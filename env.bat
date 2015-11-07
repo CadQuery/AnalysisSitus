@@ -84,12 +84,11 @@ set "VTK_LIB=%VTK_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 set "VTK_BIN=%VTK_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
 
 rem ===========================================================================
-rem Setting environment for Qt 4.7.4
-rem TODO: Support for multi-system Qt installations
+rem Setting environment for Qt
 rem ===========================================================================
 
-if "%QTDIR%" == "" set "AS=%SBM_PRODUCTS%\qt-4.7.4-20140912"
-set "QT_INC=%QTDIR%\include;%QTDIR%\include\QtGui;%QTDIR%\include\QtCore;%QTDIR%\include\QtXml;%QTDIR%\include\QtXmlPatterns;%QTDIR%\include\ActiveQt"
+if "%QTDIR%" == "" set "QTDIR=%AS_PRODUCTS%\qt-4.7.4-20140912"
+set "QT_INC=%QTDIR%\include;%QTDIR%\include\QtGui;%QTDIR%\include\QtCore"
 set "QT_LIB=%QTDIR%\lib"
 set "QT_BIN=%QTDIR%\bin"
 
@@ -120,4 +119,5 @@ echo AS_ROOT      = %AS_ROOT%
 echo AS_PRODUCTS  = %AS_PRODUCTS%
 echo CASROOT      = %CASROOT%
 echo CASDEB       = %CASDEB%
+echo QT_INC       = %QT_INC%
 echo ...

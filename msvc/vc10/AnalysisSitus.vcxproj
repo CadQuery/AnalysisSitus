@@ -57,10 +57,10 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(AS_ROOT)\win$(ARCH)\$(VCVER)\bind\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(AS_ROOT)\win$(ARCH)\$(VCVER)\objd\ADPluginDraw\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(AS_ROOT)\win$(ARCH)\$(VCVER)\objd\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(AS_ROOT)\win$(ARCH)\$(VCVER)\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(AS_ROOT)\win$(ARCH)\$(VCVER)\obj\ADPluginDraw\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(AS_ROOT)\win$(ARCH)\$(VCVER)\obj\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -70,7 +70,7 @@
     <ClCompile>
       <AdditionalOptions>/DWNT %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src\ADPluginDraw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\visu;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ADPluginDraw_LIB;ADPluginDraw_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -84,10 +84,10 @@
     <Link>
       <AdditionalLibraryDirectories>$(AD_LIB);$(CAS_LIB64);$(VTK_LIB);$(QT_LIB);$(TBB_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <ImportLibrary>$(AS_ROOT)\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalDependencies>TKernel.lib;TKMath.lib;TKG2d.lib;TKG3d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKDraw.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;vtkCommonCore-6.1.lib;vtkCommonDataModel-6.1.lib;vtkCommonExecutionModel-6.1.lib;vtkCommonMath-6.1.lib;vtkCommonTransforms-6.1.lib;vtkCommonMisc-6.1.lib;vtkRenderingCore-6.1.lib;vtkRenderingOpenGL-6.1.lib;vtkRenderingAnnotation-6.1.lib;vtkRenderingLabel-6.1.lib;vtkRenderingFreeType-6.1.lib;vtkRenderingFreeTypeOpenGL-6.1.lib;vtkFiltersCore-6.1.lib;vtkFiltersGeneral-6.1.lib;vtkFiltersSources-6.1.lib;vtkFiltersGeometry-6.1.lib;vtkFiltersParallel-6.1.lib;vtkFiltersExtraction-6.1.lib;vtkFiltersModeling-6.1.lib;vtkIOCore-6.1.lib;vtkIOImage-6.1.lib;vtkImagingCore-6.1.lib;vtkInteractionStyle-6.1.lib;vtkInteractionWidgets-6.1.lib;vtkInfovisLayout-6.1.lib;vtkGUISupportQt-6.1.lib;vtkViewsCore-6.1.lib;vtkViewsInfovis-6.1.lib;QtCored4.lib;QtGuid4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -98,7 +98,7 @@
       <AdditionalOptions>/DWNT %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src\ADPluginDraw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\visu;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ADPluginDraw_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -116,7 +116,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(AS_ROOT)\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalDependencies>TKernel.lib;TKMath.lib;TKG2d.lib;TKG3d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKDraw.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;vtkCommonCore-6.1.lib;vtkCommonDataModel-6.1.lib;vtkCommonExecutionModel-6.1.lib;vtkCommonMath-6.1.lib;vtkCommonTransforms-6.1.lib;vtkCommonMisc-6.1.lib;vtkRenderingCore-6.1.lib;vtkRenderingOpenGL-6.1.lib;vtkRenderingAnnotation-6.1.lib;vtkRenderingLabel-6.1.lib;vtkRenderingFreeType-6.1.lib;vtkRenderingFreeTypeOpenGL-6.1.lib;vtkFiltersCore-6.1.lib;vtkFiltersGeneral-6.1.lib;vtkFiltersSources-6.1.lib;vtkFiltersGeometry-6.1.lib;vtkFiltersParallel-6.1.lib;vtkFiltersExtraction-6.1.lib;vtkFiltersModeling-6.1.lib;vtkIOCore-6.1.lib;vtkIOImage-6.1.lib;vtkImagingCore-6.1.lib;vtkInteractionStyle-6.1.lib;vtkInteractionWidgets-6.1.lib;vtkInfovisLayout-6.1.lib;vtkGUISupportQt-6.1.lib;vtkViewsCore-6.1.lib;vtkViewsInfovis-6.1.lib;QtCore4.lib;QtGui4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>
       </ProgramDatabaseFile>
     </Link>

@@ -11,13 +11,26 @@
 // Windows includes
 #include <Windows.h>
 
+// VTK includes
+#include <QVTKWidget.h>
+
+// Qt includes
+#include <QApplication.h>
+#include <QMainWindow.h>
+
 //-----------------------------------------------------------------------------
 // Entry point
 //-----------------------------------------------------------------------------
 
-//! Main().
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+//! main().
+int main(int argc, char** argv)
 {
+  QApplication app(argc, argv);
+  QMainWindow* pMain = new QMainWindow();
+  QVTKWidget* pWidget = new QVTKWidget();
+  //pMain->setCentralWidget(pWidget);
+  pMain->show();
+
   // TODO: NYI
-  return 0;
+  return app.exec();
 }

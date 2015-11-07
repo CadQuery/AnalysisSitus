@@ -1,0 +1,29 @@
+products
+custom.bat
+win64/
+win32/
+tmp/
+doc/reference/generated/
+test/results/*
+test/dumping/*
+res/
+include/
+*.psess
+*.vsp
+*.ncb
+*.suo
+*.user
+~*.tmp
+*.ipch
+*.sdf
+*.opensdf
+*.log
+log.txt
+
+# Temporary MS Office files
+~$*
+
+# Intel Parallel Studio results
+/msvc/vc12/My*Results*
+/msvc/My*Results*
+/test/*.brep

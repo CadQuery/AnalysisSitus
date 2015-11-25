@@ -2,28 +2,29 @@
 // Created on: 25 September 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su
+// Web: http://quaoar.su/blog/
 //-----------------------------------------------------------------------------
 
-#include <SbmVisu_ShapePipeline.h>
+// Own include
+#include <visu_shape_pipeline.h>
 
-// SBM Visualization Framework includes
-#include <SbmVisu_NodeInformation.h>
+// Visualization includes
+#include <visu_node_info.h>
 
-// SBM algorithmic collection includes
-#include <SbmAlgo_ShapeUtils.h>
+// Modeling includes
+#include <modeling_shape_utils.h>
 
-// SBM Data Framework includes
+// Active Data includes
 #include <ActData_ParameterFactory.h>
 #include <ActData_ShapeParameter.h>
 
 // VIS includes
 #pragma warning(push, 0)
-#include <IVtkOCC/IVtkOCC_Shape.hxx>
-#include <IVtkTools/IVtkTools_DisplayModeFilter.hxx>
-#include <IVtkTools/IVtkTools_ShapeDataSource.hxx>
-#include <IVtkTools/IVtkTools_ShapeObject.hxx>
-#include <IVtkTools/IVtkTools_SubPolyDataFilter.hxx>
+#include <IVtkOCC_Shape.hxx>
+#include <IVtkTools_DisplayModeFilter.hxx>
+#include <IVtkTools_ShapeDataSource.hxx>
+#include <IVtkTools_ShapeObject.hxx>
+#include <IVtkTools_SubPolyDataFilter.hxx>
 #pragma warning(pop)
 
 // VTK includes
@@ -35,33 +36,29 @@
 #include <vtkProperty.h>
 
 // OCCT includes
-#include <Standard/Standard_ProgramError.hxx>
-#include <TColStd/TColStd_MapIteratorOfPackedMapOfInteger.hxx>
-#include <TopLoc/TopLoc_Location.hxx>
+#include <Standard_ProgramError.hxx>
+#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
+#include <TopLoc_Location.hxx>
 
 #undef DEBUG_SHOW_TRIANGULATION
 
-//-----------------------------------------------------------------------------
-// Shape Pipeline
-//-----------------------------------------------------------------------------
-
 //! Creates new Shape Pipeline initialized by default VTK mapper and actor.
 //! \param isOCCTColorScheme [in] indicates whether to use native OCCT
-//!        color scheme for rendering of OCCT shapes.
-//! \param isBound2Node [in] indicates whether to bind Node ID to actor.
-//! \param isSecondary [in] indicates whether the pipeline is secondary.
-SbmVisu_ShapePipeline::SbmVisu_ShapePipeline(const Standard_Boolean isOCCTColorScheme,
-                                             const Standard_Boolean isBound2Node,
-                                             const Standard_Boolean isSecondary)
-: SbmVisu_BasePipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                        vtkSmartPointer<vtkActor>::New() ),
-  m_bOCCTColorScheme(isOCCTColorScheme),
-  m_bIsBound2Node(isBound2Node),
-  m_bIsSecondary(isSecondary),
-  m_bMapperColorsSet(Standard_False),
-  m_bShadingMode(Standard_True), // Shading by default
-  m_bWireframeMode(!m_bShadingMode),
-  m_bSubShapesVoid(Standard_False)
+//!                               color scheme for rendering of OCCT shapes.
+//! \param isBound2Node      [in] indicates whether to bind Node ID to actor.
+//! \param isSecondary       [in] indicates whether the pipeline is secondary.
+visu_shape_pipeline::visu_shape_pipeline(const bool isOCCTColorScheme,
+                                         const bool isBound2Node,
+                                         const bool isSecondary)
+: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+                 vtkSmartPointer<vtkActor>::New() ),
+  m_bOCCTColorScheme (isOCCTColorScheme), // Native OCCT color scheme (as in Draw)
+  m_bIsBound2Node    (isBound2Node),
+  m_bIsSecondary     (isSecondary),
+  m_bMapperColorsSet (false),
+  m_bShadingMode     (true),              // Shading by default
+  m_bWireframeMode   (!m_bShadingMode),
+  m_bSubShapesVoid   (false)
 {
   /* ========================
    *  Prepare custom filters
@@ -106,10 +103,10 @@ SbmVisu_ShapePipeline::SbmVisu_ShapePipeline(const Standard_Boolean isOCCTColorS
 
 //! Sets input data for the pipeline.
 //! \param theDataProvider [in] Data Provider.
-void SbmVisu_ShapePipeline::SetInput(const Handle(SbmAPI_IPipelineDataProvider)& theDataProvider)
+void visu_shape_pipeline::SetInput(const Handle(visu_data_provider)& theDataProvider)
 {
-  Handle(SbmVisu_ShapeDataProvider)
-    aShapePrv = Handle(SbmVisu_ShapeDataProvider)::DownCast(theDataProvider);
+  Handle(visu_shape_data_provider)
+    aShapePrv = Handle(visu_shape_data_provider)::DownCast(theDataProvider);
 
   /* ===========================
    *  Validate input Parameters
@@ -139,9 +136,9 @@ void SbmVisu_ShapePipeline::SetInput(const Handle(SbmAPI_IPipelineDataProvider)&
     for ( TColStd_MapIteratorOfPackedMapOfInteger it( aSubShapes->Map() ); it.More(); it.Next() )
       aDataToKeep.Add( it.Key() );
 
-  Standard_Boolean doFiltering;
+  bool doFiltering;
   if ( m_bSubShapesVoid )
-    doFiltering = Standard_True;
+    doFiltering = true;
   else
     doFiltering = !aDataToKeep.IsEmpty();
 
@@ -156,7 +153,7 @@ void SbmVisu_ShapePipeline::SetInput(const Handle(SbmAPI_IPipelineDataProvider)&
   if ( aShapePrv->MustExecute( this->GetMTime() ) && !m_bIsSecondary )
   {
     // Access transformation to be applied
-    Standard_Real aPosX, aPosY, aPosZ, anAngA, anAngB, anAngC;
+    double aPosX, aPosY, aPosZ, anAngA, anAngB, anAngC;
     if ( aShapePrv->HasPosition() )
     {
       aShapePrv->GetPosition(aPosX, aPosY, aPosZ);
@@ -176,10 +173,10 @@ void SbmVisu_ShapePipeline::SetInput(const Handle(SbmAPI_IPipelineDataProvider)&
     // Set shape location. Notice that we do not use vtkTransform or any
     // other transformation filter in our Shape Pipeline as it will totally
     // ruin the picker's correctness (when VIS picker is active)
-    aShape = SbmAlgo_ShapeUtils::ApplyTransformation(aShape, aPosX, aPosY, aPosZ,
-                                                     anAngA, anAngB, anAngC);
+    aShape = modeling_shape_utils::ApplyTransformation(aShape, aPosX, aPosY, aPosZ,
+                                                       anAngA, anAngB, anAngC);
 
-    static Standard_Integer ShapeID = 0; ++ShapeID;
+    static int ShapeID = 0; ++ShapeID;
     Handle(IVtkOCC_Shape) aShapeIntoVtk = new IVtkOCC_Shape(aShape);
     aShapeIntoVtk->SetId(ShapeID);
 
@@ -192,7 +189,7 @@ void SbmVisu_ShapePipeline::SetInput(const Handle(SbmAPI_IPipelineDataProvider)&
     // Bind actor to owning Node ID. Thus we set back reference from VTK
     // entity to data object
     if ( m_bIsBound2Node )
-      SbmVisu_NodeInformation::Store( aShapePrv->GetNodeID(), this->Actor() );
+      visu_node_info::Store( aShapePrv->GetNodeID(), this->Actor() );
 
     // Bind Shape DS with actor. This is necessary for VIS picker -- it will
     // not work without the corresponding Information key
@@ -209,13 +206,13 @@ void SbmVisu_ShapePipeline::SetInput(const Handle(SbmAPI_IPipelineDataProvider)&
 //! Returns true if the pipeline is configured to work in SHADING mode
 //! currently, false -- otherwise.
 //! \return true/false.
-Standard_Boolean SbmVisu_ShapePipeline::IsShadingMode() const
+bool visu_shape_pipeline::IsShadingMode() const
 {
   return m_bShadingMode;
 }
 
 //! Switches ON SHADING visualization mode.
-void SbmVisu_ShapePipeline::ShadingModeOn()
+void visu_shape_pipeline::ShadingModeOn()
 {
   if ( m_bShadingMode )
     return;
@@ -225,20 +222,20 @@ void SbmVisu_ShapePipeline::ShadingModeOn()
 
   aDMFilter->SetDisplayMode(DM_Shading);
 
-  m_bShadingMode = Standard_True;
-  m_bWireframeMode = Standard_False;
+  m_bShadingMode = true;
+  m_bWireframeMode = false;
 }
 
 //! Returns true if the pipeline is configured to work in WIREFRAME mode
 //! currently, false -- otherwise.
 //! \return true/false.
-Standard_Boolean SbmVisu_ShapePipeline::IsWireframeMode() const
+bool visu_shape_pipeline::IsWireframeMode() const
 {
   return m_bWireframeMode;
 }
 
 //! Switches ON WIREFRAME visualization mode.
-void SbmVisu_ShapePipeline::WireframeModeOn()
+void visu_shape_pipeline::WireframeModeOn()
 {
   if ( m_bWireframeMode )
     return;
@@ -248,12 +245,12 @@ void SbmVisu_ShapePipeline::WireframeModeOn()
 
   aDMFilter->SetDisplayMode(DM_Wireframe);
 
-  m_bShadingMode = Standard_False;
-  m_bWireframeMode = Standard_True;
+  m_bShadingMode = false;
+  m_bWireframeMode = true;
 }
 
 //! Cleans up the underlying sub-shapes filter, however, keeps it chained.
-void SbmVisu_ShapePipeline::VoidSubShapesOn()
+void visu_shape_pipeline::VoidSubShapesOn()
 {
   IVtkTools_SubPolyDataFilter*
     aSubShapesFilter = IVtkTools_SubPolyDataFilter::SafeDownCast( m_filterMap(Filter_SubShapes) );
@@ -262,17 +259,17 @@ void SbmVisu_ShapePipeline::VoidSubShapesOn()
   aSubShapesFilter->SetDoFiltering(true);
   aSubShapesFilter->Modified();
 
-  m_bSubShapesVoid = Standard_True;
+  m_bSubShapesVoid = true;
 }
 
 //! Enables sub-shapes filtering.
-void SbmVisu_ShapePipeline::VoidSubShapesOff()
+void visu_shape_pipeline::VoidSubShapesOff()
 {
-  m_bSubShapesVoid = Standard_False;
+  m_bSubShapesVoid = false;
 }
 
 //! Enables shared vertices in Display Mode filter.
-void SbmVisu_ShapePipeline::SharedVerticesOn()
+void visu_shape_pipeline::SharedVerticesOn()
 {
   IVtkTools_DisplayModeFilter*
     aDMFilter = IVtkTools_DisplayModeFilter::SafeDownCast( m_filterMap(Filter_DM) );
@@ -282,7 +279,7 @@ void SbmVisu_ShapePipeline::SharedVerticesOn()
 }
 
 //! Disables shared vertices in Display Mode filter.
-void SbmVisu_ShapePipeline::SharedVerticesOff()
+void visu_shape_pipeline::SharedVerticesOff()
 {
   IVtkTools_DisplayModeFilter*
     aDMFilter = IVtkTools_DisplayModeFilter::SafeDownCast( m_filterMap(Filter_DM) );
@@ -293,14 +290,14 @@ void SbmVisu_ShapePipeline::SharedVerticesOff()
 
 //! Accessor for the used shape Data Source.
 //! \return shape Data Source.
-vtkPolyDataAlgorithm* SbmVisu_ShapePipeline::DataSource() const
+vtkPolyDataAlgorithm* visu_shape_pipeline::DataSource() const
 {
   return vtkPolyDataAlgorithm::SafeDownCast( m_filterMap(Filter_Source) );
 }
 
 //! Callback for AddToRenderer base routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void SbmVisu_ShapePipeline::addToRendererCallback(vtkRenderer*)
+void visu_shape_pipeline::addToRendererCallback(vtkRenderer*)
 {
 #ifdef DEBUG_SHOW_TRIANGULATION
   this->Actor()->GetProperty()->SetEdgeVisibility(1);
@@ -309,16 +306,16 @@ void SbmVisu_ShapePipeline::addToRendererCallback(vtkRenderer*)
 }
 
 //! Callback for RemoveFromRenderer base routine.
-void SbmVisu_ShapePipeline::removeFromRendererCallback(vtkRenderer*)
+void visu_shape_pipeline::removeFromRendererCallback(vtkRenderer*)
 {
 }
 
 //! Callback for Update routine.
-void SbmVisu_ShapePipeline::updateCallback()
+void visu_shape_pipeline::updateCallback()
 {
   if ( m_bOCCTColorScheme && !m_bMapperColorsSet )
   {
     IVtkTools::InitShapeMapper(m_mapper);
-    m_bMapperColorsSet = Standard_True;
+    m_bMapperColorsSet = true;
   }
 }

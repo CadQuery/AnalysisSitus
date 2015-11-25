@@ -2,15 +2,15 @@
 // Created on: 25 September 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su
+// Web: http://quaoar.su/blog/
 //-----------------------------------------------------------------------------
 
 #ifndef visu_shape_pipeline_h
 #define visu_shape_pipeline_h
 
 // A-Situs includes
+#include <visu_data_provider.h>
 #include <visu_pipeline.h>
-#include <SbmVisu_BasePipelineDataProvider.h>
 
 // OCCT includes
 #include <NCollection_DataMap.hxx>
@@ -20,23 +20,18 @@
 #include <vtkPolyDataAlgorithm.h>
 
 //-----------------------------------------------------------------------------
-// Data Provider for Shape VTK Pipeline
+// Data Provider
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(SbmVisu_ShapeDataProvider, SbmVisu_BasePipelineDataProvider)
+DEFINE_STANDARD_HANDLE(visu_shape_data_provider, visu_data_provider)
 
-//! \ingroup VISU
-//!
-//! Data source for Shape Pipeline. Specifies all data necessary for
-//! visualization of OCCT topological shapes allowing framework users define
-//! the way of how Nodal Parameters are converted to the required data by
-//! implementing the pure virtual methods of this class.
-class SbmVisu_ShapeDataProvider : public SbmVisu_BasePipelineDataProvider
+//! Data source for Shape pipeline.
+class visu_shape_data_provider : public visu_data_provider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(SbmVisu_ShapeDataProvider, SbmVisu_BasePipelineDataProvider)
+  DEFINE_STANDARD_RTTI(visu_shape_data_provider, visu_data_provider)
 
 public:
 
@@ -46,80 +41,78 @@ public:
   virtual Handle(TColStd_HPackedMapOfInteger)
     GetSubShapes() const = 0;
 
-  virtual Standard_Boolean
+  virtual bool
     HasPosition() const = 0;
 
-  virtual Standard_Boolean
+  virtual bool
     HasPositionAndRotation() const = 0;
 
   virtual void
-    GetPosition(Standard_Real& thePosX,
-                Standard_Real& thePosY,
-                Standard_Real& thePosZ) const = 0;
+    GetPosition(double& thePosX,
+                double& thePosY,
+                double& thePosZ) const = 0;
 
   virtual void
-    GetRotation(Standard_Real& theAngleAroundX,
-                Standard_Real& theAngleAroundY,
-                Standard_Real& theAngleAroundZ) const = 0;
+    GetRotation(double& theAngleAroundX,
+                double& theAngleAroundY,
+                double& theAngleAroundZ) const = 0;
 };
 
 //-----------------------------------------------------------------------------
-// Shape VTK Pipeline
+// Pipeline
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(SbmVisu_ShapePipeline, SbmVisu_BasePipeline)
+DEFINE_STANDARD_HANDLE(visu_shape_pipeline, visu_pipeline)
 
-//! \ingroup VISU
-//!
-//! Visualization pipeline for OCCT topological shapes.
-class SbmVisu_ShapePipeline : public SbmVisu_BasePipeline
+//! Visualization pipeline for OCCT shapes.
+class visu_shape_pipeline : public visu_pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(SbmVisu_ShapePipeline, SbmVisu_BasePipeline)
+  DEFINE_STANDARD_RTTI(visu_shape_pipeline, visu_pipeline)
 
 public:
 
-  SbmVisu_EXPORT
-    SbmVisu_ShapePipeline(const Standard_Boolean isOCCTColorScheme = Standard_True,
-                          const Standard_Boolean isBound2Node = Standard_True,
-                          const Standard_Boolean isSecondary = Standard_False);
+  ASitus_EXPORT
+    visu_shape_pipeline(const bool isOCCTColorScheme = true,
+                        const bool isBound2Node      = true,
+                        const bool isSecondary       = false);
 
 public:
 
-  SbmVisu_EXPORT virtual void
-    SetInput(const Handle(SbmAPI_IPipelineDataProvider)& theDataProvider);
+  ASitus_EXPORT virtual void
+    SetInput(const Handle(visu_data_provider)& theDataProvider);
 
 public:
 
-  SbmVisu_EXPORT Standard_Boolean IsShadingMode() const;
-  SbmVisu_EXPORT void ShadingModeOn();
+  ASitus_EXPORT bool IsShadingMode() const;
+  ASitus_EXPORT void ShadingModeOn();
 
-  SbmVisu_EXPORT Standard_Boolean IsWireframeMode() const;
-  SbmVisu_EXPORT void WireframeModeOn();
+  ASitus_EXPORT bool IsWireframeMode() const;
+  ASitus_EXPORT void WireframeModeOn();
 
-  SbmVisu_EXPORT void VoidSubShapesOn();
-  SbmVisu_EXPORT void VoidSubShapesOff();
+  ASitus_EXPORT void VoidSubShapesOn();
+  ASitus_EXPORT void VoidSubShapesOff();
 
-  SbmVisu_EXPORT void SharedVerticesOn();
-  SbmVisu_EXPORT void SharedVerticesOff();
+  ASitus_EXPORT void SharedVerticesOn();
+  ASitus_EXPORT void SharedVerticesOff();
 
-  SbmVisu_EXPORT vtkPolyDataAlgorithm* DataSource() const;
+  ASitus_EXPORT vtkPolyDataAlgorithm* DataSource() const;
 
 private:
 
-  virtual void addToRendererCallback(vtkRenderer* theRenderer);
-  virtual void removeFromRendererCallback(vtkRenderer* theRenderer);
-  virtual void updateCallback();
+  virtual void addToRendererCallback      (vtkRenderer* theRenderer);
+  virtual void removeFromRendererCallback (vtkRenderer* theRenderer);
+  virtual void updateCallback             ();
 
 private:
 
   //! Copying prohibited.
-  SbmVisu_ShapePipeline(const SbmVisu_ShapePipeline&);
+  visu_shape_pipeline(const visu_shape_pipeline&);
 
   //! Assignment prohibited.
-  SbmVisu_ShapePipeline& operator=(const SbmVisu_ShapePipeline&);
+  visu_shape_pipeline& operator=(const visu_shape_pipeline&);
 
 protected:
 
@@ -142,30 +135,30 @@ protected:
 
   //! Indicates whether the standard OCCT color mapping is used as a default
   //! color scheme for the visualized shapes.
-  Standard_Boolean m_bOCCTColorScheme;
+  bool m_bOCCTColorScheme;
 
   //! Indicates whether this pipeline must propagate the corresponding Node
   //! ID to its actor via vtkInformation hook.
-  Standard_Boolean m_bIsBound2Node;
+  bool m_bIsBound2Node;
 
   //! Indicates whether the pipeline is secondary or not.
-  Standard_Boolean m_bIsSecondary;
+  bool m_bIsSecondary;
 
   //! Technical flag indicating whether a GL-mapper is initialized with the
   //! custom color scheme or not.
-  Standard_Boolean m_bMapperColorsSet;
+  bool m_bMapperColorsSet;
 
   //! True if SHADING mode if turned ON, false -- otherwise. This flag is
-  //! exclusive with m_bWireframeMode.
-  Standard_Boolean m_bShadingMode;
+  //! mutually exclusive with m_bWireframeMode.
+  bool m_bShadingMode;
 
   //! True if WIREFRAME mode if turned ON, false -- otherwise. This flag is
-  //! exclusive with m_bShadingMode.
-  Standard_Boolean m_bWireframeMode;
+  //! mutually exclusive with m_bShadingMode.
+  bool m_bWireframeMode;
 
   //! Indicates whether sub-shapes filter is forced to block data regardless
   //! of the contents of Data Provider.
-  Standard_Boolean m_bSubShapesVoid;
+  bool m_bSubShapesVoid;
 
 };
 

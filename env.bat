@@ -33,12 +33,12 @@ rem ===========================================================================
 rem Setting AS environment 
 rem ===========================================================================
 
-if "%AS_ROOT%"         == "" set "AS_ROOT=%~dp0"
-if "%AS_RESOURCES%"    == "" set "AS_RESOURCES=%AS_ROOT%\res"
-if "%AS_LIB%"          == "" set "AS_LIB=%AS_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
-if "%AS_BIN%"          == "" set "AS_BIN=%AS_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
-if "%AS_INC%"          == "" set "AS_INC=%AS_ROOT%\include"
-if "%AS_PRODUCTS%"     == "" set "AS_PRODUCTS=%AS_ROOT%products"
+if "%AS_ROOT%"      == "" set "AS_ROOT=%~dp0"
+if "%AS_RESOURCES%" == "" set "AS_RESOURCES=%AS_ROOT%\res"
+if "%AS_LIB%"       == "" set "AS_LIB=%AS_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
+if "%AS_BIN%"       == "" set "AS_BIN=%AS_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
+if "%AS_INC%"       == "" set "AS_INC=%AS_ROOT%\include"
+if "%AS_PRODUCTS%"  == "" set "AS_PRODUCTS=%AS_ROOT%products"
 
 rem ===========================================================================
 rem Setting OCCT environment 

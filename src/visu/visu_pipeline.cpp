@@ -2,7 +2,7 @@
 // Created on: 25 September 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su
+// Web: http://quaoar.su/blog/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -22,17 +22,17 @@
 visu_pipeline::visu_pipeline(const vtkSmartPointer<vtkMapper>& mapper,
                              const vtkSmartPointer<vtkActor>&  actor)
   : m_dummyFilter  ( vtkSmartPointer<vtkPassThroughFilter>::New() ),
-    m_mapper       ( theMapper ),
-    m_actor        ( theActor ),
+    m_mapper       ( mapper ),
+    m_actor        ( actor ),
     m_bInitialized ( false ),
     m_bBuilt       ( false )
 {}
 
 //! Sets input data set for the pipeline.
 //! \param data [in] input data set in VTK generic form.
-void visu_pipeline::set_input_data(const vtkSmartPointer<vtkDataSet>& data)
+void visu_pipeline::SetInputData(const vtkSmartPointer<vtkDataSet>& data)
 {
-  m_dummy_filter->SetInputData(data);
+  m_dummyFilter->SetInputData(data);
   m_bInitialized = true;
 }
 
@@ -40,7 +40,7 @@ void visu_pipeline::set_input_data(const vtkSmartPointer<vtkDataSet>& data)
 //! routine. This allows append our visualization pipeline to some
 //! existing pipeline.
 //! \param out [in] output port of the precedent filter.
-void visu_pipeline::set_input_connection(vtkAlgorithmOutput* out)
+void visu_pipeline::SetInputConnection(vtkAlgorithmOutput* out)
 {
   m_dummyFilter->SetInputConnection(out);
   m_bInitialized = true;
@@ -48,10 +48,10 @@ void visu_pipeline::set_input_connection(vtkAlgorithmOutput* out)
 
 //! Requests update on the GL-mapper of the pipeline. Notice, that
 //! the pipeline is built by demand, so you need to call update() at least once.
-void visu_pipeline::update()
+void visu_pipeline::Update()
 {
   // Build the pipeline (if not yet)
-  this->build();
+  this->Build();
 
   // Perform user callback
   this->callback_update();
@@ -62,7 +62,7 @@ void visu_pipeline::update()
 }
 
 //! Builds the transient VTK pipeline (ONCE).
-void visu_pipeline::build()
+void visu_pipeline::Build()
 {
   if ( m_bBuilt )
     return; // Already built
@@ -74,7 +74,7 @@ void visu_pipeline::build()
   vtkAlgorithmOutput* out_port = m_dummyFilter->GetOutputPort();
 
   // Connect all filters in the m_filters array, ending up with the mapper
-  for ( int i = 1; i <= this->_num_filters(); ++i )
+  for ( int i = 1; i <= this->numFilters(); ++i )
   {
     vtkAlgorithm* filter = m_filters.ChangeValue(i);
     filter->SetInputConnection(out_port);
@@ -102,9 +102,9 @@ vtkMapper* visu_pipeline::Mapper()
 
 //! Adds the actor of this pipeline to the passed renderer.
 //! \param renderer [in] renderer to add the pipeline's actor to.
-void visu_pipeline::add_to_renderer(vtkRenderer* renderer)
+void visu_pipeline::AddToRenderer(vtkRenderer* renderer)
 {
-  renderer->AddActor( this->actor() );
+  renderer->AddActor( this->Actor() );
 
   // Callback for customization
   this->callback_add_to_renderer(renderer);
@@ -112,7 +112,7 @@ void visu_pipeline::add_to_renderer(vtkRenderer* renderer)
 
 //! Removes the actor of this pipeline from the passed renderer.
 //! \param renderer [in] renderer to remove the pipeline's actor from.
-void visu_pipeline::remove_from_renderer(vtkRenderer* renderer)
+void visu_pipeline::RemoveFromRenderer(vtkRenderer* renderer)
 {
   renderer->RemoveActor( this->Actor() );
 
@@ -121,14 +121,14 @@ void visu_pipeline::remove_from_renderer(vtkRenderer* renderer)
 }
 
 //! Sets newly generated modification timestamp for this pipeline.
-void visu_pipeline::modified()
+void visu_pipeline::Modified()
 {
   m_MTime = ActAux_TimeStampTool::Generate();
 }
 
 //! Returns actual modification timestamp for this pipeline.
 //! \return actual modification timestamp.
-Handle(ActAux_TimeStamp) visu_pipeline::get_MTime() const
+Handle(ActAux_TimeStamp) visu_pipeline::GetMTime() const
 {
   return m_MTime.IsNull() ? new ActAux_TimeStamp() : m_MTime;
 }
@@ -146,12 +146,12 @@ void visu_pipeline::append(const vtkSmartPointer<vtkAlgorithm>& filter)
 //! \param index [in] index in range [1, _num_filters()].
 vtkSmartPointer<vtkAlgorithm> visu_pipeline::filter(const int index) const
 {
-  return m_filters.Value(theIndex);
+  return m_filters.Value(index);
 }
 
 //! Returns the number of filters in the pipeline.
 //! \return number of filters.
-int visu_pipeline::_num_filters() const
+int visu_pipeline::numFilters() const
 {
   return m_filters.Length();
 }

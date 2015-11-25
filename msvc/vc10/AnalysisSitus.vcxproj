@@ -12,21 +12,64 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\analysis_situs.h" />
+    <CustomBuild Include="..\..\src\gui\gui_control_pane.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\gui\gui_common.h" />
+    <ClInclude Include="..\..\src\mesh\mesh_ply.h" />
+    <ClInclude Include="..\..\src\modeling\modeling_shape_utils.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_result_utils.h" />
+    <ClInclude Include="..\..\src\visu\visu_common.h" />
+    <ClInclude Include="..\..\src\visu\visu_utils.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_source.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_utils.h" />
+    <ClInclude Include="..\..\src\visu\visu_shrink_poly_filter.h" />
     <ClInclude Include="..\..\src\visu\visu_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_EN_scalar_filter.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_EN_scalar_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_E_scalar_filter.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_E_scalar_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_E_vector_filter.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_E_vector_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_N_scalar_filter.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_N_scalar_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\visu_node_info.h" />
     <ClInclude Include="..\..\src\visu\visu_pipeline.h" />
     <ClInclude Include="..\..\src\visu\visu_shape_pipeline.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\gui\gui_control_pane.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_data_provider.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\src\visu\visu_pipeline.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\src\visu\visu_shape_pipeline.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\mesh_ply.cpp" />
+    <ClCompile Include="..\..\src\modeling\modeling_shape_utils.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_result_utils.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_utils.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_source.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_utils.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_shrink_poly_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_EN_scalar_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_EN_scalar_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_E_scalar_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_E_scalar_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_E_vector_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_E_vector_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_N_scalar_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_N_scalar_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_node_info.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_shape_pipeline.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_control_pane.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{98799C8D-EED8-41DE-9C99-508159A9C504}</ProjectGuid>
@@ -70,8 +113,8 @@
     <ClCompile>
       <AdditionalOptions>/DWNT %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\visu;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ADPluginDraw_LIB;ADPluginDraw_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\modeling;$(AS_ROOT)\src\gui;$(AS_ROOT)\src\mesh;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ASITUS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -98,8 +141,8 @@
       <AdditionalOptions>/DWNT %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\visu;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ADPluginDraw_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\modeling;$(AS_ROOT)\src\gui;$(AS_ROOT)\src\mesh;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ASITUS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -111,7 +154,7 @@
     <Link>
       <AdditionalLibraryDirectories>$(AD_LIB);$(CAS_LIB64);$(VTK_LIB);$(QT_LIB);$(TBB_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(AS_ROOT)\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>

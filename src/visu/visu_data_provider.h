@@ -2,54 +2,58 @@
 // Created on: 28 September 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su
+// Web: http://quaoar.su/blog/
 //-----------------------------------------------------------------------------
 
 #ifndef visu_data_provider_h
 #define visu_data_provider_h
 
-// SBM Visualization Framework includes
-#include <SbmVisu_Common.h>
+// A-Situs includes
+#include <analysis_situs.h>
 
-// SBM API includes
+// Active Data (API) includes
 #include <ActAPI_IParameter.h>
-#include <SbmAPI_IPipelineDataProvider.h>
 
-// SBM Algorithmic layer includes
+// Active Data (auxiliary) includes
 #include <ActAux_TimeStamp.h>
 
-DEFINE_STANDARD_HANDLE(SbmVisu_BasePipelineDataProvider, SbmAPI_IPipelineDataProvider)
+DEFINE_STANDARD_HANDLE(visu_data_provider, Standard_Transient)
 
-//! \ingroup VISU
-//!
 //! The instances of this class are normally used to supply data to the VTK
 //! visualization pipelines. The main idea behind this class is to provide
 //! a universal way of feeding the pipelines with domain-specific data
 //! structures for their subsequent translation to VTK data sets. Such
-//! DOMAIN -> VTK translation process is known to be quite heavy, so it should
+//! DOMAIN -> VTK translation process is usually quite heavy, so it should
 //! perform only in cases when the DOMAIN data is actually changed. The latter
 //! fact is normally checked by comparing modification time (MTime) of the
 //! data source with the modification time of the pipeline.
-class SbmVisu_BasePipelineDataProvider : public SbmAPI_IPipelineDataProvider
+class visu_data_provider : public Standard_Transient
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(SbmVisu_BasePipelineDataProvider,SbmAPI_IPipelineDataProvider)
+  DEFINE_STANDARD_RTTI(visu_data_provider, Standard_Transient)
 
 public:
 
-  SbmVisu_EXPORT virtual Standard_Boolean
+  ASitus_EXPORT virtual bool
     MustExecute(const Handle(ActAux_TimeStamp)& Against) const;
+
+public:
+
+  //! Returns associated Node ID.
+  //! \return Node ID.
+  virtual ActAPI_DataObjectId
+    GetNodeID() const = 0;
 
 protected:
 
-  //! Enumerates all Nodal Parameters playing as sources for DOMAIN -> VTK
+  //! Enumerates all Active Data Parameters playing as sources for DOMAIN -> VTK
   //! translation process. If any Parameter listed by this method is changed
   //! (more precisely, if its MTime record is updated), the translation must
   //! be repeated.
   //! \return list of source Parameters.
-  SbmVisu_EXPORT virtual Handle(ActAPI_ParameterList)
+  ASitus_EXPORT virtual Handle(ActAPI_HParameterList)
     translationSources() const = 0;
 
 };

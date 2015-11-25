@@ -2,7 +2,7 @@
 // Created on: 25 September 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su
+// Web: http://quaoar.su/blog/
 //-----------------------------------------------------------------------------
 
 #ifndef visu_pipeline_h
@@ -11,7 +11,7 @@
 // A-Situs includes
 #include <analysis_situs.h>
 
-// SBM Algorithmic layer includes
+// Active Data (auxiliary) includes
 #include <ActAux_TimeStamp.h>
 
 // VTK includes
@@ -39,65 +39,65 @@ public:
 
 public:
 
-  ASITUS_EXPORTS
+  ASitus_EXPORT
     visu_pipeline(const vtkSmartPointer<vtkMapper>& mapper,
                   const vtkSmartPointer<vtkActor>&  actor);
 
 public:
 
-  ASITUS_EXPORTS void
-    set_input_data(const vtkSmartPointer<vtkDataSet>& data);
+  ASitus_EXPORT void
+    SetInputData(const vtkSmartPointer<vtkDataSet>& data);
 
-  ASITUS_EXPORTS void
-    set_input_connection(vtkAlgorithmOutput* out);
-
-public:
-
-  ASITUS_EXPORTS virtual void
-    update();
-
-  ASITUS_EXPORTS virtual void
-    build();
+  ASitus_EXPORT void
+    SetInputConnection(vtkAlgorithmOutput* out);
 
 public:
 
-  ASITUS_EXPORTS vtkActor*
-    actor();
+  ASitus_EXPORT virtual void
+    Update();
 
-  ASITUS_EXPORTS vtkMapper*
-    mapper();
-
-  ASITUS_EXPORTS void
-    add_to_renderer(vtkRenderer* renderer);
-
-  ASITUS_EXPORTS void
-    remove_from_renderer(vtkRenderer* renderer);
+  ASitus_EXPORT virtual void
+    Build();
 
 public:
 
-  ASITUS_EXPORTS void
-    modified();
+  ASitus_EXPORT vtkActor*
+    Actor();
 
-  ASITUS_EXPORTS Handle(ActAux_TimeStamp)
-    get_MTime() const;
+  ASitus_EXPORT vtkMapper*
+    Mapper();
+
+  ASitus_EXPORT void
+    AddToRenderer(vtkRenderer* renderer);
+
+  ASitus_EXPORT void
+    RemoveFromRenderer(vtkRenderer* renderer);
+
+public:
+
+  ASitus_EXPORT void
+    Modified();
+
+  ASitus_EXPORT Handle(ActAux_TimeStamp)
+    GetMTime() const;
 
 // Pipeline construction routines to be used by derived classes only:
 protected:
 
-  ASITUS_EXPORTS void
-    _disable(const int index);
+  ASitus_EXPORT void
+    disable(const int index);
 
-  ASITUS_EXPORTS void
-    _enable(const int index);
+  ASitus_EXPORT void
+    enable(const int index);
 
-  ASITUS_EXPORTS void
-    _append(const vtkSmartPointer<vtkAlgorithm>& filter);
+  ASitus_EXPORT void
+    append(const vtkSmartPointer<vtkAlgorithm>& filter);
 
-  ASITUS_EXPORTS vtkSmartPointer<vtkAlgorithm>
-    _filter(const int index) const;
+  ASitus_EXPORT vtkSmartPointer<vtkAlgorithm>
+    filter(const int index) const;
 
-  ASITUS_EXPORTS int
-    _num_filters() const;
+  ASitus_EXPORT int
+    numFilters() const;
 
 private:
 
@@ -159,7 +159,7 @@ protected:
   //! to the outputs of other external filtering procedures (e.g. some kinds
   //! of "data selectors"). This dummy filter performs simple shallow copying
   //! of input data to the output.
-  vtkSmartPointer<vtkPassThroughFilter> m_dummy_filter;
+  vtkSmartPointer<vtkPassThroughFilter> m_dummyFilter;
 
   //! Modification timestamp for the Pipeline.
   Handle(ActAux_TimeStamp) m_MTime;

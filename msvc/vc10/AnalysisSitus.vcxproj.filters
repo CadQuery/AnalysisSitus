@@ -9,14 +9,32 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{2fb99e3c-825a-42b7-95fe-dc2fecfa0025}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Visualization">
       <UniqueIdentifier>{b6804725-f880-4d8f-827e-de4214a871cc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Visualization">
       <UniqueIdentifier>{e16ebcdb-c6de-40bc-a2f6-08c5f4bacb8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Modeling">
+      <UniqueIdentifier>{4d1a1d05-49d9-4243-acc3-14a328fa812f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Modeling">
+      <UniqueIdentifier>{5ae5d180-7660-47fa-be33-f1ddd6ac1421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI">
+      <UniqueIdentifier>{ff78e149-feac-4461-b9f3-065f960d5cca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{cef6f73b-a06a-4fc9-8f04-ef7109517e6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MOC Files">
+      <UniqueIdentifier>{16cd439c-b0f8-427c-a52f-ca0522b0aeff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mesh">
+      <UniqueIdentifier>{3ad340fb-97bf-4c89-9e9f-8b8e0c8441fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mesh">
+      <UniqueIdentifier>{07c52b1b-df06-4b21-aef2-0c1217782d06}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -32,6 +50,66 @@
     <ClInclude Include="..\..\src\visu\visu_shape_pipeline.h">
       <Filter>Header Files\Visualization</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_E_scalar_filter.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_E_scalar_pipeline.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_E_vector_filter.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_E_vector_pipeline.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_EN_scalar_filter.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_EN_scalar_pipeline.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_N_scalar_filter.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_N_scalar_pipeline.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_pipeline.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_data_provider.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_node_info.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_shrink_poly_filter.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_utils.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_source.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_utils.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_common.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_result_utils.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\modeling\modeling_shape_utils.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\mesh_ply.h">
+      <Filter>Header Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\gui_common.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\visu\visu_data_provider.cpp">
@@ -46,5 +124,67 @@
     <ClCompile Include="..\..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_E_scalar_filter.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_E_scalar_pipeline.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_E_vector_filter.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_E_vector_pipeline.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_EN_scalar_filter.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_EN_scalar_pipeline.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_N_scalar_filter.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_N_scalar_pipeline.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_pipeline.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_node_info.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_utils.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_shrink_poly_filter.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_source.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_utils.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_result_utils.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\modeling\modeling_shape_utils.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_control_pane.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_control_pane.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\mesh_ply.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\src\gui\gui_control_pane.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

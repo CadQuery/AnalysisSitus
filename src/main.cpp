@@ -10,10 +10,17 @@
 
 // A-Situs (GUI) includes
 #include <gui_control_pane.h>
+#include <gui_viewer.h>
+#include <gui_viewer2d.h>
+
+// A-Situs (visualization) includes
+#include <visu_geom_prs.h>
+#include <visu_mesh_prs.h>
 
 // Qt includes
 #pragma warning(push, 0)
 #include <QApplication>
+#include <QDesktopWidget>
 #include <QMainWindow>
 #include <QHBoxLayout>
 #pragma warning(pop)
@@ -45,60 +52,50 @@ VTK_MODULE_INIT(vtkRenderingFreeType)
 int main(int argc, char** argv)
 {
   QApplication app(argc, argv);
-  QMainWindow* pMain = new QMainWindow();
+
+  //---------------------------------------------------------------------------
+  // Create Data Model
+  //---------------------------------------------------------------------------
+
+  Handle(common_model) M = new common_model;
+  if ( !M->NewEmpty() )
+  {
+    std::cout << "Cannot create new empty Model" << std::endl;
+    return 1;
+  }
+
+  //---------------------------------------------------------------------------
+  // Register Presentations
+  //---------------------------------------------------------------------------
+
+  REGISTER_PRESENTATION(visu_geom_prs)
+  REGISTER_PRESENTATION(visu_mesh_prs)
 
   //---------------------------------------------------------------------------
   // Initialize viewer
   //---------------------------------------------------------------------------
 
-  QVTKWidget* pViewWidget = new QVTKWidget();
+  gui_viewer* pViewer = new gui_viewer();
 
-  // Initialize renderer
-  vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-  renderer->GetActiveCamera()->ParallelProjectionOn();
-  renderer->LightFollowCameraOn();
-  renderer->TwoSidedLightingOn();
-  renderer->SetBackground(0.2, 0.2, 0.2);
-
-  // Initialize Render Window
-  vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-  renderWindow->AddRenderer(renderer);
-  pViewWidget->SetRenderWindow(renderWindow);
-
-  // Initialize Interactor Style instance for normal operation mode
-  vtkSmartPointer<vtkInteractorStyleTrackballCamera>
-    iStyle = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
-
-  // Initialize Render Window Interactor
-  vtkSmartPointer<vtkRenderWindowInteractor>
-    renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-  renderWindowInteractor->SetRenderWindow(renderWindow);
-  renderWindowInteractor->SetInteractorStyle(iStyle);
-  renderWindowInteractor->Initialize();
+  // Set size and show
+  QDesktopWidget dw;
+  pViewer->setMinimumSize(dw.height()*0.5, dw.height()*0.5);
+  pViewer->show();
 
   //---------------------------------------------------------------------------
-  // Other panels
+  // Initialize viewer 2d
   //---------------------------------------------------------------------------
 
-  // Widgets and layouts
-  gui_control_pane* pControlPane = new gui_control_pane(pMain);
-  QWidget*          pBasePane    = new QWidget();
-  QHBoxLayout*      pBaseLayout  = new QHBoxLayout();
+  gui_viewer2d* pViewer2d = new gui_viewer2d();
 
-  // Configure layout
-  pBaseLayout->setSpacing(0);
-  pBaseLayout->addWidget(pControlPane);
-  pBaseLayout->addWidget(pViewWidget);
-  pBasePane->setLayout(pBaseLayout);
-  pBasePane->setContentsMargins(0, 0, 0, 0);
-
-  // Set central widget
-  pMain->setCentralWidget(pBasePane);
+  // Set size and show
+  QDesktopWidget dw2d;
+  pViewer2d->setMinimumSize(dw2d.height()*0.25, dw2d.height()*0.25);
+  pViewer2d->show();
 
   //---------------------------------------------------------------------------
   // Run event loop
   //---------------------------------------------------------------------------
 
-  pMain->show();
   return app.exec();
 }

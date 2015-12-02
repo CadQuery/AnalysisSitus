@@ -88,13 +88,6 @@ void visu_mesh_E_vector_pipeline::SetInput(const Handle(visu_data_provider)& the
     vtkSmartPointer<visu_mesh_source> aMeshSource = vtkSmartPointer<visu_mesh_source>::New();
     aMeshSource->SetInputMesh( aMeshPrv->GetMeshDS() );
 
-    if ( aMeshPrv->HasMeshGroup() )
-    {
-      Handle(OMFDS_MeshGroup) aGrp = aMeshPrv->GetMeshGroup();
-      if ( !aGrp->IsEmpty() ) // Do not use empty groups for filtering
-        aMeshSource->SetInputElemGroup( aMeshPrv->GetMeshGroup() );
-    }
-
     Handle(HIntArray) anElemIDs = aMeshPrv->GetElementIDs();
     Handle(HRealArray) anElemVectors = aMeshPrv->GetElementVectors();
 

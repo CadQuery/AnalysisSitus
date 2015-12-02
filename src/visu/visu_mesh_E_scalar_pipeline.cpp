@@ -73,13 +73,6 @@ void visu_mesh_E_scalar_pipeline::SetInput(const Handle(visu_data_provider)& the
     vtkSmartPointer<visu_mesh_source> aMeshSource = vtkSmartPointer<visu_mesh_source>::New();
     aMeshSource->SetInputMesh( aMeshPrv->GetMeshDS() );
 
-    if ( aMeshPrv->HasMeshGroup() )
-    {
-      Handle(OMFDS_MeshGroup) aGrp = aMeshPrv->GetMeshGroup();
-      if ( !aGrp->IsEmpty() ) // Do not use empty groups for filtering
-        aMeshSource->SetInputElemGroup( aMeshPrv->GetMeshGroup() );
-    }
-
     visu_mesh_E_scalar_filter*
       aScFilter = visu_mesh_E_scalar_filter::SafeDownCast( m_filterMap.Find(Filter_EScalar) );
 

@@ -23,16 +23,19 @@ Q_OBJECT
 public:
 
   gui_control_pane(QWidget* parent = NULL);
-
   virtual ~gui_control_pane();
 
 public slots:
 
   void onLoadPly();
+  void onLoadBRep();
+  void onLoadSTEP();
 
 private:
 
-  QString selectPlyFile() const;
+  QString selectPlyFile()  const;
+  QString selectBRepFile() const;
+  QString selectSTEPFile() const;
 
 private:
 
@@ -41,11 +44,15 @@ private:
   //! Buttons.
   struct
   {
-    QPushButton* LoadPly; //!< Button for ply loading.
+    QPushButton* LoadPly;  //!< Button for ply loading.
+    QPushButton* LoadBRep; //!< Button for brep loading.
+    QPushButton* LoadSTEP; //!< Button for STEP loading.
 
     void Release()
     {
-      delete LoadPly; LoadPly = NULL;
+      delete LoadPly;  LoadPly  = NULL;
+      delete LoadBRep; LoadBRep = NULL;
+      delete LoadSTEP; LoadSTEP = NULL;
     }
   } m_buttons;
 

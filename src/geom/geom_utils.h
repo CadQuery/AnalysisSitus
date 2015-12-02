@@ -5,8 +5,8 @@
 // Web: http://quaoar.su/blog/
 //-----------------------------------------------------------------------------
 
-#ifndef modeling_shape_utils_h
-#define modeling_shape_utils_h
+#ifndef geom_utils_h
+#define geom_utils_h
 
 // A-Situs includes
 #include <analysis_situs.h>
@@ -21,18 +21,18 @@
 #include <TopTools_ListOfShape.hxx>
 
 //! Auxiliary functions facilitating working with OCCT topological shapes.
-class modeling_shape_utils
+class geom_utils
 {
 public:
 
   ASitus_EXPORT static TopoDS_Shape
     ApplyTransformation(const TopoDS_Shape& theShape,
-                        const double theXPos,
-                        const double theYPos,
-                        const double theZPos,
-                        const double theAngleA,
-                        const double theAngleB,
-                        const double theAngleC);
+                        const double        theXPos,
+                        const double        theYPos,
+                        const double        theZPos,
+                        const double        theAngleA,
+                        const double        theAngleB,
+                        const double        theAngleC);
 
   ASitus_EXPORT static gp_Trsf
     Transformation(const double theXPos,
@@ -44,7 +44,7 @@ public:
 
   ASitus_EXPORT static TopoDS_Shape
     ApplyTransformation(const TopoDS_Shape& theShape,
-                        const gp_Trsf& theTransform);
+                        const gp_Trsf&      theTransform);
 
   ASitus_EXPORT static TopoDS_Shape
     AssembleShapes(const TopTools_ListOfShape& theShapes);
@@ -55,16 +55,20 @@ public:
            double& XMax, double& YMax, double& ZMax);
 
   ASitus_EXPORT static bool
-    CheckShape(const TopoDS_Shape& theShape,
+    CheckShape(const TopoDS_Shape&  theShape,
                ActAPI_ProgressEntry PEntry);
 
   ASitus_EXPORT static double
     MaxTolerance(const TopoDS_Shape& theShape);
 
+  ASitus_EXPORT static bool
+    ReadBRep(const TCollection_AsciiString& theFilename,
+             TopoDS_Shape&                  theShape);
+
 private:
 
-  modeling_shape_utils(); //!< Prohibited.
-  modeling_shape_utils(const modeling_shape_utils&); //!< Prohibited.
+  geom_utils(); //!< Prohibited.
+  geom_utils(const geom_utils&); //!< Prohibited.
 
 };
 

@@ -22,7 +22,4 @@
 // VTK includes
 #include <vtkAutoInit.h>
 
-// Activate object factory for Freetype fonts
-VTK_MODULE_INIT(vtkRenderingFreeType);
-
 #endif

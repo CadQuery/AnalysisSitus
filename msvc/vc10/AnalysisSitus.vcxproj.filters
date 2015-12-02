@@ -15,12 +15,6 @@
     <Filter Include="Source Files\Visualization">
       <UniqueIdentifier>{e16ebcdb-c6de-40bc-a2f6-08c5f4bacb8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Modeling">
-      <UniqueIdentifier>{4d1a1d05-49d9-4243-acc3-14a328fa812f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Modeling">
-      <UniqueIdentifier>{5ae5d180-7660-47fa-be33-f1ddd6ac1421}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\GUI">
       <UniqueIdentifier>{ff78e149-feac-4461-b9f3-065f960d5cca}</UniqueIdentifier>
     </Filter>
@@ -35,6 +29,24 @@
     </Filter>
     <Filter Include="Source Files\Mesh">
       <UniqueIdentifier>{07c52b1b-df06-4b21-aef2-0c1217782d06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization\Presentation">
+      <UniqueIdentifier>{321f3c7e-0ab7-40e9-896e-ae15f008f38e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization\Presentation">
+      <UniqueIdentifier>{d20a6d2e-40f2-4fa1-8ef3-b68f87c57f5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common">
+      <UniqueIdentifier>{9269c3fb-af81-4f69-ad9e-a68c866fe247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common">
+      <UniqueIdentifier>{02715f7d-7be0-4213-ae86-afdb26232c52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry">
+      <UniqueIdentifier>{4d1a1d05-49d9-4243-acc3-14a328fa812f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry">
+      <UniqueIdentifier>{5ae5d180-7660-47fa-be33-f1ddd6ac1421}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -101,14 +113,71 @@
     <ClInclude Include="..\..\src\visu\visu_mesh_result_utils.h">
       <Filter>Header Files\Visualization</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\modeling\modeling_shape_utils.h">
-      <Filter>Header Files\Modeling</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\mesh\mesh_ply.h">
       <Filter>Header Files\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\gui\gui_common.h">
       <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_prs.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_prs_manager.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_selection.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_mesh_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\mesh_node.h">
+      <Filter>Header Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_partition.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_contour_pipeline.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_display_mode.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_version.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_model.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_root_node.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_facilities.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\geom_utils.h">
+      <Filter>Header Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\geom_node.h">
+      <Filter>Header Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_shape_data_provider.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_rotation_callback.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_viewer_callback.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_interactor_style_pick.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\geom_STEP.h">
+      <Filter>Header Files\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -169,21 +238,111 @@
     <ClCompile Include="..\..\src\visu\visu_mesh_result_utils.cpp">
       <Filter>Source Files\Visualization</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\modeling\modeling_shape_utils.cpp">
-      <Filter>Source Files\Modeling</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\gui\gui_control_pane.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_control_pane.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_splitter.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer2d.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_visu_pick_callback.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\mesh\mesh_ply.cpp">
       <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_prs.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_prs_manager.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_selection.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_mesh_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\mesh_node.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\common\common_partition.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_data_provider.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_contour_pipeline.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\common\common_model.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\common\common_root_node.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\common\common_facilities.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_splitter.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\geom_utils.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\geom_node.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_shape_data_provider.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_pick_callback.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_rotation_callback.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_viewer_callback.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_interactor_style_pick.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\geom_STEP.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer2d.cpp">
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\gui\gui_control_pane.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_splitter.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\visu\visu_pick_callback.h">
+      <Filter>Header Files\Visualization</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer2d.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
   </ItemGroup>

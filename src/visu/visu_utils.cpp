@@ -13,20 +13,45 @@
 #include <vtkActor.h>
 #include <vtkAxesActor.h>
 #include <vtkCamera.h>
+#include <vtkLookupTable.h>
 #include <vtkMath.h>
 #include <vtkPlaneSource.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #pragma warning(pop)
 
+// IVtk includes
+#include <IVtkVTK_ShapeData.hxx>
+
 // OCCT includes
 #include <gp_XYZ.hxx>
 #include <Precision.hxx>
-#include <Standard_Real.hxx>
 
-/* =========================================================================
- *  Managing scene
- * ========================================================================= */
+//-----------------------------------------------------------------------------
+// Presentation factory
+//-----------------------------------------------------------------------------
+
+visu_utils::TPrsAllocMap visu_utils::m_allocMap;
+
+visu_utils::TPrsAllocMap
+  visu_utils::RegisterPrsType(const TCollection_AsciiString& theType,
+                              const visu_prs_allocator       theAllocFunc)
+
+{
+  if ( !m_allocMap.IsBound(theType) )
+    m_allocMap.Bind(theType, theAllocFunc);
+
+  return m_allocMap;
+}
+
+const visu_utils::TPrsAllocMap& visu_utils::GetAllocMap()
+{
+  return m_allocMap;
+}
+
+//-----------------------------------------------------------------------------
+// Managing scene
+//-----------------------------------------------------------------------------
 
 //! Calculates bounding box for visible VTK Props presented in the given
 //! renderer excluding the passed collection.
@@ -303,9 +328,8 @@ void visu_utils::CameraOnRight(vtkRenderer* theRenderer)
 //! \param theActor [in] Actor to adjust lighting options.
 void visu_utils::ApplyLightingRules(vtkActor* theActor)
 {
-  theActor->GetProperty()->SetDiffuse(0.7);
-  theActor->GetProperty()->SetSpecular(0.4);
-  theActor->GetProperty()->SetSpecularPower(20);
+  theActor->GetProperty()->SetAmbient(0.1);
+  theActor->GetProperty()->SetDiffuse(0.2);
 }
 
 //! Translates camera from one position to another.
@@ -426,9 +450,9 @@ void visu_utils::AdjustTrihedron(vtkRenderer*       theRenderer,
   visu_utils::AdjustCameraClippingRange(theRenderer);
 }
 
-/* =========================================================================
- *  Handy shortcuts to commonly used VTK-based functionality
- * ========================================================================= */
+//-----------------------------------------------------------------------------
+// Handy shortcuts to commonly used VTK-based functionality
+//-----------------------------------------------------------------------------
 
 //! Allocates VTK single-component integer data array with the given name.
 //! \param theArrName [in] name of array.
@@ -504,14 +528,14 @@ void visu_utils::DefaultDetectionColor(double& fR,
 //! \return default line width for picking highlight.
 double visu_utils::DefaultPickLineWidth()
 {
-  return 4.0;
+  return 2.0;
 }
 
 //! Returns default line width for detection highlight.
 //! \return default line width for detection highlight.
 double visu_utils::DefaultDetectionLineWidth()
 {
-  return 4.0;
+  return 2.0;
 }
 
 //! Returns default point size for highlighting.
@@ -519,4 +543,88 @@ double visu_utils::DefaultDetectionLineWidth()
 double visu_utils::DefaultHilightPointSize()
 {
   return 8.0;
+}
+
+//-----------------------------------------------------------------------------
+
+vtkLookupTable* visu_utils::InitLookupTable()
+{
+  vtkLookupTable* aColorTable = vtkLookupTable::New();
+
+  // Set colors table for 3D shapes
+  double aRange[2];
+  aRange[0] = MT_Undefined;
+  aRange[1] = MT_ShadedFace;
+  aColorTable->Allocate(9);
+  aColorTable->SetNumberOfTableValues(9);
+  aColorTable->SetTableRange(aRange);
+  aColorTable->SetValueRange(0, 1);
+
+/*
+  MT_Undefined     = -1   Undefined
+  MT_IsoLine       =  0   IsoLine
+  MT_FreeVertex    =  1   Free vertex
+  MT_SharedVertex  =  2   Shared vertex
+  MT_FreeEdge      =  3   Free edge
+  MT_BoundaryEdge  =  4   Boundary edge (related to a single face)
+  MT_SharedEdge    =  5   Shared edge (related to several faces)
+  MT_WireFrameFace =  6   Wireframe face
+  MT_ShadedFace    =  7   Shaded face
+*/
+
+  aColorTable->SetTableValue(0, 0, 0, 0); // Undefined
+  aColorTable->SetTableValue(1, 0.5, 0.5, 0.5); // gray for IsoLine
+  aColorTable->SetTableValue(2, 1, 0, 0); // red for Free vertex
+  aColorTable->SetTableValue(3, 1, 1, 0); // yellow for Shared vertex
+  aColorTable->SetTableValue(4, 1, 0, 0); // red for Free edge
+  aColorTable->SetTableValue(5, 0, 1, 0); // green for Boundary edge (related to a single face)
+  aColorTable->SetTableValue(6, 1, 1, 0); // yellow for Shared edge (related to several faces)
+  aColorTable->SetTableValue(7, 0.95, 0.95, 0.8);
+  aColorTable->SetTableValue(8, 0.95, 0.95, 0.8);
+
+  return aColorTable;
+}
+
+void visu_utils::SetLookupTableColor(vtkLookupTable* theColorTable,
+                                     const IVtk_MeshType theColorRole,
+                                     const double theR, const double theG, const double theB,
+                                     const double /*theA*/)
+{
+  theColorTable->SetTableValue(theColorRole + 1, theR, theG, theB);
+}
+
+void visu_utils::GetLookupTableColor(vtkLookupTable* theColorTable,
+                                     const IVtk_MeshType theColorRole,
+                                     double &theR, double &theG, double &theB)
+{
+  double aRgb[3];
+  theColorTable->GetColor(theColorRole + 1, aRgb);
+  theR = aRgb[0];
+  theG = aRgb[1];
+  theB = aRgb[2];
+}
+
+void visu_utils::GetLookupTableColor(vtkLookupTable* theColorTable,
+                                     const IVtk_MeshType theColorRole,
+                                     double &theR, double &theG, double &theB, 
+                                     double &theA)
+{
+  theA = theColorTable->GetOpacity (theColorRole + 1);
+  GetLookupTableColor(theColorTable, theColorRole, theR, theG, theB);
+}
+
+void visu_utils::InitShapeMapper(vtkMapper* theMapper)
+{
+  InitShapeMapper( theMapper, InitLookupTable() );
+}
+
+void visu_utils::InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorTable)
+{
+  theMapper->ScalarVisibilityOn();
+  theMapper->SetScalarModeToUseCellFieldData();
+  theMapper->SelectColorArray(IVtkVTK_ShapeData::ARRNAME_MESH_TYPES);
+  theMapper->SetColorModeToMapScalars();
+  theMapper->SetScalarRange(theColorTable->GetRange());
+  theMapper->SetLookupTable(theColorTable);
+  theMapper->Update();
 }

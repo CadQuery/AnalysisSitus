@@ -11,6 +11,9 @@
 // A-Situs includes
 #include <analysis_situs.h>
 
+// Visualization includes
+#include <visu_data_provider.h>
+
 // Active Data (auxiliary) includes
 #include <ActAux_TimeStamp.h>
 
@@ -39,9 +42,8 @@ public:
 
 public:
 
-  ASitus_EXPORT
-    visu_pipeline(const vtkSmartPointer<vtkMapper>& mapper,
-                  const vtkSmartPointer<vtkActor>&  actor);
+  virtual void
+    SetInput(const Handle(visu_data_provider)& theDataProvider) = 0;
 
 public:
 
@@ -80,6 +82,12 @@ public:
 
   ASitus_EXPORT Handle(ActAux_TimeStamp)
     GetMTime() const;
+
+protected:
+
+  ASitus_EXPORT
+    visu_pipeline(const vtkSmartPointer<vtkMapper>& mapper,
+                  const vtkSmartPointer<vtkActor>&  actor);
 
 // Pipeline construction routines to be used by derived classes only:
 protected:
@@ -165,5 +173,9 @@ protected:
   Handle(ActAux_TimeStamp) m_MTime;
 
 };
+
+//! Shortcuts for list of Pipelines.
+typedef NCollection_Sequence<Handle(visu_pipeline)> visu_pipeline_list;
+typedef NCollection_Shared<visu_pipeline_list>      h_visu_pipeline_list;
 
 #endif

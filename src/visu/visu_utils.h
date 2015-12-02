@@ -11,6 +11,9 @@
 // A-Situs includes
 #include <analysis_situs.h>
 
+// Visualization includes
+#include <visu_prs.h>
+
 // Active Data (API) includes
 #include <ActAPI_INode.h>
 
@@ -33,15 +36,47 @@
 #include <vtkCubeAxesActor2D.h>
 #pragma warning(pop)
 
+// IVtk includes
+#include <IVtk_Types.hxx>
+
 // OCCT includes
 #include <NCollection_DataMap.hxx>
 #include <NCollection_Sequence.hxx>
 #include <Standard_TypeDef.hxx>
 #include <TCollection_AsciiString.hxx>
 
+//-----------------------------------------------------------------------------
+
+//! Pointer to Node allocation routine.
+typedef Handle(visu_prs) (*visu_prs_allocator)(const Handle(ActAPI_INode)&);
+
+#define DEFINE_PRESENTATION_FACTORY(CNode, AllocFunction) \
+  static void RegisterPrs() \
+  { \
+    visu_utils::RegisterPrsType(STANDARD_TYPE(CNode)->Name(), AllocFunction); \
+  }
+
+#define REGISTER_PRESENTATION(C) \
+  C::RegisterPrs();
+
+//-----------------------------------------------------------------------------
+
 //! Common visualization utilities.
 class visu_utils
 {
+// Presentation factory:
+public:
+
+  //! Mapping between Node types and allocation routines.
+  typedef NCollection_DataMap<TCollection_AsciiString, visu_prs_allocator> TPrsAllocMap;
+
+  ASitus_EXPORT static TPrsAllocMap
+    RegisterPrsType(const TCollection_AsciiString& theType,
+                    const visu_prs_allocator       theAllocFunc);
+
+  ASitus_EXPORT static const TPrsAllocMap&
+    GetAllocMap();
+
 // Scene:
 public:
 
@@ -132,6 +167,36 @@ public:
 
   ASitus_EXPORT static double
     DefaultHilightPointSize();
+
+  ASitus_EXPORT static vtkLookupTable*
+    InitLookupTable();
+
+  ASitus_EXPORT static void
+    SetLookupTableColor(vtkLookupTable* theColorTable,
+                        const IVtk_MeshType theColorRole,
+                        const double theR, const double theG, const double theB,
+                        const double /*theA*/);
+
+  ASitus_EXPORT static void
+    GetLookupTableColor(vtkLookupTable* theColorTable,
+                        const IVtk_MeshType theColorRole,
+                        double &theR, double &theG, double &theB);
+
+  ASitus_EXPORT static void
+    GetLookupTableColor(vtkLookupTable* theColorTable,
+                        const IVtk_MeshType theColorRole,
+                        double &theR, double &theG, double &theB,
+                        double &theA);
+
+  ASitus_EXPORT static void
+    InitShapeMapper(vtkMapper* theMapper);
+
+  ASitus_EXPORT static void
+    InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorTable);
+
+private:
+
+  static TPrsAllocMap m_allocMap; //!< Presentation factory.
 
 };
 

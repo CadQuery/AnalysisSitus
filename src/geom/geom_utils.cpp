@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <modeling_shape_utils.h>
+#include <geom_utils.h>
 
 // OCCT includes
 #include <Bnd_Box.hxx>
@@ -16,6 +16,7 @@
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
 #include <BRepCheck_Result.hxx>
 #include <BRepCheck_Status.hxx>
+#include <BRepTools.hxx>
 #include <gp_Quaternion.hxx>
 #include <gp_Vec.hxx>
 #include <Precision.hxx>
@@ -30,7 +31,7 @@
 // Auxiliary functions
 //-----------------------------------------------------------------------------
 
-//! Auziliary toolkit for shape checker.
+//! Auxiliary toolkit for shape validity checker.
 namespace CheckShapeAux
 {
 
@@ -156,7 +157,7 @@ namespace CheckShapeAux
 
           if ( itl.Value() != BRepCheck_NoError )
           {
-            Standard_Integer ii = 0;
+            int ii = 0;
             for ( ii = 1; ii <= sl->Length(); ii++ )
               if ( sl->Value(ii).IsSame(sub) )
                 break;
@@ -221,8 +222,8 @@ namespace CheckShapeAux
         GetProblemSub(Ana, Shape, sl, NbProblems, TopAbs_VERTEX, theMap);
         break;
       case TopAbs_FACE:
-        GetProblemSub(Ana, Shape, sl, NbProblems, TopAbs_WIRE, theMap);
-        GetProblemSub(Ana, Shape, sl, NbProblems, TopAbs_EDGE, theMap);
+        GetProblemSub(Ana, Shape, sl, NbProblems, TopAbs_WIRE,   theMap);
+        GetProblemSub(Ana, Shape, sl, NbProblems, TopAbs_EDGE,   theMap);
         GetProblemSub(Ana, Shape, sl, NbProblems, TopAbs_VERTEX, theMap);
         break;
       case TopAbs_SHELL:
@@ -246,13 +247,11 @@ namespace CheckShapeAux
     if ( PEntry.Access().IsNull() )
       return; // Cannot dump to NULL Logger
 
-    Standard_Integer i;
-
     PEntry.SendLogMessage(LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_HAS_PROBLEMS");
 
     // Initialize array storing the number of problems
     Handle(TColStd_HArray1OfInteger) NbProblems = new TColStd_HArray1OfInteger(1, 32);
-    for ( i = 1; i <= 32; i++ )
+    for ( int i = 1; i <= 32; i++ )
       NbProblems->SetValue(i, 0);
 
     Handle(TopTools_HSequenceOfShape) sl = new TopTools_HSequenceOfShape();
@@ -375,13 +374,13 @@ namespace CheckShapeAux
 //! \param theAngleB [in] rotation angle B.
 //! \param theAngleC [in] rotation angle C.
 //! \return relocated shape.
-TopoDS_Shape modeling_shape_utils::ApplyTransformation(const TopoDS_Shape& theShape,
-                                                       const double        theXPos,
-                                                       const double        theYPos,
-                                                       const double        theZPos,
-                                                       const double        theAngleA,
-                                                       const double        theAngleB,
-                                                       const double        theAngleC)
+TopoDS_Shape geom_utils::ApplyTransformation(const TopoDS_Shape& theShape,
+                                             const double        theXPos,
+                                             const double        theYPos,
+                                             const double        theZPos,
+                                             const double        theAngleA,
+                                             const double        theAngleB,
+                                             const double        theAngleC)
 {
   gp_Trsf aTrsf = Transformation(theXPos, theYPos, theZPos,
                                  theAngleA, theAngleB, theAngleC);
@@ -398,12 +397,12 @@ TopoDS_Shape modeling_shape_utils::ApplyTransformation(const TopoDS_Shape& theSh
 //! \param theAngleB [in] rotation angle B.
 //! \param theAngleC [in] rotation angle C.
 //! \return OCCT transformation structure.
-gp_Trsf modeling_shape_utils::Transformation(const double theXPos,
-                                             const double theYPos,
-                                             const double theZPos,
-                                             const double theAngleA,
-                                             const double theAngleB,
-                                             const double theAngleC)
+gp_Trsf geom_utils::Transformation(const double theXPos,
+                                   const double theYPos,
+                                   const double theZPos,
+                                   const double theAngleA,
+                                   const double theAngleB,
+                                   const double theAngleC)
 {
   gp_Vec aTranslation(theXPos, theYPos, theZPos);
 
@@ -425,8 +424,8 @@ gp_Trsf modeling_shape_utils::Transformation(const double theXPos,
 //! \param theTransform [in] transformation to apply.
 //! \return transformed shape.
 TopoDS_Shape
-  modeling_shape_utils::ApplyTransformation(const TopoDS_Shape& theShape,
-                                            const gp_Trsf&      theTransform)
+  geom_utils::ApplyTransformation(const TopoDS_Shape& theShape,
+                                  const gp_Trsf&      theTransform)
 {
   return theShape.Moved(theTransform);
 }
@@ -436,12 +435,12 @@ TopoDS_Shape
 //! \param theShapes [in] source shapes.
 //! \return resulting compound.
 TopoDS_Shape
-  modeling_shape_utils::AssembleShapes(const TopTools_ListOfShape& theShapes)
+  geom_utils::AssembleShapes(const TopTools_ListOfShape& theShapes)
 {
   TopoDS_Shape aResult;
 
   TopoDS_Shape aShape;
-  Standard_Integer aNbShapes = 0;
+  int aNbShapes = 0;
   for ( TopTools_ListIteratorOfListOfShape it(theShapes); it.More(); it.Next() )
     if ( !it.Value().IsNull() )
     {
@@ -481,9 +480,9 @@ TopoDS_Shape
 //! \param XMax     [out] max X.
 //! \param YMax     [out] max Y.
 //! \param ZMax     [out] max Z.
-void modeling_shape_utils::Bounds(const TopoDS_Shape& theShape,
-                                  double& XMin, double& YMin, double& ZMin,
-                                  double& XMax, double& YMax, double& ZMax)
+void geom_utils::Bounds(const TopoDS_Shape& theShape,
+                        double& XMin, double& YMin, double& ZMin,
+                        double& XMax, double& YMax, double& ZMax)
 {
   Bnd_Box aBndBox;
   BRepBndLib::Add(theShape, aBndBox);
@@ -495,8 +494,8 @@ void modeling_shape_utils::Bounds(const TopoDS_Shape& theShape,
 //! \param PEntry   [in] Logger instance to cumulate all meaningful messages.
 //! \return true if shape is valid, false -- otherwise.
 bool
-  modeling_shape_utils::CheckShape(const TopoDS_Shape&  theShape,
-                                   ActAPI_ProgressEntry PEntry)
+  geom_utils::CheckShape(const TopoDS_Shape&  theShape,
+                         ActAPI_ProgressEntry PEntry)
 {
   BRepCheck_Analyzer Checker(theShape);
 
@@ -520,7 +519,7 @@ bool
 //! Returns maximum tolerance value bound to the passed shape.
 //! \param theShape [in] shape to check.
 //! \return maximum tolerance value.
-double modeling_shape_utils::MaxTolerance(const TopoDS_Shape& theShape)
+double geom_utils::MaxTolerance(const TopoDS_Shape& theShape)
 {
   double aMaxToler = Precision::Confusion();
 
@@ -549,4 +548,15 @@ double modeling_shape_utils::MaxTolerance(const TopoDS_Shape& theShape)
   }
 
   return aMaxToler;
+}
+
+//! Reads CAD model from native OCCT b-rep file.
+//! \param theFilename [in]  filename.
+//! \param theShape    [out] CAD model retrieved from file.
+//! \return true in case of success, false -- otherwise.
+bool geom_utils::ReadBRep(const TCollection_AsciiString& theFilename,
+                          TopoDS_Shape&                  theShape)
+{
+  BRep_Builder BB;
+  return BRepTools::Read(theShape, theFilename.ToCString(), BB) > 0;
 }

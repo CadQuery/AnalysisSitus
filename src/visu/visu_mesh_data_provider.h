@@ -22,18 +22,45 @@ class visu_mesh_data_provider : public visu_data_provider
 {
 public:
 
+  // OCCT RTTI
   DEFINE_STANDARD_RTTI(visu_mesh_data_provider, visu_data_provider)
 
 public:
 
+  visu_mesh_data_provider();
+
+  visu_mesh_data_provider(const ActAPI_DataObjectId&           theNodeId,
+                          const Handle(ActAPI_HParameterList)& theParamList);
+
+public:
+
+  virtual ActAPI_DataObjectId
+    GetNodeID() const;
+
   virtual Handle(OMFDS_Mesh)
-    GetMeshDS() const = 0;
+    GetMeshDS() const;
 
-  virtual bool
-    HasMeshGroup() const = 0;
+  virtual Handle(ActAPI_HParameterList)
+    SourceParameters() const;
 
-  virtual Handle(OMFDS_MeshGroup)
-    GetMeshGroup() const = 0;
+public:
+
+  //! Creates copy of Data Provider.
+  //! \return copy.
+  inline Handle(visu_mesh_data_provider) Clone() const
+  {
+    return new visu_mesh_data_provider(m_nodeID, m_params);
+  }
+
+private:
+
+  virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
+
+private:
+
+  ActAPI_DataObjectId           m_nodeID; //!< Source Node ID.
+  Handle(ActAPI_HParameterList) m_params; //!< Source Parameters.
 
 };
 

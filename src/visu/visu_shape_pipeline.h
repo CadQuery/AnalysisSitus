@@ -20,47 +20,6 @@
 #include <vtkPolyDataAlgorithm.h>
 
 //-----------------------------------------------------------------------------
-// Data Provider
-//-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(visu_shape_data_provider, visu_data_provider)
-
-//! Data source for Shape pipeline.
-class visu_shape_data_provider : public visu_data_provider
-{
-public:
-
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI(visu_shape_data_provider, visu_data_provider)
-
-public:
-
-  virtual TopoDS_Shape
-    GetShape() const = 0;
-
-  virtual Handle(TColStd_HPackedMapOfInteger)
-    GetSubShapes() const = 0;
-
-  virtual bool
-    HasPosition() const = 0;
-
-  virtual bool
-    HasPositionAndRotation() const = 0;
-
-  virtual void
-    GetPosition(double& thePosX,
-                double& thePosY,
-                double& thePosZ) const = 0;
-
-  virtual void
-    GetRotation(double& theAngleAroundX,
-                double& theAngleAroundY,
-                double& theAngleAroundZ) const = 0;
-};
-
-//-----------------------------------------------------------------------------
-// Pipeline
-//-----------------------------------------------------------------------------
 
 DEFINE_STANDARD_HANDLE(visu_shape_pipeline, visu_pipeline)
 
@@ -77,7 +36,8 @@ public:
   ASitus_EXPORT
     visu_shape_pipeline(const bool isOCCTColorScheme = true,
                         const bool isBound2Node      = true,
-                        const bool isSecondary       = false);
+                        const bool isSecondary       = false,
+                        const bool isTrianglesMode   = false);
 
 public:
 
@@ -102,9 +62,9 @@ public:
 
 private:
 
-  virtual void addToRendererCallback      (vtkRenderer* theRenderer);
-  virtual void removeFromRendererCallback (vtkRenderer* theRenderer);
-  virtual void updateCallback             ();
+  virtual void callback_add_to_renderer      (vtkRenderer* theRenderer);
+  virtual void callback_remove_from_renderer (vtkRenderer* theRenderer);
+  virtual void callback_update             ();
 
 private:
 
@@ -159,6 +119,9 @@ protected:
   //! Indicates whether sub-shapes filter is forced to block data regardless
   //! of the contents of Data Provider.
   bool m_bSubShapesVoid;
+
+  //! Indicates whether to show triangulation.
+  bool m_bShowTriangles;
 
 };
 

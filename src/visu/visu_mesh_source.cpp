@@ -337,6 +337,6 @@ vtkIdType
   vtkIntArray* aTypeArr =
     vtkIntArray::SafeDownCast( thePolyData->GetCellData()->GetArray(ARRNAME_MESH_ITEM_TYPE) );
   aTypeArr->InsertNextValue(MeshItem_FreeNode);
-  
+
   return aCellID;
 }

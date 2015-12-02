@@ -10,9 +10,11 @@
 
 // Visualization includes
 #include <visu_node_info.h>
+#include <visu_shape_data_provider.h>
+#include <visu_utils.h>
 
 // Modeling includes
-#include <modeling_shape_utils.h>
+#include <geom_utils.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -40,25 +42,25 @@
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopLoc_Location.hxx>
 
-#undef DEBUG_SHOW_TRIANGULATION
-
 //! Creates new Shape Pipeline initialized by default VTK mapper and actor.
 //! \param isOCCTColorScheme [in] indicates whether to use native OCCT
 //!                               color scheme for rendering of OCCT shapes.
 //! \param isBound2Node      [in] indicates whether to bind Node ID to actor.
 //! \param isSecondary       [in] indicates whether the pipeline is secondary.
+//! \param isTrianglesMode   [in] indicates whether to show triangulation or not.
 visu_shape_pipeline::visu_shape_pipeline(const bool isOCCTColorScheme,
                                          const bool isBound2Node,
-                                         const bool isSecondary)
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                 vtkSmartPointer<vtkActor>::New() ),
+                                         const bool isSecondary,
+                                         const bool isTrianglesMode)
+: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
   m_bOCCTColorScheme (isOCCTColorScheme), // Native OCCT color scheme (as in Draw)
   m_bIsBound2Node    (isBound2Node),
   m_bIsSecondary     (isSecondary),
   m_bMapperColorsSet (false),
   m_bShadingMode     (true),              // Shading by default
   m_bWireframeMode   (!m_bShadingMode),
-  m_bSubShapesVoid   (false)
+  m_bSubShapesVoid   (false),
+  m_bShowTriangles   (isTrianglesMode)
 {
   /* ========================
    *  Prepare custom filters
@@ -173,8 +175,8 @@ void visu_shape_pipeline::SetInput(const Handle(visu_data_provider)& theDataProv
     // Set shape location. Notice that we do not use vtkTransform or any
     // other transformation filter in our Shape Pipeline as it will totally
     // ruin the picker's correctness (when VIS picker is active)
-    aShape = modeling_shape_utils::ApplyTransformation(aShape, aPosX, aPosY, aPosZ,
-                                                       anAngA, anAngB, anAngC);
+    aShape = geom_utils::ApplyTransformation(aShape, aPosX, aPosY, aPosZ,
+                                             anAngA, anAngB, anAngC);
 
     static int ShapeID = 0; ++ShapeID;
     Handle(IVtkOCC_Shape) aShapeIntoVtk = new IVtkOCC_Shape(aShape);
@@ -295,27 +297,27 @@ vtkPolyDataAlgorithm* visu_shape_pipeline::DataSource() const
   return vtkPolyDataAlgorithm::SafeDownCast( m_filterMap(Filter_Source) );
 }
 
-//! Callback for AddToRenderer base routine. Good place to adjust visualization
+//! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_shape_pipeline::addToRendererCallback(vtkRenderer*)
+void visu_shape_pipeline::callback_add_to_renderer(vtkRenderer*)
 {
-#ifdef DEBUG_SHOW_TRIANGULATION
-  this->Actor()->GetProperty()->SetEdgeVisibility(1);
-#endif
-  this->Actor()->GetProperty()->SetInterpolationToPhong();
+  if ( m_bShowTriangles )
+    this->Actor()->GetProperty()->SetEdgeVisibility(1);
+  else
+    this->Actor()->GetProperty()->SetInterpolationToPhong();
 }
 
-//! Callback for RemoveFromRenderer base routine.
-void visu_shape_pipeline::removeFromRendererCallback(vtkRenderer*)
+//! Callback for RemoveFromRenderer() routine.
+void visu_shape_pipeline::callback_remove_from_renderer(vtkRenderer*)
 {
 }
 
-//! Callback for Update routine.
-void visu_shape_pipeline::updateCallback()
+//! Callback for Update() routine.
+void visu_shape_pipeline::callback_update()
 {
   if ( m_bOCCTColorScheme && !m_bMapperColorsSet )
   {
-    IVtkTools::InitShapeMapper(m_mapper);
+    visu_utils::InitShapeMapper(m_mapper);
     m_bMapperColorsSet = true;
   }
 }

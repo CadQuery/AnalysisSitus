@@ -9,7 +9,7 @@ if /I "%ARCH%" == "win64" set ARCH=64
 if "%VCVER%" == "" set VCVER=vc10
 if "%ARCH%"  == "" set ARCH=64
 
-set CASDEB=d
+set CASDEB=
 set BUILD_CONFIG=debug
 if not "%3" == "" (
     if /I "%3" == "Debug" (

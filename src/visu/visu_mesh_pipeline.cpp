@@ -14,6 +14,7 @@
 #include <visu_mesh_utils.h>
 #include <visu_node_info.h>
 #include <visu_shrink_poly_filter.h>
+#include <visu_utils.h>
 
 // Active Data includes
 #include <ActData_MeshParameter.h>
@@ -60,6 +61,8 @@ visu_mesh_pipeline::visu_mesh_pipeline()
    *  Initialize custom filters
    * =========================== */
 
+  visu_utils::ApplyLightingRules( this->Actor() );
+
   // Initialize SHRINK filter
   this->ShrinkModeOff();
 }
@@ -84,13 +87,6 @@ void visu_mesh_pipeline::SetInput(const Handle(visu_data_provider)& dataProvider
       aMeshSource->EmptyGroupForAllModeOn();
     else
       aMeshSource->EmptyGroupForAllModeOff();
-
-    if ( aMeshPrv->HasMeshGroup() )
-    {
-      Handle(OMFDS_MeshGroup) aGrp = aMeshPrv->GetMeshGroup();
-      if ( !aGrp->IsEmpty() ) // Do not use empty groups for filtering
-        aMeshSource->SetInputElemGroup( aMeshPrv->GetMeshGroup() );
-    }
 
     // Bind actor to owning Node ID. Thus we set back reference from VTK
     // entity to data object
@@ -146,19 +142,19 @@ void visu_mesh_pipeline::ShrinkModeOff()
 
 //! Callback for AddToRenderer base routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_mesh_pipeline::addToRendererCallback(vtkRenderer*)
+void visu_mesh_pipeline::callback_add_to_renderer(vtkRenderer*)
 {
   this->Actor()->GetProperty()->SetPointSize( visu_mesh_utils::DefaultPointSize() );
   this->Actor()->GetProperty()->SetInterpolationToGouraud();
 }
 
 //! Callback for RemoveFromRenderer base routine.
-void visu_mesh_pipeline::removeFromRendererCallback(vtkRenderer*)
+void visu_mesh_pipeline::callback_remove_from_renderer(vtkRenderer*)
 {
 }
 
 //! Callback for Update routine.
-void visu_mesh_pipeline::updateCallback()
+void visu_mesh_pipeline::callback_update()
 {
   if ( !m_bMapperColorsSet )
   {

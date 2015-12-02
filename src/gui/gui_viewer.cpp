@@ -1,0 +1,150 @@
+//-----------------------------------------------------------------------------
+// Created on: 27 November 2015
+// Created by: Sergey SLYADNEV
+//-----------------------------------------------------------------------------
+// Web: http://quaoar.su/blog/
+//-----------------------------------------------------------------------------
+
+// Own include
+#include <gui_viewer.h>
+
+// Common includes
+#include <common_facilities.h>
+
+// Visualization includes
+#include <visu_mesh_prs.h>
+#include <visu_utils.h>
+
+// GUI includes
+#include <gui_control_pane.h>
+#include <gui_splitter.h>
+
+// VTK includes
+#include <vtkAssembly.h>
+#include <vtkRenderWindow.h>
+
+// Qt-VTK includes
+#include <QVTKWidget.h>
+
+// Qt includes
+#pragma warning(push, 0)
+#include <QVBoxLayout>
+#pragma warning(pop)
+
+//! Creates a new instance of viewer.
+//! \param parent [in] parent widget.
+gui_viewer::gui_viewer(QWidget* parent) : QMainWindow(parent)
+{
+  // Initialize Presentation Manager along with QVTK widget
+  common_facilities::Instance()->PrsManager = vtkSmartPointer<visu_prs_manager>::New();
+  common_facilities::Instance()->PrsManager->Initialize(this);
+
+  // Widgets and layouts
+  gui_control_pane* pControlPane = new gui_control_pane(this);
+  gui_splitter*     pBasePane    = new gui_splitter(this);
+  QVTKWidget*       pViewer      = common_facilities::Instance()->PrsManager->GetQVTKWidget();
+  QHBoxLayout*      pBaseLayout  = new QHBoxLayout();
+
+  // Configure layout
+  pBaseLayout->setSpacing(0);
+  pBaseLayout->addWidget(pControlPane);
+  pBaseLayout->addWidget(pViewer);
+  pBaseLayout->setAlignment(Qt::AlignTop);
+  pBasePane->setLayout(pBaseLayout);
+  pBaseLayout->setContentsMargins(0, 0, 0, 0);
+
+  // Set central widget
+  this->setCentralWidget(pBasePane);
+
+  /* ===================================
+   *  Setting up picking infrastructure
+   * =================================== */
+
+  // Default interactor style
+  m_interactorStyleDefault = vtkSmartPointer<visu_interactor_style_pick>::New();
+  m_interactorStyleDefault->SetRenderer( common_facilities::Instance()->PrsManager->GetRenderer() );
+
+  // Initialize Callback instance for Pick operation
+  m_pickCallback = vtkSmartPointer<visu_pick_callback>::New();
+  m_pickCallback->SetViewer(this);
+
+  // Set observer for detection
+  if ( !m_interactorStyleDefault->HasObserver(EVENT_PICK_DEFAULT) )
+    m_interactorStyleDefault->AddObserver(EVENT_PICK_DEFAULT, m_pickCallback);
+
+  // Set observer for detection
+  if ( !m_interactorStyleDefault->HasObserver(EVENT_DETECT_DEFAULT) )
+    m_interactorStyleDefault->AddObserver(EVENT_DETECT_DEFAULT, m_pickCallback);
+
+  /* ===============================
+   *  Setting up rotation callbacks
+   * =============================== */
+
+  // Initialize Callback instance for rotation
+  m_rotoCallback = vtkSmartPointer<visu_rotation_callback>::New();
+  m_rotoCallback->SetViewer(this);
+
+  // Set observer for starting rotation
+  if ( !m_interactorStyleDefault->HasObserver(EVENT_ROTATION_START) )
+    m_interactorStyleDefault->AddObserver(EVENT_ROTATION_START, m_rotoCallback);
+
+  // Set observer for ending rotation
+  if ( !m_interactorStyleDefault->HasObserver(EVENT_ROTATION_END) )
+    m_interactorStyleDefault->AddObserver(EVENT_ROTATION_END, m_rotoCallback);
+
+  //---------------------------------------------------------------------------
+
+  // Set default interactor style
+  common_facilities::Instance()->PrsManager->GetQVTKWidget()
+                                           ->GetRenderWindow()
+                                           ->GetInteractor()
+                                           ->SetInteractorStyle(m_interactorStyleDefault);
+
+  /* ========================
+   *  Initialize axes widget
+   * ======================== */
+
+  vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
+  vtkSmartPointer<vtkAssembly> assm = vtkSmartPointer<vtkAssembly>::New();
+  assm->AddPart(axes);
+
+  m_axesWidget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+  m_axesWidget->SetOrientationMarker(assm);
+
+  vtkRenderer* renderer = common_facilities::Instance()->PrsManager->GetRenderer();
+  renderer->SetRenderWindow( common_facilities::Instance()->PrsManager->GetQVTKWidget()
+                                                                      ->GetRenderWindow() );
+  m_axesWidget->SetCurrentRenderer( common_facilities::Instance()->PrsManager->GetRenderer() );
+  m_axesWidget->SetInteractor( common_facilities::Instance()->PrsManager->GetQVTKWidget()
+                                                                        ->GetRenderWindow()
+                                                                        ->GetInteractor() );
+
+  m_axesWidget->SetEnabled(1);
+  m_axesWidget->SetInteractive(0);
+  m_axesWidget->SetViewport(0, 0, 0.25, 0.25);
+
+  /* =====================================
+   *  Finalize initial state of the scene
+   * ===================================== */
+
+  this->onResetView();
+}
+
+//! Destructor.
+gui_viewer::~gui_viewer()
+{
+}
+
+//! Updates View Window.
+void gui_viewer::Repaint()
+{
+  common_facilities::Instance()->PrsManager->GetQVTKWidget()->repaint();
+}
+
+//! Callback for "Reset View" action.
+void gui_viewer::onResetView()
+{
+  visu_utils::ResetCamera( common_facilities::Instance()->PrsManager->GetRenderer(),
+                           common_facilities::Instance()->PrsManager->PropsByTrihedron() );
+  this->Repaint();
+}

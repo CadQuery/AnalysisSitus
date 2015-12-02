@@ -51,9 +51,9 @@ public:
 
 private:
 
-  virtual void addToRendererCallback      (vtkRenderer* theRenderer);
-  virtual void removeFromRendererCallback (vtkRenderer* theRenderer);
-  virtual void updateCallback             ();
+  virtual void callback_add_to_renderer      (vtkRenderer* theRenderer);
+  virtual void callback_remove_from_renderer (vtkRenderer* theRenderer);
+  virtual void callback_update               ();
 
 private:
 

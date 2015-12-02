@@ -28,6 +28,7 @@ REGISTER_NODE_TYPE(ActData_RealVarNode)
 // Custom Nodes
 REGISTER_NODE_TYPE(common_root_node)
 REGISTER_NODE_TYPE(geom_node)
+REGISTER_NODE_TYPE(geom_face_node)
 REGISTER_NODE_TYPE(mesh_node)
 
 //-----------------------------------------------------------------------------
@@ -46,6 +47,7 @@ void common_model::initPartitions()
 {
   REGISTER_PARTITION(common_partition<common_root_node>, Partition_Root);
   REGISTER_PARTITION(common_partition<geom_node>,        Partition_Geom);
+  REGISTER_PARTITION(common_partition<geom_face_node>,   Partition_GeomFace);
   REGISTER_PARTITION(common_partition<mesh_node>,        Partition_Mesh);
 }
 

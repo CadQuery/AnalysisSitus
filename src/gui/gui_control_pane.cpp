@@ -15,7 +15,6 @@
 #include <gui_common.h>
 
 // A-Situs (mesh) includes
-#include <mesh_node.h>
 #include <mesh_ply.h>
 
 // A-Situs (modeling) includes
@@ -26,6 +25,41 @@
 #pragma warning(push, 0)
 #include <QFileDialog>
 #pragma warning(pop)
+
+//-----------------------------------------------------------------------------
+
+static Handle(geom_node) CreateGeometryNode(const TopoDS_Shape& shape)
+{
+  Handle(geom_node) geom_n;
+  //
+  common_facilities::Instance()->Model->OpenCommand(); // tx start
+  {
+    // Add geom Node to Partition
+    Handle(ActAPI_INode) geom_base = geom_node::Instance();
+    common_facilities::Instance()->Model->GeomPartition()->AddNode(geom_base);
+
+    // Initialize geometry
+    geom_n = Handle(geom_node)::DownCast(geom_base);
+    geom_n->Init();
+    geom_n->SetShape(shape);
+
+    // Create underlying face representation Node
+    {
+      Handle(ActAPI_INode) geom_face_base = geom_face_node::Instance();
+      common_facilities::Instance()->Model->GeomFacePartition()->AddNode(geom_face_base);
+
+      // Initialize
+      Handle(geom_face_node) geom_face_n = Handle(geom_face_node)::DownCast(geom_face_base);
+      geom_face_n->Init();
+
+      // Set as child
+      geom_n->AddChildNode(geom_face_n);
+    }
+  }
+  common_facilities::Instance()->Model->CommitCommand(); // tx commit
+  //
+  return geom_n;
+}
 
 //-----------------------------------------------------------------------------
 // Construction & destruction
@@ -132,20 +166,7 @@ void gui_control_pane::onLoadBRep()
   // Create geometry Node
   //---------------------------------------------------------------------------
 
-  Handle(geom_node) geom_n;
-  //
-  common_facilities::Instance()->Model->OpenCommand(); // tx start
-  {
-    // Add geom Node to Partition
-    Handle(ActAPI_INode) geom_base = geom_node::Instance();
-    common_facilities::Instance()->Model->GeomPartition()->AddNode(geom_base);
-
-    // Initialize geometry
-    geom_n = Handle(geom_node)::DownCast(geom_base);
-    geom_n->Init();
-    geom_n->SetShape(shape);
-  }
-  common_facilities::Instance()->Model->CommitCommand(); // tx commit
+  Handle(geom_node) geom_n = ::CreateGeometryNode(shape);
 
   //---------------------------------------------------------------------------
   // Create presentation
@@ -171,20 +192,7 @@ void gui_control_pane::onLoadSTEP()
   // Create geometry Node
   //---------------------------------------------------------------------------
 
-  Handle(geom_node) geom_n;
-  //
-  common_facilities::Instance()->Model->OpenCommand(); // tx start
-  {
-    // Add geom Node to Partition
-    Handle(ActAPI_INode) geom_base = geom_node::Instance();
-    common_facilities::Instance()->Model->GeomPartition()->AddNode(geom_base);
-
-    // Initialize geometry
-    geom_n = Handle(geom_node)::DownCast(geom_base);
-    geom_n->Init();
-    geom_n->SetShape(shape);
-  }
-  common_facilities::Instance()->Model->CommitCommand(); // tx commit
+  Handle(geom_node) geom_n = ::CreateGeometryNode(shape);
 
   //---------------------------------------------------------------------------
   // Create presentation

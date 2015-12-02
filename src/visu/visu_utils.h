@@ -61,6 +61,19 @@ typedef Handle(visu_prs) (*visu_prs_allocator)(const Handle(ActAPI_INode)&);
 
 //-----------------------------------------------------------------------------
 
+//! Orientations.
+enum visu_orientation
+{
+  VisuOri_Undefined = -1,
+  VisuOri_Forward   =  0,
+  VisuOri_Reversed  =  1,
+  VisuOri_Internal  =  2,
+  VisuOri_External  =  3,
+  VisuOri_Last
+};
+
+//-----------------------------------------------------------------------------
+
 //! Common visualization utilities.
 class visu_utils
 {
@@ -193,6 +206,14 @@ public:
 
   ASitus_EXPORT static void
     InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorTable);
+
+  ASitus_EXPORT static vtkSmartPointer<vtkLookupTable>
+    InitDomainLookupTable();
+
+  ASitus_EXPORT static void
+    InitMapper(vtkMapper*      theMapper,
+               vtkLookupTable* theLookup,
+               const char*     theScalarsArrName);
 
 private:
 

@@ -40,10 +40,10 @@ void geom_node::Init()
   // Set empty initial shape
   ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(TopoDS_Shape(), MT_Silent);
 
-  // Set Presentation values
-  this->SetHasColor(false);
-  this->SetColor(-1); // No color
-  this->SetDisplayMode(1); // No display mode
+  // Set default values to primitive Parameters
+  this->SetHasColor    (false);
+  this->SetColor       (-1);
+  this->SetDisplayMode (1);
 }
 
 //-----------------------------------------------------------------------------
@@ -68,12 +68,6 @@ void geom_node::SetName(const TCollection_ExtendedString& theName)
 // Handy accessors
 //-----------------------------------------------------------------------------
 
-//! \return stored shape.
-TopoDS_Shape geom_node::GetShape() const
-{
-  return ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
-}
-
 //! Sets shape to store.
 //! \param shape [in] shape to store.
 void geom_node::SetShape(const TopoDS_Shape& shape)
@@ -81,10 +75,16 @@ void geom_node::SetShape(const TopoDS_Shape& shape)
   ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(shape);
 }
 
+//! \return stored shape.
+TopoDS_Shape geom_node::GetShape() const
+{
+  return ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
+}
+
 //! Sets the Boolean value indicating whether the color Parameter of this
 //! Data Node is in force.
 //! \param hasColor [in] value to set.
-void geom_node::SetHasColor(const bool hasColor) const
+void geom_node::SetHasColor(const bool hasColor)
 {
   ActParamTool::AsBool( this->Parameter(PID_HasColor) )->SetValue(hasColor);
 }
@@ -98,10 +98,10 @@ bool geom_node::HasColor() const
 }
 
 //! Sets color.
-//! \param theColor [in] color to set.
-void geom_node::SetColor(const int theColor) const
+//! \param color [in] color to set.
+void geom_node::SetColor(const int color)
 {
-  ActParamTool::AsInt( this->Parameter(PID_Color) )->SetValue(theColor);
+  ActParamTool::AsInt( this->Parameter(PID_Color) )->SetValue(color);
 }
 
 //! Accessor for the stored color value.
@@ -112,10 +112,10 @@ int geom_node::GetColor() const
 }
 
 //! Sets display mode.
-//! \param theMode [in] display mode value to set.
-void geom_node::SetDisplayMode(const int theMode) const
+//! \param mode [in] display mode value to set.
+void geom_node::SetDisplayMode(const int mode)
 {
-  ActParamTool::AsInt( this->Parameter(PID_DisplayMode) )->SetValue(theMode);
+  ActParamTool::AsInt( this->Parameter(PID_DisplayMode) )->SetValue(mode);
 }
 
 //! Accessor for the stored display mode value.
@@ -123,4 +123,18 @@ void geom_node::SetDisplayMode(const int theMode) const
 int geom_node::GetDisplayMode() const
 {
   return ActParamTool::AsInt( this->Parameter(PID_DisplayMode) )->GetValue();
+}
+
+//! \return underlying face representation Node.
+Handle(geom_face_node) geom_node::FaceRepresentation()
+{
+  Handle(geom_face_node) face_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    face_n = Handle(geom_face_node)::DownCast( cit->Value() );
+  }
+  if ( !face_n.IsNull() && face_n->IsWellFormed() )
+    return face_n;
+
+  return NULL;
 }

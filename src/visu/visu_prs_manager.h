@@ -20,6 +20,7 @@
 #include <vtkCellPicker.h>
 #include <vtkCubeAxesActor.h>
 #include <vtkInteractorStyleTrackballCamera.h>
+#include <vtkInteractorStyleImage.h>
 #include <vtkObject.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
@@ -277,6 +278,9 @@ private:
 
   //! Default Interactor Style.
   vtkSmartPointer<vtkInteractorStyleTrackballCamera> m_interactorStyleTrackball;
+
+  //! Interactor Style for 2D scenes.
+  vtkSmartPointer<vtkInteractorStyleImage> m_interactorStyleImage;
 
   //! Trihedron actor.
   vtkSmartPointer<vtkAxesActor> m_trihedron;

@@ -31,9 +31,9 @@ gui_viewer2d::gui_viewer2d(QWidget* parent) : QMainWindow(parent)
   common_facilities::Instance()->PrsManager2d->Initialize(this);
 
   // Widgets and layouts
-  QWidget*     pBasePane    = new QWidget(this);
-  QVTKWidget*  pViewer      = common_facilities::Instance()->PrsManager2d->GetQVTKWidget();
-  QHBoxLayout* pBaseLayout  = new QHBoxLayout();
+  QWidget*     pBasePane   = new QWidget(this);
+  QVTKWidget*  pViewer     = common_facilities::Instance()->PrsManager2d->GetQVTKWidget();
+  QHBoxLayout* pBaseLayout = new QHBoxLayout();
 
   // Configure layout
   pBaseLayout->setSpacing(0);
@@ -66,7 +66,6 @@ void gui_viewer2d::Repaint()
 //! Callback for "Reset View" action.
 void gui_viewer2d::onResetView()
 {
-  visu_utils::ResetCamera( common_facilities::Instance()->PrsManager2d->GetRenderer(),
-                           common_facilities::Instance()->PrsManager2d->PropsByTrihedron() );
+  visu_utils::CameraOnTop( common_facilities::Instance()->PrsManager2d->GetRenderer() );
   this->Repaint();
 }

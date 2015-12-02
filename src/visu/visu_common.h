@@ -32,6 +32,7 @@
 #define ARRNAME_MESH_E_SCALARS   "arrname_mesh_e_scalars"
 #define ARRNAME_MESH_E_VECTORS   "arrname_mesh_e_vectors"
 #define ARRNAME_MESH_N_SCALARS   "arrname_mesh_n_scalars"
+#define ARRNAME_ORIENT_SCALARS   "arrname_domain_scalars"
 
 //-----------------------------------------------------------------------------
 

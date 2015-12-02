@@ -17,7 +17,7 @@ vtkSmartPointer<vtkLookupTable> visu_mesh_utils::InitLookupTable()
   double aRange[2] = {0, MeshItem_FreeNode};
   aLookup->SetRange(aRange);
   aLookup->SetNumberOfColors(MeshItem_Last);
-  
+
   aLookup->SetTableValue(MeshItem_Triangle,   0.9, 0.9, 0.9);
   aLookup->SetTableValue(MeshItem_Quadrangle, 0.8, 0.8, 0.8);
   aLookup->SetTableValue(MeshItem_FreeNode,   1.0, 0.0, 0.0);

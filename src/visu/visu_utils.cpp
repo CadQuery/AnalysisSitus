@@ -628,3 +628,39 @@ void visu_utils::InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorT
   theMapper->SetLookupTable(theColorTable);
   theMapper->Update();
 }
+
+//! Initializes VTK lookup table charged with default color scheme for p-curves.
+//! \return VTK lookup table.
+vtkSmartPointer<vtkLookupTable> visu_utils::InitDomainLookupTable()
+{
+  vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
+
+  double aRange[3] = {0, VisuOri_External};
+  aLookup->SetRange(aRange);
+  aLookup->SetNumberOfColors(VisuOri_Last);
+
+  aLookup->SetTableValue(VisuOri_Forward,  1.0, 0.0, 0.0);
+  aLookup->SetTableValue(VisuOri_Reversed, 0.2, 0.4, 1.0);
+  aLookup->SetTableValue(VisuOri_Internal, 1.0, 1.0, 0.0);
+  aLookup->SetTableValue(VisuOri_External, 0.0, 1.0, 1.0);
+
+  return aLookup;
+}
+
+//! Initializes the passed VTK mapper with the given Lookup Table.
+//! \param theMapper         [in/out] mapper to initialize.
+//! \param theLookup         [in]     Lookup Table to initialize the mapper with.
+//! \param theScalarsArrName [in]     name of the array storing the scalars
+//!                                   for colorization.
+void visu_utils::InitMapper(vtkMapper*      theMapper,
+                            vtkLookupTable* theLookup,
+                            const char*     theScalarsArrName)
+{
+  theMapper->ScalarVisibilityOn();
+  theMapper->SetScalarModeToUseCellFieldData();
+  theMapper->SelectColorArray(theScalarsArrName);
+  theMapper->SetColorModeToMapScalars();
+  theMapper->SetScalarRange( theLookup->GetRange() );
+  theMapper->SetLookupTable(theLookup);
+  theMapper->Update();
+}

@@ -89,11 +89,15 @@ visu_prs_manager::visu_prs_manager() : vtkObject(), m_widget(NULL)
   m_interactorStyleTrackball
     = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
 
+  // Initialize Interactor Style instance for 2D scenes
+  m_interactorStyleImage
+    = vtkSmartPointer<vtkInteractorStyleImage>::New();
+
   // Initialize Render Window Interactor
   m_renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
   m_renderWindowInteractor->SetRenderWindow(m_renderWindow);
-  m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleTrackball);
- 
+  m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
+
   // Initialize trihedron
   m_trihedron = vtkSmartPointer<vtkAxesActor>::New();
   m_trihedron->SetAxisLabels(0);

@@ -60,7 +60,7 @@ int visu_mesh_E_scalar_filter::FillInputPortInformation(int /*port*/, vtkInforma
 //! \return result code.
 int visu_mesh_E_scalar_filter::RequestData(vtkInformation*,
                                            vtkInformationVector** theInputVector,
-                                           vtkInformationVector* theOutputVector)
+                                           vtkInformationVector*  theOutputVector)
 {
   // Get input and output data sets
   vtkDataSet*  anInput  = vtkDataSet::GetData(theInputVector[0]);
@@ -186,9 +186,8 @@ int visu_mesh_E_scalar_filter::RequestData(vtkInformation*,
 //! \param theElemID [in]  ID of the mesh element to access scalar value for.
 //! \param theScalar [out] requested scalar if any.
 //! \return true if scalar value has been found, false -- otherwise.
-bool
-  visu_mesh_E_scalar_filter::scalarForElem(const int theElemID,
-                                           double&   theScalar)
+bool visu_mesh_E_scalar_filter::scalarForElem(const int theElemID,
+                                              double&   theScalar)
 {
   if ( !m_scalarMap->IsBound(theElemID) )
     return false;

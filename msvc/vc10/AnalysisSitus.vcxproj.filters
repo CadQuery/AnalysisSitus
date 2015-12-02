@@ -179,6 +179,24 @@
     <ClInclude Include="..\..\src\geom\geom_STEP.h">
       <Filter>Header Files\Geometry</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_curve_source.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_face_domain_pipeline.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\geom_face_node.h">
+      <Filter>Header Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_face_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_face_data_provider.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_pcurve_source.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\visu\visu_data_provider.cpp">
@@ -327,6 +345,24 @@
     </ClCompile>
     <ClCompile Include="..\..\src\gui\gui_viewer2d.cpp">
       <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_curve_source.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_face_domain_pipeline.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\geom_face_node.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_face_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_face_data_provider.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_pcurve_source.cpp">
+      <Filter>Source Files\Visualization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

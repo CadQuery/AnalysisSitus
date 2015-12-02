@@ -13,6 +13,7 @@
 
 // Visualization includes
 #include <visu_mesh_prs.h>
+#include <visu_node_info.h>
 #include <visu_utils.h>
 
 // GUI includes
@@ -30,6 +31,9 @@
 #pragma warning(push, 0)
 #include <QVBoxLayout>
 #pragma warning(pop)
+
+// OCCT includes
+#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
 //! Creates a new instance of viewer.
 //! \param parent [in] parent widget.
@@ -75,6 +79,9 @@ gui_viewer::gui_viewer(QWidget* parent) : QMainWindow(parent)
   // Set observer for detection
   if ( !m_interactorStyleDefault->HasObserver(EVENT_DETECT_DEFAULT) )
     m_interactorStyleDefault->AddObserver(EVENT_DETECT_DEFAULT, m_pickCallback);
+
+  // Get notified once a sub-shape is picked
+  connect( m_pickCallback, SIGNAL( subShapesPicked() ), this, SLOT( onSubShapesPicked() ) );
 
   /* ===============================
    *  Setting up rotation callbacks
@@ -147,4 +154,78 @@ void gui_viewer::onResetView()
   visu_utils::ResetCamera( common_facilities::Instance()->PrsManager->GetRenderer(),
                            common_facilities::Instance()->PrsManager->PropsByTrihedron() );
   this->Repaint();
+}
+
+//! Callback for picking event.
+void gui_viewer::onSubShapesPicked()
+{
+  //---------------------------------------------------------------------------
+  // Retrieve current selection
+  //---------------------------------------------------------------------------
+
+  // Access picking results
+  const visu_actual_selection& sel      = common_facilities::Instance()->PrsManager->GetCurrentSelection();
+  const visu_pick_result&      pick_res = sel.PickResult(SelectionNature_Pick);
+  const visu_actor_elem_map&   elem_map = pick_res.GetPickMap();
+
+  // Prepare arrays for selected elements
+  std::vector<int>                 picked_face_IDs;
+  std::vector<ActAPI_DataObjectId> picked_node_IDs;
+
+  // Prepare cumulative set of all picked element IDs
+  for ( visu_actor_elem_map::Iterator it(elem_map); it.More(); it.Next() )
+  {
+    const vtkSmartPointer<vtkActor>&  picked_actor = it.Key();
+    const TColStd_PackedMapOfInteger& face_mask    = it.Value();
+
+    // Retrieve the corresponding Node ID by picked Actor
+    ActAPI_DataObjectId
+      picked_node_id = visu_node_info::Retrieve(picked_actor)->GetNodeId();
+
+    // Fill coherent collections of references: face IDs against owning Nodes
+    for ( TColStd_MapIteratorOfPackedMapOfInteger maskIt(face_mask); maskIt.More(); maskIt.Next() )
+    {
+      picked_face_IDs.push_back( maskIt.Key() );
+      picked_node_IDs.push_back(picked_node_id);
+    }
+  }
+
+  if ( picked_face_IDs.size() )
+  {
+    std::cout << "Picked faces:";
+    for ( size_t k = 0; k < picked_face_IDs.size(); ++k )
+    {
+      std::cout << " " << picked_face_IDs[k] << " [" << picked_node_IDs[k].ToCString() << "]";
+    }
+    std::cout << std::endl;
+  }
+
+  //---------------------------------------------------------------------------
+  // Store active selection in the Data Model
+  //---------------------------------------------------------------------------
+
+  Handle(geom_node) geom_n;
+  if ( picked_face_IDs.size() == 1 )
+    geom_n = Handle(geom_node)::DownCast( common_facilities::Instance()->Model->FindNode(picked_node_IDs[0]) );
+
+  if ( geom_n.IsNull() )
+  {
+    std::cout << "Active face is not stored..." << std::endl;
+    return; // No target Node to proceed with
+  }
+
+  common_facilities::Instance()->Model->OpenCommand(); // tx start
+  {
+    // Store index of the active face
+    geom_n->FaceRepresentation()->SetSelectedFace(picked_face_IDs[0]);
+    //
+    std::cout << "Active face has been stored..." << std::endl;
+  }
+  common_facilities::Instance()->Model->CommitCommand(); // tx commit
+
+  //---------------------------------------------------------------------------
+  // Actualize presentations
+  //---------------------------------------------------------------------------
+
+  common_facilities::Instance()->PrsManager2d->Actualize(geom_n->FaceRepresentation().get(), false, true);
 }

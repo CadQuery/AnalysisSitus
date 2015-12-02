@@ -68,6 +68,13 @@ public:
     return Handle(common_partition<geom_node>)::DownCast( this->Partition(Partition_Geom) );
   }
 
+  //! Accessor for a Partition instance dedicated to Geometry Face Nodes.
+  //! \return requested Partition.
+  inline Handle(common_partition<geom_face_node>) GeomFacePartition() const
+  {
+    return Handle(common_partition<geom_face_node>)::DownCast( this->Partition(Partition_GeomFace) );
+  }
+
   //! Accessor for a Partition instance dedicated to Mesh Nodes.
   //! \return requested Partition.
   inline Handle(common_partition<mesh_node>) MeshPartition() const
@@ -111,6 +118,7 @@ private:
     Partition_RealVar = 1, // Good practice to start with 1 when working with CAF
     Partition_Root,
     Partition_Geom,
+    Partition_GeomFace,
     Partition_Mesh
   };
 

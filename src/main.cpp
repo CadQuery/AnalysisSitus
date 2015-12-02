@@ -14,6 +14,7 @@
 #include <gui_viewer2d.h>
 
 // A-Situs (visualization) includes
+#include <visu_geom_face_prs.h>
 #include <visu_geom_prs.h>
 #include <visu_mesh_prs.h>
 
@@ -69,6 +70,7 @@ int main(int argc, char** argv)
   //---------------------------------------------------------------------------
 
   REGISTER_PRESENTATION(visu_geom_prs)
+  REGISTER_PRESENTATION(visu_geom_face_prs)
   REGISTER_PRESENTATION(visu_mesh_prs)
 
   //---------------------------------------------------------------------------

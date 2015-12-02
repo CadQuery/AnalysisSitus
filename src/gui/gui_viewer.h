@@ -49,6 +49,7 @@ public:
 public slots:
 
   void onResetView();
+  void onSubShapesPicked();
 
 private:
 

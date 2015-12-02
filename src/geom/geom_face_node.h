@@ -1,38 +1,35 @@
 //-----------------------------------------------------------------------------
-// Created on: 28 November 2015
+// Created on: 02 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://quaoar.su/blog/
 //-----------------------------------------------------------------------------
 
-#ifndef geom_node_h
-#define geom_node_h
+#ifndef geom_face_node_h
+#define geom_face_node_h
 
 // A-Situs includes
 #include <analysis_situs.h>
 
-// A-Situs (geometry) includes
-#include <geom_face_node.h>
-
 // Active Data includes
-#include <ActData_ShapeParameter.h>
+#include <ActData_BaseNode.h>
 
 //-----------------------------------------------------------------------------
 // Mesh Node
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(geom_node, ActData_BaseNode)
+DEFINE_STANDARD_HANDLE(geom_face_node, ActData_BaseNode)
 
-//! Node representing b-rep geometry.
-class geom_node : public ActData_BaseNode
+//! Node representing a single b-rep face.
+class geom_face_node : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(geom_node, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI(geom_face_node, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(geom_node, Instance)
+  DEFINE_NODE_FACTORY(geom_face_node, Instance)
 
 public:
 
@@ -46,13 +43,7 @@ public:
   //------------------//
   // Geometry         //
   //------------------//
-    PID_Geometry,     //!< B-rep model.
-  //------------------//
-  // Presentation     //
-  //------------------//
-    PID_DisplayMode,  //!< Display mode.
-    PID_HasColor,     //!< Indicates whether the Color Parameter is active.
-    PID_Color,        //!< Color.
+    PID_SelectedFace, //!< ID of the selected face.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -74,15 +65,8 @@ public:
 // Handy accessors to the stored data:
 public:
 
-  void                   SetShape           (const TopoDS_Shape& shape);
-  TopoDS_Shape           GetShape           ()                           const;
-  void                   SetHasColor        (const bool hasColor);
-  bool                   HasColor           ()                           const;
-  void                   SetColor           (const int color);
-  int                    GetColor           ()                           const;
-  void                   SetDisplayMode     (const int mode);
-  int                    GetDisplayMode     ()                           const;
-  Handle(geom_face_node) FaceRepresentation ();
+  void SetSelectedFace (const int faceId);
+  int  GetSelectedFace ()                  const;
 
 // Initialization:
 public:
@@ -92,7 +76,7 @@ public:
 protected:
 
   //! Allocation is allowed only via Instance method.
-  geom_node();
+  geom_face_node();
 
 };
 

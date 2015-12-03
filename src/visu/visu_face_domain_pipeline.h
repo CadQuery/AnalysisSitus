@@ -50,6 +50,10 @@ private:
 
 private:
 
+  double computeTipSize(const TopoDS_Face& F) const;
+
+private:
+
   bool m_bMapperColorsSet; //!< Boolean flag indicating whether lookup table is set.
 
 };

@@ -23,6 +23,7 @@
 #include <vtkProperty.h>
 
 // OCCT includes
+#include <BRepTools.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
@@ -79,6 +80,9 @@ void visu_face_domain_pipeline::SetInput(const Handle(visu_data_provider)& DP)
     // Access face by the stored index
     const TopoDS_Face& F = TopoDS::Face( M.FindKey(face_idx) );
 
+    // Compute tip size for the orientation markers
+    const double tip_size = this->computeTipSize(F);
+
     // Append filter
     vtkSmartPointer<vtkAppendPolyData>
       appendFilter = vtkSmartPointer<vtkAppendPolyData>::New();
@@ -95,6 +99,7 @@ void visu_face_domain_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
       // Initialize data source
       pcurveSource->SetEdgeOnFace(E, F);
+      pcurveSource->SetTipSize(tip_size);
 
       // Append poly data
       appendFilter->AddInputConnection( pcurveSource->GetOutputPort() );
@@ -128,4 +133,19 @@ void visu_face_domain_pipeline::callback_update()
     visu_utils::InitMapper(m_mapper, aLookup, ARRNAME_ORIENT_SCALARS);
     m_bMapperColorsSet = true;
   }
+}
+
+//-----------------------------------------------------------------------------
+
+//! Computes size for orientation tip glyph. This size is decided for the
+//! whole face to have it identical for all edges.
+//! \param F [in] face to compute the orientation tip size for.
+//! \return tip size.
+double visu_face_domain_pipeline::computeTipSize(const TopoDS_Face& F) const
+{
+  double uMin, uMax, vMin, vMax;
+  BRepTools::UVBounds(F, uMin, uMax, vMin, vMax);
+
+  // Take a ratio of a bounding diagonal
+  return ( gp_XY(uMax, vMax) - gp_XY(uMin, vMin) ).Modulus() * 0.025;
 }

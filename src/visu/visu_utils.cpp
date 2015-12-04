@@ -18,6 +18,8 @@
 #include <vtkPlaneSource.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
+#include <vtkTextActor.h>
+#include <vtkTextRepresentation.h>
 #pragma warning(pop)
 
 // IVtk includes
@@ -663,4 +665,18 @@ void visu_utils::InitMapper(vtkMapper*      theMapper,
   theMapper->SetScalarRange( theLookup->GetRange() );
   theMapper->SetLookupTable(theLookup);
   theMapper->Update();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Initializes the passed text widget.
+//! \param theScalarBarWidget [in] scalar bar widget to initialize.
+void visu_utils::InitTextWidget(vtkTextWidget* theTextWidget)
+{
+  vtkTextRepresentation* aRep = vtkTextRepresentation::SafeDownCast( theTextWidget->GetRepresentation() );
+  theTextWidget->SelectableOff();
+
+  vtkSmartPointer<vtkTextActor> aTextActor = vtkSmartPointer<vtkTextActor>::New();
+  aRep->SetTextActor(aTextActor);
+  aTextActor->SetTextScaleModeToViewport();
 }

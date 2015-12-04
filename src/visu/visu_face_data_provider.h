@@ -30,6 +30,7 @@ public:
 
   ActAPI_DataObjectId GetNodeID()    const;
   int                 GetFaceIndex() const;
+  TopoDS_Face         ExtractFace()  const;
 
 public:
 

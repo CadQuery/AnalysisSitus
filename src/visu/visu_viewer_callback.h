@@ -31,12 +31,12 @@ public:
 
 protected:
 
-  visu_viewer_callback(gui_viewer* theViewer);
-  ~visu_viewer_callback();
+  visu_viewer_callback  (gui_viewer* theViewer);
+  ~visu_viewer_callback ();
 
 private:
 
-  //! Host window. Notice that lifetime of a Callback instance can be longer
+  //! Host viewer. Notice that lifetime of a Callback instance can be longer
   //! that the lifetime of the viewer because user may close that window. In
   //! that case make sure that SetWindow(NULL) is called in order to keep the
   //! callbacks in a consistent (not initialized however) states.

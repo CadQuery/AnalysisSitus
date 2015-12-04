@@ -1,12 +1,12 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 December 2015
+// Created on: 04 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://quaoar.su/blog/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_geom_face_prs_h
-#define visu_geom_face_prs_h
+#ifndef visu_geom_surf_prs_h
+#define visu_geom_surf_prs_h
 
 // A-Situs (visualization) includes
 #include <visu_prs.h>
@@ -18,18 +18,18 @@
 // VTK includes
 #include <vtkTextWidget.h>
 
-DEFINE_STANDARD_HANDLE(visu_geom_face_prs, visu_prs)
+DEFINE_STANDARD_HANDLE(visu_geom_surf_prs, visu_prs)
 
-//! Presentation class for b-rep face.
-class visu_geom_face_prs : public visu_prs
+//! Presentation class for a host surface of a b-rep face.
+class visu_geom_surf_prs : public visu_prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(visu_geom_face_prs, visu_prs)
+  DEFINE_STANDARD_RTTI(visu_geom_surf_prs, visu_prs)
 
   // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(geom_face_node, Instance)
+  DEFINE_PRESENTATION_FACTORY(geom_surf_node, Instance)
 
 public:
 
@@ -50,7 +50,7 @@ public:
 private:
 
   //! Allocation is allowed only via Instance method.
-  visu_geom_face_prs(const Handle(ActAPI_INode)& theNode);
+  visu_geom_surf_prs(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:
 private:
@@ -66,11 +66,6 @@ private:
                            const visu_selection_nature& theSelNature) const;
   virtual void renderPipelines(vtkRenderer* theRenderer) const;
   virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
-
-private:
-
-  TCollection_AsciiString
-    orientationToString(const TopoDS_Shape& shape) const;
 
 private:
 

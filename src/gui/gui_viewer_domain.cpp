@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <gui_viewer2d.h>
+#include <gui_viewer_domain.h>
 
 // Common includes
 #include <common_facilities.h>
@@ -24,15 +24,16 @@
 
 //! Creates a new instance of viewer.
 //! \param parent [in] parent widget.
-gui_viewer2d::gui_viewer2d(QWidget* parent) : QMainWindow(parent)
+gui_viewer_domain::gui_viewer_domain(QWidget* parent) : gui_viewer(parent)
 {
   // Initialize Presentation Manager along with QVTK widget
-  common_facilities::Instance()->PrsManager2d = vtkSmartPointer<visu_prs_manager>::New();
-  common_facilities::Instance()->PrsManager2d->Initialize(this);
+  common_facilities::Instance()->Prs.Domain = vtkSmartPointer<visu_prs_manager>::New();
+  common_facilities::Instance()->Prs.Domain->Initialize(this);
+  common_facilities::Instance()->Prs.Domain->SetInteractionMode(visu_prs_manager::InteractionMode_2D);
 
   // Widgets and layouts
   QWidget*     pBasePane   = new QWidget(this);
-  QVTKWidget*  pViewer     = common_facilities::Instance()->PrsManager2d->GetQVTKWidget();
+  QVTKWidget*  pViewer     = common_facilities::Instance()->Prs.Domain->GetQVTKWidget();
   QHBoxLayout* pBaseLayout = new QHBoxLayout();
 
   // Configure layout
@@ -53,19 +54,19 @@ gui_viewer2d::gui_viewer2d(QWidget* parent) : QMainWindow(parent)
 }
 
 //! Destructor.
-gui_viewer2d::~gui_viewer2d()
+gui_viewer_domain::~gui_viewer_domain()
 {
 }
 
-//! Updates View Window.
-void gui_viewer2d::Repaint()
+//! Updates viewer.
+void gui_viewer_domain::Repaint()
 {
-  common_facilities::Instance()->PrsManager->GetQVTKWidget()->repaint();
+  common_facilities::Instance()->Prs.Domain->GetQVTKWidget()->repaint();
 }
 
-//! Callback for "Reset View" action.
-void gui_viewer2d::onResetView()
+//! Resets view.
+void gui_viewer_domain::onResetView()
 {
-  visu_utils::CameraOnTop( common_facilities::Instance()->PrsManager2d->GetRenderer() );
+  visu_utils::CameraOnTop( common_facilities::Instance()->Prs.Domain->GetRenderer() );
   this->Repaint();
 }

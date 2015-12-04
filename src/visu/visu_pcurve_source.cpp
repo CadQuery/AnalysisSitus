@@ -72,20 +72,25 @@ void visu_pcurve_source::SetEdgeOnFace(const TopoDS_Edge& edge,
 
   // Discretize
   Geom2dAdaptor_Curve gac(c2d, f, l);
-  GCPnts_QuasiUniformDeflection Defl(gac, 0.001);
+  GCPnts_QuasiUniformDeflection Defl(gac, 0.0001);
   if ( !Defl.IsDone() )
   {
     vtkErrorMacro( << "Cannot discretize p-curve" );
     return;
   }
   const int nPts = Defl.NbPoints();
+  if ( !nPts )
+  {
+    vtkErrorMacro( << "No points in discretization" );
+    return;
+  }
 
   // Allocate arrays
   Handle(HRealArray) xCoords = new HRealArray(0, nPts - 1, 0.0),
                      yCoords = new HRealArray(0, nPts - 1, 0.0),
                      zCoords = new HRealArray(0, nPts - 1, 0.0);
 
-  for ( int k = 1; k <= Defl.NbPoints(); ++k )
+  for ( int k = 1; k <= nPts; ++k )
   {
     gp_Pnt P = Defl.Value(k);
     //

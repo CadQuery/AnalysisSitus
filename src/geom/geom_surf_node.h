@@ -1,12 +1,12 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 December 2015
+// Created on: 04 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://quaoar.su/blog/
 //-----------------------------------------------------------------------------
 
-#ifndef geom_face_node_h
-#define geom_face_node_h
+#ifndef geom_surf_node_h
+#define geom_surf_node_h
 
 // A-Situs includes
 #include <analysis_situs.h>
@@ -15,21 +15,21 @@
 #include <ActData_BaseNode.h>
 
 //-----------------------------------------------------------------------------
-// Individual face Node
+// Host surface Node
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(geom_face_node, ActData_BaseNode)
+DEFINE_STANDARD_HANDLE(geom_surf_node, ActData_BaseNode)
 
-//! Node representing a single b-rep face.
-class geom_face_node : public ActData_BaseNode
+//! Node representing a host surface of a single b-rep face.
+class geom_surf_node : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(geom_face_node, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI(geom_surf_node, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(geom_face_node, Instance)
+  DEFINE_NODE_FACTORY(geom_surf_node, Instance)
 
 public:
 
@@ -76,7 +76,7 @@ public:
 protected:
 
   //! Allocation is allowed only via Instance method.
-  geom_face_node();
+  geom_surf_node();
 
 };
 

@@ -29,10 +29,11 @@ REGISTER_NODE_TYPE(ActData_RealVarNode)
 REGISTER_NODE_TYPE(common_root_node)
 REGISTER_NODE_TYPE(geom_node)
 REGISTER_NODE_TYPE(geom_face_node)
+REGISTER_NODE_TYPE(geom_surf_node)
 REGISTER_NODE_TYPE(mesh_node)
 
 //-----------------------------------------------------------------------------
-// Construction methods
+// Construction
 //-----------------------------------------------------------------------------
 
 //! Default constructor. Initializes Base Model foundation object so that
@@ -42,12 +43,63 @@ common_model::common_model() : ActData_BaseModel(true)
   common_facilities::Instance()->Model = this;
 }
 
+//-----------------------------------------------------------------------------
+
+//! Populates Data Model.
+void common_model::Populate()
+{
+  /* ===============================================
+   *  Add Project Node (the root one) to Data Model
+   * =============================================== */
+
+  Handle(common_root_node)
+    root_n = Handle(common_root_node)::DownCast( common_root_node::Instance() );
+
+  this->RootPartition()->AddNode(root_n);
+
+  // Set name
+  root_n->SetName("Part");
+}
+
+//! Clears the Model.
+void common_model::Clear()
+{
+  Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList();
+
+  // Loop over direct children of a root (the root one itself is not deleted)
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetRootNode()->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) child_n = cit->Value();
+
+    // Check if the given Node is consistent
+    if ( child_n.IsNull() || !child_n->IsWellFormed() )
+      continue;
+
+    // Clean up Presentations
+    common_facilities::Instance()->Prs.DeRenderAll();
+
+    // Set Node for deletion
+    nodesToDelete->Append(child_n);
+  }
+
+  this->OpenCommand(); // tx start
+  {
+    // Delete all Nodes queued for removal
+    for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
+      this->DeleteNode( nit.Value()->GetId() );
+  }
+  this->CommitCommand(); // tx end
+}
+
+//-----------------------------------------------------------------------------
+
 //! Initializes Partitions.
 void common_model::initPartitions()
 {
   REGISTER_PARTITION(common_partition<common_root_node>, Partition_Root);
   REGISTER_PARTITION(common_partition<geom_node>,        Partition_Geom);
   REGISTER_PARTITION(common_partition<geom_face_node>,   Partition_GeomFace);
+  REGISTER_PARTITION(common_partition<geom_surf_node>,   Partition_GeomSurface);
   REGISTER_PARTITION(common_partition<mesh_node>,        Partition_Mesh);
 }
 

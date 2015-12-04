@@ -20,6 +20,7 @@
 #include <vtkType.h>
 
 // OCCT includes
+#include <Geom_Curve.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
 #include <NCollection_Sequence.hxx>
@@ -36,11 +37,15 @@ public:
 // Kernel methods:
 public:
 
+  ASitus_EXPORT bool
+    SetInputCurve(const Handle(Geom_Curve)& curve,
+                  const visu_orientation    ori = VisuOri_Internal);
+
   ASitus_EXPORT void
-    SetInputArrays(const Handle(HRealArray)& theXCoords,
-                   const Handle(HRealArray)& theYCoords,
-                   const Handle(HRealArray)& theZCoords,
-                   const visu_orientation    theOri = VisuOri_Undefined);
+    SetInputArrays(const Handle(HRealArray)& xCoords,
+                   const Handle(HRealArray)& yCoords,
+                   const Handle(HRealArray)& zCoords,
+                   const visu_orientation    ori = VisuOri_Undefined);
 
 public:
 
@@ -55,32 +60,32 @@ public:
 
 protected:
 
-  virtual int RequestData(vtkInformation*        theRequest,
-                          vtkInformationVector** theInputVector,
-                          vtkInformationVector*  theOutputVector);
+  virtual int RequestData(vtkInformation*        request,
+                          vtkInformationVector** inputVector,
+                          vtkInformationVector*  outputVector);
 
 protected:
 
   vtkIdType
-    registerGridPoint(const gp_Pnt& thePoint,
-                      vtkPolyData*  thePolyData);
+    registerGridPoint(const gp_Pnt& point,
+                      vtkPolyData*  polyData);
 
   vtkIdType
-    registerGridPoint(const int    thePairIndex,
-                      vtkPolyData* thePolyData);
+    registerGridPoint(const int    index,
+                      vtkPolyData* polyData);
 
   vtkIdType
-    registerLine(const gp_Pnt& thePointStart,
-                 const gp_Pnt& thePointEnd,
-                 vtkPolyData*  thePolyData);
+    registerLine(const gp_Pnt& pointStart,
+                 const gp_Pnt& pointEnd,
+                 vtkPolyData*  polyData);
 
   vtkIdType
-    registerLine(const int    thePairIndex,
-                 vtkPolyData* thePolyData);
+    registerLine(const int    index,
+                 vtkPolyData* polyData);
 
   vtkIdType
-    registerVertex(const int    thePairIndex,
-                   vtkPolyData* thePolyData);
+    registerVertex(const int    index,
+                   vtkPolyData* polyData);
 
 protected:
 

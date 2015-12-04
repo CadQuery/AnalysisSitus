@@ -24,9 +24,9 @@
 
 // OCCT includes
 #include <BRepTools.hxx>
-#include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -68,17 +68,7 @@ void visu_face_domain_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
   if ( faceProvider->MustExecute( this->GetMTime() ) )
   {
-    // Access owning geometry
-    ActAPI_DataObjectId face_node_id = faceProvider->GetNodeID();
-    Handle(geom_node)
-      geom_n = Handle(geom_node)::DownCast( common_facilities::Instance()->Model->FindNode(face_node_id)->GetParentNode() );
-
-    // Prepare traversal
-    TopTools_IndexedMapOfShape M;
-    TopExp::MapShapes(geom_n->GetShape(), M);
-
-    // Access face by the stored index
-    const TopoDS_Face& F = TopoDS::Face( M.FindKey(face_idx) );
+    TopoDS_Face F = faceProvider->ExtractFace();
 
     // Compute tip size for the orientation markers
     const double tip_size = this->computeTipSize(F);
@@ -88,7 +78,7 @@ void visu_face_domain_pipeline::SetInput(const Handle(visu_data_provider)& DP)
       appendFilter = vtkSmartPointer<vtkAppendPolyData>::New();
 
     // Explode by edges
-    for ( TopExp_Explorer exp(F, TopAbs_EDGE); exp.More(); exp.Next() )
+    for ( TopExp_Explorer exp(F.Oriented(TopAbs_FORWARD), TopAbs_EDGE); exp.More(); exp.Next() )
     {
       // Allocate Data Source
       vtkSmartPointer<visu_pcurve_source>

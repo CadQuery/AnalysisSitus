@@ -13,6 +13,7 @@
 
 // A-Situs (geometry) includes
 #include <geom_face_node.h>
+#include <geom_surf_node.h>
 
 // Active Data includes
 #include <ActData_ShapeParameter.h>
@@ -74,15 +75,16 @@ public:
 // Handy accessors to the stored data:
 public:
 
-  void                   SetShape           (const TopoDS_Shape& shape);
-  TopoDS_Shape           GetShape           ()                           const;
-  void                   SetHasColor        (const bool hasColor);
-  bool                   HasColor           ()                           const;
-  void                   SetColor           (const int color);
-  int                    GetColor           ()                           const;
-  void                   SetDisplayMode     (const int mode);
-  int                    GetDisplayMode     ()                           const;
-  Handle(geom_face_node) FaceRepresentation ();
+  void                   SetShape              (const TopoDS_Shape& shape);
+  TopoDS_Shape           GetShape              ()                           const;
+  void                   SetHasColor           (const bool hasColor);
+  bool                   HasColor              ()                           const;
+  void                   SetColor              (const int color);
+  int                    GetColor              ()                           const;
+  void                   SetDisplayMode        (const int mode);
+  int                    GetDisplayMode        ()                           const;
+  Handle(geom_face_node) FaceRepresentation    ();
+  Handle(geom_surf_node) SurfaceRepresentation ();
 
 // Initialization:
 public:

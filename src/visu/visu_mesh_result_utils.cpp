@@ -132,20 +132,6 @@ void visu_mesh_result_utils::InitScalarBarWidget(vtkScalarBarWidget* theScalarBa
   aRep->GetPosition2Coordinate()->SetValue(0.75, 0.1);
 }
 
-//! Initializes the passed text widget for scenes containing
-//! analysis results.
-//! \param theScalarBarWidget [in] scalar bar widget to initialize.
-void visu_mesh_result_utils::InitTextWidget(vtkTextWidget* theTextWidget)
-{
-  vtkTextRepresentation* aRep = vtkTextRepresentation::SafeDownCast( theTextWidget->GetRepresentation() );
-  aRep->GetPositionCoordinate()->SetValue(0.3, 0.01);
-  aRep->GetPosition2Coordinate()->SetValue(0.4, 0.04);
-  theTextWidget->SelectableOff();
-
-  vtkSmartPointer<vtkTextActor> aTextActor = vtkSmartPointer<vtkTextActor>::New();
-  aRep->SetTextActor(aTextActor);
-}
-
 //! Returns polygonal source for VTK glyph representing vectorial data.
 //! \return polygonal source of the mentioned glyph.
 vtkSmartPointer<vtkPolyDataAlgorithm> visu_mesh_result_utils::GetVectorGlyph()

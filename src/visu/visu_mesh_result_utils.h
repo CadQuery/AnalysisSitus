@@ -19,7 +19,6 @@
 #include <vtkScalarBarWidget.h>
 #include <vtkSmartPointer.h>
 #include <vtkTextActor.h>
-#include <vtkTextWidget.h>
 #include <vtkTransform.h>
 
 // OCCT includes
@@ -61,9 +60,6 @@ namespace visu_mesh_result_utils
 
   ASitus_EXPORT void
     InitScalarBarWidget(vtkScalarBarWidget* theScalarBarWidget);
-
-  ASitus_EXPORT void
-    InitTextWidget(vtkTextWidget* theTextWidget);
 
   ASitus_EXPORT vtkSmartPointer<vtkPolyDataAlgorithm>
     GetVectorGlyph();

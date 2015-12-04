@@ -59,6 +59,14 @@ public: // VTK macros and methods to override
 
 public:
 
+  enum InteractionMode
+  {
+    InteractionMode_3D,
+    InteractionMode_2D
+  };
+
+public:
+
   ASitus_EXPORT visu_prs_manager();
 
 // Presentation management:
@@ -231,6 +239,16 @@ public:
 
   ASitus_EXPORT vtkSmartPointer<vtkPropCollection>
     PropsByTrihedron() const;
+
+public:
+
+  inline void SetInteractionMode(const InteractionMode mode)
+  {
+    if ( mode == InteractionMode_3D )
+      m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleTrackball);
+    if ( mode == InteractionMode_2D )
+      m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
+  }
 
 // Auxiliary methods:
 private:

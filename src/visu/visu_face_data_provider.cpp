@@ -8,8 +8,18 @@
 // Own include
 #include <visu_face_data_provider.h>
 
+// A-Situs (common) includes
+#include <common_facilities.h>
+
+// A-Situs (geometry) includes
+#include <geom_node.h>
+
 // Active Data includes
 #include <ActData_ParameterFactory.h>
+
+// OCCT includes
+#include <TopExp.hxx>
+#include <TopoDS.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -39,6 +49,23 @@ ActAPI_DataObjectId visu_face_data_provider::GetNodeID() const
 int visu_face_data_provider::GetFaceIndex() const
 {
   return ActParamTool::AsInt( m_params->Value(1) )->GetValue();
+}
+
+//! \return topological face extracted from the part by its stored ID.
+TopoDS_Face visu_face_data_provider::ExtractFace() const
+{
+  // Access owning geometry
+  ActAPI_DataObjectId face_node_id = this->GetNodeID();
+  Handle(geom_node)
+    geom_n = Handle(geom_node)::DownCast( common_facilities::Instance()->Model->FindNode(face_node_id)->GetParentNode() );
+
+  // Prepare traversal
+  TopTools_IndexedMapOfShape M;
+  TopExp::MapShapes(geom_n->GetShape(), M);
+
+  // Access face by the stored index
+  const TopoDS_Face& F = TopoDS::Face( M.FindKey( this->GetFaceIndex() ) );
+  return F;
 }
 
 //-----------------------------------------------------------------------------

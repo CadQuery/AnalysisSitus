@@ -11,6 +11,9 @@
 // A-Situs (common) includes
 #include <common_model.h>
 
+// A-Situs (GUI) includes
+#include <gui_object_browser.h>
+
 // A-Situs (visualization) includes
 #include <visu_prs_manager.h>
 
@@ -26,9 +29,23 @@ public:
 
 public:
 
-  Handle(common_model)              Model;        //!< Data Model instance.
-  vtkSmartPointer<visu_prs_manager> PrsManager;   //!< Presentation Manager.
-  vtkSmartPointer<visu_prs_manager> PrsManager2d; //!< Presentation Manager in 2D.
+  Handle(common_model) Model;         //!< Data Model instance.
+  gui_object_browser*  ObjectBrowser; //!< Object Browser.
+
+  //! Visualization facilities.
+  struct t_prs
+  {
+    vtkSmartPointer<visu_prs_manager> Part;    //!< Part.
+    vtkSmartPointer<visu_prs_manager> Domain;  //!< Face domain.
+    vtkSmartPointer<visu_prs_manager> Surface; //!< Host surface.
+
+    inline void DeRenderAll()
+    {
+      Part    ->DeRenderAllPresentations();
+      Domain  ->DeRenderAllPresentations();
+      Surface ->DeRenderAllPresentations();
+    }
+  } Prs;
 
 public:
 
@@ -46,7 +63,7 @@ private:
 
 private:
 
-  static Handle(common_facilities) m_ref;
+  static Handle(common_facilities) m_ref; //!< Single instance of facilities.
 
 };
 

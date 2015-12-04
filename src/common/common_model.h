@@ -44,6 +44,14 @@ public:
 
 public:
 
+  ASitus_EXPORT void
+    Populate();
+
+  ASitus_EXPORT void
+    Clear();
+
+public:
+
   //! Create a cloned instance of Data Model.
   //! \return cloned instance.
   inline virtual Handle(ActAPI_IModel) Clone() const
@@ -73,6 +81,13 @@ public:
   inline Handle(common_partition<geom_face_node>) GeomFacePartition() const
   {
     return Handle(common_partition<geom_face_node>)::DownCast( this->Partition(Partition_GeomFace) );
+  }
+
+  //! Accessor for a Partition instance dedicated to Geometry Surface Nodes.
+  //! \return requested Partition.
+  inline Handle(common_partition<geom_surf_node>) GeomSurfacePartition() const
+  {
+    return Handle(common_partition<geom_surf_node>)::DownCast( this->Partition(Partition_GeomSurface) );
   }
 
   //! Accessor for a Partition instance dedicated to Mesh Nodes.
@@ -119,6 +134,7 @@ private:
     Partition_Root,
     Partition_Geom,
     Partition_GeomFace,
+    Partition_GeomSurface,
     Partition_Mesh
   };
 

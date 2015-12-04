@@ -56,8 +56,8 @@ signals:
 
 private:
 
-  visu_pick_callback(gui_viewer* theViewer);
-  ~visu_pick_callback();
+  visu_pick_callback  (gui_viewer* theViewer);
+  ~visu_pick_callback ();
 
 };
 

@@ -24,6 +24,9 @@
 
 // VTK includes
 #pragma warning(push, 0)
+#include <vtkAxesActor.h>
+#include <vtkCubeAxesActor.h>
+#include <vtkCubeAxesActor2D.h>
 #include <vtkDoubleArray.h>
 #include <vtkIntArray.h>
 #include <vtkInteractorObserver.h>
@@ -31,9 +34,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
-#include <vtkAxesActor.h>
-#include <vtkCubeAxesActor.h>
-#include <vtkCubeAxesActor2D.h>
+#include <vtkTextWidget.h>
 #pragma warning(pop)
 
 // IVtk includes
@@ -42,8 +43,13 @@
 // OCCT includes
 #include <NCollection_DataMap.hxx>
 #include <NCollection_Sequence.hxx>
+#include <Precision.hxx>
 #include <Standard_TypeDef.hxx>
 #include <TCollection_AsciiString.hxx>
+
+//-----------------------------------------------------------------------------
+
+#define INF_LIMIT 100
 
 //-----------------------------------------------------------------------------
 
@@ -214,6 +220,22 @@ public:
     InitMapper(vtkMapper*      theMapper,
                vtkLookupTable* theLookup,
                const char*     theScalarsArrName);
+
+  ASitus_EXPORT static void
+    InitTextWidget(vtkTextWidget* theTextWidget);
+
+public:
+
+  inline double static TrimInf(const double val)
+  {
+    double ret_val = val;
+    if ( Precision::IsPositiveInfinite(val) )
+      ret_val = INF_LIMIT;
+    else if ( Precision::IsNegativeInfinite(val) )
+      ret_val = -INF_LIMIT;
+
+    return ret_val;
+  }
 
 private:
 

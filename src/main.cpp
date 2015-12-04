@@ -10,20 +10,23 @@
 
 // A-Situs (GUI) includes
 #include <gui_control_pane.h>
-#include <gui_viewer.h>
-#include <gui_viewer2d.h>
+#include <gui_object_browser.h>
+#include <gui_viewer_domain.h>
+#include <gui_viewer_part.h>
+#include <gui_viewer_surface.h>
 
 // A-Situs (visualization) includes
 #include <visu_geom_face_prs.h>
 #include <visu_geom_prs.h>
+#include <visu_geom_surf_prs.h>
 #include <visu_mesh_prs.h>
 
 // Qt includes
 #pragma warning(push, 0)
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QMainWindow>
 #include <QHBoxLayout>
+#include <QMainWindow>
 #pragma warning(pop)
 
 // Qt-VTK includes
@@ -64,6 +67,12 @@ int main(int argc, char** argv)
     std::cout << "Cannot create new empty Model" << std::endl;
     return 1;
   }
+  //
+  M->DisableTransactions();
+  {
+    M->Populate();
+  }
+  M->EnableTransactions();
 
   //---------------------------------------------------------------------------
   // Register Presentations
@@ -71,29 +80,48 @@ int main(int argc, char** argv)
 
   REGISTER_PRESENTATION(visu_geom_prs)
   REGISTER_PRESENTATION(visu_geom_face_prs)
+  REGISTER_PRESENTATION(visu_geom_surf_prs)
   REGISTER_PRESENTATION(visu_mesh_prs)
 
   //---------------------------------------------------------------------------
-  // Initialize viewer
+  // Initialize viewer for part
   //---------------------------------------------------------------------------
 
-  gui_viewer* pViewer = new gui_viewer();
+  gui_viewer_part* pViewerPart = new gui_viewer_part();
+
+  // Desktop used for sizing
+  QDesktopWidget desktop;
 
   // Set size and show
-  QDesktopWidget dw;
-  pViewer->setMinimumSize(dw.height()*0.5, dw.height()*0.5);
-  pViewer->show();
+  pViewerPart->setMinimumSize(desktop.height()*0.5, desktop.height()*0.5);
+  pViewerPart->show();
 
   //---------------------------------------------------------------------------
-  // Initialize viewer 2d
+  // Initialize viewer for face domain
   //---------------------------------------------------------------------------
 
-  gui_viewer2d* pViewer2d = new gui_viewer2d();
+  gui_viewer_domain* pViewerDomain = new gui_viewer_domain();
 
   // Set size and show
-  QDesktopWidget dw2d;
-  pViewer2d->setMinimumSize(dw2d.height()*0.25, dw2d.height()*0.25);
-  pViewer2d->show();
+  pViewerDomain->setMinimumSize(desktop.height()*0.4, desktop.height()*0.3);
+  pViewerDomain->show();
+
+  //---------------------------------------------------------------------------
+  // Initialize viewer for host surface
+  //---------------------------------------------------------------------------
+
+  gui_viewer_surface* pViewerSurf = new gui_viewer_surface();
+
+  // Set size and show
+  pViewerSurf->setMinimumSize(desktop.height()*0.4, desktop.height()*0.3);
+  pViewerSurf->show();
+
+  //---------------------------------------------------------------------------
+  // Create tree view
+  //---------------------------------------------------------------------------
+
+  gui_object_browser* pTree = new gui_object_browser();
+  pTree->show();
 
   //---------------------------------------------------------------------------
   // Run event loop

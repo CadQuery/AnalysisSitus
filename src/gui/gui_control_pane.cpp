@@ -28,6 +28,10 @@
 
 //-----------------------------------------------------------------------------
 
+//! Takes care of proper creation of a Geometry Node which would contain all
+//! possible representation items.
+//! \param shape [in] CAD part to represent in a Data Model.
+//! \return instance of the just created Node.
 static Handle(geom_node) CreateGeometryNode(const TopoDS_Shape& shape)
 {
   Handle(geom_node) geom_n;
@@ -42,6 +46,7 @@ static Handle(geom_node) CreateGeometryNode(const TopoDS_Shape& shape)
     geom_n = Handle(geom_node)::DownCast(geom_base);
     geom_n->Init();
     geom_n->SetShape(shape);
+    geom_n->SetName("Geometry");
 
     // Create underlying face representation Node
     {
@@ -51,10 +56,28 @@ static Handle(geom_node) CreateGeometryNode(const TopoDS_Shape& shape)
       // Initialize
       Handle(geom_face_node) geom_face_n = Handle(geom_face_node)::DownCast(geom_face_base);
       geom_face_n->Init();
+      geom_face_n->SetName("Face domain");
 
       // Set as child
       geom_n->AddChildNode(geom_face_n);
     }
+
+    // Create underlying surface representation Node
+    {
+      Handle(ActAPI_INode) geom_surf_base = geom_surf_node::Instance();
+      common_facilities::Instance()->Model->GeomSurfacePartition()->AddNode(geom_surf_base);
+
+      // Initialize
+      Handle(geom_surf_node) geom_surf_n = Handle(geom_surf_node)::DownCast(geom_surf_base);
+      geom_surf_n->Init();
+      geom_surf_n->SetName("Host surface");
+
+      // Set as child
+      geom_n->AddChildNode(geom_surf_n);
+    }
+
+    // Set as a child for root
+    common_facilities::Instance()->Model->GetRootNode()->AddChildNode(geom_n);
   }
   common_facilities::Instance()->Model->CommitCommand(); // tx commit
   //
@@ -127,6 +150,9 @@ void gui_control_pane::onLoadPly()
   // Create mesh Node
   //---------------------------------------------------------------------------
 
+  // Clean up the Model
+  common_facilities::Instance()->Model->Clear();
+
   Handle(mesh_node) mesh_n;
   //
   common_facilities::Instance()->Model->OpenCommand(); // tx start
@@ -139,14 +165,20 @@ void gui_control_pane::onLoadPly()
     mesh_n = Handle(mesh_node)::DownCast(mesh_base);
     mesh_n->Init();
     mesh_n->SetMesh(mesh_data);
+    mesh_n->SetName("Tessellation");
+
+    // Set as a child for root
+    common_facilities::Instance()->Model->GetRootNode()->AddChildNode(mesh_n);
   }
   common_facilities::Instance()->Model->CommitCommand(); // tx commit
 
   //---------------------------------------------------------------------------
-  // Create presentation
+  // Update UI
   //---------------------------------------------------------------------------
 
-  common_facilities::Instance()->PrsManager->Actualize(mesh_n.get(), false, true);
+  common_facilities::Instance()->Prs.Part->Actualize(mesh_n.get(), false, true);
+  //
+  common_facilities::Instance()->ObjectBrowser->Populate();
 }
 
 //! On b-rep loading.
@@ -166,13 +198,19 @@ void gui_control_pane::onLoadBRep()
   // Create geometry Node
   //---------------------------------------------------------------------------
 
+  // Clean up the Model
+  common_facilities::Instance()->Model->Clear();
+
+  // Create Node
   Handle(geom_node) geom_n = ::CreateGeometryNode(shape);
 
   //---------------------------------------------------------------------------
-  // Create presentation
+  // Update UI
   //---------------------------------------------------------------------------
 
-  common_facilities::Instance()->PrsManager->Actualize(geom_n.get(), false, true);
+  common_facilities::Instance()->Prs.Part->Actualize(geom_n.get(), false, true);
+  //
+  common_facilities::Instance()->ObjectBrowser->Populate();
 }
 
 //! On STEP loading.
@@ -192,13 +230,19 @@ void gui_control_pane::onLoadSTEP()
   // Create geometry Node
   //---------------------------------------------------------------------------
 
+  // Clean up the Model
+  common_facilities::Instance()->Model->Clear();
+
+  // Create Node
   Handle(geom_node) geom_n = ::CreateGeometryNode(shape);
 
   //---------------------------------------------------------------------------
-  // Create presentation
+  // Update UI
   //---------------------------------------------------------------------------
 
-  common_facilities::Instance()->PrsManager->Actualize(geom_n.get(), false, true);
+  common_facilities::Instance()->Prs.Part->Actualize(geom_n.get(), false, true);
+  //
+  common_facilities::Instance()->ObjectBrowser->Populate();
 }
 
 //-----------------------------------------------------------------------------

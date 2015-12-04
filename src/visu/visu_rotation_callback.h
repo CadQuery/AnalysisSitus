@@ -105,8 +105,8 @@ protected:
 
 private:
 
-  visu_rotation_callback(gui_viewer* theViewer);
-  ~visu_rotation_callback();
+  visu_rotation_callback  (gui_viewer* theViewer);
+  ~visu_rotation_callback ();
 
 protected:
 

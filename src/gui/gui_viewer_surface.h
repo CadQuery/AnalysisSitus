@@ -5,33 +5,36 @@
 // Web: http://quaoar.su/blog/
 //-----------------------------------------------------------------------------
 
-#ifndef gui_viewer_h
-#define gui_viewer_h
+#ifndef gui_viewer_surface_h
+#define gui_viewer_surface_h
 
 // A-Situs includes
 #include <analysis_situs.h>
 
-// Qt includes
-#pragma warning(push, 0)
-#include <QMainWindow>
-#pragma warning(pop)
+// GUI includes
+#include <gui_viewer.h>
 
-//! Base class for all viewers.
-class gui_viewer : public QMainWindow
+//! Viewer for surface.
+class gui_viewer_surface : public gui_viewer
 {
   Q_OBJECT
 
 public:
 
   ASitus_EXPORT
-    gui_viewer(QWidget* parent = NULL);
+    gui_viewer_surface(QWidget* parent = NULL);
 
   ASitus_EXPORT virtual
-    ~gui_viewer();
+    ~gui_viewer_surface();
 
 public:
 
-  virtual void Repaint() = 0;
+  ASitus_EXPORT void
+    Repaint();
+
+public slots:
+
+  void onResetView();
 
 };
 

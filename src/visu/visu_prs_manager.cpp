@@ -384,6 +384,10 @@ void visu_prs_manager::DeRenderAllPresentations()
 {
   for ( TNodePrsMap::Iterator it(m_nodePresentations); it.More(); it.Next() )
    this->DeRenderPresentation( it.Key() );
+
+  // Update view window to have it cleared for user
+  if ( m_widget )
+    m_widget->repaint();
 }
 
 //! Builds (if not yet) visualization pipelines for the Node's Presentation

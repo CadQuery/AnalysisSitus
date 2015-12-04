@@ -12,7 +12,7 @@
 #include <common_facilities.h>
 
 // A-Situs (GUI) includes
-#include <gui_viewer.h>
+#include <gui_viewer_part.h>
 
 // A-Situs (visualization) includes
 #include <visu_utils.h>
@@ -51,8 +51,7 @@ visu_pick_callback::visu_pick_callback(gui_viewer* theViewer)
 
 //! Default destructor.
 visu_pick_callback::~visu_pick_callback()
-{
-}
+{}
 
 //! Listens to a dedicated event. Performs all useful operations.
 //! \param theCaller   [in] caller instance.
@@ -79,10 +78,10 @@ void visu_pick_callback::Execute(vtkObject*    vtkNotUsed(theCaller),
     return;
 
   // Access selection context
-  const int selMode = common_facilities::Instance()->PrsManager->GetSelectionMode();
+  const int selMode = common_facilities::Instance()->Prs.Part->GetSelectionMode();
 
   // Skip for disabled selection
-  if ( !common_facilities::Instance()->PrsManager.GetPointer() || (selMode & SelectionMode_None) )
+  if ( !common_facilities::Instance()->Prs.Part.GetPointer() || (selMode & SelectionMode_None) )
     return;
 
   // Do not allow detection on global selection
@@ -92,7 +91,7 @@ void visu_pick_callback::Execute(vtkObject*    vtkNotUsed(theCaller),
   // Now pick
   const visu_selection_nature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
                                                                             : SelectionNature_Detection;
-  common_facilities::Instance()->PrsManager->Pick(pickInput, sel_type);
+  common_facilities::Instance()->Prs.Part->Pick(pickInput, sel_type);
 
   /* ==================
    *  Notify observers

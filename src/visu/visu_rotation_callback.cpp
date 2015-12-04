@@ -12,7 +12,7 @@
 #include <visu_utils.h>
 
 // A-Situs (GUI) includes
-#include <gui_viewer.h>
+#include <gui_viewer_part.h>
 
 // A-Situs (common) includes
 #include <common_facilities.h>
@@ -118,8 +118,7 @@ void visu_rotation_callback::Execute(vtkObject*    ASitus_NotUsed(theCaller),
   if ( !this->Viewer() )
     return;
 
-
-  vtkRenderer* aRenderer = common_facilities::Instance()->PrsManager->GetRenderer();
+  vtkRenderer* aRenderer = common_facilities::Instance()->Prs.Part->GetRenderer();
 
   // Add/Remove anchor to/from renderer
   if ( theEventId == EVENT_ROTATION_START )

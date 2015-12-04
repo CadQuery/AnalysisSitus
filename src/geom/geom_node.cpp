@@ -125,6 +125,8 @@ int geom_node::GetDisplayMode() const
   return ActParamTool::AsInt( this->Parameter(PID_DisplayMode) )->GetValue();
 }
 
+//-----------------------------------------------------------------------------
+
 //! \return underlying face representation Node.
 Handle(geom_face_node) geom_node::FaceRepresentation()
 {
@@ -132,9 +134,25 @@ Handle(geom_face_node) geom_node::FaceRepresentation()
   for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
   {
     face_n = Handle(geom_face_node)::DownCast( cit->Value() );
+
+    if ( !face_n.IsNull() && face_n->IsWellFormed() )
+      return face_n;
   }
-  if ( !face_n.IsNull() && face_n->IsWellFormed() )
-    return face_n;
+
+  return NULL;
+}
+
+//! \return underlying surface representation Node.
+Handle(geom_surf_node) geom_node::SurfaceRepresentation()
+{
+  Handle(geom_surf_node) surf_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    surf_n = Handle(geom_surf_node)::DownCast( cit->Value() );
+
+    if ( !surf_n.IsNull() && surf_n->IsWellFormed() )
+      return surf_n;
+  }
 
   return NULL;
 }

@@ -26,12 +26,11 @@ public:
 
 public:
 
-  ASitus_EXPORT
-    visu_face_surface_pipeline();
+  visu_face_surface_pipeline();
 
 public:
 
-  ASitus_EXPORT virtual void
+  virtual void
     SetInput(const Handle(visu_data_provider)& DP);
 
 public:

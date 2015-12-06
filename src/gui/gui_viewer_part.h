@@ -33,16 +33,13 @@ class gui_viewer_part : public gui_viewer
 
 public:
 
-  ASitus_EXPORT
-    gui_viewer_part(QWidget* parent = NULL);
+  gui_viewer_part(QWidget* parent = NULL);
 
-  ASitus_EXPORT virtual
-    ~gui_viewer_part();
+  virtual ~gui_viewer_part();
 
 public:
 
-  ASitus_EXPORT void
-    Repaint();
+  void Repaint();
 
 public slots:
 

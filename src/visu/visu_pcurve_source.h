@@ -22,12 +22,12 @@ class visu_pcurve_source : public visu_curve_source
 public:
 
   vtkTypeMacro(visu_pcurve_source, vtkPolyDataAlgorithm);
-  ASitus_EXPORT static visu_pcurve_source* New();
+  static visu_pcurve_source* New();
 
 // Kernel methods:
 public:
 
-  ASitus_EXPORT void
+  void
     SetEdgeOnFace(const TopoDS_Edge& edge,
                   const TopoDS_Face& face);
 

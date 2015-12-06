@@ -23,11 +23,9 @@ class gui_viewer : public QMainWindow
 
 public:
 
-  ASitus_EXPORT
-    gui_viewer(QWidget* parent = NULL);
+  gui_viewer(QWidget* parent = NULL);
 
-  ASitus_EXPORT virtual
-    ~gui_viewer();
+  virtual ~gui_viewer();
 
 public:
 

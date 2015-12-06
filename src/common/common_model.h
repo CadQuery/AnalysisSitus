@@ -39,16 +39,12 @@ public:
 
 public:
 
-  ASitus_EXPORT
-    common_model();
+  common_model();
 
 public:
 
-  ASitus_EXPORT void
-    Populate();
-
-  ASitus_EXPORT void
-    Clear();
+  void Populate();
+  void Clear();
 
 public:
 

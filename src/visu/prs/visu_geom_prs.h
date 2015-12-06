@@ -41,20 +41,20 @@ public:
 
 public:
 
-  ASitus_EXPORT static Handle(visu_prs)
+  static Handle(visu_prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
-  ASitus_EXPORT virtual bool
+  virtual bool
     IsVisible() const;
 
 // Visualization commands:
 protected:
 
-  ASitus_EXPORT void doShading() const;
-  ASitus_EXPORT void doWireframe() const;
+  void doShading() const;
+  void doWireframe() const;
 
-  ASitus_EXPORT void doColor(const QColor& theColor) const;
-  ASitus_EXPORT void doUnColor() const;
+  void doColor(const QColor& theColor) const;
+  void doUnColor() const;
 
 private:
 

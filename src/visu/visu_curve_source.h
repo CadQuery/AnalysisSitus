@@ -32,16 +32,16 @@ class visu_curve_source : public vtkPolyDataAlgorithm
 public:
 
   vtkTypeMacro(visu_curve_source, vtkPolyDataAlgorithm);
-  ASitus_EXPORT static visu_curve_source* New();
+  static visu_curve_source* New();
 
 // Kernel methods:
 public:
 
-  ASitus_EXPORT bool
+  bool
     SetInputCurve(const Handle(Geom_Curve)& curve,
                   const visu_orientation    ori = VisuOri_Internal);
 
-  ASitus_EXPORT void
+  void
     SetInputArrays(const Handle(HRealArray)& xCoords,
                    const Handle(HRealArray)& yCoords,
                    const Handle(HRealArray)& zCoords,

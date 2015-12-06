@@ -34,21 +34,21 @@ public:
 
 public:
 
-  ASitus_EXPORT void
+  void
     SetNodeId(const ActAPI_DataObjectId& nodeId);
 
-  ASitus_EXPORT ActAPI_DataObjectId
+  ActAPI_DataObjectId
     GetNodeId() const;
 
 public:
 
-  ASitus_EXPORT static vtkInformationObjectBaseKey*
+  static vtkInformationObjectBaseKey*
     GetKey();
 
-  ASitus_EXPORT static visu_node_info*
+  static visu_node_info*
     Retrieve(vtkActor* actor);
 
-  ASitus_EXPORT static void
+  static void
     Store(const ActAPI_DataObjectId& nodeId,
           vtkActor* actor);
 

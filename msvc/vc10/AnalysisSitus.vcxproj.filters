@@ -206,6 +206,9 @@
     <ClInclude Include="..\..\src\visu\prs\visu_geom_surf_prs.h">
       <Filter>Header Files\Visualization\Presentation</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_topo_graph.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\visu\visu_data_provider.cpp">
@@ -399,6 +402,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\visu\prs\visu_geom_surf_prs.cpp">
       <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_topo_graph.cpp">
+      <Filter>Source Files\Visualization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

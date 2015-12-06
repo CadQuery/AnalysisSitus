@@ -26,18 +26,17 @@ public:
 
 public:
 
-  ASitus_EXPORT
-    visu_mesh_contour_pipeline();
+  visu_mesh_contour_pipeline();
 
 public:
 
-  ASitus_EXPORT void
+  void
     SetColor(const double fR, const double fG, const double fB);
 
-  ASitus_EXPORT void
+  void
     SetOpacity(const double fOp);
 
-  ASitus_EXPORT void
+  void
     SetLineWidth(const double theLineWidth);
 
 private:

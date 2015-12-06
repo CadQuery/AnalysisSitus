@@ -53,8 +53,8 @@ visu_curve_source::~visu_curve_source()
 bool visu_curve_source::SetInputCurve(const Handle(Geom_Curve)& curve,
                                       const visu_orientation    ori)
 {
-  double f = visu_utils::TrimInf( curve->FirstParameter() ),
-         l = visu_utils::TrimInf( curve->LastParameter() );
+  const double f = visu_utils::TrimInf( curve->FirstParameter() ),
+               l = visu_utils::TrimInf( curve->LastParameter() );
 
   // Discretize
   GeomAdaptor_Curve gac(curve, f, l);

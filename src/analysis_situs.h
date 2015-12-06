@@ -8,12 +8,6 @@
 #ifndef analysis_situs_h
 #define analysis_situs_h
 
-#ifdef ASITUS_EXPORTS
-#define ASitus_EXPORT __declspec(dllexport)
-#else
-#define ASitus_EXPORT __declspec(dllimport)
-#endif
-
 #define ASitus_NotUsed(x)
 
 // Active Data (API) includes

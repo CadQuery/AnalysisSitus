@@ -55,87 +55,87 @@ public:
 // Interface methods:
 public:
 
-  ASitus_EXPORT virtual void
+  virtual void
     InitPipelines();
 
-  ASitus_EXPORT virtual void
+  virtual void
     UpdatePipelines() const;
 
-  ASitus_EXPORT virtual const Handle(visu_pipeline)&
+  virtual const Handle(visu_pipeline)&
     GetPipeline(const int theId) const;
 
-  ASitus_EXPORT virtual const Handle(h_visu_pipeline_list)
+  virtual const Handle(h_visu_pipeline_list)
     GetPipelineList() const;
 
-  ASitus_EXPORT virtual Handle(visu_pipeline)
+  virtual Handle(visu_pipeline)
     GetPickPipeline(const int theIdx = 1) const;
 
-  ASitus_EXPORT virtual const Handle(h_visu_pipeline_list)
+  virtual const Handle(h_visu_pipeline_list)
     GetPickPipelineList() const;
 
-  ASitus_EXPORT virtual const Handle(visu_pipeline)&
+  virtual const Handle(visu_pipeline)&
     GetDetectPipeline(const int theIdx = 1) const;
 
-  ASitus_EXPORT virtual const Handle(h_visu_pipeline_list)
+  virtual const Handle(h_visu_pipeline_list)
     GetDetectPipelineList() const;
 
-  ASitus_EXPORT virtual Handle(ActAPI_INode)
+  virtual Handle(ActAPI_INode)
     GetNode() const;
 
 public:
 
-  ASitus_EXPORT void
+  void
     RenderPipelines(vtkRenderer* theRenderer) const;
 
-  ASitus_EXPORT void
+  void
     DeRenderPipelines(vtkRenderer* theRenderer) const;
 
-  ASitus_EXPORT void
+  void
     Highlight(vtkRenderer*                 theRenderer,
               const visu_pick_result&      thePickRes,
               const visu_selection_nature& theSelNature) const;
 
-  ASitus_EXPORT void
+  void
     UnHighlight(vtkRenderer*                 theRenderer,
                 const visu_selection_nature& theSelNature) const;
 
 // Presentation construction methods:
 protected:
 
-  ASitus_EXPORT void
+  void
     addPipeline(const int                    theId,
                 const Handle(visu_pipeline)& thePipeline);
 
-  ASitus_EXPORT void
+  void
     assignDataProvider(const int                         theId,
                        const Handle(visu_data_provider)& theDataProvider);
 
-  ASitus_EXPORT Handle(visu_data_provider)
+  Handle(visu_data_provider)
     dataProvider(const int theId) const;
 
-  ASitus_EXPORT Handle(visu_data_provider)
+  Handle(visu_data_provider)
     dataProvider(const Handle(visu_pipeline)& thePipeline,
                  const PipelineGroup          theGroup) const;
 
-  ASitus_EXPORT Handle(visu_data_provider)
+  Handle(visu_data_provider)
     dataProviderPick(const int theIdx = 1) const;
 
-  ASitus_EXPORT Handle(visu_data_provider)
+  Handle(visu_data_provider)
     dataProviderDetect(const int theIdx = 1) const;
 
-  ASitus_EXPORT void
+  void
     installPickPipeline(const Handle(visu_pipeline)&      thePipeline,
                         const Handle(visu_data_provider)& theDataProvider,
                         const int                         theIdx = 1);
 
-  ASitus_EXPORT void
+  void
     installDetectPipeline(const Handle(visu_pipeline)&      thePipeline,
                           const Handle(visu_data_provider)& theDataProvider,
                           const int                         theIdx = 1);
 
 protected:
 
-  ASitus_EXPORT visu_prs(const Handle(ActAPI_INode)& theNode);
+  visu_prs(const Handle(ActAPI_INode)& theNode);
 
 private:
 

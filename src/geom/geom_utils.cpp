@@ -26,6 +26,7 @@
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
 
 //-----------------------------------------------------------------------------
 // Auxiliary functions
@@ -559,4 +560,78 @@ bool geom_utils::ReadBRep(const TCollection_AsciiString& theFilename,
 {
   BRep_Builder BB;
   return BRepTools::Read(theShape, theFilename.ToCString(), BB) > 0;
+}
+
+//! Collects summary information of the given shape: returns the number
+//! of sub-shapes of each type.
+//! \param shape [in]  shape to analyze.
+//! \param info  [out] shape summary as string.
+void geom_utils::ShapeSummary(const TopoDS_Shape&      shape,
+                              TCollection_AsciiString& info)
+{
+  TopTools_MapOfShape aMapOfShape;
+  aMapOfShape.Add(shape);
+  TopTools_ListOfShape aListOfShape;
+  aListOfShape.Append(shape);
+  TopTools_ListIteratorOfListOfShape itL(aListOfShape);
+
+  // Summary
+  int nbSolids     = 0,
+      nbShells     = 0,
+      nbFaces      = 0,
+      nbWires      = 0,
+      nbEdges      = 0,
+      nbVertexes   = 0,
+      nbCompounds  = 0;
+
+  if ( shape.ShapeType() == TopAbs_COMPOUND )
+    nbCompounds++;
+  if ( shape.ShapeType() == TopAbs_SOLID )
+    nbSolids++;
+  if ( shape.ShapeType() == TopAbs_SHELL )
+    nbShells++;
+  if ( shape.ShapeType() == TopAbs_FACE )
+    nbFaces++;
+  if ( shape.ShapeType() == TopAbs_WIRE )
+    nbWires++;
+  if ( shape.ShapeType() == TopAbs_EDGE )
+    nbEdges++;
+  if ( shape.ShapeType() == TopAbs_VERTEX )
+    nbVertexes++;
+
+  for ( ; itL.More(); itL.Next() )
+  {
+    for ( TopoDS_Iterator it( itL.Value() ); it.More(); it.Next() )
+    {
+      TopoDS_Shape aSubShape = it.Value();
+
+      if ( !aMapOfShape.Add(aSubShape) )
+        continue;
+
+      aListOfShape.Append(aSubShape);
+      if ( aSubShape.ShapeType() == TopAbs_COMPOUND )
+        nbCompounds++;
+      if ( aSubShape.ShapeType() == TopAbs_SOLID )
+        nbSolids++;
+      if ( aSubShape.ShapeType() == TopAbs_SHELL )
+        nbShells++;
+      if ( aSubShape.ShapeType() == TopAbs_FACE )
+        nbFaces++;
+      if ( aSubShape.ShapeType() == TopAbs_WIRE )
+        nbWires++;
+      if ( aSubShape.ShapeType() == TopAbs_EDGE )
+        nbEdges++;
+      if ( aSubShape.ShapeType() == TopAbs_VERTEX )
+        nbVertexes++;
+    }
+  }
+
+  info += "PART SUMMARY:\n";
+  info += "- nb compounds: ";    info += nbCompounds;               info += "\n";
+  info += "- nb solids: ";       info += nbSolids;                  info += "\n";
+  info += "- nb shells: ";       info += nbShells;                  info += "\n";
+  info += "- nb faces: ";        info += nbFaces;                   info += "\n";
+  info += "- nb wires: ";        info += nbWires;                   info += "\n";
+  info += "- nb edges: ";        info += nbEdges;                   info += "\n";
+  info += "- nb vertices: ";     info += nbVertexes;                info += "\n";
 }

@@ -78,6 +78,8 @@ private:
 
   ~visu_mesh_E_scalar_filter();
 
+public:
+
   virtual int FillInputPortInformation(int thePort, vtkInformation* theInfo);
 
   virtual int RequestData(vtkInformation*        theInfo,

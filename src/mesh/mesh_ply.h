@@ -36,7 +36,7 @@ namespace mesh_ply
   //! \param theNodeArrays [out] collection of data arrays associated with nodes.
   //! \param theElemArrays [out] collection of data arrays associated with faces.
   //! \return true in case of success, false -- otherwise.
-  ASitus_EXPORT bool
+   bool
     Read(const TCollection_AsciiString&     theFilename,
          Handle(OMFDS_Mesh)&                theMesh,
          NCollection_Sequence<TNamedArray>& theNodeArrays,

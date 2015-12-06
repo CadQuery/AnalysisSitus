@@ -21,16 +21,13 @@ class gui_viewer_domain : public gui_viewer
 
 public:
 
-  ASitus_EXPORT
-    gui_viewer_domain(QWidget* parent = NULL);
+  gui_viewer_domain(QWidget* parent = NULL);
 
-  ASitus_EXPORT virtual
-    ~gui_viewer_domain();
+  virtual ~gui_viewer_domain();
 
 public:
 
-  ASitus_EXPORT void
-    Repaint();
+  void Repaint();
 
 public slots:
 

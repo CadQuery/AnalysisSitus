@@ -55,12 +55,11 @@ public:
 
 public:
 
-  ASitus_EXPORT
-    visu_mesh_E_vector_pipeline();
+  visu_mesh_E_vector_pipeline();
 
 public:
 
-  ASitus_EXPORT virtual void
+  virtual void
     SetInput(const Handle(visu_data_provider)& theDataProvider);
 
 private:

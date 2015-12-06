@@ -41,10 +41,10 @@ public:
 
 public:
 
-  ASitus_EXPORT static Handle(visu_prs)
+  static Handle(visu_prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
-  ASitus_EXPORT virtual bool
+  virtual bool
     IsVisible() const;
 
 private:

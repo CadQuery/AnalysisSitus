@@ -66,6 +66,15 @@ set "AD_LIB=%AD_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 set "AD_BIN=%AD_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
 
 rem ===========================================================================
+rem Setting environment for QR (Quaoar)
+rem ===========================================================================
+
+if "%QR_ROOT%" == "" set "QR_ROOT=%AS_PRODUCTS%\quaoar"
+set "QR_INC=%QR_ROOT%\include"
+set "QR_LIB=%QR_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
+set "QR_BIN=%QR_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
+
+rem ===========================================================================
 rem Setting TBB environment 
 rem ===========================================================================
 

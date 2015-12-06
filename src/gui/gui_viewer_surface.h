@@ -21,16 +21,13 @@ class gui_viewer_surface : public gui_viewer
 
 public:
 
-  ASitus_EXPORT
-    gui_viewer_surface(QWidget* parent = NULL);
+  gui_viewer_surface(QWidget* parent = NULL);
 
-  ASitus_EXPORT virtual
-    ~gui_viewer_surface();
+  virtual ~gui_viewer_surface();
 
 public:
 
-  ASitus_EXPORT void
-    Repaint();
+  void Repaint();
 
 public slots:
 

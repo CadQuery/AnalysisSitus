@@ -69,14 +69,9 @@ visu_prs_manager::visu_prs_manager() : vtkObject(), m_widget(NULL)
   m_renderer->TwoSidedLightingOn();
   m_renderer->SetBackground(0.1, 0.1, 0.1);
 
-  // Initialize cell picker
-  m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
-  m_cellPicker->SetTolerance(0.001);
-
-  // Create a picker for OCCT shapes
-  m_shapePicker = vtkSmartPointer<IVtkTools_ShapePicker>::New();
-  m_shapePicker->SetTolerance(0.025);
-  m_shapePicker->SetRenderer(m_renderer);
+  // Well, this is kind of very stupid invocation, but we have to do it
+  // as OCCT picker works really strange...
+  this->InitializePicker();
 
   // Set default selection mode
   m_iSelectionModes = SelectionMode_None;
@@ -871,6 +866,22 @@ void visu_prs_manager::Initialize(QWidget* theWidget, const bool isOffscreen)
     m_widget->SetRenderWindow(m_renderWindow);
   }
   m_renderWindowInteractor->Initialize();
+}
+
+//! The following logic is normally a part of ctor, but we have it as a
+//! distinct method... Shame of us... But the problem is that OCCT picker
+//! seems to be not that good to survive without re-initialization from
+//! time to time...
+void visu_prs_manager::InitializePicker()
+{
+  // Initialize cell picker
+  m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
+  m_cellPicker->SetTolerance(0.001);
+
+  // Create a picker for OCCT shapes
+  m_shapePicker = vtkSmartPointer<IVtkTools_ShapePicker>::New();
+  m_shapePicker->SetTolerance(0.025);
+  m_shapePicker->SetRenderer(m_renderer);
 }
 
 //! Returns QVTK widget handled by Presentation Manager.

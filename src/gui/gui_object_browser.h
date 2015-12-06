@@ -26,16 +26,13 @@ class gui_object_browser : public QTreeWidget
 
 public:
 
-  ASitus_EXPORT
-    gui_object_browser(QWidget* parent = NULL);
+  gui_object_browser(QWidget* parent = NULL);
 
-  ASitus_EXPORT virtual
-    ~gui_object_browser();
+  virtual ~gui_object_browser();
 
 public:
 
-  ASitus_EXPORT void
-    Populate();
+  void Populate();
 
 protected:
 

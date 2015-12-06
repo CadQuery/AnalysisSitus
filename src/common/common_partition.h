@@ -41,9 +41,7 @@ public:
 
 protected:
 
-  //! Default constructor.
-  common_partition() : ActData_BasePartition()
-  {}
+  common_partition() : ActData_BasePartition() {} //!< Default constructor.
 
 };
 

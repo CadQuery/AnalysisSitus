@@ -54,8 +54,8 @@ public: // VTK macros and methods to override
 
   vtkTypeMacro(visu_prs_manager, vtkObject);
 
-  ASitus_EXPORT static visu_prs_manager* New();
-  ASitus_EXPORT void PrintSelf(ostream& os, vtkIndent indent);
+  static visu_prs_manager* New();
+  void PrintSelf(ostream& os, vtkIndent indent);
 
 public:
 
@@ -67,94 +67,94 @@ public:
 
 public:
 
-  ASitus_EXPORT visu_prs_manager();
+  visu_prs_manager();
 
 // Presentation management:
 public:
 
-  ASitus_EXPORT virtual void
+  virtual void
     Actualize(const Handle(ActAPI_INode)& theNode,
               const bool                  withChildren  = false,
               const bool                  doFitContents = false,
               const bool                  withRepaint   = true);
 
-  ASitus_EXPORT virtual void
+  virtual void
     Actualize(const Handle(ActAPI_HNodeList)& theNodeList,
               const bool                      withChildren  = false,
               const bool                      doFitContents = false,
               const bool                      withRepaint   = true);
 
-  ASitus_EXPORT virtual void
+  virtual void
     ActualizeExclusively(const Handle(ActAPI_HNodeList)& theNodeList,
                          const bool                      doFitContents = true);
 
 //-----------------------------------------------------------------------------
 
-  ASitus_EXPORT virtual bool
+  virtual bool
     IsPresented(const Handle(ActAPI_INode)& theNode);
 
-  ASitus_EXPORT virtual bool
+  virtual bool
     IsPresented(const ActAPI_DataObjectId& theNodeId);
 
 //-----------------------------------------------------------------------------
 
-  ASitus_EXPORT virtual bool
+  virtual bool
     SetPresentation(const Handle(ActAPI_INode)& theNode);
 
 //-----------------------------------------------------------------------------
 
-  ASitus_EXPORT virtual Handle(visu_prs)
+  virtual Handle(visu_prs)
     GetPresentation(const Handle(ActAPI_INode)& theNode);
 
-  ASitus_EXPORT virtual Handle(visu_prs)
+  virtual Handle(visu_prs)
     GetPresentation(const ActAPI_DataObjectId& theNodeId);
 
 //-----------------------------------------------------------------------------
 
-  ASitus_EXPORT virtual void
+  virtual void
     InitPresentation(const Handle(ActAPI_INode)& theNode);
 
-  ASitus_EXPORT virtual void
+  virtual void
     InitPresentation(const ActAPI_DataObjectId& theNodeId);
 
 //-----------------------------------------------------------------------------
 
-  ASitus_EXPORT virtual void
+  virtual void
     RenderPresentation(const Handle(ActAPI_INode)& theNode);
 
-  ASitus_EXPORT virtual void
+  virtual void
     RenderPresentation(const ActAPI_DataObjectId& theNodeId);
 
 //-----------------------------------------------------------------------------
 
-  ASitus_EXPORT virtual void
+  virtual void
     DeRenderPresentation(const Handle(ActAPI_INode)& theNode);
 
-  ASitus_EXPORT virtual void
+  virtual void
     DeRenderPresentation(const ActAPI_DataObjectId& theNodeId);
 
-  ASitus_EXPORT virtual void
+  virtual void
     DeRenderAllPresentations();
 
 //-----------------------------------------------------------------------------
 
-  ASitus_EXPORT virtual void
+  virtual void
     UpdatePresentation(const Handle(ActAPI_INode)& theNode,
                        const bool doFitContents = true);
 
-  ASitus_EXPORT virtual void
+  virtual void
     UpdatePresentation(const ActAPI_DataObjectId& theNodeId,
                        const bool doFitContents = true);
 
 //-----------------------------------------------------------------------------
 
-  ASitus_EXPORT virtual bool
+  virtual bool
     DeletePresentation(const Handle(ActAPI_INode)& theNode);
 
-  ASitus_EXPORT virtual bool
+  virtual bool
     DeletePresentation(const ActAPI_DataObjectId& theNodeId);
 
-  ASitus_EXPORT virtual void
+  virtual void
     DeleteAllPresentations();
 
 //-----------------------------------------------------------------------------
@@ -162,82 +162,85 @@ public:
 // Selection management:
 public:
 
-  ASitus_EXPORT void
+  void
     SetSelectionMode(const int theMode);
 
-  ASitus_EXPORT int
+  int
     GetSelectionMode() const;
 
-  ASitus_EXPORT ActAPI_DataObjectIdList
+  ActAPI_DataObjectIdList
     Pick(visu_pick_input*            thePickInput,
          const visu_selection_nature theSelNature);
 
-  ASitus_EXPORT void
+  void
     SetPickList(const Handle(ActAPI_HNodeList)& theNodeList);
 
-  ASitus_EXPORT Handle(ActAPI_HNodeList)
+  Handle(ActAPI_HNodeList)
     GetPickList() const;
 
-  ASitus_EXPORT void
+  void
     SetPickFromList(const bool isEnabled) const;
 
-  ASitus_EXPORT bool
+  bool
     IsPickFromList() const;
 
-  ASitus_EXPORT void
+  void
     Highlight(const Handle(ActAPI_HNodeList)& theNodes);
 
-  ASitus_EXPORT void
+  void
     Highlight(const Handle(ActAPI_INode)& theNode);
 
-  ASitus_EXPORT void
+  void
     Highlight(const Handle(ActAPI_HNodeList)& theNodes,
               const visu_actor_elem_map&      theActorElems,
               const int                       theModes);
 
-  ASitus_EXPORT void
+  void
     CleanDetection();
 
-  ASitus_EXPORT Handle(ActAPI_HNodeList)
+  Handle(ActAPI_HNodeList)
     GetHighlighted() const;
 
-  ASitus_EXPORT const visu_actual_selection&
+  const visu_actual_selection&
     GetCurrentSelection() const;
 
 // Visualization kernel:
 public:
 
-  ASitus_EXPORT long int
+  long int
     AddUpdateCallback(unsigned long theEventID,
                       vtkCommand*   theCallback);
 
-  ASitus_EXPORT bool
+  bool
     RemoveUpdateCallback(unsigned long theEventID,
                          unsigned long theTag);
 
-  ASitus_EXPORT void
+  void
     SetRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer);
 
-  ASitus_EXPORT vtkRenderer*
+  vtkRenderer*
     GetRenderer() const;
 
-  ASitus_EXPORT vtkRenderWindow*
+  vtkRenderWindow*
     GetRenderWindow() const;
 
-  ASitus_EXPORT void
+  void
     Initialize(QWidget*   theWidget,
                const bool theIsOffscreen = false);
 
-  ASitus_EXPORT QVTKWidget*
+  void
+    InitializePicker();
+
+  QVTKWidget*
     GetQVTKWidget() const;
 
-  ASitus_EXPORT vtkInteractorStyle*
+  vtkInteractorStyle*
     GetDefaultInteractorStyle() const;
 
-  ASitus_EXPORT vtkAxesActor*
+  vtkAxesActor*
     GetTrihedron() const;
 
-  ASitus_EXPORT vtkSmartPointer<vtkPropCollection>
+  vtkSmartPointer<vtkPropCollection>
     PropsByTrihedron() const;
 
 public:
@@ -284,7 +287,7 @@ private:
 
   //! QVTK widget.
   QVTKWidget* m_widget;
-  
+
   //! Active renderer.
   vtkSmartPointer<vtkRenderer> m_renderer;
 

@@ -28,43 +28,43 @@
 //! results on meshes.
 namespace visu_mesh_result_utils
 {
-  ASitus_EXPORT vtkSmartPointer<vtkLookupTable>
+  vtkSmartPointer<vtkLookupTable>
     InitLookupTable(const double theRangeMin,
                     const double theRangeMax);
 
-  ASitus_EXPORT void
+  void
     InitCellScalarMapper(vtkMapper* theMapper,
                          vtkLookupTable* theLookup,
                          const char* theScalarsArrName,
                          const bool doInterpolation = true);
 
-  ASitus_EXPORT void
+  void
     InitCellScalarMapper(vtkMapper* theMapper,
                          const char* theScalarsArrName,
                          const double theRangeMin,
                          const double theRangeMax,
                          const bool doInterpolation = true);
 
-  ASitus_EXPORT void
+  void
     InitPointScalarMapper(vtkMapper* theMapper,
                           vtkLookupTable* theLookup,
                           const char* theScalarsArrName,
                           const bool doInterpolation = true);
 
-  ASitus_EXPORT void
+  void
     InitPointScalarMapper(vtkMapper* theMapper,
                           const char* theScalarsArrName,
                           const double theRangeMin,
                           const double theRangeMax,
                           const bool doInterpolation = true);
 
-  ASitus_EXPORT void
+  void
     InitScalarBarWidget(vtkScalarBarWidget* theScalarBarWidget);
 
-  ASitus_EXPORT vtkSmartPointer<vtkPolyDataAlgorithm>
+  vtkSmartPointer<vtkPolyDataAlgorithm>
     GetVectorGlyph();
 
-  ASitus_EXPORT vtkSmartPointer<vtkTransform>
+  vtkSmartPointer<vtkTransform>
     GetVectorGlyphTransform();
 };
 

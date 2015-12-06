@@ -36,7 +36,7 @@ public:
 
 public:
 
-  ASitus_EXPORT virtual bool
+  virtual bool
     MustExecute(const Handle(ActAux_TimeStamp)& Against) const;
 
 public:
@@ -53,7 +53,7 @@ protected:
   //! (more precisely, if its MTime record is updated), the translation must
   //! be repeated.
   //! \return list of source Parameters.
-  ASitus_EXPORT virtual Handle(ActAPI_HParameterList)
+  virtual Handle(ActAPI_HParameterList)
     translationSources() const = 0;
 
 };

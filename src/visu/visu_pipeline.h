@@ -47,64 +47,63 @@ public:
 
 public:
 
-  ASitus_EXPORT void
+  void
     SetInputData(const vtkSmartPointer<vtkDataSet>& data);
 
-  ASitus_EXPORT void
+  void
     SetInputConnection(vtkAlgorithmOutput* out);
 
 public:
 
-  ASitus_EXPORT virtual void
+  virtual void
     Update();
 
-  ASitus_EXPORT virtual void
+  virtual void
     Build();
 
 public:
 
-  ASitus_EXPORT vtkActor*
+  vtkActor*
     Actor();
 
-  ASitus_EXPORT vtkMapper*
+  vtkMapper*
     Mapper();
 
-  ASitus_EXPORT void
+  void
     AddToRenderer(vtkRenderer* renderer);
 
-  ASitus_EXPORT void
+  void
     RemoveFromRenderer(vtkRenderer* renderer);
 
 public:
 
-  ASitus_EXPORT void
+  void
     Modified();
 
-  ASitus_EXPORT Handle(ActAux_TimeStamp)
+  Handle(ActAux_TimeStamp)
     GetMTime() const;
 
 protected:
 
-  ASitus_EXPORT
-    visu_pipeline(const vtkSmartPointer<vtkMapper>& mapper,
-                  const vtkSmartPointer<vtkActor>&  actor);
+  visu_pipeline(const vtkSmartPointer<vtkMapper>& mapper,
+                const vtkSmartPointer<vtkActor>&  actor);
 
 // Pipeline construction routines to be used by derived classes only:
 protected:
 
-  ASitus_EXPORT void
+  void
     disable(const int index);
 
-  ASitus_EXPORT void
+  void
     enable(const int index);
 
-  ASitus_EXPORT void
+  void
     append(const vtkSmartPointer<vtkAlgorithm>& filter);
 
-  ASitus_EXPORT vtkSmartPointer<vtkAlgorithm>
+  vtkSmartPointer<vtkAlgorithm>
     filter(const int index) const;
 
-  ASitus_EXPORT int
+  int
     numFilters() const;
 
 private:

@@ -33,32 +33,31 @@ public:
 
 public:
 
-  ASitus_EXPORT
-    visu_shape_pipeline(const bool isOCCTColorScheme = true,
-                        const bool isBound2Node      = true,
-                        const bool isSecondary       = false,
-                        const bool isTrianglesMode   = false);
+  visu_shape_pipeline(const bool isOCCTColorScheme = true,
+                      const bool isBound2Node      = true,
+                      const bool isSecondary       = false,
+                      const bool isTrianglesMode   = false);
 
 public:
 
-  ASitus_EXPORT virtual void
+  virtual void
     SetInput(const Handle(visu_data_provider)& theDataProvider);
 
 public:
 
-  ASitus_EXPORT bool IsShadingMode() const;
-  ASitus_EXPORT void ShadingModeOn();
+  bool IsShadingMode() const;
+  void ShadingModeOn();
 
-  ASitus_EXPORT bool IsWireframeMode() const;
-  ASitus_EXPORT void WireframeModeOn();
+  bool IsWireframeMode() const;
+  void WireframeModeOn();
 
-  ASitus_EXPORT void VoidSubShapesOn();
-  ASitus_EXPORT void VoidSubShapesOff();
+  void VoidSubShapesOn();
+  void VoidSubShapesOff();
 
-  ASitus_EXPORT void SharedVerticesOn();
-  ASitus_EXPORT void SharedVerticesOff();
+  void SharedVerticesOn();
+  void SharedVerticesOff();
 
-  ASitus_EXPORT vtkPolyDataAlgorithm* DataSource() const;
+  vtkPolyDataAlgorithm* DataSource() const;
 
 private:
 

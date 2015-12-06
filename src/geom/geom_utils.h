@@ -25,7 +25,7 @@ class geom_utils
 {
 public:
 
-  ASitus_EXPORT static TopoDS_Shape
+  static TopoDS_Shape
     ApplyTransformation(const TopoDS_Shape& theShape,
                         const double        theXPos,
                         const double        theYPos,
@@ -34,7 +34,7 @@ public:
                         const double        theAngleB,
                         const double        theAngleC);
 
-  ASitus_EXPORT static gp_Trsf
+  static gp_Trsf
     Transformation(const double theXPos,
                    const double theYPos,
                    const double theZPos,
@@ -42,28 +42,32 @@ public:
                    const double theAngleB,
                    const double theAngleC);
 
-  ASitus_EXPORT static TopoDS_Shape
+  static TopoDS_Shape
     ApplyTransformation(const TopoDS_Shape& theShape,
                         const gp_Trsf&      theTransform);
 
-  ASitus_EXPORT static TopoDS_Shape
+  static TopoDS_Shape
     AssembleShapes(const TopTools_ListOfShape& theShapes);
 
-  ASitus_EXPORT static void
+  static void
     Bounds(const TopoDS_Shape& theShape,
            double& XMin, double& YMin, double& ZMin,
            double& XMax, double& YMax, double& ZMax);
 
-  ASitus_EXPORT static bool
+  static bool
     CheckShape(const TopoDS_Shape&  theShape,
                ActAPI_ProgressEntry PEntry);
 
-  ASitus_EXPORT static double
+  static double
     MaxTolerance(const TopoDS_Shape& theShape);
 
-  ASitus_EXPORT static bool
+  static bool
     ReadBRep(const TCollection_AsciiString& theFilename,
              TopoDS_Shape&                  theShape);
+
+  static void
+    ShapeSummary(const TopoDS_Shape&      shape,
+                 TCollection_AsciiString& info);
 
 private:
 

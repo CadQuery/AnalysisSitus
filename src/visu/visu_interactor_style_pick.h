@@ -30,31 +30,31 @@ public:
 // Customization:
 public:
 
-  ASitus_EXPORT void
+  void
     SetRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer);
 
-  ASitus_EXPORT vtkSmartPointer<vtkRenderer>
+  vtkSmartPointer<vtkRenderer>
     GetRenderer() const;
 
-  ASitus_EXPORT unsigned long
+  unsigned long
     AddRotationCallback(unsigned long theEventID, vtkCommand* theCallback);
 
-  ASitus_EXPORT bool
+  bool
     RemoveRotationCallback(unsigned long theEventID, unsigned long theTag);
 
 // Overriding:
 public:
 
-  ASitus_EXPORT virtual void
+  virtual void
     OnMouseMove();
 
-  ASitus_EXPORT virtual void
+  virtual void
     OnLeftButtonDown();
 
-  ASitus_EXPORT virtual void
+  virtual void
     OnLeftButtonUp();
 
-  ASitus_EXPORT virtual void
+  virtual void
     EndRotate();
 
 private:

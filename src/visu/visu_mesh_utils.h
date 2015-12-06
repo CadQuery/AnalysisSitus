@@ -31,33 +31,33 @@ enum visu_mesh_items
 //! Auxiliary functions supporting mesh presentations in VTK viewer.
 namespace visu_mesh_utils
 {
-  ASitus_EXPORT vtkSmartPointer<vtkLookupTable>
+  vtkSmartPointer<vtkLookupTable>
     InitLookupTable();
 
-  ASitus_EXPORT void
+  void
     InitMapper(vtkMapper* theMapper,
                vtkLookupTable* theLookup,
                const char* theScalarsArrName);
 
-  ASitus_EXPORT void
+  void
     InitMapper(vtkMapper* theMapper,
                const char* theScalarsArrName);
 
-  ASitus_EXPORT double
+  double
     DefaultShrinkFactor();
 
-  ASitus_EXPORT double
+  double
     DefaultPointSize();
 
-  ASitus_EXPORT void
+  void
     DefaultContourColor(double& fR,
                         double& fG,
                         double& fB);
 
-  ASitus_EXPORT double
+  double
     DefaultContourLineWidth();
 
-  ASitus_EXPORT double
+  double
     DefaultContourOpacity();
 };
 

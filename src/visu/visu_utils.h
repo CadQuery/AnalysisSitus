@@ -89,66 +89,66 @@ public:
   //! Mapping between Node types and allocation routines.
   typedef NCollection_DataMap<TCollection_AsciiString, visu_prs_allocator> TPrsAllocMap;
 
-  ASitus_EXPORT static TPrsAllocMap
+  static TPrsAllocMap
     RegisterPrsType(const TCollection_AsciiString& theType,
                     const visu_prs_allocator       theAllocFunc);
 
-  ASitus_EXPORT static const TPrsAllocMap&
+  static const TPrsAllocMap&
     GetAllocMap();
 
 // Scene:
 public:
 
-  ASitus_EXPORT static int
+  static int
     ComputeVisiblePropBounds(vtkRenderer*         theRenderer,
                              vtkFloatingPointType theBounds[6],
                              vtkPropCollection*   thePropsToSkip);
 
-  ASitus_EXPORT static void
+  static void
     ResetCamera(vtkRenderer*       theRenderer,
                 vtkPropCollection* thePropsToSkip);
 
-  ASitus_EXPORT static bool
+  static bool
     AdjustCamera(vtkRenderer*       theRenderer,
                  vtkPropCollection* thePropsToSkip,
                  bool               isDefaultNorm   = false,
                  bool               doScaling       = true);
 
-  ASitus_EXPORT static void
+  static void
     AdjustCameraClippingRange(vtkRenderer* theRenderer);
 
-  ASitus_EXPORT static void
+  static void
     CameraOnTop(vtkRenderer* theRenderer);
 
-  ASitus_EXPORT static void
+  static void
     CameraOnBottom(vtkRenderer* theRenderer);
 
-  ASitus_EXPORT static void
+  static void
     CameraOnFront(vtkRenderer* theRenderer);
 
-  ASitus_EXPORT static void
+  static void
     CameraOnBack(vtkRenderer* theRenderer);
 
-  ASitus_EXPORT static void
+  static void
     CameraOnLeft(vtkRenderer* theRenderer);
 
-  ASitus_EXPORT static void
+  static void
     CameraOnRight(vtkRenderer* theRenderer);
 
-  ASitus_EXPORT static void
+  static void
     ApplyLightingRules(vtkActor* theActor);
 
-  ASitus_EXPORT static void
+  static void
     TranslateView(vtkRenderer* theRenderer,
                   const int    theOldX,
                   const int    theOldY,
                   const int    theNewX,
                   const int    theNewY);
 
-  ASitus_EXPORT static QImage
+  static QImage
     DumpView(vtkRenderWindow* theRenderWindow);
 
-  ASitus_EXPORT static void
+  static void
     AdjustTrihedron(vtkRenderer*       theRenderer,
                     vtkAxesActor*      theActor,
                     vtkPropCollection* thePropsToSkip);
@@ -156,72 +156,72 @@ public:
 // Other commons:
 public:
 
-  ASitus_EXPORT static vtkSmartPointer<vtkIntArray>
+  static vtkSmartPointer<vtkIntArray>
     InitIntArray(const char* theArrName);
 
-  ASitus_EXPORT static vtkSmartPointer<vtkDoubleArray>
+  static vtkSmartPointer<vtkDoubleArray>
     InitDoubleArray(const char* theArrName);
 
-  ASitus_EXPORT static vtkSmartPointer<vtkDoubleArray>
+  static vtkSmartPointer<vtkDoubleArray>
     InitDoubleVectorArray(const char* theArrName);
 
-  ASitus_EXPORT static vtkSmartPointer<vtkStringArray>
+  static vtkSmartPointer<vtkStringArray>
     InitStringArray(const char* theArrName);
 
-  ASitus_EXPORT static void
+  static void
     DefaultPickingColor(double& fR,
                         double& fG,
                         double& fB);
 
-  ASitus_EXPORT static void
+  static void
     DefaultDetectionColor(double& fR,
                           double& fG,
                           double& fB);
 
-  ASitus_EXPORT static double
+  static double
     DefaultPickLineWidth();
 
-  ASitus_EXPORT static double
+  static double
     DefaultDetectionLineWidth();
 
-  ASitus_EXPORT static double
+  static double
     DefaultHilightPointSize();
 
-  ASitus_EXPORT static vtkLookupTable*
+  static vtkLookupTable*
     InitLookupTable();
 
-  ASitus_EXPORT static void
+  static void
     SetLookupTableColor(vtkLookupTable* theColorTable,
                         const IVtk_MeshType theColorRole,
                         const double theR, const double theG, const double theB,
                         const double /*theA*/);
 
-  ASitus_EXPORT static void
+  static void
     GetLookupTableColor(vtkLookupTable* theColorTable,
                         const IVtk_MeshType theColorRole,
                         double &theR, double &theG, double &theB);
 
-  ASitus_EXPORT static void
+  static void
     GetLookupTableColor(vtkLookupTable* theColorTable,
                         const IVtk_MeshType theColorRole,
                         double &theR, double &theG, double &theB,
                         double &theA);
 
-  ASitus_EXPORT static void
+  static void
     InitShapeMapper(vtkMapper* theMapper);
 
-  ASitus_EXPORT static void
+  static void
     InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorTable);
 
-  ASitus_EXPORT static vtkSmartPointer<vtkLookupTable>
+  static vtkSmartPointer<vtkLookupTable>
     InitDomainLookupTable();
 
-  ASitus_EXPORT static void
+  static void
     InitMapper(vtkMapper*      theMapper,
                vtkLookupTable* theLookup,
                const char*     theScalarsArrName);
 
-  ASitus_EXPORT static void
+  static void
     InitTextWidget(vtkTextWidget* theTextWidget);
 
 public:

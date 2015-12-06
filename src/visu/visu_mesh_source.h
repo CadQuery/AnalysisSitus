@@ -36,22 +36,22 @@ public:
 // Kernel:
 public:
 
-  ASitus_EXPORT void
+  void
     EmptyGroupForAllModeOn();
 
-  ASitus_EXPORT void
+  void
     EmptyGroupForAllModeOff();
 
-  ASitus_EXPORT void
+  void
     SetInputMesh(const Handle(OMFDS_Mesh)& theMesh);
 
-  ASitus_EXPORT void
+  void
     SetInputElemGroup(const Handle(OMFDS_MeshGroup)& theGroup);
 
-  ASitus_EXPORT Handle(OMFDS_Mesh)
+  Handle(OMFDS_Mesh)
     GetInputMesh() const;
 
-  ASitus_EXPORT Handle(OMFDS_MeshGroup)
+  Handle(OMFDS_MeshGroup)
     GetInputElemGroup() const;
 
 protected:

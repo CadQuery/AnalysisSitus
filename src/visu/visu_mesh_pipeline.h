@@ -24,29 +24,28 @@ public:
 
 public:
 
-  ASitus_EXPORT
-    visu_mesh_pipeline();
+  visu_mesh_pipeline();
 
 public:
 
-  ASitus_EXPORT virtual void
+  virtual void
     SetInput(const Handle(visu_data_provider)& dataProvider);
 
 public:
 
-  ASitus_EXPORT void
+  void
     EmptyGroupForAllModeOn();
 
-  ASitus_EXPORT void
+  void
     EmptyGroupForAllModeOff();
 
-  ASitus_EXPORT bool
+  bool
     IsShrinkMode() const;
 
-  ASitus_EXPORT void
+  void
     ShrinkModeOn();
 
-  ASitus_EXPORT void
+  void
     ShrinkModeOff();
 
 private:

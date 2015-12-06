@@ -21,6 +21,9 @@
 #include <geom_STEP.h>
 #include <geom_utils.h>
 
+// A-Situs (visualization) includes
+#include <visu_topo_graph.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QFileDialog>
@@ -208,9 +211,14 @@ void gui_control_pane::onLoadBRep()
   // Update UI
   //---------------------------------------------------------------------------
 
+  common_facilities::Instance()->Prs.Part->InitializePicker();
   common_facilities::Instance()->Prs.Part->Actualize(geom_n.get(), false, true);
   //
   common_facilities::Instance()->ObjectBrowser->Populate();
+
+  // TODO: experimental
+  visu_topo_graph* pGraphView = new visu_topo_graph;
+  pGraphView->Render(shape);
 }
 
 //! On STEP loading.
@@ -240,6 +248,7 @@ void gui_control_pane::onLoadSTEP()
   // Update UI
   //---------------------------------------------------------------------------
 
+  common_facilities::Instance()->Prs.Part->InitializePicker();
   common_facilities::Instance()->Prs.Part->Actualize(geom_n.get(), false, true);
   //
   common_facilities::Instance()->ObjectBrowser->Populate();

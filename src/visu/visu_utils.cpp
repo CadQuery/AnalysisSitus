@@ -19,6 +19,7 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 #include <vtkTextRepresentation.h>
 #pragma warning(pop)
 
@@ -679,4 +680,5 @@ void visu_utils::InitTextWidget(vtkTextWidget* theTextWidget)
   vtkSmartPointer<vtkTextActor> aTextActor = vtkSmartPointer<vtkTextActor>::New();
   aRep->SetTextActor(aTextActor);
   aTextActor->SetTextScaleModeToViewport();
+  aTextActor->GetTextProperty()->SetJustificationToLeft();
 }

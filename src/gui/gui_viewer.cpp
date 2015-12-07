@@ -10,7 +10,7 @@
 
 //! Creates a new instance of viewer.
 //! \param parent [in] parent widget.
-gui_viewer::gui_viewer(QWidget* parent) : QMainWindow(parent)
+gui_viewer::gui_viewer(QWidget* parent) : QWidget(parent)
 {}
 
 //! Destructor.

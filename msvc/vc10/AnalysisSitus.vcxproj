@@ -51,6 +51,16 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
     <ClInclude Include="..\..\src\geom\geom_surf_node.h" />
+    <CustomBuild Include="..\..\src\gui\gui_main_window.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\visu\prs\visu_geom_face_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_geom_surf_prs.h" />
     <ClInclude Include="..\..\src\visu\visu_curve_source.h" />
@@ -151,6 +161,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\geom\geom_STEP.cpp" />
     <ClCompile Include="..\..\src\geom\geom_surf_node.cpp" />
     <ClCompile Include="..\..\src\geom\geom_utils.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window.cpp" />
     <ClCompile Include="..\..\src\gui\gui_object_browser.cpp" />
     <ClCompile Include="..\..\src\gui\gui_splitter.cpp" />
     <ClCompile Include="..\..\src\gui\gui_control_pane.cpp" />
@@ -207,6 +218,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_surface.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_visu_pick_callback.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_object_browser.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{98799C8D-EED8-41DE-9C99-508159A9C504}</ProjectGuid>

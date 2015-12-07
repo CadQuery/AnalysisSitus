@@ -13,11 +13,11 @@
 
 // Qt includes
 #pragma warning(push, 0)
-#include <QMainWindow>
+#include <QWidget>
 #pragma warning(pop)
 
 //! Base class for all viewers.
-class gui_viewer : public QMainWindow
+class gui_viewer : public QWidget
 {
   Q_OBJECT
 

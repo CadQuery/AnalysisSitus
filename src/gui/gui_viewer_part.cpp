@@ -18,7 +18,6 @@
 
 // GUI includes
 #include <gui_control_pane.h>
-#include <gui_splitter.h>
 
 // VTK includes
 #include <vtkAssembly.h>
@@ -46,7 +45,6 @@ gui_viewer_part::gui_viewer_part(QWidget* parent) : gui_viewer(parent)
 
   // Widgets and layouts
   gui_control_pane* pControlPane = new gui_control_pane(this);
-  gui_splitter*     pBasePane    = new gui_splitter(this);
   QVTKWidget*       pViewer      = common_facilities::Instance()->Prs.Part->GetQVTKWidget();
   QHBoxLayout*      pBaseLayout  = new QHBoxLayout();
 
@@ -55,11 +53,10 @@ gui_viewer_part::gui_viewer_part(QWidget* parent) : gui_viewer(parent)
   pBaseLayout->addWidget(pControlPane);
   pBaseLayout->addWidget(pViewer);
   pBaseLayout->setAlignment(Qt::AlignTop);
-  pBasePane->setLayout(pBaseLayout);
   pBaseLayout->setContentsMargins(0, 0, 0, 0);
 
   // Set central widget
-  this->setCentralWidget(pBasePane);
+  this->setLayout(pBaseLayout);
 
   /* ===================================
    *  Setting up picking infrastructure
@@ -229,6 +226,9 @@ void gui_viewer_part::onSubShapesPicked()
   // Actualize presentations
   //---------------------------------------------------------------------------
 
-  common_facilities::Instance()->Prs.Domain  ->Actualize(geom_n->FaceRepresentation().get(),    false, true);
-  common_facilities::Instance()->Prs.Surface ->Actualize(geom_n->SurfaceRepresentation().get(), false, true);
+  if ( common_facilities::Instance()->Prs.Domain )
+    common_facilities::Instance()->Prs.Domain->Actualize(geom_n->FaceRepresentation().get(), false, true);
+
+  if ( common_facilities::Instance()->Prs.Surface )
+    common_facilities::Instance()->Prs.Surface->Actualize(geom_n->SurfaceRepresentation().get(), false, true);
 }

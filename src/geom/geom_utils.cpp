@@ -23,6 +23,7 @@
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
@@ -569,69 +570,66 @@ bool geom_utils::ReadBRep(const TCollection_AsciiString& theFilename,
 void geom_utils::ShapeSummary(const TopoDS_Shape&      shape,
                               TCollection_AsciiString& info)
 {
-  TopTools_MapOfShape aMapOfShape;
-  aMapOfShape.Add(shape);
-  TopTools_ListOfShape aListOfShape;
-  aListOfShape.Append(shape);
-  TopTools_ListIteratorOfListOfShape itL(aListOfShape);
-
   // Summary
-  int nbSolids     = 0,
+  int nbCompsolids = 0,
+      nbCompounds  = 0,
+      nbSolids     = 0,
       nbShells     = 0,
       nbFaces      = 0,
       nbWires      = 0,
       nbEdges      = 0,
-      nbVertexes   = 0,
-      nbCompounds  = 0;
+      nbVertexes   = 0;
 
-  if ( shape.ShapeType() == TopAbs_COMPOUND )
-    nbCompounds++;
-  if ( shape.ShapeType() == TopAbs_SOLID )
-    nbSolids++;
-  if ( shape.ShapeType() == TopAbs_SHELL )
-    nbShells++;
-  if ( shape.ShapeType() == TopAbs_FACE )
-    nbFaces++;
-  if ( shape.ShapeType() == TopAbs_WIRE )
-    nbWires++;
-  if ( shape.ShapeType() == TopAbs_EDGE )
-    nbEdges++;
-  if ( shape.ShapeType() == TopAbs_VERTEX )
-    nbVertexes++;
+  // The following map is used to skip already traversed TShapes
+  TopTools_MapOfShape M;
+  M.Add(shape);
 
-  for ( ; itL.More(); itL.Next() )
+  // Traverse all sub-shapes
+  TopTools_ListOfShape shapeList;
+  shapeList.Append(shape);
+  //
+  for ( TopTools_ListIteratorOfListOfShape itL(shapeList); itL.More(); itL.Next() )
   {
-    for ( TopoDS_Iterator it( itL.Value() ); it.More(); it.Next() )
-    {
-      TopoDS_Shape aSubShape = it.Value();
+    const TopoDS_Shape& currentShape = itL.Value();
 
-      if ( !aMapOfShape.Add(aSubShape) )
+    if ( currentShape.ShapeType() == TopAbs_COMPSOLID )
+      nbCompsolids++;
+    else if ( currentShape.ShapeType() == TopAbs_COMPOUND )
+      nbCompounds++;
+    else if ( currentShape.ShapeType() == TopAbs_SOLID )
+      nbSolids++;
+    else if ( currentShape.ShapeType() == TopAbs_SHELL )
+      nbShells++;
+    else if ( currentShape.ShapeType() == TopAbs_FACE )
+      nbFaces++;
+    else if ( currentShape.ShapeType() == TopAbs_WIRE )
+      nbWires++;
+    else if ( currentShape.ShapeType() == TopAbs_EDGE )
+      nbEdges++;
+    else if ( currentShape.ShapeType() == TopAbs_VERTEX )
+      nbVertexes++;
+
+    // Iterate over the direct children of a shape
+    for ( TopoDS_Iterator sub_it(currentShape); sub_it.More(); sub_it.Next() )
+    {
+      const TopoDS_Shape& subShape = sub_it.Value();
+
+      if ( !M.Add(subShape) )
         continue;
 
-      aListOfShape.Append(aSubShape);
-      if ( aSubShape.ShapeType() == TopAbs_COMPOUND )
-        nbCompounds++;
-      if ( aSubShape.ShapeType() == TopAbs_SOLID )
-        nbSolids++;
-      if ( aSubShape.ShapeType() == TopAbs_SHELL )
-        nbShells++;
-      if ( aSubShape.ShapeType() == TopAbs_FACE )
-        nbFaces++;
-      if ( aSubShape.ShapeType() == TopAbs_WIRE )
-        nbWires++;
-      if ( aSubShape.ShapeType() == TopAbs_EDGE )
-        nbEdges++;
-      if ( aSubShape.ShapeType() == TopAbs_VERTEX )
-        nbVertexes++;
+      // Add sub-shape to iterate over
+      shapeList.Append(subShape);
     }
   }
 
+  // Prepare output string with the gathered summary
   info += "PART SUMMARY:\n";
-  info += "- nb compounds: ";    info += nbCompounds;               info += "\n";
-  info += "- nb solids: ";       info += nbSolids;                  info += "\n";
-  info += "- nb shells: ";       info += nbShells;                  info += "\n";
-  info += "- nb faces: ";        info += nbFaces;                   info += "\n";
-  info += "- nb wires: ";        info += nbWires;                   info += "\n";
-  info += "- nb edges: ";        info += nbEdges;                   info += "\n";
-  info += "- nb vertices: ";     info += nbVertexes;                info += "\n";
+  info += "- nb compsolids: "; info += nbCompsolids; info += "\n";
+  info += "- nb compounds: ";  info += nbCompounds;  info += "\n";
+  info += "- nb solids: ";     info += nbSolids;     info += "\n";
+  info += "- nb shells: ";     info += nbShells;     info += "\n";
+  info += "- nb faces: ";      info += nbFaces;      info += "\n";
+  info += "- nb wires: ";      info += nbWires;      info += "\n";
+  info += "- nb edges: ";      info += nbEdges;      info += "\n";
+  info += "- nb vertices: ";   info += nbVertexes;   info += "\n";
 }

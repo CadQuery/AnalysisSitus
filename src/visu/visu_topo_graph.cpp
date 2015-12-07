@@ -106,7 +106,7 @@ void visu_topo_graph::Render(const TopoDS_Shape& shape)
 
   // Do layout manually before handing graph to the view.
   // This allows us to know the positions of edge arrows
-  VTK_CREATE(vtkGraphLayout,         aGraphLayout);
+  VTK_CREATE(vtkGraphLayout, aGraphLayout);
   VTK_CREATE(vtkForceDirectedLayoutStrategy, aGraphLayoutStrategy);
   aGraphLayout->SetInputData(aGraphData);
   aGraphLayout->SetLayoutStrategy(aGraphLayoutStrategy);

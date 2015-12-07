@@ -32,7 +32,6 @@ gui_viewer_domain::gui_viewer_domain(QWidget* parent) : gui_viewer(parent)
   common_facilities::Instance()->Prs.Domain->SetInteractionMode(visu_prs_manager::InteractionMode_2D);
 
   // Widgets and layouts
-  QWidget*     pBasePane   = new QWidget(this);
   QVTKWidget*  pViewer     = common_facilities::Instance()->Prs.Domain->GetQVTKWidget();
   QHBoxLayout* pBaseLayout = new QHBoxLayout();
 
@@ -40,11 +39,10 @@ gui_viewer_domain::gui_viewer_domain(QWidget* parent) : gui_viewer(parent)
   pBaseLayout->setSpacing(0);
   pBaseLayout->addWidget(pViewer);
   pBaseLayout->setAlignment(Qt::AlignTop);
-  pBasePane->setLayout(pBaseLayout);
   pBaseLayout->setContentsMargins(0, 0, 0, 0);
 
   // Set central widget
-  this->setCentralWidget(pBasePane);
+  this->setLayout(pBaseLayout);
 
   /* =====================================
    *  Finalize initial state of the scene

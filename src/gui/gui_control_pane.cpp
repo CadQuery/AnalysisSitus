@@ -214,7 +214,8 @@ void gui_control_pane::onLoadBRep()
   common_facilities::Instance()->Prs.Part->InitializePicker();
   common_facilities::Instance()->Prs.Part->Actualize(geom_n.get(), false, true);
   //
-  common_facilities::Instance()->ObjectBrowser->Populate();
+  if ( common_facilities::Instance()->ObjectBrowser )
+    common_facilities::Instance()->ObjectBrowser->Populate();
 
   // TODO: experimental
   visu_topo_graph* pGraphView = new visu_topo_graph;
@@ -251,7 +252,8 @@ void gui_control_pane::onLoadSTEP()
   common_facilities::Instance()->Prs.Part->InitializePicker();
   common_facilities::Instance()->Prs.Part->Actualize(geom_n.get(), false, true);
   //
-  common_facilities::Instance()->ObjectBrowser->Populate();
+  if ( common_facilities::Instance()->ObjectBrowser )
+    common_facilities::Instance()->ObjectBrowser->Populate();
 }
 
 //-----------------------------------------------------------------------------

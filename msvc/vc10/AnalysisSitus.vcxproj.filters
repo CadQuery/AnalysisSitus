@@ -295,6 +295,9 @@
     <ClCompile Include="$(IntDir)moc\moc_gui_object_browser.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\mesh\mesh_ply.cpp">
       <Filter>Source Files\Mesh</Filter>
     </ClCompile>
@@ -406,6 +409,9 @@
     <ClCompile Include="..\..\src\visu\visu_topo_graph.cpp">
       <Filter>Source Files\Visualization</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\gui\gui_control_pane.h">
@@ -430,6 +436,9 @@
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\src\gui\gui_viewer_surface.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
   </ItemGroup>

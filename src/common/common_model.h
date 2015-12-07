@@ -43,8 +43,9 @@ public:
 
 public:
 
-  void Populate();
-  void Clear();
+  void              Populate();
+  void              Clear();
+  Handle(geom_node) GeometryNode() const;
 
 public:
 

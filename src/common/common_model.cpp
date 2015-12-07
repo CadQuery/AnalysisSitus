@@ -91,6 +91,18 @@ void common_model::Clear()
   this->CommitCommand(); // tx end
 }
 
+//! \return single Geometry Node.
+Handle(geom_node) common_model::GeometryNode() const
+{
+  for ( ActData_BasePartition::Iterator it( this->GeomPartition() ); it.More(); it.Next() )
+  {
+    Handle(geom_node) N = Handle(geom_node)::DownCast( it.Value() );
+    if ( !N.IsNull() && N->IsWellFormed() )
+      return N;
+  }
+  return NULL;
+}
+
 //-----------------------------------------------------------------------------
 
 //! Initializes Partitions.

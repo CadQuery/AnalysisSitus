@@ -54,6 +54,9 @@ int visu_face_data_provider::GetFaceIndex() const
 //! \return topological face extracted from the part by its stored ID.
 TopoDS_Face visu_face_data_provider::ExtractFace() const
 {
+  if ( !this->GetFaceIndex() )
+    return TopoDS_Face();
+
   // Access owning geometry
   ActAPI_DataObjectId face_node_id = this->GetNodeID();
   Handle(geom_node)

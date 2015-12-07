@@ -71,13 +71,13 @@ void visu_geom_surf_prs::afterInitPipelines()
   // Get working face and its host surface
   const int            F_idx = DP->GetFaceIndex();
   TopoDS_Face          F     = DP->ExtractFace();
-  Handle(Geom_Surface) S     = BRep_Tool::Surface(F);
+  Handle(Geom_Surface) S     = F.IsNull() ? NULL : BRep_Tool::Surface(F);
 
   // Prepare main title
   TCollection_AsciiString TITLE("Face #");
   TITLE += F_idx;
   TITLE += ": ";
-  TITLE += S->DynamicType()->Name();
+  TITLE += ( S.IsNull() ? "NONE" : S->DynamicType()->Name() );
 
   // Update text on the annotation
   m_textWidget->GetTextActor()->SetInput( TITLE.ToCString() );

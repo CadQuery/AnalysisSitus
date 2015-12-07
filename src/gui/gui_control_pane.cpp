@@ -24,6 +24,11 @@
 // A-Situs (visualization) includes
 #include <visu_topo_graph.h>
 
+// OCCT includes
+#include <TopExp.hxx>
+#include <TopoDS.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QFileDialog>
@@ -99,9 +104,10 @@ gui_control_pane::gui_control_pane(QWidget* parent) : QWidget(parent)
   m_pMainLayout = new QVBoxLayout();
 
   // Buttons
-  m_buttons.LoadPly  = new QPushButton("Load &ply");
-  m_buttons.LoadBRep = new QPushButton("Load &b-rep");
-  m_buttons.LoadSTEP = new QPushButton("Load &STEP");
+  m_buttons.LoadPly   = new QPushButton("Load &ply");
+  m_buttons.LoadBRep  = new QPushButton("Load &b-rep");
+  m_buttons.LoadSTEP  = new QPushButton("Load &STEP");
+  m_buttons.ShowGraph = new QPushButton("Show &graph");
 
   // Set layout
   m_pMainLayout->setSpacing(0);
@@ -109,6 +115,7 @@ gui_control_pane::gui_control_pane(QWidget* parent) : QWidget(parent)
   m_pMainLayout->addWidget(m_buttons.LoadPly);
   m_pMainLayout->addWidget(m_buttons.LoadBRep);
   m_pMainLayout->addWidget(m_buttons.LoadSTEP);
+  m_pMainLayout->addWidget(m_buttons.ShowGraph);
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
   m_pMainLayout->setContentsMargins(10, 10, 10, 10);
@@ -116,9 +123,10 @@ gui_control_pane::gui_control_pane(QWidget* parent) : QWidget(parent)
   this->setLayout(m_pMainLayout);
 
   // Connect signals to slots
-  connect( m_buttons.LoadPly,  SIGNAL( clicked() ), SLOT( onLoadPly() ) );
-  connect( m_buttons.LoadBRep, SIGNAL( clicked() ), SLOT( onLoadBRep() ) );
-  connect( m_buttons.LoadSTEP, SIGNAL( clicked() ), SLOT( onLoadSTEP() ) );
+  connect( m_buttons.LoadPly,   SIGNAL( clicked() ), SLOT( onLoadPly() ) );
+  connect( m_buttons.LoadBRep,  SIGNAL( clicked() ), SLOT( onLoadBRep() ) );
+  connect( m_buttons.LoadSTEP,  SIGNAL( clicked() ), SLOT( onLoadSTEP() ) );
+  connect( m_buttons.ShowGraph, SIGNAL( clicked() ), SLOT( onShowGraph() ) );
 }
 
 //! Destructor.
@@ -216,10 +224,6 @@ void gui_control_pane::onLoadBRep()
   //
   if ( common_facilities::Instance()->ObjectBrowser )
     common_facilities::Instance()->ObjectBrowser->Populate();
-
-  // TODO: experimental
-  visu_topo_graph* pGraphView = new visu_topo_graph;
-  pGraphView->Render(shape);
 }
 
 //! On STEP loading.
@@ -254,6 +258,37 @@ void gui_control_pane::onLoadSTEP()
   //
   if ( common_facilities::Instance()->ObjectBrowser )
     common_facilities::Instance()->ObjectBrowser->Populate();
+}
+
+//! Shows topology graph.
+void gui_control_pane::onShowGraph()
+{
+  // Access Geometry Node
+  Handle(geom_node) N = common_facilities::Instance()->Model->GeometryNode();
+  if ( N.IsNull() || !N->IsWellFormed() )
+    return;
+
+  // Shape to visualize a graph for
+  TopoDS_Shape targetShape;
+
+  // Access active face
+  Handle(geom_face_node) FN = N->FaceRepresentation();
+  if ( FN.IsNull() || !FN->IsWellFormed() || FN->GetSelectedFace() <= 0 )
+    targetShape = N->GetShape();
+  else
+  {
+    const int f_idx = FN->GetSelectedFace();
+
+    TopTools_IndexedMapOfShape M;
+    TopExp::MapShapes(N->GetShape(), M);
+    const TopoDS_Face& F = TopoDS::Face( M.FindKey(f_idx) );
+    //
+    targetShape = F;
+  }
+
+  // Show graph
+  visu_topo_graph* pGraphView = new visu_topo_graph;
+  pGraphView->Render(targetShape);
 }
 
 //-----------------------------------------------------------------------------

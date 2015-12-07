@@ -19,6 +19,7 @@
 
 // Qt includes
 #pragma warning(push, 0)
+#include <QCloseEvent>
 #include <QMainWindow>
 #pragma warning(pop)
 
@@ -31,6 +32,10 @@ public:
 
   gui_main_window();
   virtual ~gui_main_window();
+
+public:
+
+  void closeEvent(QCloseEvent* evt);
 
 private:
 
@@ -53,6 +58,14 @@ private:
                   wViewerPart(NULL),
                   wViewerSurface(NULL)
     {}
+
+    void Release()
+    {
+      delete wBrowser;       wBrowser       = NULL;
+      delete wViewerDomain;  wViewerDomain  = NULL;
+      delete wViewerPart;    wViewerPart    = NULL;
+      delete wViewerSurface; wViewerSurface = NULL;
+    }
   };
 
   t_widgets m_widgets;

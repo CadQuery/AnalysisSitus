@@ -35,6 +35,21 @@ gui_main_window::~gui_main_window()
 
 //-----------------------------------------------------------------------------
 
+//! Gets control on window close.
+//! \param evt [in] event.
+void gui_main_window::closeEvent(QCloseEvent* evt)
+{
+  // It seems that we have to destruct objects properly and manually in
+  // order to avoid some side effects from VTK. E.g. if we don't kill the
+  // widgets explicitly here, we may sometimes get a warning window of VTK
+  // saying that it lacks some resources
+  m_widgets.Release();
+  //
+  evt->accept();
+}
+
+//-----------------------------------------------------------------------------
+
 //! Creates main (part) viewer.
 void gui_main_window::createPartViewer()
 {

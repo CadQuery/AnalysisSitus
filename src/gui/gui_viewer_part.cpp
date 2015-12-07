@@ -157,6 +157,13 @@ void gui_viewer_part::onResetView()
 //! Callback for picking event.
 void gui_viewer_part::onSubShapesPicked()
 {
+  Handle(geom_node) geom_n = common_facilities::Instance()->Model->GeometryNode();
+  if ( geom_n.IsNull() || !geom_n->IsWellFormed() )
+  {
+    std::cout << "Geometry Node is not accessible" << std::endl;
+    return; // No target Node to proceed with
+  }
+
   //---------------------------------------------------------------------------
   // Retrieve current selection
   //---------------------------------------------------------------------------
@@ -202,23 +209,23 @@ void gui_viewer_part::onSubShapesPicked()
   // Store active selection in the Data Model
   //---------------------------------------------------------------------------
 
-  Handle(geom_node) geom_n;
-  if ( picked_face_IDs.size() == 1 )
-    geom_n = Handle(geom_node)::DownCast( common_facilities::Instance()->Model->FindNode(picked_node_IDs[0]) );
-
-  if ( geom_n.IsNull() )
-  {
-    std::cout << "Active face is not stored..." << std::endl;
-    return; // No target Node to proceed with
-  }
-
   common_facilities::Instance()->Model->OpenCommand(); // tx start
   {
     // Store index of the active face
-    geom_n->FaceRepresentation()    ->SetSelectedFace(picked_face_IDs[0]);
-    geom_n->SurfaceRepresentation() ->SetSelectedFace(picked_face_IDs[0]);
-    //
-    std::cout << "Active face has been stored..." << std::endl;
+    if ( picked_face_IDs.size() )
+    {
+      geom_n->FaceRepresentation()    ->SetSelectedFace(picked_face_IDs[0]);
+      geom_n->SurfaceRepresentation() ->SetSelectedFace(picked_face_IDs[0]);
+      //
+      std::cout << "Active face has been stored..." << std::endl;
+    }
+    else // Reset stored indices
+    {
+      geom_n->FaceRepresentation()    ->SetSelectedFace(0);
+      geom_n->SurfaceRepresentation() ->SetSelectedFace(0);
+      //
+      std::cout << "Active face has been reset..." << std::endl;
+    }
   }
   common_facilities::Instance()->Model->CommitCommand(); // tx commit
 

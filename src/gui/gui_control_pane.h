@@ -30,6 +30,7 @@ public slots:
   void onLoadPly();
   void onLoadBRep();
   void onLoadSTEP();
+  void onShowGraph();
 
 private:
 
@@ -44,15 +45,17 @@ private:
   //! Buttons.
   struct
   {
-    QPushButton* LoadPly;  //!< Button for ply loading.
-    QPushButton* LoadBRep; //!< Button for brep loading.
-    QPushButton* LoadSTEP; //!< Button for STEP loading.
+    QPushButton* LoadPly;   //!< Button for ply loading.
+    QPushButton* LoadBRep;  //!< Button for brep loading.
+    QPushButton* LoadSTEP;  //!< Button for STEP loading.
+    QPushButton* ShowGraph; //!< Show topology graph.
 
     void Release()
     {
-      delete LoadPly;  LoadPly  = NULL;
-      delete LoadBRep; LoadBRep = NULL;
-      delete LoadSTEP; LoadSTEP = NULL;
+      delete LoadPly;   LoadPly   = NULL;
+      delete LoadBRep;  LoadBRep  = NULL;
+      delete LoadSTEP;  LoadSTEP  = NULL;
+      delete ShowGraph; ShowGraph = NULL;
     }
   } m_buttons;
 

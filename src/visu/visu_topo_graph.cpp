@@ -239,7 +239,7 @@ void visu_topo_graph::Render(const TopoDS_Shape& shape)
    * ===================== */
 
   renderWindow->Render();
-  renderWindow->SetWindowName("Execution Graph");
+  renderWindow->SetWindowName("Topology Graph");
   renderWindowInteractor->Start();
 }
 

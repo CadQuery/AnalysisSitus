@@ -77,6 +77,9 @@ void visu_pick_callback::Execute(vtkObject*    vtkNotUsed(theCaller),
   if ( !this->Viewer() )
     return;
 
+  if ( !common_facilities::Instance()->Prs.Part )
+    return;
+
   // Access selection context
   const int selMode = common_facilities::Instance()->Prs.Part->GetSelectionMode();
 

@@ -96,7 +96,7 @@ rem ===========================================================================
 rem Setting environment for Qt
 rem ===========================================================================
 
-if "%QTDIR%" == "" set "QTDIR=%AS_PRODUCTS%\qt-4.7.4-20140912"
+if "%QTDIR%" == "" set "QTDIR=%AS_PRODUCTS%\qt-4.7.4-%ARCH%"
 set "QT_INC=%QTDIR%\include;%QTDIR%\include\QtGui;%QTDIR%\include\QtCore"
 set "QT_LIB=%QTDIR%\lib"
 set "QT_BIN=%QTDIR%\bin"

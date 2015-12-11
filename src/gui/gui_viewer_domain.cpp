@@ -28,11 +28,13 @@ gui_viewer_domain::gui_viewer_domain(QWidget* parent) : gui_viewer(parent)
 {
   // Initialize Presentation Manager along with QVTK widget
   common_facilities::Instance()->Prs.Domain = vtkSmartPointer<visu_prs_manager>::New();
-  common_facilities::Instance()->Prs.Domain->Initialize(this);
-  common_facilities::Instance()->Prs.Domain->SetInteractionMode(visu_prs_manager::InteractionMode_2D);
+  m_prs_mgr = common_facilities::Instance()->Prs.Domain;
+  //
+  m_prs_mgr->Initialize(this);
+  m_prs_mgr->SetInteractionMode(visu_prs_manager::InteractionMode_2D);
 
   // Widgets and layouts
-  QVTKWidget*  pViewer     = common_facilities::Instance()->Prs.Domain->GetQVTKWidget();
+  QVTKWidget*  pViewer     = m_prs_mgr->GetQVTKWidget();
   QHBoxLayout* pBaseLayout = new QHBoxLayout();
 
   // Configure layout
@@ -59,12 +61,12 @@ gui_viewer_domain::~gui_viewer_domain()
 //! Updates viewer.
 void gui_viewer_domain::Repaint()
 {
-  common_facilities::Instance()->Prs.Domain->GetQVTKWidget()->repaint();
+  m_prs_mgr->GetQVTKWidget()->repaint();
 }
 
 //! Resets view.
 void gui_viewer_domain::onResetView()
 {
-  visu_utils::CameraOnTop( common_facilities::Instance()->Prs.Domain->GetRenderer() );
+  visu_utils::CameraOnTop( m_prs_mgr->GetRenderer() );
   this->Repaint();
 }

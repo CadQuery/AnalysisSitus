@@ -31,24 +31,44 @@ public:
 
   Handle(common_model) Model;         //!< Data Model instance.
   gui_object_browser*  ObjectBrowser; //!< Object Browser.
+  Handle(ActAPI_INode) CurrentNode;   //!< Currently selected Node.
 
   //! Visualization facilities.
   struct t_prs
   {
+  //---------------------------------------------------------------------------
     vtkSmartPointer<visu_prs_manager> Part;    //!< Part.
     vtkSmartPointer<visu_prs_manager> Domain;  //!< Face domain.
     vtkSmartPointer<visu_prs_manager> Surface; //!< Host surface.
+  //---------------------------------------------------------------------------
+    vtkSmartPointer<visu_prs_manager> Skinner; //!< Skinner.
+    vtkSmartPointer<visu_prs_manager> Section; //!< Section.
+  //---------------------------------------------------------------------------
+
+    inline void ActualizeAll()
+    {
+      if ( Part )    Part    ->Actualize(common_facilities::Instance()->Model->GetRootNode(), true);
+      if ( Domain )  Domain  ->Actualize(common_facilities::Instance()->Model->GetRootNode(), true);
+      if ( Surface ) Surface ->Actualize(common_facilities::Instance()->Model->GetRootNode(), true);
+      //
+      if ( Skinner ) Skinner ->Actualize(common_facilities::Instance()->Model->GetRootNode(), true);
+      if ( Section ) Section ->Actualize(common_facilities::Instance()->Model->GetRootNode(), true);
+    }
 
     inline void DeRenderAll()
     {
-      Part    ->DeRenderAllPresentations();
-      Domain  ->DeRenderAllPresentations();
-      Surface ->DeRenderAllPresentations();
+      if ( Part )    Part    ->DeRenderAllPresentations();
+      if ( Domain )  Domain  ->DeRenderAllPresentations();
+      if ( Surface ) Surface ->DeRenderAllPresentations();
+      //
+      if ( Skinner ) Skinner ->DeRenderAllPresentations();
+      if ( Section ) Section ->DeRenderAllPresentations();
     }
   } Prs;
 
 public:
 
+  //! \return single instance of facilities.
   static Handle(common_facilities) Instance()
   {
     if ( m_ref.IsNull() )
@@ -59,7 +79,7 @@ public:
 
 private:
 
-  common_facilities() {}
+  inline common_facilities() {} //!< Not available for client code.
 
 private:
 

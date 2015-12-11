@@ -19,6 +19,13 @@
 #include <QTreeWidget>
 #pragma warning(pop)
 
+//-----------------------------------------------------------------------------
+
+// Qt role to store node ID near the tree item
+#define BrowserRoleNodeId Qt::UserRole
+
+//-----------------------------------------------------------------------------
+
 //! Tree view for A-Situs Data Model.
 class gui_object_browser : public QTreeWidget
 {
@@ -27,16 +34,26 @@ class gui_object_browser : public QTreeWidget
 public:
 
   gui_object_browser(QWidget* parent = NULL);
-
   virtual ~gui_object_browser();
 
 public:
 
   void Populate();
+  void SetSelected(const ActAPI_DataObjectId& nodeId);
 
 protected:
 
   void addChildren(const Handle(ActAPI_INode)& root_n, QTreeWidgetItem* root_ui);
+
+//-----------------------------------------------------------------------------
+signals:
+
+  void nodeSelected();
+
+//-----------------------------------------------------------------------------
+protected slots:
+
+  void onSelectionChanged();
 
 };
 

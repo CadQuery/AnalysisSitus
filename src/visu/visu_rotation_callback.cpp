@@ -118,6 +118,9 @@ void visu_rotation_callback::Execute(vtkObject*    ASitus_NotUsed(theCaller),
   if ( !this->Viewer() )
     return;
 
+  if ( !common_facilities::Instance()->Prs.Part )
+    return;
+
   vtkRenderer* aRenderer = common_facilities::Instance()->Prs.Part->GetRenderer();
 
   // Add/Remove anchor to/from renderer

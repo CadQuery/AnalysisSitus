@@ -18,6 +18,7 @@
 // OCCT includes
 #include <gp_Trsf.hxx>
 #include <TopoDS_Compound.hxx>
+#include <TopoDS_Wire.hxx>
 #include <TopTools_ListOfShape.hxx>
 
 //! Auxiliary functions facilitating working with OCCT topological shapes.
@@ -32,7 +33,8 @@ public:
                         const double        theZPos,
                         const double        theAngleA,
                         const double        theAngleB,
-                        const double        theAngleC);
+                        const double        theAngleC,
+                        const bool          doCopy);
 
   static gp_Trsf
     Transformation(const double theXPos,
@@ -44,7 +46,8 @@ public:
 
   static TopoDS_Shape
     ApplyTransformation(const TopoDS_Shape& theShape,
-                        const gp_Trsf&      theTransform);
+                        const gp_Trsf&      theTransform,
+                        const bool          doCopy);
 
   static TopoDS_Shape
     AssembleShapes(const TopTools_ListOfShape& theShapes);
@@ -68,6 +71,9 @@ public:
   static void
     ShapeSummary(const TopoDS_Shape&      shape,
                  TCollection_AsciiString& info);
+
+  static TopoDS_Wire
+    CreateCircularWire(const double radius);
 
 private:
 

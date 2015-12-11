@@ -13,7 +13,7 @@
 #include <visu_utils.h>
 
 // A-Situs (geometry) includes
-#include <geom_node.h>
+#include <geom_part_node.h>
 
 // VTK includes
 #include <vtkTextWidget.h>

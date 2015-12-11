@@ -176,7 +176,7 @@ void visu_shape_pipeline::SetInput(const Handle(visu_data_provider)& theDataProv
     // other transformation filter in our Shape Pipeline as it will totally
     // ruin the picker's correctness (when VIS picker is active)
     aShape = geom_utils::ApplyTransformation(aShape, aPosX, aPosY, aPosZ,
-                                             anAngA, anAngB, anAngC);
+                                             anAngA, anAngB, anAngC, false);
 
     static int ShapeID = 0; ++ShapeID;
     Handle(IVtkOCC_Shape) aShapeIntoVtk = new IVtkOCC_Shape(aShape);

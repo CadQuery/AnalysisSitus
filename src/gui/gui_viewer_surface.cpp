@@ -28,11 +28,13 @@ gui_viewer_surface::gui_viewer_surface(QWidget* parent) : gui_viewer(parent)
 {
   // Initialize Presentation Manager along with QVTK widget
   common_facilities::Instance()->Prs.Surface = vtkSmartPointer<visu_prs_manager>::New();
-  common_facilities::Instance()->Prs.Surface->Initialize(this);
-  common_facilities::Instance()->Prs.Surface->SetInteractionMode(visu_prs_manager::InteractionMode_3D);
+  m_prs_mgr = common_facilities::Instance()->Prs.Surface;
+  //
+  m_prs_mgr->Initialize(this);
+  m_prs_mgr->SetInteractionMode(visu_prs_manager::InteractionMode_3D);
 
   // Widgets and layouts
-  QVTKWidget*  pViewer     = common_facilities::Instance()->Prs.Surface->GetQVTKWidget();
+  QVTKWidget*  pViewer     = m_prs_mgr->GetQVTKWidget();
   QHBoxLayout* pBaseLayout = new QHBoxLayout();
 
   // Configure layout
@@ -59,13 +61,12 @@ gui_viewer_surface::~gui_viewer_surface()
 //! Updates viewer.
 void gui_viewer_surface::Repaint()
 {
-  common_facilities::Instance()->Prs.Surface->GetQVTKWidget()->repaint();
+  m_prs_mgr->GetQVTKWidget()->repaint();
 }
 
 //! Resets view.
 void gui_viewer_surface::onResetView()
 {
-  visu_utils::ResetCamera( common_facilities::Instance()->Prs.Surface->GetRenderer(),
-                           common_facilities::Instance()->Prs.Surface->PropsByTrihedron() );
+  visu_utils::ResetCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
   this->Repaint();
 }

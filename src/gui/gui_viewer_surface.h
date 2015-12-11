@@ -22,7 +22,6 @@ class gui_viewer_surface : public gui_viewer
 public:
 
   gui_viewer_surface(QWidget* parent = NULL);
-
   virtual ~gui_viewer_surface();
 
 public:

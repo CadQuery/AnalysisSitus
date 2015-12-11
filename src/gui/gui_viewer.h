@@ -11,6 +11,9 @@
 // A-Situs includes
 #include <analysis_situs.h>
 
+// A-Situs (visualization) includes
+#include <visu_prs_manager.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QWidget>
@@ -24,12 +27,15 @@ class gui_viewer : public QWidget
 public:
 
   gui_viewer(QWidget* parent = NULL);
-
   virtual ~gui_viewer();
 
 public:
 
   virtual void Repaint() = 0;
+
+protected:
+
+  vtkSmartPointer<visu_prs_manager> m_prs_mgr; //!< Presentation Manager.
 
 };
 

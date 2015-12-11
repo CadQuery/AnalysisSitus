@@ -8,14 +8,19 @@
 // Windows includes
 #include <Windows.h>
 
+// A-Situs (common) includes
+#include <common_model.h>
+
 // A-Situs (GUI) includes
-#include <gui_main_window.h>
+#include <gui_welcome_window.h>
 
 // A-Situs (visualization) includes
 #include <visu_geom_face_prs.h>
 #include <visu_geom_prs.h>
 #include <visu_geom_surf_prs.h>
 #include <visu_mesh_prs.h>
+#include <visu_section_prs.h>
+#include <visu_sections_prs.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -52,6 +57,7 @@ VTK_MODULE_INIT(vtkRenderingFreeType)
 int main(int argc, char** argv)
 {
   QApplication app(argc, argv);
+  QApplication::setWindowIcon( QIcon("D:/projects/analysis_situs/misc/asitus_icon_16x16.png") );
 
   //---------------------------------------------------------------------------
   // Create Data Model
@@ -74,17 +80,25 @@ int main(int argc, char** argv)
   // Register Presentations
   //---------------------------------------------------------------------------
 
+  REGISTER_PRESENTATION(visu_mesh_prs)
   REGISTER_PRESENTATION(visu_geom_prs)
   REGISTER_PRESENTATION(visu_geom_face_prs)
   REGISTER_PRESENTATION(visu_geom_surf_prs)
-  REGISTER_PRESENTATION(visu_mesh_prs)
+  REGISTER_PRESENTATION(visu_section_prs)
+  REGISTER_PRESENTATION(visu_sections_prs)
 
   //---------------------------------------------------------------------------
   // Create main window
   //---------------------------------------------------------------------------
 
-  gui_main_window* pMainWindow = new gui_main_window();
-  pMainWindow->show();
+  gui_welcome_window* pWelcomeScreen = new gui_welcome_window;
+  //
+  QRect screenGeometry = QApplication::desktop()->screenGeometry();
+  const int center_x   = ( screenGeometry.width() - pWelcomeScreen->width() ) / 2;
+  const int center_y   = ( screenGeometry.height() - pWelcomeScreen->height() ) / 2;
+  pWelcomeScreen->move(center_x, center_y); // Move to the center of the screen
+  //
+  pWelcomeScreen->show();
 
   //---------------------------------------------------------------------------
   // Run event loop

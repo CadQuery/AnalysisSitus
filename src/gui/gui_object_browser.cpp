@@ -17,6 +17,7 @@
 // Qt includes
 #pragma warning(push, 0)
 #include <QHeaderView>
+#include <QTreeWidgetItemIterator>
 #pragma warning(pop)
 
 #define TREEVIEW_MINSIZE 200
@@ -32,12 +33,19 @@ gui_object_browser::gui_object_browser(QWidget* parent) : QTreeWidget(parent)
   // Configure
   this->setMinimumWidth(TREEVIEW_MINSIZE);
   this->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  this->setSelectionMode(QAbstractItemView::SingleSelection);
   this->header()->hide();
   this->setColumnCount(1);
+  this->setAutoExpandDelay(0);
 
   // Populate
   this->Populate();
+
+  // Configure selection
+  this->setSelectionMode(QAbstractItemView::SingleSelection);
+  this->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+  // Reactions
+  connect( this, SIGNAL( itemSelectionChanged() ), this, SLOT( onSelectionChanged() ) );
 }
 
 //! Destructor.
@@ -66,7 +74,8 @@ void gui_object_browser::Populate()
     return;
   //
   QTreeWidgetItem* root_ui = new QTreeWidgetItem( QStringList() << ExtStr2QStr( root_n->GetName() ) );
-  root_ui->setFlags(Qt::ItemIsEnabled);
+  root_ui->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+  root_ui->setData( 0, BrowserRoleNodeId, AsciiStr2QStr( root_n->GetId() ) );
   //
   this->addTopLevelItem(root_ui);
 
@@ -75,6 +84,32 @@ void gui_object_browser::Populate()
   //---------------------------------------------------------------------------
 
   this->addChildren(root_n, root_ui);
+
+  //---------------------------------------------------------------------------
+  // Expand tree
+  //---------------------------------------------------------------------------
+
+  this->expandAll();
+}
+
+//! Searches for an item with the given index and set that item selected.
+//! \param nodeId [in] target Node ID.
+void gui_object_browser::SetSelected(const ActAPI_DataObjectId& nodeId)
+{
+  QTreeWidgetItemIterator it(this);
+  QTreeWidgetItem* pItem = NULL;
+
+  while ( *it )
+  {
+    QString data = (*it)->data(0, BrowserRoleNodeId).toString();
+    if ( QStr2AsciiStr(data) == nodeId )
+    {
+      (*it)->setSelected(true);
+      break;
+    }
+    else
+      ++it;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -93,11 +128,20 @@ void gui_object_browser::addChildren(const Handle(ActAPI_INode)& root_n,
     Handle(ActAPI_INode) child_n = cit->Value();
     //
     QTreeWidgetItem* child_ui = new QTreeWidgetItem( QStringList() << ExtStr2QStr( child_n->GetName() ) );
-    child_ui->setFlags(Qt::ItemIsEnabled);
+    child_ui->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    child_ui->setData( 0, BrowserRoleNodeId, AsciiStr2QStr( child_n->GetId() ) );
     //
     root_ui->addChild(child_ui);
 
     // Repeat recursively
     this->addChildren(child_n, child_ui);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on selection in a tree view.
+void gui_object_browser::onSelectionChanged()
+{
+  emit nodeSelected();
 }

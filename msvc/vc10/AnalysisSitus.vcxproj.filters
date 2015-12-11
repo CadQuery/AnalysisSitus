@@ -48,6 +48,18 @@
     <Filter Include="Source Files\Geometry">
       <UniqueIdentifier>{5ae5d180-7660-47fa-be33-f1ddd6ac1421}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Journaling">
+      <UniqueIdentifier>{fa94e904-be5c-4ea3-847e-6502366467ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Journaling">
+      <UniqueIdentifier>{b3f0dd5b-88d9-4305-ba58-96ce436526f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Skinning">
+      <UniqueIdentifier>{16e2b9c4-05d2-44f9-9db0-dea72018d57f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Skinning">
+      <UniqueIdentifier>{446a2fdb-8e83-4e5f-885f-bbb0df8c023c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\analysis_situs.h">
@@ -158,9 +170,6 @@
     <ClInclude Include="..\..\src\geom\geom_utils.h">
       <Filter>Header Files\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\geom\geom_node.h">
-      <Filter>Header Files\Geometry</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\visu\prs\visu_geom_prs.h">
       <Filter>Header Files\Visualization\Presentation</Filter>
     </ClInclude>
@@ -208,6 +217,33 @@
     </ClInclude>
     <ClInclude Include="..\..\src\visu\visu_topo_graph.h">
       <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\geom_part_node.h">
+      <Filter>Header Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\skinning\geom_sections_node.h">
+      <Filter>Header Files\Geometry\Skinning</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\skinning\geom_section_node.h">
+      <Filter>Header Files\Geometry\Skinning</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_section_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_sections_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_sections_pipeline.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_sections_data_provider.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\gui_prim_data_adaptor.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\gui_data_adaptor.h">
+      <Filter>Header Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -268,10 +304,10 @@
     <ClCompile Include="..\..\src\visu\visu_mesh_result_utils.cpp">
       <Filter>Source Files\Visualization</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\gui\gui_control_pane.cpp">
-      <Filter>Source Files\GUI</Filter>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_part.cpp">
+      <Filter>MOC Files</Filter>
     </ClCompile>
-    <ClCompile Include="$(IntDir)moc\moc_gui_control_pane.cpp">
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_section.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_splitter.cpp">
@@ -280,10 +316,19 @@
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_line_edit.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_part.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_skinner.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_domain.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_section.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_surface.cpp">
@@ -295,7 +340,16 @@
     <ClCompile Include="$(IntDir)moc\moc_gui_object_browser.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
-    <ClCompile Include="$(IntDir)moc\moc_gui_main_window.cpp">
+    <ClCompile Include="$(IntDir)moc\moc_gui_welcome_window.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_asitus.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_skinning.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_prim_data_view.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\mesh\mesh_ply.cpp">
@@ -338,9 +392,6 @@
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\geom\geom_utils.cpp">
-      <Filter>Source Files\Geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\geom\geom_node.cpp">
       <Filter>Source Files\Geometry</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\visu\prs\visu_geom_prs.cpp">
@@ -409,14 +460,62 @@
     <ClCompile Include="..\..\src\visu\visu_topo_graph.cpp">
       <Filter>Source Files\Visualization</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\gui\gui_main_window.cpp">
+    <ClCompile Include="..\..\src\gui\gui_main_window_asitus.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_welcome_window.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_skinning.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_skinner.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_part.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_section.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_section.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\geom_part_node.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\skinning\geom_sections_node.cpp">
+      <Filter>Source Files\Geometry\Skinning</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\skinning\geom_section_node.cpp">
+      <Filter>Source Files\Geometry\Skinning</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_section_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_line_edit.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_sections_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_sections_pipeline.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_sections_data_provider.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_prim_data_adaptor.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_prim_data_view.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_data_adaptor.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\src\gui\gui_control_pane.h">
-      <Filter>Header Files\GUI</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\src\gui\gui_splitter.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
@@ -438,7 +537,31 @@
     <CustomBuild Include="..\..\src\gui\gui_viewer_surface.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\gui\gui_main_window.h">
+    <CustomBuild Include="..\..\src\gui\gui_main_window_asitus.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_welcome_window.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_skinning.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_part.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_skinner.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_section.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_section.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_line_edit.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_prim_data_view.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
   </ItemGroup>

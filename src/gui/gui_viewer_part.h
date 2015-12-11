@@ -20,7 +20,6 @@
 // Visualization includes
 #include <visu_interactor_style_pick.h>
 #include <visu_pick_callback.h>
-#include <visu_prs_manager.h>
 #include <visu_rotation_callback.h>
 
 // VTK includes
@@ -34,7 +33,6 @@ class gui_viewer_part : public gui_viewer
 public:
 
   gui_viewer_part(QWidget* parent = NULL);
-
   virtual ~gui_viewer_part();
 
 public:

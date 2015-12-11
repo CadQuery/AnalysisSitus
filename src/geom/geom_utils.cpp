@@ -12,11 +12,16 @@
 #include <Bnd_Box.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepBndLib.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepCheck_Analyzer.hxx>
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
 #include <BRepCheck_Result.hxx>
 #include <BRepCheck_Status.hxx>
 #include <BRepTools.hxx>
+#include <GC_MakeCircle.hxx>
+#include <gp_Circ.hxx>
 #include <gp_Quaternion.hxx>
 #include <gp_Vec.hxx>
 #include <Precision.hxx>
@@ -382,12 +387,13 @@ TopoDS_Shape geom_utils::ApplyTransformation(const TopoDS_Shape& theShape,
                                              const double        theZPos,
                                              const double        theAngleA,
                                              const double        theAngleB,
-                                             const double        theAngleC)
+                                             const double        theAngleC,
+                                             const bool          doCopy)
 {
-  gp_Trsf aTrsf = Transformation(theXPos, theYPos, theZPos,
-                                 theAngleA, theAngleB, theAngleC);
+  gp_Trsf T = Transformation(theXPos, theYPos, theZPos,
+                             theAngleA, theAngleB, theAngleC);
 
-  return theShape.Moved(aTrsf);
+  return ApplyTransformation(theShape, T, doCopy);
 }
 
 //! Returns OCCT transformation structure for the given elemental
@@ -419,16 +425,22 @@ gp_Trsf geom_utils::Transformation(const double theXPos,
   return aTrsf;
 }
 
-//! Applies the passed transformation to the given shape. Returns another shape
-//! as a result (no deep copy of geometry is performed, only location is
-//! changed).
-//! \param theShape [in] shape to transform.
+//! Applies the passed transformation to the given shape.
+//! \param theShape     [in] shape to transform.
 //! \param theTransform [in] transformation to apply.
+//! \param doCopy       [in] indicates whether to construct a deep copy.
 //! \return transformed shape.
 TopoDS_Shape
   geom_utils::ApplyTransformation(const TopoDS_Shape& theShape,
-                                  const gp_Trsf&      theTransform)
+                                  const gp_Trsf&      theTransform,
+                                  const bool          doCopy)
 {
+  if ( doCopy )
+  {
+    TopoDS_Shape copy = BRepBuilderAPI_Copy(theShape, 1).Shape();
+    return copy.Moved(theTransform);
+  }
+
   return theShape.Moved(theTransform);
 }
 
@@ -632,4 +644,13 @@ void geom_utils::ShapeSummary(const TopoDS_Shape&      shape,
   info += "- nb wires: ";      info += nbWires;      info += "\n";
   info += "- nb edges: ";      info += nbEdges;      info += "\n";
   info += "- nb vertices: ";   info += nbVertexes;   info += "\n";
+}
+
+//! Creates a circular wire with the given radius.
+//! \param radius [in] radius of the host circle.
+//! \return created wire.
+TopoDS_Wire geom_utils::CreateCircularWire(const double radius)
+{
+  Handle(Geom_Circle) C = GC_MakeCircle(gp_Ax1( gp::Origin(), gp::DZ() ), radius);
+  return BRepBuilderAPI_MakeWire( BRepBuilderAPI_MakeEdge( C->Circ() ) );
 }

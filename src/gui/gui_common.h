@@ -11,6 +11,9 @@
 // A-Situs includes
 #include <analysis_situs.h>
 
+// Qt includes
+#include <QColor>
+
 //! GUI utilities.
 class gui_common
 {

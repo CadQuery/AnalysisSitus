@@ -5,8 +5,8 @@
 // Web: http://quaoar.su/blog/
 //-----------------------------------------------------------------------------
 
-#ifndef geom_node_h
-#define geom_node_h
+#ifndef geom_part_node_h
+#define geom_part_node_h
 
 // A-Situs includes
 #include <analysis_situs.h>
@@ -19,21 +19,21 @@
 #include <ActData_ShapeParameter.h>
 
 //-----------------------------------------------------------------------------
-// Mesh Node
+// Part Node
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(geom_node, ActData_BaseNode)
+DEFINE_STANDARD_HANDLE(geom_part_node, ActData_BaseNode)
 
-//! Node representing b-rep geometry.
-class geom_node : public ActData_BaseNode
+//! Node representing b-rep part.
+class geom_part_node : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(geom_node, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI(geom_part_node, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(geom_node, Instance)
+  DEFINE_NODE_FACTORY(geom_part_node, Instance)
 
 public:
 
@@ -94,7 +94,7 @@ public:
 protected:
 
   //! Allocation is allowed only via Instance method.
-  geom_node();
+  geom_part_node();
 
 };
 

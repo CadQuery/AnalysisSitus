@@ -33,15 +33,15 @@
 
 #define COUT_DEBUG
 
-//! Creates a Presentation object for the passed Assembly Node.
-//! \param theNode [in] Assembly Node to create a Presentation for.
-visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& theNode)
-: visu_prs(theNode)
+//! Creates a Presentation object for the passed Part Node.
+//! \param N [in] Part Node to create a Presentation for.
+visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N)
+: visu_prs(N)
 {
   // Create Data Provider
   Handle(visu_shape_data_provider) DP =
-    new visu_shape_data_provider( theNode->GetId(),
-                                  ActParamStream() << theNode->Parameter(geom_node::PID_Geometry) );
+    new visu_shape_data_provider( N->GetId(),
+                                  ActParamStream() << N->Parameter(geom_part_node::PID_Geometry) );
 
   // Pipeline for hull
   this->addPipeline        ( Pipeline_Main, new visu_shape_pipeline(true, true, false, false) );
@@ -103,11 +103,11 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& theNode)
 }
 
 //! Factory method for Presentation.
-//! \param theNode [in] Geometry Node to create a Presentation for.
+//! \param N [in] Geometry Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_geom_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(visu_prs) visu_geom_prs::Instance(const Handle(ActAPI_INode)& N)
 {
-  return new visu_geom_prs(theNode);
+  return new visu_geom_prs(N);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
@@ -160,6 +160,8 @@ void visu_geom_prs::doUnColor() const
   pl->Mapper()->ScalarVisibilityOn();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Callback for initialization of Presentation pipelines.
 void visu_geom_prs::beforeInitPipelines()
 {
@@ -194,7 +196,7 @@ void visu_geom_prs::afterInitPipelines()
 //! kernel update routine starts.
 void visu_geom_prs::beforeUpdatePipelines() const
 {
-  Handle(geom_node) N = Handle(geom_node)::DownCast( this->GetNode() );
+  Handle(geom_part_node) N = Handle(geom_part_node)::DownCast( this->GetNode() );
 
   visu_display_mode aDMode = (visu_display_mode) N->GetDisplayMode();
   if ( aDMode == DisplayMode_Undefined || aDMode == DisplayMode_Shading )
@@ -229,7 +231,7 @@ void visu_geom_prs::afterUpdatePipelines() const
    *  Actualize color
    * ================= */
 
-  Handle(geom_node) N = Handle(geom_node)::DownCast( this->GetNode() );
+  Handle(geom_part_node) N = Handle(geom_part_node)::DownCast( this->GetNode() );
   if ( N->HasColor() )
   {
     QColor color = gui_common::IntToColor( N->GetColor() );

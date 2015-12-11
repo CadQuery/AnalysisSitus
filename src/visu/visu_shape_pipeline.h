@@ -63,7 +63,7 @@ private:
 
   virtual void callback_add_to_renderer      (vtkRenderer* theRenderer);
   virtual void callback_remove_from_renderer (vtkRenderer* theRenderer);
-  virtual void callback_update             ();
+  virtual void callback_update               ();
 
 private:
 

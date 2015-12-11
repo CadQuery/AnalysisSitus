@@ -27,10 +27,37 @@ REGISTER_NODE_TYPE(ActData_RealVarNode)
 
 // Custom Nodes
 REGISTER_NODE_TYPE(common_root_node)
-REGISTER_NODE_TYPE(geom_node)
+REGISTER_NODE_TYPE(mesh_node)
+REGISTER_NODE_TYPE(geom_part_node)
 REGISTER_NODE_TYPE(geom_face_node)
 REGISTER_NODE_TYPE(geom_surf_node)
-REGISTER_NODE_TYPE(mesh_node)
+REGISTER_NODE_TYPE(geom_sections_node)
+REGISTER_NODE_TYPE(geom_section_node)
+
+//-----------------------------------------------------------------------------
+
+static void PrepareForRemoval(const Handle(ActAPI_INode)&     root_n,
+                              const Handle(ActAPI_HNodeList)& nodesToDelete)
+{
+  if ( root_n.IsNull() || !root_n->IsWellFormed() )
+    return;
+
+  // Loop over direct children of a given Node
+  for ( Handle(ActAPI_IChildIterator) cit = root_n->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) child_n = cit->Value();
+
+    // Check if the given Node is consistent
+    if ( child_n.IsNull() || !child_n->IsWellFormed() )
+      continue;
+
+    // Clean up Presentations
+    common_facilities::Instance()->Prs.DeRenderAll();
+
+    // Set Node for deletion
+    nodesToDelete->Append(child_n);
+  }
+}
 
 //-----------------------------------------------------------------------------
 // Construction
@@ -48,9 +75,9 @@ common_model::common_model() : ActData_BaseModel(true)
 //! Populates Data Model.
 void common_model::Populate()
 {
-  /* ===============================================
-   *  Add Project Node (the root one) to Data Model
-   * =============================================== */
+  //---------------------------------------------------------------------------
+  // Add root Node
+  //---------------------------------------------------------------------------
 
   Handle(common_root_node)
     root_n = Handle(common_root_node)::DownCast( common_root_node::Instance() );
@@ -58,29 +85,85 @@ void common_model::Populate()
   this->RootPartition()->AddNode(root_n);
 
   // Set name
-  root_n->SetName("Part");
+  root_n->SetName("Analysis Situs");
+
+  //---------------------------------------------------------------------------
+  // Add Part Node
+  //---------------------------------------------------------------------------
+
+  // Add Part Node to Partition
+  Handle(geom_part_node) geom_n = Handle(geom_part_node)::DownCast( geom_part_node::Instance() );
+  this->PartPartition()->AddNode(geom_n);
+
+  // Initialize geometry
+  geom_n->Init();
+  geom_n->SetName("Part");
+
+  // Create underlying face representation Node
+  {
+    Handle(ActAPI_INode) geom_face_base = geom_face_node::Instance();
+    this->GeomFacePartition()->AddNode(geom_face_base);
+
+    // Initialize
+    Handle(geom_face_node) geom_face_n = Handle(geom_face_node)::DownCast(geom_face_base);
+    geom_face_n->Init();
+    geom_face_n->SetName("Face domain");
+
+    // Set as child
+    geom_n->AddChildNode(geom_face_n);
+  }
+
+  // Create underlying surface representation Node
+  {
+    Handle(ActAPI_INode) geom_surf_base = geom_surf_node::Instance();
+    this->GeomSurfacePartition()->AddNode(geom_surf_base);
+
+    // Initialize
+    Handle(geom_surf_node) geom_surf_n = Handle(geom_surf_node)::DownCast(geom_surf_base);
+    geom_surf_n->Init();
+    geom_surf_n->SetName("Host surface");
+
+    // Set as child
+    geom_n->AddChildNode(geom_surf_n);
+  }
+
+  // Set as a child for root
+  root_n->AddChildNode(geom_n);
+
+  //---------------------------------------------------------------------------
+  // Add Sections Node
+  //---------------------------------------------------------------------------
+
+  Handle(geom_sections_node)
+    sections_n = Handle(geom_sections_node)::DownCast( geom_sections_node::Instance() );
+
+  this->SectionsPartition()->AddNode(sections_n);
+
+  // Set name
+  sections_n->SetName("Skinning Sections");
+
+  // Add as a child for the root
+  root_n->AddChildNode(sections_n);
 }
 
 //! Clears the Model.
 void common_model::Clear()
 {
-  Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList();
+  Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList;
 
-  // Loop over direct children of a root (the root one itself is not deleted)
-  for ( Handle(ActAPI_IChildIterator) cit = this->GetRootNode()->GetChildIterator(); cit->More(); cit->Next() )
-  {
-    Handle(ActAPI_INode) child_n = cit->Value();
+  //---------------------------------------------------------------------------
+  // Collects Nodes to delete
+  //---------------------------------------------------------------------------
 
-    // Check if the given Node is consistent
-    if ( child_n.IsNull() || !child_n->IsWellFormed() )
-      continue;
+  // NOTE: Part Node is not touched as it is structural. No sense in
+  //       removing it since we will have to create it again once a new
+  //       part is loaded
 
-    // Clean up Presentations
-    common_facilities::Instance()->Prs.DeRenderAll();
+  ::PrepareForRemoval(this->SectionsNode(), nodesToDelete);
 
-    // Set Node for deletion
-    nodesToDelete->Append(child_n);
-  }
+  //---------------------------------------------------------------------------
+  // Perform deletion
+  //---------------------------------------------------------------------------
 
   this->OpenCommand(); // tx start
   {
@@ -91,12 +174,26 @@ void common_model::Clear()
   this->CommitCommand(); // tx end
 }
 
-//! \return single Geometry Node.
-Handle(geom_node) common_model::GeometryNode() const
+//-----------------------------------------------------------------------------
+
+//! \return single Geometry Part Node.
+Handle(geom_part_node) common_model::PartNode() const
 {
-  for ( ActData_BasePartition::Iterator it( this->GeomPartition() ); it.More(); it.Next() )
+  for ( ActData_BasePartition::Iterator it( this->PartPartition() ); it.More(); it.Next() )
   {
-    Handle(geom_node) N = Handle(geom_node)::DownCast( it.Value() );
+    Handle(geom_part_node) N = Handle(geom_part_node)::DownCast( it.Value() );
+    if ( !N.IsNull() && N->IsWellFormed() )
+      return N;
+  }
+  return NULL;
+}
+
+//! \return single Sections Node.
+Handle(geom_sections_node) common_model::SectionsNode() const
+{
+  for ( ActData_BasePartition::Iterator it( this->SectionsPartition() ); it.More(); it.Next() )
+  {
+    Handle(geom_sections_node) N = Handle(geom_sections_node)::DownCast( it.Value() );
     if ( !N.IsNull() && N->IsWellFormed() )
       return N;
   }
@@ -108,11 +205,13 @@ Handle(geom_node) common_model::GeometryNode() const
 //! Initializes Partitions.
 void common_model::initPartitions()
 {
-  REGISTER_PARTITION(common_partition<common_root_node>, Partition_Root);
-  REGISTER_PARTITION(common_partition<geom_node>,        Partition_Geom);
-  REGISTER_PARTITION(common_partition<geom_face_node>,   Partition_GeomFace);
-  REGISTER_PARTITION(common_partition<geom_surf_node>,   Partition_GeomSurface);
-  REGISTER_PARTITION(common_partition<mesh_node>,        Partition_Mesh);
+  REGISTER_PARTITION(common_partition<common_root_node>,   Partition_Root);
+  REGISTER_PARTITION(common_partition<mesh_node>,          Partition_Mesh);
+  REGISTER_PARTITION(common_partition<geom_part_node>,     Partition_GeomPart);
+  REGISTER_PARTITION(common_partition<geom_face_node>,     Partition_GeomFace);
+  REGISTER_PARTITION(common_partition<geom_surf_node>,     Partition_GeomSurface);
+  REGISTER_PARTITION(common_partition<geom_sections_node>, Partition_Sections);
+  REGISTER_PARTITION(common_partition<geom_section_node>,  Partition_Section);
 }
 
 //! Initializes the Tree Functions bound to the Data Model.

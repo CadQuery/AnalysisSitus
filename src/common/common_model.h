@@ -17,7 +17,9 @@
 #include <common_version.h>
 
 // A-Situs (geometry) includes
-#include <geom_node.h>
+#include <geom_part_node.h>
+#include <geom_sections_node.h>
+#include <geom_section_node.h>
 
 // A-Situs (mesh) includes
 #include <mesh_node.h>
@@ -41,12 +43,22 @@ public:
 
   common_model();
 
+//-----------------------------------------------------------------------------
+// Populate and clear:
 public:
 
-  void              Populate();
-  void              Clear();
-  Handle(geom_node) GeometryNode() const;
+  void Populate();
+  void Clear();
 
+//-----------------------------------------------------------------------------
+// Accessors to Nodes:
+public:
+
+  Handle(geom_part_node)     PartNode()     const;
+  Handle(geom_sections_node) SectionsNode() const;
+
+//-----------------------------------------------------------------------------
+// Overridden:
 public:
 
   //! Create a cloned instance of Data Model.
@@ -56,8 +68,16 @@ public:
     return ActData_BaseModel::CloneInstance<common_model>();
   }
 
-// Accessors:
+//-----------------------------------------------------------------------------
+// Partitions:
 public:
+
+  //! Accessor for a Partition instance dedicated to Mesh Nodes.
+  //! \return requested Partition.
+  inline Handle(common_partition<mesh_node>) MeshPartition() const
+  {
+    return Handle(common_partition<mesh_node>)::DownCast( this->Partition(Partition_Mesh) );
+  }
 
   //! Accessor for a Partition instance dedicated to root Nodes.
   //! \return requested Partition.
@@ -66,11 +86,11 @@ public:
     return Handle(common_partition<common_root_node>)::DownCast( this->Partition(Partition_Root) );
   }
 
-  //! Accessor for a Partition instance dedicated to Geometry Nodes.
+  //! Accessor for a Partition instance dedicated to Geometry Part Nodes.
   //! \return requested Partition.
-  inline Handle(common_partition<geom_node>) GeomPartition() const
+  inline Handle(common_partition<geom_part_node>) PartPartition() const
   {
-    return Handle(common_partition<geom_node>)::DownCast( this->Partition(Partition_Geom) );
+    return Handle(common_partition<geom_part_node>)::DownCast( this->Partition(Partition_GeomPart) );
   }
 
   //! Accessor for a Partition instance dedicated to Geometry Face Nodes.
@@ -87,11 +107,18 @@ public:
     return Handle(common_partition<geom_surf_node>)::DownCast( this->Partition(Partition_GeomSurface) );
   }
 
-  //! Accessor for a Partition instance dedicated to Mesh Nodes.
+  //! Accessor for a Partition instance dedicated to Sections Nodes.
   //! \return requested Partition.
-  inline Handle(common_partition<mesh_node>) MeshPartition() const
+  inline Handle(common_partition<geom_sections_node>) SectionsPartition() const
   {
-    return Handle(common_partition<mesh_node>)::DownCast( this->Partition(Partition_Mesh) );
+    return Handle(common_partition<geom_sections_node>)::DownCast( this->Partition(Partition_Sections) );
+  }
+
+  //! Accessor for a Partition instance dedicated to Section Nodes.
+  //! \return requested Partition.
+  inline Handle(common_partition<geom_section_node>) SectionPartition() const
+  {
+    return Handle(common_partition<geom_section_node>)::DownCast( this->Partition(Partition_Section) );
   }
 
 private:
@@ -128,11 +155,17 @@ private:
   enum PartitionId
   {
     Partition_RealVar = 1, // Good practice to start with 1 when working with CAF
+  //---------------------------------------------------------------------------
     Partition_Root,
-    Partition_Geom,
+  //---------------------------------------------------------------------------
+    Partition_Mesh,
+  //---------------------------------------------------------------------------
+    Partition_GeomPart,
     Partition_GeomFace,
     Partition_GeomSurface,
-    Partition_Mesh
+  //---------------------------------------------------------------------------
+    Partition_Sections,
+    Partition_Section
   };
 
 };

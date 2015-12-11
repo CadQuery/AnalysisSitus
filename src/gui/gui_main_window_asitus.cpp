@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <gui_main_window.h>
+#include <gui_main_window_asitus.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -19,25 +19,24 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-gui_main_window::gui_main_window() : QMainWindow()
+gui_main_window_asitus::gui_main_window_asitus() : QMainWindow()
 {
   this->createPartViewer();
-  this->createStatusBar();
   this->createDockWindows();
 
   this->setCentralWidget(m_widgets.wViewerPart);
-  this->setWindowTitle("Analysis Situs");
+  this->setWindowTitle("Analysis Situs [Analysis]");
 }
 
 //! Destructor.
-gui_main_window::~gui_main_window()
+gui_main_window_asitus::~gui_main_window_asitus()
 {}
 
 //-----------------------------------------------------------------------------
 
 //! Gets control on window close.
 //! \param evt [in] event.
-void gui_main_window::closeEvent(QCloseEvent* evt)
+void gui_main_window_asitus::closeEvent(QCloseEvent* evt)
 {
   // It seems that we have to destruct objects properly and manually in
   // order to avoid some side effects from VTK. E.g. if we don't kill the
@@ -51,7 +50,7 @@ void gui_main_window::closeEvent(QCloseEvent* evt)
 //-----------------------------------------------------------------------------
 
 //! Creates main (part) viewer.
-void gui_main_window::createPartViewer()
+void gui_main_window_asitus::createPartViewer()
 {
   m_widgets.wViewerPart = new gui_viewer_part();
 
@@ -64,13 +63,8 @@ void gui_main_window::createPartViewer()
   m_widgets.wViewerPart->setMinimumSize(width, height);
 }
 
-//! Creates status bar.
-void gui_main_window::createStatusBar()
-{
-}
-
 //! Creates main dockable widgets.
-void gui_main_window::createDockWindows()
+void gui_main_window_asitus::createDockWindows()
 {
   // Desktop used for sizing
   QDesktopWidget desktop;

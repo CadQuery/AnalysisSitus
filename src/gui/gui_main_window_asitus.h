@@ -5,8 +5,8 @@
 // Web: http://quaoar.su/blog/
 //-----------------------------------------------------------------------------
 
-#ifndef gui_main_window_h
-#define gui_main_window_h
+#ifndef gui_main_window_asitus_h
+#define gui_main_window_asitus_h
 
 // A-Situs includes
 #include <analysis_situs.h>
@@ -23,15 +23,15 @@
 #include <QMainWindow>
 #pragma warning(pop)
 
-//! Main window.
-class gui_main_window : public QMainWindow
+//! Main window for Analysis composition.
+class gui_main_window_asitus : public QMainWindow
 {
-Q_OBJECT
+  Q_OBJECT
 
 public:
 
-  gui_main_window();
-  virtual ~gui_main_window();
+  gui_main_window_asitus();
+  virtual ~gui_main_window_asitus();
 
 public:
 
@@ -40,7 +40,6 @@ public:
 private:
 
   void createPartViewer();
-  void createStatusBar();
   void createDockWindows();
 
 private:
@@ -48,7 +47,7 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    gui_object_browser* wBrowser;       //!< Object browser..
+    gui_object_browser* wBrowser;       //!< Object browser.
     gui_viewer_domain*  wViewerDomain;  //!< Parametric domain viewer.
     gui_viewer_part*    wViewerPart;    //!< Part viewer.
     gui_viewer_surface* wViewerSurface; //!< Surface viewer.

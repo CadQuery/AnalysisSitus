@@ -12,7 +12,7 @@
 #include <common_facilities.h>
 
 // A-Situs (geometry) includes
-#include <geom_node.h>
+#include <geom_part_node.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -58,9 +58,8 @@ TopoDS_Face visu_face_data_provider::ExtractFace() const
     return TopoDS_Face();
 
   // Access owning geometry
-  ActAPI_DataObjectId face_node_id = this->GetNodeID();
-  Handle(geom_node)
-    geom_n = Handle(geom_node)::DownCast( common_facilities::Instance()->Model->FindNode(face_node_id)->GetParentNode() );
+  Handle(geom_part_node)
+    geom_n = Handle(geom_part_node)::DownCast( common_facilities::Instance()->Model->PartNode() );
 
   // Prepare traversal
   TopTools_IndexedMapOfShape M;
@@ -87,5 +86,5 @@ Handle(visu_face_data_provider) visu_face_data_provider::Clone() const
 //! \return source Parameters.
 Handle(ActAPI_HParameterList) visu_face_data_provider::translationSources() const
 {
-  return ActAPI_ParameterStream() << m_params->Value(1); // Parameter for face index
+  return ActParamStream() << m_params->Value(1); // Parameter for face index
 }

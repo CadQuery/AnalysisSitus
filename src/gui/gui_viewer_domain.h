@@ -22,7 +22,6 @@ class gui_viewer_domain : public gui_viewer
 public:
 
   gui_viewer_domain(QWidget* parent = NULL);
-
   virtual ~gui_viewer_domain();
 
 public:

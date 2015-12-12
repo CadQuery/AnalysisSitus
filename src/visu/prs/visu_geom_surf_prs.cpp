@@ -18,7 +18,7 @@
 
 // OCCT includes
 #include <BRep_Tool.hxx>
-#include <Geom_Surface.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
 
 //! Creates a Presentation object for the passed Geometry Surface Node.
 //! \param theNode [in] Geometry Surface Node to create a Presentation for.
@@ -78,6 +78,18 @@ void visu_geom_surf_prs::afterInitPipelines()
   TITLE += F_idx;
   TITLE += ": ";
   TITLE += ( S.IsNull() ? "NONE" : S->DynamicType()->Name() );
+
+  if ( !S.IsNull() && S->IsInstance( STANDARD_TYPE(Geom_RectangularTrimmedSurface) ) )
+  {
+    Handle(Geom_RectangularTrimmedSurface)
+      RS = Handle(Geom_RectangularTrimmedSurface)::DownCast(S);
+
+    // Let's check basis surface
+    Handle(Geom_Surface) BS = RS->BasisSurface();
+    //
+    TITLE += "\nBasis surface: ";
+    TITLE += ( BS.IsNull() ? "NONE" : BS->DynamicType()->Name() );
+  }
 
   // Update text on the annotation
   m_textWidget->GetTextActor()->SetInput( TITLE.ToCString() );

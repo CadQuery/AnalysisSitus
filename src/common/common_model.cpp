@@ -139,7 +139,8 @@ void common_model::Populate()
 
   this->SectionsPartition()->AddNode(sections_n);
 
-  // Set name
+  // Initialize
+  sections_n->Init();
   sections_n->SetName("Skinning Sections");
 
   // Add as a child for the root

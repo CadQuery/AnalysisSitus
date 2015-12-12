@@ -55,7 +55,7 @@ void gui_welcome_window::createControls()
   pMainLayout->setContentsMargins(10, 10, 10, 10);
 
   // Sizing
-  const int width  = 100;
+  const int width  = 150;
   const int height = 80;
   //
   m_widgets.pMainPane = new QWidget();

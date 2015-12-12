@@ -63,8 +63,8 @@ void gui_main_window_skinning::createSkinViewer()
   // Desktop used for sizing
   QDesktopWidget desktop;
   const int side   = std::min( desktop.height(), desktop.width() );
-  const int width  = side*0.4;
-  const int height = side*0.5;
+  const int width  = side*0.2;
+  const int height = side*0.2;
   //
   m_widgets.wViewerSkin->setMinimumSize(width, height);
 
@@ -78,7 +78,7 @@ void gui_main_window_skinning::createDockWindows()
   // Desktop used for sizing
   QDesktopWidget desktop;
   const int side  = std::min( desktop.height(), desktop.width() );
-  const int width = side*0.5;
+  const int width = side*0.2;
 
   //---------------------------------------------------------------------------
   // Object browser
@@ -104,6 +104,7 @@ void gui_main_window_skinning::createDockWindows()
     m_widgets.wViewerSection = new gui_viewer_section(pDock);
     pDock->setWidget(m_widgets.wViewerSection);
     pDock->setMinimumWidth(width);
+    pDock->setMinimumHeight(500);
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDock);
   }

@@ -97,8 +97,7 @@ void gui_object_browser::Populate()
 void gui_object_browser::SetSelected(const ActAPI_DataObjectId& nodeId)
 {
   QTreeWidgetItemIterator it(this);
-  QTreeWidgetItem* pItem = NULL;
-
+  //
   while ( *it )
   {
     QString data = (*it)->data(0, BrowserRoleNodeId).toString();

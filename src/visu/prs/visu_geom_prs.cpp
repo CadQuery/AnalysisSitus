@@ -43,7 +43,7 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N)
     new visu_shape_data_provider( N->GetId(),
                                   ActParamStream() << N->Parameter(geom_part_node::PID_Geometry) );
 
-  // Pipeline for hull
+  // Main pipeline
   this->addPipeline        ( Pipeline_Main, new visu_shape_pipeline(true, true, false, false) );
   this->assignDataProvider ( Pipeline_Main, DP );
 

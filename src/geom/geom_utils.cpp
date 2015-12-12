@@ -15,10 +15,12 @@
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepBuilderAPI_NurbsConvert.hxx>
 #include <BRepCheck_Analyzer.hxx>
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
 #include <BRepCheck_Result.hxx>
 #include <BRepCheck_Status.hxx>
+#include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepTools.hxx>
 #include <GC_MakeCircle.hxx>
 #include <gp_Circ.hxx>
@@ -653,4 +655,59 @@ TopoDS_Wire geom_utils::CreateCircularWire(const double radius)
 {
   Handle(Geom_Circle) C = GC_MakeCircle(gp_Ax1( gp::Origin(), gp::DZ() ), radius);
   return BRepBuilderAPI_MakeWire( BRepBuilderAPI_MakeEdge( C->Circ() ) );
+}
+
+//! Skins a surface through the passed sections.
+//! \param wires [in] sections to skin.
+//! \return skinning result.
+TopoDS_Shape geom_utils::MakeSkin(const TopTools_SequenceOfShape& wires)
+{
+  if ( wires.Length() < 2 )
+  {
+    std::cout << "Error: not enough sections" << std::endl;
+    return TopoDS_Shape();
+  }
+
+  // Initialize and build
+  BRepOffsetAPI_ThruSections ThruSections(0, 0, 1.0e-2);
+  ThruSections.SetSmoothing(1);
+  ThruSections.SetMaxDegree(2);
+  //
+  for ( int k = 1; k <= wires.Length(); ++k )
+  {
+    if ( wires(k).ShapeType() != TopAbs_WIRE )
+    {
+      std::cout << "Warning: section " << k << " is not a wire" << std::endl;
+      continue;
+    }
+    //
+    ThruSections.AddWire( TopoDS::Wire( wires(k) ) );
+  }
+  try
+  {
+    ThruSections.Build();
+  }
+  catch ( ... )
+  {
+    std::cout << "Error: crash in BRepOffsetAPI_ThruSections" << std::endl;
+    return TopoDS_Shape();
+  }
+  //
+  if ( !ThruSections.IsDone() )
+  {
+    std::cout << "Error: IsDone() false in BRepOffsetAPI_ThruSections" << std::endl;
+    return TopoDS_Shape();
+  }
+
+  // Get the result
+  TopExp_Explorer exp(ThruSections.Shape(), TopAbs_SHELL);
+  if ( !exp.More() )
+    return TopoDS_Shape();
+  //
+  TopoDS_Shell ResultShell = TopoDS::Shell( exp.Current() );
+  //
+  std::cout << "Skinning was done successfully" << std::endl;
+  BRepTools::Write(ResultShell, "D:/skin.brep");
+  //
+  return ResultShell;
 }

@@ -8,6 +8,9 @@
 // Own include
 #include <gui_viewer_skinner.h>
 
+// GUI includes
+#include <gui_controls_skinning.h>
+
 // Common includes
 #include <common_facilities.h>
 
@@ -27,9 +30,6 @@
 #include <QVBoxLayout>
 #pragma warning(pop)
 
-// OCCT includes
-#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
-
 //! Creates a new instance of viewer.
 //! \param parent [in] parent widget.
 gui_viewer_skinner::gui_viewer_skinner(QWidget* parent) : gui_viewer(parent)
@@ -42,12 +42,16 @@ gui_viewer_skinner::gui_viewer_skinner(QWidget* parent) : gui_viewer(parent)
   m_prs_mgr->SetInteractionMode(visu_prs_manager::InteractionMode_3D);
 
   // Widgets and layouts
-  QVTKWidget*  pViewer     = m_prs_mgr->GetQVTKWidget();
-  QHBoxLayout* pBaseLayout = new QHBoxLayout();
+  gui_controls_skinning* pControlPane = new gui_controls_skinning(this);
+  QVTKWidget*            pViewer      = m_prs_mgr->GetQVTKWidget();
+  QVBoxLayout*           pBaseLayout  = new QVBoxLayout();
 
   // Configure layout
   pBaseLayout->setSpacing(0);
   pBaseLayout->addWidget(pViewer);
+  pBaseLayout->addWidget(pControlPane);
+  pBaseLayout->setStretchFactor(pViewer, 1);
+  pBaseLayout->setStretchFactor(pControlPane, 0);
   pBaseLayout->setAlignment(Qt::AlignTop);
   pBaseLayout->setContentsMargins(0, 0, 0, 0);
 

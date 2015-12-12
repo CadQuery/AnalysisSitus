@@ -16,7 +16,8 @@
 //! Default constructor. Registers all involved Parameters.
 geom_sections_node::geom_sections_node() : ActData_BaseNode()
 {
-  REGISTER_PARAMETER(Name, PID_Name);
+  REGISTER_PARAMETER(Name,  PID_Name);
+  REGISTER_PARAMETER(Shape, PID_Geometry);
 }
 
 //! Returns new DETACHED instance of Sections Node ensuring its correct
@@ -32,6 +33,9 @@ void geom_sections_node::Init()
 {
   // Initialize name Parameter
   this->InitParameter(PID_Name, "Name");
+
+  // Set empty geometry
+  this->SetGeometry( TopoDS_Shape() );
 }
 
 //-----------------------------------------------------------------------------
@@ -46,8 +50,23 @@ TCollection_ExtendedString geom_sections_node::GetName()
 }
 
 //! Sets name for the Node.
-//! \param theName [in] name to set.
-void geom_sections_node::SetName(const TCollection_ExtendedString& theName)
+//! \param name [in] name to set.
+void geom_sections_node::SetName(const TCollection_ExtendedString& name)
 {
-  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(theName);
+  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return stored geometry.
+TopoDS_Shape geom_sections_node::GetGeometry() const
+{
+  return ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
+}
+
+//! Sets geometry to store.
+//! \param shape [in] shape to store.
+void geom_sections_node::SetGeometry(const TopoDS_Shape& shape)
+{
+  ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(shape);
 }

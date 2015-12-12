@@ -11,6 +11,8 @@
 // A-Situs (visualization) includes
 #include <visu_sections_data_provider.h>
 #include <visu_sections_pipeline.h>
+#include <visu_shape_data_provider.h>
+#include <visu_shape_pipeline.h>
 
 // VTK includes
 #include <vtkProperty.h>
@@ -20,16 +22,18 @@
 visu_sections_prs::visu_sections_prs(const Handle(ActAPI_INode)& N)
 : visu_prs(N)
 {
-  // Create Data Provider
-  Handle(visu_sections_data_provider) DP = new visu_sections_data_provider( N->GetId() );
+  // Pipeline for sections
+  this->addPipeline        ( Pipeline_Sections, new visu_sections_pipeline() );
+  this->assignDataProvider ( Pipeline_Sections, new visu_sections_data_provider( N->GetId() ) );
 
-  // Pipeline for hull
-  this->addPipeline        ( Pipeline_Main, new visu_sections_pipeline() );
-  this->assignDataProvider ( Pipeline_Main, DP );
+  // Pipeline for skin
+  this->addPipeline        ( Pipeline_Skin, new visu_shape_pipeline() );
+  this->assignDataProvider ( Pipeline_Skin, new visu_shape_data_provider( N->GetId(),
+                                                                          ActParamStream() << N->Parameter(geom_sections_node::PID_Geometry) ) );
 
   // Tuning
-  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetColor(1.0, 0.7, 0.2);
-  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetLineWidth(2.0f);
+  this->GetPipeline(Pipeline_Sections)->Actor()->GetProperty()->SetColor(1.0, 0.7, 0.2);
+  this->GetPipeline(Pipeline_Sections)->Actor()->GetProperty()->SetLineWidth(2.0f);
 }
 
 //! Factory method for Presentation.

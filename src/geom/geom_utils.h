@@ -20,6 +20,7 @@
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Wire.hxx>
 #include <TopTools_ListOfShape.hxx>
+#include <TopTools_SequenceOfShape.hxx>
 
 //! Auxiliary functions facilitating working with OCCT topological shapes.
 class geom_utils
@@ -74,6 +75,9 @@ public:
 
   static TopoDS_Wire
     CreateCircularWire(const double radius);
+
+  static TopoDS_Shape
+    MakeSkin(const TopTools_SequenceOfShape& wires);
 
 private:
 

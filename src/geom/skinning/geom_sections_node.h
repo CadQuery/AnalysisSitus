@@ -41,6 +41,8 @@ public:
   //------------------//
     PID_Name,         //!< Name of the Node.
   //------------------//
+    PID_Geometry,     //!< Skinning result.
+  //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
@@ -56,12 +58,21 @@ public:
     GetName();
 
   virtual void
-    SetName(const TCollection_ExtendedString& theName);
+    SetName(const TCollection_ExtendedString& name);
 
 // Initialization:
 public:
 
   void Init();
+
+// Convenience methods:
+public:
+
+  TopoDS_Shape
+    GetGeometry() const;
+
+  void
+    SetGeometry(const TopoDS_Shape& shape);
 
 protected:
 

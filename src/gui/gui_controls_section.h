@@ -40,8 +40,6 @@ public slots:
 
 private:
 
-  QHBoxLayout* m_pMainLayout; //!< Layout of the widget.
-
   //! Widgets.
   struct t_widgets
   {
@@ -96,8 +94,11 @@ private:
     }
   };
 
-  t_widgets                        m_widgets; //!< Involved widgets.
-  std::vector<gui_prim_data_view*> m_DV;      //!< Data-View bridges.
+  //---------------------------------------------------------------------------
+
+  QHBoxLayout*                     m_pMainLayout; //!< Layout of the widget.
+  t_widgets                        m_widgets;     //!< Involved widgets.
+  std::vector<gui_prim_data_view*> m_DV;          //!< Data-View bridges.
 
 };
 

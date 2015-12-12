@@ -33,7 +33,8 @@ public:
   //! Pipelines.
   enum PipelineId
   {
-    Pipeline_Main = 1
+    Pipeline_Sections = 1,
+    Pipeline_Skin
   };
 
 public:

@@ -310,6 +310,9 @@
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_section.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_skinning.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_splitter.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
@@ -514,6 +517,9 @@
     <ClCompile Include="..\..\src\gui\gui_data_adaptor.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_skinning.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\gui\gui_splitter.h">
@@ -562,6 +568,9 @@
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\src\gui\gui_prim_data_view.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_skinning.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
   </ItemGroup>

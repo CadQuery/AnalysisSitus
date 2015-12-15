@@ -2,7 +2,7 @@
 // Created on: 20 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -96,7 +96,7 @@ int visu_shrink_poly_filter::RequestData(vtkInformation*        vtkNotUsed(reque
   {
     int cellType = input->GetCellType(cellId);
 
-    // Get the list of points for this cell.
+    // Get the list of points for this cell
     input->GetCellPoints(cellId, ptIds);
     vtkIdType numIds = ptIds->GetNumberOfIds();
 

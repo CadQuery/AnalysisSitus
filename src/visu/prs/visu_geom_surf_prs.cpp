@@ -2,7 +2,7 @@
 // Created on: 04 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -18,6 +18,7 @@
 
 // OCCT includes
 #include <BRep_Tool.hxx>
+#include <Geom_BSplineSurface.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
 
 //! Creates a Presentation object for the passed Geometry Surface Node.
@@ -79,6 +80,7 @@ void visu_geom_surf_prs::afterInitPipelines()
   TITLE += ": ";
   TITLE += ( S.IsNull() ? "NONE" : S->DynamicType()->Name() );
 
+  // Rectangular Trimmed Surface
   if ( !S.IsNull() && S->IsInstance( STANDARD_TYPE(Geom_RectangularTrimmedSurface) ) )
   {
     Handle(Geom_RectangularTrimmedSurface)
@@ -89,6 +91,30 @@ void visu_geom_surf_prs::afterInitPipelines()
     //
     TITLE += "\nBasis surface: ";
     TITLE += ( BS.IsNull() ? "NONE" : BS->DynamicType()->Name() );
+  }
+
+  // B-surface
+  if ( !S.IsNull() && S->IsInstance( STANDARD_TYPE(Geom_BSplineSurface) ) )
+  {
+    Handle(Geom_BSplineSurface) BS = Handle(Geom_BSplineSurface)::DownCast(S);
+
+    // Get surface properties
+    TITLE += "\nU degree: "; TITLE += BS->UDegree();
+    TITLE += "\nV degree: "; TITLE += BS->VDegree();
+    TITLE += "\nContinuity: ";
+    //
+    const GeomAbs_Shape cont = BS->Continuity();
+    switch ( cont )
+    {
+      case GeomAbs_C0 : TITLE += "C0"; break;
+      case GeomAbs_C1 : TITLE += "C1"; break;
+      case GeomAbs_C2 : TITLE += "C2"; break;
+      case GeomAbs_C3 : TITLE += "C3"; break;
+      case GeomAbs_CN : TITLE += "CN"; break;
+      case GeomAbs_G1 : TITLE += "G1"; break;
+      case GeomAbs_G2 : TITLE += "G2"; break;
+      default: break;
+    }
   }
 
   // Update text on the annotation

@@ -233,7 +233,43 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_mesh.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\gui\gui_data_adaptor.h" />
+    <CustomBuild Include="..\..\src\gui\gui_main_window_meshedit.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\gui\gui_prim_data_adaptor.h" />
     <CustomBuild Include="..\..\src\gui\gui_prim_data_view.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
@@ -253,6 +289,25 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_mesh.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\mesh\mesh_convert.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_geom_face_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_geom_surf_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_sections_prs.h" />
@@ -391,11 +446,13 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\geom\geom_utils.cpp" />
     <ClCompile Include="..\..\src\geom\skinning\geom_sections_node.cpp" />
     <ClCompile Include="..\..\src\geom\skinning\geom_section_node.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_mesh.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_section.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_skinning.cpp" />
     <ClCompile Include="..\..\src\gui\gui_data_adaptor.cpp" />
     <ClCompile Include="..\..\src\gui\gui_line_edit.cpp" />
     <ClCompile Include="..\..\src\gui\gui_main_window_asitus.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_meshedit.cpp" />
     <ClCompile Include="..\..\src\gui\gui_main_window_skinning.cpp" />
     <ClCompile Include="..\..\src\gui\gui_object_browser.cpp" />
     <ClCompile Include="..\..\src\gui\gui_prim_data_adaptor.cpp" />
@@ -403,6 +460,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\gui\gui_splitter.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_part.cpp" />
     <ClCompile Include="..\..\src\gui\gui_viewer.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_mesh.cpp" />
     <ClCompile Include="..\..\src\gui\gui_viewer_part.cpp" />
     <ClCompile Include="..\..\src\gui\gui_viewer_domain.cpp" />
     <ClCompile Include="..\..\src\gui\gui_viewer_section.cpp" />
@@ -410,6 +468,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\gui\gui_viewer_surface.cpp" />
     <ClCompile Include="..\..\src\gui\gui_welcome_window.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\mesh\mesh_convert.cpp" />
     <ClCompile Include="..\..\src\mesh\mesh_node.cpp" />
     <ClCompile Include="..\..\src\mesh\mesh_ply.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_geom_face_prs.cpp" />
@@ -457,6 +516,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_part.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_section.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_skinning.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_mesh.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_splitter.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_part.cpp" />
@@ -464,11 +524,13 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_domain.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_section.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_surface.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_mesh.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_visu_pick_callback.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_object_browser.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_welcome_window.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_asitus.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_skinning.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_meshedit.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_line_edit.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_prim_data_view.cpp" />
   </ItemGroup>

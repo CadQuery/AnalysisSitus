@@ -2,7 +2,7 @@
 // Created on: 27 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 #ifndef common_facilities_h
@@ -37,6 +37,7 @@ public:
   struct t_prs
   {
   //---------------------------------------------------------------------------
+    vtkSmartPointer<visu_prs_manager> Mesh;    //!< Mesh.
     vtkSmartPointer<visu_prs_manager> Part;    //!< Part.
     vtkSmartPointer<visu_prs_manager> Domain;  //!< Face domain.
     vtkSmartPointer<visu_prs_manager> Surface; //!< Host surface.

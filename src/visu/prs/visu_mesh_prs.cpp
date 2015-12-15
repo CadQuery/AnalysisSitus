@@ -2,7 +2,7 @@
 // Created on: 26 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -51,8 +51,6 @@ visu_mesh_prs::visu_mesh_prs(const Handle(ActAPI_INode)& theNode) : visu_prs(the
 
   Handle(visu_mesh_contour_pipeline) aHiliPipeline = new visu_mesh_contour_pipeline();
 
-  aHiliPipeline->ShrinkModeOn();
-
   // Set color, opacity and line width
   double aHiliColor[3];
   visu_utils::DefaultPickingColor(aHiliColor[0], aHiliColor[1], aHiliColor[2]);
@@ -79,33 +77,9 @@ bool visu_mesh_prs::IsVisible() const
   return true; // TODO: make visibility controllable
 }
 
-//! Sets SHRINK visualization mode.
-void visu_mesh_prs::doShrink() const
-{
-  this->doShading();
-
-  Handle(visu_mesh_pipeline) aMeshPL =
-    Handle(visu_mesh_pipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
-
-  // NOTICE: shrinking is not applied to CONTOUR pipeline in order to always
-  // have original mesh edges visible
-  aMeshPL->ShrinkModeOn();
-}
-
-//! Sets NON-SHRINK visualization mode.
-void visu_mesh_prs::doUnShrink() const
-{
-  Handle(visu_mesh_pipeline) aMeshPL =
-    Handle(visu_mesh_pipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
-
-  aMeshPL->ShrinkModeOff();
-}
-
 //! Sets SHADING visualization mode.
 void visu_mesh_prs::doShading() const
 {
-  this->doUnShrink();
-
   Handle(visu_mesh_pipeline) aMeshPL =
     Handle(visu_mesh_pipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
   Handle(visu_mesh_pipeline) aMeshContourPL =
@@ -119,8 +93,6 @@ void visu_mesh_prs::doShading() const
 //! Sets WIREFRAME visualization mode.
 void visu_mesh_prs::doWireframe() const
 {
-  this->doUnShrink();
-
   Handle(visu_mesh_pipeline) aMeshPL =
     Handle(visu_mesh_pipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
   Handle(visu_mesh_pipeline) aMeshContourPL =
@@ -184,8 +156,6 @@ void visu_mesh_prs::beforeUpdatePipelines() const
     this->doShading();
   else if ( aDMode == DisplayMode_Wireframe )
     this->doWireframe();
-  else if ( aDMode == DisplayMode_Shrink )
-    this->doShrink();
 }
 
 //! Callback for updating of Presentation pipelines invoked after the

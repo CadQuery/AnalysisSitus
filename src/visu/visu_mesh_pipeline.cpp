@@ -2,7 +2,7 @@
 // Created on: 13 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -39,32 +39,11 @@ visu_mesh_pipeline::visu_mesh_pipeline()
 {
   this->EmptyGroupForAllModeOn();
 
-  /* ========================
-   *  Prepare custom filters
-   * ======================== */
-
-  // Allocate SHRINK filter
-  vtkSmartPointer<visu_shrink_poly_filter>
-    shrinkFilter = vtkSmartPointer<visu_shrink_poly_filter>::New();
-  shrinkFilter->SetShrinkFactor(1.0);
-
-  /* =========================
-   *  Register custom filters
-   * ========================= */
-
-  m_filterMap.Bind(Filter_Shrink, shrinkFilter);
-
-  // Append custom filters to the pipeline
-  this->append( m_filterMap.Find(Filter_Shrink) );
-
   /* ===========================
    *  Initialize custom filters
    * =========================== */
 
   visu_utils::ApplyLightingRules( this->Actor() );
-
-  // Initialize SHRINK filter
-  this->ShrinkModeOff();
 }
 
 //! Sets input data for the pipeline.
@@ -110,34 +89,6 @@ void visu_mesh_pipeline::EmptyGroupForAllModeOn()
 void visu_mesh_pipeline::EmptyGroupForAllModeOff()
 {
   m_bIsEmptyGroupForAll = false;
-}
-
-//! Returns true if the pipeline is configured to work in SHRINK mode
-//! currently, false -- otherwise.
-//! \return true/false.
-bool visu_mesh_pipeline::IsShrinkMode() const
-{
-  visu_shrink_poly_filter*
-    aShrinkFilter = visu_shrink_poly_filter::SafeDownCast( m_filterMap.Find(Filter_Shrink) );
-  return Abs(aShrinkFilter->GetShrinkFactor() - 1.0) > RealEpsilon();
-}
-
-//! Switches ON SHRINK visualization mode.
-void visu_mesh_pipeline::ShrinkModeOn()
-{
-  visu_shrink_poly_filter*
-    aShrinkFilter = visu_shrink_poly_filter::SafeDownCast( m_filterMap.Find(Filter_Shrink) );
-
-  aShrinkFilter->SetShrinkFactor( visu_mesh_utils::DefaultShrinkFactor() );
-}
-
-//! Switches OFF SHRINK visualization mode.
-void visu_mesh_pipeline::ShrinkModeOff()
-{
-  visu_shrink_poly_filter*
-    aShrinkFilter = visu_shrink_poly_filter::SafeDownCast( m_filterMap.Find(Filter_Shrink) );
-
-  aShrinkFilter->SetShrinkFactor(1.0);
 }
 
 //! Callback for AddToRenderer base routine. Good place to adjust visualization

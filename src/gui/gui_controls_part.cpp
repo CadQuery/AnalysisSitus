@@ -2,7 +2,7 @@
 // Created on: 25 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -14,12 +14,13 @@
 // A-Situs (GUI) includes
 #include <gui_common.h>
 
-// A-Situs (mesh) includes
-#include <mesh_ply.h>
-
 // A-Situs (modeling) includes
 #include <geom_STEP.h>
 #include <geom_utils.h>
+
+// A-Situs (mesh) includes
+#include <mesh_convert.h>
+#include <mesh_ply.h>
 
 // A-Situs (visualization) includes
 #include <visu_topo_graph.h>
@@ -35,6 +36,10 @@
 #pragma warning(pop)
 
 //-----------------------------------------------------------------------------
+
+#define BTN_MIN_WIDTH 120
+
+//-----------------------------------------------------------------------------
 // Construction & destruction
 //-----------------------------------------------------------------------------
 
@@ -46,18 +51,23 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   m_pMainLayout = new QVBoxLayout();
 
   // Buttons
-  m_widgets.pLoadPly   = new QPushButton("Load &ply");
   m_widgets.pLoadBRep  = new QPushButton("Load &b-rep");
   m_widgets.pLoadSTEP  = new QPushButton("Load &STEP");
   m_widgets.pShowGraph = new QPushButton("Show &graph");
+  m_widgets.pSavePly   = new QPushButton("Save mesh (ply)");
+  //
+  m_widgets.pLoadBRep  -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pLoadSTEP  -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pShowGraph -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSavePly   -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Set layout
   m_pMainLayout->setSpacing(0);
   //
-  m_pMainLayout->addWidget(m_widgets.pLoadPly);
   m_pMainLayout->addWidget(m_widgets.pLoadBRep);
   m_pMainLayout->addWidget(m_widgets.pLoadSTEP);
   m_pMainLayout->addWidget(m_widgets.pShowGraph);
+  m_pMainLayout->addWidget(m_widgets.pSavePly);
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
   m_pMainLayout->setContentsMargins(10, 10, 10, 10);
@@ -65,10 +75,10 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   this->setLayout(m_pMainLayout);
 
   // Connect signals to slots
-  connect( m_widgets.pLoadPly,   SIGNAL( clicked() ), SLOT( onLoadPly() ) );
   connect( m_widgets.pLoadBRep,  SIGNAL( clicked() ), SLOT( onLoadBRep() ) );
   connect( m_widgets.pLoadSTEP,  SIGNAL( clicked() ), SLOT( onLoadSTEP() ) );
   connect( m_widgets.pShowGraph, SIGNAL( clicked() ), SLOT( onShowGraph() ) );
+  connect( m_widgets.pSavePly,   SIGNAL( clicked() ), SLOT( onSavePly() ) );
 }
 
 //! Destructor.
@@ -81,58 +91,6 @@ gui_controls_part::~gui_controls_part()
 //-----------------------------------------------------------------------------
 // Slots
 //-----------------------------------------------------------------------------
-
-//! On ply loading.
-void gui_controls_part::onLoadPly()
-{
-  // Select filename
-  QString filename = this->selectPlyFile();
-
-  // Load mesh
-  Handle(OMFDS_Mesh)                          mesh_data;
-  NCollection_Sequence<mesh_ply::TNamedArray> NodeArrays;
-  NCollection_Sequence<mesh_ply::TNamedArray> ElemArrays;
-  //
-  if ( !mesh_ply::Read(QStr2AsciiStr(filename), mesh_data, NodeArrays, ElemArrays) )
-  {
-    std::cout << "Error: cannot read ply file" << std::endl;
-    return;
-  }
-
-  //---------------------------------------------------------------------------
-  // Create mesh Node
-  //---------------------------------------------------------------------------
-
-  // Clean up the Model
-  common_facilities::Instance()->Model->Clear();
-
-  Handle(mesh_node) mesh_n;
-  //
-  common_facilities::Instance()->Model->OpenCommand(); // tx start
-  {
-    // Add mesh Node to Partition
-    Handle(ActAPI_INode) mesh_base = mesh_node::Instance();
-    common_facilities::Instance()->Model->MeshPartition()->AddNode(mesh_base);
-
-    // Initialize mesh
-    mesh_n = Handle(mesh_node)::DownCast(mesh_base);
-    mesh_n->Init();
-    mesh_n->SetMesh(mesh_data);
-    mesh_n->SetName("Tessellation");
-
-    // Set as a child for root
-    common_facilities::Instance()->Model->GetRootNode()->AddChildNode(mesh_n);
-  }
-  common_facilities::Instance()->Model->CommitCommand(); // tx commit
-
-  //---------------------------------------------------------------------------
-  // Update UI
-  //---------------------------------------------------------------------------
-
-  common_facilities::Instance()->Prs.Part->Actualize(mesh_n.get(), false, true);
-  //
-  common_facilities::Instance()->ObjectBrowser->Populate();
-}
 
 //! On b-rep loading.
 void gui_controls_part::onLoadBRep()
@@ -240,29 +198,55 @@ void gui_controls_part::onShowGraph()
     targetShape = F;
   }
 
+  // No shape, no graph
+  if ( targetShape.IsNull() )
+  {
+    std::cout << "Error: target shape is null" << std::endl;
+    return;
+  }
+
   // Show graph
   visu_topo_graph* pGraphView = new visu_topo_graph;
   pGraphView->Render(targetShape);
 }
 
+//! Saves mesh to PLY file.
+void gui_controls_part::onSavePly()
+{
+  QString filename = this->selectPlyFile();
+
+  // Access Geometry Node
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  if ( N.IsNull() || !N->IsWellFormed() )
+    return;
+
+  // Shape to extract the mesh from
+  TopoDS_Shape targetShape = N->GetShape();
+  if ( targetShape.IsNull() )
+  {
+    std::cout << "Error: target shape is null" << std::endl;
+    return;
+  }
+
+  // Convert shape's inherent mesh to a storable mesh
+  Handle(OMFDS_Mesh) storedMesh;
+  if ( !mesh_convert::ToPersistent(targetShape, storedMesh) )
+  {
+    std::cout << "Error: cannot convert mesh to persistent form" << std::endl;
+    return;
+  }
+
+  // Save mesh to ply files
+  if ( !mesh_ply::Write( storedMesh, QStr2AsciiStr(filename) ) )
+  {
+    std::cout << "Error: cannot save mesh" << std::endl;
+    return;
+  }
+}
+
 //-----------------------------------------------------------------------------
 // Auxiliary functions
 //-----------------------------------------------------------------------------
-
-//! Allows to select filename for import.
-//! \return selected filename.
-QString gui_controls_part::selectPlyFile() const
-{
-  QStringList aFilter;
-  aFilter << "PLY (*.ply)";
-
-  QString dir;
-  QString
-    aFileName = QFileDialog::getOpenFileName(NULL, "Select ply file with mesh",
-                                             dir, aFilter.join(";;"), NULL);
-
-  return aFileName;
-}
 
 //! Allows to select filename for import.
 //! \return selected filename.
@@ -289,6 +273,21 @@ QString gui_controls_part::selectSTEPFile() const
   QString dir;
   QString
     aFileName = QFileDialog::getOpenFileName(NULL, "Select STEP file",
+                                             dir, aFilter.join(";;"), NULL);
+
+  return aFileName;
+}
+
+//! Allows to select filename for ply export.
+//! \return selected filename.
+QString gui_controls_part::selectPlyFile() const
+{
+  QStringList aFilter;
+  aFilter << "PLY (*.ply)";
+
+  QString dir;
+  QString
+    aFileName = QFileDialog::getSaveFileName(NULL, "Select PLY file",
                                              dir, aFilter.join(";;"), NULL);
 
   return aFileName;

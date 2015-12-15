@@ -2,7 +2,7 @@
 // Created on: 26 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -86,6 +86,21 @@ void common_model::Populate()
 
   // Set name
   root_n->SetName("Analysis Situs");
+
+  //---------------------------------------------------------------------------
+  // Add Mesh Node
+  //---------------------------------------------------------------------------
+
+  // Add Mesh Node to Partition
+  Handle(mesh_node) mesh_n = Handle(mesh_node)::DownCast( mesh_node::Instance() );
+  this->MeshPartition()->AddNode(mesh_n);
+
+  // Initialize mesh
+  mesh_n->Init();
+  mesh_n->SetName("Tessellation");
+
+  // Set as a child for root
+  root_n->AddChildNode(mesh_n);
 
   //---------------------------------------------------------------------------
   // Add Part Node
@@ -176,6 +191,18 @@ void common_model::Clear()
 }
 
 //-----------------------------------------------------------------------------
+
+//! \return single Mesh Node.
+Handle(mesh_node) common_model::MeshNode() const
+{
+  for ( ActData_BasePartition::Iterator it( this->MeshPartition() ); it.More(); it.Next() )
+  {
+    Handle(mesh_node) N = Handle(mesh_node)::DownCast( it.Value() );
+    if ( !N.IsNull() && N->IsWellFormed() )
+      return N;
+  }
+  return NULL;
+}
 
 //! \return single Geometry Part Node.
 Handle(geom_part_node) common_model::PartNode() const

@@ -2,7 +2,7 @@
 // Created on: 25 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 #ifndef gui_controls_part_h
@@ -26,16 +26,16 @@ public:
 
 public slots:
 
-  void onLoadPly();
   void onLoadBRep();
   void onLoadSTEP();
   void onShowGraph();
+  void onSavePly();
 
 private:
 
-  QString selectPlyFile()  const;
   QString selectBRepFile() const;
   QString selectSTEPFile() const;
+  QString selectPlyFile()  const;
 
 private:
 
@@ -44,27 +44,27 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    QPushButton* pLoadPly;   //!< Button for ply loading.
     QPushButton* pLoadBRep;  //!< Button for brep loading.
     QPushButton* pLoadSTEP;  //!< Button for STEP loading.
     QPushButton* pShowGraph; //!< Show topology graph.
+    QPushButton* pSavePly;   //!< Save triangulation to ply.
 
-    t_widgets() : pLoadPly(NULL),
-                  pLoadBRep(NULL),
-                  pLoadSTEP(NULL),
-                  pShowGraph(NULL)
+    t_widgets() : pLoadBRep  (NULL),
+                  pLoadSTEP  (NULL),
+                  pShowGraph (NULL),
+                  pSavePly   (NULL)
     {}
 
     void Release()
     {
-      delete pLoadPly;   pLoadPly   = NULL;
       delete pLoadBRep;  pLoadBRep  = NULL;
       delete pLoadSTEP;  pLoadSTEP  = NULL;
       delete pShowGraph; pShowGraph = NULL;
+      delete pSavePly;   pSavePly   = NULL;
     }
   };
 
-  t_widgets m_widgets;
+  t_widgets m_widgets; //!< Involved widgets.
 
 };
 

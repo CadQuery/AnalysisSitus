@@ -2,7 +2,7 @@
 // Created on: 27 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -12,7 +12,6 @@
 #include <common_facilities.h>
 
 // Visualization includes
-#include <visu_mesh_prs.h>
 #include <visu_node_info.h>
 #include <visu_utils.h>
 

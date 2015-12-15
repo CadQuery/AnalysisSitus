@@ -2,7 +2,7 @@
 // Created on: 26 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 #ifndef visu_mesh_contour_pipeline_h
@@ -52,7 +52,7 @@ protected:
   //! Internally used filters.
   enum FilterId
   {
-    Filter_ExtractEdges = visu_mesh_pipeline::Filter_Last //!< Filter to extract polygonal contour.
+    Filter_ExtractEdges = 1 //!< Filter to extract polygonal contour.
   };
 
   //! Auxiliary map of internal filters by their correspondent IDs.

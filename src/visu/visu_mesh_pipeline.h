@@ -2,7 +2,7 @@
 // Created on: 13 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 #ifndef visu_mesh_pipeline_h
@@ -33,20 +33,8 @@ public:
 
 public:
 
-  void
-    EmptyGroupForAllModeOn();
-
-  void
-    EmptyGroupForAllModeOff();
-
-  bool
-    IsShrinkMode() const;
-
-  void
-    ShrinkModeOn();
-
-  void
-    ShrinkModeOff();
+  void EmptyGroupForAllModeOn();
+  void EmptyGroupForAllModeOff();
 
 private:
 
@@ -67,17 +55,10 @@ protected:
   //! Internally used filters.
   enum FilterId
   {
-    Filter_Shrink = 1, //!< VTK built-in filter for shrink mode.
-    Filter_Last
+    Filter_Last = 1
   };
 
-  //! Auxiliary map of internal filters by their correspondent IDs.
-  typedef NCollection_DataMap< FilterId, vtkSmartPointer<vtkAlgorithm> > FilterMap;
-
 protected:
-
-  //! Map of internally used filters.
-  FilterMap m_filterMap;
 
   //! Technical flag indicating whether a GL-mapper is initialized with the
   //! custom color scheme or not.

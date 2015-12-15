@@ -2,7 +2,7 @@
 // Created on: 04 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -30,7 +30,7 @@
 visu_face_surface_pipeline::visu_face_surface_pipeline()
 : visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                  vtkSmartPointer<vtkActor>::New() ),
-  m_iStepsNumber(10)
+  m_iStepsNumber(20)
 {
   this->Actor()->GetProperty()->SetLineWidth(1.0);
 }

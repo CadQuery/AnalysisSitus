@@ -2,7 +2,7 @@
 // Created on: 26 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 #ifndef common_model_h
@@ -54,6 +54,7 @@ public:
 // Accessors to Nodes:
 public:
 
+  Handle(mesh_node)          MeshNode()     const;
   Handle(geom_part_node)     PartNode()     const;
   Handle(geom_sections_node) SectionsNode() const;
 

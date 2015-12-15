@@ -2,7 +2,7 @@
 // Created on: 26 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 #ifndef visu_mesh_prs_h
@@ -57,9 +57,6 @@ public:
 
 // Visualization commands:
 public:
-
-  void doShrink() const;
-  void doUnShrink() const;
 
   void doShading() const;
   void doWireframe() const;

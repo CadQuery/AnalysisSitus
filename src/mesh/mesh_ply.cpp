@@ -2,7 +2,7 @@
 // Created on: 25 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://quaoar.su/blog/
+// Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -13,6 +13,14 @@
 #include <vector>
 #include <iterator>
 #include <iostream>
+
+// Active Data (mesh) includes
+#include <OMFDS_MeshElementsIterator.hxx>
+#include <OMFDS_MeshNode.hxx>
+#include <OMFDS_MeshQuadrangle.hxx>
+#include <OMFDS_MeshTriangle.hxx>
+
+//-----------------------------------------------------------------------------
 
 bool mesh_ply::Read(const TCollection_AsciiString&     theFilename,
                     Handle(OMFDS_Mesh)&                theMesh,
@@ -166,5 +174,112 @@ bool mesh_ply::Read(const TCollection_AsciiString&     theFilename,
 
   FILE.close();
   theMesh = Mesh;
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool mesh_ply::Write(const Handle(OMFDS_Mesh)&      theMesh,
+                     const TCollection_AsciiString& theFilename)
+{
+  std::ofstream FILE( theFilename.ToCString() );
+  if ( !FILE.is_open() )
+  {
+    std::cout << "Error: cannot open file for writing" << std::endl;
+    return false;
+  }
+
+  // Write header
+  FILE << "ply\n";
+  FILE << "format ascii 1.0\n";
+  FILE << "comment author: Analysis Situs\n";
+  FILE << "element vertex " << theMesh->NbNodes() << "\n";
+  //
+  FILE << "property double x\n";
+  FILE << "property double y\n";
+  FILE << "property double z\n";
+  //
+  FILE << "element face " << theMesh->NbFaces() << "\n";
+  FILE << "property list uchar uint vertex_indices\n";
+  FILE << "end_header\n";
+  FILE.close();
+
+  bool isOk = _writeNodes(theMesh, theFilename);
+  isOk = isOk && _writeElements(theMesh, 0, theFilename);
+  return isOk;
+}
+
+//-----------------------------------------------------------------------------
+
+bool mesh_ply::_writeNodes(const Handle(OMFDS_Mesh)&      theMesh,
+                           const TCollection_AsciiString& theFilename)
+{
+  std::ofstream FILE(theFilename.ToCString(), std::ofstream::app);
+  if ( !FILE.is_open() )
+  {
+    std::cout << "Error: cannot open file for writing" << std::endl;
+    return false;
+  }
+
+  // Write nodes
+  for ( int node_idx = 1; node_idx <= theMesh->NbNodes(); ++node_idx )
+  {
+    const gp_Pnt& P = theMesh->FindNode(node_idx)->Pnt();
+    FILE << P.X() << " " << P.Y() << " " << P.Z();
+
+    FILE << "\n";
+  }
+
+  FILE.close();
+  return true;
+}
+
+bool mesh_ply::_writeElements(const Handle(OMFDS_Mesh)&      theMesh,
+                              const int                      theShift,
+                              const TCollection_AsciiString& theFilename)
+{
+  std::ofstream FILE(theFilename.ToCString(), std::ofstream::app);
+  if ( !FILE.is_open() )
+  {
+    std::cout << "Error: cannot open file for writing" << std::endl;
+    return false;
+  }
+
+  // Loop over the mesh elements
+  for ( OMFDS_MeshElementsIterator it(theMesh, OMFAbs_Face); it.More(); it.Next() )
+  {
+    const Handle(OMFDS_MeshElement)& E = it.GetValue();
+
+    // Get node IDs resolving the actual element's type
+    int node_idx[4] = {0, 0, 0, 0};
+    int nNodes      = 0;
+    //
+    if ( E->IsInstance( STANDARD_TYPE(OMFDS_MeshTriangle) ) )
+    {
+      Handle(OMFDS_MeshTriangle) TE = Handle(OMFDS_MeshTriangle)::DownCast(E);
+      //
+      TE->GetFaceDefinedByNodes(3, node_idx, nNodes);
+    }
+    else if ( E->IsInstance( STANDARD_TYPE(OMFDS_MeshQuadrangle) ) )
+    {
+      Handle(OMFDS_MeshQuadrangle) QE = Handle(OMFDS_MeshQuadrangle)::DownCast(E);
+      //
+      QE->GetFaceDefinedByNodes(4, node_idx, nNodes);
+    }
+    else
+      continue;
+
+    // Write elements
+    FILE << nNodes << " ";
+    for ( int k = 0; k < nNodes; ++k )
+    {
+      FILE << node_idx[k] - 1 + theShift;
+      if ( k < nNodes - 1 )
+        FILE << " ";
+    }
+    FILE << "\n";
+  }
+
+  FILE.close();
   return true;
 }

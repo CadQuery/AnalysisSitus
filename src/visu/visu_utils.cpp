@@ -575,15 +575,15 @@ vtkLookupTable* visu_utils::InitLookupTable()
   MT_ShadedFace    =  7   Shaded face
 */
 
-  aColorTable->SetTableValue(0, 0, 0, 0); // Undefined
-  aColorTable->SetTableValue(1, 0.5, 0.5, 0.5); // gray for IsoLine
-  aColorTable->SetTableValue(2, 1, 0, 0); // red for Free vertex
-  aColorTable->SetTableValue(3, 1, 1, 0); // yellow for Shared vertex
-  aColorTable->SetTableValue(4, 1, 0, 0); // red for Free edge
-  aColorTable->SetTableValue(5, 0, 1, 0); // green for Boundary edge (related to a single face)
-  aColorTable->SetTableValue(6, 1, 1, 0); // yellow for Shared edge (related to several faces)
-  aColorTable->SetTableValue(7, 0.95, 0.95, 0.8);
-  aColorTable->SetTableValue(8, 0.95, 0.95, 0.8);
+  aColorTable->SetTableValue(0, 0, 0, 0);         // undefined
+  aColorTable->SetTableValue(1, 0.5, 0.5, 0.5);   // gray for isoline in wireframe
+  aColorTable->SetTableValue(2, 1, 0, 0);         // red for free vertex
+  aColorTable->SetTableValue(3, 1, 1, 0);         // yellow for shared vertex
+  aColorTable->SetTableValue(4, 1, 0, 0);         // red for free edge
+  aColorTable->SetTableValue(5, 0, 1, 0);         // green for boundary edge (related to a single face)
+  aColorTable->SetTableValue(6, 1, 1, 0);         // yellow for shared edge (related to several faces)
+  aColorTable->SetTableValue(7, 0.05, 0.55, 0.85); // face in shading
+  aColorTable->SetTableValue(8, 0.05, 0.55, 0.85); // ?
 
   return aColorTable;
 }

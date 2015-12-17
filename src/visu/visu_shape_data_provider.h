@@ -74,7 +74,7 @@ private:
   //! Source Parameters.
   Handle(ActAPI_HParameterList) m_params;
 
-  //! Mask of sub-shape IDs
+  //! Mask of sub-shape IDs.
   Handle(TColStd_HPackedMapOfInteger) m_subShapes;
 
 };

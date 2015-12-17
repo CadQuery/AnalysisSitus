@@ -20,7 +20,9 @@
 #include <vtkPolyData.h>
 
 // OCCT includes
+#include <BRep_Tool.hxx>
 #include <GCPnts_QuasiUniformDeflection.hxx>
+#include <Geom_TrimmedCurve.hxx>
 #include <GeomAdaptor_Curve.hxx>
 #include <gp_Ax1.hxx>
 
@@ -45,6 +47,33 @@ visu_curve_source::~visu_curve_source()
 //-----------------------------------------------------------------------------
 // Kernel methods
 //-----------------------------------------------------------------------------
+
+//! Initialize data source from a topological edge.
+//! \param edge [in] edge to extract the spatial curve from.
+//! \return true if poly data has been produced.
+bool visu_curve_source::SetInputEdge(const TopoDS_Edge& edge)
+{
+  double f, l;
+  Handle(Geom_Curve) crv = BRep_Tool::Curve(edge, f, l);
+
+  // Build a trimmed curve in order to put trimming parameters of a curve
+  // right into it
+  Handle(Geom_TrimmedCurve) tcrv = new Geom_TrimmedCurve(crv, f, l);
+
+  // Resolve orientation
+  visu_orientation ori = VisuOri_Undefined;
+  switch ( edge.Orientation() )
+  {
+    case TopAbs_FORWARD  : ori = VisuOri_Forward;  break;
+    case TopAbs_REVERSED : ori = VisuOri_Reversed; break;
+    case TopAbs_INTERNAL : ori = VisuOri_Internal; break;
+    case TopAbs_EXTERNAL : ori = VisuOri_External; break;
+    default: break;
+  }
+
+  // Initialize with a curve
+  return this->SetInputCurve(tcrv, ori);
+}
 
 //! Initialize data source from a parametric curve.
 //! \param curve [in] curve to discretize.
@@ -224,7 +253,7 @@ int visu_curve_source::RequestData(vtkInformation*        request,
 }
 
 //! Adds the given point to the passed polygonal data set.
-//! \param point    [in] point to add.
+//! \param point    [in]     point to add.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK point.
 vtkIdType visu_curve_source::registerGridPoint(const gp_Pnt& point,

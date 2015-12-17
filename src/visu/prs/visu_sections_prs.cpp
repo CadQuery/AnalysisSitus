@@ -32,8 +32,8 @@ visu_sections_prs::visu_sections_prs(const Handle(ActAPI_INode)& N)
                                                                           ActParamStream() << N->Parameter(geom_sections_node::PID_Geometry) ) );
 
   // Tuning
-  this->GetPipeline(Pipeline_Sections)->Actor()->GetProperty()->SetColor(1.0, 0.7, 0.2);
-  this->GetPipeline(Pipeline_Sections)->Actor()->GetProperty()->SetLineWidth(2.0f);
+  this->GetPipeline(Pipeline_Sections)->Actor()->GetProperty()->SetColor(0.1, 0.7, 0.9);
+  this->GetPipeline(Pipeline_Sections)->Actor()->GetProperty()->SetLineWidth(3.0f);
 }
 
 //! Factory method for Presentation.

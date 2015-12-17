@@ -33,6 +33,10 @@ public:
 
   virtual void Repaint() = 0;
 
+public:
+
+  inline const vtkSmartPointer<visu_prs_manager>& PrsMgr() const { return m_prs_mgr; }
+
 protected:
 
   vtkSmartPointer<visu_prs_manager> m_prs_mgr; //!< Presentation Manager.

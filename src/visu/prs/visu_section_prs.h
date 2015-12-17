@@ -15,6 +15,9 @@
 // A-Situs (geometry) includes
 #include <geom_section_node.h>
 
+// VTK includes
+#include <vtkTextWidget.h>
+
 DEFINE_STANDARD_HANDLE(visu_section_prs, visu_prs)
 
 //! Presentation class for a single skinning section.
@@ -33,7 +36,8 @@ public:
   //! Pipelines.
   enum PipelineId
   {
-    Pipeline_Main = 1
+    Pipeline_Main = 1,
+    Pipeline_Poles //!< For b-curves only
   };
 
 public:
@@ -63,6 +67,10 @@ private:
                            const visu_selection_nature& theSelNature) const;
   virtual void renderPipelines(vtkRenderer* theRenderer) const;
   virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
+
+private:
+
+  vtkSmartPointer<vtkTextWidget> m_textWidget; //!< Annotation.
 
 };
 

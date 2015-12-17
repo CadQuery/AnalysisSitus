@@ -49,6 +49,16 @@ public:
                        unsigned long theEventId,
                        void*         theCallData);
 
+protected:
+
+  //---------------------------------------------------------------------------
+  void executePart(unsigned long theEventId,
+                   void*         theCallData);
+  //---------------------------------------------------------------------------
+  void executeSection(unsigned long theEventId,
+                      void*         theCallData);
+  //---------------------------------------------------------------------------
+
 signals:
 
   void actorsPicked();    //!< Some actors were picked.

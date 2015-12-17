@@ -52,7 +52,7 @@ visu_shape_pipeline::visu_shape_pipeline(const bool isOCCTColorScheme,
                                          const bool isBound2Node,
                                          const bool isSecondary,
                                          const bool isTrianglesMode)
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
+: visu_pipeline      ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
   m_bOCCTColorScheme (isOCCTColorScheme), // Native OCCT color scheme (as in Draw)
   m_bIsBound2Node    (isBound2Node),
   m_bIsSecondary     (isSecondary),

@@ -46,9 +46,6 @@ public slots:
 
 private:
 
-  //! Default interactor style.
-  vtkSmartPointer<visu_interactor_style_pick> m_interactorStyleDefault;
-
   //! Pick callback.
   vtkSmartPointer<visu_pick_callback> m_pickCallback;
 

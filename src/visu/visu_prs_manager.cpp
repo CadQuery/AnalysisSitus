@@ -69,8 +69,7 @@ visu_prs_manager::visu_prs_manager() : vtkObject(), m_widget(NULL)
   m_renderer->TwoSidedLightingOn();
   m_renderer->SetBackground(0.1, 0.1, 0.1);
 
-  // Well, this is kind of very stupid invocation, but we have to do it
-  // as OCCT picker works really strange...
+  // Initialize employed pickers
   this->InitializePicker();
 
   // Set default selection mode
@@ -82,11 +81,11 @@ visu_prs_manager::visu_prs_manager() : vtkObject(), m_widget(NULL)
 
   // Initialize Interactor Style instance for normal operation mode
   m_interactorStyleTrackball
-    = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
+    = vtkSmartPointer<visu_interactor_style_pick>::New();
 
   // Initialize Interactor Style instance for 2D scenes
   m_interactorStyleImage
-    = vtkSmartPointer<vtkInteractorStyleImage>::New();
+    = vtkSmartPointer<visu_interactor_style_pick_2d>::New();
 
   // Initialize Render Window Interactor
   m_renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
@@ -98,9 +97,6 @@ visu_prs_manager::visu_prs_manager() : vtkObject(), m_widget(NULL)
   m_trihedron->SetAxisLabels(0);
   m_trihedron->SetConeRadius(0);
   m_renderer->AddActor(m_trihedron);
-
-  // Set selection mode
-  this->SetSelectionMode(SelectionMode_Face);
 }
 
 //-----------------------------------------------------------------------------
@@ -545,13 +541,36 @@ ActAPI_DataObjectIdList
   if ( m_iSelectionModes & SelectionMode_Workpiece ) // Non-partial selection
   {
     m_cellPicker->Pick(XStart, YStart, 0, m_renderer);
+
+    // Extract cell ID
     vtkIdType aPickedId = m_cellPicker->GetCellId();
+    vtkIdType gid = -1;
+    //
+    if ( aPickedId != -1 )
+    {
+      std::cout << "Picked ID = " << aPickedId << std::endl;
+      ///
+      vtkSmartPointer<vtkIdTypeArray>
+        gids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetGlobalIds() );
+      //
+      if ( gids )
+      {
+        gid = gids->GetValue(aPickedId);
+        std::cout << "Picked GID = " << gid << std::endl;
+      }
+    }
+
+    // Get picked actor
     aPickedActor = m_cellPicker->GetActor();
-
+    //
     if ( !aPickedActor )
+    {
+      m_widget->repaint();
       return aResult; // Nothing has been picked
+    }
 
-    aPickRes << aPickedActor << aPickedId;
+    // Push global ID to result
+    aPickRes << aPickedActor << gid;
   }
   else // Partial selection: for topological shapes only
   {
@@ -618,8 +637,11 @@ ActAPI_DataObjectIdList
    * ====================================== */
 
   // Retrieve the corresponding Presentation by data object's ID
-  ActAPI_DataObjectId
-    aNodeId = visu_node_info::Retrieve(aPickedActor)->GetNodeId();
+  visu_node_info* nodeInfo = visu_node_info::Retrieve(aPickedActor);
+  if ( !nodeInfo )
+    return aResult;
+  //
+  ActAPI_DataObjectId aNodeId = nodeInfo->GetNodeId();
 
   if ( m_iSelectionModes & SelectionMode_Workpiece )
     aResult.Append(aNodeId);
@@ -652,7 +674,6 @@ ActAPI_DataObjectIdList
 void visu_prs_manager::SetPickList(const Handle(ActAPI_HNodeList)& theNodeList)
 {
   m_bAllowedNodes = theNodeList;
-
   m_cellPicker->InitializePickList();
 
   if ( m_bAllowedNodes.IsNull() )
@@ -876,7 +897,7 @@ void visu_prs_manager::InitializePicker()
 {
   // Initialize cell picker
   m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
-  m_cellPicker->SetTolerance(0.001);
+  m_cellPicker->SetTolerance(0.015);
 
   // Create a picker for OCCT shapes
   m_shapePicker = vtkSmartPointer<IVtkTools_ShapePicker>::New();
@@ -896,6 +917,13 @@ QVTKWidget* visu_prs_manager::GetQVTKWidget() const
 vtkInteractorStyle* visu_prs_manager::GetDefaultInteractorStyle() const
 {
   return m_interactorStyleTrackball;
+}
+
+//! Returns image Interactor Style created by Presentation Manager.
+//! \return Interactor Style instance.
+vtkInteractorStyle* visu_prs_manager::GetImageInteractorStyle() const
+{
+  return m_interactorStyleImage;
 }
 
 //! Returns trihedron actor created by Presentation Manager.

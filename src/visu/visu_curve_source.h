@@ -24,6 +24,7 @@
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
 #include <NCollection_Sequence.hxx>
+#include <TopoDS_Edge.hxx>
 
 //! Source of polygonal data representing a 3D curve.
 class visu_curve_source : public vtkPolyDataAlgorithm
@@ -36,6 +37,9 @@ public:
 
 // Kernel methods:
 public:
+
+  bool
+    SetInputEdge(const TopoDS_Edge& edge);
 
   bool
     SetInputCurve(const Handle(Geom_Curve)& curve,

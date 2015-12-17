@@ -23,6 +23,7 @@
 #include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepTools.hxx>
 #include <GC_MakeCircle.hxx>
+#include <GeomConvert.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Quaternion.hxx>
 #include <gp_Vec.hxx>
@@ -654,7 +655,12 @@ void geom_utils::ShapeSummary(const TopoDS_Shape&      shape,
 TopoDS_Wire geom_utils::CreateCircularWire(const double radius)
 {
   Handle(Geom_Circle) C = GC_MakeCircle(gp_Ax1( gp::Origin(), gp::DZ() ), radius);
-  return BRepBuilderAPI_MakeWire( BRepBuilderAPI_MakeEdge( C->Circ() ) );
+
+  // Let's convert our circle to b-curve
+  Handle(Geom_BSplineCurve) BC = GeomConvert::CurveToBSplineCurve(C, Convert_QuasiAngular);
+
+  // Build a wire
+  return BRepBuilderAPI_MakeWire( BRepBuilderAPI_MakeEdge(BC) );
 }
 
 //! Skins a surface through the passed sections.

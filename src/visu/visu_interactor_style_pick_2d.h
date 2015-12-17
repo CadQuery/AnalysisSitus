@@ -1,31 +1,31 @@
 //-----------------------------------------------------------------------------
-// Created on: 27 November 2015
+// Created on: 17 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_interactor_style_pick_h
-#define visu_interactor_style_pick_h
+#ifndef visu_interactor_style_pick_2d_h
+#define visu_interactor_style_pick_2d_h
 
 // A-Situs (visualization) includes
 #include <visu_selection.h>
 
 // VTK includes
-#include <vtkInteractorStyleTrackballCamera.h>
+#include <vtkInteractorStyleImage.h>
 #include <vtkSmartPointer.h>
 
 // OCCT includes
 #include <NCollection_Sequence.hxx>
 
 //! Class representing a specific VTK Interactor Style propagating picking
-//! event for a 3D viewer.
-class visu_interactor_style_pick : public vtkInteractorStyleTrackballCamera
+//! event for a 2D viewer.
+class visu_interactor_style_pick_2d : public vtkInteractorStyleImage
 {
 public:
 
-  static visu_interactor_style_pick* New();
-  vtkTypeMacro(visu_interactor_style_pick, vtkInteractorStyleTrackballCamera);
+  static visu_interactor_style_pick_2d* New();
+  vtkTypeMacro(visu_interactor_style_pick_2d, vtkInteractorStyleImage);
 
 // Customization:
 public:
@@ -36,12 +36,6 @@ public:
   vtkSmartPointer<vtkRenderer>
     GetRenderer() const;
 
-  unsigned long
-    AddRotationCallback(unsigned long theEventID, vtkCommand* theCallback);
-
-  bool
-    RemoveRotationCallback(unsigned long theEventID, unsigned long theTag);
-
 // Overriding:
 public:
 
@@ -51,24 +45,18 @@ public:
   virtual void
     OnLeftButtonDown();
 
-  virtual void
-    OnLeftButtonUp();
-
-  virtual void
-    EndRotate();
-
 private:
 
   //! Copying prohibited.
-  visu_interactor_style_pick(const visu_interactor_style_pick&);
+  visu_interactor_style_pick_2d(const visu_interactor_style_pick_2d&);
 
   //! Assignment prohibited.
-  void operator=(const visu_interactor_style_pick&);
+  void operator=(const visu_interactor_style_pick_2d&);
 
 private:
 
-  visu_interactor_style_pick();
-  ~visu_interactor_style_pick();
+  visu_interactor_style_pick_2d();
+  ~visu_interactor_style_pick_2d();
 
 private:
 
@@ -77,12 +65,6 @@ private:
 
   //! Pick input data.
   visu_pick_input* m_pPickInput;
-
-  //! Indicates whether left mouse button is currently pressed.
-  bool m_bIsLeftButtonDown;
-
-  //! Custom callbacks called on camers rotation event.
-  NCollection_Sequence<unsigned long> m_rotationCallbackIds;
 
 };
 

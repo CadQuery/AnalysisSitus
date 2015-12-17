@@ -35,6 +35,8 @@ gui_viewer_section::gui_viewer_section(QWidget* parent) : gui_viewer(parent)
   //
   m_prs_mgr->Initialize(this);
   m_prs_mgr->SetInteractionMode(visu_prs_manager::InteractionMode_2D);
+  m_prs_mgr->SetSelectionMode(SelectionMode_Workpiece);
+  m_prs_mgr->GetRenderer()->SetBackground(0.2, 0.2, 0.2);
 
   // Widgets and layouts
   gui_controls_section* pControlPane = new gui_controls_section(this);
@@ -53,10 +55,27 @@ gui_viewer_section::gui_viewer_section(QWidget* parent) : gui_viewer(parent)
   // Set central widget
   this->setLayout(pBaseLayout);
 
+  /* ===================================
+   *  Setting up picking infrastructure
+   * =================================== */
+
+  // Initialize Callback instance for Pick operation
+  m_pickCallback = vtkSmartPointer<visu_pick_callback>::New();
+  m_pickCallback->SetViewer(this);
+
+  // Set observer for detection
+  if ( !m_prs_mgr->GetImageInteractorStyle()->HasObserver(EVENT_PICK_DEFAULT) )
+    m_prs_mgr->GetImageInteractorStyle()->AddObserver(EVENT_PICK_DEFAULT, m_pickCallback);
+
+  // Set observer for detection
+  if ( !m_prs_mgr->GetImageInteractorStyle()->HasObserver(EVENT_DETECT_DEFAULT) )
+    m_prs_mgr->GetImageInteractorStyle()->AddObserver(EVENT_DETECT_DEFAULT, m_pickCallback);
+
   /* =====================================
    *  Finalize initial state of the scene
    * ===================================== */
 
+  // Reset camera
   this->onResetView();
 }
 

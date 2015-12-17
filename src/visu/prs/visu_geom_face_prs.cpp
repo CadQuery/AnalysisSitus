@@ -74,9 +74,8 @@ void visu_geom_face_prs::afterInitPipelines()
   TopoDS_Face F     = DP->ExtractFace();
 
   // Prepare main title
-  TCollection_AsciiString TITLE("Face #");
-  TITLE += F_idx;
-  TITLE += ": ";
+  TCollection_AsciiString TITLE("Face (#");
+  TITLE += F_idx; TITLE += "): ";
   TITLE += this->orientationToString(F);
 
   // Add orientation of all wires
@@ -87,9 +86,8 @@ void visu_geom_face_prs::afterInitPipelines()
     const TopoDS_Wire& W = TopoDS::Wire( exp.Current() );
 
     TITLE += "\n";
-    TITLE += "Wire #";
-    TITLE += wire_idx;
-    TITLE += ": ";
+    TITLE += "Wire (#";
+    TITLE += wire_idx; TITLE += "): ";
     TITLE += this->orientationToString(W);
   }
 

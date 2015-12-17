@@ -14,6 +14,10 @@
 // A-Situs (GUI) includes
 #include <gui_viewer.h>
 
+// A-Situs (visualization) includes
+#include <visu_interactor_style_pick.h>
+#include <visu_pick_callback.h>
+
 //! Viewer for a single skinning section.
 class gui_viewer_section : public gui_viewer
 {
@@ -31,6 +35,11 @@ public:
 public slots:
 
   void onResetView();
+
+private:
+
+  //! Pick callback.
+  vtkSmartPointer<visu_pick_callback> m_pickCallback;
 
 };
 

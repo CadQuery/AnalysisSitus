@@ -9,6 +9,8 @@
 #define visu_prs_manager_h
 
 // Visualization includes
+#include <visu_interactor_style_pick.h>
+#include <visu_interactor_style_pick_2d.h>
 #include <visu_prs.h>
 
 // Active Data (API) includes
@@ -19,8 +21,6 @@
 #include <vtkAxesActor.h>
 #include <vtkCellPicker.h>
 #include <vtkCubeAxesActor.h>
-#include <vtkInteractorStyleTrackballCamera.h>
-#include <vtkInteractorStyleImage.h>
 #include <vtkObject.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
@@ -237,6 +237,9 @@ public:
   vtkInteractorStyle*
     GetDefaultInteractorStyle() const;
 
+  vtkInteractorStyle*
+    GetImageInteractorStyle() const;
+
   vtkAxesActor*
     GetTrihedron() const;
 
@@ -298,10 +301,10 @@ private:
   vtkSmartPointer<vtkRenderWindowInteractor> m_renderWindowInteractor;
 
   //! Default Interactor Style.
-  vtkSmartPointer<vtkInteractorStyleTrackballCamera> m_interactorStyleTrackball;
+  vtkSmartPointer<visu_interactor_style_pick> m_interactorStyleTrackball;
 
   //! Interactor Style for 2D scenes.
-  vtkSmartPointer<vtkInteractorStyleImage> m_interactorStyleImage;
+  vtkSmartPointer<visu_interactor_style_pick_2d> m_interactorStyleImage;
 
   //! Trihedron actor.
   vtkSmartPointer<vtkAxesActor> m_trihedron;

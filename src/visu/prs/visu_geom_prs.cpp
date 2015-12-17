@@ -35,8 +35,7 @@
 
 //! Creates a Presentation object for the passed Part Node.
 //! \param N [in] Part Node to create a Presentation for.
-visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N)
-: visu_prs(N)
+visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
 {
   // Create Data Provider
   Handle(visu_shape_data_provider) DP =

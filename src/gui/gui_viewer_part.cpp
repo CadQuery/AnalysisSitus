@@ -43,6 +43,7 @@ gui_viewer_part::gui_viewer_part(QWidget* parent) : gui_viewer(parent)
   //
   m_prs_mgr->Initialize(this);
   m_prs_mgr->SetInteractionMode(visu_prs_manager::InteractionMode_3D);
+  m_prs_mgr->SetSelectionMode(SelectionMode_Face);
 
   // Widgets and layouts
   gui_controls_part* pControlPane = new gui_controls_part(this);
@@ -63,21 +64,17 @@ gui_viewer_part::gui_viewer_part(QWidget* parent) : gui_viewer(parent)
    *  Setting up picking infrastructure
    * =================================== */
 
-  // Default interactor style
-  m_interactorStyleDefault = vtkSmartPointer<visu_interactor_style_pick>::New();
-  m_interactorStyleDefault->SetRenderer( m_prs_mgr->GetRenderer() );
-
   // Initialize Callback instance for Pick operation
   m_pickCallback = vtkSmartPointer<visu_pick_callback>::New();
   m_pickCallback->SetViewer(this);
 
   // Set observer for detection
-  if ( !m_interactorStyleDefault->HasObserver(EVENT_PICK_DEFAULT) )
-    m_interactorStyleDefault->AddObserver(EVENT_PICK_DEFAULT, m_pickCallback);
+  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_PICK_DEFAULT) )
+    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_PICK_DEFAULT, m_pickCallback);
 
   // Set observer for detection
-  if ( !m_interactorStyleDefault->HasObserver(EVENT_DETECT_DEFAULT) )
-    m_interactorStyleDefault->AddObserver(EVENT_DETECT_DEFAULT, m_pickCallback);
+  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_DETECT_DEFAULT) )
+    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_DETECT_DEFAULT, m_pickCallback);
 
   // Get notified once a sub-shape is picked
   connect( m_pickCallback, SIGNAL( subShapesPicked() ), this, SLOT( onSubShapesPicked() ) );
@@ -91,17 +88,12 @@ gui_viewer_part::gui_viewer_part(QWidget* parent) : gui_viewer(parent)
   m_rotoCallback->SetViewer(this);
 
   // Set observer for starting rotation
-  if ( !m_interactorStyleDefault->HasObserver(EVENT_ROTATION_START) )
-    m_interactorStyleDefault->AddObserver(EVENT_ROTATION_START, m_rotoCallback);
+  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_ROTATION_START) )
+    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_ROTATION_START, m_rotoCallback);
 
   // Set observer for ending rotation
-  if ( !m_interactorStyleDefault->HasObserver(EVENT_ROTATION_END) )
-    m_interactorStyleDefault->AddObserver(EVENT_ROTATION_END, m_rotoCallback);
-
-  //---------------------------------------------------------------------------
-
-  // Set default interactor style
-  m_prs_mgr->GetQVTKWidget()->GetRenderWindow()->GetInteractor()->SetInteractorStyle(m_interactorStyleDefault);
+  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_ROTATION_END) )
+    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_ROTATION_END, m_rotoCallback);
 
   /* ========================
    *  Initialize axes widget

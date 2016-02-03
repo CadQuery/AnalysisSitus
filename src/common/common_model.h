@@ -20,6 +20,7 @@
 #include <geom_part_node.h>
 #include <geom_sections_node.h>
 #include <geom_section_node.h>
+#include <geom_ubend_node.h>
 
 // A-Situs (mesh) includes
 #include <mesh_node.h>
@@ -37,7 +38,7 @@ class common_model : public ActData_BaseModel
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(common_model, ActData_BaseModel)
+  DEFINE_STANDARD_RTTI_INLINE(common_model, ActData_BaseModel)
 
 public:
 
@@ -57,6 +58,7 @@ public:
   Handle(mesh_node)          MeshNode()     const;
   Handle(geom_part_node)     PartNode()     const;
   Handle(geom_sections_node) SectionsNode() const;
+  Handle(geom_ubend_node)    UBendNode()    const;
 
 //-----------------------------------------------------------------------------
 // Overridden:
@@ -122,6 +124,13 @@ public:
     return Handle(common_partition<geom_section_node>)::DownCast( this->Partition(Partition_Section) );
   }
 
+  //! Accessor for a Partition instance dedicated to U-bend Nodes.
+  //! \return requested Partition.
+  inline Handle(common_partition<geom_ubend_node>) UBendPartition() const
+  {
+    return Handle(common_partition<geom_ubend_node>)::DownCast( this->Partition(Partition_UBend) );
+  }
+
 private:
 
   virtual void
@@ -166,7 +175,9 @@ private:
     Partition_GeomSurface,
   //---------------------------------------------------------------------------
     Partition_Sections,
-    Partition_Section
+    Partition_Section,
+  //---------------------------------------------------------------------------
+    Partition_UBend
   };
 
 };

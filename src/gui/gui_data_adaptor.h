@@ -20,7 +20,7 @@ class gui_data_adaptor : public Standard_Transient
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(gui_data_adaptor, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(gui_data_adaptor, Standard_Transient)
 
 public:
 

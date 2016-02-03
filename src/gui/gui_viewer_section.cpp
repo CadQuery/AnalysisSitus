@@ -25,6 +25,17 @@
 #include <QVBoxLayout>
 #pragma warning(pop)
 
+// VTK includes
+#include <vtkCell.h>
+#include <vtkPoints.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkTextActor.h>
+#include <vtkTextRepresentation.h>
+
+// OCCT includes
+#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
+
 //! Creates a new instance of viewer.
 //! \param parent [in] parent widget.
 gui_viewer_section::gui_viewer_section(QWidget* parent) : gui_viewer(parent)
@@ -71,9 +82,23 @@ gui_viewer_section::gui_viewer_section(QWidget* parent) : gui_viewer(parent)
   if ( !m_prs_mgr->GetImageInteractorStyle()->HasObserver(EVENT_DETECT_DEFAULT) )
     m_prs_mgr->GetImageInteractorStyle()->AddObserver(EVENT_DETECT_DEFAULT, m_pickCallback);
 
+  // Get notified once any sensitive is picked on a section
+  connect( m_pickCallback, SIGNAL( sectionPicked() ), this, SLOT( onSectionPicked() ) );
+
   /* =====================================
    *  Finalize initial state of the scene
    * ===================================== */
+
+  // Initialize text widget used for annotations
+  m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
+  visu_utils::InitTextWidget(m_textWidget);
+  //
+  vtkTextRepresentation* rep = vtkTextRepresentation::SafeDownCast( m_textWidget->GetRepresentation() );
+  rep->SetWindowLocation(vtkTextRepresentation::UpperRightCorner);
+  //
+  m_textWidget->SetInteractor      ( m_prs_mgr->GetRenderer()->GetRenderWindow()->GetInteractor() );
+  m_textWidget->SetDefaultRenderer ( m_prs_mgr->GetRenderer() );
+  m_textWidget->SetCurrentRenderer ( m_prs_mgr->GetRenderer() );
 
   // Reset camera
   this->onResetView();
@@ -84,15 +109,87 @@ gui_viewer_section::~gui_viewer_section()
 {
 }
 
+//-----------------------------------------------------------------------------
+
 //! Updates viewer.
 void gui_viewer_section::Repaint()
 {
   m_prs_mgr->GetQVTKWidget()->repaint();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Resets view.
 void gui_viewer_section::onResetView()
 {
   visu_utils::CameraOnTop( m_prs_mgr->GetRenderer() );
   this->Repaint();
+}
+
+//! Callback for picking event.
+void gui_viewer_section::onSectionPicked()
+{
+  //---------------------------------------------------------------------------
+  // Retrieve current selection
+  //---------------------------------------------------------------------------
+
+  // Access picking results
+  const visu_actual_selection& sel      = m_prs_mgr->GetCurrentSelection();
+  const visu_pick_result&      pick_res = sel.PickResult(SelectionNature_Detection);
+  const visu_actor_elem_map&   elem_map = pick_res.GetPickMap();
+
+  // Check if there is anything selected
+  if ( elem_map.IsEmpty() )
+  {
+    m_textWidget->Off();
+    return;
+  }
+
+  // Prepare cumulative set of all picked element IDs
+  for ( visu_actor_elem_map::Iterator it(elem_map); it.More(); it.Next() )
+  {
+    const vtkSmartPointer<vtkActor>&  picked_actor = it.Key();
+    const TColStd_PackedMapOfInteger& cellGIDs     = it.Value();
+
+    // Access polygonal data mapper
+    vtkPolyDataMapper* pMapper = vtkPolyDataMapper::SafeDownCast( picked_actor->GetMapper() );
+    if ( !pMapper )
+    {
+      m_textWidget->Off();
+      return;
+    }
+
+    // Access polygonal data
+    vtkPolyData* pData = vtkPolyData::SafeDownCast( pMapper->GetInput() );
+    if ( !pData )
+    {
+      m_textWidget->Off();
+      return;
+    }
+
+    TCollection_AsciiString TITLE;
+
+    // Loop over the selected cells
+    for ( TColStd_MapIteratorOfPackedMapOfInteger it(cellGIDs); it.More(); it.Next() )
+    {
+      const int  cellGID = it.Key();
+      vtkCell*   pCell   = pData->GetCell(cellGID);
+      vtkIdList* pids    = pCell->GetPointIds();
+
+      // Access coordinates
+      double coord[3] = {0.0, 0.0, 0.0};
+
+      for ( vtkIdType pointId = 0; pointId < pids->GetNumberOfIds(); ++pointId )
+      {
+        pData->GetPoints()->GetPoint(pids->GetId(pointId), coord);
+
+        // Prepare label
+        TITLE += "("; TITLE += coord[0]; TITLE += ", "; TITLE += coord[1]; TITLE += ", "; TITLE += coord[2]; TITLE += ")\n";
+      }
+    }
+
+    // Update text on the annotation
+    m_textWidget->GetTextActor()->SetInput( TITLE.ToCString() );
+    m_textWidget->On();
+  }
 }

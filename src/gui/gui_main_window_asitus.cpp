@@ -57,8 +57,8 @@ void gui_main_window_asitus::createPartViewer()
   // Desktop used for sizing
   QDesktopWidget desktop;
   const int side   = std::min( desktop.height(), desktop.width() );
-  const int width  = side*0.2;
-  const int height = side*0.2;
+  const int width  = side*0.8;
+  const int height = side*0.7;
   //
   m_widgets.wViewerPart->setMinimumSize(width, height);
 }

@@ -28,7 +28,7 @@ class common_root_node : public ActData_BaseNode
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(common_root_node, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI_INLINE(common_root_node, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
   DEFINE_NODE_FACTORY(common_root_node, Instance)

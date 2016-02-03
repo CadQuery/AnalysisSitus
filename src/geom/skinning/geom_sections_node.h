@@ -26,7 +26,7 @@ class geom_sections_node : public ActData_BaseNode
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(geom_sections_node, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI_INLINE(geom_sections_node, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
   DEFINE_NODE_FACTORY(geom_sections_node, Instance)

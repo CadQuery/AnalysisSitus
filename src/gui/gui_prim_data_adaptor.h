@@ -29,7 +29,7 @@ class gui_prim_data_adaptor : public gui_data_adaptor
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(gui_prim_data_adaptor, gui_data_adaptor)
+  DEFINE_STANDARD_RTTI_INLINE(gui_prim_data_adaptor, gui_data_adaptor)
 
 public:
 

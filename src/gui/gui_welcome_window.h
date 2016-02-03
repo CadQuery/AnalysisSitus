@@ -13,8 +13,8 @@
 
 // Qt includes
 #pragma warning(push, 0)
-#include <QMainWindow>
-#include <QPushButton>
+#include <QtGui/QMainWindow>
+#include <QtGui/QPushButton>
 #pragma warning(pop)
 
 //! Welcome window.
@@ -29,9 +29,11 @@ public:
 
 public slots:
 
-  void onMeshEdit();
-  void onAnalysis();
-  void onSkinning();
+  void onUBend    ();
+  void onDMU      ();
+  void onMeshEdit ();
+  void onAnalysis ();
+  void onSkinning ();
 
 private:
 
@@ -45,18 +47,24 @@ private:
   //---------------------------------------------------------------------------
     QWidget*     pMainPane; //!< Central widget.
   //---------------------------------------------------------------------------
+    QPushButton* pDMU;      //!< dMU composition.
     QPushButton* pMeshEdit; //!< Mesh Editor composition.
     QPushButton* pAnalysis; //!< Analysis composition.
     QPushButton* pSkinning; //!< Skinning composition.
+    QPushButton* pUBend;    //!< U-bend composition.
   //---------------------------------------------------------------------------
-    t_widgets() : pMainPane(NULL),
-                  pMeshEdit(NULL),
-                  pAnalysis(NULL),
-                  pSkinning(NULL)
+    t_widgets() : pMainPane (NULL),
+                  pDMU      (NULL),
+                  pMeshEdit (NULL),
+                  pAnalysis (NULL),
+                  pSkinning (NULL),
+                  pUBend    (NULL)
     {}
 
     void Release()
     {
+      delete pUBend;    pUBend    = NULL;
+      delete pDMU;      pDMU      = NULL;
       delete pMeshEdit; pMeshEdit = NULL;
       delete pAnalysis; pAnalysis = NULL;
       delete pSkinning; pSkinning = NULL;

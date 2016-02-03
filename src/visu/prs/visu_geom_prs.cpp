@@ -43,7 +43,9 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
                                   ActParamStream() << N->Parameter(geom_part_node::PID_Geometry) );
 
   // Main pipeline
-  this->addPipeline        ( Pipeline_Main, new visu_shape_pipeline(true, true, false, false) );
+  Handle(visu_shape_pipeline) pl = new visu_shape_pipeline(true, true, false, false);
+  //
+  this->addPipeline        ( Pipeline_Main, pl );
   this->assignDataProvider ( Pipeline_Main, DP );
 
   vtkMapper::SetResolveCoincidentTopologyToDefault();
@@ -56,7 +58,7 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
   visu_utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
 
   // Create pipeline for highlighting
-  Handle(visu_shape_pipeline) pick_pl = new visu_shape_pipeline(false, true, false, false);
+  Handle(visu_shape_pipeline) pick_pl = new visu_shape_pipeline( false, true, true, false, pl->DataSource() );
 
   // Adjust props
   pick_pl->Actor()->GetProperty()->SetColor(pick_color[0], pick_color[1], pick_color[2]);
@@ -82,7 +84,7 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
   visu_utils::DefaultDetectionColor(detect_color[0], detect_color[1], detect_color[2]);
 
   // Create pipeline for highlighting
-  Handle(visu_shape_pipeline) detect_pl = new visu_shape_pipeline(false, true, false, false);
+  Handle(visu_shape_pipeline) detect_pl = new visu_shape_pipeline( false, true, true, false, pl->DataSource() );
 
   // Adjust props
   detect_pl->Actor()->GetProperty()->SetColor(detect_color[0], detect_color[1], detect_color[2]);

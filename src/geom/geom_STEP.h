@@ -21,7 +21,7 @@ class geom_STEP
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(geom_STEP, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(geom_STEP, Standard_Transient)
 
 public:
 

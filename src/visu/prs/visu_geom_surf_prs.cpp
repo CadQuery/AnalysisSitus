@@ -14,6 +14,7 @@
 #include <visu_utils.h>
 
 // VTK includes
+#include <vtkProperty.h>
 #include <vtkTextActor.h>
 
 // OCCT includes
@@ -75,9 +76,9 @@ void visu_geom_surf_prs::afterInitPipelines()
   Handle(Geom_Surface) S     = F.IsNull() ? NULL : BRep_Tool::Surface(F);
 
   // Prepare main title
-  TCollection_AsciiString TITLE("Face #");
+  TCollection_AsciiString TITLE("Face (#");
   TITLE += F_idx;
-  TITLE += ": ";
+  TITLE += "): ";
   TITLE += ( S.IsNull() ? "NONE" : S->DynamicType()->Name() );
 
   // Rectangular Trimmed Surface

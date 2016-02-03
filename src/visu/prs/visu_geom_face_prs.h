@@ -26,7 +26,7 @@ class visu_geom_face_prs : public visu_prs
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(visu_geom_face_prs, visu_prs)
+  DEFINE_STANDARD_RTTI_INLINE(visu_geom_face_prs, visu_prs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(geom_face_node, Instance)

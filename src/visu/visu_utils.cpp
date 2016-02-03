@@ -36,6 +36,8 @@
 
 visu_utils::TPrsAllocMap visu_utils::m_allocMap;
 
+//-----------------------------------------------------------------------------
+
 visu_utils::TPrsAllocMap
   visu_utils::RegisterPrsType(const TCollection_AsciiString& theType,
                               const visu_prs_allocator       theAllocFunc)
@@ -46,6 +48,8 @@ visu_utils::TPrsAllocMap
 
   return m_allocMap;
 }
+
+//-----------------------------------------------------------------------------
 
 const visu_utils::TPrsAllocMap& visu_utils::GetAllocMap()
 {
@@ -120,6 +124,8 @@ int visu_utils::ComputeVisiblePropBounds(vtkRenderer*         theRenderer,
   return aCount;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Resets camera's parameters. The resulting state of the camera depends
 //! on the contents of the active scene.
 //! \param theRenderer    [in] renderer instance.
@@ -137,6 +143,8 @@ void visu_utils::ResetCamera(vtkRenderer*       theRenderer,
   if ( AdjustCamera(theRenderer, thePropsToSkip, true) )
     anActiveCamera->SetParallelScale( RESET_COEFF * anActiveCamera->GetParallelScale() );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Sets camera's options in order for the presented scene to fit all the
 //! applicable viewport.
@@ -224,6 +232,8 @@ bool visu_utils::AdjustCamera(vtkRenderer*       theRenderer,
   return anActorCount > 0;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Adjusts clipping range of the camera.
 //! \param theRenderer [in] Renderer instance.
 void visu_utils::AdjustCameraClippingRange(vtkRenderer* theRenderer)
@@ -267,6 +277,8 @@ void visu_utils::AdjustCameraClippingRange(vtkRenderer* theRenderer)
   anActiveCamera->SetClippingRange(aRange);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Puts camera on the top position.
 //! \param theRenderer [in] Renderer instance.
 void visu_utils::CameraOnTop(vtkRenderer* theRenderer)
@@ -276,6 +288,8 @@ void visu_utils::CameraOnTop(vtkRenderer* theRenderer)
   anActiveCamera->SetViewUp(0, 1, 0);
   anActiveCamera->SetFocalPoint(0, 0, 0);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Puts camera on the bottom position.
 //! \param theRenderer [in] Renderer instance.
@@ -287,6 +301,8 @@ void visu_utils::CameraOnBottom(vtkRenderer* theRenderer)
   anActiveCamera->SetFocalPoint(0, 0, 0);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Puts camera on the front position.
 //! \param theRenderer [in] Renderer instance.
 void visu_utils::CameraOnFront(vtkRenderer* theRenderer)
@@ -296,6 +312,8 @@ void visu_utils::CameraOnFront(vtkRenderer* theRenderer)
   anActiveCamera->SetViewUp(0, 0, 1);
   anActiveCamera->SetFocalPoint(0, 0, 0);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Puts camera on the back position.
 //! \param theRenderer [in] Renderer instance.
@@ -307,6 +325,8 @@ void visu_utils::CameraOnBack(vtkRenderer* theRenderer)
   anActiveCamera->SetFocalPoint(0, 0, 0);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Puts camera on the left position.
 //! \param theRenderer [in] Renderer instance.
 void visu_utils::CameraOnLeft(vtkRenderer* theRenderer)
@@ -316,6 +336,8 @@ void visu_utils::CameraOnLeft(vtkRenderer* theRenderer)
   anActiveCamera->SetViewUp(0, 0, 1);
   anActiveCamera->SetFocalPoint(0, 0, 0);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Puts camera on the right position.
 //! \param theRenderer [in] Renderer instance.
@@ -327,13 +349,19 @@ void visu_utils::CameraOnRight(vtkRenderer* theRenderer)
   anActiveCamera->SetFocalPoint(0, 0, 0);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Sets the predefined lighting options to the passed Actor.
 //! \param theActor [in] Actor to adjust lighting options.
 void visu_utils::ApplyLightingRules(vtkActor* theActor)
 {
   theActor->GetProperty()->SetAmbient(0.1);
   theActor->GetProperty()->SetDiffuse(0.2);
+  theActor->GetProperty()->SetAmbientColor(1, 1, 1);
+  theActor->GetProperty()->SetDiffuseColor(1, 1, 1);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Translates camera from one position to another.
 //! \param theRenderer [in] Renderer instance.
@@ -382,6 +410,8 @@ void visu_utils::TranslateView(vtkRenderer* theRenderer,
                               aMotionVector[2] + aViewPoint[2]);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Dumps view contents to Qt Image object.
 //! \param theRenderWindow [in] Render Window to dump the contents for.
 //! \return resulting Qt Image object.
@@ -401,6 +431,8 @@ QImage visu_utils::DumpView(vtkRenderWindow* theRenderWindow)
 
   return anImage;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Modifies the size of the trihedron so that to make its size comparable to
 //! the bounding box of the currently rendered scene.
@@ -468,6 +500,8 @@ vtkSmartPointer<vtkIntArray> visu_utils::InitIntArray(const char* theArrName)
   return aResult;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Allocates VTK single-component real data array with the given name.
 //! \param theArrName [in] name of array.
 //! \return array.
@@ -478,6 +512,8 @@ vtkSmartPointer<vtkDoubleArray> visu_utils::InitDoubleArray(const char* theArrNa
   aResult->SetNumberOfComponents(1);
   return aResult;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Allocates VTK three-component real data array with the given name.
 //! \param theArrName [in] name of array.
@@ -491,6 +527,8 @@ vtkSmartPointer<vtkDoubleArray>
   return aResult;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Allocates VTK single-component string data array with the given name.
 //! \param theArrName [in] name of array.
 //! \return array.
@@ -503,6 +541,8 @@ vtkSmartPointer<vtkStringArray>
   return aResult;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Returns default color for picking.
 //! \param fR [out] red component [0;1].
 //! \param fG [out] green component [0;1].
@@ -511,8 +551,12 @@ void visu_utils::DefaultPickingColor(double& fR,
                                      double& fG,
                                      double& fB)
 {
-  fR = fG = fB = 1.0; // Everything is WHITE
+  fR = 1.0;
+  fG = 1.0;
+  fB = 0.0;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Returns default color for highlighting.
 //! \param fR [out] red component [0;1].
@@ -527,6 +571,8 @@ void visu_utils::DefaultDetectionColor(double& fR,
   fB = 1.0;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Returns default line width for picking highlight.
 //! \return default line width for picking highlight.
 double visu_utils::DefaultPickLineWidth()
@@ -534,12 +580,16 @@ double visu_utils::DefaultPickLineWidth()
   return 2.0;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Returns default line width for detection highlight.
 //! \return default line width for detection highlight.
 double visu_utils::DefaultDetectionLineWidth()
 {
   return 2.0;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Returns default point size for highlighting.
 //! \return default point size for highlighting.
@@ -575,26 +625,30 @@ vtkLookupTable* visu_utils::InitLookupTable()
   MT_ShadedFace    =  7   Shaded face
 */
 
-  aColorTable->SetTableValue(0, 0, 0, 0);         // undefined
-  aColorTable->SetTableValue(1, 0.5, 0.5, 0.5);   // gray for isoline in wireframe
-  aColorTable->SetTableValue(2, 1, 0, 0);         // red for free vertex
-  aColorTable->SetTableValue(3, 1, 1, 0);         // yellow for shared vertex
-  aColorTable->SetTableValue(4, 1, 0, 0);         // red for free edge
-  aColorTable->SetTableValue(5, 0, 1, 0);         // green for boundary edge (related to a single face)
-  aColorTable->SetTableValue(6, 1, 1, 0);         // yellow for shared edge (related to several faces)
+  aColorTable->SetTableValue(0, 0, 0, 0);          // undefined
+  aColorTable->SetTableValue(1, 0.5, 0.5, 0.5);    // gray for isoparametric line in wireframe
+  aColorTable->SetTableValue(2, 1, 0, 0);          // red for free vertex
+  aColorTable->SetTableValue(3, 1, 1, 0);          // yellow for shared vertex
+  aColorTable->SetTableValue(4, 1, 0, 0);          // red for free edge
+  aColorTable->SetTableValue(5, 0, 1, 0);          // green for boundary edge (related to a single face)
+  aColorTable->SetTableValue(6, 1, 1, 0);          // yellow for shared edge (related to several faces)
   aColorTable->SetTableValue(7, 0.05, 0.55, 0.85); // face in shading
-  aColorTable->SetTableValue(8, 0.05, 0.55, 0.85); // ?
+  aColorTable->SetTableValue(8, 1, 1, 1);          // solid in shading
 
   return aColorTable;
 }
 
+//-----------------------------------------------------------------------------
+
 void visu_utils::SetLookupTableColor(vtkLookupTable* theColorTable,
                                      const IVtk_MeshType theColorRole,
                                      const double theR, const double theG, const double theB,
-                                     const double /*theA*/)
+                                     const double ASitus_NotUsed(theA))
 {
   theColorTable->SetTableValue(theColorRole + 1, theR, theG, theB);
 }
+
+//-----------------------------------------------------------------------------
 
 void visu_utils::GetLookupTableColor(vtkLookupTable* theColorTable,
                                      const IVtk_MeshType theColorRole,
@@ -607,6 +661,8 @@ void visu_utils::GetLookupTableColor(vtkLookupTable* theColorTable,
   theB = aRgb[2];
 }
 
+//-----------------------------------------------------------------------------
+
 void visu_utils::GetLookupTableColor(vtkLookupTable* theColorTable,
                                      const IVtk_MeshType theColorRole,
                                      double &theR, double &theG, double &theB, 
@@ -616,10 +672,14 @@ void visu_utils::GetLookupTableColor(vtkLookupTable* theColorTable,
   GetLookupTableColor(theColorTable, theColorRole, theR, theG, theB);
 }
 
+//-----------------------------------------------------------------------------
+
 void visu_utils::InitShapeMapper(vtkMapper* theMapper)
 {
   InitShapeMapper( theMapper, InitLookupTable() );
 }
+
+//-----------------------------------------------------------------------------
 
 void visu_utils::InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorTable)
 {
@@ -631,6 +691,8 @@ void visu_utils::InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorT
   theMapper->SetLookupTable(theColorTable);
   theMapper->Update();
 }
+
+//-----------------------------------------------------------------------------
 
 //! Initializes VTK lookup table charged with default color scheme for p-curves.
 //! \return VTK lookup table.
@@ -649,6 +711,8 @@ vtkSmartPointer<vtkLookupTable> visu_utils::InitDomainLookupTable()
 
   return aLookup;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Initializes the passed VTK mapper with the given Lookup Table.
 //! \param theMapper         [in/out] mapper to initialize.

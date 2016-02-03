@@ -22,7 +22,7 @@
 
 // Qt includes
 #pragma warning(push, 0)
-#include <QPoint>
+#include <QtCore/QPoint>
 #pragma warning(pop)
 
 //-----------------------------------------------------------------------------

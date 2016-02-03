@@ -33,6 +33,7 @@ REGISTER_NODE_TYPE(geom_face_node)
 REGISTER_NODE_TYPE(geom_surf_node)
 REGISTER_NODE_TYPE(geom_sections_node)
 REGISTER_NODE_TYPE(geom_section_node)
+REGISTER_NODE_TYPE(geom_ubend_node)
 
 //-----------------------------------------------------------------------------
 
@@ -160,6 +161,22 @@ void common_model::Populate()
 
   // Add as a child for the root
   root_n->AddChildNode(sections_n);
+
+  //---------------------------------------------------------------------------
+  // Add U-bend Node
+  //---------------------------------------------------------------------------
+
+  Handle(geom_ubend_node)
+    ubend_n = Handle(geom_ubend_node)::DownCast( geom_ubend_node::Instance() );
+
+  this->UBendPartition()->AddNode(ubend_n);
+
+  // Initialize
+  ubend_n->Init();
+  ubend_n->SetName("U-bend");
+
+  // Add as a child for the root
+  root_n->AddChildNode(ubend_n);
 }
 
 //! Clears the Model.
@@ -173,7 +190,7 @@ void common_model::Clear()
 
   // NOTE: Part Node is not touched as it is structural. No sense in
   //       removing it since we will have to create it again once a new
-  //       part is loaded
+  //       part is loaded. The same rule applies to other structural Nodes.
 
   ::PrepareForRemoval(this->SectionsNode(), nodesToDelete);
 
@@ -228,6 +245,18 @@ Handle(geom_sections_node) common_model::SectionsNode() const
   return NULL;
 }
 
+//! \return single U-bend Node.
+Handle(geom_ubend_node) common_model::UBendNode() const
+{
+  for ( ActData_BasePartition::Iterator it( this->UBendPartition() ); it.More(); it.Next() )
+  {
+    Handle(geom_ubend_node) N = Handle(geom_ubend_node)::DownCast( it.Value() );
+    if ( !N.IsNull() && N->IsWellFormed() )
+      return N;
+  }
+  return NULL;
+}
+
 //-----------------------------------------------------------------------------
 
 //! Initializes Partitions.
@@ -240,6 +269,7 @@ void common_model::initPartitions()
   REGISTER_PARTITION(common_partition<geom_surf_node>,     Partition_GeomSurface);
   REGISTER_PARTITION(common_partition<geom_sections_node>, Partition_Sections);
   REGISTER_PARTITION(common_partition<geom_section_node>,  Partition_Section);
+  REGISTER_PARTITION(common_partition<geom_ubend_node>,    Partition_UBend);
 }
 
 //! Initializes the Tree Functions bound to the Data Model.

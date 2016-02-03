@@ -21,6 +21,7 @@
 #include <visu_mesh_prs.h>
 #include <visu_section_prs.h>
 #include <visu_sections_prs.h>
+#include <visu_ubend_prs.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -86,6 +87,7 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(visu_geom_surf_prs)
   REGISTER_PRESENTATION(visu_section_prs)
   REGISTER_PRESENTATION(visu_sections_prs)
+  REGISTER_PRESENTATION(visu_ubend_prs)
 
   //---------------------------------------------------------------------------
   // Create main window

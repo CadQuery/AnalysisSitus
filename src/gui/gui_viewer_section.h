@@ -18,6 +18,9 @@
 #include <visu_interactor_style_pick.h>
 #include <visu_pick_callback.h>
 
+// VTK includes
+#include <vtkTextWidget.h>
+
 //! Viewer for a single skinning section.
 class gui_viewer_section : public gui_viewer
 {
@@ -35,11 +38,12 @@ public:
 public slots:
 
   void onResetView();
+  void onSectionPicked();
 
 private:
 
-  //! Pick callback.
-  vtkSmartPointer<visu_pick_callback> m_pickCallback;
+  vtkSmartPointer<visu_pick_callback> m_pickCallback; //!< Pick callback.
+  vtkSmartPointer<vtkTextWidget>      m_textWidget;   //!< Annotation.
 
 };
 

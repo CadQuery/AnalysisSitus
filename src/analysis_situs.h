@@ -10,6 +10,12 @@
 
 #define ASitus_NotUsed(x)
 
+#ifdef ASitus_EXPORTS
+  #define ASitus_EXPORT __declspec(dllexport)
+#else
+  #define ASitus_EXPORT __declspec(dllimport)
+#endif
+
 // Active Data (API) includes
 #include <ActAPI_Common.h>
 

@@ -77,7 +77,7 @@ gui_viewer_part::gui_viewer_part(QWidget* parent) : gui_viewer(parent)
     m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_DETECT_DEFAULT, m_pickCallback);
 
   // Get notified once a sub-shape is picked
-  connect( m_pickCallback, SIGNAL( subShapesPicked() ), this, SLOT( onSubShapesPicked() ) );
+  connect( m_pickCallback, SIGNAL( partPicked() ), this, SLOT( onSubShapesPicked() ) );
 
   /* ===============================
    *  Setting up rotation callbacks
@@ -108,9 +108,9 @@ gui_viewer_part::gui_viewer_part(QWidget* parent) : gui_viewer(parent)
   //
   vtkRenderer* renderer = m_prs_mgr->GetRenderer();
   renderer->SetRenderWindow( m_prs_mgr->GetQVTKWidget()->GetRenderWindow() );
+  //
   m_axesWidget->SetCurrentRenderer( m_prs_mgr->GetRenderer() );
   m_axesWidget->SetInteractor( m_prs_mgr->GetQVTKWidget()->GetRenderWindow()->GetInteractor() );
-  //
   m_axesWidget->SetEnabled(1);
   m_axesWidget->SetInteractive(0);
   m_axesWidget->SetViewport(0, 0, 0.25, 0.25);
@@ -127,11 +127,15 @@ gui_viewer_part::~gui_viewer_part()
 {
 }
 
+//-----------------------------------------------------------------------------
+
 //! Updates viewer.
 void gui_viewer_part::Repaint()
 {
   m_prs_mgr->GetQVTKWidget()->repaint();
 }
+
+//-----------------------------------------------------------------------------
 
 //! Resets view.
 void gui_viewer_part::onResetView()

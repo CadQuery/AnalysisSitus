@@ -22,6 +22,129 @@
     <ClInclude Include="..\..\src\analysis_situs.h" />
     <ClInclude Include="..\..\src\geom\geom_face_node.h" />
     <ClInclude Include="..\..\src\geom\geom_STEP.h" />
+    <CustomBuild Include="..\..\src\gui\gui_object_browser_xde.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_dmu.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_dmu.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_face_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_mesh_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_sections_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_section_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_shape_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\filters\visu_mesh_EN_scalar_filter.h" />
+    <ClInclude Include="..\..\src\visu\filters\visu_mesh_E_scalar_filter.h" />
+    <ClInclude Include="..\..\src\visu\filters\visu_mesh_E_vector_filter.h" />
+    <ClInclude Include="..\..\src\visu\filters\visu_mesh_N_scalar_filter.h" />
+    <ClInclude Include="..\..\src\visu\filters\visu_shrink_poly_filter.h" />
+    <ClInclude Include="..\..\src\visu\interaction\visu_interactor_style_pick.h" />
+    <ClInclude Include="..\..\src\visu\interaction\visu_interactor_style_pick_2d.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_shape_data_source.h" />
+    <ClInclude Include="..\..\src\xde\xde_model.h" />
+    <CustomBuild Include="..\..\src\visu\interaction\visu_pick_callback.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\visu\interaction\visu_rotation_callback.h" />
+    <ClInclude Include="..\..\src\visu\interaction\visu_viewer_callback.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_bcurve_poles_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_face_domain_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_face_surface_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_contour_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_EN_scalar_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_E_scalar_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_E_vector_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_N_scalar_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_sections_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_section_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_shape_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_face_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_surf_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_mesh_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_prs_manager.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_sections_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_section_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_ubend_prs.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_bcurve_poles_source.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_curve_source.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_mesh_source.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_pcurve_source.h" />
+    <ClInclude Include="..\..\src\visu\visu_common.h" />
+    <ClInclude Include="..\..\src\visu\visu_display_mode.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_result_utils.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_utils.h" />
+    <ClInclude Include="..\..\src\visu\visu_node_info.h" />
+    <ClInclude Include="..\..\src\visu\visu_selection.h" />
+    <ClInclude Include="..\..\src\visu\visu_topo_graph.h" />
+    <ClInclude Include="..\..\src\visu\visu_utils.h" />
     <CustomBuild Include="..\..\src\gui\gui_viewer_domain.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
@@ -251,6 +374,26 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <ClInclude Include="..\..\src\geom\ubend\geom_ubend.h" />
+    <ClInclude Include="..\..\src\geom\ubend\geom_ubend_node.h" />
+    <CustomBuild Include="..\..\src\gui\gui_controls_ubend.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\gui\gui_data_adaptor.h" />
     <CustomBuild Include="..\..\src\gui\gui_main_window_meshedit.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
@@ -258,6 +401,42 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_dmu.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_ubend.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
@@ -307,26 +486,25 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_ubend.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\mesh\mesh_convert.h" />
-    <ClInclude Include="..\..\src\visu\prs\visu_geom_face_prs.h" />
-    <ClInclude Include="..\..\src\visu\prs\visu_geom_surf_prs.h" />
-    <ClInclude Include="..\..\src\visu\prs\visu_sections_prs.h" />
-    <ClInclude Include="..\..\src\visu\prs\visu_section_prs.h" />
-    <ClInclude Include="..\..\src\visu\visu_bcurve_poles_pipeline.h" />
-    <ClInclude Include="..\..\src\visu\visu_bcurve_poles_source.h" />
-    <ClInclude Include="..\..\src\visu\visu_curve_source.h" />
-    <ClInclude Include="..\..\src\visu\visu_face_surface_pipeline.h" />
-    <ClInclude Include="..\..\src\visu\visu_interactor_style_pick_2d.h" />
-    <ClInclude Include="..\..\src\visu\visu_pcurve_source.h" />
-    <ClInclude Include="..\..\src\visu\visu_face_data_provider.h" />
-    <ClInclude Include="..\..\src\visu\visu_face_domain_pipeline.h" />
-    <ClInclude Include="..\..\src\visu\visu_interactor_style_pick.h" />
-    <ClInclude Include="..\..\src\visu\visu_sections_data_provider.h" />
-    <ClInclude Include="..\..\src\visu\visu_sections_pipeline.h" />
-    <ClInclude Include="..\..\src\visu\visu_section_data_provider.h" />
-    <ClInclude Include="..\..\src\visu\visu_section_pipeline.h" />
-    <ClInclude Include="..\..\src\visu\visu_topo_graph.h" />
-    <ClInclude Include="..\..\src\visu\visu_viewer_callback.h" />
     <CustomBuild Include="..\..\src\gui\gui_controls_part.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
@@ -391,53 +569,6 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     </CustomBuild>
     <ClInclude Include="..\..\src\mesh\mesh_node.h" />
     <ClInclude Include="..\..\src\mesh\mesh_ply.h" />
-    <ClInclude Include="..\..\src\visu\prs\visu_geom_prs.h" />
-    <ClInclude Include="..\..\src\visu\prs\visu_mesh_prs.h" />
-    <ClInclude Include="..\..\src\visu\visu_display_mode.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_contour_pipeline.h" />
-    <CustomBuild Include="..\..\src\visu\visu_pick_callback.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
-moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
-moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
-moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if not exist $(IntDir)moc mkdir $(IntDir)moc
-moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating moc file for %(Filename).h...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating moc file for %(Filename).h...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
-    </CustomBuild>
-    <ClInclude Include="..\..\src\visu\visu_rotation_callback.h" />
-    <ClInclude Include="..\..\src\visu\visu_selection.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_result_utils.h" />
-    <ClInclude Include="..\..\src\visu\visu_common.h" />
-    <ClInclude Include="..\..\src\visu\visu_prs.h" />
-    <ClInclude Include="..\..\src\visu\visu_prs_manager.h" />
-    <ClInclude Include="..\..\src\visu\visu_shape_data_provider.h" />
-    <ClInclude Include="..\..\src\visu\visu_utils.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_source.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_utils.h" />
-    <ClInclude Include="..\..\src\visu\visu_shrink_poly_filter.h" />
-    <ClInclude Include="..\..\src\visu\visu_data_provider.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_data_provider.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_EN_scalar_filter.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_EN_scalar_pipeline.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_E_scalar_filter.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_E_scalar_pipeline.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_E_vector_filter.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_E_vector_pipeline.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_N_scalar_filter.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_N_scalar_pipeline.h" />
-    <ClInclude Include="..\..\src\visu\visu_mesh_pipeline.h" />
-    <ClInclude Include="..\..\src\visu\visu_node_info.h" />
-    <ClInclude Include="..\..\src\visu\visu_pipeline.h" />
-    <ClInclude Include="..\..\src\visu\visu_shape_pipeline.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\common\common_facilities.cpp" />
@@ -451,98 +582,117 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\geom\geom_utils.cpp" />
     <ClCompile Include="..\..\src\geom\skinning\geom_sections_node.cpp" />
     <ClCompile Include="..\..\src\geom\skinning\geom_section_node.cpp" />
+    <ClCompile Include="..\..\src\geom\ubend\geom_ubend.cpp" />
+    <ClCompile Include="..\..\src\geom\ubend\geom_ubend_node.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_dmu.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_mesh.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_section.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_skinning.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_ubend.cpp" />
     <ClCompile Include="..\..\src\gui\gui_data_adaptor.cpp" />
     <ClCompile Include="..\..\src\gui\gui_line_edit.cpp" />
     <ClCompile Include="..\..\src\gui\gui_main_window_asitus.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_dmu.cpp" />
     <ClCompile Include="..\..\src\gui\gui_main_window_meshedit.cpp" />
     <ClCompile Include="..\..\src\gui\gui_main_window_skinning.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_ubend.cpp" />
     <ClCompile Include="..\..\src\gui\gui_object_browser.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_object_browser_xde.cpp" />
     <ClCompile Include="..\..\src\gui\gui_prim_data_adaptor.cpp" />
     <ClCompile Include="..\..\src\gui\gui_prim_data_view.cpp" />
     <ClCompile Include="..\..\src\gui\gui_splitter.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_part.cpp" />
     <ClCompile Include="..\..\src\gui\gui_viewer.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_dmu.cpp" />
     <ClCompile Include="..\..\src\gui\gui_viewer_mesh.cpp" />
     <ClCompile Include="..\..\src\gui\gui_viewer_part.cpp" />
     <ClCompile Include="..\..\src\gui\gui_viewer_domain.cpp" />
     <ClCompile Include="..\..\src\gui\gui_viewer_section.cpp" />
     <ClCompile Include="..\..\src\gui\gui_viewer_skinner.cpp" />
     <ClCompile Include="..\..\src\gui\gui_viewer_surface.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_ubend.cpp" />
     <ClCompile Include="..\..\src\gui\gui_welcome_window.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\mesh\mesh_convert.cpp" />
     <ClCompile Include="..\..\src\mesh\mesh_node.cpp" />
     <ClCompile Include="..\..\src\mesh\mesh_ply.cpp" />
-    <ClCompile Include="..\..\src\visu\prs\visu_geom_face_prs.cpp" />
-    <ClCompile Include="..\..\src\visu\prs\visu_geom_prs.cpp" />
-    <ClCompile Include="..\..\src\visu\prs\visu_geom_surf_prs.cpp" />
-    <ClCompile Include="..\..\src\visu\prs\visu_mesh_prs.cpp" />
-    <ClCompile Include="..\..\src\visu\prs\visu_sections_prs.cpp" />
-    <ClCompile Include="..\..\src\visu\prs\visu_section_prs.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_bcurve_poles_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_bcurve_poles_source.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_curve_source.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_face_surface_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_interactor_style_pick_2d.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_pcurve_source.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_face_data_provider.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_face_domain_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_interactor_style_pick.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_contour_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_data_provider.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_pick_callback.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_rotation_callback.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_sections_data_provider.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_sections_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_section_data_provider.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_section_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_selection.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_result_utils.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_prs.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_prs_manager.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_shape_data_provider.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_topo_graph.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_utils.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_source.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_utils.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_shrink_poly_filter.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_data_provider.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_EN_scalar_filter.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_EN_scalar_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_E_scalar_filter.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_E_scalar_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_E_vector_filter.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_E_vector_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_N_scalar_filter.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_N_scalar_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_mesh_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_node_info.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_shape_pipeline.cpp" />
-    <ClCompile Include="..\..\src\visu\visu_viewer_callback.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_dmu.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_part.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_section.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_skinning.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_mesh.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_ubend.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_splitter.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_dmu.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_part.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_skinner.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_domain.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_section.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_surface.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_mesh.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_ubend.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_visu_pick_callback.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_object_browser.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_object_browser_xde.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_welcome_window.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_asitus.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_dmu.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_skinning.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_meshedit.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_ubend.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_line_edit.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_prim_data_view.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_face_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_mesh_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_sections_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_section_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_shape_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\filters\visu_mesh_EN_scalar_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\filters\visu_mesh_E_scalar_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\filters\visu_mesh_E_vector_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\filters\visu_mesh_N_scalar_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\filters\visu_shrink_poly_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_interactor_style_pick.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_interactor_style_pick_2d.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_pick_callback.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_rotation_callback.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_viewer_callback.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_bcurve_poles_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_face_domain_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_face_surface_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_contour_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_EN_scalar_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_E_scalar_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_E_vector_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_N_scalar_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_sections_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_section_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_shape_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_face_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_surf_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_mesh_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_prs_manager.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_sections_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_section_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_ubend_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_bcurve_poles_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_curve_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_mesh_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_pcurve_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_shape_data_source.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_result_utils.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_utils.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_node_info.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_selection.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_topo_graph.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_utils.cpp" />
+    <ClCompile Include="..\..\src\xde\xde_model.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{98799C8D-EED8-41DE-9C99-508159A9C504}</ProjectGuid>
@@ -607,8 +757,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile>
       <AdditionalOptions>/DWNT %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(QR_INC);$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ASITUS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QR_INC);$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\ubend;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\data_providers;$(AS_ROOT)\src\visu\filters;$(AS_ROOT)\src\visu\interaction;$(AS_ROOT)\src\visu\pipelines;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\visu\sources;$(AS_ROOT)\src\gui;$(AS_ROOT)\src\xde;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ASitus_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -624,7 +774,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <SubSystem>Console</SubSystem>
       <ImportLibrary>$(AS_ROOT)\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKGeomBase.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKXSBase.lib;TKSTEP.lib;TKShHealing.lib;TKOffset.lib;vtkCommonCore-6.1.lib;vtkCommonDataModel-6.1.lib;vtkCommonExecutionModel-6.1.lib;vtkCommonMath-6.1.lib;vtkCommonTransforms-6.1.lib;vtkCommonMisc-6.1.lib;vtkRenderingCore-6.1.lib;vtkRenderingOpenGL-6.1.lib;vtkRenderingAnnotation-6.1.lib;vtkRenderingLabel-6.1.lib;vtkRenderingFreeType-6.1.lib;vtkRenderingFreeTypeOpenGL-6.1.lib;vtkFiltersCore-6.1.lib;vtkFiltersGeneral-6.1.lib;vtkFiltersSources-6.1.lib;vtkFiltersGeometry-6.1.lib;vtkFiltersParallel-6.1.lib;vtkFiltersExtraction-6.1.lib;vtkFiltersModeling-6.1.lib;vtkIOCore-6.1.lib;vtkIOImage-6.1.lib;vtkImagingCore-6.1.lib;vtkInteractionStyle-6.1.lib;vtkInteractionWidgets-6.1.lib;vtkInfovisLayout-6.1.lib;vtkGUISupportQt-6.1.lib;vtkViewsCore-6.1.lib;vtkViewsInfovis-6.1.lib;QtCored4.lib;QtGuid4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKXCAF.lib;TKLCAF.lib;TKCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKXSBase.lib;TKSTEP.lib;TKShHealing.lib;TKOffset.lib;vtkCommonCore-6.1.lib;vtkCommonDataModel-6.1.lib;vtkCommonExecutionModel-6.1.lib;vtkCommonMath-6.1.lib;vtkCommonTransforms-6.1.lib;vtkCommonMisc-6.1.lib;vtkRenderingCore-6.1.lib;vtkRenderingOpenGL-6.1.lib;vtkRenderingAnnotation-6.1.lib;vtkRenderingLabel-6.1.lib;vtkRenderingFreeType-6.1.lib;vtkRenderingFreeTypeOpenGL-6.1.lib;vtkFiltersCore-6.1.lib;vtkFiltersGeneral-6.1.lib;vtkFiltersSources-6.1.lib;vtkFiltersGeometry-6.1.lib;vtkFiltersParallel-6.1.lib;vtkFiltersExtraction-6.1.lib;vtkFiltersModeling-6.1.lib;vtkIOCore-6.1.lib;vtkIOImage-6.1.lib;vtkImagingCore-6.1.lib;vtkInteractionStyle-6.1.lib;vtkInteractionWidgets-6.1.lib;vtkInfovisLayout-6.1.lib;vtkGUISupportQt-6.1.lib;vtkViewsCore-6.1.lib;vtkViewsInfovis-6.1.lib;QtCored4.lib;QtGuid4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -632,8 +782,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile>
       <AdditionalOptions>/DWNT %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(QR_INC);$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ASITUS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QR_INC);$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\ubend;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\data_providers;$(AS_ROOT)\src\visu\filters;$(AS_ROOT)\src\visu\interaction;$(AS_ROOT)\src\visu\pipelines;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\visu\sources;$(AS_ROOT)\src\gui;$(AS_ROOT)\src\xde;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ASitus_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -648,7 +798,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <ImportLibrary>$(AS_ROOT)\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKGeomBase.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKXSBase.lib;TKSTEP.lib;TKShHealing.lib;TKOffset.lib;vtkCommonCore-6.1.lib;vtkCommonDataModel-6.1.lib;vtkCommonExecutionModel-6.1.lib;vtkCommonMath-6.1.lib;vtkCommonTransforms-6.1.lib;vtkCommonMisc-6.1.lib;vtkRenderingCore-6.1.lib;vtkRenderingOpenGL-6.1.lib;vtkRenderingAnnotation-6.1.lib;vtkRenderingLabel-6.1.lib;vtkRenderingFreeType-6.1.lib;vtkRenderingFreeTypeOpenGL-6.1.lib;vtkFiltersCore-6.1.lib;vtkFiltersGeneral-6.1.lib;vtkFiltersSources-6.1.lib;vtkFiltersGeometry-6.1.lib;vtkFiltersParallel-6.1.lib;vtkFiltersExtraction-6.1.lib;vtkFiltersModeling-6.1.lib;vtkIOCore-6.1.lib;vtkIOImage-6.1.lib;vtkImagingCore-6.1.lib;vtkInteractionStyle-6.1.lib;vtkInteractionWidgets-6.1.lib;vtkInfovisLayout-6.1.lib;vtkGUISupportQt-6.1.lib;vtkViewsCore-6.1.lib;vtkViewsInfovis-6.1.lib;QtCored4.lib;QtGuid4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKXCAF.lib;TKLCAF.lib;TKCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKXSBase.lib;TKSTEP.lib;TKShHealing.lib;TKOffset.lib;vtkCommonCore-6.1.lib;vtkCommonDataModel-6.1.lib;vtkCommonExecutionModel-6.1.lib;vtkCommonMath-6.1.lib;vtkCommonTransforms-6.1.lib;vtkCommonMisc-6.1.lib;vtkRenderingCore-6.1.lib;vtkRenderingOpenGL-6.1.lib;vtkRenderingAnnotation-6.1.lib;vtkRenderingLabel-6.1.lib;vtkRenderingFreeType-6.1.lib;vtkRenderingFreeTypeOpenGL-6.1.lib;vtkFiltersCore-6.1.lib;vtkFiltersGeneral-6.1.lib;vtkFiltersSources-6.1.lib;vtkFiltersGeometry-6.1.lib;vtkFiltersParallel-6.1.lib;vtkFiltersExtraction-6.1.lib;vtkFiltersModeling-6.1.lib;vtkIOCore-6.1.lib;vtkIOImage-6.1.lib;vtkImagingCore-6.1.lib;vtkInteractionStyle-6.1.lib;vtkInteractionWidgets-6.1.lib;vtkInfovisLayout-6.1.lib;vtkGUISupportQt-6.1.lib;vtkViewsCore-6.1.lib;vtkViewsInfovis-6.1.lib;QtCored4.lib;QtGuid4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -659,8 +809,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <AdditionalOptions>/DWNT %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(QR_INC);$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ASITUS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QR_INC);$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\ubend;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\data_providers;$(AS_ROOT)\src\visu\filters;$(AS_ROOT)\src\visu\interaction;$(AS_ROOT)\src\visu\pipelines;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\visu\sources;$(AS_ROOT)\src\gui;$(AS_ROOT)\src\xde;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ASitus_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -677,7 +827,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(AS_ROOT)\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKGeomBase.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKXSBase.lib;TKSTEP.lib;TKShHealing.lib;TKOffset.lib;vtkCommonCore-6.1.lib;vtkCommonDataModel-6.1.lib;vtkCommonExecutionModel-6.1.lib;vtkCommonMath-6.1.lib;vtkCommonTransforms-6.1.lib;vtkCommonMisc-6.1.lib;vtkRenderingCore-6.1.lib;vtkRenderingOpenGL-6.1.lib;vtkRenderingAnnotation-6.1.lib;vtkRenderingLabel-6.1.lib;vtkRenderingFreeType-6.1.lib;vtkRenderingFreeTypeOpenGL-6.1.lib;vtkFiltersCore-6.1.lib;vtkFiltersGeneral-6.1.lib;vtkFiltersSources-6.1.lib;vtkFiltersGeometry-6.1.lib;vtkFiltersParallel-6.1.lib;vtkFiltersExtraction-6.1.lib;vtkFiltersModeling-6.1.lib;vtkIOCore-6.1.lib;vtkIOImage-6.1.lib;vtkImagingCore-6.1.lib;vtkInteractionStyle-6.1.lib;vtkInteractionWidgets-6.1.lib;vtkInfovisLayout-6.1.lib;vtkGUISupportQt-6.1.lib;vtkViewsCore-6.1.lib;vtkViewsInfovis-6.1.lib;QtCore4.lib;QtGui4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKXCAF.lib;TKLCAF.lib;TKCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKXSBase.lib;TKSTEP.lib;TKShHealing.lib;TKOffset.lib;vtkCommonCore-6.1.lib;vtkCommonDataModel-6.1.lib;vtkCommonExecutionModel-6.1.lib;vtkCommonMath-6.1.lib;vtkCommonTransforms-6.1.lib;vtkCommonMisc-6.1.lib;vtkRenderingCore-6.1.lib;vtkRenderingOpenGL-6.1.lib;vtkRenderingAnnotation-6.1.lib;vtkRenderingLabel-6.1.lib;vtkRenderingFreeType-6.1.lib;vtkRenderingFreeTypeOpenGL-6.1.lib;vtkFiltersCore-6.1.lib;vtkFiltersGeneral-6.1.lib;vtkFiltersSources-6.1.lib;vtkFiltersGeometry-6.1.lib;vtkFiltersParallel-6.1.lib;vtkFiltersExtraction-6.1.lib;vtkFiltersModeling-6.1.lib;vtkIOCore-6.1.lib;vtkIOImage-6.1.lib;vtkImagingCore-6.1.lib;vtkInteractionStyle-6.1.lib;vtkInteractionWidgets-6.1.lib;vtkInfovisLayout-6.1.lib;vtkGUISupportQt-6.1.lib;vtkViewsCore-6.1.lib;vtkViewsInfovis-6.1.lib;QtCore4.lib;QtGui4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>
       </ProgramDatabaseFile>
     </Link>
@@ -688,8 +838,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <AdditionalOptions>/DWNT %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(QR_INC);$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ASITUS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(QR_INC);$(AD_INC);$(CAS_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\ubend;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\data_providers;$(AS_ROOT)\src\visu\filters;$(AS_ROOT)\src\visu\interaction;$(AS_ROOT)\src\visu\pipelines;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\visu\sources;$(AS_ROOT)\src\gui;$(AS_ROOT)\src\xde;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ASitus_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -705,7 +855,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(AS_ROOT)\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKGeomBase.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKXSBase.lib;TKSTEP.lib;TKShHealing.lib;TKOffset.lib;vtkCommonCore-6.1.lib;vtkCommonDataModel-6.1.lib;vtkCommonExecutionModel-6.1.lib;vtkCommonMath-6.1.lib;vtkCommonTransforms-6.1.lib;vtkCommonMisc-6.1.lib;vtkRenderingCore-6.1.lib;vtkRenderingOpenGL-6.1.lib;vtkRenderingAnnotation-6.1.lib;vtkRenderingLabel-6.1.lib;vtkRenderingFreeType-6.1.lib;vtkRenderingFreeTypeOpenGL-6.1.lib;vtkFiltersCore-6.1.lib;vtkFiltersGeneral-6.1.lib;vtkFiltersSources-6.1.lib;vtkFiltersGeometry-6.1.lib;vtkFiltersParallel-6.1.lib;vtkFiltersExtraction-6.1.lib;vtkFiltersModeling-6.1.lib;vtkIOCore-6.1.lib;vtkIOImage-6.1.lib;vtkImagingCore-6.1.lib;vtkInteractionStyle-6.1.lib;vtkInteractionWidgets-6.1.lib;vtkInfovisLayout-6.1.lib;vtkGUISupportQt-6.1.lib;vtkViewsCore-6.1.lib;vtkViewsInfovis-6.1.lib;QtCore4.lib;QtGui4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKXCAF.lib;TKLCAF.lib;TKCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKXSBase.lib;TKSTEP.lib;TKShHealing.lib;TKOffset.lib;vtkCommonCore-6.1.lib;vtkCommonDataModel-6.1.lib;vtkCommonExecutionModel-6.1.lib;vtkCommonMath-6.1.lib;vtkCommonTransforms-6.1.lib;vtkCommonMisc-6.1.lib;vtkRenderingCore-6.1.lib;vtkRenderingOpenGL-6.1.lib;vtkRenderingAnnotation-6.1.lib;vtkRenderingLabel-6.1.lib;vtkRenderingFreeType-6.1.lib;vtkRenderingFreeTypeOpenGL-6.1.lib;vtkFiltersCore-6.1.lib;vtkFiltersGeneral-6.1.lib;vtkFiltersSources-6.1.lib;vtkFiltersGeometry-6.1.lib;vtkFiltersParallel-6.1.lib;vtkFiltersExtraction-6.1.lib;vtkFiltersModeling-6.1.lib;vtkIOCore-6.1.lib;vtkIOImage-6.1.lib;vtkImagingCore-6.1.lib;vtkInteractionStyle-6.1.lib;vtkInteractionWidgets-6.1.lib;vtkInfovisLayout-6.1.lib;vtkGUISupportQt-6.1.lib;vtkViewsCore-6.1.lib;vtkViewsInfovis-6.1.lib;QtCore4.lib;QtGui4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>
       </ProgramDatabaseFile>
     </Link>

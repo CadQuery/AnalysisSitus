@@ -21,7 +21,7 @@ class common_partition : public ActData_BasePartition
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI(common_partition, ActData_BasePartition)
+  DEFINE_STANDARD_RTTI_INLINE(common_partition, ActData_BasePartition)
 
 public:
 

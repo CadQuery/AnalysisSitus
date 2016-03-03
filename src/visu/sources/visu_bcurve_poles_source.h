@@ -2,7 +2,7 @@
 // Created on: 15 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef visu_bcurve_poles_source_h
@@ -21,6 +21,7 @@
 
 // OCCT includes
 #include <Geom_BSplineCurve.hxx>
+#include <Geom2d_BSplineCurve.hxx>
 #include <TColgp_HArray1OfPnt.hxx>
 
 //! Data source giving a control polygon of a b-curve.
@@ -35,7 +36,8 @@ public:
 // Kernel methods:
 public:
 
-  bool SetInputCurve(const Handle(Geom_BSplineCurve)& bcurve);
+  bool SetInputCurve   (const Handle(Geom_BSplineCurve)& bcurve);
+  bool SetInputCurve2d (const Handle(Geom2d_BSplineCurve)& bcurve);
 
 protected:
 

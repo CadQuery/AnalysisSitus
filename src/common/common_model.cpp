@@ -2,7 +2,7 @@
 // Created on: 26 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -11,12 +11,16 @@
 // A-Situs (common) includes
 #include <common_facilities.h>
 
+// A-Situs (engine) includes
+#include <engine_ubend.h>
+
 // Active Data includes
 #include <ActData_CAFConverter.h>
-#include <ActData_Utils.h>
 #include <ActData_RealEvaluatorFunc.h>
 #include <ActData_RealVarNode.h>
 #include <ActData_RealVarPartition.h>
+#include <ActData_UniqueNodeName.h>
+#include <ActData_Utils.h>
 
 //-----------------------------------------------------------------------------
 // Register Node types
@@ -27,6 +31,7 @@ REGISTER_NODE_TYPE(ActData_RealVarNode)
 
 // Custom Nodes
 REGISTER_NODE_TYPE(common_root_node)
+REGISTER_NODE_TYPE(calculus_design_law_node)
 REGISTER_NODE_TYPE(mesh_node)
 REGISTER_NODE_TYPE(geom_part_node)
 REGISTER_NODE_TYPE(geom_face_node)
@@ -34,6 +39,8 @@ REGISTER_NODE_TYPE(geom_surf_node)
 REGISTER_NODE_TYPE(geom_sections_node)
 REGISTER_NODE_TYPE(geom_section_node)
 REGISTER_NODE_TYPE(geom_ubend_node)
+REGISTER_NODE_TYPE(geom_ubend_law_node)
+REGISTER_NODE_TYPE(geom_ubend_laws_node)
 
 //-----------------------------------------------------------------------------
 
@@ -82,7 +89,7 @@ void common_model::Populate()
 
   Handle(common_root_node)
     root_n = Handle(common_root_node)::DownCast( common_root_node::Instance() );
-
+  //
   this->RootPartition()->AddNode(root_n);
 
   // Set name
@@ -152,7 +159,7 @@ void common_model::Populate()
 
   Handle(geom_sections_node)
     sections_n = Handle(geom_sections_node)::DownCast( geom_sections_node::Instance() );
-
+  //
   this->SectionsPartition()->AddNode(sections_n);
 
   // Initialize
@@ -161,22 +168,6 @@ void common_model::Populate()
 
   // Add as a child for the root
   root_n->AddChildNode(sections_n);
-
-  //---------------------------------------------------------------------------
-  // Add U-bend Node
-  //---------------------------------------------------------------------------
-
-  Handle(geom_ubend_node)
-    ubend_n = Handle(geom_ubend_node)::DownCast( geom_ubend_node::Instance() );
-
-  this->UBendPartition()->AddNode(ubend_n);
-
-  // Initialize
-  ubend_n->Init();
-  ubend_n->SetName("U-bend");
-
-  // Add as a child for the root
-  root_n->AddChildNode(ubend_n);
 }
 
 //! Clears the Model.
@@ -262,14 +253,17 @@ Handle(geom_ubend_node) common_model::UBendNode() const
 //! Initializes Partitions.
 void common_model::initPartitions()
 {
-  REGISTER_PARTITION(common_partition<common_root_node>,   Partition_Root);
-  REGISTER_PARTITION(common_partition<mesh_node>,          Partition_Mesh);
-  REGISTER_PARTITION(common_partition<geom_part_node>,     Partition_GeomPart);
-  REGISTER_PARTITION(common_partition<geom_face_node>,     Partition_GeomFace);
-  REGISTER_PARTITION(common_partition<geom_surf_node>,     Partition_GeomSurface);
-  REGISTER_PARTITION(common_partition<geom_sections_node>, Partition_Sections);
-  REGISTER_PARTITION(common_partition<geom_section_node>,  Partition_Section);
-  REGISTER_PARTITION(common_partition<geom_ubend_node>,    Partition_UBend);
+  REGISTER_PARTITION(common_partition<common_root_node>,         Partition_Root);
+  REGISTER_PARTITION(common_partition<calculus_design_law_node>, Partition_CalculusDesignLaw);
+  REGISTER_PARTITION(common_partition<mesh_node>,                Partition_Mesh);
+  REGISTER_PARTITION(common_partition<geom_part_node>,           Partition_GeomPart);
+  REGISTER_PARTITION(common_partition<geom_face_node>,           Partition_GeomFace);
+  REGISTER_PARTITION(common_partition<geom_surf_node>,           Partition_GeomSurface);
+  REGISTER_PARTITION(common_partition<geom_sections_node>,       Partition_Sections);
+  REGISTER_PARTITION(common_partition<geom_section_node>,        Partition_Section);
+  REGISTER_PARTITION(common_partition<geom_ubend_node>,          Partition_UBend);
+  REGISTER_PARTITION(common_partition<geom_ubend_laws_node>,     Partition_UBendLaws);
+  REGISTER_PARTITION(common_partition<geom_ubend_law_node>,      Partition_UBendLaw);
 }
 
 //! Initializes the Tree Functions bound to the Data Model.

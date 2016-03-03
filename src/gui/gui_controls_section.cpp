@@ -2,7 +2,7 @@
 // Created on: 08 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -133,12 +133,6 @@ gui_controls_section::gui_controls_section(QWidget* parent) : QWidget(parent)
   pTxGrid->addWidget(new QLabel("Rz:"), 5, 0);
   //
   pTxGrid->addWidget(m_widgets.pTx, 0, 1);
-  pTxGrid->addWidget(m_widgets.pTy, 1, 1);
-  pTxGrid->addWidget(m_widgets.pTz, 2, 1);
-  pTxGrid->addWidget(m_widgets.pRx, 3, 1);
-  pTxGrid->addWidget(m_widgets.pRy, 4, 1);
-  pTxGrid->addWidget(m_widgets.pRz, 5, 1);
-  //
   pTxGrid->addWidget(m_widgets.pTy, 1, 1);
   pTxGrid->addWidget(m_widgets.pTz, 2, 1);
   pTxGrid->addWidget(m_widgets.pRx, 3, 1);

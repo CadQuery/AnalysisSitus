@@ -2,7 +2,7 @@
 // Created on: 02 February 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef geom_ubend_node_h
@@ -11,12 +11,15 @@
 // A-Situs includes
 #include <analysis_situs.h>
 
+// A-Situs (calculus) includes
+#include <geom_ubend_law_node.h>
+
 // Active Data includes
 #include <ActData_BaseNode.h>
 #include <ActData_ShapeParameter.h>
 
 //-----------------------------------------------------------------------------
-// Part Node
+// U-bend Node
 //-----------------------------------------------------------------------------
 
 DEFINE_STANDARD_HANDLE(geom_ubend_node, ActData_BaseNode)
@@ -86,6 +89,10 @@ public:
   int          GetColor       ()                           const;
   void         SetDisplayMode (const int mode);
   int          GetDisplayMode ()                           const;
+
+//-----------------------------------------------------------------------------
+  Handle(geom_ubend_law_node) GetLaw(const int oneBased_index) const;
+//-----------------------------------------------------------------------------
 
 // Initialization:
 public:

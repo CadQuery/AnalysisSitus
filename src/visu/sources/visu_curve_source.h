@@ -2,7 +2,7 @@
 // Created on: 02 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef visu_curve_source_h
@@ -21,6 +21,7 @@
 
 // OCCT includes
 #include <Geom_Curve.hxx>
+#include <Geom2d_Curve.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
 #include <NCollection_Sequence.hxx>
@@ -44,6 +45,10 @@ public:
   bool
     SetInputCurve(const Handle(Geom_Curve)& curve,
                   const visu_orientation    ori = VisuOri_Internal);
+
+  bool
+    SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
+                    const visu_orientation      ori = VisuOri_Internal);
 
   void
     SetInputArrays(const Handle(HRealArray)& xCoords,

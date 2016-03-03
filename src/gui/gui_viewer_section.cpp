@@ -2,7 +2,7 @@
 // Created on: 09 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -37,8 +37,9 @@
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
 //! Creates a new instance of viewer.
-//! \param parent [in] parent widget.
-gui_viewer_section::gui_viewer_section(QWidget* parent) : gui_viewer(parent)
+//! \param withControlPanel [in] indicates whether to enable control panel or not.
+//! \param parent           [in] parent widget.
+gui_viewer_section::gui_viewer_section(const bool withControlPanel, QWidget* parent) : gui_viewer(parent)
 {
   // Initialize Presentation Manager along with QVTK widget
   common_facilities::Instance()->Prs.Section = vtkSmartPointer<visu_prs_manager>::New();
@@ -47,19 +48,27 @@ gui_viewer_section::gui_viewer_section(QWidget* parent) : gui_viewer(parent)
   m_prs_mgr->Initialize(this);
   m_prs_mgr->SetInteractionMode(visu_prs_manager::InteractionMode_2D);
   m_prs_mgr->SetSelectionMode(SelectionMode_Workpiece);
-  m_prs_mgr->GetRenderer()->SetBackground(0.2, 0.2, 0.2);
 
   // Widgets and layouts
-  gui_controls_section* pControlPane = new gui_controls_section(this);
+  gui_controls_section* pControlPane = NULL;
+  if ( withControlPanel )
+    pControlPane = new gui_controls_section(this);
+  //
   QVTKWidget*           pViewer      = m_prs_mgr->GetQVTKWidget();
   QVBoxLayout*          pBaseLayout  = new QVBoxLayout();
 
   // Configure layout
   pBaseLayout->setSpacing(0);
   pBaseLayout->addWidget(pViewer);
-  pBaseLayout->addWidget(pControlPane);
+  //
+  if ( withControlPanel )
+    pBaseLayout->addWidget(pControlPane);
+  //
   pBaseLayout->setStretchFactor(pViewer, 1);
-  pBaseLayout->setStretchFactor(pControlPane, 0);
+  //
+  if ( withControlPanel )
+    pBaseLayout->setStretchFactor(pControlPane, 0);
+  //
   pBaseLayout->setAlignment(Qt::AlignTop);
   pBaseLayout->setContentsMargins(0, 0, 0, 0);
 

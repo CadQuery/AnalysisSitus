@@ -2,7 +2,7 @@
 // Created on: 02 February 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -11,6 +11,7 @@
 // A-Situs (visualization) includes
 #include <visu_shape_data_provider.h>
 #include <visu_shape_pipeline.h>
+#include <visu_ubend_law_data_provider.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -21,6 +22,10 @@
 visu_ubend_prs::visu_ubend_prs(const Handle(ActAPI_INode)& N)
 : visu_prs(N)
 {
+  //---------------------------------------------------------------------------
+  // Tube pipelines
+  //---------------------------------------------------------------------------
+
   // Pipeline for path
   this->addPipeline        ( Pipeline_Path, new visu_shape_pipeline() );
   this->assignDataProvider ( Pipeline_Path, new visu_shape_data_provider( N->GetId(),
@@ -36,12 +41,26 @@ visu_ubend_prs::visu_ubend_prs(const Handle(ActAPI_INode)& N)
   this->assignDataProvider ( Pipeline_Skin, new visu_shape_data_provider( N->GetId(),
                                                                           ActParamStream() << N->Parameter(geom_ubend_node::PID_Skin) ) );
 
+  //---------------------------------------------------------------------------
+  // Law pipelines
+  //---------------------------------------------------------------------------
+
+  //// Pipelines for laws
+  //for ( int k = 0; k < 12; ++k )
+  //{
+  //  this->addPipeline        ( Pipeline_Law1 + k, new visu_law_pipeline() );
+  //  this->assignDataProvider ( Pipeline_Law1 + k, new visu_ubend_law_data_provider(k + 1) );
+  //}
+
+  //---------------------------------------------------------------------------
   // Tuning
+  //---------------------------------------------------------------------------
+
   Handle(visu_shape_pipeline) path_pl = Handle(visu_shape_pipeline)::DownCast( this->GetPipeline(Pipeline_Path) );
   Handle(visu_shape_pipeline) sect_pl = Handle(visu_shape_pipeline)::DownCast( this->GetPipeline(Pipeline_Sections) );
   Handle(visu_shape_pipeline) skin_pl = Handle(visu_shape_pipeline)::DownCast( this->GetPipeline(Pipeline_Skin) );
   //
-  path_pl->Actor()->GetProperty()->SetLineWidth(1.0f);
+  path_pl->Actor()->GetProperty()->SetLineWidth(3.0f);
   path_pl->WireframeModeOn(); // We can see edges and wires in wireframe mode only
   //
   sect_pl->Actor()->GetProperty()->SetLineWidth(3.0f);

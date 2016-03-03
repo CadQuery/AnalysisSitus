@@ -2,7 +2,7 @@
 // Created on: 02 February 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef visu_shape_data_source_h

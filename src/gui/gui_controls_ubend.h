@@ -2,7 +2,7 @@
 // Created on: 02 February 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef gui_controls_ubend_h
@@ -27,9 +27,15 @@ public:
   gui_controls_ubend(QWidget* parent = NULL);
   virtual ~gui_controls_ubend();
 
+public:
+
+  void RenderSections();
+
 public slots:
 
   void onDoTheMagic();
+  void onSaveSTEP();
+  void onBrowserSelection();
 
 private:
 
@@ -37,12 +43,14 @@ private:
   struct t_widgets
   {
     QPushButton* pBuildUBend; //!< Build u-bend.
+    QPushButton* pSaveSTEP;   //!< Save u-bend in a STEP file.
 
-    t_widgets() : pBuildUBend(NULL) {} //!< ctor.
+    t_widgets() : pBuildUBend(NULL), pSaveSTEP(NULL) {} //!< ctor.
 
     void Release()
     {
       delete pBuildUBend; pBuildUBend = NULL;
+      delete pSaveSTEP;   pSaveSTEP   = NULL;
     }
   };
 

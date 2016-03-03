@@ -2,7 +2,7 @@
 // Created on: 14 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef gui_controls_mesh_h
@@ -29,10 +29,6 @@ public slots:
   void onLoadPly();
   //void onSavePly();
   void onDecimate();
-
-private:
-
-  QString selectPlyFile() const;
 
 private:
 

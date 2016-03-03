@@ -2,7 +2,7 @@
 // Created on: 28 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -111,11 +111,13 @@ void visu_interactor_style_pick::OnLeftButtonDown()
   if ( this->Interactor->GetShiftKey() )
   {
     m_pPickInput->IsMultiple = true;
+    //
+    this->StartRotate();
   }
   else
   {
     m_pPickInput->IsMultiple = false;
-
+    //
     if ( this->Interactor->GetControlKey() )
       this->StartSpin();
     else

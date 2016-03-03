@@ -2,7 +2,7 @@
 // Created on: 05 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef visu_topo_graph_h
@@ -11,107 +11,81 @@
 // Visualization includes
 #include <visu_common.h>
 
-// Qr includes
-#include <QrCore.h>
+// GUI includes
+#include <gui_vtk_window.h>
+
+// Geometry includes
+#include <geom_aag.h>
 
 // OCCT includes
+#include <SelectMgr_EntityOwner.hxx>
 #include <TopTools_DataMapOfShapeInteger.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
 
 // VTK includes
+#include <vtkCommand.h>
 #include <vtkIntArray.h>
 #include <vtkMutableDirectedGraph.h>
+#include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
+#include <vtkTextWidget.h>
 
 //! Visualizes topology graph.
-class visu_topo_graph
+class visu_topo_graph : public QObject
 {
+  Q_OBJECT
+
+public:
+
+  //! Type of graph to visualize (e.g. topology, AAG, etc.).
+  enum Regime
+  {
+    Regime_Full,
+    Regime_AAG
+  };
+
 public:
 
   visu_topo_graph();
+  ~visu_topo_graph();
 
 public:
 
-  void Render(const TopoDS_Shape& shape);
-
-public:
-
-  //! Returns shape address as string with a prefix indicating its type,
-  //! e.g. "e05FB0" is an edge and "f780A1" is a face.
-  //! \param shape [in] shape to extract the address for.
-  //! \return address of TShape as string prefixed by type indicator.
-  inline static std::string ShapeAddrWithPrefix(const TopoDS_Shape& shape)
-  {
-    std::string addr_str = ShapeAddr( shape.TShape() );
-
-    std::string prefix;
-    const TopAbs_ShapeEnum type = shape.ShapeType();
-    if ( type == TopAbs_COMPOUND )
-      prefix = "COMPOUND";
-    else if ( type == TopAbs_COMPSOLID )
-      prefix = "COMPSOLID";
-    else if ( type == TopAbs_SOLID )
-      prefix = "SOLID";
-    else if ( type == TopAbs_SHELL )
-    {
-      if ( shape.Closed() )
-        prefix = "CLOSED";
-      else
-        prefix = "OPEN";
-
-      prefix += " SHELL";
-    }
-    else if ( type == TopAbs_FACE )
-      prefix = "FACE";
-    else if ( type == TopAbs_WIRE )
-      prefix = "WIRE";
-    else if ( type == TopAbs_EDGE )
-      prefix = "EDGE";
-    else if ( type == TopAbs_VERTEX )
-      prefix = "VERTEX";
-    else
-      prefix = "SHAPE";
-
-    // Notice extra spacing for better visualization
-    return "    " + prefix + " [" + addr_str + "]";
-  }
-
-  //! Returns TShape address as string.
-  //! \param tshape [in] TShape pointer to extract the address for.
-  //! \return address of TShape as string.
-  inline static std::string ShapeAddr(const Handle(TopoDS_TShape)& tshape)
-  {
-    std::string addr_str;
-    std::ostringstream ost;
-    ost << tshape.get();
-    addr_str = ost.str();
-
-    size_t pos = 0;
-    while ( addr_str[pos] == '0' )
-      pos++;
-
-    if ( pos )
-      addr_str = QrCore::substr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
-
-    return addr_str;
-  }
-
-  //! Returns TShape address as string.
-  //! \param shape [in] shape to extract the address for.
-  //! \return address of TShape as string.
-  inline static std::string ShapeAddr(const TopoDS_Shape& shape)
-  {
-    return ShapeAddr( shape.TShape() );
-  }
+  void Render              (const TopoDS_Shape& shape, const TopTools_ListOfShape& selectedFaces, const Regime regime, const TopAbs_ShapeEnum leafType);
+  void RenderFull          (const TopoDS_Shape& shape, const TopAbs_ShapeEnum leafType);
+  void RenderAdjacency     (const TopoDS_Shape& shape, const TopTools_ListOfShape& selectedFaces);
+  void RenderEventCallback ();
 
 protected:
 
+  vtkSmartPointer<vtkGraph>
+    convertToGraph(const TopoDS_Shape&         shape,
+                   const TopTools_ListOfShape& selectedFaces,
+                   const Regime                regime,
+                   const TopAbs_ShapeEnum      leafType);
+
   void buildRecursively(const TopoDS_Shape&             rootShape,
                         const vtkIdType                 rootId,
+                        const TopAbs_ShapeEnum          leafType,
                         vtkMutableDirectedGraph*        pDS,
                         vtkStringArray*                 pLabelArr,
-                        vtkIntArray*                    pColorArr,
+                        vtkStringArray*                 pGroupArr,
                         TopTools_DataMapOfShapeInteger& shapeVertices);
+
+protected slots:
+
+  void onViewerClosed();
+  void onVertexPicked(const vtkIdType);
+
+protected:
+
+  gui_vtk_window*                m_pWidget;
+  vtkSmartPointer<vtkTextWidget> m_textWidget;
+  vtkSmartPointer<vtkTextWidget> m_summaryWidget;
+  Handle(geom_aag)               m_aag;
+  Handle(SelectMgr_EntityOwner)  m_prevHighlighted;
 
 };
 

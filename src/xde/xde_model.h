@@ -2,7 +2,7 @@
 // Created on: 02 February 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef xde_model_h
@@ -12,7 +12,12 @@
 #include <analysis_situs.h>
 
 // OCCT includes
+#pragma warning(push, 0)
+#include <TDF_LabelSequence.hxx>
 #include <TDocStd_Document.hxx>
+#include <XCAFDoc_DocumentTool.hxx>
+#include <XCAFDoc_ShapeTool.hxx>
+#pragma warning(pop)
 
 DEFINE_STANDARD_HANDLE(xde_model, Standard_Transient)
 
@@ -21,19 +26,32 @@ class xde_model : public Standard_Transient
 {
 public:
 
+  //! Data model sections.
+  enum Section
+  {
+    Section_XDE        = 1,
+    Section_Properties = 2
+  };
+
+  //! Sub-sections of the Properties group.
+  enum PropertyGroup
+  {
+    Property_Mesh = 1
+  };
+
+public:
+
   // OCCT RTTI
   DEFINE_STANDARD_RTTI_INLINE(xde_model, Standard_Transient)
 
 public:
 
-  //! Creates clone of Data Model of the given type.
-  //! \return cloned instance.
-  template <typename ModelType>
-  static Handle(ModelType) CloneInstance()
+  //! \return Data Model instance.
+  static Handle(xde_model) Instance()
   {
-    Handle(ModelType) aRes = new ModelType;
-    if ( aRes->NewEmpty() )
-      return aRes;
+    Handle(xde_model) Res = new xde_model;
+    if ( Res->NewEmpty() )
+      return Res;
     return NULL;
   }
 
@@ -73,17 +91,37 @@ public:
   ASitus_EXPORT virtual void
     Redo();
 
-// Accessors to raw CAF data & model sections
+// Accessors to data:
 public:
 
   ASitus_EXPORT virtual TDF_Label
-    RootLabel() const;
+    GetRootLabel() const;
+
+  ASitus_EXPORT virtual TDF_Label
+    GetPropertiesRootLabel() const;
+
+  ASitus_EXPORT virtual TDF_Label
+    GetPropertiesLabel(const PropertyGroup group) const;
+
+  ASitus_EXPORT TopoDS_Shape
+    GetOneShape() const;
+
+  ASitus_EXPORT void
+    GetLabelsOfParts(TDF_LabelSequence& labels);
+
+public:
 
   //! Accessor for the underlying OCAF Document.
   //! \return OCAF Document.
-  inline const Handle(TDocStd_Document)& Document() const
+  inline Handle(TDocStd_Document)& GetDocument()
   {
     return m_doc;
+  }
+
+  //! \return shape tool.
+  inline Handle(XCAFDoc_ShapeTool) GetShapeTool() const
+  {
+    return XCAFDoc_DocumentTool::ShapeTool( m_doc->Main() );
   }
 
 // Construction & initialization:

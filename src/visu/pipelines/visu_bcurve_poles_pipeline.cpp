@@ -2,7 +2,7 @@
 // Created on: 15 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -10,8 +10,8 @@
 
 // Visualization includes
 #include <visu_bcurve_poles_source.h>
+#include <visu_curve_data_provider.h>
 #include <visu_node_info.h>
-#include <visu_section_data_provider.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -23,14 +23,11 @@
 #include <vtkProperty.h>
 
 // OCCT includes
-#include <BRep_Tool.hxx>
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Edge.hxx>
 
 //! Creates new Pipeline initialized by default VTK mapper and actor.
 visu_bcurve_poles_pipeline::visu_bcurve_poles_pipeline()
+//
 : visu_pipeline      ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
   m_bMapperColorsSet (false),
   m_bForced          (false)
@@ -65,14 +62,15 @@ visu_bcurve_poles_pipeline::visu_bcurve_poles_pipeline()
 //! \param DP [in] Data Provider.
 void visu_bcurve_poles_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 {
-  Handle(visu_section_data_provider) sDP = Handle(visu_section_data_provider)::DownCast(DP);
+  Handle(visu_curve_data_provider) dp = Handle(visu_curve_data_provider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
    * =========================== */
 
-  TopoDS_Shape shape = sDP->GetShape();
-  if ( shape.IsNull() || shape.ShapeType() != TopAbs_WIRE )
+  Handle(Standard_Type) curve_type = dp->GetCurveType();
+  //
+  if ( curve_type.IsNull() )
   {
     // Pass empty data set in order to have valid pipeline
     vtkSmartPointer<vtkPolyData> dummyDS = vtkSmartPointer<vtkPolyData>::New();
@@ -85,29 +83,48 @@ void visu_bcurve_poles_pipeline::SetInput(const Handle(visu_data_provider)& DP)
    *  Prepare polygonal data set
    * ============================ */
 
-  if ( m_bForced || sDP->MustExecute( this->GetMTime() ) )
+  if ( m_bForced || dp->MustExecute( this->GetMTime() ) )
   {
     if ( m_bForced ) m_bForced = false; // Executed, reset forced
 
     // Bind to Node
-    visu_node_info::Store( sDP->GetNodeID(), this->Actor() );
+    visu_node_info::Store( dp->GetNodeID(), this->Actor() );
 
-    // WARNING: only a single edge is currently supported
-    TopExp_Explorer exp(shape, TopAbs_EDGE);
-    const TopoDS_Edge& E = TopoDS::Edge( exp.Current() );
-    //
-    double f, l;
-    Handle(Geom_Curve) C = BRep_Tool::Curve(E, f, l);
+    // Access curve (3d or 2d)
+    Handle(Geom_Curve)   c3d = dp->GetCurve();
+    Handle(Geom2d_Curve) c2d = dp->GetCurve2d();
 
     // B-curve poles
-    if ( C->IsKind( STANDARD_TYPE(Geom_BSplineCurve) ) )
+    if ( !c3d.IsNull() && c3d->IsKind( STANDARD_TYPE(Geom_BSplineCurve) ) )
     {
-      Handle(Geom_BSplineCurve) BC = Handle(Geom_BSplineCurve)::DownCast(C);
+      Handle(Geom_BSplineCurve) BC = Handle(Geom_BSplineCurve)::DownCast(c3d);
       //
       vtkSmartPointer<visu_bcurve_poles_source>
         bpoles_src = vtkSmartPointer<visu_bcurve_poles_source>::New();
       //
       bpoles_src->SetInputCurve(BC);
+
+      // Apply selection
+      if ( m_selected->GetSize() )
+      {
+        m_extractSelection->SetInputConnection(0, bpoles_src->GetOutputPort() );
+        m_extractSelection->SetInputData(1, m_selection);
+        m_toPolyData->SetInputConnection( m_extractSelection->GetOutputPort() );
+
+        // Set ultimate input
+        this->SetInputConnection( m_toPolyData->GetOutputPort() );
+      }
+      else
+        this->SetInputConnection( bpoles_src->GetOutputPort() );
+    }
+    else if ( !c2d.IsNull() && c2d->IsKind( STANDARD_TYPE(Geom2d_BSplineCurve) ) )
+    {
+      Handle(Geom2d_BSplineCurve) BC = Handle(Geom2d_BSplineCurve)::DownCast(c2d);
+      //
+      vtkSmartPointer<visu_bcurve_poles_source>
+        bpoles_src = vtkSmartPointer<visu_bcurve_poles_source>::New();
+      //
+      bpoles_src->SetInputCurve2d(BC);
 
       // Apply selection
       if ( m_selected->GetSize() )

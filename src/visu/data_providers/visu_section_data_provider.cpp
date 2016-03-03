@@ -2,7 +2,7 @@
 // Created on: 17 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -11,6 +11,12 @@
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
+// OCCT includes
+#include <BRep_Tool.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting the set of source data structures.
@@ -18,13 +24,39 @@
 //! \param theParamList [in] source Parameters.
 visu_section_data_provider::visu_section_data_provider(const ActAPI_DataObjectId&           theNodeId,
                                                        const Handle(ActAPI_HParameterList)& theParamList)
-: visu_data_provider()
+: visu_curve_data_provider()
 {
   m_nodeID = theNodeId;
   m_params = theParamList;
 }
 
 //-----------------------------------------------------------------------------
+
+//! \return curve type.
+Handle(Standard_Type) visu_section_data_provider::GetCurveType() const
+{
+  return this->GetCurve()->DynamicType();
+}
+
+//! Not used.
+Handle(Geom2d_Curve) visu_section_data_provider::GetCurve2d() const
+{
+  return NULL;
+}
+
+//! Not used.
+Handle(Geom_Curve) visu_section_data_provider::GetCurve() const
+{
+  TopoDS_Shape section_shape = this->GetShape();
+  //
+  TopExp_Explorer exp(section_shape, TopAbs_EDGE);
+  TopoDS_Edge section_edge = TopoDS::Edge( exp.Current() );
+
+  // Extract curve
+  double f, l;
+  Handle(Geom_Curve) c3d = BRep_Tool::Curve(section_edge, f, l);
+  return c3d;
+}
 
 //! Returns ID of the Data Node which is being sourced by the visualization
 //! pipeline. This ID is bound to the pipeline's actor in order to have a

@@ -2,7 +2,7 @@
 // Created on: 02 February 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef gui_object_browser_xde_h
@@ -43,7 +43,8 @@ public:
 
 protected:
 
-  //void addChildren(const Handle(ActAPI_INode)& root_n, QTreeWidgetItem* root_ui);
+  void populateBranch(const TCollection_AsciiString& rootEntry,
+                      QTreeWidgetItem*               rootUi);
 
 //-----------------------------------------------------------------------------
 signals:
@@ -54,6 +55,10 @@ signals:
 protected slots:
 
   void onSelectionChanged();
+
+protected:
+
+  Handle(xde_model) m_model; //!< XDE model.
 
 };
 

@@ -102,6 +102,39 @@
     <Filter Include="Source Files\XDE">
       <UniqueIdentifier>{0d7cafb6-5d4b-467f-8c7e-9bedb9565432}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Calculus">
+      <UniqueIdentifier>{6338326c-d77e-4428-8ad2-4814a2596180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Calculus">
+      <UniqueIdentifier>{5016b3bc-0ff1-4709-a540-770eb42d0777}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{7f769760-eee3-406e-ad44-81eabbfecfba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{f2660fd8-c09d-4ba7-a638-067d1db53c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{5e70a59c-da96-4258-bcab-5439b9484b5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization\AIS">
+      <UniqueIdentifier>{226a52b6-1d83-4d66-8b79-e28b9ac723f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization\AIS">
+      <UniqueIdentifier>{96b49a6e-a488-40d8-8a71-a24cfd906293}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI\CAF Browser">
+      <UniqueIdentifier>{452c9fbd-c42e-44fb-97af-d819f7743b41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\CAF Browser">
+      <UniqueIdentifier>{0fc2e59d-ed77-4ac5-b44d-1ba88a1d7df8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Features">
+      <UniqueIdentifier>{93574d05-8748-4384-a5d8-e3007be847f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Features">
+      <UniqueIdentifier>{d8a66983-c22c-41cb-b63b-088b16b4e122}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\analysis_situs.h">
@@ -308,9 +341,6 @@
     <ClInclude Include="..\..\src\visu\visu_selection.h">
       <Filter>Header Files\Visualization</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\visu\visu_topo_graph.h">
-      <Filter>Header Files\Visualization</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\visu\visu_utils.h">
       <Filter>Header Files\Visualization</Filter>
     </ClInclude>
@@ -319,6 +349,168 @@
     </ClInclude>
     <ClInclude Include="..\..\src\visu\sources\visu_shape_data_source.h">
       <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\xde\xde_STEP.h">
+      <Filter>Header Files\XDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_cad_properties.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_shape_mesher.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\calculus\calculus_func_univariate.h">
+      <Filter>Header Files\Calculus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_xde_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\calculus\calculus_design_law.h">
+      <Filter>Header Files\Calculus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\calculus\calculus_design_law_node.h">
+      <Filter>Header Files\Calculus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_law_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_law_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_law_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_ubend_law_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\ubend\geom_ubend_law_node.h">
+      <Filter>Header Files\Geometry\U-bend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\ubend\geom_ubend_laws_node.h">
+      <Filter>Header Files\Geometry\U-bend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\engine\engine_ubend.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_ubend_law_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_calculus_law_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_curve_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_curve_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\gui_occt_window.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\mesh_gen.h">
+      <Filter>Header Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\mesh_info.h">
+      <Filter>Header Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\geom_IGES.h">
+      <Filter>Header Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\xde\xde_IGES.h">
+      <Filter>Header Files\XDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_Attr.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_AttrNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_AttrPrs.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_Colors.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_DFNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_DFTree.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_GUI.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_LabelNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_Level.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_ListNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_NodeType.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_NSNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_Picture.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_PtrGUI.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_PtrQTGUI.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_PtrQTGUIMOC.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_QTGUI.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_Attr.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_AttrNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_DFNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_DFTree.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_LabelNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_ListNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_NSNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\geom_point_cloud.h">
+      <Filter>Header Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_aag.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_detect_holes.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_remove_holes.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\engine\engine_mesh.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\mesh_params.h">
+      <Filter>Header Files\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -340,6 +532,9 @@
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_dmu.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_dmu_visu.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_ubend.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
@@ -352,7 +547,10 @@
     <ClCompile Include="$(IntDir)moc\moc_gui_line_edit.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
-    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_dmu.cpp">
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_func_univariate.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_curve_2d.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_part.cpp">
@@ -376,10 +574,22 @@
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_ubend.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_dmu.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_visu_pick_callback.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_visu_topo_graph.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_visu_topo_graph_item.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_object_browser.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_vtk_window.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_object_browser_xde.cpp">
@@ -404,6 +614,15 @@
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_prim_data_view.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_mesh.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_sewing.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_DFBrowser_QTGUI2.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\mesh\mesh_ply.cpp">
@@ -682,11 +901,152 @@
     <ClCompile Include="..\..\src\visu\sources\visu_shape_data_source.cpp">
       <Filter>Source Files\Visualization\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_dmu.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_common.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\xde\xde_STEP.cpp">
+      <Filter>Source Files\XDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_shape_mesher.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_func_univariate.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_curve_2d.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\calculus\calculus_func_univariate.cpp">
+      <Filter>Source Files\Calculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_xde_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\calculus\calculus_design_law.cpp">
+      <Filter>Source Files\Calculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\calculus\calculus_design_law_node.cpp">
+      <Filter>Source Files\Calculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_law_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_law_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_law_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_ubend_law_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\ubend\geom_ubend_law_node.cpp">
+      <Filter>Source Files\Geometry\U-bend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\ubend\geom_ubend_laws_node.cpp">
+      <Filter>Source Files\Geometry\U-bend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\engine\engine_ubend.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_ubend_law_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_calculus_law_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_curve_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_curve_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_occt_window.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\gui\gui_viewer_dmu.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\gui\gui_controls_dmu.cpp">
+    <ClCompile Include="..\..\src\mesh\mesh_gen.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\mesh_info.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_mesh.cpp">
       <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\geom_IGES.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\xde\xde_IGES.cpp">
+      <Filter>Source Files\XDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_sewing.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_Attr.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_AttrNode.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_DFNode.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_DFTree.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_GUI.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_LabelNode.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_ListNode.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_NSNode.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_QTGUI.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_QTGUI2.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_dmu_visu.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_topo_graph_item.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\geom_point_cloud.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_aag.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_detect_holes.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_vtk_window.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_remove_holes.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\engine\engine_mesh.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\mesh_params.cpp">
+      <Filter>Source Files\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -765,11 +1125,49 @@
     <CustomBuild Include="..\..\src\gui\gui_object_browser_xde.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\gui\gui_viewer_dmu.h">
-      <Filter>Header Files\GUI</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\src\gui\gui_controls_dmu.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_func_univariate.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_curve_2d.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_dmu.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_mesh.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_sewing.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\caf_browser\DFBrowser_QTGUI2.h">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_dmu_visu.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\visu\visu_topo_graph.h">
+      <Filter>Header Files\Visualization</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_vtk_window.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\visu\visu_topo_graph_item.h">
+      <Filter>Header Files\Visualization</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\res\Plugin">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\..\res\Resources">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\..\res\asitus_icon_16x16.png">
+      <Filter>Resources</Filter>
+    </None>
   </ItemGroup>
 </Project>

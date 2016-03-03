@@ -2,7 +2,7 @@
 // Created on: 08 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef gui_welcome_window_h
@@ -29,11 +29,20 @@ public:
 
 public slots:
 
-  void onUBend    ();
-  void onDMU      ();
-  void onMeshEdit ();
-  void onAnalysis ();
-  void onSkinning ();
+  //---------------------------------------------------------------------------
+  // Utilities
+  //---------------------------------------------------------------------------
+  void onDMU        ();
+  void onMeshEdit   ();
+  void onAnalysis   ();
+  void onCAFBrowser ();
+
+  //---------------------------------------------------------------------------
+  // Samples (skinning)
+  //---------------------------------------------------------------------------
+  void onSkinning        ();
+  void onUBend           ();
+  void onHullReconstruct ();
 
 private:
 
@@ -45,30 +54,41 @@ private:
   struct t_widgets
   {
   //---------------------------------------------------------------------------
-    QWidget*     pMainPane; //!< Central widget.
+    QWidget*     pMainPane;        //!< Central widget.
   //---------------------------------------------------------------------------
-    QPushButton* pDMU;      //!< dMU composition.
-    QPushButton* pMeshEdit; //!< Mesh Editor composition.
-    QPushButton* pAnalysis; //!< Analysis composition.
-    QPushButton* pSkinning; //!< Skinning composition.
-    QPushButton* pUBend;    //!< U-bend composition.
+    QPushButton* pDMU;             //!< dMU composition.
+    QPushButton* pMeshEdit;        //!< Mesh Editor composition.
+    QPushButton* pAnalysis;        //!< Analysis composition.
+    QPushButton* pCAFBrowser;      //!< CAF Browser composition.
+    //---------------------------------------------------------------------------
+    QPushButton* pSkinning;        //!< Skinning composition.
+    QPushButton* pUBend;           //!< U-bend composition.
+    QPushButton* pHullReconstruct; //!< Hull reconstruction composition.
   //---------------------------------------------------------------------------
-    t_widgets() : pMainPane (NULL),
-                  pDMU      (NULL),
-                  pMeshEdit (NULL),
-                  pAnalysis (NULL),
-                  pSkinning (NULL),
-                  pUBend    (NULL)
+    t_widgets() : pMainPane        (NULL),
+                  pDMU             (NULL),
+                  pMeshEdit        (NULL),
+                  pAnalysis        (NULL),
+                  pCAFBrowser      (NULL),
+                  //
+                  pSkinning        (NULL),
+                  pUBend           (NULL),
+                  pHullReconstruct (NULL)
     {}
 
+    //! Kills all widgets.
     void Release()
     {
-      delete pUBend;    pUBend    = NULL;
-      delete pDMU;      pDMU      = NULL;
-      delete pMeshEdit; pMeshEdit = NULL;
-      delete pAnalysis; pAnalysis = NULL;
-      delete pSkinning; pSkinning = NULL;
-      delete pMainPane; pMainPane = NULL;
+      delete pDMU;             pDMU             = NULL;
+      delete pMeshEdit;        pMeshEdit        = NULL;
+      delete pAnalysis;        pAnalysis        = NULL;
+      delete pCAFBrowser;      pCAFBrowser      = NULL;
+      //
+      delete pSkinning;        pSkinning        = NULL;
+      delete pUBend;           pUBend           = NULL;
+      delete pHullReconstruct; pHullReconstruct = NULL;
+      //
+      delete pMainPane;        pMainPane        = NULL;
     }
   };
 

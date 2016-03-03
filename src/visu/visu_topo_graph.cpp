@@ -2,261 +2,283 @@
 // Created on: 05 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
 #include <visu_topo_graph.h>
 
 // Visualization includes
+#include <visu_topo_graph_item.h>
 #include <visu_utils.h>
 
 // Geometry includes
 #include <geom_utils.h>
 
+// Common includes
+#include <common_facilities.h>
+
 // OCCT includes
+#include <SelectMgr_IndexedMapOfOwner.hxx>
+#include <StdSelect_BRepOwner.hxx>
 #include <TopoDS_Iterator.hxx>
 
 // VTK includes
 #include <vtkActor.h>
 #include <vtkActor2D.h>
-#include <vtkAppendPolyData.h>
-#include <vtkDataSetAttributes.h>
-#include <vtkGlyph3D.h>
-#include <vtkGlyphSource2D.h>
+#include <vtkCamera.h>
+#include <vtkContextActor.h>
+#include <vtkContextInteractorStyle.h>
+#include <vtkContextScene.h>
+#include <vtkContextTransform.h>
 #include <vtkGraphLayout.h>
-#include <vtkGraphToPolyData.h>
-#include <vtkInteractorStyleImage.h>
-#include <vtkLabeledDataMapper.h>
-#include <vtkLookupTable.h>
-#include <vtkPointData.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkProperty.h>
-#include <vtkProperty2D.h>
+#include <vtkNew.h>
 #include <vtkRenderer.h>
+#include <vtkRendererCollection.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkForceDirectedLayoutStrategy.h>
+#include <vtkSimple2DLayoutStrategy.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
 #include <vtkTextRepresentation.h>
 #include <vtkTextWidget.h>
-#include <vtkVertexGlyphFilter.h>
 
-#define ARRNAME_LABELS "Labels"
-#define ARRNAME_COLORS "Colors"
-#define LEGEND_TITLE "Topology graph down to vertices"
-#define COLOR_NORMAL 0.0, 1.0, 0.0
-#define COLOR_HEAVY 1.0, 0.0, 0.0
+#define LEGEND_TITLE_ACCESSORY "Topology graph"
+#define LEGEND_TITLE_ADJACENCY "AAG"
 
 #define VTK_CREATE(Type, Name) \
   vtkSmartPointer<Type> Name = vtkSmartPointer<Type>::New()
 
 //! Constructor.
-visu_topo_graph::visu_topo_graph() {}
+visu_topo_graph::visu_topo_graph()
+{}
 
-//! Renders topology graph.
-//! \param shape [in] target shape.
-void visu_topo_graph::Render(const TopoDS_Shape& shape)
+//! Destructor.
+visu_topo_graph::~visu_topo_graph()
 {
+  if ( !m_prevHighlighted.IsNull() && m_prevHighlighted->IsSelected() )
+  {
+    Handle(AIS_InteractiveContext) ctx = common_facilities::Instance()->ViewerDMU->GetContext();
+    ctx->AddOrRemoveSelected(m_prevHighlighted, 1);
+  }
+}
+
+//! Renders topology graph in the requested regime.
+//! \param shape         [in] target shape.
+//! \param selectedFaces [in] selected faces.
+//! \param regime        [in] regime of interest.
+//! \param leafType      [in] target leaf type for FULL regime.
+void visu_topo_graph::Render(const TopoDS_Shape&         shape,
+                             const TopTools_ListOfShape& selectedFaces,
+                             const Regime                regime,
+                             const TopAbs_ShapeEnum      leafType)
+{
+  // Populate graph data from topology graph
+  vtkSmartPointer<vtkGraph> graph = this->convertToGraph(shape, selectedFaces, regime, leafType);
+
   /* ===================================
    *  Prepare structures for attributes
    * =================================== */
 
-  // Array for vertex colors
-  VTK_CREATE(vtkIntArray, aColorArr);
-  aColorArr->SetNumberOfComponents(1);
-  aColorArr->SetName(ARRNAME_COLORS);
+  // Layout strategy
+  vtkNew<vtkSimple2DLayoutStrategy> simple2DStrategy;
+  simple2DStrategy->SetIterationsPerLayout(10);
 
-  // Array for vertex labels
-  VTK_CREATE(vtkStringArray, aLabelArr);
-  aLabelArr->SetNumberOfComponents(1);
-  aLabelArr->SetName(ARRNAME_LABELS);
+  // Layout
+  vtkSmartPointer<vtkGraphLayout> graphLayout = vtkSmartPointer<vtkGraphLayout>::New();
+  graphLayout->SetInputData(graph);
+  graphLayout->SetLayoutStrategy( simple2DStrategy.GetPointer() );
+  graphLayout->Update();
 
-  // Lookup table
-  VTK_CREATE(vtkLookupTable, aLookup);
-  aLookup->SetNumberOfTableValues(2);
-  aLookup->SetTableValue(0, COLOR_NORMAL); // Normal Tree Functions
-  aLookup->SetTableValue(1, COLOR_HEAVY); // Heavy Tree Functions
-  aLookup->Build();
+  // Graph item
+  vtkSmartPointer<visu_topo_graph_item> graphItem = vtkSmartPointer<visu_topo_graph_item>::New();
+  graphItem->SetGraph( graphLayout->GetOutput() );
 
-  /* =========================================
-   *  Populate graph data from topology graph
-   * ========================================= */
+  connect( graphItem, SIGNAL( vertexPicked(const vtkIdType) ), this, SLOT( onVertexPicked(const vtkIdType) ) );
 
-  // Create VTK data set for graph data
-  VTK_CREATE(vtkMutableDirectedGraph, aGraphData);
+  // Context transform
+  vtkSmartPointer<vtkContextTransform> trans = vtkSmartPointer<vtkContextTransform>::New();
+  trans->SetInteractive(true);
+  trans->AddItem(graphItem);
 
-  const vtkIdType root_vid = aGraphData->AddVertex();
-  TopTools_DataMapOfShapeInteger M;
-  M.Bind(shape, root_vid);
-  aLabelArr->InsertNextValue( ShapeAddrWithPrefix(shape).c_str() );
-  aColorArr->InsertNextValue(1);
-  //
-  this->buildRecursively(shape, root_vid, aGraphData, aLabelArr, aColorArr, M);
+  // Context actor
+  vtkSmartPointer<vtkContextActor> actor = vtkSmartPointer<vtkContextActor>::New();
+  actor->GetScene()->AddItem(trans);
 
-  aGraphData->GetVertexData()->AddArray(aLabelArr);
-  aGraphData->GetVertexData()->AddArray(aColorArr);
+  /* ===============================================
+   *  Prepare and initialize interaction facilities
+   * =============================================== */
 
-  /* ==============================
-   *  Build visualization pipeline
-   * ============================== */
+  // Renderer
+  vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+  renderer->SetGradientBackground(true);
+  renderer->SetBackground(0.0, 0.0, 0.0);
+  renderer->SetBackground(0.1, 0.1, 0.1);
 
-  // Do layout manually before handing graph to the view.
-  // This allows us to know the positions of edge arrows
-  VTK_CREATE(vtkGraphLayout, aGraphLayout);
-  VTK_CREATE(vtkForceDirectedLayoutStrategy, aGraphLayoutStrategy);
-  aGraphLayout->SetInputData(aGraphData);
-  aGraphLayout->SetLayoutStrategy(aGraphLayoutStrategy);
-
-  // Manually create an actor containing the arrows
-  VTK_CREATE(vtkGraphToPolyData, aGraphToPoly);
-  aGraphToPoly->SetInputConnection( aGraphLayout->GetOutputPort() );
-  aGraphToPoly->EdgeGlyphOutputOn();
-  aGraphToPoly->SetEdgeGlyphPosition(0.99); // 0: edge start, 1: edge end
-
-  // Manually create an actor containing the arrows
-  VTK_CREATE(vtkGraphToPolyData, aGraphToPolyLinks);
-  aGraphToPolyLinks->SetInputConnection( aGraphLayout->GetOutputPort() );
-  aGraphToPolyLinks->Update(); // Update as we want to access point data
-
-  // Polydata for labels
-  VTK_CREATE(vtkPolyData, aPolyDataForLabels);
-  aPolyDataForLabels->DeepCopy( aGraphToPolyLinks->GetOutput() );
-  aPolyDataForLabels->GetPointData()->AddArray(aLabelArr);
-
-  // Polydata for node markers
-  VTK_CREATE(vtkPolyData, aPolyDataForNodes);
-  aPolyDataForNodes->DeepCopy( aGraphToPolyLinks->GetOutput() );
-  aPolyDataForNodes->GetPointData()->SetScalars(aColorArr);
-  VTK_CREATE(vtkVertexGlyphFilter, aVertexFilter);
-  aVertexFilter->SetInputData(aPolyDataForNodes);
-
-  // Make a simple edge arrow to play as a glyph
-  VTK_CREATE(vtkGlyphSource2D, anArrowSource);
-  anArrowSource->SetGlyphTypeToEdgeArrow();
-  anArrowSource->SetScale(0.01);
-  anArrowSource->Update();
-
-  // Use Glyph3D to repeat the glyph on all edges
-  VTK_CREATE(vtkGlyph3D, anArrowGlyph);
-  anArrowGlyph->SetInputConnection( 0, aGraphToPoly->GetOutputPort(1) );
-  anArrowGlyph->SetInputConnection( 1, anArrowSource->GetOutputPort() );
-
-  // Manually create an actor containing the arrows
-  VTK_CREATE(vtkAppendPolyData, aGraphPolyFull);
-  aGraphPolyFull->AddInputConnection( anArrowGlyph->GetOutputPort() );
-  aGraphPolyFull->AddInputConnection( aGraphToPolyLinks->GetOutputPort() );
-
-  // Text properties for labels
-  VTK_CREATE(vtkTextProperty, aTextProps);
-  aTextProps->BoldOff();
-  aTextProps->ShadowOff();
-  aTextProps->SetFontSize(12);
-
-  // Add labels
-  VTK_CREATE(vtkLabeledDataMapper, aLabelMapper);
-  VTK_CREATE(vtkActor2D, aLabelActor);
-  aLabelMapper->SetFieldDataName(ARRNAME_LABELS);
-  aLabelMapper->SetInputData(aPolyDataForLabels);
-  aLabelMapper->SetLabelTextProperty(aTextProps);
-  aLabelMapper->SetLabelModeToLabelFieldData();
-  aLabelActor->SetMapper(aLabelMapper);
-
-  // Add arrows
-  VTK_CREATE(vtkPolyDataMapper, anArrowMapper);
-  VTK_CREATE(vtkActor, anArrowActor);
-  anArrowMapper->SetInputConnection( aGraphPolyFull->GetOutputPort() );
-  anArrowActor->SetMapper(anArrowMapper);
-
-  // Add vertices
-  VTK_CREATE(vtkPolyDataMapper, aVertexMapper);
-  VTK_CREATE(vtkActor, aVertexActor);
-  aVertexMapper->SetLookupTable(aLookup);
-  aVertexMapper->SetInputConnection( aVertexFilter->GetOutputPort() );
-  aVertexActor->SetMapper(aVertexMapper);
-  aVertexActor->GetProperty()->SetPointSize(5);
-
-  /* ================================
-   *  Finalize and start interaction
-   * ================================ */
-
-  // Create a renderer, render window and interactor
-  VTK_CREATE(vtkRenderer, renderer);
-  VTK_CREATE(vtkRenderWindow, renderWindow);
-  VTK_CREATE(vtkRenderWindowInteractor, renderWindowInteractor);
-  VTK_CREATE(vtkInteractorStyleImage, interactorStyle);
-
-  renderWindow->SetSize(800, 800);
+  // Render window
+  vtkNew<vtkRenderWindow> renderWindow;
   renderWindow->AddRenderer(renderer);
-  renderWindowInteractor->SetRenderWindow(renderWindow);
+  renderer->AddActor(actor);
 
-  // Set interactor style
-  renderWindowInteractor->SetInteractorStyle(interactorStyle);
+  // Context interactor style
+  vtkNew<vtkContextInteractorStyle> interactorStyle;
+  interactorStyle->SetScene( actor->GetScene() );
 
-  // Add actors to the scene
-  renderer->AddActor(anArrowActor);
-  renderer->AddActor(aLabelActor);
-  renderer->AddActor(aVertexActor);
-  renderer->SetBackground(0.0, 0.0, 0.0); // Background color
+  // Interactor
+  vtkNew<QVTKInteractor> interactor;
+  interactor->SetInteractorStyle( interactorStyle.GetPointer() );
+  interactor->SetRenderWindow( renderWindow.GetPointer() );
+
+  // Create Qt window. NOTICE that interactor should be already given to
+  // the render window at this stage
+  m_pWidget = new gui_vtk_window();
+  m_pWidget->SetRenderWindow( renderWindow.GetPointer() );
+
+  connect(m_pWidget, SIGNAL( windowClosed() ), this, SLOT( onViewerClosed() ) );
+
+  /* ========================
+   *  Add legend and summary
+   * ======================== */
+
+  // Legend
+  m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
+  vtkTextRepresentation* textRep = vtkTextRepresentation::SafeDownCast( m_textWidget->GetRepresentation() );
+  textRep->GetPositionCoordinate()->SetValue(0.2, 0.01);
+  textRep->GetPosition2Coordinate()->SetValue(0.5, 0.06);
+  m_textWidget->SelectableOff();
+  //
+  vtkSmartPointer<vtkTextActor> textActor = vtkSmartPointer<vtkTextActor>::New();
+  textRep->SetTextActor(textActor);
+  //
+  m_textWidget->GetTextActor()->SetInput( regime == Regime_Full ? LEGEND_TITLE_ACCESSORY : LEGEND_TITLE_ADJACENCY );
+  m_textWidget->SetInteractor( m_pWidget->GetInteractor() );
+  m_textWidget->SetDefaultRenderer( renderer );
+  m_textWidget->SetCurrentRenderer( renderer );
 
   // Shape summary
-  VTK_CREATE(vtkTextWidget, aTextWidget);
-  visu_utils::InitTextWidget(aTextWidget);
+  m_summaryWidget = vtkSmartPointer<vtkTextWidget>::New();
+  visu_utils::InitTextWidget(m_summaryWidget);
   //
   TCollection_AsciiString shapeInfo;
   geom_utils::ShapeSummary(shape, shapeInfo);
-  aTextWidget->GetTextActor()->SetInput( shapeInfo.ToCString() );
+  m_summaryWidget->GetTextActor()->SetInput( shapeInfo.ToCString() );
   //
-  aTextWidget->SetInteractor      ( renderer->GetRenderWindow()->GetInteractor() );
-  aTextWidget->SetDefaultRenderer ( renderer );
-  aTextWidget->SetCurrentRenderer ( renderer );
-  aTextWidget->On                 ( );
+  m_summaryWidget->SetInteractor      ( m_pWidget->GetInteractor() );
+  m_summaryWidget->SetDefaultRenderer ( renderer );
+  m_summaryWidget->SetCurrentRenderer ( renderer );
 
-  /* ============
-   *  Add legend
-   * ============ */
+  /* ===================
+   *  Start interaction
+   * =================== */
 
-  VTK_CREATE(vtkTextWidget, textWidget);
-  vtkTextRepresentation* aRep = vtkTextRepresentation::SafeDownCast( textWidget->GetRepresentation() );
-  aRep->GetPositionCoordinate()->SetValue(0.3, 0.01);
-  aRep->GetPosition2Coordinate()->SetValue(0.4, 0.04);
-  textWidget->SelectableOff();
+  renderWindow->SetLineSmoothing(true);
+  renderWindow->SetWindowName( regime == Regime_Full ? "Accessory Graph" : "Adjacency Graph" );
+  //
+  graphItem->StartLayoutAnimation( m_pWidget->GetInteractor() );
+  //
+  m_pWidget->GetInteractor()->Initialize();
+  m_pWidget->resize(400, 400);
+  m_pWidget->show();
 
-  VTK_CREATE(vtkTextActor, aTextActor);
-  aRep->SetTextActor(aTextActor);
+  // Set callback on rendering
+  m_pWidget->GetRenderWindow()->AddObserver(vtkCommand::RenderEvent, this, &visu_topo_graph::RenderEventCallback);
+}
 
-  textWidget->GetTextActor()->SetInput(LEGEND_TITLE);
-  textWidget->SetInteractor(renderWindowInteractor);
-  textWidget->SetDefaultRenderer(renderer);
-  textWidget->SetCurrentRenderer(renderer);
-  textWidget->SetEnabled(1);
+//! Renders topology graph.
+//! \param shape    [in] target shape.
+//! \param leafType [in] target leaf type.
+void visu_topo_graph::RenderFull(const TopoDS_Shape& shape, const TopAbs_ShapeEnum leafType)
+{
+  this->Render(shape, TopTools_ListOfShape(), Regime_Full, leafType);
+}
 
-  /* =====================
-   *  Render and interact
-   * ===================== */
+//! Renders AA graph.
+//! \param shape         [in] target shape.
+//! \param selectedFaces [in] selected faces.
+void visu_topo_graph::RenderAdjacency(const TopoDS_Shape&         shape,
+                                      const TopTools_ListOfShape& selectedFaces)
+{
+  this->Render(shape, selectedFaces, Regime_AAG, TopAbs_SHAPE);
+}
 
-  renderWindow->Render();
-  renderWindow->SetWindowName("Topology Graph");
-  renderWindowInteractor->Start();
+//! Builds one or another graph (depending on the desired regime).
+//! \param shape         [in] master model.
+//! \param selectedFaces [in] optional selected faces.
+//! \param regime        [in] desired regime.
+//! \param leafType      [in] leaf type for FULL regime.
+//! \return graph instance.
+vtkSmartPointer<vtkGraph>
+  visu_topo_graph::convertToGraph(const TopoDS_Shape&         shape,
+                                  const TopTools_ListOfShape& selectedFaces,
+                                  const Regime                regime,
+                                  const TopAbs_ShapeEnum      leafType)
+{
+  vtkSmartPointer<vtkGraph> result;
+  //
+  if ( regime == Regime_Full )
+  {
+    result = vtkSmartPointer<vtkMutableDirectedGraph>::New();
+    vtkMutableDirectedGraph* directed_result = dynamic_cast<vtkMutableDirectedGraph*>( result.GetPointer() );
+
+    // Array for groups
+    vtkNew<vtkStringArray> groupArr;
+    groupArr->SetNumberOfComponents(1);
+    groupArr->SetName(ARRNAME_GROUP);
+
+    // Array for vertex labels
+    vtkNew<vtkStringArray> labelArr;
+    labelArr->SetNumberOfComponents(1);
+    labelArr->SetName(ARRNAME_LABELS);
+
+    // Create VTK data set for graph data
+    const vtkIdType root_vid = directed_result->AddVertex();
+    TopTools_DataMapOfShapeInteger M;
+    M.Bind(shape, root_vid);
+    //
+    labelArr->InsertNextValue( geom_utils::ShapeAddrWithPrefix(shape).c_str() );
+    groupArr->InsertNextValue( shape.ShapeType() == TopAbs_COMPOUND ? ARRNAME_GROUP_COMPOUND : ARRNAME_GROUP_ORDINARY );
+    //
+    this->buildRecursively(shape, root_vid, leafType, directed_result, labelArr.GetPointer(), groupArr.GetPointer(), M);
+
+    // Set arrays
+    result->GetVertexData()->AddArray( labelArr.GetPointer() );
+    result->GetVertexData()->AddArray( groupArr.GetPointer() );
+  }
+  else if ( regime == Regime_AAG )
+  {
+    m_aag = new geom_aag(shape, selectedFaces);
+    vtkSmartPointer<vtkMutableUndirectedGraph> undirected_result = m_aag->ToVTK();
+    result = undirected_result;
+  }
+  else
+    Standard_ProgramError::Raise("Unexpected regime for graph visualization");
+
+  return result;
 }
 
 //! Builds data structures for visualization recursively.
 //! \param rootShape     [in]     root shape.
 //! \param rootId        [in]     ID of the root vertex.
+//! \param leafType      [in]     topological type for leafs.
 //! \param pDS           [in/out] data structure being filled.
 //! \param pLabelArr     [in/out] array for labels associated with vertices.
-//! \param pColorArr     [in/out] array for colors for vertices.
+//! \param pGroupArr     [in/out] array for vertex groups.
 //! \param shapeVertices [in/out] map of shapes against their registered graph vertices.
 void visu_topo_graph::buildRecursively(const TopoDS_Shape&             rootShape,
                                        const vtkIdType                 rootId,
+                                       const TopAbs_ShapeEnum          leafType,
                                        vtkMutableDirectedGraph*        pDS,
                                        vtkStringArray*                 pLabelArr,
-                                       vtkIntArray*                    pColorArr,
+                                       vtkStringArray*                 pGroupArr,
                                        TopTools_DataMapOfShapeInteger& shapeVertices)
 {
+  // Check if it is time to stop
+  if ( rootShape.ShapeType() == leafType )
+    return;
+
+  // Iterate over the sub-shape
   for ( TopoDS_Iterator it(rootShape, 0, 0); it.More(); it.Next() )
   {
     const TopoDS_Shape& subShape = it.Value();
@@ -271,12 +293,90 @@ void visu_topo_graph::buildRecursively(const TopoDS_Shape&             rootShape
       childId = pDS->AddVertex();
       shapeVertices.Bind(subShape, childId);
 
-      pLabelArr->InsertNextValue( ShapeAddrWithPrefix(subShape).c_str() );
-      pColorArr->InsertNextValue(1);
+      if ( pLabelArr )
+        pLabelArr->InsertNextValue( geom_utils::ShapeAddrWithPrefix(subShape).c_str() );
+
+      if ( pGroupArr )
+        pGroupArr->InsertNextValue( subShape.ShapeType() == TopAbs_COMPOUND ? ARRNAME_GROUP_COMPOUND : ARRNAME_GROUP_ORDINARY );
     }
     //
     pDS->AddEdge(rootId, childId);
     //
-    this->buildRecursively(subShape, childId, pDS, pLabelArr, pColorArr, shapeVertices);
+    this->buildRecursively(subShape, childId, leafType, pDS, pLabelArr, pGroupArr, shapeVertices);
+  }
+}
+
+//! Callback to adjust text widgets.
+void visu_topo_graph::RenderEventCallback()
+{
+  if ( !m_textWidget->GetEnabled() )
+    m_textWidget->On();
+
+  if ( !m_summaryWidget->GetEnabled() )
+    m_summaryWidget->On();
+}
+
+//! Reaction on closing the viewer.
+void visu_topo_graph::onViewerClosed()
+{
+  delete m_pWidget;
+  delete this;
+}
+
+//! Reaction on vertex picking.
+//! \param vid [in] vertex ID.
+void visu_topo_graph::onVertexPicked(const vtkIdType vid)
+{
+  if ( m_aag.IsNull() )
+    return;
+
+  if ( !common_facilities::Instance()->ViewerDMU )
+    return;
+
+  // Let's use the fact that vertex ID is equal to face ID minus 1.
+  // The latter is by construction
+  const int face_id = vid + 1;
+
+  // Get face from graph vertex
+  TopoDS_Face F = m_aag->GetFace(face_id);
+
+  // Access presentation
+  Handle(AIS_InteractiveContext) ctx = common_facilities::Instance()->ViewerDMU->GetContext();
+  //
+  Handle(SelectMgr_IndexedMapOfOwner) prsOwners;
+  ctx->EntityOwners(prsOwners, common_facilities::Instance()->aisDMU);
+  //
+  if ( prsOwners.IsNull() || !prsOwners->Extent() )
+  {
+    std::cout << "Error: no entity owners" << std::endl;
+    return;
+  }
+  else
+    std::cout << "Got " << prsOwners->Extent() << " entity owner(s)" << std::endl;
+
+  if ( !m_prevHighlighted.IsNull() && m_prevHighlighted->IsSelected() )
+    ctx->AddOrRemoveSelected(m_prevHighlighted, 1);
+
+  // Highlight
+  for ( int i = 1; i <= prsOwners->Extent(); ++i )
+  {
+    const Handle(SelectMgr_EntityOwner)& owner = prsOwners->FindKey(i);
+    //
+    if ( owner->IsKind( STANDARD_TYPE(StdSelect_BRepOwner) ) )
+    {
+      Handle(StdSelect_BRepOwner) brepOwner = Handle(StdSelect_BRepOwner)::DownCast(owner);
+      const TopoDS_Shape& ownedShape = brepOwner->Shape();
+
+      // Try to find the hole shape among sensitivities
+      if ( ownedShape.IsSame(F) )
+      {
+        if ( !owner->IsSelected() )
+        {
+          ctx->AddOrRemoveSelected(owner, 1);
+          m_prevHighlighted = owner;
+        }
+        break;
+      }
+    }
   }
 }

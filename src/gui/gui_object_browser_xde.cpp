@@ -2,7 +2,7 @@
 // Created on: 02 February 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -13,6 +13,14 @@
 
 // Common includes
 #include <common_facilities.h>
+
+// OCCT includes
+#pragma warning(push, 0)
+#include <TDataStd_Name.hxx>
+#include <TDF_Tool.hxx>
+#include <XCAFDoc_DocumentTool.hxx>
+#include <XCAFDoc_ShapeTool.hxx>
+#pragma warning(pop)
 
 // Qt includes
 #pragma warning(push, 0)
@@ -57,85 +65,105 @@ gui_object_browser_xde::~gui_object_browser_xde()
 //! Populates tree view from the Data Model.
 void gui_object_browser_xde::Populate()
 {
-  if ( common_facilities::Instance()->Model.IsNull() )
+  // Initialize Model
+  if ( common_facilities::Instance()->Model_XDE.IsNull() )
     return;
+  //
+  m_model = common_facilities::Instance()->Model_XDE;
 
   // Clean up the existing contents
   this->clear();
 
   //---------------------------------------------------------------------------
-  // Add root node
+  // Populate tree view
   //---------------------------------------------------------------------------
 
-  //Handle(common_root_node)
-  //  root_n = Handle(common_root_node)::DownCast( common_facilities::Instance()->Model->GetRootNode() );
-  ////
-  //if ( root_n.IsNull() || !root_n->IsWellFormed() )
-  //  return;
-  ////
-  //QTreeWidgetItem* root_ui = new QTreeWidgetItem( QStringList() << ExtStr2QStr( root_n->GetName() ) );
-  //root_ui->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-  //root_ui->setData( 0, BrowserRoleNodeId, AsciiStr2QStr( root_n->GetId() ) );
-  ////
-  //this->addTopLevelItem(root_ui);
-
-  //---------------------------------------------------------------------------
-  // Add child nodes
-  //---------------------------------------------------------------------------
-
-  //this->addChildren(root_n, root_ui);
-
-  //---------------------------------------------------------------------------
-  // Expand tree
-  //---------------------------------------------------------------------------
-
+  this->populateBranch(TCollection_AsciiString(), NULL);
   this->expandAll();
 }
-
-//! Searches for an item with the given index and set that item selected.
-//! \param nodeId [in] target Node ID.
-//void gui_object_browser::SetSelected(const ActAPI_DataObjectId& nodeId)
-//{
-//  QTreeWidgetItemIterator it(this);
-//  //
-//  while ( *it )
-//  {
-//    QString data = (*it)->data(0, BrowserRoleNodeId).toString();
-//    if ( QStr2AsciiStr(data) == nodeId )
-//    {
-//      (*it)->setSelected(true);
-//      break;
-//    }
-//    else
-//      ++it;
-//  }
-//}
 
 //-----------------------------------------------------------------------------
 
 //! Adds all child items under the given root.
-//! \param root_n  [in] root Node in a Data Model.
-//! \param root_ui [in] root item in a tree view.
-//void gui_object_browser::addChildren(const Handle(ActAPI_INode)& root_n,
-//                                     QTreeWidgetItem*            root_ui)
-//{
-//  if ( root_n.IsNull() || !root_n->IsWellFormed() )
-//    return;
-//
-//  for ( Handle(ActAPI_IChildIterator) cit = root_n->GetChildIterator(); cit->More(); cit->Next() )
-//  {
-//    Handle(ActAPI_INode) child_n = cit->Value();
-//    //
-//    QTreeWidgetItem* child_ui = new QTreeWidgetItem( QStringList() << ExtStr2QStr( child_n->GetName() ) );
-//    child_ui->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-//    child_ui->setData( 0, BrowserRoleNodeId, AsciiStr2QStr( child_n->GetId() ) );
-//    //
-//    root_ui->addChild(child_ui);
-//
-//    // Repeat recursively
-//    this->addChildren(child_n, child_ui);
-//  }
-//}
+//! \param rootEntry [in] root OCAF entry.
+//! \param rootUi    [in] root UI entry.
+void gui_object_browser_xde::populateBranch(const TCollection_AsciiString& rootEntry,
+                                            QTreeWidgetItem*               rootUi)
+{
+  Handle(TDocStd_Document)  Doc       = m_model->GetDocument();
+  Handle(XCAFDoc_ShapeTool) ShapeTool = XCAFDoc_DocumentTool::ShapeTool( Doc->Main() );
+  //
+  TDF_LabelSequence Labels;
+  if ( rootEntry.IsEmpty() )
+  {
+    // Get list of roots (disappointing "free" term means "root" here)
+    ShapeTool->GetFreeShapes(Labels);
+  }
+  else
+  {
+    // Access label by its ID
+    TDF_Label RootLabel;
+    TDF_Tool::Label(Doc->Main().Data(), rootEntry, RootLabel);
+
+    // Access all components of an assembly
+    if ( ShapeTool->IsAssembly(RootLabel) )
+      ShapeTool->GetComponents(RootLabel, Labels);
+  }
+
+  // Iterate over the root entities
+  for ( int lit = 1; lit <= Labels.Length(); ++lit )
+  {
+    TDF_Label L = Labels.Value(lit);
+    //
+    TCollection_AsciiString RefName, EntryId, RefEntryId, Name;
+    Handle(TDataStd_Name) NodeName;
+
+    TDF_Tool::Entry(L, EntryId);
+    if ( ShapeTool->IsReference(L) ) // If true, then it is a reference to part + location
+    {
+      if ( L.FindAttribute(TDataStd_Name::GetID(), NodeName) )
+        RefName = TCollection_AsciiString( NodeName->Get() );
+
+      TDF_Label RefLabel;
+      if ( ShapeTool->GetReferredShape(L, RefLabel) ) // Get the real underlying part
+      {
+        L = RefLabel;
+        TDF_Tool::Entry(RefLabel, RefEntryId);
+      }
+    }
+
+    if ( L.FindAttribute(TDataStd_Name::GetID(), NodeName) )
+    {
+      Name = TCollection_AsciiString( NodeName->Get() );
+
+      // Trim spaces
+      RefName.RightAdjust();
+      RefName.LeftAdjust();
+
+      if ( !RefName.IsEmpty()           &&
+            RefName.Search("=>[0:") != 1 &&
+           !IsEqual(RefName, Name)  )
+      {
+        Name += TCollection_AsciiString (" [") + RefName + "]";
+      }
+    }
+
+    //
+    QTreeWidgetItem* nodeUi = new QTreeWidgetItem( QStringList() << AsciiStr2QStr(Name) );
+    nodeUi->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    nodeUi->setData( 0, BrowserRoleNodeId, AsciiStr2QStr(EntryId) );
+    //
+    if ( rootUi )
+      rootUi->addChild(nodeUi);
+    else
+      this->addTopLevelItem(nodeUi);
+    //
+    if ( RefEntryId.IsEmpty() )
+      RefEntryId = EntryId;
+
+    this->populateBranch(RefEntryId, nodeUi);
+  }
+}
 
 //-----------------------------------------------------------------------------
 

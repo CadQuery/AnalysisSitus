@@ -2,7 +2,7 @@
 // Created on: 07 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Windows includes
@@ -15,12 +15,14 @@
 #include <gui_welcome_window.h>
 
 // A-Situs (visualization) includes
+#include <visu_calculus_law_prs.h>
 #include <visu_geom_face_prs.h>
 #include <visu_geom_prs.h>
 #include <visu_geom_surf_prs.h>
 #include <visu_mesh_prs.h>
 #include <visu_section_prs.h>
 #include <visu_sections_prs.h>
+#include <visu_ubend_law_prs.h>
 #include <visu_ubend_prs.h>
 
 // Qt includes
@@ -45,8 +47,12 @@
 // VTK init
 #include <vtkAutoInit.h>
 
+// OCCT includes
+#include <OSD_Environment.hxx>
+
 // Activate object factory for Freetype fonts
-VTK_MODULE_INIT(vtkRenderingOpenGL);
+VTK_MODULE_INIT(vtkRenderingContextOpenGL2);
+VTK_MODULE_INIT(vtkRenderingOpenGL2);
 VTK_MODULE_INIT(vtkInteractionStyle);
 VTK_MODULE_INIT(vtkRenderingFreeType)
 
@@ -58,7 +64,10 @@ VTK_MODULE_INIT(vtkRenderingFreeType)
 int main(int argc, char** argv)
 {
   QApplication app(argc, argv);
-  QApplication::setWindowIcon( QIcon("D:/projects/analysis_situs/misc/asitus_icon_16x16.png") );
+  //
+  TCollection_AsciiString ico_fn = OSD_Environment("AS_RESOURCES").Value();
+  ico_fn += "/asitus_icon_16x16.png";
+  QApplication::setWindowIcon( QIcon( ico_fn.ToCString() ) );
 
   //---------------------------------------------------------------------------
   // Create Data Model
@@ -88,6 +97,8 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(visu_section_prs)
   REGISTER_PRESENTATION(visu_sections_prs)
   REGISTER_PRESENTATION(visu_ubend_prs)
+  REGISTER_PRESENTATION(visu_ubend_law_prs)
+  REGISTER_PRESENTATION(visu_calculus_law_prs)
 
   //---------------------------------------------------------------------------
   // Create main window

@@ -2,7 +2,7 @@
 // Created on: 25 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -82,6 +82,7 @@ visu_prs_manager::visu_prs_manager() : vtkObject(), m_widget(NULL)
   // Initialize Render Window
   m_renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
   m_renderWindow->AddRenderer(m_renderer);
+  m_renderWindow->SetMultiSamples(8);
 
   // Initialize Interactor Style instance for normal operation mode
   m_interactorStyleTrackball

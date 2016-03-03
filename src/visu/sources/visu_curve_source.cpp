@@ -2,7 +2,7 @@
 // Created on: 02 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -23,6 +23,7 @@
 #include <BRep_Tool.hxx>
 #include <GCPnts_QuasiUniformDeflection.hxx>
 #include <Geom_TrimmedCurve.hxx>
+#include <Geom2dAdaptor_Curve.hxx>
 #include <GeomAdaptor_Curve.hxx>
 #include <gp_Ax1.hxx>
 
@@ -109,6 +110,48 @@ bool visu_curve_source::SetInputCurve(const Handle(Geom_Curve)& curve,
     xCoords->ChangeValue(k - 1) = P.X();
     yCoords->ChangeValue(k - 1) = P.Y();
     zCoords->ChangeValue(k - 1) = P.Z();
+  }
+
+  // Pass arrays as inputs
+  this->SetInputArrays(xCoords, yCoords, zCoords, ori);
+  return true;
+}
+
+//! Initialize data source from a two-dimensional parametric curve.
+//! \param curve [in] curve to discretize.
+//! \param ori   [in] orientation.
+//! \return true if poly data has been produced.
+bool visu_curve_source::SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
+                                        const visu_orientation      ori)
+{
+  const double f = visu_utils::TrimInf( curve->FirstParameter() ),
+               l = visu_utils::TrimInf( curve->LastParameter() );
+
+  // Discretize
+  Geom2dAdaptor_Curve gac(curve, f, l);
+  GCPnts_QuasiUniformDeflection Defl(gac, 0.0001);
+  if ( !Defl.IsDone() )
+  {
+    vtkErrorMacro( << "Cannot discretize curve" );
+    return false;
+  }
+  const int nPts = Defl.NbPoints();
+  if ( !nPts )
+    return false;
+
+  // Allocate arrays
+  Handle(HRealArray) xCoords = new HRealArray(0, nPts - 1, 0.0),
+                     yCoords = new HRealArray(0, nPts - 1, 0.0),
+                     zCoords = new HRealArray(0, nPts - 1, 0.0);
+
+  for ( int k = 1; k <= nPts; ++k )
+  {
+    gp_Pnt P = Defl.Value(k);
+    //
+    xCoords->ChangeValue(k - 1) = P.X();
+    yCoords->ChangeValue(k - 1) = P.Y();
+    //
+    // Z coordinate is kept zero as it was initialized
   }
 
   // Pass arrays as inputs
@@ -223,29 +266,32 @@ int visu_curve_source::RequestData(vtkInformation*        request,
                        m_YCoords->Value( m_YCoords->Upper() - 1 ),
                        m_ZCoords->Value( m_ZCoords->Upper() - 1 ) );
 
-    // Normalize tangent
-    m_oriT.Normalize();
-
-    // Derive normal
-    if ( m_oriN.Magnitude() > RealEpsilon() )
-      m_oriN.Normalize();
-    else
-      m_oriN = m_oriT.Rotated( gp_Ax1( gp::Origin(), gp::DZ() ), M_PI/2); // Lets take any orthogonal vector
-
-    // Build tip
-    if ( m_oriT.Magnitude() > RealEpsilon() &&
-         m_oriN.Magnitude() > RealEpsilon() )
+    if ( m_oriT.Magnitude() > RealEpsilon() )
     {
-      gp_Pnt P1( m_XCoords->Value( m_XCoords->Upper() ),
-                 m_YCoords->Value( m_YCoords->Upper() ),
-                 m_ZCoords->Value( m_ZCoords->Upper() ) );
+      // Normalize tangent
+      m_oriT.Normalize();
 
-      const double tip_angle = 3*M_PI/4;
-      gp_Pnt P2( P1.XYZ() + m_oriT.XYZ()*m_fOriTipSize*Cos(tip_angle) + m_oriN.XYZ()*m_fOriTipSize*Sin(tip_angle) );
-      gp_Pnt P3( P1.XYZ() + m_oriT.XYZ()*m_fOriTipSize*Cos(tip_angle) - m_oriN.XYZ()*m_fOriTipSize*Sin(tip_angle) );
+      // Derive normal
+      if ( m_oriN.Magnitude() > RealEpsilon() )
+        m_oriN.Normalize();
+      else
+        m_oriN = m_oriT.Rotated( gp_Ax1( gp::Origin(), gp::DZ() ), M_PI/2); // Lets take any orthogonal vector
 
-      this->registerLine(P1, P2, aPolyOutput);
-      this->registerLine(P1, P3, aPolyOutput);
+      // Build tip
+      if ( m_oriT.Magnitude() > RealEpsilon() &&
+           m_oriN.Magnitude() > RealEpsilon() )
+      {
+        gp_Pnt P1( m_XCoords->Value( m_XCoords->Upper() ),
+                   m_YCoords->Value( m_YCoords->Upper() ),
+                   m_ZCoords->Value( m_ZCoords->Upper() ) );
+
+        const double tip_angle = 3*M_PI/4;
+        gp_Pnt P2( P1.XYZ() + m_oriT.XYZ()*m_fOriTipSize*Cos(tip_angle) + m_oriN.XYZ()*m_fOriTipSize*Sin(tip_angle) );
+        gp_Pnt P3( P1.XYZ() + m_oriT.XYZ()*m_fOriTipSize*Cos(tip_angle) - m_oriN.XYZ()*m_fOriTipSize*Sin(tip_angle) );
+
+        this->registerLine(P1, P2, aPolyOutput);
+        this->registerLine(P1, P3, aPolyOutput);
+      }
     }
   }
 

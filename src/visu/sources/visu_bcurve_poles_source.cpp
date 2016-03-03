@@ -2,7 +2,7 @@
 // Created on: 15 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -19,6 +19,9 @@
 #include <vtkPointData.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
+
+// OCCT includes
+#include <TColgp_Array1OfPnt2d.hxx>
 
 //-----------------------------------------------------------------------------
 // Construction
@@ -74,6 +77,40 @@ bool visu_bcurve_poles_source::SetInputCurve(const Handle(Geom_BSplineCurve)& bc
   return true;
 }
 
+//! Initialize data source from a two-dimensional b-curve.
+//! \param curve [in] curve to extract a control polygon from.
+//! \return true if poly data has been produced.
+bool visu_bcurve_poles_source::SetInputCurve2d(const Handle(Geom2d_BSplineCurve)& bcurve)
+{
+  if ( bcurve.IsNull() )
+    return false;
+
+  const TColgp_Array1OfPnt2d& poles = bcurve->Poles();
+
+  int nPoles;
+  if ( bcurve->IsClosed() )
+  {
+    // For closed curves we have to repeat the first pole at the end
+    nPoles = poles.Length() + 1;
+  }
+  else
+    nPoles = poles.Length();
+
+  // Create a shared array of poles: notice that indexation is 0-based (!)
+  m_poles = new TColgp_HArray1OfPnt( 0, nPoles - 1 );
+  //
+  for ( int k = 0; k < poles.Length(); ++k )
+  {
+    const gp_Pnt2d& p2d = poles(k + 1);
+    //
+    m_poles->ChangeValue(k).SetX( p2d.X() );
+    m_poles->ChangeValue(k).SetY( p2d.Y() );
+    m_poles->ChangeValue(k).SetZ( 0.0 );
+  }
+
+  return true;
+}
+
 //! This is called by the superclass. Creates VTK polygonal data set
 //! from the input arrays.
 //! \param request      [in] information about data object.
@@ -124,7 +161,7 @@ int visu_bcurve_poles_source::RequestData(vtkInformation*        request,
 
   // Register all points once
   std::vector<vtkIdType> pids;
-  for ( int i = 0; i < nPoles - 1; i++ )
+  for ( int i = 0; i < nPoles; ++i )
   {
     pids.push_back( this->registerGridPoint(i, aPolyOutput) );
   }
@@ -157,14 +194,14 @@ int visu_bcurve_poles_source::RequestData(vtkInformation*        request,
     //                strips (vtkTriangleStrip).
 
     // So first we populate poly data with vertices...
-    for ( int i = 0; i < nPoles - 1; i++ )
+    for ( int i = 0; i < nPoles; ++i )
     {
       this->registerVertex(pids[i], aPolyOutput);
     }
     // ... and only then with lines
-    for ( int i = 0; i < nPoles - 1; i++ )
+    for ( int i = 0; i < nPoles - 1; ++i )
     {
-      this->registerLine(pids[i], ( (i == nPoles - 2) ? pids[0] : pids[i + 1] ), aPolyOutput);
+      this->registerLine(pids[i], pids[i + 1], aPolyOutput);
     }
   }
 
@@ -182,9 +219,9 @@ vtkIdType visu_bcurve_poles_source::registerGridPoint(const int    index,
   vtkPoints* aPoints = polyData->GetPoints();
 
   // Push the point into VTK data set
-  vtkIdType aPid = aPoints->InsertNextPoint( m_poles->Value(index).X(),
-                                             m_poles->Value(index).Y(),
-                                             m_poles->Value(index).Z() );
+  const gp_Pnt& P = m_poles->Value(index);
+  //
+  vtkIdType aPid = aPoints->InsertNextPoint( P.X(), P.Y(), P.Z() );
 
   return aPid;
 }

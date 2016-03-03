@@ -2,7 +2,7 @@
 // Created on: 13 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #include <visu_mesh_EN_scalar_filter.h>
@@ -32,8 +32,8 @@ visu_mesh_EN_scalar_filter::visu_mesh_EN_scalar_filter()
   m_fMinScalar    =  VTK_FLOAT_MAX;
   m_fMaxScalar    = -VTK_FLOAT_MAX;
 
-  this->GetInformation()->Set(vtkAlgorithm::PRESERVES_RANGES(), 1);
-  this->GetInformation()->Set(vtkAlgorithm::PRESERVES_BOUNDS(), 1);
+  //this->GetInformation()->Set(vtkAlgorithm::PRESERVES_RANGES(), 1);
+  //this->GetInformation()->Set(vtkAlgorithm::PRESERVES_BOUNDS(), 1);
 }
 
 //! Destructor.

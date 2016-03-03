@@ -2,7 +2,7 @@
 // Created on: 28 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -10,6 +10,7 @@
 
 // OCCT includes
 #include <STEPControl_Reader.hxx>
+#include <STEPControl_Writer.hxx>
 #include <Interface_Static.hxx>
 #include <Message_ProgressSentry.hxx>
 #include <ShapeFix_Shape.hxx>
@@ -21,6 +22,7 @@
 //! \param filename  [in]  file to read.
 //! \param doHealing [in]  indicates whether to run shape healing after import.
 //! \param result    [out] retrieved shape.
+//! \return true in case of success, false -- otherwise.
 bool geom_STEP::Read(const TCollection_AsciiString& filename,
                      const bool                     doHealing,
                      TopoDS_Shape&                  result)
@@ -31,7 +33,6 @@ bool geom_STEP::Read(const TCollection_AsciiString& filename,
 
   STEPControl_Reader aReader;
   Handle(XSControl_WorkSession) aWS = aReader.WS();
-  Interface_Static::SetCVal("xstep.cascade.unit", "M");
 
   /* ================
    *  Read STEP file
@@ -39,9 +40,7 @@ bool geom_STEP::Read(const TCollection_AsciiString& filename,
 
   if ( aReader.ReadFile( filename.ToCString() ) != IFSelect_RetDone )
   {
-#ifdef COUT_DEBUG
-    cout << "Failed to read the file " << filename.ToCString() << endl;
-#endif
+    std::cout << "Failed to read the file " << filename.ToCString() << std::endl;
     return false;
   }
 
@@ -56,15 +55,11 @@ bool geom_STEP::Read(const TCollection_AsciiString& filename,
   }
   catch ( Standard_Failure )
   {
-#ifdef COUT_DEBUG
-    cout << "Warning: exception occurred during translation" << endl;
-#endif
+    std::cout << "Warning: exception occurred during translation" << std::endl;
   }
   if ( aReader.NbShapes() <= 0 )
   {
-#ifdef COUT_DEBUG
-    cout << "Error: transferring STEP to BREP failed" << endl;
-#endif
+    std::cout << "Error: transferring STEP to BREP failed" << std::endl;
     return false;
   }
 
@@ -99,5 +94,39 @@ bool geom_STEP::Read(const TCollection_AsciiString& filename,
     }
   }
 
+  return true;
+}
+
+//! Save the passed CAD model to STEP file.
+//! \param shape    [in] shape to store.
+//! \param filename [in] file to save.
+//! \return true in case of success, false -- otherwise.
+bool geom_STEP::Write(const TopoDS_Shape&            shape,
+                      const TCollection_AsciiString& filename)
+{
+  /* ==================================
+   *  Prepare OCCT translation toolkit
+   * ================================== */
+
+  STEPControl_Writer aWriter;
+  Handle(XSControl_WorkSession) aWS = aWriter.WS();
+
+  /* ========================
+   *  Transfer shape to STEP
+   * ======================== */
+
+  if ( aWriter.Transfer( shape, STEPControl_AsIs ) != IFSelect_RetDone)
+  {
+    std::cout << "Failed to transfer shape to STEP" << std::endl;
+    return false;
+  }
+
+  if ( aWriter.Write( filename.ToCString() ) != IFSelect_RetDone )
+  {
+    std::cout << "Failed to write shape into the file " << filename.ToCString() << std::endl;
+    return false;
+  }
+
+  // Success
   return true;
 }

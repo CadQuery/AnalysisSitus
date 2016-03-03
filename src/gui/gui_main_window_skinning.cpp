@@ -2,7 +2,7 @@
 // Created on: 08 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -101,7 +101,7 @@ void gui_main_window_skinning::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Single Section", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerSection = new gui_viewer_section(pDock);
+    m_widgets.wViewerSection = new gui_viewer_section(true, pDock);
     pDock->setWidget(m_widgets.wViewerSection);
     pDock->setMinimumWidth(width);
     pDock->setMinimumHeight(500);

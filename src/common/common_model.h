@@ -2,7 +2,7 @@
 // Created on: 26 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef common_model_h
@@ -10,6 +10,9 @@
 
 // A-Situs includes
 #include <analysis_situs.h>
+
+// A-Situs (calculus) includes
+#include <calculus_design_law_node.h>
 
 // A-Situs (common) includes
 #include <common_partition.h>
@@ -20,6 +23,8 @@
 #include <geom_part_node.h>
 #include <geom_sections_node.h>
 #include <geom_section_node.h>
+#include <geom_ubend_law_node.h>
+#include <geom_ubend_laws_node.h>
 #include <geom_ubend_node.h>
 
 // A-Situs (mesh) includes
@@ -74,6 +79,13 @@ public:
 //-----------------------------------------------------------------------------
 // Partitions:
 public:
+
+  //! Accessor for a Partition instance dedicated to Calculus Design Law Nodes.
+  //! \return requested Partition.
+  inline Handle(common_partition<calculus_design_law_node>) CalculusDesignLawPartition() const
+  {
+    return Handle(common_partition<calculus_design_law_node>)::DownCast( this->Partition(Partition_CalculusDesignLaw) );
+  }
 
   //! Accessor for a Partition instance dedicated to Mesh Nodes.
   //! \return requested Partition.
@@ -131,6 +143,20 @@ public:
     return Handle(common_partition<geom_ubend_node>)::DownCast( this->Partition(Partition_UBend) );
   }
 
+  //! Accessor for a Partition instance dedicated to U-bend Laws Nodes.
+  //! \return requested Partition.
+  inline Handle(common_partition<geom_ubend_laws_node>) UBendLawsPartition() const
+  {
+    return Handle(common_partition<geom_ubend_laws_node>)::DownCast( this->Partition(Partition_UBendLaws) );
+  }
+
+  //! Accessor for a Partition instance dedicated to U-bend Law Nodes.
+  //! \return requested Partition.
+  inline Handle(common_partition<geom_ubend_law_node>) UBendLawPartition() const
+  {
+    return Handle(common_partition<geom_ubend_law_node>)::DownCast( this->Partition(Partition_UBendLaw) );
+  }
+
 private:
 
   virtual void
@@ -168,6 +194,8 @@ private:
   //---------------------------------------------------------------------------
     Partition_Root,
   //---------------------------------------------------------------------------
+    Partition_CalculusDesignLaw,
+  //---------------------------------------------------------------------------
     Partition_Mesh,
   //---------------------------------------------------------------------------
     Partition_GeomPart,
@@ -177,7 +205,9 @@ private:
     Partition_Sections,
     Partition_Section,
   //---------------------------------------------------------------------------
-    Partition_UBend
+    Partition_UBend,
+    Partition_UBendLaws,
+    Partition_UBendLaw
   };
 
 };

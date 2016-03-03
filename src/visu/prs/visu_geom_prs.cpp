@@ -2,7 +2,7 @@
 // Created on: 28 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -48,7 +48,22 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
   this->addPipeline        ( Pipeline_Main, pl );
   this->assignDataProvider ( Pipeline_Main, DP );
 
-  vtkMapper::SetResolveCoincidentTopologyToDefault();
+  /* ====================
+   *  Pipeline for edges
+   * ==================== */
+
+  // Create pipeline for highlighting
+  Handle(visu_shape_pipeline) contour_pl = new visu_shape_pipeline( true, true, true, false, pl->DataSource() );
+
+  // Adjust props
+  contour_pl->Actor()->GetProperty()->SetOpacity(0.5);
+  contour_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
+  contour_pl->Actor()->SetPickable(0);
+  //
+  contour_pl->WireframeModeOn();
+  //
+  this->addPipeline        ( Pipeline_Contour, contour_pl );
+  this->assignDataProvider ( Pipeline_Contour, DP->Clone() );
 
   /* ======================
    *  Pipeline for picking
@@ -101,6 +116,9 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
 
   // Bind to the data provider
   this->installDetectPipeline( detect_pl, DP->Clone() );
+
+  //---------------------------------------------------------------------------
+  vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
 }
 
 //! Factory method for Presentation.

@@ -2,7 +2,7 @@
 // Created on: 20 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -66,14 +66,14 @@ const visu_utils::TPrsAllocMap& visu_utils::GetAllocMap()
 //! \param theBounds      [out] resulting bounding box.
 //! \param thePropsToSkip [in]  props to exclude from calculation routine.
 //! \return number of props participated in the calculation.
-int visu_utils::ComputeVisiblePropBounds(vtkRenderer*         theRenderer,
-                                         vtkFloatingPointType theBounds[6],
-                                         vtkPropCollection*   thePropsToSkip)
+int visu_utils::ComputeVisiblePropBounds(vtkRenderer*       theRenderer,
+                                         double             theBounds[6],
+                                         vtkPropCollection* thePropsToSkip)
 {
   int aCount = 0;
 
-  theBounds[0] = theBounds[2] = theBounds[4] =  VTK_LARGE_FLOAT;
-  theBounds[1] = theBounds[3] = theBounds[5] = -VTK_LARGE_FLOAT;
+  theBounds[0] = theBounds[2] = theBounds[4] =  VTK_FLOAT_MAX;
+  theBounds[1] = theBounds[3] = theBounds[5] = -VTK_FLOAT_MAX;
 
   // Iterate over entire collection of Props
   vtkActorCollection* aCollection = theRenderer->GetActors();
@@ -101,8 +101,8 @@ int visu_utils::ComputeVisiblePropBounds(vtkRenderer*         theRenderer,
         continue;
     }
 
-    vtkFloatingPointType* aBounds = aProp->GetBounds();
-    static vtkFloatingPointType MAX_DISTANCE = 0.9 * VTK_LARGE_FLOAT;
+    double* aBounds = aProp->GetBounds();
+    static double MAX_DISTANCE = 0.9 * VTK_FLOAT_MAX;
 
     if ( aBounds != NULL &&
          aBounds[0] > -MAX_DISTANCE && aBounds[1] < MAX_DISTANCE &&
@@ -134,7 +134,7 @@ int visu_utils::ComputeVisiblePropBounds(vtkRenderer*         theRenderer,
 void visu_utils::ResetCamera(vtkRenderer*       theRenderer,
                              vtkPropCollection* thePropsToSkip)
 {
-  static vtkFloatingPointType RESET_COEFF = 3.0;
+  static double RESET_COEFF = 3.0;
 
   vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
   anActiveCamera->SetPosition(1, -1, 1);
@@ -158,7 +158,7 @@ bool visu_utils::AdjustCamera(vtkRenderer*       theRenderer,
                               bool               isDefaultNorm,
                               bool               doScaling)
 {
-  static vtkFloatingPointType MIN_DISTANCE = 1.0 / VTK_LARGE_FLOAT;
+  static double MIN_DISTANCE = 1.0 / VTK_FLOAT_MAX;
 
   if ( !theRenderer )
     return false;
@@ -167,19 +167,19 @@ bool visu_utils::AdjustCamera(vtkRenderer*       theRenderer,
   if ( !anActiveCamera )
     return false;
 
-  vtkFloatingPointType aBounds[6];
+  double aBounds[6];
   int anActorCount = ComputeVisiblePropBounds(theRenderer, aBounds, thePropsToSkip);
 
   if ( anActorCount )
   {
-    vtkFloatingPointType aLength = aBounds[1] - aBounds[0];
+    double aLength = aBounds[1] - aBounds[0];
     aLength = Max(aBounds[3] - aBounds[2], aLength );
     aLength = Max(aBounds[5] - aBounds[4], aLength );
 
     if ( aLength < MIN_DISTANCE )
       return false;
 
-    vtkFloatingPointType aWidth =
+    double aWidth =
       Sqrt( (aBounds[1] - aBounds[0]) * (aBounds[1] - aBounds[0]) +
             (aBounds[3] - aBounds[2]) * (aBounds[3] - aBounds[2]) +
             (aBounds[5] - aBounds[4]) * (aBounds[5] - aBounds[4]) );
@@ -187,7 +187,7 @@ bool visu_utils::AdjustCamera(vtkRenderer*       theRenderer,
     if ( aWidth < MIN_DISTANCE )
       return false;
 
-    vtkFloatingPointType aViewPlaneNormal[3];
+    double aViewPlaneNormal[3];
     if ( isDefaultNorm )
     {
       aViewPlaneNormal[0] =  0.57;
@@ -197,17 +197,17 @@ bool visu_utils::AdjustCamera(vtkRenderer*       theRenderer,
     else
       anActiveCamera->GetViewPlaneNormal(aViewPlaneNormal);
 
-    vtkFloatingPointType aCenter[3] = {0.0, 0.0, 0.0};
+    double aCenter[3] = {0.0, 0.0, 0.0};
     aCenter[0] = (aBounds[0] + aBounds[1]) / 2.0;
     aCenter[1] = (aBounds[2] + aBounds[3]) / 2.0;
     aCenter[2] = (aBounds[4] + aBounds[5]) / 2.0;
     anActiveCamera->SetFocalPoint(aCenter[0], aCenter[1], aCenter[2]);
 
-    vtkFloatingPointType aViewAngle = anActiveCamera->GetViewAngle();
-    vtkFloatingPointType aDistance =
+    double aViewAngle = anActiveCamera->GetViewAngle();
+    double aDistance =
       2.0 * aWidth / Tan(aViewAngle * vtkMath::Pi() / 360.0);
 
-    vtkFloatingPointType aViewUp[3];
+    double aViewUp[3];
     anActiveCamera->GetViewUp(aViewUp);
     if ( Abs( vtkMath::Dot(aViewUp, aViewPlaneNormal) ) > 0.999 )
       anActiveCamera->SetViewUp(-aViewUp[2], aViewUp[0], aViewUp[1]);
@@ -221,7 +221,7 @@ bool visu_utils::AdjustCamera(vtkRenderer*       theRenderer,
     int* aViewPortSize = theRenderer->GetSize();
     if ( aViewPortSize[0] < aViewPortSize[1] ) 
       aWidth *=
-        vtkFloatingPointType(aViewPortSize[1]) / vtkFloatingPointType(aViewPortSize[0]);
+        double(aViewPortSize[1]) / double(aViewPortSize[0]);
 
     if ( doScaling )
       anActiveCamera->SetParallelScale(aWidth / 2.0);
@@ -246,30 +246,30 @@ void visu_utils::AdjustCameraClippingRange(vtkRenderer* theRenderer)
     return;
 
   // Find the plane equation for the camera view plane
-  vtkFloatingPointType aNorm[3];
+  double aNorm[3];
   anActiveCamera->GetViewPlaneNormal(aNorm);
-  vtkFloatingPointType aPos[3];
+  double aPos[3];
   anActiveCamera->GetPosition(aPos);
 
-  vtkFloatingPointType aBounds[6];
+  double aBounds[6];
   theRenderer->ComputeVisiblePropBounds(aBounds);
 
-  vtkFloatingPointType aCenter[3];
+  double aCenter[3];
   aCenter[0] = (aBounds[0] + aBounds[1]) / 2.0;
   aCenter[1] = (aBounds[2] + aBounds[3]) / 2.0;
   aCenter[2] = (aBounds[4] + aBounds[5]) / 2.0;
 
-  vtkFloatingPointType aWidth =
+  double aWidth =
     Sqrt( (aBounds[1] - aBounds[0]) * (aBounds[1] - aBounds[0]) +
           (aBounds[3] - aBounds[2]) * (aBounds[3] - aBounds[2]) +
           (aBounds[5] - aBounds[4]) * (aBounds[5] - aBounds[4]) );
 
-  vtkFloatingPointType aDist =
+  double aDist =
     Sqrt( (aPos[0] - aCenter[0]) * (aPos[0] - aCenter[0]) +
           (aPos[1] - aCenter[1]) * (aPos[1] - aCenter[1]) +
           (aPos[2] - aCenter[2]) * (aPos[2] - aCenter[2]) );
 
-  vtkFloatingPointType aRange[2] = {aDist - aWidth / 2.0, aDist + aWidth / 2.0};
+  double aRange[2] = {aDist - aWidth / 2.0, aDist + aWidth / 2.0};
 
   if ( aRange[0] < 0.0 )
     aRange[0] = 0.0;
@@ -355,10 +355,9 @@ void visu_utils::CameraOnRight(vtkRenderer* theRenderer)
 //! \param theActor [in] Actor to adjust lighting options.
 void visu_utils::ApplyLightingRules(vtkActor* theActor)
 {
-  theActor->GetProperty()->SetAmbient(0.1);
+  theActor->GetProperty()->SetOpacity(1.0);
+  theActor->GetProperty()->SetAmbient(0.2);
   theActor->GetProperty()->SetDiffuse(0.2);
-  theActor->GetProperty()->SetAmbientColor(1, 1, 1);
-  theActor->GetProperty()->SetDiffuseColor(1, 1, 1);
 }
 
 //-----------------------------------------------------------------------------
@@ -376,8 +375,8 @@ void visu_utils::TranslateView(vtkRenderer* theRenderer,
                                const int    theNewY)
 {
   vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
-  vtkFloatingPointType aViewFocus[4], aFocalDepth, aViewPoint[3];
-  vtkFloatingPointType aNewPickPoint[4], anOldPickPoint[4], aMotionVector[3];
+  double aViewFocus[4], aFocalDepth, aViewPoint[3];
+  double aNewPickPoint[4], anOldPickPoint[4], aMotionVector[3];
   anActiveCamera->GetFocalPoint(aViewFocus);
 
   vtkInteractorObserver::ComputeWorldToDisplay(theRenderer,
@@ -386,13 +385,13 @@ void visu_utils::TranslateView(vtkRenderer* theRenderer,
   aFocalDepth = aViewFocus[2];
 
   vtkInteractorObserver::ComputeDisplayToWorld(theRenderer,
-                                               vtkFloatingPointType(theNewX),
-                                               vtkFloatingPointType(theNewY),
+                                               double(theNewX),
+                                               double(theNewY),
                                                aFocalDepth, aNewPickPoint);
 
   vtkInteractorObserver::ComputeDisplayToWorld(theRenderer,
-                                               vtkFloatingPointType(theOldX),
-                                               vtkFloatingPointType(theOldY),
+                                               double(theOldX),
+                                               double(theOldY),
                                                aFocalDepth, anOldPickPoint);
 
   // Camera's motion is reversed
@@ -450,14 +449,14 @@ void visu_utils::AdjustTrihedron(vtkRenderer*       theRenderer,
 
   // Calculate bounds of presented Actors excluding those ones which comprise
   // the trihedron itself
-  vtkFloatingPointType aBounds[6];
+  double aBounds[6];
   visu_utils::ComputeVisiblePropBounds(theRenderer, aBounds, thePropsToSkip);
 
-  if ( aBounds[0] == VTK_LARGE_FLOAT )
+  if ( aBounds[0] == VTK_FLOAT_MAX )
     return;
 
   // Calculate the new length by the bounding box
-  vtkFloatingPointType aLength = 0;
+  double aLength = 0;
   if ( CALC_BY_DIAG )
   {
     aLength =
@@ -470,8 +469,8 @@ void visu_utils::AdjustTrihedron(vtkRenderer*       theRenderer,
     aLength = Max(aBounds[3] - aBounds[2], aLength);
     aLength = Max(aBounds[5] - aBounds[4], aLength);
   }
-  vtkFloatingPointType anOldSize = theActor->GetTotalLength()[0];
-  vtkFloatingPointType aNewSize = aLength * SIZE_FACTOR;
+  double anOldSize = theActor->GetTotalLength()[0];
+  double aNewSize = aLength * SIZE_FACTOR;
 
   // Apply new size if it is good enough
   if (  Abs(aNewSize) > EPS_SIZE &&
@@ -628,10 +627,10 @@ vtkLookupTable* visu_utils::InitLookupTable()
   aColorTable->SetTableValue(0, 0, 0, 0);          // undefined
   aColorTable->SetTableValue(1, 0.5, 0.5, 0.5);    // gray for isoparametric line in wireframe
   aColorTable->SetTableValue(2, 1, 0, 0);          // red for free vertex
-  aColorTable->SetTableValue(3, 1, 1, 0);          // yellow for shared vertex
+  aColorTable->SetTableValue(3, 0, 0, 0);          // black for shared vertex
   aColorTable->SetTableValue(4, 1, 0, 0);          // red for free edge
-  aColorTable->SetTableValue(5, 0, 1, 0);          // green for boundary edge (related to a single face)
-  aColorTable->SetTableValue(6, 1, 1, 0);          // yellow for shared edge (related to several faces)
+  aColorTable->SetTableValue(5, 1, 0, 0);          // red for boundary edge (related to a single face)
+  aColorTable->SetTableValue(6, 0.3, 0.3, 0.3);    // black for shared edge (related to several faces)
   aColorTable->SetTableValue(7, 0.05, 0.55, 0.85); // face in shading
   aColorTable->SetTableValue(8, 1, 1, 1);          // solid in shading
 
@@ -738,11 +737,13 @@ void visu_utils::InitMapper(vtkMapper*      theMapper,
 //! \param theScalarBarWidget [in] scalar bar widget to initialize.
 void visu_utils::InitTextWidget(vtkTextWidget* theTextWidget)
 {
-  vtkTextRepresentation* aRep = vtkTextRepresentation::SafeDownCast( theTextWidget->GetRepresentation() );
+  vtkTextRepresentation* textRep = vtkTextRepresentation::SafeDownCast( theTextWidget->GetRepresentation() );
   theTextWidget->SelectableOff();
 
   vtkSmartPointer<vtkTextActor> aTextActor = vtkSmartPointer<vtkTextActor>::New();
-  aRep->SetTextActor(aTextActor);
-  aTextActor->SetTextScaleModeToViewport();
+  textRep->SetTextActor(aTextActor);
+  textRep->GetPositionCoordinate()->SetValue(0.01, 0.01);
+  textRep->GetPosition2Coordinate()->SetValue(0.45, 0.35);
   aTextActor->GetTextProperty()->SetJustificationToLeft();
+  aTextActor->GetTextProperty()->SetVerticalJustificationToBottom();
 }

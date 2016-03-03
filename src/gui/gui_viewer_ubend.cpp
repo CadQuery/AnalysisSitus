@@ -2,7 +2,7 @@
 // Created on: 02 February 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -27,7 +27,7 @@
 
 // Qt includes
 #pragma warning(push, 0)
-#include <QVBoxLayout>
+#include <QHBoxLayout>
 #pragma warning(pop)
 
 //! Creates a new instance of viewer.
@@ -44,7 +44,7 @@ gui_viewer_ubend::gui_viewer_ubend(QWidget* parent) : gui_viewer(parent)
   // Widgets and layouts
   gui_controls_ubend* pControlPane = new gui_controls_ubend(this);
   QVTKWidget*         pViewer      = m_prs_mgr->GetQVTKWidget();
-  QVBoxLayout*        pBaseLayout  = new QVBoxLayout();
+  QHBoxLayout*        pBaseLayout  = new QHBoxLayout();
 
   // Configure layout
   pBaseLayout->setSpacing(0);

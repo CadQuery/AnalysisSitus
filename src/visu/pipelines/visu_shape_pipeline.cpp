@@ -2,7 +2,7 @@
 // Created on: 25 September 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -105,6 +105,11 @@ visu_shape_pipeline::visu_shape_pipeline(const bool            isOCCTColorScheme
   this->append( m_filterMap.Find(Filter_DM) );
   this->append( m_filterMap.Find(Filter_SubShapes) );
   this->append( m_filterMap.Find(Filter_Normals) ); // Goes after DM as DM looses normals data
+
+  // Set line width
+  this->Actor()->GetProperty()->SetLineWidth(1);
+  //
+  visu_utils::ApplyLightingRules( this->Actor() );
 }
 
 //! Sets input data for the pipeline.

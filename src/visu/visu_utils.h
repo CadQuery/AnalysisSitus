@@ -2,7 +2,7 @@
 // Created on: 20 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef visu_utils_h
@@ -100,9 +100,9 @@ public:
 public:
 
   static int
-    ComputeVisiblePropBounds(vtkRenderer*         theRenderer,
-                             vtkFloatingPointType theBounds[6],
-                             vtkPropCollection*   thePropsToSkip);
+    ComputeVisiblePropBounds(vtkRenderer*       theRenderer,
+                             double             theBounds[6],
+                             vtkPropCollection* thePropsToSkip);
 
   static void
     ResetCamera(vtkRenderer*       theRenderer,

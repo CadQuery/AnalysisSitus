@@ -2,7 +2,7 @@
 // Created on: 28 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef visu_geom_prs_h
@@ -36,7 +36,8 @@ public:
   //! Pipelines.
   enum PipelineId
   {
-    Pipeline_Main = 1
+    Pipeline_Main = 1,
+    Pipeline_Contour
   };
 
 public:

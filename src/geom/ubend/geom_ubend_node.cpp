@@ -2,11 +2,14 @@
 // Created on: 02 February 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
 #include <geom_ubend_node.h>
+
+// A-Situs (geometry) includes
+#include <geom_ubend_laws_node.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -153,4 +156,29 @@ void geom_ubend_node::SetDisplayMode(const int mode)
 int geom_ubend_node::GetDisplayMode() const
 {
   return ActParamTool::AsInt( this->Parameter(PID_DisplayMode) )->GetValue();
+}
+
+//! Returns the child law Node.
+//! \param oneBased_index [in] 1-based Law index.
+Handle(geom_ubend_law_node) geom_ubend_node::GetLaw(const int oneBased_index) const
+{
+  // Access the first child which is a container for laws
+  Handle(geom_ubend_laws_node)
+    laws = Handle(geom_ubend_laws_node)::DownCast( this->GetChildIterator()->Value() );
+
+  // The direct children of the laws sub-container are what we are looking for
+  int count = 1;
+  Handle(geom_ubend_law_node) result;
+  //
+  for ( Handle(ActAPI_IChildIterator) cit = laws->GetChildIterator(); cit->More(); cit->Next(), ++count )
+  {
+    Handle(ActAPI_INode) child_n = cit->Value();
+    //
+    if ( !child_n->IsInstance( STANDARD_TYPE(geom_ubend_law_node) ) )
+      continue;
+
+    if ( count == oneBased_index )
+      result = Handle(geom_ubend_law_node)::DownCast(child_n);
+  }
+  return result;
 }

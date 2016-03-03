@@ -2,7 +2,7 @@
 // Created on: 20 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -16,6 +16,7 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_NurbsConvert.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepCheck_Analyzer.hxx>
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
 #include <BRepCheck_Result.hxx>
@@ -28,6 +29,7 @@
 #include <gp_Quaternion.hxx>
 #include <gp_Vec.hxx>
 #include <Precision.hxx>
+#include <ShapeUpgrade_UnifySameDomain.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
@@ -578,6 +580,16 @@ bool geom_utils::ReadBRep(const TCollection_AsciiString& theFilename,
   return BRepTools::Read(theShape, theFilename.ToCString(), BB) > 0;
 }
 
+//! Writes shape to B-Rep format.
+//! \param theShape    [in] shape to write.
+//! \param theFilename [in] filename.
+//! \return true in case of success, false -- otherwise.
+bool geom_utils::WriteBRep(const TopoDS_Shape&            theShape,
+                           const TCollection_AsciiString& theFilename)
+{
+  return BRepTools::Write( theShape, theFilename.ToCString() ) > 0;
+}
+
 //! Collects summary information of the given shape: returns the number
 //! of sub-shapes of each type.
 //! \param shape [in]  shape to analyze.
@@ -638,7 +650,7 @@ void geom_utils::ShapeSummary(const TopoDS_Shape&      shape,
   }
 
   // Prepare output string with the gathered summary
-  info += "PART SUMMARY:\n";
+  info += "PART SUMMARY (TSHAPE, TRSF, ORI):\n";
   info += "- nb compsolids: "; info += nbCompsolids; info += "\n";
   info += "- nb compounds: ";  info += nbCompounds;  info += "\n";
   info += "- nb solids: ";     info += nbSolids;     info += "\n";
@@ -713,7 +725,39 @@ TopoDS_Shape geom_utils::MakeSkin(const TopTools_SequenceOfShape& wires)
   TopoDS_Shell ResultShell = TopoDS::Shell( exp.Current() );
   //
   std::cout << "Skinning was done successfully" << std::endl;
-  BRepTools::Write(ResultShell, "D:/skin.brep");
-  //
   return ResultShell;
+}
+
+//! Performs sewing.
+//! \param shape     [in/out] shape to sew.
+//! \param tolerance [in]     sewing tolerance.
+//! \return true in case of success, false -- otherwise.
+bool geom_utils::Sew(TopoDS_Shape& shape,
+                     const double  tolerance)
+{
+  BRepBuilderAPI_Sewing Sewer(tolerance);
+  Sewer.Load(shape);
+
+  // Perform sewing
+  Sewer.Perform();
+  shape = Sewer.SewedShape();
+  return true;
+}
+
+//! Performs "same domain" expansion on faces and edges.
+//! \param shape [in/out] shape to modify.
+//! \return true in case of success, false -- otherwise.
+bool geom_utils::MaximizeFaces(TopoDS_Shape& shape)
+{
+  ShapeUpgrade_UnifySameDomain Unify(shape);
+  try
+  {
+    Unify.Build();
+  }
+  catch ( ... )
+  {
+    return false;
+  }
+  shape = Unify.Shape();
+  return true;
 }

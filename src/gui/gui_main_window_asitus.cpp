@@ -2,7 +2,7 @@
 // Created on: 07 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -69,7 +69,7 @@ void gui_main_window_asitus::createDockWindows()
   // Desktop used for sizing
   QDesktopWidget desktop;
   const int side  = std::min( desktop.height(), desktop.width() );
-  const int width = side*0.2;
+  const int width = side*0.4;
 
   //---------------------------------------------------------------------------
   // Face Domain viewer

@@ -2,7 +2,7 @@
 // Created on: 28 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef geom_STEP_h
@@ -20,14 +20,12 @@ class geom_STEP
 {
 public:
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(geom_STEP, Standard_Transient)
-
-public:
-
   static bool Read(const TCollection_AsciiString& filename,
                    const bool                     doHealing,
                    TopoDS_Shape&                  result);
+
+  static bool Write(const TopoDS_Shape&            shape,
+                    const TCollection_AsciiString& filename);
 
 private:
 

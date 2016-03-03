@@ -2,7 +2,7 @@
 // Created on: 25 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef gui_controls_part_h
@@ -26,16 +26,11 @@ public:
 
 public slots:
 
-  void onLoadBRep();
-  void onLoadSTEP();
-  void onShowGraph();
-  void onSavePly();
-
-private:
-
-  QString selectBRepFile() const;
-  QString selectSTEPFile() const;
-  QString selectPlyFile()  const;
+  void onLoadBRep      ();
+  void onLoadSTEP      ();
+  void onShowTOPOGraph ();
+  void onShowAAG       ();
+  void onSavePly       ();
 
 private:
 
@@ -44,23 +39,26 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    QPushButton* pLoadBRep;  //!< Button for brep loading.
-    QPushButton* pLoadSTEP;  //!< Button for STEP loading.
-    QPushButton* pShowGraph; //!< Show topology graph.
-    QPushButton* pSavePly;   //!< Save triangulation to ply.
+    QPushButton* pLoadBRep;      //!< Button for brep loading.
+    QPushButton* pLoadSTEP;      //!< Button for STEP loading.
+    QPushButton* pShowTOPOGraph; //!< Show topology graph.
+    QPushButton* pShowAAG;       //!< Show Attributed Adjacency Graph.
+    QPushButton* pSavePly;       //!< Save triangulation to ply.
 
-    t_widgets() : pLoadBRep  (NULL),
-                  pLoadSTEP  (NULL),
-                  pShowGraph (NULL),
-                  pSavePly   (NULL)
+    t_widgets() : pLoadBRep      (NULL),
+                  pLoadSTEP      (NULL),
+                  pShowTOPOGraph (NULL),
+                  pShowAAG       (NULL),
+                  pSavePly       (NULL)
     {}
 
     void Release()
     {
-      delete pLoadBRep;  pLoadBRep  = NULL;
-      delete pLoadSTEP;  pLoadSTEP  = NULL;
-      delete pShowGraph; pShowGraph = NULL;
-      delete pSavePly;   pSavePly   = NULL;
+      delete pLoadBRep;      pLoadBRep      = NULL;
+      delete pLoadSTEP;      pLoadSTEP      = NULL;
+      delete pShowTOPOGraph; pShowTOPOGraph = NULL;
+      delete pShowAAG;       pShowAAG       = NULL;
+      delete pSavePly;       pSavePly       = NULL;
     }
   };
 

@@ -2,7 +2,7 @@
 // Created on: 25 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef gui_common_h
@@ -17,6 +17,15 @@
 //! GUI utilities.
 class gui_common
 {
+public:
+
+  //! Enumeration for standard open-save dialogs.
+  enum OpenSaveAction
+  {
+    OpenSaveAction_Open,
+    OpenSaveAction_Save
+  };
+
 public:
 
   //! Convert TCollection_AsciiString to QString
@@ -74,6 +83,31 @@ public:
     unsigned char aBlue  =  theColor          & 0xFF;
     return QColor(aRed, aGreen, aBlue);
   }
+
+public:
+
+  static QString
+    selectBRepFile(const OpenSaveAction action);
+
+  static QString
+    selectIGESFile(const OpenSaveAction action);
+
+  static QString
+    selectSTEPFile(const OpenSaveAction action);
+
+  static QString
+    selectPlyFile(const OpenSaveAction action);
+
+  static QString
+    selectXBFFile(const OpenSaveAction action);
+
+//-----------------------------------------------------------------------------
+
+  static QString
+    selectFile(const QStringList&   filter,
+               const QString&       openTitle,
+               const QString&       saveTitle,
+               const OpenSaveAction action);
 
 };
 

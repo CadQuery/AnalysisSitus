@@ -2,7 +2,7 @@
 // Created on: 14 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -25,11 +25,6 @@
 #include <vtkDecimatePro.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
-
-// Qt includes
-#pragma warning(push, 0)
-#include <QFileDialog>
-#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 
@@ -84,7 +79,7 @@ gui_controls_mesh::~gui_controls_mesh()
 void gui_controls_mesh::onLoadPly()
 {
   // Select filename
-  QString filename = this->selectPlyFile();
+  QString filename = gui_common::selectPlyFile(gui_common::OpenSaveAction_Open);
 
   // Load mesh
   Handle(OMFDS_Mesh)                          mesh_data;
@@ -138,7 +133,7 @@ void gui_controls_mesh::onDecimate()
   // Get Mesh Presentation
   Handle(visu_mesh_prs)
     mesh_prs = Handle(visu_mesh_prs)::DownCast( common_facilities::Instance()->Prs.Mesh
-                                                                             ->GetPresentation( mesh_n.get() ) );
+                                                                             ->GetPresentation(mesh_n) );
   if ( mesh_prs.IsNull() )
   {
     std::cout << "Error: seems there is no Presentation for your mesh..." << std::endl;
@@ -174,9 +169,9 @@ void gui_controls_mesh::onDecimate()
   vtkSmartPointer<vtkPolyData> decimated = vtkSmartPointer<vtkPolyData>::New();
   decimated->ShallowCopy( decimate->GetOutput() );
   //
-  std::cout << "After decimation" << std::endl << "------------" << std::endl;
-  std::cout << "There are " << decimated->GetNumberOfPoints() << " points." << std::endl;
-  std::cout << "There are " << decimated->GetNumberOfPolys() << " polygons." << std::endl;
+  std::cout << "After decimation" << std::endl                      << "------------" << std::endl;
+  std::cout << "There are "       << decimated->GetNumberOfPoints() << " points."     << std::endl;
+  std::cout << "There are "       << decimated->GetNumberOfPolys()  << " polygons."   << std::endl;
 
   // Convert to a persistent form
   Handle(OMFDS_Mesh) decimatedMesh;
@@ -195,23 +190,4 @@ void gui_controls_mesh::onDecimate()
 
   // Update Presentation
   common_facilities::Instance()->Prs.Mesh->Actualize( mesh_n.get() );
-}
-
-//-----------------------------------------------------------------------------
-// Auxiliary functions
-//-----------------------------------------------------------------------------
-
-//! Allows to select filename for import.
-//! \return selected filename.
-QString gui_controls_mesh::selectPlyFile() const
-{
-  QStringList aFilter;
-  aFilter << "PLY (*.ply)";
-
-  QString dir;
-  QString
-    aFileName = QFileDialog::getOpenFileName(NULL, "Select ply file with mesh",
-                                             dir, aFilter.join(";;"), NULL);
-
-  return aFileName;
 }

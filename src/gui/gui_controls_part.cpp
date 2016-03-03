@@ -2,7 +2,7 @@
 // Created on: 25 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -26,14 +26,10 @@
 #include <visu_topo_graph.h>
 
 // OCCT includes
+#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
-
-// Qt includes
-#pragma warning(push, 0)
-#include <QFileDialog>
-#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 
@@ -51,22 +47,25 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   m_pMainLayout = new QVBoxLayout();
 
   // Buttons
-  m_widgets.pLoadBRep  = new QPushButton("Load &b-rep");
-  m_widgets.pLoadSTEP  = new QPushButton("Load &STEP");
-  m_widgets.pShowGraph = new QPushButton("Show &graph");
-  m_widgets.pSavePly   = new QPushButton("Save mesh (ply)");
+  m_widgets.pLoadBRep      = new QPushButton("Load b-rep");
+  m_widgets.pLoadSTEP      = new QPushButton("Load STEP");
+  m_widgets.pShowTOPOGraph = new QPushButton("Show TOPO graph");
+  m_widgets.pShowAAG       = new QPushButton("Show AA graph");
+  m_widgets.pSavePly       = new QPushButton("Save mesh (ply)");
   //
-  m_widgets.pLoadBRep  -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pLoadSTEP  -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pShowGraph -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pSavePly   -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pLoadBRep      -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pLoadSTEP      -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pShowTOPOGraph -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pShowAAG       -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSavePly       -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Set layout
   m_pMainLayout->setSpacing(0);
   //
   m_pMainLayout->addWidget(m_widgets.pLoadBRep);
   m_pMainLayout->addWidget(m_widgets.pLoadSTEP);
-  m_pMainLayout->addWidget(m_widgets.pShowGraph);
+  m_pMainLayout->addWidget(m_widgets.pShowTOPOGraph);
+  m_pMainLayout->addWidget(m_widgets.pShowAAG);
   m_pMainLayout->addWidget(m_widgets.pSavePly);
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
@@ -75,10 +74,11 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   this->setLayout(m_pMainLayout);
 
   // Connect signals to slots
-  connect( m_widgets.pLoadBRep,  SIGNAL( clicked() ), SLOT( onLoadBRep() ) );
-  connect( m_widgets.pLoadSTEP,  SIGNAL( clicked() ), SLOT( onLoadSTEP() ) );
-  connect( m_widgets.pShowGraph, SIGNAL( clicked() ), SLOT( onShowGraph() ) );
-  connect( m_widgets.pSavePly,   SIGNAL( clicked() ), SLOT( onSavePly() ) );
+  connect( m_widgets.pLoadBRep,      SIGNAL( clicked() ), SLOT( onLoadBRep      () ) );
+  connect( m_widgets.pLoadSTEP,      SIGNAL( clicked() ), SLOT( onLoadSTEP      () ) );
+  connect( m_widgets.pShowTOPOGraph, SIGNAL( clicked() ), SLOT( onShowTOPOGraph () ) );
+  connect( m_widgets.pShowAAG,       SIGNAL( clicked() ), SLOT( onShowAAG       () ) );
+  connect( m_widgets.pSavePly,       SIGNAL( clicked() ), SLOT( onSavePly       () ) );
 }
 
 //! Destructor.
@@ -95,7 +95,7 @@ gui_controls_part::~gui_controls_part()
 //! On b-rep loading.
 void gui_controls_part::onLoadBRep()
 {
-  QString filename = this->selectBRepFile();
+  QString filename = gui_common::selectBRepFile(gui_common::OpenSaveAction_Open);
 
   // Read b-rep
   TopoDS_Shape shape;
@@ -135,11 +135,11 @@ void gui_controls_part::onLoadBRep()
 //! On STEP loading.
 void gui_controls_part::onLoadSTEP()
 {
-  QString filename = this->selectSTEPFile();
+  QString filename = gui_common::selectSTEPFile(gui_common::OpenSaveAction_Open);
 
   // Read STEP
   TopoDS_Shape shape;
-  if ( !geom_STEP::Read(QStr2AsciiStr(filename), true, shape) )
+  if ( !geom_STEP::Read(QStr2AsciiStr(filename), false, shape) )
   {
     std::cout << "Error: cannot read STEP file" << std::endl;
     return;
@@ -173,7 +173,7 @@ void gui_controls_part::onLoadSTEP()
 }
 
 //! Shows topology graph.
-void gui_controls_part::onShowGraph()
+void gui_controls_part::onShowTOPOGraph()
 {
   // Access Geometry Node
   Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
@@ -207,13 +207,67 @@ void gui_controls_part::onShowGraph()
 
   // Show graph
   visu_topo_graph* pGraphView = new visu_topo_graph;
-  pGraphView->Render(targetShape);
+  pGraphView->RenderFull(targetShape, TopAbs_VERTEX);
+}
+
+//! Shows AA graph.
+void gui_controls_part::onShowAAG()
+{
+  // Access Geometry Node
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  if ( N.IsNull() || !N->IsWellFormed() )
+    return;
+
+  // Shape to visualize a graph for
+  TopoDS_Shape targetShape;
+  TopoDS_Face selectedFace;
+
+  // Access whole shape
+  targetShape = N->GetShape();
+  //
+  // No shape, no graph
+  if ( targetShape.IsNull() )
+  {
+    std::cout << "Error: target shape is null" << std::endl;
+    return;
+  }
+
+  // Access selected faces (if any)
+  TopTools_ListOfShape selected;
+  {
+    // Map ALL shapes to extract topology by selected index which is global
+    // (related to full accessory graph)
+    TopTools_IndexedMapOfShape M;
+    TopExp::MapShapes(targetShape, M);
+
+    // Get actual selection
+    const visu_actual_selection& sel      = common_facilities::Instance()->Prs.Part->GetCurrentSelection();
+    const visu_pick_result&      pick_res = sel.PickResult(SelectionNature_Pick);
+    const visu_actor_elem_map&   elem_map = pick_res.GetPickMap();
+    //
+    // Prepare cumulative set of all picked element IDs
+    for ( visu_actor_elem_map::Iterator it(elem_map); it.More(); it.Next() )
+    {
+      const TColStd_PackedMapOfInteger& face_mask = it.Value();
+      //
+      for ( TColStd_MapIteratorOfPackedMapOfInteger mit(face_mask); mit.More(); mit.Next() )
+      {
+        const int face_idx = mit.Key();
+        TopoDS_Face F = TopoDS::Face( M.FindKey(face_idx) );
+        selected.Append(F);
+      }
+    }
+  }
+
+  // Show graph
+  visu_topo_graph* pGraphView = new visu_topo_graph;
+  pGraphView->RenderAdjacency(targetShape, selected);
 }
 
 //! Saves mesh to PLY file.
 void gui_controls_part::onSavePly()
 {
-  QString filename = this->selectPlyFile();
+  QString filename = gui_common::selectPlyFile(gui_common::OpenSaveAction_Save);
 
   // Access Geometry Node
   Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
@@ -242,53 +296,4 @@ void gui_controls_part::onSavePly()
     std::cout << "Error: cannot save mesh" << std::endl;
     return;
   }
-}
-
-//-----------------------------------------------------------------------------
-// Auxiliary functions
-//-----------------------------------------------------------------------------
-
-//! Allows to select filename for import.
-//! \return selected filename.
-QString gui_controls_part::selectBRepFile() const
-{
-  QStringList aFilter;
-  aFilter << "B-Rep (*.brep)";
-
-  QString dir;
-  QString
-    aFileName = QFileDialog::getOpenFileName(NULL, "Select B-Rep file",
-                                             dir, aFilter.join(";;"), NULL);
-
-  return aFileName;
-}
-
-//! Allows to select filename for import.
-//! \return selected filename.
-QString gui_controls_part::selectSTEPFile() const
-{
-  QStringList aFilter;
-  aFilter << "STEP (*.stp)";
-
-  QString dir;
-  QString
-    aFileName = QFileDialog::getOpenFileName(NULL, "Select STEP file",
-                                             dir, aFilter.join(";;"), NULL);
-
-  return aFileName;
-}
-
-//! Allows to select filename for ply export.
-//! \return selected filename.
-QString gui_controls_part::selectPlyFile() const
-{
-  QStringList aFilter;
-  aFilter << "PLY (*.ply)";
-
-  QString dir;
-  QString
-    aFileName = QFileDialog::getSaveFileName(NULL, "Select PLY file",
-                                             dir, aFilter.join(";;"), NULL);
-
-  return aFileName;
 }

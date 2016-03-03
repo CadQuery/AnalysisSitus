@@ -2,14 +2,16 @@
 // Created on: 02 February 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
 #include <visu_shape_data_source.h>
 
+// A-Situs (visualization) includes
+#include <visu_shape_mesher.h>
+
 // OCCT includes
-#include <IVtkOCC_ShapeMesher.hxx>
 #include <IVtkTools_ShapeObject.hxx>
 
 // VTK includes
@@ -87,7 +89,7 @@ int visu_shape_data_source::RequestData (vtkInformation* theRequest,
     }
 
     myPolyData = new IVtkVTK_ShapeData;
-    IVtkOCC_ShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(0.1, 15.0*M_PI/180.0);
+    visu_shape_mesher::Handle aMesher = new visu_shape_mesher(0.001, 5.0*M_PI/180.0, 0, 0);
     aMesher->Build (aShapeWrapperCopy, myPolyData);
     vtkPolyData* aMeshData = myPolyData->getVtkPolyData();
 
@@ -111,5 +113,5 @@ int visu_shape_data_source::RequestData (vtkInformation* theRequest,
   IVtkTools_ShapeObject::SetShapeSource(this, aPolyData);
   aPolyData->GetAttributes (vtkDataObject::CELL)->SetPedigreeIds (SubShapeIDs() );
 
-  return Superclass::RequestData (theRequest, theInputVector, theOutputVector);
+  return vtkPolyDataAlgorithm::RequestData (theRequest, theInputVector, theOutputVector);
 }

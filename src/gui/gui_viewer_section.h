@@ -2,7 +2,7 @@
 // Created on: 09 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/
+// Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 #ifndef gui_viewer_section_h
@@ -28,7 +28,7 @@ class gui_viewer_section : public gui_viewer
 
 public:
 
-  gui_viewer_section(QWidget* parent = NULL);
+  gui_viewer_section(const bool withControlPanel, QWidget* parent = NULL);
   virtual ~gui_viewer_section();
 
 public:

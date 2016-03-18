@@ -48,6 +48,10 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
   this->addPipeline        ( Pipeline_Main, pl );
   this->assignDataProvider ( Pipeline_Main, DP );
 
+  // Set point size
+  pl->Actor()->GetProperty()->SetPointSize(5.0f);
+  pl->Actor()->GetProperty()->SetLineWidth(1.5f);
+
   /* ====================
    *  Pipeline for edges
    * ==================== */
@@ -137,7 +141,7 @@ bool visu_geom_prs::IsVisible() const
 }
 
 //! Sets SHADING visualization mode.
-void visu_geom_prs::doShading() const
+void visu_geom_prs::DoShading() const
 {
   Handle(visu_shape_pipeline)
     pl = Handle(visu_shape_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
@@ -146,7 +150,7 @@ void visu_geom_prs::doShading() const
 }
 
 //! Sets WIREFRAME visualization mode.
-void visu_geom_prs::doWireframe() const
+void visu_geom_prs::DoWireframe() const
 {
   Handle(visu_shape_pipeline)
     pl = Handle(visu_shape_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
@@ -156,7 +160,7 @@ void visu_geom_prs::doWireframe() const
 
 //! Sets custom color for the geometry.
 //! \param theColor [in] color to set.
-void visu_geom_prs::doColor(const QColor& theColor) const
+void visu_geom_prs::DoColor(const QColor& theColor) const
 {
   if ( !theColor.isValid() )
     return;
@@ -171,7 +175,7 @@ void visu_geom_prs::doColor(const QColor& theColor) const
 }
 
 //! Unsets custom color for the geometry.
-void visu_geom_prs::doUnColor() const
+void visu_geom_prs::DoUnColor() const
 {
   Handle(visu_shape_pipeline)
     pl = Handle(visu_shape_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
@@ -219,9 +223,9 @@ void visu_geom_prs::beforeUpdatePipelines() const
 
   visu_display_mode aDMode = (visu_display_mode) N->GetDisplayMode();
   if ( aDMode == DisplayMode_Undefined || aDMode == DisplayMode_Shading )
-    this->doShading();
+    this->DoShading();
   else
-    this->doWireframe();
+    this->DoWireframe();
 }
 
 //! Callback for updating of Presentation pipelines invoked after the
@@ -254,10 +258,10 @@ void visu_geom_prs::afterUpdatePipelines() const
   if ( N->HasColor() )
   {
     QColor color = gui_common::IntToColor( N->GetColor() );
-    this->doColor(color);
+    this->DoColor(color);
   }
   else
-    this->doUnColor();
+    this->DoUnColor();
 }
 
 //! Callback for highlighting.
@@ -272,8 +276,7 @@ void visu_geom_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRen
    *  Get target actor
    * ================== */
 
-  Handle(visu_pipeline)
-    main_pl = Handle(visu_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(visu_pipeline) main_pl = this->GetPipeline(Pipeline_Main);
   //
   vtkActor* main_actor = main_pl->Actor();
 

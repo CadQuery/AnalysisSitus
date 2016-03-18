@@ -12,6 +12,9 @@
 // Own include
 #include <gui_viewer_dmu.h>
 
+// Common includes
+#include <common_facilities.h>
+
 // GUI includes
 #include <gui_occt_window.h>
 
@@ -37,7 +40,11 @@
 
 // OCCT includes
 #pragma warning(push, 0)
+#include <AIS_ConnectedInteractive.hxx>
 #include <Aspect_DisplayConnection.hxx>
+#include <TDF_ChildIterator.hxx>
+#include <TDF_Label.hxx>
+#include <TDF_Tool.hxx>
 #include <Graphic3d_ExportFormat.hxx>
 #include <Graphic3d_GraphicDriver.hxx>
 #include <Graphic3d_TextureEnv.hxx>
@@ -109,33 +116,40 @@ Handle(AIS_InteractiveContext)& gui_viewer_dmu::GetContext()
   return myContext;
 }
 
-//! Visualizes the passed shape.
-//! \param shape [in] CAD model to visualize.
+//! Visualizes the passed XDE model.
+//! \param model [in] XDE model to visualize.
 //! \param mode  [in] display mode.
 //! \return constructed interactive object.
-Handle(AIS_Shape) gui_viewer_dmu::Visualize(const TopoDS_Shape&   shape,
-                                            const AIS_DisplayMode mode)
+void gui_viewer_dmu::Visualize(const Handle(xde_model)& model,
+                               const AIS_DisplayMode    mode)
 {
-  Handle(AIS_Shape) aisShape = new AIS_Shape(shape);
-  //
-  aisShape->UnsetDisplayMode();
-  aisShape->SetDisplayMode(mode);
-  //
-  myContext->ClearCurrents();
-  myContext->Display(aisShape);
-  //
-  return aisShape;
-}
+  if ( model.IsNull() )
+    return;
 
-//! Visualizes the passed shape only.
-//! \param shape [in] CAD model to visualize.
-//! \param mode  [in] display mode.
-//! \return constructed interactive object.
-Handle(AIS_Shape) gui_viewer_dmu::VisualizeOnly(const TopoDS_Shape&   shape,
-                                                const AIS_DisplayMode mode)
-{
-  myContext->EraseAll();
-  return this->Visualize(shape, mode);
+  myContext->SetDisplayMode(mode);
+  //
+  TDF_LabelSequence aLabels;
+  model->GetShapeTool()->GetFreeShapes(aLabels);
+
+  // Create Presentations
+  Shapes.Clear();
+  //
+  visu_xde_style aDefStyle;
+  aDefStyle.SetColorSurf(Quantity_NOC_LIMEGREEN);
+  aDefStyle.SetColorCurv(Quantity_NOC_SNOW);
+  //
+  for ( int l = 1; l <= aLabels.Length(); ++l )
+  {
+    const TDF_Label& Lab = aLabels.Value(l);
+    this->displayWithChildren( *model->GetShapeTool(),
+                               *model->GetColorTool(),
+                               Lab,
+                               TopLoc_Location(),
+                               aDefStyle,
+                               "",
+                               mode,
+                               Shapes );
+  }
 }
 
 //! Clears the viewer.
@@ -647,13 +661,13 @@ void gui_viewer_dmu::onLButtonUp( const int nFlags, const QPoint point )
     //ApplicationCommonWindow::getApplication()->onSelectionChanged();
 }
 
-void gui_viewer_dmu::onMButtonUp( const int nFlags, const QPoint /*point*/ )
+void gui_viewer_dmu::onMButtonUp( const int /*nFlags*/, const QPoint /*point*/ )
 {
     myCurrentMode = CurAction3d_Nothing;
     activateCursor( myCurrentMode );
 }
 
-void gui_viewer_dmu::onRButtonUp( const int nFlags, const QPoint point )
+void gui_viewer_dmu::onRButtonUp( const int /*nFlags*/, const QPoint point )
 {
     if ( myCurrentMode == CurAction3d_Nothing )
         Popup( point.x(), point.y() );
@@ -944,6 +958,8 @@ bool gui_viewer_dmu::dump(Standard_CString theFile)
       exFormat = Graphic3d_EF_SVG;
     if ( !ext.compare("pgf") )
       exFormat = Graphic3d_EF_PGF;
+    else
+      exFormat = Graphic3d_EF_PostScript;
     try
     {
       myView->Export( theFile, exFormat );
@@ -960,4 +976,93 @@ bool gui_viewer_dmu::dump(Standard_CString theFile)
 gui_viewer_dmu::CurrentAction3d gui_viewer_dmu::getCurrentMode()
 {
   return myCurrentMode;
+}
+
+void gui_viewer_dmu::displayWithChildren(XCAFDoc_ShapeTool&             theShapeTool,
+                                         XCAFDoc_ColorTool&             theColorTool,
+                                         const TDF_Label&               theLabel,
+                                         const TopLoc_Location&         theParentTrsf,
+                                         const visu_xde_style&          theParentStyle,
+                                         const TCollection_AsciiString& theParentId,
+                                         const int                      theDisplayMode,
+                                         visu_xde_shapes&               theMapOfShapes)
+{
+  TDF_Label aRefLabel = theLabel;
+  if ( theShapeTool.IsReference(theLabel) )
+  {
+    theShapeTool.GetReferredShape(theLabel, aRefLabel);
+  }
+
+  TCollection_AsciiString anEntry;
+  TDF_Tool::Entry(theLabel, anEntry);
+  if ( !theParentId.IsEmpty() )
+  {
+    anEntry = theParentId + "\n" + anEntry;
+  }
+  anEntry += ".";
+
+  if ( !theShapeTool.IsAssembly(aRefLabel) )
+  {
+    Handle(AIS_InteractiveObject) anAIS;
+    if ( !theMapOfShapes.Find(aRefLabel, anAIS) )
+    {
+      Graphic3d_MaterialAspect aMat(Graphic3d_NOM_SILVER);
+      anAIS = new visu_xde_shape_prs(aRefLabel, theParentStyle, aMat);
+      anAIS->SetDisplayMode(theDisplayMode);
+      theMapOfShapes.Bind(aRefLabel, anAIS);
+    }
+
+    Handle(TCollection_HAsciiString) anId       = new TCollection_HAsciiString(anEntry);
+    Handle(AIS_ConnectedInteractive) aConnected = new AIS_ConnectedInteractive();
+    aConnected->Connect( anAIS, theParentTrsf.Transformation() );
+    aConnected->SetOwner(anId);
+    aConnected->SetLocalTransformation( theParentTrsf.Transformation() );
+
+    try
+    {
+      myContext->Display(aConnected);
+    }
+    catch ( ... )
+    {
+      TCollection_AsciiString entry;
+      TDF_Tool::Entry(aRefLabel, entry);
+      //
+      std::cout << "Error: failed to visualize " << entry.ToCString() << std::endl;
+      return;
+    }
+
+    if ( theDisplayMode == 1 )
+    {
+      aConnected->SetHilightMode(1);
+    }
+
+    return;
+  }
+
+  visu_xde_style aDefStyle = theParentStyle;
+  Quantity_Color aColor;
+  if ( theColorTool.GetColor(aRefLabel, XCAFDoc_ColorGen, aColor) )
+  {
+    aDefStyle.SetColorCurv(aColor);
+    aDefStyle.SetColorSurf(aColor);
+  }
+  if ( theColorTool.GetColor(aRefLabel, XCAFDoc_ColorSurf, aColor) )
+  {
+    aDefStyle.SetColorSurf(aColor);
+  }
+  if ( theColorTool.GetColor(aRefLabel, XCAFDoc_ColorCurv, aColor) )
+  {
+    aDefStyle.SetColorCurv(aColor);
+  }
+
+  for ( TDF_ChildIterator aChildIter(aRefLabel); aChildIter.More(); aChildIter.Next() )
+  {
+    TDF_Label aLabel = aChildIter.Value();
+    if (!aLabel.IsNull()
+     && (aLabel.HasAttribute() || aLabel.HasChild()))
+    {
+      TopLoc_Location aTrsf = theParentTrsf * theShapeTool.GetLocation(aLabel);
+      this->displayWithChildren(theShapeTool, theColorTool, aLabel, aTrsf, aDefStyle, anEntry, theDisplayMode, theMapOfShapes);
+    }
+  }
 }

@@ -101,6 +101,12 @@ public:
   static QString
     selectXBFFile(const OpenSaveAction action);
 
+  static QString
+    selectXYZFile(const OpenSaveAction action);
+
+  static QString
+    selectOBJFile(const OpenSaveAction action);
+
 //-----------------------------------------------------------------------------
 
   static QString

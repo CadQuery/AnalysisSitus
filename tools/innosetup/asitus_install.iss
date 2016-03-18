@@ -78,6 +78,7 @@ Source: {#ProductsDir}\{#occt}\win64\vc10\bin\*.dll;                      DestDi
 Source: {#ProductsDir}\{#occt}\win64\vc10\bin\*.exe;                      DestDir: {app}\products\{#occt}\win64\vc10\bin;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: {#ProductsDir}\{#occt}\win64\vc10\lib\*;                          DestDir: {app}\products\{#occt}\win64\vc10\lib;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: {#ProductsDir}\{#occt}\win64\vc10\bind\*.dll;                     DestDir: {app}\products\{#occt}\win64\vc10\bind;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ProductsDir}\{#occt}\win64\vc10\bind\*.pdb;                     DestDir: {app}\products\{#occt}\win64\vc10\bind;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: {#ProductsDir}\{#occt}\win64\vc10\bind\*.exe;                     DestDir: {app}\products\{#occt}\win64\vc10\bind;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: {#ProductsDir}\{#occt}\win64\vc10\libd\*;                         DestDir: {app}\products\{#occt}\win64\vc10\libd;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: {#ProductsDir}\{#occt}\inc\*;                                     DestDir: {app}\products\{#occt}\inc;                    Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname

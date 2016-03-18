@@ -327,56 +327,56 @@ void visu_topo_graph::onViewerClosed()
 //! \param vid [in] vertex ID.
 void visu_topo_graph::onVertexPicked(const vtkIdType vid)
 {
-  if ( m_aag.IsNull() )
-    return;
+  //if ( m_aag.IsNull() )
+  //  return;
 
-  if ( !common_facilities::Instance()->ViewerDMU )
-    return;
+  //if ( !common_facilities::Instance()->ViewerDMU )
+  //  return;
 
-  // Let's use the fact that vertex ID is equal to face ID minus 1.
-  // The latter is by construction
-  const int face_id = vid + 1;
+  //// Let's use the fact that vertex ID is equal to face ID minus 1.
+  //// The latter is by construction
+  //const int face_id = vid + 1;
 
-  // Get face from graph vertex
-  TopoDS_Face F = m_aag->GetFace(face_id);
+  //// Get face from graph vertex
+  //TopoDS_Face F = m_aag->GetFace(face_id);
 
-  // Access presentation
-  Handle(AIS_InteractiveContext) ctx = common_facilities::Instance()->ViewerDMU->GetContext();
-  //
-  Handle(SelectMgr_IndexedMapOfOwner) prsOwners;
-  ctx->EntityOwners(prsOwners, common_facilities::Instance()->aisDMU);
-  //
-  if ( prsOwners.IsNull() || !prsOwners->Extent() )
-  {
-    std::cout << "Error: no entity owners" << std::endl;
-    return;
-  }
-  else
-    std::cout << "Got " << prsOwners->Extent() << " entity owner(s)" << std::endl;
+  //// Access presentation
+  //Handle(AIS_InteractiveContext) ctx = common_facilities::Instance()->ViewerDMU->GetContext();
+  ////
+  //Handle(SelectMgr_IndexedMapOfOwner) prsOwners;
+  //ctx->EntityOwners(prsOwners, common_facilities::Instance()->aisDMU);
+  ////
+  //if ( prsOwners.IsNull() || !prsOwners->Extent() )
+  //{
+  //  std::cout << "Error: no entity owners" << std::endl;
+  //  return;
+  //}
+  //else
+  //  std::cout << "Got " << prsOwners->Extent() << " entity owner(s)" << std::endl;
 
-  if ( !m_prevHighlighted.IsNull() && m_prevHighlighted->IsSelected() )
-    ctx->AddOrRemoveSelected(m_prevHighlighted, 1);
+  //if ( !m_prevHighlighted.IsNull() && m_prevHighlighted->IsSelected() )
+  //  ctx->AddOrRemoveSelected(m_prevHighlighted, 1);
 
-  // Highlight
-  for ( int i = 1; i <= prsOwners->Extent(); ++i )
-  {
-    const Handle(SelectMgr_EntityOwner)& owner = prsOwners->FindKey(i);
-    //
-    if ( owner->IsKind( STANDARD_TYPE(StdSelect_BRepOwner) ) )
-    {
-      Handle(StdSelect_BRepOwner) brepOwner = Handle(StdSelect_BRepOwner)::DownCast(owner);
-      const TopoDS_Shape& ownedShape = brepOwner->Shape();
+  //// Highlight
+  //for ( int i = 1; i <= prsOwners->Extent(); ++i )
+  //{
+  //  const Handle(SelectMgr_EntityOwner)& owner = prsOwners->FindKey(i);
+  //  //
+  //  if ( owner->IsKind( STANDARD_TYPE(StdSelect_BRepOwner) ) )
+  //  {
+  //    Handle(StdSelect_BRepOwner) brepOwner = Handle(StdSelect_BRepOwner)::DownCast(owner);
+  //    const TopoDS_Shape& ownedShape = brepOwner->Shape();
 
-      // Try to find the hole shape among sensitivities
-      if ( ownedShape.IsSame(F) )
-      {
-        if ( !owner->IsSelected() )
-        {
-          ctx->AddOrRemoveSelected(owner, 1);
-          m_prevHighlighted = owner;
-        }
-        break;
-      }
-    }
-  }
+  //    // Try to find the hole shape among sensitivities
+  //    if ( ownedShape.IsSame(F) )
+  //    {
+  //      if ( !owner->IsSelected() )
+  //      {
+  //        ctx->AddOrRemoveSelected(owner, 1);
+  //        m_prevHighlighted = owner;
+  //      }
+  //      break;
+  //    }
+  //  }
+  //}
 }

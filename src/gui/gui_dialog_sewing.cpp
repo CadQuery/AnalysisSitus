@@ -149,12 +149,9 @@ void gui_dialog_sewing::onPerform()
   // UI updates
   //---------------------------------------------------------------------------
 
-  // Access CAD to mesh
-  TopoDS_Shape fullCAD = common_facilities::Instance()->Model_XDE->GetOneShape();
-
   // Update shape
   common_facilities::Instance()->ViewerDMU->GetContext()->EraseAll();
-  common_facilities::Instance()->aisDMU = common_facilities::Instance()->ViewerDMU->VisualizeOnly(fullCAD, AIS_WireFrame);
+  common_facilities::Instance()->ViewerDMU->Visualize(common_facilities::Instance()->Model_XDE, AIS_WireFrame);
 
   // Close
   this->close();

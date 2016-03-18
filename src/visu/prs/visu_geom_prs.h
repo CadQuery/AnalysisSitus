@@ -49,13 +49,13 @@ public:
     IsVisible() const;
 
 // Visualization commands:
-protected:
+public:
 
-  void doShading() const;
-  void doWireframe() const;
+  void DoShading() const;
+  void DoWireframe() const;
 
-  void doColor(const QColor& theColor) const;
-  void doUnColor() const;
+  void DoColor(const QColor& theColor) const;
+  void DoUnColor() const;
 
 private:
 

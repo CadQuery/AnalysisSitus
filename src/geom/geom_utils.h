@@ -21,6 +21,7 @@
 // OCCT includes
 #include <BRep_Tool.hxx>
 #include <Geom_BezierSurface.hxx>
+#include <Geom_BSplineCurve.hxx>
 #include <Geom_BSplineSurface.hxx>
 #include <Geom_ConicalSurface.hxx>
 #include <Geom_CylindricalSurface.hxx>
@@ -37,6 +38,9 @@
 #include <TopoDS_Wire.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
+
+// Eigen includes
+#include <Dense>
 
 //! Auxiliary functions facilitating working with OCCT topological shapes.
 class geom_utils
@@ -232,6 +236,11 @@ public:
 
   static bool
     MaximizeFaces(TopoDS_Shape& shape);
+
+  static bool
+    InterpolatePoints(const std::vector<gp_Pnt>& points,
+                      const int                  p,
+                      Handle(Geom_BSplineCurve)& result);
 
 private:
 

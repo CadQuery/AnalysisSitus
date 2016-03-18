@@ -8,9 +8,6 @@
 // Own include
 #include <gui_controls_dmu.h>
 
-// A-Situs (common) includes
-#include <common_facilities.h>
-
 // A-Situs (GUI) includes
 #include <gui_common.h>
 #include <gui_dialog_mesh.h>
@@ -25,6 +22,9 @@
 #include <geom_remove_holes.h>
 #include <geom_utils.h>
 
+// A-Situs (mesh) includes
+#include <mesh_obj.h>
+
 // A-Situs (visualization) includes
 #include <visu_topo_graph.h>
 
@@ -32,9 +32,12 @@
 #include <DFBrowser.hxx>
 
 // OCCT includes
+#include <AIS_ConnectedInteractive.hxx>
 #include <OSD_Environment.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <StdSelect_BRepOwner.hxx>
+#include <TDF_Tool.hxx>
+#include <XCAFDoc_ColorTool.hxx>
 
 // Qt includes
 #include <QGroupBox>
@@ -124,6 +127,7 @@ gui_controls_dmu::gui_controls_dmu(QWidget* parent) : QWidget(parent)
   m_widgets.pLoadSTEP = new QPushButton("Load STEP");
   m_widgets.pSaveXBF  = new QPushButton("Save to XDE");
   m_widgets.pSaveBRep = new QPushButton("Save to B-Rep");
+  m_widgets.pSaveOBJ  = new QPushButton("Save to OBJ");
 
   // Group box for import
   QGroupBox*   pImportGroup = new QGroupBox("Import");
@@ -138,8 +142,8 @@ gui_controls_dmu::gui_controls_dmu(QWidget* parent) : QWidget(parent)
   //
   pGeometryLay->addWidget(m_widgets.pSewing,        0, 0, Qt::AlignLeft);
   pGeometryLay->addWidget(m_widgets.pMergeFaces,    0, 1, Qt::AlignLeft);
-  pGeometryLay->addWidget(m_widgets.pIdentifyHoles, 1, 0);
-  pGeometryLay->addWidget(m_widgets.pRemoveHoles,   1, 1);
+  //pGeometryLay->addWidget(m_widgets.pIdentifyHoles, 1, 0);
+  //pGeometryLay->addWidget(m_widgets.pRemoveHoles,   1, 1);
 
   // Group box for mesh
   QGroupBox*   pMeshGroup = new QGroupBox("Mesh");
@@ -153,14 +157,15 @@ gui_controls_dmu::gui_controls_dmu(QWidget* parent) : QWidget(parent)
   //
   pExportLay->addWidget(m_widgets.pSaveXBF);
   pExportLay->addWidget(m_widgets.pSaveBRep);
+  pExportLay->addWidget(m_widgets.pSaveOBJ);
 
   // Group box for analysis
   QGroupBox*   pAnalysisGroup = new QGroupBox("Analysis");
   QGridLayout* pAnalysisLay   = new QGridLayout(pAnalysisGroup);
   //
-  pAnalysisLay->addWidget(m_widgets.pShowTopoGraph, 0, 0, Qt::AlignLeft);
-  pAnalysisLay->addWidget(m_widgets.pShowAAG,       0, 1, Qt::AlignLeft);
-  pAnalysisLay->addWidget(m_widgets.pShowOCAF,      1, 0, Qt::AlignLeft);
+  /*pAnalysisLay->addWidget(m_widgets.pShowTopoGraph, 0, 0, Qt::AlignLeft);
+  pAnalysisLay->addWidget(m_widgets.pShowAAG,       0, 1, Qt::AlignLeft);*/
+  pAnalysisLay->addWidget(m_widgets.pShowOCAF,      0, 0, Qt::AlignLeft);
 
   // Set layout
   m_pMainLayout->setSpacing(0);
@@ -186,6 +191,7 @@ gui_controls_dmu::gui_controls_dmu(QWidget* parent) : QWidget(parent)
   connect( m_widgets.pMesh,          SIGNAL( clicked() ), SLOT( onMesh          () ) );
   connect( m_widgets.pSaveXBF,       SIGNAL( clicked() ), SLOT( onSaveXBF       () ) );
   connect( m_widgets.pSaveBRep,      SIGNAL( clicked() ), SLOT( onSaveBRep      () ) );
+  connect( m_widgets.pSaveOBJ,       SIGNAL( clicked() ), SLOT( onSaveOBJ       () ) );
   connect( m_widgets.pShowTopoGraph, SIGNAL( clicked() ), SLOT( onShowTopoGraph () ) );
   connect( m_widgets.pShowAAG,       SIGNAL( clicked() ), SLOT( onShowAAG       () ) );
   connect( m_widgets.pShowOCAF,      SIGNAL( clicked() ), SLOT( onShowOCAF      () ) );
@@ -251,12 +257,9 @@ void gui_controls_dmu::onMergeFaces()
   // UI updates
   //---------------------------------------------------------------------------
 
-  // Access CAD to mesh
-  TopoDS_Shape fullCAD = common_facilities::Instance()->Model_XDE->GetOneShape();
-
   // Update shape
   common_facilities::Instance()->ViewerDMU->GetContext()->EraseAll();
-  common_facilities::Instance()->aisDMU = common_facilities::Instance()->ViewerDMU->VisualizeOnly(fullCAD, AIS_WireFrame);
+  common_facilities::Instance()->ViewerDMU->Visualize(common_facilities::Instance()->Model_XDE, AIS_WireFrame);
 }
 
 //-----------------------------------------------------------------------------
@@ -264,68 +267,68 @@ void gui_controls_dmu::onMergeFaces()
 //! On holes identification.
 void gui_controls_dmu::onIdentifyHoles()
 {
-  // Target shape
-  if ( common_facilities::Instance()->aisDMU.IsNull() )
-  {
-    std::cout << "Error: no working shape" << std::endl;
-    return;
-  }
-  const TopoDS_Shape& shape = common_facilities::Instance()->aisDMU->Shape();
+  //// Target shape
+  //if ( common_facilities::Instance()->aisDMU.IsNull() )
+  //{
+  //  std::cout << "Error: no working shape" << std::endl;
+  //  return;
+  //}
+  //const TopoDS_Shape& shape = common_facilities::Instance()->aisDMU->Shape();
 
-  // Identify holes
-  const double R = FEATURE_HOLE_RADIUS;
-  geom_detect_holes detector(shape);
-  if ( !detector.Perform(R) )
-  {
-    std::cout << "Error: cannot identify holes" << std::endl;
-    return;
-  }
+  //// Identify holes
+  //const double R = FEATURE_HOLE_RADIUS;
+  //geom_detect_holes detector(shape);
+  //if ( !detector.Perform(R) )
+  //{
+  //  std::cout << "Error: cannot identify holes" << std::endl;
+  //  return;
+  //}
 
-  // Get detected holes
-  const NCollection_Sequence<TopoDS_Face>& result = detector.Result();
-  if ( result.IsEmpty() )
-  {
-    std::cout << "No holes detected with radius not greater than " << R << std::endl;
-    return;
-  }
-  else
-    std::cout << result.Length() << " hole(s) detected with radius not greater than " << R << std::endl;
+  //// Get detected holes
+  //const NCollection_Sequence<TopoDS_Face>& result = detector.Result();
+  //if ( result.IsEmpty() )
+  //{
+  //  std::cout << "No holes detected with radius not greater than " << R << std::endl;
+  //  return;
+  //}
+  //else
+  //  std::cout << result.Length() << " hole(s) detected with radius not greater than " << R << std::endl;
 
-  // Access presentation
-  Handle(AIS_InteractiveContext) ctx = common_facilities::Instance()->ViewerDMU->GetContext();
-  //
-  Handle(SelectMgr_IndexedMapOfOwner) prsOwners;
-  ctx->EntityOwners(prsOwners, common_facilities::Instance()->aisDMU);
-  //
-  if ( prsOwners.IsNull() || !prsOwners->Extent() )
-  {
-    std::cout << "Error: no entity owners" << std::endl;
-    return;
-  }
-  else
-    std::cout << "Got " << prsOwners->Extent() << " entity owner(s)" << std::endl;
+  //// Access presentation
+  //Handle(AIS_InteractiveContext) ctx = common_facilities::Instance()->ViewerDMU->GetContext();
+  ////
+  //Handle(SelectMgr_IndexedMapOfOwner) prsOwners;
+  //ctx->EntityOwners(prsOwners, common_facilities::Instance()->aisDMU);
+  ////
+  //if ( prsOwners.IsNull() || !prsOwners->Extent() )
+  //{
+  //  std::cout << "Error: no entity owners" << std::endl;
+  //  return;
+  //}
+  //else
+  //  std::cout << "Got " << prsOwners->Extent() << " entity owner(s)" << std::endl;
 
-  // Highlight
-  ctx->ClearSelected();
-  //
-  for ( int i = 1; i <= prsOwners->Extent(); ++i )
-  {
-    const Handle(SelectMgr_EntityOwner)& owner = prsOwners->FindKey(i);
-    //
-    if ( owner->IsKind( STANDARD_TYPE(StdSelect_BRepOwner) ) )
-    {
-      Handle(StdSelect_BRepOwner) brepOwner = Handle(StdSelect_BRepOwner)::DownCast(owner);
-      const TopoDS_Shape& ownedShape = brepOwner->Shape();
+  //// Highlight
+  //ctx->ClearSelected();
+  ////
+  //for ( int i = 1; i <= prsOwners->Extent(); ++i )
+  //{
+  //  const Handle(SelectMgr_EntityOwner)& owner = prsOwners->FindKey(i);
+  //  //
+  //  if ( owner->IsKind( STANDARD_TYPE(StdSelect_BRepOwner) ) )
+  //  {
+  //    Handle(StdSelect_BRepOwner) brepOwner = Handle(StdSelect_BRepOwner)::DownCast(owner);
+  //    const TopoDS_Shape& ownedShape = brepOwner->Shape();
 
-      // Try to find the hole shape among sensitivities
-      for ( int h = 1; h <= result.Length(); ++h )
-      {
-        if ( ownedShape.IsSame( result(h) ) )
-          ctx->AddOrRemoveSelected(owner, 0);
-      }
-    }
-  }
-  ctx->UpdateCurrentViewer();
+  //    // Try to find the hole shape among sensitivities
+  //    for ( int h = 1; h <= result.Length(); ++h )
+  //    {
+  //      if ( ownedShape.IsSame( result(h) ) )
+  //        ctx->AddOrRemoveSelected(owner, 0);
+  //    }
+  //  }
+  //}
+  //ctx->UpdateCurrentViewer();
 }
 
 //-----------------------------------------------------------------------------
@@ -385,12 +388,9 @@ void gui_controls_dmu::onRemoveHoles()
   // UI updates
   //---------------------------------------------------------------------------
 
-  // Access CAD to mesh
-  TopoDS_Shape fullCAD = common_facilities::Instance()->Model_XDE->GetOneShape();
-
   // Update shape
   common_facilities::Instance()->ViewerDMU->GetContext()->EraseAll();
-  common_facilities::Instance()->aisDMU = common_facilities::Instance()->ViewerDMU->VisualizeOnly(fullCAD, AIS_WireFrame);
+  common_facilities::Instance()->ViewerDMU->Visualize(common_facilities::Instance()->Model_XDE, AIS_WireFrame);
 }
 
 //-----------------------------------------------------------------------------
@@ -472,19 +472,41 @@ void gui_controls_dmu::onSaveBRep()
 {
   QString filename = gui_common::selectBRepFile(gui_common::OpenSaveAction_Save);
 
-  // Target shape
-  if ( common_facilities::Instance()->aisDMU.IsNull() )
+  // Working model
+  if ( common_facilities::Instance()->Model_XDE.IsNull() )
   {
-    std::cout << "Error: no working shape" << std::endl;
+    std::cout << "Error: no working model" << std::endl;
     return;
   }
-  const TopoDS_Shape& shape = common_facilities::Instance()->aisDMU->Shape();
+  TopoDS_Shape shape = common_facilities::Instance()->Model_XDE->GetOneShape();
 
   // Save as B-Rep geometry
   if ( geom_utils::WriteBRep( shape, QStr2AsciiStr(filename) ) )
     std::cout << "B-Rep saved successfully" << std::endl;
   else
     std::cout << "Error: cannot save B-Rep" << std::endl;
+}
+
+//-----------------------------------------------------------------------------
+
+//! On OBJ save.
+void gui_controls_dmu::onSaveOBJ()
+{
+  QString filename = gui_common::selectOBJFile(gui_common::OpenSaveAction_Save);
+
+  // XDE model
+  if ( common_facilities::Instance()->Model_XDE.IsNull() )
+  {
+    std::cout << "Error: no working model" << std::endl;
+    return;
+  }
+  TopoDS_Shape shape = common_facilities::Instance()->Model_XDE->GetOneShape();
+
+  // Save as OBJ geometry
+  if ( mesh_obj::Write( shape, QStr2AsciiStr(filename) ) )
+    std::cout << "OBJ saved successfully" << std::endl;
+  else
+    std::cout << "Error: cannot save OBJ" << std::endl;
 }
 
 //-----------------------------------------------------------------------------
@@ -511,34 +533,34 @@ void gui_controls_dmu::onShowTopoGraph()
 //! On show AAG.
 void gui_controls_dmu::onShowAAG()
 {
-  // Target shape
-  if ( common_facilities::Instance()->aisDMU.IsNull() )
-  {
-    std::cout << "Error: no working shape" << std::endl;
-    return;
-  }
-  const TopoDS_Shape& shape = common_facilities::Instance()->aisDMU->Shape();
+  //// Target shape
+  //if ( common_facilities::Instance()->aisDMU.IsNull() )
+  //{
+  //  std::cout << "Error: no working shape" << std::endl;
+  //  return;
+  //}
+  //const TopoDS_Shape& shape = common_facilities::Instance()->aisDMU->Shape();
 
-  // Get selected faces
-  TopTools_ListOfShape selectedFaces;
-  //
-  Handle(AIS_InteractiveContext) ctx = common_facilities::Instance()->ViewerDMU->GetContext();
-  //
-  ctx->InitSelected();
-  while ( ctx->MoreSelected() )
-  {
-    TopoDS_Shape sh = ctx->SelectedShape();
-    //
-    if ( sh.ShapeType() == TopAbs_FACE )
-    {
-      selectedFaces.Append(sh);
-    }
-    ctx->NextSelected();
-  }
+  //// Get selected faces
+  //TopTools_ListOfShape selectedFaces;
+  ////
+  //Handle(AIS_InteractiveContext) ctx = common_facilities::Instance()->ViewerDMU->GetContext();
+  ////
+  //ctx->InitSelected();
+  //while ( ctx->MoreSelected() )
+  //{
+  //  TopoDS_Shape sh = ctx->SelectedShape();
+  //  //
+  //  if ( sh.ShapeType() == TopAbs_FACE )
+  //  {
+  //    selectedFaces.Append(sh);
+  //  }
+  //  ctx->NextSelected();
+  //}
 
-  // Show graph
-  visu_topo_graph* pGraphView = new visu_topo_graph;
-  pGraphView->RenderAdjacency(shape, selectedFaces);
+  //// Show graph
+  //visu_topo_graph* pGraphView = new visu_topo_graph;
+  //pGraphView->RenderAdjacency(shape, selectedFaces);
 }
 
 //-----------------------------------------------------------------------------
@@ -573,16 +595,9 @@ void gui_controls_dmu::adjustUI()
   //         mode is shading or not. We proceed like this in order to give
   //         the user full control over the meshing parameters.
   drawer->SetAutoTriangulation(0);
-  //
-  // Configure wireframe settings
-  drawer->UIsoAspect()->SetNumber(0);
-  drawer->VIsoAspect()->SetNumber(0);
-  drawer->FreeBoundaryAspect()->SetColor(Quantity_NOC_RED);
-  drawer->UnFreeBoundaryAspect()->SetColor(Quantity_NOC_SNOW);
 
   // Visualize model
-  TopoDS_Shape fullCAD = common_facilities::Instance()->Model_XDE->GetOneShape();
-  common_facilities::Instance()->aisDMU = common_facilities::Instance()->ViewerDMU->VisualizeOnly(fullCAD, AIS_WireFrame);
+  common_facilities::Instance()->ViewerDMU->Visualize(common_facilities::Instance()->Model_XDE, AIS_WireFrame);
   common_facilities::Instance()->ViewerDMU->fitAll();
 
   // Populate tree view

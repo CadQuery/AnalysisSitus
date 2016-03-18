@@ -8,6 +8,9 @@
 #ifndef gui_controls_dmu_h
 #define gui_controls_dmu_h
 
+// A-Situs (common) includes
+#include <common_facilities.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QPushButton>
@@ -35,6 +38,7 @@ public slots:
   void onRemoveHoles   ();
   void onMesh          ();
   void onSaveXBF       ();
+  void onSaveOBJ       ();
   void onSaveBRep      ();
   void onShowTopoGraph ();
   void onShowAAG       ();
@@ -75,6 +79,7 @@ private:
     //-------------------------------------------------------------------------
     QPushButton* pSaveXBF;       //!< Saves model as binary XDE.
     QPushButton* pSaveBRep;      //!< Saves geometry (only) to B-Rep format.
+    QPushButton* pSaveOBJ;       //!< Saves model to OBJ format.
     //
     //-------------------------------------------------------------------------
     // ANALYSIS
@@ -91,6 +96,7 @@ private:
                   pRemoveHoles   (NULL),
                   pMesh          (NULL),
                   pSaveXBF       (NULL),
+                  pSaveOBJ       (NULL),
                   pShowTopoGraph (NULL),
                   pShowAAG       (NULL),
                   pShowOCAF      (NULL)
@@ -106,6 +112,7 @@ private:
       delete pRemoveHoles;   pRemoveHoles   = NULL;
       delete pMesh;          pMesh          = NULL;
       delete pSaveXBF;       pSaveXBF       = NULL;
+      delete pSaveOBJ;       pSaveOBJ       = NULL;
       delete pShowTopoGraph; pShowTopoGraph = NULL;
       delete pShowAAG;       pShowAAG       = NULL;
       delete pShowOCAF;      pShowOCAF      = NULL;

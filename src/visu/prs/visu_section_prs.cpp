@@ -212,8 +212,7 @@ void visu_section_prs::highlight(vtkRenderer*                 ASitus_NotUsed(the
                                  const visu_selection_nature& theSelNature) const
 {
   // Get target actor which is the only sensitive
-  Handle(visu_pipeline)
-    poles_pl = Handle(visu_pipeline)::DownCast( this->GetPipeline(Pipeline_Poles) );
+  Handle(visu_pipeline) poles_pl = this->GetPipeline(Pipeline_Poles);
   //
   vtkActor* poles_actor = poles_pl->Actor();
 

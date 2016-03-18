@@ -15,6 +15,7 @@
 #include <gui_common.h>
 
 // OCCT includes
+#include <AIS_DisplayMode.hxx>
 #include <OSD_Environment.hxx>
 #include <Prs3d_ShadingAspect.hxx>
 
@@ -51,9 +52,6 @@ gui_controls_dmu_visu::gui_controls_dmu_visu(QWidget* parent) : QWidget(parent)
   m_widgets.pToggleTransparency->setToolButtonStyle(Qt::ToolButtonIconOnly);
   m_widgets.pToggleTransparency->setIconSize( QSize(32, 32) );
   m_widgets.pToggleTransparency->setToolTip("Transparency");
-  //
-  m_widgets.pToggleLinks->setCheckable(true);
-  m_widgets.pToggleEdges->setCheckable(true);
 
   // Set layout
   m_pMainLayout->setSpacing(0);
@@ -71,10 +69,6 @@ gui_controls_dmu_visu::gui_controls_dmu_visu(QWidget* parent) : QWidget(parent)
   connect( m_widgets.pToggleLinks,        SIGNAL( clicked() ), SLOT( onToggleLinks        () ) );
   connect( m_widgets.pToggleEdges,        SIGNAL( clicked() ), SLOT( onToggleEdges        () ) );
   connect( m_widgets.pToggleTransparency, SIGNAL( clicked() ), SLOT( onToggleTransparency () ) );
-
-  // Initial state
-  m_widgets.pToggleLinks->toggle(); this->onToggleLinks();
-  m_widgets.pToggleEdges->toggle(); this->onToggleEdges();
 }
 
 //! Destructor.
@@ -91,44 +85,52 @@ gui_controls_dmu_visu::~gui_controls_dmu_visu()
 //! On toggle links.
 void gui_controls_dmu_visu::onToggleLinks()
 {
-  // Access default drawer
-  Handle(Prs3d_Drawer) drawer = common_facilities::Instance()->ViewerDMU->GetContext()->DefaultDrawer();
-  //
-  const Handle(Prs3d_ShadingAspect)& shadingAspect = drawer->ShadingAspect();
-  //
-  Handle(Graphic3d_AspectFillArea3d) fillingAspect = shadingAspect->Aspect();
-  if ( m_widgets.pToggleLinks->isChecked() )
-    fillingAspect->SetEdgeOn();
-  else
-    fillingAspect->SetEdgeOff();
-
-  // Update viewer
-  common_facilities::Instance()->ViewerDMU->GetContext()->Redisplay( common_facilities::Instance()->aisDMU );
+  const visu_xde_shapes& shapes = common_facilities::Instance()->ViewerDMU->Shapes;
+  for ( visu_xde_shapes::Iterator it(shapes); it.More(); it.Next() )
+  {
+    Handle(visu_xde_shape_prs) prs = Handle(visu_xde_shape_prs)::DownCast( it.Value() );
+    //
+    prs->DefaultStyle().SetMeshEdges( !prs->DefaultStyle().GetMeshEdges() );
+    prs->ApplyEdgesStyle();
+    //
+    common_facilities::Instance()->ViewerDMU->GetContext()->Erase(prs, 0);
+    common_facilities::Instance()->ViewerDMU->GetContext()->Redisplay(prs, 0, 1);
+  }
+  common_facilities::Instance()->ViewerDMU->GetContext()->UpdateCurrentViewer();
 }
 
 //! On toggle edges.
 void gui_controls_dmu_visu::onToggleEdges()
 {
-  // Access default drawer
-  Handle(Prs3d_Drawer) drawer = common_facilities::Instance()->ViewerDMU->GetContext()->DefaultDrawer();
-  //
-  if ( m_widgets.pToggleEdges->isChecked() )
-    drawer->SetFaceBoundaryDraw(1);
-  else
-    drawer->SetFaceBoundaryDraw(0);
-
-  // Update viewer
-  common_facilities::Instance()->ViewerDMU->GetContext()->Redisplay( common_facilities::Instance()->aisDMU );
+  const visu_xde_shapes& shapes = common_facilities::Instance()->ViewerDMU->Shapes;
+  for ( visu_xde_shapes::Iterator it(shapes); it.More(); it.Next() )
+  {
+    Handle(visu_xde_shape_prs) prs = Handle(visu_xde_shape_prs)::DownCast( it.Value() );
+    //
+    prs->DefaultStyle().SetTopoEdges( !prs->DefaultStyle().GetTopoEdges() );
+    prs->ApplyEdgesStyle();
+    //
+    common_facilities::Instance()->ViewerDMU->GetContext()->Erase(prs, 0);
+    common_facilities::Instance()->ViewerDMU->GetContext()->Redisplay(prs, 0, 1);
+  }
+  common_facilities::Instance()->ViewerDMU->GetContext()->UpdateCurrentViewer();
 }
 
 //! On toggle transparency.
 void gui_controls_dmu_visu::onToggleTransparency()
 {
-  if ( common_facilities::Instance()->aisDMU.IsNull() )
-    return;
-
-  if ( common_facilities::Instance()->aisDMU->IsTransparent() )
-    common_facilities::Instance()->ViewerDMU->GetContext()->UnsetTransparency(common_facilities::Instance()->aisDMU);
-  else
-    common_facilities::Instance()->ViewerDMU->GetContext()->SetTransparency(common_facilities::Instance()->aisDMU, 0.5);
+  const visu_xde_shapes& shapes = common_facilities::Instance()->ViewerDMU->Shapes;
+  for ( visu_xde_shapes::Iterator it(shapes); it.More(); it.Next() )
+  {
+    Handle(visu_xde_shape_prs) prs = Handle(visu_xde_shape_prs)::DownCast( it.Value() );
+    //
+    if ( prs->IsTransparent() )
+      common_facilities::Instance()->ViewerDMU->GetContext()->UnsetTransparency(prs);
+    else
+      common_facilities::Instance()->ViewerDMU->GetContext()->SetTransparency(prs, 0.5);
+    //
+    common_facilities::Instance()->ViewerDMU->GetContext()->Erase(prs, 0);
+    common_facilities::Instance()->ViewerDMU->GetContext()->Redisplay(prs, 0, 1);
+  }
+  common_facilities::Instance()->ViewerDMU->GetContext()->UpdateCurrentViewer();
 }

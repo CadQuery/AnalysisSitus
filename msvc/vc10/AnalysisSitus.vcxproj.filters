@@ -512,6 +512,24 @@
     <ClInclude Include="..\..\src\mesh\mesh_params.h">
       <Filter>Header Files\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_feature_pattern.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_aag_iterator.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_feature_pattern_chole.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_feature_pattern_phole.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\mesh_obj.h">
+      <Filter>Header Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\ais\visu_xde_shape_prs.h">
+      <Filter>Header Files\Visualization\AIS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -536,6 +554,9 @@
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_ubend.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_hull.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_splitter.cpp">
@@ -605,6 +626,9 @@
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_ubend.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_hull.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_skinning.cpp">
@@ -1048,6 +1072,30 @@
     <ClCompile Include="..\..\src\mesh\mesh_params.cpp">
       <Filter>Source Files\Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_hull.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_hull.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_feature_pattern.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_aag_iterator.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_feature_pattern_chole.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_feature_pattern_phole.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\mesh_obj.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\ais\visu_xde_shape_prs.cpp">
+      <Filter>Source Files\Visualization\AIS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\gui\gui_splitter.h">
@@ -1157,6 +1205,12 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\visu\visu_topo_graph_item.h">
       <Filter>Header Files\Visualization</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_hull.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_hull.h">
+      <Filter>Header Files\GUI</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

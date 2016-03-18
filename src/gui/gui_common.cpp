@@ -66,6 +66,28 @@ QString gui_common::selectXBFFile(const OpenSaveAction action)
   return selectFile(filter, "Select XBF file", "Save XBF file", action);
 }
 
+//! Allows to select filename for xyz format.
+//! \param action [in] open or save.
+//! \return selected filename.
+QString gui_common::selectXYZFile(const OpenSaveAction action)
+{
+  QStringList filter;
+  filter << "XYZ point cloud (*.xyz)";
+  //
+  return selectFile(filter, "Select XYZ file", "Save XYZ file", action);
+}
+
+//! Allows to select filename for OBJ format.
+//! \param action [in] open or save.
+//! \return selected filename.
+QString gui_common::selectOBJFile(const OpenSaveAction action)
+{
+  QStringList filter;
+  filter << "OBJ mesh (*.obj)";
+  //
+  return selectFile(filter, "Select OBJ file", "Save OBJ file", action);
+}
+
 //! Selects filename for opening or saving.
 //! \param filter    [in] filter for extensions.
 //! \param openTitle [in] title for open dialog.

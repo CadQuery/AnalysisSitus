@@ -103,6 +103,14 @@ set "QT_LIB=%QTDIR%\lib"
 set "QT_BIN=%QTDIR%\bin"
 
 rem ===========================================================================
+rem Setting Eigen environment
+rem ===========================================================================
+
+if "%EIGEN_ROOT%" == "" set "EIGEN_ROOT=%AS_PRODUCTS%\eigen-3.2.0"
+
+set "EIGEN_INC=%EIGEN_ROOT%\Eigen"
+
+rem ===========================================================================
 rem Setting environment for Inno Setup
 rem ===========================================================================
 

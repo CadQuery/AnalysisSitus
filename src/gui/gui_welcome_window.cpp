@@ -11,6 +11,7 @@
 // A-Situs (GUI) includes
 #include <gui_main_window_asitus.h>
 #include <gui_main_window_dmu.h>
+#include <gui_main_window_hull.h>
 #include <gui_main_window_meshedit.h>
 #include <gui_main_window_skinning.h>
 #include <gui_main_window_ubend.h>
@@ -57,7 +58,7 @@ void gui_welcome_window::createControls()
   QGroupBox* pSkinningGroup  = new QGroupBox("Skinning");
 
   // Buttons
-  m_widgets.pDMU        = new QPushButton("CAD Simplification");
+  m_widgets.pDMU        = new QPushButton("XDE");
   m_widgets.pMeshEdit   = new QPushButton("Mesh View");
   m_widgets.pAnalysis   = new QPushButton("Analysis");
   m_widgets.pCAFBrowser = new QPushButton("CAF Browser");
@@ -208,6 +209,6 @@ void gui_welcome_window::onHullReconstruct()
 {
   this->hide();
   //
-  //gui_main_window_hull* pMainWindow = new gui_main_window_hull();
-  //pMainWindow->show();
+  gui_main_window_hull* pMainWindow = new gui_main_window_hull();
+  pMainWindow->show();
 }

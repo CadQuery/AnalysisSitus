@@ -9,7 +9,7 @@
 #include <visu_data_provider.h>
 
 // Active Data includes
-#include <ActData_BaseParameter.h>
+#include <ActData_UserParameter.h>
 
 //! Returns TRUE if DOMAIN -> VTK translation process must perform, FALSE --
 //! otherwise.
@@ -27,8 +27,8 @@ bool visu_data_provider::MustExecute(const Handle(ActAux_TimeStamp)& Against) co
   ActAPI_ParameterList::Iterator aParamIt( *aSources.operator->() );
   for ( ; aParamIt.More(); aParamIt.Next() )
   {
-    Handle(ActData_BaseParameter)
-      aNextParam = Handle(ActData_BaseParameter)::DownCast( aParamIt.Value() );
+    Handle(ActData_UserParameter)
+      aNextParam = Handle(ActData_UserParameter)::DownCast( aParamIt.Value() );
 
     if ( aNextParam.IsNull() )
       continue;

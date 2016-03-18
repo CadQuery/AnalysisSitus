@@ -159,26 +159,10 @@ void gui_dialog_mesh::onGenerate()
   std::cout << "Meshing done. Visualizing..." << std::endl;
   info.Dump(std::cout);
 
-  // Access default drawer
-  Handle(Prs3d_Drawer) drawer = common_facilities::Instance()->ViewerDMU->GetContext()->DefaultDrawer();
-  //
-  drawer->FaceBoundaryAspect()->SetWidth(2);
-  drawer->FaceBoundaryAspect()->SetColor(Quantity_NOC_DARKGREEN);
-  drawer->FaceBoundaryAspect()->SetTypeOfLine(Aspect_TOL_SOLID);
-  //
-  const Handle(Prs3d_ShadingAspect)& shadingAspect = drawer->ShadingAspect();
-  shadingAspect->SetColor(Quantity_NOC_LIMEGREEN);
-  //
-  Handle(Graphic3d_AspectFillArea3d) fillingAspect = shadingAspect->Aspect();
-  fillingAspect->SetEdgeColor(Quantity_NOC_DARKGREEN);
-
   // Update visualization
   //
-  common_facilities::Instance()->aisDMU = common_facilities::Instance()->ViewerDMU->VisualizeOnly(fullCAD, AIS_Shaded);
-  //
-  // Activate shaded face selection
-  common_facilities::Instance()->ViewerDMU->GetContext()->Activate(common_facilities::Instance()->aisDMU, 4);
-  common_facilities::Instance()->aisDMU->SetHilightMode(1); // Shaded highlighting
+  common_facilities::Instance()->ViewerDMU->GetContext()->EraseAll();
+  common_facilities::Instance()->ViewerDMU->Visualize(common_facilities::Instance()->Model_XDE, AIS_Shaded);
 
   // Close
   this->close();

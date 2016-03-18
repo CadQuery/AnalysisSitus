@@ -47,8 +47,6 @@ public:
   Handle(ActAPI_INode)    CurrentNode;       //!< Currently selected Node.
   //
   gui_viewer_dmu*         ViewerDMU;         //!< OpenCascade-driven viewer for dMU.
-  //
-  Handle(AIS_Shape)       aisDMU;            //!< Digital mock-up as AIS object.
 
   //! Visualization facilities.
   struct t_prs

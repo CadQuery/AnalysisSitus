@@ -113,7 +113,7 @@ Handle(calculus_design_law)
     case Pole_P6:
     {
       Handle(HRealArray) poles = new HRealArray(0, 2);
-      poles->SetValue(0, coord == Coord_X ? 0.0 :  0.0 );
+      poles->SetValue(0, coord == Coord_X ? 0.0 :  0.0);
       poles->SetValue(1, coord == Coord_X ? 4.0 :  4.0);
       poles->SetValue(2, coord == Coord_X ? 6.0 : -1.0);
       //
@@ -334,7 +334,7 @@ void geom_ubend::CreateSkins(const NCollection_Sequence<Handle(Geom_BSplineCurve
       TColgp_Array1OfPnt mpc_data( 1, crossSections_top(k)    ->NbPoles()
                                     + crossSections_right(k)  ->NbPoles() - 1
                                     + crossSections_bottom(k) ->NbPoles() - 1
-                                    + crossSections_left(k)   ->NbPoles() - 2);
+                                    + crossSections_left(k)   ->NbPoles() - 2 );
 
       // Curve on the top
       int mpc_idx = 1;
@@ -359,7 +359,7 @@ void geom_ubend::CreateSkins(const NCollection_Sequence<Handle(Geom_BSplineCurve
         TColgp_Array1OfVec tang_data( 1, crossSections_top(k)    ->NbPoles()
                                        + crossSections_right(k)  ->NbPoles() - 1
                                        + crossSections_bottom(k) ->NbPoles() - 1
-                                       + crossSections_left(k)   ->NbPoles() - 2);
+                                       + crossSections_left(k)   ->NbPoles() - 2 );
 
         for ( int p = 1; p <= tang_data.Length(); ++p )
           tang_data(p) = gp_Vec(0, (k == 1) ? tang_modulus : -tang_modulus, 0);
@@ -389,26 +389,29 @@ void geom_ubend::CreateSkins(const NCollection_Sequence<Handle(Geom_BSplineCurve
     int CurveDegree = TheCurve.Degree();
     const TColStd_Array1OfReal& CurveKnots = TheCurve.Knots();
     const TColStd_Array1OfInteger& CurveMults = TheCurve.Multiplicities();
+    int nbPoles = TheCurve.NbPoles();
     //
     for ( int k = 0; k < TheCurve.NbCurves(); ++k )
     {
-      TColgp_Array1OfPnt Poles( 1, TheCurve.NbPoles() );
+      TColgp_Array1OfPnt Poles(1, nbPoles);
       TheCurve.Curve(k + 1, Poles);
       //
       Handle(Geom_BSplineCurve)
-        bcurve = new Geom_BSplineCurve( Poles, CurveKnots, CurveMults, CurveDegree);
+        bcurve = new Geom_BSplineCurve(Poles, CurveKnots, CurveMults, CurveDegree);
       vIsos.Append(bcurve);
     }
   }
 
-  for ( int ss = 0; ss < 4; ++ss )
+  for ( int ss = Side_Top; ss <= Side_Left; ++ss )
   {
     // STAGE 2: build a surface
     TColgp_Array2OfPnt SurfPoles( 1, vIsos(1)->NbPoles(), 1, uIsos[ss]->Value(1)->NbPoles() );
     {
       // Construct a grid of control points for a surface
-      for ( int j = 1; j <= vIsos(1)->NbPoles(); j++ ) {
-        for ( int i = 1; i <= uIsos[ss]->Value(1)->NbPoles(); i++ ) {
+      for ( int j = 1; j <= vIsos(1)->NbPoles(); j++ )
+      {
+        for ( int i = 1; i <= uIsos[ss]->Value(1)->NbPoles(); i++ )
+        {
 
           int startIdx = 0;
           if ( ss == 0 )

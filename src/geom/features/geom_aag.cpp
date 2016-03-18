@@ -25,6 +25,9 @@
 #include <vtkNew.h>
 #include <vtkStringArray.h>
 
+// Qr includes
+#include <QrCore_Types.h>
+
 //! Initializes AAG from the given master model and selected faces.
 //! \param masterCAD     [in] master model (full CAD).
 //! \param selectedFaces [in] selected faces.
@@ -70,7 +73,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph> geom_aag::ToVTK() const
     FaceVertexMap.Bind(f, vertex_id);
 
     // Fill property arrays
-    labelArr->InsertNextValue( geom_utils::FaceGeometryName( TopoDS::Face( m_faces(f) ) ).c_str() );
+    labelArr->InsertNextValue( (geom_utils::FaceGeometryName( TopoDS::Face( m_faces(f) ) ) + ":" + QrCore::to_string<int>(f) ).c_str() );
     //
     if ( m_selected.Contains(f) )
       groupArr->InsertNextValue(ARRNAME_GROUP_ADJACENT);

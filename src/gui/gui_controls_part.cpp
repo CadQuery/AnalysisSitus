@@ -125,6 +125,7 @@ void gui_controls_part::onLoadBRep()
   // Update UI
   //---------------------------------------------------------------------------
 
+  common_facilities::Instance()->Prs.Part->DeleteAllPresentations();
   common_facilities::Instance()->Prs.Part->InitializePicker();
   common_facilities::Instance()->Prs.Part->Actualize(geom_n.get(), false, true);
   //
@@ -165,6 +166,7 @@ void gui_controls_part::onLoadSTEP()
   // Update UI
   //---------------------------------------------------------------------------
 
+  common_facilities::Instance()->Prs.Part->DeleteAllPresentations();
   common_facilities::Instance()->Prs.Part->InitializePicker();
   common_facilities::Instance()->Prs.Part->Actualize(geom_n.get(), false, true);
   //

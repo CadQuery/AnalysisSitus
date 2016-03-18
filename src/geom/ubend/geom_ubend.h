@@ -5,7 +5,7 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-// A-Situs (calculus) includes
+// Calculus includes
 #include <calculus_design_law.h>
 
 // OCCT includes

@@ -54,7 +54,9 @@ signals:
 //-----------------------------------------------------------------------------
 protected slots:
 
-  void onSelectionChanged();
+  void onSelectionChanged ();
+  void onContextMenu      (QPoint pos);
+  void onShowOnly         ();
 
 protected:
 

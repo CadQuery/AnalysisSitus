@@ -124,6 +124,12 @@ public:
     return XCAFDoc_DocumentTool::ShapeTool( m_doc->Main() );
   }
 
+  //! \return color tool.
+  inline Handle(XCAFDoc_ColorTool) GetColorTool() const
+  {
+    return XCAFDoc_DocumentTool::ColorTool( m_doc->Main() );
+  }
+
 // Construction & initialization:
 protected:
 

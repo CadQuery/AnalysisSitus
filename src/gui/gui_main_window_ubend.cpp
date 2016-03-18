@@ -96,7 +96,7 @@ void gui_main_window_ubend::createDockWindows()
   QDesktopWidget desktop;
   const int side   = std::min( desktop.height(), desktop.width() );
   const int width  = side*0.3;
-  const int height = width;
+  //const int height = width;
 
   //---------------------------------------------------------------------------
   // Object browser

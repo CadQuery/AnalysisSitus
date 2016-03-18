@@ -346,8 +346,7 @@ void visu_prs_manager::RenderPresentation(const ActAPI_DataObjectId& theNodeId)
   if ( m_renderer.GetPointer() == NULL )
     Standard_ProgramError::Raise("Renderer is NULL");
 
-  Handle(visu_prs)
-    aPrs = Handle(visu_prs)::DownCast( m_nodePresentations.Find(theNodeId) );
+  Handle(visu_prs) aPrs = m_nodePresentations.Find(theNodeId);
   aPrs->RenderPipelines(m_renderer);
 }
 
@@ -370,8 +369,7 @@ void visu_prs_manager::DeRenderPresentation(const ActAPI_DataObjectId& theNodeId
   if ( m_renderer.GetPointer() == NULL )
     Standard_ProgramError::Raise("Renderer is NULL");
 
-  Handle(visu_prs)
-    aPrs = Handle(visu_prs)::DownCast( m_nodePresentations.Find(theNodeId) );
+  Handle(visu_prs) aPrs = m_nodePresentations.Find(theNodeId);
   aPrs->DeRenderPipelines(m_renderer);
 }
 
@@ -651,9 +649,8 @@ ActAPI_DataObjectIdList
   if ( m_iSelectionModes & SelectionMode_Workpiece )
     aResult.Append(aNodeId);
 
-  Handle(visu_prs)
-    aPrs3D = Handle(visu_prs)::DownCast( this->GetPresentation(aNodeId) );
-
+  Handle(visu_prs) aPrs3D =this->GetPresentation(aNodeId);
+  //
   if ( aPrs3D.IsNull() )
     Standard_ProgramError::Raise("Picked object without Presentation");
 
@@ -698,9 +695,8 @@ void visu_prs_manager::SetPickList(const Handle(ActAPI_HNodeList)& theNodeList)
     visu_pipeline_list::Iterator aPipeIt( *aPipelines.operator->() );
     for ( ; aPipeIt.More(); aPipeIt.Next() )
     {
-      Handle(visu_pipeline)
-        aPipeline = Handle(visu_pipeline)::DownCast(aPipeIt.Value());
-
+      Handle(visu_pipeline) aPipeline = aPipeIt.Value();
+      //
       if ( aPipeline.IsNull() )
         continue;
 
@@ -750,9 +746,8 @@ void visu_prs_manager::Highlight(const Handle(ActAPI_HNodeList)& theNodes)
       const Handle(ActAPI_INode)& aNode = aNodeIt.Value();
 
       // Access Presentation
-      Handle(visu_prs)
-        aPrs3D = Handle(visu_prs)::DownCast( this->GetPresentation(aNode) );
-
+      Handle(visu_prs) aPrs3D = this->GetPresentation(aNode);
+      //
       if ( aPrs3D.IsNull() || !aPrs3D->IsVisible() )
         continue; // Node does not have Presentation to highlight
 
@@ -802,8 +797,7 @@ void visu_prs_manager::Highlight(const Handle(ActAPI_HNodeList)& theNodes,
     Handle(ActAPI_INode) aNextNode = it.Value();
 
     // Get Presentation
-    Handle(visu_prs)
-      aPrs3D = Handle(visu_prs)::DownCast( this->GetPresentation(aNextNode) );
+    Handle(visu_prs) aPrs3D = this->GetPresentation(aNextNode);
 
     // Push selection to renderer
     m_currentSelection.PushToRender(aPrs3D, m_renderer, SelectionNature_Pick);

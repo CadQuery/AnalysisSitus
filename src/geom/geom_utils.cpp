@@ -28,6 +28,7 @@
 #include <gp_Circ.hxx>
 #include <gp_Quaternion.hxx>
 #include <gp_Vec.hxx>
+#include <math_Matrix.hxx>
 #include <Precision.hxx>
 #include <ShapeUpgrade_UnifySameDomain.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
@@ -38,6 +39,15 @@
 #include <TopTools_HSequenceOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
+
+//-----------------------------------------------------------------------------
+
+#define DUMP_FILES
+
+#define dump_filename_N  "D:\\N_interp_log_OCCT.log"
+#define dump_filename_Bx "D:\\Bx_interp_log_OCCT.log"
+#define dump_filename_By "D:\\By_interp_log_OCCT.log"
+#define dump_filename_Bz "D:\\Bz_interp_log_OCCT.log"
 
 //-----------------------------------------------------------------------------
 // Auxiliary functions
@@ -759,5 +769,188 @@ bool geom_utils::MaximizeFaces(TopoDS_Shape& shape)
     return false;
   }
   shape = Unify.Shape();
+  return true;
+}
+
+//! Interpolates the given collection of points with B-curve of the
+//! desired degree.
+//! \param points [in]  points to interpolate.
+//! \param p      [in]  degree to use.
+//! \param result [out] interpolant.
+//! \return true om case of success, false -- otherwise.
+bool geom_utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
+                                   const int                  p,
+                                   Handle(Geom_BSplineCurve)& result)
+{
+  // Number of unknown control points
+  const int numPoles = (int) points.size();
+  const int n        = numPoles - 1;
+  const int m        = n + p + 1;
+
+  // Calculate total chord length
+  double chordTotal = 0.0;
+  for ( size_t k = 1; k < numPoles; ++k )
+    chordTotal += ( points[k].XYZ() - points[k-1].XYZ() ).Modulus();
+
+  //-------------------------------------------------------------------------
+  // Choose parameters
+  double* pParams = new double[numPoles];
+  pParams[0] = 0.0;
+  for ( int k = 1; k < numPoles - 1; ++k )
+  {
+    pParams[k] = pParams[k - 1] + ( points[k].XYZ() - points[k-1].XYZ() ).Modulus() / chordTotal;
+  }
+  pParams[numPoles - 1] = 1.0;
+
+  //-------------------------------------------------------------------------
+  // Choose knots
+  double* pKnots = new double[m + 1];
+  //
+  for ( int k = 0; k < p + 1; ++k )
+    pKnots[k] = 0.0;
+  for ( int k = m; k > m - p - 1; --k )
+    pKnots[k] = 1.0;
+  for ( int j = 1; j <= n - p; ++j )
+  {
+    pKnots[j + p] = 0.0;
+    for ( int i = j; i <= j + p - 1; ++i )
+    {
+      pKnots[j + p] += pParams[i];
+    }
+    pKnots[j + p] /= p;
+  }
+
+  // Convert to flat knots
+  TColStd_Array1OfReal flatKnots(1, m + 1);
+  for ( int k = 0; k <= m; ++k )
+    flatKnots(k + 1) = pKnots[k];
+
+  // Initialize matrix from the passed row pointer
+  const int dim = n + 1;
+  Eigen::MatrixXd eigen_N_mx(dim, dim);
+
+  // Calculate non-zero B-splines for each parameter value
+  for ( int k = 0; k <= n; ++k )
+  {
+    int firstNonZeroIdx;
+    math_Matrix N_mx(1, 1, 1, p + 1);
+    BSplCLib::EvalBsplineBasis(1, 0, p + 1, flatKnots, pParams[k], firstNonZeroIdx, N_mx);
+
+    // Dump
+    std::cout << "\tFirst Non-Zero Index for " << pParams[k] << " is " << firstNonZeroIdx << std::endl;
+    for ( int kk = 1; kk <= p + 1; ++kk )
+    {
+      std::cout << "\t" << N_mx(1, kk);
+    }
+    std::cout << std::endl;
+
+    // Fill Eigen's matrix
+    for ( int c = 0; c < firstNonZeroIdx - 1; ++c )
+    {
+      eigen_N_mx(k, c) = 0.0;
+    }
+    //
+    for ( int c = firstNonZeroIdx - 1, kk = 1; c < firstNonZeroIdx + p; ++c, ++kk )
+    {
+      eigen_N_mx(k, c) = N_mx(1, kk);
+    }
+    //
+    for ( int c = firstNonZeroIdx + p; c < dim; ++c )
+    {
+      eigen_N_mx(k, c) = 0.0;
+    }
+  }
+
+  // Dump Eigen matrix
+  {
+    std::ofstream FILE;
+    FILE.open(dump_filename_N, std::ios::out | std::ios::trunc);
+    //
+    if ( !FILE.is_open() )
+    {
+      std::cout << "Error: cannot open file for dumping" << std::endl;
+      return false;
+    }
+    //
+    for ( int i = 0; i < dim; ++i )
+    {
+      for ( int j = 0; j < dim; ++j )
+      {
+        FILE << eigen_N_mx(i, j);
+        if ( (i + j + 2) < (dim + dim) )
+          FILE << "\t";
+      }
+      FILE << "\n";
+    }
+  }
+
+  // Initialize vector of right hand side
+  Eigen::VectorXd eigen_b_X(dim), eigen_b_Y(dim), eigen_b_Z(dim);
+  for ( int r = 0; r < dim; ++r )
+  {
+    eigen_b_X(r) = points[r].X();
+    eigen_b_Y(r) = points[r].Y();
+    eigen_b_Z(r) = points[r].Z();
+  }
+
+  // Dump Eigen bx
+  {
+    std::ofstream FILE;
+    FILE.open(dump_filename_Bx, std::ios::out | std::ios::trunc);
+    //
+    if ( !FILE.is_open() )
+    {
+      std::cout << "Error: cannot open file for dumping" << std::endl;
+      return false;
+    }
+    //
+    for ( int i = 0; i < dim; ++i )
+    {
+      FILE << eigen_b_X(i) << "\n";
+    }
+  }
+
+  // Solve
+  Eigen::VectorXd eigen_x = eigen_N_mx.colPivHouseholderQr().solve(eigen_b_X);
+  Eigen::VectorXd eigen_y = eigen_N_mx.colPivHouseholderQr().solve(eigen_b_Y);
+  Eigen::VectorXd eigen_z = eigen_N_mx.colPivHouseholderQr().solve(eigen_b_Z);
+
+  // Fill poles
+  TColgp_Array1OfPnt poles(1, dim);
+  for ( int i = 0; i < dim; ++i )
+  {
+    gp_Pnt P( eigen_x(i), eigen_y(i), eigen_z(i) );
+    poles(i + 1) = P;
+  }
+
+  // Fill knots
+  TColStd_Array1OfReal knots(1, m + 1 - 2*p);
+  TColStd_Array1OfInteger mults(1, m + 1 - 2*p);
+  //
+  knots(1) = 0; mults(1) = p + 1;
+  //
+  for ( int j = 2, jj = p + 1; j <= m - 2*p; ++j, ++jj )
+  {
+    knots(j) = pKnots[jj]; mults(j) = 1;
+  }
+  //
+  knots( knots.Upper() ) = 1; mults( mults.Upper() ) = p + 1;
+
+  // Dump knots
+  for ( int k = knots.Lower(); k <= knots.Upper(); ++k )
+  {
+    std::cout << "knots(" << k << ") = " << knots(k) << "\t" << mults(k) << std::endl;
+  }
+
+  // Create B-spline curve
+  Handle(Geom_BSplineCurve) bcurve = new Geom_BSplineCurve(poles, knots, mults, p);
+
+  // Save result
+  result = bcurve;
+
+  // Delete parameters
+  delete[] pParams;
+  delete[] pKnots;
+
   return true;
 }

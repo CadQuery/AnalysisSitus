@@ -171,8 +171,7 @@ void visu_prs::RenderPipelines(vtkRenderer* theRenderer) const
   PipelineMap::Iterator aPipesIt( m_pipelineRepo.Find(Group_Prs) );
   for ( ; aPipesIt.More(); aPipesIt.Next() )
   {
-    Handle(visu_pipeline)
-      aBasePipeline = Handle(visu_pipeline)::DownCast( aPipesIt.Value() );
+    Handle(visu_pipeline) aBasePipeline = aPipesIt.Value();
     aBasePipeline->AddToRenderer(theRenderer);
   }
 
@@ -187,8 +186,7 @@ void visu_prs::DeRenderPipelines(vtkRenderer* theRenderer) const
   PipelineMap::Iterator aPipesIt( m_pipelineRepo.Find(Group_Prs) );
   for ( ; aPipesIt.More(); aPipesIt.Next() )
   {
-    Handle(visu_pipeline)
-      aBasePipeline = Handle(visu_pipeline)::DownCast( aPipesIt.Value() );
+    Handle(visu_pipeline) aBasePipeline = aPipesIt.Value();
     aBasePipeline->RemoveFromRenderer(theRenderer);
   }
 

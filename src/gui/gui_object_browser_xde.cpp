@@ -25,6 +25,7 @@
 // Qt includes
 #pragma warning(push, 0)
 #include <QHeaderView>
+#include <QMenu>
 #include <QTreeWidgetItemIterator>
 #pragma warning(pop)
 
@@ -54,6 +55,10 @@ gui_object_browser_xde::gui_object_browser_xde(QWidget* parent) : QTreeWidget(pa
 
   // Reactions
   connect( this, SIGNAL( itemSelectionChanged() ), this, SLOT( onSelectionChanged() ) );
+  //
+  this->setContextMenuPolicy(Qt::CustomContextMenu);
+  //
+  connect( this, SIGNAL( customContextMenuRequested(QPoint) ), this, SLOT( onContextMenu(QPoint) ) );
 }
 
 //! Destructor.
@@ -171,4 +176,33 @@ void gui_object_browser_xde::populateBranch(const TCollection_AsciiString& rootE
 void gui_object_browser_xde::onSelectionChanged()
 {
   emit nodeSelected();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on context menu opening.
+//! \param pos [in] position.
+void gui_object_browser_xde::onContextMenu(QPoint pos)
+{
+  QList<QTreeWidgetItem*> items = this->selectedItems();
+  if ( !items.length() || items.length() > 1 )
+    return;
+
+  QMenu* aMenu = new QMenu(this);
+  aMenu->addAction( "Show Only", this, SLOT( onShowOnly() ) );
+  aMenu->popup( this->mapToGlobal(pos) );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on "show only" action.
+void gui_object_browser_xde::onShowOnly()
+{
+  QList<QTreeWidgetItem*> items = this->selectedItems();
+  if ( !items.length() || items.length() > 1 )
+    return;
+
+  // Access data object's entry
+  /*QTreeWidgetItem* item = items(0);
+  TCollection_AsciiString entry = nodeUi->data(0, BrowserRoleNodeId).toString();*/
 }

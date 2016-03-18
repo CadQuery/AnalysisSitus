@@ -35,7 +35,7 @@ gui_main_window_dmu::gui_main_window_dmu() : QMainWindow()
   this->createDockWindows();
   //
   this->setCentralWidget(m_widgets.wViewer);
-  this->setWindowTitle("Analysis Situs [CAD Simplification]");
+  this->setWindowTitle("XDE");
 }
 
 //! Destructor.

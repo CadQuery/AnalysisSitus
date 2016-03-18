@@ -23,6 +23,8 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 
+class geom_aag_random_iterator;
+
 //-----------------------------------------------------------------------------
 
 DEFINE_STANDARD_HANDLE(geom_aag, Standard_Transient)
@@ -30,64 +32,11 @@ DEFINE_STANDARD_HANDLE(geom_aag, Standard_Transient)
 //! AAG.
 class geom_aag : public Standard_Transient
 {
+friend class geom_aag_random_iterator;
+
 public:
 
   typedef NCollection_DataMap<int, TColStd_PackedMapOfInteger> t_adjacency;
-
-public:
-
-  //! Iterator for AAG working in a random manner. This is the very simple
-  //! and very straightforward iterator which traverses the entire graph
-  //! in the order which you should not rely on.
-  class random_iterator
-  {
-  public:
-
-    //! Creates and initializes iterator for AAG.
-    //! \param graph [in] graph to iterate.
-    random_iterator(const Handle(geom_aag)& graph)
-    {
-      this->init(graph);
-    }
-
-    //! Initializes iterator with graph.
-    //! \param graph [in] graph to iterate.
-    inline void init(const Handle(geom_aag)& graph)
-    {
-      m_graph = graph;
-      m_it.Initialize(m_graph->m_neighbors);
-    }
-
-    //! \return true if there are still some faces to iterate.
-    inline bool more() const
-    {
-      return m_it.More() > 0;
-    }
-
-    //! Moves iterator to another (not adjacent) face.
-    inline void next()
-    {
-      m_it.Next();
-    }
-
-    //! \return indices of the neighbor faces for the current face.1
-    inline const TColStd_PackedMapOfInteger& neighbors() const
-    {
-      return m_it.Value();
-    }
-
-    //! \return ID of the current face.
-    inline const int face_id() const
-    {
-      return m_it.Key();
-    }
-
-  private:
-
-    Handle(geom_aag)      m_graph; //!< AAG being iterated.
-    t_adjacency::Iterator m_it;    //!< Internal iterator for adjacency map.
-
-  };
 
 public:
 

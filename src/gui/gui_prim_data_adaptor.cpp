@@ -22,7 +22,7 @@ QVariant gui_prim_data_adaptor::GetValue() const
     return QVariant();
 
   QVariant result;
-  Handle(ActAPI_IParameter) P = m_node->Parameter(m_iPID);
+  Handle(ActAPI_IUserParameter) P = m_node->Parameter(m_iPID);
 
   // Resolve the actual data type
   if ( P->GetParamType() == Parameter_Real )
@@ -58,7 +58,7 @@ void gui_prim_data_adaptor::SetValue(const QVariant& ui_val) const
   if ( m_node.IsNull() || !m_node->IsWellFormed() )
     return;
 
-  Handle(ActAPI_IParameter) P = m_node->Parameter(m_iPID);
+  Handle(ActAPI_IUserParameter) P = m_node->Parameter(m_iPID);
 
   // Resolve data type
   if ( P->GetParamType() == Parameter_Real ) // Proceed with Real

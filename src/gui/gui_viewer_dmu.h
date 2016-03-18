@@ -8,6 +8,12 @@
 #ifndef gui_viewer_dmu_h
 #define gui_viewer_dmu_h
 
+// Visualization includes
+#include <visu_xde_shape_prs.h>
+
+// XDE includes
+#include <xde_model.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QWidget>
@@ -20,7 +26,12 @@
 #include <AIS_DisplayMode.hxx>
 #include <AIS_InteractiveContext.hxx>
 #include <AIS_Shape.hxx>
+#include <TDF_Label.hxx>
+#include <TopLoc_Location.hxx>
 #include <V3d_View.hxx>
+#include <XCAFDoc_ColorTool.hxx>
+#include <XCAFDoc_ShapeTool.hxx>
+#include <XCAFPrs_Style.hxx>
 #pragma warning(pop)
 
 class TopoDS_Shape;
@@ -49,10 +60,8 @@ public:
 
   Handle(V3d_View)&                     GetView();
   Handle(AIS_InteractiveContext)&       GetContext();
-  Handle(AIS_Shape)                     Visualize(const TopoDS_Shape&   shape,
-                                                  const AIS_DisplayMode mode);
-  Handle(AIS_Shape)                     VisualizeOnly(const TopoDS_Shape&   shape,
-                                                      const AIS_DisplayMode mode);
+  void                                  Visualize(const Handle(xde_model)& model,
+                                                  const AIS_DisplayMode    mode);
   void                                  Clear();
 
   virtual void                  init();
@@ -135,6 +144,15 @@ private:
   void                          DrawRectangle( const int MinX, const int MinY,
                                                 const int MaxX, const int MaxY, const bool Draw );
 
+  void displayWithChildren(XCAFDoc_ShapeTool&             theShapeTool,
+                           XCAFDoc_ColorTool&             theColorTool,
+                           const TDF_Label&               theLabel,
+                           const TopLoc_Location&         theParentTrsf,
+                           const visu_xde_style&          theParentStyle,
+                           const TCollection_AsciiString& theParentId,
+                           const int                      theDisplayMode,
+                           visu_xde_shapes&               theMapOfShapes);
+
 private:
 
   bool                            myDrawRect;           // set when a rect is used for selection or magnify 
@@ -150,6 +168,11 @@ private:
   QList<QAction*>*                myViewActions;
   QMenu*                          myBackMenu;
   QRubberBand*                    myRectBand; //!< selection rectangle rubber band
+
+public:
+
+  visu_xde_shapes Shapes; //!< Visualized shapes.
+
 };
 
 #endif

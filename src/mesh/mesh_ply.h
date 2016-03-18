@@ -44,7 +44,7 @@ namespace mesh_ply
 
   //! Saves the passed mesh to a ply file.
   //! \param theMesh     [in] tessellation to store.
-  //! \param theFilename [in]  target filename.
+  //! \param theFilename [in] target filename.
   //! \return true in case of success, false -- otherwise.
   bool
     Write(const Handle(OMFDS_Mesh)&      theMesh,

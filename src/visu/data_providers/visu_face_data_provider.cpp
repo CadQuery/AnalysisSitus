@@ -58,8 +58,7 @@ TopoDS_Face visu_face_data_provider::ExtractFace() const
     return TopoDS_Face();
 
   // Access owning geometry
-  Handle(geom_part_node)
-    geom_n = Handle(geom_part_node)::DownCast( common_facilities::Instance()->Model->PartNode() );
+  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->PartNode();
 
   // Prepare traversal
   TopTools_IndexedMapOfShape M;

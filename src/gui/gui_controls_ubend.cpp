@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 February 2015
+// Created on: 02 February 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
@@ -212,7 +212,7 @@ void gui_controls_ubend::onSaveSTEP()
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
-  // Save mesh to ply files
+  // Save to STEP
   if ( !geom_STEP::Write( N->GetSkin(), QStr2AsciiStr(filename) ) )
   {
     std::cout << "Error: cannot save U-bend geometry to STEP file" << std::endl;

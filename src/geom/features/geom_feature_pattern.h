@@ -39,8 +39,33 @@ public:
 
 public:
 
+  //! \return faces traversed during recognition.
+  inline const TColStd_PackedMapOfInteger& JustTraversed() const
+  {
+    return m_traversed;
+  }
+
+  //! Sets faces as traversed.
+  //! \param face_idx [in] index of the just traversed face.
+  inline void SetTraversed(const int face_idx)
+  {
+    m_traversed.Add(face_idx);
+  }
+
+  //! Recognition interface.
+  //! \param featureFaces [out] detected faces.
+  //! \return true in case of success, false -- otherwise.
+  inline bool Recognize(TopTools_IndexedMapOfShape& featureFaces)
+  {
+    m_traversed.Clear();
+    //
+    return this->recognize(featureFaces);
+  }
+
+private:
+
   virtual bool
-    Recognize(TopTools_IndexedMapOfShape& featureFaces) = 0;
+    recognize(TopTools_IndexedMapOfShape& featureFaces) = 0;
 
 protected:
 
@@ -59,7 +84,8 @@ protected:
 
 protected:
 
-  Handle(geom_aag_iterator) m_it; //!< AAG iterator.
+  Handle(geom_aag_iterator)  m_it;        //!< AAG iterator.
+  TColStd_PackedMapOfInteger m_traversed; //!< Faces traversed during recognition.
 
 };
 

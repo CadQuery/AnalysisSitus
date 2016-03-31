@@ -113,45 +113,87 @@ void gui_dialog_sewing::onPerform()
   // Sewing
   //---------------------------------------------------------------------------
 
-  // Get part labels
-  TDF_LabelSequence labels;
-  common_facilities::Instance()->Model_XDE->GetLabelsOfParts(labels);
-
-  // Get Shape Tool
-  Handle(XCAFDoc_ShapeTool) ShapeTool = common_facilities::Instance()->Model_XDE->GetShapeTool();
-
-  // Sew each part
-  common_facilities::Instance()->Model_XDE->OpenCommand();
+  if ( !common_facilities::Instance()->Model_XDE.IsNull() )
   {
-    for ( int l = 1; l <= labels.Length(); ++l )
-    {
-      TopoDS_Shape shape = ShapeTool->GetShape( labels(l) );
+    // Get part labels
+    TDF_LabelSequence labels;
+    common_facilities::Instance()->Model_XDE->GetLabelsOfParts(labels);
 
+    // Get Shape Tool
+    Handle(XCAFDoc_ShapeTool) ShapeTool = common_facilities::Instance()->Model_XDE->GetShapeTool();
+
+    // Sew each part
+    common_facilities::Instance()->Model_XDE->OpenCommand();
+    {
+      for ( int l = 1; l <= labels.Length(); ++l )
+      {
+        TopoDS_Shape shape = ShapeTool->GetShape( labels(l) );
+
+        // Perform sewing
+        //
+        std::cout << "Sewing tolerance = " << toler << std::endl;
+        //
+        if ( !geom_utils::Sew(shape, toler) )
+        {
+          std::cout << "Error: sewing failed" << std::endl;
+          this->close();
+        }
+        //
+        std::cout << "Sewing done. Visualizing..." << std::endl;
+
+        // Set shape back to model
+        ShapeTool->SetShape(labels(l), shape);
+      }
+    }
+    common_facilities::Instance()->Model_XDE->CommitCommand();
+
+    // Update shape
+    common_facilities::Instance()->ViewerDMU->GetContext()->EraseAll();
+    common_facilities::Instance()->ViewerDMU->Visualize(common_facilities::Instance()->Model_XDE, AIS_WireFrame);
+  }
+  //---------------------------------------------------------------------------
+  else if ( !common_facilities::Instance()->Model.IsNull() )
+  {
+    // Access Geometry Node
+    Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+    if ( N.IsNull() || !N->IsWellFormed() )
+      return;
+
+    // Working shape
+    TopoDS_Shape part = N->GetShape();
+    //
+    if ( part.IsNull() )
+    {
+      std::cout << "Error: part shape is null" << std::endl;
+      return;
+    }
+
+    // Sew part
+    common_facilities::Instance()->Model->OpenCommand();
+    {
       // Perform sewing
       //
       std::cout << "Sewing tolerance = " << toler << std::endl;
       //
-      if ( !geom_utils::Sew(shape, toler) )
+      if ( !geom_utils::Sew(part, toler) )
       {
         std::cout << "Error: sewing failed" << std::endl;
         this->close();
       }
       //
       std::cout << "Sewing done. Visualizing..." << std::endl;
-
-      // Set shape back to model
-      ShapeTool->SetShape(labels(l), shape);
+      //
+      N->SetShape(part);
     }
+    common_facilities::Instance()->Model->CommitCommand();
+
+    // Update viewer
+    common_facilities::Instance()->Model->Clear();
+    //
+    common_facilities::Instance()->Prs.DeleteAll();
+    common_facilities::Instance()->Prs.Part->InitializePicker();
+    common_facilities::Instance()->Prs.Part->Actualize( N.get() );
   }
-  common_facilities::Instance()->Model_XDE->CommitCommand();
-
-  //---------------------------------------------------------------------------
-  // UI updates
-  //---------------------------------------------------------------------------
-
-  // Update shape
-  common_facilities::Instance()->ViewerDMU->GetContext()->EraseAll();
-  common_facilities::Instance()->ViewerDMU->Visualize(common_facilities::Instance()->Model_XDE, AIS_WireFrame);
 
   // Close
   this->close();

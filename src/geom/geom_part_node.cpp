@@ -38,7 +38,7 @@ void geom_part_node::Init()
   this->InitParameter(PID_Name, "Name");
 
   // Set empty initial shape
-  ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(TopoDS_Shape(), MT_Silent);
+  ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape( TopoDS_Shape(), MT_Silent );
 
   // Set default values to primitive Parameters
   this->SetHasColor    (false);
@@ -152,6 +152,21 @@ Handle(geom_surf_node) geom_part_node::SurfaceRepresentation()
 
     if ( !surf_n.IsNull() && surf_n->IsWellFormed() )
       return surf_n;
+  }
+
+  return NULL;
+}
+
+//! \return underlying boundary edges representation Node.
+Handle(geom_boundary_edges_node) geom_part_node::BoundaryEdgesRepresentation()
+{
+  Handle(geom_boundary_edges_node) edges_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    edges_n = Handle(geom_boundary_edges_node)::DownCast( cit->Value() );
+
+    if ( !edges_n.IsNull() && edges_n->IsWellFormed() )
+      return edges_n;
   }
 
   return NULL;

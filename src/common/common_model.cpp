@@ -12,6 +12,7 @@
 #include <common_facilities.h>
 
 // A-Situs (engine) includes
+#include <engine_part.h>
 #include <engine_ubend.h>
 
 // Active Data includes
@@ -33,14 +34,15 @@ REGISTER_NODE_TYPE(ActData_RealVarNode)
 REGISTER_NODE_TYPE(common_root_node)
 REGISTER_NODE_TYPE(calculus_design_law_node)
 REGISTER_NODE_TYPE(mesh_node)
-REGISTER_NODE_TYPE(geom_part_node)
-REGISTER_NODE_TYPE(geom_face_node)
-REGISTER_NODE_TYPE(geom_surf_node)
 REGISTER_NODE_TYPE(geom_sections_node)
 REGISTER_NODE_TYPE(geom_section_node)
 REGISTER_NODE_TYPE(geom_ubend_node)
 REGISTER_NODE_TYPE(geom_ubend_law_node)
 REGISTER_NODE_TYPE(geom_ubend_laws_node)
+REGISTER_NODE_TYPE(geom_part_node)
+REGISTER_NODE_TYPE(geom_face_node)
+REGISTER_NODE_TYPE(geom_surf_node)
+REGISTER_NODE_TYPE(geom_boundary_edges_node)
 
 //-----------------------------------------------------------------------------
 
@@ -60,7 +62,7 @@ static void PrepareForRemoval(const Handle(ActAPI_INode)&     root_n,
       continue;
 
     // Clean up Presentations
-    common_facilities::Instance()->Prs.DeRenderAll();
+    common_facilities::Instance()->Prs.DeleteAll();
 
     // Set Node for deletion
     nodesToDelete->Append(child_n);
@@ -114,44 +116,8 @@ void common_model::Populate()
   // Add Part Node
   //---------------------------------------------------------------------------
 
-  // Add Part Node to Partition
-  Handle(geom_part_node) geom_n = Handle(geom_part_node)::DownCast( geom_part_node::Instance() );
-  this->PartPartition()->AddNode(geom_n);
-
-  // Initialize geometry
-  geom_n->Init();
-  geom_n->SetName("Part");
-
-  // Create underlying face representation Node
-  {
-    Handle(ActAPI_INode) geom_face_base = geom_face_node::Instance();
-    this->GeomFacePartition()->AddNode(geom_face_base);
-
-    // Initialize
-    Handle(geom_face_node) geom_face_n = Handle(geom_face_node)::DownCast(geom_face_base);
-    geom_face_n->Init();
-    geom_face_n->SetName("Face domain");
-
-    // Set as child
-    geom_n->AddChildNode(geom_face_n);
-  }
-
-  // Create underlying surface representation Node
-  {
-    Handle(ActAPI_INode) geom_surf_base = geom_surf_node::Instance();
-    this->GeomSurfacePartition()->AddNode(geom_surf_base);
-
-    // Initialize
-    Handle(geom_surf_node) geom_surf_n = Handle(geom_surf_node)::DownCast(geom_surf_base);
-    geom_surf_n->Init();
-    geom_surf_n->SetName("Host surface");
-
-    // Set as child
-    geom_n->AddChildNode(geom_surf_n);
-  }
-
   // Set as a child for root
-  root_n->AddChildNode(geom_n);
+  root_n->AddChildNode( engine_part::Create_Part() );
 
   //---------------------------------------------------------------------------
   // Add Sections Node
@@ -255,15 +221,16 @@ void common_model::initPartitions()
 {
   REGISTER_PARTITION(common_partition<common_root_node>,         Partition_Root);
   REGISTER_PARTITION(common_partition<calculus_design_law_node>, Partition_CalculusDesignLaw);
-  REGISTER_PARTITION(common_partition<mesh_node>,                Partition_Mesh);
-  REGISTER_PARTITION(common_partition<geom_part_node>,           Partition_GeomPart);
-  REGISTER_PARTITION(common_partition<geom_face_node>,           Partition_GeomFace);
-  REGISTER_PARTITION(common_partition<geom_surf_node>,           Partition_GeomSurface);
   REGISTER_PARTITION(common_partition<geom_sections_node>,       Partition_Sections);
   REGISTER_PARTITION(common_partition<geom_section_node>,        Partition_Section);
   REGISTER_PARTITION(common_partition<geom_ubend_node>,          Partition_UBend);
   REGISTER_PARTITION(common_partition<geom_ubend_laws_node>,     Partition_UBendLaws);
   REGISTER_PARTITION(common_partition<geom_ubend_law_node>,      Partition_UBendLaw);
+  REGISTER_PARTITION(common_partition<mesh_node>,                Partition_Mesh);
+  REGISTER_PARTITION(common_partition<geom_part_node>,           Partition_GeomPart);
+  REGISTER_PARTITION(common_partition<geom_face_node>,           Partition_GeomFace);
+  REGISTER_PARTITION(common_partition<geom_surf_node>,           Partition_GeomSurface);
+  REGISTER_PARTITION(common_partition<geom_boundary_edges_node>, Partition_GeomBoundaryEdges);
 }
 
 //! Initializes the Tree Functions bound to the Data Model.

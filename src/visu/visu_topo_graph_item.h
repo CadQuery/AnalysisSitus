@@ -11,6 +11,9 @@
 // Visualization includes
 #include <visu_common.h>
 
+// Geometry includes
+#include <geom_angle.h>
+
 // VTK includes
 #include <vtkAbstractArray.h>
 #include <vtkColor.h>
@@ -26,8 +29,12 @@
 // Qt includes
 #include <QObject>
 
+// Qr includes
+#include <QrCore.h>
+
 #define ARRNAME_LABELS          "Labels"
 #define ARRNAME_COLORS          "Colors"
+#define ARRNAME_ANGLES          "Angles"
 #define ARRNAME_GROUP           "Group"
 #define ARRNAME_GROUP_ORDINARY  "Ordinary"
 #define ARRNAME_GROUP_ADJACENT  "Adjacent"
@@ -48,7 +55,7 @@ public:
 
 signals:
 
-  void vertexPicked(const vtkIdType);
+  void vertexPicked(const int faceId, const vtkIdType);
 
 protected:
 
@@ -87,8 +94,18 @@ protected:
   }
 
   //---------------------------------------------------------------------------
-  virtual vtkColor4ub EdgeColor(vtkIdType /*line*/, vtkIdType /*point*/)
+  virtual vtkColor4ub EdgeColor(vtkIdType line, vtkIdType /*point*/)
   {
+    vtkAbstractArray* angles = this->GetGraph()->GetEdgeData()->GetAbstractArray(ARRNAME_ANGLES);
+    if ( angles )
+    {
+      const int attr = angles->GetVariantValue(line).ToInt();
+      if ( attr == Angle_Convex )
+        return vtkColor4ub(40, 190, 0, 255);
+      if ( attr == Angle_Concave )
+        return vtkColor4ub(190, 40, 0, 255);
+    }
+
     return vtkColor4ub(128, 128, 128, 128);
   }
 
@@ -130,7 +147,22 @@ protected:
     this->GetGraph()->Modified();
     this->GetScene()->SetDirty(true);
 
-    emit vertexPicked(focusedVertex);
+    // Get face ID
+    int faceIdx = -1;
+    vtkAbstractArray* labels = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_LABELS);
+    if ( labels )
+    {
+      std::string str = labels->GetVariantValue(focusedVertex).ToString();
+      faceIdx = QrCore::extract_int(str);
+    }
+
+    emit vertexPicked(faceIdx, focusedVertex);
+    return true;
+  }
+
+  //---------------------------------------------------------------------------
+  virtual bool KeyPressEvent(const vtkContextKeyEvent& key)
+  {
     return true;
   }
 

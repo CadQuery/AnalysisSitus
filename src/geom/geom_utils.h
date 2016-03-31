@@ -11,6 +11,9 @@
 // A-Situs includes
 #include <analysis_situs.h>
 
+// Geometry includes
+#include <geom_angle.h>
+
 // Active Data (API) includes
 #include <ActAPI_ILogger.h>
 #include <ActAPI_IProgressNotifier.h>
@@ -36,6 +39,7 @@
 #include <gp_Trsf.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Wire.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 
@@ -174,7 +178,9 @@ public:
     return ShapeAddr( shape.TShape() );
   }
 
-  static TopoDS_Shape
+//-----------------------------------------------------------------------------
+
+  ASitus_EXPORT static TopoDS_Shape
     ApplyTransformation(const TopoDS_Shape& theShape,
                         const double        theXPos,
                         const double        theYPos,
@@ -184,7 +190,7 @@ public:
                         const double        theAngleC,
                         const bool          doCopy);
 
-  static gp_Trsf
+  ASitus_EXPORT static gp_Trsf
     Transformation(const double theXPos,
                    const double theYPos,
                    const double theZPos,
@@ -192,55 +198,60 @@ public:
                    const double theAngleB,
                    const double theAngleC);
 
-  static TopoDS_Shape
+  ASitus_EXPORT static TopoDS_Shape
     ApplyTransformation(const TopoDS_Shape& theShape,
                         const gp_Trsf&      theTransform,
                         const bool          doCopy);
 
-  static TopoDS_Shape
+  ASitus_EXPORT static TopoDS_Shape
     AssembleShapes(const TopTools_ListOfShape& theShapes);
 
-  static void
+  ASitus_EXPORT static void
     Bounds(const TopoDS_Shape& theShape,
            double& XMin, double& YMin, double& ZMin,
            double& XMax, double& YMax, double& ZMax);
 
-  static bool
+  ASitus_EXPORT static bool
     CheckShape(const TopoDS_Shape&  theShape,
                ActAPI_ProgressEntry PEntry);
 
-  static double
+  ASitus_EXPORT static double
     MaxTolerance(const TopoDS_Shape& theShape);
 
-  static bool
+  ASitus_EXPORT static bool
     ReadBRep(const TCollection_AsciiString& theFilename,
              TopoDS_Shape&                  theShape);
 
-  static bool
+  ASitus_EXPORT static bool
     WriteBRep(const TopoDS_Shape&            theShape,
               const TCollection_AsciiString& theFilename);
 
-  static void
+  ASitus_EXPORT static void
     ShapeSummary(const TopoDS_Shape&      shape,
                  TCollection_AsciiString& info);
 
-  static TopoDS_Wire
+  ASitus_EXPORT static TopoDS_Wire
     CreateCircularWire(const double radius);
 
-  static TopoDS_Shape
+  ASitus_EXPORT static TopoDS_Shape
     MakeSkin(const TopTools_SequenceOfShape& wires);
 
-  static bool
+  ASitus_EXPORT static bool
     Sew(TopoDS_Shape& shape,
         const double  tolerance);
 
-  static bool
+  ASitus_EXPORT static bool
     MaximizeFaces(TopoDS_Shape& shape);
 
-  static bool
+  ASitus_EXPORT static bool
     InterpolatePoints(const std::vector<gp_Pnt>& points,
                       const int                  p,
                       Handle(Geom_BSplineCurve)& result);
+
+  ASitus_EXPORT static geom_angle
+    AngleBetweenFaces(const TopoDS_Face&          F,
+                      const TopoDS_Face&          G,
+                      TopTools_IndexedMapOfShape& commonEdges);
 
 private:
 

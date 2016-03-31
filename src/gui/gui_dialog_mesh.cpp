@@ -161,7 +161,7 @@ void gui_dialog_mesh::onGenerate()
 
   // Update visualization
   //
-  common_facilities::Instance()->ViewerDMU->GetContext()->EraseAll();
+  common_facilities::Instance()->ViewerDMU->GetContext()->RemoveAll();
   common_facilities::Instance()->ViewerDMU->Visualize(common_facilities::Instance()->Model_XDE, AIS_Shaded);
 
   // Close

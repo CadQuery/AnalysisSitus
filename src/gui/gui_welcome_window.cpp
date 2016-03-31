@@ -11,6 +11,7 @@
 // A-Situs (GUI) includes
 #include <gui_main_window_asitus.h>
 #include <gui_main_window_dmu.h>
+#include <gui_main_window_features.h>
 #include <gui_main_window_hull.h>
 #include <gui_main_window_meshedit.h>
 #include <gui_main_window_skinning.h>
@@ -55,13 +56,16 @@ void gui_welcome_window::createControls()
 {
   // Group decorators
   QGroupBox* pUtilitiesGroup = new QGroupBox("Utilities");
+  QGroupBox* pFeaturesGroup  = new QGroupBox("Features");
   QGroupBox* pSkinningGroup  = new QGroupBox("Skinning");
 
   // Buttons
-  m_widgets.pDMU        = new QPushButton("XDE");
-  m_widgets.pMeshEdit   = new QPushButton("Mesh View");
-  m_widgets.pAnalysis   = new QPushButton("Analysis");
-  m_widgets.pCAFBrowser = new QPushButton("CAF Browser");
+  m_widgets.pDMU             = new QPushButton("XDE");
+  m_widgets.pMeshEdit        = new QPushButton("Mesh View");
+  m_widgets.pAnalysis        = new QPushButton("Analysis");
+  m_widgets.pCAFBrowser      = new QPushButton("CAF Browser");
+  //
+  m_widgets.pFeatures        = new QPushButton("Features");
   //
   m_widgets.pSkinning        = new QPushButton("Thru-Sections");
   m_widgets.pUBend           = new QPushButton("U-bend");
@@ -71,18 +75,24 @@ void gui_welcome_window::createControls()
   m_widgets.pMeshEdit        -> setMinimumWidth(BTN_STANDARD_WIDTH);
   m_widgets.pAnalysis        -> setMinimumWidth(BTN_STANDARD_WIDTH);
   m_widgets.pCAFBrowser      -> setMinimumWidth(BTN_STANDARD_WIDTH);
+  //
+  m_widgets.pFeatures        -> setMinimumWidth(BTN_STANDARD_WIDTH);
+  //
   m_widgets.pSkinning        -> setMinimumWidth(BTN_STANDARD_WIDTH);
   m_widgets.pUBend           -> setMinimumWidth(BTN_STANDARD_WIDTH);
   m_widgets.pHullReconstruct -> setMinimumWidth(BTN_STANDARD_WIDTH);
 
   // Layouts for buttons
   QVBoxLayout* pUtilitiesLay = new QVBoxLayout(pUtilitiesGroup);
+  QVBoxLayout* pFeaturesLay  = new QVBoxLayout(pFeaturesGroup);
   QVBoxLayout* pSkinningLay  = new QVBoxLayout(pSkinningGroup);
   //
   pUtilitiesLay->addWidget(m_widgets.pDMU);
   pUtilitiesLay->addWidget(m_widgets.pMeshEdit);
   pUtilitiesLay->addWidget(m_widgets.pAnalysis);
   pUtilitiesLay->addWidget(m_widgets.pCAFBrowser);
+  //
+  pFeaturesLay->addWidget(m_widgets.pFeatures);
   //
   pSkinningLay->addWidget(m_widgets.pSkinning);
   pSkinningLay->addWidget(m_widgets.pUBend);
@@ -91,6 +101,7 @@ void gui_welcome_window::createControls()
   QVBoxLayout* pMainLayout = new QVBoxLayout();
   //
   pMainLayout->addWidget(pUtilitiesGroup);
+  pMainLayout->addWidget(pFeaturesGroup);
   pMainLayout->addWidget(pSkinningGroup);
   //
   pMainLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
@@ -105,10 +116,12 @@ void gui_welcome_window::createControls()
   m_widgets.pMainPane->setLayout(pMainLayout);
 
   // Connect signals to slots
-  connect( m_widgets.pDMU,        SIGNAL( clicked() ), SLOT( onDMU        () ) );
-  connect( m_widgets.pMeshEdit,   SIGNAL( clicked() ), SLOT( onMeshEdit   () ) );
-  connect( m_widgets.pAnalysis,   SIGNAL( clicked() ), SLOT( onAnalysis   () ) );
-  connect( m_widgets.pCAFBrowser, SIGNAL( clicked() ), SLOT( onCAFBrowser () ) );
+  connect( m_widgets.pDMU,             SIGNAL( clicked() ), SLOT( onDMU             () ) );
+  connect( m_widgets.pMeshEdit,        SIGNAL( clicked() ), SLOT( onMeshEdit        () ) );
+  connect( m_widgets.pAnalysis,        SIGNAL( clicked() ), SLOT( onAnalysis        () ) );
+  connect( m_widgets.pCAFBrowser,      SIGNAL( clicked() ), SLOT( onCAFBrowser      () ) );
+  //
+  connect( m_widgets.pFeatures,        SIGNAL( clicked() ), SLOT( onFeatures        () ) );
   //
   connect( m_widgets.pSkinning,        SIGNAL( clicked() ), SLOT( onSkinning        () ) );
   connect( m_widgets.pUBend,           SIGNAL( clicked() ), SLOT( onUBend           () ) );
@@ -182,6 +195,17 @@ void gui_welcome_window::onCAFBrowser()
 
   //
   DFBrowser::Factory(aDoc);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction to clicking "Features" button.
+void gui_welcome_window::onFeatures()
+{
+  this->hide();
+  //
+  gui_main_window_features* pMainWindow = new gui_main_window_features();
+  pMainWindow->show();
 }
 
 //-----------------------------------------------------------------------------

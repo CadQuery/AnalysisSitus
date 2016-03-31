@@ -71,6 +71,10 @@ void visu_pick_callback::Execute(vtkObject*    vtkNotUsed(theCaller),
   {
     this->executePart(theEventId, theCallData);
   }
+  else if ( mgr == common_facilities::Instance()->Prs.Domain )
+  {
+    this->executeDomain(theEventId, theCallData);
+  }
   else if ( mgr == common_facilities::Instance()->Prs.Section )
   {
     this->executeSection(theEventId, theCallData);
@@ -116,6 +120,35 @@ void visu_pick_callback::executePart(unsigned long theEventId,
                                             selMode & SelectionMode_Vertex) )
     emit partPicked();
 }
+
+//-----------------------------------------------------------------------------
+
+//! Answers to a picking event for Domain view.
+//! \param theEventId  [in] ID of the event triggered this listener.
+//! \param theCallData [in] invocation context.
+void visu_pick_callback::executeDomain(unsigned long theEventId,
+                                       void*         theCallData)
+{
+  // Check if the calling context is valid
+  if ( theEventId != EVENT_PICK_DEFAULT && theEventId != EVENT_DETECT_DEFAULT )
+    return;
+  //
+  if ( !this->Viewer() || !common_facilities::Instance()->Prs.Domain )
+    return;
+
+  // Now pick
+  visu_pick_input* pickInput = reinterpret_cast<visu_pick_input*>(theCallData);
+  //
+  const visu_selection_nature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
+                                                                            : SelectionNature_Detection;
+  common_facilities::Instance()->Prs.Domain->Pick(pickInput, sel_type);
+
+  // Notify listeners
+  if ( theEventId == EVENT_PICK_DEFAULT )
+    emit domainPicked();
+}
+
+//-----------------------------------------------------------------------------
 
 //! Answers to a picking event for Section view.
 //! \param theEventId  [in] ID of the event triggered this listener.

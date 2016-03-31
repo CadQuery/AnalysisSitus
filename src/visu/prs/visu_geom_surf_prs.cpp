@@ -71,7 +71,7 @@ void visu_geom_surf_prs::afterInitPipelines()
     DP = Handle(visu_face_data_provider)::DownCast( this->dataProvider(Pipeline_Main) );
 
   // Get working face and its host surface
-  const int            F_idx = DP->GetFaceIndex();
+  const int            F_idx = DP->GetFaceIndexAmongFaces();
   TopoDS_Face          F     = DP->ExtractFace();
   Handle(Geom_Surface) S     = F.IsNull() ? NULL : BRep_Tool::Surface(F);
 

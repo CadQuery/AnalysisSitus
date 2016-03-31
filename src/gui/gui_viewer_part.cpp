@@ -46,13 +46,11 @@ gui_viewer_part::gui_viewer_part(QWidget* parent) : gui_viewer(parent)
   m_prs_mgr->SetSelectionMode(SelectionMode_Face);
 
   // Widgets and layouts
-  gui_controls_part* pControlPane = new gui_controls_part(this);
-  QVTKWidget*        pViewer      = m_prs_mgr->GetQVTKWidget();
-  QHBoxLayout*       pBaseLayout  = new QHBoxLayout();
+  QVTKWidget*  pViewer      = m_prs_mgr->GetQVTKWidget();
+  QHBoxLayout* pBaseLayout  = new QHBoxLayout();
 
   // Configure layout
   pBaseLayout->setSpacing(0);
-  pBaseLayout->addWidget(pControlPane);
   pBaseLayout->addWidget(pViewer);
   pBaseLayout->setAlignment(Qt::AlignTop);
   pBaseLayout->setContentsMargins(0, 0, 0, 0);

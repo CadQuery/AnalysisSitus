@@ -21,6 +21,7 @@
 #include <geom_utils.h>
 
 // Common includes
+#include <common_draw_test_suite.h>
 #include <common_facilities.h>
 
 // OCCT includes
@@ -81,12 +82,20 @@ gui_controls_hull::gui_controls_hull(QWidget* parent) : QWidget(parent)
   //
   connect( m_widgets.pSaveSTEP, SIGNAL( clicked() ), this, SLOT( onSaveSTEP() ) );
 
+  // Show Gauss curvature field
+  m_widgets.pGaussCurvature = new QPushButton("Gauss curvature");
+  m_widgets.pGaussCurvature->setMinimumWidth(CONTROL_BTN_WIDTH);
+  //
+  connect( m_widgets.pGaussCurvature, SIGNAL( clicked() ), this, SLOT( onGaussCurvature() ) );
+
   // Set layout
   m_pMainLayout->addWidget(m_widgets.pLoadPoints);
   m_pMainLayout->addWidget(m_widgets.pInterpSections);
   m_pMainLayout->addWidget(m_widgets.pInterpColumns);
   m_pMainLayout->addWidget(m_widgets.pSkinSurface);
   m_pMainLayout->addWidget(m_widgets.pSaveSTEP);
+  m_pMainLayout->addWidget(m_widgets.pGaussCurvature);
+  //
   m_pMainLayout->setAlignment(Qt::AlignTop);
   //
   this->setLayout(m_pMainLayout);
@@ -201,6 +210,9 @@ void gui_controls_hull::onInterpSections()
   // Choose degree
   const int p = 4;
 
+  TIMER_NEW
+  TIMER_GO
+
   // Interpolate sections one by one
   for ( size_t section_idx = 0; section_idx < sections.size(); ++section_idx )
   {
@@ -209,7 +221,7 @@ void gui_controls_hull::onInterpSections()
     // Interpolate points
     Handle(Geom_BSplineCurve) uIso;
     //
-    if ( !geom_utils::InterpolatePoints(section, p, uIso) )
+    if ( !geom_utils::InterpolatePoints(section, p, uIso) || uIso.IsNull() )
     {
       std::cout << "Error: interpolation failed" << std::endl;
       return;
@@ -220,6 +232,9 @@ void gui_controls_hull::onInterpSections()
     //
     BRep_Builder().Add(result, E);
   }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("Interpolation of sections")
 
   /* ==============
    *  Finalization
@@ -259,6 +274,12 @@ void gui_controls_hull::onInterpColumns()
   //
   for ( TopoDS_Iterator it(partShape); it.More(); it.Next() )
   {
+    if ( it.Value().ShapeType() != TopAbs_EDGE )
+    {
+      std::cout << "Error: unexpected nested type" << std::endl;
+      return;
+    }
+    
     const TopoDS_Edge& E = TopoDS::Edge( it.Value() );
     //
     double f, l;
@@ -285,6 +306,9 @@ void gui_controls_hull::onInterpColumns()
   const int nColumns = sections[0]->NbPoles();
   const int m        = nColumns - 1;
 
+  TIMER_NEW
+  TIMER_GO
+
   // Loop over the columns and interpolate each one
   for ( int col = 0; col <= m; ++col )
   {
@@ -297,7 +321,7 @@ void gui_controls_hull::onInterpColumns()
     // Interpolate columns
     Handle(Geom_BSplineCurve) vIso;
     //
-    if ( !geom_utils::InterpolatePoints(columnPoles, q, vIso) )
+    if ( !geom_utils::InterpolatePoints(columnPoles, q, vIso) || vIso.IsNull() )
     {
       std::cout << "Error: interpolation failed" << std::endl;
       return;
@@ -308,6 +332,9 @@ void gui_controls_hull::onInterpColumns()
     //
     BRep_Builder().Add(result, E);
   }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("Interpolation of columns")
 
   // Add columns shape next to rows
   TopoDS_Compound fullComp;
@@ -359,6 +386,12 @@ void gui_controls_hull::onSkinSurface()
   //
   for ( TopoDS_Iterator it(rowsComp); it.More(); it.Next() )
   {
+    if ( it.Value().ShapeType() != TopAbs_EDGE )
+    {
+      std::cout << "Error: unexpected nested type" << std::endl;
+      return;
+    }
+
     const TopoDS_Edge& E = TopoDS::Edge( it.Value() );
     //
     double f, l;
@@ -370,6 +403,12 @@ void gui_controls_hull::onSkinSurface()
   //
   for ( TopoDS_Iterator it(colsComp); it.More(); it.Next() )
   {
+    if ( it.Value().ShapeType() != TopAbs_EDGE )
+    {
+      std::cout << "Error: unexpected nested type" << std::endl;
+      return;
+    }
+
     const TopoDS_Edge& E = TopoDS::Edge( it.Value() );
     //
     double f, l;
@@ -444,4 +483,10 @@ void gui_controls_hull::onSaveSTEP()
     std::cout << "Error: cannot save geometry to STEP file" << std::endl;
     return;
   }
+}
+
+//! Shows Gauss curvature field.
+void gui_controls_hull::onGaussCurvature()
+{
+  // TODO
 }

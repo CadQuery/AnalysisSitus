@@ -246,6 +246,9 @@ public:
   vtkSmartPointer<vtkPropCollection>
     PropsByTrihedron() const;
 
+  vtkSmartPointer<vtkCellPicker>
+    GetCellPicker() const;
+
 public:
 
   inline void SetInteractionMode(const InteractionMode mode)

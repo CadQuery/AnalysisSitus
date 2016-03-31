@@ -16,15 +16,28 @@
     <ClInclude Include="..\..\src\calculus\calculus_design_law_node.h" />
     <ClInclude Include="..\..\src\calculus\calculus_func_univariate.h" />
     <ClInclude Include="..\..\src\common\common_cad_properties.h" />
+    <ClInclude Include="..\..\src\common\common_draw_test_suite.h" />
+    <ClInclude Include="..\..\src\engine\engine_domain.h" />
     <ClInclude Include="..\..\src\engine\engine_mesh.h" />
+    <ClInclude Include="..\..\src\engine\engine_part.h" />
     <ClInclude Include="..\..\src\engine\engine_ubend.h" />
     <ClInclude Include="..\..\src\geom\features\geom_aag.h" />
     <ClInclude Include="..\..\src\geom\features\geom_aag_iterator.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_aag_vtk.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_delete_edges.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_detach_faces.h" />
     <ClInclude Include="..\..\src\geom\features\geom_detect_holes.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_detect_slots.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_feature_angle_attr.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_feature_attribute.h" />
     <ClInclude Include="..\..\src\geom\features\geom_feature_pattern.h" />
     <ClInclude Include="..\..\src\geom\features\geom_feature_pattern_chole.h" />
     <ClInclude Include="..\..\src\geom\features\geom_feature_pattern_phole.h" />
-    <ClInclude Include="..\..\src\geom\features\geom_remove_holes.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_feature_pattern_slot.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_delete_faces.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_join_edges.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_rehost_faces.h" />
+    <ClInclude Include="..\..\src\geom\geom_boundary_edges_node.h" />
     <ClInclude Include="..\..\src\geom\geom_face_node.h" />
     <ClInclude Include="..\..\src\geom\geom_IGES.h" />
     <ClInclude Include="..\..\src\geom\geom_point_cloud.h" />
@@ -136,6 +149,26 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_features.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_features.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\gui\gui_occt_window.h" />
     <CustomBuild Include="..\..\src\gui\gui_viewer_dmu.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
@@ -157,6 +190,17 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <ClInclude Include="..\..\src\journaling\journal_logger.h" />
+    <CustomBuild Include="..\..\src\journaling\journal_notifier.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\mesh\mesh_gen.h" />
     <ClInclude Include="..\..\src\mesh\mesh_info.h" />
     <ClInclude Include="..\..\src\mesh\mesh_obj.h" />
@@ -165,12 +209,25 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\visu\data_providers\visu_curve_data_provider.h" />
     <ClInclude Include="..\..\src\visu\data_providers\visu_law_data_provider.h" />
     <ClInclude Include="..\..\src\visu\data_providers\visu_ubend_law_data_provider.h" />
+    <CustomBuild Include="..\..\src\visu\interaction\visu_pdomain_callback.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\visu\pipelines\visu_curve_pipeline.h" />
     <ClInclude Include="..\..\src\visu\pipelines\visu_law_pipeline.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_calculus_law_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_boundary_edges_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_ubend_law_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_xde_prs.h" />
     <ClInclude Include="..\..\src\visu\sources\visu_law_source.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_pdomain_source.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_surface_source.h" />
     <ClInclude Include="..\..\src\visu\visu_shape_mesher.h" />
     <CustomBuild Include="..\..\src\visu\visu_topo_graph_item.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
@@ -183,6 +240,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
     <ClInclude Include="..\..\src\xde\xde_IGES.h" />
+    <ClInclude Include="..\..\src\xde\xde_shape_id.h" />
     <ClInclude Include="..\..\src\xde\xde_STEP.h" />
     <CustomBuild Include="..\..\src\gui\gui_object_browser_xde.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
@@ -531,15 +589,25 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\common\common_model.cpp" />
     <ClCompile Include="..\..\src\common\common_partition.cpp" />
     <ClCompile Include="..\..\src\common\common_root_node.cpp" />
+    <ClCompile Include="..\..\src\engine\engine_domain.cpp" />
     <ClCompile Include="..\..\src\engine\engine_mesh.cpp" />
+    <ClCompile Include="..\..\src\engine\engine_part.cpp" />
     <ClCompile Include="..\..\src\engine\engine_ubend.cpp" />
     <ClCompile Include="..\..\src\geom\features\geom_aag.cpp" />
     <ClCompile Include="..\..\src\geom\features\geom_aag_iterator.cpp" />
+    <ClCompile Include="..\..\src\geom\features\geom_aag_vtk.cpp" />
+    <ClCompile Include="..\..\src\geom\features\geom_delete_edges.cpp" />
+    <ClCompile Include="..\..\src\geom\features\geom_detach_faces.cpp" />
     <ClCompile Include="..\..\src\geom\features\geom_detect_holes.cpp" />
+    <ClCompile Include="..\..\src\geom\features\geom_detect_slots.cpp" />
     <ClCompile Include="..\..\src\geom\features\geom_feature_pattern.cpp" />
     <ClCompile Include="..\..\src\geom\features\geom_feature_pattern_chole.cpp" />
     <ClCompile Include="..\..\src\geom\features\geom_feature_pattern_phole.cpp" />
-    <ClCompile Include="..\..\src\geom\features\geom_remove_holes.cpp" />
+    <ClCompile Include="..\..\src\geom\features\geom_feature_pattern_slot.cpp" />
+    <ClCompile Include="..\..\src\geom\features\geom_delete_faces.cpp" />
+    <ClCompile Include="..\..\src\geom\features\geom_join_edges.cpp" />
+    <ClCompile Include="..\..\src\geom\features\geom_rehost_faces.cpp" />
+    <ClCompile Include="..\..\src\geom\geom_boundary_edges_node.cpp" />
     <ClCompile Include="..\..\src\geom\geom_face_node.cpp" />
     <ClCompile Include="..\..\src\geom\geom_IGES.cpp" />
     <ClCompile Include="..\..\src\geom\geom_part_node.cpp" />
@@ -567,6 +635,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\gui\gui_common.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_dmu.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_dmu_visu.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_features.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_hull.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_mesh.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_section.cpp" />
@@ -578,6 +647,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\gui\gui_line_edit.cpp" />
     <ClCompile Include="..\..\src\gui\gui_main_window_asitus.cpp" />
     <ClCompile Include="..\..\src\gui\gui_main_window_dmu.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_features.cpp" />
     <ClCompile Include="..\..\src\gui\gui_main_window_hull.cpp" />
     <ClCompile Include="..\..\src\gui\gui_main_window_meshedit.cpp" />
     <ClCompile Include="..\..\src\gui\gui_main_window_skinning.cpp" />
@@ -602,6 +672,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\gui\gui_viewer_dmu.cpp" />
     <ClCompile Include="..\..\src\gui\gui_vtk_window.cpp" />
     <ClCompile Include="..\..\src\gui\gui_welcome_window.cpp" />
+    <ClCompile Include="..\..\src\journaling\journal_logger.cpp" />
+    <ClCompile Include="..\..\src\journaling\journal_notifier.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\mesh\mesh_convert.cpp" />
     <ClCompile Include="..\..\src\mesh\mesh_gen.cpp" />
@@ -610,9 +682,11 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\mesh\mesh_obj.cpp" />
     <ClCompile Include="..\..\src\mesh\mesh_params.cpp" />
     <ClCompile Include="..\..\src\mesh\mesh_ply.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_journal_notifier.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_dmu.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_dmu_visu.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_part.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_features.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_section.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_skinning.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_mesh.cpp" />
@@ -631,12 +705,14 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_mesh.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_ubend.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_visu_pick_callback.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_visu_pdomain_callback.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_visu_topo_graph.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_visu_topo_graph_item.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_object_browser.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_object_browser_xde.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_welcome_window.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_asitus.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_features.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_dmu.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_skinning.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_meshedit.cpp" />
@@ -665,6 +741,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\filters\visu_shrink_poly_filter.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_interactor_style_pick.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_interactor_style_pick_2d.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_pdomain_callback.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_pick_callback.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_rotation_callback.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_viewer_callback.cpp" />
@@ -684,6 +761,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\pipelines\visu_section_pipeline.cpp" />
     <ClCompile Include="..\..\src\visu\pipelines\visu_shape_pipeline.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_calculus_law_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_boundary_edges_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_geom_face_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_geom_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_geom_surf_prs.cpp" />
@@ -700,7 +778,9 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\sources\visu_law_source.cpp" />
     <ClCompile Include="..\..\src\visu\sources\visu_mesh_source.cpp" />
     <ClCompile Include="..\..\src\visu\sources\visu_pcurve_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_pdomain_source.cpp" />
     <ClCompile Include="..\..\src\visu\sources\visu_shape_data_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_surface_source.cpp" />
     <ClCompile Include="..\..\src\visu\visu_mesh_result_utils.cpp" />
     <ClCompile Include="..\..\src\visu\visu_mesh_utils.cpp" />
     <ClCompile Include="..\..\src\visu\visu_node_info.cpp" />
@@ -760,7 +840,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile>
       <AdditionalOptions>/DWNT %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(QR_INC);$(EIGEN_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\calculus;$(AS_ROOT)\src\engine;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\ubend;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\geom\features;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\ais;$(AS_ROOT)\src\visu\data_providers;$(AS_ROOT)\src\visu\filters;$(AS_ROOT)\src\visu\interaction;$(AS_ROOT)\src\visu\pipelines;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\visu\sources;$(AS_ROOT)\src\gui;$(AS_ROOT)\src\gui\caf_browser;$(AS_ROOT)\src\xde;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(QR_INC);$(EIGEN_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\journaling;$(AS_ROOT)\src\calculus;$(AS_ROOT)\src\engine;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\ubend;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\geom\features;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\ais;$(AS_ROOT)\src\visu\data_providers;$(AS_ROOT)\src\visu\filters;$(AS_ROOT)\src\visu\interaction;$(AS_ROOT)\src\visu\pipelines;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\visu\sources;$(AS_ROOT)\src\gui;$(AS_ROOT)\src\gui\caf_browser;$(AS_ROOT)\src\xde;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ASitus_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -788,7 +868,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <AdditionalOptions>/DWNT %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(QR_INC);$(EIGEN_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\calculus;$(AS_ROOT)\src\engine;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\ubend;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\geom\features;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\ais;$(AS_ROOT)\src\visu\data_providers;$(AS_ROOT)\src\visu\filters;$(AS_ROOT)\src\visu\interaction;$(AS_ROOT)\src\visu\pipelines;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\visu\sources;$(AS_ROOT)\src\gui;$(AS_ROOT)\src\gui\caf_browser;$(AS_ROOT)\src\xde;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(QR_INC);$(EIGEN_INC);$(VTK_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\journaling;$(AS_ROOT)\src\calculus;$(AS_ROOT)\src\engine;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\ubend;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\geom\features;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\ais;$(AS_ROOT)\src\visu\data_providers;$(AS_ROOT)\src\visu\filters;$(AS_ROOT)\src\visu\interaction;$(AS_ROOT)\src\visu\pipelines;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\visu\sources;$(AS_ROOT)\src\gui;$(AS_ROOT)\src\gui\caf_browser;$(AS_ROOT)\src\xde;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ASitus_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>

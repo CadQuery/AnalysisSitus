@@ -14,6 +14,9 @@
 // A-Situs (XDE) includes
 #include <xde_model.h>
 
+// A-Situs (journaling) includes
+#include <journal_notifier.h>
+
 // A-Situs (GUI) includes
 #include <gui_object_browser.h>
 #include <gui_object_browser_xde.h>
@@ -39,14 +42,16 @@ public:
 
 public:
 
-  Handle(common_model)    Model;             //!< Active Data Model instance.
-  Handle(xde_model)       Model_XDE;         //!< XDE Data Model instance.
+  Handle(common_model)             Model;             //!< Active Data Model instance.
+  Handle(xde_model)                Model_XDE;         //!< XDE Data Model instance.
   //
-  gui_object_browser*     ObjectBrowser;     //!< Object Browser.
-  gui_object_browser_xde* ObjectBrowser_XDE; //!< Object Browser for XDE.
-  Handle(ActAPI_INode)    CurrentNode;       //!< Currently selected Node.
+  gui_object_browser*              ObjectBrowser;     //!< Object Browser.
+  gui_object_browser_xde*          ObjectBrowser_XDE; //!< Object Browser for XDE.
+  Handle(ActAPI_INode)             CurrentNode;       //!< Currently selected Node.
   //
-  gui_viewer_dmu*         ViewerDMU;         //!< OpenCascade-driven viewer for dMU.
+  gui_viewer_dmu*                  ViewerDMU;         //!< OpenCascade-driven viewer for dMU.
+  //
+  Handle(ActAPI_IProgressNotifier) Notifier;          //!< Algorithmic notifier.
 
   //! Visualization facilities.
   struct t_prs
@@ -81,16 +86,16 @@ public:
       if ( UBend_XY ) UBend_XY ->Actualize(common_facilities::Instance()->Model->GetRootNode(), true);
     }
 
-    inline void DeRenderAll()
+    inline void DeleteAll()
     {
-      if ( Part )    Part    ->DeRenderAllPresentations();
-      if ( Domain )  Domain  ->DeRenderAllPresentations();
-      if ( Surface ) Surface ->DeRenderAllPresentations();
+      if ( Part )    Part    ->DeleteAllPresentations();
+      if ( Domain )  Domain  ->DeleteAllPresentations();
+      if ( Surface ) Surface ->DeleteAllPresentations();
       //
-      if ( Skinner ) Skinner ->DeRenderAllPresentations();
-      if ( Section ) Section ->DeRenderAllPresentations();
+      if ( Skinner ) Skinner ->DeleteAllPresentations();
+      if ( Section ) Section ->DeleteAllPresentations();
       //
-      if ( UBend )   UBend   ->DeRenderAllPresentations();
+      if ( UBend )   UBend   ->DeleteAllPresentations();
     }
   } Prs;
 
@@ -108,10 +113,13 @@ public:
 private:
 
   inline common_facilities()
+  //
     : ObjectBrowser     (NULL),
       ObjectBrowser_XDE (NULL),
       ViewerDMU         (NULL)
-  {} //!< Not available for client code.
+  {
+    Notifier = new journal_notifier;
+  }
 
 private:
 

@@ -45,6 +45,9 @@ public:
   virtual void
     OnLeftButtonDown();
 
+  virtual void
+    OnKeyPress();
+
 private:
 
   //! Copying prohibited.

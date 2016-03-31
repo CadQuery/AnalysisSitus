@@ -57,8 +57,8 @@ void gui_main_window_asitus::createPartViewer()
   // Desktop used for sizing
   QDesktopWidget desktop;
   const int side   = std::min( desktop.height(), desktop.width() );
-  const int width  = side*0.8;
-  const int height = side*0.7;
+  const int width  = side*0.5;
+  const int height = side*0.5;
   //
   m_widgets.wViewerPart->setMinimumSize(width, height);
 }
@@ -71,6 +71,28 @@ void gui_main_window_asitus::createDockWindows()
   const int side  = std::min( desktop.height(), desktop.width() );
   const int width = side*0.4;
 
+  //---------------------------------------------------------------------------
+  // Part controls
+  {
+    QDockWidget* pDock = new QDockWidget("Utilities", this);
+    pDock->setAllowedAreas(Qt::LeftDockWidgetArea);
+    //
+    m_widgets.wControlsPart = new gui_controls_part(pDock);
+    pDock->setWidget(m_widgets.wControlsPart);
+    //
+    this->addDockWidget(Qt::LeftDockWidgetArea, pDock);
+  }
+  //---------------------------------------------------------------------------
+  // Object browser
+  {
+    QDockWidget* pDock = new QDockWidget("Stored Objects", this);
+    pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    //
+    m_widgets.wBrowser = new gui_object_browser(pDock);
+    pDock->setWidget(m_widgets.wBrowser);
+    //
+    this->addDockWidget(Qt::LeftDockWidgetArea, pDock);
+  }
   //---------------------------------------------------------------------------
   // Face Domain viewer
   {
@@ -94,16 +116,5 @@ void gui_main_window_asitus::createDockWindows()
     pDock->setMinimumWidth(width);
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDock);
-  }
-  //---------------------------------------------------------------------------
-  // Object browser
-  {
-    QDockWidget* pDock = new QDockWidget("Stored Objects", this);
-    pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    //
-    m_widgets.wBrowser = new gui_object_browser(pDock);
-    pDock->setWidget(m_widgets.wBrowser);
-    //
-    this->addDockWidget(Qt::LeftDockWidgetArea, pDock);
   }
 }

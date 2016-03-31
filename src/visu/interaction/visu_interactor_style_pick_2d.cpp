@@ -101,3 +101,13 @@ void visu_interactor_style_pick_2d::OnLeftButtonDown()
   // Invoke observers
   this->InvokeEvent(EVENT_PICK_DEFAULT, m_pPickInput);
 }
+
+//! Callback for "Key Press" event.
+void visu_interactor_style_pick_2d::OnKeyPress()
+{
+  std::string key = this->Interactor->GetKeySym();
+  if ( key == "Delete" )
+    this->InvokeEvent(EVENT_DELETE);
+  if ( key == "j" )
+    this->InvokeEvent(EVENT_JOIN);
+}

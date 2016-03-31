@@ -53,18 +53,24 @@ public:
 
 public:
 
-  void Render              (const TopoDS_Shape& shape, const TopTools_ListOfShape& selectedFaces, const Regime regime, const TopAbs_ShapeEnum leafType);
+  void Render              (const vtkSmartPointer<vtkGraph>& graph, const TopoDS_Shape& shape, const Regime regime);
+  void Render              (const TopoDS_Shape& shape, const TopTools_IndexedMapOfShape& selectedFaces, const Regime regime, const TopAbs_ShapeEnum leafType);
   void RenderFull          (const TopoDS_Shape& shape, const TopAbs_ShapeEnum leafType);
-  void RenderAdjacency     (const TopoDS_Shape& shape, const TopTools_ListOfShape& selectedFaces);
+  void RenderAdjacency     (const TopoDS_Shape& shape, const TopTools_IndexedMapOfShape& selectedFaces);
   void RenderEventCallback ();
+
+public:
+
+  //! Allows to initialize presentable graph with externally constructed AAG.
+  inline void SetAAG(const Handle(geom_aag)& aag) { m_aag = aag; }
 
 protected:
 
   vtkSmartPointer<vtkGraph>
-    convertToGraph(const TopoDS_Shape&         shape,
-                   const TopTools_ListOfShape& selectedFaces,
-                   const Regime                regime,
-                   const TopAbs_ShapeEnum      leafType);
+    convertToGraph(const TopoDS_Shape&               shape,
+                   const TopTools_IndexedMapOfShape& selectedFaces,
+                   const Regime                      regime,
+                   const TopAbs_ShapeEnum            leafType);
 
   void buildRecursively(const TopoDS_Shape&             rootShape,
                         const vtkIdType                 rootId,
@@ -77,7 +83,7 @@ protected:
 protected slots:
 
   void onViewerClosed();
-  void onVertexPicked(const vtkIdType);
+  void onVertexPicked(const int, const vtkIdType);
 
 protected:
 

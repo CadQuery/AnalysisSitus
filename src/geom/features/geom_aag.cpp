@@ -8,10 +8,8 @@
 // Own include
 #include <geom_aag.h>
 
-// Visualization includes
-#include <visu_topo_graph_item.h>
-
 // Geometry includes
+#include <geom_feature_angle_attr.h>
 #include <geom_utils.h>
 
 // OCCT includes
@@ -21,92 +19,28 @@
 #include <TopoDS.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
-// VTK includes
-#include <vtkNew.h>
-#include <vtkStringArray.h>
-
 // Qr includes
 #include <QrCore_Types.h>
 
 //! Initializes AAG from the given master model and selected faces.
 //! \param masterCAD     [in] master model (full CAD).
 //! \param selectedFaces [in] selected faces.
-geom_aag::geom_aag(const TopoDS_Shape&         masterCAD,
-                   const TopTools_ListOfShape& selectedFaces)
+geom_aag::geom_aag(const TopoDS_Shape&               masterCAD,
+                   const TopTools_IndexedMapOfShape& selectedFaces)
 {
-  this->init( masterCAD, selectedFaces );
+  this->init(masterCAD, selectedFaces);
 }
 
 //! Constructor accepting master CAD only.
 //! \param masterCAD [in] master CAD.
 geom_aag::geom_aag(const TopoDS_Shape& masterCAD)
 {
-  this->init( masterCAD, TopTools_ListOfShape() );
+  this->init( masterCAD, TopTools_IndexedMapOfShape() );
 }
 
 //! Destructor.
 geom_aag::~geom_aag()
 {}
-
-//! Converts AAG to VTK presentable form.
-//! \return VTK graph.
-vtkSmartPointer<vtkMutableUndirectedGraph> geom_aag::ToVTK() const
-{
-  vtkSmartPointer<vtkMutableUndirectedGraph>
-    result = vtkSmartPointer<vtkMutableUndirectedGraph>::New();
-
-  // Array for vertex groups
-  vtkNew<vtkStringArray> groupArr;
-  groupArr->SetNumberOfComponents(1);
-  groupArr->SetName(ARRNAME_GROUP);
-
-  // Array for vertex labels
-  vtkNew<vtkStringArray> labelArr;
-  labelArr->SetNumberOfComponents(1);
-  labelArr->SetName(ARRNAME_LABELS);
-
-  // Add vertices for faces
-  NCollection_DataMap<int, vtkIdType> FaceVertexMap;
-  for ( int f = 1; f <= m_faces.Extent(); ++f )
-  {
-    const vtkIdType vertex_id = result->AddVertex();
-    FaceVertexMap.Bind(f, vertex_id);
-
-    // Fill property arrays
-    labelArr->InsertNextValue( (geom_utils::FaceGeometryName( TopoDS::Face( m_faces(f) ) ) + ":" + QrCore::to_string<int>(f) ).c_str() );
-    //
-    if ( m_selected.Contains(f) )
-      groupArr->InsertNextValue(ARRNAME_GROUP_ADJACENT);
-    else
-      groupArr->InsertNextValue(ARRNAME_GROUP_ORDINARY);
-  }
-
-  // Set property arrays
-  result->GetVertexData()->AddArray( labelArr.GetPointer() );
-  result->GetVertexData()->AddArray( groupArr.GetPointer() );
-
-  // Add links for adjacency relations
-  for ( NCollection_DataMap<int, TColStd_PackedMapOfInteger>::Iterator it(m_neighbors); it.More(); it.Next() )
-  {
-    const int       f_idx = it.Key();
-    const vtkIdType v_idx = FaceVertexMap(f_idx);
-
-    // Get face neighbors
-    const TColStd_PackedMapOfInteger& neighbors = it.Value();
-
-    // Add links for each neighbor
-    for ( TColStd_MapIteratorOfPackedMapOfInteger mit(neighbors); mit.More(); mit.Next() )
-    {
-      const int       neighbor_f_idx = mit.Key();
-      const vtkIdType neighbor_v_idx = FaceVertexMap(neighbor_f_idx);
-
-      // Add link
-      result->AddEdge(v_idx, neighbor_v_idx);
-    }
-  }
-
-  return result;
-}
 
 //! Returns topological face by its internal index (e.g. coming from iterator).
 //! \param face_idx [in] face index.
@@ -114,6 +48,14 @@ vtkSmartPointer<vtkMutableUndirectedGraph> geom_aag::ToVTK() const
 const TopoDS_Face& geom_aag::GetFace(const int face_idx) const
 {
   return TopoDS::Face( m_faces.FindKey(face_idx) );
+}
+
+//! Returns face ID.
+//! \param face [in] face of interest.
+//! \return face ID.
+int geom_aag::GetFaceId(const TopoDS_Shape& face) const
+{
+  return m_faces.FindIndex(face);
 }
 
 //! Returns neighbors for the face having the given its internal index.
@@ -124,13 +66,128 @@ const TColStd_PackedMapOfInteger& geom_aag::GetNeighbors(const int face_idx) con
   return m_neighbors.Find(face_idx);
 }
 
+//! Returns full collection of neighbor faces.
+//! \return neighborhood data.
+const geom_aag::t_adjacency& geom_aag::GetNeighborhood() const
+{
+  return m_neighbors;
+}
+
+//! Returns all selected faces.
+//! \return indices of the selected faces.
+const TColStd_PackedMapOfInteger& geom_aag::GetSelectedFaces() const
+{
+  return m_selected;
+}
+
+//! Returns all faces of AAG.
+//! \return all AAG faces.
+const TopTools_IndexedMapOfShape& geom_aag::GetFaces() const
+{
+  return m_faces;
+}
+
+//! \return attributes associated with graph arcs.
+const geom_aag::t_attributes& geom_aag::GetAttributes() const
+{
+  return m_attributes;
+}
+
+//! \return attribute associated with the given arc.
+const Handle(geom_feature_attribute)& geom_aag::GetAttribute(const t_arc& arc) const
+{
+  return m_attributes.Find(arc);
+}
+
+//! Searches for those faces having ALL neighbors attributed with convex link.
+//! \param resultFaces [out] found faces (if any).
+//! \return true if anything has been found, false -- otherwise.
+bool geom_aag::FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const
+{
+  TColStd_PackedMapOfInteger traversed;
+  for ( t_adjacency::Iterator it(m_neighbors); it.More(); it.Next() )
+  {
+    const int                         current_face_idx       = it.Key();
+    const TColStd_PackedMapOfInteger& current_face_neighbors = it.Value();
+
+    // Mark face as traversed
+    if ( !traversed.Contains(current_face_idx) )
+      traversed.Add(current_face_idx);
+    else
+      continue;
+
+    // Loop over the neighbors
+    bool isAllConvex = true;
+    for ( TColStd_MapIteratorOfPackedMapOfInteger nit(current_face_neighbors); nit.More(); nit.Next() )
+    {
+      const int neighbor_face_idx = nit.Key();
+
+      // Get angle attribute
+      Handle(geom_feature_angle_attr)
+        attr = Handle(geom_feature_angle_attr)::DownCast( this->GetAttribute( t_arc(current_face_idx, neighbor_face_idx) ) );
+
+      if ( attr->GetAngle() != Angle_Convex )
+      {
+        isAllConvex = false;
+
+        // Mark face as traversed as we don't want to check concave neighbors
+        traversed.Add(neighbor_face_idx);
+      }
+    }
+
+    if ( isAllConvex )
+      resultFaces.Add( this->GetFace(current_face_idx) );
+  }
+
+  return resultFaces.Extent() > 0;
+}
+
+//! Removes the passed faces with all corresponding arcs from AAG.
+//! \param faces [in] faces to remove.
+void geom_aag::Remove(const TopTools_IndexedMapOfShape& faces)
+{
+  // NOTICE: indexed map of shapes is not affected as we want to keep
+  //         using the original indices of faces
+
+  // Find IDs of the faces to remove
+  TColStd_PackedMapOfInteger toRemove;
+  for ( int f = 1; f <= faces.Extent(); ++f )
+  {
+    const int face_idx = this->GetFaceId( faces.FindKey(f) );
+    toRemove.Add(face_idx);
+  }
+
+  // Loop over the target faces
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(toRemove); fit.More(); fit.Next() )
+  {
+    const int face_idx = fit.Key();
+
+    // Find all neighbors
+    const TColStd_PackedMapOfInteger& neighbor_indices = m_neighbors.Find(face_idx);
+    for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbor_indices); nit.More(); nit.Next() )
+    {
+      const int neighbor_idx = nit.Key();
+
+      // Unbind arc attributes
+      m_attributes.UnBind( t_arc(face_idx, neighbor_idx) );
+
+      // Kill the faces being removed from the list of neighbors
+      if ( m_neighbors.IsBound(neighbor_idx) )
+        m_neighbors.ChangeFind(neighbor_idx).Subtract(toRemove);
+    }
+
+    // Unbind node
+    m_neighbors.UnBind(face_idx);
+  }
+}
+
 //-----------------------------------------------------------------------------
 
 //! Initializes graph tool with master CAD and selected faces.
 //! \param masterCAD     [in] master model (full CAD).
 //! \param selectedFaces [in] selected faces.
-void geom_aag::init(const TopoDS_Shape&         masterCAD,
-                    const TopTools_ListOfShape& selectedFaces)
+void geom_aag::init(const TopoDS_Shape&               masterCAD,
+                    const TopTools_IndexedMapOfShape& selectedFaces)
 {
   //---------------------------------------------------------------------------
 
@@ -158,9 +215,9 @@ void geom_aag::init(const TopoDS_Shape&         masterCAD,
   //---------------------------------------------------------------------------
 
   // Save selected faces for future filtering
-  for ( TopTools_ListIteratorOfListOfShape lit(selectedFaces); lit.More(); lit.Next() )
+  for ( int s = 1; s <= selectedFaces.Extent(); ++s )
   {
-    m_selected.Add( m_faces.FindIndex( lit.Value() ) );
+    m_selected.Add( m_faces.FindIndex( selectedFaces.FindKey(s) ) );
   }
 }
 
@@ -172,6 +229,7 @@ void geom_aag::addMates(const TopTools_ListOfShape& mateFaces)
   {
     const int                   face_idx   = m_faces.FindIndex( lit.Value() );
     TColStd_PackedMapOfInteger& face_links = m_neighbors.ChangeFind(face_idx);
+    const TopoDS_Face&          face       = TopoDS::Face( m_faces.FindKey(face_idx) );
 
     // Add all the rest faces as neighbors
     for ( TopTools_ListIteratorOfListOfShape lit2(mateFaces); lit2.More(); lit2.Next() )
@@ -181,6 +239,18 @@ void geom_aag::addMates(const TopTools_ListOfShape& mateFaces)
         continue; // Skip the same index to avoid loop arcs in the graph
 
       face_links.Add(linked_face_idx);
+
+      //-----------------------------------------------------------------------
+      // Associate attributes
+      //-----------------------------------------------------------------------
+
+      const TopoDS_Face& linked_face = TopoDS::Face( m_faces.FindKey(linked_face_idx) );
+      //
+      TopTools_IndexedMapOfShape commonEdges;
+      const geom_angle angle = geom_utils::AngleBetweenFaces(face, linked_face, commonEdges);
+
+      // Bind attribute
+      m_attributes.Bind( t_arc(face_idx, linked_face_idx), new geom_feature_angle_attr(angle) );
     }
   }
 }

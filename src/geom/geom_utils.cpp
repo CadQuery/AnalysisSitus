@@ -8,6 +8,9 @@
 // Own include
 #include <geom_utils.h>
 
+// Common includes
+#include <common_draw_test_suite.h>
+
 // OCCT includes
 #include <Bnd_Box.hxx>
 #include <BRep_Builder.hxx>
@@ -32,6 +35,7 @@
 #include <Precision.hxx>
 #include <ShapeUpgrade_UnifySameDomain.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
+#include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Iterator.hxx>
@@ -42,7 +46,8 @@
 
 //-----------------------------------------------------------------------------
 
-#define DUMP_FILES
+#undef DUMP_COUT
+#undef DUMP_FILES
 
 #define dump_filename_N  "D:\\N_interp_log_OCCT.log"
 #define dump_filename_Bx "D:\\Bx_interp_log_OCCT.log"
@@ -607,6 +612,9 @@ bool geom_utils::WriteBRep(const TopoDS_Shape&            theShape,
 void geom_utils::ShapeSummary(const TopoDS_Shape&      shape,
                               TCollection_AsciiString& info)
 {
+  if ( shape.IsNull() )
+    return;
+
   // Summary
   int nbCompsolids = 0,
       nbCompounds  = 0,
@@ -836,6 +844,7 @@ bool geom_utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
     math_Matrix N_mx(1, 1, 1, p + 1);
     BSplCLib::EvalBsplineBasis(1, 0, p + 1, flatKnots, pParams[k], firstNonZeroIdx, N_mx);
 
+#if defined DUMP_COUT
     // Dump
     std::cout << "\tFirst Non-Zero Index for " << pParams[k] << " is " << firstNonZeroIdx << std::endl;
     for ( int kk = 1; kk <= p + 1; ++kk )
@@ -843,6 +852,7 @@ bool geom_utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
       std::cout << "\t" << N_mx(1, kk);
     }
     std::cout << std::endl;
+#endif
 
     // Fill Eigen's matrix
     for ( int c = 0; c < firstNonZeroIdx - 1; ++c )
@@ -861,6 +871,7 @@ bool geom_utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
     }
   }
 
+#if defined DUMP_FILES
   // Dump Eigen matrix
   {
     std::ofstream FILE;
@@ -883,17 +894,19 @@ bool geom_utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
       FILE << "\n";
     }
   }
+#endif
 
   // Initialize vector of right hand side
-  Eigen::VectorXd eigen_b_X(dim), eigen_b_Y(dim), eigen_b_Z(dim);
+  Eigen::MatrixXd eigen_B_mx(dim, 3);
   for ( int r = 0; r < dim; ++r )
   {
-    eigen_b_X(r) = points[r].X();
-    eigen_b_Y(r) = points[r].Y();
-    eigen_b_Z(r) = points[r].Z();
+    eigen_B_mx(r, 0) = points[r].X();
+    eigen_B_mx(r, 1) = points[r].Y();
+    eigen_B_mx(r, 2) = points[r].Z();
   }
 
-  // Dump Eigen bx
+#if defined DUMP_FILES
+  // Dump Eigen B [X]
   {
     std::ofstream FILE;
     FILE.open(dump_filename_Bx, std::ios::out | std::ios::trunc);
@@ -906,20 +919,34 @@ bool geom_utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
     //
     for ( int i = 0; i < dim; ++i )
     {
-      FILE << eigen_b_X(i) << "\n";
+      FILE << eigen_B_mx(i, 0) << "\n";
     }
   }
+#endif
+
+  //---------------------------------------------------------------------------
+  // BEGIN: solve linear system
+  //---------------------------------------------------------------------------
+
+  TIMER_NEW
+  TIMER_GO
 
   // Solve
-  Eigen::VectorXd eigen_x = eigen_N_mx.colPivHouseholderQr().solve(eigen_b_X);
-  Eigen::VectorXd eigen_y = eigen_N_mx.colPivHouseholderQr().solve(eigen_b_Y);
-  Eigen::VectorXd eigen_z = eigen_N_mx.colPivHouseholderQr().solve(eigen_b_Z);
+  Eigen::ColPivHouseholderQR<Eigen::MatrixXd> QR(eigen_N_mx);
+  Eigen::MatrixXd eigen_X_mx = QR.solve(eigen_B_mx);
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("B-curve interpolation")
+
+  //---------------------------------------------------------------------------
+  // END: solve linear system
+  //---------------------------------------------------------------------------
 
   // Fill poles
   TColgp_Array1OfPnt poles(1, dim);
   for ( int i = 0; i < dim; ++i )
   {
-    gp_Pnt P( eigen_x(i), eigen_y(i), eigen_z(i) );
+    gp_Pnt P( eigen_X_mx(i, 0), eigen_X_mx(i, 1), eigen_X_mx(i, 2) );
     poles(i + 1) = P;
   }
 
@@ -936,11 +963,13 @@ bool geom_utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
   //
   knots( knots.Upper() ) = 1; mults( mults.Upper() ) = p + 1;
 
+#if defined DUMP_COUT
   // Dump knots
   for ( int k = knots.Lower(); k <= knots.Upper(); ++k )
   {
     std::cout << "knots(" << k << ") = " << knots(k) << "\t" << mults(k) << std::endl;
   }
+#endif
 
   // Create B-spline curve
   Handle(Geom_BSplineCurve) bcurve = new Geom_BSplineCurve(poles, knots, mults, p);
@@ -953,4 +982,156 @@ bool geom_utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
   delete[] pKnots;
 
   return true;
+}
+
+//! Calculates angle between two faces using midpoints to query the normal
+//! vectors. Orientation of faces is also taken into account.
+//! \param F           [in]  first face.
+//! \param G           [in]  second face.
+//! \param commonEdges [out] common edges.
+//! \return angle between faces.
+geom_angle geom_utils::AngleBetweenFaces(const TopoDS_Face&          F,
+                                         const TopoDS_Face&          G,
+                                         TopTools_IndexedMapOfShape& commonEdges)
+{
+  // Extract edges for faces
+  TopTools_IndexedMapOfShape EdgesF, EdgesG;
+  TopExp::MapShapes(F, TopAbs_EDGE, EdgesF);
+  TopExp::MapShapes(G, TopAbs_EDGE, EdgesG);
+
+  // Collect common edges
+  TopoDS_Edge commonEdge;
+  for ( int ef = 1; ef <= EdgesF.Extent(); ++ef )
+  {
+    for ( int eg = 1; eg <= EdgesG.Extent(); ++eg )
+    {
+      if ( EdgesF(ef).IsSame( EdgesG(eg) ) )
+      {
+        commonEdges.Add(EdgesF(ef));
+        //
+        if ( commonEdge.IsNull() ) // A single common edge is enough for analysis
+          commonEdge = TopoDS::Edge( EdgesF(ef) );
+      }
+    }
+  }
+
+  if ( commonEdge.IsNull() )
+    return Angle_Undefined;
+
+  // Get orientation of co-edges on their host faces. NOTICE that orientation
+  // of the face itself is excluded by forcing FORWARD orientation flag.
+  // Another interesting point is that WIRE orientations will be automatically
+  // taken into account here, so we obtain the edge's orientation in the
+  // final contour
+  TopAbs_Orientation OriOnF = TopAbs_EXTERNAL, OriOnG = TopAbs_EXTERNAL;
+  //
+  for ( TopExp_Explorer exp(F, TopAbs_EDGE); exp.More(); exp.Next() )
+    if ( exp.Current().IsSame(commonEdge) )
+      OriOnF = exp.Current().Orientation();
+  //
+  for ( TopExp_Explorer exp(G, TopAbs_EDGE); exp.More(); exp.Next() )
+    if ( exp.Current().IsSame(commonEdge) )
+      OriOnG = exp.Current().Orientation();
+
+  // Get host (shared) curve
+  double f, l;
+  Handle(Geom_Curve) probeCurve = BRep_Tool::Curve(commonEdge, f, l);
+  //
+  if ( probeCurve.IsNull() )
+    return Angle_Undefined;
+
+  // Pick up two points on the curve
+  const double midParam  = (f + l)*0.5;
+  const double paramStep = (l - f)*0.1;
+  const double A_param   = midParam - paramStep;
+  const double B_param   = midParam + paramStep;
+  //
+  gp_Pnt A = probeCurve->Value(A_param);
+  gp_Pnt B = probeCurve->Value(B_param);
+
+  // Get host surfaces
+  Handle(Geom_Surface) S1 = BRep_Tool::Surface(F),
+                       S2 = BRep_Tool::Surface(G);
+
+  gp_Vec TF, Ref; // Tangent for F
+  {
+    // Vx
+    gp_Vec Vx = B.XYZ() - A.XYZ();
+    if ( Vx.Magnitude() < RealEpsilon() )
+      return Angle_Undefined;
+    //
+    if ( OriOnF == TopAbs_REVERSED )
+      Vx.Reverse();
+
+    // Say (u, v) is the parametric space of S1
+    double uMin, uMax, vMin, vMax;
+    S1->Bounds(uMin, uMax, vMin, vMax);
+
+    // Vz
+    gp_Pnt P;
+    gp_Vec D1U, D1V;
+    S1->D1( (uMin + uMax)*0.5, (vMin + vMax)*0.5, P, D1U, D1V);
+    //
+    gp_Vec N = D1U.Crossed(D1V);
+    if ( N.Magnitude() < RealEpsilon() )
+      return Angle_Undefined;
+    //
+    if ( F.Orientation() == TopAbs_REVERSED )
+      N.Reverse();
+
+    // Vy
+    gp_Vec Vy = N.Crossed(Vx);
+    if ( Vy.Magnitude() < RealEpsilon() )
+      return Angle_Undefined;
+    //
+    TF = Vy.Normalized();
+
+    // Ref
+    Ref = Vx.Normalized();
+  }
+
+  gp_Vec TG; // Tangent for G
+  {
+    // Vx
+    gp_Vec Vx = B.XYZ() - A.XYZ();
+    if ( Vx.Magnitude() < RealEpsilon() )
+      return Angle_Undefined;
+    //
+    if ( OriOnG == TopAbs_REVERSED )
+      Vx.Reverse();
+
+    // Say (s, t) is the parametric space of S2
+    double sMin, sMax, tMin, tMax;
+    S2->Bounds(sMin, sMax, tMin, tMax);
+
+    // Vz
+    gp_Pnt P;
+    gp_Vec D1S, D1T;
+    S2->D1( (sMin + sMax)*0.5, (tMin + tMax)*0.5, P, D1S, D1T);
+    //
+    gp_Vec N = D1S.Crossed(D1T);
+    if ( N.Magnitude() < RealEpsilon() )
+      return Angle_Undefined;
+    //
+    if ( G.Orientation() == TopAbs_REVERSED )
+      N.Reverse();
+
+    // Vy
+    gp_Vec Vy = N.Crossed(Vx);
+    if ( Vy.Magnitude() < RealEpsilon() )
+      return Angle_Undefined;
+    //
+    TG = Vy.Normalized();
+  }
+
+  const double angle = TF.AngleWithRef(TG, Ref);
+
+  // Classify angle
+  geom_angle angleType = Angle_Undefined;
+  if ( angle < 0 )
+    angleType = Angle_Convex;
+  else
+    angleType = Angle_Concave;
+
+  return angleType;
 }

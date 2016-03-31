@@ -107,7 +107,7 @@ void visu_bcurve_poles_pipeline::SetInput(const Handle(visu_data_provider)& DP)
       // Apply selection
       if ( m_selected->GetSize() )
       {
-        m_extractSelection->SetInputConnection(0, bpoles_src->GetOutputPort() );
+        m_extractSelection->SetInputConnection( 0, bpoles_src->GetOutputPort() );
         m_extractSelection->SetInputData(1, m_selection);
         m_toPolyData->SetInputConnection( m_extractSelection->GetOutputPort() );
 

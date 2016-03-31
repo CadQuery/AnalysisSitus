@@ -12,6 +12,7 @@
 #include <analysis_situs.h>
 
 // A-Situs (geometry) includes
+#include <geom_boundary_edges_node.h>
 #include <geom_face_node.h>
 #include <geom_surf_node.h>
 
@@ -75,16 +76,17 @@ public:
 // Handy accessors to the stored data:
 public:
 
-  void                   SetShape              (const TopoDS_Shape& shape);
-  TopoDS_Shape           GetShape              ()                           const;
-  void                   SetHasColor           (const bool hasColor);
-  bool                   HasColor              ()                           const;
-  void                   SetColor              (const int color);
-  int                    GetColor              ()                           const;
-  void                   SetDisplayMode        (const int mode);
-  int                    GetDisplayMode        ()                           const;
-  Handle(geom_face_node) FaceRepresentation    ();
-  Handle(geom_surf_node) SurfaceRepresentation ();
+  void                             SetShape                    (const TopoDS_Shape& shape);
+  TopoDS_Shape                     GetShape                    ()                           const;
+  void                             SetHasColor                 (const bool hasColor);
+  bool                             HasColor                    ()                           const;
+  void                             SetColor                    (const int color);
+  int                              GetColor                    ()                           const;
+  void                             SetDisplayMode              (const int mode);
+  int                              GetDisplayMode              ()                           const;
+  Handle(geom_face_node)           FaceRepresentation          ();
+  Handle(geom_surf_node)           SurfaceRepresentation       ();
+  Handle(geom_boundary_edges_node) BoundaryEdgesRepresentation ();
 
 // Initialization:
 public:

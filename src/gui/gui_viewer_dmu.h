@@ -13,6 +13,7 @@
 
 // XDE includes
 #include <xde_model.h>
+#include <xde_shape_id.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -149,7 +150,7 @@ private:
                            const TDF_Label&               theLabel,
                            const TopLoc_Location&         theParentTrsf,
                            const visu_xde_style&          theParentStyle,
-                           const TCollection_AsciiString& theParentId,
+                           const Handle(xde_shape_id)&    theParentId,
                            const int                      theDisplayMode,
                            visu_xde_shapes&               theMapOfShapes);
 

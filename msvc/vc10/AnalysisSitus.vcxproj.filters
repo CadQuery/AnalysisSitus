@@ -503,9 +503,6 @@
     <ClInclude Include="..\..\src\geom\features\geom_detect_holes.h">
       <Filter>Header Files\Geometry\Features</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\geom\features\geom_remove_holes.h">
-      <Filter>Header Files\Geometry\Features</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\engine\engine_mesh.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
@@ -530,12 +527,75 @@
     <ClInclude Include="..\..\src\visu\ais\visu_xde_shape_prs.h">
       <Filter>Header Files\Visualization\AIS</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_aag_vtk.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_feature_attribute.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_feature_angle_attr.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_feature_pattern_slot.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\engine\engine_part.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\geom_boundary_edges_node.h">
+      <Filter>Header Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_boundary_edges_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_detect_slots.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_delete_faces.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_draw_test_suite.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_surface_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\xde\xde_shape_id.h">
+      <Filter>Header Files\XDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_rehost_faces.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_detach_faces.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_pdomain_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\engine\engine_domain.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_delete_edges.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_join_edges.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\journaling\journal_logger.h">
+      <Filter>Header Files\Journaling</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_journal_notifier.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_part.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_features.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_section.cpp">
@@ -601,6 +661,9 @@
     <ClCompile Include="$(IntDir)moc\moc_visu_pick_callback.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_visu_pdomain_callback.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_visu_topo_graph.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
@@ -620,6 +683,9 @@
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_asitus.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_features.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_dmu.cpp">
@@ -1063,9 +1129,6 @@
     <ClCompile Include="..\..\src\gui\gui_vtk_window.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\geom\features\geom_remove_holes.cpp">
-      <Filter>Source Files\Geometry\Features</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\engine\engine_mesh.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
@@ -1095,6 +1158,63 @@
     </ClCompile>
     <ClCompile Include="..\..\src\visu\ais\visu_xde_shape_prs.cpp">
       <Filter>Source Files\Visualization\AIS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_aag_vtk.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_feature_pattern_slot.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\engine\engine_part.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\geom_boundary_edges_node.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_boundary_edges_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_detect_slots.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_delete_faces.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_surface_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_rehost_faces.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_detach_faces.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_pdomain_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\interaction\visu_pdomain_callback.cpp">
+      <Filter>Source Files\Visualization\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\engine\engine_domain.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_delete_edges.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_join_edges.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\journaling\journal_notifier.cpp">
+      <Filter>Source Files\Journaling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\journaling\journal_logger.cpp">
+      <Filter>Source Files\Journaling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_features.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_features.cpp">
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1210,6 +1330,18 @@
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\src\gui\gui_controls_hull.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\visu\interaction\visu_pdomain_callback.h">
+      <Filter>Header Files\Visualization\Interaction</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\journaling\journal_notifier.h">
+      <Filter>Header Files\Journaling</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_features.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_features.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
   </ItemGroup>

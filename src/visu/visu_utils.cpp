@@ -358,6 +358,8 @@ void visu_utils::ApplyLightingRules(vtkActor* theActor)
   theActor->GetProperty()->SetOpacity(1.0);
   theActor->GetProperty()->SetAmbient(0.2);
   theActor->GetProperty()->SetDiffuse(0.2);
+  theActor->GetProperty()->SetSpecular(0.5);
+  theActor->GetProperty()->SetSpecularPower(20);
 }
 
 //-----------------------------------------------------------------------------
@@ -627,7 +629,7 @@ vtkLookupTable* visu_utils::InitLookupTable()
   aColorTable->SetTableValue(0, 0, 0, 0);          // undefined
   aColorTable->SetTableValue(1, 0.5, 0.5, 0.5);    // gray for isoparametric line in wireframe
   aColorTable->SetTableValue(2, 1, 0, 0);          // red for free vertex
-  aColorTable->SetTableValue(3, 0, 0, 0);          // black for shared vertex
+  aColorTable->SetTableValue(3, 0, 0, 1);          // blue for shared vertex
   aColorTable->SetTableValue(4, 1, 0, 0);          // red for free edge
   aColorTable->SetTableValue(5, 1, 0, 0);          // red for boundary edge (related to a single face)
   aColorTable->SetTableValue(6, 0.3, 0.3, 0.3);    // black for shared edge (related to several faces)

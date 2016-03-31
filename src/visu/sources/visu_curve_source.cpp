@@ -34,7 +34,10 @@
 vtkStandardNewMacro(visu_curve_source);
 
 //! Default constructor.
-visu_curve_source::visu_curve_source() : vtkPolyDataAlgorithm(), m_fOriTipSize(0.0)
+visu_curve_source::visu_curve_source()
+  : vtkPolyDataAlgorithm (),
+    m_fOriTipSize        (0.0),
+    m_iPedigreeId        (0)
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
@@ -225,6 +228,11 @@ int visu_curve_source::RequestData(vtkInformation*        request,
   vtkSmartPointer<vtkIntArray> aTypeArr = visu_utils::InitIntArray(ARRNAME_ORIENT_SCALARS);
   aCD->AddArray(aTypeArr);
 
+  // Pedigree IDs for selection
+  vtkSmartPointer<vtkIdTypeArray> PIDsArray = vtkSmartPointer<vtkIdTypeArray>::New();
+  PIDsArray->SetNumberOfComponents(1);
+  aCD->SetPedigreeIds(PIDsArray);
+
   /* =====================================================================
    *  Assuming the input arrays ordered, we build series of line segments
    *  representing our curve in a tabular form. Each segment is
@@ -354,6 +362,12 @@ vtkIdType visu_curve_source::registerLine(const gp_Pnt& pointStart,
     aTypeArr->InsertNextValue(m_ori);
   }
 
+  // Assign a pedigree ID
+  vtkSmartPointer<vtkIdTypeArray>
+    PIDsArray = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetPedigreeIds() );
+  //
+  PIDsArray->InsertNextValue(m_iPedigreeId);
+
   return aCellID;
 }
 
@@ -386,6 +400,12 @@ vtkIdType visu_curve_source::registerVertex(const int    index,
 
   vtkIdType aCellID =
     polyData->InsertNextCell( VTK_VERTEX, (int) aPids.size(), &aPids[0] );
+
+  // Assign a pedigree ID
+  vtkSmartPointer<vtkIdTypeArray>
+    PIDsArray = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetPedigreeIds() );
+  //
+  PIDsArray->InsertNextValue(m_iPedigreeId);
 
   return aCellID;
 }

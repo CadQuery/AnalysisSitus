@@ -55,6 +55,9 @@ protected:
   void executePart(unsigned long theEventId,
                    void*         theCallData);
   //---------------------------------------------------------------------------
+  void executeDomain(unsigned long theEventId,
+                     void*         theCallData);
+  //---------------------------------------------------------------------------
   void executeSection(unsigned long theEventId,
                       void*         theCallData);
   //---------------------------------------------------------------------------
@@ -62,6 +65,7 @@ protected:
 signals:
 
   void partPicked();    //!< Some sensitives were picked in a part.
+  void domainPicked();  //!< Some sensitives were picked in a domain.
   void sectionPicked(); //!< Some sensitives were picked in a section.
 
 private:

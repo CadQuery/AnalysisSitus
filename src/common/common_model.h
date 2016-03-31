@@ -20,6 +20,7 @@
 #include <common_version.h>
 
 // A-Situs (geometry) includes
+#include <geom_boundary_edges_node.h>
 #include <geom_part_node.h>
 #include <geom_sections_node.h>
 #include <geom_section_node.h>
@@ -122,6 +123,13 @@ public:
     return Handle(common_partition<geom_surf_node>)::DownCast( this->Partition(Partition_GeomSurface) );
   }
 
+  //! Accessor for a Partition instance dedicated to Geometry Boundary Edges Nodes.
+  //! \return requested Partition.
+  inline Handle(common_partition<geom_boundary_edges_node>) GeomBoundaryEdgesPartition() const
+  {
+    return Handle(common_partition<geom_boundary_edges_node>)::DownCast( this->Partition(Partition_GeomBoundaryEdges) );
+  }
+
   //! Accessor for a Partition instance dedicated to Sections Nodes.
   //! \return requested Partition.
   inline Handle(common_partition<geom_sections_node>) SectionsPartition() const
@@ -196,18 +204,18 @@ private:
   //---------------------------------------------------------------------------
     Partition_CalculusDesignLaw,
   //---------------------------------------------------------------------------
-    Partition_Mesh,
-  //---------------------------------------------------------------------------
-    Partition_GeomPart,
-    Partition_GeomFace,
-    Partition_GeomSurface,
-  //---------------------------------------------------------------------------
     Partition_Sections,
     Partition_Section,
   //---------------------------------------------------------------------------
     Partition_UBend,
     Partition_UBendLaws,
-    Partition_UBendLaw
+    Partition_UBendLaw,
+    Partition_Mesh,
+  //---------------------------------------------------------------------------
+    Partition_GeomPart,
+    Partition_GeomFace,
+    Partition_GeomSurface,
+    Partition_GeomBoundaryEdges
   };
 
 };

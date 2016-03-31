@@ -35,29 +35,21 @@ bool geom_detect_holes::Perform(const double radius)
   Handle(geom_feature_pattern_chole) cdetector = new geom_feature_pattern_chole(it, radius);
   Handle(geom_feature_pattern_phole) pdetector = new geom_feature_pattern_phole(it, radius);
   //
-  TopTools_IndexedMapOfShape M;
-  //
   for ( ; it->More(); it->Next() )
   {
     // TODO: skip traversed faces (!!!)
 
     // Cylindrical holes
-    if ( cdetector->Recognize(M) )
+    if ( cdetector->Recognize(m_result) )
     {
       std::cout << "\tDetected cylindrical hole" << std::endl;
     }
 
     // Planar holes
-    if ( pdetector->Recognize(M) )
+    if ( pdetector->Recognize(m_result) )
     {
       std::cout << "\tDetected planar hole" << std::endl;
     }
-  }
-
-  // Add faces to result
-  for ( int fidx = 1; fidx <= M.Extent(); ++fidx )
-  {
-    m_result.Append( TopoDS::Face( M(fidx) ) );
   }
 
   return true; // Success

@@ -38,6 +38,11 @@ public slots:
   void onCAFBrowser ();
 
   //---------------------------------------------------------------------------
+  // Features
+  //---------------------------------------------------------------------------
+  void onFeatures ();
+
+  //---------------------------------------------------------------------------
   // Samples (skinning)
   //---------------------------------------------------------------------------
   void onSkinning        ();
@@ -60,7 +65,9 @@ private:
     QPushButton* pMeshEdit;        //!< Mesh Editor composition.
     QPushButton* pAnalysis;        //!< Analysis composition.
     QPushButton* pCAFBrowser;      //!< CAF Browser composition.
-    //---------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    QPushButton* pFeatures;        //!< Features composition.
+    //-------------------------------------------------------------------------
     QPushButton* pSkinning;        //!< Skinning composition.
     QPushButton* pUBend;           //!< U-bend composition.
     QPushButton* pHullReconstruct; //!< Hull reconstruction composition.
@@ -70,6 +77,8 @@ private:
                   pMeshEdit        (NULL),
                   pAnalysis        (NULL),
                   pCAFBrowser      (NULL),
+                  //
+                  pFeatures        (NULL),
                   //
                   pSkinning        (NULL),
                   pUBend           (NULL),
@@ -83,6 +92,8 @@ private:
       delete pMeshEdit;        pMeshEdit        = NULL;
       delete pAnalysis;        pAnalysis        = NULL;
       delete pCAFBrowser;      pCAFBrowser      = NULL;
+      //
+      delete pFeatures;        pFeatures        = NULL;
       //
       delete pSkinning;        pSkinning        = NULL;
       delete pUBend;           pUBend           = NULL;

@@ -18,6 +18,9 @@
 // Qt includes
 #include <QColor>
 
+// VTK includes
+#include <vtkActor.h>
+
 DEFINE_STANDARD_HANDLE(visu_geom_prs, visu_prs)
 
 //! Presentation class for b-rep geometry.
@@ -56,6 +59,13 @@ public:
 
   void DoColor(const QColor& theColor) const;
   void DoUnColor() const;
+
+public:
+
+  vtkActor* MainActor() const
+  {
+    return this->GetPipeline(Pipeline_Main)->Actor();
+  }
 
 private:
 

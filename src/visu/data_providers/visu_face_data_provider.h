@@ -11,6 +11,9 @@
 // A-Situs visualization includes
 #include <visu_data_provider.h>
 
+// OCCT includes
+#include <TopTools_IndexedMapOfShape.hxx>
+
 DEFINE_STANDARD_HANDLE(visu_face_data_provider, visu_data_provider)
 
 //! Data provider for face geometry.
@@ -28,9 +31,10 @@ public:
 
 public:
 
-  ActAPI_DataObjectId GetNodeID()    const;
-  int                 GetFaceIndex() const;
-  TopoDS_Face         ExtractFace()  const;
+  ActAPI_DataObjectId GetNodeID                  () const;
+  int                 GetFaceIndexAmongSubshapes () const;
+  int                 GetFaceIndexAmongFaces     () const;
+  TopoDS_Face         ExtractFace                () const;
 
 public:
 
@@ -49,6 +53,12 @@ private:
 
   //! Source Parameters.
   Handle(ActAPI_HParameterList) m_params;
+
+  //! Map of sub-shapes.
+  TopTools_IndexedMapOfShape m_subShapes;
+
+  //! Map of faces.
+  TopTools_IndexedMapOfShape m_faces;
 
 };
 

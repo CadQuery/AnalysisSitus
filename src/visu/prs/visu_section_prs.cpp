@@ -260,7 +260,7 @@ void visu_section_prs::highlight(vtkRenderer*                 ASitus_NotUsed(the
 void visu_section_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
                                    const visu_selection_nature& theSelNature) const
 {
-    // Access pipeline for highlighting
+  // Access pipeline for highlighting
   Handle(visu_bcurve_poles_pipeline) hili_pl;
   //
   if ( theSelNature == SelectionNature_Pick )
@@ -273,6 +273,7 @@ void visu_section_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(t
 
   // Set selection mask...
   hili_pl->SetSelectedPoles( TColStd_PackedMapOfInteger() );
+
   // ... and visibility
   hili_pl->Actor()->SetVisibility(0);
 }

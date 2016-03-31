@@ -32,15 +32,15 @@ public:
 public:
 
   //! \return detected holes.
-  inline const NCollection_Sequence<TopoDS_Face>& Result() const
+  inline const TopTools_IndexedMapOfShape& Result() const
   {
     return m_result;
   }
 
 protected:
 
-  Handle(geom_aag)                  m_aag;    //!< Master AAG.
-  NCollection_Sequence<TopoDS_Face> m_result; //!< Detected holes.
+  Handle(geom_aag)           m_aag;    //!< Master AAG.
+  TopTools_IndexedMapOfShape m_result; //!< Detected feature faces.
 
 };
 

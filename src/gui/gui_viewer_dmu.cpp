@@ -131,6 +131,8 @@ void gui_viewer_dmu::Visualize(const Handle(xde_model)& model,
   TDF_LabelSequence aLabels;
   model->GetShapeTool()->GetFreeShapes(aLabels);
 
+  Handle(xde_shape_id) id = new xde_shape_id;
+
   // Create Presentations
   Shapes.Clear();
   //
@@ -146,7 +148,7 @@ void gui_viewer_dmu::Visualize(const Handle(xde_model)& model,
                                Lab,
                                TopLoc_Location(),
                                aDefStyle,
-                               "",
+                               id,
                                mode,
                                Shapes );
   }
@@ -155,7 +157,7 @@ void gui_viewer_dmu::Visualize(const Handle(xde_model)& model,
 //! Clears the viewer.
 void gui_viewer_dmu::Clear()
 {
-  myContext->EraseAll();
+  myContext->RemoveAll();
 }
 
 void gui_viewer_dmu::init()
@@ -983,7 +985,7 @@ void gui_viewer_dmu::displayWithChildren(XCAFDoc_ShapeTool&             theShape
                                          const TDF_Label&               theLabel,
                                          const TopLoc_Location&         theParentTrsf,
                                          const visu_xde_style&          theParentStyle,
-                                         const TCollection_AsciiString& theParentId,
+                                         const Handle(xde_shape_id)&    theParentId,
                                          const int                      theDisplayMode,
                                          visu_xde_shapes&               theMapOfShapes)
 {
@@ -995,11 +997,10 @@ void gui_viewer_dmu::displayWithChildren(XCAFDoc_ShapeTool&             theShape
 
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theLabel, anEntry);
-  if ( !theParentId.IsEmpty() )
-  {
-    anEntry = theParentId + "\n" + anEntry;
-  }
-  anEntry += ".";
+  //
+  Handle(xde_shape_id) localId = new xde_shape_id;
+  localId->Add(theParentId);
+  localId->Add(anEntry);
 
   if ( !theShapeTool.IsAssembly(aRefLabel) )
   {
@@ -1012,10 +1013,9 @@ void gui_viewer_dmu::displayWithChildren(XCAFDoc_ShapeTool&             theShape
       theMapOfShapes.Bind(aRefLabel, anAIS);
     }
 
-    Handle(TCollection_HAsciiString) anId       = new TCollection_HAsciiString(anEntry);
     Handle(AIS_ConnectedInteractive) aConnected = new AIS_ConnectedInteractive();
     aConnected->Connect( anAIS, theParentTrsf.Transformation() );
-    aConnected->SetOwner(anId);
+    aConnected->SetOwner(localId);
     aConnected->SetLocalTransformation( theParentTrsf.Transformation() );
 
     try
@@ -1062,7 +1062,7 @@ void gui_viewer_dmu::displayWithChildren(XCAFDoc_ShapeTool&             theShape
      && (aLabel.HasAttribute() || aLabel.HasChild()))
     {
       TopLoc_Location aTrsf = theParentTrsf * theShapeTool.GetLocation(aLabel);
-      this->displayWithChildren(theShapeTool, theColorTool, aLabel, aTrsf, aDefStyle, anEntry, theDisplayMode, theMapOfShapes);
+      this->displayWithChildren(theShapeTool, theColorTool, aLabel, aTrsf, aDefStyle, localId, theDisplayMode, theMapOfShapes);
     }
   }
 }

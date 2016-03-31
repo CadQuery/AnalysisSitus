@@ -12,6 +12,7 @@
 #include <analysis_situs.h>
 
 // A-Situs (GUI) includes
+#include <gui_controls_part.h>
 #include <gui_object_browser.h>
 #include <gui_viewer_domain.h>
 #include <gui_viewer_part.h>
@@ -51,11 +52,13 @@ private:
     gui_viewer_domain*  wViewerDomain;  //!< Parametric domain viewer.
     gui_viewer_part*    wViewerPart;    //!< Part viewer.
     gui_viewer_surface* wViewerSurface; //!< Surface viewer.
+    gui_controls_part*  wControlsPart;  //!< Part controls.
 
-    t_widgets() : wBrowser(NULL),
-                  wViewerDomain(NULL),
-                  wViewerPart(NULL),
-                  wViewerSurface(NULL)
+    t_widgets() : wBrowser       (NULL),
+                  wViewerDomain  (NULL),
+                  wViewerPart    (NULL),
+                  wViewerSurface (NULL),
+                  wControlsPart  (NULL)
     {}
 
     void Release()
@@ -64,6 +67,7 @@ private:
       delete wViewerDomain;  wViewerDomain  = NULL;
       delete wViewerPart;    wViewerPart    = NULL;
       delete wViewerSurface; wViewerSurface = NULL;
+      delete wControlsPart;  wControlsPart  = NULL;
     }
   };
 

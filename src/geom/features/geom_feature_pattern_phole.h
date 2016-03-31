@@ -34,10 +34,10 @@ public:
     m_fTargetRadius      (target_R)
   {}
 
-public:
+private:
 
-  ASitus_EXPORT virtual bool
-    Recognize(TopTools_IndexedMapOfShape& featureFaces);
+  virtual bool
+    recognize(TopTools_IndexedMapOfShape& featureFaces);
 
 public:
 

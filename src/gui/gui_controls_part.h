@@ -26,11 +26,16 @@ public:
 
 public slots:
 
-  void onLoadBRep      ();
-  void onLoadSTEP      ();
-  void onShowTOPOGraph ();
-  void onShowAAG       ();
-  void onSavePly       ();
+  void onLoadBRep           ();
+  void onLoadSTEP           ();
+  void onSavePly            ();
+  void onSaveBRep           ();
+  //
+  void onShowTOPOGraph      ();
+  void onShowAAG            ();
+  void onElimSelected       ();
+  void onCheckShape         ();
+  void onSewing             ();
 
 private:
 
@@ -41,24 +46,39 @@ private:
   {
     QPushButton* pLoadBRep;      //!< Button for brep loading.
     QPushButton* pLoadSTEP;      //!< Button for STEP loading.
+    QPushButton* pSavePly;       //!< Save triangulation to ply.
+    QPushButton* pSaveBRep;      //!< Save shape to brep.
+    //
     QPushButton* pShowTOPOGraph; //!< Show topology graph.
     QPushButton* pShowAAG;       //!< Show Attributed Adjacency Graph.
-    QPushButton* pSavePly;       //!< Save triangulation to ply.
+    QPushButton* pElimSelected;  //!< Removes convex-only faces from AAG.
+    QPushButton* pCheckShape;    //!< Runs shape validity checker.
+    QPushButton* pSewing;        //!< Performs sewing.
 
     t_widgets() : pLoadBRep      (NULL),
                   pLoadSTEP      (NULL),
+                  pSavePly       (NULL),
+                  pSaveBRep      (NULL),
+                  //
                   pShowTOPOGraph (NULL),
                   pShowAAG       (NULL),
-                  pSavePly       (NULL)
+                  pElimSelected  (NULL),
+                  pCheckShape    (NULL),
+                  pSewing        (NULL)
     {}
 
     void Release()
     {
       delete pLoadBRep;      pLoadBRep      = NULL;
       delete pLoadSTEP;      pLoadSTEP      = NULL;
+      delete pSavePly;       pSavePly       = NULL;
+      delete pSaveBRep;      pSaveBRep      = NULL;
+      //
       delete pShowTOPOGraph; pShowTOPOGraph = NULL;
       delete pShowAAG;       pShowAAG       = NULL;
-      delete pSavePly;       pSavePly       = NULL;
+      delete pElimSelected;  pElimSelected  = NULL;
+      delete pCheckShape;    pCheckShape    = NULL;
+      delete pSewing;        pSewing        = NULL;
     }
   };
 

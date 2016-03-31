@@ -547,12 +547,13 @@ ActAPI_DataObjectIdList
 
     // Extract cell ID
     vtkIdType aPickedId = m_cellPicker->GetCellId();
-    vtkIdType gid = -1;
+    vtkIdType gid = -1, pid = -1;
     //
     if ( aPickedId != -1 )
     {
       std::cout << "Picked ID = " << aPickedId << std::endl;
-      ///
+
+      // Global IDs
       vtkSmartPointer<vtkIdTypeArray>
         gids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetGlobalIds() );
       //
@@ -560,6 +561,16 @@ ActAPI_DataObjectIdList
       {
         gid = gids->GetValue(aPickedId);
         std::cout << "Picked GID = " << gid << std::endl;
+      }
+
+      // Pedigree IDs
+      vtkSmartPointer<vtkIdTypeArray>
+        pids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetPedigreeIds() );
+      //
+      if ( pids )
+      {
+        pid = pids->GetValue(aPickedId);
+        std::cout << "Picked PID = " << pid << std::endl;
       }
     }
 
@@ -573,7 +584,10 @@ ActAPI_DataObjectIdList
     }
 
     // Push global ID to result
-    aPickRes << aPickedActor << gid;
+    if ( gid == -1 && pid != -1 )
+      aPickRes << aPickedActor << pid;
+    else
+      aPickRes << aPickedActor << gid;
   }
   else // Partial selection: for topological shapes only
   {
@@ -939,6 +953,13 @@ vtkSmartPointer<vtkPropCollection> visu_prs_manager::PropsByTrihedron() const
   vtkSmartPointer<vtkPropCollection> aRes = vtkSmartPointer<vtkPropCollection>::New();
   m_trihedron->GetActors(aRes);
   return aRes;
+}
+
+//! Accessor for cell picker.
+//! \return cell picker.
+vtkSmartPointer<vtkCellPicker> visu_prs_manager::GetCellPicker() const
+{
+  return m_cellPicker;
 }
 
 //! Modifies the size of the trihedron so that to make its size comparable to

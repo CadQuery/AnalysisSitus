@@ -15,11 +15,12 @@
 
 // A-Situs (XDE) includes
 #include <xde_IGES.h>
+#include <xde_shape_id.h>
 #include <xde_STEP.h>
 
 // A-Situs (geometry) includes
+#include <geom_delete_faces.h>
 #include <geom_detect_holes.h>
-#include <geom_remove_holes.h>
 #include <geom_utils.h>
 
 // A-Situs (mesh) includes
@@ -33,6 +34,9 @@
 
 // OCCT includes
 #include <AIS_ConnectedInteractive.hxx>
+#include <AIS_InteractiveContext.hxx>
+#include <AIS_ListOfInteractive.hxx>
+#include <BRep_Builder.hxx>
 #include <OSD_Environment.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <StdSelect_BRepOwner.hxx>
@@ -360,18 +364,18 @@ void gui_controls_dmu::onRemoveHoles()
       }
 
       // Get detected holes
-      const NCollection_Sequence<TopoDS_Face>& holes = detector.Result();
+      const TopTools_IndexedMapOfShape& holes = detector.Result();
       if ( holes.IsEmpty() )
       {
         std::cout << "No holes detected with radius not greater than " << R << std::endl;
         return;
       }
       else
-        std::cout << holes.Length() << " hole(s) detected with radius not greater than " << R << std::endl;
+        std::cout << holes.Extent() << " hole(s) detected with radius not greater than " << R << std::endl;
 
       // Remove holes
-      geom_remove_holes eraser(shape);
-      if ( !eraser.Perform(holes) )
+      geom_delete_faces eraser(shape);
+      if ( !eraser.Perform(holes, false) )
       {
         std::cout << "Error: cannot remove holes" << std::endl;
         return;
@@ -478,10 +482,35 @@ void gui_controls_dmu::onSaveBRep()
     std::cout << "Error: no working model" << std::endl;
     return;
   }
-  TopoDS_Shape shape = common_facilities::Instance()->Model_XDE->GetOneShape();
+
+  Handle(XCAFDoc_ShapeTool)
+    shapeTool = common_facilities::Instance()->Model_XDE->GetShapeTool();
+
+  TopoDS_Compound C;
+  BRep_Builder BB;
+  BB.MakeCompound(C);
+
+  // Get displayed shapes
+  Handle(AIS_InteractiveContext) ctx = common_facilities::Instance()->ViewerDMU->GetContext();
+  AIS_ListOfInteractive displayed;
+  ctx->DisplayedObjects(displayed);
+  //
+  for ( AIS_ListIteratorOfListOfInteractive it(displayed); it.More(); it.Next() )
+  {
+    Handle(xde_shape_id)
+      ID = Handle(xde_shape_id)::DownCast( it.Value()->GetOwner() );
+
+    const TCollection_AsciiString& entry = ID->Top2Bottom().Last();
+
+    TDF_Label L;
+    TDF_Tool::Label( shapeTool->Label().Data(), entry, L);
+    BB.Add( C, shapeTool->GetShape(L) );
+  }
+
+
 
   // Save as B-Rep geometry
-  if ( geom_utils::WriteBRep( shape, QStr2AsciiStr(filename) ) )
+  if ( geom_utils::WriteBRep( C, QStr2AsciiStr(filename) ) )
     std::cout << "B-Rep saved successfully" << std::endl;
   else
     std::cout << "Error: cannot save B-Rep" << std::endl;

@@ -33,6 +33,54 @@
 
 //-----------------------------------------------------------------------------
 
+inline bool isStringStartsWith(const Handle(TCollection_HAsciiString)& theString,
+                               const TCollection_AsciiString&          theStart)
+{
+  return !theString.IsNull()
+      &&  theString->Length() >= theStart.Length()
+      &&  memcmp (theString->String().ToCString(), theStart.ToCString(), theStart.Length()) == 0;
+}
+
+inline bool isStringContains(const Handle(xde_shape_id)&    theID,
+                             const TCollection_AsciiString& theSub)
+{
+  for ( int i = 1; i <= theID->Top2Bottom().Length(); ++i )
+  {
+    const TCollection_AsciiString& key = theID->Top2Bottom(i);
+    if ( key.IsEqual(theSub) )
+      return true;
+  }
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
+bool isPrsIdInList(const NCollection_Array1<TCollection_AsciiString>& theIds,
+                   const Handle(AIS_InteractiveObject)&               thePrs)
+{
+  Handle(xde_shape_id) ID = Handle(xde_shape_id)::DownCast( thePrs->GetOwner() );
+  //
+  for (NCollection_Array1<TCollection_AsciiString>::Iterator anIdIter (theIds); anIdIter.More(); anIdIter.Next())
+  {
+    if (isStringContains (ID, anIdIter.Value()))
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool isPrsCorresponding(const Handle(xde_shape_id)&          treeId,
+                        const Handle(AIS_InteractiveObject)& prs)
+{
+  Handle(xde_shape_id) prsId = Handle(xde_shape_id)::DownCast( prs->GetOwner() );
+  //
+  const bool isContained = prsId->Contains(treeId);
+  return isContained;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Creates a new instance of tree view.
 //! \param parent [in] parent widget.
 gui_object_browser_xde::gui_object_browser_xde(QWidget* parent) : QTreeWidget(parent)
@@ -202,7 +250,60 @@ void gui_object_browser_xde::onShowOnly()
   if ( !items.length() || items.length() > 1 )
     return;
 
+  QTreeWidgetItem* item = items.at(0);
+  TCollection_AsciiString entry = QStr2AsciiStr( item->data(0, BrowserRoleNodeId).toString() );
+  //
+  Handle(xde_shape_id) item_id = new xde_shape_id;
+  item_id->Prepend(entry);
+
   // Access data object's entry
-  /*QTreeWidgetItem* item = items(0);
-  TCollection_AsciiString entry = nodeUi->data(0, BrowserRoleNodeId).toString();*/
+  QTreeWidgetItem* parent = NULL;
+  do
+  {
+    parent = item->parent();
+    if ( parent )
+    {
+      TCollection_AsciiString entry = QStr2AsciiStr( parent->data(0, BrowserRoleNodeId).toString() );
+      item_id->Prepend(entry);
+    }
+    item = parent;
+  }
+  while ( parent );
+
+  // Get AIS context
+  Handle(AIS_InteractiveContext) ctx = common_facilities::Instance()->ViewerDMU->GetContext();
+
+  ctx->DisplayAll(0);
+
+  AIS_ListOfInteractive anDispObjs;
+  ctx->DisplayedObjects(anDispObjs);
+  for ( AIS_ListIteratorOfListOfInteractive aDispIter (anDispObjs); aDispIter.More(); aDispIter.Next() )
+  {
+    if (!isPrsCorresponding (item_id, aDispIter.Value()))
+    {
+      /*if (ctx->IsSelected (aDispIter.Value()))
+      {
+        ctx->AddOrRemoveSelected (aDispIter.Value(), Standard_False);
+      }*/
+      ctx->Erase (aDispIter.Value(), 0);
+    }
+  }
+
+  //// display and select currently erased object in the list
+  //AIS_ListOfInteractive anErasedObjs;
+  //ctx->ErasedObjects (anErasedObjs);
+  //for (AIS_ListIteratorOfListOfInteractive anObjIter (anErasedObjs); anObjIter.More(); anObjIter.Next())
+  //{
+  //  if (isPrsCorresponding (item_id, anObjIter.Value()))
+  //  {
+  //   // if ( ctx->IsDisplayed( anObjIter.Value() ) )
+  //      //ctx->Erase(anObjIter.Value(), Standard_False);
+  //      ctx->Display(anObjIter.Value(), Standard_False);
+
+  //    //ctx->AddOrRemoveSelected (anObjIter.Value(), Standard_False);
+  //  }
+  //}
+
+  //common_facilities::Instance()->ViewerDMU->GetView()->Invalidate();
+  common_facilities::Instance()->ViewerDMU->GetView()->Update();
 }

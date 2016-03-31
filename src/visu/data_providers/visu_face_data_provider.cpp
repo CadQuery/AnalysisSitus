@@ -32,6 +32,16 @@ visu_face_data_provider::visu_face_data_provider(const ActAPI_DataObjectId&     
 {
   m_nodeID = theNodeId;
   m_params = theParamList;
+
+  // Access owning geometry
+  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->PartNode();
+
+  // Build maps
+  if ( !geom_n->GetShape().IsNull() )
+  {
+    TopExp::MapShapes(geom_n->GetShape(), m_subShapes);
+    TopExp::MapShapes(geom_n->GetShape(), TopAbs_FACE, m_faces);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -45,27 +55,31 @@ ActAPI_DataObjectId visu_face_data_provider::GetNodeID() const
   return m_nodeID;
 }
 
-//! \return index of the OCCT face to be visualized.
-int visu_face_data_provider::GetFaceIndex() const
+//! \return global index of the OCCT face to be visualized.
+int visu_face_data_provider::GetFaceIndexAmongSubshapes() const
 {
   return ActParamTool::AsInt( m_params->Value(1) )->GetValue();
+}
+
+//! \return local index of the OCCT face to be visualized.
+int visu_face_data_provider::GetFaceIndexAmongFaces() const
+{
+  const int globalId = ActParamTool::AsInt( m_params->Value(1) )->GetValue();
+
+  if ( globalId )
+    return m_faces.FindIndex( m_subShapes.FindKey(globalId) );
+
+  return 0;
 }
 
 //! \return topological face extracted from the part by its stored ID.
 TopoDS_Face visu_face_data_provider::ExtractFace() const
 {
-  if ( !this->GetFaceIndex() )
+  if ( !this->GetFaceIndexAmongSubshapes() )
     return TopoDS_Face();
 
-  // Access owning geometry
-  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->PartNode();
-
-  // Prepare traversal
-  TopTools_IndexedMapOfShape M;
-  TopExp::MapShapes(geom_n->GetShape(), M);
-
   // Access face by the stored index
-  const TopoDS_Face& F = TopoDS::Face( M.FindKey( this->GetFaceIndex() ) );
+  const TopoDS_Face& F = TopoDS::Face( m_subShapes.FindKey( this->GetFaceIndexAmongSubshapes() ) );
   return F;
 }
 

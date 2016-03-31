@@ -33,6 +33,8 @@
 #define ARRNAME_MESH_E_VECTORS   "arrname_mesh_e_vectors"
 #define ARRNAME_MESH_N_SCALARS   "arrname_mesh_n_scalars"
 #define ARRNAME_ORIENT_SCALARS   "arrname_domain_scalars"
+//
+#define ARRNAME_SURF_GAUSSIAN_CURVATURE "arrname_surf_gaussian_curvature"
 
 //-----------------------------------------------------------------------------
 
@@ -41,6 +43,8 @@
 #define EVENT_DETECT_DEFAULT      (vtkCommand::UserEvent + 1002)
 #define EVENT_ROTATION_START      (vtkCommand::UserEvent + 1003)
 #define EVENT_ROTATION_END        (vtkCommand::UserEvent + 1004)
+#define EVENT_DELETE              (vtkCommand::UserEvent + 1005)
+#define EVENT_JOIN                (vtkCommand::UserEvent + 1006)
 
 //-----------------------------------------------------------------------------
 

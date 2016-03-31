@@ -54,8 +54,8 @@ gui_viewer_section::gui_viewer_section(const bool withControlPanel, QWidget* par
   if ( withControlPanel )
     pControlPane = new gui_controls_section(this);
   //
-  QVTKWidget*           pViewer      = m_prs_mgr->GetQVTKWidget();
-  QVBoxLayout*          pBaseLayout  = new QVBoxLayout();
+  QVTKWidget*  pViewer      = m_prs_mgr->GetQVTKWidget();
+  QVBoxLayout* pBaseLayout  = new QVBoxLayout();
 
   // Configure layout
   pBaseLayout->setSpacing(0);

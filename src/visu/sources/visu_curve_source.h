@@ -67,6 +67,9 @@ public:
   inline void   SetTipNorm    (const gp_Vec& vec)       { m_oriN = vec; }
   inline gp_Vec GetTipNorm    ()                  const { return m_oriN; }
 
+  inline void   SetPedigreeId (const int pid)           { m_iPedigreeId = pid; }
+  inline int    GetPedigreeId ()                  const { return m_iPedigreeId; }
+
 protected:
 
   virtual int RequestData(vtkInformation*        request,
@@ -108,9 +111,10 @@ private:
 
 private:
 
-  Handle(HRealArray) m_XCoords; //!< X coordinates.
-  Handle(HRealArray) m_YCoords; //!< Y coordinates.
-  Handle(HRealArray) m_ZCoords; //!< Z coordinates.
+  Handle(HRealArray) m_XCoords;     //!< X coordinates.
+  Handle(HRealArray) m_YCoords;     //!< Y coordinates.
+  Handle(HRealArray) m_ZCoords;     //!< Z coordinates.
+  int                m_iPedigreeId; //!< Pedigree ID.
 
 // Orientation marker:
 private:

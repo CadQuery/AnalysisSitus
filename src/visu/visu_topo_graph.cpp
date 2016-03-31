@@ -13,10 +13,14 @@
 #include <visu_utils.h>
 
 // Geometry includes
+#include <geom_aag_vtk.h>
 #include <geom_utils.h>
 
 // Common includes
 #include <common_facilities.h>
+
+// Engine includes
+#include <engine_part.h>
 
 // OCCT includes
 #include <SelectMgr_IndexedMapOfOwner.hxx>
@@ -65,19 +69,14 @@ visu_topo_graph::~visu_topo_graph()
   }
 }
 
-//! Renders topology graph in the requested regime.
-//! \param shape         [in] target shape.
-//! \param selectedFaces [in] selected faces.
-//! \param regime        [in] regime of interest.
-//! \param leafType      [in] target leaf type for FULL regime.
-void visu_topo_graph::Render(const TopoDS_Shape&         shape,
-                             const TopTools_ListOfShape& selectedFaces,
-                             const Regime                regime,
-                             const TopAbs_ShapeEnum      leafType)
+//! Renders graph.
+//! \param graph  [in] VTK presentable graph.
+//! \param shape  [in] master shape.
+//! \param regime [in] kind of graph to render.
+void visu_topo_graph::Render(const vtkSmartPointer<vtkGraph>& graph,
+                             const TopoDS_Shape&              shape,
+                             const Regime                     regime)
 {
-  // Populate graph data from topology graph
-  vtkSmartPointer<vtkGraph> graph = this->convertToGraph(shape, selectedFaces, regime, leafType);
-
   /* ===================================
    *  Prepare structures for attributes
    * =================================== */
@@ -96,7 +95,8 @@ void visu_topo_graph::Render(const TopoDS_Shape&         shape,
   vtkSmartPointer<visu_topo_graph_item> graphItem = vtkSmartPointer<visu_topo_graph_item>::New();
   graphItem->SetGraph( graphLayout->GetOutput() );
 
-  connect( graphItem, SIGNAL( vertexPicked(const vtkIdType) ), this, SLOT( onVertexPicked(const vtkIdType) ) );
+  connect( graphItem, SIGNAL( vertexPicked(const int, const vtkIdType) ),
+           this,      SLOT( onVertexPicked(const int, const vtkIdType) ) );
 
   // Context transform
   vtkSmartPointer<vtkContextTransform> trans = vtkSmartPointer<vtkContextTransform>::New();
@@ -136,7 +136,7 @@ void visu_topo_graph::Render(const TopoDS_Shape&         shape,
   m_pWidget = new gui_vtk_window();
   m_pWidget->SetRenderWindow( renderWindow.GetPointer() );
 
-  connect(m_pWidget, SIGNAL( windowClosed() ), this, SLOT( onViewerClosed() ) );
+  connect( m_pWidget, SIGNAL( windowClosed() ), this, SLOT( onViewerClosed() ) );
 
   /* ========================
    *  Add legend and summary
@@ -186,19 +186,36 @@ void visu_topo_graph::Render(const TopoDS_Shape&         shape,
   m_pWidget->GetRenderWindow()->AddObserver(vtkCommand::RenderEvent, this, &visu_topo_graph::RenderEventCallback);
 }
 
+//! Renders topology graph in the requested regime.
+//! \param shape         [in] target shape.
+//! \param selectedFaces [in] selected faces.
+//! \param regime        [in] regime of interest.
+//! \param leafType      [in] target leaf type for FULL regime.
+void visu_topo_graph::Render(const TopoDS_Shape&               shape,
+                             const TopTools_IndexedMapOfShape& selectedFaces,
+                             const Regime                      regime,
+                             const TopAbs_ShapeEnum            leafType)
+{
+  // Populate graph data from topology graph
+  vtkSmartPointer<vtkGraph> graph = this->convertToGraph(shape, selectedFaces, regime, leafType);
+
+  // Render VTK graph
+  this->Render(graph, shape, regime);
+}
+
 //! Renders topology graph.
 //! \param shape    [in] target shape.
 //! \param leafType [in] target leaf type.
 void visu_topo_graph::RenderFull(const TopoDS_Shape& shape, const TopAbs_ShapeEnum leafType)
 {
-  this->Render(shape, TopTools_ListOfShape(), Regime_Full, leafType);
+  this->Render(shape, TopTools_IndexedMapOfShape(), Regime_Full, leafType);
 }
 
 //! Renders AA graph.
 //! \param shape         [in] target shape.
 //! \param selectedFaces [in] selected faces.
-void visu_topo_graph::RenderAdjacency(const TopoDS_Shape&         shape,
-                                      const TopTools_ListOfShape& selectedFaces)
+void visu_topo_graph::RenderAdjacency(const TopoDS_Shape&               shape,
+                                      const TopTools_IndexedMapOfShape& selectedFaces)
 {
   this->Render(shape, selectedFaces, Regime_AAG, TopAbs_SHAPE);
 }
@@ -210,10 +227,10 @@ void visu_topo_graph::RenderAdjacency(const TopoDS_Shape&         shape,
 //! \param leafType      [in] leaf type for FULL regime.
 //! \return graph instance.
 vtkSmartPointer<vtkGraph>
-  visu_topo_graph::convertToGraph(const TopoDS_Shape&         shape,
-                                  const TopTools_ListOfShape& selectedFaces,
-                                  const Regime                regime,
-                                  const TopAbs_ShapeEnum      leafType)
+  visu_topo_graph::convertToGraph(const TopoDS_Shape&               shape,
+                                  const TopTools_IndexedMapOfShape& selectedFaces,
+                                  const Regime                      regime,
+                                  const TopAbs_ShapeEnum            leafType)
 {
   vtkSmartPointer<vtkGraph> result;
   //
@@ -249,8 +266,8 @@ vtkSmartPointer<vtkGraph>
   else if ( regime == Regime_AAG )
   {
     m_aag = new geom_aag(shape, selectedFaces);
-    vtkSmartPointer<vtkMutableUndirectedGraph> undirected_result = m_aag->ToVTK();
-    result = undirected_result;
+    vtkSmartPointer<vtkMutableUndirectedGraph> undirected = geom_aag_vtk::Convert(m_aag);
+    result = undirected;
   }
   else
     Standard_ProgramError::Raise("Unexpected regime for graph visualization");
@@ -324,11 +341,24 @@ void visu_topo_graph::onViewerClosed()
 }
 
 //! Reaction on vertex picking.
+//! \param fid [in] face ID.
 //! \param vid [in] vertex ID.
-void visu_topo_graph::onVertexPicked(const vtkIdType vid)
+void visu_topo_graph::onVertexPicked(const int fid, const vtkIdType vid)
 {
-  //if ( m_aag.IsNull() )
-  //  return;
+  if ( m_aag.IsNull() )
+    return;
+
+  if ( common_facilities::Instance()->Prs.Part )
+  {
+    // Get face from graph vertex
+    const TopoDS_Face& F = m_aag->GetFace(fid);
+
+    ///
+    TopTools_IndexedMapOfShape selected;
+    selected.Add(F);
+    //
+    engine_part::HighlightSubShapes(selected);
+  }
 
   //if ( !common_facilities::Instance()->ViewerDMU )
   //  return;

@@ -12,6 +12,14 @@
 #include <visu_data_provider.h>
 #include <visu_pipeline.h>
 
+// VTK includes
+#include <vtkExtractSelection.h>
+#include <vtkGeometryFilter.h>
+#include <vtkIdTypeArray.h>
+#include <vtkPolyDataAlgorithm.h>
+#include <vtkSelection.h>
+#include <vtkSelectionNode.h>
+
 //-----------------------------------------------------------------------------
 
 DEFINE_STANDARD_HANDLE(visu_face_domain_pipeline, visu_pipeline)
@@ -26,12 +34,21 @@ public:
 
 public:
 
-  visu_face_domain_pipeline();
+  visu_face_domain_pipeline(const bool isDefaultColorScheme = true);
 
 public:
 
   virtual void
     SetInput(const Handle(visu_data_provider)& DP);
+
+public:
+
+  inline void ForceExecution() { m_bForced = true; }
+
+public:
+
+  void
+    SetSelectedCells(const TColStd_PackedMapOfInteger& mask);
 
 private:
 
@@ -53,7 +70,14 @@ private:
 
 private:
 
-  bool m_bMapperColorsSet; //!< Boolean flag indicating whether lookup table is set.
+  bool                                 m_bDefaultColorScheme; //!< Indicates whether to use a default color scheme.
+  bool                                 m_bForced;             //!< Forced update.
+  bool                                 m_bMapperColorsSet;    //!< Boolean flag indicating whether lookup table is set.
+  vtkSmartPointer<vtkIdTypeArray>      m_selected;            //!< Poles selected for visualization.
+  vtkSmartPointer<vtkSelectionNode>    m_selectionNode;       //!< VTK selection node.
+  vtkSmartPointer<vtkSelection>        m_selection;           //!< VTK selection.
+  vtkSmartPointer<vtkExtractSelection> m_extractSelection;    //!< VTK selection extractor.
+  vtkSmartPointer<vtkGeometryFilter>   m_toPolyData;          //!< VTK geometry filter.
 
 };
 

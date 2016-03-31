@@ -1,37 +1,38 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 March 2016
+// Created on: 29 March 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef geom_remove_holes_h
-#define geom_remove_holes_h
+#ifndef geom_detach_faces_h
+#define geom_detach_faces_h
 
 // A-Situs includes
 #include <analysis_situs.h>
 
 // OCCT includes
-#include <TopoDS_Face.hxx>
+//#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 //-----------------------------------------------------------------------------
 
-//! Utility to remove through holes.
-class geom_remove_holes
+//! Utility to detach faces.
+class geom_detach_faces
 {
 public:
 
   ASitus_EXPORT
-    geom_remove_holes(const TopoDS_Shape& masterCAD);
+    geom_detach_faces(const TopoDS_Shape& masterCAD);
 
 public:
 
   ASitus_EXPORT bool
-    Perform(const NCollection_Sequence<TopoDS_Face>& featureFaces);
+    Perform(const TopTools_IndexedMapOfShape& faces);
 
 public:
 
-  //! \return shape without holes.
+  //! \return result shape.
   inline const TopoDS_Shape& Result() const
   {
     return m_result;
@@ -39,8 +40,9 @@ public:
 
 protected:
 
-  TopoDS_Shape m_master; //!< Master model.
-  TopoDS_Shape m_result; //!< Result.
+  TopoDS_Shape                              m_master; //!< Master model.
+  TopoDS_Shape                              m_result; //!< Result.
+  //TopTools_IndexedDataMapOfShapeListOfShape m_M;      //!< Sub-shapes with ancestors.
 
 };
 

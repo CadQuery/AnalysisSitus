@@ -18,7 +18,7 @@
 //! Recognizes feature starting from the current position of AAG iterator.
 //! \param featureFaces [out] feature faces.
 //! \return true/false.
-bool geom_feature_pattern_phole::Recognize(TopTools_IndexedMapOfShape& featureFaces)
+bool geom_feature_pattern_phole::recognize(TopTools_IndexedMapOfShape& featureFaces)
 {
   const TColStd_PackedMapOfInteger& neighbors = m_it->GetNeighbors();
   if ( neighbors.Extent() < 4 )

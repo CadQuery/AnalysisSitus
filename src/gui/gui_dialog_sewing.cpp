@@ -191,7 +191,7 @@ void gui_dialog_sewing::onPerform()
     common_facilities::Instance()->Model->Clear();
     //
     common_facilities::Instance()->Prs.DeleteAll();
-    common_facilities::Instance()->Prs.Part->InitializePicker();
+    common_facilities::Instance()->Prs.Part->InitializePickers();
     common_facilities::Instance()->Prs.Part->Actualize( N.get() );
   }
 

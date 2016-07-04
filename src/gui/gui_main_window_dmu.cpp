@@ -90,8 +90,7 @@ void gui_main_window_dmu::createViewer()
                             V3d_GOURAUD,
                             V3d_WAIT,
                             1,
-                            1,
-                            V3d_TEX_NONE);
+                            1);
   //
   Handle(V3d_DirectionalLight) LightDir   = new V3d_DirectionalLight (m_viewer, V3d_Zneg, Quantity_NOC_SNOW, 1);
   Handle(V3d_DirectionalLight) LightDirPT = new V3d_DirectionalLight (m_viewer, V3d_Zneg, Quantity_NOC_SNOW, 1);
@@ -122,7 +121,7 @@ void gui_main_window_dmu::createViewer()
 
   // Configure rendering parameters
   Graphic3d_RenderingParams& RenderParams = m_widgets.wViewer->GetView()->ChangeRenderingParams();
-  RenderParams.NbMsaaSamples = 8; // Anti-aliasing by multi-sampling
+  //RenderParams.NbMsaaSamples = 8; // Anti-aliasing by multi-sampling
 
   // Desktop used for sizing
   QDesktopWidget desktop;

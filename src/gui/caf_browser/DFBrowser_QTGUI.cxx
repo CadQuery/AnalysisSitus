@@ -22,15 +22,16 @@
 #include "../../res/xpm/qt_close.xpm"
 
 // qt
-//#define QT_THREAD_SUPPORT
+#pragma warning(push, 0)
 #include <QSemaphore>
 #include <qapplication.h>
 #include <qlayout.h>
 #include <qpixmap.h>
-#include <qmotifstyle.h>
+//#include <qmotifstyle.h>
 #include <qthread.h>
 #include <QShowEvent>
 #include <QAccessible>
+#pragma warning(pop)
 
 // threads
 #ifndef DEBUGBROWSER_THREADS
@@ -44,9 +45,10 @@
 #endif
 #endif
 
+#pragma warning(push, 0)
 #include <QCoreApplication>
-
 #include <QWidget>
+#pragma warning(pop)
 
 class CAFBrowserWidget : public QWidget//QListViewItem
 {

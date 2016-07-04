@@ -19,7 +19,11 @@
 
 // VTK includes
 #include <vtkAssembly.h>
+#include <vtkPointData.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper.h>
 #include <vtkRenderWindow.h>
+#include <vtkVertex.h>
 
 // Qt-VTK includes
 #include <QVTKWidget.h>
@@ -28,6 +32,11 @@
 #pragma warning(push, 0)
 #include <QVBoxLayout>
 #pragma warning(pop)
+
+// OCCT includes
+#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
+
+//-----------------------------------------------------------------------------
 
 //! Creates a new instance of viewer.
 //! \param parent [in] parent widget.
@@ -39,6 +48,7 @@ gui_viewer_mesh::gui_viewer_mesh(QWidget* parent) : gui_viewer(parent)
   //
   m_prs_mgr->Initialize(this);
   m_prs_mgr->SetInteractionMode(visu_prs_manager::InteractionMode_3D);
+  m_prs_mgr->SetSelectionMode(SelectionMode_Workpiece);
 
   // Widgets and layouts
   gui_controls_mesh* pControlPane = new gui_controls_mesh(this);
@@ -66,6 +76,7 @@ gui_viewer_mesh::gui_viewer_mesh(QWidget* parent) : gui_viewer(parent)
   // Initialize Callback instance for Pick operation
   m_pickCallback = vtkSmartPointer<visu_pick_callback>::New();
   m_pickCallback->SetViewer(this);
+  m_pickCallback->SelectMeshNodesOn();
 
   // Set observer for detection
   if ( !m_interactorStyleDefault->HasObserver(EVENT_PICK_DEFAULT) )
@@ -74,6 +85,9 @@ gui_viewer_mesh::gui_viewer_mesh(QWidget* parent) : gui_viewer(parent)
   // Set observer for detection
   if ( !m_interactorStyleDefault->HasObserver(EVENT_DETECT_DEFAULT) )
     m_interactorStyleDefault->AddObserver(EVENT_DETECT_DEFAULT, m_pickCallback);
+
+  // Get notified once any sensitive is picked on a mesh
+  connect( m_pickCallback, SIGNAL( meshNodePicked() ), this, SLOT( onMeshNodePicked() ) );
 
   /* ===============================
    *  Setting up rotation callbacks
@@ -123,10 +137,14 @@ gui_viewer_mesh::gui_viewer_mesh(QWidget* parent) : gui_viewer(parent)
   this->onResetView();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Destructor.
 gui_viewer_mesh::~gui_viewer_mesh()
 {
 }
+
+//-----------------------------------------------------------------------------
 
 //! Updates viewer.
 void gui_viewer_mesh::Repaint()
@@ -134,9 +152,46 @@ void gui_viewer_mesh::Repaint()
   m_prs_mgr->GetQVTKWidget()->repaint();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Resets view.
 void gui_viewer_mesh::onResetView()
 {
   visu_utils::ResetCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
   this->Repaint();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Callback for picking event.
+void gui_viewer_mesh::onMeshNodePicked()
+{
+  // Access picking results
+  const visu_actual_selection& sel      = m_prs_mgr->GetCurrentSelection();
+  const visu_pick_result&      pick_res = sel.PickResult(SelectionNature_Detection);
+  const visu_actor_elem_map&   elem_map = pick_res.GetPickMap();
+
+  // Prepare cumulative set of all picked element IDs
+  for ( visu_actor_elem_map::Iterator it(elem_map); it.More(); it.Next() )
+  {
+    const vtkSmartPointer<vtkActor>&  picked_actor = it.Key();
+    const TColStd_PackedMapOfInteger& pointIDs     = it.Value();
+
+    // Access polygonal data mapper and its data
+    vtkPolyDataMapper* pMapper = vtkPolyDataMapper::SafeDownCast( picked_actor->GetMapper() );
+    vtkPolyData*       pData   = vtkPolyData::SafeDownCast( pMapper->GetInput() );
+
+    // Get mesh nodes IDs
+    vtkIntArray*
+      nodeIDs = vtkIntArray::SafeDownCast( pData->GetPointData()->GetArray(ARRNAME_MESH_NODE_IDS) );
+
+    // Loop over the selected cells
+    for ( TColStd_MapIteratorOfPackedMapOfInteger it(pointIDs); it.More(); it.Next() )
+    {
+      const int pointID = it.Key();
+      const int nodeID  = nodeIDs->GetValue(pointID);
+      //
+      std::cout << "Reacted on PID = " << pointID << " => node is " << nodeID << std::endl;
+    }
+  }
 }

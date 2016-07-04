@@ -11,9 +11,9 @@
 // Visualization includes
 #include <visu_data_provider.h>
 
-// OMFDS includes
-#include <OMFDS_Mesh.hxx>
-#include <OMFDS_MeshGroup.hxx>
+// Mesh (Active Data) includes
+#include <Mesh.h>
+#include <Mesh_Group.h>
 
 DEFINE_STANDARD_HANDLE(visu_mesh_data_provider, visu_data_provider)
 
@@ -37,7 +37,7 @@ public:
   virtual ActAPI_DataObjectId
     GetNodeID() const;
 
-  virtual Handle(OMFDS_Mesh)
+  virtual Handle(Mesh)
     GetMeshDS() const;
 
   virtual Handle(ActAPI_HParameterList)

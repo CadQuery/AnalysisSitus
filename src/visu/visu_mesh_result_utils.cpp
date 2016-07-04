@@ -127,9 +127,9 @@ void visu_mesh_result_utils::InitPointScalarMapper(vtkMapper*   theMapper,
 void visu_mesh_result_utils::InitScalarBarWidget(vtkScalarBarWidget* theScalarBarWidget)
 {
   vtkScalarBarRepresentation* aRep = theScalarBarWidget->GetScalarBarRepresentation();
-  aRep->SetOrientation(0);
-  aRep->GetPositionCoordinate()->SetValue(0.15, 0.05);
-  aRep->GetPosition2Coordinate()->SetValue(0.75, 0.1);
+  aRep->SetOrientation(1);
+  aRep->GetPositionCoordinate()->SetValue(0.9, 0.2);
+  aRep->GetPosition2Coordinate()->SetValue(0.1, 0.6);
 }
 
 //! Returns polygonal source for VTK glyph representing vectorial data.

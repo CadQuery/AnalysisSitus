@@ -8,30 +8,36 @@
 // Own include
 #include <gui_controls_part.h>
 
-// A-Situs (common) includes
+// Common includes
 #include <common_draw_test_suite.h>
 #include <common_facilities.h>
 
-// A-Situs (GUI) includes
+// GUI includes
 #include <gui_common.h>
+#include <gui_dialog_cloudify.h>
 #include <gui_dialog_sewing.h>
+#include <gui_dialog_STEP.h>
 
-// A-Situs (engine) includes
+// Engine includes
 #include <engine_part.h>
 
-// A-Situs (modeling) includes
-#include <geom_aag_iterator.h>
+// Feature includes
+#include <feature_aag_iterator.h>
+#include <feature_delete_faces.h>
+
+// Geometry includes
 #include <geom_aag_vtk.h>
-#include <geom_delete_faces.h>
+#include <geom_build_obb.h>
 #include <geom_detach_faces.h>
+#include <geom_find_nonmanifold.h>
 #include <geom_STEP.h>
 #include <geom_utils.h>
 
-// A-Situs (mesh) includes
-#include <mesh_convert.h>
-#include <mesh_ply.h>
+// Mesh includes
+#include <tess_convert.h>
+#include <tess_ply.h>
 
-// A-Situs (visualization) includes
+// Visualization includes
 #include <visu_geom_prs.h>
 #include <visu_topo_graph.h>
 
@@ -40,6 +46,8 @@
 
 // OCCT includes
 #include <BRep_Builder.hxx>
+#include <BRepBndLib.hxx>
+#include <BRepPrimAPI_MakeBox.hxx>
 #include <Precision.hxx>
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopExp.hxx>
@@ -59,8 +67,6 @@
 #define BTN_MIN_WIDTH 120
 
 //-----------------------------------------------------------------------------
-// Construction & destruction
-//-----------------------------------------------------------------------------
 
 //! Constructor.
 //! \param parent [in] parent widget.
@@ -72,6 +78,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   // Buttons
   m_widgets.pLoadBRep           = new QPushButton("Load b-rep");
   m_widgets.pLoadSTEP           = new QPushButton("Load STEP");
+  m_widgets.pSaveSTEP           = new QPushButton("Save STEP");
   m_widgets.pSavePly            = new QPushButton("Save mesh (ply)");
   m_widgets.pSaveBRep           = new QPushButton("Save b-rep");
   //
@@ -79,10 +86,16 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   m_widgets.pShowAAG            = new QPushButton("Show AA graph");
   m_widgets.pElimSelected       = new QPushButton("Show AA graph w/o selected");
   m_widgets.pCheckShape         = new QPushButton("Check shape");
+  m_widgets.pNonManifoldEdges   = new QPushButton("Non-manifold edges");
+  //
   m_widgets.pSewing             = new QPushButton("Sewing");
+  m_widgets.pMaximizeFaces      = new QPushButton("Maximize faces");
+  m_widgets.pOBB                = new QPushButton("OBB");
+  m_widgets.pCloudify           = new QPushButton("Cloudify");
   //
   m_widgets.pLoadBRep           -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pLoadSTEP           -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSaveSTEP           -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSavePly            -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSaveBRep           -> setMinimumWidth(BTN_MIN_WIDTH);
   //
@@ -90,7 +103,12 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   m_widgets.pShowAAG            -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pElimSelected       -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCheckShape         -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pNonManifoldEdges   -> setMinimumWidth(BTN_MIN_WIDTH);
+  //
   m_widgets.pSewing             -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pMaximizeFaces      -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pOBB                -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pCloudify           -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Group box for data interoperability
   QGroupBox*   pExchangeGroup = new QGroupBox("Data Exchange");
@@ -98,6 +116,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   //
   pExchangeLay->addWidget(m_widgets.pLoadBRep);
   pExchangeLay->addWidget(m_widgets.pLoadSTEP);
+  pExchangeLay->addWidget(m_widgets.pSaveSTEP);
   pExchangeLay->addWidget(m_widgets.pSavePly);
   pExchangeLay->addWidget(m_widgets.pSaveBRep);
 
@@ -109,28 +128,46 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   pAnalysisLay->addWidget(m_widgets.pShowAAG);
   pAnalysisLay->addWidget(m_widgets.pElimSelected);
   pAnalysisLay->addWidget(m_widgets.pCheckShape);
-  pAnalysisLay->addWidget(m_widgets.pSewing);
+  pAnalysisLay->addWidget(m_widgets.pNonManifoldEdges);
+
+  // Group for processing
+  QGroupBox*   pProcessingGroup = new QGroupBox("Processing");
+  QVBoxLayout* pProcessingLay   = new QVBoxLayout(pProcessingGroup);
+  //
+  pProcessingLay->addWidget(m_widgets.pSewing);
+  pProcessingLay->addWidget(m_widgets.pMaximizeFaces);
+  pProcessingLay->addWidget(m_widgets.pOBB);
+  pProcessingLay->addWidget(m_widgets.pCloudify);
 
   // Set layout
   m_pMainLayout->addWidget(pExchangeGroup);
   m_pMainLayout->addWidget(pAnalysisGroup);
+  m_pMainLayout->addWidget(pProcessingGroup);
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
   //
   this->setLayout(m_pMainLayout);
 
   // Connect signals to slots
-  connect( m_widgets.pLoadBRep,      SIGNAL( clicked() ), SLOT( onLoadBRep           () ) );
-  connect( m_widgets.pLoadSTEP,      SIGNAL( clicked() ), SLOT( onLoadSTEP           () ) );
-  connect( m_widgets.pSavePly,       SIGNAL( clicked() ), SLOT( onSavePly            () ) );
-  connect( m_widgets.pSaveBRep,      SIGNAL( clicked() ), SLOT( onSaveBRep           () ) );
+  connect( m_widgets.pLoadBRep,         SIGNAL( clicked() ), SLOT( onLoadBRep         () ) );
+  connect( m_widgets.pLoadSTEP,         SIGNAL( clicked() ), SLOT( onLoadSTEP         () ) );
+  connect( m_widgets.pSaveSTEP,         SIGNAL( clicked() ), SLOT( onSaveSTEP         () ) );
+  connect( m_widgets.pSavePly,          SIGNAL( clicked() ), SLOT( onSavePly          () ) );
+  connect( m_widgets.pSaveBRep,         SIGNAL( clicked() ), SLOT( onSaveBRep         () ) );
   //
-  connect( m_widgets.pShowTOPOGraph, SIGNAL( clicked() ), SLOT( onShowTOPOGraph () ) );
-  connect( m_widgets.pShowAAG,       SIGNAL( clicked() ), SLOT( onShowAAG       () ) );
-  connect( m_widgets.pElimSelected,  SIGNAL( clicked() ), SLOT( onElimSelected  () ) );
-  connect( m_widgets.pCheckShape,    SIGNAL( clicked() ), SLOT( onCheckShape    () ) );
-  connect( m_widgets.pSewing,        SIGNAL( clicked() ), SLOT( onSewing        () ) );
+  connect( m_widgets.pShowTOPOGraph,    SIGNAL( clicked() ), SLOT( onShowTOPOGraph    () ) );
+  connect( m_widgets.pShowAAG,          SIGNAL( clicked() ), SLOT( onShowAAG          () ) );
+  connect( m_widgets.pElimSelected,     SIGNAL( clicked() ), SLOT( onElimSelected     () ) );
+  connect( m_widgets.pCheckShape,       SIGNAL( clicked() ), SLOT( onCheckShape       () ) );
+  connect( m_widgets.pNonManifoldEdges, SIGNAL( clicked() ), SLOT( onNonManifoldEdges () ) );
+  //
+  connect( m_widgets.pSewing,           SIGNAL( clicked() ), SLOT( onSewing           () ) );
+  connect( m_widgets.pMaximizeFaces,    SIGNAL( clicked() ), SLOT( onMaximizeFaces    () ) );
+  connect( m_widgets.pOBB,              SIGNAL( clicked() ), SLOT( onOBB              () ) );
+  connect( m_widgets.pCloudify,         SIGNAL( clicked() ), SLOT( onCloudify         () ) );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Destructor.
 gui_controls_part::~gui_controls_part()
@@ -139,8 +176,6 @@ gui_controls_part::~gui_controls_part()
   m_widgets.Release();
 }
 
-//-----------------------------------------------------------------------------
-// Slots
 //-----------------------------------------------------------------------------
 
 //! On b-rep loading.
@@ -156,10 +191,6 @@ void gui_controls_part::onLoadBRep()
     return;
   }
 
-  //---------------------------------------------------------------------------
-  // Create geometry Node
-  //---------------------------------------------------------------------------
-
   // Clean up the Model
   common_facilities::Instance()->Model->Clear();
 
@@ -172,118 +203,83 @@ void gui_controls_part::onLoadBRep()
   }
   common_facilities::Instance()->Model->CommitCommand(); // tx commit
 
-  //---------------------------------------------------------------------------
   // Update UI
-  //---------------------------------------------------------------------------
-
   common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePicker();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
   common_facilities::Instance()->Prs.Part->Actualize(geom_n.get(), false, true);
   //
   if ( common_facilities::Instance()->ObjectBrowser )
     common_facilities::Instance()->ObjectBrowser->Populate();
 }
 
-//! On STEP loading.
+//-----------------------------------------------------------------------------
+
+//! Loads model from STEP file.
 void gui_controls_part::onLoadSTEP()
 {
-  QString filename = gui_common::selectSTEPFile(gui_common::OpenSaveAction_Open);
-
-  // Read STEP
-  TopoDS_Shape shape;
-  if ( !geom_STEP::Read(QStr2AsciiStr(filename), false, shape) )
-  {
-    std::cout << "Error: cannot read STEP file" << std::endl;
-    return;
-  }
-
-  //---------------------------------------------------------------------------
-  // Create geometry Node
-  //---------------------------------------------------------------------------
-
-  // Clean up the Model
-  common_facilities::Instance()->Model->Clear();
-
-  // Set part geometry
-  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->PartNode();
-  //
-  common_facilities::Instance()->Model->OpenCommand(); // tx start
-  {
-    geom_n->SetShape(shape);
-  }
-  common_facilities::Instance()->Model->CommitCommand(); // tx commit
-
-  //---------------------------------------------------------------------------
-  // Update UI
-  //---------------------------------------------------------------------------
-
-  common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePicker();
-  common_facilities::Instance()->Prs.Part->Actualize(geom_n.get(), false, true);
-  //
-  if ( common_facilities::Instance()->ObjectBrowser )
-    common_facilities::Instance()->ObjectBrowser->Populate();
+  // Dialog for reading STEP
+  gui_dialog_STEP* pDlg = new gui_dialog_STEP(gui_dialog_STEP::Mode_Read, this);
+  pDlg->show();
 }
+
+//-----------------------------------------------------------------------------
+
+//! Saves model to STEP file.
+void gui_controls_part::onSaveSTEP()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Dialog for STEP save
+  gui_dialog_STEP* pDlg = new gui_dialog_STEP(gui_dialog_STEP::Mode_Write, this);
+  pDlg->show();
+}
+
+//-----------------------------------------------------------------------------
 
 //! Saves mesh to PLY file.
 void gui_controls_part::onSavePly()
 {
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+  //
   QString filename = gui_common::selectPlyFile(gui_common::OpenSaveAction_Save);
 
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
-
-  // Shape to extract the mesh from
-  TopoDS_Shape targetShape = N->GetShape();
-  if ( targetShape.IsNull() )
-  {
-    std::cout << "Error: target shape is null" << std::endl;
-    return;
-  }
-
   // Convert shape's inherent mesh to a storable mesh
-  Handle(OMFDS_Mesh) storedMesh;
-  if ( !mesh_convert::ToPersistent(targetShape, storedMesh) )
+  Handle(Mesh) storedMesh;
+  if ( !tess_convert::ToPersistent(part, storedMesh) )
   {
     std::cout << "Error: cannot convert mesh to persistent form" << std::endl;
     return;
   }
 
   // Save mesh to ply files
-  if ( !mesh_ply::Write( storedMesh, QStr2AsciiStr(filename) ) )
+  if ( !tess_ply::Write( storedMesh, QStr2AsciiStr(filename) ) )
   {
     std::cout << "Error: cannot save mesh" << std::endl;
     return;
   }
 }
 
-//! Saves model to brep file.
+//-----------------------------------------------------------------------------
+
+//! Saves model to BREP file.
 void gui_controls_part::onSaveBRep()
 {
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+  //
   QString filename = gui_common::selectBRepFile(gui_common::OpenSaveAction_Save);
 
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
-
-  // Shape to save
-  TopoDS_Shape targetShape = N->GetShape();
-  if ( targetShape.IsNull() )
-  {
-    std::cout << "Error: target shape is null" << std::endl;
-    return;
-  }
-
-  // Save mesh to ply files
-  if ( !geom_utils::WriteBRep( targetShape, QStr2AsciiStr(filename) ) )
+  // Save shape
+  if ( !geom_utils::WriteBRep( part, QStr2AsciiStr(filename) ) )
   {
     std::cout << "Error: cannot save shape" << std::endl;
     return;
   }
 }
+
+//-----------------------------------------------------------------------------
 
 //! Shows topology graph.
 void gui_controls_part::onShowTOPOGraph()
@@ -306,9 +302,14 @@ void gui_controls_part::onShowTOPOGraph()
 
     TopTools_IndexedMapOfShape M;
     TopExp::MapShapes(N->GetShape(), M);
-    const TopoDS_Face& F = TopoDS::Face( M.FindKey(f_idx) );
-    //
-    targetShape = F;
+    const TopoDS_Shape& shape = M.FindKey(f_idx);
+
+    if ( shape.ShapeType() == TopAbs_FACE )
+    {
+      const TopoDS_Face& F = TopoDS::Face(shape);
+      //
+      targetShape = F;
+    }
   }
 
   // No shape, no graph
@@ -323,27 +324,13 @@ void gui_controls_part::onShowTOPOGraph()
   pGraphView->RenderFull(targetShape, TopAbs_VERTEX);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Shows AA graph.
 void gui_controls_part::onShowAAG()
 {
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
-
-  // Shape to visualize a graph for
-  TopoDS_Shape targetShape;
-  TopoDS_Face selectedFace;
-
-  // Access whole shape
-  targetShape = N->GetShape();
-  //
-  // No shape, no graph
-  if ( targetShape.IsNull() )
-  {
-    std::cout << "Error: target shape is null" << std::endl;
-    return;
-  }
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
 
   // Access selected faces (if any)
   TopTools_IndexedMapOfShape selected;
@@ -351,32 +338,23 @@ void gui_controls_part::onShowAAG()
 
   // Show graph
   visu_topo_graph* pGraphView = new visu_topo_graph;
-  pGraphView->RenderAdjacency(targetShape, selected);
+  pGraphView->RenderAdjacency(part, selected);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Eliminates selected faces from AAG.
 void gui_controls_part::onElimSelected()
 {
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
-
-  // Shape to visualize a graph for
-  TopoDS_Shape part = N->GetShape();
-  //
-  if ( part.IsNull() )
-  {
-    std::cout << "Error: part shape is null" << std::endl;
-    return;
-  }
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
 
   // Get highlighted sub-shapes
   TopTools_IndexedMapOfShape selected;
   engine_part::GetHighlightedSubShapes(selected);
 
   // Build AAG
-  Handle(geom_aag) aag = new geom_aag(part);
+  Handle(feature_aag) aag = new feature_aag(part);
 
   // Remove highlighted sub-shapes
   aag->Remove(selected);
@@ -385,26 +363,17 @@ void gui_controls_part::onElimSelected()
   visu_topo_graph* pGraphView = new visu_topo_graph;
   pGraphView->SetAAG(aag);
   //
-  vtkSmartPointer<vtkMutableUndirectedGraph> undirected = geom_aag_vtk::Convert(aag);
+  vtkSmartPointer<vtkMutableUndirectedGraph> undirected = feature_aag_vtk::Convert(aag);
   pGraphView->Render(undirected, part, visu_topo_graph::Regime_AAG);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Runs shape checker.
 void gui_controls_part::onCheckShape()
 {
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
-
-  // Shape to work with
-  TopoDS_Shape part = N->GetShape();
-  //
-  if ( part.IsNull() )
-  {
-    std::cout << "Error: part shape is null" << std::endl;
-    return;
-  }
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
 
   // Get highlighted faces
   TopTools_IndexedMapOfShape selected;
@@ -433,8 +402,75 @@ void gui_controls_part::onCheckShape()
   }
 }
 
+//-----------------------------------------------------------------------------
+
+//! Finds non-manifold edges.
+void gui_controls_part::onNonManifoldEdges()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Find non-manifold edges
+  TopTools_IndexedMapOfShape nmEdges;
+  geom_find_nonmanifold::FindEdges(part, nmEdges, common_facilities::Instance()->Notifier);
+  //
+  std::cout << "Number of non-manifold edges: " << nmEdges.Extent() << std::endl;
+
+  // Prepare compound of edges
+  TopoDS_Compound nmEdgesComp;
+  BRep_Builder BB;
+  BB.MakeCompound(nmEdgesComp);
+  //
+  for ( int e = 1; e <= nmEdges.Extent(); ++e )
+  {
+    BB.Add( nmEdgesComp, nmEdges(e) );
+  }
+
+  // Save to model
+  Handle(geom_boundary_edges_node)
+    BN = common_facilities::Instance()->Model->PartNode()->BoundaryEdgesRepresentation();
+  //
+  common_facilities::Instance()->Model->OpenCommand();
+  {
+    ActParamTool::AsShape( BN->Parameter(geom_boundary_edges_node::PID_Red) )->SetShape(nmEdgesComp);
+  }
+  common_facilities::Instance()->Model->CommitCommand();
+
+  // Update viewer
+  Handle(visu_geom_prs)
+    NPrs = Handle(visu_geom_prs)::DownCast(
+      common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->PartNode() )
+    );
+  if ( NPrs.IsNull() )
+  {
+    std::cout << "Error: there is no available presentation for part" << std::endl;
+    return;
+  }
+  //
+  NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
+  //
+  NPrs->GetPipeline(visu_geom_prs::Pipeline_Contour)->Actor()->SetVisibility(0);
+  //
+  common_facilities::Instance()->Prs.Part->Actualize( BN.get() );
+}
+
+//-----------------------------------------------------------------------------
+
 //! Runs sewing.
 void gui_controls_part::onSewing()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Run dialog for sewing properties
+  gui_dialog_sewing* wSewing = new gui_dialog_sewing(this);
+  wSewing->show();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Runs face maximization.
+void gui_controls_part::onMaximizeFaces()
 {
   // Access Geometry Node
   Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
@@ -450,7 +486,69 @@ void gui_controls_part::onSewing()
     return;
   }
 
-  // Run dialog for sewing properties
-  gui_dialog_sewing* wSewing = new gui_dialog_sewing(this);
-  wSewing->show();
+  common_facilities::Instance()->Model->OpenCommand();
+  {
+    TIMER_NEW
+    TIMER_GO
+
+    // Perform merge
+    if ( !geom_utils::MaximizeFaces(part) )
+    {
+      std::cout << "Error: face merging failed" << std::endl;
+    }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_MSG("Face Maximization")
+
+    //
+    std::cout << "Face merging done. Visualizing..." << std::endl;
+    //
+    N->SetShape(part);
+  }
+  common_facilities::Instance()->Model->CommitCommand();
+
+  // Update viewer
+  common_facilities::Instance()->Model->Clear();
+  //
+  common_facilities::Instance()->Prs.DeleteAll();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Builds Oriented Bounding Box.
+void gui_controls_part::onOBB()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  TIMER_NEW
+  TIMER_GO
+
+  // OBB builder
+  geom_build_obb obb_builder(common_facilities::Instance()->Notifier,
+                             common_facilities::Instance()->Plotter);
+  //
+  if ( !obb_builder(part) )
+  {
+    std::cout << "Error: cannot build OBB" << std::endl;
+    return;
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("Build OBB")
+}
+
+//-----------------------------------------------------------------------------
+
+//! Builds point cloud from the model.
+void gui_controls_part::onCloudify()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Run dialog for cloudification
+  gui_dialog_cloudify* wCloudify = new gui_dialog_cloudify(this);
+  wCloudify->show();
 }

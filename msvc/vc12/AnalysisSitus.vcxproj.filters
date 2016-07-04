@@ -1,0 +1,2205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Visualization">
+      <UniqueIdentifier>{b6804725-f880-4d8f-827e-de4214a871cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization">
+      <UniqueIdentifier>{e16ebcdb-c6de-40bc-a2f6-08c5f4bacb8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI">
+      <UniqueIdentifier>{ff78e149-feac-4461-b9f3-065f960d5cca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{cef6f73b-a06a-4fc9-8f04-ef7109517e6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MOC Files">
+      <UniqueIdentifier>{16cd439c-b0f8-427c-a52f-ca0522b0aeff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization\Presentation">
+      <UniqueIdentifier>{321f3c7e-0ab7-40e9-896e-ae15f008f38e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization\Presentation">
+      <UniqueIdentifier>{d20a6d2e-40f2-4fa1-8ef3-b68f87c57f5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common">
+      <UniqueIdentifier>{9269c3fb-af81-4f69-ad9e-a68c866fe247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common">
+      <UniqueIdentifier>{02715f7d-7be0-4213-ae86-afdb26232c52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry">
+      <UniqueIdentifier>{4d1a1d05-49d9-4243-acc3-14a328fa812f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry">
+      <UniqueIdentifier>{5ae5d180-7660-47fa-be33-f1ddd6ac1421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Journaling">
+      <UniqueIdentifier>{fa94e904-be5c-4ea3-847e-6502366467ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Journaling">
+      <UniqueIdentifier>{b3f0dd5b-88d9-4305-ba58-96ce436526f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization\Data Providers">
+      <UniqueIdentifier>{07f4f778-0f48-44d7-aa60-9051fe99ea08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization\Filters">
+      <UniqueIdentifier>{ff32e5a2-f857-440b-9726-fd34a76b66d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization\Interaction">
+      <UniqueIdentifier>{76168c54-b54b-432a-a7f5-81f64b0199bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization\Pipelines">
+      <UniqueIdentifier>{11625568-da99-47f2-9ed7-9a75702e5433}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization\Sources">
+      <UniqueIdentifier>{d78e78ed-185a-4b17-a780-e3f7932a3e88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization\Data Providers">
+      <UniqueIdentifier>{6d9e9712-e7fa-41e0-8db4-74d6e9f878d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization\Filters">
+      <UniqueIdentifier>{d7f56de6-8db5-477c-acb2-f59214d3d166}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization\Interaction">
+      <UniqueIdentifier>{3f53a64a-f981-4052-9710-29605a3ad2ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization\Sources">
+      <UniqueIdentifier>{d113cf9c-0005-4ea3-8a12-69fa56e784b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization\Pipelines">
+      <UniqueIdentifier>{00ab2d3c-9d8c-4b53-b2f6-6609dcde91f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\XDE">
+      <UniqueIdentifier>{662f5a52-6a1a-4775-987e-6a950e4222f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\XDE">
+      <UniqueIdentifier>{0d7cafb6-5d4b-467f-8c7e-9bedb9565432}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Calculus">
+      <UniqueIdentifier>{6338326c-d77e-4428-8ad2-4814a2596180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Calculus">
+      <UniqueIdentifier>{5016b3bc-0ff1-4709-a540-770eb42d0777}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{7f769760-eee3-406e-ad44-81eabbfecfba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{f2660fd8-c09d-4ba7-a638-067d1db53c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{5e70a59c-da96-4258-bcab-5439b9484b5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization\AIS">
+      <UniqueIdentifier>{226a52b6-1d83-4d66-8b79-e28b9ac723f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization\AIS">
+      <UniqueIdentifier>{96b49a6e-a488-40d8-8a71-a24cfd906293}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI\CAF Browser">
+      <UniqueIdentifier>{452c9fbd-c42e-44fb-97af-d819f7743b41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\CAF Browser">
+      <UniqueIdentifier>{0fc2e59d-ed77-4ac5-b44d-1ba88a1d7df8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization\Imperative Viewer">
+      <UniqueIdentifier>{5f2480cf-b30d-48df-a0ad-4b7a895b6629}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization\Imperative Viewer">
+      <UniqueIdentifier>{92810996-21b4-4869-857d-9489af4905e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization\Data Providers\Imperative">
+      <UniqueIdentifier>{f33c6cb0-a5f8-41ff-95ba-c15e598b7ac7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visualization\Presentation\Imperative">
+      <UniqueIdentifier>{1420565c-4c32-4492-9844-96a6a0caaa3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization\Presentation\Imperative">
+      <UniqueIdentifier>{261a0b79-e1eb-4cde-856a-76043b64c0b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualization\Data Providers\Imperative">
+      <UniqueIdentifier>{8df88b55-4ee8-4e4c-bc2a-a75800a5cc79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Classification">
+      <UniqueIdentifier>{098e865b-f2b5-4468-a17d-4b1e8691d563}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Combination">
+      <UniqueIdentifier>{821afde8-a774-47e8-91ad-74c5ded291e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Common">
+      <UniqueIdentifier>{dbd5f05c-fd80-4ae0-a02d-403dad8305d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Contour Capturing">
+      <UniqueIdentifier>{04b48b39-5351-41d3-a540-acc94ec972d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Data Exchange">
+      <UniqueIdentifier>{44905d2b-eeff-4c13-9702-97f8fee711b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Direct Modeling">
+      <UniqueIdentifier>{b082d796-6c5a-471d-8880-b577ce888738}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Features">
+      <UniqueIdentifier>{ad0786a9-8218-4146-a3fc-547607b1dec4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Healing">
+      <UniqueIdentifier>{12818e81-ee16-474a-b38a-855958dee80e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Hulls">
+      <UniqueIdentifier>{d981dafa-c8c6-4409-ab27-6bc99899d948}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Intersection">
+      <UniqueIdentifier>{89469743-1f4c-4690-ad00-6c31bd7691ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Neighborhood">
+      <UniqueIdentifier>{6a937985-644c-4672-a8e8-afc8b2577ea1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Point Clouds">
+      <UniqueIdentifier>{c4a4f2ff-f1d2-4aa2-af49-d17b15757e3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Projection">
+      <UniqueIdentifier>{2b7831ba-207c-45a4-bb52-7a48e95ca7f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Re-Engineering">
+      <UniqueIdentifier>{c3351130-ccdb-4828-a571-7a59039e639a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Selection">
+      <UniqueIdentifier>{ae7f00aa-47d0-4e74-b841-f3ecd27c121e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Skinning">
+      <UniqueIdentifier>{1b3994f2-e40f-4077-9916-a088d88aef1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Use Cases">
+      <UniqueIdentifier>{3f8bb691-22a8-44ef-8d1e-3994ec0e5a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Geometry\Use Cases\U-Bend">
+      <UniqueIdentifier>{4464430e-da31-4474-970e-67dc381846d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Use Cases">
+      <UniqueIdentifier>{b859c206-b0f3-45de-91a6-b181dfae63dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Use Cases\U-Bend">
+      <UniqueIdentifier>{b1257b56-aab6-47e5-a68d-b4c2c148ecbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Skinning">
+      <UniqueIdentifier>{d09ddc08-b568-46ef-9bab-ac15a030e21d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Selection">
+      <UniqueIdentifier>{39e6bbf3-7dcb-4a06-8603-180c9c96770e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Re-Engineering">
+      <UniqueIdentifier>{cabb577e-3a4c-40cd-bcf3-66372a855ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Projection">
+      <UniqueIdentifier>{8a8b2102-ebcf-49ac-8394-06662827f636}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Point Clouds">
+      <UniqueIdentifier>{4ec7c31a-c2d1-44c3-9dbc-79e3a4cb1016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Intersection">
+      <UniqueIdentifier>{cb2ddee6-a5b5-4977-89e8-9d444d64207a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Hulls">
+      <UniqueIdentifier>{893b981c-ff55-4ec8-9749-ada655b4b5d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Healing">
+      <UniqueIdentifier>{db05e432-169e-4de2-a564-ff05b3625c37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Features">
+      <UniqueIdentifier>{1f4db3e7-f8ce-4fbc-a747-4cc5636b6ea5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Direct Modeling">
+      <UniqueIdentifier>{ddcdfa08-b5dc-4ac6-baaa-8c1addc55001}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Data Exchange">
+      <UniqueIdentifier>{aaf9a54f-8a7e-4390-a89f-d2934ab5f285}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Contour Capturing">
+      <UniqueIdentifier>{a8241f36-868d-46d9-93bd-1762e0b7e45d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Common">
+      <UniqueIdentifier>{52966ccf-7305-4862-bd4b-0bc10a126be7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Combination">
+      <UniqueIdentifier>{c0c7fe5b-d97f-4362-a7d3-4926b8cb6141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Classification">
+      <UniqueIdentifier>{74a56fdf-a3bc-45a0-b16f-631323631262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tessellation">
+      <UniqueIdentifier>{3ad340fb-97bf-4c89-9e9f-8b8e0c8441fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tessellation">
+      <UniqueIdentifier>{07c52b1b-df06-4b21-aef2-0c1217782d06}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\analysis_situs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\gui_common.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_partition.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_version.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_model.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_root_node.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_facilities.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\gui_prim_data_adaptor.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\gui_data_adaptor.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_face_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_mesh_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_section_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_sections_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_shape_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\filters\visu_mesh_E_scalar_filter.h">
+      <Filter>Header Files\Visualization\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\filters\visu_mesh_E_vector_filter.h">
+      <Filter>Header Files\Visualization\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\filters\visu_mesh_EN_scalar_filter.h">
+      <Filter>Header Files\Visualization\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\filters\visu_mesh_N_scalar_filter.h">
+      <Filter>Header Files\Visualization\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\filters\visu_shrink_poly_filter.h">
+      <Filter>Header Files\Visualization\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\interaction\visu_interactor_style_pick.h">
+      <Filter>Header Files\Visualization\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\interaction\visu_interactor_style_pick_2d.h">
+      <Filter>Header Files\Visualization\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\interaction\visu_rotation_callback.h">
+      <Filter>Header Files\Visualization\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\interaction\visu_viewer_callback.h">
+      <Filter>Header Files\Visualization\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_bcurve_poles_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_curve_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_mesh_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_pcurve_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_bcurve_poles_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_face_domain_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_face_surface_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_contour_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_E_scalar_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_E_vector_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_EN_scalar_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_N_scalar_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_section_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_sections_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_shape_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_face_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_surf_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_mesh_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_prs_manager.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_section_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_sections_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_ubend_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_common.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_display_mode.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_result_utils.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_mesh_utils.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_node_info.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_selection.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_utils.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\xde\xde_model.h">
+      <Filter>Header Files\XDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_shape_data_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\xde\xde_STEP.h">
+      <Filter>Header Files\XDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_cad_properties.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\visu_shape_mesher.h">
+      <Filter>Header Files\Visualization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\calculus\calculus_func_univariate.h">
+      <Filter>Header Files\Calculus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_xde_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\calculus\calculus_design_law.h">
+      <Filter>Header Files\Calculus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\calculus\calculus_design_law_node.h">
+      <Filter>Header Files\Calculus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_law_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_law_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_law_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_ubend_law_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\engine\engine_ubend.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_ubend_law_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_calculus_law_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_curve_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_curve_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\gui_occt_window.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\xde\xde_IGES.h">
+      <Filter>Header Files\XDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_Attr.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_AttrNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_AttrPrs.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_Colors.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_DFNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_DFTree.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_GUI.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_LabelNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_Level.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_ListNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_NodeType.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_NSNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_Picture.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_PtrGUI.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_PtrQTGUI.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_PtrQTGUIMOC.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_QTGUI.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_Attr.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_AttrNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_DFNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_DFTree.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_LabelNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_ListNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_NSNode.hxx">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\engine\engine_mesh.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\ais\visu_xde_shape_prs.h">
+      <Filter>Header Files\Visualization\AIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\engine\engine_part.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_boundary_edges_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_draw_test_suite.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_surface_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\xde\xde_shape_id.h">
+      <Filter>Header Files\XDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_pdomain_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\engine\engine_domain.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\journaling\journal_logger.h">
+      <Filter>Header Files\Journaling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_shaded_surface_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\engine\engine_re.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_re_surfaces_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_re_surfaces_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_re_surfaces_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_re_contours_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_re_contours_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_re_contours_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_re_points_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_re_points_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_points_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_curve_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_curves_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_point_set_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_points_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_surface_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_surfaces_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_topo_item_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_topo_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\engine\engine_iv.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\journaling\journal_iv.h">
+      <Filter>Header Files\Journaling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_point_set_prs.h">
+      <Filter>Header Files\Visualization\Presentation\Imperative</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_prs.h">
+      <Filter>Header Files\Visualization\Presentation\Imperative</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_points_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers\Imperative</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_points_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_curve_prs.h">
+      <Filter>Header Files\Visualization\Presentation\Imperative</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_curve_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers\Imperative</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_surface_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers\Imperative</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_surface_prs.h">
+      <Filter>Header Files\Visualization\Presentation\Imperative</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_iv_surface_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_topo_item_prs.h">
+      <Filter>Header Files\Visualization\Presentation\Imperative</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_volume_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\engine\engine_volume.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_point_set_2d_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_points_2d_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_point_set_2d_prs.h">
+      <Filter>Header Files\Visualization\Presentation\Imperative</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_2d_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers\Imperative</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_classifier.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_contour_shell.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_edge_face.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_edge_solid.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_edge.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_edge_N_IP.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_face.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_face_N_IP.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_face_N_OOP.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_solid.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_surface.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_membership.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_overlapping.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_overlapping_curve_curve.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_overlapping_curve_surface.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_overlapping_ray_surface.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\classification\geom_transition.h">
+      <Filter>Header Files\Geometry\Classification</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_boundary_edges_node.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_face_node.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_part_node.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_surf_node.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_utils.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\data_exchange\geom_IGES.h">
+      <Filter>Header Files\Geometry\Data Exchange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\data_exchange\geom_STEP.h">
+      <Filter>Header Files\Geometry\Data Exchange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\direct_modeling\geom_delete_edges.h">
+      <Filter>Header Files\Geometry\Direct Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\direct_modeling\geom_detach_faces.h">
+      <Filter>Header Files\Geometry\Direct Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\direct_modeling\geom_find_same_hosts.h">
+      <Filter>Header Files\Geometry\Direct Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\direct_modeling\geom_join_edges.h">
+      <Filter>Header Files\Geometry\Direct Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\direct_modeling\geom_rehost_faces.h">
+      <Filter>Header Files\Geometry\Direct Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_aag_vtk.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_volume_node.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\hulls\geom_quick_hull_2d.h">
+      <Filter>Header Files\Geometry\Hulls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_AABBs.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_curve_surface.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_curves.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_ray_shape.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_ray_surface.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_surfaces.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_curve_ss.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_cc.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_cs.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_edges.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_ray_face.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_ray_surface.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\point_clouds\geom_common_point_cloud_2d.h">
+      <Filter>Header Files\Geometry\Point Clouds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\point_clouds\geom_face_point_cloud.h">
+      <Filter>Header Files\Geometry\Point Clouds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\point_clouds\geom_point_cloud.h">
+      <Filter>Header Files\Geometry\Point Clouds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_build_contours.h">
+      <Filter>Header Files\Geometry\Re-Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_re_contour_node.h">
+      <Filter>Header Files\Geometry\Re-Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_re_contours_node.h">
+      <Filter>Header Files\Geometry\Re-Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_re_node.h">
+      <Filter>Header Files\Geometry\Re-Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_re_points_node.h">
+      <Filter>Header Files\Geometry\Re-Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_re_surface_node.h">
+      <Filter>Header Files\Geometry\Re-Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_re_surfaces_node.h">
+      <Filter>Header Files\Geometry\Re-Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\skinning\geom_section_node.h">
+      <Filter>Header Files\Geometry\Skinning</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\skinning\geom_sections_node.h">
+      <Filter>Header Files\Geometry\Skinning</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\use_cases\ubend\geom_ubend.h">
+      <Filter>Header Files\Geometry\Use Cases\U-Bend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\use_cases\ubend\geom_ubend_law_node.h">
+      <Filter>Header Files\Geometry\Use Cases\U-Bend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\use_cases\ubend\geom_ubend_laws_node.h">
+      <Filter>Header Files\Geometry\Use Cases\U-Bend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\use_cases\ubend\geom_ubend_node.h">
+      <Filter>Header Files\Geometry\Use Cases\U-Bend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\combination\geom_overlapping_ranges.h">
+      <Filter>Header Files\Geometry\Combination</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\combination\geom_weighted_range.h">
+      <Filter>Header Files\Geometry\Combination</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_divide_by_continuity.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\contour_capture\geom_contour_orientation.h">
+      <Filter>Header Files\Geometry\Contour Capturing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\contour_capture\geom_contour_capture.h">
+      <Filter>Header Files\Geometry\Contour Capturing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\contour_capture\geom_contour_capture_validator.h">
+      <Filter>Header Files\Geometry\Contour Capturing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\healing\geom_check_contour.h">
+      <Filter>Header Files\Geometry\Healing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\healing\geom_reapprox_contour.h">
+      <Filter>Header Files\Geometry\Healing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\healing\geom_fix_small_contour.h">
+      <Filter>Header Files\Geometry\Healing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\healing\geom_refine_tolerance.h">
+      <Filter>Header Files\Geometry\Healing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\healing\geom_check_shell.h">
+      <Filter>Header Files\Geometry\Healing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_base.h">
+      <Filter>Header Files\Geometry\Neighborhood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_empty.h">
+      <Filter>Header Files\Geometry\Neighborhood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_face_interior_full.h">
+      <Filter>Header Files\Geometry\Neighborhood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_face_interior_hemi.h">
+      <Filter>Header Files\Geometry\Neighborhood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_face_interior_sector.h">
+      <Filter>Header Files\Geometry\Neighborhood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_solid_interior_full.h">
+      <Filter>Header Files\Geometry\Neighborhood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_solid_interior_hemi.h">
+      <Filter>Header Files\Geometry\Neighborhood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\selection\geom_min_shell.h">
+      <Filter>Header Files\Geometry\Selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\selection\geom_pick_shell.h">
+      <Filter>Header Files\Geometry\Selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\selection\geom_split_edges.h">
+      <Filter>Header Files\Geometry\Selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\selection\geom_split_faces.h">
+      <Filter>Header Files\Geometry\Selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\selection\geom_split_shape.h">
+      <Filter>Header Files\Geometry\Selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\projection\geom_curve_surface_dist.h">
+      <Filter>Header Files\Geometry\Projection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\projection\geom_edge_edge_dist.h">
+      <Filter>Header Files\Geometry\Projection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\projection\geom_project_curve_surface.h">
+      <Filter>Header Files\Geometry\Projection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\projection\geom_project_edge_face.h">
+      <Filter>Header Files\Geometry\Projection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\projection\geom_project_edges_faces.h">
+      <Filter>Header Files\Geometry\Projection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\projection\geom_project_point_curve.h">
+      <Filter>Header Files\Geometry\Projection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\projection\geom_project_vertex_edge.h">
+      <Filter>Header Files\Geometry\Projection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\projection\geom_project_wire_shell.h">
+      <Filter>Header Files\Geometry\Projection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\hulls\geom_k_neighbors_hull.h">
+      <Filter>Header Files\Geometry\Hulls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\point_clouds\geom_purify_cloud.h">
+      <Filter>Header Files\Geometry\Point Clouds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_cc_2D.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_probe_curve.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_probe_surface.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_curve_curve_2D.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_curve_curve.h">
+      <Filter>Header Files\Geometry\Intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\features\geom_build_stock.h">
+      <Filter>Header Files\Geometry\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\data_exchange\geom_DE_vars.h">
+      <Filter>Header Files\Geometry\Data Exchange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\common\common_variable.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_find_nonmanifold.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_axes_btn_callback.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_tess_item_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_tess_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_tess_item_prs.h">
+      <Filter>Header Files\Visualization\Presentation\Imperative</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_build_obb.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_mesh_topo_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_topo_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\tess_conglomerate.h">
+      <Filter>Header Files\Tessellation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\tess_convert.h">
+      <Filter>Header Files\Tessellation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\tess_gen.h">
+      <Filter>Header Files\Tessellation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\tess_info.h">
+      <Filter>Header Files\Tessellation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\tess_node.h">
+      <Filter>Header Files\Tessellation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\tess_obj.h">
+      <Filter>Header Files\Tessellation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\tess_params.h">
+      <Filter>Header Files\Tessellation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mesh\tess_ply.h">
+      <Filter>Header Files\Tessellation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_cloudify.h">
+      <Filter>Header Files\Geometry\Re-Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\point_clouds\geom_point_cloud_normals.h">
+      <Filter>Header Files\Geometry\Point Clouds</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_journal_notifier.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_part.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_features.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_morphology.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_section.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_skinning.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_mesh.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_dmu.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_dmu_visu.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_ubend.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_pcloud.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_hull.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_line_edit.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_func_univariate.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_curve_2d.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_part.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_skinner.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_domain.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_section.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_mesh.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_surface.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_ubend.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_dmu.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_visu_pick_callback.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_visu_pdomain_callback.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_visu_topo_graph.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_visu_topo_graph_item.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_object_browser.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_decomposition_browser.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_vtk_window.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_object_browser_xde.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_welcome_window.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_asitus.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_features.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_morphology.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_pcloud.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_dmu.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_ubend.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_hull.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_skinning.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_meshedit.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_prim_data_view.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_decomp_generate.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_mesh.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_sewing.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_cloudify.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_STEP.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_STEP_delegate.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_DFBrowser_QTGUI2.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\common\common_partition.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\common\common_model.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\common\common_root_node.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\common\common_facilities.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_object_browser.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_part.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_domain.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_surface.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_asitus.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_welcome_window.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_skinning.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_skinner.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_part.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_section.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_section.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_line_edit.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_prim_data_adaptor.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_prim_data_view.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_data_adaptor.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_skinning.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_mesh.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_mesh.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_meshedit.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_dmu.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_ubend.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_ubend.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_ubend.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_face_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_mesh_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_section_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_sections_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_shape_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\filters\visu_mesh_E_scalar_filter.cpp">
+      <Filter>Source Files\Visualization\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\filters\visu_mesh_E_vector_filter.cpp">
+      <Filter>Source Files\Visualization\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\filters\visu_mesh_EN_scalar_filter.cpp">
+      <Filter>Source Files\Visualization\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\filters\visu_mesh_N_scalar_filter.cpp">
+      <Filter>Source Files\Visualization\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\filters\visu_shrink_poly_filter.cpp">
+      <Filter>Source Files\Visualization\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\interaction\visu_interactor_style_pick.cpp">
+      <Filter>Source Files\Visualization\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\interaction\visu_interactor_style_pick_2d.cpp">
+      <Filter>Source Files\Visualization\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\interaction\visu_pick_callback.cpp">
+      <Filter>Source Files\Visualization\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\interaction\visu_rotation_callback.cpp">
+      <Filter>Source Files\Visualization\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\interaction\visu_viewer_callback.cpp">
+      <Filter>Source Files\Visualization\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_bcurve_poles_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_curve_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_mesh_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_pcurve_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_bcurve_poles_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_face_domain_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_face_surface_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_contour_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_E_scalar_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_E_vector_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_EN_scalar_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_N_scalar_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_section_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_sections_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_shape_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_face_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_surf_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_mesh_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_prs_manager.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_section_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_sections_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_ubend_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_result_utils.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_mesh_utils.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_node_info.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_selection.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_topo_graph.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_utils.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\xde\xde_model.cpp">
+      <Filter>Source Files\XDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_object_browser_xde.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_shape_data_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_dmu.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_common.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\xde\xde_STEP.cpp">
+      <Filter>Source Files\XDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_shape_mesher.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_func_univariate.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_curve_2d.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\calculus\calculus_func_univariate.cpp">
+      <Filter>Source Files\Calculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_xde_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\calculus\calculus_design_law.cpp">
+      <Filter>Source Files\Calculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\calculus\calculus_design_law_node.cpp">
+      <Filter>Source Files\Calculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_law_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_law_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_law_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_ubend_law_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\engine\engine_ubend.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_ubend_law_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_calculus_law_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_curve_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_curve_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_occt_window.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_viewer_dmu.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_mesh.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\xde\xde_IGES.cpp">
+      <Filter>Source Files\XDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_sewing.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_Attr.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_AttrNode.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_DFNode.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_DFTree.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_GUI.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_LabelNode.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_ListNode.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_NSNode.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_QTGUI.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_QTGUI2.cxx">
+      <Filter>Source Files\GUI\CAF Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_dmu_visu.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\visu_topo_graph_item.cpp">
+      <Filter>Source Files\Visualization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_vtk_window.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\engine\engine_mesh.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_hull.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_hull.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\ais\visu_xde_shape_prs.cpp">
+      <Filter>Source Files\Visualization\AIS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\engine\engine_part.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_boundary_edges_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_surface_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_pdomain_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\interaction\visu_pdomain_callback.cpp">
+      <Filter>Source Files\Visualization\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\engine\engine_domain.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\journaling\journal_notifier.cpp">
+      <Filter>Source Files\Journaling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\journaling\journal_logger.cpp">
+      <Filter>Source Files\Journaling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_features.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_features.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_shaded_surface_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_morphology.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_morphology.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\engine\engine_re.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_re_surfaces_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_re_surfaces_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_re_surfaces_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_re_contours_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_re_contours_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_re_contours_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_re_points_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_re_points_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_points_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_curve_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_curves_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_point_set_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_points_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_surface_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_surfaces_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_topo_item_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_topo_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\engine\engine_iv.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\journaling\journal_iv.cpp">
+      <Filter>Source Files\Journaling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_point_set_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation\Imperative</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation\Imperative</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_points_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers\Imperative</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_points_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_curve_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation\Imperative</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\imperative\visu_iv_curve_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers\Imperative</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\imperative\visu_iv_surface_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers\Imperative</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_surface_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation\Imperative</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_iv_surface_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_topo_item_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation\Imperative</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_decomposition_browser.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_volume_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\engine\engine_volume.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_point_set_2d_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_points_2d_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_point_set_2d_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation\Imperative</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_2d_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers\Imperative</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_decomp_generate.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_classifier.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_contour_shell.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_edge_face.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_edge_solid.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_edge.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_edge_N_IP.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_face.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_face_N_IP.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_face_N_OOP.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_solid.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_surface.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_overlapping_curve_curve.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_overlapping_curve_surface.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_overlapping_ray_surface.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\classification\geom_transition.cpp">
+      <Filter>Source Files\Geometry\Classification</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_boundary_edges_node.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_face_node.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_part_node.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_surf_node.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_utils.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\data_exchange\geom_IGES.cpp">
+      <Filter>Source Files\Geometry\Data Exchange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\data_exchange\geom_STEP.cpp">
+      <Filter>Source Files\Geometry\Data Exchange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\direct_modeling\geom_delete_edges.cpp">
+      <Filter>Source Files\Geometry\Direct Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\direct_modeling\geom_detach_faces.cpp">
+      <Filter>Source Files\Geometry\Direct Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\direct_modeling\geom_find_same_hosts.cpp">
+      <Filter>Source Files\Geometry\Direct Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\direct_modeling\geom_join_edges.cpp">
+      <Filter>Source Files\Geometry\Direct Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\direct_modeling\geom_rehost_faces.cpp">
+      <Filter>Source Files\Geometry\Direct Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_aag_vtk.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_volume_node.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\hulls\geom_quick_hull_2d.cpp">
+      <Filter>Source Files\Geometry\Hulls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_AABBs.cpp">
+      <Filter>Source Files\Geometry\Intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_curve_surface.cpp">
+      <Filter>Source Files\Geometry\Intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_curves.cpp">
+      <Filter>Source Files\Geometry\Intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_ray_shape.cpp">
+      <Filter>Source Files\Geometry\Intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_ray_surface.cpp">
+      <Filter>Source Files\Geometry\Intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_surfaces.cpp">
+      <Filter>Source Files\Geometry\Intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\point_clouds\geom_common_point_cloud_2d.cpp">
+      <Filter>Source Files\Geometry\Point Clouds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\point_clouds\geom_face_point_cloud.cpp">
+      <Filter>Source Files\Geometry\Point Clouds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\point_clouds\geom_point_cloud.cpp">
+      <Filter>Source Files\Geometry\Point Clouds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_build_contours.cpp">
+      <Filter>Source Files\Geometry\Re-Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_re_contour_node.cpp">
+      <Filter>Source Files\Geometry\Re-Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_re_contours_node.cpp">
+      <Filter>Source Files\Geometry\Re-Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_re_node.cpp">
+      <Filter>Source Files\Geometry\Re-Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_re_points_node.cpp">
+      <Filter>Source Files\Geometry\Re-Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_re_surface_node.cpp">
+      <Filter>Source Files\Geometry\Re-Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_re_surfaces_node.cpp">
+      <Filter>Source Files\Geometry\Re-Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\skinning\geom_section_node.cpp">
+      <Filter>Source Files\Geometry\Skinning</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\skinning\geom_sections_node.cpp">
+      <Filter>Source Files\Geometry\Skinning</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\use_cases\ubend\geom_ubend.cpp">
+      <Filter>Source Files\Geometry\Use Cases\U-Bend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\use_cases\ubend\geom_ubend_law_node.cpp">
+      <Filter>Source Files\Geometry\Use Cases\U-Bend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\use_cases\ubend\geom_ubend_laws_node.cpp">
+      <Filter>Source Files\Geometry\Use Cases\U-Bend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\use_cases\ubend\geom_ubend_node.cpp">
+      <Filter>Source Files\Geometry\Use Cases\U-Bend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\combination\geom_overlapping_ranges.cpp">
+      <Filter>Source Files\Geometry\Combination</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\combination\geom_weighted_range.cpp">
+      <Filter>Source Files\Geometry\Combination</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\contour_capture\geom_contour_orientation.cpp">
+      <Filter>Source Files\Geometry\Contour Capturing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\contour_capture\geom_contour_capture.cpp">
+      <Filter>Source Files\Geometry\Contour Capturing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\contour_capture\geom_contour_capture_validator.cpp">
+      <Filter>Source Files\Geometry\Contour Capturing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\healing\geom_check_contour.cpp">
+      <Filter>Source Files\Geometry\Healing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\healing\geom_check_shell.cpp">
+      <Filter>Source Files\Geometry\Healing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\healing\geom_fix_small_contour.cpp">
+      <Filter>Source Files\Geometry\Healing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\healing\geom_refine_tolerance.cpp">
+      <Filter>Source Files\Geometry\Healing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\healing\geom_reapprox_contour.cpp">
+      <Filter>Source Files\Geometry\Healing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\hulls\geom_k_neighbors_hull.cpp">
+      <Filter>Source Files\Geometry\Hulls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\projection\geom_curve_surface_dist.cpp">
+      <Filter>Source Files\Geometry\Projection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\projection\geom_edge_edge_dist.cpp">
+      <Filter>Source Files\Geometry\Projection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\projection\geom_project_curve_surface.cpp">
+      <Filter>Source Files\Geometry\Projection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\projection\geom_project_edge_face.cpp">
+      <Filter>Source Files\Geometry\Projection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\projection\geom_project_edges_faces.cpp">
+      <Filter>Source Files\Geometry\Projection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\projection\geom_project_point_curve.cpp">
+      <Filter>Source Files\Geometry\Projection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\projection\geom_project_vertex_edge.cpp">
+      <Filter>Source Files\Geometry\Projection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\projection\geom_project_wire_shell.cpp">
+      <Filter>Source Files\Geometry\Projection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\selection\geom_min_shell.cpp">
+      <Filter>Source Files\Geometry\Selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\selection\geom_pick_shell.cpp">
+      <Filter>Source Files\Geometry\Selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\selection\geom_split_edges.cpp">
+      <Filter>Source Files\Geometry\Selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\selection\geom_split_faces.cpp">
+      <Filter>Source Files\Geometry\Selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\selection\geom_split_shape.cpp">
+      <Filter>Source Files\Geometry\Selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_divide_by_continuity.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_curve_curve_2D.cpp">
+      <Filter>Source Files\Geometry\Intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_curve_curve.cpp">
+      <Filter>Source Files\Geometry\Intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\features\geom_build_stock.cpp">
+      <Filter>Source Files\Geometry\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_STEP.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_STEP_delegate.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_find_nonmanifold.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_axes_btn_callback.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_tess_item_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_tess_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_tess_item_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation\Imperative</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_build_obb.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_mesh_topo_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_topo_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\tess_conglomerate.cpp">
+      <Filter>Source Files\Tessellation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\tess_convert.cpp">
+      <Filter>Source Files\Tessellation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\tess_gen.cpp">
+      <Filter>Source Files\Tessellation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\tess_info.cpp">
+      <Filter>Source Files\Tessellation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\tess_node.cpp">
+      <Filter>Source Files\Tessellation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\tess_obj.cpp">
+      <Filter>Source Files\Tessellation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\tess_params.cpp">
+      <Filter>Source Files\Tessellation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\tess_ply.cpp">
+      <Filter>Source Files\Tessellation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_cloudify.cpp">
+      <Filter>Source Files\Geometry\Point Clouds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_cloudify.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_pcloud.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_pcloud.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\point_clouds\geom_point_cloud_normals.cpp">
+      <Filter>Source Files\Geometry\Point Clouds</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\src\gui\gui_object_browser.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_part.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_domain.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_surface.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_asitus.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_welcome_window.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_skinning.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_part.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_skinner.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_section.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_section.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_line_edit.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_prim_data_view.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_skinning.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_mesh.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_mesh.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_meshedit.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_dmu.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_ubend.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_ubend.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_ubend.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\visu\interaction\visu_pick_callback.h">
+      <Filter>Header Files\Visualization\Interaction</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_object_browser_xde.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_dmu.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_func_univariate.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_curve_2d.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_dmu.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_mesh.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_sewing.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\caf_browser\DFBrowser_QTGUI2.h">
+      <Filter>Header Files\GUI\CAF Browser</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_dmu_visu.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\visu\visu_topo_graph.h">
+      <Filter>Header Files\Visualization</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_vtk_window.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\visu\visu_topo_graph_item.h">
+      <Filter>Header Files\Visualization</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_hull.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_hull.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\visu\interaction\visu_pdomain_callback.h">
+      <Filter>Header Files\Visualization\Interaction</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\journaling\journal_notifier.h">
+      <Filter>Header Files\Journaling</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_features.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_features.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_morphology.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_morphology.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_decomposition_browser.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_decomp_generate.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_STEP.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_STEP_delegate.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_cloudify.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_pcloud.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_pcloud.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\res\Plugin">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\..\res\Resources">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\..\res\asitus_icon_16x16.png">
+      <Filter>Resources</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -12,8 +12,8 @@
 #include <analysis_situs.h>
 
 // A-Situs (GUI) includes
-#include <gui_controls_part.h>
 #include <gui_controls_features.h>
+#include <gui_controls_part.h>
 #include <gui_object_browser.h>
 #include <gui_viewer_domain.h>
 #include <gui_viewer_part.h>

@@ -90,6 +90,24 @@ Handle(geom_part_node) engine_part::Create_Part()
   return geom_n;
 }
 
+//! Cleans up Data Model structure related to the Part Node.
+void engine_part::Clean_Part()
+{
+  // Access Model
+  Handle(common_model) M = common_facilities::Instance()->Model;
+
+  // Get Part Node
+  Handle(geom_part_node) part_n = M->PartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+    return;
+
+  // Reset data
+  part_n->Init();
+  part_n->FaceRepresentation()->Init();
+  part_n->SurfaceRepresentation()->Init();
+}
+
 //! Extracts sub-shape indices for the given collection of sub-shapes.
 //! \param subShapes [in]  sub-shapes of interest.
 //! \param indices   [out] their corresponding IDs.

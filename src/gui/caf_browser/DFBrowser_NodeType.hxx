@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_NodeType_HeaderFile
-#define _DFBrowser_NodeType_HeaderFile
+#ifndef _DFBrowser_NodeType_h
+#define _DFBrowser_NodeType_h
 
 enum DFBrowser_NodeType {
  DFBrowser_ATTRIBUTE,

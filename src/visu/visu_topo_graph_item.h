@@ -11,8 +11,8 @@
 // Visualization includes
 #include <visu_common.h>
 
-// Geometry includes
-#include <geom_angle.h>
+// Feature includes
+#include <feature_angle.h>
 
 // VTK includes
 #include <vtkAbstractArray.h>
@@ -161,7 +161,7 @@ protected:
   }
 
   //---------------------------------------------------------------------------
-  virtual bool KeyPressEvent(const vtkContextKeyEvent& key)
+  virtual bool KeyPressEvent(const vtkContextKeyEvent&)
   {
     return true;
   }

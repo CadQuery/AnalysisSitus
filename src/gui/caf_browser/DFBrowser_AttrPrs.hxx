@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_AttrPrs_HeaderFile
-#define _DFBrowser_AttrPrs_HeaderFile
+#ifndef _DFBrowser_AttrPrs_h
+#define _DFBrowser_AttrPrs_h
 
 enum DFBrowser_AttrPrs {
  DFBrowser_NORMAL,

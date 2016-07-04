@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef gui_controls_mesh_h
-#define gui_controls_mesh_h
+#ifndef gui_controls_tess_h
+#define gui_controls_tess_h
 
 // Qt includes
 #pragma warning(push, 0)

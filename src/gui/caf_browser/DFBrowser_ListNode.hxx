@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_ListNode_HeaderFile
-#define _DFBrowser_ListNode_HeaderFile
+#ifndef _DFBrowser_ListNode_h
+#define _DFBrowser_ListNode_h
 
 #include <Handle_DFBrowser_ListNode.hxx>
 #include <DFBrowser_DFNode.hxx>
@@ -29,9 +29,9 @@ class DFBrowser_ListNode : public DFBrowser_DFNode
 
   Standard_EXPORT virtual void AddSub(Handle(DFBrowser_DFNode)& theNode);
 
-  Standard_EXPORT virtual Handle_DFBrowser_DFNode Sub() const;
+  Standard_EXPORT virtual Handle(DFBrowser_DFNode) Sub() const;
 
-  inline const Handle_DFBrowser_AttrNode & FirstAttribute() const
+  inline const Handle(DFBrowser_AttrNode) & FirstAttribute() const
   {
     return myAttr;
   }
@@ -41,7 +41,7 @@ class DFBrowser_ListNode : public DFBrowser_DFNode
     myAttr = theAttribute;
   }
 
-  Standard_EXPORT Handle_DFBrowser_AttrNode LastAttribute() const;
+  Standard_EXPORT Handle(DFBrowser_AttrNode) LastAttribute() const;
 
   Standard_EXPORT virtual void Del();
 

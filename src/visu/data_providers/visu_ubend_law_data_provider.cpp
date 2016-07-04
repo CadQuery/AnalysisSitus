@@ -27,7 +27,7 @@ Handle(Standard_Type) visu_ubend_law_data_provider::GetCurveType() const
 
 //! Extracts X or Y evolution law from a persistent object.
 //! \return X or Y evolution law.
-Handle(Geom2d_Curve) visu_ubend_law_data_provider::GetCurve2d() const
+Handle(Geom2d_Curve) visu_ubend_law_data_provider::GetCurve2d(double&, double&) const
 {
   Handle(calculus_design_law) xLaw = m_node->GetLaw_X()->AsLaw();
   Handle(calculus_design_law) yLaw = m_node->GetLaw_Y()->AsLaw();
@@ -36,7 +36,7 @@ Handle(Geom2d_Curve) visu_ubend_law_data_provider::GetCurve2d() const
 }
 
 //! Not used.
-Handle(Geom_Curve) visu_ubend_law_data_provider::GetCurve() const
+Handle(Geom_Curve) visu_ubend_law_data_provider::GetCurve(double&, double&) const
 {
   return NULL;
 }

@@ -18,13 +18,15 @@
 #include <xde_shape_id.h>
 #include <xde_STEP.h>
 
+// Feature includes
+#include <feature_delete_faces.h>
+#include <feature_detect_choles.h>
+
 // A-Situs (geometry) includes
-#include <geom_delete_faces.h>
-#include <geom_detect_holes.h>
 #include <geom_utils.h>
 
 // A-Situs (mesh) includes
-#include <mesh_obj.h>
+#include <tess_obj.h>
 
 // A-Situs (visualization) includes
 #include <visu_topo_graph.h>
@@ -100,7 +102,7 @@ gui_controls_dmu::gui_controls_dmu(QWidget* parent) : QWidget(parent)
 
   // Button for mesh generation
   m_widgets.pMesh = new QToolButton();
-  m_widgets.pMesh->setIcon( QIcon( AsciiStr2QStr(ico_dir) + "toolbar_mesh_gen.png" ) );
+  m_widgets.pMesh->setIcon( QIcon( AsciiStr2QStr(ico_dir) + "toolbar_tess_gen.png" ) );
   m_widgets.pMesh->setIconSize( QSize(32, 32) );
   m_widgets.pMesh->setToolTip("Generate mesh");
   m_widgets.pMesh->setSizePolicy( QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum) );
@@ -356,7 +358,9 @@ void gui_controls_dmu::onRemoveHoles()
 
       // Identify holes
       const double R = FEATURE_HOLE_RADIUS;
-      geom_detect_holes detector(shape);
+      feature_detect_choles detector(shape, NULL,
+                                     common_facilities::Instance()->Notifier,
+                                     common_facilities::Instance()->Plotter);
       if ( !detector.Perform(R) )
       {
         std::cout << "Error: cannot identify holes" << std::endl;
@@ -364,7 +368,7 @@ void gui_controls_dmu::onRemoveHoles()
       }
 
       // Get detected holes
-      const TopTools_IndexedMapOfShape& holes = detector.Result();
+      const TopTools_IndexedMapOfShape& holes = detector.GetResult();
       if ( holes.IsEmpty() )
       {
         std::cout << "No holes detected with radius not greater than " << R << std::endl;
@@ -374,13 +378,13 @@ void gui_controls_dmu::onRemoveHoles()
         std::cout << holes.Extent() << " hole(s) detected with radius not greater than " << R << std::endl;
 
       // Remove holes
-      geom_delete_faces eraser(shape);
+      feature_delete_faces eraser(shape);
       if ( !eraser.Perform(holes, false) )
       {
         std::cout << "Error: cannot remove holes" << std::endl;
         return;
       }
-      TopoDS_Shape result = eraser.Result();
+      TopoDS_Shape result = eraser.GetResult();
 
       // Set shape back to model
       ShapeTool->SetShape(labels(l), result);
@@ -532,7 +536,7 @@ void gui_controls_dmu::onSaveOBJ()
   TopoDS_Shape shape = common_facilities::Instance()->Model_XDE->GetOneShape();
 
   // Save as OBJ geometry
-  if ( mesh_obj::Write( shape, QStr2AsciiStr(filename) ) )
+  if ( tess_obj::Write( shape, QStr2AsciiStr(filename) ) )
     std::cout << "OBJ saved successfully" << std::endl;
   else
     std::cout << "Error: cannot save OBJ" << std::endl;

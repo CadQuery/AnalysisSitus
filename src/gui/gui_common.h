@@ -115,6 +115,11 @@ public:
                const QString&       saveTitle,
                const OpenSaveAction action);
 
+public:
+
+  static bool
+    PartShape(TopoDS_Shape& part);
+
 };
 
 #define CStr2ExtStr(CStr) \

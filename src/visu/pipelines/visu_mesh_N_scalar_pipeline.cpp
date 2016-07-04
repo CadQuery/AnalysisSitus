@@ -129,6 +129,6 @@ void visu_mesh_N_scalar_pipeline::updateCallback()
     doScalarInterpolation = true;
 
   visu_mesh_result_utils::InitPointScalarMapper(m_mapper, ARRNAME_MESH_N_SCALARS,
-                                                 aMinScalar, aMaxScalar,
-                                                 doScalarInterpolation);
+                                                aMinScalar, aMaxScalar,
+                                                doScalarInterpolation);
 }

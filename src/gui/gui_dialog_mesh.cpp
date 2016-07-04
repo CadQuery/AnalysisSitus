@@ -12,8 +12,8 @@
 #include <common_facilities.h>
 
 // Mesh includes
-#include <mesh_gen.h>
-#include <mesh_info.h>
+#include <tess_gen.h>
+#include <tess_info.h>
 
 // Engine includes
 #include <engine_mesh.h>
@@ -57,7 +57,7 @@ gui_dialog_mesh::gui_dialog_mesh(QWidget* parent)
   m_widgets.pAngularDeflection->setMinimumWidth(CONTROL_EDIT_WIDTH);
 
   // Set mesh parameters from Data Model
-  mesh_params params;
+  tess_params params;
   engine_mesh::GetParameters(params);
 
   // Default values
@@ -131,7 +131,7 @@ void gui_dialog_mesh::onGenerate()
   QVariant qaDefl = m_widgets.pAngularDeflection->text();
 
   // Convert user inputs to doubles
-  mesh_params params;
+  tess_params params;
   params.Deflection.Linear  = qlDefl.toDouble();
   params.Deflection.Angular = qaDefl.toDouble();
 
@@ -149,8 +149,8 @@ void gui_dialog_mesh::onGenerate()
   std::cout << "Mesh linear defl. = " << params.Deflection.Linear << std::endl;
   std::cout << "Mesh angular defl. = " << params.Deflection.Angular << std::endl;
   //
-  mesh_info info;
-  if ( !mesh_gen::DoNative(fullCAD, params.Deflection.Linear, params.Deflection.Angular, info) )
+  tess_info info;
+  if ( !tess_gen::DoNative(fullCAD, params.Deflection.Linear, params.Deflection.Angular, info) )
   {
     std::cout << "Error: meshing failed" << std::endl;
     this->close();

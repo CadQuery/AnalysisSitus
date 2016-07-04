@@ -35,17 +35,21 @@ visu_section_data_provider::visu_section_data_provider(const ActAPI_DataObjectId
 //! \return curve type.
 Handle(Standard_Type) visu_section_data_provider::GetCurveType() const
 {
-  return this->GetCurve()->DynamicType();
+  double f, l;
+  return this->GetCurve(f, l)->DynamicType();
 }
 
 //! Not used.
-Handle(Geom2d_Curve) visu_section_data_provider::GetCurve2d() const
+Handle(Geom2d_Curve) visu_section_data_provider::GetCurve2d(double&, double&) const
 {
   return NULL;
 }
 
-//! Not used.
-Handle(Geom_Curve) visu_section_data_provider::GetCurve() const
+//! Accessor for curve.
+//! \param f [out] first parameter.
+//! \param l [out] last parameter.
+//! \return curve.
+Handle(Geom_Curve) visu_section_data_provider::GetCurve(double& f, double& l) const
 {
   TopoDS_Shape section_shape = this->GetShape();
   //
@@ -53,7 +57,6 @@ Handle(Geom_Curve) visu_section_data_provider::GetCurve() const
   TopoDS_Edge section_edge = TopoDS::Edge( exp.Current() );
 
   // Extract curve
-  double f, l;
   Handle(Geom_Curve) c3d = BRep_Tool::Curve(section_edge, f, l);
   return c3d;
 }

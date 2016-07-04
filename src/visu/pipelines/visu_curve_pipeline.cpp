@@ -53,11 +53,19 @@ void visu_curve_pipeline::SetInput(const Handle(visu_data_provider)& DP)
   if ( dp->MustExecute( this->GetMTime() ) )
   {
     // Curve source
+    double f, l;
     vtkSmartPointer<visu_curve_source> src = vtkSmartPointer<visu_curve_source>::New();
     //
     if ( curve_type->SubType( STANDARD_TYPE(Geom2d_Curve) ) )
     {
-      src->SetInputCurve2d( dp->GetCurve2d() );
+      Handle(Geom2d_Curve) curve = dp->GetCurve2d(f, l);
+      src->SetInputCurve2d(curve, f, l);
+      src->SetTipSize(0.1);
+    }
+    else if ( curve_type->SubType( STANDARD_TYPE(Geom_Curve) ) )
+    {
+      Handle(Geom_Curve) curve = dp->GetCurve(f, l);
+      src->SetInputCurve(curve, f, l);
       src->SetTipSize(0.1);
     }
     else

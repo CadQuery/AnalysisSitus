@@ -21,12 +21,15 @@
 #include <vtkCamera.h>
 #include <vtkCellData.h>
 #include <vtkIdTypeArray.h>
+#include <vtkImageData.h>
 #include <vtkInformation.h>
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
+#include <vtkTexturedButtonRepresentation2D.h>
+#include <vtkWidgetRepresentation.h>
 
 // VIS includes
 #pragma warning(push, 0)
@@ -38,6 +41,68 @@
 #include <Standard_ProgramError.hxx>
 
 #undef COUT_DEBUG
+
+//-----------------------------------------------------------------------------
+
+void visu_prs_manager::PlaceButton(vtkButtonWidget* pButton,
+                                   vtkRenderer*     pRenderer)
+{
+  // Place the widget. Must be done after a render so that the viewport is
+  // defined. Here the widget placement is in normalized display coordinates
+  vtkSmartPointer<vtkCoordinate> upperRight = vtkSmartPointer<vtkCoordinate>::New();
+  upperRight->SetCoordinateSystemToNormalizedDisplay();
+  upperRight->SetValue(1.0, 1.0);
+
+  const double displaySize[2] = { upperRight->GetComputedDisplayValue(pRenderer)[0],
+                                  upperRight->GetComputedDisplayValue(pRenderer)[1] };
+
+  double bds[6];
+  const double size = 25.0;
+  bds[0] = 3;
+  bds[1] = bds[0] + size;
+  bds[2] = displaySize[1] - size - 3;
+  bds[3] = bds[2] + size;
+  bds[4] = bds[5] = 0.0;
+
+  // Scale to 1, default is .5
+  pButton->GetRepresentation()->SetPlaceFactor(1);
+  pButton->GetRepresentation()->PlaceWidget(bds);
+}
+
+//-----------------------------------------------------------------------------
+
+void visu_prs_manager::CreateImage(vtkSmartPointer<vtkImageData> image,
+                                   unsigned char*                color1,
+                                   unsigned char*                color2)
+{
+  // Specify the size of the image data
+  image->SetDimensions(10, 10, 1);
+  image->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
+  int* dims = image->GetDimensions();
+
+  // Fill the image
+  for ( int y = 0; y < dims[1]; ++y )
+  {
+    for ( int x = 0; x < dims[0]; ++x )
+    {
+      unsigned char*
+        pixel = static_cast<unsigned char*>( image->GetScalarPointer(x, y, 0) );
+      //
+      if ( x < 5 )
+      {
+        pixel[0] = color1[0];
+        pixel[1] = color1[1];
+        pixel[2] = color1[2];
+      }
+      else
+      {
+        pixel[0] = color2[0];
+        pixel[1] = color2[1];
+        pixel[2] = color2[2];
+      }
+    }
+  }
+}
 
 //-----------------------------------------------------------------------------
 
@@ -68,13 +133,11 @@ visu_prs_manager::visu_prs_manager() : vtkObject(), m_widget(NULL)
   m_renderer->LightFollowCameraOn();
   m_renderer->TwoSidedLightingOn();
 
-  // Background
-  m_renderer->GradientBackgroundOn();
-  m_renderer->SetBackground(0, 0, 0);
-  m_renderer->SetBackground2(0.15, 0.25, 0.4);
+  // Set background color
+  m_renderer->SetBackground(0.15, 0.15, 0.15);
 
   // Initialize employed pickers
-  this->InitializePicker();
+  this->InitializePickers();
 
   // Set default selection mode
   m_iSelectionModes = SelectionMode_None;
@@ -85,23 +148,66 @@ visu_prs_manager::visu_prs_manager() : vtkObject(), m_widget(NULL)
   m_renderWindow->SetMultiSamples(8);
 
   // Initialize Interactor Style instance for normal operation mode
-  m_interactorStyleTrackball
-    = vtkSmartPointer<visu_interactor_style_pick>::New();
+  m_interactorStyleTrackball = vtkSmartPointer<visu_interactor_style_pick>::New();
 
   // Initialize Interactor Style instance for 2D scenes
-  m_interactorStyleImage
-    = vtkSmartPointer<visu_interactor_style_pick_2d>::New();
+  m_interactorStyleImage = vtkSmartPointer<visu_interactor_style_pick_2d>::New();
 
   // Initialize Render Window Interactor
   m_renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
   m_renderWindowInteractor->SetRenderWindow(m_renderWindow);
   m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
 
+  /* =======================
+   *  Button to toggle axes
+   * ======================= */
+
   // Initialize trihedron
   m_trihedron = vtkSmartPointer<vtkAxesActor>::New();
   m_trihedron->SetAxisLabels(0);
   m_trihedron->SetConeRadius(0);
   m_renderer->AddActor(m_trihedron);
+
+  // Button to switch between visualization modes
+  m_axesButton = vtkSmartPointer<vtkButtonWidget>::New();
+  m_axesCallback = vtkSmartPointer<visu_axes_btn_callback>::New();
+  //
+  m_axesCallback->SetAxesActor(m_trihedron);
+  m_axesCallback->SetRenderer(m_renderer);
+  m_axesButton->AddObserver(vtkCommand::StateChangedEvent, m_axesCallback);
+
+  // Create images for textures
+  vtkSmartPointer<vtkImageData> image1 = vtkSmartPointer<vtkImageData>::New();
+  vtkSmartPointer<vtkImageData> image2 = vtkSmartPointer<vtkImageData>::New();
+  vtkSmartPointer<vtkImageData> image3 = vtkSmartPointer<vtkImageData>::New();
+  vtkSmartPointer<vtkImageData> image4 = vtkSmartPointer<vtkImageData>::New();
+  //
+  unsigned char color1[3] = {255, 0,   0};
+  unsigned char color2[3] = {0,   255, 0};
+  unsigned char color3[3] = {0,   0,   255};
+  unsigned char color4[3] = {0,   255, 255};
+  //
+  CreateImage(image1, color1, color1);
+  CreateImage(image2, color2, color2);
+  CreateImage(image3, color3, color3);
+  CreateImage(image4, color4, color4);
+
+  // Create the widget and its representation
+  vtkSmartPointer<vtkTexturedButtonRepresentation2D>
+    buttonRepresentation = vtkSmartPointer<vtkTexturedButtonRepresentation2D>::New();
+  //
+  buttonRepresentation->SetNumberOfStates(4);
+  buttonRepresentation->SetButtonTexture(0, image1);
+  buttonRepresentation->SetButtonTexture(1, image2);
+  buttonRepresentation->SetButtonTexture(2, image3);
+  buttonRepresentation->SetButtonTexture(3, image4);
+
+  m_axesButton->SetInteractor( m_renderer->GetRenderWindow()->GetInteractor() );
+  m_axesButton->SetRepresentation(buttonRepresentation);
+  //
+  m_axesButton->On();
+  //
+  PlaceButton(m_axesButton, m_renderer);
 }
 
 //-----------------------------------------------------------------------------
@@ -262,7 +368,7 @@ bool visu_prs_manager::SetPresentation(const Handle(ActAPI_INode)& theNode)
 
   if ( m_nodePresentations.IsBound(aNodeID) )
     m_nodePresentations.UnBind(aNodeID); // If you do not want us to do this,
-                                         // use HasPresentation method
+                                         // use HasPresentation() method
 
   const visu_utils::TPrsAllocMap& anAllocMap = visu_utils::GetAllocMap();
   Standard_CString aNodeType = theNode->DynamicType()->Name();
@@ -467,6 +573,8 @@ void visu_prs_manager::DeleteAllPresentations()
   }
   for ( ActAPI_DataObjectIdList::Iterator it(aListToDel); it.More(); it.Next() )
     this->DeletePresentation( it.Value() );
+  //
+  m_nodePresentations.Clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -508,10 +616,13 @@ int visu_prs_manager::GetSelectionMode() const
 //! Perform picking or detection by the passed display coordinates.
 //! \param thePickInput [in] picking input data.
 //! \param theSelNature [in] selection nature (picking or detection).
+//! \param isTopoPicker [in] indicates whether to pick topology (shape and
+//!                          cell pickers) or geometry (point picker).
 //! \return list of affected Data Node IDs.
 ActAPI_DataObjectIdList
   visu_prs_manager::Pick(visu_pick_input*            thePickInput,
-                         const visu_selection_nature theSelNature)
+                         const visu_selection_nature theSelNature,
+                         const bool                  isTopoPicker)
 {
   /* ===================
    *  Some preparations
@@ -543,51 +654,81 @@ ActAPI_DataObjectIdList
 
   if ( m_iSelectionModes & SelectionMode_Workpiece ) // Non-partial selection
   {
-    m_cellPicker->Pick(XStart, YStart, 0, m_renderer);
+    if ( isTopoPicker )
+      m_cellPicker->Pick(XStart, YStart, 0, m_renderer);
+    else
+      m_pointPicker->Pick(XStart, YStart, 0, m_renderer);
 
     // Extract cell ID
-    vtkIdType aPickedId = m_cellPicker->GetCellId();
-    vtkIdType gid = -1, pid = -1;
-    //
-    if ( aPickedId != -1 )
+    if ( isTopoPicker )
     {
-      std::cout << "Picked ID = " << aPickedId << std::endl;
-
-      // Global IDs
-      vtkSmartPointer<vtkIdTypeArray>
-        gids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetGlobalIds() );
+      vtkIdType cell_id = m_cellPicker->GetCellId();
+      vtkIdType gid = -1, pid = -1;
       //
-      if ( gids )
+      if ( cell_id != -1 )
       {
-        gid = gids->GetValue(aPickedId);
-        std::cout << "Picked GID = " << gid << std::endl;
+        std::cout << "Picked Cell ID = " << cell_id << std::endl;
+
+        // Global IDs
+        vtkSmartPointer<vtkIdTypeArray>
+          gids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetGlobalIds() );
+        //
+        if ( gids )
+        {
+          gid = gids->GetValue(cell_id);
+          std::cout << "Picked GID = " << gid << std::endl;
+        }
+
+        // Pedigree IDs
+        vtkSmartPointer<vtkIdTypeArray>
+          pids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetPedigreeIds() );
+        //
+        if ( pids )
+        {
+          pid = pids->GetValue(cell_id);
+          std::cout << "Picked PID = " << pid << std::endl;
+        }
       }
 
-      // Pedigree IDs
-      vtkSmartPointer<vtkIdTypeArray>
-        pids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetPedigreeIds() );
+      // Get picked actor
+      aPickedActor = m_cellPicker->GetActor();
       //
-      if ( pids )
+      if ( !aPickedActor )
       {
-        pid = pids->GetValue(aPickedId);
-        std::cout << "Picked PID = " << pid << std::endl;
+        m_widget->repaint();
+        return aResult; // Nothing has been picked
       }
-    }
 
-    // Get picked actor
-    aPickedActor = m_cellPicker->GetActor();
-    //
-    if ( !aPickedActor )
+      // Push ID to result
+      if ( pid != -1 )
+        aPickRes << aPickedActor << pid;
+      else if ( gid != -1 )
+        aPickRes << aPickedActor << gid;
+      else
+        aPickRes << aPickedActor << cell_id;
+    }
+    else // point picker
     {
-      m_widget->repaint();
-      return aResult; // Nothing has been picked
+      vtkIdType point_id = m_pointPicker->GetPointId();
+      //
+      if ( point_id != -1 )
+      {
+        std::cout << "Picked Point ID = " << point_id << std::endl;
+      }
+
+      // Get picked actor
+      aPickedActor = m_pointPicker->GetActor();
+      //
+      if ( !aPickedActor )
+      {
+        m_widget->repaint();
+        return aResult; // Nothing has been picked
+      }
+
+      // Push ID to result
+      aPickRes << aPickedActor << point_id;
     }
 
-    // Push global ID to result
-    if ( gid == -1 && pid != -1 )
-      aPickRes << aPickedActor << pid;
-    else
-      aPickRes << aPickedActor << gid;
   }
   else // Partial selection: for topological shapes only
   {
@@ -663,7 +804,7 @@ ActAPI_DataObjectIdList
   if ( m_iSelectionModes & SelectionMode_Workpiece )
     aResult.Append(aNodeId);
 
-  Handle(visu_prs) aPrs3D =this->GetPresentation(aNodeId);
+  Handle(visu_prs) aPrs3D = this->GetPresentation(aNodeId);
   //
   if ( aPrs3D.IsNull() )
     Standard_ProgramError::Raise("Picked object without Presentation");
@@ -906,11 +1047,15 @@ void visu_prs_manager::Initialize(QWidget* theWidget, const bool isOffscreen)
 //! distinct method... Shame of us... But the problem is that OCCT picker
 //! seems to be not that good to survive without re-initialization from
 //! time to time...
-void visu_prs_manager::InitializePicker()
+void visu_prs_manager::InitializePickers()
 {
   // Initialize cell picker
   m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
   m_cellPicker->SetTolerance(0.015);
+
+  // Initialize point picker
+  m_pointPicker = vtkSmartPointer<vtkPointPicker>::New();
+  m_pointPicker->SetTolerance(0.005);
 
   // Create a picker for OCCT shapes
   m_shapePicker = vtkSmartPointer<IVtkTools_ShapePicker>::New();

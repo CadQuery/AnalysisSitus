@@ -12,7 +12,7 @@
 #include <analysis_situs.h>
 
 // A-Situs (mesh) includes
-#include <mesh_node.h>
+#include <tess_node.h>
 
 // A-Situs (visualization) includes
 #include <visu_prs.h>
@@ -36,7 +36,7 @@ public:
 
   // Allows to register this Presentation class in runtime.
   // Notice that the first parameter is NODE TYPE, not the Presentation one
-  DEFINE_PRESENTATION_FACTORY(mesh_node, Instance)
+  DEFINE_PRESENTATION_FACTORY(tess_node, Instance)
 
 public:
 

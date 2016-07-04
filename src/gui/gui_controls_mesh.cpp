@@ -15,8 +15,8 @@
 #include <gui_common.h>
 
 // A-Situs (mesh) includes
-#include <mesh_convert.h>
-#include <mesh_ply.h>
+#include <tess_convert.h>
+#include <tess_ply.h>
 
 // A-Situs (visualization) includes
 #include <visu_mesh_prs.h>
@@ -82,11 +82,11 @@ void gui_controls_mesh::onLoadPly()
   QString filename = gui_common::selectPlyFile(gui_common::OpenSaveAction_Open);
 
   // Load mesh
-  Handle(OMFDS_Mesh)                          mesh_data;
-  NCollection_Sequence<mesh_ply::TNamedArray> NodeArrays;
-  NCollection_Sequence<mesh_ply::TNamedArray> ElemArrays;
+  Handle(Mesh)                          tess_data;
+  NCollection_Sequence<tess_ply::TNamedArray> NodeArrays;
+  NCollection_Sequence<tess_ply::TNamedArray> ElemArrays;
   //
-  if ( !mesh_ply::Read(QStr2AsciiStr(filename), mesh_data, NodeArrays, ElemArrays) )
+  if ( !tess_ply::Read(QStr2AsciiStr(filename), tess_data, NodeArrays, ElemArrays) )
   {
     std::cout << "Error: cannot read ply file" << std::endl;
     return;
@@ -100,11 +100,11 @@ void gui_controls_mesh::onLoadPly()
   common_facilities::Instance()->Model->Clear();
 
   // Set mesh
-  Handle(mesh_node) mesh_n = common_facilities::Instance()->Model->MeshNode();
+  Handle(tess_node) tess_n = common_facilities::Instance()->Model->Mesh_Node();
   //
   common_facilities::Instance()->Model->OpenCommand(); // tx start
   {
-    mesh_n->SetMesh(mesh_data);
+    tess_n->SetMesh(tess_data);
   }
   common_facilities::Instance()->Model->CommitCommand(); // tx commit
 
@@ -112,7 +112,7 @@ void gui_controls_mesh::onLoadPly()
   // Update UI
   //---------------------------------------------------------------------------
 
-  common_facilities::Instance()->Prs.Mesh->Actualize(mesh_n.get(), false, true);
+  common_facilities::Instance()->Prs.Mesh->Actualize(tess_n.get(), false, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -123,8 +123,8 @@ void gui_controls_mesh::onDecimate()
   std::cout << "Decimation" << std::endl;
 
   // Get Mesh Node
-  Handle(mesh_node) mesh_n = common_facilities::Instance()->Model->MeshNode();
-  if ( mesh_n.IsNull() || !mesh_n->IsWellFormed() )
+  Handle(tess_node) tess_n = common_facilities::Instance()->Model->Mesh_Node();
+  if ( tess_n.IsNull() || !tess_n->IsWellFormed() )
   {
     std::cout << "Error: cannot access Mesh Node" << std::endl;
     return;
@@ -132,9 +132,9 @@ void gui_controls_mesh::onDecimate()
 
   // Get Mesh Presentation
   Handle(visu_mesh_prs)
-    mesh_prs = Handle(visu_mesh_prs)::DownCast( common_facilities::Instance()->Prs.Mesh
-                                                                             ->GetPresentation(mesh_n) );
-  if ( mesh_prs.IsNull() )
+    tess_prs = Handle(visu_mesh_prs)::DownCast( common_facilities::Instance()->Prs.Mesh
+                                                                             ->GetPresentation(tess_n) );
+  if ( tess_prs.IsNull() )
   {
     std::cout << "Error: seems there is no Presentation for your mesh..." << std::endl;
     return;
@@ -142,7 +142,7 @@ void gui_controls_mesh::onDecimate()
 
   // Access mapper associated with the visualized mesh actor
   vtkMapper*
-    mapper = mesh_prs->GetPipeline(visu_mesh_prs::Pipeline_Mesh)->Mapper();
+    mapper = tess_prs->GetPipeline(visu_mesh_prs::Pipeline_Mesh)->Mapper();
   //
   vtkPolyDataMapper* polyMapper = vtkPolyDataMapper::SafeDownCast(mapper);
   if ( !polyMapper )
@@ -174,8 +174,8 @@ void gui_controls_mesh::onDecimate()
   std::cout << "There are "       << decimated->GetNumberOfPolys()  << " polygons."   << std::endl;
 
   // Convert to a persistent form
-  Handle(OMFDS_Mesh) decimatedMesh;
-  if ( !mesh_convert::ToPersistent(decimated, decimatedMesh) )
+  Handle(Mesh) decimatedMesh;
+  if ( !tess_convert::ToPersistent(decimated, decimatedMesh) )
   {
     std::cout << "Error: cannot convert decimated mesh to a persistent form" << std::endl;
     return;
@@ -184,10 +184,10 @@ void gui_controls_mesh::onDecimate()
   // Modify mesh
   common_facilities::Instance()->Model->OpenCommand(); // tx open
   {
-    mesh_n->SetMesh(decimatedMesh);
+    tess_n->SetMesh(decimatedMesh);
   }
   common_facilities::Instance()->Model->CommitCommand(); // tx commit
 
   // Update Presentation
-  common_facilities::Instance()->Prs.Mesh->Actualize( mesh_n.get() );
+  common_facilities::Instance()->Prs.Mesh->Actualize( tess_n.get() );
 }

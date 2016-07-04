@@ -14,7 +14,7 @@
 // OCCT includes
 #include <TColStd_HPackedMapOfInteger.hxx>
 
-DEFINE_STANDARD_HANDLE(visu_section_data_provider, visu_data_provider)
+DEFINE_STANDARD_HANDLE(visu_section_data_provider, visu_curve_data_provider)
 
 //! Data provider for geometry of a single section.
 class visu_section_data_provider : public visu_curve_data_provider
@@ -35,10 +35,10 @@ public:
     GetCurveType() const;
 
   virtual Handle(Geom2d_Curve)
-    GetCurve2d() const;
+    GetCurve2d(double& f, double& l) const;
 
   virtual Handle(Geom_Curve)
-    GetCurve() const;
+    GetCurve(double& f, double& l) const;
 
   virtual ActAPI_DataObjectId
     GetNodeID() const;

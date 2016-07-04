@@ -75,11 +75,16 @@ int visu_face_data_provider::GetFaceIndexAmongFaces() const
 //! \return topological face extracted from the part by its stored ID.
 TopoDS_Face visu_face_data_provider::ExtractFace() const
 {
-  if ( !this->GetFaceIndexAmongSubshapes() )
+  const int fIdx = this->GetFaceIndexAmongSubshapes();
+  if ( !fIdx )
+    return TopoDS_Face();
+
+  const TopoDS_Shape& shape = m_subShapes.FindKey(fIdx);
+  if ( shape.ShapeType() != TopAbs_FACE )
     return TopoDS_Face();
 
   // Access face by the stored index
-  const TopoDS_Face& F = TopoDS::Face( m_subShapes.FindKey( this->GetFaceIndexAmongSubshapes() ) );
+  const TopoDS_Face& F = TopoDS::Face(shape);
   return F;
 }
 

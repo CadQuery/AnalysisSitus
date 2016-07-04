@@ -68,9 +68,15 @@ void visu_face_surface_pipeline::SetInput(const Handle(visu_data_provider)& DP)
   if ( faceProvider->MustExecute( this->GetMTime() ) )
   {
     TopoDS_Face F = faceProvider->ExtractFace();
+    //
+    if ( F.IsNull() )
+      return;
 
     // Get access to the host surface
     Handle(Geom_Surface) S = BRep_Tool::Surface(F);
+    //
+    if ( S.IsNull() )
+      return;
 
     // Append filter
     vtkSmartPointer<vtkAppendPolyData>
@@ -115,7 +121,7 @@ void visu_face_surface_pipeline::SetInput(const Handle(visu_data_provider)& DP)
         curveSource = vtkSmartPointer<visu_curve_source>::New();
 
       // Set geometry to be converted to VTK polygonal DS
-      if ( !curveSource->SetInputCurve(uIso) )
+      if ( !curveSource->SetInputCurve( uIso, uIso->FirstParameter(), uIso->LastParameter() ) )
         continue; // No poly data produced
 
       // Append poly data
@@ -144,7 +150,7 @@ void visu_face_surface_pipeline::SetInput(const Handle(visu_data_provider)& DP)
         curveSource = vtkSmartPointer<visu_curve_source>::New();
 
       // Set geometry to be converted to VTK polygonal DS
-      if ( !curveSource->SetInputCurve(vIso) )
+      if ( !curveSource->SetInputCurve( vIso, vIso->FirstParameter(), vIso->LastParameter() ) )
         continue; // No poly data produced
 
       // Append poly data

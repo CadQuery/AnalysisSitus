@@ -12,6 +12,7 @@
 #include <analysis_situs.h>
 
 // Active Data (API) includes
+#include <ActAPI_INode.h>
 #include <ActAPI_IParameter.h>
 
 // Active Data (auxiliary) includes

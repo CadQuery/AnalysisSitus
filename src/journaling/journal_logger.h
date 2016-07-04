@@ -15,7 +15,7 @@
 #include <ActAPI_ILogger.h>
 
 // TBB includes
-#include <tbb/concurrent_queue.h>
+#include <concurrent_queue.h>
 
 DEFINE_STANDARD_HANDLE(journal_logger, ActAPI_ILogger)
 

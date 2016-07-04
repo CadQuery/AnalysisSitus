@@ -45,6 +45,11 @@ public:
 
 public:
 
+  void SelectMeshNodesOn()  { m_bSelectMeshNodes = true; }
+  void SelectMeshNodesOff() { m_bSelectMeshNodes = false; }
+
+public:
+
   virtual void Execute(vtkObject*    theCaller,
                        unsigned long theEventId,
                        void*         theCallData);
@@ -53,6 +58,9 @@ protected:
 
   //---------------------------------------------------------------------------
   void executePart(unsigned long theEventId,
+                   void*         theCallData);
+  //---------------------------------------------------------------------------
+  void executeMesh(unsigned long theEventId,
                    void*         theCallData);
   //---------------------------------------------------------------------------
   void executeDomain(unsigned long theEventId,
@@ -64,14 +72,20 @@ protected:
 
 signals:
 
-  void partPicked();    //!< Some sensitives were picked in a part.
-  void domainPicked();  //!< Some sensitives were picked in a domain.
-  void sectionPicked(); //!< Some sensitives were picked in a section.
+  void partPicked();     //!< Some sensitives were picked in a part.
+  void meshNodePicked(); //!< Some sensitives were picked in a mesh.
+  void meshElemPicked(); //!< Some sensitives were picked in a mesh.
+  void domainPicked();   //!< Some sensitives were picked in a domain.
+  void sectionPicked();  //!< Some sensitives were picked in a section.
 
 private:
 
   visu_pick_callback  (gui_viewer* theViewer);
   ~visu_pick_callback ();
+
+protected:
+
+  bool m_bSelectMeshNodes; //!< Indicates whether to select mesh nodes.
 
 };
 

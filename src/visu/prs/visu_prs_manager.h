@@ -9,19 +9,21 @@
 #define visu_prs_manager_h
 
 // Visualization includes
+#include <visu_axes_btn_callback.h>
 #include <visu_interactor_style_pick.h>
 #include <visu_interactor_style_pick_2d.h>
 #include <visu_prs.h>
 
 // Active Data (API) includes
 #include <ActAPI_IModel.h>
-#include <ActAPI_INode.h>
 
 // VTK includes
 #include <vtkAxesActor.h>
+#include <vtkButtonWidget.h>
 #include <vtkCellPicker.h>
 #include <vtkCubeAxesActor.h>
 #include <vtkObject.h>
+#include <vtkPointPicker.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
@@ -59,11 +61,21 @@ public: // VTK macros and methods to override
 
 public:
 
+  //! Interaction dimensionality.
   enum InteractionMode
   {
     InteractionMode_3D,
     InteractionMode_2D
   };
+
+public:
+
+  static void PlaceButton(vtkButtonWidget* pButton,
+                          vtkRenderer*     pRenderer);
+
+  static void CreateImage(vtkSmartPointer<vtkImageData> image,
+                          unsigned char*                color1,
+                          unsigned char*                color2);
 
 public:
 
@@ -170,7 +182,8 @@ public:
 
   ActAPI_DataObjectIdList
     Pick(visu_pick_input*            thePickInput,
-         const visu_selection_nature theSelNature);
+         const visu_selection_nature theSelNature,
+         const bool                  isTopoPicker = true);
 
   void
     SetPickList(const Handle(ActAPI_HNodeList)& theNodeList);
@@ -229,7 +242,7 @@ public:
                const bool theIsOffscreen = false);
 
   void
-    InitializePicker();
+    InitializePickers();
 
   QVTKWidget*
     GetQVTKWidget() const;
@@ -279,8 +292,11 @@ private:
 // Selection management:
 private:
 
-  //! Picker to select VTK Props.
+  //! Picker to select VTK topology (cells).
   vtkSmartPointer<vtkCellPicker> m_cellPicker;
+
+  //! Picker to select VTK geometry (points).
+  vtkSmartPointer<vtkPointPicker> m_pointPicker;
 
   //! Picker to select sub-shapes.
   vtkSmartPointer<IVtkTools_ShapePicker> m_shapePicker;
@@ -309,8 +325,14 @@ private:
   //! Interactor Style for 2D scenes.
   vtkSmartPointer<visu_interactor_style_pick_2d> m_interactorStyleImage;
 
-  //! Trihedron actor.
+  //! Axes actor.
   vtkSmartPointer<vtkAxesActor> m_trihedron;
+
+  //! Button to toggle axes.
+  vtkSmartPointer<vtkButtonWidget> m_axesButton;
+
+  //! Callback for axes button.
+  vtkSmartPointer<visu_axes_btn_callback> m_axesCallback;
 
   //! List of nodes allowed for picking
   Handle(ActAPI_HNodeList) m_bAllowedNodes;

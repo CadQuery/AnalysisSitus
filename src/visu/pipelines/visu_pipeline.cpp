@@ -53,12 +53,12 @@ void visu_pipeline::Update()
   // Build the pipeline (if not yet)
   this->Build();
 
-  // Perform user callback
-  this->callback_update();
-
   // Request updated output if pipeline is initialized
   if ( m_bInitialized )
     m_mapper->Update();
+
+  // Perform user callback AFTER the data has been updated
+  this->callback_update();
 }
 
 //! Builds the transient VTK pipeline (ONCE).

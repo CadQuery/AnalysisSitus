@@ -60,6 +60,9 @@ void gui_main_window_hull::createMainViewer()
 {
   m_widgets.wViewerMain = new gui_viewer_part();
 
+  // Disable selection
+  common_facilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_None);
+
   // Desktop used for sizing
   QDesktopWidget desktop;
   const int side   = std::min( desktop.height(), desktop.width() );

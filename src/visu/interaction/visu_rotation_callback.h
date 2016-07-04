@@ -17,8 +17,8 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
-// OMFDS includes
-#include <OMFDS_Mesh.hxx>
+// Mesh (Active Data) includes
+#include <Mesh.h>
 
 //-----------------------------------------------------------------------------
 // Rotation center provider
@@ -45,7 +45,7 @@ public:
 public:
 
   //! \return mesh data structure.
-  virtual Handle(OMFDS_Mesh) GetMeshDS() const
+  virtual Handle(Mesh) GetMeshDS() const
   {
     return m_mesh;
   }
@@ -74,7 +74,7 @@ protected:
 
 protected:
 
-  Handle(OMFDS_Mesh) m_mesh; //!< Mesh representing the cube to draw.
+  Handle(Mesh) m_mesh; //!< Mesh representing the cube to draw.
 
 };
 

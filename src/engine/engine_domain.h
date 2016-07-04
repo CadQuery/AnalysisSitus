@@ -18,22 +18,14 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 
 //! Data Model API for face domain.
-class engine_domain
+namespace engine_domain
 {
-public:
-
-  static void
+  void
     GetHighlightedEdges(TopTools_IndexedMapOfShape& edges);
 
-  static void
+  void
     GetHighlightedEdges(TopTools_IndexedMapOfShape& edges,
                         TopoDS_Face&                face);
-
-private:
-
-  engine_domain() {}
-  engine_domain(const engine_domain&) {}
-  void operator=(const engine_domain&) {}
 
 };
 

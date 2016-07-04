@@ -14,7 +14,7 @@
 
 DEFINE_STANDARD_HANDLE(visu_mesh_pipeline, visu_pipeline)
 
-//! Visualization pipeline for facets.
+//! Visualization pipeline for facets and meshes.
 class visu_mesh_pipeline : public visu_pipeline
 {
 public:

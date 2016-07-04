@@ -23,8 +23,6 @@
 #include <engine_part.h>
 
 // OCCT includes
-#include <SelectMgr_IndexedMapOfOwner.hxx>
-#include <StdSelect_BRepOwner.hxx>
 #include <TopoDS_Iterator.hxx>
 
 // VTK includes
@@ -57,16 +55,13 @@
 
 //! Constructor.
 visu_topo_graph::visu_topo_graph()
+: m_textWidget    (NULL),
+  m_summaryWidget (NULL)
 {}
 
 //! Destructor.
 visu_topo_graph::~visu_topo_graph()
 {
-  if ( !m_prevHighlighted.IsNull() && m_prevHighlighted->IsSelected() )
-  {
-    Handle(AIS_InteractiveContext) ctx = common_facilities::Instance()->ViewerDMU->GetContext();
-    ctx->AddOrRemoveSelected(m_prevHighlighted, 1);
-  }
 }
 
 //! Renders graph.
@@ -143,7 +138,7 @@ void visu_topo_graph::Render(const vtkSmartPointer<vtkGraph>& graph,
    * ======================== */
 
   // Legend
-  m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
+  m_textWidget = vtkTextWidget::New();
   vtkTextRepresentation* textRep = vtkTextRepresentation::SafeDownCast( m_textWidget->GetRepresentation() );
   textRep->GetPositionCoordinate()->SetValue(0.2, 0.01);
   textRep->GetPosition2Coordinate()->SetValue(0.5, 0.06);
@@ -158,7 +153,7 @@ void visu_topo_graph::Render(const vtkSmartPointer<vtkGraph>& graph,
   m_textWidget->SetCurrentRenderer( renderer );
 
   // Shape summary
-  m_summaryWidget = vtkSmartPointer<vtkTextWidget>::New();
+  m_summaryWidget = vtkTextWidget::New();
   visu_utils::InitTextWidget(m_summaryWidget);
   //
   TCollection_AsciiString shapeInfo;
@@ -265,8 +260,8 @@ vtkSmartPointer<vtkGraph>
   }
   else if ( regime == Regime_AAG )
   {
-    m_aag = new geom_aag(shape, selectedFaces);
-    vtkSmartPointer<vtkMutableUndirectedGraph> undirected = geom_aag_vtk::Convert(m_aag);
+    m_aag = new feature_aag(shape, selectedFaces);
+    vtkSmartPointer<vtkMutableUndirectedGraph> undirected = feature_aag_vtk::Convert(m_aag);
     result = undirected;
   }
   else
@@ -336,6 +331,11 @@ void visu_topo_graph::RenderEventCallback()
 //! Reaction on closing the viewer.
 void visu_topo_graph::onViewerClosed()
 {
+  // NOTE: the important point is to remove widget after all items which
+  //       may listen to it
+  m_textWidget->Delete();
+  m_summaryWidget->Delete();
+
   delete m_pWidget;
   delete this;
 }
@@ -343,7 +343,7 @@ void visu_topo_graph::onViewerClosed()
 //! Reaction on vertex picking.
 //! \param fid [in] face ID.
 //! \param vid [in] vertex ID.
-void visu_topo_graph::onVertexPicked(const int fid, const vtkIdType vid)
+void visu_topo_graph::onVertexPicked(const int fid, const vtkIdType ASitus_NotUsed(vid))
 {
   if ( m_aag.IsNull() )
     return;
@@ -353,60 +353,10 @@ void visu_topo_graph::onVertexPicked(const int fid, const vtkIdType vid)
     // Get face from graph vertex
     const TopoDS_Face& F = m_aag->GetFace(fid);
 
-    ///
+    // Highlight in the main viewer
     TopTools_IndexedMapOfShape selected;
     selected.Add(F);
     //
     engine_part::HighlightSubShapes(selected);
   }
-
-  //if ( !common_facilities::Instance()->ViewerDMU )
-  //  return;
-
-  //// Let's use the fact that vertex ID is equal to face ID minus 1.
-  //// The latter is by construction
-  //const int face_id = vid + 1;
-
-  //// Get face from graph vertex
-  //TopoDS_Face F = m_aag->GetFace(face_id);
-
-  //// Access presentation
-  //Handle(AIS_InteractiveContext) ctx = common_facilities::Instance()->ViewerDMU->GetContext();
-  ////
-  //Handle(SelectMgr_IndexedMapOfOwner) prsOwners;
-  //ctx->EntityOwners(prsOwners, common_facilities::Instance()->aisDMU);
-  ////
-  //if ( prsOwners.IsNull() || !prsOwners->Extent() )
-  //{
-  //  std::cout << "Error: no entity owners" << std::endl;
-  //  return;
-  //}
-  //else
-  //  std::cout << "Got " << prsOwners->Extent() << " entity owner(s)" << std::endl;
-
-  //if ( !m_prevHighlighted.IsNull() && m_prevHighlighted->IsSelected() )
-  //  ctx->AddOrRemoveSelected(m_prevHighlighted, 1);
-
-  //// Highlight
-  //for ( int i = 1; i <= prsOwners->Extent(); ++i )
-  //{
-  //  const Handle(SelectMgr_EntityOwner)& owner = prsOwners->FindKey(i);
-  //  //
-  //  if ( owner->IsKind( STANDARD_TYPE(StdSelect_BRepOwner) ) )
-  //  {
-  //    Handle(StdSelect_BRepOwner) brepOwner = Handle(StdSelect_BRepOwner)::DownCast(owner);
-  //    const TopoDS_Shape& ownedShape = brepOwner->Shape();
-
-  //    // Try to find the hole shape among sensitivities
-  //    if ( ownedShape.IsSame(F) )
-  //    {
-  //      if ( !owner->IsSelected() )
-  //      {
-  //        ctx->AddOrRemoveSelected(owner, 1);
-  //        m_prevHighlighted = owner;
-  //      }
-  //      break;
-  //    }
-  //  }
-  //}
 }

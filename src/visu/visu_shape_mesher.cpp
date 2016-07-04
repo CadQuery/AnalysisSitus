@@ -332,7 +332,7 @@ void visu_shape_mesher::addEdge (const TopoDS_Edge&  theEdge,
     return;
   }
 
-  // Handle a non-identity transofmation applied to the edge
+  // Handle a non-identity transformation applied to the edge
   gp_Trsf anEdgeTransf;
   bool noTransform = true;
   if (!aLocation.IsIdentity())

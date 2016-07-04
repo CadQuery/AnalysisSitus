@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_AttrNode_HeaderFile
-#define _DFBrowser_AttrNode_HeaderFile
+#ifndef _DFBrowser_AttrNode_h
+#define _DFBrowser_AttrNode_h
 
 #include <Handle_DFBrowser_AttrNode.hxx>
 #include <DFBrowser_DFNode.hxx>
@@ -23,7 +23,7 @@ class DFBrowser_AttrNode : public DFBrowser_DFNode
 
   Standard_EXPORT virtual void AddSub(Handle(DFBrowser_DFNode)& theNode);
 
-  Standard_EXPORT virtual Handle_DFBrowser_DFNode Sub() const;
+  Standard_EXPORT virtual Handle(DFBrowser_DFNode) Sub() const;
 
   Standard_EXPORT virtual const TCollection_AsciiString & Name();
 

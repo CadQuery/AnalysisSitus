@@ -19,6 +19,9 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 
+// OCCT includes
+#include <GeomLProp_SLProps.hxx>
+
 //-----------------------------------------------------------------------------
 // Construction
 //-----------------------------------------------------------------------------
@@ -26,7 +29,15 @@
 vtkStandardNewMacro(visu_surface_source);
 
 //! Default constructor.
-visu_surface_source::visu_surface_source() : vtkPolyDataAlgorithm()
+visu_surface_source::visu_surface_source()
+//
+  : vtkPolyDataAlgorithm (),
+    m_iSteps             (0),
+    m_scalars            (Scalars_NoScalars),
+    m_fMinScalar         (0.0),
+    m_fMaxScalar         (0.0),
+    m_fTrimU             (100.0),
+    m_fTrimV             (100.0)
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
@@ -43,12 +54,42 @@ visu_surface_source::~visu_surface_source()
 
 //! Initialize data source with a parametric surface.
 //! \param surf [in] surface to visualize.
-//! \return true if poly data has been produced.
-bool visu_surface_source::SetInputSurface(const Handle(Geom_Surface)& surf)
+void visu_surface_source::SetInputSurface(const Handle(Geom_Surface)& surf)
 {
   m_surf = surf;
-  return false;
 }
+
+//! Sets the number of sampling steps for surface discretization.
+//! \param nSteps [in] number of steps to set.
+void visu_surface_source::SetNumberOfSteps(const int nSteps)
+{
+  m_iSteps = nSteps;
+  //
+  this->Modified();
+}
+
+//! Sets type of scalars to associate with nodes.
+//! \param scalars [in] scalars.
+void visu_surface_source::SetScalars(const NodeScalars scalars)
+{
+  m_scalars = scalars;
+  //
+  this->Modified();
+}
+
+//! Sets trimming values for infinite surface domains.
+//! \param uLimit [in] trimming value for U.
+//! \param vLimit [in] trimming value for V.
+void visu_surface_source::SetTrimValues(const double uLimit,
+                                        const double vLimit)
+{
+  m_fTrimU = uLimit;
+  m_fTrimV = vLimit;
+  //
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
 
 //! This is called by the superclass. Creates VTK polygonal data set
 //! from the input arrays.
@@ -69,101 +110,143 @@ int visu_surface_source::RequestData(vtkInformation*        request,
     return 0;
   }
 
+  if ( m_iSteps <= 0 )
+  {
+    vtkErrorMacro( << "Invalid domain: number of sampling steps must be positive" );
+    return 0;
+  }
+
   /* ==============================
    *  Prepare involved collections
    * ============================== */
 
-  vtkPolyData* aPolyOutput = vtkPolyData::GetData(outputVector);
-  aPolyOutput->Allocate();
+  vtkPolyData* polyOutput = vtkPolyData::GetData(outputVector);
+  polyOutput->Allocate();
 
-  vtkSmartPointer<vtkPoints> aPoints = vtkSmartPointer<vtkPoints>::New();
-  aPolyOutput->SetPoints(aPoints);
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+  polyOutput->SetPoints(points);
 
-  // Access cell data
-  vtkCellData* aCD = aPolyOutput->GetCellData();
-
-  // Array for orientation types
-  vtkSmartPointer<vtkIntArray>
-    gaussCurvature = visu_utils::InitIntArray(ARRNAME_SURF_GAUSSIAN_CURVATURE);
+  // Array for scalars
+  vtkSmartPointer<vtkDoubleArray> curvature;
   //
-  aCD->AddArray(gaussCurvature);
+  if ( m_scalars == Scalars_GaussianCurvature || m_scalars == Scalars_MeanCurvature )
+  {
+    vtkPointData* PD = polyOutput->GetPointData();
+    curvature = visu_utils::InitDoubleArray(ARRNAME_SURF_CURVATURE);
+    PD->SetScalars(curvature);
+  }
 
   //---------------------------------------------------------------------------
-
-  const int nSteps = 10;
 
   double uMin, uMax, vMin, vMax;
   m_surf->Bounds(uMin, uMax, vMin, vMax);
+  //
+  uMin = visu_utils::TrimInf(uMin, m_fTrimU);
+  uMax = visu_utils::TrimInf(uMax, m_fTrimU);
+  vMin = visu_utils::TrimInf(vMin, m_fTrimV);
+  vMax = visu_utils::TrimInf(vMax, m_fTrimV);
 
-  uMin = visu_utils::TrimInf(uMin);
-  uMax = visu_utils::TrimInf(uMax);
-  vMin = visu_utils::TrimInf(vMin);
-  vMax = visu_utils::TrimInf(vMax);
+  const double uStep = (uMax - uMin) / m_iSteps;
+  const double vStep = (vMax - vMin) / m_iSteps;
 
-  const double uStep = (uMax - uMin) / nSteps;
-  const double vStep = (vMax - vMin) / nSteps;
+  // Choose u values
+  std::vector<double> U;
+  double              u     = uMin;
+  bool                uStop = false;
+  //
+  while ( !uStop )
+  {
+    if ( u > uMax )
+    {
+      u     = uMax;
+      uStop = true;
+    }
 
-  //// Generate u-isos
-  //double u     = uMin;
-  //bool   uStop = false;
-  //while ( !uStop )
-  //{
-  //  if ( u > uMax )
-  //  {
-  //    u     = uMax;
-  //    uStop = true;
-  //  }
+    U.push_back(u);
+    u += uStep;
+  }
 
-  //  Handle(Geom_Curve) uIso = S->UIso(u);
-  //  if ( uIso.IsNull() )
-  //    continue;
+  // Choose v values
+  std::vector<double> V;
+  double              v     = vMin;
+  bool                vStop = false;
+  //
+  while ( !vStop )
+  {
+    if ( v > vMax )
+    {
+      v     = vMax;
+      vStop = true;
+    }
 
-  //  u += uStep;
+    V.push_back(v);
+    v += vStep;
+  }
 
-  //  // Allocate Data Source
-  //  vtkSmartPointer<visu_curve_source>
-  //    curveSource = vtkSmartPointer<visu_curve_source>::New();
+  m_fMinScalar =  RealLast();
+  m_fMaxScalar = -RealLast();
 
-  //  // Set geometry to be converted to VTK polygonal DS
-  //  if ( !curveSource->SetInputCurve(uIso) )
-  //    continue; // No poly data produced
+  // Register geometry (points)
+  std::vector< std::vector<vtkIdType> > UV_ids;
+  for ( size_t i = 0; i < U.size(); ++i )
+  {
+    std::vector<vtkIdType> uIso_ids;
+    for ( size_t j = 0; j < V.size(); ++j )
+    {
+      const gp_Pnt P = m_surf->Value(U[i], V[j]);
+      //
+      uIso_ids.push_back( this->registerGridPoint(P, polyOutput) );
 
-  //  // Append poly data
-  //  appendFilter->AddInputConnection( curveSource->GetOutputPort() );
-  //}
+      // Associate scalars
+      if ( m_scalars == Scalars_GaussianCurvature || m_scalars == Scalars_MeanCurvature )
+      {
+        GeomLProp_SLProps lProps( m_surf, U[i], V[j], 2, gp::Resolution() );
+        double k = 0.0;
+        //
+        if ( m_scalars == Scalars_GaussianCurvature )
+          k = lProps.GaussianCurvature();
+        if ( m_scalars == Scalars_MeanCurvature )
+          k = lProps.MeanCurvature();
+        //
+        if ( k < m_fMinScalar ) m_fMinScalar = k;
+        if ( k > m_fMaxScalar ) m_fMaxScalar = k;
+        //
+        curvature->InsertNextValue(k);
+      }
+    }
+    UV_ids.push_back(uIso_ids);
+  }
 
-  //// Generate v-isos
-  //double v     = vMin;
-  //bool   vStop = false;
-  //while ( !vStop )
-  //{
-  //  if ( v > vMax )
-  //  {
-  //    v     = vMax;
-  //    vStop = true;
-  //  }
+  // Register topology (triangles)
+  for ( size_t i = 1; i < U.size(); ++i )
+  {
+    for ( size_t j = 1; j < V.size(); ++j )
+    {
+      // First triangle
+      {
+        const vtkIdType n1 = UV_ids[i]    [j];
+        const vtkIdType n2 = UV_ids[i]    [j - 1];
+        const vtkIdType n3 = UV_ids[i - 1][j];
+        //
+        this->registerTriangle(n1, n2, n3, polyOutput);
+      }
 
-  //  Handle(Geom_Curve) vIso = S->VIso(v);
-  //  if ( vIso.IsNull() )
-  //    continue;
+      // Opposite triangle
+      {
+        const vtkIdType n1 = UV_ids[i]    [j - 1];
+        const vtkIdType n2 = UV_ids[i - 1][j - 1];
+        const vtkIdType n3 = UV_ids[i - 1][j];
+        //
+        this->registerTriangle(n1, n2, n3, polyOutput);
+      }
+    }
+  }
 
-  //  v += vStep;
-
-  //  // Allocate Data Source
-  //  vtkSmartPointer<visu_curve_source>
-  //    curveSource = vtkSmartPointer<visu_curve_source>::New();
-
-  //  // Set geometry to be converted to VTK polygonal DS
-  //  if ( !curveSource->SetInputCurve(vIso) )
-  //    continue; // No poly data produced
-
-  //  // Append poly data
-  //  appendFilter->AddInputConnection( curveSource->GetOutputPort() );
-  //}
+  if ( this->HasScalars() )
+    if ( Abs(m_fMaxScalar - m_fMinScalar) < 1.0e-6 )
+      m_fMinScalar = m_fMaxScalar; // Good for visualization
 
   //---------------------------------------------------------------------------
-
-  // TODO
 
   return Superclass::RequestData(request, inputVector, outputVector);
 }
@@ -176,31 +259,33 @@ vtkIdType visu_surface_source::registerGridPoint(const gp_Pnt& point,
                                                  vtkPolyData*  polyData)
 {
   // Access necessary arrays
-  vtkPoints* aPoints = polyData->GetPoints();
+  vtkPoints* points = polyData->GetPoints();
 
   // Push the point into VTK data set
-  vtkIdType aPid = aPoints->InsertNextPoint( point.X(),
-                                             point.Y(),
-                                             point.Z() );
+  vtkIdType pid = points->InsertNextPoint( point.X(),
+                                           point.Y(),
+                                           point.Z() );
 
-  return aPid;
+  return pid;
 }
 
-//! Adds a line cell into the polygonal data set.
-//! \param pointStart [in]     first point.
-//! \param pointEnd   [in]     second point.
-//! \param polyData   [in/out] polygonal data set being populated.
+//! Adds a triangle cell into the polygonal data set.
+//! \param n1       [in]     index of the first node.
+//! \param n2       [in]     index of the second node.
+//! \param n3       [in]     index of the third node.
+//! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType visu_surface_source::registerLine(const gp_Pnt& pointStart,
-                                            const gp_Pnt& pointEnd,
-                                            vtkPolyData*  polyData)
+vtkIdType visu_surface_source::registerTriangle(const vtkIdType n1,
+                                                const vtkIdType n2,
+                                                const vtkIdType n3,
+                                                vtkPolyData*    polyData)
 {
-  std::vector<vtkIdType> aPids;
-  aPids.push_back( this->registerGridPoint(pointStart, polyData) );
-  aPids.push_back( this->registerGridPoint(pointEnd,   polyData) );
-
-  vtkIdType aCellID =
-    polyData->InsertNextCell( VTK_LINE, (int) aPids.size(), &aPids[0] );
-
-  return aCellID;
+  std::vector<vtkIdType> nodes;
+  nodes.push_back(n1);
+  nodes.push_back(n2);
+  nodes.push_back(n3);
+  //
+  vtkIdType cellID = polyData->InsertNextCell(VTK_TRIANGLE, 3, &nodes[0]);
+  //
+  return cellID;
 }

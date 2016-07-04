@@ -17,6 +17,7 @@
 // Qt includes
 #pragma warning(push, 0)
 #include <QHeaderView>
+#include <QMenu>
 #include <QTreeWidgetItemIterator>
 #pragma warning(pop)
 
@@ -46,7 +47,13 @@ gui_object_browser::gui_object_browser(QWidget* parent) : QTreeWidget(parent)
 
   // Reactions
   connect( this, SIGNAL( itemSelectionChanged() ), this, SLOT( onSelectionChanged() ) );
+  //
+  this->setContextMenuPolicy(Qt::CustomContextMenu);
+  //
+  connect( this, SIGNAL( customContextMenuRequested(QPoint) ), this, SLOT( onContextMenu(QPoint) ) );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Destructor.
 gui_object_browser::~gui_object_browser()
@@ -63,10 +70,7 @@ void gui_object_browser::Populate()
   // Clean up the existing contents
   this->clear();
 
-  //---------------------------------------------------------------------------
   // Add root node
-  //---------------------------------------------------------------------------
-
   Handle(common_root_node)
     root_n = Handle(common_root_node)::DownCast( common_facilities::Instance()->Model->GetRootNode() );
   //
@@ -79,18 +83,14 @@ void gui_object_browser::Populate()
   //
   this->addTopLevelItem(root_ui);
 
-  //---------------------------------------------------------------------------
   // Add child nodes
-  //---------------------------------------------------------------------------
-
   this->addChildren(root_n, root_ui);
 
-  //---------------------------------------------------------------------------
   // Expand tree
-  //---------------------------------------------------------------------------
-
   this->expandAll();
 }
+
+//-----------------------------------------------------------------------------
 
 //! Searches for an item with the given index and set that item selected.
 //! \param nodeId [in] target Node ID.
@@ -144,3 +144,57 @@ void gui_object_browser::onSelectionChanged()
 {
   emit nodeSelected();
 }
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on context menu opening.
+//! \param pos [in] position.
+void gui_object_browser::onContextMenu(QPoint pos)
+{
+  QMenu* aMenu = new QMenu(this);
+  aMenu->addAction( "Show Only", this, SLOT( onShowOnly() ) );
+  aMenu->popup( this->mapToGlobal(pos) );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on "show only" action.
+void gui_object_browser::onShowOnly()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  // Actualize viewer
+  common_facilities::Instance()->Prs.DeleteAll();
+  common_facilities::Instance()->Prs.Part->Actualize( selected_n.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Returns the currently active Node.
+//! \param Node [out] requested Node.
+//! \return true in case of success, false -- otherwise.
+bool gui_object_browser::selectedNode(Handle(ActAPI_INode)& Node) const
+{
+  QList<QTreeWidgetItem*> items = this->selectedItems();
+  if ( !items.length() || items.length() > 1 )
+    return false;
+
+  QTreeWidgetItem* item = items.at(0);
+  TCollection_AsciiString entry = QStr2AsciiStr( item->data(0, BrowserRoleNodeId).toString() );
+
+  // Take the corresponding data object
+  Handle(ActAPI_INode)
+    selected_n = common_facilities::Instance()->Model->FindNode(entry);
+  //
+  if ( selected_n.IsNull() || !selected_n->IsWellFormed() )
+  {
+    std::cout << "Error: selected Node is invalid" << std::endl;
+    return false;
+  }
+
+  // Set result
+  Node = selected_n;
+  return true;
+}
+

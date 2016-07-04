@@ -15,9 +15,10 @@
 
 
 Handle(DFBrowser_DFTree) myTree;
-//#ifndef WNT 
+
+#pragma warning(push, 0)
 #include <QApplication>
-//#endif
+#pragma warning(pop)
 
 //======================================================================= 
 //function : DFBrowser

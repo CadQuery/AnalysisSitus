@@ -20,14 +20,11 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 
-// OMFDS includes
-#pragma warning(push, 0)
-#include <OMFDS_MapIteratorOfExtendedMap.hxx>
-#include <OMFDS_MeshElementsIterator.hxx>
-#include <OMFDS_MeshNode.hxx>
-#include <OMFDS_MeshQuadrangle.hxx>
-#include <OMFDS_MeshTriangle.hxx>
-#pragma warning(pop)
+// Mesh (Active Data) includes
+#include <Mesh_ElementsIterator.h>
+#include <Mesh_Node.h>
+#include <Mesh_Quadrangle.h>
+#include <Mesh_Triangle.h>
 
 //-----------------------------------------------------------------------------
 // Construction
@@ -66,28 +63,28 @@ void visu_mesh_source::EmptyGroupForAllModeOff()
 
 //! Sets the instance of Mesh DS being used as an input for Data Source.
 //! \param theMesh [in] input Mesh DS.
-void visu_mesh_source::SetInputMesh(const Handle(OMFDS_Mesh)& theMesh)
+void visu_mesh_source::SetInputMesh(const Handle(Mesh)& theMesh)
 {
   m_mesh = theMesh;
 }
 
 //! Sets the Mesh Group used to filter the input mesh.
 //! \param theGroup [in] input Mesh Group.
-void visu_mesh_source::SetInputElemGroup(const Handle(OMFDS_MeshGroup)& theGroup)
+void visu_mesh_source::SetInputElemGroup(const Handle(Mesh_Group)& theGroup)
 {
   m_elemGroup = theGroup;
 }
 
 //! Accessor for the input Mesh DS.
 //! \return requested Mesh DS.
-Handle(OMFDS_Mesh) visu_mesh_source::GetInputMesh() const
+const Handle(Mesh)& visu_mesh_source::GetInputMesh() const
 {
   return m_mesh;
 }
 
 //! Accessor for the input Mesh Group.
 //! \return requested Mesh Group.
-Handle(OMFDS_MeshGroup) visu_mesh_source::GetInputElemGroup() const
+const Handle(Mesh_Group)& visu_mesh_source::GetInputElemGroup() const
 {
   return m_elemGroup;
 }
@@ -151,12 +148,12 @@ int visu_mesh_source::RequestData(vtkInformation*        theRequest,
   // Iterate over the entire collection of nodes to cumulate them into
   // a sequence and prepare a single VTK cell for all detected free nodes
   NCollection_Sequence<int> aFreeNodeIDs;
-  OMFDS_MeshElementsIterator aMeshNodesIt(m_mesh, OMFAbs_Node);
+  Mesh_ElementsIterator aMeshNodesIt(m_mesh, Mesh_ET_Node);
   for ( ; aMeshNodesIt.More(); aMeshNodesIt.Next() )
   {
     // Access next node
-    Handle(OMFDS_MeshNode) aNode = Handle(OMFDS_MeshNode)::DownCast( aMeshNodesIt.GetValue() );
-    const OMFDS_ListOfMeshElement& lstInvElements = aNode->InverseElements();
+    Handle(Mesh_Node) aNode = Handle(Mesh_Node)::DownCast( aMeshNodesIt.GetValue() );
+    const Mesh_ListOfElements& lstInvElements = aNode->InverseElements();
 
     // Skip connected nodes as we're looking for free ones here
     if ( lstInvElements.Extent() > 0 )
@@ -173,14 +170,14 @@ int visu_mesh_source::RequestData(vtkInformation*        theRequest,
 
   if ( m_elemGroup.IsNull() && m_bIsEmptyGroupForAll ) // No filtering by group enabled
   {
-    OMFDS_MeshElementsIterator aMeshElemsIt(m_mesh, OMFAbs_Face);
+    Mesh_ElementsIterator aMeshElemsIt(m_mesh, Mesh_ET_Face);
     for ( ; aMeshElemsIt.More(); aMeshElemsIt.Next() )
       this->translateElement(aMeshElemsIt.GetValue(), aPolyOutput);
   }
   else if ( !m_elemGroup.IsNull() )
   {
-    const OMFDS_MapOfMeshElement& aGroupElems = m_elemGroup->Elements();
-    OMFDS_MapIteratorOfExtendedMap aGroupIt(aGroupElems);
+    const Mesh_MapOfElements& aGroupElems = m_elemGroup->Elements();
+    Mesh_MapOfElements::Iterator aGroupIt(aGroupElems);
     for ( ; aGroupIt.More(); aGroupIt.Next() )
       this->translateElement(aGroupIt.Key(), aPolyOutput);
   }
@@ -188,17 +185,17 @@ int visu_mesh_source::RequestData(vtkInformation*        theRequest,
   return Superclass::RequestData(theRequest, theInputVector, theOutputVector);
 }
 
-//! Translates the passed OMFDS mesh element to VTK polygonal cell.
-//! \param theElem     [in]     OMFDS element to translate.
+//! Translates the passed mesh element to VTK polygonal cell.
+//! \param theElem     [in]     Mesh element to translate.
 //! \param thePolyData [in/out] output polygonal data.
-void visu_mesh_source::translateElement(const Handle(OMFDS_MeshElement)& theElem,
-                                        vtkPolyData*                     thePolyData)
+void visu_mesh_source::translateElement(const Handle(Mesh_Element)& theElem,
+                                        vtkPolyData*                thePolyData)
 {
   // Proceed with TRIANGLE elements
-  if ( theElem->IsInstance( STANDARD_TYPE(OMFDS_MeshTriangle) ) )
+  if ( theElem->IsInstance( STANDARD_TYPE(Mesh_Triangle) ) )
   {
     // Access element data
-    Handle(OMFDS_MeshTriangle) aTriElem = Handle(OMFDS_MeshTriangle)::DownCast(theElem);
+    Handle(Mesh_Triangle) aTriElem = Handle(Mesh_Triangle)::DownCast(theElem);
     int aTriNodeIds[3], aNbNodes;
     aTriElem->GetFaceDefinedByNodes(3, aTriNodeIds, aNbNodes);
 
@@ -206,10 +203,10 @@ void visu_mesh_source::translateElement(const Handle(OMFDS_MeshElement)& theElem
     this->registerMeshFace(aTriElem->GetID(), aTriNodeIds, aNbNodes, thePolyData);
   }
   // Proceed with QUADRANGLE elements
-  else if ( theElem->IsInstance( STANDARD_TYPE(OMFDS_MeshQuadrangle) ) )
+  else if ( theElem->IsInstance( STANDARD_TYPE(Mesh_Quadrangle) ) )
   {
     // Access element data
-    Handle(OMFDS_MeshQuadrangle) aQuadElem = Handle(OMFDS_MeshQuadrangle)::DownCast(theElem);
+    Handle(Mesh_Quadrangle) aQuadElem = Handle(Mesh_Quadrangle)::DownCast(theElem);
     int aQuadNodeIds[4], aNbNodes;
     aQuadElem->GetFaceDefinedByNodes(4, aQuadNodeIds, aNbNodes);
 
@@ -231,7 +228,7 @@ vtkIdType visu_mesh_source::registerMeshNode(const int    theNodeID,
     vtkIntArray::SafeDownCast( thePolyData->GetPointData()->GetArray(ARRNAME_MESH_NODE_IDS) );
 
   // Access mesh node
-  Handle(OMFDS_MeshNode) aNode = m_mesh->FindNode(theNodeID);
+  Handle(Mesh_Node) aNode = m_mesh->FindNode(theNodeID);
 
   vtkIdType aResPid;
   if ( !m_regPoints.IsBound(theNodeID) )

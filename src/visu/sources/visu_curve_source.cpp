@@ -76,18 +76,22 @@ bool visu_curve_source::SetInputEdge(const TopoDS_Edge& edge)
   }
 
   // Initialize with a curve
-  return this->SetInputCurve(tcrv, ori);
+  return this->SetInputCurve(tcrv, f, l, ori);
 }
 
 //! Initialize data source from a parametric curve.
 //! \param curve [in] curve to discretize.
+//! \param first [in] first parameter.
+//! \param last  [in] last parameter.
 //! \param ori   [in] orientation.
 //! \return true if poly data has been produced.
 bool visu_curve_source::SetInputCurve(const Handle(Geom_Curve)& curve,
+                                      const double              first,
+                                      const double              last,
                                       const visu_orientation    ori)
 {
-  const double f = visu_utils::TrimInf( curve->FirstParameter() ),
-               l = visu_utils::TrimInf( curve->LastParameter() );
+  const double f = visu_utils::TrimInf(first),
+               l = visu_utils::TrimInf(last);
 
   // Discretize
   GeomAdaptor_Curve gac(curve, f, l);
@@ -122,13 +126,17 @@ bool visu_curve_source::SetInputCurve(const Handle(Geom_Curve)& curve,
 
 //! Initialize data source from a two-dimensional parametric curve.
 //! \param curve [in] curve to discretize.
+//! \param first [in] first parameter.
+//! \param last  [in] last parameter.
 //! \param ori   [in] orientation.
 //! \return true if poly data has been produced.
 bool visu_curve_source::SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
+                                        const double                first,
+                                        const double                last,
                                         const visu_orientation      ori)
 {
-  const double f = visu_utils::TrimInf( curve->FirstParameter() ),
-               l = visu_utils::TrimInf( curve->LastParameter() );
+  const double f = visu_utils::TrimInf(first),
+               l = visu_utils::TrimInf(last);
 
   // Discretize
   Geom2dAdaptor_Curve gac(curve, f, l);

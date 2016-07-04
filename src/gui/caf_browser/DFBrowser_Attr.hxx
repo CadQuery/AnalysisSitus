@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_Attr_HeaderFile
-#define _DFBrowser_Attr_HeaderFile
+#ifndef _DFBrowser_Attr_h
+#define _DFBrowser_Attr_h
 
 #include <Handle_DFBrowser_Attr.hxx>
 #include <MMgt_TShared.hxx>

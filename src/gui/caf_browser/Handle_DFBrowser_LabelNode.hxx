@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _Handle_DFBrowser_LabelNode_HeaderFile
-#define _Handle_DFBrowser_LabelNode_HeaderFile
+#ifndef _Handle_DFBrowser_LabelNode_h
+#define _Handle_DFBrowser_LabelNode_h
 
 #include <Standard_DefineHandle.hxx>
 #include <Handle_DFBrowser_DFNode.hxx>

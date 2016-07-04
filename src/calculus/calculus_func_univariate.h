@@ -11,6 +11,9 @@
 // A-Situs includes
 #include <analysis_situs.h>
 
+// OCCT includes
+#include <Standard_Transient.hxx>
+
 DEFINE_STANDARD_HANDLE(calculus_func_univariate, Standard_Transient)
 
 //! Interface for univariate function f(x) in explicit form.

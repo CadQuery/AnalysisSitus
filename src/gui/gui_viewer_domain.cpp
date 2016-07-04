@@ -15,6 +15,7 @@
 // Geometry includes
 #include <geom_delete_edges.h>
 #include <geom_join_edges.h>
+#include <geom_utils.h>
 
 // Engine includes
 #include <engine_domain.h>
@@ -234,6 +235,8 @@ void gui_viewer_domain::onDomainPicked()
     // Prepare label
     TCollection_AsciiString TITLE  = "(Edge #";
                             TITLE += edgeId;
+                            TITLE += ", ";
+                            TITLE += geom_utils::OrientationToString(edge);
                             TITLE += " in face)\n";
     //
     double f, l;
@@ -307,7 +310,7 @@ void gui_viewer_domain::onKillEdges()
 
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePicker();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
   common_facilities::Instance()->Prs.Part->Actualize( N.get() );
 }
 
@@ -352,6 +355,6 @@ void gui_viewer_domain::onJoinEdges()
 
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePicker();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
   common_facilities::Instance()->Prs.Part->Actualize( N.get() );
 }

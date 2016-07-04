@@ -226,13 +226,14 @@ public:
 
 public:
 
-  inline double static TrimInf(const double val)
+  inline double static TrimInf(const double val,
+                               const double limit = INF_LIMIT)
   {
     double ret_val = val;
     if ( Precision::IsPositiveInfinite(val) )
-      ret_val = INF_LIMIT;
+      ret_val = limit;
     else if ( Precision::IsNegativeInfinite(val) )
-      ret_val = -INF_LIMIT;
+      ret_val = -limit;
 
     return ret_val;
   }

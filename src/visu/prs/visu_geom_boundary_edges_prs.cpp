@@ -26,15 +26,15 @@ visu_geom_boundary_edges_prs::visu_geom_boundary_edges_prs(const Handle(ActAPI_I
   // Create Data Providers
   Handle(visu_shape_data_provider) DP_convex =
     new visu_shape_data_provider( N->GetId(),
-                                  ActParamStream() << N->Parameter(geom_boundary_edges_node::PID_Convex) );
+                                  ActParamStream() << N->Parameter(geom_boundary_edges_node::PID_Green) );
   //
   Handle(visu_shape_data_provider) DP_concave =
     new visu_shape_data_provider( N->GetId(),
-                                  ActParamStream() << N->Parameter(geom_boundary_edges_node::PID_Concave) );
+                                  ActParamStream() << N->Parameter(geom_boundary_edges_node::PID_Red) );
   //
   Handle(visu_shape_data_provider) DP_undefined =
     new visu_shape_data_provider( N->GetId(),
-                                  ActParamStream() << N->Parameter(geom_boundary_edges_node::PID_Undefined) );
+                                  ActParamStream() << N->Parameter(geom_boundary_edges_node::PID_Ordinary) );
 
   //---------------------------------------------------------------------------
   // Pipeline for convex edges

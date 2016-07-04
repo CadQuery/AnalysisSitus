@@ -26,16 +26,22 @@ public:
 
 public slots:
 
-  void onLoadBRep           ();
-  void onLoadSTEP           ();
-  void onSavePly            ();
-  void onSaveBRep           ();
+  void onLoadBRep         ();
+  void onLoadSTEP         ();
+  void onSaveSTEP         ();
+  void onSavePly          ();
+  void onSaveBRep         ();
   //
-  void onShowTOPOGraph      ();
-  void onShowAAG            ();
-  void onElimSelected       ();
-  void onCheckShape         ();
-  void onSewing             ();
+  void onShowTOPOGraph    ();
+  void onShowAAG          ();
+  void onElimSelected     ();
+  void onCheckShape       ();
+  void onNonManifoldEdges ();
+  //
+  void onSewing           ();
+  void onMaximizeFaces    ();
+  void onOBB              ();
+  void onCloudify         ();
 
 private:
 
@@ -44,41 +50,59 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    QPushButton* pLoadBRep;      //!< Button for brep loading.
-    QPushButton* pLoadSTEP;      //!< Button for STEP loading.
-    QPushButton* pSavePly;       //!< Save triangulation to ply.
-    QPushButton* pSaveBRep;      //!< Save shape to brep.
+    QPushButton* pLoadBRep;         //!< Button for BREP loading.
+    QPushButton* pLoadSTEP;         //!< Button for STEP loading.
+    QPushButton* pSaveSTEP;         //!< Save shape to STEP.
+    QPushButton* pSavePly;          //!< Save triangulation to ply.
+    QPushButton* pSaveBRep;         //!< Save shape to BREP.
     //
-    QPushButton* pShowTOPOGraph; //!< Show topology graph.
-    QPushButton* pShowAAG;       //!< Show Attributed Adjacency Graph.
-    QPushButton* pElimSelected;  //!< Removes convex-only faces from AAG.
-    QPushButton* pCheckShape;    //!< Runs shape validity checker.
-    QPushButton* pSewing;        //!< Performs sewing.
+    QPushButton* pShowTOPOGraph;    //!< Show topology graph.
+    QPushButton* pShowAAG;          //!< Show Attributed Adjacency Graph.
+    QPushButton* pElimSelected;     //!< Removes convex-only faces from AAG.
+    QPushButton* pCheckShape;       //!< Runs shape validity checker.
+    QPushButton* pNonManifoldEdges; //!< Finds non-manifold edges.
+    //
+    QPushButton* pSewing;           //!< Performs sewing.
+    QPushButton* pMaximizeFaces;    //!< Performs face maximization.
+    QPushButton* pOBB;              //!< Builds OBB.
+    QPushButton* pCloudify;         //!< Builds a point cloud from the model.
 
-    t_widgets() : pLoadBRep      (NULL),
-                  pLoadSTEP      (NULL),
-                  pSavePly       (NULL),
-                  pSaveBRep      (NULL),
+    t_widgets() : pLoadBRep         (NULL),
+                  pLoadSTEP         (NULL),
+                  pSaveSTEP         (NULL),
+                  pSavePly          (NULL),
+                  pSaveBRep         (NULL),
                   //
-                  pShowTOPOGraph (NULL),
-                  pShowAAG       (NULL),
-                  pElimSelected  (NULL),
-                  pCheckShape    (NULL),
-                  pSewing        (NULL)
+                  pShowTOPOGraph    (NULL),
+                  pShowAAG          (NULL),
+                  pElimSelected     (NULL),
+                  pCheckShape       (NULL),
+                  pNonManifoldEdges (NULL),
+                  //
+                  pSewing           (NULL),
+                  pMaximizeFaces    (NULL),
+                  pOBB              (NULL),
+                  pCloudify         (NULL)
     {}
 
     void Release()
     {
-      delete pLoadBRep;      pLoadBRep      = NULL;
-      delete pLoadSTEP;      pLoadSTEP      = NULL;
-      delete pSavePly;       pSavePly       = NULL;
-      delete pSaveBRep;      pSaveBRep      = NULL;
+      delete pLoadBRep;         pLoadBRep         = NULL;
+      delete pLoadSTEP;         pLoadSTEP         = NULL;
+      delete pSaveSTEP;         pSaveSTEP         = NULL;
+      delete pSavePly;          pSavePly          = NULL;
+      delete pSaveBRep;         pSaveBRep         = NULL;
       //
-      delete pShowTOPOGraph; pShowTOPOGraph = NULL;
-      delete pShowAAG;       pShowAAG       = NULL;
-      delete pElimSelected;  pElimSelected  = NULL;
-      delete pCheckShape;    pCheckShape    = NULL;
-      delete pSewing;        pSewing        = NULL;
+      delete pShowTOPOGraph;    pShowTOPOGraph    = NULL;
+      delete pShowAAG;          pShowAAG          = NULL;
+      delete pElimSelected;     pElimSelected     = NULL;
+      delete pCheckShape;       pCheckShape       = NULL;
+      delete pNonManifoldEdges; pNonManifoldEdges = NULL;
+      //
+      delete pSewing;           pSewing           = NULL;
+      delete pMaximizeFaces;    pMaximizeFaces    = NULL;
+      delete pOBB;              pOBB              = NULL;
+      delete pCloudify;         pCloudify         = NULL;
     }
   };
 

@@ -14,6 +14,7 @@
 // Visualization includes
 #include <visu_display_mode.h>
 #include <visu_geom_prs.h>
+#include <visu_geom_surf_prs.h>
 
 // Geometry includes
 #include <geom_point_cloud.h>
@@ -36,6 +37,7 @@
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Iterator.hxx>
+#include <TopExp.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -82,11 +84,11 @@ gui_controls_hull::gui_controls_hull(QWidget* parent) : QWidget(parent)
   //
   connect( m_widgets.pSaveSTEP, SIGNAL( clicked() ), this, SLOT( onSaveSTEP() ) );
 
-  // Show Gauss curvature field
-  m_widgets.pGaussCurvature = new QPushButton("Gauss curvature");
-  m_widgets.pGaussCurvature->setMinimumWidth(CONTROL_BTN_WIDTH);
+  // Show curvature field
+  m_widgets.pCurvature = new QPushButton("Curvature analysis");
+  m_widgets.pCurvature->setMinimumWidth(CONTROL_BTN_WIDTH);
   //
-  connect( m_widgets.pGaussCurvature, SIGNAL( clicked() ), this, SLOT( onGaussCurvature() ) );
+  connect( m_widgets.pCurvature, SIGNAL( clicked() ), this, SLOT( onCurvature() ) );
 
   // Set layout
   m_pMainLayout->addWidget(m_widgets.pLoadPoints);
@@ -94,7 +96,7 @@ gui_controls_hull::gui_controls_hull(QWidget* parent) : QWidget(parent)
   m_pMainLayout->addWidget(m_widgets.pInterpColumns);
   m_pMainLayout->addWidget(m_widgets.pSkinSurface);
   m_pMainLayout->addWidget(m_widgets.pSaveSTEP);
-  m_pMainLayout->addWidget(m_widgets.pGaussCurvature);
+  m_pMainLayout->addWidget(m_widgets.pCurvature);
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
   //
@@ -208,7 +210,7 @@ void gui_controls_hull::onInterpSections()
 
   //---------------------------------------------------------------------------
   // Choose degree
-  const int p = 4;
+  const int p = 3;
 
   TIMER_NEW
   TIMER_GO
@@ -300,7 +302,7 @@ void gui_controls_hull::onInterpColumns()
   BRep_Builder().MakeCompound(result);
 
   // Choose degree
-  const int q = 4;
+  const int q = 3;
 
   // Number of columns to interpolate
   const int nColumns = sections[0]->NbPoles();
@@ -472,7 +474,7 @@ void gui_controls_hull::onSaveSTEP()
 {
   QString filename = gui_common::selectSTEPFile(gui_common::OpenSaveAction_Save);
 
-  // Access U-bend Node
+  // Access Part Node
   Handle(geom_part_node) part = common_facilities::Instance()->Model->PartNode();
   //
   TopoDS_Shape partShape = part->GetShape();
@@ -485,8 +487,46 @@ void gui_controls_hull::onSaveSTEP()
   }
 }
 
-//! Shows Gauss curvature field.
-void gui_controls_hull::onGaussCurvature()
+//! Shows curvature view.
+void gui_controls_hull::onCurvature()
 {
-  // TODO
+  // Clean viewer
+  common_facilities::Instance()->Prs.Part->DeleteAllPresentations();
+
+  // Get Part Node with the underlying Surface Node
+  Handle(geom_part_node) part_n = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_surf_node) surf_n = part_n->SurfaceRepresentation();
+  Handle(geom_face_node) face_n = part_n->FaceRepresentation();
+
+  // Check shape type
+  if ( part_n->GetShape().ShapeType() != TopAbs_FACE )
+  {
+    std::cout << "Error: shape is not a face" << std::endl;
+    return;
+  }
+
+  // Get face corresponding to the reconstructed surface
+  TopoDS_Face F = TopoDS::Face( part_n->GetShape() );
+  if ( F.IsNull() )
+  {
+    std::cout << "Error: no available face" << std::endl;
+    return;
+  }
+
+  // Find index of the face
+  TopTools_IndexedMapOfShape M;
+  TopExp::MapShapes(F, M);
+  //
+  common_facilities::Instance()->Model->OpenCommand();
+  {
+    const int face_idx = M.FindIndex(F);
+    surf_n->SetSelectedFace(face_idx);
+    face_n->SetSelectedFace(face_idx);
+  }
+  common_facilities::Instance()->Model->CommitCommand();
+
+  // Actualize
+  vtkSmartPointer<visu_prs_manager> prsMgr = common_facilities::Instance()->Prs.Part;
+  //
+  prsMgr->Actualize( surf_n.get(), false, true );
 }

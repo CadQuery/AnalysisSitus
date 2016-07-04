@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_PtrQTGUI_HeaderFile
-#define _DFBrowser_PtrQTGUI_HeaderFile
+#ifndef _DFBrowser_PtrQTGUI_h
+#define _DFBrowser_PtrQTGUI_h
 
 class DFBrowser_QTGUI;
 

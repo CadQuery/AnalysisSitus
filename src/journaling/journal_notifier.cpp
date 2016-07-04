@@ -14,6 +14,8 @@
 // A-Situs (GUI) includes
 #include <gui_common.h>
 
+#define COUT_OUTPUT
+
 //! Constructor.
 journal_notifier::journal_notifier() : ActAPI_IProgressNotifier()
 {
@@ -188,6 +190,11 @@ void journal_notifier::StepProgress(const int theTaskID,
   else
     m_CMap[theTaskID] += theStepProgress;
 
+#if defined COUT_OUTPUT
+  const int perc = ( (double) this->SummaryProgress() / this->Capacity() )*100;
+  std::cout << "... \tprogress: " << perc << "%" << std::endl;
+#endif
+
   // Inform observers that progress value is updated
   m_pSignal->EmitProgressUpdated();
 }
@@ -208,15 +215,27 @@ void journal_notifier::SendLogMessage(const TCollection_AsciiString&  theMessage
   {
     case Severity_Information:
       m_logger->Info(theMessage, thePriority, theArguments);
+#if defined COUT_OUTPUT
+      std::cout << "... \tinfo: " << theMessage << std::endl;
+#endif
       break;
     case Severity_Notice:
       m_logger->Notice(theMessage, thePriority, theArguments);
+#if defined COUT_OUTPUT
+      std::cout << "... \tnotice: " << theMessage << std::endl;
+#endif
       break;
     case Severity_Warning:
       m_logger->Warn(theMessage, thePriority, theArguments);
+#if defined COUT_OUTPUT
+      std::cout << "... \twarning: " << theMessage << std::endl;
+#endif
       break;
     case Severity_Error:
       m_logger->Error(theMessage, thePriority, theArguments);
+#if defined COUT_OUTPUT
+      std::cout << "... \terror: " << theMessage << std::endl;
+#endif
       break;
     default:
       break;

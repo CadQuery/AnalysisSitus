@@ -8,30 +8,39 @@
 // Own include
 #include <gui_controls_features.h>
 
-// A-Situs (common) includes
+// Common includes
 #include <common_draw_test_suite.h>
 #include <common_facilities.h>
 
-// A-Situs (GUI) includes
+// GUI includes
 #include <gui_common.h>
 #include <gui_dialog_sewing.h>
 
-// A-Situs (engine) includes
+// Engine includes
 #include <engine_part.h>
 
-// A-Situs (modeling) includes
-#include <geom_aag_iterator.h>
+// Feature includes
+#include <feature_aag_iterator.h>
+#include <feature_delete_faces.h>
+#include <feature_detect_fillets.h>
+#include <feature_detect_choles.h>
+#include <feature_detect_pholes.h>
+#include <feature_detect_slots.h>
+#include <feature_solid_angle.h>
+
+// Geometry includes
 #include <geom_aag_vtk.h>
-#include <geom_delete_faces.h>
+
+// Geometry includes
 #include <geom_detach_faces.h>
-#include <geom_detect_slots.h>
+#include <geom_find_same_hosts.h>
 #include <geom_rehost_faces.h>
 #include <geom_STEP.h>
 #include <geom_utils.h>
 
 // A-Situs (mesh) includes
-#include <mesh_convert.h>
-#include <mesh_ply.h>
+#include <tess_convert.h>
+#include <tess_ply.h>
 
 // A-Situs (visualization) includes
 #include <visu_geom_prs.h>
@@ -61,7 +70,58 @@
 #define BTN_MIN_WIDTH 120
 
 //-----------------------------------------------------------------------------
-// Construction & destruction
+
+void ClassifySolidAngle(const TopoDS_Face&          F,
+                        const TopoDS_Face&          G,
+                        TopTools_IndexedMapOfShape& convexEdges,
+                        TopTools_IndexedMapOfShape& concaveEdges,
+                        TopTools_IndexedMapOfShape& undefinedEdges,
+                        TopTools_IndexedMapOfShape& smoothEdges,
+                        TopoDS_Compound&            convexEdgesComp,
+                        TopoDS_Compound&            concaveEdgesComp,
+                        TopoDS_Compound&            undefinedEdgesComp,
+                        TopoDS_Compound&            smoothEdgesComp,
+                        const bool                  usePlotter,
+                        const bool                  allowSmooth)
+{
+  // Check angle between the two faces
+  TopTools_IndexedMapOfShape commonEdges;
+  feature_solid_angle solid_angle(common_facilities::Instance()->Notifier,
+                                  usePlotter ? common_facilities::Instance()->Plotter : NULL);
+  //
+  feature_angle angle = solid_angle.AngleBetweenFaces(F, G, allowSmooth, commonEdges);
+  //
+  TopTools_IndexedMapOfShape* pTargetMap;
+  TopoDS_Compound*            pTargetComp;
+  //
+  if ( angle == Angle_Convex )
+  {
+    pTargetMap  = &convexEdges;
+    pTargetComp = &convexEdgesComp;
+  }
+  else if ( angle == Angle_Concave )
+  {
+    pTargetMap  = &concaveEdges;
+    pTargetComp = &concaveEdgesComp;
+  }
+  else if ( angle == Angle_Smooth )
+  {
+    pTargetMap  = &smoothEdges;
+    pTargetComp = &smoothEdgesComp;
+  }
+  else
+  {
+    pTargetMap  = &undefinedEdges;
+    pTargetComp = &undefinedEdgesComp;
+  }
+  //
+  for ( int i = 1; i <= commonEdges.Extent(); ++i )
+  {
+    pTargetMap->Add( commonEdges(i) );
+    BRep_Builder().Add( *pTargetComp, commonEdges(i) );
+  }
+}
+
 //-----------------------------------------------------------------------------
 
 //! Constructor.
@@ -72,63 +132,85 @@ gui_controls_features::gui_controls_features(QWidget* parent) : QWidget(parent)
   m_pMainLayout = new QVBoxLayout();
 
   // Buttons
-  m_widgets.pCheckSolidAngles   = new QPushButton("Classify solid angles");
-  m_widgets.pFindConvexOnly     = new QPushButton("Find convex-only");
-  m_widgets.pFindSlots          = new QPushButton("Find slots");
-  m_widgets.pFindSameHosts      = new QPushButton("Find same hosts");
-  m_widgets.pRehostFaces        = new QPushButton("Re-host faces");
+  m_widgets.pCheckSolidAngles    = new QPushButton("Classify solid angles");
+  m_widgets.pFindSmoothEdges     = new QPushButton("Find smooth edges");
+  m_widgets.pFindConvexOnly      = new QPushButton("Find convex-only");
+  m_widgets.pFindSlots           = new QPushButton("Find slots");
+  m_widgets.pFindHoles           = new QPushButton("Find holes");
+  m_widgets.pFindPlanarHoles     = new QPushButton("Find planar holes");
+  m_widgets.pFindFillets         = new QPushButton("Find fillets");
   //
-  m_widgets.pDetachSelected     = new QPushButton("Detach sel. faces");
-  m_widgets.pDeleteSelected     = new QPushButton("Delete sel. faces only");
-  m_widgets.pDeleteSelectedFull = new QPushButton("Delete sel. faces FULL");
+  m_widgets.pDetachSelected      = new QPushButton("Detach sel. faces");
+  m_widgets.pDeleteSelected      = new QPushButton("Delete sel. faces only");
+  m_widgets.pDeleteSelectedFull  = new QPushButton("Delete sel. faces FULL");
+  m_widgets.pFindSameHosts       = new QPushButton("Find same hosts");
+  m_widgets.pRehostFaces         = new QPushButton("Re-host faces");
+  m_widgets.pUnperiodizeSelected = new QPushButton("Unperiodize sel. faces");
   //
-  m_widgets.pCheckSolidAngles   -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pFindConvexOnly     -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pFindSlots          -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pFindSameHosts      -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pRehostFaces        -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pCheckSolidAngles    -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pFindSmoothEdges     -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pFindConvexOnly      -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pFindSlots           -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pFindHoles           -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pFindPlanarHoles     -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pFindFillets         -> setMinimumWidth(BTN_MIN_WIDTH);
   //
-  m_widgets.pDetachSelected     -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pDeleteSelected     -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pDeleteSelectedFull -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pDetachSelected      -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pDeleteSelected      -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pDeleteSelectedFull  -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pFindSameHosts       -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pRehostFaces         -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pUnperiodizeSelected -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Group for features
-  QGroupBox*   pFeaturesGroup = new QGroupBox("Features [SLOTS]");
+  QGroupBox*   pFeaturesGroup = new QGroupBox("Features");
   QVBoxLayout* pFeaturesLay   = new QVBoxLayout(pFeaturesGroup);
   //
   pFeaturesLay->addWidget(m_widgets.pCheckSolidAngles);
+  pFeaturesLay->addWidget(m_widgets.pFindSmoothEdges);
   pFeaturesLay->addWidget(m_widgets.pFindConvexOnly);
   pFeaturesLay->addWidget(m_widgets.pFindSlots);
-  pFeaturesLay->addWidget(m_widgets.pFindSameHosts);
-  pFeaturesLay->addWidget(m_widgets.pRehostFaces);
+  pFeaturesLay->addWidget(m_widgets.pFindHoles);
+  pFeaturesLay->addWidget(m_widgets.pFindPlanarHoles);
+  pFeaturesLay->addWidget(m_widgets.pFindFillets);
 
   // Group for features
-  QGroupBox*   pAllFeaturesGroup = new QGroupBox("Features");
-  QVBoxLayout* pAllFeaturesLay   = new QVBoxLayout(pAllFeaturesGroup);
+  QGroupBox*   pDyModelingGroup = new QGroupBox("Dynamic Modeling");
+  QVBoxLayout* pDyModelingLay   = new QVBoxLayout(pDyModelingGroup);
   //
-  pAllFeaturesLay->addWidget(m_widgets.pDetachSelected);
-  pAllFeaturesLay->addWidget(m_widgets.pDeleteSelected);
-  pAllFeaturesLay->addWidget(m_widgets.pDeleteSelectedFull);
+  pDyModelingLay->addWidget(m_widgets.pDetachSelected);
+  pDyModelingLay->addWidget(m_widgets.pDeleteSelected);
+  pDyModelingLay->addWidget(m_widgets.pDeleteSelectedFull);
+  pDyModelingLay->addWidget(m_widgets.pFindSameHosts);
+  pDyModelingLay->addWidget(m_widgets.pRehostFaces);
+  pDyModelingLay->addWidget(m_widgets.pUnperiodizeSelected);
 
   // Set layout
   m_pMainLayout->addWidget(pFeaturesGroup);
-  m_pMainLayout->addWidget(pAllFeaturesGroup);
+  m_pMainLayout->addWidget(pDyModelingGroup);
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
   //
   this->setLayout(m_pMainLayout);
 
   // Connect signals to slots
-  connect( m_widgets.pCheckSolidAngles,   SIGNAL( clicked() ), SLOT( onCheckSolidAngles   () ) );
-  connect( m_widgets.pFindConvexOnly,     SIGNAL( clicked() ), SLOT( onFindConvexOnly     () ) );
-  connect( m_widgets.pFindSlots,          SIGNAL( clicked() ), SLOT( onFindSlots          () ) );
-  connect( m_widgets.pFindSameHosts,      SIGNAL( clicked() ), SLOT( onFindSameHosts      () ) );
-  connect( m_widgets.pRehostFaces,        SIGNAL( clicked() ), SLOT( onRehostFaces        () ) );
+  connect( m_widgets.pCheckSolidAngles,    SIGNAL( clicked() ), SLOT( onCheckSolidAngles    () ) );
+  connect( m_widgets.pFindSmoothEdges,     SIGNAL( clicked() ), SLOT( onFindSmoothEdges     () ) );
+  connect( m_widgets.pFindConvexOnly,      SIGNAL( clicked() ), SLOT( onFindConvexOnly      () ) );
+  connect( m_widgets.pFindSlots,           SIGNAL( clicked() ), SLOT( onFindSlots           () ) );
+  connect( m_widgets.pFindHoles,           SIGNAL( clicked() ), SLOT( onFindHoles           () ) );
+  connect( m_widgets.pFindPlanarHoles,     SIGNAL( clicked() ), SLOT( onFindPlanarHoles     () ) );
+  connect( m_widgets.pFindFillets,         SIGNAL( clicked() ), SLOT( onFindFillets         () ) );
   //
-  connect( m_widgets.pDetachSelected,     SIGNAL( clicked() ), SLOT( onDetachSelected     () ) );
-  connect( m_widgets.pDeleteSelected,     SIGNAL( clicked() ), SLOT( onDeleteSelected     () ) );
-  connect( m_widgets.pDeleteSelectedFull, SIGNAL( clicked() ), SLOT( onDeleteSelectedFull () ) );
+  connect( m_widgets.pDetachSelected,      SIGNAL( clicked() ), SLOT( onDetachSelected      () ) );
+  connect( m_widgets.pDeleteSelected,      SIGNAL( clicked() ), SLOT( onDeleteSelected      () ) );
+  connect( m_widgets.pDeleteSelectedFull,  SIGNAL( clicked() ), SLOT( onDeleteSelectedFull  () ) );
+  connect( m_widgets.pFindSameHosts,       SIGNAL( clicked() ), SLOT( onFindSameHosts       () ) );
+  connect( m_widgets.pRehostFaces,         SIGNAL( clicked() ), SLOT( onRehostFaces         () ) );
+  connect( m_widgets.pUnperiodizeSelected, SIGNAL( clicked() ), SLOT( onUnperiodizeSelected () ) );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Destructor.
 gui_controls_features::~gui_controls_features()
@@ -137,75 +219,95 @@ gui_controls_features::~gui_controls_features()
   m_widgets.Release();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Classifies solid angles as concave / convex.
 void gui_controls_features::onCheckSolidAngles()
 {
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
 
-  // Working shape
-  TopoDS_Shape part = N->GetShape();
-  //
-  if ( part.IsNull() )
-  {
-    std::cout << "Error: part shape is null" << std::endl;
-    return;
-  }
+  // Get highlighted sub-shapes
+  TopTools_IndexedMapOfShape selected;
+  engine_part::GetHighlightedSubShapes(selected);
 
-  // Build AAG
-  Handle(geom_aag) aag = new geom_aag(part);
-
-  // Loop over the faces
-  TopTools_IndexedMapOfShape convexEdges,     concaveEdges,     undefinedEdges;
-  TopoDS_Compound            convexEdgesComp, concaveEdgesComp, undefinedEdgesComp;
+  // Holders for geometries
+  TopTools_IndexedMapOfShape convexEdges,     concaveEdges,     undefinedEdges,     smoothEdges;
+  TopoDS_Compound            convexEdgesComp, concaveEdgesComp, undefinedEdgesComp, smoothEdgesComp;
   //
   BRep_Builder BB;
   BB.MakeCompound(convexEdgesComp);
   BB.MakeCompound(concaveEdgesComp);
   BB.MakeCompound(undefinedEdgesComp);
-  //
-  Handle(geom_aag_random_iterator) it = new geom_aag_random_iterator(aag);
-  for ( ; it->More(); it->Next() )
+  BB.MakeCompound(smoothEdgesComp);
+
+  // Perform either global or local analysis
+  if ( selected.IsEmpty() )
   {
-    const int                         current_face_idx = it->GetFaceId();
-    const TColStd_PackedMapOfInteger& neighbor_ids     = it->GetNeighbors();
-    const TopoDS_Face&                current_face     = aag->GetFace(current_face_idx);
+    // Build AAG
+    Handle(feature_aag) aag = new feature_aag(part);
 
-    // Loop over the neighbors
-    for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbor_ids); nit.More(); nit.Next() )
+    // Loop over the faces
+    //
+    Handle(feature_aag_random_iterator) it = new feature_aag_random_iterator(aag);
+    for ( ; it->More(); it->Next() )
     {
-      const int          neighbor_face_idx = nit.Key();
-      const TopoDS_Face& neighbor_face     = aag->GetFace(neighbor_face_idx);
+      const int                         current_face_idx = it->GetFaceId();
+      const TColStd_PackedMapOfInteger& neighbor_ids     = it->GetNeighbors();
+      const TopoDS_Face&                current_face     = aag->GetFace(current_face_idx);
 
-      // Check angle between the two faces
-      TopTools_IndexedMapOfShape commonEdges;
-      geom_angle angle = geom_utils::AngleBetweenFaces(current_face, neighbor_face, commonEdges);
-      //
-      TopTools_IndexedMapOfShape* pTargetMap;
-      TopoDS_Compound*            pTargetComp;
-      //
-      if ( angle == Angle_Convex )
+      // Loop over the neighbors
+      for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbor_ids); nit.More(); nit.Next() )
       {
-        pTargetMap  = &convexEdges;
-        pTargetComp = &convexEdgesComp;
+        const int          neighbor_face_idx = nit.Key();
+        const TopoDS_Face& neighbor_face     = aag->GetFace(neighbor_face_idx);
+
+        // Check angle between the two faces
+        ClassifySolidAngle(current_face,
+                           neighbor_face,
+                           convexEdges,
+                           concaveEdges,
+                           undefinedEdges,
+                           smoothEdges,
+                           convexEdgesComp,
+                           concaveEdgesComp,
+                           undefinedEdgesComp,
+                           smoothEdgesComp,
+                           false,
+                           false);
       }
-      else if ( angle == Angle_Concave )
-      {
-        pTargetMap  = &concaveEdges;
-        pTargetComp = &concaveEdgesComp;
-      }
-      else
-      {
-        pTargetMap  = &undefinedEdges;
-        pTargetComp = &undefinedEdgesComp;
-      }
+    }
+  }
+  else
+  {
+    std::cout << "Info: local analysis of edges" << std::endl;
+    if ( selected.Extent() < 2 )
+    {
+      std::cout << "Error: at least 2 faces are expected" << std::endl;
+      return;
+    }
+
+    for ( int f = 1; f <= selected.Extent(); ++f )
+    {
+      const TopoDS_Face& F = TopoDS::Face( selected(f) );
       //
-      for ( int i = 1; i <= commonEdges.Extent(); ++i )
+      for ( int g = f + 1; g <= selected.Extent(); ++g )
       {
-        pTargetMap->Add( commonEdges(i) );
-        BB.Add( *pTargetComp, commonEdges(i) );
+        const TopoDS_Face& G = TopoDS::Face( selected(g) );
+
+        // Check angle between the two faces
+        ClassifySolidAngle(F,
+                           G,
+                           convexEdges,
+                           concaveEdges,
+                           undefinedEdges,
+                           smoothEdges,
+                           convexEdgesComp,
+                           concaveEdgesComp,
+                           undefinedEdgesComp,
+                           smoothEdgesComp,
+                           true,
+                           false);
       }
     }
   }
@@ -214,21 +316,30 @@ void gui_controls_features::onCheckSolidAngles()
   std::cout << "\tNum. convex  edges: "   << convexEdges.Extent()    << std::endl;
   std::cout << "\tNum. concave edges: "   << concaveEdges.Extent()   << std::endl;
   std::cout << "\tNum. undefined edges: " << undefinedEdges.Extent() << std::endl;
+  std::cout << "\tNum. smooth edges: "    << smoothEdges.Extent()    << std::endl;
 
   // Save to model
-  Handle(geom_boundary_edges_node) BN = N->BoundaryEdgesRepresentation();
+  Handle(geom_boundary_edges_node)
+    BN = common_facilities::Instance()->Model->PartNode()->BoundaryEdgesRepresentation();
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    ActParamTool::AsShape( BN->Parameter(geom_boundary_edges_node::PID_Convex)    )->SetShape(convexEdgesComp);
-    ActParamTool::AsShape( BN->Parameter(geom_boundary_edges_node::PID_Concave)   )->SetShape(concaveEdgesComp);
-    ActParamTool::AsShape( BN->Parameter(geom_boundary_edges_node::PID_Undefined) )->SetShape(undefinedEdgesComp);
+    ActParamTool::AsShape( BN->Parameter(geom_boundary_edges_node::PID_Green)    )->SetShape(convexEdgesComp);
+    ActParamTool::AsShape( BN->Parameter(geom_boundary_edges_node::PID_Red)   )->SetShape(concaveEdgesComp);
+    ActParamTool::AsShape( BN->Parameter(geom_boundary_edges_node::PID_Ordinary) )->SetShape(undefinedEdgesComp);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update viewer
   Handle(visu_geom_prs)
-    NPrs = Handle(visu_geom_prs)::DownCast( common_facilities::Instance()->Prs.Part->GetPresentation(N) );
+    NPrs = Handle(visu_geom_prs)::DownCast(
+             common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->PartNode() )
+           );
+  if ( NPrs.IsNull() )
+  {
+    std::cout << "Error: there is no available presentation for part" << std::endl;
+    return;
+  }
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
   //
@@ -237,25 +348,143 @@ void gui_controls_features::onCheckSolidAngles()
   common_facilities::Instance()->Prs.Part->Actualize( BN.get() );
 }
 
+//-----------------------------------------------------------------------------
+
+//! Finds smooth edges.
+void gui_controls_features::onFindSmoothEdges()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Get highlighted sub-shapes
+  TopTools_IndexedMapOfShape selected;
+  engine_part::GetHighlightedSubShapes(selected);
+
+  // Holders for geometries
+  TopTools_IndexedMapOfShape convexEdges,     concaveEdges,     undefinedEdges,     smoothEdges;
+  TopoDS_Compound            convexEdgesComp, concaveEdgesComp, undefinedEdgesComp, smoothEdgesComp;
+  //
+  BRep_Builder BB;
+  BB.MakeCompound(convexEdgesComp);
+  BB.MakeCompound(concaveEdgesComp);
+  BB.MakeCompound(undefinedEdgesComp);
+  BB.MakeCompound(smoothEdgesComp);
+
+  // Perform either global or local analysis
+  if ( selected.IsEmpty() )
+  {
+    // Build AAG
+    Handle(feature_aag) aag = new feature_aag(part);
+
+    // Loop over the faces
+    //
+    Handle(feature_aag_random_iterator) it = new feature_aag_random_iterator(aag);
+    for ( ; it->More(); it->Next() )
+    {
+      const int                         current_face_idx = it->GetFaceId();
+      const TColStd_PackedMapOfInteger& neighbor_ids     = it->GetNeighbors();
+      const TopoDS_Face&                current_face     = aag->GetFace(current_face_idx);
+
+      // Loop over the neighbors
+      for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbor_ids); nit.More(); nit.Next() )
+      {
+        const int          neighbor_face_idx = nit.Key();
+        const TopoDS_Face& neighbor_face     = aag->GetFace(neighbor_face_idx);
+
+        // Check angle between the two faces
+        ClassifySolidAngle(current_face,
+                           neighbor_face,
+                           convexEdges,
+                           concaveEdges,
+                           undefinedEdges,
+                           smoothEdges,
+                           convexEdgesComp,
+                           concaveEdgesComp,
+                           undefinedEdgesComp,
+                           smoothEdgesComp,
+                           false,
+                           true);
+      }
+    }
+  }
+  else
+  {
+    std::cout << "Info: local analysis of edges" << std::endl;
+    if ( selected.Extent() < 2 )
+    {
+      std::cout << "Error: at least 2 faces are expected" << std::endl;
+      return;
+    }
+
+    for ( int f = 1; f <= selected.Extent(); ++f )
+    {
+      const TopoDS_Face& F = TopoDS::Face( selected(f) );
+      //
+      for ( int g = f + 1; g <= selected.Extent(); ++g )
+      {
+        const TopoDS_Face& G = TopoDS::Face( selected(g) );
+
+        // Check angle between the two faces
+        ClassifySolidAngle(F,
+                           G,
+                           convexEdges,
+                           concaveEdges,
+                           undefinedEdges,
+                           smoothEdges,
+                           convexEdgesComp,
+                           concaveEdgesComp,
+                           undefinedEdgesComp,
+                           smoothEdgesComp,
+                           true,
+                           true);
+      }
+    }
+  }
+
+  // Dump
+  std::cout << "\tNum. convex  edges: "   << convexEdges.Extent()    << std::endl;
+  std::cout << "\tNum. concave edges: "   << concaveEdges.Extent()   << std::endl;
+  std::cout << "\tNum. undefined edges: " << undefinedEdges.Extent() << std::endl;
+  std::cout << "\tNum. smooth edges: "    << smoothEdges.Extent()    << std::endl;
+
+  // Save to model
+  Handle(geom_boundary_edges_node)
+    BN = common_facilities::Instance()->Model->PartNode()->BoundaryEdgesRepresentation();
+  //
+  common_facilities::Instance()->Model->OpenCommand();
+  {
+    ActParamTool::AsShape( BN->Parameter(geom_boundary_edges_node::PID_Green) )->SetShape(smoothEdgesComp);
+  }
+  common_facilities::Instance()->Model->CommitCommand();
+
+  // Update viewer
+  Handle(visu_geom_prs)
+    NPrs = Handle(visu_geom_prs)::DownCast(
+             common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->PartNode() )
+           );
+  if ( NPrs.IsNull() )
+  {
+    std::cout << "Error: there is no available presentation for part" << std::endl;
+    return;
+  }
+  //
+  NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
+  //
+  NPrs->GetPipeline(visu_geom_prs::Pipeline_Contour)->Actor()->SetVisibility(0);
+  //
+  common_facilities::Instance()->Prs.Part->Actualize( BN.get() );
+}
+
+//-----------------------------------------------------------------------------
+
 //! Identifies convex-only faces.
 void gui_controls_features::onFindConvexOnly()
 {
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
-
-  // Working shape
-  TopoDS_Shape part = N->GetShape();
-  //
-  if ( part.IsNull() )
-  {
-    std::cout << "Error: part shape is null" << std::endl;
-    return;
-  }
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
 
   // Build AAG
-  Handle(geom_aag) aag = new geom_aag(part);
+  Handle(feature_aag) aag = new feature_aag(part);
 
   // Find convex-only faces
   TopTools_IndexedMapOfShape convex;
@@ -269,36 +498,23 @@ void gui_controls_features::onFindConvexOnly()
   engine_part::HighlightSubShapes(convex);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Identifies slot features.
 void gui_controls_features::onFindSlots()
 {
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
-
-  // Working shape
-  TopoDS_Shape part = N->GetShape();
-  //
-  if ( part.IsNull() )
-  {
-    std::cout << "Error: part shape is null" << std::endl;
-    return;
-  }
-
-  TIMER_NEW
-  TIMER_GO
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
 
   // Prepare detector
-  geom_detect_slots detector(part);
+  feature_detect_slots detector(part,
+                                common_facilities::Instance()->Notifier,
+                                common_facilities::Instance()->Plotter);
   if ( !detector.Perform() )
   {
     std::cout << "Error: cannot detect slots" << std::endl;
     return;
   }
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("Slots identification")
 
   const TopTools_IndexedMapOfShape& slotFaces = detector.Result();
   std::cout << "Number of detected faces: " << slotFaces.Extent() << std::endl;
@@ -307,105 +523,154 @@ void gui_controls_features::onFindSlots()
   engine_part::HighlightSubShapes(slotFaces);
 }
 
-//! Finds faces with the same host geometry.
-void gui_controls_features::onFindSameHosts()
-{
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
+//-----------------------------------------------------------------------------
 
-  // Working shape
-  TopoDS_Shape part = N->GetShape();
-  //
-  if ( part.IsNull() )
+//! Finds holes.
+void gui_controls_features::onFindHoles()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Identify holes
+  const double R = 10.0;
+  feature_detect_choles detector(part, NULL,
+                                 common_facilities::Instance()->Notifier,
+                                 common_facilities::Instance()->Plotter);
+  if ( !detector.Perform(R) )
   {
-    std::cout << "Error: part shape is null" << std::endl;
+    std::cout << "Error: cannot identify holes" << std::endl;
     return;
   }
 
-  // Accumulate faces to highlight
-  NCollection_Sequence<TopTools_IndexedMapOfShape> selected;
-  TopTools_IndexedMapOfShape selectedSame;
+  // Get detected holes
+  const TopTools_IndexedMapOfShape& holes = detector.GetResult();
+  if ( holes.IsEmpty() )
+  {
+    std::cout << "No holes detected with radius not greater than " << R << std::endl;
+    return;
+  }
+  else
+    std::cout << holes.Extent() << " hole(s) detected with radius not greater than " << R << std::endl;
+
+  engine_part::HighlightSubShapes(holes);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Finds planar holes.
+void gui_controls_features::onFindPlanarHoles()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Identify holes
+  const double R = 0.0;
+  feature_detect_pholes detector(part,
+                                 common_facilities::Instance()->Notifier,
+                                 common_facilities::Instance()->Plotter);
+  if ( !detector.Perform() )
+  {
+    std::cout << "Error: cannot identify planar holes" << std::endl;
+    return;
+  }
+
+  // Get detected holes
+  const TopTools_IndexedMapOfShape& holes = detector.Result();
+  if ( holes.IsEmpty() )
+  {
+    std::cout << "No holes detected" << std::endl;
+    return;
+  }
+  else
+    std::cout << holes.Extent() << " hole(s) detected" << std::endl;
+
+  engine_part::HighlightSubShapes(holes);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Finds fillets.
+void gui_controls_features::onFindFillets()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Identify fillets
+  const double R = 20.0;
+  feature_detect_fillets detector(part,
+                                  common_facilities::Instance()->Notifier,
+                                  common_facilities::Instance()->Plotter);
+  if ( !detector.Perform(R) )
+  {
+    std::cout << "Error: cannot identify fillets" << std::endl;
+    return;
+  }
+
+  // Get detected fillets
+  const TopTools_IndexedMapOfShape& fillets = detector.Result();
+  if ( fillets.IsEmpty() )
+  {
+    std::cout << "No fillets detected with radius not greater than " << R << std::endl;
+    return;
+  }
+  else
+    std::cout << fillets.Extent() << " hole(s) detected with radius not greater than " << R << std::endl;
+
+  engine_part::HighlightSubShapes(fillets);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Finds faces with the same host geometry.
+void gui_controls_features::onFindSameHosts()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Prepare plotter
+  ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
+
+  // Get all faces of the part
+  TopTools_IndexedMapOfShape faces;
+  TopExp::MapShapes(part, TopAbs_FACE, faces);
 
   TIMER_NEW
   TIMER_GO
 
-  const double anglePrec = Precision::Angular();
-  const double distPrec  = Precision::Confusion();
-  //
-  for ( TopExp_Explorer exp1(part, TopAbs_FACE); exp1.More(); exp1.Next() )
-  {
-    const TopoDS_Face& F1 = TopoDS::Face( exp1.Current() );
-    Handle(Geom_Plane) P1 = Handle(Geom_Plane)::DownCast( BRep_Tool::Surface(F1) );
-    //
-    if ( P1.IsNull() )
-      continue;
-
-    const gp_Ax3& Ax_P1   = P1->Position();
-    const gp_Dir& xDir_P1 = Ax_P1.XDirection();
-    const gp_Dir& yDir_P1 = Ax_P1.YDirection();
-    gp_Pln        pln_P1  = P1->Pln();
-
-    // Second loop
-    for ( TopExp_Explorer exp2(part, TopAbs_FACE); exp2.More(); exp2.Next() )
-    {
-      const TopoDS_Face& F2 = TopoDS::Face( exp2.Current() );
-      if ( F1.IsSame(F2) )
-        continue;
-
-      Handle(Geom_Plane) P2 = Handle(Geom_Plane)::DownCast( BRep_Tool::Surface(F2) );
-      //
-      if ( P2.IsNull() )
-        continue;
-
-      const gp_Ax3& Ax_P2   = P2->Position();
-      const gp_Dir& xDir_P2 = Ax_P2.XDirection();
-      const gp_Dir& yDir_P2 = Ax_P2.YDirection();
-      gp_Pln        pln_P2  = P2->Pln();
-
-      if ( !xDir_P1.IsParallel(xDir_P2, anglePrec) )
-        continue;
-      //
-      if ( !yDir_P1.IsParallel(yDir_P2, anglePrec) )
-        continue;
-      //
-      if ( pln_P1.Distance(pln_P2) > distPrec )
-        continue;
-
-      ///
-      selectedSame.Add(F1);
-      selectedSame.Add(F2);
-    }
-    //
-    selected.Append(selectedSame);
-  }
+  geom_find_same_hosts::t_groups groups;
+  geom_find_same_hosts finder(faces);
+  finder(groups);
 
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Detection of same-host faces")
 
-  // Highlight
-  engine_part::HighlightSubShapes( selectedSame, 100 );
-  /*if ( selected.Length() >= 1 )
-    engine_part::HighlightSubShapes( selected(1) );*/
+  IV.CLEAN();
+
+  // Highlight groups
+  for ( int g = 1; g <= groups.Length(); ++g )
+  {
+    TopoDS_Compound groupComp;
+    BRep_Builder().MakeCompound(groupComp);
+
+    const TColStd_PackedMapOfInteger& group = groups(g);
+    for ( TColStd_MapIteratorOfPackedMapOfInteger fit(group); fit.More(); fit.Next() )
+    {
+      BRep_Builder().Add( groupComp, faces( fit.Key() ) );
+    }
+
+    TCollection_AsciiString name("Same Host Group");
+    name += " ["; name += group.Extent(); name += " surfaces]";
+    IV.DRAW_SHAPE(groupComp, Quantity_Color( ActAPI_IPlotter::Color_Sparse(g) ), name);
+  }
 }
+
+//-----------------------------------------------------------------------------
 
 //! Makes the selected faces share the same host geometry.
 void gui_controls_features::onRehostFaces()
 {
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
-
-  // Working shape
-  TopoDS_Shape part = N->GetShape();
-  //
-  if ( part.IsNull() )
-  {
-    std::cout << "Error: part shape is null" << std::endl;
-    return;
-  }
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
 
   // Get highlighted faces
   TopTools_IndexedMapOfShape selected;
@@ -432,32 +697,23 @@ void gui_controls_features::onRehostFaces()
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    N->SetShape(result);
+    common_facilities::Instance()->Model->PartNode()->SetShape(result);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePicker();
-  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->PartNode().get() );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Detaches selected faces.
 void gui_controls_features::onDetachSelected()
 {
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
-
-  // Working shape
-  TopoDS_Shape part = N->GetShape();
-  //
-  if ( part.IsNull() )
-  {
-    std::cout << "Error: part shape is null" << std::endl;
-    return;
-  }
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
 
   // Get highlighted faces
   TopTools_IndexedMapOfShape selected;
@@ -484,32 +740,23 @@ void gui_controls_features::onDetachSelected()
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    N->SetShape(result);
+    common_facilities::Instance()->Model->PartNode()->SetShape(result);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePicker();
-  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->PartNode().get() );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Deletes selected faces.
 void gui_controls_features::onDeleteSelected()
 {
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
-
-  // Working shape
-  TopoDS_Shape part = N->GetShape();
-  //
-  if ( part.IsNull() )
-  {
-    std::cout << "Error: part shape is null" << std::endl;
-    return;
-  }
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
 
   // Get highlighted faces
   TopTools_IndexedMapOfShape selected;
@@ -519,7 +766,7 @@ void gui_controls_features::onDeleteSelected()
   TIMER_GO
 
   // Delete selected faces
-  geom_delete_faces eraser(part);
+  feature_delete_faces eraser(part);
   if ( !eraser.Perform(selected, true) )
   {
     std::cout << "Error: cannot delete faces" << std::endl;
@@ -529,39 +776,30 @@ void gui_controls_features::onDeleteSelected()
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Faces ONLY deletion")
 
-  const TopoDS_Shape& result = eraser.Result();
+  const TopoDS_Shape& result = eraser.GetResult();
 
   // Save to model
   common_facilities::Instance()->Model->Clear();
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    N->SetShape(result);
+    common_facilities::Instance()->Model->PartNode()->SetShape(result);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePicker();
-  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->PartNode().get() );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Deletes selected faces with all underlying topology.
 void gui_controls_features::onDeleteSelectedFull()
 {
-  // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
-    return;
-
-  // Working shape
-  TopoDS_Shape part = N->GetShape();
-  //
-  if ( part.IsNull() )
-  {
-    std::cout << "Error: part shape is null" << std::endl;
-    return;
-  }
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
 
   // Get highlighted faces
   TopTools_IndexedMapOfShape selected;
@@ -571,7 +809,7 @@ void gui_controls_features::onDeleteSelectedFull()
   TIMER_GO
 
   // Delete selected faces
-  geom_delete_faces eraser(part);
+  feature_delete_faces eraser(part);
   if ( !eraser.Perform(selected, false) )
   {
     std::cout << "Error: cannot delete faces" << std::endl;
@@ -581,19 +819,65 @@ void gui_controls_features::onDeleteSelectedFull()
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("FULL faces deletion")
 
-  const TopoDS_Shape& result = eraser.Result();
+  const TopoDS_Shape& result = eraser.GetResult();
 
   // Save to model
   common_facilities::Instance()->Model->Clear();
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    N->SetShape(result);
+    common_facilities::Instance()->Model->PartNode()->SetShape(result);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePicker();
-  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->PartNode().get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Performs unperiodization of the selected faces.
+void gui_controls_features::onUnperiodizeSelected()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Get highlighted faces
+  TopTools_IndexedMapOfShape selected;
+  engine_part::GetHighlightedSubShapes(selected);
+
+  for ( int f = 1; f <= selected.Extent(); ++f )
+  {
+    const TopoDS_Shape& shape = selected(f);
+    //
+    if ( shape.ShapeType() != TopAbs_FACE )
+      continue;
+
+    // Extract host surface
+    const TopoDS_Face& face = TopoDS::Face(shape);
+    Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
+    //
+    if ( !surf->IsKind( STANDARD_TYPE(Geom_BSplineSurface) ) )
+      continue;
+
+    // Convert to B-surface
+    Handle(Geom_BSplineSurface) bsurf = Handle(Geom_BSplineSurface)::DownCast(surf);
+    if ( bsurf->IsUPeriodic() )
+    {
+      std::cout << "Surface is U-periodic -> unperiodize in U" << std::endl;
+      bsurf->SetUNotPeriodic();
+    }
+    if ( bsurf->IsVPeriodic() )
+    {
+      std::cout << "Surface is V-periodic -> unperiodize in V" << std::endl;
+      bsurf->SetVNotPeriodic();
+    }
+  }
+
+  // Update viewer
+  common_facilities::Instance()->Prs.DeleteAll();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->PartNode().get() );
 }

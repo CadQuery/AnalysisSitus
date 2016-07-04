@@ -16,7 +16,7 @@
 
 //-----------------------------------------------------------------------------
 
-#define VTK_BAD_ID -1;
+#define VTK_BAD_ID -1
 
 //-----------------------------------------------------------------------------
 
@@ -25,16 +25,16 @@
 
 //-----------------------------------------------------------------------------
 
-#define ARRNAME_MESH_ITEM_TYPE   "arrname_mesh_item_type"
-#define ARRNAME_MESH_NODE_IDS    "arrname_mesh_node_ids"
-#define ARRNAME_MESH_ELEM_IDS    "arrname_mesh_elem_ids"
-#define ARRNAME_MESH_EN_SCALARS  "arrname_mesh_en_scalars"
-#define ARRNAME_MESH_E_SCALARS   "arrname_mesh_e_scalars"
-#define ARRNAME_MESH_E_VECTORS   "arrname_mesh_e_vectors"
-#define ARRNAME_MESH_N_SCALARS   "arrname_mesh_n_scalars"
+#define ARRNAME_MESH_ITEM_TYPE   "arrname_tess_item_type"
+#define ARRNAME_MESH_NODE_IDS    "arrname_tess_node_ids"
+#define ARRNAME_MESH_ELEM_IDS    "arrname_tess_elem_ids"
+#define ARRNAME_MESH_EN_SCALARS  "arrname_tess_en_scalars"
+#define ARRNAME_MESH_E_SCALARS   "arrname_tess_e_scalars"
+#define ARRNAME_MESH_E_VECTORS   "arrname_tess_e_vectors"
+#define ARRNAME_MESH_N_SCALARS   "arrname_tess_n_scalars"
 #define ARRNAME_ORIENT_SCALARS   "arrname_domain_scalars"
 //
-#define ARRNAME_SURF_GAUSSIAN_CURVATURE "arrname_surf_gaussian_curvature"
+#define ARRNAME_SURF_CURVATURE "arrname_surf_curvature"
 
 //-----------------------------------------------------------------------------
 

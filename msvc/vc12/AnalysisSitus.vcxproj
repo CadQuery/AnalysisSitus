@@ -1,0 +1,1229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\analysis_situs.h" />
+    <ClInclude Include="..\..\src\calculus\calculus_design_law.h" />
+    <ClInclude Include="..\..\src\calculus\calculus_design_law_node.h" />
+    <ClInclude Include="..\..\src\calculus\calculus_func_univariate.h" />
+    <ClInclude Include="..\..\src\common\common_cad_properties.h" />
+    <ClInclude Include="..\..\src\common\common_draw_test_suite.h" />
+    <ClInclude Include="..\..\src\common\common_variable.h" />
+    <ClInclude Include="..\..\src\engine\engine_domain.h" />
+    <ClInclude Include="..\..\src\engine\engine_iv.h" />
+    <ClInclude Include="..\..\src\engine\engine_mesh.h" />
+    <ClInclude Include="..\..\src\engine\engine_part.h" />
+    <ClInclude Include="..\..\src\engine\engine_re.h" />
+    <ClInclude Include="..\..\src\engine\engine_ubend.h" />
+    <ClInclude Include="..\..\src\engine\engine_volume.h" />
+    <CustomBuild Include="..\..\src\gui\gui_viewer_func_univariate.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_curve_2d.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_mesh.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_sewing.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\geom\classification\geom_classifier.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_contour_shell.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_edge_face.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_edge_solid.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_edge.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_edge_N_IP.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_face.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_face_N_IP.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_face_N_OOP.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_solid.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_classify_point_surface.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_membership.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_overlapping.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_overlapping_curve_curve.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_overlapping_curve_surface.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_overlapping_ray_surface.h" />
+    <ClInclude Include="..\..\src\geom\classification\geom_transition.h" />
+    <ClInclude Include="..\..\src\geom\combination\geom_overlapping_ranges.h" />
+    <ClInclude Include="..\..\src\geom\combination\geom_weighted_range.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_build_obb.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_divide_by_continuity.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_boundary_edges_node.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_face_node.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_find_nonmanifold.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_part_node.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_surf_node.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_utils.h" />
+    <ClInclude Include="..\..\src\geom\contour_capture\geom_contour_orientation.h" />
+    <ClInclude Include="..\..\src\geom\contour_capture\geom_contour_capture.h" />
+    <ClInclude Include="..\..\src\geom\contour_capture\geom_contour_capture_validator.h" />
+    <ClInclude Include="..\..\src\geom\data_exchange\geom_DE_vars.h" />
+    <ClInclude Include="..\..\src\geom\data_exchange\geom_IGES.h" />
+    <ClInclude Include="..\..\src\geom\data_exchange\geom_STEP.h" />
+    <ClInclude Include="..\..\src\geom\direct_modeling\geom_delete_edges.h" />
+    <ClInclude Include="..\..\src\geom\direct_modeling\geom_detach_faces.h" />
+    <ClInclude Include="..\..\src\geom\direct_modeling\geom_find_same_hosts.h" />
+    <ClInclude Include="..\..\src\geom\direct_modeling\geom_join_edges.h" />
+    <ClInclude Include="..\..\src\geom\direct_modeling\geom_rehost_faces.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_aag_vtk.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_build_stock.h" />
+    <ClInclude Include="..\..\src\geom\features\geom_volume_node.h" />
+    <ClInclude Include="..\..\src\geom\healing\geom_check_contour.h" />
+    <ClInclude Include="..\..\src\geom\healing\geom_check_shell.h" />
+    <ClInclude Include="..\..\src\geom\healing\geom_fix_small_contour.h" />
+    <ClInclude Include="..\..\src\geom\healing\geom_refine_tolerance.h" />
+    <ClInclude Include="..\..\src\geom\healing\geom_reapprox_contour.h" />
+    <ClInclude Include="..\..\src\geom\hulls\geom_k_neighbors_hull.h" />
+    <ClInclude Include="..\..\src\geom\hulls\geom_quick_hull_2d.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_curve_ss.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_cc.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_cc_2D.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_cs.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_edges.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_probe_curve.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_probe_surface.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_ray_face.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersection_point_ray_surface.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_AABBs.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_curves.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_curve_curve.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_curve_curve_2D.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_curve_surface.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_ray_shape.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_ray_surface.h" />
+    <ClInclude Include="..\..\src\geom\intersection\geom_intersect_surfaces.h" />
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_base.h" />
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_empty.h" />
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_face_interior_full.h" />
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_face_interior_hemi.h" />
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_face_interior_sector.h" />
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_solid_interior_full.h" />
+    <ClInclude Include="..\..\src\geom\neighborhood\geom_epsilon_solid_interior_hemi.h" />
+    <ClInclude Include="..\..\src\geom\point_clouds\geom_point_cloud_normals.h" />
+    <ClInclude Include="..\..\src\geom\point_clouds\geom_purify_cloud.h" />
+    <ClInclude Include="..\..\src\geom\point_clouds\geom_common_point_cloud_2d.h" />
+    <ClInclude Include="..\..\src\geom\point_clouds\geom_face_point_cloud.h" />
+    <ClInclude Include="..\..\src\geom\point_clouds\geom_point_cloud.h" />
+    <ClInclude Include="..\..\src\geom\projection\geom_curve_surface_dist.h" />
+    <ClInclude Include="..\..\src\geom\projection\geom_edge_edge_dist.h" />
+    <ClInclude Include="..\..\src\geom\projection\geom_project_curve_surface.h" />
+    <ClInclude Include="..\..\src\geom\projection\geom_project_edge_face.h" />
+    <ClInclude Include="..\..\src\geom\projection\geom_project_edges_faces.h" />
+    <ClInclude Include="..\..\src\geom\projection\geom_project_point_curve.h" />
+    <ClInclude Include="..\..\src\geom\projection\geom_project_vertex_edge.h" />
+    <ClInclude Include="..\..\src\geom\projection\geom_project_wire_shell.h" />
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_build_contours.h" />
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_cloudify.h" />
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_re_contours_node.h" />
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_re_contour_node.h" />
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_re_node.h" />
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_re_points_node.h" />
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_re_surfaces_node.h" />
+    <ClInclude Include="..\..\src\geom\re_engineering\geom_re_surface_node.h" />
+    <ClInclude Include="..\..\src\geom\selection\geom_min_shell.h" />
+    <ClInclude Include="..\..\src\geom\selection\geom_pick_shell.h" />
+    <ClInclude Include="..\..\src\geom\selection\geom_split_edges.h" />
+    <ClInclude Include="..\..\src\geom\selection\geom_split_faces.h" />
+    <ClInclude Include="..\..\src\geom\selection\geom_split_shape.h" />
+    <ClInclude Include="..\..\src\geom\skinning\geom_sections_node.h" />
+    <ClInclude Include="..\..\src\geom\skinning\geom_section_node.h" />
+    <ClInclude Include="..\..\src\geom\use_cases\ubend\geom_ubend.h" />
+    <ClInclude Include="..\..\src\geom\use_cases\ubend\geom_ubend_laws_node.h" />
+    <ClInclude Include="..\..\src\geom\use_cases\ubend\geom_ubend_law_node.h" />
+    <ClInclude Include="..\..\src\geom\use_cases\ubend\geom_ubend_node.h" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_Attr.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_AttrNode.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_AttrPrs.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_Colors.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_DFNode.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_DFTree.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_GUI.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_LabelNode.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_Level.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_ListNode.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_NodeType.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_NSNode.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_Picture.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_PtrGUI.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_PtrQTGUI.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_PtrQTGUIMOC.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\DFBrowser_QTGUI.hxx" />
+    <CustomBuild Include="..\..\src\gui\caf_browser\DFBrowser_QTGUI2.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_Attr.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_AttrNode.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_DFNode.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_DFTree.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_LabelNode.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_ListNode.hxx" />
+    <ClInclude Include="..\..\src\gui\caf_browser\Handle_DFBrowser_NSNode.hxx" />
+    <CustomBuild Include="..\..\src\gui\gui_controls_dmu_visu.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_hull.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_hull.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_features.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_features.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_morphology.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_morphology.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_decomposition_browser.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_decomp_generate.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_STEP.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_STEP_delegate.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_cloudify.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_pcloud.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_pcloud.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\gui\gui_occt_window.h" />
+    <CustomBuild Include="..\..\src\gui\gui_viewer_dmu.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_vtk_window.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\journaling\journal_iv.h" />
+    <ClInclude Include="..\..\src\journaling\journal_logger.h" />
+    <CustomBuild Include="..\..\src\journaling\journal_notifier.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\mesh\tess_conglomerate.h" />
+    <ClInclude Include="..\..\src\mesh\tess_gen.h" />
+    <ClInclude Include="..\..\src\mesh\tess_info.h" />
+    <ClInclude Include="..\..\src\mesh\tess_obj.h" />
+    <ClInclude Include="..\..\src\mesh\tess_params.h" />
+    <ClInclude Include="..\..\src\visu\ais\visu_xde_shape_prs.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_curve_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_2d_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_surface_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_curve_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_law_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_points_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_re_contours_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_re_points_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_re_surfaces_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_ubend_law_data_provider.h" />
+    <CustomBuild Include="..\..\src\visu\interaction\visu_pdomain_callback.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_curves_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_curve_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_points_2d_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_points_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_point_set_2d_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_point_set_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_surfaces_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_surface_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_tess_item_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_tess_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_topo_item_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_topo_node.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_curve_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_iv_surface_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_law_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_topo_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_re_contours_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_points_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_re_surfaces_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_shaded_surface_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_curve_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_point_set_2d_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_point_set_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_surface_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_tess_item_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_topo_item_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_axes_btn_callback.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_calculus_law_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_boundary_edges_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_volume_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_re_contours_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_re_points_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_re_surfaces_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_ubend_law_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_xde_prs.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_law_source.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_mesh_topo_source.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_pdomain_source.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_points_source.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_surface_source.h" />
+    <ClInclude Include="..\..\src\visu\visu_shape_mesher.h" />
+    <CustomBuild Include="..\..\src\visu\visu_topo_graph_item.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\xde\xde_IGES.h" />
+    <ClInclude Include="..\..\src\xde\xde_shape_id.h" />
+    <ClInclude Include="..\..\src\xde\xde_STEP.h" />
+    <CustomBuild Include="..\..\src\gui\gui_object_browser_xde.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_dmu.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_face_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_mesh_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_sections_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_section_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_shape_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\filters\visu_mesh_EN_scalar_filter.h" />
+    <ClInclude Include="..\..\src\visu\filters\visu_mesh_E_scalar_filter.h" />
+    <ClInclude Include="..\..\src\visu\filters\visu_mesh_E_vector_filter.h" />
+    <ClInclude Include="..\..\src\visu\filters\visu_mesh_N_scalar_filter.h" />
+    <ClInclude Include="..\..\src\visu\filters\visu_shrink_poly_filter.h" />
+    <ClInclude Include="..\..\src\visu\interaction\visu_interactor_style_pick.h" />
+    <ClInclude Include="..\..\src\visu\interaction\visu_interactor_style_pick_2d.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_shape_data_source.h" />
+    <ClInclude Include="..\..\src\xde\xde_model.h" />
+    <CustomBuild Include="..\..\src\visu\interaction\visu_pick_callback.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\visu\interaction\visu_rotation_callback.h" />
+    <ClInclude Include="..\..\src\visu\interaction\visu_viewer_callback.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_bcurve_poles_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_face_domain_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_face_surface_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_contour_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_EN_scalar_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_E_scalar_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_E_vector_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_N_scalar_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_sections_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_section_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_shape_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_face_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_surf_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_mesh_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_prs_manager.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_sections_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_section_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_ubend_prs.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_bcurve_poles_source.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_curve_source.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_mesh_source.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_pcurve_source.h" />
+    <ClInclude Include="..\..\src\visu\visu_common.h" />
+    <ClInclude Include="..\..\src\visu\visu_display_mode.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_result_utils.h" />
+    <ClInclude Include="..\..\src\visu\visu_mesh_utils.h" />
+    <ClInclude Include="..\..\src\visu\visu_node_info.h" />
+    <ClInclude Include="..\..\src\visu\visu_selection.h" />
+    <CustomBuild Include="..\..\src\visu\visu_topo_graph.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\visu\visu_utils.h" />
+    <CustomBuild Include="..\..\src\gui\gui_viewer_domain.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_object_browser.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_surface.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_asitus.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_welcome_window.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_skinning.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_skinner.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_section.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_section.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_line_edit.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_skinning.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_mesh.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_ubend.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\gui\gui_data_adaptor.h" />
+    <CustomBuild Include="..\..\src\gui\gui_main_window_meshedit.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_dmu.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_ubend.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\gui\gui_prim_data_adaptor.h" />
+    <CustomBuild Include="..\..\src\gui\gui_prim_data_view.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_mesh.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_viewer_ubend.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\mesh\tess_convert.h" />
+    <CustomBuild Include="..\..\src\gui\gui_controls_part.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\common\common_facilities.h" />
+    <ClInclude Include="..\..\src\common\common_model.h" />
+    <ClInclude Include="..\..\src\common\common_partition.h" />
+    <ClInclude Include="..\..\src\common\common_root_node.h" />
+    <ClInclude Include="..\..\src\common\common_version.h" />
+    <ClInclude Include="..\..\src\gui\gui_common.h" />
+    <CustomBuild Include="..\..\src\gui\gui_viewer_part.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\mesh\tess_node.h" />
+    <ClInclude Include="..\..\src\mesh\tess_ply.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\calculus\calculus_design_law.cpp" />
+    <ClCompile Include="..\..\src\calculus\calculus_design_law_node.cpp" />
+    <ClCompile Include="..\..\src\calculus\calculus_func_univariate.cpp" />
+    <ClCompile Include="..\..\src\common\common_facilities.cpp" />
+    <ClCompile Include="..\..\src\common\common_model.cpp" />
+    <ClCompile Include="..\..\src\common\common_partition.cpp" />
+    <ClCompile Include="..\..\src\common\common_root_node.cpp" />
+    <ClCompile Include="..\..\src\engine\engine_domain.cpp" />
+    <ClCompile Include="..\..\src\engine\engine_iv.cpp" />
+    <ClCompile Include="..\..\src\engine\engine_mesh.cpp" />
+    <ClCompile Include="..\..\src\engine\engine_part.cpp" />
+    <ClCompile Include="..\..\src\engine\engine_re.cpp" />
+    <ClCompile Include="..\..\src\engine\engine_ubend.cpp" />
+    <ClCompile Include="..\..\src\engine\engine_volume.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_classifier.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_contour_shell.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_edge_face.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_edge_solid.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_edge.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_edge_N_IP.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_face.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_face_N_IP.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_face_N_OOP.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_solid.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_classify_point_surface.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_overlapping_curve_curve.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_overlapping_curve_surface.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_overlapping_ray_surface.cpp" />
+    <ClCompile Include="..\..\src\geom\classification\geom_transition.cpp" />
+    <ClCompile Include="..\..\src\geom\combination\geom_overlapping_ranges.cpp" />
+    <ClCompile Include="..\..\src\geom\combination\geom_weighted_range.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_build_obb.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_divide_by_continuity.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_boundary_edges_node.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_face_node.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_find_nonmanifold.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_part_node.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_surf_node.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_utils.cpp" />
+    <ClCompile Include="..\..\src\geom\contour_capture\geom_contour_orientation.cpp" />
+    <ClCompile Include="..\..\src\geom\contour_capture\geom_contour_capture.cpp" />
+    <ClCompile Include="..\..\src\geom\contour_capture\geom_contour_capture_validator.cpp" />
+    <ClCompile Include="..\..\src\geom\data_exchange\geom_IGES.cpp" />
+    <ClCompile Include="..\..\src\geom\data_exchange\geom_STEP.cpp" />
+    <ClCompile Include="..\..\src\geom\direct_modeling\geom_delete_edges.cpp" />
+    <ClCompile Include="..\..\src\geom\direct_modeling\geom_detach_faces.cpp" />
+    <ClCompile Include="..\..\src\geom\direct_modeling\geom_find_same_hosts.cpp" />
+    <ClCompile Include="..\..\src\geom\direct_modeling\geom_join_edges.cpp" />
+    <ClCompile Include="..\..\src\geom\direct_modeling\geom_rehost_faces.cpp" />
+    <ClCompile Include="..\..\src\geom\features\geom_aag_vtk.cpp" />
+    <ClCompile Include="..\..\src\geom\features\geom_build_stock.cpp" />
+    <ClCompile Include="..\..\src\geom\features\geom_volume_node.cpp" />
+    <ClCompile Include="..\..\src\geom\healing\geom_check_contour.cpp" />
+    <ClCompile Include="..\..\src\geom\healing\geom_check_shell.cpp" />
+    <ClCompile Include="..\..\src\geom\healing\geom_fix_small_contour.cpp" />
+    <ClCompile Include="..\..\src\geom\healing\geom_refine_tolerance.cpp" />
+    <ClCompile Include="..\..\src\geom\healing\geom_reapprox_contour.cpp" />
+    <ClCompile Include="..\..\src\geom\hulls\geom_k_neighbors_hull.cpp" />
+    <ClCompile Include="..\..\src\geom\hulls\geom_quick_hull_2d.cpp" />
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_AABBs.cpp" />
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_curves.cpp" />
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_curve_curve.cpp" />
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_curve_curve_2D.cpp" />
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_curve_surface.cpp" />
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_ray_shape.cpp" />
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_ray_surface.cpp" />
+    <ClCompile Include="..\..\src\geom\intersection\geom_intersect_surfaces.cpp" />
+    <ClCompile Include="..\..\src\geom\point_clouds\geom_common_point_cloud_2d.cpp" />
+    <ClCompile Include="..\..\src\geom\point_clouds\geom_face_point_cloud.cpp" />
+    <ClCompile Include="..\..\src\geom\point_clouds\geom_point_cloud.cpp" />
+    <ClCompile Include="..\..\src\geom\point_clouds\geom_point_cloud_normals.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\projection\geom_curve_surface_dist.cpp" />
+    <ClCompile Include="..\..\src\geom\projection\geom_edge_edge_dist.cpp" />
+    <ClCompile Include="..\..\src\geom\projection\geom_project_curve_surface.cpp" />
+    <ClCompile Include="..\..\src\geom\projection\geom_project_edge_face.cpp" />
+    <ClCompile Include="..\..\src\geom\projection\geom_project_edges_faces.cpp" />
+    <ClCompile Include="..\..\src\geom\projection\geom_project_point_curve.cpp" />
+    <ClCompile Include="..\..\src\geom\projection\geom_project_vertex_edge.cpp" />
+    <ClCompile Include="..\..\src\geom\projection\geom_project_wire_shell.cpp" />
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_build_contours.cpp" />
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_cloudify.cpp" />
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_re_contours_node.cpp" />
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_re_contour_node.cpp" />
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_re_node.cpp" />
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_re_points_node.cpp" />
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_re_surfaces_node.cpp" />
+    <ClCompile Include="..\..\src\geom\re_engineering\geom_re_surface_node.cpp" />
+    <ClCompile Include="..\..\src\geom\selection\geom_min_shell.cpp" />
+    <ClCompile Include="..\..\src\geom\selection\geom_pick_shell.cpp" />
+    <ClCompile Include="..\..\src\geom\selection\geom_split_edges.cpp" />
+    <ClCompile Include="..\..\src\geom\selection\geom_split_faces.cpp" />
+    <ClCompile Include="..\..\src\geom\selection\geom_split_shape.cpp" />
+    <ClCompile Include="..\..\src\geom\skinning\geom_sections_node.cpp" />
+    <ClCompile Include="..\..\src\geom\skinning\geom_section_node.cpp" />
+    <ClCompile Include="..\..\src\geom\use_cases\ubend\geom_ubend.cpp" />
+    <ClCompile Include="..\..\src\geom\use_cases\ubend\geom_ubend_laws_node.cpp" />
+    <ClCompile Include="..\..\src\geom\use_cases\ubend\geom_ubend_law_node.cpp" />
+    <ClCompile Include="..\..\src\geom\use_cases\ubend\geom_ubend_node.cpp" />
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser.cxx" />
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_Attr.cxx" />
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_AttrNode.cxx" />
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_DFNode.cxx" />
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_DFTree.cxx" />
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_GUI.cxx" />
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_LabelNode.cxx" />
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_ListNode.cxx" />
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_NSNode.cxx" />
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_QTGUI.cxx" />
+    <ClCompile Include="..\..\src\gui\caf_browser\DFBrowser_QTGUI2.cxx" />
+    <ClCompile Include="..\..\src\gui\gui_common.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_dmu.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_dmu_visu.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_features.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_hull.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_mesh.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_morphology.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_pcloud.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_section.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_skinning.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_dialog_cloudify.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_dialog_STEP.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_ubend.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_data_adaptor.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_decomposition_browser.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_dialog_decomp_generate.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_dialog_mesh.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_dialog_sewing.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_dialog_STEP_delegate.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_line_edit.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_asitus.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_dmu.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_features.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_hull.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_meshedit.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_morphology.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_pcloud.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_skinning.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_main_window_ubend.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_object_browser.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_object_browser_xde.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_occt_window.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_prim_data_adaptor.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_prim_data_view.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_part.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_curve_2d.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_func_univariate.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_mesh.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_part.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_domain.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_section.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_skinner.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_surface.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_ubend.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_viewer_dmu.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_vtk_window.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_welcome_window.cpp" />
+    <ClCompile Include="..\..\src\journaling\journal_iv.cpp" />
+    <ClCompile Include="..\..\src\journaling\journal_logger.cpp" />
+    <ClCompile Include="..\..\src\journaling\journal_notifier.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\mesh\tess_conglomerate.cpp" />
+    <ClCompile Include="..\..\src\mesh\tess_convert.cpp" />
+    <ClCompile Include="..\..\src\mesh\tess_gen.cpp" />
+    <ClCompile Include="..\..\src\mesh\tess_info.cpp" />
+    <ClCompile Include="..\..\src\mesh\tess_node.cpp" />
+    <ClCompile Include="..\..\src\mesh\tess_obj.cpp" />
+    <ClCompile Include="..\..\src\mesh\tess_params.cpp" />
+    <ClCompile Include="..\..\src\mesh\tess_ply.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_journal_notifier.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_dmu.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_dmu_visu.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_part.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_features.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_morphology.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_pcloud.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_section.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_skinning.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_mesh.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_ubend.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_hull.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_dmu.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_curve_2d.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_func_univariate.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_part.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_skinner.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_domain.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_section.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_surface.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_mesh.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_viewer_ubend.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_visu_pick_callback.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_visu_pdomain_callback.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_visu_topo_graph.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_visu_topo_graph_item.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_object_browser.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_object_browser_xde.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_decomposition_browser.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_welcome_window.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_asitus.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_features.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_morphology.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_pcloud.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_dmu.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_skinning.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_meshedit.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_ubend.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_hull.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_line_edit.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_prim_data_view.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_decomp_generate.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_mesh.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_sewing.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_cloudify.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_STEP.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_STEP_delegate.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_vtk_window.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_DFBrowser_QTGUI2.cpp" />
+    <ClCompile Include="..\..\src\visu\ais\visu_xde_shape_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\imperative\visu_iv_curve_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_2d_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\imperative\visu_iv_surface_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_curve_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_face_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_law_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_mesh_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_points_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_re_contours_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_re_points_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_re_surfaces_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_sections_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_section_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_shape_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_ubend_law_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\filters\visu_mesh_EN_scalar_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\filters\visu_mesh_E_scalar_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\filters\visu_mesh_E_vector_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\filters\visu_mesh_N_scalar_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\filters\visu_shrink_poly_filter.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_curves_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_curve_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_points_2d_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_points_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_point_set_2d_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_point_set_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_surfaces_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_surface_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_tess_item_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_tess_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_topo_item_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_topo_node.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_interactor_style_pick.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_interactor_style_pick_2d.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_pdomain_callback.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_pick_callback.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_rotation_callback.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_viewer_callback.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_bcurve_poles_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_curve_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_face_domain_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_face_surface_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_iv_surface_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_law_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_contour_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_EN_scalar_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_E_scalar_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_E_vector_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_N_scalar_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_topo_pipeline.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_re_contours_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_points_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_re_surfaces_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_sections_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_section_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_shaded_surface_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_shape_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_curve_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_point_set_2d_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_point_set_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_surface_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_tess_item_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_topo_item_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_axes_btn_callback.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_calculus_law_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_boundary_edges_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_face_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_surf_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_volume_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_mesh_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_prs_manager.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_re_contours_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_re_points_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_re_surfaces_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_sections_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_section_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_ubend_law_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_ubend_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_xde_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_bcurve_poles_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_curve_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_law_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_mesh_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_mesh_topo_source.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_pcurve_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_pdomain_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_points_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_shape_data_source.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_surface_source.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_result_utils.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_mesh_utils.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_node_info.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_selection.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_shape_mesher.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_topo_graph.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_topo_graph_item.cpp" />
+    <ClCompile Include="..\..\src\visu\visu_utils.cpp" />
+    <ClCompile Include="..\..\src\xde\xde_IGES.cpp" />
+    <ClCompile Include="..\..\src\xde\xde_model.cpp" />
+    <ClCompile Include="..\..\src\xde\xde_STEP.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\res\asitus_icon_16x16.png" />
+    <None Include="..\..\res\Plugin" />
+    <None Include="..\..\res\Resources" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{98799C8D-EED8-41DE-9C99-508159A9C504}</ProjectGuid>
+    <RootNamespace>AnalysisSitus</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>AnalysisSitus</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(AS_ROOT)\win$(ARCH)\$(VCVER)\bind\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(AS_ROOT)\win$(ARCH)\$(VCVER)\objd\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(AS_ROOT)\win$(ARCH)\$(VCVER)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(AS_ROOT)\win$(ARCH)\$(VCVER)\obj\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <AdditionalOptions>/DWNT %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(FEAT_INC);$(QR_INC);$(EIGEN_INC);$(BOOST_INC);$(FLANN_INC);$(VTK_INC);$(PCL_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\journaling;$(AS_ROOT)\src\calculus;$(AS_ROOT)\src\engine;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\classification;$(AS_ROOT)\src\geom\combination;$(AS_ROOT)\src\geom\common;$(AS_ROOT)\src\geom\contour_capture;$(AS_ROOT)\src\geom\data_exchange;$(AS_ROOT)\src\geom\direct_modeling;$(AS_ROOT)\src\geom\features;$(AS_ROOT)\src\geom\healing;$(AS_ROOT)\src\geom\hulls;$(AS_ROOT)\src\geom\intersection;$(AS_ROOT)\src\geom\neighborhood;$(AS_ROOT)\src\geom\point_clouds;$(AS_ROOT)\src\geom\projection;$(AS_ROOT)\src\geom\re_engineering;$(AS_ROOT)\src\geom\selection;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\geom\use_cases\ubend;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\imperative;$(AS_ROOT)\src\visu\ais;$(AS_ROOT)\src\visu\data_providers;$(AS_ROOT)\src\visu\data_providers\imperative;$(AS_ROOT)\src\visu\filters;$(AS_ROOT)\src\visu\interaction;$(AS_ROOT)\src\visu\pipelines;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\visu\prs\imperative;$(AS_ROOT)\src\visu\sources;$(AS_ROOT)\src\gui;$(AS_ROOT)\src\gui\caf_browser;$(AS_ROOT)\src\xde;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ASitus_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(QR_LIB);$(FEAT_LIB);$(AD_LIB);$(CAS_LIB64);$(VTK_LIB);$(PCL_LIB);$(QT_LIB);$(TBB_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <ImportLibrary>$(AS_ROOT)\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>feature.lib;QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKXDESTEP.lib;TKXDEIGES.lib;TKHLR.lib;TKFeat.lib;TKOpenGl.lib;vtkCommonCore-7.0.lib;vtkCommonDataModel-7.0.lib;vtkCommonExecutionModel-7.0.lib;vtkCommonMath-7.0.lib;vtkCommonTransforms-7.0.lib;vtkCommonMisc-7.0.lib;vtkRenderingCore-7.0.lib;vtkRenderingOpenGL2-7.0.lib;vtkRenderingAnnotation-7.0.lib;vtkRenderingLabel-7.0.lib;vtkRenderingFreeType-7.0.lib;vtkRenderingContext2D-7.0.lib;vtkRenderingContextOpenGL2-7.0.lib;vtkFiltersCore-7.0.lib;vtkFiltersGeneral-7.0.lib;vtkFiltersSources-7.0.lib;vtkFiltersGeometry-7.0.lib;vtkFiltersParallel-7.0.lib;vtkFiltersExtraction-7.0.lib;vtkFiltersModeling-7.0.lib;vtkIOCore-7.0.lib;vtkIOImage-7.0.lib;vtkImagingCore-7.0.lib;vtkInteractionStyle-7.0.lib;vtkInteractionWidgets-7.0.lib;vtkInfovisLayout-7.0.lib;vtkGUISupportQt-7.0.lib;vtkViewsCore-7.0.lib;vtkViewsContext2D-7.0.lib;vtkViewsInfovis-7.0.lib;opengl32.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <AdditionalOptions>/DWNT %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(AD_INC);$(CAS_INC);$(FEAT_INC);$(QR_INC);$(EIGEN_INC);$(BOOST_INC);$(FLANN_INC);$(VTK_INC);$(PCL_INC);$(TBB_INC);$(QT_INC);$(AS_ROOT)\src;$(AS_ROOT)\src\common;$(AS_ROOT)\src\journaling;$(AS_ROOT)\src\calculus;$(AS_ROOT)\src\engine;$(AS_ROOT)\src\geom;$(AS_ROOT)\src\geom\classification;$(AS_ROOT)\src\geom\combination;$(AS_ROOT)\src\geom\common;$(AS_ROOT)\src\geom\contour_capture;$(AS_ROOT)\src\geom\data_exchange;$(AS_ROOT)\src\geom\direct_modeling;$(AS_ROOT)\src\geom\features;$(AS_ROOT)\src\geom\healing;$(AS_ROOT)\src\geom\hulls;$(AS_ROOT)\src\geom\intersection;$(AS_ROOT)\src\geom\neighborhood;$(AS_ROOT)\src\geom\point_clouds;$(AS_ROOT)\src\geom\projection;$(AS_ROOT)\src\geom\re_engineering;$(AS_ROOT)\src\geom\selection;$(AS_ROOT)\src\geom\skinning;$(AS_ROOT)\src\geom\use_cases\ubend;$(AS_ROOT)\src\mesh;$(AS_ROOT)\src\visu;$(AS_ROOT)\src\visu\imperative;$(AS_ROOT)\src\visu\ais;$(AS_ROOT)\src\visu\data_providers;$(AS_ROOT)\src\visu\data_providers\imperative;$(AS_ROOT)\src\visu\filters;$(AS_ROOT)\src\visu\interaction;$(AS_ROOT)\src\visu\pipelines;$(AS_ROOT)\src\visu\prs;$(AS_ROOT)\src\visu\prs\imperative;$(AS_ROOT)\src\visu\sources;$(AS_ROOT)\src\gui;$(AS_ROOT)\src\gui\caf_browser;$(AS_ROOT)\src\xde;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ASitus_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(QR_LIB);$(FEAT_LIB);$(AD_LIB);$(CAS_LIB64);$(VTK_LIB);$(PCL_LIB);$(QT_LIB);$(TBB_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <ImportLibrary>$(AS_ROOT)\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>feature.lib;QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKXDESTEP.lib;TKXDEIGES.lib;TKHLR.lib;TKFeat.lib;TKOpenGl.lib;vtkCommonCore-7.0.lib;vtkCommonDataModel-7.0.lib;vtkCommonExecutionModel-7.0.lib;vtkCommonMath-7.0.lib;vtkCommonTransforms-7.0.lib;vtkCommonMisc-7.0.lib;vtkRenderingCore-7.0.lib;vtkRenderingOpenGL2-7.0.lib;vtkRenderingAnnotation-7.0.lib;vtkRenderingLabel-7.0.lib;vtkRenderingFreeType-7.0.lib;vtkRenderingContext2D-7.0.lib;vtkRenderingContextOpenGL2-7.0.lib;vtkFiltersCore-7.0.lib;vtkFiltersGeneral-7.0.lib;vtkFiltersSources-7.0.lib;vtkFiltersGeometry-7.0.lib;vtkFiltersParallel-7.0.lib;vtkFiltersExtraction-7.0.lib;vtkFiltersModeling-7.0.lib;vtkIOCore-7.0.lib;vtkIOImage-7.0.lib;vtkImagingCore-7.0.lib;vtkInteractionStyle-7.0.lib;vtkInteractionWidgets-7.0.lib;vtkInfovisLayout-7.0.lib;vtkGUISupportQt-7.0.lib;vtkViewsCore-7.0.lib;vtkViewsContext2D-7.0.lib;vtkViewsInfovis-7.0.lib;opengl32.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ProgramDatabaseFile>
+      </ProgramDatabaseFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -26,15 +26,20 @@ public:
 
 public slots:
 
-  void onCheckSolidAngles   ();
-  void onFindConvexOnly     ();
-  void onFindSlots          ();
-  void onFindSameHosts      ();
-  void onRehostFaces        ();
+  void onCheckSolidAngles    ();
+  void onFindSmoothEdges     ();
+  void onFindConvexOnly      ();
+  void onFindSlots           ();
+  void onFindHoles           ();
+  void onFindPlanarHoles     ();
+  void onFindFillets         ();
   //
-  void onDetachSelected     ();
-  void onDeleteSelected     ();
-  void onDeleteSelectedFull ();
+  void onDetachSelected      ();
+  void onDeleteSelected      ();
+  void onDeleteSelectedFull  ();
+  void onFindSameHosts       ();
+  void onRehostFaces         ();
+  void onUnperiodizeSelected ();
 
 private:
 
@@ -43,38 +48,53 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    QPushButton* pCheckSolidAngles;   //!< Checks solid angles on convexity / concavity.
-    QPushButton* pFindConvexOnly;     //!< Finds convex-only faces.
-    QPushButton* pFindSlots;          //!< Finds slot features.
-    QPushButton* pFindSameHosts;      //!< Attempts to find same-host faces.
-    QPushButton* pRehostFaces;        //!< Merges the host geometry of selected faces.
+    QPushButton* pCheckSolidAngles;    //!< Checks solid angles on convexity / concavity.
+    QPushButton* pFindSmoothEdges;     //!< Finds C1 smooth edges.
+    QPushButton* pFindConvexOnly;      //!< Finds convex-only faces.
+    QPushButton* pFindSlots;           //!< Finds slot features.
+    QPushButton* pFindHoles;           //!< Finds hole features.
+    QPushButton* pFindPlanarHoles;     //!< Finds planar hole features.
+    QPushButton* pFindFillets;         //!< Finds fillets.
     //
-    QPushButton* pDetachSelected;     //!< Detaches selected faces from B-Rep.
-    QPushButton* pDeleteSelected;     //!< Deletes selected faces (only).
-    QPushButton* pDeleteSelectedFull; //!< Deletes selected faces with all contours.
+    QPushButton* pDetachSelected;      //!< Detaches selected faces from B-Rep.
+    QPushButton* pDeleteSelected;      //!< Deletes selected faces (only).
+    QPushButton* pDeleteSelectedFull;  //!< Deletes selected faces with all contours.
+    QPushButton* pFindSameHosts;       //!< Attempts to find same-host faces.
+    QPushButton* pRehostFaces;         //!< Merges the host geometry of selected faces.
+    QPushButton* pUnperiodizeSelected; //!< Performs unperiodization of selected faces.
 
-    t_widgets() : pCheckSolidAngles   (NULL),
-                  pFindConvexOnly     (NULL),
-                  pFindSlots          (NULL),
-                  pFindSameHosts      (NULL),
-                  pRehostFaces        (NULL),
+    t_widgets() : pCheckSolidAngles    (NULL),
+                  pFindSmoothEdges     (NULL),
+                  pFindConvexOnly      (NULL),
+                  pFindSlots           (NULL),
+                  pFindHoles           (NULL),
+                  pFindPlanarHoles     (NULL),
+                  pFindFillets         (NULL),
                   //
-                  pDetachSelected     (NULL),
-                  pDeleteSelected     (NULL),
-                  pDeleteSelectedFull (NULL)
+                  pDetachSelected      (NULL),
+                  pDeleteSelected      (NULL),
+                  pDeleteSelectedFull  (NULL),
+                  pFindSameHosts       (NULL),
+                  pRehostFaces         (NULL),
+                  pUnperiodizeSelected (NULL)
     {}
 
     void Release()
     {
-      delete pCheckSolidAngles;   pCheckSolidAngles   = NULL;
-      delete pFindConvexOnly;     pFindConvexOnly     = NULL;
-      delete pFindSlots;          pFindSlots          = NULL;
-      delete pFindSameHosts;      pFindSameHosts      = NULL;
-      delete pRehostFaces;        pRehostFaces        = NULL;
+      delete pCheckSolidAngles;    pCheckSolidAngles    = NULL;
+      delete pFindSmoothEdges;     pFindSmoothEdges     = NULL;
+      delete pFindConvexOnly;      pFindConvexOnly      = NULL;
+      delete pFindSlots;           pFindSlots           = NULL;
+      delete pFindHoles;           pFindHoles           = NULL;
+      delete pFindPlanarHoles;     pFindPlanarHoles     = NULL;
+      delete pFindFillets;         pFindFillets         = NULL;
       //
-      delete pDetachSelected;     pDetachSelected     = NULL;
-      delete pDeleteSelected;     pDeleteSelected     = NULL;
-      delete pDeleteSelectedFull; pDeleteSelectedFull = NULL;
+      delete pDetachSelected;      pDetachSelected      = NULL;
+      delete pDeleteSelected;      pDeleteSelected      = NULL;
+      delete pDeleteSelectedFull;  pDeleteSelectedFull  = NULL;
+      delete pFindSameHosts;       pFindSameHosts       = NULL;
+      delete pRehostFaces;         pRehostFaces         = NULL;
+      delete pUnperiodizeSelected; pUnperiodizeSelected = NULL;
     }
   };
 

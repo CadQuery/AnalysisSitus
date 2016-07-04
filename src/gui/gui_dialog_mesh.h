@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef gui_dialog_mesh_h
-#define gui_dialog_mesh_h
+#ifndef gui_dialog_tess_h
+#define gui_dialog_tess_h
 
 // A-Situs includes
 #include <analysis_situs.h>

@@ -44,7 +44,7 @@ void visu_rotation_center_provider::Init(const double x,
                                          const double z,
                                          const double side)
 {
-  m_mesh = new OMFDS_Mesh;
+  m_mesh = new Mesh;
   const int vertices[] = { m_mesh->AddNode(x + side, y - side, z - side),
                            m_mesh->AddNode(x + side, y + side, z - side),
                            m_mesh->AddNode(x - side, y + side, z - side),

@@ -27,9 +27,9 @@ public:
 
 public:
 
-  virtual Handle(Standard_Type) GetCurveType() const = 0;
-  virtual Handle(Geom2d_Curve)  GetCurve2d()   const = 0;
-  virtual Handle(Geom_Curve)    GetCurve()     const = 0;
+  virtual Handle(Standard_Type) GetCurveType ()                     const = 0;
+  virtual Handle(Geom2d_Curve)  GetCurve2d   (double& f, double& l) const = 0;
+  virtual Handle(Geom_Curve)    GetCurve     (double& f, double& l) const = 0;
 
 };
 

@@ -8,9 +8,11 @@
 #ifndef QTDEBUGBROWSER_H
 #define QTDEBUGBROWSER_H
 
+#pragma warning(push, 0)
 #include <QFrame>
 #include <QTreeWidget>
-#include <qbuttongroup.h>
+#include <QButtonGroup>
+#pragma warning(pop)
 
 #include <TCollection_AsciiString.hxx>
 

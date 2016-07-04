@@ -8,12 +8,14 @@
 // Own include
 #include <gui_welcome_window.h>
 
-// A-Situs (GUI) includes
+// GUI includes
 #include <gui_main_window_asitus.h>
 #include <gui_main_window_dmu.h>
 #include <gui_main_window_features.h>
 #include <gui_main_window_hull.h>
 #include <gui_main_window_meshedit.h>
+#include <gui_main_window_morphology.h>
+#include <gui_main_window_pcloud.h>
 #include <gui_main_window_skinning.h>
 #include <gui_main_window_ubend.h>
 
@@ -33,8 +35,6 @@
 #define BTN_STANDARD_WIDTH 150
 
 //-----------------------------------------------------------------------------
-// Construction & destruction
-//-----------------------------------------------------------------------------
 
 //! Constructor.
 gui_welcome_window::gui_welcome_window() : QMainWindow()
@@ -44,6 +44,8 @@ gui_welcome_window::gui_welcome_window() : QMainWindow()
   this->setCentralWidget(m_widgets.pMainPane);
   this->setWindowTitle("Analysis Situs: choose composition");
 }
+
+//-----------------------------------------------------------------------------
 
 //! Destructor.
 gui_welcome_window::~gui_welcome_window()
@@ -64,8 +66,10 @@ void gui_welcome_window::createControls()
   m_widgets.pMeshEdit        = new QPushButton("Mesh View");
   m_widgets.pAnalysis        = new QPushButton("Analysis");
   m_widgets.pCAFBrowser      = new QPushButton("CAF Browser");
+  m_widgets.pPointCloud      = new QPushButton("Point Clouds");
   //
-  m_widgets.pFeatures        = new QPushButton("Features");
+  m_widgets.pFeatures        = new QPushButton("AAG Featuring");
+  m_widgets.pMorphology      = new QPushButton("Morphology");
   //
   m_widgets.pSkinning        = new QPushButton("Thru-Sections");
   m_widgets.pUBend           = new QPushButton("U-bend");
@@ -75,8 +79,10 @@ void gui_welcome_window::createControls()
   m_widgets.pMeshEdit        -> setMinimumWidth(BTN_STANDARD_WIDTH);
   m_widgets.pAnalysis        -> setMinimumWidth(BTN_STANDARD_WIDTH);
   m_widgets.pCAFBrowser      -> setMinimumWidth(BTN_STANDARD_WIDTH);
+  m_widgets.pPointCloud      -> setMinimumWidth(BTN_STANDARD_WIDTH);
   //
   m_widgets.pFeatures        -> setMinimumWidth(BTN_STANDARD_WIDTH);
+  m_widgets.pMorphology      -> setMinimumWidth(BTN_STANDARD_WIDTH);
   //
   m_widgets.pSkinning        -> setMinimumWidth(BTN_STANDARD_WIDTH);
   m_widgets.pUBend           -> setMinimumWidth(BTN_STANDARD_WIDTH);
@@ -91,8 +97,10 @@ void gui_welcome_window::createControls()
   pUtilitiesLay->addWidget(m_widgets.pMeshEdit);
   pUtilitiesLay->addWidget(m_widgets.pAnalysis);
   pUtilitiesLay->addWidget(m_widgets.pCAFBrowser);
+  pUtilitiesLay->addWidget(m_widgets.pPointCloud);
   //
   pFeaturesLay->addWidget(m_widgets.pFeatures);
+  pFeaturesLay->addWidget(m_widgets.pMorphology);
   //
   pSkinningLay->addWidget(m_widgets.pSkinning);
   pSkinningLay->addWidget(m_widgets.pUBend);
@@ -120,8 +128,10 @@ void gui_welcome_window::createControls()
   connect( m_widgets.pMeshEdit,        SIGNAL( clicked() ), SLOT( onMeshEdit        () ) );
   connect( m_widgets.pAnalysis,        SIGNAL( clicked() ), SLOT( onAnalysis        () ) );
   connect( m_widgets.pCAFBrowser,      SIGNAL( clicked() ), SLOT( onCAFBrowser      () ) );
+  connect( m_widgets.pPointCloud,      SIGNAL( clicked() ), SLOT( onPointCloud      () ) );
   //
   connect( m_widgets.pFeatures,        SIGNAL( clicked() ), SLOT( onFeatures        () ) );
+  connect( m_widgets.pMorphology,      SIGNAL( clicked() ), SLOT( onMorphology      () ) );
   //
   connect( m_widgets.pSkinning,        SIGNAL( clicked() ), SLOT( onSkinning        () ) );
   connect( m_widgets.pUBend,           SIGNAL( clicked() ), SLOT( onUBend           () ) );
@@ -139,6 +149,8 @@ void gui_welcome_window::onDMU()
   pMainWindow->show();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Reaction to clicking "Mesh Edit" button.
 void gui_welcome_window::onMeshEdit()
 {
@@ -147,6 +159,8 @@ void gui_welcome_window::onMeshEdit()
   gui_main_window_meshedit* pMainWindow = new gui_main_window_meshedit();
   pMainWindow->show();
 }
+
+//-----------------------------------------------------------------------------
 
 //! Reaction to clicking "Analysis" button.
 void gui_welcome_window::onAnalysis()
@@ -157,12 +171,12 @@ void gui_welcome_window::onAnalysis()
   pMainWindow->show();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Reaction to clicking "CAF Browser" button.
 void gui_welcome_window::onCAFBrowser()
 {
   this->hide();
-
-  //---------------------------------------------------------------------------
 
   char BUFF[1024];
   GetEnvironmentVariable("THIS_DATA", BUFF, 1024);
@@ -171,7 +185,7 @@ void gui_welcome_window::onCAFBrowser()
   const Handle(ActData_Application)& anApp = ActData_Application::Instance();
 
   Handle(TDocStd_Document) aDoc;
-  ActData_Application::Instance()->NewDocument("BinXCAF", aDoc);
+  ActData_Application::Instance()->NewDocument("BinDMU", aDoc);
 
   PCDM_ReaderStatus aStatus = PCDM_RS_OpenError;
   try
@@ -199,12 +213,34 @@ void gui_welcome_window::onCAFBrowser()
 
 //-----------------------------------------------------------------------------
 
+//! Reaction to clicking "Point Clouds" button.
+void gui_welcome_window::onPointCloud()
+{
+  this->hide();
+  //
+  gui_main_window_pcloud* pMainWindow = new gui_main_window_pcloud();
+  pMainWindow->show();
+}
+
+//-----------------------------------------------------------------------------
+
 //! Reaction to clicking "Features" button.
 void gui_welcome_window::onFeatures()
 {
   this->hide();
   //
   gui_main_window_features* pMainWindow = new gui_main_window_features();
+  pMainWindow->show();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction to clicking "Morphology" button.
+void gui_welcome_window::onMorphology()
+{
+  this->hide();
+  //
+  gui_main_window_morphology* pMainWindow = new gui_main_window_morphology();
   pMainWindow->show();
 }
 
@@ -219,6 +255,8 @@ void gui_welcome_window::onSkinning()
   pMainWindow->show();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Reaction to clicking "U-bend" button.
 void gui_welcome_window::onUBend()
 {
@@ -227,6 +265,8 @@ void gui_welcome_window::onUBend()
   gui_main_window_ubend* pMainWindow = new gui_main_window_ubend();
   pMainWindow->show();
 }
+
+//-----------------------------------------------------------------------------
 
 //! Reaction to clicking "Hull Reconstruction" button.
 void gui_welcome_window::onHullReconstruct()

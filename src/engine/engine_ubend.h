@@ -15,18 +15,11 @@
 #include <geom_ubend_node.h>
 
 //! Data Model API for U-bend.
-class engine_ubend
+namespace engine_ubend
 {
-public:
 
-  static Handle(geom_ubend_node)
+  Handle(geom_ubend_node)
     Create_UBend();
-
-private:
-
-  engine_ubend() {}
-  engine_ubend(const engine_ubend&) {}
-  void operator=(const engine_ubend&) {}
 
 };
 

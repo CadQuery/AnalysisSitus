@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_DFNode_HeaderFile
-#define _DFBrowser_DFNode_HeaderFile
+#ifndef _DFBrowser_DFNode_h
+#define _DFBrowser_DFNode_h
 
 #include <Handle_DFBrowser_DFNode.hxx>
 #include <MMgt_TShared.hxx>
@@ -30,25 +30,25 @@ class DFBrowser_DFNode : public MMgt_TShared
 
   Standard_EXPORT void Next(const Handle(DFBrowser_DFNode)& theNext);
 
-  inline const Handle_DFBrowser_DFNode & Next() const
+  inline const Handle(DFBrowser_DFNode) & Next() const
   {
     return myNext;
   }
 
   Standard_EXPORT void Parent(const Handle(DFBrowser_DFNode)& theParent);
 
-  inline const Handle_DFBrowser_DFNode & Parent() const
+  inline const Handle(DFBrowser_DFNode) & Parent() const
   {
     return myParent;
   }
 
   Standard_EXPORT virtual void AddSub(Handle(DFBrowser_DFNode)& theNode) = 0;
 
-  Standard_EXPORT virtual Handle_DFBrowser_DFNode Sub() const = 0;
+  Standard_EXPORT virtual Handle(DFBrowser_DFNode) Sub() const = 0;
 
   Standard_EXPORT virtual const TCollection_AsciiString & Name() = 0;
 
-  inline const Handle_DFBrowser_DFTree & Tree() const
+  inline const Handle(DFBrowser_DFTree) & Tree() const
   {
     return myTree;
   }
@@ -121,9 +121,9 @@ class DFBrowser_DFNode : public MMgt_TShared
 
  private:
 
-  Handle_DFBrowser_DFTree myTree;
-  Handle_DFBrowser_DFNode myNext;
-  Handle_DFBrowser_DFNode myParent;
+  Handle(DFBrowser_DFTree) myTree;
+  Handle(DFBrowser_DFNode) myNext;
+  Handle(DFBrowser_DFNode) myParent;
   Standard_Boolean myIsOpened;
   Standard_Boolean myCanOpen;
   Standard_Boolean myIsSelected;

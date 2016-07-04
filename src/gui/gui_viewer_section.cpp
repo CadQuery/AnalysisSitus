@@ -135,13 +135,11 @@ void gui_viewer_section::onResetView()
   this->Repaint();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Callback for picking event.
 void gui_viewer_section::onSectionPicked()
 {
-  //---------------------------------------------------------------------------
-  // Retrieve current selection
-  //---------------------------------------------------------------------------
-
   // Access picking results
   const visu_actual_selection& sel      = m_prs_mgr->GetCurrentSelection();
   const visu_pick_result&      pick_res = sel.PickResult(SelectionNature_Detection);

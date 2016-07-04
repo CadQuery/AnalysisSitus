@@ -53,71 +53,92 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 ; README file
 Source: {#ASitusDir}\README; DestName: README.txt; DestDir: {app}; Flags: isreadme sortfilesbyextension
-; Ezydro application folders and scripts
-Source: {#ASitusDir}\win64\vc10\bin\*;                           DestDir: {app}\app\win64\vc10\bin;                    Flags: sortfilesbyextension sortfilesbyname
-Source: {#ASitusDir}\env.bat;                                    DestDir: {app}\app;
-Source: {#ASitusDir}\run.bat;                                    DestDir: {app}\app;
-Source: {#ASitusDir}\msbuild.bat;                                DestDir: {app}\app;
-Source: {#ASitusDir}\msvc.bat;                                   DestDir: {app}\app;
-Source: {#ASitusDir}\src\*;                                      DestDir: {app}\app\src;                               Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ASitusDir}\msvc\vc10\AnalysisSitus.vcxproj;            DestDir: {app}\app\msvc\vc10;
-Source: {#ASitusDir}\msvc\vc10\AnalysisSitus.vcxproj.filters;    DestDir: {app}\app\msvc\vc10;
-Source: {#ASitusDir}\msvc\vc10\AnalysisSitus.sln;                DestDir: {app}\app\msvc\vc10;
-Source: {#ASitusDir}\res\*;                                      DestDir: {app}\app\res;                               Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ASitusDir}\data\*;                                     DestDir: {app}\app\data;                              Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+
+; Application folders and scripts
+Source: {#ASitusDir}\win64\vc12\bin\*;                                    DestDir: {app}\app\win64\vc12\bin;                    Flags: sortfilesbyextension sortfilesbyname
+Source: {#ASitusDir}\env.bat;                                             DestDir: {app}\app;
+Source: {#ASitusDir}\run.bat;                                             DestDir: {app}\app;
+Source: {#ASitusDir}\msbuild.bat;                                         DestDir: {app}\app;
+Source: {#ASitusDir}\msvc.bat;                                            DestDir: {app}\app;
+Source: {#ASitusDir}\src\*;                                               DestDir: {app}\app\src;                               Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ASitusDir}\msvc\vc12\AnalysisSitus.vcxproj;                     DestDir: {app}\app\msvc\vc12;
+Source: {#ASitusDir}\msvc\vc12\AnalysisSitus.vcxproj.filters;             DestDir: {app}\app\msvc\vc12;
+Source: {#ASitusDir}\msvc\vc12\AnalysisSitus.sln;                         DestDir: {app}\app\msvc\vc12;
+Source: {#ASitusDir}\res\*;                                               DestDir: {app}\app\res;                               Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ASitusDir}\data\*;                                              DestDir: {app}\app\data;                              Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+
 ; Third-party products
-Source: {#ProductsDir}\{#ad}\win64\vc10\bin\*;                            DestDir: {app}\products\{#ad}\win64\vc10\bin;           Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#ad}\win64\vc10\lib\*;                            DestDir: {app}\products\{#ad}\win64\vc10\lib;           Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#ad}\include\*;                                   DestDir: {app}\products\{#ad}\include;                  Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#freeimage}\*;                                    DestDir: {app}\products\{#freeimage};                   Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#freetype}\*;                                     DestDir: {app}\products\{#freetype};                    Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#gl2ps}\*;                                        DestDir: {app}\products\{#gl2ps};                       Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#occt_origin_global}\src\*;                                      DestDir: {app}\products\{#occt}\src;                    Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#occt_origin_global}\win64\vc12\bin\*.dll;                       DestDir: {app}\products\{#occt}\win64\vc12\bin;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#occt_origin_global}\win64\vc12\bin\*.exe;                       DestDir: {app}\products\{#occt}\win64\vc12\bin;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#occt_origin_global}\win64\vc12\lib\*;                           DestDir: {app}\products\{#occt}\win64\vc12\lib;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#occt_origin_global}\win64\vc12\bind\*.dll;                      DestDir: {app}\products\{#occt}\win64\vc12\bind;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#occt_origin_global}\win64\vc12\bind\*.pdb;                      DestDir: {app}\products\{#occt}\win64\vc12\bind;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#occt_origin_global}\win64\vc12\bind\*.exe;                      DestDir: {app}\products\{#occt}\win64\vc12\bind;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#occt_origin_global}\win64\vc12\libd\*;                          DestDir: {app}\products\{#occt}\win64\vc12\libd;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#occt_origin_global}\inc\*;                                      DestDir: {app}\products\{#occt}\inc;                    Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#occt_origin_global}\custom.bat;                                 DestDir: {app}\products\{#occt};
+Source: {#occt_origin_global}\env.bat;                                    DestDir: {app}\products\{#occt};
+;
+Source: {#ad_origin_global}\win64\vc12\bin\*;                             DestDir: {app}\products\{#ad}\win64\vc12\bin;           Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ad_origin_global}\win64\vc12\lib\*;                             DestDir: {app}\products\{#ad}\win64\vc12\lib;           Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ad_origin_global}\win64\vc12\bind\*;                            DestDir: {app}\products\{#ad}\win64\vc12\bind;          Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ad_origin_global}\win64\vc12\libd\*;                            DestDir: {app}\products\{#ad}\win64\vc12\libd;          Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ad_origin_global}\include\*;                                    DestDir: {app}\products\{#ad}\include;                  Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+;
+Source: {#qr_origin_global}\win64\vc12\bin\*;                             DestDir: {app}\products\{#qr}\win64\vc12\bin;           Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#qr_origin_global}\win64\vc12\lib\*;                             DestDir: {app}\products\{#qr}\win64\vc12\lib;           Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#qr_origin_global}\win64\vc12\bind\*;                            DestDir: {app}\products\{#qr}\win64\vc12\bind;          Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#qr_origin_global}\win64\vc12\libd\*;                            DestDir: {app}\products\{#qr}\win64\vc12\libd;          Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#qr_origin_global}\include\*;                                    DestDir: {app}\products\{#qr}\include;                  Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+;
+Source: {#feature_origin_global}\win64\vc12\bin\feature.dll;              DestDir: {app}\products\{#feature}\win64\vc12\bin;      Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#feature_origin_global}\win64\vc12\lib\feature.lib;              DestDir: {app}\products\{#feature}\win64\vc12\lib;      Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#feature_origin_global}\win64\vc12\bind\feature.dll;             DestDir: {app}\products\{#feature}\win64\vc12\bind;     Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#feature_origin_global}\win64\vc12\libd\feature.lib;             DestDir: {app}\products\{#feature}\win64\vc12\libd;     Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#feature_origin_global_src}\*.h;                                 DestDir: {app}\products\{#feature}\include;             Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+;
+Source: {#occt_3rdparties}\{#freeimage}\*;                                DestDir: {app}\products\{#freeimage};                   Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#occt_3rdparties}\{#freetype}\*;                                 DestDir: {app}\products\{#freetype};                    Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#occt_3rdparties}\{#gl2ps}\*;                                    DestDir: {app}\products\{#gl2ps};                       Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: {#ProductsDir}\{#eigen}\*;                                        DestDir: {app}\products\{#eigen};                       Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#occt}\src\*;                                     DestDir: {app}\products\{#occt}\src;                    Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#occt}\win64\vc10\bin\*.dll;                      DestDir: {app}\products\{#occt}\win64\vc10\bin;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#occt}\win64\vc10\bin\*.exe;                      DestDir: {app}\products\{#occt}\win64\vc10\bin;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#occt}\win64\vc10\lib\*;                          DestDir: {app}\products\{#occt}\win64\vc10\lib;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#occt}\win64\vc10\bind\*.dll;                     DestDir: {app}\products\{#occt}\win64\vc10\bind;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#occt}\win64\vc10\bind\*.pdb;                     DestDir: {app}\products\{#occt}\win64\vc10\bind;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#occt}\win64\vc10\bind\*.exe;                     DestDir: {app}\products\{#occt}\win64\vc10\bind;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#occt}\win64\vc10\libd\*;                         DestDir: {app}\products\{#occt}\win64\vc10\libd;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#occt}\inc\*;                                     DestDir: {app}\products\{#occt}\inc;                    Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#occt}\custom.bat;                                DestDir: {app}\products\{#occt};
-Source: {#ProductsDir}\{#occt}\custom_vc10_64.bat;                        DestDir: {app}\products\{#occt};
-Source: {#ProductsDir}\{#occt}\env.bat;                                   DestDir: {app}\products\{#occt};
-Source: {#ProductsDir}\{#qr}\win64\vc10\bin\*;                            DestDir: {app}\products\{#qr}\win64\vc10\bin;           Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#qr}\win64\vc10\lib\*;                            DestDir: {app}\products\{#qr}\win64\vc10\lib;           Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#qr}\win64\vc10\bind\*;                           DestDir: {app}\products\{#qr}\win64\vc10\bind;          Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#qr}\win64\vc10\libd\*;                           DestDir: {app}\products\{#qr}\win64\vc10\libd;          Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#qr}\include\*;                                   DestDir: {app}\products\{#qr}\include;                  Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#qt}\bin\QtCore4.dll;                             DestDir: {app}\products\{#qt}\bin;
-Source: {#ProductsDir}\{#qt}\bin\QtGui4.dll;                              DestDir: {app}\products\{#qt}\bin;
-Source: {#ProductsDir}\{#qt}\bin\QtCored4.dll;                            DestDir: {app}\products\{#qt}\bin;
-Source: {#ProductsDir}\{#qt}\bin\QtGuid4.dll;                             DestDir: {app}\products\{#qt}\bin;
+;
+Source: {#ProductsDir}\{#qt}\bin\Qt5Core.dll;                             DestDir: {app}\products\{#qt}\bin;
+Source: {#ProductsDir}\{#qt}\bin\Qt5Gui.dll;                              DestDir: {app}\products\{#qt}\bin;
+Source: {#ProductsDir}\{#qt}\bin\Qt5Widgets.dll;                          DestDir: {app}\products\{#qt}\bin;
+Source: {#ProductsDir}\{#qt}\bin\Qt5Cored.dll;                            DestDir: {app}\products\{#qt}\bin;
+Source: {#ProductsDir}\{#qt}\bin\Qt5Guid.dll;                             DestDir: {app}\products\{#qt}\bin;
+Source: {#ProductsDir}\{#qt}\bin\Qt5Widgetsd.dll;                         DestDir: {app}\products\{#qt}\bin;
 Source: {#ProductsDir}\{#qt}\bin\moc.exe;                                 DestDir: {app}\products\{#qt}\bin;
-Source: {#ProductsDir}\{#qt}\lib\QtCore4.lib;                             DestDir: {app}\products\{#qt}\lib;
-Source: {#ProductsDir}\{#qt}\lib\QtGui4.lib;                              DestDir: {app}\products\{#qt}\lib;
-Source: {#ProductsDir}\{#qt}\lib\QtCored4.lib;                            DestDir: {app}\products\{#qt}\lib;
-Source: {#ProductsDir}\{#qt}\lib\QtGuid4.lib;                             DestDir: {app}\products\{#qt}\lib;
+Source: {#ProductsDir}\{#qt}\lib\Qt5Core.lib;                             DestDir: {app}\products\{#qt}\lib;
+Source: {#ProductsDir}\{#qt}\lib\Qt5Gui.lib;                              DestDir: {app}\products\{#qt}\lib;
+Source: {#ProductsDir}\{#qt}\lib\Qt5Widgets.lib;                          DestDir: {app}\products\{#qt}\lib;
+Source: {#ProductsDir}\{#qt}\lib\Qt5Cored.lib;                            DestDir: {app}\products\{#qt}\lib;
+Source: {#ProductsDir}\{#qt}\lib\Qt5Guid.lib;                             DestDir: {app}\products\{#qt}\lib;
+Source: {#ProductsDir}\{#qt}\lib\Qt5Widgetsd.lib;                         DestDir: {app}\products\{#qt}\lib;
 Source: {#ProductsDir}\{#qt}\include\*;                                   DestDir: {app}\products\{#qt}\include;                  Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#tbb}\bin\intel64\vc10\tbb.dll;                   DestDir: {app}\products\{#tbb}\bin\intel64\vc10;
-Source: {#ProductsDir}\{#tbb}\bin\intel64\vc10\tbbmalloc.dll;             DestDir: {app}\products\{#tbb}\bin\intel64\vc10;
-Source: {#ProductsDir}\{#tbb}\lib\intel64\vc10\tbb.lib;                   DestDir: {app}\products\{#tbb}\lib\intel64\vc10;
-Source: {#ProductsDir}\{#tbb}\lib\intel64\vc10\tbbmalloc.lib;             DestDir: {app}\products\{#tbb}\lib\intel64\vc10;
-Source: {#ProductsDir}\{#tbb}\bin\intel64\vc10\tbb_debug.dll;             DestDir: {app}\products\{#tbb}\bin\intel64\vc10;
-Source: {#ProductsDir}\{#tbb}\bin\intel64\vc10\tbbmalloc_debug.dll;       DestDir: {app}\products\{#tbb}\bin\intel64\vc10;
-Source: {#ProductsDir}\{#tbb}\lib\intel64\vc10\tbb_debug.lib;             DestDir: {app}\products\{#tbb}\lib\intel64\vc10;
-Source: {#ProductsDir}\{#tbb}\lib\intel64\vc10\tbbmalloc_debug.lib;       DestDir: {app}\products\{#tbb}\lib\intel64\vc10;
-Source: {#ProductsDir}\{#tbb}\include\*;                                  DestDir: {app}\products\{#tbb}\include;                 Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#vtk}\win64\vc10\bin\*.dll;                       DestDir: {app}\products\{#vtk}\win64\vc10\bin;          Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#vtk}\win64\vc10\lib\*;                           DestDir: {app}\products\{#vtk}\win64\vc10\lib;          Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#vtk}\win64\vc10\bind\*.dll;                      DestDir: {app}\products\{#vtk}\win64\vc10\bind;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#vtk}\win64\vc10\libd\*;                          DestDir: {app}\products\{#vtk}\win64\vc10\libd;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#vtk}\win64\vc10\include\*;                       DestDir: {app}\products\{#vtk}\win64\vc10\include;      Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ProductsDir}\{#qt}\plugins\platforms\*;                         DestDir: {app}\products\{#qt}\plugins\platforms;        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+;
+Source: {#occt_3rdparties}\{#tbb}\bin\intel64\vc12\tbb.dll;               DestDir: {app}\products\{#tbb}\bin\intel64\vc12;
+Source: {#occt_3rdparties}\{#tbb}\bin\intel64\vc12\tbbmalloc.dll;         DestDir: {app}\products\{#tbb}\bin\intel64\vc12;
+Source: {#occt_3rdparties}\{#tbb}\lib\intel64\vc12\tbb.lib;               DestDir: {app}\products\{#tbb}\lib\intel64\vc12;
+Source: {#occt_3rdparties}\{#tbb}\lib\intel64\vc12\tbbmalloc.lib;         DestDir: {app}\products\{#tbb}\lib\intel64\vc12;
+Source: {#occt_3rdparties}\{#tbb}\bin\intel64\vc12\tbb_debug.dll;         DestDir: {app}\products\{#tbb}\bin\intel64\vc12;
+Source: {#occt_3rdparties}\{#tbb}\bin\intel64\vc12\tbbmalloc_debug.dll;   DestDir: {app}\products\{#tbb}\bin\intel64\vc12;
+Source: {#occt_3rdparties}\{#tbb}\lib\intel64\vc12\tbb_debug.lib;         DestDir: {app}\products\{#tbb}\lib\intel64\vc12;
+Source: {#occt_3rdparties}\{#tbb}\lib\intel64\vc12\tbbmalloc_debug.lib;   DestDir: {app}\products\{#tbb}\lib\intel64\vc12;
+Source: {#occt_3rdparties}\{#tbb}\include\*;                              DestDir: {app}\products\{#tbb}\include;                 Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+;
+Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\*.dll;                       DestDir: {app}\products\{#vtk}\win64\vc12\bin;          Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ProductsDir}\{#vtk}\win64\vc12\lib\*;                           DestDir: {app}\products\{#vtk}\win64\vc12\lib;          Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ProductsDir}\{#vtk}\win64\vc12\bind\*.dll;                      DestDir: {app}\products\{#vtk}\win64\vc12\bind;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ProductsDir}\{#vtk}\win64\vc12\libd\*;                          DestDir: {app}\products\{#vtk}\win64\vc12\libd;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ProductsDir}\{#vtk}\win64\vc12\include\*;                       DestDir: {app}\products\{#vtk}\win64\vc12\include;      Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+
 ; Resource files (icons, custom script, ...)
-Source: "resources\asitus.ico";          DestDir: {app}\icons
-Source: "resources\uninstall.ico";       DestDir: {app}\icons
-Source: "resources\custom.bat";          DestDir: {app}\app
+Source: "resources\asitus.ico";                                           DestDir: {app}\icons
+Source: "resources\uninstall.ico";                                        DestDir: {app}\icons
+Source: "resources\custom.bat";                                           DestDir: {app}\app
 
 
 [Icons]

@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_HeaderFile
-#define _DFBrowser_HeaderFile
+#ifndef _DFBrowser_h
+#define _DFBrowser_h
 
 #include <TDocStd_Document.hxx>
 

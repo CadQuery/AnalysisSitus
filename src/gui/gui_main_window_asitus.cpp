@@ -73,25 +73,27 @@ void gui_main_window_asitus::createDockWindows()
 
   //---------------------------------------------------------------------------
   // Part controls
+  QDockWidget* pDockUtilities;
   {
-    QDockWidget* pDock = new QDockWidget("Utilities", this);
-    pDock->setAllowedAreas(Qt::LeftDockWidgetArea);
+    pDockUtilities = new QDockWidget("Utilities", this);
+    pDockUtilities->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
-    m_widgets.wControlsPart = new gui_controls_part(pDock);
-    pDock->setWidget(m_widgets.wControlsPart);
+    m_widgets.wControlsPart = new gui_controls_part(pDockUtilities);
+    pDockUtilities->setWidget(m_widgets.wControlsPart);
     //
-    this->addDockWidget(Qt::LeftDockWidgetArea, pDock);
+    this->addDockWidget(Qt::LeftDockWidgetArea, pDockUtilities);
   }
   //---------------------------------------------------------------------------
   // Object browser
+  QDockWidget* pDockBrowser;
   {
-    QDockWidget* pDock = new QDockWidget("Stored Objects", this);
-    pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    pDockBrowser = new QDockWidget("Stored Objects", this);
+    pDockBrowser->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wBrowser = new gui_object_browser(pDock);
-    pDock->setWidget(m_widgets.wBrowser);
+    m_widgets.wBrowser = new gui_object_browser(pDockBrowser);
+    pDockBrowser->setWidget(m_widgets.wBrowser);
     //
-    this->addDockWidget(Qt::LeftDockWidgetArea, pDock);
+    this->addDockWidget(Qt::LeftDockWidgetArea, pDockBrowser);
   }
   //---------------------------------------------------------------------------
   // Face Domain viewer
@@ -117,4 +119,6 @@ void gui_main_window_asitus::createDockWindows()
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDock);
   }
+  //---------------------------------------------------------------------------
+  this->tabifyDockWidget(pDockBrowser, pDockUtilities);
 }

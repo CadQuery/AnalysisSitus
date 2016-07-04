@@ -16,7 +16,7 @@
 
 // Qt includes
 #pragma warning(push, 0)
-#include <QtGui/QTreeWidget>
+#include <QTreeWidget>
 #pragma warning(pop)
 
 //-----------------------------------------------------------------------------
@@ -53,7 +53,13 @@ signals:
 //-----------------------------------------------------------------------------
 protected slots:
 
-  void onSelectionChanged();
+  void onSelectionChanged ();
+  void onContextMenu      (QPoint pos);
+  void onShowOnly         ();
+
+private:
+
+  bool selectedNode(Handle(ActAPI_INode)& Node) const;
 
 };
 

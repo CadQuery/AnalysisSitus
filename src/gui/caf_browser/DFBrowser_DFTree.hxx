@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_DFTree_HeaderFile
-#define _DFBrowser_DFTree_HeaderFile
+#ifndef _DFBrowser_DFTree_h
+#define _DFBrowser_DFTree_h
 
 // Analysis Situs includes
 #include <analysis_situs.h>
@@ -46,7 +46,7 @@ public:
     return myAttr;
   }
 
-  inline const Handle_DFBrowser_LabelNode & Root() const
+  inline const Handle(DFBrowser_LabelNode) & Root() const
   {
     return myRoot;
   }

@@ -16,7 +16,7 @@
 
 // Qt includes
 #pragma warning(push, 0)
-#include <QtGui/QTreeWidget>
+#include <QTreeWidget>
 #pragma warning(pop)
 
 //-----------------------------------------------------------------------------

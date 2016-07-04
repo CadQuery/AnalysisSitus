@@ -16,7 +16,14 @@
 #include <geom_part_node.h>
 
 // VTK includes
+#include <vtkButtonWidget.h>
+#include <vtkCommand.h>
+#include <vtkScalarBarWidget.h>
 #include <vtkTextWidget.h>
+
+class visu_surf_btn_callback;
+
+//-----------------------------------------------------------------------------
 
 DEFINE_STANDARD_HANDLE(visu_geom_surf_prs, visu_prs)
 
@@ -36,7 +43,8 @@ public:
   //! Pipelines.
   enum PipelineId
   {
-    Pipeline_Main = 1
+    Pipeline_Main = 1,
+    Pipeline_Shaded
   };
 
 public:
@@ -46,6 +54,17 @@ public:
 
   virtual bool
     IsVisible() const;
+
+//-----------------------------------------------------------------------------
+public:
+
+  void DoWireframe();
+  void DoShaded();
+  void DoShadedAndGaussian();
+  void DoShadedAndMean();
+  //
+  bool IsShaded() const;
+  bool IsShadedAndScalars() const;
 
 private:
 
@@ -69,9 +88,40 @@ private:
 
 private:
 
-  vtkSmartPointer<vtkTextWidget> m_textWidget; //!< Annotation.
+  vtkSmartPointer<vtkTextWidget>          m_textWidget;      //!< Annotation.
+  vtkSmartPointer<vtkScalarBarWidget>     m_scalarBarWidget; //!< Scalar bar.
+  vtkSmartPointer<vtkButtonWidget>        m_modeButton;      //!< Button to switch visualization modes.
+  vtkSmartPointer<visu_surf_btn_callback> m_modeCallback;    //!< Callback for visualization mode button.
+
+};
+
+//-----------------------------------------------------------------------------
+
+//! Callback for switching visualization mode.
+class visu_surf_btn_callback : public vtkCommand
+{
+public:
+
+  static visu_surf_btn_callback* New();
+  vtkTypeMacro(visu_surf_btn_callback, vtkCommand);
+
+  visu_surf_btn_callback() {}
+
+public:
+
+  void SetPresentation(const Handle(visu_geom_surf_prs)& prs)
+  {
+    m_prs = prs;
+  }
+
+  virtual void Execute(vtkObject*    theCaller,
+                       unsigned long theEventId,
+                       void*         theCallData);
+
+private:
+
+  Handle(visu_geom_surf_prs) m_prs; //!< Listened Presentation.
 
 };
 
 #endif
-  

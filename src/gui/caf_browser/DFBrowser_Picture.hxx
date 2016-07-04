@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_Picture_HeaderFile
-#define _DFBrowser_Picture_HeaderFile
+#ifndef _DFBrowser_Picture_h
+#define _DFBrowser_Picture_h
 
 enum DFBrowser_Picture {
  DFBrowser_NONE,

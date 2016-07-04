@@ -22,6 +22,8 @@
 #include <QVBoxLayout>
 #pragma warning(pop)
 
+//-----------------------------------------------------------------------------
+
 //! Creates a new instance of viewer.
 //! \param parent [in] parent widget.
 gui_viewer_surface::gui_viewer_surface(QWidget* parent) : gui_viewer(parent)

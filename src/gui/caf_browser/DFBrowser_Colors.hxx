@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_Colors_HeaderFile
-#define _DFBrowser_Colors_HeaderFile
+#ifndef _DFBrowser_Colors_h
+#define _DFBrowser_Colors_h
 
 enum DFBrowser_Colors {
  DFBrowser_BLACK,

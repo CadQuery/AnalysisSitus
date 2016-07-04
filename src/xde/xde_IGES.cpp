@@ -94,11 +94,6 @@ void xde_IGES::clearSession(const Handle(XSControl_WorkSession)& WS)
   if ( WS.IsNull() )
     return;
 
-  // Clear transient process
-  Handle(Transfer_TransientProcess) MapReader = WS->MapReader();
-  if ( !MapReader.IsNull() )
-    MapReader->Clear();
-
   // Clear transfer reader
   Handle(XSControl_TransferReader) TransferReader = WS->TransferReader();
   if ( !TransferReader.IsNull() )

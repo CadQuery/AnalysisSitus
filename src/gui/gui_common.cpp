@@ -8,6 +8,9 @@
 // A-Situs includes
 #include <gui_common.h>
 
+// A-Situs (common) includes
+#include <common_facilities.h>
+
 // Qt includes
 #include <QFileDialog>
 
@@ -109,4 +112,27 @@ QString gui_common::selectFile(const QStringList&   filter,
     filename = QFileDialog::getSaveFileName(NULL, saveTitle, dir, filter.join(";;"), NULL);
 
   return filename;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Easy accessor for the part shape.
+//! \param part [out] part shape.
+//! \return true if the part shape is accessible and not null.
+bool gui_common::PartShape(TopoDS_Shape& part)
+{
+  // Access Geometry Node
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  if ( N.IsNull() || !N->IsWellFormed() )
+    return false;
+
+  // Working shape
+  part = N->GetShape();
+  //
+  if ( part.IsNull() )
+  {
+    std::cout << "Error: part shape is null" << std::endl;
+    return false;
+  }
+  return true;
 }

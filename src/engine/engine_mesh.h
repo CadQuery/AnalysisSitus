@@ -5,31 +5,23 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef engine_mesh_h
-#define engine_mesh_h
+#ifndef engine_tess_h
+#define engine_tess_h
 
 // A-Situs includes
 #include <analysis_situs.h>
 
 // Mesh includes
-#include <mesh_params.h>
+#include <tess_params.h>
 
 //! Data Model API for meshing.
-class engine_mesh
+namespace engine_mesh
 {
-public:
+  void
+    SaveParameters(const tess_params& params);
 
-  static void
-    SaveParameters(const mesh_params& params);
-
-  static void
-    GetParameters(mesh_params& params);
-
-private:
-
-  engine_mesh() {}
-  engine_mesh(const engine_mesh&) {}
-  void operator=(const engine_mesh&) {}
+  void
+    GetParameters(tess_params& params);
 
 };
 

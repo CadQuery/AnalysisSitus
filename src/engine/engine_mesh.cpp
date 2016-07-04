@@ -16,7 +16,7 @@
 
 //! Saves the passed mesh parameters to OCAF.
 //! \param params [in] mesh parameters.
-void engine_mesh::SaveParameters(const mesh_params& params)
+void engine_mesh::SaveParameters(const tess_params& params)
 {
   TDF_Label root = common_facilities::Instance()->Model_XDE->GetPropertiesLabel(xde_model::Property_Mesh);
 
@@ -28,7 +28,7 @@ void engine_mesh::SaveParameters(const mesh_params& params)
 
 //! Extracts mesh parameters from OCAF.
 //! \param params [out] mesh parameters.
-void engine_mesh::GetParameters(mesh_params& params)
+void engine_mesh::GetParameters(tess_params& params)
 {
   TDF_Label root = common_facilities::Instance()->Model_XDE->GetPropertiesLabel(xde_model::Property_Mesh);
 

@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _Handle_DFBrowser_Attr_HeaderFile
-#define _Handle_DFBrowser_Attr_HeaderFile
+#ifndef _Handle_DFBrowser_Attr_h
+#define _Handle_DFBrowser_Attr_h
 
 #include <Standard_DefineHandle.hxx>
 //

@@ -44,10 +44,14 @@ public:
 
   bool
     SetInputCurve(const Handle(Geom_Curve)& curve,
+                  const double              first,
+                  const double              last,
                   const visu_orientation    ori = VisuOri_Internal);
 
   bool
     SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
+                    const double                first,
+                    const double                last,
                     const visu_orientation      ori = VisuOri_Internal);
 
   void

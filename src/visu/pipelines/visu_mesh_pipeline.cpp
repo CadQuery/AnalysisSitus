@@ -13,18 +13,9 @@
 #include <visu_mesh_source.h>
 #include <visu_mesh_utils.h>
 #include <visu_node_info.h>
-#include <visu_shrink_poly_filter.h>
 #include <visu_utils.h>
 
-// Active Data includes
-#include <ActData_MeshParameter.h>
-#include <ActData_ParameterFactory.h>
-
-// OCCT includes
-#include <Standard_ProgramError.hxx>
-
 // VTK includes
-#include <vtkActor.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 

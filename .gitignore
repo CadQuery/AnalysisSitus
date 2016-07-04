@@ -1,6 +1,7 @@
 misc
 products
-custom.bat
+3rd-parties
+#custom.bat
 win64/
 win32/
 tmp/

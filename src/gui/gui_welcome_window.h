@@ -13,8 +13,8 @@
 
 // Qt includes
 #pragma warning(push, 0)
-#include <QtGui/QMainWindow>
-#include <QtGui/QPushButton>
+#include <QMainWindow>
+#include <QPushButton>
 #pragma warning(pop)
 
 //! Welcome window.
@@ -36,11 +36,13 @@ public slots:
   void onMeshEdit   ();
   void onAnalysis   ();
   void onCAFBrowser ();
+  void onPointCloud ();
 
   //---------------------------------------------------------------------------
   // Features
   //---------------------------------------------------------------------------
-  void onFeatures ();
+  void onFeatures   ();
+  void onMorphology ();
 
   //---------------------------------------------------------------------------
   // Samples (skinning)
@@ -65,9 +67,11 @@ private:
     QPushButton* pMeshEdit;        //!< Mesh Editor composition.
     QPushButton* pAnalysis;        //!< Analysis composition.
     QPushButton* pCAFBrowser;      //!< CAF Browser composition.
-    //-------------------------------------------------------------------------
+    QPushButton* pPointCloud;      //!< Point Cloud composition.
+  //-------------------------------------------------------------------------
     QPushButton* pFeatures;        //!< Features composition.
-    //-------------------------------------------------------------------------
+    QPushButton* pMorphology;      //!< Shape morphology.
+  //-------------------------------------------------------------------------
     QPushButton* pSkinning;        //!< Skinning composition.
     QPushButton* pUBend;           //!< U-bend composition.
     QPushButton* pHullReconstruct; //!< Hull reconstruction composition.
@@ -77,8 +81,10 @@ private:
                   pMeshEdit        (NULL),
                   pAnalysis        (NULL),
                   pCAFBrowser      (NULL),
+                  pPointCloud      (NULL),
                   //
                   pFeatures        (NULL),
+                  pMorphology      (NULL),
                   //
                   pSkinning        (NULL),
                   pUBend           (NULL),
@@ -92,8 +98,10 @@ private:
       delete pMeshEdit;        pMeshEdit        = NULL;
       delete pAnalysis;        pAnalysis        = NULL;
       delete pCAFBrowser;      pCAFBrowser      = NULL;
+      delete pPointCloud;      pPointCloud      = NULL;
       //
       delete pFeatures;        pFeatures        = NULL;
+      delete pMorphology;      pMorphology      = NULL;
       //
       delete pSkinning;        pSkinning        = NULL;
       delete pUBend;           pUBend           = NULL;

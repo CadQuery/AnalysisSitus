@@ -152,6 +152,9 @@ void gui_viewer_part::onSubShapesPicked()
     return; // No target Node to proceed with
   }
 
+  if ( !m_prs_mgr->IsPresented(geom_n) )
+    return;
+
   //---------------------------------------------------------------------------
   // Retrieve current selection
   //---------------------------------------------------------------------------

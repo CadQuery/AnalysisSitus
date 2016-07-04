@@ -15,9 +15,11 @@
 #include <xde_model.h>
 
 // A-Situs (journaling) includes
+#include <journal_iv.h>
 #include <journal_notifier.h>
 
 // A-Situs (GUI) includes
+#include <gui_decomposition_browser.h>
 #include <gui_object_browser.h>
 #include <gui_object_browser_xde.h>
 #include <gui_viewer_dmu.h>
@@ -45,13 +47,15 @@ public:
   Handle(common_model)             Model;             //!< Active Data Model instance.
   Handle(xde_model)                Model_XDE;         //!< XDE Data Model instance.
   //
-  gui_object_browser*              ObjectBrowser;     //!< Object Browser.
-  gui_object_browser_xde*          ObjectBrowser_XDE; //!< Object Browser for XDE.
+  gui_decomposition_browser*       DecompBrowser;     //!< Volume decomposition browser.
+  gui_object_browser*              ObjectBrowser;     //!< Object browser.
+  gui_object_browser_xde*          ObjectBrowser_XDE; //!< Object browser for XDE.
   Handle(ActAPI_INode)             CurrentNode;       //!< Currently selected Node.
   //
   gui_viewer_dmu*                  ViewerDMU;         //!< OpenCascade-driven viewer for dMU.
   //
   Handle(ActAPI_IProgressNotifier) Notifier;          //!< Algorithmic notifier.
+  Handle(ActAPI_IPlotter)          Plotter;           //!< Algorithmic plotter.
 
   //! Visualization facilities.
   struct t_prs
@@ -114,11 +118,13 @@ private:
 
   inline common_facilities()
   //
-    : ObjectBrowser     (NULL),
+    : DecompBrowser     (NULL),
+      ObjectBrowser     (NULL),
       ObjectBrowser_XDE (NULL),
       ViewerDMU         (NULL)
   {
     Notifier = new journal_notifier;
+    Plotter  = new journal_iv;
   }
 
 private:

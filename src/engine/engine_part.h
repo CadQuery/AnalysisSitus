@@ -18,32 +18,27 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 
 //! Data Model API for geometric part.
-class engine_part
+namespace engine_part
 {
-public:
-
-  static Handle(geom_part_node)
+  Handle(geom_part_node)
     Create_Part();
 
-  static void
+  void
+    Clean_Part();
+
+  void
     GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                        TColStd_PackedMapOfInteger&       indices);
 
-  static void
+  void
     HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes);
 
-  static void
+  void
     HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes,
                        const int                         color);
 
-  static void
+  void
     GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes);
-
-private:
-
-  engine_part() {}
-  engine_part(const engine_part&) {}
-  void operator=(const engine_part&) {}
 
 };
 

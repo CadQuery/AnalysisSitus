@@ -12,11 +12,12 @@
 #include <DFBrowser_QTGUI.hxx>
 #include <DFBrowser_LabelNode.hxx>
 #include <DFBrowser_Attr.hxx>
-// qt
+
+#pragma warning(push, 0)
 #include <QLayout>
 #include <qpushbutton.h>
 #include <QHeaderView>
-#include <QWindowsStyle>
+//#include <QWindowsStyle>
 #include <QColor>
 #include <QComboBox>
 #include <QCheckBox>
@@ -25,8 +26,8 @@
 #include <QWidget>
 #include <QGroupBox>
 #include <QTextEdit>
-#include <QMotifStyle>
-
+//#include <QMotifStyle>
+#pragma warning(pop)
 
 #define QTGUI_ATTRIBUTE 0
 #define QTGUI_ATTRIBUTELIST 1
@@ -324,15 +325,15 @@ DFBrowser_QTGUIMOC::DFBrowser_QTGUIMOC(const DFBrowser_PtrGUI theGUI, QWidget* p
 
   myLabelView->setRootIsDecorated(Standard_True);
   myLabelView->setAllColumnsShowFocus(Standard_True);
-  myLabelView->setStyle(new QWindowsStyle);
+//  myLabelView->setStyle(new QWindowsStyle);
   myLabelView->setColumnCount(1);
   myLabelView->setSortingEnabled(Standard_False);
   #ifndef WNT
   myLabelView->setStyle(new QMotifStyle);
   #endif
-  myLabelView->header()->setResizeMode(QHeaderView::Fixed);
-  myLabelView->header()->setResizeMode(0,QHeaderView::Interactive);
-  myLabelView->header()->setMovable(Standard_False);
+  //myLabelView->header()->setResizeMode(QHeaderView::Fixed);
+  //myLabelView->header()->setResizeMode(0,QHeaderView::Interactive);
+  //myLabelView->header()->setMovable(Standard_False);
   myLabelView->header()->hide();
   myLabelView->setFont(aFont);
 

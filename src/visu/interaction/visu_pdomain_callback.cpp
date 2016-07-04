@@ -47,7 +47,7 @@ visu_pdomain_callback::~visu_pdomain_callback()
 //! \param theCallData [in] invocation context.
 void visu_pdomain_callback::Execute(vtkObject*    vtkNotUsed(theCaller),
                                     unsigned long theEventId,
-                                    void*         theCallData)
+                                    void*         ASitus_NotUsed(theCallData))
 {
   vtkSmartPointer<visu_prs_manager> mgr = this->Viewer()->PrsMgr();
   //

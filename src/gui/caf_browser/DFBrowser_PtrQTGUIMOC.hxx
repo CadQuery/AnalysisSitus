@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_PtrQTGUIMOC_HeaderFile
-#define _DFBrowser_PtrQTGUIMOC_HeaderFile
+#ifndef _DFBrowser_PtrQTGUIMOC_h
+#define _DFBrowser_PtrQTGUIMOC_h
 
 class DFBrowser_QTGUIMOC;
 

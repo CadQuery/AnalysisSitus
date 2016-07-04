@@ -624,10 +624,10 @@ void DFBrowser_Attr::Description (const Handle(TDF_Attribute) &theAttr,
       else sprintf(aString,"Has no opened context\n");
       AddToName(aString);
       if (aContext->AutomaticHilight()) AddToName("Automatic hilight is on\n"); else AddToName("Automatic hilight is off\n");
-      sprintf(aString,"Current name: %s\n",aContext->CurrentName().ToCString());
-      AddToName(aString);
-      sprintf(aString,"Selection name: %s\n",aContext->SelectionName().ToCString());
-      AddToName(aString);
+      //sprintf(aString,"Current name: %s\n",aContext->CurrentName().ToCString());
+      //AddToName(aString);
+      //sprintf(aString,"Selection name: %s\n",aContext->SelectionName().ToCString());
+      //AddToName(aString);
       sprintf(aString,"Domain of main viewer: %s\n",aContext->DomainOfMainViewer());
       AddToName(aString);
       //sprintf(aString,"Domain of collector: %s",aContext->DomainOfCollector());

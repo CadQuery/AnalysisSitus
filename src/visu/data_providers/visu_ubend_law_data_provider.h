@@ -33,10 +33,10 @@ public:
 
 public:
 
-  virtual Handle(Standard_Type) GetCurveType() const;
-  virtual Handle(Geom2d_Curve)  GetCurve2d()   const;
-  virtual Handle(Geom_Curve)    GetCurve()     const;
-  virtual ActAPI_DataObjectId   GetNodeID()    const;
+  virtual Handle(Standard_Type) GetCurveType ()                     const;
+  virtual Handle(Geom2d_Curve)  GetCurve2d   (double& f, double& l) const;
+  virtual Handle(Geom_Curve)    GetCurve     (double& f, double& l) const;
+  virtual ActAPI_DataObjectId   GetNodeID    ()                     const;
 
 protected:
 

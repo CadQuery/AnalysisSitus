@@ -21,7 +21,7 @@ gui_vtk_window::~gui_vtk_window()
 
 //! Custom reaction on close event.
 //! \param pEvent [in] event instance.
-void gui_vtk_window::closeEvent(QCloseEvent* pEvent)
+void gui_vtk_window::closeEvent(QCloseEvent* ASitus_NotUsed(pEvent))
 {
   emit windowClosed();
 }

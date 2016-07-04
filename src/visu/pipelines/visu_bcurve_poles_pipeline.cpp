@@ -91,8 +91,9 @@ void visu_bcurve_poles_pipeline::SetInput(const Handle(visu_data_provider)& DP)
     visu_node_info::Store( dp->GetNodeID(), this->Actor() );
 
     // Access curve (3d or 2d)
-    Handle(Geom_Curve)   c3d = dp->GetCurve();
-    Handle(Geom2d_Curve) c2d = dp->GetCurve2d();
+    double f, l;
+    Handle(Geom_Curve)   c3d = dp->GetCurve(f, l);
+    Handle(Geom2d_Curve) c2d = dp->GetCurve2d(f, l);
 
     // B-curve poles
     if ( !c3d.IsNull() && c3d->IsKind( STANDARD_TYPE(Geom_BSplineCurve) ) )

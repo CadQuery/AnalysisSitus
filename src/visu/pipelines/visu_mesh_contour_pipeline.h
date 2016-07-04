@@ -26,18 +26,7 @@ public:
 
 public:
 
-  visu_mesh_contour_pipeline();
-
-public:
-
-  void
-    SetColor(const double fR, const double fG, const double fB);
-
-  void
-    SetOpacity(const double fOp);
-
-  void
-    SetLineWidth(const double theLineWidth);
+  visu_mesh_contour_pipeline(const bool doUseDefaultColor = true);
 
 private:
 

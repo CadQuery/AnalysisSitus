@@ -8,10 +8,13 @@
 // Own include
 #include <visu_geom_face_prs.h>
 
-// A-Situs (visualization) includes
+// Visualization includes
 #include <visu_face_data_provider.h>
 #include <visu_face_domain_pipeline.h>
 #include <visu_utils.h>
+
+// Geometry includes
+#include <geom_utils.h>
 
 // OCCT includes
 #include <TopExp_Explorer.hxx>
@@ -68,7 +71,7 @@ visu_geom_face_prs::visu_geom_face_prs(const Handle(ActAPI_INode)& theNode)
   detect_pl->Actor()->SetVisibility(0);
 
   // Bind to the data provider
-  this->installDetectPipeline( detect_pl, DP->Clone() );
+  this->installDetectPipeline( detect_pl, DP );
 
   /* ========================
    *  Pipeline for selection
@@ -96,7 +99,7 @@ visu_geom_face_prs::visu_geom_face_prs(const Handle(ActAPI_INode)& theNode)
   sel_pl->Actor()->SetVisibility(0);
 
   // Bind to the data provider
-  this->installPickPipeline( sel_pl, DP->Clone() );
+  this->installPickPipeline( sel_pl, DP );
 }
 
 //! Factory method for Presentation.
@@ -129,13 +132,13 @@ void visu_geom_face_prs::afterInitPipelines()
     DP = Handle(visu_face_data_provider)::DownCast( this->dataProvider(Pipeline_Main) );
 
   // Get working face
-  const int   F_idx = DP->GetFaceIndexAmongFaces();
-  TopoDS_Face F     = DP->ExtractFace();
+  const int   F_idx        = DP->GetFaceIndexAmongFaces();
+  TopoDS_Face F            = DP->ExtractFace();
 
   // Prepare main title
   TCollection_AsciiString TITLE("Face (#");
   TITLE += F_idx; TITLE += "): ";
-  TITLE += this->orientationToString(F);
+  TITLE += geom_utils::OrientationToString(F);
 
   // Add orientation of all wires
   int wire_idx = 0;
@@ -147,7 +150,7 @@ void visu_geom_face_prs::afterInitPipelines()
     TITLE += "\n";
     TITLE += "Wire (#";
     TITLE += wire_idx; TITLE += "): ";
-    TITLE += this->orientationToString(W);
+    TITLE += geom_utils::OrientationToString(W);
   }
 
   // Update text on the annotation
@@ -321,26 +324,4 @@ void visu_geom_face_prs::deRenderPipelines(vtkRenderer* theRenderer) const
   //
   detect_pl->RemoveFromRenderer(theRenderer);
   pick_pl->RemoveFromRenderer(theRenderer);
-}
-
-//-----------------------------------------------------------------------------
-
-//! Converts orientation of the given shape to string.
-//! \param shape [in] shape to access orientation.
-TCollection_AsciiString
-  visu_geom_face_prs::orientationToString(const TopoDS_Shape& shape) const
-{
-  TCollection_AsciiString oriStr;
-
-  // Check orientation
-  if ( shape.Orientation() == TopAbs_FORWARD )
-    oriStr = "FORWARD";
-  else if ( shape.Orientation() == TopAbs_REVERSED )
-    oriStr = "REVERSED";
-  else if ( shape.Orientation() == TopAbs_INTERNAL )
-    oriStr = "INTERNAL";
-  else if ( shape.Orientation() == TopAbs_EXTERNAL )
-    oriStr = "EXTERNAL";
-
-  return oriStr;
 }

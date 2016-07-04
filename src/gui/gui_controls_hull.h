@@ -34,7 +34,7 @@ public slots:
   void onInterpColumns  ();
   void onSkinSurface    ();
   void onSaveSTEP       ();
-  void onGaussCurvature ();
+  void onCurvature      ();
 
 private:
 
@@ -46,7 +46,7 @@ private:
     QPushButton* pInterpColumns;  //!< Interpolate columns.
     QPushButton* pSkinSurface;    //!< Skin surface.
     QPushButton* pSaveSTEP;       //!< Save geometry to STEP file.
-    QPushButton* pGaussCurvature; //!< Shown Gauss curvature field.
+    QPushButton* pCurvature;      //!< Initializes curvature view.
 
     //! ctor.
     t_widgets() : pLoadPoints     (NULL),
@@ -54,7 +54,7 @@ private:
                   pInterpColumns  (NULL),
                   pSkinSurface    (NULL),
                   pSaveSTEP       (NULL),
-                  pGaussCurvature (NULL)
+                  pCurvature      (NULL)
     {}
 
     void Release()
@@ -64,7 +64,7 @@ private:
       delete pInterpColumns;  pInterpColumns  = NULL;
       delete pSkinSurface;    pSkinSurface    = NULL;
       delete pSaveSTEP;       pSaveSTEP       = NULL;
-      delete pGaussCurvature; pGaussCurvature = NULL;
+      delete pCurvature;      pCurvature      = NULL;
     }
   };
 

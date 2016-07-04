@@ -15,7 +15,7 @@
 #include <ActAPI_IProgressNotifier.h>
 
 // TBB includes
-#include <tbb/concurrent_unordered_map.h>
+#include <concurrent_unordered_map.h>
 
 // Qt include
 #include <QObject>

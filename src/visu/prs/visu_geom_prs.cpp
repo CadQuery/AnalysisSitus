@@ -67,7 +67,7 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
   contour_pl->WireframeModeOn();
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
-  this->assignDataProvider ( Pipeline_Contour, DP->Clone() );
+  this->assignDataProvider ( Pipeline_Contour, DP );
 
   /* ======================
    *  Pipeline for picking
@@ -93,7 +93,7 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
   pick_pl->Actor()->GetProperty()->SetSpecularPower(20);
 
   // Bind to the data provider
-  this->installPickPipeline( pick_pl, DP->Clone() );
+  this->installPickPipeline( pick_pl, DP );
 
   /* ========================
    *  Pipeline for detecting
@@ -119,7 +119,7 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
   detect_pl->Actor()->GetProperty()->SetSpecularPower(20);
 
   // Bind to the data provider
-  this->installDetectPipeline( detect_pl, DP->Clone() );
+  this->installDetectPipeline( detect_pl, DP );
 
   //---------------------------------------------------------------------------
   vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();

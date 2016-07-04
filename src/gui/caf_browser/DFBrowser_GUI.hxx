@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef _DFBrowser_GUI_HeaderFile
-#define _DFBrowser_GUI_HeaderFile
+#ifndef _DFBrowser_GUI_h
+#define _DFBrowser_GUI_h
 
 #include <Standard.hxx>
 
@@ -42,11 +42,11 @@ class DFBrowser_GUI
 
   Standard_EXPORT void DoubleClicked(const Handle(DFBrowser_DFNode)& theNode) const;
 
-  Standard_EXPORT const Handle_DFBrowser_DFNode & First() const;
+  Standard_EXPORT const Handle(DFBrowser_DFNode) & First() const;
 
-  Standard_EXPORT Handle_DFBrowser_DFNode Next(const Handle(DFBrowser_DFNode)& theNode) const;
+  Standard_EXPORT Handle(DFBrowser_DFNode) Next(const Handle(DFBrowser_DFNode)& theNode) const;
 
-  Standard_EXPORT Handle_DFBrowser_DFNode NextVisible(const Handle(DFBrowser_DFNode)& theNode) const;
+  Standard_EXPORT Handle(DFBrowser_DFNode) NextVisible(const Handle(DFBrowser_DFNode)& theNode) const;
 
   Standard_EXPORT Standard_Integer NodeDepth(const Handle(DFBrowser_DFNode)& theNode) const;
 
@@ -54,7 +54,7 @@ class DFBrowser_GUI
 
   Standard_EXPORT Standard_Address Pixmap(const DFBrowser_Picture theID) const;
 
-  inline const Handle_DFBrowser_DFTree & Tree() const
+  inline const Handle(DFBrowser_DFTree) & Tree() const
   {
     return myTree;
   }

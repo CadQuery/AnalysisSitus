@@ -8,8 +8,10 @@
 // Own include
 #include <geom_aag_vtk.h>
 
+// Feature includes
+#include <feature_angle_attr.h>
+
 // Geometry includes
-#include <geom_feature_angle_attr.h>
 #include <geom_utils.h>
 
 // Visualization includes
@@ -31,7 +33,7 @@
 //! \param aag [in] AAG to convert.
 //! \return VTK graph.
 vtkSmartPointer<vtkMutableUndirectedGraph>
-  geom_aag_vtk::Convert(const Handle(geom_aag)& aag)
+  feature_aag_vtk::Convert(const Handle(feature_aag)& aag)
 {
   vtkSmartPointer<vtkMutableUndirectedGraph>
     result = vtkSmartPointer<vtkMutableUndirectedGraph>::New();
@@ -54,11 +56,11 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
   // Get faces from AAG.
   const TopTools_IndexedMapOfShape& Faces        = aag->GetFaces();
   const TColStd_PackedMapOfInteger& SelFaces     = aag->GetSelectedFaces();
-  const geom_aag::t_adjacency&      Neighborhood = aag->GetNeighborhood();
+  const feature_aag::t_adjacency&   Neighborhood = aag->GetNeighborhood();
 
   // Add vertices for faces
   NCollection_DataMap<int, vtkIdType> FaceVertexMap;
-  for ( geom_aag::t_adjacency::Iterator it(Neighborhood); it.More(); it.Next() )
+  for ( feature_aag::t_adjacency::Iterator it(Neighborhood); it.More(); it.Next() )
   {
     const int       f_idx     = it.Key();
     const vtkIdType vertex_id = result->AddVertex();
@@ -83,7 +85,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
   result->GetEdgeData()  ->AddArray( angleArr.GetPointer() );
 
   // Add links for adjacency relations
-  for ( geom_aag::t_adjacency::Iterator it(Neighborhood); it.More(); it.Next() )
+  for ( feature_aag::t_adjacency::Iterator it(Neighborhood); it.More(); it.Next() )
   {
     const int       f_idx = it.Key();
     const vtkIdType v_idx = FaceVertexMap(f_idx);
@@ -101,9 +103,9 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
       result->AddEdge(v_idx, neighbor_v_idx);
 
       // Check angle
-      geom_aag::t_arc arc(f_idx, neighbor_f_idx);
-      Handle(geom_feature_angle_attr)
-        attr = Handle(geom_feature_angle_attr)::DownCast( aag->GetAttribute(arc) );
+      feature_aag::t_arc arc(f_idx, neighbor_f_idx);
+      Handle(feature_angle_attr)
+        attr = Handle(feature_angle_attr)::DownCast( aag->GetAttribute(arc) );
       //
       if ( !attr.IsNull() )
         angleArr->InsertNextValue( attr->GetAngle() );

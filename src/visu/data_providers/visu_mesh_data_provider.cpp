@@ -36,7 +36,7 @@ ActAPI_DataObjectId visu_mesh_data_provider::GetNodeID() const
 
 //! Returns Mesh Data Structures used as the main source for pipelining.
 //! \return tessellation DS.
-Handle(OMFDS_Mesh) visu_mesh_data_provider::GetMeshDS() const
+Handle(Mesh) visu_mesh_data_provider::GetMeshDS() const
 {
   return ActParamTool::AsMesh( m_params->Value(1) )->GetMesh();
 }

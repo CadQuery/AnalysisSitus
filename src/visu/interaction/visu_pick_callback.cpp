@@ -47,7 +47,8 @@ visu_pick_callback* visu_pick_callback::New(gui_viewer* theViewer)
 //! Constructor accepting owning viewer as a parameter.
 //! \param theViewer [in] owning viewer.
 visu_pick_callback::visu_pick_callback(gui_viewer* theViewer)
-: visu_viewer_callback(theViewer)
+: visu_viewer_callback(theViewer),
+  m_bSelectMeshNodes(false)
 {}
 
 //! Default destructor.
@@ -70,6 +71,10 @@ void visu_pick_callback::Execute(vtkObject*    vtkNotUsed(theCaller),
   if ( mgr == common_facilities::Instance()->Prs.Part )
   {
     this->executePart(theEventId, theCallData);
+  }
+  else if ( mgr == common_facilities::Instance()->Prs.Mesh )
+  {
+    this->executeMesh(theEventId, theCallData);
   }
   else if ( mgr == common_facilities::Instance()->Prs.Domain )
   {
@@ -119,6 +124,35 @@ void visu_pick_callback::executePart(unsigned long theEventId,
                                             selMode & SelectionMode_Edge ||
                                             selMode & SelectionMode_Vertex) )
     emit partPicked();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Answers to a picking event for Mesh view.
+//! \param theEventId  [in] ID of the event triggered this listener.
+//! \param theCallData [in] invocation context.
+void visu_pick_callback::executeMesh(unsigned long theEventId,
+                                     void*         theCallData)
+{
+  // Check if the calling context is valid
+  if ( theEventId != EVENT_PICK_DEFAULT && theEventId != EVENT_DETECT_DEFAULT )
+    return;
+  //
+  if ( !this->Viewer() || !common_facilities::Instance()->Prs.Mesh )
+    return;
+
+  // Now pick
+  visu_pick_input* pickInput = reinterpret_cast<visu_pick_input*>(theCallData);
+  //
+  const visu_selection_nature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
+                                                                            : SelectionNature_Detection;
+  common_facilities::Instance()->Prs.Mesh->Pick(pickInput, sel_type, !m_bSelectMeshNodes);
+
+  // Notify listeners
+  if ( m_bSelectMeshNodes )
+    emit meshNodePicked();
+  else
+    emit meshElemPicked();
 }
 
 //-----------------------------------------------------------------------------

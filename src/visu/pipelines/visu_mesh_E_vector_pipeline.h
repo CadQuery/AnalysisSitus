@@ -45,7 +45,7 @@ public:
 
 DEFINE_STANDARD_HANDLE(visu_mesh_E_vector_pipeline, visu_pipeline)
 
-//! Visualization pipeline for OMFDS meshes with elemental vectors.
+//! Visualization pipeline for Mesh meshes with elemental vectors.
 class visu_mesh_E_vector_pipeline : public visu_pipeline
 {
 public:

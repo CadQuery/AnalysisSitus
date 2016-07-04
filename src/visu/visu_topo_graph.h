@@ -14,8 +14,8 @@
 // GUI includes
 #include <gui_vtk_window.h>
 
-// Geometry includes
-#include <geom_aag.h>
+// Feature includes
+#include <feature_aag.h>
 
 // OCCT includes
 #include <SelectMgr_EntityOwner.hxx>
@@ -62,7 +62,7 @@ public:
 public:
 
   //! Allows to initialize presentable graph with externally constructed AAG.
-  inline void SetAAG(const Handle(geom_aag)& aag) { m_aag = aag; }
+  inline void SetAAG(const Handle(feature_aag)& aag) { m_aag = aag; }
 
 protected:
 
@@ -87,11 +87,10 @@ protected slots:
 
 protected:
 
-  gui_vtk_window*                m_pWidget;
-  vtkSmartPointer<vtkTextWidget> m_textWidget;
-  vtkSmartPointer<vtkTextWidget> m_summaryWidget;
-  Handle(geom_aag)               m_aag;
-  Handle(SelectMgr_EntityOwner)  m_prevHighlighted;
+  gui_vtk_window*     m_pWidget;
+  vtkTextWidget*      m_textWidget;
+  vtkTextWidget*      m_summaryWidget;
+  Handle(feature_aag) m_aag;
 
 };
 

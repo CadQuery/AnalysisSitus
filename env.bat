@@ -75,6 +75,15 @@ if "%FEAT_LIB%"  == "" set "FEAT_LIB=%FEAT_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 if "%FEAT_BIN%"  == "" set "FEAT_BIN=%FEAT_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
 
 rem ===========================================================================
+rem Setting environment for Canonical Recognition library
+rem ===========================================================================
+
+if "%CR_ROOT%" == "" set "CR_ROOT=%AS_PRODUCTS%\occ_cr"
+if "%CR_INC%"  == "" set "CR_INC=%CR_ROOT%\inc"
+if "%CR_LIB%"  == "" set "CR_LIB=%CR_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
+if "%CR_BIN%"  == "" set "CR_BIN=%CR_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
+
+rem ===========================================================================
 rem Setting environment for QR (Quaoar)
 rem ===========================================================================
 
@@ -154,7 +163,7 @@ rem ===========================================================================
 rem Adjust PATH variable
 rem ===========================================================================
 
-set "PATH=%AS_BIN%;%AD_BIN%;%FEAT_BIN%;%QR_BIN%;%VTK_BIN%;%PCL_BIN%;%QT_BIN%;%TBB_BIN%;%INNOSETUP_ROOT%;%PATH%"
+set "PATH=%AS_BIN%;%AD_BIN%;%FEAT_BIN%;%QR_BIN%;%VTK_BIN%;%PCL_BIN%;%QT_BIN%;%TBB_BIN%;%CR_BIN%;%INNOSETUP_ROOT%;%PATH%"
 
 echo PATH=%PATH%
 

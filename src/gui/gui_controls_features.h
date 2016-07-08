@@ -31,6 +31,7 @@ public slots:
   void onFindConvexOnly      ();
   void onFindSlots           ();
   void onFindHoles           ();
+  void onSuppressHoles       ();
   void onFindPlanarHoles     ();
   void onFindFillets         ();
   //
@@ -53,6 +54,7 @@ private:
     QPushButton* pFindConvexOnly;      //!< Finds convex-only faces.
     QPushButton* pFindSlots;           //!< Finds slot features.
     QPushButton* pFindHoles;           //!< Finds hole features.
+    QPushButton* pSuppressHoles;       //!< Performs hole suppression.
     QPushButton* pFindPlanarHoles;     //!< Finds planar hole features.
     QPushButton* pFindFillets;         //!< Finds fillets.
     //
@@ -68,6 +70,7 @@ private:
                   pFindConvexOnly      (NULL),
                   pFindSlots           (NULL),
                   pFindHoles           (NULL),
+                  pSuppressHoles       (NULL),
                   pFindPlanarHoles     (NULL),
                   pFindFillets         (NULL),
                   //
@@ -86,6 +89,7 @@ private:
       delete pFindConvexOnly;      pFindConvexOnly      = NULL;
       delete pFindSlots;           pFindSlots           = NULL;
       delete pFindHoles;           pFindHoles           = NULL;
+      delete pSuppressHoles;       pSuppressHoles       = NULL;
       delete pFindPlanarHoles;     pFindPlanarHoles     = NULL;
       delete pFindFillets;         pFindFillets         = NULL;
       //

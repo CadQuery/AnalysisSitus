@@ -82,8 +82,8 @@ void visu_iv_point_set_prs::renderPipelines(vtkRenderer* theRenderer) const
 }
 
 //! Callback for de-rendering.
-//! \param theRenderer [in] renderer.
-void visu_iv_point_set_prs::deRenderPipelines(vtkRenderer* theRenderer) const
+//! \param renderer [in] renderer.
+void visu_iv_point_set_prs::deRenderPipelines(vtkRenderer* ASitus_NotUsed(renderer)) const
 {
   m_textWidget->Off();
 }

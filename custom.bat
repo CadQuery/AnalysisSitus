@@ -7,6 +7,7 @@ REM ===========================================================================
 set "CASROOT=C:\Work\OCC\master-install"
 set "AD_ROOT=C:\Work\active_data"
 set "QR_ROOT=C:\Work\quaoar"
+set "CR_ROOT=C:\Work\dMU\products\occ_cr-vc12-64"
 set "FEAT_ROOT=C:\Work\dMU\dmu-build"
 set "FEAT_INC=C:\Work\dMU\dmu\src\feature"
 
@@ -28,6 +29,6 @@ REM ===========================================================================
 
 rem set "THIS_DATA=%~dp0data\xde\test.xbf"
 rem set "THIS_DATA=D:\OCC\!Bugs\SALOME_STP27329\nmbox_nonmanifold0.xbf"
-set "THIS_DATA=T:\as1_test.dmu"
+set "THIS_DATA=D:\as1.dmu"
 
 set "PATH=D:\OCC\products\occt700products\meshgems-vc12-64\bin;%PATH%"

@@ -36,11 +36,13 @@ public slots:
   void onShowAAG          ();
   void onElimSelected     ();
   void onCheckShape       ();
+  void onTolerance        ();
   void onNonManifoldEdges ();
   //
   void onSewing           ();
   void onMaximizeFaces    ();
   void onOBB              ();
+  void onCR               ();
   void onCloudify         ();
 
 private:
@@ -60,11 +62,13 @@ private:
     QPushButton* pShowAAG;          //!< Show Attributed Adjacency Graph.
     QPushButton* pElimSelected;     //!< Removes convex-only faces from AAG.
     QPushButton* pCheckShape;       //!< Runs shape validity checker.
+    QPushButton* pTolerance;        //!< Checks tolerance.
     QPushButton* pNonManifoldEdges; //!< Finds non-manifold edges.
     //
     QPushButton* pSewing;           //!< Performs sewing.
     QPushButton* pMaximizeFaces;    //!< Performs face maximization.
     QPushButton* pOBB;              //!< Builds OBB.
+    QPushButton* pCR;               //!< Runs canonical recognition.
     QPushButton* pCloudify;         //!< Builds a point cloud from the model.
 
     t_widgets() : pLoadBRep         (NULL),
@@ -77,11 +81,13 @@ private:
                   pShowAAG          (NULL),
                   pElimSelected     (NULL),
                   pCheckShape       (NULL),
+                  pTolerance        (NULL),
                   pNonManifoldEdges (NULL),
                   //
                   pSewing           (NULL),
                   pMaximizeFaces    (NULL),
                   pOBB              (NULL),
+                  pCR               (NULL),
                   pCloudify         (NULL)
     {}
 
@@ -97,11 +103,13 @@ private:
       delete pShowAAG;          pShowAAG          = NULL;
       delete pElimSelected;     pElimSelected     = NULL;
       delete pCheckShape;       pCheckShape       = NULL;
+      delete pTolerance;        pTolerance        = NULL;
       delete pNonManifoldEdges; pNonManifoldEdges = NULL;
       //
       delete pSewing;           pSewing           = NULL;
       delete pMaximizeFaces;    pMaximizeFaces    = NULL;
       delete pOBB;              pOBB              = NULL;
+      delete pCR;               pCR               = NULL;
       delete pCloudify;         pCloudify         = NULL;
     }
   };

@@ -105,7 +105,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
       // Check angle
       feature_aag::t_arc arc(f_idx, neighbor_f_idx);
       Handle(feature_angle_attr)
-        attr = Handle(feature_angle_attr)::DownCast( aag->GetAttribute(arc) );
+        attr = Handle(feature_angle_attr)::DownCast( aag->GetArcAttribute(arc) );
       //
       if ( !attr.IsNull() )
         angleArr->InsertNextValue( attr->GetAngle() );

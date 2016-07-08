@@ -22,6 +22,7 @@
 // Feature includes
 #include <feature_aag_iterator.h>
 #include <feature_delete_faces.h>
+#include <feature_delete_holes.h>
 #include <feature_detect_fillets.h>
 #include <feature_detect_choles.h>
 #include <feature_detect_pholes.h>
@@ -137,6 +138,7 @@ gui_controls_features::gui_controls_features(QWidget* parent) : QWidget(parent)
   m_widgets.pFindConvexOnly      = new QPushButton("Find convex-only");
   m_widgets.pFindSlots           = new QPushButton("Find slots");
   m_widgets.pFindHoles           = new QPushButton("Find holes");
+  m_widgets.pSuppressHoles       = new QPushButton("Suppress holes");
   m_widgets.pFindPlanarHoles     = new QPushButton("Find planar holes");
   m_widgets.pFindFillets         = new QPushButton("Find fillets");
   //
@@ -152,6 +154,7 @@ gui_controls_features::gui_controls_features(QWidget* parent) : QWidget(parent)
   m_widgets.pFindConvexOnly      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pFindSlots           -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pFindHoles           -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSuppressHoles       -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pFindPlanarHoles     -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pFindFillets         -> setMinimumWidth(BTN_MIN_WIDTH);
   //
@@ -171,6 +174,7 @@ gui_controls_features::gui_controls_features(QWidget* parent) : QWidget(parent)
   pFeaturesLay->addWidget(m_widgets.pFindConvexOnly);
   pFeaturesLay->addWidget(m_widgets.pFindSlots);
   pFeaturesLay->addWidget(m_widgets.pFindHoles);
+  pFeaturesLay->addWidget(m_widgets.pSuppressHoles);
   pFeaturesLay->addWidget(m_widgets.pFindPlanarHoles);
   pFeaturesLay->addWidget(m_widgets.pFindFillets);
 
@@ -199,6 +203,7 @@ gui_controls_features::gui_controls_features(QWidget* parent) : QWidget(parent)
   connect( m_widgets.pFindConvexOnly,      SIGNAL( clicked() ), SLOT( onFindConvexOnly      () ) );
   connect( m_widgets.pFindSlots,           SIGNAL( clicked() ), SLOT( onFindSlots           () ) );
   connect( m_widgets.pFindHoles,           SIGNAL( clicked() ), SLOT( onFindHoles           () ) );
+  connect( m_widgets.pSuppressHoles,       SIGNAL( clicked() ), SLOT( onSuppressHoles       () ) );
   connect( m_widgets.pFindPlanarHoles,     SIGNAL( clicked() ), SLOT( onFindPlanarHoles     () ) );
   connect( m_widgets.pFindFillets,         SIGNAL( clicked() ), SLOT( onFindFillets         () ) );
   //
@@ -281,23 +286,46 @@ void gui_controls_features::onCheckSolidAngles()
   else
   {
     std::cout << "Info: local analysis of edges" << std::endl;
+
+    TopoDS_Face twin;
     if ( selected.Extent() < 2 )
     {
-      std::cout << "Error: at least 2 faces are expected" << std::endl;
-      return;
+      std::cout << "Warning: at least 2 faces are expected" << std::endl;
+
+      // Analyze the same face twice
+      twin = TopoDS::Face( selected.FindKey(1) );
     }
 
     for ( int f = 1; f <= selected.Extent(); ++f )
     {
       const TopoDS_Face& F = TopoDS::Face( selected(f) );
       //
-      for ( int g = f + 1; g <= selected.Extent(); ++g )
+      if ( twin.IsNull() )
       {
-        const TopoDS_Face& G = TopoDS::Face( selected(g) );
+        for ( int g = f + 1; g <= selected.Extent(); ++g )
+        {
+          const TopoDS_Face& G = TopoDS::Face( selected(g) );
 
+          // Check angle between the two faces
+          ClassifySolidAngle(F,
+                             G,
+                             convexEdges,
+                             concaveEdges,
+                             undefinedEdges,
+                             smoothEdges,
+                             convexEdgesComp,
+                             concaveEdgesComp,
+                             undefinedEdgesComp,
+                             smoothEdgesComp,
+                             true,
+                             false);
+        }
+      }
+      else
+      {
         // Check angle between the two faces
         ClassifySolidAngle(F,
-                           G,
+                           twin,
                            convexEdges,
                            concaveEdges,
                            undefinedEdges,
@@ -516,7 +544,7 @@ void gui_controls_features::onFindSlots()
     return;
   }
 
-  const TopTools_IndexedMapOfShape& slotFaces = detector.Result();
+  const TopTools_IndexedMapOfShape& slotFaces = detector.GetResultFaces();
   std::cout << "Number of detected faces: " << slotFaces.Extent() << std::endl;
 
   // Highlight
@@ -532,18 +560,18 @@ void gui_controls_features::onFindHoles()
   if ( !gui_common::PartShape(part) ) return;
 
   // Identify holes
-  const double R = 10.0;
-  feature_detect_choles detector(part, NULL,
+  const double R = 20.0;
+  feature_detect_choles detector(part, R, NULL,
                                  common_facilities::Instance()->Notifier,
                                  common_facilities::Instance()->Plotter);
-  if ( !detector.Perform(R) )
+  if ( !detector.Perform() )
   {
     std::cout << "Error: cannot identify holes" << std::endl;
     return;
   }
 
   // Get detected holes
-  const TopTools_IndexedMapOfShape& holes = detector.GetResult();
+  const TopTools_IndexedMapOfShape& holes = detector.GetResultFaces();
   if ( holes.IsEmpty() )
   {
     std::cout << "No holes detected with radius not greater than " << R << std::endl;
@@ -557,14 +585,57 @@ void gui_controls_features::onFindHoles()
 
 //-----------------------------------------------------------------------------
 
+//! Suppresses holes.
+void gui_controls_features::onSuppressHoles()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Get highlighted faces
+  TopTools_IndexedMapOfShape selected;
+  engine_part::GetHighlightedSubShapes(selected);
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Delete faces as holes
+  feature_delete_holes suppressor(part, NULL, NULL, common_facilities::Instance()->Plotter);
+  //
+  if ( !suppressor.Perform(selected) )
+  {
+    std::cout << "Error: cannot suppress holes" << std::endl;
+    return;
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("Suppress holes")
+
+  const TopoDS_Shape& result = suppressor.GetResult();
+
+  // Save to model
+  common_facilities::Instance()->Model->Clear();
+  //
+  common_facilities::Instance()->Model->OpenCommand();
+  {
+    common_facilities::Instance()->Model->PartNode()->SetShape(result);
+  }
+  common_facilities::Instance()->Model->CommitCommand();
+
+  // Update viewer
+  common_facilities::Instance()->Prs.DeleteAll();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->PartNode().get() );
+}
+
+//-----------------------------------------------------------------------------
+
 //! Finds planar holes.
 void gui_controls_features::onFindPlanarHoles()
 {
   TopoDS_Shape part;
   if ( !gui_common::PartShape(part) ) return;
 
-  // Identify holes
-  const double R = 0.0;
+  // Identify polyhedral holes
   feature_detect_pholes detector(part,
                                  common_facilities::Instance()->Notifier,
                                  common_facilities::Instance()->Plotter);
@@ -575,7 +646,7 @@ void gui_controls_features::onFindPlanarHoles()
   }
 
   // Get detected holes
-  const TopTools_IndexedMapOfShape& holes = detector.Result();
+  const TopTools_IndexedMapOfShape& holes = detector.GetResultFaces();
   if ( holes.IsEmpty() )
   {
     std::cout << "No holes detected" << std::endl;
@@ -597,10 +668,10 @@ void gui_controls_features::onFindFillets()
 
   // Identify fillets
   const double R = 20.0;
-  feature_detect_fillets detector(part,
+  feature_detect_fillets detector(part, R,
                                   common_facilities::Instance()->Notifier,
                                   common_facilities::Instance()->Plotter);
-  if ( !detector.Perform(R) )
+  if ( !detector.Perform() )
   {
     std::cout << "Error: cannot identify fillets" << std::endl;
     return;

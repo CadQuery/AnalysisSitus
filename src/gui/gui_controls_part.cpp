@@ -23,6 +23,7 @@
 
 // Feature includes
 #include <feature_aag_iterator.h>
+#include <feature_cr.h>
 #include <feature_delete_faces.h>
 
 // Geometry includes
@@ -86,11 +87,13 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   m_widgets.pShowAAG            = new QPushButton("Show AA graph");
   m_widgets.pElimSelected       = new QPushButton("Show AA graph w/o selected");
   m_widgets.pCheckShape         = new QPushButton("Check shape");
+  m_widgets.pTolerance          = new QPushButton("Tolerance");
   m_widgets.pNonManifoldEdges   = new QPushButton("Non-manifold edges");
   //
   m_widgets.pSewing             = new QPushButton("Sewing");
   m_widgets.pMaximizeFaces      = new QPushButton("Maximize faces");
   m_widgets.pOBB                = new QPushButton("OBB");
+  m_widgets.pCR                 = new QPushButton("Canonical recognition");
   m_widgets.pCloudify           = new QPushButton("Cloudify");
   //
   m_widgets.pLoadBRep           -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -103,11 +106,13 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   m_widgets.pShowAAG            -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pElimSelected       -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCheckShape         -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pTolerance          -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pNonManifoldEdges   -> setMinimumWidth(BTN_MIN_WIDTH);
   //
   m_widgets.pSewing             -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pMaximizeFaces      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pOBB                -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pCR                 -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCloudify           -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Group box for data interoperability
@@ -128,6 +133,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   pAnalysisLay->addWidget(m_widgets.pShowAAG);
   pAnalysisLay->addWidget(m_widgets.pElimSelected);
   pAnalysisLay->addWidget(m_widgets.pCheckShape);
+  pAnalysisLay->addWidget(m_widgets.pTolerance);
   pAnalysisLay->addWidget(m_widgets.pNonManifoldEdges);
 
   // Group for processing
@@ -137,6 +143,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   pProcessingLay->addWidget(m_widgets.pSewing);
   pProcessingLay->addWidget(m_widgets.pMaximizeFaces);
   pProcessingLay->addWidget(m_widgets.pOBB);
+  pProcessingLay->addWidget(m_widgets.pCR);
   pProcessingLay->addWidget(m_widgets.pCloudify);
 
   // Set layout
@@ -159,11 +166,13 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   connect( m_widgets.pShowAAG,          SIGNAL( clicked() ), SLOT( onShowAAG          () ) );
   connect( m_widgets.pElimSelected,     SIGNAL( clicked() ), SLOT( onElimSelected     () ) );
   connect( m_widgets.pCheckShape,       SIGNAL( clicked() ), SLOT( onCheckShape       () ) );
+  connect( m_widgets.pTolerance,        SIGNAL( clicked() ), SLOT( onTolerance        () ) );
   connect( m_widgets.pNonManifoldEdges, SIGNAL( clicked() ), SLOT( onNonManifoldEdges () ) );
   //
   connect( m_widgets.pSewing,           SIGNAL( clicked() ), SLOT( onSewing           () ) );
   connect( m_widgets.pMaximizeFaces,    SIGNAL( clicked() ), SLOT( onMaximizeFaces    () ) );
   connect( m_widgets.pOBB,              SIGNAL( clicked() ), SLOT( onOBB              () ) );
+  connect( m_widgets.pCR,               SIGNAL( clicked() ), SLOT( onCR               () ) );
   connect( m_widgets.pCloudify,         SIGNAL( clicked() ), SLOT( onCloudify         () ) );
 }
 
@@ -404,6 +413,35 @@ void gui_controls_part::onCheckShape()
 
 //-----------------------------------------------------------------------------
 
+//! Consults tolerance.
+void gui_controls_part::onTolerance()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Get highlighted faces
+  TopTools_IndexedMapOfShape selected;
+  engine_part::GetHighlightedSubShapes(selected);
+
+  if ( selected.IsEmpty() )
+  {
+    const double tol = geom_utils::MaxTolerance(part);
+    std::cout << "Tolerance: " << tol << std::endl;
+  }
+  else
+  {
+    double maxTol = 0.0;
+    for ( int i = 1; i <= selected.Extent(); ++i )
+    {
+      const double tol = geom_utils::MaxTolerance( selected(i) );
+      maxTol = std::max(tol, maxTol);
+    }
+    std::cout << "Tolerance (sub-shapes): " << maxTol << std::endl;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 //! Finds non-manifold edges.
 void gui_controls_part::onNonManifoldEdges()
 {
@@ -538,6 +576,61 @@ void gui_controls_part::onOBB()
 
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Build OBB")
+}
+
+//-----------------------------------------------------------------------------
+
+//! Runs canonical recognition.
+void gui_controls_part::onCR()
+{
+  // Access Geometry Node
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  if ( N.IsNull() || !N->IsWellFormed() )
+    return;
+
+  // Shape to visualize a graph for
+  TopoDS_Shape part = N->GetShape();
+  //
+  if ( part.IsNull() )
+  {
+    std::cout << "Error: part shape is null" << std::endl;
+    return;
+  }
+
+  common_facilities::Instance()->Model->OpenCommand();
+  {
+    TIMER_NEW
+    TIMER_GO
+
+    // CR tool
+    feature_cr recognizer(part,
+                          common_facilities::Instance()->Notifier,
+                          common_facilities::Instance()->Plotter);
+    //
+    if ( !recognizer.Perform() )
+    {
+      std::cout << "Error: canonical recognition failed" << std::endl;
+      common_facilities::Instance()->Model->AbortCommand();
+      return;
+    }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_MSG("Canonical Recognition")
+
+    TopoDS_Shape result = recognizer.GetResult();
+    //
+    std::cout << "Recognition done. Visualizing..." << std::endl;
+    //
+    N->SetShape(result);
+  }
+  common_facilities::Instance()->Model->CommitCommand();
+
+  // Update viewer
+  common_facilities::Instance()->Model->Clear();
+  //
+  common_facilities::Instance()->Prs.DeleteAll();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
 }
 
 //-----------------------------------------------------------------------------

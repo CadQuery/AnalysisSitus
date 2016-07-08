@@ -358,17 +358,17 @@ void gui_controls_dmu::onRemoveHoles()
 
       // Identify holes
       const double R = FEATURE_HOLE_RADIUS;
-      feature_detect_choles detector(shape, NULL,
+      feature_detect_choles detector(shape, R, NULL,
                                      common_facilities::Instance()->Notifier,
                                      common_facilities::Instance()->Plotter);
-      if ( !detector.Perform(R) )
+      if ( !detector.Perform() )
       {
         std::cout << "Error: cannot identify holes" << std::endl;
         return;
       }
 
       // Get detected holes
-      const TopTools_IndexedMapOfShape& holes = detector.GetResult();
+      const TopTools_IndexedMapOfShape& holes = detector.GetResultFaces();
       if ( holes.IsEmpty() )
       {
         std::cout << "No holes detected with radius not greater than " << R << std::endl;

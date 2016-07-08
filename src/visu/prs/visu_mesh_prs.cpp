@@ -199,8 +199,8 @@ void visu_mesh_prs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection kind.
-void visu_mesh_prs::highlight(vtkRenderer*                 theRenderer,
-                              const visu_pick_result&      thePickRes,
+void visu_mesh_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
+                              const visu_pick_result&      ASitus_NotUsed(thePickRes),
                               const visu_selection_nature& theSelNature) const
 {
   //---------------------------------------------------------------------------
@@ -230,7 +230,7 @@ void visu_mesh_prs::highlight(vtkRenderer*                 theRenderer,
 //! Callback for un-highlighting.
 //! \param theRenderer  [in] renderer.
 //! \param theSelNature [in] selection kind.
-void visu_mesh_prs::unHighlight(vtkRenderer*                 theRenderer,
+void visu_mesh_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
                                 const visu_selection_nature& theSelNature) const
 {
   // Access pipeline for highlighting

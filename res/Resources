@@ -1,0 +1,21 @@
+formatlist: BinOcaf BinXCAF
+
+!
+! Default format
+cbf.FileFormat: BinOcaf
+
+!
+! BinOcaf format
+!
+BinOcaf.Description: Bin Ocaf Document Version 1.0
+BinOcaf.FileExtension: cbf
+BinOcaf.StoragePlugin: 03a56835-8269-11d5-aab2-0050044b1af1
+BinOcaf.RetrievalPlugin: 03a56836-8269-11d5-aab2-0050044b1af1
+
+!
+! BinXCAF format
+!
+BinXCAF.Description: BinXCAF Document Version 1.0
+BinXCAF.FileExtension: xbf
+BinXCAF.StoragePlugin: a78ff496-a779-11d5-aab4-0050044b1af1
+BinXCAF.RetrievalPlugin: a78ff497-a779-11d5-aab4-0050044b1af1

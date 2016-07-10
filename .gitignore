@@ -8,7 +8,6 @@ tmp/
 doc/reference/generated/
 test/results/*
 test/dumping/*
-res/
 include/
 *.psess
 *.vsp

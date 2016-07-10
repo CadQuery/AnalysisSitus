@@ -560,7 +560,7 @@ void gui_controls_features::onFindHoles()
   if ( !gui_common::PartShape(part) ) return;
 
   // Identify holes
-  const double R = 20.0;
+  const double R = 100000.0;
   feature_detect_choles detector(part, R, NULL,
                                  common_facilities::Instance()->Notifier,
                                  common_facilities::Instance()->Plotter);

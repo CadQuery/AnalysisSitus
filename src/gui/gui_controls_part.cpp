@@ -607,7 +607,7 @@ void gui_controls_part::onCR()
                           common_facilities::Instance()->Notifier,
                           common_facilities::Instance()->Plotter);
     //
-    if ( !recognizer.Perform() )
+    if ( !recognizer.Perform(1e-6) )
     {
       std::cout << "Error: canonical recognition failed" << std::endl;
       common_facilities::Instance()->Model->AbortCommand();

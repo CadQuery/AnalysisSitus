@@ -535,7 +535,7 @@ void gui_controls_features::onFindSlots()
   if ( !gui_common::PartShape(part) ) return;
 
   // Prepare detector
-  feature_detect_slots detector(part,
+  feature_detect_slots detector(part, 50,
                                 common_facilities::Instance()->Notifier,
                                 common_facilities::Instance()->Plotter);
   if ( !detector.Perform() )

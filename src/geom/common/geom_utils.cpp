@@ -11,6 +11,9 @@
 // Common includes
 #include <common_draw_test_suite.h>
 
+// Feature includes
+#include <feature_merge_faces.h>
+
 // OCCT includes
 #include <Bnd_Box.hxx>
 #include <BOPAlgo_BOP.hxx>
@@ -774,17 +777,8 @@ bool geom_utils::Sew(TopoDS_Shape& shape,
 //! \return true in case of success, false -- otherwise.
 bool geom_utils::MaximizeFaces(TopoDS_Shape& shape)
 {
-  ShapeUpgrade_UnifySameDomain Unify(shape);
-  try
-  {
-    Unify.Build();
-  }
-  catch ( ... )
-  {
-    return false;
-  }
-  shape = Unify.Shape();
-  return true;
+  feature_merge_faces merger(shape, NULL, NULL);
+  return merger.Perform_OpenSource();
 }
 
 //! Interpolates the given collection of points with B-curve of the

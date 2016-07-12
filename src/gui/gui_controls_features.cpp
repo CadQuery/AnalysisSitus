@@ -21,12 +21,12 @@
 
 // Feature includes
 #include <feature_aag_iterator.h>
-#include <feature_delete_faces.h>
-#include <feature_delete_holes.h>
+#include <feature_suppress_faces.h>
+#include <feature_suppress.h>
 #include <feature_detect_fillets.h>
 #include <feature_detect_choles.h>
 #include <feature_detect_pholes.h>
-#include <feature_detect_slots.h>
+#include <feature_detect_pockets.h>
 #include <feature_solid_angle.h>
 
 // Geometry includes
@@ -535,9 +535,9 @@ void gui_controls_features::onFindSlots()
   if ( !gui_common::PartShape(part) ) return;
 
   // Prepare detector
-  feature_detect_slots detector(part, 50,
-                                common_facilities::Instance()->Notifier,
-                                common_facilities::Instance()->Plotter);
+  feature_detect_pockets detector(part, 50,
+                                  common_facilities::Instance()->Notifier,
+                                  common_facilities::Instance()->Plotter);
   if ( !detector.Perform() )
   {
     std::cout << "Error: cannot detect slots" << std::endl;
@@ -599,7 +599,7 @@ void gui_controls_features::onSuppressHoles()
   TIMER_GO
 
   // Delete faces as holes
-  feature_delete_holes suppressor(part, NULL, NULL, common_facilities::Instance()->Plotter);
+  feature_suppress suppressor(part, NULL, NULL, common_facilities::Instance()->Plotter);
   //
   if ( !suppressor.Perform(selected) )
   {
@@ -837,7 +837,7 @@ void gui_controls_features::onDeleteSelected()
   TIMER_GO
 
   // Delete selected faces
-  feature_delete_faces eraser(part);
+  feature_suppress_faces eraser(part);
   if ( !eraser.Perform(selected, true) )
   {
     std::cout << "Error: cannot delete faces" << std::endl;
@@ -880,7 +880,7 @@ void gui_controls_features::onDeleteSelectedFull()
   TIMER_GO
 
   // Delete selected faces
-  feature_delete_faces eraser(part);
+  feature_suppress_faces eraser(part);
   if ( !eraser.Perform(selected, false) )
   {
     std::cout << "Error: cannot delete faces" << std::endl;

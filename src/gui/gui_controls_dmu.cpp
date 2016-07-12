@@ -19,7 +19,7 @@
 #include <xde_STEP.h>
 
 // Feature includes
-#include <feature_delete_faces.h>
+#include <feature_suppress_faces.h>
 #include <feature_detect_choles.h>
 
 // A-Situs (geometry) includes
@@ -378,7 +378,7 @@ void gui_controls_dmu::onRemoveHoles()
         std::cout << holes.Extent() << " hole(s) detected with radius not greater than " << R << std::endl;
 
       // Remove holes
-      feature_delete_faces eraser(shape);
+      feature_suppress_faces eraser(shape);
       if ( !eraser.Perform(holes, false) )
       {
         std::cout << "Error: cannot remove holes" << std::endl;

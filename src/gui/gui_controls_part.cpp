@@ -24,7 +24,7 @@
 // Feature includes
 #include <feature_aag_iterator.h>
 #include <feature_cr.h>
-#include <feature_delete_faces.h>
+#include <feature_suppress_faces.h>
 
 // Geometry includes
 #include <geom_aag_vtk.h>

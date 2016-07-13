@@ -23,6 +23,8 @@
 #include <gui_object_browser.h>
 #include <gui_object_browser_xde.h>
 #include <gui_viewer_dmu.h>
+#include <gui_viewer_domain.h>
+#include <gui_viewer_part.h>
 
 // A-Situs (visualization) includes
 #include <visu_prs_manager.h>
@@ -52,6 +54,8 @@ public:
   gui_object_browser_xde*          ObjectBrowser_XDE; //!< Object browser for XDE.
   Handle(ActAPI_INode)             CurrentNode;       //!< Currently selected Node.
   //
+  gui_viewer_part*                 ViewerPart;        //!< Viewer for part.
+  gui_viewer_domain*               ViewerDomain;      //!< Viewer for face parametric domain.
   gui_viewer_dmu*                  ViewerDMU;         //!< OpenCascade-driven viewer for dMU.
   //
   Handle(ActAPI_IProgressNotifier) Notifier;          //!< Algorithmic notifier.
@@ -121,6 +125,8 @@ private:
     : DecompBrowser     (NULL),
       ObjectBrowser     (NULL),
       ObjectBrowser_XDE (NULL),
+      ViewerPart        (NULL),
+      ViewerDomain      (NULL),
       ViewerDMU         (NULL)
   {
     Notifier = new journal_notifier;

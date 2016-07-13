@@ -356,18 +356,6 @@ void journal_iv::visualize(const bool                  is2d,
       pl->Actor()->GetProperty()->SetSpecular(0.0);
     }
   }
-  else if ( prs->IsKind( STANDARD_TYPE(visu_iv_point_set_prs) ) )
-  {
-    Handle(visu_iv_point_set_prs)
-      pt_prs = Handle(visu_iv_point_set_prs)::DownCast(prs);
-    //
-    Handle(visu_points_pipeline)
-      pl = Handle(visu_points_pipeline)::DownCast( pt_prs->GetPipeline(visu_iv_point_set_prs::Pipeline_Main) );
-    //
-    pl->Actor()->GetProperty()->SetAmbient(0.8);
-    pl->Actor()->GetProperty()->SetDiffuse(0.2);
-    pl->Actor()->GetProperty()->SetSpecular(0.0);
-  }
   else
   {
     // Set common properties for all pipelines

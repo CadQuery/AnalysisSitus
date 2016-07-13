@@ -17,6 +17,7 @@
 
 // GUI includes
 #include <gui_controls_part.h>
+#include <gui_dialog_find_face.h>
 
 // VTK includes
 #include <vtkAssembly.h>
@@ -37,6 +38,9 @@
 //! \param parent [in] parent widget.
 gui_viewer_part::gui_viewer_part(QWidget* parent) : gui_viewer(parent)
 {
+  // Store in common facilities
+  common_facilities::Instance()->ViewerPart = this;
+
   // Initialize Presentation Manager along with QVTK widget
   common_facilities::Instance()->Prs.Part = vtkSmartPointer<visu_prs_manager>::New();
   m_prs_mgr = common_facilities::Instance()->Prs.Part;
@@ -66,6 +70,10 @@ gui_viewer_part::gui_viewer_part(QWidget* parent) : gui_viewer(parent)
   m_pickCallback = vtkSmartPointer<visu_pick_callback>::New();
   m_pickCallback->SetViewer(this);
 
+  // Initialize Callback instance for handling events related to Part viewer
+  m_partCallback = vtkSmartPointer<visu_part_callback>::New();
+  m_partCallback->SetViewer(this);
+
   // Set observer for detection
   if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_PICK_DEFAULT) )
     m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_PICK_DEFAULT, m_pickCallback);
@@ -74,8 +82,15 @@ gui_viewer_part::gui_viewer_part(QWidget* parent) : gui_viewer(parent)
   if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_DETECT_DEFAULT) )
     m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_DETECT_DEFAULT, m_pickCallback);
 
+  // Set observer for finding face
+  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_FIND_FACE) )
+    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_FIND_FACE, m_partCallback);
+
   // Get notified once a sub-shape is picked
   connect( m_pickCallback, SIGNAL( partPicked() ), this, SLOT( onSubShapesPicked() ) );
+
+  // Get notified about part events
+  connect( m_partCallback, SIGNAL( findFace() ), this, SLOT( onFindFace() ) );
 
   /* ===============================
    *  Setting up rotation callbacks
@@ -141,6 +156,8 @@ void gui_viewer_part::onResetView()
   visu_utils::ResetCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
   this->Repaint();
 }
+
+//-----------------------------------------------------------------------------
 
 //! Callback for picking event.
 void gui_viewer_part::onSubShapesPicked()
@@ -229,4 +246,14 @@ void gui_viewer_part::onSubShapesPicked()
 
   if ( common_facilities::Instance()->Prs.Surface )
     common_facilities::Instance()->Prs.Surface->Actualize(geom_n->SurfaceRepresentation().get(), false, true);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Callback for face find request.
+void gui_viewer_part::onFindFace()
+{
+  // Run dialog
+  gui_dialog_find_face* wFindFace = new gui_dialog_find_face(this);
+  wFindFace->show();
 }

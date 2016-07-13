@@ -26,6 +26,8 @@ visu_interactor_style_pick::visu_interactor_style_pick()
   m_bIsLeftButtonDown(false)
 {
   m_pPickInput = new visu_pick_input();
+  //
+  m_PickedPos[0] = m_PickedPos[1] = 0;
 }
 
 //! Default destructor.
@@ -67,10 +69,13 @@ void visu_interactor_style_pick::OnMouseMove()
   // Invoke basic method
   vtkInteractorStyleTrackballCamera::OnMouseMove();
 
-  const int pos[2] = { this->Interactor->GetEventPosition()[0],
-                       this->Interactor->GetEventPosition()[1] };
+  if ( m_bIsLeftButtonDown )
+    return;
 
-  QPoint aPickPoint(pos[0], pos[1]);
+  m_PickedPos[0] = this->Interactor->GetEventPosition()[0];
+  m_PickedPos[1] = this->Interactor->GetEventPosition()[1];
+
+  QPoint aPickPoint(m_PickedPos[0], m_PickedPos[1]);
   m_pPickInput->Start      = aPickPoint;
   m_pPickInput->Finish     = aPickPoint;
   m_pPickInput->IsMultiple = false;
@@ -101,31 +106,10 @@ void visu_interactor_style_pick::OnLeftButtonDown()
 
   m_bIsLeftButtonDown = true;
 
-  const int pos[2] = { this->Interactor->GetEventPosition()[0],
-                       this->Interactor->GetEventPosition()[1] };
-  //
-  QPoint aPickPoint(pos[0], pos[1]);
-  m_pPickInput->Start  = aPickPoint;
-  m_pPickInput->Finish = aPickPoint;
+  m_PickedPos[0] = this->Interactor->GetEventPosition()[0];
+  m_PickedPos[1] = this->Interactor->GetEventPosition()[1];
 
-  if ( this->Interactor->GetShiftKey() )
-  {
-    m_pPickInput->IsMultiple = true;
-    //
-    this->StartRotate();
-  }
-  else
-  {
-    m_pPickInput->IsMultiple = false;
-    //
-    if ( this->Interactor->GetControlKey() )
-      this->StartSpin();
-    else
-      this->StartRotate();
-  }
-
-  // Invoke observers
-  this->InvokeEvent(EVENT_PICK_DEFAULT, m_pPickInput);
+  this->StartRotate();
 }
 
 //! Callback for "Left Button Up" event.
@@ -134,8 +118,44 @@ void visu_interactor_style_pick::OnLeftButtonUp()
   vtkInteractorStyleTrackballCamera::OnLeftButtonUp();
   m_bIsLeftButtonDown = false;
 
+  const int pos[2] = { this->Interactor->GetEventPosition()[0],
+                       this->Interactor->GetEventPosition()[1] };
+  //
+  if ( pos[0] == m_PickedPos[0] && pos[1] == m_PickedPos[1] )
+  {
+    QPoint aPickPoint(m_PickedPos[0], m_PickedPos[1]);
+    m_pPickInput->Start  = aPickPoint;
+    m_pPickInput->Finish = aPickPoint;
+
+    if ( this->Interactor->GetShiftKey() )
+    {
+      m_pPickInput->IsMultiple = true;
+    }
+    else
+    {
+      m_pPickInput->IsMultiple = false;
+    }
+
+    // Invoke observers
+    this->InvokeEvent(EVENT_PICK_DEFAULT, m_pPickInput);
+  }
+  else
+  {
+    m_PickedPos[0] = pos[0];
+    m_PickedPos[1] = pos[1];
+  }
+
   // Invoke observers
+  this->EndRotate();
   this->InvokeEvent(EVENT_ROTATION_END, NULL);
+}
+
+//! Callback for "Key Press" event.
+void visu_interactor_style_pick::OnKeyPress()
+{
+  std::string key = this->Interactor->GetKeySym();
+  if ( this->Interactor->GetControlKey() && key == "f" )
+    this->InvokeEvent(EVENT_FIND_FACE);
 }
 
 //! Callback for rotation finishing action.

@@ -19,6 +19,7 @@
 
 // Visualization includes
 #include <visu_interactor_style_pick.h>
+#include <visu_part_callback.h>
 #include <visu_pick_callback.h>
 #include <visu_rotation_callback.h>
 
@@ -43,8 +44,12 @@ public slots:
 
   void onResetView();
   void onSubShapesPicked();
+  void onFindFace();
 
 private:
+
+  //! Part callback.
+  vtkSmartPointer<visu_part_callback> m_partCallback;
 
   //! Pick callback.
   vtkSmartPointer<visu_pick_callback> m_pickCallback;

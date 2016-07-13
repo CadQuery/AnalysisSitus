@@ -45,6 +45,7 @@
 #define EVENT_ROTATION_END        (vtkCommand::UserEvent + 1004)
 #define EVENT_DELETE              (vtkCommand::UserEvent + 1005)
 #define EVENT_JOIN                (vtkCommand::UserEvent + 1006)
+#define EVENT_FIND_FACE           (vtkCommand::UserEvent + 1007)
 
 //-----------------------------------------------------------------------------
 

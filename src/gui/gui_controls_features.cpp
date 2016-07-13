@@ -14,6 +14,7 @@
 
 // GUI includes
 #include <gui_common.h>
+#include <gui_dialog_detect_holes.h>
 #include <gui_dialog_sewing.h>
 
 // Engine includes
@@ -556,31 +557,9 @@ void gui_controls_features::onFindSlots()
 //! Finds holes.
 void gui_controls_features::onFindHoles()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
-
-  // Identify holes
-  const double R = 100000.0;
-  feature_detect_choles detector(part, R, NULL,
-                                 common_facilities::Instance()->Notifier,
-                                 common_facilities::Instance()->Plotter);
-  if ( !detector.Perform() )
-  {
-    std::cout << "Error: cannot identify holes" << std::endl;
-    return;
-  }
-
-  // Get detected holes
-  const TopTools_IndexedMapOfShape& holes = detector.GetResultFaces();
-  if ( holes.IsEmpty() )
-  {
-    std::cout << "No holes detected with radius not greater than " << R << std::endl;
-    return;
-  }
-  else
-    std::cout << holes.Extent() << " hole(s) detected with radius not greater than " << R << std::endl;
-
-  engine_part::HighlightSubShapes(holes);
+  // Run dialog
+  gui_dialog_detect_holes* wDetectHoles = new gui_dialog_detect_holes(this);
+  wDetectHoles->show();
 }
 
 //-----------------------------------------------------------------------------

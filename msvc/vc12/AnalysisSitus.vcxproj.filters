@@ -1135,6 +1135,9 @@
     <ClCompile Include="$(IntDir)moc\moc_visu_pdomain_callback.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_visu_part_callback.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_visu_topo_graph.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
@@ -1193,6 +1196,12 @@
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_sewing.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_detect_holes.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_find_face.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_cloudify.cpp">
@@ -2038,6 +2047,15 @@
     <ClCompile Include="..\..\src\geom\point_clouds\geom_point_cloud_normals.cpp">
       <Filter>Source Files\Geometry\Point Clouds</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_detect_holes.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\interaction\visu_part_callback.cpp">
+      <Filter>Source Files\Visualization\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_find_face.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\gui\gui_object_browser.h">
@@ -2189,6 +2207,15 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\gui\gui_main_window_pcloud.h">
       <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_detect_holes.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\visu\interaction\visu_part_callback.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_find_face.h">
+      <Filter>Header Files\GUI</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

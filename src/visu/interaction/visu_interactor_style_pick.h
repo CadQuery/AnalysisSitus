@@ -57,6 +57,9 @@ public:
   virtual void
     EndRotate();
 
+  virtual void
+    OnKeyPress();
+
 private:
 
   //! Copying prohibited.
@@ -81,8 +84,11 @@ private:
   //! Indicates whether left mouse button is currently pressed.
   bool m_bIsLeftButtonDown;
 
-  //! Custom callbacks called on camers rotation event.
+  //! Custom callbacks called on camera rotation event.
   NCollection_Sequence<unsigned long> m_rotationCallbackIds;
+
+  //! Currently picked display position.
+  int m_PickedPos[2];
 
 };
 

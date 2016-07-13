@@ -50,6 +50,9 @@
 //! \param parent [in] parent widget.
 gui_viewer_domain::gui_viewer_domain(QWidget* parent) : gui_viewer(parent)
 {
+  // Store in common facilities
+  common_facilities::Instance()->ViewerDomain = this;
+
   // Initialize Presentation Manager along with QVTK widget
   common_facilities::Instance()->Prs.Domain = vtkSmartPointer<visu_prs_manager>::New();
   m_prs_mgr = common_facilities::Instance()->Prs.Domain;
@@ -125,8 +128,8 @@ gui_viewer_domain::gui_viewer_domain(QWidget* parent) : gui_viewer(parent)
   vtkSmartPointer<vtkTextActor> textActor = vtkSmartPointer<vtkTextActor>::New();
   textRep->SetTextActor(textActor);
   //
-  textRep->GetPositionCoordinate()->SetValue(0.4, 0.8);
-  textRep->GetPosition2Coordinate()->SetValue(0.59, 0.19);
+  textRep->GetPositionCoordinate()->SetValue(0.3, 0.8);
+  textRep->GetPosition2Coordinate()->SetValue(0.69, 0.19);
   //
   textActor->GetTextProperty()->SetJustificationToLeft();
   textActor->GetTextProperty()->SetVerticalJustificationToTop();
@@ -235,6 +238,8 @@ void gui_viewer_domain::onDomainPicked()
     // Prepare label
     TCollection_AsciiString TITLE  = "(Edge #";
                             TITLE += edgeId;
+                            TITLE += ", ";
+                            TITLE += geom_utils::ShapeAddr(edge).c_str();
                             TITLE += ", ";
                             TITLE += geom_utils::OrientationToString(edge);
                             TITLE += " in face)\n";

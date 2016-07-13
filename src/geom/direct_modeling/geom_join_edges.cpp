@@ -15,6 +15,7 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepTools_ReShape.hxx>
+#include <BRepTools_WireExplorer.hxx>
 #include <GCE2d_MakeLine.hxx>
 #include <Geom2d_Curve.hxx>
 #include <Geom2d_Line.hxx>
@@ -24,8 +25,19 @@
 #include <ShapeFix_Edge.hxx>
 #include <ShapeFix_Face.hxx>
 #include <ShapeFix_Wire.hxx>
+#include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
+
+static TopoDS_Wire FixWire(const TopoDS_Wire& theWire)
+{
+  ShapeFix_Wire aWireFixer;
+  aWireFixer.Load(theWire);
+  aWireFixer.FixClosed();
+  aWireFixer.FixGaps2d();
+  aWireFixer.FixConnected();
+  return aWireFixer.Wire();
+}
 
 //! Constructor.
 //! \param masterCAD [in] full CAD model.
@@ -67,7 +79,7 @@ bool geom_join_edges::Perform(const TopTools_IndexedMapOfShape& edges,
   }
   WD->Add( newE );
   //
-  TopoDS_Wire W = WD->Wire();
+  TopoDS_Wire W = FixWire( WD->Wire() );
 
   // Build another face
   BRepBuilderAPI_MakeFace mkFace( BRep_Tool::Surface(face), Precision::Confusion() );
@@ -77,18 +89,6 @@ bool geom_join_edges::Perform(const TopTools_IndexedMapOfShape& edges,
     newFace.Reverse();
   //
   BB.Add(newFace, W);
-
-  // TODO: this is a bad practice. Shape should be valid after face deletion
-  ShapeFix_Face ShapeHealer(newFace);
-  try
-  {
-    ShapeHealer.Perform();
-  }
-  catch ( ... )
-  {
-    std::cout << "Error: cannot heal face" << std::endl;
-  }
-  newFace = ShapeHealer.Face();
 
   // Change old face with the reconstructed one
   Handle(BRepTools_ReShape) ReShape = new BRepTools_ReShape;
@@ -130,8 +130,8 @@ void geom_join_edges::chooseOrder(const TopTools_IndexedMapOfShape& edges,
 }
 
 //! Joins a couple of edges into a single edge.
-//! \param eFirst  [in]  first edge to join (the leading one).
-//! \param eSecond [in]  second edge to join (the trailing one).
+//! \param edge_A  [in]  first edge to join.
+//! \param edge_B  [in]  second edge to join.
 //! \param face    [in]  base face.
 //! \param eResult [out] result edge to fill gap.
 //! \return true in case of success, false -- otherwise.
@@ -140,6 +140,28 @@ bool geom_join_edges::joinEdges(const TopoDS_Edge& eFirst,
                                 const TopoDS_Face& face,
                                 TopoDS_Edge&       eResult) const
 {
+  // Get orientation of the edges on their host faces. We want to have
+  // orientation irrelevant of face orientation, as we are going to
+  // work in the parametric domain
+  TopAbs_Orientation eFirstOri = TopAbs_EXTERNAL, eSecondOri = TopAbs_EXTERNAL;
+  //
+  for ( TopExp_Explorer exp(face, TopAbs_EDGE); exp.More(); exp.Next() )
+  {
+    if ( exp.Current().IsSame(eFirst) )
+      eFirstOri = exp.Current().Orientation();
+    else if ( exp.Current().IsSame(eSecond) )
+      eSecondOri = exp.Current().Orientation();
+  }
+
+  // Choose orientation of the bridge edge being built
+  TopoDS_Edge eForward;
+  if ( eFirstOri == TopAbs_FORWARD )
+    eForward = eFirst;
+  else if ( eSecondOri == TopAbs_FORWARD )
+    eForward = eSecond;
+  //
+  const TopAbs_Orientation bridgeOri = ( eForward.IsNull() ? TopAbs_REVERSED : TopAbs_FORWARD );
+
   // Get p-curve for the first edge
   double first_f, first_l;
   Handle(Geom2d_Curve) cFirst = BRep_Tool::CurveOnSurface(eFirst, face, first_f, first_l);
@@ -156,10 +178,10 @@ bool geom_join_edges::joinEdges(const TopoDS_Edge& eFirst,
   if ( cSecond->IsKind( STANDARD_TYPE(Geom2d_TrimmedCurve) ) )
     cSecond = Handle(Geom2d_TrimmedCurve)::DownCast(cSecond)->BasisCurve();
 
-  // We can work with straight line cases only
-  if ( !cFirst->IsKind( STANDARD_TYPE(Geom2d_Line) ) ||
-       !cSecond->IsKind( STANDARD_TYPE(Geom2d_Line) ) )
-    return false;
+  //// We can work with straight line cases only
+  //if ( !cFirst->IsKind( STANDARD_TYPE(Geom2d_Line) ) ||
+  //     !cSecond->IsKind( STANDARD_TYPE(Geom2d_Line) ) )
+  //  return false;
 
   // Choose tolerance
   const double toler = Precision::Confusion();
@@ -187,8 +209,7 @@ bool geom_join_edges::joinEdges(const TopoDS_Edge& eFirst,
   ShapeFix_Edge SFE;
   SFE.FixAddPCurve(eResult, face, 0);
   //
-  if ( face.Orientation() == TopAbs_REVERSED )
-    eResult.Reverse();
+  eResult.Orientation(bridgeOri);
 
   return true;
 }

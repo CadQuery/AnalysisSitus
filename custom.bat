@@ -4,12 +4,11 @@ REM ===========================================================================
 REM Ecosystem
 REM ===========================================================================
 
-set "CASROOT=C:\Work\OCC\master-install"
-set "AD_ROOT=C:\Work\active_data"
-set "QR_ROOT=C:\Work\quaoar"
-set "CR_ROOT=C:\Work\dMU\products\occ_cr-vc12-64"
-set "FEAT_ROOT=C:\Work\dMU\dmu-build"
-set "FEAT_INC=C:\Work\dMU\dmu\src\feature"
+set "CASROOT=C:\Work\cadpro\win\occt-vc12-64"
+set "CR_ROOT=C:\Work\cadpro\win\occ_cr-vc12-64"
+set "AD_ROOT=C:\Work\cadpro\win\active_data-vc12-64"
+set "FEAT_ROOT=C:\Work\cadpro\dmu-build"
+set "FEAT_INC=C:\Work\cadpro\dmu\src\feature"
 
 REM ===========================================================================
 REM DEPENDS.EXE
@@ -31,4 +30,4 @@ rem set "THIS_DATA=%~dp0data\xde\test.xbf"
 rem set "THIS_DATA=D:\OCC\!Bugs\SALOME_STP27329\nmbox_nonmanifold0.xbf"
 set "THIS_DATA=D:\as1.dmu"
 
-set "PATH=D:\OCC\products\occt700products\meshgems-vc12-64\bin;%PATH%"
+set "PATH=C:\Work\cadpro\win\meshgems-vc12-64\bin;%PATH%"

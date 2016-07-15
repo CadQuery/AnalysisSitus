@@ -23,12 +23,12 @@
 
 // Feature includes
 #include <feature_aag_iterator.h>
+#include <feature_build_obb.h>
 #include <feature_cr.h>
 #include <feature_suppress_faces.h>
 
 // Geometry includes
 #include <geom_aag_vtk.h>
-#include <geom_build_obb.h>
 #include <geom_detach_faces.h>
 #include <geom_find_nonmanifold.h>
 #include <geom_STEP.h>
@@ -565,10 +565,11 @@ void gui_controls_part::onOBB()
   TIMER_GO
 
   // OBB builder
-  geom_build_obb obb_builder(common_facilities::Instance()->Notifier,
-                             common_facilities::Instance()->Plotter);
+  feature_build_obb obb_builder(part, feature_build_obb::Mode_Inertia,
+                                common_facilities::Instance()->Notifier,
+                                common_facilities::Instance()->Plotter);
   //
-  if ( !obb_builder(part) )
+  if ( !obb_builder.Perform() )
   {
     std::cout << "Error: cannot build OBB" << std::endl;
     return;
@@ -576,6 +577,10 @@ void gui_controls_part::onOBB()
 
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Build OBB")
+
+  // Draw result
+  ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
+  IV.DRAW_SHAPE(obb_builder.GetResult()->BuildSolid(), Color_White, 0.3, true);
 }
 
 //-----------------------------------------------------------------------------

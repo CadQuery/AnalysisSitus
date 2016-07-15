@@ -1013,9 +1013,6 @@
     <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_tess_item_prs.h">
       <Filter>Header Files\Visualization\Presentation\Imperative</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\geom\common\geom_build_obb.h">
-      <Filter>Header Files\Geometry\Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\visu\sources\visu_mesh_topo_source.h">
       <Filter>Header Files\Visualization\Sources</Filter>
     </ClInclude>
@@ -1998,9 +1995,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_tess_item_prs.cpp">
       <Filter>Source Files\Visualization\Presentation\Imperative</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\geom\common\geom_build_obb.cpp">
-      <Filter>Source Files\Geometry\Common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\visu\sources\visu_mesh_topo_source.cpp">
       <Filter>Source Files\Visualization\Sources</Filter>

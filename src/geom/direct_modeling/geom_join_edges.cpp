@@ -17,9 +17,11 @@
 #include <BRepTools_ReShape.hxx>
 #include <BRepTools_WireExplorer.hxx>
 #include <GCE2d_MakeLine.hxx>
+#include <Geom2d_BSplineCurve.hxx>
 #include <Geom2d_Curve.hxx>
 #include <Geom2d_Line.hxx>
 #include <Geom2d_TrimmedCurve.hxx>
+#include <Geom2dAPI_Interpolate.hxx>
 #include <Precision.hxx>
 #include <ShapeExtend_WireData.hxx>
 #include <ShapeFix_Edge.hxx>
@@ -160,7 +162,7 @@ bool geom_join_edges::joinEdges(const TopoDS_Edge& eFirst,
   else if ( eSecondOri == TopAbs_FORWARD )
     eForward = eSecond;
   //
-  const TopAbs_Orientation bridgeOri = ( eForward.IsNull() ? TopAbs_REVERSED : TopAbs_FORWARD );
+  TopAbs_Orientation bridgeOri = eFirst.Orientation();
 
   // Get p-curve for the first edge
   double first_f, first_l;
@@ -178,37 +180,62 @@ bool geom_join_edges::joinEdges(const TopoDS_Edge& eFirst,
   if ( cSecond->IsKind( STANDARD_TYPE(Geom2d_TrimmedCurve) ) )
     cSecond = Handle(Geom2d_TrimmedCurve)::DownCast(cSecond)->BasisCurve();
 
-  //// We can work with straight line cases only
-  //if ( !cFirst->IsKind( STANDARD_TYPE(Geom2d_Line) ) ||
-  //     !cSecond->IsKind( STANDARD_TYPE(Geom2d_Line) ) )
-  //  return false;
-
   // Choose tolerance
   const double toler = Precision::Confusion();
 
   // Get host surface
   Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
 
-  // Extremity points
-  gp_Pnt2d P12d = cFirst->Value(first_l);
-  gp_Pnt2d P22d = cSecond->Value(second_f);
-  gp_Pnt   P1   = surf->Value( P12d.X(), P12d.Y() );
-  gp_Pnt   P2   = surf->Value( P22d.X(), P22d.Y() );
+  // For straight lines we build a straight bridge
+  if ( cFirst->IsKind( STANDARD_TYPE(Geom2d_Line) ) &&
+       cSecond->IsKind( STANDARD_TYPE(Geom2d_Line) ) )
+  {
+    // Extremity points
+    gp_Pnt2d P12d = cFirst->Value(first_l);
+    gp_Pnt2d P22d = cSecond->Value(second_f);
+    gp_Pnt   P1   = surf->Value( P12d.X(), P12d.Y() );
+    gp_Pnt   P2   = surf->Value( P22d.X(), P22d.Y() );
 
-  // Make vertices
-  TopoDS_Vertex V1, V2;
-  BRep_Builder BB;
-  BB.MakeVertex(V1, P1, toler);
-  BB.MakeVertex(V2, P2, toler);
+    // Make vertices
+    TopoDS_Vertex V1, V2;
+    BRep_Builder BB;
+    BB.MakeVertex(V1, P1, toler);
+    BB.MakeVertex(V2, P2, toler);
 
-  // Build planar edge
-  BRepBuilderAPI_MakeEdge mkEdge(V1, V2);
-  eResult = mkEdge.Edge();
+    // Build planar edge
+    BRepBuilderAPI_MakeEdge mkEdge(V1, V2);
+    eResult = mkEdge.Edge();
 
-  // Recover missing geometry
-  ShapeFix_Edge SFE;
-  SFE.FixAddPCurve(eResult, face, 0);
-  //
+    // Recover missing geometry
+    ShapeFix_Edge SFE;
+    SFE.FixAddPCurve(eResult, face, 0);
+  }
+  else
+  {
+    gp_Pnt2d P12d, P22d;
+    gp_Vec2d T12d, T22d;
+    cFirst->D1(first_l, P12d, T12d);
+    cSecond->D1(second_f, P22d, T22d);
+
+    Handle(TColgp_HArray1OfPnt2d) pts = new TColgp_HArray1OfPnt2d(1, 2);
+    pts->ChangeValue(1) = P12d;
+    pts->ChangeValue(2) = P22d;
+
+    Geom2dAPI_Interpolate Interp(pts, 0, toler);
+    Interp.Load(T12d, T22d);
+    Interp.Perform();
+
+    // Build edge
+    Handle(Geom2d_Curve) crv2d = Interp.Curve();
+    BRepBuilderAPI_MakeEdge mkEdge(crv2d, surf);
+    eResult = mkEdge.Edge();
+
+    // Recover missing geometry
+    ShapeFix_Edge SFE;
+    SFE.FixAddCurve3d(eResult);
+  }
+
+  // Set orientation
   eResult.Orientation(bridgeOri);
 
   return true;

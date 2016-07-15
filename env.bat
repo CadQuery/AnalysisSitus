@@ -74,6 +74,11 @@ if "%FEAT_INC%"  == "" set "FEAT_INC=%FEAT_ROOT%\include"
 if "%FEAT_LIB%"  == "" set "FEAT_LIB=%FEAT_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 if "%FEAT_BIN%"  == "" set "FEAT_BIN=%FEAT_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
 
+if "%MESH_ROOT%" == "" set "MESH_ROOT=%AS_PRODUCTS%\mesh"
+if "%MESH_INC%"  == "" set "MESH_INC=%MESH_ROOT%\include"
+if "%MESH_LIB%"  == "" set "MESH_LIB=%MESH_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
+if "%MESH_BIN%"  == "" set "MESH_BIN=%MESH_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
+
 rem ===========================================================================
 rem Setting environment for Canonical Recognition library
 rem ===========================================================================

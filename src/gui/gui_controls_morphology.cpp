@@ -15,9 +15,11 @@
 // GUI includes
 #include <gui_common.h>
 
+// Feature includes
+#include <feature_build_obb.h>
+
 // Geometry includes
 #include <geom_build_contours.h>
-#include <geom_build_obb.h>
 #include <geom_build_stock.h>
 #include <geom_classify_point_solid.h>
 #include <geom_face_point_cloud.h>
@@ -248,17 +250,18 @@ void gui_controls_morphology::onBuildMajorantOBB()
   TIMER_GO
 
   // Prepare tool
-  geom_build_obb obb_builder(common_facilities::Instance()->Notifier,
-                             common_facilities::Instance()->Plotter);
+  feature_build_obb obb_builder(part, feature_build_obb::Mode_Inertia,
+                                common_facilities::Instance()->Notifier,
+                                common_facilities::Instance()->Plotter);
 
-  if ( !obb_builder(part) )
+  if ( !obb_builder.Perform() )
   {
-    std::cout << "Error: cannot build stock" << std::endl;
+    std::cout << "Error: cannot build stock (OBB)" << std::endl;
     return;
   }
 
   // Get result
-  TopoDS_Shape stockSolid = obb_builder.Result();
+  TopoDS_Shape stockSolid = obb_builder.GetResult()->BuildSolid();
 
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Stock (OBB) reconstruction")

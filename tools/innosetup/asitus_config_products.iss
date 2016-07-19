@@ -22,9 +22,12 @@
 #define qr        "quaoar"
 #define ad        "active_data"
 #define feature   "feature"
+#define mesh      "mesh"
 
 #define ad_origin_global          "C:/Work/active_data"
 #define qr_origin_global          "C:/Work/quaoar"
 #define occt_origin_global        "C:/Work/OCC/master-70-dev-install"
 #define feature_origin_global     "C:/Work/dMU/dmu-build"
 #define feature_origin_global_src "C:/Work/dMU/dmu/src/feature"
+#define mesh_origin_global        "C:/Work/dMU/dmu-build"
+#define mesh_origin_global_src    "C:/Work/dMU/dmu/src/mesh"

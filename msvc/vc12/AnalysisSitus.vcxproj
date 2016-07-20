@@ -976,7 +976,15 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\journaling\journal_iv.cpp" />
     <ClCompile Include="..\..\src\journaling\journal_logger.cpp" />
     <ClCompile Include="..\..\src\journaling\journal_notifier.cpp" />
-    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main_Marios.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main_VISMain.cpp" />
     <ClCompile Include="..\..\src\mesh\tess_conglomerate.cpp" />
     <ClCompile Include="..\..\src\mesh\tess_convert.cpp" />
     <ClCompile Include="..\..\src\mesh\tess_gen.cpp" />

@@ -10,10 +10,12 @@
 #include "IFSelect_ReturnStatus.hxx"
 #include "BRepBuilderAPI_NurbsConvert.hxx"
 #include "TColStd_HSequenceOfTransient.hxx"
-#include "Handle_TColStd_HSequenceOfTransient.hxx"
 #include "Standard.hxx"
 #include "NCollection_TListIterator.hxx"
 #include "IVtk_IShape.hxx"
+
+// OCCT includes
+#include <BRepTools.hxx>
 
 #include <vtkVersion.h>
 #include <vtkSmartPointer.h>
@@ -31,7 +33,6 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
-#include "vtkStandardPolyDataPainter.h"
 #include "vtkActorCollection.h"
 #include "vtkInteractorStyleTrackballCamera.h"
 #include "vtkSmartPointer.h"
@@ -48,7 +49,25 @@
 #include "IVtkTools_ShapePicker.hxx"
 #include "BRepPrimAPI_MakeSphere.hxx"
 
-#include "stepigesreaderwriter.h"
+//-----------------------------------------------------------------------------
+// Function: Restore
+//-----------------------------------------------------------------------------
+
+bool Restore(const TCollection_AsciiString& filename,
+             TopoDS_Shape&                  shape)
+{
+  std::cout << "Attempting to load from " << filename.ToCString() << std::endl;
+
+  BRep_Builder BB;
+  if ( !BRepTools::Read(shape, filename.ToCString(), BB) )
+  {
+    std::cout << "Cannot read file" << std::endl;
+    return false;
+  }
+
+  std::cout << "Shape has been restored" << std::endl;
+  return true;
+}
 
 using namespace std;
 
@@ -112,10 +131,9 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    // Input geometry
-    StepIgesReaderWriter myRW(filename);
-
-    TopoDS_Shape shape = myRW.returnShape();
+    TopoDS_Shape shape;
+    if ( !Restore(filename, shape) )
+      return 1;
 
     // The renderer generates the image
     // which is then displayed on the render window.

@@ -26,6 +26,7 @@
 #include <visu_iv_point_set_prs.h>
 #include <visu_iv_surface_prs.h>
 #include <visu_iv_tess_item_prs.h>
+#include <visu_iv_text_item_prs.h>
 #include <visu_iv_topo_item_prs.h>
 #include <visu_mesh_prs.h>
 #include <visu_re_contours_prs.h>
@@ -122,6 +123,7 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(visu_iv_curve_prs)
   REGISTER_PRESENTATION(visu_iv_surface_prs)
   REGISTER_PRESENTATION(visu_iv_tess_item_prs)
+  REGISTER_PRESENTATION(visu_iv_text_item_prs)
   REGISTER_PRESENTATION(visu_iv_topo_item_prs)
 
   //---------------------------------------------------------------------------

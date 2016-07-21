@@ -614,25 +614,41 @@ bool geom_utils::WriteBRep(const TopoDS_Shape&            theShape,
   return BRepTools::Write( theShape, theFilename.ToCString() ) > 0;
 }
 
-//! Collects summary information of the given shape: returns the number
-//! of sub-shapes of each type.
-//! \param shape [in]  shape to analyze.
-//! \param info  [out] shape summary as string.
-void geom_utils::ShapeSummary(const TopoDS_Shape&      shape,
-                              TCollection_AsciiString& info)
+//! Collects summary information for the given shape.
+//! \param shape        [in]  input shape.
+//! \param nbCompsolids [out] number of compsolids.
+//! \param nbCompounds  [out] number of compounds.
+//! \param nbSolids     [out] number of solids.
+//! \param nbShells     [out] number of shells.
+//! \param nbFaces      [out] number of faces.
+//! \param nbWires      [out] number of wires.
+//! \param nbOuterWires [out] number of outer wires.
+//! \param nbInnerWires [out] number of inner wires.
+//! \param nbEdges      [out] number of edges.
+//! \param nbVertexes   [out] number of vertices.
+void geom_utils::ShapeSummary(const TopoDS_Shape& shape,
+                              int&                nbCompsolids,
+                              int&                nbCompounds,
+                              int&                nbSolids,
+                              int&                nbShells,
+                              int&                nbFaces,
+                              int&                nbWires,
+                              int&                nbOuterWires,
+                              int&                nbInnerWires,
+                              int&                nbEdges,
+                              int&                nbDegenEdges,
+                              int&                nbVertexes)
 {
   if ( shape.IsNull() )
     return;
 
-  // Summary
-  int nbCompsolids = 0,
-      nbCompounds  = 0,
-      nbSolids     = 0,
-      nbShells     = 0,
-      nbFaces      = 0,
-      nbWires      = 0,
-      nbEdges      = 0,
-      nbVertexes   = 0;
+  // Get all outer wires in the model
+  TopTools_IndexedMapOfShape outerWires;
+  for ( TopExp_Explorer exp(shape, TopAbs_FACE); exp.More(); exp.Next() )
+  {
+    const TopoDS_Face& F = TopoDS::Face( exp.Current() );
+    outerWires.Add( BRepTools::OuterWire(F) );
+  }
 
   // The following map is used to skip already traversed TShapes
   TopTools_IndexedMapOfShape M;
@@ -661,9 +677,19 @@ void geom_utils::ShapeSummary(const TopoDS_Shape&      shape,
     else if ( currentShape.ShapeType() == TopAbs_FACE )
       nbFaces++;
     else if ( currentShape.ShapeType() == TopAbs_WIRE )
+    {
       nbWires++;
+      if ( outerWires.Contains(currentShape) )
+        nbOuterWires++;
+      else
+        nbInnerWires++;
+    }
     else if ( currentShape.ShapeType() == TopAbs_EDGE )
+    {
       nbEdges++;
+      if ( BRep_Tool::Degenerated( TopoDS::Edge(currentShape) ) )
+        nbDegenEdges++;
+    }
     else if ( currentShape.ShapeType() == TopAbs_VERTEX )
       nbVertexes++;
 
@@ -676,6 +702,41 @@ void geom_utils::ShapeSummary(const TopoDS_Shape&      shape,
       shapeList.Append(subShape);
     }
   }
+}
+
+//! Collects summary information of the given shape: returns the number
+//! of sub-shapes of each type.
+//! \param shape [in]  shape to analyze.
+//! \param info  [out] shape summary as string.
+void geom_utils::ShapeSummary(const TopoDS_Shape&      shape,
+                              TCollection_AsciiString& info)
+{
+  // Summary
+  int nbCompsolids = 0,
+      nbCompounds  = 0,
+      nbSolids     = 0,
+      nbShells     = 0,
+      nbFaces      = 0,
+      nbWires      = 0,
+      nbOuterWires = 0,
+      nbInnerWires = 0,
+      nbEdges      = 0,
+      nbDegenEdges = 0,
+      nbVertexes   = 0;
+
+  // Extract summary
+  ShapeSummary(shape,
+               nbCompsolids,
+               nbCompounds,
+               nbSolids,
+               nbShells,
+               nbFaces,
+               nbWires,
+               nbOuterWires,
+               nbInnerWires,
+               nbEdges,
+               nbDegenEdges,
+               nbVertexes);
 
   // Prepare output string with the gathered summary
   info += "PART SUMMARY (EQ TSHAPE, ANY TRSF, ANY ORI):\n";

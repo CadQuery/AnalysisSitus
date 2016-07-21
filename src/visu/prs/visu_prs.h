@@ -193,7 +193,7 @@ private:
   //! to pipelines.
   typedef NCollection_DataMap<PipelineGroup, DataProviderMap> DataProviderRepo;
 
-private:
+protected:
 
   //! Pipelines.
   PipelineRepo m_pipelineRepo;

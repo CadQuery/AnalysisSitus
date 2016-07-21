@@ -249,6 +249,20 @@ public:
               const TCollection_AsciiString& theFilename);
 
   ASitus_EXPORT static void
+    ShapeSummary(const TopoDS_Shape& shape,
+                 int&                nbCompsolids,
+                 int&                nbCompounds,
+                 int&                nbSolids,
+                 int&                nbShells,
+                 int&                nbFaces,
+                 int&                nbWires,
+                 int&                nbOuterWires,
+                 int&                nbInnerWires,
+                 int&                nbEdges,
+                 int&                nbDegenEdges,
+                 int&                nbVertexes);
+
+  ASitus_EXPORT static void
     ShapeSummary(const TopoDS_Shape&      shape,
                  TCollection_AsciiString& info);
 

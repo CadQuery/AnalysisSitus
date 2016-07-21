@@ -12,6 +12,7 @@
 #include <analysis_situs.h>
 
 // A-Situs (GUI) includes
+#include <gui_controls_euler.h>
 #include <gui_controls_features.h>
 #include <gui_controls_part.h>
 #include <gui_object_browser.h>
@@ -55,13 +56,15 @@ private:
     gui_viewer_surface*    wViewerSurface;    //!< Surface viewer.
     gui_controls_part*     wControlsPart;     //!< Part controls.
     gui_controls_features* wControlsFeatures; //!< Controls for features.
+    gui_controls_euler*    wControlsEuler;    //!< Controls for Euler operations.
 
     t_widgets() : wBrowser          (NULL),
                   wViewerDomain     (NULL),
                   wViewerPart       (NULL),
                   wViewerSurface    (NULL),
                   wControlsPart     (NULL),
-                  wControlsFeatures (NULL)
+                  wControlsFeatures (NULL),
+                  wControlsEuler    (NULL)
     {}
 
     void Release()
@@ -72,6 +75,7 @@ private:
       delete wViewerSurface;     wViewerSurface     = NULL;
       delete wControlsPart;      wControlsPart      = NULL;
       delete wControlsFeatures;  wControlsFeatures  = NULL;
+      delete wControlsEuler;     wControlsEuler     = NULL;
     }
   };
 

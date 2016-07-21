@@ -127,3 +127,15 @@ Handle(visu_iv_tess_node) visu_iv_node::Tessellation()
   //
   return NULL;
 }
+
+//! \return underlying text container.
+Handle(visu_iv_text_node) visu_iv_node::Text()
+{
+  Handle(visu_iv_text_node)
+    text_n = Handle(visu_iv_text_node)::DownCast( this->GetChildNode(Child_Text) );
+  //
+  if ( !text_n.IsNull() && text_n->IsWellFormed() )
+    return text_n;
+  //
+  return NULL;
+}

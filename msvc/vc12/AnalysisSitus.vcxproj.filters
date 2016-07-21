@@ -1049,6 +1049,18 @@
     <ClInclude Include="..\..\src\geom\point_clouds\geom_point_cloud_normals.h">
       <Filter>Header Files\Geometry\Point Clouds</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_text_item_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_text_node.h">
+      <Filter>Header Files\Visualization\Imperative Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_text_item_prs.h">
+      <Filter>Header Files\Visualization\Presentation\Imperative</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_euler_poincare.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -1205,6 +1217,9 @@
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_STEP.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_euler.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_STEP_delegate.cpp">
@@ -2056,6 +2071,27 @@
     <ClCompile Include="..\..\src\main_VISMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_euler.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_euler.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_text_item_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_text_node.cpp">
+      <Filter>Source Files\Visualization\Imperative Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_text_item_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation\Imperative</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_euler.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_euler_poincare.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\gui\gui_object_browser.h">
@@ -2202,19 +2238,25 @@
     <CustomBuild Include="..\..\src\gui\gui_dialog_cloudify.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\gui\gui_controls_pcloud.h">
-      <Filter>Header Files</Filter>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_find_face.h">
+      <Filter>Header Files\GUI</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\gui\gui_main_window_pcloud.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\src\gui\gui_dialog_detect_holes.h">
-      <Filter>Header Files</Filter>
+    <CustomBuild Include="..\..\src\gui\gui_controls_euler.h">
+      <Filter>Header Files\GUI</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\src\visu\interaction\visu_part_callback.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Visualization\Interaction</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\gui\gui_dialog_find_face.h">
+    <CustomBuild Include="..\..\src\gui\gui_controls_pcloud.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_detect_holes.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_pcloud.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_euler.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
   </ItemGroup>

@@ -310,6 +310,22 @@ void journal_iv::DRAW_TRIANGULATION(const Handle(Poly_Triangulation)& shape,
 
 //---------------------------------------------------------------------------//
 
+void journal_iv::DRAW_TEXT(const TCollection_AsciiString& text)
+{
+  // Create a Node for text item
+  common_facilities::Instance()->Model->OpenCommand();
+  //
+  Handle(visu_iv_text_item_node)
+    item_n = engine_iv::Create_TextItem(text);
+  //
+  common_facilities::Instance()->Model->CommitCommand();
+
+  // Visualize
+  this->visualize(false, item_n, false, Quantity_Color(), 0.0, false);
+}
+
+//---------------------------------------------------------------------------//
+
 void journal_iv::visualize(const bool                  is2d,
                            const Handle(ActAPI_INode)& node,
                            const bool                  hasColor,

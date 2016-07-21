@@ -121,7 +121,7 @@ void gui_main_window_dmu::createViewer()
 
   // Configure rendering parameters
   Graphic3d_RenderingParams& RenderParams = m_widgets.wViewer->GetView()->ChangeRenderingParams();
-  //RenderParams.NbMsaaSamples = 8; // Anti-aliasing by multi-sampling
+  RenderParams.NbMsaaSamples = 8; // Anti-aliasing by multi-sampling
 
   // Desktop used for sizing
   QDesktopWidget desktop;

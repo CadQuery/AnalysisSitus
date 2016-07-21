@@ -45,6 +45,8 @@
 #include <visu_iv_surfaces_node.h>
 #include <visu_iv_tess_item_node.h>
 #include <visu_iv_tess_node.h>
+#include <visu_iv_text_item_node.h>
+#include <visu_iv_text_node.h>
 #include <visu_iv_topo_item_node.h>
 #include <visu_iv_topo_node.h>
 
@@ -339,6 +341,20 @@ public:
     return Handle(common_partition<visu_iv_tess_item_node>)::DownCast( this->Partition(Partition_IV_TessItem) );
   }
 
+  //! Accessor for a Partition instance dedicated to IV Text Nodes.
+  //! \return requested Partition.
+  inline Handle(common_partition<visu_iv_text_node>) IVTextPartition() const
+  {
+    return Handle(common_partition<visu_iv_text_node>)::DownCast( this->Partition(Partition_IV_Text) );
+  }
+
+  //! Accessor for a Partition instance dedicated to IV Text Item Nodes.
+  //! \return requested Partition.
+  inline Handle(common_partition<visu_iv_text_item_node>) IVTextItemPartition() const
+  {
+    return Handle(common_partition<visu_iv_text_item_node>)::DownCast( this->Partition(Partition_IV_TextItem) );
+  }
+
 private:
 
   virtual void
@@ -412,7 +428,9 @@ private:
     Partition_IV_Topo,
     Partition_IV_TopoItem,
     Partition_IV_Tess,
-    Partition_IV_TessItem
+    Partition_IV_TessItem,
+    Partition_IV_Text,
+    Partition_IV_TextItem
   };
 
 };

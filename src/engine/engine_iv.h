@@ -79,6 +79,14 @@ namespace engine_iv
 
 //---------------------------------------------------------------------------//
 
+  Handle(visu_iv_text_item_node)
+    Create_TextItem(const TCollection_AsciiString& text);
+
+  void
+    Clean_Text();
+
+//---------------------------------------------------------------------------//
+
   void
     _cleanChildren(const Handle(ActAPI_INode)& parent);
 

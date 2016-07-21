@@ -120,6 +120,20 @@ Handle(visu_iv_node) engine_iv::Create_IV()
     iv_n->AddChildNode(iv_tess_n);
   }
 
+  // Create underlying Text container
+  {
+    Handle(ActAPI_INode) iv_text_base = visu_iv_text_node::Instance();
+    M->IVTextPartition()->AddNode(iv_text_base);
+
+    // Initialize
+    Handle(visu_iv_text_node) iv_text_n = Handle(visu_iv_text_node)::DownCast(iv_text_base);
+    iv_text_n->Init();
+    iv_text_n->SetName("Text");
+
+    // Add as child
+    iv_n->AddChildNode(iv_text_n);
+  }
+
   // Return the just created Node
   return iv_n;
 }
@@ -422,6 +436,58 @@ void engine_iv::Clean_Tess()
 {
   Handle(visu_iv_tess_node)
     IV_Parent = common_facilities::Instance()->Model->IVNode()->Tessellation();
+  //
+  _cleanChildren(IV_Parent);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Creates text item.
+//! \param text [in] text to store in the persistent item.
+//! \return newly created text item.
+Handle(visu_iv_text_item_node)
+  engine_iv::Create_TextItem(const TCollection_AsciiString& text)
+{
+  // Access Model and parent Node
+  Handle(common_model)      M         = common_facilities::Instance()->Model;
+  Handle(visu_iv_text_node) IV_Parent = M->IVNode()->Text();
+
+  // Add Text Item Node to Partition
+  Handle(visu_iv_text_item_node) item_n = Handle(visu_iv_text_item_node)::DownCast( visu_iv_text_item_node::Instance() );
+  M->IVTextItemPartition()->AddNode(item_n);
+
+  // Generate unique name
+  TCollection_ExtendedString item_name;
+  //
+  if ( text.IsEmpty() )
+    item_name = "Text";
+  else
+  {
+    item_name = text.SubString( 1, Min(text.Length(), 16) );
+
+    if ( text.Length() > item_name.Length() )
+      item_name += "...";
+  }
+  //
+  item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
+
+  // Initialize
+  item_n->Init();
+  item_n->SetName(item_name);
+  item_n->SetText(text);
+
+  // Add as child
+  IV_Parent->AddChildNode(item_n);
+
+  // Return the just created Node
+  return item_n;
+}
+
+//! Deletes all text items.
+void engine_iv::Clean_Text()
+{
+  Handle(visu_iv_text_node)
+    IV_Parent = common_facilities::Instance()->Model->IVNode()->Text();
   //
   _cleanChildren(IV_Parent);
 }

@@ -86,6 +86,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\geom\combination\geom_weighted_range.h" />
     <ClInclude Include="..\..\src\geom\common\geom_divide_by_continuity.h" />
     <ClInclude Include="..\..\src\geom\common\geom_boundary_edges_node.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_euler_poincare.h" />
     <ClInclude Include="..\..\src\geom\common\geom_face_node.h" />
     <ClInclude Include="..\..\src\geom\common\geom_find_nonmanifold.h" />
     <ClInclude Include="..\..\src\geom\common\geom_part_node.h" />
@@ -363,6 +364,26 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_euler.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_euler.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\gui\gui_occt_window.h" />
     <CustomBuild Include="..\..\src\gui\gui_viewer_dmu.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
@@ -434,6 +455,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\visu\imperative\visu_iv_surface_node.h" />
     <ClInclude Include="..\..\src\visu\imperative\visu_iv_tess_item_node.h" />
     <ClInclude Include="..\..\src\visu\imperative\visu_iv_tess_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_text_item_node.h" />
+    <ClInclude Include="..\..\src\visu\imperative\visu_iv_text_node.h" />
     <ClInclude Include="..\..\src\visu\imperative\visu_iv_topo_item_node.h" />
     <ClInclude Include="..\..\src\visu\imperative\visu_iv_topo_node.h" />
     <CustomBuild Include="..\..\src\visu\interaction\visu_part_callback.h">
@@ -460,6 +483,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_surface_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_tess_item_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_text_item_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\imperative\visu_iv_topo_item_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_axes_btn_callback.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_calculus_law_prs.h" />
@@ -845,6 +869,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\geom\combination\geom_weighted_range.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_divide_by_continuity.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_boundary_edges_node.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_euler_poincare.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_face_node.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_find_nonmanifold.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_part_node.cpp" />
@@ -926,6 +951,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\gui\gui_common.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_dmu.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_dmu_visu.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_controls_euler.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_features.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_hull.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_mesh.cpp" />
@@ -935,6 +961,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\gui\gui_controls_skinning.cpp" />
     <ClCompile Include="..\..\src\gui\gui_dialog_cloudify.cpp" />
     <ClCompile Include="..\..\src\gui\gui_dialog_detect_holes.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_dialog_euler.cpp" />
     <ClCompile Include="..\..\src\gui\gui_dialog_find_face.cpp" />
     <ClCompile Include="..\..\src\gui\gui_dialog_STEP.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_ubend.cpp" />
@@ -977,14 +1004,17 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\journaling\journal_logger.cpp" />
     <ClCompile Include="..\..\src\journaling\journal_notifier.cpp" />
     <ClCompile Include="..\..\src\main.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\src\main_Marios.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\src\main_VISMain.cpp" />
+    <ClCompile Include="..\..\src\main_VISMain.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\src\mesh\tess_conglomerate.cpp" />
     <ClCompile Include="..\..\src\mesh\tess_convert.cpp" />
     <ClCompile Include="..\..\src\mesh\tess_gen.cpp" />
@@ -997,6 +1027,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_dmu.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_dmu_visu.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_part.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_euler.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_features.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_morphology.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_pcloud.cpp" />
@@ -1042,6 +1073,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_find_face.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_sewing.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_cloudify.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_euler.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_STEP.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_STEP_delegate.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_vtk_window.cpp" />
@@ -1080,6 +1112,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\imperative\visu_iv_surface_node.cpp" />
     <ClCompile Include="..\..\src\visu\imperative\visu_iv_tess_item_node.cpp" />
     <ClCompile Include="..\..\src\visu\imperative\visu_iv_tess_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_text_item_node.cpp" />
+    <ClCompile Include="..\..\src\visu\imperative\visu_iv_text_node.cpp" />
     <ClCompile Include="..\..\src\visu\imperative\visu_iv_topo_item_node.cpp" />
     <ClCompile Include="..\..\src\visu\imperative\visu_iv_topo_node.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_interactor_style_pick.cpp" />
@@ -1119,6 +1153,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_surface_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_tess_item_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_text_item_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\imperative\visu_iv_topo_item_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_axes_btn_callback.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_calculus_law_prs.cpp" />

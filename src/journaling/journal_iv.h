@@ -163,6 +163,12 @@ public:
                        const double, // opacity
                        const TCollection_AsciiString&);
 
+// TEXT
+public:
+
+  virtual void
+    DRAW_TEXT(const TCollection_AsciiString& text);
+
 protected:
 
   void

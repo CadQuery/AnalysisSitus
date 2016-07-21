@@ -67,9 +67,9 @@ void gui_main_window_pcloud::createPartViewer()
 void gui_main_window_pcloud::createDockWindows()
 {
   // Desktop used for sizing
-  QDesktopWidget desktop;
+  /*QDesktopWidget desktop;
   const int side  = std::min( desktop.height(), desktop.width() );
-  const int width = side*0.25;
+  const int width = side*0.25;*/
 
   //---------------------------------------------------------------------------
   // Part controls

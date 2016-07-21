@@ -72,6 +72,8 @@ REGISTER_NODE_TYPE(visu_iv_tess_item_node)
 REGISTER_NODE_TYPE(visu_iv_tess_node)
 REGISTER_NODE_TYPE(visu_iv_topo_item_node)
 REGISTER_NODE_TYPE(visu_iv_topo_node)
+REGISTER_NODE_TYPE(visu_iv_text_item_node)
+REGISTER_NODE_TYPE(visu_iv_text_node)
 
 //-----------------------------------------------------------------------------
 
@@ -201,6 +203,7 @@ void common_model::Clear()
   ::PrepareForRemoval(this->IVNode()->Surfaces(),     nodesToDelete);
   ::PrepareForRemoval(this->IVNode()->Topology(),     nodesToDelete);
   ::PrepareForRemoval(this->IVNode()->Tessellation(), nodesToDelete);
+  ::PrepareForRemoval(this->IVNode()->Text(),         nodesToDelete);
 
   //---------------------------------------------------------------------------
   // Perform deletion
@@ -341,6 +344,8 @@ void common_model::initPartitions()
   REGISTER_PARTITION(common_partition<visu_iv_topo_item_node>,    Partition_IV_TopoItem);
   REGISTER_PARTITION(common_partition<visu_iv_tess_node>,         Partition_IV_Tess);
   REGISTER_PARTITION(common_partition<visu_iv_tess_item_node>,    Partition_IV_TessItem);
+  REGISTER_PARTITION(common_partition<visu_iv_text_node>,         Partition_IV_Text);
+  REGISTER_PARTITION(common_partition<visu_iv_text_item_node>,    Partition_IV_TextItem);
 }
 
 //! Initializes the Tree Functions bound to the Data Model.

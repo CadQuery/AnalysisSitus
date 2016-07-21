@@ -96,6 +96,18 @@ void gui_main_window_features::createDockWindows()
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockFeatures);
   }
   //---------------------------------------------------------------------------
+  // Euler controls
+  QDockWidget* pDockEuler;
+  {
+    pDockEuler = new QDockWidget("Euler", this);
+    pDockEuler->setAllowedAreas(Qt::LeftDockWidgetArea);
+    //
+    m_widgets.wControlsEuler = new gui_controls_euler(pDockEuler);
+    pDockEuler->setWidget(m_widgets.wControlsEuler);
+    //
+    this->addDockWidget(Qt::LeftDockWidgetArea, pDockEuler);
+  }
+  //---------------------------------------------------------------------------
   // Object browser
   QDockWidget* pDockBrowser;
   {
@@ -132,6 +144,7 @@ void gui_main_window_features::createDockWindows()
     this->addDockWidget(Qt::RightDockWidgetArea, pDock);
   }
   //---------------------------------------------------------------------------
-  this->tabifyDockWidget(pDockBrowser, pDockCommon);
-  this->tabifyDockWidget(pDockCommon,  pDockFeatures);
+  this->tabifyDockWidget(pDockBrowser,  pDockFeatures);
+  this->tabifyDockWidget(pDockFeatures, pDockEuler);
+  this->tabifyDockWidget(pDockEuler,    pDockCommon);
 }

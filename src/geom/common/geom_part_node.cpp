@@ -21,6 +21,7 @@ geom_part_node::geom_part_node() : ActData_BaseNode()
   REGISTER_PARAMETER(Int,   PID_DisplayMode);
   REGISTER_PARAMETER(Bool,  PID_HasColor);
   REGISTER_PARAMETER(Int,   PID_Color);
+  REGISTER_PARAMETER(Bool,  PID_HasVertices);
 }
 
 //! Returns new DETACHED instance of Geometry Node ensuring its correct
@@ -44,6 +45,7 @@ void geom_part_node::Init()
   this->SetHasColor    (false);
   this->SetColor       (-1);
   this->SetDisplayMode (1);
+  this->SetHasVertices (false);
 }
 
 //-----------------------------------------------------------------------------
@@ -123,6 +125,21 @@ void geom_part_node::SetDisplayMode(const int mode)
 int geom_part_node::GetDisplayMode() const
 {
   return ActParamTool::AsInt( this->Parameter(PID_DisplayMode) )->GetValue();
+}
+
+//! Sets the Boolean value indicating whether the vertices are active
+//! \param hasVertices [in] value to set.
+void geom_part_node::SetHasVertices(const bool hasVertices)
+{
+  ActParamTool::AsBool( this->Parameter(PID_HasVertices) )->SetValue(hasVertices);
+}
+
+//! Accessor for the value of the Boolean Parameter indicating whether the
+//! vertices are active.
+//! \return true/false.
+bool geom_part_node::HasVertices() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_HasVertices) )->GetValue() > 0;
 }
 
 //-----------------------------------------------------------------------------

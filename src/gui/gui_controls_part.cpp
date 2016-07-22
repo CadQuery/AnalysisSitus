@@ -96,6 +96,10 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   m_widgets.pCR                 = new QPushButton("Canonical recognition");
   m_widgets.pCloudify           = new QPushButton("Cloudify");
   //
+  m_widgets.pShowVertices       = new QPushButton("Show vertices");
+  m_widgets.pSelectFaces        = new QPushButton("Select faces");
+  m_widgets.pSelectEdges        = new QPushButton("Select edges");
+  //
   m_widgets.pLoadBRep           -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pLoadSTEP           -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSaveSTEP           -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -114,6 +118,13 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   m_widgets.pOBB                -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCR                 -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCloudify           -> setMinimumWidth(BTN_MIN_WIDTH);
+  //
+  m_widgets.pShowVertices       -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSelectFaces        -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSelectEdges        -> setMinimumWidth(BTN_MIN_WIDTH);
+
+  // Other configurations
+  m_widgets.pShowVertices->setCheckable(true);
 
   // Group box for data interoperability
   QGroupBox*   pExchangeGroup = new QGroupBox("Data Exchange");
@@ -146,10 +157,19 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   pProcessingLay->addWidget(m_widgets.pCR);
   pProcessingLay->addWidget(m_widgets.pCloudify);
 
+  // Group for visualization
+  QGroupBox*   pVisuGroup = new QGroupBox("Visualization");
+  QVBoxLayout* pVisuLay   = new QVBoxLayout(pVisuGroup);
+  //
+  pVisuLay->addWidget(m_widgets.pShowVertices);
+  pVisuLay->addWidget(m_widgets.pSelectFaces);
+  pVisuLay->addWidget(m_widgets.pSelectEdges);
+
   // Set layout
   m_pMainLayout->addWidget(pExchangeGroup);
   m_pMainLayout->addWidget(pAnalysisGroup);
   m_pMainLayout->addWidget(pProcessingGroup);
+  m_pMainLayout->addWidget(pVisuGroup);
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
   //
@@ -174,6 +194,10 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   connect( m_widgets.pOBB,              SIGNAL( clicked() ), SLOT( onOBB              () ) );
   connect( m_widgets.pCR,               SIGNAL( clicked() ), SLOT( onCR               () ) );
   connect( m_widgets.pCloudify,         SIGNAL( clicked() ), SLOT( onCloudify         () ) );
+  //
+  connect( m_widgets.pShowVertices,     SIGNAL( clicked() ), SLOT( onShowVertices     () ) );
+  connect( m_widgets.pSelectFaces,      SIGNAL( clicked() ), SLOT( onSelectFaces      () ) );
+  connect( m_widgets.pSelectEdges,      SIGNAL( clicked() ), SLOT( onSelectEdges      () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -649,4 +673,63 @@ void gui_controls_part::onCloudify()
   // Run dialog for cloudification
   gui_dialog_cloudify* wCloudify = new gui_dialog_cloudify(this);
   wCloudify->show();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Switches visualization of vertices.
+void gui_controls_part::onShowVertices()
+{
+  // Access Geometry Node
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  if ( N.IsNull() || !N->IsWellFormed() )
+    return;
+
+  const bool isOn = m_widgets.pShowVertices->isChecked();
+
+  // Modify data
+  common_facilities::Instance()->Model->OpenCommand();
+  {
+    N->SetHasVertices(isOn);
+  }
+  common_facilities::Instance()->Model->CommitCommand();
+
+  // Actualize
+  common_facilities::Instance()->Prs.DeleteAll();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Switches to selection by faces.
+void gui_controls_part::onSelectFaces()
+{
+  // Access Geometry Node
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  if ( N.IsNull() || !N->IsWellFormed() )
+    return;
+
+  // WHY? ALL? THE FOLLOWING? IS? NECESSARY? WTF?!
+  common_facilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_Face);
+  common_facilities::Instance()->Prs.DeleteAll();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Switches to selection by edges.
+void gui_controls_part::onSelectEdges()
+{
+  // Access Geometry Node
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  if ( N.IsNull() || !N->IsWellFormed() )
+    return;
+
+  // WHY? ALL? THE FOLLOWING? IS? NECESSARY? WTF?!
+  common_facilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_Edge);
+  common_facilities::Instance()->Prs.DeleteAll();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
 }

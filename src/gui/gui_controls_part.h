@@ -44,6 +44,10 @@ public slots:
   void onOBB              ();
   void onCR               ();
   void onCloudify         ();
+  //
+  void onShowVertices     ();
+  void onSelectFaces      ();
+  void onSelectEdges      ();
 
 private:
 
@@ -70,6 +74,10 @@ private:
     QPushButton* pOBB;              //!< Builds OBB.
     QPushButton* pCR;               //!< Runs canonical recognition.
     QPushButton* pCloudify;         //!< Builds a point cloud from the model.
+    //
+    QPushButton* pShowVertices;     //!< Shows vertices of the model.
+    QPushButton* pSelectFaces;      //!< Enables selection by faces.
+    QPushButton* pSelectEdges;      //!< Enables selection by edges.
 
     t_widgets() : pLoadBRep         (NULL),
                   pLoadSTEP         (NULL),
@@ -88,7 +96,11 @@ private:
                   pMaximizeFaces    (NULL),
                   pOBB              (NULL),
                   pCR               (NULL),
-                  pCloudify         (NULL)
+                  pCloudify         (NULL),
+                  //
+                  pShowVertices     (NULL),
+                  pSelectFaces      (NULL),
+                  pSelectEdges      (NULL)
     {}
 
     void Release()
@@ -111,6 +123,10 @@ private:
       delete pOBB;              pOBB              = NULL;
       delete pCR;               pCR               = NULL;
       delete pCloudify;         pCloudify         = NULL;
+      //
+      delete pShowVertices;     pShowVertices     = NULL;
+      delete pSelectFaces;      pSelectFaces      = NULL;
+      delete pSelectEdges;      pSelectEdges      = NULL;
     }
   };
 

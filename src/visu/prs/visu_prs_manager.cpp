@@ -17,6 +17,9 @@
 #include <visu_shape_data_source.h>
 #include <visu_utils.h>
 
+// Common includes
+#include <common_facilities.h>
+
 // VTK includes
 #include <vtkCamera.h>
 #include <vtkCellData.h>
@@ -765,6 +768,7 @@ ActAPI_DataObjectIdList
 #if defined COUT_DEBUG
           const TopoDS_Shape& aSubShape = aShapeWrapper->GetSubShape( sIt.Value() );
           cout << "--------------------------------------------------------------" << endl;
+          cout << "Actor: " << common_facilities::ADDR(anActor) << endl;
           cout << "Sub-shape ID: " << sIt.Value() << endl;
           cout << "Sub-shape type: " << aSubShape.TShape()->DynamicType()->Name() << endl;
 #endif
@@ -1102,9 +1106,16 @@ vtkSmartPointer<vtkPropCollection> visu_prs_manager::PropsByTrihedron() const
 
 //! Accessor for cell picker.
 //! \return cell picker.
-vtkSmartPointer<vtkCellPicker> visu_prs_manager::GetCellPicker() const
+const vtkSmartPointer<vtkCellPicker>& visu_prs_manager::GetCellPicker() const
 {
   return m_cellPicker;
+}
+
+//! Accessor for shape picker.
+//! \return shape picker.
+const vtkSmartPointer<IVtkTools_ShapePicker>& visu_prs_manager::GetShapePicker() const
+{
+  return m_shapePicker;
 }
 
 //! Modifies the size of the trihedron so that to make its size comparable to

@@ -259,8 +259,11 @@ public:
   vtkSmartPointer<vtkPropCollection>
     PropsByTrihedron() const;
 
-  vtkSmartPointer<vtkCellPicker>
+  const vtkSmartPointer<vtkCellPicker>&
     GetCellPicker() const;
+
+  const vtkSmartPointer<IVtkTools_ShapePicker>&
+    GetShapePicker() const;
 
 public:
 

@@ -55,6 +55,7 @@ public:
     PID_DisplayMode,  //!< Display mode.
     PID_HasColor,     //!< Indicates whether the Color Parameter is active.
     PID_Color,        //!< Color.
+    PID_HasVertices,  //!< Indicates whether vertices are active.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -84,6 +85,8 @@ public:
   int                              GetColor                    ()                           const;
   void                             SetDisplayMode              (const int mode);
   int                              GetDisplayMode              ()                           const;
+  void                             SetHasVertices              (const bool hasVertices);
+  bool                             HasVertices                 ()                           const;
   Handle(geom_face_node)           FaceRepresentation          ();
   Handle(geom_surf_node)           SurfaceRepresentation       ();
   Handle(geom_boundary_edges_node) BoundaryEdgesRepresentation ();

@@ -36,13 +36,19 @@ private:
   struct t_widgets
   {
     QPushButton* pCheckEulerPoincare; //!< Checks Euler-Poincare equation.
+    QPushButton* pKEV;
+    QPushButton* pKEF;
 
-    t_widgets() : pCheckEulerPoincare (NULL)
+    t_widgets() : pCheckEulerPoincare (NULL),
+                  pKEV                (NULL),
+                  pKEF                (NULL)
     {}
 
     void Release()
     {
       delete pCheckEulerPoincare; pCheckEulerPoincare = NULL;
+      delete pKEV;                pKEV                = NULL;
+      delete pKEF;                pKEF                = NULL;
     }
   };
 

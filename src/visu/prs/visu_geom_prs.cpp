@@ -12,6 +12,9 @@
 #include <visu_display_mode.h>
 #include <visu_shape_data_provider.h>
 
+// A-Situs (common) includes
+#include <common_facilities.h>
+
 // A-Situs (GUI) includes
 #include <gui_common.h>
 
@@ -52,6 +55,10 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
   pl->Actor()->GetProperty()->SetLineWidth(1.5f);
 
+#if defined COUT_DEBUG
+  cout << "Main actor: " << common_facilities::ADDR( pl->Actor() ) << endl;
+#endif
+
   /* ====================
    *  Pipeline for edges
    * ==================== */
@@ -68,6 +75,10 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
   this->assignDataProvider ( Pipeline_Contour, DP );
+
+#if defined COUT_DEBUG
+  cout << "Contour actor: " << common_facilities::ADDR( contour_pl->Actor() ) << endl;
+#endif
 
   /* ======================
    *  Pipeline for picking
@@ -183,6 +194,16 @@ void visu_geom_prs::DoUnColor() const
   pl->Mapper()->ScalarVisibilityOn();
 }
 
+//! Enables/disables visualization of vertices depending on the passed flag.
+//! \param on [in] true/false.
+void visu_geom_prs::DoVertices(const bool on) const
+{
+  Handle(visu_shape_pipeline)
+    pl = Handle(visu_shape_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  //
+  on ? pl->SharedVerticesOn() : pl->SharedVerticesOff();
+}
+
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
@@ -250,11 +271,13 @@ void visu_geom_prs::afterUpdatePipelines() const
   pick_pl->Update();
   detect_pl->Update();
 
-  /* =================
-   *  Actualize color
-   * ================= */
+  /* ====================================
+   *  Actualize visualization properties
+   * ==================================== */
 
   Handle(geom_part_node) N = Handle(geom_part_node)::DownCast( this->GetNode() );
+
+  // Custom color (if any)
   if ( N->HasColor() )
   {
     QColor color = gui_common::IntToColor( N->GetColor() );
@@ -262,6 +285,9 @@ void visu_geom_prs::afterUpdatePipelines() const
   }
   else
     this->DoUnColor();
+
+  // Visualization of vertices
+  this->DoVertices( N->HasVertices() );
 }
 
 //! Callback for highlighting.
@@ -325,6 +351,11 @@ void visu_geom_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRen
     hili_dp = Handle(visu_shape_data_provider)::DownCast( this->dataProviderPick() );
   else
     hili_dp = Handle(visu_shape_data_provider)::DownCast( this->dataProviderDetect() );
+
+  if ( thePickRes.IsSelectionEdge() )
+    hili_pl->WireframeModeOn();
+  else
+    hili_pl->ShadingModeOn();
 
   // Re-initialize highlighting pipeline
   hili_dp->GetSubShapes()->ChangeMap() = aSubShapeIDs;

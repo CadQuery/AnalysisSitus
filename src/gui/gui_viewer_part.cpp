@@ -181,6 +181,9 @@ void gui_viewer_part::onSubShapesPicked()
   const visu_pick_result&      pick_res = sel.PickResult(SelectionNature_Pick);
   const visu_actor_elem_map&   elem_map = pick_res.GetPickMap();
 
+  if ( !pick_res.IsSelectionFace() )
+    return;
+
   // Prepare arrays for selected elements
   std::vector<int>                 picked_face_IDs;
   std::vector<ActAPI_DataObjectId> picked_node_IDs;

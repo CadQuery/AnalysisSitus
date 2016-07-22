@@ -60,6 +60,8 @@ public:
   void DoColor(const QColor& theColor) const;
   void DoUnColor() const;
 
+  void DoVertices(const bool on) const;
+
 public:
 
   vtkActor* MainActor() const

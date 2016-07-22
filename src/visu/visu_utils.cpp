@@ -578,7 +578,7 @@ void visu_utils::DefaultDetectionColor(double& fR,
 //! \return default line width for picking highlight.
 double visu_utils::DefaultPickLineWidth()
 {
-  return 2.0;
+  return 5.0;
 }
 
 //-----------------------------------------------------------------------------
@@ -587,7 +587,7 @@ double visu_utils::DefaultPickLineWidth()
 //! \return default line width for detection highlight.
 double visu_utils::DefaultDetectionLineWidth()
 {
-  return 2.0;
+  return 5.0;
 }
 
 //-----------------------------------------------------------------------------

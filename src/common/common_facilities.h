@@ -34,6 +34,9 @@
 #include <AIS_Shape.hxx>
 #pragma warning(pop)
 
+// Qr includes
+#include <QrCore.h>
+
 DEFINE_STANDARD_HANDLE(common_facilities, Standard_Transient)
 
 //! Common tools and objects for A-Situs software.
@@ -116,6 +119,25 @@ public:
       m_ref = new common_facilities;
 
     return m_ref;
+  }
+
+public:
+
+  static std::string ADDR(void* _transient)
+  {
+    std::string addr_str;
+    std::ostringstream ost;
+    ost << _transient;
+    addr_str = ost.str();
+
+    size_t pos = 0;
+    while ( addr_str[pos] == '0' )
+      pos++;
+
+    if ( pos )
+      addr_str = QrCore::substr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
+
+    return addr_str;
   }
 
 private:

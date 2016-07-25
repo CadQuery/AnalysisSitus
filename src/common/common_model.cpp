@@ -211,6 +211,10 @@ void common_model::Clear()
 
   this->OpenCommand(); // tx start
   {
+    // Clean up persistent selection
+    this->PartNode()->FaceRepresentation()    ->SetSelectedFace(0);
+    this->PartNode()->SurfaceRepresentation() ->SetSelectedFace(0);
+
     // Delete all Nodes queued for removal
     for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
       this->DeleteNode( nit.Value()->GetId() );

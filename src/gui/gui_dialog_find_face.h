@@ -16,6 +16,7 @@
 
 // Qt includes
 #pragma warning(push, 0)
+#include <QCheckBox>
 #include <QDialog>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -29,11 +30,11 @@ class gui_dialog_find_face : public QDialog
 public:
 
   gui_dialog_find_face(QWidget* parent = NULL);
-
   virtual ~gui_dialog_find_face();
 
 public slots:
 
+  void onUseAddress();
   void onFind();
 
 protected:
@@ -42,19 +43,25 @@ protected:
   struct t_widgets
   {
   //---------------------------------------------------------------------------
-    QPushButton*   pFind;  //!< Find face of interest.
+    QPushButton*   pFind;       //!< Find face of interest.
   //---------------------------------------------------------------------------
-    gui_line_edit* pIndex; //!< Face index.
+    QCheckBox*     pUseAddress; //!< Indicates whether to use address.
+    gui_line_edit* pIndex;      //!< Face index.
+    gui_line_edit* pAddress;    //!< Face address.
   //---------------------------------------------------------------------------
 
-    t_widgets() : pFind (NULL),
-                  pIndex(NULL)
+    t_widgets() : pFind       (NULL),
+                  pUseAddress (NULL),
+                  pIndex      (NULL),
+                  pAddress    (NULL)
     {}
 
     void Release()
     {
-      delete pFind;  pFind  = NULL;
-      delete pIndex; pIndex = NULL;
+      delete pFind;       pFind       = NULL;
+      delete pUseAddress; pUseAddress = NULL;
+      delete pIndex;      pIndex      = NULL;
+      delete pAddress;    pAddress    = NULL;
     }
   };
 

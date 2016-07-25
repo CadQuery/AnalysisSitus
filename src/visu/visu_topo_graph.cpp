@@ -250,7 +250,19 @@ vtkSmartPointer<vtkGraph>
     M.Bind(shape, root_vid);
     //
     labelArr->InsertNextValue( geom_utils::ShapeAddrWithPrefix(shape).c_str() );
-    groupArr->InsertNextValue( shape.ShapeType() == TopAbs_COMPOUND ? ARRNAME_GROUP_COMPOUND : ARRNAME_GROUP_ORDINARY );
+    //
+    if ( shape.ShapeType() == TopAbs_COMPOUND )
+      groupArr->InsertNextValue(ARRNAME_GROUP_COMPOUND);
+    else if ( shape.ShapeType() == TopAbs_FACE )
+      groupArr->InsertNextValue(ARRNAME_GROUP_FACE);
+    else if ( shape.ShapeType() == TopAbs_WIRE )
+      groupArr->InsertNextValue(ARRNAME_GROUP_WIRE);
+    else if ( shape.ShapeType() == TopAbs_EDGE )
+      groupArr->InsertNextValue(ARRNAME_GROUP_EDGE);
+    else if ( shape.ShapeType() == TopAbs_VERTEX )
+      groupArr->InsertNextValue(ARRNAME_GROUP_VERTEX);
+    else
+      groupArr->InsertNextValue(ARRNAME_GROUP_ORDINARY);
     //
     this->buildRecursively(shape, root_vid, leafType, directed_result, labelArr.GetPointer(), groupArr.GetPointer(), M);
 
@@ -309,7 +321,20 @@ void visu_topo_graph::buildRecursively(const TopoDS_Shape&             rootShape
         pLabelArr->InsertNextValue( geom_utils::ShapeAddrWithPrefix(subShape).c_str() );
 
       if ( pGroupArr )
-        pGroupArr->InsertNextValue( subShape.ShapeType() == TopAbs_COMPOUND ? ARRNAME_GROUP_COMPOUND : ARRNAME_GROUP_ORDINARY );
+      {
+        if ( subShape.ShapeType() == TopAbs_COMPOUND )
+          pGroupArr->InsertNextValue(ARRNAME_GROUP_COMPOUND);
+        else if ( subShape.ShapeType() == TopAbs_FACE )
+          pGroupArr->InsertNextValue(ARRNAME_GROUP_FACE);
+        else if ( subShape.ShapeType() == TopAbs_WIRE )
+          pGroupArr->InsertNextValue(ARRNAME_GROUP_WIRE);
+        else if ( subShape.ShapeType() == TopAbs_EDGE )
+          pGroupArr->InsertNextValue(ARRNAME_GROUP_EDGE);
+        else if ( subShape.ShapeType() == TopAbs_VERTEX )
+          pGroupArr->InsertNextValue(ARRNAME_GROUP_VERTEX);
+        else
+          pGroupArr->InsertNextValue(ARRNAME_GROUP_ORDINARY);
+      }
     }
     //
     pDS->AddEdge(rootId, childId);

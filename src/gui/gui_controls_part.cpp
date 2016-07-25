@@ -557,6 +557,8 @@ void gui_controls_part::onMaximizeFaces()
     if ( !geom_utils::MaximizeFaces(part) )
     {
       std::cout << "Error: face merging failed" << std::endl;
+      common_facilities::Instance()->Model->AbortCommand();
+      return;
     }
 
     TIMER_FINISH
@@ -617,7 +619,7 @@ void gui_controls_part::onCR()
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
-  // Shape to visualize a graph for
+  // Get part
   TopoDS_Shape part = N->GetShape();
   //
   if ( part.IsNull() )
@@ -646,7 +648,7 @@ void gui_controls_part::onCR()
     TIMER_FINISH
     TIMER_COUT_RESULT_MSG("Canonical Recognition")
 
-    TopoDS_Shape result = recognizer.GetResult();
+    const TopoDS_Shape& result = recognizer.GetResult();
     //
     std::cout << "Recognition done. Visualizing..." << std::endl;
     //

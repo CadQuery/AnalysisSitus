@@ -38,7 +38,12 @@
 #define ARRNAME_GROUP           "Group"
 #define ARRNAME_GROUP_ORDINARY  "Ordinary"
 #define ARRNAME_GROUP_ADJACENT  "Adjacent"
+//
 #define ARRNAME_GROUP_COMPOUND  "Compound"
+#define ARRNAME_GROUP_FACE      "Face"
+#define ARRNAME_GROUP_WIRE      "Wire"
+#define ARRNAME_GROUP_EDGE      "Edge"
+#define ARRNAME_GROUP_VERTEX    "Vertex"
 
 //! Item of topology graph.
 class visu_topo_graph_item : public QObject,
@@ -77,8 +82,21 @@ protected:
     //
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_ADJACENT )
       return vtkColor4ub(128, 175, 128, 255);
+
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_COMPOUND )
-      return vtkColor4ub(215, 75, 75, 255);
+      return vtkColor4ub(248, 31, 209, 255);
+
+    if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_FACE )
+      return vtkColor4ub(61, 132, 218, 255);
+
+    if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_WIRE )
+      return vtkColor4ub(150, 0, 0, 255);
+
+    if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_EDGE )
+      return vtkColor4ub(255, 0, 0, 255);
+
+    if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_VERTEX )
+      return vtkColor4ub(255, 242, 0, 255);
 
     return vtkColor4ub(175, 128, 128, 255);
   }

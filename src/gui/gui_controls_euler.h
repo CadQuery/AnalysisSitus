@@ -27,6 +27,8 @@ public:
 public slots:
 
   void onCheckEulerPoincare();
+  void onKEV();
+  void onKEF();
 
 private:
 
@@ -36,8 +38,8 @@ private:
   struct t_widgets
   {
     QPushButton* pCheckEulerPoincare; //!< Checks Euler-Poincare equation.
-    QPushButton* pKEV;
-    QPushButton* pKEF;
+    QPushButton* pKEV;                //!< KEV operation.
+    QPushButton* pKEF;                //!< KEF operation.
 
     t_widgets() : pCheckEulerPoincare (NULL),
                   pKEV                (NULL),

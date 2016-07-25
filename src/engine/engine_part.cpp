@@ -193,12 +193,12 @@ void engine_part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes)
   // Prepare cumulative set of all picked element IDs
   for ( visu_actor_elem_map::Iterator it(elem_map); it.More(); it.Next() )
   {
-    const TColStd_PackedMapOfInteger& face_mask = it.Value();
+    const TColStd_PackedMapOfInteger& subshape_mask = it.Value();
     //
-    for ( TColStd_MapIteratorOfPackedMapOfInteger mit(face_mask); mit.More(); mit.Next() )
+    for ( TColStd_MapIteratorOfPackedMapOfInteger mit(subshape_mask); mit.More(); mit.Next() )
     {
-      const int face_idx = mit.Key();
-      const TopoDS_Face& F = TopoDS::Face( M.FindKey(face_idx) );
+      const int           subshape_idx = mit.Key();
+      const TopoDS_Shape& F            = M.FindKey(subshape_idx);
       subShapes.Add(F);
     }
   }

@@ -40,6 +40,7 @@
 #include <NCollection_IncAllocator.hxx>
 #include <Precision.hxx>
 #include <ShapeUpgrade_UnifySameDomain.hxx>
+#include <StlAPI_Reader.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -602,6 +603,18 @@ bool geom_utils::ReadBRep(const TCollection_AsciiString& theFilename,
 {
   BRep_Builder BB;
   return BRepTools::Read(theShape, theFilename.ToCString(), BB) > 0;
+}
+
+//! Reads CAD model from native STL file.
+//! \param theFilename [in]  filename.
+//! \param theShape    [out] CAD model retrieved from file.
+//! \return true in case of success, false -- otherwise.
+bool geom_utils::ReadSTL(const TCollection_AsciiString& theFilename,
+                         TopoDS_Shape&                  theShape)
+{
+  StlAPI_Reader stlReader;
+  stlReader.Read( theShape, theFilename.ToCString() );
+  return !theShape.IsNull();
 }
 
 //! Writes shape to B-Rep format.

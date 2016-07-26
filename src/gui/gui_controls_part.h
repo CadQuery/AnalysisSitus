@@ -28,6 +28,7 @@ public slots:
 
   void onLoadBRep         ();
   void onLoadSTEP         ();
+  void onLoadSTL          ();
   void onSaveSTEP         ();
   void onSavePly          ();
   void onSaveBRep         ();
@@ -58,6 +59,7 @@ private:
   {
     QPushButton* pLoadBRep;         //!< Button for BREP loading.
     QPushButton* pLoadSTEP;         //!< Button for STEP loading.
+    QPushButton* pLoadSTL;          //!< Button for STL loading.
     QPushButton* pSaveSTEP;         //!< Save shape to STEP.
     QPushButton* pSavePly;          //!< Save triangulation to ply.
     QPushButton* pSaveBRep;         //!< Save shape to BREP.
@@ -81,6 +83,7 @@ private:
 
     t_widgets() : pLoadBRep         (NULL),
                   pLoadSTEP         (NULL),
+                  pLoadSTL          (NULL),
                   pSaveSTEP         (NULL),
                   pSavePly          (NULL),
                   pSaveBRep         (NULL),
@@ -107,6 +110,7 @@ private:
     {
       delete pLoadBRep;         pLoadBRep         = NULL;
       delete pLoadSTEP;         pLoadSTEP         = NULL;
+      delete pLoadSTL;          pLoadSTL          = NULL;
       delete pSaveSTEP;         pSaveSTEP         = NULL;
       delete pSavePly;          pSavePly          = NULL;
       delete pSaveBRep;         pSaveBRep         = NULL;

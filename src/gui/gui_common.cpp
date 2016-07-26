@@ -91,6 +91,17 @@ QString gui_common::selectOBJFile(const OpenSaveAction action)
   return selectFile(filter, "Select OBJ file", "Save OBJ file", action);
 }
 
+//! Allows to select filename for STL format.
+//! \param action [in] open or save.
+//! \return selected filename.
+QString gui_common::selectSTLFile(const OpenSaveAction action)
+{
+  QStringList filter;
+  filter << "STL mesh (*.stl)";
+  //
+  return selectFile(filter, "Select STL file", "Save STL file", action);
+}
+
 //! Selects filename for opening or saving.
 //! \param filter    [in] filter for extensions.
 //! \param openTitle [in] title for open dialog.

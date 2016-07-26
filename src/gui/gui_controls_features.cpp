@@ -482,7 +482,9 @@ void gui_controls_features::onFindSmoothEdges()
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    ActParamTool::AsShape( BN->Parameter(geom_boundary_edges_node::PID_Green) )->SetShape(smoothEdgesComp);
+    ActParamTool::AsShape( BN->Parameter(geom_boundary_edges_node::PID_Ordinary) ) ->SetShape( TopoDS_Shape() );
+    ActParamTool::AsShape( BN->Parameter(geom_boundary_edges_node::PID_Red) )      ->SetShape( TopoDS_Shape() );
+    ActParamTool::AsShape( BN->Parameter(geom_boundary_edges_node::PID_Green) )    ->SetShape(smoothEdgesComp);
   }
   common_facilities::Instance()->Model->CommitCommand();
 

@@ -107,6 +107,9 @@ public:
   static QString
     selectOBJFile(const OpenSaveAction action);
 
+  static QString
+    selectSTLFile(const OpenSaveAction action);
+
 //-----------------------------------------------------------------------------
 
   static QString

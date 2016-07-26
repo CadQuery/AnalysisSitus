@@ -79,6 +79,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   // Buttons
   m_widgets.pLoadBRep           = new QPushButton("Load b-rep");
   m_widgets.pLoadSTEP           = new QPushButton("Load STEP");
+  m_widgets.pLoadSTL            = new QPushButton("Load STL");
   m_widgets.pSaveSTEP           = new QPushButton("Save STEP");
   m_widgets.pSavePly            = new QPushButton("Save mesh (ply)");
   m_widgets.pSaveBRep           = new QPushButton("Save b-rep");
@@ -102,6 +103,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   //
   m_widgets.pLoadBRep           -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pLoadSTEP           -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pLoadSTL            -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSaveSTEP           -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSavePly            -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSaveBRep           -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -132,6 +134,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   //
   pExchangeLay->addWidget(m_widgets.pLoadBRep);
   pExchangeLay->addWidget(m_widgets.pLoadSTEP);
+  pExchangeLay->addWidget(m_widgets.pLoadSTL);
   pExchangeLay->addWidget(m_widgets.pSaveSTEP);
   pExchangeLay->addWidget(m_widgets.pSavePly);
   pExchangeLay->addWidget(m_widgets.pSaveBRep);
@@ -178,6 +181,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   // Connect signals to slots
   connect( m_widgets.pLoadBRep,         SIGNAL( clicked() ), SLOT( onLoadBRep         () ) );
   connect( m_widgets.pLoadSTEP,         SIGNAL( clicked() ), SLOT( onLoadSTEP         () ) );
+  connect( m_widgets.pLoadSTL,          SIGNAL( clicked() ), SLOT( onLoadSTL          () ) );
   connect( m_widgets.pSaveSTEP,         SIGNAL( clicked() ), SLOT( onSaveSTEP         () ) );
   connect( m_widgets.pSavePly,          SIGNAL( clicked() ), SLOT( onSavePly          () ) );
   connect( m_widgets.pSaveBRep,         SIGNAL( clicked() ), SLOT( onSaveBRep         () ) );
@@ -211,12 +215,12 @@ gui_controls_part::~gui_controls_part()
 
 //-----------------------------------------------------------------------------
 
-//! On b-rep loading.
+//! On BREP loading.
 void gui_controls_part::onLoadBRep()
 {
   QString filename = gui_common::selectBRepFile(gui_common::OpenSaveAction_Open);
 
-  // Read b-rep
+  // Read BREP
   TopoDS_Shape shape;
   if ( !geom_utils::ReadBRep(QStr2AsciiStr(filename), shape) )
   {
@@ -253,6 +257,42 @@ void gui_controls_part::onLoadSTEP()
   // Dialog for reading STEP
   gui_dialog_STEP* pDlg = new gui_dialog_STEP(gui_dialog_STEP::Mode_Read, this);
   pDlg->show();
+}
+
+//-----------------------------------------------------------------------------
+
+//! On STL loading.
+void gui_controls_part::onLoadSTL()
+{
+  QString filename = gui_common::selectSTLFile(gui_common::OpenSaveAction_Open);
+
+  // Read STL
+  TopoDS_Shape shape;
+  if ( !geom_utils::ReadSTL(QStr2AsciiStr(filename), shape) )
+  {
+    std::cout << "Error: cannot read STL file" << std::endl;
+    return;
+  }
+
+  // Clean up the Model
+  common_facilities::Instance()->Model->Clear();
+
+  // Set part geometry
+  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->PartNode();
+  //
+  common_facilities::Instance()->Model->OpenCommand(); // tx start
+  {
+    geom_n->SetShape(shape);
+  }
+  common_facilities::Instance()->Model->CommitCommand(); // tx commit
+
+  // Update UI
+  common_facilities::Instance()->Prs.DeleteAll();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize(geom_n.get(), false, true);
+  //
+  if ( common_facilities::Instance()->ObjectBrowser )
+    common_facilities::Instance()->ObjectBrowser->Populate();
 }
 
 //-----------------------------------------------------------------------------

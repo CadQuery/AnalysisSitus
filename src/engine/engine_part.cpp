@@ -203,3 +203,24 @@ void engine_part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes)
     }
   }
 }
+
+//! Retrieves indices of the highlighted faces.
+//! \param faceIndices [out] indices of the highlighted faces.
+void engine_part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices)
+{
+  TopTools_IndexedMapOfShape subShapes;
+  GetHighlightedSubShapes(subShapes);
+
+  // Take all faces
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  //
+  TopTools_IndexedMapOfShape allFaces;
+  TopExp::MapShapes( N->GetShape(), TopAbs_FACE, allFaces);
+
+  // Filter out non-selected faces
+  for ( int f = 1; f <= allFaces.Extent(); ++f )
+  {
+    if ( subShapes.Contains( allFaces(f) ) )
+      faceIndices.Add(f);
+  }
+}

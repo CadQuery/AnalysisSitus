@@ -40,6 +40,9 @@ namespace engine_part
   void
     GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes);
 
+  void
+    GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices);
+
 };
 
 #endif

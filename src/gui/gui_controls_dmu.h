@@ -34,8 +34,6 @@ public slots:
   void onLoadSTEP      ();
   void onSewing        ();
   void onMergeFaces    ();
-  void onIdentifyHoles ();
-  void onRemoveHoles   ();
   void onMesh          ();
   void onSaveXBF       ();
   void onSaveOBJ       ();

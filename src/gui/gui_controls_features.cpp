@@ -573,8 +573,8 @@ void gui_controls_features::onSuppressHoles()
   if ( !gui_common::PartShape(part) ) return;
 
   // Get highlighted faces
-  TopTools_IndexedMapOfShape selected;
-  engine_part::GetHighlightedSubShapes(selected);
+  TColStd_PackedMapOfInteger selected;
+  engine_part::GetHighlightedFaces(selected);
 
   TIMER_NEW
   TIMER_GO
@@ -811,8 +811,8 @@ void gui_controls_features::onDeleteSelected()
   if ( !gui_common::PartShape(part) ) return;
 
   // Get highlighted faces
-  TopTools_IndexedMapOfShape selected;
-  engine_part::GetHighlightedSubShapes(selected);
+  TColStd_PackedMapOfInteger selected;
+  engine_part::GetHighlightedFaces(selected);
 
   TIMER_NEW
   TIMER_GO
@@ -854,8 +854,8 @@ void gui_controls_features::onDeleteSelectedFull()
   if ( !gui_common::PartShape(part) ) return;
 
   // Get highlighted faces
-  TopTools_IndexedMapOfShape selected;
-  engine_part::GetHighlightedSubShapes(selected);
+  TColStd_PackedMapOfInteger selected;
+  engine_part::GetHighlightedFaces(selected);
 
   TIMER_NEW
   TIMER_GO

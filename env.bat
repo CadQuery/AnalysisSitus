@@ -197,4 +197,5 @@ echo CAS_BIN64             = %CAS_BIN64%
 echo CASDEB                = %CASDEB%
 echo CSF_PluginDefaults    = %CSF_PluginDefaults% 
 echo CSF_ResourcesDefaults = %CSF_ResourcesDefaults% 
+echo PATH                  = %PATH% 
 echo ...

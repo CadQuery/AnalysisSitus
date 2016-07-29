@@ -668,6 +668,8 @@ void gui_controls_part::onCR()
     return;
   }
 
+  TColStd_PackedMapOfInteger modifiedFaces, selected;
+
   common_facilities::Instance()->Model->OpenCommand();
   {
     TIMER_NEW
@@ -693,6 +695,9 @@ void gui_controls_part::onCR()
     std::cout << "Recognition done. Visualizing..." << std::endl;
     //
     N->SetShape(result);
+
+    // Get converted faces
+    modifiedFaces = recognizer.GetHistory()->GetModified();
   }
   common_facilities::Instance()->Model->CommitCommand();
 
@@ -702,6 +707,10 @@ void gui_controls_part::onCR()
   common_facilities::Instance()->Prs.DeleteAll();
   common_facilities::Instance()->Prs.Part->InitializePickers();
   common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+
+  // Highlight the modified faces
+  engine_part::GetSubShapeIndicesByFaceIndices(modifiedFaces, selected);
+  engine_part::HighlightSubShapes(selected);
 }
 
 //-----------------------------------------------------------------------------

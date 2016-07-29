@@ -31,6 +31,17 @@ namespace engine_part
                        TColStd_PackedMapOfInteger&       indices);
 
   void
+    GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteger& faceIndices,
+                                    TColStd_PackedMapOfInteger&       indices);
+
+  void
+    HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices);
+
+  void
+    HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
+                       const int                         color);
+
+  void
     HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes);
 
   void

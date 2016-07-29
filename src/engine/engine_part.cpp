@@ -108,6 +108,27 @@ void engine_part::Clean_Part()
   part_n->SurfaceRepresentation()->Init();
 }
 
+//! Extracts sub-shape indices for the given collection of face indices.
+//! \param faceIndices [in]  indices of faces.
+//! \param indices     [out] their corresponding indices among all sub-shapes.
+void engine_part::GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteger& faceIndices,
+                                                  TColStd_PackedMapOfInteger&       indices)
+{
+  TopTools_IndexedMapOfShape AllFaces, SelectedFaces;
+  TopExp::MapShapes(common_facilities::Instance()->Model->PartNode()->GetShape(),
+                    TopAbs_FACE, AllFaces);
+
+  // Get selected faces in topological form
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(faceIndices); fit.More(); fit.Next() )
+  {
+    const int input_face_idx = fit.Key();
+    SelectedFaces.Add( AllFaces.FindKey(input_face_idx) );
+  }
+
+  // Get indices of the faces among all sub-shapes
+  GetSubShapeIndices(SelectedFaces, indices);
+}
+
 //! Extracts sub-shape indices for the given collection of sub-shapes.
 //! \param subShapes [in]  sub-shapes of interest.
 //! \param indices   [out] their corresponding IDs.
@@ -119,6 +140,51 @@ void engine_part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes
 
   for ( int i = 1; i <= subShapes.Extent(); ++i )
     indices.Add( M.FindIndex( subShapes.FindKey(i) ) );
+}
+
+//! Highlights the passed sub-shapes identified by their indices.
+//! \param subShapeIndices [in] indices of the sub-shapes to highlight.
+void engine_part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices)
+{
+  double pick_color[3];
+  visu_utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
+  QColor color;
+  color.setRedF   (pick_color[0]);
+  color.setGreenF (pick_color[1]);
+  color.setBlueF  (pick_color[2]);
+  //
+  HighlightSubShapes( subShapeIndices, gui_common::ColorToInt(color) );
+}
+
+//! Highlights the passed sub-shapes identified by their indices.
+//! \param subShapeIndices [in] indices of the sub-shapes to highlight.
+//! \param color           [in] highlighting color.
+void engine_part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
+                                     const int                         color)
+{
+  // Get Part Node
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+
+  // Get Presentation for the Part Node
+  Handle(visu_geom_prs)
+    prs = Handle(visu_geom_prs)::DownCast( common_facilities::Instance()->Prs.Part->GetPresentation(N) );
+
+  // Prepare list to satisfy the API of Presentation Manager
+  Handle(ActAPI_HNodeList) dummyList = new ActAPI_HNodeList;
+  dummyList->Append(N);
+
+  // Prepare selection object
+  visu_actor_elem_map selection;
+  selection.Bind( prs->MainActor(), subShapeIndices );
+
+  // Set color
+  double prevColor[3];
+  QColor qcolor = gui_common::IntToColor(color);
+  prs->GetPickPipeline()->Actor()->GetProperty()->GetColor( prevColor[0], prevColor[1], prevColor[2] );
+  prs->GetPickPipeline()->Actor()->GetProperty()->SetColor( qcolor.redF(), qcolor.greenF(), qcolor.blueF() );
+
+  // Highlight
+  common_facilities::Instance()->Prs.Part->Highlight(dummyList, selection, SelectionMode_Face);
 }
 
 //! Highlights the passed sub-shapes in Part Viewer.
@@ -145,29 +211,8 @@ void engine_part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes
   TColStd_PackedMapOfInteger selected;
   engine_part::GetSubShapeIndices(subShapes, selected);
 
-  // Get Part Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
-
-  // Get Presentation for the Part Node
-  Handle(visu_geom_prs)
-    prs = Handle(visu_geom_prs)::DownCast( common_facilities::Instance()->Prs.Part->GetPresentation(N) );
-
-  // Prepare list to satisfy the API of Presentation Manager
-  Handle(ActAPI_HNodeList) dummyList = new ActAPI_HNodeList;
-  dummyList->Append(N);
-
-  // Prepare selection object
-  visu_actor_elem_map selection;
-  selection.Bind( prs->MainActor(), selected );
-
-  // Set color
-  double prevColor[3];
-  QColor qcolor = gui_common::IntToColor(color);
-  prs->GetPickPipeline()->Actor()->GetProperty()->GetColor( prevColor[0], prevColor[1], prevColor[2] );
-  prs->GetPickPipeline()->Actor()->GetProperty()->SetColor( qcolor.redF(), qcolor.greenF(), qcolor.blueF() );
-
   // Highlight
-  common_facilities::Instance()->Prs.Part->Highlight(dummyList, selection, SelectionMode_Face);
+  HighlightSubShapes(selected, color);
 }
 
 //! Retrieves highlighted sub-shapes from the viewer.

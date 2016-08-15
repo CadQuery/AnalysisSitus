@@ -697,7 +697,7 @@ void gui_controls_part::onCR()
     N->SetShape(result);
 
     // Get converted faces
-    modifiedFaces = recognizer.GetHistory()->GetModified();
+    recognizer.GetHistory()->GetModified(modifiedFaces);
   }
   common_facilities::Instance()->Model->CommitCommand();
 

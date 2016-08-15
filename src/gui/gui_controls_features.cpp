@@ -26,6 +26,7 @@
 #include <feature_suppress.h>
 #include <feature_detect_fillets.h>
 #include <feature_detect_choles.h>
+#include <feature_detect_ordinary_blends.h>
 #include <feature_detect_pholes.h>
 #include <feature_detect_pockets.h>
 #include <feature_solid_angle.h>
@@ -649,17 +650,27 @@ void gui_controls_features::onFindFillets()
 
   // Identify fillets
   const double R = 20.0;
-  feature_detect_fillets detector(part, R,
-                                  common_facilities::Instance()->Notifier,
-                                  common_facilities::Instance()->Plotter);
+  feature_detect_ordinary_blends detector(part, NULL,
+                                          common_facilities::Instance()->Notifier,
+                                          common_facilities::Instance()->Plotter);
   if ( !detector.Perform() )
   {
     std::cout << "Error: cannot identify fillets" << std::endl;
     return;
   }
 
+  // Update viewer
+  Handle(visu_geom_prs)
+    NPrs = Handle(visu_geom_prs)::DownCast(
+      common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->PartNode() )
+    );
+  //
+  NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
+  //
+  NPrs->GetPipeline(visu_geom_prs::Pipeline_Contour)->Actor()->SetVisibility(0);
+
   // Get detected fillets
-  const TopTools_IndexedMapOfShape& fillets = detector.Result();
+  const TopTools_IndexedMapOfShape& fillets = detector.GetResultFaces();
   if ( fillets.IsEmpty() )
   {
     std::cout << "No fillets detected with radius not greater than " << R << std::endl;
@@ -668,6 +679,7 @@ void gui_controls_features::onFindFillets()
   else
     std::cout << fillets.Extent() << " hole(s) detected with radius not greater than " << R << std::endl;
 
+  // Highlight fillet faces
   engine_part::HighlightSubShapes(fillets);
 }
 

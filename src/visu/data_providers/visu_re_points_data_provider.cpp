@@ -15,7 +15,7 @@
 
 //! Constructor.
 visu_re_points_data_provider::visu_re_points_data_provider()
-: visu_points_data_provider( common_facilities::Instance()->Model->RENode()->Points() )
+: visu_points_data_provider( common_facilities::Instance()->Model->GetRENode()->Points() )
 {}
 
 //-----------------------------------------------------------------------------

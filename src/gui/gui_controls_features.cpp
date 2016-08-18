@@ -30,6 +30,7 @@
 #include <feature_detect_pholes.h>
 #include <feature_detect_pockets.h>
 #include <feature_solid_angle.h>
+#include <feature_utils.h>
 
 // Geometry includes
 #include <geom_aag_vtk.h>
@@ -150,6 +151,7 @@ gui_controls_features::gui_controls_features(QWidget* parent) : QWidget(parent)
   m_widgets.pFindSameHosts       = new QPushButton("Find same hosts");
   m_widgets.pRehostFaces         = new QPushButton("Re-host faces");
   m_widgets.pUnperiodizeSelected = new QPushButton("Unperiodize sel. faces");
+  m_widgets.pCheckAlongCurvature = new QPushButton("Check along curvature");
   //
   m_widgets.pCheckSolidAngles    -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pFindSmoothEdges     -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -166,6 +168,7 @@ gui_controls_features::gui_controls_features(QWidget* parent) : QWidget(parent)
   m_widgets.pFindSameHosts       -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pRehostFaces         -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pUnperiodizeSelected -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pCheckAlongCurvature -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Group for features
   QGroupBox*   pFeaturesGroup = new QGroupBox("Features");
@@ -190,6 +193,7 @@ gui_controls_features::gui_controls_features(QWidget* parent) : QWidget(parent)
   pDyModelingLay->addWidget(m_widgets.pFindSameHosts);
   pDyModelingLay->addWidget(m_widgets.pRehostFaces);
   pDyModelingLay->addWidget(m_widgets.pUnperiodizeSelected);
+  pDyModelingLay->addWidget(m_widgets.pCheckAlongCurvature);
 
   // Set layout
   m_pMainLayout->addWidget(pFeaturesGroup);
@@ -215,6 +219,7 @@ gui_controls_features::gui_controls_features(QWidget* parent) : QWidget(parent)
   connect( m_widgets.pFindSameHosts,       SIGNAL( clicked() ), SLOT( onFindSameHosts       () ) );
   connect( m_widgets.pRehostFaces,         SIGNAL( clicked() ), SLOT( onRehostFaces         () ) );
   connect( m_widgets.pUnperiodizeSelected, SIGNAL( clicked() ), SLOT( onUnperiodizeSelected () ) );
+  connect( m_widgets.pCheckAlongCurvature, SIGNAL( clicked() ), SLOT( onCheckAlongCurvature () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -350,7 +355,7 @@ void gui_controls_features::onCheckSolidAngles()
 
   // Save to model
   Handle(geom_boundary_edges_node)
-    BN = common_facilities::Instance()->Model->PartNode()->BoundaryEdgesRepresentation();
+    BN = common_facilities::Instance()->Model->GetPartNode()->GetBoundaryEdgesRepresentation();
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
@@ -363,7 +368,7 @@ void gui_controls_features::onCheckSolidAngles()
   // Update viewer
   Handle(visu_geom_prs)
     NPrs = Handle(visu_geom_prs)::DownCast(
-             common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->PartNode() )
+             common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->GetPartNode() )
            );
   if ( NPrs.IsNull() )
   {
@@ -479,7 +484,7 @@ void gui_controls_features::onFindSmoothEdges()
 
   // Save to model
   Handle(geom_boundary_edges_node)
-    BN = common_facilities::Instance()->Model->PartNode()->BoundaryEdgesRepresentation();
+    BN = common_facilities::Instance()->Model->GetPartNode()->GetBoundaryEdgesRepresentation();
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
@@ -492,7 +497,7 @@ void gui_controls_features::onFindSmoothEdges()
   // Update viewer
   Handle(visu_geom_prs)
     NPrs = Handle(visu_geom_prs)::DownCast(
-             common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->PartNode() )
+             common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->GetPartNode() )
            );
   if ( NPrs.IsNull() )
   {
@@ -599,14 +604,14 @@ void gui_controls_features::onSuppressHoles()
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    common_facilities::Instance()->Model->PartNode()->SetShape(result);
+    common_facilities::Instance()->Model->GetPartNode()->SetShape(result);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
   common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->PartNode().get() );
+  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->GetPartNode().get() );
 }
 
 //-----------------------------------------------------------------------------
@@ -648,11 +653,18 @@ void gui_controls_features::onFindFillets()
   TopoDS_Shape part;
   if ( !gui_common::PartShape(part) ) return;
 
+  // Get highlighted faces
+  TColStd_PackedMapOfInteger selectedFaceIndices;
+  engine_part::GetHighlightedFaces(selectedFaceIndices);
+
   // Identify fillets
   const double R = 20.0;
   feature_detect_ordinary_blends detector(part, NULL,
                                           common_facilities::Instance()->Notifier,
                                           common_facilities::Instance()->Plotter);
+  //
+  detector.SetFaces(selectedFaceIndices);
+  //
   if ( !detector.Perform() )
   {
     std::cout << "Error: cannot identify fillets" << std::endl;
@@ -662,7 +674,7 @@ void gui_controls_features::onFindFillets()
   // Update viewer
   Handle(visu_geom_prs)
     NPrs = Handle(visu_geom_prs)::DownCast(
-      common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->PartNode() )
+      common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->GetPartNode() )
     );
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
@@ -761,14 +773,14 @@ void gui_controls_features::onRehostFaces()
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    common_facilities::Instance()->Model->PartNode()->SetShape(result);
+    common_facilities::Instance()->Model->GetPartNode()->SetShape(result);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
   common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->PartNode().get() );
+  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->GetPartNode().get() );
 }
 
 //-----------------------------------------------------------------------------
@@ -804,14 +816,14 @@ void gui_controls_features::onDetachSelected()
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    common_facilities::Instance()->Model->PartNode()->SetShape(result);
+    common_facilities::Instance()->Model->GetPartNode()->SetShape(result);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
   common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->PartNode().get() );
+  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->GetPartNode().get() );
 }
 
 //-----------------------------------------------------------------------------
@@ -847,14 +859,14 @@ void gui_controls_features::onDeleteSelected()
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    common_facilities::Instance()->Model->PartNode()->SetShape(result);
+    common_facilities::Instance()->Model->GetPartNode()->SetShape(result);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
   common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->PartNode().get() );
+  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->GetPartNode().get() );
 }
 
 //-----------------------------------------------------------------------------
@@ -890,14 +902,14 @@ void gui_controls_features::onDeleteSelectedFull()
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    common_facilities::Instance()->Model->PartNode()->SetShape(result);
+    common_facilities::Instance()->Model->GetPartNode()->SetShape(result);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
   common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->PartNode().get() );
+  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->GetPartNode().get() );
 }
 
 //-----------------------------------------------------------------------------
@@ -943,5 +955,54 @@ void gui_controls_features::onUnperiodizeSelected()
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
   common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->PartNode().get() );
+  common_facilities::Instance()->Prs.Part->Actualize( common_facilities::Instance()->Model->GetPartNode().get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Evaluate curvature along the selected edge.
+void gui_controls_features::onCheckAlongCurvature()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Get highlighted edges
+  TopTools_IndexedMapOfShape selected;
+  engine_part::GetHighlightedSubShapes(selected);
+
+  for ( int e = 1; e <= selected.Extent(); ++e )
+  {
+    const TopoDS_Edge& edge = TopoDS::Edge( selected(e) );
+    //
+    if ( edge.IsNull() )
+      continue;
+
+    // Get owner faces
+    TopTools_IndexedDataMapOfShapeListOfShape M;
+    TopExp::MapShapesAndAncestors(part, TopAbs_EDGE, TopAbs_FACE, M);
+    //
+    const TopTools_ListOfShape& faces = M.FindFromKey(edge);
+    //
+    for ( TopTools_ListIteratorOfListOfShape fit(faces); fit.More(); fit.Next() )
+    {
+      const TopoDS_Face& face = TopoDS::Face( fit.Value() );
+
+      // Evaluate along curvature
+      double k;
+      if ( !feature_utils::EvaluateAlongCurvature(face, edge, k) )
+      {
+        std::cout << "Error: cannot evaluate along curvature" << std::endl;
+        continue;
+      }
+      else
+      {
+        std::cout << "\tAlong curvature: " << k << std::endl;
+
+        if ( Abs(k) < 1.e-5 )
+          std::cout << "\t~ Curvature radius: infinite" << std::endl;
+        else
+          std::cout << "\t~ Curvature radius: " << Abs(1.0 / k) << std::endl;
+      }
+    }
+  }
 }

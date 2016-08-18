@@ -95,74 +95,118 @@ namespace CheckShapeAux
   void FillProblems(const BRepCheck_Status            stat,
                     Handle(TColStd_HArray1OfInteger)& NbProblems)
   {
+    // Increment the number of anomalies of the given type
     switch ( stat )
     {
-    case BRepCheck_InvalidPointOnCurve:
-      NbProblems->SetValue(1, NbProblems->Value(1) + 1); break;
-    case BRepCheck_InvalidPointOnCurveOnSurface:
-      NbProblems->SetValue(2, NbProblems->Value(2) + 1); break;
-    case BRepCheck_InvalidPointOnSurface:
-      NbProblems->SetValue(3, NbProblems->Value(3) + 1); break;
-    case BRepCheck_No3DCurve:
-      NbProblems->SetValue(4, NbProblems->Value(4) + 1); break;
-    case BRepCheck_Multiple3DCurve:
-      NbProblems->SetValue(5, NbProblems->Value(5) + 1); break;
-    case BRepCheck_Invalid3DCurve:
-      NbProblems->SetValue(6, NbProblems->Value(6) + 1); break;
-    case BRepCheck_NoCurveOnSurface:
-      NbProblems->SetValue(7, NbProblems->Value(7) + 1); break;
-    case BRepCheck_InvalidCurveOnSurface:
-      NbProblems->SetValue(8, NbProblems->Value(8) + 1); break;
-    case BRepCheck_InvalidCurveOnClosedSurface:
-      NbProblems->SetValue(9, NbProblems->Value(9) + 1); break;
-    case BRepCheck_InvalidSameRangeFlag:
-      NbProblems->SetValue(10, NbProblems->Value(10) + 1); break;
-    case BRepCheck_InvalidSameParameterFlag:
-      NbProblems->SetValue(11, NbProblems->Value(11) + 1); break;
-    case BRepCheck_InvalidDegeneratedFlag:
-      NbProblems->SetValue(12, NbProblems->Value(12) + 1); break;
-    case BRepCheck_FreeEdge:
-      NbProblems->SetValue(13, NbProblems->Value(13) + 1); break;
-    case BRepCheck_InvalidMultiConnexity:
-      NbProblems->SetValue(14, NbProblems->Value(14) + 1); break;
-    case BRepCheck_InvalidRange:
-      NbProblems->SetValue(15, NbProblems->Value(15) + 1); break;
-    case BRepCheck_EmptyWire:
-      NbProblems->SetValue(16, NbProblems->Value(16) + 1); break;
-    case BRepCheck_RedundantEdge:
-      NbProblems->SetValue(17, NbProblems->Value(17) + 1); break;
-    case BRepCheck_SelfIntersectingWire:
-      NbProblems->SetValue(18, NbProblems->Value(18) + 1); break;
-    case BRepCheck_NoSurface:
-      NbProblems->SetValue(19, NbProblems->Value(19) + 1); break;
-    case BRepCheck_InvalidWire:
-      NbProblems->SetValue(20, NbProblems->Value(20) + 1); break;
-    case BRepCheck_RedundantWire:
-      NbProblems->SetValue(21, NbProblems->Value(21) + 1); break;
-    case BRepCheck_IntersectingWires:
-      NbProblems->SetValue(22, NbProblems->Value(22) + 1); break;
-    case BRepCheck_InvalidImbricationOfWires:
-      NbProblems->SetValue(23, NbProblems->Value(23) + 1); break;
-    case BRepCheck_EmptyShell:
-      NbProblems->SetValue(24, NbProblems->Value(24) + 1); break;
-    case BRepCheck_RedundantFace:
-      NbProblems->SetValue(25, NbProblems->Value(25) + 1); break;
-    case BRepCheck_UnorientableShape:
-      NbProblems->SetValue(26, NbProblems->Value(26) + 1); break;
-    case BRepCheck_NotClosed:
-      NbProblems->SetValue(27, NbProblems->Value(27) + 1); break;
-    case BRepCheck_NotConnected:
-      NbProblems->SetValue(28, NbProblems->Value(28) + 1); break;
-    case BRepCheck_SubshapeNotInShape:
-      NbProblems->SetValue(29, NbProblems->Value(29) + 1); break;
-    case BRepCheck_BadOrientation:
-      NbProblems->SetValue(30, NbProblems->Value(30) + 1); break;
-    case BRepCheck_BadOrientationOfSubshape:
-      NbProblems->SetValue(31, NbProblems->Value(31) + 1); break;
-    case BRepCheck_CheckFail:
-      NbProblems->SetValue(32, NbProblems->Value(32) + 1); break;
-    default:
-      break;
+      case BRepCheck_InvalidPointOnCurve:
+        NbProblems->ChangeValue(BRepCheck_InvalidPointOnCurve)++; break;
+        //
+      case BRepCheck_InvalidPointOnCurveOnSurface:
+        NbProblems->ChangeValue(BRepCheck_InvalidPointOnCurveOnSurface)++; break;
+        //
+      case BRepCheck_InvalidPointOnSurface:
+        NbProblems->ChangeValue(BRepCheck_InvalidPointOnSurface)++; break;
+        //
+      case BRepCheck_No3DCurve:
+        NbProblems->ChangeValue(BRepCheck_No3DCurve)++; break;
+        //
+      case BRepCheck_Multiple3DCurve:
+        NbProblems->ChangeValue(BRepCheck_Multiple3DCurve)++; break;
+        //
+      case BRepCheck_Invalid3DCurve:
+        NbProblems->ChangeValue(BRepCheck_Invalid3DCurve)++; break;
+        //
+      case BRepCheck_NoCurveOnSurface:
+        NbProblems->ChangeValue(BRepCheck_NoCurveOnSurface)++; break;
+        //
+      case BRepCheck_InvalidCurveOnSurface:
+        NbProblems->ChangeValue(BRepCheck_InvalidCurveOnSurface)++; break;
+        //
+      case BRepCheck_InvalidCurveOnClosedSurface:
+        NbProblems->ChangeValue(BRepCheck_InvalidCurveOnClosedSurface)++; break;
+        //
+      case BRepCheck_InvalidSameRangeFlag:
+        NbProblems->ChangeValue(BRepCheck_InvalidSameRangeFlag)++; break;
+        //
+      case BRepCheck_InvalidSameParameterFlag:
+        NbProblems->ChangeValue(BRepCheck_InvalidSameParameterFlag)++; break;
+        //
+      case BRepCheck_InvalidDegeneratedFlag:
+        NbProblems->ChangeValue(BRepCheck_InvalidDegeneratedFlag)++; break;
+        //
+      case BRepCheck_FreeEdge:
+        NbProblems->ChangeValue(BRepCheck_FreeEdge)++; break;
+        //
+      case BRepCheck_InvalidMultiConnexity:
+        NbProblems->ChangeValue(BRepCheck_InvalidMultiConnexity)++; break;
+        //
+      case BRepCheck_InvalidRange:
+        NbProblems->ChangeValue(BRepCheck_InvalidRange)++; break;
+        //
+      case BRepCheck_EmptyWire:
+        NbProblems->ChangeValue(BRepCheck_EmptyWire)++; break;
+        //
+      case BRepCheck_RedundantEdge:
+        NbProblems->ChangeValue(BRepCheck_RedundantEdge)++; break;
+        //
+      case BRepCheck_SelfIntersectingWire:
+        NbProblems->ChangeValue(BRepCheck_SelfIntersectingWire)++; break;
+        //
+      case BRepCheck_NoSurface:
+        NbProblems->ChangeValue(BRepCheck_NoSurface)++; break;
+        //
+      case BRepCheck_InvalidWire:
+        NbProblems->ChangeValue(BRepCheck_InvalidWire)++; break;
+        //
+      case BRepCheck_RedundantWire:
+        NbProblems->ChangeValue(BRepCheck_RedundantWire)++; break;
+        //
+      case BRepCheck_IntersectingWires:
+        NbProblems->ChangeValue(BRepCheck_IntersectingWires)++; break;
+        //
+      case BRepCheck_InvalidImbricationOfWires:
+        NbProblems->ChangeValue(BRepCheck_InvalidImbricationOfWires)++; break;
+        //
+      case BRepCheck_EmptyShell:
+        NbProblems->ChangeValue(BRepCheck_EmptyShell)++; break;
+        //
+      case BRepCheck_RedundantFace:
+        NbProblems->ChangeValue(BRepCheck_RedundantFace)++; break;
+        //
+      case BRepCheck_InvalidImbricationOfShells:
+        NbProblems->ChangeValue(BRepCheck_InvalidImbricationOfShells)++; break;
+        //
+      case BRepCheck_UnorientableShape:
+        NbProblems->ChangeValue(BRepCheck_UnorientableShape)++; break;
+        //
+      case BRepCheck_NotClosed:
+        NbProblems->ChangeValue(BRepCheck_NotClosed)++; break;
+        //
+      case BRepCheck_NotConnected:
+        NbProblems->ChangeValue(BRepCheck_NotConnected)++; break;
+        //
+      case BRepCheck_SubshapeNotInShape:
+        NbProblems->ChangeValue(BRepCheck_SubshapeNotInShape)++; break;
+        //
+      case BRepCheck_BadOrientation:
+        NbProblems->ChangeValue(BRepCheck_BadOrientation)++; break;
+        //
+      case BRepCheck_BadOrientationOfSubshape:
+        NbProblems->ChangeValue(BRepCheck_BadOrientationOfSubshape)++; break;
+        //
+      case BRepCheck_InvalidPolygonOnTriangulation:
+        NbProblems->ChangeValue(BRepCheck_InvalidPolygonOnTriangulation)++; break;
+        //
+      case BRepCheck_InvalidToleranceValue:
+        NbProblems->ChangeValue(BRepCheck_InvalidToleranceValue)++; break;
+        //
+      case BRepCheck_EnclosedRegion:
+        NbProblems->ChangeValue(BRepCheck_EnclosedRegion)++; break;
+        //
+      case BRepCheck_CheckFail:
+        NbProblems->ChangeValue(BRepCheck_CheckFail)++; break;
+        //
+      default: break;
     }
   }
 
@@ -274,7 +318,7 @@ namespace CheckShapeAux
   }
 
   //! Dumps all detected invalidities to Logger.
-  //! \param Journal   [in] Progress Entry.
+  //! \param Journal  [in] Progress Entry.
   //! \param theAna   [in] checker tool.
   //! \param theShape [in] shape to check.
   void StructuralDump(ActAPI_ProgressEntry      Journal,
@@ -287,8 +331,8 @@ namespace CheckShapeAux
     Journal.SendLogMessage(LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_HAS_PROBLEMS");
 
     // Initialize array storing the number of problems
-    Handle(TColStd_HArray1OfInteger) NbProblems = new TColStd_HArray1OfInteger(1, 32);
-    for ( int i = 1; i <= 32; i++ )
+    Handle(TColStd_HArray1OfInteger) NbProblems = new TColStd_HArray1OfInteger(1, BRepCheck_CheckFail);
+    for ( int i = 1; i <= BRepCheck_CheckFail; i++ )
       NbProblems->SetValue(i, 0);
 
     Handle(TopTools_HSequenceOfShape) sl = new TopTools_HSequenceOfShape();
@@ -296,102 +340,149 @@ namespace CheckShapeAux
     TopTools_DataMapOfShapeListOfShape MAP;
     GetProblemShapes(theAna, theShape, sl, NbProblems, MAP);
 
-    if ( NbProblems->Value(1) > 0 )
+    if ( NbProblems->Value(BRepCheck_InvalidPointOnCurve) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_POINT_ON_CURVE"
-                                             << NbProblems->Value(1) );
-    if ( NbProblems->Value(2) > 0 )
+                                              << NbProblems->Value(BRepCheck_InvalidPointOnCurve) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidPointOnCurveOnSurface) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_POINT_ON_CURVE_ON_SURFACE"
-                                             << NbProblems->Value(2) );
-    if ( NbProblems->Value(3) > 0 )
+                                              << NbProblems->Value(BRepCheck_InvalidPointOnCurveOnSurface) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidPointOnSurface) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_POINT_ON_SURFACE"
-                                             << NbProblems->Value(3) );
-    if ( NbProblems->Value(4) > 0 )
+                                              << NbProblems->Value(BRepCheck_InvalidPointOnSurface) );
+    //
+    if ( NbProblems->Value(BRepCheck_No3DCurve) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_NO_3D_CURVE"
-                                             << NbProblems->Value(4) );
-    if ( NbProblems->Value(5) > 0 )
+                                              << NbProblems->Value(BRepCheck_No3DCurve) );
+    //
+    if ( NbProblems->Value(BRepCheck_Multiple3DCurve) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_MULTIPLE_3D_CURVE"
-                                             << NbProblems->Value(5) );
-    if ( NbProblems->Value(6) > 0 )
+                                              << NbProblems->Value(BRepCheck_Multiple3DCurve) );
+    //
+    if ( NbProblems->Value(BRepCheck_Invalid3DCurve) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_3D_CURVE"
-                                             << NbProblems->Value(6) );
-    if ( NbProblems->Value(7) > 0 )
+                                              << NbProblems->Value(BRepCheck_Invalid3DCurve) );
+    //
+    if ( NbProblems->Value(BRepCheck_NoCurveOnSurface) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_NO_CURVE_ON_SURFACE"
-                                             << NbProblems->Value(7) );
-    if ( NbProblems->Value(8) > 0 )
+                                              << NbProblems->Value(BRepCheck_NoCurveOnSurface) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidCurveOnSurface) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_CURVE_ON_SURFACE"
-                                             << NbProblems->Value(8) );
-    if ( NbProblems->Value(9) > 0 )
+                                              << NbProblems->Value(BRepCheck_InvalidCurveOnSurface) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidCurveOnClosedSurface) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_CURVE_ON_CLOSED_SURFACE"
-                                             << NbProblems->Value(9) );
-    if ( NbProblems->Value(10) > 0 )
+                                              << NbProblems->Value(BRepCheck_InvalidCurveOnClosedSurface) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidSameRangeFlag) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_SAME_RANGE_FLAG"
-                                             << NbProblems->Value(10) );
-    if ( NbProblems->Value(11) > 0 )
+                                              << NbProblems->Value(BRepCheck_InvalidSameRangeFlag) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidSameParameterFlag) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_SAME_PARAMETER_FLAG"
-                                             << NbProblems->Value(11) );
-    if ( NbProblems->Value(12) > 0 )
+                                              << NbProblems->Value(BRepCheck_InvalidSameParameterFlag) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidDegeneratedFlag) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_DEGEN_FLAG"
-                                             << NbProblems->Value(12) );
-    if ( NbProblems->Value(13) > 0 )
+                                              << NbProblems->Value(BRepCheck_InvalidDegeneratedFlag) );
+    //
+    if ( NbProblems->Value(BRepCheck_FreeEdge) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_FREE_EDGE"
-                                             << NbProblems->Value(13) );
-    if ( NbProblems->Value(14) > 0 )
+                                              << NbProblems->Value(BRepCheck_FreeEdge) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidMultiConnexity) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_MULTI_CONNEXITY"
-                                             << NbProblems->Value(14) );
-    if ( NbProblems->Value(15) > 0 )
+                                              << NbProblems->Value(BRepCheck_InvalidMultiConnexity) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidRange) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_RANGE"
-                                             << NbProblems->Value(15) );
-    if ( NbProblems->Value(16) > 0 )
+                                              << NbProblems->Value(BRepCheck_InvalidRange) );
+    //
+    if ( NbProblems->Value(BRepCheck_EmptyWire) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_EMPTY_WIRE"
-                                             << NbProblems->Value(16) );
-    if ( NbProblems->Value(17) > 0 )
+                                              << NbProblems->Value(BRepCheck_EmptyWire) );
+    //
+    if ( NbProblems->Value(BRepCheck_RedundantEdge) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_REDUNDANT_EDGE"
-                                             << NbProblems->Value(17) );
-    if ( NbProblems->Value(18) > 0 )
+                                              << NbProblems->Value(BRepCheck_RedundantEdge) );
+    //
+    if ( NbProblems->Value(BRepCheck_SelfIntersectingWire) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_SELF_INTER_WIRE"
-                                             << NbProblems->Value(18) );
-    if ( NbProblems->Value(19) > 0 )
+                                              << NbProblems->Value(BRepCheck_SelfIntersectingWire) );
+    //
+    if ( NbProblems->Value(BRepCheck_NoSurface) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_NO_SURFACE"
-                                             << NbProblems->Value(19) );
-    if ( NbProblems->Value(20) > 0 )
+                                              << NbProblems->Value(BRepCheck_NoSurface) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidWire) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_WIRE"
-                                             << NbProblems->Value(20) );
-    if ( NbProblems->Value(21) > 0 )
+                                              << NbProblems->Value(BRepCheck_InvalidWire) );
+    //
+    if ( NbProblems->Value(BRepCheck_RedundantWire) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_REDUNDANT_WIRE"
-                                             << NbProblems->Value(21) );
-    if ( NbProblems->Value(22) > 0 )
+                                              << NbProblems->Value(BRepCheck_RedundantWire) );
+    //
+    if ( NbProblems->Value(BRepCheck_IntersectingWires) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INTER_WIRES"
-                                             << NbProblems->Value(22) );
-    if ( NbProblems->Value(23) > 0 )
+                                              << NbProblems->Value(BRepCheck_IntersectingWires) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidImbricationOfWires) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_IMBRICATION_OF_WIRES"
-                                             << NbProblems->Value(23) );
-    if ( NbProblems->Value(24) > 0 )
+                                              << NbProblems->Value(BRepCheck_InvalidImbricationOfWires) );
+    //
+    if ( NbProblems->Value(BRepCheck_EmptyShell) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_EMPTY_SHELL"
-                                             << NbProblems->Value(24) );
-    if ( NbProblems->Value(25) > 0 )
+                                              << NbProblems->Value(BRepCheck_EmptyShell) );
+    //
+    if ( NbProblems->Value(BRepCheck_RedundantFace) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_REDUNDANT_FACE"
-                                             << NbProblems->Value(25) );
-    if ( NbProblems->Value(26) > 0 )
+                                              << NbProblems->Value(BRepCheck_RedundantFace) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidImbricationOfShells) > 0 )
+      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_IMBRICATION_OF_SHELLS"
+                                              << NbProblems->Value(BRepCheck_InvalidImbricationOfShells) );
+    //
+    if ( NbProblems->Value(BRepCheck_UnorientableShape) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_UNORIENTABLE_SHAPE"
-                                             << NbProblems->Value(26) );
-    if ( NbProblems->Value(27) > 0 )
+                                              << NbProblems->Value(BRepCheck_UnorientableShape) );
+    //
+    if ( NbProblems->Value(BRepCheck_NotClosed) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_NOT_CLOSED"
-                                             << NbProblems->Value(27) );
-    if ( NbProblems->Value(28) > 0 )
+                                              << NbProblems->Value(BRepCheck_NotClosed) );
+    //
+    if ( NbProblems->Value(BRepCheck_NotConnected) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_NOT_CONNECTED"
-                                             << NbProblems->Value(28) );
-    if ( NbProblems->Value(29) > 0 )
+                                              << NbProblems->Value(BRepCheck_NotConnected) );
+    //
+    if ( NbProblems->Value(BRepCheck_SubshapeNotInShape) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_SUBSHAPE_NOT_IN_SHAPE"
-                                             << NbProblems->Value(29) );
-    if ( NbProblems->Value(30) > 0 )
+                                              << NbProblems->Value(BRepCheck_SubshapeNotInShape) );
+    //
+    if ( NbProblems->Value(BRepCheck_BadOrientation) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_BAD_ORIENTATION"
-                                             << NbProblems->Value(30) );
-    if ( NbProblems->Value(31) > 0 )
+                                              << NbProblems->Value(BRepCheck_BadOrientation) );
+    //
+    if ( NbProblems->Value(BRepCheck_BadOrientationOfSubshape) > 0 )
       Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_BAD_ORIENTATION_OF_SUBSHAPE"
-                                             << NbProblems->Value(31) );
-    if ( NbProblems->Value(32) > 0 )
+                                              << NbProblems->Value(BRepCheck_BadOrientationOfSubshape) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidPolygonOnTriangulation) > 0 )
+      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_POLYGON_ON_TRIANGULATION"
+                                              << NbProblems->Value(BRepCheck_InvalidPolygonOnTriangulation) );
+    //
+    if ( NbProblems->Value(BRepCheck_InvalidToleranceValue) > 0 )
+      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_TOLERANCE_VALUE"
+                                              << NbProblems->Value(BRepCheck_InvalidToleranceValue) );
+    //
+    if ( NbProblems->Value(BRepCheck_EnclosedRegion) > 0 )
+      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_ENCLOSED_REGION"
+                                              << NbProblems->Value(BRepCheck_EnclosedRegion) );
+    //
+    if ( NbProblems->Value(BRepCheck_CheckFail) > 0 )
       Journal.SendLogMessage( LogErr(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_FAILED"
-                                            << NbProblems->Value(32) );
+                                             << NbProblems->Value(BRepCheck_CheckFail) );
   }
 
 };
@@ -1064,9 +1155,9 @@ bool geom_utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
 //! \param E2 [in] second edge.
 //! \param F  [in] base face.
 //! \return calculated angle.
-feature_angle geom_utils::AngleBetweenEdges(const TopoDS_Edge& E1,
-                                         const TopoDS_Edge& E2,
-                                         const TopoDS_Face& F)
+feature_angle geom_utils::AngleBetweenEdges(const TopoDS_Edge& /*E1*/,
+                                            const TopoDS_Edge& /*E2*/,
+                                            const TopoDS_Face& /*F*/)
 {
   // TODO find convex edges
 

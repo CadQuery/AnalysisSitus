@@ -38,7 +38,7 @@ Handle(geom_part_node) engine_part::Create_Part()
 
   // Add Part Node to Partition
   Handle(geom_part_node) geom_n = Handle(geom_part_node)::DownCast( geom_part_node::Instance() );
-  M->PartPartition()->AddNode(geom_n);
+  M->GetPartPartition()->AddNode(geom_n);
 
   // Initialize geometry
   geom_n->Init();
@@ -47,7 +47,7 @@ Handle(geom_part_node) engine_part::Create_Part()
   // Create underlying face representation Node
   {
     Handle(ActAPI_INode) geom_face_base = geom_face_node::Instance();
-    M->GeomFacePartition()->AddNode(geom_face_base);
+    M->GetGeomFacePartition()->AddNode(geom_face_base);
 
     // Initialize
     Handle(geom_face_node) geom_face_n = Handle(geom_face_node)::DownCast(geom_face_base);
@@ -61,7 +61,7 @@ Handle(geom_part_node) engine_part::Create_Part()
   // Create underlying surface representation Node
   {
     Handle(ActAPI_INode) geom_surf_base = geom_surf_node::Instance();
-    M->GeomSurfacePartition()->AddNode(geom_surf_base);
+    M->GetGeomSurfacePartition()->AddNode(geom_surf_base);
 
     // Initialize
     Handle(geom_surf_node) geom_surf_n = Handle(geom_surf_node)::DownCast(geom_surf_base);
@@ -72,10 +72,38 @@ Handle(geom_part_node) engine_part::Create_Part()
     geom_n->AddChildNode(geom_surf_n);
   }
 
+  // Create underlying edge representation Node
+  {
+    Handle(ActAPI_INode) geom_edge_base = geom_edge_node::Instance();
+    M->GetGeomEdgePartition()->AddNode(geom_edge_base);
+
+    // Initialize
+    Handle(geom_edge_node) geom_edge_n = Handle(geom_edge_node)::DownCast(geom_edge_base);
+    geom_edge_n->Init();
+    geom_edge_n->SetName("Edge domain");
+
+    // Set as child
+    geom_n->AddChildNode(geom_edge_n);
+  }
+
+  // Create underlying curve representation Node
+  {
+    Handle(ActAPI_INode) geom_curve_base = geom_curve_node::Instance();
+    M->GetGeomCurvePartition()->AddNode(geom_curve_base);
+
+    // Initialize
+    Handle(geom_curve_node) geom_curve_n = Handle(geom_curve_node)::DownCast(geom_curve_base);
+    geom_curve_n->Init();
+    geom_curve_n->SetName("Host curve");
+
+    // Set as child
+    geom_n->AddChildNode(geom_curve_n);
+  }
+
   // Create underlying boundary edges representation Node
   {
     Handle(ActAPI_INode) geom_edges_base = geom_boundary_edges_node::Instance();
-    M->GeomBoundaryEdgesPartition()->AddNode(geom_edges_base);
+    M->GetGeomBoundaryEdgesPartition()->AddNode(geom_edges_base);
 
     // Initialize
     Handle(geom_boundary_edges_node) geom_edges_n = Handle(geom_boundary_edges_node)::DownCast(geom_edges_base);
@@ -97,15 +125,18 @@ void engine_part::Clean_Part()
   Handle(common_model) M = common_facilities::Instance()->Model;
 
   // Get Part Node
-  Handle(geom_part_node) part_n = M->PartNode();
+  Handle(geom_part_node) part_n = M->GetPartNode();
   //
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
     return;
 
   // Reset data
   part_n->Init();
-  part_n->FaceRepresentation()->Init();
-  part_n->SurfaceRepresentation()->Init();
+  part_n->GetFaceRepresentation()->Init();
+  part_n->GetSurfaceRepresentation()->Init();
+  part_n->GetEdgeRepresentation()->Init();
+  part_n->GetCurveRepresentation()->Init();
+  part_n->GetBoundaryEdgesRepresentation()->Init();
 }
 
 //! Extracts sub-shape indices for the given collection of face indices.
@@ -115,7 +146,7 @@ void engine_part::GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteg
                                                   TColStd_PackedMapOfInteger&       indices)
 {
   TopTools_IndexedMapOfShape AllFaces, SelectedFaces;
-  TopExp::MapShapes(common_facilities::Instance()->Model->PartNode()->GetShape(),
+  TopExp::MapShapes(common_facilities::Instance()->Model->GetPartNode()->GetShape(),
                     TopAbs_FACE, AllFaces);
 
   // Get selected faces in topological form
@@ -136,7 +167,7 @@ void engine_part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes
                                      TColStd_PackedMapOfInteger&       indices)
 {
   TopTools_IndexedMapOfShape M;
-  TopExp::MapShapes(common_facilities::Instance()->Model->PartNode()->GetShape(), M);
+  TopExp::MapShapes(common_facilities::Instance()->Model->GetPartNode()->GetShape(), M);
 
   for ( int i = 1; i <= subShapes.Extent(); ++i )
     indices.Add( M.FindIndex( subShapes.FindKey(i) ) );
@@ -163,7 +194,7 @@ void engine_part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeI
                                      const int                         color)
 {
   // Get Part Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
 
   // Get Presentation for the Part Node
   Handle(visu_geom_prs)
@@ -220,7 +251,7 @@ void engine_part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes
 void engine_part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes)
 {
   // Get Part Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
 
   // Get Part shape
   TopoDS_Shape part = N->GetShape();
@@ -257,7 +288,7 @@ void engine_part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices)
   GetHighlightedSubShapes(subShapes);
 
   // Take all faces
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
   //
   TopTools_IndexedMapOfShape allFaces;
   TopExp::MapShapes( N->GetShape(), TopAbs_FACE, allFaces);
@@ -267,5 +298,26 @@ void engine_part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices)
   {
     if ( subShapes.Contains( allFaces(f) ) )
       faceIndices.Add(f);
+  }
+}
+
+//! Retrieves indices of the highlighted edges.
+//! \param edgeIndices [out] indices of the highlighted edges.
+void engine_part::GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices)
+{
+  TopTools_IndexedMapOfShape subShapes;
+  GetHighlightedSubShapes(subShapes);
+
+  // Take all edges
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  //
+  TopTools_IndexedMapOfShape allEdges;
+  TopExp::MapShapes( N->GetShape(), TopAbs_EDGE, allEdges);
+
+  // Filter out non-selected edges
+  for ( int e = 1; e <= allEdges.Extent(); ++e )
+  {
+    if ( subShapes.Contains( allEdges(e) ) )
+      edgeIndices.Add(e);
   }
 }

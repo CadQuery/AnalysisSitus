@@ -29,8 +29,8 @@
 gui_viewer_surface::gui_viewer_surface(QWidget* parent) : gui_viewer(parent)
 {
   // Initialize Presentation Manager along with QVTK widget
-  common_facilities::Instance()->Prs.Surface = vtkSmartPointer<visu_prs_manager>::New();
-  m_prs_mgr = common_facilities::Instance()->Prs.Surface;
+  common_facilities::Instance()->Prs.Host = vtkSmartPointer<visu_prs_manager>::New();
+  m_prs_mgr = common_facilities::Instance()->Prs.Host;
   //
   m_prs_mgr->Initialize(this);
   m_prs_mgr->SetInteractionMode(visu_prs_manager::InteractionMode_3D);

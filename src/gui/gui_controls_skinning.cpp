@@ -59,7 +59,7 @@ gui_controls_skinning::~gui_controls_skinning()
 void gui_controls_skinning::onDoTheMagic()
 {
   Handle(geom_sections_node)
-    sections_n = common_facilities::Instance()->Model->SectionsNode();
+    sections_n = common_facilities::Instance()->Model->GetSectionsNode();
   //
   if ( sections_n.IsNull() || !sections_n->IsWellFormed() )
     return;

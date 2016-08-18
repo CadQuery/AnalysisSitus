@@ -1,12 +1,12 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 December 2015
+// Created on: 18 August 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_geom_face_prs_h
-#define visu_geom_face_prs_h
+#ifndef visu_geom_curve_prs_h
+#define visu_geom_curve_prs_h
 
 // A-Situs (visualization) includes
 #include <visu_prs.h>
@@ -18,18 +18,20 @@
 // VTK includes
 #include <vtkTextWidget.h>
 
-DEFINE_STANDARD_HANDLE(visu_geom_face_prs, visu_prs)
+//-----------------------------------------------------------------------------
 
-//! Presentation class for b-rep face.
-class visu_geom_face_prs : public visu_prs
+DEFINE_STANDARD_HANDLE(visu_geom_curve_prs, visu_prs)
+
+//! Presentation class for a host curve of a b-rep edge.
+class visu_geom_curve_prs : public visu_prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_geom_face_prs, visu_prs)
+  DEFINE_STANDARD_RTTI_INLINE(visu_geom_curve_prs, visu_prs)
 
   // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(geom_face_node, Instance)
+  DEFINE_PRESENTATION_FACTORY(geom_curve_node, Instance)
 
 public:
 
@@ -50,7 +52,7 @@ public:
 private:
 
   //! Allocation is allowed only via Instance method.
-  visu_geom_face_prs(const Handle(ActAPI_INode)& theNode);
+  visu_geom_curve_prs(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:
 private:
@@ -74,4 +76,3 @@ private:
 };
 
 #endif
-  

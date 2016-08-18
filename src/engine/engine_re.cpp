@@ -25,7 +25,7 @@ Handle(geom_re_node) engine_re::Create_RE()
 
   // Add RE Node to Partition
   Handle(geom_re_node) re_n = Handle(geom_re_node)::DownCast( geom_re_node::Instance() );
-  M->REPartition()->AddNode(re_n);
+  M->GetREPartition()->AddNode(re_n);
 
   // Initialize Node
   re_n->Init();
@@ -34,7 +34,7 @@ Handle(geom_re_node) engine_re::Create_RE()
   // Create underlying Surfaces Node
   {
     Handle(ActAPI_INode) geom_surfaces_base = geom_re_surfaces_node::Instance();
-    M->RESurfacesPartition()->AddNode(geom_surfaces_base);
+    M->GetRESurfacesPartition()->AddNode(geom_surfaces_base);
 
     // Initialize
     Handle(geom_re_surfaces_node) re_surfaces_n = Handle(geom_re_surfaces_node)::DownCast(geom_surfaces_base);
@@ -48,7 +48,7 @@ Handle(geom_re_node) engine_re::Create_RE()
   // Create underlying Contours Node
   {
     Handle(ActAPI_INode) geom_contours_base = geom_re_contours_node::Instance();
-    M->REContoursPartition()->AddNode(geom_contours_base);
+    M->GetREContoursPartition()->AddNode(geom_contours_base);
 
     // Initialize
     Handle(geom_re_contours_node) re_contours_n = Handle(geom_re_contours_node)::DownCast(geom_contours_base);
@@ -62,7 +62,7 @@ Handle(geom_re_node) engine_re::Create_RE()
   // Create underlying Points Node
   {
     Handle(ActAPI_INode) geom_points_base = geom_re_points_node::Instance();
-    M->REPointsPartition()->AddNode(geom_points_base);
+    M->GetREPointsPartition()->AddNode(geom_points_base);
 
     // Initialize
     Handle(geom_re_points_node) re_points_n = Handle(geom_re_points_node)::DownCast(geom_points_base);
@@ -91,11 +91,11 @@ Handle(geom_re_surface_node)
 {
   // Access Model and RE Surfaces Node
   Handle(common_model)          M    = common_facilities::Instance()->Model;
-  Handle(geom_re_surfaces_node) RESs = M->RENode()->Surfaces();
+  Handle(geom_re_surfaces_node) RESs = M->GetRENode()->Surfaces();
 
   // Add Surface Node to Partition
   Handle(geom_re_surface_node) surf_n = Handle(geom_re_surface_node)::DownCast( geom_re_surface_node::Instance() );
-  M->RESurfacePartition()->AddNode(surf_n);
+  M->GetRESurfacePartition()->AddNode(surf_n);
 
   // Generate unique name
   TCollection_ExtendedString surf_name("Surface");
@@ -118,7 +118,7 @@ Handle(geom_re_surface_node)
 void engine_re::Clean_Surfaces()
 {
   Handle(common_model)          M             = common_facilities::Instance()->Model;
-  Handle(geom_re_surfaces_node) RESs          = M->RENode()->Surfaces();
+  Handle(geom_re_surfaces_node) RESs          = M->GetRENode()->Surfaces();
   Handle(ActAPI_HNodeList)      nodesToDelete = new ActAPI_HNodeList;
 
   // Loop over direct children of a Surfaces Node
@@ -149,11 +149,11 @@ Handle(geom_re_contour_node) engine_re::Create_Contour(const TopoDS_Wire& contou
 {
   // Access Model and RE Contours Node
   Handle(common_model)          M    = common_facilities::Instance()->Model;
-  Handle(geom_re_contours_node) RECs = M->RENode()->Contours();
+  Handle(geom_re_contours_node) RECs = M->GetRENode()->Contours();
 
   // Add Contour Node to Partition
   Handle(geom_re_contour_node) cont_n = Handle(geom_re_contour_node)::DownCast( geom_re_contour_node::Instance() );
-  M->REContourPartition()->AddNode(cont_n);
+  M->GetREContourPartition()->AddNode(cont_n);
 
   // Generate unique name
   TCollection_ExtendedString cont_name("Contour");
@@ -176,7 +176,7 @@ Handle(geom_re_contour_node) engine_re::Create_Contour(const TopoDS_Wire& contou
 void engine_re::Clean_Contours()
 {
   Handle(common_model)          M             = common_facilities::Instance()->Model;
-  Handle(geom_re_contours_node) RECs          = M->RENode()->Contours();
+  Handle(geom_re_contours_node) RECs          = M->GetRENode()->Contours();
   Handle(ActAPI_HNodeList)      nodesToDelete = new ActAPI_HNodeList;
 
   // Loop over direct children of a Contours Node

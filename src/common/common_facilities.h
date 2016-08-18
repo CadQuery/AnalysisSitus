@@ -71,7 +71,7 @@ public:
     vtkSmartPointer<visu_prs_manager> Mesh;     //!< Mesh.
     vtkSmartPointer<visu_prs_manager> Part;     //!< Part.
     vtkSmartPointer<visu_prs_manager> Domain;   //!< Face domain.
-    vtkSmartPointer<visu_prs_manager> Surface;  //!< Host surface.
+    vtkSmartPointer<visu_prs_manager> Host;     //!< Host geometry.
   //---------------------------------------------------------------------------
     vtkSmartPointer<visu_prs_manager> Skinner;  //!< Skinner.
     vtkSmartPointer<visu_prs_manager> Section;  //!< Section.
@@ -86,7 +86,7 @@ public:
     {
       if ( Part )     Part     ->Actualize(common_facilities::Instance()->Model->GetRootNode(), true);
       if ( Domain )   Domain   ->Actualize(common_facilities::Instance()->Model->GetRootNode(), true);
-      if ( Surface )  Surface  ->Actualize(common_facilities::Instance()->Model->GetRootNode(), true);
+      if ( Host )     Host     ->Actualize(common_facilities::Instance()->Model->GetRootNode(), true);
       //
       if ( Skinner )  Skinner  ->Actualize(common_facilities::Instance()->Model->GetRootNode(), true);
       if ( Section )  Section  ->Actualize(common_facilities::Instance()->Model->GetRootNode(), true);
@@ -101,7 +101,7 @@ public:
     {
       if ( Part )    Part    ->DeleteAllPresentations();
       if ( Domain )  Domain  ->DeleteAllPresentations();
-      if ( Surface ) Surface ->DeleteAllPresentations();
+      if ( Host )    Host    ->DeleteAllPresentations();
       //
       if ( Skinner ) Skinner ->DeleteAllPresentations();
       if ( Section ) Section ->DeleteAllPresentations();

@@ -37,7 +37,7 @@ Handle(geom_ubend_node) engine_ubend::Create_UBend()
   Handle(geom_ubend_node)
     ubend_n = Handle(geom_ubend_node)::DownCast( geom_ubend_node::Instance() );
   //
-  M->UBendPartition()->AddNode(ubend_n);
+  M->GetUBendPartition()->AddNode(ubend_n);
 
   // Initialize
   ubend_n->Init();
@@ -65,7 +65,7 @@ Handle(geom_ubend_node) engine_ubend::Create_UBend()
     Handle(geom_ubend_laws_node)
       ubend_laws_n = Handle(geom_ubend_laws_node)::DownCast( geom_ubend_laws_node::Instance() );
     //
-    M->UBendLawsPartition()->AddNode(ubend_laws_n);
+    M->GetUBendLawsPartition()->AddNode(ubend_laws_n);
 
     // Initialize
     ubend_laws_n->Init();
@@ -83,7 +83,7 @@ Handle(geom_ubend_node) engine_ubend::Create_UBend()
       Handle(geom_ubend_law_node)
         ubend_law_n = Handle(geom_ubend_law_node)::DownCast( geom_ubend_law_node::Instance() );
       //
-      M->UBendLawPartition()->AddNode(ubend_law_n);
+      M->GetUBendLawPartition()->AddNode(ubend_law_n);
 
       // Add as a child for u-bend
       ubend_laws_n->AddChildNode(ubend_law_n);
@@ -107,7 +107,7 @@ Handle(geom_ubend_node) engine_ubend::Create_UBend()
         Handle(calculus_design_law_node)
           law_n = Handle(calculus_design_law_node)::DownCast( calculus_design_law_node::Instance() );
         //
-        M->CalculusDesignLawPartition()->AddNode(law_n);
+        M->GetCalculusDesignLawPartition()->AddNode(law_n);
         //
         law_n->Init(law);
         law_n->SetName("X Law");
@@ -126,7 +126,7 @@ Handle(geom_ubend_node) engine_ubend::Create_UBend()
         Handle(calculus_design_law_node)
           law_n = Handle(calculus_design_law_node)::DownCast( calculus_design_law_node::Instance() );
         //
-        M->CalculusDesignLawPartition()->AddNode(law_n);
+        M->GetCalculusDesignLawPartition()->AddNode(law_n);
         //
         law_n->Init(law);
         law_n->SetName("Y Law");

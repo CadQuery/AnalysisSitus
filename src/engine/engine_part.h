@@ -54,6 +54,9 @@ namespace engine_part
   void
     GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices);
 
+  void
+    GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices);
+
 };
 
 #endif

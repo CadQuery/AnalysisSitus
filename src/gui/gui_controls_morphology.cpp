@@ -181,14 +181,14 @@ void gui_controls_morphology::onSetAsPart()
   {
     engine_part::Clean_Part();
     //
-    M->PartNode()->SetShape( volume_n->GetShape() );
+    M->GetPartNode()->SetShape( volume_n->GetShape() );
   }
   M->CommitCommand();
 
   // Update viewer
   common_facilities::Instance()->Prs.DeleteAll();
   common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize( M->PartNode().get() );
+  common_facilities::Instance()->Prs.Part->Actualize( M->GetPartNode().get() );
 }
 
 //-----------------------------------------------------------------------------
@@ -625,7 +625,7 @@ void gui_controls_morphology::onFindExtrusions()
   // Update viewer
   Handle(visu_geom_prs)
     NPrs = Handle(visu_geom_prs)::DownCast(
-             common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->PartNode() )
+             common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->GetPartNode() )
            );
   if ( NPrs.IsNull() )
   {

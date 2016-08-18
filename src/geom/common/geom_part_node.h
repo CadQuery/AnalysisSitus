@@ -13,6 +13,8 @@
 
 // A-Situs (geometry) includes
 #include <geom_boundary_edges_node.h>
+#include <geom_curve_node.h>
+#include <geom_edge_node.h>
 #include <geom_face_node.h>
 #include <geom_surf_node.h>
 
@@ -48,7 +50,7 @@ public:
   //------------------//
   // Geometry         //
   //------------------//
-    PID_Geometry,     //!< B-rep model.
+    PID_Geometry,     //!< B-Rep model.
   //------------------//
   // Presentation     //
   //------------------//
@@ -72,24 +74,29 @@ public:
     GetName();
 
   virtual void
-    SetName(const TCollection_ExtendedString& theName);
+    SetName(const TCollection_ExtendedString& );
 
 // Handy accessors to the stored data:
 public:
 
-  void                             SetShape                    (const TopoDS_Shape& shape);
-  TopoDS_Shape                     GetShape                    ()                           const;
-  void                             SetHasColor                 (const bool hasColor);
-  bool                             HasColor                    ()                           const;
-  void                             SetColor                    (const int color);
-  int                              GetColor                    ()                           const;
-  void                             SetDisplayMode              (const int mode);
-  int                              GetDisplayMode              ()                           const;
-  void                             SetHasVertices              (const bool hasVertices);
-  bool                             HasVertices                 ()                           const;
-  Handle(geom_face_node)           FaceRepresentation          ();
-  Handle(geom_surf_node)           SurfaceRepresentation       ();
-  Handle(geom_boundary_edges_node) BoundaryEdgesRepresentation ();
+  void         SetShape       (const TopoDS_Shape&);
+  TopoDS_Shape GetShape       () const;
+  void         SetHasColor    (const bool);
+  bool         HasColor       () const;
+  void         SetColor       (const int);
+  int          GetColor       () const;
+  void         SetDisplayMode (const int);
+  int          GetDisplayMode () const;
+  void         SetHasVertices (const bool);
+  bool         HasVertices    () const;
+
+  //-------------------------------------------------------------------------//
+
+  Handle(geom_face_node)           GetFaceRepresentation          () const;
+  Handle(geom_surf_node)           GetSurfaceRepresentation       () const;
+  Handle(geom_edge_node)           GetEdgeRepresentation          () const;
+  Handle(geom_curve_node)          GetCurveRepresentation         () const;
+  Handle(geom_boundary_edges_node) GetBoundaryEdgesRepresentation () const;
 
 // Initialization:
 public:

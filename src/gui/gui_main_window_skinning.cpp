@@ -69,7 +69,7 @@ void gui_main_window_skinning::createSkinViewer()
   m_widgets.wViewerSkin->setMinimumSize(width, height);
 
   // Actualize Presentation of skinning
-  common_facilities::Instance()->Prs.Skinner->Actualize( common_facilities::Instance()->Model->SectionsNode().get() );
+  common_facilities::Instance()->Prs.Skinner->Actualize( common_facilities::Instance()->Model->GetSectionsNode().get() );
 }
 
 //! Creates main dockable widgets.

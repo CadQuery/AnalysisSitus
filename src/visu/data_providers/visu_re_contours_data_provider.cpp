@@ -24,7 +24,7 @@ visu_re_contours_data_provider::visu_re_contours_data_provider()
 ActAPI_DataObjectId visu_re_contours_data_provider::GetNodeID() const
 {
   Handle(geom_re_contours_node)
-    contours_n = common_facilities::Instance()->Model->RENode()->Contours();
+    contours_n = common_facilities::Instance()->Model->GetRENode()->Contours();
   //
   if ( contours_n.IsNull() || !contours_n->IsWellFormed() )
     return ActAPI_DataObjectId();
@@ -38,7 +38,7 @@ ActAPI_DataObjectId visu_re_contours_data_provider::GetNodeID() const
 int visu_re_contours_data_provider::GetNumOfContours() const
 {
   Handle(geom_re_contours_node)
-    contours_n = common_facilities::Instance()->Model->RENode()->Contours();
+    contours_n = common_facilities::Instance()->Model->GetRENode()->Contours();
   //
   if ( contours_n.IsNull() || !contours_n->IsWellFormed() )
     return 0;
@@ -64,7 +64,7 @@ TopoDS_Wire
   visu_re_contours_data_provider::GetContour(const int oneBased_idx) const
 {
   Handle(geom_re_contours_node)
-    contours_n = common_facilities::Instance()->Model->RENode()->Contours();
+    contours_n = common_facilities::Instance()->Model->GetRENode()->Contours();
   //
   if ( contours_n.IsNull() || !contours_n->IsWellFormed() )
     return TopoDS_Wire();
@@ -88,7 +88,7 @@ Handle(ActAPI_HParameterList) visu_re_contours_data_provider::translationSources
   ActParamStream out;
 
   Handle(geom_re_contours_node)
-    contours_n = common_facilities::Instance()->Model->RENode()->Contours();
+    contours_n = common_facilities::Instance()->Model->GetRENode()->Contours();
   //
   if ( contours_n.IsNull() || !contours_n->IsWellFormed() )
     return out;

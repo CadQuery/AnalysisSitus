@@ -232,7 +232,7 @@ void gui_controls_part::onLoadBRep()
   common_facilities::Instance()->Model->Clear();
 
   // Set part geometry
-  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->GetPartNode();
   //
   common_facilities::Instance()->Model->OpenCommand(); // tx start
   {
@@ -278,7 +278,7 @@ void gui_controls_part::onLoadSTL()
   common_facilities::Instance()->Model->Clear();
 
   // Set part geometry
-  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->GetPartNode();
   //
   common_facilities::Instance()->Model->OpenCommand(); // tx start
   {
@@ -358,7 +358,7 @@ void gui_controls_part::onSaveBRep()
 void gui_controls_part::onShowTOPOGraph()
 {
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
@@ -366,7 +366,7 @@ void gui_controls_part::onShowTOPOGraph()
   TopoDS_Shape targetShape;
 
   // Access active face
-  Handle(geom_face_node) FN = N->FaceRepresentation();
+  Handle(geom_face_node) FN = N->GetFaceRepresentation();
   if ( FN.IsNull() || !FN->IsWellFormed() || FN->GetSelectedFace() <= 0 )
     targetShape = N->GetShape();
   else
@@ -530,7 +530,7 @@ void gui_controls_part::onNonManifoldEdges()
 
   // Save to model
   Handle(geom_boundary_edges_node)
-    BN = common_facilities::Instance()->Model->PartNode()->BoundaryEdgesRepresentation();
+    BN = common_facilities::Instance()->Model->GetPartNode()->GetBoundaryEdgesRepresentation();
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
@@ -541,7 +541,7 @@ void gui_controls_part::onNonManifoldEdges()
   // Update viewer
   Handle(visu_geom_prs)
     NPrs = Handle(visu_geom_prs)::DownCast(
-      common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->PartNode() )
+      common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->GetPartNode() )
     );
   if ( NPrs.IsNull() )
   {
@@ -575,7 +575,7 @@ void gui_controls_part::onSewing()
 void gui_controls_part::onMaximizeFaces()
 {
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
@@ -655,7 +655,7 @@ void gui_controls_part::onOBB()
 void gui_controls_part::onCR()
 {
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
@@ -732,7 +732,7 @@ void gui_controls_part::onCloudify()
 void gui_controls_part::onShowVertices()
 {
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
@@ -757,7 +757,7 @@ void gui_controls_part::onShowVertices()
 void gui_controls_part::onSelectFaces()
 {
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
@@ -774,7 +774,7 @@ void gui_controls_part::onSelectFaces()
 void gui_controls_part::onSelectEdges()
 {
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 

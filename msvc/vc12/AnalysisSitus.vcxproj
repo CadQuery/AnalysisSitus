@@ -84,8 +84,10 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\geom\classification\geom_transition.h" />
     <ClInclude Include="..\..\src\geom\combination\geom_overlapping_ranges.h" />
     <ClInclude Include="..\..\src\geom\combination\geom_weighted_range.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_curve_node.h" />
     <ClInclude Include="..\..\src\geom\common\geom_divide_by_continuity.h" />
     <ClInclude Include="..\..\src\geom\common\geom_boundary_edges_node.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_edge_node.h" />
     <ClInclude Include="..\..\src\geom\common\geom_euler_poincare.h" />
     <ClInclude Include="..\..\src\geom\common\geom_face_node.h" />
     <ClInclude Include="..\..\src\geom\common\geom_find_nonmanifold.h" />
@@ -428,6 +430,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_data_provider.h" />
     <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_surface_data_provider.h" />
     <ClInclude Include="..\..\src\visu\data_providers\visu_curve_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_edge_data_provider.h" />
     <ClInclude Include="..\..\src\visu\data_providers\visu_law_data_provider.h" />
     <ClInclude Include="..\..\src\visu\data_providers\visu_points_data_provider.h" />
     <ClInclude Include="..\..\src\visu\data_providers\visu_re_contours_data_provider.h" />
@@ -470,6 +473,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
     <ClInclude Include="..\..\src\visu\pipelines\visu_curve_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_edge_curve_pipeline.h" />
+    <ClInclude Include="..\..\src\visu\pipelines\visu_edge_domain_pipeline.h" />
     <ClInclude Include="..\..\src\visu\pipelines\visu_iv_surface_pipeline.h" />
     <ClInclude Include="..\..\src\visu\pipelines\visu_law_pipeline.h" />
     <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_topo_pipeline.h" />
@@ -488,6 +493,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\visu\prs\visu_axes_btn_callback.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_calculus_law_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_geom_boundary_edges_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_curve_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_edge_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_geom_volume_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_re_contours_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_re_points_prs.h" />
@@ -867,8 +874,10 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\geom\classification\geom_transition.cpp" />
     <ClCompile Include="..\..\src\geom\combination\geom_overlapping_ranges.cpp" />
     <ClCompile Include="..\..\src\geom\combination\geom_weighted_range.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_curve_node.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_divide_by_continuity.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_boundary_edges_node.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_edge_node.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_euler_poincare.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_face_node.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_find_nonmanifold.cpp" />
@@ -1085,6 +1094,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\data_providers\imperative\visu_iv_surface_data_provider.cpp" />
     <ClCompile Include="..\..\src\visu\data_providers\visu_curve_data_provider.cpp" />
     <ClCompile Include="..\..\src\visu\data_providers\visu_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_edge_data_provider.cpp" />
     <ClCompile Include="..\..\src\visu\data_providers\visu_face_data_provider.cpp" />
     <ClCompile Include="..\..\src\visu\data_providers\visu_law_data_provider.cpp" />
     <ClCompile Include="..\..\src\visu\data_providers\visu_mesh_data_provider.cpp" />
@@ -1125,6 +1135,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\interaction\visu_viewer_callback.cpp" />
     <ClCompile Include="..\..\src\visu\pipelines\visu_bcurve_poles_pipeline.cpp" />
     <ClCompile Include="..\..\src\visu\pipelines\visu_curve_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_edge_curve_pipeline.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_edge_domain_pipeline.cpp" />
     <ClCompile Include="..\..\src\visu\pipelines\visu_face_domain_pipeline.cpp" />
     <ClCompile Include="..\..\src\visu\pipelines\visu_face_surface_pipeline.cpp" />
     <ClCompile Include="..\..\src\visu\pipelines\visu_iv_surface_pipeline.cpp" />
@@ -1158,6 +1170,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\prs\visu_axes_btn_callback.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_calculus_law_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_geom_boundary_edges_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_curve_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_edge_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_geom_face_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_geom_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_geom_surf_prs.cpp" />

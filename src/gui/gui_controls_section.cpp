@@ -48,7 +48,7 @@ static Handle(geom_section_node) CreateSectionNode(const TopoDS_Shape& shape)
   {
     // Add Section Node to Partition
     Handle(ActAPI_INode) section_base = geom_section_node::Instance();
-    common_facilities::Instance()->Model->SectionPartition()->AddNode(section_base);
+    common_facilities::Instance()->Model->GetSectionPartition()->AddNode(section_base);
 
     // Initialize
     section_n = Handle(geom_section_node)::DownCast(section_base);
@@ -56,7 +56,7 @@ static Handle(geom_section_node) CreateSectionNode(const TopoDS_Shape& shape)
     section_n->SetGeometry(shape);
 
     // Set as a child for root
-    Handle(geom_sections_node) group = common_facilities::Instance()->Model->SectionsNode();
+    Handle(geom_sections_node) group = common_facilities::Instance()->Model->GetSectionsNode();
     group->AddChildNode(section_n);
 
     // Choose unique name
@@ -218,7 +218,7 @@ void gui_controls_section::onCreateSection()
 
   // Update Presentation
   common_facilities::Instance()->Prs.Section->Actualize( common_facilities::Instance()->CurrentNode );
-  common_facilities::Instance()->Prs.Skinner->Actualize( common_facilities::Instance()->Model->SectionsNode().get(), false, true );
+  common_facilities::Instance()->Prs.Skinner->Actualize( common_facilities::Instance()->Model->GetSectionsNode().get(), false, true );
 }
 
 //-----------------------------------------------------------------------------
@@ -315,5 +315,5 @@ void gui_controls_section::onValueChanged()
 
   // Update Presentations
   common_facilities::Instance()->Prs.Section->Actualize( section_n.get(), false, false );
-  common_facilities::Instance()->Prs.Skinner->Actualize( common_facilities::Instance()->Model->SectionsNode().get(), false, true );
+  common_facilities::Instance()->Prs.Skinner->Actualize( common_facilities::Instance()->Model->GetSectionsNode().get(), false, true );
 }

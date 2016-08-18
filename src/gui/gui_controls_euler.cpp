@@ -64,7 +64,7 @@ private:
   static void perform(const EulerOp op)
   {
     // Access Geometry Node
-    Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+    Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
     //
     if ( N.IsNull() || !N->IsWellFormed() )
       return;

@@ -17,6 +17,8 @@
 // A-Situs (visualization) includes
 #include <visu_calculus_law_prs.h>
 #include <visu_geom_boundary_edges_prs.h>
+#include <visu_geom_curve_prs.h>
+#include <visu_geom_edge_prs.h>
 #include <visu_geom_face_prs.h>
 #include <visu_geom_prs.h>
 #include <visu_geom_surf_prs.h>
@@ -105,6 +107,8 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(visu_mesh_prs)
   REGISTER_PRESENTATION(visu_geom_prs)
   REGISTER_PRESENTATION(visu_geom_boundary_edges_prs)
+  REGISTER_PRESENTATION(visu_geom_curve_prs)
+  REGISTER_PRESENTATION(visu_geom_edge_prs)
   REGISTER_PRESENTATION(visu_geom_face_prs)
   REGISTER_PRESENTATION(visu_geom_surf_prs)
   REGISTER_PRESENTATION(visu_geom_volume_prs)

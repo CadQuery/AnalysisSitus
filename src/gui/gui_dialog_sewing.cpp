@@ -155,7 +155,7 @@ void gui_dialog_sewing::onPerform()
   else if ( !common_facilities::Instance()->Model.IsNull() )
   {
     // Access Geometry Node
-    Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+    Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
     if ( N.IsNull() || !N->IsWellFormed() )
       return;
 

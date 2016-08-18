@@ -26,7 +26,10 @@
 // OCCT includes
 #include <BRep_Tool.hxx>
 #include <Geom_BSplineSurface.hxx>
+#include <Geom_CylindricalSurface.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
+#include <Geom_SphericalSurface.hxx>
+#include <Geom_ToroidalSurface.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -323,6 +326,26 @@ void visu_geom_surf_prs::afterInitPipelines()
       TITLE += "\nV-periodic";
     else
       TITLE += "\nNot V-periodic";
+  }
+  else if ( !S.IsNull() && S->IsInstance( STANDARD_TYPE(Geom_CylindricalSurface) ) )
+  {
+    Handle(Geom_CylindricalSurface) CS = Handle(Geom_CylindricalSurface)::DownCast(S);
+    const double r = CS->Radius();
+    TITLE += "\nRadius: "; TITLE += r;
+  }
+  else if ( !S.IsNull() && S->IsInstance( STANDARD_TYPE(Geom_SphericalSurface) ) )
+  {
+    Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
+    const double r = SS->Radius();
+    TITLE += "\nRadius: "; TITLE += r;
+  }
+  else if ( !S.IsNull() && S->IsInstance( STANDARD_TYPE(Geom_ToroidalSurface) ) )
+  {
+    Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
+    const double minr = TS->MinorRadius();
+    const double majr = TS->MajorRadius();
+    TITLE += "\nMinor radius: "; TITLE += minr;
+    TITLE += "\nMajor radius: "; TITLE += majr;
   }
 
   // Update text on the annotation

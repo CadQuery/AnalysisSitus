@@ -20,7 +20,7 @@ gui_dialog_STEP_delegate::gui_dialog_STEP_delegate(QObject* parent)
 
 //! Qt overridden function to create an editor widget to edit item.
 QWidget* gui_dialog_STEP_delegate::createEditor(QWidget*                    parent,
-                                                const QStyleOptionViewItem& option,
+                                                const QStyleOptionViewItem& /*option*/,
                                                 const QModelIndex&          index) const
 {
   QWidget* wEditor = NULL;

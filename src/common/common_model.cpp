@@ -41,6 +41,8 @@ REGISTER_NODE_TYPE(tess_node)
 REGISTER_NODE_TYPE(geom_part_node)
 REGISTER_NODE_TYPE(geom_face_node)
 REGISTER_NODE_TYPE(geom_surf_node)
+REGISTER_NODE_TYPE(geom_edge_node)
+REGISTER_NODE_TYPE(geom_curve_node)
 REGISTER_NODE_TYPE(geom_boundary_edges_node)
 REGISTER_NODE_TYPE(geom_volume_node)
 //
@@ -120,7 +122,7 @@ void common_model::Populate()
   Handle(common_root_node)
     root_n = Handle(common_root_node)::DownCast( common_root_node::Instance() );
   //
-  this->RootPartition()->AddNode(root_n);
+  this->GetRootPartition()->AddNode(root_n);
 
   // Set name
   root_n->SetName("Analysis Situs");
@@ -131,7 +133,7 @@ void common_model::Populate()
 
   // Add Mesh Node to Partition
   Handle(tess_node) tess_n = Handle(tess_node)::DownCast( tess_node::Instance() );
-  this->MeshPartition()->AddNode(tess_n);
+  this->GetMeshPartition()->AddNode(tess_n);
 
   // Initialize mesh
   tess_n->Init();
@@ -159,7 +161,7 @@ void common_model::Populate()
   Handle(geom_sections_node)
     sections_n = Handle(geom_sections_node)::DownCast( geom_sections_node::Instance() );
   //
-  this->SectionsPartition()->AddNode(sections_n);
+  this->GetSectionsPartition()->AddNode(sections_n);
 
   // Initialize
   sections_n->Init();
@@ -191,19 +193,19 @@ void common_model::Clear()
   //       removing it since we will have to create it again once a new
   //       part is loaded. The same rule applies to other structural Nodes.
 
-  ::PrepareForRemoval(this->SectionsNode(),           nodesToDelete);
+  ::PrepareForRemoval(this->GetSectionsNode(),           nodesToDelete);
   //
-  ::PrepareForRemoval(this->RENode()->Surfaces(),     nodesToDelete);
-  ::PrepareForRemoval(this->RENode()->Contours(),     nodesToDelete);
-  ::PrepareForRemoval(this->RENode()->Points(),       nodesToDelete);
+  ::PrepareForRemoval(this->GetRENode()->Surfaces(),     nodesToDelete);
+  ::PrepareForRemoval(this->GetRENode()->Contours(),     nodesToDelete);
+  ::PrepareForRemoval(this->GetRENode()->Points(),       nodesToDelete);
   //
-  ::PrepareForRemoval(this->IVNode()->Points2d(),     nodesToDelete);
-  ::PrepareForRemoval(this->IVNode()->Points(),       nodesToDelete);
-  ::PrepareForRemoval(this->IVNode()->Curves(),       nodesToDelete);
-  ::PrepareForRemoval(this->IVNode()->Surfaces(),     nodesToDelete);
-  ::PrepareForRemoval(this->IVNode()->Topology(),     nodesToDelete);
-  ::PrepareForRemoval(this->IVNode()->Tessellation(), nodesToDelete);
-  ::PrepareForRemoval(this->IVNode()->Text(),         nodesToDelete);
+  ::PrepareForRemoval(this->GetIVNode()->Points2d(),     nodesToDelete);
+  ::PrepareForRemoval(this->GetIVNode()->Points(),       nodesToDelete);
+  ::PrepareForRemoval(this->GetIVNode()->Curves(),       nodesToDelete);
+  ::PrepareForRemoval(this->GetIVNode()->Surfaces(),     nodesToDelete);
+  ::PrepareForRemoval(this->GetIVNode()->Topology(),     nodesToDelete);
+  ::PrepareForRemoval(this->GetIVNode()->Tessellation(), nodesToDelete);
+  ::PrepareForRemoval(this->GetIVNode()->Text(),         nodesToDelete);
 
   //---------------------------------------------------------------------------
   // Perform deletion
@@ -212,8 +214,10 @@ void common_model::Clear()
   this->OpenCommand(); // tx start
   {
     // Clean up persistent selection
-    this->PartNode()->FaceRepresentation()    ->SetSelectedFace(0);
-    this->PartNode()->SurfaceRepresentation() ->SetSelectedFace(0);
+    this->GetPartNode()->GetFaceRepresentation()    ->SetSelectedFace(0);
+    this->GetPartNode()->GetSurfaceRepresentation() ->SetSelectedFace(0);
+    this->GetPartNode()->GetEdgeRepresentation()    ->SetSelectedEdge(0);
+    this->GetPartNode()->GetCurveRepresentation()   ->SetSelectedEdge(0);
 
     // Delete all Nodes queued for removal
     for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
@@ -228,9 +232,9 @@ void common_model::Clear()
 //-----------------------------------------------------------------------------
 
 //! \return single Mesh Node.
-Handle(tess_node) common_model::Mesh_Node() const
+Handle(tess_node) common_model::GetMeshNode() const
 {
-  for ( ActData_BasePartition::Iterator it( this->MeshPartition() ); it.More(); it.Next() )
+  for ( ActData_BasePartition::Iterator it( this->GetMeshPartition() ); it.More(); it.Next() )
   {
     Handle(tess_node) N = Handle(tess_node)::DownCast( it.Value() );
     //
@@ -241,9 +245,9 @@ Handle(tess_node) common_model::Mesh_Node() const
 }
 
 //! \return single Geometry Part Node.
-Handle(geom_part_node) common_model::PartNode() const
+Handle(geom_part_node) common_model::GetPartNode() const
 {
-  for ( ActData_BasePartition::Iterator it( this->PartPartition() ); it.More(); it.Next() )
+  for ( ActData_BasePartition::Iterator it( this->GetPartPartition() ); it.More(); it.Next() )
   {
     Handle(geom_part_node) N = Handle(geom_part_node)::DownCast( it.Value() );
     //
@@ -254,9 +258,9 @@ Handle(geom_part_node) common_model::PartNode() const
 }
 
 //! \return single Reverse Engineering Node.
-Handle(geom_re_node) common_model::RENode() const
+Handle(geom_re_node) common_model::GetRENode() const
 {
-  for ( ActData_BasePartition::Iterator it( this->REPartition() ); it.More(); it.Next() )
+  for ( ActData_BasePartition::Iterator it( this->GetREPartition() ); it.More(); it.Next() )
   {
     Handle(geom_re_node) N = Handle(geom_re_node)::DownCast( it.Value() );
     //
@@ -267,9 +271,9 @@ Handle(geom_re_node) common_model::RENode() const
 }
 
 //! \return single Sections Node.
-Handle(geom_sections_node) common_model::SectionsNode() const
+Handle(geom_sections_node) common_model::GetSectionsNode() const
 {
-  for ( ActData_BasePartition::Iterator it( this->SectionsPartition() ); it.More(); it.Next() )
+  for ( ActData_BasePartition::Iterator it( this->GetSectionsPartition() ); it.More(); it.Next() )
   {
     Handle(geom_sections_node) N = Handle(geom_sections_node)::DownCast( it.Value() );
     //
@@ -280,9 +284,9 @@ Handle(geom_sections_node) common_model::SectionsNode() const
 }
 
 //! \return single U-bend Node.
-Handle(geom_ubend_node) common_model::UBendNode() const
+Handle(geom_ubend_node) common_model::GetUBendNode() const
 {
-  for ( ActData_BasePartition::Iterator it( this->UBendPartition() ); it.More(); it.Next() )
+  for ( ActData_BasePartition::Iterator it( this->GetUBendPartition() ); it.More(); it.Next() )
   {
     Handle(geom_ubend_node) N = Handle(geom_ubend_node)::DownCast( it.Value() );
     //
@@ -293,9 +297,9 @@ Handle(geom_ubend_node) common_model::UBendNode() const
 }
 
 //! \return single Imperative Viewer Node.
-Handle(visu_iv_node) common_model::IVNode() const
+Handle(visu_iv_node) common_model::GetIVNode() const
 {
-  for ( ActData_BasePartition::Iterator it( this->IVPartition() ); it.More(); it.Next() )
+  for ( ActData_BasePartition::Iterator it( this->GetIVPartition() ); it.More(); it.Next() )
   {
     Handle(visu_iv_node) N = Handle(visu_iv_node)::DownCast( it.Value() );
     //
@@ -317,6 +321,8 @@ void common_model::initPartitions()
   REGISTER_PARTITION(common_partition<geom_part_node>,           Partition_GeomPart);
   REGISTER_PARTITION(common_partition<geom_face_node>,           Partition_GeomFace);
   REGISTER_PARTITION(common_partition<geom_surf_node>,           Partition_GeomSurface);
+  REGISTER_PARTITION(common_partition<geom_edge_node>,           Partition_GeomEdge);
+  REGISTER_PARTITION(common_partition<geom_curve_node>,          Partition_GeomCurve);
   REGISTER_PARTITION(common_partition<geom_boundary_edges_node>, Partition_GeomBoundaryEdges);
   REGISTER_PARTITION(common_partition<geom_volume_node>,         Partition_GeomVolume);
   //
@@ -384,7 +390,7 @@ Handle(ActAPI_IPartition)
 //! \return root Project Node.
 Handle(ActAPI_INode) common_model::getRootNode() const
 {
-  common_partition<common_root_node>::Iterator anIt( this->RootPartition() );
+  common_partition<common_root_node>::Iterator anIt( this->GetRootPartition() );
   return ( anIt.More() ? anIt.Value() : NULL );
 }
 

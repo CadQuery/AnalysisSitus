@@ -30,7 +30,7 @@ Handle(visu_iv_node) engine_iv::Create_IV()
 
   // Add IV Node to Partition
   Handle(visu_iv_node) iv_n = Handle(visu_iv_node)::DownCast( visu_iv_node::Instance() );
-  M->IVPartition()->AddNode(iv_n);
+  M->GetIVPartition()->AddNode(iv_n);
 
   // Initialize Node
   iv_n->Init();
@@ -39,7 +39,7 @@ Handle(visu_iv_node) engine_iv::Create_IV()
   // Create underlying Points 2D
   {
     Handle(ActAPI_INode) iv_points_2d_base = visu_iv_points_2d_node::Instance();
-    M->IVPoints2dPartition()->AddNode(iv_points_2d_base);
+    M->GetIVPoints2dPartition()->AddNode(iv_points_2d_base);
 
     // Initialize
     Handle(visu_iv_points_2d_node) iv_points_2d_n = Handle(visu_iv_points_2d_node)::DownCast(iv_points_2d_base);
@@ -53,7 +53,7 @@ Handle(visu_iv_node) engine_iv::Create_IV()
   // Create underlying Points
   {
     Handle(ActAPI_INode) iv_points_base = visu_iv_points_node::Instance();
-    M->IVPointsPartition()->AddNode(iv_points_base);
+    M->GetIVPointsPartition()->AddNode(iv_points_base);
 
     // Initialize
     Handle(visu_iv_points_node) iv_points_n = Handle(visu_iv_points_node)::DownCast(iv_points_base);
@@ -67,7 +67,7 @@ Handle(visu_iv_node) engine_iv::Create_IV()
   // Create underlying Curves
   {
     Handle(ActAPI_INode) iv_curves_base = visu_iv_curves_node::Instance();
-    M->IVCurvesPartition()->AddNode(iv_curves_base);
+    M->GetIVCurvesPartition()->AddNode(iv_curves_base);
 
     // Initialize
     Handle(visu_iv_curves_node) iv_curves_n = Handle(visu_iv_curves_node)::DownCast(iv_curves_base);
@@ -81,7 +81,7 @@ Handle(visu_iv_node) engine_iv::Create_IV()
   // Create underlying Surfaces
   {
     Handle(ActAPI_INode) iv_surfaces_base = visu_iv_surfaces_node::Instance();
-    M->IVSurfacesPartition()->AddNode(iv_surfaces_base);
+    M->GetIVSurfacesPartition()->AddNode(iv_surfaces_base);
 
     // Initialize
     Handle(visu_iv_surfaces_node) iv_surfaces_n = Handle(visu_iv_surfaces_node)::DownCast(iv_surfaces_base);
@@ -95,7 +95,7 @@ Handle(visu_iv_node) engine_iv::Create_IV()
   // Create underlying Topology container
   {
     Handle(ActAPI_INode) iv_topo_base = visu_iv_topo_node::Instance();
-    M->IVTopoPartition()->AddNode(iv_topo_base);
+    M->GetIVTopoPartition()->AddNode(iv_topo_base);
 
     // Initialize
     Handle(visu_iv_topo_node) iv_topo_n = Handle(visu_iv_topo_node)::DownCast(iv_topo_base);
@@ -109,7 +109,7 @@ Handle(visu_iv_node) engine_iv::Create_IV()
   // Create underlying Tessellation container
   {
     Handle(ActAPI_INode) iv_tess_base = visu_iv_tess_node::Instance();
-    M->IVTessPartition()->AddNode(iv_tess_base);
+    M->GetIVTessPartition()->AddNode(iv_tess_base);
 
     // Initialize
     Handle(visu_iv_tess_node) iv_tess_n = Handle(visu_iv_tess_node)::DownCast(iv_tess_base);
@@ -123,7 +123,7 @@ Handle(visu_iv_node) engine_iv::Create_IV()
   // Create underlying Text container
   {
     Handle(ActAPI_INode) iv_text_base = visu_iv_text_node::Instance();
-    M->IVTextPartition()->AddNode(iv_text_base);
+    M->GetIVTextPartition()->AddNode(iv_text_base);
 
     // Initialize
     Handle(visu_iv_text_node) iv_text_n = Handle(visu_iv_text_node)::DownCast(iv_text_base);
@@ -150,11 +150,11 @@ Handle(visu_iv_point_set_2d_node)
 {
   // Access Model and parent Node
   Handle(common_model)           M         = common_facilities::Instance()->Model;
-  Handle(visu_iv_points_2d_node) IV_Parent = M->IVNode()->Points2d();
+  Handle(visu_iv_points_2d_node) IV_Parent = M->GetIVNode()->Points2d();
 
   // Add Point Set Node to Partition
   Handle(visu_iv_point_set_2d_node) item_n = Handle(visu_iv_point_set_2d_node)::DownCast( visu_iv_point_set_2d_node::Instance() );
-  M->IVPointSet2dPartition()->AddNode(item_n);
+  M->GetIVPointSet2dPartition()->AddNode(item_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Point Set 2D" : name );
@@ -178,7 +178,7 @@ Handle(visu_iv_point_set_2d_node)
 void engine_iv::Clean_Points2d()
 {
   Handle(visu_iv_points_2d_node)
-    IV_Parent = common_facilities::Instance()->Model->IVNode()->Points2d();
+    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Points2d();
   //
   _cleanChildren(IV_Parent);
 }
@@ -195,11 +195,11 @@ Handle(visu_iv_point_set_node)
 {
   // Access Model and parent Node
   Handle(common_model)        M         = common_facilities::Instance()->Model;
-  Handle(visu_iv_points_node) IV_Parent = M->IVNode()->Points();
+  Handle(visu_iv_points_node) IV_Parent = M->GetIVNode()->Points();
 
   // Add Point Set Node to Partition
   Handle(visu_iv_point_set_node) item_n = Handle(visu_iv_point_set_node)::DownCast( visu_iv_point_set_node::Instance() );
-  M->IVPointSetPartition()->AddNode(item_n);
+  M->GetIVPointSetPartition()->AddNode(item_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Point Set" : name );
@@ -223,7 +223,7 @@ Handle(visu_iv_point_set_node)
 void engine_iv::Clean_Points()
 {
   Handle(visu_iv_points_node)
-    IV_Parent = common_facilities::Instance()->Model->IVNode()->Points();
+    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Points();
   //
   _cleanChildren(IV_Parent);
 }
@@ -245,11 +245,11 @@ Handle(visu_iv_curve_node)
 
   // Access Model and parent Node
   Handle(common_model)        M         = common_facilities::Instance()->Model;
-  Handle(visu_iv_curves_node) IV_Parent = M->IVNode()->Curves();
+  Handle(visu_iv_curves_node) IV_Parent = M->GetIVNode()->Curves();
 
   // Add Curve Node to Partition
   Handle(visu_iv_curve_node) item_n = Handle(visu_iv_curve_node)::DownCast( visu_iv_curve_node::Instance() );
-  M->IVCurvePartition()->AddNode(item_n);
+  M->GetIVCurvePartition()->AddNode(item_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Curve" : name );
@@ -293,7 +293,7 @@ Handle(visu_iv_curve_node)
 void engine_iv::Clean_Curves()
 {
   Handle(visu_iv_curves_node)
-    IV_Parent = common_facilities::Instance()->Model->IVNode()->Curves();
+    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Curves();
   //
   _cleanChildren(IV_Parent);
 }
@@ -317,11 +317,11 @@ Handle(visu_iv_surface_node)
 
   // Access Model and parent Node
   Handle(common_model)          M         = common_facilities::Instance()->Model;
-  Handle(visu_iv_surfaces_node) IV_Parent = M->IVNode()->Surfaces();
+  Handle(visu_iv_surfaces_node) IV_Parent = M->GetIVNode()->Surfaces();
 
   // Add Surface Node to Partition
   Handle(visu_iv_surface_node) item_n = Handle(visu_iv_surface_node)::DownCast( visu_iv_surface_node::Instance() );
-  M->IVSurfacePartition()->AddNode(item_n);
+  M->GetIVSurfacePartition()->AddNode(item_n);
 
   // Generate unique name if a good name is not passed
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Surface" : name );
@@ -344,7 +344,7 @@ Handle(visu_iv_surface_node)
 void engine_iv::Clean_Surfaces()
 {
   Handle(visu_iv_surfaces_node)
-    IV_Parent = common_facilities::Instance()->Model->IVNode()->Surfaces();
+    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Surfaces();
   //
   _cleanChildren(IV_Parent);
 }
@@ -361,11 +361,11 @@ Handle(visu_iv_topo_item_node)
 {
   // Access Model and parent Node
   Handle(common_model)      M         = common_facilities::Instance()->Model;
-  Handle(visu_iv_topo_node) IV_Parent = M->IVNode()->Topology();
+  Handle(visu_iv_topo_node) IV_Parent = M->GetIVNode()->Topology();
 
   // Add Topological Item Node to Partition
   Handle(visu_iv_topo_item_node) item_n = Handle(visu_iv_topo_item_node)::DownCast( visu_iv_topo_item_node::Instance() );
-  M->IVTopoItemPartition()->AddNode(item_n);
+  M->GetIVTopoItemPartition()->AddNode(item_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Shape" : name );
@@ -387,7 +387,7 @@ Handle(visu_iv_topo_item_node)
 void engine_iv::Clean_Topo()
 {
   Handle(visu_iv_topo_node)
-    IV_Parent = common_facilities::Instance()->Model->IVNode()->Topology();
+    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Topology();
   //
   _cleanChildren(IV_Parent);
 }
@@ -404,11 +404,11 @@ Handle(visu_iv_tess_item_node)
 {
   // Access Model and parent Node
   Handle(common_model)      M         = common_facilities::Instance()->Model;
-  Handle(visu_iv_tess_node) IV_Parent = M->IVNode()->Tessellation();
+  Handle(visu_iv_tess_node) IV_Parent = M->GetIVNode()->Tessellation();
 
   // Add Tessellation Item Node to Partition
   Handle(visu_iv_tess_item_node) item_n = Handle(visu_iv_tess_item_node)::DownCast( visu_iv_tess_item_node::Instance() );
-  M->IVTessItemPartition()->AddNode(item_n);
+  M->GetIVTessItemPartition()->AddNode(item_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Mesh" : name );
@@ -435,7 +435,7 @@ Handle(visu_iv_tess_item_node)
 void engine_iv::Clean_Tess()
 {
   Handle(visu_iv_tess_node)
-    IV_Parent = common_facilities::Instance()->Model->IVNode()->Tessellation();
+    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Tessellation();
   //
   _cleanChildren(IV_Parent);
 }
@@ -450,11 +450,11 @@ Handle(visu_iv_text_item_node)
 {
   // Access Model and parent Node
   Handle(common_model)      M         = common_facilities::Instance()->Model;
-  Handle(visu_iv_text_node) IV_Parent = M->IVNode()->Text();
+  Handle(visu_iv_text_node) IV_Parent = M->GetIVNode()->Text();
 
   // Add Text Item Node to Partition
   Handle(visu_iv_text_item_node) item_n = Handle(visu_iv_text_item_node)::DownCast( visu_iv_text_item_node::Instance() );
-  M->IVTextItemPartition()->AddNode(item_n);
+  M->GetIVTextItemPartition()->AddNode(item_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name;
@@ -487,7 +487,7 @@ Handle(visu_iv_text_item_node)
 void engine_iv::Clean_Text()
 {
   Handle(visu_iv_text_node)
-    IV_Parent = common_facilities::Instance()->Model->IVNode()->Text();
+    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Text();
   //
   _cleanChildren(IV_Parent);
 }

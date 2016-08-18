@@ -46,7 +46,7 @@ ActAPI_DataObjectId visu_sections_data_provider::GetNodeID() const
 TopoDS_Compound visu_sections_data_provider::GetTransformedSections() const
 {
   Handle(geom_sections_node)
-    sections_n = common_facilities::Instance()->Model->SectionsNode();
+    sections_n = common_facilities::Instance()->Model->GetSectionsNode();
 
   if ( sections_n.IsNull() || !sections_n->IsWellFormed() )
     return TopoDS_Compound();
@@ -85,7 +85,7 @@ TopoDS_Compound visu_sections_data_provider::GetTransformedSections() const
 Handle(ActAPI_HParameterList) visu_sections_data_provider::translationSources() const
 {
   Handle(geom_sections_node)
-    sections_n = common_facilities::Instance()->Model->SectionsNode();
+    sections_n = common_facilities::Instance()->Model->GetSectionsNode();
 
   if ( sections_n.IsNull() || !sections_n->IsWellFormed() )
     return NULL;

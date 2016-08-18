@@ -37,7 +37,7 @@ void engine_domain::GetHighlightedEdges(TopTools_IndexedMapOfShape& edges,
                                         TopoDS_Face&                face)
 {
   // Get Part Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
 
   // Get Part shape
   TopoDS_Shape part = N->GetShape();
@@ -47,7 +47,7 @@ void engine_domain::GetHighlightedEdges(TopTools_IndexedMapOfShape& edges,
   TopExp::MapShapes(N->GetShape(), FacesMap);
 
   // Get face
-  const int face_idx = N->FaceRepresentation()->GetSelectedFace();
+  const int face_idx = N->GetFaceRepresentation()->GetSelectedFace();
   //
   if ( face_idx > 0 )
     face = TopoDS::Face( FacesMap.FindKey(face_idx) );

@@ -100,7 +100,7 @@ void gui_controls_mesh::onLoadPly()
   common_facilities::Instance()->Model->Clear();
 
   // Set mesh
-  Handle(tess_node) tess_n = common_facilities::Instance()->Model->Mesh_Node();
+  Handle(tess_node) tess_n = common_facilities::Instance()->Model->GetMeshNode();
   //
   common_facilities::Instance()->Model->OpenCommand(); // tx start
   {
@@ -123,7 +123,7 @@ void gui_controls_mesh::onDecimate()
   std::cout << "Decimation" << std::endl;
 
   // Get Mesh Node
-  Handle(tess_node) tess_n = common_facilities::Instance()->Model->Mesh_Node();
+  Handle(tess_node) tess_n = common_facilities::Instance()->Model->GetMeshNode();
   if ( tess_n.IsNull() || !tess_n->IsWellFormed() )
   {
     std::cout << "Error: cannot access Mesh Node" << std::endl;

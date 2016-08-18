@@ -34,6 +34,49 @@
 // OCCT includes
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
+#define COUT_DEBUG
+
+//-----------------------------------------------------------------------------
+
+void GetPickedSubshapeIds(const visu_pick_result&           pick_res,
+                          std::vector<int>&                 picked_subshape_IDs,
+                          std::vector<ActAPI_DataObjectId>& picked_node_IDs)
+{
+  const visu_actor_elem_map& elem_map = pick_res.GetPickMap();
+
+  // Prepare cumulative set of all picked element IDs
+  for ( visu_actor_elem_map::Iterator it(elem_map); it.More(); it.Next() )
+  {
+    const vtkSmartPointer<vtkActor>&  picked_actor  = it.Key();
+    const TColStd_PackedMapOfInteger& subshape_mask = it.Value();
+
+    // Retrieve the corresponding Node ID by picked Actor
+    ActAPI_DataObjectId
+      picked_node_id = visu_node_info::Retrieve(picked_actor)->GetNodeId();
+
+    // Fill coherent collections of references: sub-shape IDs against owning Nodes
+    for ( TColStd_MapIteratorOfPackedMapOfInteger maskIt(subshape_mask); maskIt.More(); maskIt.Next() )
+    {
+      picked_subshape_IDs.push_back( maskIt.Key() );
+      picked_node_IDs.push_back(picked_node_id);
+    }
+  }
+
+#if defined COUT_DEBUG
+  if ( picked_subshape_IDs.size() )
+  {
+    std::cout << "Picked sub-shapes:";
+    for ( size_t k = 0; k < picked_subshape_IDs.size(); ++k )
+    {
+      std::cout << " " << picked_subshape_IDs[k] << " [" << picked_node_IDs[k].ToCString() << "]";
+    }
+    std::cout << std::endl;
+  }
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
 //! Creates a new instance of viewer.
 //! \param parent [in] parent widget.
 gui_viewer_part::gui_viewer_part(QWidget* parent) : gui_viewer(parent)
@@ -162,7 +205,7 @@ void gui_viewer_part::onResetView()
 //! Callback for picking event.
 void gui_viewer_part::onSubShapesPicked()
 {
-  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->GetPartNode();
   if ( geom_n.IsNull() || !geom_n->IsWellFormed() )
   {
     std::cout << "Geometry Node is not accessible" << std::endl;
@@ -179,76 +222,93 @@ void gui_viewer_part::onSubShapesPicked()
   // Access picking results
   const visu_actual_selection& sel      = m_prs_mgr->GetCurrentSelection();
   const visu_pick_result&      pick_res = sel.PickResult(SelectionNature_Pick);
-  const visu_actor_elem_map&   elem_map = pick_res.GetPickMap();
 
-  if ( !pick_res.IsSelectionFace() )
-    return;
-
-  // Prepare arrays for selected elements
-  std::vector<int>                 picked_face_IDs;
-  std::vector<ActAPI_DataObjectId> picked_node_IDs;
-
-  // Prepare cumulative set of all picked element IDs
-  for ( visu_actor_elem_map::Iterator it(elem_map); it.More(); it.Next() )
+  if ( pick_res.IsSelectionFace() )
   {
-    const vtkSmartPointer<vtkActor>&  picked_actor = it.Key();
-    const TColStd_PackedMapOfInteger& face_mask    = it.Value();
+    // Prepare arrays for selected elements
+    std::vector<int>                 picked_face_IDs;
+    std::vector<ActAPI_DataObjectId> picked_node_IDs;
 
-    // Retrieve the corresponding Node ID by picked Actor
-    ActAPI_DataObjectId
-      picked_node_id = visu_node_info::Retrieve(picked_actor)->GetNodeId();
+    // Prepare cumulative set of all picked element IDs
+    GetPickedSubshapeIds(pick_res, picked_face_IDs, picked_node_IDs);
 
-    // Fill coherent collections of references: face IDs against owning Nodes
-    for ( TColStd_MapIteratorOfPackedMapOfInteger maskIt(face_mask); maskIt.More(); maskIt.Next() )
+    //---------------------------------------------------------------------------
+    // Store active selection in the Data Model
+    //---------------------------------------------------------------------------
+
+    common_facilities::Instance()->Model->OpenCommand(); // tx start
     {
-      picked_face_IDs.push_back( maskIt.Key() );
-      picked_node_IDs.push_back(picked_node_id);
+      // Store index of the active face
+      if ( picked_face_IDs.size() )
+      {
+        geom_n->GetFaceRepresentation()    ->SetSelectedFace(picked_face_IDs[0]);
+        geom_n->GetSurfaceRepresentation() ->SetSelectedFace(picked_face_IDs[0]);
+        //
+        std::cout << "Active face has been stored..." << std::endl;
+      }
+      else // Reset stored indices
+      {
+        geom_n->GetFaceRepresentation()    ->SetSelectedFace(0);
+        geom_n->GetSurfaceRepresentation() ->SetSelectedFace(0);
+        //
+        std::cout << "Active face has been reset..." << std::endl;
+      }
     }
-  }
+    common_facilities::Instance()->Model->CommitCommand(); // tx commit
 
-  if ( picked_face_IDs.size() )
+    //---------------------------------------------------------------------------
+    // Actualize presentations
+    //---------------------------------------------------------------------------
+
+    if ( common_facilities::Instance()->Prs.Domain )
+      common_facilities::Instance()->Prs.Domain->Actualize(geom_n->GetFaceRepresentation().get(), false, true);
+
+    if ( common_facilities::Instance()->Prs.Host )
+      common_facilities::Instance()->Prs.Host->Actualize(geom_n->GetSurfaceRepresentation().get(), false, true);
+  }
+  else if ( pick_res.IsSelectionEdge() )
   {
-    std::cout << "Picked faces:";
-    for ( size_t k = 0; k < picked_face_IDs.size(); ++k )
+    // Prepare arrays for selected elements
+    std::vector<int>                 picked_edge_IDs;
+    std::vector<ActAPI_DataObjectId> picked_node_IDs;
+
+    // Prepare cumulative set of all picked element IDs
+    GetPickedSubshapeIds(pick_res, picked_edge_IDs, picked_node_IDs);
+
+    //---------------------------------------------------------------------------
+    // Store active selection in the Data Model
+    //---------------------------------------------------------------------------
+
+    common_facilities::Instance()->Model->OpenCommand(); // tx start
     {
-      std::cout << " " << picked_face_IDs[k] << " [" << picked_node_IDs[k].ToCString() << "]";
+      // Store index of the active edge
+      if ( picked_edge_IDs.size() )
+      {
+        geom_n->GetEdgeRepresentation()  ->SetSelectedEdge(picked_edge_IDs[0]);
+        geom_n->GetCurveRepresentation() ->SetSelectedEdge(picked_edge_IDs[0]);
+        //
+        std::cout << "Active edge has been stored..." << std::endl;
+      }
+      else // Reset stored indices
+      {
+        geom_n->GetEdgeRepresentation()  ->SetSelectedEdge(0);
+        geom_n->GetCurveRepresentation() ->SetSelectedEdge(0);
+        //
+        std::cout << "Active edge has been reset..." << std::endl;
+      }
     }
-    std::cout << std::endl;
+    common_facilities::Instance()->Model->CommitCommand(); // tx commit
+
+    //---------------------------------------------------------------------------
+    // Actualize presentations
+    //---------------------------------------------------------------------------
+
+    if ( common_facilities::Instance()->Prs.Domain )
+      common_facilities::Instance()->Prs.Domain->Actualize(geom_n->GetEdgeRepresentation().get(), false, true);
+
+    if ( common_facilities::Instance()->Prs.Host )
+      common_facilities::Instance()->Prs.Host->Actualize(geom_n->GetCurveRepresentation().get(), false, true);
   }
-
-  //---------------------------------------------------------------------------
-  // Store active selection in the Data Model
-  //---------------------------------------------------------------------------
-
-  common_facilities::Instance()->Model->OpenCommand(); // tx start
-  {
-    // Store index of the active face
-    if ( picked_face_IDs.size() )
-    {
-      geom_n->FaceRepresentation()    ->SetSelectedFace(picked_face_IDs[0]);
-      geom_n->SurfaceRepresentation() ->SetSelectedFace(picked_face_IDs[0]);
-      //
-      std::cout << "Active face has been stored..." << std::endl;
-    }
-    else // Reset stored indices
-    {
-      geom_n->FaceRepresentation()    ->SetSelectedFace(0);
-      geom_n->SurfaceRepresentation() ->SetSelectedFace(0);
-      //
-      std::cout << "Active face has been reset..." << std::endl;
-    }
-  }
-  common_facilities::Instance()->Model->CommitCommand(); // tx commit
-
-  //---------------------------------------------------------------------------
-  // Actualize presentations
-  //---------------------------------------------------------------------------
-
-  if ( common_facilities::Instance()->Prs.Domain )
-    common_facilities::Instance()->Prs.Domain->Actualize(geom_n->FaceRepresentation().get(), false, true);
-
-  if ( common_facilities::Instance()->Prs.Surface )
-    common_facilities::Instance()->Prs.Surface->Actualize(geom_n->SurfaceRepresentation().get(), false, true);
 }
 
 //-----------------------------------------------------------------------------

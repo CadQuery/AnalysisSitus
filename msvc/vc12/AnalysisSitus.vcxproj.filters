@@ -1061,6 +1061,27 @@
     <ClInclude Include="..\..\src\geom\common\geom_euler_poincare.h">
       <Filter>Header Files\Geometry\Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_curve_node.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_edge_node.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_curve_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_edge_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_edge_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_edge_curve_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_edge_domain_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -2091,6 +2112,27 @@
     </ClCompile>
     <ClCompile Include="..\..\src\geom\common\geom_euler_poincare.cpp">
       <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_curve_node.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_edge_node.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_curve_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_edge_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_edge_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_edge_curve_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_edge_domain_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

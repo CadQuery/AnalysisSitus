@@ -160,7 +160,7 @@ void gui_viewer_domain::onResetView()
 //! Callback for picking event.
 void gui_viewer_domain::onDomainPicked()
 {
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() || N->GetShape().IsNull() )
     return;
 
@@ -169,7 +169,7 @@ void gui_viewer_domain::onDomainPicked()
   TopExp::MapShapes(N->GetShape(), FacesMap);
 
   // Get face
-  const int face_idx = N->FaceRepresentation()->GetSelectedFace();
+  const int face_idx = N->GetFaceRepresentation()->GetSelectedFace();
   //
   TopoDS_Face F;
   if ( face_idx > 0 )
@@ -278,7 +278,7 @@ void gui_viewer_domain::onDomainPicked()
 //! Callback for edges removal.
 void gui_viewer_domain::onKillEdges()
 {
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() || N->GetShape().IsNull() )
     return;
 
@@ -322,7 +322,7 @@ void gui_viewer_domain::onKillEdges()
 //! Callback for edges joining.
 void gui_viewer_domain::onJoinEdges()
 {
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() || N->GetShape().IsNull() )
     return;
 

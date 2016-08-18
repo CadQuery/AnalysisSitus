@@ -130,7 +130,7 @@ void gui_controls_hull::onLoadPoints()
   common_facilities::Instance()->Model->Clear();
 
   // Set part geometry
-  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->GetPartNode();
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
@@ -157,7 +157,7 @@ void gui_controls_hull::onInterpSections()
    * ============================================= */
 
   // Get point cloud
-  Handle(geom_part_node) part = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) part = common_facilities::Instance()->Model->GetPartNode();
   //
   TopoDS_Shape partShape = part->GetShape();
 
@@ -247,21 +247,21 @@ void gui_controls_hull::onInterpSections()
   // Save geometry to data model
   common_facilities::Instance()->Model->OpenCommand();
   {
-    common_facilities::Instance()->Model->PartNode()->SetShape(result);
+    common_facilities::Instance()->Model->GetPartNode()->SetShape(result);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update presentation
   common_facilities::Instance()->Prs.Part->DeleteAllPresentations();
   vtkSmartPointer<visu_prs_manager> prsMgr = common_facilities::Instance()->Prs.Part;
-  prsMgr->Actualize( common_facilities::Instance()->Model->PartNode().get(), false, true );
+  prsMgr->Actualize( common_facilities::Instance()->Model->GetPartNode().get(), false, true );
 }
 
 //! Interpolate columns.
 void gui_controls_hull::onInterpColumns()
 {
   // Get sections edges
-  Handle(geom_part_node) part = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) part = common_facilities::Instance()->Model->GetPartNode();
   //
   TopoDS_Shape partShape = part->GetShape();
   //
@@ -353,21 +353,21 @@ void gui_controls_hull::onInterpColumns()
   // Save geometry to data model
   common_facilities::Instance()->Model->OpenCommand();
   {
-    common_facilities::Instance()->Model->PartNode()->SetShape(fullComp);
+    common_facilities::Instance()->Model->GetPartNode()->SetShape(fullComp);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update presentation
   common_facilities::Instance()->Prs.Part->DeleteAllPresentations();
   vtkSmartPointer<visu_prs_manager> prsMgr = common_facilities::Instance()->Prs.Part;
-  prsMgr->Actualize( common_facilities::Instance()->Model->PartNode().get(), false, true );
+  prsMgr->Actualize( common_facilities::Instance()->Model->GetPartNode().get(), false, true );
 }
 
 //! Skin surface.
 void gui_controls_hull::onSkinSurface()
 {
   // Get sections edges
-  Handle(geom_part_node) part = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) part = common_facilities::Instance()->Model->GetPartNode();
   //
   TopoDS_Shape partShape = part->GetShape();
   //
@@ -459,14 +459,14 @@ void gui_controls_hull::onSkinSurface()
   // Save geometry to data model
   common_facilities::Instance()->Model->OpenCommand();
   {
-    common_facilities::Instance()->Model->PartNode()->SetShape(F);
+    common_facilities::Instance()->Model->GetPartNode()->SetShape(F);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
   // Update presentation
   common_facilities::Instance()->Prs.Part->DeleteAllPresentations();
   vtkSmartPointer<visu_prs_manager> prsMgr = common_facilities::Instance()->Prs.Part;
-  prsMgr->Actualize( common_facilities::Instance()->Model->PartNode().get(), false, true );
+  prsMgr->Actualize( common_facilities::Instance()->Model->GetPartNode().get(), false, true );
 }
 
 //! Save geometry to STEP.
@@ -475,7 +475,7 @@ void gui_controls_hull::onSaveSTEP()
   QString filename = gui_common::selectSTEPFile(gui_common::OpenSaveAction_Save);
 
   // Access Part Node
-  Handle(geom_part_node) part = common_facilities::Instance()->Model->PartNode();
+  Handle(geom_part_node) part = common_facilities::Instance()->Model->GetPartNode();
   //
   TopoDS_Shape partShape = part->GetShape();
 
@@ -494,9 +494,9 @@ void gui_controls_hull::onCurvature()
   common_facilities::Instance()->Prs.Part->DeleteAllPresentations();
 
   // Get Part Node with the underlying Surface Node
-  Handle(geom_part_node) part_n = common_facilities::Instance()->Model->PartNode();
-  Handle(geom_surf_node) surf_n = part_n->SurfaceRepresentation();
-  Handle(geom_face_node) face_n = part_n->FaceRepresentation();
+  Handle(geom_part_node) part_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(geom_surf_node) surf_n = part_n->GetSurfaceRepresentation();
+  Handle(geom_face_node) face_n = part_n->GetFaceRepresentation();
 
   // Check shape type
   if ( part_n->GetShape().ShapeType() != TopAbs_FACE )

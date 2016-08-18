@@ -33,7 +33,7 @@ Handle(geom_volume_node)
 
   // Add Node to Partition
   Handle(geom_volume_node) volume_n = Handle(geom_volume_node)::DownCast( geom_volume_node::Instance() );
-  M->GeomVolumePartition()->AddNode(volume_n);
+  M->GetGeomVolumePartition()->AddNode(volume_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name;
@@ -67,7 +67,7 @@ void engine_volume::Clean_Volumes()
   Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList;
 
   // Collect Nodes to delete
-  for ( ActData_BasePartition::Iterator it( M->GeomVolumePartition() ); it.More(); it.Next() )
+  for ( ActData_BasePartition::Iterator it( M->GetGeomVolumePartition() ); it.More(); it.Next() )
   {
     nodesToDelete->Append( it.Value() );
   }
@@ -88,7 +88,7 @@ Handle(ActAPI_INode) engine_volume::Get_RootVolume()
   Handle(common_model) M = common_facilities::Instance()->Model;
 
   // Iterate over the Partition trying to find a volume without a parent
-  for ( ActData_BasePartition::Iterator it( M->GeomVolumePartition() ); it.More(); it.Next() )
+  for ( ActData_BasePartition::Iterator it( M->GetGeomVolumePartition() ); it.More(); it.Next() )
   {
     Handle(ActAPI_INode) item_n = it.Value();
     //
@@ -120,7 +120,7 @@ Handle(ActAPI_HDataCursorList)
 
   // Iterate over the Partition and take only those volumes which do not
   // have any children
-  for ( ActData_BasePartition::Iterator it( M->GeomVolumePartition() ); it.More(); it.Next() )
+  for ( ActData_BasePartition::Iterator it( M->GetGeomVolumePartition() ); it.More(); it.Next() )
   {
     Handle(ActAPI_INode) item_n = it.Value();
 

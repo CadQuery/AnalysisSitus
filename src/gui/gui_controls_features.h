@@ -41,6 +41,7 @@ public slots:
   void onFindSameHosts       ();
   void onRehostFaces         ();
   void onUnperiodizeSelected ();
+  void onCheckAlongCurvature ();
 
 private:
 
@@ -64,6 +65,7 @@ private:
     QPushButton* pFindSameHosts;       //!< Attempts to find same-host faces.
     QPushButton* pRehostFaces;         //!< Merges the host geometry of selected faces.
     QPushButton* pUnperiodizeSelected; //!< Performs unperiodization of selected faces.
+    QPushButton* pCheckAlongCurvature; //!< Evaluates along curvature for the selected edge.
 
     t_widgets() : pCheckSolidAngles    (NULL),
                   pFindSmoothEdges     (NULL),
@@ -79,7 +81,8 @@ private:
                   pDeleteSelectedFull  (NULL),
                   pFindSameHosts       (NULL),
                   pRehostFaces         (NULL),
-                  pUnperiodizeSelected (NULL)
+                  pUnperiodizeSelected (NULL),
+                  pCheckAlongCurvature (NULL)
     {}
 
     void Release()
@@ -99,6 +102,7 @@ private:
       delete pFindSameHosts;       pFindSameHosts       = NULL;
       delete pRehostFaces;         pRehostFaces         = NULL;
       delete pUnperiodizeSelected; pUnperiodizeSelected = NULL;
+      delete pCheckAlongCurvature; pCheckAlongCurvature = NULL;
     }
   };
 

@@ -162,7 +162,7 @@ void gui_dialog_find_face::onFind()
     // Read user inputs
     const int face_id = m_widgets.pIndex->text().toInt();
 
-    if ( face_id <= faces.Extent() )
+    if ( face_id > 0 && face_id <= faces.Extent() )
     {
       const TopoDS_Shape& face = faces.FindKey(face_id);
       found.Add(face);

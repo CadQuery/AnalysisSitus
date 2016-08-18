@@ -88,7 +88,7 @@ gui_controls_ubend::~gui_controls_ubend()
 void gui_controls_ubend::RenderSections()
 {
   Handle(geom_ubend_node)
-    ubend_n = common_facilities::Instance()->Model->UBendNode();
+    ubend_n = common_facilities::Instance()->Model->GetUBendNode();
   //
   if ( ubend_n.IsNull() || !ubend_n->IsWellFormed() )
     return;
@@ -103,7 +103,7 @@ void gui_controls_ubend::RenderSections()
 void gui_controls_ubend::onDoTheMagic()
 {
   Handle(geom_ubend_node)
-    ubend_n = common_facilities::Instance()->Model->UBendNode();
+    ubend_n = common_facilities::Instance()->Model->GetUBendNode();
   //
   if ( ubend_n.IsNull() || !ubend_n->IsWellFormed() )
     return;
@@ -208,7 +208,7 @@ void gui_controls_ubend::onSaveSTEP()
   QString filename = gui_common::selectSTEPFile(gui_common::OpenSaveAction_Save);
 
   // Access U-bend Node
-  Handle(geom_ubend_node) N = common_facilities::Instance()->Model->UBendNode();
+  Handle(geom_ubend_node) N = common_facilities::Instance()->Model->GetUBendNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 

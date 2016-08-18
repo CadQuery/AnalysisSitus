@@ -14,7 +14,7 @@
 // A-Situs (GUI) includes
 #include <gui_common.h>
 
-#define COUT_OUTPUT
+#undef COUT_OUTPUT
 
 //! Constructor.
 journal_notifier::journal_notifier() : ActAPI_IProgressNotifier()

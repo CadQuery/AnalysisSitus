@@ -1,12 +1,12 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 December 2015
+// Created on: 18 August 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_face_data_provider.h>
+#include <visu_edge_data_provider.h>
 
 // A-Situs (common) includes
 #include <common_facilities.h>
@@ -26,7 +26,7 @@
 //! Constructor accepting the set of source data structures.
 //! \param theNodeId    [in] ID of the target Data Node.
 //! \param theParamList [in] source Parameters.
-visu_face_data_provider::visu_face_data_provider(const ActAPI_DataObjectId&           theNodeId,
+visu_edge_data_provider::visu_edge_data_provider(const ActAPI_DataObjectId&           theNodeId,
                                                  const Handle(ActAPI_HParameterList)& theParamList)
 : visu_data_provider()
 {
@@ -40,7 +40,7 @@ visu_face_data_provider::visu_face_data_provider(const ActAPI_DataObjectId&     
   if ( !geom_n->GetShape().IsNull() )
   {
     TopExp::MapShapes(geom_n->GetShape(), m_subShapes);
-    TopExp::MapShapes(geom_n->GetShape(), TopAbs_FACE, m_faces);
+    TopExp::MapShapes(geom_n->GetShape(), TopAbs_EDGE, m_edges);
   }
 }
 
@@ -50,51 +50,51 @@ visu_face_data_provider::visu_face_data_provider(const ActAPI_DataObjectId&     
 //! pipeline. This ID is bound to the pipeline's actor in order to have a
 //! back-reference from Presentation to Data Object.
 //! \return Node ID.
-ActAPI_DataObjectId visu_face_data_provider::GetNodeID() const
+ActAPI_DataObjectId visu_edge_data_provider::GetNodeID() const
 {
   return m_nodeID;
 }
 
-//! \return global index of the OCCT face to be visualized.
-int visu_face_data_provider::GetFaceIndexAmongSubshapes() const
+//! \return global index of the OCCT edge to be visualized.
+int visu_edge_data_provider::GetEdgeIndexAmongSubshapes() const
 {
   return ActParamTool::AsInt( m_params->Value(1) )->GetValue();
 }
 
-//! \return local index of the OCCT face to be visualized.
-int visu_face_data_provider::GetFaceIndexAmongFaces() const
+//! \return local index of the OCCT edges to be visualized.
+int visu_edge_data_provider::GetEdgeIndexAmongEdges() const
 {
   const int globalId = ActParamTool::AsInt( m_params->Value(1) )->GetValue();
 
   if ( globalId )
-    return m_faces.FindIndex( m_subShapes.FindKey(globalId) );
+    return m_edges.FindIndex( m_subShapes.FindKey(globalId) );
 
   return 0;
 }
 
-//! \return topological face extracted from the part by its stored ID.
-TopoDS_Face visu_face_data_provider::ExtractFace() const
+//! \return topological edge extracted from the part by its stored ID.
+TopoDS_Edge visu_edge_data_provider::ExtractEdge() const
 {
-  const int fIdx = this->GetFaceIndexAmongSubshapes();
-  if ( !fIdx )
-    return TopoDS_Face();
+  const int eIdx = this->GetEdgeIndexAmongSubshapes();
+  if ( !eIdx )
+    return TopoDS_Edge();
 
-  const TopoDS_Shape& shape = m_subShapes.FindKey(fIdx);
-  if ( shape.ShapeType() != TopAbs_FACE )
-    return TopoDS_Face();
+  const TopoDS_Shape& shape = m_subShapes.FindKey(eIdx);
+  if ( shape.ShapeType() != TopAbs_EDGE )
+    return TopoDS_Edge();
 
-  // Access face by the stored index
-  const TopoDS_Face& F = TopoDS::Face(shape);
-  return F;
+  // Access edge by the stored index
+  const TopoDS_Edge& E = TopoDS::Edge(shape);
+  return E;
 }
 
 //-----------------------------------------------------------------------------
 
 //! Creates a copy of the Data Provider.
 //! \return copy.
-Handle(visu_face_data_provider) visu_face_data_provider::Clone() const
+Handle(visu_edge_data_provider) visu_edge_data_provider::Clone() const
 {
-  return new visu_face_data_provider(m_nodeID, m_params);
+  return new visu_edge_data_provider(m_nodeID, m_params);
 }
 
 //-----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ Handle(visu_face_data_provider) visu_face_data_provider::Clone() const
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) visu_face_data_provider::translationSources() const
+Handle(ActAPI_HParameterList) visu_edge_data_provider::translationSources() const
 {
-  return ActParamStream() << m_params->Value(1); // Parameter for face index
+  return ActParamStream() << m_params->Value(1); // Parameter for edge index
 }

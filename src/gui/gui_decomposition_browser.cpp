@@ -83,7 +83,7 @@ void gui_decomposition_browser::Populate()
   // Find root volumes
   Handle(ActAPI_HNodeList) rootNodes = new ActAPI_HNodeList;
   //
-  for ( ActData_BasePartition::Iterator it( M->GeomVolumePartition() ); it.More(); it.Next() )
+  for ( ActData_BasePartition::Iterator it( M->GetGeomVolumePartition() ); it.More(); it.Next() )
   {
     if ( it.Value()->GetParentNode().IsNull() )
       rootNodes->Append( it.Value() );

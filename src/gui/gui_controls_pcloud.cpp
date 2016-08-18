@@ -115,7 +115,7 @@ void gui_controls_pcloud::onEstimNormals()
 {
   // TODO: the following is just weird
   Handle(ActAPI_INode)
-    N = common_facilities::Instance()->Model->IVPointSetPartition()->GetNode(1);
+    N = common_facilities::Instance()->Model->GetIVPointSetPartition()->GetNode(1);
   //
   Handle(visu_iv_point_set_node) PN = Handle(visu_iv_point_set_node)::DownCast(N);
   //

@@ -24,7 +24,7 @@ visu_re_surfaces_data_provider::visu_re_surfaces_data_provider()
 ActAPI_DataObjectId visu_re_surfaces_data_provider::GetNodeID() const
 {
   Handle(geom_re_surfaces_node)
-    surfaces_n = common_facilities::Instance()->Model->RENode()->Surfaces();
+    surfaces_n = common_facilities::Instance()->Model->GetRENode()->Surfaces();
   //
   if ( surfaces_n.IsNull() || !surfaces_n->IsWellFormed() )
     return ActAPI_DataObjectId();
@@ -38,7 +38,7 @@ ActAPI_DataObjectId visu_re_surfaces_data_provider::GetNodeID() const
 int visu_re_surfaces_data_provider::GetNumOfSurfaces() const
 {
   Handle(geom_re_surfaces_node)
-    surfaces_n = common_facilities::Instance()->Model->RENode()->Surfaces();
+    surfaces_n = common_facilities::Instance()->Model->GetRENode()->Surfaces();
   //
   if ( surfaces_n.IsNull() || !surfaces_n->IsWellFormed() )
     return 0;
@@ -69,7 +69,7 @@ Handle(Geom_Surface)
                                              double&   vLimit) const
 {
   Handle(geom_re_surfaces_node)
-    surfaces_n = common_facilities::Instance()->Model->RENode()->Surfaces();
+    surfaces_n = common_facilities::Instance()->Model->GetRENode()->Surfaces();
   //
   if ( surfaces_n.IsNull() || !surfaces_n->IsWellFormed() )
     return NULL;
@@ -96,7 +96,7 @@ Handle(ActAPI_HParameterList) visu_re_surfaces_data_provider::translationSources
   ActParamStream out;
 
   Handle(geom_re_surfaces_node)
-    surfaces_n = common_facilities::Instance()->Model->RENode()->Surfaces();
+    surfaces_n = common_facilities::Instance()->Model->GetRENode()->Surfaces();
   //
   if ( surfaces_n.IsNull() || !surfaces_n->IsWellFormed() )
     return out;

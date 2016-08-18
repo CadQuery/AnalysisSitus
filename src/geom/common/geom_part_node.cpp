@@ -60,10 +60,10 @@ TCollection_ExtendedString geom_part_node::GetName()
 }
 
 //! Sets name for the Node.
-//! \param theName [in] name to set.
-void geom_part_node::SetName(const TCollection_ExtendedString& theName)
+//! \param name [in] name to set.
+void geom_part_node::SetName(const TCollection_ExtendedString& name)
 {
-  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(theName);
+  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
 }
 
 //-----------------------------------------------------------------------------
@@ -145,7 +145,7 @@ bool geom_part_node::HasVertices() const
 //-----------------------------------------------------------------------------
 
 //! \return underlying face representation Node.
-Handle(geom_face_node) geom_part_node::FaceRepresentation()
+Handle(geom_face_node) geom_part_node::GetFaceRepresentation() const
 {
   Handle(geom_face_node) face_n;
   for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
@@ -160,7 +160,7 @@ Handle(geom_face_node) geom_part_node::FaceRepresentation()
 }
 
 //! \return underlying surface representation Node.
-Handle(geom_surf_node) geom_part_node::SurfaceRepresentation()
+Handle(geom_surf_node) geom_part_node::GetSurfaceRepresentation() const
 {
   Handle(geom_surf_node) surf_n;
   for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
@@ -175,7 +175,7 @@ Handle(geom_surf_node) geom_part_node::SurfaceRepresentation()
 }
 
 //! \return underlying boundary edges representation Node.
-Handle(geom_boundary_edges_node) geom_part_node::BoundaryEdgesRepresentation()
+Handle(geom_boundary_edges_node) geom_part_node::GetBoundaryEdgesRepresentation() const
 {
   Handle(geom_boundary_edges_node) edges_n;
   for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
@@ -184,6 +184,36 @@ Handle(geom_boundary_edges_node) geom_part_node::BoundaryEdgesRepresentation()
 
     if ( !edges_n.IsNull() && edges_n->IsWellFormed() )
       return edges_n;
+  }
+
+  return NULL;
+}
+
+//! \return underlying edge representation Node.
+Handle(geom_edge_node) geom_part_node::GetEdgeRepresentation() const
+{
+  Handle(geom_edge_node) edge_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    edge_n = Handle(geom_edge_node)::DownCast( cit->Value() );
+
+    if ( !edge_n.IsNull() && edge_n->IsWellFormed() )
+      return edge_n;
+  }
+
+  return NULL;
+}
+
+//! \return underlying curve representation Node.
+Handle(geom_curve_node) geom_part_node::GetCurveRepresentation() const
+{
+  Handle(geom_curve_node) curve_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    curve_n = Handle(geom_curve_node)::DownCast( cit->Value() );
+
+    if ( !curve_n.IsNull() && curve_n->IsWellFormed() )
+      return curve_n;
   }
 
   return NULL;

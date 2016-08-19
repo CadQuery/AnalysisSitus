@@ -66,7 +66,7 @@ set "AD_LIB=%AD_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 set "AD_BIN=%AD_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
 
 rem ===========================================================================
-rem Setting environment for Features library
+rem Setting environment for Feature / Mesh libraries
 rem ===========================================================================
 
 if "%FEAT_ROOT%" == "" set "FEAT_ROOT=%AS_PRODUCTS%\feature"
@@ -80,10 +80,16 @@ if "%MESH_LIB%"  == "" set "MESH_LIB=%MESH_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 if "%MESH_BIN%"  == "" set "MESH_BIN=%MESH_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
 
 rem ===========================================================================
+rem Setting environment for MeshGems
+rem ===========================================================================
+
+if "%MESHGEMS_BIN%" == "" set "MESHGEMS_BIN=%AS_PRODUCTS%\meshgems-vc12-64\bin"
+
+rem ===========================================================================
 rem Setting environment for Canonical Recognition library
 rem ===========================================================================
 
-if "%CR_ROOT%" == "" set "CR_ROOT=%AS_PRODUCTS%\occ_cr"
+if "%CR_ROOT%" == "" set "CR_ROOT=%AS_PRODUCTS%\occ_cr-vc12-64"
 if "%CR_INC%"  == "" set "CR_INC=%CR_ROOT%\inc"
 if "%CR_LIB%"  == "" set "CR_LIB=%CR_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 if "%CR_BIN%"  == "" set "CR_BIN=%CR_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
@@ -168,7 +174,7 @@ rem ===========================================================================
 rem Adjust PATH variable
 rem ===========================================================================
 
-set "PATH=%AS_BIN%;%AD_BIN%;%FEAT_BIN%;%QR_BIN%;%VTK_BIN%;%PCL_BIN%;%QT_BIN%;%TBB_BIN%;%CR_BIN%;%INNOSETUP_ROOT%;%PATH%"
+set "PATH=%AS_BIN%;%MESHGEMS_BIN%;%AD_BIN%;%FEAT_BIN%;%MESH_BIN%;%QR_BIN%;%VTK_BIN%;%PCL_BIN%;%QT_BIN%;%TBB_BIN%;%CR_BIN%;%INNOSETUP_ROOT%;%PATH%"
 
 echo PATH=%PATH%
 

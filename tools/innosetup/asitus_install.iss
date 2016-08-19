@@ -140,6 +140,21 @@ Source: {#ProductsDir}\{#vtk}\win64\vc12\lib\*;                           DestDi
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bind\*.dll;                      DestDir: {app}\products\{#vtk}\win64\vc12\bind;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: {#ProductsDir}\{#vtk}\win64\vc12\libd\*;                          DestDir: {app}\products\{#vtk}\win64\vc12\libd;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: {#ProductsDir}\{#vtk}\win64\vc12\include\*;                       DestDir: {app}\products\{#vtk}\win64\vc12\include;      Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+;
+Source: {#ProductsDir}\{#meshgems}\bin\libifcoremd.dll;                   DestDir: {app}\products\{#meshgems}\bin;
+Source: {#ProductsDir}\{#meshgems}\bin\libifportmd.dll;                   DestDir: {app}\products\{#meshgems}\bin;
+Source: {#ProductsDir}\{#meshgems}\bin\libmmd.dll;                        DestDir: {app}\products\{#meshgems}\bin;
+Source: {#ProductsDir}\{#meshgems}\bin\meshgems.dll;                      DestDir: {app}\products\{#meshgems}\bin;
+Source: {#ProductsDir}\{#meshgems}\bin\meshgems_stubs.dll;                DestDir: {app}\products\{#meshgems}\bin;
+Source: {#ProductsDir}\{#meshgems}\bin\mg-cadsurf.dll;                    DestDir: {app}\products\{#meshgems}\bin;
+Source: {#ProductsDir}\{#meshgems}\bin\mg-precad.dll;                     DestDir: {app}\products\{#meshgems}\bin;
+Source: {#ProductsDir}\{#meshgems}\bin\mg-tetra.dll;                      DestDir: {app}\products\{#meshgems}\bin;
+;
+Source: {#ProductsDir}\{#cr}\win64\vc12\bin\*.dll;                        DestDir: {app}\products\{#vtk}\win64\vc12\bin;          Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ProductsDir}\{#cr}\win64\vc12\lib\*;                            DestDir: {app}\products\{#vtk}\win64\vc12\lib;          Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ProductsDir}\{#cr}\win64\vc12\bind\*.dll;                       DestDir: {app}\products\{#vtk}\win64\vc12\bind;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ProductsDir}\{#cr}\win64\vc12\libd\*;                           DestDir: {app}\products\{#vtk}\win64\vc12\libd;         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: {#ProductsDir}\{#cr}\inc\*;                                       DestDir: {app}\products\{#vtk}\win64\vc12\include;      Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 
 ; Resource files (icons, custom script, ...)
 Source: "resources\asitus.ico";                                           DestDir: {app}\icons

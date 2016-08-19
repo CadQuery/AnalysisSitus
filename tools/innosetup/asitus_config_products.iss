@@ -13,6 +13,8 @@
 #define tbb             "tbb44_20150728oss"
 #define vtk             "vtk-7.0.0"
 #define eigen           "eigen-3.2.0"
+#define meshgems        "meshgems-vc12-64"
+#define cr              "occ_cr-vc12-64"
 
 ;------------------------------------------------------------------------------
 ; ECOSYSTEM
@@ -26,7 +28,7 @@
 
 #define ad_origin_global          "C:/Work/active_data"
 #define qr_origin_global          "C:/Work/quaoar"
-#define occt_origin_global        "C:/Work/OCC/master-70-dev-install"
+#define occt_origin_global        "C:/Work/OCC/master-install"
 #define feature_origin_global     "C:/Work/dMU/dmu-build"
 #define feature_origin_global_src "C:/Work/dMU/dmu/src/feature"
 #define mesh_origin_global        "C:/Work/dMU/dmu-build"

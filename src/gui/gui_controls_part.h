@@ -45,6 +45,7 @@ public slots:
   void onOBB              ();
   void onCR               ();
   void onCloudify         ();
+  void onMultiLine        ();
   //
   void onShowVertices     ();
   void onSelectFaces      ();
@@ -76,6 +77,7 @@ private:
     QPushButton* pOBB;              //!< Builds OBB.
     QPushButton* pCR;               //!< Runs canonical recognition.
     QPushButton* pCloudify;         //!< Builds a point cloud from the model.
+    QPushButton* pMultiLine;        //!< Performs multi-line approximation.
     //
     QPushButton* pShowVertices;     //!< Shows vertices of the model.
     QPushButton* pSelectFaces;      //!< Enables selection by faces.

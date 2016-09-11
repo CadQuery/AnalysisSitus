@@ -264,9 +264,10 @@ void gui_controls_features::onCheckSolidAngles()
     Handle(feature_aag_random_iterator) it = new feature_aag_random_iterator(aag);
     for ( ; it->More(); it->Next() )
     {
-      const int                         current_face_idx = it->GetFaceId();
-      const TColStd_PackedMapOfInteger& neighbor_ids     = it->GetNeighbors();
-      const TopoDS_Face&                current_face     = aag->GetFace(current_face_idx);
+      const int current_face_idx = it->GetFaceId();
+      TColStd_PackedMapOfInteger neighbor_ids;
+      it->GetNeighbors(neighbor_ids);
+      const TopoDS_Face& current_face = aag->GetFace(current_face_idx);
 
       // Loop over the neighbors
       for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbor_ids); nit.More(); nit.Next() )
@@ -416,9 +417,10 @@ void gui_controls_features::onFindSmoothEdges()
     Handle(feature_aag_random_iterator) it = new feature_aag_random_iterator(aag);
     for ( ; it->More(); it->Next() )
     {
-      const int                         current_face_idx = it->GetFaceId();
-      const TColStd_PackedMapOfInteger& neighbor_ids     = it->GetNeighbors();
-      const TopoDS_Face&                current_face     = aag->GetFace(current_face_idx);
+      const int current_face_idx = it->GetFaceId();
+      TColStd_PackedMapOfInteger neighbor_ids;
+      it->GetNeighbors(neighbor_ids);
+      const TopoDS_Face& current_face = aag->GetFace(current_face_idx);
 
       // Loop over the neighbors
       for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbor_ids); nit.More(); nit.Next() )

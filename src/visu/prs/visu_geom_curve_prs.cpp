@@ -9,6 +9,8 @@
 #include <visu_geom_curve_prs.h>
 
 // A-Situs (visualization) includes
+#include <visu_bcurve_knots_pipeline.h>
+#include <visu_bcurve_poles_pipeline.h>
 #include <visu_edge_data_provider.h>
 #include <visu_edge_curve_pipeline.h>
 #include <visu_utils.h>
@@ -39,6 +41,19 @@ visu_geom_curve_prs::visu_geom_curve_prs(const Handle(ActAPI_INode)& theNode)
   // Pipeline for curve
   this->addPipeline        ( Pipeline_Main, new visu_edge_curve_pipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
+
+  // Pipeline for poles of b-curves
+  this->addPipeline        ( Pipeline_Poles, new visu_bcurve_poles_pipeline );
+  this->assignDataProvider ( Pipeline_Poles, DP );
+
+  // Pipeline for knots of b-curves
+  this->addPipeline        ( Pipeline_Knots, new visu_bcurve_knots_pipeline );
+  this->assignDataProvider ( Pipeline_Knots, DP );
+
+  // Configure presentation
+  this->GetPipeline(Pipeline_Main)  -> Actor()->GetProperty()->SetLineWidth(2.0f);
+  this->GetPipeline(Pipeline_Poles) -> Actor()->GetProperty()->SetColor(0.6, 0.6, 0.6);
+  this->GetPipeline(Pipeline_Knots) -> Actor()->GetProperty()->SetColor(0.0, 1.0, 0.0);
 
   // Initialize text widget used for annotations
   m_textWidget = vtkSmartPointer<vtkTextWidget>::New();

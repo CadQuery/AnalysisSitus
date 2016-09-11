@@ -30,7 +30,6 @@ class gui_dialog_cloudify : public QDialog
 public:
 
   gui_dialog_cloudify(QWidget* parent = NULL);
-
   virtual ~gui_dialog_cloudify();
 
 public slots:
@@ -54,8 +53,8 @@ protected:
 
     void Release()
     {
-      delete pPerform;    pPerform     = NULL;
-      delete pLinearStep; pLinearStep  = NULL;
+      delete pPerform;    pPerform    = NULL;
+      delete pLinearStep; pLinearStep = NULL;
     }
   };
 

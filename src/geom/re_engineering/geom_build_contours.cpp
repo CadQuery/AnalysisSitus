@@ -16,6 +16,7 @@
 #include <Precision.hxx>
 #include <ShapeExtend_WireData.hxx>
 #include <ShapeFix_Face.hxx>
+#include <ShapeFix_Wire.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Wire.hxx>
 
@@ -114,9 +115,9 @@ bool geom_build_contours::operator()(const geom_intersection_points_cc& points,
       Handle(Geom_TrimmedCurve) tCurve = new Geom_TrimmedCurve(section->C, f, l);
       TopoDS_Edge edge = BRepBuilderAPI_MakeEdge(tCurve);
       //
-      ///
-      if ( s == 1 )
-        edge.Reverse();
+      /////
+      /*if ( s == 1 )
+        edge.Reverse();*/
 
       WD->Add(edge);
     }
@@ -124,6 +125,14 @@ bool geom_build_contours::operator()(const geom_intersection_points_cc& points,
     // Add wire to the result
     TopoDS_Wire W = WD->Wire();
     resultWires.Add(W);
+
+    ShapeFix_Wire WireHealer;
+    WireHealer.Load(W);
+    WireHealer.FixReorder();
+    W = WireHealer.Wire();
+
+    this->Plotter().CLEAN();
+    this->Plotter().DRAW_SHAPE(W, Color_Red, 0.5, false, "Wire");
 
     // Now build a face with a single outer wire
     TopoDS_Face F = BRepBuilderAPI_MakeFace( Handle(Geom_Surface)::DownCast( S->Copy() ),

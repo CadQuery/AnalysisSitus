@@ -83,7 +83,7 @@ int journal_notifier::Capacity() const
 
 //! Returns true if the progress scale is infinite.
 //! \return true/false.
-unsigned int journal_notifier::IsInfinite() const
+bool journal_notifier::IsInfinite() const
 {
   return m_iCapacity == INT_MAX;
 }
@@ -130,21 +130,21 @@ void journal_notifier::Cancel()
 
 //! Checks whether the cancellation is in progress.
 //! \return true/false.
-unsigned int journal_notifier::IsCancelling()
+bool journal_notifier::IsCancelling()
 {
   return m_bIsCancellation;
 }
 
 //! Checks whether the job is in running state.
 //! \return true/false.
-unsigned int journal_notifier::IsRunning()
+bool journal_notifier::IsRunning()
 {
   return (m_status == Progress_Running);
 }
 
 //! Checks whether the job is in failed state.
 //! \return true/false.
-unsigned int journal_notifier::IsFailed()
+bool journal_notifier::IsFailed()
 {
   return (m_status == Progress_Failed);
 }

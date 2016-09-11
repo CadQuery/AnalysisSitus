@@ -9,21 +9,21 @@
 #define visu_edge_data_provider_h
 
 // A-Situs visualization includes
-#include <visu_data_provider.h>
+#include <visu_curve_data_provider.h>
 
 // OCCT includes
 #include <TopoDS_Edge.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
-DEFINE_STANDARD_HANDLE(visu_edge_data_provider, visu_data_provider)
+DEFINE_STANDARD_HANDLE(visu_edge_data_provider, visu_curve_data_provider)
 
 //! Data provider for edge geometry.
-class visu_edge_data_provider : public visu_data_provider
+class visu_edge_data_provider : public visu_curve_data_provider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_edge_data_provider, visu_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(visu_edge_data_provider, visu_curve_data_provider)
 
 public:
 
@@ -36,6 +36,12 @@ public:
   int                 GetEdgeIndexAmongSubshapes () const;
   int                 GetEdgeIndexAmongEdges     () const;
   TopoDS_Edge         ExtractEdge                () const;
+
+public:
+
+  virtual Handle(Standard_Type) GetCurveType ()                     const;
+  virtual Handle(Geom2d_Curve)  GetCurve2d   (double& f, double& l) const;
+  virtual Handle(Geom_Curve)    GetCurve     (double& f, double& l) const;
 
 public:
 

@@ -46,9 +46,18 @@
 #include <ActData_ParameterFactory.h>
 
 // OCCT includes
+#include <AppDef_Array1OfMultiPointConstraint.hxx>
+#include <AppDef_BSplineCompute.hxx>
+#include <AppDef_MultiLine.hxx>
+#include <AppDef_Variational.hxx>
 #include <BRep_Builder.hxx>
+#include <BRepAdaptor_Curve.hxx>
 #include <BRepBndLib.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
+#include <BRepTools.hxx>
+#include <GCPnts_QuasiUniformAbscissa.hxx>
+#include <GCPnts_UniformAbscissa.hxx>
 #include <Precision.hxx>
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopExp.hxx>
@@ -96,6 +105,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   m_widgets.pOBB                = new QPushButton("OBB");
   m_widgets.pCR                 = new QPushButton("Canonical recognition");
   m_widgets.pCloudify           = new QPushButton("Cloudify");
+  m_widgets.pMultiLine          = new QPushButton("Multi-line re-approx");
   //
   m_widgets.pShowVertices       = new QPushButton("Show vertices");
   m_widgets.pSelectFaces        = new QPushButton("Select faces");
@@ -120,6 +130,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   m_widgets.pOBB                -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCR                 -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCloudify           -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pMultiLine          -> setMinimumWidth(BTN_MIN_WIDTH);
   //
   m_widgets.pShowVertices       -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectFaces        -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -159,6 +170,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   pProcessingLay->addWidget(m_widgets.pOBB);
   pProcessingLay->addWidget(m_widgets.pCR);
   pProcessingLay->addWidget(m_widgets.pCloudify);
+  pProcessingLay->addWidget(m_widgets.pMultiLine);
 
   // Group for visualization
   QGroupBox*   pVisuGroup = new QGroupBox("Visualization");
@@ -198,6 +210,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   connect( m_widgets.pOBB,              SIGNAL( clicked() ), SLOT( onOBB              () ) );
   connect( m_widgets.pCR,               SIGNAL( clicked() ), SLOT( onCR               () ) );
   connect( m_widgets.pCloudify,         SIGNAL( clicked() ), SLOT( onCloudify         () ) );
+  connect( m_widgets.pMultiLine,        SIGNAL( clicked() ), SLOT( onMultiLine        () ) );
   //
   connect( m_widgets.pShowVertices,     SIGNAL( clicked() ), SLOT( onShowVertices     () ) );
   connect( m_widgets.pSelectFaces,      SIGNAL( clicked() ), SLOT( onSelectFaces      () ) );
@@ -724,6 +737,135 @@ void gui_controls_part::onCloudify()
   // Run dialog for cloudification
   gui_dialog_cloudify* wCloudify = new gui_dialog_cloudify(this);
   wCloudify->show();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Conducts multi-line experiment.
+void gui_controls_part::onMultiLine()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Imperative plotter
+  ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
+
+  const int NPTS = 1000;
+
+  // Get all highlighted sub-shapes
+  TopTools_IndexedMapOfShape subShapes;
+  engine_part::GetHighlightedSubShapes(subShapes);
+
+  // Perform discretization
+  int nEdges = 0;
+  //
+  std::vector<Handle(geom_point_cloud)> pclouds;
+  //
+  for ( int k = 1; k <= subShapes.Extent(); ++k )
+  {
+    const TopoDS_Shape& subShape = subShapes(k);
+    //
+    if ( subShape.ShapeType() != TopAbs_EDGE )
+      continue;
+    //
+    const TopoDS_Edge& edge = TopoDS::Edge(subShape);
+
+    // Use quasi-uniform discretizer as we need exactly the same number of points
+    BRepAdaptor_Curve bac(edge);
+    GCPnts_QuasiUniformAbscissa absc(bac, NPTS);
+    //
+    if ( !absc.IsDone() )
+    {
+      std::cout << "Error: cannot build discretization on an edge" << std::endl;
+      continue;
+    }
+
+    // Loop over the discretization points
+    Handle(HRealArray) pts = new HRealArray(0, absc.NbPoints()*3 - 1);
+    //
+    for ( int p = 1, pp = 0; p <= absc.NbPoints(); ++p )
+    {
+      const double param = absc.Parameter(p);
+      gp_Pnt         pnt = bac.Value(param);
+      //
+      pts->ChangeValue(pp++) = pnt.X();
+      pts->ChangeValue(pp++) = pnt.Y();
+      pts->ChangeValue(pp++) = pnt.Z();
+    }
+    //
+    IV.DRAW_POINTS(pts, Color_Green);
+
+    pclouds.push_back( new geom_point_cloud(pts) );
+    ++nEdges;
+  }
+
+  if ( !nEdges )
+    return;
+
+  // Initialize multiline constraints
+  AppDef_Array1OfMultiPointConstraint arr(1, NPTS);
+  //
+  for ( int idx = 0; idx < NPTS; ++idx )
+  {
+    // Fill MPC
+    Handle(TColgp_HArray1OfPnt) mpc_data = new TColgp_HArray1OfPnt(1, nEdges);
+    //
+    for ( int eidx = 0; eidx < nEdges; ++eidx )
+    {
+      gp_Pnt pnt = pclouds[eidx]->GetPoint(idx);
+      mpc_data->ChangeValue(eidx + 1) = pnt;
+    }
+
+    AppDef_MultiPointConstraint MPC( mpc_data->Array1() );
+    arr.SetValue(idx + 1, MPC);
+  }
+
+  // Multi-line approximation
+  AppDef_MultiLine multiline(arr);
+  //
+  Handle(AppParCurves_HArray1OfConstraintCouple)
+    TABofCC = new AppParCurves_HArray1OfConstraintCouple( 1, NPTS );
+  //
+  for ( int i = 1; i <= NPTS; ++i )
+  {
+    AppParCurves_ConstraintCouple ACC(i, AppParCurves_PassPoint);
+    TABofCC->SetValue(i, ACC);
+  }
+
+  // Run approximation
+  double err3d, err2d;
+  AppDef_Variational bcompute(multiline, 1, NPTS, TABofCC);
+  bcompute.Approximate();
+
+  // Build the resulting geometry
+  const AppParCurves_MultiBSpCurve& TheCurve = bcompute.Value();
+
+  // All curves are compatible at this stage: they have the same number
+  // of knots, poles, and the same degree.
+  int CurveDegree = TheCurve.Degree();
+  const TColStd_Array1OfReal& CurveKnots = TheCurve.Knots();
+  const TColStd_Array1OfInteger& CurveMults = TheCurve.Multiplicities();
+  int nbPoles = TheCurve.NbPoles();
+  //
+  TopoDS_Compound comp;
+  BRep_Builder().MakeCompound(comp);
+  //
+  for ( int k = 0; k < TheCurve.NbCurves(); ++k )
+  {
+    TColgp_Array1OfPnt Poles(1, nbPoles);
+    TheCurve.Curve(k + 1, Poles);
+    //
+    Handle(Geom_BSplineCurve)
+      bcurve = new Geom_BSplineCurve(Poles, CurveKnots, CurveMults, CurveDegree);
+
+    TopoDS_Edge edge = BRepBuilderAPI_MakeEdge(bcurve);
+    BRep_Builder().Add(comp, edge);
+
+    IV.DRAW_CURVE(bcurve, Color_Blue);
+  }
+
+  TCollection_AsciiString name("D:/bentley.brep");
+  BRepTools::Write( comp, name.ToCString() );
 }
 
 //-----------------------------------------------------------------------------

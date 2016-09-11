@@ -203,10 +203,21 @@ geom_point_cloud::geom_point_cloud(const Handle(TColStd_HArray1OfReal)& coords,
 //! Saves point cloud in ASCII pts format.
 //! \param filename [in] filename for the output file.
 //! \return true in case of success, false -- otherwise.
-bool geom_point_cloud::SaveAs(const TCollection_AsciiString& /*filename*/)
+bool geom_point_cloud::SaveAs(const TCollection_AsciiString& filename)
 {
-  // TODO: NYI
-  return false;
+  std::ofstream FILE( filename.ToCString() );
+  if ( !FILE.is_open() )
+    return false;
+
+  for ( int p = 0; p < this->GetNumOfPoints(); ++p )
+  {
+    gp_Pnt P = this->GetPoint(p);
+    FILE << P.X() << " " << P.Y() << " " << P.Z() << "\n";
+  }
+
+  // Close file
+  FILE.close();
+  return true;
 }
 
 //-----------------------------------------------------------------------------

@@ -64,7 +64,7 @@ protected slots:
 
 private:
 
-  bool volumeNode(Handle(geom_volume_node)& Node) const;
+  bool volumeNodes(std::vector<Handle(geom_volume_node)>& Nodes) const;
 
 };
 

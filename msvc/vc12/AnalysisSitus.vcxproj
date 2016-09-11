@@ -472,6 +472,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_bcurve_knots_pipeline.h" />
     <ClInclude Include="..\..\src\visu\pipelines\visu_curve_pipeline.h" />
     <ClInclude Include="..\..\src\visu\pipelines\visu_edge_curve_pipeline.h" />
     <ClInclude Include="..\..\src\visu\pipelines\visu_edge_domain_pipeline.h" />
@@ -501,6 +502,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\visu\prs\visu_re_surfaces_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_ubend_law_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_xde_prs.h" />
+    <ClInclude Include="..\..\src\visu\sources\visu_bcurve_knots_source.h" />
     <ClInclude Include="..\..\src\visu\sources\visu_law_source.h" />
     <ClInclude Include="..\..\src\visu\sources\visu_mesh_topo_source.h" />
     <ClInclude Include="..\..\src\visu\sources\visu_pdomain_source.h" />
@@ -1133,6 +1135,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\interaction\visu_pick_callback.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_rotation_callback.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_viewer_callback.cpp" />
+    <ClCompile Include="..\..\src\visu\pipelines\visu_bcurve_knots_pipeline.cpp" />
     <ClCompile Include="..\..\src\visu\pipelines\visu_bcurve_poles_pipeline.cpp" />
     <ClCompile Include="..\..\src\visu\pipelines\visu_curve_pipeline.cpp" />
     <ClCompile Include="..\..\src\visu\pipelines\visu_edge_curve_pipeline.cpp" />
@@ -1187,6 +1190,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\prs\visu_ubend_law_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_ubend_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_xde_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\sources\visu_bcurve_knots_source.cpp" />
     <ClCompile Include="..\..\src\visu\sources\visu_bcurve_poles_source.cpp" />
     <ClCompile Include="..\..\src\visu\sources\visu_curve_source.cpp" />
     <ClCompile Include="..\..\src\visu\sources\visu_law_source.cpp" />

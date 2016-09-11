@@ -208,10 +208,24 @@ void gui_controls_morphology::onBuildMajorant()
   geom_build_stock stock_builder(common_facilities::Instance()->Notifier,
                                  common_facilities::Instance()->Plotter);
 
-  if ( !stock_builder(part) )
+  TopTools_IndexedMapOfShape faces;
+  engine_part::GetHighlightedSubShapes(faces);
+
+  if ( faces.IsEmpty() )
   {
-    std::cout << "Error: cannot build stock" << std::endl;
-    return;
+    if ( !stock_builder(part) )
+    {
+      std::cout << "Error: cannot build stock" << std::endl;
+      return;
+    }
+  }
+  else
+  {
+    if ( !stock_builder(part, faces) )
+    {
+      std::cout << "Error: cannot build stock on the given outline" << std::endl;
+      return;
+    }
   }
 
   // Get result
@@ -507,8 +521,7 @@ void gui_controls_morphology::onFindExtrusions()
   //
   if ( faces.IsEmpty() )
   {
-    std::cout << "Error: no faces to proceed" << std::endl;
-    return;
+    std::cout << "Warning: no faces to proceed" << std::endl;
   }
 
   // Prepare imperative viewer

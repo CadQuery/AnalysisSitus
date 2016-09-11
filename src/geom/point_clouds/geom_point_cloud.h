@@ -66,19 +66,31 @@ public:
 
   //! Sets point coordinates.
   //! \param pts [in] points to set.
-  inline void SetPoints(const Handle(TColStd_HArray1OfReal)& pts)
+  void SetPoints(const Handle(TColStd_HArray1OfReal)& pts)
   {
     m_coords = pts;
   }
 
   //! \return coordinate array.
-  inline const Handle(TColStd_HArray1OfReal)& GetPoints() const
+  const Handle(TColStd_HArray1OfReal)& GetPoints() const
   {
     return m_coords;
   }
 
+  //! Returns a point by 0-based index.
+  //! \param[in] idx point index.
+  //! \return point.
+  gp_Pnt GetPoint(const int idx) const
+  {
+    const double x = m_coords->Value(idx*3);
+    const double y = m_coords->Value(idx*3 + 1);
+    const double z = m_coords->Value(idx*3 + 2);
+    //
+    return gp_Pnt(x, y, z);
+  }
+
   //! \return number of points in the cloud.
-  inline int GetNumOfPoints() const
+  int GetNumOfPoints() const
   {
     if ( m_coords.IsNull() )
       return 0;

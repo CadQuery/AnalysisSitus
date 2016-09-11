@@ -65,7 +65,7 @@ public:
 
   //! Returns true if the capacity value is infinite.
   //! \return true/false.
-  virtual unsigned int
+  virtual bool
     IsInfinite() const;
 
   //! Sets message localization key.
@@ -94,17 +94,17 @@ public:
 
   //! Checks whether the job is being canceled.
   //! \return true/false.
-  virtual unsigned int
+  virtual bool
     IsCancelling();
 
   //! Checks whether the job is in running state.
   //! \return true/false.
-  virtual unsigned int
+  virtual bool
     IsRunning();
 
   //! Checks whether the job is in failed state.
   //! \return true/false.
-  virtual unsigned int
+  virtual bool
     IsFailed();
 
   //! Returns the currently cumulated progress value.

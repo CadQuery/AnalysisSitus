@@ -50,7 +50,7 @@ gui_decomposition_browser::gui_decomposition_browser(QWidget* parent) : QTreeWid
   this->Populate();
 
   // Configure selection
-  this->setSelectionMode(QAbstractItemView::SingleSelection);
+  this->setSelectionMode(QAbstractItemView::MultiSelection);
   this->setSelectionBehavior(QAbstractItemView::SelectRows);
 
   // Reactions
@@ -183,16 +183,19 @@ void gui_decomposition_browser::onSelectionChanged()
 //! \param pos [in] position.
 void gui_decomposition_browser::onContextMenu(QPoint pos)
 {
-  Handle(geom_volume_node) volume_n;
-  if ( !this->volumeNode(volume_n) ) return;
+  std::vector<Handle(geom_volume_node)> volume_nodes;
+  if ( !this->volumeNodes(volume_nodes) ) return;
 
   QMenu* aMenu = new QMenu(this);
 
   // Recognize a part by the Node's name
-  TCollection_AsciiString name = volume_n->GetName();
-  name.LowerCase();
-  if ( name.Search("part") != -1 )
-    aMenu->addAction( "Generate", this, SLOT( onGenerate() ) );
+  if ( volume_nodes.size() == 1 )
+  {
+    TCollection_AsciiString name = volume_nodes[0]->GetName();
+    name.LowerCase();
+    if ( name.Search("part") != -1 )
+      aMenu->addAction( "Generate", this, SLOT( onGenerate() ) );
+  }
 
   // Complete context menu
   aMenu->addAction( "Show Only", this, SLOT( onShowOnly() ) );
@@ -204,12 +207,14 @@ void gui_decomposition_browser::onContextMenu(QPoint pos)
 //! Reaction on "show only" action.
 void gui_decomposition_browser::onShowOnly()
 {
-  Handle(geom_volume_node) volume_n;
-  if ( !this->volumeNode(volume_n) ) return;
+  std::vector<Handle(geom_volume_node)> volume_nodes;
+  if ( !this->volumeNodes(volume_nodes) ) return;
 
   // Actualize viewer
   common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->Actualize( volume_n.get() );
+  //
+  for ( size_t i = 0; i < volume_nodes.size(); ++i )
+    common_facilities::Instance()->Prs.Part->Actualize( volume_nodes[i] );
 }
 
 //-----------------------------------------------------------------------------
@@ -217,8 +222,8 @@ void gui_decomposition_browser::onShowOnly()
 //! Reaction on "generate" action.
 void gui_decomposition_browser::onGenerate()
 {
-  Handle(geom_volume_node) volume_n;
-  if ( !this->volumeNode(volume_n) ) return;
+  std::vector<Handle(geom_volume_node)> volume_nodes;
+  if ( !this->volumeNodes(volume_nodes) || volume_nodes.size() > 1 ) return;
 
   Handle(ActAPI_INode) stock_n = engine_volume::Get_RootVolume();
 
@@ -242,35 +247,39 @@ void gui_decomposition_browser::onGenerate()
   prs_mgr->Actualize( stock_n.get() );
 
   // Show features processing dialog
-  gui_dialog_decomp_generate* genDlg = new gui_dialog_decomp_generate(volume_n);
+  gui_dialog_decomp_generate* genDlg = new gui_dialog_decomp_generate(volume_nodes[0]);
   genDlg->show();
 }
 
 //-----------------------------------------------------------------------------
 
 //! Returns the currently active Volume Node.
-//! \param Node [out] requested Node.
+//! \param Nodes [out] requested Nodes.
 //! \return true in case of success, false -- otherwise.
-bool gui_decomposition_browser::volumeNode(Handle(geom_volume_node)& Node) const
+bool gui_decomposition_browser::volumeNodes(std::vector<Handle(geom_volume_node)>& Nodes) const
 {
   QList<QTreeWidgetItem*> items = this->selectedItems();
-  if ( !items.length() || items.length() > 1 )
+  if ( !items.length() )
     return false;
 
-  QTreeWidgetItem* item = items.at(0);
-  TCollection_AsciiString entry = QStr2AsciiStr( item->data(0, BrowserRoleNodeId).toString() );
-
-  // Take the corresponding data object
-  Handle(geom_volume_node)
-    volume_n = Handle(geom_volume_node)::DownCast( common_facilities::Instance()->Model->FindNode(entry) );
-  //
-  if ( volume_n.IsNull() || !volume_n->IsWellFormed() )
+  QListIterator<QTreeWidgetItem*> it(items);
+  while ( it.hasNext() )
   {
-    std::cout << "Error: selected Node is of unexpected type" << std::endl;
-    return false;
-  }
+    QTreeWidgetItem* item = it.next();
+    TCollection_AsciiString entry = QStr2AsciiStr( item->data(0, BrowserRoleNodeId).toString() );
 
-  // Set result
-  Node = volume_n;
+    // Take the corresponding data object
+    Handle(geom_volume_node)
+      volume_n = Handle(geom_volume_node)::DownCast( common_facilities::Instance()->Model->FindNode(entry) );
+    //
+    if ( volume_n.IsNull() || !volume_n->IsWellFormed() )
+    {
+      std::cout << "Error: selected Node is of unexpected type" << std::endl;
+      return false;
+    }
+
+    // Set result
+    Nodes.push_back(volume_n);
+  }
   return true;
 }

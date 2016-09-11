@@ -1082,6 +1082,12 @@
     <ClInclude Include="..\..\src\visu\pipelines\visu_edge_domain_pipeline.h">
       <Filter>Header Files\Visualization\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\visu\sources\visu_bcurve_knots_source.h">
+      <Filter>Header Files\Visualization\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\pipelines\visu_bcurve_knots_pipeline.h">
+      <Filter>Header Files\Visualization\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -2132,6 +2138,12 @@
       <Filter>Source Files\Visualization\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\visu\pipelines\visu_edge_domain_pipeline.cpp">
+      <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\sources\visu_bcurve_knots_source.cpp">
+      <Filter>Source Files\Visualization\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\pipelines\visu_bcurve_knots_pipeline.cpp">
       <Filter>Source Files\Visualization\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>

@@ -23,6 +23,7 @@
 #include <BRepBndLib.hxx>
 #include <BRepTools.hxx>
 #include <Precision.hxx>
+#include <ShapeFix_Shape.hxx>
 #include <TColGeom_SequenceOfSurface.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shell.hxx>
@@ -72,9 +73,21 @@ bool geom_build_stock::operator()(const TopoDS_Shape& part)
     planar.Add(F);
   }
 
+  return this->operator()(part, planar);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Builds stock volume from the given outline faces.
+//! \param[in] part         part to build a stock for.
+//! \param[in] outlineFaces outline faces.
+//! \return true in case of success, false -- otherwise.
+bool geom_build_stock::operator()(const TopoDS_Shape&               part,
+                                  const TopTools_IndexedMapOfShape& outlineFaces)
+{
   // Find same-host faces
   geom_find_same_hosts::t_groups groups;
-  geom_find_same_hosts finder(planar);
+  geom_find_same_hosts finder(outlineFaces);
   finder(groups);
   //
   std::cout << "\tFound " << groups.Length() << " groups of hosts" << std::endl;
@@ -84,7 +97,7 @@ bool geom_build_stock::operator()(const TopoDS_Shape& part)
   //
   for ( int g = 1; g <= groups.Length(); ++g )
   {
-    const TopoDS_Face& F = TopoDS::Face( planar( groups(g).GetMinimalMapped() ) );
+    const TopoDS_Face& F = TopoDS::Face( outlineFaces( groups(g).GetMinimalMapped() ) );
 
     // Get UV bounds
     double uMin, uMax, vMin, vMax;
@@ -146,6 +159,9 @@ bool geom_build_stock::operator()(const TopoDS_Shape& part)
     return false;
   }
 
+  ///
+  this->Plotter().CLEAN();
+
   // Draw contours
   for ( int c = 1; c <= contours.Extent(); ++c )
   {
@@ -164,10 +180,12 @@ bool geom_build_stock::operator()(const TopoDS_Shape& part)
   {
     const TopoDS_Face& F = TopoDS::Face( faces(f) );
     BB.Add(stockShell, F);
+
+    this->Plotter().DRAW_SHAPE(F, Color_Red, 0.5, false, "Face");
   }
 
-
-  this->Plotter().CLEAN();
+  //return false;
+  
   this->Plotter().DRAW_SHAPE(stockShell, "Stock_shell");
 
   /* =================================
@@ -184,8 +202,12 @@ bool geom_build_stock::operator()(const TopoDS_Shape& part)
   BB.MakeSolid(m_result);
   BB.Add(m_result, stockShell);
 
-  /// TODO
-  m_result.Reverse();
+  // TODO: this is a bad practice. Shape should be valid
+  ShapeFix_Shape ShapeHealer(m_result);
+  ShapeHealer.Perform();
+  m_result = TopoDS::Solid( ShapeHealer.Shape() );
 
+  /// TODO
+  //m_result.Reverse();
   return true;
 }

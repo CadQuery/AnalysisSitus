@@ -54,8 +54,8 @@ public:
   //! \param theLeft  [in] first operand.
   //! \param theRight [in] second operand.
   //! \return true/false.
-  virtual unsigned int IsGreater(const geom_common_point<gp_XY>& theLeft,
-                                 const geom_common_point<gp_XY>& theRight) const
+  virtual bool IsGreater(const geom_common_point<gp_XY>& theLeft,
+                         const geom_common_point<gp_XY>& theRight) const
   {
     const double l = (*( (t_point_data*) (theLeft.pData) )).Dist;
     const double r = (*( (t_point_data*) (theRight.pData) )).Dist;
@@ -66,8 +66,8 @@ public:
   //! \param theLeft  [in] first operand.
   //! \param theRight [in] second operand.
   //! \return true/false.
-  virtual unsigned int IsEqual(const geom_common_point<gp_XY>& theLeft,
-                               const geom_common_point<gp_XY>& theRight) const
+  virtual bool IsEqual(const geom_common_point<gp_XY>& theLeft,
+                       const geom_common_point<gp_XY>& theRight) const
   {
     const double l = (*( (t_point_data*) (theLeft.pData) )).Dist;
     const double r = (*( (t_point_data*) (theRight.pData) )).Dist;
@@ -89,8 +89,8 @@ public:
   //! \param theLeft  [in] first operand.
   //! \param theRight [in] second operand.
   //! \return true/false.
-  virtual unsigned int IsGreater(const geom_common_point<gp_XY>& theLeft,
-                                 const geom_common_point<gp_XY>& theRight) const
+  virtual bool IsGreater(const geom_common_point<gp_XY>& theLeft,
+                         const geom_common_point<gp_XY>& theRight) const
   {
     const double l = (*( (t_point_data*) (theLeft.pData) )).Ang;
     const double r = (*( (t_point_data*) (theRight.pData) )).Ang;
@@ -101,8 +101,8 @@ public:
   //! \param theLeft  [in] first operand.
   //! \param theRight [in] second operand.
   //! \return true/false.
-  virtual unsigned int IsEqual(const geom_common_point<gp_XY>& theLeft,
-                               const geom_common_point<gp_XY>& theRight) const
+  virtual bool IsEqual(const geom_common_point<gp_XY>& theLeft,
+                       const geom_common_point<gp_XY>& theRight) const
   {
     const double l = (*( (t_point_data*) (theLeft.pData) )).Ang;
     const double r = (*( (t_point_data*) (theRight.pData) )).Ang;

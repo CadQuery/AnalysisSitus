@@ -115,7 +115,7 @@ bool visu_bcurve_poles_source::SetInputCurve2d(const Handle(Geom2d_BSplineCurve)
 //! from the input arrays.
 //! \param request      [in] information about data object.
 //! \param inputVector  [in] the input data. As a data source is the start
-//!                          stage of the VTK pipeline, theInputVector is
+//!                          stage of the VTK pipeline, inputVector is
 //!                          empty and not used (no input port).
 //! \param outputVector [in] the pointer to output data, that is filled
 //!                          in this method.

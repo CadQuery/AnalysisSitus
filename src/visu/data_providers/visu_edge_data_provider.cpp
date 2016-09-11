@@ -18,6 +18,7 @@
 #include <ActData_ParameterFactory.h>
 
 // OCCT includes
+#include <BRep_Tool.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 
@@ -28,7 +29,7 @@
 //! \param theParamList [in] source Parameters.
 visu_edge_data_provider::visu_edge_data_provider(const ActAPI_DataObjectId&           theNodeId,
                                                  const Handle(ActAPI_HParameterList)& theParamList)
-: visu_data_provider()
+: visu_curve_data_provider()
 {
   m_nodeID = theNodeId;
   m_params = theParamList;
@@ -55,11 +56,15 @@ ActAPI_DataObjectId visu_edge_data_provider::GetNodeID() const
   return m_nodeID;
 }
 
+//-----------------------------------------------------------------------------
+
 //! \return global index of the OCCT edge to be visualized.
 int visu_edge_data_provider::GetEdgeIndexAmongSubshapes() const
 {
   return ActParamTool::AsInt( m_params->Value(1) )->GetValue();
 }
+
+//-----------------------------------------------------------------------------
 
 //! \return local index of the OCCT edges to be visualized.
 int visu_edge_data_provider::GetEdgeIndexAmongEdges() const
@@ -71,6 +76,8 @@ int visu_edge_data_provider::GetEdgeIndexAmongEdges() const
 
   return 0;
 }
+
+//-----------------------------------------------------------------------------
 
 //! \return topological edge extracted from the part by its stored ID.
 TopoDS_Edge visu_edge_data_provider::ExtractEdge() const
@@ -86,6 +93,44 @@ TopoDS_Edge visu_edge_data_provider::ExtractEdge() const
   // Access edge by the stored index
   const TopoDS_Edge& E = TopoDS::Edge(shape);
   return E;
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return type of the host curve.
+Handle(Standard_Type) visu_edge_data_provider::GetCurveType() const
+{
+  double f, l;
+  Handle(Geom_Curve) c3d = this->GetCurve(f, l);
+  //
+  if ( c3d.IsNull() )
+    return NULL;
+
+  return c3d->DynamicType();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Not used.
+Handle(Geom2d_Curve) visu_edge_data_provider::GetCurve2d(double&, double&) const
+{
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Returns host curve.
+//! \param[out] f first parameter on the curve.
+//! \param[out] l last parameter on the curve.
+//! \return host curve.
+Handle(Geom_Curve) visu_edge_data_provider::GetCurve(double& f, double& l) const
+{
+  TopoDS_Edge E = this->ExtractEdge();
+  //
+  if ( E.IsNull() )
+    return NULL;
+
+  return BRep_Tool::Curve(E, f, l);
 }
 
 //-----------------------------------------------------------------------------
@@ -106,3 +151,5 @@ Handle(ActAPI_HParameterList) visu_edge_data_provider::translationSources() cons
 {
   return ActParamStream() << m_params->Value(1); // Parameter for edge index
 }
+
+//-----------------------------------------------------------------------------

@@ -151,6 +151,19 @@ void gui_dialog_cloudify::onPerform()
   ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
   IV.DRAW_POINTS( cloud->GetPoints(), Color_Red, "Scanner imitation" );
 
+  // Select filename for the output file
+  QString
+    qfilename = gui_common::selectFile(QStringList() << "*.xyz",
+                                       "", "Choose file to store the point cloud",
+                                       gui_common::OpenSaveAction_Save);
+  //
+  TCollection_AsciiString filename = QStr2AsciiStr(qfilename);
+
+  if ( !cloud->SaveAs(filename) )
+  {
+    std::cout << "Error: cannot save file" << std::endl;
+  }
+
   // Close
   this->close();
 }

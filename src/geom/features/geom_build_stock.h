@@ -37,10 +37,14 @@ public:
   ASitus_EXPORT bool
     operator()(const TopoDS_Shape& part);
 
+  ASitus_EXPORT bool
+    operator()(const TopoDS_Shape&               part,
+               const TopTools_IndexedMapOfShape& outlineFaces);
+
 public:
 
   //! \return result stock.
-  inline const TopoDS_Solid& Result() const
+  const TopoDS_Solid& Result() const
   {
     return m_result;
   }

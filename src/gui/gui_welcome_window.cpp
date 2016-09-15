@@ -32,7 +32,7 @@
 
 //-----------------------------------------------------------------------------
 
-#define BTN_STANDARD_WIDTH 150
+#define BTN_STANDARD_WIDTH 200
 
 //-----------------------------------------------------------------------------
 
@@ -68,8 +68,8 @@ void gui_welcome_window::createControls()
   m_widgets.pCAFBrowser      = new QPushButton("CAF Browser");
   m_widgets.pPointCloud      = new QPushButton("Point Clouds");
   //
-  m_widgets.pFeatures        = new QPushButton("AAG Featuring");
-  m_widgets.pMorphology      = new QPushButton("Morphology");
+  m_widgets.pFeatures        = new QPushButton("Features");
+  m_widgets.pMorphology      = new QPushButton("Volumetric decomposition");
   //
   m_widgets.pSkinning        = new QPushButton("Thru-Sections");
   m_widgets.pUBend           = new QPushButton("U-bend");

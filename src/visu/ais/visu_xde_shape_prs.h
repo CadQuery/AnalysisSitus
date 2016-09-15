@@ -73,7 +73,7 @@ public:
   inline bool FindCustomAspects(const TopoDS_Shape&        theShape,
                                 Handle(AIS_ColoredDrawer)& theAspects) const
   {
-    return myShapeColors.Find(theShape, theAspects) > 0;
+    return myShapeColors.Find(theShape, theAspects);
   }
 
   //! Accessor for the styles map.

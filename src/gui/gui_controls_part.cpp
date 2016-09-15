@@ -833,7 +833,6 @@ void gui_controls_part::onMultiLine()
   }
 
   // Run approximation
-  double err3d, err2d;
   AppDef_Variational bcompute(multiline, 1, NPTS, TABofCC);
   bcompute.Approximate();
 
@@ -864,8 +863,8 @@ void gui_controls_part::onMultiLine()
     IV.DRAW_CURVE(bcurve, Color_Blue);
   }
 
-  TCollection_AsciiString name("D:/bentley.brep");
-  BRepTools::Write( comp, name.ToCString() );
+  /*TCollection_AsciiString name("D:/bentley.brep");
+  BRepTools::Write( comp, name.ToCString() );*/
 }
 
 //-----------------------------------------------------------------------------

@@ -9,7 +9,7 @@
 #include <geom_aag_vtk.h>
 
 // Feature includes
-#include <feature_angle_attr.h>
+#include <feature_attr_angle.h>
 
 // Geometry includes
 #include <geom_utils.h>
@@ -104,8 +104,8 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
 
       // Check angle
       feature_aag::t_arc arc(f_idx, neighbor_f_idx);
-      Handle(feature_angle_attr)
-        attr = Handle(feature_angle_attr)::DownCast( aag->GetArcAttribute(arc) );
+      Handle(feature_attr_angle)
+        attr = Handle(feature_attr_angle)::DownCast( aag->GetArcAttribute(arc) );
       //
       if ( !attr.IsNull() )
         angleArr->InsertNextValue( attr->GetAngle() );

@@ -972,7 +972,7 @@ bool gui_viewer_dmu::dump(Standard_CString theFile)
     }
     return true;
   }
-  return myView->Dump(theFile) > 0;
+  return myView->Dump(theFile);
 }
 
 gui_viewer_dmu::CurrentAction3d gui_viewer_dmu::getCurrentMode()

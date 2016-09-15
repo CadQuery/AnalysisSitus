@@ -26,7 +26,6 @@
 #include <feature_suppress.h>
 #include <feature_detect_fillets.h>
 #include <feature_detect_choles.h>
-#include <feature_detect_ordinary_blends.h>
 #include <feature_detect_pholes.h>
 #include <feature_detect_pockets.h>
 #include <feature_solid_angle.h>
@@ -661,9 +660,9 @@ void gui_controls_features::onFindFillets()
 
   // Identify fillets
   const double R = 20.0;
-  feature_detect_ordinary_blends detector(part, NULL,
-                                          common_facilities::Instance()->Notifier,
-                                          common_facilities::Instance()->Plotter);
+  feature_detect_fillets detector(part, R,
+                                  common_facilities::Instance()->Notifier,
+                                  common_facilities::Instance()->Plotter);
   //
   detector.SetFaces(selectedFaceIndices);
   //

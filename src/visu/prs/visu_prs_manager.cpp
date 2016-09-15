@@ -357,7 +357,7 @@ bool visu_prs_manager::IsPresented(const Handle(ActAPI_INode)& theNode)
 //! \return true/false.
 bool visu_prs_manager::IsPresented(const ActAPI_DataObjectId& theNodeId)
 {
-  return m_nodePresentations.IsBound(theNodeId) > 0;
+  return m_nodePresentations.IsBound(theNodeId);
 }
 
 //! Sets up a presentation for the passed Node. If no presentation exists,

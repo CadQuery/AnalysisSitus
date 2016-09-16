@@ -1019,9 +1019,6 @@
     <ClInclude Include="..\..\src\visu\pipelines\visu_mesh_topo_pipeline.h">
       <Filter>Header Files\Visualization\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\mesh\tess_conglomerate.h">
-      <Filter>Header Files\Tessellation</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\mesh\tess_convert.h">
       <Filter>Header Files\Tessellation</Filter>
     </ClInclude>
@@ -1088,6 +1085,12 @@
     <ClInclude Include="..\..\src\visu\pipelines\visu_bcurve_knots_pipeline.h">
       <Filter>Header Files\Visualization\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\mesh\tess_merge.h">
+      <Filter>Header Files\Tessellation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gui\gui_main_window_contour_capture.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -1097,6 +1100,9 @@
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_part.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_controls_cc.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_controls_features.cpp">
@@ -1202,6 +1208,9 @@
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_morphology.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_main_window_contour_capture.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_main_window_pcloud.cpp">
@@ -2044,9 +2053,6 @@
     <ClCompile Include="..\..\src\visu\pipelines\visu_mesh_topo_pipeline.cpp">
       <Filter>Source Files\Visualization\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\mesh\tess_conglomerate.cpp">
-      <Filter>Source Files\Tessellation</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\mesh\tess_convert.cpp">
       <Filter>Source Files\Tessellation</Filter>
     </ClCompile>
@@ -2145,6 +2151,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\visu\pipelines\visu_bcurve_knots_pipeline.cpp">
       <Filter>Source Files\Visualization\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mesh\tess_merge.cpp">
+      <Filter>Source Files\Tessellation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_main_window_contour_capture.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_controls_cc.cpp">
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2311,6 +2326,9 @@
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\src\gui\gui_dialog_euler.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_controls_cc.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
   </ItemGroup>

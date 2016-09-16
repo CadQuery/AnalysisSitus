@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef tess_conglomerate_h
-#define tess_conglomerate_h
+#ifndef tess_merge_h
+#define tess_merge_h
 
 // A-Situs includes
 #include <analysis_situs.h>
@@ -22,7 +22,7 @@
 //! triangles in a monolithic structure where entire topology is discarded.
 //! Use this tool to assemble a single tessellation from series of
 //! tessellations distributed by several faces.
-class tess_conglomerate
+class tess_merge
 {
 public:
 
@@ -36,8 +36,8 @@ public:
 public:
 
   ASitus_EXPORT
-    tess_conglomerate(const TopoDS_Shape& body,
-                      const Mode          mode);
+    tess_merge(const TopoDS_Shape& body,
+               const Mode          mode);
 
 public:
 

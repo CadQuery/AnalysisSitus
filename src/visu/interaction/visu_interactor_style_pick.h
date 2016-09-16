@@ -33,7 +33,7 @@ public:
   void
     SetRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer);
 
-  vtkSmartPointer<vtkRenderer>
+  const vtkSmartPointer<vtkRenderer>&
     GetRenderer() const;
 
   unsigned long

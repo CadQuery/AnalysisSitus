@@ -10,6 +10,7 @@
 
 // GUI includes
 #include <gui_main_window_asitus.h>
+#include <gui_main_window_contour_capture.h>
 #include <gui_main_window_dmu.h>
 #include <gui_main_window_features.h>
 #include <gui_main_window_hull.h>
@@ -59,7 +60,7 @@ void gui_welcome_window::createControls()
   // Group decorators
   QGroupBox* pUtilitiesGroup = new QGroupBox("Utilities");
   QGroupBox* pFeaturesGroup  = new QGroupBox("Features");
-  QGroupBox* pSkinningGroup  = new QGroupBox("Skinning");
+  QGroupBox* pSamplesGroup   = new QGroupBox("Samples");
 
   // Buttons
   m_widgets.pDMU             = new QPushButton("XDE");
@@ -69,11 +70,12 @@ void gui_welcome_window::createControls()
   m_widgets.pPointCloud      = new QPushButton("Point Clouds");
   //
   m_widgets.pFeatures        = new QPushButton("Features");
-  m_widgets.pMorphology      = new QPushButton("Volumetric decomposition");
+  m_widgets.pMorphology      = new QPushButton("Volume Decomposition");
   //
   m_widgets.pSkinning        = new QPushButton("Thru-Sections");
   m_widgets.pUBend           = new QPushButton("U-bend");
   m_widgets.pHullReconstruct = new QPushButton("Hull Reconstruction");
+  m_widgets.pContourCapture  = new QPushButton("Contour Capture");
   //
   m_widgets.pDMU             -> setMinimumWidth(BTN_STANDARD_WIDTH);
   m_widgets.pMeshEdit        -> setMinimumWidth(BTN_STANDARD_WIDTH);
@@ -87,11 +89,12 @@ void gui_welcome_window::createControls()
   m_widgets.pSkinning        -> setMinimumWidth(BTN_STANDARD_WIDTH);
   m_widgets.pUBend           -> setMinimumWidth(BTN_STANDARD_WIDTH);
   m_widgets.pHullReconstruct -> setMinimumWidth(BTN_STANDARD_WIDTH);
+  m_widgets.pContourCapture  -> setMinimumWidth(BTN_STANDARD_WIDTH);
 
   // Layouts for buttons
   QVBoxLayout* pUtilitiesLay = new QVBoxLayout(pUtilitiesGroup);
   QVBoxLayout* pFeaturesLay  = new QVBoxLayout(pFeaturesGroup);
-  QVBoxLayout* pSkinningLay  = new QVBoxLayout(pSkinningGroup);
+  QVBoxLayout* pSamplesLay   = new QVBoxLayout(pSamplesGroup);
   //
   pUtilitiesLay->addWidget(m_widgets.pDMU);
   pUtilitiesLay->addWidget(m_widgets.pMeshEdit);
@@ -102,15 +105,16 @@ void gui_welcome_window::createControls()
   pFeaturesLay->addWidget(m_widgets.pFeatures);
   pFeaturesLay->addWidget(m_widgets.pMorphology);
   //
-  pSkinningLay->addWidget(m_widgets.pSkinning);
-  pSkinningLay->addWidget(m_widgets.pUBend);
-  pSkinningLay->addWidget(m_widgets.pHullReconstruct);
+  pSamplesLay->addWidget(m_widgets.pSkinning);
+  pSamplesLay->addWidget(m_widgets.pUBend);
+  pSamplesLay->addWidget(m_widgets.pHullReconstruct);
+  pSamplesLay->addWidget(m_widgets.pContourCapture);
 
   QVBoxLayout* pMainLayout = new QVBoxLayout();
   //
   pMainLayout->addWidget(pUtilitiesGroup);
   pMainLayout->addWidget(pFeaturesGroup);
-  pMainLayout->addWidget(pSkinningGroup);
+  pMainLayout->addWidget(pSamplesGroup);
   //
   pMainLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
   pMainLayout->setContentsMargins(10, 10, 10, 10);
@@ -136,6 +140,7 @@ void gui_welcome_window::createControls()
   connect( m_widgets.pSkinning,        SIGNAL( clicked() ), SLOT( onSkinning        () ) );
   connect( m_widgets.pUBend,           SIGNAL( clicked() ), SLOT( onUBend           () ) );
   connect( m_widgets.pHullReconstruct, SIGNAL( clicked() ), SLOT( onHullReconstruct () ) );
+  connect( m_widgets.pContourCapture,  SIGNAL( clicked() ), SLOT( onContourCapture  () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -274,5 +279,16 @@ void gui_welcome_window::onHullReconstruct()
   this->hide();
   //
   gui_main_window_hull* pMainWindow = new gui_main_window_hull();
+  pMainWindow->show();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction to clicking "Contour Capture" button.
+void gui_welcome_window::onContourCapture()
+{
+  this->hide();
+  //
+  gui_main_window_contour_capture* pMainWindow = new gui_main_window_contour_capture();
   pMainWindow->show();
 }

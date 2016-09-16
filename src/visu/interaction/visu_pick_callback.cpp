@@ -117,7 +117,7 @@ void visu_pick_callback::executePart(unsigned long theEventId,
   //
   const visu_selection_nature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
                                                                             : SelectionNature_Detection;
-  common_facilities::Instance()->Prs.Part->Pick(pickInput, sel_type);
+  common_facilities::Instance()->Prs.Part->Pick(pickInput, sel_type, PickType_World);
 
   // Notify observers
   if ( theEventId == EVENT_PICK_DEFAULT && (selMode & SelectionMode_Face ||
@@ -146,7 +146,7 @@ void visu_pick_callback::executeMesh(unsigned long theEventId,
   //
   const visu_selection_nature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
                                                                             : SelectionNature_Detection;
-  common_facilities::Instance()->Prs.Mesh->Pick(pickInput, sel_type, !m_bSelectMeshNodes);
+  common_facilities::Instance()->Prs.Mesh->Pick(pickInput, sel_type, m_bSelectMeshNodes ? PickType_Point : PickType_Cell);
 
   // Notify listeners
   if ( m_bSelectMeshNodes )

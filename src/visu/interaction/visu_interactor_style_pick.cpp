@@ -58,7 +58,7 @@ void visu_interactor_style_pick::SetRenderer(const vtkSmartPointer<vtkRenderer>&
 
 //! Returns Renderer instance.
 //! \return Renderer instance.
-vtkSmartPointer<vtkRenderer> visu_interactor_style_pick::GetRenderer() const
+const vtkSmartPointer<vtkRenderer>& visu_interactor_style_pick::GetRenderer() const
 {
   return m_renderer;
 }
@@ -70,7 +70,10 @@ void visu_interactor_style_pick::OnMouseMove()
   vtkInteractorStyleTrackballCamera::OnMouseMove();
 
   if ( m_bIsLeftButtonDown )
+  {
+    this->InvokeEvent(EVENT_ROTATION_START, NULL);
     return;
+  }
 
   m_PickedPos[0] = this->Interactor->GetEventPosition()[0];
   m_PickedPos[1] = this->Interactor->GetEventPosition()[1];

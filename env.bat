@@ -104,6 +104,15 @@ set "QR_LIB=%QR_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 set "QR_BIN=%QR_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
 
 rem ===========================================================================
+rem Setting environment for SPE
+rem ===========================================================================
+
+if "%SPE_ROOT%" == "" set "SPE_ROOT=%AS_PRODUCTS%\spe"
+set "SPE_INC=%SPE_ROOT%\include"
+set "SPE_LIB=%SPE_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
+set "SPE_BIN=%SPE_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
+
+rem ===========================================================================
 rem Setting TBB environment 
 rem ===========================================================================
 
@@ -174,7 +183,7 @@ rem ===========================================================================
 rem Adjust PATH variable
 rem ===========================================================================
 
-set "PATH=%AS_BIN%;%MESHGEMS_BIN%;%AD_BIN%;%FEAT_BIN%;%MESH_BIN%;%QR_BIN%;%VTK_BIN%;%PCL_BIN%;%QT_BIN%;%TBB_BIN%;%CR_BIN%;%INNOSETUP_ROOT%;%PATH%"
+set "PATH=%AS_BIN%;%MESHGEMS_BIN%;%SPE_BIN%;%AD_BIN%;%FEAT_BIN%;%MESH_BIN%;%QR_BIN%;%VTK_BIN%;%PCL_BIN%;%QT_BIN%;%TBB_BIN%;%CR_BIN%;%INNOSETUP_ROOT%;%PATH%"
 
 echo PATH=%PATH%
 

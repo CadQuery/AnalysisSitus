@@ -50,6 +50,7 @@ public slots:
   void onSkinning        ();
   void onUBend           ();
   void onHullReconstruct ();
+  void onContourCapture  ();
 
 private:
 
@@ -75,6 +76,7 @@ private:
     QPushButton* pSkinning;        //!< Skinning composition.
     QPushButton* pUBend;           //!< U-bend composition.
     QPushButton* pHullReconstruct; //!< Hull reconstruction composition.
+    QPushButton* pContourCapture;  //!< Contour capture composition.
   //---------------------------------------------------------------------------
     t_widgets() : pMainPane        (NULL),
                   pDMU             (NULL),
@@ -88,7 +90,8 @@ private:
                   //
                   pSkinning        (NULL),
                   pUBend           (NULL),
-                  pHullReconstruct (NULL)
+                  pHullReconstruct (NULL),
+                  pContourCapture  (NULL)
     {}
 
     //! Kills all widgets.
@@ -106,6 +109,7 @@ private:
       delete pSkinning;        pSkinning        = NULL;
       delete pUBend;           pUBend           = NULL;
       delete pHullReconstruct; pHullReconstruct = NULL;
+      delete pContourCapture;  pContourCapture  = NULL;
       //
       delete pMainPane;        pMainPane        = NULL;
     }

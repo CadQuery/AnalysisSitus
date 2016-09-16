@@ -26,6 +26,7 @@
 #include <vtkPointPicker.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#include <vtkWorldPointPicker.h>
 
 // QVTK includes
 #pragma warning(push, 0)
@@ -183,7 +184,7 @@ public:
   ActAPI_DataObjectIdList
     Pick(visu_pick_input*            thePickInput,
          const visu_selection_nature theSelNature,
-         const bool                  isTopoPicker = true);
+         const visu_pick_type        thePickType = PickType_Cell);
 
   void
     SetPickList(const Handle(ActAPI_HNodeList)& theNodeList);
@@ -300,6 +301,9 @@ private:
 
   //! Picker to select VTK geometry (points).
   vtkSmartPointer<vtkPointPicker> m_pointPicker;
+
+  //! Picker to select any point (not necessarily from point data).
+  vtkSmartPointer<vtkWorldPointPicker> m_worldPicker;
 
   //! Picker to select sub-shapes.
   vtkSmartPointer<IVtkTools_ShapePicker> m_shapePicker;

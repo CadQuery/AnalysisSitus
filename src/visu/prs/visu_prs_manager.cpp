@@ -616,16 +616,15 @@ int visu_prs_manager::GetSelectionMode() const
   return m_iSelectionModes;
 }
 
-//! Perform picking or detection by the passed display coordinates.
+//! Performs picking or detection by the passed display coordinates.
 //! \param thePickInput [in] picking input data.
 //! \param theSelNature [in] selection nature (picking or detection).
-//! \param isTopoPicker [in] indicates whether to pick topology (shape and
-//!                          cell pickers) or geometry (point picker).
+//! \param thePickType  [in] type of picker to use.
 //! \return list of affected Data Node IDs.
 ActAPI_DataObjectIdList
   visu_prs_manager::Pick(visu_pick_input*            thePickInput,
                          const visu_selection_nature theSelNature,
-                         const bool                  isTopoPicker)
+                         const visu_pick_type        thePickType)
 {
   /* ===================
    *  Some preparations
@@ -657,13 +656,15 @@ ActAPI_DataObjectIdList
 
   if ( m_iSelectionModes & SelectionMode_Workpiece ) // Non-partial selection
   {
-    if ( isTopoPicker )
+    if ( thePickType == PickType_Cell )
       m_cellPicker->Pick(XStart, YStart, 0, m_renderer);
-    else
+    else if ( thePickType == PickType_Point )
       m_pointPicker->Pick(XStart, YStart, 0, m_renderer);
+    else if ( thePickType == PickType_World )
+      m_worldPicker->Pick(XStart, YStart, 0, m_renderer);
 
     // Extract cell ID
-    if ( isTopoPicker )
+    if ( thePickType == PickType_Cell )
     {
       vtkIdType cell_id = m_cellPicker->GetCellId();
       vtkIdType gid = -1, pid = -1;
@@ -710,7 +711,7 @@ ActAPI_DataObjectIdList
       else
         aPickRes << aPickedActor << cell_id;
     }
-    else // point picker
+    else if ( thePickType == PickType_Point )
     {
       vtkIdType point_id = m_pointPicker->GetPointId();
       //
@@ -730,6 +731,17 @@ ActAPI_DataObjectIdList
 
       // Push ID to result
       aPickRes << aPickedActor << point_id;
+    }
+    else // World picker
+    {
+      // TODO
+
+      double coord[3];
+      m_worldPicker->GetPickPosition(coord);
+
+      std::cout << "Picked world position: ("
+                << coord[0] << ", " << coord[1] << ", " << coord[2]
+                << ")" << std::endl;
     }
 
   }
@@ -1060,6 +1072,9 @@ void visu_prs_manager::InitializePickers()
   // Initialize point picker
   m_pointPicker = vtkSmartPointer<vtkPointPicker>::New();
   m_pointPicker->SetTolerance(0.005);
+
+  // Initialize world picker
+  m_worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
 
   // Create a picker for OCCT shapes
   m_shapePicker = vtkSmartPointer<IVtkTools_ShapePicker>::New();

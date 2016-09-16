@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <tess_conglomerate.h>
+#include <tess_merge.h>
 
 // OCCT includes
 #include <BRep_Tool.hxx>
@@ -164,8 +164,8 @@ namespace
 //! Constructor.
 //! \param body [in] CAD model to extract triangulation patches from.
 //! \param mode [in] conversion mode.
-tess_conglomerate::tess_conglomerate(const TopoDS_Shape& body,
-                                     const Mode          mode)
+tess_merge::tess_merge(const TopoDS_Shape& body,
+                       const Mode          mode)
 : m_body(body),
   m_mode(mode)
 {
@@ -173,7 +173,7 @@ tess_conglomerate::tess_conglomerate(const TopoDS_Shape& body,
 }
 
 //! Assembles many triangulations into a single one.
-void tess_conglomerate::build()
+void tess_merge::build()
 {
   // Create result
   m_resultPoly = new Poly_CoherentTriangulation;

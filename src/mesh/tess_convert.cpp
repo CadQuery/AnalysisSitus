@@ -9,7 +9,7 @@
 #include <tess_convert.h>
 
 // Mesh includes
-#include <tess_conglomerate.h>
+#include <tess_merge.h>
 
 // VTK includes
 #include <vtkCellArray.h>
@@ -25,7 +25,7 @@
 bool tess_convert::ToPersistent(const TopoDS_Shape& source,
                                 Handle(Mesh)& result)
 {
-  tess_conglomerate conglomerate(source, tess_conglomerate::Mode_Mesh);
+  tess_merge conglomerate(source, tess_merge::Mode_Mesh);
   result = conglomerate.GetResultMesh();
   return true;
 }

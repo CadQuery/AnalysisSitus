@@ -27,6 +27,16 @@
 
 //-----------------------------------------------------------------------------
 
+//! Picker type.
+enum visu_pick_type
+{
+  PickType_Cell = 0,
+  PickType_Point,
+  PickType_World
+};
+
+//-----------------------------------------------------------------------------
+
 //! Selection type.
 enum visu_selection_nature
 {

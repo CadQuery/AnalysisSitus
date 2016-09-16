@@ -102,6 +102,7 @@ private:
                   pOBB              (NULL),
                   pCR               (NULL),
                   pCloudify         (NULL),
+                  pMultiLine        (NULL),
                   //
                   pShowVertices     (NULL),
                   pSelectFaces      (NULL),
@@ -129,6 +130,7 @@ private:
       delete pOBB;              pOBB              = NULL;
       delete pCR;               pCR               = NULL;
       delete pCloudify;         pCloudify         = NULL;
+      delete pMultiLine;        pMultiLine        = NULL;
       //
       delete pShowVertices;     pShowVertices     = NULL;
       delete pSelectFaces;      pSelectFaces      = NULL;

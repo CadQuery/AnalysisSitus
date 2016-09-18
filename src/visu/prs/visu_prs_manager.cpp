@@ -742,6 +742,9 @@ ActAPI_DataObjectIdList
       std::cout << "Picked world position: ("
                 << coord[0] << ", " << coord[1] << ", " << coord[2]
                 << ")" << std::endl;
+
+      ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
+      IV.DRAW_POINT( gp_Pnt(coord[0], coord[1], coord[2]), Color_Red );
     }
 
   }
@@ -879,7 +882,7 @@ void visu_prs_manager::SetPickList(const Handle(ActAPI_HNodeList)& theNodeList)
 //! Returns the list of Nodes allowed for picking when picking
 //! from list is enabled.
 //! \return list of Nodes allowed for picking.
-Handle(ActAPI_HNodeList) visu_prs_manager::GetPickList() const
+const Handle(ActAPI_HNodeList)& visu_prs_manager::GetPickList() const
 {
   return m_bAllowedNodes;
 }

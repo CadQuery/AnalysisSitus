@@ -189,7 +189,7 @@ public:
   void
     SetPickList(const Handle(ActAPI_HNodeList)& theNodeList);
 
-  Handle(ActAPI_HNodeList)
+  const Handle(ActAPI_HNodeList)&
     GetPickList() const;
 
   void
@@ -268,7 +268,7 @@ public:
 
 public:
 
-  inline void SetInteractionMode(const InteractionMode mode)
+  void SetInteractionMode(const InteractionMode mode)
   {
     if ( mode == InteractionMode_3D )
       m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleTrackball);

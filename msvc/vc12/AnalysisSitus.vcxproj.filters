@@ -1088,9 +1088,6 @@
     <ClInclude Include="..\..\src\mesh\tess_merge.h">
       <Filter>Header Files\Tessellation</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\gui\gui_main_window_contour_capture.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -1178,6 +1175,9 @@
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_visu_part_callback.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_visu_create_contour_callback.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_visu_topo_graph.cpp">
@@ -2161,6 +2161,9 @@
     <ClCompile Include="..\..\src\gui\gui_controls_cc.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\visu\interaction\visu_create_contour_callback.cpp">
+      <Filter>Source Files\Visualization\Interaction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\gui\gui_object_browser.h">
@@ -2330,6 +2333,12 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\gui\gui_controls_cc.h">
       <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_contour_capture.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\visu\interaction\visu_create_contour_callback.h">
+      <Filter>Header Files\Visualization\Interaction</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

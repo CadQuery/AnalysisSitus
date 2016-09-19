@@ -46,7 +46,8 @@ private:
     }
   };
 
-  t_widgets m_widgets; //!< Involved widgets.
+  t_widgets m_widgets;      //!< Involved widgets.
+  int       m_iPrevSelMode; //!< Previous selection mode.
 
 };
 

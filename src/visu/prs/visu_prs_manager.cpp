@@ -743,8 +743,9 @@ ActAPI_DataObjectIdList
                 << coord[0] << ", " << coord[1] << ", " << coord[2]
                 << ")" << std::endl;
 
-      ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
-      IV.DRAW_POINT( gp_Pnt(coord[0], coord[1], coord[2]), Color_Red );
+      gp_XYZ hit(coord[0], coord[1], coord[2]);
+
+      this->InvokeEvent(EVENT_PICK_WORLD_POINT, &hit);
     }
 
   }

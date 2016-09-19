@@ -492,6 +492,16 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <CustomBuild Include="..\..\src\visu\interaction\visu_create_contour_callback.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\visu\pipelines\visu_bcurve_knots_pipeline.h" />
     <ClInclude Include="..\..\src\visu\pipelines\visu_curve_pipeline.h" />
     <ClInclude Include="..\..\src\visu\pipelines\visu_edge_curve_pipeline.h" />
@@ -1082,6 +1092,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_mesh.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_viewer_ubend.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_visu_part_callback.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_visu_create_contour_callback.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_visu_pick_callback.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_visu_pdomain_callback.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_visu_topo_graph.cpp" />
@@ -1152,6 +1163,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\imperative\visu_iv_text_node.cpp" />
     <ClCompile Include="..\..\src\visu\imperative\visu_iv_topo_item_node.cpp" />
     <ClCompile Include="..\..\src\visu\imperative\visu_iv_topo_node.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_create_contour_callback.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_interactor_style_pick.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_interactor_style_pick_2d.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_part_callback.cpp" />

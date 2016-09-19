@@ -18,6 +18,9 @@
 // Engine includes
 #include <engine_part.h>
 
+// Visualization includes
+#include <visu_create_contour_callback.h>
+
 // Qt includes
 #include <QGroupBox>
 
@@ -29,7 +32,7 @@
 
 //! Constructor.
 //! \param parent [in] parent widget.
-gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent)
+gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelMode(0)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -38,6 +41,9 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent)
   m_widgets.pPickContour = new QPushButton("Pick contour");
   //
   m_widgets.pPickContour->setMinimumWidth(BTN_MIN_WIDTH);
+
+  // Other configurations
+  m_widgets.pPickContour->setCheckable(true);
 
   // Group for buttons
   QGroupBox*   pContourGroup = new QGroupBox("Contour");
@@ -73,7 +79,28 @@ void gui_controls_cc::onPickContour()
   TopoDS_Shape part;
   if ( !gui_common::PartShape(part) ) return;
 
-  common_facilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_Workpiece);
+  const bool isOn = m_widgets.pPickContour->isChecked();
 
-  // TODO: NYI
+  if ( isOn )
+  {
+    // Enable an appropriate selection mode
+    m_iPrevSelMode = common_facilities::Instance()->Prs.Part->GetSelectionMode();
+    common_facilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_Workpiece);
+
+    // TODO: NYI
+
+    if ( !common_facilities::Instance()->Prs.Part->HasObserver(EVENT_PICK_WORLD_POINT) )
+    {
+      vtkSmartPointer<visu_create_contour_callback>
+        cb = vtkSmartPointer<visu_create_contour_callback>::New();
+
+      // Add observer
+      common_facilities::Instance()->Prs.Part->AddObserver(EVENT_PICK_WORLD_POINT, cb);
+    }
+  }
+  else
+  {
+    // Restore original selection mode
+    common_facilities::Instance()->Prs.Part->SetSelectionMode(m_iPrevSelMode);
+  }
 }

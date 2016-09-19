@@ -53,11 +53,22 @@ void visu_create_contour_callback::Execute(vtkObject*    vtkNotUsed(theCaller),
                                            unsigned long theEventId,
                                            void*         theCallData)
 {
-  const vtkSmartPointer<visu_prs_manager>& mgr = this->Viewer()->PrsMgr();
+  const vtkSmartPointer<visu_prs_manager>& mgr = common_facilities::Instance()->Prs.Part;
 
   // Get hit position
   gp_XYZ hit = *( (gp_XYZ*) theCallData );
 
-  ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
-  IV.DRAW_POINT( hit, Color_Red );
+  /*ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
+  IV.DRAW_POINT( hit, Color_Red );*/
+
+  Handle(geom_contour_node)
+    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  //
+  common_facilities::Instance()->Model->OpenCommand();
+  {
+    contour_n->AddPoint(hit);
+  }
+  common_facilities::Instance()->Model->CommitCommand();
+  //
+  mgr->Actualize( contour_n.get() );
 }

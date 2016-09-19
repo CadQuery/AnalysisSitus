@@ -20,6 +20,11 @@
 
 // Visualization includes
 #include <visu_create_contour_callback.h>
+#include <visu_geom_prs.h>
+
+// VTK includes
+#include <vtkActor.h>
+#include <vtkProperty.h>
 
 // Qt includes
 #include <QGroupBox>
@@ -81,14 +86,20 @@ void gui_controls_cc::onPickContour()
 
   const bool isOn = m_widgets.pPickContour->isChecked();
 
+  // Get contour Node
+  Handle(geom_contour_node)
+    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+
+  // Depending on the state of the control, either let user to pick some
+  // points on the shape or finalize contour creation
   if ( isOn )
   {
     // Enable an appropriate selection mode
     m_iPrevSelMode = common_facilities::Instance()->Prs.Part->GetSelectionMode();
     common_facilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_Workpiece);
 
-    // TODO: NYI
-
+    // Add observer which takes responsibility to fill the data object with
+    // the base points of the contour
     if ( !common_facilities::Instance()->Prs.Part->HasObserver(EVENT_PICK_WORLD_POINT) )
     {
       vtkSmartPointer<visu_create_contour_callback>
@@ -100,6 +111,17 @@ void gui_controls_cc::onPickContour()
   }
   else
   {
+    if ( !contour_n->IsClosed() )
+    {
+      common_facilities::Instance()->Model->OpenCommand();
+      {
+        contour_n->SetClosed(true);
+      }
+      common_facilities::Instance()->Model->CommitCommand();
+    }
+
+    common_facilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+
     // Restore original selection mode
     common_facilities::Instance()->Prs.Part->SetSelectionMode(m_iPrevSelMode);
   }

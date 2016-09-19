@@ -45,6 +45,7 @@ REGISTER_NODE_TYPE(geom_edge_node)
 REGISTER_NODE_TYPE(geom_curve_node)
 REGISTER_NODE_TYPE(geom_boundary_edges_node)
 REGISTER_NODE_TYPE(geom_volume_node)
+REGISTER_NODE_TYPE(geom_contour_node)
 //
 REGISTER_NODE_TYPE(geom_re_node)
 REGISTER_NODE_TYPE(geom_re_surfaces_node)
@@ -325,6 +326,7 @@ void common_model::initPartitions()
   REGISTER_PARTITION(common_partition<geom_curve_node>,          Partition_GeomCurve);
   REGISTER_PARTITION(common_partition<geom_boundary_edges_node>, Partition_GeomBoundaryEdges);
   REGISTER_PARTITION(common_partition<geom_volume_node>,         Partition_GeomVolume);
+  REGISTER_PARTITION(common_partition<geom_contour_node>,        Partition_GeomContour);
   //
   REGISTER_PARTITION(common_partition<geom_re_node>,             Partition_RE);
   REGISTER_PARTITION(common_partition<geom_re_surfaces_node>,    Partition_RESurfaces);

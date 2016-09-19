@@ -13,6 +13,7 @@
 
 // A-Situs (geometry) includes
 #include <geom_boundary_edges_node.h>
+#include <geom_contour_node.h>
 #include <geom_curve_node.h>
 #include <geom_edge_node.h>
 #include <geom_face_node.h>
@@ -97,6 +98,7 @@ public:
   Handle(geom_edge_node)           GetEdgeRepresentation          () const;
   Handle(geom_curve_node)          GetCurveRepresentation         () const;
   Handle(geom_boundary_edges_node) GetBoundaryEdgesRepresentation () const;
+  Handle(geom_contour_node)        GetContour                     () const;
 
 // Initialization:
 public:

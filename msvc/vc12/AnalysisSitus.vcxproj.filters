@@ -1091,6 +1091,15 @@
     <ClInclude Include="..\..\src\geom\common\geom_contour_node.h">
       <Filter>Header Files\Geometry\Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_contour_prs.h">
+      <Filter>Header Files\Visualization\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_contour_points_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\visu\data_providers\visu_contour_data_provider.h">
+      <Filter>Header Files\Visualization\Data Providers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -2169,6 +2178,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\geom\common\geom_contour_node.cpp">
       <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_contour_prs.cpp">
+      <Filter>Source Files\Visualization\Presentation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_contour_points_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\visu\data_providers\visu_contour_data_provider.cpp">
+      <Filter>Source Files\Visualization\Data Providers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

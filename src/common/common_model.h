@@ -213,6 +213,13 @@ public:
     return Handle(common_partition<geom_volume_node>)::DownCast( this->Partition(Partition_GeomVolume) );
   }
 
+  //! Accessor for a Partition instance dedicated to Contour Nodes.
+  //! \return requested Partition.
+  Handle(common_partition<geom_contour_node>) GetGeomContourPartition() const
+  {
+    return Handle(common_partition<geom_contour_node>)::DownCast( this->Partition(Partition_GeomContour) );
+  }
+
 //-----------------------------------------------------------------------------
 
   //! Accessor for a Partition instance dedicated to Reverse Engineering Nodes.
@@ -413,6 +420,7 @@ private:
     Partition_GeomCurve,
     Partition_GeomBoundaryEdges,
     Partition_GeomVolume,
+    Partition_GeomContour,
   //---------------------------------------------------------------------------
     Partition_Mesh,
   //---------------------------------------------------------------------------

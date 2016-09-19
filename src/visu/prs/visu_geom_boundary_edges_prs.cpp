@@ -10,6 +10,7 @@
 
 // A-Situs (visualization) includes
 #include <visu_shape_data_provider.h>
+#include <visu_shape_pipeline.h>
 
 // A-Situs (GUI) includes
 #include <gui_common.h>

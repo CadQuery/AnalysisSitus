@@ -9,7 +9,10 @@
 #define visu_shape_data_provider_h
 
 // A-Situs visualization includes
-#include <visu_shape_pipeline.h>
+#include <visu_data_provider.h>
+
+// OCCT includes
+#include <TColStd_HPackedMapOfInteger.hxx>
 
 DEFINE_STANDARD_HANDLE(visu_shape_data_provider, visu_data_provider)
 
@@ -26,32 +29,36 @@ public:
   visu_shape_data_provider(const ActAPI_DataObjectId&           theNodeId,
                            const Handle(ActAPI_HParameterList)& theParamList);
 
+protected:
+
+  visu_shape_data_provider();
+
 public:
 
-  ActAPI_DataObjectId
+  virtual ActAPI_DataObjectId
     GetNodeID() const;
 
-  TopoDS_Shape
+  virtual TopoDS_Shape
     GetShape() const;
 
-  Handle(TColStd_HPackedMapOfInteger)
+  virtual Handle(TColStd_HPackedMapOfInteger)
     GetSubShapes() const;
 
-  void
+  virtual void
     SetSubShapes(const Handle(TColStd_HPackedMapOfInteger)& theSubShapes);
 
-  bool
+  virtual bool
     HasPosition() const;
 
-  bool
+  virtual bool
     HasPositionAndRotation() const;
 
-  void
+  virtual void
     GetPosition(double& thePosX,
                 double& thePosY,
                 double& thePosZ) const;
 
-  void
+  virtual void
     GetRotation(double& theAngleAroundX,
                 double& theAngleAroundY,
                 double& theAngleAroundZ) const;
@@ -61,12 +68,12 @@ public:
   Handle(visu_shape_data_provider)
     Clone() const;
 
-private:
+protected:
 
   virtual Handle(ActAPI_HParameterList)
     translationSources() const;
 
-private:
+protected:
 
   //! Source Node ID.
   ActAPI_DataObjectId m_nodeID;

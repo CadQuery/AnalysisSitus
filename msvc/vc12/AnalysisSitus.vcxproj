@@ -450,6 +450,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_2d_data_provider.h" />
     <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_data_provider.h" />
     <ClInclude Include="..\..\src\visu\data_providers\imperative\visu_iv_surface_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_contour_data_provider.h" />
+    <ClInclude Include="..\..\src\visu\data_providers\visu_contour_points_data_provider.h" />
     <ClInclude Include="..\..\src\visu\data_providers\visu_curve_data_provider.h" />
     <ClInclude Include="..\..\src\visu\data_providers\visu_edge_data_provider.h" />
     <ClInclude Include="..\..\src\visu\data_providers\visu_law_data_provider.h" />
@@ -525,6 +527,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\visu\prs\visu_axes_btn_callback.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_calculus_law_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_geom_boundary_edges_prs.h" />
+    <ClInclude Include="..\..\src\visu\prs\visu_geom_contour_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_geom_curve_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_geom_edge_prs.h" />
     <ClInclude Include="..\..\src\visu\prs\visu_geom_volume_prs.h" />
@@ -1131,6 +1134,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_2d_data_provider.cpp" />
     <ClCompile Include="..\..\src\visu\data_providers\imperative\visu_iv_point_set_data_provider.cpp" />
     <ClCompile Include="..\..\src\visu\data_providers\imperative\visu_iv_surface_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_contour_data_provider.cpp" />
+    <ClCompile Include="..\..\src\visu\data_providers\visu_contour_points_data_provider.cpp" />
     <ClCompile Include="..\..\src\visu\data_providers\visu_curve_data_provider.cpp" />
     <ClCompile Include="..\..\src\visu\data_providers\visu_data_provider.cpp" />
     <ClCompile Include="..\..\src\visu\data_providers\visu_edge_data_provider.cpp" />
@@ -1211,6 +1216,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\prs\visu_axes_btn_callback.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_calculus_law_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_geom_boundary_edges_prs.cpp" />
+    <ClCompile Include="..\..\src\visu\prs\visu_geom_contour_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_geom_curve_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_geom_edge_prs.cpp" />
     <ClCompile Include="..\..\src\visu\prs\visu_geom_face_prs.cpp" />

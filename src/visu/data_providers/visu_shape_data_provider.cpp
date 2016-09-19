@@ -13,6 +13,11 @@
 
 //-----------------------------------------------------------------------------
 
+//! ctor.
+visu_shape_data_provider::visu_shape_data_provider()
+: visu_data_provider()
+{}
+
 //! Constructor accepting the set of source data structures.
 //! \param theNodeId    [in] ID of the target Data Node.
 //! \param theParamList [in] source Parameters.
@@ -114,5 +119,5 @@ void visu_shape_data_provider::GetRotation(double& theAngleAroundX,
 //! \return source Parameters.
 Handle(ActAPI_HParameterList) visu_shape_data_provider::translationSources() const
 {
-  return ActAPI_ParameterStream() << m_params->Value(1); // Shape Parameter
+  return m_params;
 }

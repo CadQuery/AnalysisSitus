@@ -14,6 +14,9 @@
 // Active Data includes
 #include <ActData_BaseNode.h>
 
+// OCCT includes
+#include <TopoDS_Wire.hxx>
+
 //-----------------------------------------------------------------------------
 // Node representing a contour on shape
 //-----------------------------------------------------------------------------
@@ -71,6 +74,7 @@ public:
   void               AddPoint  (const gp_XYZ& point);
   void               SetClosed (const bool isClosed);
   bool               IsClosed  () const;
+  TopoDS_Wire        AsShape   () const;
 
 // Initialization:
 public:

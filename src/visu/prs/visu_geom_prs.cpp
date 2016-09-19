@@ -11,6 +11,7 @@
 // A-Situs (visualization) includes
 #include <visu_display_mode.h>
 #include <visu_shape_data_provider.h>
+#include <visu_shape_pipeline.h>
 
 // A-Situs (common) includes
 #include <common_facilities.h>

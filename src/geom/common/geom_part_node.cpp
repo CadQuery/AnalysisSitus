@@ -96,7 +96,7 @@ void geom_part_node::SetHasColor(const bool hasColor)
 //! \return true/false.
 bool geom_part_node::HasColor() const
 {
-  return ActParamTool::AsBool( this->Parameter(PID_HasColor) )->GetValue() > 0;
+  return ActParamTool::AsBool( this->Parameter(PID_HasColor) )->GetValue();
 }
 
 //! Sets color.
@@ -139,7 +139,7 @@ void geom_part_node::SetHasVertices(const bool hasVertices)
 //! \return true/false.
 bool geom_part_node::HasVertices() const
 {
-  return ActParamTool::AsBool( this->Parameter(PID_HasVertices) )->GetValue() > 0;
+  return ActParamTool::AsBool( this->Parameter(PID_HasVertices) )->GetValue();
 }
 
 //-----------------------------------------------------------------------------
@@ -214,6 +214,21 @@ Handle(geom_curve_node) geom_part_node::GetCurveRepresentation() const
 
     if ( !curve_n.IsNull() && curve_n->IsWellFormed() )
       return curve_n;
+  }
+
+  return NULL;
+}
+
+//! \return underlying contour Node.
+Handle(geom_contour_node) geom_part_node::GetContour() const
+{
+  Handle(geom_contour_node) contour_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    contour_n = Handle(geom_contour_node)::DownCast( cit->Value() );
+
+    if ( !contour_n.IsNull() && contour_n->IsWellFormed() )
+      return contour_n;
   }
 
   return NULL;

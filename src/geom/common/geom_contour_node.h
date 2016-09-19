@@ -68,7 +68,9 @@ public:
 
   void               SetCoords (const Handle(HRealArray)& coords);
   Handle(HRealArray) GetCoords () const;
-  //void               AddPoint
+  void               AddPoint  (const gp_XYZ& point);
+  void               SetClosed (const bool isClosed);
+  bool               IsClosed  () const;
 
 // Initialization:
 public:

@@ -1088,6 +1088,9 @@
     <ClInclude Include="..\..\src\mesh\tess_merge.h">
       <Filter>Header Files\Tessellation</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_contour_node.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -2163,6 +2166,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\visu\interaction\visu_create_contour_callback.cpp">
       <Filter>Source Files\Visualization\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_contour_node.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

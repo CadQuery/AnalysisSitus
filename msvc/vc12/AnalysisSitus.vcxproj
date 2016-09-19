@@ -84,6 +84,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\geom\classification\geom_transition.h" />
     <ClInclude Include="..\..\src\geom\combination\geom_overlapping_ranges.h" />
     <ClInclude Include="..\..\src\geom\combination\geom_weighted_range.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_contour_node.h" />
     <ClInclude Include="..\..\src\geom\common\geom_curve_node.h" />
     <ClInclude Include="..\..\src\geom\common\geom_divide_by_continuity.h" />
     <ClInclude Include="..\..\src\geom\common\geom_boundary_edges_node.h" />
@@ -906,6 +907,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\geom\classification\geom_transition.cpp" />
     <ClCompile Include="..\..\src\geom\combination\geom_overlapping_ranges.cpp" />
     <ClCompile Include="..\..\src\geom\combination\geom_weighted_range.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_contour_node.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_curve_node.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_divide_by_continuity.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_boundary_edges_node.cpp" />

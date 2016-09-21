@@ -121,6 +121,9 @@ void journal_iv::DRAW_LINK(const gp_Pnt&                  p1,
                            const Quantity_Color&          color,
                            const TCollection_AsciiString& name)
 {
+  if ( p1.Distance(p2) < 1.0e-5 )
+    return;
+
   // Create a straight line segment between two passed points
   Handle(Geom_TrimmedCurve) C = GC_MakeSegment(p1, p2);
 

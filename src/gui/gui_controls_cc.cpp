@@ -12,6 +12,10 @@
 #include <common_draw_test_suite.h>
 #include <common_facilities.h>
 
+// Geometry includes
+#include <geom_bvh_facets.h>
+#include <geom_find_nearest_facet.h>
+
 // GUI includes
 #include <gui_common.h>
 
@@ -21,9 +25,6 @@
 // Visualization includes
 #include <visu_create_contour_callback.h>
 #include <visu_geom_prs.h>
-
-// Feature includes
-#include <feature_bvh_triangle_set.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -144,11 +145,28 @@ void gui_controls_cc::onLocateFaces()
 
   // Build triangle set. Constructor will initialize the internal structures
   // storing the triangle nodes with references to the owning parts
-  Handle(feature_bvh_triangle_set)
-    triangleSet = new feature_bvh_triangle_set(part, NULL, NULL);
+  Handle(geom_bvh_facets)
+    triangleSet = new geom_bvh_facets(part,
+                                      common_facilities::Instance()->Notifier,
+                                      common_facilities::Instance()->Plotter);
   //
-  triangleSet->InitBuilder(); // Initialize builder with possible parallel mode.
   triangleSet->BVH(); // This invocation builds the BVH tree
+
+  // Prepare a tool to find the nearest facet
+  geom_find_nearest_facet nearest(triangleSet,
+                                  common_facilities::Instance()->Notifier,
+                                  common_facilities::Instance()->Plotter);
+
+  // TODO: this is a test stuff
+  gp_Pnt probe;
+
+  // Find nearest
+  int facet_idx;
+  if ( !nearest(probe, facet_idx) )
+  {
+    std::cout << "Error: cannot find the nearest facet" << std::endl;
+    return;
+  }
 
   // TODO
 }

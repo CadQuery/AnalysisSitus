@@ -236,7 +236,7 @@ protected:
     t_node(const TopoDS_Vertex& _V, const bool _isAlien) : Opp(_V), isAlien(_isAlien) {}
     t_node(const TopoDS_Vertex& _V, const TopoDS_Edge& _E, const bool _isAlien) : Opp(_V, _E), isAlien(_isAlien) {}
 
-    bool IsNull() const { return Opp.V.IsNull() > 0; }
+    bool IsNull() const { return Opp.V.IsNull(); }
   };
 
 protected:

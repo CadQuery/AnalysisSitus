@@ -72,7 +72,7 @@ bool geom_refine_tolerance::Degrade(TopoDS_Shape&        Body,
     FixTol.SetTolerance(Body, refinedTol);
 
     BRepCheck_Analyzer Check(Body, 1);
-    isValid = Check.IsValid() > 0;
+    isValid = Check.IsValid();
   }
   while ( isValid && refinedTol > inaccuracy );
 

@@ -82,7 +82,7 @@ bool geom_IGES::Read(const TCollection_AsciiString& filename,
     bool aFixRes = false;
     try
     {
-      aFixRes = aShapeHealer->Perform() > 0;
+      aFixRes = aShapeHealer->Perform();
     }
     catch ( Standard_Failure )
     {

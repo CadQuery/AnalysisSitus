@@ -84,6 +84,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\geom\classification\geom_transition.h" />
     <ClInclude Include="..\..\src\geom\combination\geom_overlapping_ranges.h" />
     <ClInclude Include="..\..\src\geom\combination\geom_weighted_range.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_bvh_facets.h" />
     <ClInclude Include="..\..\src\geom\common\geom_contour_node.h" />
     <ClInclude Include="..\..\src\geom\common\geom_curve_node.h" />
     <ClInclude Include="..\..\src\geom\common\geom_divide_by_continuity.h" />
@@ -91,6 +92,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\geom\common\geom_edge_node.h" />
     <ClInclude Include="..\..\src\geom\common\geom_euler_poincare.h" />
     <ClInclude Include="..\..\src\geom\common\geom_face_node.h" />
+    <ClInclude Include="..\..\src\geom\common\geom_find_nearest_facet.h" />
     <ClInclude Include="..\..\src\geom\common\geom_find_nonmanifold.h" />
     <ClInclude Include="..\..\src\geom\common\geom_part_node.h" />
     <ClInclude Include="..\..\src\geom\common\geom_surf_node.h" />
@@ -910,6 +912,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\geom\classification\geom_transition.cpp" />
     <ClCompile Include="..\..\src\geom\combination\geom_overlapping_ranges.cpp" />
     <ClCompile Include="..\..\src\geom\combination\geom_weighted_range.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_bvh_facets.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_contour_node.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_curve_node.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_divide_by_continuity.cpp" />
@@ -917,6 +920,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\geom\common\geom_edge_node.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_euler_poincare.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_face_node.cpp" />
+    <ClCompile Include="..\..\src\geom\common\geom_find_nearest_facet.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_find_nonmanifold.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_part_node.cpp" />
     <ClCompile Include="..\..\src\geom\common\geom_surf_node.cpp" />

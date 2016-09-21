@@ -693,7 +693,7 @@ bool geom_utils::ReadBRep(const TCollection_AsciiString& theFilename,
                           TopoDS_Shape&                  theShape)
 {
   BRep_Builder BB;
-  return BRepTools::Read(theShape, theFilename.ToCString(), BB) > 0;
+  return BRepTools::Read(theShape, theFilename.ToCString(), BB);
 }
 
 //! Reads CAD model from native STL file.
@@ -715,7 +715,7 @@ bool geom_utils::ReadSTL(const TCollection_AsciiString& theFilename,
 bool geom_utils::WriteBRep(const TopoDS_Shape&            theShape,
                            const TCollection_AsciiString& theFilename)
 {
-  return BRepTools::Write( theShape, theFilename.ToCString() ) > 0;
+  return BRepTools::Write( theShape, theFilename.ToCString() );
 }
 
 //! Collects summary information for the given shape.

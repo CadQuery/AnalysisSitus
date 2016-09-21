@@ -1100,6 +1100,12 @@
     <ClInclude Include="..\..\src\visu\data_providers\visu_contour_data_provider.h">
       <Filter>Header Files\Visualization\Data Providers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_bvh_facets.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_find_nearest_facet.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -2187,6 +2193,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\visu\data_providers\visu_contour_data_provider.cpp">
       <Filter>Source Files\Visualization\Data Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_bvh_facets.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_find_nearest_facet.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

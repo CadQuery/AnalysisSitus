@@ -22,6 +22,9 @@
 #include <visu_create_contour_callback.h>
 #include <visu_geom_prs.h>
 
+// Feature includes
+#include <feature_bvh_triangle_set.h>
+
 // VTK includes
 #include <vtkActor.h>
 #include <vtkProperty.h>
@@ -44,8 +47,10 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
 
   // Buttons
   m_widgets.pPickContour = new QPushButton("Pick contour");
+  m_widgets.pLocateFaces = new QPushButton("Locate faces");
   //
   m_widgets.pPickContour->setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pLocateFaces->setMinimumWidth(BTN_MIN_WIDTH);
 
   // Other configurations
   m_widgets.pPickContour->setCheckable(true);
@@ -55,6 +60,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   QVBoxLayout* pContourLay   = new QVBoxLayout(pContourGroup);
   //
   pContourLay->addWidget(m_widgets.pPickContour);
+  pContourLay->addWidget(m_widgets.pLocateFaces);
 
   // Set layout
   m_pMainLayout->addWidget(pContourGroup);
@@ -65,6 +71,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
 
   // Connect signals to slots
   connect( m_widgets.pPickContour, SIGNAL( clicked() ), SLOT( onPickContour() ) );
+  connect( m_widgets.pLocateFaces, SIGNAL( clicked() ), SLOT( onLocateFaces() ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -125,4 +132,23 @@ void gui_controls_cc::onPickContour()
     // Restore original selection mode
     common_facilities::Instance()->Prs.Part->SetSelectionMode(m_iPrevSelMode);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+//! Attempts to find faces which contain the polyline's nodes.
+void gui_controls_cc::onLocateFaces()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Build triangle set. Constructor will initialize the internal structures
+  // storing the triangle nodes with references to the owning parts
+  Handle(feature_bvh_triangle_set)
+    triangleSet = new feature_bvh_triangle_set(part, NULL, NULL);
+  //
+  triangleSet->InitBuilder(); // Initialize builder with possible parallel mode.
+  triangleSet->BVH(); // This invocation builds the BVH tree
+
+  // TODO
 }

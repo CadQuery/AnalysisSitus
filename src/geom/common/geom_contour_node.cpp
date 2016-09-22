@@ -147,3 +147,16 @@ TopoDS_Wire geom_contour_node::AsShape() const
 
   return WD->WireAPIMake();
 }
+
+//! Re-packages all coordinates to a convenient sequence structure.
+//! \param[out] point result of re-packaging.
+void geom_contour_node::AsPoints(TColgp_SequenceOfPnt& points) const
+{
+  Handle(geom_point_cloud) pcloud = new geom_point_cloud( this->GetCoords() );
+  const int                nPts   = pcloud->GetNumOfPoints();
+  //
+  for ( int p = 1; p < nPts; ++p )
+  {
+    points.Append( pcloud->GetPoint(p) );
+  }
+}

@@ -189,7 +189,7 @@ bool geom_split_faces::operator()(const TSlicerMap&      Slicers,
   ImmersedContour = ExtractImmersedContour(ImmersedBody, SlicerEdges, m_fInaccuracy);
 
   BRepCheck_Analyzer Check(ImmersedBody, 1);
-  const bool isValid = Check.IsValid() > 0;
+  const bool isValid = Check.IsValid();
   if ( !isValid )
   {
     Journal.SendLogMessage( LogWarn(Normal) << "geom_split_faces.ResultIsInvalidShell" << ImmersedBody );
@@ -486,11 +486,11 @@ bool geom_split_faces::Split(TopoDS_Face&                             F,
 //! \param Journal        [in/out] journal instance.
 //! \param pInterrupt     [in]     auxiliary callback.
 //! \return true in case of success, false -- otherwise.
-bool geom_split_faces::WalkLeft(const TopoDS_Face&      F,
-                             const TopoDS_Shape&        Mosaic,
-                             TopTools_ListOfShape&      Contours,
-                             ActAPI_ProgressEntry       Journal,
-                             geom_split_faces_interrupt pInterrupt) const
+bool geom_split_faces::WalkLeft(const TopoDS_Face&         F,
+                                const TopoDS_Shape&        Mosaic,
+                                TopTools_ListOfShape&      Contours,
+                                ActAPI_ProgressEntry       Journal,
+                                geom_split_faces_interrupt pInterrupt) const
 {
   // Soup of all vertices by edges in host face (i.e. on boundary)
   TopTools_IndexedDataMapOfShapeListOfShape M_bnd;

@@ -26,8 +26,9 @@ public:
 
 public slots:
 
-  void onPickContour();
-  void onLocateFaces();
+  void onPickContour ();
+  void onPickFacet   ();
+  void onLocateFaces ();
 
 private:
 
@@ -37,15 +38,18 @@ private:
   struct t_widgets
   {
     QPushButton* pPickContour; //!< Allows selection of a contour.
+    QPushButton* pPickFacet;   //!< Allows to pick up a single facet.
     QPushButton* pLocateFaces; //!< Finds faces corresponding the the contour's nodes.
 
     t_widgets() : pPickContour (NULL),
+                  pPickFacet   (NULL),
                   pLocateFaces (NULL)
     {}
 
     void Release()
     {
       delete pPickContour; pPickContour = NULL;
+      delete pPickFacet;   pPickFacet   = NULL;
       delete pLocateFaces; pLocateFaces = NULL;
     }
   };

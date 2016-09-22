@@ -15,6 +15,7 @@
 #include <ActData_BaseNode.h>
 
 // OCCT includes
+#include <TColgp_SequenceOfPnt.hxx>
 #include <TopoDS_Wire.hxx>
 
 //-----------------------------------------------------------------------------
@@ -75,6 +76,7 @@ public:
   void               SetClosed (const bool isClosed);
   bool               IsClosed  () const;
   TopoDS_Wire        AsShape   () const;
+  void               AsPoints  (TColgp_SequenceOfPnt& points) const;
 
 // Initialization:
 public:

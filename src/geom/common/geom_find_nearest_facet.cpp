@@ -8,11 +8,15 @@
 // Own include
 #include <geom_find_nearest_facet.h>
 
+// OCCT includes
+#include <BRep_Builder.hxx>
+
 #define DRAW_DEBUG
 #if defined DRAW_DEBUG
-#include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #endif
+
+#define INPLANE_TOLER 10
 
 //-----------------------------------------------------------------------------
 
@@ -104,39 +108,77 @@ bool SegmentTriangleIntersection( const gp_Pnt& rayStart,
 //-----------------------------------------------------------------------------
 
 //! Performs narrow-phase distance testing for a BVH leaf.
-//! \param[in] P    probe point.
-//! \param[in] leaf leaf node of the BVH tree.
-//! \return true in case of success, false -- otherwise.
-bool geom_find_nearest_facet::testLeaf(const gp_Pnt&    P,
-                                       const BVH_Vec4i& leaf) const
+//! \param[in]  P           probe point.
+//! \param[in]  leaf        leaf node of the BVH tree.
+//! \param[out] resultFacet found facet which yields the min distance.
+//! \param[out] isInside    indicates whether a point lies inside the triangle.
+//! \return distance from the point P to the facets of interest.
+double geom_find_nearest_facet::testLeaf(const gp_Pnt&    P,
+                                         const BVH_Vec4i& leaf,
+                                         int&             resultFacet,
+                                         bool&            isInside) const
 {
+  gp_XYZ p       = P.XYZ();
+  double minDist = 1e100;
+
   for ( int fidx = leaf.y(); fidx <= leaf.z(); ++fidx )
   {
     // Get facet to test
     const geom_bvh_facets::t_facet& facet = m_facets->GetFacet(fidx);
 
-    //const TopoDS_Shape& aTriangleSolid = myTriangleSet->GetProperties(aTrgIdx).Shape;
+    // Get next facet to test
+    const gp_XYZ p0( facet.P0.x(), facet.P0.y(), facet.P0.z() );
+    const gp_XYZ p1( facet.P1.x(), facet.P1.y(), facet.P1.z() );
+    const gp_XYZ p2( facet.P2.x(), facet.P2.y(), facet.P2.z() );
 
-    //// Get line segment and parent solid.
-    //const TopoDS_Shape& aSegmentSolid = myLineSet->GetPropertiesSolid(theLD.mySolidPropIdx).Shape;
+    const gp_XYZ p0p1     = p1 - p0;
+    const gp_XYZ p0p2     = p2 - p0;
+    const gp_XYZ p0p      = p - p0;
+    const double p0p_dist = p0p.Modulus();
 
-    //  // Triangle and line segment should belong to different topological items.
-    //  if (aTriangleSolid.IsSame(aSegmentSolid))
-    //    continue;
+    const gp_XYZ Np        = p0p1 ^ p0p2;
+    const double cos_alpha = ( p0p * Np ) / ( p0p_dist * Np.Modulus() );
+    const double dist      = p0p_dist * cos_alpha;
+    const gp_XYZ pproj     = p - Np.Normalized()*dist;
 
-    //  gp_Pnt aTrgPnt0(aTD.myPnt0.x(), aTD.myPnt0.y(), aTD.myPnt0.z());
-    //  gp_Pnt aTrgPnt1(aTD.myPnt1.x(), aTD.myPnt1.y(), aTD.myPnt1.z());
-    //  gp_Pnt aTrgPnt2(aTD.myPnt2.x(), aTD.myPnt2.y(), aTD.myPnt2.z());
-    //  gp_Pnt aLinePnt0(theLD.myPntStart.x(), theLD.myPntStart.y(), theLD.myPntStart.z());
-    //  gp_Pnt aLinePnt1(theLD.myPntFinish.x(), theLD.myPntFinish.y(), theLD.myPntFinish.z());
+    std::cout << "Probe's projection is ("
+              << pproj.X() << ", "
+              << pproj.Y() << ", "
+              << pproj.Z() << ")" << std::endl;
 
-    //  if (SegmentTriangleIntersection(aLinePnt0, aLinePnt1, aTrgPnt0, aTrgPnt1, aTrgPnt2))
-    //    return true;
+    //if ( Abs(dist) <= minDist /*|| Abs(dist) < INPLANE_TOLER*/ )
+    //{
+    //  
 
-    return false;
+      //if ( /*fidx == 1 || fidx == 14 || */fidx == 27 )
+      //{
+
+      //}
+
+      if ( this->isInside(pproj, p0, p1, p2) && Abs(dist) <= minDist )
+      {
+        isInside    = true;
+        minDist     = Abs(dist);
+        resultFacet = fidx;
+
+        //this->Plotter().DRAW_POINT(p, Color_Blue, "probe");
+        //this->Plotter().DRAW_POINT(pproj, Color_Violet, "probe_proj");
+        ////this->Plotter().DRAW_VECTOR_AT(p0, Np, Color_Red);
+
+        /////*this->Plotter().DRAW_POINT(p0, Color_Red, "p0");
+        ////this->Plotter().DRAW_POINT(p1, Color_Green, "p1");
+        ////this->Plotter().DRAW_POINT(p2, Color_Blue, "p2");*/
+
+        //this->Plotter().DRAW_LINK(p0, p1, Color_Green);
+        //this->Plotter().DRAW_LINK(p0, p2, Color_Green);
+        //this->Plotter().DRAW_LINK(p1, p2, Color_Green);
+
+        //break;
+      //}
+    }
   }
 
-  return false;
+  return minDist;
 }
 
 //-----------------------------------------------------------------------------
@@ -148,18 +190,60 @@ bool geom_find_nearest_facet::isOut(const gp_Pnt&    P,
   const double x = P.X(),
                y = P.Y(),
                z = P.Z();
-  const double xmin = boxMin.x(),
-               ymin = boxMin.y(),
-               zmin = boxMin.z(),
-               xmax = boxMax.x(),
-               ymax = boxMax.y(),
-               zmax = boxMax.z();
+  const double xmin = boxMin.x() - INPLANE_TOLER,
+               ymin = boxMin.y() - INPLANE_TOLER,
+               zmin = boxMin.z() - INPLANE_TOLER,
+               xmax = boxMax.x() + INPLANE_TOLER,
+               ymax = boxMax.y() + INPLANE_TOLER,
+               zmax = boxMax.z() + INPLANE_TOLER;
 
   if ( x < xmin || y < ymin || z < zmin ||
        x > xmax || y > ymax || z > zmax )
     return true;
 
   return false;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Checks if the two points p1 and p2 are on the same side with respect to
+//! the line defined by points a and b.
+//! \param[in] p1 first point to test.
+//! \param[in] p2 second point to test.
+//! \param[in] a  first point on the line.
+//! \param[in] b  second point on the line.
+//! \return true/false.
+bool geom_find_nearest_facet::isSameSide(const gp_Pnt& p1, const gp_Pnt& p2,
+                                         const gp_Pnt& a,  const gp_Pnt& b) const
+{
+  const gp_XYZ ab  = b.XYZ()  - a.XYZ();
+  const gp_XYZ ap1 = p1.XYZ() - a.XYZ();
+  const gp_XYZ ap2 = p2.XYZ() - a.XYZ();
+
+  const gp_XYZ cp1 = ab ^ ap1;
+  const gp_XYZ cp2 = ab ^ ap2;
+
+  const double dot = cp1 * cp2;
+
+  return dot >= 0;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Checks whether the point p belongs to a triangle (a, b, c).
+//! \param[in] p point to test.
+//! \param[in] a first node of the triangle to test.
+//! \param[in] b second node of the triangle to test.
+//! \param[in] c third node of the triangle to test.
+//! \return true/false.
+bool geom_find_nearest_facet::isInside(const gp_Pnt& p,
+                                       const gp_Pnt& a,
+                                       const gp_Pnt& b,
+                                       const gp_Pnt& c) const
+{
+  return this->isSameSide(p, a, /* */ b, c) &&
+         this->isSameSide(p, b, /* */ a, c) &&
+         this->isSameSide(p, c, /* */ a, b);
 }
 
 //-----------------------------------------------------------------------------
@@ -204,6 +288,9 @@ bool geom_find_nearest_facet::operator()(const gp_Pnt& P,
   int aHead = -1;
   StackItem aNodes;
   StackItem anItemsToProcess[2];
+  double minDist = 1e100;
+  facet_index = -1;
+
   for (;;)
   {
     BVH_Vec4i nodeData = bvh->NodeInfoBuffer()[aNodes.Node1];
@@ -212,11 +299,14 @@ bool geom_find_nearest_facet::operator()(const gp_Pnt& P,
     {
       // If we are here, then we are close to solution. It is a right
       // time now to perform a precise check
-      const bool isIntFound = this->testLeaf(P, nodeData);
-      if(isIntFound)
+      bool isInside = false;
+      int facet_candidate = -1;
+      const double dist = this->testLeaf(P, nodeData, facet_candidate, isInside);
+      //
+      if ( isInside && Abs(dist) < minDist )
       {
-        //++myNbIntersected;
-        break;
+        minDist     = Abs(dist);
+        facet_index = facet_candidate;
       }
 
       if (aHead < 0)
@@ -360,8 +450,23 @@ bool geom_find_nearest_facet::operator()(const gp_Pnt& P,
     }
   }
 
-  this->Plotter().CLEAN();
-  this->Plotter().DRAW_SHAPE(comp_vol, Color_Yellow, 1.0, true, "BVH");
+  if ( facet_index != -1 )
+  {
+    std::cout << "Found min dist " << minDist << " on facet " << facet_index << std::endl;
+    const geom_bvh_facets::t_facet& facet = m_facets->GetFacet(facet_index);
+
+    this->Plotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
+                               gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()), Color_Red);
+    this->Plotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
+                               gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
+    this->Plotter().DRAW_LINK( gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()),
+                               gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
+  }
+  else
+    std::cout << "Error: cannot find the nearest facet" << std::endl;
+
+  //this->Plotter().CLEAN();
+  //this->Plotter().DRAW_SHAPE(comp_vol, Color_Yellow, 1.0, true, "BVH");
 
   return true;
 }

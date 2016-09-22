@@ -507,6 +507,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <ClInclude Include="..\..\src\visu\interaction\visu_pick_facet_callback.h" />
     <ClInclude Include="..\..\src\visu\pipelines\visu_bcurve_knots_pipeline.h" />
     <ClInclude Include="..\..\src\visu\pipelines\visu_curve_pipeline.h" />
     <ClInclude Include="..\..\src\visu\pipelines\visu_edge_curve_pipeline.h" />
@@ -1180,6 +1181,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\visu\interaction\visu_part_callback.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_pdomain_callback.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_pick_callback.cpp" />
+    <ClCompile Include="..\..\src\visu\interaction\visu_pick_facet_callback.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_rotation_callback.cpp" />
     <ClCompile Include="..\..\src\visu\interaction\visu_viewer_callback.cpp" />
     <ClCompile Include="..\..\src\visu\pipelines\visu_bcurve_knots_pipeline.cpp" />

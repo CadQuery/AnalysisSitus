@@ -33,12 +33,20 @@ public:
 
 protected:
 
-  bool testLeaf(const gp_Pnt&    P,
-                const BVH_Vec4i& leaf) const;
+  double testLeaf(const gp_Pnt&    P,
+                  const BVH_Vec4i& leaf,
+                  int&             resultFacet,
+                  bool&            isInside) const;
 
   bool isOut(const gp_Pnt&    P,
              const BVH_Vec4d& boxMin,
              const BVH_Vec4d& boxMax) const;
+
+  bool isSameSide(const gp_Pnt& p1, const gp_Pnt& p2,
+                  const gp_Pnt& a,  const gp_Pnt& b) const;
+
+  bool isInside(const gp_Pnt& p,
+                const gp_Pnt& a, const gp_Pnt& b, const gp_Pnt& c) const;
 
 protected:
 

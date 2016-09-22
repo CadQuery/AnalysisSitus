@@ -1106,6 +1106,9 @@
     <ClInclude Include="..\..\src\geom\common\geom_find_nearest_facet.h">
       <Filter>Header Files\Geometry\Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\visu\interaction\visu_pick_facet_callback.h">
+      <Filter>Header Files\Visualization\Interaction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -2200,6 +2203,9 @@
     <ClCompile Include="..\..\src\geom\common\geom_find_nearest_facet.cpp">
       <Filter>Source Files\Geometry\Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\visu\interaction\visu_pick_facet_callback.cpp">
+      <Filter>Source Files\Visualization\Interaction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\gui\gui_object_browser.h">
@@ -2370,11 +2376,11 @@
     <CustomBuild Include="..\..\src\gui\gui_controls_cc.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\gui\gui_main_window_contour_capture.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\src\visu\interaction\visu_create_contour_callback.h">
       <Filter>Header Files\Visualization\Interaction</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_main_window_contour_capture.h">
+      <Filter>Header Files\GUI</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

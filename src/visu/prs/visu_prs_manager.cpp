@@ -734,18 +734,38 @@ ActAPI_DataObjectIdList
     }
     else // World picker
     {
-      // TODO
+      // Picked position returned by this kind of "world" picker is very
+      // inaccurate for the needs of computational geometry. This is because
+      // the world picker is based on depth buffer analysis. The latter
+      // makes it very efficient, but not very precise. As a result, if
+      // we simply use the picked position for the intersection testing (we
+      // do that in order to know which face corresponds to the picked
+      // position), the test will fail in many cases as it wouldn't
+      // find even a bounding box containing such an imprecise point.
+      // In order to fix the deal, we take that inaccurate picked position
+      // and reconstruct a ray in the direction of projection (this is
+      // the camera's property). Then we have to intersect our geometry
+      // with the ray, thus obtaining the precise position. If we intersect
+      // the accurate B-Rep primitive, then the solution is ideal in terms
+      // of achievable accuracy. Another option is to intersect the ray
+      // with visualization facets which is faster but less accurate.
 
       double coord[3];
       m_worldPicker->GetPickPosition(coord);
+
+      vtkCamera* camera = m_renderer->GetActiveCamera();
+      double* dirProj = camera->GetDirectionOfProjection();
+
+      gp_Pnt cPos(coord[0], coord[1], coord[2]);
+      gp_Pnt cOrigin = cPos.XYZ() - gp_XYZ(dirProj[0], dirProj[1], dirProj[2])*300;
+
+      gp_Lin pickRay( cOrigin, gp_Dir(dirProj[0], dirProj[1], dirProj[2]) );
 
       std::cout << "Picked world position: ("
                 << coord[0] << ", " << coord[1] << ", " << coord[2]
                 << ")" << std::endl;
 
-      gp_XYZ hit(coord[0], coord[1], coord[2]);
-
-      this->InvokeEvent(EVENT_PICK_WORLD_POINT, &hit);
+      this->InvokeEvent(EVENT_PICK_WORLD_POINT, &pickRay);
     }
 
   }

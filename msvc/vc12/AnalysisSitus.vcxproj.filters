@@ -1103,11 +1103,14 @@
     <ClInclude Include="..\..\src\geom\common\geom_bvh_facets.h">
       <Filter>Header Files\Geometry\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\geom\common\geom_find_nearest_facet.h">
-      <Filter>Header Files\Geometry\Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\visu\interaction\visu_pick_facet_callback.h">
       <Filter>Header Files\Visualization\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_hit_facet.h">
+      <Filter>Header Files\Geometry\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\geom\common\geom_bvh_iterator.h">
+      <Filter>Header Files\Geometry\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2200,11 +2203,14 @@
     <ClCompile Include="..\..\src\geom\common\geom_bvh_facets.cpp">
       <Filter>Source Files\Geometry\Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\geom\common\geom_find_nearest_facet.cpp">
-      <Filter>Source Files\Geometry\Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\visu\interaction\visu_pick_facet_callback.cpp">
       <Filter>Source Files\Visualization\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_hit_facet.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geom\common\geom_bvh_iterator.cpp">
+      <Filter>Source Files\Geometry\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

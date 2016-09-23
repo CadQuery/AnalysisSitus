@@ -14,7 +14,8 @@
 
 // Geometry includes
 #include <geom_bvh_facets.h>
-#include <geom_find_nearest_facet.h>
+#include <geom_bvh_iterator.h>
+#include <geom_hit_facet.h>
 
 // GUI includes
 #include <gui_common.h>
@@ -34,6 +35,10 @@
 // Qt includes
 #include <QGroupBox>
 
+// OCCT includes
+#include <BRep_Builder.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
+
 //-----------------------------------------------------------------------------
 
 #define BTN_MIN_WIDTH 120
@@ -49,6 +54,8 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
 
   // Buttons
   m_widgets.pPickContour = new QPushButton("Pick contour");
+  m_widgets.pBVH_SAH     = new QPushButton("BVH [SAH]");
+  m_widgets.pBVH_Linear  = new QPushButton("BVH [linear]");
   m_widgets.pPickFacet   = new QPushButton("Pick facet");
   m_widgets.pLocateFaces = new QPushButton("Locate faces");
   //
@@ -65,6 +72,8 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   QVBoxLayout* pContourLay   = new QVBoxLayout(pContourGroup);
   //
   pContourLay->addWidget(m_widgets.pPickContour);
+  pContourLay->addWidget(m_widgets.pBVH_SAH);
+  pContourLay->addWidget(m_widgets.pBVH_Linear);
   pContourLay->addWidget(m_widgets.pPickFacet);
   pContourLay->addWidget(m_widgets.pLocateFaces);
 
@@ -77,6 +86,8 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
 
   // Connect signals to slots
   connect( m_widgets.pPickContour, SIGNAL( clicked() ), SLOT( onPickContour () ) );
+  connect( m_widgets.pBVH_SAH,     SIGNAL( clicked() ), SLOT( onBVH_SAH     () ) );
+  connect( m_widgets.pBVH_Linear,  SIGNAL( clicked() ), SLOT( onBVH_Linear  () ) );
   connect( m_widgets.pPickFacet,   SIGNAL( clicked() ), SLOT( onPickFacet   () ) );
   connect( m_widgets.pLocateFaces, SIGNAL( clicked() ), SLOT( onLocateFaces () ) );
 }
@@ -143,6 +154,46 @@ void gui_controls_cc::onPickContour()
 
 //-----------------------------------------------------------------------------
 
+//! Constructs BVH with SAH builder.
+void gui_controls_cc::onBVH_SAH()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Create the accelerating structure
+  Handle(geom_bvh_facets)
+    bvh_facets = new geom_bvh_facets(part,
+                                     geom_bvh_facets::Builder_Binned,
+                                     common_facilities::Instance()->Notifier,
+                                     common_facilities::Instance()->Plotter);
+
+  // Draw
+  common_facilities::Instance()->Plotter->CLEAN();
+  bvh_facets->Dump(common_facilities::Instance()->Plotter);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Constructs BVH with linear builder.
+void gui_controls_cc::onBVH_Linear()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Create the accelerating structure
+  Handle(geom_bvh_facets)
+    bvh_facets = new geom_bvh_facets(part,
+                                     geom_bvh_facets::Builder_Linear,
+                                     common_facilities::Instance()->Notifier,
+                                     common_facilities::Instance()->Plotter);
+
+  // Draw
+  common_facilities::Instance()->Plotter->CLEAN();
+  bvh_facets->Dump(common_facilities::Instance()->Plotter);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Allows user to pick a single facet.
 void gui_controls_cc::onPickFacet()
 {
@@ -197,33 +248,33 @@ void gui_controls_cc::onLocateFaces()
   // Build triangle set. Constructor will initialize the internal structures
   // storing the triangle nodes with references to the owning parts
   Handle(geom_bvh_facets)
-    triangleSet = new geom_bvh_facets(part,
+    triangleSet = new geom_bvh_facets(part, geom_bvh_facets::Builder_Binned,
                                       common_facilities::Instance()->Notifier,
                                       common_facilities::Instance()->Plotter);
   //
   triangleSet->BVH(); // This invocation builds the BVH tree
 
-  // Prepare a tool to find the nearest facet
-  geom_find_nearest_facet nearest(triangleSet,
-                                  common_facilities::Instance()->Notifier,
-                                  common_facilities::Instance()->Plotter);
+  // Prepare a tool to find the intersected facet
+  geom_hit_facet HitFacet(triangleSet,
+                          common_facilities::Instance()->Notifier,
+                          common_facilities::Instance()->Plotter);
 
   // Track all points of the contour
   TColgp_SequenceOfPnt points;
   contour_n->AsPoints(points);
   //
-  for ( TColgp_SequenceOfPnt::Iterator pit(points); pit.More(); pit.Next() )
-  {
-    const gp_Pnt& probe = pit.Value();
+  //for ( TColgp_SequenceOfPnt::Iterator pit(points); pit.More(); pit.Next() )
+  //{
+  //  const gp_Pnt& probe = pit.Value();
 
-    // Find nearest
-    int facet_idx;
-    if ( !nearest(probe, facet_idx) )
-    {
-      std::cout << "Error: cannot find the nearest facet" << std::endl;
-      return;
-    }
-  }
+  //  // Find nearest
+  //  int facet_idx;
+  //  if ( !HitFacet(probe, facet_idx) )
+  //  {
+  //    std::cout << "Error: cannot find the nearest facet" << std::endl;
+  //    return;
+  //  }
+  //}
 
   // TODO
 }

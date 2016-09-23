@@ -37,6 +37,13 @@ public:
     BVH_Vec4d P0, P1, P2;
   };
 
+  //! Type of BVH builder to use.
+  enum BuilderType
+  {
+    Builder_Binned,
+    Builder_Linear
+  };
+
 public:
 
   // OCCT RTTI
@@ -45,6 +52,7 @@ public:
 public:
 
   geom_bvh_facets(const TopoDS_Shape&  model,
+                  const BuilderType    builderType,
                   ActAPI_ProgressEntry progress,
                   ActAPI_PlotterEntry  plotter);
 
@@ -72,6 +80,14 @@ public:
                 BVH_Vec4d& vertex2,
                 BVH_Vec4d& vertex3) const;
 
+  double
+    GetBoundingDiag() const;
+
+public:
+
+  void
+    Dump(ActAPI_PlotterEntry IV);
+
 public:
 
   //! Returns a facet by its 0-based index.
@@ -85,15 +101,19 @@ public:
 protected:
 
   bool
-    Init(const TopoDS_Shape& model);
+    init(const TopoDS_Shape& model,
+         const BuilderType   builderType);
 
   bool
-    AddFace(const TopoDS_Face& face);
+    addFace(const TopoDS_Face& face);
 
 protected:
 
   //! Array of facets.
   std::vector<t_facet> m_facets;
+
+  //! Characteristic size of the model.
+  double m_fBoundingDiag;
 
   //! Progress Entry.
   ActAPI_ProgressEntry m_progress;
@@ -103,4 +123,4 @@ protected:
 
 };
 
-#endif 
+#endif

@@ -27,6 +27,8 @@ public:
 public slots:
 
   void onPickContour ();
+  void onBVH_SAH     ();
+  void onBVH_Linear  ();
   void onPickFacet   ();
   void onLocateFaces ();
 
@@ -38,10 +40,14 @@ private:
   struct t_widgets
   {
     QPushButton* pPickContour; //!< Allows selection of a contour.
+    QPushButton* pBVH_SAH;     //!< Builds BVH with SAH algorithm.
+    QPushButton* pBVH_Linear;  //!< Builds BVH with linear algorithm.
     QPushButton* pPickFacet;   //!< Allows to pick up a single facet.
     QPushButton* pLocateFaces; //!< Finds faces corresponding the the contour's nodes.
 
     t_widgets() : pPickContour (NULL),
+                  pBVH_SAH     (NULL),
+                  pBVH_Linear  (NULL),
                   pPickFacet   (NULL),
                   pLocateFaces (NULL)
     {}
@@ -49,6 +55,8 @@ private:
     void Release()
     {
       delete pPickContour; pPickContour = NULL;
+      delete pBVH_SAH;     pBVH_SAH     = NULL;
+      delete pBVH_Linear;  pBVH_Linear  = NULL;
       delete pPickFacet;   pPickFacet   = NULL;
       delete pLocateFaces; pLocateFaces = NULL;
     }

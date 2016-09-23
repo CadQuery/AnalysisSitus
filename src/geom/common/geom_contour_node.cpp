@@ -120,7 +120,11 @@ bool geom_contour_node::IsClosed() const
 //! \return contour converted to shape.
 TopoDS_Wire geom_contour_node::AsShape() const
 {
-  Handle(geom_point_cloud)     points  = new geom_point_cloud( this->GetCoords() );
+  Handle(geom_point_cloud) points = new geom_point_cloud( this->GetCoords() );
+  //
+  if ( !points->GetNumOfPoints() )
+    return TopoDS_Wire();
+
   const int                    nPts    = points->GetNumOfPoints();
   TopoDS_Vertex                V_first = BRepBuilderAPI_MakeVertex( points->GetPoint(0) );
   TopoDS_Vertex                V_prev  = V_first, V_last;

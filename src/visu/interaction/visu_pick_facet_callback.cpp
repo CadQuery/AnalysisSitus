@@ -13,7 +13,7 @@
 
 // Geometry includes
 #include <geom_bvh_facets.h>
-#include <geom_find_nearest_facet.h>
+#include <geom_hit_facet.h>
 
 // GUI includes
 #include <gui_common.h>
@@ -62,8 +62,8 @@ void visu_pick_facet_callback::Execute(vtkObject*    vtkNotUsed(theCaller),
 
   const vtkSmartPointer<visu_prs_manager>& mgr = common_facilities::Instance()->Prs.Part;
 
-  // Get hit position
-  gp_XYZ hit = *( (gp_XYZ*) theCallData );
+  // Get picking ray
+  gp_Lin pickRay = *( (gp_Lin*) theCallData );
 
   /*ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
   IV.DRAW_POINT( hit, Color_Red );*/
@@ -72,20 +72,19 @@ void visu_pick_facet_callback::Execute(vtkObject*    vtkNotUsed(theCaller),
   // storing the triangle nodes with references to the owning parts
   Handle(geom_bvh_facets)
     triangleSet = new geom_bvh_facets(part,
+                                      geom_bvh_facets::Builder_Binned,
                                       common_facilities::Instance()->Notifier,
                                       common_facilities::Instance()->Plotter);
   //
   triangleSet->BVH(); // This invocation builds the BVH tree
 
-  // Prepare a tool to find the nearest facet
-  geom_find_nearest_facet nearest(triangleSet,
-                                  common_facilities::Instance()->Notifier,
-                                  common_facilities::Instance()->Plotter);
+  // Prepare a tool to find the intersected facet
+  geom_hit_facet HitFacet(triangleSet,
+                          common_facilities::Instance()->Notifier,
+                          common_facilities::Instance()->Plotter);
 
-  // Find nearest
+  // Find intersection
   int facet_idx;
-  if ( !nearest(hit, facet_idx) )
-  {
-    std::cout << "Error: cannot find the nearest facet" << std::endl;
-  }
+  if ( !HitFacet(pickRay, facet_idx) )
+    std::cout << "Error: cannot find the intersected facet" << std::endl;
 }

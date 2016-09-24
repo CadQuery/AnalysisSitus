@@ -52,12 +52,14 @@ void journal_iv::DRAW_POINT(const gp_XY&                   coord,
   coords->ChangeValue(1) = coord.Y();
 
   // Create a new Node for the given point set
-  common_facilities::Instance()->Model->OpenCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->OpenCommand();
   //
   Handle(visu_iv_point_set_2d_node)
     points_n = engine_iv::Create_PointSet2d(coords, name);
   //
-  common_facilities::Instance()->Model->CommitCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->CommitCommand();
 
   // Visualize
   this->visualize(true, points_n, true, color, 1.0, false);
@@ -103,12 +105,14 @@ void journal_iv::DRAW_POINTS(const Handle(HRealArray)&      coords,
                              const TCollection_AsciiString& name)
 {
   // Create a new Node for the given point set
-  common_facilities::Instance()->Model->OpenCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->OpenCommand();
   //
   Handle(visu_iv_point_set_node)
     points_n = engine_iv::Create_PointSet( new geom_point_cloud(coords), name );
   //
-  common_facilities::Instance()->Model->CommitCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->CommitCommand();
 
   // Visualize
   this->visualize(false, points_n, true, color, 1.0, false);
@@ -128,12 +132,14 @@ void journal_iv::DRAW_LINK(const gp_Pnt&                  p1,
   Handle(Geom_TrimmedCurve) C = GC_MakeSegment(p1, p2);
 
   // Create a curve Node
-  common_facilities::Instance()->Model->OpenCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->OpenCommand();
   //
   Handle(visu_iv_curve_node)
     curve_n = engine_iv::Create_Curve( C, Precision::Infinite(), name );
   //
-  common_facilities::Instance()->Model->CommitCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->CommitCommand();
 
   // Visualize
   this->visualize(false, curve_n, true, color, 1.0, false);
@@ -156,12 +162,14 @@ void journal_iv::DRAW_CURVE(const Handle(Geom_Curve)&      curve,
                             const TCollection_AsciiString& name)
 {
   // Create a curve Node
-  common_facilities::Instance()->Model->OpenCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->OpenCommand();
   //
   Handle(visu_iv_curve_node)
     curve_n = engine_iv::Create_Curve( curve, 1000, name );
   //
-  common_facilities::Instance()->Model->CommitCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->CommitCommand();
 
   // Visualize
   this->visualize(false, curve_n, true, color, 1.0, false);
@@ -207,12 +215,14 @@ void journal_iv::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
                               const TCollection_AsciiString& name)
 {
   // Create a surface Node
-  common_facilities::Instance()->Model->OpenCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->OpenCommand();
   //
   Handle(visu_iv_surface_node)
     surface_n = engine_iv::Create_Surface(surface, uLimit, vLimit, name);
   //
-  common_facilities::Instance()->Model->CommitCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->CommitCommand();
 
   // Visualize
   this->visualize(false, surface_n, true, color, opacity, false);
@@ -242,12 +252,14 @@ void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
                             const TCollection_AsciiString& name)
 {
   // Create a Node for topology item
-  common_facilities::Instance()->Model->OpenCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->OpenCommand();
   //
   Handle(visu_iv_topo_item_node)
     item_n = engine_iv::Create_TopoItem(shape, name);
   //
-  common_facilities::Instance()->Model->CommitCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->CommitCommand();
 
   // Visualize
   this->visualize(false, item_n, false, Quantity_Color(), opacity, false);
@@ -261,12 +273,14 @@ void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
                             const TCollection_AsciiString& name)
 {
   // Create a Node for topology item
-  common_facilities::Instance()->Model->OpenCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->OpenCommand();
   //
   Handle(visu_iv_topo_item_node)
     item_n = engine_iv::Create_TopoItem(shape, name);
   //
-  common_facilities::Instance()->Model->CommitCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->CommitCommand();
 
   // Visualize
   this->visualize(false, item_n, true, color, opacity, false);
@@ -281,12 +295,14 @@ void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
                             const TCollection_AsciiString& name)
 {
   // Create a Node for topology item
-  common_facilities::Instance()->Model->OpenCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->OpenCommand();
   //
   Handle(visu_iv_topo_item_node)
     item_n = engine_iv::Create_TopoItem(shape, name);
   //
-  common_facilities::Instance()->Model->CommitCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->CommitCommand();
 
   // Visualize
   this->visualize(false, item_n, true, color, opacity, isWireframe);
@@ -300,12 +316,14 @@ void journal_iv::DRAW_TRIANGULATION(const Handle(Poly_Triangulation)& shape,
                                     const TCollection_AsciiString&    name)
 {
   // Create a Node for tessellation item
-  common_facilities::Instance()->Model->OpenCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->OpenCommand();
   //
   Handle(visu_iv_tess_item_node)
     item_n = engine_iv::Create_TessItem(shape, name);
   //
-  common_facilities::Instance()->Model->CommitCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->CommitCommand();
 
   // Visualize
   this->visualize(false, item_n, true, color, opacity, false);
@@ -316,12 +334,14 @@ void journal_iv::DRAW_TRIANGULATION(const Handle(Poly_Triangulation)& shape,
 void journal_iv::DRAW_TEXT(const TCollection_AsciiString& text)
 {
   // Create a Node for text item
-  common_facilities::Instance()->Model->OpenCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->OpenCommand();
   //
   Handle(visu_iv_text_item_node)
     item_n = engine_iv::Create_TextItem(text);
   //
-  common_facilities::Instance()->Model->CommitCommand();
+  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+    common_facilities::Instance()->Model->CommitCommand();
 
   // Visualize
   this->visualize(false, item_n, false, Quantity_Color(), 0.0, false);

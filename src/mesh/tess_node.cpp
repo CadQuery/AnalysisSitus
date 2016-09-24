@@ -97,7 +97,7 @@ void tess_node::SetHasColor(const bool hasColor) const
 //! \return true/false.
 bool tess_node::HasColor() const
 {
-  return ActParamTool::AsBool( this->Parameter(PID_HasColor) )->GetValue() > 0;
+  return ActParamTool::AsBool( this->Parameter(PID_HasColor) )->GetValue();
 }
 
 //! Sets color.

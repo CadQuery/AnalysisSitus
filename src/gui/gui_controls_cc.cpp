@@ -16,6 +16,7 @@
 #include <geom_bvh_facets.h>
 #include <geom_bvh_iterator.h>
 #include <geom_hit_facet.h>
+#include <geom_utils.h>
 
 // GUI includes
 #include <gui_common.h>
@@ -38,6 +39,12 @@
 // OCCT includes
 #include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
+
+// SPE includes
+#include <CC_ClassifyPointFace.h>
 
 //-----------------------------------------------------------------------------
 
@@ -53,43 +60,65 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   m_pMainLayout = new QVBoxLayout();
 
   // Buttons
-  m_widgets.pPickContour = new QPushButton("Pick contour");
-  m_widgets.pBVH_SAH     = new QPushButton("BVH [SAH]");
-  m_widgets.pBVH_Linear  = new QPushButton("BVH [linear]");
-  m_widgets.pPickFacet   = new QPushButton("Pick facet");
-  m_widgets.pLocateFaces = new QPushButton("Locate faces");
+  m_widgets.pPickContour         = new QPushButton("Pick contour");
+  m_widgets.pLoadContour         = new QPushButton("Import contour");
+  m_widgets.pCheckVertexDistance = new QPushButton("Check distance at poles");
+  m_widgets.pProjectVertices     = new QPushButton("Project poles to body");
+  m_widgets.pBVH_SAH             = new QPushButton("BVH [SAH]");
+  m_widgets.pBVH_Linear          = new QPushButton("BVH [linear]");
+  m_widgets.pPickFacet           = new QPushButton("Pick facet");
   //
-  m_widgets.pPickContour ->setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pPickFacet   ->setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pLocateFaces ->setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pPickContour         -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pLoadContour         -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pCheckVertexDistance -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pProjectVertices     -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pBVH_SAH             -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pBVH_Linear          -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pPickFacet           -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Other configurations
   m_widgets.pPickContour ->setCheckable(true);
   m_widgets.pPickFacet   ->setCheckable(true);
 
-  // Group for buttons
-  QGroupBox*   pContourGroup = new QGroupBox("Contour");
+  // Group of buttons for contour definition
+  QGroupBox*   pContourGroup = new QGroupBox("Define contour");
   QVBoxLayout* pContourLay   = new QVBoxLayout(pContourGroup);
   //
   pContourLay->addWidget(m_widgets.pPickContour);
-  pContourLay->addWidget(m_widgets.pBVH_SAH);
-  pContourLay->addWidget(m_widgets.pBVH_Linear);
-  pContourLay->addWidget(m_widgets.pPickFacet);
-  pContourLay->addWidget(m_widgets.pLocateFaces);
+  pContourLay->addWidget(m_widgets.pLoadContour);
+
+  // Group of buttons for contour validation
+  QGroupBox*   pValidateGroup = new QGroupBox("Contour healing");
+  QVBoxLayout* pValidateLay   = new QVBoxLayout(pValidateGroup);
+  //
+  pValidateLay->addWidget(m_widgets.pCheckVertexDistance);
+  pValidateLay->addWidget(m_widgets.pProjectVertices);
+
+  // Group of buttons for additional tests
+  QGroupBox*   pAddendumGroup = new QGroupBox("Additional");
+  QVBoxLayout* pAddendumLay   = new QVBoxLayout(pAddendumGroup);
+  //
+  pAddendumLay->addWidget(m_widgets.pPickFacet);
+  pAddendumLay->addWidget(m_widgets.pBVH_SAH);
+  pAddendumLay->addWidget(m_widgets.pBVH_Linear);
 
   // Set layout
   m_pMainLayout->addWidget(pContourGroup);
+  m_pMainLayout->addWidget(pValidateGroup);
+  m_pMainLayout->addWidget(pAddendumGroup);
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
   //
   this->setLayout(m_pMainLayout);
 
   // Connect signals to slots
-  connect( m_widgets.pPickContour, SIGNAL( clicked() ), SLOT( onPickContour () ) );
-  connect( m_widgets.pBVH_SAH,     SIGNAL( clicked() ), SLOT( onBVH_SAH     () ) );
-  connect( m_widgets.pBVH_Linear,  SIGNAL( clicked() ), SLOT( onBVH_Linear  () ) );
-  connect( m_widgets.pPickFacet,   SIGNAL( clicked() ), SLOT( onPickFacet   () ) );
-  connect( m_widgets.pLocateFaces, SIGNAL( clicked() ), SLOT( onLocateFaces () ) );
+  connect( m_widgets.pPickContour,         SIGNAL( clicked() ), SLOT( onPickContour         () ) );
+  connect( m_widgets.pLoadContour,         SIGNAL( clicked() ), SLOT( onLoadContour         () ) );
+  connect( m_widgets.pCheckVertexDistance, SIGNAL( clicked() ), SLOT( onCheckVertexDistance () ) );
+  connect( m_widgets.pProjectVertices,     SIGNAL( clicked() ), SLOT( onProjectVertices     () ) );
+  connect( m_widgets.pBVH_SAH,             SIGNAL( clicked() ), SLOT( onBVH_SAH             () ) );
+  connect( m_widgets.pBVH_Linear,          SIGNAL( clicked() ), SLOT( onBVH_Linear          () ) );
+  connect( m_widgets.pPickFacet,           SIGNAL( clicked() ), SLOT( onPickFacet           () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -111,6 +140,13 @@ void gui_controls_cc::onPickContour()
 
   const bool isOn = m_widgets.pPickContour->isChecked();
 
+  // Create the accelerating structure
+  if ( m_bvh.IsNull() )
+    m_bvh = new geom_bvh_facets(part,
+                                geom_bvh_facets::Builder_Binned,
+                                common_facilities::Instance()->Notifier,
+                                common_facilities::Instance()->Plotter);
+
   // Get contour Node
   Handle(geom_contour_node)
     contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
@@ -129,6 +165,8 @@ void gui_controls_cc::onPickContour()
     {
       vtkSmartPointer<visu_create_contour_callback>
         cb = vtkSmartPointer<visu_create_contour_callback>::New();
+      //
+      cb->SetBVH(m_bvh);
 
       // Add observer
       common_facilities::Instance()->Prs.Part->AddObserver(EVENT_PICK_WORLD_POINT, cb);
@@ -149,7 +187,205 @@ void gui_controls_cc::onPickContour()
 
     // Restore original selection mode
     common_facilities::Instance()->Prs.Part->SetSelectionMode(m_iPrevSelMode);
+    //
+    common_facilities::Instance()->Prs.Part->RemoveObserver(EVENT_PICK_WORLD_POINT);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+//! Allows user to load an externally defined contour.
+void gui_controls_cc::onLoadContour()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  QString filename = gui_common::selectBRepFile(gui_common::OpenSaveAction_Open);
+
+  // Read BREP
+  TopoDS_Shape shape;
+  if ( !geom_utils::ReadBRep(QStr2AsciiStr(filename), shape) )
+  {
+    std::cout << "Error: cannot read b-rep file" << std::endl;
+    return;
+  }
+
+  if ( shape.ShapeType() != TopAbs_WIRE )
+  {
+    std::cout << "Error: loaded shape is not a WIRE" << std::endl;
+    return;
+  }
+
+  // Create the accelerating structure
+  if ( m_bvh.IsNull() )
+    m_bvh = new geom_bvh_facets(part,
+                                geom_bvh_facets::Builder_Binned,
+                                common_facilities::Instance()->Notifier,
+                                common_facilities::Instance()->Plotter);
+
+  // Tool to find the owner face
+  geom_hit_facet HitFacet(m_bvh,
+                          common_facilities::Instance()->Notifier,
+                          common_facilities::Instance()->Plotter);
+
+  // Set geometry of contour
+  Handle(geom_contour_node)
+    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  //
+  common_facilities::Instance()->Model->OpenCommand(); // tx start
+  {
+    TopTools_IndexedMapOfShape traversed;
+    //
+    for ( TopExp_Explorer exp(shape, TopAbs_VERTEX); exp.More(); exp.Next() )
+    {
+      TopoDS_Vertex V = TopoDS::Vertex( exp.Current() );
+      //
+      if ( traversed.Contains(V) )
+        continue;
+
+      // Access the probe point
+      traversed.Add(V);
+      gp_Pnt P = BRep_Tool::Pnt(V);
+
+      // Recover host face
+      int facet_idx = -1;
+      if ( !HitFacet(P, facet_idx) )
+      {
+        std::cout << "Cannot locate a host facet for a contour's point" << std::endl;
+        common_facilities::Instance()->Plotter->DRAW_POINT(P, Color_Red, "Failure");
+        common_facilities::Instance()->Model->AbortCommand();
+        return;
+      }
+
+      // Add point to the contour
+      contour_n->AddPoint( P.XYZ(), m_bvh->GetFacet(facet_idx).FaceIndex );
+    }
+  }
+  common_facilities::Instance()->Model->CommitCommand(); // tx commit
+
+  // Actualize
+  common_facilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
+  common_facilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Checks distance from the contour vertices to the host faces.
+void gui_controls_cc::onCheckVertexDistance()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Get contour Node
+  Handle(geom_contour_node)
+    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  //
+  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+  {
+    std::cout << "Error: contour is not defined" << std::endl;
+    return;
+  }
+
+  // Get all faces
+  TopTools_IndexedMapOfShape faces;
+  TopExp::MapShapes(part, TopAbs_FACE, faces);
+
+  double maxGap = 0.0;
+
+  // Get all points of the contour
+  TColgp_SequenceOfPnt points;
+  TColStd_SequenceOfInteger faceIndices;
+  //
+  contour_n->AsPointsOnFaces(points, faceIndices);
+  //
+  TColgp_SequenceOfPnt::Iterator pit(points);
+  TColStd_SequenceOfInteger::Iterator fit(faceIndices);
+  //
+  for ( ; pit.More(); pit.Next(), fit.Next() )
+  {
+    const gp_Pnt& point    = pit.Value();
+    const int     face_idx = fit.Value();
+
+    // Get face
+    const TopoDS_Face& face = TopoDS::Face( faces(face_idx) );
+
+    // Point-face classifier
+    gp_Pnt2d UV;
+    double gap;
+    //
+    CC_ClassifyPointFace ClassPtFace( face, BRep_Tool::Tolerance(face), Precision::Confusion() );
+    //
+    ClassPtFace(point, false, UV, gap, NULL);
+
+    if ( gap > maxGap )
+      maxGap = gap;
+  }
+
+  std::cout << "Max gap is " << maxGap << std::endl;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Projects vertices of the contour to the part.
+void gui_controls_cc::onProjectVertices()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Get contour Node
+  Handle(geom_contour_node)
+    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  //
+  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+  {
+    std::cout << "Error: contour is not defined" << std::endl;
+    return;
+  }
+
+  // Get all faces
+  TopTools_IndexedMapOfShape faces;
+  TopExp::MapShapes(part, TopAbs_FACE, faces);
+
+  // Get all points of the contour
+  TColgp_SequenceOfPnt points;
+  TColStd_SequenceOfInteger faceIndices;
+  //
+  contour_n->AsPointsOnFaces(points, faceIndices);
+  //
+  TColgp_SequenceOfPnt::Iterator pit(points);
+  TColStd_SequenceOfInteger::Iterator fit(faceIndices);
+
+  // Perform projection point-by-point
+  common_facilities::Instance()->Model->OpenCommand();
+  {
+    int pointIndex = 0;
+    for ( ; pit.More(); pit.Next(), fit.Next(), ++pointIndex )
+    {
+      const gp_Pnt& point    = pit.Value();
+      const int     face_idx = fit.Value();
+
+      // Get face
+      const TopoDS_Face& face = TopoDS::Face( faces(face_idx) );
+
+      // Point-face classifier
+      gp_Pnt2d UV;
+      double gap;
+      //
+      CC_ClassifyPointFace ClassPtFace( face, BRep_Tool::Tolerance(face), Precision::Confusion() );
+      //
+      ClassPtFace(point, false, UV, gap, NULL);
+
+      // Reconstruct a point from UV
+      gp_Pnt newPole = BRep_Tool::Surface(face)->Value( UV.X(), UV.Y() );
+      //
+      contour_n->ReplacePoint(pointIndex, newPole);
+    }
+  }
+  common_facilities::Instance()->Model->CommitCommand();
+
+  // Actualize
+  common_facilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
+  common_facilities::Instance()->Prs.Part->Actualize( contour_n.get() );
 }
 
 //-----------------------------------------------------------------------------
@@ -161,15 +397,14 @@ void gui_controls_cc::onBVH_SAH()
   if ( !gui_common::PartShape(part) ) return;
 
   // Create the accelerating structure
-  Handle(geom_bvh_facets)
-    bvh_facets = new geom_bvh_facets(part,
-                                     geom_bvh_facets::Builder_Binned,
-                                     common_facilities::Instance()->Notifier,
-                                     common_facilities::Instance()->Plotter);
+  m_bvh = new geom_bvh_facets(part,
+                              geom_bvh_facets::Builder_Binned,
+                              common_facilities::Instance()->Notifier,
+                              common_facilities::Instance()->Plotter);
 
   // Draw
   common_facilities::Instance()->Plotter->CLEAN();
-  bvh_facets->Dump(common_facilities::Instance()->Plotter);
+  m_bvh->Dump(common_facilities::Instance()->Plotter);
 }
 
 //-----------------------------------------------------------------------------
@@ -181,15 +416,14 @@ void gui_controls_cc::onBVH_Linear()
   if ( !gui_common::PartShape(part) ) return;
 
   // Create the accelerating structure
-  Handle(geom_bvh_facets)
-    bvh_facets = new geom_bvh_facets(part,
-                                     geom_bvh_facets::Builder_Linear,
-                                     common_facilities::Instance()->Notifier,
-                                     common_facilities::Instance()->Plotter);
+  m_bvh = new geom_bvh_facets(part,
+                              geom_bvh_facets::Builder_Linear,
+                              common_facilities::Instance()->Notifier,
+                              common_facilities::Instance()->Plotter);
 
   // Draw
   common_facilities::Instance()->Plotter->CLEAN();
-  bvh_facets->Dump(common_facilities::Instance()->Plotter);
+  m_bvh->Dump(common_facilities::Instance()->Plotter);
 }
 
 //-----------------------------------------------------------------------------
@@ -199,6 +433,13 @@ void gui_controls_cc::onPickFacet()
 {
   TopoDS_Shape part;
   if ( !gui_common::PartShape(part) ) return;
+
+  // Create the accelerating structure
+  if ( m_bvh.IsNull() )
+    m_bvh = new geom_bvh_facets(part,
+                                geom_bvh_facets::Builder_Binned,
+                                common_facilities::Instance()->Notifier,
+                                common_facilities::Instance()->Plotter);
 
   const bool isOn = m_widgets.pPickFacet->isChecked();
 
@@ -215,6 +456,8 @@ void gui_controls_cc::onPickFacet()
     {
       vtkSmartPointer<visu_pick_facet_callback>
         cb = vtkSmartPointer<visu_pick_facet_callback>::New();
+      //
+      cb->SetBVH(m_bvh);
 
       // Add observer
       common_facilities::Instance()->Prs.Part->AddObserver(EVENT_PICK_WORLD_POINT, cb);
@@ -224,57 +467,7 @@ void gui_controls_cc::onPickFacet()
   {
     // Restore original selection mode
     common_facilities::Instance()->Prs.Part->SetSelectionMode(m_iPrevSelMode);
+    //
+    common_facilities::Instance()->Prs.Part->RemoveObserver(EVENT_PICK_WORLD_POINT);
   }
-}
-
-//-----------------------------------------------------------------------------
-
-//! Attempts to find faces which contain the polyline's nodes.
-void gui_controls_cc::onLocateFaces()
-{
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
-
-  // Get contour Node
-  Handle(geom_contour_node)
-    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
-  //
-  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
-  {
-    std::cout << "Error: contour is not defined" << std::endl;
-    return;
-  }
-
-  // Build triangle set. Constructor will initialize the internal structures
-  // storing the triangle nodes with references to the owning parts
-  Handle(geom_bvh_facets)
-    triangleSet = new geom_bvh_facets(part, geom_bvh_facets::Builder_Binned,
-                                      common_facilities::Instance()->Notifier,
-                                      common_facilities::Instance()->Plotter);
-  //
-  triangleSet->BVH(); // This invocation builds the BVH tree
-
-  // Prepare a tool to find the intersected facet
-  geom_hit_facet HitFacet(triangleSet,
-                          common_facilities::Instance()->Notifier,
-                          common_facilities::Instance()->Plotter);
-
-  // Track all points of the contour
-  TColgp_SequenceOfPnt points;
-  contour_n->AsPoints(points);
-  //
-  //for ( TColgp_SequenceOfPnt::Iterator pit(points); pit.More(); pit.Next() )
-  //{
-  //  const gp_Pnt& probe = pit.Value();
-
-  //  // Find nearest
-  //  int facet_idx;
-  //  if ( !HitFacet(probe, facet_idx) )
-  //  {
-  //    std::cout << "Error: cannot find the nearest facet" << std::endl;
-  //    return;
-  //  }
-  //}
-
-  // TODO
 }

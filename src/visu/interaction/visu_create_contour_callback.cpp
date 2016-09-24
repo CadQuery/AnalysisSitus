@@ -8,13 +8,16 @@
 // Own include
 #include <visu_create_contour_callback.h>
 
-// A-Situs (common) includes
+// Common includes
 #include <common_facilities.h>
 
-// A-Situs (GUI) includes
+// Geometry includes
+#include <geom_hit_facet.h>
+
+// GUI includes
 #include <gui_viewer_part.h>
 
-// A-Situs (visualization) includes
+// Visualization includes
 #include <visu_prs_manager.h>
 #include <visu_utils.h>
 
@@ -23,14 +26,6 @@
 visu_create_contour_callback* visu_create_contour_callback::New()
 {
   return new visu_create_contour_callback(NULL);
-}
-
-//! Instantiation routine accepting viewer.
-//! \param theViewer [in] viewer to bind callback object to.
-//! \return instance of the callback class.
-visu_create_contour_callback* visu_create_contour_callback::New(gui_viewer* theViewer)
-{
-  return new visu_create_contour_callback(theViewer);
 }
 
 //! Constructor accepting owning viewer as a parameter.
@@ -55,18 +50,29 @@ void visu_create_contour_callback::Execute(vtkObject*    vtkNotUsed(theCaller),
 {
   const vtkSmartPointer<visu_prs_manager>& mgr = common_facilities::Instance()->Prs.Part;
 
-  // Get hit position
-  gp_XYZ hit = *( (gp_XYZ*) theCallData );
+  // Get picking ray
+  gp_Lin pickRay = *( (gp_Lin*) theCallData );
 
   /*ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
   IV.DRAW_POINT( hit, Color_Red );*/
+
+  // Prepare a tool to find the intersected facet
+  geom_hit_facet HitFacet(m_bvh,
+                          common_facilities::Instance()->Notifier,
+                          common_facilities::Instance()->Plotter);
+
+  // Find intersection
+  gp_XYZ hit;
+  int facet_idx;
+  if ( !HitFacet(pickRay, facet_idx, hit) )
+    std::cout << "Error: cannot find the intersected facet" << std::endl;
 
   Handle(geom_contour_node)
     contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    contour_n->AddPoint(hit);
+    contour_n->AddPoint(hit, m_bvh->GetFacet(facet_idx).FaceIndex);
   }
   common_facilities::Instance()->Model->CommitCommand();
   //

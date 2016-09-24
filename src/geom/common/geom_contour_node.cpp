@@ -31,6 +31,7 @@ geom_contour_node::geom_contour_node() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,      PID_Name);
   REGISTER_PARAMETER(RealArray, PID_Coords);
+  REGISTER_PARAMETER(IntArray,  PID_Faces);
   REGISTER_PARAMETER(Bool,      PID_IsClosed);
 }
 
@@ -50,6 +51,7 @@ void geom_contour_node::Init()
 
   // Set default values to primitive Parameters
   this->SetCoords(NULL);
+  this->SetFaces(NULL);
   this->SetClosed(false);
 }
 
@@ -88,18 +90,60 @@ Handle(HRealArray) geom_contour_node::GetCoords() const
   return ActParamTool::AsRealArray( this->Parameter(PID_Coords) )->GetArray();
 }
 
-//! Adds another point to the contour.
-//! \param[in] point point to add.
-void geom_contour_node::AddPoint(const gp_XYZ& point)
+//! Replaces a point with the given 0-based index with the passed
+//! coordinates.
+//! \param[in] zeroBasedIndex 0-based index of the target point.
+//! \param[in] point          new coordinates.
+void geom_contour_node::ReplacePoint(const int     zeroBasedIndex,
+                                     const gp_Pnt& point)
 {
+  // Get array of coordinates
+  Handle(ActData_RealArrayParameter)
+    coords_p = ActParamTool::AsRealArray( this->Parameter(PID_Coords) );
+
+  // Change values in the Real Array Parameter
+  const int startIdx = zeroBasedIndex*3;
+  coords_p->SetElement( startIdx,     point.X() );
+  coords_p->SetElement( startIdx + 1, point.Y() );
+  coords_p->SetElement( startIdx + 2, point.Z() );
+}
+
+//! Sets the array of face indices.
+//! \param[in] indices indices to set.
+void geom_contour_node::SetFaces(const Handle(HIntArray)& indices)
+{
+  ActParamTool::AsIntArray( this->Parameter(PID_Faces) )->SetArray(indices);
+}
+
+//! \return array of face indices.
+Handle(HIntArray) geom_contour_node::GetFaces() const
+{
+  return ActParamTool::AsIntArray( this->Parameter(PID_Faces) )->GetArray();
+}
+
+//! Adds another point to the contour.
+//! \param[in] point    point to add.
+//! \param[in] face_idx index of the host face.
+void geom_contour_node::AddPoint(const gp_XYZ& point,
+                                 const int     face_idx)
+{
+  // Change the array of coordinates
   Handle(HRealArray)
-    arr = ActParamTool::AsRealArray( this->Parameter(PID_Coords) )->GetArray();
+    coords = ActParamTool::AsRealArray( this->Parameter(PID_Coords) )->GetArray();
+  //
+  coords = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( coords, point.X() );
+  coords = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( coords, point.Y() );
+  coords = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( coords, point.Z() );
+  //
+  this->SetCoords(coords);
 
-  arr = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( arr, point.X() );
-  arr = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( arr, point.Y() );
-  arr = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( arr, point.Z() );
-
-  this->SetCoords(arr);
+  // Change the array of face indices
+  Handle(HIntArray)
+    faces = ActParamTool::AsIntArray( this->Parameter(PID_Faces) )->GetArray();
+  //
+  faces = ActAux_ArrayUtils::Append<HIntArray, Handle(HIntArray), int>(faces, face_idx);
+  //
+  this->SetFaces(faces);
 }
 
 //! Sets closeness property for the contour.
@@ -153,14 +197,21 @@ TopoDS_Wire geom_contour_node::AsShape() const
 }
 
 //! Re-packages all coordinates to a convenient sequence structure.
-//! \param[out] point result of re-packaging.
-void geom_contour_node::AsPoints(TColgp_SequenceOfPnt& points) const
+//! \param[out] points result of re-packaging.
+//! \param[out] faces  indices of the corresponding faces.
+void geom_contour_node::AsPointsOnFaces(TColgp_SequenceOfPnt&      points,
+                                        TColStd_SequenceOfInteger& faces) const
 {
+  // Get face indices
+  Handle(HIntArray) faceIndices = this->GetFaces();
+
+  // Get coordinates as point cloud
   Handle(geom_point_cloud) pcloud = new geom_point_cloud( this->GetCoords() );
   const int                nPts   = pcloud->GetNumOfPoints();
   //
-  for ( int p = 1; p < nPts; ++p )
+  for ( int p = 0; p < nPts; ++p )
   {
     points.Append( pcloud->GetPoint(p) );
+    faces.Append( faceIndices->Value(p) );
   }
 }

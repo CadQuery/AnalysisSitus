@@ -275,7 +275,7 @@ double geom_cloudify::chooseParametricStep(const BRepAdaptor_Surface& bas,
     try
     {
       gce_MakeCirc mkCirc(P0, P1, Pm);
-      isOk = mkCirc.IsDone() > 0;
+      isOk = mkCirc.IsDone();
       R = mkCirc.Value().Radius();
     }
     catch ( ... )

@@ -29,7 +29,8 @@ public:
 
 public:
 
-  bool operator()(const gp_Lin& ray, int& facet_index);
+  bool   operator() (const gp_Lin& ray, int& facet_index, gp_XYZ& result);
+  double operator() (const gp_Pnt& P, int& facet_index);
 
 protected:
 
@@ -42,7 +43,8 @@ protected:
                 const double     length,
                 const BVH_Vec4i& leaf,
                 int&             resultFacet,
-                double&          resultRayParam) const;
+                double&          resultRayParamNormalized,
+                gp_XYZ&          hitPoint) const;
 
   bool isOut(const gp_Lin&    ray,
              const BVH_Vec4d& boxMin,
@@ -65,7 +67,8 @@ protected:
                      const gp_XYZ& pntTri1,
                      const gp_XYZ& pntTri2,
                      const gp_XYZ& pntTri3,
-                     double&       hitParam) const;
+                     double&       hitParamNormalized,
+                     gp_XYZ&       hitPoint) const;
 
 protected:
 

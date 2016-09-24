@@ -43,7 +43,7 @@ QVariant gui_prim_data_adaptor::GetValue() const
   else if ( P->GetParamType() == Parameter_Bool )
   {
     Handle(ActData_BoolParameter) PBool = ActParamTool::AsBool(P);
-    result = (PBool->GetValue() > 0);
+    result = PBool->GetValue();
   }
   else
     result = QVariant();

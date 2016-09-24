@@ -8,8 +8,11 @@
 #ifndef visu_create_contour_callback_h
 #define visu_create_contour_callback_h
 
-// A-Situs (visualization) includes
+// Visualization includes
 #include <visu_viewer_callback.h>
+
+// Geometry includes
+#include <geom_bvh_facets.h>
 
 // VIS includes
 #include <IVtk_Types.hxx>
@@ -30,7 +33,7 @@ class visu_create_contour_callback : public QObject,
 public:
 
   static visu_create_contour_callback* New();
-  static visu_create_contour_callback* New(gui_viewer* theViewer);
+  //
   vtkTypeMacro(visu_create_contour_callback, visu_viewer_callback);
 
 public:
@@ -39,10 +42,21 @@ public:
                        unsigned long theEventId,
                        void*         theCallData);
 
+public:
+
+  void SetBVH(const Handle(geom_bvh_facets)& bvh_facets)
+  {
+    m_bvh = bvh_facets;
+  }
+
 private:
 
   visu_create_contour_callback  (gui_viewer* theViewer);
   ~visu_create_contour_callback ();
+
+private:
+
+  Handle(geom_bvh_facets) m_bvh; //!< Accelerating structure for picking.
 
 };
 

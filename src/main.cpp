@@ -65,7 +65,7 @@
 // OCCT includes
 #include <OSD_Environment.hxx>
 
-// Activate object factory for Freetype fonts
+// Activate object factories
 VTK_MODULE_INIT(vtkRenderingContextOpenGL2);
 VTK_MODULE_INIT(vtkRenderingOpenGL2);
 VTK_MODULE_INIT(vtkInteractionStyle);

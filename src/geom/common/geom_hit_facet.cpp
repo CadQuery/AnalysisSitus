@@ -41,17 +41,20 @@ geom_hit_facet::geom_hit_facet(const Handle(geom_bvh_facets)& facets,
 
 //-----------------------------------------------------------------------------
 
-//! Performs hit check.
+//! Performs hit check for a ray.
 //! \param[in]  ray         probe ray.
 //! \param[out] facet_index nearest facet.
+//! \param[out] result      picked point.
 //! \return true in case of success, false -- otherwise.
 bool geom_hit_facet::operator()(const gp_Lin& ray,
-                                int&          facet_index)
+                                int&          facet_index,
+                                gp_XYZ&       result)
 {
-  const NCollection_Handle<BVH_Tree<double, 4> >& bvh = m_facets->BVH();
+  const NCollection_Handle< BVH_Tree<double, 4> >& bvh = m_facets->BVH();
   if ( bvh.IsNull() )
     return false;
 
+  // Initialize output index
   facet_index = -1;
 
   // Limit of the ray for hit test
@@ -65,19 +68,14 @@ bool geom_hit_facet::operator()(const gp_Lin& ray,
 
 #if defined DRAW_DEBUG
   this->Plotter().CLEAN();
+  this->Plotter().DRAW_POINT(ray.Location(), Color_Red, "ray_origin");
   this->Plotter().DRAW_LINK(ray.Location(), ray.Location().XYZ() + ray.Direction().XYZ()*ray_limit, Color_Green, "ray");
 #endif
 
+  // Traverse BVH
   for ( geom_bvh_iterator it(bvh); it.More(); it.Next() )
   {
     const BVH_Vec4i& nodeData = it.Current();
-
-#if defined DRAW_DEBUG
-    TopoDS_Compound comp_tentative_left, comp_tentative_right;
-    BRep_Builder BB;
-    BB.MakeCompound(comp_tentative_left);
-    BB.MakeCompound(comp_tentative_right);
-#endif
 
     if ( it.IsLeaf() )
     {
@@ -86,12 +84,15 @@ bool geom_hit_facet::operator()(const gp_Lin& ray,
 
       int facet_candidate = -1;
       double hitParam;
-      const bool isHit = this->testLeaf(ray, ray_limit, nodeData, facet_candidate, hitParam);
+      gp_XYZ hitPoint;
+      //
+      const bool isHit = this->testLeaf(ray, ray_limit, nodeData, facet_candidate, hitParam, hitPoint);
       //
       if ( isHit && hitParam < resultRayParam )
       {
         facet_index    = facet_candidate;
         resultRayParam = hitParam;
+        result         = hitPoint;
       }
     }
     else // sub-volume
@@ -105,118 +106,9 @@ bool geom_hit_facet::operator()(const gp_Lin& ray,
       const bool isRightOut = this->isOut(ray, minCorner_Right, maxCorner_Right, prec);
 
       if ( isLeftOut )
-      {
-        std::cout << "Blocked left " << nodeData.y() << std::endl;
         it.BlockLeft();
-      }
       if ( isRightOut )
-      {
-        std::cout << "Blocked right " << nodeData.z() << std::endl;
         it.BlockRight();
-      }
-
-#if defined DRAW_DEBUG
-      if ( !isLeftOut )
-      {
-        gp_Pnt Pmin( minCorner_Left.x(), minCorner_Left.y(), minCorner_Left.z() );
-        gp_Pnt Pmax( maxCorner_Left.x(), maxCorner_Left.y(), maxCorner_Left.z() );
-
-        const gp_Pnt P2 = gp_Pnt( Pmax.X(), Pmin.Y(), Pmin.Z() );
-        const gp_Pnt P3 = gp_Pnt( Pmax.X(), Pmax.Y(), Pmin.Z() );
-        const gp_Pnt P4 = gp_Pnt( Pmin.X(), Pmax.Y(), Pmin.Z() );
-        const gp_Pnt P5 = gp_Pnt( Pmin.X(), Pmin.Y(), Pmax.Z() );
-        const gp_Pnt P6 = gp_Pnt( Pmax.X(), Pmin.Y(), Pmax.Z() );
-        const gp_Pnt P8 = gp_Pnt( Pmin.X(), Pmax.Y(), Pmax.Z() );
-
-        if ( Pmin.Distance(P2) > 1.0e-6 )
-          BB.Add( comp_tentative_left, BRepBuilderAPI_MakeEdge(Pmin, P2) );
-
-        if ( P2.Distance(P3) > 1.0e-6 )
-          BB.Add( comp_tentative_left, BRepBuilderAPI_MakeEdge(P2, P3) );
-
-        if ( P3.Distance(P4) > 1.0e-6 )
-          BB.Add( comp_tentative_left, BRepBuilderAPI_MakeEdge(P3, P4) );
-
-        if ( P4.Distance(Pmin) > 1.0e-6 )
-          BB.Add( comp_tentative_left, BRepBuilderAPI_MakeEdge(P4, Pmin) );
-
-        if ( P5.Distance(P6) > 1.0e-6 )
-          BB.Add( comp_tentative_left, BRepBuilderAPI_MakeEdge(P5, P6) );
-
-        if ( P6.Distance(Pmax) > 1.0e-6 )
-          BB.Add( comp_tentative_left, BRepBuilderAPI_MakeEdge(P6, Pmax) );
-
-        if ( Pmax.Distance(P8) > 1.0e-6 )
-          BB.Add( comp_tentative_left, BRepBuilderAPI_MakeEdge(Pmax, P8) );
-
-        if ( P8.Distance(P5) > 1.0e-6 )
-          BB.Add( comp_tentative_left, BRepBuilderAPI_MakeEdge(P8, P5) );
-
-        if ( P6.Distance(P2) > 1.0e-6 )
-          BB.Add( comp_tentative_left, BRepBuilderAPI_MakeEdge(P6, P2) );
-
-        if ( Pmax.Distance(P3) > 1.0e-6 )
-          BB.Add( comp_tentative_left, BRepBuilderAPI_MakeEdge(Pmax, P3) );
-
-        if ( P8.Distance(P4) > 1.0e-6 )
-          BB.Add( comp_tentative_left, BRepBuilderAPI_MakeEdge(P8, P4) );
-
-        if ( P5.Distance(Pmin) > 1.0e-6 )
-          BB.Add( comp_tentative_left, BRepBuilderAPI_MakeEdge(P5, Pmin) );
-
-        this->Plotter().DRAW_SHAPE(comp_tentative_left, Color_Yellow, 1.0, true, "BVH");
-      }
-      if ( !isRightOut )
-      {
-        gp_Pnt Pmin( minCorner_Right.x(), minCorner_Right.y(), minCorner_Right.z() );
-        gp_Pnt Pmax( maxCorner_Left.x(), maxCorner_Left.y(), maxCorner_Left.z() );
-
-        const gp_Pnt P2 = gp_Pnt( Pmax.X(), Pmin.Y(), Pmin.Z() );
-        const gp_Pnt P3 = gp_Pnt( Pmax.X(), Pmax.Y(), Pmin.Z() );
-        const gp_Pnt P4 = gp_Pnt( Pmin.X(), Pmax.Y(), Pmin.Z() );
-        const gp_Pnt P5 = gp_Pnt( Pmin.X(), Pmin.Y(), Pmax.Z() );
-        const gp_Pnt P6 = gp_Pnt( Pmax.X(), Pmin.Y(), Pmax.Z() );
-        const gp_Pnt P8 = gp_Pnt( Pmin.X(), Pmax.Y(), Pmax.Z() );
-
-        if ( Pmin.Distance(P2) > 1.0e-6 )
-          BB.Add( comp_tentative_right, BRepBuilderAPI_MakeEdge(Pmin, P2) );
-
-        if ( P2.Distance(P3) > 1.0e-6 )
-          BB.Add( comp_tentative_right, BRepBuilderAPI_MakeEdge(P2, P3) );
-
-        if ( P3.Distance(P4) > 1.0e-6 )
-          BB.Add( comp_tentative_right, BRepBuilderAPI_MakeEdge(P3, P4) );
-
-        if ( P4.Distance(Pmin) > 1.0e-6 )
-          BB.Add( comp_tentative_right, BRepBuilderAPI_MakeEdge(P4, Pmin) );
-
-        if ( P5.Distance(P6) > 1.0e-6 )
-          BB.Add( comp_tentative_right, BRepBuilderAPI_MakeEdge(P5, P6) );
-
-        if ( P6.Distance(Pmax) > 1.0e-6 )
-          BB.Add( comp_tentative_right, BRepBuilderAPI_MakeEdge(P6, Pmax) );
-
-        if ( Pmax.Distance(P8) > 1.0e-6 )
-          BB.Add( comp_tentative_right, BRepBuilderAPI_MakeEdge(Pmax, P8) );
-
-        if ( P8.Distance(P5) > 1.0e-6 )
-          BB.Add( comp_tentative_right, BRepBuilderAPI_MakeEdge(P8, P5) );
-
-        if ( P6.Distance(P2) > 1.0e-6 )
-          BB.Add( comp_tentative_right, BRepBuilderAPI_MakeEdge(P6, P2) );
-
-        if ( Pmax.Distance(P3) > 1.0e-6 )
-          BB.Add( comp_tentative_right, BRepBuilderAPI_MakeEdge(Pmax, P3) );
-
-        if ( P8.Distance(P4) > 1.0e-6 )
-          BB.Add( comp_tentative_right, BRepBuilderAPI_MakeEdge(P8, P4) );
-
-        if ( P5.Distance(Pmin) > 1.0e-6 )
-          BB.Add( comp_tentative_right, BRepBuilderAPI_MakeEdge(P5, Pmin) );
-
-        this->Plotter().DRAW_SHAPE(comp_tentative_right, Color_Green, 1.0, true, "BVH");
-      }
-#endif
     }
   }
 
@@ -224,10 +116,13 @@ bool geom_hit_facet::operator()(const gp_Lin& ray,
   {
     std::cout << "Found intersection with facet "
               << facet_index
+              << " on face "
+              << m_facets->GetFacet(facet_index).FaceIndex
               << " for ray parameter "
               << resultRayParam
               << std::endl;
 
+#if defined DRAW_DEBUG
     const geom_bvh_facets::t_facet& facet = m_facets->GetFacet(facet_index);
     //
     this->Plotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
@@ -236,11 +131,99 @@ bool geom_hit_facet::operator()(const gp_Lin& ray,
                                gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
     this->Plotter().DRAW_LINK( gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()),
                                gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
+#endif
   }
   else
     std::cout << "Error: cannot find the intersected facet" << std::endl;
 
-  return true;
+  return facet_index != -1;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Performs hit check for a point.
+//! \param[in]  P           probe point.
+//! \param[out] facet_index nearest facet.
+//! \return distance to the nearest facet.
+double geom_hit_facet::operator()(const gp_Pnt& P,
+                                  int&          facet_index)
+{
+  const NCollection_Handle< BVH_Tree<double, 4> >& bvh = m_facets->BVH();
+  if ( bvh.IsNull() )
+    return false;
+
+  // Initialize output index
+  facet_index = -1;
+
+  // Precision for fast intersection test on AABB
+  const double prec = Precision::Confusion();
+
+  // Distance for sorting
+  double minDist = RealLast();
+
+  // Traverse BVH
+  for ( geom_bvh_iterator it(bvh); it.More(); it.Next() )
+  {
+    const BVH_Vec4i& nodeData = it.Current();
+
+    if ( it.IsLeaf() )
+    {
+      // If we are here, then we are close to solution. It is a right
+      // time now to perform a precise check
+
+      int  facet_candidate = -1;
+      bool isInside        = false;
+      //
+      const double dist = this->testLeaf(P, nodeData, facet_candidate, isInside);
+      //
+      if ( isInside && dist < minDist )
+      {
+        facet_index = facet_candidate;
+        minDist     = dist;
+      }
+    }
+    else // sub-volume
+    {
+      const BVH_Vec4d& minCorner_Left  = bvh->MinPoint( nodeData.y() );
+      const BVH_Vec4d& maxCorner_Left  = bvh->MaxPoint( nodeData.y() );
+      const BVH_Vec4d& minCorner_Right = bvh->MinPoint( nodeData.z() );
+      const BVH_Vec4d& maxCorner_Right = bvh->MaxPoint( nodeData.z() );
+
+      const bool isLeftOut  = this->isOut(P, minCorner_Left, maxCorner_Left, prec);
+      const bool isRightOut = this->isOut(P, minCorner_Right, maxCorner_Right, prec);
+
+      if ( isLeftOut )
+        it.BlockLeft();
+      if ( isRightOut )
+        it.BlockRight();
+    }
+  }
+
+  if ( facet_index != -1 )
+  {
+    std::cout << "Found host facet "
+              << facet_index
+              << " on face "
+              << m_facets->GetFacet(facet_index).FaceIndex
+              << " for min distance "
+              << minDist
+              << std::endl;
+
+#if defined DRAW_DEBUG
+    const geom_bvh_facets::t_facet& facet = m_facets->GetFacet(facet_index);
+    //
+    this->Plotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
+                               gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()), Color_Red);
+    this->Plotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
+                               gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
+    this->Plotter().DRAW_LINK( gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()),
+                               gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
+#endif
+  }
+  else
+    std::cout << "Error: cannot find the host facet" << std::endl;
+
+  return facet_index != -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -305,17 +288,19 @@ double geom_hit_facet::testLeaf(const gp_Pnt&    P,
 //-----------------------------------------------------------------------------
 
 //! Performs narrow-phase testing for a BVH leaf.
-//! \param[in]  ray            probe ray.
-//! \param[in]  length         length of the probe ray to take into account.
-//! \param[in]  leaf           leaf node of the BVH tree.
-//! \param[out] resultFacet    found facet which yields the min distance.
-//! \param[out] resultRayParam parameter of the intersection point on the ray.
+//! \param[in]  ray                      probe ray.
+//! \param[in]  length                   length of the probe ray to take into account.
+//! \param[in]  leaf                     leaf node of the BVH tree.
+//! \param[out] resultFacet              found facet which yields the min distance.
+//! \param[out] resultRayParamNormalized parameter [0,1] of the intersection point on the ray.
+//! \param[out] hitPoint                 intersection point.
 //! \return true if intersection detected, false -- otherwise.
 bool geom_hit_facet::testLeaf(const gp_Lin&    ray,
                               const double     length,
                               const BVH_Vec4i& leaf,
                               int&             resultFacet,
-                              double&          resultRayParam) const
+                              double&          resultRayParamNormalized,
+                              gp_XYZ&          hitPoint) const
 {
   // Prepare a segment of the ray to pass for intersection test
   const gp_XYZ l0 = ray.Location().XYZ();
@@ -323,8 +308,8 @@ bool geom_hit_facet::testLeaf(const gp_Lin&    ray,
 
   // Parameter on ray is used for intersection sorting. We are interested
   // in the closest point only
-  resultFacet    = -1;
-  resultRayParam = RealLast();
+  resultFacet              = -1;
+  resultRayParamNormalized = RealLast();
 
   // Loop over the tentative facets
   for ( int fidx = leaf.y(); fidx <= leaf.z(); ++fidx )
@@ -339,7 +324,9 @@ bool geom_hit_facet::testLeaf(const gp_Lin&    ray,
 
     // Hit test
     double currentParam;
-    if ( this->isIntersected(l0, l1, p0, p1, p2, currentParam) )
+    gp_XYZ currentPoint;
+    //
+    if ( this->isIntersected(l0, l1, p0, p1, p2, currentParam, currentPoint) )
     {
 #if defined DRAW_DEBUG
       /*this->Plotter().DRAW_LINK(p0, p1, Color_Green);
@@ -347,10 +334,11 @@ bool geom_hit_facet::testLeaf(const gp_Lin&    ray,
       this->Plotter().DRAW_LINK(p1, p2, Color_Green);*/
 #endif
 
-      if ( currentParam < resultRayParam )
+      if ( currentParam < resultRayParamNormalized )
       {
-        resultFacet    = fidx;
-        resultRayParam = currentParam;
+        resultFacet              = fidx;
+        resultRayParamNormalized = currentParam;
+        hitPoint                 = currentPoint;
       }
     }
   }
@@ -546,7 +534,8 @@ bool geom_hit_facet::isIntersected(const gp_XYZ& rayStart,
                                    const gp_XYZ& pntTri1,
                                    const gp_XYZ& pntTri2,
                                    const gp_XYZ& pntTri3,
-                                   double&       hitParam) const
+                                   double&       hitParamNormalized,
+                                   gp_XYZ&       hitPoint) const
 {
   // Moller–Trumbore intersection algorithm
   // (T. Moller et al, Fast Minimum Storage Ray / Triangle Intersection)
@@ -567,21 +556,18 @@ bool geom_hit_facet::isIntersected(const gp_XYZ& rayStart,
 
   // Calculate u parameter and test bound.
   double u = T.Dot(P) * inv_det;
-
-  // The intersection lies outside of the triangle.
   if ( u < 0.0 || u > 1.0 )
-    return false;
+    return false; // Intersection lies outside the triangle
 
   // Calculate V parameter and test bound.
   gp_Vec Q = T.Crossed(e1);
   double v = dir.Dot(Q) * inv_det;
-
-  // The intersection lies outside of the triangle.
   if ( v < 0.0 || (u + v)  > 1.0 )
-    return false;
+    return false; // Intersection lies outside the triangle
 
-  double t = e2.Dot(Q) * inv_det;
-  hitParam = t;
+  double t           = e2.Dot(Q) * inv_det;
+  hitParamNormalized = t;
+  hitPoint           = (1 - u - v)*pntTri1 + u*pntTri2 + v*pntTri3;
 
   if ( t < 0.0 || t > 1.0 )
     return false;

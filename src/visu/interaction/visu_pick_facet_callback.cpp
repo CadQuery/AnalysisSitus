@@ -24,23 +24,18 @@
 
 //! Instantiation routine.
 //! \return instance of the callback class.
-visu_pick_facet_callback* visu_pick_facet_callback::New()
+visu_pick_facet_callback*
+  visu_pick_facet_callback::New()
 {
-  return new visu_pick_facet_callback(NULL);
-}
-
-//! Instantiation routine accepting viewer.
-//! \param theViewer [in] viewer to bind callback object to.
-//! \return instance of the callback class.
-visu_pick_facet_callback* visu_pick_facet_callback::New(gui_viewer* theViewer)
-{
-  return new visu_pick_facet_callback(theViewer);
+  return new visu_pick_facet_callback(NULL, NULL);
 }
 
 //! Constructor accepting owning viewer as a parameter.
-//! \param theViewer [in] owning viewer.
-visu_pick_facet_callback::visu_pick_facet_callback(gui_viewer* theViewer)
-: visu_viewer_callback(theViewer)
+//! \param[in] bvh_facets accelerating structure for picking.
+//! \param[in] viewer     owning viewer.
+visu_pick_facet_callback::visu_pick_facet_callback(const Handle(geom_bvh_facets)& bvh_facets,
+                                                   gui_viewer*                    viewer)
+: visu_viewer_callback(viewer), m_bvh(bvh_facets)
 {}
 
 //! Destructor.
@@ -60,31 +55,21 @@ void visu_pick_facet_callback::Execute(vtkObject*    vtkNotUsed(theCaller),
   TopoDS_Shape part;
   if ( !gui_common::PartShape(part) ) return;
 
-  const vtkSmartPointer<visu_prs_manager>& mgr = common_facilities::Instance()->Prs.Part;
-
   // Get picking ray
   gp_Lin pickRay = *( (gp_Lin*) theCallData );
 
-  /*ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
-  IV.DRAW_POINT( hit, Color_Red );*/
-
-  // Build triangle set. Constructor will initialize the internal structures
-  // storing the triangle nodes with references to the owning parts
-  Handle(geom_bvh_facets)
-    triangleSet = new geom_bvh_facets(part,
-                                      geom_bvh_facets::Builder_Binned,
-                                      common_facilities::Instance()->Notifier,
-                                      common_facilities::Instance()->Plotter);
-  //
-  triangleSet->BVH(); // This invocation builds the BVH tree
+  ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
 
   // Prepare a tool to find the intersected facet
-  geom_hit_facet HitFacet(triangleSet,
+  geom_hit_facet HitFacet(m_bvh,
                           common_facilities::Instance()->Notifier,
                           common_facilities::Instance()->Plotter);
 
   // Find intersection
+  gp_XYZ hit;
   int facet_idx;
-  if ( !HitFacet(pickRay, facet_idx) )
+  if ( !HitFacet(pickRay, facet_idx, hit) )
     std::cout << "Error: cannot find the intersected facet" << std::endl;
+  else
+    IV.DRAW_POINT(hit, Color_Red);
 }

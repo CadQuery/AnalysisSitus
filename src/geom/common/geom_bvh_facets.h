@@ -34,7 +34,11 @@ public:
   //! Structure representing a single facet.
   struct t_facet
   {
-    BVH_Vec4d P0, P1, P2;
+    t_facet() : FaceIndex(-1) {}
+    t_facet(const int fidx) : FaceIndex(fidx) {}
+
+    BVH_Vec4d P0, P1, P2; //!< Triangle nodes.
+    int       FaceIndex;  //!< Index of the host face.
   };
 
   //! Type of BVH builder to use.
@@ -105,7 +109,8 @@ protected:
          const BuilderType   builderType);
 
   bool
-    addFace(const TopoDS_Face& face);
+    addFace(const TopoDS_Face& face,
+            const int          face_idx);
 
 protected:
 

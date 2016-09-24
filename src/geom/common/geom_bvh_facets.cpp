@@ -276,12 +276,16 @@ bool geom_bvh_facets::init(const TopoDS_Shape& model,
   else
     myBuilder = new BVH_LinearBuilder<double, 4>(5, 32);
 
+  // Explode shape on faces to get face indices
+  TopTools_IndexedMapOfShape faces;
+  TopExp::MapShapes(model, TopAbs_FACE, faces);
+
   // Initialize with facets taken from faces
-  for ( TopExp_Explorer fexp(model, TopAbs_FACE); fexp.More(); fexp.Next() )
+  for ( int fidx = 1; fidx <= faces.Extent(); ++fidx )
   {
-    const TopoDS_Face& face = TopoDS::Face( fexp.Current() );
+    const TopoDS_Face& face = TopoDS::Face( faces(fidx) );
     //
-    if ( !this->addFace(face) )
+    if ( !this->addFace(face, fidx) )
       return false;
   }
 
@@ -296,9 +300,11 @@ bool geom_bvh_facets::init(const TopoDS_Shape& model,
 //-----------------------------------------------------------------------------
 
 //! Adds face to the accelerating structure.
-//! \param[in] face face to add.
+//! \param[in] face     face to add.
+//! \param[in] face_idx index of the face being added.
 //! \return true in case of success, false -- otherwise.
-bool geom_bvh_facets::addFace(const TopoDS_Face& face)
+bool geom_bvh_facets::addFace(const TopoDS_Face& face,
+                              const int          face_idx)
 {
   TopLoc_Location loc;
   const Handle(Poly_Triangulation)& tris = BRep_Tool::Triangulation(face, loc);
@@ -323,7 +329,7 @@ bool geom_bvh_facets::addFace(const TopoDS_Face& face)
     P2.Transform(loc);
 
     // Create a new facet and store it in the internal collection
-    t_facet facet;
+    t_facet facet(face_idx);
     //
     facet.P0 = BVH_Vec4d(P0.X(), P0.Y(), P0.Z(), 0.0);
     facet.P1 = BVH_Vec4d(P1.X(), P1.Y(), P1.Z(), 0.0);

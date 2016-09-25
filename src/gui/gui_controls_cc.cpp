@@ -141,7 +141,7 @@ void gui_controls_cc::onPickContour()
   const bool isOn = m_widgets.pPickContour->isChecked();
 
   // Create the accelerating structure
-  if ( m_bvh.IsNull() )
+  if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
     m_bvh = new geom_bvh_facets(part,
                                 geom_bvh_facets::Builder_Binned,
                                 common_facilities::Instance()->Notifier,
@@ -155,6 +155,13 @@ void gui_controls_cc::onPickContour()
   // points on the shape or finalize contour creation
   if ( isOn )
   {
+    // Clear contour
+    common_facilities::Instance()->Model->OpenCommand();
+    {
+      contour_n->Init();
+    }
+    common_facilities::Instance()->Model->CommitCommand();
+
     // Enable an appropriate selection mode
     m_iPrevSelMode = common_facilities::Instance()->Prs.Part->GetSelectionMode();
     common_facilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_Workpiece);
@@ -217,7 +224,7 @@ void gui_controls_cc::onLoadContour()
   }
 
   // Create the accelerating structure
-  if ( m_bvh.IsNull() )
+  if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
     m_bvh = new geom_bvh_facets(part,
                                 geom_bvh_facets::Builder_Binned,
                                 common_facilities::Instance()->Notifier,
@@ -234,9 +241,14 @@ void gui_controls_cc::onLoadContour()
   //
   common_facilities::Instance()->Model->OpenCommand(); // tx start
   {
+    // Clear contour
+    contour_n->Init();
+
+    // Iterate over the vertices to compose a contour data structure
     TopTools_IndexedMapOfShape traversed;
+    int vidx = 1;
     //
-    for ( TopExp_Explorer exp(shape, TopAbs_VERTEX); exp.More(); exp.Next() )
+    for ( TopExp_Explorer exp(shape, TopAbs_VERTEX); exp.More(); exp.Next(), ++vidx )
     {
       TopoDS_Vertex V = TopoDS::Vertex( exp.Current() );
       //
@@ -249,17 +261,19 @@ void gui_controls_cc::onLoadContour()
 
       // Recover host face
       int facet_idx = -1;
-      if ( !HitFacet(P, facet_idx) )
+      if ( !HitFacet(P, 1e-1, facet_idx) )
       {
         std::cout << "Cannot locate a host facet for a contour's point" << std::endl;
         common_facilities::Instance()->Plotter->DRAW_POINT(P, Color_Red, "Failure");
-        common_facilities::Instance()->Model->AbortCommand();
-        return;
+        /*common_facilities::Instance()->Model->AbortCommand();
+        return;*/
+        continue;
       }
 
       // Add point to the contour
       contour_n->AddPoint( P.XYZ(), m_bvh->GetFacet(facet_idx).FaceIndex );
     }
+    contour_n->SetClosed(true);
   }
   common_facilities::Instance()->Model->CommitCommand(); // tx commit
 
@@ -435,7 +449,7 @@ void gui_controls_cc::onPickFacet()
   if ( !gui_common::PartShape(part) ) return;
 
   // Create the accelerating structure
-  if ( m_bvh.IsNull() )
+  if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
     m_bvh = new geom_bvh_facets(part,
                                 geom_bvh_facets::Builder_Binned,
                                 common_facilities::Instance()->Notifier,

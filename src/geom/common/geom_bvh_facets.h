@@ -102,6 +102,12 @@ public:
     return m_facets[index];
   }
 
+  //! \return master CAD model.
+  const TopoDS_Shape& GetShape() const
+  {
+    return m_model;
+  }
+
 protected:
 
   bool
@@ -113,6 +119,9 @@ protected:
             const int          face_idx);
 
 protected:
+
+  //! Master shape.
+  TopoDS_Shape m_model;
 
   //! Array of facets.
   std::vector<t_facet> m_facets;

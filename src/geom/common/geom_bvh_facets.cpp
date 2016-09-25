@@ -270,6 +270,8 @@ void geom_bvh_facets::Dump(ActAPI_PlotterEntry IV)
 bool geom_bvh_facets::init(const TopoDS_Shape& model,
                            const BuilderType   builderType)
 {
+  m_model = model;
+
   // Prepare builder
   if ( builderType == Builder_Binned )
     myBuilder = new BVH_BinnedBuilder<double, 4, 32>(5, 32);
@@ -278,7 +280,7 @@ bool geom_bvh_facets::init(const TopoDS_Shape& model,
 
   // Explode shape on faces to get face indices
   TopTools_IndexedMapOfShape faces;
-  TopExp::MapShapes(model, TopAbs_FACE, faces);
+  TopExp::MapShapes(m_model, TopAbs_FACE, faces);
 
   // Initialize with facets taken from faces
   for ( int fidx = 1; fidx <= faces.Extent(); ++fidx )
@@ -291,7 +293,7 @@ bool geom_bvh_facets::init(const TopoDS_Shape& model,
 
   // Calculate bounding diagonal
   Bnd_Box aabb;
-  BRepBndLib::Add(model, aabb);
+  BRepBndLib::Add(m_model, aabb);
   m_fBoundingDiag = ( aabb.CornerMax().XYZ() - aabb.CornerMin().XYZ() ).Modulus();
 
   return true;

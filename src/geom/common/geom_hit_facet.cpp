@@ -142,10 +142,12 @@ bool geom_hit_facet::operator()(const gp_Lin& ray,
 //-----------------------------------------------------------------------------
 
 //! Performs hit check for a point.
-//! \param[in]  P           probe point.
-//! \param[out] facet_index nearest facet.
+//! \param[in]  P               probe point.
+//! \param[in]  membership_prec precision of membership test.
+//! \param[out] facet_index     nearest facet.
 //! \return distance to the nearest facet.
 double geom_hit_facet::operator()(const gp_Pnt& P,
+                                  const double  membership_prec,
                                   int&          facet_index)
 {
   const NCollection_Handle< BVH_Tree<double, 4> >& bvh = m_facets->BVH();
@@ -156,7 +158,7 @@ double geom_hit_facet::operator()(const gp_Pnt& P,
   facet_index = -1;
 
   // Precision for fast intersection test on AABB
-  const double prec = Precision::Confusion();
+  const double intersectPrec = Precision::Confusion();
 
   // Distance for sorting
   double minDist = RealLast();
@@ -174,7 +176,7 @@ double geom_hit_facet::operator()(const gp_Pnt& P,
       int  facet_candidate = -1;
       bool isInside        = false;
       //
-      const double dist = this->testLeaf(P, nodeData, facet_candidate, isInside);
+      const double dist = this->testLeaf(P, nodeData, membership_prec, facet_candidate, isInside);
       //
       if ( isInside && dist < minDist )
       {
@@ -189,8 +191,8 @@ double geom_hit_facet::operator()(const gp_Pnt& P,
       const BVH_Vec4d& minCorner_Right = bvh->MinPoint( nodeData.z() );
       const BVH_Vec4d& maxCorner_Right = bvh->MaxPoint( nodeData.z() );
 
-      const bool isLeftOut  = this->isOut(P, minCorner_Left, maxCorner_Left, prec);
-      const bool isRightOut = this->isOut(P, minCorner_Right, maxCorner_Right, prec);
+      const bool isLeftOut  = this->isOut(P, minCorner_Left, maxCorner_Left, intersectPrec);
+      const bool isRightOut = this->isOut(P, minCorner_Right, maxCorner_Right, intersectPrec);
 
       if ( isLeftOut )
         it.BlockLeft();
@@ -229,13 +231,15 @@ double geom_hit_facet::operator()(const gp_Pnt& P,
 //-----------------------------------------------------------------------------
 
 //! Performs narrow-phase testing for a BVH leaf.
-//! \param[in]  P           probe point.
-//! \param[in]  leaf        leaf node of the BVH tree.
-//! \param[out] resultFacet found facet which yields the min distance.
-//! \param[out] isInside    indicates whether a point lies inside the triangle.
+//! \param[in]  P               probe point.
+//! \param[in]  leaf            leaf node of the BVH tree.
+//! \param[in]  membership_prec precision of PMC.
+//! \param[out] resultFacet     found facet which yields the min distance.
+//! \param[out] isInside        indicates whether a point lies inside the triangle.
 //! \return distance from the point P to the facets of interest.
 double geom_hit_facet::testLeaf(const gp_Pnt&    P,
                                 const BVH_Vec4i& leaf,
+                                const double     membership_prec,
                                 int&             resultFacet,
                                 bool&            isInside) const
 {
@@ -258,7 +262,11 @@ double geom_hit_facet::testLeaf(const gp_Pnt&    P,
     const gp_XYZ p0p      = p - p0;
     const double p0p_dist = p0p.Modulus();
 
-    const gp_XYZ Np        = p0p1 ^ p0p2;
+    // Compute normal vector
+    const gp_XYZ Np = p0p1 ^ p0p2;
+    if ( Np.SquareModulus() < RealEpsilon() )
+      continue;
+
     const double cos_alpha = ( p0p * Np ) / ( p0p_dist * Np.Modulus() );
     const double dist      = p0p_dist * cos_alpha;
     const gp_XYZ pproj     = p - Np.Normalized()*dist;
@@ -268,7 +276,7 @@ double geom_hit_facet::testLeaf(const gp_Pnt&    P,
               << pproj.Y() << ", "
               << pproj.Z() << ")" << std::endl;
 
-    if ( this->isInside(pproj, p0, p1, p2) && Abs(dist) <= minDist )
+    if ( this->isInsideBarycentric(pproj, p0, p1, p2, membership_prec) && Abs(dist) <= minDist )
     {
       isInside    = true;
       minDist     = Abs(dist);
@@ -525,6 +533,45 @@ bool geom_hit_facet::isInside(const gp_Pnt& p,
   return this->isSameSide(p, a, /* */ b, c) &&
          this->isSameSide(p, b, /* */ a, c) &&
          this->isSameSide(p, c, /* */ a, b);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Checks whether the point p belongs to a triangle (a, b, c). This is another
+//! approach based on calculation of barycentric coordinates.
+//! \param[in] p               point to test.
+//! \param[in] a               first node of the triangle to test.
+//! \param[in] b               second node of the triangle to test.
+//! \param[in] c               third node of the triangle to test.
+//! \param[in] membership_prec precision of PMC.
+//! \return true/false.
+bool geom_hit_facet::isInsideBarycentric(const gp_Pnt& p,
+                                         const gp_Pnt& a,
+                                         const gp_Pnt& b,
+                                         const gp_Pnt& c,
+                                         const double  membership_prec) const
+{
+  // Compute vectors
+  gp_XYZ v0 = c.XYZ() - a.XYZ();
+  gp_XYZ v1 = b.XYZ() - a.XYZ();
+  gp_XYZ v2 = p.XYZ() - a.XYZ();
+
+  // Compute dot products
+  const double dot00 = v0.Dot(v0);
+  const double dot01 = v0.Dot(v1);
+  const double dot02 = v0.Dot(v2);
+  const double dot11 = v1.Dot(v1);
+  const double dot12 = v1.Dot(v2);
+
+  // Compute barycentric coordinates
+  const double invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+  const double u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+  const double v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+  // Check if point is in triangle
+  return (u >= 0.0) &&
+         (v >= 0.0) &&
+       ( (u + v < 1) || (Abs(u + v - 1) < membership_prec) );
 }
 
 //-----------------------------------------------------------------------------

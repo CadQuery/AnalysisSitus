@@ -30,12 +30,13 @@ public:
 public:
 
   bool   operator() (const gp_Lin& ray, int& facet_index, gp_XYZ& result);
-  double operator() (const gp_Pnt& P, int& facet_index);
+  double operator() (const gp_Pnt& P, const double membership_prec, int& facet_index);
 
 protected:
 
   double testLeaf(const gp_Pnt&    P,
                   const BVH_Vec4i& leaf,
+                  const double     membership_prec,
                   int&             resultFacet,
                   bool&            isInside) const;
 
@@ -60,7 +61,15 @@ protected:
                   const gp_Pnt& a,  const gp_Pnt& b) const;
 
   bool isInside(const gp_Pnt& p,
-                const gp_Pnt& a, const gp_Pnt& b, const gp_Pnt& c) const;
+                const gp_Pnt& a,
+                const gp_Pnt& b,
+                const gp_Pnt& c) const;
+
+  bool isInsideBarycentric(const gp_Pnt& p,
+                           const gp_Pnt& a,
+                           const gp_Pnt& b,
+                           const gp_Pnt& c,
+                           const double  membership_prec) const;
 
   bool isIntersected(const gp_XYZ& rayStart,
                      const gp_XYZ& rayFinish,

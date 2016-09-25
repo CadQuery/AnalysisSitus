@@ -35,6 +35,9 @@ public slots:
   void onCheckVertexDistance ();
   void onProjectVertices     ();
   //
+  void onCapture             ();
+  void onValidateResult      ();
+  //
   void onBVH_SAH             ();
   void onBVH_Linear          ();
   void onPickFacet           ();
@@ -52,6 +55,9 @@ private:
     QPushButton* pCheckVertexDistance; //!< Checks distance from the contour's vertices to a part.
     QPushButton* pProjectVertices;     //!< Projects vertices of the contour to the exact body.
     //
+    QPushButton* pCapture;             //!< Performs contour capturing.
+    QPushButton* pValidateResult;      //!< Validates capture result.
+    //
     QPushButton* pBVH_SAH;             //!< Builds BVH with SAH algorithm.
     QPushButton* pBVH_Linear;          //!< Builds BVH with linear algorithm.
     QPushButton* pPickFacet;           //!< Allows to pick up a single facet.
@@ -61,6 +67,9 @@ private:
                   //
                   pCheckVertexDistance (NULL),
                   pProjectVertices     (NULL),
+                  //
+                  pCapture             (NULL),
+                  pValidateResult      (NULL),
                   //
                   pBVH_SAH             (NULL),
                   pBVH_Linear          (NULL),
@@ -74,6 +83,9 @@ private:
       //
       delete pCheckVertexDistance; pCheckVertexDistance = NULL;
       delete pProjectVertices;     pProjectVertices     = NULL;
+      //
+      delete pCapture;             pCapture             = NULL;
+      delete pValidateResult;      pValidateResult      = NULL;
       //
       delete pBVH_SAH;             pBVH_SAH             = NULL;
       delete pBVH_Linear;          pBVH_Linear          = NULL;

@@ -20,6 +20,7 @@
 
 // GUI includes
 #include <gui_common.h>
+#include <gui_dialog_contour_capture.h>
 
 // Engine includes
 #include <engine_part.h>
@@ -64,6 +65,8 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   m_widgets.pLoadContour         = new QPushButton("Import contour");
   m_widgets.pCheckVertexDistance = new QPushButton("Check distance at poles");
   m_widgets.pProjectVertices     = new QPushButton("Project poles to body");
+  m_widgets.pCapture             = new QPushButton("Capture");
+  m_widgets.pValidateResult      = new QPushButton("Validate result");
   m_widgets.pBVH_SAH             = new QPushButton("BVH [SAH]");
   m_widgets.pBVH_Linear          = new QPushButton("BVH [linear]");
   m_widgets.pPickFacet           = new QPushButton("Pick facet");
@@ -72,6 +75,8 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   m_widgets.pLoadContour         -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCheckVertexDistance -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pProjectVertices     -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pCapture             -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pValidateResult      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pBVH_SAH             -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pBVH_Linear          -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pPickFacet           -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -94,6 +99,13 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   pValidateLay->addWidget(m_widgets.pCheckVertexDistance);
   pValidateLay->addWidget(m_widgets.pProjectVertices);
 
+  // Group of buttons for contour capture
+  QGroupBox*   pCaptureGroup = new QGroupBox("Capture");
+  QVBoxLayout* pCaptureLay   = new QVBoxLayout(pCaptureGroup);
+  //
+  pCaptureLay->addWidget(m_widgets.pCapture);
+  pCaptureLay->addWidget(m_widgets.pValidateResult);
+
   // Group of buttons for additional tests
   QGroupBox*   pAddendumGroup = new QGroupBox("Additional");
   QVBoxLayout* pAddendumLay   = new QVBoxLayout(pAddendumGroup);
@@ -105,6 +117,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   // Set layout
   m_pMainLayout->addWidget(pContourGroup);
   m_pMainLayout->addWidget(pValidateGroup);
+  m_pMainLayout->addWidget(pCaptureGroup);
   m_pMainLayout->addWidget(pAddendumGroup);
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
@@ -116,6 +129,8 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   connect( m_widgets.pLoadContour,         SIGNAL( clicked() ), SLOT( onLoadContour         () ) );
   connect( m_widgets.pCheckVertexDistance, SIGNAL( clicked() ), SLOT( onCheckVertexDistance () ) );
   connect( m_widgets.pProjectVertices,     SIGNAL( clicked() ), SLOT( onProjectVertices     () ) );
+  connect( m_widgets.pCapture,             SIGNAL( clicked() ), SLOT( onCapture             () ) );
+  connect( m_widgets.pValidateResult,      SIGNAL( clicked() ), SLOT( onValidateResult      () ) );
   connect( m_widgets.pBVH_SAH,             SIGNAL( clicked() ), SLOT( onBVH_SAH             () ) );
   connect( m_widgets.pBVH_Linear,          SIGNAL( clicked() ), SLOT( onBVH_Linear          () ) );
   connect( m_widgets.pPickFacet,           SIGNAL( clicked() ), SLOT( onPickFacet           () ) );
@@ -400,6 +415,27 @@ void gui_controls_cc::onProjectVertices()
   // Actualize
   common_facilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
   common_facilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Performs contour capturing.
+void gui_controls_cc::onCapture()
+{
+  // Run dialog
+  gui_dialog_contour_capture* wCC = new gui_dialog_contour_capture(this);
+  wCC->show();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Performs validation of capture result.
+void gui_controls_cc::onValidateResult()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // TODO: NYI
 }
 
 //-----------------------------------------------------------------------------

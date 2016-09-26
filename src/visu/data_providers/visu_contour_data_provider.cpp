@@ -29,6 +29,7 @@ visu_contour_data_provider::visu_contour_data_provider()
   Handle(ActAPI_HParameterList) params = new ActAPI_HParameterList;
   params->Append( contour_n->Parameter(geom_contour_node::PID_Coords) );
   params->Append( contour_n->Parameter(geom_contour_node::PID_IsClosed) );
+  params->Append( contour_n->Parameter(geom_contour_node::PID_Geometry) );
 
   // Set tracked Parameters
   m_params = params;

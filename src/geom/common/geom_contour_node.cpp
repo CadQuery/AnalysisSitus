@@ -21,6 +21,7 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <ShapeExtend_WireData.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
 
@@ -33,6 +34,7 @@ geom_contour_node::geom_contour_node() : ActData_BaseNode()
   REGISTER_PARAMETER(RealArray, PID_Coords);
   REGISTER_PARAMETER(IntArray,  PID_Faces);
   REGISTER_PARAMETER(Bool,      PID_IsClosed);
+  REGISTER_PARAMETER(Shape,     PID_Geometry);
 }
 
 //! Returns new DETACHED instance of the Node ensuring its correct
@@ -50,9 +52,10 @@ void geom_contour_node::Init()
   this->InitParameter(PID_Name, "Name");
 
   // Set default values to primitive Parameters
-  this->SetCoords(NULL);
-  this->SetFaces(NULL);
-  this->SetClosed(false);
+  this->SetCoords   ( NULL );
+  this->SetFaces    ( NULL );
+  this->SetClosed   ( false );
+  this->SetGeometry ( TopoDS_Shape() );
 }
 
 //-----------------------------------------------------------------------------
@@ -161,9 +164,21 @@ bool geom_contour_node::IsClosed() const
   return ActParamTool::AsBool( this->Parameter(PID_IsClosed) )->GetValue();
 }
 
+//! Returns B-Rep representation of the contour.
+//! \param[in] useCache whether to use cached B-Rep.
 //! \return contour converted to shape.
-TopoDS_Wire geom_contour_node::AsShape() const
+TopoDS_Wire geom_contour_node::AsShape(const bool useCache) const
 {
+  // If there is an alternative representation, let's return it
+  TopoDS_Shape derivedRep;
+  if ( useCache )
+    derivedRep = this->GetGeometry();
+  //
+  if ( !derivedRep.IsNull() )
+    return TopoDS::Wire(derivedRep);
+
+  // If there is no any cached B-Rep, let's build a polyline from the
+  // original points
   Handle(geom_point_cloud) points = new geom_point_cloud( this->GetCoords() );
   //
   if ( !points->GetNumOfPoints() )
@@ -214,4 +229,17 @@ void geom_contour_node::AsPointsOnFaces(TColgp_SequenceOfPnt&      points,
     points.Append( pcloud->GetPoint(p) );
     faces.Append( faceIndices->Value(p) );
   }
+}
+
+//! Sets explicit geometry for the contour.
+//! \param[in] shape B-Rep geometry to set.
+void geom_contour_node::SetGeometry(const TopoDS_Shape& shape)
+{
+  ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(shape);
+}
+
+//! \return stored B-Rep geometry.
+TopoDS_Shape geom_contour_node::GetGeometry() const
+{
+  return ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
 }

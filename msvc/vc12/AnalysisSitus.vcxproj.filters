@@ -1267,6 +1267,9 @@
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_contour_capture.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_contour_healing.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_sewing.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
@@ -2218,6 +2221,9 @@
     <ClCompile Include="..\..\src\gui\gui_dialog_contour_capture.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_contour_healing.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\gui\gui_object_browser.h">
@@ -2395,6 +2401,9 @@
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\src\gui\gui_dialog_contour_capture.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_contour_healing.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
   </ItemGroup>

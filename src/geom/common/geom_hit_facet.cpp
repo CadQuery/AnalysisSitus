@@ -112,6 +112,7 @@ bool geom_hit_facet::operator()(const gp_Lin& ray,
     }
   }
 
+#if defined DRAW_DEBUG
   if ( facet_index != -1 )
   {
     std::cout << "Found intersection with facet "
@@ -122,7 +123,6 @@ bool geom_hit_facet::operator()(const gp_Lin& ray,
               << resultRayParam
               << std::endl;
 
-#if defined DRAW_DEBUG
     const geom_bvh_facets::t_facet& facet = m_facets->GetFacet(facet_index);
     //
     this->Plotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
@@ -131,10 +131,10 @@ bool geom_hit_facet::operator()(const gp_Lin& ray,
                                gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
     this->Plotter().DRAW_LINK( gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()),
                                gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
-#endif
   }
   else
     std::cout << "Error: cannot find the intersected facet" << std::endl;
+#endif
 
   return facet_index != -1;
 }
@@ -201,6 +201,7 @@ double geom_hit_facet::operator()(const gp_Pnt& P,
     }
   }
 
+#if defined DRAW_DEBUG
   if ( facet_index != -1 )
   {
     std::cout << "Found host facet "
@@ -211,7 +212,6 @@ double geom_hit_facet::operator()(const gp_Pnt& P,
               << minDist
               << std::endl;
 
-#if defined DRAW_DEBUG
     const geom_bvh_facets::t_facet& facet = m_facets->GetFacet(facet_index);
     //
     this->Plotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
@@ -220,10 +220,10 @@ double geom_hit_facet::operator()(const gp_Pnt& P,
                                gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
     this->Plotter().DRAW_LINK( gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()),
                                gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
-#endif
   }
   else
     std::cout << "Error: cannot find the host facet" << std::endl;
+#endif
 
   return facet_index != -1;
 }
@@ -271,10 +271,12 @@ double geom_hit_facet::testLeaf(const gp_Pnt&    P,
     const double dist      = p0p_dist * cos_alpha;
     const gp_XYZ pproj     = p - Np.Normalized()*dist;
 
+#if defined COUT_DEBUG
     std::cout << "Probe's projection is ("
               << pproj.X() << ", "
               << pproj.Y() << ", "
               << pproj.Z() << ")" << std::endl;
+#endif
 
     if ( this->isInsideBarycentric(pproj, p0, p1, p2, membership_prec) && Abs(dist) <= minDist )
     {
@@ -336,12 +338,6 @@ bool geom_hit_facet::testLeaf(const gp_Lin&    ray,
     //
     if ( this->isIntersected(l0, l1, p0, p1, p2, currentParam, currentPoint) )
     {
-#if defined DRAW_DEBUG
-      /*this->Plotter().DRAW_LINK(p0, p1, Color_Green);
-      this->Plotter().DRAW_LINK(p0, p2, Color_Green);
-      this->Plotter().DRAW_LINK(p1, p2, Color_Green);*/
-#endif
-
       if ( currentParam < resultRayParamNormalized )
       {
         resultFacet              = fidx;

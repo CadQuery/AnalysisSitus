@@ -1,12 +1,12 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2016
+// Created on: 26 September 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <gui_dialog_contour_capture.h>
+#include <gui_dialog_contour_healing.h>
 
 // Common includes
 #include <common_draw_test_suite.h>
@@ -27,7 +27,7 @@
 #include <TopExp_Explorer.hxx>
 
 // SPE includes
-#include <SpeCore_Hull.h>
+#include <Common_ReapproxContour.h>
 
 //-----------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@
 
 //! Constructor.
 //! \param parent [in] parent widget.
-gui_dialog_contour_capture::gui_dialog_contour_capture(QWidget* parent)
+gui_dialog_contour_healing::gui_dialog_contour_healing(QWidget* parent)
 //
 : QDialog(parent)
 {
@@ -51,15 +51,13 @@ gui_dialog_contour_capture::gui_dialog_contour_capture(QWidget* parent)
   QGroupBox* pGroup = new QGroupBox("Parameters");
 
   // Editors
-  m_widgets.pPrecision   = new gui_line_edit();
-  m_widgets.pHealContour = new QCheckBox();
+  m_widgets.pPrecision = new gui_line_edit();
 
   // Sizing
   m_widgets.pPrecision->setMinimumWidth(CONTROL_EDIT_WIDTH);
 
   // Default values
   m_widgets.pPrecision->setText("0.1");
-  m_widgets.pHealContour->setChecked(true);
 
   //---------------------------------------------------------------------------
   // Buttons
@@ -82,11 +80,9 @@ gui_dialog_contour_capture::gui_dialog_contour_capture(QWidget* parent)
   pGrid->setSpacing(5);
   pGrid->setAlignment(Qt::AlignTop | Qt::AlignLeft);
   //
-  pGrid->addWidget(new QLabel("Precision:"),    0, 0);
-  pGrid->addWidget(new QLabel("Auto-healing:"), 1, 0);
+  pGrid->addWidget(new QLabel("Precision:"), 0, 0);
   //
-  pGrid->addWidget(m_widgets.pPrecision,   0, 1);
-  pGrid->addWidget(m_widgets.pHealContour, 1, 1);
+  pGrid->addWidget(m_widgets.pPrecision, 0, 1);
   //
   pGrid->setColumnStretch(0, 0);
   pGrid->setColumnStretch(1, 1);
@@ -106,11 +102,11 @@ gui_dialog_contour_capture::gui_dialog_contour_capture(QWidget* parent)
 
   this->setLayout(m_pMainLayout);
   this->setWindowModality(Qt::WindowModal);
-  this->setWindowTitle("Contour Capture");
+  this->setWindowTitle("Contour Healing");
 }
 
 //! Destructor.
-gui_dialog_contour_capture::~gui_dialog_contour_capture()
+gui_dialog_contour_healing::~gui_dialog_contour_healing()
 {
   delete m_pMainLayout;
 }
@@ -118,11 +114,10 @@ gui_dialog_contour_capture::~gui_dialog_contour_capture()
 //-----------------------------------------------------------------------------
 
 //! Reaction on clicking "Perform" button.
-void gui_dialog_contour_capture::onPerform()
+void gui_dialog_contour_healing::onPerform()
 {
   // Read user inputs
-  const double precision     = m_widgets.pPrecision->text().toDouble();
-  const bool   isAutoHealing = m_widgets.pHealContour->isChecked();
+  const double precision = m_widgets.pPrecision->text().toDouble();
 
   // Get part Node
   Handle(geom_part_node)
@@ -143,46 +138,50 @@ void gui_dialog_contour_capture::onPerform()
     return;
   }
 
-  /* ====================
-   *  Prepare extraction
-   * ==================== */
-
-  Handle(SpeCore_Journal) Journal = SpeCore_Journal::Instance();
-  Handle(SpeCore_Hull)    Hull    = new SpeCore_Hull;
-  //
-  if ( !Hull->Load(part_n->GetShape(), Journal) )
-  {
-    std::cout << "Error: cannot initialize hull" << std::endl;
-    return;
-  }
+  /* =================
+   *  Perform healing
+   * ================= */
 
   // Get contour wire
   TopoDS_Wire contourShape = contour_n->AsShape();
 
   // Count edges
-  int numEdges = 0;
-  for ( TopExp_Explorer exp(contourShape, TopAbs_EDGE); exp.More(); exp.Next() )
   {
-    numEdges++;
+    int numEdges = 0;
+    for ( TopExp_Explorer exp(contourShape, TopAbs_EDGE); exp.More(); exp.Next() )
+      numEdges++;
+    //
+    std::cout << "Input contour contains " << numEdges << " edge(s)" << std::endl;
   }
-  std::cout << "Input contour contains " << numEdges << " edge(s)" << std::endl;
 
-  /* ================
-   *  Run extraction
-   * ================ */
+  // Prepare journal
+  Handle(SpeCore_Journal) Journal = SpeCore_Journal::Instance();
 
   TIMER_NEW
   TIMER_GO
 
-  Handle(SpeCore_Plate) Plate;
-  //
-  if ( !Hull->ExtractPlate(contourShape, precision, isAutoHealing, Plate, Journal) )
-    std::cout << "Cannot extract plate base" << std::endl;
+  // Run healing
+  Common_ReapproxContour Heal(contourShape, precision);
+  TopoDS_Wire res;
+  if ( !Heal(res, true, true, Journal) )
+  {
+    std::cout << "Error: cannot heal contour" << std::endl;
+    return;
+  }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("Contour Capture")
+  TIMER_COUT_RESULT_MSG("Contour Healing")
 
   Journal->Dump(std::cout);
+
+  // Count edges
+  {
+    int numEdges = 0;
+    for ( TopExp_Explorer exp(res, TopAbs_EDGE); exp.More(); exp.Next() )
+      numEdges++;
+    //
+    std::cout << "Output contour contains " << numEdges << " edge(s)" << std::endl;
+  }
 
   /* ==========
    *  Finalize
@@ -190,14 +189,13 @@ void gui_dialog_contour_capture::onPerform()
 
   common_facilities::Instance()->Model->OpenCommand();
   {
-    part_n->SetShape(Plate->GetPlateBase().Geometry);
+    contour_n->SetGeometry(res);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
-  // Replace part with the extracted piece of shell
-  common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize(part_n.get(), false, false);
+  // Actualize
+  common_facilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
+  common_facilities::Instance()->Prs.Part->Actualize( contour_n.get() );
 
   // Close
   this->close();

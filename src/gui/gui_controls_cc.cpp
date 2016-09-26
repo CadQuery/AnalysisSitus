@@ -21,6 +21,7 @@
 // GUI includes
 #include <gui_common.h>
 #include <gui_dialog_contour_capture.h>
+#include <gui_dialog_contour_healing.h>
 
 // Engine includes
 #include <engine_part.h>
@@ -39,13 +40,17 @@
 
 // OCCT includes
 #include <BRep_Builder.hxx>
+#include <BRepAdaptor_Curve.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
+#include <GCPnts_TangentialDeflection.hxx>
+#include <ShapeAnalysis_FreeBounds.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 
 // SPE includes
 #include <CC_ClassifyPointFace.h>
+#include <CC_Validate.h>
 
 //-----------------------------------------------------------------------------
 
@@ -61,53 +66,62 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   m_pMainLayout = new QVBoxLayout();
 
   // Buttons
-  m_widgets.pPickContour         = new QPushButton("Pick contour");
-  m_widgets.pLoadContour         = new QPushButton("Import contour");
-  m_widgets.pCheckVertexDistance = new QPushButton("Check distance at poles");
-  m_widgets.pProjectVertices     = new QPushButton("Project poles to body");
-  m_widgets.pCapture             = new QPushButton("Capture");
-  m_widgets.pValidateResult      = new QPushButton("Validate result");
-  m_widgets.pBVH_SAH             = new QPushButton("BVH [SAH]");
-  m_widgets.pBVH_Linear          = new QPushButton("BVH [linear]");
-  m_widgets.pPickFacet           = new QPushButton("Pick facet");
+  m_widgets.pPickContour          = new QPushButton("Pick contour");
+  m_widgets.pLoadContour          = new QPushButton("Import contour");
+  m_widgets.pSaveContour          = new QPushButton("Save contour");
+  m_widgets.pCheckContourDistance = new QPushButton("Check contour-shell distance");
+  m_widgets.pCheckVertexDistance  = new QPushButton("Check distance at poles");
+  m_widgets.pProjectVertices      = new QPushButton("Project poles to body");
+  m_widgets.pHealContour          = new QPushButton("Heal contour");
+  m_widgets.pCapture              = new QPushButton("Capture");
+  m_widgets.pValidateResult       = new QPushButton("Validate result");
+  m_widgets.pBVH_SAH              = new QPushButton("BVH [SAH]");
+  m_widgets.pBVH_Linear           = new QPushButton("BVH [linear]");
+  m_widgets.pPickFacet            = new QPushButton("Pick facet");
   //
-  m_widgets.pPickContour         -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pLoadContour         -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pCheckVertexDistance -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pProjectVertices     -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pCapture             -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pValidateResult      -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pBVH_SAH             -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pBVH_Linear          -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pPickFacet           -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pPickContour          -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pLoadContour          -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSaveContour          -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pCheckContourDistance -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pCheckVertexDistance  -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pProjectVertices      -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pHealContour          -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pCapture              -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pValidateResult       -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pBVH_SAH              -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pBVH_Linear           -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pPickFacet            -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Other configurations
   m_widgets.pPickContour ->setCheckable(true);
   m_widgets.pPickFacet   ->setCheckable(true);
 
   // Group of buttons for contour definition
-  QGroupBox*   pContourGroup = new QGroupBox("Define contour");
+  QGroupBox*   pContourGroup = new QGroupBox("Contour geometry");
   QVBoxLayout* pContourLay   = new QVBoxLayout(pContourGroup);
   //
   pContourLay->addWidget(m_widgets.pPickContour);
   pContourLay->addWidget(m_widgets.pLoadContour);
+  pContourLay->addWidget(m_widgets.pSaveContour);
 
   // Group of buttons for contour validation
-  QGroupBox*   pValidateGroup = new QGroupBox("Contour healing");
+  QGroupBox*   pValidateGroup = new QGroupBox("Contour processing");
   QVBoxLayout* pValidateLay   = new QVBoxLayout(pValidateGroup);
   //
+  pValidateLay->addWidget(m_widgets.pCheckContourDistance);
   pValidateLay->addWidget(m_widgets.pCheckVertexDistance);
   pValidateLay->addWidget(m_widgets.pProjectVertices);
+  pValidateLay->addWidget(m_widgets.pHealContour);
 
   // Group of buttons for contour capture
-  QGroupBox*   pCaptureGroup = new QGroupBox("Capture");
+  QGroupBox*   pCaptureGroup = new QGroupBox("Contour capture");
   QVBoxLayout* pCaptureLay   = new QVBoxLayout(pCaptureGroup);
   //
   pCaptureLay->addWidget(m_widgets.pCapture);
   pCaptureLay->addWidget(m_widgets.pValidateResult);
 
   // Group of buttons for additional tests
-  QGroupBox*   pAddendumGroup = new QGroupBox("Additional");
+  QGroupBox*   pAddendumGroup = new QGroupBox("Additional tools");
   QVBoxLayout* pAddendumLay   = new QVBoxLayout(pAddendumGroup);
   //
   pAddendumLay->addWidget(m_widgets.pPickFacet);
@@ -125,15 +139,18 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   this->setLayout(m_pMainLayout);
 
   // Connect signals to slots
-  connect( m_widgets.pPickContour,         SIGNAL( clicked() ), SLOT( onPickContour         () ) );
-  connect( m_widgets.pLoadContour,         SIGNAL( clicked() ), SLOT( onLoadContour         () ) );
-  connect( m_widgets.pCheckVertexDistance, SIGNAL( clicked() ), SLOT( onCheckVertexDistance () ) );
-  connect( m_widgets.pProjectVertices,     SIGNAL( clicked() ), SLOT( onProjectVertices     () ) );
-  connect( m_widgets.pCapture,             SIGNAL( clicked() ), SLOT( onCapture             () ) );
-  connect( m_widgets.pValidateResult,      SIGNAL( clicked() ), SLOT( onValidateResult      () ) );
-  connect( m_widgets.pBVH_SAH,             SIGNAL( clicked() ), SLOT( onBVH_SAH             () ) );
-  connect( m_widgets.pBVH_Linear,          SIGNAL( clicked() ), SLOT( onBVH_Linear          () ) );
-  connect( m_widgets.pPickFacet,           SIGNAL( clicked() ), SLOT( onPickFacet           () ) );
+  connect( m_widgets.pPickContour,          SIGNAL( clicked() ), SLOT( onPickContour          () ) );
+  connect( m_widgets.pLoadContour,          SIGNAL( clicked() ), SLOT( onLoadContour          () ) );
+  connect( m_widgets.pSaveContour,          SIGNAL( clicked() ), SLOT( onSaveContour          () ) );
+  connect( m_widgets.pCheckContourDistance, SIGNAL( clicked() ), SLOT( onCheckContourDistance () ) );
+  connect( m_widgets.pCheckVertexDistance,  SIGNAL( clicked() ), SLOT( onCheckVertexDistance  () ) );
+  connect( m_widgets.pProjectVertices,      SIGNAL( clicked() ), SLOT( onProjectVertices      () ) );
+  connect( m_widgets.pHealContour,          SIGNAL( clicked() ), SLOT( onHealContour          () ) );
+  connect( m_widgets.pCapture,              SIGNAL( clicked() ), SLOT( onCapture              () ) );
+  connect( m_widgets.pValidateResult,       SIGNAL( clicked() ), SLOT( onValidateResult       () ) );
+  connect( m_widgets.pBVH_SAH,              SIGNAL( clicked() ), SLOT( onBVH_SAH              () ) );
+  connect( m_widgets.pBVH_Linear,           SIGNAL( clicked() ), SLOT( onBVH_Linear           () ) );
+  connect( m_widgets.pPickFacet,            SIGNAL( clicked() ), SLOT( onPickFacet            () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -280,8 +297,6 @@ void gui_controls_cc::onLoadContour()
       {
         std::cout << "Cannot locate a host facet for a contour's point" << std::endl;
         common_facilities::Instance()->Plotter->DRAW_POINT(P, Color_Red, "Failure");
-        /*common_facilities::Instance()->Model->AbortCommand();
-        return;*/
         continue;
       }
 
@@ -295,6 +310,141 @@ void gui_controls_cc::onLoadContour()
   // Actualize
   common_facilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
   common_facilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Saves contour to a BREP file.
+void gui_controls_cc::onSaveContour()
+{
+  // Get contour Node
+  Handle(geom_contour_node)
+    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  //
+  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+  {
+    std::cout << "Error: contour is not defined" << std::endl;
+    return;
+  }
+
+  QString filename = gui_common::selectBRepFile(gui_common::OpenSaveAction_Save);
+
+  // Save shape
+  TopoDS_Wire contourShape = contour_n->AsShape(true);
+  //
+  if ( !geom_utils::WriteBRep( contourShape, QStr2AsciiStr(filename) ) )
+    std::cout << "Error: cannot save contour" << std::endl;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Checks distance from the contour to the host faces.
+void gui_controls_cc::onCheckContourDistance()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Get contour Node
+  Handle(geom_contour_node)
+    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  //
+  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+  {
+    std::cout << "Error: contour is not defined" << std::endl;
+    return;
+  }
+
+  // Imperative viewer
+  ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
+
+  // Create the accelerating structure
+  if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
+    m_bvh = new geom_bvh_facets(part,
+                                geom_bvh_facets::Builder_Binned,
+                                common_facilities::Instance()->Notifier,
+                                common_facilities::Instance()->Plotter);
+
+  // Get contour wire
+  TopoDS_Wire contourWire = contour_n->AsShape();
+
+  // Linear precision
+  double linPrec = 0.1;
+
+  // Pick up sample points on the wire and find the nearest faces for them
+  TColgp_SequenceOfPnt pts;
+  //
+  for ( TopExp_Explorer exp(contourWire, TopAbs_EDGE); exp.More(); exp.Next() )
+  {
+    const TopoDS_Edge& E = TopoDS::Edge( exp.Current() );
+
+    double f, l;
+    BRep_Tool::Range(E, f, l);
+    BRepAdaptor_Curve BAC(E);
+    GCPnts_TangentialDeflection Defl(BAC, f, l, M_PI/18.0, linPrec);
+
+    if ( E.Orientation() == TopAbs_REVERSED )
+    {
+      for ( int pt_idx = Defl.NbPoints(); pt_idx >= 1; --pt_idx )
+      {
+        gp_Pnt P = Defl.Value(pt_idx);
+        pts.Append(P);
+      }
+    }
+    else
+    {
+      for ( int pt_idx = 1; pt_idx <= Defl.NbPoints(); ++pt_idx )
+      {
+        gp_Pnt P = Defl.Value(pt_idx);
+        pts.Append(P);
+      }
+    }
+  }
+
+  std::cout << "Number of sample points: " << pts.Length() << std::endl;
+
+  // Get all faces with indices
+  TopTools_IndexedMapOfShape faces;
+  TopExp::MapShapes(part, TopAbs_FACE, faces);
+
+  // Prepare a tool to find the intersected facet
+  geom_hit_facet HitFacet(m_bvh,
+                          common_facilities::Instance()->Notifier,
+                          common_facilities::Instance()->Plotter);
+
+  double maxGap = 0.0;
+  gp_Pnt maxGapPt;
+
+  // For each point, find the nearest faces
+  for ( TColgp_SequenceOfPnt::Iterator it(pts); it.More(); it.Next() )
+  {
+    const gp_Pnt& P = it.Value();
+
+    // Recover host face
+    int facet_idx = -1;
+    if ( !HitFacet(P, 1e-1, facet_idx) )
+      continue;
+
+    // Get face index and face
+    const int          face_idx = m_bvh->GetFacet(facet_idx).FaceIndex;
+    const TopoDS_Face& face     = TopoDS::Face( faces(face_idx) );
+
+    // Point-face classifier
+    gp_Pnt2d UV;
+    double gap;
+    //
+    CC_ClassifyPointFace ClassPtFace( face, BRep_Tool::Tolerance(face), Precision::Confusion() );
+    //
+    ClassPtFace(P, false, UV, gap, NULL);
+
+    if ( gap > maxGap )
+    {
+      maxGap   = gap;
+      maxGapPt = P;
+    }
+  }
+
+  std::cout << "Max gap: " << maxGap << std::endl;
+  IV.DRAW_POINT(maxGapPt, Color_Yellow);
 }
 
 //-----------------------------------------------------------------------------
@@ -315,7 +465,7 @@ void gui_controls_cc::onCheckVertexDistance()
     return;
   }
 
-  // Get all faces
+  // Get all faces with indices
   TopTools_IndexedMapOfShape faces;
   TopExp::MapShapes(part, TopAbs_FACE, faces);
 
@@ -419,6 +569,16 @@ void gui_controls_cc::onProjectVertices()
 
 //-----------------------------------------------------------------------------
 
+//! Performs contour healing.
+void gui_controls_cc::onHealContour()
+{
+  // Run dialog
+  gui_dialog_contour_healing* wCH = new gui_dialog_contour_healing(this);
+  wCH->show();
+}
+
+//-----------------------------------------------------------------------------
+
 //! Performs contour capturing.
 void gui_controls_cc::onCapture()
 {
@@ -432,10 +592,43 @@ void gui_controls_cc::onCapture()
 //! Performs validation of capture result.
 void gui_controls_cc::onValidateResult()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  // Get part Node
+  Handle(geom_part_node)
+    part_n = common_facilities::Instance()->Model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+  {
+    std::cout << "Error: part is not defined" << std::endl;
+    return;
+  }
 
-  // TODO: NYI
+  // Get contour Node
+  Handle(geom_contour_node) contour_n = part_n->GetContour();
+  //
+  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+  {
+    std::cout << "Error: contour is not defined" << std::endl;
+    return;
+  }
+
+  // Get contour
+  TopoDS_Shape contour = contour_n->AsShape();
+
+  // Get part shape
+  TopoDS_Shape capturedShape = part_n->GetShape();
+
+  // Check gap. The check is performed on vertices. I.e. the vertices of
+  // the reference contour are projected to the edges of the outer wire
+  // of the extracted shape. Since we consider the original vertices as
+  // "perfect" ones (we cannot say this for the interior edges which
+  // normally do not lie on surface), our expectation is that a good
+  // contour capture procedure will not move them significantly
+  ShapeAnalysis_FreeBounds shellAnalyzer(capturedShape, 0.2);
+  const TopoDS_Compound& outerWire = shellAnalyzer.GetClosedWires();
+  //
+  const double H = CC_Validate::GetMaxDistanceVertex(contour, outerWire);
+
+  std::cout << "Deviation in vertices: " << H << std::endl;
 }
 
 //-----------------------------------------------------------------------------

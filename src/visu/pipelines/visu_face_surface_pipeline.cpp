@@ -30,7 +30,7 @@
 visu_face_surface_pipeline::visu_face_surface_pipeline()
 : visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                  vtkSmartPointer<vtkActor>::New() ),
-  m_iStepsNumber(20)
+  m_iStepsNumber(80)
 {
   this->Actor()->GetProperty()->SetLineWidth(1.0);
 }

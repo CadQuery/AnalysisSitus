@@ -1,12 +1,12 @@
 //-----------------------------------------------------------------------------
-// Created on: 26 September 2016
+// Created on: 25 September 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <gui_dialog_contour_healing.h>
+#include <gui_dialog_build_offsets.h>
 
 // Common includes
 #include <common_draw_test_suite.h>
@@ -24,10 +24,11 @@
 #include <QSizePolicy>
 
 // OCCT includes
+#include <BRep_Builder.hxx>
 #include <TopExp_Explorer.hxx>
 
 // SPE includes
-#include <Common_ReapproxContour.h>
+#include <SpeCore_Hull.h>
 
 //-----------------------------------------------------------------------------
 
@@ -39,10 +40,12 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
+//! \param plate  [in] plate base to offset.
 //! \param parent [in] parent widget.
-gui_dialog_contour_healing::gui_dialog_contour_healing(QWidget* parent)
+gui_dialog_build_offsets::gui_dialog_build_offsets(const Handle(SpeCore_Plate)& plate,
+                                                   QWidget*                     parent)
 //
-: QDialog(parent)
+: QDialog(parent), m_plate(plate)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -51,13 +54,19 @@ gui_dialog_contour_healing::gui_dialog_contour_healing(QWidget* parent)
   QGroupBox* pGroup = new QGroupBox("Parameters");
 
   // Editors
-  m_widgets.pPrecision = new gui_line_edit();
+  m_widgets.pOffset    = new gui_line_edit();
+  m_widgets.pThickness = new gui_line_edit();
+  m_widgets.pShift     = new gui_line_edit();
 
   // Sizing
-  m_widgets.pPrecision->setMinimumWidth(CONTROL_EDIT_WIDTH);
+  m_widgets.pOffset    -> setMinimumWidth(CONTROL_EDIT_WIDTH);
+  m_widgets.pThickness -> setMinimumWidth(CONTROL_EDIT_WIDTH);
+  m_widgets.pShift     -> setMinimumWidth(CONTROL_EDIT_WIDTH);
 
   // Default values
-  m_widgets.pPrecision->setText("0.1");
+  m_widgets.pOffset    -> setText("100");
+  m_widgets.pThickness -> setText("10");
+  m_widgets.pShift     -> setText("0.5");
 
   //---------------------------------------------------------------------------
   // Buttons
@@ -80,9 +89,13 @@ gui_dialog_contour_healing::gui_dialog_contour_healing(QWidget* parent)
   pGrid->setSpacing(5);
   pGrid->setAlignment(Qt::AlignTop | Qt::AlignLeft);
   //
-  pGrid->addWidget(new QLabel("Precision:"), 0, 0);
+  pGrid->addWidget(new QLabel("Offset:"),    0, 0);
+  pGrid->addWidget(new QLabel("Thickness:"), 1, 0);
+  pGrid->addWidget(new QLabel("Shift:"),     2, 0);
   //
-  pGrid->addWidget(m_widgets.pPrecision, 0, 1);
+  pGrid->addWidget(m_widgets.pOffset,    0, 1);
+  pGrid->addWidget(m_widgets.pThickness, 1, 1);
+  pGrid->addWidget(m_widgets.pShift,     2, 1);
   //
   pGrid->setColumnStretch(0, 0);
   pGrid->setColumnStretch(1, 1);
@@ -102,11 +115,11 @@ gui_dialog_contour_healing::gui_dialog_contour_healing(QWidget* parent)
 
   this->setLayout(m_pMainLayout);
   this->setWindowModality(Qt::WindowModal);
-  this->setWindowTitle("Contour Healing");
+  this->setWindowTitle("Build Offsets");
 }
 
 //! Destructor.
-gui_dialog_contour_healing::~gui_dialog_contour_healing()
+gui_dialog_build_offsets::~gui_dialog_build_offsets()
 {
   delete m_pMainLayout;
 }
@@ -114,10 +127,17 @@ gui_dialog_contour_healing::~gui_dialog_contour_healing()
 //-----------------------------------------------------------------------------
 
 //! Reaction on clicking "Perform" button.
-void gui_dialog_contour_healing::onPerform()
+void gui_dialog_build_offsets::onPerform()
 {
+  if ( m_plate.IsNull() )
+  {
+    std::cout << "Error: plate base is undefined" << std::endl;
+  }
+
   // Read user inputs
-  const double precision = m_widgets.pPrecision->text().toDouble();
+  const double offset    = m_widgets.pOffset->text().toDouble();
+  const double thickness = m_widgets.pThickness->text().toDouble();
+  const double shift     = m_widgets.pShift->text().toDouble();
 
   // Get part Node
   Handle(geom_part_node)
@@ -129,77 +149,53 @@ void gui_dialog_contour_healing::onPerform()
     return;
   }
 
-  // Get contour Node
-  Handle(geom_contour_node) contour_n = part_n->GetContour();
-  //
-  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
-  {
-    std::cout << "Error: contour is not defined" << std::endl;
-    return;
-  }
-
-  /* =================
-   *  Perform healing
-   * ================= */
-
-  // Get contour wire
-  TopoDS_Wire contourShape = contour_n->AsShape();
-
-  // Count edges
-  {
-    int numEdges = 0;
-    for ( TopExp_Explorer exp(contourShape, TopAbs_EDGE); exp.More(); exp.Next() )
-      numEdges++;
-    //
-    std::cout << "Input contour contains " << numEdges << " edge(s)" << std::endl;
-  }
-
-  // Prepare journal
   Handle(SpeCore_Journal) Journal = SpeCore_Journal::Instance();
+  
+  /* ===============
+   *  Build offsets
+   * =============== */
 
   TIMER_NEW
   TIMER_GO
 
-  // Run healing
-  Common_ReapproxContour Heal(contourShape, precision);
-  TopoDS_Wire res;
-  if ( !Heal(res, true, true, Journal) )
-  {
-    std::cout << "Error: cannot heal contour" << std::endl;
-    return;
-  }
+  if ( !m_plate->DefineOffsets(offset, thickness, shift, Journal) )
+    std::cout << "Cannot define offsets" << std::endl;
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("Contour Healing")
+  TIMER_COUT_RESULT_MSG("Contour Capture")
 
-  Journal->Dump(std::cout);
-
-  //---------------------------------------------------------------------------
-
-  ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
-
-  const gp_Pnt& Center = Heal.Center();
-  const gp_Vec& Ori    = Heal.Orientation();
-
-  if ( Ori.Magnitude() < RealEpsilon() )
+  SpeCore_Surface PlateOffset;
+  if ( !m_plate->GetOffsetSurface(SpeCore_Plate::Surface_Plate, PlateOffset, Journal) )
   {
-    std::cout << "Error: cannot compute orientation vector" << std::endl;
+    std::cout << "Cannot access to a plate offset" << std::endl;
+    Journal->Dump(std::cout);
     return;
   }
 
-  IV.DRAW_POINT(Center, Color_Violet);
-  IV.DRAW_VECTOR_AT(Center, Ori*2000, Color_Violet);
-
-  //---------------------------------------------------------------------------
-
-  // Count edges
+  SpeCore_Surface LowerOffset;
+  if ( !m_plate->GetOffsetSurface(SpeCore_Plate::Surface_Lower, LowerOffset, Journal) )
   {
-    int numEdges = 0;
-    for ( TopExp_Explorer exp(res, TopAbs_EDGE); exp.More(); exp.Next() )
-      numEdges++;
-    //
-    std::cout << "Output contour contains " << numEdges << " edge(s)" << std::endl;
+    std::cout << "Cannot access to a lower offset" << std::endl;
+    Journal->Dump(std::cout);
+    return;
   }
+
+  SpeCore_Surface UpperOffset;
+  if ( !m_plate->GetOffsetSurface(SpeCore_Plate::Surface_Upper, UpperOffset, Journal) )
+  {
+    std::cout << "Cannot access to a upper offset" << std::endl;
+    Journal->Dump(std::cout);
+    return;
+  }
+
+  TopoDS_Compound comp;
+  BRep_Builder().MakeCompound(comp);
+  BRep_Builder().Add(comp, m_plate->GetPlateBase().Geometry);
+  BRep_Builder().Add(comp, PlateOffset.Geometry);
+  BRep_Builder().Add(comp, LowerOffset.Geometry);
+  BRep_Builder().Add(comp, UpperOffset.Geometry);
+
+  Journal->Dump(std::cout);
 
   /* ==========
    *  Finalize
@@ -207,13 +203,14 @@ void gui_dialog_contour_healing::onPerform()
 
   common_facilities::Instance()->Model->OpenCommand();
   {
-    contour_n->SetGeometry(res);
+    part_n->SetShape(comp);
   }
   common_facilities::Instance()->Model->CommitCommand();
 
-  // Actualize
-  common_facilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
-  common_facilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+  // Replace part with the extracted piece of shell
+  common_facilities::Instance()->Prs.DeleteAll();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize(part_n.get(), false, false);
 
   // Close
   this->close();

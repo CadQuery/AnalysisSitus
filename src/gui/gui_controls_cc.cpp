@@ -20,6 +20,7 @@
 
 // GUI includes
 #include <gui_common.h>
+#include <gui_dialog_build_offsets.h>
 #include <gui_dialog_contour_capture.h>
 #include <gui_dialog_contour_healing.h>
 
@@ -71,6 +72,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   m_widgets.pSaveContour          = new QPushButton("Save contour");
   m_widgets.pCheckContourDistance = new QPushButton("Check contour-shell distance");
   m_widgets.pCheckVertexDistance  = new QPushButton("Check distance at poles");
+  m_widgets.pHealedVSOriginal     = new QPushButton("Check healed-original distance");
   m_widgets.pProjectVertices      = new QPushButton("Project poles to body");
   m_widgets.pHealContour          = new QPushButton("Heal contour");
   m_widgets.pCapture              = new QPushButton("Capture");
@@ -78,12 +80,14 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   m_widgets.pBVH_SAH              = new QPushButton("BVH [SAH]");
   m_widgets.pBVH_Linear           = new QPushButton("BVH [linear]");
   m_widgets.pPickFacet            = new QPushButton("Pick facet");
+  m_widgets.pBuildOffsets         = new QPushButton("Build offsets");
   //
   m_widgets.pPickContour          -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pLoadContour          -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSaveContour          -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCheckContourDistance -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCheckVertexDistance  -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pHealedVSOriginal     -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pProjectVertices      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pHealContour          -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCapture              -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -91,6 +95,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   m_widgets.pBVH_SAH              -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pBVH_Linear           -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pPickFacet            -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pBuildOffsets         -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Other configurations
   m_widgets.pPickContour ->setCheckable(true);
@@ -110,6 +115,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   //
   pValidateLay->addWidget(m_widgets.pCheckContourDistance);
   pValidateLay->addWidget(m_widgets.pCheckVertexDistance);
+  pValidateLay->addWidget(m_widgets.pHealedVSOriginal);
   pValidateLay->addWidget(m_widgets.pProjectVertices);
   pValidateLay->addWidget(m_widgets.pHealContour);
 
@@ -128,11 +134,18 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   pAddendumLay->addWidget(m_widgets.pBVH_SAH);
   pAddendumLay->addWidget(m_widgets.pBVH_Linear);
 
+  // Group of buttons for plate modeling
+  QGroupBox*   pPlateGroup = new QGroupBox("Plate");
+  QVBoxLayout* pPlateLay   = new QVBoxLayout(pPlateGroup);
+  //
+  pPlateLay->addWidget(m_widgets.pBuildOffsets);
+
   // Set layout
   m_pMainLayout->addWidget(pContourGroup);
   m_pMainLayout->addWidget(pValidateGroup);
   m_pMainLayout->addWidget(pCaptureGroup);
   m_pMainLayout->addWidget(pAddendumGroup);
+  m_pMainLayout->addWidget(pPlateGroup);
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
   //
@@ -144,6 +157,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   connect( m_widgets.pSaveContour,          SIGNAL( clicked() ), SLOT( onSaveContour          () ) );
   connect( m_widgets.pCheckContourDistance, SIGNAL( clicked() ), SLOT( onCheckContourDistance () ) );
   connect( m_widgets.pCheckVertexDistance,  SIGNAL( clicked() ), SLOT( onCheckVertexDistance  () ) );
+  connect( m_widgets.pHealedVSOriginal,     SIGNAL( clicked() ), SLOT( onHealedVSOriginal     () ) );
   connect( m_widgets.pProjectVertices,      SIGNAL( clicked() ), SLOT( onProjectVertices      () ) );
   connect( m_widgets.pHealContour,          SIGNAL( clicked() ), SLOT( onHealContour          () ) );
   connect( m_widgets.pCapture,              SIGNAL( clicked() ), SLOT( onCapture              () ) );
@@ -151,6 +165,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   connect( m_widgets.pBVH_SAH,              SIGNAL( clicked() ), SLOT( onBVH_SAH              () ) );
   connect( m_widgets.pBVH_Linear,           SIGNAL( clicked() ), SLOT( onBVH_Linear           () ) );
   connect( m_widgets.pPickFacet,            SIGNAL( clicked() ), SLOT( onPickFacet            () ) );
+  connect( m_widgets.pBuildOffsets,         SIGNAL( clicked() ), SLOT( onBuildOffsets         () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -505,6 +520,36 @@ void gui_controls_cc::onCheckVertexDistance()
 
 //-----------------------------------------------------------------------------
 
+//! Checks distance from the original contour to the healed one.
+void gui_controls_cc::onHealedVSOriginal()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Get contour Node
+  Handle(geom_contour_node)
+    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  //
+  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+  {
+    std::cout << "Error: contour is not defined" << std::endl;
+    return;
+  }
+
+  // Get healed geometry
+  TopoDS_Wire healedContour = TopoDS::Wire( contour_n->GetGeometry() );
+
+  // Get original geometry
+  TopoDS_Wire originalContour = contour_n->AsShape(false);
+
+  // Compute Hausdorff distance
+  const double H = CC_Validate::Compute_HausdorffDistance(healedContour, originalContour);
+  //
+  std::cout << "Hausdorff deviation (healed-original): " << H << std::endl;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Projects vertices of the contour to the part.
 void gui_controls_cc::onProjectVertices()
 {
@@ -626,7 +671,7 @@ void gui_controls_cc::onValidateResult()
   ShapeAnalysis_FreeBounds shellAnalyzer(capturedShape, 0.2);
   const TopoDS_Compound& outerWire = shellAnalyzer.GetClosedWires();
   //
-  const double H = CC_Validate::GetMaxDistanceVertex(contour, outerWire);
+  const double H = CC_Validate::Compute_HausdorffDistance(contour, outerWire);
 
   std::cout << "Deviation in vertices: " << H << std::endl;
 }
@@ -713,4 +758,36 @@ void gui_controls_cc::onPickFacet()
     //
     common_facilities::Instance()->Prs.Part->RemoveObserver(EVENT_PICK_WORLD_POINT);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+//! Builds offset surfaces.
+void gui_controls_cc::onBuildOffsets()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // A part should be a shell
+  if ( part.ShapeType() != TopAbs_SHELL )
+  {
+    std::cout << "Part is not a shell" << std::endl;
+    return;
+  }
+
+  // Initialize plate base
+  SpeCore_Surface plateBase;
+  plateBase.Geometry = TopoDS::Shell(part);
+
+  // Create plate interface
+  Handle(SpeCore_Plate) plate = new SpeCore_Plate;
+  if ( !plate->Init(plateBase, NULL) )
+  {
+    std::cout << "Error: cannot initialize plate base" << std::endl;
+    return;
+  }
+
+  // Run dialog
+  gui_dialog_build_offsets* wBO = new gui_dialog_build_offsets(plate, this);
+  wBO->show();
 }

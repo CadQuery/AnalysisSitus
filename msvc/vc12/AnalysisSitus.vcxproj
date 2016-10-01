@@ -430,6 +430,16 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_build_offsets.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\gui\gui_occt_window.h" />
     <CustomBuild Include="..\..\src\gui\gui_viewer_dmu.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
@@ -1033,6 +1043,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\gui\gui_controls_pcloud.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_section.cpp" />
     <ClCompile Include="..\..\src\gui\gui_controls_skinning.cpp" />
+    <ClCompile Include="..\..\src\gui\gui_dialog_build_offsets.cpp" />
     <ClCompile Include="..\..\src\gui\gui_dialog_cloudify.cpp" />
     <ClCompile Include="..\..\src\gui\gui_dialog_contour_capture.cpp" />
     <ClCompile Include="..\..\src\gui\gui_dialog_contour_healing.cpp" />
@@ -1155,6 +1166,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_cloudify.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_contour_capture.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_contour_healing.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_build_offsets.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_euler.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_STEP.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_STEP_delegate.cpp" />

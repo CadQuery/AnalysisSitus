@@ -107,7 +107,7 @@ void gui_main_window_dmu::createViewer()
   m_viewer->SetLightOn(LightAmb);
   //
   m_context = new AIS_InteractiveContext(m_viewer);
-  m_context->SelectionColor(Quantity_NOC_YELLOW);
+  m_context->HighlightStyle()->SetColor(Quantity_NOC_YELLOW);
 
   // Create OpenCascade viewer
   m_widgets.wViewer = new gui_viewer_dmu(m_context, this);

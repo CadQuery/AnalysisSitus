@@ -777,9 +777,10 @@ ActAPI_DataObjectIdList
     m_shapePicker->Pick(XStart, YStart, 0);
 
     // Traversing results
-    visu_node_info*     aNodeInfo         = NULL;
-    vtkActorCollection* anActorCollection = m_shapePicker->GetPickedActors();
-    if ( anActorCollection )
+    visu_node_info*                     aNodeInfo         = NULL;
+    vtkSmartPointer<vtkActorCollection> anActorCollection = m_shapePicker->GetPickedActors();
+    //
+    if ( anActorCollection && anActorCollection->GetNumberOfItems() > 0 )
     {
       anActorCollection->InitTraversal();
       while ( vtkActor* anActor = anActorCollection->GetNextActor() )

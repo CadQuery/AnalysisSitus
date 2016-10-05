@@ -43,7 +43,7 @@
 #include <BRep_Builder.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
-#include <GCPnts_TangentialDeflection.hxx>
+#include <GCPnts_QuasiUniformAbscissa.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -383,7 +383,8 @@ void gui_controls_cc::onCheckContourDistance()
   TopoDS_Wire contourWire = contour_n->AsShape();
 
   // Linear precision
-  double linPrec = 0.1;
+  const int nProbePts = 23; // hey, this number is a magic one in OpenCascade,
+                            // so it should work!
 
   // Pick up sample points on the wire and find the nearest faces for them
   TColgp_SequenceOfPnt pts;
@@ -395,13 +396,16 @@ void gui_controls_cc::onCheckContourDistance()
     double f, l;
     BRep_Tool::Range(E, f, l);
     BRepAdaptor_Curve BAC(E);
-    GCPnts_TangentialDeflection Defl(BAC, f, l, M_PI/18.0, linPrec);
+    GCPnts_QuasiUniformAbscissa Defl(BAC, nProbePts, f, l);
+
+    if ( !Defl.IsDone() )
+      continue;
 
     if ( E.Orientation() == TopAbs_REVERSED )
     {
       for ( int pt_idx = Defl.NbPoints(); pt_idx >= 1; --pt_idx )
       {
-        gp_Pnt P = Defl.Value(pt_idx);
+        gp_Pnt P = BAC.Value( Defl.Parameter(pt_idx) );
         pts.Append(P);
       }
     }
@@ -409,13 +413,13 @@ void gui_controls_cc::onCheckContourDistance()
     {
       for ( int pt_idx = 1; pt_idx <= Defl.NbPoints(); ++pt_idx )
       {
-        gp_Pnt P = Defl.Value(pt_idx);
+        gp_Pnt P = BAC.Value( Defl.Parameter(pt_idx) );
         pts.Append(P);
       }
     }
   }
 
-  std::cout << "Number of sample points: " << pts.Length() << std::endl;
+  std::cout << "Number of probe points: " << pts.Length() << std::endl;
 
   // Get all faces with indices
   TopTools_IndexedMapOfShape faces;
@@ -458,8 +462,8 @@ void gui_controls_cc::onCheckContourDistance()
     }
   }
 
-  std::cout << "Max gap: " << maxGap << std::endl;
-  IV.DRAW_POINT(maxGapPt, Color_Yellow);
+  std::cout << "Max gap (C-B error): " << maxGap << std::endl;
+  IV.DRAW_POINT(maxGapPt, Color_Violet);
 }
 
 //-----------------------------------------------------------------------------

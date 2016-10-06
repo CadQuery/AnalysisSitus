@@ -48,6 +48,7 @@ public slots:
   void onMultiLine        ();
   //
   void onShowVertices     ();
+  void onShowNormals      ();
   void onSelectFaces      ();
   void onSelectEdges      ();
 
@@ -80,6 +81,7 @@ private:
     QPushButton* pMultiLine;        //!< Performs multi-line approximation.
     //
     QPushButton* pShowVertices;     //!< Shows vertices of the model.
+    QPushButton* pShowNormals;      //!< Shows normals for faces.
     QPushButton* pSelectFaces;      //!< Enables selection by faces.
     QPushButton* pSelectEdges;      //!< Enables selection by edges.
 
@@ -105,6 +107,7 @@ private:
                   pMultiLine        (NULL),
                   //
                   pShowVertices     (NULL),
+                  pShowNormals      (NULL),
                   pSelectFaces      (NULL),
                   pSelectEdges      (NULL)
     {}
@@ -133,6 +136,7 @@ private:
       delete pMultiLine;        pMultiLine        = NULL;
       //
       delete pShowVertices;     pShowVertices     = NULL;
+      delete pShowNormals;      pShowNormals      = NULL;
       delete pSelectFaces;      pSelectFaces      = NULL;
       delete pSelectEdges;      pSelectEdges      = NULL;
     }

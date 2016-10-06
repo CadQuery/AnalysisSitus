@@ -933,7 +933,50 @@ bool geom_utils::Sew(TopoDS_Shape& shape,
 
   // Perform sewing
   Sewer.Perform();
-  shape = Sewer.SewedShape();
+  TopoDS_Shape sewedShape = Sewer.SewedShape();
+
+  // Original faces
+  TopTools_IndexedMapOfShape originalFaces;
+  TopExp::MapShapes(shape, TopAbs_FACE, originalFaces);
+
+  // Sewed faces
+  TopTools_IndexedMapOfShape sewedFaces;
+  TopExp::MapShapes(sewedShape, TopAbs_FACE, sewedFaces);
+
+  // Recover orientations of faces
+  for ( int fidx = 1; fidx <= originalFaces.Extent(); ++fidx )
+  {
+    const TopoDS_Shape& originalFace = originalFaces(fidx);
+    const TopoDS_Shape& sewedFace    = Sewer.ModifiedSubShape(originalFace);
+
+    if ( sewedFace.Orientation() != originalFace.Orientation() )
+    {
+      std::cout << "Warning: orientation has changed!" << std::endl;
+    }
+  }
+
+  if ( sewedShape.ShapeType() == TopAbs_SHELL )
+  {
+    TopoDS_Shell betterShell;
+    BRep_Builder().MakeShell(betterShell);
+    //
+    for ( int fidx = 1; fidx <= sewedFaces.Extent(); ++fidx )
+    {
+      const TopoDS_Shape& sewedFace = sewedFaces(fidx); // Hey, the orientation is different here (!)
+      const TopoDS_Shape& originalFace = originalFaces(fidx);
+
+      if ( sewedFace.Orientation() != originalFace.Orientation() )
+      {
+        std::cout << "Warning: orientation has changed!" << std::endl;
+
+        BRep_Builder().Add( betterShell, sewedFace.Oriented( originalFace.Orientation() ) );
+      }
+      else
+        BRep_Builder().Add( betterShell, sewedFace );
+    }
+    shape = betterShell;
+  }
+
   return true;
 }
 

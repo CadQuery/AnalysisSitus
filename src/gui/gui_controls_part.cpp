@@ -108,6 +108,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   m_widgets.pMultiLine          = new QPushButton("Multi-line re-approx");
   //
   m_widgets.pShowVertices       = new QPushButton("Show vertices");
+  m_widgets.pShowNormals        = new QPushButton("Show normals");
   m_widgets.pSelectFaces        = new QPushButton("Select faces");
   m_widgets.pSelectEdges        = new QPushButton("Select edges");
   //
@@ -133,6 +134,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   m_widgets.pMultiLine          -> setMinimumWidth(BTN_MIN_WIDTH);
   //
   m_widgets.pShowVertices       -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pShowNormals        -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectFaces        -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectEdges        -> setMinimumWidth(BTN_MIN_WIDTH);
 
@@ -177,6 +179,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   QVBoxLayout* pVisuLay   = new QVBoxLayout(pVisuGroup);
   //
   pVisuLay->addWidget(m_widgets.pShowVertices);
+  pVisuLay->addWidget(m_widgets.pShowNormals);
   pVisuLay->addWidget(m_widgets.pSelectFaces);
   pVisuLay->addWidget(m_widgets.pSelectEdges);
 
@@ -213,6 +216,7 @@ gui_controls_part::gui_controls_part(QWidget* parent) : QWidget(parent)
   connect( m_widgets.pMultiLine,        SIGNAL( clicked() ), SLOT( onMultiLine        () ) );
   //
   connect( m_widgets.pShowVertices,     SIGNAL( clicked() ), SLOT( onShowVertices     () ) );
+  connect( m_widgets.pShowNormals,      SIGNAL( clicked() ), SLOT( onShowNormals      () ) );
   connect( m_widgets.pSelectFaces,      SIGNAL( clicked() ), SLOT( onSelectFaces      () ) );
   connect( m_widgets.pSelectEdges,      SIGNAL( clicked() ), SLOT( onSelectEdges      () ) );
 }
@@ -890,6 +894,67 @@ void gui_controls_part::onShowVertices()
   common_facilities::Instance()->Prs.DeleteAll();
   common_facilities::Instance()->Prs.Part->InitializePickers();
   common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Switches visualization of normals.
+void gui_controls_part::onShowNormals()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Calculate boundary box to choose a nice modulus for normal
+  Bnd_Box B;
+  BRepBndLib::Add(part, B);
+  //
+  const double modulus = B.CornerMin().Distance( B.CornerMax() ) / 50;
+
+  // Imperative plotter
+  ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
+
+  const bool isOn = m_widgets.pShowNormals->isChecked();
+
+  // Iterate over the face and sample the vector field defined by their
+  // orientations
+  for ( TopExp_Explorer fexp(part, TopAbs_FACE); fexp.More(); fexp.Next() )
+  {
+    const TopoDS_Face& face = TopoDS::Face( fexp.Current() );
+
+    double uMin, uMax, vMin, vMax;
+    BRepTools::UVBounds(face, uMin, uMax, vMin, vMax);
+
+    // Get middle point
+    const double um = (uMin + uMax)*0.5;
+    const double vm = (vMin + vMax)*0.5;
+
+    Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
+    gp_Pnt P;
+    gp_Vec D1U, D1V;
+    //
+    surf->D1(um, vm, P, D1U, D1V);
+
+    // Calculate normal
+    gp_Vec norm = D1U ^ D1V;
+    if ( norm.Magnitude() < RealEpsilon() )
+    {
+      std::cout << "Error: degenerated normal" << std::endl;
+      IV.DRAW_POINT(P, Color_Black, "Degenerated Face Norm");
+      continue;
+    }
+
+    norm.Normalize();
+    norm *= modulus;
+
+    if ( face.Orientation() == TopAbs_REVERSED )
+    {
+      IV.DRAW_VECTOR_AT(P, norm, Color_Blue, "Face Norm");
+    }
+    else
+    {
+      IV.DRAW_VECTOR_AT(P, norm, Color_Red, "Face Norm");
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------

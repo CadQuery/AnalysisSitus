@@ -37,6 +37,7 @@ public slots:
   void onCheckVertexDistance  ();
   void onHealedVSOriginal     ();
   void onProjectVertices      ();
+  void onEnrichContour        ();
   void onHealContour          ();
   //
   void onCapture              ();
@@ -63,6 +64,7 @@ private:
     QPushButton* pCheckVertexDistance;  //!< Checks distance from the contour's vertices to a part.
     QPushButton* pHealedVSOriginal;     //!< Checks healed contour wrt original one.
     QPushButton* pProjectVertices;      //!< Projects vertices of the contour to the exact body.
+    QPushButton* pEnrichContour;        //!< Adds more points to the contour.
     QPushButton* pHealContour;          //!< Performs contour healing.
     //
     QPushButton* pCapture;              //!< Performs contour capturing.
@@ -82,6 +84,7 @@ private:
                   pCheckVertexDistance  (NULL),
                   pHealedVSOriginal     (NULL),
                   pProjectVertices      (NULL),
+                  pEnrichContour        (NULL),
                   pHealContour          (NULL),
                   //
                   pCapture              (NULL),
@@ -104,6 +107,7 @@ private:
       delete pCheckVertexDistance;  pCheckVertexDistance = NULL;
       delete pHealedVSOriginal;     pHealedVSOriginal    = NULL;
       delete pProjectVertices;      pProjectVertices     = NULL;
+      delete pEnrichContour;        pEnrichContour       = NULL;
       delete pHealContour;          pHealContour         = NULL;
       //
       delete pCapture;              pCapture             = NULL;

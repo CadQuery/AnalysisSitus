@@ -22,6 +22,7 @@
 #include <gui_common.h>
 #include <gui_dialog_build_offsets.h>
 #include <gui_dialog_contour_capture.h>
+#include <gui_dialog_contour_enrich.h>
 #include <gui_dialog_contour_healing.h>
 
 // Engine includes
@@ -74,6 +75,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   m_widgets.pCheckVertexDistance  = new QPushButton("Check distance at poles");
   m_widgets.pHealedVSOriginal     = new QPushButton("Check healed-original distance");
   m_widgets.pProjectVertices      = new QPushButton("Project poles to body");
+  m_widgets.pEnrichContour        = new QPushButton("Enrich contour");
   m_widgets.pHealContour          = new QPushButton("Heal contour");
   m_widgets.pCapture              = new QPushButton("Capture");
   m_widgets.pValidateResult       = new QPushButton("Validate result");
@@ -89,6 +91,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   m_widgets.pCheckVertexDistance  -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pHealedVSOriginal     -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pProjectVertices      -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pEnrichContour        -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pHealContour          -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCapture              -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pValidateResult       -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -98,8 +101,8 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   m_widgets.pBuildOffsets         -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Other configurations
-  m_widgets.pPickContour ->setCheckable(true);
-  m_widgets.pPickFacet   ->setCheckable(true);
+  m_widgets.pPickContour  ->setCheckable(true);
+  m_widgets.pPickFacet    ->setCheckable(true);
 
   // Group of buttons for contour definition
   QGroupBox*   pContourGroup = new QGroupBox("Contour geometry");
@@ -117,6 +120,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   pValidateLay->addWidget(m_widgets.pCheckVertexDistance);
   pValidateLay->addWidget(m_widgets.pHealedVSOriginal);
   pValidateLay->addWidget(m_widgets.pProjectVertices);
+  pValidateLay->addWidget(m_widgets.pEnrichContour);
   pValidateLay->addWidget(m_widgets.pHealContour);
 
   // Group of buttons for contour capture
@@ -159,6 +163,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
   connect( m_widgets.pCheckVertexDistance,  SIGNAL( clicked() ), SLOT( onCheckVertexDistance  () ) );
   connect( m_widgets.pHealedVSOriginal,     SIGNAL( clicked() ), SLOT( onHealedVSOriginal     () ) );
   connect( m_widgets.pProjectVertices,      SIGNAL( clicked() ), SLOT( onProjectVertices      () ) );
+  connect( m_widgets.pEnrichContour,        SIGNAL( clicked() ), SLOT( onEnrichContour        () ) );
   connect( m_widgets.pHealContour,          SIGNAL( clicked() ), SLOT( onHealContour          () ) );
   connect( m_widgets.pCapture,              SIGNAL( clicked() ), SLOT( onCapture              () ) );
   connect( m_widgets.pValidateResult,       SIGNAL( clicked() ), SLOT( onValidateResult       () ) );
@@ -614,6 +619,26 @@ void gui_controls_cc::onProjectVertices()
   // Actualize
   common_facilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
   common_facilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Enriches contour with additional points.
+void gui_controls_cc::onEnrichContour()
+{
+  TopoDS_Shape part;
+  if ( !gui_common::PartShape(part) ) return;
+
+  // Create the accelerating structure
+  if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
+    m_bvh = new geom_bvh_facets(part,
+                                geom_bvh_facets::Builder_Binned,
+                                common_facilities::Instance()->Notifier,
+                                common_facilities::Instance()->Plotter);
+
+  // Run dialog
+  gui_dialog_contour_enrich* wCE = new gui_dialog_contour_enrich(m_bvh, this);
+  wCE->show();
 }
 
 //-----------------------------------------------------------------------------

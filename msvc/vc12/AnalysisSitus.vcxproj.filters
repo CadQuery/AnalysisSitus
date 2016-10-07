@@ -1267,6 +1267,9 @@
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_contour_capture.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_gui_dialog_contour_enrich.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_gui_dialog_contour_healing.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
@@ -2230,6 +2233,9 @@
     <ClCompile Include="..\..\src\gui\gui_dialog_build_offsets.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui_dialog_contour_enrich.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\gui\gui_object_browser.h">
@@ -2413,6 +2419,9 @@
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\src\gui\gui_dialog_build_offsets.h">
+      <Filter>Header Files\GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\gui\gui_dialog_contour_enrich.h">
       <Filter>Header Files\GUI</Filter>
     </CustomBuild>
   </ItemGroup>

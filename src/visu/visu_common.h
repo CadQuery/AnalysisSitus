@@ -47,6 +47,7 @@
 #define EVENT_JOIN                (vtkCommand::UserEvent + 1006)
 #define EVENT_FIND_FACE           (vtkCommand::UserEvent + 1007)
 #define EVENT_PICK_WORLD_POINT    (vtkCommand::UserEvent + 1008)
+#define EVENT_TRACE_WORLD_POINTS  (vtkCommand::UserEvent + 1009)
 
 //-----------------------------------------------------------------------------
 

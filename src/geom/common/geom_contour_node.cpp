@@ -18,6 +18,7 @@
 #include <ActAux_ArrayUtils.h>
 
 // OCCT includes
+#include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <ShapeExtend_WireData.hxx>
@@ -184,31 +185,49 @@ TopoDS_Wire geom_contour_node::AsShape(const bool useCache) const
   if ( !points->GetNumOfPoints() )
     return TopoDS_Wire();
 
-  const int                    nPts    = points->GetNumOfPoints();
-  TopoDS_Vertex                V_first = BRepBuilderAPI_MakeVertex( points->GetPoint(0) );
-  TopoDS_Vertex                V_prev  = V_first, V_last;
-  Handle(ShapeExtend_WireData) WD      = new ShapeExtend_WireData;
+  TopoDS_Wire   result;
+  const int     nPts    = points->GetNumOfPoints();
+  TopoDS_Vertex V_first = BRepBuilderAPI_MakeVertex( points->GetPoint(0) );
   //
-  for ( int p = 1; p < nPts; ++p )
+  if ( nPts == 1 )
   {
-    TopoDS_Vertex V = BRepBuilderAPI_MakeVertex( points->GetPoint(p) );
-    TopoDS_Edge   E = BRepBuilderAPI_MakeEdge(V_prev, V);
-    //
-    WD->Add(E);
-    //
-    if ( p == nPts - 1 )
-      V_last = V;
+    TopoDS_Edge E;
+    BRep_Builder B;
+    B.MakeEdge(E);
+    B.Degenerated(E, true);
+    B.Add(E, V_first);
 
-    V_prev = V;
+    B.MakeWire(result);
+    B.Add(result, E);
   }
-  //
-  if ( this->IsClosed() )
+  else
   {
-    TopoDS_Edge E = BRepBuilderAPI_MakeEdge(V_last, V_first);
-    WD->Add(E);
+    TopoDS_Vertex                V_prev = V_first, V_last;
+    Handle(ShapeExtend_WireData) WD     = new ShapeExtend_WireData;
+    //
+    for ( int p = 1; p < nPts; ++p )
+    {
+      TopoDS_Vertex V = BRepBuilderAPI_MakeVertex( points->GetPoint(p) );
+      TopoDS_Edge   E = BRepBuilderAPI_MakeEdge(V_prev, V);
+      //
+      WD->Add(E);
+      //
+      if ( p == nPts - 1 )
+        V_last = V;
+
+      V_prev = V;
+    }
+    //
+    if ( this->IsClosed() )
+    {
+      TopoDS_Edge E = BRepBuilderAPI_MakeEdge(V_last, V_first);
+      WD->Add(E);
+    }
+
+    result = WD->WireAPIMake();
   }
 
-  return WD->WireAPIMake();
+  return result;
 }
 
 //! Re-packages all coordinates to a convenient sequence structure.
@@ -229,6 +248,31 @@ void geom_contour_node::AsPointsOnFaces(TColgp_SequenceOfPnt&      points,
     points.Append( pcloud->GetPoint(p) );
     faces.Append( faceIndices->Value(p) );
   }
+}
+
+//! Sets new points and face indices.
+//! \param[in] points collection of points.
+//! \param[in] faces  collection of face indices.
+void geom_contour_node::SetPointsOnFaces(const TColgp_SequenceOfPnt&      points,
+                                         const TColStd_SequenceOfInteger& faces)
+{
+  const int numPts = points.Length();
+
+  Handle(HRealArray) coords = new HRealArray(0, numPts*3 - 1);
+  Handle(HIntArray)  ifaces = new HIntArray(0, numPts - 1);
+
+  // Fill arrays with data
+  for ( int pidx = 1; pidx <= points.Length(); ++pidx )
+  {
+    coords->ChangeValue( (pidx - 1)*3 )     = points(pidx).X();
+    coords->ChangeValue( (pidx - 1)*3 + 1 ) = points(pidx).Y();
+    coords->ChangeValue( (pidx - 1)*3 + 2 ) = points(pidx).Z();
+    ifaces->ChangeValue( pidx - 1 )         = faces(pidx);
+  }
+
+  // Set arrays
+  this->SetCoords(coords);
+  this->SetFaces(ifaces);
 }
 
 //! Sets explicit geometry for the contour.

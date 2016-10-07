@@ -120,6 +120,10 @@ public:
                     TColStd_SequenceOfInteger& faces) const;
 
   void
+    SetPointsOnFaces(const TColgp_SequenceOfPnt&      points,
+                     const TColStd_SequenceOfInteger& faces);
+
+  void
     SetGeometry(const TopoDS_Shape& shape);
 
   TopoDS_Shape

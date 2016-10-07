@@ -35,7 +35,7 @@ visu_points_pipeline::visu_points_pipeline()
 //! \param DP [in] Data Provider.
 void visu_points_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 {
-  Handle(visu_points_data_provider)
+  const Handle(visu_points_data_provider)&
     provider = Handle(visu_points_data_provider)::DownCast(DP);
 
   /* ===========================

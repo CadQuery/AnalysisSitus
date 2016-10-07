@@ -65,7 +65,10 @@ void visu_create_contour_callback::Execute(vtkObject*    vtkNotUsed(theCaller),
   gp_XYZ hit;
   int facet_idx;
   if ( !HitFacet(pickRay, facet_idx, hit) )
+  {
     std::cout << "Error: cannot find the intersected facet" << std::endl;
+    return;
+  }
 
   Handle(geom_contour_node)
     contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();

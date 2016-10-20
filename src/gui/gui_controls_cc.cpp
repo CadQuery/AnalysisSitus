@@ -467,7 +467,10 @@ void gui_controls_cc::onCheckContourDistance()
     }
   }
 
-  std::cout << "Max gap (C-B error): " << maxGap << std::endl;
+  std::cout << "Max gap (C-B error): " << maxGap
+            << " at (" << maxGapPt.X() << ", " << maxGapPt.Y() << ", " << maxGapPt.Z() << ")"
+            << std::endl;
+  //
   IV.DRAW_POINT(maxGapPt, Color_Violet);
 }
 

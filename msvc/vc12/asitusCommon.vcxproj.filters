@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Calculus">
+      <UniqueIdentifier>{fd135209-107c-4414-936d-a256d817b001}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Journaling">
+      <UniqueIdentifier>{8c66b5df-3298-43df-acb6-543821009ee7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Calculus">
+      <UniqueIdentifier>{0f3a3e7b-a78b-4629-a235-0f3403231da1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Journaling">
+      <UniqueIdentifier>{56352d8b-07ef-4343-9025-7b278186defa}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\asitusCommon\analysis_situs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\common_draw_test_suite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\common_facilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\common_model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\common_partition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\common_root_node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\common_variable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\common_version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\calculus\calculus_design_law.h">
+      <Filter>Header Files\Calculus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\calculus\calculus_design_law_node.h">
+      <Filter>Header Files\Calculus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\calculus\calculus_func_univariate.h">
+      <Filter>Header Files\Calculus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\journaling\journal_iv.h">
+      <Filter>Header Files\Journaling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\journaling\journal_logger.h">
+      <Filter>Header Files\Journaling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusCommon\journaling\journal_notifier.h">
+      <Filter>Header Files\Journaling</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\asitusCommon\common_facilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusCommon\common_model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusCommon\common_partition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusCommon\common_root_node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusCommon\calculus\calculus_design_law.cpp">
+      <Filter>Source Files\Calculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusCommon\calculus\calculus_design_law_node.cpp">
+      <Filter>Source Files\Calculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusCommon\calculus\calculus_func_univariate.cpp">
+      <Filter>Source Files\Calculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusCommon\journaling\journal_iv.cpp">
+      <Filter>Source Files\Journaling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusCommon\journaling\journal_logger.cpp">
+      <Filter>Source Files\Journaling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusCommon\journaling\journal_notifier.cpp">
+      <Filter>Source Files\Journaling</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

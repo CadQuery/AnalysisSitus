@@ -1,0 +1,266 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Common">
+      <UniqueIdentifier>{015d2a1c-444a-4db1-86f2-0bbd7da38df1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Data Exchange">
+      <UniqueIdentifier>{bfc75060-d567-42ac-a363-7d2ff648b80f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Direct Modeling">
+      <UniqueIdentifier>{855f5984-8fcf-435e-8b72-afe0a7ca7061}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Hulls">
+      <UniqueIdentifier>{9b867571-4ba1-44c6-a120-e1d209ef4714}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Point Clouds">
+      <UniqueIdentifier>{ad153322-f067-473b-abc9-0db2321f2680}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reverse Engineering">
+      <UniqueIdentifier>{04198f41-928b-4467-a235-b81718b00657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common">
+      <UniqueIdentifier>{e86c0d8b-9786-47b3-9995-e6783632da4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Data Exchange">
+      <UniqueIdentifier>{2d636298-b397-4573-bbf6-b6674d63581a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Direct Modeling">
+      <UniqueIdentifier>{e93b37cb-3a57-4a76-b65d-96b6f2db941c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Hulls">
+      <UniqueIdentifier>{9abd531c-5c91-4113-a1ab-13f0dafa5ccb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Reverse Engineering">
+      <UniqueIdentifier>{a26b3eb1-a9ed-4698-b31d-fed32507ade5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Point Clouds">
+      <UniqueIdentifier>{3d04cc8a-673c-43f7-a370-cdcbd3ed6733}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_boundary_edges_node.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_bvh_facets.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_bvh_iterator.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_contour_node.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_curve_node.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_edge_node.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_euler_poincare.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_face_node.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_find_nonmanifold.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_hit_facet.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_part_node.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_surf_node.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\common\geom_utils.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\data_exchange\geom_DE_vars.h">
+      <Filter>Header Files\Data Exchange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\data_exchange\geom_IGES.h">
+      <Filter>Header Files\Data Exchange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\data_exchange\geom_STEP.h">
+      <Filter>Header Files\Data Exchange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\direct_modeling\geom_delete_edges.h">
+      <Filter>Header Files\Direct Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\direct_modeling\geom_detach_faces.h">
+      <Filter>Header Files\Direct Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\direct_modeling\geom_find_same_hosts.h">
+      <Filter>Header Files\Direct Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\direct_modeling\geom_join_edges.h">
+      <Filter>Header Files\Direct Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\direct_modeling\geom_rehost_faces.h">
+      <Filter>Header Files\Direct Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\hulls\geom_k_neighbors_hull.h">
+      <Filter>Header Files\Hulls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\hulls\geom_quick_hull_2d.h">
+      <Filter>Header Files\Hulls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\re_engineering\geom_build_contours.h">
+      <Filter>Header Files\Reverse Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\re_engineering\geom_cloudify.h">
+      <Filter>Header Files\Reverse Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\re_engineering\geom_re_contour_node.h">
+      <Filter>Header Files\Reverse Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\re_engineering\geom_re_contours_node.h">
+      <Filter>Header Files\Reverse Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\re_engineering\geom_re_node.h">
+      <Filter>Header Files\Reverse Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\re_engineering\geom_re_points_node.h">
+      <Filter>Header Files\Reverse Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\re_engineering\geom_re_surface_node.h">
+      <Filter>Header Files\Reverse Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\re_engineering\geom_re_surfaces_node.h">
+      <Filter>Header Files\Reverse Engineering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\point_clouds\geom_common_point_cloud_2d.h">
+      <Filter>Header Files\Point Clouds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\point_clouds\geom_face_point_cloud.h">
+      <Filter>Header Files\Point Clouds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\point_clouds\geom_point_cloud.h">
+      <Filter>Header Files\Point Clouds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\point_clouds\geom_point_cloud_normals.h">
+      <Filter>Header Files\Point Clouds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\point_clouds\geom_purify_cloud.h">
+      <Filter>Header Files\Point Clouds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asitusGeom\asitusGeom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_boundary_edges_node.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_bvh_facets.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_bvh_iterator.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_contour_node.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_curve_node.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_edge_node.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_euler_poincare.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_face_node.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_find_nonmanifold.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_hit_facet.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_part_node.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_surf_node.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\common\geom_utils.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\data_exchange\geom_IGES.cpp">
+      <Filter>Source Files\Data Exchange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\data_exchange\geom_STEP.cpp">
+      <Filter>Source Files\Data Exchange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\direct_modeling\geom_delete_edges.cpp">
+      <Filter>Source Files\Direct Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\direct_modeling\geom_detach_faces.cpp">
+      <Filter>Source Files\Direct Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\direct_modeling\geom_find_same_hosts.cpp">
+      <Filter>Source Files\Direct Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\direct_modeling\geom_join_edges.cpp">
+      <Filter>Source Files\Direct Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\direct_modeling\geom_rehost_faces.cpp">
+      <Filter>Source Files\Direct Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\hulls\geom_k_neighbors_hull.cpp">
+      <Filter>Source Files\Hulls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\hulls\geom_quick_hull_2d.cpp">
+      <Filter>Source Files\Hulls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\re_engineering\geom_build_contours.cpp">
+      <Filter>Source Files\Reverse Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\re_engineering\geom_cloudify.cpp">
+      <Filter>Source Files\Reverse Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\re_engineering\geom_re_contour_node.cpp">
+      <Filter>Source Files\Reverse Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\re_engineering\geom_re_contours_node.cpp">
+      <Filter>Source Files\Reverse Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\re_engineering\geom_re_node.cpp">
+      <Filter>Source Files\Reverse Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\re_engineering\geom_re_points_node.cpp">
+      <Filter>Source Files\Reverse Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\re_engineering\geom_re_surface_node.cpp">
+      <Filter>Source Files\Reverse Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\re_engineering\geom_re_surfaces_node.cpp">
+      <Filter>Source Files\Reverse Engineering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\point_clouds\geom_common_point_cloud_2d.cpp">
+      <Filter>Source Files\Point Clouds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\point_clouds\geom_face_point_cloud.cpp">
+      <Filter>Source Files\Point Clouds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\point_clouds\geom_point_cloud.cpp">
+      <Filter>Source Files\Point Clouds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asitusGeom\point_clouds\geom_point_cloud_normals.cpp">
+      <Filter>Source Files\Point Clouds</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

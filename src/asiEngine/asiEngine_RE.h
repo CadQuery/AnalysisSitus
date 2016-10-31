@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef engine_re_h
-#define engine_re_h
+#ifndef asiEngine_RE_h
+#define asiEngine_RE_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiEngine.h>
 
 // A-Situs (geometry) includes
 #include <asiData_RENode.h>
@@ -19,27 +19,27 @@
 #include <TopoDS_Wire.hxx>
 
 //! Data Model API for reverse engineering.
-namespace engine_re
+namespace asiEngine_RE
 {
-  Handle(asiData_RENode)
+  asiEngine_EXPORT Handle(asiData_RENode)
     Create_RE();
 
 //---------------------------------------------------------------------------//
 
-  Handle(asiData_RESurfaceNode)
+  asiEngine_EXPORT Handle(asiData_RESurfaceNode)
     Create_Surface(const Handle(Geom_Surface)& surface,
                    const double                uLimit,
                    const double                vLimit);
 
-  void
+  asiEngine_EXPORT void
     Clean_Surfaces();
 
 //---------------------------------------------------------------------------//
 
-  Handle(asiData_REContourNode)
+  asiEngine_EXPORT Handle(asiData_REContourNode)
     Create_Contour(const TopoDS_Wire& contour);
 
-  void
+  asiEngine_EXPORT void
     Clean_Contours();
 
 };

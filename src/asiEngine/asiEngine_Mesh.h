@@ -5,24 +5,23 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef engine_tess_h
-#define engine_tess_h
+#ifndef asiEngine_Mesh_h
+#define asiEngine_Mesh_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiEngine.h>
 
 // Mesh includes
 #include <asiAlgo_MeshParams.h>
 
 //! Data Model API for meshing.
-namespace engine_mesh
+namespace asiEngine_Mesh
 {
-  void
+  asiEngine_EXPORT void
     SaveParameters(const asiAlgo_MeshParams& params);
 
-  void
+  asiEngine_EXPORT void
     GetParameters(asiAlgo_MeshParams& params);
-
 };
 
 #endif

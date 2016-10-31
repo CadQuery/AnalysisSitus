@@ -92,7 +92,7 @@ Handle(asiData_RESurfaceNode)
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    surf_n = engine_re::Create_Surface(surface, uLimit, vLimit);
+    surf_n = asiEngine_RE::Create_Surface(surface, uLimit, vLimit);
   }
   common_facilities::Instance()->Model->CommitCommand();
   //
@@ -104,7 +104,7 @@ void asiData_RESurfacesNode::TX_CleanSurfaces()
 {
   common_facilities::Instance()->Model->OpenCommand();
   {
-    engine_re::Clean_Surfaces();
+    asiEngine_RE::Clean_Surfaces();
   }
   common_facilities::Instance()->Model->CommitCommand();
 }

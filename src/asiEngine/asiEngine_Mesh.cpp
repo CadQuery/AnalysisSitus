@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <engine_mesh.h>
+#include <asiEngine_Mesh.h>
 
 // A-Situs (common) includes
 #include <common_facilities.h>
@@ -16,7 +16,7 @@
 
 //! Saves the passed mesh parameters to OCAF.
 //! \param params [in] mesh parameters.
-void engine_mesh::SaveParameters(const asiAlgo_MeshParams& params)
+void asiEngine_Mesh::SaveParameters(const asiAlgo_MeshParams& params)
 {
   TDF_Label root = common_facilities::Instance()->Model_XDE->GetPropertiesLabel(xde_model::Property_Mesh);
 
@@ -28,7 +28,7 @@ void engine_mesh::SaveParameters(const asiAlgo_MeshParams& params)
 
 //! Extracts mesh parameters from OCAF.
 //! \param params [out] mesh parameters.
-void engine_mesh::GetParameters(asiAlgo_MeshParams& params)
+void asiEngine_Mesh::GetParameters(asiAlgo_MeshParams& params)
 {
   TDF_Label root = common_facilities::Instance()->Model_XDE->GetPropertiesLabel(xde_model::Property_Mesh);
 

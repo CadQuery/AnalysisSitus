@@ -5,58 +5,57 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef engine_part_h
-#define engine_part_h
+#ifndef asiEngine_Part_h
+#define asiEngine_Part_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiEngine.h>
 
 // A-Situs (geometry) includes
-#include <geom_part_node.h>
+#include <asiData_PartNode.h>
 
 // OCCT includes
 #include <TopTools_IndexedMapOfShape.hxx>
 
 //! Data Model API for geometric part.
-namespace engine_part
+namespace asiEngine_Part
 {
-  Handle(geom_part_node)
+  asiEngine_EXPORT Handle(asiData_PartNode)
     Create_Part();
 
-  void
+  asiEngine_EXPORT void
     Clean_Part();
 
-  void
+  asiEngine_EXPORT void
     GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                        TColStd_PackedMapOfInteger&       indices);
 
-  void
+  asiEngine_EXPORT void
     GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteger& faceIndices,
                                     TColStd_PackedMapOfInteger&       indices);
 
-  void
+  asiEngine_EXPORT void
     HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices);
 
-  void
+  asiEngine_EXPORT void
     HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
                        const int                         color);
 
-  void
+  asiEngine_EXPORT void
     HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes);
 
-  void
+  asiEngine_EXPORT void
     HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes,
                        const int                         color);
 
-  void
+  asiEngine_EXPORT void
     GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes);
 
-  void
+  asiEngine_EXPORT void
     GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices);
 
-  void
+  asiEngine_EXPORT void
     GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices);
-
 };
 
 #endif

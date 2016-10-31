@@ -5,15 +5,15 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asitusGeom_h
-#define asitusGeom_h
+#ifndef asiEngine_h
+#define asiEngine_h
 
-#define asitusGeom_NotUsed(x)
+#define asiEngine_NotUsed(x)
 
-#ifdef asitusGeom_EXPORTS
-  #define asitusGeom_EXPORT __declspec(dllexport)
+#ifdef asiEngine_EXPORTS
+  #define asiEngine_EXPORT __declspec(dllexport)
 #else
-  #define asitusGeom_EXPORT __declspec(dllimport)
+  #define asiEngine_EXPORT __declspec(dllimport)
 #endif
 
 #endif

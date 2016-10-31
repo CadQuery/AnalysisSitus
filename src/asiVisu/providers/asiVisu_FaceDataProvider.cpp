@@ -12,7 +12,7 @@
 #include <common_facilities.h>
 
 // A-Situs (geometry) includes
-#include <geom_part_node.h>
+#include <asiData_PartNode.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -34,7 +34,7 @@ visu_face_data_provider::visu_face_data_provider(const ActAPI_DataObjectId&     
   m_params = theParamList;
 
   // Access owning geometry
-  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) geom_n = common_facilities::Instance()->Model->GetPartNode();
 
   // Build maps
   if ( !geom_n->GetShape().IsNull() )

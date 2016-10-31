@@ -12,9 +12,9 @@
 #include <common_facilities.h>
 
 // A-Situs (engine) includes
-#include <engine_iv.h>
-#include <engine_part.h>
-#include <engine_re.h>
+#include <asiEngine_IV.h>
+#include <asiEngine_Part.h>
+#include <asiEngine_RE.h>
 #include <engine_ubend.h>
 #include <engine_volume.h>
 
@@ -147,13 +147,13 @@ void asiData_Model::Populate()
   // Add Part Node
   //---------------------------------------------------------------------------
 
-  root_n->AddChildNode( engine_part::Create_Part() );
+  root_n->AddChildNode( asiEngine_Part::Create_Part() );
 
   //---------------------------------------------------------------------------
   // Add Reverse Engineering Node
   //---------------------------------------------------------------------------
 
-  root_n->AddChildNode( engine_re::Create_RE() );
+  root_n->AddChildNode( asiEngine_RE::Create_RE() );
 
   //---------------------------------------------------------------------------
   // Add Sections Node
@@ -175,7 +175,7 @@ void asiData_Model::Populate()
   // Add Imperative Viewer Node
   //---------------------------------------------------------------------------
 
-  root_n->AddChildNode( engine_iv::Create_IV() );
+  root_n->AddChildNode( asiEngine_IV::Create_IV() );
 }
 
 //! Clears the Model.

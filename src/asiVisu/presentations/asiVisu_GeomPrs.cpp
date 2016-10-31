@@ -44,7 +44,7 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
   // Create Data Provider
   Handle(visu_shape_data_provider) DP =
     new visu_shape_data_provider( N->GetId(),
-                                  ActParamStream() << N->Parameter(geom_part_node::PID_Geometry) );
+                                  ActParamStream() << N->Parameter(asiData_PartNode::PID_Geometry) );
 
   // Main pipeline
   Handle(visu_shape_pipeline) pl = new visu_shape_pipeline(true, true, false, false);
@@ -241,7 +241,7 @@ void visu_geom_prs::afterInitPipelines()
 //! kernel update routine starts.
 void visu_geom_prs::beforeUpdatePipelines() const
 {
-  Handle(geom_part_node) N = Handle(geom_part_node)::DownCast( this->GetNode() );
+  Handle(asiData_PartNode) N = Handle(asiData_PartNode)::DownCast( this->GetNode() );
 
   visu_display_mode aDMode = (visu_display_mode) N->GetDisplayMode();
   if ( aDMode == DisplayMode_Undefined || aDMode == DisplayMode_Shading )
@@ -276,7 +276,7 @@ void visu_geom_prs::afterUpdatePipelines() const
    *  Actualize visualization properties
    * ==================================== */
 
-  Handle(geom_part_node) N = Handle(geom_part_node)::DownCast( this->GetNode() );
+  Handle(asiData_PartNode) N = Handle(asiData_PartNode)::DownCast( this->GetNode() );
 
   // Custom color (if any)
   if ( N->HasColor() )

@@ -12,7 +12,7 @@
 #include <common_facilities.h>
 
 // Engine includes
-#include <engine_iv.h>
+#include <asiEngine_IV.h>
 
 // Visualization includes
 #include <visu_iv_point_set_prs.h>
@@ -60,7 +60,7 @@ void journal_iv::DRAW_POINT(const gp_XY&                   coord,
   }
   //
   Handle(asiData_IVPointSet2dNode)
-    points_n = engine_iv::Create_PointSet2d(coords, name);
+    points_n = asiEngine_IV::Create_PointSet2d(coords, name);
   //
   if ( isTx )
     common_facilities::Instance()->Model->CommitCommand();
@@ -117,7 +117,7 @@ void journal_iv::DRAW_POINTS(const Handle(HRealArray)&      coords,
   }
   //
   Handle(asiData_IVPointSetNode)
-    points_n = engine_iv::Create_PointSet( new asiAlgo_PointCloud(coords), name );
+    points_n = asiEngine_IV::Create_PointSet( new asiAlgo_PointCloud(coords), name );
   //
   if ( isTx )
     common_facilities::Instance()->Model->CommitCommand();
@@ -148,7 +148,7 @@ void journal_iv::DRAW_LINK(const gp_Pnt&                  p1,
   }
   //
   Handle(asiData_IVCurveNode)
-    curve_n = engine_iv::Create_Curve( C, Precision::Infinite(), name );
+    curve_n = asiEngine_IV::Create_Curve( C, Precision::Infinite(), name );
   //
   if ( isTx )
     common_facilities::Instance()->Model->CommitCommand();
@@ -182,7 +182,7 @@ void journal_iv::DRAW_CURVE(const Handle(Geom_Curve)&      curve,
   }
   //
   Handle(asiData_IVCurveNode)
-    curve_n = engine_iv::Create_Curve( curve, 1000, name );
+    curve_n = asiEngine_IV::Create_Curve( curve, 1000, name );
   //
   if ( isTx )
     common_facilities::Instance()->Model->CommitCommand();
@@ -239,7 +239,7 @@ void journal_iv::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
   }
   //
   Handle(asiData_IVSurfaceNode)
-    surface_n = engine_iv::Create_Surface(surface, uLimit, vLimit, name);
+    surface_n = asiEngine_IV::Create_Surface(surface, uLimit, vLimit, name);
   //
   if ( isTx )
     common_facilities::Instance()->Model->CommitCommand();
@@ -280,7 +280,7 @@ void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
   }
   //
   Handle(asiData_IVTopoItemNode)
-    item_n = engine_iv::Create_TopoItem(shape, name);
+    item_n = asiEngine_IV::Create_TopoItem(shape, name);
   //
   if ( isTx )
     common_facilities::Instance()->Model->CommitCommand();
@@ -305,7 +305,7 @@ void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
   }
   //
   Handle(asiData_IVTopoItemNode)
-    item_n = engine_iv::Create_TopoItem(shape, name);
+    item_n = asiEngine_IV::Create_TopoItem(shape, name);
   //
   if ( isTx )
     common_facilities::Instance()->Model->CommitCommand();
@@ -331,7 +331,7 @@ void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
   }
   //
   Handle(asiData_IVTopoItemNode)
-    item_n = engine_iv::Create_TopoItem(shape, name);
+    item_n = asiEngine_IV::Create_TopoItem(shape, name);
   //
   if ( isTx )
     common_facilities::Instance()->Model->CommitCommand();
@@ -356,7 +356,7 @@ void journal_iv::DRAW_TRIANGULATION(const Handle(Poly_Triangulation)& shape,
   }
   //
   Handle(asiData_IVTessItemNode)
-    item_n = engine_iv::Create_TessItem(shape, name);
+    item_n = asiEngine_IV::Create_TessItem(shape, name);
   //
   if ( isTx )
     common_facilities::Instance()->Model->CommitCommand();
@@ -378,7 +378,7 @@ void journal_iv::DRAW_TEXT(const TCollection_AsciiString& text)
   }
   //
   Handle(asiData_IVTextItemNode)
-    item_n = engine_iv::Create_TextItem(text);
+    item_n = asiEngine_IV::Create_TextItem(text);
   //
   if ( isTx )
     common_facilities::Instance()->Model->CommitCommand();

@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <engine_re.h>
+#include <asiEngine_RE.h>
 
 // A-Situs (common) includes
 #include <common_facilities.h>
@@ -18,7 +18,7 @@
 //-----------------------------------------------------------------------------
 
 //! \return newly created Reverse Engineering Node.
-Handle(asiData_RENode) engine_re::Create_RE()
+Handle(asiData_RENode) asiEngine_RE::Create_RE()
 {
   // Access Model
   Handle(asiData_Model) M = common_facilities::Instance()->Model;
@@ -85,7 +85,7 @@ Handle(asiData_RENode) engine_re::Create_RE()
 //! \param vLimit  [in] bounding V value for infinite domains.
 //! \return Surface Node.
 Handle(asiData_RESurfaceNode)
-  engine_re::Create_Surface(const Handle(Geom_Surface)& surface,
+  asiEngine_RE::Create_Surface(const Handle(Geom_Surface)& surface,
                             const double                uLimit,
                             const double                vLimit)
 {
@@ -115,7 +115,7 @@ Handle(asiData_RESurfaceNode)
 //-----------------------------------------------------------------------------
 
 //! Deletes all Surface Nodes.
-void engine_re::Clean_Surfaces()
+void asiEngine_RE::Clean_Surfaces()
 {
   Handle(asiData_Model)          M             = common_facilities::Instance()->Model;
   Handle(asiData_RESurfacesNode) RESs          = M->GetRENode()->Surfaces();
@@ -145,7 +145,7 @@ void engine_re::Clean_Surfaces()
 //! wire.
 //! \param contour [in] contour in form of topological wire.
 //! \return just created Data Node.
-Handle(asiData_REContourNode) engine_re::Create_Contour(const TopoDS_Wire& contour)
+Handle(asiData_REContourNode) asiEngine_RE::Create_Contour(const TopoDS_Wire& contour)
 {
   // Access Model and RE Contours Node
   Handle(asiData_Model)          M    = common_facilities::Instance()->Model;
@@ -173,7 +173,7 @@ Handle(asiData_REContourNode) engine_re::Create_Contour(const TopoDS_Wire& conto
 //-----------------------------------------------------------------------------
 
 //! Cleans up all contours stored in the collection of RE contours.
-void engine_re::Clean_Contours()
+void asiEngine_RE::Clean_Contours()
 {
   Handle(asiData_Model)          M             = common_facilities::Instance()->Model;
   Handle(asiData_REContoursNode) RECs          = M->GetRENode()->Contours();

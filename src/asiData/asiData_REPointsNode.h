@@ -48,36 +48,38 @@ public:
 
 public:
 
-  static Handle(ActAPI_INode)
+  asiData_EXPORT static Handle(ActAPI_INode)
     Instance();
 
 // Initialization:
 public:
 
-  void Init();
+  asiData_EXPORT void
+    Init();
 
 // Generic naming support:
 public:
 
-  virtual TCollection_ExtendedString
+  asiData_EXPORT virtual TCollection_ExtendedString
     GetName();
 
-  virtual void
+  asiData_EXPORT virtual void
     SetName(const TCollection_ExtendedString& theName);
 
 // Handy accessors to the stored data:
 public:
 
-  Handle(asiAlgo_PointCloud)
+  asiData_EXPORT Handle(asiAlgo_PointCloud)
     GetPoints() const;
 
-  void
+  asiData_EXPORT void
     TX_SetPoints(const Handle(asiAlgo_PointCloud)& points);
 
 protected:
 
   //! Allocation is allowed only via Instance method.
-  asiData_REPointsNode();
+  asiData_EXPORT
+    asiData_REPointsNode();
 
 };
 

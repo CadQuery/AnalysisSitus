@@ -16,7 +16,7 @@
 #include <asiAlgo_MeshInfo.h>
 
 // Engine includes
-#include <engine_mesh.h>
+#include <asiEngine_Mesh.h>
 
 // Qt includes
 #include <QGroupBox>
@@ -58,7 +58,7 @@ gui_dialog_mesh::gui_dialog_mesh(QWidget* parent)
 
   // Set mesh parameters from Data Model
   asiAlgo_MeshParams params;
-  engine_mesh::GetParameters(params);
+  asiEngine_Mesh::GetParameters(params);
 
   // Default values
   m_widgets.pLinearDeflection->setText( QString::number(params.Deflection.Linear) );
@@ -140,7 +140,7 @@ void gui_dialog_mesh::onGenerate()
   //
   M->OpenCommand();
   {
-    engine_mesh::SaveParameters(params);
+    asiEngine_Mesh::SaveParameters(params);
   }
   M->CommitCommand();
 

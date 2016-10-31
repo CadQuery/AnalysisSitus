@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <engine_part.h>
+#include <asiEngine_Part.h>
 
 // A-Situs (common) includes
 #include <common_facilities.h>
@@ -27,7 +27,7 @@
 #include <TopoDS.hxx>
 
 //! \return newly created Part Node.
-Handle(geom_part_node) engine_part::Create_Part()
+Handle(asiData_PartNode) asiEngine_Part::Create_Part()
 {
   //---------------------------------------------------------------------------
   // Create persistent object
@@ -37,7 +37,7 @@ Handle(geom_part_node) engine_part::Create_Part()
   Handle(asiData_Model) M = common_facilities::Instance()->Model;
 
   // Add Part Node to Partition
-  Handle(geom_part_node) geom_n = Handle(geom_part_node)::DownCast( geom_part_node::Instance() );
+  Handle(asiData_PartNode) geom_n = Handle(asiData_PartNode)::DownCast( asiData_PartNode::Instance() );
   M->GetPartPartition()->AddNode(geom_n);
 
   // Initialize geometry
@@ -133,13 +133,13 @@ Handle(geom_part_node) engine_part::Create_Part()
 }
 
 //! Cleans up Data Model structure related to the Part Node.
-void engine_part::Clean_Part()
+void asiEngine_Part::Clean_Part()
 {
   // Access Model
   Handle(asiData_Model) M = common_facilities::Instance()->Model;
 
   // Get Part Node
-  Handle(geom_part_node) part_n = M->GetPartNode();
+  Handle(asiData_PartNode) part_n = M->GetPartNode();
   //
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
     return;
@@ -156,7 +156,7 @@ void engine_part::Clean_Part()
 //! Extracts sub-shape indices for the given collection of face indices.
 //! \param faceIndices [in]  indices of faces.
 //! \param indices     [out] their corresponding indices among all sub-shapes.
-void engine_part::GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteger& faceIndices,
+void asiEngine_Part::GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteger& faceIndices,
                                                   TColStd_PackedMapOfInteger&       indices)
 {
   TopTools_IndexedMapOfShape AllFaces, SelectedFaces;
@@ -177,7 +177,7 @@ void engine_part::GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteg
 //! Extracts sub-shape indices for the given collection of sub-shapes.
 //! \param subShapes [in]  sub-shapes of interest.
 //! \param indices   [out] their corresponding IDs.
-void engine_part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
+void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                                      TColStd_PackedMapOfInteger&       indices)
 {
   TopTools_IndexedMapOfShape M;
@@ -189,7 +189,7 @@ void engine_part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes
 
 //! Highlights the passed sub-shapes identified by their indices.
 //! \param subShapeIndices [in] indices of the sub-shapes to highlight.
-void engine_part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices)
+void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices)
 {
   double pick_color[3];
   visu_utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
@@ -204,11 +204,11 @@ void engine_part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeI
 //! Highlights the passed sub-shapes identified by their indices.
 //! \param subShapeIndices [in] indices of the sub-shapes to highlight.
 //! \param color           [in] highlighting color.
-void engine_part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
+void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
                                      const int                         color)
 {
   // Get Part Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
 
   // Get Presentation for the Part Node
   Handle(visu_geom_prs)
@@ -234,7 +234,7 @@ void engine_part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeI
 
 //! Highlights the passed sub-shapes in Part Viewer.
 //! \param subShapes [in] sub-shapes to highlight.
-void engine_part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes)
+void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes)
 {
   double pick_color[3];
   visu_utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
@@ -249,12 +249,12 @@ void engine_part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes
 //! Highlights the passed sub-shapes in Part Viewer.
 //! \param subShapes [in] sub-shapes to highlight.
 //! \param color     [in] highlighting color.
-void engine_part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes,
+void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes,
                                      const int                         color)
 {
   // Get global relative indices of the sub-shapes in the CAD model
   TColStd_PackedMapOfInteger selected;
-  engine_part::GetSubShapeIndices(subShapes, selected);
+  asiEngine_Part::GetSubShapeIndices(subShapes, selected);
 
   // Highlight
   HighlightSubShapes(selected, color);
@@ -262,10 +262,10 @@ void engine_part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes
 
 //! Retrieves highlighted sub-shapes from the viewer.
 //! \param subShapes [out] result collection.
-void engine_part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes)
+void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes)
 {
   // Get Part Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
 
   // Get Part shape
   TopoDS_Shape part = N->GetShape();
@@ -296,13 +296,13 @@ void engine_part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes)
 
 //! Retrieves indices of the highlighted faces.
 //! \param faceIndices [out] indices of the highlighted faces.
-void engine_part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices)
+void asiEngine_Part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices)
 {
   TopTools_IndexedMapOfShape subShapes;
   GetHighlightedSubShapes(subShapes);
 
   // Take all faces
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   //
   TopTools_IndexedMapOfShape allFaces;
   TopExp::MapShapes( N->GetShape(), TopAbs_FACE, allFaces);
@@ -317,13 +317,13 @@ void engine_part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices)
 
 //! Retrieves indices of the highlighted edges.
 //! \param edgeIndices [out] indices of the highlighted edges.
-void engine_part::GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices)
+void asiEngine_Part::GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices)
 {
   TopTools_IndexedMapOfShape subShapes;
   GetHighlightedSubShapes(subShapes);
 
   // Take all edges
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   //
   TopTools_IndexedMapOfShape allEdges;
   TopExp::MapShapes( N->GetShape(), TopAbs_EDGE, allEdges);

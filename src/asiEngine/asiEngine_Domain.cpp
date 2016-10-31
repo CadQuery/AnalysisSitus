@@ -6,14 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <engine_domain.h>
-
-// A-Situs (common) includes
-#include <common_facilities.h>
-#include <asiData_Model.h>
-
-// A-Situs (GUI) includes
-#include <gui_common.h>
+#include <asiEngine_Domain.h>
 
 // OCCT includes
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
@@ -24,30 +17,29 @@
 
 //! Retrieves highlighted edges from the Face Domain viewer.
 //! \param edges [out] result collection.
-void engine_domain::GetHighlightedEdges(TopTools_IndexedMapOfShape& edges)
+void asiEngine_Domain::GetHighlightedEdges(TopTools_IndexedMapOfShape& edges)
 {
   TopoDS_Face dummyFace;
   GetHighlightedEdges(edges, dummyFace);
 }
 
 //! Retrieves highlighted edges from the Face Domain viewer.
-//! \param edges [out] result collection.
-//! \param face  [out] base face.
-void engine_domain::GetHighlightedEdges(TopTools_IndexedMapOfShape& edges,
-                                        TopoDS_Face&                face)
+//! \param partNode [in]  part Node playing as a source of geometry.
+//! \param edges    [out] result collection.
+//! \param face     [out] base face.
+void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)& partNode,
+                                           TopTools_IndexedMapOfShape&     edges,
+                                           TopoDS_Face&                    face)
 {
-  // Get Part Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
-
   // Get Part shape
-  TopoDS_Shape part = N->GetShape();
+  TopoDS_Shape part = partNode->GetShape();
 
   // Build a map of shapes
   TopTools_IndexedMapOfShape FacesMap;
-  TopExp::MapShapes(N->GetShape(), FacesMap);
+  TopExp::MapShapes(part, FacesMap);
 
   // Get face
-  const int face_idx = N->GetFaceRepresentation()->GetSelectedFace();
+  const int face_idx = partNode->GetFaceRepresentation()->GetSelectedFace();
   //
   if ( face_idx > 0 )
     face = TopoDS::Face( FacesMap.FindKey(face_idx) );

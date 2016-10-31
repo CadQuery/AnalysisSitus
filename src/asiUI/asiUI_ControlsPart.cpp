@@ -19,7 +19,7 @@
 #include <asiUI_DialogSTEP.h>
 
 // Engine includes
-#include <engine_part.h>
+#include <asiEngine_Part.h>
 
 // Feature includes
 #include <feature_aag_iterator.h>
@@ -249,7 +249,7 @@ void gui_controls_part::onLoadBRep()
   common_facilities::Instance()->Model->Clear();
 
   // Set part geometry
-  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) geom_n = common_facilities::Instance()->Model->GetPartNode();
   //
   common_facilities::Instance()->Model->OpenCommand(); // tx start
   {
@@ -295,7 +295,7 @@ void gui_controls_part::onLoadSTL()
   common_facilities::Instance()->Model->Clear();
 
   // Set part geometry
-  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) geom_n = common_facilities::Instance()->Model->GetPartNode();
   //
   common_facilities::Instance()->Model->OpenCommand(); // tx start
   {
@@ -375,7 +375,7 @@ void gui_controls_part::onSaveBRep()
 void gui_controls_part::onShowTOPOGraph()
 {
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
@@ -424,7 +424,7 @@ void gui_controls_part::onShowAAG()
 
   // Access selected faces (if any)
   TopTools_IndexedMapOfShape selected;
-  engine_part::GetHighlightedSubShapes(selected);
+  asiEngine_Part::GetHighlightedSubShapes(selected);
 
   // Show graph
   visu_topo_graph* pGraphView = new visu_topo_graph;
@@ -441,7 +441,7 @@ void gui_controls_part::onElimSelected()
 
   // Get highlighted sub-shapes
   TopTools_IndexedMapOfShape selected;
-  engine_part::GetHighlightedSubShapes(selected);
+  asiEngine_Part::GetHighlightedSubShapes(selected);
 
   // Build AAG
   Handle(feature_aag) aag = new feature_aag(part);
@@ -467,7 +467,7 @@ void gui_controls_part::onCheckShape()
 
   // Get highlighted faces
   TopTools_IndexedMapOfShape selected;
-  engine_part::GetHighlightedSubShapes(selected);
+  asiEngine_Part::GetHighlightedSubShapes(selected);
 
   if ( selected.IsEmpty() )
   {
@@ -502,7 +502,7 @@ void gui_controls_part::onTolerance()
 
   // Get highlighted faces
   TopTools_IndexedMapOfShape selected;
-  engine_part::GetHighlightedSubShapes(selected);
+  asiEngine_Part::GetHighlightedSubShapes(selected);
 
   if ( selected.IsEmpty() )
   {
@@ -592,7 +592,7 @@ void gui_controls_part::onSewing()
 void gui_controls_part::onMaximizeFaces()
 {
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
@@ -672,7 +672,7 @@ void gui_controls_part::onOBB()
 void gui_controls_part::onCR()
 {
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
@@ -726,8 +726,8 @@ void gui_controls_part::onCR()
   common_facilities::Instance()->Prs.Part->Actualize( N.get() );
 
   // Highlight the modified faces
-  engine_part::GetSubShapeIndicesByFaceIndices(modifiedFaces, selected);
-  engine_part::HighlightSubShapes(selected);
+  asiEngine_Part::GetSubShapeIndicesByFaceIndices(modifiedFaces, selected);
+  asiEngine_Part::HighlightSubShapes(selected);
 }
 
 //-----------------------------------------------------------------------------
@@ -758,7 +758,7 @@ void gui_controls_part::onMultiLine()
 
   // Get all highlighted sub-shapes
   TopTools_IndexedMapOfShape subShapes;
-  engine_part::GetHighlightedSubShapes(subShapes);
+  asiEngine_Part::GetHighlightedSubShapes(subShapes);
 
   // Perform discretization
   int nEdges = 0;
@@ -877,7 +877,7 @@ void gui_controls_part::onMultiLine()
 void gui_controls_part::onShowVertices()
 {
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
@@ -963,7 +963,7 @@ void gui_controls_part::onShowNormals()
 void gui_controls_part::onSelectFaces()
 {
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
@@ -980,7 +980,7 @@ void gui_controls_part::onSelectFaces()
 void gui_controls_part::onSelectEdges()
 {
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 

@@ -20,7 +20,7 @@
 #include <common_facilities.h>
 
 // Engine includes
-#include <engine_part.h>
+#include <asiEngine_Part.h>
 
 // OCCT includes
 #include <TopoDS_Iterator.hxx>
@@ -382,6 +382,6 @@ void visu_topo_graph::onVertexPicked(const int fid, const vtkIdType ASitus_NotUs
     TopTools_IndexedMapOfShape selected;
     selected.Add(F);
     //
-    engine_part::HighlightSubShapes(selected);
+    asiEngine_Part::HighlightSubShapes(selected);
   }
 }

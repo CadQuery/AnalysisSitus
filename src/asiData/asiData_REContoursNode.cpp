@@ -12,7 +12,7 @@
 #include <common_facilities.h>
 
 // Engine includes
-#include <engine_re.h>
+#include <asiEngine_RE.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -94,7 +94,7 @@ Handle(asiData_REContourNode)
   //
   common_facilities::Instance()->Model->OpenCommand();
   {
-    contour_n = engine_re::Create_Contour(contour);
+    contour_n = asiEngine_RE::Create_Contour(contour);
   }
   common_facilities::Instance()->Model->CommitCommand();
   //
@@ -106,7 +106,7 @@ void asiData_REContoursNode::TX_CleanContours()
 {
   common_facilities::Instance()->Model->OpenCommand();
   {
-    engine_re::Clean_Contours();
+    asiEngine_RE::Clean_Contours();
   }
   common_facilities::Instance()->Model->CommitCommand();
 }

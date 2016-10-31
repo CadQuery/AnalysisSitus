@@ -18,7 +18,7 @@
 #include <asiAlgo_Utils.h>
 
 // Engine includes
-#include <engine_part.h>
+#include <asiEngine_Part.h>
 
 // Qt includes
 #include <QGroupBox>
@@ -176,7 +176,7 @@ void gui_dialog_find_face::onFind()
   if ( !found.IsEmpty() )
   {
     // Highlight
-    engine_part::HighlightSubShapes(found);
+    asiEngine_Part::HighlightSubShapes(found);
     //
     common_facilities::Instance()->ViewerPart->onSubShapesPicked();
   }

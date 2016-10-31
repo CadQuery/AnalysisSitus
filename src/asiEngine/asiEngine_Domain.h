@@ -5,28 +5,27 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef engine_domain_h
-#define engine_domain_h
+#ifndef asiEngine_Domain_h
+#define asiEngine_Domain_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiEngine.h>
 
 // A-Situs (geometry) includes
-#include <geom_part_node.h>
+#include <asiData_PartNode.h>
 
 // OCCT includes
 #include <TopTools_IndexedMapOfShape.hxx>
 
 //! Data Model API for face domain.
-namespace engine_domain
+namespace asiEngine_Domain
 {
-  void
+  asiEngine_EXPORT void
     GetHighlightedEdges(TopTools_IndexedMapOfShape& edges);
 
-  void
+  asiEngine_EXPORT void
     GetHighlightedEdges(TopTools_IndexedMapOfShape& edges,
                         TopoDS_Face&                face);
-
 };
 
 #endif

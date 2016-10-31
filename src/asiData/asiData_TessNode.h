@@ -58,54 +58,56 @@ public:
 
 public:
 
-  static Handle(ActAPI_INode)
+  asiData_EXPORT static Handle(ActAPI_INode)
     Instance();
 
 // Generic naming support:
 public:
 
-  virtual TCollection_ExtendedString
+  asiData_EXPORT virtual TCollection_ExtendedString
     GetName();
 
-  virtual void
+  asiData_EXPORT virtual void
     SetName(const TCollection_ExtendedString& theName);
 
 // Handy accessors to the stored data:
 public:
 
-  Handle(Mesh)
+  asiData_EXPORT Handle(Mesh)
     GetMesh() const;
 
-  void
+  asiData_EXPORT void
     SetMesh(const Handle(Mesh)& mesh);
 
-  void
+  asiData_EXPORT void
     SetHasColor(const bool hasColor) const;
 
-  bool
+  asiData_EXPORT bool
     HasColor() const;
 
-  void
+  asiData_EXPORT void
     SetColor(const int theColor) const;
 
-  int
+  asiData_EXPORT int
     GetColor() const;
 
-  void
+  asiData_EXPORT void
     SetDisplayMode(const int theMode) const;
 
-  int
+  asiData_EXPORT int
     GetDisplayMode() const;
 
 // Initialization:
 public:
 
-  void Init();
+  asiData_EXPORT void
+    Init();
 
 protected:
 
   //! Allocation is allowed only via Instance method.
-  asiData_TessNode();
+  asiData_EXPORT
+    asiData_TessNode();
 
 };
 

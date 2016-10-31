@@ -18,7 +18,7 @@
 #include <asiAlgo_Utils.h>
 
 // Engine includes
-#include <engine_domain.h>
+#include <asiEngine_Domain.h>
 
 // Visualization includes
 #include <visu_utils.h>
@@ -160,7 +160,7 @@ void gui_viewer_domain::onResetView()
 //! Callback for picking event.
 void gui_viewer_domain::onDomainPicked()
 {
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() || N->GetShape().IsNull() )
     return;
 
@@ -278,7 +278,7 @@ void gui_viewer_domain::onDomainPicked()
 //! Callback for edges removal.
 void gui_viewer_domain::onKillEdges()
 {
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() || N->GetShape().IsNull() )
     return;
 
@@ -286,7 +286,7 @@ void gui_viewer_domain::onKillEdges()
 
   // Get edges
   TopTools_IndexedMapOfShape selectedEdges;
-  engine_domain::GetHighlightedEdges(selectedEdges);
+  asiEngine_Domain::GetHighlightedEdges(selectedEdges);
 
   TIMER_NEW
   TIMER_GO
@@ -322,7 +322,7 @@ void gui_viewer_domain::onKillEdges()
 //! Callback for edges joining.
 void gui_viewer_domain::onJoinEdges()
 {
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() || N->GetShape().IsNull() )
     return;
 
@@ -331,7 +331,7 @@ void gui_viewer_domain::onJoinEdges()
   // Get edges
   TopoDS_Face face;
   TopTools_IndexedMapOfShape selectedEdges;
-  engine_domain::GetHighlightedEdges(selectedEdges, face);
+  asiEngine_Domain::GetHighlightedEdges(selectedEdges, face);
 
   TIMER_NEW
   TIMER_GO

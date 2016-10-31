@@ -205,7 +205,7 @@ void gui_viewer_part::onResetView()
 //! Callback for picking event.
 void gui_viewer_part::onSubShapesPicked()
 {
-  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) geom_n = common_facilities::Instance()->Model->GetPartNode();
   if ( geom_n.IsNull() || !geom_n->IsWellFormed() )
   {
     std::cout << "Geometry Node is not accessible" << std::endl;

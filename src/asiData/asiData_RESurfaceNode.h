@@ -50,37 +50,46 @@ public:
 
 public:
 
-  static Handle(ActAPI_INode)
+  asiData_EXPORT static Handle(ActAPI_INode)
     Instance();
 
 // Generic naming support:
 public:
 
-  virtual TCollection_ExtendedString
+  asiData_EXPORT virtual TCollection_ExtendedString
     GetName();
 
-  virtual void
+  asiData_EXPORT virtual void
     SetName(const TCollection_ExtendedString& theName);
 
 // Initialization:
 public:
 
-  void Init(const Handle(Geom_Surface)& surface,
-            const double                uLimit,
-            const double                vLimit);
+  asiData_EXPORT void
+    Init(const Handle(Geom_Surface)& surface,
+         const double                uLimit,
+         const double                vLimit);
 
 // Convenience methods:
 public:
 
-  void                 SetSurface (const Handle(Geom_Surface)& surface);
-  Handle(Geom_Surface) GetSurface () const;
-  void                 SetLimits  (const double uLimit, const double vLimit);
-  void                 GetLimits  (double& uLimit, double& vLimit) const;
+  asiData_EXPORT void
+    SetSurface(const Handle(Geom_Surface)& surface);
+
+  asiData_EXPORT Handle(Geom_Surface)
+    GetSurface() const;
+
+  asiData_EXPORT void
+    SetLimits(const double uLimit, const double vLimit);
+
+  asiData_EXPORT void
+    GetLimits(double& uLimit, double& vLimit) const;
 
 protected:
 
   //! Allocation is allowed only via Instance method.
-  asiData_RESurfaceNode();
+  asiData_EXPORT
+    asiData_RESurfaceNode();
 
 };
 

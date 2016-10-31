@@ -43,32 +43,35 @@ public:
 
 public:
 
-  static Handle(ActAPI_INode)
+  asiData_EXPORT static Handle(ActAPI_INode)
     Instance();
 
 // Generic naming support:
 public:
 
-  virtual TCollection_ExtendedString
+  asiData_EXPORT virtual TCollection_ExtendedString
     GetName();
 
-  virtual void
+  asiData_EXPORT virtual void
     SetName(const TCollection_ExtendedString& theName);
 
 // Handy accessors to the stored data:
 public:
 
-  Handle(asiData_IVTextItemNode) Item(const int oneBased_idx);
+  asiData_EXPORT Handle(asiData_IVTextItemNode)
+    Item(const int oneBased_idx);
 
 // Initialization:
 public:
 
-  void Init();
+  asiData_EXPORT void
+    Init();
 
 protected:
 
   //! Allocation is allowed only via Instance method.
-  asiData_IVTextNode();
+  asiData_EXPORT
+    asiData_IVTextNode();
 
 };
 

@@ -87,6 +87,11 @@
     <ClCompile Include="..\..\src\asiData\asiData_SurfNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_TessNode.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="asiAlgo.vcxproj">
+      <Project>{18bdd73e-5256-451d-9df9-7e38b34e6191}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8B06C62D-603C-401C-9D8E-F251C8A4A2C7}</ProjectGuid>
     <RootNamespace>QrVisu</RootNamespace>
@@ -160,7 +165,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>

@@ -13,7 +13,7 @@
 #include <gui_dialog_euler.h>
 
 // Engine includes
-#include <engine_part.h>
+#include <asiEngine_Part.h>
 
 // Geometry includes
 #include <asiAlgo_Utils.h>
@@ -64,7 +64,7 @@ private:
   static void perform(const EulerOp op)
   {
     // Access Geometry Node
-    Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+    Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
     //
     if ( N.IsNull() || !N->IsWellFormed() )
       return;
@@ -80,7 +80,7 @@ private:
 
     // Get highlighted sub-shapes
     TopTools_IndexedMapOfShape subshapes;
-    engine_part::GetHighlightedSubShapes(subshapes);
+    asiEngine_Part::GetHighlightedSubShapes(subshapes);
     //
     if ( subshapes.IsEmpty() )
     {

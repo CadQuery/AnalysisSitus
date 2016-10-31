@@ -257,7 +257,7 @@ void asiUI_DialogSTEP::proceed_Write()
   QString filename = gui_common::selectSTEPFile(gui_common::OpenSaveAction_Save);
 
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
@@ -290,7 +290,7 @@ void asiUI_DialogSTEP::proceed_Read()
   QString filename = gui_common::selectSTEPFile(gui_common::OpenSaveAction_Open);
 
   // Access Geometry Node
-  Handle(geom_part_node) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
   if ( N.IsNull() || !N->IsWellFormed() )
     return;
 
@@ -309,7 +309,7 @@ void asiUI_DialogSTEP::proceed_Read()
   common_facilities::Instance()->Model->Clear();
 
   // Set part geometry
-  Handle(geom_part_node) geom_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) geom_n = common_facilities::Instance()->Model->GetPartNode();
   //
   common_facilities::Instance()->Model->OpenCommand(); // tx start
   {

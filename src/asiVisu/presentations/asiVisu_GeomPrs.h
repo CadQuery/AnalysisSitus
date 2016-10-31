@@ -13,7 +13,7 @@
 #include <visu_utils.h>
 
 // A-Situs (geometry) includes
-#include <geom_part_node.h>
+#include <asiData_PartNode.h>
 
 // Qt includes
 #include <QColor>
@@ -32,7 +32,7 @@ public:
   DEFINE_STANDARD_RTTI_INLINE(visu_geom_prs, visu_prs)
 
   // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(geom_part_node, Instance)
+  DEFINE_PRESENTATION_FACTORY(asiData_PartNode, Instance)
 
 public:
 

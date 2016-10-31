@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <engine_iv.h>
+#include <asiEngine_IV.h>
 
 // Common includes
 #include <common_facilities.h>
@@ -23,7 +23,7 @@
 #include <Geom_TrimmedCurve.hxx>
 
 //! \return newly created IV Node.
-Handle(asiData_IVNode) engine_iv::Create_IV()
+Handle(asiData_IVNode) asiEngine_IV::Create_IV()
 {
   // Access Model
   Handle(asiData_Model) M = common_facilities::Instance()->Model;
@@ -145,7 +145,7 @@ Handle(asiData_IVNode) engine_iv::Create_IV()
 //! \param name   [in] name to set (auto-generated if empty).
 //! \return Point Set 2D Node.
 Handle(asiData_IVPointSet2dNode)
-  engine_iv::Create_PointSet2d(const Handle(TColStd_HArray1OfReal)& coords,
+  asiEngine_IV::Create_PointSet2d(const Handle(TColStd_HArray1OfReal)& coords,
                                const TCollection_AsciiString&       name)
 {
   // Access Model and parent Node
@@ -175,7 +175,7 @@ Handle(asiData_IVPointSet2dNode)
 //-----------------------------------------------------------------------------
 
 //! Deletes all Point Set 2D Nodes.
-void engine_iv::Clean_Points2d()
+void asiEngine_IV::Clean_Points2d()
 {
   Handle(asiData_IVPoints2dNode)
     IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Points2d();
@@ -190,7 +190,7 @@ void engine_iv::Clean_Points2d()
 //! \param name   [in] name to set (auto-generated if empty).
 //! \return Point Set Node.
 Handle(asiData_IVPointSetNode)
-  engine_iv::Create_PointSet(const Handle(asiAlgo_PointCloud)& points,
+  asiEngine_IV::Create_PointSet(const Handle(asiAlgo_PointCloud)& points,
                              const TCollection_AsciiString&  name)
 {
   // Access Model and parent Node
@@ -220,7 +220,7 @@ Handle(asiData_IVPointSetNode)
 //-----------------------------------------------------------------------------
 
 //! Deletes all Point Set Nodes.
-void engine_iv::Clean_Points()
+void asiEngine_IV::Clean_Points()
 {
   Handle(asiData_IVPointsNode)
     IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Points();
@@ -236,7 +236,7 @@ void engine_iv::Clean_Points()
 //! \param name   [in] name to set (auto-generated if empty).
 //! \return newly created Node.
 Handle(asiData_IVCurveNode)
-  engine_iv::Create_Curve(const Handle(Geom_Curve)&      curve,
+  asiEngine_IV::Create_Curve(const Handle(Geom_Curve)&      curve,
                           const double                   uLimit,
                           const TCollection_AsciiString& name)
 {
@@ -290,7 +290,7 @@ Handle(asiData_IVCurveNode)
 }
 
 //! Deletes all Curve Nodes.
-void engine_iv::Clean_Curves()
+void asiEngine_IV::Clean_Curves()
 {
   Handle(asiData_IVCurvesNode)
     IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Curves();
@@ -307,7 +307,7 @@ void engine_iv::Clean_Curves()
 //! \param name    [in] name to set (auto-generated if empty).
 //! \return newly created Node.
 Handle(asiData_IVSurfaceNode)
-  engine_iv::Create_Surface(const Handle(Geom_Surface)&    surface,
+  asiEngine_IV::Create_Surface(const Handle(Geom_Surface)&    surface,
                             const double                   uLimit,
                             const double                   vLimit,
                             const TCollection_AsciiString& name)
@@ -341,7 +341,7 @@ Handle(asiData_IVSurfaceNode)
 }
 
 //! Deletes all Surface Nodes.
-void engine_iv::Clean_Surfaces()
+void asiEngine_IV::Clean_Surfaces()
 {
   Handle(asiData_IVSurfacesNode)
     IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Surfaces();
@@ -356,7 +356,7 @@ void engine_iv::Clean_Surfaces()
 //! \param name  [in] name to set (auto-generated if empty).
 //! \return newly created Node.
 Handle(asiData_IVTopoItemNode)
-  engine_iv::Create_TopoItem(const TopoDS_Shape&            shape,
+  asiEngine_IV::Create_TopoItem(const TopoDS_Shape&            shape,
                              const TCollection_AsciiString& name)
 {
   // Access Model and parent Node
@@ -384,7 +384,7 @@ Handle(asiData_IVTopoItemNode)
 }
 
 //! Deletes all topological items.
-void engine_iv::Clean_Topo()
+void asiEngine_IV::Clean_Topo()
 {
   Handle(asiData_IVTopoNode)
     IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Topology();
@@ -399,7 +399,7 @@ void engine_iv::Clean_Topo()
 //! \param name [in] name of the tessellation item.
 //! \return newly created tessellation item.
 Handle(asiData_IVTessItemNode)
-  engine_iv::Create_TessItem(const Handle(Poly_Triangulation)& tess,
+  asiEngine_IV::Create_TessItem(const Handle(Poly_Triangulation)& tess,
                              const TCollection_AsciiString&    name)
 {
   // Access Model and parent Node
@@ -432,7 +432,7 @@ Handle(asiData_IVTessItemNode)
 }
 
 //! Deletes all tessellation items.
-void engine_iv::Clean_Tess()
+void asiEngine_IV::Clean_Tess()
 {
   Handle(asiData_IVTessNode)
     IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Tessellation();
@@ -446,7 +446,7 @@ void engine_iv::Clean_Tess()
 //! \param text [in] text to store in the persistent item.
 //! \return newly created text item.
 Handle(asiData_IVTextItemNode)
-  engine_iv::Create_TextItem(const TCollection_AsciiString& text)
+  asiEngine_IV::Create_TextItem(const TCollection_AsciiString& text)
 {
   // Access Model and parent Node
   Handle(asiData_Model)      M         = common_facilities::Instance()->Model;
@@ -484,7 +484,7 @@ Handle(asiData_IVTextItemNode)
 }
 
 //! Deletes all text items.
-void engine_iv::Clean_Text()
+void asiEngine_IV::Clean_Text()
 {
   Handle(asiData_IVTextNode)
     IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Text();
@@ -496,7 +496,7 @@ void engine_iv::Clean_Text()
 
 //! Removes all child Nodes for the given parent.
 //! \param parent [in] parent Node to clean up children for.
-void engine_iv::_cleanChildren(const Handle(ActAPI_INode)& parent)
+void asiEngine_IV::_cleanChildren(const Handle(ActAPI_INode)& parent)
 {
   Handle(asiData_Model)     M             = common_facilities::Instance()->Model;
   Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList;

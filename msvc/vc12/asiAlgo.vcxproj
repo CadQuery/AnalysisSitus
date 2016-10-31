@@ -1,0 +1,306 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{18BDD73E-5256-451D-9DF9-7E38B34E6191}</ProjectGuid>
+    <RootNamespace>QrVisu</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win$(ARCH)\$(VCVER)\bind\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win$(ARCH)\$(VCVER)\objd\asiAlgo\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win$(ARCH)\$(VCVER)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win$(ARCH)\$(VCVER)\obj\asiAlgo\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\win$(ARCH)\$(VCVER)\bind\</OutDir>
+    <IntDir>..\..\win$(ARCH)\$(VCVER)\objd\QrVisu\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(EIGEN_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>asiAlgo_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(TBB_LIB);$(AD_LIB);$(CAS_LIB64);$(QT_LIB);$(QR_LIB);$(VTK_LIB)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.0.lib;vtkCommonDataModel-7.0.lib;vtkCommonExecutionModel-7.0.lib;vtkCommonMath-7.0.lib;vtkCommonTransforms-7.0.lib;vtkCommonMisc-7.0.lib;Qt5Cored.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl />
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(QR_ROOT)\src\QrCore;$(QR_ROOT)\src\QrCore\Primitives;$(QR_ROOT)\src\QrCore\Utils;$(QR_ROOT)\src\QrBSpl;$(QR_ROOT)\src\QrBSpl\Basis;$(QR_ROOT)\src\QrBSpl\Reconstruct;$(QR_ROOT)\src\QrBSpl\Common;$(QR_ROOT)\src\QrGeom3D;$(QR_ROOT)\src\QrGeom3D\Classifiers;$(QR_ROOT)\src\QrGeom3D\Clouds;$(QR_ROOT)\src\QrGeom3D\Discrete;$(QR_ROOT)\src\QrGeom3D\Interpolation;$(QR_ROOT)\src\QrGeom3D\Primitives;$(QR_ROOT)\src\QrTools;$(QR_ROOT)\src\QrTools\PointClouds;$(QR_ROOT)\src\QrTools\Skinning;$(QR_ROOT)\src\QrTools\Extrema;$(QR_ROOT)\src\QrTools\Opt;$(QR_ROOT)\src\QrVisu;$(QR_ROOT)\src\QrVisu\Actors;$(QR_ROOT)\src\QrVisu\Actors\BSpl;$(QR_ROOT)\src\QrVisu\Actors\Geom3D;$(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data;$(QR_ROOT)\src\QrVisu\Actors\Misc;$(QR_ROOT)\src\QrVisu\Engine\;$(QR_ROOT)\src\QrVisu\Engine\GL;$(QR_ROOT)\src\QrVisu\Engine\GL\NeHe;$(QR_ROOT)\src\QrVisu\Commands;$(QR_ROOT)\src\QrVisu\Commands\Base;$(QR_ROOT)\src\QrVisu\Commands\Console;$(QR_ROOT)\src\QrVisu\Commands\View;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QrVisu_LIB;Qr_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>if not exist $(QR_ROOT)\include mkdir $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\BSpl\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Misc\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\Console\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\View\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Engine\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(EIGEN_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>asiAlgo_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>$(TBB_LIB);$(AD_LIB);$(CAS_LIB64);$(QT_LIB);$(QR_LIB);$(VTK_LIB)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.0.lib;vtkCommonDataModel-7.0.lib;vtkCommonExecutionModel-7.0.lib;vtkCommonMath-7.0.lib;vtkCommonTransforms-7.0.lib;vtkCommonMisc-7.0.lib;Qt5Core.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl />
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(QR_ROOT)\src\QrCore;$(QR_ROOT)\src\QrCore\Primitives;$(QR_ROOT)\src\QrCore\Utils;$(QR_ROOT)\src\QrBSpl;$(QR_ROOT)\src\QrBSpl\Basis;$(QR_ROOT)\src\QrBSpl\Reconstruct;$(QR_ROOT)\src\QrBSpl\Common;$(QR_ROOT)\src\QrGeom3D;$(QR_ROOT)\src\QrGeom3D\Classifiers;$(QR_ROOT)\src\QrGeom3D\Clouds;$(QR_ROOT)\src\QrGeom3D\Discrete;$(QR_ROOT)\src\QrGeom3D\Interpolation;$(QR_ROOT)\src\QrGeom3D\Primitives;$(QR_ROOT)\src\QrTools;$(QR_ROOT)\src\QrTools\PointClouds;$(QR_ROOT)\src\QrTools\Skinning;$(QR_ROOT)\src\QrTools\Extrema;$(QR_ROOT)\src\QrTools\Opt;$(QR_ROOT)\src\QrVisu;$(QR_ROOT)\src\QrVisu\Actors;$(QR_ROOT)\src\QrVisu\Actors\BSpl;$(QR_ROOT)\src\QrVisu\Actors\Geom3D;$(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data;$(QR_ROOT)\src\QrVisu\Actors\Misc;$(QR_ROOT)\src\QrVisu\Engine\;$(QR_ROOT)\src\QrVisu\Engine\GL;$(QR_ROOT)\src\QrVisu\Engine\GL\NeHe;$(QR_ROOT)\src\QrVisu\Commands;$(QR_ROOT)\src\QrVisu\Commands\Base;$(QR_ROOT)\src\QrVisu\Commands\Console;$(QR_ROOT)\src\QrVisu\Commands\View;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QrVisu_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>if not exist $(QR_ROOT)\include mkdir $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\BSpl\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Misc\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\Console\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\View\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Engine\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\asiAlgo\asiAlgo.h" />
+    <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.h" />
+    <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_InteropVars.h" />
+    <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_OBJ.h" />
+    <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_PLY.h" />
+    <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_STEP.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BuildContours.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHFacets.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_Classifier.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_ClassifyPointFace.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_DeleteEdges.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_DesignLaw.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_DetachFaces.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_EulerPoincare.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_FindNonmanifold.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_FindSameHosts.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_FuncUnivariate.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_HitFacet.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_IntersectionCurveSS.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_IntersectionPointCC.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_JoinEdges.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_KNeighborsHull.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_Membership.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_RehostFaces.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshConvert.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshGen.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshInfo.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshMerge.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshParams.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_Cloudify.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_CommonCloud.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_FacePointCloud.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudNormals.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PurifyCloud.h" />
+    <ClInclude Include="..\..\src\asiAlgo\utils\asiAlgo_JournalLogger.h" />
+    <CustomBuild Include="..\..\src\asiAlgo\utils\asiAlgo_JournalNotifier.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\asiAlgo\utils\asiAlgo_Timer.h" />
+    <ClInclude Include="..\..\src\asiAlgo\utils\asiAlgo_Utils.h" />
+    <ClInclude Include="..\..\src\asiAlgo\utils\asiAlgo_Variable.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_OBJ.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_PLY.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_STEP.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BuildContours.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHFacets.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_Classifier.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_ClassifyPointFace.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_DeleteEdges.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_DesignLaw.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_DetachFaces.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_EulerPoincare.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_FindNonmanifold.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_FindSameHosts.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_FuncUnivariate.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_HitFacet.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_JoinEdges.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_KNeighborsHull.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_RehostFaces.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshConvert.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshGen.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshInfo.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshMerge.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshParams.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_Cloudify.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_CommonCloud.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_FacePointCloud.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudNormals.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_JournalLogger.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_JournalNotifier.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Utils.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiAlgo_JournalNotifier.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

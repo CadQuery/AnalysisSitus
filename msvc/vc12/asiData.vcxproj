@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\asiData\asiData.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_BoundaryEdgesNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_ContourNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_CurveNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_DesignLawNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_EdgeNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_FaceNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVCurveNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVCurvesNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVPoints2dNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVPointSet2dNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVPointSetNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVPointsNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVSurfaceNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVSurfacesNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVTessItemNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVTessNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVTextItemNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVTextNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVTopoItemNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_IVTopoNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_Partition.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_PartNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_REContourNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_REContoursNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_RENode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_REPointsNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_RESurfaceNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_RESurfacesNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_RootNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_SurfNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_TessNode.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\asiData\asiData_BoundaryEdgesNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_ContourNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_CurveNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_DesignLawNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_EdgeNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_FaceNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVCurveNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVCurvesNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVPoints2dNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVPointSet2dNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVPointSetNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVPointsNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVSurfaceNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVSurfacesNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVTessItemNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVTessNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVTextItemNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVTextNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVTopoItemNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_IVTopoNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_Partition.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_PartNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_REContourNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_REContoursNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_RENode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_REPointsNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_RESurfaceNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_RESurfacesNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_RootNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_SurfNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_TessNode.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8B06C62D-603C-401C-9D8E-F251C8A4A2C7}</ProjectGuid>
+    <RootNamespace>QrVisu</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win$(ARCH)\$(VCVER)\bind\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win$(ARCH)\$(VCVER)\objd\asiData\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win$(ARCH)\$(VCVER)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win$(ARCH)\$(VCVER)\obj\asiData\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\win$(ARCH)\$(VCVER)\bind\</OutDir>
+    <IntDir>..\..\win$(ARCH)\$(VCVER)\objd\QrVisu\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>asiData_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(TBB_LIB);$(AD_LIB);$(CAS_LIB64);</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>QrCore.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>if not exist $(QR_ROOT)\include mkdir $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\BSpl\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Misc\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\Console\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\View\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Engine\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl />
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(QR_ROOT)\src\QrCore;$(QR_ROOT)\src\QrCore\Primitives;$(QR_ROOT)\src\QrCore\Utils;$(QR_ROOT)\src\QrBSpl;$(QR_ROOT)\src\QrBSpl\Basis;$(QR_ROOT)\src\QrBSpl\Reconstruct;$(QR_ROOT)\src\QrBSpl\Common;$(QR_ROOT)\src\QrGeom3D;$(QR_ROOT)\src\QrGeom3D\Classifiers;$(QR_ROOT)\src\QrGeom3D\Clouds;$(QR_ROOT)\src\QrGeom3D\Discrete;$(QR_ROOT)\src\QrGeom3D\Interpolation;$(QR_ROOT)\src\QrGeom3D\Primitives;$(QR_ROOT)\src\QrTools;$(QR_ROOT)\src\QrTools\PointClouds;$(QR_ROOT)\src\QrTools\Skinning;$(QR_ROOT)\src\QrTools\Extrema;$(QR_ROOT)\src\QrTools\Opt;$(QR_ROOT)\src\QrVisu;$(QR_ROOT)\src\QrVisu\Actors;$(QR_ROOT)\src\QrVisu\Actors\BSpl;$(QR_ROOT)\src\QrVisu\Actors\Geom3D;$(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data;$(QR_ROOT)\src\QrVisu\Actors\Misc;$(QR_ROOT)\src\QrVisu\Engine\;$(QR_ROOT)\src\QrVisu\Engine\GL;$(QR_ROOT)\src\QrVisu\Engine\GL\NeHe;$(QR_ROOT)\src\QrVisu\Commands;$(QR_ROOT)\src\QrVisu\Commands\Base;$(QR_ROOT)\src\QrVisu\Commands\Console;$(QR_ROOT)\src\QrVisu\Commands\View;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QrVisu_LIB;Qr_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>if not exist $(QR_ROOT)\include mkdir $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\BSpl\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Misc\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\Console\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\View\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Engine\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>asiData_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>$(TBB_LIB);$(AD_LIB);$(CAS_LIB64);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>QrCore.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>if not exist $(QR_ROOT)\include mkdir $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\BSpl\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Misc\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\Console\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\View\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Engine\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl />
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(QR_ROOT)\src\QrCore;$(QR_ROOT)\src\QrCore\Primitives;$(QR_ROOT)\src\QrCore\Utils;$(QR_ROOT)\src\QrBSpl;$(QR_ROOT)\src\QrBSpl\Basis;$(QR_ROOT)\src\QrBSpl\Reconstruct;$(QR_ROOT)\src\QrBSpl\Common;$(QR_ROOT)\src\QrGeom3D;$(QR_ROOT)\src\QrGeom3D\Classifiers;$(QR_ROOT)\src\QrGeom3D\Clouds;$(QR_ROOT)\src\QrGeom3D\Discrete;$(QR_ROOT)\src\QrGeom3D\Interpolation;$(QR_ROOT)\src\QrGeom3D\Primitives;$(QR_ROOT)\src\QrTools;$(QR_ROOT)\src\QrTools\PointClouds;$(QR_ROOT)\src\QrTools\Skinning;$(QR_ROOT)\src\QrTools\Extrema;$(QR_ROOT)\src\QrTools\Opt;$(QR_ROOT)\src\QrVisu;$(QR_ROOT)\src\QrVisu\Actors;$(QR_ROOT)\src\QrVisu\Actors\BSpl;$(QR_ROOT)\src\QrVisu\Actors\Geom3D;$(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data;$(QR_ROOT)\src\QrVisu\Actors\Misc;$(QR_ROOT)\src\QrVisu\Engine\;$(QR_ROOT)\src\QrVisu\Engine\GL;$(QR_ROOT)\src\QrVisu\Engine\GL\NeHe;$(QR_ROOT)\src\QrVisu\Commands;$(QR_ROOT)\src\QrVisu\Commands\Base;$(QR_ROOT)\src\QrVisu\Commands\Console;$(QR_ROOT)\src\QrVisu\Commands\View;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QrVisu_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>if not exist $(QR_ROOT)\include mkdir $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\BSpl\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Actors\Misc\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\Console\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Commands\View\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Engine\*.h $(QR_ROOT)\include
+copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

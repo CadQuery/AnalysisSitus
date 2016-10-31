@@ -1,0 +1,283 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Interoperability">
+      <UniqueIdentifier>{e2d2f4fe-805e-4450-9e54-7384943e5711}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interoperability">
+      <UniqueIdentifier>{7d1a0eba-d6f5-4c27-881a-dac3c162d2d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Modeling">
+      <UniqueIdentifier>{648cc8e8-d44c-4411-a066-d91ab31122c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Modeling">
+      <UniqueIdentifier>{c35ab229-f9c7-4817-940b-278af301480a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Modeling\Mesh">
+      <UniqueIdentifier>{1a892d99-319e-4227-b2a7-ececaa7548eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Modeling\Mesh">
+      <UniqueIdentifier>{d2ee58c9-cef4-4378-a8f6-60fb74aa4d6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Modeling\Points">
+      <UniqueIdentifier>{0fcabec1-3803-46f7-8229-1f35f3556d90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Modeling\Points">
+      <UniqueIdentifier>{4ef0afca-7a05-4f0d-beb2-ed11264d548c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{9acf86f1-d637-4a7a-9c19-4575f60a8019}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{77b1b582-a3eb-4463-b2b1-440514c69e17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MOC">
+      <UniqueIdentifier>{be1ca64f-ec18-4136-ac2c-5c447389116e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.h">
+      <Filter>Header Files\Interoperability</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_InteropVars.h">
+      <Filter>Header Files\Interoperability</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_OBJ.h">
+      <Filter>Header Files\Interoperability</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_PLY.h">
+      <Filter>Header Files\Interoperability</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_STEP.h">
+      <Filter>Header Files\Interoperability</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshConvert.h">
+      <Filter>Header Files\Modeling\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshGen.h">
+      <Filter>Header Files\Modeling\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshInfo.h">
+      <Filter>Header Files\Modeling\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshMerge.h">
+      <Filter>Header Files\Modeling\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshParams.h">
+      <Filter>Header Files\Modeling\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_Cloudify.h">
+      <Filter>Header Files\Modeling\Points</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_FacePointCloud.h">
+      <Filter>Header Files\Modeling\Points</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.h">
+      <Filter>Header Files\Modeling\Points</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudNormals.h">
+      <Filter>Header Files\Modeling\Points</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PurifyCloud.h">
+      <Filter>Header Files\Modeling\Points</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BuildContours.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHFacets.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_DeleteEdges.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_DesignLaw.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_DetachFaces.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_EulerPoincare.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_FindNonmanifold.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_FindSameHosts.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_FuncUnivariate.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_HitFacet.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_JoinEdges.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_KNeighborsHull.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_RehostFaces.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\utils\asiAlgo_JournalLogger.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\utils\asiAlgo_Timer.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\utils\asiAlgo_Utils.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\utils\asiAlgo_Variable.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\asiAlgo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_IntersectionCurveSS.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_IntersectionPointCC.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_CommonCloud.h">
+      <Filter>Header Files\Modeling\Points</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_Classifier.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_ClassifyPointFace.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_Membership.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.cpp">
+      <Filter>Source Files\Interoperability</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_OBJ.cpp">
+      <Filter>Source Files\Interoperability</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_PLY.cpp">
+      <Filter>Source Files\Interoperability</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_STEP.cpp">
+      <Filter>Source Files\Interoperability</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshConvert.cpp">
+      <Filter>Source Files\Modeling\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshGen.cpp">
+      <Filter>Source Files\Modeling\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshInfo.cpp">
+      <Filter>Source Files\Modeling\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshMerge.cpp">
+      <Filter>Source Files\Modeling\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshParams.cpp">
+      <Filter>Source Files\Modeling\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_Cloudify.cpp">
+      <Filter>Source Files\Modeling\Points</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_FacePointCloud.cpp">
+      <Filter>Source Files\Modeling\Points</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.cpp">
+      <Filter>Source Files\Modeling\Points</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudNormals.cpp">
+      <Filter>Source Files\Modeling\Points</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BuildContours.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHFacets.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_DeleteEdges.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_DesignLaw.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_DetachFaces.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_EulerPoincare.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_FindNonmanifold.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_FindSameHosts.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_FuncUnivariate.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_HitFacet.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_JoinEdges.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_KNeighborsHull.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_RehostFaces.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_JournalLogger.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_JournalNotifier.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Utils.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_CommonCloud.cpp">
+      <Filter>Source Files\Modeling\Points</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_Classifier.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_ClassifyPointFace.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiAlgo_JournalNotifier.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\src\asiAlgo\utils\asiAlgo_JournalNotifier.h">
+      <Filter>Header Files\Utils</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

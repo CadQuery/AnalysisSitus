@@ -8,10 +8,12 @@
 #ifndef asiUI_RotationCallback_h
 #define asiUI_RotationCallback_h
 
+// A-Situs (UI) includes
+#include <asiUI_ViewerCallback.h>
+
 // A-Situs (visualization) includes
 #include <asiVisu_MeshDataProvider.h>
 #include <asiVisu_MeshPipeline.h>
-#include <asiVisu_ViewerCallback.h>
 
 // VTK includes
 #include <vtkRenderer.h>
@@ -24,19 +26,19 @@
 // Rotation center provider
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_RotationCenterCallback, asiVisu_MeshDataProvider)
+DEFINE_STANDARD_HANDLE(asiUI_RotationCenterCallback, asiVisu_MeshDataProvider)
 
 //! Data Provider for rotation center.
-class asiVisu_RotationCenterCallback : public asiVisu_MeshDataProvider
+class asiUI_RotationCenterCallback : public asiVisu_MeshDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_RotationCenterCallback, asiVisu_MeshDataProvider)
+  DEFINE_STANDARD_RTTI_INLINE(asiUI_RotationCenterCallback, asiVisu_MeshDataProvider)
 
 public:
 
-  asiVisu_RotationCenterCallback();
+  asiUI_RotationCenterCallback();
 
 public:
 
@@ -84,13 +86,13 @@ protected:
 
 //! Callback for rotation operation. Cooperates with VTK window via VTK
 //! command pattern. Manages two events: rotation start and rotation end.
-class asiUI_RotationCallback : public asiVisu_ViewerCallback
+class asiUI_RotationCallback : public asiUI_ViewerCallback
 {
 public:
 
   static asiUI_RotationCallback* New();
   static asiUI_RotationCallback* New(asiUI_Viewer* theViewer);
-  vtkTypeMacro(asiUI_RotationCallback, asiVisu_ViewerCallback);
+  vtkTypeMacro(asiUI_RotationCallback, asiUI_ViewerCallback);
 
 public:
 
@@ -110,9 +112,9 @@ private:
 
 protected:
 
-  Handle(asiVisu_MeshPipeline)           m_pl;         //!< Pipeline for rotation center.
-  Handle(asiVisu_RotationCenterCallback) m_prv;        //!< Data Provider.
-  bool                                   m_bIsStarted; //!< Used for optimization only.
+  Handle(asiVisu_MeshPipeline)         m_pl;         //!< Pipeline for rotation center.
+  Handle(asiUI_RotationCenterCallback) m_prv;        //!< Data Provider.
+  bool                                 m_bIsStarted; //!< Used for optimization only.
 
 };
 

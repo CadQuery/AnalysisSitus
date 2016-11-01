@@ -6,34 +6,34 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_PDomainCallback.h>
+#include <asiUI_PDomainCallback.h>
 
 // Visualization includes
 #include <asiVisu_PrsManager.h>
 
 //! Instantiation routine.
 //! \return instance of the callback class.
-asiVisu_PDomainCallback* asiVisu_PDomainCallback::New()
+asiUI_PDomainCallback* asiUI_PDomainCallback::New()
 {
-  return new asiVisu_PDomainCallback(NULL);
+  return new asiUI_PDomainCallback(NULL);
 }
 
 //! Instantiation routine accepting viewer.
 //! \param theViewer [in] viewer to bind callback object to.
 //! \return instance of the callback class.
-asiVisu_PDomainCallback* asiVisu_PDomainCallback::New(asiUI_Viewer* theViewer)
+asiUI_PDomainCallback* asiUI_PDomainCallback::New(asiUI_Viewer* theViewer)
 {
-  return new asiVisu_PDomainCallback(theViewer);
+  return new asiUI_PDomainCallback(theViewer);
 }
 
 //! Constructor accepting owning viewer as a parameter.
 //! \param theViewer [in] owning viewer.
-asiVisu_PDomainCallback::asiVisu_PDomainCallback(asiUI_Viewer* theViewer)
-: asiVisu_ViewerCallback(theViewer)
+asiUI_PDomainCallback::asiUI_PDomainCallback(asiUI_Viewer* theViewer)
+: asiUI_ViewerCallback(theViewer)
 {}
 
 //! Destructor.
-asiVisu_PDomainCallback::~asiVisu_PDomainCallback()
+asiUI_PDomainCallback::~asiUI_PDomainCallback()
 {}
 
 //-----------------------------------------------------------------------------
@@ -42,7 +42,7 @@ asiVisu_PDomainCallback::~asiVisu_PDomainCallback()
 //! \param theCaller   [in] caller instance.
 //! \param theEventId  [in] ID of the event triggered this listener.
 //! \param theCallData [in] invocation context.
-void asiVisu_PDomainCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
+void asiUI_PDomainCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
                                       unsigned long theEventId,
                                       void*         asiVisu_NotUsed(theCallData))
 {

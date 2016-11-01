@@ -8,8 +8,8 @@
 #ifndef asiUI_InteractorStylePick2d_h
 #define asiUI_InteractorStylePick2d_h
 
-// A-Situs (visualization) includes
-#include <asiVisu_Selection.h>
+// A-Situs (UI) includes
+#include <asiUI_Selection.h>
 
 // VTK includes
 #include <vtkInteractorStyleImage.h>
@@ -67,7 +67,7 @@ private:
   vtkSmartPointer<vtkRenderer> m_renderer;
 
   //! Pick input data.
-  asiVisu_PickInput* m_pPickInput;
+  asiUI_PickInput* m_pPickInput;
 
 };
 

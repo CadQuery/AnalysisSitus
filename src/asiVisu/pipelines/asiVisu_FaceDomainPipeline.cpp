@@ -13,7 +13,7 @@
 
 // Visualization includes
 #include <asiVisu_FaceDataProvider.h>
-#include <asiVisu_NodeInfo.h>
+#include <asiUI_NodeInfo.h>
 #include <asiVisu_PDomainSource.h>
 #include <asiVisu_Utils.h>
 
@@ -98,7 +98,7 @@ void asiVisu_FaceDomainPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP
     if ( m_bForced ) m_bForced = false; // Executed, reset forced
 
     // Bind to Node
-    asiVisu_NodeInfo::Store( faceProvider->GetNodeID(), this->Actor() );
+    asiUI_NodeInfo::Store( faceProvider->GetNodeID(), this->Actor() );
 
     // Append filter
     vtkSmartPointer<asiVisu_PDomainSource>

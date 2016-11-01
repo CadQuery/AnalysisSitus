@@ -13,7 +13,7 @@
 #include <asiVisu_MeshResultUtils.h>
 #include <asiVisu_MeshSource.h>
 #include <asiVisu_MeshUtils.h>
-#include <asiVisu_NodeInfo.h>
+#include <asiUI_NodeInfo.h>
 
 // Active Data includes
 #include <ActData_MeshParameter.h>
@@ -86,7 +86,7 @@ void asiVisu_MeshENScalarPipeline::SetInput(const Handle(asiVisu_DataProvider)& 
 
     // Bind actor to owning Node ID. Thus we set back reference from VTK
     // entity to data object
-    asiVisu_NodeInfo::Store( aMeshPrv->GetNodeID(), this->Actor() );
+    asiUI_NodeInfo::Store( aMeshPrv->GetNodeID(), this->Actor() );
   }
 
   // Update modification timestamp

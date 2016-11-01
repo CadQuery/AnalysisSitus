@@ -402,7 +402,7 @@ void asiUI_ControlsPart::onShowTOPOGraph()
   }
 
   // Show graph
-  asiVisu_TopoGraph* pGraphView = new asiVisu_TopoGraph;
+  asiUI_TopoGraph* pGraphView = new asiUI_TopoGraph;
   pGraphView->RenderFull(targetShape, TopAbs_VERTEX);
 }
 
@@ -419,7 +419,7 @@ void asiUI_ControlsPart::onShowAAG()
   asiEngine_Part::GetHighlightedSubShapes(selected);
 
   // Show graph
-  asiVisu_TopoGraph* pGraphView = new asiVisu_TopoGraph;
+  asiUI_TopoGraph* pGraphView = new asiUI_TopoGraph;
   pGraphView->RenderAdjacency(part, selected);
 }
 
@@ -442,11 +442,11 @@ void asiUI_ControlsPart::onElimSelected()
   aag->Remove(selected);
 
   // Show graph
-  asiVisu_TopoGraph* pGraphView = new asiVisu_TopoGraph;
+  asiUI_TopoGraph* pGraphView = new asiUI_TopoGraph;
   pGraphView->SetAAG(aag);
   //
   vtkSmartPointer<vtkMutableUndirectedGraph> undirected = feature_aag_vtk::Convert(aag);
-  pGraphView->Render(undirected, part, asiVisu_TopoGraph::Regime_AAG);
+  pGraphView->Render(undirected, part, asiUI_TopoGraph::Regime_AAG);
 }
 
 //-----------------------------------------------------------------------------

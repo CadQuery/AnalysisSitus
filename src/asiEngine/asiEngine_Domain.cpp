@@ -55,7 +55,7 @@ void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)& partN
 
   // Get actual selection
   const visu_actual_selection& sel      = common_facilities::Instance()->Prs.Domain->GetCurrentSelection();
-  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  const asiUI_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
   const asiVisu_ActorElemMap&   elem_map = pick_res.GetPickMap();
   //
   // Prepare cumulative set of all picked element IDs

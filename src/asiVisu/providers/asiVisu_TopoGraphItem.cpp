@@ -6,13 +6,13 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_TopoGraphItem.h>
+#include <asiUI_TopoGraphItem.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro(asiVisu_TopoGraphItem);
+vtkStandardNewMacro(asiUI_TopoGraphItem);
 
-asiVisu_TopoGraphItem::~asiVisu_TopoGraphItem()
+asiUI_TopoGraphItem::~asiUI_TopoGraphItem()
 {
 }

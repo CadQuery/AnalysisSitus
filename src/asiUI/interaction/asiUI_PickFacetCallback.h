@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_PickFacetCallback_h
-#define asiVisu_PickFacetCallback_h
+#ifndef asiUI_PickFacetCallback_h
+#define asiUI_PickFacetCallback_h
 
-// Visualization includes
-#include <asiVisu_ViewerCallback.h>
+// UI includes
+#include <asiUI_ViewerCallback.h>
 
 // Geometry includes
 #include <asiAlgo_BVHFacets.h>
@@ -22,13 +22,13 @@
 #include <vtkSmartPointer.h>
 
 //! Callback for picking a facet in 3D viewer.
-class asiVisu_PickFacetCallback : public asiVisu_ViewerCallback
+class asiUI_PickFacetCallback : public asiUI_ViewerCallback
 {
 public:
 
-  static asiVisu_PickFacetCallback* New();
+  static asiUI_PickFacetCallback* New();
   //
-  vtkTypeMacro(asiVisu_PickFacetCallback, asiVisu_ViewerCallback);
+  vtkTypeMacro(asiUI_PickFacetCallback, asiUI_ViewerCallback);
 
 public:
 
@@ -45,8 +45,8 @@ public:
 
 private:
 
-  asiVisu_PickFacetCallback  (const Handle(asiAlgo_BVHFacets)& bvh_facets, asiUI_Viewer* viewer);
-  ~asiVisu_PickFacetCallback ();
+  asiUI_PickFacetCallback  (const Handle(asiAlgo_BVHFacets)& bvh_facets, asiUI_Viewer* viewer);
+  ~asiUI_PickFacetCallback ();
 
 private:
 

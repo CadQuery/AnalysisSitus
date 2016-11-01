@@ -24,7 +24,7 @@ vtkStandardNewMacro(asiUI_InteractorStylePick2d);
 asiUI_InteractorStylePick2d::asiUI_InteractorStylePick2d()
 : vtkInteractorStyleImage()
 {
-  m_pPickInput = new asiVisu_PickInput();
+  m_pPickInput = new asiUI_PickInput();
 }
 
 //! Default destructor.

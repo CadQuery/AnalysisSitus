@@ -84,7 +84,7 @@ asiUI_Viewer_domain::asiUI_Viewer_domain(QWidget* parent) : asiUI_Viewer(parent)
   m_pickCallback->SetViewer(this);
 
   // Initialize Callback instance for Domain operations
-  m_domainCallback = vtkSmartPointer<asiVisu_PDomainCallback>::New();
+  m_domainCallback = vtkSmartPointer<asiUI_PDomainCallback>::New();
   m_domainCallback->SetViewer(this);
 
   // Set observer for picking
@@ -184,7 +184,7 @@ void asiUI_Viewer_domain::onDomainPicked()
 
   // Access picking results
   const visu_actual_selection& sel      = m_prs_mgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  const asiUI_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
   const asiVisu_ActorElemMap&   elem_map = pick_res.GetPickMap();
 
   // Check if there is anything selected

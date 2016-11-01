@@ -26,10 +26,14 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
+//! \param model  [in] Data Model instance.
+//! \param part_n [in] Part Node.
 //! \param parent [in] parent widget.
-asiUI_DialogSewing::asiUI_DialogSewing(QWidget* parent)
+asiUI_DialogSewing::asiUI_DialogSewing(const Handle(ActAPI_IModel)&    model,
+                                       const Handle(asiData_PartNode)& part_n,
+                                       QWidget*                        parent)
 //
-: QDialog(parent)
+: QDialog(parent), m_model(model), m_part(part_n)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -110,13 +114,12 @@ void asiUI_DialogSewing::onPerform()
   // Sewing
   //---------------------------------------------------------------------------
 
-  // Access Geometry Node
-  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
+  // Check Geometry Node
+  if ( m_part.IsNull() || !m_part->IsWellFormed() )
     return;
 
   // Working shape
-  TopoDS_Shape part = N->GetShape();
+  TopoDS_Shape part = m_part->GetShape();
   //
   if ( part.IsNull() )
   {
@@ -125,7 +128,7 @@ void asiUI_DialogSewing::onPerform()
   }
 
   // Sew part
-  common_facilities::Instance()->Model->OpenCommand();
+  m_model->OpenCommand();
   {
     // Perform sewing
     //
@@ -139,16 +142,9 @@ void asiUI_DialogSewing::onPerform()
     //
     std::cout << "Sewing done. Visualizing..." << std::endl;
     //
-    N->SetShape(part);
+    m_part->SetShape(part);
   }
-  common_facilities::Instance()->Model->CommitCommand();
-
-  // Update viewer
-  common_facilities::Instance()->Model->Clear();
-  //
-  common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+  m_model->CommitCommand();
 
   // Close
   this->close();

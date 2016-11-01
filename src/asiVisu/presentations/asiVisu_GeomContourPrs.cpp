@@ -113,8 +113,8 @@ void asiVisu_GeomContourPrs::afterUpdatePipelines() const
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
 void asiVisu_GeomContourPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                      const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
-                                      const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                      const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
+                                      const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
@@ -122,7 +122,7 @@ void asiVisu_GeomContourPrs::highlight(vtkRenderer*                 asiVisu_NotU
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
 void asiVisu_GeomContourPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                        const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                        const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }

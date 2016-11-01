@@ -8,8 +8,8 @@
 #ifndef asiUI_PickCallback_h
 #define asiUI_PickCallback_h
 
-// A-Situs (visualization) includes
-#include <asiVisu_ViewerCallback.h>
+// A-Situs (UI) includes
+#include <asiUI_ViewerCallback.h>
 
 // VIS includes
 #include <IVtk_Types.hxx>
@@ -33,7 +33,7 @@
 //!
 //! User-click in VTK window -> Pick Callback -> GUI Observers
 class asiUI_PickCallback : public QObject,
-                             public asiVisu_ViewerCallback
+                           public asiUI_ViewerCallback
 {
   Q_OBJECT
 
@@ -41,7 +41,7 @@ public:
 
   static asiUI_PickCallback* New();
   static asiUI_PickCallback* New(asiUI_Viewer* theViewer);
-  vtkTypeMacro(asiUI_PickCallback, asiVisu_ViewerCallback);
+  vtkTypeMacro(asiUI_PickCallback, asiUI_ViewerCallback);
 
 public:
 

@@ -47,7 +47,7 @@ asiUI_PickCallback* asiUI_PickCallback::New(asiUI_Viewer* theViewer)
 //! Constructor accepting owning viewer as a parameter.
 //! \param theViewer [in] owning viewer.
 asiUI_PickCallback::asiUI_PickCallback(asiUI_Viewer* theViewer)
-: asiVisu_ViewerCallback(theViewer),
+: asiUI_ViewerCallback(theViewer),
   m_bSelectMeshNodes(false)
 {}
 
@@ -113,9 +113,9 @@ void asiUI_PickCallback::executePart(unsigned long theEventId,
     return;
 
   // Now pick
-  asiVisu_PickInput* pickInput = reinterpret_cast<asiVisu_PickInput*>(theCallData);
+  asiUI_PickInput* pickInput = reinterpret_cast<asiUI_PickInput*>(theCallData);
   //
-  const asiVisu_SelectionNature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
+  const asiUI_SelectionNature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
                                                                             : SelectionNature_Detection;
   common_facilities::Instance()->Prs.Part->Pick(pickInput, sel_type, PickType_World);
 
@@ -142,9 +142,9 @@ void asiUI_PickCallback::executeMesh(unsigned long theEventId,
     return;
 
   // Now pick
-  asiVisu_PickInput* pickInput = reinterpret_cast<asiVisu_PickInput*>(theCallData);
+  asiUI_PickInput* pickInput = reinterpret_cast<asiUI_PickInput*>(theCallData);
   //
-  const asiVisu_SelectionNature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
+  const asiUI_SelectionNature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
                                                                             : SelectionNature_Detection;
   common_facilities::Instance()->Prs.Mesh->Pick(pickInput, sel_type, m_bSelectMeshNodes ? PickType_Point : PickType_Cell);
 
@@ -171,9 +171,9 @@ void asiUI_PickCallback::executeDomain(unsigned long theEventId,
     return;
 
   // Now pick
-  asiVisu_PickInput* pickInput = reinterpret_cast<asiVisu_PickInput*>(theCallData);
+  asiUI_PickInput* pickInput = reinterpret_cast<asiUI_PickInput*>(theCallData);
   //
-  const asiVisu_SelectionNature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
+  const asiUI_SelectionNature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
                                                                             : SelectionNature_Detection;
   common_facilities::Instance()->Prs.Domain->Pick(pickInput, sel_type);
 
@@ -198,9 +198,9 @@ void asiUI_PickCallback::executeSection(unsigned long theEventId,
     return;
 
   // Now pick
-  asiVisu_PickInput* pickInput = reinterpret_cast<asiVisu_PickInput*>(theCallData);
+  asiUI_PickInput* pickInput = reinterpret_cast<asiUI_PickInput*>(theCallData);
   //
-  const asiVisu_SelectionNature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
+  const asiUI_SelectionNature sel_type = (theEventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
                                                                             : SelectionNature_Detection;
   common_facilities::Instance()->Prs.Section->Pick(pickInput, sel_type);
 

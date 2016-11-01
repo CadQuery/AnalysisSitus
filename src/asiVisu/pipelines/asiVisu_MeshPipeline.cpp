@@ -12,7 +12,7 @@
 #include <asiVisu_MeshDataProvider.h>
 #include <asiVisu_MeshSource.h>
 #include <asiVisu_MeshUtils.h>
-#include <asiVisu_NodeInfo.h>
+#include <asiUI_NodeInfo.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -60,7 +60,7 @@ void asiVisu_MeshPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
 
     // Bind actor to owning Node ID. Thus we set back reference from VTK
     // entity to data object
-    asiVisu_NodeInfo::Store( aMeshPrv->GetNodeID(), this->Actor() );
+    asiUI_NodeInfo::Store( aMeshPrv->GetNodeID(), this->Actor() );
 
     // Initialize pipeline
     this->SetInputConnection( aMeshSource->GetOutputPort() );

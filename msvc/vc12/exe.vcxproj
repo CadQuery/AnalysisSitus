@@ -25,7 +25,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v120</PlatformToolset>
@@ -37,7 +37,7 @@
     <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
@@ -228,28 +228,6 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="QrCore.vcxproj">
-      <Project>{32770788-99cc-46e3-8a3c-fd62b7999e0f}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="QrBSpl.vcxproj">
-      <Project>{f2ebf92b-ea4c-4608-a025-679dcb35709f}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="QrGeom3D.vcxproj">
-      <Project>{865af71d-7216-408d-b118-95292fd30eec}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="QrTools.vcxproj">
-      <Project>{6b8adf4a-d5af-4462-a480-d11c021d2220}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\src\exe\data\exe_Model.h" />
     <ClInclude Include="..\..\src\exe\exe_Version.h" />
     <ClInclude Include="..\..\src\exe\ui\exe_CommonFacilities.h" />
@@ -260,6 +238,23 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClCompile Include="..\..\src\exe\exe_Main.cpp" />
     <ClCompile Include="..\..\src\exe\ui\exe_CommonFacilities.cpp" />
     <ClCompile Include="..\..\src\exe\ui\exe_MainWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="asiAlgo.vcxproj">
+      <Project>{18bdd73e-5256-451d-9df9-7e38b34e6191}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiData.vcxproj">
+      <Project>{8b06c62d-603c-401c-9d8e-f251c8a4a2c7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiEngine.vcxproj">
+      <Project>{1ef86927-32bd-48ce-9dcd-7dbfa3fe6f34}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiUI.vcxproj">
+      <Project>{e08413bb-fdc9-4674-810c-dba4bf7c35e2}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiVisu.vcxproj">
+      <Project>{2dd37131-6046-4b5d-8ded-09e25b718d61}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

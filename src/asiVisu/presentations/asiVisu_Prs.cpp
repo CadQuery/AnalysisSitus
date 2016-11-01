@@ -199,8 +199,8 @@ void asiVisu_Prs::DeRenderPipelines(vtkRenderer* theRenderer) const
 //! \param thePickRes   [in] results of interactive picking.
 //! \param theSelNature [in] selection nature (picking or detection).
 void asiVisu_Prs::Highlight(vtkRenderer*                 theRenderer,
-                         const asiVisu_PickResult&      thePickRes,
-                         const asiVisu_SelectionNature& theSelNature) const
+                         const asiUI_PickResult&      thePickRes,
+                         const asiUI_SelectionNature& theSelNature) const
 {
   this->highlight(theRenderer, thePickRes, theSelNature);
 }
@@ -209,7 +209,7 @@ void asiVisu_Prs::Highlight(vtkRenderer*                 theRenderer,
 //! \param theRenderer  [in] renderer.
 //! \param theSelNature [in] selection nature (picking or detection).
 void asiVisu_Prs::UnHighlight(vtkRenderer*                 theRenderer,
-                           const asiVisu_SelectionNature& theSelNature) const
+                           const asiUI_SelectionNature& theSelNature) const
 {
   this->unHighlight(theRenderer, theSelNature);
 }

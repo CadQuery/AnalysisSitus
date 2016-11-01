@@ -29,7 +29,7 @@ asiUI_PartCallback* asiUI_PartCallback::New(asiUI_Viewer* theViewer)
 //! Constructor accepting owning viewer as a parameter.
 //! \param theViewer [in] owning viewer.
 asiUI_PartCallback::asiUI_PartCallback(asiUI_Viewer* theViewer)
-: asiVisu_ViewerCallback(theViewer)
+: asiUI_ViewerCallback(theViewer)
 {}
 
 //! Destructor.

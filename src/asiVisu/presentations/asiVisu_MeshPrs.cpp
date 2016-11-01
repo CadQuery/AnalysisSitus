@@ -200,8 +200,8 @@ void asiVisu_MeshPrs::afterUpdatePipelines() const
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection kind.
 void asiVisu_MeshPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                              const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
-                              const asiVisu_SelectionNature& theSelNature) const
+                              const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
+                              const asiUI_SelectionNature& theSelNature) const
 {
   //---------------------------------------------------------------------------
   // Update highlighting pipelines
@@ -231,7 +231,7 @@ void asiVisu_MeshPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(the
 //! \param theRenderer  [in] renderer.
 //! \param theSelNature [in] selection kind.
 void asiVisu_MeshPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                const asiVisu_SelectionNature& theSelNature) const
+                                const asiUI_SelectionNature& theSelNature) const
 {
   // Access pipeline for highlighting
   Handle(asiVisu_MeshContourPipeline) hili_pl;

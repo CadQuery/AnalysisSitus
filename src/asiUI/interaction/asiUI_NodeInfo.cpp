@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_NodeInfo.h>
+#include <asiUI_NodeInfo.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -14,30 +14,30 @@
 #include <vtkInformationObjectBaseKey.h>
 #include <vtkObjectFactory.h>
 
-vtkSmartPointer<vtkInformationObjectBaseKey> asiVisu_NodeInfo::m_key = NULL;
+vtkSmartPointer<vtkInformationObjectBaseKey> asiUI_NodeInfo::m_key = NULL;
 
-vtkStandardNewMacro(asiVisu_NodeInfo);
+vtkStandardNewMacro(asiUI_NodeInfo);
 
 //! Default constructor.
-asiVisu_NodeInfo::asiVisu_NodeInfo()
+asiUI_NodeInfo::asiUI_NodeInfo()
 {
 }
 
 //! Default destructor.
-asiVisu_NodeInfo::~asiVisu_NodeInfo()
+asiUI_NodeInfo::~asiUI_NodeInfo()
 {
 }
 
 //! Sets Node ID to store in actor's Information property.
 //! \param nodeId [in] Node ID to store.
-void asiVisu_NodeInfo::SetNodeId(const ActAPI_DataObjectId& nodeId)
+void asiUI_NodeInfo::SetNodeId(const ActAPI_DataObjectId& nodeId)
 {
   m_nodeId = nodeId;
 }
 
 //! Accessor for Node ID.
 //! \return Node ID.
-ActAPI_DataObjectId asiVisu_NodeInfo::GetNodeId() const
+ActAPI_DataObjectId asiUI_NodeInfo::GetNodeId() const
 {
   return m_nodeId;
 }
@@ -45,10 +45,10 @@ ActAPI_DataObjectId asiVisu_NodeInfo::GetNodeId() const
 //! Accessor for statically defined information key used to store Node ID
 //! in actor's Information properties.
 //! \return information key.
-vtkInformationObjectBaseKey* asiVisu_NodeInfo::GetKey()
+vtkInformationObjectBaseKey* asiUI_NodeInfo::GetKey()
 {
   if ( m_key.GetPointer() == NULL )
-    m_key = new vtkInformationObjectBaseKey("NodeInformation", "asiVisu_NodeInfo::m_key");
+    m_key = new vtkInformationObjectBaseKey("NodeInformation", "asiUI_NodeInfo::m_key");
   return m_key;
 }
 
@@ -57,15 +57,15 @@ vtkInformationObjectBaseKey* asiVisu_NodeInfo::GetKey()
 //! NULL pointer.
 //! \param actor [in] actor to access information from.
 //! \return requested NodeInformation reference or NULL.
-asiVisu_NodeInfo* asiVisu_NodeInfo::Retrieve(vtkActor* actor)
+asiUI_NodeInfo* asiUI_NodeInfo::Retrieve(vtkActor* actor)
 {
-  asiVisu_NodeInfo* result = NULL;
+  asiUI_NodeInfo* result = NULL;
   vtkInformation* info = actor->GetPropertyKeys();
   if ( info )
   {
     vtkInformationObjectBaseKey* key = GetKey();
     if ( key->Has(info) )
-      result = reinterpret_cast<asiVisu_NodeInfo*>( key->Get(info) );
+      result = reinterpret_cast<asiUI_NodeInfo*>( key->Get(info) );
   }
   return result;
 }
@@ -73,14 +73,14 @@ asiVisu_NodeInfo* asiVisu_NodeInfo::Retrieve(vtkActor* actor)
 //! Sets actor's Information property storing the passed Node ID.
 //! \param nodeId [in] Node ID to store.
 //! \param actor  [in] actor to store the Node ID in.
-void asiVisu_NodeInfo::Store(const ActAPI_DataObjectId& nodeId,
+void asiUI_NodeInfo::Store(const ActAPI_DataObjectId& nodeId,
                              vtkActor*                  actor)
 {
   if ( !actor->GetPropertyKeys() )
     actor->SetPropertyKeys( vtkSmartPointer<vtkInformation>::New() );
 
   // Create new wrapper for Node ID
-  vtkSmartPointer<asiVisu_NodeInfo> nodeInfo = vtkSmartPointer<asiVisu_NodeInfo>::New();
+  vtkSmartPointer<asiUI_NodeInfo> nodeInfo = vtkSmartPointer<asiUI_NodeInfo>::New();
   nodeInfo->SetNodeId(nodeId);
 
   // Set Information property

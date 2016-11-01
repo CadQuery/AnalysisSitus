@@ -12,7 +12,7 @@
 #include <asiUI.h>
 
 // Active Data (API) includes
-#include <ActAPI_INode.h>
+#include <ActAPI_IModel.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -33,7 +33,9 @@ class asiUI_ObjectBrowser : public QTreeWidget
 
 public:
 
-  asiUI_ObjectBrowser(QWidget* parent = NULL);
+  asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
+                      QWidget*                     parent = NULL);
+
   virtual ~asiUI_ObjectBrowser();
 
 public:
@@ -48,7 +50,8 @@ protected:
 //-----------------------------------------------------------------------------
 signals:
 
-  void nodeSelected();
+  void showOnly     (const ActAPI_DataObjectId&);
+  void nodeSelected ();
 
 //-----------------------------------------------------------------------------
 protected slots:
@@ -60,6 +63,10 @@ protected slots:
 private:
 
   bool selectedNode(Handle(ActAPI_INode)& Node) const;
+
+protected:
+
+  Handle(ActAPI_IModel) m_model; //!< Data Model.
 
 };
 

@@ -75,15 +75,15 @@ void asiVisu_RESurfacesPrs::afterUpdatePipelines() const
 
 //! Callback for highlighting.
 void asiVisu_RESurfacesPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                     const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
-                                     const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                     const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
+                                     const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting reset.
 void asiVisu_RESurfacesPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                       const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                       const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }

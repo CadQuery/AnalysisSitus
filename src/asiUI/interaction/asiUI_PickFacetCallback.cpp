@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_PickFacetCallback.h>
+#include <asiUI_PickFacetCallback.h>
 
 // Common includes
 #include <common_facilities.h>
@@ -24,22 +24,22 @@
 
 //! Instantiation routine.
 //! \return instance of the callback class.
-asiVisu_PickFacetCallback*
-  asiVisu_PickFacetCallback::New()
+asiUI_PickFacetCallback*
+  asiUI_PickFacetCallback::New()
 {
-  return new asiVisu_PickFacetCallback(NULL, NULL);
+  return new asiUI_PickFacetCallback(NULL, NULL);
 }
 
 //! Constructor accepting owning viewer as a parameter.
 //! \param[in] bvh_facets accelerating structure for picking.
 //! \param[in] viewer     owning viewer.
-asiVisu_PickFacetCallback::asiVisu_PickFacetCallback(const Handle(asiAlgo_BVHFacets)& bvh_facets,
+asiUI_PickFacetCallback::asiUI_PickFacetCallback(const Handle(asiAlgo_BVHFacets)& bvh_facets,
                                                    asiUI_Viewer*                    viewer)
-: asiVisu_ViewerCallback(viewer), m_bvh(bvh_facets)
+: asiUI_ViewerCallback(viewer), m_bvh(bvh_facets)
 {}
 
 //! Destructor.
-asiVisu_PickFacetCallback::~asiVisu_PickFacetCallback()
+asiUI_PickFacetCallback::~asiUI_PickFacetCallback()
 {}
 
 //-----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ asiVisu_PickFacetCallback::~asiVisu_PickFacetCallback()
 //! \param theCaller   [in] caller instance.
 //! \param theEventId  [in] ID of the event triggered this listener.
 //! \param theCallData [in] invocation context.
-void asiVisu_PickFacetCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
+void asiUI_PickFacetCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
                                        unsigned long theEventId,
                                        void*         theCallData)
 {

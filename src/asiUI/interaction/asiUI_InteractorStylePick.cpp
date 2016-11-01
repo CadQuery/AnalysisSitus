@@ -25,7 +25,7 @@ asiUI_InteractorStylePick::asiUI_InteractorStylePick()
 : vtkInteractorStyleTrackballCamera(),
   m_bIsLeftButtonDown(false)
 {
-  m_pPickInput = new asiVisu_PickInput();
+  m_pPickInput = new asiUI_PickInput();
   //
   m_PickedPos[0] = m_PickedPos[1] = 0;
 }

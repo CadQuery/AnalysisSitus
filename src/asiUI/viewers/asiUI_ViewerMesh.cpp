@@ -168,7 +168,7 @@ void asiUI_ViewerMesh::onMeshNodePicked()
 {
   // Access picking results
   const visu_actual_selection& sel      = m_prs_mgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Detection);
+  const asiUI_PickResult&      pick_res = sel.PickResult(SelectionNature_Detection);
   const asiVisu_ActorElemMap&   elem_map = pick_res.GetPickMap();
 
   // Prepare cumulative set of all picked element IDs

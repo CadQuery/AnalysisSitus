@@ -12,7 +12,7 @@
 #include <common_facilities.h>
 
 // Visualization includes
-#include <asiVisu_NodeInfo.h>
+#include <asiUI_NodeInfo.h>
 #include <asiVisu_Utils.h>
 
 // GUI includes
@@ -38,7 +38,7 @@
 
 //-----------------------------------------------------------------------------
 
-void GetPickedSubshapeIds(const asiVisu_PickResult&           pick_res,
+void GetPickedSubshapeIds(const asiUI_PickResult&           pick_res,
                           std::vector<int>&                 picked_subshape_IDs,
                           std::vector<ActAPI_DataObjectId>& picked_node_IDs)
 {
@@ -52,7 +52,7 @@ void GetPickedSubshapeIds(const asiVisu_PickResult&           pick_res,
 
     // Retrieve the corresponding Node ID by picked Actor
     ActAPI_DataObjectId
-      picked_node_id = asiVisu_NodeInfo::Retrieve(picked_actor)->GetNodeId();
+      picked_node_id = asiUI_NodeInfo::Retrieve(picked_actor)->GetNodeId();
 
     // Fill coherent collections of references: sub-shape IDs against owning Nodes
     for ( TColStd_MapIteratorOfPackedMapOfInteger maskIt(subshape_mask); maskIt.More(); maskIt.Next() )
@@ -221,7 +221,7 @@ void asiUI_ViewerPart::onSubShapesPicked()
 
   // Access picking results
   const visu_actual_selection& sel      = m_prs_mgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  const asiUI_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
 
   if ( pick_res.IsSelectionFace() )
   {

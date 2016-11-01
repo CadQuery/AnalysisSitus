@@ -77,10 +77,10 @@ private:
   virtual void beforeUpdatePipelines ()                                          const;
   virtual void afterUpdatePipelines  ()                                          const;
   virtual void highlight             (vtkRenderer*                 theRenderer,
-                                      const asiVisu_PickResult&      thePickRes,
-                                      const asiVisu_SelectionNature& theSelNature) const;
+                                      const asiUI_PickResult&      thePickRes,
+                                      const asiUI_SelectionNature& theSelNature) const;
   virtual void unHighlight           (vtkRenderer*                 theRenderer,
-                                      const asiVisu_SelectionNature& theSelNature) const;
+                                      const asiUI_SelectionNature& theSelNature) const;
   virtual void renderPipelines       (vtkRenderer*                 theRenderer)  const;
   virtual void deRenderPipelines     (vtkRenderer*                 theRenderer)  const;
 

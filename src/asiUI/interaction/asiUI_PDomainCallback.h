@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_PDomainCallback_h
-#define asiVisu_PDomainCallback_h
+#ifndef asiUI_PDomainCallback_h
+#define asiUI_PDomainCallback_h
 
-// A-Situs (visualization) includes
-#include <asiVisu_ViewerCallback.h>
+// A-Situs (UI) includes
+#include <asiUI_ViewerCallback.h>
 
 // VTK includes
 #include <vtkRenderer.h>
@@ -19,16 +19,16 @@
 #include <QObject>
 
 //! Callback for operations in Face Domain viewer.
-class asiVisu_PDomainCallback : public QObject,
-                                public asiVisu_ViewerCallback
+class asiUI_PDomainCallback : public QObject,
+                              public asiUI_ViewerCallback
 {
   Q_OBJECT
 
 public:
 
-  static asiVisu_PDomainCallback* New();
-  static asiVisu_PDomainCallback* New(asiUI_Viewer* theViewer);
-  vtkTypeMacro(asiVisu_PDomainCallback, asiVisu_ViewerCallback);
+  static asiUI_PDomainCallback* New();
+  static asiUI_PDomainCallback* New(asiUI_Viewer* theViewer);
+  vtkTypeMacro(asiUI_PDomainCallback, asiUI_ViewerCallback);
 
 public:
 
@@ -43,8 +43,8 @@ signals:
 
 private:
 
-  asiVisu_PDomainCallback  (asiUI_Viewer* theViewer);
-  ~asiVisu_PDomainCallback ();
+  asiUI_PDomainCallback  (asiUI_Viewer* theViewer);
+  ~asiUI_PDomainCallback ();
 
 };
 

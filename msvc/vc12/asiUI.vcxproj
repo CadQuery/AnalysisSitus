@@ -228,28 +228,6 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="QrCore.vcxproj">
-      <Project>{32770788-99cc-46e3-8a3c-fd62b7999e0f}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="QrBSpl.vcxproj">
-      <Project>{f2ebf92b-ea4c-4608-a025-679dcb35709f}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="QrGeom3D.vcxproj">
-      <Project>{865af71d-7216-408d-b118-95292fd30eec}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="QrTools.vcxproj">
-      <Project>{6b8adf4a-d5af-4462-a480-d11c021d2220}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\src\asiUI\controls\asiUI_ControlsPart.h" />
     <ClInclude Include="..\..\src\asiUI\controls\asiUI_LineEdit.h" />
     <ClInclude Include="..\..\src\asiUI\controls\asiUI_ObjectBrowser.h" />
@@ -319,6 +297,20 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerPart.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerSurface.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_VtkWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="asiAlgo.vcxproj">
+      <Project>{18bdd73e-5256-451d-9df9-7e38b34e6191}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiData.vcxproj">
+      <Project>{8b06c62d-603c-401c-9d8e-f251c8a4a2c7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiEngine.vcxproj">
+      <Project>{1ef86927-32bd-48ce-9dcd-7dbfa3fe6f34}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiVisu.vcxproj">
+      <Project>{2dd37131-6046-4b5d-8ded-09e25b718d61}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

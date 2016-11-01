@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_Selection_h
-#define asiVisu_Selection_h
+#ifndef asiUI_Selection_h
+#define asiUI_Selection_h
 
-// Visualization includes
-#include <asiVisu.h>
+// UI includes
+#include <asiUI.h>
 
 // OCCT includes
 #include <NCollection_DataMap.hxx>
@@ -28,7 +28,7 @@
 //-----------------------------------------------------------------------------
 
 //! Picker type.
-enum asiVisu_PickType
+enum asiUI_PickType
 {
   PickType_Cell = 0,
   PickType_Point,
@@ -38,7 +38,7 @@ enum asiVisu_PickType
 //-----------------------------------------------------------------------------
 
 //! Selection type.
-enum asiVisu_SelectionNature
+enum asiUI_SelectionNature
 {
   SelectionNature_None,     //!< Nothing.
   SelectionNature_Pick = 1, //!< User makes final decision on selection.
@@ -48,7 +48,7 @@ enum asiVisu_SelectionNature
 //-----------------------------------------------------------------------------
 
 //! Selection mode.
-enum asiVisu_SelectionMode
+enum asiUI_SelectionMode
 {
   SelectionMode_None      = 0x0001, //!< Selection is disabled.
   SelectionMode_Workpiece = 0x0002, //!< Entire shape or mesh.
@@ -79,14 +79,14 @@ enum asiVisu_SelectionMode
 //! Class representing picking inputs. This structure is designed to be
 //! used in pick callbacks in order to retrieve all data required to
 //! shoot the actual picking request.
-struct asiVisu_PickInput
+struct asiUI_PickInput
 {
   QPoint Start;      //!< Picked X coordinate.
   QPoint Finish;     //!< Picked Y coordinate.
   bool   IsMultiple; //!< Indicates whether the multiple picking is enabled.
 
   //! Default constructor
-  asiVisu_PickInput()
+  asiUI_PickInput()
   {
     this->IsMultiple = false;
   }
@@ -95,7 +95,7 @@ struct asiVisu_PickInput
   //! \param theStart   [in] start picking point.
   //! \param theFinish  [in] finish picking point.
   //! \param isMultiple [in] indicates whether the multiple picking is enabled.
-  asiVisu_PickInput(const QPoint& theStart,
+  asiUI_PickInput(const QPoint& theStart,
                   const QPoint& theFinish,
                   const bool    isMultiple)
   {
@@ -115,18 +115,18 @@ typedef NCollection_DataMap<vtkSmartPointer<vtkActor>,
 //-----------------------------------------------------------------------------
 
 //! Class representing picking results for different kinds of selection.
-class asiVisu_PickResult
+class asiUI_PickResult
 {
 public:
 
-  asiVisu_PickResult(const int theSelModes = SelectionMode_None);
-  ~asiVisu_PickResult();
+  asiUI_PickResult(const int theSelModes = SelectionMode_None);
+  ~asiUI_PickResult();
 
 public:
 
-  asiVisu_PickResult& operator<<(const vtkSmartPointer<vtkActor>& theActor);
-  asiVisu_PickResult& operator<<(const vtkIdType theElemID);
-  asiVisu_PickResult& operator<<(const TColStd_PackedMapOfInteger& theElemMask);
+  asiUI_PickResult& operator<<(const vtkSmartPointer<vtkActor>& theActor);
+  asiUI_PickResult& operator<<(const vtkIdType theElemID);
+  asiUI_PickResult& operator<<(const TColStd_PackedMapOfInteger& theElemMask);
 
 public:
 

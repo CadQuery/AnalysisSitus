@@ -296,8 +296,8 @@ void asiVisu_GeomPrs::afterUpdatePipelines() const
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
 void asiVisu_GeomPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                              const asiVisu_PickResult&      thePickRes,
-                              const asiVisu_SelectionNature& theSelNature) const
+                              const asiUI_PickResult&      thePickRes,
+                              const asiUI_SelectionNature& theSelNature) const
 {
   /* ==================
    *  Get target actor
@@ -367,7 +367,7 @@ void asiVisu_GeomPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(the
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
 void asiVisu_GeomPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                const asiVisu_SelectionNature& theSelNature) const
+                                const asiUI_SelectionNature& theSelNature) const
 {
   Handle(asiVisu_ShapePipeline) hili_pl;
   //

@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_ViewerCallback_h
-#define asiVisu_ViewerCallback_h
+#ifndef asiUI_ViewerCallback_h
+#define asiUI_ViewerCallback_h
 
 // A-Situs (visualization) includes
 #include <asiVisu.h>
@@ -18,11 +18,11 @@
 class asiUI_Viewer;
 
 //! Base class for all callbacks associated with 3D viewer.
-class asiVisu_ViewerCallback : public vtkCommand
+class asiUI_ViewerCallback : public vtkCommand
 {
 public:
 
-  vtkTypeMacro(asiVisu_ViewerCallback, vtkCommand);
+  vtkTypeMacro(asiUI_ViewerCallback, vtkCommand);
 
 public:
 
@@ -31,8 +31,8 @@ public:
 
 protected:
 
-  asiVisu_ViewerCallback  (asiUI_Viewer* theViewer);
-  ~asiVisu_ViewerCallback ();
+  asiUI_ViewerCallback  (asiUI_Viewer* theViewer);
+  ~asiUI_ViewerCallback ();
 
 private:
 

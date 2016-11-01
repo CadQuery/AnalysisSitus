@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_TopoGraph_h
-#define asiVisu_TopoGraph_h
+#ifndef asiUI_TopoGraph_h
+#define asiUI_TopoGraph_h
 
 // Visualization includes
 #include <asiVisu.h>
@@ -33,7 +33,7 @@
 #include <vtkTextWidget.h>
 
 //! Visualizes topology graph.
-class asiVisu_TopoGraph : public QObject
+class asiUI_TopoGraph : public QObject
 {
   Q_OBJECT
 
@@ -48,8 +48,8 @@ public:
 
 public:
 
-  asiVisu_TopoGraph();
-  ~asiVisu_TopoGraph();
+  asiUI_TopoGraph();
+  ~asiUI_TopoGraph();
 
 public:
 

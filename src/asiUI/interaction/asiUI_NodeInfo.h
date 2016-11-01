@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_NodeInfo_h
-#define asiVisu_NodeInfo_h
+#ifndef asiUI_NodeInfo_h
+#define asiUI_NodeInfo_h
 
 // A-Situs includes
-#include <asiVisu.h>
+#include <asiUI.h>
 
 // Active Data (API) includes
 #include <ActAPI_INode.h>
@@ -25,12 +25,12 @@ class vtkInformationObjectBaseKey;
 
 //! VTK holder for Node ID which can be passed through visualization
 //! pipelines in order to resolve Nodes by their corresponding actors.
-class asiVisu_NodeInfo : public vtkObject
+class asiUI_NodeInfo : public vtkObject
 {
 public:
 
-  vtkTypeMacro(asiVisu_NodeInfo, vtkObject);
-  static asiVisu_NodeInfo* New();
+  vtkTypeMacro(asiUI_NodeInfo, vtkObject);
+  static asiUI_NodeInfo* New();
 
 public:
 
@@ -45,19 +45,19 @@ public:
   static vtkInformationObjectBaseKey*
     GetKey();
 
-  static asiVisu_NodeInfo*
+  static asiUI_NodeInfo*
     Retrieve(vtkActor* actor);
 
   static void
     Store(const ActAPI_DataObjectId& nodeId,
-          vtkActor* actor);
+          vtkActor*                  actor);
 
 private:
 
-  asiVisu_NodeInfo();
-  asiVisu_NodeInfo(const asiVisu_NodeInfo&);
-  asiVisu_NodeInfo& operator=(const asiVisu_NodeInfo&);
-  ~asiVisu_NodeInfo();
+  asiUI_NodeInfo();
+  asiUI_NodeInfo(const asiUI_NodeInfo&);
+  asiUI_NodeInfo& operator=(const asiUI_NodeInfo&);
+  ~asiUI_NodeInfo();
 
 private:
 

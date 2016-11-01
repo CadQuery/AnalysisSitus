@@ -401,8 +401,8 @@ void asiVisu_GeomSurfPrs::afterUpdatePipelines() const
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
 void asiVisu_GeomSurfPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                   const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
-                                   const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                   const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
+                                   const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
@@ -410,7 +410,7 @@ void asiVisu_GeomSurfPrs::highlight(vtkRenderer*                 asiVisu_NotUsed
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
 void asiVisu_GeomSurfPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                     const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                     const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }

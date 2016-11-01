@@ -251,8 +251,8 @@ void asiVisu_GeomFacePrs::afterUpdatePipelines() const
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
 void asiVisu_GeomFacePrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                   const asiVisu_PickResult&      thePickRes,
-                                   const asiVisu_SelectionNature& theSelNature) const
+                                   const asiUI_PickResult&      thePickRes,
+                                   const asiUI_SelectionNature& theSelNature) const
 {
   // Get target actor which is the only sensitive
   Handle(asiVisu_Pipeline) poles_pl = this->GetPipeline(Pipeline_Main);
@@ -301,7 +301,7 @@ void asiVisu_GeomFacePrs::highlight(vtkRenderer*                 asiVisu_NotUsed
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
 void asiVisu_GeomFacePrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                     const asiVisu_SelectionNature& theSelNature) const
+                                     const asiUI_SelectionNature& theSelNature) const
 {
   // Access pipeline for highlighting
   Handle(asiVisu_FaceDomainPipeline) hili_pl;

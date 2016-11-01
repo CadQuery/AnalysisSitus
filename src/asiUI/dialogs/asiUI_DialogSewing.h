@@ -11,8 +11,14 @@
 // A-Situs includes
 #include <asiUI.h>
 
+// A-Situs (data) includes
+#include <asiData_PartNode.h>
+
 // A-Situs (GUI) includes
 #include <asiUI_LineEdit.h>
+
+// Active Data includes
+#include <ActAPI_IModel.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -22,11 +28,6 @@
 #include <QVBoxLayout>
 #pragma warning(pop)
 
-// OCCT includes
-#pragma warning(push, 0)
-#include <AIS_Shape.hxx>
-#pragma warning(pop)
-
 //! Dialog for sewing.
 class asiUI_DialogSewing : public QDialog
 {
@@ -34,7 +35,9 @@ class asiUI_DialogSewing : public QDialog
 
 public:
 
-  asiUI_DialogSewing(QWidget* parent = NULL);
+  asiUI_DialogSewing(const Handle(ActAPI_IModel)&    model,
+                     const Handle(asiData_PartNode)& part_n,
+                     QWidget*                        parent = NULL);
 
   virtual ~asiUI_DialogSewing();
 
@@ -72,8 +75,11 @@ protected:
     }
   };
 
-  t_widgets    m_widgets;     //!< UI controls.
-  QVBoxLayout* m_pMainLayout; //!< Layout of the widget.
+  t_widgets                m_widgets;     //!< UI controls.
+  QVBoxLayout*             m_pMainLayout; //!< Layout of the widget.
+  //
+  Handle(ActAPI_IModel)    m_model;       //!< Data Model instance.
+  Handle(asiData_PartNode) m_part;        //!< Part Node.
 
 };
 

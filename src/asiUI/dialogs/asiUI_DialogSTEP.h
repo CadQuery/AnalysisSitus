@@ -8,12 +8,18 @@
 #ifndef asiUI_DialogSTEP_h
 #define asiUI_DialogSTEP_h
 
-// Common includes
+// asiAlgo includes
 #include <asiAlgo_Variable.h>
+
+// asiData includes
+#include <asiData_PartNode.h>
 
 // OCCT includes
 #include <NCollection_IndexedMap.hxx>
 #include <NCollection_Sequence.hxx>
+
+// Active Data includes
+#include <ActAPI_IModel.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -39,8 +45,10 @@ public:
 
 public:
 
-  asiUI_DialogSTEP(const Mode mode,
-                   QWidget*   parent = NULL);
+  asiUI_DialogSTEP(const Handle(ActAPI_IModel)&    model,
+                   const Handle(asiData_PartNode)& part_n,
+                   const Mode                      mode,
+                   QWidget*                        parent = NULL);
 
   virtual ~asiUI_DialogSTEP();
 
@@ -81,6 +89,9 @@ private:
   };
 
   t_widgets m_widgets; //!< Involved widgets.
+  //
+  Handle(ActAPI_IModel)    m_model; //!< Data Model instance.
+  Handle(asiData_PartNode) m_part;  //!< Part Node.
 
 };
 

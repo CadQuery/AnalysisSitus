@@ -8,8 +8,8 @@
 #ifndef asiUI_InteractorStylePick_h
 #define asiUI_InteractorStylePick_h
 
-// A-Situs (visualization) includes
-#include <asiVisu_Selection.h>
+// A-Situs (UI) includes
+#include <asiUI_Selection.h>
 
 // VTK includes
 #include <vtkInteractorStyleTrackballCamera.h>
@@ -79,7 +79,7 @@ private:
   vtkSmartPointer<vtkRenderer> m_renderer;
 
   //! Pick input data.
-  asiVisu_PickInput* m_pPickInput;
+  asiUI_PickInput* m_pPickInput;
 
   //! Indicates whether left mouse button is currently pressed.
   bool m_bIsLeftButtonDown;

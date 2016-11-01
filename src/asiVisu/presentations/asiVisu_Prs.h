@@ -12,7 +12,7 @@
 #include <asiVisu.h>
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
-#include <asiVisu_Selection.h>
+#include <asiUI_Selection.h>
 
 // Active Data (API) includes
 #include <ActAPI_INode.h>
@@ -92,12 +92,12 @@ public:
 
   void
     Highlight(vtkRenderer*                 theRenderer,
-              const asiVisu_PickResult&      thePickRes,
-              const asiVisu_SelectionNature& theSelNature) const;
+              const asiUI_PickResult&      thePickRes,
+              const asiUI_SelectionNature& theSelNature) const;
 
   void
     UnHighlight(vtkRenderer*                 theRenderer,
-                const asiVisu_SelectionNature& theSelNature) const;
+                const asiUI_SelectionNature& theSelNature) const;
 
 // Presentation construction methods:
 protected:
@@ -161,12 +161,12 @@ protected:
 
   //! To be provided by descendants.
   virtual void highlight(vtkRenderer*,
-                         const asiVisu_PickResult&,
-                         const asiVisu_SelectionNature&) const = 0;
+                         const asiUI_PickResult&,
+                         const asiUI_SelectionNature&) const = 0;
 
   //! To be provided by descendants.
   virtual void unHighlight(vtkRenderer*,
-                           const asiVisu_SelectionNature&) const = 0;
+                           const asiUI_SelectionNature&) const = 0;
 
   //! To be provided by descendants.
   virtual void renderPipelines(vtkRenderer*) const = 0;
@@ -215,8 +215,8 @@ class visu_actual_selection
 public:
 
   typedef NCollection_Sequence<Handle(asiVisu_Prs)>                       PrsSeq;
-  typedef NCollection_DataMap<asiVisu_SelectionNature, PrsSeq>           PrsMap;
-  typedef NCollection_DataMap<asiVisu_SelectionNature, asiVisu_PickResult> PickResultMap;
+  typedef NCollection_DataMap<asiUI_SelectionNature, PrsSeq>           PrsMap;
+  typedef NCollection_DataMap<asiUI_SelectionNature, asiUI_PickResult> PickResultMap;
 
 public:
 
@@ -226,15 +226,15 @@ public:
     m_prsSet.Bind( SelectionNature_Pick,      PrsSeq() );
     m_prsSet.Bind( SelectionNature_Detection, PrsSeq() );
 
-    m_pickResultSet.Bind( SelectionNature_Pick,      asiVisu_PickResult() );
-    m_pickResultSet.Bind( SelectionNature_Detection, asiVisu_PickResult() );
+    m_pickResultSet.Bind( SelectionNature_Pick,      asiUI_PickResult() );
+    m_pickResultSet.Bind( SelectionNature_Detection, asiUI_PickResult() );
   }
 
   //! Cleans up the internal collection.
   //! \param theRenderer  [in] renderer to remove the Presentations from.
   //! \param theSelNature [in] selection kind.
   void PopAll(vtkRenderer*                 theRenderer,
-              const asiVisu_SelectionNature& theSelNature)
+              const asiUI_SelectionNature& theSelNature)
   {
     PrsSeq::Iterator anIt( m_prsSet.Find(theSelNature) );
     for ( ; anIt.More(); anIt.Next() )
@@ -256,9 +256,9 @@ public:
   //! \param theSelNature [in] selection kind.
   void PushToRender(const Handle(asiVisu_Prs)&      thePrs,
                     vtkRenderer*                 theRenderer,
-                    const asiVisu_SelectionNature& theSelNature)
+                    const asiUI_SelectionNature& theSelNature)
   {
-    asiVisu_PickResult aPickRes = m_pickResultSet.Find(theSelNature);
+    asiUI_PickResult aPickRes = m_pickResultSet.Find(theSelNature);
     m_prsSet.ChangeFind(theSelNature).Append(thePrs);
 
     thePrs->Highlight(theRenderer, aPickRes, theSelNature);
@@ -267,7 +267,7 @@ public:
   //! Accessor for picking result structure by selection nature.
   //! \param theSelNature [in] selection nature.
   //! \return picking result structure.
-  asiVisu_PickResult& ChangePickResult(const asiVisu_SelectionNature& theSelNature)
+  asiUI_PickResult& ChangePickResult(const asiUI_SelectionNature& theSelNature)
   {
     return m_pickResultSet.ChangeFind(theSelNature);
   }
@@ -275,7 +275,7 @@ public:
   //! Accessor for picking result structure by selection nature.
   //! \param theSelNature [in] selection nature.
   //! \return picking result structure.
-  const asiVisu_PickResult& PickResult(const asiVisu_SelectionNature& theSelNature) const
+  const asiUI_PickResult& PickResult(const asiUI_SelectionNature& theSelNature) const
   {
     return m_pickResultSet.Find(theSelNature);
   }
@@ -284,7 +284,7 @@ public:
   //! \param theSelNature [in] selection kind.
   //! \return sequence of rendered presentations.
   const PrsSeq&
-    RenderedPresentations(const asiVisu_SelectionNature theSelNature) const
+    RenderedPresentations(const asiUI_SelectionNature theSelNature) const
   {
     return m_prsSet.Find(theSelNature);
   }

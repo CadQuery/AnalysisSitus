@@ -182,9 +182,9 @@ public:
     GetSelectionMode() const;
 
   ActAPI_DataObjectIdList
-    Pick(asiVisu_PickInput*            thePickInput,
-         const asiVisu_SelectionNature theSelNature,
-         const asiVisu_PickType        thePickType = PickType_Cell);
+    Pick(asiUI_PickInput*            thePickInput,
+         const asiUI_SelectionNature theSelNature,
+         const asiUI_PickType        thePickType = PickType_Cell);
 
   void
     SetPickList(const Handle(ActAPI_HNodeList)& theNodeList);

@@ -15,7 +15,7 @@
 #include <asiUI_Viewer.h>
 
 // A-Situs (visualization) includes
-#include <asiVisu_PDomainCallback.h>
+#include <asiUI_PDomainCallback.h>
 #include <asiUI_PickCallback.h>
 
 // VTK includes
@@ -44,7 +44,7 @@ public slots:
 
 private:
 
-  vtkSmartPointer<asiVisu_PDomainCallback> m_domainCallback; //!< Callback for domain operations.
+  vtkSmartPointer<asiUI_PDomainCallback> m_domainCallback; //!< Callback for domain operations.
   vtkSmartPointer<asiUI_PickCallback>    m_pickCallback;   //!< Pick callback.
   vtkSmartPointer<vtkTextWidget>         m_textWidget;     //!< Annotation.
 

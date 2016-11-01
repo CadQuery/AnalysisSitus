@@ -9,7 +9,7 @@
 #define asiUI_PartCallback_h
 
 // A-Situs (visualization) includes
-#include <asiVisu_ViewerCallback.h>
+#include <asiUI_ViewerCallback.h>
 
 // VTK includes
 #include <vtkRenderer.h>
@@ -20,7 +20,7 @@
 
 //! Callback for operations in Part viewer.
 class asiUI_PartCallback : public QObject,
-                             public asiVisu_ViewerCallback
+                           public asiUI_ViewerCallback
 {
   Q_OBJECT
 
@@ -28,7 +28,7 @@ public:
 
   static asiUI_PartCallback* New();
   static asiUI_PartCallback* New(asiUI_Viewer* theViewer);
-  vtkTypeMacro(asiUI_PartCallback, asiVisu_ViewerCallback);
+  vtkTypeMacro(asiUI_PartCallback, asiUI_ViewerCallback);
 
 public:
 

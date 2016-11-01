@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-asiVisu_RotationCenterCallback::asiVisu_RotationCenterCallback() : asiVisu_MeshDataProvider()
+asiUI_RotationCenterCallback::asiUI_RotationCenterCallback() : asiVisu_MeshDataProvider()
 {
   this->Init(0.0, 0.0, 0.0, 1.0);
 }
@@ -39,7 +39,7 @@ asiVisu_RotationCenterCallback::asiVisu_RotationCenterCallback() : asiVisu_MeshD
 //! \param y    [in] y coordinate of the center point.
 //! \param z    [in] z coordinate of the center point.
 //! \param side [in] side of the rotation marker.
-void asiVisu_RotationCenterCallback::Init(const double x,
+void asiUI_RotationCenterCallback::Init(const double x,
                                          const double y,
                                          const double z,
                                          const double side)
@@ -85,11 +85,11 @@ asiUI_RotationCallback* asiUI_RotationCallback::New(asiUI_Viewer* theViewer)
 //! Constructor accepting owning viewer as a parameter.
 //! \param theViewer [in] owning viewer.
 asiUI_RotationCallback::asiUI_RotationCallback(asiUI_Viewer* theViewer)
-: asiVisu_ViewerCallback(theViewer),
+: asiUI_ViewerCallback(theViewer),
   m_bIsStarted(false)
 {
   m_pl  = new asiVisu_MeshPipeline;
-  m_prv = new asiVisu_RotationCenterCallback;
+  m_prv = new asiUI_RotationCenterCallback;
 }
 
 //! Destructor.

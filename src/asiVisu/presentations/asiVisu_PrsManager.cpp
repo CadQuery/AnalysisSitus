@@ -10,10 +10,10 @@
 
 // Visualization includes
 #include <asiVisu_Common.h>
-#include <asiVisu_NodeInfo.h>
+#include <asiUI_NodeInfo.h>
 #include <asiVisu_Prs.h>
 #include <asiVisu_Pipeline.h>
-#include <asiVisu_Selection.h>
+#include <asiUI_Selection.h>
 #include <asiVisu_ShapeDataSource.h>
 #include <asiVisu_Utils.h>
 
@@ -622,9 +622,9 @@ int asiVisu_PrsManager::GetSelectionMode() const
 //! \param thePickType  [in] type of picker to use.
 //! \return list of affected Data Node IDs.
 ActAPI_DataObjectIdList
-  asiVisu_PrsManager::Pick(asiVisu_PickInput*            thePickInput,
-                         const asiVisu_SelectionNature theSelNature,
-                         const asiVisu_PickType        thePickType)
+  asiVisu_PrsManager::Pick(asiUI_PickInput*            thePickInput,
+                         const asiUI_SelectionNature theSelNature,
+                         const asiUI_PickType        thePickType)
 {
   /* ===================
    *  Some preparations
@@ -651,7 +651,7 @@ ActAPI_DataObjectIdList
 
   // Prepare picking results
   vtkActor*         aPickedActor = NULL;
-  asiVisu_PickResult& aPickRes     = m_currentSelection.ChangePickResult(theSelNature);
+  asiUI_PickResult& aPickRes     = m_currentSelection.ChangePickResult(theSelNature);
   aPickRes.SetSelectionModes(m_iSelectionModes);
 
   if ( m_iSelectionModes & SelectionMode_Workpiece ) // Non-partial selection
@@ -777,7 +777,7 @@ ActAPI_DataObjectIdList
     m_shapePicker->Pick(XStart, YStart, 0);
 
     // Traversing results
-    asiVisu_NodeInfo*                     aNodeInfo         = NULL;
+    asiUI_NodeInfo*                     aNodeInfo         = NULL;
     vtkSmartPointer<vtkActorCollection> anActorCollection = m_shapePicker->GetPickedActors();
     //
     if ( anActorCollection && anActorCollection->GetNumberOfItems() > 0 )
@@ -812,7 +812,7 @@ ActAPI_DataObjectIdList
           aPickRes << sIt.Value();
         }
 
-        aNodeInfo = asiVisu_NodeInfo::Retrieve(aPickedActor);
+        aNodeInfo = asiUI_NodeInfo::Retrieve(aPickedActor);
         if ( aNodeInfo )
           break;
       }
@@ -836,7 +836,7 @@ ActAPI_DataObjectIdList
    * ====================================== */
 
   // Retrieve the corresponding Presentation by data object's ID
-  asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve(aPickedActor);
+  asiUI_NodeInfo* nodeInfo = asiUI_NodeInfo::Retrieve(aPickedActor);
   if ( !nodeInfo )
     return aResult;
   //
@@ -980,7 +980,7 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& theNodes,
 
   // Populate Pick resulting structure to be used by Presentation's
   // highlight method
-  asiVisu_PickResult& aPickRes = m_currentSelection.ChangePickResult(SelectionNature_Pick);
+  asiUI_PickResult& aPickRes = m_currentSelection.ChangePickResult(SelectionNature_Pick);
   aPickRes.Clear();
   aPickRes.SetSelectionModes(theModes);
   for ( asiVisu_ActorElemMap::Iterator it(theActorElems); it.More(); it.Next() )

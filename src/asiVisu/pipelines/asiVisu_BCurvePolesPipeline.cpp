@@ -11,7 +11,7 @@
 // Visualization includes
 #include <asiVisu_BCurvePolesSource.h>
 #include <asiVisu_CurveDataProvider.h>
-#include <asiVisu_NodeInfo.h>
+#include <asiUI_NodeInfo.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -88,7 +88,7 @@ void asiVisu_BCurvePolesPipeline::SetInput(const Handle(asiVisu_DataProvider)& D
     if ( m_bForced ) m_bForced = false; // Executed, reset forced
 
     // Bind to Node
-    asiVisu_NodeInfo::Store( dp->GetNodeID(), this->Actor() );
+    asiUI_NodeInfo::Store( dp->GetNodeID(), this->Actor() );
 
     // Access curve (3d or 2d)
     double f, l;

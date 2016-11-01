@@ -11,9 +11,6 @@
 // UI includes
 #include <asiUI_Common.h>
 
-// Common includes
-#include <common_facilities.h>
-
 // Qt includes
 #pragma warning(push, 0)
 #include <QHeaderView>
@@ -26,11 +23,12 @@
 //-----------------------------------------------------------------------------
 
 //! Creates a new instance of tree view.
+//! \param model  [in] Data Model instance.
 //! \param parent [in] parent widget.
-asiUI_ObjectBrowser::asiUI_ObjectBrowser(QWidget* parent) : QTreeWidget(parent)
+asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
+                                         QWidget*                     parent)
+: QTreeWidget(parent), m_model(model)
 {
-  common_facilities::Instance()->ObjectBrowser = this;
-
   // Configure
   this->setMinimumWidth(TREEVIEW_MINSIZE);
   this->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -64,15 +62,11 @@ asiUI_ObjectBrowser::~asiUI_ObjectBrowser()
 //! Populates tree view from the Data Model.
 void asiUI_ObjectBrowser::Populate()
 {
-  if ( common_facilities::Instance()->Model.IsNull() )
-    return;
-
   // Clean up the existing contents
   this->clear();
 
   // Add root node
-  Handle(asiData_RootNode)
-    root_n = Handle(asiData_RootNode)::DownCast( common_facilities::Instance()->Model->GetRootNode() );
+  Handle(ActAPI_INode) root_n = m_model->GetRootNode();
   //
   if ( root_n.IsNull() || !root_n->IsWellFormed() )
     return;
@@ -117,7 +111,7 @@ void asiUI_ObjectBrowser::SetSelected(const ActAPI_DataObjectId& nodeId)
 //! \param root_n  [in] root Node in a Data Model.
 //! \param root_ui [in] root item in a tree view.
 void asiUI_ObjectBrowser::addChildren(const Handle(ActAPI_INode)& root_n,
-                                     QTreeWidgetItem*            root_ui)
+                                      QTreeWidgetItem*            root_ui)
 {
   if ( root_n.IsNull() || !root_n->IsWellFormed() )
     return;
@@ -164,9 +158,9 @@ void asiUI_ObjectBrowser::onShowOnly()
   Handle(ActAPI_INode) selected_n;
   if ( !this->selectedNode(selected_n) ) return;
 
-  // Actualize viewer
-  common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->Actualize( selected_n.get() );
+  // TODO
+
+  emit showOnly( selected_n->GetId() );
 }
 
 //-----------------------------------------------------------------------------
@@ -184,8 +178,7 @@ bool asiUI_ObjectBrowser::selectedNode(Handle(ActAPI_INode)& Node) const
   TCollection_AsciiString entry = QStr2AsciiStr( item->data(0, BrowserRoleNodeId).toString() );
 
   // Take the corresponding data object
-  Handle(ActAPI_INode)
-    selected_n = common_facilities::Instance()->Model->FindNode(entry);
+  Handle(ActAPI_INode) selected_n = m_model->FindNode(entry);
   //
   if ( selected_n.IsNull() || !selected_n->IsWellFormed() )
   {
@@ -197,4 +190,3 @@ bool asiUI_ObjectBrowser::selectedNode(Handle(ActAPI_INode)& Node) const
   Node = selected_n;
   return true;
 }
-

@@ -8,9 +8,6 @@
 // Own include
 #include <asiUI_DialogSTEP.h>
 
-// Common includes
-#include <common_facilities.h>
-
 // Geometry includes
 #include <asiAlgo_STEP.h>
 
@@ -37,10 +34,18 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
+//! \param model  [in] Data Model instance.
+//! \param part_n [in] Part Node.
 //! \param mode   [in] interoperability mode.
 //! \param parent [in] parent widget.
-asiUI_DialogSTEP::asiUI_DialogSTEP(const Mode mode,
-                                 QWidget*   parent) : QDialog(parent), m_mode(mode)
+asiUI_DialogSTEP::asiUI_DialogSTEP(const Handle(ActAPI_IModel)&    model,
+                                   const Handle(asiData_PartNode)& part_n,
+                                   const Mode                      mode,
+                                   QWidget*                        parent)
+: QDialog (parent),
+  m_model (model),
+  m_part  (part_n),
+  m_mode  (mode)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -256,13 +261,12 @@ void asiUI_DialogSTEP::proceed_Write()
 {
   QString filename = asiUI_Common::selectSTEPFile(asiUI_Common::OpenSaveAction_Save);
 
-  // Access Geometry Node
-  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
+  // Check Geometry Node
+  if ( m_part.IsNull() || !m_part->IsWellFormed() )
     return;
 
   // Shape to save
-  TopoDS_Shape targetShape = N->GetShape();
+  TopoDS_Shape targetShape = m_part->GetShape();
   if ( targetShape.IsNull() )
   {
     std::cout << "Error: target shape is null" << std::endl;
@@ -289,9 +293,8 @@ void asiUI_DialogSTEP::proceed_Read()
 {
   QString filename = asiUI_Common::selectSTEPFile(asiUI_Common::OpenSaveAction_Open);
 
-  // Access Geometry Node
-  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
+  // Check Geometry Node
+  if ( m_part.IsNull() || !m_part->IsWellFormed() )
     return;
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
@@ -305,25 +308,12 @@ void asiUI_DialogSTEP::proceed_Read()
     return;
   }
 
-  // Clean up the Model
-  common_facilities::Instance()->Model->Clear();
-
   // Set part geometry
-  Handle(asiData_PartNode) geom_n = common_facilities::Instance()->Model->GetPartNode();
-  //
-  common_facilities::Instance()->Model->OpenCommand(); // tx start
+  m_model->OpenCommand(); // tx start
   {
-    geom_n->SetShape(shape);
+    m_part->SetShape(shape);
   }
-  common_facilities::Instance()->Model->CommitCommand(); // tx commit
-
-  // Update UI
-  common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize(geom_n.get(), false, true);
-  //
-  if ( common_facilities::Instance()->ObjectBrowser )
-    common_facilities::Instance()->ObjectBrowser->Populate();
+  m_model->CommitCommand(); // tx commit
 
   QApplication::restoreOverrideCursor();
 }

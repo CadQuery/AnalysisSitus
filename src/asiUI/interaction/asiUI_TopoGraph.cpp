@@ -6,10 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_TopoGraph.h>
+#include <asiUI_TopoGraph.h>
 
 // Visualization includes
-#include <asiVisu_TopoGraphItem.h>
+#include <asiUI_TopoGraphItem.h>
 #include <asiVisu_Utils.h>
 
 // Geometry includes
@@ -54,13 +54,13 @@
   vtkSmartPointer<Type> Name = vtkSmartPointer<Type>::New()
 
 //! Constructor.
-asiVisu_TopoGraph::asiVisu_TopoGraph()
+asiUI_TopoGraph::asiUI_TopoGraph()
 : m_textWidget    (NULL),
   m_summaryWidget (NULL)
 {}
 
 //! Destructor.
-asiVisu_TopoGraph::~asiVisu_TopoGraph()
+asiUI_TopoGraph::~asiUI_TopoGraph()
 {
 }
 
@@ -68,7 +68,7 @@ asiVisu_TopoGraph::~asiVisu_TopoGraph()
 //! \param graph  [in] VTK presentable graph.
 //! \param shape  [in] master shape.
 //! \param regime [in] kind of graph to render.
-void asiVisu_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
+void asiUI_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
                              const TopoDS_Shape&              shape,
                              const Regime                     regime)
 {
@@ -87,7 +87,7 @@ void asiVisu_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
   graphLayout->Update();
 
   // Graph item
-  vtkSmartPointer<asiVisu_TopoGraphItem> graphItem = vtkSmartPointer<asiVisu_TopoGraphItem>::New();
+  vtkSmartPointer<asiUI_TopoGraphItem> graphItem = vtkSmartPointer<asiUI_TopoGraphItem>::New();
   graphItem->SetGraph( graphLayout->GetOutput() );
 
   connect( graphItem, SIGNAL( vertexPicked(const int, const vtkIdType) ),
@@ -178,7 +178,7 @@ void asiVisu_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
   m_pWidget->show();
 
   // Set callback on rendering
-  m_pWidget->GetRenderWindow()->AddObserver(vtkCommand::RenderEvent, this, &asiVisu_TopoGraph::RenderEventCallback);
+  m_pWidget->GetRenderWindow()->AddObserver(vtkCommand::RenderEvent, this, &asiUI_TopoGraph::RenderEventCallback);
 }
 
 //! Renders topology graph in the requested regime.
@@ -186,7 +186,7 @@ void asiVisu_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
 //! \param selectedFaces [in] selected faces.
 //! \param regime        [in] regime of interest.
 //! \param leafType      [in] target leaf type for FULL regime.
-void asiVisu_TopoGraph::Render(const TopoDS_Shape&               shape,
+void asiUI_TopoGraph::Render(const TopoDS_Shape&               shape,
                              const TopTools_IndexedMapOfShape& selectedFaces,
                              const Regime                      regime,
                              const TopAbs_ShapeEnum            leafType)
@@ -201,7 +201,7 @@ void asiVisu_TopoGraph::Render(const TopoDS_Shape&               shape,
 //! Renders topology graph.
 //! \param shape    [in] target shape.
 //! \param leafType [in] target leaf type.
-void asiVisu_TopoGraph::RenderFull(const TopoDS_Shape& shape, const TopAbs_ShapeEnum leafType)
+void asiUI_TopoGraph::RenderFull(const TopoDS_Shape& shape, const TopAbs_ShapeEnum leafType)
 {
   this->Render(shape, TopTools_IndexedMapOfShape(), Regime_Full, leafType);
 }
@@ -209,7 +209,7 @@ void asiVisu_TopoGraph::RenderFull(const TopoDS_Shape& shape, const TopAbs_Shape
 //! Renders AA graph.
 //! \param shape         [in] target shape.
 //! \param selectedFaces [in] selected faces.
-void asiVisu_TopoGraph::RenderAdjacency(const TopoDS_Shape&               shape,
+void asiUI_TopoGraph::RenderAdjacency(const TopoDS_Shape&               shape,
                                       const TopTools_IndexedMapOfShape& selectedFaces)
 {
   this->Render(shape, selectedFaces, Regime_AAG, TopAbs_SHAPE);
@@ -222,7 +222,7 @@ void asiVisu_TopoGraph::RenderAdjacency(const TopoDS_Shape&               shape,
 //! \param leafType      [in] leaf type for FULL regime.
 //! \return graph instance.
 vtkSmartPointer<vtkGraph>
-  asiVisu_TopoGraph::convertToGraph(const TopoDS_Shape&               shape,
+  asiUI_TopoGraph::convertToGraph(const TopoDS_Shape&               shape,
                                   const TopTools_IndexedMapOfShape& selectedFaces,
                                   const Regime                      regime,
                                   const TopAbs_ShapeEnum            leafType)
@@ -290,7 +290,7 @@ vtkSmartPointer<vtkGraph>
 //! \param pLabelArr     [in/out] array for labels associated with vertices.
 //! \param pGroupArr     [in/out] array for vertex groups.
 //! \param shapeVertices [in/out] map of shapes against their registered graph vertices.
-void asiVisu_TopoGraph::buildRecursively(const TopoDS_Shape&             rootShape,
+void asiUI_TopoGraph::buildRecursively(const TopoDS_Shape&             rootShape,
                                        const vtkIdType                 rootId,
                                        const TopAbs_ShapeEnum          leafType,
                                        vtkMutableDirectedGraph*        pDS,
@@ -344,7 +344,7 @@ void asiVisu_TopoGraph::buildRecursively(const TopoDS_Shape&             rootSha
 }
 
 //! Callback to adjust text widgets.
-void asiVisu_TopoGraph::RenderEventCallback()
+void asiUI_TopoGraph::RenderEventCallback()
 {
   if ( !m_textWidget->GetEnabled() )
     m_textWidget->On();
@@ -354,7 +354,7 @@ void asiVisu_TopoGraph::RenderEventCallback()
 }
 
 //! Reaction on closing the viewer.
-void asiVisu_TopoGraph::onViewerClosed()
+void asiUI_TopoGraph::onViewerClosed()
 {
   // NOTE: the important point is to remove widget after all items which
   //       may listen to it
@@ -368,7 +368,7 @@ void asiVisu_TopoGraph::onViewerClosed()
 //! Reaction on vertex picking.
 //! \param fid [in] face ID.
 //! \param vid [in] vertex ID.
-void asiVisu_TopoGraph::onVertexPicked(const int fid, const vtkIdType asiVisu_NotUsed(vid))
+void asiUI_TopoGraph::onVertexPicked(const int fid, const vtkIdType asiVisu_NotUsed(vid))
 {
   if ( m_aag.IsNull() )
     return;

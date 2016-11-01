@@ -6,12 +6,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_bcurve_poles_pipeline.h>
+#include <asiVisu_BCurvePolesPipeline.h>
 
 // Visualization includes
-#include <visu_bcurve_poles_source.h>
-#include <visu_curve_data_provider.h>
-#include <visu_node_info.h>
+#include <asiVisu_BCurvePolesSource.h>
+#include <asiVisu_CurveDataProvider.h>
+#include <asiVisu_NodeInfo.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -26,9 +26,9 @@
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
 //! Creates new Pipeline initialized by default VTK mapper and actor.
-visu_bcurve_poles_pipeline::visu_bcurve_poles_pipeline()
+asiVisu_BCurvePolesPipeline::asiVisu_BCurvePolesPipeline()
 //
-: visu_pipeline      ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
+: asiVisu_Pipeline      ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
   m_bMapperColorsSet (false),
   m_bForced          (false)
 {
@@ -60,9 +60,9 @@ visu_bcurve_poles_pipeline::visu_bcurve_poles_pipeline()
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void visu_bcurve_poles_pipeline::SetInput(const Handle(visu_data_provider)& DP)
+void asiVisu_BCurvePolesPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  Handle(visu_curve_data_provider) dp = Handle(visu_curve_data_provider)::DownCast(DP);
+  Handle(asiVisu_CurveDataProvider) dp = Handle(asiVisu_CurveDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
@@ -88,7 +88,7 @@ void visu_bcurve_poles_pipeline::SetInput(const Handle(visu_data_provider)& DP)
     if ( m_bForced ) m_bForced = false; // Executed, reset forced
 
     // Bind to Node
-    visu_node_info::Store( dp->GetNodeID(), this->Actor() );
+    asiVisu_NodeInfo::Store( dp->GetNodeID(), this->Actor() );
 
     // Access curve (3d or 2d)
     double f, l;
@@ -100,8 +100,8 @@ void visu_bcurve_poles_pipeline::SetInput(const Handle(visu_data_provider)& DP)
     {
       Handle(Geom_BSplineCurve) BC = Handle(Geom_BSplineCurve)::DownCast(c3d);
       //
-      vtkSmartPointer<visu_bcurve_poles_source>
-        bpoles_src = vtkSmartPointer<visu_bcurve_poles_source>::New();
+      vtkSmartPointer<asiVisu_BCurvePolesSource>
+        bpoles_src = vtkSmartPointer<asiVisu_BCurvePolesSource>::New();
       //
       bpoles_src->SetInputCurve(BC);
 
@@ -122,8 +122,8 @@ void visu_bcurve_poles_pipeline::SetInput(const Handle(visu_data_provider)& DP)
     {
       Handle(Geom2d_BSplineCurve) BC = Handle(Geom2d_BSplineCurve)::DownCast(c2d);
       //
-      vtkSmartPointer<visu_bcurve_poles_source>
-        bpoles_src = vtkSmartPointer<visu_bcurve_poles_source>::New();
+      vtkSmartPointer<asiVisu_BCurvePolesSource>
+        bpoles_src = vtkSmartPointer<asiVisu_BCurvePolesSource>::New();
       //
       bpoles_src->SetInputCurve2d(BC);
 
@@ -156,7 +156,7 @@ void visu_bcurve_poles_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
 //! Sets poles selected for visualization.
 //! \param mask [in] selected poles.
-void visu_bcurve_poles_pipeline::SetSelectedPoles(const TColStd_PackedMapOfInteger& mask)
+void asiVisu_BCurvePolesPipeline::SetSelectedPoles(const TColStd_PackedMapOfInteger& mask)
 {
   m_selected->Reset();
   m_selected->SetNumberOfComponents(1);
@@ -176,20 +176,20 @@ void visu_bcurve_poles_pipeline::SetSelectedPoles(const TColStd_PackedMapOfInteg
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_bcurve_poles_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_BCurvePolesPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_bcurve_poles_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_BCurvePolesPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void visu_bcurve_poles_pipeline::callback_update()
+void asiVisu_BCurvePolesPipeline::callback_update()
 {
   if ( !m_bMapperColorsSet )
   {
-    vtkSmartPointer<vtkLookupTable> aLookup = visu_utils::InitDomainLookupTable();
-    visu_utils::InitMapper(m_mapper, aLookup, ARRNAME_ORIENT_SCALARS);
+    vtkSmartPointer<vtkLookupTable> aLookup = asiVisu_Utils::InitDomainLookupTable();
+    asiVisu_Utils::InitMapper(m_mapper, aLookup, ARRNAME_ORIENT_SCALARS);
     m_bMapperColorsSet = true;
   }
 }

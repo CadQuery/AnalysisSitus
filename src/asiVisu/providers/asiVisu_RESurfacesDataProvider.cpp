@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_re_surfaces_data_provider.h>
+#include <asiVisu_RESurfacesDataProvider.h>
 
 // Common includes
 #include <common_facilities.h>
@@ -14,14 +14,14 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-visu_re_surfaces_data_provider::visu_re_surfaces_data_provider()
-: visu_data_provider()
+asiVisu_RESurfacesDataProvider::asiVisu_RESurfacesDataProvider()
+: asiVisu_DataProvider()
 {}
 
 //-----------------------------------------------------------------------------
 
 //! \return ID of the associated Data Node.
-ActAPI_DataObjectId visu_re_surfaces_data_provider::GetNodeID() const
+ActAPI_DataObjectId asiVisu_RESurfacesDataProvider::GetNodeID() const
 {
   Handle(asiData_RESurfacesNode)
     surfaces_n = common_facilities::Instance()->Model->GetRENode()->Surfaces();
@@ -35,7 +35,7 @@ ActAPI_DataObjectId visu_re_surfaces_data_provider::GetNodeID() const
 //-----------------------------------------------------------------------------
 
 //! \return number of stored surfaces.
-int visu_re_surfaces_data_provider::GetNumOfSurfaces() const
+int asiVisu_RESurfacesDataProvider::GetNumOfSurfaces() const
 {
   Handle(asiData_RESurfacesNode)
     surfaces_n = common_facilities::Instance()->Model->GetRENode()->Surfaces();
@@ -64,7 +64,7 @@ int visu_re_surfaces_data_provider::GetNumOfSurfaces() const
 //! \param vLimit       [out] V limit.
 //! \return surface.
 Handle(Geom_Surface)
-  visu_re_surfaces_data_provider::GetSurface(const int oneBased_idx,
+  asiVisu_RESurfacesDataProvider::GetSurface(const int oneBased_idx,
                                              double&   uLimit,
                                              double&   vLimit) const
 {
@@ -90,7 +90,7 @@ Handle(Geom_Surface)
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) visu_re_surfaces_data_provider::translationSources() const
+Handle(ActAPI_HParameterList) asiVisu_RESurfacesDataProvider::translationSources() const
 {
   // Resulting Parameters
   ActParamStream out;

@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_shape_data_provider.h>
+#include <asiVisu_ShapeDataProvider.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -14,16 +14,16 @@
 //-----------------------------------------------------------------------------
 
 //! ctor.
-visu_shape_data_provider::visu_shape_data_provider()
-: visu_data_provider()
+asiVisu_ShapeDataProvider::asiVisu_ShapeDataProvider()
+: asiVisu_DataProvider()
 {}
 
 //! Constructor accepting the set of source data structures.
 //! \param theNodeId    [in] ID of the target Data Node.
 //! \param theParamList [in] source Parameters.
-visu_shape_data_provider::visu_shape_data_provider(const ActAPI_DataObjectId&           theNodeId,
+asiVisu_ShapeDataProvider::asiVisu_ShapeDataProvider(const ActAPI_DataObjectId&           theNodeId,
                                                    const Handle(ActAPI_HParameterList)& theParamList)
-: visu_data_provider()
+: asiVisu_DataProvider()
 {
   m_nodeID = theNodeId;
   m_params = theParamList;
@@ -35,28 +35,28 @@ visu_shape_data_provider::visu_shape_data_provider(const ActAPI_DataObjectId&   
 //! pipeline. This ID is bound to the pipeline's actor in order to have a
 //! back-reference from Presentation to Data Object.
 //! \return Node ID.
-ActAPI_DataObjectId visu_shape_data_provider::GetNodeID() const
+ActAPI_DataObjectId asiVisu_ShapeDataProvider::GetNodeID() const
 {
   return m_nodeID;
 }
 
 //! Returns the OCCT topological shape to be visualized.
 //! \return OCCT topological shape.
-TopoDS_Shape visu_shape_data_provider::GetShape() const
+TopoDS_Shape asiVisu_ShapeDataProvider::GetShape() const
 {
   return ActParamTool::AsShape( m_params->Value(1) )->GetShape();
 }
 
 //! Returns mask of sub-shape IDs to keep in the initial source.
 //! \return mask of sub-shape IDs.
-Handle(TColStd_HPackedMapOfInteger) visu_shape_data_provider::GetSubShapes() const
+Handle(TColStd_HPackedMapOfInteger) asiVisu_ShapeDataProvider::GetSubShapes() const
 {
   return m_subShapes;
 }
 
 //! Setter for transient collection of sub-shape IDs.
 //! \param theSubShapes [in] collection to set.
-void visu_shape_data_provider::SetSubShapes(const Handle(TColStd_HPackedMapOfInteger)& theSubShapes)
+void asiVisu_ShapeDataProvider::SetSubShapes(const Handle(TColStd_HPackedMapOfInteger)& theSubShapes)
 {
   m_subShapes = theSubShapes;
 }
@@ -65,23 +65,23 @@ void visu_shape_data_provider::SetSubShapes(const Handle(TColStd_HPackedMapOfInt
 
 //! Creates a copy of the Data Provider.
 //! \return copy.
-Handle(visu_shape_data_provider) visu_shape_data_provider::Clone() const
+Handle(asiVisu_ShapeDataProvider) asiVisu_ShapeDataProvider::Clone() const
 {
-  return new visu_shape_data_provider(m_nodeID, m_params);
+  return new asiVisu_ShapeDataProvider(m_nodeID, m_params);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Returns TRUE if position data is sourced.
 //! \return true/false.
-bool visu_shape_data_provider::HasPosition() const
+bool asiVisu_ShapeDataProvider::HasPosition() const
 {
   return false;
 }
 
 //! Returns TRUE if position & rotation data is sourced.
 //! \return true/false.
-bool visu_shape_data_provider::HasPositionAndRotation() const
+bool asiVisu_ShapeDataProvider::HasPositionAndRotation() const
 {
   return false;
 }
@@ -90,7 +90,7 @@ bool visu_shape_data_provider::HasPositionAndRotation() const
 //! \param thePosX [out] position X.
 //! \param thePosY [out] position Y.
 //! \param thePosZ [out] position Z.
-void visu_shape_data_provider::GetPosition(double& thePosX,
+void asiVisu_ShapeDataProvider::GetPosition(double& thePosX,
                                            double& thePosY,
                                            double& thePosZ) const
 {
@@ -103,7 +103,7 @@ void visu_shape_data_provider::GetPosition(double& thePosX,
 //! \param theAngleAroundX [out] rotation angle around OX axis.
 //! \param theAngleAroundY [out] rotation angle around OY axis.
 //! \param theAngleAroundZ [out] rotation angle around OZ axis.
-void visu_shape_data_provider::GetRotation(double& theAngleAroundX,
+void asiVisu_ShapeDataProvider::GetRotation(double& theAngleAroundX,
                                            double& theAngleAroundY,
                                            double& theAngleAroundZ) const
 {
@@ -117,7 +117,7 @@ void visu_shape_data_provider::GetRotation(double& theAngleAroundX,
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) visu_shape_data_provider::translationSources() const
+Handle(ActAPI_HParameterList) asiVisu_ShapeDataProvider::translationSources() const
 {
   return m_params;
 }

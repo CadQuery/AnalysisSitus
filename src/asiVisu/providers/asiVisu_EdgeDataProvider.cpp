@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_edge_data_provider.h>
+#include <asiVisu_EdgeDataProvider.h>
 
 // A-Situs (common) includes
 #include <common_facilities.h>
@@ -27,9 +27,9 @@
 //! Constructor accepting the set of source data structures.
 //! \param theNodeId    [in] ID of the target Data Node.
 //! \param theParamList [in] source Parameters.
-visu_edge_data_provider::visu_edge_data_provider(const ActAPI_DataObjectId&           theNodeId,
+asiVisu_EdgeDataProvider::asiVisu_EdgeDataProvider(const ActAPI_DataObjectId&           theNodeId,
                                                  const Handle(ActAPI_HParameterList)& theParamList)
-: visu_curve_data_provider()
+: asiVisu_CurveDataProvider()
 {
   m_nodeID = theNodeId;
   m_params = theParamList;
@@ -51,7 +51,7 @@ visu_edge_data_provider::visu_edge_data_provider(const ActAPI_DataObjectId&     
 //! pipeline. This ID is bound to the pipeline's actor in order to have a
 //! back-reference from Presentation to Data Object.
 //! \return Node ID.
-ActAPI_DataObjectId visu_edge_data_provider::GetNodeID() const
+ActAPI_DataObjectId asiVisu_EdgeDataProvider::GetNodeID() const
 {
   return m_nodeID;
 }
@@ -59,7 +59,7 @@ ActAPI_DataObjectId visu_edge_data_provider::GetNodeID() const
 //-----------------------------------------------------------------------------
 
 //! \return global index of the OCCT edge to be visualized.
-int visu_edge_data_provider::GetEdgeIndexAmongSubshapes() const
+int asiVisu_EdgeDataProvider::GetEdgeIndexAmongSubshapes() const
 {
   return ActParamTool::AsInt( m_params->Value(1) )->GetValue();
 }
@@ -67,7 +67,7 @@ int visu_edge_data_provider::GetEdgeIndexAmongSubshapes() const
 //-----------------------------------------------------------------------------
 
 //! \return local index of the OCCT edges to be visualized.
-int visu_edge_data_provider::GetEdgeIndexAmongEdges() const
+int asiVisu_EdgeDataProvider::GetEdgeIndexAmongEdges() const
 {
   const int globalId = ActParamTool::AsInt( m_params->Value(1) )->GetValue();
 
@@ -80,7 +80,7 @@ int visu_edge_data_provider::GetEdgeIndexAmongEdges() const
 //-----------------------------------------------------------------------------
 
 //! \return topological edge extracted from the part by its stored ID.
-TopoDS_Edge visu_edge_data_provider::ExtractEdge() const
+TopoDS_Edge asiVisu_EdgeDataProvider::ExtractEdge() const
 {
   const int eIdx = this->GetEdgeIndexAmongSubshapes();
   if ( !eIdx )
@@ -98,7 +98,7 @@ TopoDS_Edge visu_edge_data_provider::ExtractEdge() const
 //-----------------------------------------------------------------------------
 
 //! \return type of the host curve.
-Handle(Standard_Type) visu_edge_data_provider::GetCurveType() const
+Handle(Standard_Type) asiVisu_EdgeDataProvider::GetCurveType() const
 {
   double f, l;
   Handle(Geom_Curve) c3d = this->GetCurve(f, l);
@@ -112,7 +112,7 @@ Handle(Standard_Type) visu_edge_data_provider::GetCurveType() const
 //-----------------------------------------------------------------------------
 
 //! Not used.
-Handle(Geom2d_Curve) visu_edge_data_provider::GetCurve2d(double&, double&) const
+Handle(Geom2d_Curve) asiVisu_EdgeDataProvider::GetCurve2d(double&, double&) const
 {
   return NULL;
 }
@@ -123,7 +123,7 @@ Handle(Geom2d_Curve) visu_edge_data_provider::GetCurve2d(double&, double&) const
 //! \param[out] f first parameter on the curve.
 //! \param[out] l last parameter on the curve.
 //! \return host curve.
-Handle(Geom_Curve) visu_edge_data_provider::GetCurve(double& f, double& l) const
+Handle(Geom_Curve) asiVisu_EdgeDataProvider::GetCurve(double& f, double& l) const
 {
   TopoDS_Edge E = this->ExtractEdge();
   //
@@ -137,9 +137,9 @@ Handle(Geom_Curve) visu_edge_data_provider::GetCurve(double& f, double& l) const
 
 //! Creates a copy of the Data Provider.
 //! \return copy.
-Handle(visu_edge_data_provider) visu_edge_data_provider::Clone() const
+Handle(asiVisu_EdgeDataProvider) asiVisu_EdgeDataProvider::Clone() const
 {
-  return new visu_edge_data_provider(m_nodeID, m_params);
+  return new asiVisu_EdgeDataProvider(m_nodeID, m_params);
 }
 
 //-----------------------------------------------------------------------------
@@ -147,7 +147,7 @@ Handle(visu_edge_data_provider) visu_edge_data_provider::Clone() const
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) visu_edge_data_provider::translationSources() const
+Handle(ActAPI_HParameterList) asiVisu_EdgeDataProvider::translationSources() const
 {
   return ActParamStream() << m_params->Value(1); // Parameter for edge index
 }

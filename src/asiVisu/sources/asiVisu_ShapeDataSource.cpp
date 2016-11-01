@@ -6,10 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_shape_data_source.h>
+#include <asiVisu_ShapeDataSource.h>
 
 // A-Situs (visualization) includes
-#include <visu_shape_mesher.h>
+#include <asiVisu_ShapeMesher.h>
 
 // OCCT includes
 #include <IVtkTools_ShapeObject.hxx>
@@ -27,27 +27,27 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
-vtkStandardNewMacro(visu_shape_data_source);
+vtkStandardNewMacro(asiVisu_ShapeDataSource);
 
 //================================================================
 // Function : Constructor
 // Purpose  : 
 //================================================================
-visu_shape_data_source::visu_shape_data_source() : IVtkTools_ShapeDataSource()
+asiVisu_ShapeDataSource::asiVisu_ShapeDataSource() : IVtkTools_ShapeDataSource()
 {}
 
 //================================================================
 // Function : Destructor
 // Purpose  : 
 //================================================================
-visu_shape_data_source::~visu_shape_data_source()
+asiVisu_ShapeDataSource::~asiVisu_ShapeDataSource()
 {}
 
 //================================================================
 // Function : RequestData
 // Purpose  : 
 //================================================================
-int visu_shape_data_source::RequestData (vtkInformation* theRequest,
+int asiVisu_ShapeDataSource::RequestData (vtkInformation* theRequest,
                                          vtkInformationVector** theInputVector,
                                          vtkInformationVector* theOutputVector)
 {
@@ -89,7 +89,7 @@ int visu_shape_data_source::RequestData (vtkInformation* theRequest,
     }
 
     myPolyData = new IVtkVTK_ShapeData;
-    visu_shape_mesher::Handle aMesher = new visu_shape_mesher(0.001, 5.0*M_PI/180.0, 0, 0);
+    asiVisu_ShapeMesher::Handle aMesher = new asiVisu_ShapeMesher(0.001, 5.0*M_PI/180.0, 0, 0);
     aMesher->Build (aShapeWrapperCopy, myPolyData);
     vtkPolyData* aMeshData = myPolyData->getVtkPolyData();
 

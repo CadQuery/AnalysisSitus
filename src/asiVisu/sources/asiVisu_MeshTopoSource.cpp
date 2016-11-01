@@ -6,11 +6,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_mesh_topo_source.h>
+#include <asiVisu_MeshTopoSource.h>
 
 // Visualization includes
-#include <visu_mesh_utils.h>
-#include <visu_utils.h>
+#include <asiVisu_MeshUtils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkCellData.h>
@@ -31,17 +31,17 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(visu_mesh_topo_source);
+vtkStandardNewMacro(asiVisu_MeshTopoSource);
 
 //! Default constructor.
-visu_mesh_topo_source::visu_mesh_topo_source()
+asiVisu_MeshTopoSource::asiVisu_MeshTopoSource()
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
 }
 
 //! Destructor.
-visu_mesh_topo_source::~visu_mesh_topo_source()
+asiVisu_MeshTopoSource::~asiVisu_MeshTopoSource()
 {
 }
 
@@ -51,27 +51,27 @@ visu_mesh_topo_source::~visu_mesh_topo_source()
 
 //! Sets the instance of Mesh DS being used as an input for Data Source.
 //! \param mesh [in] input Mesh DS.
-void visu_mesh_topo_source::SetInputMesh(const Handle(Mesh)& mesh)
+void asiVisu_MeshTopoSource::SetInputMesh(const Handle(Mesh)& mesh)
 {
   m_mesh = mesh;
 }
 
 //! Accessor for the input Mesh DS.
 //! \return requested Mesh DS.
-const Handle(Mesh)& visu_mesh_topo_source::GetInputMesh() const
+const Handle(Mesh)& asiVisu_MeshTopoSource::GetInputMesh() const
 {
   return m_mesh;
 }
 
 //! Sets base nodes.
 //! \param nodes [in] nodes to set.
-void visu_mesh_topo_source::SetBaseNodes(const TColStd_PackedMapOfInteger& nodes)
+void asiVisu_MeshTopoSource::SetBaseNodes(const TColStd_PackedMapOfInteger& nodes)
 {
   m_nodes = nodes;
 }
 
 //! \return base nodes.
-const TColStd_PackedMapOfInteger& visu_mesh_topo_source::GetBaseNodes() const
+const TColStd_PackedMapOfInteger& asiVisu_MeshTopoSource::GetBaseNodes() const
 {
   return m_nodes;
 }
@@ -85,7 +85,7 @@ const TColStd_PackedMapOfInteger& visu_mesh_topo_source::GetBaseNodes() const
 //! \param pOutputVector [in] the pointer to output data, that is filled
 //!                           in this method.
 //! \return status.
-int visu_mesh_topo_source::RequestData(vtkInformation*        pRequest,
+int asiVisu_MeshTopoSource::RequestData(vtkInformation*        pRequest,
                                        vtkInformationVector** pInputVector,
                                        vtkInformationVector*  pOutputVector)
 {
@@ -103,7 +103,7 @@ int visu_mesh_topo_source::RequestData(vtkInformation*        pRequest,
 
   // Array for mesh node IDs
   vtkSmartPointer<vtkIntArray>
-    aNodeIDsArr = visu_utils::InitIntArray(ARRNAME_MESH_NODE_IDS);
+    aNodeIDsArr = asiVisu_Utils::InitIntArray(ARRNAME_MESH_NODE_IDS);
   aPD->AddArray(aNodeIDsArr);
 
   /* =======================
@@ -171,7 +171,7 @@ int visu_mesh_topo_source::RequestData(vtkInformation*        pRequest,
 //! \param coords    [in]     Cartesian coordinates of the node.
 //! \param pPolyData [in/out] output polygonal data.
 //! \return internal VTK ID for the newly added point.
-vtkIdType visu_mesh_topo_source::registerNode(const int     nodeId,
+vtkIdType asiVisu_MeshTopoSource::registerNode(const int     nodeId,
                                               const gp_Pnt& coords,
                                               vtkPolyData*  pPolyData)
 {
@@ -192,7 +192,7 @@ vtkIdType visu_mesh_topo_source::registerNode(const int     nodeId,
 //! \param n         [in] ID of the point.
 //! \param pPolyData [in] polygonal data being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType visu_mesh_topo_source::registerVertex(vtkIdType    n,
+vtkIdType asiVisu_MeshTopoSource::registerVertex(vtkIdType    n,
                                                 vtkPolyData* pPolyData)
 {
   std::vector<vtkIdType> pids = {n};
@@ -208,7 +208,7 @@ vtkIdType visu_mesh_topo_source::registerVertex(vtkIdType    n,
 //! \param n2        [in] ID of the second node.
 //! \param pPolyData [in] polygonal data being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType visu_mesh_topo_source::registerLink(vtkIdType    n1,
+vtkIdType asiVisu_MeshTopoSource::registerLink(vtkIdType    n1,
                                               vtkIdType    n2,
                                               vtkPolyData* pPolyData)
 {

@@ -5,14 +5,14 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef journal_iv_h
-#define journal_iv_h
+#ifndef asiVisu_JournalIV_h
+#define asiVisu_JournalIV_h
 
 // A-Situs includes
 #include <asiAlgo.h>
 
 // Visualization includes
-#include <visu_prs_manager.h>
+#include <asiVisu_PrsManager.h>
 
 // OCCT includes
 #include <Poly_Triangulation.hxx>
@@ -21,31 +21,31 @@
 #include <ActAPI_INode.h>
 #include <ActAPI_IPlotter.h>
 
-DEFINE_STANDARD_HANDLE(journal_iv, ActAPI_IPlotter)
+DEFINE_STANDARD_HANDLE(asiVisu_JournalIV, ActAPI_IPlotter)
 
 //! Interface for Imperative Viewer. A particular algorithm may benefit
 //! from immediate plotting of its geometric variables in a unified way
 //! thanks to this abstract class.
-class journal_iv : public ActAPI_IPlotter
+class asiVisu_JournalIV : public ActAPI_IPlotter
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(journal_iv, ActAPI_IPlotter)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_JournalIV, ActAPI_IPlotter)
 
 public:
 
   //! \return IV instance.
-  static Handle(journal_iv) Instance()
+  static Handle(asiVisu_JournalIV) Instance()
   {
-    return new journal_iv();
+    return new asiVisu_JournalIV();
   }
 
   //! Constructor.
-  journal_iv() : ActAPI_IPlotter() {}
+  asiVisu_JournalIV() : ActAPI_IPlotter() {}
 
   //! Destructor.
-  virtual ~journal_iv() {}
+  virtual ~asiVisu_JournalIV() {}
 
 // COMMON:
 public:
@@ -179,13 +179,13 @@ protected:
               const double                opacity,
               const bool                  isWireframe) const;
 
-  const vtkSmartPointer<visu_prs_manager>&
+  const vtkSmartPointer<asiVisu_PrsManager>&
     prsManager(const bool is2d) const;
 
-  const vtkSmartPointer<visu_prs_manager>&
+  const vtkSmartPointer<asiVisu_PrsManager>&
     prsManager3d() const;
 
-  const vtkSmartPointer<visu_prs_manager>&
+  const vtkSmartPointer<asiVisu_PrsManager>&
     prsManager2d() const;
 
 };

@@ -6,10 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_bcurve_poles_source.h>
+#include <asiVisu_BCurvePolesSource.h>
 
 // Visualization includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkCellData.h>
@@ -27,17 +27,17 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(visu_bcurve_poles_source);
+vtkStandardNewMacro(asiVisu_BCurvePolesSource);
 
 //! Default constructor.
-visu_bcurve_poles_source::visu_bcurve_poles_source() : vtkPolyDataAlgorithm()
+asiVisu_BCurvePolesSource::asiVisu_BCurvePolesSource() : vtkPolyDataAlgorithm()
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
 }
 
 //! Destructor.
-visu_bcurve_poles_source::~visu_bcurve_poles_source()
+asiVisu_BCurvePolesSource::~asiVisu_BCurvePolesSource()
 {
 }
 
@@ -48,7 +48,7 @@ visu_bcurve_poles_source::~visu_bcurve_poles_source()
 //! Initialize data source from a b-curve.
 //! \param curve [in] curve to extract a control polygon from.
 //! \return true if poly data has been produced.
-bool visu_bcurve_poles_source::SetInputCurve(const Handle(Geom_BSplineCurve)& bcurve)
+bool asiVisu_BCurvePolesSource::SetInputCurve(const Handle(Geom_BSplineCurve)& bcurve)
 {
   if ( bcurve.IsNull() )
     return false;
@@ -80,7 +80,7 @@ bool visu_bcurve_poles_source::SetInputCurve(const Handle(Geom_BSplineCurve)& bc
 //! Initialize data source from a two-dimensional b-curve.
 //! \param curve [in] curve to extract a control polygon from.
 //! \return true if poly data has been produced.
-bool visu_bcurve_poles_source::SetInputCurve2d(const Handle(Geom2d_BSplineCurve)& bcurve)
+bool asiVisu_BCurvePolesSource::SetInputCurve2d(const Handle(Geom2d_BSplineCurve)& bcurve)
 {
   if ( bcurve.IsNull() )
     return false;
@@ -120,7 +120,7 @@ bool visu_bcurve_poles_source::SetInputCurve2d(const Handle(Geom2d_BSplineCurve)
 //! \param outputVector [in] the pointer to output data, that is filled
 //!                          in this method.
 //! \return status.
-int visu_bcurve_poles_source::RequestData(vtkInformation*        request,
+int asiVisu_BCurvePolesSource::RequestData(vtkInformation*        request,
                                           vtkInformationVector** inputVector,
                                           vtkInformationVector*  outputVector)
 {
@@ -212,7 +212,7 @@ int visu_bcurve_poles_source::RequestData(vtkInformation*        request,
 //! \param index    [in]     index of (X, Y, Z) coordinate triple.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK point.
-vtkIdType visu_bcurve_poles_source::registerGridPoint(const int    index,
+vtkIdType asiVisu_BCurvePolesSource::registerGridPoint(const int    index,
                                                       vtkPolyData* polyData)
 {
   // Access necessary arrays
@@ -231,7 +231,7 @@ vtkIdType visu_bcurve_poles_source::registerGridPoint(const int    index,
 //! \param pid1     [in]     point 2.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType visu_bcurve_poles_source::registerLine(const vtkIdType pid0,
+vtkIdType asiVisu_BCurvePolesSource::registerLine(const vtkIdType pid0,
                                                  const vtkIdType pid1,
                                                  vtkPolyData*    polyData)
 {
@@ -262,7 +262,7 @@ vtkIdType visu_bcurve_poles_source::registerLine(const vtkIdType pid0,
 //! \param pid      [in]     point index.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType visu_bcurve_poles_source::registerVertex(const vtkIdType pid,
+vtkIdType asiVisu_BCurvePolesSource::registerVertex(const vtkIdType pid,
                                                    vtkPolyData*    polyData)
 {
   std::vector<vtkIdType> aPids;

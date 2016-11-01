@@ -6,13 +6,13 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_mesh_E_scalar_pipeline.h>
+#include <asiVisu_MeshEScalarPipeline.h>
 
 // Visualization includes
-#include <visu_mesh_E_scalar_filter.h>
-#include <visu_mesh_result_utils.h>
-#include <visu_mesh_source.h>
-#include <visu_node_info.h>
+#include <asiVisu_MeshEScalarFilter.h>
+#include <asiVisu_MeshResultUtils.h>
+#include <asiVisu_MeshSource.h>
+#include <asiVisu_NodeInfo.h>
 
 // Active Data includes
 #include <ActData_MeshParameter.h>
@@ -33,8 +33,8 @@
 //-----------------------------------------------------------------------------
 
 //! Creates new Pipeline instance.
-visu_mesh_E_scalar_pipeline::visu_mesh_E_scalar_pipeline()
-  : visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+asiVisu_MeshEScalarPipeline::asiVisu_MeshEScalarPipeline()
+  : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                    vtkSmartPointer<vtkActor>::New() )
 {
   /* ========================
@@ -42,8 +42,8 @@ visu_mesh_E_scalar_pipeline::visu_mesh_E_scalar_pipeline()
    * ======================== */
 
   // Allocate filter populating scalar arrays
-  vtkSmartPointer<visu_mesh_E_scalar_filter>
-    aScFilter = vtkSmartPointer<visu_mesh_E_scalar_filter>::New();
+  vtkSmartPointer<asiVisu_MeshEScalarFilter>
+    aScFilter = vtkSmartPointer<asiVisu_MeshEScalarFilter>::New();
 
   /* =========================
    *  Register custom filters
@@ -59,10 +59,10 @@ visu_mesh_E_scalar_pipeline::visu_mesh_E_scalar_pipeline()
 //! Actually this method performs translation of DOMAIN data to VTK POLYGONAL
 //! DATA.
 //! \param theDataProvider [in] Data Provider.
-void visu_mesh_E_scalar_pipeline::SetInput(const Handle(visu_data_provider)& theDataProvider)
+void asiVisu_MeshEScalarPipeline::SetInput(const Handle(asiVisu_DataProvider)& theDataProvider)
 {
-  Handle(visu_mesh_E_scalar_data_provider)
-    aMeshPrv = Handle(visu_mesh_E_scalar_data_provider)::DownCast(theDataProvider);
+  Handle(asiVisu_MeshEScalarDataProvider)
+    aMeshPrv = Handle(asiVisu_MeshEScalarDataProvider)::DownCast(theDataProvider);
 
   /* ============================
    *  Prepare polygonal data set
@@ -70,11 +70,11 @@ void visu_mesh_E_scalar_pipeline::SetInput(const Handle(visu_data_provider)& the
 
   if ( aMeshPrv->MustExecute( this->GetMTime() ) )
   {
-    vtkSmartPointer<visu_mesh_source> aMeshSource = vtkSmartPointer<visu_mesh_source>::New();
+    vtkSmartPointer<asiVisu_MeshSource> aMeshSource = vtkSmartPointer<asiVisu_MeshSource>::New();
     aMeshSource->SetInputMesh( aMeshPrv->GetMeshDS() );
 
-    visu_mesh_E_scalar_filter*
-      aScFilter = visu_mesh_E_scalar_filter::SafeDownCast( m_filterMap.Find(Filter_EScalar) );
+    asiVisu_MeshEScalarFilter*
+      aScFilter = asiVisu_MeshEScalarFilter::SafeDownCast( m_filterMap.Find(Filter_EScalar) );
 
     aScFilter->SetScalarArrays( aMeshPrv->GetElementIDs(),
                                 aMeshPrv->GetElementScalars() );
@@ -84,7 +84,7 @@ void visu_mesh_E_scalar_pipeline::SetInput(const Handle(visu_data_provider)& the
 
     // Bind actor to owning Node ID. Thus we set back reference from VTK
     // entity to data object
-    visu_node_info::Store( aMeshPrv->GetNodeID(), this->Actor() );
+    asiVisu_NodeInfo::Store( aMeshPrv->GetNodeID(), this->Actor() );
   }
 
   // Update modification timestamp
@@ -93,21 +93,21 @@ void visu_mesh_E_scalar_pipeline::SetInput(const Handle(visu_data_provider)& the
 
 //! Callback for AddToRenderer base routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_mesh_E_scalar_pipeline::addToRendererCallback(vtkRenderer*)
+void asiVisu_MeshEScalarPipeline::addToRendererCallback(vtkRenderer*)
 {
   this->Actor()->GetProperty()->SetInterpolationToFlat();
 }
 
 //! Callback for RemoveFromRenderer base routine.
-void visu_mesh_E_scalar_pipeline::removeFromRendererCallback(vtkRenderer*)
+void asiVisu_MeshEScalarPipeline::removeFromRendererCallback(vtkRenderer*)
 {
 }
 
 //! Callback for Update routine.
-void visu_mesh_E_scalar_pipeline::updateCallback()
+void asiVisu_MeshEScalarPipeline::updateCallback()
 {
-  visu_mesh_E_scalar_filter*
-    aScFilter = visu_mesh_E_scalar_filter::SafeDownCast( m_filterMap.Find(Filter_EScalar) );
+  asiVisu_MeshEScalarFilter*
+    aScFilter = asiVisu_MeshEScalarFilter::SafeDownCast( m_filterMap.Find(Filter_EScalar) );
 
   aScFilter->Update();
 
@@ -123,7 +123,7 @@ void visu_mesh_E_scalar_pipeline::updateCallback()
   else
     doScalarInterpolation = true;
 
-  visu_mesh_result_utils::InitCellScalarMapper(m_mapper, ARRNAME_MESH_E_SCALARS,
+  asiVisu_MeshResultUtils::InitCellScalarMapper(m_mapper, ARRNAME_MESH_E_SCALARS,
                                                aMinScalar, aMaxScalar,
                                                doScalarInterpolation);
 }

@@ -6,10 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_law_source.h>
+#include <asiVisu_LawSource.h>
 
 // A-Situs (visualization) includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -18,17 +18,17 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(visu_law_source);
+vtkStandardNewMacro(asiVisu_LawSource);
 
 //! Default constructor.
-visu_law_source::visu_law_source() : visu_curve_source()
+asiVisu_LawSource::asiVisu_LawSource() : asiVisu_CurveSource()
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
 }
 
 //! Destructor.
-visu_law_source::~visu_law_source()
+asiVisu_LawSource::~asiVisu_LawSource()
 {
 }
 
@@ -38,7 +38,7 @@ visu_law_source::~visu_law_source()
 
 //! Sets input data.
 //! \param law [in] law function to convert.
-void visu_law_source::SetLaw(const Handle(asiAlgo_DesignLaw)& law)
+void asiVisu_LawSource::SetLaw(const Handle(asiAlgo_DesignLaw)& law)
 {
   if ( law.IsNull() )
   {
@@ -81,5 +81,5 @@ void visu_law_source::SetLaw(const Handle(asiAlgo_DesignLaw)& law)
    * =================== */
 
   // Perform basic initialization
-  visu_curve_source::SetInputArrays(xCoords, yCoords, zCoords);
+  asiVisu_CurveSource::SetInputArrays(xCoords, yCoords, zCoords);
 }

@@ -5,28 +5,28 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_points_data_provider_h
-#define visu_points_data_provider_h
+#ifndef asiVisu_PointsDataProvider_h
+#define asiVisu_PointsDataProvider_h
 
 // A-Situs visualization includes
-#include <visu_data_provider.h>
+#include <asiVisu_DataProvider.h>
 
 // Geometry includes
 #include <asiAlgo_PointCloud.h>
 
-DEFINE_STANDARD_HANDLE(visu_points_data_provider, visu_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_PointsDataProvider, asiVisu_DataProvider)
 
 //! Data provider for a single point cloud.
-class visu_points_data_provider : public visu_data_provider
+class asiVisu_PointsDataProvider : public asiVisu_DataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_points_data_provider, visu_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_PointsDataProvider, asiVisu_DataProvider)
 
 public:
 
-  visu_points_data_provider(const Handle(ActAPI_INode)& N);
+  asiVisu_PointsDataProvider(const Handle(ActAPI_INode)& N);
 
 public:
 

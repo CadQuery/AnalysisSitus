@@ -6,13 +6,13 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_edge_domain_pipeline.h>
+#include <asiVisu_EdgeDomainPipeline.h>
 
 // Common includes
 #include <common_facilities.h>
 
 // Visualization includes
-#include <visu_edge_data_provider.h>
+#include <asiVisu_EdgeDataProvider.h>
 
 // VTK includes
 #include <vtkPolyData.h>
@@ -21,9 +21,9 @@
 //-----------------------------------------------------------------------------
 
 //! Creates new Edge Domain Pipeline initialized by default VTK mapper and actor.
-visu_edge_domain_pipeline::visu_edge_domain_pipeline()
+asiVisu_EdgeDomainPipeline::asiVisu_EdgeDomainPipeline()
 //
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                  vtkSmartPointer<vtkActor>::New() )
 {}
 
@@ -31,10 +31,10 @@ visu_edge_domain_pipeline::visu_edge_domain_pipeline()
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void visu_edge_domain_pipeline::SetInput(const Handle(visu_data_provider)& DP)
+void asiVisu_EdgeDomainPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  Handle(visu_edge_data_provider)
-    edgeProvider = Handle(visu_edge_data_provider)::DownCast(DP);
+  Handle(asiVisu_EdgeDataProvider)
+    edgeProvider = Handle(asiVisu_EdgeDataProvider)::DownCast(DP);
 
   /* =================
    *  Validate inputs
@@ -68,13 +68,13 @@ void visu_edge_domain_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_edge_domain_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_EdgeDomainPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_edge_domain_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_EdgeDomainPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void visu_edge_domain_pipeline::callback_update()
+void asiVisu_EdgeDomainPipeline::callback_update()
 {}

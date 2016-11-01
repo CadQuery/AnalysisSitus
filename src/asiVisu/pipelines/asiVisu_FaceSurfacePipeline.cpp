@@ -6,15 +6,15 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_face_surface_pipeline.h>
+#include <asiVisu_FaceSurfacePipeline.h>
 
 // Common includes
 #include <common_facilities.h>
 
 // Visualization includes
-#include <visu_curve_source.h>
-#include <visu_face_data_provider.h>
-#include <visu_utils.h>
+#include <asiVisu_CurveSource.h>
+#include <asiVisu_FaceDataProvider.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkAppendPolyData.h>
@@ -27,8 +27,8 @@
 //-----------------------------------------------------------------------------
 
 //! Creates new Face Surface Pipeline initialized by default VTK mapper and actor.
-visu_face_surface_pipeline::visu_face_surface_pipeline()
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+asiVisu_FaceSurfacePipeline::asiVisu_FaceSurfacePipeline()
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                  vtkSmartPointer<vtkActor>::New() ),
   m_iStepsNumber(40)
 {
@@ -39,13 +39,13 @@ visu_face_surface_pipeline::visu_face_surface_pipeline()
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void visu_face_surface_pipeline::SetInput(const Handle(visu_data_provider)& DP)
+void asiVisu_FaceSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
   if ( !m_iStepsNumber )
     return;
 
-  Handle(visu_face_data_provider)
-    faceProvider = Handle(visu_face_data_provider)::DownCast(DP);
+  Handle(asiVisu_FaceDataProvider)
+    faceProvider = Handle(asiVisu_FaceDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
@@ -91,10 +91,10 @@ void visu_face_surface_pipeline::SetInput(const Handle(visu_data_provider)& DP)
     double uMin, uMax, vMin, vMax;
     S->Bounds(uMin, uMax, vMin, vMax);
 
-    uMin = visu_utils::TrimInf(uMin);
-    uMax = visu_utils::TrimInf(uMax);
-    vMin = visu_utils::TrimInf(vMin);
-    vMax = visu_utils::TrimInf(vMax);
+    uMin = asiVisu_Utils::TrimInf(uMin);
+    uMax = asiVisu_Utils::TrimInf(uMax);
+    vMin = asiVisu_Utils::TrimInf(vMin);
+    vMax = asiVisu_Utils::TrimInf(vMax);
 
     const double uStep = (uMax - uMin) / m_iStepsNumber;
     const double vStep = (vMax - vMin) / m_iStepsNumber;
@@ -117,8 +117,8 @@ void visu_face_surface_pipeline::SetInput(const Handle(visu_data_provider)& DP)
       u += uStep;
 
       // Allocate Data Source
-      vtkSmartPointer<visu_curve_source>
-        curveSource = vtkSmartPointer<visu_curve_source>::New();
+      vtkSmartPointer<asiVisu_CurveSource>
+        curveSource = vtkSmartPointer<asiVisu_CurveSource>::New();
 
       // Set geometry to be converted to VTK polygonal DS
       if ( !curveSource->SetInputCurve( uIso, uIso->FirstParameter(), uIso->LastParameter() ) )
@@ -146,8 +146,8 @@ void visu_face_surface_pipeline::SetInput(const Handle(visu_data_provider)& DP)
       v += vStep;
 
       // Allocate Data Source
-      vtkSmartPointer<visu_curve_source>
-        curveSource = vtkSmartPointer<visu_curve_source>::New();
+      vtkSmartPointer<asiVisu_CurveSource>
+        curveSource = vtkSmartPointer<asiVisu_CurveSource>::New();
 
       // Set geometry to be converted to VTK polygonal DS
       if ( !curveSource->SetInputCurve( vIso, vIso->FirstParameter(), vIso->LastParameter() ) )
@@ -169,13 +169,13 @@ void visu_face_surface_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_face_surface_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_FaceSurfacePipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_face_surface_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_FaceSurfacePipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void visu_face_surface_pipeline::callback_update()
+void asiVisu_FaceSurfacePipeline::callback_update()
 {}

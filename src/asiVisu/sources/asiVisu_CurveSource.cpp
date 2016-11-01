@@ -6,10 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_curve_source.h>
+#include <asiVisu_CurveSource.h>
 
 // Visualization includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkCellData.h>
@@ -31,10 +31,10 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(visu_curve_source);
+vtkStandardNewMacro(asiVisu_CurveSource);
 
 //! Default constructor.
-visu_curve_source::visu_curve_source()
+asiVisu_CurveSource::asiVisu_CurveSource()
   : vtkPolyDataAlgorithm (),
     m_fOriTipSize        (0.0),
     m_iPedigreeId        (0)
@@ -44,7 +44,7 @@ visu_curve_source::visu_curve_source()
 }
 
 //! Destructor.
-visu_curve_source::~visu_curve_source()
+asiVisu_CurveSource::~asiVisu_CurveSource()
 {
 }
 
@@ -55,7 +55,7 @@ visu_curve_source::~visu_curve_source()
 //! Initialize data source from a topological edge.
 //! \param edge [in] edge to extract the spatial curve from.
 //! \return true if poly data has been produced.
-bool visu_curve_source::SetInputEdge(const TopoDS_Edge& edge)
+bool asiVisu_CurveSource::SetInputEdge(const TopoDS_Edge& edge)
 {
   double f, l;
   Handle(Geom_Curve) crv = BRep_Tool::Curve(edge, f, l);
@@ -85,13 +85,13 @@ bool visu_curve_source::SetInputEdge(const TopoDS_Edge& edge)
 //! \param last  [in] last parameter.
 //! \param ori   [in] orientation.
 //! \return true if poly data has been produced.
-bool visu_curve_source::SetInputCurve(const Handle(Geom_Curve)& curve,
+bool asiVisu_CurveSource::SetInputCurve(const Handle(Geom_Curve)& curve,
                                       const double              first,
                                       const double              last,
                                       const visu_orientation    ori)
 {
-  const double f = visu_utils::TrimInf(first),
-               l = visu_utils::TrimInf(last);
+  const double f = asiVisu_Utils::TrimInf(first),
+               l = asiVisu_Utils::TrimInf(last);
 
   // Discretize
   GeomAdaptor_Curve gac(curve, f, l);
@@ -130,13 +130,13 @@ bool visu_curve_source::SetInputCurve(const Handle(Geom_Curve)& curve,
 //! \param last  [in] last parameter.
 //! \param ori   [in] orientation.
 //! \return true if poly data has been produced.
-bool visu_curve_source::SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
+bool asiVisu_CurveSource::SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
                                         const double                first,
                                         const double                last,
                                         const visu_orientation      ori)
 {
-  const double f = visu_utils::TrimInf(first),
-               l = visu_utils::TrimInf(last);
+  const double f = asiVisu_Utils::TrimInf(first),
+               l = asiVisu_Utils::TrimInf(last);
 
   // Discretize
   Geom2dAdaptor_Curve gac(curve, f, l);
@@ -178,7 +178,7 @@ bool visu_curve_source::SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
 //! \param yCoords [in] Y coordinates.
 //! \param zCoords [in] Z coordinates.
 //! \param ori     [in] orientation.
-void visu_curve_source::SetInputArrays(const Handle(HRealArray)& xCoords,
+void asiVisu_CurveSource::SetInputArrays(const Handle(HRealArray)& xCoords,
                                        const Handle(HRealArray)& yCoords,
                                        const Handle(HRealArray)& zCoords,
                                        const visu_orientation    ori)
@@ -209,7 +209,7 @@ void visu_curve_source::SetInputArrays(const Handle(HRealArray)& xCoords,
 //! \param outputVector [in] the pointer to output data, that is filled
 //!                          in this method.
 //! \return status.
-int visu_curve_source::RequestData(vtkInformation*        request,
+int asiVisu_CurveSource::RequestData(vtkInformation*        request,
                                    vtkInformationVector** inputVector,
                                    vtkInformationVector*  outputVector)
 {
@@ -233,7 +233,7 @@ int visu_curve_source::RequestData(vtkInformation*        request,
   vtkCellData* aCD = aPolyOutput->GetCellData();
 
   // Array for orientation types
-  vtkSmartPointer<vtkIntArray> aTypeArr = visu_utils::InitIntArray(ARRNAME_ORIENT_SCALARS);
+  vtkSmartPointer<vtkIntArray> aTypeArr = asiVisu_Utils::InitIntArray(ARRNAME_ORIENT_SCALARS);
   aCD->AddArray(aTypeArr);
 
   // Pedigree IDs for selection
@@ -318,7 +318,7 @@ int visu_curve_source::RequestData(vtkInformation*        request,
 //! \param point    [in]     point to add.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK point.
-vtkIdType visu_curve_source::registerGridPoint(const gp_Pnt& point,
+vtkIdType asiVisu_CurveSource::registerGridPoint(const gp_Pnt& point,
                                                vtkPolyData*  polyData)
 {
   // Access necessary arrays
@@ -336,7 +336,7 @@ vtkIdType visu_curve_source::registerGridPoint(const gp_Pnt& point,
 //! \param index    [in]     index of (X, Y, Z) coordinate triple.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK point.
-vtkIdType visu_curve_source::registerGridPoint(const int    index,
+vtkIdType asiVisu_CurveSource::registerGridPoint(const int    index,
                                                vtkPolyData* polyData)
 {
   return this->registerGridPoint( gp_Pnt( m_XCoords->Value(index),
@@ -351,7 +351,7 @@ vtkIdType visu_curve_source::registerGridPoint(const int    index,
 //! \param pointEnd   [in]     second point.
 //! \param polyData   [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType visu_curve_source::registerLine(const gp_Pnt& pointStart,
+vtkIdType asiVisu_CurveSource::registerLine(const gp_Pnt& pointStart,
                                           const gp_Pnt& pointEnd,
                                           vtkPolyData*  polyData)
 {
@@ -383,7 +383,7 @@ vtkIdType visu_curve_source::registerLine(const gp_Pnt& pointStart,
 //! \param index    [in]     index of (X, Y, Z) coordinate triple.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType visu_curve_source::registerLine(const int    index,
+vtkIdType asiVisu_CurveSource::registerLine(const int    index,
                                           vtkPolyData* polyData)
 {
   gp_Pnt P1( m_XCoords->Value(index),
@@ -400,7 +400,7 @@ vtkIdType visu_curve_source::registerLine(const int    index,
 //! \param index    [in]     index of (X, Y, Z) coordinate triple.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType visu_curve_source::registerVertex(const int    index,
+vtkIdType asiVisu_CurveSource::registerVertex(const int    index,
                                             vtkPolyData* polyData)
 {
   std::vector<vtkIdType> aPids;

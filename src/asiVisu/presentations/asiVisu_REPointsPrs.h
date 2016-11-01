@@ -5,25 +5,25 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_re_points_prs_h
-#define visu_re_points_prs_h
+#ifndef asiVisu_REPointsPrs_h
+#define asiVisu_REPointsPrs_h
 
 // A-Situs (visualization) includes
-#include <visu_prs.h>
-#include <visu_utils.h>
+#include <asiVisu_Prs.h>
+#include <asiVisu_Utils.h>
 
 // A-Situs (geometry) includes
 #include <asiData_REPointsNode.h>
 
-DEFINE_STANDARD_HANDLE(visu_re_points_prs, visu_prs)
+DEFINE_STANDARD_HANDLE(asiVisu_REPointsPrs, asiVisu_Prs)
 
 //! Presentation class for re-engineering point cloud.
-class visu_re_points_prs : public visu_prs
+class asiVisu_REPointsPrs : public asiVisu_Prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_re_points_prs, visu_prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_REPointsPrs, asiVisu_Prs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_REPointsNode, Instance)
@@ -38,7 +38,7 @@ public:
 
 public:
 
-  static Handle(visu_prs)
+  static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
   virtual bool
@@ -47,7 +47,7 @@ public:
 private:
 
   //! Allocation is allowed only via Instance method.
-  visu_re_points_prs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_REPointsPrs(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:
 private:
@@ -57,10 +57,10 @@ private:
   virtual void beforeUpdatePipelines() const;
   virtual void afterUpdatePipelines() const;
   virtual void highlight(vtkRenderer* theRenderer,
-                         const visu_pick_result& thePickRes,
-                         const visu_selection_nature& theSelNature) const;
+                         const asiVisu_PickResult& thePickRes,
+                         const asiVisu_SelectionNature& theSelNature) const;
   virtual void unHighlight(vtkRenderer* theRenderer,
-                           const visu_selection_nature& theSelNature) const;
+                           const asiVisu_SelectionNature& theSelNature) const;
   virtual void renderPipelines(vtkRenderer* theRenderer) const;
   virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
 

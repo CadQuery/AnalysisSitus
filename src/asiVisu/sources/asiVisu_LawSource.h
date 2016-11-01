@@ -9,19 +9,19 @@
 #define visu_law_func_source_h
 
 // Visualization includes
-#include <visu_curve_source.h>
+#include <asiVisu_CurveSource.h>
 
 // Calculation includes
 #include <asiAlgo_DesignLaw.h>
 
 //! Source of polygonal data representing a univariate explicit law function.
-class visu_law_source : public visu_curve_source
+class asiVisu_LawSource : public asiVisu_CurveSource
 {
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(visu_law_source, vtkPolyDataAlgorithm);
-  static visu_law_source* New();
+  vtkTypeMacro(asiVisu_LawSource, vtkPolyDataAlgorithm);
+  static asiVisu_LawSource* New();
 
 // Kernel methods:
 public:
@@ -30,13 +30,13 @@ public:
 
 protected:
 
-  visu_law_source();
-  ~visu_law_source();
+  asiVisu_LawSource();
+  ~asiVisu_LawSource();
 
 private:
 
-  visu_law_source(const visu_law_source&);
-  visu_law_source& operator=(const visu_law_source&);
+  asiVisu_LawSource(const asiVisu_LawSource&);
+  asiVisu_LawSource& operator=(const asiVisu_LawSource&);
 
 private:
 

@@ -6,16 +6,16 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_face_domain_pipeline.h>
+#include <asiVisu_FaceDomainPipeline.h>
 
 // Common includes
 #include <common_facilities.h>
 
 // Visualization includes
-#include <visu_face_data_provider.h>
-#include <visu_node_info.h>
-#include <visu_pdomain_source.h>
-#include <visu_utils.h>
+#include <asiVisu_FaceDataProvider.h>
+#include <asiVisu_NodeInfo.h>
+#include <asiVisu_PDomainSource.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkAppendPolyData.h>
@@ -34,9 +34,9 @@
 
 //! Creates new Face Domain Pipeline initialized by default VTK mapper and actor.
 //! \param isDefaultColorScheme [in] indicates whether to use default color scheme.
-visu_face_domain_pipeline::visu_face_domain_pipeline(const bool isDefaultColorScheme)
+asiVisu_FaceDomainPipeline::asiVisu_FaceDomainPipeline(const bool isDefaultColorScheme)
 //
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                  vtkSmartPointer<vtkActor>::New() ),
 //
   m_bDefaultColorScheme (isDefaultColorScheme),
@@ -70,10 +70,10 @@ visu_face_domain_pipeline::visu_face_domain_pipeline(const bool isDefaultColorSc
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void visu_face_domain_pipeline::SetInput(const Handle(visu_data_provider)& DP)
+void asiVisu_FaceDomainPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  Handle(visu_face_data_provider)
-    faceProvider = Handle(visu_face_data_provider)::DownCast(DP);
+  Handle(asiVisu_FaceDataProvider)
+    faceProvider = Handle(asiVisu_FaceDataProvider)::DownCast(DP);
 
   /* =================
    *  Validate inputs
@@ -98,11 +98,11 @@ void visu_face_domain_pipeline::SetInput(const Handle(visu_data_provider)& DP)
     if ( m_bForced ) m_bForced = false; // Executed, reset forced
 
     // Bind to Node
-    visu_node_info::Store( faceProvider->GetNodeID(), this->Actor() );
+    asiVisu_NodeInfo::Store( faceProvider->GetNodeID(), this->Actor() );
 
     // Append filter
-    vtkSmartPointer<visu_pdomain_source>
-      source = vtkSmartPointer<visu_pdomain_source>::New();
+    vtkSmartPointer<asiVisu_PDomainSource>
+      source = vtkSmartPointer<asiVisu_PDomainSource>::New();
     //
     source->SetFace( faceProvider->ExtractFace() );
 
@@ -132,7 +132,7 @@ void visu_face_domain_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
 //! Sets cells selected for visualization.
 //! \param mask [in] selected cells.
-void visu_face_domain_pipeline::SetSelectedCells(const TColStd_PackedMapOfInteger& mask)
+void asiVisu_FaceDomainPipeline::SetSelectedCells(const TColStd_PackedMapOfInteger& mask)
 {
   m_selected->Reset();
   m_selected->SetNumberOfComponents(1);
@@ -152,20 +152,20 @@ void visu_face_domain_pipeline::SetSelectedCells(const TColStd_PackedMapOfIntege
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_face_domain_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_FaceDomainPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_face_domain_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_FaceDomainPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void visu_face_domain_pipeline::callback_update()
+void asiVisu_FaceDomainPipeline::callback_update()
 {
   if ( m_bDefaultColorScheme && !m_bMapperColorsSet )
   {
-    vtkSmartPointer<vtkLookupTable> aLookup = visu_utils::InitDomainLookupTable();
-    visu_utils::InitMapper(m_mapper, aLookup, ARRNAME_ORIENT_SCALARS);
+    vtkSmartPointer<vtkLookupTable> aLookup = asiVisu_Utils::InitDomainLookupTable();
+    asiVisu_Utils::InitMapper(m_mapper, aLookup, ARRNAME_ORIENT_SCALARS);
     m_bMapperColorsSet = true;
   }
 }

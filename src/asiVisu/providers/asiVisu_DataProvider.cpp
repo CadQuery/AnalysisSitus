@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_data_provider.h>
+#include <asiVisu_DataProvider.h>
 
 // Active Data includes
 #include <ActData_UserParameter.h>
@@ -15,7 +15,7 @@
 //! otherwise.
 //! \param Against [in] MTime of the corresponding pipeline.
 //! \return true/false.
-bool visu_data_provider::MustExecute(const Handle(ActAux_TimeStamp)& Against) const
+bool asiVisu_DataProvider::MustExecute(const Handle(ActAux_TimeStamp)& Against) const
 {
   // Access source Parameters
   Handle(ActAPI_HParameterList) aSources = this->translationSources();

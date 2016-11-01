@@ -5,25 +5,25 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_contour_points_data_provider_h
-#define visu_contour_points_data_provider_h
+#ifndef asiData_ContourPointsDataProvider_h
+#define asiData_ContourPointsDataProvider_h
 
 // A-Situs visualization includes
-#include <visu_points_data_provider.h>
+#include <asiVisu_PointsDataProvider.h>
 
-DEFINE_STANDARD_HANDLE(visu_contour_points_data_provider, visu_points_data_provider)
+DEFINE_STANDARD_HANDLE(asiData_ContourPointsDataProvider, asiVisu_PointsDataProvider)
 
 //! Data provider for base points of a contour.
-class visu_contour_points_data_provider : public visu_points_data_provider
+class asiData_ContourPointsDataProvider : public asiVisu_PointsDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_contour_points_data_provider, visu_points_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_ContourPointsDataProvider, asiVisu_PointsDataProvider)
 
 public:
 
-  visu_contour_points_data_provider();
+  asiData_ContourPointsDataProvider();
 
 public:
 

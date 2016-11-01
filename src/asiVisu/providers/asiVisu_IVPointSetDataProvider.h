@@ -5,26 +5,26 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_iv_point_set_data_provider_h
-#define visu_iv_point_set_data_provider_h
+#ifndef asiVisu_IVPointSetDataProvider_h
+#define asiVisu_IVPointSetDataProvider_h
 
 // Visualization includes
 #include <asiData_IVPointSetNode.h>
-#include <visu_points_data_provider.h>
+#include <asiVisu_PointsDataProvider.h>
 
-DEFINE_STANDARD_HANDLE(visu_iv_point_set_data_provider, visu_points_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_IVPointSetDataProvider, asiVisu_PointsDataProvider)
 
 //! Data provider for a point cloud represented in IV.
-class visu_iv_point_set_data_provider : public visu_points_data_provider
+class asiVisu_IVPointSetDataProvider : public asiVisu_PointsDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_iv_point_set_data_provider, visu_points_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVPointSetDataProvider, asiVisu_PointsDataProvider)
 
 public:
 
-  visu_iv_point_set_data_provider(const Handle(ActAPI_INode)& pointSet);
+  asiVisu_IVPointSetDataProvider(const Handle(ActAPI_INode)& pointSet);
 
 public:
 

@@ -6,11 +6,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_curve_pipeline.h>
+#include <asiVisu_CurvePipeline.h>
 
 // Visualization includes
-#include <visu_curve_source.h>
-#include <visu_curve_data_provider.h>
+#include <asiVisu_CurveSource.h>
+#include <asiVisu_CurveDataProvider.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -18,18 +18,18 @@
 #include <vtkProperty.h>
 
 //! Creates new Curve Pipeline initialized by default VTK mapper and actor.
-visu_curve_pipeline::visu_curve_pipeline()
+asiVisu_CurvePipeline::asiVisu_CurvePipeline()
 //
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() )
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() )
 {
   this->Actor()->GetProperty()->SetLineWidth(2.0);
 }
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void visu_curve_pipeline::SetInput(const Handle(visu_data_provider)& DP)
+void asiVisu_CurvePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  Handle(visu_curve_data_provider) dp = Handle(visu_curve_data_provider)::DownCast(DP);
+  Handle(asiVisu_CurveDataProvider) dp = Handle(asiVisu_CurveDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
@@ -54,7 +54,7 @@ void visu_curve_pipeline::SetInput(const Handle(visu_data_provider)& DP)
   {
     // Curve source
     double f, l;
-    vtkSmartPointer<visu_curve_source> src = vtkSmartPointer<visu_curve_source>::New();
+    vtkSmartPointer<asiVisu_CurveSource> src = vtkSmartPointer<asiVisu_CurveSource>::New();
     //
     if ( curve_type->SubType( STANDARD_TYPE(Geom2d_Curve) ) )
     {
@@ -83,13 +83,13 @@ void visu_curve_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_curve_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_CurvePipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_curve_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_CurvePipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void visu_curve_pipeline::callback_update()
+void asiVisu_CurvePipeline::callback_update()
 {}

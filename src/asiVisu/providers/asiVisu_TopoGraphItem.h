@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_topo_graph_item_h
-#define visu_topo_graph_item_h
+#ifndef asiVisu_TopoGraphItem_h
+#define asiVisu_TopoGraphItem_h
 
 // Visualization includes
-#include <visu_common.h>
+#include <asiVisu.h>
 
 // Feature includes
 #include <feature_angle.h>
@@ -46,17 +46,17 @@
 #define ARRNAME_GROUP_VERTEX    "Vertex"
 
 //! Item of topology graph.
-class visu_topo_graph_item : public QObject,
-                             public vtkGraphItem
+class asiVisu_TopoGraphItem : public QObject,
+                              public vtkGraphItem
 {
   Q_OBJECT
 
 public:
 
-  static visu_topo_graph_item* New();
-  vtkTypeMacro(visu_topo_graph_item, vtkGraphItem);
+  static asiVisu_TopoGraphItem* New();
+  vtkTypeMacro(asiVisu_TopoGraphItem, vtkGraphItem);
 
-  virtual ~visu_topo_graph_item();
+  virtual ~asiVisu_TopoGraphItem();
 
 signals:
 
@@ -67,7 +67,7 @@ protected:
   vtkIdType focusedVertex;
 
   //---------------------------------------------------------------------------
-  visu_topo_graph_item()
+  asiVisu_TopoGraphItem()
   {
     focusedVertex = -1;
   }

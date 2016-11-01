@@ -6,12 +6,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_iv_point_set_2d_prs.h>
+#include <asiVisu_IVPointSet2dPrs.h>
 
 // A-Situs (visualization) includes
-#include <visu_iv_point_set_2d_data_provider.h>
-#include <visu_points_pipeline.h>
-#include <visu_utils.h>
+#include <asiVisu_IVPointSet2dDataProvider.h>
+#include <asiVisu_PointsPipeline.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -19,22 +19,22 @@
 
 //! Creates a Presentation object for the passed Node.
 //! \param theNode [in] Node to create a Presentation for.
-visu_iv_point_set_2d_prs::visu_iv_point_set_2d_prs(const Handle(ActAPI_INode)& theNode)
-: visu_iv_prs(theNode)
+asiVisu_IVPointSet2dPrs::asiVisu_IVPointSet2dPrs(const Handle(ActAPI_INode)& theNode)
+: asiVisu_IVPrs(theNode)
 {
   // Create Data Provider
-  Handle(visu_iv_point_set_2d_data_provider)
-    DP = new visu_iv_point_set_2d_data_provider(theNode);
+  Handle(asiVisu_IVPointSet2dDataProvider)
+    DP = new asiVisu_IVPointSet2dDataProvider(theNode);
 
   // Pipeline for points
-  this->addPipeline        ( Pipeline_Main, new visu_points_pipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 }
 
 //! Factory method for Presentation.
 //! \param theNode [in] Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_iv_point_set_2d_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_IVPointSet2dPrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_iv_point_set_2d_prs(theNode);
+  return new asiVisu_IVPointSet2dPrs(theNode);
 }

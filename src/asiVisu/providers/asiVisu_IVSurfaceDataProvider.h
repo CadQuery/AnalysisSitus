@@ -5,28 +5,28 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_iv_surface_data_provider_h
-#define visu_iv_surface_data_provider_h
+#ifndef asiVisu_IVSurfaceDataProvider_h
+#define asiVisu_IVSurfaceDataProvider_h
 
 // A-Situs visualization includes
-#include <visu_data_provider.h>
+#include <asiVisu_DataProvider.h>
 
 // OCCT includes
 #include <Geom_Surface.hxx>
 
-DEFINE_STANDARD_HANDLE(visu_iv_surface_data_provider, visu_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_IVSurfaceDataProvider, asiVisu_DataProvider)
 
 //! Data provider for a surface in IV.
-class visu_iv_surface_data_provider : public visu_data_provider
+class asiVisu_IVSurfaceDataProvider : public asiVisu_DataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_iv_surface_data_provider, visu_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVSurfaceDataProvider, asiVisu_DataProvider)
 
 public:
 
-  visu_iv_surface_data_provider(const Handle(ActAPI_INode)& N);
+  asiVisu_IVSurfaceDataProvider(const Handle(ActAPI_INode)& N);
 
 public:
 

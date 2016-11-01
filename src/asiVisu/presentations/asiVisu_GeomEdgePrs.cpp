@@ -6,12 +6,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_geom_edge_prs.h>
+#include <asiVisu_GeomEdgePrs.h>
 
 // Visualization includes
-#include <visu_edge_data_provider.h>
-#include <visu_edge_domain_pipeline.h>
-#include <visu_utils.h>
+#include <asiVisu_EdgeDataProvider.h>
+#include <asiVisu_EdgeDomainPipeline.h>
+#include <asiVisu_Utils.h>
 
 // Geometry includes
 #include <asiAlgo_Utils.h>
@@ -29,34 +29,34 @@
 
 //! Creates a Presentation object for the passed Geometry Edge Node.
 //! \param theNode [in] Geometry Edge Node to create a Presentation for.
-visu_geom_edge_prs::visu_geom_edge_prs(const Handle(ActAPI_INode)& theNode)
-: visu_prs(theNode)
+asiVisu_GeomEdgePrs::asiVisu_GeomEdgePrs(const Handle(ActAPI_INode)& theNode)
+: asiVisu_Prs(theNode)
 {
   // Create Data Provider
-  Handle(visu_edge_data_provider) DP =
-    new visu_edge_data_provider( theNode->GetId(),
+  Handle(asiVisu_EdgeDataProvider) DP =
+    new asiVisu_EdgeDataProvider( theNode->GetId(),
                                  ActParamStream() << theNode->Parameter(asiData_EdgeNode::PID_SelectedEdge) );
 
   // Pipeline for edge
-  this->addPipeline        ( Pipeline_Main, new visu_edge_domain_pipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_EdgeDomainPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 
   // Initialize text widget used for annotations
   m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
-  visu_utils::InitTextWidget(m_textWidget);
+  asiVisu_Utils::InitTextWidget(m_textWidget);
 }
 
 //! Factory method for Presentation.
 //! \param theNode [in] Edge Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_geom_edge_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_GeomEdgePrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_geom_edge_prs(theNode);
+  return new asiVisu_GeomEdgePrs(theNode);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool visu_geom_edge_prs::IsVisible() const
+bool asiVisu_GeomEdgePrs::IsVisible() const
 {
   return true;
 }
@@ -64,16 +64,16 @@ bool visu_geom_edge_prs::IsVisible() const
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void visu_geom_edge_prs::beforeInitPipelines()
+void asiVisu_GeomEdgePrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void visu_geom_edge_prs::afterInitPipelines()
+void asiVisu_GeomEdgePrs::afterInitPipelines()
 {
-  Handle(visu_edge_data_provider)
-    DP = Handle(visu_edge_data_provider)::DownCast( this->dataProvider(Pipeline_Main) );
+  Handle(asiVisu_EdgeDataProvider)
+    DP = Handle(asiVisu_EdgeDataProvider)::DownCast( this->dataProvider(Pipeline_Main) );
 
   // Get working edge
   const int   E_idx = DP->GetEdgeIndexAmongEdges();
@@ -103,34 +103,34 @@ void visu_geom_edge_prs::afterInitPipelines()
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void visu_geom_edge_prs::beforeUpdatePipelines() const
+void asiVisu_GeomEdgePrs::beforeUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void visu_geom_edge_prs::afterUpdatePipelines() const
+void asiVisu_GeomEdgePrs::afterUpdatePipelines() const
 {}
 
 //! Callback for highlighting.
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void visu_geom_edge_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                   const visu_pick_result&      ASitus_NotUsed(thePickRes),
-                                   const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_GeomEdgePrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                   const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                   const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {}
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void visu_geom_edge_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                     const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_GeomEdgePrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                     const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {}
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void visu_geom_edge_prs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomEdgePrs::renderPipelines(vtkRenderer* theRenderer) const
 {
   if ( !m_textWidget->GetCurrentRenderer() )
   {
@@ -143,7 +143,7 @@ void visu_geom_edge_prs::renderPipelines(vtkRenderer* theRenderer) const
 
 //! Callback for de-rendering.
 //! \param theRenderer [in] renderer.
-void visu_geom_edge_prs::deRenderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomEdgePrs::deRenderPipelines(vtkRenderer* theRenderer) const
 {
   m_textWidget->Off();
 }

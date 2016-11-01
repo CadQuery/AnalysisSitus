@@ -6,18 +6,18 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_mesh_topo_pipeline.h>
+#include <asiVisu_MeshTopoPipeline.h>
 
 // Visualization includes
 #include <visu_mesh_topo_data_provider.h>
-#include <visu_mesh_topo_source.h>
+#include <asiVisu_MeshTopoSource.h>
 
 // VTK includes
 #include <vtkPolyDataMapper.h>
 
 //! Creates new Pipeline instance.
-visu_mesh_topo_pipeline::visu_mesh_topo_pipeline()
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+asiVisu_MeshTopoPipeline::asiVisu_MeshTopoPipeline()
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                  vtkSmartPointer<vtkActor>::New() )
 {
 }
@@ -25,7 +25,7 @@ visu_mesh_topo_pipeline::visu_mesh_topo_pipeline()
 //! Sets input data for the pipeline.
 //! This method performs translation of DOMAIN data to VTK polygonal data.
 //! \param dataProvider [in] Data Provider.
-void visu_mesh_topo_pipeline::SetInput(const Handle(visu_data_provider)& dataProvider)
+void asiVisu_MeshTopoPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
 {
   Handle(visu_mesh_topo_data_provider)
     prv = Handle(visu_mesh_topo_data_provider)::DownCast(dataProvider);
@@ -36,7 +36,7 @@ void visu_mesh_topo_pipeline::SetInput(const Handle(visu_data_provider)& dataPro
 
   if ( prv->MustExecute( this->GetMTime() ) )
   {
-    vtkSmartPointer<visu_mesh_topo_source> src = vtkSmartPointer<visu_mesh_topo_source>::New();
+    vtkSmartPointer<asiVisu_MeshTopoSource> src = vtkSmartPointer<asiVisu_MeshTopoSource>::New();
     src->SetInputMesh( prv->GetMeshDS() );
     src->SetBaseNodes( prv->GetBaseNodes() );
 
@@ -50,16 +50,16 @@ void visu_mesh_topo_pipeline::SetInput(const Handle(visu_data_provider)& dataPro
 
 //! Callback for AddToRenderer() base routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_mesh_topo_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_MeshTopoPipeline::callback_add_to_renderer(vtkRenderer*)
 {
 }
 
 //! Callback for RemoveFromRenderer() base routine.
-void visu_mesh_topo_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_MeshTopoPipeline::callback_remove_from_renderer(vtkRenderer*)
 {
 }
 
 //! Callback for Update() routine.
-void visu_mesh_topo_pipeline::callback_update()
+void asiVisu_MeshTopoPipeline::callback_update()
 {
 }

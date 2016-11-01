@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_iv_point_set_data_provider.h>
+#include <asiVisu_IVPointSetDataProvider.h>
 
 // Common includes
 #include <common_facilities.h>
@@ -15,14 +15,14 @@
 
 //! Constructor.
 //! \param pointSet [in] point set to source data from.
-visu_iv_point_set_data_provider::visu_iv_point_set_data_provider(const Handle(ActAPI_INode)& pointSet)
-: visu_points_data_provider(pointSet)
+asiVisu_IVPointSetDataProvider::asiVisu_IVPointSetDataProvider(const Handle(ActAPI_INode)& pointSet)
+: asiVisu_PointsDataProvider(pointSet)
 {}
 
 //-----------------------------------------------------------------------------
 
 //! \return point cloud to visualize.
-Handle(asiAlgo_PointCloud) visu_iv_point_set_data_provider::GetPoints() const
+Handle(asiAlgo_PointCloud) asiVisu_IVPointSetDataProvider::GetPoints() const
 {
   Handle(asiData_IVPointSetNode)
     points_n = Handle(asiData_IVPointSetNode)::DownCast(m_node);
@@ -38,7 +38,7 @@ Handle(asiAlgo_PointCloud) visu_iv_point_set_data_provider::GetPoints() const
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) visu_iv_point_set_data_provider::translationSources() const
+Handle(ActAPI_HParameterList) asiVisu_IVPointSetDataProvider::translationSources() const
 {
   // Resulting Parameters
   ActParamStream out;

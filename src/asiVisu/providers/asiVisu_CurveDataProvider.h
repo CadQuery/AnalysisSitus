@@ -5,25 +5,25 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_curve_data_provider_h
-#define visu_curve_data_provider_h
+#ifndef asiVisu_CurveDataProvider_h
+#define asiVisu_CurveDataProvider_h
 
 // A-Situs (visualization) includes
-#include <visu_data_provider.h>
+#include <asiVisu_DataProvider.h>
 
 // OCCT includes
 #include <Geom_Curve.hxx>
 #include <Geom2d_Curve.hxx>
 
-DEFINE_STANDARD_HANDLE(visu_curve_data_provider, visu_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_CurveDataProvider, asiVisu_DataProvider)
 
 //! Data provider for parametric curves.
-class visu_curve_data_provider : public visu_data_provider
+class asiVisu_CurveDataProvider : public asiVisu_DataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_curve_data_provider, visu_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_CurveDataProvider, asiVisu_DataProvider)
 
 public:
 

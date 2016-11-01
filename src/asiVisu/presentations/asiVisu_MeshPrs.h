@@ -5,18 +5,18 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_prs_h
-#define visu_mesh_prs_h
+#ifndef asiVisu_MeshPrs_h
+#define asiVisu_MeshPrs_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiVisu.h>
 
 // A-Situs (mesh) includes
 #include <asiData_TessNode.h>
 
 // A-Situs (visualization) includes
-#include <visu_prs.h>
-#include <visu_utils.h>
+#include <asiVisu_Prs.h>
+#include <asiVisu_Utils.h>
 
 // OCCT includes
 #include <Standard_Type.hxx>
@@ -24,15 +24,15 @@
 // Qt includes
 #include <QColor>
 
-DEFINE_STANDARD_HANDLE(visu_mesh_prs, visu_prs)
+DEFINE_STANDARD_HANDLE(asiVisu_MeshPrs, asiVisu_Prs)
 
 //! Presentation class for Mesh Node.
-class visu_mesh_prs : public visu_prs
+class asiVisu_MeshPrs : public asiVisu_Prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_mesh_prs, visu_prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshPrs, asiVisu_Prs)
 
   // Allows to register this Presentation class in runtime.
   // Notice that the first parameter is NODE TYPE, not the Presentation one
@@ -49,7 +49,7 @@ public:
 
 public:
 
-  static Handle(visu_prs)
+  static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
   virtual bool
@@ -67,7 +67,7 @@ public:
 private:
 
   //! Allocation is allowed only via Instance method.
-  visu_mesh_prs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_MeshPrs(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:
 private:
@@ -77,10 +77,10 @@ private:
   virtual void beforeUpdatePipelines ()                                          const;
   virtual void afterUpdatePipelines  ()                                          const;
   virtual void highlight             (vtkRenderer*                 theRenderer,
-                                      const visu_pick_result&      thePickRes,
-                                      const visu_selection_nature& theSelNature) const;
+                                      const asiVisu_PickResult&      thePickRes,
+                                      const asiVisu_SelectionNature& theSelNature) const;
   virtual void unHighlight           (vtkRenderer*                 theRenderer,
-                                      const visu_selection_nature& theSelNature) const;
+                                      const asiVisu_SelectionNature& theSelNature) const;
   virtual void renderPipelines       (vtkRenderer*                 theRenderer)  const;
   virtual void deRenderPipelines     (vtkRenderer*                 theRenderer)  const;
 

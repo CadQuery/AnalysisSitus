@@ -6,12 +6,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_re_points_prs.h>
+#include <asiVisu_REPointsPrs.h>
 
 // A-Situs (visualization) includes
-#include <visu_re_points_data_provider.h>
-#include <visu_points_pipeline.h>
-#include <visu_utils.h>
+#include <asiVisu_REPointsDataProvider.h>
+#include <asiVisu_PointsPipeline.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -19,28 +19,28 @@
 
 //! Creates a Presentation object for the passed Node.
 //! \param theNode [in] Node to create a Presentation for.
-visu_re_points_prs::visu_re_points_prs(const Handle(ActAPI_INode)& theNode)
-: visu_prs(theNode)
+asiVisu_REPointsPrs::asiVisu_REPointsPrs(const Handle(ActAPI_INode)& theNode)
+: asiVisu_Prs(theNode)
 {
   // Create Data Provider
-  Handle(visu_re_points_data_provider) DP = new visu_re_points_data_provider;
+  Handle(asiVisu_REPointsDataProvider) DP = new asiVisu_REPointsDataProvider;
 
   // Pipeline for points
-  this->addPipeline        ( Pipeline_Main, new visu_points_pipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 }
 
 //! Factory method for Presentation.
 //! \param theNode [in] Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_re_points_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_REPointsPrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_re_points_prs(theNode);
+  return new asiVisu_REPointsPrs(theNode);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool visu_re_points_prs::IsVisible() const
+bool asiVisu_REPointsPrs::IsVisible() const
 {
   return true;
 }
@@ -48,54 +48,54 @@ bool visu_re_points_prs::IsVisible() const
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void visu_re_points_prs::beforeInitPipelines()
+void asiVisu_REPointsPrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void visu_re_points_prs::afterInitPipelines()
+void asiVisu_REPointsPrs::afterInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void visu_re_points_prs::beforeUpdatePipelines() const
+void asiVisu_REPointsPrs::beforeUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void visu_re_points_prs::afterUpdatePipelines() const
+void asiVisu_REPointsPrs::afterUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting.
-void visu_re_points_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                   const visu_pick_result&      ASitus_NotUsed(thePickRes),
-                                   const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_REPointsPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                   const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                   const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting reset.
-void visu_re_points_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                     const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_REPointsPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                     const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for rendering.
-void visu_re_points_prs::renderPipelines(vtkRenderer* ASitus_NotUsed(theRenderer)) const
+void asiVisu_REPointsPrs::renderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   // Do nothing...
 }
 
 //! Callback for de-rendering.
-void visu_re_points_prs::deRenderPipelines(vtkRenderer* ASitus_NotUsed(theRenderer)) const
+void asiVisu_REPointsPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   // Do nothing...
 }

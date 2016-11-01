@@ -5,26 +5,26 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_EN_scalar_pipeline_h
-#define visu_mesh_EN_scalar_pipeline_h
+#ifndef asiVisu_MeshENScalarPipeline_h
+#define asiVisu_MeshENScalarPipeline_h
 
 // Visualization includes
-#include <visu_mesh_data_provider.h>
-#include <visu_mesh_pipeline.h>
+#include <asiVisu_MeshDataProvider.h>
+#include <asiVisu_MeshPipeline.h>
 
 //-----------------------------------------------------------------------------
 // Data Provider
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_mesh_EN_scalar_data_provider, visu_mesh_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_MeshENScalarDataProvider, asiVisu_MeshDataProvider)
 
 //! Data source for the corresponding pipeline. Specifies all data necessary
 //! for visualization of mesh with element nodal scalars.
-class visu_mesh_EN_scalar_data_provider : public visu_mesh_data_provider
+class asiVisu_MeshENScalarDataProvider : public asiVisu_MeshDataProvider
 {
 public:
 
-  DEFINE_STANDARD_RTTI_INLINE(visu_mesh_EN_scalar_data_provider, visu_mesh_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshENScalarDataProvider, asiVisu_MeshDataProvider)
 
 public:
 
@@ -46,24 +46,24 @@ public:
 // Pipeline
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_mesh_EN_scalar_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_MeshENScalarPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for meshes with element nodal scalars.
-class visu_mesh_EN_scalar_pipeline : public visu_pipeline
+class asiVisu_MeshENScalarPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_mesh_EN_scalar_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshENScalarPipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_mesh_EN_scalar_pipeline();
+  asiVisu_MeshENScalarPipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& theDataProvider);
+    SetInput(const Handle(asiVisu_DataProvider)& theDataProvider);
 
 private:
 
@@ -74,10 +74,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_mesh_EN_scalar_pipeline(const visu_mesh_EN_scalar_pipeline&);
+  asiVisu_MeshENScalarPipeline(const asiVisu_MeshENScalarPipeline&);
 
   //! Assignment prohibited.
-  visu_mesh_EN_scalar_pipeline& operator=(const visu_mesh_EN_scalar_pipeline&);
+  asiVisu_MeshENScalarPipeline& operator=(const asiVisu_MeshENScalarPipeline&);
 
 protected:
 

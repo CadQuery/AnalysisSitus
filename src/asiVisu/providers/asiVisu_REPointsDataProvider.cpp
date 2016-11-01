@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_re_points_data_provider.h>
+#include <asiVisu_REPointsDataProvider.h>
 
 // Common includes
 #include <common_facilities.h>
@@ -14,14 +14,14 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-visu_re_points_data_provider::visu_re_points_data_provider()
-: visu_points_data_provider( common_facilities::Instance()->Model->GetRENode()->Points() )
+asiVisu_REPointsDataProvider::asiVisu_REPointsDataProvider()
+: asiVisu_PointsDataProvider( common_facilities::Instance()->Model->GetRENode()->Points() )
 {}
 
 //-----------------------------------------------------------------------------
 
 //! \return point cloud to visualize.
-Handle(asiAlgo_PointCloud) visu_re_points_data_provider::GetPoints() const
+Handle(asiAlgo_PointCloud) asiVisu_REPointsDataProvider::GetPoints() const
 {
   Handle(asiData_REPointsNode)
     points_n = Handle(asiData_REPointsNode)::DownCast(m_node);
@@ -37,7 +37,7 @@ Handle(asiAlgo_PointCloud) visu_re_points_data_provider::GetPoints() const
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) visu_re_points_data_provider::translationSources() const
+Handle(ActAPI_HParameterList) asiVisu_REPointsDataProvider::translationSources() const
 {
   // Resulting Parameters
   ActParamStream out;

@@ -5,29 +5,29 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_section_data_provider_h
-#define visu_section_data_provider_h
+#ifndef asiVisu_SectionDataProvider_h
+#define asiVisu_SectionDataProvider_h
 
 // A-Situs visualization includes
-#include <visu_curve_data_provider.h>
+#include <asiVisu_CurveDataProvider.h>
 
 // OCCT includes
 #include <TColStd_HPackedMapOfInteger.hxx>
 
-DEFINE_STANDARD_HANDLE(visu_section_data_provider, visu_curve_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_SectionDataProvider, asiVisu_CurveDataProvider)
 
 //! Data provider for geometry of a single section.
-class visu_section_data_provider : public visu_curve_data_provider
+class asiVisu_SectionDataProvider : public asiVisu_CurveDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_section_data_provider, visu_curve_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_SectionDataProvider, asiVisu_CurveDataProvider)
 
 public:
 
-  visu_section_data_provider(const ActAPI_DataObjectId&           theNodeId,
-                             const Handle(ActAPI_HParameterList)& theParamList);
+  asiVisu_SectionDataProvider(const ActAPI_DataObjectId&           theNodeId,
+                              const Handle(ActAPI_HParameterList)& theParamList);
 
 public:
 
@@ -48,7 +48,7 @@ public:
 
 public:
 
-  Handle(visu_section_data_provider)
+  Handle(asiVisu_SectionDataProvider)
     Clone() const;
 
 private:

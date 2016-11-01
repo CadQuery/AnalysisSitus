@@ -5,28 +5,28 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_contour_data_provider_h
-#define visu_contour_data_provider_h
+#ifndef asiVisu_ContourDataProvider_h
+#define asiVisu_ContourDataProvider_h
 
 // A-Situs visualization includes
-#include <visu_shape_data_provider.h>
+#include <asiVisu_ShapeDataProvider.h>
 
 // OCCT includes
 #include <TColStd_HPackedMapOfInteger.hxx>
 
-DEFINE_STANDARD_HANDLE(visu_contour_data_provider, visu_shape_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_ContourDataProvider, asiVisu_ShapeDataProvider)
 
 //! Data provider for contour shape.
-class visu_contour_data_provider : public visu_shape_data_provider
+class asiVisu_ContourDataProvider : public asiVisu_ShapeDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_contour_data_provider, visu_shape_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ContourDataProvider, asiVisu_ShapeDataProvider)
 
 public:
 
-  visu_contour_data_provider();
+  asiVisu_ContourDataProvider();
 
 public:
 

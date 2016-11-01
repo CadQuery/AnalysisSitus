@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_curve_source_h
-#define visu_curve_source_h
+#ifndef asiVisu_CurveSource_h
+#define asiVisu_CurveSource_h
 
 // Visualization includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // Active Data (auxiliary) includes
 #include <ActAux_Common.h>
@@ -28,13 +28,13 @@
 #include <TopoDS_Edge.hxx>
 
 //! Source of polygonal data representing a 3D curve.
-class visu_curve_source : public vtkPolyDataAlgorithm
+class asiVisu_CurveSource : public vtkPolyDataAlgorithm
 {
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(visu_curve_source, vtkPolyDataAlgorithm);
-  static visu_curve_source* New();
+  vtkTypeMacro(asiVisu_CurveSource, vtkPolyDataAlgorithm);
+  static asiVisu_CurveSource* New();
 
 // Kernel methods:
 public:
@@ -105,13 +105,13 @@ protected:
 
 protected:
 
-  visu_curve_source();
-  ~visu_curve_source();
+  asiVisu_CurveSource();
+  ~asiVisu_CurveSource();
 
 private:
 
-  visu_curve_source(const visu_curve_source&);
-  visu_curve_source& operator=(const visu_curve_source&);
+  asiVisu_CurveSource(const asiVisu_CurveSource&);
+  asiVisu_CurveSource& operator=(const asiVisu_CurveSource&);
 
 private:
 

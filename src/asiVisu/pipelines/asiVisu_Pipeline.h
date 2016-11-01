@@ -5,14 +5,14 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_pipeline_h
-#define visu_pipeline_h
+#ifndef asiVisu_Pipeline_h
+#define asiVisu_Pipeline_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiVisu.h>
 
 // Visualization includes
-#include <visu_data_provider.h>
+#include <asiVisu_DataProvider.h>
 
 // Active Data (auxiliary) includes
 #include <ActAux_TimeStamp.h>
@@ -26,24 +26,24 @@
 // OCCT includes
 #include <NCollection_Sequence.hxx>
 
-DEFINE_STANDARD_HANDLE(visu_pipeline, Standard_Transient)
+DEFINE_STANDARD_HANDLE(asiVisu_Pipeline, Standard_Transient)
 
 //! Interface for any visualization pipeline in Analysis Situs. Each pipeline
 //! represents a set of filters for the input dataset along with the
 //! corresponding actor and mapper. The one-to-one correspondence between
 //! the actor and the pipeline reflects the idea that a single actor is
 //! responsible for a dedicated presentation rather than for a distinct object.
-class visu_pipeline : public Standard_Transient
+class asiVisu_Pipeline : public Standard_Transient
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_pipeline, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_Pipeline, Standard_Transient)
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& theDataProvider) = 0;
+    SetInput(const Handle(asiVisu_DataProvider)& theDataProvider) = 0;
 
 public:
 
@@ -85,7 +85,7 @@ public:
 
 protected:
 
-  visu_pipeline(const vtkSmartPointer<vtkMapper>& mapper,
+  asiVisu_Pipeline(const vtkSmartPointer<vtkMapper>& mapper,
                 const vtkSmartPointer<vtkActor>&  actor);
 
 // Pipeline construction routines to be used by derived classes only:
@@ -129,10 +129,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_pipeline(const visu_pipeline&);
+  asiVisu_Pipeline(const asiVisu_Pipeline&);
 
   //! Assignment prohibited.
-  visu_pipeline& operator=(const visu_pipeline&);
+  asiVisu_Pipeline& operator=(const asiVisu_Pipeline&);
 
 // Few internal type definitions:
 protected:
@@ -174,7 +174,7 @@ protected:
 };
 
 //! Shortcuts for list of Pipelines.
-typedef NCollection_Sequence<Handle(visu_pipeline)> visu_pipeline_list;
-typedef NCollection_Shared<visu_pipeline_list>      h_visu_pipeline_list;
+typedef NCollection_Sequence<Handle(asiVisu_Pipeline)> asiVisu_Pipeline_list;
+typedef NCollection_Shared<asiVisu_Pipeline_list>      h_asiVisu_Pipeline_list;
 
 #endif

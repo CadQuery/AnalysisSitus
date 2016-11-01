@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_topo_source_h
-#define visu_mesh_topo_source_h
+#ifndef asiVisu_MeshTopoSource_h
+#define asiVisu_MeshTopoSource_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiVisu.h>
 
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
@@ -21,13 +21,13 @@
 
 //! Source of polygonal data representing mesh topology constraints
 //! basing on the predefined fixed nodes.
-class visu_mesh_topo_source : public vtkPolyDataAlgorithm
+class asiVisu_MeshTopoSource : public vtkPolyDataAlgorithm
 {
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(visu_mesh_topo_source, vtkPolyDataAlgorithm);
-  static visu_mesh_topo_source* New();
+  vtkTypeMacro(asiVisu_MeshTopoSource, vtkPolyDataAlgorithm);
+  static asiVisu_MeshTopoSource* New();
 
 // Kernel:
 public:
@@ -68,13 +68,13 @@ private:
 
 private:
 
-  visu_mesh_topo_source();
-  ~visu_mesh_topo_source();
+  asiVisu_MeshTopoSource();
+  ~asiVisu_MeshTopoSource();
 
 private:
 
-  visu_mesh_topo_source(const visu_mesh_topo_source&);
-  visu_mesh_topo_source& operator=(const visu_mesh_topo_source&);
+  asiVisu_MeshTopoSource(const asiVisu_MeshTopoSource&);
+  asiVisu_MeshTopoSource& operator=(const asiVisu_MeshTopoSource&);
 
 private:
 

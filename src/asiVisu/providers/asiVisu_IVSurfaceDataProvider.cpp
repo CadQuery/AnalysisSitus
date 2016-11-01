@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_iv_surface_data_provider.h>
+#include <asiVisu_IVSurfaceDataProvider.h>
 
 // Visualization includes
 #include <asiData_IVSurfaceNode.h>
@@ -15,15 +15,15 @@
 
 //! Constructor.
 //! \param N [in] source Node.
-visu_iv_surface_data_provider::visu_iv_surface_data_provider(const Handle(ActAPI_INode)& N)
-: visu_data_provider(),
+asiVisu_IVSurfaceDataProvider::asiVisu_IVSurfaceDataProvider(const Handle(ActAPI_INode)& N)
+: asiVisu_DataProvider(),
   m_node(N)
 {}
 
 //-----------------------------------------------------------------------------
 
 //! \return ID of the associated Data Node.
-ActAPI_DataObjectId visu_iv_surface_data_provider::GetNodeID() const
+ActAPI_DataObjectId asiVisu_IVSurfaceDataProvider::GetNodeID() const
 {
   return m_node->GetId();
 }
@@ -35,7 +35,7 @@ ActAPI_DataObjectId visu_iv_surface_data_provider::GetNodeID() const
 //! \param vLimit [out] absolute bound for V curvilinear axis.
 //! \return surface.
 Handle(Geom_Surface)
-  visu_iv_surface_data_provider::GetSurface(double& uLimit, double& vLimit) const
+  asiVisu_IVSurfaceDataProvider::GetSurface(double& uLimit, double& vLimit) const
 {
   Handle(asiData_IVSurfaceNode)
     surface_n = Handle(asiData_IVSurfaceNode)::DownCast(m_node);
@@ -53,7 +53,7 @@ Handle(Geom_Surface)
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) visu_iv_surface_data_provider::translationSources() const
+Handle(ActAPI_HParameterList) asiVisu_IVSurfaceDataProvider::translationSources() const
 {
   // Resulting Parameters
   ActParamStream out;

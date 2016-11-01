@@ -6,11 +6,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_bcurve_knots_pipeline.h>
+#include <asiVisu_BCurveKnotsPipeline.h>
 
 // Visualization includes
-#include <visu_bcurve_knots_source.h>
-#include <visu_curve_data_provider.h>
+#include <asiVisu_BCurveKnotsSource.h>
+#include <asiVisu_CurveDataProvider.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -20,18 +20,18 @@
 #include <vtkProperty.h>
 
 //! Creates new Pipeline initialized by default VTK mapper and actor.
-visu_bcurve_knots_pipeline::visu_bcurve_knots_pipeline()
+asiVisu_BCurveKnotsPipeline::asiVisu_BCurveKnotsPipeline()
 //
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() )
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() )
 {
   this->Actor()->GetProperty()->SetPointSize(5.0f);
 }
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void visu_bcurve_knots_pipeline::SetInput(const Handle(visu_data_provider)& DP)
+void asiVisu_BCurveKnotsPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  Handle(visu_curve_data_provider) dp = Handle(visu_curve_data_provider)::DownCast(DP);
+  Handle(asiVisu_CurveDataProvider) dp = Handle(asiVisu_CurveDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
@@ -63,8 +63,8 @@ void visu_bcurve_knots_pipeline::SetInput(const Handle(visu_data_provider)& DP)
     {
       Handle(Geom_BSplineCurve) BC = Handle(Geom_BSplineCurve)::DownCast(c3d);
       //
-      vtkSmartPointer<visu_bcurve_knots_source>
-        bpoles_src = vtkSmartPointer<visu_bcurve_knots_source>::New();
+      vtkSmartPointer<asiVisu_BCurveKnotsSource>
+        bpoles_src = vtkSmartPointer<asiVisu_BCurveKnotsSource>::New();
       //
       bpoles_src->SetInputCurve(BC);
 
@@ -87,13 +87,13 @@ void visu_bcurve_knots_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_bcurve_knots_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_BCurveKnotsPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_bcurve_knots_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_BCurveKnotsPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void visu_bcurve_knots_pipeline::callback_update()
+void asiVisu_BCurveKnotsPipeline::callback_update()
 {}

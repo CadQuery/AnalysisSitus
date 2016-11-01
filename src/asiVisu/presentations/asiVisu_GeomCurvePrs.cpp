@@ -6,14 +6,14 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_geom_curve_prs.h>
+#include <asiVisu_GeomCurvePrs.h>
 
 // A-Situs (visualization) includes
-#include <visu_bcurve_knots_pipeline.h>
-#include <visu_bcurve_poles_pipeline.h>
-#include <visu_edge_data_provider.h>
-#include <visu_edge_curve_pipeline.h>
-#include <visu_utils.h>
+#include <asiVisu_BCurveKnotsPipeline.h>
+#include <asiVisu_BCurvePolesPipeline.h>
+#include <asiVisu_EdgeDataProvider.h>
+#include <asiVisu_EdgeCurvePipeline.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -30,24 +30,24 @@
 
 //! Creates a Presentation object for the passed Geometry Curve Node.
 //! \param theNode [in] Geometry Curve Node to create a Presentation for.
-visu_geom_curve_prs::visu_geom_curve_prs(const Handle(ActAPI_INode)& theNode)
-: visu_prs(theNode)
+asiVisu_GeomCurvePrs::asiVisu_GeomCurvePrs(const Handle(ActAPI_INode)& theNode)
+: asiVisu_Prs(theNode)
 {
   // Create Data Provider
-  Handle(visu_edge_data_provider) DP =
-    new visu_edge_data_provider( theNode->GetId(),
+  Handle(asiVisu_EdgeDataProvider) DP =
+    new asiVisu_EdgeDataProvider( theNode->GetId(),
                                  ActParamStream() << theNode->Parameter(geom_curve_node::PID_SelectedEdge) );
 
   // Pipeline for curve
-  this->addPipeline        ( Pipeline_Main, new visu_edge_curve_pipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_EdgeCurvePipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 
   // Pipeline for poles of b-curves
-  this->addPipeline        ( Pipeline_Poles, new visu_bcurve_poles_pipeline );
+  this->addPipeline        ( Pipeline_Poles, new asiVisu_BCurvePolesPipeline );
   this->assignDataProvider ( Pipeline_Poles, DP );
 
   // Pipeline for knots of b-curves
-  this->addPipeline        ( Pipeline_Knots, new visu_bcurve_knots_pipeline );
+  this->addPipeline        ( Pipeline_Knots, new asiVisu_BCurveKnotsPipeline );
   this->assignDataProvider ( Pipeline_Knots, DP );
 
   // Configure presentation
@@ -57,20 +57,20 @@ visu_geom_curve_prs::visu_geom_curve_prs(const Handle(ActAPI_INode)& theNode)
 
   // Initialize text widget used for annotations
   m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
-  visu_utils::InitTextWidget(m_textWidget);
+  asiVisu_Utils::InitTextWidget(m_textWidget);
 }
 
 //! Factory method for Presentation.
 //! \param theNode [in] Curve Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_geom_curve_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_GeomCurvePrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_geom_curve_prs(theNode);
+  return new asiVisu_GeomCurvePrs(theNode);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool visu_geom_curve_prs::IsVisible() const
+bool asiVisu_GeomCurvePrs::IsVisible() const
 {
   return true;
 }
@@ -78,16 +78,16 @@ bool visu_geom_curve_prs::IsVisible() const
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void visu_geom_curve_prs::beforeInitPipelines()
+void asiVisu_GeomCurvePrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void visu_geom_curve_prs::afterInitPipelines()
+void asiVisu_GeomCurvePrs::afterInitPipelines()
 {
-  Handle(visu_edge_data_provider)
-    DP = Handle(visu_edge_data_provider)::DownCast( this->dataProvider(Pipeline_Main) );
+  Handle(asiVisu_EdgeDataProvider)
+    DP = Handle(asiVisu_EdgeDataProvider)::DownCast( this->dataProvider(Pipeline_Main) );
 
   // Get working edge and its host curve
   double f, l;
@@ -153,32 +153,32 @@ void visu_geom_curve_prs::afterInitPipelines()
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void visu_geom_curve_prs::beforeUpdatePipelines() const
+void asiVisu_GeomCurvePrs::beforeUpdatePipelines() const
 {}
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void visu_geom_curve_prs::afterUpdatePipelines() const
+void asiVisu_GeomCurvePrs::afterUpdatePipelines() const
 {}
 
 //! Callback for highlighting.
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void visu_geom_curve_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                    const visu_pick_result&      ASitus_NotUsed(thePickRes),
-                                    const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_GeomCurvePrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                    const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                    const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {}
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void visu_geom_curve_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                      const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_GeomCurvePrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                      const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {}
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void visu_geom_curve_prs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomCurvePrs::renderPipelines(vtkRenderer* theRenderer) const
 {
   // Annotation
   if ( !m_textWidget->GetCurrentRenderer() )
@@ -192,7 +192,7 @@ void visu_geom_curve_prs::renderPipelines(vtkRenderer* theRenderer) const
 
 //! Callback for de-rendering.
 //! \param theRenderer [in] renderer.
-void visu_geom_curve_prs::deRenderPipelines(vtkRenderer* ASitus_NotUsed(theRenderer)) const
+void asiVisu_GeomCurvePrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   m_textWidget->Off();
 }

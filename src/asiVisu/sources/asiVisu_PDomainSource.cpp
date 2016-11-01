@@ -6,11 +6,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_pdomain_source.h>
+#include <asiVisu_PDomainSource.h>
 
 // A-Situs (visualization) includes
-#include <visu_pcurve_source.h>
-#include <visu_utils.h>
+#include <asiVisu_PCurveSource.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkAppendPolyData.h>
@@ -27,17 +27,17 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(visu_pdomain_source);
+vtkStandardNewMacro(asiVisu_PDomainSource);
 
 //! Default constructor.
-visu_pdomain_source::visu_pdomain_source() : vtkPolyDataAlgorithm()
+asiVisu_PDomainSource::asiVisu_PDomainSource() : vtkPolyDataAlgorithm()
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
 }
 
 //! Destructor.
-visu_pdomain_source::~visu_pdomain_source()
+asiVisu_PDomainSource::~asiVisu_PDomainSource()
 {
 }
 
@@ -47,7 +47,7 @@ visu_pdomain_source::~visu_pdomain_source()
 
 //! Sets input geometry.
 //! \param face [in] face to render the parametric portrait for.
-void visu_pdomain_source::SetFace(const TopoDS_Face& face)
+void asiVisu_PDomainSource::SetFace(const TopoDS_Face& face)
 {
   m_face = face;
 }
@@ -63,7 +63,7 @@ void visu_pdomain_source::SetFace(const TopoDS_Face& face)
 //! \param outputVector [in] the pointer to output data, that is filled
 //!                          in this method.
 //! \return status.
-int visu_pdomain_source::RequestData(vtkInformation*        request,
+int asiVisu_PDomainSource::RequestData(vtkInformation*        request,
                                      vtkInformationVector** inputVector,
                                      vtkInformationVector*  outputVector)
 {
@@ -94,8 +94,8 @@ int visu_pdomain_source::RequestData(vtkInformation*        request,
     ++edgeId;
 
     // Allocate Data Source
-    vtkSmartPointer<visu_pcurve_source>
-      pcurveSource = vtkSmartPointer<visu_pcurve_source>::New();
+    vtkSmartPointer<asiVisu_PCurveSource>
+      pcurveSource = vtkSmartPointer<asiVisu_PCurveSource>::New();
 
     // Access edge
     const TopoDS_Edge& E = TopoDS::Edge( exp.Current() );
@@ -121,7 +121,7 @@ int visu_pdomain_source::RequestData(vtkInformation*        request,
 //! Computes size for orientation tip glyph. This size is decided for the
 //! whole face to have it identical for all edges.
 //! \return tip size.
-double visu_pdomain_source::computeTipSize() const
+double asiVisu_PDomainSource::computeTipSize() const
 {
   double uMin, uMax, vMin, vMax;
   BRepTools::UVBounds(m_face, uMin, uMax, vMin, vMax);

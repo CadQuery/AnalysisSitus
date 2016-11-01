@@ -6,27 +6,27 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_mesh_contour_pipeline.h>
+#include <asiVisu_MeshContourPipeline.h>
 
 // Visualization includes
-#include <visu_mesh_utils.h>
+#include <asiVisu_MeshUtils.h>
 
 // VTK includes
 #include <vtkExtractEdges.h>
 
 //! Creates new Mesh Contour Pipeline instance.
 //! \param doUseDefaultColor [in] indicates whether to use default color.
-visu_mesh_contour_pipeline::visu_mesh_contour_pipeline(const bool doUseDefaultColor)
-: visu_mesh_pipeline()
+asiVisu_MeshContourPipeline::asiVisu_MeshContourPipeline(const bool doUseDefaultColor)
+: asiVisu_MeshPipeline()
 {
   /* ======================
    *  Basic initialization
    * ====================== */
 
   if ( doUseDefaultColor )
-    visu_mesh_utils::DefaultContourColor(m_fColor[0], m_fColor[1], m_fColor[2]);
+    asiVisu_MeshUtils::DefaultContourColor(m_fColor[0], m_fColor[1], m_fColor[2]);
 
-  m_fOpacity = visu_mesh_utils::DefaultContourOpacity();
+  m_fOpacity = asiVisu_MeshUtils::DefaultContourOpacity();
   m_fLineWidth = 1.0;
 
   /* ========================
@@ -47,16 +47,16 @@ visu_mesh_contour_pipeline::visu_mesh_contour_pipeline(const bool doUseDefaultCo
 
 //! Callback for AddToRenderer() base routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_mesh_contour_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_MeshContourPipeline::callback_add_to_renderer(vtkRenderer*)
 {
 }
 
 //! Callback for RemoveFromRenderer() base routine.
-void visu_mesh_contour_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_MeshContourPipeline::callback_remove_from_renderer(vtkRenderer*)
 {
 }
 
 //! Callback for Update() routine.
-void visu_mesh_contour_pipeline::callback_update()
+void asiVisu_MeshContourPipeline::callback_update()
 {
 }

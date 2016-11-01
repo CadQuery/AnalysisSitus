@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_result_utils_h
-#define visu_mesh_result_utils_h
+#ifndef asiVisu_MeshResultUtils_h
+#define asiVisu_MeshResultUtils_h
 
 // Visualization includes
-#include <visu_common.h>
+#include <asiVisu_Common.h>
 
 // VTK includes
 #include <vtkLookupTable.h>
@@ -26,7 +26,7 @@
 
 //! Auxiliary functions facilitating representation of calculation
 //! results on meshes.
-namespace visu_mesh_result_utils
+namespace asiVisu_MeshResultUtils
 {
   vtkSmartPointer<vtkLookupTable>
     InitLookupTable(const double theRangeMin,

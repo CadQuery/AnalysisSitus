@@ -6,4 +6,4 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_curve_data_provider.h>
+#include <asiVisu_CurveDataProvider.h>

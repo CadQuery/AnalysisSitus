@@ -6,13 +6,13 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_shape_pipeline.h>
+#include <asiVisu_ShapePipeline.h>
 
 // Visualization includes
-#include <visu_node_info.h>
-#include <visu_shape_data_provider.h>
-#include <visu_shape_data_source.h>
-#include <visu_utils.h>
+#include <asiVisu_NodeInfo.h>
+#include <asiVisu_ShapeDataProvider.h>
+#include <asiVisu_ShapeDataSource.h>
+#include <asiVisu_Utils.h>
 
 // Modeling includes
 #include <asiAlgo_Utils.h>
@@ -49,13 +49,13 @@
 //! \param isSecondary       [in] indicates whether the pipeline is secondary.
 //! \param isTrianglesMode   [in] indicates whether to show triangulation or not.
 //! \param pSource           [in] Data Source for secondary pipelines.
-visu_shape_pipeline::visu_shape_pipeline(const bool            isOCCTColorScheme,
+asiVisu_ShapePipeline::asiVisu_ShapePipeline(const bool            isOCCTColorScheme,
                                          const bool            isBound2Node,
                                          const bool            isSecondary,
                                          const bool            isTrianglesMode,
                                          vtkPolyDataAlgorithm* pSource)
 //
-: visu_pipeline      ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
+: asiVisu_Pipeline      ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
   m_bOCCTColorScheme ( isOCCTColorScheme ), // Native OCCT color scheme (as in Draw)
   m_bIsBound2Node    ( isBound2Node ),
   m_bIsSecondary     ( isSecondary ),
@@ -70,9 +70,9 @@ visu_shape_pipeline::visu_shape_pipeline(const bool            isOCCTColorScheme
    * ======================== */
 
   // Allocate Data Source
-  vtkSmartPointer<visu_shape_data_source>
-    aDS = m_bIsSecondary ? visu_shape_data_source::SafeDownCast(pSource)
-                         : vtkSmartPointer<visu_shape_data_source>::New();
+  vtkSmartPointer<asiVisu_ShapeDataSource>
+    aDS = m_bIsSecondary ? asiVisu_ShapeDataSource::SafeDownCast(pSource)
+                         : vtkSmartPointer<asiVisu_ShapeDataSource>::New();
 
   // Use optimized approach to isotropic transformations
   aDS->FastTransformModeOn();
@@ -109,15 +109,15 @@ visu_shape_pipeline::visu_shape_pipeline(const bool            isOCCTColorScheme
   // Set line width
   this->Actor()->GetProperty()->SetLineWidth(1);
   //
-  visu_utils::ApplyLightingRules( this->Actor() );
+  asiVisu_Utils::ApplyLightingRules( this->Actor() );
 }
 
 //! Sets input data for the pipeline.
 //! \param theDataProvider [in] Data Provider.
-void visu_shape_pipeline::SetInput(const Handle(visu_data_provider)& theDataProvider)
+void asiVisu_ShapePipeline::SetInput(const Handle(asiVisu_DataProvider)& theDataProvider)
 {
-  Handle(visu_shape_data_provider)
-    aShapePrv = Handle(visu_shape_data_provider)::DownCast(theDataProvider);
+  Handle(asiVisu_ShapeDataProvider)
+    aShapePrv = Handle(asiVisu_ShapeDataProvider)::DownCast(theDataProvider);
 
   /* ===========================
    *  Validate input Parameters
@@ -164,8 +164,8 @@ void visu_shape_pipeline::SetInput(const Handle(visu_data_provider)& theDataProv
   if ( aShapePrv->MustExecute( this->GetMTime() ) )
   {
     // Active mesh source for geometry
-    visu_shape_data_source*
-      aShapeDS = visu_shape_data_source::SafeDownCast( m_filterMap(Filter_Source) );
+    asiVisu_ShapeDataSource*
+      aShapeDS = asiVisu_ShapeDataSource::SafeDownCast( m_filterMap(Filter_Source) );
 
     // Two modes: affect or not data source
     if ( !m_bIsSecondary )
@@ -205,7 +205,7 @@ void visu_shape_pipeline::SetInput(const Handle(visu_data_provider)& theDataProv
       // Bind actor to owning Node ID. Thus we set back reference from VTK
       // entity to data object
       if ( m_bIsBound2Node )
-        visu_node_info::Store( aShapePrv->GetNodeID(), this->Actor() );
+        asiVisu_NodeInfo::Store( aShapePrv->GetNodeID(), this->Actor() );
 
       // Bind Shape DS with actor. This is necessary for VIS picker -- it will
       // not work without the corresponding Information key
@@ -223,13 +223,13 @@ void visu_shape_pipeline::SetInput(const Handle(visu_data_provider)& theDataProv
 //! Returns true if the pipeline is configured to work in SHADING mode
 //! currently, false -- otherwise.
 //! \return true/false.
-bool visu_shape_pipeline::IsShadingMode() const
+bool asiVisu_ShapePipeline::IsShadingMode() const
 {
   return m_bShadingMode;
 }
 
 //! Switches ON SHADING visualization mode.
-void visu_shape_pipeline::ShadingModeOn()
+void asiVisu_ShapePipeline::ShadingModeOn()
 {
   if ( m_bShadingMode )
     return;
@@ -246,13 +246,13 @@ void visu_shape_pipeline::ShadingModeOn()
 //! Returns true if the pipeline is configured to work in WIREFRAME mode
 //! currently, false -- otherwise.
 //! \return true/false.
-bool visu_shape_pipeline::IsWireframeMode() const
+bool asiVisu_ShapePipeline::IsWireframeMode() const
 {
   return m_bWireframeMode;
 }
 
 //! Switches ON WIREFRAME visualization mode.
-void visu_shape_pipeline::WireframeModeOn()
+void asiVisu_ShapePipeline::WireframeModeOn()
 {
   if ( m_bWireframeMode )
     return;
@@ -267,7 +267,7 @@ void visu_shape_pipeline::WireframeModeOn()
 }
 
 //! Cleans up the underlying sub-shapes filter, however, keeps it chained.
-void visu_shape_pipeline::VoidSubShapesOn()
+void asiVisu_ShapePipeline::VoidSubShapesOn()
 {
   IVtkTools_SubPolyDataFilter*
     aSubShapesFilter = IVtkTools_SubPolyDataFilter::SafeDownCast( m_filterMap(Filter_SubShapes) );
@@ -280,13 +280,13 @@ void visu_shape_pipeline::VoidSubShapesOn()
 }
 
 //! Enables sub-shapes filtering.
-void visu_shape_pipeline::VoidSubShapesOff()
+void asiVisu_ShapePipeline::VoidSubShapesOff()
 {
   m_bSubShapesVoid = false;
 }
 
 //! Enables shared vertices in Display Mode filter.
-void visu_shape_pipeline::SharedVerticesOn()
+void asiVisu_ShapePipeline::SharedVerticesOn()
 {
   IVtkTools_DisplayModeFilter*
     aDMFilter = IVtkTools_DisplayModeFilter::SafeDownCast( m_filterMap(Filter_DM) );
@@ -296,7 +296,7 @@ void visu_shape_pipeline::SharedVerticesOn()
 }
 
 //! Disables shared vertices in Display Mode filter.
-void visu_shape_pipeline::SharedVerticesOff()
+void asiVisu_ShapePipeline::SharedVerticesOff()
 {
   IVtkTools_DisplayModeFilter*
     aDMFilter = IVtkTools_DisplayModeFilter::SafeDownCast( m_filterMap(Filter_DM) );
@@ -307,14 +307,14 @@ void visu_shape_pipeline::SharedVerticesOff()
 
 //! Accessor for the used shape Data Source.
 //! \return shape Data Source.
-vtkPolyDataAlgorithm* visu_shape_pipeline::DataSource() const
+vtkPolyDataAlgorithm* asiVisu_ShapePipeline::DataSource() const
 {
   return vtkPolyDataAlgorithm::SafeDownCast( m_filterMap(Filter_Source) );
 }
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_shape_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_ShapePipeline::callback_add_to_renderer(vtkRenderer*)
 {
   if ( m_bShowTriangles )
     this->Actor()->GetProperty()->SetEdgeVisibility(1);
@@ -323,16 +323,16 @@ void visu_shape_pipeline::callback_add_to_renderer(vtkRenderer*)
 }
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_shape_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_ShapePipeline::callback_remove_from_renderer(vtkRenderer*)
 {
 }
 
 //! Callback for Update() routine.
-void visu_shape_pipeline::callback_update()
+void asiVisu_ShapePipeline::callback_update()
 {
   if ( m_bOCCTColorScheme && !m_bMapperColorsSet )
   {
-    visu_utils::InitShapeMapper(m_mapper);
+    asiVisu_Utils::InitShapeMapper(m_mapper);
     m_bMapperColorsSet = true;
   }
 }

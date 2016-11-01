@@ -5,36 +5,37 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_E_scalar_filter_h
-#define visu_mesh_E_scalar_filter_h
+#ifndef asiVisu_MeshEScalarFilter_h
+#define asiVisu_MeshEScalarFilter_h
 
 // Visualization includes
-#include <visu_common.h>
+#include <asiVisu.h>
 
 // VTK includes
 #include <vtkDoubleArray.h>
 #include <vtkIdList.h>
 #include <vtkPolyDataAlgorithm.h>
 
+// Active Data includes
+#include <ActAPI_Common.h>
+
 // OCCT includes
-#pragma warning(push, 0)
 #include <NCollection_SparseArray.hxx>
-#pragma warning(pop)
 
 //! Collection of scalar values associated with sparse integer IDs.
 typedef NCollection_SparseArray<double> ScalarMap;
 typedef NCollection_Shared<ScalarMap>   HScalarMap;
 
 //! Filter populating VTK cell scalars with domain data.
-class visu_mesh_E_scalar_filter : public vtkPolyDataAlgorithm
+class asiVisu_MeshEScalarFilter : public vtkPolyDataAlgorithm
 {
 public:
 
-  vtkTypeMacro(visu_mesh_E_scalar_filter, vtkPolyDataAlgorithm);
+  vtkTypeMacro(asiVisu_MeshEScalarFilter, vtkPolyDataAlgorithm);
 
 public:
 
-  static visu_mesh_E_scalar_filter* New();
+  static asiVisu_MeshEScalarFilter* New();
 
   //! Sets elemental scalars.
   //! \param theElemIDs  [in] involved mesh element IDs.
@@ -74,9 +75,9 @@ public:
 
 private:
 
-  visu_mesh_E_scalar_filter();
+  asiVisu_MeshEScalarFilter();
 
-  ~visu_mesh_E_scalar_filter();
+  ~asiVisu_MeshEScalarFilter();
 
 public:
 
@@ -97,11 +98,11 @@ private:
 
   //! Prohibited copy constructor.
   //! \param theFilter [in] another filter.
-  visu_mesh_E_scalar_filter(const visu_mesh_E_scalar_filter& theFilter); // Not implemented.
+  asiVisu_MeshEScalarFilter(const asiVisu_MeshEScalarFilter& theFilter); // Not implemented.
 
   //! Prohibited assignment operator.
   //! \param theFilter [in] another filter.
-  void operator=(const visu_mesh_E_scalar_filter& theFilter); // Not implemented.
+  void operator=(const asiVisu_MeshEScalarFilter& theFilter); // Not implemented.
 
 private:
 

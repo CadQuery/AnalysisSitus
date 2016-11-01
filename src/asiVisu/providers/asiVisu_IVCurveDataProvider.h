@@ -5,25 +5,25 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_iv_curve_data_provider_h
-#define visu_iv_curve_data_provider_h
+#ifndef asiVisu_IVCurveDataProvider_h
+#define asiVisu_IVCurveDataProvider_h
 
 // A-Situs visualization includes
-#include <visu_curve_data_provider.h>
+#include <asiVisu_CurveDataProvider.h>
 
-DEFINE_STANDARD_HANDLE(visu_iv_curve_data_provider, visu_curve_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_IVCurveDataProvider, asiVisu_CurveDataProvider)
 
 //! Data provider for a single curve in IV.
-class visu_iv_curve_data_provider : public visu_curve_data_provider
+class asiVisu_IVCurveDataProvider : public asiVisu_CurveDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_iv_curve_data_provider, visu_curve_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVCurveDataProvider, asiVisu_CurveDataProvider)
 
 public:
 
-  visu_iv_curve_data_provider(const Handle(ActAPI_INode)& N);
+  asiVisu_IVCurveDataProvider(const Handle(ActAPI_INode)& N);
 
 public:
 
@@ -41,7 +41,7 @@ public:
 
 public:
 
-  Handle(visu_iv_curve_data_provider)
+  Handle(asiVisu_IVCurveDataProvider)
     Clone() const;
 
 private:

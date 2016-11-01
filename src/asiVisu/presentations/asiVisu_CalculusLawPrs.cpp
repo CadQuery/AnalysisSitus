@@ -6,11 +6,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_calculus_law_prs.h>
+#include <asiVisu_CalculusLawPrs.h>
 
 // A-Situs (visualization) includes
-#include <visu_law_data_provider.h>
-#include <visu_law_pipeline.h>
+#include <asiVisu_LawDataProvider.h>
+#include <asiVisu_LawPipeline.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -18,25 +18,25 @@
 
 //! Creates a Presentation object.
 //! \param N [in] Data Node to create a Presentation for.
-visu_calculus_law_prs::visu_calculus_law_prs(const Handle(ActAPI_INode)& N)
-: visu_prs(N)
+asiVisu_CalculusLawPrs::asiVisu_CalculusLawPrs(const Handle(ActAPI_INode)& N)
+: asiVisu_Prs(N)
 {
   // Pipeline for law
-  this->addPipeline        ( Pipeline_Law, new visu_law_pipeline() );
-  this->assignDataProvider ( Pipeline_Law, new visu_law_data_provider( Handle(asiAlgo_DesignLaw_node)::DownCast(N) ) );
+  this->addPipeline        ( Pipeline_Law, new asiVisu_LawPipeline() );
+  this->assignDataProvider ( Pipeline_Law, new asiVisu_LawDataProvider( Handle(asiData_DesignLawNode)::DownCast(N) ) );
 }
 
 //! Factory method for Presentation.
 //! \param N [in] Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_calculus_law_prs::Instance(const Handle(ActAPI_INode)& N)
+Handle(asiVisu_Prs) asiVisu_CalculusLawPrs::Instance(const Handle(ActAPI_INode)& N)
 {
-  return new visu_calculus_law_prs(N);
+  return new asiVisu_CalculusLawPrs(N);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool visu_calculus_law_prs::IsVisible() const
+bool asiVisu_CalculusLawPrs::IsVisible() const
 {
   return true;
 }
@@ -44,27 +44,27 @@ bool visu_calculus_law_prs::IsVisible() const
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void visu_calculus_law_prs::beforeInitPipelines()
+void asiVisu_CalculusLawPrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void visu_calculus_law_prs::afterInitPipelines()
+void asiVisu_CalculusLawPrs::afterInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void visu_calculus_law_prs::beforeUpdatePipelines() const
+void asiVisu_CalculusLawPrs::beforeUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void visu_calculus_law_prs::afterUpdatePipelines() const
+void asiVisu_CalculusLawPrs::afterUpdatePipelines() const
 {
   // Do nothing...
 }
@@ -73,31 +73,31 @@ void visu_calculus_law_prs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void visu_calculus_law_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                      const visu_pick_result&      ASitus_NotUsed(thePickRes),
-                                      const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_CalculusLawPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                      const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                      const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void visu_calculus_law_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                        const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_CalculusLawPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                        const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void visu_calculus_law_prs::renderPipelines(vtkRenderer* ASitus_NotUsed(theRenderer)) const
+void asiVisu_CalculusLawPrs::renderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   // Do nothing...
 }
 
 //! Callback for de-rendering.
 //! \param theRenderer [in] renderer.
-void visu_calculus_law_prs::deRenderPipelines(vtkRenderer* ASitus_NotUsed(theRenderer)) const
+void asiVisu_CalculusLawPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   // Do nothing...
 }

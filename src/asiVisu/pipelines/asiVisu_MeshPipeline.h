@@ -5,31 +5,31 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_pipeline_h
-#define visu_mesh_pipeline_h
+#ifndef asiVisu_MeshPipeline_h
+#define asiVisu_MeshPipeline_h
 
 // Visualization includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
-DEFINE_STANDARD_HANDLE(visu_mesh_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_MeshPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for facets and meshes.
-class visu_mesh_pipeline : public visu_pipeline
+class asiVisu_MeshPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_mesh_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshPipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_mesh_pipeline();
+  asiVisu_MeshPipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& dataProvider);
+    SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
 
 public:
 
@@ -45,10 +45,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_mesh_pipeline(const visu_mesh_pipeline&);
+  asiVisu_MeshPipeline(const asiVisu_MeshPipeline&);
 
   //! Assignment prohibited.
-  visu_mesh_pipeline& operator=(const visu_mesh_pipeline&);
+  asiVisu_MeshPipeline& operator=(const asiVisu_MeshPipeline&);
 
 protected:
 

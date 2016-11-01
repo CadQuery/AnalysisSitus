@@ -6,14 +6,14 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_mesh_pipeline.h>
+#include <asiVisu_MeshPipeline.h>
 
 // Visualization includes
-#include <visu_mesh_data_provider.h>
-#include <visu_mesh_source.h>
-#include <visu_mesh_utils.h>
-#include <visu_node_info.h>
-#include <visu_utils.h>
+#include <asiVisu_MeshDataProvider.h>
+#include <asiVisu_MeshSource.h>
+#include <asiVisu_MeshUtils.h>
+#include <asiVisu_NodeInfo.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkPolyDataMapper.h>
@@ -24,8 +24,8 @@
 //-----------------------------------------------------------------------------
 
 //! Creates new Mesh Pipeline instance.
-visu_mesh_pipeline::visu_mesh_pipeline()
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+asiVisu_MeshPipeline::asiVisu_MeshPipeline()
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                  vtkSmartPointer<vtkActor>::New() )
 {
   this->EmptyGroupForAllModeOn();
@@ -34,16 +34,16 @@ visu_mesh_pipeline::visu_mesh_pipeline()
    *  Initialize custom filters
    * =========================== */
 
-  visu_utils::ApplyLightingRules( this->Actor() );
+  asiVisu_Utils::ApplyLightingRules( this->Actor() );
 }
 
 //! Sets input data for the pipeline.
 //! This method performs translation of DOMAIN data to VTK polygonal data.
 //! \param dataProvider [in] Data Provider.
-void visu_mesh_pipeline::SetInput(const Handle(visu_data_provider)& dataProvider)
+void asiVisu_MeshPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
 {
-  Handle(visu_mesh_data_provider)
-    aMeshPrv = Handle(visu_mesh_data_provider)::DownCast(dataProvider);
+  Handle(asiVisu_MeshDataProvider)
+    aMeshPrv = Handle(asiVisu_MeshDataProvider)::DownCast(dataProvider);
 
   /* ============================
    *  Prepare polygonal data set
@@ -51,7 +51,7 @@ void visu_mesh_pipeline::SetInput(const Handle(visu_data_provider)& dataProvider
 
   if ( aMeshPrv->MustExecute( this->GetMTime() ) )
   {
-    vtkSmartPointer<visu_mesh_source> aMeshSource = vtkSmartPointer<visu_mesh_source>::New();
+    vtkSmartPointer<asiVisu_MeshSource> aMeshSource = vtkSmartPointer<asiVisu_MeshSource>::New();
     aMeshSource->SetInputMesh( aMeshPrv->GetMeshDS() );
     if ( m_bIsEmptyGroupForAll )
       aMeshSource->EmptyGroupForAllModeOn();
@@ -60,7 +60,7 @@ void visu_mesh_pipeline::SetInput(const Handle(visu_data_provider)& dataProvider
 
     // Bind actor to owning Node ID. Thus we set back reference from VTK
     // entity to data object
-    visu_node_info::Store( aMeshPrv->GetNodeID(), this->Actor() );
+    asiVisu_NodeInfo::Store( aMeshPrv->GetNodeID(), this->Actor() );
 
     // Initialize pipeline
     this->SetInputConnection( aMeshSource->GetOutputPort() );
@@ -71,36 +71,36 @@ void visu_mesh_pipeline::SetInput(const Handle(visu_data_provider)& dataProvider
 }
 
 //! Switches ON inverse mode of filtering.
-void visu_mesh_pipeline::EmptyGroupForAllModeOn()
+void asiVisu_MeshPipeline::EmptyGroupForAllModeOn()
 {
   m_bIsEmptyGroupForAll = true;
 }
 
 //! Switches OFF inverse mode of filtering.
-void visu_mesh_pipeline::EmptyGroupForAllModeOff()
+void asiVisu_MeshPipeline::EmptyGroupForAllModeOff()
 {
   m_bIsEmptyGroupForAll = false;
 }
 
 //! Callback for AddToRenderer base routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_mesh_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_MeshPipeline::callback_add_to_renderer(vtkRenderer*)
 {
-  this->Actor()->GetProperty()->SetPointSize( visu_mesh_utils::DefaultPointSize() );
+  this->Actor()->GetProperty()->SetPointSize( asiVisu_MeshUtils::DefaultPointSize() );
   this->Actor()->GetProperty()->SetInterpolationToGouraud();
 }
 
 //! Callback for RemoveFromRenderer base routine.
-void visu_mesh_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_MeshPipeline::callback_remove_from_renderer(vtkRenderer*)
 {
 }
 
 //! Callback for Update routine.
-void visu_mesh_pipeline::callback_update()
+void asiVisu_MeshPipeline::callback_update()
 {
   if ( !m_bMapperColorsSet )
   {
-    visu_mesh_utils::InitMapper(m_mapper, ARRNAME_MESH_ITEM_TYPE);
+    asiVisu_MeshUtils::InitMapper(m_mapper, ARRNAME_MESH_ITEM_TYPE);
     m_bMapperColorsSet = true;
   }
 }

@@ -5,30 +5,30 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_topo_pipeline_h
-#define visu_mesh_topo_pipeline_h
+#ifndef asiVisu_MeshTopoPipeline_h
+#define asiVisu_MeshTopoPipeline_h
 
 // Visualization includes
-#include <visu_pipeline.h>
+#include <asiVisu_Pipeline.h>
 
-DEFINE_STANDARD_HANDLE(visu_mesh_topo_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_MeshTopoPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for topological constraints on the mesh.
-class visu_mesh_topo_pipeline : public visu_pipeline
+class asiVisu_MeshTopoPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_mesh_topo_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshTopoPipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_mesh_topo_pipeline();
+  asiVisu_MeshTopoPipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& dataProvider);
+    SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
 
 private:
 
@@ -39,10 +39,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_mesh_topo_pipeline(const visu_mesh_topo_pipeline&);
+  asiVisu_MeshTopoPipeline(const asiVisu_MeshTopoPipeline&);
 
   //! Assignment prohibited.
-  visu_mesh_topo_pipeline& operator=(const visu_mesh_topo_pipeline&);
+  asiVisu_MeshTopoPipeline& operator=(const asiVisu_MeshTopoPipeline&);
 
 };
 

@@ -5,33 +5,33 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_shape_data_provider_h
-#define visu_shape_data_provider_h
+#ifndef asiVisu_ShapeDataProvider_h
+#define asiVisu_ShapeDataProvider_h
 
 // A-Situs visualization includes
-#include <visu_data_provider.h>
+#include <asiVisu_DataProvider.h>
 
 // OCCT includes
 #include <TColStd_HPackedMapOfInteger.hxx>
 
-DEFINE_STANDARD_HANDLE(visu_shape_data_provider, visu_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_ShapeDataProvider, asiVisu_DataProvider)
 
 //! Data provider from geometry Node to Presentation.
-class visu_shape_data_provider : public visu_data_provider
+class asiVisu_ShapeDataProvider : public asiVisu_DataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_shape_data_provider, visu_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ShapeDataProvider, asiVisu_DataProvider)
 
 public:
 
-  visu_shape_data_provider(const ActAPI_DataObjectId&           theNodeId,
+  asiVisu_ShapeDataProvider(const ActAPI_DataObjectId&           theNodeId,
                            const Handle(ActAPI_HParameterList)& theParamList);
 
 protected:
 
-  visu_shape_data_provider();
+  asiVisu_ShapeDataProvider();
 
 public:
 
@@ -65,7 +65,7 @@ public:
 
 public:
 
-  Handle(visu_shape_data_provider)
+  Handle(asiVisu_ShapeDataProvider)
     Clone() const;
 
 protected:

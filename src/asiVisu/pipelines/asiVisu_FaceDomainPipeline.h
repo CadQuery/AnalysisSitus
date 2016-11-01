@@ -5,12 +5,12 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_face_domain_pipeline_h
-#define visu_face_domain_pipeline_h
+#ifndef asiVisu_FaceDomainPipeline_h
+#define asiVisu_FaceDomainPipeline_h
 
 // A-Situs includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 // VTK includes
 #include <vtkExtractSelection.h>
@@ -22,24 +22,24 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_face_domain_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_FaceDomainPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for face domain.
-class visu_face_domain_pipeline : public visu_pipeline
+class asiVisu_FaceDomainPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_face_domain_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FaceDomainPipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_face_domain_pipeline(const bool isDefaultColorScheme = true);
+  asiVisu_FaceDomainPipeline(const bool isDefaultColorScheme = true);
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& DP);
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 public:
 
@@ -59,10 +59,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_face_domain_pipeline(const visu_face_domain_pipeline&);
+  asiVisu_FaceDomainPipeline(const asiVisu_FaceDomainPipeline&);
 
   //! Assignment prohibited.
-  visu_face_domain_pipeline& operator=(const visu_face_domain_pipeline&);
+  asiVisu_FaceDomainPipeline& operator=(const asiVisu_FaceDomainPipeline&);
 
 private:
 

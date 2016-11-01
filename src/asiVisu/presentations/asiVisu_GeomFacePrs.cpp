@@ -6,12 +6,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_geom_face_prs.h>
+#include <asiVisu_GeomFacePrs.h>
 
 // Visualization includes
-#include <visu_face_data_provider.h>
-#include <visu_face_domain_pipeline.h>
-#include <visu_utils.h>
+#include <asiVisu_FaceDataProvider.h>
+#include <asiVisu_FaceDomainPipeline.h>
+#include <asiVisu_Utils.h>
 
 // Geometry includes
 #include <asiAlgo_Utils.h>
@@ -29,36 +29,36 @@
 
 //! Creates a Presentation object for the passed Geometry Face Node.
 //! \param theNode [in] Geometry Face Node to create a Presentation for.
-visu_geom_face_prs::visu_geom_face_prs(const Handle(ActAPI_INode)& theNode)
-: visu_prs(theNode)
+asiVisu_GeomFacePrs::asiVisu_GeomFacePrs(const Handle(ActAPI_INode)& theNode)
+: asiVisu_Prs(theNode)
 {
   // Create Data Provider
-  Handle(visu_face_data_provider) DP =
-    new visu_face_data_provider( theNode->GetId(),
+  Handle(asiVisu_FaceDataProvider) DP =
+    new asiVisu_FaceDataProvider( theNode->GetId(),
                                  ActParamStream() << theNode->Parameter(asiData_FaceNode::PID_SelectedFace) );
 
   // Pipeline for face
-  this->addPipeline        ( Pipeline_Main, new visu_face_domain_pipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_FaceDomainPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 
   // Initialize text widget used for annotations
   m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
-  visu_utils::InitTextWidget(m_textWidget);
+  asiVisu_Utils::InitTextWidget(m_textWidget);
 
   /* ========================
    *  Pipeline for detecting
    * ======================== */
 
   double detect_color[3];
-  visu_utils::DefaultDetectionColor(detect_color[0], detect_color[1], detect_color[2]);
+  asiVisu_Utils::DefaultDetectionColor(detect_color[0], detect_color[1], detect_color[2]);
 
   // Create pipeline for highlighting
-  Handle(visu_face_domain_pipeline) detect_pl = new visu_face_domain_pipeline(false);
+  Handle(asiVisu_FaceDomainPipeline) detect_pl = new asiVisu_FaceDomainPipeline(false);
 
   // Adjust props
   detect_pl->Actor()->GetProperty()->SetColor(detect_color[0], detect_color[1], detect_color[2]);
-  detect_pl->Actor()->GetProperty()->SetLineWidth( visu_utils::DefaultDetectionLineWidth() + 1 );
-  detect_pl->Actor()->GetProperty()->SetPointSize( visu_utils::DefaultHilightPointSize() );
+  detect_pl->Actor()->GetProperty()->SetLineWidth( asiVisu_Utils::DefaultDetectionLineWidth() + 1 );
+  detect_pl->Actor()->GetProperty()->SetPointSize( asiVisu_Utils::DefaultHilightPointSize() );
   detect_pl->Actor()->SetPickable(0);
   detect_pl->Mapper()->ScalarVisibilityOff();
   //
@@ -78,15 +78,15 @@ visu_geom_face_prs::visu_geom_face_prs(const Handle(ActAPI_INode)& theNode)
    * ======================== */
 
   double sel_color[3];
-  visu_utils::DefaultPickingColor(sel_color[0], sel_color[1], sel_color[2]);
+  asiVisu_Utils::DefaultPickingColor(sel_color[0], sel_color[1], sel_color[2]);
 
   // Create pipeline for selection
-  Handle(visu_face_domain_pipeline) sel_pl = new visu_face_domain_pipeline(false);
+  Handle(asiVisu_FaceDomainPipeline) sel_pl = new asiVisu_FaceDomainPipeline(false);
 
   // Adjust props
   sel_pl->Actor()->GetProperty()->SetColor(sel_color[0], sel_color[1], sel_color[2]);
-  sel_pl->Actor()->GetProperty()->SetLineWidth( visu_utils::DefaultPickLineWidth() + 1 );
-  sel_pl->Actor()->GetProperty()->SetPointSize( visu_utils::DefaultHilightPointSize() );
+  sel_pl->Actor()->GetProperty()->SetLineWidth( asiVisu_Utils::DefaultPickLineWidth() + 1 );
+  sel_pl->Actor()->GetProperty()->SetPointSize( asiVisu_Utils::DefaultHilightPointSize() );
   sel_pl->Actor()->SetPickable(0);
   sel_pl->Mapper()->ScalarVisibilityOff();
   //
@@ -105,14 +105,14 @@ visu_geom_face_prs::visu_geom_face_prs(const Handle(ActAPI_INode)& theNode)
 //! Factory method for Presentation.
 //! \param theNode [in] Face Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_geom_face_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_GeomFacePrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_geom_face_prs(theNode);
+  return new asiVisu_GeomFacePrs(theNode);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool visu_geom_face_prs::IsVisible() const
+bool asiVisu_GeomFacePrs::IsVisible() const
 {
   return true;
 }
@@ -120,16 +120,16 @@ bool visu_geom_face_prs::IsVisible() const
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void visu_geom_face_prs::beforeInitPipelines()
+void asiVisu_GeomFacePrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void visu_geom_face_prs::afterInitPipelines()
+void asiVisu_GeomFacePrs::afterInitPipelines()
 {
-  Handle(visu_face_data_provider)
-    DP = Handle(visu_face_data_provider)::DownCast( this->dataProvider(Pipeline_Main) );
+  Handle(asiVisu_FaceDataProvider)
+    DP = Handle(asiVisu_FaceDataProvider)::DownCast( this->dataProvider(Pipeline_Main) );
 
   // Get working face
   const int   F_idx = DP->GetFaceIndexAmongFaces();
@@ -200,15 +200,15 @@ void visu_geom_face_prs::afterInitPipelines()
   //---------------------------------------------------------------------------
 
   // Access pipelines dedicated for highlighting
-  const Handle(visu_face_domain_pipeline)&
-    detect_pl = Handle(visu_face_domain_pipeline)::DownCast( this->GetDetectPipeline() );
-  const Handle(visu_face_domain_pipeline)&
-    pick_pl = Handle(visu_face_domain_pipeline)::DownCast( this->GetPickPipeline() );
+  const Handle(asiVisu_FaceDomainPipeline)&
+    detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() );
+  const Handle(asiVisu_FaceDomainPipeline)&
+    pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
 
-  const Handle(visu_face_data_provider)&
-    detect_dp = Handle(visu_face_data_provider)::DownCast( this->dataProviderDetect() );
-  const Handle(visu_face_data_provider)&
-    pick_dp = Handle(visu_face_data_provider)::DownCast( this->dataProviderPick() );
+  const Handle(asiVisu_FaceDataProvider)&
+    detect_dp = Handle(asiVisu_FaceDataProvider)::DownCast( this->dataProviderDetect() );
+  const Handle(asiVisu_FaceDataProvider)&
+    pick_dp = Handle(asiVisu_FaceDataProvider)::DownCast( this->dataProviderPick() );
 
   // Init PL as selection pipelines are not automated
   detect_pl->SetInput(detect_dp);
@@ -217,24 +217,24 @@ void visu_geom_face_prs::afterInitPipelines()
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void visu_geom_face_prs::beforeUpdatePipelines() const
+void asiVisu_GeomFacePrs::beforeUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void visu_geom_face_prs::afterUpdatePipelines() const
+void asiVisu_GeomFacePrs::afterUpdatePipelines() const
 {
   /* ====================================
    *  Update selection pipelines as well
    * ==================================== */
 
   // Access pipelines dedicated for highlighting
-  const Handle(visu_face_domain_pipeline)&
-    detect_pl = Handle(visu_face_domain_pipeline)::DownCast( this->GetDetectPipeline() );
-  const Handle(visu_face_domain_pipeline)&
-    pick_pl = Handle(visu_face_domain_pipeline)::DownCast( this->GetPickPipeline() );
+  const Handle(asiVisu_FaceDomainPipeline)&
+    detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() );
+  const Handle(asiVisu_FaceDomainPipeline)&
+    pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
 
   // IMPORTANT: We update our highlighting pipelines here just to make things
   // faster. The better place to do that is "highlight" method, because
@@ -250,12 +250,12 @@ void visu_geom_face_prs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void visu_geom_face_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                   const visu_pick_result&      thePickRes,
-                                   const visu_selection_nature& theSelNature) const
+void asiVisu_GeomFacePrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                   const asiVisu_PickResult&      thePickRes,
+                                   const asiVisu_SelectionNature& theSelNature) const
 {
   // Get target actor which is the only sensitive
-  Handle(visu_pipeline) poles_pl = this->GetPipeline(Pipeline_Main);
+  Handle(asiVisu_Pipeline) poles_pl = this->GetPipeline(Pipeline_Main);
   //
   vtkActor* poles_actor = poles_pl->Actor();
 
@@ -263,8 +263,8 @@ void visu_geom_face_prs::highlight(vtkRenderer*                 ASitus_NotUsed(t
   TColStd_PackedMapOfInteger cellIds;
   if ( thePickRes.IsSelectionWorkpiece() )
   {
-    const visu_actor_elem_map& pickMap = thePickRes.GetPickMap();
-    for ( visu_actor_elem_map::Iterator it(pickMap); it.More(); it.Next() )
+    const asiVisu_ActorElemMap& pickMap = thePickRes.GetPickMap();
+    for ( asiVisu_ActorElemMap::Iterator it(pickMap); it.More(); it.Next() )
     {
       const vtkSmartPointer<vtkActor>& aResActor = it.Key();
       if ( aResActor != poles_actor )
@@ -279,12 +279,12 @@ void visu_geom_face_prs::highlight(vtkRenderer*                 ASitus_NotUsed(t
   //---------------------------------------------------------------------------
 
   // Access pipeline for highlighting
-  Handle(visu_face_domain_pipeline) hili_pl;
+  Handle(asiVisu_FaceDomainPipeline) hili_pl;
   //
   if ( theSelNature == SelectionNature_Pick )
-    hili_pl = Handle(visu_face_domain_pipeline)::DownCast( this->GetPickPipeline() );
+    hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
   else
-    hili_pl = Handle(visu_face_domain_pipeline)::DownCast( this->GetDetectPipeline() );
+    hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() );
 
   if ( !hili_pl )
     return;
@@ -300,16 +300,16 @@ void visu_geom_face_prs::highlight(vtkRenderer*                 ASitus_NotUsed(t
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void visu_geom_face_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                     const visu_selection_nature& theSelNature) const
+void asiVisu_GeomFacePrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                     const asiVisu_SelectionNature& theSelNature) const
 {
   // Access pipeline for highlighting
-  Handle(visu_face_domain_pipeline) hili_pl;
+  Handle(asiVisu_FaceDomainPipeline) hili_pl;
   //
   if ( theSelNature == SelectionNature_Pick )
-    hili_pl = Handle(visu_face_domain_pipeline)::DownCast( this->GetPickPipeline() );
+    hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
   else
-    hili_pl = Handle(visu_face_domain_pipeline)::DownCast( this->GetDetectPipeline() );
+    hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() );
 
   if ( !hili_pl )
     return;
@@ -323,7 +323,7 @@ void visu_geom_face_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void visu_geom_face_prs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomFacePrs::renderPipelines(vtkRenderer* theRenderer) const
 {
   if ( !m_textWidget->GetCurrentRenderer() )
   {
@@ -337,9 +337,9 @@ void visu_geom_face_prs::renderPipelines(vtkRenderer* theRenderer) const
   // Highlighting
   //---------------------------------------------------------------------------
 
-  Handle(visu_face_domain_pipeline)
-    detect_pl = Handle(visu_face_domain_pipeline)::DownCast( this->GetDetectPipeline() ),
-    pick_pl = Handle(visu_face_domain_pipeline)::DownCast( this->GetPickPipeline() );
+  Handle(asiVisu_FaceDomainPipeline)
+    detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() ),
+    pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
 
   // Picking pipeline must be added to renderer the LAST (!). Otherwise
   // we experience some strange coloring bug because of their coincidence
@@ -349,7 +349,7 @@ void visu_geom_face_prs::renderPipelines(vtkRenderer* theRenderer) const
 
 //! Callback for de-rendering.
 //! \param theRenderer [in] renderer.
-void visu_geom_face_prs::deRenderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomFacePrs::deRenderPipelines(vtkRenderer* theRenderer) const
 {
   m_textWidget->Off();
 
@@ -357,9 +357,9 @@ void visu_geom_face_prs::deRenderPipelines(vtkRenderer* theRenderer) const
   // Highlighting
   //---------------------------------------------------------------------------
 
-  Handle(visu_face_domain_pipeline)
-    detect_pl = Handle(visu_face_domain_pipeline)::DownCast( this->GetDetectPipeline() ),
-    pick_pl = Handle(visu_face_domain_pipeline)::DownCast( this->GetPickPipeline() );
+  Handle(asiVisu_FaceDomainPipeline)
+    detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() ),
+    pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
   //
   detect_pl->RemoveFromRenderer(theRenderer);
   pick_pl->RemoveFromRenderer(theRenderer);

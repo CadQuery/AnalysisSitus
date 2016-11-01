@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_utils_h
-#define visu_mesh_utils_h
+#ifndef asiVisu_MeshUtils_h
+#define asiVisu_MeshUtils_h
 
 // Visualization includes
-#include <visu_common.h>
+#include <asiVisu.h>
 
 // VTK includes
 #include <vtkLookupTable.h>
@@ -29,7 +29,7 @@ enum visu_mesh_items
 };
 
 //! Auxiliary functions supporting mesh presentations in VTK viewer.
-namespace visu_mesh_utils
+namespace asiVisu_MeshUtils
 {
   vtkSmartPointer<vtkLookupTable>
     InitLookupTable();

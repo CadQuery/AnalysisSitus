@@ -5,33 +5,33 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_face_surface_pipeline_h
-#define visu_face_surface_pipeline_h
+#ifndef asiVisu_FaceSurfacePipeline_h
+#define asiVisu_FaceSurfacePipeline_h
 
 // A-Situs includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_face_surface_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_FaceSurfacePipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for a host surface of a face.
-class visu_face_surface_pipeline : public visu_pipeline
+class asiVisu_FaceSurfacePipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_face_surface_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FaceSurfacePipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_face_surface_pipeline();
+  asiVisu_FaceSurfacePipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& DP);
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 public:
 
@@ -47,10 +47,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_face_surface_pipeline(const visu_face_surface_pipeline&);
+  asiVisu_FaceSurfacePipeline(const asiVisu_FaceSurfacePipeline&);
 
   //! Assignment prohibited.
-  visu_face_surface_pipeline& operator=(const visu_face_surface_pipeline&);
+  asiVisu_FaceSurfacePipeline& operator=(const asiVisu_FaceSurfacePipeline&);
 
 protected:
 

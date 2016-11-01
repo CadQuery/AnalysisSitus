@@ -5,30 +5,30 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_edge_data_provider_h
-#define visu_edge_data_provider_h
+#ifndef asiVisu_EdgeDataProvider_h
+#define asiVisu_EdgeDataProvider_h
 
 // A-Situs visualization includes
-#include <visu_curve_data_provider.h>
+#include <asiVisu_CurveDataProvider.h>
 
 // OCCT includes
 #include <TopoDS_Edge.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
-DEFINE_STANDARD_HANDLE(visu_edge_data_provider, visu_curve_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_EdgeDataProvider, asiVisu_CurveDataProvider)
 
 //! Data provider for edge geometry.
-class visu_edge_data_provider : public visu_curve_data_provider
+class asiVisu_EdgeDataProvider : public asiVisu_CurveDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_edge_data_provider, visu_curve_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_EdgeDataProvider, asiVisu_CurveDataProvider)
 
 public:
 
-  visu_edge_data_provider(const ActAPI_DataObjectId&           theNodeId,
-                          const Handle(ActAPI_HParameterList)& theParamList);
+  asiVisu_EdgeDataProvider(const ActAPI_DataObjectId&           theNodeId,
+                           const Handle(ActAPI_HParameterList)& theParamList);
 
 public:
 
@@ -45,7 +45,7 @@ public:
 
 public:
 
-  Handle(visu_edge_data_provider)
+  Handle(asiVisu_EdgeDataProvider)
     Clone() const;
 
 private:

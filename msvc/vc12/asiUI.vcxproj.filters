@@ -9,159 +9,243 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Header Files\Controls">
+      <UniqueIdentifier>{1e8d2d5a-18ce-4571-a22e-7aa5fbee6e81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Dialogs">
+      <UniqueIdentifier>{ae9013b6-c5e8-49ef-8cc2-2b138fbf1dfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Interaction">
+      <UniqueIdentifier>{7979f1d7-23eb-47df-a3e4-e7e1f5711f0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{21a47de2-21d8-4747-8afa-acad7f805320}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Viewers">
+      <UniqueIdentifier>{1cc61559-609a-4924-b1c6-02415454299c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MOC">
+      <UniqueIdentifier>{693ecc3c-eafe-40a0-aec5-d717ad47f87f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Controls">
+      <UniqueIdentifier>{d662f9f4-8082-47d0-a370-f75e945e987f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Dialogs">
+      <UniqueIdentifier>{9b1c78ec-8643-4b89-8cbb-901f4df7c0e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interaction">
+      <UniqueIdentifier>{b224d336-fb0c-43d2-bf7e-1d9d4ba30fad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{68638f35-63e1-474b-ac15-241b0ff14be8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Viewers">
+      <UniqueIdentifier>{d66e770a-fdfd-4dc8-9e6e-7a62cb314a4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\asiUI\asiUI_Common.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\controls\asiUI_ControlsPart.h">
+      <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_ControlsEuler.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\controls\asiUI_LineEdit.h">
+      <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_ControlsMesh.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\controls\asiUI_ObjectBrowser.h">
+      <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_ControlsPart.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogCloudify.h">
+      <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_ControlsPCloud.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogEuler.h">
+      <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_DataAdaptor.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.h">
+      <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_DialogCloudify.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogMesh.h">
+      <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_DialogEuler.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogSewing.h">
+      <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_DialogFindFace.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEP.h">
+      <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_DialogMesh.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEPDelegate.h">
+      <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_DialogSewing.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_Viewer.h">
+      <Filter>Header Files\Viewers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_DialogSTEP.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.h">
+      <Filter>Header Files\Viewers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_DialogSTEPDelegate.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerDomain.h">
+      <Filter>Header Files\Viewers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_LineEdit.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerFuncUnivariate.h">
+      <Filter>Header Files\Viewers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_ObjectBrowser.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerMesh.h">
+      <Filter>Header Files\Viewers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_PrimDataAdaptor.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerPart.h">
+      <Filter>Header Files\Viewers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_PrimDataView.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerSurface.h">
+      <Filter>Header Files\Viewers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_Viewer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_VtkWindow.h">
+      <Filter>Header Files\Viewers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_ViewerCurve2d.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\utils\asiUI_Common.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_ViewerDomain.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\utils\asiUI_DataAdaptor.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_ViewerFuncUnivariate.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\utils\asiUI_PrimDataAdaptor.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_ViewerMesh.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\utils\asiUI_PrimDataView.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_ViewerPart.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_InteractorStylePick.h">
+      <Filter>Header Files\Interaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_ViewerSurface.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_InteractorStylePick2d.h">
+      <Filter>Header Files\Interaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\asiUI_VtkWindow.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_NodeInfo.h">
+      <Filter>Header Files\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PartCallback.h">
+      <Filter>Header Files\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PDomainCallback.h">
+      <Filter>Header Files\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PickCallback.h">
+      <Filter>Header Files\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PickFacetCallback.h">
+      <Filter>Header Files\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_RotationCallback.h">
+      <Filter>Header Files\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_Selection.h">
+      <Filter>Header Files\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_TopoGraph.h">
+      <Filter>Header Files\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_ViewerCallback.h">
+      <Filter>Header Files\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_Dialog.h">
+      <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\asiUI\asiUI_Common.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPart.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_ControlsEuler.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_LineEdit.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_ControlsMesh.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_ObjectBrowser.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_ControlsPart.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogCloudify.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_ControlsPCloud.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogEuler.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_DataAdaptor.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_DialogCloudify.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogMesh.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_DialogEuler.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogSewing.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_DialogFindFace.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEP.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_DialogMesh.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEPDelegate.cpp">
+      <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_DialogSewing.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_Viewer.cpp">
+      <Filter>Source Files\Viewers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_DialogSTEP.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.cpp">
+      <Filter>Source Files\Viewers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_DialogSTEPDelegate.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerDomain.cpp">
+      <Filter>Source Files\Viewers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_LineEdit.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerFuncUnivariate.cpp">
+      <Filter>Source Files\Viewers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_ObjectBrowser.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerMesh.cpp">
+      <Filter>Source Files\Viewers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_PrimDataAdaptor.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerPart.cpp">
+      <Filter>Source Files\Viewers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_PrimDataView.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerSurface.cpp">
+      <Filter>Source Files\Viewers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_Viewer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_VtkWindow.cpp">
+      <Filter>Source Files\Viewers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_ViewerCurve2d.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_Common.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_ViewerDomain.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_DataAdaptor.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_ViewerFuncUnivariate.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_PrimDataAdaptor.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_ViewerMesh.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_PrimDataView.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_ViewerPart.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_InteractorStylePick.cpp">
+      <Filter>Source Files\Interaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_ViewerSurface.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_InteractorStylePick2d.cpp">
+      <Filter>Source Files\Interaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\asiUI_VtkWindow.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_NodeInfo.cpp">
+      <Filter>Source Files\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_PartCallback.cpp">
+      <Filter>Source Files\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_PDomainCallback.cpp">
+      <Filter>Source Files\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_PickCallback.cpp">
+      <Filter>Source Files\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_PickFacetCallback.cpp">
+      <Filter>Source Files\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_RotationCallback.cpp">
+      <Filter>Source Files\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_Selection.cpp">
+      <Filter>Source Files\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_TopoGraph.cpp">
+      <Filter>Source Files\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_ViewerCallback.cpp">
+      <Filter>Source Files\Interaction</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

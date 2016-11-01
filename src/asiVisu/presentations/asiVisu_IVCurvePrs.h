@@ -5,22 +5,22 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_iv_curve_prs_h
-#define visu_iv_curve_prs_h
+#ifndef asiVisu_IVCurvePrs_h
+#define asiVisu_IVCurvePrs_h
 
 // Visualization includes
 #include <asiData_IVCurveNode.h>
-#include <visu_iv_prs.h>
+#include <asiVisu_IVPrs.h>
 
-DEFINE_STANDARD_HANDLE(visu_iv_curve_prs, visu_iv_prs)
+DEFINE_STANDARD_HANDLE(asiVisu_IVCurvePrs, asiVisu_IVPrs)
 
 //! Presentation class for curves in IV.
-class visu_iv_curve_prs : public visu_iv_prs
+class asiVisu_IVCurvePrs : public asiVisu_IVPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_iv_curve_prs, visu_iv_prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVCurvePrs, asiVisu_IVPrs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_IVCurveNode, Instance)
@@ -35,13 +35,13 @@ public:
 
 public:
 
-  static Handle(visu_prs)
+  static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
 private:
 
   //! Allocation is allowed only via Instance method.
-  visu_iv_curve_prs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& theNode);
 
 };
 

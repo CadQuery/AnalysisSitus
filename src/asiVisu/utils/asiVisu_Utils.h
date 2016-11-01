@@ -5,14 +5,14 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_utils_h
-#define visu_utils_h
+#ifndef asiVisu_Utils_h
+#define asiVisu_Utils_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiVisu.h>
 
 // Visualization includes
-#include <visu_prs.h>
+#include <asiVisu_Prs.h>
 
 // Active Data (API) includes
 #include <ActAPI_INode.h>
@@ -54,12 +54,12 @@
 //-----------------------------------------------------------------------------
 
 //! Pointer to Node allocation routine.
-typedef Handle(visu_prs) (*visu_prs_allocator)(const Handle(ActAPI_INode)&);
+typedef Handle(asiVisu_Prs) (*asiVisu_PrsAllocator)(const Handle(ActAPI_INode)&);
 
 #define DEFINE_PRESENTATION_FACTORY(CNode, AllocFunction) \
   static void RegisterPrs() \
   { \
-    visu_utils::RegisterPrsType(STANDARD_TYPE(CNode)->Name(), AllocFunction); \
+    asiVisu_Utils::RegisterPrsType(STANDARD_TYPE(CNode)->Name(), AllocFunction); \
   }
 
 #define REGISTER_PRESENTATION(C) \
@@ -81,17 +81,17 @@ enum visu_orientation
 //-----------------------------------------------------------------------------
 
 //! Common visualization utilities.
-class visu_utils
+class asiVisu_Utils
 {
 // Presentation factory:
 public:
 
   //! Mapping between Node types and allocation routines.
-  typedef NCollection_DataMap<TCollection_AsciiString, visu_prs_allocator> TPrsAllocMap;
+  typedef NCollection_DataMap<TCollection_AsciiString, asiVisu_PrsAllocator> TPrsAllocMap;
 
   static TPrsAllocMap
     RegisterPrsType(const TCollection_AsciiString& theType,
-                    const visu_prs_allocator       theAllocFunc);
+                    const asiVisu_PrsAllocator       theAllocFunc);
 
   static const TPrsAllocMap&
     GetAllocMap();

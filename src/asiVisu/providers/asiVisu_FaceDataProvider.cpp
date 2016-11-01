@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_face_data_provider.h>
+#include <asiVisu_FaceDataProvider.h>
 
 // A-Situs (common) includes
 #include <common_facilities.h>
@@ -26,9 +26,9 @@
 //! Constructor accepting the set of source data structures.
 //! \param theNodeId    [in] ID of the target Data Node.
 //! \param theParamList [in] source Parameters.
-visu_face_data_provider::visu_face_data_provider(const ActAPI_DataObjectId&           theNodeId,
+asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const ActAPI_DataObjectId&           theNodeId,
                                                  const Handle(ActAPI_HParameterList)& theParamList)
-: visu_data_provider()
+: asiVisu_DataProvider()
 {
   m_nodeID = theNodeId;
   m_params = theParamList;
@@ -50,19 +50,19 @@ visu_face_data_provider::visu_face_data_provider(const ActAPI_DataObjectId&     
 //! pipeline. This ID is bound to the pipeline's actor in order to have a
 //! back-reference from Presentation to Data Object.
 //! \return Node ID.
-ActAPI_DataObjectId visu_face_data_provider::GetNodeID() const
+ActAPI_DataObjectId asiVisu_FaceDataProvider::GetNodeID() const
 {
   return m_nodeID;
 }
 
 //! \return global index of the OCCT face to be visualized.
-int visu_face_data_provider::GetFaceIndexAmongSubshapes() const
+int asiVisu_FaceDataProvider::GetFaceIndexAmongSubshapes() const
 {
   return ActParamTool::AsInt( m_params->Value(1) )->GetValue();
 }
 
 //! \return local index of the OCCT face to be visualized.
-int visu_face_data_provider::GetFaceIndexAmongFaces() const
+int asiVisu_FaceDataProvider::GetFaceIndexAmongFaces() const
 {
   const int globalId = ActParamTool::AsInt( m_params->Value(1) )->GetValue();
 
@@ -73,7 +73,7 @@ int visu_face_data_provider::GetFaceIndexAmongFaces() const
 }
 
 //! \return topological face extracted from the part by its stored ID.
-TopoDS_Face visu_face_data_provider::ExtractFace() const
+TopoDS_Face asiVisu_FaceDataProvider::ExtractFace() const
 {
   const int fIdx = this->GetFaceIndexAmongSubshapes();
   if ( !fIdx )
@@ -92,9 +92,9 @@ TopoDS_Face visu_face_data_provider::ExtractFace() const
 
 //! Creates a copy of the Data Provider.
 //! \return copy.
-Handle(visu_face_data_provider) visu_face_data_provider::Clone() const
+Handle(asiVisu_FaceDataProvider) asiVisu_FaceDataProvider::Clone() const
 {
-  return new visu_face_data_provider(m_nodeID, m_params);
+  return new asiVisu_FaceDataProvider(m_nodeID, m_params);
 }
 
 //-----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ Handle(visu_face_data_provider) visu_face_data_provider::Clone() const
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) visu_face_data_provider::translationSources() const
+Handle(ActAPI_HParameterList) asiVisu_FaceDataProvider::translationSources() const
 {
   return ActParamStream() << m_params->Value(1); // Parameter for face index
 }

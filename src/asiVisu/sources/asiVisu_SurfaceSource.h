@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_surface_source_h
-#define visu_surface_source_h
+#ifndef asiVisu_SurfaceSource_h
+#define asiVisu_SurfaceSource_h
 
 // Visualization includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
@@ -20,7 +20,7 @@
 #include <Geom_Surface.hxx>
 
 //! Source of polygonal data representing a parametric surface.
-class visu_surface_source : public vtkPolyDataAlgorithm
+class asiVisu_SurfaceSource : public vtkPolyDataAlgorithm
 {
 public:
 
@@ -36,8 +36,8 @@ public:
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(visu_surface_source, vtkPolyDataAlgorithm);
-  static visu_surface_source* New();
+  vtkTypeMacro(asiVisu_SurfaceSource, vtkPolyDataAlgorithm);
+  static asiVisu_SurfaceSource* New();
 
 // Kernel methods:
 public:
@@ -47,10 +47,10 @@ public:
   void SetScalars       (const NodeScalars scalars);
   void SetTrimValues    (const double uLimit, const double vLimit);
   //
-  inline double      GetMinScalar  () const { return m_fMinScalar; }
-  inline double      GetMaxScalar  () const { return m_fMaxScalar; }
-  inline bool        HasScalars    () const { return (m_scalars != Scalars_NoScalars); }
-  inline NodeScalars GetScalarType () const { return m_scalars; }
+  double      GetMinScalar  () const { return m_fMinScalar; }
+  double      GetMaxScalar  () const { return m_fMaxScalar; }
+  bool        HasScalars    () const { return (m_scalars != Scalars_NoScalars); }
+  NodeScalars GetScalarType () const { return m_scalars; }
 
 protected:
 
@@ -72,13 +72,13 @@ protected:
 
 protected:
 
-  visu_surface_source();
-  ~visu_surface_source();
+  asiVisu_SurfaceSource();
+  ~asiVisu_SurfaceSource();
 
 private:
 
-  visu_surface_source(const visu_surface_source&);
-  visu_surface_source& operator=(const visu_surface_source&);
+  asiVisu_SurfaceSource(const asiVisu_SurfaceSource&);
+  asiVisu_SurfaceSource& operator=(const asiVisu_SurfaceSource&);
 
 private:
 

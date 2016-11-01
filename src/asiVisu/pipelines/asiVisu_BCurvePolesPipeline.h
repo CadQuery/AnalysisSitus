@@ -5,12 +5,12 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_bcurve_poles_pipeline_h
-#define visu_bcurve_poles_pipeline_h
+#ifndef asiVisu_BCurvePolesPipeline_h
+#define asiVisu_BCurvePolesPipeline_h
 
 // A-Situs includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 // VTK includes
 #include <vtkExtractSelection.h>
@@ -25,24 +25,24 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_bcurve_poles_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_BCurvePolesPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for b-curve poles.
-class visu_bcurve_poles_pipeline : public visu_pipeline
+class asiVisu_BCurvePolesPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_bcurve_poles_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_BCurvePolesPipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_bcurve_poles_pipeline();
+  asiVisu_BCurvePolesPipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& DP);
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 public:
 
@@ -62,10 +62,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_bcurve_poles_pipeline(const visu_bcurve_poles_pipeline&);
+  asiVisu_BCurvePolesPipeline(const asiVisu_BCurvePolesPipeline&);
 
   //! Assignment prohibited.
-  visu_bcurve_poles_pipeline& operator=(const visu_bcurve_poles_pipeline&);
+  asiVisu_BCurvePolesPipeline& operator=(const asiVisu_BCurvePolesPipeline&);
 
 private:
 

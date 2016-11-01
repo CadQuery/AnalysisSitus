@@ -5,30 +5,30 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_geom_contour_prs_h
-#define visu_geom_contour_prs_h
+#ifndef asiVisu_GeomContourPrs_h
+#define asiVisu_GeomContourPrs_h
 
 // A-Situs (visualization) includes
-#include <visu_prs.h>
-#include <visu_utils.h>
+#include <asiVisu_Prs.h>
+#include <asiVisu_Utils.h>
 
 // A-Situs (geometry) includes
 #include <asiData_PartNode.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_geom_contour_prs, visu_prs)
+DEFINE_STANDARD_HANDLE(asiVisu_GeomContourPrs, asiVisu_Prs)
 
 //! Presentation class for a contour.
-class visu_geom_contour_prs : public visu_prs
+class asiVisu_GeomContourPrs : public asiVisu_Prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_geom_contour_prs, visu_prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_GeomContourPrs, asiVisu_Prs)
 
   // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(geom_contour_node, Instance)
+  DEFINE_PRESENTATION_FACTORY(asiData_ContourNode, Instance)
 
 public:
 
@@ -41,7 +41,7 @@ public:
 
 public:
 
-  static Handle(visu_prs)
+  static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
   virtual bool
@@ -50,7 +50,7 @@ public:
 private:
 
   //! Allocation is allowed only via Instance method.
-  visu_geom_contour_prs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_GeomContourPrs(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:
 private:
@@ -60,10 +60,10 @@ private:
   virtual void beforeUpdatePipelines() const;
   virtual void afterUpdatePipelines() const;
   virtual void highlight(vtkRenderer* theRenderer,
-                         const visu_pick_result& thePickRes,
-                         const visu_selection_nature& theSelNature) const;
+                         const asiVisu_PickResult& thePickRes,
+                         const asiVisu_SelectionNature& theSelNature) const;
   virtual void unHighlight(vtkRenderer* theRenderer,
-                           const visu_selection_nature& theSelNature) const;
+                           const asiVisu_SelectionNature& theSelNature) const;
   virtual void renderPipelines(vtkRenderer* theRenderer) const;
   virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
 

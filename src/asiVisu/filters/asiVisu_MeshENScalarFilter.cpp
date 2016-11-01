@@ -5,10 +5,10 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#include <visu_mesh_EN_scalar_filter.h>
+#include <asiVisu_MeshENScalarFilter.h>
 
 // Visualization includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkCell.h>
@@ -21,10 +21,10 @@
 #include <vtkSmartPointer.h>
 #include <vtkMath.h>
 
-vtkStandardNewMacro(visu_mesh_EN_scalar_filter);
+vtkStandardNewMacro(asiVisu_MeshENScalarFilter);
 
 //! Default constructor.
-visu_mesh_EN_scalar_filter::visu_mesh_EN_scalar_filter()
+asiVisu_MeshENScalarFilter::asiVisu_MeshENScalarFilter()
 {
   m_scalarMap = new HScalarMap(100);
 
@@ -37,7 +37,7 @@ visu_mesh_EN_scalar_filter::visu_mesh_EN_scalar_filter()
 }
 
 //! Destructor.
-visu_mesh_EN_scalar_filter::~visu_mesh_EN_scalar_filter()
+asiVisu_MeshENScalarFilter::~asiVisu_MeshENScalarFilter()
 {
 }
 
@@ -45,7 +45,7 @@ visu_mesh_EN_scalar_filter::~visu_mesh_EN_scalar_filter()
 //! \param thePort [not used] connection port.
 //! \param theInfo [in/out] information object.
 //! \return result code.
-int visu_mesh_EN_scalar_filter::FillInputPortInformation(int, vtkInformation* info)
+int asiVisu_MeshENScalarFilter::FillInputPortInformation(int, vtkInformation* info)
 {
   // This filter uses the vtkDataSet cell traversal methods so it
   // supports any data set type as input
@@ -58,7 +58,7 @@ int visu_mesh_EN_scalar_filter::FillInputPortInformation(int, vtkInformation* in
 //! \param theInput  [in]       input data.
 //! \param theOutput [out]      output data.
 //! \return result code.
-int visu_mesh_EN_scalar_filter::RequestData(vtkInformation*,
+int asiVisu_MeshENScalarFilter::RequestData(vtkInformation*,
                                             vtkInformationVector** theInputVector,
                                             vtkInformationVector*  theOutputVector)
 {
@@ -112,7 +112,7 @@ int visu_mesh_EN_scalar_filter::RequestData(vtkInformation*,
 
   // Allocate an array for point scalars
   vtkSmartPointer<vtkDoubleArray>
-    aNewNodeScalars = visu_utils::InitDoubleArray(ARRNAME_MESH_EN_SCALARS);
+    aNewNodeScalars = asiVisu_Utils::InitDoubleArray(ARRNAME_MESH_EN_SCALARS);
 
   // Traverse all cells
   for ( vtkIdType aCellId = 0; aCellId < aNbCells; ++aCellId )
@@ -196,9 +196,9 @@ int visu_mesh_EN_scalar_filter::RequestData(vtkInformation*,
 //! \param thePointIds [in] IDs of the sibling points to extract from the
 //!        data set passed as the first parameter.
 //! \param thePointCoords [in/out] coordinates to shrink.
-void visu_mesh_EN_scalar_filter::applyShrinkFactor(vtkDataSet* theInput,
-                                                   vtkIdList* thePointIds,
-                                                   double* thePointCoords)
+void asiVisu_MeshENScalarFilter::applyShrinkFactor(vtkDataSet* theInput,
+                                                   vtkIdList*  thePointIds,
+                                                   double*     thePointCoords)
 {
   // Compute the center of mass of the cell points
   vtkIdType aNbPoints = thePointIds->GetNumberOfIds();
@@ -223,7 +223,7 @@ void visu_mesh_EN_scalar_filter::applyShrinkFactor(vtkDataSet* theInput,
 //! \param theScTuple [out] scalar data for the given element.
 //! \return true if scalar values have been found, false -- otherwise.
 bool
-  visu_mesh_EN_scalar_filter::scalarsForElem(const int theID,
+  asiVisu_MeshENScalarFilter::scalarsForElem(const int    theID,
                                              ScalarTuple& theScTuple)
 {
   if ( !m_scalarMap->IsBound(theID) )
@@ -236,7 +236,7 @@ bool
 //! Adjusts min & max scalar values against the passed collection of scalar
 //! values packed into the given scalar tuple.
 //! \param theScTuple [in] scalar tuple.
-void visu_mesh_EN_scalar_filter::adjustMinMax(const ScalarTuple& theScTuple)
+void asiVisu_MeshENScalarFilter::adjustMinMax(const ScalarTuple& theScTuple)
 {
   int aTupleSize = (theScTuple.IsTriangle ? 3 : 4);
 

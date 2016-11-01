@@ -15,26 +15,26 @@
 #include <gui_welcome_window.h>
 
 // A-Situs (visualization) includes
-#include <visu_calculus_law_prs.h>
-#include <visu_geom_boundary_edges_prs.h>
-#include <visu_geom_contour_prs.h>
-#include <visu_geom_curve_prs.h>
-#include <visu_geom_edge_prs.h>
-#include <visu_geom_face_prs.h>
-#include <visu_geom_prs.h>
-#include <visu_geom_surf_prs.h>
+#include <asiVisu_CalculusLawPrs.h>
+#include <asiVisu_GeomBoundaryEdgesPrs.h>
+#include <asiVisu_GeomContourPrs.h>
+#include <asiVisu_GeomCurvePrs.h>
+#include <asiVisu_GeomEdgePrs.h>
+#include <asiVisu_GeomFacePrs.h>
+#include <asiVisu_GeomPrs.h>
+#include <asiVisu_GeomSurfPrs.h>
 #include <visu_geom_volume_prs.h>
-#include <visu_iv_curve_prs.h>
-#include <visu_iv_point_set_2d_prs.h>
-#include <visu_iv_point_set_prs.h>
-#include <visu_iv_surface_prs.h>
-#include <visu_iv_tess_item_prs.h>
-#include <visu_iv_text_item_prs.h>
-#include <visu_iv_topo_item_prs.h>
-#include <visu_mesh_prs.h>
-#include <visu_re_contours_prs.h>
-#include <visu_re_points_prs.h>
-#include <visu_re_surfaces_prs.h>
+#include <asiVisu_IVCurvePrs.h>
+#include <asiVisu_IVPointSet2dPrs.h>
+#include <asiVisu_IVPointSetPrs.h>
+#include <asiVisu_IVSurfacePrs.h>
+#include <asiVisu_IVTessItemPrs.h>
+#include <asiVisu_IVTextItemPrs.h>
+#include <asiVisu_IVTopoItemPrs.h>
+#include <asiVisu_MeshPrs.h>
+#include <asiVisu_REContoursPrs.h>
+#include <asiVisu_REPointsPrs.h>
+#include <asiVisu_RESurfacesPrs.h>
 #include <visu_section_prs.h>
 #include <visu_sections_prs.h>
 #include <visu_ubend_law_prs.h>
@@ -105,32 +105,32 @@ int main(int argc, char** argv)
   // Register Presentations
   //---------------------------------------------------------------------------
 
-  REGISTER_PRESENTATION(visu_mesh_prs)
-  REGISTER_PRESENTATION(visu_geom_prs)
-  REGISTER_PRESENTATION(visu_geom_boundary_edges_prs)
-  REGISTER_PRESENTATION(visu_geom_curve_prs)
-  REGISTER_PRESENTATION(visu_geom_edge_prs)
-  REGISTER_PRESENTATION(visu_geom_face_prs)
-  REGISTER_PRESENTATION(visu_geom_surf_prs)
+  REGISTER_PRESENTATION(asiVisu_MeshPrs)
+  REGISTER_PRESENTATION(asiVisu_GeomPrs)
+  REGISTER_PRESENTATION(asiVisu_GeomBoundaryEdgesPrs)
+  REGISTER_PRESENTATION(asiVisu_GeomCurvePrs)
+  REGISTER_PRESENTATION(asiVisu_GeomEdgePrs)
+  REGISTER_PRESENTATION(asiVisu_GeomFacePrs)
+  REGISTER_PRESENTATION(asiVisu_GeomSurfPrs)
   REGISTER_PRESENTATION(visu_geom_volume_prs)
-  REGISTER_PRESENTATION(visu_geom_contour_prs)
-  REGISTER_PRESENTATION(visu_re_contours_prs)
-  REGISTER_PRESENTATION(visu_re_points_prs)
-  REGISTER_PRESENTATION(visu_re_surfaces_prs)
+  REGISTER_PRESENTATION(asiVisu_GeomContourPrs)
+  REGISTER_PRESENTATION(asiVisu_REContoursPrs)
+  REGISTER_PRESENTATION(asiVisu_REPointsPrs)
+  REGISTER_PRESENTATION(asiVisu_RESurfacesPrs)
   REGISTER_PRESENTATION(visu_section_prs)
   REGISTER_PRESENTATION(visu_sections_prs)
   REGISTER_PRESENTATION(visu_ubend_prs)
   REGISTER_PRESENTATION(visu_ubend_law_prs)
-  REGISTER_PRESENTATION(visu_calculus_law_prs)
+  REGISTER_PRESENTATION(asiVisu_CalculusLawPrs)
 
   // Imperative viewer
-  REGISTER_PRESENTATION(visu_iv_point_set_2d_prs)
-  REGISTER_PRESENTATION(visu_iv_point_set_prs)
-  REGISTER_PRESENTATION(visu_iv_curve_prs)
-  REGISTER_PRESENTATION(visu_iv_surface_prs)
-  REGISTER_PRESENTATION(visu_iv_tess_item_prs)
-  REGISTER_PRESENTATION(visu_iv_text_item_prs)
-  REGISTER_PRESENTATION(visu_iv_topo_item_prs)
+  REGISTER_PRESENTATION(asiVisu_IVPointSet2dPrs)
+  REGISTER_PRESENTATION(asiVisu_IVPointSetPrs)
+  REGISTER_PRESENTATION(asiVisu_IVCurvePrs)
+  REGISTER_PRESENTATION(asiVisu_IVSurfacePrs)
+  REGISTER_PRESENTATION(asiVisu_IVTessItemPrs)
+  REGISTER_PRESENTATION(asiVisu_IVTextItemPrs)
+  REGISTER_PRESENTATION(asiVisu_IVTopoItemPrs)
 
   //---------------------------------------------------------------------------
   // Create main window

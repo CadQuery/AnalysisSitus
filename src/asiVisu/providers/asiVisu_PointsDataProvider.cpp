@@ -6,14 +6,14 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_points_data_provider.h>
+#include <asiVisu_PointsDataProvider.h>
 
 //-----------------------------------------------------------------------------
 
 //! Constructor.
 //! \param N [in] source Node.
-visu_points_data_provider::visu_points_data_provider(const Handle(ActAPI_INode)& N)
-: visu_data_provider(),
+asiVisu_PointsDataProvider::asiVisu_PointsDataProvider(const Handle(ActAPI_INode)& N)
+: asiVisu_DataProvider(),
   m_node(N)
 {
 }
@@ -21,7 +21,7 @@ visu_points_data_provider::visu_points_data_provider(const Handle(ActAPI_INode)&
 //-----------------------------------------------------------------------------
 
 //! \return ID of the associated Data Node.
-ActAPI_DataObjectId visu_points_data_provider::GetNodeID() const
+ActAPI_DataObjectId asiVisu_PointsDataProvider::GetNodeID() const
 {
   return m_node->GetId();
 }

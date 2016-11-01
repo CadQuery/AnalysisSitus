@@ -6,11 +6,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_re_surfaces_pipeline.h>
+#include <asiVisu_RESurfacesPipeline.h>
 
 // Visualization includes
-#include <visu_re_surfaces_data_provider.h>
-#include <visu_surface_source.h>
+#include <asiVisu_RESurfacesDataProvider.h>
+#include <asiVisu_SurfaceSource.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -21,8 +21,8 @@
 //-----------------------------------------------------------------------------
 
 //! Creates new Pipeline initialized by default VTK mapper and actor.
-visu_re_surfaces_pipeline::visu_re_surfaces_pipeline()
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+asiVisu_RESurfacesPipeline::asiVisu_RESurfacesPipeline()
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                  vtkSmartPointer<vtkActor>::New() ),
   m_iStepsNumber(20)
 {
@@ -33,13 +33,13 @@ visu_re_surfaces_pipeline::visu_re_surfaces_pipeline()
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void visu_re_surfaces_pipeline::SetInput(const Handle(visu_data_provider)& DP)
+void asiVisu_RESurfacesPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
   if ( !m_iStepsNumber )
     return;
 
-  Handle(visu_re_surfaces_data_provider)
-    provider = Handle(visu_re_surfaces_data_provider)::DownCast(DP);
+  Handle(asiVisu_RESurfacesDataProvider)
+    provider = Handle(asiVisu_RESurfacesDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
@@ -72,8 +72,8 @@ void visu_re_surfaces_pipeline::SetInput(const Handle(visu_data_provider)& DP)
       double uLimit, vLimit;
       Handle(Geom_Surface) S = provider->GetSurface(s, uLimit, vLimit);
 
-      vtkSmartPointer<visu_surface_source>
-        src = vtkSmartPointer<visu_surface_source>::New();
+      vtkSmartPointer<asiVisu_SurfaceSource>
+        src = vtkSmartPointer<asiVisu_SurfaceSource>::New();
       //
       src->SetInputSurface  (S);
       src->SetNumberOfSteps (m_iStepsNumber);
@@ -94,13 +94,13 @@ void visu_re_surfaces_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_re_surfaces_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_RESurfacesPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_re_surfaces_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_RESurfacesPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void visu_re_surfaces_pipeline::callback_update()
+void asiVisu_RESurfacesPipeline::callback_update()
 {}

@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_shrink_poly_filter_h
-#define visu_shrink_poly_filter_h
+#ifndef asiVisu_ShrinkPolyFilter_h
+#define asiVisu_ShrinkPolyFilter_h
 
 // Visualization includes
-#include <visu_common.h>
+#include <asiVisu.h>
 
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
@@ -18,12 +18,12 @@
 //! a polygonal data set as an output as well. Unlike vtkShrinkPolyData
 //! filter shipped with VTK, this one is more stable (the native one leads
 //! to memory corruption crashes on VTK 5.8.0).
-class visu_shrink_poly_filter : public vtkPolyDataAlgorithm
+class asiVisu_ShrinkPolyFilter : public vtkPolyDataAlgorithm
 {
 public:
 
-  vtkTypeMacro(visu_shrink_poly_filter, vtkPolyDataAlgorithm);
-  static visu_shrink_poly_filter* New();
+  vtkTypeMacro(asiVisu_ShrinkPolyFilter, vtkPolyDataAlgorithm);
+  static asiVisu_ShrinkPolyFilter* New();
 
   vtkSetClampMacro(ShrinkFactor, double, 0.0, 1.0);
   vtkGetMacro(ShrinkFactor, double);
@@ -34,8 +34,8 @@ protected:
 
 protected:
 
-  visu_shrink_poly_filter();
-  ~visu_shrink_poly_filter();
+  asiVisu_ShrinkPolyFilter();
+  ~asiVisu_ShrinkPolyFilter();
 
 private:
 

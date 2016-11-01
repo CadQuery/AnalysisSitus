@@ -5,33 +5,33 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_edge_domain_pipeline_h
-#define visu_edge_domain_pipeline_h
+#ifndef asiVisu_EdgeDomainPipeline_h
+#define asiVisu_EdgeDomainPipeline_h
 
 // A-Situs includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_edge_domain_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_EdgeDomainPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for edge domain.
-class visu_edge_domain_pipeline : public visu_pipeline
+class asiVisu_EdgeDomainPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_edge_domain_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_EdgeDomainPipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_edge_domain_pipeline();
+  asiVisu_EdgeDomainPipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& DP);
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:
 
@@ -42,10 +42,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_edge_domain_pipeline(const visu_edge_domain_pipeline&);
+  asiVisu_EdgeDomainPipeline(const asiVisu_EdgeDomainPipeline&);
 
   //! Assignment prohibited.
-  visu_edge_domain_pipeline& operator=(const visu_edge_domain_pipeline&);
+  asiVisu_EdgeDomainPipeline& operator=(const asiVisu_EdgeDomainPipeline&);
 
 };
 

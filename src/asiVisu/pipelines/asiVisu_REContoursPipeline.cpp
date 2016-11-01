@@ -6,11 +6,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_re_contours_pipeline.h>
+#include <asiVisu_REContoursPipeline.h>
 
 // Visualization includes
-#include <visu_re_contours_data_provider.h>
-#include <visu_curve_source.h>
+#include <asiVisu_REContoursDataProvider.h>
+#include <asiVisu_CurveSource.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -25,8 +25,8 @@
 //-----------------------------------------------------------------------------
 
 //! Creates new Pipeline initialized by default VTK mapper and actor.
-visu_re_contours_pipeline::visu_re_contours_pipeline()
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+asiVisu_REContoursPipeline::asiVisu_REContoursPipeline()
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                  vtkSmartPointer<vtkActor>::New() )
 {
   this->Actor()->GetProperty()->SetLineWidth(2.0);
@@ -38,10 +38,10 @@ visu_re_contours_pipeline::visu_re_contours_pipeline()
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void visu_re_contours_pipeline::SetInput(const Handle(visu_data_provider)& DP)
+void asiVisu_REContoursPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  Handle(visu_re_contours_data_provider)
-    provider = Handle(visu_re_contours_data_provider)::DownCast(DP);
+  Handle(asiVisu_REContoursDataProvider)
+    provider = Handle(asiVisu_REContoursDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
@@ -76,8 +76,8 @@ void visu_re_contours_pipeline::SetInput(const Handle(visu_data_provider)& DP)
       // Add edges one by one
       for ( TopExp_Explorer exp(W, TopAbs_EDGE); exp.More(); exp.Next() )
       {
-        vtkSmartPointer<visu_curve_source>
-          src = vtkSmartPointer<visu_curve_source>::New();
+        vtkSmartPointer<asiVisu_CurveSource>
+          src = vtkSmartPointer<asiVisu_CurveSource>::New();
         //
         src->SetInputEdge( TopoDS::Edge( exp.Current() ) );
         //
@@ -97,13 +97,13 @@ void visu_re_contours_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_re_contours_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_REContoursPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_re_contours_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_REContoursPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void visu_re_contours_pipeline::callback_update()
+void asiVisu_REContoursPipeline::callback_update()
 {}

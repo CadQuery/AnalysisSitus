@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_bcurve_knots_source_h
-#define visu_bcurve_knots_source_h
+#ifndef asiVisu_BCurveKnotsSource_h
+#define asiVisu_BCurveKnotsSource_h
 
 // Visualization includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // Active Data (auxiliary) includes
 #include <ActAux_Common.h>
@@ -25,13 +25,13 @@
 
 //! Data source giving a visual feedback on the distribution of knots
 //! in a b-curve.
-class visu_bcurve_knots_source : public vtkPolyDataAlgorithm
+class asiVisu_BCurveKnotsSource : public vtkPolyDataAlgorithm
 {
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(visu_bcurve_knots_source, vtkPolyDataAlgorithm);
-  static visu_bcurve_knots_source* New();
+  vtkTypeMacro(asiVisu_BCurveKnotsSource, vtkPolyDataAlgorithm);
+  static asiVisu_BCurveKnotsSource* New();
 
 // Kernel methods:
 public:
@@ -56,13 +56,13 @@ protected:
 
 protected:
 
-  visu_bcurve_knots_source();
-  ~visu_bcurve_knots_source();
+  asiVisu_BCurveKnotsSource();
+  ~asiVisu_BCurveKnotsSource();
 
 private:
 
-  visu_bcurve_knots_source(const visu_bcurve_knots_source&);
-  visu_bcurve_knots_source& operator=(const visu_bcurve_knots_source&);
+  asiVisu_BCurveKnotsSource(const asiVisu_BCurveKnotsSource&);
+  asiVisu_BCurveKnotsSource& operator=(const asiVisu_BCurveKnotsSource&);
 
 private:
 

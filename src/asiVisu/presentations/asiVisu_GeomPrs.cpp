@@ -6,18 +6,18 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_geom_prs.h>
+#include <asiVisu_GeomPrs.h>
 
 // A-Situs (visualization) includes
-#include <visu_display_mode.h>
-#include <visu_shape_data_provider.h>
-#include <visu_shape_pipeline.h>
+#include <asiVisu_DisplayMode.h>
+#include <asiVisu_ShapeDataProvider.h>
+#include <asiVisu_ShapePipeline.h>
 
 // A-Situs (common) includes
 #include <common_facilities.h>
 
 // A-Situs (GUI) includes
-#include <gui_common.h>
+#include <asiUI_Common.h>
 
 // VTK includes
 #include <vtkCellData.h>
@@ -39,15 +39,15 @@
 
 //! Creates a Presentation object for the passed Part Node.
 //! \param N [in] Part Node to create a Presentation for.
-visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
+asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
 {
   // Create Data Provider
-  Handle(visu_shape_data_provider) DP =
-    new visu_shape_data_provider( N->GetId(),
+  Handle(asiVisu_ShapeDataProvider) DP =
+    new asiVisu_ShapeDataProvider( N->GetId(),
                                   ActParamStream() << N->Parameter(asiData_PartNode::PID_Geometry) );
 
   // Main pipeline
-  Handle(visu_shape_pipeline) pl = new visu_shape_pipeline(true, true, false, false);
+  Handle(asiVisu_ShapePipeline) pl = new asiVisu_ShapePipeline(true, true, false, false);
   //
   this->addPipeline        ( Pipeline_Main, pl );
   this->assignDataProvider ( Pipeline_Main, DP );
@@ -65,7 +65,7 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
    * ==================== */
 
   // Create pipeline for highlighting
-  Handle(visu_shape_pipeline) contour_pl = new visu_shape_pipeline( true, true, true, false, pl->DataSource() );
+  Handle(asiVisu_ShapePipeline) contour_pl = new asiVisu_ShapePipeline( true, true, true, false, pl->DataSource() );
 
   // Adjust props
   contour_pl->Actor()->GetProperty()->SetOpacity(0.5);
@@ -86,15 +86,15 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
    * ====================== */
 
   double pick_color[3];
-  visu_utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
+  asiVisu_Utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
 
   // Create pipeline for highlighting
-  Handle(visu_shape_pipeline) pick_pl = new visu_shape_pipeline( false, true, true, false, pl->DataSource() );
+  Handle(asiVisu_ShapePipeline) pick_pl = new asiVisu_ShapePipeline( false, true, true, false, pl->DataSource() );
 
   // Adjust props
   pick_pl->Actor()->GetProperty()->SetColor(pick_color[0], pick_color[1], pick_color[2]);
-  pick_pl->Actor()->GetProperty()->SetLineWidth( visu_utils::DefaultPickLineWidth() );
-  pick_pl->Actor()->GetProperty()->SetPointSize( visu_utils::DefaultHilightPointSize() );
+  pick_pl->Actor()->GetProperty()->SetLineWidth( asiVisu_Utils::DefaultPickLineWidth() );
+  pick_pl->Actor()->GetProperty()->SetPointSize( asiVisu_Utils::DefaultHilightPointSize() );
   pick_pl->Actor()->SetPickable(0);
   pick_pl->Mapper()->ScalarVisibilityOff();
   //
@@ -112,15 +112,15 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
    * ======================== */
 
   double detect_color[3];
-  visu_utils::DefaultDetectionColor(detect_color[0], detect_color[1], detect_color[2]);
+  asiVisu_Utils::DefaultDetectionColor(detect_color[0], detect_color[1], detect_color[2]);
 
   // Create pipeline for highlighting
-  Handle(visu_shape_pipeline) detect_pl = new visu_shape_pipeline( false, true, true, false, pl->DataSource() );
+  Handle(asiVisu_ShapePipeline) detect_pl = new asiVisu_ShapePipeline( false, true, true, false, pl->DataSource() );
 
   // Adjust props
   detect_pl->Actor()->GetProperty()->SetColor(detect_color[0], detect_color[1], detect_color[2]);
-  detect_pl->Actor()->GetProperty()->SetLineWidth( visu_utils::DefaultDetectionLineWidth() );
-  detect_pl->Actor()->GetProperty()->SetPointSize( visu_utils::DefaultHilightPointSize() );
+  detect_pl->Actor()->GetProperty()->SetLineWidth( asiVisu_Utils::DefaultDetectionLineWidth() );
+  detect_pl->Actor()->GetProperty()->SetPointSize( asiVisu_Utils::DefaultHilightPointSize() );
   detect_pl->Actor()->SetPickable(0);
   detect_pl->Mapper()->ScalarVisibilityOff();
   //
@@ -140,45 +140,45 @@ visu_geom_prs::visu_geom_prs(const Handle(ActAPI_INode)& N) : visu_prs(N)
 //! Factory method for Presentation.
 //! \param N [in] Geometry Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_geom_prs::Instance(const Handle(ActAPI_INode)& N)
+Handle(asiVisu_Prs) asiVisu_GeomPrs::Instance(const Handle(ActAPI_INode)& N)
 {
-  return new visu_geom_prs(N);
+  return new asiVisu_GeomPrs(N);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool visu_geom_prs::IsVisible() const
+bool asiVisu_GeomPrs::IsVisible() const
 {
   return true;
 }
 
 //! Sets SHADING visualization mode.
-void visu_geom_prs::DoShading() const
+void asiVisu_GeomPrs::DoShading() const
 {
-  Handle(visu_shape_pipeline)
-    pl = Handle(visu_shape_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_ShapePipeline)
+    pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
   pl->ShadingModeOn();
 }
 
 //! Sets WIREFRAME visualization mode.
-void visu_geom_prs::DoWireframe() const
+void asiVisu_GeomPrs::DoWireframe() const
 {
-  Handle(visu_shape_pipeline)
-    pl = Handle(visu_shape_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_ShapePipeline)
+    pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
   pl->WireframeModeOn();
 }
 
 //! Sets custom color for the geometry.
 //! \param theColor [in] color to set.
-void visu_geom_prs::DoColor(const QColor& theColor) const
+void asiVisu_GeomPrs::DoColor(const QColor& theColor) const
 {
   if ( !theColor.isValid() )
     return;
 
-  Handle(visu_shape_pipeline)
-    pl = Handle(visu_shape_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_ShapePipeline)
+    pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
   pl->Mapper()->ScalarVisibilityOff();
   pl->Actor()->GetProperty()->SetColor( theColor.redF(),
@@ -187,20 +187,20 @@ void visu_geom_prs::DoColor(const QColor& theColor) const
 }
 
 //! Unsets custom color for the geometry.
-void visu_geom_prs::DoUnColor() const
+void asiVisu_GeomPrs::DoUnColor() const
 {
-  Handle(visu_shape_pipeline)
-    pl = Handle(visu_shape_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_ShapePipeline)
+    pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
   pl->Mapper()->ScalarVisibilityOn();
 }
 
 //! Enables/disables visualization of vertices depending on the passed flag.
 //! \param on [in] true/false.
-void visu_geom_prs::DoVertices(const bool on) const
+void asiVisu_GeomPrs::DoVertices(const bool on) const
 {
-  Handle(visu_shape_pipeline)
-    pl = Handle(visu_shape_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_ShapePipeline)
+    pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
   //
   on ? pl->SharedVerticesOn() : pl->SharedVerticesOff();
 }
@@ -208,22 +208,22 @@ void visu_geom_prs::DoVertices(const bool on) const
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void visu_geom_prs::beforeInitPipelines()
+void asiVisu_GeomPrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void visu_geom_prs::afterInitPipelines()
+void asiVisu_GeomPrs::afterInitPipelines()
 {
   // Access pipelines dedicated for highlighting
-  const Handle(visu_shape_pipeline)&
-    pick_pl = Handle(visu_shape_pipeline)::DownCast( this->GetPickPipeline() ),
-    detect_pl = Handle(visu_shape_pipeline)::DownCast( this->GetDetectPipeline() );
+  const Handle(asiVisu_ShapePipeline)&
+    pick_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() ),
+    detect_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
 
-  const Handle(visu_shape_data_provider)&
-    pick_dp = Handle(visu_shape_data_provider)::DownCast( this->dataProviderPick() ),
-    detect_dp = Handle(visu_shape_data_provider)::DownCast( this->dataProviderDetect() );
+  const Handle(asiVisu_ShapeDataProvider)&
+    pick_dp = Handle(asiVisu_ShapeDataProvider)::DownCast( this->dataProviderPick() ),
+    detect_dp = Handle(asiVisu_ShapeDataProvider)::DownCast( this->dataProviderDetect() );
 
   pick_dp->SetSubShapes(new TColStd_HPackedMapOfInteger);
   detect_dp->SetSubShapes(new TColStd_HPackedMapOfInteger);
@@ -239,11 +239,11 @@ void visu_geom_prs::afterInitPipelines()
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void visu_geom_prs::beforeUpdatePipelines() const
+void asiVisu_GeomPrs::beforeUpdatePipelines() const
 {
   Handle(asiData_PartNode) N = Handle(asiData_PartNode)::DownCast( this->GetNode() );
 
-  visu_display_mode aDMode = (visu_display_mode) N->GetDisplayMode();
+  asiVisu_DisplayMode aDMode = (asiVisu_DisplayMode) N->GetDisplayMode();
   if ( aDMode == DisplayMode_Undefined || aDMode == DisplayMode_Shading )
     this->DoShading();
   else
@@ -252,16 +252,16 @@ void visu_geom_prs::beforeUpdatePipelines() const
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void visu_geom_prs::afterUpdatePipelines() const
+void asiVisu_GeomPrs::afterUpdatePipelines() const
 {
   /* ====================================
    *  Update selection pipelines as well
    * ==================================== */
 
   // Access pipelines dedicated for highlighting
-  const Handle(visu_shape_pipeline)&
-    pick_pl = Handle(visu_shape_pipeline)::DownCast( this->GetPickPipeline() ),
-    detect_pl = Handle(visu_shape_pipeline)::DownCast( this->GetDetectPipeline() );
+  const Handle(asiVisu_ShapePipeline)&
+    pick_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() ),
+    detect_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
 
   // IMPORTANT: We update our highlighting pipelines here just to make things
   // faster. The better place to do that is "highlight" method, because
@@ -281,7 +281,7 @@ void visu_geom_prs::afterUpdatePipelines() const
   // Custom color (if any)
   if ( N->HasColor() )
   {
-    QColor color = gui_common::IntToColor( N->GetColor() );
+    QColor color = asiUI_Common::IntToColor( N->GetColor() );
     this->DoColor(color);
   }
   else
@@ -295,15 +295,15 @@ void visu_geom_prs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void visu_geom_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                              const visu_pick_result&      thePickRes,
-                              const visu_selection_nature& theSelNature) const
+void asiVisu_GeomPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                              const asiVisu_PickResult&      thePickRes,
+                              const asiVisu_SelectionNature& theSelNature) const
 {
   /* ==================
    *  Get target actor
    * ================== */
 
-  Handle(visu_pipeline) main_pl = this->GetPipeline(Pipeline_Main);
+  Handle(asiVisu_Pipeline) main_pl = this->GetPipeline(Pipeline_Main);
   //
   vtkActor* main_actor = main_pl->Actor();
 
@@ -315,8 +315,8 @@ void visu_geom_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRen
   TColStd_PackedMapOfInteger aSubShapeIDs;
   if ( thePickRes.IsSelectionSubShape() )
   {
-    const visu_actor_elem_map& aPickMap = thePickRes.GetPickMap();
-    for ( visu_actor_elem_map::Iterator it(aPickMap); it.More(); it.Next() )
+    const asiVisu_ActorElemMap& aPickMap = thePickRes.GetPickMap();
+    for ( asiVisu_ActorElemMap::Iterator it(aPickMap); it.More(); it.Next() )
     {
       const vtkSmartPointer<vtkActor>& aResActor = it.Key();
       if ( aResActor != main_actor )
@@ -331,12 +331,12 @@ void visu_geom_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRen
    * =============================== */
 
   // Access pipeline for highlighting
-  Handle(visu_shape_pipeline) hili_pl;
+  Handle(asiVisu_ShapePipeline) hili_pl;
   //
   if ( theSelNature == SelectionNature_Pick )
-    hili_pl = Handle(visu_shape_pipeline)::DownCast( this->GetPickPipeline() );
+    hili_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() );
   else
-    hili_pl = Handle(visu_shape_pipeline)::DownCast( this->GetDetectPipeline() );
+    hili_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
 
   // No sub-shapes -> no selection
   if ( thePickRes.IsSelectionSubShape() && aSubShapeIDs.IsEmpty() )
@@ -346,12 +346,12 @@ void visu_geom_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRen
   }
 
   // Access its Data Provider
-  Handle(visu_shape_data_provider) hili_dp;
+  Handle(asiVisu_ShapeDataProvider) hili_dp;
   //
   if ( theSelNature == SelectionNature_Pick )
-    hili_dp = Handle(visu_shape_data_provider)::DownCast( this->dataProviderPick() );
+    hili_dp = Handle(asiVisu_ShapeDataProvider)::DownCast( this->dataProviderPick() );
   else
-    hili_dp = Handle(visu_shape_data_provider)::DownCast( this->dataProviderDetect() );
+    hili_dp = Handle(asiVisu_ShapeDataProvider)::DownCast( this->dataProviderDetect() );
 
   if ( thePickRes.IsSelectionEdge() )
     hili_pl->WireframeModeOn();
@@ -366,15 +366,15 @@ void visu_geom_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRen
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void visu_geom_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                const visu_selection_nature& theSelNature) const
+void asiVisu_GeomPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                const asiVisu_SelectionNature& theSelNature) const
 {
-  Handle(visu_shape_pipeline) hili_pl;
+  Handle(asiVisu_ShapePipeline) hili_pl;
   //
   if ( theSelNature == SelectionNature_Pick )
-    hili_pl = Handle(visu_shape_pipeline)::DownCast( this->GetPickPipeline() );
+    hili_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() );
   else
-    hili_pl = Handle(visu_shape_pipeline)::DownCast( this->GetDetectPipeline() );
+    hili_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
 
   // Block data pipelining
   hili_pl->VoidSubShapesOn();
@@ -382,11 +382,11 @@ void visu_geom_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theR
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void visu_geom_prs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomPrs::renderPipelines(vtkRenderer* theRenderer) const
 {
-  Handle(visu_shape_pipeline)
-    pick_pl = Handle(visu_shape_pipeline)::DownCast( this->GetPickPipeline() ),
-    detect_pl = Handle(visu_shape_pipeline)::DownCast( this->GetDetectPipeline() );
+  Handle(asiVisu_ShapePipeline)
+    pick_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() ),
+    detect_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
 
   // Detection is initially blocked
   detect_pl->VoidSubShapesOn();
@@ -399,11 +399,11 @@ void visu_geom_prs::renderPipelines(vtkRenderer* theRenderer) const
 
 //! Callback for de-rendering.
 //! \param theRenderer [in] renderer.
-void visu_geom_prs::deRenderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomPrs::deRenderPipelines(vtkRenderer* theRenderer) const
 {
-  Handle(visu_shape_pipeline)
-    pick_pl = Handle(visu_shape_pipeline)::DownCast( this->GetPickPipeline() ),
-    detect_pl = Handle(visu_shape_pipeline)::DownCast( this->GetDetectPipeline() );
+  Handle(asiVisu_ShapePipeline)
+    pick_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() ),
+    detect_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
 
   pick_pl->RemoveFromRenderer(theRenderer);
   detect_pl->RemoveFromRenderer(theRenderer);

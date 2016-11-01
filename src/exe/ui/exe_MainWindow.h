@@ -12,11 +12,11 @@
 #include <analysis_situs.h>
 
 // A-Situs (GUI) includes
-#include <gui_controls_part.h>
-#include <gui_object_browser.h>
-#include <gui_viewer_domain.h>
-#include <gui_viewer_part.h>
-#include <gui_viewer_surface.h>
+#include <asiUI_ControlsPart.h>
+#include <asiUI_ObjectBrowser.h>
+#include <asiUI_Viewer_domain.h>
+#include <asiUI_ViewerPart.h>
+#include <asiUI_Viewer_surface.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -48,11 +48,11 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    gui_object_browser* wBrowser;       //!< Object browser.
-    gui_viewer_domain*  wViewerDomain;  //!< Parametric domain viewer.
-    gui_viewer_part*    wViewerPart;    //!< Part viewer.
-    gui_viewer_surface* wViewerSurface; //!< Surface viewer.
-    gui_controls_part*  wControlsPart;  //!< Part controls.
+    asiUI_ObjectBrowser* wBrowser;       //!< Object browser.
+    asiUI_Viewer_domain*  wViewerDomain;  //!< Parametric domain viewer.
+    asiUI_ViewerPart*    wViewerPart;    //!< Part viewer.
+    asiUI_Viewer_surface* wViewerSurface; //!< Surface viewer.
+    asiUI_ControlsPart*  wControlsPart;  //!< Part controls.
 
     t_widgets() : wBrowser       (NULL),
                   wViewerDomain  (NULL),

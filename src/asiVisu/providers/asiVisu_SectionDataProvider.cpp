@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_section_data_provider.h>
+#include <asiVisu_SectionDataProvider.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -22,9 +22,9 @@
 //! Constructor accepting the set of source data structures.
 //! \param theNodeId    [in] ID of the target Data Node.
 //! \param theParamList [in] source Parameters.
-visu_section_data_provider::visu_section_data_provider(const ActAPI_DataObjectId&           theNodeId,
+asiVisu_SectionDataProvider::asiVisu_SectionDataProvider(const ActAPI_DataObjectId&           theNodeId,
                                                        const Handle(ActAPI_HParameterList)& theParamList)
-: visu_curve_data_provider()
+: asiVisu_CurveDataProvider()
 {
   m_nodeID = theNodeId;
   m_params = theParamList;
@@ -33,14 +33,14 @@ visu_section_data_provider::visu_section_data_provider(const ActAPI_DataObjectId
 //-----------------------------------------------------------------------------
 
 //! \return curve type.
-Handle(Standard_Type) visu_section_data_provider::GetCurveType() const
+Handle(Standard_Type) asiVisu_SectionDataProvider::GetCurveType() const
 {
   double f, l;
   return this->GetCurve(f, l)->DynamicType();
 }
 
 //! Not used.
-Handle(Geom2d_Curve) visu_section_data_provider::GetCurve2d(double&, double&) const
+Handle(Geom2d_Curve) asiVisu_SectionDataProvider::GetCurve2d(double&, double&) const
 {
   return NULL;
 }
@@ -49,7 +49,7 @@ Handle(Geom2d_Curve) visu_section_data_provider::GetCurve2d(double&, double&) co
 //! \param f [out] first parameter.
 //! \param l [out] last parameter.
 //! \return curve.
-Handle(Geom_Curve) visu_section_data_provider::GetCurve(double& f, double& l) const
+Handle(Geom_Curve) asiVisu_SectionDataProvider::GetCurve(double& f, double& l) const
 {
   TopoDS_Shape section_shape = this->GetShape();
   //
@@ -65,14 +65,14 @@ Handle(Geom_Curve) visu_section_data_provider::GetCurve(double& f, double& l) co
 //! pipeline. This ID is bound to the pipeline's actor in order to have a
 //! back-reference from Presentation to Data Object.
 //! \return Node ID.
-ActAPI_DataObjectId visu_section_data_provider::GetNodeID() const
+ActAPI_DataObjectId asiVisu_SectionDataProvider::GetNodeID() const
 {
   return m_nodeID;
 }
 
 //! Returns the OCCT topological shape to be visualized.
 //! \return OCCT topological shape.
-TopoDS_Shape visu_section_data_provider::GetShape() const
+TopoDS_Shape asiVisu_SectionDataProvider::GetShape() const
 {
   return ActParamTool::AsShape( m_params->Value(1) )->GetShape();
 }
@@ -81,9 +81,9 @@ TopoDS_Shape visu_section_data_provider::GetShape() const
 
 //! Creates a copy of the Data Provider.
 //! \return copy.
-Handle(visu_section_data_provider) visu_section_data_provider::Clone() const
+Handle(asiVisu_SectionDataProvider) asiVisu_SectionDataProvider::Clone() const
 {
-  return new visu_section_data_provider(m_nodeID, m_params);
+  return new asiVisu_SectionDataProvider(m_nodeID, m_params);
 }
 
 //-----------------------------------------------------------------------------
@@ -91,7 +91,7 @@ Handle(visu_section_data_provider) visu_section_data_provider::Clone() const
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) visu_section_data_provider::translationSources() const
+Handle(ActAPI_HParameterList) asiVisu_SectionDataProvider::translationSources() const
 {
   return ActAPI_ParameterStream() << m_params->Value(1); // Shape Parameter
 }

@@ -5,22 +5,22 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_iv_topo_item_prs_h
-#define visu_iv_topo_item_prs_h
+#ifndef asiVisu_IVTopoItemPrs_h
+#define asiVisu_IVTopoItemPrs_h
 
 // Visualization includes
-#include <visu_iv_prs.h>
+#include <asiVisu_IVPrs.h>
 #include <asiData_IVTopoItemNode.h>
 
-DEFINE_STANDARD_HANDLE(visu_iv_topo_item_prs, visu_iv_prs)
+DEFINE_STANDARD_HANDLE(asiVisu_IVTopoItemPrs, asiVisu_IVPrs)
 
 //! Presentation class for topological items in IV.
-class visu_iv_topo_item_prs : public visu_iv_prs
+class asiVisu_IVTopoItemPrs : public asiVisu_IVPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_iv_topo_item_prs, visu_iv_prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVTopoItemPrs, asiVisu_IVPrs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_IVTopoItemNode, Instance)
@@ -35,13 +35,13 @@ public:
 
 public:
 
-  static Handle(visu_prs)
+  static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
 private:
 
   //! Allocation is allowed only via Instance method.
-  visu_iv_topo_item_prs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& theNode);
 
 };
 

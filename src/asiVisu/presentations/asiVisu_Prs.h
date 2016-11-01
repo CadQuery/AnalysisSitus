@@ -5,14 +5,14 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_prs_h
-#define visu_prs_h
+#ifndef asiVisu_Prs_h
+#define asiVisu_Prs_h
 
 // Visualization includes
-#include <visu_common.h>
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
-#include <visu_selection.h>
+#include <asiVisu.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
+#include <asiVisu_Selection.h>
 
 // Active Data (API) includes
 #include <ActAPI_INode.h>
@@ -26,16 +26,16 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_prs, Standard_Transient)
+DEFINE_STANDARD_HANDLE(asiVisu_Prs, Standard_Transient)
 
 //! Base class for all kinds of Node presentations which can be visualized
 //! in 3D viewer.
-class visu_prs : public Standard_Transient
+class asiVisu_Prs : public Standard_Transient
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_prs, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_Prs, Standard_Transient)
 
 public:
 
@@ -61,22 +61,22 @@ public:
   virtual void
     UpdatePipelines() const;
 
-  virtual const Handle(visu_pipeline)&
+  virtual const Handle(asiVisu_Pipeline)&
     GetPipeline(const int theId) const;
 
-  virtual const Handle(h_visu_pipeline_list)
+  virtual const Handle(h_asiVisu_Pipeline_list)
     GetPipelineList() const;
 
-  virtual Handle(visu_pipeline)
+  virtual Handle(asiVisu_Pipeline)
     GetPickPipeline(const int theIdx = 1) const;
 
-  virtual const Handle(h_visu_pipeline_list)
+  virtual const Handle(h_asiVisu_Pipeline_list)
     GetPickPipelineList() const;
 
-  virtual const Handle(visu_pipeline)&
+  virtual const Handle(asiVisu_Pipeline)&
     GetDetectPipeline(const int theIdx = 1) const;
 
-  virtual const Handle(h_visu_pipeline_list)
+  virtual const Handle(h_asiVisu_Pipeline_list)
     GetDetectPipelineList() const;
 
   virtual Handle(ActAPI_INode)
@@ -92,58 +92,58 @@ public:
 
   void
     Highlight(vtkRenderer*                 theRenderer,
-              const visu_pick_result&      thePickRes,
-              const visu_selection_nature& theSelNature) const;
+              const asiVisu_PickResult&      thePickRes,
+              const asiVisu_SelectionNature& theSelNature) const;
 
   void
     UnHighlight(vtkRenderer*                 theRenderer,
-                const visu_selection_nature& theSelNature) const;
+                const asiVisu_SelectionNature& theSelNature) const;
 
 // Presentation construction methods:
 protected:
 
   void
     addPipeline(const int                    theId,
-                const Handle(visu_pipeline)& thePipeline);
+                const Handle(asiVisu_Pipeline)& thePipeline);
 
   void
     assignDataProvider(const int                         theId,
-                       const Handle(visu_data_provider)& theDataProvider);
+                       const Handle(asiVisu_DataProvider)& theDataProvider);
 
-  Handle(visu_data_provider)
+  Handle(asiVisu_DataProvider)
     dataProvider(const int theId) const;
 
-  Handle(visu_data_provider)
-    dataProvider(const Handle(visu_pipeline)& thePipeline,
+  Handle(asiVisu_DataProvider)
+    dataProvider(const Handle(asiVisu_Pipeline)& thePipeline,
                  const PipelineGroup          theGroup) const;
 
-  Handle(visu_data_provider)
+  Handle(asiVisu_DataProvider)
     dataProviderPick(const int theIdx = 1) const;
 
-  Handle(visu_data_provider)
+  Handle(asiVisu_DataProvider)
     dataProviderDetect(const int theIdx = 1) const;
 
   void
-    installPickPipeline(const Handle(visu_pipeline)&      thePipeline,
-                        const Handle(visu_data_provider)& theDataProvider,
+    installPickPipeline(const Handle(asiVisu_Pipeline)&      thePipeline,
+                        const Handle(asiVisu_DataProvider)& theDataProvider,
                         const int                         theIdx = 1);
 
   void
-    installDetectPipeline(const Handle(visu_pipeline)&      thePipeline,
-                          const Handle(visu_data_provider)& theDataProvider,
+    installDetectPipeline(const Handle(asiVisu_Pipeline)&      thePipeline,
+                          const Handle(asiVisu_DataProvider)& theDataProvider,
                           const int                         theIdx = 1);
 
 protected:
 
-  visu_prs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_Prs(const Handle(ActAPI_INode)& theNode);
 
 private:
 
   //! Copying prohibited.
-  visu_prs(const visu_prs&);
+  asiVisu_Prs(const asiVisu_Prs&);
 
   //! Assignment prohibited.
-  visu_prs& operator=(const visu_prs&);
+  asiVisu_Prs& operator=(const asiVisu_Prs&);
 
 protected:
 
@@ -161,12 +161,12 @@ protected:
 
   //! To be provided by descendants.
   virtual void highlight(vtkRenderer*,
-                         const visu_pick_result&,
-                         const visu_selection_nature&) const = 0;
+                         const asiVisu_PickResult&,
+                         const asiVisu_SelectionNature&) const = 0;
 
   //! To be provided by descendants.
   virtual void unHighlight(vtkRenderer*,
-                           const visu_selection_nature&) const = 0;
+                           const asiVisu_SelectionNature&) const = 0;
 
   //! To be provided by descendants.
   virtual void renderPipelines(vtkRenderer*) const = 0;
@@ -180,11 +180,11 @@ private:
   //! the presentation object. Notice that each pipeline is associated with
   //! some unique ID to facilitate its manipulation.
   typedef NCollection_DataMap<int,
-                              Handle(visu_pipeline)> PipelineMap;
+                              Handle(asiVisu_Pipeline)> PipelineMap;
 
   //! Type definition for pipeline Data Providers.
   typedef NCollection_DataMap<int,
-                              Handle(visu_data_provider)> DataProviderMap;
+                              Handle(asiVisu_DataProvider)> DataProviderMap;
 
   //! Repository of pipelines distributed by groups.
   typedef NCollection_DataMap<PipelineGroup, PipelineMap> PipelineRepo;
@@ -214,9 +214,9 @@ class visu_actual_selection
 {
 public:
 
-  typedef NCollection_Sequence<Handle(visu_prs)>                       PrsSeq;
-  typedef NCollection_DataMap<visu_selection_nature, PrsSeq>           PrsMap;
-  typedef NCollection_DataMap<visu_selection_nature, visu_pick_result> PickResultMap;
+  typedef NCollection_Sequence<Handle(asiVisu_Prs)>                       PrsSeq;
+  typedef NCollection_DataMap<asiVisu_SelectionNature, PrsSeq>           PrsMap;
+  typedef NCollection_DataMap<asiVisu_SelectionNature, asiVisu_PickResult> PickResultMap;
 
 public:
 
@@ -226,20 +226,20 @@ public:
     m_prsSet.Bind( SelectionNature_Pick,      PrsSeq() );
     m_prsSet.Bind( SelectionNature_Detection, PrsSeq() );
 
-    m_pickResultSet.Bind( SelectionNature_Pick,      visu_pick_result() );
-    m_pickResultSet.Bind( SelectionNature_Detection, visu_pick_result() );
+    m_pickResultSet.Bind( SelectionNature_Pick,      asiVisu_PickResult() );
+    m_pickResultSet.Bind( SelectionNature_Detection, asiVisu_PickResult() );
   }
 
   //! Cleans up the internal collection.
   //! \param theRenderer  [in] renderer to remove the Presentations from.
   //! \param theSelNature [in] selection kind.
   void PopAll(vtkRenderer*                 theRenderer,
-              const visu_selection_nature& theSelNature)
+              const asiVisu_SelectionNature& theSelNature)
   {
     PrsSeq::Iterator anIt( m_prsSet.Find(theSelNature) );
     for ( ; anIt.More(); anIt.Next() )
     {
-      const Handle(visu_prs)& aPrs = anIt.Value();
+      const Handle(asiVisu_Prs)& aPrs = anIt.Value();
       if ( aPrs.IsNull() )
         continue;
 
@@ -254,11 +254,11 @@ public:
   //! \param thePrs       [in] Presentation to add.
   //! \param theRenderer  [in] renderer to add the Presentation to.
   //! \param theSelNature [in] selection kind.
-  void PushToRender(const Handle(visu_prs)&      thePrs,
+  void PushToRender(const Handle(asiVisu_Prs)&      thePrs,
                     vtkRenderer*                 theRenderer,
-                    const visu_selection_nature& theSelNature)
+                    const asiVisu_SelectionNature& theSelNature)
   {
-    visu_pick_result aPickRes = m_pickResultSet.Find(theSelNature);
+    asiVisu_PickResult aPickRes = m_pickResultSet.Find(theSelNature);
     m_prsSet.ChangeFind(theSelNature).Append(thePrs);
 
     thePrs->Highlight(theRenderer, aPickRes, theSelNature);
@@ -267,7 +267,7 @@ public:
   //! Accessor for picking result structure by selection nature.
   //! \param theSelNature [in] selection nature.
   //! \return picking result structure.
-  visu_pick_result& ChangePickResult(const visu_selection_nature& theSelNature)
+  asiVisu_PickResult& ChangePickResult(const asiVisu_SelectionNature& theSelNature)
   {
     return m_pickResultSet.ChangeFind(theSelNature);
   }
@@ -275,7 +275,7 @@ public:
   //! Accessor for picking result structure by selection nature.
   //! \param theSelNature [in] selection nature.
   //! \return picking result structure.
-  const visu_pick_result& PickResult(const visu_selection_nature& theSelNature) const
+  const asiVisu_PickResult& PickResult(const asiVisu_SelectionNature& theSelNature) const
   {
     return m_pickResultSet.Find(theSelNature);
   }
@@ -284,7 +284,7 @@ public:
   //! \param theSelNature [in] selection kind.
   //! \return sequence of rendered presentations.
   const PrsSeq&
-    RenderedPresentations(const visu_selection_nature theSelNature) const
+    RenderedPresentations(const asiVisu_SelectionNature theSelNature) const
   {
     return m_prsSet.Find(theSelNature);
   }

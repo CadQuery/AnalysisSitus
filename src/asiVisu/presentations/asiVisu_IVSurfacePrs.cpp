@@ -6,12 +6,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_iv_surface_prs.h>
+#include <asiVisu_IVSurfacePrs.h>
 
 // A-Situs (visualization) includes
-#include <visu_iv_surface_pipeline.h>
-#include <visu_iv_surface_data_provider.h>
-#include <visu_utils.h>
+#include <asiVisu_IVSurfacePipeline.h>
+#include <asiVisu_IVSurfaceDataProvider.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -19,21 +19,21 @@
 
 //! Creates a Presentation object for the passed Node.
 //! \param theNode [in] Node to create a Presentation for.
-visu_iv_surface_prs::visu_iv_surface_prs(const Handle(ActAPI_INode)& theNode)
-: visu_iv_prs(theNode)
+asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& theNode)
+: asiVisu_IVPrs(theNode)
 {
   // Create Data Provider
-  Handle(visu_iv_surface_data_provider) DP = new visu_iv_surface_data_provider(theNode);
+  Handle(asiVisu_IVSurfaceDataProvider) DP = new asiVisu_IVSurfaceDataProvider(theNode);
 
   // Pipeline for contours
-  this->addPipeline        ( Pipeline_Main, new visu_iv_surface_pipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_IVSurfacePipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 }
 
 //! Factory method for Presentation.
 //! \param theNode [in] Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_iv_surface_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_IVSurfacePrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_iv_surface_prs(theNode);
+  return new asiVisu_IVSurfacePrs(theNode);
 }

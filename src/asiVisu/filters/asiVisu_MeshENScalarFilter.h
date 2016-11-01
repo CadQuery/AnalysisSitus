@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_EN_scalar_filter_h
-#define visu_mesh_EN_scalar_filter_h
+#ifndef asiVisu_MeshENScalarFilter_h
+#define asiVisu_MeshENScalarFilter_h
 
 // Visualization includes
-#include <visu_common.h>
+#include <asiVisu.h>
 
 // Active Data (auxiliary) includes
 #include <ActAux_Common.h>
@@ -20,9 +20,7 @@
 #include <vtkPolyDataAlgorithm.h>
 
 // OCCT includes
-#pragma warning(push, 0)
 #include <NCollection_SparseArray.hxx>
-#pragma warning(pop)
 
 //! Elementary data chunk representing EN scalar values.
 struct ScalarTuple
@@ -36,7 +34,7 @@ struct ScalarTuple
     F[0] = 0.0; F[1] = 0.0; F[2] = 0.0; F[3] = 0.0;
   }
 
-  ScalarTuple(const bool isTriangle,
+  ScalarTuple(const bool   isTriangle,
               const double theF1,
               const double theF2,
               const double theF3,
@@ -52,15 +50,15 @@ typedef NCollection_Shared<ScalarMap>        HScalarMap;
 
 //! Filter splitting the cells by their shared points in order to associate
 //! the charged nodal scalars for each one.
-class visu_mesh_EN_scalar_filter : public vtkPolyDataAlgorithm
+class asiVisu_MeshENScalarFilter : public vtkPolyDataAlgorithm
 {
 public:
 
-  vtkTypeMacro(visu_mesh_EN_scalar_filter, vtkPolyDataAlgorithm);
+  vtkTypeMacro(asiVisu_MeshENScalarFilter, vtkPolyDataAlgorithm);
 
 public:
 
-  static visu_mesh_EN_scalar_filter* New();
+  static asiVisu_MeshENScalarFilter* New();
 
   //! Sets the shrink factor for nodal splitting.
   //! \param theShrinkFactor [in] shrink factor to set
@@ -129,9 +127,9 @@ public:
 
 private:
 
-  visu_mesh_EN_scalar_filter();
+  asiVisu_MeshENScalarFilter();
 
-  ~visu_mesh_EN_scalar_filter();
+  ~asiVisu_MeshENScalarFilter();
 
 public:
 
@@ -156,11 +154,11 @@ private:
 
   //! Prohibited copy constructor.
   //! \param theFilter [in] another filter.
-  visu_mesh_EN_scalar_filter(const visu_mesh_EN_scalar_filter& theFilter); // Not implemented.
+  asiVisu_MeshENScalarFilter(const asiVisu_MeshENScalarFilter& theFilter); // Not implemented.
 
   //! Prohibited assignment operator.
   //! \param theFilter [in] another filter.
-  void operator=(const visu_mesh_EN_scalar_filter& theFilter); // Not implemented.
+  void operator=(const asiVisu_MeshENScalarFilter& theFilter); // Not implemented.
 
 private:
 

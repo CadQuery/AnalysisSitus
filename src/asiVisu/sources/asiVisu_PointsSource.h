@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_points_source_h
-#define visu_points_source_h
+#ifndef asiVisu_PointsSource_h
+#define asiVisu_PointsSource_h
 
 // Visualization includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // Geometry includes
 #include <asiAlgo_PointCloud.h>
@@ -20,13 +20,13 @@
 #include <vtkType.h>
 
 //! Source of polygonal data representing a point cloud.
-class visu_points_source : public vtkPolyDataAlgorithm
+class asiVisu_PointsSource : public vtkPolyDataAlgorithm
 {
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(visu_points_source, vtkPolyDataAlgorithm);
-  static visu_points_source* New();
+  vtkTypeMacro(asiVisu_PointsSource, vtkPolyDataAlgorithm);
+  static asiVisu_PointsSource* New();
 
 // Kernel methods:
 public:
@@ -51,13 +51,13 @@ protected:
 
 protected:
 
-  visu_points_source();
-  ~visu_points_source();
+  asiVisu_PointsSource();
+  ~asiVisu_PointsSource();
 
 private:
 
-  visu_points_source(const visu_points_source&);
-  visu_points_source& operator=(const visu_points_source&);
+  asiVisu_PointsSource(const asiVisu_PointsSource&);
+  asiVisu_PointsSource& operator=(const asiVisu_PointsSource&);
 
 private:
 

@@ -15,19 +15,19 @@
 #include <xde_model.h>
 
 // A-Situs (journaling) includes
-#include <journal_iv.h>
+#include <asiVisu_JournalIV.h>
 #include <journal_notifier.h>
 
 // A-Situs (GUI) includes
 #include <gui_decomposition_browser.h>
-#include <gui_object_browser.h>
-#include <gui_object_browser_xde.h>
-#include <gui_viewer_dmu.h>
-#include <gui_viewer_domain.h>
-#include <gui_viewer_part.h>
+#include <asiUI_ObjectBrowser.h>
+#include <asiUI_ObjectBrowser_xde.h>
+#include <asiUI_Viewer_dmu.h>
+#include <asiUI_Viewer_domain.h>
+#include <asiUI_ViewerPart.h>
 
 // A-Situs (visualization) includes
-#include <visu_prs_manager.h>
+#include <asiVisu_PrsManager.h>
 
 // OCCT includes
 #pragma warning(push, 0)
@@ -53,13 +53,13 @@ public:
   Handle(xde_model)                Model_XDE;         //!< XDE Data Model instance.
   //
   gui_decomposition_browser*       DecompBrowser;     //!< Volume decomposition browser.
-  gui_object_browser*              ObjectBrowser;     //!< Object browser.
-  gui_object_browser_xde*          ObjectBrowser_XDE; //!< Object browser for XDE.
+  asiUI_ObjectBrowser*              ObjectBrowser;     //!< Object browser.
+  asiUI_ObjectBrowser_xde*          ObjectBrowser_XDE; //!< Object browser for XDE.
   Handle(ActAPI_INode)             CurrentNode;       //!< Currently selected Node.
   //
-  gui_viewer_part*                 ViewerPart;        //!< Viewer for part.
-  gui_viewer_domain*               ViewerDomain;      //!< Viewer for face parametric domain.
-  gui_viewer_dmu*                  ViewerDMU;         //!< OpenCascade-driven viewer for dMU.
+  asiUI_ViewerPart*                 ViewerPart;        //!< Viewer for part.
+  asiUI_Viewer_domain*               ViewerDomain;      //!< Viewer for face parametric domain.
+  asiUI_Viewer_dmu*                  ViewerDMU;         //!< OpenCascade-driven viewer for dMU.
   //
   Handle(ActAPI_IProgressNotifier) Notifier;          //!< Algorithmic notifier.
   Handle(ActAPI_IPlotter)          Plotter;           //!< Algorithmic plotter.
@@ -68,18 +68,18 @@ public:
   struct t_prs
   {
   //---------------------------------------------------------------------------
-    vtkSmartPointer<visu_prs_manager> Mesh;     //!< Mesh.
-    vtkSmartPointer<visu_prs_manager> Part;     //!< Part.
-    vtkSmartPointer<visu_prs_manager> Domain;   //!< Face domain.
-    vtkSmartPointer<visu_prs_manager> Host;     //!< Host geometry.
+    vtkSmartPointer<asiVisu_PrsManager> Mesh;     //!< Mesh.
+    vtkSmartPointer<asiVisu_PrsManager> Part;     //!< Part.
+    vtkSmartPointer<asiVisu_PrsManager> Domain;   //!< Face domain.
+    vtkSmartPointer<asiVisu_PrsManager> Host;     //!< Host geometry.
   //---------------------------------------------------------------------------
-    vtkSmartPointer<visu_prs_manager> Skinner;  //!< Skinner.
-    vtkSmartPointer<visu_prs_manager> Section;  //!< Section.
+    vtkSmartPointer<asiVisu_PrsManager> Skinner;  //!< Skinner.
+    vtkSmartPointer<asiVisu_PrsManager> Section;  //!< Section.
   //---------------------------------------------------------------------------
-    vtkSmartPointer<visu_prs_manager> UBend;    //!< U-bend.
-    vtkSmartPointer<visu_prs_manager> UBend_Xt; //!< X(t) for U-bend.
-    vtkSmartPointer<visu_prs_manager> UBend_Yt; //!< Y(t) for U-bend.
-    vtkSmartPointer<visu_prs_manager> UBend_XY; //!< Section law for U-bend.
+    vtkSmartPointer<asiVisu_PrsManager> UBend;    //!< U-bend.
+    vtkSmartPointer<asiVisu_PrsManager> UBend_Xt; //!< X(t) for U-bend.
+    vtkSmartPointer<asiVisu_PrsManager> UBend_Yt; //!< Y(t) for U-bend.
+    vtkSmartPointer<asiVisu_PrsManager> UBend_XY; //!< Section law for U-bend.
   //---------------------------------------------------------------------------
 
     inline void ActualizeAll()
@@ -152,7 +152,7 @@ private:
       ViewerDMU         (NULL)
   {
     Notifier = new journal_notifier;
-    Plotter  = new journal_iv;
+    Plotter  = new asiVisu_JournalIV;
   }
 
 private:

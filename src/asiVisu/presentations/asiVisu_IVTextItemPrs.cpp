@@ -6,34 +6,34 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_iv_text_item_prs.h>
+#include <asiVisu_IVTextItemPrs.h>
 
 // A-Situs (visualization) includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkTextActor.h>
 
 //! Creates a Presentation object for the passed Node.
 //! \param theNode [in] Node to create a Presentation for.
-visu_iv_text_item_prs::visu_iv_text_item_prs(const Handle(ActAPI_INode)& theNode)
-: visu_iv_prs(theNode)
+asiVisu_IVTextItemPrs::asiVisu_IVTextItemPrs(const Handle(ActAPI_INode)& theNode)
+: asiVisu_IVPrs(theNode)
 {
   // Initialize text widget used for annotations
   m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
-  visu_utils::InitTextWidget(m_textWidget);
+  asiVisu_Utils::InitTextWidget(m_textWidget);
 }
 
 //! Factory method for Presentation.
 //! \param theNode [in] Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_iv_text_item_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_IVTextItemPrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_iv_text_item_prs(theNode);
+  return new asiVisu_IVTextItemPrs(theNode);
 }
 
 //! Callback after initialization.
-void visu_iv_text_item_prs::afterInitPipelines()
+void asiVisu_IVTextItemPrs::afterInitPipelines()
 {
   TCollection_AsciiString
     title = Handle(asiData_IVTextItemNode)::DownCast(m_node)->GetText();
@@ -44,7 +44,7 @@ void visu_iv_text_item_prs::afterInitPipelines()
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void visu_iv_text_item_prs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_IVTextItemPrs::renderPipelines(vtkRenderer* theRenderer) const
 {
   if ( !m_textWidget->GetCurrentRenderer() )
   {
@@ -57,7 +57,7 @@ void visu_iv_text_item_prs::renderPipelines(vtkRenderer* theRenderer) const
 
 //! Callback for de-rendering.
 //! \param renderer [in] renderer.
-void visu_iv_text_item_prs::deRenderPipelines(vtkRenderer* ASitus_NotUsed(renderer)) const
+void asiVisu_IVTextItemPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(renderer)) const
 {
   m_textWidget->Off();
 }

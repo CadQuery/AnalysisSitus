@@ -5,31 +5,31 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_data_provider_h
-#define visu_mesh_data_provider_h
+#ifndef asiVisu_MeshDataProvider_h
+#define asiVisu_MeshDataProvider_h
 
 // Visualization includes
-#include <visu_data_provider.h>
+#include <asiVisu_DataProvider.h>
 
 // Mesh (Active Data) includes
 #include <Mesh.h>
 #include <Mesh_Group.h>
 
-DEFINE_STANDARD_HANDLE(visu_mesh_data_provider, visu_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_MeshDataProvider, asiVisu_DataProvider)
 
 //! Provides data necessary for visualization of mesh structures.
-class visu_mesh_data_provider : public visu_data_provider
+class asiVisu_MeshDataProvider : public asiVisu_DataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_mesh_data_provider, visu_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshDataProvider, asiVisu_DataProvider)
 
 public:
 
-  visu_mesh_data_provider();
+  asiVisu_MeshDataProvider();
 
-  visu_mesh_data_provider(const ActAPI_DataObjectId&           theNodeId,
+  asiVisu_MeshDataProvider(const ActAPI_DataObjectId&           theNodeId,
                           const Handle(ActAPI_HParameterList)& theParamList);
 
 public:
@@ -47,9 +47,9 @@ public:
 
   //! Creates copy of Data Provider.
   //! \return copy.
-  inline Handle(visu_mesh_data_provider) Clone() const
+  inline Handle(asiVisu_MeshDataProvider) Clone() const
   {
-    return new visu_mesh_data_provider(m_nodeID, m_params);
+    return new asiVisu_MeshDataProvider(m_nodeID, m_params);
   }
 
 private:

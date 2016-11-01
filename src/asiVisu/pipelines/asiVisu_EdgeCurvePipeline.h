@@ -5,33 +5,33 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_edge_curve_pipeline_h
-#define visu_edge_curve_pipeline_h
+#ifndef asiVisu_EdgeCurvePipeline_h
+#define asiVisu_EdgeCurvePipeline_h
 
 // A-Situs includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_edge_curve_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_EdgeCurvePipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for a host curve of an edge.
-class visu_edge_curve_pipeline : public visu_pipeline
+class asiVisu_EdgeCurvePipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_edge_curve_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_EdgeCurvePipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_edge_curve_pipeline();
+  asiVisu_EdgeCurvePipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& DP);
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 public:
 
@@ -47,10 +47,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_edge_curve_pipeline(const visu_edge_curve_pipeline&);
+  asiVisu_EdgeCurvePipeline(const asiVisu_EdgeCurvePipeline&);
 
   //! Assignment prohibited.
-  visu_edge_curve_pipeline& operator=(const visu_edge_curve_pipeline&);
+  asiVisu_EdgeCurvePipeline& operator=(const asiVisu_EdgeCurvePipeline&);
 
 protected:
 

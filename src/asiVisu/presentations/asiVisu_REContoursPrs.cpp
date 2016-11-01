@@ -6,12 +6,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_re_contours_prs.h>
+#include <asiVisu_REContoursPrs.h>
 
 // A-Situs (visualization) includes
-#include <visu_re_contours_data_provider.h>
-#include <visu_re_contours_pipeline.h>
-#include <visu_utils.h>
+#include <asiVisu_REContoursDataProvider.h>
+#include <asiVisu_REContoursPipeline.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -19,28 +19,28 @@
 
 //! Creates a Presentation object for the passed Node.
 //! \param theNode [in] Node to create a Presentation for.
-visu_re_contours_prs::visu_re_contours_prs(const Handle(ActAPI_INode)& theNode)
-: visu_prs(theNode)
+asiVisu_REContoursPrs::asiVisu_REContoursPrs(const Handle(ActAPI_INode)& theNode)
+: asiVisu_Prs(theNode)
 {
   // Create Data Provider
-  Handle(visu_re_contours_data_provider) DP = new visu_re_contours_data_provider;
+  Handle(asiVisu_REContoursDataProvider) DP = new asiVisu_REContoursDataProvider;
 
   // Pipeline for contours
-  this->addPipeline        ( Pipeline_Main, new visu_re_contours_pipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_REContoursPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 }
 
 //! Factory method for Presentation.
 //! \param theNode [in] Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_re_contours_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_REContoursPrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_re_contours_prs(theNode);
+  return new asiVisu_REContoursPrs(theNode);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool visu_re_contours_prs::IsVisible() const
+bool asiVisu_REContoursPrs::IsVisible() const
 {
   return true;
 }
@@ -48,54 +48,54 @@ bool visu_re_contours_prs::IsVisible() const
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void visu_re_contours_prs::beforeInitPipelines()
+void asiVisu_REContoursPrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void visu_re_contours_prs::afterInitPipelines()
+void asiVisu_REContoursPrs::afterInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void visu_re_contours_prs::beforeUpdatePipelines() const
+void asiVisu_REContoursPrs::beforeUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void visu_re_contours_prs::afterUpdatePipelines() const
+void asiVisu_REContoursPrs::afterUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting.
-void visu_re_contours_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                     const visu_pick_result&      ASitus_NotUsed(thePickRes),
-                                     const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_REContoursPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                     const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                     const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting reset.
-void visu_re_contours_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                       const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_REContoursPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                       const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for rendering.
-void visu_re_contours_prs::renderPipelines(vtkRenderer* ASitus_NotUsed(theRenderer)) const
+void asiVisu_REContoursPrs::renderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   // Do nothing...
 }
 
 //! Callback for de-rendering.
-void visu_re_contours_prs::deRenderPipelines(vtkRenderer* ASitus_NotUsed(theRenderer)) const
+void asiVisu_REContoursPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   // Do nothing...
 }

@@ -249,6 +249,14 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_ControlsPCloud.h" />
+    <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_MainWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_ControlsPCloud.cpp" />
+    <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_MainWindow.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

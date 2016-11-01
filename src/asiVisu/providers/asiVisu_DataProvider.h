@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_data_provider_h
-#define visu_data_provider_h
+#ifndef asiVisu_DataProvider_h
+#define asiVisu_DataProvider_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiVisu.h>
 
 // Active Data (API) includes
 #include <ActAPI_INode.h>
@@ -18,7 +18,7 @@
 // Active Data (auxiliary) includes
 #include <ActAux_TimeStamp.h>
 
-DEFINE_STANDARD_HANDLE(visu_data_provider, Standard_Transient)
+DEFINE_STANDARD_HANDLE(asiVisu_DataProvider, Standard_Transient)
 
 //! The instances of this class are normally used to supply data to the VTK
 //! visualization pipelines. The main idea behind this class is to provide
@@ -28,12 +28,12 @@ DEFINE_STANDARD_HANDLE(visu_data_provider, Standard_Transient)
 //! perform only in cases when the DOMAIN data is actually changed. The latter
 //! fact is normally checked by comparing modification time (MTime) of the
 //! data source with the modification time of the pipeline.
-class visu_data_provider : public Standard_Transient
+class asiVisu_DataProvider : public Standard_Transient
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_data_provider, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_DataProvider, Standard_Transient)
 
 public:
 

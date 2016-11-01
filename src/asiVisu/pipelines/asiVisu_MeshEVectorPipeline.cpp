@@ -6,14 +6,14 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_mesh_E_vector_pipeline.h>
+#include <asiVisu_MeshEVectorPipeline.h>
 
 // Visualization includes
-#include <visu_mesh_E_vector_filter.h>
-#include <visu_mesh_result_utils.h>
-#include <visu_mesh_source.h>
-#include <visu_mesh_utils.h>
-#include <visu_node_info.h>
+#include <asiVisu_MeshEVectorFilter.h>
+#include <asiVisu_MeshResultUtils.h>
+#include <asiVisu_MeshSource.h>
+#include <asiVisu_MeshUtils.h>
+#include <asiVisu_NodeInfo.h>
 
 // Active Data includes
 #include <ActData_MeshParameter.h>
@@ -37,8 +37,8 @@
 //-----------------------------------------------------------------------------
 
 //! Creates new Pipeline instance.
-visu_mesh_E_vector_pipeline::visu_mesh_E_vector_pipeline()
-  : visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+asiVisu_MeshEVectorPipeline::asiVisu_MeshEVectorPipeline()
+  : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                    vtkSmartPointer<vtkActor>::New() )
 {
   /* ========================
@@ -46,8 +46,8 @@ visu_mesh_E_vector_pipeline::visu_mesh_E_vector_pipeline()
    * ======================== */
 
   // Allocate filter populating vector data
-  vtkSmartPointer<visu_mesh_E_vector_filter>
-    aVecFilter = vtkSmartPointer<visu_mesh_E_vector_filter>::New();
+  vtkSmartPointer<asiVisu_MeshEVectorFilter>
+    aVecFilter = vtkSmartPointer<asiVisu_MeshEVectorFilter>::New();
 
   // Allocate Transformation filter
   vtkSmartPointer<vtkTransformPolyDataFilter>
@@ -74,10 +74,10 @@ visu_mesh_E_vector_pipeline::visu_mesh_E_vector_pipeline()
 //! Actually this method performs translation of DOMAIN data to VTK POLYGONAL
 //! DATA.
 //! \param theDataProvider [in] Data Provider.
-void visu_mesh_E_vector_pipeline::SetInput(const Handle(visu_data_provider)& theDataProvider)
+void asiVisu_MeshEVectorPipeline::SetInput(const Handle(asiVisu_DataProvider)& theDataProvider)
 {
-  Handle(visu_mesh_E_vector_data_provider)
-    aMeshPrv = Handle(visu_mesh_E_vector_data_provider)::DownCast(theDataProvider);
+  Handle(asiVisu_MeshEVectorDataProvider)
+    aMeshPrv = Handle(asiVisu_MeshEVectorDataProvider)::DownCast(theDataProvider);
 
   /* ============================
    *  Prepare polygonal data set
@@ -85,15 +85,15 @@ void visu_mesh_E_vector_pipeline::SetInput(const Handle(visu_data_provider)& the
 
   if ( aMeshPrv->MustExecute( this->GetMTime() ) )
   {
-    vtkSmartPointer<visu_mesh_source> aMeshSource = vtkSmartPointer<visu_mesh_source>::New();
+    vtkSmartPointer<asiVisu_MeshSource> aMeshSource = vtkSmartPointer<asiVisu_MeshSource>::New();
     aMeshSource->SetInputMesh( aMeshPrv->GetMeshDS() );
 
     Handle(HIntArray) anElemIDs = aMeshPrv->GetElementIDs();
     Handle(HRealArray) anElemVectors = aMeshPrv->GetElementVectors();
 
     // Pass vector array
-    visu_mesh_E_vector_filter*
-      aVecFilter = visu_mesh_E_vector_filter::SafeDownCast( m_filterMap.Find(Filter_EVector) );
+    asiVisu_MeshEVectorFilter*
+      aVecFilter = asiVisu_MeshEVectorFilter::SafeDownCast( m_filterMap.Find(Filter_EVector) );
     aVecFilter->SetVectorArrays( anElemIDs,
                                  anElemVectors,
                                  aMeshPrv->GetMaxModulus() );
@@ -101,8 +101,8 @@ void visu_mesh_E_vector_pipeline::SetInput(const Handle(visu_data_provider)& the
     // Transform glyphs
     vtkTransformPolyDataFilter*
       aTrsfFilter = vtkTransformPolyDataFilter::SafeDownCast( m_filterMap.Find(Filter_Trsf) );
-    aTrsfFilter->SetInputConnection( visu_mesh_result_utils::GetVectorGlyph()->GetOutputPort() );
-    aTrsfFilter->SetTransform( visu_mesh_result_utils::GetVectorGlyphTransform() );
+    aTrsfFilter->SetInputConnection( asiVisu_MeshResultUtils::GetVectorGlyph()->GetOutputPort() );
+    aTrsfFilter->SetTransform( asiVisu_MeshResultUtils::GetVectorGlyphTransform() );
 
     // Adjust glyph filter
     vtkGlyph3D* aGlyphFilter = vtkGlyph3D::SafeDownCast( m_filterMap.Find(Filter_Glyph3D) );
@@ -118,7 +118,7 @@ void visu_mesh_E_vector_pipeline::SetInput(const Handle(visu_data_provider)& the
 
     // Bind actor to owning Node ID. Thus we set back reference from VTK
     // entity to data object
-    visu_node_info::Store( aMeshPrv->GetNodeID(), this->Actor() );
+    asiVisu_NodeInfo::Store( aMeshPrv->GetNodeID(), this->Actor() );
   }
 
   // Update modification timestamp
@@ -127,17 +127,17 @@ void visu_mesh_E_vector_pipeline::SetInput(const Handle(visu_data_provider)& the
 
 //! Callback for AddToRenderer base routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_mesh_E_vector_pipeline::addToRendererCallback(vtkRenderer*)
+void asiVisu_MeshEVectorPipeline::addToRendererCallback(vtkRenderer*)
 {
 }
 
 //! Callback for RemoveFromRenderer base routine.
-void visu_mesh_E_vector_pipeline::removeFromRendererCallback(vtkRenderer*)
+void asiVisu_MeshEVectorPipeline::removeFromRendererCallback(vtkRenderer*)
 {
 }
 
 //! Callback for Update routine.
-void visu_mesh_E_vector_pipeline::updateCallback()
+void asiVisu_MeshEVectorPipeline::updateCallback()
 {
   m_mapper->ScalarVisibilityOff();
 }

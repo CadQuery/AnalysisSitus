@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_mesh_result_utils.h>
+#include <asiVisu_MeshResultUtils.h>
 
 // VTK includes
 #include <vtkCoordinate.h>
@@ -22,7 +22,7 @@
 //! \param theRangeMax [in] maximal scalar value.
 //! \return VTK lookup table.
 vtkSmartPointer<vtkLookupTable>
-  visu_mesh_result_utils::InitLookupTable(const double theRangeMin,
+  asiVisu_MeshResultUtils::InitLookupTable(const double theRangeMin,
                                           const double theRangeMax)
 {
   vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
@@ -38,7 +38,7 @@ vtkSmartPointer<vtkLookupTable>
 //!                                   for colorization.
 //! \param doInterpolation   [in]     indicates whether to ask mapper to interpolate
 //!                                   scalars before actual mapping.
-void visu_mesh_result_utils::InitCellScalarMapper(vtkMapper*      theMapper,
+void asiVisu_MeshResultUtils::InitCellScalarMapper(vtkMapper*      theMapper,
                                                   vtkLookupTable* theLookup,
                                                   const char*     theScalarsArrName,
                                                   const bool      doInterpolation)
@@ -66,7 +66,7 @@ void visu_mesh_result_utils::InitCellScalarMapper(vtkMapper*      theMapper,
 //! \param theRangeMax       [in]     maximal scalar value.
 //! \param doInterpolation   [in]     indicates whether to ask mapper to interpolate
 //!                                   scalars before actual mapping.
-void visu_mesh_result_utils::InitCellScalarMapper(vtkMapper*   theMapper,
+void asiVisu_MeshResultUtils::InitCellScalarMapper(vtkMapper*   theMapper,
                                                   const char*  theScalarsArrName,
                                                   const double theRangeMin,
                                                   const double theRangeMax,
@@ -83,7 +83,7 @@ void visu_mesh_result_utils::InitCellScalarMapper(vtkMapper*   theMapper,
 //!                                   for colorization.
 //! \param doInterpolation   [in]     indicates whether to ask mapper to interpolate
 //!                                   scalars before actual mapping.
-void visu_mesh_result_utils::InitPointScalarMapper(vtkMapper*      theMapper,
+void asiVisu_MeshResultUtils::InitPointScalarMapper(vtkMapper*      theMapper,
                                                    vtkLookupTable* theLookup,
                                                    const char*     theScalarsArrName,
                                                    const bool      doInterpolation)
@@ -111,7 +111,7 @@ void visu_mesh_result_utils::InitPointScalarMapper(vtkMapper*      theMapper,
 //! \param theRangeMax       [in]     maximal scalar value.
 //! \param doInterpolation   [in]     indicates whether to ask mapper to interpolate
 //!                                   scalars before actual mapping.
-void visu_mesh_result_utils::InitPointScalarMapper(vtkMapper*   theMapper,
+void asiVisu_MeshResultUtils::InitPointScalarMapper(vtkMapper*   theMapper,
                                                    const char*  theScalarsArrName,
                                                    const double theRangeMin,
                                                    const double theRangeMax,
@@ -124,7 +124,7 @@ void visu_mesh_result_utils::InitPointScalarMapper(vtkMapper*   theMapper,
 //! Initializes the passed scalar bar widget for scenes containing
 //! analysis results.
 //! \param theScalarBarWidget [in] scalar bar widget to initialize.
-void visu_mesh_result_utils::InitScalarBarWidget(vtkScalarBarWidget* theScalarBarWidget)
+void asiVisu_MeshResultUtils::InitScalarBarWidget(vtkScalarBarWidget* theScalarBarWidget)
 {
   vtkScalarBarRepresentation* aRep = theScalarBarWidget->GetScalarBarRepresentation();
   aRep->SetOrientation(1);
@@ -134,7 +134,7 @@ void visu_mesh_result_utils::InitScalarBarWidget(vtkScalarBarWidget* theScalarBa
 
 //! Returns polygonal source for VTK glyph representing vectorial data.
 //! \return polygonal source of the mentioned glyph.
-vtkSmartPointer<vtkPolyDataAlgorithm> visu_mesh_result_utils::GetVectorGlyph()
+vtkSmartPointer<vtkPolyDataAlgorithm> asiVisu_MeshResultUtils::GetVectorGlyph()
 {
   vtkSmartPointer<vtkGlyphSource2D> aResult = vtkSmartPointer<vtkGlyphSource2D>::New();
   aResult->SetGlyphTypeToArrow();
@@ -147,7 +147,7 @@ vtkSmartPointer<vtkPolyDataAlgorithm> visu_mesh_result_utils::GetVectorGlyph()
 //! method moves the glyph so that it starts from the point it is imposed to.
 //! \return VTK transformation object describing the relative transformation
 //!         to apply on each glyph being rendered.
-vtkSmartPointer<vtkTransform> visu_mesh_result_utils::GetVectorGlyphTransform()
+vtkSmartPointer<vtkTransform> asiVisu_MeshResultUtils::GetVectorGlyphTransform()
 {
   vtkSmartPointer<vtkTransform> aResult = vtkSmartPointer<vtkTransform>::New();
   aResult->Translate(0.5, 0.0, 0.0);

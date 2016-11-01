@@ -6,12 +6,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_iv_point_set_prs.h>
+#include <asiVisu_IVPointSetPrs.h>
 
 // A-Situs (visualization) includes
-#include <visu_iv_point_set_data_provider.h>
-#include <visu_points_pipeline.h>
-#include <visu_utils.h>
+#include <asiVisu_IVPointSetDataProvider.h>
+#include <asiVisu_PointsPipeline.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -20,34 +20,34 @@
 
 //! Creates a Presentation object for the passed Node.
 //! \param theNode [in] Node to create a Presentation for.
-visu_iv_point_set_prs::visu_iv_point_set_prs(const Handle(ActAPI_INode)& theNode)
-: visu_iv_prs(theNode)
+asiVisu_IVPointSetPrs::asiVisu_IVPointSetPrs(const Handle(ActAPI_INode)& theNode)
+: asiVisu_IVPrs(theNode)
 {
   // Create Data Provider
-  Handle(visu_iv_point_set_data_provider) DP = new visu_iv_point_set_data_provider(theNode);
+  Handle(asiVisu_IVPointSetDataProvider) DP = new asiVisu_IVPointSetDataProvider(theNode);
 
   // Pipeline for points
-  this->addPipeline        ( Pipeline_Main, new visu_points_pipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 
   // Initialize text widget used for annotations
   m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
-  visu_utils::InitTextWidget(m_textWidget);
+  asiVisu_Utils::InitTextWidget(m_textWidget);
 }
 
 //! Factory method for Presentation.
 //! \param theNode [in] Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_iv_point_set_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_IVPointSetPrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_iv_point_set_prs(theNode);
+  return new asiVisu_IVPointSetPrs(theNode);
 }
 
 //! Callback after initialization.
-void visu_iv_point_set_prs::afterInitPipelines()
+void asiVisu_IVPointSetPrs::afterInitPipelines()
 {
-  Handle(visu_iv_point_set_data_provider)
-    DP = Handle(visu_iv_point_set_data_provider)::DownCast( this->dataProvider(Pipeline_Main) );
+  Handle(asiVisu_IVPointSetDataProvider)
+    DP = Handle(asiVisu_IVPointSetDataProvider)::DownCast( this->dataProvider(Pipeline_Main) );
 
   const int nPts = DP->GetPoints()->GetNumOfPoints();
 
@@ -62,10 +62,10 @@ void visu_iv_point_set_prs::afterInitPipelines()
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void visu_iv_point_set_prs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_IVPointSetPrs::renderPipelines(vtkRenderer* theRenderer) const
 {
-  Handle(visu_iv_point_set_data_provider)
-    DP = Handle(visu_iv_point_set_data_provider)::DownCast( this->dataProvider(Pipeline_Main) );
+  Handle(asiVisu_IVPointSetDataProvider)
+    DP = Handle(asiVisu_IVPointSetDataProvider)::DownCast( this->dataProvider(Pipeline_Main) );
 
   const int nPts = DP->GetPoints()->GetNumOfPoints();
   //
@@ -83,7 +83,7 @@ void visu_iv_point_set_prs::renderPipelines(vtkRenderer* theRenderer) const
 
 //! Callback for de-rendering.
 //! \param renderer [in] renderer.
-void visu_iv_point_set_prs::deRenderPipelines(vtkRenderer* ASitus_NotUsed(renderer)) const
+void asiVisu_IVPointSetPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(renderer)) const
 {
   m_textWidget->Off();
 }

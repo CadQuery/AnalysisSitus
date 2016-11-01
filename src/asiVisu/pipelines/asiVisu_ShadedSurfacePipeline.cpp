@@ -6,15 +6,15 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_shaded_surface_pipeline.h>
+#include <asiVisu_ShadedSurfacePipeline.h>
 
 // Common includes
 #include <common_facilities.h>
 
 // Visualization includes
-#include <visu_mesh_result_utils.h>
-#include <visu_face_data_provider.h>
-#include <visu_utils.h>
+#include <asiVisu_MeshResultUtils.h>
+#include <asiVisu_FaceDataProvider.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkPolyDataMapper.h>
@@ -25,25 +25,25 @@
 //-----------------------------------------------------------------------------
 
 //! Creates new Shaded Surface Pipeline initialized by default VTK mapper and actor.
-visu_shaded_surface_pipeline::visu_shaded_surface_pipeline()
+asiVisu_ShadedSurfacePipeline::asiVisu_ShadedSurfacePipeline()
 //
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                  vtkSmartPointer<vtkActor>::New() ),
   //
   m_iStepsNumber (0),
   m_bForced      (false),
   //
-  m_source( vtkSmartPointer<visu_surface_source>::New() )
+  m_source( vtkSmartPointer<asiVisu_SurfaceSource>::New() )
 {}
 
 //-----------------------------------------------------------------------------
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void visu_shaded_surface_pipeline::SetInput(const Handle(visu_data_provider)& DP)
+void asiVisu_ShadedSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  Handle(visu_face_data_provider)
-    faceProvider = Handle(visu_face_data_provider)::DownCast(DP);
+  Handle(asiVisu_FaceDataProvider)
+    faceProvider = Handle(asiVisu_FaceDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
@@ -85,59 +85,59 @@ void visu_shaded_surface_pipeline::SetInput(const Handle(visu_data_provider)& DP
 }
 
 //! \return true if any curvature field is enabled.
-bool visu_shaded_surface_pipeline::IsCurvature() const
+bool asiVisu_ShadedSurfacePipeline::IsCurvature() const
 {
   return m_source->HasScalars();
 }
 
 //! \return true if Gaussian curvature field is enabled.
-bool visu_shaded_surface_pipeline::IsGaussianCurvature() const
+bool asiVisu_ShadedSurfacePipeline::IsGaussianCurvature() const
 {
-  return m_source->GetScalarType() == visu_surface_source::Scalars_GaussianCurvature;
+  return m_source->GetScalarType() == asiVisu_SurfaceSource::Scalars_GaussianCurvature;
 }
 
 //! \return true if mean curvature field is enabled.
-bool visu_shaded_surface_pipeline::IsMeanCurvature() const
+bool asiVisu_ShadedSurfacePipeline::IsMeanCurvature() const
 {
-  return m_source->GetScalarType() == visu_surface_source::Scalars_MeanCurvature;
+  return m_source->GetScalarType() == asiVisu_SurfaceSource::Scalars_MeanCurvature;
 }
 
 //! Enables Gaussian curvature field.
-void visu_shaded_surface_pipeline::GaussianCurvatureOn()
+void asiVisu_ShadedSurfacePipeline::GaussianCurvatureOn()
 {
-  m_source->SetScalars(visu_surface_source::Scalars_GaussianCurvature);
+  m_source->SetScalars(asiVisu_SurfaceSource::Scalars_GaussianCurvature);
 }
 
 //! Enables mean curvature field.
-void visu_shaded_surface_pipeline::MeanCurvatureOn()
+void asiVisu_ShadedSurfacePipeline::MeanCurvatureOn()
 {
-  m_source->SetScalars(visu_surface_source::Scalars_MeanCurvature);
+  m_source->SetScalars(asiVisu_SurfaceSource::Scalars_MeanCurvature);
 }
 
 //! Disables curvature field.
-void visu_shaded_surface_pipeline::CurvatureOff()
+void asiVisu_ShadedSurfacePipeline::CurvatureOff()
 {
-  m_source->SetScalars(visu_surface_source::Scalars_NoScalars);
+  m_source->SetScalars(asiVisu_SurfaceSource::Scalars_NoScalars);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_shaded_surface_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_ShadedSurfacePipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_shaded_surface_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_ShadedSurfacePipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void visu_shaded_surface_pipeline::callback_update()
+void asiVisu_ShadedSurfacePipeline::callback_update()
 {
   const double min_k = m_source->GetMinScalar();
   const double max_k = m_source->GetMaxScalar();
   //
   if ( m_source->HasScalars() )
-    visu_mesh_result_utils::InitPointScalarMapper(m_mapper, ARRNAME_SURF_CURVATURE,
+    asiVisu_MeshResultUtils::InitPointScalarMapper(m_mapper, ARRNAME_SURF_CURVATURE,
                                                   min_k, max_k, false);
 }

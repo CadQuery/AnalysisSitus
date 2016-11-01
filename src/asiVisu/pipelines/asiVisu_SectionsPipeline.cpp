@@ -6,11 +6,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_sections_pipeline.h>
+#include <asiVisu_SectionsPipeline.h>
 
 // Visualization includes
-#include <visu_sections_data_provider.h>
-#include <visu_shape_data_source.h>
+#include <asiVisu_SectionsDataProvider.h>
+#include <asiVisu_ShapeDataSource.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -23,16 +23,16 @@
 #include <IVtkTools_DisplayModeFilter.hxx>
 
 //! Creates new Sections Pipeline initialized by default VTK mapper and actor.
-visu_sections_pipeline::visu_sections_pipeline()
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() )
+asiVisu_SectionsPipeline::asiVisu_SectionsPipeline()
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() )
 {}
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void visu_sections_pipeline::SetInput(const Handle(visu_data_provider)& DP)
+void asiVisu_SectionsPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  Handle(visu_sections_data_provider)
-    sDP = Handle(visu_sections_data_provider)::DownCast(DP);
+  Handle(asiVisu_SectionsDataProvider)
+    sDP = Handle(asiVisu_SectionsDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
@@ -59,7 +59,7 @@ void visu_sections_pipeline::SetInput(const Handle(visu_data_provider)& DP)
     shapeIntoVtk->SetId(ShapeID);
 
     // Prepare DS
-    vtkSmartPointer<visu_shape_data_source> sDS = vtkSmartPointer<visu_shape_data_source>::New();
+    vtkSmartPointer<asiVisu_ShapeDataSource> sDS = vtkSmartPointer<asiVisu_ShapeDataSource>::New();
     sDS->SetShape(shapeIntoVtk);
 
     // Allocate Display Mode filter
@@ -81,13 +81,13 @@ void visu_sections_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_sections_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_SectionsPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_sections_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_SectionsPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void visu_sections_pipeline::callback_update()
+void asiVisu_SectionsPipeline::callback_update()
 {}

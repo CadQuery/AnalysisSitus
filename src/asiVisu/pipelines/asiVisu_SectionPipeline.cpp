@@ -6,11 +6,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_section_pipeline.h>
+#include <asiVisu_SectionPipeline.h>
 
 // Visualization includes
-#include <visu_curve_source.h>
-#include <visu_section_data_provider.h>
+#include <asiVisu_CurveSource.h>
+#include <asiVisu_SectionDataProvider.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -27,8 +27,8 @@
 #include <TopoDS_Edge.hxx>
 
 //! Creates new Section Pipeline initialized by default VTK mapper and actor.
-visu_section_pipeline::visu_section_pipeline()
-: visu_pipeline      ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
+asiVisu_SectionPipeline::asiVisu_SectionPipeline()
+: asiVisu_Pipeline      ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
   m_bMapperColorsSet (false)
 {
   this->Actor()->GetProperty()->SetLineWidth(2.0);
@@ -39,9 +39,9 @@ visu_section_pipeline::visu_section_pipeline()
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void visu_section_pipeline::SetInput(const Handle(visu_data_provider)& DP)
+void asiVisu_SectionPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  Handle(visu_section_data_provider) sDP = Handle(visu_section_data_provider)::DownCast(DP);
+  Handle(asiVisu_SectionDataProvider) sDP = Handle(asiVisu_SectionDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
@@ -73,7 +73,7 @@ void visu_section_pipeline::SetInput(const Handle(visu_data_provider)& DP)
       const TopoDS_Edge& E = TopoDS::Edge( exp.Current() );
 
       // Curve source
-      vtkSmartPointer<visu_curve_source> src = vtkSmartPointer<visu_curve_source>::New();
+      vtkSmartPointer<asiVisu_CurveSource> src = vtkSmartPointer<asiVisu_CurveSource>::New();
       src->SetInputEdge(E);
 
       // Append poly data for curve
@@ -92,20 +92,20 @@ void visu_section_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_section_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_SectionPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_section_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_SectionPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void visu_section_pipeline::callback_update()
+void asiVisu_SectionPipeline::callback_update()
 {
   if ( !m_bMapperColorsSet )
   {
-    vtkSmartPointer<vtkLookupTable> aLookup = visu_utils::InitDomainLookupTable();
-    visu_utils::InitMapper(m_mapper, aLookup, ARRNAME_ORIENT_SCALARS);
+    vtkSmartPointer<vtkLookupTable> aLookup = asiVisu_Utils::InitDomainLookupTable();
+    asiVisu_Utils::InitMapper(m_mapper, aLookup, ARRNAME_ORIENT_SCALARS);
     m_bMapperColorsSet = true;
   }
 }

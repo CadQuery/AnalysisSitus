@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_re_contours_data_provider.h>
+#include <asiVisu_REContoursDataProvider.h>
 
 // Common includes
 #include <common_facilities.h>
@@ -14,14 +14,14 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-visu_re_contours_data_provider::visu_re_contours_data_provider()
-: visu_data_provider()
+asiVisu_REContoursDataProvider::asiVisu_REContoursDataProvider()
+: asiVisu_DataProvider()
 {}
 
 //-----------------------------------------------------------------------------
 
 //! \return ID of the associated Data Node.
-ActAPI_DataObjectId visu_re_contours_data_provider::GetNodeID() const
+ActAPI_DataObjectId asiVisu_REContoursDataProvider::GetNodeID() const
 {
   Handle(asiData_REContoursNode)
     contours_n = common_facilities::Instance()->Model->GetRENode()->Contours();
@@ -35,7 +35,7 @@ ActAPI_DataObjectId visu_re_contours_data_provider::GetNodeID() const
 //-----------------------------------------------------------------------------
 
 //! \return number of stored contours.
-int visu_re_contours_data_provider::GetNumOfContours() const
+int asiVisu_REContoursDataProvider::GetNumOfContours() const
 {
   Handle(asiData_REContoursNode)
     contours_n = common_facilities::Instance()->Model->GetRENode()->Contours();
@@ -61,7 +61,7 @@ int visu_re_contours_data_provider::GetNumOfContours() const
 //! Returns a contour by its one-based index.
 //! \param oneBased_idx [in] 1-based index of the contour to access.
 TopoDS_Wire
-  visu_re_contours_data_provider::GetContour(const int oneBased_idx) const
+  asiVisu_REContoursDataProvider::GetContour(const int oneBased_idx) const
 {
   Handle(asiData_REContoursNode)
     contours_n = common_facilities::Instance()->Model->GetRENode()->Contours();
@@ -82,7 +82,7 @@ TopoDS_Wire
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) visu_re_contours_data_provider::translationSources() const
+Handle(ActAPI_HParameterList) asiVisu_REContoursDataProvider::translationSources() const
 {
   // Resulting Parameters
   ActParamStream out;

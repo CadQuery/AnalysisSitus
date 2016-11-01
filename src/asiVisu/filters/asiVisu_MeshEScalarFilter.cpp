@@ -6,10 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_mesh_E_scalar_filter.h>
+#include <asiVisu_MeshEScalarFilter.h>
 
 // Visualization includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkCell.h>
@@ -22,10 +22,10 @@
 #include <vtkSmartPointer.h>
 #include <vtkMath.h>
 
-vtkStandardNewMacro(visu_mesh_E_scalar_filter);
+vtkStandardNewMacro(asiVisu_MeshEScalarFilter);
 
 //! Default constructor.
-visu_mesh_E_scalar_filter::visu_mesh_E_scalar_filter()
+asiVisu_MeshEScalarFilter::asiVisu_MeshEScalarFilter()
 {
   m_scalarMap = new HScalarMap(100);
 
@@ -37,7 +37,7 @@ visu_mesh_E_scalar_filter::visu_mesh_E_scalar_filter()
 }
 
 //! Destructor.
-visu_mesh_E_scalar_filter::~visu_mesh_E_scalar_filter()
+asiVisu_MeshEScalarFilter::~asiVisu_MeshEScalarFilter()
 {
 }
 
@@ -45,7 +45,7 @@ visu_mesh_E_scalar_filter::~visu_mesh_E_scalar_filter()
 //! \param port [not used] connection port.
 //! \param info [in/out]   information object.
 //! \return result code.
-int visu_mesh_E_scalar_filter::FillInputPortInformation(int /*port*/, vtkInformation* info)
+int asiVisu_MeshEScalarFilter::FillInputPortInformation(int /*port*/, vtkInformation* info)
 {
   // This filter utilizes vtkDataSet cell traversal so it
   // supports any data set type as input
@@ -58,7 +58,7 @@ int visu_mesh_E_scalar_filter::FillInputPortInformation(int /*port*/, vtkInforma
 //! \param theInput  [in]       input data.
 //! \param theOutput [out]      output data.
 //! \return result code.
-int visu_mesh_E_scalar_filter::RequestData(vtkInformation*,
+int asiVisu_MeshEScalarFilter::RequestData(vtkInformation*,
                                            vtkInformationVector** theInputVector,
                                            vtkInformationVector*  theOutputVector)
 {
@@ -116,7 +116,7 @@ int visu_mesh_E_scalar_filter::RequestData(vtkInformation*,
 
   // Allocate an array for cell scalars
   vtkSmartPointer<vtkDoubleArray>
-    aNewCellScalars = visu_utils::InitDoubleArray(ARRNAME_MESH_N_SCALARS);
+    aNewCellScalars = asiVisu_Utils::InitDoubleArray(ARRNAME_MESH_N_SCALARS);
 
   // Map for shared VTK points
   NCollection_DataMap<int, vtkIdType> aRegPoints;
@@ -186,7 +186,7 @@ int visu_mesh_E_scalar_filter::RequestData(vtkInformation*,
 //! \param theElemID [in]  ID of the mesh element to access scalar value for.
 //! \param theScalar [out] requested scalar if any.
 //! \return true if scalar value has been found, false -- otherwise.
-bool visu_mesh_E_scalar_filter::scalarForElem(const int theElemID,
+bool asiVisu_MeshEScalarFilter::scalarForElem(const int theElemID,
                                               double&   theScalar)
 {
   if ( !m_scalarMap->IsBound(theElemID) )
@@ -199,7 +199,7 @@ bool visu_mesh_E_scalar_filter::scalarForElem(const int theElemID,
 //! Adjusts min & max scalar values against the passed scalar value.
 //! \param theScalar [in] scalar value to adjust the min & max
 //!        values against.
-void visu_mesh_E_scalar_filter::adjustMinMax(double theScalar)
+void asiVisu_MeshEScalarFilter::adjustMinMax(double theScalar)
 {
   if ( theScalar > m_fMaxScalar )
     m_fMaxScalar = theScalar;

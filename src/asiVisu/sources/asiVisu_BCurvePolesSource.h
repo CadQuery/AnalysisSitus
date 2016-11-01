@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_bcurve_poles_source_h
-#define visu_bcurve_poles_source_h
+#ifndef asiVisu_BCurvePolesSource_h
+#define asiVisu_BCurvePolesSource_h
 
 // Visualization includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // Active Data (auxiliary) includes
 #include <ActAux_Common.h>
@@ -25,13 +25,13 @@
 #include <TColgp_HArray1OfPnt.hxx>
 
 //! Data source giving a control polygon of a b-curve.
-class visu_bcurve_poles_source : public vtkPolyDataAlgorithm
+class asiVisu_BCurvePolesSource : public vtkPolyDataAlgorithm
 {
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(visu_bcurve_poles_source, vtkPolyDataAlgorithm);
-  static visu_bcurve_poles_source* New();
+  vtkTypeMacro(asiVisu_BCurvePolesSource, vtkPolyDataAlgorithm);
+  static asiVisu_BCurvePolesSource* New();
 
 // Kernel methods:
 public:
@@ -62,13 +62,13 @@ protected:
 
 protected:
 
-  visu_bcurve_poles_source();
-  ~visu_bcurve_poles_source();
+  asiVisu_BCurvePolesSource();
+  ~asiVisu_BCurvePolesSource();
 
 private:
 
-  visu_bcurve_poles_source(const visu_bcurve_poles_source&);
-  visu_bcurve_poles_source& operator=(const visu_bcurve_poles_source&);
+  asiVisu_BCurvePolesSource(const asiVisu_BCurvePolesSource&);
+  asiVisu_BCurvePolesSource& operator=(const asiVisu_BCurvePolesSource&);
 
 private:
 

@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_iv_point_set_prs_h
-#define visu_iv_point_set_prs_h
+#ifndef asiVisu_IVPointSetPrs_h
+#define asiVisu_IVPointSetPrs_h
 
 // A-Situs (visualization) includes
-#include <visu_iv_prs.h>
+#include <asiVisu_IVPrs.h>
 
 // A-Situs (visualization) includes
 #include <asiData_IVPointSetNode.h>
@@ -17,15 +17,15 @@
 // VTK includes
 #include <vtkTextWidget.h>
 
-DEFINE_STANDARD_HANDLE(visu_iv_point_set_prs, visu_iv_prs)
+DEFINE_STANDARD_HANDLE(asiVisu_IVPointSetPrs, asiVisu_IVPrs)
 
 //! Presentation class for a single point cloud in IV.
-class visu_iv_point_set_prs : public visu_iv_prs
+class asiVisu_IVPointSetPrs : public asiVisu_IVPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_iv_point_set_prs, visu_iv_prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVPointSetPrs, asiVisu_IVPrs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_IVPointSetNode, Instance)
@@ -40,7 +40,7 @@ public:
 
 public:
 
-  static Handle(visu_prs)
+  static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:
@@ -53,7 +53,7 @@ private:
 private:
 
   //! Allocation is allowed only via Instance method.
-  visu_iv_point_set_prs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_IVPointSetPrs(const Handle(ActAPI_INode)& theNode);
 
 private:
 

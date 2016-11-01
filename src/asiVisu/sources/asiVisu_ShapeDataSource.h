@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_shape_data_source_h
-#define visu_shape_data_source_h
+#ifndef asiVisu_ShapeDataSource_h
+#define asiVisu_ShapeDataSource_h
 
 // OCCT includes
 #include <IVtkTools_ShapeDataSource.hxx>
@@ -23,12 +23,12 @@
 //!       with OCCT. We have injected this source here in order to have
 //!       ability to play with meshing parameters. Later on it can be pushed
 //!       back to the original IVtk component of OCCT.
-class visu_shape_data_source : public IVtkTools_ShapeDataSource
+class asiVisu_ShapeDataSource : public IVtkTools_ShapeDataSource
 {
 public:
 
-  vtkTypeMacro(visu_shape_data_source, IVtkTools_ShapeDataSource);
-  static visu_shape_data_source* New();
+  vtkTypeMacro(asiVisu_ShapeDataSource, IVtkTools_ShapeDataSource);
+  static asiVisu_ShapeDataSource* New();
 
 protected: //! @name Interface to override
 
@@ -46,13 +46,13 @@ protected: //! @name Interface to override
 
 protected:
 
-  visu_shape_data_source();
-  ~visu_shape_data_source();
+  asiVisu_ShapeDataSource();
+  ~asiVisu_ShapeDataSource();
 
 private:
 
-  visu_shape_data_source (const visu_shape_data_source&);
-  visu_shape_data_source& operator= (const visu_shape_data_source&);
+  asiVisu_ShapeDataSource (const asiVisu_ShapeDataSource&);
+  asiVisu_ShapeDataSource& operator= (const asiVisu_ShapeDataSource&);
 
 };
 

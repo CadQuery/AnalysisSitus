@@ -5,15 +5,15 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asitusGeom_h
-#define asitusGeom_h
+#ifndef asiVisu_h
+#define asiVisu_h
 
-#define asitusGeom_NotUsed(x)
+#define asiVisu_NotUsed(x)
 
-#ifdef asitusGeom_EXPORTS
-  #define asitusGeom_EXPORT __declspec(dllexport)
+#ifdef asiVisu_EXPORTS
+  #define asiVisu_EXPORT __declspec(dllexport)
 #else
-  #define asitusGeom_EXPORT __declspec(dllimport)
+  #define asiVisu_EXPORT __declspec(dllimport)
 #endif
 
 // VTK includes

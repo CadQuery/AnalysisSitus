@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_shape_mesher_h
-#define visu_shape_mesher_h
+#ifndef asiVisu_ShapeMesher_h
+#define asiVisu_ShapeMesher_h
 
 // OCCT includes
 #include <BRepAdaptor_HSurface.hxx>
@@ -27,14 +27,14 @@ typedef NCollection_DataMap <TopoDS_Shape, IVtk_MeshType, TopTools_ShapeMapHashe
 typedef NCollection_Sequence <gp_Pnt> IVtk_Polyline;
 typedef NCollection_List <IVtk_Polyline> IVtk_PolylineList;
 
-class visu_shape_mesher;
-DEFINE_STANDARD_HANDLE( visu_shape_mesher, IVtk_IShapeMesher )
+class asiVisu_ShapeMesher;
+DEFINE_STANDARD_HANDLE( asiVisu_ShapeMesher, IVtk_IShapeMesher )
 
 //! \todo blueprint from IVtkOCC_ShapeMesher.
-class visu_shape_mesher : public IVtk_IShapeMesher
+class asiVisu_ShapeMesher : public IVtk_IShapeMesher
 {
 public:
-  visu_shape_mesher (const Standard_Real& theDevCoeff = 0.0001,
+  asiVisu_ShapeMesher (const Standard_Real& theDevCoeff = 0.0001,
                      const Standard_Real& theDevAngle = 12.0 * M_PI / 180.0,
                      const Standard_Integer theNbUIsos = 1,
                      const Standard_Integer theNbVIsos = 1)
@@ -46,7 +46,7 @@ public:
     myNbIsos[1] = theNbVIsos;
   }
 
-  virtual ~visu_shape_mesher() { }
+  virtual ~asiVisu_ShapeMesher() { }
 
   //! Returns absolute deflection used by this algorithm.
   //! This value is calculated on the basis of the shape's bounding box.
@@ -167,7 +167,7 @@ private:
   //! Get the IShape as OCC implementation
   const IVtkOCC_Shape::Handle GetShapeObj() const;
 
-  DEFINE_STANDARD_RTTIEXT(visu_shape_mesher, IVtk_IShapeMesher)
+  DEFINE_STANDARD_RTTIEXT(asiVisu_ShapeMesher, IVtk_IShapeMesher)
 
 private:
   IVtk_ShapeTypeMap     myEdgesTypes;

@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_prs.h>
+#include <asiVisu_Prs.h>
 
 // Active Data (API) includes
 #include <ActAPI_INode.h>
@@ -16,7 +16,7 @@
 
 //! Creates Presentation object for the passed Node.
 //! \param theNode [in] Node to create the presentation object for.
-visu_prs::visu_prs(const Handle(ActAPI_INode)& theNode)
+asiVisu_Prs::asiVisu_Prs(const Handle(ActAPI_INode)& theNode)
 : Standard_Transient(),
   m_node(theNode)
 {
@@ -37,7 +37,7 @@ visu_prs::visu_prs(const Handle(ActAPI_INode)& theNode)
 //! sources for the visualization pipelines. This process must be
 //! repeated each time the concerned Node Parameters are changed, e.g. due
 //! execution of a Tree Function.
-void visu_prs::InitPipelines()
+void asiVisu_Prs::InitPipelines()
 {
   // Allow descendants to do some job
   this->beforeInitPipelines();
@@ -48,7 +48,7 @@ void visu_prs::InitPipelines()
   for ( ; aPipesIt.More(); aPipesIt.Next() )
   {
     // Get pipeline
-    const Handle(visu_pipeline)& aPipeline = aPipesIt.Value();
+    const Handle(asiVisu_Pipeline)& aPipeline = aPipesIt.Value();
     const int aPipeKey = aPipesIt.Key();
 
     // Check Data Provider
@@ -56,7 +56,7 @@ void visu_prs::InitPipelines()
       Standard_ProgramError::Raise("No Data Provider bound to pipeline");
 
     // Assemble Parameters
-    Handle(visu_data_provider) aDataPrv = this->dataProvider(aPipeKey);
+    Handle(asiVisu_DataProvider) aDataPrv = this->dataProvider(aPipeKey);
 
     // Initialize pipeline
     aPipeline->SetInput(aDataPrv);
@@ -68,7 +68,7 @@ void visu_prs::InitPipelines()
 
 //! Attempts to build the underlying pipelines (if not yet) and then
 //! sends VTK Update request in order to re-pass them.
-void visu_prs::UpdatePipelines() const
+void asiVisu_Prs::UpdatePipelines() const
 {
   // Allow descendants to do some job
   this->beforeUpdatePipelines();
@@ -78,7 +78,7 @@ void visu_prs::UpdatePipelines() const
   for ( ; aPipesIt.More(); aPipesIt.Next() )
   {
     // Get pipeline
-    const Handle(visu_pipeline)& aPipeline = aPipesIt.Value();
+    const Handle(asiVisu_Pipeline)& aPipeline = aPipesIt.Value();
     aPipeline->Update();
   }
 
@@ -89,7 +89,7 @@ void visu_prs::UpdatePipelines() const
 //! Accessor for a visualization pipeline by its ID.
 //! \param theId [in] pipeline ID.
 //! \return requested visualization pipeline.
-const Handle(visu_pipeline)& visu_prs::GetPipeline(const int theId) const
+const Handle(asiVisu_Pipeline)& asiVisu_Prs::GetPipeline(const int theId) const
 {
   const PipelineMap& aPLMap = m_pipelineRepo.Find(Group_Prs);
 
@@ -102,10 +102,10 @@ const Handle(visu_pipeline)& visu_prs::GetPipeline(const int theId) const
 //! Gets list of visualization pipelines.
 //! Highlighting pipelines are not included in the list.
 //! \return list of visualization pipeline.
-const Handle(h_visu_pipeline_list) visu_prs::GetPipelineList() const
+const Handle(h_asiVisu_Pipeline_list) asiVisu_Prs::GetPipelineList() const
 {
-  Handle(h_visu_pipeline_list) aList = new h_visu_pipeline_list();
-  visu_prs::PipelineMap::Iterator aMapIt( m_pipelineRepo.Find(Group_Prs) );
+  Handle(h_asiVisu_Pipeline_list) aList = new h_asiVisu_Pipeline_list();
+  asiVisu_Prs::PipelineMap::Iterator aMapIt( m_pipelineRepo.Find(Group_Prs) );
   for ( ; aMapIt.More(); aMapIt.Next() )
     aList->Append( aMapIt.Value() );
 
@@ -115,7 +115,7 @@ const Handle(h_visu_pipeline_list) visu_prs::GetPipelineList() const
 //! Accessor for a visualization pipeline used for picking.
 //! \param theIdx [in] index of the picking pipeline to access.
 //! \return requested visualization pipeline.
-Handle(visu_pipeline) visu_prs::GetPickPipeline(const int theIdx) const
+Handle(asiVisu_Pipeline) asiVisu_Prs::GetPickPipeline(const int theIdx) const
 {
   const PipelineMap& aPLMap = m_pipelineRepo.Find(Group_Pick);
 
@@ -127,10 +127,10 @@ Handle(visu_pipeline) visu_prs::GetPickPipeline(const int theIdx) const
 
 //! Gets list of picking pipelines.
 //! \return list of picking pipeline.
-const Handle(h_visu_pipeline_list) visu_prs::GetPickPipelineList() const
+const Handle(h_asiVisu_Pipeline_list) asiVisu_Prs::GetPickPipelineList() const
 {
-  Handle(h_visu_pipeline_list) aList = new h_visu_pipeline_list();
-  visu_prs::PipelineMap::Iterator aMapIt( m_pipelineRepo.Find(Group_Pick) );
+  Handle(h_asiVisu_Pipeline_list) aList = new h_asiVisu_Pipeline_list();
+  asiVisu_Prs::PipelineMap::Iterator aMapIt( m_pipelineRepo.Find(Group_Pick) );
   for ( ; aMapIt.More(); aMapIt.Next() )
     aList->Append( aMapIt.Value() );
 
@@ -140,17 +140,17 @@ const Handle(h_visu_pipeline_list) visu_prs::GetPickPipelineList() const
 //! Accessor for a visualization pipeline used for detection.
 //! \param theIdx [in] index of the detection pipeline to access.
 //! \return requested visualization pipeline.
-const Handle(visu_pipeline)& visu_prs::GetDetectPipeline(const int theIdx) const
+const Handle(asiVisu_Pipeline)& asiVisu_Prs::GetDetectPipeline(const int theIdx) const
 {
   return m_pipelineRepo.Find(Group_Detect).Find(theIdx);
 }
 
 //! Gets list of detection pipelines.
 //! \return list of detection pipeline.
-const Handle(h_visu_pipeline_list) visu_prs::GetDetectPipelineList() const
+const Handle(h_asiVisu_Pipeline_list) asiVisu_Prs::GetDetectPipelineList() const
 {
-  Handle(h_visu_pipeline_list) aList = new h_visu_pipeline_list();
-  visu_prs::PipelineMap::Iterator aMapIt( m_pipelineRepo.Find(Group_Detect) );
+  Handle(h_asiVisu_Pipeline_list) aList = new h_asiVisu_Pipeline_list();
+  asiVisu_Prs::PipelineMap::Iterator aMapIt( m_pipelineRepo.Find(Group_Detect) );
   for ( ; aMapIt.More(); aMapIt.Next() )
     aList->Append( aMapIt.Value() );
 
@@ -159,19 +159,19 @@ const Handle(h_visu_pipeline_list) visu_prs::GetDetectPipelineList() const
 
 //! Return the associated data object.
 //! \return data object.
-Handle(ActAPI_INode) visu_prs::GetNode() const
+Handle(ActAPI_INode) asiVisu_Prs::GetNode() const
 {
   return m_node;
 }
 
 //! Adds the underlying pipelines to the passed renderer.
 //! \param theRenderer [in] render to add the pipelines to.
-void visu_prs::RenderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_Prs::RenderPipelines(vtkRenderer* theRenderer) const
 {
   PipelineMap::Iterator aPipesIt( m_pipelineRepo.Find(Group_Prs) );
   for ( ; aPipesIt.More(); aPipesIt.Next() )
   {
-    Handle(visu_pipeline) aBasePipeline = aPipesIt.Value();
+    Handle(asiVisu_Pipeline) aBasePipeline = aPipesIt.Value();
     aBasePipeline->AddToRenderer(theRenderer);
   }
 
@@ -181,12 +181,12 @@ void visu_prs::RenderPipelines(vtkRenderer* theRenderer) const
 
 //! Removes the underlying pipelines from the passed renderer.
 //! \param theRenderer [in] render to remove the pipelines from.
-void visu_prs::DeRenderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_Prs::DeRenderPipelines(vtkRenderer* theRenderer) const
 {
   PipelineMap::Iterator aPipesIt( m_pipelineRepo.Find(Group_Prs) );
   for ( ; aPipesIt.More(); aPipesIt.Next() )
   {
-    Handle(visu_pipeline) aBasePipeline = aPipesIt.Value();
+    Handle(asiVisu_Pipeline) aBasePipeline = aPipesIt.Value();
     aBasePipeline->RemoveFromRenderer(theRenderer);
   }
 
@@ -198,9 +198,9 @@ void visu_prs::DeRenderPipelines(vtkRenderer* theRenderer) const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] results of interactive picking.
 //! \param theSelNature [in] selection nature (picking or detection).
-void visu_prs::Highlight(vtkRenderer*                 theRenderer,
-                         const visu_pick_result&      thePickRes,
-                         const visu_selection_nature& theSelNature) const
+void asiVisu_Prs::Highlight(vtkRenderer*                 theRenderer,
+                         const asiVisu_PickResult&      thePickRes,
+                         const asiVisu_SelectionNature& theSelNature) const
 {
   this->highlight(theRenderer, thePickRes, theSelNature);
 }
@@ -208,8 +208,8 @@ void visu_prs::Highlight(vtkRenderer*                 theRenderer,
 //! Default un-highlighting actions.
 //! \param theRenderer  [in] renderer.
 //! \param theSelNature [in] selection nature (picking or detection).
-void visu_prs::UnHighlight(vtkRenderer*                 theRenderer,
-                           const visu_selection_nature& theSelNature) const
+void asiVisu_Prs::UnHighlight(vtkRenderer*                 theRenderer,
+                           const asiVisu_SelectionNature& theSelNature) const
 {
   this->unHighlight(theRenderer, theSelNature);
 }
@@ -218,8 +218,8 @@ void visu_prs::UnHighlight(vtkRenderer*                 theRenderer,
 //! by descendant classes in order to construct custom Presentation objects.
 //! \param theId       [in] ID of the new pipeline.
 //! \param thePipeline [in] pipeline to register.
-void visu_prs::addPipeline(const int                    theId,
-                           const Handle(visu_pipeline)& thePipeline)
+void asiVisu_Prs::addPipeline(const int                    theId,
+                           const Handle(asiVisu_Pipeline)& thePipeline)
 {
   m_pipelineRepo.ChangeFind(Group_Prs).Bind(theId, thePipeline);
 }
@@ -227,8 +227,8 @@ void visu_prs::addPipeline(const int                    theId,
 //! Assigns Data Provider instance to the given Pipeline.
 //! \param theId           [in] ID of the pipeline to bind Data Provider to.
 //! \param theDataProvider [in] Data Provider.
-void visu_prs::assignDataProvider(const int                         theId,
-                                  const Handle(visu_data_provider)& theDataProvider)
+void asiVisu_Prs::assignDataProvider(const int                         theId,
+                                  const Handle(asiVisu_DataProvider)& theDataProvider)
 {
   DataProviderMap& aDataPrvMap = m_dataPrvRepo.ChangeFind(Group_Prs);
 
@@ -242,7 +242,7 @@ void visu_prs::assignDataProvider(const int                         theId,
 //! passed ID.
 //! \param theId [in] ID of the pipeline to get Data Provider for.
 //! \return requested Data Provider.
-Handle(visu_data_provider) visu_prs::dataProvider(const int theId) const
+Handle(asiVisu_DataProvider) asiVisu_Prs::dataProvider(const int theId) const
 {
   const DataProviderMap& aDataPrvMap = m_dataPrvRepo.Find(Group_Prs);
 
@@ -256,8 +256,8 @@ Handle(visu_data_provider) visu_prs::dataProvider(const int theId) const
 //! \param theId [in] pipeline to get Data Provider for.
 //! \param theGroup [in] group.
 //! \return requested Data Provider.
-Handle(visu_data_provider)
-  visu_prs::dataProvider(const Handle(visu_pipeline)& thePipeline,
+Handle(asiVisu_DataProvider)
+  asiVisu_Prs::dataProvider(const Handle(asiVisu_Pipeline)& thePipeline,
                          const PipelineGroup          theGroup) const
 {
   const PipelineMap& aPipelineMap = m_pipelineRepo.Find(theGroup);
@@ -283,7 +283,7 @@ Handle(visu_data_provider)
 //! passed ID. This method is specialized for PICKING pipelines.
 //! \param theId [in] ID of the pipeline to get Data Provider for.
 //! \return requested Data Provider.
-Handle(visu_data_provider) visu_prs::dataProviderPick(const int theId) const
+Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderPick(const int theId) const
 {
   const DataProviderMap& aDataPrvMap = m_dataPrvRepo.Find(Group_Pick);
 
@@ -297,7 +297,7 @@ Handle(visu_data_provider) visu_prs::dataProviderPick(const int theId) const
 //! passed ID. This method is specialized for DETECTION pipelines.
 //! \param theId [in] ID of the pipeline to get Data Provider for.
 //! \return requested Data Provider.
-Handle(visu_data_provider) visu_prs::dataProviderDetect(const int theId) const
+Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderDetect(const int theId) const
 {
   const DataProviderMap& aDataPrvMap = m_dataPrvRepo.Find(Group_Detect);
 
@@ -311,8 +311,8 @@ Handle(visu_data_provider) visu_prs::dataProviderDetect(const int theId) const
 //! \param thePipeline     [in] pipeline to set.
 //! \param theDataProvider [in] Data Provider for the pipeline.
 //! \param theIdx          [in] pipeline index (1 by default).
-void visu_prs::installPickPipeline(const Handle(visu_pipeline)&      thePipeline,
-                                   const Handle(visu_data_provider)& theDataProvider,
+void asiVisu_Prs::installPickPipeline(const Handle(asiVisu_Pipeline)&      thePipeline,
+                                   const Handle(asiVisu_DataProvider)& theDataProvider,
                                    const int                         theIdx)
 {
   m_pipelineRepo.ChangeFind(Group_Pick).Bind(theIdx, thePipeline);
@@ -323,8 +323,8 @@ void visu_prs::installPickPipeline(const Handle(visu_pipeline)&      thePipeline
 //! \param thePipeline     [in] pipeline to set.
 //! \param theDataProvider [in] Data Provider for the pipeline.
 //! \param theIdx          [in] pipeline index (1 by default).
-void visu_prs::installDetectPipeline(const Handle(visu_pipeline)&      thePipeline,
-                                     const Handle(visu_data_provider)& theDataProvider,
+void asiVisu_Prs::installDetectPipeline(const Handle(asiVisu_Pipeline)&      thePipeline,
+                                     const Handle(asiVisu_DataProvider)& theDataProvider,
                                      const int                         theIdx)
 {
   m_pipelineRepo.ChangeFind(Group_Detect).Bind(theIdx, thePipeline);

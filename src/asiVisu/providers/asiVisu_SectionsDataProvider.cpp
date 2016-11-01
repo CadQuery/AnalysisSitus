@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_sections_data_provider.h>
+#include <asiVisu_SectionsDataProvider.h>
 
 // A-Situs (common) includes
 #include <common_facilities.h>
@@ -25,8 +25,8 @@
 
 //! Constructor accepting source ID.
 //! \param nodeId [in] ID of the target Data Node.
-visu_sections_data_provider::visu_sections_data_provider(const ActAPI_DataObjectId& nodeId)
-: visu_data_provider()
+asiVisu_SectionsDataProvider::asiVisu_SectionsDataProvider(const ActAPI_DataObjectId& nodeId)
+: asiVisu_DataProvider()
 {
   m_nodeID = nodeId;
 }
@@ -37,13 +37,13 @@ visu_sections_data_provider::visu_sections_data_provider(const ActAPI_DataObject
 //! pipeline. This ID is bound to the pipeline's actor in order to have a
 //! back-reference from Presentation to Data Object.
 //! \return Node ID.
-ActAPI_DataObjectId visu_sections_data_provider::GetNodeID() const
+ActAPI_DataObjectId asiVisu_SectionsDataProvider::GetNodeID() const
 {
   return m_nodeID;
 }
 
 //! \return transformed sections ready to be visualized.
-TopoDS_Compound visu_sections_data_provider::GetTransformedSections() const
+TopoDS_Compound asiVisu_SectionsDataProvider::GetTransformedSections() const
 {
   Handle(geom_sections_node)
     sections_n = common_facilities::Instance()->Model->GetSectionsNode();
@@ -82,7 +82,7 @@ TopoDS_Compound visu_sections_data_provider::GetTransformedSections() const
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) visu_sections_data_provider::translationSources() const
+Handle(ActAPI_HParameterList) asiVisu_SectionsDataProvider::translationSources() const
 {
   Handle(geom_sections_node)
     sections_n = common_facilities::Instance()->Model->GetSectionsNode();

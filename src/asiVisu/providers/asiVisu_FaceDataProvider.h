@@ -5,29 +5,29 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_face_data_provider_h
-#define visu_face_data_provider_h
+#ifndef asiVisu_FaceDataProvider_h
+#define asiVisu_FaceDataProvider_h
 
 // A-Situs visualization includes
-#include <visu_data_provider.h>
+#include <asiVisu_DataProvider.h>
 
 // OCCT includes
 #include <TopTools_IndexedMapOfShape.hxx>
 
-DEFINE_STANDARD_HANDLE(visu_face_data_provider, visu_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_FaceDataProvider, asiVisu_DataProvider)
 
 //! Data provider for face geometry.
-class visu_face_data_provider : public visu_data_provider
+class asiVisu_FaceDataProvider : public asiVisu_DataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_face_data_provider, visu_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FaceDataProvider, asiVisu_DataProvider)
 
 public:
 
-  visu_face_data_provider(const ActAPI_DataObjectId&           theNodeId,
-                          const Handle(ActAPI_HParameterList)& theParamList);
+  asiVisu_FaceDataProvider(const ActAPI_DataObjectId&           theNodeId,
+                           const Handle(ActAPI_HParameterList)& theParamList);
 
 public:
 
@@ -38,7 +38,7 @@ public:
 
 public:
 
-  Handle(visu_face_data_provider)
+  Handle(asiVisu_FaceDataProvider)
     Clone() const;
 
 private:

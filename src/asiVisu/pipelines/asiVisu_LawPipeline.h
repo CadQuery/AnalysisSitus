@@ -9,29 +9,29 @@
 #define visu_law_func_pipeline_h
 
 // A-Situs includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_law_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_LawPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for explicit design laws.
-class visu_law_pipeline : public visu_pipeline
+class asiVisu_LawPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_law_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_LawPipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_law_pipeline();
+  asiVisu_LawPipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& DP);
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:
 
@@ -42,10 +42,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_law_pipeline(const visu_law_pipeline&);
+  asiVisu_LawPipeline(const asiVisu_LawPipeline&);
 
   //! Assignment prohibited.
-  visu_law_pipeline& operator=(const visu_law_pipeline&);
+  asiVisu_LawPipeline& operator=(const asiVisu_LawPipeline&);
 
 };
 

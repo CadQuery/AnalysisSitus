@@ -5,22 +5,22 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_iv_prs_h
-#define visu_iv_prs_h
+#ifndef asiVisu_IVPrs_h
+#define asiVisu_IVPrs_h
 
 // A-Situs (visualization) includes
-#include <visu_prs.h>
-#include <visu_utils.h>
+#include <asiVisu_Prs.h>
+#include <asiVisu_Utils.h>
 
-DEFINE_STANDARD_HANDLE(visu_iv_prs, visu_prs)
+DEFINE_STANDARD_HANDLE(asiVisu_IVPrs, asiVisu_Prs)
 
 //! Base presentation class for IV.
-class visu_iv_prs : public visu_prs
+class asiVisu_IVPrs : public asiVisu_Prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_iv_prs, visu_prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVPrs, asiVisu_Prs)
 
 public:
 
@@ -37,16 +37,16 @@ private:
   virtual void beforeUpdatePipelines() const;
   virtual void afterUpdatePipelines() const;
   virtual void highlight(vtkRenderer* theRenderer,
-                         const visu_pick_result& thePickRes,
-                         const visu_selection_nature& theSelNature) const;
+                         const asiVisu_PickResult& thePickRes,
+                         const asiVisu_SelectionNature& theSelNature) const;
   virtual void unHighlight(vtkRenderer* theRenderer,
-                           const visu_selection_nature& theSelNature) const;
+                           const asiVisu_SelectionNature& theSelNature) const;
   virtual void renderPipelines(vtkRenderer* theRenderer) const;
   virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
 
 protected:
 
-  visu_iv_prs(const Handle(ActAPI_INode)& node) : visu_prs(node) {}
+  asiVisu_IVPrs(const Handle(ActAPI_INode)& node) : asiVisu_Prs(node) {}
 
 };
 

@@ -6,17 +6,17 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_mesh_prs.h>
+#include <asiVisu_MeshPrs.h>
 
 // Visualization includes
-#include <visu_display_mode.h>
-#include <visu_mesh_contour_pipeline.h>
-#include <visu_mesh_data_provider.h>
-#include <visu_mesh_pipeline.h>
-#include <visu_utils.h>
+#include <asiVisu_DisplayMode.h>
+#include <asiVisu_MeshContourPipeline.h>
+#include <asiVisu_MeshDataProvider.h>
+#include <asiVisu_MeshPipeline.h>
+#include <asiVisu_Utils.h>
 
 // GUI includes
-#include <gui_common.h>
+#include <asiUI_Common.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -25,19 +25,19 @@
 
 //! Creates a Presentation object for the passed Mesh Node.
 //! \param theNode [in] Mesh Node to create a Presentation for.
-visu_mesh_prs::visu_mesh_prs(const Handle(ActAPI_INode)& theNode) : visu_prs(theNode)
+asiVisu_MeshPrs::asiVisu_MeshPrs(const Handle(ActAPI_INode)& theNode) : asiVisu_Prs(theNode)
 {
   // Create Data Provider
-  Handle(visu_mesh_data_provider)
-    DP = new visu_mesh_data_provider( theNode->GetId(),
+  Handle(asiVisu_MeshDataProvider)
+    DP = new asiVisu_MeshDataProvider( theNode->GetId(),
                                       ActAPI_ParameterStream() << theNode->Parameter(asiData_TessNode::PID_Mesh) );
 
   // Pipeline for mesh
-  this->addPipeline(Pipeline_Mesh, new visu_mesh_pipeline);
+  this->addPipeline(Pipeline_Mesh, new asiVisu_MeshPipeline);
   this->assignDataProvider(Pipeline_Mesh, DP);
 
   // Pipeline for mesh contour
-  this->addPipeline(Pipeline_MeshContour, new visu_mesh_contour_pipeline);
+  this->addPipeline(Pipeline_MeshContour, new asiVisu_MeshContourPipeline);
   this->assignDataProvider(Pipeline_MeshContour, DP);
   //
   this->GetPipeline(Pipeline_MeshContour)->Actor()->GetProperty()->SetOpacity(0.5);
@@ -52,14 +52,14 @@ visu_mesh_prs::visu_mesh_prs(const Handle(ActAPI_INode)& theNode) : visu_prs(the
    *  Prepare a pipeline for highlighting
    * ===================================== */
 
-  Handle(visu_mesh_contour_pipeline) aHiliPipeline = new visu_mesh_contour_pipeline();
+  Handle(asiVisu_MeshContourPipeline) aHiliPipeline = new asiVisu_MeshContourPipeline();
 
   // Set color, opacity and line width
   double aHiliColor[3];
-  visu_utils::DefaultDetectionColor(aHiliColor[0], aHiliColor[1], aHiliColor[2]);
+  asiVisu_Utils::DefaultDetectionColor(aHiliColor[0], aHiliColor[1], aHiliColor[2]);
   aHiliPipeline->Actor()->GetProperty()->SetColor(aHiliColor[0], aHiliColor[1], aHiliColor[2]);
   aHiliPipeline->Actor()->GetProperty()->SetOpacity(0.75);
-  aHiliPipeline->Actor()->GetProperty()->SetLineWidth( visu_utils::DefaultDetectionLineWidth() );
+  aHiliPipeline->Actor()->GetProperty()->SetLineWidth( asiVisu_Utils::DefaultDetectionLineWidth() );
 
   // Set picking pipeline
   this->installDetectPipeline( aHiliPipeline, DP->Clone() );
@@ -68,25 +68,25 @@ visu_mesh_prs::visu_mesh_prs(const Handle(ActAPI_INode)& theNode) : visu_prs(the
 //! Factory method for Node's Presentation.
 //! \param theNode [in] Mesh Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_mesh_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_MeshPrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_mesh_prs(theNode);
+  return new asiVisu_MeshPrs(theNode);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool visu_mesh_prs::IsVisible() const
+bool asiVisu_MeshPrs::IsVisible() const
 {
   return true; // TODO: make visibility controllable
 }
 
 //! Sets SHADING visualization mode.
-void visu_mesh_prs::doShading() const
+void asiVisu_MeshPrs::doShading() const
 {
-  Handle(visu_mesh_pipeline) aMeshPL =
-    Handle(visu_mesh_pipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
-  Handle(visu_mesh_pipeline) aMeshContourPL =
-    Handle(visu_mesh_pipeline)::DownCast( this->GetPipeline(Pipeline_MeshContour) );
+  Handle(asiVisu_MeshPipeline) aMeshPL =
+    Handle(asiVisu_MeshPipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
+  Handle(asiVisu_MeshPipeline) aMeshContourPL =
+    Handle(asiVisu_MeshPipeline)::DownCast( this->GetPipeline(Pipeline_MeshContour) );
 
   aMeshPL->Actor()->GetProperty()->EdgeVisibilityOff();
   aMeshPL->Actor()->GetProperty()->SetRepresentationToSurface();
@@ -94,12 +94,12 @@ void visu_mesh_prs::doShading() const
 }
 
 //! Sets WIREFRAME visualization mode.
-void visu_mesh_prs::doWireframe() const
+void asiVisu_MeshPrs::doWireframe() const
 {
-  Handle(visu_mesh_pipeline) aMeshPL =
-    Handle(visu_mesh_pipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
-  Handle(visu_mesh_pipeline) aMeshContourPL =
-    Handle(visu_mesh_pipeline)::DownCast( this->GetPipeline(Pipeline_MeshContour) );
+  Handle(asiVisu_MeshPipeline) aMeshPL =
+    Handle(asiVisu_MeshPipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
+  Handle(asiVisu_MeshPipeline) aMeshContourPL =
+    Handle(asiVisu_MeshPipeline)::DownCast( this->GetPipeline(Pipeline_MeshContour) );
 
   aMeshPL->Actor()->GetProperty()->EdgeVisibilityOn();
   aMeshPL->Actor()->GetProperty()->SetRepresentationToWireframe();
@@ -108,13 +108,13 @@ void visu_mesh_prs::doWireframe() const
 
 //! Sets custom color for the Mesh.
 //! \param theColor [in] color to set.
-void visu_mesh_prs::doColor(const QColor& theColor) const
+void asiVisu_MeshPrs::doColor(const QColor& theColor) const
 {
   if ( !theColor.isValid() )
     return;
 
-  Handle(visu_mesh_pipeline) aMeshPL =
-    Handle(visu_mesh_pipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
+  Handle(asiVisu_MeshPipeline) aMeshPL =
+    Handle(asiVisu_MeshPipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
 
   aMeshPL->Mapper()->ScalarVisibilityOff();
   aMeshPL->Actor()->GetProperty()->SetColor( theColor.redF(),
@@ -123,26 +123,26 @@ void visu_mesh_prs::doColor(const QColor& theColor) const
 }
 
 //! Unsets custom color for the Mesh.
-void visu_mesh_prs::doUnColor() const
+void asiVisu_MeshPrs::doUnColor() const
 {
-  Handle(visu_mesh_pipeline) aMeshPL =
-    Handle(visu_mesh_pipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
+  Handle(asiVisu_MeshPipeline) aMeshPL =
+    Handle(asiVisu_MeshPipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
 
   aMeshPL->Mapper()->ScalarVisibilityOn();
 }
 
 //! Callback for initialization of Presentation pipelines.
-void visu_mesh_prs::beforeInitPipelines()
+void asiVisu_MeshPrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void visu_mesh_prs::afterInitPipelines()
+void asiVisu_MeshPrs::afterInitPipelines()
 {
   // Access a dedicated pipeline for highlighting
-  const Handle(visu_mesh_contour_pipeline)& detect_pl =
-    Handle(visu_mesh_contour_pipeline)::DownCast( this->GetDetectPipeline() );
+  const Handle(asiVisu_MeshContourPipeline)& detect_pl =
+    Handle(asiVisu_MeshContourPipeline)::DownCast( this->GetDetectPipeline() );
 
   // Initialize the pipeline's input
   detect_pl->SetInput( this->dataProvider(Pipeline_Mesh) );
@@ -150,11 +150,11 @@ void visu_mesh_prs::afterInitPipelines()
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void visu_mesh_prs::beforeUpdatePipelines() const
+void asiVisu_MeshPrs::beforeUpdatePipelines() const
 {
   Handle(asiData_TessNode) Mesh_Node = Handle(asiData_TessNode)::DownCast( this->GetNode() );
 
-  visu_display_mode aDMode = (visu_display_mode) Mesh_Node->GetDisplayMode();
+  asiVisu_DisplayMode aDMode = (asiVisu_DisplayMode) Mesh_Node->GetDisplayMode();
   if ( aDMode == DisplayMode_Undefined || aDMode == DisplayMode_Shading )
     this->doShading();
   else if ( aDMode == DisplayMode_Wireframe )
@@ -163,15 +163,15 @@ void visu_mesh_prs::beforeUpdatePipelines() const
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void visu_mesh_prs::afterUpdatePipelines() const
+void asiVisu_MeshPrs::afterUpdatePipelines() const
 {
   /* ======================================
    *  Update highlighting pipeline as well
    * ====================================== */
 
   // Access a dedicated pipeline for highlighting
-  const Handle(visu_mesh_contour_pipeline)& detect_pl =
-    Handle(visu_mesh_contour_pipeline)::DownCast( this->GetDetectPipeline() );
+  const Handle(asiVisu_MeshContourPipeline)& detect_pl =
+    Handle(asiVisu_MeshContourPipeline)::DownCast( this->GetDetectPipeline() );
 
   // IMPORTANT: We update our highlighting pipeline here just to make things
   // faster. The better place to do that is "highlight" method, because
@@ -188,7 +188,7 @@ void visu_mesh_prs::afterUpdatePipelines() const
   Handle(asiData_TessNode) Mesh_Node = Handle(asiData_TessNode)::DownCast( this->GetNode() );
   if ( Mesh_Node->HasColor() )
   {
-    QColor aColor = gui_common::IntToColor( Mesh_Node->GetColor() );
+    QColor aColor = asiUI_Common::IntToColor( Mesh_Node->GetColor() );
     this->doColor(aColor);
   }
   else
@@ -199,21 +199,21 @@ void visu_mesh_prs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection kind.
-void visu_mesh_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                              const visu_pick_result&      ASitus_NotUsed(thePickRes),
-                              const visu_selection_nature& theSelNature) const
+void asiVisu_MeshPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                              const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                              const asiVisu_SelectionNature& theSelNature) const
 {
   //---------------------------------------------------------------------------
   // Update highlighting pipelines
   //---------------------------------------------------------------------------
 
   // Access pipeline for highlighting
-  Handle(visu_mesh_contour_pipeline) hili_pl;
+  Handle(asiVisu_MeshContourPipeline) hili_pl;
   //
   if ( theSelNature == SelectionNature_Pick )
-    hili_pl = Handle(visu_mesh_contour_pipeline)::DownCast( this->GetPickPipeline() );
+    hili_pl = Handle(asiVisu_MeshContourPipeline)::DownCast( this->GetPickPipeline() );
   else
-    hili_pl = Handle(visu_mesh_contour_pipeline)::DownCast( this->GetDetectPipeline() );
+    hili_pl = Handle(asiVisu_MeshContourPipeline)::DownCast( this->GetDetectPipeline() );
 
   if ( !hili_pl )
     return;
@@ -230,16 +230,16 @@ void visu_mesh_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRen
 //! Callback for un-highlighting.
 //! \param theRenderer  [in] renderer.
 //! \param theSelNature [in] selection kind.
-void visu_mesh_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                const visu_selection_nature& theSelNature) const
+void asiVisu_MeshPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                const asiVisu_SelectionNature& theSelNature) const
 {
   // Access pipeline for highlighting
-  Handle(visu_mesh_contour_pipeline) hili_pl;
+  Handle(asiVisu_MeshContourPipeline) hili_pl;
   //
   if ( theSelNature == SelectionNature_Pick )
-    hili_pl = Handle(visu_mesh_contour_pipeline)::DownCast( this->GetPickPipeline() );
+    hili_pl = Handle(asiVisu_MeshContourPipeline)::DownCast( this->GetPickPipeline() );
   else
-    hili_pl = Handle(visu_mesh_contour_pipeline)::DownCast( this->GetDetectPipeline() );
+    hili_pl = Handle(asiVisu_MeshContourPipeline)::DownCast( this->GetDetectPipeline() );
 
   if ( !hili_pl )
     return;
@@ -250,14 +250,14 @@ void visu_mesh_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theR
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void visu_mesh_prs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_MeshPrs::renderPipelines(vtkRenderer* theRenderer) const
 {
   //---------------------------------------------------------------------------
   // Highlighting
   //---------------------------------------------------------------------------
 
-  const Handle(visu_mesh_contour_pipeline)&
-    detect_pl = Handle(visu_mesh_contour_pipeline)::DownCast( this->GetDetectPipeline() );
+  const Handle(asiVisu_MeshContourPipeline)&
+    detect_pl = Handle(asiVisu_MeshContourPipeline)::DownCast( this->GetDetectPipeline() );
 
   // Picking pipeline must be added to renderer the LAST (!). Otherwise
   // we experience some strange coloring bug because of their coincidence
@@ -266,14 +266,14 @@ void visu_mesh_prs::renderPipelines(vtkRenderer* theRenderer) const
 
 //! Callback for de-rendering.
 //! \param theRenderer [in] renderer.
-void visu_mesh_prs::deRenderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_MeshPrs::deRenderPipelines(vtkRenderer* theRenderer) const
 {
   //---------------------------------------------------------------------------
   // Highlighting
   //---------------------------------------------------------------------------
 
-  Handle(visu_mesh_contour_pipeline)
-    detect_pl = Handle(visu_mesh_contour_pipeline)::DownCast( this->GetDetectPipeline() );
+  Handle(asiVisu_MeshContourPipeline)
+    detect_pl = Handle(asiVisu_MeshContourPipeline)::DownCast( this->GetDetectPipeline() );
   //
   detect_pl->RemoveFromRenderer(theRenderer);
 }

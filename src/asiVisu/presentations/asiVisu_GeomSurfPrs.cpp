@@ -6,14 +6,14 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_geom_surf_prs.h>
+#include <asiVisu_GeomSurfPrs.h>
 
 // A-Situs (visualization) includes
-#include <visu_face_data_provider.h>
-#include <visu_face_surface_pipeline.h>
-#include <visu_mesh_result_utils.h>
-#include <visu_shaded_surface_pipeline.h>
-#include <visu_utils.h>
+#include <asiVisu_FaceDataProvider.h>
+#include <asiVisu_FaceSurfacePipeline.h>
+#include <asiVisu_MeshResultUtils.h>
+#include <asiVisu_ShadedSurfacePipeline.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkCoordinate.h>
@@ -97,12 +97,12 @@ void CreateImage(vtkSmartPointer<vtkImageData> image,
 
 //! Creates a Presentation object for the passed Geometry Surface Node.
 //! \param theNode [in] Geometry Surface Node to create a Presentation for.
-visu_geom_surf_prs::visu_geom_surf_prs(const Handle(ActAPI_INode)& theNode)
-: visu_prs(theNode)
+asiVisu_GeomSurfPrs::asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& theNode)
+: asiVisu_Prs(theNode)
 {
   // Create Data Provider
-  Handle(visu_face_data_provider) DP =
-    new visu_face_data_provider( theNode->GetId(),
+  Handle(asiVisu_FaceDataProvider) DP =
+    new asiVisu_FaceDataProvider( theNode->GetId(),
                                  ActParamStream() << theNode->Parameter(asiData_SurfNode::PID_SelectedFace) );
 
   //---------------------------------------------------------------------------
@@ -110,7 +110,7 @@ visu_geom_surf_prs::visu_geom_surf_prs(const Handle(ActAPI_INode)& theNode)
   //---------------------------------------------------------------------------
 
   // Pipeline for surface isolines
-  this->addPipeline        ( Pipeline_Main, new visu_face_surface_pipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_FaceSurfacePipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 
   //---------------------------------------------------------------------------
@@ -118,7 +118,7 @@ visu_geom_surf_prs::visu_geom_surf_prs(const Handle(ActAPI_INode)& theNode)
   //---------------------------------------------------------------------------
 
   // Pipeline for surface in manually crafted shading
-  Handle(visu_shaded_surface_pipeline) shaded_pl = new visu_shaded_surface_pipeline;
+  Handle(asiVisu_ShadedSurfacePipeline) shaded_pl = new asiVisu_ShadedSurfacePipeline;
   //
   this->addPipeline        ( Pipeline_Shaded, shaded_pl );
   this->assignDataProvider ( Pipeline_Shaded, DP );
@@ -132,15 +132,15 @@ visu_geom_surf_prs::visu_geom_surf_prs(const Handle(ActAPI_INode)& theNode)
 
   // Initialize text widget used for annotations
   m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
-  visu_utils::InitTextWidget(m_textWidget);
+  asiVisu_Utils::InitTextWidget(m_textWidget);
 
   // Initialize scalar bar
   m_scalarBarWidget = vtkSmartPointer<vtkScalarBarWidget>::New();
-  visu_mesh_result_utils::InitScalarBarWidget(m_scalarBarWidget);
+  asiVisu_MeshResultUtils::InitScalarBarWidget(m_scalarBarWidget);
 
   // Button to switch between visualization modes
   m_modeButton = vtkSmartPointer<vtkButtonWidget>::New();
-  m_modeCallback = vtkSmartPointer<visu_surf_btn_callback>::New();
+  m_modeCallback = vtkSmartPointer<asiVisu_SurfBtnCallback>::New();
   //
   m_modeCallback->SetPresentation(this);
   m_modeButton->AddObserver(vtkCommand::StateChangedEvent, m_modeCallback);
@@ -149,14 +149,14 @@ visu_geom_surf_prs::visu_geom_surf_prs(const Handle(ActAPI_INode)& theNode)
 //! Factory method for Presentation.
 //! \param theNode [in] Surface Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_geom_surf_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_GeomSurfPrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_geom_surf_prs(theNode);
+  return new asiVisu_GeomSurfPrs(theNode);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool visu_geom_surf_prs::IsVisible() const
+bool asiVisu_GeomSurfPrs::IsVisible() const
 {
   return true;
 }
@@ -164,33 +164,33 @@ bool visu_geom_surf_prs::IsVisible() const
 //-----------------------------------------------------------------------------
 
 //! Enables wireframe pipeline.
-void visu_geom_surf_prs::DoWireframe()
+void asiVisu_GeomSurfPrs::DoWireframe()
 {
   // Pipeline for wireframe surface
-  Handle(visu_face_surface_pipeline)
-    wire_pl = Handle(visu_face_surface_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_FaceSurfacePipeline)
+    wire_pl = Handle(asiVisu_FaceSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
   //
   wire_pl->Actor()->SetVisibility(1);
 
   // Pipeline for shaded surface
-  Handle(visu_shaded_surface_pipeline)
-    shaded_pl = Handle(visu_shaded_surface_pipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+  Handle(asiVisu_ShadedSurfacePipeline)
+    shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
   //
   shaded_pl->Actor()->SetVisibility(0);
 }
 
 //! Enables shaded pipeline.
-void visu_geom_surf_prs::DoShaded()
+void asiVisu_GeomSurfPrs::DoShaded()
 {
   // Pipeline for wireframe surface
-  Handle(visu_face_surface_pipeline)
-    wire_pl = Handle(visu_face_surface_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_FaceSurfacePipeline)
+    wire_pl = Handle(asiVisu_FaceSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
   //
   wire_pl->Actor()->SetVisibility(0);
 
   // Pipeline for shaded surface
-  Handle(visu_shaded_surface_pipeline)
-    shaded_pl = Handle(visu_shaded_surface_pipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+  Handle(asiVisu_ShadedSurfacePipeline)
+    shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
   //
   shaded_pl->CurvatureOff();
   shaded_pl->ForceUpdate();
@@ -198,17 +198,17 @@ void visu_geom_surf_prs::DoShaded()
 }
 
 //! Enables shaded pipeline with Gaussian curvature scalars.
-void visu_geom_surf_prs::DoShadedAndGaussian()
+void asiVisu_GeomSurfPrs::DoShadedAndGaussian()
 {
   // Pipeline for wireframe surface
-  Handle(visu_face_surface_pipeline)
-    wire_pl = Handle(visu_face_surface_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_FaceSurfacePipeline)
+    wire_pl = Handle(asiVisu_FaceSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
   //
   wire_pl->Actor()->SetVisibility(0);
 
   // Pipeline for shaded surface
-  Handle(visu_shaded_surface_pipeline)
-    shaded_pl = Handle(visu_shaded_surface_pipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+  Handle(asiVisu_ShadedSurfacePipeline)
+    shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
   //
   shaded_pl->GaussianCurvatureOn();
   shaded_pl->ForceUpdate();
@@ -216,17 +216,17 @@ void visu_geom_surf_prs::DoShadedAndGaussian()
 }
 
 //! Enables shaded pipeline with mean curvature scalars.
-void visu_geom_surf_prs::DoShadedAndMean()
+void asiVisu_GeomSurfPrs::DoShadedAndMean()
 {
   // Pipeline for wireframe surface
-  Handle(visu_face_surface_pipeline)
-    wire_pl = Handle(visu_face_surface_pipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_FaceSurfacePipeline)
+    wire_pl = Handle(asiVisu_FaceSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
   //
   wire_pl->Actor()->SetVisibility(0);
 
   // Pipeline for shaded surface
-  Handle(visu_shaded_surface_pipeline)
-    shaded_pl = Handle(visu_shaded_surface_pipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+  Handle(asiVisu_ShadedSurfacePipeline)
+    shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
   //
   shaded_pl->MeanCurvatureOn();
   shaded_pl->ForceUpdate();
@@ -235,22 +235,22 @@ void visu_geom_surf_prs::DoShadedAndMean()
 
 //! Checks whether the shaded pipeline is enabled or not.
 //! \return true/false.
-bool visu_geom_surf_prs::IsShaded() const
+bool asiVisu_GeomSurfPrs::IsShaded() const
 {
   // Pipeline for shaded surface
-  Handle(visu_shaded_surface_pipeline)
-    shaded_pl = Handle(visu_shaded_surface_pipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+  Handle(asiVisu_ShadedSurfacePipeline)
+    shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
   //
   return shaded_pl->Actor()->GetVisibility() > 0;
 }
 
 //! Checks whether the shaded pipeline is enabled or not.
 //! \return true/false.
-bool visu_geom_surf_prs::IsShadedAndScalars() const
+bool asiVisu_GeomSurfPrs::IsShadedAndScalars() const
 {
   // Pipeline for shaded surface
-  Handle(visu_shaded_surface_pipeline)
-    shaded_pl = Handle(visu_shaded_surface_pipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+  Handle(asiVisu_ShadedSurfacePipeline)
+    shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
   //
   return ( shaded_pl->Actor()->GetVisibility() > 0 ) &&
          ( shaded_pl->IsGaussianCurvature() || shaded_pl->IsMeanCurvature() );
@@ -259,16 +259,16 @@ bool visu_geom_surf_prs::IsShadedAndScalars() const
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void visu_geom_surf_prs::beforeInitPipelines()
+void asiVisu_GeomSurfPrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void visu_geom_surf_prs::afterInitPipelines()
+void asiVisu_GeomSurfPrs::afterInitPipelines()
 {
-  Handle(visu_face_data_provider)
-    DP = Handle(visu_face_data_provider)::DownCast( this->dataProvider(Pipeline_Main) );
+  Handle(asiVisu_FaceDataProvider)
+    DP = Handle(asiVisu_FaceDataProvider)::DownCast( this->dataProvider(Pipeline_Main) );
 
   // Get working face and its host surface
   const int            F_idx = DP->GetFaceIndexAmongFaces();
@@ -354,14 +354,14 @@ void visu_geom_surf_prs::afterInitPipelines()
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void visu_geom_surf_prs::beforeUpdatePipelines() const
+void asiVisu_GeomSurfPrs::beforeUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void visu_geom_surf_prs::afterUpdatePipelines() const
+void asiVisu_GeomSurfPrs::afterUpdatePipelines() const
 {
   // Scalar bar
   if ( this->IsShadedAndScalars() )
@@ -373,8 +373,8 @@ void visu_geom_surf_prs::afterUpdatePipelines() const
   if ( this->IsShadedAndScalars() )
   {
     // Pipeline for shaded surface
-    Handle(visu_shaded_surface_pipeline)
-      shaded_pl = Handle(visu_shaded_surface_pipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+    Handle(asiVisu_ShadedSurfacePipeline)
+      shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
 
     // Initialize scalar bar Actor
     m_scalarBarWidget->GetScalarBarActor()->SetLookupTable( shaded_pl->Mapper()->GetLookupTable() );
@@ -400,24 +400,24 @@ void visu_geom_surf_prs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void visu_geom_surf_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                   const visu_pick_result&      ASitus_NotUsed(thePickRes),
-                                   const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_GeomSurfPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                   const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                   const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void visu_geom_surf_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                     const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_GeomSurfPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                     const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void visu_geom_surf_prs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomSurfPrs::renderPipelines(vtkRenderer* theRenderer) const
 {
   // Annotation
   if ( !m_textWidget->GetCurrentRenderer() )
@@ -478,7 +478,7 @@ void visu_geom_surf_prs::renderPipelines(vtkRenderer* theRenderer) const
 
 //! Callback for de-rendering.
 //! \param theRenderer [in] renderer.
-void visu_geom_surf_prs::deRenderPipelines(vtkRenderer* ASitus_NotUsed(theRenderer)) const
+void asiVisu_GeomSurfPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   m_textWidget->Off();
   //
@@ -492,13 +492,13 @@ void visu_geom_surf_prs::deRenderPipelines(vtkRenderer* ASitus_NotUsed(theRender
 
 //! Instantiation routine.
 //! \return instance of the callback class.
-visu_surf_btn_callback* visu_surf_btn_callback::New()
+asiVisu_SurfBtnCallback* asiVisu_SurfBtnCallback::New()
 {
-  return new visu_surf_btn_callback();
+  return new asiVisu_SurfBtnCallback();
 }
 
 //! Callback for button clicking.
-void visu_surf_btn_callback::Execute(vtkObject* theCaller,
+void asiVisu_SurfBtnCallback::Execute(vtkObject* theCaller,
                                      unsigned long,
                                      void*)
 {

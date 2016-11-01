@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <journal_iv.h>
+#include <asiVisu_JournalIV.h>
 
 // Common includes
 #include <common_facilities.h>
@@ -15,11 +15,11 @@
 #include <asiEngine_IV.h>
 
 // Visualization includes
-#include <visu_iv_point_set_prs.h>
-#include <visu_iv_topo_item_prs.h>
-#include <visu_points_pipeline.h>
-#include <visu_shape_pipeline.h>
-#include <visu_utils.h>
+#include <asiVisu_IVPointSetPrs.h>
+#include <asiVisu_IVTopoItemPrs.h>
+#include <asiVisu_PointsPipeline.h>
+#include <asiVisu_ShapePipeline.h>
+#include <asiVisu_Utils.h>
 
 // OCCT includes
 #include <GC_MakeSegment.hxx>
@@ -31,7 +31,7 @@
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::CLEAN()
+void asiVisu_JournalIV::CLEAN()
 {
   this->prsManager2d()->DeleteAllPresentations();
   this->prsManager2d()->InitializePickers();
@@ -42,7 +42,7 @@ void journal_iv::CLEAN()
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_POINT(const gp_XY&                   coord,
+void asiVisu_JournalIV::DRAW_POINT(const gp_XY&                   coord,
                             const Quantity_Color&          color,
                             const TCollection_AsciiString& name)
 {
@@ -71,7 +71,7 @@ void journal_iv::DRAW_POINT(const gp_XY&                   coord,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_POINT(const gp_Pnt2d&                point,
+void asiVisu_JournalIV::DRAW_POINT(const gp_Pnt2d&                point,
                             const Quantity_Color&          color,
                             const TCollection_AsciiString& name)
 {
@@ -80,7 +80,7 @@ void journal_iv::DRAW_POINT(const gp_Pnt2d&                point,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_POINT(const gp_XYZ&                  coord,
+void asiVisu_JournalIV::DRAW_POINT(const gp_XYZ&                  coord,
                             const Quantity_Color&          color,
                             const TCollection_AsciiString& name)
 {
@@ -95,7 +95,7 @@ void journal_iv::DRAW_POINT(const gp_XYZ&                  coord,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_POINT(const gp_Pnt&                  point,
+void asiVisu_JournalIV::DRAW_POINT(const gp_Pnt&                  point,
                             const Quantity_Color&          color,
                             const TCollection_AsciiString& name)
 {
@@ -104,7 +104,7 @@ void journal_iv::DRAW_POINT(const gp_Pnt&                  point,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_POINTS(const Handle(HRealArray)&      coords,
+void asiVisu_JournalIV::DRAW_POINTS(const Handle(HRealArray)&      coords,
                              const Quantity_Color&          color,
                              const TCollection_AsciiString& name)
 {
@@ -128,7 +128,7 @@ void journal_iv::DRAW_POINTS(const Handle(HRealArray)&      coords,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_LINK(const gp_Pnt&                  p1,
+void asiVisu_JournalIV::DRAW_LINK(const gp_Pnt&                  p1,
                            const gp_Pnt&                  p2,
                            const Quantity_Color&          color,
                            const TCollection_AsciiString& name)
@@ -159,7 +159,7 @@ void journal_iv::DRAW_LINK(const gp_Pnt&                  p1,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_VECTOR_AT(const gp_Pnt&                  P,
+void asiVisu_JournalIV::DRAW_VECTOR_AT(const gp_Pnt&                  P,
                                 const gp_Vec&                  V,
                                 const Quantity_Color&          color,
                                 const TCollection_AsciiString& name)
@@ -169,7 +169,7 @@ void journal_iv::DRAW_VECTOR_AT(const gp_Pnt&                  P,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_CURVE(const Handle(Geom_Curve)&      curve,
+void asiVisu_JournalIV::DRAW_CURVE(const Handle(Geom_Curve)&      curve,
                             const Quantity_Color&          color,
                             const TCollection_AsciiString& name)
 {
@@ -193,7 +193,7 @@ void journal_iv::DRAW_CURVE(const Handle(Geom_Curve)&      curve,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
+void asiVisu_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
                               const Quantity_Color&          color,
                               const TCollection_AsciiString& name)
 {
@@ -202,7 +202,7 @@ void journal_iv::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
+void asiVisu_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
                               const Quantity_Color&          color,
                               const double                   opacity,
                               const TCollection_AsciiString& name)
@@ -212,7 +212,7 @@ void journal_iv::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
+void asiVisu_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
                               const double                   uLimit,
                               const double                   vLimit,
                               const Quantity_Color&          color,
@@ -223,7 +223,7 @@ void journal_iv::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
+void asiVisu_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
                               const double                   uLimit,
                               const double                   vLimit,
                               const Quantity_Color&          color,
@@ -250,7 +250,7 @@ void journal_iv::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
+void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
                             const TCollection_AsciiString& name)
 {
   this->DRAW_SHAPE(shape, 1.0, name);
@@ -258,7 +258,7 @@ void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
+void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
                             const Quantity_Color&          color,
                             const TCollection_AsciiString& name)
 {
@@ -267,7 +267,7 @@ void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
+void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
                             const double                   opacity,
                             const TCollection_AsciiString& name)
 {
@@ -291,7 +291,7 @@ void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
+void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
                             const Quantity_Color&          color,
                             const double                   opacity,
                             const TCollection_AsciiString& name)
@@ -316,7 +316,7 @@ void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
+void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
                             const Quantity_Color&          color,
                             const double                   opacity,
                             const bool                     isWireframe,
@@ -342,7 +342,7 @@ void journal_iv::DRAW_SHAPE(const TopoDS_Shape&            shape,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_TRIANGULATION(const Handle(Poly_Triangulation)& shape,
+void asiVisu_JournalIV::DRAW_TRIANGULATION(const Handle(Poly_Triangulation)& shape,
                                     const Quantity_Color&             color,
                                     const double                      opacity,
                                     const TCollection_AsciiString&    name)
@@ -367,7 +367,7 @@ void journal_iv::DRAW_TRIANGULATION(const Handle(Poly_Triangulation)& shape,
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::DRAW_TEXT(const TCollection_AsciiString& text)
+void asiVisu_JournalIV::DRAW_TEXT(const TCollection_AsciiString& text)
 {
   // Create a Node for text item
   bool isTx = false;
@@ -389,7 +389,7 @@ void journal_iv::DRAW_TEXT(const TCollection_AsciiString& text)
 
 //---------------------------------------------------------------------------//
 
-void journal_iv::visualize(const bool                  is2d,
+void asiVisu_JournalIV::visualize(const bool                  is2d,
                            const Handle(ActAPI_INode)& node,
                            const bool                  hasColor,
                            const Quantity_Color&       color,
@@ -400,16 +400,16 @@ void journal_iv::visualize(const bool                  is2d,
     this->prsManager(is2d)->SetPresentation(node);
 
   // Set visualization properties
-  Handle(visu_prs) prs = this->prsManager(is2d)->GetPresentation(node);
+  Handle(asiVisu_Prs) prs = this->prsManager(is2d)->GetPresentation(node);
 
   // Specific treatment for predefined pipelines
-  if ( prs->IsKind( STANDARD_TYPE(visu_iv_topo_item_prs) ) )
+  if ( prs->IsKind( STANDARD_TYPE(asiVisu_IVTopoItemPrs) ) )
   {
-    Handle(visu_iv_topo_item_prs)
-      topo_prs = Handle(visu_iv_topo_item_prs)::DownCast(prs);
+    Handle(asiVisu_IVTopoItemPrs)
+      topo_prs = Handle(asiVisu_IVTopoItemPrs)::DownCast(prs);
     //
-    Handle(visu_shape_pipeline)
-      pl = Handle(visu_shape_pipeline)::DownCast( topo_prs->GetPipeline(visu_iv_topo_item_prs::Pipeline_Main) );
+    Handle(asiVisu_ShapePipeline)
+      pl = Handle(asiVisu_ShapePipeline)::DownCast( topo_prs->GetPipeline(asiVisu_IVTopoItemPrs::Pipeline_Main) );
 
     // Configure shape visualization
     TopoDS_Shape shape = Handle(asiData_IVTopoItemNode)::DownCast(node)->GetShape();
@@ -438,7 +438,7 @@ void journal_iv::visualize(const bool                  is2d,
   else
   {
     // Set common properties for all pipelines
-    Handle(h_visu_pipeline_list) pipelines = prs->GetPipelineList();
+    Handle(h_asiVisu_Pipeline_list) pipelines = prs->GetPipelineList();
     for ( int p = 1; p <= pipelines->Length(); ++p )
     {
       if ( hasColor )
@@ -461,21 +461,21 @@ void journal_iv::visualize(const bool                  is2d,
 
 //----------------------------------------------------------------------------//
 
-const vtkSmartPointer<visu_prs_manager>& journal_iv::prsManager(const bool is2d) const
+const vtkSmartPointer<asiVisu_PrsManager>& asiVisu_JournalIV::prsManager(const bool is2d) const
 {
   return is2d ? this->prsManager2d() : this->prsManager3d();
 }
 
 //----------------------------------------------------------------------------//
 
-const vtkSmartPointer<visu_prs_manager>& journal_iv::prsManager3d() const
+const vtkSmartPointer<asiVisu_PrsManager>& asiVisu_JournalIV::prsManager3d() const
 {
   return common_facilities::Instance()->Prs.Part;
 }
 
 //----------------------------------------------------------------------------//
 
-const vtkSmartPointer<visu_prs_manager>& journal_iv::prsManager2d() const
+const vtkSmartPointer<asiVisu_PrsManager>& asiVisu_JournalIV::prsManager2d() const
 {
   return common_facilities::Instance()->Prs.Domain;
 }

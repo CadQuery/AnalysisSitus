@@ -5,29 +5,29 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_law_data_provider_h
-#define visu_law_data_provider_h
+#ifndef asiVisu_LawDataProvider_h
+#define asiVisu_LawDataProvider_h
 
 // A-Situs (visualization) includes
-#include <visu_data_provider.h>
+#include <asiVisu_DataProvider.h>
 
 // A-Situs (calculus) includes
 #include <asiAlgo_DesignLaw.h>
-#include <asiAlgo_DesignLaw_node.h>
+#include <asiData_DesignLawNode.h>
 
-DEFINE_STANDARD_HANDLE(visu_law_data_provider, visu_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_LawDataProvider, asiVisu_DataProvider)
 
 //! Data provider for explicitly defined design law.
-class visu_law_data_provider : public visu_data_provider
+class asiVisu_LawDataProvider : public asiVisu_DataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_law_data_provider, visu_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_LawDataProvider, asiVisu_DataProvider)
 
 public:
 
-  visu_law_data_provider(const Handle(asiAlgo_DesignLaw_node)& N);
+  asiVisu_LawDataProvider(const Handle(asiData_DesignLawNode)& N);
 
 public:
 
@@ -40,7 +40,7 @@ protected:
 
 protected:
 
-  Handle(asiAlgo_DesignLaw_node) m_node; //!< Source Node.
+  Handle(asiData_DesignLawNode) m_node; //!< Source Node.
 
 };
 

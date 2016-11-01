@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_contour_points_data_provider.h>
+#include <asiData_ContourPointsDataProvider.h>
 
 // Common includes
 #include <common_facilities.h>
@@ -21,17 +21,17 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-visu_contour_points_data_provider::visu_contour_points_data_provider()
-: visu_points_data_provider( common_facilities::Instance()->Model->GetPartNode()->GetContour() )
+asiData_ContourPointsDataProvider::asiData_ContourPointsDataProvider()
+: asiVisu_PointsDataProvider( common_facilities::Instance()->Model->GetPartNode()->GetContour() )
 {}
 
 //-----------------------------------------------------------------------------
 
 //! \return point cloud to visualize.
-Handle(asiAlgo_PointCloud) visu_contour_points_data_provider::GetPoints() const
+Handle(asiAlgo_PointCloud) asiData_ContourPointsDataProvider::GetPoints() const
 {
-  Handle(geom_contour_node)
-    contour_n = Handle(geom_contour_node)::DownCast(m_node);
+  Handle(asiData_ContourNode)
+    contour_n = Handle(asiData_ContourNode)::DownCast(m_node);
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
     return NULL;
@@ -68,20 +68,20 @@ Handle(asiAlgo_PointCloud) visu_contour_points_data_provider::GetPoints() const
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) visu_contour_points_data_provider::translationSources() const
+Handle(ActAPI_HParameterList) asiData_ContourPointsDataProvider::translationSources() const
 {
   // Resulting Parameters
   ActParamStream out;
 
-  Handle(geom_contour_node)
-    points_n = Handle(geom_contour_node)::DownCast(m_node);
+  Handle(asiData_ContourNode)
+    points_n = Handle(asiData_ContourNode)::DownCast(m_node);
   //
   if ( points_n.IsNull() || !points_n->IsWellFormed() )
     return out;
 
   // Register Parameter as sensitive
-  out << points_n->Parameter(geom_contour_node::PID_Coords)
-      << points_n->Parameter(geom_contour_node::PID_Geometry);
+  out << points_n->Parameter(asiData_ContourNode::PID_Coords)
+      << points_n->Parameter(asiData_ContourNode::PID_Geometry);
 
   return out;
 }

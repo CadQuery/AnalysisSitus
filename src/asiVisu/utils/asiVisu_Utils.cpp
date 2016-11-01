@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #pragma warning(push, 0)
@@ -34,13 +34,13 @@
 // Presentation factory
 //-----------------------------------------------------------------------------
 
-visu_utils::TPrsAllocMap visu_utils::m_allocMap;
+asiVisu_Utils::TPrsAllocMap asiVisu_Utils::m_allocMap;
 
 //-----------------------------------------------------------------------------
 
-visu_utils::TPrsAllocMap
-  visu_utils::RegisterPrsType(const TCollection_AsciiString& theType,
-                              const visu_prs_allocator       theAllocFunc)
+asiVisu_Utils::TPrsAllocMap
+  asiVisu_Utils::RegisterPrsType(const TCollection_AsciiString& theType,
+                                 const asiVisu_PrsAllocator       theAllocFunc)
 
 {
   if ( !m_allocMap.IsBound(theType) )
@@ -51,7 +51,7 @@ visu_utils::TPrsAllocMap
 
 //-----------------------------------------------------------------------------
 
-const visu_utils::TPrsAllocMap& visu_utils::GetAllocMap()
+const asiVisu_Utils::TPrsAllocMap& asiVisu_Utils::GetAllocMap()
 {
   return m_allocMap;
 }
@@ -66,9 +66,9 @@ const visu_utils::TPrsAllocMap& visu_utils::GetAllocMap()
 //! \param theBounds      [out] resulting bounding box.
 //! \param thePropsToSkip [in]  props to exclude from calculation routine.
 //! \return number of props participated in the calculation.
-int visu_utils::ComputeVisiblePropBounds(vtkRenderer*       theRenderer,
-                                         double             theBounds[6],
-                                         vtkPropCollection* thePropsToSkip)
+int asiVisu_Utils::ComputeVisiblePropBounds(vtkRenderer*       theRenderer,
+                                            double             theBounds[6],
+                                            vtkPropCollection* thePropsToSkip)
 {
   int aCount = 0;
 
@@ -131,8 +131,8 @@ int visu_utils::ComputeVisiblePropBounds(vtkRenderer*       theRenderer,
 //! \param theRenderer    [in] renderer instance.
 //! \param thePropsToSkip [in] props to ignore when calculating the bounding
 //!                            box of the scene.
-void visu_utils::ResetCamera(vtkRenderer*       theRenderer,
-                             vtkPropCollection* thePropsToSkip)
+void asiVisu_Utils::ResetCamera(vtkRenderer*       theRenderer,
+                                vtkPropCollection* thePropsToSkip)
 {
   static double RESET_COEFF = 3.0;
 
@@ -153,10 +153,10 @@ void visu_utils::ResetCamera(vtkRenderer*       theRenderer,
 //!                            box of the scene.
 //! \param doScaling      [in] indicates whether to adjust scale factor as well.
 //! \return true if visible Props exist, false -- otherwise.
-bool visu_utils::AdjustCamera(vtkRenderer*       theRenderer,
-                              vtkPropCollection* thePropsToSkip,
-                              bool               isDefaultNorm,
-                              bool               doScaling)
+bool asiVisu_Utils::AdjustCamera(vtkRenderer*       theRenderer,
+                                 vtkPropCollection* thePropsToSkip,
+                                 bool               isDefaultNorm,
+                                 bool               doScaling)
 {
   static double MIN_DISTANCE = 1.0 / VTK_FLOAT_MAX;
 
@@ -236,7 +236,7 @@ bool visu_utils::AdjustCamera(vtkRenderer*       theRenderer,
 
 //! Adjusts clipping range of the camera.
 //! \param theRenderer [in] Renderer instance.
-void visu_utils::AdjustCameraClippingRange(vtkRenderer* theRenderer)
+void asiVisu_Utils::AdjustCameraClippingRange(vtkRenderer* theRenderer)
 {
   if ( !theRenderer || !theRenderer->VisibleActorCount() )
     return;
@@ -281,7 +281,7 @@ void visu_utils::AdjustCameraClippingRange(vtkRenderer* theRenderer)
 
 //! Puts camera on the top position.
 //! \param theRenderer [in] Renderer instance.
-void visu_utils::CameraOnTop(vtkRenderer* theRenderer)
+void asiVisu_Utils::CameraOnTop(vtkRenderer* theRenderer)
 {
   vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
   anActiveCamera->SetPosition(0, 0, 1);
@@ -293,7 +293,7 @@ void visu_utils::CameraOnTop(vtkRenderer* theRenderer)
 
 //! Puts camera on the bottom position.
 //! \param theRenderer [in] Renderer instance.
-void visu_utils::CameraOnBottom(vtkRenderer* theRenderer)
+void asiVisu_Utils::CameraOnBottom(vtkRenderer* theRenderer)
 {
   vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
   anActiveCamera->SetPosition(0, 0, -1);
@@ -305,7 +305,7 @@ void visu_utils::CameraOnBottom(vtkRenderer* theRenderer)
 
 //! Puts camera on the front position.
 //! \param theRenderer [in] Renderer instance.
-void visu_utils::CameraOnFront(vtkRenderer* theRenderer)
+void asiVisu_Utils::CameraOnFront(vtkRenderer* theRenderer)
 {
   vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
   anActiveCamera->SetPosition(1, 0, 0);
@@ -317,7 +317,7 @@ void visu_utils::CameraOnFront(vtkRenderer* theRenderer)
 
 //! Puts camera on the back position.
 //! \param theRenderer [in] Renderer instance.
-void visu_utils::CameraOnBack(vtkRenderer* theRenderer)
+void asiVisu_Utils::CameraOnBack(vtkRenderer* theRenderer)
 {
   vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
   anActiveCamera->SetPosition(-1, 0, 0);
@@ -329,7 +329,7 @@ void visu_utils::CameraOnBack(vtkRenderer* theRenderer)
 
 //! Puts camera on the left position.
 //! \param theRenderer [in] Renderer instance.
-void visu_utils::CameraOnLeft(vtkRenderer* theRenderer)
+void asiVisu_Utils::CameraOnLeft(vtkRenderer* theRenderer)
 {
   vtkCamera* anActiveCamera = theRenderer->GetActiveCamera(); 
   anActiveCamera->SetPosition(0, -1, 0);
@@ -341,7 +341,7 @@ void visu_utils::CameraOnLeft(vtkRenderer* theRenderer)
 
 //! Puts camera on the right position.
 //! \param theRenderer [in] Renderer instance.
-void visu_utils::CameraOnRight(vtkRenderer* theRenderer)
+void asiVisu_Utils::CameraOnRight(vtkRenderer* theRenderer)
 {
   vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
   anActiveCamera->SetPosition(0, 1, 0);
@@ -353,7 +353,7 @@ void visu_utils::CameraOnRight(vtkRenderer* theRenderer)
 
 //! Sets the predefined lighting options to the passed Actor.
 //! \param theActor [in] Actor to adjust lighting options.
-void visu_utils::ApplyLightingRules(vtkActor* theActor)
+void asiVisu_Utils::ApplyLightingRules(vtkActor* theActor)
 {
   theActor->GetProperty()->SetOpacity(1.0);
   theActor->GetProperty()->SetAmbient(0.2);
@@ -370,11 +370,11 @@ void visu_utils::ApplyLightingRules(vtkActor* theActor)
 //! \param theOldY     [in] old Y coordinate.
 //! \param theNewX     [in] new X coordinate.
 //! \param theNewY     [in] new Y coordinate.
-void visu_utils::TranslateView(vtkRenderer* theRenderer,
-                               const int    theOldX,
-                               const int    theOldY,
-                               const int    theNewX,
-                               const int    theNewY)
+void asiVisu_Utils::TranslateView(vtkRenderer* theRenderer,
+                                  const int    theOldX,
+                                  const int    theOldY,
+                                  const int    theNewX,
+                                  const int    theNewY)
 {
   vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
   double aViewFocus[4], aFocalDepth, aViewPoint[3];
@@ -416,7 +416,7 @@ void visu_utils::TranslateView(vtkRenderer* theRenderer,
 //! Dumps view contents to Qt Image object.
 //! \param theRenderWindow [in] Render Window to dump the contents for.
 //! \return resulting Qt Image object.
-QImage visu_utils::DumpView(vtkRenderWindow* theRenderWindow)
+QImage asiVisu_Utils::DumpView(vtkRenderWindow* theRenderWindow)
 {
   int* aSize = theRenderWindow->GetSize();
   int aWidth = aSize[0];
@@ -440,9 +440,9 @@ QImage visu_utils::DumpView(vtkRenderWindow* theRenderWindow)
 //! \param theRenderer    [in] the scene renderer.
 //! \param theActor       [in] the cube axes actor.
 //! \param thePropsToSkip [in] the actors to exclude from bounding.
-void visu_utils::AdjustTrihedron(vtkRenderer*       theRenderer,
-                                 vtkAxesActor*      theActor,
-                                 vtkPropCollection* thePropsToSkip)
+void asiVisu_Utils::AdjustTrihedron(vtkRenderer*       theRenderer,
+                                    vtkAxesActor*      theActor,
+                                    vtkPropCollection* thePropsToSkip)
 {
    // Some static configuration
   static bool   CALC_BY_DIAG = false;
@@ -452,7 +452,7 @@ void visu_utils::AdjustTrihedron(vtkRenderer*       theRenderer,
   // Calculate bounds of presented Actors excluding those ones which comprise
   // the trihedron itself
   double aBounds[6];
-  visu_utils::ComputeVisiblePropBounds(theRenderer, aBounds, thePropsToSkip);
+  ComputeVisiblePropBounds(theRenderer, aBounds, thePropsToSkip);
 
   if ( aBounds[0] == VTK_FLOAT_MAX )
     return;
@@ -483,7 +483,7 @@ void visu_utils::AdjustTrihedron(vtkRenderer*       theRenderer,
   }
 
   // Adjust camera's options
-  visu_utils::AdjustCameraClippingRange(theRenderer);
+  AdjustCameraClippingRange(theRenderer);
 }
 
 //-----------------------------------------------------------------------------
@@ -493,7 +493,7 @@ void visu_utils::AdjustTrihedron(vtkRenderer*       theRenderer,
 //! Allocates VTK single-component integer data array with the given name.
 //! \param theArrName [in] name of array.
 //! \return array.
-vtkSmartPointer<vtkIntArray> visu_utils::InitIntArray(const char* theArrName)
+vtkSmartPointer<vtkIntArray> asiVisu_Utils::InitIntArray(const char* theArrName)
 {
   vtkSmartPointer<vtkIntArray> aResult = vtkSmartPointer<vtkIntArray>::New();
   aResult->SetName(theArrName);
@@ -506,7 +506,7 @@ vtkSmartPointer<vtkIntArray> visu_utils::InitIntArray(const char* theArrName)
 //! Allocates VTK single-component real data array with the given name.
 //! \param theArrName [in] name of array.
 //! \return array.
-vtkSmartPointer<vtkDoubleArray> visu_utils::InitDoubleArray(const char* theArrName)
+vtkSmartPointer<vtkDoubleArray> asiVisu_Utils::InitDoubleArray(const char* theArrName)
 {
   vtkSmartPointer<vtkDoubleArray> aResult = vtkSmartPointer<vtkDoubleArray>::New();
   aResult->SetName(theArrName);
@@ -520,7 +520,7 @@ vtkSmartPointer<vtkDoubleArray> visu_utils::InitDoubleArray(const char* theArrNa
 //! \param theArrName [in] name of array.
 //! \return array.
 vtkSmartPointer<vtkDoubleArray>
-  visu_utils::InitDoubleVectorArray(const char* theArrName)
+  asiVisu_Utils::InitDoubleVectorArray(const char* theArrName)
 {
   vtkSmartPointer<vtkDoubleArray> aResult = vtkSmartPointer<vtkDoubleArray>::New();
   aResult->SetName(theArrName);
@@ -534,7 +534,7 @@ vtkSmartPointer<vtkDoubleArray>
 //! \param theArrName [in] name of array.
 //! \return array.
 vtkSmartPointer<vtkStringArray>
-  visu_utils::InitStringArray(const char* theArrName)
+  asiVisu_Utils::InitStringArray(const char* theArrName)
 {
   vtkSmartPointer<vtkStringArray> aResult = vtkSmartPointer<vtkStringArray>::New();
   aResult->SetName(theArrName);
@@ -548,9 +548,9 @@ vtkSmartPointer<vtkStringArray>
 //! \param fR [out] red component [0;1].
 //! \param fG [out] green component [0;1].
 //! \param fB [out] blue component [0;1].
-void visu_utils::DefaultPickingColor(double& fR,
-                                     double& fG,
-                                     double& fB)
+void asiVisu_Utils::DefaultPickingColor(double& fR,
+                                        double& fG,
+                                        double& fB)
 {
   fR = 1.0;
   fG = 1.0;
@@ -560,12 +560,12 @@ void visu_utils::DefaultPickingColor(double& fR,
 //-----------------------------------------------------------------------------
 
 //! Returns default color for highlighting.
-//! \param fR [out] red component [0;1].
-//! \param fG [out] green component [0;1].
-//! \param fB [out] blue component [0;1].
-void visu_utils::DefaultDetectionColor(double& fR,
-                                       double& fG,
-                                       double& fB)
+//! \param fR [out] red component [0,1].
+//! \param fG [out] green component [0,1].
+//! \param fB [out] blue component [0,1].
+void asiVisu_Utils::DefaultDetectionColor(double& fR,
+                                          double& fG,
+                                          double& fB)
 {
   fR = 0.0;
   fG = 1.0;
@@ -576,7 +576,7 @@ void visu_utils::DefaultDetectionColor(double& fR,
 
 //! Returns default line width for picking highlight.
 //! \return default line width for picking highlight.
-double visu_utils::DefaultPickLineWidth()
+double asiVisu_Utils::DefaultPickLineWidth()
 {
   return 5.0;
 }
@@ -585,7 +585,7 @@ double visu_utils::DefaultPickLineWidth()
 
 //! Returns default line width for detection highlight.
 //! \return default line width for detection highlight.
-double visu_utils::DefaultDetectionLineWidth()
+double asiVisu_Utils::DefaultDetectionLineWidth()
 {
   return 5.0;
 }
@@ -594,14 +594,14 @@ double visu_utils::DefaultDetectionLineWidth()
 
 //! Returns default point size for highlighting.
 //! \return default point size for highlighting.
-double visu_utils::DefaultHilightPointSize()
+double asiVisu_Utils::DefaultHilightPointSize()
 {
   return 8.0;
 }
 
 //-----------------------------------------------------------------------------
 
-vtkLookupTable* visu_utils::InitLookupTable()
+vtkLookupTable* asiVisu_Utils::InitLookupTable()
 {
   vtkLookupTable* aColorTable = vtkLookupTable::New();
 
@@ -641,19 +641,19 @@ vtkLookupTable* visu_utils::InitLookupTable()
 
 //-----------------------------------------------------------------------------
 
-void visu_utils::SetLookupTableColor(vtkLookupTable* theColorTable,
-                                     const IVtk_MeshType theColorRole,
-                                     const double theR, const double theG, const double theB,
-                                     const double ASitus_NotUsed(theA))
+void asiVisu_Utils::SetLookupTableColor(vtkLookupTable* theColorTable,
+                                        const IVtk_MeshType theColorRole,
+                                        const double theR, const double theG, const double theB,
+                                        const double asiVisu_NotUsed(theA))
 {
   theColorTable->SetTableValue(theColorRole + 1, theR, theG, theB);
 }
 
 //-----------------------------------------------------------------------------
 
-void visu_utils::GetLookupTableColor(vtkLookupTable* theColorTable,
-                                     const IVtk_MeshType theColorRole,
-                                     double &theR, double &theG, double &theB)
+void asiVisu_Utils::GetLookupTableColor(vtkLookupTable* theColorTable,
+                                        const IVtk_MeshType theColorRole,
+                                        double &theR, double &theG, double &theB)
 {
   double aRgb[3];
   theColorTable->GetColor(theColorRole + 1, aRgb);
@@ -664,10 +664,10 @@ void visu_utils::GetLookupTableColor(vtkLookupTable* theColorTable,
 
 //-----------------------------------------------------------------------------
 
-void visu_utils::GetLookupTableColor(vtkLookupTable* theColorTable,
-                                     const IVtk_MeshType theColorRole,
-                                     double &theR, double &theG, double &theB, 
-                                     double &theA)
+void asiVisu_Utils::GetLookupTableColor(vtkLookupTable* theColorTable,
+                                        const IVtk_MeshType theColorRole,
+                                        double &theR, double &theG, double &theB, 
+                                        double &theA)
 {
   theA = theColorTable->GetOpacity (theColorRole + 1);
   GetLookupTableColor(theColorTable, theColorRole, theR, theG, theB);
@@ -675,14 +675,14 @@ void visu_utils::GetLookupTableColor(vtkLookupTable* theColorTable,
 
 //-----------------------------------------------------------------------------
 
-void visu_utils::InitShapeMapper(vtkMapper* theMapper)
+void asiVisu_Utils::InitShapeMapper(vtkMapper* theMapper)
 {
   InitShapeMapper( theMapper, InitLookupTable() );
 }
 
 //-----------------------------------------------------------------------------
 
-void visu_utils::InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorTable)
+void asiVisu_Utils::InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorTable)
 {
   theMapper->ScalarVisibilityOn();
   theMapper->SetScalarModeToUseCellFieldData();
@@ -697,7 +697,7 @@ void visu_utils::InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorT
 
 //! Initializes VTK lookup table charged with default color scheme for p-curves.
 //! \return VTK lookup table.
-vtkSmartPointer<vtkLookupTable> visu_utils::InitDomainLookupTable()
+vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitDomainLookupTable()
 {
   vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
 
@@ -720,9 +720,9 @@ vtkSmartPointer<vtkLookupTable> visu_utils::InitDomainLookupTable()
 //! \param theLookup         [in]     Lookup Table to initialize the mapper with.
 //! \param theScalarsArrName [in]     name of the array storing the scalars
 //!                                   for colorization.
-void visu_utils::InitMapper(vtkMapper*      theMapper,
-                            vtkLookupTable* theLookup,
-                            const char*     theScalarsArrName)
+void asiVisu_Utils::InitMapper(vtkMapper*      theMapper,
+                               vtkLookupTable* theLookup,
+                               const char*     theScalarsArrName)
 {
   theMapper->ScalarVisibilityOn();
   theMapper->SetScalarModeToUseCellFieldData();
@@ -737,7 +737,7 @@ void visu_utils::InitMapper(vtkMapper*      theMapper,
 
 //! Initializes the passed text widget.
 //! \param theScalarBarWidget [in] scalar bar widget to initialize.
-void visu_utils::InitTextWidget(vtkTextWidget* theTextWidget)
+void asiVisu_Utils::InitTextWidget(vtkTextWidget* theTextWidget)
 {
   vtkTextRepresentation* textRep = vtkTextRepresentation::SafeDownCast( theTextWidget->GetRepresentation() );
   theTextWidget->SelectableOff();

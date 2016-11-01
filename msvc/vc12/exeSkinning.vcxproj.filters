@@ -9,5 +9,60 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{2aaed2de-c9c1-4395-9ad4-5b2753c0ab54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{239ae43b-e7b7-43e2-92c5-3d0d0cb2e049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MOC">
+      <UniqueIdentifier>{ce07645e-727e-4d9b-8d91-3223e823328b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_ControlsHull.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_ControlsSection.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_ControlsSkinning.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_MainWindowHull.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_MainWindowSkinning.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_ViewerSection.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_ViewerSkinner.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_ControlsHull.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_ControlsSection.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_ControlsSkinning.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_MainWindowHull.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_MainWindowSkinning.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_ViewerSection.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_ViewerSkinner.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

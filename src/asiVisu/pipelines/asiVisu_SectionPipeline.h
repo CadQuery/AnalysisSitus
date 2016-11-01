@@ -5,36 +5,36 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_section_pipeline_h
-#define visu_section_pipeline_h
+#ifndef asiVisu_SectionPipeline_h
+#define asiVisu_SectionPipeline_h
 
 // A-Situs includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_section_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_SectionPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for a single skinning section.
-class visu_section_pipeline : public visu_pipeline
+class asiVisu_SectionPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_section_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_SectionPipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_section_pipeline();
+  asiVisu_SectionPipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& DP);
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:
 
@@ -45,10 +45,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_section_pipeline(const visu_section_pipeline&);
+  asiVisu_SectionPipeline(const asiVisu_SectionPipeline&);
 
   //! Assignment prohibited.
-  visu_section_pipeline& operator=(const visu_section_pipeline&);
+  asiVisu_SectionPipeline& operator=(const asiVisu_SectionPipeline&);
 
 private:
 

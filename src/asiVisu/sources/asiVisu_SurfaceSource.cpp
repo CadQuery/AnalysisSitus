@@ -6,10 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_surface_source.h>
+#include <asiVisu_SurfaceSource.h>
 
 // Visualization includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkCellData.h>
@@ -26,10 +26,10 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(visu_surface_source);
+vtkStandardNewMacro(asiVisu_SurfaceSource);
 
 //! Default constructor.
-visu_surface_source::visu_surface_source()
+asiVisu_SurfaceSource::asiVisu_SurfaceSource()
 //
   : vtkPolyDataAlgorithm (),
     m_iSteps             (0),
@@ -44,7 +44,7 @@ visu_surface_source::visu_surface_source()
 }
 
 //! Destructor.
-visu_surface_source::~visu_surface_source()
+asiVisu_SurfaceSource::~asiVisu_SurfaceSource()
 {
 }
 
@@ -54,14 +54,14 @@ visu_surface_source::~visu_surface_source()
 
 //! Initialize data source with a parametric surface.
 //! \param surf [in] surface to visualize.
-void visu_surface_source::SetInputSurface(const Handle(Geom_Surface)& surf)
+void asiVisu_SurfaceSource::SetInputSurface(const Handle(Geom_Surface)& surf)
 {
   m_surf = surf;
 }
 
 //! Sets the number of sampling steps for surface discretization.
 //! \param nSteps [in] number of steps to set.
-void visu_surface_source::SetNumberOfSteps(const int nSteps)
+void asiVisu_SurfaceSource::SetNumberOfSteps(const int nSteps)
 {
   m_iSteps = nSteps;
   //
@@ -70,7 +70,7 @@ void visu_surface_source::SetNumberOfSteps(const int nSteps)
 
 //! Sets type of scalars to associate with nodes.
 //! \param scalars [in] scalars.
-void visu_surface_source::SetScalars(const NodeScalars scalars)
+void asiVisu_SurfaceSource::SetScalars(const NodeScalars scalars)
 {
   m_scalars = scalars;
   //
@@ -80,7 +80,7 @@ void visu_surface_source::SetScalars(const NodeScalars scalars)
 //! Sets trimming values for infinite surface domains.
 //! \param uLimit [in] trimming value for U.
 //! \param vLimit [in] trimming value for V.
-void visu_surface_source::SetTrimValues(const double uLimit,
+void asiVisu_SurfaceSource::SetTrimValues(const double uLimit,
                                         const double vLimit)
 {
   m_fTrimU = uLimit;
@@ -100,7 +100,7 @@ void visu_surface_source::SetTrimValues(const double uLimit,
 //! \param outputVector [in] the pointer to output data, that is filled
 //!                          in this method.
 //! \return status.
-int visu_surface_source::RequestData(vtkInformation*        request,
+int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
                                      vtkInformationVector** inputVector,
                                      vtkInformationVector*  outputVector)
 {
@@ -132,7 +132,7 @@ int visu_surface_source::RequestData(vtkInformation*        request,
   if ( m_scalars == Scalars_GaussianCurvature || m_scalars == Scalars_MeanCurvature )
   {
     vtkPointData* PD = polyOutput->GetPointData();
-    curvature = visu_utils::InitDoubleArray(ARRNAME_SURF_CURVATURE);
+    curvature = asiVisu_Utils::InitDoubleArray(ARRNAME_SURF_CURVATURE);
     PD->SetScalars(curvature);
   }
 
@@ -141,10 +141,10 @@ int visu_surface_source::RequestData(vtkInformation*        request,
   double uMin, uMax, vMin, vMax;
   m_surf->Bounds(uMin, uMax, vMin, vMax);
   //
-  uMin = visu_utils::TrimInf(uMin, m_fTrimU);
-  uMax = visu_utils::TrimInf(uMax, m_fTrimU);
-  vMin = visu_utils::TrimInf(vMin, m_fTrimV);
-  vMax = visu_utils::TrimInf(vMax, m_fTrimV);
+  uMin = asiVisu_Utils::TrimInf(uMin, m_fTrimU);
+  uMax = asiVisu_Utils::TrimInf(uMax, m_fTrimU);
+  vMin = asiVisu_Utils::TrimInf(vMin, m_fTrimV);
+  vMax = asiVisu_Utils::TrimInf(vMax, m_fTrimV);
 
   const double uStep = (uMax - uMin) / m_iSteps;
   const double vStep = (vMax - vMin) / m_iSteps;
@@ -255,7 +255,7 @@ int visu_surface_source::RequestData(vtkInformation*        request,
 //! \param point    [in]     point to add.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK point.
-vtkIdType visu_surface_source::registerGridPoint(const gp_Pnt& point,
+vtkIdType asiVisu_SurfaceSource::registerGridPoint(const gp_Pnt& point,
                                                  vtkPolyData*  polyData)
 {
   // Access necessary arrays
@@ -275,7 +275,7 @@ vtkIdType visu_surface_source::registerGridPoint(const gp_Pnt& point,
 //! \param n3       [in]     index of the third node.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType visu_surface_source::registerTriangle(const vtkIdType n1,
+vtkIdType asiVisu_SurfaceSource::registerTriangle(const vtkIdType n1,
                                                 const vtkIdType n2,
                                                 const vtkIdType n3,
                                                 vtkPolyData*    polyData)

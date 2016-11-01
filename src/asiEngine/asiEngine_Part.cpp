@@ -13,10 +13,10 @@
 #include <asiData_Model.h>
 
 // A-Situs (GUI) includes
-#include <gui_common.h>
+#include <asiUI_Common.h>
 
 // A-Situs (visualization) includes
-#include <visu_geom_prs.h>
+#include <asiVisu_GeomPrs.h>
 
 // VTK includes
 #include <vtkProperty.h>
@@ -102,11 +102,11 @@ Handle(asiData_PartNode) asiEngine_Part::Create_Part()
 
   // Create underlying boundary edges representation Node
   {
-    Handle(ActAPI_INode) geom_edges_base = geom_boundary_edges_node::Instance();
+    Handle(ActAPI_INode) geom_edges_base = asiData_BoundaryEdgesNode::Instance();
     M->GetGeomBoundaryEdgesPartition()->AddNode(geom_edges_base);
 
     // Initialize
-    Handle(geom_boundary_edges_node) geom_edges_n = Handle(geom_boundary_edges_node)::DownCast(geom_edges_base);
+    Handle(asiData_BoundaryEdgesNode) geom_edges_n = Handle(asiData_BoundaryEdgesNode)::DownCast(geom_edges_base);
     geom_edges_n->Init();
     geom_edges_n->SetName("Boundary");
 
@@ -116,11 +116,11 @@ Handle(asiData_PartNode) asiEngine_Part::Create_Part()
 
   // Create underlying contour Node
   {
-    Handle(ActAPI_INode) geom_contour_base = geom_contour_node::Instance();
+    Handle(ActAPI_INode) geom_contour_base = asiData_ContourNode::Instance();
     M->GetGeomContourPartition()->AddNode(geom_contour_base);
 
     // Initialize
-    Handle(geom_contour_node) geom_contour_n = Handle(geom_contour_node)::DownCast(geom_contour_base);
+    Handle(asiData_ContourNode) geom_contour_n = Handle(asiData_ContourNode)::DownCast(geom_contour_base);
     geom_contour_n->Init();
     geom_contour_n->SetName("Contour");
 
@@ -192,13 +192,13 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
 void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices)
 {
   double pick_color[3];
-  visu_utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
+  asiVisu_Utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
   QColor color;
   color.setRedF   (pick_color[0]);
   color.setGreenF (pick_color[1]);
   color.setBlueF  (pick_color[2]);
   //
-  HighlightSubShapes( subShapeIndices, gui_common::ColorToInt(color) );
+  HighlightSubShapes( subShapeIndices, asiUI_Common::ColorToInt(color) );
 }
 
 //! Highlights the passed sub-shapes identified by their indices.
@@ -211,20 +211,20 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
   Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
 
   // Get Presentation for the Part Node
-  Handle(visu_geom_prs)
-    prs = Handle(visu_geom_prs)::DownCast( common_facilities::Instance()->Prs.Part->GetPresentation(N) );
+  Handle(asiVisu_GeomPrs)
+    prs = Handle(asiVisu_GeomPrs)::DownCast( common_facilities::Instance()->Prs.Part->GetPresentation(N) );
 
   // Prepare list to satisfy the API of Presentation Manager
   Handle(ActAPI_HNodeList) dummyList = new ActAPI_HNodeList;
   dummyList->Append(N);
 
   // Prepare selection object
-  visu_actor_elem_map selection;
+  asiVisu_ActorElemMap selection;
   selection.Bind( prs->MainActor(), subShapeIndices );
 
   // Set color
   double prevColor[3];
-  QColor qcolor = gui_common::IntToColor(color);
+  QColor qcolor = asiUI_Common::IntToColor(color);
   prs->GetPickPipeline()->Actor()->GetProperty()->GetColor( prevColor[0], prevColor[1], prevColor[2] );
   prs->GetPickPipeline()->Actor()->GetProperty()->SetColor( qcolor.redF(), qcolor.greenF(), qcolor.blueF() );
 
@@ -237,13 +237,13 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
 void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes)
 {
   double pick_color[3];
-  visu_utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
+  asiVisu_Utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
   QColor color;
   color.setRedF   (pick_color[0]);
   color.setGreenF (pick_color[1]);
   color.setBlueF  (pick_color[2]);
   //
-  HighlightSubShapes( subShapes, gui_common::ColorToInt(color) );
+  HighlightSubShapes( subShapes, asiUI_Common::ColorToInt(color) );
 }
 
 //! Highlights the passed sub-shapes in Part Viewer.
@@ -277,11 +277,11 @@ void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShap
 
   // Get actual selection
   const visu_actual_selection& sel      = common_facilities::Instance()->Prs.Part->GetCurrentSelection();
-  const visu_pick_result&      pick_res = sel.PickResult(SelectionNature_Pick);
-  const visu_actor_elem_map&   elem_map = pick_res.GetPickMap();
+  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  const asiVisu_ActorElemMap&   elem_map = pick_res.GetPickMap();
   //
   // Prepare cumulative set of all picked element IDs
-  for ( visu_actor_elem_map::Iterator it(elem_map); it.More(); it.Next() )
+  for ( asiVisu_ActorElemMap::Iterator it(elem_map); it.More(); it.Next() )
   {
     const TColStd_PackedMapOfInteger& subshape_mask = it.Value();
     //

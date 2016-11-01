@@ -5,25 +5,25 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_re_points_data_provider_h
-#define visu_re_points_data_provider_h
+#ifndef asiVisu_REPointsDataProvider_h
+#define asiVisu_REPointsDataProvider_h
 
 // A-Situs visualization includes
-#include <visu_points_data_provider.h>
+#include <asiVisu_PointsDataProvider.h>
 
-DEFINE_STANDARD_HANDLE(visu_re_points_data_provider, visu_points_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_REPointsDataProvider, asiVisu_PointsDataProvider)
 
 //! Data provider for re-engineering point cloud.
-class visu_re_points_data_provider : public visu_points_data_provider
+class asiVisu_REPointsDataProvider : public asiVisu_PointsDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_re_points_data_provider, visu_points_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_REPointsDataProvider, asiVisu_PointsDataProvider)
 
 public:
 
-  visu_re_points_data_provider();
+  asiVisu_REPointsDataProvider();
 
 public:
 

@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_shape_mesher.h>
+#include <asiVisu_ShapeMesher.h>
 
 // OCCT includes
 #include <Adaptor3d_HCurve.hxx>
@@ -41,13 +41,13 @@
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(visu_shape_mesher,IVtk_IShapeMesher)
+IMPLEMENT_STANDARD_RTTIEXT(asiVisu_ShapeMesher,IVtk_IShapeMesher)
 
 //================================================================
 // Function : internalBuild
 // Purpose  : 
 //================================================================
-void visu_shape_mesher::internalBuild()
+void asiVisu_ShapeMesher::internalBuild()
 {
   // TODO: do we need any protection here so as not to triangualte
   // the shape twice??? This can be done e.g. by checking if
@@ -71,7 +71,7 @@ void visu_shape_mesher::internalBuild()
 // Function : GetShapeObj
 // Purpose  : 
 //================================================================
-const IVtkOCC_Shape::Handle visu_shape_mesher::GetShapeObj() const
+const IVtkOCC_Shape::Handle asiVisu_ShapeMesher::GetShapeObj() const
 {
   return (IVtkOCC_Shape::Handle::DownCast(myShapeObj));
 }
@@ -80,7 +80,7 @@ const IVtkOCC_Shape::Handle visu_shape_mesher::GetShapeObj() const
 // Function : GetDeflection
 // Purpose  : Returns absolute deflection used by this algorithm.
 //================================================================
-Standard_Real visu_shape_mesher::GetDeflection() const
+Standard_Real asiVisu_ShapeMesher::GetDeflection() const
 {
   if (myDeflection < Precision::Confusion()) // if not yet initialized
   {
@@ -97,7 +97,7 @@ Standard_Real visu_shape_mesher::GetDeflection() const
 // Function : meshShape
 // Purpose  : 
 //================================================================
-void visu_shape_mesher::meshShape()
+void asiVisu_ShapeMesher::meshShape()
 {
   TopoDS_Shape shape = GetShapeObj()->GetShape();
   if ( shape.IsNull() )
@@ -129,7 +129,7 @@ void visu_shape_mesher::meshShape()
 // Function : addFreeVertices
 // Purpose  : 
 //================================================================
-void visu_shape_mesher::addFreeVertices()
+void asiVisu_ShapeMesher::addFreeVertices()
 {
   TopTools_IndexedDataMapOfShapeListOfShape aVertexMap;
   TopExp::MapShapesAndAncestors (GetShapeObj()->GetShape(),
@@ -158,7 +158,7 @@ void visu_shape_mesher::addFreeVertices()
 // Function : addEdges
 // Purpose  : 
 //================================================================
-void visu_shape_mesher::addEdges()
+void asiVisu_ShapeMesher::addEdges()
 {
   TopTools_IndexedDataMapOfShapeListOfShape anEdgesMap;
   TopExp::MapShapesAndAncestors (GetShapeObj()->GetShape(), 
@@ -196,7 +196,7 @@ void visu_shape_mesher::addEdges()
 // Function : addWireFrameFaces
 // Purpose  : 
 //================================================================
-void visu_shape_mesher::addWireFrameFaces()
+void asiVisu_ShapeMesher::addWireFrameFaces()
 {
   // Check the deflection value once for all faces
   if (GetDeflection() < Precision::Confusion())
@@ -223,7 +223,7 @@ void visu_shape_mesher::addWireFrameFaces()
 // Function : addShadedFaces
 // Purpose  : 
 //================================================================
-void visu_shape_mesher::addShadedFaces()
+void asiVisu_ShapeMesher::addShadedFaces()
 {
   TopExp_Explorer aFaceIter (GetShapeObj()->GetShape(), TopAbs_FACE);
   for (; aFaceIter.More(); aFaceIter.Next())
@@ -238,7 +238,7 @@ void visu_shape_mesher::addShadedFaces()
 // Function : addVertex
 // Purpose  : 
 //================================================================
-void visu_shape_mesher::addVertex (const TopoDS_Vertex& theVertex,
+void asiVisu_ShapeMesher::addVertex (const TopoDS_Vertex& theVertex,
                                      const IVtk_IdType    theShapeId,
                                      const IVtk_MeshType  theMeshType)
 {
@@ -259,7 +259,7 @@ void visu_shape_mesher::addVertex (const TopoDS_Vertex& theVertex,
 // Function : processPolyline
 // Purpose  : 
 //================================================================
-void visu_shape_mesher::processPolyline (Standard_Integer          theNbNodes,
+void asiVisu_ShapeMesher::processPolyline (Standard_Integer          theNbNodes,
                                       const TColgp_Array1OfPnt&      thePoints,
                                       const TColStd_Array1OfInteger& thePointIds,
                                       const IVtk_IdType              theOcctId,
@@ -299,7 +299,7 @@ void visu_shape_mesher::processPolyline (Standard_Integer          theNbNodes,
 // Function : addEdge
 // Purpose  : 
 //================================================================
-void visu_shape_mesher::addEdge (const TopoDS_Edge&  theEdge,
+void asiVisu_ShapeMesher::addEdge (const TopoDS_Edge&  theEdge,
                                    const IVtk_IdType   theShapeId,
                                    const IVtk_MeshType theMeshType)
 {
@@ -506,7 +506,7 @@ static void DrawCurve (Adaptor3d_Curve&      theCurve,
 // Function : buildIsoLines
 // Purpose  : 
 //================================================================
-void visu_shape_mesher::buildIsoLines (const Handle(BRepAdaptor_HSurface)& theFace,
+void asiVisu_ShapeMesher::buildIsoLines (const Handle(BRepAdaptor_HSurface)& theFace,
                                          const Standard_Boolean          theIsDrawUIso,
                                          const Standard_Boolean          theIsDrawVIso,
                                          const Standard_Integer          theNBUiso,
@@ -785,7 +785,7 @@ void visu_shape_mesher::buildIsoLines (const Handle(BRepAdaptor_HSurface)& theFa
 // Function : addWFFace
 // Purpose  : 
 //================================================================
-void visu_shape_mesher::addWFFace (const TopoDS_Face& theFace,
+void asiVisu_ShapeMesher::addWFFace (const TopoDS_Face& theFace,
                                      const IVtk_IdType  theShapeId)
 {
   if (theFace.IsNull())
@@ -903,7 +903,7 @@ void visu_shape_mesher::addWFFace (const TopoDS_Face& theFace,
 // Function : addShadedFace
 // Purpose  : 
 //================================================================
-void visu_shape_mesher::addShadedFace (const TopoDS_Face& theFace,
+void asiVisu_ShapeMesher::addShadedFace (const TopoDS_Face& theFace,
                                          const IVtk_IdType  theShapeId)
 {
   if (theFace.IsNull())

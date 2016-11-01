@@ -6,12 +6,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_law_pipeline.h>
+#include <asiVisu_LawPipeline.h>
 
 // Visualization includes
-#include <visu_law_data_provider.h>
-#include <visu_law_source.h>
-#include <visu_utils.h>
+#include <asiVisu_LawDataProvider.h>
+#include <asiVisu_LawSource.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkPolyDataMapper.h>
@@ -20,8 +20,8 @@
 //-----------------------------------------------------------------------------
 
 //! Creates new pipeline initialized by default VTK mapper and actor.
-visu_law_pipeline::visu_law_pipeline()
-: visu_pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+asiVisu_LawPipeline::asiVisu_LawPipeline()
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                  vtkSmartPointer<vtkActor>::New() )
 {
   this->Actor()->GetProperty()->SetLineWidth(2.0);
@@ -31,10 +31,10 @@ visu_law_pipeline::visu_law_pipeline()
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void visu_law_pipeline::SetInput(const Handle(visu_data_provider)& DP)
+void asiVisu_LawPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  Handle(visu_law_data_provider)
-    provider = Handle(visu_law_data_provider)::DownCast(DP);
+  Handle(asiVisu_LawDataProvider)
+    provider = Handle(asiVisu_LawDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
@@ -57,7 +57,7 @@ void visu_law_pipeline::SetInput(const Handle(visu_data_provider)& DP)
   if ( provider->MustExecute( this->GetMTime() ) )
   {
     // Allocate Data Source
-    vtkSmartPointer<visu_law_source> src = vtkSmartPointer<visu_law_source>::New();
+    vtkSmartPointer<asiVisu_LawSource> src = vtkSmartPointer<asiVisu_LawSource>::New();
 
     // Initialize data source
     src->SetLaw(law);
@@ -74,13 +74,13 @@ void visu_law_pipeline::SetInput(const Handle(visu_data_provider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void visu_law_pipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_LawPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void visu_law_pipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_LawPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void visu_law_pipeline::callback_update()
+void asiVisu_LawPipeline::callback_update()
 {}

@@ -52,7 +52,7 @@ void gui_main_window_asitus::closeEvent(QCloseEvent* evt)
 //! Creates main (part) viewer.
 void gui_main_window_asitus::createPartViewer()
 {
-  m_widgets.wViewerPart = new gui_viewer_part();
+  m_widgets.wViewerPart = new asiUI_ViewerPart();
 
   // Desktop used for sizing
   QDesktopWidget desktop;
@@ -78,7 +78,7 @@ void gui_main_window_asitus::createDockWindows()
     pDockUtilities = new QDockWidget("Utilities", this);
     pDockUtilities->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
-    m_widgets.wControlsPart = new gui_controls_part(pDockUtilities);
+    m_widgets.wControlsPart = new asiUI_ControlsPart(pDockUtilities);
     pDockUtilities->setWidget(m_widgets.wControlsPart);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockUtilities);
@@ -90,7 +90,7 @@ void gui_main_window_asitus::createDockWindows()
     pDockBrowser = new QDockWidget("Stored Objects", this);
     pDockBrowser->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wBrowser = new gui_object_browser(pDockBrowser);
+    m_widgets.wBrowser = new asiUI_ObjectBrowser(pDockBrowser);
     pDockBrowser->setWidget(m_widgets.wBrowser);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockBrowser);
@@ -101,7 +101,7 @@ void gui_main_window_asitus::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Face Domain", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerDomain = new gui_viewer_domain(pDock);
+    m_widgets.wViewerDomain = new asiUI_Viewer_domain(pDock);
     pDock->setWidget(m_widgets.wViewerDomain);
     pDock->setMinimumWidth(width);
     //
@@ -113,7 +113,7 @@ void gui_main_window_asitus::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Host Surface", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerSurface = new gui_viewer_surface(pDock);
+    m_widgets.wViewerSurface = new asiUI_Viewer_surface(pDock);
     pDock->setWidget(m_widgets.wViewerSurface);
     pDock->setMinimumWidth(width);
     //

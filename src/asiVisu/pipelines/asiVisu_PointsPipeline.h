@@ -5,33 +5,33 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_points_pipeline_h
-#define visu_points_pipeline_h
+#ifndef asiVisu_PointsPipeline_h
+#define asiVisu_PointsPipeline_h
 
 // A-Situs includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_points_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_PointsPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for point cloud.
-class visu_points_pipeline : public visu_pipeline
+class asiVisu_PointsPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_points_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_PointsPipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_points_pipeline();
+  asiVisu_PointsPipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& DP);
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:
 
@@ -42,10 +42,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_points_pipeline(const visu_points_pipeline&);
+  asiVisu_PointsPipeline(const asiVisu_PointsPipeline&);
 
   //! Assignment prohibited.
-  visu_points_pipeline& operator=(const visu_points_pipeline&);
+  asiVisu_PointsPipeline& operator=(const asiVisu_PointsPipeline&);
 
 };
 

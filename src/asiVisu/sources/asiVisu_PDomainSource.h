@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_pdomain_source_h
-#define visu_pdomain_source_h
+#ifndef asiVisu_PDomainSource_h
+#define asiVisu_PDomainSource_h
 
 // OCCT includes
 #include <TopoDS_Face.hxx>
@@ -17,13 +17,13 @@
 #include <vtkType.h>
 
 //! Source of polygonal data representing face domain.
-class visu_pdomain_source : public vtkPolyDataAlgorithm
+class asiVisu_PDomainSource : public vtkPolyDataAlgorithm
 {
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(visu_pdomain_source, vtkPolyDataAlgorithm);
-  static visu_pdomain_source* New();
+  vtkTypeMacro(asiVisu_PDomainSource, vtkPolyDataAlgorithm);
+  static asiVisu_PDomainSource* New();
 
 // Kernel methods:
 public:
@@ -42,13 +42,13 @@ protected:
 
 protected:
 
-  visu_pdomain_source();
-  ~visu_pdomain_source();
+  asiVisu_PDomainSource();
+  ~asiVisu_PDomainSource();
 
 private:
 
-  visu_pdomain_source(const visu_pdomain_source&);
-  visu_pdomain_source& operator=(const visu_pdomain_source&);
+  asiVisu_PDomainSource(const asiVisu_PDomainSource&);
+  asiVisu_PDomainSource& operator=(const asiVisu_PDomainSource&);
 
 private:
 

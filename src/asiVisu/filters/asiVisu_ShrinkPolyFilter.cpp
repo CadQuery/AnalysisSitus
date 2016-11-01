@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_shrink_poly_filter.h>
+#include <asiVisu_ShrinkPolyFilter.h>
 
 // VTK includes
 #include <vtkCellArray.h>
@@ -19,16 +19,16 @@
 #include <vtkSmartPointer.h>
 #include <vtkShrinkFilter.h>
 
-vtkStandardNewMacro(visu_shrink_poly_filter);
+vtkStandardNewMacro(asiVisu_ShrinkPolyFilter);
 
 //! Default constructor.
-visu_shrink_poly_filter::visu_shrink_poly_filter()
+asiVisu_ShrinkPolyFilter::asiVisu_ShrinkPolyFilter()
 : vtkPolyDataAlgorithm(),
   ShrinkFactor(0.8)
 {}
 
 //! Destructor.
-visu_shrink_poly_filter::~visu_shrink_poly_filter()
+asiVisu_ShrinkPolyFilter::~asiVisu_ShrinkPolyFilter()
 {}
 
 //! Filtering routine.
@@ -36,9 +36,9 @@ visu_shrink_poly_filter::~visu_shrink_poly_filter()
 //! \param inputVector  [in] input information vector.
 //! \param outputVector [in] output information vector.
 //! \return execution status.
-int visu_shrink_poly_filter::RequestData(vtkInformation*        vtkNotUsed(request),
-                                         vtkInformationVector** inputVector,
-                                         vtkInformationVector*  outputVector)
+int asiVisu_ShrinkPolyFilter::RequestData(vtkInformation*        vtkNotUsed(request),
+                                          vtkInformationVector** inputVector,
+                                          vtkInformationVector*  outputVector)
 {
   /* ========================================
    *  Access input & output VTK data objects
@@ -118,7 +118,7 @@ int visu_shrink_poly_filter::RequestData(vtkInformation*        vtkNotUsed(reque
 
     double shrinkFactor;
     if ( cellType == VTK_VERTEX || cellType == VTK_POLY_VERTEX )
-      shrinkFactor = 1.0; // No srinking for vertices
+      shrinkFactor = 1.0; // No shrinking for vertices
     else
       shrinkFactor = ShrinkFactor;
 

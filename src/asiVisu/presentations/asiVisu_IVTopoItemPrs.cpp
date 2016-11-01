@@ -6,12 +6,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_iv_topo_item_prs.h>
+#include <asiVisu_IVTopoItemPrs.h>
 
 // A-Situs (visualization) includes
-#include <visu_shape_data_provider.h>
-#include <visu_shape_pipeline.h>
-#include <visu_utils.h>
+#include <asiVisu_ShapeDataProvider.h>
+#include <asiVisu_ShapePipeline.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -19,23 +19,23 @@
 
 //! Creates a Presentation object for the passed Node.
 //! \param theNode [in] Node to create a Presentation for.
-visu_iv_topo_item_prs::visu_iv_topo_item_prs(const Handle(ActAPI_INode)& theNode)
-: visu_iv_prs(theNode)
+asiVisu_IVTopoItemPrs::asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& theNode)
+: asiVisu_IVPrs(theNode)
 {
   // Create Data Provider
-  Handle(visu_shape_data_provider)
-    DP = new visu_shape_data_provider( theNode->GetId(),
+  Handle(asiVisu_ShapeDataProvider)
+    DP = new asiVisu_ShapeDataProvider( theNode->GetId(),
                                        ActParamStream() << theNode->Parameter(asiData_IVTopoItemNode::PID_Geometry) );
 
   // Pipeline for contours
-  this->addPipeline        ( Pipeline_Main, new visu_shape_pipeline(false) );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_ShapePipeline(false) );
   this->assignDataProvider ( Pipeline_Main, DP );
 }
 
 //! Factory method for Presentation.
 //! \param theNode [in] Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_iv_topo_item_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_IVTopoItemPrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_iv_topo_item_prs(theNode);
+  return new asiVisu_IVTopoItemPrs(theNode);
 }

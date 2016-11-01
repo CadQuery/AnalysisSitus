@@ -12,9 +12,6 @@
     <Filter Include="Header Files\Filters">
       <UniqueIdentifier>{7189735e-bbad-41ac-9bca-875f9b361c79}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Interaction">
-      <UniqueIdentifier>{e9385c9a-a693-4b72-8424-507a817e38a5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Pipelines">
       <UniqueIdentifier>{7c10ccf8-ab4b-42a4-bd7a-263fe8495ba0}</UniqueIdentifier>
     </Filter>
@@ -32,9 +29,6 @@
     </Filter>
     <Filter Include="Source Files\Filters">
       <UniqueIdentifier>{cdc55157-d2a8-44c6-a396-83d36934cbc4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Interaction">
-      <UniqueIdentifier>{e6d2fd1e-1a47-4168-a9a7-28262fb3e0dd}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Utils">
       <UniqueIdentifier>{b32c2c94-aa23-497b-86c3-19c3000fe2ce}</UniqueIdentifier>
@@ -67,39 +61,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_ShrinkPolyFilter.h">
       <Filter>Header Files\Filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\interaction\asiVisu_InteractorStylePick.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\interaction\asiVisu_InteractorStylePick2d.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\interaction\asiVisu_NodeInfo.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\interaction\asiVisu_PartCallback.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\interaction\asiVisu_PDomainCallback.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\interaction\asiVisu_PickCallback.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\interaction\asiVisu_PickFacetCallback.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\interaction\asiVisu_RotationCallback.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\interaction\asiVisu_Selection.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\interaction\asiVisu_TopoGraph.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\interaction\asiVisu_ViewerCallback.h">
-      <Filter>Header Files\Interaction</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\utils\asiVisu_MeshResultUtils.h">
       <Filter>Header Files\Utils</Filter>
@@ -372,39 +333,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_ShrinkPolyFilter.cpp">
       <Filter>Source Files\Filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\interaction\asiVisu_InteractorStylePick.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\interaction\asiVisu_InteractorStylePick2d.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\interaction\asiVisu_NodeInfo.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\interaction\asiVisu_PartCallback.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\interaction\asiVisu_PDomainCallback.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\interaction\asiVisu_PickCallback.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\interaction\asiVisu_PickFacetCallback.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\interaction\asiVisu_RotationCallback.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\interaction\asiVisu_Selection.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\interaction\asiVisu_TopoGraph.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\interaction\asiVisu_ViewerCallback.cpp">
-      <Filter>Source Files\Interaction</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\utils\asiVisu_MeshResultUtils.cpp">
       <Filter>Source Files\Utils</Filter>

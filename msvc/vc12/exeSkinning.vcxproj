@@ -249,6 +249,24 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_ControlsHull.h" />
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_ControlsSection.h" />
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_ControlsSkinning.h" />
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_MainWindowHull.h" />
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_MainWindowSkinning.h" />
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_ViewerSection.h" />
+    <ClInclude Include="..\..\src\exeSkinning\ui\exeSkinning_ViewerSkinner.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_ControlsHull.cpp" />
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_ControlsSection.cpp" />
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_ControlsSkinning.cpp" />
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_MainWindowHull.cpp" />
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_MainWindowSkinning.cpp" />
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_ViewerSection.cpp" />
+    <ClCompile Include="..\..\src\exeSkinning\ui\exeSkinning_ViewerSkinner.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

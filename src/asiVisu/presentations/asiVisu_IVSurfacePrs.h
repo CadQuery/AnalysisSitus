@@ -5,22 +5,22 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_iv_surface_prs_h
-#define visu_iv_surface_prs_h
+#ifndef asiVisu_IVSurfacePrs_h
+#define asiVisu_IVSurfacePrs_h
 
 // Visualization includes
 #include <asiData_IVSurfaceNode.h>
-#include <visu_iv_prs.h>
+#include <asiVisu_IVPrs.h>
 
-DEFINE_STANDARD_HANDLE(visu_iv_surface_prs, visu_iv_prs)
+DEFINE_STANDARD_HANDLE(asiVisu_IVSurfacePrs, asiVisu_IVPrs)
 
 //! Presentation class for surfaces in IV.
-class visu_iv_surface_prs : public visu_iv_prs
+class asiVisu_IVSurfacePrs : public asiVisu_IVPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_iv_surface_prs, visu_iv_prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVSurfacePrs, asiVisu_IVPrs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_IVSurfaceNode, Instance)
@@ -35,13 +35,13 @@ public:
 
 public:
 
-  static Handle(visu_prs)
+  static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
 private:
 
   //! Allocation is allowed only via Instance method.
-  visu_iv_surface_prs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& theNode);
 
 };
 

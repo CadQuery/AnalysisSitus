@@ -5,26 +5,26 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_axes_btn_callback_h
-#define visu_axes_btn_callback_h
+#ifndef asiVisu_AxesBtnCallback_h
+#define asiVisu_AxesBtnCallback_h
 
 // A-Situs (visualization) includes
-#include <visu_prs.h>
-#include <visu_utils.h>
+#include <asiVisu_Prs.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkButtonWidget.h>
 #include <vtkCommand.h>
 
 //! Callback for toggling axes.
-class visu_axes_btn_callback : public vtkCommand
+class asiVisu_AxesBtnCallback : public vtkCommand
 {
 public:
 
-  static visu_axes_btn_callback* New();
-  vtkTypeMacro(visu_axes_btn_callback, vtkCommand);
+  static asiVisu_AxesBtnCallback* New();
+  vtkTypeMacro(asiVisu_AxesBtnCallback, vtkCommand);
 
-  visu_axes_btn_callback() {}
+  asiVisu_AxesBtnCallback() {}
 
 public:
 

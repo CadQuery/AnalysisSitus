@@ -5,12 +5,12 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_geom_surf_prs_h
-#define visu_geom_surf_prs_h
+#ifndef asiVisu_GeomSurfPrs_h
+#define asiVisu_GeomSurfPrs_h
 
 // A-Situs (visualization) includes
-#include <visu_prs.h>
-#include <visu_utils.h>
+#include <asiVisu_Prs.h>
+#include <asiVisu_Utils.h>
 
 // A-Situs (geometry) includes
 #include <asiData_PartNode.h>
@@ -21,19 +21,19 @@
 #include <vtkScalarBarWidget.h>
 #include <vtkTextWidget.h>
 
-class visu_surf_btn_callback;
+class asiVisu_SurfBtnCallback;
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_geom_surf_prs, visu_prs)
+DEFINE_STANDARD_HANDLE(asiVisu_GeomSurfPrs, asiVisu_Prs)
 
 //! Presentation class for a host surface of a b-rep face.
-class visu_geom_surf_prs : public visu_prs
+class asiVisu_GeomSurfPrs : public asiVisu_Prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_geom_surf_prs, visu_prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_GeomSurfPrs, asiVisu_Prs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_SurfNode, Instance)
@@ -49,7 +49,7 @@ public:
 
 public:
 
-  static Handle(visu_prs)
+  static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
   virtual bool
@@ -69,7 +69,7 @@ public:
 private:
 
   //! Allocation is allowed only via Instance method.
-  visu_geom_surf_prs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:
 private:
@@ -79,10 +79,10 @@ private:
   virtual void beforeUpdatePipelines() const;
   virtual void afterUpdatePipelines() const;
   virtual void highlight(vtkRenderer* theRenderer,
-                         const visu_pick_result& thePickRes,
-                         const visu_selection_nature& theSelNature) const;
+                         const asiVisu_PickResult& thePickRes,
+                         const asiVisu_SelectionNature& theSelNature) const;
   virtual void unHighlight(vtkRenderer* theRenderer,
-                           const visu_selection_nature& theSelNature) const;
+                           const asiVisu_SelectionNature& theSelNature) const;
   virtual void renderPipelines(vtkRenderer* theRenderer) const;
   virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
 
@@ -91,25 +91,25 @@ private:
   vtkSmartPointer<vtkTextWidget>          m_textWidget;      //!< Annotation.
   vtkSmartPointer<vtkScalarBarWidget>     m_scalarBarWidget; //!< Scalar bar.
   vtkSmartPointer<vtkButtonWidget>        m_modeButton;      //!< Button to switch visualization modes.
-  vtkSmartPointer<visu_surf_btn_callback> m_modeCallback;    //!< Callback for visualization mode button.
+  vtkSmartPointer<asiVisu_SurfBtnCallback> m_modeCallback;    //!< Callback for visualization mode button.
 
 };
 
 //-----------------------------------------------------------------------------
 
 //! Callback for switching visualization mode.
-class visu_surf_btn_callback : public vtkCommand
+class asiVisu_SurfBtnCallback : public vtkCommand
 {
 public:
 
-  static visu_surf_btn_callback* New();
-  vtkTypeMacro(visu_surf_btn_callback, vtkCommand);
+  static asiVisu_SurfBtnCallback* New();
+  vtkTypeMacro(asiVisu_SurfBtnCallback, vtkCommand);
 
-  visu_surf_btn_callback() {}
+  asiVisu_SurfBtnCallback() {}
 
 public:
 
-  void SetPresentation(const Handle(visu_geom_surf_prs)& prs)
+  void SetPresentation(const Handle(asiVisu_GeomSurfPrs)& prs)
   {
     m_prs = prs;
   }
@@ -120,7 +120,7 @@ public:
 
 private:
 
-  Handle(visu_geom_surf_prs) m_prs; //!< Listened Presentation.
+  Handle(asiVisu_GeomSurfPrs) m_prs; //!< Listened Presentation.
 
 };
 

@@ -5,36 +5,36 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_curve_pipeline_h
-#define visu_curve_pipeline_h
+#ifndef asiVisu_CurvePipeline_h
+#define asiVisu_CurvePipeline_h
 
 // A-Situs includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_curve_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_CurvePipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for a parametric curve.
-class visu_curve_pipeline : public visu_pipeline
+class asiVisu_CurvePipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_curve_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_CurvePipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_curve_pipeline();
+  asiVisu_CurvePipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& DP);
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:
 
@@ -45,10 +45,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_curve_pipeline(const visu_curve_pipeline&);
+  asiVisu_CurvePipeline(const asiVisu_CurvePipeline&);
 
   //! Assignment prohibited.
-  visu_curve_pipeline& operator=(const visu_curve_pipeline&);
+  asiVisu_CurvePipeline& operator=(const asiVisu_CurvePipeline&);
 
 };
 

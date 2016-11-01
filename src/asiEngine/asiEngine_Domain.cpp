@@ -55,11 +55,11 @@ void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)& partN
 
   // Get actual selection
   const visu_actual_selection& sel      = common_facilities::Instance()->Prs.Domain->GetCurrentSelection();
-  const visu_pick_result&      pick_res = sel.PickResult(SelectionNature_Pick);
-  const visu_actor_elem_map&   elem_map = pick_res.GetPickMap();
+  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  const asiVisu_ActorElemMap&   elem_map = pick_res.GetPickMap();
   //
   // Prepare cumulative set of all picked element IDs
-  for ( visu_actor_elem_map::Iterator it(elem_map); it.More(); it.Next() )
+  for ( asiVisu_ActorElemMap::Iterator it(elem_map); it.More(); it.Next() )
   {
     const TColStd_PackedMapOfInteger& face_mask = it.Value();
     //

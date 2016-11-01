@@ -5,28 +5,28 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_re_contours_data_provider_h
-#define visu_re_contours_data_provider_h
+#ifndef asiVisu_REContoursDataProvider_h
+#define asiVisu_REContoursDataProvider_h
 
 // A-Situs visualization includes
-#include <visu_data_provider.h>
+#include <asiVisu_DataProvider.h>
 
 // OCCT includes
 #include <TopoDS_Wire.hxx>
 
-DEFINE_STANDARD_HANDLE(visu_re_contours_data_provider, visu_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_REContoursDataProvider, asiVisu_DataProvider)
 
 //! Data provider for re-engineering contours.
-class visu_re_contours_data_provider : public visu_data_provider
+class asiVisu_REContoursDataProvider : public asiVisu_DataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_re_contours_data_provider, visu_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_REContoursDataProvider, asiVisu_DataProvider)
 
 public:
 
-  visu_re_contours_data_provider();
+  asiVisu_REContoursDataProvider();
 
 public:
 

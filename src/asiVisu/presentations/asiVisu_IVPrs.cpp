@@ -6,59 +6,59 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_iv_prs.h>
+#include <asiVisu_IVPrs.h>
 
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void visu_iv_prs::beforeInitPipelines()
+void asiVisu_IVPrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void visu_iv_prs::afterInitPipelines()
+void asiVisu_IVPrs::afterInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void visu_iv_prs::beforeUpdatePipelines() const
+void asiVisu_IVPrs::beforeUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void visu_iv_prs::afterUpdatePipelines() const
+void asiVisu_IVPrs::afterUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting.
-void visu_iv_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                            const visu_pick_result&      ASitus_NotUsed(thePickRes),
-                            const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_IVPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                            const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                            const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting reset.
-void visu_iv_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                              const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_IVPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                              const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for rendering.
-void visu_iv_prs::renderPipelines(vtkRenderer* ASitus_NotUsed(theRenderer)) const
+void asiVisu_IVPrs::renderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   // Do nothing...
 }
 
 //! Callback for de-rendering.
-void visu_iv_prs::deRenderPipelines(vtkRenderer* ASitus_NotUsed(theRenderer)) const
+void asiVisu_IVPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   // Do nothing...
 }

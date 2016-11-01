@@ -5,14 +5,14 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_prs_manager_h
-#define visu_prs_manager_h
+#ifndef asiVisu_PrsManager_h
+#define asiVisu_PrsManager_h
 
 // Visualization includes
-#include <visu_axes_btn_callback.h>
-#include <visu_interactor_style_pick.h>
-#include <visu_interactor_style_pick_2d.h>
-#include <visu_prs.h>
+#include <asiVisu_AxesBtnCallback.h>
+#include <asiUI_InteractorStylePick.h>
+#include <asiUI_InteractorStylePick2d.h>
+#include <asiVisu_Prs.h>
 
 // Active Data (API) includes
 #include <ActAPI_IModel.h>
@@ -51,13 +51,13 @@
 //!
 //! This class inherits vtkObject in order to take advantage of VTK standard
 //! observer mechanism.
-class visu_prs_manager : public vtkObject
+class asiVisu_PrsManager : public vtkObject
 {
 public: // VTK macros and methods to override
 
-  vtkTypeMacro(visu_prs_manager, vtkObject);
+  vtkTypeMacro(asiVisu_PrsManager, vtkObject);
 
-  static visu_prs_manager* New();
+  static asiVisu_PrsManager* New();
   void PrintSelf(ostream& os, vtkIndent indent);
 
 public:
@@ -80,7 +80,7 @@ public:
 
 public:
 
-  visu_prs_manager();
+  asiVisu_PrsManager();
 
 // Presentation management:
 public:
@@ -116,10 +116,10 @@ public:
 
 //-----------------------------------------------------------------------------
 
-  virtual Handle(visu_prs)
+  virtual Handle(asiVisu_Prs)
     GetPresentation(const Handle(ActAPI_INode)& theNode);
 
-  virtual Handle(visu_prs)
+  virtual Handle(asiVisu_Prs)
     GetPresentation(const ActAPI_DataObjectId& theNodeId);
 
 //-----------------------------------------------------------------------------
@@ -182,9 +182,9 @@ public:
     GetSelectionMode() const;
 
   ActAPI_DataObjectIdList
-    Pick(visu_pick_input*            thePickInput,
-         const visu_selection_nature theSelNature,
-         const visu_pick_type        thePickType = PickType_Cell);
+    Pick(asiVisu_PickInput*            thePickInput,
+         const asiVisu_SelectionNature theSelNature,
+         const asiVisu_PickType        thePickType = PickType_Cell);
 
   void
     SetPickList(const Handle(ActAPI_HNodeList)& theNodeList);
@@ -206,7 +206,7 @@ public:
 
   void
     Highlight(const Handle(ActAPI_HNodeList)& theNodes,
-              const visu_actor_elem_map&      theActorElems,
+              const asiVisu_ActorElemMap&      theActorElems,
               const int                       theModes);
 
   void
@@ -288,7 +288,7 @@ private:
   //! Shortcut for mapping type between Nodes and Presentations. We use
   //! Node ID as key type in order not to deal with data objects when
   //! storing/retrieving Node Information to/from pipelines.
-  typedef NCollection_DataMap<ActAPI_DataObjectId, Handle(visu_prs)> TNodePrsMap;
+  typedef NCollection_DataMap<ActAPI_DataObjectId, Handle(asiVisu_Prs)> TNodePrsMap;
 
   //! Mapping between Nodes and their Presentations.
   TNodePrsMap m_nodePresentations;
@@ -327,10 +327,10 @@ private:
   vtkSmartPointer<vtkRenderWindowInteractor> m_renderWindowInteractor;
 
   //! Default Interactor Style.
-  vtkSmartPointer<visu_interactor_style_pick> m_interactorStyleTrackball;
+  vtkSmartPointer<asiUI_InteractorStylePick> m_interactorStyleTrackball;
 
   //! Interactor Style for 2D scenes.
-  vtkSmartPointer<visu_interactor_style_pick_2d> m_interactorStyleImage;
+  vtkSmartPointer<asiUI_InteractorStylePick2d> m_interactorStyleImage;
 
   //! Axes actor.
   vtkSmartPointer<vtkAxesActor> m_trihedron;
@@ -339,7 +339,7 @@ private:
   vtkSmartPointer<vtkButtonWidget> m_axesButton;
 
   //! Callback for axes button.
-  vtkSmartPointer<visu_axes_btn_callback> m_axesCallback;
+  vtkSmartPointer<asiVisu_AxesBtnCallback> m_axesCallback;
 
   //! List of nodes allowed for picking
   Handle(ActAPI_HNodeList) m_bAllowedNodes;

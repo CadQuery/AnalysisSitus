@@ -5,24 +5,24 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_pcurve_source_h
-#define visu_pcurve_source_h
+#ifndef asiVisu_PCurveSource_h
+#define asiVisu_PCurveSource_h
 
 // Visualization includes
-#include <visu_curve_source.h>
+#include <asiVisu_CurveSource.h>
 
 // OCCT includes
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 
 //! Source of polygonal data representing a curve on surface.
-class visu_pcurve_source : public visu_curve_source
+class asiVisu_PCurveSource : public asiVisu_CurveSource
 {
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(visu_pcurve_source, vtkPolyDataAlgorithm);
-  static visu_pcurve_source* New();
+  vtkTypeMacro(asiVisu_PCurveSource, vtkPolyDataAlgorithm);
+  static asiVisu_PCurveSource* New();
 
 // Kernel methods:
 public:
@@ -33,13 +33,13 @@ public:
 
 protected:
 
-  visu_pcurve_source();
-  ~visu_pcurve_source();
+  asiVisu_PCurveSource();
+  ~asiVisu_PCurveSource();
 
 private:
 
-  visu_pcurve_source(const visu_pcurve_source&);
-  visu_pcurve_source& operator=(const visu_pcurve_source&);
+  asiVisu_PCurveSource(const asiVisu_PCurveSource&);
+  asiVisu_PCurveSource& operator=(const asiVisu_PCurveSource&);
 
 private:
 

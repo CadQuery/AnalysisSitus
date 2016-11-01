@@ -5,36 +5,36 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_contour_pipeline_h
-#define visu_mesh_contour_pipeline_h
+#ifndef asiVisu_MeshContourPipeline_h
+#define asiVisu_MeshContourPipeline_h
 
 // Visualization includes
-#include <visu_mesh_pipeline.h>
+#include <asiVisu_MeshPipeline.h>
 
 // OCCT includes
 #include <NCollection_DataMap.hxx>
 
-DEFINE_STANDARD_HANDLE(visu_mesh_contour_pipeline, visu_mesh_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_MeshContourPipeline, asiVisu_MeshPipeline)
 
 //! Visualization pipeline for a tessellation represented with contour.
-class visu_mesh_contour_pipeline : public visu_mesh_pipeline
+class asiVisu_MeshContourPipeline : public asiVisu_MeshPipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_mesh_contour_pipeline, visu_mesh_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshContourPipeline, asiVisu_MeshPipeline)
 
 public:
 
-  visu_mesh_contour_pipeline(const bool doUseDefaultColor = true);
+  asiVisu_MeshContourPipeline(const bool doUseDefaultColor = true);
 
 private:
 
   //! Copying prohibited.
-  visu_mesh_contour_pipeline(const visu_mesh_contour_pipeline&);
+  asiVisu_MeshContourPipeline(const asiVisu_MeshContourPipeline&);
 
   //! Assignment prohibited.
-  visu_mesh_contour_pipeline& operator=(const visu_mesh_contour_pipeline&);
+  asiVisu_MeshContourPipeline& operator=(const asiVisu_MeshContourPipeline&);
 
 protected:
 

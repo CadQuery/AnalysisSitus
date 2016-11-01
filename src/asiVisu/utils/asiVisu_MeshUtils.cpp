@@ -6,11 +6,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_mesh_utils.h>
+#include <asiVisu_MeshUtils.h>
 
 //! Initializes VTK lookup table charged with default color scheme for meshes.
 //! \return VTK lookup table.
-vtkSmartPointer<vtkLookupTable> visu_mesh_utils::InitLookupTable()
+vtkSmartPointer<vtkLookupTable> asiVisu_MeshUtils::InitLookupTable()
 {
   vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
 
@@ -30,9 +30,9 @@ vtkSmartPointer<vtkLookupTable> visu_mesh_utils::InitLookupTable()
 //! \param theLookup         [in]     Lookup Table to initialize the mapper with.
 //! \param theScalarsArrName [in]     name of the array storing the scalars
 //!                                   for colorization.
-void visu_mesh_utils::InitMapper(vtkMapper*      theMapper,
-                                 vtkLookupTable* theLookup,
-                                 const char*     theScalarsArrName)
+void asiVisu_MeshUtils::InitMapper(vtkMapper*      theMapper,
+                                   vtkLookupTable* theLookup,
+                                   const char*     theScalarsArrName)
 {
   theMapper->ScalarVisibilityOn();
   theMapper->SetScalarModeToUseCellFieldData();
@@ -47,7 +47,7 @@ void visu_mesh_utils::InitMapper(vtkMapper*      theMapper,
 //! \param theMapper         [in/out] mapper to initialize.
 //! \param theScalarsArrName [in]     name of the array storing the scalars
 //!                                   for colorization.
-void visu_mesh_utils::InitMapper(vtkMapper*  theMapper,
+void asiVisu_MeshUtils::InitMapper(vtkMapper*  theMapper,
                                  const char* theScalarsArrName)
 {
   vtkSmartPointer<vtkLookupTable> aLookup = InitLookupTable();
@@ -56,14 +56,14 @@ void visu_mesh_utils::InitMapper(vtkMapper*  theMapper,
 
 //! Returns default shrink factor for meshes.
 //! \return shrink factor.
-double visu_mesh_utils::DefaultShrinkFactor()
+double asiVisu_MeshUtils::DefaultShrinkFactor()
 {
   return 0.8;
 }
 
 //! Returns default point size used for representation of mesh nodes.
 //! \return point size in pixels.
-double visu_mesh_utils::DefaultPointSize()
+double asiVisu_MeshUtils::DefaultPointSize()
 {
   return 5;
 }
@@ -72,7 +72,7 @@ double visu_mesh_utils::DefaultPointSize()
 //! \param fR [out] red component [0;1].
 //! \param fG [out] green component [0;1].
 //! \param fB [out] blud component [0;1].
-void visu_mesh_utils::DefaultContourColor(double& fR,
+void asiVisu_MeshUtils::DefaultContourColor(double& fR,
                                           double& fG,
                                           double& fB)
 {
@@ -81,7 +81,7 @@ void visu_mesh_utils::DefaultContourColor(double& fR,
 
 //! Returns default opacity for mesh contour.
 //! \return opacity factor.
-double visu_mesh_utils::DefaultContourOpacity()
+double asiVisu_MeshUtils::DefaultContourOpacity()
 {
   return 0.2;
 }

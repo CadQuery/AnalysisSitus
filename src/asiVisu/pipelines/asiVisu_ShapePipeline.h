@@ -5,12 +5,12 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_shape_pipeline_h
-#define visu_shape_pipeline_h
+#ifndef asiVisu_ShapePipeline_h
+#define asiVisu_ShapePipeline_h
 
 // A-Situs includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 // OCCT includes
 #include <NCollection_DataMap.hxx>
@@ -21,28 +21,28 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_shape_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_ShapePipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for OCCT shapes.
-class visu_shape_pipeline : public visu_pipeline
+class asiVisu_ShapePipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_shape_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ShapePipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_shape_pipeline(const bool            isOCCTColorScheme = true,
-                      const bool            isBound2Node      = true,
-                      const bool            isSecondary       = false,
-                      const bool            isTrianglesMode   = false,
-                      vtkPolyDataAlgorithm* pSource           = NULL);
+  asiVisu_ShapePipeline(const bool            isOCCTColorScheme = true,
+                        const bool            isBound2Node      = true,
+                        const bool            isSecondary       = false,
+                        const bool            isTrianglesMode   = false,
+                        vtkPolyDataAlgorithm* pSource           = NULL);
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& theDataProvider);
+    SetInput(const Handle(asiVisu_DataProvider)& theDataProvider);
 
 public:
 
@@ -69,10 +69,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_shape_pipeline(const visu_shape_pipeline&);
+  asiVisu_ShapePipeline(const asiVisu_ShapePipeline&);
 
   //! Assignment prohibited.
-  visu_shape_pipeline& operator=(const visu_shape_pipeline&);
+  asiVisu_ShapePipeline& operator=(const asiVisu_ShapePipeline&);
 
 protected:
 

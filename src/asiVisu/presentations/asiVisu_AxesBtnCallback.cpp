@@ -6,20 +6,20 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_axes_btn_callback.h>
+#include <asiVisu_AxesBtnCallback.h>
 
 // VTK includes
 #include <vtkTexturedButtonRepresentation2D.h>
 
 //! Instantiation routine.
 //! \return instance of the callback class.
-visu_axes_btn_callback* visu_axes_btn_callback::New()
+asiVisu_AxesBtnCallback* asiVisu_AxesBtnCallback::New()
 {
-  return new visu_axes_btn_callback();
+  return new asiVisu_AxesBtnCallback();
 }
 
 //! Callback for button clicking.
-void visu_axes_btn_callback::Execute(vtkObject* caller,
+void asiVisu_AxesBtnCallback::Execute(vtkObject* caller,
                                      unsigned long,
                                      void*)
 {

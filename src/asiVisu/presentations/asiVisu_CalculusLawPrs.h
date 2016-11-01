@@ -5,28 +5,28 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_calculus_law_prs_h
-#define visu_calculus_law_prs_h
+#ifndef asiVisu_CalculusLawPrs_h
+#define asiVisu_CalculusLawPrs_h
 
 // A-Situs (visualization) includes
-#include <visu_prs.h>
-#include <visu_utils.h>
+#include <asiVisu_Prs.h>
+#include <asiVisu_Utils.h>
 
 // A-Situs (calculus) includes
-#include <asiAlgo_DesignLaw_node.h>
+#include <asiData_DesignLawNode.h>
 
-DEFINE_STANDARD_HANDLE(visu_calculus_law_prs, visu_prs)
+DEFINE_STANDARD_HANDLE(asiVisu_CalculusLawPrs, asiVisu_Prs)
 
 //! Presentation class for a design parameter law.
-class visu_calculus_law_prs : public visu_prs
+class asiVisu_CalculusLawPrs : public asiVisu_Prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_calculus_law_prs, visu_prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_CalculusLawPrs, asiVisu_Prs)
 
   // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(asiAlgo_DesignLaw_node, Instance)
+  DEFINE_PRESENTATION_FACTORY(asiData_DesignLawNode, Instance)
 
 public:
 
@@ -38,7 +38,7 @@ public:
 
 public:
 
-  static Handle(visu_prs)
+  static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
   virtual bool
@@ -47,7 +47,7 @@ public:
 private:
 
   //! Allocation is allowed only via Instance method.
-  visu_calculus_law_prs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_CalculusLawPrs(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:
 private:
@@ -57,10 +57,10 @@ private:
   virtual void beforeUpdatePipelines() const;
   virtual void afterUpdatePipelines() const;
   virtual void highlight(vtkRenderer* theRenderer,
-                         const visu_pick_result& thePickRes,
-                         const visu_selection_nature& theSelNature) const;
+                         const asiVisu_PickResult& thePickRes,
+                         const asiVisu_SelectionNature& theSelNature) const;
   virtual void unHighlight(vtkRenderer* theRenderer,
-                           const visu_selection_nature& theSelNature) const;
+                           const asiVisu_SelectionNature& theSelNature) const;
   virtual void renderPipelines(vtkRenderer* theRenderer) const;
   virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
 

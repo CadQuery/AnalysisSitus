@@ -5,12 +5,12 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_geom_edge_prs_h
-#define visu_geom_edge_prs_h
+#ifndef asiVisu_GeomEdgePrs_h
+#define asiVisu_GeomEdgePrs_h
 
 // A-Situs (visualization) includes
-#include <visu_prs.h>
-#include <visu_utils.h>
+#include <asiVisu_Prs.h>
+#include <asiVisu_Utils.h>
 
 // A-Situs (geometry) includes
 #include <asiData_PartNode.h>
@@ -18,15 +18,15 @@
 // VTK includes
 #include <vtkTextWidget.h>
 
-DEFINE_STANDARD_HANDLE(visu_geom_edge_prs, visu_prs)
+DEFINE_STANDARD_HANDLE(asiVisu_GeomEdgePrs, asiVisu_Prs)
 
 //! Presentation class for b-rep edge.
-class visu_geom_edge_prs : public visu_prs
+class asiVisu_GeomEdgePrs : public asiVisu_Prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_geom_edge_prs, visu_prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_GeomEdgePrs, asiVisu_Prs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_EdgeNode, Instance)
@@ -41,7 +41,7 @@ public:
 
 public:
 
-  static Handle(visu_prs)
+  static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
   virtual bool
@@ -50,7 +50,7 @@ public:
 private:
 
   //! Allocation is allowed only via Instance method.
-  visu_geom_edge_prs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_GeomEdgePrs(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:
 private:
@@ -60,10 +60,10 @@ private:
   virtual void beforeUpdatePipelines() const;
   virtual void afterUpdatePipelines() const;
   virtual void highlight(vtkRenderer* theRenderer,
-                         const visu_pick_result& thePickRes,
-                         const visu_selection_nature& theSelNature) const;
+                         const asiVisu_PickResult& thePickRes,
+                         const asiVisu_SelectionNature& theSelNature) const;
   virtual void unHighlight(vtkRenderer* theRenderer,
-                           const visu_selection_nature& theSelNature) const;
+                           const asiVisu_SelectionNature& theSelNature) const;
   virtual void renderPipelines(vtkRenderer* theRenderer) const;
   virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
 

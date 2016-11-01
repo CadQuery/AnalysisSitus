@@ -5,36 +5,36 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_bcurve_knots_pipeline_h
-#define visu_bcurve_knots_pipeline_h
+#ifndef asiVisu_BCurveKnotsPipeline_h
+#define asiVisu_BCurveKnotsPipeline_h
 
 // A-Situs includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_bcurve_knots_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_BCurveKnotsPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for b-curve knots.
-class visu_bcurve_knots_pipeline : public visu_pipeline
+class asiVisu_BCurveKnotsPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_bcurve_knots_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_BCurveKnotsPipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_bcurve_knots_pipeline();
+  asiVisu_BCurveKnotsPipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& DP);
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:
 
@@ -45,10 +45,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_bcurve_knots_pipeline(const visu_bcurve_knots_pipeline&);
+  asiVisu_BCurveKnotsPipeline(const asiVisu_BCurveKnotsPipeline&);
 
   //! Assignment prohibited.
-  visu_bcurve_knots_pipeline& operator=(const visu_bcurve_knots_pipeline&);
+  asiVisu_BCurveKnotsPipeline& operator=(const asiVisu_BCurveKnotsPipeline&);
 
 };
 

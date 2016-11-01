@@ -6,10 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_pcurve_source.h>
+#include <asiVisu_PCurveSource.h>
 
 // A-Situs (visualization) includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -23,17 +23,17 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(visu_pcurve_source);
+vtkStandardNewMacro(asiVisu_PCurveSource);
 
 //! Default constructor.
-visu_pcurve_source::visu_pcurve_source() : visu_curve_source()
+asiVisu_PCurveSource::asiVisu_PCurveSource() : asiVisu_CurveSource()
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
 }
 
 //! Destructor.
-visu_pcurve_source::~visu_pcurve_source()
+asiVisu_PCurveSource::~asiVisu_PCurveSource()
 {
 }
 
@@ -44,7 +44,7 @@ visu_pcurve_source::~visu_pcurve_source()
 //! Sets input geometry.
 //! \param edge [in] edge to retrieve the p-curve from.
 //! \param face [in] host face.
-void visu_pcurve_source::SetEdgeOnFace(const TopoDS_Edge& edge,
+void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
                                        const TopoDS_Face& face)
 {
   if ( edge.IsNull() )
@@ -120,5 +120,5 @@ void visu_pcurve_source::SetEdgeOnFace(const TopoDS_Edge& edge,
    * =================== */
 
   // Perform basic initialization
-  visu_curve_source::SetInputArrays(xCoords, yCoords, zCoords, ori);
+  asiVisu_CurveSource::SetInputArrays(xCoords, yCoords, zCoords, ori);
 }

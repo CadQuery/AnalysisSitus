@@ -5,26 +5,26 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_E_vector_pipeline_h
-#define visu_mesh_E_vector_pipeline_h
+#ifndef asiVisu_MeshEVectorPipeline_h
+#define asiVisu_MeshEVectorPipeline_h
 
 // Visualization includes
-#include <visu_mesh_data_provider.h>
-#include <visu_mesh_pipeline.h>
+#include <asiVisu_MeshDataProvider.h>
+#include <asiVisu_MeshPipeline.h>
 
 //-----------------------------------------------------------------------------
 // Data Provider
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_mesh_E_vector_data_provider, visu_mesh_data_provider)
+DEFINE_STANDARD_HANDLE(asiVisu_MeshEVectorDataProvider, asiVisu_MeshDataProvider)
 
 //! Data source for the corresponding pipeline. Specifies all data necessary
 //! for visualization of mesh with elemental vectors.
-class visu_mesh_E_vector_data_provider : public visu_mesh_data_provider
+class asiVisu_MeshEVectorDataProvider : public asiVisu_MeshDataProvider
 {
 public:
 
-  DEFINE_STANDARD_RTTI_INLINE(visu_mesh_E_vector_data_provider,visu_mesh_data_provider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshEVectorDataProvider,asiVisu_MeshDataProvider)
 
 public:
 
@@ -43,24 +43,24 @@ public:
 // Pipeline
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_mesh_E_vector_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_MeshEVectorPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for Mesh meshes with elemental vectors.
-class visu_mesh_E_vector_pipeline : public visu_pipeline
+class asiVisu_MeshEVectorPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_mesh_E_vector_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshEVectorPipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_mesh_E_vector_pipeline();
+  asiVisu_MeshEVectorPipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& theDataProvider);
+    SetInput(const Handle(asiVisu_DataProvider)& theDataProvider);
 
 private:
 
@@ -71,10 +71,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_mesh_E_vector_pipeline(const visu_mesh_E_vector_pipeline&);
+  asiVisu_MeshEVectorPipeline(const asiVisu_MeshEVectorPipeline&);
 
   //! Assignment prohibited.
-  visu_mesh_E_vector_pipeline& operator=(const visu_mesh_E_vector_pipeline&);
+  asiVisu_MeshEVectorPipeline& operator=(const asiVisu_MeshEVectorPipeline&);
 
 protected:
 

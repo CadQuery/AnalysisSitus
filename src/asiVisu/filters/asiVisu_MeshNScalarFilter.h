@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_N_scalar_filter_h
-#define visu_mesh_N_scalar_filter_h
+#ifndef asiVisu_MeshNScalarFilter_h
+#define asiVisu_MeshNScalarFilter_h
 
 // Visualization includes
-#include <visu_common.h>
+#include <asiVisu_Common.h>
 
 // Active Data (auxiliary) includes
 #include <ActAux_Common.h>
@@ -20,24 +20,22 @@
 #include <vtkPolyDataAlgorithm.h>
 
 // OCCT includes
-#pragma warning(push, 0)
 #include <NCollection_SparseArray.hxx>
-#pragma warning(pop)
 
 //! Collection of scalar values associated with sparse integer IDs.
 typedef NCollection_SparseArray<double> ScalarMap;
 typedef NCollection_Shared<ScalarMap>   HScalarMap;
 
 //! Filter populating VTK point scalars with domain data.
-class visu_mesh_N_scalar_filter : public vtkPolyDataAlgorithm
+class asiVisu_MeshNScalarFilter : public vtkPolyDataAlgorithm
 {
 public:
 
-  vtkTypeMacro(visu_mesh_N_scalar_filter, vtkPolyDataAlgorithm);
+  vtkTypeMacro(asiVisu_MeshNScalarFilter, vtkPolyDataAlgorithm);
 
 public:
 
-  static visu_mesh_N_scalar_filter* New();
+  static asiVisu_MeshNScalarFilter* New();
 
   //! Sets nodal scalars.
   //! \param theNodeIDs  [in] involved mesh node IDs.
@@ -73,9 +71,9 @@ public:
 
 private:
 
-  visu_mesh_N_scalar_filter();
+  asiVisu_MeshNScalarFilter();
 
-  ~visu_mesh_N_scalar_filter();
+  ~asiVisu_MeshNScalarFilter();
 
 public:
 
@@ -96,11 +94,11 @@ private:
 
   //! Prohibited copy constructor.
   //! \param theFilter [in] another filter.
-  visu_mesh_N_scalar_filter(const visu_mesh_N_scalar_filter& theFilter); // Not implemented.
+  asiVisu_MeshNScalarFilter(const asiVisu_MeshNScalarFilter& theFilter); // Not implemented.
 
   //! Prohibited assignment operator.
   //! \param theFilter [in] another filter.
-  void operator=(const visu_mesh_N_scalar_filter& theFilter); // Not implemented.
+  void operator=(const asiVisu_MeshNScalarFilter& theFilter); // Not implemented.
 
 private:
 

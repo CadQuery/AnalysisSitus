@@ -6,11 +6,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_mesh_source.h>
+#include <asiVisu_MeshSource.h>
 
 // Visualization includes
-#include <visu_mesh_utils.h>
-#include <visu_utils.h>
+#include <asiVisu_MeshUtils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkCellData.h>
@@ -30,10 +30,10 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(visu_mesh_source);
+vtkStandardNewMacro(asiVisu_MeshSource);
 
 //! Default constructor.
-visu_mesh_source::visu_mesh_source()
+asiVisu_MeshSource::asiVisu_MeshSource()
 {
   this->EmptyGroupForAllModeOn();
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
@@ -41,7 +41,7 @@ visu_mesh_source::visu_mesh_source()
 }
 
 //! Destructor.
-visu_mesh_source::~visu_mesh_source()
+asiVisu_MeshSource::~asiVisu_MeshSource()
 {
 }
 
@@ -50,41 +50,41 @@ visu_mesh_source::~visu_mesh_source()
 //-----------------------------------------------------------------------------
 
 //! Switches ON inverse mode of filtering.
-void visu_mesh_source::EmptyGroupForAllModeOn()
+void asiVisu_MeshSource::EmptyGroupForAllModeOn()
 {
   m_bIsEmptyGroupForAll = true;
 }
 
 //! Switches OFF inverse mode of filtering.
-void visu_mesh_source::EmptyGroupForAllModeOff()
+void asiVisu_MeshSource::EmptyGroupForAllModeOff()
 {
   m_bIsEmptyGroupForAll = false;
 }
 
 //! Sets the instance of Mesh DS being used as an input for Data Source.
 //! \param theMesh [in] input Mesh DS.
-void visu_mesh_source::SetInputMesh(const Handle(Mesh)& theMesh)
+void asiVisu_MeshSource::SetInputMesh(const Handle(Mesh)& theMesh)
 {
   m_mesh = theMesh;
 }
 
 //! Sets the Mesh Group used to filter the input mesh.
 //! \param theGroup [in] input Mesh Group.
-void visu_mesh_source::SetInputElemGroup(const Handle(Mesh_Group)& theGroup)
+void asiVisu_MeshSource::SetInputElemGroup(const Handle(Mesh_Group)& theGroup)
 {
   m_elemGroup = theGroup;
 }
 
 //! Accessor for the input Mesh DS.
 //! \return requested Mesh DS.
-const Handle(Mesh)& visu_mesh_source::GetInputMesh() const
+const Handle(Mesh)& asiVisu_MeshSource::GetInputMesh() const
 {
   return m_mesh;
 }
 
 //! Accessor for the input Mesh Group.
 //! \return requested Mesh Group.
-const Handle(Mesh_Group)& visu_mesh_source::GetInputElemGroup() const
+const Handle(Mesh_Group)& asiVisu_MeshSource::GetInputElemGroup() const
 {
   return m_elemGroup;
 }
@@ -98,7 +98,7 @@ const Handle(Mesh_Group)& visu_mesh_source::GetInputElemGroup() const
 //! \param theOutputVector [in] the pointer to output data, that is filled
 //!                             in this method.
 //! \return status.
-int visu_mesh_source::RequestData(vtkInformation*        theRequest,
+int asiVisu_MeshSource::RequestData(vtkInformation*        theRequest,
                                   vtkInformationVector** theInputVector,
                                   vtkInformationVector*  theOutputVector)
 {
@@ -121,17 +121,17 @@ int visu_mesh_source::RequestData(vtkInformation*        theRequest,
 
   // Array for mesh item types
   vtkSmartPointer<vtkIntArray>
-    aTypeArr = visu_utils::InitIntArray(ARRNAME_MESH_ITEM_TYPE);
+    aTypeArr = asiVisu_Utils::InitIntArray(ARRNAME_MESH_ITEM_TYPE);
   aCD->AddArray(aTypeArr);
 
   // Array for mesh node IDs
   vtkSmartPointer<vtkIntArray>
-    aNodeIDsArr = visu_utils::InitIntArray(ARRNAME_MESH_NODE_IDS);
+    aNodeIDsArr = asiVisu_Utils::InitIntArray(ARRNAME_MESH_NODE_IDS);
   aPD->AddArray(aNodeIDsArr);
 
   // Array for mesh element IDs
   vtkSmartPointer<vtkIntArray>
-    aFaceIDsArr = visu_utils::InitIntArray(ARRNAME_MESH_ELEM_IDS);
+    aFaceIDsArr = asiVisu_Utils::InitIntArray(ARRNAME_MESH_ELEM_IDS);
   aCD->AddArray(aFaceIDsArr);
 
   /* ==============================================================
@@ -188,7 +188,7 @@ int visu_mesh_source::RequestData(vtkInformation*        theRequest,
 //! Translates the passed mesh element to VTK polygonal cell.
 //! \param theElem     [in]     Mesh element to translate.
 //! \param thePolyData [in/out] output polygonal data.
-void visu_mesh_source::translateElement(const Handle(Mesh_Element)& theElem,
+void asiVisu_MeshSource::translateElement(const Handle(Mesh_Element)& theElem,
                                         vtkPolyData*                thePolyData)
 {
   // Proceed with TRIANGLE elements
@@ -219,7 +219,7 @@ void visu_mesh_source::translateElement(const Handle(Mesh_Element)& theElem,
 //! \param theNodeID   [in]     node ID.
 //! \param thePolyData [in/out] output polygonal data.
 //! \return internal VTK ID for the newly added point.
-vtkIdType visu_mesh_source::registerMeshNode(const int    theNodeID,
+vtkIdType asiVisu_MeshSource::registerMeshNode(const int    theNodeID,
                                              vtkPolyData* thePolyData)
 {
   // Access necessary arrays
@@ -256,7 +256,7 @@ vtkIdType visu_mesh_source::registerMeshNode(const int    theNodeID,
 //! \param theNbNodes  [in] number of nodes.
 //! \param thePolyData [in] polygonal data being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType visu_mesh_source::registerMeshFace(const int    theFaceID,
+vtkIdType asiVisu_MeshSource::registerMeshFace(const int    theFaceID,
                                              const void*  theNodes,
                                              const int    theNbNodes,
                                              vtkPolyData* thePolyData)
@@ -314,7 +314,7 @@ vtkIdType visu_mesh_source::registerMeshFace(const int    theFaceID,
 //! \param thePolyData [in] polygonal data being populated.
 //! \return ID of the registered cell.
 vtkIdType
-  visu_mesh_source::registerFreeNodesCell(const NCollection_Sequence<int>& theNodeIDs,
+  asiVisu_MeshSource::registerFreeNodesCell(const NCollection_Sequence<int>& theNodeIDs,
                                           vtkPolyData*                     thePolyData)
 {
   if ( theNodeIDs.IsEmpty() )

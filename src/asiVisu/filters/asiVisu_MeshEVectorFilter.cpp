@@ -6,10 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_mesh_E_vector_filter.h>
+#include <asiVisu_MeshEVectorFilter.h>
 
 // Visualization includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkCell.h>
@@ -22,10 +22,10 @@
 #include <vtkSmartPointer.h>
 #include <vtkMath.h>
 
-vtkStandardNewMacro(visu_mesh_E_vector_filter);
+vtkStandardNewMacro(asiVisu_MeshEVectorFilter);
 
 //! Default constructor.
-visu_mesh_E_vector_filter::visu_mesh_E_vector_filter()
+asiVisu_MeshEVectorFilter::asiVisu_MeshEVectorFilter()
 {
   m_vectorMap = new HVectorMap(100);
 
@@ -38,7 +38,7 @@ visu_mesh_E_vector_filter::visu_mesh_E_vector_filter()
 }
 
 //! Destructor.
-visu_mesh_E_vector_filter::~visu_mesh_E_vector_filter()
+asiVisu_MeshEVectorFilter::~asiVisu_MeshEVectorFilter()
 {
 }
 
@@ -46,7 +46,7 @@ visu_mesh_E_vector_filter::~visu_mesh_E_vector_filter()
 //! \param thePort [not used] connection port.
 //! \param theInfo [in/out] information object.
 //! \return result code.
-int visu_mesh_E_vector_filter::FillInputPortInformation(int, vtkInformation* info)
+int asiVisu_MeshEVectorFilter::FillInputPortInformation(int, vtkInformation* info)
 {
   // This filter uses the vtkDataSet cell traversal methods so it
   // supports any data set type as input
@@ -59,7 +59,7 @@ int visu_mesh_E_vector_filter::FillInputPortInformation(int, vtkInformation* inf
 //! \param theInput  [in]       input data.
 //! \param theOutput [out]      output data.
 //! \return result code.
-int visu_mesh_E_vector_filter::RequestData(vtkInformation*,
+int asiVisu_MeshEVectorFilter::RequestData(vtkInformation*,
                                            vtkInformationVector** theInputVector,
                                            vtkInformationVector*  theOutputVector)
 {
@@ -116,7 +116,7 @@ int visu_mesh_E_vector_filter::RequestData(vtkInformation*,
 
   // Allocate an array for cell vectors
   vtkSmartPointer<vtkDoubleArray>
-    aNewCellVectors = visu_utils::InitDoubleVectorArray(ARRNAME_MESH_E_VECTORS);
+    aNewCellVectors = asiVisu_Utils::InitDoubleVectorArray(ARRNAME_MESH_E_VECTORS);
 
   // Traverse all cells
   for ( vtkIdType aCellId = 0; aCellId < aNbCells; ++aCellId )
@@ -198,7 +198,7 @@ int visu_mesh_E_vector_filter::RequestData(vtkInformation*,
 //! \param theVecTuple [out] requested vectorial data if any.
 //! \return true if vectorial data has been found, false -- otherwise.
 bool
-  visu_mesh_E_vector_filter::vectorForElem(const int    theElemID,
+  asiVisu_MeshEVectorFilter::vectorForElem(const int    theElemID,
                                            VectorTuple& theVecTuple)
 {
   if ( !m_vectorMap->IsBound(theElemID) )
@@ -210,7 +210,7 @@ bool
 
 //! Adjusts min & max scalar values against the passed vectorial data.
 //! \param theVecTuple [in] vectorial data.
-void visu_mesh_E_vector_filter::adjustMinMax(const VectorTuple& theVecTuple)
+void asiVisu_MeshEVectorFilter::adjustMinMax(const VectorTuple& theVecTuple)
 {
   double aVecModulus = 0.0;
   for ( int k = 0; k < 3; k++ )

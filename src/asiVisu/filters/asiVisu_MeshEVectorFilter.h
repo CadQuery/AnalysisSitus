@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_mesh_E_vector_filter_h
-#define visu_mesh_E_vector_filter_h
+#ifndef asiVisu_MeshEVectorFilter_h
+#define asiVisu_MeshEVectorFilter_h
 
 // Visualization includes
-#include <visu_common.h>
+#include <asiVisu.h>
 
 // Active Data (auxiliary) includes
 #include <ActAux_Common.h>
@@ -20,9 +20,7 @@
 #include <vtkPolyDataAlgorithm.h>
 
 // OCCT includes
-#pragma warning(push, 0)
 #include <NCollection_SparseArray.hxx>
-#pragma warning(pop)
 
 //! Elementary data chunk representing vector value.
 struct VectorTuple
@@ -47,15 +45,15 @@ typedef NCollection_SparseArray<VectorTuple> VectorMap;
 typedef NCollection_Shared<VectorMap>        HVectorMap;
 
 //! Filter populating VTK cell vectors with domain data.
-class visu_mesh_E_vector_filter : public vtkPolyDataAlgorithm
+class asiVisu_MeshEVectorFilter : public vtkPolyDataAlgorithm
 {
 public:
 
-  vtkTypeMacro(visu_mesh_E_vector_filter, vtkPolyDataAlgorithm);
+  vtkTypeMacro(asiVisu_MeshEVectorFilter, vtkPolyDataAlgorithm);
 
 public:
 
-  static visu_mesh_E_vector_filter* New();
+  static asiVisu_MeshEVectorFilter* New();
 
   //! Sets elemental vectors.
   //! \param theElemIDs    [in] involved mesh element IDs.
@@ -101,9 +99,9 @@ public:
 
 private:
 
-  visu_mesh_E_vector_filter();
+  asiVisu_MeshEVectorFilter();
 
-  ~visu_mesh_E_vector_filter();
+  ~asiVisu_MeshEVectorFilter();
 
 public:
 
@@ -122,11 +120,11 @@ private:
 
   //! Prohibited copy constructor.
   //! \param theFilter [in] another filter.
-  visu_mesh_E_vector_filter(const visu_mesh_E_vector_filter& theFilter); // Not implemented.
+  asiVisu_MeshEVectorFilter(const asiVisu_MeshEVectorFilter& theFilter); // Not implemented.
 
   //! Prohibited assignment operator.
   //! \param theFilter [in] another filter.
-  void operator=(const visu_mesh_E_vector_filter& theFilter); // Not implemented.
+  void operator=(const asiVisu_MeshEVectorFilter& theFilter); // Not implemented.
 
 private:
 

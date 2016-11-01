@@ -6,10 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_bcurve_knots_source.h>
+#include <asiVisu_BCurveKnotsSource.h>
 
 // Visualization includes
-#include <visu_utils.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkCellData.h>
@@ -27,17 +27,17 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(visu_bcurve_knots_source);
+vtkStandardNewMacro(asiVisu_BCurveKnotsSource);
 
 //! Default constructor.
-visu_bcurve_knots_source::visu_bcurve_knots_source() : vtkPolyDataAlgorithm()
+asiVisu_BCurveKnotsSource::asiVisu_BCurveKnotsSource() : vtkPolyDataAlgorithm()
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
 }
 
 //! Destructor.
-visu_bcurve_knots_source::~visu_bcurve_knots_source()
+asiVisu_BCurveKnotsSource::~asiVisu_BCurveKnotsSource()
 {
 }
 
@@ -48,7 +48,7 @@ visu_bcurve_knots_source::~visu_bcurve_knots_source()
 //! Initialize data source from a b-curve.
 //! \param curve [in] curve to extract a knot sequence from.
 //! \return true if poly data has been produced.
-bool visu_bcurve_knots_source::SetInputCurve(const Handle(Geom_BSplineCurve)& bcurve)
+bool asiVisu_BCurveKnotsSource::SetInputCurve(const Handle(Geom_BSplineCurve)& bcurve)
 {
   if ( bcurve.IsNull() )
     return false;
@@ -66,7 +66,7 @@ bool visu_bcurve_knots_source::SetInputCurve(const Handle(Geom_BSplineCurve)& bc
 //! \param outputVector [in] the pointer to output data, that is filled
 //!                          in this method.
 //! \return status.
-int visu_bcurve_knots_source::RequestData(vtkInformation*        request,
+int asiVisu_BCurveKnotsSource::RequestData(vtkInformation*        request,
                                           vtkInformationVector** inputVector,
                                           vtkInformationVector*  outputVector)
 {
@@ -105,7 +105,7 @@ int visu_bcurve_knots_source::RequestData(vtkInformation*        request,
 //! \param index    [in]     index of (X, Y, Z) coordinate triple.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK point.
-vtkIdType visu_bcurve_knots_source::registerGridPoint(const int    index,
+vtkIdType asiVisu_BCurveKnotsSource::registerGridPoint(const int    index,
                                                       vtkPolyData* polyData)
 {
   // Access necessary arrays
@@ -123,7 +123,7 @@ vtkIdType visu_bcurve_knots_source::registerGridPoint(const int    index,
 //! \param pid      [in]     point index.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType visu_bcurve_knots_source::registerVertex(const vtkIdType pid,
+vtkIdType asiVisu_BCurveKnotsSource::registerVertex(const vtkIdType pid,
                                                    vtkPolyData*    polyData)
 {
   std::vector<vtkIdType> pids;

@@ -249,6 +249,18 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_Controls.h" />
+    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_ControlsEuler.h" />
+    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_DialogDetectHoles.h" />
+    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_MainWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\exeFeatures\ui\exeFeatures_Controls.cpp" />
+    <ClCompile Include="..\..\src\exeFeatures\ui\exeFeatures_ControlsEuler.cpp" />
+    <ClCompile Include="..\..\src\exeFeatures\ui\exeFeatures_DialogDetectHoles.cpp" />
+    <ClCompile Include="..\..\src\exeFeatures\ui\exeFeatures_MainWindow.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

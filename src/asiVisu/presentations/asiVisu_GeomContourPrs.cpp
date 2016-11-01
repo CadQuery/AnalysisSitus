@@ -6,14 +6,14 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <visu_geom_contour_prs.h>
+#include <asiVisu_GeomContourPrs.h>
 
 // A-Situs (visualization) includes
-#include <visu_contour_data_provider.h>
-#include <visu_contour_points_data_provider.h>
-#include <visu_points_pipeline.h>
-#include <visu_shape_pipeline.h>
-#include <visu_utils.h>
+#include <asiVisu_ContourDataProvider.h>
+#include <asiData_ContourPointsDataProvider.h>
+#include <asiVisu_PointsPipeline.h>
+#include <asiVisu_ShapePipeline.h>
+#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -24,26 +24,26 @@
 
 //! Creates a Presentation object for the passed Geometry Contour Node.
 //! \param theNode [in] Geometry Contour Node to create a Presentation for.
-visu_geom_contour_prs::visu_geom_contour_prs(const Handle(ActAPI_INode)& theNode)
-: visu_prs(theNode)
+asiVisu_GeomContourPrs::asiVisu_GeomContourPrs(const Handle(ActAPI_INode)& theNode)
+: asiVisu_Prs(theNode)
 {
   // Create Data Provider for polyline
-  Handle(visu_contour_data_provider)
-    DP_contour = new visu_contour_data_provider;
+  Handle(asiVisu_ContourDataProvider)
+    DP_contour = new asiVisu_ContourDataProvider;
 
   // Create Data Provider for points
-  Handle(visu_contour_points_data_provider)
-    DP_points = new visu_contour_points_data_provider;
+  Handle(asiData_ContourPointsDataProvider)
+    DP_points = new asiData_ContourPointsDataProvider;
 
   // Pipeline for contour
-  Handle(visu_shape_pipeline) shape_pl = new visu_shape_pipeline();
+  Handle(asiVisu_ShapePipeline) shape_pl = new asiVisu_ShapePipeline();
   shape_pl->WireframeModeOn();
   //
   this->addPipeline        ( Pipeline_Main, shape_pl );
   this->assignDataProvider ( Pipeline_Main, DP_contour );
 
   // Pipeline for points
-  Handle(visu_points_pipeline) points_pl = new visu_points_pipeline;
+  Handle(asiVisu_PointsPipeline) points_pl = new asiVisu_PointsPipeline;
   //
   this->addPipeline        ( Pipeline_Points, points_pl );
   this->assignDataProvider ( Pipeline_Points, DP_points );
@@ -68,14 +68,14 @@ visu_geom_contour_prs::visu_geom_contour_prs(const Handle(ActAPI_INode)& theNode
 //! Factory method for Presentation.
 //! \param theNode [in] Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(visu_prs) visu_geom_contour_prs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_GeomContourPrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new visu_geom_contour_prs(theNode);
+  return new asiVisu_GeomContourPrs(theNode);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool visu_geom_contour_prs::IsVisible() const
+bool asiVisu_GeomContourPrs::IsVisible() const
 {
   return true;
 }
@@ -83,27 +83,27 @@ bool visu_geom_contour_prs::IsVisible() const
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void visu_geom_contour_prs::beforeInitPipelines()
+void asiVisu_GeomContourPrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void visu_geom_contour_prs::afterInitPipelines()
+void asiVisu_GeomContourPrs::afterInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void visu_geom_contour_prs::beforeUpdatePipelines() const
+void asiVisu_GeomContourPrs::beforeUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void visu_geom_contour_prs::afterUpdatePipelines() const
+void asiVisu_GeomContourPrs::afterUpdatePipelines() const
 {
   // Do nothing...
 }
@@ -112,31 +112,31 @@ void visu_geom_contour_prs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void visu_geom_contour_prs::highlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                      const visu_pick_result&      ASitus_NotUsed(thePickRes),
-                                      const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_GeomContourPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                      const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                      const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void visu_geom_contour_prs::unHighlight(vtkRenderer*                 ASitus_NotUsed(theRenderer),
-                                        const visu_selection_nature& ASitus_NotUsed(theSelNature)) const
+void asiVisu_GeomContourPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
+                                        const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void visu_geom_contour_prs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomContourPrs::renderPipelines(vtkRenderer* theRenderer) const
 {
   // Do nothing...
 }
 
 //! Callback for de-rendering.
 //! \param theRenderer [in] renderer.
-void visu_geom_contour_prs::deRenderPipelines(vtkRenderer* ASitus_NotUsed(theRenderer)) const
+void asiVisu_GeomContourPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   // Do nothing...
 }

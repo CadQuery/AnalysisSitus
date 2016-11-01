@@ -5,34 +5,34 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_shaded_surface_pipeline_h
-#define visu_shaded_surface_pipeline_h
+#ifndef asiVisu_ShadedSurfacePipeline_h
+#define asiVisu_ShadedSurfacePipeline_h
 
 // A-Situs includes
-#include <visu_data_provider.h>
-#include <visu_pipeline.h>
-#include <visu_surface_source.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
+#include <asiVisu_SurfaceSource.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(visu_shaded_surface_pipeline, visu_pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_ShadedSurfacePipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for a parametric surface in shaded view.
-class visu_shaded_surface_pipeline : public visu_pipeline
+class asiVisu_ShadedSurfacePipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(visu_shaded_surface_pipeline, visu_pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ShadedSurfacePipeline, asiVisu_Pipeline)
 
 public:
 
-  visu_shaded_surface_pipeline();
+  asiVisu_ShadedSurfacePipeline();
 
 public:
 
   virtual void
-    SetInput(const Handle(visu_data_provider)& DP);
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 public:
 
@@ -56,10 +56,10 @@ private:
 private:
 
   //! Copying prohibited.
-  visu_shaded_surface_pipeline(const visu_shaded_surface_pipeline&);
+  asiVisu_ShadedSurfacePipeline(const asiVisu_ShadedSurfacePipeline&);
 
   //! Assignment prohibited.
-  visu_shaded_surface_pipeline& operator=(const visu_shaded_surface_pipeline&);
+  asiVisu_ShadedSurfacePipeline& operator=(const asiVisu_ShadedSurfacePipeline&);
 
 protected:
 
@@ -67,7 +67,7 @@ protected:
   bool m_bForced;            //!< Not very graceful flag to force execution even if
                              //!< no persistent data has changed.
   //
-  vtkSmartPointer<visu_surface_source> m_source; //!< Polygonal data source.
+  vtkSmartPointer<asiVisu_SurfaceSource> m_source; //!< Polygonal data source.
 
 };
 

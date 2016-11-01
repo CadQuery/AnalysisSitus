@@ -9,5 +9,14 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{87db7292-87ad-4e5e-9106-68ff09ae92d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{c4d066d2-16ed-467b-a3b2-5fd278f92987}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MOC">
+      <UniqueIdentifier>{451b98c0-2d36-41c2-9b4f-2334d048810c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

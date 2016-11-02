@@ -12,16 +12,16 @@
 #include <asiUI.h>
 
 // Common includes
-#include <asiData_Model.h>
+#include <asiEngine_Model.h>
 
 // GUI includes
-#include <asiUI_Viewer.h>
-
-// Visualization includes
-#include <asiUI_InteractorStylePick.h>
 #include <asiUI_PartCallback.h>
 #include <asiUI_PickCallback.h>
 #include <asiUI_RotationCallback.h>
+#include <asiUI_Viewer.h>
+
+// Visualization includes
+#include <asiVisu_InteractorStylePick.h>
 
 // VTK includes
 #include <vtkOrientationMarkerWidget.h>
@@ -33,7 +33,8 @@ class asiUI_ViewerPart : public asiUI_Viewer
 
 public:
 
-  asiUI_ViewerPart(QWidget* parent = NULL);
+  asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
+                   QWidget*                       parent = NULL);
   virtual ~asiUI_ViewerPart();
 
 public:
@@ -46,7 +47,15 @@ public slots:
   void onSubShapesPicked();
   void onFindFace();
 
-private:
+signals:
+
+  void facePicked();
+  void edgePicked();
+
+protected:
+
+  //! Data Model instance.
+  Handle(asiEngine_Model) m_model;
 
   //! Part callback.
   vtkSmartPointer<asiUI_PartCallback> m_partCallback;

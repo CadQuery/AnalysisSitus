@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_InteractorStylePick_h
-#define asiUI_InteractorStylePick_h
+#ifndef asiVisu_InteractorStylePick_h
+#define asiVisu_InteractorStylePick_h
 
 // A-Situs (UI) includes
-#include <asiUI_Selection.h>
+#include <asiVisu_Selection.h>
 
 // VTK includes
 #include <vtkInteractorStyleTrackballCamera.h>
@@ -20,12 +20,12 @@
 
 //! Class representing a specific VTK Interactor Style propagating picking
 //! event for a 3D viewer.
-class asiUI_InteractorStylePick : public vtkInteractorStyleTrackballCamera
+class asiVisu_InteractorStylePick : public vtkInteractorStyleTrackballCamera
 {
 public:
 
-  static asiUI_InteractorStylePick* New();
-  vtkTypeMacro(asiUI_InteractorStylePick, vtkInteractorStyleTrackballCamera);
+  static asiVisu_InteractorStylePick* New();
+  vtkTypeMacro(asiVisu_InteractorStylePick, vtkInteractorStyleTrackballCamera);
 
 // Customization:
 public:
@@ -63,15 +63,15 @@ public:
 private:
 
   //! Copying prohibited.
-  asiUI_InteractorStylePick(const asiUI_InteractorStylePick&);
+  asiVisu_InteractorStylePick(const asiVisu_InteractorStylePick&);
 
   //! Assignment prohibited.
-  void operator=(const asiUI_InteractorStylePick&);
+  void operator=(const asiVisu_InteractorStylePick&);
 
 private:
 
-  asiUI_InteractorStylePick();
-  ~asiUI_InteractorStylePick();
+  asiVisu_InteractorStylePick();
+  ~asiVisu_InteractorStylePick();
 
 private:
 
@@ -79,7 +79,7 @@ private:
   vtkSmartPointer<vtkRenderer> m_renderer;
 
   //! Pick input data.
-  asiUI_PickInput* m_pPickInput;
+  asiVisu_PickInput* m_pPickInput;
 
   //! Indicates whether left mouse button is currently pressed.
   bool m_bIsLeftButtonDown;

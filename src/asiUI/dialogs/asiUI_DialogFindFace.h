@@ -15,6 +15,9 @@
 #include <asiUI_LineEdit.h>
 #include <asiUI_ViewerPart.h>
 
+// A-Situs (visualization) includes
+#include <asiVisu_PrsManager.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QCheckBox>
@@ -30,8 +33,10 @@ class asiUI_DialogFindFace : public QDialog
 
 public:
 
-  asiUI_DialogFindFace(asiUI_ViewerPart* pViewer,
-                       QWidget*          parent = NULL);
+  asiUI_DialogFindFace(const Handle(asiEngine_Model)&             model,
+                       const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
+                       asiUI_ViewerPart*                          pViewer,
+                       QWidget*                                   parent = NULL);
 
   virtual ~asiUI_DialogFindFace();
 
@@ -68,9 +73,11 @@ protected:
     }
   };
 
-  t_widgets         m_widgets;     //!< UI controls.
-  QVBoxLayout*      m_pMainLayout; //!< Layout of the widget.
-  asiUI_ViewerPart* m_pViewer;     //!< External reference to viewer.
+  t_widgets                           m_widgets;     //!< UI controls.
+  QVBoxLayout*                        m_pMainLayout; //!< Layout of the widget.
+  asiUI_ViewerPart*                   m_pViewer;     //!< External reference to viewer.
+  Handle(asiEngine_Model)             m_model;       //!< Data Model instance.
+  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr;      //!< Presentation Manager.
 
 };
 

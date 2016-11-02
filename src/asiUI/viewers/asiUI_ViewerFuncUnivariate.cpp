@@ -6,16 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_Viewer_func_univariate.h>
-
-// Common includes
-#include <common_facilities.h>
+#include <asiUI_ViewerFuncUnivariate.h>
 
 // Visualization includes
 #include <asiVisu_Utils.h>
-
-// GUI includes
-#include <gui_controls_section.h>
 
 // Qt-VTK includes
 #include <QVTKWidget.h>
@@ -34,14 +28,11 @@
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
 //! Creates a new instance of viewer.
-//! \param prs_mgr [in/out] externally defined Presentation Manager.
-//! \param parent  [in]     parent widget.
-asiUI_Viewer_func_univariate::asiUI_Viewer_func_univariate(vtkSmartPointer<asiVisu_PrsManager>& prs_mgr,
-                                                       QWidget*                           parent) : asiUI_Viewer(parent)
+//! \param parent [in] parent widget.
+asiUI_ViewerFuncUnivariate::asiUI_ViewerFuncUnivariate(QWidget* parent) : asiUI_Viewer(parent)
 {
-  // Initialize Presentation Manager along with QVTK widget
-  prs_mgr   = vtkSmartPointer<asiVisu_PrsManager>::New();
-  m_prs_mgr = prs_mgr;
+  // Initialize presentation manager along with QVTK widget
+  m_prs_mgr = vtkSmartPointer<asiVisu_PrsManager>::New();
   //
   m_prs_mgr->Initialize(this);
   m_prs_mgr->SetInteractionMode(asiVisu_PrsManager::InteractionMode_2D);
@@ -82,14 +73,14 @@ asiUI_Viewer_func_univariate::asiUI_Viewer_func_univariate(vtkSmartPointer<asiVi
 }
 
 //! Destructor.
-asiUI_Viewer_func_univariate::~asiUI_Viewer_func_univariate()
+asiUI_ViewerFuncUnivariate::~asiUI_ViewerFuncUnivariate()
 {
 }
 
 //-----------------------------------------------------------------------------
 
 //! Updates viewer.
-void asiUI_Viewer_func_univariate::Repaint()
+void asiUI_ViewerFuncUnivariate::Repaint()
 {
   m_prs_mgr->GetQVTKWidget()->repaint();
 }
@@ -97,7 +88,7 @@ void asiUI_Viewer_func_univariate::Repaint()
 //-----------------------------------------------------------------------------
 
 //! Resets view.
-void asiUI_Viewer_func_univariate::onResetView()
+void asiUI_ViewerFuncUnivariate::onResetView()
 {
   asiVisu_Utils::CameraOnTop( m_prs_mgr->GetRenderer() );
   this->Repaint();

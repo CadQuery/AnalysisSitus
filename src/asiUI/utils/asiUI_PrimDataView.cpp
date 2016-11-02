@@ -119,17 +119,16 @@ asiUI_PrimDataView& asiUI_PrimDataView::operator<<(QWidget* pView)
 //! \param pView [in] View to complete editing session for.
 void asiUI_PrimDataView::FinishEditing(QWidget* pView)
 {
-  Handle(ActAPI_IModel) M = common_facilities::Instance()->Model;
-  if ( M->HasOpenCommand() )
+  if ( m_model->HasOpenCommand() )
     return; // Some transaction is already active, so let's get out from here...
 
   bool isAnyChanged = false;
   //
-  M->OpenCommand(); // tx begin
+  m_model->OpenCommand(); // tx begin
   {
     isAnyChanged = this->ViewToData(pView);
-  } // tx end
-  isAnyChanged ? M->CommitCommand() : M->AbortCommand();
+  }
+  isAnyChanged ? m_model->CommitCommand() : m_model->AbortCommand(); // tx end
 
   if ( isAnyChanged )
   {
@@ -287,7 +286,7 @@ bool asiUI_PrimDataView::isConsistent() const
   return (m_streamChunk & Chunk_Data);
 }
 
-//! \param dataID [in] registed Data identifier.
+//! \param dataID [in] registered Data identifier.
 //! \return corresponding (to the specified ID) data adaptor.
 Handle(asiUI_PrimDataAdaptor) asiUI_PrimDataView::dataByID(const int dataID) const
 {

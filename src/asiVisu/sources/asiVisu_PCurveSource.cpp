@@ -103,7 +103,7 @@ void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
    *  Resolve scalar for orientation
    * ================================ */
 
-  visu_orientation ori;
+  asiVisu_Orientation ori;
   if ( m_edge.Orientation() == TopAbs_FORWARD )
     ori = VisuOri_Forward;
   else if ( m_edge.Orientation() == TopAbs_REVERSED )

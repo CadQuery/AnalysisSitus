@@ -6,11 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_Viewer_domain.h>
-
-// Common includes
-#include <common_draw_test_suite.h>
-#include <common_facilities.h>
+#include <asiUI_ViewerDomain.h>
 
 // Geometry includes
 #include <asiAlgo_DeleteEdges.h>
@@ -47,15 +43,14 @@
 #include <TopoDS_Edge.hxx>
 
 //! Creates a new instance of viewer.
+//! \param model  [in] Data Model instance.
 //! \param parent [in] parent widget.
-asiUI_Viewer_domain::asiUI_Viewer_domain(QWidget* parent) : asiUI_Viewer(parent)
+asiUI_ViewerDomain::asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
+                                       QWidget*                       parent)
+: asiUI_Viewer(parent), m_model(model)
 {
-  // Store in common facilities
-  common_facilities::Instance()->ViewerDomain = this;
-
-  // Initialize Presentation Manager along with QVTK widget
-  common_facilities::Instance()->Prs.Domain = vtkSmartPointer<asiVisu_PrsManager>::New();
-  m_prs_mgr = common_facilities::Instance()->Prs.Domain;
+  // Initialize presentation manager along with QVTK widget
+  m_prs_mgr = vtkSmartPointer<asiVisu_PrsManager>::New();
   //
   m_prs_mgr->Initialize(this);
   m_prs_mgr->SetInteractionMode(asiVisu_PrsManager::InteractionMode_2D);
@@ -138,18 +133,18 @@ asiUI_Viewer_domain::asiUI_Viewer_domain(QWidget* parent) : asiUI_Viewer(parent)
 }
 
 //! Destructor.
-asiUI_Viewer_domain::~asiUI_Viewer_domain()
+asiUI_ViewerDomain::~asiUI_ViewerDomain()
 {
 }
 
 //! Updates viewer.
-void asiUI_Viewer_domain::Repaint()
+void asiUI_ViewerDomain::Repaint()
 {
   m_prs_mgr->GetQVTKWidget()->repaint();
 }
 
 //! Resets view.
-void asiUI_Viewer_domain::onResetView()
+void asiUI_ViewerDomain::onResetView()
 {
   asiVisu_Utils::CameraOnTop( m_prs_mgr->GetRenderer() );
   this->Repaint();
@@ -158,9 +153,10 @@ void asiUI_Viewer_domain::onResetView()
 //-----------------------------------------------------------------------------
 
 //! Callback for picking event.
-void asiUI_Viewer_domain::onDomainPicked()
+void asiUI_ViewerDomain::onDomainPicked()
 {
-  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = m_model->GetPartNode();
+  //
   if ( N.IsNull() || !N->IsWellFormed() || N->GetShape().IsNull() )
     return;
 
@@ -183,9 +179,9 @@ void asiUI_Viewer_domain::onDomainPicked()
   //---------------------------------------------------------------------------
 
   // Access picking results
-  const visu_actual_selection& sel      = m_prs_mgr->GetCurrentSelection();
-  const asiUI_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
-  const asiVisu_ActorElemMap&   elem_map = pick_res.GetPickMap();
+  const asiVisu_ActualSelection& sel      = m_prs_mgr->GetCurrentSelection();
+  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  const asiVisu_ActorElemMap&    elem_map = pick_res.GetPickMap();
 
   // Check if there is anything selected
   if ( elem_map.IsEmpty() )
@@ -276,9 +272,10 @@ void asiUI_Viewer_domain::onDomainPicked()
 //-----------------------------------------------------------------------------
 
 //! Callback for edges removal.
-void asiUI_Viewer_domain::onKillEdges()
+void asiUI_ViewerDomain::onKillEdges()
 {
-  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = m_model->GetPartNode();
+  //
   if ( N.IsNull() || !N->IsWellFormed() || N->GetShape().IsNull() )
     return;
 
@@ -286,10 +283,7 @@ void asiUI_Viewer_domain::onKillEdges()
 
   // Get edges
   TopTools_IndexedMapOfShape selectedEdges;
-  asiEngine_Domain::GetHighlightedEdges(selectedEdges);
-
-  TIMER_NEW
-  TIMER_GO
+  asiEngine_Domain::GetHighlightedEdges(N, this->PrsMgr(), selectedEdges);
 
   // Delete selected edges
   asiAlgo_DeleteEdges eraser(part);
@@ -299,30 +293,31 @@ void asiUI_Viewer_domain::onKillEdges()
     return;
   }
 
-  TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("Edge ONLY deletion")
-
   const TopoDS_Shape& result = eraser.Result();
 
   // Save to model
-  common_facilities::Instance()->Model->Clear();
+  m_model->Clear();
   //
-  common_facilities::Instance()->Model->OpenCommand();
+  m_model->OpenCommand();
   {
     N->SetShape(result);
   }
-  common_facilities::Instance()->Model->CommitCommand();
+  m_model->CommitCommand();
 
   // Update viewer
-  common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+  this->PrsMgr()->DeleteAllPresentations();
+  this->PrsMgr()->InitializePickers();
+  this->PrsMgr()->Actualize( N.get() );
+
+  // Notify
+  emit partModified();
 }
 
 //! Callback for edges joining.
-void asiUI_Viewer_domain::onJoinEdges()
+void asiUI_ViewerDomain::onJoinEdges()
 {
-  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) N = m_model->GetPartNode();
+  //
   if ( N.IsNull() || !N->IsWellFormed() || N->GetShape().IsNull() )
     return;
 
@@ -331,10 +326,7 @@ void asiUI_Viewer_domain::onJoinEdges()
   // Get edges
   TopoDS_Face face;
   TopTools_IndexedMapOfShape selectedEdges;
-  asiEngine_Domain::GetHighlightedEdges(selectedEdges, face);
-
-  TIMER_NEW
-  TIMER_GO
+  asiEngine_Domain::GetHighlightedEdges(N, this->PrsMgr(), selectedEdges, face);
 
   // Join selected edges
   asiAlgo_JoinEdges joiner(part);
@@ -344,22 +336,19 @@ void asiUI_Viewer_domain::onJoinEdges()
     return;
   }
 
-  TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("Edge joining")
-
   const TopoDS_Shape& result = joiner.Result();
 
   // Save to model
-  common_facilities::Instance()->Model->Clear();
+  m_model->Clear();
   //
-  common_facilities::Instance()->Model->OpenCommand();
+  m_model->OpenCommand();
   {
     N->SetShape(result);
   }
-  common_facilities::Instance()->Model->CommitCommand();
+  m_model->CommitCommand();
 
   // Update viewer
-  common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+  this->PrsMgr()->DeleteAllPresentations();
+  this->PrsMgr()->InitializePickers();
+  this->PrsMgr()->Actualize( N.get() );
 }

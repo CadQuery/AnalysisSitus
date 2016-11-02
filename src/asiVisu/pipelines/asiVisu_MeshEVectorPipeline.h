@@ -55,11 +55,12 @@ public:
 
 public:
 
-  asiVisu_MeshEVectorPipeline();
+  asiVisu_EXPORT
+    asiVisu_MeshEVectorPipeline();
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& theDataProvider);
 
 private:

@@ -31,7 +31,7 @@ public:
   DEFINE_STANDARD_RTTI_INLINE(asiVisu_GeomCurvePrs, asiVisu_Prs)
 
   // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(geom_curve_node, Instance)
+  DEFINE_PRESENTATION_FACTORY(asiData_CurveNode, Instance)
 
 public:
 
@@ -64,10 +64,10 @@ private:
   virtual void beforeUpdatePipelines() const;
   virtual void afterUpdatePipelines() const;
   virtual void highlight(vtkRenderer* theRenderer,
-                         const asiUI_PickResult& thePickRes,
-                         const asiUI_SelectionNature& theSelNature) const;
+                         const asiVisu_PickResult& thePickRes,
+                         const asiVisu_SelectionNature& theSelNature) const;
   virtual void unHighlight(vtkRenderer* theRenderer,
-                           const asiUI_SelectionNature& theSelNature) const;
+                           const asiVisu_SelectionNature& theSelNature) const;
   virtual void renderPipelines(vtkRenderer* theRenderer) const;
   virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
 

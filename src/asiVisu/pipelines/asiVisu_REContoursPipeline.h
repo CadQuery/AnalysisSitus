@@ -26,11 +26,12 @@ public:
 
 public:
 
-  asiVisu_REContoursPipeline();
+  asiVisu_EXPORT
+    asiVisu_REContoursPipeline();
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:

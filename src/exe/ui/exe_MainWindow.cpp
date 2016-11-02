@@ -101,7 +101,7 @@ void gui_main_window_asitus::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Face Domain", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerDomain = new asiUI_Viewer_domain(pDock);
+    m_widgets.wViewerDomain = new asiUI_ViewerDomain(pDock);
     pDock->setWidget(m_widgets.wViewerDomain);
     pDock->setMinimumWidth(width);
     //
@@ -113,7 +113,7 @@ void gui_main_window_asitus::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Host Surface", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerSurface = new asiUI_Viewer_surface(pDock);
+    m_widgets.wViewerSurface = new asiUI_ViewerSurface(pDock);
     pDock->setWidget(m_widgets.wViewerSurface);
     pDock->setMinimumWidth(width);
     //

@@ -26,17 +26,18 @@ public:
 
 public:
 
-  asiVisu_EdgeCurvePipeline();
+  asiVisu_EXPORT
+    asiVisu_EdgeCurvePipeline();
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 public:
 
-  inline void SetStepsNumber(const int nbSteps)       { m_iStepsNumber = nbSteps; }
-  inline int  GetStepsNumber()                  const { return m_iStepsNumber; }
+  void SetStepsNumber(const int nbSteps)       { m_iStepsNumber = nbSteps; }
+  int  GetStepsNumber()                  const { return m_iStepsNumber; }
 
 private:
 

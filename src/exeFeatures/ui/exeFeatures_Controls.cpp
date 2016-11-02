@@ -135,6 +135,11 @@ exeFeatures_Controls::exeFeatures_Controls(QWidget* parent) : QWidget(parent)
   m_pMainLayout = new QVBoxLayout();
 
   // Buttons
+  m_widgets.pShowTOPOGraph      = new QPushButton("Show TOPO graph");
+  m_widgets.pShowAAG            = new QPushButton("Show AA graph");
+  m_widgets.pElimSelected       = new QPushButton("Show AA graph w/o selected");
+  //
+  m_widgets.pNonManifoldEdges    = new QPushButton("Non-manifold edges");
   m_widgets.pCheckSolidAngles    = new QPushButton("Classify solid angles");
   m_widgets.pFindSmoothEdges     = new QPushButton("Find smooth edges");
   m_widgets.pFindConvexOnly      = new QPushButton("Find convex-only");
@@ -152,6 +157,11 @@ exeFeatures_Controls::exeFeatures_Controls(QWidget* parent) : QWidget(parent)
   m_widgets.pUnperiodizeSelected = new QPushButton("Unperiodize sel. faces");
   m_widgets.pCheckAlongCurvature = new QPushButton("Check along curvature");
   //
+  m_widgets.pShowTOPOGraph      -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pShowAAG            -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pElimSelected       -> setMinimumWidth(BTN_MIN_WIDTH);
+  //
+  m_widgets.pNonManifoldEdges    -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCheckSolidAngles    -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pFindSmoothEdges     -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pFindConvexOnly      -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -169,10 +179,19 @@ exeFeatures_Controls::exeFeatures_Controls(QWidget* parent) : QWidget(parent)
   m_widgets.pUnperiodizeSelected -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCheckAlongCurvature -> setMinimumWidth(BTN_MIN_WIDTH);
 
+  // Group for analysis
+  QGroupBox*   pAnalysisGroup = new QGroupBox("Analysis");
+  QVBoxLayout* pAnalysisLay   = new QVBoxLayout(pAnalysisGroup);
+  //
+  pAnalysisLay->addWidget(m_widgets.pShowTOPOGraph);
+  pAnalysisLay->addWidget(m_widgets.pShowAAG);
+  pAnalysisLay->addWidget(m_widgets.pElimSelected);
+
   // Group for features
   QGroupBox*   pFeaturesGroup = new QGroupBox("Features");
   QVBoxLayout* pFeaturesLay   = new QVBoxLayout(pFeaturesGroup);
   //
+  pFeaturesLay->addWidget(m_widgets.pNonManifoldEdges);
   pFeaturesLay->addWidget(m_widgets.pCheckSolidAngles);
   pFeaturesLay->addWidget(m_widgets.pFindSmoothEdges);
   pFeaturesLay->addWidget(m_widgets.pFindConvexOnly);
@@ -195,6 +214,7 @@ exeFeatures_Controls::exeFeatures_Controls(QWidget* parent) : QWidget(parent)
   pDyModelingLay->addWidget(m_widgets.pCheckAlongCurvature);
 
   // Set layout
+  m_pMainLayout->addWidget(pAnalysisGroup);
   m_pMainLayout->addWidget(pFeaturesGroup);
   m_pMainLayout->addWidget(pDyModelingGroup);
   //
@@ -203,6 +223,11 @@ exeFeatures_Controls::exeFeatures_Controls(QWidget* parent) : QWidget(parent)
   this->setLayout(m_pMainLayout);
 
   // Connect signals to slots
+  connect( m_widgets.pShowTOPOGraph,       SIGNAL( clicked() ), SLOT( onShowTOPOGraph    () ) );
+  connect( m_widgets.pShowAAG,             SIGNAL( clicked() ), SLOT( onShowAAG          () ) );
+  connect( m_widgets.pElimSelected,        SIGNAL( clicked() ), SLOT( onElimSelected     () ) );
+  //
+  connect( m_widgets.pNonManifoldEdges, SIGNAL( clicked() ), SLOT( onNonManifoldEdges () ) );
   connect( m_widgets.pCheckSolidAngles,    SIGNAL( clicked() ), SLOT( onCheckSolidAngles    () ) );
   connect( m_widgets.pFindSmoothEdges,     SIGNAL( clicked() ), SLOT( onFindSmoothEdges     () ) );
   connect( m_widgets.pFindConvexOnly,      SIGNAL( clicked() ), SLOT( onFindConvexOnly      () ) );
@@ -228,6 +253,146 @@ exeFeatures_Controls::~exeFeatures_Controls()
 {
   delete m_pMainLayout;
   m_widgets.Release();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Shows topology graph.
+void asiUI_ControlsPart::onShowTOPOGraph()
+{
+  // Access Geometry Node
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
+  if ( N.IsNull() || !N->IsWellFormed() )
+    return;
+
+  // Shape to visualize a graph for
+  TopoDS_Shape targetShape;
+
+  // Access active face
+  Handle(asiData_FaceNode) FN = N->GetFaceRepresentation();
+  if ( FN.IsNull() || !FN->IsWellFormed() || FN->GetSelectedFace() <= 0 )
+    targetShape = N->GetShape();
+  else
+  {
+    const int f_idx = FN->GetSelectedFace();
+
+    TopTools_IndexedMapOfShape M;
+    TopExp::MapShapes(N->GetShape(), M);
+    const TopoDS_Shape& shape = M.FindKey(f_idx);
+
+    if ( shape.ShapeType() == TopAbs_FACE )
+    {
+      const TopoDS_Face& F = TopoDS::Face(shape);
+      //
+      targetShape = F;
+    }
+  }
+
+  // No shape, no graph
+  if ( targetShape.IsNull() )
+  {
+    std::cout << "Error: target shape is null" << std::endl;
+    return;
+  }
+
+  // Show graph
+  asiUI_TopoGraph* pGraphView = new asiUI_TopoGraph;
+  pGraphView->RenderFull(targetShape, TopAbs_VERTEX);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Shows AA graph.
+void asiUI_ControlsPart::onShowAAG()
+{
+  TopoDS_Shape part;
+  if ( !asiUI_Common::PartShape(part) ) return;
+
+  // Access selected faces (if any)
+  TopTools_IndexedMapOfShape selected;
+  asiEngine_Part::GetHighlightedSubShapes(selected);
+
+  // Show graph
+  asiUI_TopoGraph* pGraphView = new asiUI_TopoGraph;
+  pGraphView->RenderAdjacency(part, selected);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Eliminates selected faces from AAG.
+void asiUI_ControlsPart::onElimSelected()
+{
+  TopoDS_Shape part;
+  if ( !asiUI_Common::PartShape(part) ) return;
+
+  // Get highlighted sub-shapes
+  TopTools_IndexedMapOfShape selected;
+  asiEngine_Part::GetHighlightedSubShapes(selected);
+
+  // Build AAG
+  Handle(feature_aag) aag = new feature_aag(part);
+
+  // Remove highlighted sub-shapes
+  aag->Remove(selected);
+
+  // Show graph
+  asiUI_TopoGraph* pGraphView = new asiUI_TopoGraph;
+  pGraphView->SetAAG(aag);
+  //
+  vtkSmartPointer<vtkMutableUndirectedGraph> undirected = feature_aag_vtk::Convert(aag);
+  pGraphView->Render(undirected, part, asiUI_TopoGraph::Regime_AAG);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Finds non-manifold edges.
+void asiUI_ControlsPart::onNonManifoldEdges()
+{
+  TopoDS_Shape part;
+  if ( !asiUI_Common::PartShape(part) ) return;
+
+  // Find non-manifold edges
+  TopTools_IndexedMapOfShape nmEdges;
+  asiAlgo_FindNonmanifold::FindEdges(part, nmEdges, common_facilities::Instance()->Notifier);
+  //
+  std::cout << "Number of non-manifold edges: " << nmEdges.Extent() << std::endl;
+
+  // Prepare compound of edges
+  TopoDS_Compound nmEdgesComp;
+  BRep_Builder BB;
+  BB.MakeCompound(nmEdgesComp);
+  //
+  for ( int e = 1; e <= nmEdges.Extent(); ++e )
+  {
+    BB.Add( nmEdgesComp, nmEdges(e) );
+  }
+
+  // Save to model
+  Handle(asiData_BoundaryEdgesNode)
+    BN = common_facilities::Instance()->Model->GetPartNode()->GetBoundaryEdgesRepresentation();
+  //
+  common_facilities::Instance()->Model->OpenCommand();
+  {
+    ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Red) )->SetShape(nmEdgesComp);
+  }
+  common_facilities::Instance()->Model->CommitCommand();
+
+  // Update viewer
+  Handle(asiVisu_GeomPrs)
+    NPrs = Handle(asiVisu_GeomPrs)::DownCast(
+      common_facilities::Instance()->Prs.Part->GetPresentation( common_facilities::Instance()->Model->GetPartNode() )
+    );
+  if ( NPrs.IsNull() )
+  {
+    std::cout << "Error: there is no available presentation for part" << std::endl;
+    return;
+  }
+  //
+  NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
+  //
+  NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
+  //
+  common_facilities::Instance()->Prs.Part->Actualize( BN.get() );
 }
 
 //-----------------------------------------------------------------------------
@@ -1006,4 +1171,98 @@ void exeFeatures_Controls::onCheckAlongCurvature()
       }
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+
+//! Builds Oriented Bounding Box.
+void asiUI_ControlsPart::onOBB()
+{
+  TopoDS_Shape part;
+  if ( !asiUI_Common::PartShape(part) ) return;
+
+  TIMER_NEW
+  TIMER_GO
+
+  // OBB builder
+  feature_build_obb obb_builder(part, feature_build_obb::Mode_Inertia,
+                                common_facilities::Instance()->Notifier,
+                                common_facilities::Instance()->Plotter);
+  //
+  if ( !obb_builder.Perform() )
+  {
+    std::cout << "Error: cannot build OBB" << std::endl;
+    return;
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("Build OBB")
+
+  // Draw result
+  ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
+  IV.DRAW_SHAPE(obb_builder.GetResult()->BuildSolid(), Color_White, 0.3, true);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Runs canonical recognition.
+void asiUI_ControlsPart::onCR()
+{
+  // Access Geometry Node
+  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
+  if ( N.IsNull() || !N->IsWellFormed() )
+    return;
+
+  // Get part
+  TopoDS_Shape part = N->GetShape();
+  //
+  if ( part.IsNull() )
+  {
+    std::cout << "Error: part shape is null" << std::endl;
+    return;
+  }
+
+  TColStd_PackedMapOfInteger modifiedFaces, selected;
+
+  common_facilities::Instance()->Model->OpenCommand();
+  {
+    TIMER_NEW
+    TIMER_GO
+
+    // CR tool
+    feature_cr recognizer(part,
+                          common_facilities::Instance()->Notifier,
+                          common_facilities::Instance()->Plotter);
+    //
+    if ( !recognizer.Perform(1e-6) )
+    {
+      std::cout << "Error: canonical recognition failed" << std::endl;
+      common_facilities::Instance()->Model->AbortCommand();
+      return;
+    }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_MSG("Canonical Recognition")
+
+    const TopoDS_Shape& result = recognizer.GetResult();
+    //
+    std::cout << "Recognition done. Visualizing..." << std::endl;
+    //
+    N->SetShape(result);
+
+    // Get converted faces
+    recognizer.GetHistory()->GetModified(modifiedFaces);
+  }
+  common_facilities::Instance()->Model->CommitCommand();
+
+  // Update viewer
+  common_facilities::Instance()->Model->Clear();
+  //
+  common_facilities::Instance()->Prs.DeleteAll();
+  common_facilities::Instance()->Prs.Part->InitializePickers();
+  common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+
+  // Highlight the modified faces
+  asiEngine_Part::GetSubShapeIndicesByFaceIndices(modifiedFaces, selected);
+  asiEngine_Part::HighlightSubShapes(selected);
 }

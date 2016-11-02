@@ -33,10 +33,10 @@
 asiVisu_GeomCurvePrs::asiVisu_GeomCurvePrs(const Handle(ActAPI_INode)& theNode)
 : asiVisu_Prs(theNode)
 {
+  Handle(asiData_EdgeNode) edge_n = Handle(asiData_EdgeNode)::DownCast(theNode);
+
   // Create Data Provider
-  Handle(asiVisu_EdgeDataProvider) DP =
-    new asiVisu_EdgeDataProvider( theNode->GetId(),
-                                 ActParamStream() << theNode->Parameter(geom_curve_node::PID_SelectedEdge) );
+  Handle(asiVisu_EdgeDataProvider) DP = new asiVisu_EdgeDataProvider(edge_n);
 
   // Pipeline for curve
   this->addPipeline        ( Pipeline_Main, new asiVisu_EdgeCurvePipeline );
@@ -165,15 +165,15 @@ void asiVisu_GeomCurvePrs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomCurvePrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                    const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
-                                    const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+void asiVisu_GeomCurvePrs::highlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
+                                     const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                     const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {}
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomCurvePrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                      const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+void asiVisu_GeomCurvePrs::unHighlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
+                                       const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {}
 
 //! Callback for rendering.

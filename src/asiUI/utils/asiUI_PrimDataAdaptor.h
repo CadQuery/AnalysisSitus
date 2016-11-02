@@ -9,7 +9,7 @@
 #define asiUI_PrimDataAdaptor_h
 
 // A-Situs includes
-#include <gui_data_adaptor.h>
+#include <asiUI_DataAdaptor.h>
 
 // Active Data (API) includes
 #include <ActAPI_INode.h>
@@ -19,17 +19,17 @@
 #include <QVariant>
 #pragma warning(pop)
 
-DEFINE_STANDARD_HANDLE(asiUI_PrimDataAdaptor, gui_data_adaptor)
+DEFINE_STANDARD_HANDLE(asiUI_PrimDataAdaptor, asiUI_DataAdaptor)
 
 //! Adaptor class representing scalar data for Data-View connectors. Client
 //! code should provide an actual implementation of this class in order to
 //! customize data accessors which are essentially domain-specific.
-class asiUI_PrimDataAdaptor : public gui_data_adaptor
+class asiUI_PrimDataAdaptor : public asiUI_DataAdaptor
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiUI_PrimDataAdaptor, gui_data_adaptor)
+  DEFINE_STANDARD_RTTI_INLINE(asiUI_PrimDataAdaptor, asiUI_DataAdaptor)
 
 public:
 
@@ -38,7 +38,7 @@ public:
   //! \param PID [in] Parameter ID.
   asiUI_PrimDataAdaptor(const Handle(ActAPI_INode)& N,
                         const int                   PID)
-  : gui_data_adaptor()
+  : asiUI_DataAdaptor()
   {
     this->Init(N, PID);
   }

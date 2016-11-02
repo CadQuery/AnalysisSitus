@@ -9,7 +9,7 @@
 #include <Windows.h>
 
 // A-Situs (common) includes
-#include <asiData_Model.h>
+#include <asiEngine_Model.h>
 
 // A-Situs (GUI) includes
 #include <gui_welcome_window.h>
@@ -88,7 +88,7 @@ int main(int argc, char** argv)
   // Create Data Model
   //---------------------------------------------------------------------------
 
-  Handle(asiData_Model) M = new asiData_Model;
+  Handle(asiEngine_Model) M = new asiEngine_Model;
   if ( !M->NewEmpty() )
   {
     std::cout << "Cannot create new empty Model" << std::endl;

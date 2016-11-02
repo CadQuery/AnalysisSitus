@@ -34,7 +34,7 @@
 //! \param parent [in] parent widget.
 gui_viewer_skinner::gui_viewer_skinner(QWidget* parent) : gui_viewer(parent)
 {
-  // Initialize Presentation Manager along with QVTK widget
+  // Initialize presentation manager along with QVTK widget
   common_facilities::Instance()->Prs.Skinner = vtkSmartPointer<visu_prs_manager>::New();
   m_prs_mgr = common_facilities::Instance()->Prs.Skinner;
   //

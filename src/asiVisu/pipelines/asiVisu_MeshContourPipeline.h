@@ -26,7 +26,8 @@ public:
 
 public:
 
-  asiVisu_MeshContourPipeline(const bool doUseDefaultColor = true);
+  asiVisu_EXPORT
+    asiVisu_MeshContourPipeline(const bool doUseDefaultColor = true);
 
 private:
 

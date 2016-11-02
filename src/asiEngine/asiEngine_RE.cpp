@@ -9,8 +9,7 @@
 #include <asiEngine_RE.h>
 
 // A-Situs (common) includes
-#include <common_facilities.h>
-#include <asiData_Model.h>
+#include <asiEngine_Model.h>
 
 // Active Data includes
 #include <ActData_UniqueNodeName.h>
@@ -20,12 +19,9 @@
 //! \return newly created Reverse Engineering Node.
 Handle(asiData_RENode) asiEngine_RE::Create_RE()
 {
-  // Access Model
-  Handle(asiData_Model) M = common_facilities::Instance()->Model;
-
   // Add RE Node to Partition
   Handle(asiData_RENode) re_n = Handle(asiData_RENode)::DownCast( asiData_RENode::Instance() );
-  M->GetREPartition()->AddNode(re_n);
+  m_model->GetREPartition()->AddNode(re_n);
 
   // Initialize Node
   re_n->Init();
@@ -34,7 +30,7 @@ Handle(asiData_RENode) asiEngine_RE::Create_RE()
   // Create underlying Surfaces Node
   {
     Handle(ActAPI_INode) geom_surfaces_base = asiData_RESurfacesNode::Instance();
-    M->GetRESurfacesPartition()->AddNode(geom_surfaces_base);
+    m_model->GetRESurfacesPartition()->AddNode(geom_surfaces_base);
 
     // Initialize
     Handle(asiData_RESurfacesNode) re_surfaces_n = Handle(asiData_RESurfacesNode)::DownCast(geom_surfaces_base);
@@ -48,7 +44,7 @@ Handle(asiData_RENode) asiEngine_RE::Create_RE()
   // Create underlying Contours Node
   {
     Handle(ActAPI_INode) geom_contours_base = asiData_REContoursNode::Instance();
-    M->GetREContoursPartition()->AddNode(geom_contours_base);
+    m_model->GetREContoursPartition()->AddNode(geom_contours_base);
 
     // Initialize
     Handle(asiData_REContoursNode) re_contours_n = Handle(asiData_REContoursNode)::DownCast(geom_contours_base);
@@ -62,7 +58,7 @@ Handle(asiData_RENode) asiEngine_RE::Create_RE()
   // Create underlying Points Node
   {
     Handle(ActAPI_INode) geom_points_base = asiData_REPointsNode::Instance();
-    M->GetREPointsPartition()->AddNode(geom_points_base);
+    m_model->GetREPointsPartition()->AddNode(geom_points_base);
 
     // Initialize
     Handle(asiData_REPointsNode) re_points_n = Handle(asiData_REPointsNode)::DownCast(geom_points_base);
@@ -86,16 +82,15 @@ Handle(asiData_RENode) asiEngine_RE::Create_RE()
 //! \return Surface Node.
 Handle(asiData_RESurfaceNode)
   asiEngine_RE::Create_Surface(const Handle(Geom_Surface)& surface,
-                            const double                uLimit,
-                            const double                vLimit)
+                               const double                uLimit,
+                               const double                vLimit)
 {
   // Access Model and RE Surfaces Node
-  Handle(asiData_Model)          M    = common_facilities::Instance()->Model;
-  Handle(asiData_RESurfacesNode) RESs = M->GetRENode()->Surfaces();
+  Handle(asiData_RESurfacesNode) RESs = m_model->GetRENode()->Surfaces();
 
   // Add Surface Node to Partition
   Handle(asiData_RESurfaceNode) surf_n = Handle(asiData_RESurfaceNode)::DownCast( asiData_RESurfaceNode::Instance() );
-  M->GetRESurfacePartition()->AddNode(surf_n);
+  m_model->GetRESurfacePartition()->AddNode(surf_n);
 
   // Generate unique name
   TCollection_ExtendedString surf_name("Surface");
@@ -117,9 +112,8 @@ Handle(asiData_RESurfaceNode)
 //! Deletes all Surface Nodes.
 void asiEngine_RE::Clean_Surfaces()
 {
-  Handle(asiData_Model)          M             = common_facilities::Instance()->Model;
-  Handle(asiData_RESurfacesNode) RESs          = M->GetRENode()->Surfaces();
-  Handle(ActAPI_HNodeList)      nodesToDelete = new ActAPI_HNodeList;
+  Handle(asiData_RESurfacesNode) RESs          = m_model->GetRENode()->Surfaces();
+  Handle(ActAPI_HNodeList)       nodesToDelete = new ActAPI_HNodeList;
 
   // Loop over direct children of a Surfaces Node
   for ( Handle(ActAPI_IChildIterator) cit = RESs->GetChildIterator(); cit->More(); cit->Next() )
@@ -136,24 +130,22 @@ void asiEngine_RE::Clean_Surfaces()
 
   // Delete all Nodes queued for removal
   for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
-    M->DeleteNode( nit.Value()->GetId() );
+    m_model->DeleteNode( nit.Value()->GetId() );
 }
 
 //-----------------------------------------------------------------------------
 
-//! Creates a new Contour Node initializing it with the passed topological
-//! wire.
+//! Creates a new Contour Node initializing it with the passed topological wire.
 //! \param contour [in] contour in form of topological wire.
 //! \return just created Data Node.
 Handle(asiData_REContourNode) asiEngine_RE::Create_Contour(const TopoDS_Wire& contour)
 {
   // Access Model and RE Contours Node
-  Handle(asiData_Model)          M    = common_facilities::Instance()->Model;
-  Handle(asiData_REContoursNode) RECs = M->GetRENode()->Contours();
+  Handle(asiData_REContoursNode) RECs = m_model->GetRENode()->Contours();
 
   // Add Contour Node to Partition
   Handle(asiData_REContourNode) cont_n = Handle(asiData_REContourNode)::DownCast( asiData_REContourNode::Instance() );
-  M->GetREContourPartition()->AddNode(cont_n);
+  m_model->GetREContourPartition()->AddNode(cont_n);
 
   // Generate unique name
   TCollection_ExtendedString cont_name("Contour");
@@ -175,9 +167,8 @@ Handle(asiData_REContourNode) asiEngine_RE::Create_Contour(const TopoDS_Wire& co
 //! Cleans up all contours stored in the collection of RE contours.
 void asiEngine_RE::Clean_Contours()
 {
-  Handle(asiData_Model)          M             = common_facilities::Instance()->Model;
-  Handle(asiData_REContoursNode) RECs          = M->GetRENode()->Contours();
-  Handle(ActAPI_HNodeList)      nodesToDelete = new ActAPI_HNodeList;
+  Handle(asiData_REContoursNode) RECs          = m_model->GetRENode()->Contours();
+  Handle(ActAPI_HNodeList)       nodesToDelete = new ActAPI_HNodeList;
 
   // Loop over direct children of a Contours Node
   for ( Handle(ActAPI_IChildIterator) cit = RECs->GetChildIterator(); cit->More(); cit->Next() )
@@ -194,5 +185,5 @@ void asiEngine_RE::Clean_Contours()
 
   // Delete all Nodes queued for removal
   for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
-    M->DeleteNode( nit.Value()->GetId() );
+    m_model->DeleteNode( nit.Value()->GetId() );
 }

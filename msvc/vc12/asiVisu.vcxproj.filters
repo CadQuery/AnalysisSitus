@@ -45,6 +45,12 @@
     <Filter Include="Source Files\Pipelines">
       <UniqueIdentifier>{e51e6d76-1aa4-4727-a553-d1165060396c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Selection">
+      <UniqueIdentifier>{deb36da8-2b6d-487c-81fc-18262c8e2d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Selection">
+      <UniqueIdentifier>{61bed10e-fb8d-4fde-b085-1aff0d34fba6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_MeshENScalarFilter.h">
@@ -86,9 +92,6 @@
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_MeshSource.h">
       <Filter>Header Files\Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_MeshTopoSource.h">
-      <Filter>Header Files\Sources</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PCurveSource.h">
       <Filter>Header Files\Sources</Filter>
     </ClInclude>
@@ -114,9 +117,6 @@
       <Filter>Header Files\Providers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_DataProvider.h">
-      <Filter>Header Files\Providers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_DisplayMode.h">
       <Filter>Header Files\Providers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_EdgeDataProvider.h">
@@ -155,19 +155,10 @@
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_RESurfacesDataProvider.h">
       <Filter>Header Files\Providers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_SectionDataProvider.h">
-      <Filter>Header Files\Providers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_SectionsDataProvider.h">
-      <Filter>Header Files\Providers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_ShapeDataProvider.h">
       <Filter>Header Files\Providers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_ShapeMesher.h">
-      <Filter>Header Files\Providers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_TopoGraphItem.h">
       <Filter>Header Files\Providers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_BCurveKnotsPipeline.h">
@@ -215,9 +206,6 @@
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshPipeline.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshTopoPipeline.h">
-      <Filter>Header Files\Pipelines</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_Pipeline.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
@@ -228,9 +216,6 @@
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_RESurfacesPipeline.h">
-      <Filter>Header Files\Pipelines</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_SectionPipeline.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_SectionsPipeline.h">
@@ -314,8 +299,20 @@
     <ClInclude Include="..\..\src\asiVisu\asiVisu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\utils\asiVisu_JournalIV.h">
-      <Filter>Header Files\Utils</Filter>
+    <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_NodeInfo.h">
+      <Filter>Header Files\Selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_Selection.h">
+      <Filter>Header Files\Selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick.h">
+      <Filter>Header Files\Selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick2d.h">
+      <Filter>Header Files\Selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\asiVisu_DisplayMode.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -356,9 +353,6 @@
       <Filter>Source Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_MeshSource.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_MeshTopoSource.cpp">
       <Filter>Source Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PCurveSource.cpp">
@@ -424,19 +418,10 @@
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_RESurfacesDataProvider.cpp">
       <Filter>Source Files\Providers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_SectionDataProvider.cpp">
-      <Filter>Source Files\Providers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_SectionsDataProvider.cpp">
-      <Filter>Source Files\Providers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_ShapeDataProvider.cpp">
       <Filter>Source Files\Providers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_ShapeMesher.cpp">
-      <Filter>Source Files\Providers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_TopoGraphItem.cpp">
       <Filter>Source Files\Providers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_BCurveKnotsPipeline.cpp">
@@ -484,9 +469,6 @@
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshPipeline.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshTopoPipeline.cpp">
-      <Filter>Source Files\Pipelines</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_Pipeline.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
@@ -497,12 +479,6 @@
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_RESurfacesPipeline.cpp">
-      <Filter>Source Files\Pipelines</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_SectionPipeline.cpp">
-      <Filter>Source Files\Pipelines</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_SectionsPipeline.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_ShadedSurfacePipeline.cpp">
@@ -580,8 +556,17 @@
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_RESurfacesPrs.cpp">
       <Filter>Source Files\Presentations</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\utils\asiVisu_JournalIV.cpp">
-      <Filter>Source Files\Utils</Filter>
+    <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_NodeInfo.cpp">
+      <Filter>Source Files\Selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_Selection.cpp">
+      <Filter>Source Files\Selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick.cpp">
+      <Filter>Source Files\Selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick2d.cpp">
+      <Filter>Source Files\Selection</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@
 
 // A-Situs (visualization) includes
 #include <asiVisu_ContourDataProvider.h>
-#include <asiData_ContourPointsDataProvider.h>
+#include <asiVisu_ContourPointsDataProvider.h>
 #include <asiVisu_PointsPipeline.h>
 #include <asiVisu_ShapePipeline.h>
 #include <asiVisu_Utils.h>
@@ -27,13 +27,15 @@
 asiVisu_GeomContourPrs::asiVisu_GeomContourPrs(const Handle(ActAPI_INode)& theNode)
 : asiVisu_Prs(theNode)
 {
+  Handle(asiData_ContourNode) contour_n = Handle(asiData_ContourNode)::DownCast(theNode);
+
   // Create Data Provider for polyline
   Handle(asiVisu_ContourDataProvider)
-    DP_contour = new asiVisu_ContourDataProvider;
+    DP_contour = new asiVisu_ContourDataProvider(contour_n);
 
   // Create Data Provider for points
-  Handle(asiData_ContourPointsDataProvider)
-    DP_points = new asiData_ContourPointsDataProvider;
+  Handle(asiVisu_ContourPointsDataProvider)
+    DP_points = new asiVisu_ContourPointsDataProvider(contour_n);
 
   // Pipeline for contour
   Handle(asiVisu_ShapePipeline) shape_pl = new asiVisu_ShapePipeline();
@@ -112,24 +114,24 @@ void asiVisu_GeomContourPrs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomContourPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                      const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
-                                      const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+void asiVisu_GeomContourPrs::highlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
+                                       const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                       const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomContourPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                        const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+void asiVisu_GeomContourPrs::unHighlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
+                                         const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomContourPrs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomContourPrs::renderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   // Do nothing...
 }

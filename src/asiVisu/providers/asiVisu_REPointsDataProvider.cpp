@@ -8,14 +8,12 @@
 // Own include
 #include <asiVisu_REPointsDataProvider.h>
 
-// Common includes
-#include <common_facilities.h>
-
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-asiVisu_REPointsDataProvider::asiVisu_REPointsDataProvider()
-: asiVisu_PointsDataProvider( common_facilities::Instance()->Model->GetRENode()->Points() )
+//! \param points_n [in] Points Node.
+asiVisu_REPointsDataProvider::asiVisu_REPointsDataProvider(const Handle(asiData_REPointsNode)& points_n)
+: asiVisu_PointsDataProvider(points_n)
 {}
 
 //-----------------------------------------------------------------------------

@@ -9,16 +9,12 @@
 #include <asiVisu_PrsManager.h>
 
 // Visualization includes
-#include <asiVisu_Common.h>
-#include <asiUI_NodeInfo.h>
+#include <asiVisu_NodeInfo.h>
 #include <asiVisu_Prs.h>
 #include <asiVisu_Pipeline.h>
-#include <asiUI_Selection.h>
+#include <asiVisu_Selection.h>
 #include <asiVisu_ShapeDataSource.h>
 #include <asiVisu_Utils.h>
-
-// Common includes
-#include <common_facilities.h>
 
 // VTK includes
 #include <vtkCamera.h>
@@ -120,12 +116,12 @@ void asiVisu_PrsManager::PrintSelf(ostream& os, vtkIndent indent)
 
 //-----------------------------------------------------------------------------
 
-//! Constructs Presentation Manager setting up the underlying QVTK widget
+//! Constructs presentation manager setting up the underlying QVTK widget
 //! as a child for the passed arbitrary Qt widget. It allows creation of
-//! Presentation Manager providing basic visualization suite in any window.
+//! presentation manager providing basic visualization suite in any window.
 //!
 //! \param theParent   [in] parent Qt widget for underlying QVTK widget.
-//! \param isOffscreen [in] indicates whether Presentation Manager should
+//! \param isOffscreen [in] indicates whether presentation manager should
 //!                         operate in off-screen rendering mode. In that
 //!                         case QVTK widget is not created.
 asiVisu_PrsManager::asiVisu_PrsManager() : vtkObject(), m_widget(NULL)
@@ -151,10 +147,10 @@ asiVisu_PrsManager::asiVisu_PrsManager() : vtkObject(), m_widget(NULL)
   m_renderWindow->SetMultiSamples(8);
 
   // Initialize Interactor Style instance for normal operation mode
-  m_interactorStyleTrackball = vtkSmartPointer<asiUI_InteractorStylePick>::New();
+  m_interactorStyleTrackball = vtkSmartPointer<asiVisu_InteractorStylePick>::New();
 
   // Initialize Interactor Style instance for 2D scenes
-  m_interactorStyleImage = vtkSmartPointer<asiUI_InteractorStylePick2d>::New();
+  m_interactorStyleImage = vtkSmartPointer<asiVisu_InteractorStylePick2d>::New();
 
   // Initialize Render Window Interactor
   m_renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
@@ -352,7 +348,7 @@ bool asiVisu_PrsManager::IsPresented(const Handle(ActAPI_INode)& theNode)
 }
 
 //! Checks whether the passed Node has been already registered in the
-//! Presentation Manager by the passed ID.
+//! presentation manager by the passed ID.
 //! \param theNodeID [in] ID of the Node to check.
 //! \return true/false.
 bool asiVisu_PrsManager::IsPresented(const ActAPI_DataObjectId& theNodeId)
@@ -622,9 +618,9 @@ int asiVisu_PrsManager::GetSelectionMode() const
 //! \param thePickType  [in] type of picker to use.
 //! \return list of affected Data Node IDs.
 ActAPI_DataObjectIdList
-  asiVisu_PrsManager::Pick(asiUI_PickInput*            thePickInput,
-                         const asiUI_SelectionNature theSelNature,
-                         const asiUI_PickType        thePickType)
+  asiVisu_PrsManager::Pick(asiVisu_PickInput*            thePickInput,
+                         const asiVisu_SelectionNature theSelNature,
+                         const asiVisu_PickType        thePickType)
 {
   /* ===================
    *  Some preparations
@@ -651,7 +647,7 @@ ActAPI_DataObjectIdList
 
   // Prepare picking results
   vtkActor*         aPickedActor = NULL;
-  asiUI_PickResult& aPickRes     = m_currentSelection.ChangePickResult(theSelNature);
+  asiVisu_PickResult& aPickRes     = m_currentSelection.ChangePickResult(theSelNature);
   aPickRes.SetSelectionModes(m_iSelectionModes);
 
   if ( m_iSelectionModes & SelectionMode_Workpiece ) // Non-partial selection
@@ -777,7 +773,7 @@ ActAPI_DataObjectIdList
     m_shapePicker->Pick(XStart, YStart, 0);
 
     // Traversing results
-    asiUI_NodeInfo*                     aNodeInfo         = NULL;
+    asiVisu_NodeInfo*                     aNodeInfo         = NULL;
     vtkSmartPointer<vtkActorCollection> anActorCollection = m_shapePicker->GetPickedActors();
     //
     if ( anActorCollection && anActorCollection->GetNumberOfItems() > 0 )
@@ -812,7 +808,7 @@ ActAPI_DataObjectIdList
           aPickRes << sIt.Value();
         }
 
-        aNodeInfo = asiUI_NodeInfo::Retrieve(aPickedActor);
+        aNodeInfo = asiVisu_NodeInfo::Retrieve(aPickedActor);
         if ( aNodeInfo )
           break;
       }
@@ -836,7 +832,7 @@ ActAPI_DataObjectIdList
    * ====================================== */
 
   // Retrieve the corresponding Presentation by data object's ID
-  asiUI_NodeInfo* nodeInfo = asiUI_NodeInfo::Retrieve(aPickedActor);
+  asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve(aPickedActor);
   if ( !nodeInfo )
     return aResult;
   //
@@ -884,11 +880,11 @@ void asiVisu_PrsManager::SetPickList(const Handle(ActAPI_HNodeList)& theNodeList
     if ( aPrs.IsNull() )
       continue;
 
-    Handle(h_asiVisu_Pipeline_list) aPipelines = aPrs->GetPipelineList();
+    Handle(asiVisu_HPipelineList) aPipelines = aPrs->GetPipelineList();
     if ( aPipelines.IsNull() )
       continue;
 
-    asiVisu_Pipeline_list::Iterator aPipeIt( *aPipelines.operator->() );
+    asiVisu_PipelineList::Iterator aPipeIt( *aPipelines.operator->() );
     for ( ; aPipeIt.More(); aPipeIt.Next() )
     {
       Handle(asiVisu_Pipeline) aPipeline = aPipeIt.Value();
@@ -980,7 +976,7 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& theNodes,
 
   // Populate Pick resulting structure to be used by Presentation's
   // highlight method
-  asiUI_PickResult& aPickRes = m_currentSelection.ChangePickResult(SelectionNature_Pick);
+  asiVisu_PickResult& aPickRes = m_currentSelection.ChangePickResult(SelectionNature_Pick);
   aPickRes.Clear();
   aPickRes.SetSelectionModes(theModes);
   for ( asiVisu_ActorElemMap::Iterator it(theActorElems); it.More(); it.Next() )
@@ -1019,10 +1015,10 @@ Handle(ActAPI_HNodeList) asiVisu_PrsManager::GetHighlighted() const
 {
   Handle(ActAPI_HNodeList) aList = new ActAPI_HNodeList();
 
-  const visu_actual_selection::PrsSeq&
+  const asiVisu_ActualSelection::PrsSeq&
     aSeq = m_currentSelection.RenderedPresentations(SelectionNature_Pick);
 
-  visu_actual_selection::PrsSeq::Iterator anIt(aSeq);
+  asiVisu_ActualSelection::PrsSeq::Iterator anIt(aSeq);
   for ( ; anIt.More(); anIt.Next() )
     aList->Append( anIt.Value()->GetNode() );
 
@@ -1031,7 +1027,7 @@ Handle(ActAPI_HNodeList) asiVisu_PrsManager::GetHighlighted() const
 
 //! Returns data structure representing the currently selected entities in viewer.
 //! \return current selection (picking and detection).
-const visu_actual_selection& asiVisu_PrsManager::GetCurrentSelection() const
+const asiVisu_ActualSelection& asiVisu_PrsManager::GetCurrentSelection() const
 {
   return m_currentSelection;
 }
@@ -1042,7 +1038,7 @@ const visu_actual_selection& asiVisu_PrsManager::GetCurrentSelection() const
 
 //! Sets up a renderer for the Presentation Manager. Notice that Presentation
 //! Manager is always created with default renderer. Use this method only if
-//! you really need to populate your Presentation Manager with some external
+//! you really need to populate your presentation manager with some external
 //! renderer.
 //! \param theRenderer [in] renderer to set.
 void asiVisu_PrsManager::SetRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer)

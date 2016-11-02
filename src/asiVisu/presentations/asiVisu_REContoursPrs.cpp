@@ -22,8 +22,11 @@
 asiVisu_REContoursPrs::asiVisu_REContoursPrs(const Handle(ActAPI_INode)& theNode)
 : asiVisu_Prs(theNode)
 {
+  Handle(asiData_REContoursNode)
+    contours_n = Handle(asiData_REContoursNode)::DownCast(theNode);
+
   // Create Data Provider
-  Handle(asiVisu_REContoursDataProvider) DP = new asiVisu_REContoursDataProvider;
+  Handle(asiVisu_REContoursDataProvider) DP = new asiVisu_REContoursDataProvider(contours_n);
 
   // Pipeline for contours
   this->addPipeline        ( Pipeline_Main, new asiVisu_REContoursPipeline );
@@ -74,16 +77,16 @@ void asiVisu_REContoursPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-void asiVisu_REContoursPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                     const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
-                                     const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+void asiVisu_REContoursPrs::highlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
+                                      const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                      const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting reset.
-void asiVisu_REContoursPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                       const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+void asiVisu_REContoursPrs::unHighlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
+                                        const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }

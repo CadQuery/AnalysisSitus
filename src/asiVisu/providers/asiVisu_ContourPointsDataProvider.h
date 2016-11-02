@@ -5,34 +5,38 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_ContourPointsDataProvider_h
-#define asiData_ContourPointsDataProvider_h
+#ifndef asiVisu_ContourPointsDataProvider_h
+#define asiVisu_ContourPointsDataProvider_h
 
 // A-Situs visualization includes
 #include <asiVisu_PointsDataProvider.h>
 
-DEFINE_STANDARD_HANDLE(asiData_ContourPointsDataProvider, asiVisu_PointsDataProvider)
+// asiData includes
+#include <asiData_ContourNode.h>
+
+DEFINE_STANDARD_HANDLE(asiVisu_ContourPointsDataProvider, asiVisu_PointsDataProvider)
 
 //! Data provider for base points of a contour.
-class asiData_ContourPointsDataProvider : public asiVisu_PointsDataProvider
+class asiVisu_ContourPointsDataProvider : public asiVisu_PointsDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_ContourPointsDataProvider, asiVisu_PointsDataProvider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ContourPointsDataProvider, asiVisu_PointsDataProvider)
 
 public:
 
-  asiData_ContourPointsDataProvider();
+  asiVisu_EXPORT
+    asiVisu_ContourPointsDataProvider(const Handle(asiData_ContourNode)& contour);
 
 public:
 
-  virtual Handle(asiAlgo_PointCloud)
+  asiVisu_EXPORT virtual Handle(asiAlgo_PointCloud)
     GetPoints() const;
 
 private:
 
-  virtual Handle(ActAPI_HParameterList)
+  asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
     translationSources() const;
 
 };

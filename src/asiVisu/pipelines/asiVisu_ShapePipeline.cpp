@@ -9,7 +9,7 @@
 #include <asiVisu_ShapePipeline.h>
 
 // Visualization includes
-#include <asiUI_NodeInfo.h>
+#include <asiVisu_NodeInfo.h>
 #include <asiVisu_ShapeDataProvider.h>
 #include <asiVisu_ShapeDataSource.h>
 #include <asiVisu_Utils.h>
@@ -205,7 +205,7 @@ void asiVisu_ShapePipeline::SetInput(const Handle(asiVisu_DataProvider)& theData
       // Bind actor to owning Node ID. Thus we set back reference from VTK
       // entity to data object
       if ( m_bIsBound2Node )
-        asiUI_NodeInfo::Store( aShapePrv->GetNodeID(), this->Actor() );
+        asiVisu_NodeInfo::Store( aShapePrv->GetNodeID(), this->Actor() );
 
       // Bind Shape DS with actor. This is necessary for VIS picker -- it will
       // not work without the corresponding Information key

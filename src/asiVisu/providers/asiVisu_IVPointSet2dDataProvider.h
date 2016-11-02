@@ -24,11 +24,12 @@ public:
 
 public:
 
-  asiVisu_IVPointSet2dDataProvider(const Handle(ActAPI_INode)& pointSet);
+  asiVisu_EXPORT
+    asiVisu_IVPointSet2dDataProvider(const Handle(ActAPI_INode)& pointSet);
 
 public:
 
-  virtual Handle(asiAlgo_PointCloud)
+  asiVisu_EXPORT virtual Handle(asiAlgo_PointCloud)
     GetPoints() const;
 
 private:

@@ -64,14 +64,6 @@ public:
   asiData_EXPORT Handle(asiData_RESurfaceNode)
     Surface(const int oneBased_idx);
 
-  asiData_EXPORT Handle(asiData_RESurfaceNode)
-    TX_AddSurface(const Handle(Geom_Surface)& surface,
-                  const double                uLimit,
-                  const double                vLimit);
-
-  asiData_EXPORT void
-    TX_CleanSurfaces();
-
 // Initialization:
 public:
 

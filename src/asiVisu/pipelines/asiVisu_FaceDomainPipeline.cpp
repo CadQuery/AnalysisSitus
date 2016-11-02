@@ -8,12 +8,9 @@
 // Own include
 #include <asiVisu_FaceDomainPipeline.h>
 
-// Common includes
-#include <common_facilities.h>
-
 // Visualization includes
 #include <asiVisu_FaceDataProvider.h>
-#include <asiUI_NodeInfo.h>
+#include <asiVisu_NodeInfo.h>
 #include <asiVisu_PDomainSource.h>
 #include <asiVisu_Utils.h>
 
@@ -98,7 +95,7 @@ void asiVisu_FaceDomainPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP
     if ( m_bForced ) m_bForced = false; // Executed, reset forced
 
     // Bind to Node
-    asiUI_NodeInfo::Store( faceProvider->GetNodeID(), this->Actor() );
+    asiVisu_NodeInfo::Store( faceProvider->GetNodeID(), this->Actor() );
 
     // Append filter
     vtkSmartPointer<asiVisu_PDomainSource>

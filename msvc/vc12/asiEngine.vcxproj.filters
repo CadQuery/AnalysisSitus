@@ -20,13 +20,13 @@
     <ClInclude Include="..\..\src\asiEngine\asiEngine_IV.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiEngine\asiEngine_Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiEngine\asiEngine_Part.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiEngine\asiEngine_RE.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiEngine\asiEngine_Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -37,13 +37,13 @@
     <ClCompile Include="..\..\src\asiEngine\asiEngine_IV.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiEngine\asiEngine_Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\asiEngine\asiEngine_Part.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiEngine\asiEngine_RE.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiEngine\asiEngine_Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

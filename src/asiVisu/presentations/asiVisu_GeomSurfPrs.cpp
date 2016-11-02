@@ -100,10 +100,11 @@ void CreateImage(vtkSmartPointer<vtkImageData> image,
 asiVisu_GeomSurfPrs::asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& theNode)
 : asiVisu_Prs(theNode)
 {
+  Handle(asiData_FaceNode)
+    face_n = Handle(asiData_FaceNode)::DownCast(theNode);
+
   // Create Data Provider
-  Handle(asiVisu_FaceDataProvider) DP =
-    new asiVisu_FaceDataProvider( theNode->GetId(),
-                                 ActParamStream() << theNode->Parameter(asiData_SurfNode::PID_SelectedFace) );
+  Handle(asiVisu_FaceDataProvider) DP = new asiVisu_FaceDataProvider(face_n);
 
   //---------------------------------------------------------------------------
   // Surface isolines
@@ -401,8 +402,8 @@ void asiVisu_GeomSurfPrs::afterUpdatePipelines() const
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
 void asiVisu_GeomSurfPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                   const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
-                                   const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                   const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                   const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
@@ -410,7 +411,7 @@ void asiVisu_GeomSurfPrs::highlight(vtkRenderer*                 asiVisu_NotUsed
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
 void asiVisu_GeomSurfPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                     const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                     const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }

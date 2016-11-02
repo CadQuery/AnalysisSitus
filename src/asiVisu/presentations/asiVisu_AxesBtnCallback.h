@@ -30,14 +30,14 @@ public:
 
   //! Initializes callback with the axes actor to manage.
   //! \param axes [in] axes actor to set.
-  inline void SetAxesActor(const vtkSmartPointer<vtkAxesActor>& axes)
+  void SetAxesActor(const vtkSmartPointer<vtkAxesActor>& axes)
   {
     m_axes = axes;
   }
 
   //! Initializes callback with the renderer to manage.
   //! \param renderer [in] renderer to set.
-  inline void SetRenderer(const vtkSmartPointer<vtkRenderer>& renderer)
+  void SetRenderer(const vtkSmartPointer<vtkRenderer>& renderer)
   {
     m_renderer = renderer;
   }

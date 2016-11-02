@@ -8,9 +8,6 @@
 // Own include
 #include <asiVisu_SectionsDataProvider.h>
 
-// A-Situs (common) includes
-#include <common_facilities.h>
-
 // A-Situs (geometry) includes
 #include <geom_sections_node.h>
 #include <asiAlgo_Utils.h>

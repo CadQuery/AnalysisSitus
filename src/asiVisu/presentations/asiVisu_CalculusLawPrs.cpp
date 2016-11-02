@@ -74,8 +74,8 @@ void asiVisu_CalculusLawPrs::afterUpdatePipelines() const
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
 void asiVisu_CalculusLawPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                      const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
-                                      const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                      const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                      const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
@@ -83,7 +83,7 @@ void asiVisu_CalculusLawPrs::highlight(vtkRenderer*                 asiVisu_NotU
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
 void asiVisu_CalculusLawPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                        const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                        const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }

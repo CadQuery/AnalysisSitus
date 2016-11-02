@@ -8,14 +8,13 @@
 // Own include
 #include <asiVisu_REContoursDataProvider.h>
 
-// Common includes
-#include <common_facilities.h>
-
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-asiVisu_REContoursDataProvider::asiVisu_REContoursDataProvider()
-: asiVisu_DataProvider()
+//! \param contours_n [in] Contours Node.
+asiVisu_REContoursDataProvider::asiVisu_REContoursDataProvider(const Handle(asiData_REContoursNode)& contours_n)
+: asiVisu_DataProvider(),
+  m_contours(contours_n)
 {}
 
 //-----------------------------------------------------------------------------
@@ -23,13 +22,10 @@ asiVisu_REContoursDataProvider::asiVisu_REContoursDataProvider()
 //! \return ID of the associated Data Node.
 ActAPI_DataObjectId asiVisu_REContoursDataProvider::GetNodeID() const
 {
-  Handle(asiData_REContoursNode)
-    contours_n = common_facilities::Instance()->Model->GetRENode()->Contours();
-  //
-  if ( contours_n.IsNull() || !contours_n->IsWellFormed() )
+  if ( m_contours.IsNull() || !m_contours->IsWellFormed() )
     return ActAPI_DataObjectId();
 
-  return contours_n->GetId();
+  return m_contours->GetId();
 }
 
 //-----------------------------------------------------------------------------
@@ -37,15 +33,12 @@ ActAPI_DataObjectId asiVisu_REContoursDataProvider::GetNodeID() const
 //! \return number of stored contours.
 int asiVisu_REContoursDataProvider::GetNumOfContours() const
 {
-  Handle(asiData_REContoursNode)
-    contours_n = common_facilities::Instance()->Model->GetRENode()->Contours();
-  //
-  if ( contours_n.IsNull() || !contours_n->IsWellFormed() )
+  if ( m_contours.IsNull() || !m_contours->IsWellFormed() )
     return 0;
 
   // Iterate over the child Nodes which are the individual contours
   int nbContours = 0;
-  for ( Handle(ActAPI_IChildIterator) cit = contours_n->GetChildIterator(); cit->More(); cit->Next() )
+  for ( Handle(ActAPI_IChildIterator) cit = m_contours->GetChildIterator(); cit->More(); cit->Next() )
   {
     Handle(asiData_REContourNode) contour_n = Handle(asiData_REContourNode)::DownCast( cit->Value() );
     //
@@ -63,14 +56,11 @@ int asiVisu_REContoursDataProvider::GetNumOfContours() const
 TopoDS_Wire
   asiVisu_REContoursDataProvider::GetContour(const int oneBased_idx) const
 {
-  Handle(asiData_REContoursNode)
-    contours_n = common_facilities::Instance()->Model->GetRENode()->Contours();
-  //
-  if ( contours_n.IsNull() || !contours_n->IsWellFormed() )
+  if ( m_contours.IsNull() || !m_contours->IsWellFormed() )
     return TopoDS_Wire();
 
   // Access individual contour
-  Handle(asiData_REContourNode) contour_n = contours_n->Contour(oneBased_idx);
+  Handle(asiData_REContourNode) contour_n = m_contours->Contour(oneBased_idx);
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
     return TopoDS_Wire();
 
@@ -87,14 +77,11 @@ Handle(ActAPI_HParameterList) asiVisu_REContoursDataProvider::translationSources
   // Resulting Parameters
   ActParamStream out;
 
-  Handle(asiData_REContoursNode)
-    contours_n = common_facilities::Instance()->Model->GetRENode()->Contours();
-  //
-  if ( contours_n.IsNull() || !contours_n->IsWellFormed() )
+  if ( m_contours.IsNull() || !m_contours->IsWellFormed() )
     return out;
 
   // Iterate over the child Nodes which are the individual contours
-  for ( Handle(ActAPI_IChildIterator) cit = contours_n->GetChildIterator(); cit->More(); cit->Next() )
+  for ( Handle(ActAPI_IChildIterator) cit = m_contours->GetChildIterator(); cit->More(); cit->Next() )
   {
     Handle(asiData_REContourNode) contour_n = Handle(asiData_REContourNode)::DownCast( cit->Value() );
     //

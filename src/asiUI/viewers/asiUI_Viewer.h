@@ -9,7 +9,7 @@
 #define asiUI_Viewer_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiUI.h>
 
 // A-Situs (visualization) includes
 #include <asiVisu_PrsManager.h>
@@ -35,7 +35,7 @@ public:
 
 public:
 
-  inline const vtkSmartPointer<asiVisu_PrsManager>& PrsMgr() const { return m_prs_mgr; }
+  const vtkSmartPointer<asiVisu_PrsManager>& PrsMgr() const { return m_prs_mgr; }
 
 protected:
 

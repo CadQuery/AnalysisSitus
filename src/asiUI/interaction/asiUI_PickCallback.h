@@ -40,52 +40,24 @@ class asiUI_PickCallback : public QObject,
 public:
 
   static asiUI_PickCallback* New();
-  static asiUI_PickCallback* New(asiUI_Viewer* theViewer);
+  static asiUI_PickCallback* New(asiUI_Viewer* pViewer);
+
   vtkTypeMacro(asiUI_PickCallback, asiUI_ViewerCallback);
 
 public:
 
-  void SelectMeshNodesOn()  { m_bSelectMeshNodes = true; }
-  void SelectMeshNodesOff() { m_bSelectMeshNodes = false; }
-
-public:
-
-  virtual void Execute(vtkObject*    theCaller,
-                       unsigned long theEventId,
-                       void*         theCallData);
-
-protected:
-
-  //---------------------------------------------------------------------------
-  void executePart(unsigned long theEventId,
-                   void*         theCallData);
-  //---------------------------------------------------------------------------
-  void executeMesh(unsigned long theEventId,
-                   void*         theCallData);
-  //---------------------------------------------------------------------------
-  void executeDomain(unsigned long theEventId,
-                     void*         theCallData);
-  //---------------------------------------------------------------------------
-  void executeSection(unsigned long theEventId,
-                      void*         theCallData);
-  //---------------------------------------------------------------------------
+  virtual void Execute(vtkObject*    pCaller,
+                       unsigned long eventId,
+                       void*         CallData);
 
 signals:
 
-  void partPicked();     //!< Some sensitives were picked in a part.
-  void meshNodePicked(); //!< Some sensitives were picked in a mesh.
-  void meshElemPicked(); //!< Some sensitives were picked in a mesh.
-  void domainPicked();   //!< Some sensitives were picked in a domain.
-  void sectionPicked();  //!< Some sensitives were picked in a section.
+  void picked();
 
 private:
 
   asiUI_PickCallback  (asiUI_Viewer* theViewer);
   ~asiUI_PickCallback ();
-
-protected:
-
-  bool m_bSelectMeshNodes; //!< Indicates whether to select mesh nodes.
 
 };
 

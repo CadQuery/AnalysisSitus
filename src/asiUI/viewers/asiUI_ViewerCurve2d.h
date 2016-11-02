@@ -5,32 +5,32 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_Viewer_curve_2d_h
-#define asiUI_Viewer_curve_2d_h
+#ifndef asiUI_ViewerCurve2d_h
+#define asiUI_ViewerCurve2d_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiUI.h>
 
 // A-Situs (GUI) includes
 #include <asiUI_Viewer.h>
 
 // A-Situs (visualization) includes
-#include <asiUI_InteractorStylePick.h>
+#include <asiVisu_InteractorStylePick.h>
 #include <asiUI_PickCallback.h>
 
 // VTK includes
 #include <vtkTextWidget.h>
 
 //! Viewer for a two-dimensional parametric curve.
-class asiUI_Viewer_curve_2d : public asiUI_Viewer
+class asiUI_ViewerCurve2d : public asiUI_Viewer
 {
   Q_OBJECT
 
 public:
 
-  asiUI_Viewer_curve_2d(vtkSmartPointer<asiVisu_PrsManager>& prs_mgr,
-                      QWidget*                           parent = NULL);
-  virtual ~asiUI_Viewer_curve_2d();
+  asiUI_ViewerCurve2d(vtkSmartPointer<asiVisu_PrsManager>& prs_mgr,
+                      QWidget*                             parent = NULL);
+  virtual ~asiUI_ViewerCurve2d();
 
 public:
 

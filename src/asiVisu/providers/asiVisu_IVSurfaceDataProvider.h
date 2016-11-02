@@ -26,15 +26,17 @@ public:
 
 public:
 
-  asiVisu_IVSurfaceDataProvider(const Handle(ActAPI_INode)& N);
+  asiVisu_EXPORT
+    asiVisu_IVSurfaceDataProvider(const Handle(ActAPI_INode)& N);
 
 public:
 
-  virtual ActAPI_DataObjectId GetNodeID() const;
+  asiVisu_EXPORT virtual ActAPI_DataObjectId
+    GetNodeID() const;
 
 public:
 
-  Handle(Geom_Surface)
+  asiVisu_EXPORT Handle(Geom_Surface)
     GetSurface(double& uLimit, double& vLimit) const;
 
 private:

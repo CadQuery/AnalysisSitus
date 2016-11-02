@@ -11,6 +11,9 @@
 // A-Situs includes
 #include <asiUI_Dialog.h>
 
+// A-Situs (engine) includes
+#include <asiEngine_Model.h>
+
 // A-Situs (GUI) includes
 #include <asiUI_LineEdit.h>
 
@@ -29,9 +32,10 @@ class asiUI_DialogCloudify : public asiUI_Dialog
 
 public:
 
-  asiUI_DialogCloudify(ActAPI_ProgressEntry notifier,
-                       ActAPI_PlotterEntry  plotter,
-                       QWidget*             parent = NULL);
+  asiUI_DialogCloudify(const Handle(asiEngine_Model)& model,
+                       ActAPI_ProgressEntry           notifier,
+                       ActAPI_PlotterEntry            plotter,
+                       QWidget*                       parent = NULL);
 
   virtual ~asiUI_DialogCloudify();
 
@@ -61,8 +65,9 @@ protected:
     }
   };
 
-  t_widgets    m_widgets;     //!< UI controls.
-  QVBoxLayout* m_pMainLayout; //!< Layout of the widget.
+  t_widgets               m_widgets;     //!< UI controls.
+  QVBoxLayout*            m_pMainLayout; //!< Layout of the widget.
+  Handle(asiEngine_Model) m_model;       //!< Data Model instance.
 
 };
 

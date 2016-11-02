@@ -8,6 +8,10 @@
 // Own include
 #include <asiEngine_Domain.h>
 
+// Visualization includes
+#include <asiVisu_Prs.h>
+#include <asiVisu_Selection.h>
+
 // OCCT includes
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopExp.hxx>
@@ -16,20 +20,26 @@
 #include <TopTools_SequenceOfShape.hxx>
 
 //! Retrieves highlighted edges from the Face Domain viewer.
-//! \param edges [out] result collection.
-void asiEngine_Domain::GetHighlightedEdges(TopTools_IndexedMapOfShape& edges)
+//! \param partNode [in]  part Node playing as a source of geometry.
+//! \param prsMgr   [in]  presentation manager.
+//! \param edges    [out] result collection.
+void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)&            partNode,
+                                           const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
+                                           TopTools_IndexedMapOfShape&                edges)
 {
   TopoDS_Face dummyFace;
-  GetHighlightedEdges(edges, dummyFace);
+  GetHighlightedEdges(partNode, prsMgr, edges, dummyFace);
 }
 
 //! Retrieves highlighted edges from the Face Domain viewer.
 //! \param partNode [in]  part Node playing as a source of geometry.
+//! \param prsMgr   [in]  presentation manager.
 //! \param edges    [out] result collection.
 //! \param face     [out] base face.
-void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)& partNode,
-                                           TopTools_IndexedMapOfShape&     edges,
-                                           TopoDS_Face&                    face)
+void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)&            partNode,
+                                           const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
+                                           TopTools_IndexedMapOfShape&                edges,
+                                           TopoDS_Face&                               face)
 {
   // Get Part shape
   TopoDS_Shape part = partNode->GetShape();
@@ -54,9 +64,9 @@ void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)& partN
   }
 
   // Get actual selection
-  const visu_actual_selection& sel      = common_facilities::Instance()->Prs.Domain->GetCurrentSelection();
-  const asiUI_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
-  const asiVisu_ActorElemMap&   elem_map = pick_res.GetPickMap();
+  const asiVisu_ActualSelection& sel      = prsMgr->GetCurrentSelection();
+  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  const asiVisu_ActorElemMap&    elem_map = pick_res.GetPickMap();
   //
   // Prepare cumulative set of all picked element IDs
   for ( asiVisu_ActorElemMap::Iterator it(elem_map); it.More(); it.Next() )

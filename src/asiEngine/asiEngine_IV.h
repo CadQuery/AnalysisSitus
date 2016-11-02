@@ -9,14 +9,24 @@
 #define asiEngine_IV_h
 
 // A-Situs includes
-#include <asiEngine.h>
+#include <asiEngine_Model.h>
 
-// Visualization includes
-#include <asiData_IVNode.h>
+// A-Situs (visualization) includes
+#include <asiVisu_PrsManager.h>
 
 //! API for imperative viewer (IV).
-namespace asiEngine_IV
+class asiEngine_IV
 {
+public:
+
+  //! ctor.
+  //! \param model [in] Data Model instance.
+  asiEngine_IV(const Handle(asiEngine_Model)& model)
+  //
+  : m_model(model) {}
+
+public:
+
   asiEngine_EXPORT Handle(asiData_IVNode)
     Create_IV();
 
@@ -85,10 +95,14 @@ namespace asiEngine_IV
   asiEngine_EXPORT void
     Clean_Text();
 
-//---------------------------------------------------------------------------//
+protected:
 
   asiEngine_EXPORT void
     _cleanChildren(const Handle(ActAPI_INode)& parent);
+
+protected:
+
+  Handle(asiEngine_Model) m_model;  //!< Data Model instance.
 
 };
 

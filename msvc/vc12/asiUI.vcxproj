@@ -83,7 +83,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;$(AS_ROOT)\src\asiEngine;$(AS_ROOT)\src\asiUI;$(AS_ROOT)\src\asiUI\controls;$(AS_ROOT)\src\asiUI\dialogs;$(AS_ROOT)\src\asiUI\interaction;$(AS_ROOT)\src\asiUI\utils;$(AS_ROOT)\src\asiUI\viewers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\selection;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;$(AS_ROOT)\src\asiEngine;$(AS_ROOT)\src\asiUI;$(AS_ROOT)\src\asiUI\controls;$(AS_ROOT)\src\asiUI\dialogs;$(AS_ROOT)\src\asiUI\interaction;$(AS_ROOT)\src\asiUI\utils;$(AS_ROOT)\src\asiUI\viewers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiUI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -91,7 +91,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -102,18 +102,8 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist $(QR_ROOT)\include mkdir $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\BSpl\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\Misc\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Commands\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Commands\Console\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Commands\View\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Engine\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -159,7 +149,7 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;$(AS_ROOT)\src\asiEngine;$(AS_ROOT)\src\asiUI;$(AS_ROOT)\src\asiUI\controls;$(AS_ROOT)\src\asiUI\dialogs;$(AS_ROOT)\src\asiUI\interaction;$(AS_ROOT)\src\asiUI\utils;$(AS_ROOT)\src\asiUI\viewers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\selection;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;$(AS_ROOT)\src\asiEngine;$(AS_ROOT)\src\asiUI;$(AS_ROOT)\src\asiUI\controls;$(AS_ROOT)\src\asiUI\dialogs;$(AS_ROOT)\src\asiUI\interaction;$(AS_ROOT)\src\asiUI\utils;$(AS_ROOT)\src\asiUI\viewers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiUI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -177,18 +167,8 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist $(QR_ROOT)\include mkdir $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\BSpl\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\Misc\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Commands\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Commands\Console\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Commands\View\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Engine\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -235,30 +215,24 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogCloudify.h" />
     <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogEuler.h" />
     <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.h" />
-    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogMesh.h" />
     <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogSewing.h" />
     <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEP.h" />
     <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEPDelegate.h" />
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_InteractorStylePick.h" />
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_InteractorStylePick2d.h" />
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_NodeInfo.h" />
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PartCallback.h" />
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PDomainCallback.h" />
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PickCallback.h" />
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PickFacetCallback.h" />
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_RotationCallback.h" />
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_Selection.h" />
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_TopoGraph.h" />
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_ViewerCallback.h" />
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_Common.h" />
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_DataAdaptor.h" />
+    <ClInclude Include="..\..\src\asiUI\utils\asiUI_JournalIV.h" />
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_PrimDataAdaptor.h" />
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_PrimDataView.h" />
     <ClInclude Include="..\..\src\asiUI\viewers\asiUI_Viewer.h" />
     <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.h" />
     <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerDomain.h" />
     <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerFuncUnivariate.h" />
-    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerMesh.h" />
     <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerPart.h" />
     <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerSurface.h" />
     <ClInclude Include="..\..\src\asiUI\viewers\asiUI_VtkWindow.h" />
@@ -270,30 +244,24 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogCloudify.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogEuler.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.cpp" />
-    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogMesh.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogSewing.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEP.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEPDelegate.cpp" />
-    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_InteractorStylePick.cpp" />
-    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_InteractorStylePick2d.cpp" />
-    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_NodeInfo.cpp" />
     <ClCompile Include="..\..\src\asiUI\interaction\asiUI_PartCallback.cpp" />
     <ClCompile Include="..\..\src\asiUI\interaction\asiUI_PDomainCallback.cpp" />
     <ClCompile Include="..\..\src\asiUI\interaction\asiUI_PickCallback.cpp" />
     <ClCompile Include="..\..\src\asiUI\interaction\asiUI_PickFacetCallback.cpp" />
     <ClCompile Include="..\..\src\asiUI\interaction\asiUI_RotationCallback.cpp" />
-    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_Selection.cpp" />
-    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_TopoGraph.cpp" />
     <ClCompile Include="..\..\src\asiUI\interaction\asiUI_ViewerCallback.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_Common.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_DataAdaptor.cpp" />
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_JournalIV.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_PrimDataAdaptor.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_PrimDataView.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_Viewer.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerDomain.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerFuncUnivariate.cpp" />
-    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerMesh.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerPart.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerSurface.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_VtkWindow.cpp" />

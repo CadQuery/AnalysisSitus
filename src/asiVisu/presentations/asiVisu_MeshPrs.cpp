@@ -15,13 +15,21 @@
 #include <asiVisu_MeshPipeline.h>
 #include <asiVisu_Utils.h>
 
-// GUI includes
-#include <asiUI_Common.h>
-
 // VTK includes
 #include <vtkActor.h>
 #include <vtkMapper.h>
 #include <vtkProperty.h>
+
+//! Convert integer value to a color.
+//! \param theColor [in] integer value.
+//! \return converted value
+static QColor IntToColor(const int theColor)
+{
+  unsigned char aRed   = ( theColor >> 16 ) & 0xFF;
+  unsigned char aGreen = ( theColor >>  8 ) & 0xFF;
+  unsigned char aBlue  =  theColor          & 0xFF;
+  return QColor(aRed, aGreen, aBlue);
+}
 
 //! Creates a Presentation object for the passed Mesh Node.
 //! \param theNode [in] Mesh Node to create a Presentation for.
@@ -30,7 +38,7 @@ asiVisu_MeshPrs::asiVisu_MeshPrs(const Handle(ActAPI_INode)& theNode) : asiVisu_
   // Create Data Provider
   Handle(asiVisu_MeshDataProvider)
     DP = new asiVisu_MeshDataProvider( theNode->GetId(),
-                                      ActAPI_ParameterStream() << theNode->Parameter(asiData_TessNode::PID_Mesh) );
+                                       ActAPI_ParameterStream() << theNode->Parameter(asiData_TessNode::PID_Mesh) );
 
   // Pipeline for mesh
   this->addPipeline(Pipeline_Mesh, new asiVisu_MeshPipeline);
@@ -83,10 +91,11 @@ bool asiVisu_MeshPrs::IsVisible() const
 //! Sets SHADING visualization mode.
 void asiVisu_MeshPrs::doShading() const
 {
-  Handle(asiVisu_MeshPipeline) aMeshPL =
-    Handle(asiVisu_MeshPipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
-  Handle(asiVisu_MeshPipeline) aMeshContourPL =
-    Handle(asiVisu_MeshPipeline)::DownCast( this->GetPipeline(Pipeline_MeshContour) );
+  Handle(asiVisu_MeshPipeline)
+    aMeshPL = Handle(asiVisu_MeshPipeline)::DownCast( this->GetPipeline(Pipeline_Mesh) );
+  //
+  Handle(asiVisu_MeshPipeline)
+    aMeshContourPL = Handle(asiVisu_MeshPipeline)::DownCast( this->GetPipeline(Pipeline_MeshContour) );
 
   aMeshPL->Actor()->GetProperty()->EdgeVisibilityOff();
   aMeshPL->Actor()->GetProperty()->SetRepresentationToSurface();
@@ -188,7 +197,7 @@ void asiVisu_MeshPrs::afterUpdatePipelines() const
   Handle(asiData_TessNode) Mesh_Node = Handle(asiData_TessNode)::DownCast( this->GetNode() );
   if ( Mesh_Node->HasColor() )
   {
-    QColor aColor = asiUI_Common::IntToColor( Mesh_Node->GetColor() );
+    QColor aColor = ::IntToColor( Mesh_Node->GetColor() );
     this->doColor(aColor);
   }
   else
@@ -199,9 +208,9 @@ void asiVisu_MeshPrs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection kind.
-void asiVisu_MeshPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                              const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
-                              const asiUI_SelectionNature& theSelNature) const
+void asiVisu_MeshPrs::highlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
+                                const asiVisu_PickResult&        asiVisu_NotUsed(thePickRes),
+                                const asiVisu_SelectionNature& theSelNature) const
 {
   //---------------------------------------------------------------------------
   // Update highlighting pipelines
@@ -230,8 +239,8 @@ void asiVisu_MeshPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(the
 //! Callback for un-highlighting.
 //! \param theRenderer  [in] renderer.
 //! \param theSelNature [in] selection kind.
-void asiVisu_MeshPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                const asiUI_SelectionNature& theSelNature) const
+void asiVisu_MeshPrs::unHighlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
+                                  const asiVisu_SelectionNature& theSelNature) const
 {
   // Access pipeline for highlighting
   Handle(asiVisu_MeshContourPipeline) hili_pl;

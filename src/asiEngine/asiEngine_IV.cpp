@@ -9,8 +9,7 @@
 #include <asiEngine_IV.h>
 
 // Common includes
-#include <common_facilities.h>
-#include <asiData_Model.h>
+#include <asiEngine_Model.h>
 
 // Mesh includes
 #include <asiAlgo_MeshConvert.h>
@@ -25,12 +24,9 @@
 //! \return newly created IV Node.
 Handle(asiData_IVNode) asiEngine_IV::Create_IV()
 {
-  // Access Model
-  Handle(asiData_Model) M = common_facilities::Instance()->Model;
-
   // Add IV Node to Partition
   Handle(asiData_IVNode) iv_n = Handle(asiData_IVNode)::DownCast( asiData_IVNode::Instance() );
-  M->GetIVPartition()->AddNode(iv_n);
+  m_model->GetIVPartition()->AddNode(iv_n);
 
   // Initialize Node
   iv_n->Init();
@@ -39,7 +35,7 @@ Handle(asiData_IVNode) asiEngine_IV::Create_IV()
   // Create underlying Points 2D
   {
     Handle(ActAPI_INode) iv_points_2d_base = asiData_IVPoints2dNode::Instance();
-    M->GetIVPoints2dPartition()->AddNode(iv_points_2d_base);
+    m_model->GetIVPoints2dPartition()->AddNode(iv_points_2d_base);
 
     // Initialize
     Handle(asiData_IVPoints2dNode) iv_points_2d_n = Handle(asiData_IVPoints2dNode)::DownCast(iv_points_2d_base);
@@ -53,7 +49,7 @@ Handle(asiData_IVNode) asiEngine_IV::Create_IV()
   // Create underlying Points
   {
     Handle(ActAPI_INode) iv_points_base = asiData_IVPointsNode::Instance();
-    M->GetIVPointsPartition()->AddNode(iv_points_base);
+    m_model->GetIVPointsPartition()->AddNode(iv_points_base);
 
     // Initialize
     Handle(asiData_IVPointsNode) iv_points_n = Handle(asiData_IVPointsNode)::DownCast(iv_points_base);
@@ -67,7 +63,7 @@ Handle(asiData_IVNode) asiEngine_IV::Create_IV()
   // Create underlying Curves
   {
     Handle(ActAPI_INode) iv_curves_base = asiData_IVCurvesNode::Instance();
-    M->GetIVCurvesPartition()->AddNode(iv_curves_base);
+    m_model->GetIVCurvesPartition()->AddNode(iv_curves_base);
 
     // Initialize
     Handle(asiData_IVCurvesNode) iv_curves_n = Handle(asiData_IVCurvesNode)::DownCast(iv_curves_base);
@@ -81,7 +77,7 @@ Handle(asiData_IVNode) asiEngine_IV::Create_IV()
   // Create underlying Surfaces
   {
     Handle(ActAPI_INode) iv_surfaces_base = asiData_IVSurfacesNode::Instance();
-    M->GetIVSurfacesPartition()->AddNode(iv_surfaces_base);
+    m_model->GetIVSurfacesPartition()->AddNode(iv_surfaces_base);
 
     // Initialize
     Handle(asiData_IVSurfacesNode) iv_surfaces_n = Handle(asiData_IVSurfacesNode)::DownCast(iv_surfaces_base);
@@ -95,7 +91,7 @@ Handle(asiData_IVNode) asiEngine_IV::Create_IV()
   // Create underlying Topology container
   {
     Handle(ActAPI_INode) iv_topo_base = asiData_IVTopoNode::Instance();
-    M->GetIVTopoPartition()->AddNode(iv_topo_base);
+    m_model->GetIVTopoPartition()->AddNode(iv_topo_base);
 
     // Initialize
     Handle(asiData_IVTopoNode) iv_topo_n = Handle(asiData_IVTopoNode)::DownCast(iv_topo_base);
@@ -109,7 +105,7 @@ Handle(asiData_IVNode) asiEngine_IV::Create_IV()
   // Create underlying Tessellation container
   {
     Handle(ActAPI_INode) iv_tess_base = asiData_IVTessNode::Instance();
-    M->GetIVTessPartition()->AddNode(iv_tess_base);
+    m_model->GetIVTessPartition()->AddNode(iv_tess_base);
 
     // Initialize
     Handle(asiData_IVTessNode) iv_tess_n = Handle(asiData_IVTessNode)::DownCast(iv_tess_base);
@@ -123,7 +119,7 @@ Handle(asiData_IVNode) asiEngine_IV::Create_IV()
   // Create underlying Text container
   {
     Handle(ActAPI_INode) iv_text_base = asiData_IVTextNode::Instance();
-    M->GetIVTextPartition()->AddNode(iv_text_base);
+    m_model->GetIVTextPartition()->AddNode(iv_text_base);
 
     // Initialize
     Handle(asiData_IVTextNode) iv_text_n = Handle(asiData_IVTextNode)::DownCast(iv_text_base);
@@ -146,15 +142,14 @@ Handle(asiData_IVNode) asiEngine_IV::Create_IV()
 //! \return Point Set 2D Node.
 Handle(asiData_IVPointSet2dNode)
   asiEngine_IV::Create_PointSet2d(const Handle(TColStd_HArray1OfReal)& coords,
-                               const TCollection_AsciiString&       name)
+                                  const TCollection_AsciiString&       name)
 {
   // Access Model and parent Node
-  Handle(asiData_Model)           M         = common_facilities::Instance()->Model;
-  Handle(asiData_IVPoints2dNode) IV_Parent = M->GetIVNode()->Points2d();
+  Handle(asiData_IVPoints2dNode) IV_Parent = m_model->GetIVNode()->Points2d();
 
   // Add Point Set Node to Partition
   Handle(asiData_IVPointSet2dNode) item_n = Handle(asiData_IVPointSet2dNode)::DownCast( asiData_IVPointSet2dNode::Instance() );
-  M->GetIVPointSet2dPartition()->AddNode(item_n);
+  m_model->GetIVPointSet2dPartition()->AddNode(item_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Point Set 2D" : name );
@@ -178,7 +173,7 @@ Handle(asiData_IVPointSet2dNode)
 void asiEngine_IV::Clean_Points2d()
 {
   Handle(asiData_IVPoints2dNode)
-    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Points2d();
+    IV_Parent = m_model->GetIVNode()->Points2d();
   //
   _cleanChildren(IV_Parent);
 }
@@ -191,15 +186,14 @@ void asiEngine_IV::Clean_Points2d()
 //! \return Point Set Node.
 Handle(asiData_IVPointSetNode)
   asiEngine_IV::Create_PointSet(const Handle(asiAlgo_PointCloud)& points,
-                             const TCollection_AsciiString&  name)
+                                const TCollection_AsciiString&    name)
 {
   // Access Model and parent Node
-  Handle(asiData_Model)        M         = common_facilities::Instance()->Model;
-  Handle(asiData_IVPointsNode) IV_Parent = M->GetIVNode()->Points();
+  Handle(asiData_IVPointsNode) IV_Parent = m_model->GetIVNode()->Points();
 
   // Add Point Set Node to Partition
   Handle(asiData_IVPointSetNode) item_n = Handle(asiData_IVPointSetNode)::DownCast( asiData_IVPointSetNode::Instance() );
-  M->GetIVPointSetPartition()->AddNode(item_n);
+  m_model->GetIVPointSetPartition()->AddNode(item_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Point Set" : name );
@@ -223,7 +217,7 @@ Handle(asiData_IVPointSetNode)
 void asiEngine_IV::Clean_Points()
 {
   Handle(asiData_IVPointsNode)
-    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Points();
+    IV_Parent = m_model->GetIVNode()->Points();
   //
   _cleanChildren(IV_Parent);
 }
@@ -237,19 +231,18 @@ void asiEngine_IV::Clean_Points()
 //! \return newly created Node.
 Handle(asiData_IVCurveNode)
   asiEngine_IV::Create_Curve(const Handle(Geom_Curve)&      curve,
-                          const double                   uLimit,
-                          const TCollection_AsciiString& name)
+                             const double                   uLimit,
+                             const TCollection_AsciiString& name)
 {
   if ( curve.IsNull() )
     return NULL;
 
   // Access Model and parent Node
-  Handle(asiData_Model)        M         = common_facilities::Instance()->Model;
-  Handle(asiData_IVCurvesNode) IV_Parent = M->GetIVNode()->Curves();
+  Handle(asiData_IVCurvesNode) IV_Parent = m_model->GetIVNode()->Curves();
 
   // Add Curve Node to Partition
   Handle(asiData_IVCurveNode) item_n = Handle(asiData_IVCurveNode)::DownCast( asiData_IVCurveNode::Instance() );
-  M->GetIVCurvePartition()->AddNode(item_n);
+  m_model->GetIVCurvePartition()->AddNode(item_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Curve" : name );
@@ -293,7 +286,7 @@ Handle(asiData_IVCurveNode)
 void asiEngine_IV::Clean_Curves()
 {
   Handle(asiData_IVCurvesNode)
-    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Curves();
+    IV_Parent = m_model->GetIVNode()->Curves();
   //
   _cleanChildren(IV_Parent);
 }
@@ -308,20 +301,19 @@ void asiEngine_IV::Clean_Curves()
 //! \return newly created Node.
 Handle(asiData_IVSurfaceNode)
   asiEngine_IV::Create_Surface(const Handle(Geom_Surface)&    surface,
-                            const double                   uLimit,
-                            const double                   vLimit,
-                            const TCollection_AsciiString& name)
+                               const double                   uLimit,
+                               const double                   vLimit,
+                               const TCollection_AsciiString& name)
 {
   if ( surface.IsNull() )
     return NULL;
 
   // Access Model and parent Node
-  Handle(asiData_Model)          M         = common_facilities::Instance()->Model;
-  Handle(asiData_IVSurfacesNode) IV_Parent = M->GetIVNode()->Surfaces();
+  Handle(asiData_IVSurfacesNode) IV_Parent = m_model->GetIVNode()->Surfaces();
 
   // Add Surface Node to Partition
   Handle(asiData_IVSurfaceNode) item_n = Handle(asiData_IVSurfaceNode)::DownCast( asiData_IVSurfaceNode::Instance() );
-  M->GetIVSurfacePartition()->AddNode(item_n);
+  m_model->GetIVSurfacePartition()->AddNode(item_n);
 
   // Generate unique name if a good name is not passed
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Surface" : name );
@@ -344,7 +336,7 @@ Handle(asiData_IVSurfaceNode)
 void asiEngine_IV::Clean_Surfaces()
 {
   Handle(asiData_IVSurfacesNode)
-    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Surfaces();
+    IV_Parent = m_model->GetIVNode()->Surfaces();
   //
   _cleanChildren(IV_Parent);
 }
@@ -357,15 +349,14 @@ void asiEngine_IV::Clean_Surfaces()
 //! \return newly created Node.
 Handle(asiData_IVTopoItemNode)
   asiEngine_IV::Create_TopoItem(const TopoDS_Shape&            shape,
-                             const TCollection_AsciiString& name)
+                                const TCollection_AsciiString& name)
 {
   // Access Model and parent Node
-  Handle(asiData_Model)      M         = common_facilities::Instance()->Model;
-  Handle(asiData_IVTopoNode) IV_Parent = M->GetIVNode()->Topology();
+  Handle(asiData_IVTopoNode) IV_Parent = m_model->GetIVNode()->Topology();
 
   // Add Topological Item Node to Partition
   Handle(asiData_IVTopoItemNode) item_n = Handle(asiData_IVTopoItemNode)::DownCast( asiData_IVTopoItemNode::Instance() );
-  M->GetIVTopoItemPartition()->AddNode(item_n);
+  m_model->GetIVTopoItemPartition()->AddNode(item_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Shape" : name );
@@ -387,7 +378,7 @@ Handle(asiData_IVTopoItemNode)
 void asiEngine_IV::Clean_Topo()
 {
   Handle(asiData_IVTopoNode)
-    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Topology();
+    IV_Parent = m_model->GetIVNode()->Topology();
   //
   _cleanChildren(IV_Parent);
 }
@@ -403,12 +394,11 @@ Handle(asiData_IVTessItemNode)
                              const TCollection_AsciiString&    name)
 {
   // Access Model and parent Node
-  Handle(asiData_Model)      M         = common_facilities::Instance()->Model;
-  Handle(asiData_IVTessNode) IV_Parent = M->GetIVNode()->Tessellation();
+  Handle(asiData_IVTessNode) IV_Parent = m_model->GetIVNode()->Tessellation();
 
   // Add Tessellation Item Node to Partition
   Handle(asiData_IVTessItemNode) item_n = Handle(asiData_IVTessItemNode)::DownCast( asiData_IVTessItemNode::Instance() );
-  M->GetIVTessItemPartition()->AddNode(item_n);
+  m_model->GetIVTessItemPartition()->AddNode(item_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Mesh" : name );
@@ -435,7 +425,7 @@ Handle(asiData_IVTessItemNode)
 void asiEngine_IV::Clean_Tess()
 {
   Handle(asiData_IVTessNode)
-    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Tessellation();
+    IV_Parent = m_model->GetIVNode()->Tessellation();
   //
   _cleanChildren(IV_Parent);
 }
@@ -449,12 +439,11 @@ Handle(asiData_IVTextItemNode)
   asiEngine_IV::Create_TextItem(const TCollection_AsciiString& text)
 {
   // Access Model and parent Node
-  Handle(asiData_Model)      M         = common_facilities::Instance()->Model;
-  Handle(asiData_IVTextNode) IV_Parent = M->GetIVNode()->Text();
+  Handle(asiData_IVTextNode) IV_Parent = m_model->GetIVNode()->Text();
 
   // Add Text Item Node to Partition
   Handle(asiData_IVTextItemNode) item_n = Handle(asiData_IVTextItemNode)::DownCast( asiData_IVTextItemNode::Instance() );
-  M->GetIVTextItemPartition()->AddNode(item_n);
+  m_model->GetIVTextItemPartition()->AddNode(item_n);
 
   // Generate unique name
   TCollection_ExtendedString item_name;
@@ -487,7 +476,7 @@ Handle(asiData_IVTextItemNode)
 void asiEngine_IV::Clean_Text()
 {
   Handle(asiData_IVTextNode)
-    IV_Parent = common_facilities::Instance()->Model->GetIVNode()->Text();
+    IV_Parent = m_model->GetIVNode()->Text();
   //
   _cleanChildren(IV_Parent);
 }
@@ -498,7 +487,6 @@ void asiEngine_IV::Clean_Text()
 //! \param parent [in] parent Node to clean up children for.
 void asiEngine_IV::_cleanChildren(const Handle(ActAPI_INode)& parent)
 {
-  Handle(asiData_Model)     M             = common_facilities::Instance()->Model;
   Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList;
 
   // Loop over direct children of a Surfaces Node
@@ -516,5 +504,5 @@ void asiEngine_IV::_cleanChildren(const Handle(ActAPI_INode)& parent)
 
   // Delete all Nodes queued for removal
   for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
-    M->DeleteNode( nit.Value()->GetId() );
+    m_model->DeleteNode( nit.Value()->GetId() );
 }

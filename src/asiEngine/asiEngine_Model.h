@@ -9,31 +9,11 @@
 #define asiEngine_Model_h
 
 // A-Situs includes
-#include <asiData.h>
+#include <asiEngine.h>
 
-// A-Situs (calculus) includes
-#include <asiData_DesignLawNode.h>
-
-// A-Situs (common) includes
-#include <asiData_Partition.h>
-#include <asiData_RootNode.h>
-#include <common_version.h>
-
-// A-Situs (geometry) includes
+// A-Situs (data) includes
 #include <asiData_BoundaryEdgesNode.h>
-#include <asiData_PartNode.h>
-#include <asiData_RENode.h>
-#include <geom_sections_node.h>
-#include <geom_section_node.h>
-#include <geom_ubend_law_node.h>
-#include <geom_ubend_laws_node.h>
-#include <geom_ubend_node.h>
-#include <geom_volume_node.h>
-
-// A-Situs (mesh) includes
-#include <asiData_TessNode.h>
-
-// A-Situs (visualization) includes
+#include <asiData_DesignLawNode.h>
 #include <asiData_IVCurveNode.h>
 #include <asiData_IVCurvesNode.h>
 #include <asiData_IVNode.h>
@@ -49,6 +29,11 @@
 #include <asiData_IVTextNode.h>
 #include <asiData_IVTopoItemNode.h>
 #include <asiData_IVTopoNode.h>
+#include <asiData_Partition.h>
+#include <asiData_PartNode.h>
+#include <asiData_RENode.h>
+#include <asiData_RootNode.h>
+#include <asiData_TessNode.h>
 
 // Active Data includes
 #include <ActData_BaseModel.h>
@@ -57,7 +42,13 @@
 
 DEFINE_STANDARD_HANDLE(asiEngine_Model, ActData_BaseModel)
 
-//! Data Model of A-Situs.
+//! Standard implementation of Data Model in Analysis Situs. This
+//! standard implementation answers many typical needs related to analysis.
+//! However, in the prototyping scope you normally need something more.
+//! If the basic data model is not enough, you may either extend it with your
+//! custom Data Nodes or implement a brand new one. In the latter case you
+//! cannot use some handy services from the Engine package (e.g.
+//! initialization of Part Nodes).
 class asiEngine_Model : public ActData_BaseModel
 {
 public:
@@ -67,25 +58,34 @@ public:
 
 public:
 
-  asiEngine_Model();
+  asiEngine_EXPORT
+    asiEngine_Model();
 
 //-----------------------------------------------------------------------------
 // Populate and clear:
 public:
 
-  void Populate();
-  void Clear();
+  asiEngine_EXPORT void
+    Populate();
+
+  asiEngine_EXPORT void
+    Clear();
 
 //-----------------------------------------------------------------------------
 // Accessors to Nodes:
 public:
 
-  Handle(asiData_TessNode)          GetMeshNode()     const;
-  Handle(asiData_PartNode)     GetPartNode()     const;
-  Handle(asiData_RENode)       GetRENode()       const;
-  Handle(geom_sections_node) GetSectionsNode() const;
-  Handle(geom_ubend_node)    GetUBendNode()    const;
-  Handle(asiData_IVNode)       GetIVNode()       const;
+  asiEngine_EXPORT Handle(asiData_TessNode)
+    GetMeshNode() const;
+
+  asiEngine_EXPORT Handle(asiData_PartNode)
+    GetPartNode() const;
+
+  asiEngine_EXPORT Handle(asiData_RENode)
+    GetRENode() const;
+
+  asiEngine_EXPORT Handle(asiData_IVNode)
+    GetIVNode() const;
 
 //-----------------------------------------------------------------------------
 // Overridden:
@@ -121,45 +121,6 @@ public:
   Handle(asiData_Partition<asiData_RootNode>) GetRootPartition() const
   {
     return Handle(asiData_Partition<asiData_RootNode>)::DownCast( this->Partition(Partition_Root) );
-  }
-
-//-----------------------------------------------------------------------------
-
-  //! Accessor for a Partition instance dedicated to Sections Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<geom_sections_node>) GetSectionsPartition() const
-  {
-    return Handle(asiData_Partition<geom_sections_node>)::DownCast( this->Partition(Partition_Sections) );
-  }
-
-  //! Accessor for a Partition instance dedicated to Section Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<geom_section_node>) GetSectionPartition() const
-  {
-    return Handle(asiData_Partition<geom_section_node>)::DownCast( this->Partition(Partition_Section) );
-  }
-
-//-----------------------------------------------------------------------------
-
-  //! Accessor for a Partition instance dedicated to U-bend Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<geom_ubend_node>) GetUBendPartition() const
-  {
-    return Handle(asiData_Partition<geom_ubend_node>)::DownCast( this->Partition(Partition_UBend) );
-  }
-
-  //! Accessor for a Partition instance dedicated to U-bend Laws Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<geom_ubend_laws_node>) GetUBendLawsPartition() const
-  {
-    return Handle(asiData_Partition<geom_ubend_laws_node>)::DownCast( this->Partition(Partition_UBendLaws) );
-  }
-
-  //! Accessor for a Partition instance dedicated to U-bend Law Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<geom_ubend_law_node>) GetUBendLawPartition() const
-  {
-    return Handle(asiData_Partition<geom_ubend_law_node>)::DownCast( this->Partition(Partition_UBendLaw) );
   }
 
 //-----------------------------------------------------------------------------
@@ -204,13 +165,6 @@ public:
   Handle(asiData_Partition<asiData_BoundaryEdgesNode>) GetGeomBoundaryEdgesPartition() const
   {
     return Handle(asiData_Partition<asiData_BoundaryEdgesNode>)::DownCast( this->Partition(Partition_GeomBoundaryEdges) );
-  }
-
-  //! Accessor for a Partition instance dedicated to Volume Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<geom_volume_node>) GetGeomVolumePartition() const
-  {
-    return Handle(asiData_Partition<geom_volume_node>)::DownCast( this->Partition(Partition_GeomVolume) );
   }
 
   //! Accessor for a Partition instance dedicated to Contour Nodes.
@@ -419,7 +373,6 @@ private:
     Partition_GeomEdge,
     Partition_GeomCurve,
     Partition_GeomBoundaryEdges,
-    Partition_GeomVolume,
     Partition_GeomContour,
   //---------------------------------------------------------------------------
     Partition_Mesh,
@@ -431,14 +384,7 @@ private:
     Partition_REContour,
     Partition_REPoints,
   //---------------------------------------------------------------------------
-    Partition_Sections,
-    Partition_Section,
-  //---------------------------------------------------------------------------
     Partition_CalculusDesignLaw,
-  //---------------------------------------------------------------------------
-    Partition_UBend,
-    Partition_UBendLaws,
-    Partition_UBendLaw,
   //---------------------------------------------------------------------------
     Partition_IV,
     Partition_IV_Points2d,

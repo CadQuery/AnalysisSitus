@@ -27,27 +27,29 @@ public:
 
 public:
 
-  asiVisu_MeshDataProvider();
+  asiVisu_EXPORT
+    asiVisu_MeshDataProvider();
 
-  asiVisu_MeshDataProvider(const ActAPI_DataObjectId&           theNodeId,
-                          const Handle(ActAPI_HParameterList)& theParamList);
+  asiVisu_EXPORT
+    asiVisu_MeshDataProvider(const ActAPI_DataObjectId&           theNodeId,
+                             const Handle(ActAPI_HParameterList)& theParamList);
 
 public:
 
-  virtual ActAPI_DataObjectId
+  asiVisu_EXPORT virtual ActAPI_DataObjectId
     GetNodeID() const;
 
-  virtual Handle(Mesh)
+  asiVisu_EXPORT virtual Handle(Mesh)
     GetMeshDS() const;
 
-  virtual Handle(ActAPI_HParameterList)
+  asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
     SourceParameters() const;
 
 public:
 
   //! Creates copy of Data Provider.
   //! \return copy.
-  inline Handle(asiVisu_MeshDataProvider) Clone() const
+  Handle(asiVisu_MeshDataProvider) Clone() const
   {
     return new asiVisu_MeshDataProvider(m_nodeID, m_params);
   }

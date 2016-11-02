@@ -35,12 +35,18 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
+//! \param model   [in] Data Model instance.
+//! \param prsMgr  [in] presentation manager.
 //! \param pViewer [in] connected viewer.
 //! \param parent  [in] parent widget.
-asiUI_DialogFindFace::asiUI_DialogFindFace(asiUI_ViewerPart* pViewer,
-                                           QWidget*          parent)
+asiUI_DialogFindFace::asiUI_DialogFindFace(const Handle(asiEngine_Model)&             model,
+                                           const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
+                                           asiUI_ViewerPart*                          pViewer,
+                                           QWidget*                                   parent)
 //
 : QDialog   (parent),
+  m_model   (model),
+  m_prsMgr  (prsMgr),
   m_pViewer (pViewer)
 {
   // Main layout
@@ -134,8 +140,10 @@ void asiUI_DialogFindFace::onFind()
 {
   const bool useAddress = m_widgets.pUseAddress->isChecked();
   //
-  TopoDS_Shape part;
-  if ( !asiUI_Common::PartShape(part) ) return;
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
   TopTools_IndexedMapOfShape faces, found;
   TopExp::MapShapes(part, TopAbs_FACE, faces);
@@ -176,7 +184,7 @@ void asiUI_DialogFindFace::onFind()
   if ( !found.IsEmpty() )
   {
     // Highlight
-    asiEngine_Part::HighlightSubShapes(found);
+    asiEngine_Part(m_model, m_prsMgr).HighlightSubShapes(found);
     //
     m_pViewer->onSubShapesPicked(); // TODO: change with event
   }

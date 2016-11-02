@@ -9,10 +9,13 @@
 #define asiUI_PrimDataView_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiUI.h>
 
 // A-Situs (GUI) includes
 #include <asiUI_PrimDataAdaptor.h>
+
+// A-Situs (engine) includes
+#include <asiEngine_Model.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -43,7 +46,7 @@ public:
     t_view() : pWidget(NULL) {}
 
     //! \return true if the View has not been initialized.
-    inline bool IsNull() const { return pWidget == NULL; }
+    bool IsNull() const { return pWidget == NULL; }
 
     //! Assignment operator.
     //! \param OtherView [in] another View to copy into this.
@@ -68,54 +71,57 @@ public:
   //! Type short-cut for Data-View associations.
   typedef NCollection_DataMap<Handle(asiUI_PrimDataAdaptor),
                               t_view,
-                              gui_data_adaptor::Hasher> t_data_view_map;
+                              asiUI_DataAdaptor::Hasher> t_data_view_map;
 
 //-----------------------------------------------------------------------------
 public:
 
-  inline asiUI_PrimDataView(QObject* parent = NULL) : QObject(parent), m_streamChunk(Chunk_Data) {}
+  asiUI_PrimDataView(const Handle(asiEngine_Model)& model,
+                     QObject*                       parent = NULL)
+  //
+  : QObject(parent), m_model(model), m_streamChunk(Chunk_Data) {}
 
 //-----------------------------------------------------------------------------
 // API methods:
 public:
 
-  virtual bool
+  asiUI_EXPORT virtual bool
     ViewToData(QWidget* pView = NULL);
 
-  virtual bool
+  asiUI_EXPORT virtual bool
     DataToView();
 
 //-----------------------------------------------------------------------------
 // Initialization:
 public:
 
-  asiUI_PrimDataView& operator<<(const Handle(asiUI_PrimDataAdaptor)& Data);
-  asiUI_PrimDataView& operator<<(QWidget* pView);
+  asiUI_EXPORT asiUI_PrimDataView& operator<<(const Handle(asiUI_PrimDataAdaptor)& Data);
+  asiUI_EXPORT asiUI_PrimDataView& operator<<(QWidget* pView);
 
 //-----------------------------------------------------------------------------
 // Reactions:
 public:
 
-  virtual void
+  asiUI_EXPORT virtual void
     FinishEditing(QWidget* pView);
 
 //-----------------------------------------------------------------------------
 // Convenience methods:
 public:
 
-  virtual QWidget*
+  asiUI_EXPORT virtual QWidget*
     ViewByData(const Handle(asiUI_PrimDataAdaptor)& Data) const;
 
-  virtual QWidget*
+  asiUI_EXPORT virtual QWidget*
     ViewByData(const int dataID) const;
 
-  virtual Handle(asiUI_PrimDataAdaptor)
+  asiUI_EXPORT virtual Handle(asiUI_PrimDataAdaptor)
     DataByView(QWidget* pView) const;
 
-  t_view
+  asiUI_EXPORT t_view
     ViewGroupByData(const Handle(asiUI_PrimDataAdaptor)& Data) const;
 
-  t_view
+  asiUI_EXPORT t_view
     ViewGroupByData(const int dataID) const;
 
 //-----------------------------------------------------------------------------
@@ -126,30 +132,31 @@ signals:
 //-----------------------------------------------------------------------------
 protected slots:
 
-  void onEditFinished();
+  asiUI_EXPORT void onEditFinished();
 
 //-----------------------------------------------------------------------------
 private:
 
-  bool
+  asiUI_EXPORT bool
     viewToData(QWidget*                             pView,
                const Handle(asiUI_PrimDataAdaptor)& Data);
 
-  bool
+  asiUI_EXPORT bool
     dataToView(const Handle(asiUI_PrimDataAdaptor)& Data,
                QWidget*                             pView);
 
-  bool
+  asiUI_EXPORT bool
     isConsistent() const;
 
-  Handle(asiUI_PrimDataAdaptor)
+  asiUI_EXPORT Handle(asiUI_PrimDataAdaptor)
     dataByID(const int dataID) const;
 
 //-----------------------------------------------------------------------------
 // Core members:
 protected:
 
-  t_data_view_map m_dataViewMap; //!< Data-View associations.
+  t_data_view_map         m_dataViewMap; //!< Data-View associations.
+  Handle(asiEngine_Model) m_model;       //!< Data Model instance.
 
 //-----------------------------------------------------------------------------
 // Other members:

@@ -8,14 +8,12 @@
 // Own include
 #include <asiVisu_RESurfacesDataProvider.h>
 
-// Common includes
-#include <common_facilities.h>
-
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-asiVisu_RESurfacesDataProvider::asiVisu_RESurfacesDataProvider()
-: asiVisu_DataProvider()
+//! \param surfaces_n [in] Surfaces Node.
+asiVisu_RESurfacesDataProvider::asiVisu_RESurfacesDataProvider(const Handle(asiData_RESurfacesNode)& surfaces_n)
+: asiVisu_DataProvider(), m_surfaces(surfaces_n)
 {}
 
 //-----------------------------------------------------------------------------
@@ -23,13 +21,10 @@ asiVisu_RESurfacesDataProvider::asiVisu_RESurfacesDataProvider()
 //! \return ID of the associated Data Node.
 ActAPI_DataObjectId asiVisu_RESurfacesDataProvider::GetNodeID() const
 {
-  Handle(asiData_RESurfacesNode)
-    surfaces_n = common_facilities::Instance()->Model->GetRENode()->Surfaces();
-  //
-  if ( surfaces_n.IsNull() || !surfaces_n->IsWellFormed() )
+  if ( m_surfaces.IsNull() || !m_surfaces->IsWellFormed() )
     return ActAPI_DataObjectId();
 
-  return surfaces_n->GetId();
+  return m_surfaces->GetId();
 }
 
 //-----------------------------------------------------------------------------
@@ -37,15 +32,12 @@ ActAPI_DataObjectId asiVisu_RESurfacesDataProvider::GetNodeID() const
 //! \return number of stored surfaces.
 int asiVisu_RESurfacesDataProvider::GetNumOfSurfaces() const
 {
-  Handle(asiData_RESurfacesNode)
-    surfaces_n = common_facilities::Instance()->Model->GetRENode()->Surfaces();
-  //
-  if ( surfaces_n.IsNull() || !surfaces_n->IsWellFormed() )
+  if ( m_surfaces.IsNull() || !m_surfaces->IsWellFormed() )
     return 0;
 
   // Iterate over the child Nodes which are the individual surfaces
   int nbSurfaces = 0;
-  for ( Handle(ActAPI_IChildIterator) cit = surfaces_n->GetChildIterator(); cit->More(); cit->Next() )
+  for ( Handle(ActAPI_IChildIterator) cit = m_surfaces->GetChildIterator(); cit->More(); cit->Next() )
   {
     Handle(asiData_RESurfaceNode) surface_n = Handle(asiData_RESurfaceNode)::DownCast( cit->Value() );
     //
@@ -68,14 +60,11 @@ Handle(Geom_Surface)
                                              double&   uLimit,
                                              double&   vLimit) const
 {
-  Handle(asiData_RESurfacesNode)
-    surfaces_n = common_facilities::Instance()->Model->GetRENode()->Surfaces();
-  //
-  if ( surfaces_n.IsNull() || !surfaces_n->IsWellFormed() )
+  if ( m_surfaces.IsNull() || !m_surfaces->IsWellFormed() )
     return NULL;
 
   // Access individual surface
-  Handle(asiData_RESurfaceNode) surface_n = surfaces_n->Surface(oneBased_idx);
+  Handle(asiData_RESurfaceNode) surface_n = m_surfaces->Surface(oneBased_idx);
   if ( surface_n.IsNull() || !surface_n->IsWellFormed() )
     return NULL;
 
@@ -95,14 +84,11 @@ Handle(ActAPI_HParameterList) asiVisu_RESurfacesDataProvider::translationSources
   // Resulting Parameters
   ActParamStream out;
 
-  Handle(asiData_RESurfacesNode)
-    surfaces_n = common_facilities::Instance()->Model->GetRENode()->Surfaces();
-  //
-  if ( surfaces_n.IsNull() || !surfaces_n->IsWellFormed() )
+  if ( m_surfaces.IsNull() || !m_surfaces->IsWellFormed() )
     return out;
 
   // Iterate over the child Nodes which are the individual surfaces
-  for ( Handle(ActAPI_IChildIterator) cit = surfaces_n->GetChildIterator(); cit->More(); cit->Next() )
+  for ( Handle(ActAPI_IChildIterator) cit = m_surfaces->GetChildIterator(); cit->More(); cit->Next() )
   {
     Handle(asiData_RESurfaceNode) surface_n = Handle(asiData_RESurfaceNode)::DownCast( cit->Value() );
     //

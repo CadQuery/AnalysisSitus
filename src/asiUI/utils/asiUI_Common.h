@@ -9,7 +9,15 @@
 #define asiUI_Common_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiUI.h>
+
+// A-Situs (engine) includes
+#include <asiEngine_Model.h>
+
+// OCCT includes
+#include <TCollection_AsciiString.hxx>
+#include <TCollection_ExtendedString.hxx>
+#include <TopoDS_Shape.hxx>
 
 // Qt includes
 #include <QColor>
@@ -28,21 +36,21 @@ public:
 
 public:
 
-  //! Convert TCollection_AsciiString to QString
+  //! Converts TCollection_AsciiString to QString
   //! \return converted string
   static QString ToQString(const TCollection_AsciiString& theStr)
   {
     return QString( theStr.ToCString() );
   }
 
-  //! Convert TCollection_ExtendedString to QString
+  //! Converts TCollection_ExtendedString to QString
   //! \return converted string
   static QString ToQString(const TCollection_ExtendedString& theStr)
   {
     return QString( (const QChar*) theStr.ToExtString(), theStr.Length() );
   }
 
-  //! Convert QString to TCollection_AsciiString
+  //! Converts QString to TCollection_AsciiString
   //! \return converted string
   static TCollection_AsciiString ToAsciiString(const QString& theStr)
   {
@@ -50,7 +58,7 @@ public:
       TCollection_AsciiString( theStr.toLatin1().data() ) : TCollection_AsciiString();
   }
 
-  //! Convert QString to TCollection_ExtendedString
+  //! Converts QString to TCollection_ExtendedString
   //! \return converted string
   static TCollection_ExtendedString ToExtString(const QString& theStr)
   {
@@ -62,7 +70,7 @@ public:
     return aRes;
   }
 
-  //! Convert color value to an integer representation.
+  //! Converts color value to an integer representation.
   //! \param theColor [in] color.
   //! \return converted value
   static int ColorToInt(const QColor& theColor)
@@ -73,14 +81,14 @@ public:
     return aRed << 16 | aGreen << 8 | aBlue;
   }
 
-  //! Convert integer value to a color.
+  //! Converts integer value to a color.
   //! \param theColor [in] integer value.
   //! \return converted value
   static QColor IntToColor(const int theColor)
   {
     unsigned char aRed   = ( theColor >> 16 ) & 0xFF;
     unsigned char aGreen = ( theColor >>  8 ) & 0xFF;
-    unsigned char aBlue  =  theColor          & 0xFF;
+    unsigned char aBlue  =   theColor         & 0xFF;
     return QColor(aRed, aGreen, aBlue);
   }
 
@@ -121,7 +129,9 @@ public:
 public:
 
   static bool
-    PartShape(TopoDS_Shape& part);
+    PartShape(const Handle(asiEngine_Model)& model,
+              Handle(asiData_PartNode)&      part_n,
+              TopoDS_Shape&                  part);
 
 };
 

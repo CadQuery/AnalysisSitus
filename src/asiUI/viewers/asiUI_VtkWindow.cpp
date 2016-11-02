@@ -6,22 +6,22 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <gui_vtk_window.h>
+#include <asiUI_VtkWindow.h>
 
 //! Constructor.
 //! \param parent [in] parent widget.
 //! \param f      [in] window flags.
-gui_vtk_window::gui_vtk_window(QWidget* parent, Qt::WindowFlags f)
+asiUI_VtkWindow::asiUI_VtkWindow(QWidget* parent, Qt::WindowFlags f)
 : QVTKWidget(parent, f)
 {}
 
 //! Destructor.
-gui_vtk_window::~gui_vtk_window()
+asiUI_VtkWindow::~asiUI_VtkWindow()
 {}
 
 //! Custom reaction on close event.
 //! \param pEvent [in] event instance.
-void gui_vtk_window::closeEvent(QCloseEvent* ASitus_NotUsed(pEvent))
+void asiUI_VtkWindow::closeEvent(QCloseEvent* asiUI_NotUsed(pEvent))
 {
   emit windowClosed();
 }

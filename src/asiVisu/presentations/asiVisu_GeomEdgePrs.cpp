@@ -32,10 +32,10 @@
 asiVisu_GeomEdgePrs::asiVisu_GeomEdgePrs(const Handle(ActAPI_INode)& theNode)
 : asiVisu_Prs(theNode)
 {
+  Handle(asiData_EdgeNode) edge_n = Handle(asiData_EdgeNode)::DownCast(theNode);
+
   // Create Data Provider
-  Handle(asiVisu_EdgeDataProvider) DP =
-    new asiVisu_EdgeDataProvider( theNode->GetId(),
-                                 ActParamStream() << theNode->Parameter(asiData_EdgeNode::PID_SelectedEdge) );
+  Handle(asiVisu_EdgeDataProvider) DP = new asiVisu_EdgeDataProvider(edge_n);
 
   // Pipeline for edge
   this->addPipeline        ( Pipeline_Main, new asiVisu_EdgeDomainPipeline );
@@ -118,14 +118,14 @@ void asiVisu_GeomEdgePrs::afterUpdatePipelines() const
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
 void asiVisu_GeomEdgePrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                   const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
-                                   const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                   const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                   const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {}
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
 void asiVisu_GeomEdgePrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                     const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                     const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {}
 
 //! Callback for rendering.
@@ -143,7 +143,7 @@ void asiVisu_GeomEdgePrs::renderPipelines(vtkRenderer* theRenderer) const
 
 //! Callback for de-rendering.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomEdgePrs::deRenderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomEdgePrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
 {
   m_textWidget->Off();
 }

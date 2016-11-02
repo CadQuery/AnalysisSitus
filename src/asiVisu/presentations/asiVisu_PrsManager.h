@@ -10,8 +10,8 @@
 
 // Visualization includes
 #include <asiVisu_AxesBtnCallback.h>
-#include <asiUI_InteractorStylePick.h>
-#include <asiUI_InteractorStylePick2d.h>
+#include <asiVisu_InteractorStylePick.h>
+#include <asiVisu_InteractorStylePick2d.h>
 #include <asiVisu_Prs.h>
 
 // Active Data (API) includes
@@ -42,10 +42,10 @@
 #include <NCollection_DataMap.hxx>
 
 //! This class is designed to handle 3D representations. Besides that,
-//! Presentation Manager controls QVTK widget along with all standard
+//! presentation manager controls QVTK widget along with all standard
 //! visualization suite like Renderer, Render Window, etc.
 //!
-//! Presentation Manager is a facade under visualization. It connects
+//! presentation manager is a facade under visualization. It connects
 //! Data Model with viewer. Moreover, it manages interactive detection
 //! and picking.
 //!
@@ -71,103 +71,106 @@ public:
 
 public:
 
-  static void PlaceButton(vtkButtonWidget* pButton,
-                          vtkRenderer*     pRenderer);
+  asiVisu_EXPORT static void
+    PlaceButton(vtkButtonWidget* pButton,
+                vtkRenderer*     pRenderer);
 
-  static void CreateImage(vtkSmartPointer<vtkImageData> image,
-                          unsigned char*                color1,
-                          unsigned char*                color2);
+  asiVisu_EXPORT static void
+    CreateImage(vtkSmartPointer<vtkImageData> image,
+                unsigned char*                color1,
+                unsigned char*                color2);
 
 public:
 
-  asiVisu_PrsManager();
+  asiVisu_EXPORT
+    asiVisu_PrsManager();
 
 // Presentation management:
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     Actualize(const Handle(ActAPI_INode)& theNode,
               const bool                  withChildren  = false,
               const bool                  doFitContents = false,
               const bool                  withRepaint   = true);
 
-  virtual void
+  asiVisu_EXPORT virtual void
     Actualize(const Handle(ActAPI_HNodeList)& theNodeList,
               const bool                      withChildren  = false,
               const bool                      doFitContents = false,
               const bool                      withRepaint   = true);
 
-  virtual void
+  asiVisu_EXPORT virtual void
     ActualizeExclusively(const Handle(ActAPI_HNodeList)& theNodeList,
                          const bool                      doFitContents = true);
 
 //-----------------------------------------------------------------------------
 
-  virtual bool
+  asiVisu_EXPORT virtual bool
     IsPresented(const Handle(ActAPI_INode)& theNode);
 
-  virtual bool
+  asiVisu_EXPORT virtual bool
     IsPresented(const ActAPI_DataObjectId& theNodeId);
 
 //-----------------------------------------------------------------------------
 
-  virtual bool
+  asiVisu_EXPORT virtual bool
     SetPresentation(const Handle(ActAPI_INode)& theNode);
 
 //-----------------------------------------------------------------------------
 
-  virtual Handle(asiVisu_Prs)
+  asiVisu_EXPORT virtual Handle(asiVisu_Prs)
     GetPresentation(const Handle(ActAPI_INode)& theNode);
 
-  virtual Handle(asiVisu_Prs)
+  asiVisu_EXPORT virtual Handle(asiVisu_Prs)
     GetPresentation(const ActAPI_DataObjectId& theNodeId);
 
 //-----------------------------------------------------------------------------
 
-  virtual void
+  asiVisu_EXPORT virtual void
     InitPresentation(const Handle(ActAPI_INode)& theNode);
 
-  virtual void
+  asiVisu_EXPORT virtual void
     InitPresentation(const ActAPI_DataObjectId& theNodeId);
 
 //-----------------------------------------------------------------------------
 
-  virtual void
+  asiVisu_EXPORT virtual void
     RenderPresentation(const Handle(ActAPI_INode)& theNode);
 
-  virtual void
+  asiVisu_EXPORT virtual void
     RenderPresentation(const ActAPI_DataObjectId& theNodeId);
 
 //-----------------------------------------------------------------------------
 
-  virtual void
+  asiVisu_EXPORT virtual void
     DeRenderPresentation(const Handle(ActAPI_INode)& theNode);
 
-  virtual void
+  asiVisu_EXPORT virtual void
     DeRenderPresentation(const ActAPI_DataObjectId& theNodeId);
 
-  virtual void
+  asiVisu_EXPORT virtual void
     DeRenderAllPresentations();
 
 //-----------------------------------------------------------------------------
 
-  virtual void
+  asiVisu_EXPORT virtual void
     UpdatePresentation(const Handle(ActAPI_INode)& theNode,
                        const bool doFitContents = true);
 
-  virtual void
+  asiVisu_EXPORT virtual void
     UpdatePresentation(const ActAPI_DataObjectId& theNodeId,
                        const bool doFitContents = true);
 
 //-----------------------------------------------------------------------------
 
-  virtual bool
+  asiVisu_EXPORT virtual bool
     DeletePresentation(const Handle(ActAPI_INode)& theNode);
 
-  virtual bool
+  asiVisu_EXPORT virtual bool
     DeletePresentation(const ActAPI_DataObjectId& theNodeId);
 
-  virtual void
+  asiVisu_EXPORT virtual void
     DeleteAllPresentations();
 
 //-----------------------------------------------------------------------------
@@ -175,95 +178,95 @@ public:
 // Selection management:
 public:
 
-  void
+  asiVisu_EXPORT void
     SetSelectionMode(const int theMode);
 
-  int
+  asiVisu_EXPORT int
     GetSelectionMode() const;
 
-  ActAPI_DataObjectIdList
-    Pick(asiUI_PickInput*            thePickInput,
-         const asiUI_SelectionNature theSelNature,
-         const asiUI_PickType        thePickType = PickType_Cell);
+  asiVisu_EXPORT ActAPI_DataObjectIdList
+    Pick(asiVisu_PickInput*            thePickInput,
+         const asiVisu_SelectionNature theSelNature,
+         const asiVisu_PickType        thePickType = PickType_Cell);
 
-  void
+  asiVisu_EXPORT void
     SetPickList(const Handle(ActAPI_HNodeList)& theNodeList);
 
-  const Handle(ActAPI_HNodeList)&
+  asiVisu_EXPORT const Handle(ActAPI_HNodeList)&
     GetPickList() const;
 
-  void
+  asiVisu_EXPORT void
     SetPickFromList(const bool isEnabled) const;
 
-  bool
+  asiVisu_EXPORT bool
     IsPickFromList() const;
 
-  void
+  asiVisu_EXPORT void
     Highlight(const Handle(ActAPI_HNodeList)& theNodes);
 
-  void
+  asiVisu_EXPORT void
     Highlight(const Handle(ActAPI_INode)& theNode);
 
-  void
+  asiVisu_EXPORT void
     Highlight(const Handle(ActAPI_HNodeList)& theNodes,
               const asiVisu_ActorElemMap&      theActorElems,
               const int                       theModes);
 
-  void
+  asiVisu_EXPORT void
     CleanDetection();
 
-  Handle(ActAPI_HNodeList)
+  asiVisu_EXPORT Handle(ActAPI_HNodeList)
     GetHighlighted() const;
 
-  const visu_actual_selection&
+  asiVisu_EXPORT const asiVisu_ActualSelection&
     GetCurrentSelection() const;
 
 // Visualization kernel:
 public:
 
-  long int
+  asiVisu_EXPORT long int
     AddUpdateCallback(unsigned long theEventID,
                       vtkCommand*   theCallback);
 
-  bool
+  asiVisu_EXPORT bool
     RemoveUpdateCallback(unsigned long theEventID,
                          unsigned long theTag);
 
-  void
+  asiVisu_EXPORT void
     SetRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer);
 
-  vtkRenderer*
+  asiVisu_EXPORT vtkRenderer*
     GetRenderer() const;
 
-  vtkRenderWindow*
+  asiVisu_EXPORT vtkRenderWindow*
     GetRenderWindow() const;
 
-  void
+  asiVisu_EXPORT void
     Initialize(QWidget*   theWidget,
                const bool theIsOffscreen = false);
 
-  void
+  asiVisu_EXPORT void
     InitializePickers();
 
-  QVTKWidget*
+  asiVisu_EXPORT QVTKWidget*
     GetQVTKWidget() const;
 
-  vtkInteractorStyle*
+  asiVisu_EXPORT vtkInteractorStyle*
     GetDefaultInteractorStyle() const;
 
-  vtkInteractorStyle*
+  asiVisu_EXPORT vtkInteractorStyle*
     GetImageInteractorStyle() const;
 
-  vtkAxesActor*
+  asiVisu_EXPORT vtkAxesActor*
     GetTrihedron() const;
 
-  vtkSmartPointer<vtkPropCollection>
+  asiVisu_EXPORT vtkSmartPointer<vtkPropCollection>
     PropsByTrihedron() const;
 
-  const vtkSmartPointer<vtkCellPicker>&
+  asiVisu_EXPORT const vtkSmartPointer<vtkCellPicker>&
     GetCellPicker() const;
 
-  const vtkSmartPointer<IVtkTools_ShapePicker>&
+  asiVisu_EXPORT const vtkSmartPointer<IVtkTools_ShapePicker>&
     GetShapePicker() const;
 
 public:
@@ -309,7 +312,7 @@ private:
   vtkSmartPointer<IVtkTools_ShapePicker> m_shapePicker;
 
   //! Currently selected Presentations.
-  visu_actual_selection m_currentSelection;
+  asiVisu_ActualSelection m_currentSelection;
 
 // Visualization kernel:
 private:
@@ -327,10 +330,10 @@ private:
   vtkSmartPointer<vtkRenderWindowInteractor> m_renderWindowInteractor;
 
   //! Default Interactor Style.
-  vtkSmartPointer<asiUI_InteractorStylePick> m_interactorStyleTrackball;
+  vtkSmartPointer<asiVisu_InteractorStylePick> m_interactorStyleTrackball;
 
   //! Interactor Style for 2D scenes.
-  vtkSmartPointer<asiUI_InteractorStylePick2d> m_interactorStyleImage;
+  vtkSmartPointer<asiVisu_InteractorStylePick2d> m_interactorStyleImage;
 
   //! Axes actor.
   vtkSmartPointer<vtkAxesActor> m_trihedron;

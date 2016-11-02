@@ -8,11 +8,8 @@
 // Own include
 #include <asiUI_ViewerPart.h>
 
-// Common includes
-#include <common_facilities.h>
-
 // Visualization includes
-#include <asiUI_NodeInfo.h>
+#include <asiVisu_NodeInfo.h>
 #include <asiVisu_Utils.h>
 
 // GUI includes
@@ -35,10 +32,13 @@
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
 #define COUT_DEBUG
+#if defined COUT_DEBUG
+  #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
 
 //-----------------------------------------------------------------------------
 
-void GetPickedSubshapeIds(const asiUI_PickResult&           pick_res,
+void GetPickedSubshapeIds(const asiVisu_PickResult&         pick_res,
                           std::vector<int>&                 picked_subshape_IDs,
                           std::vector<ActAPI_DataObjectId>& picked_node_IDs)
 {
@@ -52,7 +52,7 @@ void GetPickedSubshapeIds(const asiUI_PickResult&           pick_res,
 
     // Retrieve the corresponding Node ID by picked Actor
     ActAPI_DataObjectId
-      picked_node_id = asiUI_NodeInfo::Retrieve(picked_actor)->GetNodeId();
+      picked_node_id = asiVisu_NodeInfo::Retrieve(picked_actor)->GetNodeId();
 
     // Fill coherent collections of references: sub-shape IDs against owning Nodes
     for ( TColStd_MapIteratorOfPackedMapOfInteger maskIt(subshape_mask); maskIt.More(); maskIt.Next() )
@@ -78,23 +78,22 @@ void GetPickedSubshapeIds(const asiUI_PickResult&           pick_res,
 //-----------------------------------------------------------------------------
 
 //! Creates a new instance of viewer.
+//! \param model  [in] Data Model instance.
 //! \param parent [in] parent widget.
-asiUI_ViewerPart::asiUI_ViewerPart(QWidget* parent) : asiUI_Viewer(parent)
+asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
+                                   QWidget*                       parent)
+: asiUI_Viewer(parent), m_model(model)
 {
-  // Store in common facilities
-  common_facilities::Instance()->ViewerPart = this;
-
-  // Initialize Presentation Manager along with QVTK widget
-  common_facilities::Instance()->Prs.Part = vtkSmartPointer<asiVisu_PrsManager>::New();
-  m_prs_mgr = common_facilities::Instance()->Prs.Part;
+  // Initialize presentation manager along with QVTK widget
+  m_prs_mgr = vtkSmartPointer<asiVisu_PrsManager>::New();
   //
   m_prs_mgr->Initialize(this);
   m_prs_mgr->SetInteractionMode(asiVisu_PrsManager::InteractionMode_3D);
   m_prs_mgr->SetSelectionMode(SelectionMode_Face);
 
   // Widgets and layouts
-  QVTKWidget*  pViewer      = m_prs_mgr->GetQVTKWidget();
-  QHBoxLayout* pBaseLayout  = new QHBoxLayout();
+  QVTKWidget*  pViewer     = m_prs_mgr->GetQVTKWidget();
+  QHBoxLayout* pBaseLayout = new QHBoxLayout();
 
   // Configure layout
   pBaseLayout->setSpacing(0);
@@ -205,7 +204,8 @@ void asiUI_ViewerPart::onResetView()
 //! Callback for picking event.
 void asiUI_ViewerPart::onSubShapesPicked()
 {
-  Handle(asiData_PartNode) geom_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
+  //
   if ( geom_n.IsNull() || !geom_n->IsWellFormed() )
   {
     std::cout << "Geometry Node is not accessible" << std::endl;
@@ -220,8 +220,8 @@ void asiUI_ViewerPart::onSubShapesPicked()
   //---------------------------------------------------------------------------
 
   // Access picking results
-  const visu_actual_selection& sel      = m_prs_mgr->GetCurrentSelection();
-  const asiUI_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  const asiVisu_ActualSelection& sel      = m_prs_mgr->GetCurrentSelection();
+  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
 
   if ( pick_res.IsSelectionFace() )
   {
@@ -236,7 +236,7 @@ void asiUI_ViewerPart::onSubShapesPicked()
     // Store active selection in the Data Model
     //---------------------------------------------------------------------------
 
-    common_facilities::Instance()->Model->OpenCommand(); // tx start
+    m_model->OpenCommand(); // tx start
     {
       // Store index of the active face
       if ( picked_face_IDs.size() )
@@ -254,17 +254,13 @@ void asiUI_ViewerPart::onSubShapesPicked()
         std::cout << "Active face has been reset..." << std::endl;
       }
     }
-    common_facilities::Instance()->Model->CommitCommand(); // tx commit
+    m_model->CommitCommand(); // tx commit
 
     //---------------------------------------------------------------------------
-    // Actualize presentations
+    // Notify
     //---------------------------------------------------------------------------
 
-    if ( common_facilities::Instance()->Prs.Domain )
-      common_facilities::Instance()->Prs.Domain->Actualize(geom_n->GetFaceRepresentation().get(), false, true);
-
-    if ( common_facilities::Instance()->Prs.Host )
-      common_facilities::Instance()->Prs.Host->Actualize(geom_n->GetSurfaceRepresentation().get(), false, true);
+    emit facePicked();
   }
   else if ( pick_res.IsSelectionEdge() )
   {
@@ -279,7 +275,7 @@ void asiUI_ViewerPart::onSubShapesPicked()
     // Store active selection in the Data Model
     //---------------------------------------------------------------------------
 
-    common_facilities::Instance()->Model->OpenCommand(); // tx start
+    m_model->OpenCommand(); // tx start
     {
       // Store index of the active edge
       if ( picked_edge_IDs.size() )
@@ -297,17 +293,13 @@ void asiUI_ViewerPart::onSubShapesPicked()
         std::cout << "Active edge has been reset..." << std::endl;
       }
     }
-    common_facilities::Instance()->Model->CommitCommand(); // tx commit
+    m_model->CommitCommand(); // tx commit
 
     //---------------------------------------------------------------------------
-    // Actualize presentations
+    // Notify
     //---------------------------------------------------------------------------
 
-    if ( common_facilities::Instance()->Prs.Domain )
-      common_facilities::Instance()->Prs.Domain->Actualize(geom_n->GetEdgeRepresentation().get(), false, true);
-
-    if ( common_facilities::Instance()->Prs.Host )
-      common_facilities::Instance()->Prs.Host->Actualize(geom_n->GetCurveRepresentation().get(), false, true);
+    emit edgePicked();
   }
 }
 
@@ -317,6 +309,6 @@ void asiUI_ViewerPart::onSubShapesPicked()
 void asiUI_ViewerPart::onFindFace()
 {
   // Run dialog
-  asiUI_DialogFindFace* wFindFace = new asiUI_DialogFindFace(this);
+  asiUI_DialogFindFace* wFindFace = new asiUI_DialogFindFace(m_model, this->PrsMgr(), this);
   wFindFace->show();
 }

@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_InteractorStylePick.h>
+#include <asiVisu_InteractorStylePick.h>
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -18,26 +18,26 @@
 #include <QPoint>
 #pragma warning(pop)
 
-vtkStandardNewMacro(asiUI_InteractorStylePick);
+vtkStandardNewMacro(asiVisu_InteractorStylePick);
 
 //! Default constructor.
-asiUI_InteractorStylePick::asiUI_InteractorStylePick()
+asiVisu_InteractorStylePick::asiVisu_InteractorStylePick()
 : vtkInteractorStyleTrackballCamera(),
   m_bIsLeftButtonDown(false)
 {
-  m_pPickInput = new asiUI_PickInput();
+  m_pPickInput = new asiVisu_PickInput();
   //
   m_PickedPos[0] = m_PickedPos[1] = 0;
 }
 
 //! Default destructor.
-asiUI_InteractorStylePick::~asiUI_InteractorStylePick() 
+asiVisu_InteractorStylePick::~asiVisu_InteractorStylePick() 
 {
   delete m_pPickInput;
 }
 
 //! Prohibited copy constructor.
-asiUI_InteractorStylePick::asiUI_InteractorStylePick(const asiUI_InteractorStylePick&)
+asiVisu_InteractorStylePick::asiVisu_InteractorStylePick(const asiVisu_InteractorStylePick&)
 : vtkInteractorStyleTrackballCamera(),
   m_pPickInput(NULL),
   m_bIsLeftButtonDown(false)
@@ -45,26 +45,26 @@ asiUI_InteractorStylePick::asiUI_InteractorStylePick(const asiUI_InteractorStyle
 }
 
 //! Prohibited assignment operator.
-void asiUI_InteractorStylePick::operator=(const asiUI_InteractorStylePick&)
+void asiVisu_InteractorStylePick::operator=(const asiVisu_InteractorStylePick&)
 {
 }
 
 //! Sets Renderer instance.
 //! \param theRenderer [in] Renderer instance to set.
-void asiUI_InteractorStylePick::SetRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer)
+void asiVisu_InteractorStylePick::SetRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer)
 {
   m_renderer = theRenderer;
 }
 
 //! Returns Renderer instance.
 //! \return Renderer instance.
-const vtkSmartPointer<vtkRenderer>& asiUI_InteractorStylePick::GetRenderer() const
+const vtkSmartPointer<vtkRenderer>& asiVisu_InteractorStylePick::GetRenderer() const
 {
   return m_renderer;
 }
 
 //! Callback for "Mouse Move" event.
-void asiUI_InteractorStylePick::OnMouseMove()
+void asiVisu_InteractorStylePick::OnMouseMove()
 {
   // Invoke basic method
   vtkInteractorStyleTrackballCamera::OnMouseMove();
@@ -99,7 +99,7 @@ void asiUI_InteractorStylePick::OnMouseMove()
 }
 
 //! Callback for "Left Button Down" event.
-void asiUI_InteractorStylePick::OnLeftButtonDown()
+void asiVisu_InteractorStylePick::OnLeftButtonDown()
 {
   this->FindPokedRenderer(this->Interactor->GetEventPosition()[0],
                           this->Interactor->GetEventPosition()[1]);
@@ -116,7 +116,7 @@ void asiUI_InteractorStylePick::OnLeftButtonDown()
 }
 
 //! Callback for "Left Button Up" event.
-void asiUI_InteractorStylePick::OnLeftButtonUp()
+void asiVisu_InteractorStylePick::OnLeftButtonUp()
 {
   vtkInteractorStyleTrackballCamera::OnLeftButtonUp();
   m_bIsLeftButtonDown = false;
@@ -154,7 +154,7 @@ void asiUI_InteractorStylePick::OnLeftButtonUp()
 }
 
 //! Callback for "Key Press" event.
-void asiUI_InteractorStylePick::OnKeyPress()
+void asiVisu_InteractorStylePick::OnKeyPress()
 {
   std::string key = this->Interactor->GetKeySym();
   if ( this->Interactor->GetControlKey() && key == "f" )
@@ -162,7 +162,7 @@ void asiUI_InteractorStylePick::OnKeyPress()
 }
 
 //! Callback for rotation finishing action.
-void asiUI_InteractorStylePick::EndRotate()
+void asiVisu_InteractorStylePick::EndRotate()
 {
   vtkInteractorStyleTrackballCamera::EndRotate();
 }
@@ -171,8 +171,8 @@ void asiUI_InteractorStylePick::EndRotate()
 //! \param theEventID  [in] ID of callback action.
 //! \param theCallback [in] command to be added.
 //! \return tag of the event (see vtkObject::AddObserver() method for VTK event tags).
-unsigned long asiUI_InteractorStylePick::AddRotationCallback(unsigned long theEventID,
-                                                               vtkCommand*   theCallback)
+unsigned long asiVisu_InteractorStylePick::AddRotationCallback(unsigned long theEventID,
+                                                             vtkCommand*   theCallback)
 {
   m_rotationCallbackIds.Append(theEventID);
   return this->AddObserver(theEventID, theCallback);
@@ -182,16 +182,16 @@ unsigned long asiUI_InteractorStylePick::AddRotationCallback(unsigned long theEv
 //! \param theEventID [in] the event ID on which events are invoked
 //! \param theTag     [in] the tag which is assigned to particular event entity.
 //! \return true/false.
-bool asiUI_InteractorStylePick::RemoveRotationCallback(unsigned long theEventID,
-                                                         unsigned long theTag)
+bool asiVisu_InteractorStylePick::RemoveRotationCallback(unsigned long theEventID,
+                                                       unsigned long theTag)
 {
   if ( m_rotationCallbackIds.IsEmpty() )
     return false;
 
-  this->RemoveObserver( theTag );
+  this->RemoveObserver(theTag);
 
   if ( !this->HasObserver(theEventID) )
-    m_rotationCallbackIds.Remove( theEventID );
+    m_rotationCallbackIds.Remove(theEventID);
 
   return true;
 }

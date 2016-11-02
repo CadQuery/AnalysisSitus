@@ -62,9 +62,6 @@
     <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogMesh.h">
-      <Filter>Header Files\Dialogs</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogSewing.h">
       <Filter>Header Files\Dialogs</Filter>
     </ClInclude>
@@ -84,9 +81,6 @@
       <Filter>Header Files\Viewers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerFuncUnivariate.h">
-      <Filter>Header Files\Viewers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerMesh.h">
       <Filter>Header Files\Viewers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerPart.h">
@@ -110,15 +104,6 @@
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_PrimDataView.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_InteractorStylePick.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_InteractorStylePick2d.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_NodeInfo.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PartCallback.h">
       <Filter>Header Files\Interaction</Filter>
     </ClInclude>
@@ -134,17 +119,14 @@
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_RotationCallback.h">
       <Filter>Header Files\Interaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_Selection.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_TopoGraph.h">
-      <Filter>Header Files\Interaction</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_ViewerCallback.h">
       <Filter>Header Files\Interaction</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_Dialog.h">
       <Filter>Header Files\Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\utils\asiUI_JournalIV.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -164,9 +146,6 @@
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.cpp">
-      <Filter>Source Files\Dialogs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogMesh.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogSewing.cpp">
@@ -190,9 +169,6 @@
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerFuncUnivariate.cpp">
       <Filter>Source Files\Viewers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerMesh.cpp">
-      <Filter>Source Files\Viewers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerPart.cpp">
       <Filter>Source Files\Viewers</Filter>
     </ClCompile>
@@ -214,15 +190,6 @@
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_PrimDataView.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_InteractorStylePick.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_InteractorStylePick2d.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_NodeInfo.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\asiUI\interaction\asiUI_PartCallback.cpp">
       <Filter>Source Files\Interaction</Filter>
     </ClCompile>
@@ -238,14 +205,11 @@
     <ClCompile Include="..\..\src\asiUI\interaction\asiUI_RotationCallback.cpp">
       <Filter>Source Files\Interaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_Selection.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_TopoGraph.cpp">
-      <Filter>Source Files\Interaction</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\asiUI\interaction\asiUI_ViewerCallback.cpp">
       <Filter>Source Files\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_JournalIV.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

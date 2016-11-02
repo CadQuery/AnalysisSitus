@@ -83,7 +83,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\selection;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiVisu_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -91,29 +91,20 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(TBB_LIB);$(QR_LIB);$(AD_LIB);$(CAS_LIB64);$(QT_LIB);$(VTK_LIB)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.0.lib;vtkCommonDataModel-7.0.lib;vtkCommonExecutionModel-7.0.lib;vtkCommonMath-7.0.lib;vtkCommonTransforms-7.0.lib;vtkCommonMisc-7.0.lib;vtkRenderingCore-7.0.lib;vtkRenderingOpenGL2-7.0.lib;vtkRenderingAnnotation-7.0.lib;vtkRenderingLabel-7.0.lib;vtkRenderingFreeType-7.0.lib;vtkRenderingContext2D-7.0.lib;vtkRenderingContextOpenGL2-7.0.lib;vtkFiltersCore-7.0.lib;vtkFiltersGeneral-7.0.lib;vtkFiltersSources-7.0.lib;vtkFiltersGeometry-7.0.lib;vtkFiltersParallel-7.0.lib;vtkFiltersExtraction-7.0.lib;vtkFiltersModeling-7.0.lib;vtkIOCore-7.0.lib;vtkIOImage-7.0.lib;vtkImagingCore-7.0.lib;vtkInteractionStyle-7.0.lib;vtkInteractionWidgets-7.0.lib;vtkInfovisLayout-7.0.lib;vtkGUISupportQt-7.0.lib;vtkViewsCore-7.0.lib;vtkViewsContext2D-7.0.lib;vtkViewsInfovis-7.0.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist $(QR_ROOT)\include mkdir $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\BSpl\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\Misc\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Commands\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Commands\Console\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Commands\View\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Engine\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -159,7 +150,7 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\selection;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiVisu_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -175,20 +166,12 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>$(TBB_LIB);$(QR_LIB);$(AD_LIB);$(CAS_LIB64);$(QT_LIB);$(VTK_LIB)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.0.lib;vtkCommonDataModel-7.0.lib;vtkCommonExecutionModel-7.0.lib;vtkCommonMath-7.0.lib;vtkCommonTransforms-7.0.lib;vtkCommonMisc-7.0.lib;vtkRenderingCore-7.0.lib;vtkRenderingOpenGL2-7.0.lib;vtkRenderingAnnotation-7.0.lib;vtkRenderingLabel-7.0.lib;vtkRenderingFreeType-7.0.lib;vtkRenderingContext2D-7.0.lib;vtkRenderingContextOpenGL2-7.0.lib;vtkFiltersCore-7.0.lib;vtkFiltersGeneral-7.0.lib;vtkFiltersSources-7.0.lib;vtkFiltersGeometry-7.0.lib;vtkFiltersParallel-7.0.lib;vtkFiltersExtraction-7.0.lib;vtkFiltersModeling-7.0.lib;vtkIOCore-7.0.lib;vtkIOImage-7.0.lib;vtkImagingCore-7.0.lib;vtkInteractionStyle-7.0.lib;vtkInteractionWidgets-7.0.lib;vtkInfovisLayout-7.0.lib;vtkGUISupportQt-7.0.lib;vtkViewsCore-7.0.lib;vtkViewsContext2D-7.0.lib;vtkViewsInfovis-7.0.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist $(QR_ROOT)\include mkdir $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\BSpl\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Actors\Misc\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Commands\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Commands\Console\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Commands\View\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Engine\*.h $(QR_ROOT)\include
-copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -228,29 +211,8 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="QrCore.vcxproj">
-      <Project>{32770788-99cc-46e3-8a3c-fd62b7999e0f}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="QrBSpl.vcxproj">
-      <Project>{f2ebf92b-ea4c-4608-a025-679dcb35709f}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="QrGeom3D.vcxproj">
-      <Project>{865af71d-7216-408d-b118-95292fd30eec}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="QrTools.vcxproj">
-      <Project>{6b8adf4a-d5af-4462-a480-d11c021d2220}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\src\asiVisu\asiVisu.h" />
+    <ClInclude Include="..\..\src\asiVisu\asiVisu_DisplayMode.h" />
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_MeshENScalarFilter.h" />
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_MeshEScalarFilter.h" />
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_MeshEVectorFilter.h" />
@@ -271,12 +233,10 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshEVectorPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshNScalarPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshPipeline.h" />
-    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshTopoPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_Pipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_PointsPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_REContoursPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_RESurfacesPipeline.h" />
-    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_SectionPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_SectionsPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_ShadedSurfacePipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_ShapePipeline.h" />
@@ -307,7 +267,6 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_ContourPointsDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_CurveDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_DataProvider.h" />
-    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_DisplayMode.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_EdgeDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_FaceDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_IVCurveDataProvider.h" />
@@ -320,23 +279,22 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_REContoursDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_REPointsDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_RESurfacesDataProvider.h" />
-    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_SectionDataProvider.h" />
-    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_SectionsDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_ShapeDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_ShapeMesher.h" />
-    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_TopoGraphItem.h" />
+    <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick.h" />
+    <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick2d.h" />
+    <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_NodeInfo.h" />
+    <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_Selection.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_BCurveKnotsSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_BCurvePolesSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_CurveSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_LawSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_MeshSource.h" />
-    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_MeshTopoSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PCurveSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PDomainSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PointsSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeDataSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_SurfaceSource.h" />
-    <ClInclude Include="..\..\src\asiVisu\utils\asiVisu_JournalIV.h" />
     <ClInclude Include="..\..\src\asiVisu\utils\asiVisu_MeshResultUtils.h" />
     <ClInclude Include="..\..\src\asiVisu\utils\asiVisu_MeshUtils.h" />
     <ClInclude Include="..\..\src\asiVisu\utils\asiVisu_Utils.h" />
@@ -362,13 +320,10 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshEVectorPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshNScalarPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshPipeline.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshTopoPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_Pipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PointsPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_REContoursPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_RESurfacesPipeline.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_SectionPipeline.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_SectionsPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_ShadedSurfacePipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_ShapePipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_AxesBtnCallback.cpp" />
@@ -410,26 +365,33 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_REContoursDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_REPointsDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_RESurfacesDataProvider.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_SectionDataProvider.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_SectionsDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_ShapeDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_ShapeMesher.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_TopoGraphItem.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick2d.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_NodeInfo.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_Selection.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_BCurveKnotsSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_BCurvePolesSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_CurveSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_LawSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_MeshSource.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_MeshTopoSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PCurveSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PDomainSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PointsSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeDataSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_SurfaceSource.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\utils\asiVisu_JournalIV.cpp" />
     <ClCompile Include="..\..\src\asiVisu\utils\asiVisu_MeshResultUtils.cpp" />
     <ClCompile Include="..\..\src\asiVisu\utils\asiVisu_MeshUtils.cpp" />
     <ClCompile Include="..\..\src\asiVisu\utils\asiVisu_Utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="asiAlgo.vcxproj">
+      <Project>{18bdd73e-5256-451d-9df9-7e38b34e6191}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiData.vcxproj">
+      <Project>{8b06c62d-603c-401c-9d8e-f251c8a4a2c7}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

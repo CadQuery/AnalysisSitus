@@ -37,7 +37,7 @@ public:
 
 public:
 
-  virtual bool
+  asiVisu_EXPORT virtual bool
     MustExecute(const Handle(ActAux_TimeStamp)& Against) const;
 
 public:

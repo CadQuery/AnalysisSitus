@@ -9,18 +9,28 @@
 #define asiEngine_RE_h
 
 // A-Situs includes
-#include <asiEngine.h>
+#include <asiEngine_Model.h>
 
-// A-Situs (geometry) includes
-#include <asiData_RENode.h>
+// A-Situs (visualization) includes
+#include <asiVisu_PrsManager.h>
 
 // OCCT includes
 #include <Geom_Surface.hxx>
 #include <TopoDS_Wire.hxx>
 
 //! Data Model API for reverse engineering.
-namespace asiEngine_RE
+class asiEngine_RE
 {
+public:
+
+  //! ctor.
+  //! \param model [in] Data Model instance.
+  asiEngine_RE(const Handle(asiEngine_Model)& model)
+  //
+  : m_model(model) {}
+
+public:
+
   asiEngine_EXPORT Handle(asiData_RENode)
     Create_RE();
 
@@ -41,6 +51,10 @@ namespace asiEngine_RE
 
   asiEngine_EXPORT void
     Clean_Contours();
+
+protected:
+
+  Handle(asiEngine_Model) m_model;  //!< Data Model instance.
 
 };
 

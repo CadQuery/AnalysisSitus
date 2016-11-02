@@ -26,46 +26,48 @@ public:
 
 public:
 
-  asiVisu_ShapeDataProvider(const ActAPI_DataObjectId&           theNodeId,
-                           const Handle(ActAPI_HParameterList)& theParamList);
+  asiVisu_EXPORT
+    asiVisu_ShapeDataProvider(const ActAPI_DataObjectId&           theNodeId,
+                              const Handle(ActAPI_HParameterList)& theParamList);
 
 protected:
 
-  asiVisu_ShapeDataProvider();
+  asiVisu_EXPORT
+    asiVisu_ShapeDataProvider();
 
 public:
 
-  virtual ActAPI_DataObjectId
+  asiVisu_EXPORT virtual ActAPI_DataObjectId
     GetNodeID() const;
 
-  virtual TopoDS_Shape
+  asiVisu_EXPORT virtual TopoDS_Shape
     GetShape() const;
 
-  virtual Handle(TColStd_HPackedMapOfInteger)
+  asiVisu_EXPORT virtual Handle(TColStd_HPackedMapOfInteger)
     GetSubShapes() const;
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetSubShapes(const Handle(TColStd_HPackedMapOfInteger)& theSubShapes);
 
-  virtual bool
+  asiVisu_EXPORT virtual bool
     HasPosition() const;
 
-  virtual bool
+  asiVisu_EXPORT virtual bool
     HasPositionAndRotation() const;
 
-  virtual void
+  asiVisu_EXPORT virtual void
     GetPosition(double& thePosX,
                 double& thePosY,
                 double& thePosZ) const;
 
-  virtual void
+  asiVisu_EXPORT virtual void
     GetRotation(double& theAngleAroundX,
                 double& theAngleAroundY,
                 double& theAngleAroundZ) const;
 
 public:
 
-  Handle(asiVisu_ShapeDataProvider)
+  asiVisu_EXPORT Handle(asiVisu_ShapeDataProvider)
     Clone() const;
 
 protected:

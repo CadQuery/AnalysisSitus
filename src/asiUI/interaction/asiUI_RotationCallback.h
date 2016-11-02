@@ -92,6 +92,7 @@ public:
 
   static asiUI_RotationCallback* New();
   static asiUI_RotationCallback* New(asiUI_Viewer* theViewer);
+
   vtkTypeMacro(asiUI_RotationCallback, asiUI_ViewerCallback);
 
 public:

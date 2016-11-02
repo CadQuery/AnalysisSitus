@@ -26,7 +26,7 @@ public:
 
 public:
 
-  void        SetViewer (asiUI_Viewer* theViewer);
+  void          SetViewer (asiUI_Viewer* theViewer);
   asiUI_Viewer* Viewer    ();
 
 protected:

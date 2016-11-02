@@ -11,6 +11,9 @@
 // A-Situs visualization includes
 #include <asiVisu_DataProvider.h>
 
+// asiData includes
+#include <asiData_REContoursNode.h>
+
 // OCCT includes
 #include <TopoDS_Wire.hxx>
 
@@ -26,24 +29,30 @@ public:
 
 public:
 
-  asiVisu_REContoursDataProvider();
+  asiVisu_EXPORT
+    asiVisu_REContoursDataProvider(const Handle(asiData_REContoursNode)& contours_n);
 
 public:
 
-  virtual ActAPI_DataObjectId GetNodeID() const;
+  asiVisu_EXPORT virtual ActAPI_DataObjectId
+    GetNodeID() const;
 
 public:
 
-  int
+  asiVisu_EXPORT int
     GetNumOfContours() const;
 
-  TopoDS_Wire
+  asiVisu_EXPORT TopoDS_Wire
     GetContour(const int oneBased_idx) const;
 
 private:
 
   virtual Handle(ActAPI_HParameterList)
     translationSources() const;
+
+protected:
+
+  Handle(asiData_REContoursNode) m_contours; //!< Contours Node.
 
 };
 

@@ -22,8 +22,11 @@
 asiVisu_REPointsPrs::asiVisu_REPointsPrs(const Handle(ActAPI_INode)& theNode)
 : asiVisu_Prs(theNode)
 {
+  Handle(asiData_REPointsNode)
+    points_n = Handle(asiData_REPointsNode)::DownCast(theNode);
+
   // Create Data Provider
-  Handle(asiVisu_REPointsDataProvider) DP = new asiVisu_REPointsDataProvider;
+  Handle(asiVisu_REPointsDataProvider) DP = new asiVisu_REPointsDataProvider(points_n);
 
   // Pipeline for points
   this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline );
@@ -75,15 +78,15 @@ void asiVisu_REPointsPrs::afterUpdatePipelines() const
 
 //! Callback for highlighting.
 void asiVisu_REPointsPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                   const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
-                                   const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                   const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                   const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }
 
 //! Callback for highlighting reset.
 void asiVisu_REPointsPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                     const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+                                     const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
   // Do nothing...
 }

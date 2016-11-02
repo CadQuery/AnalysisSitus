@@ -9,7 +9,7 @@
 #define asiVisu_MeshNScalarFilter_h
 
 // Visualization includes
-#include <asiVisu_Common.h>
+#include <asiVisu.h>
 
 // Active Data (auxiliary) includes
 #include <ActAux_Common.h>

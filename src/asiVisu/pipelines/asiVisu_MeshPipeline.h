@@ -24,17 +24,21 @@ public:
 
 public:
 
-  asiVisu_MeshPipeline();
+  asiVisu_EXPORT
+    asiVisu_MeshPipeline();
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
 
 public:
 
-  void EmptyGroupForAllModeOn();
-  void EmptyGroupForAllModeOff();
+  asiVisu_EXPORT void
+    EmptyGroupForAllModeOn();
+
+  asiVisu_EXPORT void
+    EmptyGroupForAllModeOff();
 
 private:
 

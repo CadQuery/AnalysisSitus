@@ -27,12 +27,16 @@ public:
 
 public:
 
-  asiVisu_LawDataProvider(const Handle(asiData_DesignLawNode)& N);
+  asiVisu_EXPORT
+    asiVisu_LawDataProvider(const Handle(asiData_DesignLawNode)& N);
 
 public:
 
-  virtual Handle(asiAlgo_DesignLaw) GetLaw()    const;
-  virtual ActAPI_DataObjectId         GetNodeID() const;
+  asiVisu_EXPORT virtual Handle(asiAlgo_DesignLaw)
+    GetLaw() const;
+
+  asiVisu_EXPORT virtual ActAPI_DataObjectId
+    GetNodeID() const;
 
 protected:
 

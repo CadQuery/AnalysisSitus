@@ -8,14 +8,8 @@
 // Own include
 #include <asiUI_ViewerMesh.h>
 
-// Common includes
-#include <common_facilities.h>
-
 // Visualization includes
 #include <asiVisu_Utils.h>
-
-// GUI includes
-#include <asiUI_ControlsMesh.h>
 
 // VTK includes
 #include <vtkAssembly.h>
@@ -42,7 +36,7 @@
 //! \param parent [in] parent widget.
 asiUI_ViewerMesh::asiUI_ViewerMesh(QWidget* parent) : asiUI_Viewer(parent)
 {
-  // Initialize Presentation Manager along with QVTK widget
+  // Initialize presentation manager along with QVTK widget
   common_facilities::Instance()->Prs.Mesh = vtkSmartPointer<asiVisu_PrsManager>::New();
   m_prs_mgr = common_facilities::Instance()->Prs.Mesh;
   //
@@ -70,7 +64,7 @@ asiUI_ViewerMesh::asiUI_ViewerMesh(QWidget* parent) : asiUI_Viewer(parent)
    * =================================== */
 
   // Default interactor style
-  m_interactorStyleDefault = vtkSmartPointer<asiUI_InteractorStylePick>::New();
+  m_interactorStyleDefault = vtkSmartPointer<asiVisu_InteractorStylePick>::New();
   m_interactorStyleDefault->SetRenderer( m_prs_mgr->GetRenderer() );
 
   // Initialize Callback instance for Pick operation
@@ -167,9 +161,9 @@ void asiUI_ViewerMesh::onResetView()
 void asiUI_ViewerMesh::onMeshNodePicked()
 {
   // Access picking results
-  const visu_actual_selection& sel      = m_prs_mgr->GetCurrentSelection();
-  const asiUI_PickResult&      pick_res = sel.PickResult(SelectionNature_Detection);
-  const asiVisu_ActorElemMap&   elem_map = pick_res.GetPickMap();
+  const asiVisu_ActualSelection& sel      = m_prs_mgr->GetCurrentSelection();
+  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Detection);
+  const asiVisu_ActorElemMap&    elem_map = pick_res.GetPickMap();
 
   // Prepare cumulative set of all picked element IDs
   for ( asiVisu_ActorElemMap::Iterator it(elem_map); it.More(); it.Next() )

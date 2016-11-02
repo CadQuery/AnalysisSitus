@@ -6,10 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiData_ContourPointsDataProvider.h>
-
-// Common includes
-#include <common_facilities.h>
+#include <asiVisu_ContourPointsDataProvider.h>
 
 // OCCT includes
 #include <BRep_Tool.hxx>
@@ -21,14 +18,14 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-asiData_ContourPointsDataProvider::asiData_ContourPointsDataProvider()
-: asiVisu_PointsDataProvider( common_facilities::Instance()->Model->GetPartNode()->GetContour() )
+asiVisu_ContourPointsDataProvider::asiVisu_ContourPointsDataProvider(const Handle(asiData_ContourNode)& contour)
+: asiVisu_PointsDataProvider(contour)
 {}
 
 //-----------------------------------------------------------------------------
 
 //! \return point cloud to visualize.
-Handle(asiAlgo_PointCloud) asiData_ContourPointsDataProvider::GetPoints() const
+Handle(asiAlgo_PointCloud) asiVisu_ContourPointsDataProvider::GetPoints() const
 {
   Handle(asiData_ContourNode)
     contour_n = Handle(asiData_ContourNode)::DownCast(m_node);
@@ -68,7 +65,7 @@ Handle(asiAlgo_PointCloud) asiData_ContourPointsDataProvider::GetPoints() const
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) asiData_ContourPointsDataProvider::translationSources() const
+Handle(ActAPI_HParameterList) asiVisu_ContourPointsDataProvider::translationSources() const
 {
   // Resulting Parameters
   ActParamStream out;

@@ -68,7 +68,7 @@ typedef Handle(asiVisu_Prs) (*asiVisu_PrsAllocator)(const Handle(ActAPI_INode)&)
 //-----------------------------------------------------------------------------
 
 //! Orientations.
-enum visu_orientation
+enum asiVisu_Orientation
 {
   VisuOri_Undefined = -1,
   VisuOri_Forward   =  0,
@@ -91,7 +91,7 @@ public:
 
   static TPrsAllocMap
     RegisterPrsType(const TCollection_AsciiString& theType,
-                    const asiVisu_PrsAllocator       theAllocFunc);
+                    const asiVisu_PrsAllocator     theAllocFunc);
 
   static const TPrsAllocMap&
     GetAllocMap();
@@ -99,56 +99,56 @@ public:
 // Scene:
 public:
 
-  static int
+  asiVisu_EXPORT static int
     ComputeVisiblePropBounds(vtkRenderer*       theRenderer,
                              double             theBounds[6],
                              vtkPropCollection* thePropsToSkip);
 
-  static void
+  asiVisu_EXPORT static void
     ResetCamera(vtkRenderer*       theRenderer,
                 vtkPropCollection* thePropsToSkip);
 
-  static bool
+  asiVisu_EXPORT static bool
     AdjustCamera(vtkRenderer*       theRenderer,
                  vtkPropCollection* thePropsToSkip,
                  bool               isDefaultNorm   = false,
                  bool               doScaling       = true);
 
-  static void
+  asiVisu_EXPORT static void
     AdjustCameraClippingRange(vtkRenderer* theRenderer);
 
-  static void
+  asiVisu_EXPORT static void
     CameraOnTop(vtkRenderer* theRenderer);
 
-  static void
+  asiVisu_EXPORT static void
     CameraOnBottom(vtkRenderer* theRenderer);
 
-  static void
+  asiVisu_EXPORT static void
     CameraOnFront(vtkRenderer* theRenderer);
 
-  static void
+  asiVisu_EXPORT static void
     CameraOnBack(vtkRenderer* theRenderer);
 
-  static void
+  asiVisu_EXPORT static void
     CameraOnLeft(vtkRenderer* theRenderer);
 
-  static void
+  asiVisu_EXPORT static void
     CameraOnRight(vtkRenderer* theRenderer);
 
-  static void
+  asiVisu_EXPORT static void
     ApplyLightingRules(vtkActor* theActor);
 
-  static void
+  asiVisu_EXPORT static void
     TranslateView(vtkRenderer* theRenderer,
                   const int    theOldX,
                   const int    theOldY,
                   const int    theNewX,
                   const int    theNewY);
 
-  static QImage
+  asiVisu_EXPORT static QImage
     DumpView(vtkRenderWindow* theRenderWindow);
 
-  static void
+  asiVisu_EXPORT static void
     AdjustTrihedron(vtkRenderer*       theRenderer,
                     vtkAxesActor*      theActor,
                     vtkPropCollection* thePropsToSkip);
@@ -156,78 +156,78 @@ public:
 // Other commons:
 public:
 
-  static vtkSmartPointer<vtkIntArray>
+  asiVisu_EXPORT static vtkSmartPointer<vtkIntArray>
     InitIntArray(const char* theArrName);
 
-  static vtkSmartPointer<vtkDoubleArray>
+  asiVisu_EXPORT static vtkSmartPointer<vtkDoubleArray>
     InitDoubleArray(const char* theArrName);
 
-  static vtkSmartPointer<vtkDoubleArray>
+  asiVisu_EXPORT static vtkSmartPointer<vtkDoubleArray>
     InitDoubleVectorArray(const char* theArrName);
 
-  static vtkSmartPointer<vtkStringArray>
+  asiVisu_EXPORT static vtkSmartPointer<vtkStringArray>
     InitStringArray(const char* theArrName);
 
-  static void
+  asiVisu_EXPORT static void
     DefaultPickingColor(double& fR,
                         double& fG,
                         double& fB);
 
-  static void
+  asiVisu_EXPORT static void
     DefaultDetectionColor(double& fR,
                           double& fG,
                           double& fB);
 
-  static double
+  asiVisu_EXPORT static double
     DefaultPickLineWidth();
 
-  static double
+  asiVisu_EXPORT static double
     DefaultDetectionLineWidth();
 
-  static double
+  asiVisu_EXPORT static double
     DefaultHilightPointSize();
 
-  static vtkLookupTable*
+  asiVisu_EXPORT static vtkLookupTable*
     InitLookupTable();
 
-  static void
+  asiVisu_EXPORT static void
     SetLookupTableColor(vtkLookupTable* theColorTable,
                         const IVtk_MeshType theColorRole,
                         const double theR, const double theG, const double theB,
                         const double /*theA*/);
 
-  static void
+  asiVisu_EXPORT static void
     GetLookupTableColor(vtkLookupTable* theColorTable,
                         const IVtk_MeshType theColorRole,
                         double &theR, double &theG, double &theB);
 
-  static void
+  asiVisu_EXPORT static void
     GetLookupTableColor(vtkLookupTable* theColorTable,
                         const IVtk_MeshType theColorRole,
                         double &theR, double &theG, double &theB,
                         double &theA);
 
-  static void
+  asiVisu_EXPORT static void
     InitShapeMapper(vtkMapper* theMapper);
 
-  static void
+  asiVisu_EXPORT static void
     InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorTable);
 
-  static vtkSmartPointer<vtkLookupTable>
+  asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
     InitDomainLookupTable();
 
-  static void
+  asiVisu_EXPORT static void
     InitMapper(vtkMapper*      theMapper,
                vtkLookupTable* theLookup,
                const char*     theScalarsArrName);
 
-  static void
+  asiVisu_EXPORT static void
     InitTextWidget(vtkTextWidget* theTextWidget);
 
 public:
 
-  inline double static TrimInf(const double val,
-                               const double limit = INF_LIMIT)
+  double static TrimInf(const double val,
+                        const double limit = INF_LIMIT)
   {
     double ret_val = val;
     if ( Precision::IsPositiveInfinite(val) )

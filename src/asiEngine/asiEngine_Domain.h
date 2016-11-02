@@ -14,6 +14,9 @@
 // A-Situs (geometry) includes
 #include <asiData_PartNode.h>
 
+// A-Situs (visualization) includes
+#include <asiVisu_PrsManager.h>
+
 // OCCT includes
 #include <TopTools_IndexedMapOfShape.hxx>
 
@@ -21,11 +24,15 @@
 namespace asiEngine_Domain
 {
   asiEngine_EXPORT void
-    GetHighlightedEdges(TopTools_IndexedMapOfShape& edges);
+    GetHighlightedEdges(const Handle(asiData_PartNode)&            partNode,
+                        const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
+                        TopTools_IndexedMapOfShape&                edges);
 
   asiEngine_EXPORT void
-    GetHighlightedEdges(TopTools_IndexedMapOfShape& edges,
-                        TopoDS_Face&                face);
+    GetHighlightedEdges(const Handle(asiData_PartNode)&            partNode,
+                        const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
+                        TopTools_IndexedMapOfShape&                edges,
+                        TopoDS_Face&                               face);
 };
 
 #endif

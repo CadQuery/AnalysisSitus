@@ -12,13 +12,13 @@
 #include <asiUI.h>
 
 // Common includes
-#include <asiData_Model.h>
+#include <asiEngine_Model.h>
 
 // GUI includes
 #include <asiUI_Viewer.h>
 
 // Visualization includes
-#include <asiUI_InteractorStylePick.h>
+#include <asiVisu_InteractorStylePick.h>
 #include <asiUI_PickCallback.h>
 #include <asiUI_RotationCallback.h>
 
@@ -47,7 +47,7 @@ public slots:
 private:
 
   //! Default interactor style.
-  vtkSmartPointer<asiUI_InteractorStylePick> m_interactorStyleDefault;
+  vtkSmartPointer<asiVisu_InteractorStylePick> m_interactorStyleDefault;
 
   //! Pick callback.
   vtkSmartPointer<asiUI_PickCallback> m_pickCallback;

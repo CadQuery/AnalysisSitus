@@ -11,6 +11,9 @@
 // A-Situs visualization includes
 #include <asiVisu_CurveDataProvider.h>
 
+// asiData includes
+#include <asiData_EdgeNode.h>
+
 // OCCT includes
 #include <TopoDS_Edge.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -27,25 +30,37 @@ public:
 
 public:
 
-  asiVisu_EdgeDataProvider(const ActAPI_DataObjectId&           theNodeId,
-                           const Handle(ActAPI_HParameterList)& theParamList);
+  asiVisu_EXPORT
+    asiVisu_EdgeDataProvider(const Handle(asiData_EdgeNode)& edge_n);
 
 public:
 
-  ActAPI_DataObjectId GetNodeID                  () const;
-  int                 GetEdgeIndexAmongSubshapes () const;
-  int                 GetEdgeIndexAmongEdges     () const;
-  TopoDS_Edge         ExtractEdge                () const;
+  asiVisu_EXPORT ActAPI_DataObjectId
+    GetNodeID() const;
+
+  asiVisu_EXPORT int
+    GetEdgeIndexAmongSubshapes() const;
+
+  asiVisu_EXPORT int
+    GetEdgeIndexAmongEdges() const;
+
+  asiVisu_EXPORT TopoDS_Edge
+    ExtractEdge() const;
 
 public:
 
-  virtual Handle(Standard_Type) GetCurveType ()                     const;
-  virtual Handle(Geom2d_Curve)  GetCurve2d   (double& f, double& l) const;
-  virtual Handle(Geom_Curve)    GetCurve     (double& f, double& l) const;
+  asiVisu_EXPORT virtual Handle(Standard_Type)
+    GetCurveType() const;
+
+  asiVisu_EXPORT virtual Handle(Geom2d_Curve)
+    GetCurve2d(double& f, double& l) const;
+
+  asiVisu_EXPORT virtual Handle(Geom_Curve)
+    GetCurve(double& f, double& l) const;
 
 public:
 
-  Handle(asiVisu_EdgeDataProvider)
+  asiVisu_EXPORT Handle(asiVisu_EdgeDataProvider)
     Clone() const;
 
 private:
@@ -55,11 +70,8 @@ private:
 
 private:
 
-  //! Source Node ID.
-  ActAPI_DataObjectId m_nodeID;
-
-  //! Source Parameters.
-  Handle(ActAPI_HParameterList) m_params;
+  //! Source Node.
+  Handle(asiData_EdgeNode) m_edgeNode;
 
   //! Map of sub-shapes.
   TopTools_IndexedMapOfShape m_subShapes;

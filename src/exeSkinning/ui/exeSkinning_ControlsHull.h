@@ -35,7 +35,6 @@ public slots:
   void onSkinSurface    ();
   void onSaveSTEP       ();
   void onCurvature      ();
-  void onMultiLine        ();
 
 private:
 

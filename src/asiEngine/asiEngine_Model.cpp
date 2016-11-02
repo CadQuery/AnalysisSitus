@@ -8,15 +8,10 @@
 // Own include
 #include <asiEngine_Model.h>
 
-// A-Situs (common) includes
-#include <common_facilities.h>
-
 // A-Situs (engine) includes
 #include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
 #include <asiEngine_RE.h>
-#include <engine_ubend.h>
-#include <engine_volume.h>
 
 // Active Data includes
 #include <ActData_CAFConverter.h>
@@ -44,7 +39,6 @@ REGISTER_NODE_TYPE(asiData_SurfNode)
 REGISTER_NODE_TYPE(asiData_EdgeNode)
 REGISTER_NODE_TYPE(asiData_CurveNode)
 REGISTER_NODE_TYPE(asiData_BoundaryEdgesNode)
-REGISTER_NODE_TYPE(geom_volume_node)
 REGISTER_NODE_TYPE(asiData_ContourNode)
 //
 REGISTER_NODE_TYPE(asiData_RENode)
@@ -54,13 +48,7 @@ REGISTER_NODE_TYPE(asiData_REContoursNode)
 REGISTER_NODE_TYPE(asiData_REContourNode)
 REGISTER_NODE_TYPE(asiData_REPointsNode)
 //
-REGISTER_NODE_TYPE(geom_sections_node)
-REGISTER_NODE_TYPE(geom_section_node)
-//
 REGISTER_NODE_TYPE(asiData_DesignLawNode)
-REGISTER_NODE_TYPE(geom_ubend_node)
-REGISTER_NODE_TYPE(geom_ubend_law_node)
-REGISTER_NODE_TYPE(geom_ubend_laws_node)
 //
 REGISTER_NODE_TYPE(asiData_IVCurveNode)
 REGISTER_NODE_TYPE(asiData_IVCurvesNode)
@@ -107,9 +95,7 @@ static void PrepareForRemoval(const Handle(ActAPI_INode)&     root_n,
 //! Default constructor. Initializes Base Model foundation object so that
 //! to enable Extended Transaction Mode.
 asiEngine_Model::asiEngine_Model() : ActData_BaseModel(true)
-{
-  common_facilities::Instance()->Model = this;
-}
+{}
 
 //-----------------------------------------------------------------------------
 
@@ -147,43 +133,24 @@ void asiEngine_Model::Populate()
   // Add Part Node
   //---------------------------------------------------------------------------
 
-  root_n->AddChildNode( asiEngine_Part::Create_Part() );
+  root_n->AddChildNode( asiEngine_Part(this, NULL).Create_Part() );
 
   //---------------------------------------------------------------------------
   // Add Reverse Engineering Node
   //---------------------------------------------------------------------------
 
-  root_n->AddChildNode( asiEngine_RE::Create_RE() );
-
-  //---------------------------------------------------------------------------
-  // Add Sections Node
-  //---------------------------------------------------------------------------
-
-  Handle(geom_sections_node)
-    sections_n = Handle(geom_sections_node)::DownCast( geom_sections_node::Instance() );
-  //
-  this->GetSectionsPartition()->AddNode(sections_n);
-
-  // Initialize
-  sections_n->Init();
-  sections_n->SetName("Skinning Sections");
-
-  // Add as a child for the root
-  root_n->AddChildNode(sections_n);
+  root_n->AddChildNode( asiEngine_RE(this).Create_RE() );
 
   //---------------------------------------------------------------------------
   // Add Imperative Viewer Node
   //---------------------------------------------------------------------------
 
-  root_n->AddChildNode( asiEngine_IV::Create_IV() );
+  root_n->AddChildNode( asiEngine_IV(this).Create_IV() );
 }
 
 //! Clears the Model.
 void asiEngine_Model::Clear()
 {
-  // Clean up Presentations
-  common_facilities::Instance()->Prs.DeleteAll();
-
   //---------------------------------------------------------------------------
   // Collects Nodes to delete
   //---------------------------------------------------------------------------
@@ -194,8 +161,6 @@ void asiEngine_Model::Clear()
   //       removing it since we will have to create it again once a new
   //       part is loaded. The same rule applies to other structural Nodes.
 
-  ::PrepareForRemoval(this->GetSectionsNode(),           nodesToDelete);
-  //
   ::PrepareForRemoval(this->GetRENode()->Surfaces(),     nodesToDelete);
   ::PrepareForRemoval(this->GetRENode()->Contours(),     nodesToDelete);
   ::PrepareForRemoval(this->GetRENode()->Points(),       nodesToDelete);
@@ -223,9 +188,6 @@ void asiEngine_Model::Clear()
     // Delete all Nodes queued for removal
     for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
       this->DeleteNode( nit.Value()->GetId() );
-
-    // Delete volumes
-    engine_volume::Clean_Volumes();
   }
   this->CommitCommand(); // tx end
 }
@@ -271,32 +233,6 @@ Handle(asiData_RENode) asiEngine_Model::GetRENode() const
   return NULL;
 }
 
-//! \return single Sections Node.
-Handle(geom_sections_node) asiEngine_Model::GetSectionsNode() const
-{
-  for ( ActData_BasePartition::Iterator it( this->GetSectionsPartition() ); it.More(); it.Next() )
-  {
-    Handle(geom_sections_node) N = Handle(geom_sections_node)::DownCast( it.Value() );
-    //
-    if ( !N.IsNull() && N->IsWellFormed() )
-      return N;
-  }
-  return NULL;
-}
-
-//! \return single U-bend Node.
-Handle(geom_ubend_node) asiEngine_Model::GetUBendNode() const
-{
-  for ( ActData_BasePartition::Iterator it( this->GetUBendPartition() ); it.More(); it.Next() )
-  {
-    Handle(geom_ubend_node) N = Handle(geom_ubend_node)::DownCast( it.Value() );
-    //
-    if ( !N.IsNull() && N->IsWellFormed() )
-      return N;
-  }
-  return NULL;
-}
-
 //! \return single Imperative Viewer Node.
 Handle(asiData_IVNode) asiEngine_Model::GetIVNode() const
 {
@@ -315,48 +251,41 @@ Handle(asiData_IVNode) asiEngine_Model::GetIVNode() const
 //! Initializes Partitions.
 void asiEngine_Model::initPartitions()
 {
-  REGISTER_PARTITION(asiData_Partition<asiData_RootNode>,         Partition_Root);
+  REGISTER_PARTITION(asiData_Partition<asiData_RootNode>,          Partition_Root);
   //
-  REGISTER_PARTITION(asiData_Partition<asiData_TessNode>,                Partition_Mesh);
+  REGISTER_PARTITION(asiData_Partition<asiData_TessNode>,          Partition_Mesh);
   //
-  REGISTER_PARTITION(asiData_Partition<asiData_PartNode>,           Partition_GeomPart);
-  REGISTER_PARTITION(asiData_Partition<asiData_FaceNode>,           Partition_GeomFace);
-  REGISTER_PARTITION(asiData_Partition<asiData_SurfNode>,           Partition_GeomSurface);
-  REGISTER_PARTITION(asiData_Partition<asiData_EdgeNode>,           Partition_GeomEdge);
-  REGISTER_PARTITION(asiData_Partition<asiData_CurveNode>,          Partition_GeomCurve);
+  REGISTER_PARTITION(asiData_Partition<asiData_PartNode>,          Partition_GeomPart);
+  REGISTER_PARTITION(asiData_Partition<asiData_FaceNode>,          Partition_GeomFace);
+  REGISTER_PARTITION(asiData_Partition<asiData_SurfNode>,          Partition_GeomSurface);
+  REGISTER_PARTITION(asiData_Partition<asiData_EdgeNode>,          Partition_GeomEdge);
+  REGISTER_PARTITION(asiData_Partition<asiData_CurveNode>,         Partition_GeomCurve);
   REGISTER_PARTITION(asiData_Partition<asiData_BoundaryEdgesNode>, Partition_GeomBoundaryEdges);
-  REGISTER_PARTITION(asiData_Partition<geom_volume_node>,         Partition_GeomVolume);
-  REGISTER_PARTITION(asiData_Partition<asiData_ContourNode>,        Partition_GeomContour);
+  REGISTER_PARTITION(asiData_Partition<asiData_ContourNode>,       Partition_GeomContour);
   //
-  REGISTER_PARTITION(asiData_Partition<asiData_RENode>,             Partition_RE);
+  REGISTER_PARTITION(asiData_Partition<asiData_RENode>,            Partition_RE);
   REGISTER_PARTITION(asiData_Partition<asiData_RESurfacesNode>,    Partition_RESurfaces);
   REGISTER_PARTITION(asiData_Partition<asiData_RESurfaceNode>,     Partition_RESurface);
   REGISTER_PARTITION(asiData_Partition<asiData_REContoursNode>,    Partition_REContours);
   REGISTER_PARTITION(asiData_Partition<asiData_REContourNode>,     Partition_REContour);
   REGISTER_PARTITION(asiData_Partition<asiData_REPointsNode>,      Partition_REPoints);
   //
-  REGISTER_PARTITION(asiData_Partition<geom_sections_node>,       Partition_Sections);
-  REGISTER_PARTITION(asiData_Partition<geom_section_node>,        Partition_Section);
+  REGISTER_PARTITION(asiData_Partition<asiData_DesignLawNode>,     Partition_CalculusDesignLaw);
   //
-  REGISTER_PARTITION(asiData_Partition<asiData_DesignLawNode>, Partition_CalculusDesignLaw);
-  REGISTER_PARTITION(asiData_Partition<geom_ubend_node>,          Partition_UBend);
-  REGISTER_PARTITION(asiData_Partition<geom_ubend_laws_node>,     Partition_UBendLaws);
-  REGISTER_PARTITION(asiData_Partition<geom_ubend_law_node>,      Partition_UBendLaw);
-  //
-  REGISTER_PARTITION(asiData_Partition<asiData_IVNode>,              Partition_IV);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVNode>,            Partition_IV);
   REGISTER_PARTITION(asiData_Partition<asiData_IVPoints2dNode>,    Partition_IV_Points2d);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVPointsNode>,       Partition_IV_Points);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVPointSet2dNode>, Partition_IV_PointSet2d);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVPointsNode>,      Partition_IV_Points);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVPointSet2dNode>,  Partition_IV_PointSet2d);
   REGISTER_PARTITION(asiData_Partition<asiData_IVPointSetNode>,    Partition_IV_PointSet);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVCurvesNode>,       Partition_IV_Curves);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVCurveNode>,        Partition_IV_Curve);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVSurfacesNode>,     Partition_IV_Surfaces);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVSurfaceNode>,      Partition_IV_Surface);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVTopoNode>,         Partition_IV_Topo);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVCurvesNode>,      Partition_IV_Curves);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVCurveNode>,       Partition_IV_Curve);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVSurfacesNode>,    Partition_IV_Surfaces);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVSurfaceNode>,     Partition_IV_Surface);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVTopoNode>,        Partition_IV_Topo);
   REGISTER_PARTITION(asiData_Partition<asiData_IVTopoItemNode>,    Partition_IV_TopoItem);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVTessNode>,         Partition_IV_Tess);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVTessNode>,        Partition_IV_Tess);
   REGISTER_PARTITION(asiData_Partition<asiData_IVTessItemNode>,    Partition_IV_TessItem);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVTextNode>,         Partition_IV_Text);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVTextNode>,        Partition_IV_Text);
   REGISTER_PARTITION(asiData_Partition<asiData_IVTextItemNode>,    Partition_IV_TextItem);
 }
 
@@ -400,10 +329,9 @@ Handle(ActAPI_INode) asiEngine_Model::getRootNode() const
 //! in Copy/Paste operation.
 //! \param FuncGUIDs [in/out] Function GUIDs to pass.
 //! \param Refs      [in/out] Reference Parameters to pass.
-void asiEngine_Model::invariantCopyRefs(ActAPI_FuncGUIDStream&         ASitus_NotUsed(FuncGUIDs),
-                                     ActAPI_ParameterLocatorStream& ASitus_NotUsed(Refs)) const
-{
-}
+void asiEngine_Model::invariantCopyRefs(ActAPI_FuncGUIDStream&         asiEngine_NotUsed(FuncGUIDs),
+                                        ActAPI_ParameterLocatorStream& asiEngine_NotUsed(Refs)) const
+{}
 
 //-----------------------------------------------------------------------------
 // Versions
@@ -413,7 +341,7 @@ void asiEngine_Model::invariantCopyRefs(ActAPI_FuncGUIDStream&         ASitus_No
 //! \return current version of Data Model.
 int asiEngine_Model::actualVersionApp()
 {
-  return ASitus_Version_HEX;
+  return 0x0;
 }
 
 //! Callback supplying CAF converter required to perform application-specific

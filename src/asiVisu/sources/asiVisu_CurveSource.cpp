@@ -65,7 +65,7 @@ bool asiVisu_CurveSource::SetInputEdge(const TopoDS_Edge& edge)
   Handle(Geom_TrimmedCurve) tcrv = new Geom_TrimmedCurve(crv, f, l);
 
   // Resolve orientation
-  visu_orientation ori = VisuOri_Undefined;
+  asiVisu_Orientation ori = VisuOri_Undefined;
   switch ( edge.Orientation() )
   {
     case TopAbs_FORWARD  : ori = VisuOri_Forward;  break;
@@ -88,7 +88,7 @@ bool asiVisu_CurveSource::SetInputEdge(const TopoDS_Edge& edge)
 bool asiVisu_CurveSource::SetInputCurve(const Handle(Geom_Curve)& curve,
                                       const double              first,
                                       const double              last,
-                                      const visu_orientation    ori)
+                                      const asiVisu_Orientation    ori)
 {
   const double f = asiVisu_Utils::TrimInf(first),
                l = asiVisu_Utils::TrimInf(last);
@@ -133,7 +133,7 @@ bool asiVisu_CurveSource::SetInputCurve(const Handle(Geom_Curve)& curve,
 bool asiVisu_CurveSource::SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
                                         const double                first,
                                         const double                last,
-                                        const visu_orientation      ori)
+                                        const asiVisu_Orientation      ori)
 {
   const double f = asiVisu_Utils::TrimInf(first),
                l = asiVisu_Utils::TrimInf(last);
@@ -181,7 +181,7 @@ bool asiVisu_CurveSource::SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
 void asiVisu_CurveSource::SetInputArrays(const Handle(HRealArray)& xCoords,
                                        const Handle(HRealArray)& yCoords,
                                        const Handle(HRealArray)& zCoords,
-                                       const visu_orientation    ori)
+                                       const asiVisu_Orientation    ori)
 {
   if ( xCoords->Length() != zCoords->Length() )
   {

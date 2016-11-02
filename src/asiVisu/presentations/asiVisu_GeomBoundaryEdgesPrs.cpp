@@ -12,9 +12,6 @@
 #include <asiVisu_ShapeDataProvider.h>
 #include <asiVisu_ShapePipeline.h>
 
-// A-Situs (GUI) includes
-#include <asiUI_Common.h>
-
 // VTK includes
 #include <vtkActor.h>
 #include <vtkMapper.h>
@@ -27,15 +24,15 @@ asiVisu_GeomBoundaryEdgesPrs::asiVisu_GeomBoundaryEdgesPrs(const Handle(ActAPI_I
   // Create Data Providers
   Handle(asiVisu_ShapeDataProvider) DP_convex =
     new asiVisu_ShapeDataProvider( N->GetId(),
-                                  ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Green) );
+                                   ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Green) );
   //
   Handle(asiVisu_ShapeDataProvider) DP_concave =
     new asiVisu_ShapeDataProvider( N->GetId(),
-                                  ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Red) );
+                                   ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Red) );
   //
   Handle(asiVisu_ShapeDataProvider) DP_undefined =
     new asiVisu_ShapeDataProvider( N->GetId(),
-                                  ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Ordinary) );
+                                   ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Ordinary) );
 
   //---------------------------------------------------------------------------
   // Pipeline for convex edges
@@ -117,15 +114,15 @@ void asiVisu_GeomBoundaryEdgesPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-void asiVisu_GeomBoundaryEdgesPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                             const asiUI_PickResult&      asiVisu_NotUsed(thePickRes),
-                                             const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+void asiVisu_GeomBoundaryEdgesPrs::highlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
+                                             const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
+                                             const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
 }
 
 //! Callback for highlighting reset.
-void asiVisu_GeomBoundaryEdgesPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                               const asiUI_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+void asiVisu_GeomBoundaryEdgesPrs::unHighlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
+                                               const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
 {
 }
 

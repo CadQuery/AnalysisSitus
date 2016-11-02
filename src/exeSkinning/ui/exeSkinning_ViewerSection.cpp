@@ -41,7 +41,7 @@
 //! \param parent           [in] parent widget.
 gui_viewer_section::gui_viewer_section(const bool withControlPanel, QWidget* parent) : gui_viewer(parent)
 {
-  // Initialize Presentation Manager along with QVTK widget
+  // Initialize presentation manager along with QVTK widget
   common_facilities::Instance()->Prs.Section = vtkSmartPointer<visu_prs_manager>::New();
   m_prs_mgr = common_facilities::Instance()->Prs.Section;
   //
@@ -141,7 +141,7 @@ void gui_viewer_section::onResetView()
 void gui_viewer_section::onSectionPicked()
 {
   // Access picking results
-  const visu_actual_selection& sel      = m_prs_mgr->GetCurrentSelection();
+  const asiVisu_ActualSelection& sel      = m_prs_mgr->GetCurrentSelection();
   const visu_pick_result&      pick_res = sel.PickResult(SelectionNature_Detection);
   const visu_actor_elem_map&   elem_map = pick_res.GetPickMap();
 

@@ -13,12 +13,6 @@
 #include <asiVisu_ShapeDataProvider.h>
 #include <asiVisu_ShapePipeline.h>
 
-// A-Situs (common) includes
-#include <common_facilities.h>
-
-// A-Situs (GUI) includes
-#include <asiUI_Common.h>
-
 // VTK includes
 #include <vtkCellData.h>
 #include <vtkIdTypeArray.h>
@@ -35,7 +29,16 @@
 // OCCT includes
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
-#define COUT_DEBUG
+//! Convert integer value to a color.
+//! \param theColor [in] integer value.
+//! \return converted value
+static QColor IntToColor(const int theColor)
+{
+  unsigned char aRed   = ( theColor >> 16 ) & 0xFF;
+  unsigned char aGreen = ( theColor >>  8 ) & 0xFF;
+  unsigned char aBlue  =   theColor         & 0xFF;
+  return QColor(aRed, aGreen, aBlue);
+}
 
 //! Creates a Presentation object for the passed Part Node.
 //! \param N [in] Part Node to create a Presentation for.
@@ -44,7 +47,7 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   // Create Data Provider
   Handle(asiVisu_ShapeDataProvider) DP =
     new asiVisu_ShapeDataProvider( N->GetId(),
-                                  ActParamStream() << N->Parameter(asiData_PartNode::PID_Geometry) );
+                                   ActParamStream() << N->Parameter(asiData_PartNode::PID_Geometry) );
 
   // Main pipeline
   Handle(asiVisu_ShapePipeline) pl = new asiVisu_ShapePipeline(true, true, false, false);
@@ -56,16 +59,13 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
   pl->Actor()->GetProperty()->SetLineWidth(1.5f);
 
-#if defined COUT_DEBUG
-  cout << "Main actor: " << common_facilities::ADDR( pl->Actor() ) << endl;
-#endif
-
   /* ====================
    *  Pipeline for edges
    * ==================== */
 
   // Create pipeline for highlighting
-  Handle(asiVisu_ShapePipeline) contour_pl = new asiVisu_ShapePipeline( true, true, true, false, pl->DataSource() );
+  Handle(asiVisu_ShapePipeline)
+    contour_pl = new asiVisu_ShapePipeline( true, true, true, false, pl->DataSource() );
 
   // Adjust props
   contour_pl->Actor()->GetProperty()->SetOpacity(0.5);
@@ -76,10 +76,6 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
   this->assignDataProvider ( Pipeline_Contour, DP );
-
-#if defined COUT_DEBUG
-  cout << "Contour actor: " << common_facilities::ADDR( contour_pl->Actor() ) << endl;
-#endif
 
   /* ======================
    *  Pipeline for picking
@@ -115,7 +111,8 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   asiVisu_Utils::DefaultDetectionColor(detect_color[0], detect_color[1], detect_color[2]);
 
   // Create pipeline for highlighting
-  Handle(asiVisu_ShapePipeline) detect_pl = new asiVisu_ShapePipeline( false, true, true, false, pl->DataSource() );
+  Handle(asiVisu_ShapePipeline)
+    detect_pl = new asiVisu_ShapePipeline( false, true, true, false, pl->DataSource() );
 
   // Adjust props
   detect_pl->Actor()->GetProperty()->SetColor(detect_color[0], detect_color[1], detect_color[2]);
@@ -281,7 +278,7 @@ void asiVisu_GeomPrs::afterUpdatePipelines() const
   // Custom color (if any)
   if ( N->HasColor() )
   {
-    QColor color = asiUI_Common::IntToColor( N->GetColor() );
+    QColor color = ::IntToColor( N->GetColor() );
     this->DoColor(color);
   }
   else
@@ -295,9 +292,9 @@ void asiVisu_GeomPrs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                              const asiUI_PickResult&      thePickRes,
-                              const asiUI_SelectionNature& theSelNature) const
+void asiVisu_GeomPrs::highlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
+                                const asiVisu_PickResult&      thePickRes,
+                                const asiVisu_SelectionNature& theSelNature) const
 {
   /* ==================
    *  Get target actor
@@ -366,8 +363,8 @@ void asiVisu_GeomPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(the
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                const asiUI_SelectionNature& theSelNature) const
+void asiVisu_GeomPrs::unHighlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
+                                  const asiVisu_SelectionNature& theSelNature) const
 {
   Handle(asiVisu_ShapePipeline) hili_pl;
   //

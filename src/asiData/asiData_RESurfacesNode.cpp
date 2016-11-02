@@ -77,34 +77,3 @@ Handle(asiData_RESurfaceNode) asiData_RESurfacesNode::Surface(const int oneBased
 
   return NULL;
 }
-
-//! [TRANSACTION] Adds another Surface Node for the given parametric surface.
-//! \param surface [in] parametric surface to store.
-//! \param uLimit  [in] bounding value for U curvilinear axis.
-//! \param vLimit  [in] bounding value for V curvilinear axis.
-//! \return just created Surface Node.
-Handle(asiData_RESurfaceNode)
-  asiData_RESurfacesNode::TX_AddSurface(const Handle(Geom_Surface)& surface,
-                                       const double                uLimit,
-                                       const double                vLimit)
-{
-  Handle(asiData_RESurfaceNode) surf_n;
-  //
-  common_facilities::Instance()->Model->OpenCommand();
-  {
-    surf_n = asiEngine_RE::Create_Surface(surface, uLimit, vLimit);
-  }
-  common_facilities::Instance()->Model->CommitCommand();
-  //
-  return surf_n;
-}
-
-//! [TRANSACTION] Deletes all underlying surfaces.
-void asiData_RESurfacesNode::TX_CleanSurfaces()
-{
-  common_facilities::Instance()->Model->OpenCommand();
-  {
-    asiEngine_RE::Clean_Surfaces();
-  }
-  common_facilities::Instance()->Model->CommitCommand();
-}

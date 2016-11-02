@@ -102,9 +102,9 @@ const Handle(asiVisu_Pipeline)& asiVisu_Prs::GetPipeline(const int theId) const
 //! Gets list of visualization pipelines.
 //! Highlighting pipelines are not included in the list.
 //! \return list of visualization pipeline.
-const Handle(h_asiVisu_Pipeline_list) asiVisu_Prs::GetPipelineList() const
+const Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPipelineList() const
 {
-  Handle(h_asiVisu_Pipeline_list) aList = new h_asiVisu_Pipeline_list();
+  Handle(asiVisu_HPipelineList) aList = new asiVisu_HPipelineList();
   asiVisu_Prs::PipelineMap::Iterator aMapIt( m_pipelineRepo.Find(Group_Prs) );
   for ( ; aMapIt.More(); aMapIt.Next() )
     aList->Append( aMapIt.Value() );
@@ -127,9 +127,9 @@ Handle(asiVisu_Pipeline) asiVisu_Prs::GetPickPipeline(const int theIdx) const
 
 //! Gets list of picking pipelines.
 //! \return list of picking pipeline.
-const Handle(h_asiVisu_Pipeline_list) asiVisu_Prs::GetPickPipelineList() const
+const Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPickPipelineList() const
 {
-  Handle(h_asiVisu_Pipeline_list) aList = new h_asiVisu_Pipeline_list();
+  Handle(asiVisu_HPipelineList) aList = new asiVisu_HPipelineList();
   asiVisu_Prs::PipelineMap::Iterator aMapIt( m_pipelineRepo.Find(Group_Pick) );
   for ( ; aMapIt.More(); aMapIt.Next() )
     aList->Append( aMapIt.Value() );
@@ -147,9 +147,9 @@ const Handle(asiVisu_Pipeline)& asiVisu_Prs::GetDetectPipeline(const int theIdx)
 
 //! Gets list of detection pipelines.
 //! \return list of detection pipeline.
-const Handle(h_asiVisu_Pipeline_list) asiVisu_Prs::GetDetectPipelineList() const
+const Handle(asiVisu_HPipelineList) asiVisu_Prs::GetDetectPipelineList() const
 {
-  Handle(h_asiVisu_Pipeline_list) aList = new h_asiVisu_Pipeline_list();
+  Handle(asiVisu_HPipelineList) aList = new asiVisu_HPipelineList();
   asiVisu_Prs::PipelineMap::Iterator aMapIt( m_pipelineRepo.Find(Group_Detect) );
   for ( ; aMapIt.More(); aMapIt.Next() )
     aList->Append( aMapIt.Value() );
@@ -199,8 +199,8 @@ void asiVisu_Prs::DeRenderPipelines(vtkRenderer* theRenderer) const
 //! \param thePickRes   [in] results of interactive picking.
 //! \param theSelNature [in] selection nature (picking or detection).
 void asiVisu_Prs::Highlight(vtkRenderer*                 theRenderer,
-                         const asiUI_PickResult&      thePickRes,
-                         const asiUI_SelectionNature& theSelNature) const
+                         const asiVisu_PickResult&      thePickRes,
+                         const asiVisu_SelectionNature& theSelNature) const
 {
   this->highlight(theRenderer, thePickRes, theSelNature);
 }
@@ -209,7 +209,7 @@ void asiVisu_Prs::Highlight(vtkRenderer*                 theRenderer,
 //! \param theRenderer  [in] renderer.
 //! \param theSelNature [in] selection nature (picking or detection).
 void asiVisu_Prs::UnHighlight(vtkRenderer*                 theRenderer,
-                           const asiUI_SelectionNature& theSelNature) const
+                           const asiVisu_SelectionNature& theSelNature) const
 {
   this->unHighlight(theRenderer, theSelNature);
 }

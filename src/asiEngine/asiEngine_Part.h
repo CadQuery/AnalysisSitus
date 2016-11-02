@@ -9,17 +9,28 @@
 #define asiEngine_Part_h
 
 // A-Situs includes
-#include <asiEngine.h>
+#include <asiEngine_Model.h>
 
-// A-Situs (geometry) includes
-#include <asiData_PartNode.h>
+// A-Situs (visualization) includes
+#include <asiVisu_PrsManager.h>
 
 // OCCT includes
 #include <TopTools_IndexedMapOfShape.hxx>
 
 //! Data Model API for geometric part.
-namespace asiEngine_Part
+class asiEngine_Part
 {
+public:
+
+  //! ctor.
+  //! \param model [in] Data Model instance.
+  asiEngine_Part(const Handle(asiEngine_Model)&             model,
+                 const vtkSmartPointer<asiVisu_PrsManager>& prsMgr)
+  //
+  : m_model(model), m_prsMgr(prsMgr) {}
+
+public:
+
   asiEngine_EXPORT Handle(asiData_PartNode)
     Create_Part();
 
@@ -56,6 +67,12 @@ namespace asiEngine_Part
 
   asiEngine_EXPORT void
     GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices);
+
+protected:
+
+  Handle(asiEngine_Model)             m_model;  //!< Data Model instance.
+  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr; //!< Presentation Manager.
+
 };
 
 #endif

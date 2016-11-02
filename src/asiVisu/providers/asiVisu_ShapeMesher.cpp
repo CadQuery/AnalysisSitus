@@ -49,9 +49,9 @@ IMPLEMENT_STANDARD_RTTIEXT(asiVisu_ShapeMesher,IVtk_IShapeMesher)
 //================================================================
 void asiVisu_ShapeMesher::internalBuild()
 {
-  // TODO: do we need any protection here so as not to triangualte
+  // TODO: do we need any protection here so as not to triangulate
   // the shape twice??? This can be done e.g. by checking if
-  // triangulation exists for TopoDS_Shape..
+  // triangulation exists for TopoDS_Shape.
   meshShape();
 
   // Free vertices and free edges should always be shown.

@@ -42,68 +42,69 @@ public:
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& theDataProvider) = 0;
 
 public:
 
-  void
+  asiVisu_EXPORT void
     SetInputData(const vtkSmartPointer<vtkDataSet>& data);
 
-  void
+  asiVisu_EXPORT void
     SetInputConnection(vtkAlgorithmOutput* out);
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     Update();
 
-  virtual void
+  asiVisu_EXPORT virtual void
     Build();
 
 public:
 
-  vtkActor*
+  asiVisu_EXPORT vtkActor*
     Actor();
 
-  vtkMapper*
+  asiVisu_EXPORT vtkMapper*
     Mapper();
 
-  void
+  asiVisu_EXPORT void
     AddToRenderer(vtkRenderer* renderer);
 
-  void
+  asiVisu_EXPORT void
     RemoveFromRenderer(vtkRenderer* renderer);
 
 public:
 
-  void
+  asiVisu_EXPORT void
     Modified();
 
-  Handle(ActAux_TimeStamp)
+  asiVisu_EXPORT Handle(ActAux_TimeStamp)
     GetMTime() const;
 
 protected:
 
-  asiVisu_Pipeline(const vtkSmartPointer<vtkMapper>& mapper,
-                const vtkSmartPointer<vtkActor>&  actor);
+  asiVisu_EXPORT
+    asiVisu_Pipeline(const vtkSmartPointer<vtkMapper>& mapper,
+                     const vtkSmartPointer<vtkActor>&  actor);
 
 // Pipeline construction routines to be used by derived classes only:
 protected:
 
-  void
+  asiVisu_EXPORT void
     disable(const int index);
 
-  void
+  asiVisu_EXPORT void
     enable(const int index);
 
-  void
+  asiVisu_EXPORT void
     append(const vtkSmartPointer<vtkAlgorithm>& filter);
 
-  vtkSmartPointer<vtkAlgorithm>
+  asiVisu_EXPORT vtkSmartPointer<vtkAlgorithm>
     filter(const int index) const;
 
-  int
+  asiVisu_EXPORT int
     numFilters() const;
 
 private:
@@ -174,7 +175,7 @@ protected:
 };
 
 //! Shortcuts for list of Pipelines.
-typedef NCollection_Sequence<Handle(asiVisu_Pipeline)> asiVisu_Pipeline_list;
-typedef NCollection_Shared<asiVisu_Pipeline_list>      h_asiVisu_Pipeline_list;
+typedef NCollection_Sequence<Handle(asiVisu_Pipeline)> asiVisu_PipelineList;
+typedef NCollection_Shared<asiVisu_PipelineList>       asiVisu_HPipelineList;
 
 #endif

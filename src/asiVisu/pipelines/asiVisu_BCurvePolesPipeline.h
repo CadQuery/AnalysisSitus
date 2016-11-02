@@ -37,21 +37,22 @@ public:
 
 public:
 
-  asiVisu_BCurvePolesPipeline();
+  asiVisu_EXPORT
+    asiVisu_BCurvePolesPipeline();
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 public:
 
-  void
+  asiVisu_EXPORT void
     SetSelectedPoles(const TColStd_PackedMapOfInteger& mask);
 
 public:
 
-  inline void ForceExecution() { m_bForced = true; }
+  void ForceExecution() { m_bForced = true; }
 
 private:
 

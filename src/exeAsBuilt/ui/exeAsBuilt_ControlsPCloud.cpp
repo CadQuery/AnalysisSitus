@@ -129,3 +129,16 @@ void exeAsBuilt_ControlsPCloud::onEstimNormals()
   //asiAlgo_PointCloudNormals::Calculate( PN->GetPoints() );
   // TODO
 }
+
+//-----------------------------------------------------------------------------
+
+//! Builds point cloud from the model.
+void asiUI_ControlsPart::onCloudify()
+{
+  TopoDS_Shape part;
+  if ( !asiUI_Common::PartShape(part) ) return;
+
+  // Run dialog for cloudification
+  asiUI_DialogCloudify* wCloudify = new asiUI_DialogCloudify(this);
+  wCloudify->show();
+}

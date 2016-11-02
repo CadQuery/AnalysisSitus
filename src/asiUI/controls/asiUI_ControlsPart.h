@@ -11,6 +11,16 @@
 // asiUI includes
 #include <asiUI.h>
 
+// asiEngine includes
+#include <asiEngine_Model.h>
+
+// asiVisu includes
+#include <asiVisu_PrsManager.h>
+
+// Active Data includes
+#include <ActAPI_IPlotter.h>
+#include <ActAPI_IProgressNotifier.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QPushButton>
@@ -24,27 +34,44 @@ class asiUI_ControlsPart : public QWidget
 
 public:
 
-  asiUI_ControlsPart(QWidget* parent = NULL);
+  asiUI_ControlsPart(const Handle(asiEngine_Model)&             model,
+                     const vtkSmartPointer<asiVisu_PrsManager>& partPrsMgr,
+                     ActAPI_ProgressEntry                       notifier,
+                     ActAPI_PlotterEntry                        plotter,
+                     QWidget*                                   parent = NULL);
+  //
   virtual ~asiUI_ControlsPart();
 
 public slots:
 
-  void onLoadBRep         ();
-  void onLoadSTEP         ();
-  void onLoadSTL          ();
-  void onSaveSTEP         ();
-  void onSavePly          ();
-  void onSaveBRep         ();
+  void onLoadBRep      ();
+  void onLoadSTEP      ();
+  void onLoadSTL       ();
+  void onSaveSTEP      ();
+  void onSavePly       ();
+  void onSaveBRep      ();
   //
-  void onCheckShape       ();
-  void onTolerance        ();
-  void onSewing           ();
-  void onMaximizeFaces    ();
+  void onCheckShape    ();
+  void onTolerance     ();
+  void onSewing        ();
+  void onMaximizeFaces ();
   //
-  void onShowVertices     ();
-  void onShowNormals      ();
-  void onSelectFaces      ();
-  void onSelectEdges      ();
+  void onShowVertices  ();
+  void onShowNormals   ();
+  void onSelectFaces   ();
+  void onSelectEdges   ();
+
+signals:
+
+  void partLoaded       ();
+  void partSaved        ();
+  void partModified     ();
+  void verticesOn       ();
+  void verticesOff      ();
+  void normalsOn        ();
+  void normalsOff       ();
+  void selectionFacesOn ();
+  void selectionEdgesOn ();
 
 private:
 
@@ -89,7 +116,6 @@ private:
                   pOBB              (NULL),
                   pCR               (NULL),
                   pCloudify         (NULL),
-                  pMultiLine        (NULL),
                   //
                   pShowVertices     (NULL),
                   pShowNormals      (NULL),
@@ -114,7 +140,6 @@ private:
       delete pOBB;              pOBB              = NULL;
       delete pCR;               pCR               = NULL;
       delete pCloudify;         pCloudify         = NULL;
-      delete pMultiLine;        pMultiLine        = NULL;
       //
       delete pShowVertices;     pShowVertices     = NULL;
       delete pShowNormals;      pShowNormals      = NULL;
@@ -123,7 +148,11 @@ private:
     }
   };
 
-  t_widgets m_widgets; //!< Involved widgets.
+  t_widgets                           m_widgets;    //!< Involved widgets.
+  Handle(asiEngine_Model)             m_model;      //!< Data Model instance.
+  vtkSmartPointer<asiVisu_PrsManager> m_partPrsMgr; //!< Presentation manager for Part Node.
+  ActAPI_ProgressEntry                m_notifier;   //!< Progress Notifier.
+  ActAPI_PlotterEntry                 m_plotter;    //!< Imperative Plotter.
 
 };
 

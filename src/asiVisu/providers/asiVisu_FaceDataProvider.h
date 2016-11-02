@@ -11,6 +11,9 @@
 // A-Situs visualization includes
 #include <asiVisu_DataProvider.h>
 
+// asiData includes
+#include <asiData_FaceNode.h>
+
 // OCCT includes
 #include <TopTools_IndexedMapOfShape.hxx>
 
@@ -26,19 +29,26 @@ public:
 
 public:
 
-  asiVisu_FaceDataProvider(const ActAPI_DataObjectId&           theNodeId,
-                           const Handle(ActAPI_HParameterList)& theParamList);
+  asiVisu_EXPORT
+    asiVisu_FaceDataProvider(const Handle(asiData_FaceNode)& face_n);
 
 public:
 
-  ActAPI_DataObjectId GetNodeID                  () const;
-  int                 GetFaceIndexAmongSubshapes () const;
-  int                 GetFaceIndexAmongFaces     () const;
-  TopoDS_Face         ExtractFace                () const;
+  asiVisu_EXPORT ActAPI_DataObjectId
+    GetNodeID() const;
+
+  asiVisu_EXPORT int
+    GetFaceIndexAmongSubshapes() const;
+
+  asiVisu_EXPORT int
+    GetFaceIndexAmongFaces() const;
+
+  asiVisu_EXPORT TopoDS_Face
+    ExtractFace() const;
 
 public:
 
-  Handle(asiVisu_FaceDataProvider)
+  asiVisu_EXPORT Handle(asiVisu_FaceDataProvider)
     Clone() const;
 
 private:
@@ -48,11 +58,8 @@ private:
 
 private:
 
-  //! Source Node ID.
-  ActAPI_DataObjectId m_nodeID;
-
-  //! Source Parameters.
-  Handle(ActAPI_HParameterList) m_params;
+  //! Source Node.
+  Handle(asiData_FaceNode) m_faceNode;
 
   //! Map of sub-shapes.
   TopTools_IndexedMapOfShape m_subShapes;

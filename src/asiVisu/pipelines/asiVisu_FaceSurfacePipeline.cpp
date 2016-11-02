@@ -8,9 +8,6 @@
 // Own include
 #include <asiVisu_FaceSurfacePipeline.h>
 
-// Common includes
-#include <common_facilities.h>
-
 // Visualization includes
 #include <asiVisu_CurveSource.h>
 #include <asiVisu_FaceDataProvider.h>

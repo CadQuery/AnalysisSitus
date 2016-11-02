@@ -35,9 +35,9 @@ class asiVisu_ShapeMesher : public IVtk_IShapeMesher
 {
 public:
   asiVisu_ShapeMesher (const Standard_Real& theDevCoeff = 0.0001,
-                     const Standard_Real& theDevAngle = 12.0 * M_PI / 180.0,
-                     const Standard_Integer theNbUIsos = 1,
-                     const Standard_Integer theNbVIsos = 1)
+                       const Standard_Real& theDevAngle = 12.0 * M_PI / 180.0,
+                       const Standard_Integer theNbUIsos = 1,
+                       const Standard_Integer theNbVIsos = 1)
  : myDevCoeff (theDevCoeff),
    myDevAngle (theDevAngle),
    myDeflection (0.0)

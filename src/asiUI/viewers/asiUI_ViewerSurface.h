@@ -5,24 +5,24 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_Viewer_surface_h
-#define asiUI_Viewer_surface_h
+#ifndef asiUI_ViewerSurface_h
+#define asiUI_ViewerSurface_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiUI.h>
 
 // GUI includes
 #include <asiUI_Viewer.h>
 
 //! Viewer for surface.
-class asiUI_Viewer_surface : public asiUI_Viewer
+class asiUI_ViewerSurface : public asiUI_Viewer
 {
   Q_OBJECT
 
 public:
 
-  asiUI_Viewer_surface(QWidget* parent = NULL);
-  virtual ~asiUI_Viewer_surface();
+  asiUI_ViewerSurface(QWidget* parent = NULL);
+  virtual ~asiUI_ViewerSurface();
 
 public:
 

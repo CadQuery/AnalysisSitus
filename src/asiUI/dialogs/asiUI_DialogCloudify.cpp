@@ -35,14 +35,16 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
+//! \param model    [in] Data Model instance.
 //! \param notifier [in] progress notifier.
 //! \param plotter  [in] imperative plotter.
 //! \param parent   [in] parent widget.
-asiUI_DialogCloudify::asiUI_DialogCloudify(ActAPI_ProgressEntry notifier,
-                                           ActAPI_PlotterEntry  plotter,
-                                           QWidget*             parent)
+asiUI_DialogCloudify::asiUI_DialogCloudify(const Handle(asiEngine_Model)& model,
+                                           ActAPI_ProgressEntry           notifier,
+                                           ActAPI_PlotterEntry            plotter,
+                                           QWidget*                       parent)
 //
-: asiUI_Dialog(notifier, plotter, parent)
+: asiUI_Dialog(notifier, plotter, parent), m_model(model)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -56,9 +58,10 @@ asiUI_DialogCloudify::asiUI_DialogCloudify(ActAPI_ProgressEntry notifier,
   // Sizing
   m_widgets.pLinearStep->setMinimumWidth(CONTROL_EDIT_WIDTH);
 
-  // Default values
-  TopoDS_Shape part;
-  if ( !asiUI_Common::PartShape(part) ) return;
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
   //
   // Depending on the bounding box of the part, we now choose the most
   // suitable parameters for sampling
@@ -129,8 +132,10 @@ void asiUI_DialogCloudify::onPerform()
   // Convert user input to double
   const double linStep = QVariant( m_widgets.pLinearStep->text() ).toDouble();
 
-  TopoDS_Shape part;
-  if ( !asiUI_Common::PartShape(part) ) return;
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
   TIMER_NEW
   TIMER_GO

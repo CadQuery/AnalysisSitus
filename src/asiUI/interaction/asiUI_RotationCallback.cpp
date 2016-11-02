@@ -14,9 +14,6 @@
 // A-Situs (GUI) includes
 #include <asiUI_ViewerPart.h>
 
-// A-Situs (common) includes
-#include <common_facilities.h>
-
 // VTK includes
 #include <vtkCamera.h>
 #include <vtkProperty.h>
@@ -40,9 +37,9 @@ asiUI_RotationCenterCallback::asiUI_RotationCenterCallback() : asiVisu_MeshDataP
 //! \param z    [in] z coordinate of the center point.
 //! \param side [in] side of the rotation marker.
 void asiUI_RotationCenterCallback::Init(const double x,
-                                         const double y,
-                                         const double z,
-                                         const double side)
+                                        const double y,
+                                        const double z,
+                                        const double side)
 {
   m_mesh = new Mesh;
   const int vertices[] = { m_mesh->AddNode(x + side, y - side, z - side),
@@ -118,10 +115,8 @@ void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(theCaller),
   if ( !this->Viewer() )
     return;
 
-  if ( !common_facilities::Instance()->Prs.Part )
-    return;
-
-  vtkRenderer* aRenderer = common_facilities::Instance()->Prs.Part->GetRenderer();
+  const vtkSmartPointer<asiVisu_PrsManager>& prsMgr   = this->Viewer()->PrsMgr();
+  vtkRenderer*                               renderer = prsMgr->GetRenderer();
 
   // Add/Remove anchor to/from renderer
   if ( theEventId == EVENT_ROTATION_START )
@@ -132,11 +127,11 @@ void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(theCaller),
       return;
 
     double X, Y, Z;
-    vtkCamera* aCamera = aRenderer->GetActiveCamera();
+    vtkCamera* aCamera = renderer->GetActiveCamera();
     aCamera->GetFocalPoint(X, Y, Z);
 
     // Initialize Data Provider
-    m_prv->Init( X, Y, Z, this->getScaledSize(aRenderer) );
+    m_prv->Init( X, Y, Z, this->getScaledSize(renderer) );
 
     // Initialize pipeline
     m_pl->SetInput(m_prv);
@@ -146,12 +141,12 @@ void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(theCaller),
     this->setVisualProps();
 
     // Render
-    m_pl->AddToRenderer(aRenderer);
+    m_pl->AddToRenderer(renderer);
   }
   else
   {
     m_bIsStarted = false;
-    m_pl->RemoveFromRenderer(aRenderer);
+    m_pl->RemoveFromRenderer(renderer);
   }
 
   this->Viewer()->Repaint();

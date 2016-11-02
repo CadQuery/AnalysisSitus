@@ -8,9 +8,6 @@
 // Own include
 #include <asiData_REPointsNode.h>
 
-// Common includes
-#include <common_facilities.h>
-
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
@@ -70,15 +67,4 @@ Handle(asiAlgo_PointCloud) asiData_REPointsNode::GetPoints() const
   //
   Handle(asiAlgo_PointCloud) result = new asiAlgo_PointCloud(coords);
   return result;
-}
-
-//! Sets point cloud to store.
-//! \param points [in] points to store.
-void asiData_REPointsNode::TX_SetPoints(const Handle(asiAlgo_PointCloud)& points)
-{
-  common_facilities::Instance()->Model->OpenCommand();
-  {
-    ActParamTool::AsRealArray( this->Parameter(PID_Points) )->SetArray( points->GetPoints() );
-  }
-  common_facilities::Instance()->Model->CommitCommand();
 }

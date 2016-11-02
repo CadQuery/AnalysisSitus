@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef gui_vtk_window_h
-#define gui_vtk_window_h
+#ifndef asiUI_VtkWindow_h
+#define asiUI_VtkWindow_h
 
 // Analysis Situs includes
-#include <analysis_situs.h>
+#include <asiUI.h>
 
 // QVTK includes
 #pragma warning(push, 0)
@@ -17,21 +17,21 @@
 #pragma warning(pop)
 
 //! Sub-class for QVTKWidget to override its closeEvent().
-class gui_vtk_window : public QVTKWidget
+class asiUI_VtkWindow : public QVTKWidget
 {
   Q_OBJECT
 
 public:
 
-  ASitus_EXPORT
-    gui_vtk_window(QWidget* parent = NULL, Qt::WindowFlags f = 0);
+  asiUI_EXPORT
+    asiUI_VtkWindow(QWidget* parent = NULL, Qt::WindowFlags f = 0);
 
-  ASitus_EXPORT
-    virtual ~gui_vtk_window();
+  asiUI_EXPORT
+    virtual ~asiUI_VtkWindow();
 
 protected:
 
-  ASitus_EXPORT virtual void
+  asiUI_EXPORT virtual void
     closeEvent(QCloseEvent* pEvent);
 
 signals:

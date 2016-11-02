@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_InteractorStylePick2d_h
-#define asiUI_InteractorStylePick2d_h
+#ifndef asiVisu_InteractorStylePick2d_h
+#define asiVisu_InteractorStylePick2d_h
 
 // A-Situs (UI) includes
-#include <asiUI_Selection.h>
+#include <asiVisu_Selection.h>
 
 // VTK includes
 #include <vtkInteractorStyleImage.h>
@@ -20,12 +20,12 @@
 
 //! Class representing a specific VTK Interactor Style propagating picking
 //! event for a 2D viewer.
-class asiUI_InteractorStylePick2d : public vtkInteractorStyleImage
+class asiVisu_InteractorStylePick2d : public vtkInteractorStyleImage
 {
 public:
 
-  static asiUI_InteractorStylePick2d* New();
-  vtkTypeMacro(asiUI_InteractorStylePick2d, vtkInteractorStyleImage);
+  static asiVisu_InteractorStylePick2d* New();
+  vtkTypeMacro(asiVisu_InteractorStylePick2d, vtkInteractorStyleImage);
 
 // Customization:
 public:
@@ -51,15 +51,15 @@ public:
 private:
 
   //! Copying prohibited.
-  asiUI_InteractorStylePick2d(const asiUI_InteractorStylePick2d&);
+  asiVisu_InteractorStylePick2d(const asiVisu_InteractorStylePick2d&);
 
   //! Assignment prohibited.
-  void operator=(const asiUI_InteractorStylePick2d&);
+  void operator=(const asiVisu_InteractorStylePick2d&);
 
 private:
 
-  asiUI_InteractorStylePick2d();
-  ~asiUI_InteractorStylePick2d();
+  asiVisu_InteractorStylePick2d();
+  ~asiVisu_InteractorStylePick2d();
 
 private:
 
@@ -67,7 +67,7 @@ private:
   vtkSmartPointer<vtkRenderer> m_renderer;
 
   //! Pick input data.
-  asiUI_PickInput* m_pPickInput;
+  asiVisu_PickInput* m_pPickInput;
 
 };
 

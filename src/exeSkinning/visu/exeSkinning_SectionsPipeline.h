@@ -1,12 +1,12 @@
 //-----------------------------------------------------------------------------
-// Created on: 15 December 2015
+// Created on: 09 December 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_SectionPipeline_h
-#define asiVisu_SectionPipeline_h
+#ifndef asiVisu_SectionsPipeline_h
+#define asiVisu_SectionsPipeline_h
 
 // A-Situs includes
 #include <asiVisu_DataProvider.h>
@@ -17,23 +17,24 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_SectionPipeline, asiVisu_Pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_SectionsPipeline, asiVisu_Pipeline)
 
-//! Visualization pipeline for a single skinning section.
-class asiVisu_SectionPipeline : public asiVisu_Pipeline
+//! Visualization pipeline for a set of skinning sections.
+class asiVisu_SectionsPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_SectionPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_SectionsPipeline, asiVisu_Pipeline)
 
 public:
 
-  asiVisu_SectionPipeline();
+  asiVisu_EXPORT
+    asiVisu_SectionsPipeline();
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:
@@ -45,14 +46,10 @@ private:
 private:
 
   //! Copying prohibited.
-  asiVisu_SectionPipeline(const asiVisu_SectionPipeline&);
+  asiVisu_SectionsPipeline(const asiVisu_SectionsPipeline&);
 
   //! Assignment prohibited.
-  asiVisu_SectionPipeline& operator=(const asiVisu_SectionPipeline&);
-
-private:
-
-  bool m_bMapperColorsSet; //!< Boolean flag indicating whether lookup table is set.
+  asiVisu_SectionsPipeline& operator=(const asiVisu_SectionsPipeline&);
 
 };
 

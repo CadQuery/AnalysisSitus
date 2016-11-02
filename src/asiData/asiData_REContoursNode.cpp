@@ -8,12 +8,6 @@
 // Own include
 #include <asiData_REContoursNode.h>
 
-// Common includes
-#include <common_facilities.h>
-
-// Engine includes
-#include <asiEngine_RE.h>
-
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
@@ -82,31 +76,4 @@ Handle(asiData_REContourNode) asiData_REContoursNode::Contour(const int oneBased
   }
 
   return NULL;
-}
-
-//! [TRANSACTION] Adds another Contour Node for the given wire.
-//! \param contour [in] wire to store as a contour.
-//! \return just created Contour Node.
-Handle(asiData_REContourNode)
-  asiData_REContoursNode::TX_AddContour(const TopoDS_Wire& contour)
-{
-  Handle(asiData_REContourNode) contour_n;
-  //
-  common_facilities::Instance()->Model->OpenCommand();
-  {
-    contour_n = asiEngine_RE::Create_Contour(contour);
-  }
-  common_facilities::Instance()->Model->CommitCommand();
-  //
-  return contour_n;
-}
-
-//! [TRANSACTION] Deletes all underlying contours.
-void asiData_REContoursNode::TX_CleanContours()
-{
-  common_facilities::Instance()->Model->OpenCommand();
-  {
-    asiEngine_RE::Clean_Contours();
-  }
-  common_facilities::Instance()->Model->CommitCommand();
 }

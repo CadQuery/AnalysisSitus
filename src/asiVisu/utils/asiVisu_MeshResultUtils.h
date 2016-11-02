@@ -9,7 +9,7 @@
 #define asiVisu_MeshResultUtils_h
 
 // Visualization includes
-#include <asiVisu_Common.h>
+#include <asiVisu.h>
 
 // VTK includes
 #include <vtkLookupTable.h>
@@ -28,43 +28,43 @@
 //! results on meshes.
 namespace asiVisu_MeshResultUtils
 {
-  vtkSmartPointer<vtkLookupTable>
+  asiVisu_EXPORT vtkSmartPointer<vtkLookupTable>
     InitLookupTable(const double theRangeMin,
                     const double theRangeMax);
 
-  void
+  asiVisu_EXPORT void
     InitCellScalarMapper(vtkMapper* theMapper,
                          vtkLookupTable* theLookup,
                          const char* theScalarsArrName,
                          const bool doInterpolation = true);
 
-  void
+  asiVisu_EXPORT void
     InitCellScalarMapper(vtkMapper* theMapper,
                          const char* theScalarsArrName,
                          const double theRangeMin,
                          const double theRangeMax,
                          const bool doInterpolation = true);
 
-  void
+  asiVisu_EXPORT void
     InitPointScalarMapper(vtkMapper* theMapper,
                           vtkLookupTable* theLookup,
                           const char* theScalarsArrName,
                           const bool doInterpolation = true);
 
-  void
+  asiVisu_EXPORT void
     InitPointScalarMapper(vtkMapper* theMapper,
                           const char* theScalarsArrName,
                           const double theRangeMin,
                           const double theRangeMax,
                           const bool doInterpolation = true);
 
-  void
+  asiVisu_EXPORT void
     InitScalarBarWidget(vtkScalarBarWidget* theScalarBarWidget);
 
-  vtkSmartPointer<vtkPolyDataAlgorithm>
+  asiVisu_EXPORT vtkSmartPointer<vtkPolyDataAlgorithm>
     GetVectorGlyph();
 
-  vtkSmartPointer<vtkTransform>
+  asiVisu_EXPORT vtkSmartPointer<vtkTransform>
     GetVectorGlyphTransform();
 };
 

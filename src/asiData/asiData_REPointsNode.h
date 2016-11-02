@@ -8,6 +8,9 @@
 #ifndef asiData_REPointsNode_h
 #define asiData_REPointsNode_h
 
+// asiData includes
+#include <asiData.h>
+
 // Geometry includes
 #include <asiAlgo_PointCloud.h>
 

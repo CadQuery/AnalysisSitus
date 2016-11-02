@@ -14,9 +14,9 @@
 // A-Situs (GUI) includes
 #include <asiUI_ControlsPart.h>
 #include <asiUI_ObjectBrowser.h>
-#include <asiUI_Viewer_domain.h>
+#include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerPart.h>
-#include <asiUI_Viewer_surface.h>
+#include <asiUI_ViewerSurface.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -49,9 +49,9 @@ private:
   struct t_widgets
   {
     asiUI_ObjectBrowser* wBrowser;       //!< Object browser.
-    asiUI_Viewer_domain*  wViewerDomain;  //!< Parametric domain viewer.
+    asiUI_ViewerDomain*  wViewerDomain;  //!< Parametric domain viewer.
     asiUI_ViewerPart*    wViewerPart;    //!< Part viewer.
-    asiUI_Viewer_surface* wViewerSurface; //!< Surface viewer.
+    asiUI_ViewerSurface* wViewerSurface; //!< Surface viewer.
     asiUI_ControlsPart*  wControlsPart;  //!< Part controls.
 
     t_widgets() : wBrowser       (NULL),

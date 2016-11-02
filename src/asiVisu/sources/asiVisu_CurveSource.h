@@ -46,19 +46,19 @@ public:
     SetInputCurve(const Handle(Geom_Curve)& curve,
                   const double              first,
                   const double              last,
-                  const visu_orientation    ori = VisuOri_Internal);
+                  const asiVisu_Orientation    ori = VisuOri_Internal);
 
   bool
     SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
                     const double                first,
                     const double                last,
-                    const visu_orientation      ori = VisuOri_Internal);
+                    const asiVisu_Orientation      ori = VisuOri_Internal);
 
   void
     SetInputArrays(const Handle(HRealArray)& xCoords,
                    const Handle(HRealArray)& yCoords,
                    const Handle(HRealArray)& zCoords,
-                   const visu_orientation    ori = VisuOri_Undefined);
+                   const asiVisu_Orientation    ori = VisuOri_Undefined);
 
 public:
 
@@ -123,7 +123,7 @@ private:
 // Orientation marker:
 private:
 
-  visu_orientation m_ori;         //!< Curve orientation.
+  asiVisu_Orientation m_ori;         //!< Curve orientation.
   double           m_fOriTipSize; //!< Size of orientation tip (calculated externally).
   gp_Vec           m_oriT;        //!< Orientation vector at the end point.
   gp_Vec           m_oriN;        //!< Normal to the curve at the end point.

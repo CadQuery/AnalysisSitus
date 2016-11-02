@@ -26,11 +26,12 @@ public:
 
 public:
 
-  asiVisu_EdgeDomainPipeline();
+  asiVisu_EXPORT
+    asiVisu_EdgeDomainPipeline();
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:

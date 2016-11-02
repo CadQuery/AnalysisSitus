@@ -29,11 +29,12 @@ public:
 
 public:
 
-  asiVisu_CurvePipeline();
+  asiVisu_EXPORT
+    asiVisu_CurvePipeline();
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:

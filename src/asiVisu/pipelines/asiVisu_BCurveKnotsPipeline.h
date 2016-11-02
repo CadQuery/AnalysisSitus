@@ -29,11 +29,12 @@ public:
 
 public:
 
-  asiVisu_BCurveKnotsPipeline();
+  asiVisu_EXPORT
+    asiVisu_BCurveKnotsPipeline();
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:

@@ -11,6 +11,9 @@
 // A-Situs visualization includes
 #include <asiVisu_PointsDataProvider.h>
 
+// asiData includes
+#include <asiData_REPointsNode.h>
+
 DEFINE_STANDARD_HANDLE(asiVisu_REPointsDataProvider, asiVisu_PointsDataProvider)
 
 //! Data provider for re-engineering point cloud.
@@ -23,17 +26,22 @@ public:
 
 public:
 
-  asiVisu_REPointsDataProvider();
+  asiVisu_EXPORT
+    asiVisu_REPointsDataProvider(const Handle(asiData_REPointsNode)& points_n);
 
 public:
 
-  virtual Handle(asiAlgo_PointCloud)
+  asiVisu_EXPORT virtual Handle(asiAlgo_PointCloud)
     GetPoints() const;
 
 private:
 
   virtual Handle(ActAPI_HParameterList)
     translationSources() const;
+
+protected:
+
+  Handle(asiData_REPointsNode) m_points; //!< Points Data Node.
 
 };
 

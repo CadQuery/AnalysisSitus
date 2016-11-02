@@ -8,9 +8,6 @@
 // Own include
 #include <asiVisu_FaceDataProvider.h>
 
-// A-Situs (common) includes
-#include <common_facilities.h>
-
 // A-Situs (geometry) includes
 #include <asiData_PartNode.h>
 
@@ -23,18 +20,14 @@
 
 //-----------------------------------------------------------------------------
 
-//! Constructor accepting the set of source data structures.
-//! \param theNodeId    [in] ID of the target Data Node.
-//! \param theParamList [in] source Parameters.
-asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const ActAPI_DataObjectId&           theNodeId,
-                                                 const Handle(ActAPI_HParameterList)& theParamList)
-: asiVisu_DataProvider()
+//! Constructor.
+//! \param face_n [in] source Data Node.
+asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const Handle(asiData_FaceNode)& face_n)
+: asiVisu_DataProvider(), m_faceNode(face_n)
 {
-  m_nodeID = theNodeId;
-  m_params = theParamList;
-
   // Access owning geometry
-  Handle(asiData_PartNode) geom_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode)
+    geom_n = Handle(asiData_PartNode)::DownCast( m_faceNode->GetParentNode() );
 
   // Build maps
   if ( !geom_n->GetShape().IsNull() )
@@ -52,19 +45,19 @@ asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const ActAPI_DataObjectId&   
 //! \return Node ID.
 ActAPI_DataObjectId asiVisu_FaceDataProvider::GetNodeID() const
 {
-  return m_nodeID;
+  return m_faceNode->GetId();
 }
 
 //! \return global index of the OCCT face to be visualized.
 int asiVisu_FaceDataProvider::GetFaceIndexAmongSubshapes() const
 {
-  return ActParamTool::AsInt( m_params->Value(1) )->GetValue();
+  return m_faceNode->GetSelectedFace();
 }
 
 //! \return local index of the OCCT face to be visualized.
 int asiVisu_FaceDataProvider::GetFaceIndexAmongFaces() const
 {
-  const int globalId = ActParamTool::AsInt( m_params->Value(1) )->GetValue();
+  const int globalId = m_faceNode->GetSelectedFace();
 
   if ( globalId )
     return m_faces.FindIndex( m_subShapes.FindKey(globalId) );
@@ -94,7 +87,7 @@ TopoDS_Face asiVisu_FaceDataProvider::ExtractFace() const
 //! \return copy.
 Handle(asiVisu_FaceDataProvider) asiVisu_FaceDataProvider::Clone() const
 {
-  return new asiVisu_FaceDataProvider(m_nodeID, m_params);
+  return new asiVisu_FaceDataProvider(m_faceNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -104,5 +97,5 @@ Handle(asiVisu_FaceDataProvider) asiVisu_FaceDataProvider::Clone() const
 //! \return source Parameters.
 Handle(ActAPI_HParameterList) asiVisu_FaceDataProvider::translationSources() const
 {
-  return ActParamStream() << m_params->Value(1); // Parameter for face index
+  return ActParamStream() << m_faceNode->Parameter(asiData_FaceNode::PID_SelectedFace); // Parameter for face index
 }

@@ -9,13 +9,13 @@
 #define common_facilities_h
 
 // A-Situs (common) includes
-#include <asiData_Model.h>
+#include <asiEngine_Model.h>
 
 // A-Situs (XDE) includes
 #include <xde_model.h>
 
 // A-Situs (journaling) includes
-#include <asiVisu_JournalIV.h>
+#include <asiUI_JournalIV.h>
 #include <journal_notifier.h>
 
 // A-Situs (GUI) includes
@@ -23,7 +23,7 @@
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ObjectBrowser_xde.h>
 #include <asiUI_Viewer_dmu.h>
-#include <asiUI_Viewer_domain.h>
+#include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerPart.h>
 
 // A-Situs (visualization) includes
@@ -49,7 +49,7 @@ public:
 
 public:
 
-  Handle(asiData_Model)             Model;             //!< Active Data Model instance.
+  Handle(asiEngine_Model)             Model;             //!< Active Data Model instance.
   Handle(xde_model)                Model_XDE;         //!< XDE Data Model instance.
   //
   gui_decomposition_browser*       DecompBrowser;     //!< Volume decomposition browser.
@@ -58,7 +58,7 @@ public:
   Handle(ActAPI_INode)             CurrentNode;       //!< Currently selected Node.
   //
   asiUI_ViewerPart*                 ViewerPart;        //!< Viewer for part.
-  asiUI_Viewer_domain*               ViewerDomain;      //!< Viewer for face parametric domain.
+  asiUI_ViewerDomain*               ViewerDomain;      //!< Viewer for face parametric domain.
   asiUI_Viewer_dmu*                  ViewerDMU;         //!< OpenCascade-driven viewer for dMU.
   //
   Handle(ActAPI_IProgressNotifier) Notifier;          //!< Algorithmic notifier.
@@ -152,7 +152,7 @@ private:
       ViewerDMU         (NULL)
   {
     Notifier = new journal_notifier;
-    Plotter  = new asiVisu_JournalIV;
+    Plotter  = new asiUI_JournalIV;
   }
 
 private:

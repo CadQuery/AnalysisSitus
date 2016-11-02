@@ -26,11 +26,13 @@ public:
 
 public:
 
-  asiVisu_PointsDataProvider(const Handle(ActAPI_INode)& N);
+  asiVisu_EXPORT
+    asiVisu_PointsDataProvider(const Handle(ActAPI_INode)& N);
 
 public:
 
-  virtual ActAPI_DataObjectId GetNodeID() const;
+  asiVisu_EXPORT virtual ActAPI_DataObjectId
+    GetNodeID() const;
 
 public:
 

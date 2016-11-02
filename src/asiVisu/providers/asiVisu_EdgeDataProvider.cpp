@@ -8,9 +8,6 @@
 // Own include
 #include <asiVisu_EdgeDataProvider.h>
 
-// A-Situs (common) includes
-#include <common_facilities.h>
-
 // A-Situs (geometry) includes
 #include <asiData_PartNode.h>
 
@@ -24,18 +21,14 @@
 
 //-----------------------------------------------------------------------------
 
-//! Constructor accepting the set of source data structures.
-//! \param theNodeId    [in] ID of the target Data Node.
-//! \param theParamList [in] source Parameters.
-asiVisu_EdgeDataProvider::asiVisu_EdgeDataProvider(const ActAPI_DataObjectId&           theNodeId,
-                                                 const Handle(ActAPI_HParameterList)& theParamList)
-: asiVisu_CurveDataProvider()
+//! Constructor.
+//! \param edge_n [in] source Data Node.
+asiVisu_EdgeDataProvider::asiVisu_EdgeDataProvider(const Handle(asiData_EdgeNode)& edge_n)
+: asiVisu_CurveDataProvider(), m_edgeNode(edge_n)
 {
-  m_nodeID = theNodeId;
-  m_params = theParamList;
-
   // Access owning geometry
-  Handle(asiData_PartNode) geom_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode)
+    geom_n = Handle(asiData_PartNode)::DownCast( m_edgeNode->GetParentNode() );
 
   // Build maps
   if ( !geom_n->GetShape().IsNull() )
@@ -53,7 +46,7 @@ asiVisu_EdgeDataProvider::asiVisu_EdgeDataProvider(const ActAPI_DataObjectId&   
 //! \return Node ID.
 ActAPI_DataObjectId asiVisu_EdgeDataProvider::GetNodeID() const
 {
-  return m_nodeID;
+  return m_edgeNode->GetId();
 }
 
 //-----------------------------------------------------------------------------
@@ -61,7 +54,7 @@ ActAPI_DataObjectId asiVisu_EdgeDataProvider::GetNodeID() const
 //! \return global index of the OCCT edge to be visualized.
 int asiVisu_EdgeDataProvider::GetEdgeIndexAmongSubshapes() const
 {
-  return ActParamTool::AsInt( m_params->Value(1) )->GetValue();
+  return m_edgeNode->GetSelectedEdge();
 }
 
 //-----------------------------------------------------------------------------
@@ -69,7 +62,7 @@ int asiVisu_EdgeDataProvider::GetEdgeIndexAmongSubshapes() const
 //! \return local index of the OCCT edges to be visualized.
 int asiVisu_EdgeDataProvider::GetEdgeIndexAmongEdges() const
 {
-  const int globalId = ActParamTool::AsInt( m_params->Value(1) )->GetValue();
+  const int globalId = m_edgeNode->GetSelectedEdge();
 
   if ( globalId )
     return m_edges.FindIndex( m_subShapes.FindKey(globalId) );
@@ -139,7 +132,7 @@ Handle(Geom_Curve) asiVisu_EdgeDataProvider::GetCurve(double& f, double& l) cons
 //! \return copy.
 Handle(asiVisu_EdgeDataProvider) asiVisu_EdgeDataProvider::Clone() const
 {
-  return new asiVisu_EdgeDataProvider(m_nodeID, m_params);
+  return new asiVisu_EdgeDataProvider(m_edgeNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -149,7 +142,7 @@ Handle(asiVisu_EdgeDataProvider) asiVisu_EdgeDataProvider::Clone() const
 //! \return source Parameters.
 Handle(ActAPI_HParameterList) asiVisu_EdgeDataProvider::translationSources() const
 {
-  return ActParamStream() << m_params->Value(1); // Parameter for edge index
+  return ActParamStream() << m_edgeNode->Parameter(asiData_EdgeNode::PID_SelectedEdge); // Parameter for edge index
 }
 
 //-----------------------------------------------------------------------------

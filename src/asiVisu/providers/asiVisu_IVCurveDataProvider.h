@@ -23,25 +23,26 @@ public:
 
 public:
 
-  asiVisu_IVCurveDataProvider(const Handle(ActAPI_INode)& N);
+  asiVisu_EXPORT
+    asiVisu_IVCurveDataProvider(const Handle(ActAPI_INode)& N);
 
 public:
 
-  virtual Handle(Standard_Type)
+  asiVisu_EXPORT virtual Handle(Standard_Type)
     GetCurveType() const;
 
-  virtual Handle(Geom2d_Curve)
+  asiVisu_EXPORT virtual Handle(Geom2d_Curve)
     GetCurve2d(double& f, double& l) const;
 
-  virtual Handle(Geom_Curve)
+  asiVisu_EXPORT virtual Handle(Geom_Curve)
     GetCurve(double& f, double& l) const;
 
-  virtual ActAPI_DataObjectId
+  asiVisu_EXPORT virtual ActAPI_DataObjectId
     GetNodeID() const;
 
 public:
 
-  Handle(asiVisu_IVCurveDataProvider)
+  asiVisu_EXPORT Handle(asiVisu_IVCurveDataProvider)
     Clone() const;
 
 private:

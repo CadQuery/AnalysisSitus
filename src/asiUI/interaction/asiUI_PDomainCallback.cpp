@@ -8,6 +8,9 @@
 // Own include
 #include <asiUI_PDomainCallback.h>
 
+// UI includes
+#include <asiUI_Viewer.h>
+
 // Visualization includes
 #include <asiVisu_PrsManager.h>
 
@@ -43,8 +46,8 @@ asiUI_PDomainCallback::~asiUI_PDomainCallback()
 //! \param theEventId  [in] ID of the event triggered this listener.
 //! \param theCallData [in] invocation context.
 void asiUI_PDomainCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
-                                      unsigned long theEventId,
-                                      void*         asiVisu_NotUsed(theCallData))
+                                    unsigned long theEventId,
+                                    void*         asiVisu_NotUsed(theCallData))
 {
   vtkSmartPointer<asiVisu_PrsManager> mgr = this->Viewer()->PrsMgr();
 

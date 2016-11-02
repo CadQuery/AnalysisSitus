@@ -27,19 +27,20 @@ public:
 
 public:
 
-  asiVisu_ShadedSurfacePipeline();
+  asiVisu_EXPORT
+    asiVisu_ShadedSurfacePipeline();
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 public:
 
-  inline void SetStepsNumber (const int nbSteps)       { m_iStepsNumber = nbSteps; }
-  inline int  GetStepsNumber ()                  const { return m_iStepsNumber; }
-  inline void ForceUpdate    ()                        { m_bForced = true; }
-//
+  void SetStepsNumber (const int nbSteps)       { m_iStepsNumber = nbSteps; }
+  int  GetStepsNumber ()                  const { return m_iStepsNumber; }
+  void ForceUpdate    ()                        { m_bForced = true; }
+  //
   bool IsCurvature         () const;
   bool IsGaussianCurvature () const;
   bool IsMeanCurvature     () const;
@@ -63,9 +64,9 @@ private:
 
 protected:
 
-  int  m_iStepsNumber;       //!< Number of steps for sampling the parametric space.
-  bool m_bForced;            //!< Not very graceful flag to force execution even if
-                             //!< no persistent data has changed.
+  int  m_iStepsNumber; //!< Number of steps for sampling the parametric space.
+  bool m_bForced;      //!< Not very graceful flag to force execution even if
+                       //!< no persistent data has changed.
   //
   vtkSmartPointer<asiVisu_SurfaceSource> m_source; //!< Polygonal data source.
 

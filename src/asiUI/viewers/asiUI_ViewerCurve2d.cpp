@@ -6,16 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_Viewer_curve_2d.h>
-
-// Common includes
-#include <common_facilities.h>
+#include <asiUI_ViewerCurve2d.h>
 
 // Visualization includes
 #include <asiVisu_Utils.h>
-
-// GUI includes
-#include <gui_controls_section.h>
 
 // Qt-VTK includes
 #include <QVTKWidget.h>
@@ -36,10 +30,10 @@
 //! Creates a new instance of viewer.
 //! \param prs_mgr [in/out] externally defined Presentation Manager.
 //! \param parent  [in]     parent widget.
-asiUI_Viewer_curve_2d::asiUI_Viewer_curve_2d(vtkSmartPointer<asiVisu_PrsManager>& prs_mgr,
-                                         QWidget*                           parent) : asiUI_Viewer(parent)
+asiUI_ViewerCurve2d::asiUI_ViewerCurve2d(vtkSmartPointer<asiVisu_PrsManager>& prs_mgr,
+                                         QWidget*                             parent) : asiUI_Viewer(parent)
 {
-  // Initialize Presentation Manager along with QVTK widget
+  // Initialize presentation manager along with QVTK widget
   prs_mgr   = vtkSmartPointer<asiVisu_PrsManager>::New();
   m_prs_mgr = prs_mgr;
   //
@@ -79,14 +73,14 @@ asiUI_Viewer_curve_2d::asiUI_Viewer_curve_2d(vtkSmartPointer<asiVisu_PrsManager>
 }
 
 //! Destructor.
-asiUI_Viewer_curve_2d::~asiUI_Viewer_curve_2d()
+asiUI_ViewerCurve2d::~asiUI_ViewerCurve2d()
 {
 }
 
 //-----------------------------------------------------------------------------
 
 //! Updates viewer.
-void asiUI_Viewer_curve_2d::Repaint()
+void asiUI_ViewerCurve2d::Repaint()
 {
   m_prs_mgr->GetQVTKWidget()->repaint();
 }
@@ -94,7 +88,7 @@ void asiUI_Viewer_curve_2d::Repaint()
 //-----------------------------------------------------------------------------
 
 //! Resets view.
-void asiUI_Viewer_curve_2d::onResetView()
+void asiUI_ViewerCurve2d::onResetView()
 {
   asiVisu_Utils::CameraOnTop( m_prs_mgr->GetRenderer() );
   this->Repaint();

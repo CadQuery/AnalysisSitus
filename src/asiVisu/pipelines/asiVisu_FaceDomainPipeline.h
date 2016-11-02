@@ -34,20 +34,21 @@ public:
 
 public:
 
-  asiVisu_FaceDomainPipeline(const bool isDefaultColorScheme = true);
+  asiVisu_EXPORT
+    asiVisu_FaceDomainPipeline(const bool isDefaultColorScheme = true);
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 public:
 
-  inline void ForceExecution() { m_bForced = true; }
+  void ForceExecution() { m_bForced = true; }
 
 public:
 
-  void
+  asiVisu_EXPORT void
     SetSelectedCells(const TColStd_PackedMapOfInteger& mask);
 
 private:

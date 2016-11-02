@@ -8,9 +8,6 @@
 // Own include
 #include <asiVisu_ShadedSurfacePipeline.h>
 
-// Common includes
-#include <common_facilities.h>
-
 // Visualization includes
 #include <asiVisu_MeshResultUtils.h>
 #include <asiVisu_FaceDataProvider.h>
@@ -28,7 +25,7 @@
 asiVisu_ShadedSurfacePipeline::asiVisu_ShadedSurfacePipeline()
 //
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                 vtkSmartPointer<vtkActor>::New() ),
+                    vtkSmartPointer<vtkActor>::New() ),
   //
   m_iStepsNumber (0),
   m_bForced      (false),
@@ -139,5 +136,5 @@ void asiVisu_ShadedSurfacePipeline::callback_update()
   //
   if ( m_source->HasScalars() )
     asiVisu_MeshResultUtils::InitPointScalarMapper(m_mapper, ARRNAME_SURF_CURVATURE,
-                                                  min_k, max_k, false);
+                                                   min_k, max_k, false);
 }

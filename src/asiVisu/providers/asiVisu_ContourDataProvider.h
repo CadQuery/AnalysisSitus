@@ -11,8 +11,8 @@
 // A-Situs visualization includes
 #include <asiVisu_ShapeDataProvider.h>
 
-// OCCT includes
-#include <TColStd_HPackedMapOfInteger.hxx>
+// asiData includes
+#include <asiData_ContourNode.h>
 
 DEFINE_STANDARD_HANDLE(asiVisu_ContourDataProvider, asiVisu_ShapeDataProvider)
 
@@ -26,12 +26,17 @@ public:
 
 public:
 
-  asiVisu_ContourDataProvider();
+  asiVisu_EXPORT
+    asiVisu_ContourDataProvider(const Handle(asiData_ContourNode)& contour);
 
 public:
 
-  virtual TopoDS_Shape
+  asiVisu_EXPORT virtual TopoDS_Shape
     GetShape() const;
+
+protected:
+
+  Handle(asiData_ContourNode) m_contour; //!< Contour Node.
 
 };
 

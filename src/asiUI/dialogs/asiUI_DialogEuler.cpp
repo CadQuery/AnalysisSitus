@@ -29,10 +29,12 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
+//! \param model  [in] Data Model instance.
 //! \param parent [in] parent widget.
-asiUI_DialogEuler::asiUI_DialogEuler(QWidget* parent)
+asiUI_DialogEuler::asiUI_DialogEuler(const Handle(asiEngine_Model)& model,
+                                     QWidget*                       parent)
 //
-: QDialog(parent)
+: QDialog(parent), m_model(model)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -106,10 +108,12 @@ asiUI_DialogEuler::~asiUI_DialogEuler()
 void asiUI_DialogEuler::onCheck()
 {
   // Convert user input to integer
-  const double genus = QVariant( m_widgets.pGenus->text() ).toDouble();
+  const int genus = QVariant( m_widgets.pGenus->text() ).toInt();
 
-  TopoDS_Shape part;
-  if ( !asiUI_Common::PartShape(part) ) return;
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
   // TODO
   if ( !asiAlgo_EulerPoincare::Check(part, genus) )

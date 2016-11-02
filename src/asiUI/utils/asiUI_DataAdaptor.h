@@ -5,22 +5,25 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef gui_data_adaptor_h
-#define gui_data_adaptor_h
+#ifndef asiUI_DataAdaptor_h
+#define asiUI_DataAdaptor_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiUI.h>
 
-DEFINE_STANDARD_HANDLE(gui_data_adaptor, Standard_Transient)
+// OCCT includes
+#include <Standard_Type.hxx>
+
+DEFINE_STANDARD_HANDLE(asiUI_DataAdaptor, Standard_Transient)
 
 //! Base class for Data Adaptors representing scalar or tabulated data in
 //! Data-View connectors.
-class gui_data_adaptor : public Standard_Transient
+class asiUI_DataAdaptor : public Standard_Transient
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(gui_data_adaptor, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(asiUI_DataAdaptor, Standard_Transient)
 
 public:
 
@@ -40,8 +43,8 @@ public:
     //! \param nBuckets [in] number of buckets.
     //! \return hash code.
     static int
-      HashCode(const Handle(gui_data_adaptor)& Adt,
-               const int                       nBuckets = 100)
+      HashCode(const Handle(asiUI_DataAdaptor)& Adt,
+               const int                        nBuckets = 100)
     {
       return ::HashCode(Adt->ID(), nBuckets);
     }
@@ -52,8 +55,8 @@ public:
     //! \param Adt2 [in] second adaptor.
     //! \return true in case of equality, false -- otherwise.
     static int
-      IsEqual(const Handle(gui_data_adaptor)& Adt1,
-              const Handle(gui_data_adaptor)& Adt2)
+      IsEqual(const Handle(asiUI_DataAdaptor)& Adt1,
+              const Handle(asiUI_DataAdaptor)& Adt2)
     {
       return ( Adt1->ID() == Adt2->ID() );
     }

@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_Selection_h
-#define asiUI_Selection_h
+#ifndef asiVisu_Selection_h
+#define asiVisu_Selection_h
 
-// UI includes
-#include <asiUI.h>
+// Visualization includes
+#include <asiVisu.h>
 
 // OCCT includes
 #include <NCollection_DataMap.hxx>
@@ -28,7 +28,7 @@
 //-----------------------------------------------------------------------------
 
 //! Picker type.
-enum asiUI_PickType
+enum asiVisu_PickType
 {
   PickType_Cell = 0,
   PickType_Point,
@@ -38,7 +38,7 @@ enum asiUI_PickType
 //-----------------------------------------------------------------------------
 
 //! Selection type.
-enum asiUI_SelectionNature
+enum asiVisu_SelectionNature
 {
   SelectionNature_None,     //!< Nothing.
   SelectionNature_Pick = 1, //!< User makes final decision on selection.
@@ -48,7 +48,7 @@ enum asiUI_SelectionNature
 //-----------------------------------------------------------------------------
 
 //! Selection mode.
-enum asiUI_SelectionMode
+enum asiVisu_SelectionMode
 {
   SelectionMode_None      = 0x0001, //!< Selection is disabled.
   SelectionMode_Workpiece = 0x0002, //!< Entire shape or mesh.
@@ -79,14 +79,14 @@ enum asiUI_SelectionMode
 //! Class representing picking inputs. This structure is designed to be
 //! used in pick callbacks in order to retrieve all data required to
 //! shoot the actual picking request.
-struct asiUI_PickInput
+struct asiVisu_PickInput
 {
   QPoint Start;      //!< Picked X coordinate.
   QPoint Finish;     //!< Picked Y coordinate.
   bool   IsMultiple; //!< Indicates whether the multiple picking is enabled.
 
   //! Default constructor
-  asiUI_PickInput()
+  asiVisu_PickInput()
   {
     this->IsMultiple = false;
   }
@@ -95,9 +95,9 @@ struct asiUI_PickInput
   //! \param theStart   [in] start picking point.
   //! \param theFinish  [in] finish picking point.
   //! \param isMultiple [in] indicates whether the multiple picking is enabled.
-  asiUI_PickInput(const QPoint& theStart,
-                  const QPoint& theFinish,
-                  const bool    isMultiple)
+  asiVisu_PickInput(const QPoint& theStart,
+                    const QPoint& theFinish,
+                    const bool    isMultiple)
   {
     this->Start      = theStart;
     this->Finish     = theFinish;
@@ -115,37 +115,69 @@ typedef NCollection_DataMap<vtkSmartPointer<vtkActor>,
 //-----------------------------------------------------------------------------
 
 //! Class representing picking results for different kinds of selection.
-class asiUI_PickResult
+class asiVisu_PickResult
 {
 public:
 
-  asiUI_PickResult(const int theSelModes = SelectionMode_None);
-  ~asiUI_PickResult();
+  asiVisu_EXPORT
+    asiVisu_PickResult(const int theSelModes = SelectionMode_None);
+
+  asiVisu_EXPORT
+    ~asiVisu_PickResult();
 
 public:
 
-  asiUI_PickResult& operator<<(const vtkSmartPointer<vtkActor>& theActor);
-  asiUI_PickResult& operator<<(const vtkIdType theElemID);
-  asiUI_PickResult& operator<<(const TColStd_PackedMapOfInteger& theElemMask);
+  asiVisu_EXPORT asiVisu_PickResult&
+    operator<<(const vtkSmartPointer<vtkActor>& theActor);
+
+  asiVisu_EXPORT asiVisu_PickResult&
+    operator<<(const vtkIdType theElemID);
+
+  asiVisu_EXPORT asiVisu_PickResult&
+    operator<<(const TColStd_PackedMapOfInteger& theElemMask);
 
 public:
 
-  void SetSelectionModes(const int theSelModes);
+  asiVisu_EXPORT void
+    SetSelectionModes(const int theSelModes);
 
 public:
 
-  const asiVisu_ActorElemMap& GetPickMap           ()                  const;
-  int                         NbElements           ()                  const;
-  void                        Clear                ();
-  bool                        IsEmpty              ()                  const;
-  bool                        DoesSelectionCover   (const int theMode) const;
-  bool                        IsSelectionEqual     (const int theMode) const;
-  bool                        IsSelectionNone      ()                  const;
-  bool                        IsSelectionWorkpiece ()                  const;
-  bool                        IsSelectionFace      ()                  const;
-  bool                        IsSelectionEdge      ()                  const;
-  bool                        IsSelectionVertex    ()                  const;
-  bool                        IsSelectionSubShape  ()                  const;
+  asiVisu_EXPORT const asiVisu_ActorElemMap&
+    GetPickMap() const;
+
+  asiVisu_EXPORT int
+    NbElements() const;
+
+  asiVisu_EXPORT void
+    Clear();
+
+  asiVisu_EXPORT bool
+    IsEmpty() const;
+  
+  asiVisu_EXPORT bool
+    DoesSelectionCover(const int theMode) const;
+
+  asiVisu_EXPORT bool
+    IsSelectionEqual(const int theMode) const;
+
+  asiVisu_EXPORT bool
+    IsSelectionNone() const;
+
+  asiVisu_EXPORT bool
+    IsSelectionWorkpiece() const;
+
+  asiVisu_EXPORT bool
+    IsSelectionFace() const;
+
+  asiVisu_EXPORT bool
+    IsSelectionEdge() const;
+
+  asiVisu_EXPORT bool
+    IsSelectionVertex() const;
+
+  asiVisu_EXPORT bool
+    IsSelectionSubShape() const;
 
 private:
 

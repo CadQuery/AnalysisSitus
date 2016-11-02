@@ -5,31 +5,34 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_Viewer_domain_h
-#define asiUI_Viewer_domain_h
+#ifndef asiUI_ViewerDomain_h
+#define asiUI_ViewerDomain_h
 
 // A-Situs includes
-#include <analysis_situs.h>
+#include <asiUI.h>
 
 // A-Situs (GUI) includes
-#include <asiUI_Viewer.h>
-
-// A-Situs (visualization) includes
 #include <asiUI_PDomainCallback.h>
 #include <asiUI_PickCallback.h>
+#include <asiUI_Viewer.h>
+
+// A-Situs (engine) includes
+#include <asiEngine_Model.h>
 
 // VTK includes
 #include <vtkTextWidget.h>
 
 //! Viewer for face domain.
-class asiUI_Viewer_domain : public asiUI_Viewer
+class asiUI_ViewerDomain : public asiUI_Viewer
 {
   Q_OBJECT
 
 public:
 
-  asiUI_Viewer_domain(QWidget* parent = NULL);
-  virtual ~asiUI_Viewer_domain();
+  asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
+                     QWidget*                       parent = NULL);
+  //
+  virtual ~asiUI_ViewerDomain();
 
 public:
 
@@ -42,8 +45,13 @@ public slots:
   void onKillEdges();
   void onJoinEdges();
 
+signals:
+
+  void partModified();
+
 private:
 
+  Handle(asiEngine_Model)                m_model;          //!< Data Model instance.
   vtkSmartPointer<asiUI_PDomainCallback> m_domainCallback; //!< Callback for domain operations.
   vtkSmartPointer<asiUI_PickCallback>    m_pickCallback;   //!< Pick callback.
   vtkSmartPointer<vtkTextWidget>         m_textWidget;     //!< Annotation.

@@ -8,9 +8,6 @@
 // A-Situs includes
 #include <asiUI_Common.h>
 
-// A-Situs (common) includes
-#include <common_facilities.h>
-
 // Qt includes
 #include <QFileDialog>
 
@@ -109,9 +106,9 @@ QString asiUI_Common::selectSTLFile(const OpenSaveAction action)
 //! \param action    [in] open/save action.
 //! \return filename selected by user.
 QString asiUI_Common::selectFile(const QStringList&   filter,
-                               const QString&       openTitle,
-                               const QString&       saveTitle,
-                               const OpenSaveAction action)
+                                 const QString&       openTitle,
+                                 const QString&       saveTitle,
+                                 const OpenSaveAction action)
 {
   QString dir;
   QString filename;
@@ -128,17 +125,22 @@ QString asiUI_Common::selectFile(const QStringList&   filter,
 //-----------------------------------------------------------------------------
 
 //! Easy accessor for the part shape.
-//! \param part [out] part shape.
+//! \param model  [in]  Data Model instance.
+//! \param part_n [out] Part Node.
+//! \param part   [out] part shape.
 //! \return true if the part shape is accessible and not null.
-bool asiUI_Common::PartShape(TopoDS_Shape& part)
+bool asiUI_Common::PartShape(const Handle(asiEngine_Model)& model,
+                             Handle(asiData_PartNode)&      part_n,
+                             TopoDS_Shape&                  part)
 {
   // Access Geometry Node
-  Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
-  if ( N.IsNull() || !N->IsWellFormed() )
+  part_n = model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
     return false;
 
   // Working shape
-  part = N->GetShape();
+  part = part_n->GetShape();
   //
   if ( part.IsNull() )
   {

@@ -26,11 +26,12 @@ public:
 
 public:
 
-  asiVisu_LawPipeline();
+  asiVisu_EXPORT
+    asiVisu_LawPipeline();
 
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:

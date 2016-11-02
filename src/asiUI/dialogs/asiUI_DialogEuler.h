@@ -11,6 +11,9 @@
 // A-Situs includes
 #include <asiUI.h>
 
+// Engine includes
+#include <asiEngine_Model.h>
+
 // GUI includes
 #include <asiUI_LineEdit.h>
 
@@ -28,7 +31,8 @@ class asiUI_DialogEuler : public QDialog
 
 public:
 
-  asiUI_DialogEuler(QWidget* parent = NULL);
+  asiUI_DialogEuler(const Handle(asiEngine_Model)& model,
+                    QWidget*                       parent = NULL);
 
   virtual ~asiUI_DialogEuler();
 
@@ -58,8 +62,9 @@ protected:
     }
   };
 
-  t_widgets    m_widgets;     //!< UI controls.
-  QVBoxLayout* m_pMainLayout; //!< Layout of the widget.
+  t_widgets               m_widgets;     //!< UI controls.
+  QVBoxLayout*            m_pMainLayout; //!< Layout of the widget.
+  Handle(asiEngine_Model) m_model;       //!< Data Model instance.
 
 };
 

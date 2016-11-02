@@ -8,9 +8,6 @@
 // Own include
 #include <asiVisu_IVPointSet2dDataProvider.h>
 
-// Common includes
-#include <common_facilities.h>
-
 //-----------------------------------------------------------------------------
 
 //! Constructor.

@@ -6,10 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_JournalIV.h>
-
-// Common includes
-#include <common_facilities.h>
+#include <asiUI_JournalIV.h>
 
 // Engine includes
 #include <asiEngine_IV.h>
@@ -31,7 +28,7 @@
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::CLEAN()
+void asiUI_JournalIV::CLEAN()
 {
   this->prsManager2d()->DeleteAllPresentations();
   this->prsManager2d()->InitializePickers();
@@ -42,9 +39,9 @@ void asiVisu_JournalIV::CLEAN()
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_POINT(const gp_XY&                   coord,
-                            const Quantity_Color&          color,
-                            const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_POINT(const gp_XY&                   coord,
+                                 const Quantity_Color&          color,
+                                 const TCollection_AsciiString& name)
 {
   Handle(HRealArray) coords = new HRealArray(0, 1);
   //
@@ -53,17 +50,17 @@ void asiVisu_JournalIV::DRAW_POINT(const gp_XY&                   coord,
 
   // Create a new Node for the given point set
   bool isTx = false;
-  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+  if ( !m_model->HasOpenCommand() )
   {
-    common_facilities::Instance()->Model->OpenCommand();
+    m_model->OpenCommand();
     isTx = true;
   }
   //
   Handle(asiData_IVPointSet2dNode)
-    points_n = asiEngine_IV::Create_PointSet2d(coords, name);
+    points_n = asiEngine_IV(m_model).Create_PointSet2d(coords, name);
   //
   if ( isTx )
-    common_facilities::Instance()->Model->CommitCommand();
+    m_model->CommitCommand();
 
   // Visualize
   this->visualize(true, points_n, true, color, 1.0, false);
@@ -71,18 +68,18 @@ void asiVisu_JournalIV::DRAW_POINT(const gp_XY&                   coord,
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_POINT(const gp_Pnt2d&                point,
-                            const Quantity_Color&          color,
-                            const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_POINT(const gp_Pnt2d&                point,
+                                 const Quantity_Color&          color,
+                                 const TCollection_AsciiString& name)
 {
   this->DRAW_POINT(point.XY(), color, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_POINT(const gp_XYZ&                  coord,
-                            const Quantity_Color&          color,
-                            const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_POINT(const gp_XYZ&                  coord,
+                                 const Quantity_Color&          color,
+                                 const TCollection_AsciiString& name)
 {
   Handle(HRealArray) coords = new HRealArray(0, 2);
   //
@@ -95,32 +92,32 @@ void asiVisu_JournalIV::DRAW_POINT(const gp_XYZ&                  coord,
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_POINT(const gp_Pnt&                  point,
-                            const Quantity_Color&          color,
-                            const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_POINT(const gp_Pnt&                  point,
+                                 const Quantity_Color&          color,
+                                 const TCollection_AsciiString& name)
 {
   this->DRAW_POINT(point.XYZ(), color, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_POINTS(const Handle(HRealArray)&      coords,
-                             const Quantity_Color&          color,
-                             const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_POINTS(const Handle(HRealArray)&      coords,
+                                  const Quantity_Color&          color,
+                                  const TCollection_AsciiString& name)
 {
   // Create a new Node for the given point set
   bool isTx = false;
-  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+  if ( !m_model->HasOpenCommand() )
   {
-    common_facilities::Instance()->Model->OpenCommand();
+    m_model->OpenCommand();
     isTx = true;
   }
   //
   Handle(asiData_IVPointSetNode)
-    points_n = asiEngine_IV::Create_PointSet( new asiAlgo_PointCloud(coords), name );
+    points_n = asiEngine_IV(m_model).Create_PointSet( new asiAlgo_PointCloud(coords), name );
   //
   if ( isTx )
-    common_facilities::Instance()->Model->CommitCommand();
+    m_model->CommitCommand();
 
   // Visualize
   this->visualize(false, points_n, true, color, 1.0, false);
@@ -128,10 +125,10 @@ void asiVisu_JournalIV::DRAW_POINTS(const Handle(HRealArray)&      coords,
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_LINK(const gp_Pnt&                  p1,
-                           const gp_Pnt&                  p2,
-                           const Quantity_Color&          color,
-                           const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_LINK(const gp_Pnt&                  p1,
+                                const gp_Pnt&                  p2,
+                                const Quantity_Color&          color,
+                                const TCollection_AsciiString& name)
 {
   if ( p1.Distance(p2) < 1.0e-5 )
     return;
@@ -141,17 +138,17 @@ void asiVisu_JournalIV::DRAW_LINK(const gp_Pnt&                  p1,
 
   // Create a curve Node
   bool isTx = false;
-  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+  if ( !m_model->HasOpenCommand() )
   {
-    common_facilities::Instance()->Model->OpenCommand();
+    m_model->OpenCommand();
     isTx = true;
   }
   //
   Handle(asiData_IVCurveNode)
-    curve_n = asiEngine_IV::Create_Curve( C, Precision::Infinite(), name );
+    curve_n = asiEngine_IV(m_model).Create_Curve( C, Precision::Infinite(), name );
   //
   if ( isTx )
-    common_facilities::Instance()->Model->CommitCommand();
+    m_model->CommitCommand();
 
   // Visualize
   this->visualize(false, curve_n, true, color, 1.0, false);
@@ -159,33 +156,33 @@ void asiVisu_JournalIV::DRAW_LINK(const gp_Pnt&                  p1,
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_VECTOR_AT(const gp_Pnt&                  P,
-                                const gp_Vec&                  V,
-                                const Quantity_Color&          color,
-                                const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_VECTOR_AT(const gp_Pnt&                  P,
+                                     const gp_Vec&                  V,
+                                     const Quantity_Color&          color,
+                                     const TCollection_AsciiString& name)
 {
   this->DRAW_LINK(P, P.XYZ() + V.XYZ(), color, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_CURVE(const Handle(Geom_Curve)&      curve,
-                            const Quantity_Color&          color,
-                            const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_CURVE(const Handle(Geom_Curve)&      curve,
+                                 const Quantity_Color&          color,
+                                 const TCollection_AsciiString& name)
 {
   // Create a curve Node
   bool isTx = false;
-  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+  if ( !m_model->HasOpenCommand() )
   {
-    common_facilities::Instance()->Model->OpenCommand();
+    m_model->OpenCommand();
     isTx = true;
   }
   //
   Handle(asiData_IVCurveNode)
-    curve_n = asiEngine_IV::Create_Curve( curve, 1000, name );
+    curve_n = asiEngine_IV(m_model).Create_Curve( curve, 1000, name );
   //
   if ( isTx )
-    common_facilities::Instance()->Model->CommitCommand();
+    m_model->CommitCommand();
 
   // Visualize
   this->visualize(false, curve_n, true, color, 1.0, false);
@@ -193,56 +190,56 @@ void asiVisu_JournalIV::DRAW_CURVE(const Handle(Geom_Curve)&      curve,
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
-                              const Quantity_Color&          color,
-                              const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
+                                   const Quantity_Color&          color,
+                                   const TCollection_AsciiString& name)
 {
   this->DRAW_SURFACE(surface, 1000, 1000, color, 1.0, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
-                              const Quantity_Color&          color,
-                              const double                   opacity,
-                              const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
+                                   const Quantity_Color&          color,
+                                   const double                   opacity,
+                                   const TCollection_AsciiString& name)
 {
   this->DRAW_SURFACE(surface, 1000, 1000, color, opacity, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
-                              const double                   uLimit,
-                              const double                   vLimit,
-                              const Quantity_Color&          color,
-                              const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
+                                   const double                   uLimit,
+                                   const double                   vLimit,
+                                   const Quantity_Color&          color,
+                                   const TCollection_AsciiString& name)
 {
   this->DRAW_SURFACE(surface, uLimit, vLimit, color, 1.0, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
-                              const double                   uLimit,
-                              const double                   vLimit,
-                              const Quantity_Color&          color,
-                              const double                   opacity,
-                              const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
+                                   const double                   uLimit,
+                                   const double                   vLimit,
+                                   const Quantity_Color&          color,
+                                   const double                   opacity,
+                                   const TCollection_AsciiString& name)
 {
   // Create a surface Node
   bool isTx = false;
-  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+  if ( !m_model->HasOpenCommand() )
   {
-    common_facilities::Instance()->Model->OpenCommand();
+    m_model->OpenCommand();
     isTx = true;
   }
   //
   Handle(asiData_IVSurfaceNode)
-    surface_n = asiEngine_IV::Create_Surface(surface, uLimit, vLimit, name);
+    surface_n = asiEngine_IV(m_model).Create_Surface(surface, uLimit, vLimit, name);
   //
   if ( isTx )
-    common_facilities::Instance()->Model->CommitCommand();
+    m_model->CommitCommand();
 
   // Visualize
   this->visualize(false, surface_n, true, color, opacity, false);
@@ -250,40 +247,40 @@ void asiVisu_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
-                            const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
+                                 const TCollection_AsciiString& name)
 {
   this->DRAW_SHAPE(shape, 1.0, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
-                            const Quantity_Color&          color,
-                            const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
+                                 const Quantity_Color&          color,
+                                 const TCollection_AsciiString& name)
 {
   this->DRAW_SHAPE(shape, color, 1.0, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
-                            const double                   opacity,
-                            const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
+                                 const double                   opacity,
+                                 const TCollection_AsciiString& name)
 {
   // Create a Node for topology item
   bool isTx = false;
-  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+  if ( !m_model->HasOpenCommand() )
   {
-    common_facilities::Instance()->Model->OpenCommand();
+    m_model->OpenCommand();
     isTx = true;
   }
   //
   Handle(asiData_IVTopoItemNode)
-    item_n = asiEngine_IV::Create_TopoItem(shape, name);
+    item_n = asiEngine_IV(m_model).Create_TopoItem(shape, name);
   //
   if ( isTx )
-    common_facilities::Instance()->Model->CommitCommand();
+    m_model->CommitCommand();
 
   // Visualize
   this->visualize(false, item_n, false, Quantity_Color(), opacity, false);
@@ -291,24 +288,24 @@ void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
-                            const Quantity_Color&          color,
-                            const double                   opacity,
-                            const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
+                                 const Quantity_Color&          color,
+                                 const double                   opacity,
+                                 const TCollection_AsciiString& name)
 {
   // Create a Node for topology item
   bool isTx = false;
-  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+  if ( !m_model->HasOpenCommand() )
   {
-    common_facilities::Instance()->Model->OpenCommand();
+    m_model->OpenCommand();
     isTx = true;
   }
   //
   Handle(asiData_IVTopoItemNode)
-    item_n = asiEngine_IV::Create_TopoItem(shape, name);
+    item_n = asiEngine_IV(m_model).Create_TopoItem(shape, name);
   //
   if ( isTx )
-    common_facilities::Instance()->Model->CommitCommand();
+    m_model->CommitCommand();
 
   // Visualize
   this->visualize(false, item_n, true, color, opacity, false);
@@ -316,25 +313,25 @@ void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
-                            const Quantity_Color&          color,
-                            const double                   opacity,
-                            const bool                     isWireframe,
-                            const TCollection_AsciiString& name)
+void asiUI_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
+                                 const Quantity_Color&          color,
+                                 const double                   opacity,
+                                 const bool                     isWireframe,
+                                 const TCollection_AsciiString& name)
 {
   // Create a Node for topology item
   bool isTx = false;
-  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+  if ( !m_model->HasOpenCommand() )
   {
-    common_facilities::Instance()->Model->OpenCommand();
+    m_model->OpenCommand();
     isTx = true;
   }
   //
   Handle(asiData_IVTopoItemNode)
-    item_n = asiEngine_IV::Create_TopoItem(shape, name);
+    item_n = asiEngine_IV(m_model).Create_TopoItem(shape, name);
   //
   if ( isTx )
-    common_facilities::Instance()->Model->CommitCommand();
+    m_model->CommitCommand();
 
   // Visualize
   this->visualize(false, item_n, true, color, opacity, isWireframe);
@@ -342,24 +339,24 @@ void asiVisu_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_TRIANGULATION(const Handle(Poly_Triangulation)& shape,
-                                    const Quantity_Color&             color,
-                                    const double                      opacity,
-                                    const TCollection_AsciiString&    name)
+void asiUI_JournalIV::DRAW_TRIANGULATION(const Handle(Poly_Triangulation)& shape,
+                                         const Quantity_Color&             color,
+                                         const double                      opacity,
+                                         const TCollection_AsciiString&    name)
 {
   // Create a Node for tessellation item
   bool isTx = false;
-  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+  if ( !m_model->HasOpenCommand() )
   {
-    common_facilities::Instance()->Model->OpenCommand();
+    m_model->OpenCommand();
     isTx = true;
   }
   //
   Handle(asiData_IVTessItemNode)
-    item_n = asiEngine_IV::Create_TessItem(shape, name);
+    item_n = asiEngine_IV(m_model).Create_TessItem(shape, name);
   //
   if ( isTx )
-    common_facilities::Instance()->Model->CommitCommand();
+    m_model->CommitCommand();
 
   // Visualize
   this->visualize(false, item_n, true, color, opacity, false);
@@ -367,21 +364,21 @@ void asiVisu_JournalIV::DRAW_TRIANGULATION(const Handle(Poly_Triangulation)& sha
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::DRAW_TEXT(const TCollection_AsciiString& text)
+void asiUI_JournalIV::DRAW_TEXT(const TCollection_AsciiString& text)
 {
   // Create a Node for text item
   bool isTx = false;
-  if ( !common_facilities::Instance()->Model->HasOpenCommand() )
+  if ( !m_model->HasOpenCommand() )
   {
-    common_facilities::Instance()->Model->OpenCommand();
+    m_model->OpenCommand();
     isTx = true;
   }
   //
   Handle(asiData_IVTextItemNode)
-    item_n = asiEngine_IV::Create_TextItem(text);
+    item_n = asiEngine_IV(m_model).Create_TextItem(text);
   //
   if ( isTx )
-    common_facilities::Instance()->Model->CommitCommand();
+    m_model->CommitCommand();
 
   // Visualize
   this->visualize(false, item_n, false, Quantity_Color(), 0.0, false);
@@ -389,12 +386,12 @@ void asiVisu_JournalIV::DRAW_TEXT(const TCollection_AsciiString& text)
 
 //---------------------------------------------------------------------------//
 
-void asiVisu_JournalIV::visualize(const bool                  is2d,
-                           const Handle(ActAPI_INode)& node,
-                           const bool                  hasColor,
-                           const Quantity_Color&       color,
-                           const double                opacity,
-                           const bool                  isWireframe) const
+void asiUI_JournalIV::visualize(const bool                  is2d,
+                                const Handle(ActAPI_INode)& node,
+                                const bool                  hasColor,
+                                const Quantity_Color&       color,
+                                const double                opacity,
+                                const bool                  isWireframe) const
 {
   if ( !this->prsManager(is2d)->IsPresented(node) )
     this->prsManager(is2d)->SetPresentation(node);
@@ -438,7 +435,7 @@ void asiVisu_JournalIV::visualize(const bool                  is2d,
   else
   {
     // Set common properties for all pipelines
-    Handle(h_asiVisu_Pipeline_list) pipelines = prs->GetPipelineList();
+    Handle(asiVisu_HPipelineList) pipelines = prs->GetPipelineList();
     for ( int p = 1; p <= pipelines->Length(); ++p )
     {
       if ( hasColor )
@@ -456,26 +453,26 @@ void asiVisu_JournalIV::visualize(const bool                  is2d,
   // Update UI
   this->prsManager(is2d)->Actualize(node.get(), false, false, true);
   //
-  common_facilities::Instance()->ObjectBrowser->Populate();
+  m_pBrowser->Populate();
 }
 
 //----------------------------------------------------------------------------//
 
-const vtkSmartPointer<asiVisu_PrsManager>& asiVisu_JournalIV::prsManager(const bool is2d) const
+const vtkSmartPointer<asiVisu_PrsManager>& asiUI_JournalIV::prsManager(const bool is2d) const
 {
   return is2d ? this->prsManager2d() : this->prsManager3d();
 }
 
 //----------------------------------------------------------------------------//
 
-const vtkSmartPointer<asiVisu_PrsManager>& asiVisu_JournalIV::prsManager3d() const
+const vtkSmartPointer<asiVisu_PrsManager>& asiUI_JournalIV::prsManager3d() const
 {
-  return common_facilities::Instance()->Prs.Part;
+  return m_prsMgr3d;
 }
 
 //----------------------------------------------------------------------------//
 
-const vtkSmartPointer<asiVisu_PrsManager>& asiVisu_JournalIV::prsManager2d() const
+const vtkSmartPointer<asiVisu_PrsManager>& asiUI_JournalIV::prsManager2d() const
 {
-  return common_facilities::Instance()->Prs.Domain;
+  return m_prsMgr2d;
 }

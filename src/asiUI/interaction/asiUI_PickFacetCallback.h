@@ -8,11 +8,14 @@
 #ifndef asiUI_PickFacetCallback_h
 #define asiUI_PickFacetCallback_h
 
-// UI includes
+// asiUI includes
 #include <asiUI_ViewerCallback.h>
 
-// Geometry includes
+// asiAlgo includes
 #include <asiAlgo_BVHFacets.h>
+
+// asiEngine includes
+#include <asiEngine_Model.h>
 
 // VIS includes
 #include <IVtk_Types.hxx>
@@ -32,15 +35,24 @@ public:
 
 public:
 
-  virtual void Execute(vtkObject*    theCaller,
-                       unsigned long theEventId,
-                       void*         theCallData);
+  virtual void Execute(vtkObject*    pCaller,
+                       unsigned long eventId,
+                       void*         pCallData);
 
 public:
 
+  //! Sets accelerating structure to use for picking.
+  //! \param bvh_facets [in] accelerating structure to set.
   void SetBVH(const Handle(asiAlgo_BVHFacets)& bvh_facets)
   {
     m_bvh = bvh_facets;
+  }
+
+  //! Sets Data Model instance to access the geometry to pick.
+  //! \param model [in] Data Model instance.
+  void SetModel(const Handle(asiEngine_Model)& model)
+  {
+    m_model = model;
   }
 
 private:
@@ -50,7 +62,10 @@ private:
 
 private:
 
-  Handle(asiAlgo_BVHFacets) m_bvh; //!< Accelerating structure for picking.
+  Handle(asiAlgo_BVHFacets) m_bvh;      //!< Accelerating structure for picking.
+  Handle(asiEngine_Model)   m_model;    //!< Data Model instance.
+  ActAPI_ProgressEntry      m_notifier; //!< Progress notifier.
+  ActAPI_PlotterEntry       m_plotter;  //!< Imperative plotter.
 
 };
 

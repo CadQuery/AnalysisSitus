@@ -8,9 +8,6 @@
 // Own include
 #include <asiVisu_EdgeDomainPipeline.h>
 
-// Common includes
-#include <common_facilities.h>
-
 // Visualization includes
 #include <asiVisu_EdgeDataProvider.h>
 

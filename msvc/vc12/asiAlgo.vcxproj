@@ -248,8 +248,8 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudNormals.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PurifyCloud.h" />
-    <ClInclude Include="..\..\src\asiAlgo\utils\asiAlgo_JournalLogger.h" />
-    <CustomBuild Include="..\..\src\asiAlgo\utils\asiAlgo_JournalNotifier.h">
+    <ClInclude Include="..\..\src\asiAlgo\utils\asiAlgo_Logger.h" />
+    <CustomBuild Include="..\..\src\asiAlgo\utils\asiAlgo_Notifier.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
@@ -295,10 +295,10 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_FacePointCloud.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudNormals.cpp" />
-    <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_JournalLogger.cpp" />
-    <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_JournalNotifier.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Logger.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Notifier.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Utils.cpp" />
-    <ClCompile Include="$(IntDir)moc\moc_asiAlgo_JournalNotifier.cpp" />
+    <ClCompile Include="..\..\win64\vc12\objd\asiAlgo\moc\moc_asiAlgo_Notifier.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

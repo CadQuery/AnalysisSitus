@@ -26,12 +26,12 @@ public:
   asiUI_EXPORT
     asiUI_VtkWindow(QWidget* parent = NULL, Qt::WindowFlags f = 0);
 
-  asiUI_EXPORT
-    virtual ~asiUI_VtkWindow();
+  asiUI_EXPORT virtual
+    ~asiUI_VtkWindow();
 
 protected:
 
-  asiUI_EXPORT virtual void
+  virtual void
     closeEvent(QCloseEvent* pEvent);
 
 signals:

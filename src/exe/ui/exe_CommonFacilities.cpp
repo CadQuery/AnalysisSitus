@@ -6,6 +6,6 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <common_facilities.h>
+#include <exe_CommonFacilities.h>
 
-Handle(common_facilities) common_facilities::m_ref;
+Handle(exe_CommonFacilities) exe_CommonFacilities::m_ref;

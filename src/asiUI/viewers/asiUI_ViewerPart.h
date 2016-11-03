@@ -33,9 +33,12 @@ class asiUI_ViewerPart : public asiUI_Viewer
 
 public:
 
-  asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
-                   QWidget*                       parent = NULL);
-  virtual ~asiUI_ViewerPart();
+  asiUI_EXPORT
+    asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
+                     QWidget*                       parent = NULL);
+
+  asiUI_EXPORT virtual
+    ~asiUI_ViewerPart();
 
 public:
 

@@ -26,8 +26,11 @@ class asiUI_Viewer : public QWidget
 
 public:
 
-  asiUI_Viewer(QWidget* parent = NULL);
-  virtual ~asiUI_Viewer();
+  asiUI_EXPORT
+    asiUI_Viewer(QWidget* parent = NULL);
+
+  asiUI_EXPORT virtual
+    ~asiUI_Viewer();
 
 public:
 

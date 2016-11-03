@@ -29,10 +29,12 @@ class asiUI_ViewerDomain : public asiUI_Viewer
 
 public:
 
-  asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
-                     QWidget*                       parent = NULL);
-  //
-  virtual ~asiUI_ViewerDomain();
+  asiUI_EXPORT
+    asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
+                       QWidget*                       parent = NULL);
+
+  asiUI_EXPORT virtual
+    ~asiUI_ViewerDomain();
 
 public:
 

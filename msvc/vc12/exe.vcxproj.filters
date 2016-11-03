@@ -15,25 +15,13 @@
     <Filter Include="Source Files\UI">
       <UniqueIdentifier>{002b4aa1-a90a-47bc-8fd2-8df89e427559}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Data">
-      <UniqueIdentifier>{d4b918d1-6f40-4a65-8956-0c9209a822bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Data">
-      <UniqueIdentifier>{bf6761d7-51b0-4f21-adc0-8ac3fa02763c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\exe\ui\exe_CommonFacilities.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\exe\ui\exe_MainWindow.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\exe\exe_Version.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\exe\data\exe_Model.h">
-      <Filter>Header Files\Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -46,8 +34,10 @@
     <ClCompile Include="..\..\src\exe\exe_Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\exe\data\exe_Model.cpp">
-      <Filter>Source Files\Data</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\src\exe\ui\exe_MainWindow.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

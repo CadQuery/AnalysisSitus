@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiAlgo_JournalLogger.h>
+#include <asiAlgo_Logger.h>
 
 // Active Data includes
 #include <ActAux_TimeStamp.h>
@@ -19,13 +19,13 @@
 //-----------------------------------------------------------------------------
 
 //! Default constructor.
-asiAlgo_JournalLogger::asiAlgo_JournalLogger() : ActAPI_ILogger()
+asiAlgo_Logger::asiAlgo_Logger() : ActAPI_ILogger()
 {}
 
 //! Returns a copy of the list of messages in OCCT form and cleans up the
 //! internal thread-safe TBB collection.
 //! \return list of logging messages.
-ActAPI_LogMessageList asiAlgo_JournalLogger::PopMessageList()
+ActAPI_LogMessageList asiAlgo_Logger::PopMessageList()
 {
   ActAPI_LogMessageList aResultList;
   ActAPI_LogMessage aMsg;
@@ -39,7 +39,7 @@ ActAPI_LogMessageList asiAlgo_JournalLogger::PopMessageList()
 
 //! Checks whether the logger contains any error messages.
 //! \return true/false.
-unsigned int asiAlgo_JournalLogger::HasErrors()
+unsigned int asiAlgo_Logger::HasErrors()
 {
   ActAPI_LogMessageList aResultList = this->PopMessageList();
   for ( ActAPI_LogMessageList::Iterator it(aResultList); it.More(); it.Next() )
@@ -52,7 +52,7 @@ unsigned int asiAlgo_JournalLogger::HasErrors()
 }
 
 //! Cleans up the internal collection of messages.
-void asiAlgo_JournalLogger::Clear()
+void asiAlgo_Logger::Clear()
 {
   m_messageQueue.clear();
 }
@@ -67,7 +67,7 @@ void asiAlgo_JournalLogger::Clear()
 //! \param theArguments [in] message arguments.
 //! \param theTimeStamp [in] application-specific timestamp. Current timestamp
 //!                          is used in case of NULL value passed.
-void asiAlgo_JournalLogger::Info(const TCollection_AsciiString&    theMessage,
+void asiAlgo_Logger::Info(const TCollection_AsciiString&    theMessage,
                                  const ActAPI_LogMessagePriority   thePriority,
                                  const ActAPI_LogArguments&        theArguments,
                                  const Handle(Standard_Transient)& theTimeStamp)
@@ -85,7 +85,7 @@ void asiAlgo_JournalLogger::Info(const TCollection_AsciiString&    theMessage,
 //! \param theArguments [in] message arguments.
 //! \param theTimeStamp [in] application-specific timestamp. Current timestamp
 //!                          is used in case of NULL value passed.
-void asiAlgo_JournalLogger::Notice(const TCollection_AsciiString&    theMessage,
+void asiAlgo_Logger::Notice(const TCollection_AsciiString&    theMessage,
                                    const ActAPI_LogMessagePriority   thePriority,
                                    const ActAPI_LogArguments&        theArguments,
                                    const Handle(Standard_Transient)& theTimeStamp)
@@ -103,7 +103,7 @@ void asiAlgo_JournalLogger::Notice(const TCollection_AsciiString&    theMessage,
 //! \param theArguments [in] message arguments.
 //! \param theTimeStamp [in] application-specific timestamp. Current timestamp
 //!                          is used in case of NULL value passed.
-void asiAlgo_JournalLogger::Warn(const TCollection_AsciiString&    theMessage,
+void asiAlgo_Logger::Warn(const TCollection_AsciiString&    theMessage,
                                  const ActAPI_LogMessagePriority   thePriority,
                                  const ActAPI_LogArguments&        theArguments,
                                  const Handle(Standard_Transient)& theTimeStamp)
@@ -121,7 +121,7 @@ void asiAlgo_JournalLogger::Warn(const TCollection_AsciiString&    theMessage,
 //! \param theArguments [in] message arguments.
 //! \param theTimeStamp [in] application-specific timestamp. Current timestamp
 //!                          is used in case of NULL value passed.
-void asiAlgo_JournalLogger::Error(const TCollection_AsciiString&    theMessage,
+void asiAlgo_Logger::Error(const TCollection_AsciiString&    theMessage,
                                   const ActAPI_LogMessagePriority   thePriority,
                                   const ActAPI_LogArguments&        theArguments,
                                   const Handle(Standard_Transient)& theTimeStamp)
@@ -139,7 +139,7 @@ void asiAlgo_JournalLogger::Error(const TCollection_AsciiString&    theMessage,
 //! \param thePriority  [in] priority of the message.
 //! \param theArguments [in] message arguments.
 //! \param theTimeStamp [in] application-specific timestamp.
-void asiAlgo_JournalLogger::appendMessage(const TCollection_AsciiString&    theMessage,
+void asiAlgo_Logger::appendMessage(const TCollection_AsciiString&    theMessage,
                                           const ActAPI_LogMessageSeverity   /*theSeverity*/,
                                           const ActAPI_LogMessagePriority   /*thePriority*/,
                                           const ActAPI_LogArguments&        /*theArguments*/,

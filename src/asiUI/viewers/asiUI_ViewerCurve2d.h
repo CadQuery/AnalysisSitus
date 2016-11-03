@@ -28,9 +28,12 @@ class asiUI_ViewerCurve2d : public asiUI_Viewer
 
 public:
 
-  asiUI_ViewerCurve2d(vtkSmartPointer<asiVisu_PrsManager>& prs_mgr,
-                      QWidget*                             parent = NULL);
-  virtual ~asiUI_ViewerCurve2d();
+  asiUI_EXPORT
+    asiUI_ViewerCurve2d(vtkSmartPointer<asiVisu_PrsManager>& prs_mgr,
+                        QWidget*                             parent = NULL);
+
+  asiUI_EXPORT virtual
+    ~asiUI_ViewerCurve2d();
 
 public:
 

@@ -6,7 +6,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <gui_main_window_asitus.h>
+#include <exe_MainWindow.h>
+
+// exe includes
+#include <exe_CommonFacilities.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -19,24 +22,24 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-gui_main_window_asitus::gui_main_window_asitus() : QMainWindow()
+exe_MainWindow::exe_MainWindow() : QMainWindow()
 {
   this->createPartViewer();
   this->createDockWindows();
 
   this->setCentralWidget(m_widgets.wViewerPart);
-  this->setWindowTitle("Analysis Situs [Analysis]");
+  this->setWindowTitle("Analysis Situs");
 }
 
 //! Destructor.
-gui_main_window_asitus::~gui_main_window_asitus()
+exe_MainWindow::~exe_MainWindow()
 {}
 
 //-----------------------------------------------------------------------------
 
 //! Gets control on window close.
 //! \param evt [in] event.
-void gui_main_window_asitus::closeEvent(QCloseEvent* evt)
+void exe_MainWindow::closeEvent(QCloseEvent* evt)
 {
   // It seems that we have to destruct objects properly and manually in
   // order to avoid some side effects from VTK. E.g. if we don't kill the
@@ -50,9 +53,9 @@ void gui_main_window_asitus::closeEvent(QCloseEvent* evt)
 //-----------------------------------------------------------------------------
 
 //! Creates main (part) viewer.
-void gui_main_window_asitus::createPartViewer()
+void exe_MainWindow::createPartViewer()
 {
-  m_widgets.wViewerPart = new asiUI_ViewerPart();
+  m_widgets.wViewerPart = new asiUI_ViewerPart(exe_CommonFacilities::Instance()->Model);
 
   // Desktop used for sizing
   QDesktopWidget desktop;
@@ -64,12 +67,15 @@ void gui_main_window_asitus::createPartViewer()
 }
 
 //! Creates main dockable widgets.
-void gui_main_window_asitus::createDockWindows()
+void exe_MainWindow::createDockWindows()
 {
   // Desktop used for sizing
   QDesktopWidget desktop;
   const int side  = std::min( desktop.height(), desktop.width() );
   const int width = side*0.4;
+
+  // Common facilities instance
+  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
 
   //---------------------------------------------------------------------------
   // Part controls
@@ -78,7 +84,12 @@ void gui_main_window_asitus::createDockWindows()
     pDockUtilities = new QDockWidget("Utilities", this);
     pDockUtilities->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
-    m_widgets.wControlsPart = new asiUI_ControlsPart(pDockUtilities);
+    m_widgets.wControlsPart = new asiUI_ControlsPart(cf->Model,
+                                                     cf->Prs.Part,
+                                                     cf->Notifier,
+                                                     cf->Plotter,
+                                                     pDockUtilities);
+    //
     pDockUtilities->setWidget(m_widgets.wControlsPart);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockUtilities);
@@ -90,7 +101,8 @@ void gui_main_window_asitus::createDockWindows()
     pDockBrowser = new QDockWidget("Stored Objects", this);
     pDockBrowser->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wBrowser = new asiUI_ObjectBrowser(pDockBrowser);
+    m_widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, pDockBrowser);
+    //
     pDockBrowser->setWidget(m_widgets.wBrowser);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockBrowser);
@@ -101,7 +113,7 @@ void gui_main_window_asitus::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Face Domain", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerDomain = new asiUI_ViewerDomain(pDock);
+    m_widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, pDock);
     pDock->setWidget(m_widgets.wViewerDomain);
     pDock->setMinimumWidth(width);
     //

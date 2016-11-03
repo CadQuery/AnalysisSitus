@@ -57,8 +57,11 @@ public: // VTK macros and methods to override
 
   vtkTypeMacro(asiVisu_PrsManager, vtkObject);
 
-  static asiVisu_PrsManager* New();
-  void PrintSelf(ostream& os, vtkIndent indent);
+  asiVisu_EXPORT static asiVisu_PrsManager*
+    New();
+
+  asiVisu_EXPORT void
+    PrintSelf(ostream& os, vtkIndent indent);
 
 public:
 

@@ -5,13 +5,10 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef gui_main_window_asitus_h
-#define gui_main_window_asitus_h
+#ifndef exe_MainWindow_h
+#define exe_MainWindow_h
 
-// A-Situs includes
-#include <analysis_situs.h>
-
-// A-Situs (GUI) includes
+// asiUI includes
 #include <asiUI_ControlsPart.h>
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerDomain.h>
@@ -24,15 +21,15 @@
 #include <QMainWindow>
 #pragma warning(pop)
 
-//! Main window for Analysis composition.
-class gui_main_window_asitus : public QMainWindow
+//! Main window for Analysis Situs.
+class exe_MainWindow : public QMainWindow
 {
   Q_OBJECT
 
 public:
 
-  gui_main_window_asitus();
-  virtual ~gui_main_window_asitus();
+  exe_MainWindow();
+  virtual ~exe_MainWindow();
 
 public:
 

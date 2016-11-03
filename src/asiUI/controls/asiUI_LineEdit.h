@@ -23,8 +23,12 @@ class asiUI_LineEdit : public QLineEdit
 
 public:
 
-  asiUI_LineEdit(const QString& value, QWidget* parent = 0) : QLineEdit(value, parent) {}
-  asiUI_LineEdit(QWidget* parent = 0) : QLineEdit(parent) {}
+  asiUI_LineEdit(const QString& value,
+                 QWidget*       parent = 0)
+  : QLineEdit(value, parent) {}
+
+  asiUI_LineEdit(QWidget* parent = 0)
+  : QLineEdit(parent) {}
 
 };
 

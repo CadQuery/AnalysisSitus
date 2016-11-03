@@ -8,13 +8,13 @@
 // Windows includes
 #include <Windows.h>
 
-// A-Situs (common) includes
+// exe includes
+#include <exe_MainWindow.h>
+
+// asiEngine includes
 #include <asiEngine_Model.h>
 
-// A-Situs (GUI) includes
-#include <gui_welcome_window.h>
-
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_CalculusLawPrs.h>
 #include <asiVisu_GeomBoundaryEdgesPrs.h>
 #include <asiVisu_GeomContourPrs.h>
@@ -23,7 +23,6 @@
 #include <asiVisu_GeomFacePrs.h>
 #include <asiVisu_GeomPrs.h>
 #include <asiVisu_GeomSurfPrs.h>
-#include <visu_geom_volume_prs.h>
 #include <asiVisu_IVCurvePrs.h>
 #include <asiVisu_IVPointSet2dPrs.h>
 #include <asiVisu_IVPointSetPrs.h>
@@ -35,10 +34,6 @@
 #include <asiVisu_REContoursPrs.h>
 #include <asiVisu_REPointsPrs.h>
 #include <asiVisu_RESurfacesPrs.h>
-#include <visu_section_prs.h>
-#include <visu_sections_prs.h>
-#include <visu_ubend_law_prs.h>
-#include <visu_ubend_prs.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -85,23 +80,6 @@ int main(int argc, char** argv)
   QApplication::setWindowIcon( QIcon( ico_fn.ToCString() ) );
 
   //---------------------------------------------------------------------------
-  // Create Data Model
-  //---------------------------------------------------------------------------
-
-  Handle(asiEngine_Model) M = new asiEngine_Model;
-  if ( !M->NewEmpty() )
-  {
-    std::cout << "Cannot create new empty Model" << std::endl;
-    return 1;
-  }
-  //
-  M->DisableTransactions();
-  {
-    M->Populate();
-  }
-  M->EnableTransactions();
-
-  //---------------------------------------------------------------------------
   // Register Presentations
   //---------------------------------------------------------------------------
 
@@ -112,15 +90,10 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_GeomEdgePrs)
   REGISTER_PRESENTATION(asiVisu_GeomFacePrs)
   REGISTER_PRESENTATION(asiVisu_GeomSurfPrs)
-  REGISTER_PRESENTATION(visu_geom_volume_prs)
   REGISTER_PRESENTATION(asiVisu_GeomContourPrs)
   REGISTER_PRESENTATION(asiVisu_REContoursPrs)
   REGISTER_PRESENTATION(asiVisu_REPointsPrs)
   REGISTER_PRESENTATION(asiVisu_RESurfacesPrs)
-  REGISTER_PRESENTATION(visu_section_prs)
-  REGISTER_PRESENTATION(visu_sections_prs)
-  REGISTER_PRESENTATION(visu_ubend_prs)
-  REGISTER_PRESENTATION(visu_ubend_law_prs)
   REGISTER_PRESENTATION(asiVisu_CalculusLawPrs)
 
   // Imperative viewer
@@ -136,14 +109,14 @@ int main(int argc, char** argv)
   // Create main window
   //---------------------------------------------------------------------------
 
-  gui_welcome_window* pWelcomeScreen = new gui_welcome_window;
+  exe_MainWindow* pMainWindow = new exe_MainWindow;
   //
   QRect screenGeometry = QApplication::desktop()->screenGeometry();
-  const int center_x   = ( screenGeometry.width() - pWelcomeScreen->width() ) / 2;
-  const int center_y   = ( screenGeometry.height() - pWelcomeScreen->height() ) / 2;
-  pWelcomeScreen->move(center_x, center_y); // Move to the center of the screen
+  const int center_x   = ( screenGeometry.width() - pMainWindow->width() ) / 2;
+  const int center_y   = ( screenGeometry.height() - pMainWindow->height() ) / 2;
   //
-  pWelcomeScreen->show();
+  pMainWindow->move(center_x/2, center_y/2); // Move to a handy position
+  pMainWindow->show();
 
   //---------------------------------------------------------------------------
   // Run event loop

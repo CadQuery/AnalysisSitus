@@ -95,11 +95,12 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(TBB_LIB);$(AD_LIB);$(CAS_LIB64);$(VTK_LIB);$(QT_LIB)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.0.lib;vtkCommonDataModel-7.0.lib;vtkCommonExecutionModel-7.0.lib;vtkCommonMath-7.0.lib;vtkCommonTransforms-7.0.lib;vtkCommonMisc-7.0.lib;vtkRenderingAnnotation-7.0.lib;vtkRenderingCore-7.0.lib;vtkGUISupportQt-7.0.lib;vtkInteractionWidgets-7.0.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -165,6 +166,8 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>$(TBB_LIB);$(AD_LIB);$(CAS_LIB64);$(VTK_LIB);$(QT_LIB)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.0.lib;vtkCommonDataModel-7.0.lib;vtkCommonExecutionModel-7.0.lib;vtkCommonMath-7.0.lib;vtkCommonTransforms-7.0.lib;vtkCommonMisc-7.0.lib;vtkRenderingAnnotation-7.0.lib;vtkRenderingCore-7.0.lib;vtkGUISupportQt-7.0.lib;vtkInteractionWidgets-7.0.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -208,19 +211,136 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\asiUI\controls\asiUI_ControlsPart.h" />
-    <ClInclude Include="..\..\src\asiUI\controls\asiUI_LineEdit.h" />
-    <ClInclude Include="..\..\src\asiUI\controls\asiUI_ObjectBrowser.h" />
-    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_Dialog.h" />
-    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogCloudify.h" />
-    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogEuler.h" />
-    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.h" />
-    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogSewing.h" />
-    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEP.h" />
-    <ClInclude Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEPDelegate.h" />
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PartCallback.h" />
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PDomainCallback.h" />
-    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PickCallback.h" />
+    <CustomBuild Include="..\..\src\asiUI\controls\asiUI_ControlsPart.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\controls\asiUI_LineEdit.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\controls\asiUI_ObjectBrowser.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_Dialog.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogCloudify.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogEuler.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogSewing.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEP.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEPDelegate.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\interaction\asiUI_PartCallback.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\interaction\asiUI_PDomainCallback.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\interaction\asiUI_PickCallback.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PickFacetCallback.h" />
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_RotationCallback.h" />
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_ViewerCallback.h" />
@@ -228,14 +348,86 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_DataAdaptor.h" />
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_JournalIV.h" />
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_PrimDataAdaptor.h" />
-    <ClInclude Include="..\..\src\asiUI\utils\asiUI_PrimDataView.h" />
-    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_Viewer.h" />
-    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.h" />
-    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerDomain.h" />
-    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerFuncUnivariate.h" />
-    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerPart.h" />
-    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerSurface.h" />
-    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_VtkWindow.h" />
+    <CustomBuild Include="..\..\src\asiUI\utils\asiUI_PrimDataView.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_Viewer.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerDomain.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerFuncUnivariate.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerPart.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerSurface.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_VtkWindow.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPart.cpp" />
@@ -265,6 +457,27 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerPart.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerSurface.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_VtkWindow.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPart.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_LineEdit.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ObjectBrowser.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_Dialog.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogCloudify.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogEuler.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogFindFace.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogSewing.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogSTEP.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogSTEPDelegate.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_PartCallback.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_PDomainCallback.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_PickCallback.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_PrimDataView.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_Viewer.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerCurve2d.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerDomain.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerFuncUnivariate.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerPart.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerSurface.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_VtkWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="asiAlgo.vcxproj">

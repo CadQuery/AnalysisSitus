@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_JournalLogger_h
-#define asiAlgo_JournalLogger_h
+#ifndef asiAlgo_Logger_h
+#define asiAlgo_Logger_h
 
 // Analysis Situs includes
 #include <asiAlgo.h>
@@ -17,21 +17,21 @@
 // TBB includes
 #include <concurrent_queue.h>
 
-DEFINE_STANDARD_HANDLE(asiAlgo_JournalLogger, ActAPI_ILogger)
+DEFINE_STANDARD_HANDLE(asiAlgo_Logger, ActAPI_ILogger)
 
 //! Logger for algorithmic messages.
-class asiAlgo_JournalLogger : public ActAPI_ILogger
+class asiAlgo_Logger : public ActAPI_ILogger
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_JournalLogger, ActAPI_ILogger)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_Logger, ActAPI_ILogger)
 
 // Methods to use in single-threaded context:
 public:
 
   asiAlgo_EXPORT
-    asiAlgo_JournalLogger();
+    asiAlgo_Logger();
 
   asiAlgo_EXPORT ActAPI_LogMessageList
     PopMessageList();

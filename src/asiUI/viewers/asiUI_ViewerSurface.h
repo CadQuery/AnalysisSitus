@@ -21,8 +21,11 @@ class asiUI_ViewerSurface : public asiUI_Viewer
 
 public:
 
-  asiUI_ViewerSurface(QWidget* parent = NULL);
-  virtual ~asiUI_ViewerSurface();
+  asiUI_EXPORT
+    asiUI_ViewerSurface(QWidget* parent = NULL);
+
+  asiUI_EXPORT virtual
+    ~asiUI_ViewerSurface();
 
 public:
 

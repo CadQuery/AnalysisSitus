@@ -89,11 +89,11 @@ public:
   //! Mapping between Node types and allocation routines.
   typedef NCollection_DataMap<TCollection_AsciiString, asiVisu_PrsAllocator> TPrsAllocMap;
 
-  static TPrsAllocMap
+  asiVisu_EXPORT static TPrsAllocMap
     RegisterPrsType(const TCollection_AsciiString& theType,
                     const asiVisu_PrsAllocator     theAllocFunc);
 
-  static const TPrsAllocMap&
+  asiVisu_EXPORT static const TPrsAllocMap&
     GetAllocMap();
 
 // Scene:

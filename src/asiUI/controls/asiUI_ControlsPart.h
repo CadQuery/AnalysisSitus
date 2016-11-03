@@ -34,13 +34,15 @@ class asiUI_ControlsPart : public QWidget
 
 public:
 
-  asiUI_ControlsPart(const Handle(asiEngine_Model)&             model,
-                     const vtkSmartPointer<asiVisu_PrsManager>& partPrsMgr,
-                     ActAPI_ProgressEntry                       notifier,
-                     ActAPI_PlotterEntry                        plotter,
-                     QWidget*                                   parent = NULL);
-  //
-  virtual ~asiUI_ControlsPart();
+  asiUI_EXPORT
+    asiUI_ControlsPart(const Handle(asiEngine_Model)&             model,
+                       const vtkSmartPointer<asiVisu_PrsManager>& partPrsMgr,
+                       ActAPI_ProgressEntry                       notifier,
+                       ActAPI_PlotterEntry                        plotter,
+                       QWidget*                                   parent = NULL);
+
+  asiUI_EXPORT virtual
+    ~asiUI_ControlsPart();
 
 public slots:
 

@@ -33,10 +33,12 @@ class asiUI_ObjectBrowser : public QTreeWidget
 
 public:
 
-  asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
-                      QWidget*                     parent = NULL);
+  asiUI_EXPORT
+    asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
+                        QWidget*                     parent = NULL);
 
-  virtual ~asiUI_ObjectBrowser();
+  asiUI_EXPORT virtual
+    ~asiUI_ObjectBrowser();
 
 public:
 

@@ -6,15 +6,15 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiAlgo_JournalNotifier.h>
+#include <asiAlgo_Notifier.h>
 
 #undef COUT_OUTPUT
 
 //! Constructor.
-asiAlgo_JournalNotifier::asiAlgo_JournalNotifier() : ActAPI_IProgressNotifier()
+asiAlgo_Notifier::asiAlgo_Notifier() : ActAPI_IProgressNotifier()
 {
   m_pSignal = new signal();
-  m_logger  = new asiAlgo_JournalLogger();
+  m_logger  = new asiAlgo_Logger();
 
   this->Reset();
 }
@@ -29,7 +29,7 @@ asiAlgo_JournalNotifier::asiAlgo_JournalNotifier() : ActAPI_IProgressNotifier()
 
 //! Resets Progress Notifier.
 //! \param theMsgKey [in] message key to set.
-void asiAlgo_JournalNotifier::Reset()
+void asiAlgo_Notifier::Reset()
 {
   // Clean up the cumulative collections
   m_CMap.clear();
@@ -49,7 +49,7 @@ void asiAlgo_JournalNotifier::Reset()
 
 //! Initializes Progress Notifier and sets up the capacity value.
 //! \param theCapacity [in] capacity value to set.
-void asiAlgo_JournalNotifier::Init(const int theCapacity)
+void asiAlgo_Notifier::Init(const int theCapacity)
 {
   // Clean up the cumulative collections
   m_CMap.clear();
@@ -70,21 +70,21 @@ void asiAlgo_JournalNotifier::Init(const int theCapacity)
 
 //! Returns the capacity value.
 //! \return capacity value.
-int asiAlgo_JournalNotifier::Capacity() const
+int asiAlgo_Notifier::Capacity() const
 {
   return m_iCapacity;
 }
 
 //! Returns true if the progress scale is infinite.
 //! \return true/false.
-bool asiAlgo_JournalNotifier::IsInfinite() const
+bool asiAlgo_Notifier::IsInfinite() const
 {
   return m_iCapacity == INT_MAX;
 }
 
 //! Sets message key for the Progress Notifier.
 //! \param theMsgKey [in] message key to set.
-void asiAlgo_JournalNotifier::SetMessageKey(const TCollection_AsciiString& theMsgKey)
+void asiAlgo_Notifier::SetMessageKey(const TCollection_AsciiString& theMsgKey)
 {
   m_msgKey = theMsgKey;
 
@@ -94,14 +94,14 @@ void asiAlgo_JournalNotifier::SetMessageKey(const TCollection_AsciiString& theMs
 
 //! Accessor for the message key associated with the Progress Notifier.
 //! \return associated message key.
-TCollection_AsciiString asiAlgo_JournalNotifier::MessageKey() const
+TCollection_AsciiString asiAlgo_Notifier::MessageKey() const
 {
   return m_msgKey;
 }
 
 //! Sets the progress status to the given value.
 //! \param theStatus [in] progress status to set.
-void asiAlgo_JournalNotifier::SetProgressStatus(const ActAPI_ProgressStatus theStatus)
+void asiAlgo_Notifier::SetProgressStatus(const ActAPI_ProgressStatus theStatus)
 {
   m_status = theStatus;
 
@@ -111,34 +111,34 @@ void asiAlgo_JournalNotifier::SetProgressStatus(const ActAPI_ProgressStatus theS
 
 //! Accessor for the progress status.
 //! \return progress status.
-ActAPI_ProgressStatus asiAlgo_JournalNotifier::ProgressStatus() const
+ActAPI_ProgressStatus asiAlgo_Notifier::ProgressStatus() const
 {
   return m_status;
 }
 
 //! Sends cancellation requests to the task context.
-void asiAlgo_JournalNotifier::Cancel()
+void asiAlgo_Notifier::Cancel()
 {
   m_bIsCancellation = Standard_True;
 }
 
 //! Checks whether the cancellation is in progress.
 //! \return true/false.
-bool asiAlgo_JournalNotifier::IsCancelling()
+bool asiAlgo_Notifier::IsCancelling()
 {
   return m_bIsCancellation;
 }
 
 //! Checks whether the job is in running state.
 //! \return true/false.
-bool asiAlgo_JournalNotifier::IsRunning()
+bool asiAlgo_Notifier::IsRunning()
 {
   return (m_status == Progress_Running);
 }
 
 //! Checks whether the job is in failed state.
 //! \return true/false.
-bool asiAlgo_JournalNotifier::IsFailed()
+bool asiAlgo_Notifier::IsFailed()
 {
   return (m_status == Progress_Failed);
 }
@@ -150,7 +150,7 @@ bool asiAlgo_JournalNotifier::IsFailed()
 //! Collects the currently cumulated progress summing up the progress
 //! values for all registered tasks.
 //! \return cumulative progress value.
-int asiAlgo_JournalNotifier::SummaryProgress() const
+int asiAlgo_Notifier::SummaryProgress() const
 {
   int aResult = 0;
   for ( CMap::const_iterator cit = m_CMap.begin(); cit != m_CMap.end(); cit++ )
@@ -164,7 +164,7 @@ int asiAlgo_JournalNotifier::SummaryProgress() const
 //! Dumps the contents of the internal thread-safe collecting slots to the
 //! passed output stream.
 //! \param theOS [in/out] output stream to dump data to.
-void asiAlgo_JournalNotifier::DumpProgressMap(Standard_OStream& theOS) const
+void asiAlgo_Notifier::DumpProgressMap(Standard_OStream& theOS) const
 {
   for ( CMap::const_iterator cit = m_CMap.begin(); cit != m_CMap.end(); cit++ )
   {
@@ -176,7 +176,7 @@ void asiAlgo_JournalNotifier::DumpProgressMap(Standard_OStream& theOS) const
 //! value will be added into cumulative progress collection.
 //! \param theTaskID       [in] ID of the task reporting the progress.
 //! \param theStepProgress [in] next progress value.
-void asiAlgo_JournalNotifier::StepProgress(const int theTaskID,
+void asiAlgo_Notifier::StepProgress(const int theTaskID,
                                     const int theStepProgress)
 {
   if ( m_CMap.find(theTaskID) == m_CMap.end() )
@@ -200,7 +200,7 @@ void asiAlgo_JournalNotifier::StepProgress(const int theTaskID,
 //! \param theSeverity  [in] message severity (info, warning, error).
 //! \param thePriority  [in] message priority (normal, high).
 //! \param theArguments [in] message arguments (if any).
-void asiAlgo_JournalNotifier::SendLogMessage(const TCollection_AsciiString&  theMessage,
+void asiAlgo_Notifier::SendLogMessage(const TCollection_AsciiString&  theMessage,
                                              const ActAPI_LogMessageSeverity theSeverity,
                                              const ActAPI_LogMessagePriority thePriority,
                                              const ActAPI_LogArguments&      theArguments)
@@ -246,7 +246,7 @@ void asiAlgo_JournalNotifier::SendLogMessage(const TCollection_AsciiString&  the
 //! \param theSeverity  [in] message severity (info, warning, error).
 //! \param thePriority  [in] message priority (normal, high).
 //! \param theArguments [in] message arguments (if any).
-void asiAlgo_JournalNotifier::SendLogMessage(const ActAPI_LogStream& theLogStream)
+void asiAlgo_Notifier::SendLogMessage(const ActAPI_LogStream& theLogStream)
 {
   this->SendLogMessage( theLogStream.Text(),
                         theLogStream.Severity(),

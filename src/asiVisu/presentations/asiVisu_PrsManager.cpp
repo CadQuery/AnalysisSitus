@@ -801,7 +801,7 @@ ActAPI_DataObjectIdList
 #if defined COUT_DEBUG
           const TopoDS_Shape& aSubShape = aShapeWrapper->GetSubShape( sIt.Value() );
           cout << "--------------------------------------------------------------" << endl;
-          cout << "Actor: " << common_facilities::ADDR(anActor) << endl;
+          cout << "Actor: " << exe_CommonFacilities::ADDR(anActor) << endl;
           cout << "Sub-shape ID: " << sIt.Value() << endl;
           cout << "Sub-shape type: " << aSubShape.TShape()->DynamicType()->Name() << endl;
 #endif

@@ -43,6 +43,7 @@ asiAlgo_Membership
                                         ActAPI_ProgressEntry Journal)
 {
   const TopAbs_State state = m_fclass.Perform(PonS);
+
   if ( state == TopAbs_IN )
     return Membership_In;
   if ( state == TopAbs_ON )

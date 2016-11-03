@@ -30,25 +30,27 @@ class asiVisu_NodeInfo : public vtkObject
 public:
 
   vtkTypeMacro(asiVisu_NodeInfo, vtkObject);
-  static asiVisu_NodeInfo* New();
+
+  asiVisu_EXPORT static asiVisu_NodeInfo*
+    New();
 
 public:
 
-  void
+  asiVisu_EXPORT void
     SetNodeId(const ActAPI_DataObjectId& nodeId);
 
-  ActAPI_DataObjectId
+  asiVisu_EXPORT ActAPI_DataObjectId
     GetNodeId() const;
 
 public:
 
-  static vtkInformationObjectBaseKey*
+  asiVisu_EXPORT static vtkInformationObjectBaseKey*
     GetKey();
 
-  static asiVisu_NodeInfo*
+  asiVisu_EXPORT static asiVisu_NodeInfo*
     Retrieve(vtkActor* actor);
 
-  static void
+  asiVisu_EXPORT static void
     Store(const ActAPI_DataObjectId& nodeId,
           vtkActor*                  actor);
 

@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_JournalNotifier_h
-#define asiAlgo_JournalNotifier_h
+#ifndef asiAlgo_Notifier_h
+#define asiAlgo_Notifier_h
 
 // Journaling includes
-#include <asiAlgo_JournalLogger.h>
+#include <asiAlgo_Logger.h>
 
 // Active Data includes
 #include <ActAPI_IProgressNotifier.h>
@@ -20,22 +20,22 @@
 // Qt include
 #include <QObject>
 
-DEFINE_STANDARD_HANDLE(asiAlgo_JournalNotifier, ActAPI_IProgressNotifier)
+DEFINE_STANDARD_HANDLE(asiAlgo_Notifier, ActAPI_IProgressNotifier)
 
 //! Notification tool to send algorithmic messages.
-class asiAlgo_JournalNotifier : public ActAPI_IProgressNotifier
+class asiAlgo_Notifier : public ActAPI_IProgressNotifier
 {
   class signal;
 
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_JournalNotifier, ActAPI_IProgressNotifier)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_Notifier, ActAPI_IProgressNotifier)
 
 public:
 
   asiAlgo_EXPORT
-    asiAlgo_JournalNotifier();
+    asiAlgo_Notifier();
 
 // Thread-unsafe methods:
 public:
@@ -169,7 +169,7 @@ private:
   CMap m_CMap;
 
   //! Storage for logging messages.
-  Handle(asiAlgo_JournalLogger) m_logger;
+  Handle(asiAlgo_Logger) m_logger;
 
 // Single-threaded members:
 private:
@@ -195,7 +195,7 @@ private:
 //-----------------------------------------------------------------------------
 
 //! Emits notification signals.
-class asiAlgo_JournalNotifier::signal : public QObject
+class asiAlgo_Notifier::signal : public QObject
 {
   Q_OBJECT
 

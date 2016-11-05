@@ -11,7 +11,10 @@
 // A-Situs includes
 #include <asiEngine_Model.h>
 
-// A-Situs (visualization) includes
+// asiData includes
+#include <asiData_RENode.h>
+
+// asiVisu includes
 #include <asiVisu_PrsManager.h>
 
 // OCCT includes

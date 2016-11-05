@@ -11,7 +11,6 @@
 // A-Situs (engine) includes
 #include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
-#include <asiEngine_RE.h>
 
 // Active Data includes
 #include <ActData_CAFConverter.h>
@@ -31,8 +30,6 @@ REGISTER_NODE_TYPE(ActData_RealVarNode)
 // Custom Nodes
 REGISTER_NODE_TYPE(asiData_RootNode)
 //
-REGISTER_NODE_TYPE(asiData_TessNode)
-//
 REGISTER_NODE_TYPE(asiData_PartNode)
 REGISTER_NODE_TYPE(asiData_FaceNode)
 REGISTER_NODE_TYPE(asiData_SurfNode)
@@ -40,15 +37,6 @@ REGISTER_NODE_TYPE(asiData_EdgeNode)
 REGISTER_NODE_TYPE(asiData_CurveNode)
 REGISTER_NODE_TYPE(asiData_BoundaryEdgesNode)
 REGISTER_NODE_TYPE(asiData_ContourNode)
-//
-REGISTER_NODE_TYPE(asiData_RENode)
-REGISTER_NODE_TYPE(asiData_RESurfacesNode)
-REGISTER_NODE_TYPE(asiData_RESurfaceNode)
-REGISTER_NODE_TYPE(asiData_REContoursNode)
-REGISTER_NODE_TYPE(asiData_REContourNode)
-REGISTER_NODE_TYPE(asiData_REPointsNode)
-//
-REGISTER_NODE_TYPE(asiData_DesignLawNode)
 //
 REGISTER_NODE_TYPE(asiData_IVCurveNode)
 REGISTER_NODE_TYPE(asiData_IVCurvesNode)
@@ -89,8 +77,6 @@ static void PrepareForRemoval(const Handle(ActAPI_INode)&     root_n,
 }
 
 //-----------------------------------------------------------------------------
-// Construction
-//-----------------------------------------------------------------------------
 
 //! Default constructor. Initializes Base Model foundation object so that
 //! to enable Extended Transaction Mode.
@@ -102,10 +88,7 @@ asiEngine_Model::asiEngine_Model() : ActData_BaseModel(true)
 //! Populates Data Model.
 void asiEngine_Model::Populate()
 {
-  //---------------------------------------------------------------------------
   // Add root Node
-  //---------------------------------------------------------------------------
-
   Handle(asiData_RootNode)
     root_n = Handle(asiData_RootNode)::DownCast( asiData_RootNode::Instance() );
   //
@@ -114,57 +97,25 @@ void asiEngine_Model::Populate()
   // Set name
   root_n->SetName("Analysis Situs");
 
-  //---------------------------------------------------------------------------
-  // Add Mesh Node
-  //---------------------------------------------------------------------------
-
-  // Add Mesh Node to Partition
-  Handle(asiData_TessNode) tess_n = Handle(asiData_TessNode)::DownCast( asiData_TessNode::Instance() );
-  this->GetMeshPartition()->AddNode(tess_n);
-
-  // Initialize mesh
-  tess_n->Init();
-  tess_n->SetName("Tessellation");
-
-  // Set as a child for root
-  root_n->AddChildNode(tess_n);
-
-  //---------------------------------------------------------------------------
   // Add Part Node
-  //---------------------------------------------------------------------------
-
   root_n->AddChildNode( asiEngine_Part(this, NULL).Create_Part() );
 
-  //---------------------------------------------------------------------------
-  // Add Reverse Engineering Node
-  //---------------------------------------------------------------------------
-
-  root_n->AddChildNode( asiEngine_RE(this).Create_RE() );
-
-  //---------------------------------------------------------------------------
   // Add Imperative Viewer Node
-  //---------------------------------------------------------------------------
-
   root_n->AddChildNode( asiEngine_IV(this).Create_IV() );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Clears the Model.
 void asiEngine_Model::Clear()
 {
-  //---------------------------------------------------------------------------
-  // Collects Nodes to delete
-  //---------------------------------------------------------------------------
-
+  // Nodes to delete
   Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList;
 
   // NOTE: Part Node is not touched as it is structural. No sense in
   //       removing it since we will have to create it again once a new
   //       part is loaded. The same rule applies to other structural Nodes.
 
-  ::PrepareForRemoval(this->GetRENode()->Surfaces(),     nodesToDelete);
-  ::PrepareForRemoval(this->GetRENode()->Contours(),     nodesToDelete);
-  ::PrepareForRemoval(this->GetRENode()->Points(),       nodesToDelete);
-  //
   ::PrepareForRemoval(this->GetIVNode()->Points2d(),     nodesToDelete);
   ::PrepareForRemoval(this->GetIVNode()->Points(),       nodesToDelete);
   ::PrepareForRemoval(this->GetIVNode()->Curves(),       nodesToDelete);
@@ -173,10 +124,7 @@ void asiEngine_Model::Clear()
   ::PrepareForRemoval(this->GetIVNode()->Tessellation(), nodesToDelete);
   ::PrepareForRemoval(this->GetIVNode()->Text(),         nodesToDelete);
 
-  //---------------------------------------------------------------------------
   // Perform deletion
-  //---------------------------------------------------------------------------
-
   this->OpenCommand(); // tx start
   {
     // Clean up persistent selection
@@ -194,19 +142,6 @@ void asiEngine_Model::Clear()
 
 //-----------------------------------------------------------------------------
 
-//! \return single Mesh Node.
-Handle(asiData_TessNode) asiEngine_Model::GetMeshNode() const
-{
-  for ( ActData_BasePartition::Iterator it( this->GetMeshPartition() ); it.More(); it.Next() )
-  {
-    Handle(asiData_TessNode) N = Handle(asiData_TessNode)::DownCast( it.Value() );
-    //
-    if ( !N.IsNull() && N->IsWellFormed() )
-      return N;
-  }
-  return NULL;
-}
-
 //! \return single Geometry Part Node.
 Handle(asiData_PartNode) asiEngine_Model::GetPartNode() const
 {
@@ -220,18 +155,7 @@ Handle(asiData_PartNode) asiEngine_Model::GetPartNode() const
   return NULL;
 }
 
-//! \return single Reverse Engineering Node.
-Handle(asiData_RENode) asiEngine_Model::GetRENode() const
-{
-  for ( ActData_BasePartition::Iterator it( this->GetREPartition() ); it.More(); it.Next() )
-  {
-    Handle(asiData_RENode) N = Handle(asiData_RENode)::DownCast( it.Value() );
-    //
-    if ( !N.IsNull() && N->IsWellFormed() )
-      return N;
-  }
-  return NULL;
-}
+//-----------------------------------------------------------------------------
 
 //! \return single Imperative Viewer Node.
 Handle(asiData_IVNode) asiEngine_Model::GetIVNode() const
@@ -253,8 +177,6 @@ void asiEngine_Model::initPartitions()
 {
   REGISTER_PARTITION(asiData_Partition<asiData_RootNode>,          Partition_Root);
   //
-  REGISTER_PARTITION(asiData_Partition<asiData_TessNode>,          Partition_Mesh);
-  //
   REGISTER_PARTITION(asiData_Partition<asiData_PartNode>,          Partition_GeomPart);
   REGISTER_PARTITION(asiData_Partition<asiData_FaceNode>,          Partition_GeomFace);
   REGISTER_PARTITION(asiData_Partition<asiData_SurfNode>,          Partition_GeomSurface);
@@ -262,15 +184,6 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_CurveNode>,         Partition_GeomCurve);
   REGISTER_PARTITION(asiData_Partition<asiData_BoundaryEdgesNode>, Partition_GeomBoundaryEdges);
   REGISTER_PARTITION(asiData_Partition<asiData_ContourNode>,       Partition_GeomContour);
-  //
-  REGISTER_PARTITION(asiData_Partition<asiData_RENode>,            Partition_RE);
-  REGISTER_PARTITION(asiData_Partition<asiData_RESurfacesNode>,    Partition_RESurfaces);
-  REGISTER_PARTITION(asiData_Partition<asiData_RESurfaceNode>,     Partition_RESurface);
-  REGISTER_PARTITION(asiData_Partition<asiData_REContoursNode>,    Partition_REContours);
-  REGISTER_PARTITION(asiData_Partition<asiData_REContourNode>,     Partition_REContour);
-  REGISTER_PARTITION(asiData_Partition<asiData_REPointsNode>,      Partition_REPoints);
-  //
-  REGISTER_PARTITION(asiData_Partition<asiData_DesignLawNode>,     Partition_CalculusDesignLaw);
   //
   REGISTER_PARTITION(asiData_Partition<asiData_IVNode>,            Partition_IV);
   REGISTER_PARTITION(asiData_Partition<asiData_IVPoints2dNode>,    Partition_IV_Points2d);
@@ -289,6 +202,8 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_IVTextItemNode>,    Partition_IV_TextItem);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Initializes the Tree Functions bound to the Data Model.
 void asiEngine_Model::initFunctionDrivers()
 {
@@ -296,18 +211,16 @@ void asiEngine_Model::initFunctionDrivers()
 }
 
 //-----------------------------------------------------------------------------
-// Structure management methods
-//-----------------------------------------------------------------------------
 
 //! Returns a Partition of Data Nodes representing Variables for Expression
 //! Evaluation mechanism.
-//! \param theVarType [in] type of Variable to return the dedicated
-//!                        Partition for.
+//! \param varType [in] type of Variable to return the dedicated
+//!                     Partition for.
 //! \return Variable Partition.
 Handle(ActAPI_IPartition)
-  asiEngine_Model::getVariablePartition(const VariableType& theVarType) const
+  asiEngine_Model::getVariablePartition(const VariableType& varType) const
 {
-  switch ( theVarType )
+  switch ( varType )
   {
     case Variable_Real:
       return this->Partition(Partition_RealVar);
@@ -317,6 +230,8 @@ Handle(ActAPI_IPartition)
   return NULL;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Accessor for the root Project Node.
 //! \return root Project Node.
 Handle(ActAPI_INode) asiEngine_Model::getRootNode() const
@@ -324,6 +239,8 @@ Handle(ActAPI_INode) asiEngine_Model::getRootNode() const
   asiData_Partition<asiData_RootNode>::Iterator anIt( this->GetRootPartition() );
   return ( anIt.More() ? anIt.Value() : NULL );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Populates the passed collections of references to pass out-scope filtering
 //! in Copy/Paste operation.
@@ -334,8 +251,6 @@ void asiEngine_Model::invariantCopyRefs(ActAPI_FuncGUIDStream&         asiEngine
 {}
 
 //-----------------------------------------------------------------------------
-// Versions
-//-----------------------------------------------------------------------------
 
 //! Returns version of Data Model.
 //! \return current version of Data Model.
@@ -343,6 +258,8 @@ int asiEngine_Model::actualVersionApp()
 {
   return 0x0;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Callback supplying CAF converter required to perform application-specific
 //! conversion of Data Model from older version of the application to the

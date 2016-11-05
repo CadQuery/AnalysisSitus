@@ -126,20 +126,6 @@ Handle(asiData_PartNode) asiEngine_Part::Create_Part()
     geom_n->AddChildNode(geom_edges_n);
   }
 
-  // Create underlying contour Node
-  {
-    Handle(ActAPI_INode) geom_contour_base = asiData_ContourNode::Instance();
-    m_model->GetGeomContourPartition()->AddNode(geom_contour_base);
-
-    // Initialize
-    Handle(asiData_ContourNode) geom_contour_n = Handle(asiData_ContourNode)::DownCast(geom_contour_base);
-    geom_contour_n->Init();
-    geom_contour_n->SetName("Contour");
-
-    // Set as child
-    geom_n->AddChildNode(geom_contour_n);
-  }
-
   // Return the just created Node
   return geom_n;
 }

@@ -216,14 +216,12 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClInclude Include="..\..\src\asiEngine\asiEngine_IV.h" />
     <ClInclude Include="..\..\src\asiEngine\asiEngine_Model.h" />
     <ClInclude Include="..\..\src\asiEngine\asiEngine_Part.h" />
-    <ClInclude Include="..\..\src\asiEngine\asiEngine_RE.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiEngine\asiEngine_Domain.cpp" />
     <ClCompile Include="..\..\src\asiEngine\asiEngine_IV.cpp" />
     <ClCompile Include="..\..\src\asiEngine\asiEngine_Model.cpp" />
     <ClCompile Include="..\..\src\asiEngine\asiEngine_Part.cpp" />
-    <ClCompile Include="..\..\src\asiEngine\asiEngine_RE.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="asiAlgo.vcxproj">

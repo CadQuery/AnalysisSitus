@@ -24,18 +24,19 @@
 //! Constructor.
 //! \param edge_n [in] source Data Node.
 asiVisu_EdgeDataProvider::asiVisu_EdgeDataProvider(const Handle(asiData_EdgeNode)& edge_n)
-: asiVisu_CurveDataProvider(), m_edgeNode(edge_n)
+: asiVisu_CurveDataProvider()
 {
-  // Access owning geometry
-  Handle(asiData_PartNode)
-    geom_n = Handle(asiData_PartNode)::DownCast( m_edgeNode->GetParentNode() );
+  this->init(edge_n);
+}
 
-  // Build maps
-  if ( !geom_n->GetShape().IsNull() )
-  {
-    TopExp::MapShapes(geom_n->GetShape(), m_subShapes);
-    TopExp::MapShapes(geom_n->GetShape(), TopAbs_EDGE, m_edges);
-  }
+//-----------------------------------------------------------------------------
+
+//! Constructor.
+//! \param curve_n [in] source Data Node.
+asiVisu_EdgeDataProvider::asiVisu_EdgeDataProvider(const Handle(asiData_CurveNode)& curve_n)
+: asiVisu_CurveDataProvider()
+{
+  this->init(curve_n);
 }
 
 //-----------------------------------------------------------------------------
@@ -46,7 +47,7 @@ asiVisu_EdgeDataProvider::asiVisu_EdgeDataProvider(const Handle(asiData_EdgeNode
 //! \return Node ID.
 ActAPI_DataObjectId asiVisu_EdgeDataProvider::GetNodeID() const
 {
-  return m_edgeNode->GetId();
+  return m_node->GetId();
 }
 
 //-----------------------------------------------------------------------------
@@ -54,7 +55,14 @@ ActAPI_DataObjectId asiVisu_EdgeDataProvider::GetNodeID() const
 //! \return global index of the OCCT edge to be visualized.
 int asiVisu_EdgeDataProvider::GetEdgeIndexAmongSubshapes() const
 {
-  return m_edgeNode->GetSelectedEdge();
+  int globalId = 0;
+
+  if ( m_node->IsInstance( STANDARD_TYPE(asiData_EdgeNode) ) )
+    globalId = Handle(asiData_EdgeNode)::DownCast(m_node)->GetSelectedEdge();
+  else if ( m_node->IsInstance( STANDARD_TYPE(asiData_CurveNode) ) )
+    globalId = Handle(asiData_CurveNode)::DownCast(m_node)->GetSelectedEdge();
+
+  return globalId;
 }
 
 //-----------------------------------------------------------------------------
@@ -62,7 +70,7 @@ int asiVisu_EdgeDataProvider::GetEdgeIndexAmongSubshapes() const
 //! \return local index of the OCCT edges to be visualized.
 int asiVisu_EdgeDataProvider::GetEdgeIndexAmongEdges() const
 {
-  const int globalId = m_edgeNode->GetSelectedEdge();
+  const int globalId = this->GetEdgeIndexAmongSubshapes();
 
   if ( globalId )
     return m_edges.FindIndex( m_subShapes.FindKey(globalId) );
@@ -132,7 +140,43 @@ Handle(Geom_Curve) asiVisu_EdgeDataProvider::GetCurve(double& f, double& l) cons
 //! \return copy.
 Handle(asiVisu_EdgeDataProvider) asiVisu_EdgeDataProvider::Clone() const
 {
-  return new asiVisu_EdgeDataProvider(m_edgeNode);
+  if ( m_node->IsInstance( STANDARD_TYPE(asiData_EdgeNode) ) )
+  {
+    Handle(asiData_EdgeNode)
+      edgeNode = Handle(asiData_EdgeNode)::DownCast(m_node);
+    //
+    return new asiVisu_EdgeDataProvider(edgeNode);
+  }
+
+  if ( m_node->IsInstance( STANDARD_TYPE(asiData_CurveNode) ) )
+  {
+    Handle(asiData_CurveNode)
+      curveNode = Handle(asiData_CurveNode)::DownCast(m_node);
+    //
+    return new asiVisu_EdgeDataProvider(curveNode);
+  }
+
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Initializes data provider with the source data.
+//! \param subNode [in] Data Node representing the edge.
+void asiVisu_EdgeDataProvider::init(const Handle(ActAPI_INode)& subNode)
+{
+  m_node = subNode;
+
+  // Access owning geometry
+  Handle(asiData_PartNode)
+    geom_n = Handle(asiData_PartNode)::DownCast( subNode->GetParentNode() );
+
+  // Build maps
+  if ( !geom_n->GetShape().IsNull() )
+  {
+    TopExp::MapShapes(geom_n->GetShape(), m_subShapes);
+    TopExp::MapShapes(geom_n->GetShape(), TopAbs_EDGE, m_edges);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -142,7 +186,14 @@ Handle(asiVisu_EdgeDataProvider) asiVisu_EdgeDataProvider::Clone() const
 //! \return source Parameters.
 Handle(ActAPI_HParameterList) asiVisu_EdgeDataProvider::translationSources() const
 {
-  return ActParamStream() << m_edgeNode->Parameter(asiData_EdgeNode::PID_SelectedEdge); // Parameter for edge index
-}
+  int PID = -1;
+  if ( m_node->IsInstance( STANDARD_TYPE(asiData_EdgeNode) ) )
+    PID = asiData_EdgeNode::PID_SelectedEdge;
+  else if ( m_node->IsInstance( STANDARD_TYPE(asiData_CurveNode) ) )
+    PID = asiData_CurveNode::PID_SelectedEdge;
 
-//-----------------------------------------------------------------------------
+  if ( PID == -1 )
+    return NULL;
+
+  return ActParamStream() << m_node->Parameter(PID); // Parameter for edge index
+}

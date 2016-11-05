@@ -48,13 +48,13 @@ public slots:
 
   void onLoadBRep      ();
   void onLoadSTEP      ();
-  void onLoadSTL       ();
   void onSaveSTEP      ();
   void onSavePly       ();
   void onSaveBRep      ();
   //
   void onCheckShape    ();
   void onTolerance     ();
+  //
   void onSewing        ();
   void onMaximizeFaces ();
   //
@@ -82,71 +82,59 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    QPushButton* pLoadBRep;         //!< Button for BREP loading.
-    QPushButton* pLoadSTEP;         //!< Button for STEP loading.
-    QPushButton* pLoadSTL;          //!< Button for STL loading.
-    QPushButton* pSaveSTEP;         //!< Save shape to STEP.
-    QPushButton* pSavePly;          //!< Save triangulation to ply.
-    QPushButton* pSaveBRep;         //!< Save shape to BREP.
+    QPushButton* pLoadBRep;      //!< Button for BREP loading.
+    QPushButton* pLoadSTEP;      //!< Button for STEP loading.
+    QPushButton* pSaveSTEP;      //!< Save shape to STEP.
+    QPushButton* pSavePly;       //!< Save triangulation to ply.
+    QPushButton* pSaveBRep;      //!< Save shape to BREP.
     //
-    QPushButton* pCheckShape;       //!< Runs shape validity checker.
-    QPushButton* pTolerance;        //!< Checks tolerance.
+    QPushButton* pCheckShape;    //!< Runs shape validity checker.
+    QPushButton* pTolerance;     //!< Checks tolerance.
     //
-    QPushButton* pSewing;           //!< Performs sewing.
-    QPushButton* pMaximizeFaces;    //!< Performs face maximization.
-    QPushButton* pOBB;              //!< Builds OBB.
-    QPushButton* pCR;               //!< Runs canonical recognition.
-    QPushButton* pCloudify;         //!< Builds a point cloud from the model.
+    QPushButton* pSewing;        //!< Performs sewing.
+    QPushButton* pMaximizeFaces; //!< Performs face maximization.
     //
-    QPushButton* pShowVertices;     //!< Shows vertices of the model.
-    QPushButton* pShowNormals;      //!< Shows normals for faces.
-    QPushButton* pSelectFaces;      //!< Enables selection by faces.
-    QPushButton* pSelectEdges;      //!< Enables selection by edges.
+    QPushButton* pShowVertices;  //!< Shows vertices of the model.
+    QPushButton* pShowNormals;   //!< Shows normals for faces.
+    QPushButton* pSelectFaces;   //!< Enables selection by faces.
+    QPushButton* pSelectEdges;   //!< Enables selection by edges.
 
-    t_widgets() : pLoadBRep         (NULL),
-                  pLoadSTEP         (NULL),
-                  pLoadSTL          (NULL),
-                  pSaveSTEP         (NULL),
-                  pSavePly          (NULL),
-                  pSaveBRep         (NULL),
+    t_widgets() : pLoadBRep      (NULL),
+                  pLoadSTEP      (NULL),
+                  pSaveSTEP      (NULL),
+                  pSavePly       (NULL),
+                  pSaveBRep      (NULL),
                   //
-                  pCheckShape       (NULL),
-                  pTolerance        (NULL),
+                  pCheckShape    (NULL),
+                  pTolerance     (NULL),
                   //
-                  pSewing           (NULL),
-                  pMaximizeFaces    (NULL),
-                  pOBB              (NULL),
-                  pCR               (NULL),
-                  pCloudify         (NULL),
+                  pSewing        (NULL),
+                  pMaximizeFaces (NULL),
                   //
-                  pShowVertices     (NULL),
-                  pShowNormals      (NULL),
-                  pSelectFaces      (NULL),
-                  pSelectEdges      (NULL)
+                  pShowVertices  (NULL),
+                  pShowNormals   (NULL),
+                  pSelectFaces   (NULL),
+                  pSelectEdges   (NULL)
     {}
 
     void Release()
     {
-      delete pLoadBRep;         pLoadBRep         = NULL;
-      delete pLoadSTEP;         pLoadSTEP         = NULL;
-      delete pLoadSTL;          pLoadSTL          = NULL;
-      delete pSaveSTEP;         pSaveSTEP         = NULL;
-      delete pSavePly;          pSavePly          = NULL;
-      delete pSaveBRep;         pSaveBRep         = NULL;
+      delete pLoadBRep;      pLoadBRep      = NULL;
+      delete pLoadSTEP;      pLoadSTEP      = NULL;
+      delete pSaveSTEP;      pSaveSTEP      = NULL;
+      delete pSavePly;       pSavePly       = NULL;
+      delete pSaveBRep;      pSaveBRep      = NULL;
       //
-      delete pCheckShape;       pCheckShape       = NULL;
-      delete pTolerance;        pTolerance        = NULL;
+      delete pCheckShape;    pCheckShape    = NULL;
+      delete pTolerance;     pTolerance     = NULL;
       //
-      delete pSewing;           pSewing           = NULL;
-      delete pMaximizeFaces;    pMaximizeFaces    = NULL;
-      delete pOBB;              pOBB              = NULL;
-      delete pCR;               pCR               = NULL;
-      delete pCloudify;         pCloudify         = NULL;
+      delete pSewing;        pSewing        = NULL;
+      delete pMaximizeFaces; pMaximizeFaces = NULL;
       //
-      delete pShowVertices;     pShowVertices     = NULL;
-      delete pShowNormals;      pShowNormals      = NULL;
-      delete pSelectFaces;      pSelectFaces      = NULL;
-      delete pSelectEdges;      pSelectEdges      = NULL;
+      delete pShowVertices;  pShowVertices  = NULL;
+      delete pShowNormals;   pShowNormals   = NULL;
+      delete pSelectFaces;   pSelectFaces   = NULL;
+      delete pSelectEdges;   pSelectEdges   = NULL;
     }
   };
 

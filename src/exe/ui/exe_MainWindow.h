@@ -40,6 +40,19 @@ private:
   void createPartViewer();
   void createDockWindows();
 
+private slots:
+
+  void onPartLoaded       ();
+  void onPartModified     ();
+  void onFacePicked       ();
+  void onEdgePicked       ();
+  void onVerticesOn       ();
+  void onVerticesOff      ();
+  void onNormalsOn        ();
+  void onNormalsOff       ();
+  void onSelectionFacesOn ();
+  void onSelectionEdgesOn ();
+
 private:
 
   //! Widgets.

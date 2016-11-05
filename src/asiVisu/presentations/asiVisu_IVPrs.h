@@ -24,7 +24,7 @@ public:
 
 public:
 
-  inline virtual bool IsVisible() const
+  virtual bool IsVisible() const
   {
     return true;
   }
@@ -46,7 +46,8 @@ private:
 
 protected:
 
-  asiVisu_IVPrs(const Handle(ActAPI_INode)& node) : asiVisu_Prs(node) {}
+  asiVisu_EXPORT
+    asiVisu_IVPrs(const Handle(ActAPI_INode)& node) : asiVisu_Prs(node) {}
 
 };
 

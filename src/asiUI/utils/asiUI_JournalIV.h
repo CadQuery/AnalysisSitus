@@ -179,6 +179,24 @@ public:
   asiUI_EXPORT virtual void
     DRAW_TEXT(const TCollection_AsciiString& text);
 
+public:
+
+  //! Initializes imperative plotter.
+  //! \param model    [in] Data Model instance.
+  //! \param prsMgr3d [in] 3D presentation manager.
+  //! \param prsMgr2d [in] 2D presentation manager.
+  //! \param pBrowser [in] Object browser instance.
+  void Init(const Handle(asiEngine_Model)&             model,
+            const vtkSmartPointer<asiVisu_PrsManager>& prsMgr3d,
+            const vtkSmartPointer<asiVisu_PrsManager>& prsMgr2d,
+            asiUI_ObjectBrowser*                       pBrowser)
+  {
+    m_model    = model;
+    m_prsMgr3d = prsMgr3d;
+    m_prsMgr2d = prsMgr2d;
+    m_pBrowser = pBrowser;
+  }
+
 protected:
 
   asiUI_EXPORT void

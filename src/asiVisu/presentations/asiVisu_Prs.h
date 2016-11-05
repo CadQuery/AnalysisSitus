@@ -49,93 +49,94 @@ public:
 
 public:
 
-  virtual bool
+  asiVisu_EXPORT virtual bool
     IsVisible() const = 0;
 
 // Interface methods:
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     InitPipelines();
 
-  virtual void
+  asiVisu_EXPORT virtual void
     UpdatePipelines() const;
 
-  virtual const Handle(asiVisu_Pipeline)&
+  asiVisu_EXPORT virtual const Handle(asiVisu_Pipeline)&
     GetPipeline(const int theId) const;
 
-  virtual const Handle(asiVisu_HPipelineList)
+  asiVisu_EXPORT virtual const Handle(asiVisu_HPipelineList)
     GetPipelineList() const;
 
-  virtual Handle(asiVisu_Pipeline)
+  asiVisu_EXPORT virtual Handle(asiVisu_Pipeline)
     GetPickPipeline(const int theIdx = 1) const;
 
-  virtual const Handle(asiVisu_HPipelineList)
+  asiVisu_EXPORT virtual const Handle(asiVisu_HPipelineList)
     GetPickPipelineList() const;
 
-  virtual const Handle(asiVisu_Pipeline)&
+  asiVisu_EXPORT virtual const Handle(asiVisu_Pipeline)&
     GetDetectPipeline(const int theIdx = 1) const;
 
-  virtual const Handle(asiVisu_HPipelineList)
+  asiVisu_EXPORT virtual const Handle(asiVisu_HPipelineList)
     GetDetectPipelineList() const;
 
-  virtual Handle(ActAPI_INode)
+  asiVisu_EXPORT virtual Handle(ActAPI_INode)
     GetNode() const;
 
 public:
 
-  void
+  asiVisu_EXPORT void
     RenderPipelines(vtkRenderer* theRenderer) const;
 
-  void
+  asiVisu_EXPORT void
     DeRenderPipelines(vtkRenderer* theRenderer) const;
 
-  void
+  asiVisu_EXPORT void
     Highlight(vtkRenderer*                   theRenderer,
               const asiVisu_PickResult&      thePickRes,
               const asiVisu_SelectionNature& theSelNature) const;
 
-  void
+  asiVisu_EXPORT void
     UnHighlight(vtkRenderer*                   theRenderer,
                 const asiVisu_SelectionNature& theSelNature) const;
 
 // Presentation construction methods:
 protected:
 
-  void
+  asiVisu_EXPORT void
     addPipeline(const int                       theId,
                 const Handle(asiVisu_Pipeline)& thePipeline);
 
-  void
+  asiVisu_EXPORT void
     assignDataProvider(const int                           theId,
                        const Handle(asiVisu_DataProvider)& theDataProvider);
 
-  Handle(asiVisu_DataProvider)
+  asiVisu_EXPORT Handle(asiVisu_DataProvider)
     dataProvider(const int theId) const;
 
-  Handle(asiVisu_DataProvider)
+  asiVisu_EXPORT Handle(asiVisu_DataProvider)
     dataProvider(const Handle(asiVisu_Pipeline)& thePipeline,
                  const PipelineGroup             theGroup) const;
 
-  Handle(asiVisu_DataProvider)
+  asiVisu_EXPORT Handle(asiVisu_DataProvider)
     dataProviderPick(const int theIdx = 1) const;
 
-  Handle(asiVisu_DataProvider)
+  asiVisu_EXPORT Handle(asiVisu_DataProvider)
     dataProviderDetect(const int theIdx = 1) const;
 
-  void
+  asiVisu_EXPORT void
     installPickPipeline(const Handle(asiVisu_Pipeline)&     thePipeline,
                         const Handle(asiVisu_DataProvider)& theDataProvider,
                         const int                           theIdx = 1);
 
-  void
+  asiVisu_EXPORT void
     installDetectPipeline(const Handle(asiVisu_Pipeline)&     thePipeline,
                           const Handle(asiVisu_DataProvider)& theDataProvider,
                           const int                           theIdx = 1);
 
 protected:
 
-  asiVisu_Prs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_EXPORT
+    asiVisu_Prs(const Handle(ActAPI_INode)& theNode);
 
 private:
 

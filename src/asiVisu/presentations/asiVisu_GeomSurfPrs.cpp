@@ -100,8 +100,8 @@ void CreateImage(vtkSmartPointer<vtkImageData> image,
 asiVisu_GeomSurfPrs::asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& theNode)
 : asiVisu_Prs(theNode)
 {
-  Handle(asiData_FaceNode)
-    face_n = Handle(asiData_FaceNode)::DownCast(theNode);
+  Handle(asiData_SurfNode)
+    face_n = Handle(asiData_SurfNode)::DownCast(theNode);
 
   // Create Data Provider
   Handle(asiVisu_FaceDataProvider) DP = new asiVisu_FaceDataProvider(face_n);

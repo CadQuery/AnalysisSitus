@@ -37,7 +37,7 @@ public:
 
 public:
 
-  static Handle(asiVisu_Prs)
+  asiVisu_EXPORT static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
 private:

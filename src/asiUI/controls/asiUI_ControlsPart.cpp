@@ -70,7 +70,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   // Buttons
   m_widgets.pLoadBRep      = new QPushButton("Load b-rep");
   m_widgets.pLoadSTEP      = new QPushButton("Load STEP");
-  m_widgets.pLoadSTL       = new QPushButton("Load STL");
   m_widgets.pSaveSTEP      = new QPushButton("Save STEP");
   m_widgets.pSavePly       = new QPushButton("Save mesh (ply)");
   m_widgets.pSaveBRep      = new QPushButton("Save b-rep");
@@ -80,9 +79,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   //
   m_widgets.pSewing        = new QPushButton("Sewing");
   m_widgets.pMaximizeFaces = new QPushButton("Maximize faces");
-  m_widgets.pOBB           = new QPushButton("OBB");
-  m_widgets.pCR            = new QPushButton("Canonical recognition");
-  m_widgets.pCloudify      = new QPushButton("Cloudify");
   //
   m_widgets.pShowVertices  = new QPushButton("Show vertices");
   m_widgets.pShowNormals   = new QPushButton("Show normals");
@@ -91,7 +87,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   //
   m_widgets.pLoadBRep      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pLoadSTEP      -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pLoadSTL       -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSaveSTEP      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSavePly       -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSaveBRep      -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -101,9 +96,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   //
   m_widgets.pSewing        -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pMaximizeFaces -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pOBB           -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pCR            -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pCloudify      -> setMinimumWidth(BTN_MIN_WIDTH);
   //
   m_widgets.pShowVertices  -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pShowNormals   -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -119,7 +111,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   //
   pExchangeLay->addWidget(m_widgets.pLoadBRep);
   pExchangeLay->addWidget(m_widgets.pLoadSTEP);
-  pExchangeLay->addWidget(m_widgets.pLoadSTL);
   pExchangeLay->addWidget(m_widgets.pSaveSTEP);
   pExchangeLay->addWidget(m_widgets.pSavePly);
   pExchangeLay->addWidget(m_widgets.pSaveBRep);
@@ -137,9 +128,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   //
   pProcessingLay->addWidget(m_widgets.pSewing);
   pProcessingLay->addWidget(m_widgets.pMaximizeFaces);
-  pProcessingLay->addWidget(m_widgets.pOBB);
-  pProcessingLay->addWidget(m_widgets.pCR);
-  pProcessingLay->addWidget(m_widgets.pCloudify);
 
   // Group for visualization
   QGroupBox*   pVisuGroup = new QGroupBox("Visualization");
@@ -163,7 +151,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   // Connect signals to slots
   connect( m_widgets.pLoadBRep,      SIGNAL( clicked() ), SLOT( onLoadBRep      () ) );
   connect( m_widgets.pLoadSTEP,      SIGNAL( clicked() ), SLOT( onLoadSTEP      () ) );
-  connect( m_widgets.pLoadSTL,       SIGNAL( clicked() ), SLOT( onLoadSTL       () ) );
   connect( m_widgets.pSaveSTEP,      SIGNAL( clicked() ), SLOT( onSaveSTEP      () ) );
   connect( m_widgets.pSavePly,       SIGNAL( clicked() ), SLOT( onSavePly       () ) );
   connect( m_widgets.pSaveBRep,      SIGNAL( clicked() ), SLOT( onSaveBRep      () ) );
@@ -173,9 +160,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   //
   connect( m_widgets.pSewing,        SIGNAL( clicked() ), SLOT( onSewing        () ) );
   connect( m_widgets.pMaximizeFaces, SIGNAL( clicked() ), SLOT( onMaximizeFaces () ) );
-  connect( m_widgets.pOBB,           SIGNAL( clicked() ), SLOT( onOBB           () ) );
-  connect( m_widgets.pCR,            SIGNAL( clicked() ), SLOT( onCR            () ) );
-  connect( m_widgets.pCloudify,      SIGNAL( clicked() ), SLOT( onCloudify      () ) );
   //
   connect( m_widgets.pShowVertices,  SIGNAL( clicked() ), SLOT( onShowVertices  () ) );
   connect( m_widgets.pShowNormals,   SIGNAL( clicked() ), SLOT( onShowNormals   () ) );
@@ -232,38 +216,7 @@ void asiUI_ControlsPart::onLoadSTEP()
 
   // Dialog for reading STEP
   asiUI_DialogSTEP* pDlg = new asiUI_DialogSTEP(m_model, geom_n, asiUI_DialogSTEP::Mode_Read, this);
-  pDlg->show();
-
-  // Notify
-  emit partLoaded();
-}
-
-//-----------------------------------------------------------------------------
-
-//! On STL loading.
-void asiUI_ControlsPart::onLoadSTL()
-{
-  QString filename = asiUI_Common::selectSTLFile(asiUI_Common::OpenSaveAction_Open);
-
-  // Read STL
-  TopoDS_Shape shape;
-  if ( !asiAlgo_Utils::ReadSTL(QStr2AsciiStr(filename), shape) )
-  {
-    std::cout << "Error: cannot read STL file" << std::endl;
-    return;
-  }
-
-  // Clean up the Model
-  m_model->Clear();
-
-  // Set part geometry
-  Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
-  //
-  m_model->OpenCommand(); // tx start
-  {
-    geom_n->SetShape(shape);
-  }
-  m_model->CommitCommand(); // tx commit
+  pDlg->exec();
 
   // Notify
   emit partLoaded();
@@ -421,7 +374,7 @@ void asiUI_ControlsPart::onSewing()
 
   // Run dialog for sewing properties
   asiUI_DialogSewing* wSewing = new asiUI_DialogSewing(m_model, part_n, this);
-  wSewing->show();
+  wSewing->exec();
 
   // Notify
   emit partModified();
@@ -560,6 +513,7 @@ void asiUI_ControlsPart::onSelectFaces()
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
+  // Enable the corresponding selection mode
   m_partPrsMgr->SetSelectionMode(SelectionMode_Face);
 
   // Notify
@@ -576,6 +530,7 @@ void asiUI_ControlsPart::onSelectEdges()
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
+  // Enable the corresponding selection mode
   m_partPrsMgr->SetSelectionMode(SelectionMode_Edge);
 
   // Notify

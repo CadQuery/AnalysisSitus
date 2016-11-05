@@ -49,22 +49,22 @@ public:
 
 public:
 
-  static Handle(asiVisu_Prs)
+  asiVisu_EXPORT static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
-  virtual bool
+  asiVisu_EXPORT virtual bool
     IsVisible() const;
 
 //-----------------------------------------------------------------------------
 public:
 
-  void DoWireframe();
-  void DoShaded();
-  void DoShadedAndGaussian();
-  void DoShadedAndMean();
+  asiVisu_EXPORT void DoWireframe();
+  asiVisu_EXPORT void DoShaded();
+  asiVisu_EXPORT void DoShadedAndGaussian();
+  asiVisu_EXPORT void DoShadedAndMean();
   //
-  bool IsShaded() const;
-  bool IsShadedAndScalars() const;
+  asiVisu_EXPORT bool IsShaded() const;
+  asiVisu_EXPORT bool IsShadedAndScalars() const;
 
 private:
 

@@ -46,10 +46,10 @@ public:
 
 public:
 
-  static Handle(asiVisu_Prs)
+  asiVisu_EXPORT static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
-  virtual bool
+  asiVisu_EXPORT virtual bool
     IsVisible() const;
 
 private:

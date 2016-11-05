@@ -338,4 +338,6 @@ void asiUI_DialogSTEP::onProceed()
     this->proceed_Read();
   else
     this->proceed_Write();
+
+  this->close();
 }

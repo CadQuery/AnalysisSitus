@@ -13,6 +13,7 @@
 
 // asiData includes
 #include <asiData_FaceNode.h>
+#include <asiData_SurfNode.h>
 
 // OCCT includes
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -31,6 +32,9 @@ public:
 
   asiVisu_EXPORT
     asiVisu_FaceDataProvider(const Handle(asiData_FaceNode)& face_n);
+
+  asiVisu_EXPORT
+    asiVisu_FaceDataProvider(const Handle(asiData_SurfNode)& surf_n);
 
 public:
 
@@ -51,6 +55,11 @@ public:
   asiVisu_EXPORT Handle(asiVisu_FaceDataProvider)
     Clone() const;
 
+protected:
+
+  asiVisu_EXPORT void
+    init(const Handle(ActAPI_INode)& subNode);
+
 private:
 
   virtual Handle(ActAPI_HParameterList)
@@ -59,7 +68,7 @@ private:
 private:
 
   //! Source Node.
-  Handle(asiData_FaceNode) m_faceNode;
+  Handle(ActAPI_INode) m_node;
 
   //! Map of sub-shapes.
   TopTools_IndexedMapOfShape m_subShapes;

@@ -13,7 +13,6 @@
 
 // A-Situs (data) includes
 #include <asiData_BoundaryEdgesNode.h>
-#include <asiData_DesignLawNode.h>
 #include <asiData_IVCurveNode.h>
 #include <asiData_IVCurvesNode.h>
 #include <asiData_IVNode.h>
@@ -31,9 +30,7 @@
 #include <asiData_IVTopoNode.h>
 #include <asiData_Partition.h>
 #include <asiData_PartNode.h>
-#include <asiData_RENode.h>
 #include <asiData_RootNode.h>
-#include <asiData_TessNode.h>
 
 // Active Data includes
 #include <ActData_BaseModel.h>
@@ -75,14 +72,8 @@ public:
 // Accessors to Nodes:
 public:
 
-  asiEngine_EXPORT Handle(asiData_TessNode)
-    GetMeshNode() const;
-
   asiEngine_EXPORT Handle(asiData_PartNode)
     GetPartNode() const;
-
-  asiEngine_EXPORT Handle(asiData_RENode)
-    GetRENode() const;
 
   asiEngine_EXPORT Handle(asiData_IVNode)
     GetIVNode() const;
@@ -101,20 +92,6 @@ public:
 //-----------------------------------------------------------------------------
 // Partitions:
 public:
-
-  //! Accessor for a Partition instance dedicated to Calculus Design Law Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<asiData_DesignLawNode>) GetCalculusDesignLawPartition() const
-  {
-    return Handle(asiData_Partition<asiData_DesignLawNode>)::DownCast( this->Partition(Partition_CalculusDesignLaw) );
-  }
-
-  //! Accessor for a Partition instance dedicated to Mesh Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<asiData_TessNode>) GetMeshPartition() const
-  {
-    return Handle(asiData_Partition<asiData_TessNode>)::DownCast( this->Partition(Partition_Mesh) );
-  }
 
   //! Accessor for a Partition instance dedicated to root Nodes.
   //! \return requested Partition.
@@ -172,55 +149,6 @@ public:
   Handle(asiData_Partition<asiData_ContourNode>) GetGeomContourPartition() const
   {
     return Handle(asiData_Partition<asiData_ContourNode>)::DownCast( this->Partition(Partition_GeomContour) );
-  }
-
-//-----------------------------------------------------------------------------
-
-  //! Accessor for a Partition instance dedicated to Reverse Engineering Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<asiData_RENode>) GetREPartition() const
-  {
-    return Handle(asiData_Partition<asiData_RENode>)::DownCast( this->Partition(Partition_RE) );
-  }
-
-  //! Accessor for a Partition instance dedicated to Reverse Engineering
-  //! Surfaces Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<asiData_RESurfacesNode>) GetRESurfacesPartition() const
-  {
-    return Handle(asiData_Partition<asiData_RESurfacesNode>)::DownCast( this->Partition(Partition_RESurfaces) );
-  }
-
-  //! Accessor for a Partition instance dedicated to Reverse Engineering
-  //! Surface Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<asiData_RESurfaceNode>) GetRESurfacePartition() const
-  {
-    return Handle(asiData_Partition<asiData_RESurfaceNode>)::DownCast( this->Partition(Partition_RESurface) );
-  }
-
-  //! Accessor for a Partition instance dedicated to Reverse Engineering
-  //! Contours Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<asiData_REContoursNode>) GetREContoursPartition() const
-  {
-    return Handle(asiData_Partition<asiData_REContoursNode>)::DownCast( this->Partition(Partition_REContours) );
-  }
-
-  //! Accessor for a Partition instance dedicated to Reverse Engineering
-  //! Contour Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<asiData_REContourNode>) GetREContourPartition() const
-  {
-    return Handle(asiData_Partition<asiData_REContourNode>)::DownCast( this->Partition(Partition_REContour) );
-  }
-
-  //! Accessor for a Partition instance dedicated to Reverse Engineering
-  //! Points Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<asiData_REPointsNode>) GetREPointsPartition() const
-  {
-    return Handle(asiData_Partition<asiData_REPointsNode>)::DownCast( this->Partition(Partition_REPoints) );
   }
 
 //-----------------------------------------------------------------------------
@@ -341,7 +269,7 @@ private:
 private:
 
   virtual Handle(ActAPI_IPartition)
-    getVariablePartition(const VariableType& theVarType) const;
+    getVariablePartition(const VariableType& varType) const;
 
   virtual Handle(ActAPI_INode)
     getRootNode() const;
@@ -374,17 +302,6 @@ private:
     Partition_GeomCurve,
     Partition_GeomBoundaryEdges,
     Partition_GeomContour,
-  //---------------------------------------------------------------------------
-    Partition_Mesh,
-  //---------------------------------------------------------------------------
-    Partition_RE,
-    Partition_RESurfaces,
-    Partition_RESurface,
-    Partition_REContours,
-    Partition_REContour,
-    Partition_REPoints,
-  //---------------------------------------------------------------------------
-    Partition_CalculusDesignLaw,
   //---------------------------------------------------------------------------
     Partition_IV,
     Partition_IV_Points2d,

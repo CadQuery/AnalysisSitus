@@ -129,7 +129,7 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
     m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_FIND_FACE, m_partCallback);
 
   // Get notified once a sub-shape is picked
-  connect( m_pickCallback, SIGNAL( partPicked() ), this, SLOT( onSubShapesPicked() ) );
+  connect( m_pickCallback, SIGNAL( picked() ), this, SLOT( onSubShapesPicked() ) );
 
   // Get notified about part events
   connect( m_partCallback, SIGNAL( findFace() ), this, SLOT( onFindFace() ) );

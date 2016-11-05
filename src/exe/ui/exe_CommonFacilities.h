@@ -22,6 +22,7 @@
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerPart.h>
+#include <asiUI_ViewerSurface.h>
 
 DEFINE_STANDARD_HANDLE(exe_CommonFacilities, Standard_Transient)
 
@@ -42,6 +43,7 @@ public:
   //
   asiUI_ViewerPart*                ViewerPart;    //!< Viewer for part.
   asiUI_ViewerDomain*              ViewerDomain;  //!< Viewer for face parametric domain.
+  asiUI_ViewerSurface*             ViewerHost;    //!< Viewer for host geometry.
   //
   Handle(ActAPI_IProgressNotifier) Notifier;      //!< Algorithmic notifier.
   Handle(ActAPI_IPlotter)          Plotter;       //!< Algorithmic plotter.
@@ -87,7 +89,8 @@ private:
   //
     : ObjectBrowser (NULL),
       ViewerPart    (NULL),
-      ViewerDomain  (NULL)
+      ViewerDomain  (NULL),
+      ViewerHost    (NULL)
   {
     // Create Data Model
     Model = new asiEngine_Model;
@@ -102,8 +105,8 @@ private:
     }
     Model->EnableTransactions();
 
+    // Initialize notifier
     Notifier = new asiAlgo_Notifier;
-    Plotter  = new asiUI_JournalIV(Model, Prs.Part, Prs.Domain, ObjectBrowser);
   }
 
 private:

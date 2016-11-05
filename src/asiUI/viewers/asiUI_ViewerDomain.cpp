@@ -99,7 +99,7 @@ asiUI_ViewerDomain::asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
     m_prs_mgr->GetImageInteractorStyle()->AddObserver(EVENT_JOIN, m_domainCallback);
 
   // Get notified once any sensitive is picked on a section
-  connect( m_pickCallback, SIGNAL( domainPicked() ), this, SLOT( onDomainPicked() ) );
+  connect( m_pickCallback, SIGNAL( picked() ), this, SLOT( onDomainPicked() ) );
 
   // Get notified of edge removal
   connect( m_domainCallback, SIGNAL( killEdges() ), this, SLOT( onKillEdges() ) );

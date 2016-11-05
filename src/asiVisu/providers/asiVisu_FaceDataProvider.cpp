@@ -23,18 +23,19 @@
 //! Constructor.
 //! \param face_n [in] source Data Node.
 asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const Handle(asiData_FaceNode)& face_n)
-: asiVisu_DataProvider(), m_faceNode(face_n)
+: asiVisu_DataProvider()
 {
-  // Access owning geometry
-  Handle(asiData_PartNode)
-    geom_n = Handle(asiData_PartNode)::DownCast( m_faceNode->GetParentNode() );
+  this->init(face_n);
+}
 
-  // Build maps
-  if ( !geom_n->GetShape().IsNull() )
-  {
-    TopExp::MapShapes(geom_n->GetShape(), m_subShapes);
-    TopExp::MapShapes(geom_n->GetShape(), TopAbs_FACE, m_faces);
-  }
+//-----------------------------------------------------------------------------
+
+//! Constructor.
+//! \param surf_n [in] source Data Node.
+asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const Handle(asiData_SurfNode)& surf_n)
+: asiVisu_DataProvider()
+{
+  this->init(surf_n);
 }
 
 //-----------------------------------------------------------------------------
@@ -45,19 +46,26 @@ asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const Handle(asiData_FaceNode
 //! \return Node ID.
 ActAPI_DataObjectId asiVisu_FaceDataProvider::GetNodeID() const
 {
-  return m_faceNode->GetId();
+  return m_node->GetId();
 }
 
 //! \return global index of the OCCT face to be visualized.
 int asiVisu_FaceDataProvider::GetFaceIndexAmongSubshapes() const
 {
-  return m_faceNode->GetSelectedFace();
+  int globalId = 0;
+
+  if ( m_node->IsInstance( STANDARD_TYPE(asiData_FaceNode) ) )
+    globalId = Handle(asiData_FaceNode)::DownCast(m_node)->GetSelectedFace();
+  else if ( m_node->IsInstance( STANDARD_TYPE(asiData_SurfNode) ) )
+    globalId = Handle(asiData_SurfNode)::DownCast(m_node)->GetSelectedFace();
+
+  return globalId;
 }
 
 //! \return local index of the OCCT face to be visualized.
 int asiVisu_FaceDataProvider::GetFaceIndexAmongFaces() const
 {
-  const int globalId = m_faceNode->GetSelectedFace();
+  const int globalId = this->GetFaceIndexAmongSubshapes();
 
   if ( globalId )
     return m_faces.FindIndex( m_subShapes.FindKey(globalId) );
@@ -87,7 +95,43 @@ TopoDS_Face asiVisu_FaceDataProvider::ExtractFace() const
 //! \return copy.
 Handle(asiVisu_FaceDataProvider) asiVisu_FaceDataProvider::Clone() const
 {
-  return new asiVisu_FaceDataProvider(m_faceNode);
+  if ( m_node->IsInstance( STANDARD_TYPE(asiData_FaceNode) ) )
+  {
+    Handle(asiData_FaceNode)
+      faceNode = Handle(asiData_FaceNode)::DownCast(m_node);
+    //
+    return new asiVisu_FaceDataProvider(faceNode);
+  }
+
+  if ( m_node->IsInstance( STANDARD_TYPE(asiData_SurfNode) ) )
+  {
+    Handle(asiData_SurfNode)
+      surfNode = Handle(asiData_SurfNode)::DownCast(m_node);
+    //
+    return new asiVisu_FaceDataProvider(surfNode);
+  }
+
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Initializes data provider with the source data.
+//! \param subNode [in] Data Node representing the face.
+void asiVisu_FaceDataProvider::init(const Handle(ActAPI_INode)& subNode)
+{
+  m_node = subNode;
+
+  // Access owning geometry
+  Handle(asiData_PartNode)
+    geom_n = Handle(asiData_PartNode)::DownCast( subNode->GetParentNode() );
+
+  // Build maps
+  if ( !geom_n->GetShape().IsNull() )
+  {
+    TopExp::MapShapes(geom_n->GetShape(), m_subShapes);
+    TopExp::MapShapes(geom_n->GetShape(), TopAbs_FACE, m_faces);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -97,5 +141,14 @@ Handle(asiVisu_FaceDataProvider) asiVisu_FaceDataProvider::Clone() const
 //! \return source Parameters.
 Handle(ActAPI_HParameterList) asiVisu_FaceDataProvider::translationSources() const
 {
-  return ActParamStream() << m_faceNode->Parameter(asiData_FaceNode::PID_SelectedFace); // Parameter for face index
+  int PID = -1;
+  if ( m_node->IsInstance( STANDARD_TYPE(asiData_FaceNode) ) )
+    PID = asiData_FaceNode::PID_SelectedFace;
+  else if ( m_node->IsInstance( STANDARD_TYPE(asiData_SurfNode) ) )
+    PID = asiData_SurfNode::PID_SelectedFace;
+
+  if ( PID == -1 )
+    return NULL;
+
+  return ActParamStream() << m_node->Parameter(PID); // Parameter for face index
 }

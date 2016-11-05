@@ -283,10 +283,13 @@ public:
   }
 
 // Auxiliary methods:
-private:
+protected:
 
-  void adjustTrihedron();
-  void actualizeShapeSelectionMode();
+  asiVisu_EXPORT void
+    adjustTrihedron();
+
+  asiVisu_EXPORT void
+    actualizeShapeSelectionMode();
 
 // Presentation management:
 private:

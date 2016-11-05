@@ -33,10 +33,10 @@
 asiVisu_GeomCurvePrs::asiVisu_GeomCurvePrs(const Handle(ActAPI_INode)& theNode)
 : asiVisu_Prs(theNode)
 {
-  Handle(asiData_EdgeNode) edge_n = Handle(asiData_EdgeNode)::DownCast(theNode);
+  Handle(asiData_CurveNode) curve_n = Handle(asiData_CurveNode)::DownCast(theNode);
 
   // Create Data Provider
-  Handle(asiVisu_EdgeDataProvider) DP = new asiVisu_EdgeDataProvider(edge_n);
+  Handle(asiVisu_EdgeDataProvider) DP = new asiVisu_EdgeDataProvider(curve_n);
 
   // Pipeline for curve
   this->addPipeline        ( Pipeline_Main, new asiVisu_EdgeCurvePipeline );

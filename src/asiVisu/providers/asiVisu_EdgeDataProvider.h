@@ -12,6 +12,7 @@
 #include <asiVisu_CurveDataProvider.h>
 
 // asiData includes
+#include <asiData_CurveNode.h>
 #include <asiData_EdgeNode.h>
 
 // OCCT includes
@@ -32,6 +33,9 @@ public:
 
   asiVisu_EXPORT
     asiVisu_EdgeDataProvider(const Handle(asiData_EdgeNode)& edge_n);
+
+  asiVisu_EXPORT
+    asiVisu_EdgeDataProvider(const Handle(asiData_CurveNode)& curve_n);
 
 public:
 
@@ -63,6 +67,11 @@ public:
   asiVisu_EXPORT Handle(asiVisu_EdgeDataProvider)
     Clone() const;
 
+protected:
+
+  asiVisu_EXPORT void
+    init(const Handle(ActAPI_INode)& subNode);
+
 private:
 
   virtual Handle(ActAPI_HParameterList)
@@ -71,7 +80,7 @@ private:
 private:
 
   //! Source Node.
-  Handle(asiData_EdgeNode) m_edgeNode;
+  Handle(ActAPI_INode) m_node;
 
   //! Map of sub-shapes.
   TopTools_IndexedMapOfShape m_subShapes;

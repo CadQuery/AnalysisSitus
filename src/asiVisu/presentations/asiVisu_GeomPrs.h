@@ -45,22 +45,22 @@ public:
 
 public:
 
-  static Handle(asiVisu_Prs)
+  asiVisu_EXPORT static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
-  virtual bool
+  asiVisu_EXPORT virtual bool
     IsVisible() const;
 
 // Visualization commands:
 public:
 
-  void DoShading() const;
-  void DoWireframe() const;
+  asiVisu_EXPORT void DoShading() const;
+  asiVisu_EXPORT void DoWireframe() const;
 
-  void DoColor(const QColor& theColor) const;
-  void DoUnColor() const;
+  asiVisu_EXPORT void DoColor(const QColor& theColor) const;
+  asiVisu_EXPORT void DoUnColor() const;
 
-  void DoVertices(const bool on) const;
+  asiVisu_EXPORT void DoVertices(const bool on) const;
 
 public:
 

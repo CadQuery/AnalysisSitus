@@ -8,19 +8,19 @@
 // Own include
 #include <exeFeatures_ControlsEuler.h>
 
-// GUI includes
-#include <asiUI_Common.h>
-#include <asiUI_DialogEuler.h>
+// exeFeatures includes
+#include <exeFeatures_CommonFacilities.h>
 
-// Engine includes
-#include <asiEngine_Part.h>
-
-// Geometry includes
+// asiAlgo includes
+#include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
-// Common includes
-#include <common_draw_test_suite.h>
-#include <common_facilities.h>
+// asiEngine includes
+#include <asiEngine_Part.h>
+
+// asiUI includes
+#include <asiUI_Common.h>
+#include <asiUI_DialogEuler.h>
 
 // Feature includes
 #include <feature_euler_KEF.h>
@@ -64,7 +64,7 @@ private:
   static void perform(const EulerOp op)
   {
     // Access Geometry Node
-    Handle(asiData_PartNode) N = common_facilities::Instance()->Model->GetPartNode();
+    Handle(asiData_PartNode) N = exeFeatures_CommonFacilities::Instance()->Model->GetPartNode();
     //
     if ( N.IsNull() || !N->IsWellFormed() )
       return;
@@ -89,7 +89,7 @@ private:
     }
 
     // Perform modification
-    common_facilities::Instance()->Model->OpenCommand();
+    exeFeatures_CommonFacilities::Instance()->Model->OpenCommand();
     {
       TIMER_NEW
       TIMER_GO
@@ -126,7 +126,7 @@ private:
         if ( !OP->Perform() )
         {
           std::cout << "Error: Euler operation failed" << std::endl;
-          common_facilities::Instance()->Model->AbortCommand();
+          exeFeatures_CommonFacilities::Instance()->Model->AbortCommand();
           return;
         }
 
@@ -159,16 +159,16 @@ private:
 
       N->SetShape(result);
     }
-    common_facilities::Instance()->Model->CommitCommand();
+    exeFeatures_CommonFacilities::Instance()->Model->CommitCommand();
     //
     std::cout << "Euler operation done. Visualizing..." << std::endl;
 
     // Clean up
-    common_facilities::Instance()->Model->Clear();
+    exeFeatures_CommonFacilities::Instance()->Model->Clear();
 
     // Actualize
-    common_facilities::Instance()->Prs.Part->InitializePickers();
-    common_facilities::Instance()->Prs.Part->Actualize( N.get() );
+    exeFeatures_CommonFacilities::Instance()->Prs.Part->InitializePickers();
+    exeFeatures_CommonFacilities::Instance()->Prs.Part->Actualize( N.get() );
   }
 
 };

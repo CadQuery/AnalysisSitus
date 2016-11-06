@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CF6D5B48-C134-4C34-A5E1-D0E77CFE43D1}</ProjectGuid>
+    <ProjectGuid>{B4A2E270-0B2A-4CBD-867F-39B841E42D4E}</ProjectGuid>
     <RootNamespace>QrVisu</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -65,11 +65,11 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win$(ARCH)\$(VCVER)\bind\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win$(ARCH)\$(VCVER)\objd\QrVisu\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win$(ARCH)\$(VCVER)\objd\exeFeatures\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win$(ARCH)\$(VCVER)\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win$(ARCH)\$(VCVER)\obj\QrVisu\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win$(ARCH)\$(VCVER)\obj\exeFeatures\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
   </PropertyGroup>
@@ -83,7 +83,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(QR_ROOT)\src\QrCore;$(QR_ROOT)\src\QrCore\Primitives;$(QR_ROOT)\src\QrCore\Utils;$(QR_ROOT)\src\QrBSpl;$(QR_ROOT)\src\QrBSpl\Basis;$(QR_ROOT)\src\QrBSpl\Reconstruct;$(QR_ROOT)\src\QrBSpl\Common;$(QR_ROOT)\src\QrGeom3D;$(QR_ROOT)\src\QrGeom3D\Classifiers;$(QR_ROOT)\src\QrGeom3D\Clouds;$(QR_ROOT)\src\QrGeom3D\Discrete;$(QR_ROOT)\src\QrGeom3D\Interpolation;$(QR_ROOT)\src\QrGeom3D\Primitives;$(QR_ROOT)\src\QrTools;$(QR_ROOT)\src\QrTools\PointClouds;$(QR_ROOT)\src\QrTools\Skinning;$(QR_ROOT)\src\QrTools\Extrema;$(QR_ROOT)\src\QrTools\Opt;$(QR_ROOT)\src\QrVisu;$(QR_ROOT)\src\QrVisu\Actors;$(QR_ROOT)\src\QrVisu\Actors\BSpl;$(QR_ROOT)\src\QrVisu\Actors\Geom3D;$(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data;$(QR_ROOT)\src\QrVisu\Actors\Misc;$(QR_ROOT)\src\QrVisu\Engine\;$(QR_ROOT)\src\QrVisu\Engine\GL;$(QR_ROOT)\src\QrVisu\Engine\GL\NeHe;$(QR_ROOT)\src\QrVisu\Commands;$(QR_ROOT)\src\QrVisu\Commands\Base;$(QR_ROOT)\src\QrVisu\Commands\Console;$(QR_ROOT)\src\QrVisu\Commands\View;$(ADOLC_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FEAT_INC);$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(QR_INC);$(TBB_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\selection;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;$(AS_ROOT)\src\asiEngine;$(AS_ROOT)\src\asiUI;$(AS_ROOT)\src\asiUI\controls;$(AS_ROOT)\src\asiUI\dialogs;$(AS_ROOT)\src\asiUI\interaction;$(AS_ROOT)\src\asiUI\utils;$(AS_ROOT)\src\asiUI\viewers;$(AS_ROOT)\src\exeFeatures;$(AS_ROOT)\src\exeFeatures\ui;$(AS_ROOT)\src\exeFeatures\visu;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>QrVisu_LIB;AUTO_DIFF_ADOLC;Qr_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -95,11 +95,12 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(TBB_LIB);$(AD_LIB);$(CAS_LIB64);$(VTK_LIB);$(QT_LIB)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.0.lib;vtkCommonDataModel-7.0.lib;vtkCommonExecutionModel-7.0.lib;vtkCommonMath-7.0.lib;vtkCommonTransforms-7.0.lib;vtkCommonMisc-7.0.lib;vtkRenderingAnnotation-7.0.lib;vtkRenderingCore-7.0.lib;vtkRenderingContextOpenGL2-7.0.lib;vtkRenderingOpenGL2-7.0.lib;vtkRenderingFreeType-7.0.lib;vtkGUISupportQt-7.0.lib;vtkInteractionWidgets-7.0.lib;vtkInteractionStyle-7.0.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>if not exist $(QR_ROOT)\include mkdir $(QR_ROOT)\include
@@ -159,7 +160,7 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(QR_ROOT)\src\QrCore;$(QR_ROOT)\src\QrCore\Primitives;$(QR_ROOT)\src\QrCore\Utils;$(QR_ROOT)\src\QrBSpl;$(QR_ROOT)\src\QrBSpl\Basis;$(QR_ROOT)\src\QrBSpl\Reconstruct;$(QR_ROOT)\src\QrBSpl\Common;$(QR_ROOT)\src\QrGeom3D;$(QR_ROOT)\src\QrGeom3D\Classifiers;$(QR_ROOT)\src\QrGeom3D\Clouds;$(QR_ROOT)\src\QrGeom3D\Discrete;$(QR_ROOT)\src\QrGeom3D\Interpolation;$(QR_ROOT)\src\QrGeom3D\Primitives;$(QR_ROOT)\src\QrTools;$(QR_ROOT)\src\QrTools\PointClouds;$(QR_ROOT)\src\QrTools\Skinning;$(QR_ROOT)\src\QrTools\Extrema;$(QR_ROOT)\src\QrTools\Opt;$(QR_ROOT)\src\QrVisu;$(QR_ROOT)\src\QrVisu\Actors;$(QR_ROOT)\src\QrVisu\Actors\BSpl;$(QR_ROOT)\src\QrVisu\Actors\Geom3D;$(QR_ROOT)\src\QrVisu\Actors\Geom3D\Data;$(QR_ROOT)\src\QrVisu\Actors\Misc;$(QR_ROOT)\src\QrVisu\Engine\;$(QR_ROOT)\src\QrVisu\Engine\GL;$(QR_ROOT)\src\QrVisu\Engine\GL\NeHe;$(QR_ROOT)\src\QrVisu\Commands;$(QR_ROOT)\src\QrVisu\Commands\Base;$(QR_ROOT)\src\QrVisu\Commands\Console;$(QR_ROOT)\src\QrVisu\Commands\View;$(ADOLC_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FEAT_INC);$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(QR_INC);$(TBB_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\selection;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;$(AS_ROOT)\src\asiEngine;$(AS_ROOT)\src\asiUI;$(AS_ROOT)\src\asiUI\controls;$(AS_ROOT)\src\asiUI\dialogs;$(AS_ROOT)\src\asiUI\interaction;$(AS_ROOT)\src\asiUI\utils;$(AS_ROOT)\src\asiUI\viewers;$(AS_ROOT)\src\exeFeatures;$(AS_ROOT)\src\exeFeatures\ui;$(AS_ROOT)\src\exeFeatures\visu;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>QrVisu_LIB;AUTO_DIFF_ADOLC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -170,11 +171,13 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>$(TBB_LIB);$(AD_LIB);$(CAS_LIB64);$(VTK_LIB);$(QT_LIB)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.0.lib;vtkCommonDataModel-7.0.lib;vtkCommonExecutionModel-7.0.lib;vtkCommonMath-7.0.lib;vtkCommonTransforms-7.0.lib;vtkCommonMisc-7.0.lib;vtkRenderingAnnotation-7.0.lib;vtkRenderingCore-7.0.lib;vtkRenderingContextOpenGL2-7.0.lib;vtkRenderingOpenGL2-7.0.lib;vtkRenderingFreeType-7.0.lib;vtkGUISupportQt-7.0.lib;vtkInteractionWidgets-7.0.lib;vtkInteractionStyle-7.0.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>if not exist $(QR_ROOT)\include mkdir $(QR_ROOT)\include
@@ -228,38 +231,42 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="QrCore.vcxproj">
-      <Project>{32770788-99cc-46e3-8a3c-fd62b7999e0f}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="QrBSpl.vcxproj">
-      <Project>{f2ebf92b-ea4c-4608-a025-679dcb35709f}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="QrGeom3D.vcxproj">
-      <Project>{865af71d-7216-408d-b118-95292fd30eec}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="QrTools.vcxproj">
-      <Project>{6b8adf4a-d5af-4462-a480-d11c021d2220}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_Controls.h" />
-    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_ControlsEuler.h" />
-    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_DialogDetectHoles.h" />
-    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_MainWindow.h" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="..\..\src\exeFeatures\exeFeatures_Main.cpp" />
+    <ClCompile Include="..\..\src\exeFeatures\ui\exeFeatures_CommonFacilities.cpp" />
     <ClCompile Include="..\..\src\exeFeatures\ui\exeFeatures_Controls.cpp" />
     <ClCompile Include="..\..\src\exeFeatures\ui\exeFeatures_ControlsEuler.cpp" />
     <ClCompile Include="..\..\src\exeFeatures\ui\exeFeatures_DialogDetectHoles.cpp" />
     <ClCompile Include="..\..\src\exeFeatures\ui\exeFeatures_MainWindow.cpp" />
+    <ClCompile Include="..\..\src\exeFeatures\visu\exeFeatures_AAGAdaptor.cpp" />
+    <ClCompile Include="..\..\src\exeFeatures\visu\exeFeatures_TopoGraph.cpp" />
+    <ClCompile Include="..\..\src\exeFeatures\visu\exeFeatures_TopoGraphItem.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="asiAlgo.vcxproj">
+      <Project>{18bdd73e-5256-451d-9df9-7e38b34e6191}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiData.vcxproj">
+      <Project>{8b06c62d-603c-401c-9d8e-f251c8a4a2c7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiEngine.vcxproj">
+      <Project>{1ef86927-32bd-48ce-9dcd-7dbfa3fe6f34}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiUI.vcxproj">
+      <Project>{e08413bb-fdc9-4674-810c-dba4bf7c35e2}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiVisu.vcxproj">
+      <Project>{2dd37131-6046-4b5d-8ded-09e25b718d61}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_CommonFacilities.h" />
+    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_Controls.h" />
+    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_ControlsEuler.h" />
+    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_DialogDetectHoles.h" />
+    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_MainWindow.h" />
+    <ClInclude Include="..\..\src\exeFeatures\visu\exeFeatures_AAGAdaptor.h" />
+    <ClInclude Include="..\..\src\exeFeatures\visu\exeFeatures_TopoGraph.h" />
+    <ClInclude Include="..\..\src\exeFeatures\visu\exeFeatures_TopoGraphItem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

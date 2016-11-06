@@ -9,7 +9,7 @@
 #define exe_MainWindow_h
 
 // asiUI includes
-#include <asiUI_ControlsPart.h>
+#include <asiUI_ControlsPartResponder.h>
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerPart.h>
@@ -42,42 +42,37 @@ private:
 
 private slots:
 
-  void onPartLoaded       ();
-  void onPartModified     ();
-  void onFacePicked       ();
-  void onEdgePicked       ();
-  void onVerticesOn       ();
-  void onVerticesOff      ();
-  void onNormalsOn        ();
-  void onNormalsOff       ();
-  void onSelectionFacesOn ();
-  void onSelectionEdgesOn ();
+  void onFacePicked();
+  void onEdgePicked();
 
 private:
 
   //! Widgets.
   struct t_widgets
   {
-    asiUI_ObjectBrowser* wBrowser;       //!< Object browser.
-    asiUI_ViewerDomain*  wViewerDomain;  //!< Parametric domain viewer.
-    asiUI_ViewerPart*    wViewerPart;    //!< Part viewer.
-    asiUI_ViewerSurface* wViewerSurface; //!< Surface viewer.
-    asiUI_ControlsPart*  wControlsPart;  //!< Part controls.
+    asiUI_ObjectBrowser*         wBrowser;          //!< Object browser.
+    asiUI_ViewerDomain*          wViewerDomain;     //!< Parametric domain viewer.
+    asiUI_ViewerPart*            wViewerPart;       //!< Part viewer.
+    asiUI_ViewerSurface*         wViewerSurface;    //!< Surface viewer.
+    asiUI_ControlsPart*          wControlsPart;     //!< Part controls.
+    asiUI_ControlsPartResponder* pControlsPartResp; //!< Responder for part controls.
 
-    t_widgets() : wBrowser       (NULL),
-                  wViewerDomain  (NULL),
-                  wViewerPart    (NULL),
-                  wViewerSurface (NULL),
-                  wControlsPart  (NULL)
+    t_widgets() : wBrowser          (NULL),
+                  wViewerDomain     (NULL),
+                  wViewerPart       (NULL),
+                  wViewerSurface    (NULL),
+                  wControlsPart     (NULL),
+                  pControlsPartResp (NULL)
     {}
 
     void Release()
     {
-      delete wBrowser;       wBrowser       = NULL;
-      delete wViewerDomain;  wViewerDomain  = NULL;
-      delete wViewerPart;    wViewerPart    = NULL;
-      delete wViewerSurface; wViewerSurface = NULL;
-      delete wControlsPart;  wControlsPart  = NULL;
+      delete wBrowser;          wBrowser          = NULL;
+      delete wViewerDomain;     wViewerDomain     = NULL;
+      delete wViewerPart;       wViewerPart       = NULL;
+      delete wViewerSurface;    wViewerSurface    = NULL;
+      delete wControlsPart;     wControlsPart     = NULL;
+      delete pControlsPartResp; pControlsPartResp = NULL;
     }
   };
 

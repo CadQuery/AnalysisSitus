@@ -9,17 +9,32 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="MOC">
+      <UniqueIdentifier>{9ba7dd1c-5244-4e67-a590-1dde40d40af3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\UI">
-      <UniqueIdentifier>{982b94f6-26fd-4826-8ae1-1ddb8fbcb10f}</UniqueIdentifier>
+      <UniqueIdentifier>{8b012b5c-d1db-4f10-9e1a-fdb4a503212f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\UI">
-      <UniqueIdentifier>{ffb1501e-58ef-44d4-92f0-2d1c91404ce8}</UniqueIdentifier>
+      <UniqueIdentifier>{5a584c54-4235-4c63-b441-4d662f24ea09}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MOC">
-      <UniqueIdentifier>{f97a44a2-ebd5-49bb-a302-a9886bf2dbe1}</UniqueIdentifier>
+    <Filter Include="Header Files\Visu">
+      <UniqueIdentifier>{c869d12b-6538-4073-9492-91765cb8019f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visu">
+      <UniqueIdentifier>{d5098c62-8bec-49c3-a03c-0826e6bece95}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\exeFeatures\visu\exeFeatures_AAGAdaptor.h">
+      <Filter>Header Files\Visu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeFeatures\visu\exeFeatures_TopoGraph.h">
+      <Filter>Header Files\Visu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeFeatures\visu\exeFeatures_TopoGraphItem.h">
+      <Filter>Header Files\Visu</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_Controls.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
@@ -32,8 +47,20 @@
     <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_MainWindow.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\exeFeatures\ui\exeFeatures_CommonFacilities.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\exeFeatures\visu\exeFeatures_AAGAdaptor.cpp">
+      <Filter>Source Files\Visu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeFeatures\visu\exeFeatures_TopoGraph.cpp">
+      <Filter>Source Files\Visu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeFeatures\visu\exeFeatures_TopoGraphItem.cpp">
+      <Filter>Source Files\Visu</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\exeFeatures\ui\exeFeatures_Controls.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
@@ -44,6 +71,12 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\exeFeatures\ui\exeFeatures_MainWindow.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeFeatures\exeFeatures_Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeFeatures\ui\exeFeatures_CommonFacilities.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>

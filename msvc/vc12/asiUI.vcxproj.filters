@@ -151,6 +151,9 @@
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPart.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPartResponder.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_LineEdit.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
@@ -210,6 +213,9 @@
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_VtkWindow.cpp">
       <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPartResponder.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -275,6 +281,9 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEPDelegate.h">
       <Filter>Header Files\Dialogs</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\controls\asiUI_ControlsPartResponder.h">
+      <Filter>Header Files\Controls</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

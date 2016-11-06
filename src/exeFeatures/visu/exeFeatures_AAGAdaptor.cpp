@@ -6,16 +6,16 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <geom_aag_vtk.h>
+#include <exeFeatures_AAGAdaptor.h>
+
+// exeFeatures includes
+#include <exeFeatures_TopoGraphItem.h>
+
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
 
 // Feature includes
 #include <feature_attr_angle.h>
-
-// Geometry includes
-#include <geom_utils.h>
-
-// Visualization includes
-#include <visu_topo_graph_item.h>
 
 // OCCT includes
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
@@ -33,7 +33,7 @@
 //! \param aag [in] AAG to convert.
 //! \return VTK graph.
 vtkSmartPointer<vtkMutableUndirectedGraph>
-  feature_aag_vtk::Convert(const Handle(feature_aag)& aag)
+  exeFeatures_AAGAdaptor::Convert(const Handle(feature_aag)& aag)
 {
   vtkSmartPointer<vtkMutableUndirectedGraph>
     result = vtkSmartPointer<vtkMutableUndirectedGraph>::New();
@@ -68,7 +68,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
     FaceVertexMap.Bind(f_idx, vertex_id);
 
     // Fill property arrays
-    std::string faceName = geom_utils::FaceGeometryName( TopoDS::Face( Faces(f_idx) ) );
+    std::string faceName = asiAlgo_Utils::FaceGeometryName( TopoDS::Face( Faces(f_idx) ) );
     faceName += ":";
     faceName += QrCore::to_string<int>(f_idx).c_str();
     labelArr->InsertNextValue(faceName);

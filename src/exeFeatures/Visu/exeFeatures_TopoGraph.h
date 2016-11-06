@@ -5,14 +5,14 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_TopoGraph_h
-#define asiUI_TopoGraph_h
+#ifndef exeFeatures_TopoGraph_h
+#define exeFeatures_TopoGraph_h
 
 // Visualization includes
 #include <asiVisu.h>
 
 // GUI includes
-#include <gui_vtk_window.h>
+#include <asiUI_VtkWindow.h>
 
 // Feature includes
 #include <feature_aag.h>
@@ -33,7 +33,7 @@
 #include <vtkTextWidget.h>
 
 //! Visualizes topology graph.
-class asiUI_TopoGraph : public QObject
+class exeFeatures_TopoGraph : public QObject
 {
   Q_OBJECT
 
@@ -48,8 +48,8 @@ public:
 
 public:
 
-  asiUI_TopoGraph();
-  ~asiUI_TopoGraph();
+  exeFeatures_TopoGraph();
+  ~exeFeatures_TopoGraph();
 
 public:
 
@@ -62,7 +62,7 @@ public:
 public:
 
   //! Allows to initialize presentable graph with externally constructed AAG.
-  inline void SetAAG(const Handle(feature_aag)& aag) { m_aag = aag; }
+  void SetAAG(const Handle(feature_aag)& aag) { m_aag = aag; }
 
 protected:
 
@@ -87,7 +87,7 @@ protected slots:
 
 protected:
 
-  gui_vtk_window*     m_pWidget;
+  asiUI_VtkWindow*    m_pWidget;
   vtkTextWidget*      m_textWidget;
   vtkTextWidget*      m_summaryWidget;
   Handle(feature_aag) m_aag;

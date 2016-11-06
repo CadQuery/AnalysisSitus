@@ -5,11 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef feature_aag_vtk_h
-#define feature_aag_vtk_h
-
-// A-Situs includes
-#include <analysis_situs.h>
+#ifndef exeFeatures_AAGAdaptor_h
+#define exeFeatures_AAGAdaptor_h
 
 // Feature includes
 #include <feature_aag.h>
@@ -19,9 +16,9 @@
 #include <vtkSmartPointer.h>
 
 //! Converter of AAG to VTK presentable graph data structure.
-namespace feature_aag_vtk
+namespace exeFeatures_AAGAdaptor
 {
-  ASitus_EXPORT vtkSmartPointer<vtkMutableUndirectedGraph>
+  vtkSmartPointer<vtkMutableUndirectedGraph>
     Convert(const Handle(feature_aag)& aag);
 };
 

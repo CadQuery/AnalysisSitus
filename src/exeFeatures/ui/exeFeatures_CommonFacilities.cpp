@@ -1,17 +1,11 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 February 2016
+// Created on: 27 November 2015
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <exeFeatures_TopoGraphItem.h>
+#include <exeFeatures_CommonFacilities.h>
 
-// VTK includes
-#include <vtkObjectFactory.h>
-
-vtkStandardNewMacro(exeFeatures_TopoGraphItem);
-
-exeFeatures_TopoGraphItem::~exeFeatures_TopoGraphItem()
-{}
+Handle(exeFeatures_CommonFacilities) exeFeatures_CommonFacilities::m_ref;

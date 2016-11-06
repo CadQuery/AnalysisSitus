@@ -341,6 +341,16 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\controls\asiUI_ControlsPartResponder.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PickFacetCallback.h" />
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_RotationCallback.h" />
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_ViewerCallback.h" />
@@ -431,6 +441,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPart.cpp" />
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPartResponder.cpp" />
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_LineEdit.cpp" />
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_ObjectBrowser.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogCloudify.cpp" />
@@ -458,6 +469,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerSurface.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_VtkWindow.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPart.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPartResponder.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_LineEdit.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ObjectBrowser.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_Dialog.cpp" />

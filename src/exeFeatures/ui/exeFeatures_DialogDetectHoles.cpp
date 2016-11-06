@@ -6,19 +6,19 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <gui_dialog_detect_holes.h>
+#include <exeFeatures_DialogDetectHoles.h>
 
-// Common includes
-#include <common_facilities.h>
+// exeFeatures includes
+#include <exeFeatures_CommonFacilities.h>
 
-// Engine includes
-#include <engine_part.h>
+// asiEngine includes
+#include <asiEngine_Part.h>
+
+// asiUI includes
+#include <asiUI_Common.h>
 
 // Feature includes
 #include <feature_detect_choles.h>
-
-// GUI includes
-#include <gui_common.h>
 
 // Qt includes
 #include <QGroupBox>
@@ -36,7 +36,7 @@
 
 //! Constructor.
 //! \param parent [in] parent widget.
-gui_dialog_detect_holes::gui_dialog_detect_holes(QWidget* parent)
+exeFeatures_DialogDetectHoles::exeFeatures_DialogDetectHoles(QWidget* parent)
 //
 : QDialog(parent)
 {
@@ -47,7 +47,7 @@ gui_dialog_detect_holes::gui_dialog_detect_holes(QWidget* parent)
   QGroupBox* pGroup = new QGroupBox("Parameters");
 
   // Editors
-  m_widgets.pRadius            = new gui_line_edit();
+  m_widgets.pRadius            = new asiUI_LineEdit();
   m_widgets.pIsHardFeatureMode = new QCheckBox();
 
   // Sizing
@@ -106,7 +106,7 @@ gui_dialog_detect_holes::gui_dialog_detect_holes(QWidget* parent)
 }
 
 //! Destructor.
-gui_dialog_detect_holes::~gui_dialog_detect_holes()
+exeFeatures_DialogDetectHoles::~exeFeatures_DialogDetectHoles()
 {
   delete m_pMainLayout;
 }
@@ -114,19 +114,19 @@ gui_dialog_detect_holes::~gui_dialog_detect_holes()
 //-----------------------------------------------------------------------------
 
 //! Reaction on clicking "Identify" button.
-void gui_dialog_detect_holes::onIdentify()
+void exeFeatures_DialogDetectHoles::onIdentify()
 {
   // Read user inputs
   const double radius     = m_widgets.pRadius->text().toDouble();
   const bool   isHardMode = m_widgets.pIsHardFeatureMode->isChecked();
 
   TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  if ( !asiUI_Common::PartShape(part) ) return;
 
   // Identify holes
   feature_detect_choles detector(part, radius, NULL,
-                                 common_facilities::Instance()->Notifier,
-                                 common_facilities::Instance()->Plotter);
+                                 exeFeatures_CommonFacilities::Instance()->Notifier,
+                                 exeFeatures_CommonFacilities::Instance()->Plotter);
   //
   detector.SetHardFeatureMode(isHardMode);
   //
@@ -147,7 +147,7 @@ void gui_dialog_detect_holes::onIdentify()
     std::cout << holes.Extent() << " hole(s) detected with radius <= " << radius << std::endl;
 
   // Highlight
-  engine_part::HighlightSubShapes(holes);
+  asiEngine_Part::HighlightSubShapes(holes);
 
   // Close
   this->close();

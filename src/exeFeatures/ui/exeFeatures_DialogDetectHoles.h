@@ -5,14 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef gui_dialog_detect_holes_h
-#define gui_dialog_detect_holes_h
-
-// A-Situs includes
-#include <analysis_situs.h>
+#ifndef exeFeatures_DialogDetectHoles_h
+#define exeFeatures_DialogDetectHoles_h
 
 // A-Situs (GUI) includes
-#include <gui_line_edit.h>
+#include <asiUI_LineEdit.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -23,15 +20,15 @@
 #pragma warning(pop)
 
 //! Dialog for configuring holes identification.
-class gui_dialog_detect_holes : public QDialog
+class exeFeatures_DialogDetectHoles : public QDialog
 {
   Q_OBJECT
 
 public:
 
-  gui_dialog_detect_holes(QWidget* parent = NULL);
+  exeFeatures_DialogDetectHoles(QWidget* parent = NULL);
 
-  virtual ~gui_dialog_detect_holes();
+  virtual ~exeFeatures_DialogDetectHoles();
 
 public slots:
 
@@ -43,10 +40,10 @@ protected:
   struct t_widgets
   {
   //---------------------------------------------------------------------------
-    QPushButton*   pIdentify;          //!< Identify features.
+    QPushButton*    pIdentify;          //!< Identify features.
   //---------------------------------------------------------------------------
-    gui_line_edit* pRadius;            //!< Radius of interest.
-    QCheckBox*     pIsHardFeatureMode; //!< Hard/soft feature detection mode.
+    asiUI_LineEdit* pRadius;            //!< Radius of interest.
+    QCheckBox*      pIsHardFeatureMode; //!< Hard/soft feature detection mode.
   //---------------------------------------------------------------------------
 
     t_widgets() : pIdentify          (NULL),

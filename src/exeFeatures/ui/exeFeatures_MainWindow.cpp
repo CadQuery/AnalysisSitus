@@ -52,7 +52,7 @@ void exeFeatures_MainWindow::closeEvent(QCloseEvent* evt)
 //! Creates main (part) viewer.
 void exeFeatures_MainWindow::createPartViewer()
 {
-  m_widgets.wViewerPart = new gui_viewer_part();
+  m_widgets.wViewerPart = new asiUI_ViewerPart();
 
   // Desktop used for sizing
   QDesktopWidget desktop;
@@ -78,7 +78,7 @@ void exeFeatures_MainWindow::createDockWindows()
     pDockCommon = new QDockWidget("Common tools", this);
     pDockCommon->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
-    m_widgets.wControlsPart = new gui_controls_part(pDockCommon);
+    m_widgets.wControlsPart = new asiUI_ControlsPart(pDockCommon);
     pDockCommon->setWidget(m_widgets.wControlsPart);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockCommon);
@@ -102,7 +102,7 @@ void exeFeatures_MainWindow::createDockWindows()
     pDockEuler = new QDockWidget("Euler", this);
     pDockEuler->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
-    m_widgets.wControlsEuler = new gui_controls_euler(pDockEuler);
+    m_widgets.wControlsEuler = new exeFeatures_ControlsEuler(pDockEuler);
     pDockEuler->setWidget(m_widgets.wControlsEuler);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockEuler);
@@ -114,7 +114,7 @@ void exeFeatures_MainWindow::createDockWindows()
     pDockBrowser = new QDockWidget("Stored Objects", this);
     pDockBrowser->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wBrowser = new gui_object_browser(pDockBrowser);
+    m_widgets.wBrowser = new asiUI_ObjectBrowser(pDockBrowser);
     pDockBrowser->setWidget(m_widgets.wBrowser);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockBrowser);
@@ -125,7 +125,7 @@ void exeFeatures_MainWindow::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Face Domain", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerDomain = new gui_viewer_domain(pDock);
+    m_widgets.wViewerDomain = new asiUI_ViewerDomain(pDock);
     pDock->setWidget(m_widgets.wViewerDomain);
     pDock->setMinimumWidth(width);
     //
@@ -137,7 +137,7 @@ void exeFeatures_MainWindow::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Host Surface", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerSurface = new gui_viewer_surface(pDock);
+    m_widgets.wViewerSurface = new asiUI_ViewerSurface(pDock);
     pDock->setWidget(m_widgets.wViewerSurface);
     pDock->setMinimumWidth(width);
     //

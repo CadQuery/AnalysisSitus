@@ -8,17 +8,16 @@
 #ifndef exeFeatures_MainWindow_h
 #define exeFeatures_MainWindow_h
 
-// A-Situs includes
-#include <analysis_situs.h>
+// asiUI includes
+#include <asiUI_ControlsPart.h>
+#include <asiUI_ObjectBrowser.h>
+#include <asiUI_ViewerDomain.h>
+#include <asiUI_ViewerPart.h>
+#include <asiUI_ViewerSurface.h>
 
-// A-Situs (GUI) includes
-#include <gui_controls_euler.h>
+// exeFeatures includes
 #include <exeFeatures_Controls.h>
-#include <gui_controls_part.h>
-#include <gui_object_browser.h>
-#include <gui_viewer_domain.h>
-#include <gui_viewer_part.h>
-#include <gui_viewer_surface.h>
+#include <exeFeatures_ControlsEuler.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -50,13 +49,13 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    gui_object_browser*    wBrowser;          //!< Object browser.
-    gui_viewer_domain*     wViewerDomain;     //!< Parametric domain viewer.
-    gui_viewer_part*       wViewerPart;       //!< Part viewer.
-    gui_viewer_surface*    wViewerSurface;    //!< Surface viewer.
-    gui_controls_part*     wControlsPart;     //!< Part controls.
-    exeFeatures_Controls* wControlsFeatures; //!< Controls for features.
-    gui_controls_euler*    wControlsEuler;    //!< Controls for Euler operations.
+    asiUI_ObjectBrowser*       wBrowser;          //!< Object browser.
+    asiUI_ViewerDomain*        wViewerDomain;     //!< Parametric domain viewer.
+    asiUI_ViewerPart*          wViewerPart;       //!< Part viewer.
+    asiUI_ViewerSurface*       wViewerSurface;    //!< Surface viewer.
+    asiUI_ControlsPart*        wControlsPart;     //!< Part controls.
+    exeFeatures_Controls*      wControlsFeatures; //!< Controls for features.
+    exeFeatures_ControlsEuler* wControlsEuler;    //!< Controls for Euler operations.
 
     t_widgets() : wBrowser          (NULL),
                   wViewerDomain     (NULL),

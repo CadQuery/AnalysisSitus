@@ -156,60 +156,20 @@ void exe_MainWindow::createDockWindows()
   // Tabify widgets
   this->tabifyDockWidget(pDockBrowser, pDockUtilities);
 
+  // Responder for part controls
+  m_widgets.pControlsPartResp = new asiUI_ControlsPartResponder(m_widgets.wViewerPart,
+                                                                m_widgets.wViewerDomain,
+                                                                m_widgets.wViewerSurface,
+                                                                cf->Model);
+
   // Signals-slots
-  connect( m_widgets.wControlsPart, SIGNAL ( partLoaded() ),
-           this,                    SLOT   ( onPartLoaded() ) );
-  //
-  connect( m_widgets.wControlsPart, SIGNAL ( partModified() ),
-           this,                    SLOT   ( onPartModified() ) );
+  m_widgets.pControlsPartResp->Connect(m_widgets.wControlsPart);
   //
   connect( m_widgets.wViewerPart, SIGNAL ( facePicked() ),
            this,                  SLOT   ( onFacePicked() ) );
   //
   connect( m_widgets.wViewerPart, SIGNAL ( edgePicked() ),
            this,                  SLOT   ( onEdgePicked() ) );
-  //
-  connect( m_widgets.wControlsPart, SIGNAL ( verticesOn() ),
-           this,                    SLOT   ( onVerticesOn() ) );
-  //
-  connect( m_widgets.wControlsPart, SIGNAL ( verticesOff() ),
-           this,                    SLOT   ( onVerticesOff() ) );
-  //
-  connect( m_widgets.wControlsPart, SIGNAL ( normalsOn() ),
-           this,                    SLOT   ( onNormalsOn() ) );
-  //
-  connect( m_widgets.wControlsPart, SIGNAL ( normalsOff() ),
-           this,                    SLOT   ( onNormalsOff() ) );
-  //
-  connect( m_widgets.wControlsPart, SIGNAL ( selectionFacesOn() ),
-           this,                    SLOT   ( onSelectionFacesOn() ) );
-  //
-  connect( m_widgets.wControlsPart, SIGNAL ( selectionEdgesOn() ),
-           this,                    SLOT   ( onSelectionEdgesOn() ) );
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on part loading.
-void exe_MainWindow::onPartLoaded()
-{
-  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
-  //
-  cf->Prs.DeleteAll();
-  cf->Prs.Part->Actualize( cf->Model->GetPartNode(), false, true );
-  cf->Prs.Part->InitializePickers();
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on part modification.
-void exe_MainWindow::onPartModified()
-{
-  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
-  //
-  cf->Prs.DeleteAll();
-  cf->Prs.Part->Actualize( cf->Model->GetPartNode(), false, false );
-  cf->Prs.Part->InitializePickers();
 }
 
 //-----------------------------------------------------------------------------
@@ -236,80 +196,4 @@ void exe_MainWindow::onEdgePicked()
   //
   cf->Prs.Domain -> Actualize(geom_n->GetEdgeRepresentation().get(), false, true);
   cf->Prs.Host   -> Actualize(geom_n->GetCurveRepresentation().get(), false, true);
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on enabling visualization of vertices.
-void exe_MainWindow::onVerticesOn()
-{
-  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
-  //
-  Handle(asiData_PartNode) geom_n = cf->Model->GetPartNode();
-
-  // WHY? ALL? THE FOLLOWING? IS? NECESSARY? WTF?!
-  cf->Prs.DeleteAll();
-  cf->Prs.Part->InitializePickers();
-  cf->Prs.Part->Actualize( geom_n.get() );
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on disabling visualization of vertices.
-void exe_MainWindow::onVerticesOff()
-{
-  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
-  //
-  Handle(asiData_PartNode) geom_n = cf->Model->GetPartNode();
-
-  // WHY? ALL? THE FOLLOWING? IS? NECESSARY? WTF?!
-  cf->Prs.DeleteAll();
-  cf->Prs.Part->InitializePickers();
-  cf->Prs.Part->Actualize( geom_n.get() );
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on enabling visualization of normals.
-void exe_MainWindow::onNormalsOn()
-{
-  // NYI
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on disabling visualization of normals.
-void exe_MainWindow::onNormalsOff()
-{
-  // NYI
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on enabling selection of faces.
-void exe_MainWindow::onSelectionFacesOn()
-{
-  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
-  //
-  Handle(asiData_PartNode) geom_n = cf->Model->GetPartNode();
-
-  // WHY? ALL? THE FOLLOWING? IS? NECESSARY? WTF?!
-  cf->Prs.DeleteAll();
-  cf->Prs.Part->InitializePickers();
-  cf->Prs.Part->Actualize( geom_n.get() );
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on enabling selection of edges.
-void exe_MainWindow::onSelectionEdgesOn()
-{
-  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
-  //
-  Handle(asiData_PartNode) geom_n = cf->Model->GetPartNode();
-
-  // WHY? ALL? THE FOLLOWING? IS? NECESSARY? WTF?!
-  cf->Prs.DeleteAll();
-  cf->Prs.Part->InitializePickers();
-  cf->Prs.Part->Actualize( geom_n.get() );
 }

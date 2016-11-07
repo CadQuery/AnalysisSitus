@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_ControlsPartResponder_h
-#define asiUI_ControlsPartResponder_h
+#ifndef asiUI_ControlsPartListener_h
+#define asiUI_ControlsPartListener_h
 
 // asiUI includes
 #include <asiUI_ControlsPart.h>
@@ -17,26 +17,27 @@
 // Qt includes
 #include <QObject>
 
-//! Default responses for controls operating with parts.
-class asiUI_ControlsPartResponder : public QObject
+//! Default slots for controls operating with parts.
+class asiUI_ControlsPartListener : public QObject
 {
   Q_OBJECT
 
 public:
 
   asiUI_EXPORT
-    asiUI_ControlsPartResponder(asiUI_ViewerPart*              wViewerPart,
-                                asiUI_ViewerDomain*            wViewerDomain,
-                                asiUI_ViewerSurface*           wViewerSurface,
-                                const Handle(asiEngine_Model)& model);
+    asiUI_ControlsPartListener(asiUI_ControlsPart*            wControls,
+                               asiUI_ViewerPart*              wViewerPart,
+                               asiUI_ViewerDomain*            wViewerDomain,
+                               asiUI_ViewerSurface*           wViewerSurface,
+                               const Handle(asiEngine_Model)& model);
 
   asiUI_EXPORT virtual
-    ~asiUI_ControlsPartResponder();
+    ~asiUI_ControlsPartListener();
 
 public:
 
   asiUI_EXPORT virtual void
-    Connect(asiUI_ControlsPart* wControls);
+    Connect();
 
 protected slots:
 
@@ -59,6 +60,7 @@ protected:
 
 protected:
 
+  asiUI_ControlsPart*     m_wControls;      //!< Controls.
   asiUI_ViewerPart*       m_wViewerPart;    //!< Part viewer.
   asiUI_ViewerDomain*     m_wViewerDomain;  //!< Face domain viewer.
   asiUI_ViewerSurface*    m_wViewerSurface; //!< Surface viewer.

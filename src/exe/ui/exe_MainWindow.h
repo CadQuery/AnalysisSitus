@@ -9,11 +9,9 @@
 #define exe_MainWindow_h
 
 // asiUI includes
-#include <asiUI_ControlsPartResponder.h>
+#include <asiUI_ControlsPartListener.h>
 #include <asiUI_ObjectBrowser.h>
-#include <asiUI_ViewerDomain.h>
-#include <asiUI_ViewerPart.h>
-#include <asiUI_ViewerSurface.h>
+#include <asiUI_ViewerPartListener.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -40,43 +38,53 @@ private:
   void createPartViewer();
   void createDockWindows();
 
-private slots:
-
-  void onFacePicked();
-  void onEdgePicked();
-
 private:
 
   //! Widgets.
   struct t_widgets
   {
-    asiUI_ObjectBrowser*         wBrowser;          //!< Object browser.
-    asiUI_ViewerDomain*          wViewerDomain;     //!< Parametric domain viewer.
-    asiUI_ViewerPart*            wViewerPart;       //!< Part viewer.
-    asiUI_ViewerSurface*         wViewerSurface;    //!< Surface viewer.
-    asiUI_ControlsPart*          wControlsPart;     //!< Part controls.
-    asiUI_ControlsPartResponder* pControlsPartResp; //!< Responder for part controls.
+    asiUI_ObjectBrowser* wBrowser;       //!< Object browser.
+    asiUI_ViewerDomain*  wViewerDomain;  //!< Parametric domain viewer.
+    asiUI_ViewerPart*    wViewerPart;    //!< Part viewer.
+    asiUI_ViewerSurface* wViewerSurface; //!< Surface viewer.
+    asiUI_ControlsPart*  wControlsPart;  //!< Part controls.
 
-    t_widgets() : wBrowser          (NULL),
-                  wViewerDomain     (NULL),
-                  wViewerPart       (NULL),
-                  wViewerSurface    (NULL),
-                  wControlsPart     (NULL),
-                  pControlsPartResp (NULL)
+    t_widgets() : wBrowser       (NULL),
+                  wViewerDomain  (NULL),
+                  wViewerPart    (NULL),
+                  wViewerSurface (NULL),
+                  wControlsPart  (NULL)
     {}
 
     void Release()
     {
-      delete wBrowser;          wBrowser          = NULL;
-      delete wViewerDomain;     wViewerDomain     = NULL;
-      delete wViewerPart;       wViewerPart       = NULL;
-      delete wViewerSurface;    wViewerSurface    = NULL;
-      delete wControlsPart;     wControlsPart     = NULL;
-      delete pControlsPartResp; pControlsPartResp = NULL;
+      delete wBrowser;       wBrowser       = NULL;
+      delete wViewerDomain;  wViewerDomain  = NULL;
+      delete wViewerPart;    wViewerPart    = NULL;
+      delete wViewerSurface; wViewerSurface = NULL;
+      delete wControlsPart;  wControlsPart  = NULL;
     }
   };
 
-  t_widgets m_widgets;
+  //! Listeners.
+  struct t_listeners
+  {
+    asiUI_ControlsPartListener* pControlsPart; //!< Listener for part controls.
+    asiUI_ViewerPartListener*   pViewerPart;   //!< Listener for part viewer.
+
+    t_listeners() : pControlsPart (NULL),
+                    pViewerPart   (NULL)
+    {}
+
+    void Release()
+    {
+      delete pControlsPart; pControlsPart = NULL;
+      delete pViewerPart;   pViewerPart   = NULL;
+    }
+  };
+
+  t_widgets   m_widgets;
+  t_listeners m_listeners;
 
 };
 

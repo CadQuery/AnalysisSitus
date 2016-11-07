@@ -156,44 +156,20 @@ void exe_MainWindow::createDockWindows()
   // Tabify widgets
   this->tabifyDockWidget(pDockBrowser, pDockUtilities);
 
-  // Responder for part controls
-  m_widgets.pControlsPartResp = new asiUI_ControlsPartResponder(m_widgets.wViewerPart,
-                                                                m_widgets.wViewerDomain,
-                                                                m_widgets.wViewerSurface,
-                                                                cf->Model);
+  // Listener for part controls
+  m_listeners.pControlsPart = new asiUI_ControlsPartListener(m_widgets.wControlsPart,
+                                                             m_widgets.wViewerPart,
+                                                             m_widgets.wViewerDomain,
+                                                             m_widgets.wViewerSurface,
+                                                             cf->Model);
+
+  // Listener for part viewer
+  m_listeners.pViewerPart = new asiUI_ViewerPartListener(m_widgets.wViewerPart,
+                                                         m_widgets.wViewerDomain,
+                                                         m_widgets.wViewerSurface,
+                                                         cf->Model);
 
   // Signals-slots
-  m_widgets.pControlsPartResp->Connect(m_widgets.wControlsPart);
-  //
-  connect( m_widgets.wViewerPart, SIGNAL ( facePicked() ),
-           this,                  SLOT   ( onFacePicked() ) );
-  //
-  connect( m_widgets.wViewerPart, SIGNAL ( edgePicked() ),
-           this,                  SLOT   ( onEdgePicked() ) );
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on face picking.
-void exe_MainWindow::onFacePicked()
-{
-  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
-  //
-  Handle(asiData_PartNode) geom_n = cf->Model->GetPartNode();
-  //
-  cf->Prs.Domain -> Actualize(geom_n->GetFaceRepresentation().get(), false, true);
-  cf->Prs.Host   -> Actualize(geom_n->GetSurfaceRepresentation().get(), false, true);
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on edge picking.
-void exe_MainWindow::onEdgePicked()
-{
-  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
-  //
-  Handle(asiData_PartNode) geom_n = cf->Model->GetPartNode();
-  //
-  cf->Prs.Domain -> Actualize(geom_n->GetEdgeRepresentation().get(), false, true);
-  cf->Prs.Host   -> Actualize(geom_n->GetCurveRepresentation().get(), false, true);
+  m_listeners.pControlsPart->Connect();
+  m_listeners.pViewerPart->Connect();
 }

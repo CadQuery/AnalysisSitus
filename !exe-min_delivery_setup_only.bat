@@ -10,7 +10,7 @@ echo Delivery production
 
 if "%DELIVERY_DIR%" == "" set DELIVERY_DIR=%AS_ROOT%
 
-FOR /F "usebackq tokens=3" %%A IN ( `FINDSTR /R ASITUS_VERSION_STRING %AS_ROOT%\src\analysis_situs.h` ) do (
+FOR /F "usebackq tokens=3" %%A IN ( `FINDSTR /R ASitus_Version_STRING %AS_ROOT%\src\exe\exe_Version.h` ) do (
   set "ASITUS_VERSION_STRING=%%~A"
 )
 
@@ -30,7 +30,7 @@ echo [Inno Setup] Packaging...
 if exist "%AS_TOOLS%\innosetup" (
   iscc.exe /O"%DELIVERY_DIR%" "/DMyAppVersion=%ASITUS_VERSION_STRING%" ^
              "/DASitusDir=%AS_ROOT%" "/DProductsDir=%AS_PRODUCTS%" ^
-             "%AS_TOOLS%\innosetup\asitus_install.iss" > delivery.log 2>&1
+             "%AS_TOOLS%\innosetup\asitus-min_install.iss" > delivery.log 2>&1
 )
 echo [Inno Setup] Packaging done
 

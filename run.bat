@@ -6,4 +6,4 @@ if "%CONFIG%" == "" set CONFIG=release
 
 call %~dp0env.bat vc12 win64 %CONFIG%
 
-start AnalysisSitus.exe
+start exe.exe

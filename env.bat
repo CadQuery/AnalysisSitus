@@ -53,8 +53,7 @@ set "CAS_INC=%CASROOT%\inc"
 set "CAS_LIB64=%CASROOT%\win64\%VCVER%\lib%DEB%
 set "CAS_BIN64=%CASROOT%\win64\%VCVER%\bin%DEB%
 
-rem Call OCCT env.bat -- all 3-rd party binaries will be added to PATH
-call %CASROOT%\env.bat %VCVER% win%ARCH% %BUILD_CONFIG%
+set "FREETYPE_BIN=%OCCT_3RDPARTIES%\freetype-2.5.5-vc12-64\bin"
 
 rem ===========================================================================
 rem Setting environment for AD (Active Data)
@@ -183,7 +182,7 @@ rem ===========================================================================
 rem Adjust PATH variable
 rem ===========================================================================
 
-set "PATH=%AS_BIN%;%MESHGEMS_BIN%;%SPE_BIN%;%AD_BIN%;%FEAT_BIN%;%MESH_BIN%;%QR_BIN%;%VTK_BIN%;%PCL_BIN%;%QT_BIN%;%TBB_BIN%;%CR_BIN%;%INNOSETUP_ROOT%;%PATH%"
+set "PATH=%AS_BIN%;%CAS_BIN64%;%FREETYPE_BIN%;%MESHGEMS_BIN%;%SPE_BIN%;%AD_BIN%;%FEAT_BIN%;%MESH_BIN%;%QR_BIN%;%VTK_BIN%;%PCL_BIN%;%QT_BIN%;%TBB_BIN%;%CR_BIN%;%INNOSETUP_ROOT%;%PATH%"
 
 echo PATH=%PATH%
 

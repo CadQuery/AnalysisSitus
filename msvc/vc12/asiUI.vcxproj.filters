@@ -65,6 +65,12 @@
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_JournalIV.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerDomainListener.h">
+      <Filter>Header Files\Viewers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\viewers\asiUI_ViewerPartListener.h">
+      <Filter>Header Files\Viewers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPart.cpp">
@@ -151,9 +157,6 @@
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPart.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
-    <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPartResponder.cpp">
-      <Filter>MOC</Filter>
-    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_LineEdit.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
@@ -214,8 +217,23 @@
     <ClCompile Include="$(IntDir)moc\moc_asiUI_VtkWindow.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPartResponder.cpp">
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPartListener.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerDomainListener.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerPartListener.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerDomainListener.cpp">
+      <Filter>Source Files\Viewers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPartListener.cpp">
       <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerPartListener.cpp">
+      <Filter>Source Files\Viewers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -282,7 +300,7 @@
     <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogSTEPDelegate.h">
       <Filter>Header Files\Dialogs</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\asiUI\controls\asiUI_ControlsPartResponder.h">
+    <CustomBuild Include="..\..\src\asiUI\controls\asiUI_ControlsPartListener.h">
       <Filter>Header Files\Controls</Filter>
     </CustomBuild>
   </ItemGroup>

@@ -6,20 +6,23 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_ControlsPartResponder.h>
+#include <asiUI_ControlsPartListener.h>
 
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting all necessary facilities.
+//! \param wControls      [in] controls.
 //! \param wViewerPart    [in] part viewer.
 //! \param wViewerDomain  [in] domain viewer.
 //! \param wViewerSurface [in] host geometry viewer.
 //! \param model          [in] Data Model instance.
-asiUI_ControlsPartResponder::asiUI_ControlsPartResponder(asiUI_ViewerPart*              wViewerPart,
-                                                         asiUI_ViewerDomain*            wViewerDomain,
-                                                         asiUI_ViewerSurface*           wViewerSurface,
-                                                         const Handle(asiEngine_Model)& model)
+asiUI_ControlsPartListener::asiUI_ControlsPartListener(asiUI_ControlsPart*            wControls,
+                                                       asiUI_ViewerPart*              wViewerPart,
+                                                       asiUI_ViewerDomain*            wViewerDomain,
+                                                       asiUI_ViewerSurface*           wViewerSurface,
+                                                       const Handle(asiEngine_Model)& model)
 : QObject          (),
+  m_wControls      (wControls),
   m_wViewerPart    (wViewerPart),
   m_wViewerDomain  (wViewerDomain),
   m_wViewerSurface (wViewerSurface),
@@ -29,44 +32,43 @@ asiUI_ControlsPartResponder::asiUI_ControlsPartResponder(asiUI_ViewerPart*      
 //-----------------------------------------------------------------------------
 
 //! Destructor.
-asiUI_ControlsPartResponder::~asiUI_ControlsPartResponder()
+asiUI_ControlsPartListener::~asiUI_ControlsPartListener()
 {}
 
 //-----------------------------------------------------------------------------
 
-//! Connects this responder to the controls widget.
-//! \param wControls [in] widget to listen.
-void asiUI_ControlsPartResponder::Connect(asiUI_ControlsPart* wControls)
+//! Connects this listener to the controls widget.
+void asiUI_ControlsPartListener::Connect()
 {
-  connect( wControls, SIGNAL ( partLoaded() ),
-           this,      SLOT   ( onPartLoaded() ) );
+  connect( m_wControls, SIGNAL ( partLoaded() ),
+           this,        SLOT   ( onPartLoaded() ) );
   //
-  connect( wControls, SIGNAL ( partModified() ),
-           this,      SLOT   ( onPartModified() ) );
+  connect( m_wControls, SIGNAL ( partModified() ),
+           this,        SLOT   ( onPartModified() ) );
   //
-  connect( wControls, SIGNAL ( verticesOn() ),
-           this,      SLOT   ( onVerticesOn() ) );
+  connect( m_wControls, SIGNAL ( verticesOn() ),
+           this,        SLOT   ( onVerticesOn() ) );
   //
-  connect( wControls, SIGNAL ( verticesOff() ),
-           this,      SLOT   ( onVerticesOff() ) );
+  connect( m_wControls, SIGNAL ( verticesOff() ),
+           this,        SLOT   ( onVerticesOff() ) );
   //
-  connect( wControls, SIGNAL ( normalsOn() ),
-           this,      SLOT   ( onNormalsOn() ) );
+  connect( m_wControls, SIGNAL ( normalsOn() ),
+           this,        SLOT   ( onNormalsOn() ) );
   //
-  connect( wControls, SIGNAL ( normalsOff() ),
-           this,      SLOT   ( onNormalsOff() ) );
+  connect( m_wControls, SIGNAL ( normalsOff() ),
+           this,        SLOT   ( onNormalsOff() ) );
   //
-  connect( wControls, SIGNAL ( selectionFacesOn() ),
-           this,      SLOT   ( onSelectionFacesOn() ) );
+  connect( m_wControls, SIGNAL ( selectionFacesOn() ),
+           this,        SLOT   ( onSelectionFacesOn() ) );
   //
-  connect( wControls, SIGNAL ( selectionEdgesOn() ),
-           this,      SLOT   ( onSelectionEdgesOn() ) );
+  connect( m_wControls, SIGNAL ( selectionEdgesOn() ),
+           this,        SLOT   ( onSelectionEdgesOn() ) );
 }
 
 //-----------------------------------------------------------------------------
 
 //! Reaction on part loading.
-void asiUI_ControlsPartResponder::onPartLoaded()
+void asiUI_ControlsPartListener::onPartLoaded()
 {
   this->reinitializeEverything();
 }
@@ -74,7 +76,7 @@ void asiUI_ControlsPartResponder::onPartLoaded()
 //-----------------------------------------------------------------------------
 
 //! Reaction on part modification.
-void asiUI_ControlsPartResponder::onPartModified()
+void asiUI_ControlsPartListener::onPartModified()
 {
   this->cleanViewers();
   //
@@ -85,7 +87,7 @@ void asiUI_ControlsPartResponder::onPartModified()
 //-----------------------------------------------------------------------------
 
 //! Reaction on enabling visualization of vertices.
-void asiUI_ControlsPartResponder::onVerticesOn()
+void asiUI_ControlsPartListener::onVerticesOn()
 {
   this->onPartModified(); // TODO: this is completely weird
 }
@@ -93,7 +95,7 @@ void asiUI_ControlsPartResponder::onVerticesOn()
 //-----------------------------------------------------------------------------
 
 //! Reaction on disabling visualization of vertices.
-void asiUI_ControlsPartResponder::onVerticesOff()
+void asiUI_ControlsPartListener::onVerticesOff()
 {
   this->onPartModified(); // TODO: this is completely weird
 }
@@ -101,7 +103,7 @@ void asiUI_ControlsPartResponder::onVerticesOff()
 //-----------------------------------------------------------------------------
 
 //! Reaction on enabling visualization of normals.
-void asiUI_ControlsPartResponder::onNormalsOn()
+void asiUI_ControlsPartListener::onNormalsOn()
 {
   // NYI
 }
@@ -109,7 +111,7 @@ void asiUI_ControlsPartResponder::onNormalsOn()
 //-----------------------------------------------------------------------------
 
 //! Reaction on disabling visualization of normals.
-void asiUI_ControlsPartResponder::onNormalsOff()
+void asiUI_ControlsPartListener::onNormalsOff()
 {
   // NYI
 }
@@ -117,7 +119,7 @@ void asiUI_ControlsPartResponder::onNormalsOff()
 //-----------------------------------------------------------------------------
 
 //! Reaction on enabling selection of faces.
-void asiUI_ControlsPartResponder::onSelectionFacesOn()
+void asiUI_ControlsPartListener::onSelectionFacesOn()
 {
   this->onPartModified(); // TODO: this is completely weird
 }
@@ -125,7 +127,7 @@ void asiUI_ControlsPartResponder::onSelectionFacesOn()
 //-----------------------------------------------------------------------------
 
 //! Reaction on enabling selection of edges.
-void asiUI_ControlsPartResponder::onSelectionEdgesOn()
+void asiUI_ControlsPartListener::onSelectionEdgesOn()
 {
   this->onPartModified(); // TODO: this is completely weird
 }
@@ -133,7 +135,7 @@ void asiUI_ControlsPartResponder::onSelectionEdgesOn()
 //-----------------------------------------------------------------------------
 
 //! Cleans up the managed viewers.
-void asiUI_ControlsPartResponder::cleanViewers()
+void asiUI_ControlsPartListener::cleanViewers()
 {
   m_wViewerPart    ->PrsMgr()->DeleteAllPresentations();
   m_wViewerDomain  ->PrsMgr()->DeleteAllPresentations();
@@ -143,7 +145,7 @@ void asiUI_ControlsPartResponder::cleanViewers()
 //-----------------------------------------------------------------------------
 
 //! Performs full re-initialization of everything.
-void asiUI_ControlsPartResponder::reinitializeEverything()
+void asiUI_ControlsPartListener::reinitializeEverything()
 {
   this->cleanViewers();
   //

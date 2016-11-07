@@ -211,6 +211,26 @@ copy $(QR_ROOT)\src\QrVisu\Engine\GL\*.h $(QR_ROOT)\include</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerDomainListener.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerPartListener.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\controls\asiUI_ControlsPart.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
@@ -341,7 +361,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\asiUI\controls\asiUI_ControlsPartResponder.h">
+    <CustomBuild Include="..\..\src\asiUI\controls\asiUI_ControlsPartListener.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
@@ -441,7 +461,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPart.cpp" />
-    <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPartResponder.cpp" />
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPartListener.cpp" />
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_LineEdit.cpp" />
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_ObjectBrowser.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogCloudify.cpp" />
@@ -464,12 +484,14 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_Viewer.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerDomain.cpp" />
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerDomainListener.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerFuncUnivariate.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerPart.cpp" />
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerPartListener.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerSurface.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_VtkWindow.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPart.cpp" />
-    <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPartResponder.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPartListener.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_LineEdit.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ObjectBrowser.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_Dialog.cpp" />
@@ -486,8 +508,10 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_Viewer.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerCurve2d.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerDomain.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerDomainListener.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerFuncUnivariate.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerPart.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerPartListener.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerSurface.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_VtkWindow.cpp" />
   </ItemGroup>

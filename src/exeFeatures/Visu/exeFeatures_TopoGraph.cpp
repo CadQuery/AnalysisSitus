@@ -20,7 +20,7 @@
 #include <asiAlgo_Utils.h>
 
 // asiEngine includes
-#include <asiasiEngine_Part.h>
+#include <asiEngine_Part.h>
 
 // OCCT includes
 #include <TopoDS_Iterator.hxx>

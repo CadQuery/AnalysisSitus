@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_DialogEuler.h>
+#include <exeFeatures_DialogEuler.h>
 
 // GUI includes
 #include <asiUI_Common.h>
@@ -31,8 +31,8 @@
 //! Constructor.
 //! \param model  [in] Data Model instance.
 //! \param parent [in] parent widget.
-asiUI_DialogEuler::asiUI_DialogEuler(const Handle(asiEngine_Model)& model,
-                                     QWidget*                       parent)
+exeFeatures_DialogEuler::exeFeatures_DialogEuler(const Handle(asiEngine_Model)& model,
+                                                 QWidget*                       parent)
 //
 : QDialog(parent), m_model(model)
 {
@@ -97,7 +97,7 @@ asiUI_DialogEuler::asiUI_DialogEuler(const Handle(asiEngine_Model)& model,
 }
 
 //! Destructor.
-asiUI_DialogEuler::~asiUI_DialogEuler()
+exeFeatures_DialogEuler::~exeFeatures_DialogEuler()
 {
   delete m_pMainLayout;
 }
@@ -105,7 +105,7 @@ asiUI_DialogEuler::~asiUI_DialogEuler()
 //-----------------------------------------------------------------------------
 
 //! Reaction on check.
-void asiUI_DialogEuler::onCheck()
+void exeFeatures_DialogEuler::onCheck()
 {
   // Convert user input to integer
   const int genus = QVariant( m_widgets.pGenus->text() ).toInt();

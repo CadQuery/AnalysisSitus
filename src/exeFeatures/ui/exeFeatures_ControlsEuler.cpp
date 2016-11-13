@@ -20,7 +20,7 @@
 
 // asiUI includes
 #include <asiUI_Common.h>
-#include <asiUI_DialogEuler.h>
+#include <exeFeatures_DialogEuler.h>
 
 // Feature includes
 #include <feature_euler_KEF.h>
@@ -63,24 +63,16 @@ private:
 
   static void perform(const EulerOp op)
   {
-    // Access Geometry Node
-    Handle(asiData_PartNode) N = exeFeatures_CommonFacilities::Instance()->Model->GetPartNode();
+    const Handle(asiEngine_Model)&             model  = exeFeatures_CommonFacilities::Instance()->Model;
+    const vtkSmartPointer<asiVisu_PrsManager>& prsMgr = exeFeatures_CommonFacilities::Instance()->Prs.Part;
+    Handle(asiData_PartNode)                   part_n;
+    TopoDS_Shape                               part;
     //
-    if ( N.IsNull() || !N->IsWellFormed() )
-      return;
-
-    // Get part
-    TopoDS_Shape part = N->GetShape();
-    //
-    if ( part.IsNull() )
-    {
-      std::cout << "Error: part shape is null" << std::endl;
-      return;
-    }
+    if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
     // Get highlighted sub-shapes
     TopTools_IndexedMapOfShape subshapes;
-    asiEngine_Part::GetHighlightedSubShapes(subshapes);
+    asiEngine_Part(model, prsMgr).GetHighlightedSubShapes(subshapes);
     //
     if ( subshapes.IsEmpty() )
     {
@@ -89,7 +81,7 @@ private:
     }
 
     // Perform modification
-    exeFeatures_CommonFacilities::Instance()->Model->OpenCommand();
+    model->OpenCommand();
     {
       TIMER_NEW
       TIMER_GO
@@ -157,18 +149,18 @@ private:
       TIMER_FINISH
       TIMER_COUT_RESULT_MSG("Euler operation")
 
-      N->SetShape(result);
+      part_n->SetShape(result);
     }
-    exeFeatures_CommonFacilities::Instance()->Model->CommitCommand();
+    model->CommitCommand();
     //
     std::cout << "Euler operation done. Visualizing..." << std::endl;
 
     // Clean up
-    exeFeatures_CommonFacilities::Instance()->Model->Clear();
+    model->Clear();
 
     // Actualize
-    exeFeatures_CommonFacilities::Instance()->Prs.Part->InitializePickers();
-    exeFeatures_CommonFacilities::Instance()->Prs.Part->Actualize( N.get() );
+    prsMgr->InitializePickers();
+    prsMgr->Actualize( part_n.get() );
   }
 
 };
@@ -236,11 +228,14 @@ exeFeatures_ControlsEuler::~exeFeatures_ControlsEuler()
 //! Checks Euler-Poincare equation.
 void exeFeatures_ControlsEuler::onCheckEulerPoincare()
 {
-  TopoDS_Shape part;
-  if ( !asiUI_Common::PartShape(part) ) return;
+  const Handle(asiEngine_Model)& model  = exeFeatures_CommonFacilities::Instance()->Model;
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
   // Run dialog
-  asiUI_DialogEuler* wEuler = new asiUI_DialogEuler(this);
+  exeFeatures_DialogEuler* wEuler = new exeFeatures_DialogEuler(model, this);
   wEuler->show();
 }
 

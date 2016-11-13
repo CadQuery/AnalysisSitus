@@ -11,9 +11,6 @@
 // exe includes
 #include <exe_MainWindow.h>
 
-// asiEngine includes
-#include <asiEngine_Model.h>
-
 // asiVisu includes
 #include <asiVisu_CalculusLawPrs.h>
 #include <asiVisu_GeomBoundaryEdgesPrs.h>

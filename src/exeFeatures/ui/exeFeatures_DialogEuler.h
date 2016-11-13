@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_DialogEuler_h
-#define asiUI_DialogEuler_h
+#ifndef exeFeatures_DialogEuler_h
+#define exeFeatures_DialogEuler_h
 
 // A-Situs includes
 #include <asiUI.h>
@@ -25,16 +25,16 @@
 #pragma warning(pop)
 
 //! Dialog for calculation of Euler characteristics.
-class asiUI_DialogEuler : public QDialog
+class exeFeatures_DialogEuler : public QDialog
 {
   Q_OBJECT
 
 public:
 
-  asiUI_DialogEuler(const Handle(asiEngine_Model)& model,
-                    QWidget*                       parent = NULL);
+  exeFeatures_DialogEuler(const Handle(asiEngine_Model)& model,
+                          QWidget*                       parent = NULL);
 
-  virtual ~asiUI_DialogEuler();
+  virtual ~exeFeatures_DialogEuler();
 
 public slots:
 

@@ -59,7 +59,7 @@ void exe_MainWindow::createPartViewer()
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
 
   // Create viewer
-  m_widgets.wViewerPart = new asiUI_ViewerPart(exe_CommonFacilities::Instance()->Model);
+  m_widgets.wViewerPart = new asiUI_ViewerPart(cf->Model);
 
   // Desktop used for sizing
   QDesktopWidget desktop;

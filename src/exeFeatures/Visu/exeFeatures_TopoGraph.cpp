@@ -383,6 +383,7 @@ void exeFeatures_TopoGraph::onVertexPicked(const int fid, const vtkIdType asiVis
     TopTools_IndexedMapOfShape selected;
     selected.Add(F);
     //
-    asiasiEngine_Part::HighlightSubShapes(selected);
+    asiEngine_Part(exeFeatures_CommonFacilities::Instance()->Model,
+                   exeFeatures_CommonFacilities::Instance()->Prs.Part).HighlightSubShapes(selected);
   }
 }

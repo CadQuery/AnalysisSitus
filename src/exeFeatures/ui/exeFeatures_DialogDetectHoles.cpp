@@ -116,12 +116,16 @@ exeFeatures_DialogDetectHoles::~exeFeatures_DialogDetectHoles()
 //! Reaction on clicking "Identify" button.
 void exeFeatures_DialogDetectHoles::onIdentify()
 {
+  const Handle(asiEngine_Model)&             model  = exeFeatures_CommonFacilities::Instance()->Model;
+  const vtkSmartPointer<asiVisu_PrsManager>& prsMgr = exeFeatures_CommonFacilities::Instance()->Prs.Part;
+  Handle(asiData_PartNode)                   part_n;
+  TopoDS_Shape                               part;
+  //
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
+
   // Read user inputs
   const double radius     = m_widgets.pRadius->text().toDouble();
   const bool   isHardMode = m_widgets.pIsHardFeatureMode->isChecked();
-
-  TopoDS_Shape part;
-  if ( !asiUI_Common::PartShape(part) ) return;
 
   // Identify holes
   feature_detect_choles detector(part, radius, NULL,
@@ -147,7 +151,7 @@ void exeFeatures_DialogDetectHoles::onIdentify()
     std::cout << holes.Extent() << " hole(s) detected with radius <= " << radius << std::endl;
 
   // Highlight
-  asiEngine_Part::HighlightSubShapes(holes);
+  asiEngine_Part(model, prsMgr).HighlightSubShapes(holes);
 
   // Close
   this->close();

@@ -17,7 +17,7 @@
 #pragma warning(pop)
 
 //! Editor with a desired policy of focus handling.
-class asiUI_LineEdit : public QLineEdit
+class asiUI_EXPORT asiUI_LineEdit : public QLineEdit
 {
   Q_OBJECT
 

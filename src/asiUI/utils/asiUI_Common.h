@@ -94,33 +94,33 @@ public:
 
 public:
 
-  static QString
+  asiUI_EXPORT static QString
     selectBRepFile(const OpenSaveAction action);
 
-  static QString
+  asiUI_EXPORT static QString
     selectIGESFile(const OpenSaveAction action);
 
-  static QString
+  asiUI_EXPORT static QString
     selectSTEPFile(const OpenSaveAction action);
 
-  static QString
+  asiUI_EXPORT static QString
     selectPlyFile(const OpenSaveAction action);
 
-  static QString
+  asiUI_EXPORT static QString
     selectXBFFile(const OpenSaveAction action);
 
-  static QString
+  asiUI_EXPORT static QString
     selectXYZFile(const OpenSaveAction action);
 
-  static QString
+  asiUI_EXPORT static QString
     selectOBJFile(const OpenSaveAction action);
 
-  static QString
+  asiUI_EXPORT static QString
     selectSTLFile(const OpenSaveAction action);
 
 //-----------------------------------------------------------------------------
 
-  static QString
+  asiUI_EXPORT static QString
     selectFile(const QStringList&   filter,
                const QString&       openTitle,
                const QString&       saveTitle,
@@ -128,7 +128,7 @@ public:
 
 public:
 
-  static bool
+  asiUI_EXPORT static bool
     PartShape(const Handle(asiEngine_Model)& model,
               Handle(asiData_PartNode)&      part_n,
               TopoDS_Shape&                  part);

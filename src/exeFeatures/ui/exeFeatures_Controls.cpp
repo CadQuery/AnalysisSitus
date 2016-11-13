@@ -303,16 +303,16 @@ void exeFeatures_Controls::onShowTOPOGraph()
 //! Shows AA graph.
 void exeFeatures_Controls::onShowAAG()
 {
-  const Handle(asiEngine_Model)& model = exeFeatures_CommonFacilities::Instance()->Model;
-  Handle(asiData_PartNode)       part_n;
-  TopoDS_Shape                   part;
+  Handle(exeFeatures_CommonFacilities) cf    = exeFeatures_CommonFacilities::Instance();
+  const Handle(asiEngine_Model)&       model = cf->Model;
+  Handle(asiData_PartNode)             part_n;
+  TopoDS_Shape                         part;
   //
   if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
   // Access selected faces (if any)
   TopTools_IndexedMapOfShape selected;
-  asiEngine_Part(exeFeatures_CommonFacilities::Instance()->Model,
-                 exeFeatures_CommonFacilities::Instance()->Prs.Part).GetHighlightedSubShapes(selected);
+  asiEngine_Part(cf->Model, cf->Prs.Part).GetHighlightedSubShapes(selected);
 
   // Show graph
   exeFeatures_TopoGraph* pGraphView = new exeFeatures_TopoGraph;

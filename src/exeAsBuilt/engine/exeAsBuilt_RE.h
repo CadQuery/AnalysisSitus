@@ -5,14 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_RE_h
-#define asiEngine_RE_h
+#ifndef exeAsBuilt_RE_h
+#define exeAsBuilt_RE_h
 
-// A-Situs includes
-#include <asiEngine_Model.h>
-
-// asiData includes
-#include <asiData_RENode.h>
+// exeAsBuilt includes
+#include <exeAsBuilt_Model.h>
 
 // asiVisu includes
 #include <asiVisu_PrsManager.h>
@@ -22,42 +19,42 @@
 #include <TopoDS_Wire.hxx>
 
 //! Data Model API for reverse engineering.
-class asiEngine_RE
+class exeAsBuilt_RE
 {
 public:
 
   //! ctor.
   //! \param model [in] Data Model instance.
-  asiEngine_RE(const Handle(asiEngine_Model)& model)
+  exeAsBuilt_RE(const Handle(exeAsBuilt_Model)& model)
   //
   : m_model(model) {}
 
 public:
 
-  asiEngine_EXPORT Handle(asiData_RENode)
+  Handle(asiData_RENode)
     Create_RE();
 
 //---------------------------------------------------------------------------//
 
-  asiEngine_EXPORT Handle(asiData_RESurfaceNode)
+  Handle(asiData_RESurfaceNode)
     Create_Surface(const Handle(Geom_Surface)& surface,
                    const double                uLimit,
                    const double                vLimit);
 
-  asiEngine_EXPORT void
+  void
     Clean_Surfaces();
 
 //---------------------------------------------------------------------------//
 
-  asiEngine_EXPORT Handle(asiData_REContourNode)
+  Handle(asiData_REContourNode)
     Create_Contour(const TopoDS_Wire& contour);
 
-  asiEngine_EXPORT void
+  void
     Clean_Contours();
 
 protected:
 
-  Handle(asiEngine_Model) m_model;  //!< Data Model instance.
+  Handle(exeAsBuilt_Model) m_model; //!< Data Model instance.
 
 };
 

@@ -9,14 +9,20 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="MOC">
+      <UniqueIdentifier>{9ba7dd1c-5244-4e67-a590-1dde40d40af3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\UI">
-      <UniqueIdentifier>{08ae8641-2dad-448d-bd35-7f81a8468671}</UniqueIdentifier>
+      <UniqueIdentifier>{8b012b5c-d1db-4f10-9e1a-fdb4a503212f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\UI">
-      <UniqueIdentifier>{3f0ddf43-fc4f-46d9-a112-ba6a7b4cf983}</UniqueIdentifier>
+      <UniqueIdentifier>{5a584c54-4235-4c63-b441-4d662f24ea09}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MOC">
-      <UniqueIdentifier>{627d83b3-28b9-45cb-9f10-f1473e3ebd2c}</UniqueIdentifier>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{c869d12b-6538-4073-9492-91765cb8019f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{d5098c62-8bec-49c3-a03c-0826e6bece95}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -26,12 +32,30 @@
     <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_MainWindow.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\exeAsBuilt\engine\exeAsBuilt_RE.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeAsBuilt\engine\exeAsBuilt_Model.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_CommonFacilities.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_ControlsPCloud.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_MainWindow.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeAsBuilt\engine\exeAsBuilt_RE.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeAsBuilt\engine\exeAsBuilt_Model.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_CommonFacilities.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>

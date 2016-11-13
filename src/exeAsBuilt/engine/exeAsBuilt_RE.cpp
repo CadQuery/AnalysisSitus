@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiEngine_RE.h>
+#include <exeAsBuilt_RE.h>
 
 // A-Situs (common) includes
 #include <asiEngine_Model.h>
@@ -17,7 +17,7 @@
 //-----------------------------------------------------------------------------
 
 //! \return newly created Reverse Engineering Node.
-Handle(asiData_RENode) asiEngine_RE::Create_RE()
+Handle(asiData_RENode) exeAsBuilt_RE::Create_RE()
 {
   // Add RE Node to Partition
   Handle(asiData_RENode) re_n = Handle(asiData_RENode)::DownCast( asiData_RENode::Instance() );
@@ -81,9 +81,9 @@ Handle(asiData_RENode) asiEngine_RE::Create_RE()
 //! \param vLimit  [in] bounding V value for infinite domains.
 //! \return Surface Node.
 Handle(asiData_RESurfaceNode)
-  asiEngine_RE::Create_Surface(const Handle(Geom_Surface)& surface,
-                               const double                uLimit,
-                               const double                vLimit)
+  exeAsBuilt_RE::Create_Surface(const Handle(Geom_Surface)& surface,
+                                const double                uLimit,
+                                const double                vLimit)
 {
   // Access Model and RE Surfaces Node
   Handle(asiData_RESurfacesNode) RESs = m_model->GetRENode()->Surfaces();
@@ -110,7 +110,7 @@ Handle(asiData_RESurfaceNode)
 //-----------------------------------------------------------------------------
 
 //! Deletes all Surface Nodes.
-void asiEngine_RE::Clean_Surfaces()
+void exeAsBuilt_RE::Clean_Surfaces()
 {
   Handle(asiData_RESurfacesNode) RESs          = m_model->GetRENode()->Surfaces();
   Handle(ActAPI_HNodeList)       nodesToDelete = new ActAPI_HNodeList;
@@ -138,7 +138,7 @@ void asiEngine_RE::Clean_Surfaces()
 //! Creates a new Contour Node initializing it with the passed topological wire.
 //! \param contour [in] contour in form of topological wire.
 //! \return just created Data Node.
-Handle(asiData_REContourNode) asiEngine_RE::Create_Contour(const TopoDS_Wire& contour)
+Handle(asiData_REContourNode) exeAsBuilt_RE::Create_Contour(const TopoDS_Wire& contour)
 {
   // Access Model and RE Contours Node
   Handle(asiData_REContoursNode) RECs = m_model->GetRENode()->Contours();
@@ -165,7 +165,7 @@ Handle(asiData_REContourNode) asiEngine_RE::Create_Contour(const TopoDS_Wire& co
 //-----------------------------------------------------------------------------
 
 //! Cleans up all contours stored in the collection of RE contours.
-void asiEngine_RE::Clean_Contours()
+void exeAsBuilt_RE::Clean_Contours()
 {
   Handle(asiData_REContoursNode) RECs          = m_model->GetRENode()->Contours();
   Handle(ActAPI_HNodeList)       nodesToDelete = new ActAPI_HNodeList;

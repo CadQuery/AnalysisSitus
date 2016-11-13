@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "exe", "exe.vcxproj", "{986C
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "exeFeatures", "exeFeatures.vcxproj", "{B4A2E270-0B2A-4CBD-867F-39B841E42D4E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "exeAsBuilt", "exeAsBuilt.vcxproj", "{FC086BB2-3F75-4197-AEEC-CEECB40B3CCD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,10 @@ Global
 		{B4A2E270-0B2A-4CBD-867F-39B841E42D4E}.Debug|x64.Build.0 = Debug|x64
 		{B4A2E270-0B2A-4CBD-867F-39B841E42D4E}.Release|x64.ActiveCfg = Release|x64
 		{B4A2E270-0B2A-4CBD-867F-39B841E42D4E}.Release|x64.Build.0 = Release|x64
+		{FC086BB2-3F75-4197-AEEC-CEECB40B3CCD}.Debug|x64.ActiveCfg = Debug|x64
+		{FC086BB2-3F75-4197-AEEC-CEECB40B3CCD}.Debug|x64.Build.0 = Debug|x64
+		{FC086BB2-3F75-4197-AEEC-CEECB40B3CCD}.Release|x64.ActiveCfg = Release|x64
+		{FC086BB2-3F75-4197-AEEC-CEECB40B3CCD}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

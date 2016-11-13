@@ -62,10 +62,10 @@ public:
 // Populate and clear:
 public:
 
-  asiEngine_EXPORT void
+  asiEngine_EXPORT virtual void
     Populate();
 
-  asiEngine_EXPORT void
+  asiEngine_EXPORT virtual void
     Clear();
 
 //-----------------------------------------------------------------------------
@@ -286,7 +286,7 @@ private:
   virtual Handle(ActData_CAFConverter)
     converterApp();
 
-private:
+protected:
 
   //! IDs of the registered Partitions.
   enum PartitionId
@@ -317,7 +317,9 @@ private:
     Partition_IV_Tess,
     Partition_IV_TessItem,
     Partition_IV_Text,
-    Partition_IV_TextItem
+    Partition_IV_TextItem,
+  //---------------------------------------------------------------------------
+    Partition_LAST
   };
 
 };

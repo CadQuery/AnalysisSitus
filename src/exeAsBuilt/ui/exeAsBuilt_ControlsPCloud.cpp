@@ -8,15 +8,14 @@
 // Own include
 #include <exeAsBuilt_ControlsPCloud.h>
 
-// Common includes
-#include <common_draw_test_suite.h>
-#include <common_facilities.h>
+// exeAsBuilt includes
+#include <exeAsBuilt_CommonFacilities.h>
 
-// GUI includes
+// asiAlgo includes
+#include <asiAlgo_Timer.h>
+
+// asiUI includes
 #include <asiUI_Common.h>
-
-// Geometry includes
-//#include <asiAlgo_PointCloudNormals.h>
 
 // Qt include
 #include <QGroupBox>
@@ -86,14 +85,16 @@ void exeAsBuilt_ControlsPCloud::onLoadPoints()
   // Select file for point cloud data
   QString
     qfilename = asiUI_Common::selectFile(QStringList() << "*.pts" << "*.xyz",
-                                       "Choose point cloud to load", "",
-                                       asiUI_Common::OpenSaveAction_Open);
+                                        "Choose point cloud to load", "",
+                                         asiUI_Common::OpenSaveAction_Open);
   //
   TCollection_AsciiString filename = QStr2AsciiStr(qfilename);
 
   // Load point cloud
-  Handle(asiAlgo_PointCloud) cloud = new asiAlgo_PointCloud(common_facilities::Instance()->Notifier,
-                                                        common_facilities::Instance()->Plotter);
+  Handle(asiAlgo_PointCloud)
+    cloud = new asiAlgo_PointCloud(exeAsBuilt_CommonFacilities::Instance()->Notifier,
+                                   exeAsBuilt_CommonFacilities::Instance()->Plotter);
+  //
   if ( !cloud->Load(filename) )
   {
     std::cout << "Error: cannot load point cloud" << std::endl;
@@ -104,7 +105,7 @@ void exeAsBuilt_ControlsPCloud::onLoadPoints()
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Load point cloud")
 
-  ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
+  ActAPI_PlotterEntry IV(exeAsBuilt_CommonFacilities::Instance()->Plotter);
   IV.DRAW_POINTS( cloud->GetPoints(), Color_White, "Scan data" );
 }
 
@@ -115,7 +116,7 @@ void exeAsBuilt_ControlsPCloud::onEstimNormals()
 {
   // TODO: the following is just weird
   Handle(ActAPI_INode)
-    N = common_facilities::Instance()->Model->GetIVPointSetPartition()->GetNode(1);
+    N = exeAsBuilt_CommonFacilities::Instance()->Model->GetIVPointSetPartition()->GetNode(1);
   //
   Handle(asiData_IVPointSetNode) PN = Handle(asiData_IVPointSetNode)::DownCast(N);
   //
@@ -133,7 +134,7 @@ void exeAsBuilt_ControlsPCloud::onEstimNormals()
 //-----------------------------------------------------------------------------
 
 //! Builds point cloud from the model.
-void asiUI_ControlsPart::onCloudify()
+void exeAsBuilt_ControlsPCloud::onCloudify()
 {
   TopoDS_Shape part;
   if ( !asiUI_Common::PartShape(part) ) return;

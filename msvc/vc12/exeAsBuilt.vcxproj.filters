@@ -26,12 +26,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_ControlsPCloud.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_MainWindow.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\exeAsBuilt\engine\exeAsBuilt_RE.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
@@ -58,5 +52,31 @@
     <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_CommonFacilities.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_exeAsBuilt_MainWindow.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_exeAsBuilt_ControlsPCloud.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_exeAsBuilt_DialogCloudify.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeAsBuilt\exeAsBuilt_Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_DialogCloudify.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_DialogCloudify.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_MainWindow.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_ControlsPCloud.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

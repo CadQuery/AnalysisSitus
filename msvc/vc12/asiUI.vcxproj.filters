@@ -76,9 +76,6 @@
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_ObjectBrowser.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogCloudify.cpp">
-      <Filter>Source Files\Dialogs</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
@@ -152,12 +149,6 @@
       <Filter>MOC</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ObjectBrowser.cpp">
-      <Filter>MOC</Filter>
-    </ClCompile>
-    <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogCloudify.cpp">
-      <Filter>MOC</Filter>
-    </ClCompile>
-    <ClCompile Include="$(IntDir)moc\moc_asiUI_Dialog.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogFindFace.cpp">
@@ -266,12 +257,6 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.h">
       <Filter>Header Files\Controls</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_Dialog.h">
-      <Filter>Header Files\Dialogs</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogCloudify.h">
-      <Filter>Header Files\Dialogs</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.h">
       <Filter>Header Files\Dialogs</Filter>

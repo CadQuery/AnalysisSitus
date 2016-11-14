@@ -5,16 +5,13 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_DialogCloudify_h
-#define asiUI_DialogCloudify_h
+#ifndef exeAsBuilt_DialogCloudify_h
+#define exeAsBuilt_DialogCloudify_h
 
-// A-Situs includes
-#include <asiUI_Dialog.h>
+// exeAsBuilt includes
+#include <exeAsBuilt_Model.h>
 
-// A-Situs (engine) includes
-#include <asiEngine_Model.h>
-
-// A-Situs (GUI) includes
+// asiUI includes
 #include <asiUI_LineEdit.h>
 
 // Qt includes
@@ -26,18 +23,18 @@
 #pragma warning(pop)
 
 //! Dialog for cloudification (that is, conversion from B-Rep to point cloud).
-class asiUI_DialogCloudify : public asiUI_Dialog
+class exeAsBuilt_DialogCloudify : public QDialog
 {
   Q_OBJECT
 
 public:
 
-  asiUI_DialogCloudify(const Handle(asiEngine_Model)& model,
-                       ActAPI_ProgressEntry           notifier,
-                       ActAPI_PlotterEntry            plotter,
-                       QWidget*                       parent = NULL);
+  exeAsBuilt_DialogCloudify(const Handle(exeAsBuilt_Model)&         model,
+                            const Handle(ActAPI_IProgressNotifier)& notifier,
+                            const Handle(ActAPI_IPlotter)&          plotter,
+                            QWidget*                                parent = NULL);
 
-  virtual ~asiUI_DialogCloudify();
+  virtual ~exeAsBuilt_DialogCloudify();
 
 public slots:
 
@@ -65,9 +62,11 @@ protected:
     }
   };
 
-  t_widgets               m_widgets;     //!< UI controls.
-  QVBoxLayout*            m_pMainLayout; //!< Layout of the widget.
-  Handle(asiEngine_Model) m_model;       //!< Data Model instance.
+  t_widgets                        m_widgets;     //!< UI controls.
+  QVBoxLayout*                     m_pMainLayout; //!< Layout of the widget.
+  Handle(exeAsBuilt_Model)         m_model;       //!< Data Model instance.
+  Handle(ActAPI_IProgressNotifier) m_progress;    //!< Progress entry.
+  Handle(ActAPI_IPlotter)          m_plotter;     //!< Plotter entry.
 
 };
 

@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_DialogCloudify.h>
+#include <exeAsBuilt_DialogCloudify.h>
 
 // GUI includes
 #include <asiUI_Common.h>
@@ -39,12 +39,12 @@
 //! \param notifier [in] progress notifier.
 //! \param plotter  [in] imperative plotter.
 //! \param parent   [in] parent widget.
-asiUI_DialogCloudify::asiUI_DialogCloudify(const Handle(asiEngine_Model)& model,
-                                           ActAPI_ProgressEntry           notifier,
-                                           ActAPI_PlotterEntry            plotter,
-                                           QWidget*                       parent)
+exeAsBuilt_DialogCloudify::exeAsBuilt_DialogCloudify(const Handle(exeAsBuilt_Model)&         model,
+                                                     const Handle(ActAPI_IProgressNotifier)& notifier,
+                                                     const Handle(ActAPI_IPlotter)&          plotter,
+                                                     QWidget*                                parent)
 //
-: asiUI_Dialog(notifier, plotter, parent), m_model(model)
+: QDialog(parent), m_model(model), m_progress(notifier), m_plotter(plotter)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -119,7 +119,7 @@ asiUI_DialogCloudify::asiUI_DialogCloudify(const Handle(asiEngine_Model)& model,
 }
 
 //! Destructor.
-asiUI_DialogCloudify::~asiUI_DialogCloudify()
+exeAsBuilt_DialogCloudify::~exeAsBuilt_DialogCloudify()
 {
   delete m_pMainLayout;
 }
@@ -127,7 +127,7 @@ asiUI_DialogCloudify::~asiUI_DialogCloudify()
 //-----------------------------------------------------------------------------
 
 //! Reaction on perform.
-void asiUI_DialogCloudify::onPerform()
+void exeAsBuilt_DialogCloudify::onPerform()
 {
   // Convert user input to double
   const double linStep = QVariant( m_widgets.pLinearStep->text() ).toDouble();
@@ -141,7 +141,7 @@ void asiUI_DialogCloudify::onPerform()
   TIMER_GO
 
   // Cloud builder
-  asiAlgo_Cloudify cloud_builder(linStep, m_notifier, m_plotter);
+  asiAlgo_Cloudify cloud_builder(linStep, m_progress, m_plotter);
   //
   Handle(asiAlgo_PointCloud) cloud;
   if ( !cloud_builder.Sample_Faces(part, cloud) )

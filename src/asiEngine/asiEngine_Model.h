@@ -258,32 +258,32 @@ public:
     return Handle(asiData_Partition<asiData_IVTextItemNode>)::DownCast( this->Partition(Partition_IV_TextItem) );
   }
 
-private:
+protected:
 
-  virtual void
+  asiEngine_EXPORT virtual void
     initPartitions();
 
-  virtual void
+  asiEngine_EXPORT virtual void
     initFunctionDrivers();
 
-private:
+protected:
 
-  virtual Handle(ActAPI_IPartition)
+  asiEngine_EXPORT virtual Handle(ActAPI_IPartition)
     getVariablePartition(const VariableType& varType) const;
 
-  virtual Handle(ActAPI_INode)
+  asiEngine_EXPORT virtual Handle(ActAPI_INode)
     getRootNode() const;
 
-  virtual void
+  asiEngine_EXPORT virtual void
     invariantCopyRefs(ActAPI_FuncGUIDStream&         FuncGUIDs,
                       ActAPI_ParameterLocatorStream& Refs) const;
 
-private:
+protected:
 
-  virtual int
+  asiEngine_EXPORT virtual int
     actualVersionApp();
 
-  virtual Handle(ActData_CAFConverter)
+  asiEngine_EXPORT virtual Handle(ActData_CAFConverter)
     converterApp();
 
 protected:

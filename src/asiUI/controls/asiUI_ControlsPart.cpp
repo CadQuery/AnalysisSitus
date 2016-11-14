@@ -10,7 +10,6 @@
 
 // asiUI includes
 #include <asiUI_Common.h>
-#include <asiUI_DialogCloudify.h>
 #include <asiUI_DialogSewing.h>
 #include <asiUI_DialogSTEP.h>
 

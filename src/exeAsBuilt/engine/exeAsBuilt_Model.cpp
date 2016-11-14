@@ -72,6 +72,10 @@ Handle(asiData_RENode) exeAsBuilt_Model::GetRENode() const
 //! Initializes Partitions.
 void exeAsBuilt_Model::initPartitions()
 {
+  // Register basic Partitions
+  asiEngine_Model::initPartitions();
+
+  // Register custom Partitions
   REGISTER_PARTITION(asiData_Partition<asiData_RENode>,         Partition_RE);
   REGISTER_PARTITION(asiData_Partition<asiData_REContourNode>,  Partition_REContour);
   REGISTER_PARTITION(asiData_Partition<asiData_REContoursNode>, Partition_REContours);

@@ -30,10 +30,6 @@
 #include <asiVisu_IVTessItemPrs.h>
 #include <asiVisu_IVTextItemPrs.h>
 #include <asiVisu_IVTopoItemPrs.h>
-#include <asiVisu_MeshPrs.h>
-#include <asiVisu_REContoursPrs.h>
-#include <asiVisu_REPointsPrs.h>
-#include <asiVisu_RESurfacesPrs.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -83,7 +79,6 @@ int main(int argc, char** argv)
   // Register Presentations
   //---------------------------------------------------------------------------
 
-  REGISTER_PRESENTATION(asiVisu_MeshPrs)
   REGISTER_PRESENTATION(asiVisu_GeomPrs)
   REGISTER_PRESENTATION(asiVisu_GeomBoundaryEdgesPrs)
   REGISTER_PRESENTATION(asiVisu_GeomCurvePrs)
@@ -91,9 +86,6 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_GeomFacePrs)
   REGISTER_PRESENTATION(asiVisu_GeomSurfPrs)
   REGISTER_PRESENTATION(asiVisu_GeomContourPrs)
-  REGISTER_PRESENTATION(asiVisu_REContoursPrs)
-  REGISTER_PRESENTATION(asiVisu_REPointsPrs)
-  REGISTER_PRESENTATION(asiVisu_RESurfacesPrs)
   REGISTER_PRESENTATION(asiVisu_CalculusLawPrs)
 
   // Imperative viewer

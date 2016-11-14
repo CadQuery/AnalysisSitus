@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 07 November 2015
+// Created on: 14 November 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
@@ -8,8 +8,9 @@
 // Windows includes
 #include <Windows.h>
 
-// exe includes
-#include <exe_MainWindow.h>
+// exeAsBuilt includes
+#include <exeAsBuilt_MainWindow.h>
+#include <exeAsBuilt_Model.h>
 
 // asiVisu includes
 #include <asiVisu_CalculusLawPrs.h>
@@ -27,6 +28,10 @@
 #include <asiVisu_IVTessItemPrs.h>
 #include <asiVisu_IVTextItemPrs.h>
 #include <asiVisu_IVTopoItemPrs.h>
+#include <asiVisu_MeshPrs.h>
+#include <asiVisu_REContoursPrs.h>
+#include <asiVisu_REPointsPrs.h>
+#include <asiVisu_RESurfacesPrs.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -94,11 +99,16 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_IVTextItemPrs)
   REGISTER_PRESENTATION(asiVisu_IVTopoItemPrs)
 
+  // Reverse engineering
+  REGISTER_PRESENTATION(asiVisu_REPointsPrs)
+  REGISTER_PRESENTATION(asiVisu_REContoursPrs)
+  REGISTER_PRESENTATION(asiVisu_RESurfacesPrs)
+
   //---------------------------------------------------------------------------
   // Create main window
   //---------------------------------------------------------------------------
 
-  exe_MainWindow* pMainWindow = new exe_MainWindow;
+  exeAsBuilt_MainWindow* pMainWindow = new exeAsBuilt_MainWindow;
   //
   QRect screenGeometry = QApplication::desktop()->screenGeometry();
   const int center_x   = ( screenGeometry.width() - pMainWindow->width() ) / 2;

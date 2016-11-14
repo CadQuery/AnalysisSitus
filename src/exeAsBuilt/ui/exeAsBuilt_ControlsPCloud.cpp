@@ -10,6 +10,7 @@
 
 // exeAsBuilt includes
 #include <exeAsBuilt_CommonFacilities.h>
+#include <exeAsBuilt_DialogCloudify.h>
 
 // asiAlgo includes
 #include <asiAlgo_Timer.h>
@@ -136,10 +137,15 @@ void exeAsBuilt_ControlsPCloud::onEstimNormals()
 //! Builds point cloud from the model.
 void exeAsBuilt_ControlsPCloud::onCloudify()
 {
-  TopoDS_Shape part;
-  if ( !asiUI_Common::PartShape(part) ) return;
+  Handle(exeAsBuilt_CommonFacilities) cf = exeAsBuilt_CommonFacilities::Instance();
+  Handle(asiData_PartNode)            part_n;
+  TopoDS_Shape                        part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   // Run dialog for cloudification
-  asiUI_DialogCloudify* wCloudify = new asiUI_DialogCloudify(this);
+  exeAsBuilt_DialogCloudify*
+    wCloudify = new exeAsBuilt_DialogCloudify(cf->Model, cf->Notifier, cf->Plotter, this);
+  //
   wCloudify->show();
 }

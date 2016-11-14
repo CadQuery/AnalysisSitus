@@ -8,12 +8,13 @@
 #ifndef exeAsBuilt_MainWindow_h
 #define exeAsBuilt_MainWindow_h
 
-// EXE includes
+// exeAsBuilt includes
 #include <exeAsBuilt_ControlsPCloud.h>
 
-// A-Situs (GUI) includes
+// asiUI includes
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerPart.h>
+#include <asiUI_ViewerPartListener.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -45,9 +46,9 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    gui_object_browser*  wBrowser;  //!< Object browser.
-    gui_viewer_part*     wViewer;   //!< Part viewer.
-    gui_controls_pcloud* wControls; //!< Part controls.
+    asiUI_ObjectBrowser*       wBrowser;  //!< Object browser.
+    asiUI_ViewerPart*          wViewer;   //!< Part viewer.
+    exeAsBuilt_ControlsPCloud* wControls; //!< Part controls.
 
     t_widgets() : wBrowser  (NULL),
                   wViewer   (NULL),
@@ -62,7 +63,22 @@ private:
     }
   };
 
-  t_widgets m_widgets;
+  //! Listeners.
+  struct t_listeners
+  {
+    asiUI_ViewerPartListener* pViewerPart;   //!< Listener for part viewer.
+
+    t_listeners() : pViewerPart (NULL)
+    {}
+
+    void Release()
+    {
+      delete pViewerPart; pViewerPart = NULL;
+    }
+  };
+
+  t_widgets   m_widgets;
+  t_listeners m_listeners;
 
 };
 

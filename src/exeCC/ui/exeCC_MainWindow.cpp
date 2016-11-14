@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <gui_main_window_contour_capture.h>
+#include <exeCC_MainWindow.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -19,7 +19,7 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-gui_main_window_contour_capture::gui_main_window_contour_capture() : QMainWindow()
+exeCC_MainWindow::exeCC_MainWindow() : QMainWindow()
 {
   this->createPartViewer();
   this->createDockWindows();
@@ -29,14 +29,14 @@ gui_main_window_contour_capture::gui_main_window_contour_capture() : QMainWindow
 }
 
 //! Destructor.
-gui_main_window_contour_capture::~gui_main_window_contour_capture()
+exeCC_MainWindow::~exeCC_MainWindow()
 {}
 
 //-----------------------------------------------------------------------------
 
 //! Gets control on window close.
 //! \param evt [in] event.
-void gui_main_window_contour_capture::closeEvent(QCloseEvent* evt)
+void exeCC_MainWindow::closeEvent(QCloseEvent* evt)
 {
   // It seems that we have to destruct objects properly and manually in
   // order to avoid some side effects from VTK. E.g. if we don't kill the
@@ -50,9 +50,9 @@ void gui_main_window_contour_capture::closeEvent(QCloseEvent* evt)
 //-----------------------------------------------------------------------------
 
 //! Creates main (part) viewer.
-void gui_main_window_contour_capture::createPartViewer()
+void exeCC_MainWindow::createPartViewer()
 {
-  m_widgets.wViewerPart = new gui_viewer_part();
+  m_widgets.wViewerPart = new asiUI_ViewerPart();
 
   // Desktop used for sizing
   QDesktopWidget desktop;
@@ -64,7 +64,7 @@ void gui_main_window_contour_capture::createPartViewer()
 }
 
 //! Creates main dockable widgets.
-void gui_main_window_contour_capture::createDockWindows()
+void exeCC_MainWindow::createDockWindows()
 {
   // Desktop used for sizing
   QDesktopWidget desktop;
@@ -78,7 +78,7 @@ void gui_main_window_contour_capture::createDockWindows()
     pDockCommon = new QDockWidget("Common tools", this);
     pDockCommon->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
-    m_widgets.wControlsPart = new gui_controls_part(pDockCommon);
+    m_widgets.wControlsPart = new asiUI_ControlsPart(pDockCommon);
     pDockCommon->setWidget(m_widgets.wControlsPart);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockCommon);
@@ -90,7 +90,7 @@ void gui_main_window_contour_capture::createDockWindows()
     pDockCC = new QDockWidget("Contour capture", this);
     pDockCC->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
-    m_widgets.wControlsCC = new gui_controls_cc(pDockCC);
+    m_widgets.wControlsCC = new exeCC_Controls(pDockCC);
     pDockCC->setWidget(m_widgets.wControlsCC);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockCC);
@@ -102,7 +102,7 @@ void gui_main_window_contour_capture::createDockWindows()
     pDockBrowser = new QDockWidget("Stored Objects", this);
     pDockBrowser->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wBrowser = new gui_object_browser(pDockBrowser);
+    m_widgets.wBrowser = new asiUI_ObjectBrowser(pDockBrowser);
     pDockBrowser->setWidget(m_widgets.wBrowser);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockBrowser);
@@ -113,7 +113,7 @@ void gui_main_window_contour_capture::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Face Domain", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerDomain = new gui_viewer_domain(pDock);
+    m_widgets.wViewerDomain = new asiUI_ViewerDomain(pDock);
     pDock->setWidget(m_widgets.wViewerDomain);
     pDock->setMinimumWidth(width);
     //
@@ -125,7 +125,7 @@ void gui_main_window_contour_capture::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Host Surface", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerSurface = new gui_viewer_surface(pDock);
+    m_widgets.wViewerSurface = new asiUI_ViewerSurface(pDock);
     pDock->setWidget(m_widgets.wViewerSurface);
     pDock->setMinimumWidth(width);
     //

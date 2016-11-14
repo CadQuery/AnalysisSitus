@@ -6,20 +6,20 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <gui_dialog_contour_enrich.h>
+#include <exeCC_DialogEnrich.h>
 
-// Common includes
-#include <common_draw_test_suite.h>
-#include <common_facilities.h>
+// exeCC includes
+#include <exeCC_CommonFacilities.h>
 
-// Geometry includes
-#include <geom_hit_facet.h>
+// asiAlgo includes
+#include <asiAlgo_HitFacet.h>
+#include <asiAlgo_Timer.h>
 
-// Engine includes
-#include <engine_part.h>
+// asiEngine includes
+#include <asiEngine_Part.h>
 
-// GUI includes
-#include <gui_common.h>
+// asUI includes
+#include <asiUI_Common.h>
 
 // Qt includes
 #include <QGroupBox>
@@ -41,8 +41,8 @@
 //! Constructor.
 //! \param bvh    [in] BVH for fast picking of facets.
 //! \param parent [in] parent widget.
-gui_dialog_contour_enrich::gui_dialog_contour_enrich(const Handle(geom_bvh_facets)& bvh,
-                                                     QWidget* parent)
+exeCC_DialogEnrich::exeCC_DialogEnrich(const Handle(asiAlgo_BVHFacets)& bvh,
+                                       QWidget*                         parent)
 //
 : QDialog(parent),
   m_bvh(bvh)
@@ -54,7 +54,7 @@ gui_dialog_contour_enrich::gui_dialog_contour_enrich(const Handle(geom_bvh_facet
   QGroupBox* pGroup = new QGroupBox("Parameters");
 
   // Editors
-  m_widgets.pNumPoints = new gui_line_edit();
+  m_widgets.pNumPoints = new asiUI_LineEdit();
 
   // Sizing
   m_widgets.pNumPoints->setMinimumWidth(CONTROL_EDIT_WIDTH);
@@ -109,7 +109,7 @@ gui_dialog_contour_enrich::gui_dialog_contour_enrich(const Handle(geom_bvh_facet
 }
 
 //! Destructor.
-gui_dialog_contour_enrich::~gui_dialog_contour_enrich()
+exeCC_DialogEnrich::~exeCC_DialogEnrich()
 {
   delete m_pMainLayout;
 }
@@ -117,14 +117,14 @@ gui_dialog_contour_enrich::~gui_dialog_contour_enrich()
 //-----------------------------------------------------------------------------
 
 //! Reaction on clicking "Perform" button.
-void gui_dialog_contour_enrich::onPerform()
+void exeCC_DialogEnrich::onPerform()
 {
   // Read user inputs
   const int nPoints = m_widgets.pNumPoints->text().toInt();
 
   // Get part Node
-  Handle(geom_part_node)
-    part_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode)
+    part_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode();
   //
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
   {
@@ -133,7 +133,7 @@ void gui_dialog_contour_enrich::onPerform()
   }
 
   // Get contour Node
-  Handle(geom_contour_node) contour_n = part_n->GetContour();
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
   {
@@ -141,7 +141,7 @@ void gui_dialog_contour_enrich::onPerform()
     return;
   }
 
-  ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
+  ActAPI_PlotterEntry IV(exeCC_CommonFacilities::Instance()->Plotter);
 
   /* =======================================
    *  Enrich contour with additional points
@@ -156,9 +156,9 @@ void gui_dialog_contour_enrich::onPerform()
   contour_n->AsPointsOnFaces(poles, faces);
 
   // Prepare a tool to find the intersected facet
-  geom_hit_facet HitFacet(m_bvh,
-                          common_facilities::Instance()->Notifier,
-                          common_facilities::Instance()->Plotter);
+  asiAlgo_HitFacet HitFacet(m_bvh,
+                            exeCC_CommonFacilities::Instance()->Notifier,
+                            exeCC_CommonFacilities::Instance()->Plotter);
 
   // Collection with new points and face indices
   TColgp_SequenceOfPnt enrichedPoints;
@@ -208,7 +208,7 @@ void gui_dialog_contour_enrich::onPerform()
     }
   }
 
-  common_facilities::Instance()->Model->OpenCommand();
+  exeCC_CommonFacilities::Instance()->Model->OpenCommand();
   {
     // Clean up the cached geometry
     contour_n->SetGeometry( TopoDS_Shape() );
@@ -216,15 +216,15 @@ void gui_dialog_contour_enrich::onPerform()
     // Set new enriched data
     contour_n->SetPointsOnFaces(enrichedPoints, enrichedFaces);
   }
-  common_facilities::Instance()->Model->CommitCommand();
+  exeCC_CommonFacilities::Instance()->Model->CommitCommand();
 
   /* ==========
    *  Finalize
    * ========== */
 
   // Actualize
-  common_facilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
-  common_facilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+  exeCC_CommonFacilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
+  exeCC_CommonFacilities::Instance()->Prs.Part->Actualize( contour_n.get() );
 
   // Close
   this->close();

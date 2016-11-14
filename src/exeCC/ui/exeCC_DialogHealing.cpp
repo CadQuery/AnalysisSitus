@@ -1,22 +1,24 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2016
+// Created on: 26 September 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <gui_dialog_contour_capture.h>
+#include <exeCC_DialogHealing.h>
 
-// Common includes
-#include <common_draw_test_suite.h>
-#include <common_facilities.h>
+// exeCC includes
+#include <exeCC_CommonFacilities.h>
 
-// Engine includes
-#include <engine_part.h>
+// asiAlgo includes
+#include <asiAlgo_Timer.h>
 
-// GUI includes
-#include <gui_common.h>
+// asiEngine includes
+#include <asiEngine_Part.h>
+
+// asiUI includes
+#include <asiUI_Common.h>
 
 // Qt includes
 #include <QGroupBox>
@@ -27,7 +29,7 @@
 #include <TopExp_Explorer.hxx>
 
 // SPE includes
-#include <SpeCore_Hull.h>
+#include <Common_ReapproxContour.h>
 
 //-----------------------------------------------------------------------------
 
@@ -40,7 +42,7 @@
 
 //! Constructor.
 //! \param parent [in] parent widget.
-gui_dialog_contour_capture::gui_dialog_contour_capture(QWidget* parent)
+exeCC_DialogHealing::exeCC_DialogHealing(QWidget* parent)
 //
 : QDialog(parent)
 {
@@ -51,15 +53,13 @@ gui_dialog_contour_capture::gui_dialog_contour_capture(QWidget* parent)
   QGroupBox* pGroup = new QGroupBox("Parameters");
 
   // Editors
-  m_widgets.pPrecision   = new gui_line_edit();
-  m_widgets.pHealContour = new QCheckBox();
+  m_widgets.pPrecision = new asiUI_LineEdit();
 
   // Sizing
   m_widgets.pPrecision->setMinimumWidth(CONTROL_EDIT_WIDTH);
 
   // Default values
   m_widgets.pPrecision->setText("0.1");
-  m_widgets.pHealContour->setChecked(true);
 
   //---------------------------------------------------------------------------
   // Buttons
@@ -82,11 +82,9 @@ gui_dialog_contour_capture::gui_dialog_contour_capture(QWidget* parent)
   pGrid->setSpacing(5);
   pGrid->setAlignment(Qt::AlignTop | Qt::AlignLeft);
   //
-  pGrid->addWidget(new QLabel("Precision:"),    0, 0);
-  pGrid->addWidget(new QLabel("Auto-healing:"), 1, 0);
+  pGrid->addWidget(new QLabel("Precision:"), 0, 0);
   //
-  pGrid->addWidget(m_widgets.pPrecision,   0, 1);
-  pGrid->addWidget(m_widgets.pHealContour, 1, 1);
+  pGrid->addWidget(m_widgets.pPrecision, 0, 1);
   //
   pGrid->setColumnStretch(0, 0);
   pGrid->setColumnStretch(1, 1);
@@ -106,11 +104,11 @@ gui_dialog_contour_capture::gui_dialog_contour_capture(QWidget* parent)
 
   this->setLayout(m_pMainLayout);
   this->setWindowModality(Qt::WindowModal);
-  this->setWindowTitle("Contour Capture");
+  this->setWindowTitle("Contour Healing");
 }
 
 //! Destructor.
-gui_dialog_contour_capture::~gui_dialog_contour_capture()
+exeCC_DialogHealing::~exeCC_DialogHealing()
 {
   delete m_pMainLayout;
 }
@@ -118,15 +116,14 @@ gui_dialog_contour_capture::~gui_dialog_contour_capture()
 //-----------------------------------------------------------------------------
 
 //! Reaction on clicking "Perform" button.
-void gui_dialog_contour_capture::onPerform()
+void exeCC_DialogHealing::onPerform()
 {
   // Read user inputs
-  const double precision     = m_widgets.pPrecision->text().toDouble();
-  const bool   isAutoHealing = m_widgets.pHealContour->isChecked();
+  const double precision = m_widgets.pPrecision->text().toDouble();
 
   // Get part Node
-  Handle(geom_part_node)
-    part_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode)
+    part_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode();
   //
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
   {
@@ -135,7 +132,7 @@ void gui_dialog_contour_capture::onPerform()
   }
 
   // Get contour Node
-  Handle(geom_contour_node) contour_n = part_n->GetContour();
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
   {
@@ -143,61 +140,82 @@ void gui_dialog_contour_capture::onPerform()
     return;
   }
 
-  /* ====================
-   *  Prepare extraction
-   * ==================== */
-
-  Handle(SpeCore_Journal) Journal = SpeCore_Journal::Instance();
-  Handle(SpeCore_Hull)    Hull    = new SpeCore_Hull;
-  //
-  if ( !Hull->Load(part_n->GetShape(), Journal) )
-  {
-    std::cout << "Error: cannot initialize hull" << std::endl;
-    return;
-  }
+  /* =================
+   *  Perform healing
+   * ================= */
 
   // Get contour wire
   TopoDS_Wire contourShape = contour_n->AsShape();
 
   // Count edges
-  int numEdges = 0;
-  for ( TopExp_Explorer exp(contourShape, TopAbs_EDGE); exp.More(); exp.Next() )
   {
-    numEdges++;
+    int numEdges = 0;
+    for ( TopExp_Explorer exp(contourShape, TopAbs_EDGE); exp.More(); exp.Next() )
+      numEdges++;
+    //
+    std::cout << "Input contour contains " << numEdges << " edge(s)" << std::endl;
   }
-  std::cout << "Input contour contains " << numEdges << " edge(s)" << std::endl;
 
-  /* ================
-   *  Run extraction
-   * ================ */
+  // Prepare journal
+  Handle(SpeCore_Journal) Journal = SpeCore_Journal::Instance();
 
   TIMER_NEW
   TIMER_GO
 
-  Handle(SpeCore_Plate) Plate;
-  //
-  if ( !Hull->ExtractPlate(contourShape, precision, isAutoHealing, Plate, Journal) )
-    std::cout << "Cannot extract plate base" << std::endl;
+  // Run healing
+  Common_ReapproxContour Heal(contourShape, precision);
+  TopoDS_Wire res;
+  if ( !Heal(res, true, true, Journal) )
+  {
+    std::cout << "Error: cannot heal contour" << std::endl;
+    return;
+  }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("Contour Capture")
+  TIMER_COUT_RESULT_MSG("Contour Healing")
 
   Journal->Dump(std::cout);
+
+  //---------------------------------------------------------------------------
+
+  ActAPI_PlotterEntry IV(exeCC_CommonFacilities::Instance()->Plotter);
+
+  const gp_Pnt& Center = Heal.Center();
+  const gp_Vec& Ori    = Heal.Orientation();
+
+  if ( Ori.Magnitude() < RealEpsilon() )
+  {
+    std::cout << "Error: cannot compute orientation vector" << std::endl;
+    return;
+  }
+
+  IV.DRAW_POINT(Center, Color_Violet);
+  IV.DRAW_VECTOR_AT(Center, Ori*2000, Color_Violet);
+
+  //---------------------------------------------------------------------------
+
+  // Count edges
+  {
+    int numEdges = 0;
+    for ( TopExp_Explorer exp(res, TopAbs_EDGE); exp.More(); exp.Next() )
+      numEdges++;
+    //
+    std::cout << "Output contour contains " << numEdges << " edge(s)" << std::endl;
+  }
 
   /* ==========
    *  Finalize
    * ========== */
 
-  common_facilities::Instance()->Model->OpenCommand();
+  exeCC_CommonFacilities::Instance()->Model->OpenCommand();
   {
-    part_n->SetShape(Plate->GetPlateBase().Geometry);
+    contour_n->SetGeometry(res);
   }
-  common_facilities::Instance()->Model->CommitCommand();
+  exeCC_CommonFacilities::Instance()->Model->CommitCommand();
 
-  // Replace part with the extracted piece of shell
-  common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize(part_n.get(), false, false);
+  // Actualize
+  exeCC_CommonFacilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
+  exeCC_CommonFacilities::Instance()->Prs.Part->Actualize( contour_n.get() );
 
   // Close
   this->close();

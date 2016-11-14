@@ -5,14 +5,14 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef visu_create_contour_callback_h
-#define visu_create_contour_callback_h
+#ifndef exeCC_CreateContourCallback_h
+#define exeCC_CreateContourCallback_h
 
-// Visualization includes
-#include <visu_viewer_callback.h>
+// asiUI includes
+#include <asiUI_ViewerCallback.h>
 
-// Geometry includes
-#include <geom_bvh_facets.h>
+// asiAlgo includes
+#include <asiAlgo_BVHFacets.h>
 
 // VIS includes
 #include <IVtk_Types.hxx>
@@ -25,16 +25,16 @@
 #include <QObject>
 
 //! Callback for contour creation.
-class visu_create_contour_callback : public QObject,
-                                     public visu_viewer_callback
+class exeCC_CreateContourCallback : public QObject,
+                                    public asiUI_ViewerCallback
 {
   Q_OBJECT
 
 public:
 
-  static visu_create_contour_callback* New();
+  static exeCC_CreateContourCallback* New();
   //
-  vtkTypeMacro(visu_create_contour_callback, visu_viewer_callback);
+  vtkTypeMacro(exeCC_CreateContourCallback, asiUI_ViewerCallback);
 
 public:
 
@@ -44,19 +44,19 @@ public:
 
 public:
 
-  void SetBVH(const Handle(geom_bvh_facets)& bvh_facets)
+  void SetBVH(const Handle(asiAlgo_BVHFacets)& bvh_facets)
   {
     m_bvh = bvh_facets;
   }
 
 private:
 
-  visu_create_contour_callback  (gui_viewer* theViewer);
-  ~visu_create_contour_callback ();
+  exeCC_CreateContourCallback  (asiUI_Viewer* theViewer);
+  ~exeCC_CreateContourCallback ();
 
 private:
 
-  Handle(geom_bvh_facets) m_bvh; //!< Accelerating structure for picking.
+  Handle(asiAlgo_BVHFacets) m_bvh; //!< Accelerating structure for picking.
 
 };
 

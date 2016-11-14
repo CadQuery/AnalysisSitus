@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{49B6442D-BAE0-4B22-9482-BBBDE0D6B6B0}</ProjectGuid>
+    <RootNamespace>QrVisu</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win$(ARCH)\$(VCVER)\bind\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\win$(ARCH)\$(VCVER)\objd\exeCC\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win$(ARCH)\$(VCVER)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\win$(ARCH)\$(VCVER)\obj\exeCC\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SPE_INC);$(CAS_INC);$(QR_INC);$(ADOLC_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\selection;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;$(AS_ROOT)\src\asiEngine;$(AS_ROOT)\src\asiUI;$(AS_ROOT)\src\asiUI\controls;$(AS_ROOT)\src\asiUI\dialogs;$(AS_ROOT)\src\asiUI\interaction;$(AS_ROOT)\src\asiUI\utils;$(AS_ROOT)\src\asiUI\viewers;$(AS_ROOT)\src\exeCC;$(AS_ROOT)\src\exeCC\ui;$(AS_ROOT)\src\exeCC\visu;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SPE_LIB);$(TBB_LIB);$(AD_LIB);$(CAS_LIB64);$(VTK_LIB);$(QT_LIB)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>SpeCore.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.0.lib;vtkCommonDataModel-7.0.lib;vtkCommonExecutionModel-7.0.lib;vtkCommonMath-7.0.lib;vtkCommonTransforms-7.0.lib;vtkCommonMisc-7.0.lib;vtkRenderingAnnotation-7.0.lib;vtkRenderingCore-7.0.lib;vtkRenderingContext2D-7.0.lib;vtkRenderingContextOpenGL2-7.0.lib;vtkRenderingOpenGL2-7.0.lib;vtkRenderingFreeType-7.0.lib;vtkGUISupportQt-7.0.lib;vtkInteractionWidgets-7.0.lib;vtkInteractionStyle-7.0.lib;vtkViewsContext2D-7.0.lib;vtkViewsInfovis-7.0.lib;vtkInfovisLayout-7.0.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SPE_INC);$(CAS_INC);$(QR_INC);$(ADOLC_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\selection;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;$(AS_ROOT)\src\asiEngine;$(AS_ROOT)\src\asiUI;$(AS_ROOT)\src\asiUI\controls;$(AS_ROOT)\src\asiUI\dialogs;$(AS_ROOT)\src\asiUI\interaction;$(AS_ROOT)\src\asiUI\utils;$(AS_ROOT)\src\asiUI\viewers;$(AS_ROOT)\src\exeCC;$(AS_ROOT)\src\exeCC\ui;$(AS_ROOT)\src\exeCC\visu;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>$(SPE_LIB);$(TBB_LIB);$(AD_LIB);$(CAS_LIB64);$(VTK_LIB);$(QT_LIB)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SpeCore.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.0.lib;vtkCommonDataModel-7.0.lib;vtkCommonExecutionModel-7.0.lib;vtkCommonMath-7.0.lib;vtkCommonTransforms-7.0.lib;vtkCommonMisc-7.0.lib;vtkRenderingAnnotation-7.0.lib;vtkRenderingCore-7.0.lib;vtkRenderingContext2D-7.0.lib;vtkRenderingContextOpenGL2-7.0.lib;vtkRenderingOpenGL2-7.0.lib;vtkRenderingFreeType-7.0.lib;vtkGUISupportQt-7.0.lib;vtkInteractionWidgets-7.0.lib;vtkInteractionStyle-7.0.lib;vtkViewsContext2D-7.0.lib;vtkViewsInfovis-7.0.lib;vtkInfovisLayout-7.0.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="asiAlgo.vcxproj">
+      <Project>{18bdd73e-5256-451d-9df9-7e38b34e6191}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiData.vcxproj">
+      <Project>{8b06c62d-603c-401c-9d8e-f251c8a4a2c7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiEngine.vcxproj">
+      <Project>{1ef86927-32bd-48ce-9dcd-7dbfa3fe6f34}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiUI.vcxproj">
+      <Project>{e08413bb-fdc9-4674-810c-dba4bf7c35e2}</Project>
+    </ProjectReference>
+    <ProjectReference Include="asiVisu.vcxproj">
+      <Project>{2dd37131-6046-4b5d-8ded-09e25b718d61}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\exeCC\ui\exeCC_CommonFacilities.h" />
+    <ClInclude Include="..\..\src\exeCC\ui\exeCC_Controls.h" />
+    <ClInclude Include="..\..\src\exeCC\ui\exeCC_DialogBuildOffsets.h" />
+    <ClInclude Include="..\..\src\exeCC\ui\exeCC_DialogCapture.h" />
+    <ClInclude Include="..\..\src\exeCC\ui\exeCC_DialogEnrich.h" />
+    <ClInclude Include="..\..\src\exeCC\ui\exeCC_DialogHealing.h" />
+    <ClInclude Include="..\..\src\exeCC\ui\exeCC_MainWindow.h" />
+    <ClInclude Include="..\..\src\exeCC\visu\exeCC_CreateContourCallback.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\exeCC\exeCC_Main.cpp" />
+    <ClCompile Include="..\..\src\exeCC\ui\exeCC_CommonFacilities.cpp" />
+    <ClCompile Include="..\..\src\exeCC\ui\exeCC_Controls.cpp" />
+    <ClCompile Include="..\..\src\exeCC\ui\exeCC_DialogBuildOffsets.cpp" />
+    <ClCompile Include="..\..\src\exeCC\ui\exeCC_DialogCapture.cpp" />
+    <ClCompile Include="..\..\src\exeCC\ui\exeCC_DialogEnrich.cpp" />
+    <ClCompile Include="..\..\src\exeCC\ui\exeCC_DialogHealing.cpp" />
+    <ClCompile Include="..\..\src\exeCC\ui\exeCC_MainWindow.cpp" />
+    <ClCompile Include="..\..\src\exeCC\visu\exeCC_CreateContourCallback.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

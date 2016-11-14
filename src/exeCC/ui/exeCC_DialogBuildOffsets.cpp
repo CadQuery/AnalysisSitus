@@ -6,17 +6,19 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <gui_dialog_build_offsets.h>
+#include <exeCC_DialogBuildOffsets.h>
 
-// Common includes
-#include <common_draw_test_suite.h>
-#include <common_facilities.h>
+// exeCC includes
+#include <exeCC_CommonFacilities.h>
 
-// Engine includes
-#include <engine_part.h>
+// asiAlgo includes
+#include <asiAlgo_Timer.h>
 
-// GUI includes
-#include <gui_common.h>
+// asiEngine includes
+#include <asiEngine_Part.h>
+
+// asiUI includes
+#include <asiUI_Common.h>
 
 // Qt includes
 #include <QGroupBox>
@@ -42,7 +44,7 @@
 //! Constructor.
 //! \param plate  [in] plate base to offset.
 //! \param parent [in] parent widget.
-gui_dialog_build_offsets::gui_dialog_build_offsets(const Handle(SpeCore_Plate)& plate,
+exeCC_DialogBuildOffsets::exeCC_DialogBuildOffsets(const Handle(SpeCore_Plate)& plate,
                                                    QWidget*                     parent)
 //
 : QDialog(parent), m_plate(plate)
@@ -54,9 +56,9 @@ gui_dialog_build_offsets::gui_dialog_build_offsets(const Handle(SpeCore_Plate)& 
   QGroupBox* pGroup = new QGroupBox("Parameters");
 
   // Editors
-  m_widgets.pOffset    = new gui_line_edit();
-  m_widgets.pThickness = new gui_line_edit();
-  m_widgets.pShift     = new gui_line_edit();
+  m_widgets.pOffset    = new asiUI_LineEdit();
+  m_widgets.pThickness = new asiUI_LineEdit();
+  m_widgets.pShift     = new asiUI_LineEdit();
 
   // Sizing
   m_widgets.pOffset    -> setMinimumWidth(CONTROL_EDIT_WIDTH);
@@ -119,7 +121,7 @@ gui_dialog_build_offsets::gui_dialog_build_offsets(const Handle(SpeCore_Plate)& 
 }
 
 //! Destructor.
-gui_dialog_build_offsets::~gui_dialog_build_offsets()
+exeCC_DialogBuildOffsets::~exeCC_DialogBuildOffsets()
 {
   delete m_pMainLayout;
 }
@@ -127,7 +129,7 @@ gui_dialog_build_offsets::~gui_dialog_build_offsets()
 //-----------------------------------------------------------------------------
 
 //! Reaction on clicking "Perform" button.
-void gui_dialog_build_offsets::onPerform()
+void exeCC_DialogBuildOffsets::onPerform()
 {
   if ( m_plate.IsNull() )
   {
@@ -140,8 +142,8 @@ void gui_dialog_build_offsets::onPerform()
   const double shift     = m_widgets.pShift->text().toDouble();
 
   // Get part Node
-  Handle(geom_part_node)
-    part_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode)
+    part_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode();
   //
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
   {
@@ -201,16 +203,16 @@ void gui_dialog_build_offsets::onPerform()
    *  Finalize
    * ========== */
 
-  common_facilities::Instance()->Model->OpenCommand();
+  exeCC_CommonFacilities::Instance()->Model->OpenCommand();
   {
     part_n->SetShape(comp);
   }
-  common_facilities::Instance()->Model->CommitCommand();
+  exeCC_CommonFacilities::Instance()->Model->CommitCommand();
 
   // Replace part with the extracted piece of shell
-  common_facilities::Instance()->Prs.DeleteAll();
-  common_facilities::Instance()->Prs.Part->InitializePickers();
-  common_facilities::Instance()->Prs.Part->Actualize(part_n.get(), false, false);
+  exeCC_CommonFacilities::Instance()->Prs.DeleteAll();
+  exeCC_CommonFacilities::Instance()->Prs.Part->InitializePickers();
+  exeCC_CommonFacilities::Instance()->Prs.Part->Actualize(part_n.get(), false, false);
 
   // Close
   this->close();

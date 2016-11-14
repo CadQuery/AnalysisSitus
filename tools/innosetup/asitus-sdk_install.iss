@@ -57,7 +57,7 @@ Source: {#ASitusDir}\README; DestName: README.txt; DestDir: {app}; Flags: isread
 ; Application folders and scripts
 Source: {#ASitusDir}\win64\vc12\bin\*;                                    DestDir: {app}\app\win64\vc12\bin;                      Flags: sortfilesbyextension sortfilesbyname
 Source: {#ASitusDir}\env.bat;                                             DestDir: {app}\app;
-Source: {#ASitusDir}\run.bat;                                             DestDir: {app}\app;
+Source: {#ASitusDir}\run_exe.bat;                                         DestDir: {app}\app;
 Source: {#ASitusDir}\msbuild.bat;                                         DestDir: {app}\app;
 Source: {#ASitusDir}\msvc.bat;                                            DestDir: {app}\app;
 Source: {#ASitusDir}\src\asiAlgo\*;                                       DestDir: {app}\app\src\asiAlgo;                         Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
@@ -150,9 +150,9 @@ Source: "resources\uninstall.ico";                                        DestDi
 Source: "resources\custom.bat";                                           DestDir: {app}\app
 
 [Icons]
-Name: {group}\{#MyAppName};                       Filename: {app}\app\run.bat;            IconFileName: {app}\icons\asitus.ico
+Name: {group}\{#MyAppName};                       Filename: {app}\app\run_exe.bat;        IconFileName: {app}\icons\asitus.ico
 Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe};               IconFileName: {app}\icons\uninstall.ico
-Name: {commondesktop}\{#MyAppName};               Filename: {app}\app\run.bat;            IconFileName: {app}\icons\asitus.ico;           Tasks: desktopicon
+Name: {commondesktop}\{#MyAppName};               Filename: {app}\app\run_exe.bat;        IconFileName: {app}\icons\asitus.ico;           Tasks: desktopicon
 
 
 [InstallDelete]

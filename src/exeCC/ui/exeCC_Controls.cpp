@@ -6,32 +6,32 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <gui_controls_cc.h>
+#include <exeCC_Controls.h>
 
-// Common includes
-#include <common_draw_test_suite.h>
-#include <common_facilities.h>
+// exeCC includes
+#include <exeCC_CommonFacilities.h>
+#include <exeCC_CreateContourCallback.h>
+#include <exeCC_DialogBuildOffsets.h>
+#include <exeCC_DialogCapture.h>
+#include <exeCC_DialogEnrich.h>
+#include <exeCC_DialogHealing.h>
 
-// Geometry includes
-#include <geom_bvh_facets.h>
-#include <geom_bvh_iterator.h>
-#include <geom_hit_facet.h>
-#include <geom_utils.h>
+// asiAlgo includes
+#include <asiAlgo_BVHFacets.h>
+#include <asiAlgo_BVHIterator.h>
+#include <asiAlgo_HitFacet.h>
+#include <asiAlgo_Timer.h>
+#include <asiAlgo_Utils.h>
 
-// GUI includes
-#include <gui_common.h>
-#include <gui_dialog_build_offsets.h>
-#include <gui_dialog_contour_capture.h>
-#include <gui_dialog_contour_enrich.h>
-#include <gui_dialog_contour_healing.h>
+// asiUI includes
+#include <asiUI_Common.h>
+#include <asiUI_PickFacetCallback.h>
 
-// Engine includes
-#include <engine_part.h>
+// asiEngine includes
+#include <asiEngine_Part.h>
 
-// Visualization includes
-#include <visu_create_contour_callback.h>
-#include <visu_geom_prs.h>
-#include <visu_pick_facet_callback.h>
+// asiVisu includes
+#include <asiVisu_GeomPrs.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -62,7 +62,7 @@
 
 //! Constructor.
 //! \param parent [in] parent widget.
-gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelMode(0)
+exeCC_Controls::exeCC_Controls(QWidget* parent) : QWidget(parent), m_iPrevSelMode(0)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -176,7 +176,7 @@ gui_controls_cc::gui_controls_cc(QWidget* parent) : QWidget(parent), m_iPrevSelM
 //-----------------------------------------------------------------------------
 
 //! Destructor.
-gui_controls_cc::~gui_controls_cc()
+exeCC_Controls::~exeCC_Controls()
 {
   delete m_pMainLayout;
   m_widgets.Release();
@@ -185,85 +185,91 @@ gui_controls_cc::~gui_controls_cc()
 //-----------------------------------------------------------------------------
 
 //! Allows user to pick a contour interactively.
-void gui_controls_cc::onPickContour()
+void exeCC_Controls::onPickContour()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   const bool isOn = m_widgets.pPickContour->isChecked();
 
   // Create the accelerating structure
   if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
-    m_bvh = new geom_bvh_facets(part,
-                                geom_bvh_facets::Builder_Binned,
-                                common_facilities::Instance()->Notifier,
-                                common_facilities::Instance()->Plotter);
+    m_bvh = new asiAlgo_BVHFacets(part,
+                                  asiAlgo_BVHFacets::Builder_Binned,
+                                  exeCC_CommonFacilities::Instance()->Notifier,
+                                  exeCC_CommonFacilities::Instance()->Plotter);
 
   // Get contour Node
-  Handle(geom_contour_node)
-    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode)
+    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
 
   // Depending on the state of the control, either let user to pick some
   // points on the shape or finalize contour creation
   if ( isOn )
   {
     // Clear contour
-    common_facilities::Instance()->Model->OpenCommand();
+    exeCC_CommonFacilities::Instance()->Model->OpenCommand();
     {
       contour_n->Init();
     }
-    common_facilities::Instance()->Model->CommitCommand();
+    exeCC_CommonFacilities::Instance()->Model->CommitCommand();
 
     // Enable an appropriate selection mode
-    m_iPrevSelMode = common_facilities::Instance()->Prs.Part->GetSelectionMode();
-    common_facilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_Workpiece);
+    m_iPrevSelMode = exeCC_CommonFacilities::Instance()->Prs.Part->GetSelectionMode();
+    exeCC_CommonFacilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_Workpiece);
 
     // Add observer which takes responsibility to fill the data object with
     // the base points of the contour
-    if ( !common_facilities::Instance()->Prs.Part->HasObserver(EVENT_PICK_WORLD_POINT) )
+    if ( !exeCC_CommonFacilities::Instance()->Prs.Part->HasObserver(EVENT_PICK_WORLD_POINT) )
     {
-      vtkSmartPointer<visu_create_contour_callback>
-        cb = vtkSmartPointer<visu_create_contour_callback>::New();
+      vtkSmartPointer<exeCC_CreateContourCallback>
+        cb = vtkSmartPointer<exeCC_CreateContourCallback>::New();
       //
       cb->SetBVH(m_bvh);
 
       // Add observer
-      common_facilities::Instance()->Prs.Part->AddObserver(EVENT_PICK_WORLD_POINT, cb);
+      exeCC_CommonFacilities::Instance()->Prs.Part->AddObserver(EVENT_PICK_WORLD_POINT, cb);
     }
   }
   else
   {
     if ( !contour_n->IsClosed() )
     {
-      common_facilities::Instance()->Model->OpenCommand();
+      exeCC_CommonFacilities::Instance()->Model->OpenCommand();
       {
         contour_n->SetClosed(true);
       }
-      common_facilities::Instance()->Model->CommitCommand();
+      exeCC_CommonFacilities::Instance()->Model->CommitCommand();
     }
 
-    common_facilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+    exeCC_CommonFacilities::Instance()->Prs.Part->Actualize( contour_n.get() );
 
     // Restore original selection mode
-    common_facilities::Instance()->Prs.Part->SetSelectionMode(m_iPrevSelMode);
+    exeCC_CommonFacilities::Instance()->Prs.Part->SetSelectionMode(m_iPrevSelMode);
     //
-    common_facilities::Instance()->Prs.Part->RemoveObserver(EVENT_PICK_WORLD_POINT);
+    exeCC_CommonFacilities::Instance()->Prs.Part->RemoveObserver(EVENT_PICK_WORLD_POINT);
   }
 }
 
 //-----------------------------------------------------------------------------
 
 //! Allows user to load an externally defined contour.
-void gui_controls_cc::onLoadContour()
+void exeCC_Controls::onLoadContour()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
-  QString filename = gui_common::selectBRepFile(gui_common::OpenSaveAction_Open);
+  QString filename = asiUI_Common::selectBRepFile(asiUI_Common::OpenSaveAction_Open);
 
   // Read BREP
   TopoDS_Shape shape;
-  if ( !geom_utils::ReadBRep(QStr2AsciiStr(filename), shape) )
+  if ( !asiAlgo_Utils::ReadBRep(QStr2AsciiStr(filename), shape) )
   {
     std::cout << "Error: cannot read b-rep file" << std::endl;
     return;
@@ -277,21 +283,21 @@ void gui_controls_cc::onLoadContour()
 
   // Create the accelerating structure
   if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
-    m_bvh = new geom_bvh_facets(part,
-                                geom_bvh_facets::Builder_Binned,
-                                common_facilities::Instance()->Notifier,
-                                common_facilities::Instance()->Plotter);
+    m_bvh = new asiAlgo_BVHFacets(part,
+                                  asiAlgo_BVHFacets::Builder_Binned,
+                                  exeCC_CommonFacilities::Instance()->Notifier,
+                                  exeCC_CommonFacilities::Instance()->Plotter);
 
   // Tool to find the owner face
-  geom_hit_facet HitFacet(m_bvh,
-                          common_facilities::Instance()->Notifier,
-                          common_facilities::Instance()->Plotter);
+  asiAlgo_HitFacet HitFacet(m_bvh,
+                            exeCC_CommonFacilities::Instance()->Notifier,
+                            exeCC_CommonFacilities::Instance()->Plotter);
 
   // Set geometry of contour
-  Handle(geom_contour_node)
-    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode)
+    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
   //
-  common_facilities::Instance()->Model->OpenCommand(); // tx start
+  exeCC_CommonFacilities::Instance()->Model->OpenCommand(); // tx start
   {
     // Clear contour
     contour_n->Init();
@@ -316,7 +322,7 @@ void gui_controls_cc::onLoadContour()
       if ( !HitFacet(P, 1e-1, facet_idx) )
       {
         std::cout << "Cannot locate a host facet for a contour's point" << std::endl;
-        common_facilities::Instance()->Plotter->DRAW_POINT(P, Color_Red, "Failure");
+        exeCC_CommonFacilities::Instance()->Plotter->DRAW_POINT(P, Color_Red, "Failure");
         continue;
       }
 
@@ -325,21 +331,21 @@ void gui_controls_cc::onLoadContour()
     }
     contour_n->SetClosed(true);
   }
-  common_facilities::Instance()->Model->CommitCommand(); // tx commit
+  exeCC_CommonFacilities::Instance()->Model->CommitCommand(); // tx commit
 
   // Actualize
-  common_facilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
-  common_facilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+  exeCC_CommonFacilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
+  exeCC_CommonFacilities::Instance()->Prs.Part->Actualize( contour_n.get() );
 }
 
 //-----------------------------------------------------------------------------
 
 //! Saves contour to a BREP file.
-void gui_controls_cc::onSaveContour()
+void exeCC_Controls::onSaveContour()
 {
   // Get contour Node
-  Handle(geom_contour_node)
-    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode)
+    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
   {
@@ -347,26 +353,29 @@ void gui_controls_cc::onSaveContour()
     return;
   }
 
-  QString filename = gui_common::selectBRepFile(gui_common::OpenSaveAction_Save);
+  QString filename = asiUI_Common::selectBRepFile(asiUI_Common::OpenSaveAction_Save);
 
   // Save shape
   TopoDS_Wire contourShape = contour_n->AsShape(true);
   //
-  if ( !geom_utils::WriteBRep( contourShape, QStr2AsciiStr(filename) ) )
+  if ( !asiAlgo_Utils::WriteBRep( contourShape, QStr2AsciiStr(filename) ) )
     std::cout << "Error: cannot save contour" << std::endl;
 }
 
 //-----------------------------------------------------------------------------
 
 //! Checks distance from the contour to the host faces.
-void gui_controls_cc::onCheckContourDistance()
+void exeCC_Controls::onCheckContourDistance()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   // Get contour Node
-  Handle(geom_contour_node)
-    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode)
+    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
   {
@@ -375,14 +384,14 @@ void gui_controls_cc::onCheckContourDistance()
   }
 
   // Imperative viewer
-  ActAPI_PlotterEntry IV(common_facilities::Instance()->Plotter);
+  ActAPI_PlotterEntry IV(exeCC_CommonFacilities::Instance()->Plotter);
 
   // Create the accelerating structure
   if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
-    m_bvh = new geom_bvh_facets(part,
-                                geom_bvh_facets::Builder_Binned,
-                                common_facilities::Instance()->Notifier,
-                                common_facilities::Instance()->Plotter);
+    m_bvh = new asiAlgo_BVHFacets(part,
+                                  asiAlgo_BVHFacets::Builder_Binned,
+                                  exeCC_CommonFacilities::Instance()->Notifier,
+                                  exeCC_CommonFacilities::Instance()->Plotter);
 
   // Get contour wire
   TopoDS_Wire contourWire = contour_n->AsShape();
@@ -431,9 +440,9 @@ void gui_controls_cc::onCheckContourDistance()
   TopExp::MapShapes(part, TopAbs_FACE, faces);
 
   // Prepare a tool to find the intersected facet
-  geom_hit_facet HitFacet(m_bvh,
-                          common_facilities::Instance()->Notifier,
-                          common_facilities::Instance()->Plotter);
+  asiAlgo_HitFacet HitFacet(m_bvh,
+                            exeCC_CommonFacilities::Instance()->Notifier,
+                            exeCC_CommonFacilities::Instance()->Plotter);
 
   double maxGap = 0.0;
   gp_Pnt maxGapPt;
@@ -477,14 +486,17 @@ void gui_controls_cc::onCheckContourDistance()
 //-----------------------------------------------------------------------------
 
 //! Checks distance from the contour vertices to the host faces.
-void gui_controls_cc::onCheckVertexDistance()
+void exeCC_Controls::onCheckVertexDistance()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   // Get contour Node
-  Handle(geom_contour_node)
-    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode)
+    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
   {
@@ -533,14 +545,17 @@ void gui_controls_cc::onCheckVertexDistance()
 //-----------------------------------------------------------------------------
 
 //! Checks distance from the original contour to the healed one.
-void gui_controls_cc::onHealedVSOriginal()
+void exeCC_Controls::onHealedVSOriginal()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   // Get contour Node
-  Handle(geom_contour_node)
-    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode)
+    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
   {
@@ -563,14 +578,17 @@ void gui_controls_cc::onHealedVSOriginal()
 //-----------------------------------------------------------------------------
 
 //! Projects vertices of the contour to the part.
-void gui_controls_cc::onProjectVertices()
+void exeCC_Controls::onProjectVertices()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   // Get contour Node
-  Handle(geom_contour_node)
-    contour_n = common_facilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode)
+    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
   {
@@ -592,7 +610,7 @@ void gui_controls_cc::onProjectVertices()
   TColStd_SequenceOfInteger::Iterator fit(faceIndices);
 
   // Perform projection point-by-point
-  common_facilities::Instance()->Model->OpenCommand();
+  exeCC_CommonFacilities::Instance()->Model->OpenCommand();
   {
     int pointIndex = 0;
     for ( ; pit.More(); pit.Next(), fit.Next(), ++pointIndex )
@@ -617,61 +635,64 @@ void gui_controls_cc::onProjectVertices()
       contour_n->ReplacePoint(pointIndex, newPole);
     }
   }
-  common_facilities::Instance()->Model->CommitCommand();
+  exeCC_CommonFacilities::Instance()->Model->CommitCommand();
 
   // Actualize
-  common_facilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
-  common_facilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+  exeCC_CommonFacilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
+  exeCC_CommonFacilities::Instance()->Prs.Part->Actualize( contour_n.get() );
 }
 
 //-----------------------------------------------------------------------------
 
 //! Enriches contour with additional points.
-void gui_controls_cc::onEnrichContour()
+void exeCC_Controls::onEnrichContour()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   // Create the accelerating structure
   if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
-    m_bvh = new geom_bvh_facets(part,
-                                geom_bvh_facets::Builder_Binned,
-                                common_facilities::Instance()->Notifier,
-                                common_facilities::Instance()->Plotter);
+    m_bvh = new asiAlgo_BVHFacets(part,
+                                  asiAlgo_BVHFacets::Builder_Binned,
+                                  exeCC_CommonFacilities::Instance()->Notifier,
+                                  exeCC_CommonFacilities::Instance()->Plotter);
 
   // Run dialog
-  gui_dialog_contour_enrich* wCE = new gui_dialog_contour_enrich(m_bvh, this);
+  exeCC_DialogEnrich* wCE = new exeCC_DialogEnrich(m_bvh, this);
   wCE->show();
 }
 
 //-----------------------------------------------------------------------------
 
 //! Performs contour healing.
-void gui_controls_cc::onHealContour()
+void exeCC_Controls::onHealContour()
 {
   // Run dialog
-  gui_dialog_contour_healing* wCH = new gui_dialog_contour_healing(this);
+  exeCC_DialogHealing* wCH = new exeCC_DialogHealing(this);
   wCH->show();
 }
 
 //-----------------------------------------------------------------------------
 
 //! Performs contour capturing.
-void gui_controls_cc::onCapture()
+void exeCC_Controls::onCapture()
 {
   // Run dialog
-  gui_dialog_contour_capture* wCC = new gui_dialog_contour_capture(this);
+  exeCC_DialogCapture* wCC = new exeCC_DialogCapture(this);
   wCC->show();
 }
 
 //-----------------------------------------------------------------------------
 
 //! Performs validation of capture result.
-void gui_controls_cc::onValidateResult()
+void exeCC_Controls::onValidateResult()
 {
   // Get part Node
-  Handle(geom_part_node)
-    part_n = common_facilities::Instance()->Model->GetPartNode();
+  Handle(asiData_PartNode)
+    part_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode();
   //
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
   {
@@ -680,7 +701,7 @@ void gui_controls_cc::onValidateResult()
   }
 
   // Get contour Node
-  Handle(geom_contour_node) contour_n = part_n->GetContour();
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
   {
@@ -711,55 +732,64 @@ void gui_controls_cc::onValidateResult()
 //-----------------------------------------------------------------------------
 
 //! Constructs BVH with SAH builder.
-void gui_controls_cc::onBVH_SAH()
+void exeCC_Controls::onBVH_SAH()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   // Create the accelerating structure
-  m_bvh = new geom_bvh_facets(part,
-                              geom_bvh_facets::Builder_Binned,
-                              common_facilities::Instance()->Notifier,
-                              common_facilities::Instance()->Plotter);
+  m_bvh = new asiAlgo_BVHFacets(part,
+                                asiAlgo_BVHFacets::Builder_Binned,
+                                exeCC_CommonFacilities::Instance()->Notifier,
+                                exeCC_CommonFacilities::Instance()->Plotter);
 
   // Draw
-  common_facilities::Instance()->Plotter->CLEAN();
-  m_bvh->Dump(common_facilities::Instance()->Plotter);
+  exeCC_CommonFacilities::Instance()->Plotter->CLEAN();
+  m_bvh->Dump(exeCC_CommonFacilities::Instance()->Plotter);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Constructs BVH with linear builder.
-void gui_controls_cc::onBVH_Linear()
+void exeCC_Controls::onBVH_Linear()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   // Create the accelerating structure
-  m_bvh = new geom_bvh_facets(part,
-                              geom_bvh_facets::Builder_Linear,
-                              common_facilities::Instance()->Notifier,
-                              common_facilities::Instance()->Plotter);
+  m_bvh = new asiAlgo_BVHFacets(part,
+                                asiAlgo_BVHFacets::Builder_Linear,
+                                exeCC_CommonFacilities::Instance()->Notifier,
+                                exeCC_CommonFacilities::Instance()->Plotter);
 
   // Draw
-  common_facilities::Instance()->Plotter->CLEAN();
-  m_bvh->Dump(common_facilities::Instance()->Plotter);
+  exeCC_CommonFacilities::Instance()->Plotter->CLEAN();
+  m_bvh->Dump(exeCC_CommonFacilities::Instance()->Plotter);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Allows user to pick a single facet.
-void gui_controls_cc::onPickFacet()
+void exeCC_Controls::onPickFacet()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   // Create the accelerating structure
   if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
-    m_bvh = new geom_bvh_facets(part,
-                                geom_bvh_facets::Builder_Binned,
-                                common_facilities::Instance()->Notifier,
-                                common_facilities::Instance()->Plotter);
+    m_bvh = new asiAlgo_BVHFacets(part,
+                                  asiAlgo_BVHFacets::Builder_Binned,
+                                  exeCC_CommonFacilities::Instance()->Notifier,
+                                  exeCC_CommonFacilities::Instance()->Plotter);
 
   const bool isOn = m_widgets.pPickFacet->isChecked();
 
@@ -768,37 +798,40 @@ void gui_controls_cc::onPickFacet()
   if ( isOn )
   {
     // Enable an appropriate selection mode
-    m_iPrevSelMode = common_facilities::Instance()->Prs.Part->GetSelectionMode();
-    common_facilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_Workpiece);
+    m_iPrevSelMode = exeCC_CommonFacilities::Instance()->Prs.Part->GetSelectionMode();
+    exeCC_CommonFacilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_Workpiece);
 
     // Add observer which takes responsibility to interact with user
-    if ( !common_facilities::Instance()->Prs.Part->HasObserver(EVENT_PICK_WORLD_POINT) )
+    if ( !exeCC_CommonFacilities::Instance()->Prs.Part->HasObserver(EVENT_PICK_WORLD_POINT) )
     {
-      vtkSmartPointer<visu_pick_facet_callback>
-        cb = vtkSmartPointer<visu_pick_facet_callback>::New();
+      vtkSmartPointer<asiUI_PickFacetCallback>
+        cb = vtkSmartPointer<asiUI_PickFacetCallback>::New();
       //
       cb->SetBVH(m_bvh);
 
       // Add observer
-      common_facilities::Instance()->Prs.Part->AddObserver(EVENT_PICK_WORLD_POINT, cb);
+      exeCC_CommonFacilities::Instance()->Prs.Part->AddObserver(EVENT_PICK_WORLD_POINT, cb);
     }
   }
   else
   {
     // Restore original selection mode
-    common_facilities::Instance()->Prs.Part->SetSelectionMode(m_iPrevSelMode);
+    exeCC_CommonFacilities::Instance()->Prs.Part->SetSelectionMode(m_iPrevSelMode);
     //
-    common_facilities::Instance()->Prs.Part->RemoveObserver(EVENT_PICK_WORLD_POINT);
+    exeCC_CommonFacilities::Instance()->Prs.Part->RemoveObserver(EVENT_PICK_WORLD_POINT);
   }
 }
 
 //-----------------------------------------------------------------------------
 
 //! Builds offset surfaces.
-void gui_controls_cc::onBuildOffsets()
+void exeCC_Controls::onBuildOffsets()
 {
-  TopoDS_Shape part;
-  if ( !gui_common::PartShape(part) ) return;
+  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   // A part should be a shell
   if ( part.ShapeType() != TopAbs_SHELL )
@@ -820,6 +853,6 @@ void gui_controls_cc::onBuildOffsets()
   }
 
   // Run dialog
-  gui_dialog_build_offsets* wBO = new gui_dialog_build_offsets(plate, this);
+  exeCC_DialogBuildOffsets* wBO = new exeCC_DialogBuildOffsets(plate, this);
   wBO->show();
 }

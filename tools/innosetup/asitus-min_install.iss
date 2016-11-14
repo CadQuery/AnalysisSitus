@@ -58,7 +58,7 @@ Source: {#ASitusDir}\README; DestName: README.txt; DestDir: {app}; Flags: isread
 Source: {#ASitusDir}\win64\vc12\bin\*.dll;                                DestDir: {app}\app\win64\vc12\bin;                      Flags: sortfilesbyextension sortfilesbyname
 Source: {#ASitusDir}\win64\vc12\bin\*.exe;                                DestDir: {app}\app\win64\vc12\bin;                      Flags: sortfilesbyextension sortfilesbyname
 Source: {#ASitusDir}\env.bat;                                             DestDir: {app}\app;
-Source: {#ASitusDir}\run.bat;                                             DestDir: {app}\app;
+Source: {#ASitusDir}\run_exe.bat;                                         DestDir: {app}\app;
 Source: {#ASitusDir}\res\*;                                               DestDir: {app}\app\res;                                 Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: {#ASitusDir}\data\*;                                              DestDir: {app}\app\data;                                Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 
@@ -178,9 +178,9 @@ Source: "resources\uninstall.ico";                                        DestDi
 Source: "resources\custom.bat";                                           DestDir: {app}\app
 
 [Icons]
-Name: {group}\{#MyAppName};                       Filename: {app}\app\run.bat;            IconFileName: {app}\icons\asitus.ico
+Name: {group}\{#MyAppName};                       Filename: {app}\app\run_exe.bat;        IconFileName: {app}\icons\asitus.ico
 Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe};               IconFileName: {app}\icons\uninstall.ico
-Name: {commondesktop}\{#MyAppName};               Filename: {app}\app\run.bat;            IconFileName: {app}\icons\asitus.ico;           Tasks: desktopicon
+Name: {commondesktop}\{#MyAppName};               Filename: {app}\app\run_exe.bat;        IconFileName: {app}\icons\asitus.ico;           Tasks: desktopicon
 
 
 [InstallDelete]

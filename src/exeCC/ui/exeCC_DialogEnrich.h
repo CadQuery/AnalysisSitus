@@ -5,17 +5,14 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef gui_dialog_contour_enrich_h
-#define gui_dialog_contour_enrich_h
-
-// A-Situs includes
-#include <analysis_situs.h>
+#ifndef exeCC_DialogEnrich_h
+#define exeCC_DialogEnrich_h
 
 // Geometry includes
-#include <geom_bvh_facets.h>
+#include <asiAlgo_BVHFacets.h>
 
 // GUI includes
-#include <gui_line_edit.h>
+#include <asiUI_LineEdit.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -25,16 +22,16 @@
 #pragma warning(pop)
 
 //! Dialog for enriching contour with additional points.
-class gui_dialog_contour_enrich : public QDialog
+class exeCC_DialogEnrich : public QDialog
 {
   Q_OBJECT
 
 public:
 
-  gui_dialog_contour_enrich(const Handle(geom_bvh_facets)& bvh,
-                            QWidget* parent = NULL);
+  exeCC_DialogEnrich(const Handle(asiAlgo_BVHFacets)& bvh,
+                     QWidget*                         parent = NULL);
 
-  virtual ~gui_dialog_contour_enrich();
+  virtual ~exeCC_DialogEnrich();
 
 public slots:
 
@@ -46,9 +43,9 @@ protected:
   struct t_widgets
   {
   //---------------------------------------------------------------------------
-    QPushButton*   pPerform;   //!< Runs the algorithm.
+    QPushButton*    pPerform;   //!< Runs the algorithm.
   //---------------------------------------------------------------------------
-    gui_line_edit* pNumPoints; //!< Number of additional points on each edge.
+    asiUI_LineEdit* pNumPoints; //!< Number of additional points on each edge.
   //---------------------------------------------------------------------------
 
     t_widgets() : pPerform   (NULL),
@@ -62,9 +59,9 @@ protected:
     }
   };
 
-  t_widgets               m_widgets;     //!< UI controls.
-  QVBoxLayout*            m_pMainLayout; //!< Layout of the widget.
-  Handle(geom_bvh_facets) m_bvh;         //!< Accelerating structure for picking.
+  t_widgets                 m_widgets;     //!< UI controls.
+  QVBoxLayout*              m_pMainLayout; //!< Layout of the widget.
+  Handle(asiAlgo_BVHFacets) m_bvh;         //!< Accelerating structure for picking.
 
 };
 

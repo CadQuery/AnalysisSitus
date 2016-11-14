@@ -5,11 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef gui_controls_cc_h
-#define gui_controls_cc_h
+#ifndef exeCC_Controls_h
+#define exeCC_Controls_h
 
 // Geometry includes
-#include <geom_bvh_facets.h>
+#include <asiAlgo_BVHFacets.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -18,14 +18,14 @@
 #pragma warning(pop)
 
 //! Widget for contour capture controls.
-class gui_controls_cc : public QWidget
+class exeCC_Controls : public QWidget
 {
   Q_OBJECT
 
 public:
 
-  gui_controls_cc(QWidget* parent = NULL);
-  virtual ~gui_controls_cc();
+  exeCC_Controls(QWidget* parent = NULL);
+  virtual ~exeCC_Controls();
 
 public slots:
 
@@ -121,9 +121,9 @@ private:
     }
   };
 
-  t_widgets               m_widgets;      //!< Involved widgets.
-  int                     m_iPrevSelMode; //!< Previous selection mode.
-  Handle(geom_bvh_facets) m_bvh;          //!< Accelerating structure for picking.
+  t_widgets                 m_widgets;      //!< Involved widgets.
+  int                       m_iPrevSelMode; //!< Previous selection mode.
+  Handle(asiAlgo_BVHFacets) m_bvh;          //!< Accelerating structure for picking.
 
 };
 

@@ -30,7 +30,7 @@ echo [Inno Setup] Packaging...
 if exist "%AS_TOOLS%\innosetup" (
   iscc.exe /O"%DELIVERY_DIR%" "/DMyAppVersion=%ASITUS_VERSION_STRING%" ^
              "/DASitusDir=%AS_ROOT%" "/DProductsDir=%AS_PRODUCTS%" ^
-             "%AS_TOOLS%\innosetup\asitus_install.iss" > delivery.log 2>&1
+             "%AS_TOOLS%\innosetup\asitus-sdk_install.iss" > delivery.log 2>&1
 )
 echo [Inno Setup] Packaging done
 

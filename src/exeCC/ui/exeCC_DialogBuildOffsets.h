@@ -5,14 +5,11 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef gui_dialog_build_offsets_h
-#define gui_dialog_build_offsets_h
-
-// A-Situs includes
-#include <analysis_situs.h>
+#ifndef exeCC_DialogBuildOffsets_h
+#define exeCC_DialogBuildOffsets_h
 
 // A-Situs (GUI) includes
-#include <gui_line_edit.h>
+#include <asiUI_LineEdit.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -26,16 +23,16 @@
 #include <SpeCore_Plate.h>
 
 //! Dialog to manage the construction of offsets.
-class gui_dialog_build_offsets : public QDialog
+class exeCC_DialogBuildOffsets : public QDialog
 {
   Q_OBJECT
 
 public:
 
-  gui_dialog_build_offsets(const Handle(SpeCore_Plate)& plate,
+  exeCC_DialogBuildOffsets(const Handle(SpeCore_Plate)& plate,
                            QWidget*                     parent = NULL);
 
-  virtual ~gui_dialog_build_offsets();
+  virtual ~exeCC_DialogBuildOffsets();
 
 public slots:
 
@@ -47,11 +44,11 @@ protected:
   struct t_widgets
   {
   //---------------------------------------------------------------------------
-    QPushButton*   pPerform;   //!< Runs the algorithm.
+    QPushButton*    pPerform;   //!< Runs the algorithm.
   //---------------------------------------------------------------------------
-    gui_line_edit* pOffset;    //!< Offset value.
-    gui_line_edit* pThickness; //!< Precision to use.
-    gui_line_edit* pShift;     //!< Precision to use.
+    asiUI_LineEdit* pOffset;    //!< Offset value.
+    asiUI_LineEdit* pThickness; //!< Precision to use.
+    asiUI_LineEdit* pShift;     //!< Precision to use.
   //---------------------------------------------------------------------------
 
     t_widgets() : pPerform   (NULL),

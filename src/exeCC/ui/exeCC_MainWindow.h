@@ -5,19 +5,18 @@
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
-#ifndef gui_main_window_contour_capture_h
-#define gui_main_window_contour_capture_h
+#ifndef exeCC_MainWindow_h
+#define exeCC_MainWindow_h
 
-// A-Situs includes
-#include <analysis_situs.h>
+// exeCC includes
+#include <exeCC_Controls.h>
 
-// A-Situs (GUI) includes
-#include <gui_controls_cc.h>
-#include <gui_controls_part.h>
-#include <gui_object_browser.h>
-#include <gui_viewer_domain.h>
-#include <gui_viewer_part.h>
-#include <gui_viewer_surface.h>
+// asiUI includes
+#include <asiUI_ControlsPart.h>
+#include <asiUI_ObjectBrowser.h>
+#include <asiUI_ViewerDomain.h>
+#include <asiUI_ViewerPart.h>
+#include <asiUI_ViewerSurface.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -26,14 +25,14 @@
 #pragma warning(pop)
 
 //! Main window for Contour Capture composition.
-class gui_main_window_contour_capture : public QMainWindow
+class exeCC_MainWindow : public QMainWindow
 {
   Q_OBJECT
 
 public:
 
-  gui_main_window_contour_capture();
-  virtual ~gui_main_window_contour_capture();
+  exeCC_MainWindow();
+  virtual ~exeCC_MainWindow();
 
 public:
 
@@ -49,12 +48,12 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    gui_object_browser* wBrowser;       //!< Object browser.
-    gui_viewer_domain*  wViewerDomain;  //!< Parametric domain viewer.
-    gui_viewer_part*    wViewerPart;    //!< Part viewer.
-    gui_viewer_surface* wViewerSurface; //!< Surface viewer.
-    gui_controls_part*  wControlsPart;  //!< Part controls.
-    gui_controls_cc*    wControlsCC;    //!< Controls for contour capture.
+    asiUI_ObjectBrowser* wBrowser;       //!< Object browser.
+    asiUI_ViewerDomain*  wViewerDomain;  //!< Parametric domain viewer.
+    asiUI_ViewerPart*    wViewerPart;    //!< Part viewer.
+    asiUI_ViewerSurface* wViewerSurface; //!< Surface viewer.
+    asiUI_ControlsPart*  wControlsPart;  //!< Part controls.
+    exeCC_Controls*      wControlsCC;    //!< Controls for contour capture.
 
     t_widgets() : wBrowser       (NULL),
                   wViewerDomain  (NULL),

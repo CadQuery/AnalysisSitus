@@ -38,11 +38,16 @@ public:
 
 public:
 
-  asiUI_RotationCenterCallback();
+  asiUI_EXPORT
+    asiUI_RotationCenterCallback();
 
 public:
 
-  void Init(const double x, const double y, const double z, const double side);
+  asiUI_EXPORT void
+    Init(const double x,
+         const double y,
+         const double z,
+         const double side);
 
 public:
 
@@ -90,26 +95,36 @@ class asiUI_RotationCallback : public asiUI_ViewerCallback
 {
 public:
 
-  static asiUI_RotationCallback* New();
-  static asiUI_RotationCallback* New(asiUI_Viewer* theViewer);
+  asiUI_EXPORT static asiUI_RotationCallback*
+    New();
+
+  asiUI_EXPORT static asiUI_RotationCallback*
+    New(asiUI_Viewer* viewer);
 
   vtkTypeMacro(asiUI_RotationCallback, asiUI_ViewerCallback);
 
 public:
 
-  virtual void Execute(vtkObject*    theCaller,
-                       unsigned long theEventId,
-                       void*         theCallData);
+  asiUI_EXPORT virtual void
+    Execute(vtkObject*    pCaller,
+            unsigned long eventId,
+            void*         pCallData);
 
 protected:
 
-  void   setVisualProps ();
-  double getScaledSize  (vtkRenderer* theRenderer);
+  asiUI_EXPORT void
+    setVisualProps();
 
-private:
+  asiUI_EXPORT double
+    getScaledSize(vtkRenderer* pRenderer);
 
-  asiUI_RotationCallback  (asiUI_Viewer* theViewer);
-  ~asiUI_RotationCallback ();
+protected:
+
+  asiUI_EXPORT
+    asiUI_RotationCallback(asiUI_Viewer* pViewer);
+
+  asiUI_EXPORT
+    ~asiUI_RotationCallback();
 
 protected:
 

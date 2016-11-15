@@ -144,13 +144,6 @@ public:
     return Handle(asiData_Partition<asiData_BoundaryEdgesNode>)::DownCast( this->Partition(Partition_GeomBoundaryEdges) );
   }
 
-  //! Accessor for a Partition instance dedicated to Contour Nodes.
-  //! \return requested Partition.
-  Handle(asiData_Partition<asiData_ContourNode>) GetGeomContourPartition() const
-  {
-    return Handle(asiData_Partition<asiData_ContourNode>)::DownCast( this->Partition(Partition_GeomContour) );
-  }
-
 //-----------------------------------------------------------------------------
 
   //! Accessor for a Partition instance dedicated to IV Nodes.
@@ -301,7 +294,6 @@ protected:
     Partition_GeomEdge,
     Partition_GeomCurve,
     Partition_GeomBoundaryEdges,
-    Partition_GeomContour,
   //---------------------------------------------------------------------------
     Partition_IV,
     Partition_IV_Points2d,

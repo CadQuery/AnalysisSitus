@@ -8,8 +8,8 @@
 #ifndef asiUI_ViewerCallback_h
 #define asiUI_ViewerCallback_h
 
-// A-Situs (visualization) includes
-#include <asiVisu.h>
+// asiUI includes
+#include <asiUI.h>
 
 // VTK includes
 #include <vtkCommand.h>
@@ -26,13 +26,19 @@ public:
 
 public:
 
-  void          SetViewer (asiUI_Viewer* theViewer);
-  asiUI_Viewer* Viewer    ();
+  asiUI_EXPORT void
+    SetViewer(asiUI_Viewer* pViewer);
+
+  asiUI_EXPORT asiUI_Viewer*
+    GetViewer();
 
 protected:
 
-  asiUI_ViewerCallback  (asiUI_Viewer* theViewer);
-  ~asiUI_ViewerCallback ();
+  asiUI_EXPORT
+    asiUI_ViewerCallback(asiUI_Viewer* pViewer);
+
+  asiUI_EXPORT
+    ~asiUI_ViewerCallback();
 
 private:
 

@@ -59,15 +59,15 @@ asiUI_PickCallback::~asiUI_PickCallback()
 //! \param pCallData [in] invocation context.
 void asiUI_PickCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
                                  unsigned long eventId,
-                                 void*         callData)
+                                 void*         pCallData)
 {
-  vtkSmartPointer<asiVisu_PrsManager> mgr = this->Viewer()->PrsMgr();
+  vtkSmartPointer<asiVisu_PrsManager> mgr = this->GetViewer()->PrsMgr();
 
   // Check if the calling context is valid
   if ( eventId != EVENT_PICK_DEFAULT && eventId != EVENT_DETECT_DEFAULT )
     return;
   //
-  if ( !this->Viewer() )
+  if ( !this->GetViewer() )
     return;
 
   // Access selection context
@@ -82,7 +82,7 @@ void asiUI_PickCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
     return;
 
   // Now pick
-  asiVisu_PickInput* pickInput = reinterpret_cast<asiVisu_PickInput*>(callData);
+  asiVisu_PickInput* pickInput = reinterpret_cast<asiVisu_PickInput*>(pCallData);
   //
   const asiVisu_SelectionNature sel_type = (eventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
                                                                            : SelectionNature_Detection;

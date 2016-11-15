@@ -24,31 +24,19 @@
     <Filter Include="Source Files\Visu">
       <UniqueIdentifier>{d245fde1-27f9-451d-b183-d13a01948898}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{6a95ba8f-efed-4885-b3ea-ab66c3acc968}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{97a33fbf-388f-4aae-aaa8-3519c7176ccb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\exeCC\visu\exeCC_CreateContourCallback.h">
-      <Filter>Header Files\Visu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\exeCC\ui\exeCC_Controls.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\exeCC\ui\exeCC_DialogBuildOffsets.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\exeCC\ui\exeCC_DialogCapture.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\exeCC\ui\exeCC_DialogEnrich.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\exeCC\ui\exeCC_DialogHealing.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\exeCC\ui\exeCC_MainWindow.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\exeCC\ui\exeCC_CommonFacilities.h">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeCC\engine\exeCC_Model.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -79,5 +67,52 @@
     <ClCompile Include="..\..\src\exeCC\exeCC_Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_exeCC_CreateContourCallback.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_exeCC_Controls.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_exeCC_DialogBuildOffsets.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_exeCC_DialogCapture.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_exeCC_DialogEnrich.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_exeCC_DialogHealing.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_exeCC_MainWindow.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeCC\engine\exeCC_Model.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\src\exeCC\ui\exeCC_Controls.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\exeCC\ui\exeCC_DialogBuildOffsets.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\exeCC\ui\exeCC_DialogCapture.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\exeCC\ui\exeCC_DialogEnrich.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\exeCC\ui\exeCC_DialogHealing.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\exeCC\ui\exeCC_MainWindow.h">
+      <Filter>Header Files\UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\exeCC\visu\exeCC_CreateContourCallback.h">
+      <Filter>Header Files\Visu</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

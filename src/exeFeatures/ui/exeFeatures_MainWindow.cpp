@@ -136,7 +136,7 @@ void exeFeatures_MainWindow::createDockWindows()
   // Part controls
   QDockWidget* pDockCommon;
   {
-    pDockCommon = new QDockWidget("Common tools", this);
+    pDockCommon = new QDockWidget("Common Tools", this);
     pDockCommon->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
     m_widgets.wControlsPart = new asiUI_ControlsPart(cf->Model,

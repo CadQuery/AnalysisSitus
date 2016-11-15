@@ -72,17 +72,17 @@ asiUI_RotationCallback* asiUI_RotationCallback::New()
 }
 
 //! Instantiation routine accepting viewer.
-//! \param theViewer [in] viewer to bind callback object to.
+//! \param pViewer [in] viewer to bind callback object to.
 //! \return instance of the callback class.
-asiUI_RotationCallback* asiUI_RotationCallback::New(asiUI_Viewer* theViewer)
+asiUI_RotationCallback* asiUI_RotationCallback::New(asiUI_Viewer* pViewer)
 {
-  return new asiUI_RotationCallback(theViewer);
+  return new asiUI_RotationCallback(pViewer);
 }
 
 //! Constructor accepting owning viewer as a parameter.
-//! \param theViewer [in] owning viewer.
-asiUI_RotationCallback::asiUI_RotationCallback(asiUI_Viewer* theViewer)
-: asiUI_ViewerCallback(theViewer),
+//! \param pViewer [in] owning viewer.
+asiUI_RotationCallback::asiUI_RotationCallback(asiUI_Viewer* pViewer)
+: asiUI_ViewerCallback(pViewer),
   m_bIsStarted(false)
 {
   m_pl  = new asiVisu_MeshPipeline;
@@ -94,32 +94,32 @@ asiUI_RotationCallback::~asiUI_RotationCallback()
 {}
 
 //! Listens to a dedicated event. Performs all useful operations.
-//! \param theCaller   [in] caller instance.
-//! \param theEventId  [in] ID of the event triggered this listener.
-//! \param theCallData [in] invocation context.
-void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(theCaller),
-                                     unsigned long theEventId,
-                                     void*         asiVisu_NotUsed(theCallData))
+//! \param pCaller   [in] caller instance.
+//! \param eventId   [in] ID of the event triggered this listener.
+//! \param pCallData [in] invocation context.
+void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(pCaller),
+                                     unsigned long eventId,
+                                     void*         asiVisu_NotUsed(pCallData))
 {
   /* =======================================
    *  Check if the calling context is valid
    * ======================================= */
 
-  if ( theEventId != EVENT_ROTATION_START && theEventId != EVENT_ROTATION_END )
+  if ( eventId != EVENT_ROTATION_START && eventId != EVENT_ROTATION_END )
     return;
 
   /* ==========================
    *  Perform something useful
    * ========================== */
 
-  if ( !this->Viewer() )
+  if ( !this->GetViewer() )
     return;
 
-  const vtkSmartPointer<asiVisu_PrsManager>& prsMgr   = this->Viewer()->PrsMgr();
+  const vtkSmartPointer<asiVisu_PrsManager>& prsMgr   = this->GetViewer()->PrsMgr();
   vtkRenderer*                               renderer = prsMgr->GetRenderer();
 
   // Add/Remove anchor to/from renderer
-  if ( theEventId == EVENT_ROTATION_START )
+  if ( eventId == EVENT_ROTATION_START )
   {
     if ( !m_bIsStarted )
       m_bIsStarted = true;
@@ -127,8 +127,8 @@ void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(theCaller),
       return;
 
     double X, Y, Z;
-    vtkCamera* aCamera = renderer->GetActiveCamera();
-    aCamera->GetFocalPoint(X, Y, Z);
+    vtkCamera* pCamera = renderer->GetActiveCamera();
+    pCamera->GetFocalPoint(X, Y, Z);
 
     // Initialize Data Provider
     m_prv->Init( X, Y, Z, this->getScaledSize(renderer) );
@@ -149,7 +149,7 @@ void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(theCaller),
     m_pl->RemoveFromRenderer(renderer);
   }
 
-  this->Viewer()->Repaint();
+  this->GetViewer()->Repaint();
 }
 
 //! Sets visualization properties for rotation anchor ball.
@@ -168,25 +168,25 @@ void asiUI_RotationCallback::setVisualProps()
 
 
 //! Returns size for rotation marker.
-//! \param theRenderer [in] renderer instance.
+//! \param pRenderer [in] renderer instance.
 //! \return radius.
-double asiUI_RotationCallback::getScaledSize(vtkRenderer* theRenderer)
+double asiUI_RotationCallback::getScaledSize(vtkRenderer* pRenderer)
 {
-  vtkCamera* aCamera = theRenderer->GetActiveCamera();
+  vtkCamera* pCamera = pRenderer->GetActiveCamera();
 
-  if ( !aCamera->GetParallelProjection() )
+  if ( !pCamera->GetParallelProjection() )
     return 0.0;
 
-  double aScale        = aCamera->GetParallelScale();
-  double aWorldScale   = 8*aScale;
-  int    aWindowHeight = theRenderer->GetSize()[1];
-  double aResultScale;
+  const double scale        = pCamera->GetParallelScale();
+  const double worldScale   = 8*scale;
+  const int    windowHeight = pRenderer->GetSize()[1];
+  double       resultScale;
 
-  if ( aWindowHeight > 0 )
-    aResultScale = aWorldScale / aWindowHeight;
+  if ( windowHeight > 0 )
+    resultScale = worldScale / windowHeight;
   else
     return 0.0;
 
-  return aResultScale;
+  return resultScale;
 }
 

@@ -8,8 +8,8 @@
 #ifndef exeCC_CommonFacilities_h
 #define exeCC_CommonFacilities_h
 
-// asiEngine includes
-#include <asiEngine_Model.h>
+// exeCC includes
+#include <exeCC_Model.h>
 
 // asiAlgo includes
 #include <asiAlgo_Notifier.h>
@@ -36,7 +36,7 @@ public:
 
 public:
 
-  Handle(asiEngine_Model)          Model;         //!< Data Model instance.
+  Handle(exeCC_Model)              Model;         //!< Data Model instance.
   //
   asiUI_ObjectBrowser*             ObjectBrowser; //!< Object browser.
   Handle(ActAPI_INode)             CurrentNode;   //!< Currently selected Node.
@@ -93,7 +93,7 @@ private:
       ViewerHost    (NULL)
   {
     // Create Data Model
-    Model = new asiEngine_Model;
+    Model = new exeCC_Model;
     if ( !Model->NewEmpty() )
     {
       Standard_ProgramError::Raise("Cannot create Data Model");

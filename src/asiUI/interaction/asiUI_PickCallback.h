@@ -39,25 +39,32 @@ class asiUI_PickCallback : public QObject,
 
 public:
 
-  static asiUI_PickCallback* New();
-  static asiUI_PickCallback* New(asiUI_Viewer* pViewer);
+  asiUI_EXPORT static asiUI_PickCallback*
+    New();
+
+  asiUI_EXPORT static asiUI_PickCallback*
+    New(asiUI_Viewer* pViewer);
 
   vtkTypeMacro(asiUI_PickCallback, asiUI_ViewerCallback);
 
 public:
 
-  virtual void Execute(vtkObject*    pCaller,
-                       unsigned long eventId,
-                       void*         CallData);
+  asiUI_EXPORT virtual void
+    Execute(vtkObject*    pCaller,
+            unsigned long eventId,
+            void*         pCallData);
 
 signals:
 
   void picked();
 
-private:
+protected:
 
-  asiUI_PickCallback  (asiUI_Viewer* theViewer);
-  ~asiUI_PickCallback ();
+  asiUI_EXPORT
+    asiUI_PickCallback(asiUI_Viewer* pViewer);
+
+  asiUI_EXPORT
+    ~asiUI_PickCallback ();
 
 };
 

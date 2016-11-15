@@ -45,7 +45,7 @@ exeCC_CreateContourCallback::~exeCC_CreateContourCallback()
 //! \param theEventId  [in] ID of the event triggered this listener.
 //! \param theCallData [in] invocation context.
 void exeCC_CreateContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
-                                          unsigned long theEventId,
+                                          unsigned long vtkNotUsed(theEventId),
                                           void*         theCallData)
 {
   const vtkSmartPointer<asiVisu_PrsManager>& mgr = exeCC_CommonFacilities::Instance()->Prs.Part;
@@ -58,8 +58,8 @@ void exeCC_CreateContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
 
   // Prepare a tool to find the intersected facet
   asiAlgo_HitFacet HitFacet(m_bvh,
-                          exeCC_CommonFacilities::Instance()->Notifier,
-                          exeCC_CommonFacilities::Instance()->Plotter);
+                            exeCC_CommonFacilities::Instance()->Notifier,
+                            exeCC_CommonFacilities::Instance()->Plotter);
 
   // Find intersection
   gp_XYZ hit;

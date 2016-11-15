@@ -13,9 +13,11 @@
 
 // asiUI includes
 #include <asiUI_ControlsPart.h>
+#include <asiUI_ControlsPartListener.h>
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerPart.h>
+#include <asiUI_ViewerPartListener.h>
 #include <asiUI_ViewerSurface.h>
 
 // Qt includes
@@ -74,7 +76,25 @@ private:
     }
   };
 
-  t_widgets m_widgets;
+  //! Listeners.
+  struct t_listeners
+  {
+    asiUI_ControlsPartListener* pControlsPart; //!< Listener for part controls.
+    asiUI_ViewerPartListener*   pViewerPart;   //!< Listener for part viewer.
+
+    t_listeners() : pControlsPart (NULL),
+                    pViewerPart   (NULL)
+    {}
+
+    void Release()
+    {
+      delete pControlsPart; pControlsPart = NULL;
+      delete pViewerPart;   pViewerPart   = NULL;
+    }
+  };
+
+  t_widgets   m_widgets;
+  t_listeners m_listeners;
 
 };
 

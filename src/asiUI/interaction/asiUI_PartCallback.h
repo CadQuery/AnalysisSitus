@@ -26,15 +26,20 @@ class asiUI_PartCallback : public QObject,
 
 public:
 
-  static asiUI_PartCallback* New();
-  static asiUI_PartCallback* New(asiUI_Viewer* theViewer);
+  asiUI_EXPORT static asiUI_PartCallback*
+    New();
+
+  asiUI_EXPORT static asiUI_PartCallback*
+    New(asiUI_Viewer* pViewer);
+
   vtkTypeMacro(asiUI_PartCallback, asiUI_ViewerCallback);
 
 public:
 
-  virtual void Execute(vtkObject*    theCaller,
-                       unsigned long theEventId,
-                       void*         theCallData);
+  asiUI_EXPORT virtual void
+    Execute(vtkObject*    pCaller,
+            unsigned long eventId,
+            void*         pCallData);
 
 signals:
 
@@ -42,8 +47,11 @@ signals:
 
 private:
 
-  asiUI_PartCallback  (asiUI_Viewer* theViewer);
-  ~asiUI_PartCallback ();
+  asiUI_EXPORT
+    asiUI_PartCallback(asiUI_Viewer* pViewer);
+
+  asiUI_EXPORT
+    ~asiUI_PartCallback();
 
 };
 

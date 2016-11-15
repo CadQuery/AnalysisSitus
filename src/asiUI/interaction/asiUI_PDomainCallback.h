@@ -26,25 +26,33 @@ class asiUI_PDomainCallback : public QObject,
 
 public:
 
-  static asiUI_PDomainCallback* New();
-  static asiUI_PDomainCallback* New(asiUI_Viewer* theViewer);
+  asiUI_EXPORT static asiUI_PDomainCallback*
+    New();
+
+  asiUI_EXPORT static asiUI_PDomainCallback*
+    New(asiUI_Viewer* pViewer);
+
   vtkTypeMacro(asiUI_PDomainCallback, asiUI_ViewerCallback);
 
 public:
 
-  virtual void Execute(vtkObject*    theCaller,
-                       unsigned long theEventId,
-                       void*         theCallData);
+  asiUI_EXPORT virtual void
+    Execute(vtkObject*    pCaller,
+            unsigned long eventId,
+            void*         pCallData);
 
 signals:
 
   void killEdges();
   void joinEdges();
 
-private:
+protected:
 
-  asiUI_PDomainCallback  (asiUI_Viewer* theViewer);
-  ~asiUI_PDomainCallback ();
+  asiUI_EXPORT
+    asiUI_PDomainCallback(asiUI_Viewer* pViewer);
+
+  asiUI_EXPORT
+    ~asiUI_PDomainCallback();
 
 };
 

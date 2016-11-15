@@ -29,15 +29,17 @@ class asiUI_PickFacetCallback : public asiUI_ViewerCallback
 {
 public:
 
-  static asiUI_PickFacetCallback* New();
-  //
+  asiUI_EXPORT static asiUI_PickFacetCallback*
+    New();
+
   vtkTypeMacro(asiUI_PickFacetCallback, asiUI_ViewerCallback);
 
 public:
 
-  virtual void Execute(vtkObject*    pCaller,
-                       unsigned long eventId,
-                       void*         pCallData);
+  asiUI_EXPORT virtual void
+    Execute(vtkObject*    pCaller,
+            unsigned long eventId,
+            void*         pCallData);
 
 public:
 
@@ -57,8 +59,12 @@ public:
 
 private:
 
-  asiUI_PickFacetCallback  (const Handle(asiAlgo_BVHFacets)& bvh_facets, asiUI_Viewer* viewer);
-  ~asiUI_PickFacetCallback ();
+  asiUI_EXPORT
+    asiUI_PickFacetCallback(const Handle(asiAlgo_BVHFacets)& bvh_facets,
+                            asiUI_Viewer*                    viewer);
+
+  asiUI_EXPORT
+    ~asiUI_PickFacetCallback();
 
 private:
 

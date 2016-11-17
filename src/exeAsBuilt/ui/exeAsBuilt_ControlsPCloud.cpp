@@ -37,23 +37,31 @@ exeAsBuilt_ControlsPCloud::exeAsBuilt_ControlsPCloud(QWidget* parent) : QWidget(
   m_pMainLayout = new QVBoxLayout();
 
   // Buttons
-  m_widgets.pLoadPoints   = new QPushButton("Load points");
-  m_widgets.pEstimNormals = new QPushButton("Estimate normals");
+  m_widgets.pLoadPointsBtn   = new QPushButton("Load points");
+  m_widgets.pEstimNormalsBtn = new QPushButton("Estimate normals");
+  m_widgets.pProjPlaneBtn    = new QPushButton("Projection plane");
+  m_widgets.pProjPlane       = vtkSmartPointer<vtkPlaneWidget>::New();
   //
-  m_widgets.pLoadPoints   -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pEstimNormals -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pLoadPointsBtn   -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pEstimNormalsBtn -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pProjPlaneBtn    -> setMinimumWidth(BTN_MIN_WIDTH);
+
+  // Other configurations
+  m_widgets.pProjPlaneBtn->setCheckable(true);
+  m_widgets.pProjPlane->SetInteractor( exeAsBuilt_CommonFacilities::Instance()->Prs.Part->GetRenderWindow()->GetInteractor() );
 
   // Group for data exchange
   QGroupBox*   pDEGroup = new QGroupBox("Data exchange");
   QVBoxLayout* pDELay   = new QVBoxLayout(pDEGroup);
   //
-  pDELay->addWidget(m_widgets.pLoadPoints);
+  pDELay->addWidget(m_widgets.pLoadPointsBtn);
 
   // Group for analysis
   QGroupBox*   pAnalysisGroup = new QGroupBox("Analysis");
   QVBoxLayout* pAnalysisLay   = new QVBoxLayout(pAnalysisGroup);
   //
-  pAnalysisLay->addWidget(m_widgets.pEstimNormals);
+  //pAnalysisLay->addWidget(m_widgets.pEstimNormals);
+  pAnalysisLay->addWidget(m_widgets.pProjPlaneBtn);
 
   // Set layout
   m_pMainLayout->addWidget(pDEGroup);
@@ -64,8 +72,9 @@ exeAsBuilt_ControlsPCloud::exeAsBuilt_ControlsPCloud(QWidget* parent) : QWidget(
   this->setLayout(m_pMainLayout);
 
   // Connect signals to slots
-  connect( m_widgets.pLoadPoints,   SIGNAL( clicked() ), SLOT( onLoadPoints   () ) );
-  connect( m_widgets.pEstimNormals, SIGNAL( clicked() ), SLOT( onEstimNormals () ) );
+  connect( m_widgets.pLoadPointsBtn,   SIGNAL( clicked() ), SLOT( onLoadPoints   () ) );
+  connect( m_widgets.pEstimNormalsBtn, SIGNAL( clicked() ), SLOT( onEstimNormals () ) );
+  connect( m_widgets.pProjPlaneBtn,    SIGNAL( clicked() ), SLOT( onProjPlane    () ) );
 }
 
 //! Destructor.
@@ -148,4 +157,23 @@ void exeAsBuilt_ControlsPCloud::onCloudify()
     wCloudify = new exeAsBuilt_DialogCloudify(cf->Model, cf->Notifier, cf->Plotter, this);
   //
   wCloudify->show();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Enables/disables a projection plane.
+void exeAsBuilt_ControlsPCloud::onProjPlane()
+{
+  Handle(exeAsBuilt_CommonFacilities) cf = exeAsBuilt_CommonFacilities::Instance();
+
+  const bool isOn = m_widgets.pProjPlaneBtn->isChecked();
+
+  if ( isOn )
+  {
+    m_widgets.pProjPlane->On();
+  }
+  else
+  {
+    m_widgets.pProjPlane->Off();
+  }
 }

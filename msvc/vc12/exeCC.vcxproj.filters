@@ -82,6 +82,9 @@
     <ClCompile Include="$(IntDir)moc\moc_exeCC_DialogEnrich.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_exeCC_DialogEdgesOverlapping.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_exeCC_DialogHealing.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
@@ -90,6 +93,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\exeCC\engine\exeCC_Model.cpp">
       <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeCC\ui\exeCC_DialogEdgesOverlapping.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +119,9 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\exeCC\visu\exeCC_CreateContourCallback.h">
       <Filter>Header Files\Visu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\exeCC\ui\exeCC_DialogEdgesOverlapping.h">
+      <Filter>Header Files\UI</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

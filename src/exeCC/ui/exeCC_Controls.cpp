@@ -13,6 +13,7 @@
 #include <exeCC_CreateContourCallback.h>
 #include <exeCC_DialogBuildOffsets.h>
 #include <exeCC_DialogCapture.h>
+#include <exeCC_DialogEdgesOverlapping.h>
 #include <exeCC_DialogEnrich.h>
 #include <exeCC_DialogHealing.h>
 
@@ -82,6 +83,8 @@ exeCC_Controls::exeCC_Controls(QWidget* parent) : QWidget(parent), m_iPrevSelMod
   m_widgets.pBVH_SAH              = new QPushButton("BVH [SAH]");
   m_widgets.pBVH_Linear           = new QPushButton("BVH [linear]");
   m_widgets.pPickFacet            = new QPushButton("Pick facet");
+  m_widgets.pPutInCompound        = new QPushButton("Put in compound");
+  m_widgets.pCheckOverlapping     = new QPushButton("Check overlapping");
   m_widgets.pBuildOffsets         = new QPushButton("Build offsets");
   //
   m_widgets.pPickContour          -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -98,6 +101,8 @@ exeCC_Controls::exeCC_Controls(QWidget* parent) : QWidget(parent), m_iPrevSelMod
   m_widgets.pBVH_SAH              -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pBVH_Linear           -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pPickFacet            -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pPutInCompound        -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pCheckOverlapping     -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pBuildOffsets         -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Other configurations
@@ -137,6 +142,8 @@ exeCC_Controls::exeCC_Controls(QWidget* parent) : QWidget(parent), m_iPrevSelMod
   pAddendumLay->addWidget(m_widgets.pPickFacet);
   pAddendumLay->addWidget(m_widgets.pBVH_SAH);
   pAddendumLay->addWidget(m_widgets.pBVH_Linear);
+  pAddendumLay->addWidget(m_widgets.pPutInCompound);
+  pAddendumLay->addWidget(m_widgets.pCheckOverlapping);
 
   // Group of buttons for plate modeling
   QGroupBox*   pPlateGroup = new QGroupBox("Plate");
@@ -170,6 +177,8 @@ exeCC_Controls::exeCC_Controls(QWidget* parent) : QWidget(parent), m_iPrevSelMod
   connect( m_widgets.pBVH_SAH,              SIGNAL( clicked() ), SLOT( onBVH_SAH              () ) );
   connect( m_widgets.pBVH_Linear,           SIGNAL( clicked() ), SLOT( onBVH_Linear           () ) );
   connect( m_widgets.pPickFacet,            SIGNAL( clicked() ), SLOT( onPickFacet            () ) );
+  connect( m_widgets.pPutInCompound,        SIGNAL( clicked() ), SLOT( onPutInCompound        () ) );
+  connect( m_widgets.pCheckOverlapping,     SIGNAL( clicked() ), SLOT( onCheckOverlapping     () ) );
   connect( m_widgets.pBuildOffsets,         SIGNAL( clicked() ), SLOT( onBuildOffsets         () ) );
 }
 
@@ -187,11 +196,12 @@ exeCC_Controls::~exeCC_Controls()
 //! Allows user to pick a contour interactively.
 void exeCC_Controls::onPickContour()
 {
-  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(exeCC_CommonFacilities) cf    = exeCC_CommonFacilities::Instance();
+  const Handle(asiEngine_Model)& model = cf->Model;
   Handle(asiData_PartNode)       part_n;
   TopoDS_Shape                   part;
   //
-  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
   const bool isOn = m_widgets.pPickContour->isChecked();
 
@@ -199,31 +209,30 @@ void exeCC_Controls::onPickContour()
   if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
     m_bvh = new asiAlgo_BVHFacets(part,
                                   asiAlgo_BVHFacets::Builder_Binned,
-                                  exeCC_CommonFacilities::Instance()->Notifier,
-                                  exeCC_CommonFacilities::Instance()->Plotter);
+                                  cf->Notifier,
+                                  cf->Plotter);
 
   // Get contour Node
-  Handle(asiData_ContourNode)
-    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
 
   // Depending on the state of the control, either let user to pick some
   // points on the shape or finalize contour creation
   if ( isOn )
   {
     // Clear contour
-    exeCC_CommonFacilities::Instance()->Model->OpenCommand();
+    model->OpenCommand();
     {
       contour_n->Init();
     }
-    exeCC_CommonFacilities::Instance()->Model->CommitCommand();
+    model->CommitCommand();
 
     // Enable an appropriate selection mode
-    m_iPrevSelMode = exeCC_CommonFacilities::Instance()->Prs.Part->GetSelectionMode();
-    exeCC_CommonFacilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_Workpiece);
+    m_iPrevSelMode = cf->Prs.Part->GetSelectionMode();
+    cf->Prs.Part->SetSelectionMode(SelectionMode_Workpiece);
 
     // Add observer which takes responsibility to fill the data object with
     // the base points of the contour
-    if ( !exeCC_CommonFacilities::Instance()->Prs.Part->HasObserver(EVENT_PICK_WORLD_POINT) )
+    if ( !cf->Prs.Part->HasObserver(EVENT_PICK_WORLD_POINT) )
     {
       vtkSmartPointer<exeCC_CreateContourCallback>
         cb = vtkSmartPointer<exeCC_CreateContourCallback>::New();
@@ -231,26 +240,26 @@ void exeCC_Controls::onPickContour()
       cb->SetBVH(m_bvh);
 
       // Add observer
-      exeCC_CommonFacilities::Instance()->Prs.Part->AddObserver(EVENT_PICK_WORLD_POINT, cb);
+      cf->Prs.Part->AddObserver(EVENT_PICK_WORLD_POINT, cb);
     }
   }
   else
   {
     if ( !contour_n->IsClosed() )
     {
-      exeCC_CommonFacilities::Instance()->Model->OpenCommand();
+      model->OpenCommand();
       {
         contour_n->SetClosed(true);
       }
-      exeCC_CommonFacilities::Instance()->Model->CommitCommand();
+      model->CommitCommand();
     }
 
-    exeCC_CommonFacilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+    cf->Prs.Part->Actualize( contour_n.get() );
 
     // Restore original selection mode
-    exeCC_CommonFacilities::Instance()->Prs.Part->SetSelectionMode(m_iPrevSelMode);
+    cf->Prs.Part->SetSelectionMode(m_iPrevSelMode);
     //
-    exeCC_CommonFacilities::Instance()->Prs.Part->RemoveObserver(EVENT_PICK_WORLD_POINT);
+    cf->Prs.Part->RemoveObserver(EVENT_PICK_WORLD_POINT);
   }
 }
 
@@ -259,11 +268,12 @@ void exeCC_Controls::onPickContour()
 //! Allows user to load an externally defined contour.
 void exeCC_Controls::onLoadContour()
 {
-  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(exeCC_CommonFacilities) cf    = exeCC_CommonFacilities::Instance();
+  const Handle(asiEngine_Model)& model = cf->Model;
   Handle(asiData_PartNode)       part_n;
   TopoDS_Shape                   part;
   //
-  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
   QString filename = asiUI_Common::selectBRepFile(asiUI_Common::OpenSaveAction_Open);
 
@@ -285,19 +295,18 @@ void exeCC_Controls::onLoadContour()
   if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
     m_bvh = new asiAlgo_BVHFacets(part,
                                   asiAlgo_BVHFacets::Builder_Binned,
-                                  exeCC_CommonFacilities::Instance()->Notifier,
-                                  exeCC_CommonFacilities::Instance()->Plotter);
+                                  cf->Notifier,
+                                  cf->Plotter);
 
   // Tool to find the owner face
   asiAlgo_HitFacet HitFacet(m_bvh,
-                            exeCC_CommonFacilities::Instance()->Notifier,
-                            exeCC_CommonFacilities::Instance()->Plotter);
+                            cf->Notifier,
+                            cf->Plotter);
 
   // Set geometry of contour
-  Handle(asiData_ContourNode)
-    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
   //
-  exeCC_CommonFacilities::Instance()->Model->OpenCommand(); // tx start
+  model->OpenCommand(); // tx start
   {
     // Clear contour
     contour_n->Init();
@@ -322,7 +331,7 @@ void exeCC_Controls::onLoadContour()
       if ( !HitFacet(P, 1e-1, facet_idx) )
       {
         std::cout << "Cannot locate a host facet for a contour's point" << std::endl;
-        exeCC_CommonFacilities::Instance()->Plotter->DRAW_POINT(P, Color_Red, "Failure");
+        cf->Plotter->DRAW_POINT(P, Color_Red, "Failure");
         continue;
       }
 
@@ -331,11 +340,11 @@ void exeCC_Controls::onLoadContour()
     }
     contour_n->SetClosed(true);
   }
-  exeCC_CommonFacilities::Instance()->Model->CommitCommand(); // tx commit
+  model->CommitCommand(); // tx commit
 
   // Actualize
-  exeCC_CommonFacilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
-  exeCC_CommonFacilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+  cf->Prs.Part->DeletePresentation( contour_n.get() );
+  cf->Prs.Part->Actualize( contour_n.get() );
 }
 
 //-----------------------------------------------------------------------------
@@ -367,15 +376,15 @@ void exeCC_Controls::onSaveContour()
 //! Checks distance from the contour to the host faces.
 void exeCC_Controls::onCheckContourDistance()
 {
-  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(exeCC_CommonFacilities) cf    = exeCC_CommonFacilities::Instance();
+  const Handle(asiEngine_Model)& model = cf->Model;
   Handle(asiData_PartNode)       part_n;
   TopoDS_Shape                   part;
   //
-  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
   // Get contour Node
-  Handle(asiData_ContourNode)
-    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
   {
@@ -384,14 +393,14 @@ void exeCC_Controls::onCheckContourDistance()
   }
 
   // Imperative viewer
-  ActAPI_PlotterEntry IV(exeCC_CommonFacilities::Instance()->Plotter);
+  ActAPI_PlotterEntry IV(cf->Plotter);
 
   // Create the accelerating structure
   if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
     m_bvh = new asiAlgo_BVHFacets(part,
                                   asiAlgo_BVHFacets::Builder_Binned,
-                                  exeCC_CommonFacilities::Instance()->Notifier,
-                                  exeCC_CommonFacilities::Instance()->Plotter);
+                                  cf->Notifier,
+                                  cf->Plotter);
 
   // Get contour wire
   TopoDS_Wire contourWire = contour_n->AsShape();
@@ -441,8 +450,8 @@ void exeCC_Controls::onCheckContourDistance()
 
   // Prepare a tool to find the intersected facet
   asiAlgo_HitFacet HitFacet(m_bvh,
-                            exeCC_CommonFacilities::Instance()->Notifier,
-                            exeCC_CommonFacilities::Instance()->Plotter);
+                            cf->Notifier,
+                            cf->Plotter);
 
   double maxGap = 0.0;
   gp_Pnt maxGapPt;
@@ -488,15 +497,15 @@ void exeCC_Controls::onCheckContourDistance()
 //! Checks distance from the contour vertices to the host faces.
 void exeCC_Controls::onCheckVertexDistance()
 {
-  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(exeCC_CommonFacilities) cf    = exeCC_CommonFacilities::Instance();
+  const Handle(asiEngine_Model)& model = cf->Model;
   Handle(asiData_PartNode)       part_n;
   TopoDS_Shape                   part;
   //
-  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
   // Get contour Node
-  Handle(asiData_ContourNode)
-    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
   {
@@ -547,15 +556,15 @@ void exeCC_Controls::onCheckVertexDistance()
 //! Checks distance from the original contour to the healed one.
 void exeCC_Controls::onHealedVSOriginal()
 {
-  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(exeCC_CommonFacilities) cf    = exeCC_CommonFacilities::Instance();
+  const Handle(asiEngine_Model)& model = cf->Model;
   Handle(asiData_PartNode)       part_n;
   TopoDS_Shape                   part;
   //
-  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
   // Get contour Node
-  Handle(asiData_ContourNode)
-    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
   {
@@ -580,15 +589,15 @@ void exeCC_Controls::onHealedVSOriginal()
 //! Projects vertices of the contour to the part.
 void exeCC_Controls::onProjectVertices()
 {
-  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(exeCC_CommonFacilities) cf    = exeCC_CommonFacilities::Instance();
+  const Handle(asiEngine_Model)& model = cf->Model;
   Handle(asiData_PartNode)       part_n;
   TopoDS_Shape                   part;
   //
-  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
   // Get contour Node
-  Handle(asiData_ContourNode)
-    contour_n = exeCC_CommonFacilities::Instance()->Model->GetPartNode()->GetContour();
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
   {
@@ -610,7 +619,7 @@ void exeCC_Controls::onProjectVertices()
   TColStd_SequenceOfInteger::Iterator fit(faceIndices);
 
   // Perform projection point-by-point
-  exeCC_CommonFacilities::Instance()->Model->OpenCommand();
+  model->OpenCommand();
   {
     int pointIndex = 0;
     for ( ; pit.More(); pit.Next(), fit.Next(), ++pointIndex )
@@ -635,11 +644,11 @@ void exeCC_Controls::onProjectVertices()
       contour_n->ReplacePoint(pointIndex, newPole);
     }
   }
-  exeCC_CommonFacilities::Instance()->Model->CommitCommand();
+  model->CommitCommand();
 
   // Actualize
-  exeCC_CommonFacilities::Instance()->Prs.Part->DeletePresentation( contour_n.get() );
-  exeCC_CommonFacilities::Instance()->Prs.Part->Actualize( contour_n.get() );
+  cf->Prs.Part->DeletePresentation( contour_n.get() );
+  cf->Prs.Part->Actualize( contour_n.get() );
 }
 
 //-----------------------------------------------------------------------------
@@ -647,18 +656,19 @@ void exeCC_Controls::onProjectVertices()
 //! Enriches contour with additional points.
 void exeCC_Controls::onEnrichContour()
 {
-  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(exeCC_CommonFacilities) cf    = exeCC_CommonFacilities::Instance();
+  const Handle(asiEngine_Model)& model = cf->Model;
   Handle(asiData_PartNode)       part_n;
   TopoDS_Shape                   part;
   //
-  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
   // Create the accelerating structure
   if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
     m_bvh = new asiAlgo_BVHFacets(part,
                                   asiAlgo_BVHFacets::Builder_Binned,
-                                  exeCC_CommonFacilities::Instance()->Notifier,
-                                  exeCC_CommonFacilities::Instance()->Plotter);
+                                  cf->Notifier,
+                                  cf->Plotter);
 
   // Run dialog
   exeCC_DialogEnrich* wCE = new exeCC_DialogEnrich(m_bvh, this);
@@ -734,21 +744,22 @@ void exeCC_Controls::onValidateResult()
 //! Constructs BVH with SAH builder.
 void exeCC_Controls::onBVH_SAH()
 {
-  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(exeCC_CommonFacilities) cf    = exeCC_CommonFacilities::Instance();
+  const Handle(asiEngine_Model)& model = cf->Model;
   Handle(asiData_PartNode)       part_n;
   TopoDS_Shape                   part;
   //
-  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
   // Create the accelerating structure
   m_bvh = new asiAlgo_BVHFacets(part,
                                 asiAlgo_BVHFacets::Builder_Binned,
-                                exeCC_CommonFacilities::Instance()->Notifier,
-                                exeCC_CommonFacilities::Instance()->Plotter);
+                                cf->Notifier,
+                                cf->Plotter);
 
   // Draw
-  exeCC_CommonFacilities::Instance()->Plotter->CLEAN();
-  m_bvh->Dump(exeCC_CommonFacilities::Instance()->Plotter);
+  cf->Plotter->CLEAN();
+  m_bvh->Dump(cf->Plotter);
 }
 
 //-----------------------------------------------------------------------------
@@ -756,21 +767,22 @@ void exeCC_Controls::onBVH_SAH()
 //! Constructs BVH with linear builder.
 void exeCC_Controls::onBVH_Linear()
 {
-  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(exeCC_CommonFacilities) cf    = exeCC_CommonFacilities::Instance();
+  const Handle(asiEngine_Model)& model = cf->Model;
   Handle(asiData_PartNode)       part_n;
   TopoDS_Shape                   part;
   //
-  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
   // Create the accelerating structure
   m_bvh = new asiAlgo_BVHFacets(part,
                                 asiAlgo_BVHFacets::Builder_Linear,
-                                exeCC_CommonFacilities::Instance()->Notifier,
-                                exeCC_CommonFacilities::Instance()->Plotter);
+                                cf->Notifier,
+                                cf->Plotter);
 
   // Draw
-  exeCC_CommonFacilities::Instance()->Plotter->CLEAN();
-  m_bvh->Dump(exeCC_CommonFacilities::Instance()->Plotter);
+  cf->Plotter->CLEAN();
+  m_bvh->Dump(cf->Plotter);
 }
 
 //-----------------------------------------------------------------------------
@@ -778,18 +790,19 @@ void exeCC_Controls::onBVH_Linear()
 //! Allows user to pick a single facet.
 void exeCC_Controls::onPickFacet()
 {
-  Handle(exeCC_CommonFacilities) cf = exeCC_CommonFacilities::Instance();
+  Handle(exeCC_CommonFacilities) cf    = exeCC_CommonFacilities::Instance();
+  const Handle(asiEngine_Model)& model = cf->Model;
   Handle(asiData_PartNode)       part_n;
   TopoDS_Shape                   part;
   //
-  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
 
   // Create the accelerating structure
   if ( m_bvh.IsNull() || part != m_bvh->GetShape() )
     m_bvh = new asiAlgo_BVHFacets(part,
                                   asiAlgo_BVHFacets::Builder_Binned,
-                                  exeCC_CommonFacilities::Instance()->Notifier,
-                                  exeCC_CommonFacilities::Instance()->Plotter);
+                                  cf->Notifier,
+                                  cf->Plotter);
 
   const bool isOn = m_widgets.pPickFacet->isChecked();
 
@@ -798,11 +811,11 @@ void exeCC_Controls::onPickFacet()
   if ( isOn )
   {
     // Enable an appropriate selection mode
-    m_iPrevSelMode = exeCC_CommonFacilities::Instance()->Prs.Part->GetSelectionMode();
-    exeCC_CommonFacilities::Instance()->Prs.Part->SetSelectionMode(SelectionMode_Workpiece);
+    m_iPrevSelMode = cf->Prs.Part->GetSelectionMode();
+    cf->Prs.Part->SetSelectionMode(SelectionMode_Workpiece);
 
     // Add observer which takes responsibility to interact with user
-    if ( !exeCC_CommonFacilities::Instance()->Prs.Part->HasObserver(EVENT_PICK_WORLD_POINT) )
+    if ( !cf->Prs.Part->HasObserver(EVENT_PICK_WORLD_POINT) )
     {
       vtkSmartPointer<asiUI_PickFacetCallback>
         cb = vtkSmartPointer<asiUI_PickFacetCallback>::New();
@@ -810,16 +823,73 @@ void exeCC_Controls::onPickFacet()
       cb->SetBVH(m_bvh);
 
       // Add observer
-      exeCC_CommonFacilities::Instance()->Prs.Part->AddObserver(EVENT_PICK_WORLD_POINT, cb);
+      cf->Prs.Part->AddObserver(EVENT_PICK_WORLD_POINT, cb);
     }
   }
   else
   {
     // Restore original selection mode
-    exeCC_CommonFacilities::Instance()->Prs.Part->SetSelectionMode(m_iPrevSelMode);
+    cf->Prs.Part->SetSelectionMode(m_iPrevSelMode);
     //
-    exeCC_CommonFacilities::Instance()->Prs.Part->RemoveObserver(EVENT_PICK_WORLD_POINT);
+    cf->Prs.Part->RemoveObserver(EVENT_PICK_WORLD_POINT);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+//! Puts a part shape and a contour to a compound.
+void exeCC_Controls::onPutInCompound()
+{
+  Handle(exeCC_CommonFacilities) cf    = exeCC_CommonFacilities::Instance();
+  const Handle(asiEngine_Model)& model = cf->Model;
+  Handle(asiData_PartNode)       part_n;
+  TopoDS_Shape                   part;
+  //
+  if ( !asiUI_Common::PartShape(model, part_n, part) ) return;
+
+  // Get contour Node
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
+  //
+  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+  {
+    std::cout << "Error: contour is not defined" << std::endl;
+    return;
+  }
+
+  // Get contour
+  TopoDS_Shape contour = contour_n->AsShape();
+
+  // Make a compound of them
+  TopoDS_Compound comp;
+  BRep_Builder BB;
+  BB.MakeCompound(comp);
+  BB.Add(comp, part);
+  BB.Add(comp, contour);
+
+  // Store as a part and clean up the contour
+  model->OpenCommand();
+  {
+    contour_n->Init();
+    part_n->Init();
+    //
+    part_n->SetShape(comp);
+  }
+  model->CommitCommand();
+
+  // Update UI
+  cf->Prs.DeleteAll();
+  cf->Prs.Part->InitializePickers();
+  cf->Prs.Part->Actualize(part_n, false, true);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Allows user to check overlapping between two selected edges.
+void exeCC_Controls::onCheckOverlapping()
+{
+  // Run dialog
+  exeCC_DialogEdgesOverlapping* wEO = new exeCC_DialogEdgesOverlapping(this);
+  wEO->show();
 }
 
 //-----------------------------------------------------------------------------

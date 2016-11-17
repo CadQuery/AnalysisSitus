@@ -17,6 +17,10 @@
 #include <QVBoxLayout>
 #pragma warning(pop)
 
+// VTK includes
+#include <vtkPlaneWidget.h>
+#include <vtkSmartPointer.h>
+
 //! Widget for point cloud controls.
 class exeAsBuilt_ControlsPCloud : public QWidget
 {
@@ -32,6 +36,7 @@ public slots:
   void onLoadPoints   ();
   void onEstimNormals ();
   void onCloudify     ();
+  void onProjPlane    ();
 
 private:
 
@@ -40,17 +45,21 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    QPushButton* pLoadPoints;   //!< Button to load points.
-    QPushButton* pEstimNormals; //!< Button to calculate normals.
+    QPushButton*                    pLoadPointsBtn;   //!< Button to load points.
+    QPushButton*                    pEstimNormalsBtn; //!< Button to calculate normals.
+    QPushButton*                    pProjPlaneBtn;    //!< Button to enable/disable a projection plane.
+    vtkSmartPointer<vtkPlaneWidget> pProjPlane;       //!< Projection plane widget.
 
-    t_widgets() : pLoadPoints   (NULL),
-                  pEstimNormals (NULL)
+    t_widgets() : pLoadPointsBtn   (NULL),
+                  pEstimNormalsBtn (NULL),
+                  pProjPlaneBtn    (NULL)
     {}
 
     void Release()
     {
-      delete pLoadPoints;   pLoadPoints   = NULL;
-      delete pEstimNormals; pEstimNormals = NULL;
+      delete pLoadPointsBtn;   pLoadPointsBtn   = NULL;
+      delete pEstimNormalsBtn; pEstimNormalsBtn = NULL;
+      delete pProjPlaneBtn;    pProjPlaneBtn    = NULL;
     }
   };
 

@@ -127,6 +127,16 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\exeCC\engine\exeCC_Model.h" />
     <ClInclude Include="..\..\src\exeCC\ui\exeCC_CommonFacilities.h" />
+    <CustomBuild Include="..\..\src\exeCC\ui\exeCC_DialogEdgesOverlapping.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <CustomBuild Include="..\..\src\exeCC\ui\exeCC_Controls.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
@@ -209,6 +219,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\exeCC\ui\exeCC_Controls.cpp" />
     <ClCompile Include="..\..\src\exeCC\ui\exeCC_DialogBuildOffsets.cpp" />
     <ClCompile Include="..\..\src\exeCC\ui\exeCC_DialogCapture.cpp" />
+    <ClCompile Include="..\..\src\exeCC\ui\exeCC_DialogEdgesOverlapping.cpp" />
     <ClCompile Include="..\..\src\exeCC\ui\exeCC_DialogEnrich.cpp" />
     <ClCompile Include="..\..\src\exeCC\ui\exeCC_DialogHealing.cpp" />
     <ClCompile Include="..\..\src\exeCC\ui\exeCC_MainWindow.cpp" />
@@ -217,6 +228,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_exeCC_DialogBuildOffsets.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_exeCC_DialogCapture.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_exeCC_DialogEnrich.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_exeCC_DialogEdgesOverlapping.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_exeCC_DialogHealing.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_exeCC_MainWindow.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_exeCC_CreateContourCallback.cpp" />

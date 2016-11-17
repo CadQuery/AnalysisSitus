@@ -46,6 +46,8 @@ public slots:
   void onBVH_SAH              ();
   void onBVH_Linear           ();
   void onPickFacet            ();
+  void onPutInCompound        ();
+  void onCheckOverlapping     ();
   //
   void onBuildOffsets         ();
 
@@ -73,6 +75,8 @@ private:
     QPushButton* pBVH_SAH;              //!< Builds BVH with SAH algorithm.
     QPushButton* pBVH_Linear;           //!< Builds BVH with linear algorithm.
     QPushButton* pPickFacet;            //!< Allows to pick up a single facet.
+    QPushButton* pPutInCompound;        //!< Makes a compound from a part and a contour.
+    QPushButton* pCheckOverlapping;     //!< Allows to check overlapping between two edges.
     //
     QPushButton* pBuildOffsets;         //!< Builds offset surfaces.
 
@@ -93,6 +97,8 @@ private:
                   pBVH_SAH              (NULL),
                   pBVH_Linear           (NULL),
                   pPickFacet            (NULL),
+                  pPutInCompound        (NULL),
+                  pCheckOverlapping     (NULL),
                   //
                   pBuildOffsets         (NULL)
     {}
@@ -116,6 +122,8 @@ private:
       delete pBVH_SAH;              pBVH_SAH             = NULL;
       delete pBVH_Linear;           pBVH_Linear          = NULL;
       delete pPickFacet;            pPickFacet           = NULL;
+      delete pPutInCompound;        pPutInCompound       = NULL;
+      delete pCheckOverlapping;     pCheckOverlapping    = NULL;
       //
       delete pBuildOffsets;         pBuildOffsets        = NULL;
     }

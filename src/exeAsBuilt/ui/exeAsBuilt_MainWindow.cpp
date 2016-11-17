@@ -28,7 +28,7 @@ exeAsBuilt_MainWindow::exeAsBuilt_MainWindow() : QMainWindow()
   this->createDockWindows();
 
   this->setCentralWidget(m_widgets.wViewer);
-  this->setWindowTitle("Point Clouds");
+  this->setWindowTitle("As-Built Reconstruction");
 }
 
 //! Destructor.

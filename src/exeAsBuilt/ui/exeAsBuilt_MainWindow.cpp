@@ -64,8 +64,8 @@ void exeAsBuilt_MainWindow::createPartViewer()
   // Desktop used for sizing
   QDesktopWidget desktop;
   const int side   = std::min( desktop.height(), desktop.width() );
-  const int width  = side*0.25;
-  const int height = side*0.25;
+  const int width  = side*0.5;
+  const int height = side*0.5;
   //
   m_widgets.wViewer->setMinimumSize(width, height);
 
@@ -77,11 +77,6 @@ void exeAsBuilt_MainWindow::createPartViewer()
 //! Creates main dockable widgets.
 void exeAsBuilt_MainWindow::createDockWindows()
 {
-  // Desktop used for sizing
-  /*QDesktopWidget desktop;
-  const int side  = std::min( desktop.height(), desktop.width() );
-  const int width = side*0.25;*/
-
   // Common facilities instance
   Handle(exeAsBuilt_CommonFacilities) cf = exeAsBuilt_CommonFacilities::Instance();
 
@@ -100,25 +95,48 @@ void exeAsBuilt_MainWindow::createDockWindows()
     // Initialize desktop
     cf->ObjectBrowser = m_widgets.wBrowser;
   }
-
   //---------------------------------------------------------------------------
   // Part controls
   QDockWidget* pDockCommon;
   {
-    pDockCommon = new QDockWidget("Common", this);
+    pDockCommon = new QDockWidget("Common Tools", this);
     pDockCommon->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
+    m_widgets.wControlsPart = new asiUI_ControlsPart(cf->Model,
+                                                     cf->Prs.Part,
+                                                     cf->Notifier,
+                                                     cf->Plotter,
+                                                     pDockCommon);
+    pDockCommon->setWidget(m_widgets.wControlsPart);
+    //
+    this->addDockWidget(Qt::LeftDockWidgetArea, pDockCommon);
+  }
+  //---------------------------------------------------------------------------
+  // Point cloud controls
+  QDockWidget* pDockPCloud;
+  {
+    pDockPCloud = new QDockWidget("Point Clouds", this);
+    pDockPCloud->setAllowedAreas(Qt::LeftDockWidgetArea);
+    //
     m_widgets.wControls = new exeAsBuilt_ControlsPCloud(pDockCommon);
-    pDockCommon->setWidget(m_widgets.wControls);
+    pDockPCloud->setWidget(m_widgets.wControls);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockCommon);
   }
 
   // Tabify widgets
   this->tabifyDockWidget(pDockBrowser, pDockCommon);
+  this->tabifyDockWidget(pDockCommon,  pDockPCloud);
 
   // Now we have everything to initialize an imperative plotter
   cf->Plotter = new asiUI_JournalIV(cf->Model, cf->Prs.Part, cf->Prs.Domain, cf->ObjectBrowser);
+
+  // Listener for part controls
+  m_listeners.pControlsPart = new asiUI_ControlsPartListener(m_widgets.wControlsPart,
+                                                             m_widgets.wViewer,
+                                                             NULL,
+                                                             NULL,
+                                                             cf->Model);
 
   // Listener for part viewer
   m_listeners.pViewerPart = new asiUI_ViewerPartListener(m_widgets.wViewer,
@@ -127,5 +145,6 @@ void exeAsBuilt_MainWindow::createDockWindows()
                                                          cf->Model);
 
   // Signals-slots
+  m_listeners.pControlsPart->Connect();
   m_listeners.pViewerPart->Connect();
 }

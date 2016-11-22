@@ -12,6 +12,8 @@
 #include <exeAsBuilt_ControlsPCloud.h>
 
 // asiUI includes
+#include <asiUI_ControlsPart.h>
+#include <asiUI_ControlsPartListener.h>
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerPart.h>
 #include <asiUI_ViewerPartListener.h>
@@ -46,34 +48,40 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    asiUI_ObjectBrowser*       wBrowser;  //!< Object browser.
-    asiUI_ViewerPart*          wViewer;   //!< Part viewer.
-    exeAsBuilt_ControlsPCloud* wControls; //!< Part controls.
+    asiUI_ObjectBrowser*       wBrowser;      //!< Object browser.
+    asiUI_ViewerPart*          wViewer;       //!< Part viewer.
+    exeAsBuilt_ControlsPCloud* wControls;     //!< Controls to operate with point clouds.
+    asiUI_ControlsPart*        wControlsPart; //!< Part controls.
 
-    t_widgets() : wBrowser  (NULL),
-                  wViewer   (NULL),
-                  wControls (NULL)
+    t_widgets() : wBrowser      (NULL),
+                  wViewer       (NULL),
+                  wControls     (NULL),
+                  wControlsPart (NULL)
     {}
 
     void Release()
     {
-      delete wBrowser;  wBrowser  = NULL;
-      delete wViewer;   wViewer   = NULL;
-      delete wControls; wControls = NULL;
+      delete wBrowser;      wBrowser      = NULL;
+      delete wViewer;       wViewer       = NULL;
+      delete wControls;     wControls     = NULL;
+      delete wControlsPart; wControlsPart = NULL;
     }
   };
 
   //! Listeners.
   struct t_listeners
   {
-    asiUI_ViewerPartListener* pViewerPart;   //!< Listener for part viewer.
+    asiUI_ControlsPartListener* pControlsPart; //!< Listener for part controls.
+    asiUI_ViewerPartListener*   pViewerPart;   //!< Listener for part viewer.
 
-    t_listeners() : pViewerPart (NULL)
+    t_listeners() : pControlsPart (NULL),
+                    pViewerPart   (NULL)
     {}
 
     void Release()
     {
-      delete pViewerPart; pViewerPart = NULL;
+      delete pControlsPart; pControlsPart = NULL;
+      delete pViewerPart;   pViewerPart   = NULL;
     }
   };
 

@@ -51,8 +51,11 @@ void asiUI_ViewerPartListener::onFacePicked()
 {
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
   //
-  m_wViewerDomain->PrsMgr()  -> Actualize(geom_n->GetFaceRepresentation().get(), false, true);
-  m_wViewerSurface->PrsMgr() -> Actualize(geom_n->GetSurfaceRepresentation().get(), false, true);
+  if ( m_wViewerDomain )
+    m_wViewerDomain->PrsMgr()->Actualize(geom_n->GetFaceRepresentation().get(), false, true);
+  //
+  if ( m_wViewerSurface )
+    m_wViewerSurface->PrsMgr()->Actualize(geom_n->GetSurfaceRepresentation().get(), false, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -62,6 +65,9 @@ void asiUI_ViewerPartListener::onEdgePicked()
 {
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
   //
-  m_wViewerDomain->PrsMgr()  -> Actualize(geom_n->GetEdgeRepresentation().get(), false, true);
-  m_wViewerSurface->PrsMgr() -> Actualize(geom_n->GetCurveRepresentation().get(), false, true);
+  if ( m_wViewerDomain )
+    m_wViewerDomain->PrsMgr()->Actualize(geom_n->GetEdgeRepresentation().get(), false, true);
+  //
+  if ( m_wViewerSurface )
+    m_wViewerSurface->PrsMgr()->Actualize(geom_n->GetCurveRepresentation().get(), false, true);
 }

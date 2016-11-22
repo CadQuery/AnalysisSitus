@@ -513,11 +513,15 @@ void exeCC_Controls::onCheckVertexDistance()
     return;
   }
 
+  // Imperative viewer
+  ActAPI_PlotterEntry IV(cf->Plotter);
+
   // Get all faces with indices
   TopTools_IndexedMapOfShape faces;
   TopExp::MapShapes(part, TopAbs_FACE, faces);
 
   double maxGap = 0.0;
+  gp_Pnt maxGapPt;
 
   // Get all points of the contour
   TColgp_SequenceOfPnt points;
@@ -545,10 +549,16 @@ void exeCC_Controls::onCheckVertexDistance()
     ClassPtFace(point, false, UV, gap, NULL);
 
     if ( gap > maxGap )
-      maxGap = gap;
+    {
+      maxGap   = gap;
+      maxGapPt = point;
+    }
   }
 
   std::cout << "Max gap is " << maxGap << std::endl;
+  //
+  IV.CLEAN();
+  IV.DRAW_POINT(maxGapPt, Color_Violet);
 }
 
 //-----------------------------------------------------------------------------

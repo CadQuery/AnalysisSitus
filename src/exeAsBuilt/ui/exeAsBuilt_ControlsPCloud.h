@@ -46,11 +46,13 @@ private:
   struct t_widgets
   {
     QPushButton*                    pLoadPointsBtn;   //!< Button to load points.
+    QPushButton*                    pCloudifyBtn;     //!< Button to cloudify CAD part.
     QPushButton*                    pEstimNormalsBtn; //!< Button to calculate normals.
     QPushButton*                    pProjPlaneBtn;    //!< Button to enable/disable a projection plane.
     vtkSmartPointer<vtkPlaneWidget> pProjPlane;       //!< Projection plane widget.
 
     t_widgets() : pLoadPointsBtn   (NULL),
+                  pCloudifyBtn     (NULL),
                   pEstimNormalsBtn (NULL),
                   pProjPlaneBtn    (NULL)
     {}
@@ -58,6 +60,7 @@ private:
     void Release()
     {
       delete pLoadPointsBtn;   pLoadPointsBtn   = NULL;
+      delete pCloudifyBtn;     pCloudifyBtn     = NULL;
       delete pEstimNormalsBtn; pEstimNormalsBtn = NULL;
       delete pProjPlaneBtn;    pProjPlaneBtn    = NULL;
     }

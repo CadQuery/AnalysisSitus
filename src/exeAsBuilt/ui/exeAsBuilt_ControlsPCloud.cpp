@@ -38,11 +38,13 @@ exeAsBuilt_ControlsPCloud::exeAsBuilt_ControlsPCloud(QWidget* parent) : QWidget(
 
   // Buttons
   m_widgets.pLoadPointsBtn   = new QPushButton("Load points");
+  m_widgets.pCloudifyBtn     = new QPushButton("Cloudify CAD part");
   m_widgets.pEstimNormalsBtn = new QPushButton("Estimate normals");
   m_widgets.pProjPlaneBtn    = new QPushButton("Projection plane");
   m_widgets.pProjPlane       = vtkSmartPointer<vtkPlaneWidget>::New();
   //
   m_widgets.pLoadPointsBtn   -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pCloudifyBtn     -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pEstimNormalsBtn -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pProjPlaneBtn    -> setMinimumWidth(BTN_MIN_WIDTH);
 
@@ -51,10 +53,11 @@ exeAsBuilt_ControlsPCloud::exeAsBuilt_ControlsPCloud(QWidget* parent) : QWidget(
   m_widgets.pProjPlane->SetInteractor( exeAsBuilt_CommonFacilities::Instance()->Prs.Part->GetRenderWindow()->GetInteractor() );
 
   // Group for data exchange
-  QGroupBox*   pDEGroup = new QGroupBox("Data exchange");
+  QGroupBox*   pDEGroup = new QGroupBox("Data source");
   QVBoxLayout* pDELay   = new QVBoxLayout(pDEGroup);
   //
   pDELay->addWidget(m_widgets.pLoadPointsBtn);
+  pDELay->addWidget(m_widgets.pCloudifyBtn);
 
   // Group for analysis
   QGroupBox*   pAnalysisGroup = new QGroupBox("Analysis");
@@ -73,6 +76,7 @@ exeAsBuilt_ControlsPCloud::exeAsBuilt_ControlsPCloud(QWidget* parent) : QWidget(
 
   // Connect signals to slots
   connect( m_widgets.pLoadPointsBtn,   SIGNAL( clicked() ), SLOT( onLoadPoints   () ) );
+  connect( m_widgets.pCloudifyBtn,     SIGNAL( clicked() ), SLOT( onCloudify     () ) );
   connect( m_widgets.pEstimNormalsBtn, SIGNAL( clicked() ), SLOT( onEstimNormals () ) );
   connect( m_widgets.pProjPlaneBtn,    SIGNAL( clicked() ), SLOT( onProjPlane    () ) );
 }
@@ -156,7 +160,7 @@ void exeAsBuilt_ControlsPCloud::onCloudify()
   exeAsBuilt_DialogCloudify*
     wCloudify = new exeAsBuilt_DialogCloudify(cf->Model, cf->Notifier, cf->Plotter, this);
   //
-  wCloudify->show();
+  wCloudify->exec();
 }
 
 //-----------------------------------------------------------------------------

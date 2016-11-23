@@ -169,8 +169,11 @@ rem ===========================================================================
 rem Setting FLANN environment
 rem ===========================================================================
 
-set "FLANN_ROOT=%AS_PRODUCTS%\flann-1.7.1"
+if "%FLANN_ROOT%" == "" set "FLANN_ROOT=%AS_PRODUCTS%\flann-1.8.4-vc12-64"
+
 set "FLANN_INC=%FLANN_ROOT%/include"
+set "FLANN_LIB=%FLANN_ROOT%\lib"
+set "FLANN_BIN=%FLANN_ROOT%\bin"
 
 rem ===========================================================================
 rem Setting environment for Inno Setup
@@ -212,4 +215,5 @@ echo CASDEB                = %CASDEB%
 echo CSF_PluginDefaults    = %CSF_PluginDefaults% 
 echo CSF_ResourcesDefaults = %CSF_ResourcesDefaults% 
 echo PATH                  = %PATH% 
+echo FLANN_ROOT            = %FLANN_ROOT%
 echo ...

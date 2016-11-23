@@ -67,6 +67,9 @@
     <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_DialogCloudify.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\exeAsBuilt\exeAsBuilt_FlannExampleMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_DialogCloudify.h">

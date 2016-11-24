@@ -171,9 +171,19 @@ rem ===========================================================================
 
 if "%FLANN_ROOT%" == "" set "FLANN_ROOT=%AS_PRODUCTS%\flann-1.8.4-vc12-64"
 
-set "FLANN_INC=%FLANN_ROOT%/include"
+set "FLANN_INC=%FLANN_ROOT%\include"
 set "FLANN_LIB=%FLANN_ROOT%\lib"
 set "FLANN_BIN=%FLANN_ROOT%\bin"
+
+rem ===========================================================================
+rem Setting HDF5 environment
+rem ===========================================================================
+
+if "%HDF5_ROOT%" == "" set "HDF5_ROOT=%AS_PRODUCTS%\hdf5"
+
+set "HDF5_INC=%HDF5_ROOT%\include"
+set "HDF5_LIB=%HDF5_ROOT%\lib"
+set "HDF5_BIN=%HDF5_ROOT%\bin"
 
 rem ===========================================================================
 rem Setting environment for Inno Setup
@@ -186,8 +196,6 @@ rem Adjust PATH variable
 rem ===========================================================================
 
 set "PATH=%AS_BIN%;%CAS_BIN64%;%FREETYPE_BIN%;%MESHGEMS_BIN%;%SPE_BIN%;%AD_BIN%;%FEAT_BIN%;%MESH_BIN%;%QR_BIN%;%VTK_BIN%;%PCL_BIN%;%QT_BIN%;%TBB_BIN%;%CR_BIN%;%INNOSETUP_ROOT%;%PATH%"
-
-echo PATH=%PATH%
 
 rem ===========================================================================
 rem Customize OCCT environment variables

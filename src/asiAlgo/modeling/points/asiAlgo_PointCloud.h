@@ -26,9 +26,38 @@
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_HArray1OfReal.hxx>
 
+//-----------------------------------------------------------------------------
+
+template <typename TColType>
+class HCollection : public TColType, public Standard_Transient
+{
+public:
+   DEFINE_STANDARD_RTTI_INLINE(HClassName,MMgt_TShared)
+   DEFINE_STANDARD_ALLOC
+   DEFINE_NCOLLECTION_ALLOC
+   //
+   HClassName (const Standard_Integer theLower,
+               const Standard_Integer theUpper) :
+     _Array1Type_ (theLower,theUpper)  {}
+   //
+   HClassName (const Standard_Integer theLower,
+               const Standard_Integer theUpper,
+               const _Array1Type_::value_type& theValue) :
+     _Array1Type_ (theLower,theUpper)  { Init (theValue); }
+   //
+   HClassName  (const _Array1Type_& theOther) : _Array1Type_(theOther) {}
+   //
+   const _Array1Type_& Array1 () const { return *this; }
+   //
+   _Array1Type_& ChangeArray1 ()       { return *this; }
+};
+
+//-----------------------------------------------------------------------------
+
 DEFINE_STANDARD_HANDLE(asiAlgo_PointCloud, ActAPI_IAlgorithm)
 
 //! Interoperability tool for point clouds.
+template <typename T>
 class asiAlgo_PointCloud : public ActAPI_IAlgorithm
 {
 public:
@@ -112,7 +141,7 @@ protected:
 
 protected:
 
-  Handle(TColStd_HArray1OfReal) m_coords; //!< Array of coordinates.
+  Handle( HCollection< NCollection_Array1<T> > ) m_coords; //!< Array of coordinates.
 
 };
 

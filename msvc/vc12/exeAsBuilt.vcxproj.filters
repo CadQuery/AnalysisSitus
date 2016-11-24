@@ -24,6 +24,12 @@
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{d5098c62-8bec-49c3-a03c-0826e6bece95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Algo">
+      <UniqueIdentifier>{6e993674-a0cd-4b81-933e-1fe721f90eef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Algo">
+      <UniqueIdentifier>{e03a090f-65f5-4ed7-90db-f7d114e2d02c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\exeAsBuilt\engine\exeAsBuilt_RE.h">
@@ -34,6 +40,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_CommonFacilities.h">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\exeAsBuilt\algo\exeAsBuilt_FlannKdTree.h">
+      <Filter>Header Files\Algo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -67,8 +76,8 @@
     <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_DialogCloudify.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\exeAsBuilt\exeAsBuilt_FlannExampleMain.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\src\exeAsBuilt\algo\exeAsBuilt_FlannKdTree.cpp">
+      <Filter>Source Files\Algo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

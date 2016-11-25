@@ -19,7 +19,7 @@ asiVisu_IVPointSet2dDataProvider::asiVisu_IVPointSet2dDataProvider(const Handle(
 //-----------------------------------------------------------------------------
 
 //! \return point cloud to visualize.
-Handle(asiAlgo_PointCloud) asiVisu_IVPointSet2dDataProvider::GetPoints() const
+Handle(asiAlgo_PointCloud<double>) asiVisu_IVPointSet2dDataProvider::GetPoints() const
 {
   Handle(asiData_IVPointSet2dNode)
     points_n = Handle(asiData_IVPointSet2dNode)::DownCast(m_node);
@@ -37,12 +37,12 @@ Handle(asiAlgo_PointCloud) asiVisu_IVPointSet2dDataProvider::GetPoints() const
   //
   for ( int coordidx3d = 0, coordidx2d = 0; coordidx3d < coords3d->Length(); coordidx3d += 3, coordidx2d += 2 )
   {
-    coords3d->ChangeValue(coordidx3d)     = coords2d->Value(coordidx2d);
+    coords3d->ChangeValue(coordidx3d + 0) = coords2d->Value(coordidx2d);
     coords3d->ChangeValue(coordidx3d + 1) = coords2d->Value(coordidx2d + 1);
     coords3d->ChangeValue(coordidx3d + 2) = 0.0;
   }
 
-  return new asiAlgo_PointCloud(coords3d);
+  return new asiAlgo_PointCloud<double>(coords3d);
 }
 
 //-----------------------------------------------------------------------------

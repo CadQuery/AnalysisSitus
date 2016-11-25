@@ -80,12 +80,6 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_FacePointCloud.h">
       <Filter>Header Files\Modeling\Points</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.h">
-      <Filter>Header Files\Modeling\Points</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudNormals.h">
-      <Filter>Header Files\Modeling\Points</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PurifyCloud.h">
       <Filter>Header Files\Modeling\Points</Filter>
     </ClInclude>
@@ -200,12 +194,6 @@
       <Filter>Source Files\Modeling\Points</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_FacePointCloud.cpp">
-      <Filter>Source Files\Modeling\Points</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.cpp">
-      <Filter>Source Files\Modeling\Points</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudNormals.cpp">
       <Filter>Source Files\Modeling\Points</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BuildContours.cpp">

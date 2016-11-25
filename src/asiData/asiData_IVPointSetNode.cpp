@@ -60,18 +60,18 @@ void asiData_IVPointSetNode::SetName(const TCollection_ExtendedString& theName)
 //-----------------------------------------------------------------------------
 
 //! \return stored point cloud.
-Handle(asiAlgo_PointCloud) asiData_IVPointSetNode::GetPoints() const
+Handle(asiAlgo_PointCloud<double>) asiData_IVPointSetNode::GetPoints() const
 {
   Handle(TColStd_HArray1OfReal)
     coords = ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->GetArray();
   //
-  Handle(asiAlgo_PointCloud) result = new asiAlgo_PointCloud(coords);
+  Handle(asiAlgo_PointCloud<double>) result = new asiAlgo_PointCloud<double>(coords);
   return result;
 }
 
 //! Sets point cloud to store.
 //! \param points [in] points to store.
-void asiData_IVPointSetNode::SetPoints(const Handle(asiAlgo_PointCloud)& points)
+void asiData_IVPointSetNode::SetPoints(const Handle(asiAlgo_PointCloud<double>)& points)
 {
   ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray( points.IsNull() ? NULL : points->GetPoints() );
 }

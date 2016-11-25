@@ -25,7 +25,7 @@ asiVisu_ContourPointsDataProvider::asiVisu_ContourPointsDataProvider(const Handl
 //-----------------------------------------------------------------------------
 
 //! \return point cloud to visualize.
-Handle(asiAlgo_PointCloud) asiVisu_ContourPointsDataProvider::GetPoints() const
+Handle(asiAlgo_PointCloud<double>) asiVisu_ContourPointsDataProvider::GetPoints() const
 {
   Handle(asiData_ContourNode)
     contour_n = Handle(asiData_ContourNode)::DownCast(m_node);
@@ -57,7 +57,7 @@ Handle(asiAlgo_PointCloud) asiVisu_ContourPointsDataProvider::GetPoints() const
     coords->SetValue( v*3 + 2, P.Z() );
   }
   //
-  return new asiAlgo_PointCloud(coords);
+  return new asiAlgo_PointCloud<double>(coords);
 }
 
 //-----------------------------------------------------------------------------

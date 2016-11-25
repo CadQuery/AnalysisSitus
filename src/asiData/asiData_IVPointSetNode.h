@@ -11,8 +11,8 @@
 // asiData includes
 #include <asiData.h>
 
-// Geometry includes
-#include <asiAlgo_PointCloud.h>
+// QrGeom3D includes
+#include <QrGeom3D_PositionCloud.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
@@ -61,16 +61,16 @@ public:
     GetName();
 
   asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& theName);
+    SetName(const TCollection_ExtendedString& name);
 
 // Handy accessors to the stored data:
 public:
 
-  asiData_EXPORT Handle(asiAlgo_PointCloud)
+  asiData_EXPORT QrPtr<pcloud>
     GetPoints() const;
 
   asiData_EXPORT void
-    SetPoints(const Handle(asiAlgo_PointCloud)& pointCloud);
+    SetPoints(const QrPtr<pcloud>& pointCloud);
 
 // Initialization:
 public:

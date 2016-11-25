@@ -43,7 +43,7 @@ asiVisu_PointsSource::~asiVisu_PointsSource()
 
 //! Sets input points to visualize.
 //! \param points [in] points to visualize.
-void asiVisu_PointsSource::SetInputPoints(const Handle(asiAlgo_PointCloud)& points)
+void asiVisu_PointsSource::SetInputPoints(const Handle(asiAlgo_PointCloud<double>)& points)
 {
   m_points = points;
   //
@@ -62,8 +62,8 @@ void asiVisu_PointsSource::SetInputPoints(const Handle(asiAlgo_PointCloud)& poin
 //!                          in this method.
 //! \return status.
 int asiVisu_PointsSource::RequestData(vtkInformation*        request,
-                                    vtkInformationVector** inputVector,
-                                    vtkInformationVector*  outputVector)
+                                      vtkInformationVector** inputVector,
+                                      vtkInformationVector*  outputVector)
 {
   if ( m_points.IsNull() )
   {
@@ -106,7 +106,7 @@ int asiVisu_PointsSource::RequestData(vtkInformation*        request,
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK point.
 vtkIdType asiVisu_PointsSource::registerGridPoint(const gp_Pnt& point,
-                                                vtkPolyData*  polyData)
+                                                  vtkPolyData*  polyData)
 {
   // Access necessary arrays
   vtkPoints* points = polyData->GetPoints();
@@ -124,7 +124,7 @@ vtkIdType asiVisu_PointsSource::registerGridPoint(const gp_Pnt& point,
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
 vtkIdType asiVisu_PointsSource::registerVertex(const vtkIdType n,
-                                             vtkPolyData*    polyData)
+                                               vtkPolyData*    polyData)
 {
   std::vector<vtkIdType> nodes;
   nodes.push_back(n);

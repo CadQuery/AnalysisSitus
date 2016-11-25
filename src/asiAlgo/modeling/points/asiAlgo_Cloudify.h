@@ -11,8 +11,11 @@
 // A-Situs includes
 #include <asiAlgo.h>
 
-// Geometry includes
-#include <asiAlgo_PointCloud.h>
+// Qr includes
+#include <QrGeom3D_PositionCloud.h>
+
+// Active Data includes
+#include <ActAPI_IAlgorithm.h>
 
 // OCCT includes
 #include <BRepAdaptor_Surface.hxx>
@@ -33,12 +36,12 @@ public:
 public:
 
   asiAlgo_EXPORT bool
-    Sample_Faces(const TopoDS_Shape&       model,
-                 Handle(asiAlgo_PointCloud)& point_cloud);
+    Sample_Faces(const TopoDS_Shape& model,
+                 QrPtr<pcloud>&      point_cloud);
 
   asiAlgo_EXPORT bool
-    Sample_Facets(const TopoDS_Shape&       model,
-                  Handle(asiAlgo_PointCloud)& point_cloud);
+    Sample_Facets(const TopoDS_Shape& model,
+                  QrPtr<pcloud>&      point_cloud);
 
 protected:
 

@@ -185,8 +185,8 @@ void asiEngine_IV::Clean_Points2d()
 //! \param name   [in] name to set (auto-generated if empty).
 //! \return Point Set Node.
 Handle(asiData_IVPointSetNode)
-  asiEngine_IV::Create_PointSet(const Handle(asiAlgo_PointCloud)& points,
-                                const TCollection_AsciiString&    name)
+  asiEngine_IV::Create_PointSet(const Handle(asiAlgo_PointCloud<double>)& points,
+                                const TCollection_AsciiString&            name)
 {
   // Access Model and parent Node
   Handle(asiData_IVPointsNode) IV_Parent = m_model->GetIVNode()->Points();

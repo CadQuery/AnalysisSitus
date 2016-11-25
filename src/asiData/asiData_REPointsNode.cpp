@@ -60,11 +60,11 @@ void asiData_REPointsNode::SetName(const TCollection_ExtendedString& theName)
 //-----------------------------------------------------------------------------
 
 //! \return stored point cloud.
-Handle(asiAlgo_PointCloud) asiData_REPointsNode::GetPoints() const
+QrPtr<pcloud> asiData_REPointsNode::GetPoints() const
 {
   Handle(TColStd_HArray1OfReal)
     coords = ActParamTool::AsRealArray( this->Parameter(PID_Points) )->GetArray();
   //
-  Handle(asiAlgo_PointCloud) result = new asiAlgo_PointCloud(coords);
+  pcloud result = new pcloud(coords);
   return result;
 }

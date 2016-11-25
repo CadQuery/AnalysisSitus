@@ -11,8 +11,8 @@
 // asiData includes
 #include <asiData.h>
 
-// Geometry includes
-#include <asiAlgo_PointCloud.h>
+// Qr includes
+#include <QrGeom3D_PositionCloud.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
@@ -72,11 +72,11 @@ public:
 // Handy accessors to the stored data:
 public:
 
-  asiData_EXPORT Handle(asiAlgo_PointCloud)
+  asiData_EXPORT QrPtr<pcloud>
     GetPoints() const;
 
   asiData_EXPORT void
-    TX_SetPoints(const Handle(asiAlgo_PointCloud)& points);
+    TX_SetPoints(const QrPtr<pcloud>& points);
 
 protected:
 

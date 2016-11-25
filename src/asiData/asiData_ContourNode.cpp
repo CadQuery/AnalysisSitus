@@ -8,8 +8,8 @@
 // Own include
 #include <asiData_ContourNode.h>
 
-// Geometry includes
-#include <asiAlgo_PointCloud.h>
+// Qr includes
+#include <QrGeom3D_PositionCloud.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -180,13 +180,13 @@ TopoDS_Wire asiData_ContourNode::AsShape(const bool useCache) const
 
   // If there is no any cached B-Rep, let's build a polyline from the
   // original points
-  Handle(asiAlgo_PointCloud) points = new asiAlgo_PointCloud( this->GetCoords() );
+  QrPtr<pcloud> points = new pcloud( this->GetCoords() );
   //
-  if ( !points->GetNumOfPoints() )
+  if ( !points->NumberOfPoints() )
     return TopoDS_Wire();
 
   TopoDS_Wire   result;
-  const int     nPts    = points->GetNumOfPoints();
+  const int     nPts    = points->NumberOfPoints();
   TopoDS_Vertex V_first = BRepBuilderAPI_MakeVertex( points->GetPoint(0) );
   //
   if ( nPts == 1 )
@@ -240,8 +240,8 @@ void asiData_ContourNode::AsPointsOnFaces(TColgp_SequenceOfPnt&      points,
   Handle(HIntArray) faceIndices = this->GetFaces();
 
   // Get coordinates as point cloud
-  Handle(asiAlgo_PointCloud) pcloud = new asiAlgo_PointCloud( this->GetCoords() );
-  const int                nPts   = pcloud->GetNumOfPoints();
+  Handle(asiAlgo_PointCloud<double>) pcloud = new asiAlgo_PointCloud<double>( this->GetCoords() );
+  const int                          nPts   = pcloud->GetNumOfPoints();
   //
   for ( int p = 0; p < nPts; ++p )
   {

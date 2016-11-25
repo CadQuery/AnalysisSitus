@@ -114,7 +114,7 @@ void asiUI_JournalIV::DRAW_POINTS(const Handle(HRealArray)&      coords,
   }
   //
   Handle(asiData_IVPointSetNode)
-    points_n = asiEngine_IV(m_model).Create_PointSet( new asiAlgo_PointCloud(coords), name );
+    points_n = asiEngine_IV(m_model).Create_PointSet( new asiAlgo_PointCloud<double>(coords), name );
   //
   if ( isTx )
     m_model->CommitCommand();

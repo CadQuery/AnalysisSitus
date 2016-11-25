@@ -42,8 +42,8 @@ public:
 //---------------------------------------------------------------------------//
 
   asiEngine_EXPORT Handle(asiData_IVPointSetNode)
-    Create_PointSet(const Handle(asiAlgo_PointCloud)& points,
-                    const TCollection_AsciiString&    name);
+    Create_PointSet(const Handle(asiAlgo_PointCloud<double>)& points,
+                    const TCollection_AsciiString&            name);
 
   asiEngine_EXPORT void
     Clean_Points();

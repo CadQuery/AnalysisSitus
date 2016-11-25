@@ -105,9 +105,9 @@ void exeAsBuilt_ControlsPCloud::onLoadPoints()
   TCollection_AsciiString filename = QStr2AsciiStr(qfilename);
 
   // Load point cloud
-  Handle(asiAlgo_PointCloud)
-    cloud = new asiAlgo_PointCloud(exeAsBuilt_CommonFacilities::Instance()->Notifier,
-                                   exeAsBuilt_CommonFacilities::Instance()->Plotter);
+  Handle(asiAlgo_PointCloud<double>)
+    cloud = new asiAlgo_PointCloud<double>(exeAsBuilt_CommonFacilities::Instance()->Notifier,
+                                           exeAsBuilt_CommonFacilities::Instance()->Plotter);
   //
   if ( !cloud->Load(filename) )
   {

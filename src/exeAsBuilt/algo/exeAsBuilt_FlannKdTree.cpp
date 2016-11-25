@@ -10,7 +10,7 @@
 
 //! ctor.
 //! \param pointCloud [in] input point cloud to build a k-d tree for.
-exeAsBuilt_FlannKdTree::exeAsBuilt_FlannKdTree(const Handle(asiAlgo_PointCloud)& pointCloud)
+exeAsBuilt_FlannKdTree::exeAsBuilt_FlannKdTree(const Handle(asiAlgo_PointCloud<double>)& pointCloud)
 : Standard_Transient(), m_pointCloud(pointCloud)
 {
   const Handle(TColStd_HArray1OfReal)& coords = m_pointCloud->GetPoints();

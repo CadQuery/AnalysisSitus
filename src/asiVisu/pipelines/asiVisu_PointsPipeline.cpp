@@ -42,7 +42,7 @@ void asiVisu_PointsPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
    *  Validate input Parameters
    * =========================== */
 
-  Handle(asiAlgo_PointCloud) points = provider->GetPoints();
+  Handle(asiAlgo_PointCloud<double>) points = provider->GetPoints();
   //
   if ( points.IsNull() )
   {

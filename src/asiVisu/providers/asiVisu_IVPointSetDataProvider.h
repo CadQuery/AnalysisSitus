@@ -29,7 +29,7 @@ public:
 
 public:
 
-  asiVisu_EXPORT virtual Handle(asiAlgo_PointCloud)
+  asiVisu_EXPORT virtual Handle(asiAlgo_PointCloud<double>)
     GetPoints() const;
 
 private:

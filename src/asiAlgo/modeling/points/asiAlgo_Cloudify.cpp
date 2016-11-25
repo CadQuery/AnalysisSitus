@@ -22,25 +22,6 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 
-static Handle(asiAlgo_PointCloud) repack(const QrPtr<pcloud>& qrCloud)
-{
-  // Re-pack coordinates to the conventional persistent form
-  const std::vector<xyz>& coords = qrCloud->Points();
-  Handle(TColStd_HArray1OfReal) packed_coords = new TColStd_HArray1OfReal(0, (int) qrCloud->NumberOfPoints()*3 - 1);
-  //
-  int idx = 0;
-  for ( size_t p = 0; p < coords.size(); ++p )
-  {
-    packed_coords->ChangeValue(idx++) = coords[p].X();
-    packed_coords->ChangeValue(idx++) = coords[p].Y();
-    packed_coords->ChangeValue(idx++) = coords[p].Z();
-  }
-
-  // Set result
-  Handle(asiAlgo_PointCloud) point_cloud = new asiAlgo_PointCloud(packed_coords);
-  return point_cloud;
-}
-
 //-----------------------------------------------------------------------------
 
 //! Constructor.
@@ -60,8 +41,8 @@ asiAlgo_Cloudify::asiAlgo_Cloudify(const double         uv_step,
 //! \param model       [in]  target CAD model.
 //! \param point_cloud [out] result point cloud.
 //! \return true in case of success, false -- otherwise.
-bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape&         model,
-                                    Handle(asiAlgo_PointCloud)& point_cloud)
+bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape& model,
+                                    QrPtr<pcloud>&      point_cloud)
 {
   QrPtr<pcloud> qrCloud = new pcloud;
 
@@ -146,8 +127,6 @@ bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape&         model,
     } // Progress [end]
   }
 
-  // Convert to a persistent point cloud
-  point_cloud = repack(qrCloud);
   return true;
 }
 
@@ -157,8 +136,8 @@ bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape&         model,
 //! \param model       [in]  target CAD model to take facets from.
 //! \param point_cloud [out] result point cloud.
 //! \return true in case of success, false -- otherwise.
-bool asiAlgo_Cloudify::Sample_Facets(const TopoDS_Shape&         model,
-                                     Handle(asiAlgo_PointCloud)& point_cloud)
+bool asiAlgo_Cloudify::Sample_Facets(const TopoDS_Shape& model,
+                                     QrPtr<pcloud>&      point_cloud)
 {
   QrPtr<pcloud> qrCloud = new pcloud;
 

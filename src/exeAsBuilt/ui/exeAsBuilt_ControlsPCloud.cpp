@@ -105,11 +105,9 @@ void exeAsBuilt_ControlsPCloud::onLoadPoints()
   TCollection_AsciiString filename = QStr2AsciiStr(qfilename);
 
   // Load point cloud
-  Handle(asiAlgo_PointCloud<double>)
-    cloud = new asiAlgo_PointCloud<double>(exeAsBuilt_CommonFacilities::Instance()->Notifier,
-                                           exeAsBuilt_CommonFacilities::Instance()->Plotter);
+  Handle(asiAlgo_PointCloud<double>) cloud = new asiAlgo_PointCloud<double>;
   //
-  if ( !cloud->Load(filename) )
+  if ( !cloud->Load( filename.ToCString() ) )
   {
     std::cout << "Error: cannot load point cloud" << std::endl;
     return;
@@ -120,7 +118,7 @@ void exeAsBuilt_ControlsPCloud::onLoadPoints()
   TIMER_COUT_RESULT_MSG("Load point cloud")
 
   ActAPI_PlotterEntry IV(exeAsBuilt_CommonFacilities::Instance()->Plotter);
-  IV.DRAW_POINTS( cloud->GetPoints(), Color_White, "Scan data" );
+  IV.DRAW_POINTS( asiAlgo_PointCloud<double>::AsRealArray(cloud), Color_White, "Scan data" );
 }
 
 //-----------------------------------------------------------------------------

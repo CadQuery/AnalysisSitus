@@ -57,7 +57,7 @@ Handle(asiAlgo_PointCloud<double>) asiVisu_ContourPointsDataProvider::GetPoints(
     coords->SetValue( v*3 + 2, P.Z() );
   }
   //
-  return new asiAlgo_PointCloud<double>(coords);
+  return asiAlgo_PointCloud<double>::AsPointCloud(coords);
 }
 
 //-----------------------------------------------------------------------------

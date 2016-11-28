@@ -42,7 +42,7 @@ Handle(asiAlgo_PointCloud<double>) asiVisu_IVPointSet2dDataProvider::GetPoints()
     coords3d->ChangeValue(coordidx3d + 2) = 0.0;
   }
 
-  return new asiAlgo_PointCloud<double>(coords3d);
+  return asiAlgo_PointCloud<double>::AsPointCloud(coords3d);
 }
 
 //-----------------------------------------------------------------------------

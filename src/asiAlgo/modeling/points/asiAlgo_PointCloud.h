@@ -1,0 +1,91 @@
+//-----------------------------------------------------------------------------
+// Created on: 28 November 2016
+// Created by: Sergey SLYADNEV
+//-----------------------------------------------------------------------------
+// Web: http://dev.opencascade.org/
+//-----------------------------------------------------------------------------
+
+#ifndef asiAlgo_PointCloud_h
+#define asiAlgo_PointCloud_h
+
+// A-Situs includes
+#include <asiAlgo.h>
+
+// OCCT includes
+#include <Standard_Type.hxx>
+#include <TColStd_HArray1OfReal.hxx>
+
+// STL includes
+#include <vector>
+
+//-----------------------------------------------------------------------------
+
+//! Simple point cloud.
+template <typename TCoordType>
+class asiAlgo_PointCloud : public Standard_Transient
+{
+public:
+
+  static Handle(TColStd_HArray1OfReal)
+    AsRealArray(const Handle(asiAlgo_PointCloud<double>)& pointCloud)
+  {
+    Handle(TColStd_HArray1OfReal)
+      result = new TColStd_HArray1OfReal(0, (int) pointCloud->ChangeCoords().size() - 1);
+    //
+    for ( int i = result->Lower(); i <= result->Upper(); ++i )
+      result->ChangeValue(i) = pointCloud->ChangeCoords()[i];
+
+    return result;
+  }
+
+  static Handle(asiAlgo_PointCloud<double>)
+    AsPointCloud(const Handle(TColStd_HArray1OfReal)& arr)
+  {
+    Handle(asiAlgo_PointCloud<double>) result = new asiAlgo_PointCloud<double>;
+    //
+    for ( int i = arr->Lower(); i <= arr->Upper(); ++i )
+      result->ChangeCoords().push_back( arr->Value(i) );
+
+    return result;
+  }
+
+public:
+
+  asiAlgo_EXPORT
+    asiAlgo_PointCloud();
+
+  asiAlgo_EXPORT
+    asiAlgo_PointCloud(const std::vector<TCoordType>& coords);
+
+public:
+
+  asiAlgo_EXPORT int
+    GetNumberOfPoints() const;
+
+  asiAlgo_EXPORT void
+    AddPoint(const TCoordType x, const TCoordType y, const TCoordType z);
+
+  asiAlgo_EXPORT void
+    GetPoint(const int pointIndex, TCoordType& x, TCoordType& y, TCoordType& z) const;
+
+  asiAlgo_EXPORT const std::vector<TCoordType>&
+    GetCoords() const;
+
+  asiAlgo_EXPORT std::vector<TCoordType>&
+    ChangeCoords();
+
+public:
+
+  asiAlgo_EXPORT bool
+    Load(const char* filename);
+
+  asiAlgo_EXPORT bool
+    SaveAs(const char* filename) const;
+
+protected:
+
+  std::vector<TCoordType> m_coords; //!< Coordinates of a point cloud.
+
+};
+
+#endif

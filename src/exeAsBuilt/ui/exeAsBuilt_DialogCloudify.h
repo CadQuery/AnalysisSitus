@@ -14,6 +14,10 @@
 // asiUI includes
 #include <asiUI_LineEdit.h>
 
+// Active Data includes
+#include <ActAPI_IPlotter.h>
+#include <ActAPI_IProgressNotifier.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QDialog>

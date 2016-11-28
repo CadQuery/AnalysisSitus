@@ -9,16 +9,15 @@
 #define exeAsBuilt_FlannKdTree_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
-
-// Qr includes
-#include <QrGeom3D_PositionCloud.h>
+#include <asiAlgo_PointCloud.h>
 
 // FLANN includes
 #include <flann/flann.h>
 
 // OCCT includes
 #include <Standard_Type.hxx>
+
+DEFINE_STANDARD_HANDLE(exeAsBuilt_FlannKdTree, Standard_Transient)
 
 //! Shared structure representing a k-d tree for a three-dimensional point
 //! cloud. This class is the "experience box" for FLANN.
@@ -27,16 +26,16 @@ class exeAsBuilt_FlannKdTree : public Standard_Transient
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTIEXT(exeAsBuilt_FlannKdTree, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(exeAsBuilt_FlannKdTree, Standard_Transient)
 
 public:
 
-  exeAsBuilt_FlannKdTree(const QrPtr<pcloud>& pointCloud);
+  exeAsBuilt_FlannKdTree(const Handle(asiAlgo_PointCloud<double>)& pointCloud);
 
 protected:
 
   //! Working point cloud.
-  QrPtr<pcloud> m_pointCloud;
+  Handle(asiAlgo_PointCloud<double>) m_pointCloud;
 
   //! FLANN parameters.
   FLANNParameters m_flannParams;

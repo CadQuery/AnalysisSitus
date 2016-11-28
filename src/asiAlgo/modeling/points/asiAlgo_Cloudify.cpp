@@ -11,9 +11,6 @@
 // Geometry includes
 #include <asiAlgo_ClassifyPointFace.h>
 
-// Qr includes
-#include <QrGeom3D_PositionCloud.h>
-
 // OCCT includes
 #include <BRep_Tool.hxx>
 #include <BRepTools.hxx>
@@ -41,10 +38,10 @@ asiAlgo_Cloudify::asiAlgo_Cloudify(const double         uv_step,
 //! \param model       [in]  target CAD model.
 //! \param point_cloud [out] result point cloud.
 //! \return true in case of success, false -- otherwise.
-bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape& model,
-                                    QrPtr<pcloud>&      point_cloud)
+bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape&                 model,
+                                    Handle(asiAlgo_PointCloud<double>)& point_cloud)
 {
-  QrPtr<pcloud> qrCloud = new pcloud;
+  point_cloud = new asiAlgo_PointCloud<double>;
 
   { // Progress [begin]
     TopTools_IndexedMapOfShape M;
@@ -113,7 +110,7 @@ bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape& model,
          if ( pmc & Membership_InOn )
          {
            gp_Pnt P = bas.Value(u, v);
-           qrCloud->AddPoint( xyz( P.X(), P.Y(), P.Z() ) );
+           point_cloud->AddPoint( P.X(), P.Y(), P.Z() );
          }
 
          v += vStep;
@@ -136,10 +133,10 @@ bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape& model,
 //! \param model       [in]  target CAD model to take facets from.
 //! \param point_cloud [out] result point cloud.
 //! \return true in case of success, false -- otherwise.
-bool asiAlgo_Cloudify::Sample_Facets(const TopoDS_Shape& model,
-                                     QrPtr<pcloud>&      point_cloud)
+bool asiAlgo_Cloudify::Sample_Facets(const TopoDS_Shape&                 model,
+                                     Handle(asiAlgo_PointCloud<double>)& point_cloud)
 {
-  QrPtr<pcloud> qrCloud = new pcloud;
+  point_cloud = new asiAlgo_PointCloud<double>;
 
   // Constants
   const double lower = 0.0, upper = 1.0;
@@ -201,7 +198,7 @@ bool asiAlgo_Cloudify::Sample_Facets(const TopoDS_Shape& model,
 
           gp_XYZ P = r[0] + beta*(r[1] + alpha*(r[2] - r[1]) - r[0]);
           //
-          qrCloud->AddPoint( xyz( P.X(), P.Y(), P.Z() ) );
+          point_cloud->AddPoint( P.X(), P.Y(), P.Z() );
 
           beta += m_fLinStep;
         }
@@ -211,8 +208,6 @@ bool asiAlgo_Cloudify::Sample_Facets(const TopoDS_Shape& model,
     }
   }
 
-  // Convert to a persistent point cloud
-  point_cloud = repack(qrCloud);
   return true;
 }
 

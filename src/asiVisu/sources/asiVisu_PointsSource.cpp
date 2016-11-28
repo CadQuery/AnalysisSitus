@@ -71,7 +71,7 @@ int asiVisu_PointsSource::RequestData(vtkInformation*        request,
     return 0;
   }
 
-  Handle(TColStd_HArray1OfReal) coords = m_points->GetPoints();
+  Handle(TColStd_HArray1OfReal) coords = asiAlgo_PointCloud<double>::AsRealArray(m_points);
   //
   if ( coords.IsNull() )
   {

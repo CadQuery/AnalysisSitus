@@ -143,7 +143,7 @@ void exeAsBuilt_DialogCloudify::onPerform()
   // Cloud builder
   asiAlgo_Cloudify cloud_builder(linStep, m_progress, m_plotter);
   //
-  Handle(asiAlgo_PointCloud) cloud;
+  Handle(asiAlgo_PointCloud<double>) cloud;
   if ( !cloud_builder.Sample_Faces(part, cloud) )
   {
     std::cout << "Error: cannot build point cloud" << std::endl;
@@ -154,7 +154,7 @@ void exeAsBuilt_DialogCloudify::onPerform()
   TIMER_COUT_RESULT_MSG("Cloudification")
 
   ActAPI_PlotterEntry IV(m_plotter);
-  IV.DRAW_POINTS( cloud->GetPoints(), Color_Red, "Scanner imitation" );
+  IV.DRAW_POINTS( asiAlgo_PointCloud<double>::AsRealArray(cloud), Color_Red, "Scanner imitation" );
 
   // Select filename for the output file
   QString
@@ -164,7 +164,7 @@ void exeAsBuilt_DialogCloudify::onPerform()
   //
   TCollection_AsciiString filename = QStr2AsciiStr(qfilename);
 
-  if ( !cloud->SaveAs(filename) )
+  if ( !cloud->SaveAs( filename.ToCString() ) )
   {
     std::cout << "Error: cannot save file" << std::endl;
   }

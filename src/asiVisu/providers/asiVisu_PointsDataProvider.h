@@ -11,8 +11,8 @@
 // A-Situs visualization includes
 #include <asiVisu_DataProvider.h>
 
-// Geometry includes
-#include <QrGeom3D_PositionCloud.h>
+// asiAlgo includes
+#include <asiAlgo_PointCloud.h>
 
 DEFINE_STANDARD_HANDLE(asiVisu_PointsDataProvider, asiVisu_DataProvider)
 
@@ -36,7 +36,7 @@ public:
 
 public:
 
-  virtual QrPtr<pcloud>
+  virtual Handle(asiAlgo_PointCloud<double>)
     GetPoints() const = 0;
 
 protected:

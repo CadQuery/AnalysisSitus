@@ -11,8 +11,8 @@
 // Visualization includes
 #include <asiVisu_Utils.h>
 
-// Qr includes
-#include <QrGeom3D_PositionCloud.h>
+// asiAlgo includes
+#include <asiAlgo_PointCloud.h>
 
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
@@ -31,7 +31,7 @@ public:
 // Kernel methods:
 public:
 
-  void SetInputPoints(const QrPtr<pcloud>& points);
+  void SetInputPoints(const Handle(asiAlgo_PointCloud<double>)& points);
 
 protected:
 
@@ -61,7 +61,7 @@ private:
 
 private:
 
-  QrPtr<pcloud> m_points; //!< Points to visualize.
+  Handle(asiAlgo_PointCloud<double>) m_points; //!< Points to visualize.
 
 };
 

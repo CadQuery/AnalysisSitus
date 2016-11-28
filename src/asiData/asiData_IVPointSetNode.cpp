@@ -65,13 +65,14 @@ Handle(asiAlgo_PointCloud<double>) asiData_IVPointSetNode::GetPoints() const
   Handle(TColStd_HArray1OfReal)
     coords = ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->GetArray();
   //
-  Handle(asiAlgo_PointCloud<double>) result = new asiAlgo_PointCloud<double>(coords);
-  return result;
+  return asiAlgo_PointCloud<double>::AsPointCloud(coords);
 }
 
 //! Sets point cloud to store.
 //! \param points [in] points to store.
 void asiData_IVPointSetNode::SetPoints(const Handle(asiAlgo_PointCloud<double>)& points)
 {
-  ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray( points.IsNull() ? NULL : points->GetPoints() );
+  Handle(TColStd_HArray1OfReal) arr = asiAlgo_PointCloud<double>::AsRealArray(points);
+  //
+  ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray( points.IsNull() ? NULL : arr );
 }

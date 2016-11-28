@@ -13,9 +13,8 @@
 exeAsBuilt_FlannKdTree::exeAsBuilt_FlannKdTree(const Handle(asiAlgo_PointCloud<double>)& pointCloud)
 : Standard_Transient(), m_pointCloud(pointCloud)
 {
-  const Handle(TColStd_HArray1OfReal)& coords = m_pointCloud->GetPoints();
-  const int                            numPts = m_pointCloud->GetNumOfPoints();
-  double*                             pCoords = &coords->ChangeFirst();
+  const int numPts = m_pointCloud->GetNumberOfPoints();
+  double*  pCoords = &m_pointCloud->ChangeCoords()[0];
 
   // Initialize FLANN parameters
   m_flannParams           = DEFAULT_FLANN_PARAMETERS;
@@ -26,6 +25,6 @@ exeAsBuilt_FlannKdTree::exeAsBuilt_FlannKdTree(const Handle(asiAlgo_PointCloud<d
 
   // Build index
   float speedup;
-  m_flannIndex = flann_build_index(pCoords, numPts, 3, &speedup, &m_flannParams)
+  //m_flannIndex = flann_build_index(pCoords, numPts, 3, &speedup, &m_flannParams)
 
 }

@@ -12,6 +12,7 @@
 #include <asiVisu_DisplayMode.h>
 #include <asiVisu_ShapeDataProvider.h>
 #include <asiVisu_ShapePipeline.h>
+#include <asiVisu_ShapeRobustPipeline.h>
 
 // VTK includes
 #include <vtkCellData.h>
@@ -30,14 +31,14 @@
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
 //! Convert integer value to a color.
-//! \param theColor [in] integer value.
+//! \param color [in] integer value.
 //! \return converted value
-static QColor IntToColor(const int theColor)
+static QColor IntToColor(const int color)
 {
-  unsigned char aRed   = ( theColor >> 16 ) & 0xFF;
-  unsigned char aGreen = ( theColor >>  8 ) & 0xFF;
-  unsigned char aBlue  =   theColor         & 0xFF;
-  return QColor(aRed, aGreen, aBlue);
+  unsigned char red   = ( color >> 16 ) & 0xFF;
+  unsigned char green = ( color >>  8 ) & 0xFF;
+  unsigned char blue  =   color         & 0xFF;
+  return QColor(red, green, blue);
 }
 
 //! Creates a Presentation object for the passed Part Node.
@@ -76,6 +77,20 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
   this->assignDataProvider ( Pipeline_Contour, DP );
+
+  /* ==================================
+   *  Pipeline for robust presentation
+   * ================================== */
+
+  // Create pipeline for highlighting
+  Handle(asiVisu_ShapeRobustPipeline)
+    robust_pl = new asiVisu_ShapeRobustPipeline();
+  //
+  this->addPipeline        ( Pipeline_Robust, robust_pl );
+  this->assignDataProvider ( Pipeline_Robust, DP );
+
+  // Hide by default
+  this->DoRobust(false);
 
   /* ======================
    *  Pipeline for picking
@@ -202,6 +217,29 @@ void asiVisu_GeomPrs::DoVertices(const bool on) const
   on ? pl->SharedVerticesOn() : pl->SharedVerticesOff();
 }
 
+//! Enables/disables visualization of robust presentation.
+//! \param on [in] true/false.
+void asiVisu_GeomPrs::DoRobust(const bool on) const
+{
+  // Toggle robust pipeline
+  Handle(asiVisu_ShapeRobustPipeline)
+    pl = Handle(asiVisu_ShapeRobustPipeline)::DownCast( this->GetPipeline(Pipeline_Robust) );
+  //
+  pl->Actor()->SetVisibility( on ? 1 : 0 );
+
+  // Toggle main pipeline
+  Handle(asiVisu_ShapePipeline)
+    main_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  //
+  main_pl->Actor()->SetVisibility( on ? 0 : 1 );
+
+  // Toggle contour pipeline
+  Handle(asiVisu_ShapePipeline)
+    contour_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
+  //
+  contour_pl->Actor()->SetVisibility( on ? 0 : 1 );
+}
+
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
@@ -217,7 +255,7 @@ void asiVisu_GeomPrs::afterInitPipelines()
   const Handle(asiVisu_ShapePipeline)&
     pick_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() ),
     detect_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
-
+  //
   const Handle(asiVisu_ShapeDataProvider)&
     pick_dp = Handle(asiVisu_ShapeDataProvider)::DownCast( this->dataProviderPick() ),
     detect_dp = Handle(asiVisu_ShapeDataProvider)::DownCast( this->dataProviderDetect() );

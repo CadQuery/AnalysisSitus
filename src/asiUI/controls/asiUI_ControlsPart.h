@@ -58,6 +58,7 @@ public slots:
   void onSewing        ();
   void onMaximizeFaces ();
   //
+  void onShowRobust    ();
   void onShowVertices  ();
   void onShowNormals   ();
   void onSelectFaces   ();
@@ -68,6 +69,8 @@ signals:
   void partLoaded       ();
   void partSaved        ();
   void partModified     ();
+  void robustOn         ();
+  void robustOff        ();
   void verticesOn       ();
   void verticesOff      ();
   void normalsOn        ();
@@ -94,6 +97,7 @@ private:
     QPushButton* pSewing;        //!< Performs sewing.
     QPushButton* pMaximizeFaces; //!< Performs face maximization.
     //
+    QPushButton* pShowRobust;    //!< Shows robust presentation.
     QPushButton* pShowVertices;  //!< Shows vertices of the model.
     QPushButton* pShowNormals;   //!< Shows normals for faces.
     QPushButton* pSelectFaces;   //!< Enables selection by faces.
@@ -111,6 +115,7 @@ private:
                   pSewing        (NULL),
                   pMaximizeFaces (NULL),
                   //
+                  pShowRobust    (NULL),
                   pShowVertices  (NULL),
                   pShowNormals   (NULL),
                   pSelectFaces   (NULL),
@@ -131,6 +136,7 @@ private:
       delete pSewing;        pSewing        = NULL;
       delete pMaximizeFaces; pMaximizeFaces = NULL;
       //
+      delete pShowRobust;    pShowRobust    = NULL;
       delete pShowVertices;  pShowVertices  = NULL;
       delete pShowNormals;   pShowNormals   = NULL;
       delete pSelectFaces;   pSelectFaces   = NULL;

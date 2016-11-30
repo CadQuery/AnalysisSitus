@@ -27,8 +27,23 @@ class asiVisu_ShapeDataSource : public IVtkTools_ShapeDataSource
 {
 public:
 
+  //! Type of faceter.
+  enum FaceterType
+  {
+    Faceter_Standard = 1,
+    Faceter_Robust
+  };
+
+public:
+
   vtkTypeMacro(asiVisu_ShapeDataSource, IVtkTools_ShapeDataSource);
   static asiVisu_ShapeDataSource* New();
+
+public:
+
+  void SetFaceter(const FaceterType faceter) { m_faceterType = faceter; }
+
+  FaceterType GetFaceter() const { return m_faceterType; }
 
 protected: //! @name Interface to override
 
@@ -53,6 +68,10 @@ private:
 
   asiVisu_ShapeDataSource (const asiVisu_ShapeDataSource&);
   asiVisu_ShapeDataSource& operator= (const asiVisu_ShapeDataSource&);
+
+protected:
+
+  FaceterType m_faceterType; //!< Type of faceter to use.
 
 };
 

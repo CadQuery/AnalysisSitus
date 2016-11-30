@@ -79,6 +79,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   m_widgets.pSewing        = new QPushButton("Sewing");
   m_widgets.pMaximizeFaces = new QPushButton("Maximize faces");
   //
+  m_widgets.pShowRobust    = new QPushButton("Show die hard presentation");
   m_widgets.pShowVertices  = new QPushButton("Show vertices");
   m_widgets.pShowNormals   = new QPushButton("Show normals");
   m_widgets.pSelectFaces   = new QPushButton("Select faces");
@@ -96,12 +97,14 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   m_widgets.pSewing        -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pMaximizeFaces -> setMinimumWidth(BTN_MIN_WIDTH);
   //
+  m_widgets.pShowRobust    -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pShowVertices  -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pShowNormals   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectFaces   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectEdges   -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Other configurations
+  m_widgets.pShowRobust->setCheckable(true);
   m_widgets.pShowVertices->setCheckable(true);
 
   // Group box for data interoperability
@@ -132,6 +135,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   QGroupBox*   pVisuGroup = new QGroupBox("Visualization");
   QVBoxLayout* pVisuLay   = new QVBoxLayout(pVisuGroup);
   //
+  pVisuLay->addWidget(m_widgets.pShowRobust);
   pVisuLay->addWidget(m_widgets.pShowVertices);
   pVisuLay->addWidget(m_widgets.pShowNormals);
   pVisuLay->addWidget(m_widgets.pSelectFaces);
@@ -160,6 +164,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   connect( m_widgets.pSewing,        SIGNAL( clicked() ), SLOT( onSewing        () ) );
   connect( m_widgets.pMaximizeFaces, SIGNAL( clicked() ), SLOT( onMaximizeFaces () ) );
   //
+  connect( m_widgets.pShowRobust,    SIGNAL( clicked() ), SLOT( onShowRobust    () ) );
   connect( m_widgets.pShowVertices,  SIGNAL( clicked() ), SLOT( onShowVertices  () ) );
   connect( m_widgets.pShowNormals,   SIGNAL( clicked() ), SLOT( onShowNormals   () ) );
   connect( m_widgets.pSelectFaces,   SIGNAL( clicked() ), SLOT( onSelectFaces   () ) );
@@ -414,6 +419,17 @@ void asiUI_ControlsPart::onMaximizeFaces()
 
   // Notify
   emit partModified();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Switches visualization of robust presentation.
+void asiUI_ControlsPart::onShowRobust()
+{
+  const bool isOn = m_widgets.pShowRobust->isChecked();
+
+  // Notify
+  isOn ? emit robustOn() : emit robustOff();
 }
 
 //-----------------------------------------------------------------------------

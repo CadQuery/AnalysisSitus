@@ -8,6 +8,9 @@
 // Own include
 #include <asiUI_ControlsPartListener.h>
 
+// asiVisu includes
+#include <asiVisu_GeomPrs.h>
+
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting all necessary facilities.
@@ -46,6 +49,12 @@ void asiUI_ControlsPartListener::Connect()
   connect( m_wControls, SIGNAL ( partModified() ),
            this,        SLOT   ( onPartModified() ) );
   //
+  connect( m_wControls, SIGNAL ( robustOn() ),
+           this,        SLOT   ( onRobustOn() ) );
+  //
+  connect( m_wControls, SIGNAL ( robustOff() ),
+           this,        SLOT   ( onRobustOff() ) );
+  //
   connect( m_wControls, SIGNAL ( verticesOn() ),
            this,        SLOT   ( onVerticesOn() ) );
   //
@@ -82,6 +91,28 @@ void asiUI_ControlsPartListener::onPartModified()
   //
   m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, false);
   m_wViewerPart->PrsMgr()->InitializePickers();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on enabling visualization of robust presentation.
+void asiUI_ControlsPartListener::onRobustOn()
+{
+  Handle(asiVisu_GeomPrs)
+    prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+  //
+  prs->DoRobust(true);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on disabling visualization of robust presentation.
+void asiUI_ControlsPartListener::onRobustOff()
+{
+  Handle(asiVisu_GeomPrs)
+    prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+  //
+  prs->DoRobust(false);
 }
 
 //-----------------------------------------------------------------------------

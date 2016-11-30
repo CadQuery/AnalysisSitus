@@ -50,12 +50,12 @@
 //! \param isTrianglesMode   [in] indicates whether to show triangulation or not.
 //! \param pSource           [in] Data Source for secondary pipelines.
 asiVisu_ShapePipeline::asiVisu_ShapePipeline(const bool            isOCCTColorScheme,
-                                         const bool            isBound2Node,
-                                         const bool            isSecondary,
-                                         const bool            isTrianglesMode,
-                                         vtkPolyDataAlgorithm* pSource)
+                                             const bool            isBound2Node,
+                                             const bool            isSecondary,
+                                             const bool            isTrianglesMode,
+                                             vtkPolyDataAlgorithm* pSource)
 //
-: asiVisu_Pipeline      ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
+: asiVisu_Pipeline   ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
   m_bOCCTColorScheme ( isOCCTColorScheme ), // Native OCCT color scheme (as in Draw)
   m_bIsBound2Node    ( isBound2Node ),
   m_bIsSecondary     ( isSecondary ),
@@ -192,7 +192,7 @@ void asiVisu_ShapePipeline::SetInput(const Handle(asiVisu_DataProvider)& theData
       // other transformation filter in our Shape Pipeline as it will totally
       // ruin the picker's correctness (when VIS picker is active)
       aShape = asiAlgo_Utils::ApplyTransformation(aShape, aPosX, aPosY, aPosZ,
-                                               anAngA, anAngB, anAngC, false);
+                                                  anAngA, anAngB, anAngC, false);
 
       static int ShapeID = 0; ++ShapeID;
       Handle(IVtkOCC_Shape) aShapeIntoVtk = new IVtkOCC_Shape(aShape);

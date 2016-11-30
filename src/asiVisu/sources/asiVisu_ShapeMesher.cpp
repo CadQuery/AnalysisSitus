@@ -161,8 +161,8 @@ void asiVisu_ShapeMesher::addFreeVertices()
 void asiVisu_ShapeMesher::addEdges()
 {
   TopTools_IndexedDataMapOfShapeListOfShape anEdgesMap;
-  TopExp::MapShapesAndAncestors (GetShapeObj()->GetShape(), 
-                                 TopAbs_EDGE, 
+  TopExp::MapShapesAndAncestors (GetShapeObj()->GetShape(),
+                                 TopAbs_EDGE,
                                  TopAbs_FACE,
                                  anEdgesMap);
 
@@ -260,12 +260,12 @@ void asiVisu_ShapeMesher::addVertex (const TopoDS_Vertex& theVertex,
 // Purpose  : 
 //================================================================
 void asiVisu_ShapeMesher::processPolyline (Standard_Integer          theNbNodes,
-                                      const TColgp_Array1OfPnt&      thePoints,
-                                      const TColStd_Array1OfInteger& thePointIds,
-                                      const IVtk_IdType              theOcctId,
-                                      bool                           theNoTransform,
-                                      gp_Trsf                        theTransformation,
-                                      const IVtk_MeshType            theMeshType)
+                                           const TColgp_Array1OfPnt&      thePoints,
+                                           const TColStd_Array1OfInteger& thePointIds,
+                                           const IVtk_IdType              theOcctId,
+                                           bool                           theNoTransform,
+                                           gp_Trsf                        theTransformation,
+                                           const IVtk_MeshType            theMeshType)
 {
   if (theNbNodes < 2)
   {
@@ -309,7 +309,7 @@ void asiVisu_ShapeMesher::addEdge (const TopoDS_Edge&  theEdge,
   }
 
   // Two discrete representations of an OCCT edge are possible:
-  // 1. Polygon on trinagulation - holds Ids of points
+  // 1. Polygon on triangulation - holds Ids of points
   // contained in Poly_Triangulation object
   Handle(Poly_PolygonOnTriangulation) aPolyOnTriangulation;
   Handle(Poly_Triangulation) aTriangulation;

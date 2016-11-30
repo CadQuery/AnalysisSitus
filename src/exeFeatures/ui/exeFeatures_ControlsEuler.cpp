@@ -61,8 +61,36 @@ public:
 
 private:
 
+  static void dumpHistoryOnFaces(const TopTools_IndexedMapOfShape& facesBefore,
+                                 const Handle(feature_euler)&      OP)
+  {
+    // Dump modification history
+    for ( int f = 1; f <= facesBefore.Extent(); ++f )
+    {
+      const TopoDS_Shape&     face_before = facesBefore(f);
+      TCollection_AsciiString old_addr    = asiAlgo_Utils::ShapeAddr(face_before).c_str();
+      old_addr.LowerCase();
+
+      // Attempt to find its image
+      TopoDS_Shape            face_after = OP->GetContext()->Value(face_before);
+      TCollection_AsciiString new_addr   = asiAlgo_Utils::ShapeAddr(face_after).c_str();
+      new_addr.LowerCase();
+
+      if ( !old_addr.IsEqual(new_addr) )
+      {
+        std::cout << "  [M]: " << old_addr.ToCString() << " -> "
+                  << ( new_addr.IsEmpty() ? "null" : new_addr.ToCString() )
+                  << std::endl;
+      }
+    }
+  }
+
   static void perform(const EulerOp op)
   {
+    /* =========
+     *  Prepare
+     * ========= */
+
     const Handle(asiEngine_Model)&             model  = exeFeatures_CommonFacilities::Instance()->Model;
     const vtkSmartPointer<asiVisu_PrsManager>& prsMgr = exeFeatures_CommonFacilities::Instance()->Prs.Part;
     Handle(asiData_PartNode)                   part_n;
@@ -80,75 +108,80 @@ private:
       return;
     }
 
-    // Perform modification
-    model->OpenCommand();
-    {
-      TIMER_NEW
-      TIMER_GO
+    TopoDS_Shape result = part;
 
-      TopoDS_Shape result = part;
+    // Get all faces BEFORE modification
+    TopTools_IndexedMapOfShape facesBefore;
+    TopExp::MapShapes(result, TopAbs_FACE, facesBefore);
+
+    TIMER_NEW
+    TIMER_GO
+
+    /* =======================
+     *  KEV: kill-edge-vertex
+     * ======================= */
+
+    if ( op == EulerOp_KEV )
+    {
+      Handle(feature_euler)
+        OP = new feature_euler_KEV(result, subshapes, NULL, NULL);
       //
+      if ( !OP->Perform() )
+      {
+        std::cout << "Error: Euler operation failed" << std::endl;
+        return;
+      }
+
+      // Update result
+      result = OP->GetResult();
+
+      // Dump history
+      dumpHistoryOnFaces(facesBefore, OP);
+    }
+
+    /* =====================
+     *  KEF: kill-edge-face
+     * ===================== */
+
+    else if ( op == EulerOp_KEF )
+    {
       for ( int ss = 1; ss <= subshapes.Extent(); ++ss )
       {
         const TopoDS_Shape& current = subshapes(ss);
         //
-        if ( op == EulerOp_KEV && current.ShapeType() != TopAbs_EDGE )
-        {
-          std::cout << "Warning: selected shape is not an edge: SKIPPED" << std::endl;
-          continue;
-        }
-        else if ( op == EulerOp_KEF && current.ShapeType() != TopAbs_FACE )
+        if ( current.ShapeType() != TopAbs_FACE )
         {
           std::cout << "Warning: selected shape is not a face: SKIPPED" << std::endl;
           continue;
         }
 
-        // Get all faces BEFORE modification
-        TopTools_IndexedMapOfShape facesBefore;
-        TopExp::MapShapes(result, TopAbs_FACE, facesBefore);
-
-        // Perform Euler operation
-        Handle(feature_euler) OP;
-        //
-        if ( op == EulerOp_KEV )
-          OP = new feature_euler_KEV(result, TopoDS::Edge(current), NULL, NULL);
-        else if ( op == EulerOp_KEF )
+        Handle(feature_euler)
           OP = new feature_euler_KEF(result, TopoDS::Face(current), NULL, NULL);
-
+        //
         if ( !OP->Perform() )
         {
           std::cout << "Error: Euler operation failed" << std::endl;
-          exeFeatures_CommonFacilities::Instance()->Model->AbortCommand();
           return;
         }
 
         // Update result
         result = OP->GetResult();
 
-        // Dump modification history
-        for ( int f = 1; f <= facesBefore.Extent(); ++f )
-        {
-          const TopoDS_Shape&     face_before = facesBefore(f);
-          TCollection_AsciiString old_addr    = asiAlgo_Utils::ShapeAddr(face_before).c_str();
-          old_addr.LowerCase();
-
-          // Attempt to find its image
-          TopoDS_Shape            face_after = OP->GetContext()->Value(face_before);
-          TCollection_AsciiString new_addr   = asiAlgo_Utils::ShapeAddr(face_after).c_str();
-          new_addr.LowerCase();
-
-          if ( !old_addr.IsEqual(new_addr) )
-          {
-            std::cout << "  [M]: " << old_addr.ToCString() << " -> "
-                      << ( new_addr.IsEmpty() ? "null" : new_addr.ToCString() )
-                      << std::endl;
-          }
-        }
+        // Dump history
+        dumpHistoryOnFaces(facesBefore, OP);
       }
+    }
 
-      TIMER_FINISH
-      TIMER_COUT_RESULT_MSG("Euler operation")
+    /* ==========
+     *  Finalize
+     * ========== */
 
+    TIMER_FINISH
+    TIMER_COUT_RESULT_MSG("Euler operation")
+
+    // Perform modification
+    model->OpenCommand();
+    {
       part_n->SetShape(result);
     }
     model->CommitCommand();
@@ -161,6 +194,7 @@ private:
     // Actualize
     prsMgr->InitializePickers();
     prsMgr->Actualize( part_n.get() );
+    prsMgr->SetSelectionMode(SelectionMode_None);
   }
 
 };

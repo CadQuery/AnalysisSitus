@@ -9,7 +9,6 @@
 #define asiVisu_ShapePipeline_h
 
 // A-Situs includes
-#include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 
 // OCCT includes

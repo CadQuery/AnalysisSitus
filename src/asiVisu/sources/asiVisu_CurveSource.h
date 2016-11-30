@@ -46,33 +46,39 @@ public:
     SetInputCurve(const Handle(Geom_Curve)& curve,
                   const double              first,
                   const double              last,
-                  const asiVisu_Orientation    ori = VisuOri_Internal);
+                  const asiVisu_Orientation ori = VisuOri_Internal);
 
   bool
     SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
                     const double                first,
                     const double                last,
-                    const asiVisu_Orientation      ori = VisuOri_Internal);
+                    const asiVisu_Orientation   ori = VisuOri_Internal);
 
   void
     SetInputArrays(const Handle(HRealArray)& xCoords,
                    const Handle(HRealArray)& yCoords,
                    const Handle(HRealArray)& zCoords,
-                   const asiVisu_Orientation    ori = VisuOri_Undefined);
+                   const asiVisu_Orientation ori = VisuOri_Undefined);
+
+  void
+    GetInputArrays(Handle(HRealArray)&  xCoords,
+                   Handle(HRealArray)&  yCoords,
+                   Handle(HRealArray)&  zCoords,
+                   asiVisu_Orientation& ori) const;
 
 public:
 
-  inline void   SetTipSize    (const double size)       { m_fOriTipSize = size; }
-  inline double GetTipSize    ()                  const { return m_fOriTipSize; }
+  void          SetTipSize    (const double size)       { m_fOriTipSize = size; }
+  double        GetTipSize    ()                  const { return m_fOriTipSize; }
 
-  inline void   SetTipTangent (const gp_Vec& vec)       { m_oriT = vec; }
-  inline gp_Vec GetTipTangent ()                  const { return m_oriT; }
+  void          SetTipTangent (const gp_Vec& vec)       { m_oriT = vec; }
+  const gp_Vec& GetTipTangent ()                  const { return m_oriT; }
 
-  inline void   SetTipNorm    (const gp_Vec& vec)       { m_oriN = vec; }
-  inline gp_Vec GetTipNorm    ()                  const { return m_oriN; }
+  void          SetTipNorm    (const gp_Vec& vec)       { m_oriN = vec; }
+  const gp_Vec& GetTipNorm    ()                  const { return m_oriN; }
 
-  inline void   SetPedigreeId (const int pid)           { m_iPedigreeId = pid; }
-  inline int    GetPedigreeId ()                  const { return m_iPedigreeId; }
+  void          SetPedigreeId (const int pid)           { m_iPedigreeId = pid; }
+  int           GetPedigreeId ()                  const { return m_iPedigreeId; }
 
 protected:
 
@@ -124,9 +130,9 @@ private:
 private:
 
   asiVisu_Orientation m_ori;         //!< Curve orientation.
-  double           m_fOriTipSize; //!< Size of orientation tip (calculated externally).
-  gp_Vec           m_oriT;        //!< Orientation vector at the end point.
-  gp_Vec           m_oriN;        //!< Normal to the curve at the end point.
+  double              m_fOriTipSize; //!< Size of orientation tip (calculated externally).
+  gp_Vec              m_oriT;        //!< Orientation vector at the end point.
+  gp_Vec              m_oriN;        //!< Normal to the curve at the end point.
 
 };
 

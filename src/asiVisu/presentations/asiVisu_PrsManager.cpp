@@ -767,7 +767,17 @@ ActAPI_DataObjectIdList
   }
   else // Partial selection: for topological shapes only
   {
-    this->actualizeShapeSelectionMode();
+    try
+    {
+      this->actualizeShapeSelectionMode();
+    }
+    catch ( ... )
+    {
+#if defined COUT_DEBUG
+      cout << "Actualization of selection modes crashed" << endl;
+#endif
+      return aResult; // Nothing has been picked
+    }
 
     // PICK (!!!)
     m_shapePicker->Pick(XStart, YStart, 0);

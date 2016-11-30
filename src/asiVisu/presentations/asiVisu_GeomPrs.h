@@ -40,7 +40,8 @@ public:
   enum PipelineId
   {
     Pipeline_Main = 1,
-    Pipeline_Contour
+    Pipeline_Contour,
+    Pipeline_Robust
   };
 
 public:
@@ -61,6 +62,8 @@ public:
   asiVisu_EXPORT void DoUnColor() const;
 
   asiVisu_EXPORT void DoVertices(const bool on) const;
+
+  asiVisu_EXPORT void DoRobust(const bool on) const;
 
 public:
 

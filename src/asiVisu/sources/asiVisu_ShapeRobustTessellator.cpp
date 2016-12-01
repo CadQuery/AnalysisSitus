@@ -70,7 +70,6 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   {
     const TopoDS_Vertex&           v = TopoDS::Vertex( m_vertices(vidx) );
     const TopTools_ListOfShape edges = verticesOnEdges.FindFromKey(v);
-    const int              globalIdx = m_all.FindIndex(v);
 
     IVtk_MeshType type;
     if ( edges.IsEmpty() )
@@ -79,7 +78,7 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
       type = MT_SharedVertex;
 
     // Add vertex to the data source
-    this->addVertex(v, globalIdx, type);
+    this->addVertex(v, vidx, type);
   }
 
   /* ======================================
@@ -91,7 +90,6 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   {
     const TopoDS_Edge&             e = TopoDS::Edge( m_edges(eidx) );
     const TopTools_ListOfShape faces = edgesOnFaces.FindFromKey(e);
-    const int              globalIdx = m_all.FindIndex(e);
 
     IVtk_MeshType type;
     if ( faces.IsEmpty() )
@@ -102,7 +100,7 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
       type = MT_SharedEdge;
 
     // Add edge to the data source
-    this->addEdge(e, globalIdx, type);
+    this->addEdge(e, eidx, type);
   }
 
 }
@@ -151,7 +149,7 @@ void asiVisu_ShapeRobustTessellator::addEdge(const TopoDS_Edge&  edge,
   //
   curveSrc->GetInputArrays(xCoords, yCoords, zCoords, ori);
 
-  if ( xCoords->Length() < 2)
+  if ( xCoords->Length() < 2 )
   {
 #if defined COUT_DEBUG
     std::cout << "Error: poor edge discretization" << std::endl;

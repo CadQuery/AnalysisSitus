@@ -11,6 +11,9 @@
 // Feature includes
 #include <feature_angle.h>
 
+// OCCT includes
+#include <TopAbs_ShapeEnum.hxx>
+
 // VTK includes
 #include <vtkAbstractArray.h>
 #include <vtkColor.h>
@@ -30,6 +33,7 @@
 #include <QrCore.h>
 
 #define ARRNAME_LABELS          "Labels"
+#define ARRNAME_PIDS            "Pids"
 #define ARRNAME_COLORS          "Colors"
 #define ARRNAME_ANGLES          "Angles"
 #define ARRNAME_GROUP           "Group"
@@ -57,7 +61,9 @@ public:
 
 signals:
 
-  void vertexPicked(const int faceId, const vtkIdType);
+  void vertexPicked(const int              subShapeId,
+                    const TopAbs_ShapeEnum subShapeType,
+                    const vtkIdType        vertexId);
 
 protected:
 
@@ -144,7 +150,7 @@ protected:
       painter->GetTextProp()->SetJustificationToCentered();
       painter->GetTextProp()->BoldOff();
 
-      vtkVector2f pos = this->VertexPosition(focusedVertex);
+      vtkVector2f    pos = this->VertexPosition(focusedVertex);
       vtkStdString label = this->VertexTooltip(focusedVertex);
 
       painter->GetTextProp()->SetFontSize(12);
@@ -162,16 +168,29 @@ protected:
     this->GetGraph()->Modified();
     this->GetScene()->SetDirty(true);
 
-    // Get face ID
-    int faceIdx = -1;
-    vtkAbstractArray* labels = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_LABELS);
-    if ( labels )
+    // Get sub-shape ID
+    TopAbs_ShapeEnum shapeType   = TopAbs_SHAPE;
+    int              subShapeIdx = -1;
+    //
+    vtkAbstractArray* pids   = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_PIDS);
+    vtkAbstractArray* groups = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_GROUP);
+    //
+    if ( pids )
     {
-      std::string str = labels->GetVariantValue(focusedVertex).ToString();
-      faceIdx = QrCore::extract_int(str);
+      subShapeIdx = pids->GetVariantValue(focusedVertex).ToInt();
+    }
+    //
+    if ( groups )
+    {
+      if ( groups->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_FACE )
+        shapeType = TopAbs_FACE;
+      else if ( groups->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_EDGE )
+        shapeType = TopAbs_EDGE;
+      else if ( groups->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_VERTEX )
+        shapeType = TopAbs_VERTEX;
     }
 
-    emit vertexPicked(faceIdx, focusedVertex);
+    emit vertexPicked(subShapeIdx, shapeType, focusedVertex);
     return true;
   }
 

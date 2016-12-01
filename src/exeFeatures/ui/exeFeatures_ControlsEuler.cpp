@@ -61,24 +61,33 @@ public:
 
 private:
 
-  static void dumpHistoryOnFaces(const TopTools_IndexedMapOfShape& facesBefore,
-                                 const Handle(feature_euler)&      OP)
+  static void dumpHistoryOnSubshapes(const TopTools_IndexedMapOfShape& ssBefore,
+                                     const Handle(feature_euler)&      OP)
   {
     // Dump modification history
-    for ( int f = 1; f <= facesBefore.Extent(); ++f )
+    for ( int s = 1; s <= ssBefore.Extent(); ++s )
     {
-      const TopoDS_Shape&     face_before = facesBefore(f);
-      TCollection_AsciiString old_addr    = asiAlgo_Utils::ShapeAddr(face_before).c_str();
+      const TopoDS_Shape&     ss_before = ssBefore(s);
+      TCollection_AsciiString old_addr  = asiAlgo_Utils::ShapeAddr(ss_before).c_str();
       old_addr.LowerCase();
 
       // Attempt to find its image
-      TopoDS_Shape            face_after = OP->GetContext()->Value(face_before);
-      TCollection_AsciiString new_addr   = asiAlgo_Utils::ShapeAddr(face_after).c_str();
+      TopoDS_Shape            ss_after = OP->GetContext()->Value(ss_before);
+      TCollection_AsciiString new_addr = asiAlgo_Utils::ShapeAddr(ss_after).c_str();
       new_addr.LowerCase();
 
       if ( !old_addr.IsEqual(new_addr) )
       {
-        std::cout << "  [M]: " << old_addr.ToCString() << " -> "
+        std::cout << "  [M] ";
+
+        if ( ss_before.ShapeType() == TopAbs_FACE )
+          std::cout << "FACE: ";
+        else if ( ss_before.ShapeType() == TopAbs_EDGE )
+          std::cout << "EDGE: ";
+        else if ( ss_before.ShapeType() == TopAbs_VERTEX )
+          std::cout << "VERTEX: ";
+
+        std::cout << old_addr.ToCString() << " -> "
                   << ( new_addr.IsEmpty() ? "null" : new_addr.ToCString() )
                   << std::endl;
       }
@@ -110,6 +119,10 @@ private:
 
     TopoDS_Shape result = part;
 
+    // Get all edges BEFORE modification
+    TopTools_IndexedMapOfShape edgesBefore;
+    TopExp::MapShapes(result, TopAbs_EDGE, edgesBefore);
+
     // Get all faces BEFORE modification
     TopTools_IndexedMapOfShape facesBefore;
     TopExp::MapShapes(result, TopAbs_FACE, facesBefore);
@@ -123,20 +136,31 @@ private:
 
     if ( op == EulerOp_KEV )
     {
-      Handle(feature_euler)
-        OP = new feature_euler_KEV(result, subshapes, NULL, NULL);
-      //
-      if ( !OP->Perform() )
+      for ( int ss = 1; ss <= subshapes.Extent(); ++ss )
       {
-        std::cout << "Error: Euler operation failed" << std::endl;
-        return;
+        const TopoDS_Shape& current = subshapes(ss);
+        //
+        if ( current.ShapeType() != TopAbs_EDGE )
+        {
+          std::cout << "Warning: selected shape is not an edge: SKIPPED" << std::endl;
+          continue;
+        }
+
+        Handle(feature_euler)
+          OP = new feature_euler_KEV(result, TopoDS::Edge(current), NULL, NULL);
+        //
+        if ( !OP->Perform() )
+        {
+          std::cout << "Error: Euler operation failed" << std::endl;
+          return;
+        }
+
+        // Update result
+        result = OP->GetResult();
+
+        // Dump history
+        dumpHistoryOnSubshapes(edgesBefore, OP);
       }
-
-      // Update result
-      result = OP->GetResult();
-
-      // Dump history
-      dumpHistoryOnFaces(facesBefore, OP);
     }
 
     /* =====================
@@ -168,7 +192,7 @@ private:
         result = OP->GetResult();
 
         // Dump history
-        dumpHistoryOnFaces(facesBefore, OP);
+        dumpHistoryOnSubshapes(facesBefore, OP);
       }
     }
 

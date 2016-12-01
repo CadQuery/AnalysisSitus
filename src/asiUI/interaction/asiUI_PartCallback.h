@@ -44,6 +44,7 @@ public:
 signals:
 
   void findFace();
+  void findEdge();
 
 private:
 

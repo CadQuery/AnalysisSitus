@@ -9,7 +9,7 @@
 #define asiUI_ControlsPart_h
 
 // asiUI includes
-#include <asiUI.h>
+#include <asiUI_ViewerPart.h>
 
 // asiEngine includes
 #include <asiEngine_Model.h>
@@ -35,11 +35,11 @@ class asiUI_ControlsPart : public QWidget
 public:
 
   asiUI_EXPORT
-    asiUI_ControlsPart(const Handle(asiEngine_Model)&             model,
-                       const vtkSmartPointer<asiVisu_PrsManager>& partPrsMgr,
-                       ActAPI_ProgressEntry                       notifier,
-                       ActAPI_PlotterEntry                        plotter,
-                       QWidget*                                   parent = NULL);
+    asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
+                       asiUI_ViewerPart*              pPartViewer,
+                       ActAPI_ProgressEntry           notifier,
+                       ActAPI_PlotterEntry            plotter,
+                       QWidget*                       parent = NULL);
 
   asiUI_EXPORT virtual
     ~asiUI_ControlsPart();
@@ -63,6 +63,7 @@ public slots:
   void onShowNormals   ();
   void onSelectFaces   ();
   void onSelectEdges   ();
+  void onPickEdge      ();
 
 signals:
 
@@ -102,6 +103,7 @@ private:
     QPushButton* pShowNormals;   //!< Shows normals for faces.
     QPushButton* pSelectFaces;   //!< Enables selection by faces.
     QPushButton* pSelectEdges;   //!< Enables selection by edges.
+    QPushButton* pPickEdge;      //!< Picks a single edge.
 
     t_widgets() : pLoadBRep      (NULL),
                   pLoadSTEP      (NULL),
@@ -119,7 +121,8 @@ private:
                   pShowVertices  (NULL),
                   pShowNormals   (NULL),
                   pSelectFaces   (NULL),
-                  pSelectEdges   (NULL)
+                  pSelectEdges   (NULL),
+                  pPickEdge      (NULL)
     {}
 
     void Release()
@@ -141,14 +144,16 @@ private:
       delete pShowNormals;   pShowNormals   = NULL;
       delete pSelectFaces;   pSelectFaces   = NULL;
       delete pSelectEdges;   pSelectEdges   = NULL;
+      delete pPickEdge;      pPickEdge      = NULL;
     }
   };
 
-  t_widgets                           m_widgets;    //!< Involved widgets.
-  Handle(asiEngine_Model)             m_model;      //!< Data Model instance.
-  vtkSmartPointer<asiVisu_PrsManager> m_partPrsMgr; //!< Presentation manager for Part Node.
-  ActAPI_ProgressEntry                m_notifier;   //!< Progress Notifier.
-  ActAPI_PlotterEntry                 m_plotter;    //!< Imperative Plotter.
+  t_widgets               m_widgets;      //!< Involved widgets.
+  Handle(asiEngine_Model) m_model;        //!< Data Model instance.
+  asiUI_ViewerPart*       m_partViewer;   //!< Part viewer.
+  ActAPI_ProgressEntry    m_notifier;     //!< Progress Notifier.
+  ActAPI_PlotterEntry     m_plotter;      //!< Imperative Plotter.
+  int                     m_iPrevSelMode; //!< Previous selection mode.
 
 };
 

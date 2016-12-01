@@ -29,9 +29,9 @@ public:
 
 public slots:
 
-  void onCheckEulerPoincare();
-  void onKEV();
-  void onKEF();
+  void onCheckEulerPoincare ();
+  void onKEV                ();
+  void onKEF                ();
 
 private:
 

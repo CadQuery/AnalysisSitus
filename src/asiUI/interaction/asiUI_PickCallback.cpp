@@ -44,7 +44,7 @@ asiUI_PickCallback* asiUI_PickCallback::New(asiUI_Viewer* pViewer)
 //! Constructor accepting owning viewer as a parameter.
 //! \param pViewer [in] owning viewer.
 asiUI_PickCallback::asiUI_PickCallback(asiUI_Viewer* pViewer)
-: asiUI_ViewerCallback(pViewer)
+: asiUI_ViewerCallback(pViewer), m_pickType(PickType_World)
 {}
 
 //! Default destructor.
@@ -86,7 +86,7 @@ void asiUI_PickCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
   //
   const asiVisu_SelectionNature sel_type = (eventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
                                                                            : SelectionNature_Detection;
-  mgr->Pick(pickInput, sel_type, PickType_World);
+  mgr->Pick(pickInput, sel_type, m_pickType);
 
   // Notify observers
   if ( eventId == EVENT_PICK_DEFAULT )

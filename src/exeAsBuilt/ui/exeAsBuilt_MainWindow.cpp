@@ -103,7 +103,7 @@ void exeAsBuilt_MainWindow::createDockWindows()
     pDockCommon->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
     m_widgets.wControlsPart = new asiUI_ControlsPart(cf->Model,
-                                                     cf->Prs.Part,
+                                                     cf->ViewerPart,
                                                      cf->Notifier,
                                                      cf->Plotter,
                                                      pDockCommon);

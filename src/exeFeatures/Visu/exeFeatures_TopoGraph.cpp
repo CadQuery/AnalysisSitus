@@ -23,6 +23,8 @@
 #include <asiEngine_Part.h>
 
 // OCCT includes
+#include <TopExp.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Iterator.hxx>
 
 // VTK includes
@@ -61,8 +63,7 @@ exeFeatures_TopoGraph::exeFeatures_TopoGraph()
 
 //! Destructor.
 exeFeatures_TopoGraph::~exeFeatures_TopoGraph()
-{
-}
+{}
 
 //! Renders graph.
 //! \param graph  [in] VTK presentable graph.
@@ -90,8 +91,8 @@ void exeFeatures_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
   vtkSmartPointer<exeFeatures_TopoGraphItem> graphItem = vtkSmartPointer<exeFeatures_TopoGraphItem>::New();
   graphItem->SetGraph( graphLayout->GetOutput() );
 
-  connect( graphItem, SIGNAL( vertexPicked(const int, const vtkIdType) ),
-           this,      SLOT( onVertexPicked(const int, const vtkIdType) ) );
+  connect( graphItem, SIGNAL( vertexPicked(const int, const TopAbs_ShapeEnum, const vtkIdType) ),
+           this,      SLOT( onVertexPicked(const int, const TopAbs_ShapeEnum, const vtkIdType) ) );
 
   // Context transform
   vtkSmartPointer<vtkContextTransform> trans = vtkSmartPointer<vtkContextTransform>::New();
@@ -191,6 +192,11 @@ void exeFeatures_TopoGraph::Render(const TopoDS_Shape&               shape,
                                    const Regime                      regime,
                                    const TopAbs_ShapeEnum            leafType)
 {
+  // Prepare maps of sub-shapes
+  TopExp::MapShapes(shape, TopAbs_FACE,   m_faces);
+  TopExp::MapShapes(shape, TopAbs_EDGE,   m_edges);
+  TopExp::MapShapes(shape, TopAbs_VERTEX, m_vertices);
+
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph> graph = this->convertToGraph(shape, selectedFaces, regime, leafType);
 
@@ -245,12 +251,29 @@ vtkSmartPointer<vtkGraph>
     labelArr->SetNumberOfComponents(1);
     labelArr->SetName(ARRNAME_LABELS);
 
+    // Array for pedigree indices (sub-shape IDs)
+    vtkNew<vtkIntArray> idsArr;
+    idsArr->SetNumberOfComponents(1);
+    idsArr->SetName(ARRNAME_PIDS);
+
     // Create VTK data set for graph data
     const vtkIdType root_vid = directed_result->AddVertex();
     TopTools_DataMapOfShapeInteger M;
     M.Bind(shape, root_vid);
     //
-    labelArr->InsertNextValue( asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str() );
+    int pid = 0;
+    if ( shape.ShapeType() == TopAbs_FACE )
+      pid = m_faces.FindIndex(shape);
+    else if ( shape.ShapeType() == TopAbs_EDGE )
+      pid = m_edges.FindIndex(shape);
+    else if ( shape.ShapeType() == TopAbs_VERTEX )
+      pid = m_vertices.FindIndex(shape);
+    //
+    idsArr->InsertNextValue(pid);
+    //
+    labelArr->InsertNextValue( asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str()
+                             + std::string(": ")
+                             + QrCore::to_string(pid) );
     //
     if ( shape.ShapeType() == TopAbs_COMPOUND )
       groupArr->InsertNextValue(ARRNAME_GROUP_COMPOUND);
@@ -265,11 +288,19 @@ vtkSmartPointer<vtkGraph>
     else
       groupArr->InsertNextValue(ARRNAME_GROUP_ORDINARY);
     //
-    this->buildRecursively(shape, root_vid, leafType, directed_result, labelArr.GetPointer(), groupArr.GetPointer(), M);
+    this->buildRecursively(shape,
+                           root_vid,
+                           leafType,
+                           directed_result,
+                           labelArr.GetPointer(),
+                           groupArr.GetPointer(),
+                           idsArr.GetPointer(),
+                           M);
 
     // Set arrays
     result->GetVertexData()->AddArray( labelArr.GetPointer() );
     result->GetVertexData()->AddArray( groupArr.GetPointer() );
+    result->GetVertexData()->AddArray( idsArr.GetPointer() );
   }
   else if ( regime == Regime_AAG )
   {
@@ -290,6 +321,7 @@ vtkSmartPointer<vtkGraph>
 //! \param pDS           [in/out] data structure being filled.
 //! \param pLabelArr     [in/out] array for labels associated with vertices.
 //! \param pGroupArr     [in/out] array for vertex groups.
+//! \param pIdsArr       [in/out] array of pedigree ids.
 //! \param shapeVertices [in/out] map of shapes against their registered graph vertices.
 void exeFeatures_TopoGraph::buildRecursively(const TopoDS_Shape&             rootShape,
                                              const vtkIdType                 rootId,
@@ -297,6 +329,7 @@ void exeFeatures_TopoGraph::buildRecursively(const TopoDS_Shape&             roo
                                              vtkMutableDirectedGraph*        pDS,
                                              vtkStringArray*                 pLabelArr,
                                              vtkStringArray*                 pGroupArr,
+                                             vtkIntArray*                    pIdsArr,
                                              TopTools_DataMapOfShapeInteger& shapeVertices)
 {
   // Check if it is time to stop
@@ -318,9 +351,27 @@ void exeFeatures_TopoGraph::buildRecursively(const TopoDS_Shape&             roo
       childId = pDS->AddVertex();
       shapeVertices.Bind(subShape, childId);
 
-      if ( pLabelArr )
-        pLabelArr->InsertNextValue( asiAlgo_Utils::ShapeAddrWithPrefix(subShape).c_str() );
+      // Indices
+      int pid = 0;
+      if ( pIdsArr )
+      {
+        if ( subShape.ShapeType() == TopAbs_FACE )
+          pid = m_faces.FindIndex(subShape);
+        else if ( subShape.ShapeType() == TopAbs_EDGE )
+          pid = m_edges.FindIndex(subShape);
+        else if ( subShape.ShapeType() == TopAbs_VERTEX )
+          pid = m_vertices.FindIndex(subShape);
 
+        pIdsArr->InsertNextValue(pid);
+      }
+
+      // Labels
+      if ( pLabelArr )
+        pLabelArr->InsertNextValue( asiAlgo_Utils::ShapeAddrWithPrefix(subShape).c_str()
+                                  + std::string(": ")
+                                  + QrCore::to_string(pid) );
+
+      // Groups
       if ( pGroupArr )
       {
         if ( subShape.ShapeType() == TopAbs_COMPOUND )
@@ -340,7 +391,7 @@ void exeFeatures_TopoGraph::buildRecursively(const TopoDS_Shape&             roo
     //
     pDS->AddEdge(rootId, childId);
     //
-    this->buildRecursively(subShape, childId, leafType, pDS, pLabelArr, pGroupArr, shapeVertices);
+    this->buildRecursively(subShape, childId, leafType, pDS, pLabelArr, pGroupArr, pIdsArr, shapeVertices);
   }
 }
 
@@ -367,21 +418,27 @@ void exeFeatures_TopoGraph::onViewerClosed()
 }
 
 //! Reaction on vertex picking.
-//! \param fid [in] face ID.
-//! \param vid [in] vertex ID.
-void exeFeatures_TopoGraph::onVertexPicked(const int fid, const vtkIdType asiVisu_NotUsed(vid))
+//! \param subShapeId [in] sub-shape ID.
+//! \param shapeType  [in] sub-shape type.
+//! \param vid        [in] graph vertex ID.
+void exeFeatures_TopoGraph::onVertexPicked(const int              subShapeId,
+                                           const TopAbs_ShapeEnum shapeType,
+                                           const vtkIdType        asiVisu_NotUsed(vid))
 {
-  if ( m_aag.IsNull() )
-    return;
-
-  if ( exeFeatures_CommonFacilities::Instance()->Prs.Part )
+  if ( subShapeId > 0 && exeFeatures_CommonFacilities::Instance()->Prs.Part )
   {
-    // Get face from graph vertex
-    const TopoDS_Face& F = m_aag->GetFace(fid);
+    // Get sub-shape by index
+    TopoDS_Shape subShape;
+    if ( shapeType == TopAbs_FACE )
+      subShape = m_faces.FindKey(subShapeId);
+    else if ( shapeType == TopAbs_EDGE )
+      subShape = m_edges.FindKey(subShapeId);
+    else if ( shapeType == TopAbs_VERTEX )
+      subShape = m_vertices.FindKey(subShapeId);
 
     // Highlight in the main viewer
     TopTools_IndexedMapOfShape selected;
-    selected.Add(F);
+    selected.Add(subShape);
     //
     asiEngine_Part(exeFeatures_CommonFacilities::Instance()->Model,
                    exeFeatures_CommonFacilities::Instance()->Prs.Part).HighlightSubShapes(selected);

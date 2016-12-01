@@ -181,9 +181,38 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
     indices.Add( M.FindIndex( subShapes.FindKey(i) ) );
 }
 
+//! Extracts sub-shape indices for the given collection of sub-shapes. The
+//! output is distributed by faces, edges and vertices.
+//! \param subShapes     [in]  sub-shapes of interest.
+//! \param faceIndices   [out] global indices for faces.
+//! \param edgeIndices   [out] global indices for edges.
+//! \param vertexIndices [out] global indices for vertices.
+void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
+                                        TColStd_PackedMapOfInteger&       faceIndices,
+                                        TColStd_PackedMapOfInteger&       edgeIndices,
+                                        TColStd_PackedMapOfInteger&       vertexIndices)
+{
+  TopTools_IndexedMapOfShape M;
+  TopExp::MapShapes(m_model->GetPartNode()->GetShape(), M);
+
+  for ( int i = 1; i <= subShapes.Extent(); ++i )
+  {
+    if ( subShapes.FindKey(i).ShapeType() == TopAbs_FACE )
+      faceIndices.Add( M.FindIndex( subShapes.FindKey(i) ) );
+    //
+    else if ( subShapes.FindKey(i).ShapeType() == TopAbs_EDGE )
+      edgeIndices.Add( M.FindIndex( subShapes.FindKey(i) ) );
+    //
+    else if ( subShapes.FindKey(i).ShapeType() == TopAbs_VERTEX )
+      vertexIndices.Add( M.FindIndex( subShapes.FindKey(i) ) );
+  }
+}
+
 //! Highlights the passed sub-shapes identified by their indices.
 //! \param subShapeIndices [in] indices of the sub-shapes to highlight.
-void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices)
+//! \param selMode         [in] selection mode.
+void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
+                                        const asiVisu_SelectionMode       selMode)
 {
   double pick_color[3];
   asiVisu_Utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
@@ -192,14 +221,16 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
   color.setGreenF (pick_color[1]);
   color.setBlueF  (pick_color[2]);
   //
-  HighlightSubShapes( subShapeIndices, ::ColorToInt(color) );
+  HighlightSubShapes( subShapeIndices, ::ColorToInt(color), selMode );
 }
 
 //! Highlights the passed sub-shapes identified by their indices.
 //! \param subShapeIndices [in] indices of the sub-shapes to highlight.
 //! \param color           [in] highlighting color.
+//! \param selMode         [in] selection mode.
 void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
-                                        const int                         color)
+                                        const int                         color,
+                                        const asiVisu_SelectionMode       selMode)
 {
   // Get Part Node
   Handle(asiData_PartNode) N = m_model->GetPartNode();
@@ -223,7 +254,7 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
   prs->GetPickPipeline()->Actor()->GetProperty()->SetColor( qcolor.redF(), qcolor.greenF(), qcolor.blueF() );
 
   // Highlight
-  m_prsMgr->Highlight(dummyList, selection, SelectionMode_Face);
+  m_prsMgr->Highlight(dummyList, selection, selMode);
 }
 
 //! Highlights the passed sub-shapes in Part Viewer.
@@ -247,11 +278,18 @@ void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subSha
                                         const int                         color)
 {
   // Get global relative indices of the sub-shapes in the CAD model
-  TColStd_PackedMapOfInteger selected;
-  asiEngine_Part::GetSubShapeIndices(subShapes, selected);
+  TColStd_PackedMapOfInteger selectedFaces, selectedEdges, selectedVertices;
+  asiEngine_Part::GetSubShapeIndices(subShapes, selectedFaces, selectedEdges, selectedVertices);
 
   // Highlight
-  HighlightSubShapes(selected, color);
+  if ( !selectedFaces.IsEmpty() )
+    HighlightSubShapes(selectedFaces, color, SelectionMode_Face);
+  //
+  if ( !selectedEdges.IsEmpty() )
+    HighlightSubShapes(selectedEdges, color, SelectionMode_Edge);
+  //
+  if ( !selectedVertices.IsEmpty() )
+    HighlightSubShapes(selectedVertices, color, SelectionMode_Vertex);
 }
 
 //! Retrieves highlighted sub-shapes from the viewer.

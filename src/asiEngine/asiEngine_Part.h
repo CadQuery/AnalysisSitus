@@ -42,15 +42,23 @@ public:
                        TColStd_PackedMapOfInteger&       indices);
 
   asiEngine_EXPORT void
+    GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
+                       TColStd_PackedMapOfInteger&       faceIndices,
+                       TColStd_PackedMapOfInteger&       edgeIndices,
+                       TColStd_PackedMapOfInteger&       vertexIndices);
+
+  asiEngine_EXPORT void
     GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteger& faceIndices,
                                     TColStd_PackedMapOfInteger&       indices);
 
   asiEngine_EXPORT void
-    HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices);
+    HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
+                       const asiVisu_SelectionMode       selMode);
 
   asiEngine_EXPORT void
     HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
-                       const int                         color);
+                       const int                         color,
+                       const asiVisu_SelectionMode       selMode);
 
   asiEngine_EXPORT void
     HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes);

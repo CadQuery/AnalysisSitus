@@ -14,6 +14,7 @@
 
 // GUI includes
 #include <asiUI_ControlsPart.h>
+#include <asiUI_DialogFindEdge.h>
 #include <asiUI_DialogFindFace.h>
 
 // VTK includes
@@ -116,7 +117,7 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
   m_partCallback = vtkSmartPointer<asiUI_PartCallback>::New();
   m_partCallback->SetViewer(this);
 
-  // Set observer for detection
+  // Set observer for picking
   if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_PICK_DEFAULT) )
     m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_PICK_DEFAULT, m_pickCallback);
 
@@ -128,11 +129,16 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
   if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_FIND_FACE) )
     m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_FIND_FACE, m_partCallback);
 
+  // Set observer for finding edge
+  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_FIND_EDGE) )
+    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_FIND_EDGE, m_partCallback);
+
   // Get notified once a sub-shape is picked
   connect( m_pickCallback, SIGNAL( picked() ), this, SLOT( onSubShapesPicked() ) );
 
   // Get notified about part events
   connect( m_partCallback, SIGNAL( findFace() ), this, SLOT( onFindFace() ) );
+  connect( m_partCallback, SIGNAL( findEdge() ), this, SLOT( onFindEdge() ) );
 
   /* ===============================
    *  Setting up rotation callbacks
@@ -311,4 +317,14 @@ void asiUI_ViewerPart::onFindFace()
   // Run dialog
   asiUI_DialogFindFace* wFindFace = new asiUI_DialogFindFace(m_model, this->PrsMgr(), this);
   wFindFace->show();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Callback for edge find request.
+void asiUI_ViewerPart::onFindEdge()
+{
+  // Run dialog
+  asiUI_DialogFindEdge* wFindEdge = new asiUI_DialogFindEdge(m_model, this->PrsMgr(), this);
+  wFindEdge->show();
 }

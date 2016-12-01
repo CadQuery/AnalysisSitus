@@ -13,5 +13,6 @@
 
 vtkStandardNewMacro(exeFeatures_TopoGraphItem);
 
+//! Destructor.
 exeFeatures_TopoGraphItem::~exeFeatures_TopoGraphItem()
 {}

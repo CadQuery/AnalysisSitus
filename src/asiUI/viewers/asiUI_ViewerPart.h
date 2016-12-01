@@ -42,13 +42,23 @@ public:
 
 public:
 
-  void Repaint();
+  asiUI_EXPORT void
+    Repaint();
+
+public:
+
+  //! \return pick callback.
+  const vtkSmartPointer<asiUI_PickCallback>& GetPickCallback() const
+  {
+    return m_pickCallback;
+  }
 
 public slots:
 
   void onResetView();
   void onSubShapesPicked();
   void onFindFace();
+  void onFindEdge();
 
 signals:
 

@@ -65,6 +65,9 @@
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_JournalIV.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PickEdgeCallback.h">
+      <Filter>Header Files\Interaction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPart.cpp">
@@ -151,6 +154,9 @@
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ObjectBrowser.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogFindEdge.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogFindFace.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
@@ -213,6 +219,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerPartListener.cpp">
       <Filter>Source Files\Viewers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogFindEdge.cpp">
+      <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\interaction\asiUI_PickEdgeCallback.cpp">
+      <Filter>Source Files\Interaction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,6 +290,9 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerPartListener.h">
       <Filter>Header Files\Viewers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogFindEdge.h">
+      <Filter>Header Files\Dialogs</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

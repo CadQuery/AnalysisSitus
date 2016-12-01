@@ -78,12 +78,13 @@ protected:
                         vtkMutableDirectedGraph*        pDS,
                         vtkStringArray*                 pLabelArr,
                         vtkStringArray*                 pGroupArr,
+                        vtkIntArray*                    pIdsArr,
                         TopTools_DataMapOfShapeInteger& shapeVertices);
 
 protected slots:
 
   void onViewerClosed();
-  void onVertexPicked(const int, const vtkIdType);
+  void onVertexPicked(const int, const TopAbs_ShapeEnum, const vtkIdType);
 
 protected:
 
@@ -91,6 +92,10 @@ protected:
   vtkTextWidget*      m_textWidget;
   vtkTextWidget*      m_summaryWidget;
   Handle(feature_aag) m_aag;
+  //
+  TopTools_IndexedMapOfShape m_faces;    //!< Faces.
+  TopTools_IndexedMapOfShape m_edges;    //!< Edges.
+  TopTools_IndexedMapOfShape m_vertices; //!< Vertices.
 
 };
 

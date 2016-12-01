@@ -8,8 +8,11 @@
 #ifndef asiUI_PickCallback_h
 #define asiUI_PickCallback_h
 
-// A-Situs (UI) includes
+// asiUI includes
 #include <asiUI_ViewerCallback.h>
+
+// asiVisu includes
+#include <asiVisu_Selection.h>
 
 // VIS includes
 #include <IVtk_Types.hxx>
@@ -54,6 +57,21 @@ public:
             unsigned long eventId,
             void*         pCallData);
 
+public:
+
+  //! Sets type of picker for a workpiece.
+  //! \param type [in] type of picker to set.
+  void SetWorkpiecePicker(const asiVisu_PickType type)
+  {
+    m_pickType = type;
+  }
+
+  //! \return type of picker for a workpiece.
+  asiVisu_PickType GetWorkpiecePicker() const
+  {
+    return m_pickType;
+  }
+
 signals:
 
   void picked();
@@ -64,7 +82,11 @@ protected:
     asiUI_PickCallback(asiUI_Viewer* pViewer);
 
   asiUI_EXPORT
-    ~asiUI_PickCallback ();
+    ~asiUI_PickCallback();
+
+protected:
+
+  asiVisu_PickType m_pickType; //!< Type of picker for a workpiece.
 
 };
 

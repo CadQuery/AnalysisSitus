@@ -12,6 +12,8 @@
 #include <asiUI_Common.h>
 #include <asiUI_DialogSewing.h>
 #include <asiUI_DialogSTEP.h>
+#include <asiUI_PickCallback.h>
+#include <asiUI_PickEdgeCallback.h>
 
 // asiEngine includes
 #include <asiEngine_Part.h>
@@ -51,17 +53,18 @@
 //! \param notifier   [in] progress notifier.
 //! \param plotter    [in] imperative plotter.
 //! \param parent     [in] parent widget.
-asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&             model,
-                                       const vtkSmartPointer<asiVisu_PrsManager>& partPrsMgr,
-                                       ActAPI_ProgressEntry                       notifier,
-                                       ActAPI_PlotterEntry                        plotter,
-                                       QWidget*                                   parent)
+asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
+                                       asiUI_ViewerPart*              pPartViewer,
+                                       ActAPI_ProgressEntry           notifier,
+                                       ActAPI_PlotterEntry            plotter,
+                                       QWidget*                       parent)
 //
-: QWidget      (parent),
-  m_model      (model),
-  m_partPrsMgr (partPrsMgr),
-  m_notifier   (notifier),
-  m_plotter    (plotter)
+: QWidget        (parent),
+  m_model        (model),
+  m_partViewer   (pPartViewer),
+  m_notifier     (notifier),
+  m_plotter      (plotter),
+  m_iPrevSelMode (0)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -84,6 +87,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   m_widgets.pShowNormals   = new QPushButton("Show normals");
   m_widgets.pSelectFaces   = new QPushButton("Select faces");
   m_widgets.pSelectEdges   = new QPushButton("Select edges");
+  m_widgets.pPickEdge      = new QPushButton("Pick edge");
   //
   m_widgets.pLoadBRep      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pLoadSTEP      -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -102,10 +106,12 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   m_widgets.pShowNormals   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectFaces   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectEdges   -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pPickEdge      -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Other configurations
-  m_widgets.pShowRobust->setCheckable(true);
-  m_widgets.pShowVertices->setCheckable(true);
+  m_widgets.pShowRobust   -> setCheckable(true);
+  m_widgets.pShowVertices -> setCheckable(true);
+  m_widgets.pPickEdge     -> setCheckable(true);
 
   // Group box for data interoperability
   QGroupBox*   pExchangeGroup = new QGroupBox("Data Exchange");
@@ -140,6 +146,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   pVisuLay->addWidget(m_widgets.pShowNormals);
   pVisuLay->addWidget(m_widgets.pSelectFaces);
   pVisuLay->addWidget(m_widgets.pSelectEdges);
+  pVisuLay->addWidget(m_widgets.pPickEdge);
 
   // Set layout
   m_pMainLayout->addWidget(pExchangeGroup);
@@ -169,6 +176,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)&           
   connect( m_widgets.pShowNormals,   SIGNAL( clicked() ), SLOT( onShowNormals   () ) );
   connect( m_widgets.pSelectFaces,   SIGNAL( clicked() ), SLOT( onSelectFaces   () ) );
   connect( m_widgets.pSelectEdges,   SIGNAL( clicked() ), SLOT( onSelectEdges   () ) );
+  connect( m_widgets.pPickEdge,      SIGNAL( clicked() ), SLOT( onPickEdge      () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -310,7 +318,7 @@ void asiUI_ControlsPart::onCheckShape()
 
   // Get highlighted faces
   TopTools_IndexedMapOfShape selected;
-  asiEngine_Part(m_model, m_partPrsMgr).GetHighlightedSubShapes(selected);
+  asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedSubShapes(selected);
 
   if ( selected.IsEmpty() )
   {
@@ -347,7 +355,7 @@ void asiUI_ControlsPart::onTolerance()
 
   // Get highlighted faces
   TopTools_IndexedMapOfShape selected;
-  asiEngine_Part(m_model, m_partPrsMgr).GetHighlightedSubShapes(selected);
+  asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedSubShapes(selected);
 
   if ( selected.IsEmpty() )
   {
@@ -529,7 +537,7 @@ void asiUI_ControlsPart::onSelectFaces()
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
   // Enable the corresponding selection mode
-  m_partPrsMgr->SetSelectionMode(SelectionMode_Face);
+  m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Face);
 
   // Notify
   emit selectionFacesOn();
@@ -546,8 +554,55 @@ void asiUI_ControlsPart::onSelectEdges()
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
   // Enable the corresponding selection mode
-  m_partPrsMgr->SetSelectionMode(SelectionMode_Edge);
+  m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Edge);
 
   // Notify
   emit selectionEdgesOn();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Allows to pick an edge in the part viewer.
+void asiUI_ControlsPart::onPickEdge()
+{
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+
+  const bool isOn = m_widgets.pPickEdge->isChecked();
+
+  // Depending on the state of the control, either let user to pick an
+  // edge or finalize picking
+  if ( isOn )
+  {
+    // Enable an appropriate selection mode
+    m_iPrevSelMode = m_partViewer->PrsMgr()->GetSelectionMode();
+    m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Workpiece);
+
+    // Configure workpiece picker
+    m_partViewer->GetPickCallback()->SetWorkpiecePicker(PickType_Cell);
+
+    // Add observer which takes responsibility to interact with user
+    if ( !m_partViewer->PrsMgr()->HasObserver(EVENT_PICK_WORLD_POINT) )
+    {
+      vtkSmartPointer<asiUI_PickEdgeCallback>
+        cb = vtkSmartPointer<asiUI_PickEdgeCallback>::New();
+      //
+      cb->SetModel(m_model);
+
+      // Add observer
+      m_partViewer->PrsMgr()->AddObserver(EVENT_PICK_WORLD_POINT, cb);
+    }
+  }
+  else
+  {
+    // Restore original selection mode
+    m_partViewer->PrsMgr()->SetSelectionMode(m_iPrevSelMode);
+    //
+    m_partViewer->PrsMgr()->RemoveObserver(EVENT_PICK_WORLD_POINT);
+
+    // Configure workpiece picker
+    m_partViewer->GetPickCallback()->SetWorkpiecePicker(PickType_World);
+  }
 }

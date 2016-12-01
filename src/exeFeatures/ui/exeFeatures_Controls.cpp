@@ -1317,5 +1317,5 @@ void exeFeatures_Controls::onCR()
                  cf->Prs.Part).GetSubShapeIndicesByFaceIndices(modifiedFaces, selected);
   //
   asiEngine_Part(model,
-                 cf->Prs.Part).HighlightSubShapes(selected);
+                 cf->Prs.Part).HighlightSubShapes(selected, SelectionMode_Face);
 }

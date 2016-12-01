@@ -157,8 +157,12 @@ void asiVisu_InteractorStylePick::OnLeftButtonUp()
 void asiVisu_InteractorStylePick::OnKeyPress()
 {
   std::string key = this->Interactor->GetKeySym();
+
   if ( this->Interactor->GetControlKey() && key == "f" )
     this->InvokeEvent(EVENT_FIND_FACE);
+  //
+  if ( this->Interactor->GetControlKey() && key == "e" )
+    this->InvokeEvent(EVENT_FIND_EDGE);
 }
 
 //! Callback for rotation finishing action.
@@ -172,7 +176,7 @@ void asiVisu_InteractorStylePick::EndRotate()
 //! \param theCallback [in] command to be added.
 //! \return tag of the event (see vtkObject::AddObserver() method for VTK event tags).
 unsigned long asiVisu_InteractorStylePick::AddRotationCallback(unsigned long theEventID,
-                                                             vtkCommand*   theCallback)
+                                                               vtkCommand*   theCallback)
 {
   m_rotationCallbackIds.Append(theEventID);
   return this->AddObserver(theEventID, theCallback);
@@ -183,7 +187,7 @@ unsigned long asiVisu_InteractorStylePick::AddRotationCallback(unsigned long the
 //! \param theTag     [in] the tag which is assigned to particular event entity.
 //! \return true/false.
 bool asiVisu_InteractorStylePick::RemoveRotationCallback(unsigned long theEventID,
-                                                       unsigned long theTag)
+                                                         unsigned long theTag)
 {
   if ( m_rotationCallbackIds.IsEmpty() )
     return false;

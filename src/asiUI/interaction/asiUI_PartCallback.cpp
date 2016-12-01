@@ -53,4 +53,7 @@ void asiUI_PartCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
 
   if ( eventId == EVENT_FIND_FACE )
     emit findFace();
+
+  if ( eventId == EVENT_FIND_EDGE )
+    emit findEdge();
 }

@@ -16,6 +16,9 @@
 #include <asiVisu_ShapeDataSource.h>
 #include <asiVisu_Utils.h>
 
+// Qr includes
+#include <QrCore.h>
+
 // VTK includes
 #include <vtkCamera.h>
 #include <vtkCellData.h>
@@ -39,12 +42,37 @@
 #include <NCollection_Sequence.hxx>
 #include <Standard_ProgramError.hxx>
 
-#undef COUT_DEBUG
+#define COUT_DEBUG
+#if defined COUT_DEBUG
+  #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
+
+//-----------------------------------------------------------------------------
+
+//! Returns address as string.
+//! \param pActor [in] pointer to extract the address for.
+//! \return address as string.
+static std::string ActorAddr(const vtkActor* pActor)
+{
+  std::string addr_str;
+  std::ostringstream ost;
+  ost << pActor;
+  addr_str = ost.str();
+
+  size_t pos = 0;
+  while ( addr_str[pos] == '0' )
+    pos++;
+
+  if ( pos )
+    addr_str = QrCore::substr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
+
+  return addr_str;
+}
 
 //-----------------------------------------------------------------------------
 
 void asiVisu_PrsManager::PlaceButton(vtkButtonWidget* pButton,
-                                   vtkRenderer*     pRenderer)
+                                     vtkRenderer*     pRenderer)
 {
   // Place the widget. Must be done after a render so that the viewport is
   // defined. Here the widget placement is in normalized display coordinates
@@ -71,8 +99,8 @@ void asiVisu_PrsManager::PlaceButton(vtkButtonWidget* pButton,
 //-----------------------------------------------------------------------------
 
 void asiVisu_PrsManager::CreateImage(vtkSmartPointer<vtkImageData> image,
-                                   unsigned char*                color1,
-                                   unsigned char*                color2)
+                                     unsigned char*                color1,
+                                     unsigned char*                color2)
 {
   // Specify the size of the image data
   image->SetDimensions(10, 10, 1);
@@ -221,9 +249,9 @@ asiVisu_PrsManager::asiVisu_PrsManager() : vtkObject(), m_widget(NULL)
 //!                           after actualization of Presentations.
 //! \param withRepaint   [in] if true, repaint view window.
 void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& theNode,
-                                 const bool                  withChildren,
-                                 const bool                  doFitContents,
-                                 const bool                  withRepaint)
+                                   const bool                  withChildren,
+                                   const bool                  doFitContents,
+                                   const bool                  withRepaint)
 {
   if ( theNode.IsNull() )
     return;
@@ -282,9 +310,9 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& theNode,
 //!                           after actualization of Presentations.
 //! \param withRepaint   [in] if true, repaint view window.
 void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& theNodeList,
-                                 const bool                      withChildren,
-                                 const bool                      doFitContents,
-                                 const bool                      withRepaint)
+                                   const bool                      withChildren,
+                                   const bool                      doFitContents,
+                                   const bool                      withRepaint)
 {
   if ( theNodeList.IsNull() )
     return;
@@ -303,25 +331,26 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& theNodeList,
 
 //! Rebuilds the entire scene so that it fully corresponds to the given
 //! collection of Nodes exclusively.
-//! \param theNodeList   [in] Data Nodes to visualize.
+//! \param nodeList      [in] Data Nodes to visualize.
 //! \param doFitContents [in] indicates whether to fit the viewport contents
 //!                           after actualization of Presentations.
-void asiVisu_PrsManager::ActualizeExclusively(const Handle(ActAPI_HNodeList)& theNodeList,
-                                            const bool                      doFitContents)
+void asiVisu_PrsManager::ActualizeExclusively(const Handle(ActAPI_HNodeList)& nodeList,
+                                              const bool                      doFitContents)
 {
-  if ( theNodeList.IsNull() )
+  if ( nodeList.IsNull() )
     return;
 
   // Delete all existing Presentations except the passed ones
   ActAPI_DataObjectIdList aListToDel;
   for ( TNodePrsMap::Iterator it(m_nodePresentations); it.More(); it.Next() )
   {
-    ActAPI_DataObjectId aCurrentID = it.Key();
-    bool isInList = false;
-    for ( ActAPI_NodeList::Iterator nit( *theNodeList.operator->() ); nit.More(); nit.Next() )
+    ActAPI_DataObjectId currentID = it.Key();
+    bool                isInList  = false;
+
+    for ( ActAPI_NodeList::Iterator nit( *nodeList.operator->() ); nit.More(); nit.Next() )
     {
-      ActAPI_DataObjectId aPassedID = nit.Value()->GetId();
-      if ( IsEqual(aPassedID, aCurrentID) )
+      ActAPI_DataObjectId passedID = nit.Value()->GetId();
+      if ( IsEqual(passedID, currentID) )
       {
         isInList = true;
         break;
@@ -329,13 +358,13 @@ void asiVisu_PrsManager::ActualizeExclusively(const Handle(ActAPI_HNodeList)& th
     }
 
     if ( !isInList )
-      aListToDel.Append(aCurrentID);
+      aListToDel.Append(currentID);
   }
   for ( ActAPI_DataObjectIdList::Iterator it(aListToDel); it.More(); it.Next() )
     this->DeletePresentation( it.Value() );
 
   // Actualize: it will build all necessary Presentations
-  this->Actualize(theNodeList, false, doFitContents, true);
+  this->Actualize(nodeList, false, doFitContents, true);
 }
 
 //! Checks whether the passed Node has been already registered in the
@@ -499,7 +528,7 @@ void asiVisu_PrsManager::DeRenderAllPresentations()
 //! \param doFitContents [in] indicates whether to adjust camera in order for
 //!                           the viewer contents to fit the rendering window.
 void asiVisu_PrsManager::UpdatePresentation(const Handle(ActAPI_INode)& theNode,
-                                          const bool                  doFitContents)
+                                            const bool                  doFitContents)
 {
   this->UpdatePresentation(theNode->GetId(), doFitContents);
 }
@@ -514,7 +543,7 @@ void asiVisu_PrsManager::UpdatePresentation(const Handle(ActAPI_INode)& theNode,
 //! \param doFitContents [in] indicates whether to adjust camera in order for
 //!                           the viewer contents to fit the rendering window.
 void asiVisu_PrsManager::UpdatePresentation(const ActAPI_DataObjectId& theNodeId,
-                                          const bool                 doFitContents)
+                                            const bool                 doFitContents)
 {
   if ( !m_nodePresentations.IsBound(theNodeId) )
     Standard_ProgramError::Raise("Presentation does not exist");
@@ -619,8 +648,8 @@ int asiVisu_PrsManager::GetSelectionMode() const
 //! \return list of affected Data Node IDs.
 ActAPI_DataObjectIdList
   asiVisu_PrsManager::Pick(asiVisu_PickInput*            thePickInput,
-                         const asiVisu_SelectionNature theSelNature,
-                         const asiVisu_PickType        thePickType)
+                           const asiVisu_SelectionNature theSelNature,
+                           const asiVisu_PickType        thePickType)
 {
   /* ===================
    *  Some preparations
@@ -676,7 +705,7 @@ ActAPI_DataObjectIdList
         if ( gids )
         {
           gid = gids->GetValue(cell_id);
-          std::cout << "Picked GID = " << gid << std::endl;
+          std::cout << "Picked GID (Global ID) = " << gid << std::endl;
         }
 
         // Pedigree IDs
@@ -686,7 +715,7 @@ ActAPI_DataObjectIdList
         if ( pids )
         {
           pid = pids->GetValue(cell_id);
-          std::cout << "Picked PID = " << pid << std::endl;
+          std::cout << "Picked PID (Pedigree ID) = " << pid << std::endl;
         }
       }
 
@@ -767,17 +796,7 @@ ActAPI_DataObjectIdList
   }
   else // Partial selection: for topological shapes only
   {
-    try
-    {
-      this->actualizeShapeSelectionMode();
-    }
-    catch ( ... )
-    {
-#if defined COUT_DEBUG
-      cout << "Actualization of selection modes crashed" << endl;
-#endif
-      return aResult; // Nothing has been picked
-    }
+    this->actualizeShapeSelectionMode();
 
     // PICK (!!!)
     m_shapePicker->Pick(XStart, YStart, 0);
@@ -810,10 +829,10 @@ ActAPI_DataObjectIdList
         {
 #if defined COUT_DEBUG
           const TopoDS_Shape& aSubShape = aShapeWrapper->GetSubShape( sIt.Value() );
-          cout << "--------------------------------------------------------------" << endl;
-          cout << "Actor: " << exe_CommonFacilities::ADDR(anActor) << endl;
-          cout << "Sub-shape ID: " << sIt.Value() << endl;
-          cout << "Sub-shape type: " << aSubShape.TShape()->DynamicType()->Name() << endl;
+          std::cout << "--------------------------------------------------------------" << std::endl;
+          std::cout << "Actor: "          << ActorAddr(aPickedActor)                    << std::endl;
+          std::cout << "Sub-shape ID: "   << sIt.Value()                                << std::endl;
+          std::cout << "Sub-shape type: " << aSubShape.TShape()->DynamicType()->Name()  << std::endl;
 #endif
           aPickRes << sIt.Value();
         }
@@ -978,8 +997,8 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)& theNode)
 //! \param theActorElems [in] actors along with their cells to highlight.
 //! \param theModes      [in] active selection modes.
 void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& theNodes,
-                                 const asiVisu_ActorElemMap&      theActorElems,
-                                 const int                       theModes)
+                                   const asiVisu_ActorElemMap&      theActorElems,
+                                   const int                       theModes)
 {
   // Reset current selection (if any)
   m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
@@ -1109,7 +1128,7 @@ void asiVisu_PrsManager::InitializePickers()
 
   // Create a picker for OCCT shapes
   m_shapePicker = vtkSmartPointer<IVtkTools_ShapePicker>::New();
-  m_shapePicker->SetTolerance(0.025);
+  m_shapePicker->SetTolerance(0.25);
   m_shapePicker->SetRenderer(m_renderer);
 }
 
@@ -1198,7 +1217,8 @@ void asiVisu_PrsManager::actualizeShapeSelectionMode()
 //! \param theEventID  [in] ID of callback action
 //! \param theCallback [in] callback to add.
 //! \return tag of the event.
-long int asiVisu_PrsManager::AddUpdateCallback(unsigned long theEventID, vtkCommand* theCallback)
+long int asiVisu_PrsManager::AddUpdateCallback(unsigned long theEventID,
+                                               vtkCommand* theCallback)
 {
   m_updateCallbackIds.Append(theEventID);
   return this->AddObserver(theEventID, theCallback);
@@ -1209,7 +1229,7 @@ long int asiVisu_PrsManager::AddUpdateCallback(unsigned long theEventID, vtkComm
 //! \param theTag     [in] tag which is assigned to particular event entity.
 //! \return true in case of success, false -- otherwise.
 bool asiVisu_PrsManager::RemoveUpdateCallback(unsigned long theEventID,
-                                            unsigned long theTag)
+                                              unsigned long theTag)
 {
   if ( m_updateCallbackIds.IsEmpty() )
     return false;

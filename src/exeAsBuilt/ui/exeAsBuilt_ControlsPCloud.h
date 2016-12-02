@@ -11,6 +11,9 @@
 // A-Situs includes
 #include <asiUI.h>
 
+// OCCT includes
+#include <Standard_Type.hxx>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QPushButton>
@@ -20,6 +23,8 @@
 // VTK includes
 #include <vtkPlaneWidget.h>
 #include <vtkSmartPointer.h>
+
+class exeAsBuilt_FlannKdTree;
 
 //! Widget for point cloud controls.
 class exeAsBuilt_ControlsPCloud : public QWidget
@@ -37,6 +42,7 @@ public slots:
   void onEstimNormals ();
   void onCloudify     ();
   void onProjPlane    ();
+  void onPickPoint    ();
 
 private:
 
@@ -50,11 +56,13 @@ private:
     QPushButton*                    pEstimNormalsBtn; //!< Button to calculate normals.
     QPushButton*                    pProjPlaneBtn;    //!< Button to enable/disable a projection plane.
     vtkSmartPointer<vtkPlaneWidget> pProjPlane;       //!< Projection plane widget.
+    QPushButton*                    pPickPointBtn;    //!< Button to pick a point.
 
     t_widgets() : pLoadPointsBtn   (NULL),
                   pCloudifyBtn     (NULL),
                   pEstimNormalsBtn (NULL),
-                  pProjPlaneBtn    (NULL)
+                  pProjPlaneBtn    (NULL),
+                  pPickPointBtn    (NULL)
     {}
 
     void Release()
@@ -63,10 +71,13 @@ private:
       delete pCloudifyBtn;     pCloudifyBtn     = NULL;
       delete pEstimNormalsBtn; pEstimNormalsBtn = NULL;
       delete pProjPlaneBtn;    pProjPlaneBtn    = NULL;
+      delete pPickPointBtn;    pPickPointBtn    = NULL;
     }
   };
 
-  t_widgets m_widgets; //!< Involved widgets.
+  t_widgets                      m_widgets;      //!< Involved widgets.
+  Handle(exeAsBuilt_FlannKdTree) m_kdTree;       //!< K-d tree.
+  int                            m_iPrevSelMode; //!< Cached selection mode.
 
 };
 

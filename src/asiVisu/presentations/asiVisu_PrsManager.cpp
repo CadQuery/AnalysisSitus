@@ -745,6 +745,21 @@ ActAPI_DataObjectIdList
         std::cout << "Picked Point ID = " << point_id << std::endl;
       }
 
+      vtkPoints* pickedPositions = m_pointPicker->GetPickedPositions();
+      //
+      if ( point_id != -1 && pickedPositions )
+      {
+        double coord[3] = {0.0, 0.0, 0.0};
+        pickedPositions->GetPoint(0, coord);
+
+        std::cout << "Picked point position: ("
+                  << coord[0] << ", " << coord[1] << ", " << coord[2]
+                  << ")" << std::endl;
+
+        gp_Pnt cPos(coord[0], coord[1], coord[2]);
+        this->InvokeEvent(EVENT_PICK_WORLD_POINT, &cPos);
+      }
+
       // Get picked actor
       aPickedActor = m_pointPicker->GetActor();
       //

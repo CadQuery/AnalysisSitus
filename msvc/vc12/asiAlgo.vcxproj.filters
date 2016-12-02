@@ -164,6 +164,9 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.h">
       <Filter>Header Files\Modeling\Points</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudUtils.h">
+      <Filter>Header Files\Modeling\Points</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.cpp">
@@ -266,6 +269,9 @@
       <Filter>MOC</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.cpp">
+      <Filter>Source Files\Modeling\Points</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudUtils.cpp">
       <Filter>Source Files\Modeling\Points</Filter>
     </ClCompile>
   </ItemGroup>

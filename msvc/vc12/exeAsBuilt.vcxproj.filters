@@ -44,6 +44,9 @@
     <ClInclude Include="..\..\src\exeAsBuilt\algo\exeAsBuilt_FlannKdTree.h">
       <Filter>Header Files\Algo</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_PickPointCallback.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_ControlsPCloud.cpp">
@@ -78,6 +81,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\exeAsBuilt\algo\exeAsBuilt_FlannKdTree.cpp">
       <Filter>Source Files\Algo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_PickPointCallback.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -8,6 +8,9 @@
 // Own include
 #include <asiVisu_ContourPointsDataProvider.h>
 
+// asiAlgo includes
+#include <asiAlgo_PointCloudUtils.h>
+
 // OCCT includes
 #include <BRep_Tool.hxx>
 #include <TopExp.hxx>
@@ -57,7 +60,7 @@ Handle(asiAlgo_PointCloud<double>) asiVisu_ContourPointsDataProvider::GetPoints(
     coords->SetValue( v*3 + 2, P.Z() );
   }
   //
-  return asiAlgo_PointCloud<double>::AsPointCloud(coords);
+  return asiAlgo_PointCloudUtils::AsPointCloud(coords);
 }
 
 //-----------------------------------------------------------------------------

@@ -8,6 +8,9 @@
 // Own include
 #include <asiData_IVPointSetNode.h>
 
+// asiAlgo includes
+#include <asiAlgo_PointCloudUtils.h>
+
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
@@ -65,14 +68,14 @@ Handle(asiAlgo_PointCloud<double>) asiData_IVPointSetNode::GetPoints() const
   Handle(TColStd_HArray1OfReal)
     coords = ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->GetArray();
   //
-  return asiAlgo_PointCloud<double>::AsPointCloud(coords);
+  return asiAlgo_PointCloudUtils::AsPointCloud(coords);
 }
 
 //! Sets point cloud to store.
 //! \param points [in] points to store.
 void asiData_IVPointSetNode::SetPoints(const Handle(asiAlgo_PointCloud<double>)& points)
 {
-  Handle(TColStd_HArray1OfReal) arr = asiAlgo_PointCloud<double>::AsRealArray(points);
+  Handle(TColStd_HArray1OfReal) arr = asiAlgo_PointCloudUtils::AsRealArray(points);
   //
   ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray( points.IsNull() ? NULL : arr );
 }

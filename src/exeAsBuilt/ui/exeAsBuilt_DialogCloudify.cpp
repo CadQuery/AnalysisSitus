@@ -8,11 +8,15 @@
 // Own include
 #include <exeAsBuilt_DialogCloudify.h>
 
-// GUI includes
+// exeAsBuilt includes
+#include <exeAsBuilt_CommonFacilities.h>
+
+// asiUI includes
 #include <asiUI_Common.h>
 
-// Geometry includes
+// asiAlgo includes
 #include <asiAlgo_Cloudify.h>
+#include <asiAlgo_PointCloudUtils.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -132,8 +136,9 @@ void exeAsBuilt_DialogCloudify::onPerform()
   // Convert user input to double
   const double linStep = QVariant( m_widgets.pLinearStep->text() ).toDouble();
 
-  Handle(asiData_PartNode) part_n;
-  TopoDS_Shape             part;
+  Handle(exeAsBuilt_CommonFacilities) cf = exeAsBuilt_CommonFacilities::Instance();
+  Handle(asiData_PartNode)            part_n;
+  TopoDS_Shape                        part;
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
@@ -154,7 +159,7 @@ void exeAsBuilt_DialogCloudify::onPerform()
   TIMER_COUT_RESULT_MSG("Cloudification")
 
   ActAPI_PlotterEntry IV(m_plotter);
-  IV.DRAW_POINTS( asiAlgo_PointCloud<double>::AsRealArray(cloud), Color_Red, "Scanner imitation" );
+  IV.DRAW_POINTS( asiAlgo_PointCloudUtils::AsRealArray(cloud), Color_Red, "Scanner imitation" );
 
   // Select filename for the output file
   QString
@@ -168,6 +173,14 @@ void exeAsBuilt_DialogCloudify::onPerform()
   {
     std::cout << "Error: cannot save file" << std::endl;
   }
+
+  // Store in database
+  cf->Model->OpenCommand();
+  {
+    Handle(asiData_REPointsNode) PointsNode = cf->Model->GetRENode()->Points();
+    PointsNode->SetPoints(cloud);
+  }
+  cf->Model->CommitCommand();
 
   // Close
   this->close();

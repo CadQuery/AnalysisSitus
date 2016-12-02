@@ -8,15 +8,18 @@
 // Own include
 #include <asiUI_JournalIV.h>
 
-// Engine includes
+// asiEngine includes
 #include <asiEngine_IV.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_IVPointSetPrs.h>
 #include <asiVisu_IVTopoItemPrs.h>
 #include <asiVisu_PointsPipeline.h>
 #include <asiVisu_ShapePipeline.h>
 #include <asiVisu_Utils.h>
+
+// asiAlgo includes
+#include <asiAlgo_PointCloudUtils.h>
 
 // OCCT includes
 #include <GC_MakeSegment.hxx>
@@ -114,7 +117,7 @@ void asiUI_JournalIV::DRAW_POINTS(const Handle(HRealArray)&      coords,
   }
   //
   Handle(asiData_IVPointSetNode)
-    points_n = asiEngine_IV(m_model).Create_PointSet( asiAlgo_PointCloud<double>::AsPointCloud(coords), name );
+    points_n = asiEngine_IV(m_model).Create_PointSet( asiAlgo_PointCloudUtils::AsPointCloud(coords), name );
   //
   if ( isTx )
     m_model->CommitCommand();

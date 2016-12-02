@@ -8,6 +8,9 @@
 // Own include
 #include <asiData_REPointsNode.h>
 
+// asiAlgo includes
+#include <asiAlgo_PointCloudUtils.h>
+
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
@@ -66,5 +69,27 @@ Handle(asiAlgo_PointCloud<double>) asiData_REPointsNode::GetPoints() const
     coords = ActParamTool::AsRealArray( this->Parameter(PID_Points) )->GetArray();
 
   // TODO: get rid of copying here
-  return asiAlgo_PointCloud<double>::AsPointCloud(coords);
+  return asiAlgo_PointCloudUtils::AsPointCloud(coords);
+}
+
+//! \return stored point cloud with float coordinates.
+Handle(asiAlgo_PointCloud<float>) asiData_REPointsNode::GetPointsf() const
+{
+  Handle(TColStd_HArray1OfReal)
+    coords = ActParamTool::AsRealArray( this->Parameter(PID_Points) )->GetArray();
+
+  // TODO: get rid of copying here
+  return asiAlgo_PointCloudUtils::AsPointCloudf(coords);
+}
+
+//! Stores point cloud.
+//! \param points [in] point cloud to store.
+void asiData_REPointsNode::SetPoints(const Handle(asiAlgo_PointCloud<double>)& points)
+{
+  // TODO: get rid of copying here
+  Handle(TColStd_HArray1OfReal)
+    coords = asiAlgo_PointCloudUtils::AsRealArray(points);
+
+  // Store
+  ActParamTool::AsRealArray( this->Parameter(PID_Points) )->SetArray(coords);
 }

@@ -15,6 +15,7 @@
 #include <flann/flann.h>
 
 // OCCT includes
+#include <gp_Pnt.hxx>
 #include <Standard_Type.hxx>
 
 DEFINE_STANDARD_HANDLE(exeAsBuilt_FlannKdTree, Standard_Transient)
@@ -30,12 +31,21 @@ public:
 
 public:
 
-  exeAsBuilt_FlannKdTree(const Handle(asiAlgo_PointCloud<double>)& pointCloud);
+  exeAsBuilt_FlannKdTree(const Handle(asiAlgo_PointCloud<float>)& pointCloud);
+
+  ~exeAsBuilt_FlannKdTree();
+
+public:
+
+  void Search(const gp_Pnt&       P,
+              const int           k,
+              std::vector<int>&   nearestIndices,
+              std::vector<float>& nearestDistances);
 
 protected:
 
   //! Working point cloud.
-  Handle(asiAlgo_PointCloud<double>) m_pointCloud;
+  Handle(asiAlgo_PointCloud<float>) m_pointCloud;
 
   //! FLANN parameters.
   FLANNParameters m_flannParams;

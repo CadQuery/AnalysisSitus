@@ -8,6 +8,9 @@
 // Own include
 #include <asiVisu_IVPointSet2dDataProvider.h>
 
+// asiAlgo includes
+#include <asiAlgo_PointCloudUtils.h>
+
 //-----------------------------------------------------------------------------
 
 //! Constructor.
@@ -42,7 +45,7 @@ Handle(asiAlgo_PointCloud<double>) asiVisu_IVPointSet2dDataProvider::GetPoints()
     coords3d->ChangeValue(coordidx3d + 2) = 0.0;
   }
 
-  return asiAlgo_PointCloud<double>::AsPointCloud(coords3d);
+  return asiAlgo_PointCloudUtils::AsPointCloud(coords3d);
 }
 
 //-----------------------------------------------------------------------------

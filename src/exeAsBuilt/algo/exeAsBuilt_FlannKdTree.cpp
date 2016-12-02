@@ -8,13 +8,15 @@
 // Own include
 #include <exeAsBuilt_FlannKdTree.h>
 
+//-----------------------------------------------------------------------------
+
 //! ctor.
 //! \param pointCloud [in] input point cloud to build a k-d tree for.
-exeAsBuilt_FlannKdTree::exeAsBuilt_FlannKdTree(const Handle(asiAlgo_PointCloud<double>)& pointCloud)
+exeAsBuilt_FlannKdTree::exeAsBuilt_FlannKdTree(const Handle(asiAlgo_PointCloud<float>)& pointCloud)
 : Standard_Transient(), m_pointCloud(pointCloud)
 {
   const int numPts = m_pointCloud->GetNumberOfPoints();
-  double*  pCoords = &m_pointCloud->ChangeCoords()[0];
+  float*   pCoords = &m_pointCloud->ChangeCoords()[0];
 
   // Initialize FLANN parameters
   m_flannParams           = DEFAULT_FLANN_PARAMETERS;
@@ -25,6 +27,37 @@ exeAsBuilt_FlannKdTree::exeAsBuilt_FlannKdTree(const Handle(asiAlgo_PointCloud<d
 
   // Build index
   float speedup;
-  //m_flannIndex = flann_build_index(pCoords, numPts, 3, &speedup, &m_flannParams)
+  m_flannIndex = flann_build_index(pCoords, numPts, 3, &speedup, &m_flannParams);
+}
 
+//-----------------------------------------------------------------------------
+
+//! Destructor.
+exeAsBuilt_FlannKdTree::~exeAsBuilt_FlannKdTree()
+{
+  flann_free_index(m_flannIndex, &m_flannParams);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Searches for the {k} nearest neighbors of the {queryPoint}.
+//! \param P                [in]  point of interest.
+//! \param k                [in]  number of nearest neighbors to return.
+//! \param nearestIndices   [out] indices of the nearest points.
+//! \param nearestDistances [out] distances to the nearest points.
+void exeAsBuilt_FlannKdTree::Search(const gp_Pnt&       P,
+                                    const int           k,
+                                    std::vector<int>&   nearestIndices,
+                                    std::vector<float>& nearestDistances)
+{
+  float queryCoords[3] = { P.X(), P.Y(), P.Z() };
+
+  // Do ANN
+  flann_find_nearest_neighbors_index(m_flannIndex,
+                                     queryCoords,
+                                     1,
+                                     &nearestIndices[0],
+                                     &nearestDistances[0],
+                                     k,
+                                     &m_flannParams);
 }

@@ -1,12 +1,15 @@
 //-----------------------------------------------------------------------------
-// Created on: 01 December 2016 (*)
+// Created on: 02 December 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_PickEdgeCallback.h>
+#include <exeAsBuilt_PickPointCallback.h>
+
+// exeAsBuilt includes
+#include <exeAsBuilt_CommonFacilities.h>
 
 // GUI includes
 #include <asiUI_Common.h>
@@ -15,21 +18,24 @@
 #include <asiVisu_PrsManager.h>
 #include <asiVisu_Utils.h>
 
+// exeAsBuilt includes (FlannKdTree should be included after Qt includes)
+#include <exeAsBuilt_FlannKdTree.h>
+
 //! Instantiation routine.
 //! \return instance of the callback class.
-asiUI_PickEdgeCallback* asiUI_PickEdgeCallback::New()
+exeAsBuilt_PickPointCallback* exeAsBuilt_PickPointCallback::New()
 {
-  return new asiUI_PickEdgeCallback(NULL);
+  return new exeAsBuilt_PickPointCallback(NULL);
 }
 
 //! Constructor accepting owning viewer as a parameter.
 //! \param[in] viewer owning viewer.
-asiUI_PickEdgeCallback::asiUI_PickEdgeCallback(asiUI_Viewer* viewer)
+exeAsBuilt_PickPointCallback::exeAsBuilt_PickPointCallback(asiUI_Viewer* viewer)
 : asiUI_ViewerCallback(viewer)
 {}
 
 //! Destructor.
-asiUI_PickEdgeCallback::~asiUI_PickEdgeCallback()
+exeAsBuilt_PickPointCallback::~exeAsBuilt_PickPointCallback()
 {}
 
 //-----------------------------------------------------------------------------
@@ -38,26 +44,27 @@ asiUI_PickEdgeCallback::~asiUI_PickEdgeCallback()
 //! \param pCaller   [in] caller instance.
 //! \param eventId   [in] ID of the event triggered this listener.
 //! \param pCallData [in] invocation context.
-void asiUI_PickEdgeCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
-                                     unsigned long vtkNotUsed(eventId),
-                                     void*         pCallData)
+void exeAsBuilt_PickPointCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
+                                           unsigned long vtkNotUsed(eventId),
+                                           void*         pCallData)
 {
   Handle(asiData_PartNode) part_n;
   TopoDS_Shape             part;
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
-  // Get picking ray
-  //  gp_Lin pickRay = *( (gp_Lin*) pCallData );
+  // Get picked point
+  gp_Pnt P = *( (gp_Pnt*) pCallData );
+
+  ActAPI_PlotterEntry IV(exeAsBuilt_CommonFacilities::Instance()->Plotter);
+
+  IV.DRAW_POINT(P, Color_Green);
+
+  // Find neighbors
+  std::vector<int> indices(10);
+  std::vector<float> distances(10);
   //
-  //  // Prepare a tool to find the intersected facet
-  //  asiAlgo_HitFacet HitFacet(m_bvh, m_notifier, m_plotter);
-  //
-  //  // Find intersection
-  //  gp_XYZ hit;
-  //  int facet_idx;
-  //  if ( !HitFacet(pickRay, facet_idx, hit) )
-  //    std::cout << "Error: cannot find the intersected facet" << std::endl;
-  //  else
-  //    m_plotter.DRAW_POINT(hit, Color_Red);
+  m_kdTree->Search(P, 10, indices, distances);
+
+  std::cout << "test done" << std::endl;
 }

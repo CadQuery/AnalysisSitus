@@ -9,7 +9,7 @@
 #include <asiData_ContourNode.h>
 
 // asiAlgo includes
-#include <asiAlgo_PointCloud.h>
+#include <asiAlgo_PointCloudUtils.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -181,7 +181,7 @@ TopoDS_Wire asiData_ContourNode::AsShape(const bool useCache) const
   // If there is no any cached B-Rep, let's build a polyline from the
   // original points
   Handle(asiAlgo_PointCloud<double>)
-    points = asiAlgo_PointCloud<double>::AsPointCloud( this->GetCoords() );
+    points = asiAlgo_PointCloudUtils::AsPointCloud( this->GetCoords() );
   //
   if ( !points->GetNumberOfPoints() )
     return TopoDS_Wire();
@@ -247,7 +247,7 @@ void asiData_ContourNode::AsPointsOnFaces(TColgp_SequenceOfPnt&      points,
   Handle(HIntArray) faceIndices = this->GetFaces();
 
   // Get coordinates as point cloud
-  Handle(asiAlgo_PointCloud<double>) pcloud = asiAlgo_PointCloud<double>::AsPointCloud( this->GetCoords() );
+  Handle(asiAlgo_PointCloud<double>) pcloud = asiAlgo_PointCloudUtils::AsPointCloud( this->GetCoords() );
   const int                          nPts   = pcloud->GetNumberOfPoints();
   //
   for ( int p = 0; p < nPts; ++p )

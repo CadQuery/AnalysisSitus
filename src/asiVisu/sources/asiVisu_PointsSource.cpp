@@ -8,8 +8,11 @@
 // Own include
 #include <asiVisu_PointsSource.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_Utils.h>
+
+// asiAlgo includes
+#include <asiAlgo_PointCloudUtils.h>
 
 // VTK includes
 #include <vtkCellData.h>
@@ -71,7 +74,7 @@ int asiVisu_PointsSource::RequestData(vtkInformation*        request,
     return 0;
   }
 
-  Handle(TColStd_HArray1OfReal) coords = asiAlgo_PointCloud<double>::AsRealArray(m_points);
+  Handle(TColStd_HArray1OfReal) coords = asiAlgo_PointCloudUtils::AsRealArray(m_points);
   //
   if ( coords.IsNull() )
   {

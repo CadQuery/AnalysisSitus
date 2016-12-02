@@ -572,7 +572,7 @@ void asiUI_ControlsPart::onPickEdge()
 
   const bool isOn = m_widgets.pPickEdge->isChecked();
 
-  // Depending on the state of the control, either let user to pick an
+  // Depending on the state of the control, either let user pick an
   // edge or finalize picking
   if ( isOn )
   {

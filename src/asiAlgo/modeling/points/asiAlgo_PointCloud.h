@@ -26,31 +26,6 @@ class asiAlgo_PointCloud : public Standard_Transient
 {
 public:
 
-  static Handle(TColStd_HArray1OfReal)
-    AsRealArray(const Handle(asiAlgo_PointCloud<double>)& pointCloud)
-  {
-    Handle(TColStd_HArray1OfReal)
-      result = new TColStd_HArray1OfReal(0, (int) pointCloud->ChangeCoords().size() - 1);
-    //
-    for ( int i = result->Lower(); i <= result->Upper(); ++i )
-      result->ChangeValue(i) = pointCloud->ChangeCoords()[i];
-
-    return result;
-  }
-
-  static Handle(asiAlgo_PointCloud<double>)
-    AsPointCloud(const Handle(TColStd_HArray1OfReal)& arr)
-  {
-    Handle(asiAlgo_PointCloud<double>) result = new asiAlgo_PointCloud<double>;
-    //
-    for ( int i = arr->Lower(); i <= arr->Upper(); ++i )
-      result->ChangeCoords().push_back( arr->Value(i) );
-
-    return result;
-  }
-
-public:
-
   asiAlgo_EXPORT
     asiAlgo_PointCloud();
 

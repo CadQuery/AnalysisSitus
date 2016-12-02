@@ -75,8 +75,11 @@ public:
   asiData_EXPORT Handle(asiAlgo_PointCloud<double>)
     GetPoints() const;
 
+  asiData_EXPORT Handle(asiAlgo_PointCloud<float>)
+    GetPointsf() const;
+
   asiData_EXPORT void
-    TX_SetPoints(const Handle(asiAlgo_PointCloud<double>)& points);
+    SetPoints(const Handle(asiAlgo_PointCloud<double>)& points);
 
 protected:
 

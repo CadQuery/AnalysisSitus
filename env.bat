@@ -53,7 +53,7 @@ set "CAS_INC=%CASROOT%\inc"
 set "CAS_LIB64=%CASROOT%\win64\%VCVER%\lib%DEB%
 set "CAS_BIN64=%CASROOT%\win64\%VCVER%\bin%DEB%
 
-set "FREETYPE_BIN=%OCCT_3RDPARTIES%\freetype-2.5.5-vc12-64\bin"
+call %CASROOT%\env.bat %VCVER% %ARCH% %BUILD_CONFIG%
 
 rem ===========================================================================
 rem Setting environment for AD (Active Data)

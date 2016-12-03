@@ -61,3 +61,12 @@ void exeAsBuilt_FlannKdTree::Search(const gp_Pnt&       P,
                                      k,
                                      &m_flannParams);
 }
+
+//-----------------------------------------------------------------------------
+
+//! \return point cloud.
+const Handle(asiAlgo_PointCloud<float>)&
+  exeAsBuilt_FlannKdTree::GetPointCloud() const
+{
+    return m_pointCloud;
+}

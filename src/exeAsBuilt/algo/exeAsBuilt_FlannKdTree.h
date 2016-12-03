@@ -37,10 +37,14 @@ public:
 
 public:
 
-  void Search(const gp_Pnt&       P,
-              const int           k,
-              std::vector<int>&   nearestIndices,
-              std::vector<float>& nearestDistances);
+  void
+    Search(const gp_Pnt&       P,
+           const int           k,
+           std::vector<int>&   nearestIndices,
+           std::vector<float>& nearestDistances);
+
+  const Handle(asiAlgo_PointCloud<float>)&
+    GetPointCloud() const;
 
 protected:
 

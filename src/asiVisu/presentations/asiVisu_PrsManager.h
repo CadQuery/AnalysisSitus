@@ -92,65 +92,65 @@ public:
 public:
 
   asiVisu_EXPORT virtual void
-    Actualize(const Handle(ActAPI_INode)& theNode,
+    Actualize(const Handle(ActAPI_INode)& node,
               const bool                  withChildren  = false,
               const bool                  doFitContents = false,
               const bool                  withRepaint   = true);
 
   asiVisu_EXPORT virtual void
-    Actualize(const Handle(ActAPI_HNodeList)& theNodeList,
+    Actualize(const Handle(ActAPI_HNodeList)& nodeList,
               const bool                      withChildren  = false,
               const bool                      doFitContents = false,
               const bool                      withRepaint   = true);
 
   asiVisu_EXPORT virtual void
-    ActualizeExclusively(const Handle(ActAPI_HNodeList)& theNodeList,
+    ActualizeExclusively(const Handle(ActAPI_HNodeList)& nodeList,
                          const bool                      doFitContents = true);
 
 //-----------------------------------------------------------------------------
 
   asiVisu_EXPORT virtual bool
-    IsPresented(const Handle(ActAPI_INode)& theNode);
+    IsPresented(const Handle(ActAPI_INode)& node);
 
   asiVisu_EXPORT virtual bool
-    IsPresented(const ActAPI_DataObjectId& theNodeId);
+    IsPresented(const ActAPI_DataObjectId& nodeId);
 
 //-----------------------------------------------------------------------------
 
   asiVisu_EXPORT virtual bool
-    SetPresentation(const Handle(ActAPI_INode)& theNode);
+    SetPresentation(const Handle(ActAPI_INode)& node);
 
 //-----------------------------------------------------------------------------
 
   asiVisu_EXPORT virtual Handle(asiVisu_Prs)
-    GetPresentation(const Handle(ActAPI_INode)& theNode);
+    GetPresentation(const Handle(ActAPI_INode)& node);
 
   asiVisu_EXPORT virtual Handle(asiVisu_Prs)
-    GetPresentation(const ActAPI_DataObjectId& theNodeId);
+    GetPresentation(const ActAPI_DataObjectId& nodeId);
 
 //-----------------------------------------------------------------------------
 
   asiVisu_EXPORT virtual void
-    InitPresentation(const Handle(ActAPI_INode)& theNode);
+    InitPresentation(const Handle(ActAPI_INode)& node);
 
   asiVisu_EXPORT virtual void
-    InitPresentation(const ActAPI_DataObjectId& theNodeId);
+    InitPresentation(const ActAPI_DataObjectId& nodeId);
 
 //-----------------------------------------------------------------------------
 
   asiVisu_EXPORT virtual void
-    RenderPresentation(const Handle(ActAPI_INode)& theNode);
+    RenderPresentation(const Handle(ActAPI_INode)& node);
 
   asiVisu_EXPORT virtual void
-    RenderPresentation(const ActAPI_DataObjectId& theNodeId);
+    RenderPresentation(const ActAPI_DataObjectId& nodeId);
 
 //-----------------------------------------------------------------------------
 
   asiVisu_EXPORT virtual void
-    DeRenderPresentation(const Handle(ActAPI_INode)& theNode);
+    DeRenderPresentation(const Handle(ActAPI_INode)& node);
 
   asiVisu_EXPORT virtual void
-    DeRenderPresentation(const ActAPI_DataObjectId& theNodeId);
+    DeRenderPresentation(const ActAPI_DataObjectId& nodeId);
 
   asiVisu_EXPORT virtual void
     DeRenderAllPresentations();
@@ -158,20 +158,20 @@ public:
 //-----------------------------------------------------------------------------
 
   asiVisu_EXPORT virtual void
-    UpdatePresentation(const Handle(ActAPI_INode)& theNode,
+    UpdatePresentation(const Handle(ActAPI_INode)& node,
                        const bool doFitContents = true);
 
   asiVisu_EXPORT virtual void
-    UpdatePresentation(const ActAPI_DataObjectId& theNodeId,
+    UpdatePresentation(const ActAPI_DataObjectId& nodeId,
                        const bool doFitContents = true);
 
 //-----------------------------------------------------------------------------
 
   asiVisu_EXPORT virtual bool
-    DeletePresentation(const Handle(ActAPI_INode)& theNode);
+    DeletePresentation(const Handle(ActAPI_INode)& node);
 
   asiVisu_EXPORT virtual bool
-    DeletePresentation(const ActAPI_DataObjectId& theNodeId);
+    DeletePresentation(const ActAPI_DataObjectId& nodeId);
 
   asiVisu_EXPORT virtual void
     DeleteAllPresentations();
@@ -182,18 +182,18 @@ public:
 public:
 
   asiVisu_EXPORT void
-    SetSelectionMode(const int theMode);
+    SetSelectionMode(const int node);
 
   asiVisu_EXPORT int
     GetSelectionMode() const;
 
   asiVisu_EXPORT ActAPI_DataObjectIdList
-    Pick(asiVisu_PickInput*            thePickInput,
-         const asiVisu_SelectionNature theSelNature,
-         const asiVisu_PickType        thePickType = PickType_Cell);
+    Pick(asiVisu_PickInput*            pickInput,
+         const asiVisu_SelectionNature selNature,
+         const asiVisu_PickType        pickType = PickType_Cell);
 
   asiVisu_EXPORT void
-    SetPickList(const Handle(ActAPI_HNodeList)& theNodeList);
+    SetPickList(const Handle(ActAPI_HNodeList)& nodeList);
 
   asiVisu_EXPORT const Handle(ActAPI_HNodeList)&
     GetPickList() const;
@@ -205,15 +205,15 @@ public:
     IsPickFromList() const;
 
   asiVisu_EXPORT void
-    Highlight(const Handle(ActAPI_HNodeList)& theNodes);
+    Highlight(const Handle(ActAPI_HNodeList)& nodeList);
 
   asiVisu_EXPORT void
-    Highlight(const Handle(ActAPI_INode)& theNode);
+    Highlight(const Handle(ActAPI_INode)& node);
 
   asiVisu_EXPORT void
-    Highlight(const Handle(ActAPI_HNodeList)& theNodes,
-              const asiVisu_ActorElemMap&      theActorElems,
-              const int                       theModes);
+    Highlight(const Handle(ActAPI_HNodeList)& nodeList,
+              const asiVisu_ActorElemMap&     actorElems,
+              const int                       modes);
 
   asiVisu_EXPORT void
     CleanDetection();
@@ -228,15 +228,15 @@ public:
 public:
 
   asiVisu_EXPORT long int
-    AddUpdateCallback(unsigned long theEventID,
-                      vtkCommand*   theCallback);
+    AddUpdateCallback(unsigned long eventID,
+                      vtkCommand*   pCallback);
 
   asiVisu_EXPORT bool
-    RemoveUpdateCallback(unsigned long theEventID,
-                         unsigned long theTag);
+    RemoveUpdateCallback(unsigned long eventID,
+                         unsigned long tag);
 
   asiVisu_EXPORT void
-    SetRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer);
+    SetRenderer(const vtkSmartPointer<vtkRenderer>& renderer);
 
   asiVisu_EXPORT vtkRenderer*
     GetRenderer() const;
@@ -245,8 +245,8 @@ public:
     GetRenderWindow() const;
 
   asiVisu_EXPORT void
-    Initialize(QWidget*   theWidget,
-               const bool theIsOffscreen = false);
+    Initialize(QWidget*   pWidget,
+               const bool isOffscreen = false);
 
   asiVisu_EXPORT void
     InitializePickers();

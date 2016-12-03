@@ -21,6 +21,12 @@
 // exeAsBuilt includes (FlannKdTree should be included after Qt includes)
 #include <exeAsBuilt_FlannKdTree.h>
 
+//-----------------------------------------------------------------------------
+
+#define KDTREE_K 10
+
+//-----------------------------------------------------------------------------
+
 //! Instantiation routine.
 //! \return instance of the callback class.
 exeAsBuilt_PickPointCallback* exeAsBuilt_PickPointCallback::New()
@@ -28,11 +34,15 @@ exeAsBuilt_PickPointCallback* exeAsBuilt_PickPointCallback::New()
   return new exeAsBuilt_PickPointCallback(NULL);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Constructor accepting owning viewer as a parameter.
 //! \param[in] viewer owning viewer.
 exeAsBuilt_PickPointCallback::exeAsBuilt_PickPointCallback(asiUI_Viewer* viewer)
 : asiUI_ViewerCallback(viewer)
 {}
+
+//-----------------------------------------------------------------------------
 
 //! Destructor.
 exeAsBuilt_PickPointCallback::~exeAsBuilt_PickPointCallback()
@@ -61,10 +71,21 @@ void exeAsBuilt_PickPointCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
   IV.DRAW_POINT(P, Color_Green);
 
   // Find neighbors
-  std::vector<int> indices(10);
-  std::vector<float> distances(10);
+  std::vector<int> indices(KDTREE_K);
+  std::vector<float> distances(KDTREE_K);
   //
-  m_kdTree->Search(P, 10, indices, distances);
+  m_kdTree->Search(P, KDTREE_K, indices, distances);
+
+  // Get neighbor points
+  const Handle(asiAlgo_PointCloud<float>)& pointCloud = m_kdTree->GetPointCloud();
+  //
+  for ( size_t k = 0; k < KDTREE_K; ++k )
+  {
+    float x, y, z;
+    pointCloud->GetPoint(indices[k], x, y, z);
+
+    IV.DRAW_POINT(gp_Pnt(x, y, z), Color_Yellow);
+  }
 
   std::cout << "test done" << std::endl;
 }

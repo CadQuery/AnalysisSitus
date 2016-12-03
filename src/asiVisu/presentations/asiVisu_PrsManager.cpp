@@ -144,14 +144,7 @@ void asiVisu_PrsManager::PrintSelf(ostream& os, vtkIndent indent)
 
 //-----------------------------------------------------------------------------
 
-//! Constructs presentation manager setting up the underlying QVTK widget
-//! as a child for the passed arbitrary Qt widget. It allows creation of
-//! presentation manager providing basic visualization suite in any window.
-//!
-//! \param theParent   [in] parent Qt widget for underlying QVTK widget.
-//! \param isOffscreen [in] indicates whether presentation manager should
-//!                         operate in off-screen rendering mode. In that
-//!                         case QVTK widget is not created.
+//! Constructs presentation manager.
 asiVisu_PrsManager::asiVisu_PrsManager() : vtkObject(), m_widget(NULL)
 {
   // Initialize renderer
@@ -242,29 +235,29 @@ asiVisu_PrsManager::asiVisu_PrsManager() : vtkObject(), m_widget(NULL)
 //-----------------------------------------------------------------------------
 
 //! Re-initializes and updates the Node's Presentation.
-//! \param theNode       [in] Data Node to actualize Presentation for.
+//! \param node          [in] Data Node to actualize Presentation for.
 //! \param withChildren  [in] indicates whether child Nodes should also be
 //!                           actualized.
 //! \param doFitContents [in] indicates whether to fit the viewport contents
 //!                           after actualization of Presentations.
 //! \param withRepaint   [in] if true, repaint view window.
-void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& theNode,
+void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& node,
                                    const bool                  withChildren,
                                    const bool                  doFitContents,
                                    const bool                  withRepaint)
 {
-  if ( theNode.IsNull() )
+  if ( node.IsNull() )
     return;
 
   // Filter Nodes with bad domain-specific data
-  if ( !theNode->IsValidData() )
+  if ( !node->IsValidData() )
     return;
 
   // Initialize Presentation if not yet
   bool isPrsOk = true;
-  if ( !this->IsPresented(theNode) )
+  if ( !this->IsPresented(node) )
   {
-    if ( !this->SetPresentation(theNode) )
+    if ( !this->SetPresentation(node) )
       isPrsOk = false;
   }
 
@@ -275,22 +268,22 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& theNode,
     m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
 
     // Finally, update Presentation
-    if ( this->GetPresentation(theNode)->IsVisible() )
+    if ( this->GetPresentation(node)->IsVisible() )
     {
-      this->InitPresentation(theNode);
-      this->RenderPresentation(theNode); // Render before update to adjust trihedron correctly
-      this->UpdatePresentation(theNode, false);
+      this->InitPresentation(node);
+      this->RenderPresentation(node); // Render before update to adjust trihedron correctly
+      this->UpdatePresentation(node, false);
     }
     else
     {
-      this->DeRenderPresentation(theNode);
+      this->DeRenderPresentation(node);
     }
   }
 
   // Proceed with children if requested
   if ( withChildren )
   {
-    for ( Handle(ActAPI_IChildIterator) it = theNode->GetChildIterator(); it->More(); it->Next() )
+    for ( Handle(ActAPI_IChildIterator) it = node->GetChildIterator(); it->More(); it->Next() )
       this->Actualize(it->Value(), true, false, false);
   }
 
@@ -303,21 +296,21 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& theNode,
 }
 
 //! Re-initializes and updates the Node's Presentation.
-//! \param theNodeList   [in] list of Data Nodes to actualize Presentation for.
+//! \param nodeList      [in] list of Data Nodes to actualize Presentation for.
 //! \param withChildren  [in] indicates whether child Nodes should also be
 //!                           actualized.
 //! \param doFitContents [in] indicates whether to fit the viewport contents
 //!                           after actualization of Presentations.
 //! \param withRepaint   [in] if true, repaint view window.
-void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& theNodeList,
+void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& nodeList,
                                    const bool                      withChildren,
                                    const bool                      doFitContents,
                                    const bool                      withRepaint)
 {
-  if ( theNodeList.IsNull() )
+  if ( nodeList.IsNull() )
     return;
 
-  ActAPI_NodeList::Iterator aNodeIt( *theNodeList.operator->() );
+  ActAPI_NodeList::Iterator aNodeIt( *nodeList.operator->() );
   for ( ; aNodeIt.More(); aNodeIt.Next() )
     this->Actualize(aNodeIt.Value(), withChildren, false, false);
 
@@ -369,68 +362,68 @@ void asiVisu_PrsManager::ActualizeExclusively(const Handle(ActAPI_HNodeList)& no
 
 //! Checks whether the passed Node has been already registered in the
 //! Presentation Manager.
-//! \param theNode [in] Node to check.
+//! \param node [in] Node to check.
 //! \return true/false.
-bool asiVisu_PrsManager::IsPresented(const Handle(ActAPI_INode)& theNode)
+bool asiVisu_PrsManager::IsPresented(const Handle(ActAPI_INode)& node)
 {
-  return this->IsPresented( theNode->GetId() );
+  return this->IsPresented( node->GetId() );
 }
 
 //! Checks whether the passed Node has been already registered in the
 //! presentation manager by the passed ID.
-//! \param theNodeID [in] ID of the Node to check.
+//! \param nodeID [in] ID of the Node to check.
 //! \return true/false.
-bool asiVisu_PrsManager::IsPresented(const ActAPI_DataObjectId& theNodeId)
+bool asiVisu_PrsManager::IsPresented(const ActAPI_DataObjectId& nodeID)
 {
-  return m_nodePresentations.IsBound(theNodeId);
+  return m_nodePresentations.IsBound(nodeID);
 }
 
 //! Sets up a presentation for the passed Node. If no presentation exists,
 //! this method returns false.
-//! \param theNode [in] Node to register a Presentation for.
+//! \param node [in] Node to register a Presentation for.
 //! \return true if presentation exists and can be registered so, false --
 //!         otherwise.
-bool asiVisu_PrsManager::SetPresentation(const Handle(ActAPI_INode)& theNode)
+bool asiVisu_PrsManager::SetPresentation(const Handle(ActAPI_INode)& node)
 {
-  TCollection_AsciiString aNodeID = theNode->GetId();
+  TCollection_AsciiString aNodeID = node->GetId();
 
   if ( m_nodePresentations.IsBound(aNodeID) )
     m_nodePresentations.UnBind(aNodeID); // If you do not want us to do this,
                                          // use HasPresentation() method
 
   const asiVisu_Utils::TPrsAllocMap& anAllocMap = asiVisu_Utils::GetAllocMap();
-  Standard_CString aNodeType = theNode->DynamicType()->Name();
+  Standard_CString aNodeType = node->DynamicType()->Name();
 
   if ( !anAllocMap.IsBound(aNodeType) )
     return false; // No Presentation exists for Node
 
   const asiVisu_PrsAllocator& aPrsAlloc = anAllocMap.Find(aNodeType);
-  m_nodePresentations.Bind( aNodeID, (*aPrsAlloc)(theNode) );
+  m_nodePresentations.Bind( aNodeID, (*aPrsAlloc)(node) );
 
   return true;
 }
 
 //! Returns Presentation registered for the passed Node. If no Presentation
 //! is registered, returns NULL.
-//! \param theNode [in] Node to access Presentation for.
+//! \param node [in] Node to access Presentation for.
 //! \return requested Presentation or NULL.
 Handle(asiVisu_Prs)
-  asiVisu_PrsManager::GetPresentation(const Handle(ActAPI_INode)& theNode)
+  asiVisu_PrsManager::GetPresentation(const Handle(ActAPI_INode)& node)
 {
-  return this->GetPresentation( theNode->GetId() );
+  return this->GetPresentation( node->GetId() );
 }
 
 //! Returns Presentation registered for the passed Node. If no Presentation
 //! is registered, returns NULL.
-//! \param theNodeId [in] ID of the Node to access Presentation for.
+//! \param nodeId [in] ID of the Node to access Presentation for.
 //! \return requested Presentation or NULL.
 Handle(asiVisu_Prs)
-  asiVisu_PrsManager::GetPresentation(const ActAPI_DataObjectId& theNodeId)
+  asiVisu_PrsManager::GetPresentation(const ActAPI_DataObjectId& nodeId)
 {
-  if ( !m_nodePresentations.IsBound(theNodeId) )
+  if ( !m_nodePresentations.IsBound(nodeId) )
     return NULL;
 
-  return m_nodePresentations.Find(theNodeId);
+  return m_nodePresentations.Find(nodeId);
 }
 
 //! Performs initialization of the Node's Presentation by rebuilding the
@@ -438,10 +431,11 @@ Handle(asiVisu_Prs)
 //! Normally, this method should be invoked once at the very first
 //! visualization request for a Node, and again each time when the pipelined
 //! data is changed (e.g. due to Tree Function execution).
-//! \param theNode [in] Node to (re-)initialize pipelines for.
-void asiVisu_PrsManager::InitPresentation(const Handle(ActAPI_INode)& theNode)
+//!
+//! \param node [in] Node to (re-)initialize pipelines for.
+void asiVisu_PrsManager::InitPresentation(const Handle(ActAPI_INode)& node)
 {
-  this->InitPresentation( theNode->GetId() );
+  this->InitPresentation( node->GetId() );
 }
 
 //! Performs initialization of the Node's Presentation by rebuilding the
@@ -449,62 +443,66 @@ void asiVisu_PrsManager::InitPresentation(const Handle(ActAPI_INode)& theNode)
 //! Normally, this method should be invoked once at the very first
 //! visualization request for a Node, and again each time when Nodal data
 //! is changed (e.g. due to Tree Function execution).
+//!
 //! \param theNodeID [in] ID of the Node to (re-)initialize pipelines for.
-void asiVisu_PrsManager::InitPresentation(const ActAPI_DataObjectId& theNodeId)
+void asiVisu_PrsManager::InitPresentation(const ActAPI_DataObjectId& nodeId)
 {
-  if ( !m_nodePresentations.IsBound(theNodeId) )
+  if ( !m_nodePresentations.IsBound(nodeId) )
     Standard_ProgramError::Raise("Presentation does not exist");
 
-  const Handle(asiVisu_Prs)& aPrs = m_nodePresentations.Find(theNodeId);
-  aPrs->InitPipelines();
+  const Handle(asiVisu_Prs)& prs = m_nodePresentations.Find(nodeId);
+  prs->InitPipelines();
 }
 
 //! Pushes the Node's Presentation to the renderer. Notice that Presentation
 //! should exist and be registered by SetPresentation() method, otherwise
 //! an exception is thrown.
-//! \param theNode [in] Node to render the Presentation for.
-void asiVisu_PrsManager::RenderPresentation(const Handle(ActAPI_INode)& theNode)
+//!
+//! \param node [in] Node to render the Presentation for.
+void asiVisu_PrsManager::RenderPresentation(const Handle(ActAPI_INode)& node)
 {
-  this->RenderPresentation( theNode->GetId() );
+  this->RenderPresentation( node->GetId() );
 }
 
 //! Pushes the Node's Presentation to the renderer. Notice that Presentation
 //! should exist and be registered by SetPresentation() method, otherwise
 //! an exception is thrown.
-//! \param theNodeId [in] ID of the Node to render the Presentation for.
-void asiVisu_PrsManager::RenderPresentation(const ActAPI_DataObjectId& theNodeId)
+//!
+//! \param nodeId [in] ID of the Node to render the Presentation for.
+void asiVisu_PrsManager::RenderPresentation(const ActAPI_DataObjectId& nodeId)
 {
-  if ( !m_nodePresentations.IsBound(theNodeId) )
+  if ( !m_nodePresentations.IsBound(nodeId) )
     Standard_ProgramError::Raise("Presentation does not exist");
 
   if ( m_renderer.GetPointer() == NULL )
     Standard_ProgramError::Raise("Renderer is NULL");
 
-  Handle(asiVisu_Prs) aPrs = m_nodePresentations.Find(theNodeId);
-  aPrs->RenderPipelines(m_renderer);
+  Handle(asiVisu_Prs) prs = m_nodePresentations.Find(nodeId);
+  prs->RenderPipelines(m_renderer);
 }
 
 //! Removes the Node's Presentation from the renderer. Notice that
 //! Presentation should exist and be registered by SetPresentation()
 //! method, otherwise an exception is thrown.
-//! \param theNode [in] Node to de-render the Presentation for.
-void asiVisu_PrsManager::DeRenderPresentation(const Handle(ActAPI_INode)& theNode)
+//!
+//! \param node [in] Node to de-render the Presentation for.
+void asiVisu_PrsManager::DeRenderPresentation(const Handle(ActAPI_INode)& node)
 {
-  this->DeRenderPresentation( theNode->GetId() );
+  this->DeRenderPresentation( node->GetId() );
 }
 
 //! Attempts to remove the Node's Presentation from the renderer.
-//! \param theNodeId [in] ID of the Node to de-render the Presentation for.
-void asiVisu_PrsManager::DeRenderPresentation(const ActAPI_DataObjectId& theNodeId)
+//! \param nodeId [in] ID of the Node to de-render the Presentation for.
+void asiVisu_PrsManager::DeRenderPresentation(const ActAPI_DataObjectId& nodeId)
 {
-  if ( !m_nodePresentations.IsBound(theNodeId) )
+  if ( !m_nodePresentations.IsBound(nodeId) )
     return; // Presentation does not exist --> be safe, do not fail here
 
   if ( m_renderer.GetPointer() == NULL )
     Standard_ProgramError::Raise("Renderer is NULL");
 
-  Handle(asiVisu_Prs) aPrs = m_nodePresentations.Find(theNodeId);
-  aPrs->DeRenderPipelines(m_renderer);
+  Handle(asiVisu_Prs) prs = m_nodePresentations.Find(nodeId);
+  prs->DeRenderPipelines(m_renderer);
 }
 
 //! Removes all existing Presentations from renderer.
@@ -524,13 +522,13 @@ void asiVisu_PrsManager::DeRenderAllPresentations()
 //! Presentation should exist and be registered with SetPresentation()
 //! method, otherwise an exception is thrown.
 //!
-//! \param theNode       [in] Node to update the Presentation for.
+//! \param node          [in] Node to update the Presentation for.
 //! \param doFitContents [in] indicates whether to adjust camera in order for
 //!                           the viewer contents to fit the rendering window.
-void asiVisu_PrsManager::UpdatePresentation(const Handle(ActAPI_INode)& theNode,
+void asiVisu_PrsManager::UpdatePresentation(const Handle(ActAPI_INode)& node,
                                             const bool                  doFitContents)
 {
-  this->UpdatePresentation(theNode->GetId(), doFitContents);
+  this->UpdatePresentation(node->GetId(), doFitContents);
 }
 
 //! Builds (if not yet) visualization pipelines for the Node's Presentation
@@ -539,24 +537,24 @@ void asiVisu_PrsManager::UpdatePresentation(const Handle(ActAPI_INode)& theNode,
 //! Presentation should exist and be registered with SetPresentation()
 //! method, otherwise an exception is thrown.
 //!
-//! \param theNodeId     [in] ID of the Node to update the Presentation for.
+//! \param nodeId        [in] ID of the Node to update the Presentation for.
 //! \param doFitContents [in] indicates whether to adjust camera in order for
 //!                           the viewer contents to fit the rendering window.
-void asiVisu_PrsManager::UpdatePresentation(const ActAPI_DataObjectId& theNodeId,
+void asiVisu_PrsManager::UpdatePresentation(const ActAPI_DataObjectId& nodeId,
                                             const bool                 doFitContents)
 {
-  if ( !m_nodePresentations.IsBound(theNodeId) )
+  if ( !m_nodePresentations.IsBound(nodeId) )
     Standard_ProgramError::Raise("Presentation does not exist");
 
   // Update presentation
-  const Handle(asiVisu_Prs)& aPrs = m_nodePresentations.Find(theNodeId);
-  aPrs->UpdatePipelines();
+  const Handle(asiVisu_Prs)& prs = m_nodePresentations.Find(nodeId);
+  prs->UpdatePipelines();
 
   // Update callbacks
-  for ( NCollection_Sequence<unsigned long>::Iterator anIt(m_updateCallbackIds);
-        anIt.More(); anIt.Next() )
+  for ( NCollection_Sequence<unsigned long>::Iterator it(m_updateCallbackIds);
+        it.More(); it.Next() )
   {
-    InvokeEvent( anIt.Value() );
+    InvokeEvent( it.Value() );
   }
 
   // Adjust trihedron
@@ -569,37 +567,39 @@ void asiVisu_PrsManager::UpdatePresentation(const ActAPI_DataObjectId& theNodeId
 
 //! Unbinds the Presentation instance for the given Node. If a Presentation
 //! does not exist, returns false, otherwise -- true.
-//! \param theNode [in] Node to remove the Presentation for.
+//!
+//! \param node [in] Node to remove the Presentation for.
 //! \return true/false.
-bool asiVisu_PrsManager::DeletePresentation(const Handle(ActAPI_INode)& theNode)
+bool asiVisu_PrsManager::DeletePresentation(const Handle(ActAPI_INode)& node)
 {
-  return this->DeletePresentation( theNode->GetId() );
+  return this->DeletePresentation( node->GetId() );
 }
 
 //! Unbinds the Presentation instance for the given Node. If a Presentation
 //! does not exist, returns false, otherwise -- true.
-//! \param theNodeId [in] ID of the Node to remove the Presentation for.
+//! \param nodeId [in] ID of the Node to remove the Presentation for.
 //! \return true/false.
-bool asiVisu_PrsManager::DeletePresentation(const ActAPI_DataObjectId& theNodeId)
+bool asiVisu_PrsManager::DeletePresentation(const ActAPI_DataObjectId& nodeId)
 {
-  if ( !this->IsPresented(theNodeId) )
+  if ( !this->IsPresented(nodeId) )
     return false;
 
-  this->DeRenderPresentation(theNodeId);
-  m_nodePresentations.UnBind(theNodeId);
+  this->DeRenderPresentation(nodeId);
+  m_nodePresentations.UnBind(nodeId);
   return true;
 }
 
 //! Unbinds all registered Presentations.
 void asiVisu_PrsManager::DeleteAllPresentations()
 {
-  ActAPI_DataObjectIdList aListToDel;
+  ActAPI_DataObjectIdList listToDel;
   for ( TNodePrsMap::Iterator it(m_nodePresentations); it.More(); it.Next() )
   {
-    ActAPI_DataObjectId aCurrentID = it.Key();
-    aListToDel.Append(aCurrentID);
+    const ActAPI_DataObjectId& currentID = it.Key();
+    listToDel.Append(currentID);
   }
-  for ( ActAPI_DataObjectIdList::Iterator it(aListToDel); it.More(); it.Next() )
+  //
+  for ( ActAPI_DataObjectIdList::Iterator it(listToDel); it.More(); it.Next() )
     this->DeletePresentation( it.Value() );
   //
   m_nodePresentations.Clear();
@@ -610,17 +610,17 @@ void asiVisu_PrsManager::DeleteAllPresentations()
 //-----------------------------------------------------------------------------
 
 //! Sets selection modes.
-//! \param theMode [in] selection modes to set.
-void asiVisu_PrsManager::SetSelectionMode(const int theMode)
+//! \param mode [in] selection modes to set.
+void asiVisu_PrsManager::SetSelectionMode(const int mode)
 {
   // We erase current highlighting only if user is not switching to NONE
   // selection mode
-  if ( !(theMode & SelectionMode_None) )
+  if ( !(mode & SelectionMode_None) )
   {
     // If user applies the same (or sub-set) selection mode as the currently
     // active one, then we do not erase anything. This could happen if user
     // re-enables some selection mode after neutral (NONE) one
-    if ( !m_currentSelection.PickResult(SelectionNature_Pick).DoesSelectionCover(theMode) )
+    if ( !m_currentSelection.PickResult(SelectionNature_Pick).DoesSelectionCover(mode) )
     {
       m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
       m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
@@ -631,7 +631,7 @@ void asiVisu_PrsManager::SetSelectionMode(const int theMode)
   }
 
   // Set selection mode
-  m_iSelectionModes = theMode;
+  m_iSelectionModes = mode;
 }
 
 //! Returns currently active selection modes.
@@ -641,62 +641,71 @@ int asiVisu_PrsManager::GetSelectionMode() const
   return m_iSelectionModes;
 }
 
-//! Performs picking or detection by the passed display coordinates.
-//! \param thePickInput [in] picking input data.
-//! \param theSelNature [in] selection nature (picking or detection).
-//! \param thePickType  [in] type of picker to use.
+//! Performs picking or detection by the passed display coordinates (pick input).
+//!
+//! \param pickInput [in] picking input data.
+//! \param selNature [in] selection nature (picking or detection).
+//! \param pickType  [in] type of picker to use.
 //! \return list of affected Data Node IDs.
 ActAPI_DataObjectIdList
-  asiVisu_PrsManager::Pick(asiVisu_PickInput*            thePickInput,
-                           const asiVisu_SelectionNature theSelNature,
-                           const asiVisu_PickType        thePickType)
+  asiVisu_PrsManager::Pick(asiVisu_PickInput*            pickInput,
+                           const asiVisu_SelectionNature selNature,
+                           const asiVisu_PickType        pickType)
 {
   /* ===================
    *  Some preparations
    * =================== */
 
-  // Prepare a resulting collection
-  ActAPI_DataObjectIdList aResult;
+  // Result collection
+  ActAPI_DataObjectIdList result;
 
   // Selection is disabled
   if ( m_iSelectionModes & SelectionMode_None )
-    return aResult;
+    return result;
 
-  int  XStart     = thePickInput->Start.x();
-  int  YStart     = thePickInput->Start.y();
-  bool isMultiple = thePickInput->IsMultiple;
+  const int  xStart     = pickInput->Start.x();
+  const int  yStart     = pickInput->Start.y();
+  const bool isMultiple = pickInput->IsMultiple;
 
   // Reset current selection (if any)
   if ( !isMultiple )
-    m_currentSelection.PopAll(m_renderer, theSelNature);
+    m_currentSelection.PopAll(m_renderer, selNature);
 
   /* =====================
    *  Perform actual pick
    * ===================== */
 
   // Prepare picking results
-  vtkActor*         aPickedActor = NULL;
-  asiVisu_PickResult& aPickRes     = m_currentSelection.ChangePickResult(theSelNature);
-  aPickRes.SetSelectionModes(m_iSelectionModes);
+  vtkActor*           pickedActor = NULL;
+  asiVisu_PickResult& pickRes     = m_currentSelection.ChangePickResult(selNature);
+  //
+  pickRes.SetSelectionModes(m_iSelectionModes);
 
-  if ( m_iSelectionModes & SelectionMode_Workpiece ) // Non-partial selection
+  if ( m_iSelectionModes & SelectionMode_Workpiece ) // Global selection of a part
   {
-    if ( thePickType == PickType_Cell )
-      m_cellPicker->Pick(XStart, YStart, 0, m_renderer);
-    else if ( thePickType == PickType_Point )
-      m_pointPicker->Pick(XStart, YStart, 0, m_renderer);
-    else if ( thePickType == PickType_World )
-      m_worldPicker->Pick(XStart, YStart, 0, m_renderer);
+    if ( pickType == PickType_Cell ) // Cell (topology) picker
+    {
+      m_cellPicker->Pick(xStart, yStart, 0, m_renderer);
+    }
+    else if ( pickType == PickType_Point ) // Point (geometry) picker
+    {
+      m_pointPicker->Pick(xStart, yStart, 0, m_renderer);
+    }
+    else if ( pickType == PickType_World ) // World (any visible point) picker
+    {
+      m_worldPicker->Pick(xStart, yStart, 0, m_renderer);
+    }
 
     // Extract cell ID
-    if ( thePickType == PickType_Cell )
+    if ( pickType == PickType_Cell )
     {
-      vtkIdType cell_id = m_cellPicker->GetCellId();
-      vtkIdType gid = -1, pid = -1;
+      vtkIdType cellId = m_cellPicker->GetCellId();
+      vtkIdType gid    = -1;
+      vtkIdType pid    = -1;
       //
-      if ( cell_id != -1 )
+      if ( cellId != -1 )
       {
-        std::cout << "Picked Cell ID = " << cell_id << std::endl;
+        std::cout << "Picked Cell ID = " << cellId << std::endl;
 
         // Global IDs
         vtkSmartPointer<vtkIdTypeArray>
@@ -704,7 +713,7 @@ ActAPI_DataObjectIdList
         //
         if ( gids )
         {
-          gid = gids->GetValue(cell_id);
+          gid = gids->GetValue(cellId);
           std::cout << "Picked GID (Global ID) = " << gid << std::endl;
         }
 
@@ -714,43 +723,38 @@ ActAPI_DataObjectIdList
         //
         if ( pids )
         {
-          pid = pids->GetValue(cell_id);
+          pid = pids->GetValue(cellId);
           std::cout << "Picked PID (Pedigree ID) = " << pid << std::endl;
         }
       }
 
       // Get picked actor
-      aPickedActor = m_cellPicker->GetActor();
+      pickedActor = m_cellPicker->GetActor();
       //
-      if ( !aPickedActor )
+      if ( !pickedActor )
       {
         m_widget->repaint();
-        return aResult; // Nothing has been picked
+        return result; // Nothing has been picked
       }
 
       // Push ID to result
       if ( pid != -1 )
-        aPickRes << aPickedActor << pid;
+        pickRes << pickedActor << pid;
       else if ( gid != -1 )
-        aPickRes << aPickedActor << gid;
+        pickRes << pickedActor << gid;
       else
-        aPickRes << aPickedActor << cell_id;
+        pickRes << pickedActor << cellId;
     }
-    else if ( thePickType == PickType_Point )
+    else if ( pickType == PickType_Point )
     {
-      vtkIdType point_id = m_pointPicker->GetPointId();
+      vtkIdType pointId = m_pointPicker->GetPointId();
       //
-      if ( point_id != -1 )
+      if ( pointId != -1 )
       {
-        std::cout << "Picked Point ID = " << point_id << std::endl;
-      }
+        std::cout << "Picked Point ID = " << pointId << std::endl;
 
-      vtkPoints* pickedPositions = m_pointPicker->GetPickedPositions();
-      //
-      if ( point_id != -1 && pickedPositions )
-      {
         double coord[3] = {0.0, 0.0, 0.0};
-        pickedPositions->GetPoint(0, coord);
+        m_pointPicker->GetDataSet()->GetPoint(pointId, coord);
 
         std::cout << "Picked point position: ("
                   << coord[0] << ", " << coord[1] << ", " << coord[2]
@@ -761,16 +765,16 @@ ActAPI_DataObjectIdList
       }
 
       // Get picked actor
-      aPickedActor = m_pointPicker->GetActor();
+      pickedActor = m_pointPicker->GetActor();
       //
-      if ( !aPickedActor )
+      if ( !pickedActor )
       {
         m_widget->repaint();
-        return aResult; // Nothing has been picked
+        return result; // Nothing has been picked
       }
 
       // Push ID to result
-      aPickRes << aPickedActor << point_id;
+      pickRes << pickedActor << pointId;
     }
     else // World picker
     {
@@ -793,8 +797,8 @@ ActAPI_DataObjectIdList
       double coord[3];
       m_worldPicker->GetPickPosition(coord);
 
-      vtkCamera* camera = m_renderer->GetActiveCamera();
-      double* dirProj = camera->GetDirectionOfProjection();
+      vtkCamera* camera  = m_renderer->GetActiveCamera();
+      double*    dirProj = camera->GetDirectionOfProjection();
 
       gp_Pnt cPos(coord[0], coord[1], coord[2]);
       gp_Pnt cOrigin = cPos.XYZ() - gp_XYZ(dirProj[0], dirProj[1], dirProj[2])*300;
@@ -814,61 +818,61 @@ ActAPI_DataObjectIdList
     this->actualizeShapeSelectionMode();
 
     // PICK (!!!)
-    m_shapePicker->Pick(XStart, YStart, 0);
+    m_shapePicker->Pick(xStart, yStart, 0);
 
     // Traversing results
-    asiVisu_NodeInfo*                   aNodeInfo         = NULL;
-    vtkSmartPointer<vtkActorCollection> anActorCollection = m_shapePicker->GetPickedActors();
+    asiVisu_NodeInfo*                   nodeInfo        = NULL;
+    vtkSmartPointer<vtkActorCollection> actorCollection = m_shapePicker->GetPickedActors();
     //
-    if ( anActorCollection && anActorCollection->GetNumberOfItems() > 0 )
+    if ( actorCollection && actorCollection->GetNumberOfItems() > 0 )
     {
-      anActorCollection->InitTraversal();
-      while ( vtkActor* anActor = anActorCollection->GetNextActor() )
+      actorCollection->InitTraversal();
+      while ( vtkActor* actor = actorCollection->GetNextActor() )
       {
-        aPickedActor = anActor;
-        aPickRes << aPickedActor;
-        IVtkTools_ShapeDataSource* aDataSource = IVtkTools_ShapeObject::GetShapeSource(anActor);
-        if ( !aDataSource )
+        pickedActor = actor;
+        pickRes << pickedActor;
+        IVtkTools_ShapeDataSource* dataSource = IVtkTools_ShapeObject::GetShapeSource(actor);
+        if ( !dataSource )
           continue;
 
         // Access initial shape wrapper
-        IVtkOCC_Shape::Handle aShapeWrapper = aDataSource->GetShape();
-        if ( aShapeWrapper.IsNull() )
+        IVtkOCC_Shape::Handle shapeWrapper = dataSource->GetShape();
+        if ( shapeWrapper.IsNull() )
           continue;
 
-        IVtk_IdType aShapeID = aShapeWrapper->GetId();
-        IVtk_ShapeIdList subShapeIds = m_shapePicker->GetPickedSubShapesIds(aShapeID);
+        IVtk_IdType          shapeID = shapeWrapper->GetId();
+        IVtk_ShapeIdList subShapeIds = m_shapePicker->GetPickedSubShapesIds(shapeID);
 
         // Get IDs of cells for picked sub-shapes.
         for ( IVtk_ShapeIdList::Iterator sIt(subShapeIds); sIt.More(); sIt.Next() )
         {
 #if defined COUT_DEBUG
-          const TopoDS_Shape& aSubShape = aShapeWrapper->GetSubShape( sIt.Value() );
+          const TopoDS_Shape& subShape = shapeWrapper->GetSubShape( sIt.Value() );
           std::cout << "--------------------------------------------------------------" << std::endl;
-          std::cout << "Actor: "          << ActorAddr(aPickedActor)                    << std::endl;
+          std::cout << "Actor: "          << ActorAddr(pickedActor)                     << std::endl;
           std::cout << "Sub-shape ID: "   << sIt.Value()                                << std::endl;
-          std::cout << "Sub-shape type: " << aSubShape.TShape()->DynamicType()->Name()  << std::endl;
+          std::cout << "Sub-shape type: " << subShape.TShape()->DynamicType()->Name()   << std::endl;
 #endif
-          aPickRes << sIt.Value();
+          pickRes << sIt.Value();
         }
 
-        aNodeInfo = asiVisu_NodeInfo::Retrieve(aPickedActor);
-        if ( aNodeInfo )
+        nodeInfo = asiVisu_NodeInfo::Retrieve(pickedActor);
+        if ( nodeInfo )
           break;
       }
     }
 #if defined COUT_DEBUG
-    if ( !aNodeInfo )
+    if ( !nodeInfo )
       cout << "WARNING: Node Information hook of picked actor is NULL" << endl;
 #endif
   }
 
-  if ( !aPickedActor )
+  if ( !pickedActor )
   {
-    if ( m_widget && theSelNature == SelectionNature_Detection )
+    if ( m_widget && selNature == SelectionNature_Detection )
       m_widget->repaint(); // Clean up detection highlighting
 
-    return aResult;
+    return result;
   }
 
   /* ======================================
@@ -876,26 +880,26 @@ ActAPI_DataObjectIdList
    * ====================================== */
 
   // Retrieve the corresponding Presentation by data object's ID
-  asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve(aPickedActor);
+  asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve(pickedActor);
   if ( !nodeInfo )
-    return aResult;
+    return result;
   //
-  ActAPI_DataObjectId aNodeId = nodeInfo->GetNodeId();
+  ActAPI_DataObjectId nodeId = nodeInfo->GetNodeId();
 
   if ( m_iSelectionModes & SelectionMode_Workpiece )
-    aResult.Append(aNodeId);
+    result.Append(nodeId);
 
-  Handle(asiVisu_Prs) aPrs3D = this->GetPresentation(aNodeId);
+  Handle(asiVisu_Prs) prs3D = this->GetPresentation(nodeId);
   //
-  if ( aPrs3D.IsNull() )
+  if ( prs3D.IsNull() )
     Standard_ProgramError::Raise("Picked object without Presentation");
 
   // When picking erase detection at first in order to prevent blinking
-  if ( theSelNature == SelectionNature_Pick )
+  if ( selNature == SelectionNature_Pick )
     m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
 
   // Push selection to renderer
-  m_currentSelection.PushToRender(aPrs3D, m_renderer, theSelNature);
+  m_currentSelection.PushToRender(prs3D, m_renderer, selNature);
 
   // Update view window
   if ( m_widget )
@@ -903,15 +907,15 @@ ActAPI_DataObjectIdList
     m_widget->repaint();
   }
 
-  return aResult;
+  return result;
 }
 
 //! Set list of Nodes allowed for picking. This can be used to limit
 //! the picking "perimeter".
-//! \param theNodeList [in] list of Nodes allowed for picking.
-void asiVisu_PrsManager::SetPickList(const Handle(ActAPI_HNodeList)& theNodeList)
+//! \param nodeList [in] list of Nodes allowed for picking.
+void asiVisu_PrsManager::SetPickList(const Handle(ActAPI_HNodeList)& nodeList)
 {
-  m_bAllowedNodes = theNodeList;
+  m_bAllowedNodes = nodeList;
   m_cellPicker->InitializePickList();
 
   if ( m_bAllowedNodes.IsNull() )
@@ -964,8 +968,8 @@ bool asiVisu_PrsManager::IsPickFromList() const
 }
 
 //! Highlights Presentation for the passed Nodes.
-//! \param theNodes [in] Nodes to highlight.
-void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& theNodes)
+//! \param nodeList [in] Nodes to highlight.
+void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& nodeList)
 {
   // Reset current selection (if any)
   m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
@@ -976,7 +980,7 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& theNodes)
   {
     // Iterate over the passed Data Nodes accessing & highlighting
     // their Presentations
-    ActAPI_NodeList::Iterator aNodeIt( *theNodes.operator->() );
+    ActAPI_NodeList::Iterator aNodeIt( *nodeList.operator->() );
     for ( ; aNodeIt.More(); aNodeIt.Next() )
     {
       const Handle(ActAPI_INode)& aNode = aNodeIt.Value();
@@ -998,22 +1002,22 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& theNodes)
 }
 
 //! Highlights Presentation for the passed Node.
-//! \param theNode [in] Node to highlight.
-void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)& theNode)
+//! \param node [in] Node to highlight.
+void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)& node)
 {
   Handle(ActAPI_HNodeList) aDummyList = new ActAPI_HNodeList;
-  aDummyList->Append(theNode);
+  aDummyList->Append(node);
   this->Highlight(aDummyList);
 }
 
 //! Highlights the given set of elements in the actors corresponding
 //! to the passed Node Presentation.
-//! \param theNodes      [in] Data Nodes to highlight.
-//! \param theActorElems [in] actors along with their cells to highlight.
-//! \param theModes      [in] active selection modes.
-void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& theNodes,
-                                   const asiVisu_ActorElemMap&      theActorElems,
-                                   const int                       theModes)
+//! \param nodeList   [in] Data Nodes to highlight.
+//! \param actorElems [in] actors along with their cells to highlight.
+//! \param modes      [in] active selection modes.
+void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& nodeList,
+                                   const asiVisu_ActorElemMap&     actorElems,
+                                   const int                       modes)
 {
   // Reset current selection (if any)
   m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
@@ -1022,15 +1026,16 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& theNodes,
   // highlight method
   asiVisu_PickResult& aPickRes = m_currentSelection.ChangePickResult(SelectionNature_Pick);
   aPickRes.Clear();
-  aPickRes.SetSelectionModes(theModes);
-  for ( asiVisu_ActorElemMap::Iterator it(theActorElems); it.More(); it.Next() )
+  aPickRes.SetSelectionModes(modes);
+  //
+  for ( asiVisu_ActorElemMap::Iterator it(actorElems); it.More(); it.Next() )
     aPickRes << it.Key() << it.Value();
 
-  // Ask involved Presentations to highlight themselves
-  for ( ActAPI_NodeList::Iterator it( *theNodes.operator->() ); it.More(); it.Next() )
+  // Ask involved Presentations to highlight themselves (they know better how to do that)
+  for ( ActAPI_NodeList::Iterator it( *nodeList.operator->() ); it.More(); it.Next() )
   {
     // Current Node
-    Handle(ActAPI_INode) aNextNode = it.Value();
+    const Handle(ActAPI_INode)& aNextNode = it.Value();
 
     // Get Presentation
     Handle(asiVisu_Prs) aPrs3D = this->GetPresentation(aNextNode);
@@ -1084,10 +1089,11 @@ const asiVisu_ActualSelection& asiVisu_PrsManager::GetCurrentSelection() const
 //! Manager is always created with default renderer. Use this method only if
 //! you really need to populate your presentation manager with some external
 //! renderer.
-//! \param theRenderer [in] renderer to set.
-void asiVisu_PrsManager::SetRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer)
+//!
+//! \param renderer [in] renderer to set.
+void asiVisu_PrsManager::SetRenderer(const vtkSmartPointer<vtkRenderer>& renderer)
 {
-  m_renderer = theRenderer;
+  m_renderer = renderer;
 }
 
 //! Accessor for the renderer.
@@ -1106,9 +1112,10 @@ vtkRenderWindow* asiVisu_PrsManager::GetRenderWindow() const
 
 //! Initializes rendering process for the input QVTK widget
 //! and VTK render window handled by Presentation Manager.
-//! \param theWidget   [in] the widget to set.
+//!
+//! \param pWidget     [in] the widget to set.
 //! \param isOffscreen [in] off-screen rendering mode.
-void asiVisu_PrsManager::Initialize(QWidget* theWidget, const bool isOffscreen)
+void asiVisu_PrsManager::Initialize(QWidget* pWidget, const bool isOffscreen)
 {
   // Initialize QVTK widget depending on rendering mode
   if ( isOffscreen )
@@ -1118,7 +1125,7 @@ void asiVisu_PrsManager::Initialize(QWidget* theWidget, const bool isOffscreen)
   }
   else
   {
-    m_widget = new QVTKWidget(theWidget);
+    m_widget = new QVTKWidget(pWidget);
     m_widget->SetRenderWindow(m_renderWindow);
   }
   m_renderWindowInteractor->Initialize();
@@ -1229,30 +1236,31 @@ void asiVisu_PrsManager::actualizeShapeSelectionMode()
 }
 
 //! Adds callback to be activated in UpdatePresentation() method.
-//! \param theEventID  [in] ID of callback action
-//! \param theCallback [in] callback to add.
+//!
+//! \param eventID   [in] ID of callback action
+//! \param pCallback [in] callback to add.
 //! \return tag of the event.
-long int asiVisu_PrsManager::AddUpdateCallback(unsigned long theEventID,
-                                               vtkCommand* theCallback)
+long int asiVisu_PrsManager::AddUpdateCallback(unsigned long eventID,
+                                               vtkCommand*   pCallback)
 {
-  m_updateCallbackIds.Append(theEventID);
-  return this->AddObserver(theEventID, theCallback);
+  m_updateCallbackIds.Append(eventID);
+  return this->AddObserver(eventID, pCallback);
 }
 
 //! Removes callback with the given tag.
-//! \param theEventID [in] event ID on which events are invoked.
-//! \param theTag     [in] tag which is assigned to particular event entity.
+//! \param eventID [in] event ID on which events are invoked.
+//! \param tag     [in] tag which is assigned to particular event entity.
 //! \return true in case of success, false -- otherwise.
-bool asiVisu_PrsManager::RemoveUpdateCallback(unsigned long theEventID,
-                                              unsigned long theTag)
+bool asiVisu_PrsManager::RemoveUpdateCallback(unsigned long eventID,
+                                              unsigned long tag)
 {
   if ( m_updateCallbackIds.IsEmpty() )
     return false;
 
-  this->RemoveObserver(theTag);
+  this->RemoveObserver(tag);
 
-  if ( !this->HasObserver(theEventID) )
-    m_updateCallbackIds.Remove(theEventID);
+  if ( !this->HasObserver(eventID) )
+    m_updateCallbackIds.Remove(eventID);
 
   return true;
 }

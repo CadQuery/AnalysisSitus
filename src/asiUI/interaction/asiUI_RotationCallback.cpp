@@ -26,7 +26,7 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-asiUI_RotationCenterCallback::asiUI_RotationCenterCallback() : asiVisu_MeshDataProvider()
+asiUI_RotationCenterProvider::asiUI_RotationCenterProvider() : asiVisu_MeshDataProvider()
 {
   this->Init(0.0, 0.0, 0.0, 1.0);
 }
@@ -36,7 +36,7 @@ asiUI_RotationCenterCallback::asiUI_RotationCenterCallback() : asiVisu_MeshDataP
 //! \param y    [in] y coordinate of the center point.
 //! \param z    [in] z coordinate of the center point.
 //! \param side [in] side of the rotation marker.
-void asiUI_RotationCenterCallback::Init(const double x,
+void asiUI_RotationCenterProvider::Init(const double x,
                                         const double y,
                                         const double z,
                                         const double side)
@@ -86,7 +86,10 @@ asiUI_RotationCallback::asiUI_RotationCallback(asiUI_Viewer* pViewer)
   m_bIsStarted(false)
 {
   m_pl  = new asiVisu_MeshPipeline;
-  m_prv = new asiUI_RotationCenterCallback;
+  m_prv = new asiUI_RotationCenterProvider;
+
+  // Initialize world picker for center of rotation
+  m_worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
 }
 
 //! Destructor.
@@ -99,7 +102,7 @@ asiUI_RotationCallback::~asiUI_RotationCallback()
 //! \param pCallData [in] invocation context.
 void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(pCaller),
                                      unsigned long eventId,
-                                     void*         asiVisu_NotUsed(pCallData))
+                                     void*         pCallData)
 {
   /* =======================================
    *  Check if the calling context is valid
@@ -126,9 +129,40 @@ void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(pCaller),
     else
       return;
 
+    // Rotation center
     double X, Y, Z;
-    vtkCamera* pCamera = renderer->GetActiveCamera();
-    pCamera->GetFocalPoint(X, Y, Z);
+
+    // Pick position
+    asiVisu_PickInput* pickInput = reinterpret_cast<asiVisu_PickInput*>(pCallData);
+    //
+    m_worldPicker->Pick(pickInput->Start.x(), pickInput->Start.y(), 0, renderer);
+    {
+      double coord[3];
+      m_worldPicker->GetPickPosition(coord);
+      //
+      X = coord[0];
+      Y = coord[1];
+      Z = coord[2];
+
+      // The idea is to change focal point of the camera to the picked position because the
+      // focal point is the center of rotation. However, simply doing so is not enough as
+      // the center will be automatically moved to the focal point. Therefore, it is necessary
+      // to manipulate the center manually. We take the display coordinates of the picked point
+      // and apply simple linear transformation with respect to the window's normalized
+      // coordinates [1,-1]x[1,-1]
+
+      int*   viewport = renderer->GetSize();
+      int xDisplayMax = viewport[0];
+      int yDisplayMax = viewport[1];
+      //
+      double xWindowCenter = -2.0 * ( (double) pickInput->Start.x() ) / xDisplayMax + 1;
+      double yWindowCenter = -2.0 * ( (double) pickInput->Start.y() ) / yDisplayMax + 1;
+      //
+      vtkCamera* pCamera = renderer->GetActiveCamera();
+      //
+      pCamera->SetFocalPoint(X, Y, Z);
+      pCamera->SetWindowCenter(xWindowCenter, yWindowCenter);
+    }
 
     // Initialize Data Provider
     m_prv->Init( X, Y, Z, this->getScaledSize(renderer) );

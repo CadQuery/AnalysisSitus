@@ -84,6 +84,9 @@ private:
   //! Indicates whether left mouse button is currently pressed.
   bool m_bIsLeftButtonDown;
 
+  //! Indicates whether rotation is in progress.
+  bool m_bIsRotation;
+
   //! Custom callbacks called on camera rotation event.
   NCollection_Sequence<unsigned long> m_rotationCallbackIds;
 

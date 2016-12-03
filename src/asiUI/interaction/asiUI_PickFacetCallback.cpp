@@ -21,8 +21,7 @@
 
 //! Instantiation routine.
 //! \return instance of the callback class.
-asiUI_PickFacetCallback*
-  asiUI_PickFacetCallback::New()
+asiUI_PickFacetCallback* asiUI_PickFacetCallback::New()
 {
   return new asiUI_PickFacetCallback(NULL, NULL);
 }

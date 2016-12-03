@@ -23,7 +23,8 @@ vtkStandardNewMacro(asiVisu_InteractorStylePick);
 //! Default constructor.
 asiVisu_InteractorStylePick::asiVisu_InteractorStylePick()
 : vtkInteractorStyleTrackballCamera(),
-  m_bIsLeftButtonDown(false)
+  m_bIsLeftButtonDown(false),
+  m_bIsRotation(false)
 {
   m_pPickInput = new asiVisu_PickInput();
   //
@@ -40,14 +41,14 @@ asiVisu_InteractorStylePick::~asiVisu_InteractorStylePick()
 asiVisu_InteractorStylePick::asiVisu_InteractorStylePick(const asiVisu_InteractorStylePick&)
 : vtkInteractorStyleTrackballCamera(),
   m_pPickInput(NULL),
-  m_bIsLeftButtonDown(false)
+  m_bIsLeftButtonDown(false),
+  m_bIsRotation(false)
 {
 }
 
 //! Prohibited assignment operator.
 void asiVisu_InteractorStylePick::operator=(const asiVisu_InteractorStylePick&)
-{
-}
+{}
 
 //! Sets Renderer instance.
 //! \param theRenderer [in] Renderer instance to set.
@@ -69,12 +70,6 @@ void asiVisu_InteractorStylePick::OnMouseMove()
   // Invoke basic method
   vtkInteractorStyleTrackballCamera::OnMouseMove();
 
-  if ( m_bIsLeftButtonDown )
-  {
-    this->InvokeEvent(EVENT_ROTATION_START, NULL);
-    return;
-  }
-
   m_PickedPos[0] = this->Interactor->GetEventPosition()[0];
   m_PickedPos[1] = this->Interactor->GetEventPosition()[1];
 
@@ -83,12 +78,22 @@ void asiVisu_InteractorStylePick::OnMouseMove()
   m_pPickInput->Finish     = aPickPoint;
   m_pPickInput->IsMultiple = false;
 
+  if ( m_bIsLeftButtonDown )
+  {
+    if ( !m_bIsRotation )
+      m_bIsRotation = true;
+
+    this->InvokeEvent(EVENT_ROTATION_START, m_pPickInput);
+    return;
+  }
+
   // Invoke observers
-  this->InvokeEvent(EVENT_DETECT_DEFAULT, m_pPickInput);
+  if ( !m_bIsRotation )
+    this->InvokeEvent(EVENT_DETECT_DEFAULT, m_pPickInput);
   //
   if ( m_bIsLeftButtonDown && !this->Interactor->GetShiftKey() )
   {
-    this->InvokeEvent(EVENT_ROTATION_START, NULL);
+    this->InvokeEvent(EVENT_ROTATION_START, m_pPickInput);
     //
     for ( NCollection_Sequence<unsigned long>::Iterator it(m_rotationCallbackIds);
           it.More(); it.Next() )
@@ -140,7 +145,8 @@ void asiVisu_InteractorStylePick::OnLeftButtonUp()
     }
 
     // Invoke observers
-    this->InvokeEvent(EVENT_PICK_DEFAULT, m_pPickInput);
+    if ( !m_bIsRotation )
+      this->InvokeEvent(EVENT_PICK_DEFAULT, m_pPickInput);
   }
   else
   {
@@ -149,6 +155,7 @@ void asiVisu_InteractorStylePick::OnLeftButtonUp()
   }
 
   // Invoke observers
+  m_bIsRotation = false;
   this->EndRotate();
   this->InvokeEvent(EVENT_ROTATION_END, NULL);
 }

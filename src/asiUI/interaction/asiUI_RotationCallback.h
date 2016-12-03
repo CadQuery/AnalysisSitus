@@ -18,6 +18,7 @@
 // VTK includes
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#include <vtkWorldPointPicker.h>
 
 // Mesh (Active Data) includes
 #include <Mesh.h>
@@ -26,20 +27,20 @@
 // Rotation center provider
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiUI_RotationCenterCallback, asiVisu_MeshDataProvider)
+DEFINE_STANDARD_HANDLE(asiUI_RotationCenterProvider, asiVisu_MeshDataProvider)
 
 //! Data Provider for rotation center.
-class asiUI_RotationCenterCallback : public asiVisu_MeshDataProvider
+class asiUI_RotationCenterProvider : public asiVisu_MeshDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiUI_RotationCenterCallback, asiVisu_MeshDataProvider)
+  DEFINE_STANDARD_RTTI_INLINE(asiUI_RotationCenterProvider, asiVisu_MeshDataProvider)
 
 public:
 
   asiUI_EXPORT
-    asiUI_RotationCenterCallback();
+    asiUI_RotationCenterProvider();
 
 public:
 
@@ -128,9 +129,10 @@ protected:
 
 protected:
 
-  Handle(asiVisu_MeshPipeline)         m_pl;         //!< Pipeline for rotation center.
-  Handle(asiUI_RotationCenterCallback) m_prv;        //!< Data Provider.
-  bool                                 m_bIsStarted; //!< Used for optimization only.
+  Handle(asiVisu_MeshPipeline)         m_pl;          //!< Pipeline for rotation center.
+  Handle(asiUI_RotationCenterProvider) m_prv;         //!< Data Provider.
+  bool                                 m_bIsStarted;  //!< Used for optimization only.
+  vtkSmartPointer<vtkWorldPointPicker> m_worldPicker; //!< World picker.
 
 };
 

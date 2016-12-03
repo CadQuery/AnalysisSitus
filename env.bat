@@ -125,7 +125,7 @@ rem Setting environment for VTK
 rem ===========================================================================
 
 if "%VTK_ROOT%" == "" set "VTK_ROOT=%AS_PRODUCTS%\vtk-7.0.0"
-set "VTK_INC=%VTK_ROOT%\win%ARCH%\%VCVER%\include\vtk-7.0"
+set "VTK_INC=%VTK_ROOT%\include\vtk-7.0"
 set "VTK_LIB=%VTK_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 set "VTK_BIN=%VTK_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
 

@@ -65,10 +65,6 @@ void exeAsBuilt_PickTangentPlaneCallback::Execute(vtkObject*    vtkNotUsed(pCall
                                                   void*         pCallData)
 {
   Handle(exeAsBuilt_CommonFacilities) cf = exeAsBuilt_CommonFacilities::Instance();
-  Handle(asiData_PartNode)            part_n;
-  TopoDS_Shape                        part;
-  //
-  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
   // Get picked point
   gp_Pnt P = *( (gp_Pnt*) pCallData );

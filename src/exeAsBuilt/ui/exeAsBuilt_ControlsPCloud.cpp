@@ -112,6 +112,8 @@ exeAsBuilt_ControlsPCloud::~exeAsBuilt_ControlsPCloud()
 //! Reaction on user request to load points.
 void exeAsBuilt_ControlsPCloud::onLoadPoints()
 {
+  Handle(exeAsBuilt_CommonFacilities) cf = exeAsBuilt_CommonFacilities::Instance();
+
   TIMER_NEW
   TIMER_GO
 
@@ -133,11 +135,19 @@ void exeAsBuilt_ControlsPCloud::onLoadPoints()
   }
   std::cout << "Point cloud was loaded successfully" << std::endl;
 
+  // Store in database
+  cf->Model->OpenCommand();
+  {
+    Handle(asiData_REPointsNode) PointsNode = cf->Model->GetRENode()->Points();
+    PointsNode->SetPoints(cloud);
+  }
+  cf->Model->CommitCommand();
+
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Load point cloud")
 
-  ActAPI_PlotterEntry IV(exeAsBuilt_CommonFacilities::Instance()->Plotter);
-  IV.DRAW_POINTS( asiAlgo_PointCloudUtils::AsRealArray(cloud), Color_White, "Scan data" );
+  ActAPI_PlotterEntry IV(cf->Plotter);
+  IV.DRAW_POINTS( asiAlgo_PointCloudUtils::AsRealArray(cloud), Color_Red, "Scanner imitation" );
 }
 
 //-----------------------------------------------------------------------------
@@ -205,10 +215,6 @@ void exeAsBuilt_ControlsPCloud::onProjPlane()
 void exeAsBuilt_ControlsPCloud::onPickPoint()
 {
   Handle(exeAsBuilt_CommonFacilities) cf = exeAsBuilt_CommonFacilities::Instance();
-  Handle(asiData_PartNode)            part_n;
-  TopoDS_Shape                        part;
-  //
-  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   // Build k-d tree if necessary
   if ( m_kdTree.IsNull() )
@@ -277,10 +283,6 @@ void exeAsBuilt_ControlsPCloud::onPickPoint()
 void exeAsBuilt_ControlsPCloud::onBuildPlane()
 {
   Handle(exeAsBuilt_CommonFacilities) cf = exeAsBuilt_CommonFacilities::Instance();
-  Handle(asiData_PartNode)            part_n;
-  TopoDS_Shape                        part;
-  //
-  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
 
   // Build k-d tree if necessary
   if ( m_kdTree.IsNull() )

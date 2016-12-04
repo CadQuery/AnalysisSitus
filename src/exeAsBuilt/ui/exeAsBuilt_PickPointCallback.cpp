@@ -58,11 +58,6 @@ void exeAsBuilt_PickPointCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
                                            unsigned long vtkNotUsed(eventId),
                                            void*         pCallData)
 {
-  Handle(asiData_PartNode) part_n;
-  TopoDS_Shape             part;
-  //
-  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
-
   // Get picked point
   gp_Pnt P = *( (gp_Pnt*) pCallData );
 

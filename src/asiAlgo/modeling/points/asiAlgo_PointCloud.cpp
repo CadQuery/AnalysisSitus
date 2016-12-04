@@ -97,7 +97,7 @@ bool asiAlgo_PointCloud<TCoordType>::Load(const char* filename)
                std::istream_iterator<std::string>(),
                std::back_inserter< std::vector<std::string> >(tokens) );
 
-    if ( tokens.empty() )
+    if ( tokens.empty() || tokens.size() < 3 )
       continue;
 
     TCoordType x = (TCoordType) ( atof(tokens[0].c_str()) ),

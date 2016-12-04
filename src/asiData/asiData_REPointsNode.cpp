@@ -88,7 +88,7 @@ void asiData_REPointsNode::SetPoints(const Handle(asiAlgo_PointCloud<double>)& p
 {
   // TODO: get rid of copying here
   Handle(TColStd_HArray1OfReal)
-    coords = asiAlgo_PointCloudUtils::AsRealArray(points);
+    coords = points.IsNull() ? NULL : asiAlgo_PointCloudUtils::AsRealArray(points);
 
   // Store
   ActParamTool::AsRealArray( this->Parameter(PID_Points) )->SetArray(coords);

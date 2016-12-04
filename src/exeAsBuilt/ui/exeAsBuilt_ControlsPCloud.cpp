@@ -73,7 +73,7 @@ exeAsBuilt_ControlsPCloud::exeAsBuilt_ControlsPCloud(QWidget* parent)
   pDELay->addWidget(m_widgets.pCloudifyBtn);
 
   // Group for analysis
-  QGroupBox*   pAnalysisGroup = new QGroupBox("Analysis");
+  QGroupBox*   pAnalysisGroup = new QGroupBox("Local analysis");
   QVBoxLayout* pAnalysisLay   = new QVBoxLayout(pAnalysisGroup);
   //
   //pAnalysisLay->addWidget(m_widgets.pEstimNormals);

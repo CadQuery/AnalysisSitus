@@ -108,5 +108,6 @@ void exeAsBuilt_PickTangentPlaneCallback::Execute(vtkObject*    vtkNotUsed(pCall
 
   // U and V bounds for the drawable surface are chosen with respect to the
   // max distance from the seed point to its neighbors
-  IV.DRAW_SURFACE( new Geom_Plane(plane), distances[distances.size()]*2, distances[distances.size()]*2, Color_Green );
+  const double uvLimit = distances[distances.size() - 1]*0.1;
+  IV.DRAW_SURFACE(new Geom_Plane(plane), uvLimit, uvLimit, Color_Green);
 }

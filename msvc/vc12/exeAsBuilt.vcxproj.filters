@@ -47,6 +47,9 @@
     <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_PickPointCallback.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_PickTangentPlaneCallback.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_ControlsPCloud.cpp">
@@ -83,6 +86,9 @@
       <Filter>Source Files\Algo</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_PickPointCallback.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_PickTangentPlaneCallback.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>

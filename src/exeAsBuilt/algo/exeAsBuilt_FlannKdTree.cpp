@@ -20,10 +20,11 @@ exeAsBuilt_FlannKdTree::exeAsBuilt_FlannKdTree(const Handle(asiAlgo_PointCloud<f
 
   // Initialize FLANN parameters
   m_flannParams           = DEFAULT_FLANN_PARAMETERS;
-  m_flannParams.algorithm = FLANN_INDEX_KDTREE;
+  m_flannParams.algorithm = FLANN_INDEX_KMEANS;
   m_flannParams.trees     = 1;
   m_flannParams.log_level = FLANN_LOG_INFO;
   m_flannParams.checks    = 64;
+  m_flannParams.cores     = 1;
 
   // Build index
   float speedup;
@@ -52,7 +53,7 @@ void exeAsBuilt_FlannKdTree::Search(const gp_Pnt&       P,
 {
   float queryCoords[3] = { P.X(), P.Y(), P.Z() };
 
-  // Do ANN
+  // Do FANN search
   flann_find_nearest_neighbors_index(m_flannIndex,
                                      queryCoords,
                                      1,
@@ -68,5 +69,5 @@ void exeAsBuilt_FlannKdTree::Search(const gp_Pnt&       P,
 const Handle(asiAlgo_PointCloud<float>)&
   exeAsBuilt_FlannKdTree::GetPointCloud() const
 {
-    return m_pointCloud;
+  return m_pointCloud;
 }

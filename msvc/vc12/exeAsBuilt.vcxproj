@@ -130,6 +130,7 @@
     <ClInclude Include="..\..\src\exeAsBuilt\engine\exeAsBuilt_RE.h" />
     <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_CommonFacilities.h" />
     <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_PickPointCallback.h" />
+    <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_PickTangentPlaneCallback.h" />
     <CustomBuild Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_DialogCloudify.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
@@ -180,6 +181,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_exeAsBuilt_ControlsPCloud.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_exeAsBuilt_DialogCloudify.cpp" />
     <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_PickPointCallback.cpp" />
+    <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_PickTangentPlaneCallback.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

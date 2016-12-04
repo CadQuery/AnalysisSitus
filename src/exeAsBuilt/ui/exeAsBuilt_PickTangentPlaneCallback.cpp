@@ -1,22 +1,28 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 December 2016
+// Created on: 04 December 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <exeAsBuilt_PickPointCallback.h>
+#include <exeAsBuilt_PickTangentPlaneCallback.h>
 
 // exeAsBuilt includes
 #include <exeAsBuilt_CommonFacilities.h>
 
-// GUI includes
+// asiAlgo includes
+#include <asiAlgo_PlaneOnPoints.h>
+
+// asiUI includes
 #include <asiUI_Common.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_PrsManager.h>
 #include <asiVisu_Utils.h>
+
+// OCCT includes
+#include <Geom_Plane.hxx>
 
 // exeAsBuilt includes (FlannKdTree should be included after Qt includes)
 #include <exeAsBuilt_FlannKdTree.h>
@@ -29,23 +35,23 @@
 
 //! Instantiation routine.
 //! \return instance of the callback class.
-exeAsBuilt_PickPointCallback* exeAsBuilt_PickPointCallback::New()
+exeAsBuilt_PickTangentPlaneCallback* exeAsBuilt_PickTangentPlaneCallback::New()
 {
-  return new exeAsBuilt_PickPointCallback(NULL);
+  return new exeAsBuilt_PickTangentPlaneCallback(NULL);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting owning viewer as a parameter.
 //! \param[in] viewer owning viewer.
-exeAsBuilt_PickPointCallback::exeAsBuilt_PickPointCallback(asiUI_Viewer* viewer)
+exeAsBuilt_PickTangentPlaneCallback::exeAsBuilt_PickTangentPlaneCallback(asiUI_Viewer* viewer)
 : asiUI_ViewerCallback(viewer)
 {}
 
 //-----------------------------------------------------------------------------
 
 //! Destructor.
-exeAsBuilt_PickPointCallback::~exeAsBuilt_PickPointCallback()
+exeAsBuilt_PickTangentPlaneCallback::~exeAsBuilt_PickTangentPlaneCallback()
 {}
 
 //-----------------------------------------------------------------------------
@@ -54,25 +60,27 @@ exeAsBuilt_PickPointCallback::~exeAsBuilt_PickPointCallback()
 //! \param pCaller   [in] caller instance.
 //! \param eventId   [in] ID of the event triggered this listener.
 //! \param pCallData [in] invocation context.
-void exeAsBuilt_PickPointCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
-                                           unsigned long vtkNotUsed(eventId),
-                                           void*         pCallData)
+void exeAsBuilt_PickTangentPlaneCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
+                                                  unsigned long vtkNotUsed(eventId),
+                                                  void*         pCallData)
 {
-  Handle(asiData_PartNode) part_n;
-  TopoDS_Shape             part;
+  Handle(exeAsBuilt_CommonFacilities) cf = exeAsBuilt_CommonFacilities::Instance();
+  Handle(asiData_PartNode)            part_n;
+  TopoDS_Shape                        part;
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
   // Get picked point
   gp_Pnt P = *( (gp_Pnt*) pCallData );
 
-  ActAPI_PlotterEntry IV(exeAsBuilt_CommonFacilities::Instance()->Plotter);
+  ActAPI_PlotterEntry IV(cf->Plotter);
 
   IV.DRAW_POINT(P, Color_Green);
 
   // Find neighbors
-  std::vector<int> indices(KDTREE_K);
-  std::vector<float> distances(KDTREE_K);
+  std::vector<gp_Pnt> points(KDTREE_K);
+  std::vector<int>    indices(KDTREE_K);
+  std::vector<float>  distances(KDTREE_K);
   //
   m_kdTree->Search(P, KDTREE_K, indices, distances);
 
@@ -83,9 +91,22 @@ void exeAsBuilt_PickPointCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
   {
     float x, y, z;
     pointCloud->GetPoint(indices[k], x, y, z);
+    points[k] = gp_Pnt(x, y, z);
 
-    IV.DRAW_POINT(gp_Pnt(x, y, z), Color_Yellow);
+    IV.DRAW_POINT(points[k], Color_Yellow);
   }
 
-  std::cout << "test done" << std::endl;
+  // Build a fitting plane
+  gp_Pln plane;
+  asiAlgo_PlaneOnPoints mkPlaneOnPoints(cf->Notifier, cf->Plotter);
+  //
+  if ( !mkPlaneOnPoints.Build(points, plane) )
+  {
+    std::cout << "Error: cannot build fitting plane" << std::endl;
+    return;
+  }
+
+  // U and V bounds for the drawable surface are chosen with respect to the
+  // max distance from the seed point to its neighbors
+  IV.DRAW_SURFACE( new Geom_Plane(plane), distances[distances.size()]*2, distances[distances.size()]*2, Color_Green );
 }

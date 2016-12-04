@@ -12,6 +12,7 @@
 #include <exeAsBuilt_CommonFacilities.h>
 #include <exeAsBuilt_DialogCloudify.h>
 #include <exeAsBuilt_PickPointCallback.h>
+#include <exeAsBuilt_PickTangentPlaneCallback.h>
 
 // asiAlgo includes
 #include <asiAlgo_PointCloudUtils.h>
@@ -49,16 +50,19 @@ exeAsBuilt_ControlsPCloud::exeAsBuilt_ControlsPCloud(QWidget* parent)
   m_widgets.pProjPlaneBtn    = new QPushButton("Projection plane");
   m_widgets.pProjPlane       = vtkSmartPointer<vtkPlaneWidget>::New();
   m_widgets.pPickPointBtn    = new QPushButton("Pick point");
+  m_widgets.pBuildPlaneBtn   = new QPushButton("Build tangent plane");
   //
   m_widgets.pLoadPointsBtn   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCloudifyBtn     -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pEstimNormalsBtn -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pProjPlaneBtn    -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pPickPointBtn    -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pBuildPlaneBtn   -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Other configurations
   m_widgets.pPickPointBtn->setCheckable(true);
   m_widgets.pProjPlaneBtn->setCheckable(true);
+  m_widgets.pBuildPlaneBtn->setCheckable(true);
   m_widgets.pProjPlane->SetInteractor( exeAsBuilt_CommonFacilities::Instance()->Prs.Part->GetRenderWindow()->GetInteractor() );
 
   // Group for data exchange
@@ -75,6 +79,7 @@ exeAsBuilt_ControlsPCloud::exeAsBuilt_ControlsPCloud(QWidget* parent)
   //pAnalysisLay->addWidget(m_widgets.pEstimNormals);
   pAnalysisLay->addWidget(m_widgets.pProjPlaneBtn);
   pAnalysisLay->addWidget(m_widgets.pPickPointBtn);
+  pAnalysisLay->addWidget(m_widgets.pBuildPlaneBtn);
 
   // Set layout
   m_pMainLayout->addWidget(pDEGroup);
@@ -90,7 +95,10 @@ exeAsBuilt_ControlsPCloud::exeAsBuilt_ControlsPCloud(QWidget* parent)
   connect( m_widgets.pEstimNormalsBtn, SIGNAL( clicked() ), SLOT( onEstimNormals () ) );
   connect( m_widgets.pProjPlaneBtn,    SIGNAL( clicked() ), SLOT( onProjPlane    () ) );
   connect( m_widgets.pPickPointBtn,    SIGNAL( clicked() ), SLOT( onPickPoint    () ) );
+  connect( m_widgets.pBuildPlaneBtn,   SIGNAL( clicked() ), SLOT( onBuildPlane   () ) );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Destructor.
 exeAsBuilt_ControlsPCloud::~exeAsBuilt_ControlsPCloud()
@@ -261,6 +269,76 @@ void exeAsBuilt_ControlsPCloud::onPickPoint()
     // Configure workpiece picker
     cf->ViewerPart->GetPickCallback()->SetWorkpiecePicker(PickType_World);
   }
+}
 
-  // TODO: NYI
+//-----------------------------------------------------------------------------
+
+//! Allows user to build a tangent plane for an interactively picked point.
+void exeAsBuilt_ControlsPCloud::onBuildPlane()
+{
+  Handle(exeAsBuilt_CommonFacilities) cf = exeAsBuilt_CommonFacilities::Instance();
+  Handle(asiData_PartNode)            part_n;
+  TopoDS_Shape                        part;
+  //
+  if ( !asiUI_Common::PartShape(cf->Model, part_n, part) ) return;
+
+  // Build k-d tree if necessary
+  if ( m_kdTree.IsNull() )
+  {
+    // Get the stored point cloud
+    Handle(asiData_REPointsNode)      PointsNode = cf->Model->GetRENode()->Points();
+    Handle(asiAlgo_PointCloud<float>) PointCloud = PointsNode->GetPointsf();
+    //
+    if ( PointCloud.IsNull() || !PointCloud->GetNumberOfPoints() )
+    {
+      std::cout << "Point cloud is null or empty" << std::endl;
+      return;
+    }
+    std::cout << "Number of points in the point cloud: " << PointCloud->GetNumberOfPoints() << std::endl;
+
+    TIMER_NEW
+    TIMER_GO
+
+    m_kdTree = new exeAsBuilt_FlannKdTree(PointCloud);
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_MSG("Construct k-d tree")
+  }
+
+  const bool isOn = m_widgets.pBuildPlaneBtn->isChecked();
+
+  // Depending on the state of the control, either let user pick a
+  // point or finalize picking
+  if ( isOn )
+  {
+    // Enable an appropriate selection mode
+    m_iPrevSelMode = cf->ViewerPart->PrsMgr()->GetSelectionMode();
+    cf->ViewerPart->PrsMgr()->SetSelectionMode(SelectionMode_Workpiece);
+
+    // Configure workpiece picker
+    cf->ViewerPart->GetPickCallback()->SetWorkpiecePicker(PickType_Point);
+
+    // Add observer which takes responsibility to interact with user
+    if ( !cf->ViewerPart->PrsMgr()->HasObserver(EVENT_PICK_WORLD_POINT) )
+    {
+      vtkSmartPointer<exeAsBuilt_PickTangentPlaneCallback>
+        cb = vtkSmartPointer<exeAsBuilt_PickTangentPlaneCallback>::New();
+      //
+      cb->SetModel(cf->Model);
+      cb->SetKdTree(m_kdTree);
+
+      // Add observer
+      cf->ViewerPart->PrsMgr()->AddObserver(EVENT_PICK_WORLD_POINT, cb);
+    }
+  }
+  else
+  {
+    // Restore original selection mode
+    cf->ViewerPart->PrsMgr()->SetSelectionMode(m_iPrevSelMode);
+    //
+    cf->ViewerPart->PrsMgr()->RemoveObserver(EVENT_PICK_WORLD_POINT);
+
+    // Configure workpiece picker
+    cf->ViewerPart->GetPickCallback()->SetWorkpiecePicker(PickType_World);
+  }
 }

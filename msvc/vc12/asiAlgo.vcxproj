@@ -144,6 +144,7 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_Cloudify.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_CommonCloud.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_FacePointCloud.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlaneOnPoints.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudUtils.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PurifyCloud.h" />
@@ -192,6 +193,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_Cloudify.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_CommonCloud.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_FacePointCloud.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlaneOnPoints.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudUtils.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Logger.cpp" />

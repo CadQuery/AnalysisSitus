@@ -43,6 +43,7 @@ public slots:
   void onCloudify     ();
   void onProjPlane    ();
   void onPickPoint    ();
+  void onBuildPlane   ();
 
 private:
 
@@ -57,12 +58,14 @@ private:
     QPushButton*                    pProjPlaneBtn;    //!< Button to enable/disable a projection plane.
     vtkSmartPointer<vtkPlaneWidget> pProjPlane;       //!< Projection plane widget.
     QPushButton*                    pPickPointBtn;    //!< Button to pick a point.
+    QPushButton*                    pBuildPlaneBtn;   //!< Button to build a tangent plane.
 
     t_widgets() : pLoadPointsBtn   (NULL),
                   pCloudifyBtn     (NULL),
                   pEstimNormalsBtn (NULL),
                   pProjPlaneBtn    (NULL),
-                  pPickPointBtn    (NULL)
+                  pPickPointBtn    (NULL),
+                  pBuildPlaneBtn   (NULL)
     {}
 
     void Release()
@@ -72,6 +75,7 @@ private:
       delete pEstimNormalsBtn; pEstimNormalsBtn = NULL;
       delete pProjPlaneBtn;    pProjPlaneBtn    = NULL;
       delete pPickPointBtn;    pPickPointBtn    = NULL;
+      delete pBuildPlaneBtn;   pBuildPlaneBtn   = NULL;
     }
   };
 

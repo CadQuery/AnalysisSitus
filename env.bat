@@ -172,8 +172,8 @@ rem ===========================================================================
 if "%FLANN_ROOT%" == "" set "FLANN_ROOT=%AS_PRODUCTS%\flann-1.8.4-vc12-64"
 
 set "FLANN_INC=%FLANN_ROOT%\include"
-set "FLANN_LIB=%FLANN_ROOT%\lib"
-set "FLANN_BIN=%FLANN_ROOT%\bin"
+set "FLANN_LIB=%FLANN_ROOT%\lib%DEB%"
+set "FLANN_BIN=%FLANN_ROOT%\bin%DEB%"
 
 rem ===========================================================================
 rem Setting HDF5 environment

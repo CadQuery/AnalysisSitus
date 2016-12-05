@@ -96,6 +96,8 @@ asiUI_RotationCallback::asiUI_RotationCallback(asiUI_Viewer* pViewer)
 asiUI_RotationCallback::~asiUI_RotationCallback()
 {}
 
+//! \todo rotation around custom rotation center is done incorrectly. This need to be rewritten.
+//!
 //! Listens to a dedicated event. Performs all useful operations.
 //! \param pCaller   [in] caller instance.
 //! \param eventId   [in] ID of the event triggered this listener.
@@ -160,8 +162,8 @@ void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(pCaller),
       //
       vtkCamera* pCamera = renderer->GetActiveCamera();
       //
-      pCamera->SetFocalPoint(X, Y, Z);
       pCamera->SetWindowCenter(xWindowCenter, yWindowCenter);
+      pCamera->SetFocalPoint(X, Y, Z);
     }
 
     // Initialize Data Provider

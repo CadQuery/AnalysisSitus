@@ -26,6 +26,14 @@ asiAlgo_PointCloud<TCoordType>::asiAlgo_PointCloud(const std::vector<TCoordType>
 //-----------------------------------------------------------------------------
 
 template <typename TCoordType>
+void asiAlgo_PointCloud<TCoordType>::Reserve(const int nPts)
+{
+  m_coords.resize(nPts*3);
+}
+
+//-----------------------------------------------------------------------------
+
+template <typename TCoordType>
 int asiAlgo_PointCloud<TCoordType>::GetNumberOfPoints() const
 {
   return (int) ( m_coords.size() / 3 );
@@ -41,6 +49,19 @@ void asiAlgo_PointCloud<TCoordType>::AddPoint(const TCoordType x,
   m_coords.push_back(x);
   m_coords.push_back(y);
   m_coords.push_back(z);
+}
+
+//-----------------------------------------------------------------------------
+
+template <typename TCoordType>
+void asiAlgo_PointCloud<TCoordType>::SetPoint(const int        pointIndex,
+                                              const TCoordType x,
+                                              const TCoordType y,
+                                              const TCoordType z)
+{
+  m_coords[pointIndex*3 + 0] = x;
+  m_coords[pointIndex*3 + 1] = y;
+  m_coords[pointIndex*3 + 2] = z;
 }
 
 //-----------------------------------------------------------------------------

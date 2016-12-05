@@ -50,6 +50,9 @@
     <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_PickTangentPlaneCallback.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\exeAsBuilt\algo\exeAsBuilt_PointCloudNormals.h">
+      <Filter>Header Files\Algo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_ControlsPCloud.cpp">
@@ -90,6 +93,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_PickTangentPlaneCallback.cpp">
       <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\exeAsBuilt\algo\exeAsBuilt_PointCloudNormals.cpp">
+      <Filter>Source Files\Algo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

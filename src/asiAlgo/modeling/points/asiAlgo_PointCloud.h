@@ -34,11 +34,17 @@ public:
 
 public:
 
+  asiAlgo_EXPORT void
+    Reserve(const int nPts);
+
   asiAlgo_EXPORT int
     GetNumberOfPoints() const;
 
   asiAlgo_EXPORT void
     AddPoint(const TCoordType x, const TCoordType y, const TCoordType z);
+
+  asiAlgo_EXPORT void
+    SetPoint(const int pointIndex, const TCoordType x, const TCoordType y, const TCoordType z);
 
   asiAlgo_EXPORT void
     GetPoint(const int pointIndex, TCoordType& x, TCoordType& y, TCoordType& z) const;

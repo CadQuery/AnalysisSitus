@@ -13,6 +13,7 @@
 #include <exeAsBuilt_DialogCloudify.h>
 #include <exeAsBuilt_PickPointCallback.h>
 #include <exeAsBuilt_PickTangentPlaneCallback.h>
+#include <exeAsBuilt_PointCloudNormals.h>
 
 // asiAlgo includes
 #include <asiAlgo_PointCloudUtils.h>
@@ -46,7 +47,7 @@ exeAsBuilt_ControlsPCloud::exeAsBuilt_ControlsPCloud(QWidget* parent)
   // Buttons
   m_widgets.pLoadPointsBtn   = new QPushButton("Load points");
   m_widgets.pCloudifyBtn     = new QPushButton("Cloudify CAD part");
-  m_widgets.pEstimNormalsBtn = new QPushButton("Estimate normals");
+  m_widgets.pEstimNormalsBtn = new QPushButton("Calculate normals");
   m_widgets.pProjPlaneBtn    = new QPushButton("Projection plane");
   m_widgets.pProjPlane       = vtkSmartPointer<vtkPlaneWidget>::New();
   m_widgets.pPickPointBtn    = new QPushButton("Pick point");
@@ -76,7 +77,7 @@ exeAsBuilt_ControlsPCloud::exeAsBuilt_ControlsPCloud(QWidget* parent)
   QGroupBox*   pAnalysisGroup = new QGroupBox("Local analysis");
   QVBoxLayout* pAnalysisLay   = new QVBoxLayout(pAnalysisGroup);
   //
-  //pAnalysisLay->addWidget(m_widgets.pEstimNormals);
+  pAnalysisLay->addWidget(m_widgets.pEstimNormalsBtn);
   pAnalysisLay->addWidget(m_widgets.pProjPlaneBtn);
   pAnalysisLay->addWidget(m_widgets.pPickPointBtn);
   pAnalysisLay->addWidget(m_widgets.pBuildPlaneBtn);
@@ -155,21 +156,48 @@ void exeAsBuilt_ControlsPCloud::onLoadPoints()
 //! Reaction on estimation of normal field.
 void exeAsBuilt_ControlsPCloud::onEstimNormals()
 {
-  // TODO: the following is just weird
-  Handle(ActAPI_INode)
-    N = exeAsBuilt_CommonFacilities::Instance()->Model->GetIVPointSetPartition()->GetNode(1);
+  Handle(exeAsBuilt_CommonFacilities) cf = exeAsBuilt_CommonFacilities::Instance();
+
+  // Get the stored point cloud
+  Handle(asiData_REPointsNode)      PointsNode = cf->Model->GetRENode()->Points();
+  Handle(asiAlgo_PointCloud<float>) PointCloud = PointsNode->GetPointsf();
   //
-  Handle(asiData_IVPointSetNode) PN = Handle(asiData_IVPointSetNode)::DownCast(N);
-  //
-  if ( N.IsNull() || !PN->IsWellFormed() )
+  if ( PointCloud.IsNull() || !PointCloud->GetNumberOfPoints() )
   {
-    std::cout << "Error: point cloud is not ready" << std::endl;
+    std::cout << "Point cloud is null or empty" << std::endl;
+    return;
+  }
+  std::cout << "Number of points in the point cloud: " << PointCloud->GetNumberOfPoints() << std::endl;
+
+  // Build k-d tree if necessary
+  if ( m_kdTree.IsNull() )
+  {
+    TIMER_NEW
+    TIMER_GO
+
+    m_kdTree = new exeAsBuilt_FlannKdTree(PointCloud);
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_MSG("Construct k-d tree")
+  }
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Calculate normals
+  exeAsBuilt_PointCloudNormals CalculateNormals(m_kdTree, cf->Notifier, cf->Plotter);
+  //
+  if ( !CalculateNormals.IsDone() )
+  {
+    std::cout << "Error: cannot calculate normals" << std::endl;
     return;
   }
 
-  // Calculate normals
-  //asiAlgo_PointCloudNormals::Calculate( PN->GetPoints() );
-  // TODO
+  // Get the result
+  const Handle(asiAlgo_PointCloud<float>)& normals = CalculateNormals.GetResult();
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("Calculate normals")
 }
 
 //-----------------------------------------------------------------------------

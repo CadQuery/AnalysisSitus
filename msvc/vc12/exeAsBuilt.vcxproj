@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\exeAsBuilt\algo\exeAsBuilt_FlannKdTree.h" />
+    <ClInclude Include="..\..\src\exeAsBuilt\algo\exeAsBuilt_PointCloudNormals.h" />
     <ClInclude Include="..\..\src\exeAsBuilt\engine\exeAsBuilt_Model.h" />
     <ClInclude Include="..\..\src\exeAsBuilt\engine\exeAsBuilt_RE.h" />
     <ClInclude Include="..\..\src\exeAsBuilt\ui\exeAsBuilt_CommonFacilities.h" />
@@ -164,6 +165,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\exeAsBuilt\algo\exeAsBuilt_FlannKdTree.cpp" />
+    <ClCompile Include="..\..\src\exeAsBuilt\algo\exeAsBuilt_PointCloudNormals.cpp" />
     <ClCompile Include="..\..\src\exeAsBuilt\engine\exeAsBuilt_Model.cpp" />
     <ClCompile Include="..\..\src\exeAsBuilt\engine\exeAsBuilt_RE.cpp" />
     <ClCompile Include="..\..\src\exeAsBuilt\exeAsBuilt_Main.cpp">

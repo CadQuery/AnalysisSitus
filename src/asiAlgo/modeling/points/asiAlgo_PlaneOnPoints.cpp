@@ -11,7 +11,7 @@
 // Eigen includes
 #include <Eigen/Dense>
 
-#define COUT_DEBUG
+#undef COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif
@@ -115,6 +115,18 @@ bool asiAlgo_PlaneOnPoints::Build(const std::vector<gp_Pnt>& points,
   gp_Ax1 ax_X(mu, V[lambda[0].second]);
   gp_Ax1 ax_Y(mu, V[lambda[1].second]);
   gp_Ax1 ax_Z(mu, V[lambda[2].second]);
+  //
+  gp_Vec vec_X( ax_X.Direction() );
+  gp_Vec vec_Y( ax_Y.Direction() );
+  gp_Vec vec_Z( ax_Z.Direction() );
+  //
+  if ( (vec_X ^ vec_Y).Magnitude() < gp::Resolution() ||
+       (vec_X ^ vec_Z).Magnitude() < gp::Resolution() ||
+       (vec_Y ^ vec_Z).Magnitude() < gp::Resolution() )
+  {
+    std::cout << "Warning: degenerated normal" << std::endl;
+    return false; // Degenerated normal
+  }
 
   // Check if the system is right-handed
   const double ang = ax_X.Direction().AngleWithRef( ax_Y.Direction(), ax_Z.Direction() );
@@ -126,8 +138,8 @@ bool asiAlgo_PlaneOnPoints::Build(const std::vector<gp_Pnt>& points,
   }
 
   // Store results
-  result.SetLocation(mu);
-  result.SetAxis(ax_Z);
+  gp_Ax3 ax3( gp_Pnt(mu), ax_Z.Direction(), ax_X.Direction() );
+  result.SetPosition(ax3);
   //
   return true;
 }

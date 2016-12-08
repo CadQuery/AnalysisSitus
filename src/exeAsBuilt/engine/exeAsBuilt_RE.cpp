@@ -69,6 +69,20 @@ Handle(asiData_RENode) exeAsBuilt_RE::Create_RE()
     re_n->AddChildNode(re_points_n);
   }
 
+  // Create underlying Normals Node
+  {
+    Handle(ActAPI_INode) geom_normals_base = asiData_RENormalsNode::Instance();
+    m_model->GetRENormalsPartition()->AddNode(geom_normals_base);
+
+    // Initialize
+    Handle(asiData_RENormalsNode) re_normals_n = Handle(asiData_RENormalsNode)::DownCast(geom_normals_base);
+    re_normals_n->Init();
+    re_normals_n->SetName("Normals");
+
+    // Set as child
+    re_n->AddChildNode(re_normals_n);
+  }
+
   // Return the just created Node
   return re_n;
 }

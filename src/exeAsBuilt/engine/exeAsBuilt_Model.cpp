@@ -19,6 +19,7 @@ REGISTER_NODE_TYPE(asiData_RENode)
 REGISTER_NODE_TYPE(asiData_REContourNode)
 REGISTER_NODE_TYPE(asiData_REContoursNode)
 REGISTER_NODE_TYPE(asiData_REPointsNode)
+REGISTER_NODE_TYPE(asiData_RENormalsNode)
 REGISTER_NODE_TYPE(asiData_RESurfaceNode)
 REGISTER_NODE_TYPE(asiData_RESurfacesNode)
 
@@ -80,6 +81,7 @@ void exeAsBuilt_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_REContourNode>,  Partition_REContour);
   REGISTER_PARTITION(asiData_Partition<asiData_REContoursNode>, Partition_REContours);
   REGISTER_PARTITION(asiData_Partition<asiData_REPointsNode>,   Partition_REPoints);
+  REGISTER_PARTITION(asiData_Partition<asiData_RENormalsNode>,  Partition_RENormals);
   REGISTER_PARTITION(asiData_Partition<asiData_RESurfaceNode>,  Partition_RESurface);
   REGISTER_PARTITION(asiData_Partition<asiData_RESurfacesNode>, Partition_RESurfaces);
 }

@@ -27,6 +27,23 @@ Handle(TColStd_HArray1OfReal)
 
 //-----------------------------------------------------------------------------
 
+Handle(TColStd_HArray1OfReal)
+  asiAlgo_PointCloudUtils::AsRealArray(const Handle(asiAlgo_PointCloud<float>)& pointCloud)
+{
+  if ( pointCloud.IsNull() )
+    return NULL;
+
+  Handle(TColStd_HArray1OfReal)
+    result = new TColStd_HArray1OfReal(0, (int) pointCloud->ChangeCoords().size() - 1);
+  //
+  for ( int i = result->Lower(); i <= result->Upper(); ++i )
+    result->ChangeValue(i) = pointCloud->ChangeCoords()[i];
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
 Handle(asiAlgo_PointCloud<double>)
   asiAlgo_PointCloudUtils::AsPointCloud(const Handle(TColStd_HArray1OfReal)& arr)
 {

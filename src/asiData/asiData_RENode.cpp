@@ -57,7 +57,7 @@ void asiData_RENode::SetName(const TCollection_ExtendedString& theName)
 //-----------------------------------------------------------------------------
 
 //! \return underlying surfaces.
-Handle(asiData_RESurfacesNode) asiData_RENode::Surfaces()
+Handle(asiData_RESurfacesNode) asiData_RENode::GetSurfaces()
 {
   Handle(asiData_RESurfacesNode)
     surf_n = Handle(asiData_RESurfacesNode)::DownCast( this->GetChildNode(Child_Surfaces) );
@@ -69,7 +69,7 @@ Handle(asiData_RESurfacesNode) asiData_RENode::Surfaces()
 }
 
 //! \return underlying contours.
-Handle(asiData_REContoursNode) asiData_RENode::Contours()
+Handle(asiData_REContoursNode) asiData_RENode::GetContours()
 {
   Handle(asiData_REContoursNode)
     cont_n = Handle(asiData_REContoursNode)::DownCast( this->GetChildNode(Child_Contours) );
@@ -81,13 +81,25 @@ Handle(asiData_REContoursNode) asiData_RENode::Contours()
 }
 
 //! \return underlying points.
-Handle(asiData_REPointsNode) asiData_RENode::Points()
+Handle(asiData_REPointsNode) asiData_RENode::GetPoints()
 {
   Handle(asiData_REPointsNode)
     points_n = Handle(asiData_REPointsNode)::DownCast( this->GetChildNode(Child_Points) );
   //
   if ( !points_n.IsNull() && points_n->IsWellFormed() )
     return points_n;
+  //
+  return NULL;
+}
+
+//! \return underlying normals.
+Handle(asiData_RENormalsNode) asiData_RENode::GetNormals()
+{
+  Handle(asiData_RENormalsNode)
+    normal_n = Handle(asiData_RENormalsNode)::DownCast( this->GetChildNode(Child_Normals) );
+  //
+  if ( !normal_n.IsNull() && normal_n->IsWellFormed() )
+    return normal_n;
   //
   return NULL;
 }

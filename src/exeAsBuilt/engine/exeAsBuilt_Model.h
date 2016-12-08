@@ -90,6 +90,13 @@ public:
     return Handle(asiData_Partition<asiData_REPointsNode>)::DownCast( this->Partition(Partition_REPoints) );
   }
 
+  //! Accessor for a Partition instance dedicated to RE Normals Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_RENormalsNode>) GetRENormalsPartition() const
+  {
+    return Handle(asiData_Partition<asiData_RENormalsNode>)::DownCast( this->Partition(Partition_RENormals) );
+  }
+
   //! Accessor for a Partition instance dedicated to RE Surface Nodes.
   //! \return requested Partition.
   Handle(asiData_Partition<asiData_RESurfaceNode>) GetRESurfacePartition() const
@@ -118,6 +125,7 @@ private:
     Partition_REContour,
     Partition_REContours,
     Partition_REPoints,
+    Partition_RENormals,
     Partition_RESurface,
     Partition_RESurfaces
   };

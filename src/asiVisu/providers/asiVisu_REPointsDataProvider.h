@@ -39,10 +39,6 @@ private:
   virtual Handle(ActAPI_HParameterList)
     translationSources() const;
 
-protected:
-
-  Handle(asiData_REPointsNode) m_points; //!< Points Data Node.
-
 };
 
 #endif

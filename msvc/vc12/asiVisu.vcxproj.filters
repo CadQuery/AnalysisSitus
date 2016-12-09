@@ -326,6 +326,18 @@
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_RENormalsDataProvider.h">
       <Filter>Header Files\Providers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_NormalsPipeline.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_NormalsDataProvider.h">
+      <Filter>Header Files\Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_PointsVectorFilter.h">
+      <Filter>Header Files\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\asiVisu_Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_MeshENScalarFilter.cpp">
@@ -591,6 +603,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_RENormalsDataProvider.cpp">
       <Filter>Source Files\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_NormalsPipeline.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_NormalsDataProvider.cpp">
+      <Filter>Source Files\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_PointsVectorFilter.cpp">
+      <Filter>Source Files\Filters</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

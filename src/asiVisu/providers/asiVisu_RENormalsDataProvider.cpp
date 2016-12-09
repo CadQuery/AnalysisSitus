@@ -1,33 +1,33 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 April 2016
+// Created on: 09 December 2016
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_REPointsDataProvider.h>
+#include <asiVisu_RENormalsDataProvider.h>
 
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-//! \param points_n [in] Points Node.
-asiVisu_REPointsDataProvider::asiVisu_REPointsDataProvider(const Handle(asiData_REPointsNode)& points_n)
-: asiVisu_PointsDataProvider(points_n)
+//! \param normalsNode [in] Normals Node.
+asiVisu_RENormalsDataProvider::asiVisu_RENormalsDataProvider(const Handle(asiData_RENormalsNode)& normalsNode)
+: asiVisu_NormalsDataProvider(normalsNode)
 {}
 
 //-----------------------------------------------------------------------------
 
-//! \return point cloud to visualize.
-Handle(asiAlgo_PointCloud<double>) asiVisu_REPointsDataProvider::GetPoints() const
+//! \return normals to visualize.
+Handle(asiAlgo_PointCloud<float>) asiVisu_RENormalsDataProvider::GetNormalsf() const
 {
-  Handle(asiData_REPointsNode)
-    points_n = Handle(asiData_REPointsNode)::DownCast(m_node);
+  Handle(asiData_RENormalsNode)
+    normals_n = Handle(asiData_RENormalsNode)::DownCast(m_node);
   //
-  if ( points_n.IsNull() || !points_n->IsWellFormed() )
+  if ( normals_n.IsNull() || !normals_n->IsWellFormed() )
     return NULL;
 
-  return points_n->GetPoints();
+  return normals_n->GetNormalsf();
 }
 
 //-----------------------------------------------------------------------------
@@ -35,19 +35,19 @@ Handle(asiAlgo_PointCloud<double>) asiVisu_REPointsDataProvider::GetPoints() con
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
-Handle(ActAPI_HParameterList) asiVisu_REPointsDataProvider::translationSources() const
+Handle(ActAPI_HParameterList) asiVisu_RENormalsDataProvider::translationSources() const
 {
   // Resulting Parameters
   ActParamStream out;
 
-  Handle(asiData_REPointsNode)
-    points_n = Handle(asiData_REPointsNode)::DownCast(m_node);
+  Handle(asiData_RENormalsNode)
+    normals_n = Handle(asiData_RENormalsNode)::DownCast(m_node);
   //
-  if ( points_n.IsNull() || !points_n->IsWellFormed() )
+  if ( normals_n.IsNull() || !normals_n->IsWellFormed() )
     return out;
 
   // Register Parameter as sensitive
-  out << points_n->Parameter(asiData_REPointsNode::PID_Points);
+  out << normals_n->Parameter(asiData_RENormalsNode::PID_Normals);
 
   return out;
 }

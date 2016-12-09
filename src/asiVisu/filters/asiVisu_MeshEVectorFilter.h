@@ -22,28 +22,6 @@
 // OCCT includes
 #include <NCollection_SparseArray.hxx>
 
-//! Elementary data chunk representing vector value.
-struct VectorTuple
-{
-  double F[3];
-
-  VectorTuple()
-  {
-    F[0] = 0.0; F[1] = 0.0; F[2] = 0.0;
-  }
-
-  VectorTuple(const double theF1,
-              const double theF2,
-              const double theF3)
-  {
-    F[0] = theF1; F[1] = theF2; F[2] = theF3;
-  }
-};
-
-//! Collection of vector values associated with sparse integer IDs.
-typedef NCollection_SparseArray<VectorTuple> VectorMap;
-typedef NCollection_Shared<VectorMap>        HVectorMap;
-
 //! Filter populating VTK cell vectors with domain data.
 class asiVisu_MeshEVectorFilter : public vtkPolyDataAlgorithm
 {

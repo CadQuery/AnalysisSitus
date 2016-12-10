@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|@X_COMPILER_BITNESS@'">
+    <LocalDebuggerEnvironment>PATH=@3RDPARTY_DLL_PATH@;@CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE@;%PATH%
+CASROOT=@3RDPARTY_OCCT_DIR@
+CSF_ShadersDirectory=@3RDPARTY_OCCT_DIR@/src/Shaders
+CSF_PluginDefaults=@ASITUS_OCAF_PLUGIN_DIR@
+CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
+    </LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>@CMAKE_BINARY_DIR@</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|@X_COMPILER_BITNESS@'">
+    <LocalDebuggerEnvironment>PATH=@3RDPARTY_DLL_PATH@;@CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO@;%PATH%
+CASROOT=@3RDPARTY_OCCT_DIR@
+CSF_ShadersDirectory=@3RDPARTY_OCCT_DIR@/src/Shaders
+CSF_PluginDefaults=@ASITUS_OCAF_PLUGIN_DIR@
+CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
+    </LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>@CMAKE_BINARY_DIR@</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|@X_COMPILER_BITNESS@'">
+    <LocalDebuggerEnvironment>PATH=@3RDPARTY_DLL_DEB_PATH@;@CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG@;%PATH%
+CASROOT=@3RDPARTY_OCCT_DIR@
+CSF_ShadersDirectory=@3RDPARTY_OCCT_DIR@/src/Shaders
+CSF_PluginDefaults=@ASITUS_OCAF_PLUGIN_DIR@
+CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
+    </LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>@CMAKE_BINARY_DIR@</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+</Project>

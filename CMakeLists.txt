@@ -17,12 +17,32 @@ set (CMAKE_CONFIGURATION_TYPES Release Debug RelWithDebInfo CACHE INTERNAL "" FO
 include (${CMAKE_SOURCE_DIR}/cmake/asitus_3rdparty_macros.cmake)
 
 #-------------------------------------------------------------------------------
-# Find Qt4 with the standard CMake finder for the
-# sake of automated MOC handling
+# Find 3rd-parties
 #-------------------------------------------------------------------------------
 
 # Set a directory containing all 3-rd parties
 set (3RDPARTY_DIR "" CACHE PATH "The root directory for all 3-rd parties")
+
+# Qt
+include (${CMAKE_SOURCE_DIR}/cmake/asitus_Qt.cmake)
+
+# Active Data
+include (${CMAKE_SOURCE_DIR}/cmake/asitus_ActiveData.cmake)
+
+# Eigen
+include (${CMAKE_SOURCE_DIR}/cmake/asitus_Eigen.cmake)
+
+# VTK
+include (${CMAKE_SOURCE_DIR}/cmake/asitus_VTK.cmake)
+
+# OCCT
+include (${CMAKE_SOURCE_DIR}/cmake/asitus_OCCT.cmake)
+
+# OCCT 3rdparty
+include (${CMAKE_SOURCE_DIR}/cmake/asitus_OCCT_3rdparty.cmake)
+
+# Inno Setup for installation
+include (${CMAKE_SOURCE_DIR}/cmake/asitus_InnoSetup.cmake)
 
 # Qt is searched manually first
 ASITUS_THIRDPARTY_PRODUCT("QT" "" "" "QtCore4.lib")

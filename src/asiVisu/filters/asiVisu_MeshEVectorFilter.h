@@ -9,7 +9,7 @@
 #define asiVisu_MeshEVectorFilter_h
 
 // Visualization includes
-#include <asiVisu.h>
+#include <asiVisu_Common.h>
 
 // Active Data (auxiliary) includes
 #include <ActAux_Common.h>
@@ -51,9 +51,9 @@ public:
         if ( anID == -1 )
           continue;
 
-        VectorTuple aVecTuple( theElemData->Value(3 * i),
-                               theElemData->Value(3 * i + 1),
-                               theElemData->Value(3 * i + 2) );
+        asiVisu_VectorTuple aVecTuple( theElemData->Value(3 * i),
+                                       theElemData->Value(3 * i + 1),
+                                       theElemData->Value(3 * i + 2) );
         m_vectorMap->Bind(anID, aVecTuple);
       }
     }
@@ -91,8 +91,8 @@ public:
 
 private:
 
-  bool vectorForElem (const int theElemID, VectorTuple& theVecTuple);
-  void adjustMinMax  (const VectorTuple& theVecTuple);
+  bool vectorForElem (const int theElemID, asiVisu_VectorTuple& theVecTuple);
+  void adjustMinMax  (const asiVisu_VectorTuple& theVecTuple);
 
 private:
 
@@ -110,7 +110,7 @@ private:
   double m_fMaxModulus;
 
   //! Vectors associated with their owning IDs.
-  Handle(HVectorMap) m_vectorMap;
+  Handle(asiVisu_HVectorMap) m_vectorMap;
 
   //! Maximum scalar value obtained during the filtering process.
   double m_fMaxScalar;

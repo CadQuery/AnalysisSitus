@@ -9,6 +9,34 @@
 ###  ####         #######     ####     ####       ########   #######
 ===============================================================================
 
+Analysis Situs software is aimed to assist developers who use OpenCascade or
+other CAD modeling libraries. You can benefit from this software if:
+
+- you're a computational geometer, and you need an ecosystem to prototype and
+  profile your algos.
+
+- you're OpenCascade user or developer, and you need a handy tool to inspect
+  your geometries.
+
+Some real examples of its usage are as follows:
+
+ex 01. Implement Feature Recognition and Suppression utilities. If you're
+       working in this field, then you normally need to inspect CAD models
+       closely: find faces and edges, check their types, analyze their
+       geometries, etc.
+
+ex 02. Implement Reverse Engineering utilities. If you're working in this
+       field, you need to study differential properties of your geometries,
+       reconstruct valid topologies, etc.
+
+ex 03. Implement custom geometric modeling algorithms.
+
+Analysis Situs is yet another tool to drop into your CAD geometer's tool box.
+The idea is to simplify your daily geometrical challenges, and let you focus
+on your particular problems.
+
+-------------------------------------------------------------------------------
+
 Analysis Situs is the former name for Topology. Henri Poincare wrote an
 original paper on the subject in 1895 where he introduced the fundamental
 concepts of the new branch of mathematics. The topological language has appeared
@@ -38,8 +66,7 @@ substitute DRAW even in plain geometric workflows. DRAW is an entry point to Ope
 Analysis Situs is not. Either it is not a CAD system (heaven forbid). It is a tool for
 geometric modeling developers, learners, and researchers.
 
-Several decades ago there was a CAD system PADL. It is interesting to speak about
-it because of its particular purpose which was connecting the academia with industry.
+Several decades ago there was a CAD system PADL connecting the academia with industry.
 Practice shows that such a combination of the academic roots playing on the industrial
 ground is somewhat very fruitful. Pioneer researchers like A. Requicha who participated
 in PADL brought a lot of new seminal concepts to the field (for this A. Requicha and

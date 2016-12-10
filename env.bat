@@ -65,35 +65,6 @@ set "AD_LIB=%AD_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 set "AD_BIN=%AD_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
 
 rem ===========================================================================
-rem Setting environment for Feature / Mesh libraries
-rem ===========================================================================
-
-if "%FEAT_ROOT%" == "" set "FEAT_ROOT=%AS_PRODUCTS%\feature"
-if "%FEAT_INC%"  == "" set "FEAT_INC=%FEAT_ROOT%\include"
-if "%FEAT_LIB%"  == "" set "FEAT_LIB=%FEAT_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
-if "%FEAT_BIN%"  == "" set "FEAT_BIN=%FEAT_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
-
-if "%MESH_ROOT%" == "" set "MESH_ROOT=%AS_PRODUCTS%\mesh"
-if "%MESH_INC%"  == "" set "MESH_INC=%MESH_ROOT%\include"
-if "%MESH_LIB%"  == "" set "MESH_LIB=%MESH_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
-if "%MESH_BIN%"  == "" set "MESH_BIN=%MESH_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
-
-rem ===========================================================================
-rem Setting environment for MeshGems
-rem ===========================================================================
-
-if "%MESHGEMS_BIN%" == "" set "MESHGEMS_BIN=%AS_PRODUCTS%\meshgems-vc12-64\bin"
-
-rem ===========================================================================
-rem Setting environment for Canonical Recognition library
-rem ===========================================================================
-
-if "%CR_ROOT%" == "" set "CR_ROOT=%AS_PRODUCTS%\occ_cr-vc12-64"
-if "%CR_INC%"  == "" set "CR_INC=%CR_ROOT%\inc"
-if "%CR_LIB%"  == "" set "CR_LIB=%CR_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
-if "%CR_BIN%"  == "" set "CR_BIN=%CR_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
-
-rem ===========================================================================
 rem Setting environment for QR (Quaoar)
 rem ===========================================================================
 
@@ -101,15 +72,6 @@ if "%QR_ROOT%" == "" set "QR_ROOT=%AS_PRODUCTS%\quaoar"
 set "QR_INC=%QR_ROOT%\include"
 set "QR_LIB=%QR_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 set "QR_BIN=%QR_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
-
-rem ===========================================================================
-rem Setting environment for SPE
-rem ===========================================================================
-
-if "%SPE_ROOT%" == "" set "SPE_ROOT=%AS_PRODUCTS%\spe"
-set "SPE_INC=%SPE_ROOT%\include"
-set "SPE_LIB=%SPE_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
-set "SPE_BIN=%SPE_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
 
 rem ===========================================================================
 rem Setting TBB environment 
@@ -124,19 +86,10 @@ rem ===========================================================================
 rem Setting environment for VTK
 rem ===========================================================================
 
-if "%VTK_ROOT%" == "" set "VTK_ROOT=%AS_PRODUCTS%\vtk-7.0.0"
-set "VTK_INC=%VTK_ROOT%\include\vtk-7.0"
+if "%VTK_ROOT%" == "" set "VTK_ROOT=%AS_PRODUCTS%\vtk-7.1.0"
+set "VTK_INC=%VTK_ROOT%\include\vtk-7.1"
 set "VTK_LIB=%VTK_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 set "VTK_BIN=%VTK_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
-
-rem ===========================================================================
-rem Setting environment for PCL
-rem ===========================================================================
-
-if "%PCL_ROOT%" == "" set "PCL_ROOT=D:\projects\nnnp\pcl1.8.0"
-set "PCL_INC=%PCL_ROOT%\include\pcl-1.8"
-set "PCL_LIB=%PCL_ROOT%\lib"
-set "PCL_BIN=%PCL_ROOT%\bin"
 
 rem ===========================================================================
 rem Setting environment for Qt
@@ -156,34 +109,6 @@ rem ===========================================================================
 if "%EIGEN_ROOT%" == "" set "EIGEN_ROOT=%AS_PRODUCTS%\eigen-3.2.0"
 
 set "EIGEN_INC=%EIGEN_ROOT%"
-
-rem ===========================================================================
-rem Setting Boost environment
-rem ===========================================================================
-
-if "%BOOST_ROOT%" == "" set "BOOST_ROOT=D:\projects\nnnp\pcl1.8.0\3rdParty\Boost"
-
-set "BOOST_INC=%BOOST_ROOT%/include"
-
-rem ===========================================================================
-rem Setting FLANN environment
-rem ===========================================================================
-
-if "%FLANN_ROOT%" == "" set "FLANN_ROOT=%AS_PRODUCTS%\flann-1.8.4-vc12-64"
-
-set "FLANN_INC=%FLANN_ROOT%\include"
-set "FLANN_LIB=%FLANN_ROOT%\lib%DEB%"
-set "FLANN_BIN=%FLANN_ROOT%\bin%DEB%"
-
-rem ===========================================================================
-rem Setting HDF5 environment
-rem ===========================================================================
-
-if "%HDF5_ROOT%" == "" set "HDF5_ROOT=%AS_PRODUCTS%\hdf5"
-
-set "HDF5_INC=%HDF5_ROOT%\include"
-set "HDF5_LIB=%HDF5_ROOT%\lib"
-set "HDF5_BIN=%HDF5_ROOT%\bin"
 
 rem ===========================================================================
 rem Setting environment for Inno Setup
@@ -217,11 +142,13 @@ echo VCVER                 = %VCVER%
 echo BUILD_CONFIG          = %BUILD_CONFIG%
 echo AS_ROOT               = %AS_ROOT%
 echo AS_PRODUCTS           = %AS_PRODUCTS%
+echo VTK_ROOT              = %VTK_ROOT%
+echo VTK_INC               = %VTK_INC%
 echo CASROOT               = %CASROOT%
 echo CAS_BIN64             = %CAS_BIN64%
 echo CASDEB                = %CASDEB%
 echo CSF_PluginDefaults    = %CSF_PluginDefaults% 
-echo CSF_ResourcesDefaults = %CSF_ResourcesDefaults% 
+echo CSF_ResourcesDefaults = %CSF_ResourcesDefaults%
+echo ... 
 echo PATH                  = %PATH% 
-echo FLANN_ROOT            = %FLANN_ROOT%
 echo ...

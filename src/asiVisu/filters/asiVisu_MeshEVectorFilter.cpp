@@ -27,7 +27,7 @@ vtkStandardNewMacro(asiVisu_MeshEVectorFilter);
 //! Default constructor.
 asiVisu_MeshEVectorFilter::asiVisu_MeshEVectorFilter()
 {
-  m_vectorMap = new HVectorMap(100);
+  m_vectorMap = new asiVisu_HVectorMap(100);
 
   m_fMaxModulus =  1.0;
   m_fMinScalar  =  VTK_FLOAT_MAX;
@@ -132,7 +132,7 @@ int asiVisu_MeshEVectorFilter::RequestData(vtkInformation*,
     int anElemID = aCellIDs->GetValue(aCellId);
 
     // Access scalar value
-    VectorTuple aVecTuple;
+    asiVisu_VectorTuple aVecTuple;
     bool isCellVectored = this->vectorForElem(anElemID, aVecTuple);
     this->adjustMinMax(aVecTuple);
 
@@ -199,7 +199,7 @@ int asiVisu_MeshEVectorFilter::RequestData(vtkInformation*,
 //! \return true if vectorial data has been found, false -- otherwise.
 bool
   asiVisu_MeshEVectorFilter::vectorForElem(const int    theElemID,
-                                           VectorTuple& theVecTuple)
+                                           asiVisu_VectorTuple& theVecTuple)
 {
   if ( !m_vectorMap->IsBound(theElemID) )
     return false;
@@ -210,7 +210,7 @@ bool
 
 //! Adjusts min & max scalar values against the passed vectorial data.
 //! \param theVecTuple [in] vectorial data.
-void asiVisu_MeshEVectorFilter::adjustMinMax(const VectorTuple& theVecTuple)
+void asiVisu_MeshEVectorFilter::adjustMinMax(const asiVisu_VectorTuple& theVecTuple)
 {
   double aVecModulus = 0.0;
   for ( int k = 0; k < 3; k++ )

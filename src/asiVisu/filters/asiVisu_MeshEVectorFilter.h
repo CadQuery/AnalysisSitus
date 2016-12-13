@@ -19,9 +19,6 @@
 #include <vtkIdList.h>
 #include <vtkPolyDataAlgorithm.h>
 
-// OCCT includes
-#include <NCollection_SparseArray.hxx>
-
 //! Filter populating VTK cell vectors with domain data.
 class asiVisu_MeshEVectorFilter : public vtkPolyDataAlgorithm
 {

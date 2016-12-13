@@ -120,7 +120,7 @@ rem ===========================================================================
 rem Adjust PATH variable
 rem ===========================================================================
 
-set "PATH=%AS_BIN%;%CAS_BIN64%;%FREETYPE_BIN%;%MESHGEMS_BIN%;%SPE_BIN%;%AD_BIN%;%FEAT_BIN%;%MESH_BIN%;%QR_BIN%;%VTK_BIN%;%PCL_BIN%;%QT_BIN%;%TBB_BIN%;%CR_BIN%;%INNOSETUP_ROOT%;%PATH%"
+set "PATH=%AS_BIN%;%CAS_BIN64%;%FREETYPE_BIN%;%AD_BIN%;%QR_BIN%;%VTK_BIN%;%QT_BIN%;%TBB_BIN%;%INNOSETUP_ROOT%;%PATH%"
 
 rem ===========================================================================
 rem Customize OCCT environment variables

@@ -40,7 +40,7 @@ asiVisu_Utils::TPrsAllocMap asiVisu_Utils::m_allocMap;
 
 asiVisu_Utils::TPrsAllocMap
   asiVisu_Utils::RegisterPrsType(const TCollection_AsciiString& theType,
-                                 const asiVisu_PrsAllocator       theAllocFunc)
+                                 const asiVisu_PrsAllocator     theAllocFunc)
 
 {
   if ( !m_allocMap.IsBound(theType) )
@@ -742,10 +742,13 @@ void asiVisu_Utils::InitTextWidget(vtkTextWidget* theTextWidget)
   vtkTextRepresentation* textRep = vtkTextRepresentation::SafeDownCast( theTextWidget->GetRepresentation() );
   theTextWidget->SelectableOff();
 
-  vtkSmartPointer<vtkTextActor> aTextActor = vtkSmartPointer<vtkTextActor>::New();
-  textRep->SetTextActor(aTextActor);
-  textRep->GetPositionCoordinate()->SetValue(0.01, 0.01);
-  textRep->GetPosition2Coordinate()->SetValue(0.45, 0.35);
-  aTextActor->GetTextProperty()->SetJustificationToLeft();
-  aTextActor->GetTextProperty()->SetVerticalJustificationToBottom();
+  vtkSmartPointer<vtkTextActor> textActor = vtkSmartPointer<vtkTextActor>::New();
+  textRep->SetTextActor(textActor);
+  //
+  /*textRep->GetPositionCoordinate()->SetValue(0.01, 0.01);
+  textRep->GetPosition2Coordinate()->SetValue(0.45, 0.35);*/
+  //
+  textActor->GetTextProperty()->SetJustificationToLeft();
+  textActor->GetTextProperty()->SetVerticalJustificationToBottom();
+  textActor->GetTextProperty()->UseTightBoundingBoxOn();
 }

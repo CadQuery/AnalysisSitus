@@ -37,8 +37,7 @@ asiVisu_PointsSource::asiVisu_PointsSource() : vtkPolyDataAlgorithm ()
 
 //! Destructor.
 asiVisu_PointsSource::~asiVisu_PointsSource()
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 // Kernel methods

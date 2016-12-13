@@ -44,19 +44,147 @@ include (${CMAKE_SOURCE_DIR}/cmake/asitus_OCCT_3rdparty.cmake)
 # Inno Setup for installation
 include (${CMAKE_SOURCE_DIR}/cmake/asitus_InnoSetup.cmake)
 
-# Qt is searched manually first
-ASITUS_THIRDPARTY_PRODUCT("QT" "" "" "QtCore4.lib")
-#
-list ( APPEND 3RDPARTY_INCLUDE_DIRS ${3RDPARTY_QT_INCLUDE_DIR}/QtCore
-                                    ${3RDPARTY_QT_INCLUDE_DIR}/QtGui )
+set (3RDPARTY_DLL_PATH "${3RDPARTY_tcl_DLL_DIR}; \
+                        ${3RDPARTY_tk_DLL_DIR}; \
+                        ${3RDPARTY_freetype_DLL_DIR}; \
+                        ${3RDPARTY_freeimage_DLL_DIR}; \
+                        ${3RDPARTY_gl2ps_DLL_DIR}; \
+                        ${3RDPARTY_tbb_DLL_DIR}; \
+                        ${3RDPARTY_QT_DIR}/bin; \
+                        ${3RDPARTY_vtk_DLL_DIR}")
 
-# Now set CMAKE_PREFIX_PATH to point to local Qt installation.
-# Without this setting find_package() will not work
-set(CMAKE_PREFIX_PATH ${3RDPARTY_QT_DIR}/bin)
+set (3RDPARTY_DLL_DEB_PATH "${3RDPARTY_DLL_PATH}")
 
-# Now we can apply standard CMake finder for Qt4. We do this mostly
-# to have qt4_wrap_cpp() function available
-find_package(Qt4 REQUIRED)
+if (3RDPARTY_OCCT_DLL_DIR_DEBUG AND EXISTS "${3RDPARTY_OCCT_DLL_DIR_DEBUG}")
+  set (3RDPARTY_DLL_DEB_PATH "${3RDPARTY_DLL_DEB_PATH};${3RDPARTY_OCCT_DLL_DIR_DEBUG}")
+endif()
+
+if (3RDPARTY_active_data_DLL_DIR_DEBUG AND EXISTS "${3RDPARTY_active_data_DLL_DIR_DEBUG}")
+  set (3RDPARTY_DLL_DEB_PATH "${3RDPARTY_DLL_DEB_PATH};${3RDPARTY_active_data_DLL_DIR_DEBUG}")
+endif()
+
+set (3RDPARTY_DLL_PATH "${3RDPARTY_DLL_PATH}; \
+                        ${3RDPARTY_OCCT_DLL_DIR}; \
+                        ${3RDPARTY_active_data_DLL_DIR};")
+
+#-------------------------------------------------------------------------------
+string (REGEX REPLACE ";" " " 3RDPARTY_NOT_INCLUDED "${3RDPARTY_NOT_INCLUDED}")
+
+# check all 3rdparty paths
+if (3RDPARTY_NOT_INCLUDED)
+  message (FATAL_ERROR "NOT FOUND: ${3RDPARTY_NOT_INCLUDED}")
+endif()
+
+#-------------------------------------------------------------------------------
+# Executable
+#-------------------------------------------------------------------------------
+
+# Configure warnings level
+if (MSVC)
+  add_definitions (/W4)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /EHa")
+elseif (CMAKE_COMPILER_IS_GNUCXX)
+  add_definitions (-Wall -pedantic)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")  
+else()
+  message ("Unknown compiler")
+endif()
+
+#-------------------------------------------------------------------------------
+# Output
+#-------------------------------------------------------------------------------
+
+# build directories
+set (OS_WITH_BIT "${PLATFORM}${COMPILER_BITNESS}")
+
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/lib")
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/bin")
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/lib")
+
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/libi")
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/bini")
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/libi")
+
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/libd")
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/bind")
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/libd")
+
+if (WIN32)
+  set (CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE        "${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/bin")
+  set (CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/bini")
+  set (CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG          "${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/bind")
+endif()
+
+#-------------------------------------------------------------------------------
+# Sub-projects
+#-------------------------------------------------------------------------------
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/mesh)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/feature)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/core)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/api)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/visu)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/app)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/drawer)
+
+#-------------------------------------------------------------------------------
+# Documentation
+#-------------------------------------------------------------------------------
+
+if (NOT "${DOXYGEN_EXE}" STREQUAL "" AND EXISTS "${DOXYGEN_EXE}")
+  message(STATUS "... Collect dependencies for docapi")
+  file(GLOB_RECURSE dep_sources "*.h" "*.cpp")
+  set (DOXYGEN_STATIC "${CMAKE_SOURCE_DIR}/doc/static")
+
+  if (EXISTS "${MATHJAX_EXE}")
+    set (DOXYGEN_USE_MATHJAX "YES")
+    set (DOXYGEN_MATHJAX "${MATHJAX_DIR}")
+  else()
+    set (DOXYGEN_USE_MATHJAX "NO")
+  endif()
+
+  set (USE_GRAPHVIZ ON CACHE BOOL "Using of Graphviz for diagrams in documentation")
+  if (EXISTS "${GRAPHVIZ_EXE}" AND USE_GRAPHVIZ)
+    set (DOXYGEN_USE_GRAPHVIZ "YES")
+  else()
+    set (DOXYGEN_USE_GRAPHVIZ "NO")
+  endif()
+
+  add_subdirectory(${CMAKE_SOURCE_DIR}/doc/docapi)
+  add_subdirectory(${CMAKE_SOURCE_DIR}/doc/docalgo)
+
+  add_dependencies(docalgo docapi)
+endif()
+
+#-------------------------------------------------------------------------------
+# Setup compiler
+#-------------------------------------------------------------------------------
+
+if (NOT "${INNOSETUP_EXE}" STREQUAL "" AND EXISTS "${INNOSETUP_EXE}")
+  add_subdirectory(${CMAKE_SOURCE_DIR}/setup)
+endif()
+
+#-------------------------------------------------------------------------------
+# Installation
+#-------------------------------------------------------------------------------
+
+if (EXISTS "${3RDPARTY_DIR}/Redistributable/msvcp120.dll")
+  install (FILES "${3RDPARTY_DIR}/Redistributable/msvcp120.dll" DESTINATION bin)
+endif()
+
+if (EXISTS "${3RDPARTY_DIR}/Redistributable/msvcr120.dll")
+  install (FILES "${3RDPARTY_DIR}/Redistributable/msvcr120.dll" DESTINATION bin)
+endif()
+
+
+
+
+
+
+
+
+
+
 
 #-------------------------------------------------------------------------------
 # INCLUDE directories for compiler

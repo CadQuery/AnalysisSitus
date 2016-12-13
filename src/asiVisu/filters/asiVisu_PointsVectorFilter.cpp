@@ -95,14 +95,10 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
 
   // Allocate space for the new collection of points
   vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
-  aNewPoints->Allocate(nbPoints, nbPoints);
+  newPoints->Allocate(nbPoints, nbPoints);
 
   // Allocate space for data associated with the new set of points
   vtkPointData* outputPD = output->GetPointData();
-
-  // Get arrays of IDs
-  vtkIntArray* cellIDs =
-    vtkIntArray::SafeDownCast( input->GetCellData()->GetArray(ARRNAME_MESH_ELEM_IDS) );
 
   // Allocate space for data associated with the new set of cells
   vtkCellData* inputCD  = input->GetCellData();
@@ -115,32 +111,27 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
     aNewCellVectors = asiVisu_Utils::InitDoubleVectorArray(ARRNAME_MESH_E_VECTORS);
 
   // Traverse all cells
-  for ( vtkIdType aCellId = 0; aCellId < aNbCells; ++aCellId )
+  for ( vtkIdType aCellId = 0; aCellId < nbCells; ++aCellId )
   {
     // Get the list of points for this cell
-    anInput->GetCellPoints(aCellId, anOldPointIds);
-    vtkIdType aNbCellPoints = anOldPointIds->GetNumberOfIds();
+    input->GetCellPoints(aCellId, oldPointIds);
+    vtkIdType aNbCellPoints = oldPointIds->GetNumberOfIds();
 
     // Create new points for this cell
-    aNewPointIds->Reset();
-
-    // Get ID of the mesh element
-    int anElemID = aCellIDs->GetValue(aCellId);
+    newPointIds->Reset();
 
     // Access scalar value
-    VectorTuple aVecTuple;
-    bool isCellVectored = this->vectorForElem(anElemID, aVecTuple);
+    float nx, ny, nz;
+    m_normals->GetPoint( (int) aCellId, nx, ny, nz );
+    asiVisu_VectorTuple aVecTuple(nx, ny, nz);
     this->adjustMinMax(aVecTuple);
-
-    if ( !isCellVectored )
-      continue;
 
     double aCenterCoords[3] = {0.0, 0.0, 0.0};
     for ( vtkIdType aNodeLocalID = 0; aNodeLocalID < aNbCellPoints; ++aNodeLocalID )
     {
-      vtkIdType anOldPid = anOldPointIds->GetId(aNodeLocalID);
+      vtkIdType anOldPid = oldPointIds->GetId(aNodeLocalID);
       double aCurrentCoords[3];
-      anInput->GetPoint(anOldPid, aCurrentCoords);
+      input->GetPoint(anOldPid, aCurrentCoords);
 
       for ( int k = 0; k < 3; k++ )
         aCenterCoords[k] += aCurrentCoords[k];
@@ -149,11 +140,11 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
     for ( int k = 0; k < 3; k++ )
       aCenterCoords[k] /= aNbCellPoints;
 
-    vtkIdType aNewPntPid = aNewPoints->InsertNextPoint(aCenterCoords);
-    aNewPointIds->InsertId(0, aNewPntPid);
+    vtkIdType aNewPntPid = newPoints->InsertNextPoint(aCenterCoords);
+    newPointIds->InsertId(0, aNewPntPid);
 
     // Store the new cell in the output as vertex
-    vtkIdType aNewCellPid = anOutput->InsertNextCell(VTK_VERTEX, aNewPointIds);
+    vtkIdType aNewCellPid = output->InsertNextCell(VTK_VERTEX, newPointIds);
 
     // Associate scalar with cell data
     double aVecCoords[3] = {aVecTuple.F[0], aVecTuple.F[1], aVecTuple.F[2]};
@@ -178,39 +169,24 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
   }
 
   // Set vectors to cell data
-  anOutputPD->SetScalars(aNewCellVectors);
+  outputPD->SetScalars(aNewCellVectors);
 
   // Store the new set of points in the output
-  anOutput->SetPoints(aNewPoints);
+  output->SetPoints(newPoints);
 
   // Avoid keeping extra memory around
-  anOutput->Squeeze();
+  output->Squeeze();
 
   return 1;
 }
 
-//! Retrieves vector components for the element with the given ID.
-//! \param theElemID   [in]  ID of the mesh element to access data for.
-//! \param theVecTuple [out] requested vectorial data if any.
-//! \return true if vectorial data has been found, false -- otherwise.
-bool
-  asiVisu_MeshEVectorFilter::vectorForElem(const int    theElemID,
-                                           VectorTuple& theVecTuple)
-{
-  if ( !m_vectorMap->IsBound(theElemID) )
-    return false;
-
-  theVecTuple = m_vectorMap->Find(theElemID);
-  return true;
-}
-
 //! Adjusts min & max scalar values against the passed vectorial data.
-//! \param theVecTuple [in] vectorial data.
-void asiVisu_MeshEVectorFilter::adjustMinMax(const VectorTuple& theVecTuple)
+//! \param vecTuple [in] vectorial data.
+void asiVisu_PointsVectorFilter::adjustMinMax(const asiVisu_VectorTuple& vecTuple)
 {
   double aVecModulus = 0.0;
   for ( int k = 0; k < 3; k++ )
-    aVecModulus += theVecTuple.F[k] * theVecTuple.F[k];
+    aVecModulus += vecTuple.F[k] * vecTuple.F[k];
   aVecModulus = Sqrt(aVecModulus);
 
   if ( aVecModulus > m_fMaxScalar )

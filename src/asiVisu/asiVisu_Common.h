@@ -11,8 +11,10 @@
 // Visualization includes
 #include <asiVisu.h>
 
+// Active Data (auxiliary) includes
+#include <ActAux_Common.h>
+
 // OCCT includes
-#include <NCollection_Shared.hxx>
 #include <NCollection_SparseArray.hxx>
 
 //-----------------------------------------------------------------------------

@@ -78,8 +78,7 @@ public:
 
 private:
 
-  bool vectorForElem (const int theElemID, VectorTuple& theVecTuple);
-  void adjustMinMax  (const VectorTuple& theVecTuple);
+  void adjustMinMax(const asiVisu_VectorTuple& vecTuple);
 
 private:
 

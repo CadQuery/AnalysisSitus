@@ -50,7 +50,7 @@ int asiVisu_ShapeDataSource::RequestData(vtkInformation*        theRequest,
   vtkPolyData* aPolyData = vtkPolyData::GetData (theOutputVector);
   aPolyData->Allocate();
   vtkPoints* aPts = vtkPoints::New();
-  aPolyData->SetPoints (aPts);
+  aPolyData->SetPoints(aPts);
   aPts->Delete();
 
   vtkSmartPointer<vtkPolyData> aTransformedData;

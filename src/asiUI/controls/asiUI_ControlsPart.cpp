@@ -70,11 +70,11 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   m_pMainLayout = new QVBoxLayout();
 
   // Buttons
-  m_widgets.pLoadBRep      = new QPushButton("Load b-rep");
+  m_widgets.pLoadBRep      = new QPushButton("Load BREP");
   m_widgets.pLoadSTEP      = new QPushButton("Load STEP");
+  m_widgets.pSavePly       = new QPushButton("Save facets (ply)");
+  m_widgets.pSaveBRep      = new QPushButton("Save BREP");
   m_widgets.pSaveSTEP      = new QPushButton("Save STEP");
-  m_widgets.pSavePly       = new QPushButton("Save mesh (ply)");
-  m_widgets.pSaveBRep      = new QPushButton("Save b-rep");
   //
   m_widgets.pCheckShape    = new QPushButton("Check shape");
   m_widgets.pTolerance     = new QPushButton("Tolerance");
@@ -119,9 +119,9 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   //
   pExchangeLay->addWidget(m_widgets.pLoadBRep);
   pExchangeLay->addWidget(m_widgets.pLoadSTEP);
-  pExchangeLay->addWidget(m_widgets.pSaveSTEP);
   pExchangeLay->addWidget(m_widgets.pSavePly);
   pExchangeLay->addWidget(m_widgets.pSaveBRep);
+  pExchangeLay->addWidget(m_widgets.pSaveSTEP);
 
   // Group for analysis
   QGroupBox*   pAnalysisGroup = new QGroupBox("Analysis");

@@ -81,7 +81,7 @@ void asiVisu_SurfaceSource::SetScalars(const NodeScalars scalars)
 //! \param uLimit [in] trimming value for U.
 //! \param vLimit [in] trimming value for V.
 void asiVisu_SurfaceSource::SetTrimValues(const double uLimit,
-                                        const double vLimit)
+                                          const double vLimit)
 {
   m_fTrimU = uLimit;
   m_fTrimV = vLimit;
@@ -101,8 +101,8 @@ void asiVisu_SurfaceSource::SetTrimValues(const double uLimit,
 //!                          in this method.
 //! \return status.
 int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
-                                     vtkInformationVector** inputVector,
-                                     vtkInformationVector*  outputVector)
+                                       vtkInformationVector** inputVector,
+                                       vtkInformationVector*  outputVector)
 {
   if ( m_surf.IsNull() )
   {
@@ -256,7 +256,7 @@ int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK point.
 vtkIdType asiVisu_SurfaceSource::registerGridPoint(const gp_Pnt& point,
-                                                 vtkPolyData*  polyData)
+                                                   vtkPolyData*  polyData)
 {
   // Access necessary arrays
   vtkPoints* points = polyData->GetPoints();
@@ -276,9 +276,9 @@ vtkIdType asiVisu_SurfaceSource::registerGridPoint(const gp_Pnt& point,
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
 vtkIdType asiVisu_SurfaceSource::registerTriangle(const vtkIdType n1,
-                                                const vtkIdType n2,
-                                                const vtkIdType n3,
-                                                vtkPolyData*    polyData)
+                                                  const vtkIdType n2,
+                                                  const vtkIdType n3,
+                                                  vtkPolyData*    polyData)
 {
   std::vector<vtkIdType> nodes;
   nodes.push_back(n1);

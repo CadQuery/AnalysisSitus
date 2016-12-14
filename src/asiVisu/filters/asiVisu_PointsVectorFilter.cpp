@@ -148,7 +148,7 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
 
     // Associate scalar with cell data
     double aVecCoords[3] = {aVecTuple.F[0], aVecTuple.F[1], aVecTuple.F[2]};
-    aNewCellVectors->InsertTupleValue(aNewCellPid, aVecCoords);
+    aNewCellVectors->InsertTypedTuple(aNewCellPid, aVecCoords);
   }
 
   // Loop over all vectors calibrating their magnitudes by the maximum one

@@ -167,7 +167,7 @@ int asiVisu_MeshEScalarFilter::RequestData(vtkInformation*,
 
     // Associate scalar with cell data
     double aScalarTuple[1] = {aScalar};
-    aNewCellScalars->InsertTupleValue(aNewCellPid, aScalarTuple);
+    aNewCellScalars->InsertTypedTuple(aNewCellPid, aScalarTuple);
   }
 
   // Set scalars to cell data

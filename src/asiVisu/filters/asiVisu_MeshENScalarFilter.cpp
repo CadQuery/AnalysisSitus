@@ -165,7 +165,7 @@ int asiVisu_MeshENScalarFilter::RequestData(vtkInformation*,
 
       // Retrieve and associate scalar
       double aScalarTuple[1] = {aCellScalars[aNodeLocalID]};
-      aNewNodeScalars->InsertTupleValue(aNewPid, aScalarTuple);
+      aNewNodeScalars->InsertTypedTuple(aNewPid, aScalarTuple);
 
       anOutputPD->CopyData(anInputPD, anOldPid, aNewPid);
     }

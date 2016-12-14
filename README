@@ -36,6 +36,15 @@ The idea is to simplify your daily geometrical challenges, and let you focus
 on your particular problems.
 
 -------------------------------------------------------------------------------
+Release notes (0.1.1), 14 December 2016
+-------------------------------------------------------------------------------
+- Experimental version of adaptive center of rotation (there is a problem with
+  discontinuity at rotation start). Center of rotation is changed by overriding
+  the focal point of the camera and repositioning window center.
+- Cosmetic changes in UI: reordering buttons.
+- Porting to VTK 7.1.
+
+-------------------------------------------------------------------------------
 
 Analysis Situs is the former name for Topology. Henri Poincare wrote an
 original paper on the subject in 1895 where he introduced the fundamental

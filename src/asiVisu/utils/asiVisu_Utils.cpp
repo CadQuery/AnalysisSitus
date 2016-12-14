@@ -745,10 +745,9 @@ void asiVisu_Utils::InitTextWidget(vtkTextWidget* theTextWidget)
   vtkSmartPointer<vtkTextActor> textActor = vtkSmartPointer<vtkTextActor>::New();
   textRep->SetTextActor(textActor);
   //
-  /*textRep->GetPositionCoordinate()->SetValue(0.01, 0.01);
-  textRep->GetPosition2Coordinate()->SetValue(0.45, 0.35);*/
+  textRep->GetPositionCoordinate()->SetValue(0.01, 0.01);
+  textRep->GetPosition2Coordinate()->SetValue(0.45, 0.35);
   //
   textActor->GetTextProperty()->SetJustificationToLeft();
   textActor->GetTextProperty()->SetVerticalJustificationToBottom();
-  textActor->GetTextProperty()->UseTightBoundingBoxOn();
 }

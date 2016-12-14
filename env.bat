@@ -46,7 +46,7 @@ rem Setting OCCT environment
 rem ===========================================================================
 
 if "%PRODUCTS_PATH%"   == "" set "PRODUCTS_PATH=%AS_PRODUCTS%"
-if "%CASROOT%"         == "" set "CASROOT=%AS_PRODUCTS%\occt"
+if "%CASROOT%"         == "" set "CASROOT=%AS_PRODUCTS%\occt-vc12-64"
 if "%OCCT_3RDPARTIES%" == "" set "OCCT_3RDPARTIES=%AS_PRODUCTS%"
 
 set "CAS_INC=%CASROOT%\inc"
@@ -59,7 +59,7 @@ rem ===========================================================================
 rem Setting environment for AD (Active Data)
 rem ===========================================================================
 
-if "%AD_ROOT%" == "" set "AD_ROOT=%AS_PRODUCTS%\active_data"
+if "%AD_ROOT%" == "" set "AD_ROOT=%AS_PRODUCTS%\active_data-vc12-64"
 set "AD_INC=%AD_ROOT%\include"
 set "AD_LIB=%AD_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 set "AD_BIN=%AD_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
@@ -68,7 +68,7 @@ rem ===========================================================================
 rem Setting environment for QR (Quaoar)
 rem ===========================================================================
 
-if "%QR_ROOT%" == "" set "QR_ROOT=%AS_PRODUCTS%\quaoar"
+if "%QR_ROOT%" == "" set "QR_ROOT=%AS_PRODUCTS%\quaoar-vc12-64"
 set "QR_INC=%QR_ROOT%\include"
 set "QR_LIB=%QR_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 set "QR_BIN=%QR_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
@@ -77,7 +77,7 @@ rem ===========================================================================
 rem Setting TBB environment 
 rem ===========================================================================
 
-if "%TBB_ROOT%" == "" set "TBB_ROOT=%AS_PRODUCTS%\tbb44_20150728oss"
+if "%TBB_ROOT%" == "" set "TBB_ROOT=%AS_PRODUCTS%\tbb44_20151115oss"
 set "TBB_INC=%TBB_ROOT%\include\tbb"
 set "TBB_LIB=%TBB_ROOT%\lib\intel64\vc12"
 set "TBB_BIN=%TBB_ROOT%\bin\intel64\vc12"
@@ -86,7 +86,7 @@ rem ===========================================================================
 rem Setting environment for VTK
 rem ===========================================================================
 
-if "%VTK_ROOT%" == "" set "VTK_ROOT=%AS_PRODUCTS%\vtk-7.1.0"
+if "%VTK_ROOT%" == "" set "VTK_ROOT=%AS_PRODUCTS%\vtk-7.1.0-vc12-64"
 set "VTK_INC=%VTK_ROOT%\include\vtk-7.1"
 set "VTK_LIB=%VTK_ROOT%\win%ARCH%\%VCVER%\lib%DEB%"
 set "VTK_BIN=%VTK_ROOT%\win%ARCH%\%VCVER%\bin%DEB%"
@@ -95,7 +95,7 @@ rem ===========================================================================
 rem Setting environment for Qt
 rem ===========================================================================
 
-if "%QTDIR%" == "" set "QTDIR=%AS_PRODUCTS%\qt-5.5.1
+if "%QTDIR%" == "" set "QTDIR=%AS_PRODUCTS%\qt-5.7-vc12-64"
 set "QT_INC=%QTDIR%\include;%QTDIR%\include\QtCore;%QTDIR%\include\QtGui;%QTDIR%\include\QtWidgets"
 set "QT_LIB=%QTDIR%\lib"
 set "QT_BIN=%QTDIR%\bin"
@@ -114,7 +114,7 @@ rem ===========================================================================
 rem Setting environment for Inno Setup
 rem ===========================================================================
 
-if "%INNOSETUP_ROOT%" == "" set "INNOSETUP_ROOT=%AS_PRODUCTS%\issrc-5.5.6"
+if "%INNOSETUP_ROOT%" == "" set "INNOSETUP_ROOT=%AS_PRODUCTS%\innosetup5"
 
 rem ===========================================================================
 rem Adjust PATH variable
@@ -126,11 +126,8 @@ rem ===========================================================================
 rem Customize OCCT environment variables
 rem ===========================================================================
 
-rem if "%CSF_PluginDefaults%" == "" set "CSF_PluginDefaults=%AS_RESOURCES%"
-rem if "%CSF_ResourcesDefaults%" == "" set "CSF_ResourcesDefaults=%AS_RESOURCES%"
-
-set "CSF_PluginDefaults=C:\Work\dMU\dmu\src\core\resources"
-set "CSF_ResourcesDefaults=C:\Work\dMU\dmu\src\core\resources"
+if "%CSF_PluginDefaults%" == "" set "CSF_PluginDefaults=%AS_RESOURCES%"
+if "%CSF_ResourcesDefaults%" == "" set "CSF_ResourcesDefaults=%AS_RESOURCES%"
 
 rem ===========================================================================
 rem Hint echoes

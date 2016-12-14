@@ -199,7 +199,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Logger.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Notifier.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Utils.cpp" />
-    <ClCompile Include="..\..\win64\vc12\objd\asiAlgo\moc\moc_asiAlgo_Notifier.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiAlgo_Notifier.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

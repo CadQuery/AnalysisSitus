@@ -52,7 +52,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(EIGEN_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(EIGEN_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiAlgo_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -84,7 +84,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(EIGEN_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(EIGEN_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiAlgo_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -136,6 +136,13 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_Membership.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_RehostFaces.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\features\asiAlgo_AAG.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\features\asiAlgo_AAGIterator.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\features\asiAlgo_DihedralAngle.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\features\asiAlgo_FeatureAngle.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\features\asiAlgo_FeatureAttr.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\features\asiAlgo_FeatureAttrAdjacency.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\features\asiAlgo_FeatureAttrAngle.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshConvert.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshGen.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshInfo.h" />
@@ -185,6 +192,9 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_KNeighborsHull.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_RehostFaces.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\features\asiAlgo_AAG.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\features\asiAlgo_AAGIterator.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\features\asiAlgo_DihedralAngle.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshConvert.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshGen.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshInfo.cpp" />

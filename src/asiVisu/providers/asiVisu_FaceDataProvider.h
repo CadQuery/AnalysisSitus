@@ -45,10 +45,10 @@ public:
     GetFaceIndexAmongSubshapes() const;
 
   asiVisu_EXPORT int
-    GetFaceIndexAmongFaces() const;
+    GetFaceIndexAmongFaces();
 
   asiVisu_EXPORT TopoDS_Face
-    ExtractFace() const;
+    ExtractFace();
 
 public:
 
@@ -58,7 +58,7 @@ public:
 protected:
 
   asiVisu_EXPORT void
-    init(const Handle(ActAPI_INode)& subNode);
+    init();
 
 private:
 

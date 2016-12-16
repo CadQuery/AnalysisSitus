@@ -35,8 +35,18 @@ Analysis Situs is yet another tool to drop into your CAD geometer's tool box.
 The idea is to simplify your daily geometrical challenges, and let you focus
 on your particular problems.
 
+===============================================================================
+Release notes
 -------------------------------------------------------------------------------
-Release notes (0.1.1), 14 December 2016
+v0.1.2, 16 December 2016
+-------------------------------------------------------------------------------
+- Add AAG and topology graphs with visualization.
+- Add dihedral angle checker.
+- Add non-manifold edges checker.
+- Add tools to detach (break sharing info) and kill faces.
+- Fix visualization bug with incorrect feeding of face selection pipeline.
+-------------------------------------------------------------------------------
+v0.1.1, 14 December 2016
 -------------------------------------------------------------------------------
 - Experimental version of adaptive center of rotation (there is a problem with
   discontinuity at rotation start). Center of rotation is changed by overriding
@@ -44,7 +54,7 @@ Release notes (0.1.1), 14 December 2016
 - Cosmetic changes in UI: reordering buttons.
 - Porting to VTK 7.1.
 
--------------------------------------------------------------------------------
+===============================================================================
 
 Analysis Situs is the former name for Topology. Henri Poincare wrote an
 original paper on the subject in 1895 where he introduced the fundamental

@@ -140,6 +140,7 @@ Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkFiltersExtraction-7.1.dll;      
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkFiltersGeneral-7.1.dll;               DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkFiltersGeometry-7.1.dll;              DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkFiltersHybrid-7.1.dll;                DestDir: {app}\products\{#vtk}\win64\vc12\bin;
+Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkFiltersImaging-7.1.dll;               DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkFiltersModeling-7.1.dll;              DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkFiltersParallel-7.1.dll;              DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkFiltersSources-7.1.dll;               DestDir: {app}\products\{#vtk}\win64\vc12\bin;
@@ -167,11 +168,19 @@ Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkRenderingContext2D-7.1.dll;     
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkRenderingContextOpenGL2-7.1.dll;      DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkRenderingCore-7.1.dll;                DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkRenderingFreeType-7.1.dll;            DestDir: {app}\products\{#vtk}\win64\vc12\bin;
+Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkRenderingLabel-7.1.dll;               DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkRenderingOpenGL2-7.1.dll;             DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkRenderingVolume-7.1.dll;              DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtksys-7.1.dll;                          DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtktiff-7.1.dll;                         DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkzlib-7.1.dll;                         DestDir: {app}\products\{#vtk}\win64\vc12\bin;
+Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkRenderingContext2D-7.1.dll;           DestDir: {app}\products\{#vtk}\win64\vc12\bin;
+Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkInfovisCore-7.1.dll;                  DestDir: {app}\products\{#vtk}\win64\vc12\bin;
+Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkInfovisLayout-7.1.dll;                DestDir: {app}\products\{#vtk}\win64\vc12\bin;
+Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkChartsCore-7.1.dll;                   DestDir: {app}\products\{#vtk}\win64\vc12\bin;
+Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkViewsCore-7.1.dll;                    DestDir: {app}\products\{#vtk}\win64\vc12\bin;
+Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkViewsInfovis-7.1.dll;                 DestDir: {app}\products\{#vtk}\win64\vc12\bin;
+Source: {#ProductsDir}\{#vtk}\win64\vc12\bin\vtkViewsContext2D-7.1.dll;               DestDir: {app}\products\{#vtk}\win64\vc12\bin;
 
 ; Resource files (icons, custom script, ...)
 Source: "resources\asitus.ico";                                           DestDir: {app}\icons

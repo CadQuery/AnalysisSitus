@@ -9,6 +9,7 @@
 #define exe_MainWindow_h
 
 // asiUI includes
+#include <asiUI_ControlsFeature.h>
 #include <asiUI_ControlsPartListener.h>
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerPartListener.h>
@@ -43,26 +44,29 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    asiUI_ObjectBrowser* wBrowser;       //!< Object browser.
-    asiUI_ViewerDomain*  wViewerDomain;  //!< Parametric domain viewer.
-    asiUI_ViewerPart*    wViewerPart;    //!< Part viewer.
-    asiUI_ViewerSurface* wViewerSurface; //!< Surface viewer.
-    asiUI_ControlsPart*  wControlsPart;  //!< Part controls.
+    asiUI_ObjectBrowser*   wBrowser;         //!< Object browser.
+    asiUI_ViewerDomain*    wViewerDomain;    //!< Parametric domain viewer.
+    asiUI_ViewerPart*      wViewerPart;      //!< Part viewer.
+    asiUI_ViewerSurface*   wViewerSurface;   //!< Surface viewer.
+    asiUI_ControlsPart*    wControlsPart;    //!< Part controls.
+    asiUI_ControlsFeature* wControlsFeature; //!< Feature controls.
 
-    t_widgets() : wBrowser       (NULL),
-                  wViewerDomain  (NULL),
-                  wViewerPart    (NULL),
-                  wViewerSurface (NULL),
-                  wControlsPart  (NULL)
+    t_widgets() : wBrowser         (NULL),
+                  wViewerDomain    (NULL),
+                  wViewerPart      (NULL),
+                  wViewerSurface   (NULL),
+                  wControlsPart    (NULL),
+                  wControlsFeature (NULL)
     {}
 
     void Release()
     {
-      delete wBrowser;       wBrowser       = NULL;
-      delete wViewerDomain;  wViewerDomain  = NULL;
-      delete wViewerPart;    wViewerPart    = NULL;
-      delete wViewerSurface; wViewerSurface = NULL;
-      delete wControlsPart;  wControlsPart  = NULL;
+      delete wBrowser;         wBrowser         = NULL;
+      delete wViewerDomain;    wViewerDomain    = NULL;
+      delete wViewerPart;      wViewerPart      = NULL;
+      delete wViewerSurface;   wViewerSurface   = NULL;
+      delete wControlsPart;    wControlsPart    = NULL;
+      delete wControlsFeature; wControlsFeature = NULL;
     }
   };
 

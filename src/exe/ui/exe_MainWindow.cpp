@@ -136,25 +136,45 @@ void exe_MainWindow::createDockWindows()
   // Now we have everything to initialize an imperative plotter
   cf->Plotter = new asiUI_JournalIV(cf->Model, cf->Prs.Part, cf->Prs.Domain, cf->ObjectBrowser);
 
-  // Part controls
-  QDockWidget* pDockUtilities;
+  // Feature controls
+  QDockWidget* pDockFeature;
   {
-    pDockUtilities = new QDockWidget("Utilities", this);
-    pDockUtilities->setAllowedAreas(Qt::LeftDockWidgetArea);
+    pDockFeature = new QDockWidget("Features", this);
+    pDockFeature->setAllowedAreas(Qt::LeftDockWidgetArea);
+    //
+    m_widgets.wControlsFeature = new asiUI_ControlsFeature(cf->Model,
+                                                           cf->ViewerPart,
+                                                           cf->Notifier,
+                                                           cf->Plotter,
+                                                           pDockFeature);
+    //
+    pDockFeature->setWidget(m_widgets.wControlsFeature);
+    //
+    this->addDockWidget(Qt::LeftDockWidgetArea, pDockFeature);
+  }
+
+  // Tabify widgets
+  this->tabifyDockWidget(pDockBrowser, pDockFeature);
+
+  // Part controls
+  QDockWidget* pDockPart;
+  {
+    pDockPart = new QDockWidget("Part", this);
+    pDockPart->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
     m_widgets.wControlsPart = new asiUI_ControlsPart(cf->Model,
                                                      cf->ViewerPart,
                                                      cf->Notifier,
                                                      cf->Plotter,
-                                                     pDockUtilities);
+                                                     pDockPart);
     //
-    pDockUtilities->setWidget(m_widgets.wControlsPart);
+    pDockPart->setWidget(m_widgets.wControlsPart);
     //
-    this->addDockWidget(Qt::LeftDockWidgetArea, pDockUtilities);
+    this->addDockWidget(Qt::LeftDockWidgetArea, pDockPart);
   }
 
   // Tabify widgets
-  this->tabifyDockWidget(pDockBrowser, pDockUtilities);
+  this->tabifyDockWidget(pDockFeature, pDockPart);
 
   // Listener for part controls
   m_listeners.pControlsPart = new asiUI_ControlsPartListener(m_widgets.wControlsPart,

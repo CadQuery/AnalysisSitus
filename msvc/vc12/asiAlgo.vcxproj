@@ -52,7 +52,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(EIGEN_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(EIGEN_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\editing;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiAlgo_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -84,7 +84,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(EIGEN_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(EIGEN_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\editing;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiAlgo_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -121,21 +121,22 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_Classifier.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_ClassifyPointFace.h" />
-    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_DeleteEdges.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_DesignLaw.h" />
-    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_DetachFaces.h" />
-    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_EulerPoincare.h" />
-    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_FindNonmanifold.h" />
-    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_FindSameHosts.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_FuncUnivariate.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_HitFacet.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_IntersectionCurveSS.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_IntersectionPointCC.h" />
-    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_JoinEdges.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_KNeighborsHull.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_Membership.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.h" />
-    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_RehostFaces.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_DeleteEdges.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_DetachFaces.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_EulerPoincare.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_FindNonmanifold.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_FindSameHosts.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_JoinEdges.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_RehostFaces.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_SuppressFaces.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\features\asiAlgo_AAG.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\features\asiAlgo_AAGIterator.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\features\asiAlgo_DihedralAngle.h" />
@@ -180,18 +181,19 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_Classifier.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_ClassifyPointFace.cpp" />
-    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_DeleteEdges.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_DesignLaw.cpp" />
-    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_DetachFaces.cpp" />
-    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_EulerPoincare.cpp" />
-    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_FindNonmanifold.cpp" />
-    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_FindSameHosts.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_FuncUnivariate.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_HitFacet.cpp" />
-    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_JoinEdges.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_KNeighborsHull.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.cpp" />
-    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_RehostFaces.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_DeleteEdges.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_DetachFaces.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_EulerPoincare.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_FindNonmanifold.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_FindSameHosts.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_JoinEdges.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_RehostFaces.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_SuppressFaces.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\features\asiAlgo_AAG.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\features\asiAlgo_AAGIterator.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\features\asiAlgo_DihedralAngle.cpp" />

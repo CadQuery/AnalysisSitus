@@ -42,6 +42,12 @@
     <Filter Include="Source Files\Viewers">
       <UniqueIdentifier>{d66e770a-fdfd-4dc8-9e6e-7a62cb314a4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graphs">
+      <UniqueIdentifier>{f74eb140-c6ab-49ae-a441-97d3beff9b61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphs">
+      <UniqueIdentifier>{374b4000-2f65-4380-9eb2-562389450f0b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_Common.h">
@@ -67,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\asiUI\interaction\asiUI_PickEdgeCallback.h">
       <Filter>Header Files\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\graphs\asiUI_AAGAdaptor.h">
+      <Filter>Header Files\Graphs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +153,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_JournalIV.cpp">
       <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_TopoGraph.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_TopoGraphItem.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsFeature.cpp">
+      <Filter>MOC</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPart.cpp">
       <Filter>MOC</Filter>
@@ -226,6 +244,18 @@
     <ClCompile Include="..\..\src\asiUI\interaction\asiUI_PickEdgeCallback.cpp">
       <Filter>Source Files\Interaction</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsFeature.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\graphs\asiUI_AAGAdaptor.cpp">
+      <Filter>Source Files\Graphs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\graphs\asiUI_TopoGraph.cpp">
+      <Filter>Source Files\Graphs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\graphs\asiUI_TopoGraphItem.cpp">
+      <Filter>Source Files\Graphs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerDomain.h">
@@ -293,6 +323,15 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogFindEdge.h">
       <Filter>Header Files\Dialogs</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\graphs\asiUI_TopoGraphItem.h">
+      <Filter>Header Files\Graphs</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\graphs\asiUI_TopoGraph.h">
+      <Filter>Header Files\Graphs</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\controls\asiUI_ControlsFeature.h">
+      <Filter>Header Files\Controls</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

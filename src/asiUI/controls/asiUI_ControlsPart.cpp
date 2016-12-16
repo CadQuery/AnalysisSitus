@@ -48,11 +48,11 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-//! \param model      [in] Data Model instance.
-//! \param partPrsMgr [in] presentation manager for Part Node.
-//! \param notifier   [in] progress notifier.
-//! \param plotter    [in] imperative plotter.
-//! \param parent     [in] parent widget.
+//! \param model       [in] Data Model instance.
+//! \param pPartViewer [in] Part viewer.
+//! \param notifier    [in] progress notifier.
+//! \param plotter     [in] imperative plotter.
+//! \param parent      [in] parent widget.
 asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
                                        asiUI_ViewerPart*              pPartViewer,
                                        ActAPI_ProgressEntry           notifier,
@@ -82,7 +82,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   m_widgets.pSewing        = new QPushButton("Sewing");
   m_widgets.pMaximizeFaces = new QPushButton("Maximize faces");
   //
-  m_widgets.pShowRobust    = new QPushButton("Show die hard presentation");
+  m_widgets.pShowRobust    = new QPushButton("Error-resistant view");
   m_widgets.pShowVertices  = new QPushButton("Show vertices");
   m_widgets.pShowNormals   = new QPushButton("Show normals");
   m_widgets.pSelectFaces   = new QPushButton("Select faces");
@@ -143,10 +143,10 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   //
   pVisuLay->addWidget(m_widgets.pShowRobust);
   pVisuLay->addWidget(m_widgets.pShowVertices);
-  pVisuLay->addWidget(m_widgets.pShowNormals);
+  //pVisuLay->addWidget(m_widgets.pShowNormals); // TODO
   pVisuLay->addWidget(m_widgets.pSelectFaces);
   pVisuLay->addWidget(m_widgets.pSelectEdges);
-  pVisuLay->addWidget(m_widgets.pPickEdge);
+  //pVisuLay->addWidget(m_widgets.pPickEdge); // TODO
 
   // Set layout
   m_pMainLayout->addWidget(pExchangeGroup);

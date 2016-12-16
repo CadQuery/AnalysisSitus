@@ -34,7 +34,7 @@
 asiVisu_FaceDomainPipeline::asiVisu_FaceDomainPipeline(const bool isDefaultColorScheme)
 //
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                 vtkSmartPointer<vtkActor>::New() ),
+                    vtkSmartPointer<vtkActor>::New() ),
 //
   m_bDefaultColorScheme (isDefaultColorScheme),
   m_bMapperColorsSet    (false),

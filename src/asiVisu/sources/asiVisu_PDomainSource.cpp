@@ -64,8 +64,8 @@ void asiVisu_PDomainSource::SetFace(const TopoDS_Face& face)
 //!                          in this method.
 //! \return status.
 int asiVisu_PDomainSource::RequestData(vtkInformation*        request,
-                                     vtkInformationVector** inputVector,
-                                     vtkInformationVector*  outputVector)
+                                       vtkInformationVector** inputVector,
+                                       vtkInformationVector*  outputVector)
 {
   if ( m_face.IsNull() )
   {

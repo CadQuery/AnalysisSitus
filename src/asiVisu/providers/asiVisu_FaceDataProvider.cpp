@@ -25,7 +25,7 @@
 asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const Handle(asiData_FaceNode)& face_n)
 : asiVisu_DataProvider()
 {
-  this->init(face_n);
+  m_node = face_n;
 }
 
 //-----------------------------------------------------------------------------
@@ -35,7 +35,7 @@ asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const Handle(asiData_FaceNode
 asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const Handle(asiData_SurfNode)& surf_n)
 : asiVisu_DataProvider()
 {
-  this->init(surf_n);
+  m_node = surf_n;
 }
 
 //-----------------------------------------------------------------------------
@@ -63,24 +63,29 @@ int asiVisu_FaceDataProvider::GetFaceIndexAmongSubshapes() const
 }
 
 //! \return local index of the OCCT face to be visualized.
-int asiVisu_FaceDataProvider::GetFaceIndexAmongFaces() const
+int asiVisu_FaceDataProvider::GetFaceIndexAmongFaces()
 {
   const int globalId = this->GetFaceIndexAmongSubshapes();
 
   if ( globalId )
+  {
+    this->init();
     return m_faces.FindIndex( m_subShapes.FindKey(globalId) );
+  }
 
   return 0;
 }
 
 //! \return topological face extracted from the part by its stored ID.
-TopoDS_Face asiVisu_FaceDataProvider::ExtractFace() const
+TopoDS_Face asiVisu_FaceDataProvider::ExtractFace()
 {
   const int fIdx = this->GetFaceIndexAmongSubshapes();
   if ( !fIdx )
     return TopoDS_Face();
 
+  this->init();
   const TopoDS_Shape& shape = m_subShapes.FindKey(fIdx);
+  //
   if ( shape.ShapeType() != TopAbs_FACE )
     return TopoDS_Face();
 
@@ -116,19 +121,19 @@ Handle(asiVisu_FaceDataProvider) asiVisu_FaceDataProvider::Clone() const
 
 //-----------------------------------------------------------------------------
 
-//! Initializes data provider with the source data.
-//! \param subNode [in] Data Node representing the face.
-void asiVisu_FaceDataProvider::init(const Handle(ActAPI_INode)& subNode)
+//! Builds topology maps.
+void asiVisu_FaceDataProvider::init()
 {
-  m_node = subNode;
-
   // Access owning geometry
   Handle(asiData_PartNode)
-    geom_n = Handle(asiData_PartNode)::DownCast( subNode->GetParentNode() );
+    geom_n = Handle(asiData_PartNode)::DownCast( m_node->GetParentNode() );
 
   // Build maps
   if ( !geom_n->GetShape().IsNull() )
   {
+    m_subShapes.Clear();
+    m_faces.Clear();
+
     TopExp::MapShapes(geom_n->GetShape(), m_subShapes);
     TopExp::MapShapes(geom_n->GetShape(), TopAbs_FACE, m_faces);
   }

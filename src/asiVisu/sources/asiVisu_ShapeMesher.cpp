@@ -869,7 +869,7 @@ void asiVisu_ShapeMesher::addWFFace (const TopoDS_Face& theFace,
                    myNbIsos[1],
                    0,
                    myNbIsos[1],
-                   aPolylines);
+                     aPolylines);
 
     IVtk_PolylineList::Iterator anIt (aPolylines);
     for (; anIt.More(); anIt.Next())

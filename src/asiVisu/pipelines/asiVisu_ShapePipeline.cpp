@@ -145,7 +145,10 @@ void asiVisu_ShapePipeline::SetInput(const Handle(asiVisu_DataProvider)& theData
 
   if ( !aSubShapes.IsNull() )
     for ( TColStd_MapIteratorOfPackedMapOfInteger it( aSubShapes->Map() ); it.More(); it.Next() )
-      aDataToKeep.Add( it.Key() );
+    {
+      const int subShapeId = it.Key();
+      aDataToKeep.Add(subShapeId);
+    }
 
   bool doFiltering;
   if ( m_bSubShapesVoid )

@@ -59,11 +59,13 @@ public slots:
   void onSubShapesPicked();
   void onFindFace();
   void onFindEdge();
+  void onContextMenu(const QPoint&);
 
 signals:
 
   void facePicked();
   void edgePicked();
+  void contextMenu(const QPoint&);
 
 protected:
 

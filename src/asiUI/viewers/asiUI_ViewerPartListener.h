@@ -39,8 +39,14 @@ public:
 
 protected slots:
 
-  asiUI_EXPORT void onFacePicked();
-  asiUI_EXPORT void onEdgePicked();
+  asiUI_EXPORT void
+    onFacePicked();
+
+  asiUI_EXPORT void
+    onEdgePicked();
+
+  asiUI_EXPORT void
+    onContextMenu(const QPoint&);
 
 protected:
 

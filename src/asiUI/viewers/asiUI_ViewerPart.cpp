@@ -180,8 +180,14 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
    *  Finalize initial state of the scene
    * ===================================== */
 
+  pViewer->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect( pViewer, SIGNAL ( customContextMenuRequested(const QPoint&) ),
+           this,    SLOT   ( onContextMenu(const QPoint&) ) );
+
   this->onResetView();
 }
+
+//-----------------------------------------------------------------------------
 
 //! Destructor.
 asiUI_ViewerPart::~asiUI_ViewerPart()
@@ -238,9 +244,9 @@ void asiUI_ViewerPart::onSubShapesPicked()
     // Prepare cumulative set of all picked element IDs
     GetPickedSubshapeIds(pick_res, picked_face_IDs, picked_node_IDs);
 
-    //---------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // Store active selection in the Data Model
-    //---------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
 
     m_model->OpenCommand(); // tx start
     {
@@ -262,9 +268,9 @@ void asiUI_ViewerPart::onSubShapesPicked()
     }
     m_model->CommitCommand(); // tx commit
 
-    //---------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // Notify
-    //---------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
 
     emit facePicked();
   }
@@ -277,9 +283,9 @@ void asiUI_ViewerPart::onSubShapesPicked()
     // Prepare cumulative set of all picked element IDs
     GetPickedSubshapeIds(pick_res, picked_edge_IDs, picked_node_IDs);
 
-    //---------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // Store active selection in the Data Model
-    //---------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
 
     m_model->OpenCommand(); // tx start
     {
@@ -301,9 +307,9 @@ void asiUI_ViewerPart::onSubShapesPicked()
     }
     m_model->CommitCommand(); // tx commit
 
-    //---------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // Notify
-    //---------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
 
     emit edgePicked();
   }
@@ -327,4 +333,14 @@ void asiUI_ViewerPart::onFindEdge()
   // Run dialog
   asiUI_DialogFindEdge* wFindEdge = new asiUI_DialogFindEdge(m_model, this->PrsMgr(), this);
   wFindEdge->show();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ViewerPart::onContextMenu(const QPoint& pos)
+{
+  QVTKWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
+  QPoint      globalPos = pViewer->mapToGlobal(pos);
+
+  emit contextMenu(globalPos);
 }

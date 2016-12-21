@@ -206,12 +206,10 @@ void asiUI_ControlsPart::onLoadBRep()
   // Clean up the Model
   m_model->Clear();
 
-  // Set part geometry
-  Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
-  //
+  // Update part
   m_model->OpenCommand(); // tx start
   {
-    geom_n->SetShape(shape);
+    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(shape);
   }
   m_model->CommitCommand(); // tx commit
 

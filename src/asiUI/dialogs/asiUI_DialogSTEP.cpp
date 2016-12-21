@@ -8,10 +8,13 @@
 // Own include
 #include <asiUI_DialogSTEP.h>
 
-// Geometry includes
+// asiAlgo includes
 #include <asiAlgo_STEP.h>
 
-// GUI includes
+// asiEngine includes
+#include <asiEngine_Part.h>
+
+// asiUI includes
 #include <asiUI_Common.h>
 #include <asiUI_DialogSTEPDelegate.h>
 
@@ -308,12 +311,14 @@ void asiUI_DialogSTEP::proceed_Read()
     return;
   }
 
-  // Set part geometry
-  m_model->OpenCommand(); // tx start
+  // Update part
+  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(m_model);
+  //
+  M->OpenCommand(); // tx start
   {
-    m_part->SetShape(shape);
+    asiEngine_Part(M, NULL).Update(shape);
   }
-  m_model->CommitCommand(); // tx commit
+  M->CommitCommand(); // tx commit
 
   QApplication::restoreOverrideCursor();
 }

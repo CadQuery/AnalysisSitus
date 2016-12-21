@@ -263,7 +263,7 @@
       <Filter>Source Files\Modeling\Points</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_asiAlgo_Notifier.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>MOC</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\features\asiAlgo_AAG.cpp">
       <Filter>Source Files\Modeling\Features</Filter>

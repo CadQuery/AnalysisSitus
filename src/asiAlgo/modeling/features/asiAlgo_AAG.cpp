@@ -85,6 +85,30 @@ const TopoDS_Shape& asiAlgo_AAG::GetMasterCAD() const
 
 //-----------------------------------------------------------------------------
 
+//! \return map of faces.
+const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfFaces() const
+{
+  return m_faces;
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return map of edges.
+const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfEdges() const
+{
+  return m_edges;
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return map of sub-shapes.
+const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfSubShapes() const
+{
+  return m_subShapes;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Returns true if the index is in range.
 //! \param[in] face_idx face index.
 //! \return true/false.
@@ -545,11 +569,14 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
 
   ShapeAnalysis_Edge sae;
 
-  // Extract all edges with unique indices from the master CAD
-  TopExp::MapShapes(masterCAD, TopAbs_EDGE, m_edges);
+  // Extract all sub-shapes with unique indices from the master CAD
+  TopExp::MapShapes(masterCAD, m_subShapes);
 
   // Extract all faces with unique indices from the master CAD
   TopExp::MapShapes(masterCAD, TopAbs_FACE, m_faces);
+
+  // Extract all edges with unique indices from the master CAD
+  TopExp::MapShapes(masterCAD, TopAbs_EDGE, m_edges);
 
   // Fill adjacency map with empty buckets and provide all required
   // treatment for each individual face

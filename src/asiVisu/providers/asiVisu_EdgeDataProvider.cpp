@@ -8,9 +8,6 @@
 // Own include
 #include <asiVisu_EdgeDataProvider.h>
 
-// A-Situs (geometry) includes
-#include <asiData_PartNode.h>
-
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
@@ -73,7 +70,15 @@ int asiVisu_EdgeDataProvider::GetEdgeIndexAmongEdges() const
   const int globalId = this->GetEdgeIndexAmongSubshapes();
 
   if ( globalId )
-    return m_edges.FindIndex( m_subShapes.FindKey(globalId) );
+  {
+    const TopTools_IndexedMapOfShape&
+      edges = m_partNode->GetAAG()->GetMapOfEdges();
+
+    const TopTools_IndexedMapOfShape&
+      subShapes = m_partNode->GetAAG()->GetMapOfSubShapes();
+
+    return edges.FindIndex( subShapes.FindKey(globalId) );
+  }
 
   return 0;
 }
@@ -87,7 +92,11 @@ TopoDS_Edge asiVisu_EdgeDataProvider::ExtractEdge() const
   if ( !eIdx )
     return TopoDS_Edge();
 
-  const TopoDS_Shape& shape = m_subShapes.FindKey(eIdx);
+  const TopTools_IndexedMapOfShape&
+    subShapes = m_partNode->GetAAG()->GetMapOfSubShapes();
+
+  const TopoDS_Shape& shape = subShapes.FindKey(eIdx);
+  //
   if ( shape.ShapeType() != TopAbs_EDGE )
     return TopoDS_Edge();
 
@@ -168,15 +177,7 @@ void asiVisu_EdgeDataProvider::init(const Handle(ActAPI_INode)& subNode)
   m_node = subNode;
 
   // Access owning geometry
-  Handle(asiData_PartNode)
-    geom_n = Handle(asiData_PartNode)::DownCast( subNode->GetParentNode() );
-
-  // Build maps
-  if ( !geom_n->GetShape().IsNull() )
-  {
-    TopExp::MapShapes(geom_n->GetShape(), m_subShapes);
-    TopExp::MapShapes(geom_n->GetShape(), TopAbs_EDGE, m_edges);
-  }
+  m_partNode = Handle(asiData_PartNode)::DownCast( subNode->GetParentNode() );
 }
 
 //-----------------------------------------------------------------------------

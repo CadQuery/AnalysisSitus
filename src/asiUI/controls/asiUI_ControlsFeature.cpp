@@ -184,10 +184,12 @@ void asiUI_ControlsFeature::onShowTOPOGraph()
   {
     const int f_idx = FN->GetSelectedFace();
 
-    TopTools_IndexedMapOfShape M;
-    TopExp::MapShapes(N->GetShape(), M);
-    const TopoDS_Shape& shape = M.FindKey(f_idx);
+    // Get all sub-shapes
+    const TopTools_IndexedMapOfShape&
+      M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
 
+    const TopoDS_Shape& shape = M.FindKey(f_idx);
+    //
     if ( shape.ShapeType() == TopAbs_FACE )
     {
       const TopoDS_Face& F = TopoDS::Face(shape);
@@ -653,11 +655,12 @@ void asiUI_ControlsFeature::onDetachSelected()
   // Save to model
   m_model->Clear();
   //
-  m_model->OpenCommand();
+  // Update part
+  m_model->OpenCommand(); // tx start
   {
-    part_n->SetShape(result);
+    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(result);
   }
-  m_model->CommitCommand();
+  m_model->CommitCommand(); // tx commit
 
   // Update viewer
   m_partViewer->PrsMgr()->DeleteAllPresentations();
@@ -698,11 +701,12 @@ void asiUI_ControlsFeature::onDeleteSelected()
   // Save to model
   m_model->Clear();
   //
-  m_model->OpenCommand();
+  // Update part
+  m_model->OpenCommand(); // tx start
   {
-    part_n->SetShape(result);
+    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(result);
   }
-  m_model->CommitCommand();
+  m_model->CommitCommand(); // tx commit
 
   // Update viewer
   m_partViewer->PrsMgr()->DeleteAllPresentations();
@@ -743,11 +747,12 @@ void asiUI_ControlsFeature::onDeleteSelectedFull()
   // Save to model
   m_model->Clear();
   //
-  m_model->OpenCommand();
+  // Update part
+  m_model->OpenCommand(); // tx start
   {
-    part_n->SetShape(result);
+    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(result);
   }
-  m_model->CommitCommand();
+  m_model->CommitCommand(); // tx commit
 
   // Update viewer
   m_partViewer->PrsMgr()->DeleteAllPresentations();

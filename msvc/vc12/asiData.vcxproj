@@ -12,6 +12,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\asiData\asiData.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_AAGAttr.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_AAGParameter.h" />
     <ClInclude Include="..\..\src\asiData\asiData_BoundaryEdgesNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_ContourNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_CurveNode.h" />
@@ -47,6 +49,8 @@
     <ClInclude Include="..\..\src\asiData\asiData_TessNode.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\asiData\asiData_AAGAttr.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_AAGParameter.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_BoundaryEdgesNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_ContourNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_CurveNode.cpp" />
@@ -131,7 +135,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\editing;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiData_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -149,7 +153,7 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalDependencies>ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKBRep.lib;TKTopAlgo.lib;TKShHealing.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKBRep.lib;TKTopAlgo.lib;TKShHealing.lib;TKLCAF.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -163,7 +167,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\editing;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiData_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -181,7 +185,7 @@
       <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>$(TBB_LIB);$(AD_LIB);$(CAS_LIB64);</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKBRep.lib;TKTopAlgo.lib;TKShHealing.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKMath.lib;TKBRep.lib;TKTopAlgo.lib;TKShHealing.lib;TKLCAF.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>

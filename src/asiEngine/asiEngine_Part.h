@@ -32,10 +32,13 @@ public:
 public:
 
   asiEngine_EXPORT Handle(asiData_PartNode)
-    Create_Part();
+    Create();
 
   asiEngine_EXPORT void
-    Clean_Part();
+    Update(const TopoDS_Shape& model);
+
+  asiEngine_EXPORT void
+    Clean();
 
   asiEngine_EXPORT void
     GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,

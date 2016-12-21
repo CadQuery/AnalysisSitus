@@ -16,12 +16,16 @@
 //! Default constructor. Registers all involved Parameters.
 asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
 {
+  // Register standard Active Data Parameters
   REGISTER_PARAMETER(Name,  PID_Name);
   REGISTER_PARAMETER(Shape, PID_Geometry);
   REGISTER_PARAMETER(Int,   PID_DisplayMode);
   REGISTER_PARAMETER(Bool,  PID_HasColor);
   REGISTER_PARAMETER(Int,   PID_Color);
   REGISTER_PARAMETER(Bool,  PID_HasVertices);
+
+  // Register custom Analysis Situs Parameters
+  this->registerParameter(PID_AAG, asiData_AAGParameter::Instance(), false);
 }
 
 //! Returns new DETACHED instance of Geometry Node ensuring its correct
@@ -38,8 +42,9 @@ void asiData_PartNode::Init()
   // Initialize name Parameter
   this->InitParameter(PID_Name, "Name");
 
-  // Set empty initial shape
-  ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape( TopoDS_Shape(), MT_Silent );
+  // Set empty initial B-Rep and AAG
+  this->SetShape( TopoDS_Shape() );
+  this->SetAAG(NULL);
 
   // Set default values to primitive Parameters
   this->SetHasColor    (false);
@@ -81,6 +86,19 @@ void asiData_PartNode::SetShape(const TopoDS_Shape& shape)
 TopoDS_Shape asiData_PartNode::GetShape() const
 {
   return ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
+}
+
+//! Sets AAG to store.
+//! \param aag [in] AAG to store.
+void asiData_PartNode::SetAAG(const Handle(asiAlgo_AAG)& aag)
+{
+  Handle(asiData_AAGParameter)::DownCast( this->Parameter(PID_AAG) )->SetAAG(aag);
+}
+
+//! \return stored AAG.
+Handle(asiAlgo_AAG) asiData_PartNode::GetAAG() const
+{
+  return Handle(asiData_AAGParameter)::DownCast( this->Parameter(PID_AAG) )->GetAAG();
 }
 
 //! Sets the Boolean value indicating whether the color Parameter of this

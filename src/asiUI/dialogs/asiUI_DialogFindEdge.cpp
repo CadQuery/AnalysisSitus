@@ -145,8 +145,10 @@ void asiUI_DialogFindEdge::onFind()
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
-  TopTools_IndexedMapOfShape edges, found;
-  TopExp::MapShapes(part, TopAbs_EDGE, edges);
+  const TopTools_IndexedMapOfShape&
+    edges = m_model->GetPartNode()->GetAAG()->GetMapOfEdges();
+  //
+  TopTools_IndexedMapOfShape found;
 
   if ( useAddress )
   {

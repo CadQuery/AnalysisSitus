@@ -113,6 +113,12 @@
     <ClInclude Include="..\..\src\asiData\asiData_RENormalsNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiData\asiData_AAGParameter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiData\asiData_AAGAttr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiData\asiData_BoundaryEdgesNode.cpp">
@@ -212,6 +218,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiData\asiData_RENormalsNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiData\asiData_AAGParameter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiData\asiData_AAGAttr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -12,8 +12,7 @@
 #include <asiVisu_CurveDataProvider.h>
 
 // asiData includes
-#include <asiData_CurveNode.h>
-#include <asiData_EdgeNode.h>
+#include <asiData_PartNode.h>
 
 // OCCT includes
 #include <TopoDS_Edge.hxx>
@@ -82,11 +81,8 @@ private:
   //! Source Node.
   Handle(ActAPI_INode) m_node;
 
-  //! Map of sub-shapes.
-  TopTools_IndexedMapOfShape m_subShapes;
-
-  //! Map of edges.
-  TopTools_IndexedMapOfShape m_edges;
+  //! Working part Node.
+  Handle(asiData_PartNode) m_partNode;
 
 };
 

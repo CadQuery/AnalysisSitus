@@ -97,7 +97,7 @@ void asiEngine_Model::Populate()
   root_n->SetName("Analysis Situs");
 
   // Add Part Node
-  root_n->AddChildNode( asiEngine_Part(this, NULL).Create_Part() );
+  root_n->AddChildNode( asiEngine_Part(this, NULL).Create() );
 
   // Add Imperative Viewer Node
   root_n->AddChildNode( asiEngine_IV(this).Create_IV() );

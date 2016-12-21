@@ -19,35 +19,37 @@
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Converts color value to an integer representation.
-//! \param theColor [in] color.
+//! \param color [in] color.
 //! \return converted value
-static int ColorToInt(const QColor& theColor)
+static int ColorToInt(const QColor& color)
 {
-  unsigned char aRed   = (unsigned char) theColor.red();
-  unsigned char aGreen = (unsigned char) theColor.green();
-  unsigned char aBlue  = (unsigned char) theColor.blue();
-  return aRed << 16 | aGreen << 8 | aBlue;
+  unsigned char red   = (unsigned char) color.red();
+  unsigned char green = (unsigned char) color.green();
+  unsigned char blue  = (unsigned char) color.blue();
+  return red << 16 | green << 8 | blue;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Convert integer value to a color.
-//! \param theColor [in] integer value.
+//! \param color [in] integer value.
 //! \return converted value
-static QColor IntToColor(const int theColor)
+static QColor IntToColor(const int color)
 {
-  unsigned char aRed   = ( theColor >> 16 ) & 0xFF;
-  unsigned char aGreen = ( theColor >>  8 ) & 0xFF;
-  unsigned char aBlue  =   theColor         & 0xFF;
-  return QColor(aRed, aGreen, aBlue);
+  unsigned char red   = ( color >> 16 ) & 0xFF;
+  unsigned char green = ( color >>  8 ) & 0xFF;
+  unsigned char blue  =   color         & 0xFF;
+  return QColor(red, green, blue);
 }
 
-//! \return newly created Part Node.
-Handle(asiData_PartNode) asiEngine_Part::Create_Part()
-{
-  //---------------------------------------------------------------------------
-  // Create persistent object
-  //---------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
+//! \return newly created Part Node.
+Handle(asiData_PartNode) asiEngine_Part::Create()
+{
   // Add Part Node to Partition
   Handle(asiData_PartNode) geom_n = Handle(asiData_PartNode)::DownCast( asiData_PartNode::Instance() );
   m_model->GetPartPartition()->AddNode(geom_n);
@@ -130,8 +132,31 @@ Handle(asiData_PartNode) asiEngine_Part::Create_Part()
   return geom_n;
 }
 
+//-----------------------------------------------------------------------------
+
+//! Updates part's geometry in a smart way, so all dependent attributes
+//! are also actualized.
+//! \param model [in] CAD part to set.
+void asiEngine_Part::Update(const TopoDS_Shape& model)
+{
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+    return;
+
+  // Reset data
+  Clean();
+
+  // Set working structures
+  part_n->SetShape(model);
+  part_n->SetAAG( new asiAlgo_AAG(model) );
+}
+
+//-----------------------------------------------------------------------------
+
 //! Cleans up Data Model structure related to the Part Node.
-void asiEngine_Part::Clean_Part()
+void asiEngine_Part::Clean()
 {
   // Get Part Node
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
@@ -148,14 +173,18 @@ void asiEngine_Part::Clean_Part()
   part_n->GetBoundaryEdgesRepresentation() ->Init();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Extracts sub-shape indices for the given collection of face indices.
 //! \param faceIndices [in]  indices of faces.
 //! \param indices     [out] their corresponding indices among all sub-shapes.
 void asiEngine_Part::GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteger& faceIndices,
                                                      TColStd_PackedMapOfInteger&       indices)
 {
-  TopTools_IndexedMapOfShape AllFaces, SelectedFaces;
-  TopExp::MapShapes(m_model->GetPartNode()->GetShape(), TopAbs_FACE, AllFaces);
+  const TopTools_IndexedMapOfShape&
+    AllFaces = m_model->GetPartNode()->GetAAG()->GetMapOfFaces();
+  //
+  TopTools_IndexedMapOfShape SelectedFaces;
 
   // Get selected faces in topological form
   for ( TColStd_MapIteratorOfPackedMapOfInteger fit(faceIndices); fit.More(); fit.Next() )
@@ -168,18 +197,22 @@ void asiEngine_Part::GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfIn
   GetSubShapeIndices(SelectedFaces, indices);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Extracts sub-shape indices for the given collection of sub-shapes.
 //! \param subShapes [in]  sub-shapes of interest.
 //! \param indices   [out] their corresponding IDs.
 void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                                         TColStd_PackedMapOfInteger&       indices)
 {
-  TopTools_IndexedMapOfShape M;
-  TopExp::MapShapes(m_model->GetPartNode()->GetShape(), M);
-
+  const TopTools_IndexedMapOfShape&
+    M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
+  //
   for ( int i = 1; i <= subShapes.Extent(); ++i )
     indices.Add( M.FindIndex( subShapes.FindKey(i) ) );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Extracts sub-shape indices for the given collection of sub-shapes. The
 //! output is distributed by faces, edges and vertices.
@@ -192,9 +225,9 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
                                         TColStd_PackedMapOfInteger&       edgeIndices,
                                         TColStd_PackedMapOfInteger&       vertexIndices)
 {
-  TopTools_IndexedMapOfShape M;
-  TopExp::MapShapes(m_model->GetPartNode()->GetShape(), M);
-
+  const TopTools_IndexedMapOfShape&
+    M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
+  //
   for ( int i = 1; i <= subShapes.Extent(); ++i )
   {
     if ( subShapes.FindKey(i).ShapeType() == TopAbs_FACE )
@@ -207,6 +240,8 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
       vertexIndices.Add( M.FindIndex( subShapes.FindKey(i) ) );
   }
 }
+
+//-----------------------------------------------------------------------------
 
 //! Highlights the passed sub-shapes identified by their indices.
 //! \param subShapeIndices [in] indices of the sub-shapes to highlight.
@@ -223,6 +258,8 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
   //
   HighlightSubShapes( subShapeIndices, ::ColorToInt(color), selMode );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Highlights the passed sub-shapes identified by their indices.
 //! \param subShapeIndices [in] indices of the sub-shapes to highlight.
@@ -257,6 +294,8 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
   m_prsMgr->Highlight(dummyList, selection, selMode);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Highlights the passed sub-shapes in Part Viewer.
 //! \param subShapes [in] sub-shapes to highlight.
 void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes)
@@ -270,6 +309,8 @@ void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subSha
   //
   HighlightSubShapes( subShapes, ::ColorToInt(color) );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Highlights the passed sub-shapes in Part Viewer.
 //! \param subShapes [in] sub-shapes to highlight.
@@ -292,20 +333,16 @@ void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subSha
     HighlightSubShapes(selectedVertices, color, SelectionMode_Vertex);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Retrieves highlighted sub-shapes from the viewer.
 //! \param subShapes [out] result collection.
 void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes)
 {
-  // Get Part Node
-  Handle(asiData_PartNode) N = m_model->GetPartNode();
-
-  // Get Part shape
-  TopoDS_Shape part = N->GetShape();
-
-  // Map ALL shapes to extract topology by selected index which is global
-  // (related to full accessory graph)
-  TopTools_IndexedMapOfShape M;
-  TopExp::MapShapes(part, M);
+  // Get the map of ALL shapes to extract topology by selected index which
+  // is global (related to full accessory graph)
+  const TopTools_IndexedMapOfShape&
+    M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
 
   // Get actual selection
   const asiVisu_ActualSelection& sel      = m_prsMgr->GetCurrentSelection();
@@ -326,6 +363,8 @@ void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShap
   }
 }
 
+//-----------------------------------------------------------------------------
+
 //! Retrieves indices of the highlighted faces.
 //! \param faceIndices [out] indices of the highlighted faces.
 void asiEngine_Part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices)
@@ -334,10 +373,8 @@ void asiEngine_Part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices
   GetHighlightedSubShapes(subShapes);
 
   // Take all faces
-  Handle(asiData_PartNode) N = m_model->GetPartNode();
-  //
-  TopTools_IndexedMapOfShape allFaces;
-  TopExp::MapShapes( N->GetShape(), TopAbs_FACE, allFaces);
+  const TopTools_IndexedMapOfShape&
+    allFaces = m_model->GetPartNode()->GetAAG()->GetMapOfFaces();
 
   // Filter out non-selected faces
   for ( int f = 1; f <= allFaces.Extent(); ++f )
@@ -347,6 +384,8 @@ void asiEngine_Part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices
   }
 }
 
+//-----------------------------------------------------------------------------
+
 //! Retrieves indices of the highlighted edges.
 //! \param edgeIndices [out] indices of the highlighted edges.
 void asiEngine_Part::GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices)
@@ -355,10 +394,8 @@ void asiEngine_Part::GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices
   GetHighlightedSubShapes(subShapes);
 
   // Take all edges
-  Handle(asiData_PartNode) N = m_model->GetPartNode();
-  //
-  TopTools_IndexedMapOfShape allEdges;
-  TopExp::MapShapes( N->GetShape(), TopAbs_EDGE, allEdges);
+  const TopTools_IndexedMapOfShape&
+    allEdges = m_model->GetPartNode()->GetAAG()->GetMapOfEdges();
 
   // Filter out non-selected edges
   for ( int e = 1; e <= allEdges.Extent(); ++e )

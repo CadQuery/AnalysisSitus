@@ -1203,3 +1203,15 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& Object,
 
   return BOP.Shape();
 }
+
+//! Explodes the passed shape by solids.
+//! \param model  [in]  input CAD part.
+//! \param solids [out] extracted solids.
+void asiAlgo_Utils::ExplodeBySolids(const TopoDS_Shape&   model,
+                                    TopTools_ListOfShape& solids)
+{
+  for ( TopExp_Explorer exp(model, TopAbs_SOLID); exp.More(); exp.Next() )
+  {
+    solids.Append( exp.Current() );
+  }
+}

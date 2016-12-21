@@ -8,10 +8,8 @@
 #ifndef asiData_PartNode_h
 #define asiData_PartNode_h
 
-// A-Situs includes
-#include <asiData.h>
-
-// A-Situs (geometry) includes
+// asiData includes
+#include <asiData_AAGParameter.h>
 #include <asiData_BoundaryEdgesNode.h>
 #include <asiData_ContourNode.h>
 #include <asiData_CurveNode.h>
@@ -51,7 +49,8 @@ public:
   //------------------//
   // Geometry         //
   //------------------//
-    PID_Geometry,     //!< B-Rep model.
+    PID_Geometry,     //!< B-Rep structure.
+    PID_AAG,          //!< AAG structure.
   //------------------//
   // Presentation     //
   //------------------//
@@ -85,6 +84,12 @@ public:
 
   asiData_EXPORT TopoDS_Shape
     GetShape() const;
+
+  asiData_EXPORT void
+    SetAAG(const Handle(asiAlgo_AAG)&);
+
+  asiData_EXPORT Handle(asiAlgo_AAG)
+    GetAAG() const;
 
   asiData_EXPORT void
     SetHasColor(const bool);

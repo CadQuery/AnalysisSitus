@@ -145,8 +145,10 @@ void asiUI_DialogFindFace::onFind()
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
-  TopTools_IndexedMapOfShape faces, found;
-  TopExp::MapShapes(part, TopAbs_FACE, faces);
+  const TopTools_IndexedMapOfShape&
+    faces = m_model->GetPartNode()->GetAAG()->GetMapOfFaces();
+  //
+  TopTools_IndexedMapOfShape found;
 
   if ( useAddress )
   {

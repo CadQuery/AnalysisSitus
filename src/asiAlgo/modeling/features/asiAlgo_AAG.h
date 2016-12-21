@@ -160,6 +160,15 @@ public:
   asiAlgo_EXPORT const TopoDS_Shape&
     GetMasterCAD() const;
 
+  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
+    GetMapOfFaces() const;
+
+  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
+    GetMapOfEdges() const;
+
+  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
+    GetMapOfSubShapes() const;
+
   asiAlgo_EXPORT bool
     HasFace(const int face_idx) const;
 
@@ -249,6 +258,9 @@ protected:
   //! which we do not care about here. One typical scenario is to select
   //! those faces corresponding to some feature in the model.
   TColStd_PackedMapOfInteger m_selected;
+
+  //! All sub-shapes.
+  TopTools_IndexedMapOfShape m_subShapes;
 
   //! All faces of the master model.
   TopTools_IndexedMapOfShape m_faces;

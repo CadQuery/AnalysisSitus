@@ -161,15 +161,14 @@ void asiUI_ViewerDomain::onDomainPicked()
     return;
 
   // Build a map of shapes
-  TopTools_IndexedMapOfShape FacesMap;
-  TopExp::MapShapes(N->GetShape(), FacesMap);
+  const TopTools_IndexedMapOfShape& subShapesMap = N->GetAAG()->GetMapOfSubShapes();
 
   // Get face
   const int face_idx = N->GetFaceRepresentation()->GetSelectedFace();
   //
   TopoDS_Face F;
   if ( face_idx > 0 )
-    F = TopoDS::Face( FacesMap.FindKey(face_idx) );
+    F = TopoDS::Face( subShapesMap.FindKey(face_idx) );
   //
   if ( F.IsNull() )
     return;

@@ -16,4 +16,13 @@
   #define asiData_EXPORT __declspec(dllimport)
 #endif
 
+// Active Data includes
+#include <ActAPI_IParameter.h>
+
+//-----------------------------------------------------------------------------
+// Custom Active Data Parameters
+//-----------------------------------------------------------------------------
+
+#define Parameter_AAG Parameter_LASTFREE
+
 #endif

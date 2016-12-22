@@ -1,8 +1,8 @@
 //-----------------------------------------------------------------------------
 // Created on: 06 November 2016 (that's nice refactoring)
-// Created by: Sergey SLYADNEV
+// Created by: Quaoar
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/
+// Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
 // Own include

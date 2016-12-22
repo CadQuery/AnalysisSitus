@@ -1,8 +1,8 @@
 //-----------------------------------------------------------------------------
 // Created on: 16 April 2016
-// Created by: Sergey SLYADNEV
+// Created by: Quaoar
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/
+// Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
 #ifndef asiVisu_IVPointSet2dPrs_h

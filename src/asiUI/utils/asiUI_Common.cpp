@@ -1,8 +1,8 @@
 //-----------------------------------------------------------------------------
 // Created on: 03 February 2016
-// Created by: Sergey SLYADNEV
+// Created by: Quaoar
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/
+// Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
 // A-Situs includes
@@ -39,7 +39,7 @@ QString asiUI_Common::selectIGESFile(const OpenSaveAction action)
 QString asiUI_Common::selectSTEPFile(const OpenSaveAction action)
 {
   QStringList filter;
-  filter << "STEP (*.stp)";
+  filter << "STEP (*.stp; *.step)";
   //
   return selectFile(filter, "Select STEP file", "Save STEP file", action);
 }

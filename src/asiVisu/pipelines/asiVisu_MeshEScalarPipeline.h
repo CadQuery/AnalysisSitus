@@ -1,8 +1,8 @@
 //-----------------------------------------------------------------------------
 // Created on: 13 November 2015
-// Created by: Sergey SLYADNEV
+// Created by: Quaoar
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/
+// Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
 #ifndef asiVisu_MeshEScalarPipeline_h

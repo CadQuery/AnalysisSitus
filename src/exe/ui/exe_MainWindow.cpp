@@ -10,6 +10,7 @@
 
 // exe includes
 #include <exe_CommonFacilities.h>
+#include <exe_Version.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -24,9 +25,13 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
 {
   this->createPartViewer();
   this->createDockWindows();
-
   this->setCentralWidget(m_widgets.wViewerPart);
-  this->setWindowTitle("Analysis Situs");
+
+  // Prepare application name with the version number
+  TCollection_AsciiString appName(ASitus_APP_NAME);
+  appName += " ["; appName += ASitus_Version_STRING; appName += "]";
+  //
+  this->setWindowTitle( appName.ToCString() );
 }
 
 //-----------------------------------------------------------------------------

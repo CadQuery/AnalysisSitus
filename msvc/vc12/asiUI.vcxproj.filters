@@ -77,6 +77,18 @@
     <ClInclude Include="..\..\src\asiUI\graphs\asiUI_AAGAdaptor.h">
       <Filter>Header Files\Graphs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\utils\asiUI_ProgressNotifier.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\controls\asiUI_IStatusBar.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\controls\asiUI_StatusBar.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\controls\asiUI_StatusBarImpl.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPart.cpp">
@@ -255,6 +267,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiUI\graphs\asiUI_TopoGraphItem.cpp">
       <Filter>Source Files\Graphs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_ProgressNotifier.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_StatusBar.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_StatusBarImpl.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -110,6 +110,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\asiUI\controls\asiUI_IStatusBar.h" />
+    <ClInclude Include="..\..\src\asiUI\controls\asiUI_StatusBar.h" />
+    <ClInclude Include="..\..\src\asiUI\controls\asiUI_StatusBarImpl.h" />
+    <ClInclude Include="..\..\src\asiUI\utils\asiUI_ProgressNotifier.h" />
     <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerDomainListener.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
@@ -376,6 +380,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPartListener.cpp" />
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_LineEdit.cpp" />
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_ObjectBrowser.cpp" />
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_StatusBar.cpp" />
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_StatusBarImpl.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogFindEdge.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogSewing.cpp" />
@@ -396,6 +402,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_JournalIV.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_PrimDataAdaptor.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_PrimDataView.cpp" />
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_ProgressNotifier.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_Viewer.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerDomain.cpp" />

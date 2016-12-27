@@ -45,14 +45,13 @@ void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)&      
   TopoDS_Shape part = partNode->GetShape();
 
   // Build a map of shapes
-  TopTools_IndexedMapOfShape FacesMap;
-  TopExp::MapShapes(part, FacesMap);
+  const TopTools_IndexedMapOfShape& SubShapesMap = partNode->GetAAG()->GetMapOfSubShapes();
 
   // Get face
   const int face_idx = partNode->GetFaceRepresentation()->GetSelectedFace();
   //
   if ( face_idx > 0 )
-    face = TopoDS::Face( FacesMap.FindKey(face_idx) );
+    face = TopoDS::Face( SubShapesMap.FindKey(face_idx) );
   //
   if ( face.IsNull() )
     return;

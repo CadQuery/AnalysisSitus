@@ -18,6 +18,7 @@
 #include <asiEngine_Model.h>
 
 // asiUI includes
+#include <asiUI_IStatusBar.h>
 #include <asiUI_JournalIV.h>
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerDomain.h>
@@ -47,6 +48,7 @@ public:
   //
   Handle(ActAPI_IProgressNotifier) Notifier;      //!< Algorithmic notifier.
   Handle(ActAPI_IPlotter)          Plotter;       //!< Algorithmic plotter.
+  Handle(asiUI_IStatusBar)         StatusBar;     //!< Status bar of the main window.
 
   //! Visualization facilities.
   struct t_prs

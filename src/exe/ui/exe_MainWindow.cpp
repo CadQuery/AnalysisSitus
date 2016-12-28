@@ -42,6 +42,12 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
     statusBar = new asiUI_StatusBarImpl(new asiUI_StatusBar);
   //
   this->setStatusBar( statusBar->GetStatusBar() );
+
+  // Common facilities instance
+  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
+  //
+  cf->StatusBar = statusBar;
+  cf->StatusBar->SetStatusText("Load part from STEP or BREP to start analysis");
 }
 
 //-----------------------------------------------------------------------------

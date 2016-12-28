@@ -195,6 +195,9 @@ void asiUI_ControlsPart::onLoadBRep()
 {
   QString filename = asiUI_Common::selectBRepFile(asiUI_Common::OpenSaveAction_Open);
 
+  m_notifier.Init();
+  m_notifier.SetMessageKey("Load BREP");
+
   // Read BREP
   TopoDS_Shape shape;
   if ( !asiAlgo_Utils::ReadBRep(QStr2AsciiStr(filename), shape) )

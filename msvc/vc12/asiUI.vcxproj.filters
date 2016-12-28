@@ -77,13 +77,7 @@
     <ClInclude Include="..\..\src\asiUI\graphs\asiUI_AAGAdaptor.h">
       <Filter>Header Files\Graphs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\utils\asiUI_ProgressNotifier.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiUI\controls\asiUI_IStatusBar.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiUI\controls\asiUI_StatusBar.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiUI\controls\asiUI_StatusBarImpl.h">
@@ -241,6 +235,12 @@
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerPartListener.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ProgressNotifier.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_StatusBar.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerDomainListener.cpp">
       <Filter>Source Files\Viewers</Filter>
     </ClCompile>
@@ -352,6 +352,12 @@
       <Filter>Header Files\Graphs</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\controls\asiUI_ControlsFeature.h">
+      <Filter>Header Files\Controls</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\utils\asiUI_ProgressNotifier.h">
+      <Filter>Header Files\Utils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\controls\asiUI_StatusBar.h">
       <Filter>Header Files\Controls</Filter>
     </CustomBuild>
   </ItemGroup>

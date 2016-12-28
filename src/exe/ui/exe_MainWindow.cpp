@@ -12,6 +12,10 @@
 #include <exe_CommonFacilities.h>
 #include <exe_Version.h>
 
+// asiUI includes
+#include <asiUI_StatusBar.h>
+#include <asiUI_StatusBarImpl.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QDesktopWidget>
@@ -32,6 +36,12 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
   appName += " ["; appName += ASitus_Version_STRING; appName += "]";
   //
   this->setWindowTitle( appName.ToCString() );
+
+  // Create status bar
+  Handle(asiUI_StatusBarImpl)
+    statusBar = new asiUI_StatusBarImpl(new asiUI_StatusBar);
+  //
+  this->setStatusBar( statusBar->GetStatusBar() );
 }
 
 //-----------------------------------------------------------------------------

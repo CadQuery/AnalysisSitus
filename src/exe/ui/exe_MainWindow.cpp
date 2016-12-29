@@ -48,6 +48,10 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
   //
   cf->StatusBar = statusBar;
   cf->StatusBar->SetStatusText("Load part from STEP or BREP to start analysis");
+
+  // Initialize and connect progress listener
+  cf->ProgressListener = new asiUI_ProgressListener(statusBar, cf->ProgressNotifier);
+  cf->ProgressListener->Connect();
 }
 
 //-----------------------------------------------------------------------------
@@ -165,7 +169,7 @@ void exe_MainWindow::createDockWindows()
     //
     m_widgets.wControlsFeature = new asiUI_ControlsFeature(cf->Model,
                                                            cf->ViewerPart,
-                                                           cf->Notifier,
+                                                           cf->ProgressNotifier,
                                                            cf->Plotter,
                                                            pDockFeature);
     //
@@ -185,7 +189,7 @@ void exe_MainWindow::createDockWindows()
     //
     m_widgets.wControlsPart = new asiUI_ControlsPart(cf->Model,
                                                      cf->ViewerPart,
-                                                     cf->Notifier,
+                                                     cf->ProgressNotifier,
                                                      cf->Plotter,
                                                      pDockPart);
     //

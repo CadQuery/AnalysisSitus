@@ -39,9 +39,6 @@
     <Filter Include="Source Files\Utils">
       <UniqueIdentifier>{77b1b582-a3eb-4463-b2b1-440514c69e17}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MOC">
-      <UniqueIdentifier>{be1ca64f-ec18-4136-ac2c-5c447389116e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Modeling\Features">
       <UniqueIdentifier>{2ccadd12-7368-4010-8395-ef3f97db2b1f}</UniqueIdentifier>
     </Filter>
@@ -247,9 +244,6 @@
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_CommonCloud.cpp">
       <Filter>Source Files\Modeling\Points</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Notifier.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Logger.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
@@ -261,9 +255,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlaneOnPoints.cpp">
       <Filter>Source Files\Modeling\Points</Filter>
-    </ClCompile>
-    <ClCompile Include="$(IntDir)moc\moc_asiAlgo_Notifier.cpp">
-      <Filter>MOC</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\features\asiAlgo_AAG.cpp">
       <Filter>Source Files\Modeling\Features</Filter>
@@ -328,10 +319,5 @@
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.cpp">
       <Filter>Source Files\Modeling</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="..\..\src\asiAlgo\utils\asiAlgo_Notifier.h">
-      <Filter>Header Files\Utils</Filter>
-    </CustomBuild>
   </ItemGroup>
 </Project>

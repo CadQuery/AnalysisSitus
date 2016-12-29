@@ -111,6 +111,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\asiUI\controls\asiUI_IStatusBar.h" />
+    <CustomBuild Include="..\..\src\asiUI\utils\asiUI_ProgressListener.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\controls\asiUI_StatusBar.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
@@ -420,6 +430,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_JournalIV.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_PrimDataAdaptor.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_PrimDataView.cpp" />
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_ProgressListener.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_ProgressNotifier.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_Viewer.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.cpp" />
@@ -457,6 +468,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_TopoGraphItem.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ProgressNotifier.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_StatusBar.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ProgressListener.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="asiAlgo.vcxproj">

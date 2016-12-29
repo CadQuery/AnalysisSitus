@@ -8,9 +8,6 @@
 #ifndef exe_CommonFacilities_h
 #define exe_CommonFacilities_h
 
-// asiAlgo includes
-#include <asiAlgo_Notifier.h>
-
 // asiVisu includes
 #include <asiVisu_PrsManager.h>
 
@@ -21,6 +18,8 @@
 #include <asiUI_IStatusBar.h>
 #include <asiUI_JournalIV.h>
 #include <asiUI_ObjectBrowser.h>
+#include <asiUI_ProgressListener.h>
+#include <asiUI_ProgressNotifier.h>
 #include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerPart.h>
 #include <asiUI_ViewerSurface.h>
@@ -37,18 +36,19 @@ public:
 
 public:
 
-  Handle(asiEngine_Model)          Model;         //!< Data Model instance.
+  Handle(asiEngine_Model)          Model;            //!< Data Model instance.
   //
-  asiUI_ObjectBrowser*             ObjectBrowser; //!< Object browser.
-  Handle(ActAPI_INode)             CurrentNode;   //!< Currently selected Node.
+  asiUI_ObjectBrowser*             ObjectBrowser;    //!< Object browser.
+  Handle(ActAPI_INode)             CurrentNode;      //!< Currently selected Node.
   //
-  asiUI_ViewerPart*                ViewerPart;    //!< Viewer for part.
-  asiUI_ViewerDomain*              ViewerDomain;  //!< Viewer for face parametric domain.
-  asiUI_ViewerSurface*             ViewerHost;    //!< Viewer for host geometry.
+  asiUI_ViewerPart*                ViewerPart;       //!< Viewer for part.
+  asiUI_ViewerDomain*              ViewerDomain;     //!< Viewer for face parametric domain.
+  asiUI_ViewerSurface*             ViewerHost;       //!< Viewer for host geometry.
   //
-  Handle(ActAPI_IProgressNotifier) Notifier;      //!< Algorithmic notifier.
-  Handle(ActAPI_IPlotter)          Plotter;       //!< Algorithmic plotter.
-  Handle(asiUI_IStatusBar)         StatusBar;     //!< Status bar of the main window.
+  Handle(ActAPI_IProgressNotifier) ProgressNotifier; //!< Progress notifier.
+  asiUI_ProgressListener*          ProgressListener; //!< Progress listener.
+  Handle(ActAPI_IPlotter)          Plotter;          //!< Imperative plotter.
+  Handle(asiUI_IStatusBar)         StatusBar;        //!< Status bar of the main window.
 
   //! Visualization facilities.
   struct t_prs
@@ -87,12 +87,13 @@ public:
 
 private:
 
-  exe_CommonFacilities()
+  exe_CommonFacilities() //!< ctor.
   //
-    : ObjectBrowser (NULL),
-      ViewerPart    (NULL),
-      ViewerDomain  (NULL),
-      ViewerHost    (NULL)
+    : ObjectBrowser    (NULL),
+      ViewerPart       (NULL),
+      ViewerDomain     (NULL),
+      ViewerHost       (NULL),
+      ProgressListener (NULL)
   {
     // Create Data Model
     Model = new asiEngine_Model;
@@ -108,7 +109,7 @@ private:
     Model->EnableTransactions();
 
     // Initialize notifier
-    Notifier = new asiAlgo_Notifier;
+    ProgressNotifier = new asiUI_ProgressNotifier;
   }
 
 private:

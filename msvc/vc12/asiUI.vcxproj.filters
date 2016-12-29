@@ -238,6 +238,9 @@
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ProgressNotifier.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ProgressListener.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_StatusBar.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
@@ -276,6 +279,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_StatusBarImpl.cpp">
       <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_ProgressListener.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -359,6 +365,9 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\controls\asiUI_StatusBar.h">
       <Filter>Header Files\Controls</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\utils\asiUI_ProgressListener.h">
+      <Filter>Header Files\Utils</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

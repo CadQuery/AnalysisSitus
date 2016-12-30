@@ -8,11 +8,14 @@
 #ifndef asiUI_Common_h
 #define asiUI_Common_h
 
-// A-Situs includes
+// asiUI includes
 #include <asiUI.h>
 
-// A-Situs (engine) includes
+// asiEngine includes
 #include <asiEngine_Model.h>
+
+// Active Data includes
+#include <ActAux_TimeStamp.h>
 
 // OCCT includes
 #include <TCollection_AsciiString.hxx>
@@ -21,6 +24,7 @@
 
 // Qt includes
 #include <QColor>
+#include <QDateTime>
 
 //! GUI utilities.
 class asiUI_Common
@@ -90,6 +94,27 @@ public:
     unsigned char aGreen = ( theColor >>  8 ) & 0xFF;
     unsigned char aBlue  =   theColor         & 0xFF;
     return QColor(aRed, aGreen, aBlue);
+  }
+
+  //! Converts timestamp to QDateTime value.
+  //! \param timeStamp [in] timestamp.
+  //! \return date and time as QDateTime.
+  static QDateTime ToQDateTime(const Handle(ActAux_TimeStamp)& timeStamp)
+  {
+    Handle(HIntArray) dateArr = ActAux_TimeStampTool::AsChunked(timeStamp);
+
+    if ( dateArr.IsNull() )
+      return QDateTime();
+
+    QDate date(dateArr->Value(5) + 1900, // year [1900-...] -> [0 - ...]
+               dateArr->Value(4) + 1,    // months [0-11]   -> [1-12]
+               dateArr->Value(3));       // days   [1-31]
+    //
+    QTime time(dateArr->Value(2),        // hours   [0-23]
+               dateArr->Value(1),        // minutes [0-59]
+               dateArr->Value(0));       // seconds [0-59]
+
+    return QDateTime(date, time);
   }
 
 public:

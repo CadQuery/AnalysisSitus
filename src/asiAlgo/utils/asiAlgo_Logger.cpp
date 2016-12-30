@@ -139,16 +139,16 @@ void asiAlgo_Logger::Error(const TCollection_AsciiString&    theMessage,
 //! \param thePriority  [in] priority of the message.
 //! \param theArguments [in] message arguments.
 //! \param theTimeStamp [in] application-specific timestamp.
-void asiAlgo_Logger::appendMessage(const TCollection_AsciiString&    theMessage,
-                                          const ActAPI_LogMessageSeverity   /*theSeverity*/,
-                                          const ActAPI_LogMessagePriority   /*thePriority*/,
-                                          const ActAPI_LogArguments&        /*theArguments*/,
-                                          const Handle(Standard_Transient)& /*theTimeStamp*/)
+void asiAlgo_Logger::appendMessage(const TCollection_AsciiString&           theMessage,
+                                          const ActAPI_LogMessageSeverity   theSeverity,
+                                          const ActAPI_LogMessagePriority   thePriority,
+                                          const ActAPI_LogArguments&        theArguments,
+                                          const Handle(Standard_Transient)& theTimeStamp)
 {
   std::cout << "\tLOGGER: " << theMessage.ToCString() << std::endl;
-  //m_messageQueue.push( ActAPI_LogMessage(thePriority,
-  //                                       theSeverity,
-  //                                       theMessage,
-  //                                       theArguments,
-  //                                       theTimeStamp) );
+  m_messageQueue.push( ActAPI_LogMessage(thePriority,
+                                         theSeverity,
+                                         theMessage,
+                                         theArguments,
+                                         theTimeStamp) );
 }

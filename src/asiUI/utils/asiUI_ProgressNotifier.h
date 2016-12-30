@@ -12,7 +12,7 @@
 #include <asiUI.h>
 
 // asiAlgo includes
-#include <asiAlgo_Logger.h>
+#include <asiUI_Logger.h>
 
 // Active Data includes
 #include <ActAPI_IProgressNotifier.h>

@@ -36,22 +36,6 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
   appName += " ["; appName += ASitus_Version_STRING; appName += "]";
   //
   this->setWindowTitle( appName.ToCString() );
-
-  // Create status bar
-  Handle(asiUI_StatusBarImpl)
-    statusBar = new asiUI_StatusBarImpl(new asiUI_StatusBar);
-  //
-  this->setStatusBar( statusBar->GetStatusBar() );
-
-  // Common facilities instance
-  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
-  //
-  cf->StatusBar = statusBar;
-  cf->StatusBar->SetStatusText("Load part from STEP or BREP to start analysis");
-
-  // Initialize and connect progress listener
-  cf->ProgressListener = new asiUI_ProgressListener(statusBar, cf->ProgressNotifier);
-  cf->ProgressListener->Connect();
 }
 
 //-----------------------------------------------------------------------------
@@ -201,12 +185,26 @@ void exe_MainWindow::createDockWindows()
   // Tabify widgets
   this->tabifyDockWidget(pDockFeature, pDockPart);
 
+  // Log window
+  QDockWidget* pDockLogWindow;
+  {
+    pDockLogWindow = new QDockWidget("Logger", this);
+    pDockLogWindow->setAllowedAreas(Qt::BottomDockWidgetArea);
+    //
+    m_widgets.wLogger = new QTextEdit(pDockLogWindow);
+    //
+    pDockLogWindow->setWidget(m_widgets.wLogger);
+    //
+    this->addDockWidget(Qt::BottomDockWidgetArea, pDockLogWindow);
+  }
+
   // Listener for part controls
   m_listeners.pControlsPart = new asiUI_ControlsPartListener(m_widgets.wControlsPart,
                                                              m_widgets.wViewerPart,
                                                              m_widgets.wViewerDomain,
                                                              m_widgets.wViewerSurface,
-                                                             cf->Model);
+                                                             cf->Model,
+                                                             cf->ProgressNotifier);
 
   // Listener for part viewer
   m_listeners.pViewerPart = new asiUI_ViewerPartListener(m_widgets.wViewerPart,
@@ -217,4 +215,18 @@ void exe_MainWindow::createDockWindows()
   // Signals-slots
   m_listeners.pControlsPart->Connect();
   m_listeners.pViewerPart->Connect();
+
+  // Create status bar
+  Handle(asiUI_StatusBarImpl)
+    statusBar = new asiUI_StatusBarImpl(new asiUI_StatusBar);
+  //
+  this->setStatusBar( statusBar->GetStatusBar() );
+  //
+  cf->StatusBar = statusBar;
+  cf->StatusBar->SetStatusText("Load part from STEP or BREP to start analysis");
+
+  // Initialize and connect progress listener
+  cf->Logger           = new asiUI_Logger(m_widgets.wLogger);
+  cf->ProgressListener = new asiUI_ProgressListener(statusBar, cf->ProgressNotifier, cf->Logger);
+  cf->ProgressListener->Connect();
 }

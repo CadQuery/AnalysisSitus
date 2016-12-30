@@ -19,17 +19,20 @@
 //! \param wViewerDomain  [in] domain viewer.
 //! \param wViewerSurface [in] host geometry viewer.
 //! \param model          [in] Data Model instance.
+//! \param notifier       [in] progress notifier.
 asiUI_ControlsPartListener::asiUI_ControlsPartListener(asiUI_ControlsPart*            wControls,
                                                        asiUI_ViewerPart*              wViewerPart,
                                                        asiUI_ViewerDomain*            wViewerDomain,
                                                        asiUI_ViewerSurface*           wViewerSurface,
-                                                       const Handle(asiEngine_Model)& model)
+                                                       const Handle(asiEngine_Model)& model,
+                                                       ActAPI_ProgressEntry           notifier)
 : QObject          (),
   m_wControls      (wControls),
   m_wViewerPart    (wViewerPart),
   m_wViewerDomain  (wViewerDomain),
   m_wViewerSurface (wViewerSurface),
-  m_model          (model)
+  m_model          (model),
+  m_notifier       (notifier)
 {}
 
 //-----------------------------------------------------------------------------
@@ -183,8 +186,14 @@ void asiUI_ControlsPartListener::cleanViewers()
 //! Performs full re-initialization of everything.
 void asiUI_ControlsPartListener::reinitializeEverything()
 {
+  m_notifier.SetMessageKey("Actualize presentations");
+  m_notifier.Init(1);
+
   this->cleanViewers();
-  //
   m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, true);
+
+  m_notifier.StepProgress(1, 1);
+  m_notifier.SetProgressStatus(Progress_Succeeded);
+
   m_wViewerPart->PrsMgr()->InitializePickers();
 }

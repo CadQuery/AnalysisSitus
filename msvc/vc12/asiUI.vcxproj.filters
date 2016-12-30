@@ -83,6 +83,9 @@
     <ClInclude Include="..\..\src\asiUI\controls\asiUI_StatusBarImpl.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiUI\utils\asiUI_Logger.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiUI\controls\asiUI_ControlsPart.cpp">
@@ -244,6 +247,9 @@
     <ClCompile Include="$(IntDir)moc\moc_asiUI_StatusBar.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_OverrideCursor.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerDomainListener.cpp">
       <Filter>Source Files\Viewers</Filter>
     </ClCompile>
@@ -281,6 +287,12 @@
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_ProgressListener.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_OverrideCursor.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_Logger.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -367,6 +379,9 @@
       <Filter>Header Files\Controls</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\utils\asiUI_ProgressListener.h">
+      <Filter>Header Files\Utils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\utils\asiUI_OverrideCursor.h">
       <Filter>Header Files\Utils</Filter>
     </CustomBuild>
   </ItemGroup>

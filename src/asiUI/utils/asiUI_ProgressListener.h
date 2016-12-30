@@ -10,6 +10,7 @@
 
 // asiUI includes
 #include <asiUI_IStatusBar.h>
+#include <asiUI_Logger.h>
 
 // Active Data includes
 #include <ActAPI_IProgressNotifier.h>
@@ -26,7 +27,8 @@ public:
 
   asiUI_EXPORT
     asiUI_ProgressListener(const Handle(asiUI_IStatusBar)&         statusBar,
-                           const Handle(ActAPI_IProgressNotifier)& notifier);
+                           const Handle(ActAPI_IProgressNotifier)& notifier,
+                           const Handle(asiUI_Logger)&             logger);
 
   asiUI_EXPORT virtual
     ~asiUI_ProgressListener();
@@ -49,6 +51,7 @@ protected:
 
   Handle(asiUI_IStatusBar)         m_statusBar; //!< Status bar.
   Handle(ActAPI_IProgressNotifier) m_notifier;  //!< Progress notifier.
+  Handle(asiUI_Logger)             m_logger;    //!< Logger instance.
 
 };
 

@@ -29,7 +29,8 @@ public:
                                asiUI_ViewerPart*              wViewerPart,
                                asiUI_ViewerDomain*            wViewerDomain,
                                asiUI_ViewerSurface*           wViewerSurface,
-                               const Handle(asiEngine_Model)& model);
+                               const Handle(asiEngine_Model)& model,
+                               ActAPI_ProgressEntry           notifier);
 
   asiUI_EXPORT virtual
     ~asiUI_ControlsPartListener();
@@ -67,6 +68,7 @@ protected:
   asiUI_ViewerDomain*     m_wViewerDomain;  //!< Face domain viewer.
   asiUI_ViewerSurface*    m_wViewerSurface; //!< Surface viewer.
   Handle(asiEngine_Model) m_model;          //!< Data Model instance.
+  ActAPI_ProgressEntry    m_notifier;       //!< Progress notifier.
 
 };
 

@@ -320,6 +320,17 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_Common.h" />
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_DataAdaptor.h" />
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_JournalIV.h" />
+    <CustomBuild Include="..\..\src\asiUI\utils\asiUI_OverrideCursor.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\asiUI\utils\asiUI_Logger.h" />
     <ClInclude Include="..\..\src\asiUI\utils\asiUI_PrimDataAdaptor.h" />
     <CustomBuild Include="..\..\src\asiUI\utils\asiUI_PrimDataView.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
@@ -428,6 +439,8 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_Common.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_DataAdaptor.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_JournalIV.cpp" />
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_Logger.cpp" />
+    <ClCompile Include="..\..\src\asiUI\utils\asiUI_OverrideCursor.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_PrimDataAdaptor.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_PrimDataView.cpp" />
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_ProgressListener.cpp" />
@@ -464,6 +477,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerPartListener.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerSurface.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_VtkWindow.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_OverrideCursor.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_TopoGraph.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_TopoGraphItem.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ProgressNotifier.cpp" />

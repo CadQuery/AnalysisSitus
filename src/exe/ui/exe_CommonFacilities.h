@@ -49,6 +49,7 @@ public:
   asiUI_ProgressListener*          ProgressListener; //!< Progress listener.
   Handle(ActAPI_IPlotter)          Plotter;          //!< Imperative plotter.
   Handle(asiUI_IStatusBar)         StatusBar;        //!< Status bar of the main window.
+  Handle(asiUI_Logger)             Logger;           //!< Logger.
 
   //! Visualization facilities.
   struct t_prs

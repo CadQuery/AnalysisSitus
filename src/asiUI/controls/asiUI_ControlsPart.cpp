@@ -195,8 +195,8 @@ void asiUI_ControlsPart::onLoadBRep()
 {
   QString filename = asiUI_Common::selectBRepFile(asiUI_Common::OpenSaveAction_Open);
 
-  m_notifier.Init();
   m_notifier.SetMessageKey("Load BREP");
+  m_notifier.Init(2);
 
   // Read BREP
   TopoDS_Shape shape;
@@ -205,6 +205,9 @@ void asiUI_ControlsPart::onLoadBRep()
     std::cout << "Error: cannot read b-rep file" << std::endl;
     return;
   }
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Part loaded from BREP file %1" << QStr2AsciiStr(filename) );
+  m_notifier.StepProgress(1, 1);
+  m_notifier.SetMessageKey("Update accelerating structures");
 
   // Clean up the Model
   m_model->Clear();
@@ -215,6 +218,9 @@ void asiUI_ControlsPart::onLoadBRep()
     asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(shape);
   }
   m_model->CommitCommand(); // tx commit
+  //
+  m_notifier.StepProgress(1, 1);
+  m_notifier.SetProgressStatus(Progress_Succeeded);
 
   // Notify
   emit partLoaded();

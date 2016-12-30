@@ -18,6 +18,7 @@
 #pragma warning(push, 0)
 #include <QCloseEvent>
 #include <QMainWindow>
+#include <QTextEdit>
 #pragma warning(pop)
 
 //! Main window for Analysis Situs.
@@ -50,13 +51,15 @@ private:
     asiUI_ViewerSurface*   wViewerSurface;   //!< Surface viewer.
     asiUI_ControlsPart*    wControlsPart;    //!< Part controls.
     asiUI_ControlsFeature* wControlsFeature; //!< Feature controls.
+    QTextEdit*             wLogger;          //!< Logger.
 
     t_widgets() : wBrowser         (NULL),
                   wViewerDomain    (NULL),
                   wViewerPart      (NULL),
                   wViewerSurface   (NULL),
                   wControlsPart    (NULL),
-                  wControlsFeature (NULL)
+                  wControlsFeature (NULL),
+                  wLogger          (NULL)
     {}
 
     void Release()
@@ -67,6 +70,7 @@ private:
       delete wViewerSurface;   wViewerSurface   = NULL;
       delete wControlsPart;    wControlsPart    = NULL;
       delete wControlsFeature; wControlsFeature = NULL;
+      delete wLogger;          wLogger          = NULL;
     }
   };
 

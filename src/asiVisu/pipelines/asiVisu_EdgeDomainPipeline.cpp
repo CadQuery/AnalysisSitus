@@ -53,6 +53,11 @@ void asiVisu_EdgeDomainPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP
 
   if ( edgeProvider->MustExecute( this->GetMTime() ) )
   {
+    vtkSmartPointer<vtkPolyData> aDummyDS = vtkSmartPointer<vtkPolyData>::New();
+    this->SetInputData(aDummyDS);
+    this->Modified(); // Update modification timestamp
+    return; // Do nothing
+
     // TODO: NYI
     //this->SetInputConnection( source->GetOutputPort() );
   }

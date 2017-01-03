@@ -37,18 +37,21 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-//! \param model  [in] Data Model instance.
-//! \param part_n [in] Part Node.
-//! \param mode   [in] interoperability mode.
-//! \param parent [in] parent widget.
+//! \param model    [in] Data Model instance.
+//! \param part_n   [in] Part Node.
+//! \param mode     [in] interoperability mode.
+//! \param notifier [in] progress notifier.
+//! \param parent   [in] parent widget.
 asiUI_DialogSTEP::asiUI_DialogSTEP(const Handle(ActAPI_IModel)&    model,
                                    const Handle(asiData_PartNode)& part_n,
                                    const Mode                      mode,
+                                   ActAPI_ProgressEntry            notifier,
                                    QWidget*                        parent)
-: QDialog (parent),
-  m_model (model),
-  m_part  (part_n),
-  m_mode  (mode)
+: QDialog    (parent),
+  m_model    (model),
+  m_part     (part_n),
+  m_mode     (mode),
+  m_notifier (notifier)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -302,6 +305,9 @@ void asiUI_DialogSTEP::proceed_Read()
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
+  m_notifier.SetMessageKey("Load STEP");
+  m_notifier.Init(2);
+
   // Read STEP
   TopoDS_Shape shape;
   if ( !asiAlgo_STEP::Read(QStr2AsciiStr(filename), false, shape) )
@@ -310,6 +316,9 @@ void asiUI_DialogSTEP::proceed_Read()
     QApplication::restoreOverrideCursor();
     return;
   }
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Part loaded from STEP file %1" << QStr2AsciiStr(filename) );
+  m_notifier.StepProgress(1, 1);
+  m_notifier.SetMessageKey("Update accelerating structures");
 
   // Update part
   Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(m_model);
@@ -320,6 +329,9 @@ void asiUI_DialogSTEP::proceed_Read()
   }
   M->CommitCommand(); // tx commit
 
+  // Finalize
+  m_notifier.StepProgress(1, 1);
+  m_notifier.SetProgressStatus(Progress_Succeeded);
   QApplication::restoreOverrideCursor();
 }
 
@@ -339,10 +351,10 @@ void asiUI_DialogSTEP::onVarChanged(QTableWidgetItem* pItem)
 //! On proceed.
 void asiUI_DialogSTEP::onProceed()
 {
+  this->close();
+
   if ( m_mode == Mode_Read )
     this->proceed_Read();
   else
     this->proceed_Write();
-
-  this->close();
 }

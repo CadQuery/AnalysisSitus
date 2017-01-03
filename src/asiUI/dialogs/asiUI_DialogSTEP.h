@@ -48,6 +48,7 @@ public:
   asiUI_DialogSTEP(const Handle(ActAPI_IModel)&    model,
                    const Handle(asiData_PartNode)& part_n,
                    const Mode                      mode,
+                   ActAPI_ProgressEntry            notifier,
                    QWidget*                        parent = NULL);
 
   virtual ~asiUI_DialogSTEP();
@@ -88,10 +89,11 @@ private:
     }
   };
 
-  t_widgets m_widgets; //!< Involved widgets.
+  t_widgets                m_widgets;  //!< Involved widgets.
   //
-  Handle(ActAPI_IModel)    m_model; //!< Data Model instance.
-  Handle(asiData_PartNode) m_part;  //!< Part Node.
+  Handle(ActAPI_IModel)    m_model;    //!< Data Model instance.
+  Handle(asiData_PartNode) m_part;     //!< Part Node.
+  ActAPI_ProgressEntry     m_notifier; //!< Progress Notifier.
 
 };
 

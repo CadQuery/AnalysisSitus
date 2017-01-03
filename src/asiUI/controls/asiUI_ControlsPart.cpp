@@ -234,7 +234,11 @@ void asiUI_ControlsPart::onLoadSTEP()
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
 
   // Dialog for reading STEP
-  asiUI_DialogSTEP* pDlg = new asiUI_DialogSTEP(m_model, geom_n, asiUI_DialogSTEP::Mode_Read, this);
+  asiUI_DialogSTEP* pDlg = new asiUI_DialogSTEP(m_model,
+                                                geom_n,
+                                                asiUI_DialogSTEP::Mode_Read,
+                                                m_notifier,
+                                                this);
   pDlg->exec();
 
   // Notify
@@ -252,7 +256,11 @@ void asiUI_ControlsPart::onSaveSTEP()
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
   // Dialog for STEP save
-  asiUI_DialogSTEP* pDlg = new asiUI_DialogSTEP(m_model, part_n, asiUI_DialogSTEP::Mode_Write, this);
+  asiUI_DialogSTEP* pDlg = new asiUI_DialogSTEP(m_model,
+                                                part_n,
+                                                asiUI_DialogSTEP::Mode_Write,
+                                                m_notifier,
+                                                this);
   pDlg->show();
 
   // Notify

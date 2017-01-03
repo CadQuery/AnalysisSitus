@@ -48,7 +48,7 @@ void asiVisu_EdgeDomainPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP
   }
 
   /* ============================
-   *  Prepare polygonal data set
+   *  Prepare polygo1nal data set
    * ============================ */
 
   if ( edgeProvider->MustExecute( this->GetMTime() ) )

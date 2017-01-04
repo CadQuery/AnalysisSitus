@@ -99,8 +99,8 @@ const Handle(Mesh_Group)& asiVisu_MeshSource::GetInputElemGroup() const
 //!                             in this method.
 //! \return status.
 int asiVisu_MeshSource::RequestData(vtkInformation*        theRequest,
-                                  vtkInformationVector** theInputVector,
-                                  vtkInformationVector*  theOutputVector)
+                                    vtkInformationVector** theInputVector,
+                                    vtkInformationVector*  theOutputVector)
 {
   /* ==============================
    *  Prepare involved collections
@@ -189,7 +189,7 @@ int asiVisu_MeshSource::RequestData(vtkInformation*        theRequest,
 //! \param theElem     [in]     Mesh element to translate.
 //! \param thePolyData [in/out] output polygonal data.
 void asiVisu_MeshSource::translateElement(const Handle(Mesh_Element)& theElem,
-                                        vtkPolyData*                thePolyData)
+                                          vtkPolyData*                thePolyData)
 {
   // Proceed with TRIANGLE elements
   if ( theElem->IsInstance( STANDARD_TYPE(Mesh_Triangle) ) )
@@ -220,7 +220,7 @@ void asiVisu_MeshSource::translateElement(const Handle(Mesh_Element)& theElem,
 //! \param thePolyData [in/out] output polygonal data.
 //! \return internal VTK ID for the newly added point.
 vtkIdType asiVisu_MeshSource::registerMeshNode(const int    theNodeID,
-                                             vtkPolyData* thePolyData)
+                                               vtkPolyData* thePolyData)
 {
   // Access necessary arrays
   vtkPoints* aPoints = thePolyData->GetPoints();
@@ -257,9 +257,9 @@ vtkIdType asiVisu_MeshSource::registerMeshNode(const int    theNodeID,
 //! \param thePolyData [in] polygonal data being populated.
 //! \return ID of the just added VTK cell.
 vtkIdType asiVisu_MeshSource::registerMeshFace(const int    theFaceID,
-                                             const void*  theNodes,
-                                             const int    theNbNodes,
-                                             vtkPolyData* thePolyData)
+                                               const void*  theNodes,
+                                               const int    theNbNodes,
+                                               vtkPolyData* thePolyData)
 {
   /* ==============================================
    *  Define the type of the cell being registered
@@ -315,7 +315,7 @@ vtkIdType asiVisu_MeshSource::registerMeshFace(const int    theFaceID,
 //! \return ID of the registered cell.
 vtkIdType
   asiVisu_MeshSource::registerFreeNodesCell(const NCollection_Sequence<int>& theNodeIDs,
-                                          vtkPolyData*                     thePolyData)
+                                            vtkPolyData*                     thePolyData)
 {
   if ( theNodeIDs.IsEmpty() )
     return VTK_BAD_ID;

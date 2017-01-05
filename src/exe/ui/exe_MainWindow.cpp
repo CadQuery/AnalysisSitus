@@ -185,19 +185,6 @@ void exe_MainWindow::createDockWindows()
   // Tabify widgets
   this->tabifyDockWidget(pDockFeature, pDockPart);
 
-  // Log window
-  QDockWidget* pDockLogWindow;
-  {
-    pDockLogWindow = new QDockWidget("Logger", this);
-    pDockLogWindow->setAllowedAreas(Qt::BottomDockWidgetArea);
-    //
-    m_widgets.wLogger = new QTextEdit(pDockLogWindow);
-    //
-    pDockLogWindow->setWidget(m_widgets.wLogger);
-    //
-    this->addDockWidget(Qt::BottomDockWidgetArea, pDockLogWindow);
-  }
-
   // Listener for part controls
   m_listeners.pControlsPart = new asiUI_ControlsPartListener(m_widgets.wControlsPart,
                                                              m_widgets.wViewerPart,
@@ -215,6 +202,19 @@ void exe_MainWindow::createDockWindows()
   // Signals-slots
   m_listeners.pControlsPart->Connect();
   m_listeners.pViewerPart->Connect();
+
+  // Log window
+  QDockWidget* pDockLogWindow;
+  {
+    pDockLogWindow = new QDockWidget("Logger", this);
+    pDockLogWindow->setAllowedAreas(Qt::BottomDockWidgetArea);
+    //
+    m_widgets.wLogger = new QTextEdit(pDockLogWindow);
+    //
+    pDockLogWindow->setWidget(m_widgets.wLogger);
+    //
+    this->addDockWidget(Qt::BottomDockWidgetArea, pDockLogWindow);
+  }
 
   // Create status bar
   Handle(asiUI_StatusBarImpl)

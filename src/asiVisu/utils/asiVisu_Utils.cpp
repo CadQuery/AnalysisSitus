@@ -567,9 +567,9 @@ void asiVisu_Utils::DefaultDetectionColor(double& fR,
                                           double& fG,
                                           double& fB)
 {
-  fR = 0.0;
-  fG = 1.0;
-  fB = 1.0;
+  fR = 130.0 / 255.0;
+  fG = 200.0 / 255.0;
+  fB = 255.0 / 255.0;
 }
 
 //-----------------------------------------------------------------------------

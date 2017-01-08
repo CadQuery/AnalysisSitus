@@ -200,6 +200,7 @@ void asiUI_TopoGraph::Render(const TopoDS_Shape&               shape,
   TopExp::MapShapes(shape, TopAbs_FACE,   m_faces);
   TopExp::MapShapes(shape, TopAbs_EDGE,   m_edges);
   TopExp::MapShapes(shape, TopAbs_VERTEX, m_vertices);
+  TopExp::MapShapes(shape, m_subShapes);
 
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph> graph = this->convertToGraph(shape, selectedFaces, regime, leafType);
@@ -446,6 +447,8 @@ void asiUI_TopoGraph::onVertexPicked(const int              subShapeId,
       subShape = m_edges.FindKey(subShapeId);
     else if ( shapeType == TopAbs_VERTEX )
       subShape = m_vertices.FindKey(subShapeId);
+    else
+      subShape = m_subShapes(subShapeId);
 
     // Highlight in the main viewer
     TopTools_IndexedMapOfShape selected;

@@ -114,9 +114,10 @@ protected:
   Handle(asiEngine_Model) m_model;         //!< Data Model instance.
   asiUI_ViewerPart*       m_partViewer;    //!< Part viewer.
   //
-  TopTools_IndexedMapOfShape m_faces;    //!< Faces.
-  TopTools_IndexedMapOfShape m_edges;    //!< Edges.
-  TopTools_IndexedMapOfShape m_vertices; //!< Vertices.
+  TopTools_IndexedMapOfShape m_faces;     //!< Faces.
+  TopTools_IndexedMapOfShape m_edges;     //!< Edges.
+  TopTools_IndexedMapOfShape m_vertices;  //!< Vertices.
+  TopTools_IndexedMapOfShape m_subShapes; //!< All sub-shapes.
 
 };
 

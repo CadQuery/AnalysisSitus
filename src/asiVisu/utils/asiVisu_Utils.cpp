@@ -632,7 +632,7 @@ vtkLookupTable* asiVisu_Utils::InitLookupTable()
   aColorTable->SetTableValue(3, 0, 0, 1);          // blue for shared vertex
   aColorTable->SetTableValue(4, 1, 0, 0);          // red for free edge
   aColorTable->SetTableValue(5, 1, 0, 0);          // red for boundary edge (related to a single face)
-  aColorTable->SetTableValue(6, 0.3, 0.3, 0.3);    // black for shared edge (related to several faces)
+  aColorTable->SetTableValue(6, 0, 0, 0);          // black for shared edge (related to several faces)
   aColorTable->SetTableValue(7, 0.05, 0.55, 0.85); // face in shading
   aColorTable->SetTableValue(8, 1, 1, 1);          // solid in shading
 

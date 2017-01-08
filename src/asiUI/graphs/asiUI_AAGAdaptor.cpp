@@ -51,6 +51,11 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
   angleArr->SetNumberOfComponents(1);
   angleArr->SetName(ARRNAME_ANGLES);
 
+  // Array for pedigree indices (sub-shape IDs)
+  vtkNew<vtkIntArray> idsArr;
+  idsArr->SetNumberOfComponents(1);
+  idsArr->SetName(ARRNAME_PIDS);
+
   // Get faces from AAG.
   const TopTools_IndexedMapOfShape& Faces        = aag->GetFaces();
   const TColStd_PackedMapOfInteger& SelFaces     = aag->GetSelectedFaces();
@@ -75,11 +80,14 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
       groupArr->InsertNextValue(ARRNAME_GROUP_ADJACENT);
     else
       groupArr->InsertNextValue(ARRNAME_GROUP_ORDINARY);
+    //
+    idsArr->InsertNextValue( aag->GetMapOfSubShapes().FindIndex( aag->GetFace(f_idx) ) );
   }
 
   // Set property arrays
   result->GetVertexData()->AddArray( labelArr.GetPointer() );
   result->GetVertexData()->AddArray( groupArr.GetPointer() );
+  result->GetVertexData()->AddArray( idsArr  .GetPointer() );
   result->GetEdgeData()  ->AddArray( angleArr.GetPointer() );
 
   // Add links for adjacency relations

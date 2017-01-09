@@ -69,8 +69,8 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
     contour_pl = new asiVisu_ShapePipeline( true, true, true, false, pl->DataSource() );
 
   // Adjust props
-  contour_pl->Actor()->GetProperty()->SetOpacity(0.8);
-  contour_pl->Actor()->GetProperty()->SetLineWidth(1.0f);
+  contour_pl->Actor()->GetProperty()->SetOpacity(0.5);
+  contour_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
   contour_pl->Actor()->SetPickable(0);
   //
   contour_pl->WireframeModeOn();

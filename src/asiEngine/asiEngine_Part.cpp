@@ -243,6 +243,38 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
 
 //-----------------------------------------------------------------------------
 
+//! Highlights a single face.
+//! \param faceIndex [in] face to highlight.
+//! \param color     [in] highlighting color.
+void asiEngine_Part::HighlightFace(const int     faceIndex,
+                                   const QColor& color)
+{
+  // Prepare a fictive collection
+  TColStd_PackedMapOfInteger faceIndices;
+  faceIndices.Add(faceIndex);
+
+  // Highlight
+  HighlightFaces(faceIndices, color);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Highlights faces.
+//! \param faceIndices [in] faces to highlight.
+//! \param color       [in] highlighting color.
+void asiEngine_Part::HighlightFaces(const TColStd_PackedMapOfInteger& faceIndices,
+                                    const QColor&                     color)
+{
+  // Convert face indices to sub-shape indices
+  TColStd_PackedMapOfInteger ssIndices;
+  GetSubShapeIndicesByFaceIndices(faceIndices, ssIndices);
+
+  // Highlight
+  HighlightSubShapes(ssIndices, ::ColorToInt(color), SelectionMode_Face);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Highlights the passed sub-shapes identified by their indices.
 //! \param subShapeIndices [in] indices of the sub-shapes to highlight.
 //! \param selMode         [in] selection mode.
@@ -292,6 +324,9 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
 
   // Highlight
   m_prsMgr->Highlight(dummyList, selection, selMode);
+
+  // Restore previous color
+  prs->GetPickPipeline()->Actor()->GetProperty()->SetColor( prevColor[0], prevColor[1], prevColor[2] );
 }
 
 //-----------------------------------------------------------------------------

@@ -55,6 +55,14 @@ public:
                                     TColStd_PackedMapOfInteger&       indices);
 
   asiEngine_EXPORT void
+    HighlightFace(const int     faceIndex,
+                  const QColor& color);
+
+  asiEngine_EXPORT void
+    HighlightFaces(const TColStd_PackedMapOfInteger& faceIndices,
+                   const QColor&                     color);
+
+  asiEngine_EXPORT void
     HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
                        const asiVisu_SelectionMode       selMode);
 

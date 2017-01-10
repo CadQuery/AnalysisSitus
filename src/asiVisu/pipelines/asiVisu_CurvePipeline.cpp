@@ -60,13 +60,21 @@ void asiVisu_CurvePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
     {
       Handle(Geom2d_Curve) curve = dp->GetCurve2d(f, l);
       src->SetInputCurve2d(curve, f, l);
-      src->SetTipSize(0.1);
+
+      // Set tip size
+      const double tipSize = Max( 0.1, (curve->Value(l).XY() - curve->Value(f).XY() ).Modulus()*0.1 );
+      //
+      src->SetTipSize(tipSize);
     }
     else if ( curve_type->SubType( STANDARD_TYPE(Geom_Curve) ) )
     {
       Handle(Geom_Curve) curve = dp->GetCurve(f, l);
       src->SetInputCurve(curve, f, l);
-      src->SetTipSize(0.1);
+
+      // Set tip size
+      const double tipSize = Max( 0.1, (curve->Value(l).XYZ() - curve->Value(f).XYZ() ).Modulus()*0.1 );
+      //
+      src->SetTipSize(tipSize);
     }
     else
       Standard_ProgramError::Raise("Not yet implemented");

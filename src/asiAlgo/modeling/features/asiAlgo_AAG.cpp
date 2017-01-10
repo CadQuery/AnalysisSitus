@@ -339,7 +339,7 @@ Handle(asiAlgo_FeatureAttr)
 //! is already there, this method does nothing and returns false.
 //! \param[in] node ID of the graph node of interest.
 //! \param[in] attr attribute to set.
-bool asiAlgo_AAG::SetNodeAttribute(const int                   node,
+bool asiAlgo_AAG::SetNodeAttribute(const int                          node,
                                    const Handle(asiAlgo_FeatureAttr)& attr)
 {
   if ( attr.IsNull() )
@@ -389,7 +389,7 @@ bool asiAlgo_AAG::FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const
       // Get angle attribute
       Handle(asiAlgo_FeatureAttrAngle)
         attr = Handle(asiAlgo_FeatureAttrAngle)::DownCast( this->GetArcAttribute( t_arc(current_face_idx,
-                                                                                  neighbor_face_idx) ) );
+                                                                                        neighbor_face_idx) ) );
 
       if ( attr->GetAngle() != Angle_Convex )
       {
@@ -435,7 +435,7 @@ bool asiAlgo_AAG::FindConcaveOnly(TopTools_IndexedMapOfShape& resultFaces) const
       // Get angle attribute
       Handle(asiAlgo_FeatureAttrAngle)
         attr = Handle(asiAlgo_FeatureAttrAngle)::DownCast( this->GetArcAttribute( t_arc(current_face_idx,
-                                                                                  neighbor_face_idx) ) );
+                                                                                        neighbor_face_idx) ) );
 
       if ( attr->GetAngle() != Angle_Concave )
       {

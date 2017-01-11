@@ -21,11 +21,11 @@ include/
 *.opensdf
 *.log
 log.txt
+*.obj
 
 # Temporary MS Office files
 ~$*
 
-# Intel Parallel Studio results
 /msvc/vc12/My*Results*
 /msvc/My*Results*
 /test/*.brep

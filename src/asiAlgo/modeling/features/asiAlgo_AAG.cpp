@@ -330,7 +330,13 @@ Handle(asiAlgo_FeatureAttr)
   asiAlgo_AAG::GetNodeAttribute(const int            node,
                                 const Standard_GUID& attr_id) const
 {
-  return m_node_attributes.IsBound(node) ? m_node_attributes(node)(attr_id) : NULL;
+  if ( !m_node_attributes.IsBound(node) )
+    return NULL;
+
+  if ( !m_node_attributes(node).GetMap().IsBound(attr_id) )
+    return NULL;
+
+  return  m_node_attributes(node)(attr_id);
 }
 
 //-----------------------------------------------------------------------------

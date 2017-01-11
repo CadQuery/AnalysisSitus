@@ -197,6 +197,19 @@ public:
     return ShapeAddr( shape.TShape() );
   }
 
+  //! Checks face type.
+  //! \param[in] face face to check.
+  //! \return true/false.
+  template<typename TSurf>
+  static bool IsTypeOf(const TopoDS_Face& face)
+  {
+    Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
+    if ( surf->IsInstance( STANDARD_TYPE(TSurf) ) )
+      return true;
+
+    return false;
+  }
+
 //-----------------------------------------------------------------------------
 
   asiAlgo_EXPORT static TopoDS_Shape

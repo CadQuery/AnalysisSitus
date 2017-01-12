@@ -336,7 +336,7 @@ Handle(asiAlgo_FeatureAttr)
   if ( !m_node_attributes(node).GetMap().IsBound(attr_id) )
     return NULL;
 
-  return  m_node_attributes(node)(attr_id);
+  return m_node_attributes(node)(attr_id);
 }
 
 //-----------------------------------------------------------------------------

@@ -203,6 +203,9 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.h">
       <Filter>Header Files\Modeling</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BorderTrihedron.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.cpp">

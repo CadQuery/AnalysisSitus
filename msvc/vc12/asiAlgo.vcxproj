@@ -116,6 +116,7 @@
     <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_OBJ.h" />
     <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_PLY.h" />
     <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_STEP.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BorderTrihedron.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BuildContours.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHFacets.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.h" />

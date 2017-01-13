@@ -65,7 +65,7 @@ asiUI_StatusBar::asiUI_StatusBar(QWidget* parent) : QStatusBar(parent)
   m_pProgressBar->setRange(0, 0);
   m_pProgressBar->setTextVisible(false);
   m_pProgressBar->setAlignment(Qt::AlignHCenter);
-  m_pProgressBar->setMinimumWidth(600);
+  m_pProgressBar->setMinimumWidth(200);
 
   // Configure layout
   QHBoxLayout* lay = new QHBoxLayout();

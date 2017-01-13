@@ -22,7 +22,7 @@
 //! Creates new Pipeline initialized by default VTK mapper and actor.
 asiVisu_PointsPipeline::asiVisu_PointsPipeline()
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                 vtkSmartPointer<vtkActor>::New() )
+                    vtkSmartPointer<vtkActor>::New() )
 {
   this->Actor()->GetProperty()->SetPointSize(5.0);
   this->Actor()->GetProperty()->SetColor(0.0, 0.0, 1.0);

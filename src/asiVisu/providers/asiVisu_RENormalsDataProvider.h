@@ -32,6 +32,9 @@ public:
 public:
 
   asiVisu_EXPORT virtual Handle(asiAlgo_PointCloud<float>)
+    GetPointsf() const;
+
+  asiVisu_EXPORT virtual Handle(asiAlgo_PointCloud<float>)
     GetNormalsf() const;
 
 private:

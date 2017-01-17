@@ -48,6 +48,25 @@ private:
   //! Assignment prohibited.
   asiVisu_RENormalsPipeline& operator=(const asiVisu_RENormalsPipeline&);
 
+protected:
+
+  //! Internally used filters.
+  enum FilterId
+  {
+    Filter_Vector = 1, //!< Filter for populating cell vector array.
+    Filter_Trsf,       //!< Transformation filter to prepare for glyphs.
+    Filter_Glyph3D,    //!< Filter for generating glyphs.
+    Filter_Last
+  };
+
+  //! Auxiliary map of internal filters by their correspondent IDs.
+  typedef NCollection_DataMap< FilterId, vtkSmartPointer<vtkAlgorithm> > FilterMap;
+
+protected:
+
+  //! Map of internally used filters.
+  FilterMap m_filterMap;
+
 };
 
 #endif

@@ -18,6 +18,20 @@ asiVisu_RENormalsDataProvider::asiVisu_RENormalsDataProvider(const Handle(asiDat
 
 //-----------------------------------------------------------------------------
 
+//! \return points where normals are located.
+Handle(asiAlgo_PointCloud<float>) asiVisu_RENormalsDataProvider::GetPointsf() const
+{
+  Handle(asiData_RENormalsNode)
+    normals_n = Handle(asiData_RENormalsNode)::DownCast(m_node);
+  //
+  if ( normals_n.IsNull() || !normals_n->IsWellFormed() )
+    return NULL;
+
+  return normals_n->GetNormalsf();
+}
+
+//-----------------------------------------------------------------------------
+
 //! \return normals to visualize.
 Handle(asiAlgo_PointCloud<float>) asiVisu_RENormalsDataProvider::GetNormalsf() const
 {

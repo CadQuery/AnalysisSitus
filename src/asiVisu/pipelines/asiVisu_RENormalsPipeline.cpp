@@ -10,12 +10,15 @@
 
 // Visualization includes
 #include <asiVisu_PointsSource.h>
-#include <asiVisu_PointsDataProvider.h>
+#include <asiVisu_PointsVectorFilter.h>
+#include <asiVisu_RENormalsDataProvider.h>
 
 // VTK includes
 #include <vtkActor.h>
+#include <vtkGlyph3D.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
+#include <vtkTransformPolyDataFilter.h>
 
 //-----------------------------------------------------------------------------
 // Pipeline
@@ -31,47 +34,49 @@ asiVisu_RENormalsPipeline::asiVisu_RENormalsPipeline()
    * ======================== */
 
   // Allocate filter populating vector data
-  vtkSmartPointer<asiVisu_MeshEVectorFilter>
-    aVecFilter = vtkSmartPointer<asiVisu_MeshEVectorFilter>::New();
+  vtkSmartPointer<asiVisu_PointsVectorFilter>
+    vecFilter = vtkSmartPointer<asiVisu_PointsVectorFilter>::New();
 
   // Allocate Transformation filter
   vtkSmartPointer<vtkTransformPolyDataFilter>
-    aTrsfFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+    trsfFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
 
   // Allocate Glyph filter
   vtkSmartPointer<vtkGlyph3D>
-    aGlyphFilter = vtkSmartPointer<vtkGlyph3D>::New();
+    glyphFilter = vtkSmartPointer<vtkGlyph3D>::New();
 
   /* =========================
    *  Register custom filters
    * ========================= */
 
-  m_filterMap.Bind(Filter_EVector, aVecFilter);
-  m_filterMap.Bind(Filter_Trsf,    aTrsfFilter);
-  m_filterMap.Bind(Filter_Glyph3D, aGlyphFilter);
+  m_filterMap.Bind(Filter_Vector,  vecFilter);
+  m_filterMap.Bind(Filter_Trsf,    trsfFilter);
+  m_filterMap.Bind(Filter_Glyph3D, glyphFilter);
 
   // Append custom filters to the pipeline
-  this->append( m_filterMap.Find(Filter_EVector) );
+  this->append( m_filterMap.Find(Filter_Vector) );
   this->append( m_filterMap.Find(Filter_Glyph3D) );
 }
 
 //! Sets input data for the pipeline accepting Active Data entities.
-//! Actually this method performs translation of DOMAIN data to VTK POLYGONAL
-//! DATA.
-//! \param theDataProvider [in] Data Provider.
-void asiVisu_RENormalsPipeline::SetInput(const Handle(asiVisu_DataProvider)& theDataProvider)
+//! Actually this method performs translation of DOMAIN data to
+//! VTK POLYGONAL DATA.
+//! \param dataProvider [in] Data Provider.
+void asiVisu_RENormalsPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
 {
-  Handle(asiVisu_MeshEVectorDataProvider)
-    aMeshPrv = Handle(asiVisu_MeshEVectorDataProvider)::DownCast(theDataProvider);
+  Handle(asiVisu_RENormalsDataProvider)
+    DP = Handle(asiVisu_RENormalsDataProvider)::DownCast(dataProvider);
 
   /* ============================
    *  Prepare polygonal data set
    * ============================ */
 
-  if ( aMeshPrv->MustExecute( this->GetMTime() ) )
+  if ( DP->MustExecute( this->GetMTime() ) )
   {
-    vtkSmartPointer<asiVisu_MeshSource> aMeshSource = vtkSmartPointer<asiVisu_MeshSource>::New();
-    aMeshSource->SetInputMesh( aMeshPrv->GetMeshDS() );
+    vtkSmartPointer<asiVisu_PointsSource>
+      pointsSource = vtkSmartPointer<asiVisu_PointsSource>::New();
+    //
+    pointsSource->SetInputPoints( DP->GeGetMeshDS() );
 
     Handle(HIntArray) anElemIDs = aMeshPrv->GetElementIDs();
     Handle(HRealArray) anElemVectors = aMeshPrv->GetElementVectors();

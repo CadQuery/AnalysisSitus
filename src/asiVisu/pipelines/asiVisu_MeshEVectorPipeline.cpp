@@ -39,7 +39,7 @@
 //! Creates new Pipeline instance.
 asiVisu_MeshEVectorPipeline::asiVisu_MeshEVectorPipeline()
   : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                   vtkSmartPointer<vtkActor>::New() )
+                      vtkSmartPointer<vtkActor>::New() )
 {
   /* ========================
    *  Prepare custom filters

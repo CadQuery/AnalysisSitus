@@ -22,21 +22,28 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 
+// Instantiate for allowed types
+template class asiVisu_PointsSource<double>;
+template class asiVisu_PointsSource<float>;
+
 //-----------------------------------------------------------------------------
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_PointsSource);
+vtkStandardNewMacro(asiVisu_PointsSource<double>);
+vtkStandardNewMacro(asiVisu_PointsSource<float>);
 
 //! Default constructor.
-asiVisu_PointsSource::asiVisu_PointsSource() : vtkPolyDataAlgorithm ()
+template <typename REAL_TYPE>
+asiVisu_PointsSource<REAL_TYPE>::asiVisu_PointsSource() : vtkPolyDataAlgorithm ()
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
 }
 
 //! Destructor.
-asiVisu_PointsSource::~asiVisu_PointsSource()
+template <typename REAL_TYPE>
+asiVisu_PointsSource<REAL_TYPE>::~asiVisu_PointsSource()
 {}
 
 //-----------------------------------------------------------------------------
@@ -45,7 +52,8 @@ asiVisu_PointsSource::~asiVisu_PointsSource()
 
 //! Sets input points to visualize.
 //! \param points [in] points to visualize.
-void asiVisu_PointsSource::SetInputPoints(const Handle(asiAlgo_PointCloud<double>)& points)
+template <typename REAL_TYPE>
+void asiVisu_PointsSource<REAL_TYPE>::SetInputPoints(const Handle(asiAlgo_PointCloud<REAL_TYPE>)& points)
 {
   m_points = points;
   //
@@ -63,9 +71,10 @@ void asiVisu_PointsSource::SetInputPoints(const Handle(asiAlgo_PointCloud<double
 //! \param outputVector [in] the pointer to output data, that is filled
 //!                          in this method.
 //! \return status.
-int asiVisu_PointsSource::RequestData(vtkInformation*        request,
-                                      vtkInformationVector** inputVector,
-                                      vtkInformationVector*  outputVector)
+template <typename REAL_TYPE>
+int asiVisu_PointsSource<REAL_TYPE>::RequestData(vtkInformation*        request,
+                                                 vtkInformationVector** inputVector,
+                                                 vtkInformationVector*  outputVector)
 {
   if ( m_points.IsNull() )
   {
@@ -107,8 +116,9 @@ int asiVisu_PointsSource::RequestData(vtkInformation*        request,
 //! \param point    [in]     point to add.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK point.
-vtkIdType asiVisu_PointsSource::registerGridPoint(const gp_Pnt& point,
-                                                  vtkPolyData*  polyData)
+template <typename REAL_TYPE>
+vtkIdType asiVisu_PointsSource<REAL_TYPE>::registerGridPoint(const gp_Pnt& point,
+                                                             vtkPolyData*  polyData)
 {
   // Access necessary arrays
   vtkPoints* points = polyData->GetPoints();
@@ -125,8 +135,9 @@ vtkIdType asiVisu_PointsSource::registerGridPoint(const gp_Pnt& point,
 //! \param n        [in]     index of the corresponding geometric point.
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType asiVisu_PointsSource::registerVertex(const vtkIdType n,
-                                               vtkPolyData*    polyData)
+template <typename REAL_TYPE>
+vtkIdType asiVisu_PointsSource<REAL_TYPE>::registerVertex(const vtkIdType n,
+                                                          vtkPolyData*    polyData)
 {
   std::vector<vtkIdType> nodes;
   nodes.push_back(n);

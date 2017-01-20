@@ -20,6 +20,7 @@
 #include <vtkType.h>
 
 //! Source of polygonal data representing a point cloud.
+template <typename REAL_TYPE>
 class asiVisu_PointsSource : public vtkPolyDataAlgorithm
 {
 // RTTI and construction:
@@ -31,7 +32,7 @@ public:
 // Kernel methods:
 public:
 
-  void SetInputPoints(const Handle(asiAlgo_PointCloud<double>)& points);
+  void SetInputPoints(const Handle(asiAlgo_PointCloud<REAL_TYPE>)& points);
 
 protected:
 
@@ -61,7 +62,7 @@ private:
 
 private:
 
-  Handle(asiAlgo_PointCloud<double>) m_points; //!< Points to visualize.
+  Handle(asiAlgo_PointCloud<REAL_TYPE>) m_points; //!< Points to visualize.
 
 };
 

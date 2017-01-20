@@ -65,3 +65,11 @@ Handle(ActAPI_HParameterList) asiVisu_RENormalsDataProvider::translationSources(
 
   return out;
 }
+
+//-----------------------------------------------------------------------------
+
+//! \return max modulus for a normal.
+double asiVisu_RENormalsDataProvider::GetMaxNormModulus() const
+{
+  return 0.0;
+}

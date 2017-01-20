@@ -231,7 +231,9 @@
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_Pipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PointsPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_REContoursPipeline.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_RENormalsPipeline.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_RENormalsPipeline.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_RESurfacesPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_ShadedSurfacePipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_ShapePipeline.cpp" />

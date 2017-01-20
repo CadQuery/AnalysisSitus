@@ -39,6 +39,9 @@ public:
   virtual Handle(asiAlgo_PointCloud<float>)
     GetNormalsf() const = 0;
 
+  virtual double
+    GetMaxNormModulus() const = 0;
+
 protected:
 
   Handle(ActAPI_INode) m_node; //!< Source Node.

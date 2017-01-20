@@ -62,7 +62,7 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
   vtkPolyData* output = vtkPolyData::GetData(outputVector);
 
   const vtkIdType nbCells  = input->GetNumberOfCells();
-  const vtkIdType nbPoints = output->GetNumberOfPoints();
+  const vtkIdType nbPoints = input->GetNumberOfPoints();
 
   // Skip execution if there is no input topology / geometry
   if ( nbCells < 1 || nbPoints < 1 )
@@ -106,15 +106,15 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
   //
   outputCD->CopyAllocate(inputCD, nbCells, nbCells);
 
-  // Allocate an array for cell vectors
+  // Allocate an array for vectors
   vtkSmartPointer<vtkDoubleArray>
-    aNewCellVectors = asiVisu_Utils::InitDoubleVectorArray(ARRNAME_MESH_E_VECTORS);
+    newCellVectors = asiVisu_Utils::InitDoubleVectorArray(ARRNAME_POINTCLOUD_VECTORS);
 
   // Traverse all cells
-  for ( vtkIdType aCellId = 0; aCellId < nbCells; ++aCellId )
+  for ( vtkIdType cellId = 0; cellId < nbCells; ++cellId )
   {
     // Get the list of points for this cell
-    input->GetCellPoints(aCellId, oldPointIds);
+    input->GetCellPoints(cellId, oldPointIds);
     vtkIdType aNbCellPoints = oldPointIds->GetNumberOfIds();
 
     // Create new points for this cell
@@ -122,7 +122,7 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
 
     // Access scalar value
     float nx, ny, nz;
-    m_normals->GetPoint( (int) aCellId, nx, ny, nz );
+    m_normals->GetPoint( (int) cellId, nx, ny, nz );
     asiVisu_VectorTuple aVecTuple(nx, ny, nz);
     this->adjustMinMax(aVecTuple);
 
@@ -148,13 +148,13 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
 
     // Associate scalar with cell data
     double aVecCoords[3] = {aVecTuple.F[0], aVecTuple.F[1], aVecTuple.F[2]};
-    aNewCellVectors->InsertTypedTuple(aNewCellPid, aVecCoords);
+    newCellVectors->InsertTypedTuple(aNewCellPid, aVecCoords);
   }
 
   // Loop over all vectors calibrating their magnitudes by the maximum one
-  for ( vtkIdType vecId = 0; vecId < aNewCellVectors->GetNumberOfTuples(); ++vecId )
+  for ( vtkIdType vecId = 0; vecId < newCellVectors->GetNumberOfTuples(); ++vecId )
   {
-    double* aVecCoords = aNewCellVectors->GetTuple(vecId);
+    double* aVecCoords = newCellVectors->GetTuple(vecId);
 
     double aVecModulus = 0.0;
     for ( int k = 0; k < 3; k++ )
@@ -165,11 +165,11 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
     for ( int k = 0; k < 3; k++ )
       aVecCoords[k] *= aModFactor;
 
-    aNewCellVectors->SetTuple(vecId, aVecCoords);
+    newCellVectors->SetTuple(vecId, aVecCoords);
   }
 
   // Set vectors to cell data
-  outputPD->SetScalars(aNewCellVectors);
+  outputPD->SetVectors(newCellVectors);
 
   // Store the new set of points in the output
   output->SetPoints(newPoints);

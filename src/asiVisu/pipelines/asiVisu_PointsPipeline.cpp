@@ -37,6 +37,9 @@ void asiVisu_PointsPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
   const Handle(asiVisu_PointsDataProvider)&
     provider = Handle(asiVisu_PointsDataProvider)::DownCast(DP);
+  //
+  if ( provider.IsNull() )
+    return;
 
   /* ===========================
    *  Validate input Parameters
@@ -60,8 +63,8 @@ void asiVisu_PointsPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
   if ( provider->MustExecute( this->GetMTime() ) )
   {
     // Source for points
-    vtkSmartPointer<asiVisu_PointsSource>
-      src = vtkSmartPointer<asiVisu_PointsSource>::New();
+    vtkSmartPointer< asiVisu_PointsSource<double> >
+      src = vtkSmartPointer< asiVisu_PointsSource<double> >::New();
     //
     src->SetInputPoints(points);
 

@@ -9,6 +9,7 @@
 #include <asiVisu_RENormalsPipeline.h>
 
 // Visualization includes
+#include <asiVisu_MeshResultUtils.h>
 #include <asiVisu_PointsSource.h>
 #include <asiVisu_PointsVectorFilter.h>
 #include <asiVisu_RENormalsDataProvider.h>
@@ -58,6 +59,8 @@ asiVisu_RENormalsPipeline::asiVisu_RENormalsPipeline()
   this->append( m_filterMap.Find(Filter_Glyph3D) );
 }
 
+//-----------------------------------------------------------------------------
+
 //! Sets input data for the pipeline accepting Active Data entities.
 //! Actually this method performs translation of DOMAIN data to
 //! VTK POLYGONAL DATA.
@@ -73,59 +76,61 @@ void asiVisu_RENormalsPipeline::SetInput(const Handle(asiVisu_DataProvider)& dat
 
   if ( DP->MustExecute( this->GetMTime() ) )
   {
-    vtkSmartPointer<asiVisu_PointsSource>
-      pointsSource = vtkSmartPointer<asiVisu_PointsSource>::New();
+    vtkSmartPointer< asiVisu_PointsSource<float> >
+      pointsSource = vtkSmartPointer< asiVisu_PointsSource<float> >::New();
     //
-    pointsSource->SetInputPoints( DP->GeGetMeshDS() );
-
-    Handle(HIntArray) anElemIDs = aMeshPrv->GetElementIDs();
-    Handle(HRealArray) anElemVectors = aMeshPrv->GetElementVectors();
+    pointsSource->SetInputPoints( DP->GetPointsf() );
 
     // Pass vector array
-    asiVisu_MeshEVectorFilter*
-      aVecFilter = asiVisu_MeshEVectorFilter::SafeDownCast( m_filterMap.Find(Filter_EVector) );
-    aVecFilter->SetVectorArrays( anElemIDs,
-                                 anElemVectors,
-                                 aMeshPrv->GetMaxModulus() );
+    asiVisu_PointsVectorFilter*
+      vecFilter = asiVisu_PointsVectorFilter::SafeDownCast( m_filterMap.Find(Filter_Vector) );
+    //
+    vecFilter->SetNormals( DP->GetNormalsf(),
+                           DP->GetMaxNormModulus() );
 
     // Transform glyphs
     vtkTransformPolyDataFilter*
-      aTrsfFilter = vtkTransformPolyDataFilter::SafeDownCast( m_filterMap.Find(Filter_Trsf) );
-    aTrsfFilter->SetInputConnection( asiVisu_MeshResultUtils::GetVectorGlyph()->GetOutputPort() );
-    aTrsfFilter->SetTransform( asiVisu_MeshResultUtils::GetVectorGlyphTransform() );
+      trsfFilter = vtkTransformPolyDataFilter::SafeDownCast( m_filterMap.Find(Filter_Trsf) );
+    trsfFilter->SetInputConnection( asiVisu_MeshResultUtils::GetVectorGlyph()->GetOutputPort() );
+    trsfFilter->SetTransform( asiVisu_MeshResultUtils::GetVectorGlyphTransform() );
 
     // Adjust glyph filter
-    vtkGlyph3D* aGlyphFilter = vtkGlyph3D::SafeDownCast( m_filterMap.Find(Filter_Glyph3D) );
-    aGlyphFilter->SetSourceConnection( aTrsfFilter->GetOutputPort() );
-    aGlyphFilter->SetVectorModeToUseVector();
-    aGlyphFilter->SetScaleModeToScaleByVector();
-    aGlyphFilter->SetColorModeToColorByScale();
-    aGlyphFilter->SetInputArrayToProcess(1, 0, 0, 0, ARRNAME_MESH_E_VECTORS);
-    aGlyphFilter->SetScaleFactor(1.0); // No global scaling
+    vtkGlyph3D* glyphFilter = vtkGlyph3D::SafeDownCast( m_filterMap.Find(Filter_Glyph3D) );
+    glyphFilter->SetSourceConnection( trsfFilter->GetOutputPort() );
+    glyphFilter->SetVectorModeToUseVector();
+    glyphFilter->SetScaleModeToScaleByVector();
+    glyphFilter->SetColorModeToColorByScale();
+    glyphFilter->SetInputArrayToProcess(1, 0, 0, 0, ARRNAME_POINTCLOUD_VECTORS);
+    glyphFilter->SetScaleFactor(1.0); // No global scaling
 
     // Complete pipeline
-    this->SetInputConnection( aMeshSource->GetOutputPort() );
-
-    // Bind actor to owning Node ID. Thus we set back reference from VTK
-    // entity to data object
-    asiVisu_NodeInfo::Store( aMeshPrv->GetNodeID(), this->Actor() );
+    this->SetInputConnection( pointsSource->GetOutputPort() );
   }
 
   // Update modification timestamp
   this->Modified();
 }
 
-//! Callback for AddToRenderer base routine. Good place to adjust visualization
-//! properties of the pipeline's actor.
-void asiVisu_RENormalsPipeline::addToRendererCallback(vtkRenderer*)
-{}
+//-----------------------------------------------------------------------------
 
-//! Callback for RemoveFromRenderer base routine.
-void asiVisu_RENormalsPipeline::removeFromRendererCallback(vtkRenderer*)
-{}
-
-//! Callback for Update routine.
-void asiVisu_RENormalsPipeline::updateCallback()
+//! Callback for adding the actor to a renderer.
+//! \param renderer [in] target renderer.
+void asiVisu_RENormalsPipeline::callback_add_to_renderer(vtkRenderer* renderer)
 {
-  m_mapper->ScalarVisibilityOff();
+  asiVisu_NotUsed(renderer);
 }
+
+//-----------------------------------------------------------------------------
+
+//! Callback for removal of the actor from a renderer.
+//! \param renderer [in] target renderer.
+void asiVisu_RENormalsPipeline::callback_remove_from_renderer(vtkRenderer* renderer)
+{
+  asiVisu_NotUsed(renderer);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Callback on pipeline update.
+void asiVisu_RENormalsPipeline::callback_update()
+{}

@@ -401,19 +401,22 @@ void asiVisu_GeomSurfPrs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomSurfPrs::highlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                   const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
-                                   const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+void asiVisu_GeomSurfPrs::highlight(vtkRenderer*                   theRenderer,
+                                    const asiVisu_PickResult&      thePickRes,
+                                    const asiVisu_SelectionNature& theSelNature) const
 {
-  // Do nothing...
+  asiVisu_NotUsed(theRenderer);
+  asiVisu_NotUsed(thePickRes);
+  asiVisu_NotUsed(theSelNature);
 }
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomSurfPrs::unHighlight(vtkRenderer*                 asiVisu_NotUsed(theRenderer),
-                                     const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+void asiVisu_GeomSurfPrs::unHighlight(vtkRenderer*                   theRenderer,
+                                      const asiVisu_SelectionNature& theSelNature) const
 {
-  // Do nothing...
+  asiVisu_NotUsed(theRenderer);
+  asiVisu_NotUsed(theSelNature);
 }
 
 //! Callback for rendering.
@@ -479,8 +482,10 @@ void asiVisu_GeomSurfPrs::renderPipelines(vtkRenderer* theRenderer) const
 
 //! Callback for de-rendering.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomSurfPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
+void asiVisu_GeomSurfPrs::deRenderPipelines(vtkRenderer* theRenderer) const
 {
+  asiVisu_NotUsed(theRenderer);
+
   m_textWidget->Off();
   //
   if ( this->IsShadedAndScalars() )
@@ -500,8 +505,8 @@ asiVisu_SurfBtnCallback* asiVisu_SurfBtnCallback::New()
 
 //! Callback for button clicking.
 void asiVisu_SurfBtnCallback::Execute(vtkObject* theCaller,
-                                     unsigned long,
-                                     void*)
+                                      unsigned long,
+                                      void*)
 {
   if ( m_prs.IsNull() )
     return;

@@ -8,7 +8,7 @@
 #ifndef asiVisu_h
 #define asiVisu_h
 
-#define asiVisu_NotUsed(x)
+#define asiVisu_NotUsed(x) x
 
 #ifdef asiVisu_EXPORTS
   #define asiVisu_EXPORT __declspec(dllexport)
@@ -30,14 +30,15 @@
 
 //-----------------------------------------------------------------------------
 
-#define ARRNAME_MESH_ITEM_TYPE   "arrname_tess_item_type"
-#define ARRNAME_MESH_NODE_IDS    "arrname_asiData_TessNode_ids"
-#define ARRNAME_MESH_ELEM_IDS    "arrname_tess_elem_ids"
-#define ARRNAME_MESH_EN_SCALARS  "arrname_tess_en_scalars"
-#define ARRNAME_MESH_E_SCALARS   "arrname_tess_e_scalars"
-#define ARRNAME_MESH_E_VECTORS   "arrname_tess_e_vectors"
-#define ARRNAME_MESH_N_SCALARS   "arrname_tess_n_scalars"
-#define ARRNAME_ORIENT_SCALARS   "arrname_domain_scalars"
+#define ARRNAME_MESH_ITEM_TYPE     "arrname_tess_item_type"
+#define ARRNAME_MESH_NODE_IDS      "arrname_asiData_TessNode_ids"
+#define ARRNAME_MESH_ELEM_IDS      "arrname_tess_elem_ids"
+#define ARRNAME_MESH_EN_SCALARS    "arrname_tess_en_scalars"
+#define ARRNAME_MESH_E_SCALARS     "arrname_tess_e_scalars"
+#define ARRNAME_MESH_E_VECTORS     "arrname_tess_e_vectors"
+#define ARRNAME_MESH_N_SCALARS     "arrname_tess_n_scalars"
+#define ARRNAME_ORIENT_SCALARS     "arrname_domain_scalars"
+#define ARRNAME_POINTCLOUD_VECTORS "arrname_pointcloud_vectors"
 //
 #define ARRNAME_SURF_CURVATURE "arrname_surf_curvature"
 

@@ -37,6 +37,9 @@ public:
   asiVisu_EXPORT virtual Handle(asiAlgo_PointCloud<float>)
     GetNormalsf() const;
 
+  asiVisu_EXPORT virtual double
+    GetMaxNormModulus() const;
+
 private:
 
   virtual Handle(ActAPI_HParameterList)

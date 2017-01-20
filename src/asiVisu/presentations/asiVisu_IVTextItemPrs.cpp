@@ -57,7 +57,8 @@ void asiVisu_IVTextItemPrs::renderPipelines(vtkRenderer* theRenderer) const
 
 //! Callback for de-rendering.
 //! \param renderer [in] renderer.
-void asiVisu_IVTextItemPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(renderer)) const
+void asiVisu_IVTextItemPrs::deRenderPipelines(vtkRenderer* renderer) const
 {
+  asiVisu_NotUsed(renderer);
   m_textWidget->Off();
 }

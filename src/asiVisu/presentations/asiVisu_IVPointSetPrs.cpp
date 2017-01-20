@@ -83,7 +83,8 @@ void asiVisu_IVPointSetPrs::renderPipelines(vtkRenderer* theRenderer) const
 
 //! Callback for de-rendering.
 //! \param renderer [in] renderer.
-void asiVisu_IVPointSetPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(renderer)) const
+void asiVisu_IVPointSetPrs::deRenderPipelines(vtkRenderer* renderer) const
 {
+  asiVisu_NotUsed(renderer);
   m_textWidget->Off();
 }

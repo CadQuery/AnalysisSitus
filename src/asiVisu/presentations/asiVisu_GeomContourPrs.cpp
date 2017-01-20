@@ -114,31 +114,34 @@ void asiVisu_GeomContourPrs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomContourPrs::highlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
-                                       const asiVisu_PickResult&      asiVisu_NotUsed(thePickRes),
-                                       const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+void asiVisu_GeomContourPrs::highlight(vtkRenderer*                   theRenderer,
+                                       const asiVisu_PickResult&      thePickRes,
+                                       const asiVisu_SelectionNature& theSelNature) const
 {
-  // Do nothing...
+  asiVisu_NotUsed(theRenderer);
+  asiVisu_NotUsed(thePickRes);
+  asiVisu_NotUsed(theSelNature);
 }
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomContourPrs::unHighlight(vtkRenderer*                   asiVisu_NotUsed(theRenderer),
-                                         const asiVisu_SelectionNature& asiVisu_NotUsed(theSelNature)) const
+void asiVisu_GeomContourPrs::unHighlight(vtkRenderer*                   theRenderer,
+                                         const asiVisu_SelectionNature& theSelNature) const
 {
-  // Do nothing...
+  asiVisu_NotUsed(theRenderer);
+  asiVisu_NotUsed(theSelNature);
 }
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomContourPrs::renderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
+void asiVisu_GeomContourPrs::renderPipelines(vtkRenderer* theRenderer) const
 {
-  // Do nothing...
+  asiVisu_NotUsed(theRenderer);
 }
 
 //! Callback for de-rendering.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomContourPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(theRenderer)) const
+void asiVisu_GeomContourPrs::deRenderPipelines(vtkRenderer* theRenderer) const
 {
-  // Do nothing...
+  asiVisu_NotUsed(theRenderer);
 }

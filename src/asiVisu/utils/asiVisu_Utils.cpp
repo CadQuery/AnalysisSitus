@@ -641,19 +641,24 @@ vtkLookupTable* asiVisu_Utils::InitLookupTable()
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_Utils::SetLookupTableColor(vtkLookupTable* theColorTable,
+void asiVisu_Utils::SetLookupTableColor(vtkLookupTable*     theColorTable,
                                         const IVtk_MeshType theColorRole,
-                                        const double theR, const double theG, const double theB,
-                                        const double asiVisu_NotUsed(theA))
+                                        const double        theR,
+                                        const double        theG,
+                                        const double        theB,
+                                        const double        theA)
 {
+  asiVisu_NotUsed(theA);
   theColorTable->SetTableValue(theColorRole + 1, theR, theG, theB);
 }
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_Utils::GetLookupTableColor(vtkLookupTable* theColorTable,
+void asiVisu_Utils::GetLookupTableColor(vtkLookupTable*     theColorTable,
                                         const IVtk_MeshType theColorRole,
-                                        double &theR, double &theG, double &theB)
+                                        double&             theR,
+                                        double&             theG,
+                                        double&             theB)
 {
   double aRgb[3];
   theColorTable->GetColor(theColorRole + 1, aRgb);
@@ -664,10 +669,12 @@ void asiVisu_Utils::GetLookupTableColor(vtkLookupTable* theColorTable,
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_Utils::GetLookupTableColor(vtkLookupTable* theColorTable,
+void asiVisu_Utils::GetLookupTableColor(vtkLookupTable*     theColorTable,
                                         const IVtk_MeshType theColorRole,
-                                        double &theR, double &theG, double &theB, 
-                                        double &theA)
+                                        double&             theR,
+                                        double&             theG,
+                                        double&             theB,
+                                        double&             theA)
 {
   theA = theColorTable->GetOpacity (theColorRole + 1);
   GetLookupTableColor(theColorTable, theColorRole, theR, theG, theB);
@@ -682,7 +689,8 @@ void asiVisu_Utils::InitShapeMapper(vtkMapper* theMapper)
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_Utils::InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorTable)
+void asiVisu_Utils::InitShapeMapper(vtkMapper*      theMapper,
+                                    vtkLookupTable* theColorTable)
 {
   theMapper->ScalarVisibilityOn();
   theMapper->SetScalarModeToUseCellFieldData();

@@ -9,8 +9,8 @@
 #include <asiVisu_RENormalsPrs.h>
 
 // asiVisu includes
-#include <asiVisu_PointsPipeline.h>
 #include <asiVisu_RENormalsDataProvider.h>
+#include <asiVisu_RENormalsPipeline.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -29,7 +29,7 @@ asiVisu_RENormalsPrs::asiVisu_RENormalsPrs(const Handle(ActAPI_INode)& node)
   Handle(asiVisu_RENormalsDataProvider) DP = new asiVisu_RENormalsDataProvider(points_n);
 
   // Pipeline for points
-  this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_RENormalsPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 }
 
@@ -77,28 +77,31 @@ void asiVisu_RENormalsPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-void asiVisu_RENormalsPrs::highlight(vtkRenderer*                   asiVisu_NotUsed(renderer),
-                                     const asiVisu_PickResult&      asiVisu_NotUsed(pickRes),
-                                     const asiVisu_SelectionNature& asiVisu_NotUsed(selNature)) const
+void asiVisu_RENormalsPrs::highlight(vtkRenderer*                   renderer,
+                                     const asiVisu_PickResult&      pickRes,
+                                     const asiVisu_SelectionNature& selNature) const
 {
-  // Do nothing...
+  asiVisu_NotUsed(renderer);
+  asiVisu_NotUsed(pickRes);
+  asiVisu_NotUsed(selNature);
 }
 
 //! Callback for highlighting reset.
-void asiVisu_RENormalsPrs::unHighlight(vtkRenderer*                   asiVisu_NotUsed(renderer),
-                                       const asiVisu_SelectionNature& asiVisu_NotUsed(selNature)) const
+void asiVisu_RENormalsPrs::unHighlight(vtkRenderer*                   renderer,
+                                       const asiVisu_SelectionNature& selNature) const
 {
-  // Do nothing...
+  asiVisu_NotUsed(renderer);
+  asiVisu_NotUsed(selNature);
 }
 
 //! Callback for rendering.
-void asiVisu_RENormalsPrs::renderPipelines(vtkRenderer* asiVisu_NotUsed(renderer)) const
+void asiVisu_RENormalsPrs::renderPipelines(vtkRenderer* renderer) const
 {
-  // Do nothing...
+  asiVisu_NotUsed(renderer);
 }
 
 //! Callback for de-rendering.
-void asiVisu_RENormalsPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(renderer)) const
+void asiVisu_RENormalsPrs::deRenderPipelines(vtkRenderer* renderer) const
 {
-  // Do nothing...
+  asiVisu_NotUsed(renderer);
 }

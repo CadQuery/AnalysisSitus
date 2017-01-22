@@ -10,7 +10,6 @@
 
 // Geometry includes
 #include <asiData_REContoursNode.h>
-#include <asiData_RENormalsNode.h>
 #include <asiData_REPointsNode.h>
 #include <asiData_RESurfacesNode.h>
 
@@ -70,9 +69,6 @@ public:
   asiData_EXPORT Handle(asiData_REPointsNode)
     GetPoints();
 
-  asiData_EXPORT Handle(asiData_RENormalsNode)
-    GetNormals();
-
 // Initialization:
 public:
 
@@ -91,8 +87,7 @@ private:
   {
     Child_Surfaces = 1,
     Child_Contours,
-    Child_Points,
-    Child_Normals
+    Child_Points
   };
 
 };

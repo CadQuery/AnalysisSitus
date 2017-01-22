@@ -27,7 +27,8 @@ public:
 public:
 
   asiVisu_EXPORT
-    asiVisu_NormalsDataProvider(const Handle(ActAPI_INode)& N);
+    asiVisu_NormalsDataProvider(const Handle(ActAPI_INode)& pointsNode,
+                                const Handle(ActAPI_INode)& normalsNode);
 
 public:
 
@@ -37,6 +38,9 @@ public:
 public:
 
   virtual Handle(asiAlgo_PointCloud<float>)
+    GetPointsf() const = 0;
+
+  virtual Handle(asiAlgo_PointCloud<float>)
     GetNormalsf() const = 0;
 
   virtual double
@@ -44,7 +48,8 @@ public:
 
 protected:
 
-  Handle(ActAPI_INode) m_node; //!< Source Node.
+  Handle(ActAPI_INode) m_points;  //!< Source Node for points.
+  Handle(ActAPI_INode) m_normals; //!< Source Node for normals.
 
 };
 

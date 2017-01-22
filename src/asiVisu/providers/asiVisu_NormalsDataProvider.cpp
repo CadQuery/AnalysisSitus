@@ -11,10 +11,13 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-//! \param N [in] source Node.
-asiVisu_NormalsDataProvider::asiVisu_NormalsDataProvider(const Handle(ActAPI_INode)& N)
-: asiVisu_DataProvider(),
-  m_node(N)
+//! \param pointsNode  [in] source points Node.
+//! \param normalsNode [in] source normals Node.
+asiVisu_NormalsDataProvider::asiVisu_NormalsDataProvider(const Handle(ActAPI_INode)& pointsNode,
+                                                         const Handle(ActAPI_INode)& normalsNode)
+: asiVisu_DataProvider (),
+  m_points             (pointsNode),
+  m_normals            (normalsNode)
 {}
 
 //-----------------------------------------------------------------------------
@@ -22,5 +25,5 @@ asiVisu_NormalsDataProvider::asiVisu_NormalsDataProvider(const Handle(ActAPI_INo
 //! \return ID of the associated Data Node.
 ActAPI_DataObjectId asiVisu_NormalsDataProvider::GetNodeID() const
 {
-  return m_node->GetId();
+  return m_normals->GetId();
 }

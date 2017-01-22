@@ -126,21 +126,10 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
     asiVisu_VectorTuple aVecTuple(nx, ny, nz);
     this->adjustMinMax(aVecTuple);
 
-    double aCenterCoords[3] = {0.0, 0.0, 0.0};
-    for ( vtkIdType aNodeLocalID = 0; aNodeLocalID < aNbCellPoints; ++aNodeLocalID )
-    {
-      vtkIdType anOldPid = oldPointIds->GetId(aNodeLocalID);
-      double aCurrentCoords[3];
-      input->GetPoint(anOldPid, aCurrentCoords);
-
-      for ( int k = 0; k < 3; k++ )
-        aCenterCoords[k] += aCurrentCoords[k];
-    }
-
-    for ( int k = 0; k < 3; k++ )
-      aCenterCoords[k] /= aNbCellPoints;
-
-    vtkIdType aNewPntPid = newPoints->InsertNextPoint(aCenterCoords);
+    vtkIdType anOldPid = oldPointIds->GetId(0);
+    double aCurrentCoords[3];
+    input->GetPoint(anOldPid, aCurrentCoords);
+    vtkIdType aNewPntPid = newPoints->InsertNextPoint(aCurrentCoords);
     newPointIds->InsertId(0, aNewPntPid);
 
     // Store the new cell in the output as vertex
@@ -168,8 +157,8 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
     newCellVectors->SetTuple(vecId, aVecCoords);
   }
 
-  // Set vectors to cell data
-  outputPD->SetVectors(newCellVectors);
+  // Set vectors
+  outputPD->SetScalars(newCellVectors);
 
   // Store the new set of points in the output
   output->SetPoints(newPoints);

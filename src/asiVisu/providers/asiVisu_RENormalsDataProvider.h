@@ -13,6 +13,7 @@
 
 // asiData includes
 #include <asiData_RENormalsNode.h>
+#include <asiData_REPointsNode.h>
 
 DEFINE_STANDARD_HANDLE(asiVisu_RENormalsDataProvider, asiVisu_NormalsDataProvider)
 
@@ -27,7 +28,8 @@ public:
 public:
 
   asiVisu_EXPORT
-    asiVisu_RENormalsDataProvider(const Handle(asiData_RENormalsNode)& normalsNode);
+    asiVisu_RENormalsDataProvider(const Handle(asiData_REPointsNode)&  pointsNode,
+                                  const Handle(asiData_RENormalsNode)& normalsNode);
 
 public:
 

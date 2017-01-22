@@ -114,8 +114,6 @@ void asiUI_ProgressListener::onStep()
     // Set message
     m_statusBar->SetProgressText(Msg);
   }
-  //
-  QCoreApplication::processEvents();
 }
 
 //-----------------------------------------------------------------------------

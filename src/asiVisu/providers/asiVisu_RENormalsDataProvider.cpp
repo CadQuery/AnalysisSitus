@@ -11,9 +11,11 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-//! \param normalsNode [in] Normals Node.
-asiVisu_RENormalsDataProvider::asiVisu_RENormalsDataProvider(const Handle(asiData_RENormalsNode)& normalsNode)
-: asiVisu_NormalsDataProvider(normalsNode)
+//! \param pointsNode  [in] points Node.
+//! \param normalsNode [in] normals Node.
+asiVisu_RENormalsDataProvider::asiVisu_RENormalsDataProvider(const Handle(asiData_REPointsNode)&  pointsNode,
+                                                             const Handle(asiData_RENormalsNode)& normalsNode)
+: asiVisu_NormalsDataProvider(pointsNode, normalsNode)
 {}
 
 //-----------------------------------------------------------------------------
@@ -21,13 +23,13 @@ asiVisu_RENormalsDataProvider::asiVisu_RENormalsDataProvider(const Handle(asiDat
 //! \return points where normals are located.
 Handle(asiAlgo_PointCloud<float>) asiVisu_RENormalsDataProvider::GetPointsf() const
 {
-  Handle(asiData_RENormalsNode)
-    normals_n = Handle(asiData_RENormalsNode)::DownCast(m_node);
+  Handle(asiData_REPointsNode)
+    points_n = Handle(asiData_REPointsNode)::DownCast(m_points);
   //
-  if ( normals_n.IsNull() || !normals_n->IsWellFormed() )
+  if ( points_n.IsNull() || !points_n->IsWellFormed() )
     return NULL;
 
-  return normals_n->GetNormalsf();
+  return points_n->GetPointsf();
 }
 
 //-----------------------------------------------------------------------------
@@ -36,7 +38,7 @@ Handle(asiAlgo_PointCloud<float>) asiVisu_RENormalsDataProvider::GetPointsf() co
 Handle(asiAlgo_PointCloud<float>) asiVisu_RENormalsDataProvider::GetNormalsf() const
 {
   Handle(asiData_RENormalsNode)
-    normals_n = Handle(asiData_RENormalsNode)::DownCast(m_node);
+    normals_n = Handle(asiData_RENormalsNode)::DownCast(m_normals);
   //
   if ( normals_n.IsNull() || !normals_n->IsWellFormed() )
     return NULL;
@@ -55,7 +57,7 @@ Handle(ActAPI_HParameterList) asiVisu_RENormalsDataProvider::translationSources(
   ActParamStream out;
 
   Handle(asiData_RENormalsNode)
-    normals_n = Handle(asiData_RENormalsNode)::DownCast(m_node);
+    normals_n = Handle(asiData_RENormalsNode)::DownCast(m_normals);
   //
   if ( normals_n.IsNull() || !normals_n->IsWellFormed() )
     return out;
@@ -71,5 +73,5 @@ Handle(ActAPI_HParameterList) asiVisu_RENormalsDataProvider::translationSources(
 //! \return max modulus for a normal.
 double asiVisu_RENormalsDataProvider::GetMaxNormModulus() const
 {
-  return 0.0;
+  return 10.0;
 }

@@ -91,15 +91,3 @@ Handle(asiData_REPointsNode) asiData_RENode::GetPoints()
   //
   return NULL;
 }
-
-//! \return underlying normals.
-Handle(asiData_RENormalsNode) asiData_RENode::GetNormals()
-{
-  Handle(asiData_RENormalsNode)
-    normal_n = Handle(asiData_RENormalsNode)::DownCast( this->GetChildNode(Child_Normals) );
-  //
-  if ( !normal_n.IsNull() && normal_n->IsWellFormed() )
-    return normal_n;
-  //
-  return NULL;
-}

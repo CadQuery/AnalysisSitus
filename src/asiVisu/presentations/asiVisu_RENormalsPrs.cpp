@@ -23,10 +23,14 @@ asiVisu_RENormalsPrs::asiVisu_RENormalsPrs(const Handle(ActAPI_INode)& node)
 : asiVisu_Prs(node)
 {
   Handle(asiData_RENormalsNode)
-    points_n = Handle(asiData_RENormalsNode)::DownCast(node);
+    normals_n = Handle(asiData_RENormalsNode)::DownCast(node);
+  //
+  Handle(asiData_REPointsNode)
+    points_n = Handle(asiData_REPointsNode)::DownCast( normals_n->GetParentNode() );
 
   // Create Data Provider
-  Handle(asiVisu_RENormalsDataProvider) DP = new asiVisu_RENormalsDataProvider(points_n);
+  Handle(asiVisu_RENormalsDataProvider)
+    DP = new asiVisu_RENormalsDataProvider(points_n, normals_n);
 
   // Pipeline for points
   this->addPipeline        ( Pipeline_Main, new asiVisu_RENormalsPipeline );

@@ -16,6 +16,7 @@
 #include <BOPAlgo_BOP.hxx>
 #include <BOPAlgo_PaveFiller.hxx>
 #include <BRep_Builder.hxx>
+#include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -1202,6 +1203,26 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& Object,
   }
 
   return BOP.Shape();
+}
+
+//! Performs Boolean fuse operation on the passed objects.
+//! \param objects [in] shapes to fuse.
+//! \param fuzzy   [in] fuzzy value.
+//! \return result of fuse.
+TopoDS_Shape asiAlgo_Utils::BooleanFuse(const TopTools_ListOfShape& objects,
+                                        const double                fuzzy)
+{
+  TopTools_ListIteratorOfListOfShape it(objects);
+  TopoDS_Shape result = it.Value();
+  it.Next();
+
+  for ( ; it.More(); it.Next() )
+  {
+    TopoDS_Shape arg = it.Value();
+    result = BRepAlgoAPI_Fuse(result, arg);
+  }
+
+  return result;
 }
 
 //! Explodes the passed shape by solids.

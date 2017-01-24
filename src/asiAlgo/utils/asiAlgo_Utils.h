@@ -303,6 +303,10 @@ public:
                const TopoDS_Shape& Tool,
                const double        fuzzy = 0.0);
 
+  asiAlgo_EXPORT static TopoDS_Shape
+    BooleanFuse(const TopTools_ListOfShape& objects,
+                const double                fuzzy = 0.0);
+
   asiAlgo_EXPORT static void
     ExplodeBySolids(const TopoDS_Shape&   model,
                     TopTools_ListOfShape& solids);

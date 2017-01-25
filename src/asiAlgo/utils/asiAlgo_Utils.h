@@ -304,12 +304,15 @@ public:
                const double        fuzzy = 0.0);
 
   asiAlgo_EXPORT static TopoDS_Shape
-    BooleanFuse(const TopTools_ListOfShape& objects,
-                const double                fuzzy = 0.0);
+    BooleanFuse(const TopTools_ListOfShape& objects);
 
   asiAlgo_EXPORT static void
     ExplodeBySolids(const TopoDS_Shape&   model,
                     TopTools_ListOfShape& solids);
+
+  asiAlgo_EXPORT static bool
+    InvertFace(const TopoDS_Face&    face,
+               TopTools_ListOfShape& inverted);
 
 private:
 

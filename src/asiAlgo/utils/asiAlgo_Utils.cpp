@@ -20,6 +20,7 @@
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_NurbsConvert.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
@@ -37,6 +38,7 @@
 #include <math_Matrix.hxx>
 #include <NCollection_IncAllocator.hxx>
 #include <Precision.hxx>
+#include <ShapeFix_Face.hxx>
 #include <ShapeUpgrade_UnifySameDomain.hxx>
 #include <StlAPI_Reader.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
@@ -1207,10 +1209,8 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& Object,
 
 //! Performs Boolean fuse operation on the passed objects.
 //! \param objects [in] shapes to fuse.
-//! \param fuzzy   [in] fuzzy value.
 //! \return result of fuse.
-TopoDS_Shape asiAlgo_Utils::BooleanFuse(const TopTools_ListOfShape& objects,
-                                        const double                fuzzy)
+TopoDS_Shape asiAlgo_Utils::BooleanFuse(const TopTools_ListOfShape& objects)
 {
   TopTools_ListIteratorOfListOfShape it(objects);
   TopoDS_Shape result = it.Value();
@@ -1235,4 +1235,45 @@ void asiAlgo_Utils::ExplodeBySolids(const TopoDS_Shape&   model,
   {
     solids.Append( exp.Current() );
   }
+}
+
+//! Inverts the passed face so that all internal loops become individual
+//! faces while the outer loop is simply erased.
+//! \param face     [in]  face to invert.
+//! \param inverted [out] inversion result (collection of faces).
+//! \return true in case of success, false -- otherwise.
+bool asiAlgo_Utils::InvertFace(const TopoDS_Face&    face,
+                               TopTools_ListOfShape& inverted)
+{
+  TopTools_IndexedMapOfShape wires;
+  TopExp::MapShapes(face, TopAbs_WIRE, wires);
+  //
+  if ( wires.Extent() < 2 )
+    return false; // Cannot invert a face without holes
+
+  // Get outer wire
+  TopoDS_Wire outerWire = BRepTools::OuterWire(face);
+
+  // Get host geometry
+  Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
+
+  // Search for internal loops: those which are not the outer wire
+  for ( int w = 1; w <= wires.Extent(); ++w )
+  {
+    TopoDS_Wire wire = TopoDS::Wire( wires(w) );
+    //
+    if ( wire.IsSame(outerWire) )
+      continue;
+
+    // Construct another face on the same host with a different wire
+    wire.Reverse();
+    TopoDS_Face innerFace = BRepBuilderAPI_MakeFace(surf, wire, false);
+    //
+    ShapeFix_Face fix(innerFace);
+    if ( fix.Perform() )
+      innerFace = fix.Face();
+    //
+    inverted.Append(innerFace);
+  }
+  return true;
 }

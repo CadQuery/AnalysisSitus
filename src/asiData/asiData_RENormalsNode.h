@@ -84,6 +84,9 @@ public:
   asiData_EXPORT void
     SetNormalsf(const Handle(asiAlgo_PointCloud<float>)& normals);
 
+  asiData_EXPORT bool
+    IsEmpty() const;
+
 protected:
 
   //! Allocation is allowed only via Instance method.

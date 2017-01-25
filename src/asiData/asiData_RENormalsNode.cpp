@@ -105,3 +105,12 @@ void asiData_RENormalsNode::SetNormalsf(const Handle(asiAlgo_PointCloud<float>)&
   // Store
   ActParamTool::AsRealArray( this->Parameter(PID_Normals) )->SetArray(coords);
 }
+
+//! \return true if the stored normal field is empty, false -- otherwise.
+bool asiData_RENormalsNode::IsEmpty() const
+{
+  Handle(TColStd_HArray1OfReal)
+    coords = ActParamTool::AsRealArray( this->Parameter(PID_Normals) )->GetArray();
+
+  return coords.IsNull();
+}

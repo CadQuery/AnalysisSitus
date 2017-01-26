@@ -72,6 +72,9 @@ public:
 // Handy accessors to the stored data:
 public:
 
+  asiData_EXPORT gp_Vec
+    GetNormal(const int zeroBasedIndex) const;
+
   asiData_EXPORT Handle(asiAlgo_PointCloud<double>)
     GetNormals() const;
 

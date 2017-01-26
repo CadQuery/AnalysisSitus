@@ -143,6 +143,9 @@ public:
 
 public:
 
+  asiVisu_EXPORT const vtkSmartPointer<vtkActor>&
+    GetLastPickedActor() const;
+
   asiVisu_EXPORT const asiVisu_ActorElemMap&
     GetPickMap() const;
 

@@ -72,6 +72,9 @@ public:
 // Handy accessors to the stored data:
 public:
 
+  asiData_EXPORT gp_Pnt
+    GetPoint(const int zeroBasedIndex) const;
+
   asiData_EXPORT Handle(asiAlgo_PointCloud<double>)
     GetPoints() const;
 

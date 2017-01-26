@@ -35,6 +35,9 @@ public:
 public:
 
   asiAlgo_EXPORT void
+    CopyTo(asiAlgo_PointCloud<TCoordType>& copy) const;
+
+  asiAlgo_EXPORT void
     Reserve(const int nPts);
 
   asiAlgo_EXPORT int

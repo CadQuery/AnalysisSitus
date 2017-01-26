@@ -748,21 +748,6 @@ ActAPI_DataObjectIdList
     else if ( pickType == PickType_Point )
     {
       vtkIdType pointId = m_pointPicker->GetPointId();
-      //
-      if ( pointId != -1 )
-      {
-        std::cout << "Picked Point ID = " << pointId << std::endl;
-
-        double coord[3] = {0.0, 0.0, 0.0};
-        m_pointPicker->GetDataSet()->GetPoint(pointId, coord);
-
-        std::cout << "Picked point position: ("
-                  << coord[0] << ", " << coord[1] << ", " << coord[2]
-                  << ")" << std::endl;
-
-        gp_Pnt cPos(coord[0], coord[1], coord[2]);
-        this->InvokeEvent(EVENT_PICK_WORLD_POINT, &cPos);
-      }
 
       // Get picked actor
       pickedActor = m_pointPicker->GetActor();
@@ -775,6 +760,20 @@ ActAPI_DataObjectIdList
 
       // Push ID to result
       pickRes << pickedActor << pointId;
+
+      if ( pointId != -1 )
+      {
+        std::cout << "Picked Point ID = " << pointId << std::endl;
+
+        double coord[3] = {0.0, 0.0, 0.0};
+        m_pointPicker->GetDataSet()->GetPoint(pointId, coord);
+
+        std::cout << "Picked point position: ("
+                  << coord[0] << ", " << coord[1] << ", " << coord[2]
+                  << ")" << std::endl;
+
+        this->InvokeEvent(EVENT_PICK_WORLD_POINT, &pickRes);
+      }
     }
     else // World picker
     {

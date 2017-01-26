@@ -62,6 +62,21 @@ void asiData_RENormalsNode::SetName(const TCollection_ExtendedString& theName)
 // Handy API
 //-----------------------------------------------------------------------------
 
+//! Returns normal vector by a given zero-based index.
+//! \param zeroBasedIndex [in] zero-based index.
+//! \return normal vector.
+gp_Vec asiData_RENormalsNode::GetNormal(const int zeroBasedIndex) const
+{
+  Handle(TColStd_HArray1OfReal)
+    coords = ActParamTool::AsRealArray( this->Parameter(PID_Normals) )->GetArray();
+
+  const int coordIdx = zeroBasedIndex*3;
+
+  return gp_Vec( coords->Value(coordIdx + 0),
+                 coords->Value(coordIdx + 1),
+                 coords->Value(coordIdx + 2) );
+}
+
 //! \return stored normals in form of point cloud.
 Handle(asiAlgo_PointCloud<double>) asiData_RENormalsNode::GetNormals() const
 {

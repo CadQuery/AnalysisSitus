@@ -91,6 +91,12 @@ void asiVisu_PickResult::SetSelectionModes(const int theSelModes)
   m_iSelModes = theSelModes;
 }
 
+//! \return last picked actor.
+const vtkSmartPointer<vtkActor>& asiVisu_PickResult::GetLastPickedActor() const
+{
+  return m_prevActor;
+}
+
 //! Accessor for the elements map.
 //! \return elements map.
 const asiVisu_ActorElemMap& asiVisu_PickResult::GetPickMap() const

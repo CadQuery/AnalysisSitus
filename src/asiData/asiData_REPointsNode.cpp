@@ -62,6 +62,21 @@ void asiData_REPointsNode::SetName(const TCollection_ExtendedString& theName)
 // Handy API
 //-----------------------------------------------------------------------------
 
+//! Accessor for a point by its zero-based index.
+//! \param zeroBasedIndex [in] 0-based index of a point to access.
+//! \return point.
+gp_Pnt asiData_REPointsNode::GetPoint(const int zeroBasedIndex) const
+{
+  Handle(TColStd_HArray1OfReal)
+    coords = ActParamTool::AsRealArray( this->Parameter(PID_Points) )->GetArray();
+
+  const int coordIdx = zeroBasedIndex*3;
+
+  return gp_Pnt( coords->Value(coordIdx + 0),
+                 coords->Value(coordIdx + 1),
+                 coords->Value(coordIdx + 2) );
+}
+
 //! \return stored point cloud.
 Handle(asiAlgo_PointCloud<double>) asiData_REPointsNode::GetPoints() const
 {

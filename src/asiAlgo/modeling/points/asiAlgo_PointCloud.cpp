@@ -26,6 +26,14 @@ asiAlgo_PointCloud<TCoordType>::asiAlgo_PointCloud(const std::vector<TCoordType>
 //-----------------------------------------------------------------------------
 
 template <typename TCoordType>
+void asiAlgo_PointCloud<TCoordType>::CopyTo(asiAlgo_PointCloud<TCoordType>& copy) const
+{
+  copy.m_coords = m_coords;
+}
+
+//-----------------------------------------------------------------------------
+
+template <typename TCoordType>
 void asiAlgo_PointCloud<TCoordType>::Reserve(const int nPts)
 {
   m_coords.resize(nPts*3);

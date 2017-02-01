@@ -143,9 +143,7 @@ bool asiUI_Common::PartShape(const Handle(asiEngine_Model)& model,
   part = part_n->GetShape();
   //
   if ( part.IsNull() )
-  {
-    std::cout << "Error: part shape is null" << std::endl;
     return false;
-  }
+
   return true;
 }

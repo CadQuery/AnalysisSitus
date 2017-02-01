@@ -24,8 +24,8 @@ asiVisu_PointsPipeline::asiVisu_PointsPipeline()
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                     vtkSmartPointer<vtkActor>::New() )
 {
-  this->Actor()->GetProperty()->SetPointSize(5.0);
-  this->Actor()->GetProperty()->SetColor(0.0, 0.0, 1.0);
+  this->Actor()->GetProperty()->SetPointSize(3.0);
+  this->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
   this->Actor()->GetProperty()->SetOpacity(0.5);
 }
 

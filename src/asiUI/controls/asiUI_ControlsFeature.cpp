@@ -11,6 +11,7 @@
 // exeFeatures includes
 #include <asiUI_AAGAdaptor.h>
 #include <asiUI_Common.h>
+#include <asiUI_DialogSmoothAngleTol.h>
 #include <asiUI_TopoGraph.h>
 
 // asiAlgo includes
@@ -370,7 +371,8 @@ void asiUI_ControlsFeature::onCheckDihedralAngles()
                                undefinedEdgesComp,
                                smoothEdgesComp,
                                false,
-                               false);
+                               false,
+                               0.0);
       }
     }
   }
@@ -409,7 +411,8 @@ void asiUI_ControlsFeature::onCheckDihedralAngles()
                                  undefinedEdgesComp,
                                  smoothEdgesComp,
                                  true,
-                                 false);
+                                 false,
+                                 0.0);
         }
       }
       else
@@ -426,7 +429,8 @@ void asiUI_ControlsFeature::onCheckDihedralAngles()
                                undefinedEdgesComp,
                                smoothEdgesComp,
                                true,
-                               false);
+                               false,
+                               0.0);
       }
     }
   }
@@ -476,6 +480,13 @@ void asiUI_ControlsFeature::onFindSmoothEdges()
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
+  // Ask user to provide a tolerance for detection of smooth angles
+  asiUI_DialogSmoothAngleTol* wDlg = new asiUI_DialogSmoothAngleTol(this);
+  //
+  wDlg->exec();
+  //
+  const double angTol = wDlg->Tolerance;
+
   // Get highlighted sub-shapes
   TopTools_IndexedMapOfShape selected;
   asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedSubShapes(selected);
@@ -524,7 +535,8 @@ void asiUI_ControlsFeature::onFindSmoothEdges()
                                undefinedEdgesComp,
                                smoothEdgesComp,
                                false,
-                               true);
+                               true,
+                               angTol);
       }
     }
   }
@@ -557,7 +569,8 @@ void asiUI_ControlsFeature::onFindSmoothEdges()
                                undefinedEdgesComp,
                                smoothEdgesComp,
                                true,
-                               true);
+                               true,
+                               angTol);
       }
     }
   }
@@ -773,14 +786,19 @@ void asiUI_ControlsFeature::classifyDihAngle(const TopoDS_Face&          F,
                                              TopoDS_Compound&            undefinedEdgesComp,
                                              TopoDS_Compound&            smoothEdgesComp,
                                              const bool                  usePlotter,
-                                             const bool                  allowSmooth) const
+                                             const bool                  allowSmooth,
+                                             const double                smoothAngularTol) const
 {
   // Check angle between the two faces
   TopTools_IndexedMapOfShape commonEdges;
   asiAlgo_DihedralAngle dihAngle(m_notifier,
                                  usePlotter ? m_plotter : NULL);
   //
-  asiAlgo_FeatureAngle angle = dihAngle.AngleBetweenFaces(F, G, allowSmooth, commonEdges);
+  asiAlgo_FeatureAngle angle = dihAngle.AngleBetweenFaces(F,
+                                                          G,
+                                                          allowSmooth,
+                                                          smoothAngularTol,
+                                                          commonEdges);
   //
   TopTools_IndexedMapOfShape* pTargetMap;
   TopoDS_Compound*            pTargetComp;

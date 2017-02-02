@@ -43,6 +43,7 @@ public:
     AngleBetweenFaces(const TopoDS_Face&          F,
                       const TopoDS_Face&          G,
                       const bool                  allowSmooth,
+                      const double                smoothAngularTol,
                       TopTools_IndexedMapOfShape& commonEdges) const;
 
 public:

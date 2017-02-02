@@ -71,7 +71,8 @@ protected:
                         TopoDS_Compound&            undefinedEdgesComp,
                         TopoDS_Compound&            smoothEdgesComp,
                         const bool                  usePlotter,
-                        const bool                  allowSmooth) const;
+                        const bool                  allowSmooth,
+                        const double                smoothAngularTol) const;
 
 private:
 

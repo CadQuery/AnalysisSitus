@@ -190,6 +190,9 @@
     <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogSewing.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogSmoothAngleTol.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogSTEP.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
@@ -295,6 +298,9 @@
     <ClCompile Include="..\..\src\asiUI\utils\asiUI_Logger.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogSmoothAngleTol.cpp">
+      <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerDomain.h">
@@ -383,6 +389,9 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\utils\asiUI_OverrideCursor.h">
       <Filter>Header Files\Utils</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogSmoothAngleTol.h">
+      <Filter>Header Files\Dialogs</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

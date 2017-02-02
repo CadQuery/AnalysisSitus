@@ -22,34 +22,46 @@
 
 //-----------------------------------------------------------------------------
 
-//! Initializes AAG from the given master model and selected faces.
-//! \param[in] masterCAD     master model (full CAD).
-//! \param[in] selectedFaces selected faces.
-//! \param[in] allowSmooth   indicates whether to allow "smooth" value for
-//!                          arc attribute. This value means that the
-//!                          joint between faces is at least G1, so in
-//!                          order to calculate dihedral angle, the neighborhood
-//!                          of transition has to be analyzed. The latter
-//!                          analysis introduces additional cost, so you
-//!                          may disable it if you are Ok to attribute G0
-//!                          joints only.
+//! Initializes AAG from the    given master model and selected faces.
+//! \param[in] masterCAD        master model (full CAD).
+//! \param[in] selectedFaces    selected faces.
+//! \param[in] allowSmooth      indicates whether to allow "smooth" value for
+//!                             arc attribute. This value means that the
+//!                             joint between faces is at least G1, so in
+//!                             order to calculate dihedral angle, the neighborhood
+//!                             of transition has to be analyzed. The latter
+//!                             analysis introduces additional cost, so you
+//!                             may disable it if you are Ok to attribute G0
+//!                             joints only.
+//! \param[in] smoothAngularTol angular tolerance used for recognition
+//!                             of smooth dihedral angles. A smooth angle
+//!                             may appear to be imperfect by construction,
+//!                             but still smooth by the design intent. With
+//!                             this parameter you're able to control it.
 asiAlgo_AAG::asiAlgo_AAG(const TopoDS_Shape&               masterCAD,
                          const TopTools_IndexedMapOfShape& selectedFaces,
-                         const bool                        allowSmooth)
+                         const bool                        allowSmooth,
+                         const double                      smoothAngularTol)
 {
-  this->init(masterCAD, selectedFaces, allowSmooth);
+  this->init(masterCAD, selectedFaces, allowSmooth, smoothAngularTol);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting master CAD only.
-//! \param[in] masterCAD   master CAD.
-//! \param[in] allowSmooth indicates whether "smooth" attribution for arcs
-//!                        is allowed (true) or not (false).
+//! \param[in] masterCAD        master CAD.
+//! \param[in] allowSmooth      indicates whether "smooth" attribution for arcs
+//!                             is allowed (true) or not (false).
+//! \param[in] smoothAngularTol angular tolerance used for recognition
+//!                             of smooth dihedral angles. A smooth angle
+//!                             may appear to be imperfect by construction,
+//!                             but still smooth by the design intent. With
+//!                             this parameter you're able to control it.
 asiAlgo_AAG::asiAlgo_AAG(const TopoDS_Shape& masterCAD,
-                         const bool          allowSmooth)
+                         const bool          allowSmooth,
+                         const double        smoothAngularTol)
 {
-  this->init( masterCAD, TopTools_IndexedMapOfShape(), allowSmooth );
+  this->init(masterCAD, TopTools_IndexedMapOfShape(), allowSmooth, smoothAngularTol);
 }
 
 //-----------------------------------------------------------------------------
@@ -560,16 +572,23 @@ void asiAlgo_AAG::Dump(Standard_OStream& out) const
 //-----------------------------------------------------------------------------
 
 //! Initializes graph tool with master CAD and selected faces.
-//! \param[in] masterCAD     master model (full CAD).
-//! \param[in] selectedFaces selected faces.
-//! \param[in] allowSmooth   indicates whether "smooth" attribution for arcs
-//!                          is allowed (true) or not (false).
+//! \param[in] masterCAD        master model (full CAD).
+//! \param[in] selectedFaces    selected faces.
+//! \param[in] allowSmooth      indicates whether "smooth" attribution for arcs
+//!                             is allowed (true) or not (false).
+//! \param[in] smoothAngularTol angular tolerance used for recognition
+//!                             of smooth dihedral angles. A smooth angle
+//!                             may appear to be imperfect by construction,
+//!                             but still smooth by the design intent. With
+//!                             this parameter you're able to control it.
 void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
                        const TopTools_IndexedMapOfShape& selectedFaces,
-                       const bool                        allowSmooth)
+                       const bool                        allowSmooth,
+                       const double                      smoothAngularTol)
 {
-  m_master       = masterCAD;
-  m_bAllowSmooth = allowSmooth;
+  m_master            = masterCAD;
+  m_bAllowSmooth      = allowSmooth;
+  m_fSmoothAngularTol = smoothAngularTol;
 
   //---------------------------------------------------------------------------
 
@@ -607,7 +626,7 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
         // the following treatment is designed for periodic faces, and we normally
         // have self-transition of quality C1 and better there
         const asiAlgo_FeatureAngle
-          face_angle = solid_angle.AngleBetweenFaces(face, face, false, edges);
+          face_angle = solid_angle.AngleBetweenFaces(face, face, false, 0.0, edges);
 
         // Bind attribute
         m_node_attributes.Bind( f, t_attr_set( new asiAlgo_FeatureAttrAngle(face_angle) ) );
@@ -685,7 +704,11 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
       // or not. Smooth transition normally requires additional processing
       // in order to classify feature angle as concave or convex
       const asiAlgo_FeatureAngle
-        angle = solid_angle.AngleBetweenFaces(face, linked_face, m_bAllowSmooth, commonEdges);
+        angle = solid_angle.AngleBetweenFaces(face,
+                                              linked_face,
+                                              m_bAllowSmooth,
+                                              m_fSmoothAngularTol,
+                                              commonEdges);
 
       // Bind attribute
       m_arc_attributes.Bind( arc, new asiAlgo_FeatureAttrAngle(angle, commonEdges) );

@@ -35,15 +35,21 @@ asiAlgo_DihedralAngle::asiAlgo_DihedralAngle(ActAPI_ProgressEntry progress,
 
 //! Calculates angle between two faces using midpoints to query the normal
 //! vectors. Orientation of faces is also taken into account.
-//! \param[in]  F           first face.
-//! \param[in]  G           second face.
-//! \param[in]  allowSmooth indicates whether to process C1 smooth joints.
-//! \param[out] commonEdges common edges.
+//! \param[in]  F                first face.
+//! \param[in]  G                second face.
+//! \param[in]  allowSmooth      indicates whether to process C1 smooth joints.
+//! \param[in]  smoothAngularTol angular tolerance used for recognition
+//!                              of smooth dihedral angles. A smooth angle
+//!                              may appear to be imperfect by construction,
+//!                              but still smooth by the design intent. With
+//!                              this parameter you're able to control it.
+//! \param[out] commonEdges      common edges.
 //! \return angle between faces.
 asiAlgo_FeatureAngle
   asiAlgo_DihedralAngle::AngleBetweenFaces(const TopoDS_Face&          F,
                                            const TopoDS_Face&          G,
                                            const bool                  allowSmooth,
+                                           const double                smoothAngularTol,
                                            TopTools_IndexedMapOfShape& commonEdges) const
 {
   TopoDS_Edge commonEdge = m_commonEdge;
@@ -265,9 +271,9 @@ asiAlgo_FeatureAngle
   std::cout << "Angle is " << angle << std::endl;
 #endif
 
-  const double ang_prec = 1.0e-4;
+  const double ang_tol = Max(smoothAngularTol, 1.0e-4);
   //
-  if ( Abs(Abs(angle) - M_PI) < ang_prec )
+  if ( Abs(Abs(angle) - M_PI) < ang_tol )
   {
     if ( allowSmooth )
       return Angle_Smooth;

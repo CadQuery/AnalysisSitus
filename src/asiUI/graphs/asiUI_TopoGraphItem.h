@@ -32,19 +32,19 @@
 // Qr includes
 #include <QrCore.h>
 
-#define ARRNAME_LABELS          "Labels"
-#define ARRNAME_PIDS            "Pids"
-#define ARRNAME_COLORS          "Colors"
-#define ARRNAME_ANGLES          "Angles"
-#define ARRNAME_GROUP           "Group"
-#define ARRNAME_GROUP_ORDINARY  "Ordinary"
-#define ARRNAME_GROUP_ADJACENT  "Adjacent"
+#define ARRNAME_LABELS            "Labels"
+#define ARRNAME_PIDS              "Pids"
+#define ARRNAME_COLORS            "Colors"
+#define ARRNAME_ANGLES            "Angles"
+#define ARRNAME_GROUP             "Group"
+#define ARRNAME_GROUP_ORDINARY    "Ordinary"
+#define ARRNAME_GROUP_HIGHLIGHTED "Highlighted"
 //
-#define ARRNAME_GROUP_COMPOUND  "Compound"
-#define ARRNAME_GROUP_FACE      "Face"
-#define ARRNAME_GROUP_WIRE      "Wire"
-#define ARRNAME_GROUP_EDGE      "Edge"
-#define ARRNAME_GROUP_VERTEX    "Vertex"
+#define ARRNAME_GROUP_COMPOUND    "Compound"
+#define ARRNAME_GROUP_FACE        "Face"
+#define ARRNAME_GROUP_WIRE        "Wire"
+#define ARRNAME_GROUP_EDGE        "Edge"
+#define ARRNAME_GROUP_VERTEX      "Vertex"
 
 //! Item of topology graph.
 class asiUI_TopoGraphItem : public QObject,
@@ -83,8 +83,8 @@ protected:
 
     vtkAbstractArray* domain = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_GROUP);
     //
-    if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_ADJACENT )
-      return vtkColor4ub(128, 175, 128, 255);
+    if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_HIGHLIGHTED )
+      return vtkColor4ub(255, 255, 0, 255);
 
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_COMPOUND )
       return vtkColor4ub(248, 31, 209, 255);

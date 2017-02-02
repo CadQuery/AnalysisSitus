@@ -1,21 +1,15 @@
 //-----------------------------------------------------------------------------
-// Created on: 17 February 2016
+// Created on: 02 February 2017
 // Created by: Quaoar
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_DialogSewing_h
-#define asiUI_DialogSewing_h
+#ifndef asiUI_DialogSmoothAngleTol_h
+#define asiUI_DialogSmoothAngleTol_h
 
-// A-Situs includes
+// asiUI includes
 #include <asiUI_LineEdit.h>
-
-// A-Situs (data) includes
-#include <asiData_PartNode.h>
-
-// Active Data includes
-#include <ActAPI_IModel.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -24,22 +18,24 @@
 #include <QVBoxLayout>
 #pragma warning(pop)
 
-//! Dialog for sewing.
-class asiUI_DialogSewing : public QDialog
+//! Dialog for specification of smooth angle tolerance.
+class asiUI_DialogSmoothAngleTol : public QDialog
 {
   Q_OBJECT
 
 public:
 
-  asiUI_DialogSewing(const Handle(ActAPI_IModel)&    model,
-                     const Handle(asiData_PartNode)& part_n,
-                     QWidget*                        parent = NULL);
+  asiUI_DialogSmoothAngleTol(QWidget* parent = NULL);
 
-  virtual ~asiUI_DialogSewing();
+  virtual ~asiUI_DialogSmoothAngleTol();
 
 public slots:
 
   void onPerform();
+
+public:
+
+  double Tolerance; //!< User-specified angular tolerance.
 
 protected:
 
@@ -71,11 +67,8 @@ protected:
     }
   };
 
-  t_widgets                m_widgets;     //!< UI controls.
-  QVBoxLayout*             m_pMainLayout; //!< Layout of the widget.
-  //
-  Handle(ActAPI_IModel)    m_model;       //!< Data Model instance.
-  Handle(asiData_PartNode) m_part;        //!< Part Node.
+  t_widgets    m_widgets;     //!< UI controls.
+  QVBoxLayout* m_pMainLayout; //!< Layout of the widget.
 
 };
 

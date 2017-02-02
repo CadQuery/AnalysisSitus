@@ -141,11 +141,13 @@ public:
   asiAlgo_EXPORT
     asiAlgo_AAG(const TopoDS_Shape&               masterCAD,
                 const TopTools_IndexedMapOfShape& selectedFaces,
-                const bool                        allowSmooth = false);
+                const bool                        allowSmooth = false,
+                const double                      smoothAngularTol = 1.e-4);
 
   asiAlgo_EXPORT
     asiAlgo_AAG(const TopoDS_Shape& masterCAD,
-                const bool          allowSmooth = false);
+                const bool          allowSmooth = false,
+                const double        smoothAngularTol = 1.e-4);
 
   asiAlgo_EXPORT
     ~asiAlgo_AAG();
@@ -240,7 +242,8 @@ protected:
   asiAlgo_EXPORT void
     init(const TopoDS_Shape&               masterCAD,
          const TopTools_IndexedMapOfShape& selectedFaces,
-         const bool                        allowSmooth);
+         const bool                        allowSmooth,
+         const double                      smoothAngularTol);
 
   asiAlgo_EXPORT void
     addMates(const TopTools_ListOfShape& mateFaces);
@@ -279,6 +282,9 @@ protected:
 
   //! Indicates whether to allow smooth transitions or not.
   bool m_bAllowSmooth;
+
+  //! Angular tolerance to use for attribution of "smooth" dihedral edges.
+  double m_fSmoothAngularTol;
 
 };
 

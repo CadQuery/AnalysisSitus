@@ -77,7 +77,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
     labelArr->InsertNextValue(faceName);
     //
     if ( SelFaces.Contains(f_idx) )
-      groupArr->InsertNextValue(ARRNAME_GROUP_ADJACENT);
+      groupArr->InsertNextValue(ARRNAME_GROUP_HIGHLIGHTED);
     else
       groupArr->InsertNextValue(ARRNAME_GROUP_ORDINARY);
     //

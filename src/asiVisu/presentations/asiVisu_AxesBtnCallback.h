@@ -10,6 +10,7 @@
 
 // A-Situs (visualization) includes
 #include <asiVisu_Prs.h>
+#include <asiVisu_PrsManager.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -42,16 +43,28 @@ public:
     m_renderer = renderer;
   }
 
+  //! Initializes callback with the owning presentation manager.
+  //! \param manager [in] manager to set.
+  void SetManager(const vtkSmartPointer<asiVisu_PrsManager>& manager)
+  {
+    m_manager = manager;
+  }
+
 public:
 
   virtual void Execute(vtkObject*    caller,
                        unsigned long eventId,
                        void*         callData);
 
+protected:
+
+  void colorizeActors();
+
 private:
 
-  vtkSmartPointer<vtkAxesActor> m_axes;     //!< Axes actor.
-  vtkSmartPointer<vtkRenderer>  m_renderer; //!< Renderer.
+  vtkSmartPointer<vtkAxesActor>       m_axes;     //!< Axes actor.
+  vtkSmartPointer<vtkRenderer>        m_renderer; //!< Renderer.
+  vtkSmartPointer<asiVisu_PrsManager> m_manager;  //!< Presentation manager.
 
 };
 

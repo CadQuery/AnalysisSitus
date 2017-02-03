@@ -9,7 +9,6 @@
 #define asiVisu_PrsManager_h
 
 // Visualization includes
-#include <asiVisu_AxesBtnCallback.h>
 #include <asiVisu_InteractorStylePick.h>
 #include <asiVisu_InteractorStylePick2d.h>
 #include <asiVisu_Prs.h>
@@ -40,6 +39,8 @@
 
 // OCCT includes
 #include <NCollection_DataMap.hxx>
+
+class asiVisu_AxesBtnCallback;
 
 //! This class is designed to handle 3D representations. Besides that,
 //! presentation manager controls QVTK widget along with all standard
@@ -290,6 +291,12 @@ protected:
 
   asiVisu_EXPORT void
     actualizeShapeSelectionMode();
+
+public:
+
+  double ActorColorRed;
+  double ActorColorGreen;
+  double ActorColorBlue;
 
 // Presentation management:
 private:

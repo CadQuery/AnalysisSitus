@@ -9,6 +9,7 @@
 #include <asiVisu_PrsManager.h>
 
 // Visualization includes
+#include <asiVisu_AxesBtnCallback.h>
 #include <asiVisu_NodeInfo.h>
 #include <asiVisu_Prs.h>
 #include <asiVisu_Pipeline.h>
@@ -145,7 +146,12 @@ void asiVisu_PrsManager::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 
 //! Constructs presentation manager.
-asiVisu_PrsManager::asiVisu_PrsManager() : vtkObject(), m_widget(NULL)
+asiVisu_PrsManager::asiVisu_PrsManager()
+: vtkObject       (),
+  m_widget        (NULL),
+  ActorColorRed   (WHITE_COMPONENT),
+  ActorColorGreen (WHITE_COMPONENT),
+  ActorColorBlue  (WHITE_COMPONENT)
 {
   // Initialize renderer
   m_renderer = vtkSmartPointer<vtkRenderer>::New();
@@ -194,6 +200,7 @@ asiVisu_PrsManager::asiVisu_PrsManager() : vtkObject(), m_widget(NULL)
   //
   m_axesCallback->SetAxesActor(m_trihedron);
   m_axesCallback->SetRenderer(m_renderer);
+  m_axesCallback->SetManager(this);
   m_axesButton->AddObserver(vtkCommand::StateChangedEvent, m_axesCallback);
 
   // Create images for textures
@@ -398,7 +405,20 @@ bool asiVisu_PrsManager::SetPresentation(const Handle(ActAPI_INode)& node)
     return false; // No Presentation exists for Node
 
   const asiVisu_PrsAllocator& aPrsAlloc = anAllocMap.Find(aNodeType);
-  m_nodePresentations.Bind( aNodeID, (*aPrsAlloc)(node) );
+  Handle(asiVisu_Prs)         aPrs      = (*aPrsAlloc)(node);
+  //
+  m_nodePresentations.Bind(aNodeID, aPrs);
+
+  // Set viewer-specific visual settings
+  Handle(asiVisu_HPipelineList) pipelines = aPrs->GetPipelineList();
+  //
+  for ( asiVisu_HPipelineList::Iterator pit(*pipelines); pit.More(); pit.Next() )
+  {
+    // Color affects visual properties even if scalar mapping is used
+    pit.Value()->Actor()->GetProperty()->SetColor(this->ActorColorRed,
+                                                  this->ActorColorGreen,
+                                                  this->ActorColorBlue);
+  }
 
   return true;
 }

@@ -352,14 +352,14 @@ void asiVisu_Utils::CameraOnRight(vtkRenderer* theRenderer)
 //-----------------------------------------------------------------------------
 
 //! Sets the predefined lighting options to the passed Actor.
-//! \param theActor [in] Actor to adjust lighting options.
-void asiVisu_Utils::ApplyLightingRules(vtkActor* theActor)
+//! \param actor [in] Actor to adjust lighting options.
+void asiVisu_Utils::ApplyLightingRules(vtkActor* actor)
 {
-  //theActor->GetProperty()->SetOpacity(1.0);
-  theActor->GetProperty()->SetAmbient(0.4);
-  //theActor->GetProperty()->SetDiffuse(0.0);
-  //theActor->GetProperty()->SetSpecular(0.0);
-  //theActor->GetProperty()->SetSpecularPower(20);
+  actor->GetProperty()->SetOpacity(1.0);
+  actor->GetProperty()->SetAmbient(0.5);
+  actor->GetProperty()->SetDiffuse(0.5);
+  actor->GetProperty()->SetSpecular(0.5);
+  actor->GetProperty()->SetSpecularPower(20);
 }
 
 //-----------------------------------------------------------------------------

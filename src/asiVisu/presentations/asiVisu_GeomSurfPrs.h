@@ -88,9 +88,9 @@ private:
 
 private:
 
-  vtkSmartPointer<vtkTextWidget>          m_textWidget;      //!< Annotation.
-  vtkSmartPointer<vtkScalarBarWidget>     m_scalarBarWidget; //!< Scalar bar.
-  vtkSmartPointer<vtkButtonWidget>        m_modeButton;      //!< Button to switch visualization modes.
+  vtkSmartPointer<vtkTextWidget>           m_textWidget;      //!< Annotation.
+  vtkSmartPointer<vtkScalarBarWidget>      m_scalarBarWidget; //!< Scalar bar.
+  vtkSmartPointer<vtkButtonWidget>         m_modeButton;      //!< Button to switch visualization modes.
   vtkSmartPointer<asiVisu_SurfBtnCallback> m_modeCallback;    //!< Callback for visualization mode button.
 
 };

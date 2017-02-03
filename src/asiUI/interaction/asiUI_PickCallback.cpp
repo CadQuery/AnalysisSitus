@@ -61,7 +61,7 @@ void asiUI_PickCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
                                  unsigned long eventId,
                                  void*         pCallData)
 {
-  vtkSmartPointer<asiVisu_PrsManager> mgr = this->GetViewer()->PrsMgr();
+  const vtkSmartPointer<asiVisu_PrsManager>& mgr = this->GetViewer()->PrsMgr();
 
   // Check if the calling context is valid
   if ( eventId != EVENT_PICK_DEFAULT && eventId != EVENT_DETECT_DEFAULT )

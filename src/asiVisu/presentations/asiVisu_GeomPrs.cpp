@@ -56,7 +56,7 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   this->addPipeline        ( Pipeline_Main, pl );
   this->assignDataProvider ( Pipeline_Main, DP );
 
-  // Set point size
+  // Set point size and line width
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
   pl->Actor()->GetProperty()->SetLineWidth(1.5f);
 

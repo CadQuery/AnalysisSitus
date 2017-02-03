@@ -89,6 +89,12 @@ public:
   asiVisu_EXPORT
     asiVisu_PrsManager();
 
+public:
+
+  asiVisu_EXPORT void
+    SetBlackAndWhiteIntensity(const double black,
+                              const double white);
+
 // Presentation management:
 public:
 
@@ -294,9 +300,9 @@ protected:
 
 public:
 
-  double ActorColorRed;
-  double ActorColorGreen;
-  double ActorColorBlue;
+  double BlackIntensity;
+  double WhiteIntensity;
+  bool   isWhiteBackground;
 
 // Presentation management:
 private:

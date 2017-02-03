@@ -25,8 +25,8 @@ asiVisu_AxesBtnCallback* asiVisu_AxesBtnCallback::New()
 
 //! Callback for button clicking.
 void asiVisu_AxesBtnCallback::Execute(vtkObject* caller,
-                                     unsigned long,
-                                     void*)
+                                      unsigned long,
+                                      void*)
 {
   vtkButtonWidget*                   pBtn  = vtkButtonWidget::SafeDownCast(caller);
   vtkTexturedButtonRepresentation2D* pRepr = vtkTexturedButtonRepresentation2D::SafeDownCast( pBtn->GetRepresentation() );
@@ -42,6 +42,8 @@ void asiVisu_AxesBtnCallback::Execute(vtkObject* caller,
     m_renderer->SetBackground(1.0, 1.0, 1.0);
     //
     this->colorizeActors();
+    //
+    m_manager->isWhiteBackground = true;
   }
   else if ( state == 3 )
   {
@@ -52,6 +54,8 @@ void asiVisu_AxesBtnCallback::Execute(vtkObject* caller,
     m_renderer->SetBackground(0.15, 0.15, 0.15);
     //
     this->colorizeActors();
+    //
+    m_manager->isWhiteBackground = false;
   }
 }
 
@@ -70,24 +74,27 @@ void asiVisu_AxesBtnCallback::colorizeActors()
       double r, g, b;
       prop->GetColor(r, g, b);
 
-      if ( r == WHITE_COMPONENT && g == WHITE_COMPONENT && b == WHITE_COMPONENT )
+      // If actor is white...
+      if ( Abs(r - m_manager->WhiteIntensity) < 1.0e-6 &&
+           Abs(g - m_manager->WhiteIntensity) < 1.0e-6 &&
+           Abs(b - m_manager->WhiteIntensity) < 1.0e-6 )
       {
-        m_manager->ActorColorRed   = BLACK_COMPONENT;
-        m_manager->ActorColorGreen = BLACK_COMPONENT;
-        m_manager->ActorColorBlue  = BLACK_COMPONENT;
+        // ... it means the background is black, so we switch to white
+        prop->SetColor(m_manager->BlackIntensity,
+                       m_manager->BlackIntensity,
+                       m_manager->BlackIntensity);
       }
-      else if ( r == BLACK_COMPONENT && g == BLACK_COMPONENT && b == BLACK_COMPONENT )
-      {
-        m_manager->ActorColorRed   = WHITE_COMPONENT;
-        m_manager->ActorColorGreen = WHITE_COMPONENT;
-        m_manager->ActorColorBlue  = WHITE_COMPONENT;
-      }
-      else
-        continue;
 
-      prop->SetColor(m_manager->ActorColorRed,
-                     m_manager->ActorColorGreen,
-                     m_manager->ActorColorBlue);
+      // If actor is black...
+      else if ( Abs(r - m_manager->BlackIntensity) < 1.0e-6 &&
+                Abs(g - m_manager->BlackIntensity) < 1.0e-6 &&
+                Abs(b - m_manager->BlackIntensity) < 1.0e-6 )
+      {
+        // ... it means the background is white, so we switch to black
+        prop->SetColor(m_manager->WhiteIntensity,
+                       m_manager->WhiteIntensity,
+                       m_manager->WhiteIntensity);
+      }
     }
   }
 }

@@ -147,11 +147,11 @@ void asiVisu_PrsManager::PrintSelf(ostream& os, vtkIndent indent)
 
 //! Constructs presentation manager.
 asiVisu_PrsManager::asiVisu_PrsManager()
-: vtkObject       (),
-  m_widget        (NULL),
-  ActorColorRed   (WHITE_COMPONENT),
-  ActorColorGreen (WHITE_COMPONENT),
-  ActorColorBlue  (WHITE_COMPONENT)
+: vtkObject         (),
+  m_widget          (NULL),
+  BlackIntensity    (0.0),
+  WhiteIntensity    (1.0),
+  isWhiteBackground (false)
 {
   // Initialize renderer
   m_renderer = vtkSmartPointer<vtkRenderer>::New();
@@ -235,6 +235,16 @@ asiVisu_PrsManager::asiVisu_PrsManager()
   m_axesButton->On();
   //
   PlaceButton(m_axesButton, m_renderer);
+}
+
+//! Sets intensity values for black and white color schemes.
+//! \param black [in] black intensity (from zero and greater).
+//! \param white [in] white intensity (from one and smaller).
+void asiVisu_PrsManager::SetBlackAndWhiteIntensity(const double black,
+                                                   const double white)
+{
+  BlackIntensity = black;
+  WhiteIntensity = white;
 }
 
 //-----------------------------------------------------------------------------
@@ -415,9 +425,14 @@ bool asiVisu_PrsManager::SetPresentation(const Handle(ActAPI_INode)& node)
   for ( asiVisu_HPipelineList::Iterator pit(*pipelines); pit.More(); pit.Next() )
   {
     // Color affects visual properties even if scalar mapping is used
-    pit.Value()->Actor()->GetProperty()->SetColor(this->ActorColorRed,
-                                                  this->ActorColorGreen,
-                                                  this->ActorColorBlue);
+    if ( this->isWhiteBackground )
+      pit.Value()->Actor()->GetProperty()->SetColor(this->BlackIntensity,
+                                                    this->BlackIntensity,
+                                                    this->BlackIntensity);
+    else
+      pit.Value()->Actor()->GetProperty()->SetColor(this->WhiteIntensity,
+                                                    this->WhiteIntensity,
+                                                    this->WhiteIntensity);
   }
 
   return true;

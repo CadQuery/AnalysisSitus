@@ -419,22 +419,6 @@ bool asiVisu_PrsManager::SetPresentation(const Handle(ActAPI_INode)& node)
   //
   m_nodePresentations.Bind(aNodeID, aPrs);
 
-  // Set viewer-specific visual settings
-  Handle(asiVisu_HPipelineList) pipelines = aPrs->GetPipelineList();
-  //
-  for ( asiVisu_HPipelineList::Iterator pit(*pipelines); pit.More(); pit.Next() )
-  {
-    // Color affects visual properties even if scalar mapping is used
-    if ( this->isWhiteBackground )
-      pit.Value()->Actor()->GetProperty()->SetColor(this->BlackIntensity,
-                                                    this->BlackIntensity,
-                                                    this->BlackIntensity);
-    else
-      pit.Value()->Actor()->GetProperty()->SetColor(this->WhiteIntensity,
-                                                    this->WhiteIntensity,
-                                                    this->WhiteIntensity);
-  }
-
   return true;
 }
 
@@ -487,6 +471,36 @@ void asiVisu_PrsManager::InitPresentation(const ActAPI_DataObjectId& nodeId)
 
   const Handle(asiVisu_Prs)& prs = m_nodePresentations.Find(nodeId);
   prs->InitPipelines();
+
+  // Set viewer-specific visual settings
+  Handle(asiVisu_HPipelineList) pipelines = prs->GetPipelineList();
+  //
+  for ( asiVisu_HPipelineList::Iterator pit(*pipelines); pit.More(); pit.Next() )
+  {
+    vtkActor* actor = pit.Value()->Actor();
+
+    // Attempt to extract binding to Node. Black & white color scheme makes
+    // difference for those actors which are bounded to Data Nodes and those
+    // which are not. This is an adequate filter since such a bounding exists
+    // for domain data and does not exist for whatever technical stuff, e.g.
+    // axes. Probably, this is not the best way to implement this idea, but
+    // we found it reasonable in our narrow context.
+
+    asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve(actor);
+    //
+    if ( !nodeInfo )
+      continue;
+
+    // Color affects visual properties even if scalar mapping is used
+    if ( this->isWhiteBackground )
+      actor->GetProperty()->SetColor(this->BlackIntensity,
+                                     this->BlackIntensity,
+                                     this->BlackIntensity);
+    else
+      actor->GetProperty()->SetColor(this->WhiteIntensity,
+                                     this->WhiteIntensity,
+                                     this->WhiteIntensity);
+  }
 }
 
 //! Pushes the Node's Presentation to the renderer. Notice that Presentation
@@ -866,11 +880,13 @@ ActAPI_DataObjectIdList
         pickedActor = actor;
         pickRes << pickedActor;
         IVtkTools_ShapeDataSource* dataSource = IVtkTools_ShapeObject::GetShapeSource(actor);
+        //
         if ( !dataSource )
           continue;
 
         // Access initial shape wrapper
         IVtkOCC_Shape::Handle shapeWrapper = dataSource->GetShape();
+        //
         if ( shapeWrapper.IsNull() )
           continue;
 

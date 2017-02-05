@@ -42,7 +42,7 @@ asiVisu_GeomBoundaryEdgesPrs::asiVisu_GeomBoundaryEdgesPrs(const Handle(ActAPI_I
   this->assignDataProvider ( Pipeline_Convex, DP_convex );
   //
   pl_convex->Actor()->GetProperty()->SetLineWidth(2.0f);
-  pl_convex->Actor()->GetProperty()->SetColor(0.2, 1.0, 0.0);
+  pl_convex->Actor()->GetProperty()->SetColor(0.1, 0.7, 0.0);
   pl_convex->Mapper()->ScalarVisibilityOff();
   pl_convex->WireframeModeOn();
 
@@ -54,7 +54,7 @@ asiVisu_GeomBoundaryEdgesPrs::asiVisu_GeomBoundaryEdgesPrs(const Handle(ActAPI_I
   this->assignDataProvider ( Pipeline_Concave, DP_concave );
   //
   pl_concave->Actor()->GetProperty()->SetLineWidth(2.0f);
-  pl_concave->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
+  pl_concave->Actor()->GetProperty()->SetColor(0.7, 0.0, 0.0);
   pl_concave->Mapper()->ScalarVisibilityOff();
   pl_concave->WireframeModeOn();
 

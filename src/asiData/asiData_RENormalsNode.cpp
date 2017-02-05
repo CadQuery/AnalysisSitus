@@ -83,6 +83,9 @@ Handle(asiAlgo_PointCloud<double>) asiData_RENormalsNode::GetNormals() const
   Handle(TColStd_HArray1OfReal)
     coords = ActParamTool::AsRealArray( this->Parameter(PID_Normals) )->GetArray();
 
+  if ( coords.IsNull() )
+    return NULL;
+
   // TODO: get rid of copying here
   return asiAlgo_PointCloudUtils::AsPointCloud(coords);
 }
@@ -92,6 +95,9 @@ Handle(asiAlgo_PointCloud<float>) asiData_RENormalsNode::GetNormalsf() const
 {
   Handle(TColStd_HArray1OfReal)
     coords = ActParamTool::AsRealArray( this->Parameter(PID_Normals) )->GetArray();
+
+  if ( coords.IsNull() )
+    return NULL;
 
   // TODO: get rid of copying here
   return asiAlgo_PointCloudUtils::AsPointCloudf(coords);

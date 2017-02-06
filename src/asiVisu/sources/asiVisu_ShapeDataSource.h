@@ -8,6 +8,9 @@
 #ifndef asiVisu_ShapeDataSource_h
 #define asiVisu_ShapeDataSource_h
 
+// asiVisu includes
+#include <asiVisu.h>
+
 // OCCT includes
 #include <IVtkTools_ShapeDataSource.hxx>
 #include <IVtkOCC_Shape.hxx>
@@ -37,7 +40,9 @@ public:
 public:
 
   vtkTypeMacro(asiVisu_ShapeDataSource, IVtkTools_ShapeDataSource);
-  static asiVisu_ShapeDataSource* New();
+
+  asiVisu_EXPORT static asiVisu_ShapeDataSource*
+    New();
 
 public:
 
@@ -52,22 +57,29 @@ protected: //! @name Interface to override
   //! Build output polygonal data set from the shape wrapper.
   //! @param theRequest [in] information about data object.
   //! In current implementation it is ignored.
-  //! @param theInputVector [in] the input data. As adata source is the start
+  //! @param theInputVector [in] the input data. As a data source is the start
   //! stage of the VTK pipeline, theInputVector is empty and not used (no input port).
   //! @param theOutputVector [in] the pointer to output data, that is filled in this method.
-  virtual int RequestData(vtkInformation* theRequest,
-                          vtkInformationVector** theInputVector,
-                          vtkInformationVector* theOutputVector);
+  asiVisu_EXPORT virtual int
+    RequestData(vtkInformation*        theRequest,
+                vtkInformationVector** theInputVector,
+                vtkInformationVector*  theOutputVector);
 
 protected:
 
-  asiVisu_ShapeDataSource();
-  ~asiVisu_ShapeDataSource();
+  asiVisu_EXPORT
+    asiVisu_ShapeDataSource();
+
+  asiVisu_EXPORT
+    ~asiVisu_ShapeDataSource();
 
 private:
 
-  asiVisu_ShapeDataSource (const asiVisu_ShapeDataSource&);
-  asiVisu_ShapeDataSource& operator= (const asiVisu_ShapeDataSource&);
+  asiVisu_EXPORT
+    asiVisu_ShapeDataSource(const asiVisu_ShapeDataSource&);
+
+  asiVisu_EXPORT asiVisu_ShapeDataSource&
+    operator=(const asiVisu_ShapeDataSource&);
 
 protected:
 

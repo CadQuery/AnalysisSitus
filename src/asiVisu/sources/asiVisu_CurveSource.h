@@ -34,33 +34,35 @@ class asiVisu_CurveSource : public vtkPolyDataAlgorithm
 public:
 
   vtkTypeMacro(asiVisu_CurveSource, vtkPolyDataAlgorithm);
-  static asiVisu_CurveSource* New();
+
+  asiVisu_EXPORT static asiVisu_CurveSource*
+    New();
 
 // Kernel methods:
 public:
 
-  bool
+  asiVisu_EXPORT bool
     SetInputEdge(const TopoDS_Edge& edge);
 
-  bool
+  asiVisu_EXPORT bool
     SetInputCurve(const Handle(Geom_Curve)& curve,
                   const double              first,
                   const double              last,
                   const asiVisu_Orientation ori = VisuOri_Internal);
 
-  bool
+  asiVisu_EXPORT bool
     SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
                     const double                first,
                     const double                last,
                     const asiVisu_Orientation   ori = VisuOri_Internal);
 
-  void
+  asiVisu_EXPORT void
     SetInputArrays(const Handle(HRealArray)& xCoords,
                    const Handle(HRealArray)& yCoords,
                    const Handle(HRealArray)& zCoords,
                    const asiVisu_Orientation ori = VisuOri_Undefined);
 
-  void
+  asiVisu_EXPORT void
     GetInputArrays(Handle(HRealArray)&  xCoords,
                    Handle(HRealArray)&  yCoords,
                    Handle(HRealArray)&  zCoords,
@@ -82,37 +84,41 @@ public:
 
 protected:
 
-  virtual int RequestData(vtkInformation*        request,
-                          vtkInformationVector** inputVector,
-                          vtkInformationVector*  outputVector);
+  asiVisu_EXPORT virtual int
+    RequestData(vtkInformation*        request,
+                vtkInformationVector** inputVector,
+                vtkInformationVector*  outputVector);
 
 protected:
 
-  vtkIdType
+  asiVisu_EXPORT vtkIdType
     registerGridPoint(const gp_Pnt& point,
                       vtkPolyData*  polyData);
 
-  vtkIdType
+  asiVisu_EXPORT vtkIdType
     registerGridPoint(const int    index,
                       vtkPolyData* polyData);
 
-  vtkIdType
+  asiVisu_EXPORT vtkIdType
     registerLine(const gp_Pnt& pointStart,
                  const gp_Pnt& pointEnd,
                  vtkPolyData*  polyData);
 
-  vtkIdType
+  asiVisu_EXPORT vtkIdType
     registerLine(const int    index,
                  vtkPolyData* polyData);
 
-  vtkIdType
+  asiVisu_EXPORT vtkIdType
     registerVertex(const int    index,
                    vtkPolyData* polyData);
 
 protected:
 
-  asiVisu_CurveSource();
-  ~asiVisu_CurveSource();
+  asiVisu_EXPORT
+    asiVisu_CurveSource();
+
+  asiVisu_EXPORT
+    ~asiVisu_CurveSource();
 
 private:
 

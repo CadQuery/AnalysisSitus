@@ -30,7 +30,7 @@
 //!
 //! NOTICE: This Data-View is designed for usage in scope of a single Node for
 //!         primitive (scalar) Parameter types only.
-class asiUI_PrimDataView : public QObject
+class asiUI_EXPORT asiUI_PrimDataView : public QObject
 {
   Q_OBJECT
 
@@ -85,43 +85,43 @@ public:
 // API methods:
 public:
 
-  asiUI_EXPORT virtual bool
+  virtual bool
     ViewToData(QWidget* pView = NULL);
 
-  asiUI_EXPORT virtual bool
+  virtual bool
     DataToView();
 
 //-----------------------------------------------------------------------------
 // Initialization:
 public:
 
-  asiUI_EXPORT asiUI_PrimDataView& operator<<(const Handle(asiUI_PrimDataAdaptor)& Data);
-  asiUI_EXPORT asiUI_PrimDataView& operator<<(QWidget* pView);
+  asiUI_PrimDataView& operator<<(const Handle(asiUI_PrimDataAdaptor)& Data);
+  asiUI_PrimDataView& operator<<(QWidget* pView);
 
 //-----------------------------------------------------------------------------
 // Reactions:
 public:
 
-  asiUI_EXPORT virtual void
+  virtual void
     FinishEditing(QWidget* pView);
 
 //-----------------------------------------------------------------------------
 // Convenience methods:
 public:
 
-  asiUI_EXPORT virtual QWidget*
+  virtual QWidget*
     ViewByData(const Handle(asiUI_PrimDataAdaptor)& Data) const;
 
-  asiUI_EXPORT virtual QWidget*
+  virtual QWidget*
     ViewByData(const int dataID) const;
 
-  asiUI_EXPORT virtual Handle(asiUI_PrimDataAdaptor)
+  virtual Handle(asiUI_PrimDataAdaptor)
     DataByView(QWidget* pView) const;
 
-  asiUI_EXPORT t_view
+  t_view
     ViewGroupByData(const Handle(asiUI_PrimDataAdaptor)& Data) const;
 
-  asiUI_EXPORT t_view
+  t_view
     ViewGroupByData(const int dataID) const;
 
 //-----------------------------------------------------------------------------
@@ -132,23 +132,24 @@ signals:
 //-----------------------------------------------------------------------------
 protected slots:
 
-  asiUI_EXPORT void onEditFinished();
+  void
+    onEditFinished();
 
 //-----------------------------------------------------------------------------
 private:
 
-  asiUI_EXPORT bool
+  bool
     viewToData(QWidget*                             pView,
                const Handle(asiUI_PrimDataAdaptor)& Data);
 
-  asiUI_EXPORT bool
+  bool
     dataToView(const Handle(asiUI_PrimDataAdaptor)& Data,
                QWidget*                             pView);
 
-  asiUI_EXPORT bool
+  bool
     isConsistent() const;
 
-  asiUI_EXPORT Handle(asiUI_PrimDataAdaptor)
+  Handle(asiUI_PrimDataAdaptor)
     dataByID(const int dataID) const;
 
 //-----------------------------------------------------------------------------

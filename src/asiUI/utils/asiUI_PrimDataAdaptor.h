@@ -48,8 +48,8 @@ public:
   //! Initializes Data Adaptor.
   //! \param N   [in] source Data Node.
   //! \param PID [in] Parameter ID.
-  inline virtual void Init(const Handle(ActAPI_INode)& N,
-                           const int                   PID)
+  virtual void Init(const Handle(ActAPI_INode)& N,
+                    const int                   PID)
   {
     m_node = N;
     m_iPID = PID;
@@ -59,24 +59,24 @@ public:
 
   //! Accessor for Node.
   //! \return Node.
-  inline virtual Handle(ActAPI_INode) Node() const
+  virtual Handle(ActAPI_INode) Node() const
   {
     return m_node;
   }
 
   //! Returns ID of the Data Adaptor.
   //! \return PID used as Data Adaptor ID.
-  inline virtual int ID() const
+  virtual int ID() const
   {
     return m_iPID;
   }
 
 public:
 
-  virtual QVariant
+  asiUI_EXPORT virtual QVariant
     GetValue() const;
 
-  virtual void
+  asiUI_EXPORT virtual void
     SetValue(const QVariant& ui_val) const;
 
 protected:

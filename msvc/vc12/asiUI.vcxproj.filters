@@ -339,12 +339,6 @@
     <CustomBuild Include="..\..\src\asiUI\controls\asiUI_ObjectBrowser.h">
       <Filter>Header Files\Controls</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_Viewer.h">
-      <Filter>Header Files\Controls</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.h">
-      <Filter>Header Files\Controls</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.h">
       <Filter>Header Files\Dialogs</Filter>
     </CustomBuild>
@@ -392,6 +386,12 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogSmoothAngleTol.h">
       <Filter>Header Files\Dialogs</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_Viewer.h">
+      <Filter>Header Files\Viewers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.h">
+      <Filter>Header Files\Viewers</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

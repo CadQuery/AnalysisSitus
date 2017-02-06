@@ -20,17 +20,15 @@
 #pragma warning(pop)
 
 //! Base class for all viewers.
-class asiUI_Viewer : public QWidget
+class asiUI_EXPORT asiUI_Viewer : public QWidget
 {
   Q_OBJECT
 
 public:
 
-  asiUI_EXPORT
-    asiUI_Viewer(QWidget* parent = NULL);
+  asiUI_Viewer(QWidget* parent = NULL);
 
-  asiUI_EXPORT virtual
-    ~asiUI_Viewer();
+  virtual ~asiUI_Viewer();
 
 public:
 

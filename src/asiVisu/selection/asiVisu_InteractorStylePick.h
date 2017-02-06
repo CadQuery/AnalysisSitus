@@ -24,54 +24,56 @@ class asiVisu_InteractorStylePick : public vtkInteractorStyleTrackballCamera
 {
 public:
 
-  static asiVisu_InteractorStylePick* New();
   vtkTypeMacro(asiVisu_InteractorStylePick, vtkInteractorStyleTrackballCamera);
+
+  asiVisu_EXPORT static asiVisu_InteractorStylePick*
+    New();
 
 // Customization:
 public:
 
-  void
+  asiVisu_EXPORT void
     SetRenderer(const vtkSmartPointer<vtkRenderer>& theRenderer);
 
-  const vtkSmartPointer<vtkRenderer>&
+  asiVisu_EXPORT const vtkSmartPointer<vtkRenderer>&
     GetRenderer() const;
 
-  unsigned long
+  asiVisu_EXPORT unsigned long
     AddRotationCallback(unsigned long theEventID, vtkCommand* theCallback);
 
-  bool
+  asiVisu_EXPORT bool
     RemoveRotationCallback(unsigned long theEventID, unsigned long theTag);
 
 // Overriding:
 public:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     OnMouseMove();
 
-  virtual void
+  asiVisu_EXPORT virtual void
     OnLeftButtonDown();
 
-  virtual void
+  asiVisu_EXPORT virtual void
     OnLeftButtonUp();
 
-  virtual void
+  asiVisu_EXPORT virtual void
     EndRotate();
 
-  virtual void
+  asiVisu_EXPORT virtual void
     OnKeyPress();
 
 private:
 
   //! Copying prohibited.
-  asiVisu_InteractorStylePick(const asiVisu_InteractorStylePick&);
+  asiVisu_EXPORT asiVisu_InteractorStylePick(const asiVisu_InteractorStylePick&);
 
   //! Assignment prohibited.
-  void operator=(const asiVisu_InteractorStylePick&);
+  asiVisu_EXPORT void operator=(const asiVisu_InteractorStylePick&);
 
 private:
 
-  asiVisu_InteractorStylePick();
-  ~asiVisu_InteractorStylePick();
+  asiVisu_EXPORT asiVisu_InteractorStylePick();
+  asiVisu_EXPORT ~asiVisu_InteractorStylePick();
 
 private:
 

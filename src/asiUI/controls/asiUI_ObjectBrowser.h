@@ -27,17 +27,16 @@
 //-----------------------------------------------------------------------------
 
 //! Tree view for A-Situs Data Model.
-class asiUI_ObjectBrowser : public QTreeWidget
+class asiUI_EXPORT asiUI_ObjectBrowser : public QTreeWidget
 {
   Q_OBJECT
 
 public:
 
-  asiUI_EXPORT
-    asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
-                        QWidget*                     parent = NULL);
+  asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
+                      QWidget*                     parent = NULL);
 
-  asiUI_EXPORT virtual
+  virtual
     ~asiUI_ObjectBrowser();
 
 public:

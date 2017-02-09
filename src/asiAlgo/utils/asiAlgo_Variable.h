@@ -22,8 +22,11 @@ enum asiAlgo_VariableType
   //
   var_INTEGER = 0,
   var_REAL,
+  var_BOOL,
   var_STRING
 };
+
+//-----------------------------------------------------------------------------
 
 //! Variable.
 class asiAlgo_Variable

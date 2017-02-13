@@ -8,8 +8,8 @@
 #ifndef asiUI_ObjectBrowser_h
 #define asiUI_ObjectBrowser_h
 
-// A-Situs includes
-#include <asiUI.h>
+// asiUI includes
+#include <asiUI_ViewerPart.h>
 
 // Active Data (API) includes
 #include <ActAPI_IModel.h>
@@ -34,6 +34,7 @@ class asiUI_EXPORT asiUI_ObjectBrowser : public QTreeWidget
 public:
 
   asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
+                      asiUI_ViewerPart*            pPartViewer,
                       QWidget*                     parent = NULL);
 
   virtual
@@ -51,7 +52,9 @@ protected:
 //-----------------------------------------------------------------------------
 signals:
 
+  void show         (const ActAPI_DataObjectId&);
   void showOnly     (const ActAPI_DataObjectId&);
+  void hide         (const ActAPI_DataObjectId&);
   void nodeSelected ();
 
 //-----------------------------------------------------------------------------
@@ -59,7 +62,9 @@ protected slots:
 
   void onSelectionChanged ();
   void onContextMenu      (QPoint pos);
+  void onShow             ();
   void onShowOnly         ();
+  void onHide             ();
 
 private:
 
@@ -67,7 +72,8 @@ private:
 
 protected:
 
-  Handle(ActAPI_IModel) m_model; //!< Data Model.
+  Handle(ActAPI_IModel) m_model;       //!< Data Model.
+  asiUI_ViewerPart*     m_pPartViewer; //!< Part viewer.
 
 };
 

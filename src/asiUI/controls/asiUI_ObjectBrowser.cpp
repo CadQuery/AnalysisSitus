@@ -26,8 +26,9 @@
 //! \param model  [in] Data Model instance.
 //! \param parent [in] parent widget.
 asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
+                                         asiUI_ViewerPart*            pPartViewer,
                                          QWidget*                     parent)
-: QTreeWidget(parent), m_model(model)
+: QTreeWidget(parent), m_model(model), m_pPartViewer(pPartViewer)
 {
   // Configure
   this->setMinimumWidth(TREEVIEW_MINSIZE);
@@ -145,9 +146,34 @@ void asiUI_ObjectBrowser::onSelectionChanged()
 //! \param pos [in] position.
 void asiUI_ObjectBrowser::onContextMenu(QPoint pos)
 {
-  QMenu* aMenu = new QMenu(this);
-  aMenu->addAction( "Show Only", this, SLOT( onShowOnly() ) );
-  aMenu->popup( this->mapToGlobal(pos) );
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( m_pPartViewer && m_pPartViewer->PrsMgr()->IsPresented(selected_n) )
+  {
+    QMenu* aMenu = new QMenu(this);
+    aMenu->addAction( "Show",      this, SLOT( onShow()     ) );
+    aMenu->addAction( "Show Only", this, SLOT( onShowOnly() ) );
+    aMenu->addAction( "Hide",      this, SLOT( onHide()     ) );
+    aMenu->popup( this->mapToGlobal(pos) );
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on "show" action.
+void asiUI_ObjectBrowser::onShow()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( m_pPartViewer && m_pPartViewer->PrsMgr()->IsPresented(selected_n) )
+  {
+    m_pPartViewer->PrsMgr()->DeRenderPresentation(selected_n);
+    m_pPartViewer->PrsMgr()->Actualize(selected_n);
+  }
+
+  emit show( selected_n->GetId() );
 }
 
 //-----------------------------------------------------------------------------
@@ -158,9 +184,30 @@ void asiUI_ObjectBrowser::onShowOnly()
   Handle(ActAPI_INode) selected_n;
   if ( !this->selectedNode(selected_n) ) return;
 
-  // TODO
+  if ( m_pPartViewer && m_pPartViewer->PrsMgr()->IsPresented(selected_n) )
+  {
+    m_pPartViewer->PrsMgr()->DeRenderAllPresentations();
+    m_pPartViewer->PrsMgr()->Actualize(selected_n);
+  }
 
   emit showOnly( selected_n->GetId() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on "hide" action.
+void asiUI_ObjectBrowser::onHide()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( m_pPartViewer && m_pPartViewer->PrsMgr()->IsPresented(selected_n) )
+  {
+    m_pPartViewer->PrsMgr()->DeRenderPresentation(selected_n);
+    m_pPartViewer->Repaint();
+  }
+
+  emit hide( selected_n->GetId() );
 }
 
 //-----------------------------------------------------------------------------

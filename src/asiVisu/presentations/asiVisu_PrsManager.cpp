@@ -10,7 +10,7 @@
 
 // Visualization includes
 #include <asiVisu_AxesBtnCallback.h>
-#include <asiVisu_NodeInfo.h>
+#include <asiVisu_PartNodeInfo.h>
 #include <asiVisu_Prs.h>
 #include <asiVisu_Pipeline.h>
 #include <asiVisu_Selection.h>
@@ -486,7 +486,7 @@ void asiVisu_PrsManager::InitPresentation(const ActAPI_DataObjectId& nodeId)
     // axes. Probably, this is not the best way to implement this idea, but
     // we found it reasonable in our narrow context.
 
-    asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve(actor);
+    asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve(actor);
     //
     if ( !nodeInfo )
       continue;

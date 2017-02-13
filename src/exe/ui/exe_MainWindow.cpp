@@ -100,7 +100,7 @@ void exe_MainWindow::createDockWindows()
     pDockBrowser = new QDockWidget("Stored Objects", this);
     pDockBrowser->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, pDockBrowser);
+    m_widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, cf->ViewerPart, pDockBrowser);
     //
     pDockBrowser->setWidget(m_widgets.wBrowser);
     //

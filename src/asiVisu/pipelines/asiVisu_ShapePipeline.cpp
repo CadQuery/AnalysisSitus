@@ -9,7 +9,7 @@
 #include <asiVisu_ShapePipeline.h>
 
 // Visualization includes
-#include <asiVisu_NodeInfo.h>
+#include <asiVisu_PartNodeInfo.h>
 #include <asiVisu_ShapeDataProvider.h>
 #include <asiVisu_ShapeDataSource.h>
 #include <asiVisu_Utils.h>
@@ -43,24 +43,23 @@
 #include <TopLoc_Location.hxx>
 
 //! Creates new Shape Pipeline initialized by default VTK mapper and actor.
-//! \param isOCCTColorScheme [in] indicates whether to use native OCCT
-//!                               color scheme for rendering of OCCT shapes.
-//! \param isBound2Node      [in] indicates whether to bind Node ID to actor.
-//! \param isSecondary       [in] indicates whether the pipeline is secondary.
-//! \param isTrianglesMode   [in] indicates whether to show triangulation or not.
-//! \param pSource           [in] Data Source for secondary pipelines.
-asiVisu_ShapePipeline::asiVisu_ShapePipeline(const bool            isOCCTColorScheme,
+//! \param isPartScheme    [in] indicates whether this shape is a part.
+//! \param isBound2Node    [in] indicates whether to bind Node ID to actor.
+//! \param isSecondary     [in] indicates whether the pipeline is secondary.
+//! \param isTrianglesMode [in] indicates whether to show triangulation or not.
+//! \param pSource         [in] Data Source for secondary pipelines.
+asiVisu_ShapePipeline::asiVisu_ShapePipeline(const bool            isPartScheme,
                                              const bool            isBound2Node,
                                              const bool            isSecondary,
                                              const bool            isTrianglesMode,
                                              vtkPolyDataAlgorithm* pSource)
 //
 : asiVisu_Pipeline   ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
-  m_bOCCTColorScheme ( isOCCTColorScheme ), // Native OCCT color scheme (as in Draw)
+  m_bIsPartScheme    ( isPartScheme ), // Native OCCT color scheme (as in Draw)
   m_bIsBound2Node    ( isBound2Node ),
   m_bIsSecondary     ( isSecondary ),
   m_bMapperColorsSet ( false ),
-  m_bShadingMode     ( true ),              // Shading by default
+  m_bShadingMode     ( true ), // Shading by default
   m_bWireframeMode   ( !m_bShadingMode ),
   m_bSubShapesVoid   ( false ),
   m_bShowTriangles   ( isTrianglesMode )
@@ -208,7 +207,12 @@ void asiVisu_ShapePipeline::SetInput(const Handle(asiVisu_DataProvider)& theData
       // Bind actor to owning Node ID. Thus we set back reference from VTK
       // entity to data object
       if ( m_bIsBound2Node )
-        asiVisu_NodeInfo::Store( aShapePrv->GetNodeID(), this->Actor() );
+      {
+        if ( m_bIsPartScheme )
+          asiVisu_PartNodeInfo::Store( aShapePrv->GetNodeID(), this->Actor() );
+        else
+          asiVisu_NodeInfo::Store( aShapePrv->GetNodeID(), this->Actor() );
+      }
 
       // Bind Shape DS with actor. This is necessary for VIS picker -- it will
       // not work without the corresponding Information key
@@ -333,7 +337,7 @@ void asiVisu_ShapePipeline::callback_remove_from_renderer(vtkRenderer*)
 //! Callback for Update() routine.
 void asiVisu_ShapePipeline::callback_update()
 {
-  if ( m_bOCCTColorScheme && !m_bMapperColorsSet )
+  if ( m_bIsPartScheme && !m_bMapperColorsSet )
   {
     asiVisu_Utils::InitShapeMapper(m_mapper);
     m_bMapperColorsSet = true;

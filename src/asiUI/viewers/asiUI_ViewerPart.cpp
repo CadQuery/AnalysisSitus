@@ -192,8 +192,7 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
 
 //! Destructor.
 asiUI_ViewerPart::~asiUI_ViewerPart()
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 

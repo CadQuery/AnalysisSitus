@@ -33,11 +33,11 @@ public:
 public:
 
   asiVisu_EXPORT
-    asiVisu_ShapePipeline(const bool            isOCCTColorScheme = true,
-                          const bool            isBound2Node      = true,
-                          const bool            isSecondary       = false,
-                          const bool            isTrianglesMode   = false,
-                          vtkPolyDataAlgorithm* pSource           = NULL);
+    asiVisu_ShapePipeline(const bool            isPartScheme    = true,
+                          const bool            isBound2Node    = true,
+                          const bool            isSecondary     = false,
+                          const bool            isTrianglesMode = false,
+                          vtkPolyDataAlgorithm* pSource         = NULL);
 
 public:
 
@@ -106,9 +106,8 @@ protected:
   //! Map of internally used filters.
   FilterMap m_filterMap;
 
-  //! Indicates whether the standard OCCT color mapping is used as a default
-  //! color scheme for the visualized shapes.
-  bool m_bOCCTColorScheme;
+  //! Indicates whether this pipeline represents part.
+  bool m_bIsPartScheme;
 
   //! Indicates whether this pipeline must propagate the corresponding Node
   //! ID to its actor via vtkInformation hook.

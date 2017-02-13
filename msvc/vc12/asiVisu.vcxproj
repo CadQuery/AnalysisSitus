@@ -189,6 +189,7 @@
     <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick.h" />
     <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick2d.h" />
     <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_NodeInfo.h" />
+    <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_PartNodeInfo.h" />
     <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_Selection.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_BCurveKnotsSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_BCurvePolesSource.h" />
@@ -284,6 +285,7 @@
     <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick.cpp" />
     <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick2d.cpp" />
     <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_NodeInfo.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_PartNodeInfo.cpp" />
     <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_Selection.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_BCurveKnotsSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_BCurvePolesSource.cpp" />

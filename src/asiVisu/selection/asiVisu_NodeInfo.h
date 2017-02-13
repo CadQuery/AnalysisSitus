@@ -54,14 +54,14 @@ public:
     Store(const ActAPI_DataObjectId& nodeId,
           vtkActor*                  actor);
 
-private:
+protected:
 
   asiVisu_NodeInfo();
   asiVisu_NodeInfo(const asiVisu_NodeInfo&);
   asiVisu_NodeInfo& operator=(const asiVisu_NodeInfo&);
   ~asiVisu_NodeInfo();
 
-private:
+protected:
 
   //! Information key.
   static vtkSmartPointer<vtkInformationObjectBaseKey> m_key;

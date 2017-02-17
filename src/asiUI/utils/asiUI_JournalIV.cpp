@@ -413,13 +413,17 @@ void asiUI_JournalIV::visualize(const bool                  is2d,
 
     // Configure shape visualization
     TopoDS_Shape shape = Handle(asiData_IVTopoItemNode)::DownCast(node)->GetShape();
-    if ( shape.ShapeType() == TopAbs_EDGE || shape.ShapeType() == TopAbs_WIRE )
+    //
+    if ( !shape.IsNull() )
     {
-      pl->WireframeModeOn();
-      pl->Actor()->GetProperty()->SetLineWidth(3.0);
+      if ( shape.ShapeType() == TopAbs_EDGE || shape.ShapeType() == TopAbs_WIRE )
+      {
+        pl->WireframeModeOn();
+        pl->Actor()->GetProperty()->SetLineWidth(3.0);
+      }
+      else if ( isWireframe )
+        pl->WireframeModeOn();
     }
-    else if ( isWireframe )
-      pl->WireframeModeOn();
 
     // Process color
     if ( hasColor )

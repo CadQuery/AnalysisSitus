@@ -6,13 +6,13 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_RENormalsPipeline.h>
+#include <asiVisu_VectorsPipeline.h>
 
 // Visualization includes
 #include <asiVisu_MeshResultUtils.h>
 #include <asiVisu_PointsSource.h>
 #include <asiVisu_PointsVectorFilter.h>
-#include <asiVisu_RENormalsDataProvider.h>
+#include <asiVisu_VectorsDataProvider.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -26,7 +26,7 @@
 //-----------------------------------------------------------------------------
 
 //! Creates new Pipeline instance.
-asiVisu_RENormalsPipeline::asiVisu_RENormalsPipeline()
+asiVisu_VectorsPipeline::asiVisu_VectorsPipeline()
   : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                       vtkSmartPointer<vtkActor>::New() )
 {
@@ -65,10 +65,10 @@ asiVisu_RENormalsPipeline::asiVisu_RENormalsPipeline()
 //! Actually this method performs translation of DOMAIN data to
 //! VTK POLYGONAL DATA.
 //! \param dataProvider [in] Data Provider.
-void asiVisu_RENormalsPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
+void asiVisu_VectorsPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
 {
-  Handle(asiVisu_RENormalsDataProvider)
-    DP = Handle(asiVisu_RENormalsDataProvider)::DownCast(dataProvider);
+  Handle(asiVisu_VectorsDataProvider)
+    DP = Handle(asiVisu_VectorsDataProvider)::DownCast(dataProvider);
 
   /* ============================
    *  Prepare polygonal data set
@@ -85,8 +85,8 @@ void asiVisu_RENormalsPipeline::SetInput(const Handle(asiVisu_DataProvider)& dat
     asiVisu_PointsVectorFilter*
       vecFilter = asiVisu_PointsVectorFilter::SafeDownCast( m_filterMap.Find(Filter_Vector) );
     //
-    vecFilter->SetNormals( DP->GetNormalsf(),
-                           DP->GetMaxNormModulus() );
+    vecFilter->SetNormals( DP->GetVectorsf(),
+                           DP->GetMaxVectorModulus() );
 
     // Transform glyphs
     vtkTransformPolyDataFilter*
@@ -99,7 +99,6 @@ void asiVisu_RENormalsPipeline::SetInput(const Handle(asiVisu_DataProvider)& dat
     glyphFilter->SetSourceConnection( trsfFilter->GetOutputPort() );
     glyphFilter->SetVectorModeToUseVector();
     glyphFilter->SetScaleModeToScaleByVector();
-    glyphFilter->SetColorModeToColorByScale();
     glyphFilter->SetInputArrayToProcess(1, 0, 0, 0, ARRNAME_POINTCLOUD_VECTORS);
     glyphFilter->SetScaleFactor(1.0); // No global scaling
 
@@ -115,7 +114,7 @@ void asiVisu_RENormalsPipeline::SetInput(const Handle(asiVisu_DataProvider)& dat
 
 //! Callback for adding the actor to a renderer.
 //! \param renderer [in] target renderer.
-void asiVisu_RENormalsPipeline::callback_add_to_renderer(vtkRenderer* renderer)
+void asiVisu_VectorsPipeline::callback_add_to_renderer(vtkRenderer* renderer)
 {
   asiVisu_NotUsed(renderer);
 }
@@ -124,7 +123,7 @@ void asiVisu_RENormalsPipeline::callback_add_to_renderer(vtkRenderer* renderer)
 
 //! Callback for removal of the actor from a renderer.
 //! \param renderer [in] target renderer.
-void asiVisu_RENormalsPipeline::callback_remove_from_renderer(vtkRenderer* renderer)
+void asiVisu_VectorsPipeline::callback_remove_from_renderer(vtkRenderer* renderer)
 {
   asiVisu_NotUsed(renderer);
 }
@@ -132,5 +131,5 @@ void asiVisu_RENormalsPipeline::callback_remove_from_renderer(vtkRenderer* rende
 //-----------------------------------------------------------------------------
 
 //! Callback on pipeline update.
-void asiVisu_RENormalsPipeline::callback_update()
+void asiVisu_VectorsPipeline::callback_update()
 {}

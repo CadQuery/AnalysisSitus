@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_RENormalsPipeline_h
-#define asiVisu_RENormalsPipeline_h
+#ifndef asiVisu_VectorsPipeline_h
+#define asiVisu_VectorsPipeline_h
 
 // A-Situs includes
 #include <asiVisu_DataProvider.h>
@@ -14,20 +14,20 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_RENormalsPipeline, asiVisu_Pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_VectorsPipeline, asiVisu_Pipeline)
 
-//! Visualization pipeline for normal vectors in reverse engineering context.
-class asiVisu_RENormalsPipeline : public asiVisu_Pipeline
+//! Visualization pipeline for vectors.
+class asiVisu_VectorsPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_RENormalsPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_VectorsPipeline, asiVisu_Pipeline)
 
 public:
 
   asiVisu_EXPORT
-    asiVisu_RENormalsPipeline();
+    asiVisu_VectorsPipeline();
 
 public:
 
@@ -43,10 +43,10 @@ private:
 private:
 
   //! Copying prohibited.
-  asiVisu_RENormalsPipeline(const asiVisu_RENormalsPipeline&);
+  asiVisu_VectorsPipeline(const asiVisu_VectorsPipeline&);
 
   //! Assignment prohibited.
-  asiVisu_RENormalsPipeline& operator=(const asiVisu_RENormalsPipeline&);
+  asiVisu_VectorsPipeline& operator=(const asiVisu_VectorsPipeline&);
 
 protected:
 

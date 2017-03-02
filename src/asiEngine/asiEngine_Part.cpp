@@ -72,6 +72,20 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
     geom_n->AddChildNode(geom_face_n);
   }
 
+  // Create underlying face norms representation Node
+  {
+    Handle(ActAPI_INode) geom_face_norms_base = asiData_FaceNormsNode::Instance();
+    m_model->GetGeomFaceNormsPartition()->AddNode(geom_face_norms_base);
+
+    // Initialize
+    Handle(asiData_FaceNormsNode) geom_face_norms_n = Handle(asiData_FaceNormsNode)::DownCast(geom_face_norms_base);
+    geom_face_norms_n->Init();
+    geom_face_norms_n->SetName("Face norms");
+
+    // Set as child
+    geom_n->AddChildNode(geom_face_norms_n);
+  }
+
   // Create underlying surface representation Node
   {
     Handle(ActAPI_INode) geom_surf_base = asiData_SurfNode::Instance();

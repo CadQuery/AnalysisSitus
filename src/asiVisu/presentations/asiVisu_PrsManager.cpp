@@ -777,6 +777,11 @@ ActAPI_DataObjectIdList
         }
       }
 
+      // Get picked position and store it in the result
+      double pickedPos[3];
+      m_cellPicker->GetPickPosition(pickedPos);
+      pickRes.SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
+
       // Get picked actor
       pickedActor = m_cellPicker->GetActor();
       //
@@ -797,6 +802,11 @@ ActAPI_DataObjectIdList
     else if ( pickType == PickType_Point )
     {
       vtkIdType pointId = m_pointPicker->GetPointId();
+
+      // Get picked position and store it in the result
+      double pickedPos[3];
+      m_pointPicker->GetPickPosition(pickedPos);
+      pickRes.SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
 
       // Get picked actor
       pickedActor = m_pointPicker->GetActor();
@@ -845,6 +855,9 @@ ActAPI_DataObjectIdList
       double coord[3];
       m_worldPicker->GetPickPosition(coord);
 
+      // Store picked position in the result
+      pickRes.SetPickedPos(coord[0], coord[1], coord[2]);
+
       vtkCamera* camera  = m_renderer->GetActiveCamera();
       double*    dirProj = camera->GetDirectionOfProjection();
 
@@ -867,6 +880,12 @@ ActAPI_DataObjectIdList
 
     // PICK (!!!)
     m_shapePicker->Pick(xStart, yStart, 0);
+
+    // Get picked position and store it in the result
+    // !!! ATTENTION: in IVtk GetPickPosition() does not work !!!
+    double pickedPos[3];
+    m_shapePicker->GetPickPosition(pickedPos);
+    pickRes.SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
 
     // Traversing results
     asiVisu_NodeInfo*                   nodeInfo        = NULL;

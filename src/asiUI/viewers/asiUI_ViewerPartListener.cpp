@@ -33,15 +33,18 @@
 //! \param wViewerDomain  [in] domain viewer.
 //! \param wViewerSurface [in] surface viewer.
 //! \param model          [in] Data Model instance.
+//! \param plotter        [in] imperative plotter.
 asiUI_ViewerPartListener::asiUI_ViewerPartListener(asiUI_ViewerPart*              wViewerPart,
                                                    asiUI_ViewerDomain*            wViewerDomain,
                                                    asiUI_ViewerSurface*           wViewerSurface,
-                                                   const Handle(asiEngine_Model)& model)
+                                                   const Handle(asiEngine_Model)& model,
+                                                   ActAPI_PlotterEntry            plotter)
 : QObject          (),
   m_wViewerPart    (wViewerPart),
   m_wViewerDomain  (wViewerDomain),
   m_wViewerSurface (wViewerSurface),
-  m_model          (model)
+  m_model          (model),
+  m_plotter        (plotter)
 {}
 
 //-----------------------------------------------------------------------------
@@ -55,11 +58,11 @@ asiUI_ViewerPartListener::~asiUI_ViewerPartListener()
 //! Connects this listener to the target widget.
 void asiUI_ViewerPartListener::Connect()
 {
-  connect( m_wViewerPart, SIGNAL ( facePicked() ),
-           this,          SLOT   ( onFacePicked() ) );
+  connect( m_wViewerPart, SIGNAL ( facePicked(const asiVisu_PickResult&) ),
+           this,          SLOT   ( onFacePicked(const asiVisu_PickResult&) ) );
   //
-  connect( m_wViewerPart, SIGNAL ( edgePicked() ),
-           this,          SLOT   ( onEdgePicked() ) );
+  connect( m_wViewerPart, SIGNAL ( edgePicked(const asiVisu_PickResult&) ),
+           this,          SLOT   ( onEdgePicked(const asiVisu_PickResult&) ) );
   //
   connect( m_wViewerPart, SIGNAL ( contextMenu(const QPoint&) ),
            this,          SLOT   ( onContextMenu(const QPoint&) ) );
@@ -68,8 +71,11 @@ void asiUI_ViewerPartListener::Connect()
 //-----------------------------------------------------------------------------
 
 //! Reaction on face picking.
-void asiUI_ViewerPartListener::onFacePicked()
+//! \param pickRes [in] pick result.
+void asiUI_ViewerPartListener::onFacePicked(const asiVisu_PickResult& pickRes)
 {
+  asiUI_NotUsed(pickRes);
+
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
   //
   if ( m_wViewerDomain )
@@ -82,8 +88,11 @@ void asiUI_ViewerPartListener::onFacePicked()
 //-----------------------------------------------------------------------------
 
 //! Reaction on edge picking.
-void asiUI_ViewerPartListener::onEdgePicked()
+//! \param pickRes [in] pick result.
+void asiUI_ViewerPartListener::onEdgePicked(const asiVisu_PickResult& pickRes)
 {
+  asiUI_NotUsed(pickRes);
+
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
   //
   if ( m_wViewerDomain )
@@ -100,7 +109,8 @@ void asiUI_ViewerPartListener::onEdgePicked()
 void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
 {
   QMenu menu;
-  QAction* pSaveBREPAction = menu.addAction("Save to BREP...");
+  QAction* pSaveBREPAction  = menu.addAction("Save to BREP...");
+  QAction* pShowNormsAction = menu.addAction("Show normal vectors");
 
   // Execute
   QAction* selectedItem = menu.exec(globalPos);
@@ -140,6 +150,10 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
       std::cout << "Error: cannot save shape" << std::endl;
       return;
     }
+  }
+  else if ( selectedItem == pShowNormsAction )
+  {
+    m_wViewerPart->PrsMgr()->Actualize( m_model->GetPartNode()->GetNormsRepresentation() );
   }
   else
   {

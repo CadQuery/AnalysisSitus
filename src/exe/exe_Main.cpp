@@ -17,6 +17,7 @@
 #include <asiVisu_GeomContourPrs.h>
 #include <asiVisu_GeomCurvePrs.h>
 #include <asiVisu_GeomEdgePrs.h>
+#include <asiVisu_GeomFaceNormsPrs.h>
 #include <asiVisu_GeomFacePrs.h>
 #include <asiVisu_GeomPrs.h>
 #include <asiVisu_GeomSurfPrs.h>
@@ -81,6 +82,7 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_GeomCurvePrs)
   REGISTER_PRESENTATION(asiVisu_GeomEdgePrs)
   REGISTER_PRESENTATION(asiVisu_GeomFacePrs)
+  REGISTER_PRESENTATION(asiVisu_GeomFaceNormsPrs)
   REGISTER_PRESENTATION(asiVisu_GeomSurfPrs)
   REGISTER_PRESENTATION(asiVisu_GeomContourPrs)
   REGISTER_PRESENTATION(asiVisu_CalculusLawPrs)

@@ -28,17 +28,16 @@
 #include <vtkTextActor.h>
 
 //! Creates a Presentation object for the passed Geometry Face Node.
-//! \param theNode [in] Geometry Face Node to create a Presentation for.
-asiVisu_GeomFacePrs::asiVisu_GeomFacePrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_Prs(theNode)
+//! \param N [in] Face Node to create a Presentation for.
+asiVisu_GeomFacePrs::asiVisu_GeomFacePrs(const Handle(ActAPI_INode)& N)
+: asiVisu_Prs(N)
 {
-  Handle(asiData_FaceNode)
-    face_n = Handle(asiData_FaceNode)::DownCast(theNode);
+  Handle(asiData_FaceNode) face_n = Handle(asiData_FaceNode)::DownCast(N);
 
   // Create Data Provider
   Handle(asiVisu_FaceDataProvider) DP = new asiVisu_FaceDataProvider(face_n);
 
-  // Pipeline for face
+  // Pipelines for face
   this->addPipeline        ( Pipeline_Main, new asiVisu_FaceDomainPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 

@@ -8,10 +8,10 @@
 // Own include
 #include <asiUI_PickCallback.h>
 
-// A-Situs (GUI) includes
+// asiUI includes
 #include <asiUI_ViewerPart.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_PrsManager.h>
 #include <asiVisu_Utils.h>
 

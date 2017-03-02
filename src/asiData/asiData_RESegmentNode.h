@@ -1,39 +1,38 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 April 2016
+// Created on: 01 March 2017
 // Created by: Quaoar
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_REPointsNode_h
-#define asiData_REPointsNode_h
+#ifndef asiData_RESegmentNode_h
+#define asiData_RESegmentNode_h
 
 // asiData includes
-#include <asiData_RENormalsNode.h>
-#include <asiData_RESegmentsNode.h>
-
-// asiAlgo includes
-#include <asiAlgo_PointCloud.h>
+#include <asiData.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
 
+// OCCT includes
+#include <TColStd_HPackedMapOfInteger.hxx>
+
 //-----------------------------------------------------------------------------
-// Points for Reverse Engineering
+// Node for a single point cloud segment
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_REPointsNode, ActData_BaseNode)
+DEFINE_STANDARD_HANDLE(asiData_RESegmentNode, ActData_BaseNode)
 
-//! Node representing a point cloud for reverse engineering.
-class asiData_REPointsNode : public ActData_BaseNode
+//! Node for a point cloud segment.
+class asiData_RESegmentNode : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_REPointsNode, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_RESegmentNode, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_REPointsNode, Instance)
+  DEFINE_NODE_FACTORY(asiData_RESegmentNode, Instance)
 
 public:
 
@@ -45,7 +44,7 @@ public:
   //------------------//
     PID_Name,         //!< Name of the Node.
   //------------------//
-    PID_Points,       //!< Point cloud (array of coordinates).
+    PID_Indices,      //!< Indices of the points in a segment.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -68,42 +67,22 @@ public:
     GetName();
 
   asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& theName);
+    SetName(const TCollection_ExtendedString& name);
 
-// Handy accessors to the stored data:
+// API:
 public:
 
-  asiData_EXPORT gp_Pnt
-    GetPoint(const int zeroBasedIndex) const;
-
-  asiData_EXPORT Handle(asiAlgo_PointCloud<double>)
-    GetPoints() const;
-
-  asiData_EXPORT Handle(asiAlgo_PointCloud<float>)
-    GetPointsf() const;
+  asiData_EXPORT Handle(TColStd_HPackedMapOfInteger)
+    GetIndices() const;
 
   asiData_EXPORT void
-    SetPoints(const Handle(asiAlgo_PointCloud<double>)& points);
-
-  asiData_EXPORT Handle(asiData_RENormalsNode)
-    GetNormals();
-
-  asiData_EXPORT Handle(asiData_RESegmentsNode)
-    GetSegments();
+    SetIndices(const Handle(TColStd_HPackedMapOfInteger)& indices);
 
 protected:
 
   //! Allocation is allowed only via Instance method.
   asiData_EXPORT
-    asiData_REPointsNode();
-
-protected:
-
-  enum Child
-  {
-    Child_Normals = 1,
-    Child_Segments
-  };
+    asiData_RESegmentNode();
 
 };
 

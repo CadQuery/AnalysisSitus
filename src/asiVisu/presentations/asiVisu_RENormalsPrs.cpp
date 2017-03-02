@@ -10,8 +10,8 @@
 
 // asiVisu includes
 #include <asiVisu_RENormalsDataProvider.h>
-#include <asiVisu_RENormalsPipeline.h>
 #include <asiVisu_Utils.h>
+#include <asiVisu_VectorsPipeline.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -33,7 +33,7 @@ asiVisu_RENormalsPrs::asiVisu_RENormalsPrs(const Handle(ActAPI_INode)& node)
     DP = new asiVisu_RENormalsDataProvider(points_n, normals_n);
 
   // Pipeline for points
-  this->addPipeline        ( Pipeline_Main, new asiVisu_RENormalsPipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_VectorsPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 }
 

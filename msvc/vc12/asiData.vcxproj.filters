@@ -119,6 +119,15 @@
     <ClInclude Include="..\..\src\asiData\asiData_AAGAttr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiData\asiData_RESegmentsNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiData\asiData_RESegmentNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiData\asiData_FaceNormsNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiData\asiData_BoundaryEdgesNode.cpp">
@@ -224,6 +233,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiData\asiData_AAGAttr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiData\asiData_RESegmentsNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiData\asiData_RESegmentNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiData\asiData_FaceNormsNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

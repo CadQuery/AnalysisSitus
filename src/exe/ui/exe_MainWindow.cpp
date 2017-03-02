@@ -197,7 +197,8 @@ void exe_MainWindow::createDockWindows()
   m_listeners.pViewerPart = new asiUI_ViewerPartListener(m_widgets.wViewerPart,
                                                          m_widgets.wViewerDomain,
                                                          m_widgets.wViewerSurface,
-                                                         cf->Model);
+                                                         cf->Model,
+                                                         cf->Plotter);
 
   // Signals-slots
   m_listeners.pControlsPart->Connect();

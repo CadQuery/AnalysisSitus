@@ -116,11 +116,18 @@ public:
     return Handle(asiData_Partition<asiData_FaceNode>)::DownCast( this->Partition(Partition_GeomFace) );
   }
 
+  //! Accessor for a Partition instance dedicated to Face Norms Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_FaceNormsNode>) GetGeomFaceNormsPartition() const
+  {
+    return Handle(asiData_Partition<asiData_FaceNormsNode>)::DownCast( this->Partition(Partition_GeomFaceNorms) );
+  }
+
   //! Accessor for a Partition instance dedicated to Geometry Surface Nodes.
   //! \return requested Partition.
   Handle(asiData_Partition<asiData_SurfNode>) GetGeomSurfacePartition() const
   {
-    return Handle(asiData_Partition<asiData_SurfNode>)::DownCast( this->Partition(Partition_GeomSurface) );
+    return Handle(asiData_Partition<asiData_SurfNode>)::DownCast( this->Partition(Partition_GeomFaceSurf) );
   }
 
   //! Accessor for a Partition instance dedicated to Geometry Edge Nodes.
@@ -290,7 +297,8 @@ protected:
   //---------------------------------------------------------------------------
     Partition_GeomPart,
     Partition_GeomFace,
-    Partition_GeomSurface,
+    Partition_GeomFaceNorms,
+    Partition_GeomFaceSurf,
     Partition_GeomEdge,
     Partition_GeomCurve,
     Partition_GeomBoundaryEdges,

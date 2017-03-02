@@ -1,35 +1,33 @@
 //-----------------------------------------------------------------------------
-// Created on: 08 December 2016
+// Created on: 02 March 2017
 // Created by: Quaoar
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_RENormalsDataProvider_h
-#define asiVisu_RENormalsDataProvider_h
+#ifndef asiVisu_FaceNormalsDataProvider_h
+#define asiVisu_FaceNormalsDataProvider_h
 
 // asiVisu includes
 #include <asiVisu_VectorsDataProvider.h>
 
 // asiData includes
-#include <asiData_RENormalsNode.h>
-#include <asiData_REPointsNode.h>
+#include <asiData_PartNode.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_RENormalsDataProvider, asiVisu_VectorsDataProvider)
+DEFINE_STANDARD_HANDLE(asiVisu_FaceNormalsDataProvider, asiVisu_VectorsDataProvider)
 
-//! Data provider for re-engineering normals.
-class asiVisu_RENormalsDataProvider : public asiVisu_VectorsDataProvider
+//! Data provider for b-rep face normals.
+class asiVisu_FaceNormalsDataProvider : public asiVisu_VectorsDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_RENormalsDataProvider, asiVisu_VectorsDataProvider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FaceNormalsDataProvider, asiVisu_VectorsDataProvider)
 
 public:
 
   asiVisu_EXPORT
-    asiVisu_RENormalsDataProvider(const Handle(asiData_REPointsNode)&  pointsNode,
-                                  const Handle(asiData_RENormalsNode)& normalsNode);
+    asiVisu_FaceNormalsDataProvider(const Handle(asiData_FaceNormsNode)& faceNode);
 
 public:
 
@@ -42,6 +40,11 @@ public:
   asiVisu_EXPORT virtual double
     GetMaxVectorModulus() const;
 
+public:
+
+  asiVisu_EXPORT TopoDS_Face
+    GetFace() const;
+
 private:
 
   virtual Handle(ActAPI_HParameterList)
@@ -49,7 +52,9 @@ private:
 
 protected:
 
-  Handle(ActAPI_INode) m_vectors; //!< Vectors Node.
+  Handle(asiData_PartNode)          m_partNode; //!< Owning part Node.
+  Handle(asiAlgo_PointCloud<float>) m_points;   //!< Cached points.
+  Handle(asiAlgo_PointCloud<float>) m_vectors;  //!< Cached vectors.
 
 };
 

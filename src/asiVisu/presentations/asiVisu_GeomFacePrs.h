@@ -8,11 +8,11 @@
 #ifndef asiVisu_GeomFacePrs_h
 #define asiVisu_GeomFacePrs_h
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_Prs.h>
 #include <asiVisu_Utils.h>
 
-// A-Situs (geometry) includes
+// asiData includes
 #include <asiData_PartNode.h>
 
 // VTK includes
@@ -20,7 +20,7 @@
 
 DEFINE_STANDARD_HANDLE(asiVisu_GeomFacePrs, asiVisu_Prs)
 
-//! Presentation class for b-rep face.
+//! Presentation class for a B-Rep face.
 class asiVisu_GeomFacePrs : public asiVisu_Prs
 {
 public:
@@ -36,7 +36,7 @@ public:
   //! Pipelines.
   enum PipelineId
   {
-    Pipeline_Main = 1
+    Pipeline_Main = 1, //!< Face geometry.
   };
 
 public:

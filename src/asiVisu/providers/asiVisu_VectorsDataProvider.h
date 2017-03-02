@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_NormalsDataProvider_h
-#define asiVisu_NormalsDataProvider_h
+#ifndef asiVisu_VectorsDataProvider_h
+#define asiVisu_VectorsDataProvider_h
 
 // asiVisu includes
 #include <asiVisu_DataProvider.h>
@@ -14,21 +14,20 @@
 // asiAlgo includes
 #include <asiAlgo_PointCloud.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_NormalsDataProvider, asiVisu_DataProvider)
+DEFINE_STANDARD_HANDLE(asiVisu_VectorsDataProvider, asiVisu_DataProvider)
 
-//! Data provider for a normal field.
-class asiVisu_NormalsDataProvider : public asiVisu_DataProvider
+//! Data provider for a vector field.
+class asiVisu_VectorsDataProvider : public asiVisu_DataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_NormalsDataProvider, asiVisu_DataProvider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_VectorsDataProvider, asiVisu_DataProvider)
 
 public:
 
   asiVisu_EXPORT
-    asiVisu_NormalsDataProvider(const Handle(ActAPI_INode)& pointsNode,
-                                const Handle(ActAPI_INode)& normalsNode);
+    asiVisu_VectorsDataProvider(const Handle(ActAPI_INode)& N);
 
 public:
 
@@ -38,18 +37,17 @@ public:
 public:
 
   virtual Handle(asiAlgo_PointCloud<float>)
-    GetPointsf() const = 0;
+    GetPointsf() = 0;
 
   virtual Handle(asiAlgo_PointCloud<float>)
-    GetNormalsf() const = 0;
+    GetVectorsf() = 0;
 
   virtual double
-    GetMaxNormModulus() const = 0;
+    GetMaxVectorModulus() const = 0;
 
 protected:
 
-  Handle(ActAPI_INode) m_points;  //!< Source Node for points.
-  Handle(ActAPI_INode) m_normals; //!< Source Node for normals.
+  Handle(ActAPI_INode) m_source; //!< Source Node.
 
 };
 

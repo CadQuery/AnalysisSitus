@@ -137,7 +137,7 @@
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_Pipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_PointsPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_REContoursPipeline.h" />
-    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_RENormalsPipeline.h" />
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_VectorsPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_RESurfacesPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_SectionsPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_ShadedSurfacePipeline.h" />
@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_GeomContourPrs.h" />
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_GeomCurvePrs.h" />
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_GeomEdgePrs.h" />
+    <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_GeomFaceNormsPrs.h" />
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_GeomFacePrs.h" />
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_GeomPrs.h" />
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_GeomSurfPrs.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_REContoursPrs.h" />
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_RENormalsPrs.h" />
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_REPointsPrs.h" />
+    <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_RESegmentPrs.h" />
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_RESurfacesPrs.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_ContourDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_ContourPointsDataProvider.h" />
@@ -173,17 +175,19 @@
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_DataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_EdgeDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_FaceDataProvider.h" />
+    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_FaceNormalsDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_IVCurveDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_IVPointSet2dDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_IVPointSetDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_IVSurfaceDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_LawDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_MeshDataProvider.h" />
-    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_NormalsDataProvider.h" />
+    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_VectorsDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_PointsDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_REContoursDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_RENormalsDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_REPointsDataProvider.h" />
+    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_RESegmentDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_RESurfacesDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_ShapeDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick.h" />
@@ -232,7 +236,7 @@
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_Pipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PointsPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_REContoursPipeline.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_RENormalsPipeline.cpp">
+    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_VectorsPipeline.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_RESurfacesPipeline.cpp" />
@@ -245,6 +249,7 @@
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_GeomContourPrs.cpp" />
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_GeomCurvePrs.cpp" />
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_GeomEdgePrs.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_GeomFaceNormsPrs.cpp" />
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_GeomFacePrs.cpp" />
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_GeomPrs.cpp" />
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_GeomSurfPrs.cpp" />
@@ -262,6 +267,7 @@
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_REContoursPrs.cpp" />
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_RENormalsPrs.cpp" />
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_REPointsPrs.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_RESegmentPrs.cpp" />
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_RESurfacesPrs.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_ContourDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_ContourPointsDataProvider.cpp" />
@@ -269,17 +275,19 @@
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_DataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_EdgeDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_FaceDataProvider.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_FaceNormalsDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_IVCurveDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_IVPointSet2dDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_IVPointSetDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_IVSurfaceDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_LawDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_MeshDataProvider.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_NormalsDataProvider.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_VectorsDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_PointsDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_REContoursDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_RENormalsDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_REPointsDataProvider.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_RESegmentDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_RESurfacesDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_ShapeDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick.cpp" />

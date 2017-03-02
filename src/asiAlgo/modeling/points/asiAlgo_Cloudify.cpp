@@ -94,27 +94,27 @@ bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape&                 model,
         uStop = true;
       }
 
-       double v = vMin;
-       bool vStop = false;
-       while ( !vStop )
-       {
-         if ( v > vMax )
-         {
-           v     = vMax;
-           vStop = true;
-         }
+      double v = vMin;
+      bool vStop = false;
+      while ( !vStop )
+      {
+        if ( v > vMax )
+        {
+          v     = vMax;
+          vStop = true;
+        }
 
-         // Perform point membership classification
-         asiAlgo_Membership pmc = classifier(gp_Pnt2d(u, v), NULL);
-         //
-         if ( pmc & Membership_InOn )
-         {
-           gp_Pnt P = bas.Value(u, v);
-           point_cloud->AddPoint( P.X(), P.Y(), P.Z() );
-         }
+        // Perform point membership classification
+        asiAlgo_Membership pmc = classifier(gp_Pnt2d(u, v), NULL);
+        //
+        if ( pmc & Membership_InOn )
+        {
+          gp_Pnt P = bas.Value(u, v);
+          point_cloud->AddPoint( P.X(), P.Y(), P.Z() );
+        }
 
-         v += vStep;
-       }
+        v += vStep;
+      }
 
       u += uStep;
     }

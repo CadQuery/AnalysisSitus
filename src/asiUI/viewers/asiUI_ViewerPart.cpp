@@ -254,6 +254,7 @@ void asiUI_ViewerPart::onSubShapesPicked()
       if ( picked_face_IDs.size() )
       {
         geom_n->GetFaceRepresentation()    ->SetSelectedFace(picked_face_IDs[0]);
+        geom_n->GetNormsRepresentation()   ->SetSelectedFace(picked_face_IDs[0]);
         geom_n->GetSurfaceRepresentation() ->SetSelectedFace(picked_face_IDs[0]);
         //
         std::cout << "Active face has been stored..." << std::endl;
@@ -261,6 +262,7 @@ void asiUI_ViewerPart::onSubShapesPicked()
       else // Reset stored indices
       {
         geom_n->GetFaceRepresentation()    ->SetSelectedFace(0);
+        geom_n->GetNormsRepresentation()   ->SetSelectedFace(0);
         geom_n->GetSurfaceRepresentation() ->SetSelectedFace(0);
         //
         std::cout << "Active face has been reset..." << std::endl;
@@ -272,7 +274,7 @@ void asiUI_ViewerPart::onSubShapesPicked()
     // Notify
     //-------------------------------------------------------------------------
 
-    emit facePicked();
+    emit facePicked(pick_res);
   }
   else if ( pick_res.IsSelectionEdge() )
   {
@@ -311,7 +313,7 @@ void asiUI_ViewerPart::onSubShapesPicked()
     // Notify
     //-------------------------------------------------------------------------
 
-    emit edgePicked();
+    emit edgePicked(pick_res);
   }
 }
 

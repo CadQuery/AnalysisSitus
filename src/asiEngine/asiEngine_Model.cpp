@@ -32,6 +32,7 @@ REGISTER_NODE_TYPE(asiData_RootNode)
 //
 REGISTER_NODE_TYPE(asiData_PartNode)
 REGISTER_NODE_TYPE(asiData_FaceNode)
+REGISTER_NODE_TYPE(asiData_FaceNormsNode)
 REGISTER_NODE_TYPE(asiData_SurfNode)
 REGISTER_NODE_TYPE(asiData_EdgeNode)
 REGISTER_NODE_TYPE(asiData_CurveNode)
@@ -128,6 +129,7 @@ void asiEngine_Model::Clear()
   {
     // Clean up persistent selection
     this->GetPartNode()->GetFaceRepresentation()    ->SetSelectedFace(0);
+    this->GetPartNode()->GetNormsRepresentation()   ->SetSelectedFace(0);
     this->GetPartNode()->GetSurfaceRepresentation() ->SetSelectedFace(0);
     this->GetPartNode()->GetEdgeRepresentation()    ->SetSelectedEdge(0);
     this->GetPartNode()->GetCurveRepresentation()   ->SetSelectedEdge(0);
@@ -178,7 +180,8 @@ void asiEngine_Model::initPartitions()
   //
   REGISTER_PARTITION(asiData_Partition<asiData_PartNode>,          Partition_GeomPart);
   REGISTER_PARTITION(asiData_Partition<asiData_FaceNode>,          Partition_GeomFace);
-  REGISTER_PARTITION(asiData_Partition<asiData_SurfNode>,          Partition_GeomSurface);
+  REGISTER_PARTITION(asiData_Partition<asiData_FaceNormsNode>,     Partition_GeomFaceNorms);
+  REGISTER_PARTITION(asiData_Partition<asiData_SurfNode>,          Partition_GeomFaceSurf);
   REGISTER_PARTITION(asiData_Partition<asiData_EdgeNode>,          Partition_GeomEdge);
   REGISTER_PARTITION(asiData_Partition<asiData_CurveNode>,         Partition_GeomCurve);
   REGISTER_PARTITION(asiData_Partition<asiData_BoundaryEdgesNode>, Partition_GeomBoundaryEdges);

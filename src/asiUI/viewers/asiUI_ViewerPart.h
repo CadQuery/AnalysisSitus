@@ -63,8 +63,8 @@ public slots:
 
 signals:
 
-  void facePicked();
-  void edgePicked();
+  void facePicked(const asiVisu_PickResult&);
+  void edgePicked(const asiVisu_PickResult&);
   void contextMenu(const QPoint&);
 
 protected:

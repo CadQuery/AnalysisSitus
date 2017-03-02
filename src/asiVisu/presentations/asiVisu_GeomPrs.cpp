@@ -390,6 +390,7 @@ void asiVisu_GeomPrs::highlight(vtkRenderer*                   theRenderer,
   else
     hili_dp = Handle(asiVisu_ShapeDataProvider)::DownCast( this->dataProviderDetect() );
 
+  // For edges, we have to switch to a wireframe mode
   if ( thePickRes.IsSelectionEdge() )
     hili_pl->WireframeModeOn();
   else

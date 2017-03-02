@@ -6,24 +6,21 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_NormalsDataProvider.h>
+#include <asiVisu_VectorsDataProvider.h>
 
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-//! \param pointsNode  [in] source points Node.
-//! \param normalsNode [in] source normals Node.
-asiVisu_NormalsDataProvider::asiVisu_NormalsDataProvider(const Handle(ActAPI_INode)& pointsNode,
-                                                         const Handle(ActAPI_INode)& normalsNode)
+//! \param N [in] source Node.
+asiVisu_VectorsDataProvider::asiVisu_VectorsDataProvider(const Handle(ActAPI_INode)& N)
 : asiVisu_DataProvider (),
-  m_points             (pointsNode),
-  m_normals            (normalsNode)
+  m_source             (N)
 {}
 
 //-----------------------------------------------------------------------------
 
 //! \return ID of the associated Data Node.
-ActAPI_DataObjectId asiVisu_NormalsDataProvider::GetNodeID() const
+ActAPI_DataObjectId asiVisu_VectorsDataProvider::GetNodeID() const
 {
-  return m_normals->GetId();
+  return m_source->GetId();
 }

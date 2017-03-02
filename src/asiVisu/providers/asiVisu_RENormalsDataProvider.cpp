@@ -15,16 +15,18 @@
 //! \param normalsNode [in] normals Node.
 asiVisu_RENormalsDataProvider::asiVisu_RENormalsDataProvider(const Handle(asiData_REPointsNode)&  pointsNode,
                                                              const Handle(asiData_RENormalsNode)& normalsNode)
-: asiVisu_NormalsDataProvider(pointsNode, normalsNode)
-{}
+: asiVisu_VectorsDataProvider(pointsNode)
+{
+  m_vectors = normalsNode;
+}
 
 //-----------------------------------------------------------------------------
 
 //! \return points where normals are located.
-Handle(asiAlgo_PointCloud<float>) asiVisu_RENormalsDataProvider::GetPointsf() const
+Handle(asiAlgo_PointCloud<float>) asiVisu_RENormalsDataProvider::GetPointsf()
 {
   Handle(asiData_REPointsNode)
-    points_n = Handle(asiData_REPointsNode)::DownCast(m_points);
+    points_n = Handle(asiData_REPointsNode)::DownCast(m_source);
   //
   if ( points_n.IsNull() || !points_n->IsWellFormed() )
     return NULL;
@@ -35,10 +37,10 @@ Handle(asiAlgo_PointCloud<float>) asiVisu_RENormalsDataProvider::GetPointsf() co
 //-----------------------------------------------------------------------------
 
 //! \return normals to visualize.
-Handle(asiAlgo_PointCloud<float>) asiVisu_RENormalsDataProvider::GetNormalsf() const
+Handle(asiAlgo_PointCloud<float>) asiVisu_RENormalsDataProvider::GetVectorsf()
 {
   Handle(asiData_RENormalsNode)
-    normals_n = Handle(asiData_RENormalsNode)::DownCast(m_normals);
+    normals_n = Handle(asiData_RENormalsNode)::DownCast(m_vectors);
   //
   if ( normals_n.IsNull() || !normals_n->IsWellFormed() )
     return NULL;
@@ -57,7 +59,7 @@ Handle(ActAPI_HParameterList) asiVisu_RENormalsDataProvider::translationSources(
   ActParamStream out;
 
   Handle(asiData_RENormalsNode)
-    normals_n = Handle(asiData_RENormalsNode)::DownCast(m_normals);
+    normals_n = Handle(asiData_RENormalsNode)::DownCast(m_vectors);
   //
   if ( normals_n.IsNull() || !normals_n->IsWellFormed() )
     return out;
@@ -71,7 +73,7 @@ Handle(ActAPI_HParameterList) asiVisu_RENormalsDataProvider::translationSources(
 //-----------------------------------------------------------------------------
 
 //! \return max modulus for a normal.
-double asiVisu_RENormalsDataProvider::GetMaxNormModulus() const
+double asiVisu_RENormalsDataProvider::GetMaxVectorModulus() const
 {
   return 10.0;
 }

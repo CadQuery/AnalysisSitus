@@ -13,6 +13,9 @@
 #include <asiUI_ViewerPart.h>
 #include <asiUI_ViewerSurface.h>
 
+// Active Data includes
+#include <ActAPI_IPlotter.h>
+
 // Qt includes
 #include <QObject>
 
@@ -27,7 +30,8 @@ public:
     asiUI_ViewerPartListener(asiUI_ViewerPart*              wViewerPart,
                              asiUI_ViewerDomain*            wViewerDomain,
                              asiUI_ViewerSurface*           wViewerSurface,
-                             const Handle(asiEngine_Model)& model);
+                             const Handle(asiEngine_Model)& model,
+                             ActAPI_PlotterEntry            plotter);
 
   asiUI_EXPORT virtual
     ~asiUI_ViewerPartListener();
@@ -40,10 +44,10 @@ public:
 protected slots:
 
   asiUI_EXPORT void
-    onFacePicked();
+    onFacePicked(const asiVisu_PickResult& pickRes);
 
   asiUI_EXPORT void
-    onEdgePicked();
+    onEdgePicked(const asiVisu_PickResult& pickRes);
 
   asiUI_EXPORT void
     onContextMenu(const QPoint&);
@@ -54,6 +58,7 @@ protected:
   asiUI_ViewerDomain*     m_wViewerDomain;  //!< Face domain viewer.
   asiUI_ViewerSurface*    m_wViewerSurface; //!< Surface viewer.
   Handle(asiEngine_Model) m_model;          //!< Data Model instance.
+  ActAPI_PlotterEntry     m_plotter;        //!< Imperative plotter.
 
 };
 

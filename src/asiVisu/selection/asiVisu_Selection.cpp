@@ -15,36 +15,36 @@
 //-----------------------------------------------------------------------------
 
 //! Default constructor.
-//! \param theSelModes [in] selection mode the picking results are related to.
-asiVisu_PickResult::asiVisu_PickResult(const int theSelModes)
+//! \param selModes [in] selection mode the picking results are related to.
+asiVisu_PickResult::asiVisu_PickResult(const int selModes)
 {
   m_prevActor = NULL;
-  m_iSelModes = theSelModes;
+  m_iSelModes = selModes;
+  m_pickPos[0] = m_pickPos[1] = m_pickPos[2] = 0.0;
 }
 
 //! Destructor.
 asiVisu_PickResult::~asiVisu_PickResult()
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 
-//! Streaming operator for VTK actors. Allows you to record new picking
+//! Initializer for VTK actors. Allows you to record new picking
 //! result for the new actor.
-//! \param theActor [in] actor to register in the collection of results.
+//! \param actor [in] actor to register in the collection of results.
 //! \return this for subsequent streaming.
 asiVisu_PickResult&
-  asiVisu_PickResult::operator<<(const vtkSmartPointer<vtkActor>& theActor)
+  asiVisu_PickResult::operator<<(const vtkSmartPointer<vtkActor>& actor)
 {
-  m_prevActor = theActor;
+  m_prevActor = actor;
   return *this;
 }
 
-//! Streaming operator for actor's element IDs. You have to register the parent
+//! Initializer for actor's element IDs. You have to register the parent
 //! actor before invocation of this method.
-//! \param theElemID [in] actor's element ID.
+//! \param elemID [in] actor's element ID.
 //! \return this for subsequent streaming.
-asiVisu_PickResult& asiVisu_PickResult::operator<<(const vtkIdType theElemID)
+asiVisu_PickResult& asiVisu_PickResult::operator<<(const vtkIdType elemID)
 {
   if ( m_prevActor == NULL )
     Standard_ProgramError::Raise("Invalid streaming order");
@@ -53,7 +53,7 @@ asiVisu_PickResult& asiVisu_PickResult::operator<<(const vtkIdType theElemID)
     m_pickMap.Bind( m_prevActor, TColStd_PackedMapOfInteger() );
 
   TColStd_PackedMapOfInteger& aCellMask = m_pickMap.ChangeFind(m_prevActor);
-  int aComingID = (int) theElemID;
+  int aComingID = (int) elemID;
 
   // If such ID is already there, we exclude it. This behavior express
   // XOR principle of multiple selection
@@ -65,11 +65,11 @@ asiVisu_PickResult& asiVisu_PickResult::operator<<(const vtkIdType theElemID)
   return *this;
 }
 
-//! Streaming operator for actor's element IDs. You have to register the parent
+//! Initializer for actor's element IDs. You have to register the parent
 //! actor before invocation of this method.
-//! \param theElemMask [in] actor's element mask.
+//! \param elemMask [in] actor's element mask.
 //! \return this for subsequent streaming.
-asiVisu_PickResult& asiVisu_PickResult::operator<<(const TColStd_PackedMapOfInteger& theElemMask)
+asiVisu_PickResult& asiVisu_PickResult::operator<<(const TColStd_PackedMapOfInteger& elemMask)
 {
   if ( m_prevActor == NULL )
     Standard_ProgramError::Raise("Invalid streaming order");
@@ -77,7 +77,7 @@ asiVisu_PickResult& asiVisu_PickResult::operator<<(const TColStd_PackedMapOfInte
   if ( !m_pickMap.IsBound(m_prevActor) )
     m_pickMap.UnBind(m_prevActor);
 
-  m_pickMap.Bind(m_prevActor, theElemMask);
+  m_pickMap.Bind(m_prevActor, elemMask);
 
   return *this;
 }
@@ -85,10 +85,32 @@ asiVisu_PickResult& asiVisu_PickResult::operator<<(const TColStd_PackedMapOfInte
 //-----------------------------------------------------------------------------
 
 //! Setter for selection modes.
-//! \param theSelModes [in] selection modes to set.
-void asiVisu_PickResult::SetSelectionModes(const int theSelModes)
+//! \param selModes [in] selection modes to set.
+void asiVisu_PickResult::SetSelectionModes(const int selModes)
 {
-  m_iSelModes = theSelModes;
+  m_iSelModes = selModes;
+}
+
+//! Sets picked position.
+//! \param x [in] x coordinate.
+//! \param y [in] y coordinate.
+//! \param z [in] z coordinate.
+void asiVisu_PickResult::SetPickedPos(const double x, const double y, const double z)
+{
+  m_pickPos[0] = x;
+  m_pickPos[1] = y;
+  m_pickPos[2] = z;
+}
+
+//! Returns picked position.
+//! \param x [out] x coordinate.
+//! \param y [out] y coordinate.
+//! \param z [out] z coordinate.
+void asiVisu_PickResult::GetPickedPos(double& x, double& y, double& z) const
+{
+  x = m_pickPos[0];
+  y = m_pickPos[1];
+  z = m_pickPos[2];
 }
 
 //! \return last picked actor.
@@ -134,18 +156,18 @@ bool asiVisu_PickResult::IsEmpty() const
 }
 
 //! Checks whether the active selection mode covers the passed one.
-//! \param theMode [in] selection mode to check.
-bool asiVisu_PickResult::DoesSelectionCover(const int theMode) const
+//! \param mode [in] selection mode to check.
+bool asiVisu_PickResult::DoesSelectionCover(const int mode) const
 {
-  return ( (m_iSelModes ^ theMode) | m_iSelModes ) == m_iSelModes;
+  return ( (m_iSelModes ^ mode) | m_iSelModes ) == m_iSelModes;
 }
 
 //! Checks whether the active selection mode is exclusive and equal to
 //! the passed one.
-//! \param theMode [in] selection mode to compare the current one with.
-bool asiVisu_PickResult::IsSelectionEqual(const int theMode) const
+//! \param mode [in] selection mode to compare the current one with.
+bool asiVisu_PickResult::IsSelectionEqual(const int mode) const
 {
-  return m_iSelModes == theMode;
+  return m_iSelModes == mode;
 }
 
 //! Returns true if the associated selection mode corresponds to

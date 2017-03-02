@@ -1,78 +1,53 @@
 //-----------------------------------------------------------------------------
-// Created on: 28 November 2015
+// Created on: 01 March 2017
 // Created by: Quaoar
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_GeomPrs_h
-#define asiVisu_GeomPrs_h
+#ifndef asiVisu_RESegmentPrs_h
+#define asiVisu_RESegmentPrs_h
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_Prs.h>
 #include <asiVisu_Utils.h>
 
-// A-Situs (geometry) includes
-#include <asiData_PartNode.h>
+// asiData includes
+#include <asiData_RESegmentNode.h>
 
-// Qt includes
-#include <QColor>
+DEFINE_STANDARD_HANDLE(asiVisu_RESegmentPrs, asiVisu_Prs)
 
-// VTK includes
-#include <vtkActor.h>
-
-DEFINE_STANDARD_HANDLE(asiVisu_GeomPrs, asiVisu_Prs)
-
-//! Presentation class for b-rep geometry.
-class asiVisu_GeomPrs : public asiVisu_Prs
+//! Presentation class for a segment of re-engineering point cloud.
+class asiVisu_RESegmentPrs : public asiVisu_Prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_GeomPrs, asiVisu_Prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_RESegmentPrs, asiVisu_Prs)
 
   // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(asiData_PartNode, Instance)
+  DEFINE_PRESENTATION_FACTORY(asiData_RESegmentNode, Instance)
 
 public:
 
   //! Pipelines.
   enum PipelineId
   {
-    Pipeline_Main = 1,
-    Pipeline_Contour,
-    Pipeline_Robust
+    Pipeline_Main = 1
   };
 
 public:
 
   asiVisu_EXPORT static Handle(asiVisu_Prs)
-    Instance(const Handle(ActAPI_INode)& theNode);
+    Instance(const Handle(ActAPI_INode)& N);
 
   asiVisu_EXPORT virtual bool
     IsVisible() const;
 
-// Visualization commands:
-public:
-
-  asiVisu_EXPORT void DoShading() const;
-  asiVisu_EXPORT void DoWireframe() const;
-  asiVisu_EXPORT void DoColor(const QColor& theColor) const;
-  asiVisu_EXPORT void DoUnColor() const;
-  asiVisu_EXPORT void DoVertices(const bool on) const;
-  asiVisu_EXPORT void DoRobust(const bool on) const;
-
-public:
-
-  vtkActor* MainActor() const
-  {
-    return this->GetPipeline(Pipeline_Main)->Actor();
-  }
-
 private:
 
   //! Allocation is allowed only via Instance method.
-  asiVisu_GeomPrs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_RESegmentPrs(const Handle(ActAPI_INode)& N);
 
 // Callbacks:
 private:

@@ -1,39 +1,35 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 April 2016
+// Created on: 02 March 2017
 // Created by: Quaoar
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_REPointsNode_h
-#define asiData_REPointsNode_h
+#ifndef asiData_FaceNormsNode_h
+#define asiData_FaceNormsNode_h
 
-// asiData includes
-#include <asiData_RENormalsNode.h>
-#include <asiData_RESegmentsNode.h>
-
-// asiAlgo includes
-#include <asiAlgo_PointCloud.h>
+// A-Situs includes
+#include <asiData.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
 
 //-----------------------------------------------------------------------------
-// Points for Reverse Engineering
+// Face normal vectors
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_REPointsNode, ActData_BaseNode)
+DEFINE_STANDARD_HANDLE(asiData_FaceNormsNode, ActData_BaseNode)
 
-//! Node representing a point cloud for reverse engineering.
-class asiData_REPointsNode : public ActData_BaseNode
+//! Node representing normal vectors of a b-rep face.
+class asiData_FaceNormsNode : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_REPointsNode, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_FaceNormsNode, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_REPointsNode, Instance)
+  DEFINE_NODE_FACTORY(asiData_FaceNormsNode, Instance)
 
 public:
 
@@ -45,7 +41,9 @@ public:
   //------------------//
     PID_Name,         //!< Name of the Node.
   //------------------//
-    PID_Points,       //!< Point cloud (array of coordinates).
+  // Geometry         //
+  //------------------//
+    PID_SelectedFace, //!< ID of the selected face.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -55,12 +53,6 @@ public:
   asiData_EXPORT static Handle(ActAPI_INode)
     Instance();
 
-// Initialization:
-public:
-
-  asiData_EXPORT void
-    Init();
-
 // Generic naming support:
 public:
 
@@ -68,42 +60,28 @@ public:
     GetName();
 
   asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& theName);
+    SetName(const TCollection_ExtendedString& name);
 
 // Handy accessors to the stored data:
 public:
 
-  asiData_EXPORT gp_Pnt
-    GetPoint(const int zeroBasedIndex) const;
+  asiData_EXPORT void
+    SetSelectedFace(const int faceId);
 
-  asiData_EXPORT Handle(asiAlgo_PointCloud<double>)
-    GetPoints() const;
+  asiData_EXPORT int
+    GetSelectedFace() const;
 
-  asiData_EXPORT Handle(asiAlgo_PointCloud<float>)
-    GetPointsf() const;
+// Initialization:
+public:
 
   asiData_EXPORT void
-    SetPoints(const Handle(asiAlgo_PointCloud<double>)& points);
-
-  asiData_EXPORT Handle(asiData_RENormalsNode)
-    GetNormals();
-
-  asiData_EXPORT Handle(asiData_RESegmentsNode)
-    GetSegments();
+    Init();
 
 protected:
 
   //! Allocation is allowed only via Instance method.
   asiData_EXPORT
-    asiData_REPointsNode();
-
-protected:
-
-  enum Child
-  {
-    Child_Normals = 1,
-    Child_Segments
-  };
+    asiData_FaceNormsNode();
 
 };
 

@@ -177,6 +177,21 @@ Handle(asiData_FaceNode) asiData_PartNode::GetFaceRepresentation() const
   return NULL;
 }
 
+//! \return underlying normal vectors representation Node.
+Handle(asiData_FaceNormsNode) asiData_PartNode::GetNormsRepresentation() const
+{
+  Handle(asiData_FaceNormsNode) norms_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    norms_n = Handle(asiData_FaceNormsNode)::DownCast( cit->Value() );
+
+    if ( !norms_n.IsNull() && norms_n->IsWellFormed() )
+      return norms_n;
+  }
+
+  return NULL;
+}
+
 //! \return underlying surface representation Node.
 Handle(asiData_SurfNode) asiData_PartNode::GetSurfaceRepresentation() const
 {

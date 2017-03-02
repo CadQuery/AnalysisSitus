@@ -115,7 +115,7 @@ void asiData_REPointsNode::SetPoints(const Handle(asiAlgo_PointCloud<double>)& p
   ActParamTool::AsRealArray( this->Parameter(PID_Points) )->SetArray(coords);
 }
 
-//! \return underlying normals.
+//! \return underlying normals Node.
 Handle(asiData_RENormalsNode) asiData_REPointsNode::GetNormals()
 {
   Handle(asiData_RENormalsNode)
@@ -123,6 +123,18 @@ Handle(asiData_RENormalsNode) asiData_REPointsNode::GetNormals()
   //
   if ( !normal_n.IsNull() && normal_n->IsWellFormed() )
     return normal_n;
+  //
+  return NULL;
+}
+
+//! \return underlying segments Node.
+Handle(asiData_RESegmentsNode) asiData_REPointsNode::GetSegments()
+{
+  Handle(asiData_RESegmentsNode)
+    segments_n = Handle(asiData_RESegmentsNode)::DownCast( this->GetChildNode(Child_Segments) );
+  //
+  if ( !segments_n.IsNull() && segments_n->IsWellFormed() )
+    return segments_n;
   //
   return NULL;
 }

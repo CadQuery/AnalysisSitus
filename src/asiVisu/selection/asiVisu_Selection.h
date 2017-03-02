@@ -120,7 +120,7 @@ class asiVisu_PickResult
 public:
 
   asiVisu_EXPORT
-    asiVisu_PickResult(const int theSelModes = SelectionMode_None);
+    asiVisu_PickResult(const int selModes = SelectionMode_None);
 
   asiVisu_EXPORT
     ~asiVisu_PickResult();
@@ -128,20 +128,26 @@ public:
 public:
 
   asiVisu_EXPORT asiVisu_PickResult&
-    operator<<(const vtkSmartPointer<vtkActor>& theActor);
+    operator<<(const vtkSmartPointer<vtkActor>& actor);
 
   asiVisu_EXPORT asiVisu_PickResult&
-    operator<<(const vtkIdType theElemID);
+    operator<<(const vtkIdType elemID);
 
   asiVisu_EXPORT asiVisu_PickResult&
-    operator<<(const TColStd_PackedMapOfInteger& theElemMask);
+    operator<<(const TColStd_PackedMapOfInteger& elemMask);
 
 public:
 
   asiVisu_EXPORT void
-    SetSelectionModes(const int theSelModes);
+    SetSelectionModes(const int selModes);
 
 public:
+
+  asiVisu_EXPORT void
+    SetPickedPos(const double x, const double y, const double z);
+
+  asiVisu_EXPORT void
+    GetPickedPos(double& x, double& y, double& z) const;
 
   asiVisu_EXPORT const vtkSmartPointer<vtkActor>&
     GetLastPickedActor() const;
@@ -157,12 +163,12 @@ public:
 
   asiVisu_EXPORT bool
     IsEmpty() const;
-  
-  asiVisu_EXPORT bool
-    DoesSelectionCover(const int theMode) const;
 
   asiVisu_EXPORT bool
-    IsSelectionEqual(const int theMode) const;
+    DoesSelectionCover(const int mode) const;
+
+  asiVisu_EXPORT bool
+    IsSelectionEqual(const int mode) const;
 
   asiVisu_EXPORT bool
     IsSelectionNone() const;
@@ -192,6 +198,9 @@ private:
 
   //! Previously streamed actor.
   vtkSmartPointer<vtkActor> m_prevActor;
+
+  //! Picked position in world coordinates.
+  double m_pickPos[3];
 
 };
 

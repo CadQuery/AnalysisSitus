@@ -8,7 +8,7 @@
 #ifndef asiUI_h
 #define asiUI
 
-#define asiUI_NotUsed(x)
+#define asiUI_NotUsed(x) x
 
 #ifdef asiUI_EXPORTS
   #define asiUI_EXPORT __declspec(dllexport)

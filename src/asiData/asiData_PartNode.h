@@ -15,6 +15,7 @@
 #include <asiData_CurveNode.h>
 #include <asiData_EdgeNode.h>
 #include <asiData_FaceNode.h>
+#include <asiData_FaceNormsNode.h>
 #include <asiData_SurfNode.h>
 
 // Active Data includes
@@ -119,6 +120,9 @@ public:
 
   asiData_EXPORT Handle(asiData_FaceNode)
     GetFaceRepresentation() const;
+
+  asiData_EXPORT Handle(asiData_FaceNormsNode)
+    GetNormsRepresentation() const;
 
   asiData_EXPORT Handle(asiData_SurfNode)
     GetSurfaceRepresentation() const;

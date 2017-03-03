@@ -12,7 +12,7 @@
 #include <asiData.h>
 
 // asiAlgo includes
-#include <asiAlgo_PointCloud.h>
+#include <asiAlgo_BaseCloud.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
@@ -66,11 +66,11 @@ public:
 // Handy accessors to the stored data:
 public:
 
-  asiData_EXPORT Handle(asiAlgo_PointCloud<double>)
+  asiData_EXPORT Handle(asiAlgo_BaseCloud<double>)
     GetPoints() const;
 
   asiData_EXPORT void
-    SetPoints(const Handle(asiAlgo_PointCloud<double>)& pointCloud);
+    SetPoints(const Handle(asiAlgo_BaseCloud<double>)& pointCloud);
 
 // Initialization:
 public:

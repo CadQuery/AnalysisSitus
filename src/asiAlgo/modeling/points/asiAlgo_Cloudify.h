@@ -9,7 +9,7 @@
 #define asiAlgo_Cloudify_h
 
 // A-Situs includes
-#include <asiAlgo_PointCloud.h>
+#include <asiAlgo_BaseCloud.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
@@ -33,12 +33,12 @@ public:
 public:
 
   asiAlgo_EXPORT bool
-    Sample_Faces(const TopoDS_Shape&                 model,
-                 Handle(asiAlgo_PointCloud<double>)& point_cloud);
+    Sample_Faces(const TopoDS_Shape&                model,
+                 Handle(asiAlgo_BaseCloud<double>)& point_cloud);
 
   asiAlgo_EXPORT bool
-    Sample_Facets(const TopoDS_Shape&                 model,
-                  Handle(asiAlgo_PointCloud<double>)& point_cloud);
+    Sample_Facets(const TopoDS_Shape&                model,
+                  Handle(asiAlgo_BaseCloud<double>)& point_cloud);
 
 protected:
 

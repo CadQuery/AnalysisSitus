@@ -9,7 +9,7 @@
 #define asiAlgo_PlaneOnPoints_h
 
 // A-Situs includes
-#include <asiAlgo_PointCloud.h>
+#include <asiAlgo_BaseCloud.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>

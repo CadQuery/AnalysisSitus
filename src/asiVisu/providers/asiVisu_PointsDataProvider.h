@@ -12,7 +12,7 @@
 #include <asiVisu_DataProvider.h>
 
 // asiAlgo includes
-#include <asiAlgo_PointCloud.h>
+#include <asiAlgo_BaseCloud.h>
 
 DEFINE_STANDARD_HANDLE(asiVisu_PointsDataProvider, asiVisu_DataProvider)
 
@@ -36,7 +36,7 @@ public:
 
 public:
 
-  virtual Handle(asiAlgo_PointCloud<double>)
+  virtual Handle(asiAlgo_BaseCloud<double>)
     GetPoints() const = 0;
 
 protected:

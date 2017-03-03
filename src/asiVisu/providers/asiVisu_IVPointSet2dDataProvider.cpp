@@ -22,7 +22,7 @@ asiVisu_IVPointSet2dDataProvider::asiVisu_IVPointSet2dDataProvider(const Handle(
 //-----------------------------------------------------------------------------
 
 //! \return point cloud to visualize.
-Handle(asiAlgo_PointCloud<double>) asiVisu_IVPointSet2dDataProvider::GetPoints() const
+Handle(asiAlgo_BaseCloud<double>) asiVisu_IVPointSet2dDataProvider::GetPoints() const
 {
   Handle(asiData_IVPointSet2dNode)
     points_n = Handle(asiData_IVPointSet2dNode)::DownCast(m_node);

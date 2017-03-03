@@ -12,7 +12,7 @@
 #include <asiVisu_Utils.h>
 
 // asiAlgo includes
-#include <asiAlgo_PointCloud.h>
+#include <asiAlgo_BaseCloud.h>
 
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
@@ -32,7 +32,7 @@ public:
 // Kernel methods:
 public:
 
-  void SetInputPoints(const Handle(asiAlgo_PointCloud<REAL_TYPE>)& points);
+  void SetInputPoints(const Handle(asiAlgo_BaseCloud<REAL_TYPE>)& points);
 
 protected:
 
@@ -62,7 +62,7 @@ private:
 
 private:
 
-  Handle(asiAlgo_PointCloud<REAL_TYPE>) m_points; //!< Points to visualize.
+  Handle(asiAlgo_BaseCloud<REAL_TYPE>) m_points; //!< Points to visualize.
 
 };
 

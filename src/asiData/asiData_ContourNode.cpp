@@ -180,17 +180,17 @@ TopoDS_Wire asiData_ContourNode::AsShape(const bool useCache) const
 
   // If there is no any cached B-Rep, let's build a polyline from the
   // original points
-  Handle(asiAlgo_PointCloud<double>)
+  Handle(asiAlgo_BaseCloud<double>)
     points = asiAlgo_PointCloudUtils::AsPointCloud( this->GetCoords() );
   //
-  if ( !points->GetNumberOfPoints() )
+  if ( !points->GetNumberOfElements() )
     return TopoDS_Wire();
 
   double x0, y0, z0;
-  points->GetPoint(0, x0, y0, z0);
+  points->GetElement(0, x0, y0, z0);
   //
   TopoDS_Wire   result;
-  const int     nPts    = points->GetNumberOfPoints();
+  const int     nPts    = points->GetNumberOfElements();
   TopoDS_Vertex V_first = BRepBuilderAPI_MakeVertex( gp_Pnt(x0, y0, z0) );
   //
   if ( nPts == 1 )
@@ -212,7 +212,7 @@ TopoDS_Wire asiData_ContourNode::AsShape(const bool useCache) const
     for ( int p = 1; p < nPts; ++p )
     {
       double xp, yp, zp;
-      points->GetPoint(p, xp, yp, zp);
+      points->GetElement(p, xp, yp, zp);
       //
       TopoDS_Vertex V = BRepBuilderAPI_MakeVertex( gp_Pnt(xp, yp, zp) );
       TopoDS_Edge   E = BRepBuilderAPI_MakeEdge(V_prev, V);
@@ -247,13 +247,13 @@ void asiData_ContourNode::AsPointsOnFaces(TColgp_SequenceOfPnt&      points,
   Handle(HIntArray) faceIndices = this->GetFaces();
 
   // Get coordinates as point cloud
-  Handle(asiAlgo_PointCloud<double>) pcloud = asiAlgo_PointCloudUtils::AsPointCloud( this->GetCoords() );
-  const int                          nPts   = pcloud->GetNumberOfPoints();
+  Handle(asiAlgo_BaseCloud<double>) pcloud = asiAlgo_PointCloudUtils::AsPointCloud( this->GetCoords() );
+  const int                         nPts   = pcloud->GetNumberOfElements();
   //
   for ( int p = 0; p < nPts; ++p )
   {
     double xp, yp, zp;
-    pcloud->GetPoint(p, xp, yp, zp);
+    pcloud->GetElement(p, xp, yp, zp);
 
     points.Append( gp_Pnt(xp, yp, zp) );
     faces.Append( faceIndices->Value(p) );

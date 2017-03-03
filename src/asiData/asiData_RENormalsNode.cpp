@@ -77,8 +77,8 @@ gp_Vec asiData_RENormalsNode::GetNormal(const int zeroBasedIndex) const
                  coords->Value(coordIdx + 2) );
 }
 
-//! \return stored normals in form of point cloud.
-Handle(asiAlgo_PointCloud<double>) asiData_RENormalsNode::GetNormals() const
+//! \return stored normals in form of base cloud.
+Handle(asiAlgo_BaseCloud<double>) asiData_RENormalsNode::GetNormals() const
 {
   Handle(TColStd_HArray1OfReal)
     coords = ActParamTool::AsRealArray( this->Parameter(PID_Normals) )->GetArray();
@@ -91,7 +91,7 @@ Handle(asiAlgo_PointCloud<double>) asiData_RENormalsNode::GetNormals() const
 }
 
 //! \return stored normals with float coordinates.
-Handle(asiAlgo_PointCloud<float>) asiData_RENormalsNode::GetNormalsf() const
+Handle(asiAlgo_BaseCloud<float>) asiData_RENormalsNode::GetNormalsf() const
 {
   Handle(TColStd_HArray1OfReal)
     coords = ActParamTool::AsRealArray( this->Parameter(PID_Normals) )->GetArray();
@@ -104,24 +104,24 @@ Handle(asiAlgo_PointCloud<float>) asiData_RENormalsNode::GetNormalsf() const
 }
 
 //! Stores normals.
-//! \param points [in] normals to store.
-void asiData_RENormalsNode::SetNormals(const Handle(asiAlgo_PointCloud<double>)& points)
+//! \param normals [in] normals to store.
+void asiData_RENormalsNode::SetNormals(const Handle(asiAlgo_BaseCloud<double>)& normals)
 {
   // TODO: get rid of copying here
   Handle(TColStd_HArray1OfReal)
-    coords = points.IsNull() ? NULL : asiAlgo_PointCloudUtils::AsRealArray(points);
+    coords = normals.IsNull() ? NULL : asiAlgo_PointCloudUtils::AsRealArray(normals);
 
   // Store
   ActParamTool::AsRealArray( this->Parameter(PID_Normals) )->SetArray(coords);
 }
 
 //! Stores normals with float coordinates.
-//! \param points [in] normals to store.
-void asiData_RENormalsNode::SetNormalsf(const Handle(asiAlgo_PointCloud<float>)& points)
+//! \param normals [in] normals to store.
+void asiData_RENormalsNode::SetNormalsf(const Handle(asiAlgo_BaseCloud<float>)& normals)
 {
   // TODO: get rid of copying here
   Handle(TColStd_HArray1OfReal)
-    coords = points.IsNull() ? NULL : asiAlgo_PointCloudUtils::AsRealArray(points);
+    coords = normals.IsNull() ? NULL : asiAlgo_PointCloudUtils::AsRealArray(normals);
 
   // Store
   ActParamTool::AsRealArray( this->Parameter(PID_Normals) )->SetArray(coords);

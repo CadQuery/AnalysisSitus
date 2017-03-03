@@ -72,7 +72,7 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
   }
 
   // Skip execution if there are no vectors in the field
-  if ( m_normals.IsNull() || m_normals->GetNumberOfPoints() < 1 )
+  if ( m_normals.IsNull() || m_normals->GetNumberOfElements() < 1 )
   {
     m_fMaxScalar = m_fMinScalar = 0.0;
     vtkDebugMacro("No vectors to process");
@@ -122,7 +122,7 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
 
     // Access scalar value
     float nx, ny, nz;
-    m_normals->GetPoint( (int) cellId, nx, ny, nz );
+    m_normals->GetElement( (int) cellId, nx, ny, nz );
     asiVisu_VectorTuple aVecTuple(nx, ny, nz);
     this->adjustMinMax(aVecTuple);
 

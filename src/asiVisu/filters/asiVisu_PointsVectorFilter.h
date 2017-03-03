@@ -12,7 +12,7 @@
 #include <asiVisu_Common.h>
 
 // asiAlgo includes
-#include <asiAlgo_PointCloud.h>
+#include <asiAlgo_BaseCloud.h>
 
 // Active Data (auxiliary) includes
 #include <ActAux_Common.h>
@@ -37,8 +37,8 @@ public:
   //! Sets normals.
   //! \param normals    [in] normals to associate.
   //! \param maxModulus [in] max modulus of a normal vector.
-  void SetNormals(const Handle(asiAlgo_PointCloud<float>)& normals,
-                  const double                             maxModulus = 1.0)
+  void SetNormals(const Handle(asiAlgo_BaseCloud<float>)& normals,
+                  const double                            maxModulus = 1.0)
   {
     m_normals     = normals;
     m_fMaxModulus = maxModulus;
@@ -94,7 +94,7 @@ private:
   double m_fMaxModulus;
 
   //! Normal field.
-  Handle(asiAlgo_PointCloud<float>) m_normals;
+  Handle(asiAlgo_BaseCloud<float>) m_normals;
 
   //! Maximum scalar value obtained during the filtering process.
   double m_fMaxScalar;

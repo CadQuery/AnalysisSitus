@@ -78,7 +78,7 @@ gp_Pnt asiData_REPointsNode::GetPoint(const int zeroBasedIndex) const
 }
 
 //! \return stored point cloud.
-Handle(asiAlgo_PointCloud<double>) asiData_REPointsNode::GetPoints() const
+Handle(asiAlgo_BaseCloud<double>) asiData_REPointsNode::GetPoints() const
 {
   Handle(TColStd_HArray1OfReal)
     coords = ActParamTool::AsRealArray( this->Parameter(PID_Points) )->GetArray();
@@ -91,7 +91,7 @@ Handle(asiAlgo_PointCloud<double>) asiData_REPointsNode::GetPoints() const
 }
 
 //! \return stored point cloud with float coordinates.
-Handle(asiAlgo_PointCloud<float>) asiData_REPointsNode::GetPointsf() const
+Handle(asiAlgo_BaseCloud<float>) asiData_REPointsNode::GetPointsf() const
 {
   Handle(TColStd_HArray1OfReal)
     coords = ActParamTool::AsRealArray( this->Parameter(PID_Points) )->GetArray();
@@ -105,7 +105,7 @@ Handle(asiAlgo_PointCloud<float>) asiData_REPointsNode::GetPointsf() const
 
 //! Stores point cloud.
 //! \param points [in] point cloud to store.
-void asiData_REPointsNode::SetPoints(const Handle(asiAlgo_PointCloud<double>)& points)
+void asiData_REPointsNode::SetPoints(const Handle(asiAlgo_BaseCloud<double>)& points)
 {
   // TODO: get rid of copying here
   Handle(TColStd_HArray1OfReal)

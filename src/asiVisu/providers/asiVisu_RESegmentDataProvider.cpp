@@ -25,7 +25,7 @@ asiVisu_RESegmentDataProvider::asiVisu_RESegmentDataProvider(const Handle(asiDat
 //-----------------------------------------------------------------------------
 
 //! \return point cloud to visualize.
-Handle(asiAlgo_PointCloud<double>) asiVisu_RESegmentDataProvider::GetPoints() const
+Handle(asiAlgo_BaseCloud<double>) asiVisu_RESegmentDataProvider::GetPoints() const
 {
   Handle(asiData_RESegmentNode)
     segment_n = Handle(asiData_RESegmentNode)::DownCast(m_node);
@@ -40,21 +40,21 @@ Handle(asiAlgo_PointCloud<double>) asiVisu_RESegmentDataProvider::GetPoints() co
     return NULL;
 
   // Get the entire point cloud
-  Handle(ActAPI_INode)               points_base = segment_n->GetParentNode()  // Segments
-                                                            ->GetParentNode(); // Points
-  Handle(asiData_REPointsNode)       points_n    = Handle(asiData_REPointsNode)::DownCast(points_base);
-  Handle(asiAlgo_PointCloud<double>) universum   = points_n->GetPoints();
+  Handle(ActAPI_INode)              points_base = segment_n->GetParentNode()  // Segments
+                                                           ->GetParentNode(); // Points
+  Handle(asiData_REPointsNode)      points_n    = Handle(asiData_REPointsNode)::DownCast(points_base);
+  Handle(asiAlgo_BaseCloud<double>) universum   = points_n->GetPoints();
 
   // Points to visualize
-  Handle(asiAlgo_PointCloud<double>) result = new asiAlgo_PointCloud<double>;
+  Handle(asiAlgo_BaseCloud<double>) result  = new asiAlgo_BaseCloud<double>;
   const TColStd_PackedMapOfInteger& indices = hindices->Map();
   //
   for ( TColStd_MapIteratorOfPackedMapOfInteger it(indices); it.More(); it.Next() )
   {
     const int pidx = it.Key();
     double x, y, z;
-    universum->GetPoint(pidx, x, y, z);
-    result->AddPoint(x, y, z);
+    universum->GetElement(pidx, x, y, z);
+    result->AddElement(x, y, z);
   }
 
   return result;

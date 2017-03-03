@@ -12,7 +12,7 @@
 #include <asiVisu_DataProvider.h>
 
 // asiAlgo includes
-#include <asiAlgo_PointCloud.h>
+#include <asiAlgo_BaseCloud.h>
 
 DEFINE_STANDARD_HANDLE(asiVisu_VectorsDataProvider, asiVisu_DataProvider)
 
@@ -36,10 +36,10 @@ public:
 
 public:
 
-  virtual Handle(asiAlgo_PointCloud<float>)
+  virtual Handle(asiAlgo_BaseCloud<float>)
     GetPointsf() = 0;
 
-  virtual Handle(asiAlgo_PointCloud<float>)
+  virtual Handle(asiAlgo_BaseCloud<float>)
     GetVectorsf() = 0;
 
   virtual double

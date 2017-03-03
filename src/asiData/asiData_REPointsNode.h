@@ -13,7 +13,7 @@
 #include <asiData_RESegmentsNode.h>
 
 // asiAlgo includes
-#include <asiAlgo_PointCloud.h>
+#include <asiAlgo_BaseCloud.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
@@ -76,14 +76,14 @@ public:
   asiData_EXPORT gp_Pnt
     GetPoint(const int zeroBasedIndex) const;
 
-  asiData_EXPORT Handle(asiAlgo_PointCloud<double>)
+  asiData_EXPORT Handle(asiAlgo_BaseCloud<double>)
     GetPoints() const;
 
-  asiData_EXPORT Handle(asiAlgo_PointCloud<float>)
+  asiData_EXPORT Handle(asiAlgo_BaseCloud<float>)
     GetPointsf() const;
 
   asiData_EXPORT void
-    SetPoints(const Handle(asiAlgo_PointCloud<double>)& points);
+    SetPoints(const Handle(asiAlgo_BaseCloud<double>)& points);
 
   asiData_EXPORT Handle(asiData_RENormalsNode)
     GetNormals();

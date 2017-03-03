@@ -32,7 +32,7 @@ asiVisu_FaceNormalsDataProvider::asiVisu_FaceNormalsDataProvider(const Handle(as
 //-----------------------------------------------------------------------------
 
 //! \return points where normals are located.
-Handle(asiAlgo_PointCloud<float>) asiVisu_FaceNormalsDataProvider::GetPointsf()
+Handle(asiAlgo_BaseCloud<float>) asiVisu_FaceNormalsDataProvider::GetPointsf()
 {
   TopoDS_Face face = this->GetFace();
   //
@@ -40,8 +40,8 @@ Handle(asiAlgo_PointCloud<float>) asiVisu_FaceNormalsDataProvider::GetPointsf()
     return NULL;
 
   // Prepare a point cloud as a result
-  m_points  = new asiAlgo_PointCloud<float>;
-  m_vectors = new asiAlgo_PointCloud<float>;
+  m_points  = new asiAlgo_BaseCloud<float>;
+  m_vectors = new asiAlgo_BaseCloud<float>;
 
   // Take surface
   Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
@@ -87,8 +87,8 @@ Handle(asiAlgo_PointCloud<float>) asiVisu_FaceNormalsDataProvider::GetPointsf()
         surf->D1(u, v, P, D1U, D1V);
         gp_Vec N = (D1U^D1V).Normalized();
         //
-        m_points->AddPoint( (float) P.X(), (float) P.Y(), (float) P.Z() );
-        m_vectors->AddPoint( (float) N.X(), (float) N.Y(), (float) N.Z() );
+        m_points->AddElement( (float) P.X(), (float) P.Y(), (float) P.Z() );
+        m_vectors->AddElement( (float) N.X(), (float) N.Y(), (float) N.Z() );
       }
 
       v += vStep;
@@ -104,7 +104,7 @@ Handle(asiAlgo_PointCloud<float>) asiVisu_FaceNormalsDataProvider::GetPointsf()
 //-----------------------------------------------------------------------------
 
 //! \return normals to visualize.
-Handle(asiAlgo_PointCloud<float>) asiVisu_FaceNormalsDataProvider::GetVectorsf()
+Handle(asiAlgo_BaseCloud<float>) asiVisu_FaceNormalsDataProvider::GetVectorsf()
 {
   // Return cached vectors available after GetPointsf() invocation
   return m_vectors;

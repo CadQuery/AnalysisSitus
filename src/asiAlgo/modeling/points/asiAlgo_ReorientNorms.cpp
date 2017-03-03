@@ -25,12 +25,12 @@ asiAlgo_ReorientNorms::asiAlgo_ReorientNorms(ActAPI_ProgressEntry progress,
 //! \param input        [in]  input normal field.
 //! \param refNormIndex [in]  index of the reference normal.
 //! \param output       [out] output normal field.
-bool asiAlgo_ReorientNorms::Perform(const asiAlgo_PointCloud<float>& input,
-                                    const int                        refNormIndex,
-                                    asiAlgo_PointCloud<float>&       output)
+bool asiAlgo_ReorientNorms::Perform(const asiAlgo_BaseCloud<float>& input,
+                                    const int                       refNormIndex,
+                                    asiAlgo_BaseCloud<float>&       output)
 {
   float refx, refy, refz;
-  input.GetPoint(refNormIndex, refx, refy, refz);
+  input.GetElement(refNormIndex, refx, refy, refz);
   gp_Vec refNorm(refx, refy, refz);
 
   // Prepare a deep copy (TODO: this may be improved in future)

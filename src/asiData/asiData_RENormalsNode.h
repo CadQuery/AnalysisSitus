@@ -12,13 +12,13 @@
 #include <asiData.h>
 
 // asiAlgo includes
-#include <asiAlgo_PointCloud.h>
+#include <asiAlgo_BaseCloud.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
 
 //-----------------------------------------------------------------------------
-// Normals for Reverse Engineering
+// Normal vectors for Reverse Engineering
 //-----------------------------------------------------------------------------
 
 DEFINE_STANDARD_HANDLE(asiData_RENormalsNode, ActData_BaseNode)
@@ -44,7 +44,7 @@ public:
   //------------------//
     PID_Name,         //!< Name of the Node.
   //------------------//
-    PID_Normals,      //!< Normals (array of coordinates).
+    PID_Normals,      //!< Normal vectors (array of coordinates).
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -75,17 +75,17 @@ public:
   asiData_EXPORT gp_Vec
     GetNormal(const int zeroBasedIndex) const;
 
-  asiData_EXPORT Handle(asiAlgo_PointCloud<double>)
+  asiData_EXPORT Handle(asiAlgo_BaseCloud<double>)
     GetNormals() const;
 
-  asiData_EXPORT Handle(asiAlgo_PointCloud<float>)
+  asiData_EXPORT Handle(asiAlgo_BaseCloud<float>)
     GetNormalsf() const;
 
   asiData_EXPORT void
-    SetNormals(const Handle(asiAlgo_PointCloud<double>)& normals);
+    SetNormals(const Handle(asiAlgo_BaseCloud<double>)& normals);
 
   asiData_EXPORT void
-    SetNormalsf(const Handle(asiAlgo_PointCloud<float>)& normals);
+    SetNormalsf(const Handle(asiAlgo_BaseCloud<float>)& normals);
 
   asiData_EXPORT bool
     IsEmpty() const;

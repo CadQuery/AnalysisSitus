@@ -9,7 +9,7 @@
 #define asiAlgo_PointCloudUtils_h
 
 // A-Situs includes
-#include <asiAlgo_PointCloud.h>
+#include <asiAlgo_BaseCloud.h>
 
 //-----------------------------------------------------------------------------
 
@@ -17,15 +17,15 @@
 namespace asiAlgo_PointCloudUtils
 {
   asiAlgo_EXPORT Handle(TColStd_HArray1OfReal)
-    AsRealArray(const Handle(asiAlgo_PointCloud<double>)& pointCloud);
+    AsRealArray(const Handle(asiAlgo_BaseCloud<double>)& pointCloud);
 
   asiAlgo_EXPORT Handle(TColStd_HArray1OfReal)
-    AsRealArray(const Handle(asiAlgo_PointCloud<float>)& pointCloud);
+    AsRealArray(const Handle(asiAlgo_BaseCloud<float>)& pointCloud);
 
-  asiAlgo_EXPORT Handle(asiAlgo_PointCloud<double>)
+  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<double>)
     AsPointCloud(const Handle(TColStd_HArray1OfReal)& arr);
 
-  asiAlgo_EXPORT Handle(asiAlgo_PointCloud<float>)
+  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<float>)
     AsPointCloudf(const Handle(TColStd_HArray1OfReal)& arr);
 };
 

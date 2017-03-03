@@ -31,10 +31,10 @@ public:
 
 public:
 
-  asiVisu_EXPORT virtual Handle(asiAlgo_PointCloud<float>)
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<float>)
     GetPointsf();
 
-  asiVisu_EXPORT virtual Handle(asiAlgo_PointCloud<float>)
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<float>)
     GetVectorsf();
 
   asiVisu_EXPORT virtual double
@@ -52,9 +52,9 @@ private:
 
 protected:
 
-  Handle(asiData_PartNode)          m_partNode; //!< Owning part Node.
-  Handle(asiAlgo_PointCloud<float>) m_points;   //!< Cached points.
-  Handle(asiAlgo_PointCloud<float>) m_vectors;  //!< Cached vectors.
+  Handle(asiData_PartNode)         m_partNode; //!< Owning part Node.
+  Handle(asiAlgo_BaseCloud<float>) m_points;   //!< Cached points.
+  Handle(asiAlgo_BaseCloud<float>) m_vectors;  //!< Cached vectors.
 
 };
 

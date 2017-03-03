@@ -49,7 +49,7 @@ void asiVisu_IVPointSetPrs::afterInitPipelines()
   Handle(asiVisu_IVPointSetDataProvider)
     DP = Handle(asiVisu_IVPointSetDataProvider)::DownCast( this->dataProvider(Pipeline_Main) );
 
-  const int nPts = DP->GetPoints()->GetNumberOfPoints();
+  const int nPts = DP->GetPoints()->GetNumberOfElements();
 
   if ( nPts > 1 )
   {
@@ -67,7 +67,7 @@ void asiVisu_IVPointSetPrs::renderPipelines(vtkRenderer* theRenderer) const
   Handle(asiVisu_IVPointSetDataProvider)
     DP = Handle(asiVisu_IVPointSetDataProvider)::DownCast( this->dataProvider(Pipeline_Main) );
 
-  const int nPts = DP->GetPoints()->GetNumberOfPoints();
+  const int nPts = DP->GetPoints()->GetNumberOfElements();
   //
   if ( nPts > 1 )
   {

@@ -19,7 +19,7 @@ asiVisu_REPointsDataProvider::asiVisu_REPointsDataProvider(const Handle(asiData_
 //-----------------------------------------------------------------------------
 
 //! \return point cloud to visualize.
-Handle(asiAlgo_PointCloud<double>) asiVisu_REPointsDataProvider::GetPoints() const
+Handle(asiAlgo_BaseCloud<double>) asiVisu_REPointsDataProvider::GetPoints() const
 {
   Handle(asiData_REPointsNode)
     points_n = Handle(asiData_REPointsNode)::DownCast(m_node);

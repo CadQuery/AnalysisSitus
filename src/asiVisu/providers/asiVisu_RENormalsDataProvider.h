@@ -33,10 +33,10 @@ public:
 
 public:
 
-  asiVisu_EXPORT virtual Handle(asiAlgo_PointCloud<float>)
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<float>)
     GetPointsf();
 
-  asiVisu_EXPORT virtual Handle(asiAlgo_PointCloud<float>)
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<float>)
     GetVectorsf();
 
   asiVisu_EXPORT virtual double

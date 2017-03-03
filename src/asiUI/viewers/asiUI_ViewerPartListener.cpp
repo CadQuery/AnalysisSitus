@@ -12,6 +12,7 @@
 #include <asiUI_Common.h>
 
 // asiAlgo includes
+#include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
 // asiEngine includes
@@ -153,7 +154,13 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
   }
   else if ( selectedItem == pShowNormsAction )
   {
+    TIMER_NEW
+    TIMER_GO
+
     m_wViewerPart->PrsMgr()->Actualize( m_model->GetPartNode()->GetNormsRepresentation() );
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_MSG("Visualization of normals")
   }
   else
   {

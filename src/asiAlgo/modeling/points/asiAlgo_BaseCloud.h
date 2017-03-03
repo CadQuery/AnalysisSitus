@@ -5,8 +5,8 @@
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_PointCloud_h
-#define asiAlgo_PointCloud_h
+#ifndef asiAlgo_BaseCloud_h
+#define asiAlgo_BaseCloud_h
 
 // A-Situs includes
 #include <asiAlgo.h>
@@ -20,43 +20,48 @@
 
 //-----------------------------------------------------------------------------
 
-//! Simple point cloud.
+//! Simple cloud of elements (points or vectors).
 template <typename TCoordType>
-class asiAlgo_PointCloud : public Standard_Transient
+class asiAlgo_BaseCloud : public Standard_Transient
 {
 public:
 
   asiAlgo_EXPORT
-    asiAlgo_PointCloud();
+    asiAlgo_BaseCloud();
 
   asiAlgo_EXPORT
-    asiAlgo_PointCloud(const std::vector<TCoordType>& coords);
+    asiAlgo_BaseCloud(const std::vector<TCoordType>& coords);
 
 public:
 
   asiAlgo_EXPORT void
-    CopyTo(asiAlgo_PointCloud<TCoordType>& copy) const;
+    CopyTo(asiAlgo_BaseCloud<TCoordType>& copy) const;
 
   asiAlgo_EXPORT void
-    Reserve(const int nPts);
+    Reserve(const int nElems);
 
   asiAlgo_EXPORT int
-    GetNumberOfPoints() const;
+    GetNumberOfElements() const;
 
   asiAlgo_EXPORT void
-    AddPoint(const TCoordType x, const TCoordType y, const TCoordType z);
+    AddElement(const TCoordType x, const TCoordType y, const TCoordType z);
 
   asiAlgo_EXPORT void
-    SetPoint(const int pointIndex, const TCoordType x, const TCoordType y, const TCoordType z);
+    SetElement(const int elemIndex, const TCoordType x, const TCoordType y, const TCoordType z);
 
   asiAlgo_EXPORT void
-    GetPoint(const int pointIndex, TCoordType& x, TCoordType& y, TCoordType& z) const;
+    GetElement(const int elemIndex, TCoordType& x, TCoordType& y, TCoordType& z) const;
 
   asiAlgo_EXPORT const std::vector<TCoordType>&
     GetCoords() const;
 
   asiAlgo_EXPORT std::vector<TCoordType>&
     ChangeCoords();
+
+  asiAlgo_EXPORT void
+    ComputeBoundingBox(TCoordType& xMin, TCoordType& xMax,
+                       TCoordType& yMin, TCoordType& yMax,
+                       TCoordType& zMin, TCoordType& zMax) const;
 
 public:
 
@@ -68,7 +73,7 @@ public:
 
 protected:
 
-  std::vector<TCoordType> m_coords; //!< Coordinates of a point cloud.
+  std::vector<TCoordType> m_coords; //!< Coordinates of cloud elements.
 
 };
 

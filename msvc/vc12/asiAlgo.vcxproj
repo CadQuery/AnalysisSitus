@@ -154,7 +154,8 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_CommonCloud.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_FacePointCloud.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlaneOnPoints.h" />
-    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_BaseCloud.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlateOnPoints.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudUtils.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PurifyCloud.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_ReorientNorms.h" />
@@ -198,7 +199,8 @@
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_CommonCloud.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_FacePointCloud.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlaneOnPoints.cpp" />
-    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_BaseCloud.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlateOnPoints.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudUtils.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_ReorientNorms.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Logger.cpp" />

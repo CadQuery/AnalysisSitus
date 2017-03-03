@@ -110,9 +110,6 @@
     <ClInclude Include="..\..\src\asiAlgo\utils\asiAlgo_Logger.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.h">
-      <Filter>Header Files\Modeling\Points</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudUtils.h">
       <Filter>Header Files\Modeling\Points</Filter>
     </ClInclude>
@@ -209,6 +206,12 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_ReorientNorms.h">
       <Filter>Header Files\Modeling\Points</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_BaseCloud.h">
+      <Filter>Header Files\Modeling\Points</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlateOnPoints.h">
+      <Filter>Header Files\Modeling\Points</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.cpp">
@@ -252,9 +255,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\utils\asiAlgo_Logger.cpp">
       <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloud.cpp">
-      <Filter>Source Files\Modeling\Points</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudUtils.cpp">
       <Filter>Source Files\Modeling\Points</Filter>
@@ -326,6 +326,12 @@
       <Filter>Source Files\Modeling</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_ReorientNorms.cpp">
+      <Filter>Source Files\Modeling\Points</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_BaseCloud.cpp">
+      <Filter>Source Files\Modeling\Points</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlateOnPoints.cpp">
       <Filter>Source Files\Modeling\Points</Filter>
     </ClCompile>
   </ItemGroup>

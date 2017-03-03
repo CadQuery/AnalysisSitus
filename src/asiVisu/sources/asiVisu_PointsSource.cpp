@@ -53,7 +53,7 @@ asiVisu_PointsSource<REAL_TYPE>::~asiVisu_PointsSource()
 //! Sets input points to visualize.
 //! \param points [in] points to visualize.
 template <typename REAL_TYPE>
-void asiVisu_PointsSource<REAL_TYPE>::SetInputPoints(const Handle(asiAlgo_PointCloud<REAL_TYPE>)& points)
+void asiVisu_PointsSource<REAL_TYPE>::SetInputPoints(const Handle(asiAlgo_BaseCloud<REAL_TYPE>)& points)
 {
   m_points = points;
   //

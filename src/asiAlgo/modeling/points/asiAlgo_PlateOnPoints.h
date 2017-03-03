@@ -1,44 +1,43 @@
 //-----------------------------------------------------------------------------
-// Created on: 26 January 2017
+// Created on: 03 March 2017
 // Created by: Quaoar
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_ReorientNorms_h
-#define asiAlgo_ReorientNorms_h
+#ifndef asiAlgo_PlateOnPoints_h
+#define asiAlgo_PlateOnPoints_h
 
-// asiAlgo includes
+// A-Situs includes
 #include <asiAlgo_BaseCloud.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
 
 // OCCT includes
-#include <gp_Pln.hxx>
+#include <Geom_BSplineSurface.hxx>
 
 //-----------------------------------------------------------------------------
 
-//! Utility to reorient normal field with respect to a sample vector.
-class asiAlgo_ReorientNorms : public ActAPI_IAlgorithm
+//! Utility to build a plate surface on the given point set.
+class asiAlgo_PlateOnPoints : public ActAPI_IAlgorithm
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_ReorientNorms, ActAPI_IAlgorithm)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_PlateOnPoints, ActAPI_IAlgorithm)
 
 public:
 
   asiAlgo_EXPORT
-    asiAlgo_ReorientNorms(ActAPI_ProgressEntry progress,
+    asiAlgo_PlateOnPoints(ActAPI_ProgressEntry progress,
                           ActAPI_PlotterEntry  plotter);
 
 public:
 
   asiAlgo_EXPORT bool
-    Perform(const asiAlgo_BaseCloud<float>& input,
-            const int                       refNormIndex,
-            asiAlgo_BaseCloud<float>&       output);
+    Build(const std::vector<gp_Pnt>&   points,
+          Handle(Geom_BSplineSurface)& result);
 
 };
 

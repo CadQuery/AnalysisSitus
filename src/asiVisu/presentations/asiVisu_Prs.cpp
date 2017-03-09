@@ -198,9 +198,9 @@ void asiVisu_Prs::DeRenderPipelines(vtkRenderer* theRenderer) const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] results of interactive picking.
 //! \param theSelNature [in] selection nature (picking or detection).
-void asiVisu_Prs::Highlight(vtkRenderer*                 theRenderer,
-                         const asiVisu_PickResult&      thePickRes,
-                         const asiVisu_SelectionNature& theSelNature) const
+void asiVisu_Prs::Highlight(vtkRenderer*                   theRenderer,
+                            const asiVisu_PickResult&      thePickRes,
+                            const asiVisu_SelectionNature& theSelNature) const
 {
   this->highlight(theRenderer, thePickRes, theSelNature);
 }
@@ -208,8 +208,8 @@ void asiVisu_Prs::Highlight(vtkRenderer*                 theRenderer,
 //! Default un-highlighting actions.
 //! \param theRenderer  [in] renderer.
 //! \param theSelNature [in] selection nature (picking or detection).
-void asiVisu_Prs::UnHighlight(vtkRenderer*                 theRenderer,
-                           const asiVisu_SelectionNature& theSelNature) const
+void asiVisu_Prs::UnHighlight(vtkRenderer*                   theRenderer,
+                              const asiVisu_SelectionNature& theSelNature) const
 {
   this->unHighlight(theRenderer, theSelNature);
 }
@@ -218,8 +218,8 @@ void asiVisu_Prs::UnHighlight(vtkRenderer*                 theRenderer,
 //! by descendant classes in order to construct custom Presentation objects.
 //! \param theId       [in] ID of the new pipeline.
 //! \param thePipeline [in] pipeline to register.
-void asiVisu_Prs::addPipeline(const int                    theId,
-                           const Handle(asiVisu_Pipeline)& thePipeline)
+void asiVisu_Prs::addPipeline(const int                       theId,
+                              const Handle(asiVisu_Pipeline)& thePipeline)
 {
   m_pipelineRepo.ChangeFind(Group_Prs).Bind(theId, thePipeline);
 }
@@ -227,8 +227,8 @@ void asiVisu_Prs::addPipeline(const int                    theId,
 //! Assigns Data Provider instance to the given Pipeline.
 //! \param theId           [in] ID of the pipeline to bind Data Provider to.
 //! \param theDataProvider [in] Data Provider.
-void asiVisu_Prs::assignDataProvider(const int                         theId,
-                                  const Handle(asiVisu_DataProvider)& theDataProvider)
+void asiVisu_Prs::assignDataProvider(const int                           theId,
+                                     const Handle(asiVisu_DataProvider)& theDataProvider)
 {
   DataProviderMap& aDataPrvMap = m_dataPrvRepo.ChangeFind(Group_Prs);
 
@@ -258,7 +258,7 @@ Handle(asiVisu_DataProvider) asiVisu_Prs::dataProvider(const int theId) const
 //! \return requested Data Provider.
 Handle(asiVisu_DataProvider)
   asiVisu_Prs::dataProvider(const Handle(asiVisu_Pipeline)& thePipeline,
-                         const PipelineGroup          theGroup) const
+                            const PipelineGroup             theGroup) const
 {
   const PipelineMap& aPipelineMap = m_pipelineRepo.Find(theGroup);
 
@@ -311,9 +311,9 @@ Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderDetect(const int theId) co
 //! \param thePipeline     [in] pipeline to set.
 //! \param theDataProvider [in] Data Provider for the pipeline.
 //! \param theIdx          [in] pipeline index (1 by default).
-void asiVisu_Prs::installPickPipeline(const Handle(asiVisu_Pipeline)&      thePipeline,
-                                   const Handle(asiVisu_DataProvider)& theDataProvider,
-                                   const int                         theIdx)
+void asiVisu_Prs::installPickPipeline(const Handle(asiVisu_Pipeline)&     thePipeline,
+                                      const Handle(asiVisu_DataProvider)& theDataProvider,
+                                      const int                           theIdx)
 {
   m_pipelineRepo.ChangeFind(Group_Pick).Bind(theIdx, thePipeline);
   m_dataPrvRepo.ChangeFind(Group_Pick).Bind(theIdx, theDataProvider);
@@ -323,9 +323,9 @@ void asiVisu_Prs::installPickPipeline(const Handle(asiVisu_Pipeline)&      thePi
 //! \param thePipeline     [in] pipeline to set.
 //! \param theDataProvider [in] Data Provider for the pipeline.
 //! \param theIdx          [in] pipeline index (1 by default).
-void asiVisu_Prs::installDetectPipeline(const Handle(asiVisu_Pipeline)&      thePipeline,
-                                     const Handle(asiVisu_DataProvider)& theDataProvider,
-                                     const int                         theIdx)
+void asiVisu_Prs::installDetectPipeline(const Handle(asiVisu_Pipeline)&     thePipeline,
+                                        const Handle(asiVisu_DataProvider)& theDataProvider,
+                                        const int                           theIdx)
 {
   m_pipelineRepo.ChangeFind(Group_Detect).Bind(theIdx, thePipeline);
   m_dataPrvRepo.ChangeFind(Group_Detect).Bind(theIdx, theDataProvider);

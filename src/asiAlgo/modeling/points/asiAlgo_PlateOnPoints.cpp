@@ -108,7 +108,7 @@ bool asiAlgo_PlateOnPoints::Build(const std::vector<gp_Pnt>&   points,
   //
   if ( !plateAlgo.IsDone() )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Plate approximation failed");
+    m_progress.SendLogMessage(LogErr(Normal) << "Plating failed");
     return false;
   }
   //

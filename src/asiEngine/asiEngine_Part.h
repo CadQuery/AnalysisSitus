@@ -55,11 +55,19 @@ public:
                                     TColStd_PackedMapOfInteger&       indices);
 
   asiEngine_EXPORT void
+    GetSubShapeIndicesByEdgeIndices(const TColStd_PackedMapOfInteger& edgeIndices,
+                                    TColStd_PackedMapOfInteger&       indices);
+
+  asiEngine_EXPORT void
     HighlightFace(const int     faceIndex,
                   const QColor& color);
 
   asiEngine_EXPORT void
     HighlightFaces(const TColStd_PackedMapOfInteger& faceIndices,
+                   const QColor&                     color);
+
+  asiEngine_EXPORT void
+    HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndices,
                    const QColor&                     color);
 
   asiEngine_EXPORT void

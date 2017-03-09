@@ -122,6 +122,7 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_Classifier.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_ClassifyPointFace.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_CompleteEdgeLoop.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_DesignLaw.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_FuncUnivariate.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_HitFacet.h" />
@@ -129,6 +130,7 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_IntersectionPointCC.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_KNeighborsHull.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_Membership.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_PlateOnEdges.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_DeleteEdges.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_DetachFaces.h" />
@@ -174,10 +176,12 @@
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_Classifier.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_ClassifyPointFace.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_CompleteEdgeLoop.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_DesignLaw.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_FuncUnivariate.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_HitFacet.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_KNeighborsHull.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_PlateOnEdges.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_DeleteEdges.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_DetachFaces.cpp" />

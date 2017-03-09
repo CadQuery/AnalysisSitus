@@ -57,10 +57,10 @@ public slots:
   //
   void onSewing        ();
   void onMaximizeFaces ();
+  void onFillGap       ();
   //
   void onShowRobust    ();
   void onShowVertices  ();
-  void onShowNormals   ();
   void onSelectFaces   ();
   void onSelectEdges   ();
   void onPickEdge      ();
@@ -97,10 +97,10 @@ private:
     //
     QPushButton* pSewing;        //!< Performs sewing.
     QPushButton* pMaximizeFaces; //!< Performs face maximization.
+    QPushButton* pFillGap;       //!< Performs gap filling.
     //
     QPushButton* pShowRobust;    //!< Shows robust presentation.
     QPushButton* pShowVertices;  //!< Shows vertices of the model.
-    QPushButton* pShowNormals;   //!< Shows normals for faces.
     QPushButton* pSelectFaces;   //!< Enables selection by faces.
     QPushButton* pSelectEdges;   //!< Enables selection by edges.
     QPushButton* pPickEdge;      //!< Picks a single edge.
@@ -116,10 +116,10 @@ private:
                   //
                   pSewing        (NULL),
                   pMaximizeFaces (NULL),
+                  pFillGap       (NULL),
                   //
                   pShowRobust    (NULL),
                   pShowVertices  (NULL),
-                  pShowNormals   (NULL),
                   pSelectFaces   (NULL),
                   pSelectEdges   (NULL),
                   pPickEdge      (NULL)
@@ -138,10 +138,10 @@ private:
       //
       delete pSewing;        pSewing        = NULL;
       delete pMaximizeFaces; pMaximizeFaces = NULL;
+      delete pFillGap;       pFillGap       = NULL;
       //
       delete pShowRobust;    pShowRobust    = NULL;
       delete pShowVertices;  pShowVertices  = NULL;
-      delete pShowNormals;   pShowNormals   = NULL;
       delete pSelectFaces;   pSelectFaces   = NULL;
       delete pSelectEdges;   pSelectEdges   = NULL;
       delete pPickEdge;      pPickEdge      = NULL;

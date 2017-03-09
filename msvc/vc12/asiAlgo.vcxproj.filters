@@ -212,6 +212,12 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlateOnPoints.h">
       <Filter>Header Files\Modeling\Points</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_CompleteEdgeLoop.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_PlateOnEdges.h">
+      <Filter>Header Files\Modeling</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.cpp">
@@ -333,6 +339,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlateOnPoints.cpp">
       <Filter>Source Files\Modeling\Points</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_CompleteEdgeLoop.cpp">
+      <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_PlateOnEdges.cpp">
+      <Filter>Source Files\Modeling</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

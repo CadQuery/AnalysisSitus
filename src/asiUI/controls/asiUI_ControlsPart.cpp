@@ -19,7 +19,9 @@
 #include <asiEngine_Part.h>
 
 // asiAlgo includes
+#include <asiAlgo_CompleteEdgeLoop.h>
 #include <asiAlgo_MeshConvert.h>
+#include <asiAlgo_PlateOnEdges.h>
 #include <asiAlgo_PLY.h>
 #include <asiAlgo_STEP.h>
 #include <asiAlgo_Timer.h>
@@ -29,6 +31,7 @@
 #include <asiVisu_GeomPrs.h>
 
 // OCCT includes
+#include <BRep_Builder.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepTools.hxx>
 #include <TopExp_Explorer.hxx>
@@ -81,10 +84,10 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   //
   m_widgets.pSewing        = new QPushButton("Sewing");
   m_widgets.pMaximizeFaces = new QPushButton("Maximize faces");
+  m_widgets.pFillGap       = new QPushButton("Fill gap");
   //
   m_widgets.pShowRobust    = new QPushButton("Error-resistant view");
   m_widgets.pShowVertices  = new QPushButton("Show vertices");
-  m_widgets.pShowNormals   = new QPushButton("Show normals");
   m_widgets.pSelectFaces   = new QPushButton("Select faces");
   m_widgets.pSelectEdges   = new QPushButton("Select edges");
   m_widgets.pPickEdge      = new QPushButton("Pick edge");
@@ -100,10 +103,10 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   //
   m_widgets.pSewing        -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pMaximizeFaces -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pFillGap       -> setMinimumWidth(BTN_MIN_WIDTH);
   //
   m_widgets.pShowRobust    -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pShowVertices  -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pShowNormals   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectFaces   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectEdges   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pPickEdge      -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -136,6 +139,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   //
   pProcessingLay->addWidget(m_widgets.pSewing);
   pProcessingLay->addWidget(m_widgets.pMaximizeFaces);
+  pProcessingLay->addWidget(m_widgets.pFillGap);
 
   // Group for visualization
   QGroupBox*   pVisuGroup = new QGroupBox("Visualization");
@@ -143,7 +147,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   //
   pVisuLay->addWidget(m_widgets.pShowRobust);
   pVisuLay->addWidget(m_widgets.pShowVertices);
-  //pVisuLay->addWidget(m_widgets.pShowNormals); // TODO
   pVisuLay->addWidget(m_widgets.pSelectFaces);
   pVisuLay->addWidget(m_widgets.pSelectEdges);
   //pVisuLay->addWidget(m_widgets.pPickEdge); // TODO
@@ -170,10 +173,10 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   //
   connect( m_widgets.pSewing,        SIGNAL( clicked() ), SLOT( onSewing        () ) );
   connect( m_widgets.pMaximizeFaces, SIGNAL( clicked() ), SLOT( onMaximizeFaces () ) );
+  connect( m_widgets.pFillGap,       SIGNAL( clicked() ), SLOT( onFillGap       () ) );
   //
   connect( m_widgets.pShowRobust,    SIGNAL( clicked() ), SLOT( onShowRobust    () ) );
   connect( m_widgets.pShowVertices,  SIGNAL( clicked() ), SLOT( onShowVertices  () ) );
-  connect( m_widgets.pShowNormals,   SIGNAL( clicked() ), SLOT( onShowNormals   () ) );
   connect( m_widgets.pSelectFaces,   SIGNAL( clicked() ), SLOT( onSelectFaces   () ) );
   connect( m_widgets.pSelectEdges,   SIGNAL( clicked() ), SLOT( onSelectEdges   () ) );
   connect( m_widgets.pPickEdge,      SIGNAL( clicked() ), SLOT( onPickEdge      () ) );
@@ -446,6 +449,79 @@ void asiUI_ControlsPart::onMaximizeFaces()
 
 //-----------------------------------------------------------------------------
 
+//! Performs gap filling.
+void asiUI_ControlsPart::onFillGap()
+{
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+
+  /* ======================================================
+   *  Gather free edges which should form a closed contour
+   * ====================================================== */
+
+  TColStd_PackedMapOfInteger edgeIndices;
+  asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedEdges(edgeIndices);
+  //
+  if ( !edgeIndices.Extent() )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "No seed edges selected");
+    return;
+  }
+
+  // Complete edge loop
+  TColStd_PackedMapOfInteger loopIndices;
+  //
+  asiAlgo_CompleteEdgeLoop CompleteEdgeLoop(m_model->GetPartNode()->GetAAG(), m_notifier, m_plotter);
+  //
+  if ( !CompleteEdgeLoop(edgeIndices.GetMaximalMapped(), loopIndices) )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Cannot find a closed loop of edges to fill");
+    return;
+  }
+
+  // Highlight detected edges
+  asiEngine_Part( m_model, m_partViewer->PrsMgr() ).HighlightEdges( loopIndices, QColor(255, 0, 0) );
+
+  /* =====================
+   *  Perform gap filling
+   * ===================== */
+
+  Handle(Geom_BSplineSurface) supportSurf;
+  TopoDS_Face patchFace;
+  //
+  m_model->OpenCommand();
+  {
+    // Perform gap filling
+    asiAlgo_PlateOnEdges PlateOnEdges(m_model->GetPartNode()->GetAAG(), m_notifier, m_plotter);
+    //
+    if ( !PlateOnEdges.Build(loopIndices, supportSurf, patchFace) )
+    {
+      m_notifier.SendLogMessage(LogErr(Normal) << "Gap filling failed");
+      //m_plotter.DRAW_SURFACE(supportSurf, Color_Green, "support");
+      //
+      // m_model->AbortCommand(); // NEVER ABORT IF IV IS USED !!!
+      return;
+    }
+
+    // Build a compound of the original geometry and a patch
+    TopoDS_Compound comp;
+    BRep_Builder().MakeCompound(comp);
+    BRep_Builder().Add(comp, part);
+    BRep_Builder().Add(comp, patchFace);
+
+    // Set new geometry
+    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(comp);
+  }
+  m_model->CommitCommand();
+
+  // Notify
+  emit partModified();
+}
+
+//-----------------------------------------------------------------------------
+
 //! Switches visualization of robust presentation.
 void asiUI_ControlsPart::onShowRobust()
 {
@@ -476,69 +552,6 @@ void asiUI_ControlsPart::onShowVertices()
 
   // Notify
   isOn ? emit verticesOn() : emit verticesOff();
-}
-
-//-----------------------------------------------------------------------------
-
-//! Switches visualization of normals.
-void asiUI_ControlsPart::onShowNormals()
-{
-  Handle(asiData_PartNode) part_n;
-  TopoDS_Shape             part;
-  //
-  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
-
-  // Calculate boundary box to choose a nice modulus for normal
-  Bnd_Box B;
-  BRepBndLib::Add(part, B);
-  //
-  const double modulus = B.CornerMin().Distance( B.CornerMax() ) / 50;
-
-  const bool isOn = m_widgets.pShowNormals->isChecked();
-
-  // Iterate over the face and sample the vector field defined by their
-  // orientations
-  for ( TopExp_Explorer fexp(part, TopAbs_FACE); fexp.More(); fexp.Next() )
-  {
-    const TopoDS_Face& face = TopoDS::Face( fexp.Current() );
-
-    double uMin, uMax, vMin, vMax;
-    BRepTools::UVBounds(face, uMin, uMax, vMin, vMax);
-
-    // Get middle point
-    const double um = (uMin + uMax)*0.5;
-    const double vm = (vMin + vMax)*0.5;
-
-    Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
-    gp_Pnt P;
-    gp_Vec D1U, D1V;
-    //
-    surf->D1(um, vm, P, D1U, D1V);
-
-    // Calculate normal
-    gp_Vec norm = D1U ^ D1V;
-    if ( norm.Magnitude() < RealEpsilon() )
-    {
-      std::cout << "Error: degenerated normal" << std::endl;
-      m_plotter.DRAW_POINT(P, Color_Black, "Degenerated Face Norm");
-      continue;
-    }
-
-    norm.Normalize();
-    norm *= modulus;
-
-    if ( face.Orientation() == TopAbs_REVERSED )
-    {
-      m_plotter.DRAW_VECTOR_AT(P, norm, Color_Blue, "Face Norm");
-    }
-    else
-    {
-      m_plotter.DRAW_VECTOR_AT(P, norm, Color_Red, "Face Norm");
-    }
-  }
-
-  // Notify
-  isOn ? emit normalsOn() : emit normalsOff();
 }
 
 //-----------------------------------------------------------------------------

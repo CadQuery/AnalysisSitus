@@ -213,6 +213,30 @@ void asiEngine_Part::GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfIn
 
 //-----------------------------------------------------------------------------
 
+//! Extracts sub-shape indices for the given collection of edge indices.
+//! \param edgeIndices [in]  indices of edges.
+//! \param indices     [out] their corresponding indices among all sub-shapes.
+void asiEngine_Part::GetSubShapeIndicesByEdgeIndices(const TColStd_PackedMapOfInteger& edgeIndices,
+                                                     TColStd_PackedMapOfInteger&       indices)
+{
+  const TopTools_IndexedMapOfShape&
+    AllEdges = m_model->GetPartNode()->GetAAG()->GetMapOfEdges();
+  //
+  TopTools_IndexedMapOfShape SelectedEdges;
+
+  // Get selected edges in topological form
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(edgeIndices); fit.More(); fit.Next() )
+  {
+    const int input_edge_idx = fit.Key();
+    SelectedEdges.Add( AllEdges.FindKey(input_edge_idx) );
+  }
+
+  // Get indices of the edges among all sub-shapes
+  GetSubShapeIndices(SelectedEdges, indices);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Extracts sub-shape indices for the given collection of sub-shapes.
 //! \param subShapes [in]  sub-shapes of interest.
 //! \param indices   [out] their corresponding IDs.
@@ -285,6 +309,22 @@ void asiEngine_Part::HighlightFaces(const TColStd_PackedMapOfInteger& faceIndice
 
   // Highlight
   HighlightSubShapes(ssIndices, ::ColorToInt(color), SelectionMode_Face);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Highlights edges.
+//! \param edgeIndices [in] edges to highlight.
+//! \param color       [in] highlighting color.
+void asiEngine_Part::HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndices,
+                                    const QColor&                     color)
+{
+  // Convert edge indices to sub-shape indices
+  TColStd_PackedMapOfInteger ssIndices;
+  GetSubShapeIndicesByEdgeIndices(edgeIndices, ssIndices);
+
+  // Highlight
+  HighlightSubShapes(ssIndices, ::ColorToInt(color), SelectionMode_Edge);
 }
 
 //-----------------------------------------------------------------------------

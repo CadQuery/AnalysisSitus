@@ -87,8 +87,6 @@ asiUI_DialogSewing::asiUI_DialogSewing(const Handle(ActAPI_IModel)&    model,
   m_pMainLayout->addWidget(pGroup);
   m_pMainLayout->addWidget(m_widgets.pPerform);
   m_pMainLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-  //
-  m_pMainLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
   m_pMainLayout->setContentsMargins(10, 10, 10, 10);
 
   this->setLayout(m_pMainLayout);

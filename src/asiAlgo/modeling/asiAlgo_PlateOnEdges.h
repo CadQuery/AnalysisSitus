@@ -39,6 +39,7 @@ public:
 
   asiAlgo_EXPORT bool
     Build(const TColStd_PackedMapOfInteger& edgeIndices,
+          const unsigned int                continuity,
           Handle(Geom_BSplineSurface)&      support,
           TopoDS_Face&                      result);
 

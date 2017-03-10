@@ -187,6 +187,9 @@
     <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogFindFace.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogGapFilling.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogSewing.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
@@ -301,6 +304,9 @@
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogSmoothAngleTol.cpp">
       <Filter>Source Files\Dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogGapFilling.cpp">
+      <Filter>Source Files\Dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerDomain.h">
@@ -392,6 +398,9 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerCurve2d.h">
       <Filter>Header Files\Viewers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogGapFilling.h">
+      <Filter>Header Files\Dialogs</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

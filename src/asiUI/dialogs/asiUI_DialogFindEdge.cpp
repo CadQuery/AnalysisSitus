@@ -106,8 +106,6 @@ asiUI_DialogFindEdge::asiUI_DialogFindEdge(const Handle(asiEngine_Model)&       
   m_pMainLayout->addWidget(pGroup);
   m_pMainLayout->addWidget(m_widgets.pFind);
   m_pMainLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-  //
-  m_pMainLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
   m_pMainLayout->setContentsMargins(10, 10, 10, 10);
 
   this->setLayout(m_pMainLayout);

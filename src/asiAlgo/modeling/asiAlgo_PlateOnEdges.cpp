@@ -57,10 +57,12 @@ asiAlgo_PlateOnEdges::asiAlgo_PlateOnEdges(const Handle(asiAlgo_AAG)& aag,
 
 //! Constructs TPS (Thin Plate Spline) approximation for the passed edges.
 //! \param edgeIndices [in]  edges to build the approximation surface for.
+//! \param continuity  [in]  desired order of continuity.
 //! \param support     [out] support b-surface.
 //! \param result      [out] reconstructed face.
 //! \return true in case of success, false -- otherwise.
 bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
+                                 const unsigned int                continuity,
                                  Handle(Geom_BSplineSurface)&      support,
                                  TopoDS_Face&                      result)
 {
@@ -70,13 +72,18 @@ bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
 
   const int nbedges = edgeIndices.Extent();
 
-  // Prepare working collections
+  // Prepare working collection for support curves (used to create
+  // pinpoint constraints)
   Handle(GeomPlate_HArray1OfHCurveOnSurface)
     fronts = new GeomPlate_HArray1OfHCurveOnSurface(1, nbedges);
-  //
+
+  // Prepare working collection for smoothness values associated with
+  // each support curve
   Handle(TColStd_HArray1OfInteger)
     tang = new TColStd_HArray1OfInteger(1, nbedges);
-  //
+
+  // Prepare working collection for discretization numbers associated with
+  // each support curve
   Handle(TColStd_HArray1OfInteger)
     nbPtsCur = new TColStd_HArray1OfInteger(1, nbedges);
 
@@ -92,8 +99,8 @@ bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
   for ( TColStd_MapIteratorOfPackedMapOfInteger eit(edgeIndices); eit.More(); eit.Next() )
   {
     i++;
-    tang->SetValue(i, 1);
-    nbPtsCur->SetValue(i, 10);
+    tang->SetValue(i, continuity);
+    nbPtsCur->SetValue(i, 10); // Number of discretization points
 
     const int          eidx = eit.Key();
     const TopoDS_Edge& E    = TopoDS::Edge( m_aag->GetMapOfEdges().FindKey(eidx) );
@@ -155,92 +162,26 @@ bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
 
   TopTools_Array1OfShape tab(1, nbedges);
 
-  // Build edges
+  // File wire builder with edges. We use the original topology as-is. The
+  // only post-processing stage which is necessary to apply is re-projection
+  // of 3D-curves to the plate surface (in order to obtain p-curves)
   Handle(ShapeExtend_WireData) WD = new ShapeExtend_WireData;
   for ( TColStd_MapIteratorOfPackedMapOfInteger eit(edgeIndices); eit.More(); eit.Next() )
   {
     const int          eidx = eit.Key();
     const TopoDS_Edge& E    = TopoDS::Edge( m_aag->GetMapOfEdges().FindKey(eidx) );
-    //if ( BuildPlate.Sense()->Value( BuildPlate.Order()->Value(i) ) == 1 )
-    //{
-    //  BRepBuilderAPI_MakeEdge ME( BuildPlate.Curves2d()->Value( BuildPlate.Order()->Value(i) ),
-    //                              support,
-    //                              fronts->Value( BuildPlate.Order()->Value(i) )->LastParameter(),
-    //                              fronts->Value( BuildPlate.Order()->Value(i) )->FirstParameter() );
-    //  //
-    //  TopoDS_Edge E = ME.Edge();
-    //  BRepLib::BuildCurves3d(E);
-    //  tab( BuildPlate.Order()->Value(i) ) = E;
-    //}
-    //else
-    //{
-      //BRepBuilderAPI_MakeEdge ME( BuildPlate.Curves2d()->Value(i),
-      //                            support,
-      //                            fronts->Value(i)->FirstParameter(),
-      //                            fronts->Value(i)->LastParameter() );
-      ////
-      //TopoDS_Edge E = ME.Edge();
-      //BRepLib::BuildCurves3d(E);
 
-      WD->Add(E);
-      //tab( BuildPlate.Order()->Value(i) ) = E;
-    //}
+    WD->Add(E);
   }
-
+  //
   TopoDS_Wire W = WD->WireAPIMake();
   //
   if ( W.IsNull() )
   {
+    m_plotter.DRAW_SURFACE(support, Color_Red, "support");
     m_progress.SendLogMessage(LogErr(Normal) << "Wire reconstruction failed: null wire");
     return false;
   }
-
-  //// Build wire
-  //BRepBuilderAPI_MakeWire MW;
-  //for ( i = 1; i <= nbedges; ++i )
-  //{
-  //  const TopoDS_Edge& E = TopoDS::Edge( tab(i) );
-  //  //
-  //  if ( i == 3 )
-  //  {
-  //    //m_plotter.DRAW_SHAPE(E, Color_Green, 1.0, true, "plate edge");
-
-  //    TopoDS_Vertex Vf = TopExp::FirstVertex(E);
-  //    TopoDS_Vertex Vl = TopExp::LastVertex(E);
-  //    //
-  //    m_plotter.DRAW_POINT( BRep_Tool::Pnt(Vf), Color_Green, "Vf" );
-  //    m_plotter.DRAW_POINT( BRep_Tool::Pnt(Vl), Color_Green, "Vl" );
-  //  }
-  //  if ( i == 4 )
-  //  {
-  //   // m_plotter.DRAW_SHAPE(E, Color_Blue, 1.0, true, "plate edge");
-
-  //    TopoDS_Vertex Vf = TopExp::FirstVertex(E);
-  //    TopoDS_Vertex Vl = TopExp::LastVertex(E);
-  //    //
-  //    m_plotter.DRAW_POINT( BRep_Tool::Pnt(Vf), Color_Blue, "Vf" );
-  //    m_plotter.DRAW_POINT( BRep_Tool::Pnt(Vl), Color_Blue, "Vl" );
-  //  }
-  //  //
-  //  MW.Add(E);
-  //}
-  ////
-  //TopoDS_Wire W;
-  //try
-  //{
-  //  W = MW.Wire();
-  //}
-  //catch ( ... )
-  //{
-  //  m_progress.SendLogMessage(LogErr(Normal) << "Wire reconstruction failed");
-  //  return false;
-  //}
-
-  //if ( !W.Closed() )
-  //{
-  //  m_progress.SendLogMessage(LogErr(Normal) << "Wire is not closed");
-  //  return false;
-  //}
 
   // Build face
   BRepBuilderAPI_MakeFace MF(support, W, true);
@@ -255,6 +196,7 @@ bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
     face = MF1.Face();
   }
 
+  // Use shape healer to re-project 3D curves and obtain missing p-curves so
   ShapeFix_Shape ShapeHealer(face);
   try
   {
@@ -262,13 +204,19 @@ bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
   }
   catch ( ... )
   {
+    m_plotter.DRAW_SURFACE(support, Color_Red, "support");
     m_progress.SendLogMessage(LogErr(Normal) << "Face healing failed");
     return false;
   }
   face = TopoDS::Face( ShapeHealer.Shape() );
 
+  // Check the result
   if ( !BRepAlgo::IsValid(face) )
+  {
+    m_plotter.DRAW_SURFACE(support, Color_Red, "support");
     m_progress.SendLogMessage(LogWarn(Normal) << "Face is not valid");
+    return false;
+  }
 
   // Set result
   result = face;

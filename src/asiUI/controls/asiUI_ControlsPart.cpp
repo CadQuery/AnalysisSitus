@@ -10,6 +10,7 @@
 
 // asiUI includes
 #include <asiUI_Common.h>
+#include <asiUI_DialogGapFilling.h>
 #include <asiUI_DialogSewing.h>
 #include <asiUI_DialogSTEP.h>
 #include <asiUI_PickCallback.h>
@@ -21,7 +22,6 @@
 // asiAlgo includes
 #include <asiAlgo_CompleteEdgeLoop.h>
 #include <asiAlgo_MeshConvert.h>
-#include <asiAlgo_PlateOnEdges.h>
 #include <asiAlgo_PLY.h>
 #include <asiAlgo_STEP.h>
 #include <asiAlgo_Timer.h>
@@ -488,33 +488,15 @@ void asiUI_ControlsPart::onFillGap()
    *  Perform gap filling
    * ===================== */
 
-  Handle(Geom_BSplineSurface) supportSurf;
-  TopoDS_Face patchFace;
-  //
-  m_model->OpenCommand();
-  {
-    // Perform gap filling
-    asiAlgo_PlateOnEdges PlateOnEdges(m_model->GetPartNode()->GetAAG(), m_notifier, m_plotter);
-    //
-    if ( !PlateOnEdges.Build(loopIndices, supportSurf, patchFace) )
-    {
-      m_notifier.SendLogMessage(LogErr(Normal) << "Gap filling failed");
-      //m_plotter.DRAW_SURFACE(supportSurf, Color_Green, "support");
-      //
-      // m_model->AbortCommand(); // NEVER ABORT IF IV IS USED !!!
-      return;
-    }
-
-    // Build a compound of the original geometry and a patch
-    TopoDS_Compound comp;
-    BRep_Builder().MakeCompound(comp);
-    BRep_Builder().Add(comp, part);
-    BRep_Builder().Add(comp, patchFace);
-
-    // Set new geometry
-    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(comp);
-  }
-  m_model->CommitCommand();
+  // Dialog for reading STEP
+  asiUI_DialogGapFilling*
+    pDlg = new asiUI_DialogGapFilling(m_model,
+                                      m_partViewer->PrsMgr(),
+                                      m_partViewer,
+                                      m_notifier,
+                                      m_plotter,
+                                      this);
+  pDlg->exec();
 
   // Notify
   emit partModified();

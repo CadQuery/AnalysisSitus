@@ -162,7 +162,7 @@ bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
 
   TopTools_Array1OfShape tab(1, nbedges);
 
-  // File wire builder with edges. We use the original topology as-is. The
+  // Fill wire builder with edges. We use the original topology as-is. The
   // only post-processing stage which is necessary to apply is re-projection
   // of 3D-curves to the plate surface (in order to obtain p-curves)
   Handle(ShapeExtend_WireData) WD = new ShapeExtend_WireData;

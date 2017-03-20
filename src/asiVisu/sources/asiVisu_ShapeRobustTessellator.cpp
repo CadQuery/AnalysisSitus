@@ -25,34 +25,20 @@
 //-----------------------------------------------------------------------------
 
 //! ctor.
-asiVisu_ShapeRobustTessellator::asiVisu_ShapeRobustTessellator() : IVtk_IShapeMesher()
+//! \param aag [in] AAG.
+asiVisu_ShapeRobustTessellator::asiVisu_ShapeRobustTessellator(const Handle(asiAlgo_AAG)& aag)
+: Standard_Transient(), m_aag(aag)
 {}
-
-//-----------------------------------------------------------------------------
-
-//! \return CAD model being tessellated.
-TopoDS_Shape asiVisu_ShapeRobustTessellator::GetShape() const
-{
-  return IVtkOCC_Shape::Handle::DownCast(myShapeObj)->GetShape();
-}
 
 //-----------------------------------------------------------------------------
 
 //! Builds the polygonal data.
 void asiVisu_ShapeRobustTessellator::internalBuild()
 {
-  TopoDS_Shape master = this->GetShape();
+  TopoDS_Shape master = m_aag->GetMasterCAD();
   //
   if ( master.IsNull() )
     return;
-
-  // Build map of all topological elements
-  TopExp::MapShapes(master, m_all);
-
-  // Build maps of topological entities
-  TopExp::MapShapes(master, TopAbs_VERTEX, m_vertices);
-  TopExp::MapShapes(master, TopAbs_EDGE,   m_edges);
-  TopExp::MapShapes(master, TopAbs_FACE,   m_faces);
 
   // Build map of shapes and their parents
   TopTools_IndexedDataMapOfShapeListOfShape verticesOnEdges;
@@ -61,15 +47,20 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   TopTools_IndexedDataMapOfShapeListOfShape edgesOnFaces;
   TopExp::MapShapesAndAncestors(master, TopAbs_EDGE, TopAbs_FACE, edgesOnFaces);
 
+  // Cached maps
+  const TopTools_IndexedMapOfShape& allVertices = m_aag->GetMapOfVertices();
+  const TopTools_IndexedMapOfShape& allEdges    = m_aag->GetMapOfEdges();
+  const TopTools_IndexedMapOfShape& allFaces    = m_aag->GetMapOfFaces();
+
   /* =========================================
    *  STAGE 1: fill data source with vertices
    * ========================================= */
 
   // Add vertices
-  for ( int vidx = 1; vidx <= m_vertices.Extent(); ++vidx )
+  for ( int vidx = 1; vidx <= allVertices.Extent(); ++vidx )
   {
-    const TopoDS_Vertex&           v = TopoDS::Vertex( m_vertices(vidx) );
-    const TopTools_ListOfShape edges = verticesOnEdges.FindFromKey(v);
+    const TopoDS_Vertex&            v = TopoDS::Vertex( allVertices(vidx) );
+    const TopTools_ListOfShape& edges = verticesOnEdges.FindFromKey(v);
 
     IVtk_MeshType type;
     if ( edges.IsEmpty() )
@@ -86,9 +77,9 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
    * ====================================== */
 
   // Add edges
-  for ( int eidx = 1; eidx <= m_edges.Extent(); ++eidx )
+  for ( int eidx = 1; eidx <= allEdges.Extent(); ++eidx )
   {
-    const TopoDS_Edge&             e = TopoDS::Edge( m_edges(eidx) );
+    const TopoDS_Edge&             e = TopoDS::Edge( allEdges(eidx) );
     const TopTools_ListOfShape faces = edgesOnFaces.FindFromKey(e);
 
     IVtk_MeshType type;

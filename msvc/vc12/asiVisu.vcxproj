@@ -203,6 +203,7 @@
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PCurveSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PDomainSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PointsSource.h" />
+    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeData.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeDataSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeMesher.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeRobustTessellator.h" />
@@ -303,6 +304,7 @@
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PCurveSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PDomainSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PointsSource.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeData.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeDataSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeMesher.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeRobustTessellator.cpp" />

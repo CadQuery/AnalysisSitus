@@ -169,6 +169,9 @@ public:
     GetMapOfEdges() const;
 
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
+    GetMapOfVertices() const;
+
+  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     GetMapOfSubShapes() const;
 
   asiAlgo_EXPORT bool
@@ -198,12 +201,6 @@ public:
 
   asiAlgo_EXPORT const TColStd_PackedMapOfInteger&
     GetSelectedFaces() const;
-
-  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
-    GetFaces() const;
-
-  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
-    GetEdges() const;
 
   asiAlgo_EXPORT const t_arc_attributes&
     GetArcAttributes() const;
@@ -270,6 +267,9 @@ protected:
 
   //! All edges of the master model.
   TopTools_IndexedMapOfShape m_edges;
+
+  //! All vertices of the master model.
+  TopTools_IndexedMapOfShape m_vertices;
 
   //! This data map can be seen as adjacency matrix for graph.
   t_adjacency m_neighbors;

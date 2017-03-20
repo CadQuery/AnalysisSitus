@@ -77,12 +77,17 @@ Handle(asiAlgo_AAG) asiAlgo_AAG::Copy() const
 {
   Handle(asiAlgo_AAG) copy = new asiAlgo_AAG;
   //
-  copy->m_selected        = this->m_selected;
-  copy->m_faces           = this->m_faces;
-  copy->m_neighbors       = this->m_neighbors;
-  copy->m_arc_attributes  = this->m_arc_attributes;
-  copy->m_node_attributes = this->m_node_attributes;
-  copy->m_bAllowSmooth    = this->m_bAllowSmooth;
+  copy->m_master            = this->m_master;
+  copy->m_selected          = this->m_selected;
+  copy->m_subShapes         = this->m_subShapes;
+  copy->m_faces             = this->m_faces;
+  copy->m_edges             = this->m_edges;
+  copy->m_vertices          = this->m_vertices;
+  copy->m_neighbors         = this->m_neighbors;
+  copy->m_arc_attributes    = this->m_arc_attributes;
+  copy->m_node_attributes   = this->m_node_attributes;
+  copy->m_bAllowSmooth      = this->m_bAllowSmooth;
+  copy->m_fSmoothAngularTol = this->m_fSmoothAngularTol;
   //
   return copy;
 }
@@ -109,6 +114,14 @@ const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfFaces() const
 const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfEdges() const
 {
   return m_edges;
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return map of vertices.
+const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfVertices() const
+{
+  return m_vertices;
 }
 
 //-----------------------------------------------------------------------------
@@ -276,24 +289,6 @@ const asiAlgo_AAG::t_adjacency& asiAlgo_AAG::GetNeighborhood() const
 const TColStd_PackedMapOfInteger& asiAlgo_AAG::GetSelectedFaces() const
 {
   return m_selected;
-}
-
-//-----------------------------------------------------------------------------
-
-//! Returns all faces of the master model.
-//! \return all faces.
-const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetFaces() const
-{
-  return m_faces;
-}
-
-//-----------------------------------------------------------------------------
-
-//! Returns all edges of the master model.
-//! \return all edges.
-const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetEdges() const
-{
-  return m_edges;
 }
 
 //-----------------------------------------------------------------------------
@@ -602,6 +597,9 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
 
   // Extract all edges with unique indices from the master CAD
   TopExp::MapShapes(masterCAD, TopAbs_EDGE, m_edges);
+
+  // Extract all vertices with unique indices from the master CAD
+  TopExp::MapShapes(masterCAD, TopAbs_VERTEX, m_vertices);
 
   // Fill adjacency map with empty buckets and provide all required
   // treatment for each individual face

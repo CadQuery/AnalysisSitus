@@ -608,31 +608,31 @@ TopoDS_Shape
 }
 
 //! Calculates bounding box for the given shape.
-//! \param theShape [in]  input shape.
-//! \param XMin     [out] min X.
-//! \param YMin     [out] min Y.
-//! \param ZMin     [out] min Z.
-//! \param XMax     [out] max X.
-//! \param YMax     [out] max Y.
-//! \param ZMax     [out] max Z.
-void asiAlgo_Utils::Bounds(const TopoDS_Shape& theShape,
+//! \param shape [in]  input shape.
+//! \param XMin  [out] min X.
+//! \param YMin  [out] min Y.
+//! \param ZMin  [out] min Z.
+//! \param XMax  [out] max X.
+//! \param YMax  [out] max Y.
+//! \param ZMax  [out] max Z.
+void asiAlgo_Utils::Bounds(const TopoDS_Shape& shape,
                            double& XMin, double& YMin, double& ZMin,
                            double& XMax, double& YMax, double& ZMax)
 {
-  Bnd_Box aBndBox;
-  BRepBndLib::Add(theShape, aBndBox);
-  aBndBox.Get(XMin, YMin, ZMin, XMax, YMax, ZMax);
+  Bnd_Box bndBox;
+  BRepBndLib::Add(shape, bndBox);
+  bndBox.Get(XMin, YMin, ZMin, XMax, YMax, ZMax);
 }
 
 //! Checks OCCT validity rules of the given shape.
-//! \param theShape [in] shape to check.
-//! \param Journal   [in] Logger instance to cumulate all meaningful messages.
+//! \param shape   [in] shape to check.
+//! \param Journal [in] Logger instance to cumulate all meaningful messages.
 //! \return true if shape is valid, false -- otherwise.
 bool
-  asiAlgo_Utils::CheckShape(const TopoDS_Shape&  theShape,
+  asiAlgo_Utils::CheckShape(const TopoDS_Shape&  shape,
                             ActAPI_ProgressEntry Journal)
 {
-  BRepCheck_Analyzer Checker(theShape);
+  BRepCheck_Analyzer Checker(shape);
 
   // Check validity
   if ( Checker.IsValid() )
@@ -646,15 +646,16 @@ bool
   // ...
 
   // Perform structural dump
-  CheckShapeAux::StructuralDump(Journal, Checker, theShape);
+  if ( Journal.Access() )
+    CheckShapeAux::StructuralDump(Journal, Checker, shape);
 
   return false;
 }
 
 //! Returns maximum tolerance value bound to the passed shape.
-//! \param theShape [in] shape to check.
+//! \param shape [in] shape to check.
 //! \return maximum tolerance value.
-double asiAlgo_Utils::MaxTolerance(const TopoDS_Shape& theShape)
+double asiAlgo_Utils::MaxTolerance(const TopoDS_Shape& shape)
 {
   double aMaxToler = Precision::Confusion();
 

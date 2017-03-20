@@ -239,16 +239,16 @@ public:
     AssembleShapes(const TopTools_ListOfShape& theShapes);
 
   asiAlgo_EXPORT static void
-    Bounds(const TopoDS_Shape& theShape,
+    Bounds(const TopoDS_Shape& shape,
            double& XMin, double& YMin, double& ZMin,
            double& XMax, double& YMax, double& ZMax);
 
   asiAlgo_EXPORT static bool
-    CheckShape(const TopoDS_Shape&  theShape,
+    CheckShape(const TopoDS_Shape&  shape,
                ActAPI_ProgressEntry Journal);
 
   asiAlgo_EXPORT static double
-    MaxTolerance(const TopoDS_Shape& theShape);
+    MaxTolerance(const TopoDS_Shape& shape);
 
   asiAlgo_EXPORT static bool
     ReadBRep(const TCollection_AsciiString& theFilename,

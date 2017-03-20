@@ -11,14 +11,16 @@
 // asiVisu includes
 #include <asiVisu.h>
 
+// asiAlgo includes
+#include <asiAlgo_AAG.h>
+
 // OCCT includes
-#include <IVtk_IShapeMesher.hxx>
 #include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
 #include <TopoDS_Vertex.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
 
 //! Utility which is designed to offer a high level of sustainability of
-//! visualization faceting. Why would you want to have a non-standard
+//! visualization facets. Why would you want to have a non-standard
 //! faceter for your B-Rep model? Such need arises in two major contexts:
 //!
 //! - Your CAD model is broken. Local topology anomalies may cause failures
@@ -43,22 +45,25 @@
 //! the standard one is its capacity to give you "at least something" to
 //! look at. The latter enables you to debug your geometric stuff while
 //! having some visual feedback from your prototyping system.
-class asiVisu_ShapeRobustTessellator : public IVtk_IShapeMesher
+class asiVisu_ShapeRobustTessellator : public Standard_Transient
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ShapeRobustTessellator, IVtk_IShapeMesher)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ShapeRobustTessellator, Standard_Transient)
 
 public:
 
   asiVisu_EXPORT
-    asiVisu_ShapeRobustTessellator();
+    asiVisu_ShapeRobustTessellator(const Handle(asiAlgo_AAG)& aag);
 
 public:
 
-  asiVisu_EXPORT TopoDS_Shape
-    GetShape() const;
+  //! \return AAG instance.
+  const Handle(asiAlgo_AAG)& GetAAG() const
+  {
+    return m_aag;
+  }
 
 protected:
 
@@ -79,10 +84,7 @@ protected:
 
 protected:
 
-  TopTools_IndexedMapOfShape m_all;      //!< All topological elements.
-  TopTools_IndexedMapOfShape m_vertices; //!< Vertices.
-  TopTools_IndexedMapOfShape m_edges;    //!< Edges.
-  TopTools_IndexedMapOfShape m_faces;    //!< Faces.
+  Handle(asiAlgo_AAG) m_aag; //!< AAG to access the topological elements.
 
 };
 

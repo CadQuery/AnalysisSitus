@@ -353,6 +353,9 @@
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_FaceNormalsDataProvider.h">
       <Filter>Header Files\Providers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeData.h">
+      <Filter>Header Files\Sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_MeshENScalarFilter.cpp">
@@ -642,6 +645,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_FaceNormalsDataProvider.cpp">
       <Filter>Source Files\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeData.cpp">
+      <Filter>Source Files\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

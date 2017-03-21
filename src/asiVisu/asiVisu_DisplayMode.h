@@ -8,6 +8,9 @@
 #ifndef asiVisu_DisplayMode_h
 #define asiVisu_DisplayMode_h
 
+// asiVisu includes
+#include <asiVisu.h>
+
 //! Enumerates display modes.
 enum asiVisu_DisplayMode
 {

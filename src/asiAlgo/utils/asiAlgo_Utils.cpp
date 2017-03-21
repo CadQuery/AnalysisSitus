@@ -660,7 +660,7 @@ double asiAlgo_Utils::MaxTolerance(const TopoDS_Shape& shape)
   double aMaxToler = Precision::Confusion();
 
   // Tolerance by faces
-  for ( TopExp_Explorer exp(theShape, TopAbs_FACE); exp.More(); exp.Next() )
+  for ( TopExp_Explorer exp(shape, TopAbs_FACE); exp.More(); exp.Next() )
   {
     double aTol = BRep_Tool::Tolerance( TopoDS::Face( exp.Current() ) );
     if ( aTol > aMaxToler )
@@ -668,7 +668,7 @@ double asiAlgo_Utils::MaxTolerance(const TopoDS_Shape& shape)
   }
 
   // Tolerance by edges
-  for ( TopExp_Explorer exp(theShape, TopAbs_EDGE); exp.More(); exp.Next() )
+  for ( TopExp_Explorer exp(shape, TopAbs_EDGE); exp.More(); exp.Next() )
   {
     double aTol = BRep_Tool::Tolerance( TopoDS::Edge( exp.Current() ) );
     if ( aTol > aMaxToler )
@@ -676,7 +676,7 @@ double asiAlgo_Utils::MaxTolerance(const TopoDS_Shape& shape)
   }
 
   // Tolerance by vertices
-  for ( TopExp_Explorer exp(theShape, TopAbs_VERTEX); exp.More(); exp.Next() )
+  for ( TopExp_Explorer exp(shape, TopAbs_VERTEX); exp.More(); exp.Next() )
   {
     double aTol = BRep_Tool::Tolerance( TopoDS::Vertex( exp.Current() ) );
     if ( aTol > aMaxToler )

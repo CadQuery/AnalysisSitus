@@ -9,7 +9,7 @@
 #define asiVisu_ShapeRobustTessellator_h
 
 // asiVisu includes
-#include <asiVisu.h>
+#include <asiVisu_ShapeData.h>
 
 // asiAlgo includes
 #include <asiAlgo_AAG.h>
@@ -18,6 +18,9 @@
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Vertex.hxx>
+
+// VTK includes
+#include <vtkType.h>
 
 //! Utility which is designed to offer a high level of sustainability of
 //! visualization facets. Why would you want to have a non-standard
@@ -73,18 +76,19 @@ protected:
 protected:
 
   asiVisu_EXPORT void
-    addVertex(const TopoDS_Vertex& vertex,
-              const IVtk_IdType    shapeId,
-              const IVtk_MeshType  meshType);
+    addVertex(const TopoDS_Vertex&        vertex,
+              const vtkIdType             shapeId,
+              const asiVisu_ShapeCellType scType);
 
   asiVisu_EXPORT void
-    addEdge(const TopoDS_Edge&  edge,
-            const IVtk_IdType   shapeId,
-            const IVtk_MeshType meshType);
+    addEdge(const TopoDS_Edge&          edge,
+            const vtkIdType             shapeId,
+            const asiVisu_ShapeCellType scType);
 
 protected:
 
-  Handle(asiAlgo_AAG) m_aag; //!< AAG to access the topological elements.
+  Handle(asiAlgo_AAG)       m_aag;  //!< AAG to access the topological elements.
+  Handle(asiVisu_ShapeData) m_data; //!< Visualization data.
 
 };
 

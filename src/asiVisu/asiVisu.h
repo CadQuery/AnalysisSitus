@@ -40,7 +40,10 @@
 #define ARRNAME_ORIENT_SCALARS     "arrname_domain_scalars"
 #define ARRNAME_POINTCLOUD_VECTORS "arrname_pointcloud_vectors"
 //
-#define ARRNAME_SURF_CURVATURE "arrname_surf_curvature"
+#define ARRNAME_SURF_CURVATURE     "arrname_surf_curvature"
+//
+#define ARRNAME_PART_SUBSHAPE_IDS  "arrname_part_subshape_ids"
+#define ARRNAME_PART_CELL_TYPES    "arrname_part_cell_types"
 
 //-----------------------------------------------------------------------------
 

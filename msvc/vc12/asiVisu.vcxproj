@@ -113,6 +113,7 @@
     <ClInclude Include="..\..\src\asiVisu\asiVisu.h" />
     <ClInclude Include="..\..\src\asiVisu\asiVisu_Common.h" />
     <ClInclude Include="..\..\src\asiVisu\asiVisu_DisplayMode.h" />
+    <ClInclude Include="..\..\src\asiVisu\asiVisu_ShapeCellType.h" />
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_MeshENScalarFilter.h" />
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_MeshEScalarFilter.h" />
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_MeshEVectorFilter.h" />
@@ -206,6 +207,7 @@
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeData.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeDataSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeMesher.h" />
+    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeRobustSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeRobustTessellator.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_SurfaceSource.h" />
     <ClInclude Include="..\..\src\asiVisu\utils\asiVisu_MeshResultUtils.h" />
@@ -307,6 +309,7 @@
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeData.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeDataSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeMesher.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeRobustSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeRobustTessellator.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_SurfaceSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\utils\asiVisu_MeshResultUtils.cpp" />

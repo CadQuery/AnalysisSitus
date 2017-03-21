@@ -9,86 +9,73 @@
 #define asiVisu_ShapeData_h
 
 // asiVisu includes
-#include <asiVisu.h>
+#include <asiVisu_ShapeCellType.h>
 
 // OCCT includes
-#include <Standard_Transient.hxx>
+#include <Standard_Type.hxx>
 
 // VTK includes
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
-// Wrapper for vtkPolyData representing B-Rep shape.
+//! Wrapper for vtkPolyData representing B-Rep shape.
 class asiVisu_ShapeData : public Standard_Transient
 {
 public:
 
-  IVtkVTK_EXPORT static const char* const ARRNAME_SUBSHAPE_IDS;
-  IVtkVTK_EXPORT static const char* const ARRNAME_MESH_TYPES;
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ShapeData, Standard_Transient)
 
-  //! Constructor
-  Standard_EXPORT IVtkVTK_ShapeData();
-  //! Destructor
-  Standard_EXPORT ~IVtkVTK_ShapeData();
+public:
 
-  DEFINE_STANDARD_RTTIEXT(IVtkVTK_ShapeData,IVtk_IShapeData)
+  asiVisu_EXPORT
+    asiVisu_ShapeData();
 
-  //! Insert a coordinate
-  //! @param [in] theX X coordinate
-  //! @param [in] theY Y coordinate
-  //! @param [in] theZ Z coordinate
-  //! @return id of added point
-  Standard_EXPORT virtual IVtk_PointId InsertCoordinate (double theX, double theY, double theZ) Standard_OVERRIDE;
+public:
 
-  //! Insert a vertex.
-  //! @param [in] theShapeID id of the subshape to which the vertex belongs.
-  //! @param [in] thePointId id of the point that defines the coordinates of the vertex
-  //! @param [in] theMeshType mesh type of the subshape (MT_Undefined by default)
-  Standard_EXPORT virtual void InsertVertex (const IVtk_IdType   theShapeID,
-                                             const IVtk_PointId  thePointId,
-                                             const IVtk_MeshType theMeshType) Standard_OVERRIDE;
+  asiVisu_EXPORT virtual vtkIdType
+    InsertCoordinate(const double x,
+                     const double y,
+                     const double z);
 
-  //! Insert a line.
-  //! @param [in] theShapeID id of the subshape to which the line belongs.
-  //! @param [in] thePointId1 id of the first point
-  //! @param [in] thePointId2 id of the second point
-  //! @param [in] theMeshType mesh type of the subshape (MT_Undefined by default)
-  Standard_EXPORT virtual void InsertLine (const IVtk_IdType   theShapeID,
-                                           const IVtk_PointId  thePointId1,
-                                           const IVtk_PointId  thePointId2,
-                                           const IVtk_MeshType theMeshType) Standard_OVERRIDE;
+  asiVisu_EXPORT virtual void
+    InsertVertex(vtkIdType             shapeID,
+                 vtkIdType             pid,
+                 asiVisu_ShapeCellType scType);
 
-  //! Insert a poly-line.
-  //! @param [in] theShapeID id of the subshape to which the polyline belongs.
-  //! @param [in] thePointIds vector of point ids
-  //! @param [in] theMeshType mesh type of the subshape (MT_Undefined by default)
-  Standard_EXPORT virtual void InsertLine (const IVtk_IdType       theShapeID, 
-                                           const IVtk_PointIdList* thePointIds,
-                                           const IVtk_MeshType     theMeshType) Standard_OVERRIDE;
-  //! Insert a triangle
-  //! @param [in] theShapeID id of the subshape to which the triangle belongs.
-  //! @param [in] thePointId1 id of the first point
-  //! @param [in] thePointId2 id of the second point
-  //! @param [in] thePointId3 id of the third point
-  //! @param [in] theMeshType mesh type of the subshape (MT_Undefined by default)
-  Standard_EXPORT virtual void InsertTriangle (const IVtk_IdType   theShapeID,
-                                               const IVtk_PointId  thePointId1,
-                                               const IVtk_PointId  thePointId2,
-                                               const IVtk_PointId  thePointId3,
-                                               const IVtk_MeshType theMeshType) Standard_OVERRIDE;
+  asiVisu_EXPORT virtual void
+    InsertLine(vtkIdType             shapeID,
+               vtkIdType             pid1,
+               vtkIdType             pid2,
+               asiVisu_ShapeCellType scType);
+
+  asiVisu_EXPORT virtual void
+    InsertPolyline(vtkIdType                         shapeID,
+                   const vtkSmartPointer<vtkIdList>& pids,
+                   asiVisu_ShapeCellType             scType);
+
+  asiVisu_EXPORT virtual void
+    InsertTriangle(vtkIdType             shapeID,
+                   vtkIdType             pid1,
+                   vtkIdType             pid2,
+                   vtkIdType             pid3,
+                   asiVisu_ShapeCellType scType);
 
 
-public: //! @name Specific methods
+public:
 
-  //! Get VTK PolyData.
-  //! @return VTK PolyData
-  vtkPolyData* getVtkPolyData() const
-  { return myPolyData; }
+  //! \return instance of vtkPolyData representing the shape.
+  const vtkSmartPointer<vtkPolyData>& GetPolyData() const
+  {
+    return m_polyData;
+  }
 
 private:
-  vtkSmartPointer< vtkPolyData >    myPolyData;    //!< Shape geometry as vtkPolyData
-  vtkSmartPointer< vtkIdTypeArray > mySubShapeIDs; //!< Array of sub-shapes ids
-  vtkSmartPointer< vtkIdTypeArray > myMeshTypes;   //!< Array of type codes of mesh parts
+
+  vtkSmartPointer<vtkPolyData>    m_polyData;       //!< Geometry.
+  vtkSmartPointer<vtkIdTypeArray> m_subShapeIDs;    //!< Array of sub-shapes IDs.
+  vtkSmartPointer<vtkIdTypeArray> m_shapeCellTypes; //!< Array of cell types.
+
 };
 
-#endif // __IVTKVTK_SHAPEDATA_H__
+#endif

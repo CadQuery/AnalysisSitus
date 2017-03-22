@@ -72,7 +72,7 @@ public:
 
 private:
 
-  vtkSmartPointer<vtkPolyData>    m_polyData;       //!< Geometry.
+  vtkSmartPointer<vtkPolyData>    m_polyData;       //!< Polygonal data.
   vtkSmartPointer<vtkIdTypeArray> m_subShapeIDs;    //!< Array of sub-shapes IDs.
   vtkSmartPointer<vtkIdTypeArray> m_shapeCellTypes; //!< Array of cell types.
 

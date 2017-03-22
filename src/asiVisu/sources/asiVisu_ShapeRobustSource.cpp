@@ -1,19 +1,15 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 February 2016
+// Created on: 03 March 2017
 // Created by: Quaoar
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_ShapeDataSource.h>
+#include <asiVisu_ShapeRobustSource.h>
 
-// A-Situs (visualization) includes
-#include <asiVisu_ShapeMesher.h>
+// asiVisu includes
 #include <asiVisu_ShapeRobustTessellator.h>
-
-// OCCT includes
-#include <IVtkTools_ShapeObject.hxx>
 
 // VTK includes
 #include <vtkCellArray.h>
@@ -28,100 +24,62 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
-vtkStandardNewMacro(asiVisu_ShapeDataSource);
+vtkStandardNewMacro(asiVisu_ShapeRobustSource);
 
 //-----------------------------------------------------------------------------
 
-asiVisu_ShapeDataSource::asiVisu_ShapeDataSource()
-: IVtkTools_ShapeDataSource(), m_faceterType(Faceter_Standard)
+asiVisu_ShapeRobustSource::asiVisu_ShapeRobustSource() : vtkPolyDataAlgorithm()
 {}
 
 //-----------------------------------------------------------------------------
 
-asiVisu_ShapeDataSource::~asiVisu_ShapeDataSource()
+asiVisu_ShapeRobustSource::~asiVisu_ShapeRobustSource()
 {}
 
 //-----------------------------------------------------------------------------
 
-int asiVisu_ShapeDataSource::RequestData(vtkInformation*        theRequest,
-                                         vtkInformationVector** theInputVector,
-                                         vtkInformationVector*  theOutputVector)
+void asiVisu_ShapeRobustSource::SetAAG(const Handle(asiAlgo_AAG)& aag)
 {
-  vtkPolyData* aPolyData = vtkPolyData::GetData (theOutputVector);
-  aPolyData->Allocate();
-  vtkPoints* aPts = vtkPoints::New();
-  aPolyData->SetPoints(aPts);
-  aPts->Delete();
+  m_aag = aag;
+}
 
-  vtkSmartPointer<vtkPolyData> aTransformedData;
-  TopoDS_Shape aShape = myOccShape->GetShape();
-  TopLoc_Location aShapeLoc = aShape.Location();
+//-----------------------------------------------------------------------------
 
-  if (myIsTransformOnly)
-  {
-    vtkPolyData* aPrevData = myPolyData->getVtkPolyData();
-    if (!aShapeLoc.IsIdentity() )
-    {
-      aTransformedData = this->transform (aPrevData, aShapeLoc);
-    }
-    else
-    {
-      aTransformedData = aPrevData;
-    }
-  }
-  else
-  {
-    IVtkOCC_Shape::Handle aShapeWrapperCopy;
-    if (myIsFastTransformMode && !aShapeLoc.IsIdentity() )
-    {
-      // Reset location before meshing
-      aShape.Location (TopLoc_Location() );
-      aShapeWrapperCopy = new IVtkOCC_Shape (aShape);
-      aShapeWrapperCopy->SetId( myOccShape->GetId() );
-    }
-    else
-    {
-      aShapeWrapperCopy = myOccShape;
-    }
+const Handle(asiAlgo_AAG)& asiVisu_ShapeRobustSource::GetAAG() const
+{
+  return m_aag;
+}
 
-    /* =============
-     *  Run faceter
-     * ============= */
+//-----------------------------------------------------------------------------
 
-    myPolyData = new IVtkVTK_ShapeData;
-    //
-    if ( m_faceterType == Faceter_Standard )
-    {
-      asiVisu_ShapeMesher::Handle aMesher = new asiVisu_ShapeMesher(0.001, 5.0*M_PI/180.0, 0, 0);
-      aMesher->Build(aShapeWrapperCopy, myPolyData);
-    }
-    else if ( m_faceterType == Faceter_Robust )
-    {
-      asiVisu_ShapeRobustTessellator::Handle aMesher = new asiVisu_ShapeRobustTessellator();
-      aMesher->Build(aShapeWrapperCopy, myPolyData);
-    }
-    //
-    vtkPolyData* aMeshData = myPolyData->getVtkPolyData();
+int asiVisu_ShapeRobustSource::RequestData(vtkInformation*        pInfo,
+                                           vtkInformationVector** pInputVector,
+                                           vtkInformationVector*  pOutputVector)
+{
+  vtkPolyData* pOutputPolyData = vtkPolyData::GetData(pOutputVector);
+  pOutputPolyData->Allocate();
+  //
+  vtkSmartPointer<vtkPoints> pOutputPts = vtkSmartPointer<vtkPoints>::New();
+  pOutputPolyData->SetPoints(pOutputPts);
 
-    /* ==============
-     *  Post-process
-     * ============== */
+  /* =============
+   *  Run faceter
+   * ============= */
 
-    if ( myIsFastTransformMode && !aShapeLoc.IsIdentity() )
-      aTransformedData = this->transform(aMeshData, aShapeLoc);
-    else
-      aTransformedData = aMeshData;
-  }
+  m_shapeData = new asiVisu_ShapeData;
+  //
+  Handle(asiVisu_ShapeRobustTessellator) tessGen = new asiVisu_ShapeRobustTessellator(m_aag);
+  tessGen->Build();
+  //
+  const Handle(asiVisu_ShapeData)&    tessResult         = tessGen->GetResult();
+  const vtkSmartPointer<vtkPolyData>& tessResultPolyData = tessResult->GetPolyData();
 
-  aPolyData->CopyStructure(aTransformedData);  // Copy points and cells
-  aPolyData->CopyAttributes(aTransformedData); // Copy data arrays (sub-shapes IDs)
+  /* ==========
+   *  Finalize
+   * ========== */
 
-  // We store the OccShape instance in a IVtkTools_ShapeObject
-  // wrapper in vtkInformation object of vtkDataObject, then pass it
-  // to the actors through pipelines, so selection logic can access
-  // OccShape easily given the actor instance.
-  IVtkTools_ShapeObject::SetShapeSource(this, aPolyData);
-  aPolyData->GetAttributes(vtkDataObject::CELL)->SetPedigreeIds( SubShapeIDs() );
+  pOutputPolyData->CopyStructure(tessResultPolyData);  // Copy points and cells
+  pOutputPolyData->CopyAttributes(tessResultPolyData); // Copy data arrays
 
-  return vtkPolyDataAlgorithm::RequestData (theRequest, theInputVector, theOutputVector);
+  return vtkPolyDataAlgorithm::RequestData(pInfo, pInputVector, pOutputVector);
 }

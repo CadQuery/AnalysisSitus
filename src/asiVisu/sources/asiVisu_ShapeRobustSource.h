@@ -9,7 +9,10 @@
 #define asiVisu_ShapeRobustSource_h
 
 // asiVisu includes
-#include <asiVisu.h>
+#include <asiVisu_ShapeData.h>
+
+// asiAlgo includes
+#include <asiAlgo_AAG.h>
 
 // VTK includes
 #include <vtkInformationIdTypeKey.h>
@@ -26,6 +29,14 @@ public:
 
   asiVisu_EXPORT static asiVisu_ShapeRobustSource*
     New();
+
+public:
+
+  asiVisu_EXPORT void
+    SetAAG(const Handle(asiAlgo_AAG)& aag);
+
+  asiVisu_EXPORT const Handle(asiAlgo_AAG)&
+    GetAAG() const;
 
 protected:
 
@@ -46,14 +57,15 @@ protected:
 private:
 
   asiVisu_EXPORT
-    asiVisu_ShapeDataSource(const asiVisu_ShapeDataSource&);
+    asiVisu_ShapeRobustSource(const asiVisu_ShapeRobustSource&);
 
-  asiVisu_EXPORT asiVisu_ShapeDataSource&
-    operator=(const asiVisu_ShapeDataSource&);
+  asiVisu_EXPORT asiVisu_ShapeRobustSource&
+    operator=(const asiVisu_ShapeRobustSource&);
 
 protected:
 
-  FaceterType m_faceterType; //!< Type of faceter to use.
+  Handle(asiAlgo_AAG)       m_aag;       //!< AAG of the original B-Rep shape.
+  Handle(asiVisu_ShapeData) m_shapeData; //!< Polygonal data container.
 
 };
 

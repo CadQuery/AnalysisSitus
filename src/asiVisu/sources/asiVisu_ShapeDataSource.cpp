@@ -97,8 +97,8 @@ int asiVisu_ShapeDataSource::RequestData(vtkInformation*        theRequest,
     }
     else if ( m_faceterType == Faceter_Robust )
     {
-      Handle(asiVisu_ShapeRobustTessellator) tessGen = new asiVisu_ShapeRobustTessellator();
-      aMesher->Build(aShapeWrapperCopy, myPolyData);
+      /*Handle(asiVisu_ShapeRobustTessellator) tessGen = new asiVisu_ShapeRobustTessellator();
+      aMesher->Build(aShapeWrapperCopy, myPolyData);*/
     }
     //
     vtkPolyData* aMeshData = myPolyData->getVtkPolyData();

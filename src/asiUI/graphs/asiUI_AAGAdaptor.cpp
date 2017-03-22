@@ -57,7 +57,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
   idsArr->SetName(ARRNAME_PIDS);
 
   // Get faces from AAG.
-  const TopTools_IndexedMapOfShape& Faces        = aag->GetFaces();
+  const TopTools_IndexedMapOfShape& Faces        = aag->GetMapOfFaces();
   const TColStd_PackedMapOfInteger& SelFaces     = aag->GetSelectedFaces();
   const asiAlgo_AAG::t_adjacency&   Neighborhood = aag->GetNeighborhood();
 

@@ -68,6 +68,17 @@ public:
     return m_aag;
   }
 
+  //! \return result shape data.
+  const Handle(asiVisu_ShapeData)& GetResult() const
+  {
+    return m_data;
+  }
+
+public:
+
+  asiVisu_EXPORT void
+    Build();
+
 protected:
 
   asiVisu_EXPORT virtual void

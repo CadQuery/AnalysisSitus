@@ -35,6 +35,14 @@ asiVisu_ShapeRobustTessellator::asiVisu_ShapeRobustTessellator(const Handle(asiA
 //-----------------------------------------------------------------------------
 
 //! Builds the polygonal data.
+void asiVisu_ShapeRobustTessellator::Build()
+{
+  this->internalBuild();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Internal method which builds the polygonal data.
 void asiVisu_ShapeRobustTessellator::internalBuild()
 {
   TopoDS_Shape master = m_aag->GetMasterCAD();

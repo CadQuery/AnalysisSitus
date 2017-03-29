@@ -186,6 +186,16 @@ void asiUI_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
   m_pWidget->GetRenderWindow()->AddObserver(vtkCommand::RenderEvent, this, &asiUI_TopoGraph::RenderEventCallback);
 }
 
+//! Callback to adjust text widgets.
+void asiUI_TopoGraph::RenderEventCallback()
+{
+  if ( !m_textWidget->GetEnabled() )
+    m_textWidget->On();
+
+  if ( !m_summaryWidget->GetEnabled() )
+    m_summaryWidget->On();
+}
+
 //! Renders topology graph in the requested regime.
 //! \param shape         [in] target shape.
 //! \param selectedFaces [in] selected faces.
@@ -405,16 +415,6 @@ void asiUI_TopoGraph::buildRecursively(const TopoDS_Shape&             rootShape
                            pIdsArr,
                            shapeVertices);
   }
-}
-
-//! Callback to adjust text widgets.
-void asiUI_TopoGraph::RenderEventCallback()
-{
-  if ( !m_textWidget->GetEnabled() )
-    m_textWidget->On();
-
-  if ( !m_summaryWidget->GetEnabled() )
-    m_summaryWidget->On();
 }
 
 //! Reaction on closing the viewer.

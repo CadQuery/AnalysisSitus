@@ -50,8 +50,8 @@ if "%CASROOT%"         == "" set "CASROOT=%AS_PRODUCTS%\occt-vc12-64"
 if "%OCCT_3RDPARTIES%" == "" set "OCCT_3RDPARTIES=%AS_PRODUCTS%"
 
 set "CAS_INC=%CASROOT%\inc"
-set "CAS_LIB64=%CASROOT%\win64\%VCVER%\lib%DEB%
-set "CAS_BIN64=%CASROOT%\win64\%VCVER%\bin%DEB%
+set "CAS_LIB64=%CASROOT%\win64\%VCVER%\lib%DEB%"
+set "CAS_BIN64=%CASROOT%\win64\%VCVER%\bin%DEB%"
 
 call %CASROOT%\env.bat %VCVER% %ARCH% %BUILD_CONFIG%
 

@@ -23,6 +23,7 @@
 
 // OCCT includes
 #include <GC_MakeSegment.hxx>
+#include <GCE2d_MakeSegment.hxx>
 
 // VTK includes
 #include <vtkActor.h>

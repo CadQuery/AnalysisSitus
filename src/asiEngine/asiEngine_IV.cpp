@@ -391,7 +391,7 @@ void asiEngine_IV::Clean_Topo()
 //! \return newly created tessellation item.
 Handle(asiData_IVTessItemNode)
   asiEngine_IV::Create_TessItem(const Handle(Poly_Triangulation)& tess,
-                             const TCollection_AsciiString&    name)
+                                const TCollection_AsciiString&    name)
 {
   // Access Model and parent Node
   Handle(asiData_IVTessNode) IV_Parent = m_model->GetIVNode()->Tessellation();

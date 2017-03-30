@@ -465,7 +465,8 @@ void asiUI_ControlsFeature::onCheckDihedralAngles()
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
   //
-  NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
+  if ( !NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour).IsNull() )
+    NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
   //
   m_partViewer->PrsMgr()->Actualize( BN.get() );
 }

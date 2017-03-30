@@ -59,7 +59,6 @@ public slots:
   void onMaximizeFaces ();
   void onFillGap       ();
   //
-  void onShowRobust    ();
   void onShowVertices  ();
   void onSelectFaces   ();
   void onSelectEdges   ();
@@ -70,8 +69,6 @@ signals:
   void partLoaded       ();
   void partSaved        ();
   void partModified     ();
-  void robustOn         ();
-  void robustOff        ();
   void verticesOn       ();
   void verticesOff      ();
   void normalsOn        ();
@@ -99,7 +96,6 @@ private:
     QPushButton* pMaximizeFaces; //!< Performs face maximization.
     QPushButton* pFillGap;       //!< Performs gap filling.
     //
-    QPushButton* pShowRobust;    //!< Shows robust presentation.
     QPushButton* pShowVertices;  //!< Shows vertices of the model.
     QPushButton* pSelectFaces;   //!< Enables selection by faces.
     QPushButton* pSelectEdges;   //!< Enables selection by edges.
@@ -118,7 +114,6 @@ private:
                   pMaximizeFaces (NULL),
                   pFillGap       (NULL),
                   //
-                  pShowRobust    (NULL),
                   pShowVertices  (NULL),
                   pSelectFaces   (NULL),
                   pSelectEdges   (NULL),
@@ -140,7 +135,6 @@ private:
       delete pMaximizeFaces; pMaximizeFaces = NULL;
       delete pFillGap;       pFillGap       = NULL;
       //
-      delete pShowRobust;    pShowRobust    = NULL;
       delete pShowVertices;  pShowVertices  = NULL;
       delete pSelectFaces;   pSelectFaces   = NULL;
       delete pSelectEdges;   pSelectEdges   = NULL;

@@ -86,7 +86,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   m_widgets.pMaximizeFaces = new QPushButton("Maximize faces");
   m_widgets.pFillGap       = new QPushButton("Fill gap");
   //
-  m_widgets.pShowRobust    = new QPushButton("Error-resistant view");
   m_widgets.pShowVertices  = new QPushButton("Show vertices");
   m_widgets.pSelectFaces   = new QPushButton("Select faces");
   m_widgets.pSelectEdges   = new QPushButton("Select edges");
@@ -105,14 +104,12 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   m_widgets.pMaximizeFaces -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pFillGap       -> setMinimumWidth(BTN_MIN_WIDTH);
   //
-  m_widgets.pShowRobust    -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pShowVertices  -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectFaces   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectEdges   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pPickEdge      -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Other configurations
-  m_widgets.pShowRobust   -> setCheckable(true);
   m_widgets.pShowVertices -> setCheckable(true);
   m_widgets.pPickEdge     -> setCheckable(true);
 
@@ -145,7 +142,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   QGroupBox*   pVisuGroup = new QGroupBox("Visualization");
   QVBoxLayout* pVisuLay   = new QVBoxLayout(pVisuGroup);
   //
-  pVisuLay->addWidget(m_widgets.pShowRobust);
   pVisuLay->addWidget(m_widgets.pShowVertices);
   pVisuLay->addWidget(m_widgets.pSelectFaces);
   pVisuLay->addWidget(m_widgets.pSelectEdges);
@@ -175,7 +171,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   connect( m_widgets.pMaximizeFaces, SIGNAL( clicked() ), SLOT( onMaximizeFaces () ) );
   connect( m_widgets.pFillGap,       SIGNAL( clicked() ), SLOT( onFillGap       () ) );
   //
-  connect( m_widgets.pShowRobust,    SIGNAL( clicked() ), SLOT( onShowRobust    () ) );
   connect( m_widgets.pShowVertices,  SIGNAL( clicked() ), SLOT( onShowVertices  () ) );
   connect( m_widgets.pSelectFaces,   SIGNAL( clicked() ), SLOT( onSelectFaces   () ) );
   connect( m_widgets.pSelectEdges,   SIGNAL( clicked() ), SLOT( onSelectEdges   () ) );
@@ -500,17 +495,6 @@ void asiUI_ControlsPart::onFillGap()
 
   // Notify
   emit partModified();
-}
-
-//-----------------------------------------------------------------------------
-
-//! Switches visualization of robust presentation.
-void asiUI_ControlsPart::onShowRobust()
-{
-  const bool isOn = m_widgets.pShowRobust->isChecked();
-
-  // Notify
-  isOn ? emit robustOn() : emit robustOff();
 }
 
 //-----------------------------------------------------------------------------

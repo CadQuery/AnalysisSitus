@@ -78,8 +78,8 @@ void asiUI_PickCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
     return;
 
   // Do not allow detection on global selection
-  if ( (selMode & SelectionMode_Workpiece) && eventId == EVENT_DETECT_DEFAULT )
-    return;
+  /*if ( (selMode & SelectionMode_Workpiece) && eventId == EVENT_DETECT_DEFAULT )
+    return;*/
 
   // Now pick
   asiVisu_PickInput* pickInput = reinterpret_cast<asiVisu_PickInput*>(pCallData);

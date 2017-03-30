@@ -29,7 +29,9 @@ vtkStandardNewMacro(asiVisu_ShapeRobustSource);
 //-----------------------------------------------------------------------------
 
 asiVisu_ShapeRobustSource::asiVisu_ShapeRobustSource() : vtkPolyDataAlgorithm()
-{}
+{
+  this->SetNumberOfInputPorts(0); // Input is passed from application data model
+}
 
 //-----------------------------------------------------------------------------
 
@@ -68,7 +70,10 @@ int asiVisu_ShapeRobustSource::RequestData(vtkInformation*        pInfo,
 
   m_shapeData = new asiVisu_ShapeData;
   //
-  Handle(asiVisu_ShapeRobustTessellator) tessGen = new asiVisu_ShapeRobustTessellator(m_aag);
+  vtkSmartPointer<asiVisu_ShapeRobustTessellator>
+    tessGen = vtkSmartPointer<asiVisu_ShapeRobustTessellator>::New();
+  //
+  tessGen->Initialize(m_aag, 0.1, 1.0);
   tessGen->Build();
   //
   const Handle(asiVisu_ShapeData)&    tessResult         = tessGen->GetResult();

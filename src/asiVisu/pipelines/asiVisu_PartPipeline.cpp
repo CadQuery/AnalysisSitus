@@ -6,16 +6,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_ShapeRobustPipeline.h>
+#include <asiVisu_PartPipeline.h>
 
 // Visualization includes
+#include <asiVisu_PartDataProvider.h>
 #include <asiVisu_PartNodeInfo.h>
-#include <asiVisu_ShapeDataProvider.h>
 #include <asiVisu_Utils.h>
-
-// VIS includes
-#include <IVtkOCC_Shape.hxx>
-#include <IVtkTools_ShapeObject.hxx>
 
 // VTK includes
 #include <vtkActor.h>
@@ -23,12 +19,14 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 
+//-----------------------------------------------------------------------------
+
 //! Creates new Shape Pipeline initialized by default VTK mapper and actor.
 //! \param isOCCTColorScheme [in] indicates whether to use native OCCT
 //!                               color scheme for rendering of OCCT shapes.
 //! \param isBound2Node      [in] indicates whether to bind Node ID to actor.
-asiVisu_ShapeRobustPipeline::asiVisu_ShapeRobustPipeline(const bool isOCCTColorScheme,
-                                                         const bool isBound2Node)
+asiVisu_PartPipeline::asiVisu_PartPipeline(const bool isOCCTColorScheme,
+                                           const bool isBound2Node)
 //
 : asiVisu_Pipeline   ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
   m_bOCCTColorScheme ( isOCCTColorScheme ), // Native OCCT color scheme (as in Draw)
@@ -40,10 +38,10 @@ asiVisu_ShapeRobustPipeline::asiVisu_ShapeRobustPipeline(const bool isOCCTColorS
    * ======================== */
 
   // Initialize Data Source
-  m_DS = vtkSmartPointer<asiVisu_ShapeDataSource>::New();
-  //
-  m_DS->FastTransformModeOn(); // Use optimized approach to isotropic transformations
-  m_DS->SetFaceter(asiVisu_ShapeDataSource::Faceter_Robust);
+  m_source = vtkSmartPointer<asiVisu_ShapeRobustSource>::New();
+  ////
+  //m_DS->FastTransformModeOn(); // Use optimized approach to isotropic transformations
+  //m_DS->SetFaceter(asiVisu_ShapeDataSource::Faceter_Robust);
 
   // Set line width
   this->Actor()->GetProperty()->SetLineWidth(1);
@@ -52,23 +50,25 @@ asiVisu_ShapeRobustPipeline::asiVisu_ShapeRobustPipeline(const bool isOCCTColorS
   asiVisu_Utils::ApplyLightingRules( this->Actor() );
 }
 
+//-----------------------------------------------------------------------------
+
 //! Sets input data for the pipeline.
 //! \param dataProvider [in] Data Provider.
-void asiVisu_ShapeRobustPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
+void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
 {
-  Handle(asiVisu_ShapeDataProvider)
-    DP = Handle(asiVisu_ShapeDataProvider)::DownCast(dataProvider);
+  Handle(asiVisu_PartDataProvider)
+    DP = Handle(asiVisu_PartDataProvider)::DownCast(dataProvider);
 
   /* ===========================
    *  Validate input Parameters
    * =========================== */
 
-  TopoDS_Shape aShape = DP->GetShape();
-  if ( aShape.IsNull() )
+  TopoDS_Shape shape = DP->GetShape();
+  if ( shape.IsNull() )
   {
     // Pass empty data set in order to have valid pipeline
-    vtkSmartPointer<vtkPolyData> aDummyDS = vtkSmartPointer<vtkPolyData>::New();
-    this->SetInputData(aDummyDS);
+    vtkSmartPointer<vtkPolyData> dummyData = vtkSmartPointer<vtkPolyData>::New();
+    this->SetInputData(dummyData);
     this->Modified(); // Update modification timestamp
     return; // Do nothing
   }
@@ -79,44 +79,52 @@ void asiVisu_ShapeRobustPipeline::SetInput(const Handle(asiVisu_DataProvider)& d
 
   if ( DP->MustExecute( this->GetMTime() ) )
   {
-    static int ShapeID = 0; ++ShapeID;
-    Handle(IVtkOCC_Shape) aShapeIntoVtk = new IVtkOCC_Shape(aShape);
-    aShapeIntoVtk->SetId(ShapeID);
+    m_source->SetAAG( DP->GetAAG() );
 
-    // Re-use existing Data Source to benefit from its lightweight
-    // transformation capabilities
-    m_DS->SetShape(aShapeIntoVtk);
+    //static int ShapeID = 0; ++ShapeID;
+    //Handle(IVtkOCC_Shape) aShapeIntoVtk = new IVtkOCC_Shape(aShape);
+    //aShapeIntoVtk->SetId(ShapeID);
 
-    // Bind actor to owning Node ID. Thus we set back reference from VTK
-    // entity to data object
-    if ( m_bIsBound2Node )
-      asiVisu_PartNodeInfo::Store( DP->GetNodeID(), this->Actor() );
+    //// Re-use existing Data Source to benefit from its lightweight
+    //// transformation capabilities
+    //m_DS->SetShape(aShapeIntoVtk);
 
-    // Bind Shape DS with actor. This is necessary for VIS picker -- it will
-    // not work without the corresponding Information key
-    IVtkTools_ShapeObject::SetShapeSource( m_DS, this->Actor() );
+    //// Bind actor to owning Node ID. Thus we set back reference from VTK
+    //// entity to data object
+    //if ( m_bIsBound2Node )
+    //  asiVisu_PartNodeInfo::Store( DP->GetNodeID(), this->Actor() );
+
+    //// Bind Shape DS with actor. This is necessary for VIS picker -- it will
+    //// not work without the corresponding Information key
+    //IVtkTools_ShapeObject::SetShapeSource( m_DS, this->Actor() );
 
     // Initialize pipeline
-    this->SetInputConnection( m_DS->GetOutputPort() );
+    this->SetInputConnection( m_source->GetOutputPort() );
   }
 
   // Update modification timestamp
   this->Modified();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void asiVisu_ShapeRobustPipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_PartPipeline::callback_add_to_renderer(vtkRenderer*)
 {
   this->Actor()->GetProperty()->SetInterpolationToPhong();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Callback for RemoveFromRenderer() routine.
-void asiVisu_ShapeRobustPipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_PartPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
+//-----------------------------------------------------------------------------
+
 //! Callback for Update() routine.
-void asiVisu_ShapeRobustPipeline::callback_update()
+void asiVisu_PartPipeline::callback_update()
 {
   if ( m_bOCCTColorScheme && !m_bMapperColorsSet )
   {

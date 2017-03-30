@@ -24,7 +24,7 @@ namespace asiAlgo_MeshGen
     bool DoNative(const TopoDS_Shape& shape,
                   const double        linearDeflection,
                   const double        angularDeflection_deg,
-                  asiAlgo_MeshInfo&          info);
+                  asiAlgo_MeshInfo&   info);
 };
 
 #endif

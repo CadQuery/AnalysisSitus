@@ -89,12 +89,12 @@ void asiVisu_Prs::UpdatePipelines() const
 //! Accessor for a visualization pipeline by its ID.
 //! \param theId [in] pipeline ID.
 //! \return requested visualization pipeline.
-const Handle(asiVisu_Pipeline)& asiVisu_Prs::GetPipeline(const int theId) const
+Handle(asiVisu_Pipeline) asiVisu_Prs::GetPipeline(const int theId) const
 {
   const PipelineMap& aPLMap = m_pipelineRepo.Find(Group_Prs);
 
   if ( !aPLMap.IsBound(theId) )
-    Standard_ProgramError::Raise("Pipeline does not exist");
+    return NULL;
 
   return aPLMap.Find(theId);
 }
@@ -102,7 +102,7 @@ const Handle(asiVisu_Pipeline)& asiVisu_Prs::GetPipeline(const int theId) const
 //! Gets list of visualization pipelines.
 //! Highlighting pipelines are not included in the list.
 //! \return list of visualization pipeline.
-const Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPipelineList() const
+Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPipelineList() const
 {
   Handle(asiVisu_HPipelineList) aList = new asiVisu_HPipelineList();
   asiVisu_Prs::PipelineMap::Iterator aMapIt( m_pipelineRepo.Find(Group_Prs) );
@@ -127,7 +127,7 @@ Handle(asiVisu_Pipeline) asiVisu_Prs::GetPickPipeline(const int theIdx) const
 
 //! Gets list of picking pipelines.
 //! \return list of picking pipeline.
-const Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPickPipelineList() const
+Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPickPipelineList() const
 {
   Handle(asiVisu_HPipelineList) aList = new asiVisu_HPipelineList();
   asiVisu_Prs::PipelineMap::Iterator aMapIt( m_pipelineRepo.Find(Group_Pick) );
@@ -140,14 +140,19 @@ const Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPickPipelineList() const
 //! Accessor for a visualization pipeline used for detection.
 //! \param theIdx [in] index of the detection pipeline to access.
 //! \return requested visualization pipeline.
-const Handle(asiVisu_Pipeline)& asiVisu_Prs::GetDetectPipeline(const int theIdx) const
+Handle(asiVisu_Pipeline) asiVisu_Prs::GetDetectPipeline(const int theIdx) const
 {
-  return m_pipelineRepo.Find(Group_Detect).Find(theIdx);
+  const PipelineMap& aPLMap = m_pipelineRepo.Find(Group_Detect);
+
+  if ( !aPLMap.IsBound(theIdx) )
+    return NULL;
+
+  return aPLMap.Find(theIdx);
 }
 
 //! Gets list of detection pipelines.
 //! \return list of detection pipeline.
-const Handle(asiVisu_HPipelineList) asiVisu_Prs::GetDetectPipelineList() const
+Handle(asiVisu_HPipelineList) asiVisu_Prs::GetDetectPipelineList() const
 {
   Handle(asiVisu_HPipelineList) aList = new asiVisu_HPipelineList();
   asiVisu_Prs::PipelineMap::Iterator aMapIt( m_pipelineRepo.Find(Group_Detect) );

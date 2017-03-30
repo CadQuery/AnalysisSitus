@@ -5,37 +5,37 @@
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_ShapeRobustPipeline_h
-#define asiVisu_ShapeRobustPipeline_h
+#ifndef asiVisu_PartPipeline_h
+#define asiVisu_PartPipeline_h
 
 // A-Situs includes
 #include <asiVisu_Pipeline.h>
-#include <asiVisu_ShapeDataSource.h>
+#include <asiVisu_ShapeRobustSource.h>
 
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_ShapeRobustPipeline, asiVisu_Pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_PartPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for OCCT shapes. This pipeline serves the purpose
 //! of visualization of "not-so-valid" shapes. Such shapes can occur either
 //! because of any sort of corruption, or they can represent some intermediate
 //! state of modeling, e.g. a result of Euler Operation which breaks geometry,
 //! but keeps topology consistent.
-class asiVisu_ShapeRobustPipeline : public asiVisu_Pipeline
+class asiVisu_PartPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ShapeRobustPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_PartPipeline, asiVisu_Pipeline)
 
 public:
 
   asiVisu_EXPORT
-    asiVisu_ShapeRobustPipeline(const bool isOCCTColorScheme = true,
-                                const bool isBound2Node      = true);
+    asiVisu_PartPipeline(const bool isOCCTColorScheme = true,
+                         const bool isBound2Node      = true);
 
 public:
 
@@ -44,17 +44,17 @@ public:
 
 private:
 
-  virtual void callback_add_to_renderer      (vtkRenderer* theRenderer);
-  virtual void callback_remove_from_renderer (vtkRenderer* theRenderer);
+  virtual void callback_add_to_renderer      (vtkRenderer* renderer);
+  virtual void callback_remove_from_renderer (vtkRenderer* renderer);
   virtual void callback_update               ();
 
 private:
 
   //! Copying prohibited.
-  asiVisu_ShapeRobustPipeline(const asiVisu_ShapeRobustPipeline&);
+  asiVisu_PartPipeline(const asiVisu_PartPipeline&);
 
   //! Assignment prohibited.
-  asiVisu_ShapeRobustPipeline& operator=(const asiVisu_ShapeRobustPipeline&);
+  asiVisu_PartPipeline& operator=(const asiVisu_PartPipeline&);
 
 protected:
 
@@ -71,7 +71,7 @@ protected:
   bool m_bMapperColorsSet;
 
   //! Data source.
-  vtkSmartPointer<asiVisu_ShapeDataSource> m_DS;
+  vtkSmartPointer<asiVisu_ShapeRobustSource> m_source;
 
 };
 

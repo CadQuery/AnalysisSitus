@@ -42,7 +42,7 @@ namespace
     InspectXYZ(const double tol, const gp_XYZ& P) : m_fTol(tol), m_bFound(false), m_P(P) {}
 
     //! \return true/false depending on whether the node was found or not.
-    inline bool IsFound() const { return m_bFound; }
+    bool IsFound() const { return m_bFound; }
 
     //! Implementation of inspection method.
     NCollection_CellFilter_Action Inspect(const gp_XYZ& Target)
@@ -69,7 +69,7 @@ namespace
     //! Constructor accepting resolution distance and point.
     InspectNode(const double tol, const gp_XYZ& P) : InspectXYZ(tol, P), m_iID(-1) {}
 
-    inline int GetID() const { return m_iID; }
+    int GetID() const { return m_iID; }
 
     //! Implementation of inspection method.
     NCollection_CellFilter_Action Inspect(const TriNode& Target)
@@ -100,10 +100,10 @@ namespace
 
     PatchInfo(const TopoDS_Face& F) : m_F(F) {}
 
-    inline const TopoDS_Face&             Face() const                  { return m_F; }
-    inline void                           SetFace(const TopoDS_Face& F) { m_F = F; }
-    inline NCollection_DataMap<int, int>& FaceTris()                    { return m_GlobalLocalTris; }
-    inline NCollection_DataMap<int, int>& LocalNodes()                  { return m_LocalGlobalNodes; }
+    const TopoDS_Face&             GetFace() const               { return m_F; }
+    void                           SetFace(const TopoDS_Face& F) { m_F = F; }
+    NCollection_DataMap<int, int>& FaceTris()                    { return m_GlobalLocalTris; }
+    NCollection_DataMap<int, int>& LocalNodes()                  { return m_LocalGlobalNodes; }
 
   private:
 
@@ -121,37 +121,39 @@ namespace
   // Auxiliary functions
   //---------------------------------------------------------------------------
 
-  void appendNodeInGlobalTri(const int                            LocalId,
-                             const int                            GlobalID,
-                             const gp_XYZ&                        P,
+  void appendNodeInGlobalTri(const int                            localNodeId,
+                             int&                                 globalNodeId,
+                             const gp_XYZ&                        xyz,
                              Handle(Poly_CoherentTriangulation)&  GlobalTri,
                              NCollection_CellFilter<InspectNode>& NodeFilter,
-                             NCollection_DataMap<int, int>&       DegNodesMap,
-                             NCollection_DataMap<int, int>&       LocalNodesMap)
+                             NCollection_DataMap<int, int>&       LocGlobMap)
   {
     const double prec = Precision::Confusion();
-    InspectNode Inspect(prec, P);
-    gp_XYZ XYZ_min = Inspect.Shift( P, -prec );
-    gp_XYZ XYZ_max = Inspect.Shift( P,  prec );
+    InspectNode Inspect(prec, xyz);
+    gp_XYZ XYZ_min = Inspect.Shift( xyz, -prec );
+    gp_XYZ XYZ_max = Inspect.Shift( xyz,  prec );
 
-    // Attempt to find a spatial cell containing this node
+    // Coincidence test
     NodeFilter.Inspect(XYZ_min, XYZ_max, Inspect);
     const bool isFound = Inspect.IsFound();
-  
+    //
     if ( !isFound )
     {
       TriNode N;
-      N.ID    = GlobalID;
-      N.Point = P;
-      NodeFilter.Add(N, P);
-      GlobalTri->SetNode(P, GlobalID);
-      LocalNodesMap.Bind(LocalId, GlobalID);
+      N.ID    = globalNodeId;
+      N.Point = xyz;
+      //
+      NodeFilter.Add(N, xyz);
+      GlobalTri->SetNode(xyz, globalNodeId);
+      LocGlobMap.Bind(localNodeId, globalNodeId);
+
+      // (!!!) Increment global node ID
+      ++globalNodeId;
     }
     else
     {
       const int equalID = Inspect.GetID();
-      DegNodesMap.Bind(GlobalID, equalID);
-      LocalNodesMap.Bind(LocalId, equalID);
+      LocGlobMap.Bind(localNodeId, equalID);
     }
   }
 
@@ -162,67 +164,102 @@ namespace
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-//! \param body [in] CAD model to extract triangulation patches from.
-//! \param mode [in] conversion mode.
+//! \param body            [in] CAD model to extract triangulation patches from.
+//! \param mode            [in] conversion mode.
+//! \param collectBoundary [in] indicates whether to preserve boundary links.
 asiAlgo_MeshMerge::asiAlgo_MeshMerge(const TopoDS_Shape& body,
-                                     const Mode          mode)
-: m_body(body),
-  m_mode(mode)
+                                     const Mode          mode,
+                                     const bool          collectBoundary)
+: m_body        (body),
+  m_mode        (mode),
+  m_bCollectBnd (collectBoundary)
 {
   this->build();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Assembles many triangulations into a single one.
 void asiAlgo_MeshMerge::build()
 {
-  // Create result
+  // Create result as coherent triangulation
   m_resultPoly = new Poly_CoherentTriangulation;
 
   // Working tools and variables
-  int nNodes = 0, nTriangles = 0;
+  int globalNodeId = 0;
   NCollection_CellFilter<InspectNode> NodeFilter( Precision::Confusion() );
-  NCollection_DataMap<int, int> DegNodesMap;
 
-  // Iterate over the patches
+  //###########################################################################
+  // [BEGIN] Iterate over the faces
   for ( TopExp_Explorer exp(m_body, TopAbs_FACE); exp.More(); exp.Next() )
   {
     const TopoDS_Face& F = TopoDS::Face( exp.Current() );
-    PatchInfo FT(F);
-    NCollection_DataMap<int, int>& LocalNodesMap = FT.LocalNodes();
+    NCollection_DataMap<int, int> FaceNodeIds_ToGlobalNodeIds;
 
     // Extract triangulation of a patch
     TopLoc_Location Loc;
-    Handle(Poly_Triangulation) LocalTri = BRep_Tool::Triangulation(F, Loc);
+    const Handle(Poly_Triangulation)& LocalTri = BRep_Tool::Triangulation(F, Loc);
+    //
+    if ( LocalTri.IsNull() )
+      continue;
     //
     const int nLocalNodes     = LocalTri->NbNodes();
     const int nLocalTriangles = LocalTri->NbTriangles();
 
-    // Add nodes
-    if ( Loc.IsIdentity() )
+    // Add nodes with coincidence test
+    for ( int localNodeId = 1; localNodeId <= nLocalNodes; ++localNodeId )
     {
-      for ( int i = 1; i <= nLocalNodes; ++i )
-      {
-        const int curID = nNodes + i - 1;
-        const gp_XYZ& curP = LocalTri->Nodes()(i).XYZ();
+      gp_XYZ xyz;
+      if ( Loc.IsIdentity() )
+        xyz = LocalTri->Nodes()(localNodeId).XYZ();
+      else
+        xyz = LocalTri->Nodes()(localNodeId).Transformed( Loc.Transformation() ).XYZ();
 
-        // Add node
-        ::appendNodeInGlobalTri(i, curID, curP, m_resultPoly, NodeFilter, DegNodesMap, LocalNodesMap);
-      }
-    }
-    else
-    {
-      const gp_Trsf& trsf = Loc.Transformation();
-      for ( int i = 1; i <= nLocalNodes; ++i )
-      {
-        const int curID = nNodes + i - 1;
-        const gp_XYZ& curP = LocalTri->Nodes()(i).Transformed(trsf).XYZ();
-
-        // Add node
-        ::appendNodeInGlobalTri(i, curID, curP, m_resultPoly, NodeFilter, DegNodesMap, LocalNodesMap);
-      }
+      // Add node to the conglomerate after coincidence test
+      ::appendNodeInGlobalTri(localNodeId,                  // [in]     local node ID in a face
+                              globalNodeId,                 // [in,out] global node ID in the conglomerate mesh
+                              xyz,                          // [in]     coordinates for coincidence test
+                              m_resultPoly,                 // [in,out] result conglomerate mesh
+                              NodeFilter,                   // [in]     cell filter
+                              FaceNodeIds_ToGlobalNodeIds); // [in,out] face-conglomerate map of node IDs
     }
 
-    // Add triangles
+    // Collect local indices of the boundary nodes
+    if ( m_bCollectBnd )
+    {
+      for ( TopExp_Explorer eexp(F, TopAbs_EDGE); eexp.More(); eexp.Next() )
+      {
+        const TopoDS_Edge& E = TopoDS::Edge( eexp.Current() );
+
+        // Get discrete analogue of p-curve
+        TopLoc_Location ELoc;
+        const Handle(Poly_PolygonOnTriangulation)&
+          polygonOnTri = BRep_Tool::PolygonOnTriangulation(E, LocalTri, ELoc);
+        //
+        if ( polygonOnTri.IsNull() )
+          continue;
+
+        // Add node indices to the collection of boundary nodes
+        const TColStd_Array1OfInteger& polygonOnTriNodes = polygonOnTri->Nodes();
+        int prevBndNode = 0;
+        //
+        for ( int k = polygonOnTriNodes.Lower(); k <= polygonOnTriNodes.Upper(); ++k )
+        {
+          const int localBndIndex  = polygonOnTriNodes(k);
+          const int globalBndIndex = FaceNodeIds_ToGlobalNodeIds(localBndIndex);
+
+          if ( k > polygonOnTriNodes.Lower() )
+          {
+            t_unoriented_link bndLink(prevBndNode, globalBndIndex);
+            this->addBoundaryLink(bndLink);
+          }
+          //
+          prevBndNode = globalBndIndex;
+        }
+      }
+    }
+
+    // Add triangles taking into account face orientations
     for ( int i = 1; i <= nLocalTriangles; ++i )
     {
       int n1, n2, n3;
@@ -234,23 +271,28 @@ void asiAlgo_MeshMerge::build()
         m[1] = n3;
         m[2] = n2;
       }
-      for ( int idx = 0; idx < 3; ++idx )
-      {
-        if ( DegNodesMap.IsBound(m[idx] + nNodes - 1) )
-          m[idx] = DegNodesMap.Find(m[idx] + nNodes - 1) - nNodes + 1;
-      }
+
+      m[0] = FaceNodeIds_ToGlobalNodeIds.Find(m[0]);
+      m[1] = FaceNodeIds_ToGlobalNodeIds.Find(m[1]);
+      m[2] = FaceNodeIds_ToGlobalNodeIds.Find(m[2]);
+
       if ( m[0] == m[1] || m[0] == m[2] || m[1] == m[2] )
         continue;
 
-      m_resultPoly->AddTriangle(m[0] + nNodes - 1,
-                                m[1] + nNodes - 1,
-                                m[2] + nNodes - 1);
+      m_resultPoly->AddTriangle(m[0], m[1], m[2]);
     }
-
-    nNodes += nLocalNodes;
-    nTriangles += nLocalTriangles;
   }
+  // [END] Iterate over the faces
+  //###########################################################################
 
   if ( m_mode == Mode_Mesh )
-    m_resultMesh = new Mesh( m_resultPoly->GetTriangulation() );
+    if ( !m_resultPoly->GetTriangulation().IsNull() )
+      m_resultMesh = new Mesh( m_resultPoly->GetTriangulation() );
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_MeshMerge::addBoundaryLink(const t_unoriented_link& bndLink)
+{
+  m_boundaryLinks.Add(bndLink);
 }

@@ -49,7 +49,7 @@ void asiUI_PartCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
                                  unsigned long eventId,
                                  void*         asiVisu_NotUsed(pCallData))
 {
-  vtkSmartPointer<asiVisu_PrsManager> mgr = this->GetViewer()->PrsMgr();
+  const vtkSmartPointer<asiVisu_PrsManager>& mgr = this->GetViewer()->PrsMgr();
 
   if ( eventId == EVENT_FIND_FACE )
     emit findFace();

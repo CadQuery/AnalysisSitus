@@ -48,17 +48,25 @@
 //! the standard one is its capacity to give you "at least something" to
 //! look at. The latter enables you to debug your geometric stuff while
 //! having some visual feedback from your prototyping system.
-class asiVisu_ShapeRobustTessellator : public Standard_Transient
+class asiVisu_ShapeRobustTessellator : public vtkObject
 {
+// RTTI and construction:
 public:
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ShapeRobustTessellator, Standard_Transient)
+  vtkTypeMacro(asiVisu_ShapeRobustTessellator, vtkObject);
 
-public:
+  asiVisu_EXPORT static asiVisu_ShapeRobustTessellator*
+    New();
 
   asiVisu_EXPORT
-    asiVisu_ShapeRobustTessellator(const Handle(asiAlgo_AAG)& aag);
+    asiVisu_ShapeRobustTessellator();
+
+public:
+
+  asiVisu_EXPORT void
+    Initialize(const Handle(asiAlgo_AAG)& aag,
+               const double               linearDeflection,
+               const double               angularDeflection_deg);
 
 public:
 
@@ -98,8 +106,10 @@ protected:
 
 protected:
 
-  Handle(asiAlgo_AAG)       m_aag;  //!< AAG to access the topological elements.
-  Handle(asiVisu_ShapeData) m_data; //!< Visualization data.
+  Handle(asiAlgo_AAG)       m_aag;               //!< AAG to access the topological elements.
+  Handle(asiVisu_ShapeData) m_data;              //!< Visualization data.
+  double                    m_fLinDeflection;    //!< Linear deflection.
+  double                    m_fAngDeflectionDeg; //!< Angular deflection.
 
 };
 

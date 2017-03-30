@@ -23,7 +23,7 @@
 
 DEFINE_STANDARD_HANDLE(asiVisu_GeomPrs, asiVisu_Prs)
 
-//! Presentation class for b-rep geometry.
+//! Presentation class for B-Rep geometry.
 class asiVisu_GeomPrs : public asiVisu_Prs
 {
 public:
@@ -47,7 +47,7 @@ public:
 public:
 
   asiVisu_EXPORT static Handle(asiVisu_Prs)
-    Instance(const Handle(ActAPI_INode)& theNode);
+    Instance(const Handle(ActAPI_INode)& N);
 
   asiVisu_EXPORT virtual bool
     IsVisible() const;
@@ -57,10 +57,9 @@ public:
 
   asiVisu_EXPORT void DoShading() const;
   asiVisu_EXPORT void DoWireframe() const;
-  asiVisu_EXPORT void DoColor(const QColor& theColor) const;
+  asiVisu_EXPORT void DoColor(const QColor& color) const;
   asiVisu_EXPORT void DoUnColor() const;
   asiVisu_EXPORT void DoVertices(const bool on) const;
-  asiVisu_EXPORT void DoRobust(const bool on) const;
 
 public:
 
@@ -72,7 +71,7 @@ public:
 private:
 
   //! Allocation is allowed only via Instance method.
-  asiVisu_GeomPrs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_GeomPrs(const Handle(ActAPI_INode)& N);
 
 // Callbacks:
 private:
@@ -81,13 +80,13 @@ private:
   virtual void afterInitPipelines();
   virtual void beforeUpdatePipelines() const;
   virtual void afterUpdatePipelines() const;
-  virtual void highlight(vtkRenderer* theRenderer,
-                         const asiVisu_PickResult& thePickRes,
-                         const asiVisu_SelectionNature& theSelNature) const;
-  virtual void unHighlight(vtkRenderer* theRenderer,
-                           const asiVisu_SelectionNature& theSelNature) const;
-  virtual void renderPipelines(vtkRenderer* theRenderer) const;
-  virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
+  virtual void highlight(vtkRenderer* renderer,
+                         const asiVisu_PickResult& pickRes,
+                         const asiVisu_SelectionNature& selNature) const;
+  virtual void unHighlight(vtkRenderer* renderer,
+                           const asiVisu_SelectionNature& selNature) const;
+  virtual void renderPipelines(vtkRenderer* renderer) const;
+  virtual void deRenderPipelines(vtkRenderer* renderer) const;
 
 };
 

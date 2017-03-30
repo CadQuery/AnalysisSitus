@@ -61,22 +61,22 @@ public:
   asiVisu_EXPORT virtual void
     UpdatePipelines() const;
 
-  asiVisu_EXPORT virtual const Handle(asiVisu_Pipeline)&
+  asiVisu_EXPORT virtual Handle(asiVisu_Pipeline)
     GetPipeline(const int theId) const;
 
-  asiVisu_EXPORT virtual const Handle(asiVisu_HPipelineList)
+  asiVisu_EXPORT virtual Handle(asiVisu_HPipelineList)
     GetPipelineList() const;
 
   asiVisu_EXPORT virtual Handle(asiVisu_Pipeline)
     GetPickPipeline(const int theIdx = 1) const;
 
-  asiVisu_EXPORT virtual const Handle(asiVisu_HPipelineList)
+  asiVisu_EXPORT virtual Handle(asiVisu_HPipelineList)
     GetPickPipelineList() const;
 
-  asiVisu_EXPORT virtual const Handle(asiVisu_Pipeline)&
+  asiVisu_EXPORT virtual Handle(asiVisu_Pipeline)
     GetDetectPipeline(const int theIdx = 1) const;
 
-  asiVisu_EXPORT virtual const Handle(asiVisu_HPipelineList)
+  asiVisu_EXPORT virtual Handle(asiVisu_HPipelineList)
     GetDetectPipelineList() const;
 
   asiVisu_EXPORT virtual Handle(ActAPI_INode)

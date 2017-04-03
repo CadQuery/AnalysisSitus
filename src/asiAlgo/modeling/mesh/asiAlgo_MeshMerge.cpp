@@ -232,9 +232,8 @@ void asiAlgo_MeshMerge::build()
         const TopoDS_Edge& E = TopoDS::Edge( eexp.Current() );
 
         // Get discrete analogue of p-curve
-        TopLoc_Location ELoc;
         const Handle(Poly_PolygonOnTriangulation)&
-          polygonOnTri = BRep_Tool::PolygonOnTriangulation(E, LocalTri, ELoc);
+          polygonOnTri = BRep_Tool::PolygonOnTriangulation(E, LocalTri, Loc);
         //
         if ( polygonOnTri.IsNull() )
           continue;

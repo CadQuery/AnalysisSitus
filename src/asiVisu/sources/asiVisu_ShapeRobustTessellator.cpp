@@ -129,11 +129,15 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   // Loop over the nodes and fill geometric VTK data (points)
   for ( Poly_CoherentTriangulation::IteratorOfNode nit(cohTriangulation); nit.More(); nit.Next() )
   {
-    const Poly_CoherentNode& cohNode  = nit.Value();
+    const Poly_CoherentNode& cohNode = nit.Value();
     m_data->InsertCoordinate( cohNode.X(),
                               cohNode.Y(),
                               cohNode.Z() );
   }
+
+  /* ========================================
+   *  STAGE 2.2: create VTK topology (cells)
+   * ======================================== */
 
   // Add links for boundaries
   const asiAlgo_MeshMerge::t_link_set& bndLinks = conglomerate.GetBoundaryLinks();
@@ -147,11 +151,18 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     m_data->InsertLine(0, link.N1, link.N2, ShapeCellType_Undefined);
   }
 
-  // TODO
+  // Add facets for shading
+  for ( Poly_CoherentTriangulation::IteratorOfTriangle fit(cohTriangulation); fit.More(); fit.Next() )
+  {
+    const Poly_CoherentTriangle& cohTriangle = fit.Value();
+    m_data->InsertTriangle(0,
+                           cohTriangle.Node(0),
+                           cohTriangle.Node(1),
+                           cohTriangle.Node(2),
+                           ShapeCellType_Undefined);
+  }
 
-  /* ========================================
-   *  STAGE 2.2: create VTK topology (cells)
-   * ======================================== */
+  // TODO
 
   //// Loop over the faces
   //for ( TopExp_Explorer exp(master, TopAbs_FACE); exp.More(); exp.Next() )

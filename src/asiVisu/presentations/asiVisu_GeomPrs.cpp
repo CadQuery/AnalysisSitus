@@ -145,7 +145,7 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   //this->installDetectPipeline( detect_pl, DP );
 
   //---------------------------------------------------------------------------
-  //vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
+  vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
 }
 
 //! Factory method for Presentation.

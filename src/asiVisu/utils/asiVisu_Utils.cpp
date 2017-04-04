@@ -601,18 +601,19 @@ double asiVisu_Utils::DefaultHilightPointSize()
 
 //-----------------------------------------------------------------------------
 
-vtkLookupTable* asiVisu_Utils::InitLookupTable()
+vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitLookupTable()
 {
-  vtkLookupTable* aColorTable = vtkLookupTable::New();
+  vtkSmartPointer<vtkLookupTable>
+    colorTable = vtkSmartPointer<vtkLookupTable>::New();
 
   // Set colors table for 3D shapes
-  double aRange[2];
-  aRange[0] = MT_Undefined;
-  aRange[1] = MT_ShadedFace;
-  aColorTable->Allocate(9);
-  aColorTable->SetNumberOfTableValues(9);
-  aColorTable->SetTableRange(aRange);
-  aColorTable->SetValueRange(0, 1);
+  double range[2];
+  range[0] = MT_Undefined;
+  range[1] = MT_ShadedFace;
+  colorTable->Allocate(9);
+  colorTable->SetNumberOfTableValues(9);
+  colorTable->SetTableRange(range);
+  colorTable->SetValueRange(0, 1);
 
 /*
   MT_Undefined     = -1   Undefined
@@ -626,17 +627,17 @@ vtkLookupTable* asiVisu_Utils::InitLookupTable()
   MT_ShadedFace    =  7   Shaded face
 */
 
-  aColorTable->SetTableValue(0, 0, 0, 0);          // undefined
-  aColorTable->SetTableValue(1, 0.5, 0.5, 0.5);    // gray for isoparametric line in wireframe
-  aColorTable->SetTableValue(2, 1, 0, 0);          // red for free vertex
-  aColorTable->SetTableValue(3, 0, 0, 1);          // blue for shared vertex
-  aColorTable->SetTableValue(4, 1, 0, 0);          // red for free edge
-  aColorTable->SetTableValue(5, 1, 0, 0);          // red for boundary edge (related to a single face)
-  aColorTable->SetTableValue(6, 0, 0, 0);          // black for shared edge (related to several faces)
-  aColorTable->SetTableValue(7, 0.05, 0.55, 0.85); // face in shading
-  aColorTable->SetTableValue(8, 1, 1, 1);          // solid in shading
+  colorTable->SetTableValue(0, 0, 0, 0);          // undefined
+  colorTable->SetTableValue(1, 0.5, 0.5, 0.5);    // gray for isoparametric line in wireframe
+  colorTable->SetTableValue(2, 1, 0, 0);          // red for free vertex
+  colorTable->SetTableValue(3, 0, 0, 1);          // blue for shared vertex
+  colorTable->SetTableValue(4, 1, 0, 0);          // red for free edge
+  colorTable->SetTableValue(5, 1, 0, 0);          // red for boundary edge (related to a single face)
+  colorTable->SetTableValue(6, 0.1, 0.1, 0.1);    // black for shared edge (related to several faces)
+  colorTable->SetTableValue(7, 0.05, 0.55, 0.85); // face in shading
+  colorTable->SetTableValue(8, 1, 1, 1);          // solid in shading
 
-  return aColorTable;
+  return colorTable;
 }
 
 //-----------------------------------------------------------------------------
@@ -694,7 +695,7 @@ void asiVisu_Utils::InitShapeMapper(vtkMapper*      theMapper,
 {
   theMapper->ScalarVisibilityOn();
   theMapper->SetScalarModeToUseCellFieldData();
-  theMapper->SelectColorArray(IVtkVTK_ShapeData::ARRNAME_MESH_TYPES);
+  theMapper->SelectColorArray(ARRNAME_PART_CELL_TYPES);
   theMapper->SetColorModeToMapScalars();
   theMapper->SetScalarRange(theColorTable->GetRange());
   theMapper->SetLookupTable(theColorTable);

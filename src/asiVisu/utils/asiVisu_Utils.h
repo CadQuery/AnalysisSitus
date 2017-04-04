@@ -187,7 +187,7 @@ public:
   asiVisu_EXPORT static double
     DefaultHilightPointSize();
 
-  asiVisu_EXPORT static vtkLookupTable*
+  asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
     InitLookupTable();
 
   asiVisu_EXPORT static void

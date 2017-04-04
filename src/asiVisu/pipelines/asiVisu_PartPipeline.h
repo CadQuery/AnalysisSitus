@@ -13,7 +13,7 @@
 #include <asiVisu_ShapeRobustSource.h>
 
 // VTK includes
-#include <vtkPolyDataAlgorithm.h>
+#include <vtkPolyDataNormals.h>
 
 //-----------------------------------------------------------------------------
 
@@ -72,6 +72,9 @@ protected:
 
   //! Data source.
   vtkSmartPointer<asiVisu_ShapeRobustSource> m_source;
+
+  //! Filter for normals.
+  vtkSmartPointer<vtkPolyDataNormals> m_normalsFilter;
 
 };
 

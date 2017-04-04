@@ -39,15 +39,18 @@ asiVisu_PartPipeline::asiVisu_PartPipeline(const bool isOCCTColorScheme,
 
   // Initialize Data Source
   m_source = vtkSmartPointer<asiVisu_ShapeRobustSource>::New();
-  ////
-  //m_DS->FastTransformModeOn(); // Use optimized approach to isotropic transformations
-  //m_DS->SetFaceter(asiVisu_ShapeDataSource::Faceter_Robust);
 
+  // Filter for normals
+  m_normalsFilter = vtkSmartPointer<vtkPolyDataNormals>::New();
+  
   // Set line width
   this->Actor()->GetProperty()->SetLineWidth(1);
   this->Actor()->GetProperty()->SetPointSize(8);
   //
   asiVisu_Utils::ApplyLightingRules( this->Actor() );
+
+  // Compose pipeline
+  this->append(m_normalsFilter);
 }
 
 //-----------------------------------------------------------------------------

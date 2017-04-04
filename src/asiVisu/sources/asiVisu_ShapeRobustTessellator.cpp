@@ -14,6 +14,7 @@
 // asiAlgo includes
 #include <asiAlgo_MeshGen.h>
 #include <asiAlgo_MeshMerge.h>
+#include <asiAlgo_Timer.h>
 
 // OCCT includes
 #include <BRep_Tool.hxx>
@@ -73,6 +74,9 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   if ( master.IsNull() )
     return;
 
+  TIMER_NEW
+  TIMER_GO
+
   // Build map of shapes and their parents
   TopTools_IndexedDataMapOfShapeListOfShape verticesOnEdges;
   TopExp::MapShapesAndAncestors(master, TopAbs_VERTEX, TopAbs_EDGE, verticesOnEdges);
@@ -84,6 +88,9 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   const TopTools_IndexedMapOfShape& allVertices = m_aag->GetMapOfVertices();
   const TopTools_IndexedMapOfShape& allEdges    = m_aag->GetMapOfEdges();
   const TopTools_IndexedMapOfShape& allFaces    = m_aag->GetMapOfFaces();
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: build topology maps")
 
   /* =========================================
    *  STAGE 1: fill data source with vertices
@@ -105,9 +112,12 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   //  this->addVertex(v, vidx, type);
   //}
 
-  /* =========================================
-   *  STAGE 2.1: create VTK geometry (points)
-   * ========================================= */
+  /* ===============
+   *  STAGE 2: mesh
+   * =============== */
+
+  TIMER_RESET
+  TIMER_GO
 
   // Discretize B-Rep model to produce visualization facets
   asiAlgo_MeshInfo meshInfo;
@@ -121,10 +131,30 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     return;
   }
 
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: B-Rep mesh")
+
+  /* =========================
+   *  STAGE 3: conglomeration
+   * ========================= */
+
+  TIMER_RESET
+  TIMER_GO
+
   // Prepare conglomeration of meshes
   asiAlgo_MeshMerge conglomerate(master);
   //
   const Handle(Poly_CoherentTriangulation)& cohTriangulation = conglomerate.GetResultPoly();
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: conglomeration")
+
+  /* ======================
+   *  STAGE 4: fill points
+   * ====================== */
+
+  TIMER_RESET
+  TIMER_GO
 
   // Loop over the nodes and fill geometric VTK data (points)
   for ( Poly_CoherentTriangulation::IteratorOfNode nit(cohTriangulation); nit.More(); nit.Next() )
@@ -135,9 +165,15 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
                               cohNode.Z() );
   }
 
-  /* ========================================
-   *  STAGE 2.2: create VTK topology (cells)
-   * ======================================== */
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: fill VTK points")
+
+  /* ======================================
+   *  STAGE 5: create VTK topology (cells)
+   * ====================================== */
+
+  TIMER_RESET
+  TIMER_GO
 
   // Add links for boundaries
   const asiAlgo_MeshMerge::t_link_set& bndLinks = conglomerate.GetBoundaryLinks();
@@ -148,7 +184,7 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     // triangulation are exactly the same as PIDs inserted above
     const asiAlgo_MeshMerge::t_unoriented_link& link = bndLinks(i);
     //
-    m_data->InsertLine(0, link.N1, link.N2, ShapeCellType_Undefined);
+    m_data->InsertLine(0, link.N1, link.N2, ShapeCellType_SharedEdge);
   }
 
   // Add facets for shading
@@ -159,8 +195,11 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
                            cohTriangle.Node(0),
                            cohTriangle.Node(1),
                            cohTriangle.Node(2),
-                           ShapeCellType_Undefined);
+                           ShapeCellType_ShadedFace);
   }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: fill VTK cells")
 
   // TODO
 

@@ -101,6 +101,9 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   // Build map of shapes and their parents
   TopTools_IndexedDataMapOfShapeListOfShape verticesOnEdges;
   TopExp::MapShapesAndAncestors(master, TopAbs_VERTEX, TopAbs_EDGE, verticesOnEdges);
+  //
+  TopTools_IndexedDataMapOfShapeListOfShape edgesOnFaces;
+  TopExp::MapShapesAndAncestors(master, TopAbs_EDGE, TopAbs_FACE, edgesOnFaces);
 
   // Cached maps
   const TopTools_IndexedMapOfShape& allVertices = m_aag->GetMapOfVertices();
@@ -156,138 +159,166 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
    *  STAGE 3: conglomeration
    * ========================= */
 
-  TIMER_RESET
-  TIMER_GO
+  //TIMER_RESET
+  //TIMER_GO
 
-  // Prepare conglomeration of meshes
-  asiAlgo_MeshMerge conglomerate(master);
-  //
-  const Handle(Poly_CoherentTriangulation)& cohTriangulation = conglomerate.GetResultPoly();
+  //// Prepare conglomeration of meshes
+  //asiAlgo_MeshMerge conglomerate(master);
+  ////
+  //const Handle(Poly_CoherentTriangulation)& cohTriangulation = conglomerate.GetResultPoly();
 
-  TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: conglomeration")
+  //TIMER_FINISH
+  //TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: conglomeration")
 
-  /* ======================
-   *  STAGE 4: fill points
-   * ====================== */
+  ///* ======================
+  // *  STAGE 4: fill points
+  // * ====================== */
 
-  TIMER_RESET
-  TIMER_GO
+  //TIMER_RESET
+  //TIMER_GO
 
-  // Loop over the nodes and fill geometric VTK data (points)
-  for ( Poly_CoherentTriangulation::IteratorOfNode nit(cohTriangulation); nit.More(); nit.Next() )
-  {
-    const Poly_CoherentNode& cohNode = nit.Value();
-    m_data->InsertCoordinate( cohNode.X(),
-                              cohNode.Y(),
-                              cohNode.Z() );
-  }
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: fill VTK points")
-
-  /* ======================================
-   *  STAGE 5: create VTK topology (cells)
-   * ====================================== */
-
-  TIMER_RESET
-  TIMER_GO
-
-  // Here we take advantage of the fact the indices of nodes in coherent
-  // triangulation are exactly the same as PIDs inserted above
-
-  // Add free links
-  const asiAlgo_MeshMerge::t_link_set& freeLinks = conglomerate.GetFreeLinks();
-  //
-  for ( int i = 1; i <= freeLinks.Extent(); ++i )
-  {
-    const asiAlgo_MeshMerge::t_unoriented_link& link = freeLinks(i);
-    //
-    m_data->InsertLine(0, link.N1, link.N2, ShapePrimitive_FreeEdge);
-  }
-
-  // Add manifold links
-  const asiAlgo_MeshMerge::t_link_set& manifoldLinks = conglomerate.GetManifoldLinks();
-  //
-  for ( int i = 1; i <= manifoldLinks.Extent(); ++i )
-  {
-    const asiAlgo_MeshMerge::t_unoriented_link& link = manifoldLinks(i);
-    //
-    m_data->InsertLine(0, link.N1, link.N2, ShapePrimitive_ManifoldEdge);
-  }
-
-  // Add non-manifold links
-  const asiAlgo_MeshMerge::t_link_set& nonManifoldLinks = conglomerate.GetNonManifoldLinks();
-  //
-  for ( int i = 1; i <= nonManifoldLinks.Extent(); ++i )
-  {
-    const asiAlgo_MeshMerge::t_unoriented_link& link = nonManifoldLinks(i);
-    //
-    m_data->InsertLine(0, link.N1, link.N2, ShapePrimitive_NonManifoldEdge);
-  }
-
-  // Add facets for shading
-  for ( Poly_CoherentTriangulation::IteratorOfTriangle fit(cohTriangulation); fit.More(); fit.Next() )
-  {
-    const Poly_CoherentTriangle& cohTriangle = fit.Value();
-    m_data->InsertTriangle(0,
-                           cohTriangle.Node(0),
-                           cohTriangle.Node(1),
-                           cohTriangle.Node(2),
-                           ShapePrimitive_Facet);
-  }
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: fill VTK cells")
-
-  // TODO
-
-  //// Loop over the faces
-  //for ( TopExp_Explorer exp(master, TopAbs_FACE); exp.More(); exp.Next() )
+  //// Loop over the nodes and fill geometric VTK data (points)
+  //for ( Poly_CoherentTriangulation::IteratorOfNode nit(cohTriangulation); nit.More(); nit.Next() )
   //{
-  //  const TopoDS_Face& face = TopoDS::Face( exp.Current() );
-  //  //
-  //  if ( face.IsNull() )
-  //    continue;
-
-  //  // Get facets associated with the face
-  //  TopLoc_Location loc;
-  //  const Handle(Poly_Triangulation)& triangulation = BRep_Tool::Triangulation(face, loc);
-  //  //
-  //  if ( triangulation.IsNull() )
-  //    continue;
-
-  //  // Create triangle cells
-  //  const TColgp_Array1OfPnt&    nodes     = triangulation->Nodes();
-  //  const Poly_Array1OfTriangle& triangles = triangulation->Triangles();
-  //  //
-  //  for ( int t = triangles.Lower(); t <= triangles.Upper(); ++t )
-  //  {
-  //    const Poly_Triangle& triangle = triangles(t);
-  //  }
+  //  const Poly_CoherentNode& cohNode = nit.Value();
+  //  m_data->InsertCoordinate( cohNode.X(),
+  //                            cohNode.Y(),
+  //                            cohNode.Z() );
   //}
+
+  //TIMER_FINISH
+  //TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: fill VTK points")
+
+  ///* ======================================
+  // *  STAGE 5: create VTK topology (cells)
+  // * ====================================== */
+
+  //TIMER_RESET
+  //TIMER_GO
+
+  //// Here we take advantage of the fact the indices of nodes in coherent
+  //// triangulation are exactly the same as PIDs inserted above
+
+  //// Add free links
+  //const asiAlgo_MeshMerge::t_link_set& freeLinks = conglomerate.GetFreeLinks();
+  ////
+  //for ( int i = 1; i <= freeLinks.Extent(); ++i )
+  //{
+  //  const asiAlgo_MeshMerge::t_unoriented_link& link = freeLinks(i);
+  //  //
+  //  m_data->InsertLine(0, link.N1, link.N2, ShapePrimitive_FreeEdge);
+  //}
+
+  //// Add manifold links
+  //const asiAlgo_MeshMerge::t_link_set& manifoldLinks = conglomerate.GetManifoldLinks();
+  ////
+  //for ( int i = 1; i <= manifoldLinks.Extent(); ++i )
+  //{
+  //  const asiAlgo_MeshMerge::t_unoriented_link& link = manifoldLinks(i);
+  //  //
+  //  m_data->InsertLine(0, link.N1, link.N2, ShapePrimitive_ManifoldEdge);
+  //}
+
+  //// Add non-manifold links
+  //const asiAlgo_MeshMerge::t_link_set& nonManifoldLinks = conglomerate.GetNonManifoldLinks();
+  ////
+  //for ( int i = 1; i <= nonManifoldLinks.Extent(); ++i )
+  //{
+  //  const asiAlgo_MeshMerge::t_unoriented_link& link = nonManifoldLinks(i);
+  //  //
+  //  m_data->InsertLine(0, link.N1, link.N2, ShapePrimitive_NonManifoldEdge);
+  //}
+
+  //// Add facets for shading
+  //for ( Poly_CoherentTriangulation::IteratorOfTriangle fit(cohTriangulation); fit.More(); fit.Next() )
+  //{
+  //  const Poly_CoherentTriangle& cohTriangle = fit.Value();
+  //  m_data->InsertTriangle(0,
+  //                         cohTriangle.Node(0),
+  //                         cohTriangle.Node(1),
+  //                         cohTriangle.Node(2),
+  //                         ShapePrimitive_Facet);
+  //}
+
+  //TIMER_FINISH
+  //TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: fill VTK cells")
 
   /* ======================================
    *  STAGE 3: fill data source with edges
    * ====================================== */
 
-  //// Add edges
-  //for ( int eidx = 1; eidx <= allEdges.Extent(); ++eidx )
-  //{
-  //  const TopoDS_Edge&              e = TopoDS::Edge( allEdges(eidx) );
-  //  const TopTools_ListOfShape& faces = edgesOnFaces.FindFromKey(e);
+  // Add edges
+  for ( int eidx = 1; eidx <= allEdges.Extent(); ++eidx )
+  {
+    const TopoDS_Edge&              e = TopoDS::Edge( allEdges(eidx) );
+    const TopTools_ListOfShape& faces = edgesOnFaces.FindFromKey(e);
 
-  //  asiVisu_ShapeCellType type;
-  //  if ( faces.IsEmpty() )
-  //    type = ShapeCellType_FreeEdge;
-  //  else if ( faces.Extent() == 1 )
-  //    type = ShapeCellType_BorderEdge;
-  //  else
-  //    type = ShapeCellType_SharedEdge;
+    asiVisu_ShapePrimitive type;
+    if ( faces.Extent() == 1 )
+      type = ShapePrimitive_FreeEdge;
+    else if ( faces.Extent() > 2 )
+      type = ShapePrimitive_NonManifoldEdge;
+    else
+      type = ShapePrimitive_ManifoldEdge;
 
-  //  // Add edge to the data source
-  //  this->addEdge(e, eidx, type);
-  //}
+    // Add edge to the data source
+    this->addEdge(e, eidx, type);
+  }
+
+  /* ======================================
+   *  STAGE 4: fill data source with faces
+   * ====================================== */
+
+  // Loop over the faces
+  for ( TopExp_Explorer exp(master, TopAbs_FACE); exp.More(); exp.Next() )
+  {
+    const TopoDS_Face& face = TopoDS::Face( exp.Current() );
+    //
+    if ( face.IsNull() )
+      continue;
+
+    // Get facets associated with the face
+    TopLoc_Location loc;
+    const Handle(Poly_Triangulation)& triangulation = BRep_Tool::Triangulation(face, loc);
+    //
+    if ( triangulation.IsNull() )
+      continue;
+
+    // Populate node
+    NCollection_DataMap<int, vtkIdType> pointIds;
+    const TColgp_Array1OfPnt& nodes = triangulation->Nodes();
+    //
+    for ( int pidx = nodes.Lower(); pidx <= nodes.Upper(); ++pidx )
+    {
+      gp_Pnt P = nodes(pidx);
+      //
+      if ( !loc.IsIdentity() )
+        P.Transform(loc);
+
+      // Insert VTK point
+      vtkIdType pid = m_data->InsertCoordinate( P.X(), P.Y(), P.Z() );
+      //
+      pointIds.Bind(pidx, pid);
+    }
+
+    // Create triangle cells
+    const Poly_Array1OfTriangle& triangles = triangulation->Triangles();
+    //
+    for ( int t = triangles.Lower(); t <= triangles.Upper(); ++t )
+    {
+      const Poly_Triangle& triangle = triangles(t);
+
+      int n1, n2, n3;
+      triangle.Get(n1, n2, n3);
+
+      // Insert VTK cell
+      m_data->InsertTriangle(0,
+                             pointIds(n1),
+                             pointIds(n2),
+                             pointIds(n3),
+                             ShapePrimitive_Facet);
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -316,41 +347,70 @@ void asiVisu_ShapeRobustTessellator::addEdge(const TopoDS_Edge&           edge,
   if ( edge.IsNull() || BRep_Tool::Degenerated(edge) )
     return;
 
-  // Use curve data source to provide the required tessellation
-  vtkSmartPointer<asiVisu_CurveSource>
-    curveSrc = vtkSmartPointer<asiVisu_CurveSource>::New();
+  Handle(Poly_PolygonOnTriangulation) polyOn;
+  Handle(Poly_Triangulation) poly;
+  TopLoc_Location loc;
   //
-  if ( !curveSrc->SetInputEdge(edge) )
-  {
-#if defined COUT_DEBUG
-    std::cout << "Error: cannot discretize edge" << std::endl;
-#endif
+  BRep_Tool::PolygonOnTriangulation(edge, polyOn, poly, loc);
+
+  if ( polyOn.IsNull() || poly.IsNull() )
     return;
-  }
 
-  // Get tessellation
-  Handle(HRealArray) xCoords, yCoords, zCoords;
-  asiVisu_Orientation ori;
-  //
-  curveSrc->GetInputArrays(xCoords, yCoords, zCoords, ori);
-
-  if ( xCoords->Length() < 2 )
-  {
-#if defined COUT_DEBUG
-    std::cout << "Error: poor edge discretization" << std::endl;
-#endif
-    return;
-  }
-
-  // Prepare a discrete representation for edge
+  // Add node indices to the collection of boundary nodes
+  const TColStd_Array1OfInteger& polygonOnTriNodes = polyOn->Nodes();
   vtkSmartPointer<vtkIdList> pids = vtkSmartPointer<vtkIdList>::New();
   //
-  for ( int j = xCoords->Lower(); j <= xCoords->Upper(); ++j )
+  for ( int k = polygonOnTriNodes.Lower(); k <= polygonOnTriNodes.Upper(); ++k )
   {
-    IVtk_PointId pid = m_data->InsertCoordinate( xCoords->Value(j),
-                                                 yCoords->Value(j),
-                                                 zCoords->Value(j) );
+    const int pidx = polygonOnTriNodes(k);
+    gp_Pnt P = poly->Nodes()(pidx);
+    //
+    if ( !loc.IsIdentity() )
+      P.Transform(loc);
+
+    // Insert VTK point
+    vtkIdType pid = m_data->InsertCoordinate( P.X(), P.Y(), P.Z() );
+    //
     pids->InsertNextId(pid);
   }
+  //
   m_data->InsertPolyline(shapeId, pids, scType);
+
+//  // Use curve data source to provide the required tessellation
+//  vtkSmartPointer<asiVisu_CurveSource>
+//    curveSrc = vtkSmartPointer<asiVisu_CurveSource>::New();
+//  //
+//  if ( !curveSrc->SetInputEdge(edge) )
+//  {
+//#if defined COUT_DEBUG
+//    std::cout << "Error: cannot discretize edge" << std::endl;
+//#endif
+//    return;
+//  }
+//
+//  // Get tessellation
+//  Handle(HRealArray) xCoords, yCoords, zCoords;
+//  asiVisu_Orientation ori;
+//  //
+//  curveSrc->GetInputArrays(xCoords, yCoords, zCoords, ori);
+//
+//  if ( xCoords->Length() < 2 )
+//  {
+//#if defined COUT_DEBUG
+//    std::cout << "Error: poor edge discretization" << std::endl;
+//#endif
+//    return;
+//  }
+//
+//  // Prepare a discrete representation for edge
+//  vtkSmartPointer<vtkIdList> pids = vtkSmartPointer<vtkIdList>::New();
+//  //
+//  for ( int j = xCoords->Lower(); j <= xCoords->Upper(); ++j )
+//  {
+//    IVtk_PointId pid = m_data->InsertCoordinate( xCoords->Value(j),
+//                                                 yCoords->Value(j),
+//                                                 zCoords->Value(j) );
+//    pids->InsertNextId(pid);
+//  }
+//  m_data->InsertPolyline(shapeId, pids, scType);
 }

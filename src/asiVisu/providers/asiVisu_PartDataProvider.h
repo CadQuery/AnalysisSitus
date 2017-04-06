@@ -48,6 +48,12 @@ public:
   asiVisu_EXPORT virtual Handle(asiAlgo_AAG)
     GetAAG() const;
 
+  asiVisu_EXPORT double
+    GetLinearDeflection() const;
+
+  asiVisu_EXPORT double
+    GetAngularDeflection() const;
+
 public:
 
   asiVisu_EXPORT Handle(asiVisu_PartDataProvider)

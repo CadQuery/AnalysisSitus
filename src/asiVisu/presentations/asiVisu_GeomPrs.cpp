@@ -11,6 +11,7 @@
 // A-Situs (visualization) includes
 #include <asiVisu_DisplayMode.h>
 #include <asiVisu_PartDataProvider.h>
+#include <asiVisu_PartEdgesPipeline.h>
 #include <asiVisu_PartPipeline.h>
 
 // VTK includes
@@ -50,7 +51,7 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   Handle(asiVisu_PartDataProvider) dp = new asiVisu_PartDataProvider(partNode);
 
   // Main pipeline
-  Handle(asiVisu_PartPipeline) pl = new asiVisu_PartPipeline(true, true);
+  Handle(asiVisu_PartPipeline) pl = new asiVisu_PartPipeline();
   //
   this->addPipeline        ( Pipeline_Main, pl );
   this->assignDataProvider ( Pipeline_Main, dp );
@@ -59,37 +60,21 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
   pl->Actor()->GetProperty()->SetLineWidth(1.5f);
 
-  ///* ====================
-  // *  Pipeline for edges
-  // * ==================== */
+  /* ====================
+   *  Pipeline for edges
+   * ==================== */
 
-  //// Create pipeline for highlighting
-  //Handle(asiVisu_ShapePipeline)
-  //  contour_pl = new asiVisu_ShapePipeline( true, true, true, false, pl->DataSource() );
+  // Create pipeline for edges
+  Handle(asiVisu_PartEdgesPipeline)
+    contour_pl = new asiVisu_PartEdgesPipeline( pl->GetSource() );
 
-  //// Adjust props
-  //contour_pl->Actor()->GetProperty()->SetOpacity(0.5);
-  //contour_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
-  //contour_pl->Actor()->SetPickable(0);
-  ////
-  //contour_pl->WireframeModeOn();
-  ////
-  //this->addPipeline        ( Pipeline_Contour, contour_pl );
-  //this->assignDataProvider ( Pipeline_Contour, DP );
-
-  ///* ==================================
-  // *  Pipeline for robust presentation
-  // * ================================== */
-
-  //// Create pipeline for highlighting
-  //Handle(asiVisu_ShapeRobustPipeline)
-  //  robust_pl = new asiVisu_ShapeRobustPipeline();
-  ////
-  //this->addPipeline        ( Pipeline_Robust, robust_pl );
-  //this->assignDataProvider ( Pipeline_Robust, DP );
-
-  //// Hide by default
-  //this->DoRobust(false);
+  // Adjust props
+  contour_pl->Actor()->GetProperty()->SetOpacity(0.5);
+  contour_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
+  contour_pl->Actor()->SetPickable(0);
+  //
+  this->addPipeline        ( Pipeline_Contour, contour_pl );
+  this->assignDataProvider ( Pipeline_Contour, dp );
 
   ///* ======================
   // *  Pipeline for picking
@@ -161,6 +146,23 @@ Handle(asiVisu_Prs) asiVisu_GeomPrs::Instance(const Handle(ActAPI_INode)& N)
 bool asiVisu_GeomPrs::IsVisible() const
 {
   return true;
+}
+
+//! Sets diagnostic tools for the presentation.
+//! \param progress [in] progress notifier.
+//! \param plotter  [in] imperative plotter.
+void asiVisu_GeomPrs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                                         ActAPI_PlotterEntry  plotter)
+{
+  asiVisu_Prs::SetDiagnosticTools(progress, plotter);
+
+  Handle(asiVisu_PartPipeline)
+    pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+
+  if ( pl.IsNull() )
+    return;
+
+  pl->SetDiagnosticTools(m_progress, m_plotter);
 }
 
 //! Sets SHADING visualization mode.

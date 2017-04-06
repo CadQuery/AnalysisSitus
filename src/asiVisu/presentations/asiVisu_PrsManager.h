@@ -95,6 +95,10 @@ public:
     SetBlackAndWhiteIntensity(const double black,
                               const double white);
 
+  asiVisu_EXPORT void
+    SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                       ActAPI_PlotterEntry  plotter);
+
 // Presentation management:
 public:
 

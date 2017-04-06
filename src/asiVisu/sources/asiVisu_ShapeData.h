@@ -9,7 +9,7 @@
 #define asiVisu_ShapeData_h
 
 // asiVisu includes
-#include <asiVisu_ShapeCellType.h>
+#include <asiVisu_ShapePrimitive.h>
 
 // OCCT includes
 #include <Standard_Type.hxx>
@@ -39,27 +39,27 @@ public:
                      const double z);
 
   asiVisu_EXPORT virtual void
-    InsertVertex(vtkIdType             shapeID,
-                 vtkIdType             pid,
-                 asiVisu_ShapeCellType scType);
+    InsertVertex(vtkIdType              shapeID,
+                 vtkIdType              pid,
+                 asiVisu_ShapePrimitive scType);
 
   asiVisu_EXPORT virtual void
-    InsertLine(vtkIdType             shapeID,
-               vtkIdType             pid1,
-               vtkIdType             pid2,
-               asiVisu_ShapeCellType scType);
+    InsertLine(vtkIdType              shapeID,
+               vtkIdType              pid1,
+               vtkIdType              pid2,
+               asiVisu_ShapePrimitive scType);
 
   asiVisu_EXPORT virtual void
     InsertPolyline(vtkIdType                         shapeID,
                    const vtkSmartPointer<vtkIdList>& pids,
-                   asiVisu_ShapeCellType             scType);
+                   asiVisu_ShapePrimitive            scType);
 
   asiVisu_EXPORT virtual void
-    InsertTriangle(vtkIdType             shapeID,
-                   vtkIdType             pid1,
-                   vtkIdType             pid2,
-                   vtkIdType             pid3,
-                   asiVisu_ShapeCellType scType);
+    InsertTriangle(vtkIdType              shapeID,
+                   vtkIdType              pid1,
+                   vtkIdType              pid2,
+                   vtkIdType              pid3,
+                   asiVisu_ShapePrimitive scType);
 
 
 public:

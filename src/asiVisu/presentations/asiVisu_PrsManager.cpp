@@ -237,6 +237,8 @@ asiVisu_PrsManager::asiVisu_PrsManager()
   PlaceButton(m_axesButton, m_renderer);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Sets intensity values for black and white color schemes.
 //! \param black [in] black intensity (from zero and greater).
 //! \param white [in] white intensity (from one and smaller).
@@ -245,6 +247,18 @@ void asiVisu_PrsManager::SetBlackAndWhiteIntensity(const double black,
 {
   BlackIntensity = black;
   WhiteIntensity = white;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Sets diagnostic tools to all existing Presentations.
+//! \param progress [in] progress notifier.
+//! \param plotter  [in] imperative plotter.
+void asiVisu_PrsManager::SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                                            ActAPI_PlotterEntry  plotter)
+{
+  for ( TNodePrsMap::Iterator it(m_nodePresentations); it.More(); it.Next() )
+    it.Value()->SetDiagnosticTools(progress, plotter);
 }
 
 //-----------------------------------------------------------------------------

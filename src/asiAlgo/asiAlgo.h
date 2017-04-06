@@ -8,7 +8,7 @@
 #ifndef asiAlgo_h
 #define asiAlgo_h
 
-#define asiAlgo_NotUsed(x)
+#define asiAlgo_NotUsed(x) x
 
 #ifdef asiAlgo_EXPORTS
   #define asiAlgo_EXPORT __declspec(dllexport)

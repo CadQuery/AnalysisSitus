@@ -14,6 +14,10 @@
 // asiAlgo includes
 #include <asiAlgo_AAG.h>
 
+// Active Data includes
+#include <ActAPI_IPlotter.h>
+#include <ActAPI_IProgressNotifier.h>
+
 // OCCT includes
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
@@ -65,8 +69,10 @@ public:
 
   asiVisu_EXPORT void
     Initialize(const Handle(asiAlgo_AAG)& aag,
-               const double               linearDeflection,
-               const double               angularDeflection_deg);
+               const double               linearDeflection = 0,
+               const double               angularDeflection_deg = 0,
+               ActAPI_ProgressEntry       progress = NULL,
+               ActAPI_PlotterEntry        plotter  = NULL);
 
 public:
 
@@ -95,14 +101,14 @@ protected:
 protected:
 
   asiVisu_EXPORT void
-    addVertex(const TopoDS_Vertex&        vertex,
-              const vtkIdType             shapeId,
-              const asiVisu_ShapeCellType scType);
+    addVertex(const TopoDS_Vertex&         vertex,
+              const vtkIdType              shapeId,
+              const asiVisu_ShapePrimitive scType);
 
   asiVisu_EXPORT void
-    addEdge(const TopoDS_Edge&          edge,
-            const vtkIdType             shapeId,
-            const asiVisu_ShapeCellType scType);
+    addEdge(const TopoDS_Edge&           edge,
+            const vtkIdType              shapeId,
+            const asiVisu_ShapePrimitive scType);
 
 protected:
 
@@ -110,6 +116,8 @@ protected:
   Handle(asiVisu_ShapeData) m_data;              //!< Visualization data.
   double                    m_fLinDeflection;    //!< Linear deflection.
   double                    m_fAngDeflectionDeg; //!< Angular deflection.
+  ActAPI_ProgressEntry      m_progress;          //!< Progress notifier.
+  ActAPI_PlotterEntry       m_plotter;           //!< Imperative plotter.
 
 };
 

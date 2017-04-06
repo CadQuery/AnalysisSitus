@@ -16,6 +16,7 @@
 #include <asiUI_ControlsPart.h>
 #include <asiUI_DialogFindEdge.h>
 #include <asiUI_DialogFindFace.h>
+#include <asiUI_DialogRefineTessellation.h>
 
 // VTK includes
 #include <vtkAssembly.h>
@@ -134,12 +135,17 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
   if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_FIND_EDGE) )
     m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_FIND_EDGE, m_partCallback);
 
+  // Set observer for tessellation refinement
+  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_REFINE_TESSELLATION) )
+    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_REFINE_TESSELLATION, m_partCallback);
+
   // Get notified once a sub-shape is picked
   connect( m_pickCallback, SIGNAL( picked() ), this, SLOT( onSubShapesPicked() ) );
 
   // Get notified about part events
-  connect( m_partCallback, SIGNAL( findFace() ), this, SLOT( onFindFace() ) );
-  connect( m_partCallback, SIGNAL( findEdge() ), this, SLOT( onFindEdge() ) );
+  connect( m_partCallback, SIGNAL( findFace() ),           this, SLOT( onFindFace() ) );
+  connect( m_partCallback, SIGNAL( findEdge() ),           this, SLOT( onFindEdge() ) );
+  connect( m_partCallback, SIGNAL( refineTessellation() ), this, SLOT( onRefineTessellation() ) );
 
   /* ===============================
    *  Setting up rotation callbacks
@@ -335,6 +341,18 @@ void asiUI_ViewerPart::onFindEdge()
   // Run dialog
   asiUI_DialogFindEdge* wFindEdge = new asiUI_DialogFindEdge(m_model, this->PrsMgr(), this);
   wFindEdge->show();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Callback for tessellation refinement.
+void asiUI_ViewerPart::onRefineTessellation()
+{
+  // Run dialog
+  asiUI_DialogRefineTessellation*
+    wRefineTessellation = new asiUI_DialogRefineTessellation(m_model, this->PrsMgr(), this);
+  //
+  wRefineTessellation->show();
 }
 
 //-----------------------------------------------------------------------------

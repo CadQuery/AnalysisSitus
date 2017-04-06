@@ -45,6 +45,7 @@ signals:
 
   void findFace();
   void findEdge();
+  void refineTessellation();
 
 private:
 

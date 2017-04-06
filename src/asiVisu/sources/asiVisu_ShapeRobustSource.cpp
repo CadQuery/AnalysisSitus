@@ -28,7 +28,10 @@ vtkStandardNewMacro(asiVisu_ShapeRobustSource);
 
 //-----------------------------------------------------------------------------
 
-asiVisu_ShapeRobustSource::asiVisu_ShapeRobustSource() : vtkPolyDataAlgorithm()
+asiVisu_ShapeRobustSource::asiVisu_ShapeRobustSource()
+: vtkPolyDataAlgorithm(),
+  m_fLinDeflection(0.0), // Zeroes lead to automatic selection of faceter parameters
+  m_fAngDeflectionDeg(0.0)
 {
   this->SetNumberOfInputPorts(0); // Input is passed from application data model
 }
@@ -54,6 +57,29 @@ const Handle(asiAlgo_AAG)& asiVisu_ShapeRobustSource::GetAAG() const
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_ShapeRobustSource::SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                                                   ActAPI_PlotterEntry  plotter)
+{
+  m_progress = progress;
+  m_plotter  = plotter;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_ShapeRobustSource::SetTessellationParams(const double linDefl,
+                                                      const double angDefl)
+{
+  m_fLinDeflection    = linDefl;
+  m_fAngDeflectionDeg = angDefl;
+
+  // Mark as modified. Such marking will lead to invocation of RequestData()
+  // method once the pipeline is updated with Update() method on any of
+  // successor stages.
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
 int asiVisu_ShapeRobustSource::RequestData(vtkInformation*        pInfo,
                                            vtkInformationVector** pInputVector,
                                            vtkInformationVector*  pOutputVector)
@@ -73,7 +99,11 @@ int asiVisu_ShapeRobustSource::RequestData(vtkInformation*        pInfo,
   vtkSmartPointer<asiVisu_ShapeRobustTessellator>
     tessGen = vtkSmartPointer<asiVisu_ShapeRobustTessellator>::New();
   //
-  tessGen->Initialize(m_aag, 0.1, 1.0);
+  tessGen->Initialize(m_aag,
+                      m_fLinDeflection,
+                      m_fAngDeflectionDeg,
+                      m_progress,
+                      m_plotter);
   tessGen->Build();
   //
   const Handle(asiVisu_ShapeData)&    tessResult         = tessGen->GetResult();

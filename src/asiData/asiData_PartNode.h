@@ -55,6 +55,8 @@ public:
   //------------------//
   // Presentation     //
   //------------------//
+    PID_TessLinDefl,  //!< Linear deflection of visualization tessellation.
+    PID_TessAngDefl,  //!< Angular deflection of visualization tessellation.
     PID_DisplayMode,  //!< Display mode.
     PID_HasColor,     //!< Indicates whether the Color Parameter is active.
     PID_Color,        //!< Color.
@@ -75,7 +77,7 @@ public:
     GetName();
 
   asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& );
+    SetName(const TCollection_ExtendedString&);
 
 // Handy accessors to the stored data:
 public:
@@ -91,6 +93,18 @@ public:
 
   asiData_EXPORT Handle(asiAlgo_AAG)
     GetAAG() const;
+
+  asiData_EXPORT void
+    SetLinearDeflection(const double);
+
+  asiData_EXPORT double
+    GetLinearDeflection() const;
+
+  asiData_EXPORT void
+    SetAngularDeflection(const double);
+
+  asiData_EXPORT double
+    GetAngularDeflection() const;
 
   asiData_EXPORT void
     SetHasColor(const bool);

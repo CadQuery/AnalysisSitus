@@ -69,7 +69,6 @@ asiUI_DialogSewing::asiUI_DialogSewing(const Handle(ActAPI_IModel)&    model,
   // Create layout
   QGridLayout* pGrid = new QGridLayout(pGroup);
   pGrid->setSpacing(5);
-  pGrid->setAlignment(Qt::AlignTop | Qt::AlignLeft);
   //
   pGrid->addWidget(new QLabel("Tolerance:"), 0, 0);
   //

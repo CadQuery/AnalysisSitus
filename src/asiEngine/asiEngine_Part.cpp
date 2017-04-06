@@ -8,8 +8,11 @@
 // Own include
 #include <asiEngine_Part.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_GeomPrs.h>
+
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
 
 // VTK includes
 #include <vtkProperty.h>
@@ -164,6 +167,8 @@ void asiEngine_Part::Update(const TopoDS_Shape& model)
 
   // Set working structures
   part_n->SetShape(model);
+  part_n->SetLinearDeflection( asiAlgo_Utils::AutoSelectLinearDeflection(model) );
+  part_n->SetAngularDeflection( asiAlgo_Utils::AutoSelectAngularDeflection(model) );
   part_n->SetAAG( new asiAlgo_AAG(model) );
 }
 

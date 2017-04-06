@@ -353,9 +353,6 @@
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeData.h">
       <Filter>Header Files\Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\asiVisu_ShapeCellType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeRobustSource.h">
       <Filter>Header Files\Sources</Filter>
     </ClInclude>
@@ -363,6 +360,15 @@
       <Filter>Header Files\Providers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_PartPipeline.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\asiVisu_ShapePrimitive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_DisplayModeFilter.h">
+      <Filter>Header Files\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_PartEdgesPipeline.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
   </ItemGroup>
@@ -662,6 +668,12 @@
       <Filter>Source Files\Providers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PartPipeline.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_DisplayModeFilter.cpp">
+      <Filter>Source Files\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PartEdgesPipeline.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>

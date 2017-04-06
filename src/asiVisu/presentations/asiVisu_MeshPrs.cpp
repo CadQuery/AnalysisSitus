@@ -164,7 +164,7 @@ void asiVisu_MeshPrs::beforeUpdatePipelines() const
   Handle(asiData_TessNode) Mesh_Node = Handle(asiData_TessNode)::DownCast( this->GetNode() );
 
   asiVisu_DisplayMode aDMode = (asiVisu_DisplayMode) Mesh_Node->GetDisplayMode();
-  if ( aDMode == DisplayMode_Undefined || aDMode == DisplayMode_Shading )
+  if ( aDMode == DisplayMode_Undefined || aDMode == DisplayMode_Shaded )
     this->doShading();
   else if ( aDMode == DisplayMode_Wireframe )
     this->doWireframe();

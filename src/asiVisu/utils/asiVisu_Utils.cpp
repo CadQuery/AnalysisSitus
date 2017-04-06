@@ -8,6 +8,9 @@
 // Own include
 #include <asiVisu_Utils.h>
 
+// asiVisu includes
+#include <asiVisu_ShapePrimitive.h>
+
 // VTK includes
 #pragma warning(push, 0)
 #include <vtkActor.h>
@@ -608,34 +611,21 @@ vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitLookupTable()
 
   // Set colors table for 3D shapes
   double range[2];
-  range[0] = MT_Undefined;
-  range[1] = MT_ShadedFace;
-  colorTable->Allocate(9);
-  colorTable->SetNumberOfTableValues(9);
+  range[0] = ShapePrimitive_Undefined;
+  range[1] = ShapePrimitive_Facet;
+  colorTable->Allocate(8);
+  colorTable->SetNumberOfTableValues(8);
   colorTable->SetTableRange(range);
   colorTable->SetValueRange(0, 1);
 
-/*
-  MT_Undefined     = -1   Undefined
-  MT_IsoLine       =  0   IsoLine
-  MT_FreeVertex    =  1   Free vertex
-  MT_SharedVertex  =  2   Shared vertex
-  MT_FreeEdge      =  3   Free edge
-  MT_BoundaryEdge  =  4   Boundary edge (related to a single face)
-  MT_SharedEdge    =  5   Shared edge (related to several faces)
-  MT_WireFrameFace =  6   Wireframe face
-  MT_ShadedFace    =  7   Shaded face
-*/
-
-  colorTable->SetTableValue(0, 0, 0, 0);          // undefined
-  colorTable->SetTableValue(1, 0.5, 0.5, 0.5);    // gray for isoparametric line in wireframe
-  colorTable->SetTableValue(2, 1, 0, 0);          // red for free vertex
-  colorTable->SetTableValue(3, 0, 0, 1);          // blue for shared vertex
-  colorTable->SetTableValue(4, 1, 0, 0);          // red for free edge
-  colorTable->SetTableValue(5, 1, 0, 0);          // red for boundary edge (related to a single face)
-  colorTable->SetTableValue(6, 0.1, 0.1, 0.1);    // black for shared edge (related to several faces)
-  colorTable->SetTableValue(7, 0.05, 0.55, 0.85); // face in shading
-  colorTable->SetTableValue(8, 1, 1, 1);          // solid in shading
+  colorTable->SetTableValue(ShapePrimitive_Undefined,       0.0, 0.0, 0.0);
+  colorTable->SetTableValue(ShapePrimitive_FreeVertex,      0.5, 0.0, 0.0);
+  colorTable->SetTableValue(ShapePrimitive_SharedVertex,    0.0, 0.0, 0.0);
+  colorTable->SetTableValue(ShapePrimitive_DanglingEdge,    1.0, 1.0, 0.0);
+  colorTable->SetTableValue(ShapePrimitive_FreeEdge,        1.0, 0.0, 0.0);
+  colorTable->SetTableValue(ShapePrimitive_ManifoldEdge,    0.1, 0.1, 0.1);
+  colorTable->SetTableValue(ShapePrimitive_NonManifoldEdge, 0.0, 0.0, 1.0);
+  colorTable->SetTableValue(ShapePrimitive_Facet,           1.0, 1.0, 1.0);
 
   return colorTable;
 }

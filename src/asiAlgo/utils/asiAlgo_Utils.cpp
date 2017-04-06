@@ -517,6 +517,8 @@ TopoDS_Shape asiAlgo_Utils::ApplyTransformation(const TopoDS_Shape& theShape,
   return ApplyTransformation(theShape, T, doCopy);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Returns OCCT transformation structure for the given elemental
 //! transformations.
 //! \param theXPos   [in] X position.
@@ -546,6 +548,8 @@ gp_Trsf asiAlgo_Utils::Transformation(const double theXPos,
   return aTrsf;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Applies the passed transformation to the given shape.
 //! \param theShape     [in] shape to transform.
 //! \param theTransform [in] transformation to apply.
@@ -564,6 +568,8 @@ TopoDS_Shape
 
   return theShape.Moved(theTransform);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Creates a compound from the given list of shapes. If the list contains
 //! only one not-null shape, this single shape is returned as-is.
@@ -607,6 +613,8 @@ TopoDS_Shape
   return aResult;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Calculates bounding box for the given shape.
 //! \param shape [in]  input shape.
 //! \param XMin  [out] min X.
@@ -623,6 +631,8 @@ void asiAlgo_Utils::Bounds(const TopoDS_Shape& shape,
   BRepBndLib::Add(shape, bndBox);
   bndBox.Get(XMin, YMin, ZMin, XMax, YMax, ZMax);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Checks OCCT validity rules of the given shape.
 //! \param shape   [in] shape to check.
@@ -651,6 +661,8 @@ bool
 
   return false;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Returns maximum tolerance value bound to the passed shape.
 //! \param shape [in] shape to check.
@@ -686,6 +698,8 @@ double asiAlgo_Utils::MaxTolerance(const TopoDS_Shape& shape)
   return aMaxToler;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Reads CAD model from native OCCT b-rep file.
 //! \param theFilename [in]  filename.
 //! \param theShape    [out] CAD model retrieved from file.
@@ -696,6 +710,8 @@ bool asiAlgo_Utils::ReadBRep(const TCollection_AsciiString& theFilename,
   BRep_Builder BB;
   return BRepTools::Read(theShape, theFilename.ToCString(), BB);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Reads CAD model from native STL file.
 //! \param theFilename [in]  filename.
@@ -709,6 +725,8 @@ bool asiAlgo_Utils::ReadSTL(const TCollection_AsciiString& theFilename,
   return !theShape.IsNull();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Writes shape to B-Rep format.
 //! \param theShape    [in] shape to write.
 //! \param theFilename [in] filename.
@@ -718,6 +736,8 @@ bool asiAlgo_Utils::WriteBRep(const TopoDS_Shape&            theShape,
 {
   return BRepTools::Write( theShape, theFilename.ToCString() );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Collects summary information for the given shape.
 //! \param shape        [in]  input shape.
@@ -809,6 +829,8 @@ void asiAlgo_Utils::ShapeSummary(const TopoDS_Shape& shape,
   }
 }
 
+//-----------------------------------------------------------------------------
+
 //! Collects summary information of the given shape: returns the number
 //! of sub-shapes of each type.
 //! \param shape [in]  shape to analyze.
@@ -855,6 +877,8 @@ void asiAlgo_Utils::ShapeSummary(const TopoDS_Shape&      shape,
   info += "- nb vertices: ";   info += nbVertexes;   info += "\n";
 }
 
+//-----------------------------------------------------------------------------
+
 //! Creates a circular wire with the given radius.
 //! \param radius [in] radius of the host circle.
 //! \return created wire.
@@ -868,6 +892,8 @@ TopoDS_Wire asiAlgo_Utils::CreateCircularWire(const double radius)
   // Build a wire
   return BRepBuilderAPI_MakeWire( BRepBuilderAPI_MakeEdge(BC) );
 }
+
+//-----------------------------------------------------------------------------
 
 //! Skins a surface through the passed sections.
 //! \param wires [in] sections to skin.
@@ -922,6 +948,8 @@ TopoDS_Shape asiAlgo_Utils::MakeSkin(const TopTools_SequenceOfShape& wires)
   return ResultShell;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Performs sewing.
 //! \param shape     [in/out] shape to sew.
 //! \param tolerance [in]     sewing tolerance.
@@ -937,6 +965,8 @@ bool asiAlgo_Utils::Sew(TopoDS_Shape& shape,
   shape = Sewer.SewedShape();
   return true;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Performs "same domain" expansion on faces and edges.
 //! \param shape [in/out] shape to modify.
@@ -955,6 +985,8 @@ bool asiAlgo_Utils::MaximizeFaces(TopoDS_Shape& shape)
   shape = Unify.Shape();
   return true;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Interpolates the given collection of points with B-curve of the
 //! desired degree.
@@ -1160,6 +1192,8 @@ bool asiAlgo_Utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
   return true;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Performs Boolean Cut of a tool shape from the given object shape.
 //! \param Object [in] object to cut from.
 //! \param Tool   [in] tool to cut out.
@@ -1208,6 +1242,8 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& Object,
   return BOP.Shape();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Performs Boolean fuse operation on the passed objects.
 //! \param objects [in] shapes to fuse.
 //! \return result of fuse.
@@ -1226,6 +1262,8 @@ TopoDS_Shape asiAlgo_Utils::BooleanFuse(const TopTools_ListOfShape& objects)
   return result;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Explodes the passed shape by solids.
 //! \param model  [in]  input CAD part.
 //! \param solids [out] extracted solids.
@@ -1237,6 +1275,8 @@ void asiAlgo_Utils::ExplodeBySolids(const TopoDS_Shape&   model,
     solids.Append( exp.Current() );
   }
 }
+
+//-----------------------------------------------------------------------------
 
 //! Inverts the passed face so that all internal loops become individual
 //! faces while the outer loop is simply erased.
@@ -1277,4 +1317,25 @@ bool asiAlgo_Utils::InvertFace(const TopoDS_Face&    face,
     inverted.Append(innerFace);
   }
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+double asiAlgo_Utils::AutoSelectLinearDeflection(const TopoDS_Shape& model)
+{
+  double xMin, yMix, zMin, xMax, yMax, zMax;
+  Bounds(model, xMin, yMix, zMin, xMax, yMax, zMax);
+
+  // Use a fraction of a bounding diagonal
+  const double diag = ( gp_XYZ(xMin, yMix, zMin) - gp_XYZ(xMax, yMax, zMax) ).Modulus();
+  return 0.001*diag;
+}
+
+//-----------------------------------------------------------------------------
+
+double asiAlgo_Utils::AutoSelectAngularDeflection(const TopoDS_Shape& model)
+{
+  asiAlgo_NotUsed(model);
+
+  return 0.5; // In degrees
 }

@@ -92,24 +92,41 @@ public:
     return m_resultMesh;
   }
 
-  const t_link_set& GetBoundaryLinks() const
+  //! \return free links (those corresponding to non-shared edges).
+  const t_link_set& GetFreeLinks() const
   {
-    return m_boundaryLinks;
+    return m_freeLinks;
+  }
+
+  //! \return manifold links (those corresponding to the shared manifold edges).
+  const t_link_set& GetManifoldLinks() const
+  {
+    return m_manifoldLinks;
+  }
+
+  //! \return non-manifold links (those corresponding to the shared non-manifold edges).
+  const t_link_set& GetNonManifoldLinks() const
+  {
+    return m_nonManifoldLinks;
   }
 
 protected:
 
   void build();
-  void addBoundaryLink(const t_unoriented_link& bndLink);
+  void addFreeLink(const t_unoriented_link& link);
+  void addManifoldLink(const t_unoriented_link& link);
+  void addNonManifoldLink(const t_unoriented_link& link);
 
 protected:
 
-  TopoDS_Shape                       m_body;          //!< Working body.
-  Mode                               m_mode;          //!< Conversion mode.
-  bool                               m_bCollectBnd;   //!< Whether to preserve boundary.
-  Handle(Poly_CoherentTriangulation) m_resultPoly;    //!< Result tessellation.
-  Handle(Mesh)                       m_resultMesh;    //!< Result mesh.
-  t_link_set                         m_boundaryLinks; //!< Boundary links.
+  TopoDS_Shape                       m_body;             //!< Working body.
+  Mode                               m_mode;             //!< Conversion mode.
+  bool                               m_bCollectBnd;      //!< Whether to preserve boundary.
+  Handle(Poly_CoherentTriangulation) m_resultPoly;       //!< Result tessellation.
+  Handle(Mesh)                       m_resultMesh;       //!< Result mesh.
+  t_link_set                         m_freeLinks;        //!< Free links.
+  t_link_set                         m_manifoldLinks;    //!< Manifold links.
+  t_link_set                         m_nonManifoldLinks; //!< Non-manifold links.
 
 };
 

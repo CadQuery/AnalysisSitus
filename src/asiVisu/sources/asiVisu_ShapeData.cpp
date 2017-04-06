@@ -49,9 +49,9 @@ vtkIdType asiVisu_ShapeData::InsertCoordinate(const double x,
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_ShapeData::InsertVertex(vtkIdType             shapeID,
-                                     vtkIdType             pid,
-                                     asiVisu_ShapeCellType scType)
+void asiVisu_ShapeData::InsertVertex(vtkIdType              shapeID,
+                                     vtkIdType              pid,
+                                     asiVisu_ShapePrimitive scType)
 {
   // Insert new cell
   m_polyData->InsertNextCell(VTK_VERTEX, 1, &pid);
@@ -66,10 +66,10 @@ void asiVisu_ShapeData::InsertVertex(vtkIdType             shapeID,
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_ShapeData::InsertLine(vtkIdType             shapeID,
-                                   vtkIdType             pid1,
-                                   vtkIdType             pid2,
-                                   asiVisu_ShapeCellType scType)
+void asiVisu_ShapeData::InsertLine(vtkIdType              shapeID,
+                                   vtkIdType              pid1,
+                                   vtkIdType              pid2,
+                                   asiVisu_ShapePrimitive scType)
 {
   // Insert new cell
   vtkIdType pids[2] = {pid1, pid2};
@@ -87,7 +87,7 @@ void asiVisu_ShapeData::InsertLine(vtkIdType             shapeID,
 
 void asiVisu_ShapeData::InsertPolyline(vtkIdType                         shapeID,
                                        const vtkSmartPointer<vtkIdList>& pids,
-                                       asiVisu_ShapeCellType             scType)
+                                       asiVisu_ShapePrimitive            scType)
 {
   if ( !pids.GetPointer() )
     return;
@@ -105,11 +105,11 @@ void asiVisu_ShapeData::InsertPolyline(vtkIdType                         shapeID
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_ShapeData::InsertTriangle(vtkIdType             shapeID,
-                                       vtkIdType             pid1,
-                                       vtkIdType             pid2,
-                                       vtkIdType             pid3,
-                                       asiVisu_ShapeCellType scType)
+void asiVisu_ShapeData::InsertTriangle(vtkIdType              shapeID,
+                                       vtkIdType              pid1,
+                                       vtkIdType              pid2,
+                                       vtkIdType              pid3,
+                                       asiVisu_ShapePrimitive scType)
 {
   // Insert new cell
   vtkIdType pids[3] = {pid1, pid2, pid3};

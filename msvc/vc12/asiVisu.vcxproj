@@ -113,11 +113,12 @@
     <ClInclude Include="..\..\src\asiVisu\asiVisu.h" />
     <ClInclude Include="..\..\src\asiVisu\asiVisu_Common.h" />
     <ClInclude Include="..\..\src\asiVisu\asiVisu_DisplayMode.h" />
-    <ClInclude Include="..\..\src\asiVisu\asiVisu_ShapeCellType.h" />
+    <ClInclude Include="..\..\src\asiVisu\asiVisu_ShapePrimitive.h" />
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_MeshENScalarFilter.h" />
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_MeshEScalarFilter.h" />
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_MeshEVectorFilter.h" />
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_MeshNScalarFilter.h" />
+    <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_DisplayModeFilter.h" />
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_PointsVectorFilter.h" />
     <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_ShrinkPolyFilter.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_BCurveKnotsPipeline.h" />
@@ -135,6 +136,7 @@
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshEVectorPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshNScalarPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshPipeline.h" />
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_PartEdgesPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_Pipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_PointsPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_REContoursPipeline.h" />
@@ -220,6 +222,7 @@
     <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_MeshEScalarFilter.cpp" />
     <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_MeshEVectorFilter.cpp" />
     <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_MeshNScalarFilter.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_DisplayModeFilter.cpp" />
     <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_PointsVectorFilter.cpp" />
     <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_ShrinkPolyFilter.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_BCurveKnotsPipeline.cpp" />
@@ -237,6 +240,7 @@
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshEVectorPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshNScalarPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshPipeline.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PartEdgesPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_Pipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PointsPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_REContoursPipeline.cpp" />

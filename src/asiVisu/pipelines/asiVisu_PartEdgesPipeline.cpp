@@ -1,16 +1,15 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
+// Created on: 06 April 2017
 // Created by: Quaoar
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_PartPipeline.h>
+#include <asiVisu_PartEdgesPipeline.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_PartDataProvider.h>
-#include <asiVisu_PartNodeInfo.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -21,54 +20,33 @@
 
 //-----------------------------------------------------------------------------
 
-asiVisu_PartPipeline::asiVisu_PartPipeline()
+asiVisu_PartEdgesPipeline::asiVisu_PartEdgesPipeline(const vtkSmartPointer<asiVisu_ShapeRobustSource>& source)
 //
 : asiVisu_Pipeline   ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
-  m_bMapperColorsSet ( false )
+  m_bMapperColorsSet ( false ),
+  m_source           ( source )
 {
   /* ========================
    *  Prepare custom filters
    * ======================== */
 
-  // Initialize Data Source
-  m_source = vtkSmartPointer<asiVisu_ShapeRobustSource>::New();
-
-  // Filter for normals
-  m_normalsFilter = vtkSmartPointer<vtkPolyDataNormals>::New();
-
   // Display mode filter
   m_dmFilter = vtkSmartPointer<asiVisu_DisplayModeFilter>::New();
-  m_dmFilter->SetDisplayMode(DisplayMode_Shaded);
+  m_dmFilter->SetDisplayMode(DisplayMode_Wireframe);
 
   // Set line width
   this->Actor()->GetProperty()->SetLineWidth(1);
   this->Actor()->GetProperty()->SetPointSize(8);
-  //
-  asiVisu_Utils::ApplyLightingRules( this->Actor() );
 
   // Compose pipeline
   this->append(m_dmFilter);
-  //
-  if ( m_dmFilter->GetDisplayMode() == DisplayMode_Shaded )
-    this->append(m_normalsFilter);
-}
-
-//-----------------------------------------------------------------------------
-
-void asiVisu_PartPipeline::SetDiagnosticTools(ActAPI_ProgressEntry progress,
-                                              ActAPI_PlotterEntry  plotter)
-{
-  m_progress = progress;
-  m_plotter  = plotter;
-  //
-  m_source->SetDiagnosticTools(m_progress, m_plotter);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Sets input data for the pipeline.
 //! \param dataProvider [in] Data Provider.
-void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
+void asiVisu_PartEdgesPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
 {
   Handle(asiVisu_PartDataProvider)
     DP = Handle(asiVisu_PartDataProvider)::DownCast(dataProvider);
@@ -93,27 +71,6 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
 
   if ( DP->MustExecute( this->GetMTime() ) )
   {
-    m_source->SetAAG( DP->GetAAG() );
-    m_source->SetTessellationParams( DP->GetLinearDeflection(),
-                                     DP->GetAngularDeflection() );
-
-    //static int ShapeID = 0; ++ShapeID;
-    //Handle(IVtkOCC_Shape) aShapeIntoVtk = new IVtkOCC_Shape(aShape);
-    //aShapeIntoVtk->SetId(ShapeID);
-
-    //// Re-use existing Data Source to benefit from its lightweight
-    //// transformation capabilities
-    //m_DS->SetShape(aShapeIntoVtk);
-
-    //// Bind actor to owning Node ID. Thus we set back reference from VTK
-    //// entity to data object
-    //if ( m_bIsBound2Node )
-    //  asiVisu_PartNodeInfo::Store( DP->GetNodeID(), this->Actor() );
-
-    //// Bind Shape DS with actor. This is necessary for VIS picker -- it will
-    //// not work without the corresponding Information key
-    //IVtkTools_ShapeObject::SetShapeSource( m_DS, this->Actor() );
-
     // Initialize pipeline
     this->SetInputConnection( m_source->GetOutputPort() );
   }
@@ -126,7 +83,7 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void asiVisu_PartPipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_PartEdgesPipeline::callback_add_to_renderer(vtkRenderer*)
 {
   this->Actor()->GetProperty()->SetInterpolationToPhong();
 }
@@ -134,13 +91,13 @@ void asiVisu_PartPipeline::callback_add_to_renderer(vtkRenderer*)
 //-----------------------------------------------------------------------------
 
 //! Callback for RemoveFromRenderer() routine.
-void asiVisu_PartPipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_PartEdgesPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //-----------------------------------------------------------------------------
 
 //! Callback for Update() routine.
-void asiVisu_PartPipeline::callback_update()
+void asiVisu_PartEdgesPipeline::callback_update()
 {
   if ( !m_bMapperColorsSet )
   {

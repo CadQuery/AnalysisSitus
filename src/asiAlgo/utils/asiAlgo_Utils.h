@@ -42,8 +42,11 @@
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 
-//! Face versus its slicer edges.
-typedef NCollection_IndexedDataMap< TopoDS_Face, Handle(TopTools_HSequenceOfShape) > TSlicerMap;
+//-----------------------------------------------------------------------------
+
+#define asiAlgo_TooSmallValue 1.0e-4
+
+//-----------------------------------------------------------------------------
 
 //! Auxiliary functions facilitating working with OCCT topological shapes.
 class asiAlgo_Utils
@@ -313,6 +316,12 @@ public:
   asiAlgo_EXPORT static bool
     InvertFace(const TopoDS_Face&    face,
                TopTools_ListOfShape& inverted);
+
+  asiAlgo_EXPORT static double
+    AutoSelectLinearDeflection(const TopoDS_Shape& model);
+
+  asiAlgo_EXPORT static double
+    AutoSelectAngularDeflection(const TopoDS_Shape& model);
 
 private:
 

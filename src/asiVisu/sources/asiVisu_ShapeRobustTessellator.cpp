@@ -15,6 +15,7 @@
 #include <asiAlgo_MeshGen.h>
 #include <asiAlgo_MeshMerge.h>
 #include <asiAlgo_Timer.h>
+#include <asiAlgo_Utils.h>
 
 // OCCT includes
 #include <BRep_Tool.hxx>
@@ -47,13 +48,33 @@ asiVisu_ShapeRobustTessellator::asiVisu_ShapeRobustTessellator()
 //! \param aag                   [in] AAG.
 //! \param linearDeflection      [in] linear deflection.
 //! \param angularDeflection_deg [in] angular deflection in degrees.
+//! \param progress              [in] progress notifier.
+//! \param plotter               [in] imperative plotter.
 void asiVisu_ShapeRobustTessellator::Initialize(const Handle(asiAlgo_AAG)& aag,
                                                 const double               linearDeflection,
-                                                const double               angularDeflection_deg)
+                                                const double               angularDeflection_deg,
+                                                ActAPI_ProgressEntry       progress,
+                                                ActAPI_PlotterEntry        plotter)
 {
-  m_aag               = aag;
-  m_fLinDeflection    = linearDeflection;
-  m_fAngDeflectionDeg = angularDeflection_deg;
+  m_aag      = aag;
+  m_progress = progress;
+  m_plotter  = plotter;
+
+  // Set linear deflection
+  if ( Abs(linearDeflection) < asiAlgo_TooSmallValue )
+    m_fLinDeflection = asiAlgo_Utils::AutoSelectLinearDeflection( m_aag->GetMasterCAD() );
+  else
+    m_fLinDeflection = linearDeflection;
+  //
+  m_progress.SendLogMessage(LogInfo(Normal) << "Faceter linear deflection is %1" << m_fLinDeflection);
+
+  // Set angular deflection
+  if ( Abs(angularDeflection_deg) < asiAlgo_TooSmallValue )
+    m_fAngDeflectionDeg = asiAlgo_Utils::AutoSelectAngularDeflection( m_aag->GetMasterCAD() );
+  else
+    m_fAngDeflectionDeg = angularDeflection_deg;
+  //
+  m_progress.SendLogMessage(LogInfo(Normal) << "Faceter angular deflection is %1 deg." << m_fAngDeflectionDeg);
 }
 
 //-----------------------------------------------------------------------------
@@ -80,9 +101,6 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   // Build map of shapes and their parents
   TopTools_IndexedDataMapOfShapeListOfShape verticesOnEdges;
   TopExp::MapShapesAndAncestors(master, TopAbs_VERTEX, TopAbs_EDGE, verticesOnEdges);
-  //
-  TopTools_IndexedDataMapOfShapeListOfShape edgesOnFaces;
-  TopExp::MapShapesAndAncestors(master, TopAbs_EDGE, TopAbs_FACE, edgesOnFaces);
 
   // Cached maps
   const TopTools_IndexedMapOfShape& allVertices = m_aag->GetMapOfVertices();
@@ -175,16 +193,37 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   TIMER_RESET
   TIMER_GO
 
-  // Add links for boundaries
-  const asiAlgo_MeshMerge::t_link_set& bndLinks = conglomerate.GetBoundaryLinks();
+  // Here we take advantage of the fact the indices of nodes in coherent
+  // triangulation are exactly the same as PIDs inserted above
+
+  // Add free links
+  const asiAlgo_MeshMerge::t_link_set& freeLinks = conglomerate.GetFreeLinks();
   //
-  for ( int i = 1; i <= bndLinks.Extent(); ++i )
+  for ( int i = 1; i <= freeLinks.Extent(); ++i )
   {
-    // Here we take advantage of the fact the indices of nodes in coherent
-    // triangulation are exactly the same as PIDs inserted above
-    const asiAlgo_MeshMerge::t_unoriented_link& link = bndLinks(i);
+    const asiAlgo_MeshMerge::t_unoriented_link& link = freeLinks(i);
     //
-    m_data->InsertLine(0, link.N1, link.N2, ShapeCellType_SharedEdge);
+    m_data->InsertLine(0, link.N1, link.N2, ShapePrimitive_FreeEdge);
+  }
+
+  // Add manifold links
+  const asiAlgo_MeshMerge::t_link_set& manifoldLinks = conglomerate.GetManifoldLinks();
+  //
+  for ( int i = 1; i <= manifoldLinks.Extent(); ++i )
+  {
+    const asiAlgo_MeshMerge::t_unoriented_link& link = manifoldLinks(i);
+    //
+    m_data->InsertLine(0, link.N1, link.N2, ShapePrimitive_ManifoldEdge);
+  }
+
+  // Add non-manifold links
+  const asiAlgo_MeshMerge::t_link_set& nonManifoldLinks = conglomerate.GetNonManifoldLinks();
+  //
+  for ( int i = 1; i <= nonManifoldLinks.Extent(); ++i )
+  {
+    const asiAlgo_MeshMerge::t_unoriented_link& link = nonManifoldLinks(i);
+    //
+    m_data->InsertLine(0, link.N1, link.N2, ShapePrimitive_NonManifoldEdge);
   }
 
   // Add facets for shading
@@ -195,7 +234,7 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
                            cohTriangle.Node(0),
                            cohTriangle.Node(1),
                            cohTriangle.Node(2),
-                           ShapeCellType_ShadedFace);
+                           ShapePrimitive_Facet);
   }
 
   TIMER_FINISH
@@ -253,9 +292,9 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_ShapeRobustTessellator::addVertex(const TopoDS_Vertex&        vertex,
-                                               const vtkIdType             shapeId,
-                                               const asiVisu_ShapeCellType scType)
+void asiVisu_ShapeRobustTessellator::addVertex(const TopoDS_Vertex&         vertex,
+                                               const vtkIdType              shapeId,
+                                               const asiVisu_ShapePrimitive scType)
 {
   if ( vertex.IsNull() )
     return;
@@ -270,9 +309,9 @@ void asiVisu_ShapeRobustTessellator::addVertex(const TopoDS_Vertex&        verte
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_ShapeRobustTessellator::addEdge(const TopoDS_Edge&          edge,
-                                             const vtkIdType             shapeId,
-                                             const asiVisu_ShapeCellType scType)
+void asiVisu_ShapeRobustTessellator::addEdge(const TopoDS_Edge&           edge,
+                                             const vtkIdType              shapeId,
+                                             const asiVisu_ShapePrimitive scType)
 {
   if ( edge.IsNull() || BRep_Tool::Degenerated(edge) )
     return;

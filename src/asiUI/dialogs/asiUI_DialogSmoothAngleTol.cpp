@@ -62,7 +62,6 @@ asiUI_DialogSmoothAngleTol::asiUI_DialogSmoothAngleTol(QWidget* parent)
   // Create layout
   QGridLayout* pGrid = new QGridLayout(pGroup);
   pGrid->setSpacing(5);
-  pGrid->setAlignment(Qt::AlignTop | Qt::AlignLeft);
   //
   pGrid->addWidget(new QLabel("In radians:"), 0, 0);
   //

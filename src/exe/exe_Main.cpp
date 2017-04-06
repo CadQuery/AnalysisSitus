@@ -9,6 +9,7 @@
 #include <Windows.h>
 
 // exe includes
+#include <exe_CommonFacilities.h>
 #include <exe_MainWindow.h>
 
 // asiVisu includes

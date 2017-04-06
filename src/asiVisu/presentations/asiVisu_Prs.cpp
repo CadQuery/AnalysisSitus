@@ -219,6 +219,16 @@ void asiVisu_Prs::UnHighlight(vtkRenderer*                   theRenderer,
   this->unHighlight(theRenderer, theSelNature);
 }
 
+//! Sets diagnostic tools to all existing Presentations.
+//! \param progress [in] progress notifier.
+//! \param plotter  [in] imperative plotter.
+void asiVisu_Prs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                                     ActAPI_PlotterEntry  plotter)
+{
+  m_progress = progress;
+  m_plotter  = plotter;
+}
+
 //! Adds a pipeline to the Presentation object. This method should be used
 //! by descendant classes in order to construct custom Presentation objects.
 //! \param theId       [in] ID of the new pipeline.

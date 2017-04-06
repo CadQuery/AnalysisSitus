@@ -84,7 +84,6 @@ asiUI_DialogFindEdge::asiUI_DialogFindEdge(const Handle(asiEngine_Model)&       
   // Create layout
   QGridLayout* pGrid = new QGridLayout(pGroup);
   pGrid->setSpacing(5);
-  pGrid->setAlignment(Qt::AlignTop | Qt::AlignLeft);
   //
   pGrid->addWidget(new QLabel("Use edge address:"),     0, 0);
   pGrid->addWidget(new QLabel("Edge index (1-based):"), 1, 0);

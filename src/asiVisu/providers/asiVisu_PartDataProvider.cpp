@@ -64,6 +64,20 @@ Handle(asiAlgo_AAG) asiVisu_PartDataProvider::GetAAG() const
 
 //-----------------------------------------------------------------------------
 
+double asiVisu_PartDataProvider::GetLinearDeflection() const
+{
+  return m_node->GetLinearDeflection();
+}
+
+//-----------------------------------------------------------------------------
+
+double asiVisu_PartDataProvider::GetAngularDeflection() const
+{
+  return m_node->GetAngularDeflection();
+}
+
+//-----------------------------------------------------------------------------
+
 //! \return copy.
 Handle(asiVisu_PartDataProvider) asiVisu_PartDataProvider::Clone() const
 {
@@ -80,7 +94,9 @@ Handle(ActAPI_HParameterList) asiVisu_PartDataProvider::translationSources() con
   ActParamStream params;
 
   params << m_node->Parameter(asiData_PartNode::PID_Geometry)
-         << m_node->Parameter(asiData_PartNode::PID_AAG);
+         << m_node->Parameter(asiData_PartNode::PID_AAG)
+         << m_node->Parameter(asiData_PartNode::PID_TessLinDefl)
+         << m_node->Parameter(asiData_PartNode::PID_TessAngDefl);
 
   return params.List;
 }

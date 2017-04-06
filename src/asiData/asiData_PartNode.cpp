@@ -19,6 +19,8 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   // Register standard Active Data Parameters
   REGISTER_PARAMETER(Name,  PID_Name);
   REGISTER_PARAMETER(Shape, PID_Geometry);
+  REGISTER_PARAMETER(Real,  PID_TessLinDefl);
+  REGISTER_PARAMETER(Real,  PID_TessAngDefl);
   REGISTER_PARAMETER(Int,   PID_DisplayMode);
   REGISTER_PARAMETER(Bool,  PID_HasColor);
   REGISTER_PARAMETER(Int,   PID_Color);
@@ -47,10 +49,12 @@ void asiData_PartNode::Init()
   this->SetAAG(NULL);
 
   // Set default values to primitive Parameters
-  this->SetHasColor    (false);
-  this->SetColor       (-1);
-  this->SetDisplayMode (1);
-  this->SetHasVertices (false);
+  this->SetLinearDeflection  (0.0);
+  this->SetAngularDeflection (0.0);
+  this->SetHasColor          (false);
+  this->SetColor             (-1);
+  this->SetDisplayMode       (1);
+  this->SetHasVertices       (false);
 }
 
 //-----------------------------------------------------------------------------
@@ -99,6 +103,32 @@ void asiData_PartNode::SetAAG(const Handle(asiAlgo_AAG)& aag)
 Handle(asiAlgo_AAG) asiData_PartNode::GetAAG() const
 {
   return Handle(asiData_AAGParameter)::DownCast( this->Parameter(PID_AAG) )->GetAAG();
+}
+
+//! Sets linear deflection.
+//! \param defl [in] value to set.
+void asiData_PartNode::SetLinearDeflection(const double defl)
+{
+  ActParamTool::AsReal( this->Parameter(PID_TessLinDefl) )->SetValue(defl);
+}
+
+//! \return linear deflection.
+double asiData_PartNode::GetLinearDeflection() const
+{
+  return ActParamTool::AsReal( this->Parameter(PID_TessLinDefl) )->GetValue();
+}
+
+//! Sets angular deflection.
+//! \param defl [in] value to set.
+void asiData_PartNode::SetAngularDeflection(const double defl)
+{
+  ActParamTool::AsReal( this->Parameter(PID_TessAngDefl) )->SetValue(defl);
+}
+
+//! \return angular deflection.
+double asiData_PartNode::GetAngularDeflection() const
+{
+  return ActParamTool::AsReal( this->Parameter(PID_TessAngDefl) )->GetValue();
 }
 
 //! Sets the Boolean value indicating whether the color Parameter of this

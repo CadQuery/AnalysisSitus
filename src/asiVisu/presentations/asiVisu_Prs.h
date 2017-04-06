@@ -16,6 +16,8 @@
 
 // Active Data (API) includes
 #include <ActAPI_INode.h>
+#include <ActAPI_IPlotter.h>
+#include <ActAPI_IProgressNotifier.h>
 
 // OCCT includes
 #include <NCollection_DataMap.hxx>
@@ -98,6 +100,12 @@ public:
   asiVisu_EXPORT void
     UnHighlight(vtkRenderer*                   theRenderer,
                 const asiVisu_SelectionNature& theSelNature) const;
+
+public:
+
+  asiVisu_EXPORT virtual void
+    SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                       ActAPI_PlotterEntry  plotter);
 
 // Presentation construction methods:
 protected:
@@ -204,6 +212,12 @@ protected:
 
   //! Data Node the Presentation is bound to.
   Handle(ActAPI_INode) m_node;
+
+  //! Progress notifier.
+  ActAPI_ProgressEntry m_progress;
+
+  //! Imperative plotter.
+  ActAPI_PlotterEntry m_plotter;
 
 };
 

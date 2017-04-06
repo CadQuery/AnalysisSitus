@@ -162,6 +162,14 @@ void asiUI_ControlsPartListener::reinitializeEverything()
   m_notifier.Init(1);
 
   this->cleanViewers();
+
+  // Set all necessary diagnostic tools
+  ActAPI_DataObjectId partId = m_model->GetPartNode()->GetId();
+  //
+  if ( !m_wViewerPart->PrsMgr()->IsPresented(partId) )
+    m_wViewerPart->PrsMgr()->SetPresentation( m_model->GetPartNode() );
+  //
+  m_wViewerPart->PrsMgr()->SetDiagnosticTools(m_notifier, NULL);
   m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, true);
 
   m_notifier.StepProgress(1, 1);

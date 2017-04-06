@@ -14,6 +14,10 @@
 // asiAlgo includes
 #include <asiAlgo_AAG.h>
 
+// Active Data includes
+#include <ActAPI_IPlotter.h>
+#include <ActAPI_IProgressNotifier.h>
+
 // VTK includes
 #include <vtkInformationIdTypeKey.h>
 #include <vtkPolyDataAlgorithm.h>
@@ -37,6 +41,14 @@ public:
 
   asiVisu_EXPORT const Handle(asiAlgo_AAG)&
     GetAAG() const;
+
+  asiVisu_EXPORT void
+    SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                       ActAPI_PlotterEntry  plotter);
+
+  asiVisu_EXPORT void
+    SetTessellationParams(const double linDefl,
+                          const double angDefl);
 
 protected:
 
@@ -64,8 +76,12 @@ private:
 
 protected:
 
-  Handle(asiAlgo_AAG)       m_aag;       //!< AAG of the original B-Rep shape.
-  Handle(asiVisu_ShapeData) m_shapeData; //!< Polygonal data container.
+  Handle(asiAlgo_AAG)       m_aag;               //!< AAG of the original B-Rep shape.
+  Handle(asiVisu_ShapeData) m_shapeData;         //!< Polygonal data container.
+  double                    m_fLinDeflection;    //!< Linear deflection.
+  double                    m_fAngDeflectionDeg; //!< Angular deflection.
+  ActAPI_ProgressEntry      m_progress;          //!< Progress notifier.
+  ActAPI_PlotterEntry       m_plotter;           //!< Imperative plotter.
 
 };
 

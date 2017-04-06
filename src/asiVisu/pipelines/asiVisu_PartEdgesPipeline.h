@@ -1,51 +1,37 @@
 //-----------------------------------------------------------------------------
-// Created on: 30 November 2016
+// Created on: 06 April 2017
 // Created by: Quaoar
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_PartPipeline_h
-#define asiVisu_PartPipeline_h
+#ifndef asiVisu_PartEdgesPipeline_h
+#define asiVisu_PartEdgesPipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DisplayModeFilter.h>
 #include <asiVisu_Pipeline.h>
 #include <asiVisu_ShapeRobustSource.h>
 
-// Active Data includes
-#include <ActAPI_IPlotter.h>
-#include <ActAPI_IProgressNotifier.h>
-
-// VTK includes
-#include <vtkPolyDataNormals.h>
-
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_PartPipeline, asiVisu_Pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_PartEdgesPipeline, asiVisu_Pipeline)
 
-//! Visualization pipeline for OCCT shapes. This pipeline serves the purpose
-//! of visualization of "not-so-valid" shapes. Such shapes can occur either
-//! because of any sort of corruption, or they can represent some intermediate
-//! state of modeling, e.g. a result of Euler Operation which breaks geometry,
-//! but keeps topology consistent.
-class asiVisu_PartPipeline : public asiVisu_Pipeline
+//! Visualization pipeline for wireframe of OCCT shape. This pipeline is
+//! secondary: it should be feeded with a source of a main shape pipeline.
+class asiVisu_PartEdgesPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_PartPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_PartEdgesPipeline, asiVisu_Pipeline)
 
 public:
 
   asiVisu_EXPORT
-    asiVisu_PartPipeline();
+    asiVisu_PartEdgesPipeline(const vtkSmartPointer<asiVisu_ShapeRobustSource>& source);
 
 public:
-
-  asiVisu_EXPORT void
-    SetDiagnosticTools(ActAPI_ProgressEntry progress,
-                       ActAPI_PlotterEntry  plotter);
 
   asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
@@ -56,12 +42,6 @@ public:
   const vtkSmartPointer<asiVisu_ShapeRobustSource>& GetSource() const
   {
     return m_source;
-  }
-
-  //! \return normals calculation filter.
-  const vtkSmartPointer<vtkPolyDataNormals>& GetNormalsFilter() const
-  {
-    return m_normalsFilter;
   }
 
   //! \return display mode filter.
@@ -79,10 +59,10 @@ private:
 private:
 
   //! Copying prohibited.
-  asiVisu_PartPipeline(const asiVisu_PartPipeline&);
+  asiVisu_PartEdgesPipeline(const asiVisu_PartEdgesPipeline&);
 
   //! Assignment prohibited.
-  asiVisu_PartPipeline& operator=(const asiVisu_PartPipeline&);
+  asiVisu_PartEdgesPipeline& operator=(const asiVisu_PartEdgesPipeline&);
 
 protected:
 
@@ -93,17 +73,8 @@ protected:
   //! Data source.
   vtkSmartPointer<asiVisu_ShapeRobustSource> m_source;
 
-  //! Filter for normals.
-  vtkSmartPointer<vtkPolyDataNormals> m_normalsFilter;
-
   //! Display mode filter.
   vtkSmartPointer<asiVisu_DisplayModeFilter> m_dmFilter;
-
-  //! Progress notifier.
-  ActAPI_ProgressEntry m_progress;
-
-  //! Imperative plotter.
-  ActAPI_PlotterEntry m_plotter;
 
 };
 

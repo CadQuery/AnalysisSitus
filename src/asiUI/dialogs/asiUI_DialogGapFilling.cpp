@@ -91,7 +91,6 @@ asiUI_DialogGapFilling::asiUI_DialogGapFilling(const Handle(asiEngine_Model)&   
   // Create layout
   QGridLayout* pGrid = new QGridLayout(pGroup);
   pGrid->setSpacing(5);
-  pGrid->setAlignment(Qt::AlignTop | Qt::AlignLeft);
   //
   pGrid->addWidget(new QLabel("Order of continuity:"), 0, 0);
   //

@@ -14,9 +14,12 @@
 #include <Poly_CoherentTriangulation.hxx>
 #include <Precision.hxx>
 #include <TColStd_ListOfInteger.hxx>
+#include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
 namespace
 {
@@ -89,35 +92,6 @@ namespace
   };
 
   //---------------------------------------------------------------------------
-  // Patch tessellation info
-  //---------------------------------------------------------------------------
-
-  //! Stores correspondences between IDs of triangles and nodes with respect
-  //! to patch local triangulation and global triangulation.
-  class PatchInfo
-  {
-  public:
-
-    PatchInfo(const TopoDS_Face& F) : m_F(F) {}
-
-    const TopoDS_Face&             GetFace() const               { return m_F; }
-    void                           SetFace(const TopoDS_Face& F) { m_F = F; }
-    NCollection_DataMap<int, int>& FaceTris()                    { return m_GlobalLocalTris; }
-    NCollection_DataMap<int, int>& LocalNodes()                  { return m_LocalGlobalNodes; }
-
-  private:
-
-    //! Initial patch.
-    TopoDS_Face m_F;
-
-    //! Correspondence between the global and local triangle indices.
-    NCollection_DataMap<int, int> m_GlobalLocalTris;
-
-    //! Correspondence between local and global node indices.
-    NCollection_DataMap<int, int> m_LocalGlobalNodes;
-  };
-
-  //---------------------------------------------------------------------------
   // Auxiliary functions
   //---------------------------------------------------------------------------
 
@@ -185,6 +159,11 @@ void asiAlgo_MeshMerge::build()
   // Create result as coherent triangulation
   m_resultPoly = new Poly_CoherentTriangulation;
 
+  // Prepare map of edges and their parent faces
+  TopTools_IndexedDataMapOfShapeListOfShape edgesOnFaces;
+  if ( m_bCollectBnd )
+    TopExp::MapShapesAndAncestors(m_body, TopAbs_EDGE, TopAbs_FACE, edgesOnFaces);
+
   // Working tools and variables
   int globalNodeId = 0;
   NCollection_CellFilter<InspectNode> NodeFilter( Precision::Confusion() );
@@ -238,6 +217,10 @@ void asiAlgo_MeshMerge::build()
         if ( polygonOnTri.IsNull() )
           continue;
 
+        // Get owner faces to decide the type of sharing
+        const TopTools_ListOfShape& ownerFaces = edgesOnFaces.FindFromKey(E);
+        const int nFaces = ownerFaces.Extent();
+
         // Add node indices to the collection of boundary nodes
         const TColStd_Array1OfInteger& polygonOnTriNodes = polygonOnTri->Nodes();
         int prevBndNode = 0;
@@ -250,7 +233,14 @@ void asiAlgo_MeshMerge::build()
           if ( k > polygonOnTriNodes.Lower() )
           {
             t_unoriented_link bndLink(prevBndNode, globalBndIndex);
-            this->addBoundaryLink(bndLink);
+
+            // Depending on the sharing type choose one or another collection
+            if ( nFaces == 1 )
+              this->addFreeLink(bndLink);
+            else if ( nFaces > 2 )
+              this->addNonManifoldLink(bndLink);
+            else
+              this->addManifoldLink(bndLink);
           }
           //
           prevBndNode = globalBndIndex;
@@ -291,7 +281,21 @@ void asiAlgo_MeshMerge::build()
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_MeshMerge::addBoundaryLink(const t_unoriented_link& bndLink)
+void asiAlgo_MeshMerge::addFreeLink(const t_unoriented_link& link)
 {
-  m_boundaryLinks.Add(bndLink);
+  m_freeLinks.Add(link);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_MeshMerge::addManifoldLink(const t_unoriented_link& link)
+{
+  m_manifoldLinks.Add(link);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_MeshMerge::addNonManifoldLink(const t_unoriented_link& link)
+{
+  m_nonManifoldLinks.Add(link);
 }

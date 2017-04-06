@@ -56,4 +56,7 @@ void asiUI_PartCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
 
   if ( eventId == EVENT_FIND_EDGE )
     emit findEdge();
+
+  if ( eventId == EVENT_REFINE_TESSELLATION )
+    emit refineTessellation();
 }

@@ -59,6 +59,7 @@ public slots:
   void onSubShapesPicked();
   void onFindFace();
   void onFindEdge();
+  void onRefineTessellation();
   void onContextMenu(const QPoint&);
 
 signals:

@@ -8,11 +8,11 @@
 #ifndef asiVisu_GeomPrs_h
 #define asiVisu_GeomPrs_h
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_Prs.h>
 #include <asiVisu_Utils.h>
 
-// A-Situs (geometry) includes
+// asiData includes
 #include <asiData_PartNode.h>
 
 // Qt includes
@@ -51,6 +51,10 @@ public:
 
   asiVisu_EXPORT virtual bool
     IsVisible() const;
+
+  asiVisu_EXPORT virtual void
+    SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                       ActAPI_PlotterEntry  plotter);
 
 // Visualization commands:
 public:

@@ -9,6 +9,10 @@
 ###  ####         #######     ####     ####       ########   #######
 ===============================================================================
 
+... A prototyping framework for OpenCascade modeling algorithms.
+
+===============================================================================
+
 Analysis Situs software is aimed to assist developers who use OpenCascade or
 other CAD modeling libraries. You can benefit from this software if:
 

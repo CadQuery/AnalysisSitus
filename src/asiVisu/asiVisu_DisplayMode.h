@@ -9,7 +9,12 @@
 #define asiVisu_DisplayMode_h
 
 // asiVisu includes
-#include <asiVisu.h>
+#include <asiVisu_ShapePrimitive.h>
+
+// OCCT includes
+#include <TColStd_PackedMapOfInteger.hxx>
+
+//-----------------------------------------------------------------------------
 
 //! Enumerates display modes.
 enum asiVisu_DisplayMode
@@ -18,6 +23,68 @@ enum asiVisu_DisplayMode
   DisplayMode_Shaded    = 0x0001, //!< Shaded.
   DisplayMode_Wireframe = 0x0002, //!< Wireframe.
   DisplayMode_Vertices  = 0x0004  //!< Vertices
+};
+
+//-----------------------------------------------------------------------------
+
+//! Provides display modes for a display mode filter.
+class asiVisu_DisplayModeProvider
+{
+public:
+
+  //! \return collection of shape primitives employed in SHADED mode.
+  static TColStd_PackedMapOfInteger SHADED()
+  {
+    TColStd_PackedMapOfInteger mode;
+    //
+    mode.Add(ShapePrimitive_FreeVertex);
+    mode.Add(ShapePrimitive_DanglingEdge);
+    mode.Add(ShapePrimitive_NonManifoldEdge);
+    mode.Add(ShapePrimitive_Facet);
+    //
+    return mode;
+  }
+
+  //! \return collection of shape primitives employed in WIREFRAME mode.
+  static TColStd_PackedMapOfInteger WIREFRAME()
+  {
+    TColStd_PackedMapOfInteger mode;
+    //
+    mode.Add(ShapePrimitive_FreeVertex);
+    mode.Add(ShapePrimitive_DanglingEdge);
+    mode.Add(ShapePrimitive_FreeEdge);
+    mode.Add(ShapePrimitive_ManifoldEdge);
+    mode.Add(ShapePrimitive_NonManifoldEdge);
+    //
+    return mode;
+  }
+
+  //! \return collection of shape primitives employed in VERTICES mode.
+  static TColStd_PackedMapOfInteger VERTICES()
+  {
+    TColStd_PackedMapOfInteger mode;
+    //
+    mode.Add(ShapePrimitive_FreeVertex);
+    mode.Add(ShapePrimitive_SharedVertex);
+    //
+    return mode;
+  }
+
+  //! Returns shape primitives employed in the given display mode.
+  //! \param mode [in] display mode of interest.
+  //! \return collection of primitive types.
+  static TColStd_PackedMapOfInteger GetPrimitivesForMode(const asiVisu_DisplayMode mode)
+  {
+    switch ( mode )
+    {
+      case DisplayMode_Shaded:    return SHADED();
+      case DisplayMode_Wireframe: return WIREFRAME();
+      case DisplayMode_Vertices:  return VERTICES();
+      //
+      default: break;
+    }
+    return TColStd_PackedMapOfInteger();
+  }
 };
 
 #endif

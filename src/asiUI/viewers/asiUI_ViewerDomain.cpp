@@ -15,6 +15,7 @@
 
 // Engine includes
 #include <asiEngine_Domain.h>
+#include <asiEngine_Part.h>
 
 // Visualization includes
 #include <asiVisu_Utils.h>
@@ -155,117 +156,117 @@ void asiUI_ViewerDomain::onResetView()
 //! Callback for picking event.
 void asiUI_ViewerDomain::onDomainPicked()
 {
-  Handle(asiData_PartNode) N = m_model->GetPartNode();
-  //
-  if ( N.IsNull() || !N->IsWellFormed() || N->GetShape().IsNull() )
-    return;
+  //Handle(asiData_PartNode) N = m_model->GetPartNode();
+  ////
+  //if ( N.IsNull() || !N->IsWellFormed() || N->GetShape().IsNull() )
+  //  return;
 
-  // Build a map of shapes
-  const TopTools_IndexedMapOfShape& subShapesMap = N->GetAAG()->GetMapOfSubShapes();
+  //// Build a map of shapes
+  //const TopTools_IndexedMapOfShape& subShapesMap = N->GetAAG()->GetMapOfSubShapes();
 
-  // Get face
-  const int face_idx = N->GetFaceRepresentation()->GetSelectedFace();
-  //
-  TopoDS_Face F;
-  if ( face_idx > 0 )
-    F = TopoDS::Face( subShapesMap.FindKey(face_idx) );
-  //
-  if ( F.IsNull() )
-    return;
+  //// Get face
+  //const int face_idx = N->GetFaceRepresentation()->GetSelectedFace();
+  ////
+  //TopoDS_Face F;
+  //if ( face_idx > 0 )
+  //  F = TopoDS::Face( subShapesMap.FindKey(face_idx) );
+  ////
+  //if ( F.IsNull() )
+  //  return;
 
-  //---------------------------------------------------------------------------
-  // Retrieve current selection
-  //---------------------------------------------------------------------------
+  ////---------------------------------------------------------------------------
+  //// Retrieve current selection
+  ////---------------------------------------------------------------------------
 
-  // Access picking results
-  const asiVisu_ActualSelection& sel      = m_prs_mgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
-  const asiVisu_ActorElemMap&    elem_map = pick_res.GetPickMap();
+  //// Access picking results
+  //const asiVisu_ActualSelection& sel      = m_prs_mgr->GetCurrentSelection();
+  //const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  //const asiVisu_ActorElemMap&    elem_map = pick_res.GetPickMap();
 
-  // Check if there is anything selected
-  if ( elem_map.IsEmpty() )
-  {
-    m_textWidget->Off();
-    this->Repaint();
-    return;
-  }
+  //// Check if there is anything selected
+  //if ( elem_map.IsEmpty() )
+  //{
+  //  m_textWidget->Off();
+  //  this->Repaint();
+  //  return;
+  //}
 
-  // Prepare cumulative set of all picked element IDs
-  for ( asiVisu_ActorElemMap::Iterator it(elem_map); it.More(); it.Next() )
-  {
-    const vtkSmartPointer<vtkActor>&  picked_actor = it.Key();
-    const TColStd_PackedMapOfInteger& cellGIDs     = it.Value();
+  //// Prepare cumulative set of all picked element IDs
+  //for ( asiVisu_ActorElemMap::Iterator it(elem_map); it.More(); it.Next() )
+  //{
+  //  const vtkSmartPointer<vtkActor>&  picked_actor = it.Key();
+  //  const TColStd_PackedMapOfInteger& cellGIDs     = it.Value();
 
-    // Access polygonal data mapper
-    vtkPolyDataMapper* pMapper = vtkPolyDataMapper::SafeDownCast( picked_actor->GetMapper() );
-    if ( !pMapper )
-    {
-      m_textWidget->Off();
-      return;
-    }
+  //  // Access polygonal data mapper
+  //  vtkPolyDataMapper* pMapper = vtkPolyDataMapper::SafeDownCast( picked_actor->GetMapper() );
+  //  if ( !pMapper )
+  //  {
+  //    m_textWidget->Off();
+  //    return;
+  //  }
 
-    // Access polygonal data
-    vtkPolyData* pData = vtkPolyData::SafeDownCast( pMapper->GetInput() );
-    if ( !pData )
-    {
-      m_textWidget->Off();
-      return;
-    }
+  //  // Access polygonal data
+  //  vtkPolyData* pData = vtkPolyData::SafeDownCast( pMapper->GetInput() );
+  //  if ( !pData )
+  //  {
+  //    m_textWidget->Off();
+  //    return;
+  //  }
 
-    // Get edge. We make an exploration loop here in order not to miss seams
-    const int   edgeId     = cellGIDs.GetMinimalMapped();
-    int         current_id = 0;
-    TopoDS_Edge edge;
-    //
-    for ( TopExp_Explorer eexp(F, TopAbs_EDGE); eexp.More(); eexp.Next() )
-    {
-      ++current_id;
-      if ( current_id == edgeId )
-      {
-        edge = TopoDS::Edge( eexp.Current() );
-        break;
-      }
-    }
-    //
-    if ( edge.IsNull() )
-      return;
+  //  // Get edge. We make an exploration loop here in order not to miss seams
+  //  const int   edgeId     = cellGIDs.GetMinimalMapped();
+  //  int         current_id = 0;
+  //  TopoDS_Edge edge;
+  //  //
+  //  for ( TopExp_Explorer eexp(F, TopAbs_EDGE); eexp.More(); eexp.Next() )
+  //  {
+  //    ++current_id;
+  //    if ( current_id == edgeId )
+  //    {
+  //      edge = TopoDS::Edge( eexp.Current() );
+  //      break;
+  //    }
+  //  }
+  //  //
+  //  if ( edge.IsNull() )
+  //    return;
 
-    // Prepare label
-    TCollection_AsciiString TITLE  = "(Edge #";
-                            TITLE += edgeId;
-                            TITLE += ", ";
-                            TITLE += asiAlgo_Utils::ShapeAddr(edge).c_str();
-                            TITLE += ", ";
-                            TITLE += asiAlgo_Utils::OrientationToString(edge);
-                            TITLE += " in face)\n";
-    //
-    double f, l;
-    Handle(Geom_Curve) c3d = BRep_Tool::Curve(edge, f, l);
-    //
-    TITLE += "3D: ";
-    TITLE += c3d->DynamicType()->Name();
-    TITLE += " [";
-    TITLE += f;
-    TITLE += ", ";
-    TITLE += l;
-    TITLE += " ]\n";
+  //  // Prepare label
+  //  TCollection_AsciiString TITLE  = "(Edge #";
+  //                          TITLE += edgeId;
+  //                          TITLE += ", ";
+  //                          TITLE += asiAlgo_Utils::ShapeAddr(edge).c_str();
+  //                          TITLE += ", ";
+  //                          TITLE += asiAlgo_Utils::OrientationToString(edge);
+  //                          TITLE += " in face)\n";
+  //  //
+  //  double f, l;
+  //  Handle(Geom_Curve) c3d = BRep_Tool::Curve(edge, f, l);
+  //  //
+  //  TITLE += "3D: ";
+  //  TITLE += c3d->DynamicType()->Name();
+  //  TITLE += " [";
+  //  TITLE += f;
+  //  TITLE += ", ";
+  //  TITLE += l;
+  //  TITLE += " ]\n";
 
-    double f2, l2;
-    Handle(Geom2d_Curve) c2d = BRep_Tool::CurveOnSurface(edge, F, f2, l2);
-    //
-    TITLE += "2D: ";
-    TITLE += c2d->DynamicType()->Name();
-    TITLE += " [";
-    TITLE += f2;
-    TITLE += ", ";
-    TITLE += l2;
-    TITLE += " ]";
+  //  double f2, l2;
+  //  Handle(Geom2d_Curve) c2d = BRep_Tool::CurveOnSurface(edge, F, f2, l2);
+  //  //
+  //  TITLE += "2D: ";
+  //  TITLE += c2d->DynamicType()->Name();
+  //  TITLE += " [";
+  //  TITLE += f2;
+  //  TITLE += ", ";
+  //  TITLE += l2;
+  //  TITLE += " ]";
 
-    // Update text on the annotation
-    m_textWidget->GetTextActor()->SetInput( TITLE.ToCString() );
-    m_textWidget->On();
-  }
-  this->Repaint();
+  //  // Update text on the annotation
+  //  m_textWidget->GetTextActor()->SetInput( TITLE.ToCString() );
+  //  m_textWidget->On();
+  //}
+  //this->Repaint();
 }
 
 //-----------------------------------------------------------------------------
@@ -299,7 +300,7 @@ void asiUI_ViewerDomain::onKillEdges()
   //
   m_model->OpenCommand();
   {
-    N->SetShape(result);
+    asiEngine_Part(m_model).Update(result);
   }
   m_model->CommitCommand();
 
@@ -342,7 +343,7 @@ void asiUI_ViewerDomain::onJoinEdges()
   //
   m_model->OpenCommand();
   {
-    N->SetShape(result);
+    asiEngine_Part(m_model).Update(result);
   }
   m_model->CommitCommand();
 

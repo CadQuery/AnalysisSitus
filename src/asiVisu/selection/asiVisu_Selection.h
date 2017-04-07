@@ -107,13 +107,6 @@ struct asiVisu_PickInput
 
 //-----------------------------------------------------------------------------
 
-//! Type short-cut for correspondence map between VTK actors and their
-//! sub-element masks.
-typedef NCollection_DataMap<vtkSmartPointer<vtkActor>,
-                            TColStd_PackedMapOfInteger> asiVisu_ActorElemMap;
-
-//-----------------------------------------------------------------------------
-
 //! Class representing picking results for different kinds of selection.
 class asiVisu_PickResult
 {
@@ -122,21 +115,31 @@ public:
   asiVisu_EXPORT
     asiVisu_PickResult(const int selModes = SelectionMode_None);
 
-  asiVisu_EXPORT
-    ~asiVisu_PickResult();
-
 public:
 
-  asiVisu_EXPORT asiVisu_PickResult&
-    operator<<(const vtkSmartPointer<vtkActor>& actor);
+  asiVisu_EXPORT void
+    SetPickedPos(const double x, const double y, const double z);
 
-  asiVisu_EXPORT asiVisu_PickResult&
-    operator<<(const vtkIdType elemID);
+  asiVisu_EXPORT void
+    SetPickedActor(const vtkSmartPointer<vtkActor>& actor);
 
-  asiVisu_EXPORT asiVisu_PickResult&
-    operator<<(const TColStd_PackedMapOfInteger& elemMask);
+  asiVisu_EXPORT void
+    SetPickedElementId(const vtkIdType elemId);
 
-public:
+  asiVisu_EXPORT void
+    SetPickedElementIds(const TColStd_PackedMapOfInteger& elemIds);
+
+  asiVisu_EXPORT void
+    SetPickedPointId(const vtkIdType pointId);
+
+  asiVisu_EXPORT void
+    SetPickedPointIds(const TColStd_PackedMapOfInteger& pointIds);
+
+  asiVisu_EXPORT void
+    SetPickedCellId(const vtkIdType cellId);
+
+  asiVisu_EXPORT void
+    SetPickedCellIds(const TColStd_PackedMapOfInteger& cellIds);
 
   asiVisu_EXPORT void
     SetSelectionModes(const int selModes);
@@ -144,19 +147,19 @@ public:
 public:
 
   asiVisu_EXPORT void
-    SetPickedPos(const double x, const double y, const double z);
-
-  asiVisu_EXPORT void
     GetPickedPos(double& x, double& y, double& z) const;
 
   asiVisu_EXPORT const vtkSmartPointer<vtkActor>&
-    GetLastPickedActor() const;
+    GetPickedActor() const;
 
-  asiVisu_EXPORT const asiVisu_ActorElemMap&
-    GetPickMap() const;
+  asiVisu_EXPORT const TColStd_PackedMapOfInteger&
+    GetPickedElementIds() const;
 
-  asiVisu_EXPORT int
-    NbElements() const;
+  asiVisu_EXPORT const TColStd_PackedMapOfInteger&
+    GetPickedPointIds() const;
+
+  asiVisu_EXPORT const TColStd_PackedMapOfInteger&
+    GetPickedCellIds() const;
 
   asiVisu_EXPORT void
     Clear();
@@ -190,17 +193,23 @@ public:
 
 private:
 
-  //! Selection modes the results were obtained for.
-  int m_iSelModes;
-
-  //! Internal collection for picking results.
-  asiVisu_ActorElemMap m_pickMap;
-
-  //! Previously streamed actor.
-  vtkSmartPointer<vtkActor> m_prevActor;
-
   //! Picked position in world coordinates.
   double m_pickPos[3];
+
+  //! Picked actor.
+  vtkSmartPointer<vtkActor> m_pickedActor;
+
+  // Picked element IDs (application-specific).
+  TColStd_PackedMapOfInteger m_pickedElementIds;
+
+  // Picked point IDs.
+  TColStd_PackedMapOfInteger m_pickedPointIds;
+
+  // Picked cell IDs.
+  TColStd_PackedMapOfInteger m_pickedCellIds;
+
+  //! Selection modes the results were obtained for.
+  int m_iSelModes;
 
 };
 

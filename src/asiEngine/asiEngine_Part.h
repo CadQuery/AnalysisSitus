@@ -23,11 +23,18 @@ class asiEngine_Part
 public:
 
   //! ctor.
-  //! \param model [in] Data Model instance.
+  //! \param model  [in] Data Model instance.
+  //! \param prsMgr [in] Presentation Manager for visual commands.
   asiEngine_Part(const Handle(asiEngine_Model)&             model,
                  const vtkSmartPointer<asiVisu_PrsManager>& prsMgr)
   //
   : m_model(model), m_prsMgr(prsMgr) {}
+
+  //! ctor.
+  //! \param model [in] Data Model instance.
+  asiEngine_Part(const Handle(asiEngine_Model)& model)
+  //
+  : m_model(model) {}
 
 public:
 
@@ -35,7 +42,8 @@ public:
     Create();
 
   asiEngine_EXPORT void
-    Update(const TopoDS_Shape& model);
+    Update(const TopoDS_Shape& model,
+           const bool          doResetTessParams = false);
 
   asiEngine_EXPORT void
     Clean();

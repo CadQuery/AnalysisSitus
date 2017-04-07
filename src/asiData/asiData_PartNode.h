@@ -82,14 +82,8 @@ public:
 // Handy accessors to the stored data:
 public:
 
-  asiData_EXPORT void
-    SetShape(const TopoDS_Shape&);
-
   asiData_EXPORT TopoDS_Shape
     GetShape() const;
-
-  asiData_EXPORT void
-    SetAAG(const Handle(asiAlgo_AAG)&);
 
   asiData_EXPORT Handle(asiAlgo_AAG)
     GetAAG() const;
@@ -164,6 +158,18 @@ protected:
   //! Allocation is allowed only via Instance method.
   asiData_EXPORT
     asiData_PartNode();
+
+protected:
+
+  //! We prohibit to set shape from external code as such update should
+  //! normally include update of AAG. Therefore, there should be
+  //! "smart update" defined at the upper level of software architecture.
+  asiData_EXPORT void
+    setShape(const TopoDS_Shape&);
+
+  //! See comment for setShape() method.
+  asiData_EXPORT void
+    setAAG(const Handle(asiAlgo_AAG)&);
 
 };
 

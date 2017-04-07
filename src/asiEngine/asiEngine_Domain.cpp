@@ -41,40 +41,40 @@ void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)&      
                                            TopTools_IndexedMapOfShape&                edges,
                                            TopoDS_Face&                               face)
 {
-  // Get Part shape
-  TopoDS_Shape part = partNode->GetShape();
+  //// Get Part shape
+  //TopoDS_Shape part = partNode->GetShape();
 
-  // Build a map of shapes
-  const TopTools_IndexedMapOfShape& SubShapesMap = partNode->GetAAG()->GetMapOfSubShapes();
+  //// Build a map of shapes
+  //const TopTools_IndexedMapOfShape& SubShapesMap = partNode->GetAAG()->GetMapOfSubShapes();
 
-  // Get face
-  const int face_idx = partNode->GetFaceRepresentation()->GetSelectedFace();
-  //
-  if ( face_idx > 0 )
-    face = TopoDS::Face( SubShapesMap.FindKey(face_idx) );
-  //
-  if ( face.IsNull() )
-    return;
+  //// Get face
+  //const int face_idx = partNode->GetFaceRepresentation()->GetSelectedFace();
+  ////
+  //if ( face_idx > 0 )
+  //  face = TopoDS::Face( SubShapesMap.FindKey(face_idx) );
+  ////
+  //if ( face.IsNull() )
+  //  return;
 
-  TopTools_SequenceOfShape faceEdges;
-  for ( TopExp_Explorer eexp(face, TopAbs_EDGE); eexp.More(); eexp.Next() )
-  {
-    faceEdges.Append( eexp.Current() );
-  }
+  //TopTools_SequenceOfShape faceEdges;
+  //for ( TopExp_Explorer eexp(face, TopAbs_EDGE); eexp.More(); eexp.Next() )
+  //{
+  //  faceEdges.Append( eexp.Current() );
+  //}
 
-  // Get actual selection
-  const asiVisu_ActualSelection& sel      = prsMgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
-  const asiVisu_ActorElemMap&    elem_map = pick_res.GetPickMap();
-  //
-  // Prepare cumulative set of all picked element IDs
-  for ( asiVisu_ActorElemMap::Iterator it(elem_map); it.More(); it.Next() )
-  {
-    const TColStd_PackedMapOfInteger& face_mask = it.Value();
-    //
-    for ( TColStd_MapIteratorOfPackedMapOfInteger mit(face_mask); mit.More(); mit.Next() )
-    {
-      edges.Add( faceEdges( mit.Key() ) );
-    }
-  }
+  //// Get actual selection
+  //const asiVisu_ActualSelection& sel      = prsMgr->GetCurrentSelection();
+  //const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  //const asiVisu_ActorElemMap&    elem_map = pick_res.GetPickMap();
+  ////
+  //// Prepare cumulative set of all picked element IDs
+  //for ( asiVisu_ActorElemMap::Iterator it(elem_map); it.More(); it.Next() )
+  //{
+  //  const TColStd_PackedMapOfInteger& face_mask = it.Value();
+  //  //
+  //  for ( TColStd_MapIteratorOfPackedMapOfInteger mit(face_mask); mit.More(); mit.Next() )
+  //  {
+  //    edges.Add( faceEdges( mit.Key() ) );
+  //  }
+  //}
 }

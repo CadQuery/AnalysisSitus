@@ -20,6 +20,7 @@
 // OCCT includes
 #include <Geom_RectangularTrimmedSurface.hxx>
 #include <Geom_TrimmedCurve.hxx>
+#include <Precision.hxx>
 
 //! \return newly created IV Node.
 Handle(asiData_IVNode) asiEngine_IV::Create_IV()

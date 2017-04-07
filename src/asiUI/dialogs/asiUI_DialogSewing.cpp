@@ -8,7 +8,10 @@
 // Own include
 #include <asiUI_DialogSewing.h>
 
-// Geometry includes
+// asiEngine includes
+#include <asiEngine_Part.h>
+
+// asiAlgo includes
 #include <asiAlgo_Utils.h>
 
 // Qt includes
@@ -27,13 +30,11 @@
 
 //! Constructor.
 //! \param model  [in] Data Model instance.
-//! \param part_n [in] Part Node.
 //! \param parent [in] parent widget.
-asiUI_DialogSewing::asiUI_DialogSewing(const Handle(ActAPI_IModel)&    model,
-                                       const Handle(asiData_PartNode)& part_n,
-                                       QWidget*                        parent)
+asiUI_DialogSewing::asiUI_DialogSewing(const Handle(asiEngine_Model)& model,
+                                       QWidget*                       parent)
 //
-: QDialog(parent), m_model(model), m_part(part_n)
+: QDialog(parent), m_model(model)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -111,12 +112,12 @@ void asiUI_DialogSewing::onPerform()
   // Sewing
   //---------------------------------------------------------------------------
 
-  // Check Geometry Node
-  if ( m_part.IsNull() || !m_part->IsWellFormed() )
+  if ( m_model.IsNull() )
     return;
 
   // Working shape
-  TopoDS_Shape part = m_part->GetShape();
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  TopoDS_Shape             part   = part_n->GetShape();
   //
   if ( part.IsNull() )
   {
@@ -139,7 +140,7 @@ void asiUI_DialogSewing::onPerform()
     //
     std::cout << "Sewing done. Visualizing..." << std::endl;
     //
-    m_part->SetShape(part);
+    asiEngine_Part(m_model).Update(part);
   }
   m_model->CommitCommand();
 

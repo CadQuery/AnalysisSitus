@@ -108,7 +108,9 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
     //// Bind actor to owning Node ID. Thus we set back reference from VTK
     //// entity to data object
     //if ( m_bIsBound2Node )
-    //  asiVisu_PartNodeInfo::Store( DP->GetNodeID(), this->Actor() );
+
+    // Bind to a Data Node using information key
+    asiVisu_PartNodeInfo::Store( DP->GetNodeID(), this->Actor() );
 
     //// Bind Shape DS with actor. This is necessary for VIS picker -- it will
     //// not work without the corresponding Information key

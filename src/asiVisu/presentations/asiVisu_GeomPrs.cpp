@@ -333,34 +333,47 @@ void asiVisu_GeomPrs::highlight(vtkRenderer*                   theRenderer,
                                 const asiVisu_PickResult&      thePickRes,
                                 const asiVisu_SelectionNature& theSelNature) const
 {
-  //asiVisu_NotUsed(theRenderer);
+  asiVisu_NotUsed(theRenderer);
 
-  ///* ==================
-  // *  Get target actor
-  // * ================== */
+  /* ==================
+   *  Get target actor
+   * ================== */
 
-  //Handle(asiVisu_Pipeline) main_pl = this->GetPipeline(Pipeline_Main);
-  ////
-  //vtkActor* main_actor = main_pl->Actor();
+  Handle(asiVisu_Pipeline) mainPl = this->GetPipeline(Pipeline_Main);
+  //
+  vtkActor* mainActor = mainPl->Actor();
 
-  ///* ============================================================
-  // *  Get the list of sub-shape IDs corresponding to the picking
-  // *  results on the main actor
-  // * ============================================================ */
+  /* =========================================================
+   *  Get the list of cells PIDs corresponding to the picking
+   *  results on the main actor
+   * ========================================================= */
 
-  //TColStd_PackedMapOfInteger aSubShapeIDs;
-  //if ( thePickRes.IsSelectionSubShape() )
-  //{
-  //  const asiVisu_ActorElemMap& aPickMap = thePickRes.GetPickMap();
-  //  for ( asiVisu_ActorElemMap::Iterator it(aPickMap); it.More(); it.Next() )
-  //  {
-  //    const vtkSmartPointer<vtkActor>& aResActor = it.Key();
-  //    if ( aResActor != main_actor )
-  //      continue;
+  const TColStd_PackedMapOfInteger& pickedCellIds = thePickRes.GetPickedCellIds();
 
-  //    aSubShapeIDs = it.Value();
-  //  }
-  //}
+  // Cell PIDs (pedigree ids) are equal to sub-shape ids. Therefore,
+  // it is necessary to extract all cells having the target PIDs and set
+  // their scalars to colorize them properly
+
+  vtkPolyData*
+    data = vtkPolyData::SafeDownCast( mainActor->GetMapper()->GetInputDataObject(0, 0) );
+  //
+  if ( !data )
+    return;
+
+  vtkIdTypeArray*
+    shapePrimArr = vtkIdTypeArray::SafeDownCast( data->GetCellData()->GetArray(ARRNAME_PART_CELL_TYPES) );
+
+  for ( TColStd_MapIteratorOfPackedMapOfInteger mit(pickedCellIds); mit.More(); mit.Next() )
+  {
+    const int cellId = mit.Key();
+    shapePrimArr->SetTuple1(cellId, ShapePrimitive_DetectedLink);
+  }
+
+  // Set modification status for data and update
+  data->Modified();
+  mainActor->GetMapper()->Update();
+
+  // TODO
 
   ///* ===============================
   // *  Update highlighting pipelines

@@ -11,10 +11,6 @@
 // asiVisu includes
 #include <asiVisu_DisplayMode.h>
 
-// OCCT includes
-#include <NCollection_DataMap.hxx>
-#include <TColStd_PackedMapOfInteger.hxx>
-
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
 
@@ -24,12 +20,6 @@
 //! set of display modes, e.g. shaded, wireframe, vertices, etc.
 class asiVisu_DisplayModeFilter : public vtkPolyDataAlgorithm
 {
-public:
-
-  //! Convenience type definition for a map of display modes. A key is a
-  //! display mode. A value is a set of shape primitives employed in this mode.
-  typedef NCollection_DataMap<asiVisu_DisplayMode, TColStd_PackedMapOfInteger> t_mode_map;
-
 public:
 
   vtkTypeMacro(asiVisu_DisplayModeFilter, vtkPolyDataAlgorithm)
@@ -62,7 +52,6 @@ protected:
 
 protected:
 
-  t_mode_map          m_modeMap;     //!< Map of display modes.
   asiVisu_DisplayMode m_displayMode; //!< Display mode.
 
 };

@@ -8,14 +8,11 @@
 #ifndef asiUI_DialogSewing_h
 #define asiUI_DialogSewing_h
 
-// A-Situs includes
+// asiUI includes
 #include <asiUI_LineEdit.h>
 
-// A-Situs (data) includes
-#include <asiData_PartNode.h>
-
-// Active Data includes
-#include <ActAPI_IModel.h>
+// asiEngine includes
+#include <asiEngine_Model.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -31,9 +28,8 @@ class asiUI_DialogSewing : public QDialog
 
 public:
 
-  asiUI_DialogSewing(const Handle(ActAPI_IModel)&    model,
-                     const Handle(asiData_PartNode)& part_n,
-                     QWidget*                        parent = NULL);
+  asiUI_DialogSewing(const Handle(asiEngine_Model)& model,
+                     QWidget*                       parent = NULL);
 
   virtual ~asiUI_DialogSewing();
 
@@ -73,9 +69,7 @@ protected:
 
   t_widgets                m_widgets;     //!< UI controls.
   QVBoxLayout*             m_pMainLayout; //!< Layout of the widget.
-  //
-  Handle(ActAPI_IModel)    m_model;       //!< Data Model instance.
-  Handle(asiData_PartNode) m_part;        //!< Part Node.
+  Handle(asiEngine_Model)  m_model;       //!< Data Model instance.
 
 };
 

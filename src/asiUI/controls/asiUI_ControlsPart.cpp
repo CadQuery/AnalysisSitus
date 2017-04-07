@@ -213,7 +213,7 @@ void asiUI_ControlsPart::onLoadBRep()
   // Update part
   m_model->OpenCommand(); // tx start
   {
-    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(shape);
+    asiEngine_Part(m_model).Update(shape, true);
   }
   m_model->CommitCommand(); // tx commit
   //
@@ -398,7 +398,7 @@ void asiUI_ControlsPart::onSewing()
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
   // Run dialog for sewing properties
-  asiUI_DialogSewing* wSewing = new asiUI_DialogSewing(m_model, part_n, this);
+  asiUI_DialogSewing* wSewing = new asiUI_DialogSewing(m_model, this);
   wSewing->exec();
 
   // Notify
@@ -434,7 +434,7 @@ void asiUI_ControlsPart::onMaximizeFaces()
     //
     std::cout << "Face merging done. Visualizing..." << std::endl;
     //
-    part_n->SetShape(part);
+    asiEngine_Part(m_model).Update(part);
   }
   m_model->CommitCommand();
 
@@ -574,9 +574,6 @@ void asiUI_ControlsPart::onPickEdge()
     m_iPrevSelMode = m_partViewer->PrsMgr()->GetSelectionMode();
     m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Workpiece);
 
-    // Configure workpiece picker
-    m_partViewer->GetPickCallback()->SetWorkpiecePicker(PickType_Cell);
-
     // Add observer which takes responsibility to interact with user
     if ( !m_partViewer->PrsMgr()->HasObserver(EVENT_PICK_WORLD_POINT) )
     {
@@ -595,8 +592,5 @@ void asiUI_ControlsPart::onPickEdge()
     m_partViewer->PrsMgr()->SetSelectionMode(m_iPrevSelMode);
     //
     m_partViewer->PrsMgr()->RemoveObserver(EVENT_PICK_WORLD_POINT);
-
-    // Configure workpiece picker
-    m_partViewer->GetPickCallback()->SetWorkpiecePicker(PickType_World);
   }
 }

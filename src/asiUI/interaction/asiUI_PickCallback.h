@@ -14,9 +14,6 @@
 // asiVisu includes
 #include <asiVisu_Selection.h>
 
-// VIS includes
-#include <IVtk_Types.hxx>
-
 // VTK includes
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
@@ -61,13 +58,13 @@ public:
 
   //! Sets type of picker for a workpiece.
   //! \param type [in] type of picker to set.
-  void SetWorkpiecePicker(const asiVisu_PickType type)
+  void SetPickerType(const asiVisu_PickType type)
   {
     m_pickType = type;
   }
 
   //! \return type of picker for a workpiece.
-  asiVisu_PickType GetWorkpiecePicker() const
+  asiVisu_PickType GetPickerType() const
   {
     return m_pickType;
   }

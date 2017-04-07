@@ -256,48 +256,48 @@ void asiVisu_GeomFacePrs::highlight(vtkRenderer*                   theRenderer,
 {
   asiVisu_NotUsed(theRenderer);
 
-  // Get target actor which is the only sensitive
-  Handle(asiVisu_Pipeline) poles_pl = this->GetPipeline(Pipeline_Main);
-  //
-  vtkActor* poles_actor = poles_pl->Actor();
+  //// Get target actor which is the only sensitive
+  //Handle(asiVisu_Pipeline) poles_pl = this->GetPipeline(Pipeline_Main);
+  ////
+  //vtkActor* poles_actor = poles_pl->Actor();
 
-  // Get the list of picked cell IDs
-  TColStd_PackedMapOfInteger cellIds;
-  if ( thePickRes.IsSelectionWorkpiece() )
-  {
-    const asiVisu_ActorElemMap& pickMap = thePickRes.GetPickMap();
-    for ( asiVisu_ActorElemMap::Iterator it(pickMap); it.More(); it.Next() )
-    {
-      const vtkSmartPointer<vtkActor>& aResActor = it.Key();
-      if ( aResActor != poles_actor )
-        continue;
+  //// Get the list of picked cell IDs
+  //TColStd_PackedMapOfInteger cellIds;
+  //if ( thePickRes.IsSelectionWorkpiece() )
+  //{
+  //  const asiVisu_ActorElemMap& pickMap = thePickRes.GetPickMap();
+  //  for ( asiVisu_ActorElemMap::Iterator it(pickMap); it.More(); it.Next() )
+  //  {
+  //    const vtkSmartPointer<vtkActor>& aResActor = it.Key();
+  //    if ( aResActor != poles_actor )
+  //      continue;
 
-      cellIds = it.Value();
-    }
-  }
+  //    cellIds = it.Value();
+  //  }
+  //}
 
-  //---------------------------------------------------------------------------
-  // Update highlighting pipelines
-  //---------------------------------------------------------------------------
+  ////---------------------------------------------------------------------------
+  //// Update highlighting pipelines
+  ////---------------------------------------------------------------------------
 
-  // Access pipeline for highlighting
-  Handle(asiVisu_FaceDomainPipeline) hili_pl;
-  //
-  if ( theSelNature == SelectionNature_Pick )
-    hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
-  else
-    hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() );
+  //// Access pipeline for highlighting
+  //Handle(asiVisu_FaceDomainPipeline) hili_pl;
+  ////
+  //if ( theSelNature == SelectionNature_Pick )
+  //  hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
+  //else
+  //  hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() );
 
-  if ( !hili_pl )
-    return;
+  //if ( !hili_pl )
+  //  return;
 
-  // Set selection mask...
-  hili_pl->SetSelectedCells(cellIds);
-  hili_pl->ForceExecution();
-  hili_pl->SetInput( this->dataProviderDetect() );
+  //// Set selection mask...
+  //hili_pl->SetSelectedCells(cellIds);
+  //hili_pl->ForceExecution();
+  //hili_pl->SetInput( this->dataProviderDetect() );
 
-  // ... and visibility
-  hili_pl->Actor()->SetVisibility( !cellIds.IsEmpty() );
+  //// ... and visibility
+  //hili_pl->Actor()->SetVisibility( !cellIds.IsEmpty() );
 }
 
 //! Callback for highlighting reset.
@@ -307,22 +307,22 @@ void asiVisu_GeomFacePrs::unHighlight(vtkRenderer*                   theRenderer
 {
   asiVisu_NotUsed(theRenderer);
 
-  // Access pipeline for highlighting
-  Handle(asiVisu_FaceDomainPipeline) hili_pl;
-  //
-  if ( theSelNature == SelectionNature_Pick )
-    hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
-  else
-    hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() );
+  //// Access pipeline for highlighting
+  //Handle(asiVisu_FaceDomainPipeline) hili_pl;
+  ////
+  //if ( theSelNature == SelectionNature_Pick )
+  //  hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
+  //else
+  //  hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() );
 
-  if ( !hili_pl )
-    return;
+  //if ( !hili_pl )
+  //  return;
 
-  // Set selection mask...
-  hili_pl->SetSelectedCells( TColStd_PackedMapOfInteger() );
+  //// Set selection mask...
+  //hili_pl->SetSelectedCells( TColStd_PackedMapOfInteger() );
 
-  // ... and visibility
-  hili_pl->Actor()->SetVisibility(0);
+  //// ... and visibility
+  //hili_pl->Actor()->SetVisibility(0);
 }
 
 //! Callback for rendering.

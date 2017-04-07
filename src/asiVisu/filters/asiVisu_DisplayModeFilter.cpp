@@ -22,47 +22,17 @@
 
 vtkStandardNewMacro(asiVisu_DisplayModeFilter)
 
+#define COUT_DEBUG
+#if defined COUT_DEBUG
+  #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
+
 //-----------------------------------------------------------------------------
 
 asiVisu_DisplayModeFilter::asiVisu_DisplayModeFilter()
 : vtkPolyDataAlgorithm(),
   m_displayMode(DisplayMode_Undefined)
-{
-  // SHADED
-  {
-    TColStd_PackedMapOfInteger mode;
-    //
-    mode.Add(ShapePrimitive_FreeVertex);
-    mode.Add(ShapePrimitive_DanglingEdge);
-    mode.Add(ShapePrimitive_NonManifoldEdge);
-    mode.Add(ShapePrimitive_Facet);
-    //
-    m_modeMap.Bind(DisplayMode_Shaded, mode);
-  }
-
-  // WIREFRAME
-  {
-    TColStd_PackedMapOfInteger mode;
-    //
-    mode.Add(ShapePrimitive_FreeVertex);
-    mode.Add(ShapePrimitive_DanglingEdge);
-    mode.Add(ShapePrimitive_FreeEdge);
-    mode.Add(ShapePrimitive_ManifoldEdge);
-    mode.Add(ShapePrimitive_NonManifoldEdge);
-    //
-    m_modeMap.Bind(DisplayMode_Wireframe, mode);
-  }
-
-  // VERTICES
-  {
-    TColStd_PackedMapOfInteger mode;
-    //
-    mode.Add(ShapePrimitive_FreeVertex);
-    mode.Add(ShapePrimitive_SharedVertex);
-    //
-    m_modeMap.Bind(DisplayMode_Vertices, mode);
-  }
-}
+{}
 
 //-----------------------------------------------------------------------------
 
@@ -96,7 +66,8 @@ int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
   }
 
   // Get primitive types employed in the display mode
-  const TColStd_PackedMapOfInteger& modePrimitiveTypes = m_modeMap(m_displayMode);
+  TColStd_PackedMapOfInteger
+    modePrimitiveTypes = asiVisu_DisplayModeProvider::GetPrimitivesForMode(m_displayMode);
 
   // Get the input and output
   vtkInformation* pInInfo  = pInputVector[0]->GetInformationObject(0);
@@ -108,7 +79,7 @@ int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
   vtkCellData*
     pInputCellData = pInputPolyData->GetCellData();
   vtkIdTypeArray*
-    pInputDataArray = vtkIdTypeArray::SafeDownCast( pInputCellData->GetArray(ARRNAME_PART_CELL_TYPES) );
+    pInputCellTypeArray = vtkIdTypeArray::SafeDownCast( pInputCellData->GetArray(ARRNAME_PART_CELL_TYPES) );
 
   // Output
   vtkPolyData*
@@ -116,31 +87,33 @@ int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
   vtkCellData*
     pOutputCellData = pOutputPolyData->GetCellData();
 
-  // List of cell ids to be passed
-  vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
-  idList->Allocate( modePrimitiveTypes.Extent() ); // Allocate the list of ids
+  // Number of cells in the input
+  vtkIdType numOfInputCells = pInputCellData->GetNumberOfTuples();
 
-  vtkIdType numOfTuples = 0;
-  if ( pInputDataArray )
-  {
-    numOfTuples = pInputDataArray->GetNumberOfTuples();
-    idList->Allocate(numOfTuples); // Allocate the list of ids
-  }
+  // List of cell ids to be passed. We allocate as much memory as many
+  // cells we have in the input. This gonna be more than enough
+  // because usually not all cells are passed though the display mode
+  // filter
+  vtkSmartPointer<vtkIdList> cellIdsToPass = vtkSmartPointer<vtkIdList>::New();
+  cellIdsToPass->Allocate(numOfInputCells); // Allocate the list of ids
 
-  // Filtering
-  for ( vtkIdType t = 0; t < numOfTuples; ++t )
+  // Collect cell IDs which will be preserved in the output. We need to put
+  // the preserved IDs to the list and then call CopyCells() method of VTK
+  // which will transfer only necessary cells to the output
+  for ( vtkIdType cellId = 0; cellId < numOfInputCells; ++cellId )
   {
-    int primTypeOfACell = (int) pInputDataArray->GetValue(t);
+    const int primTypeOfACell = (int) pInputCellTypeArray->GetValue(cellId);
 
     if ( modePrimitiveTypes.Contains(primTypeOfACell) )
     {
-      // Add a cell id to output if it's value is in the set.
-      idList->InsertNextId(t);
+      // Add a cell id to output if it's value is in the set
+      cellIdsToPass->InsertNextId(cellId);
     }
   }
+  const vtkIdType numOfRemainingCells = cellIdsToPass->GetNumberOfIds();
 
-  // Copy cells with their points according to the prepared list of cell ids.
-  pOutputPolyData->Allocate( pInputPolyData, idList->GetNumberOfIds() );  // Allocate output cells
+  // Allocate space for output data arrays
+  pOutputPolyData->Allocate( pInputPolyData, numOfRemainingCells );
   pOutputPolyData->GetCellData()->AllocateArrays( pInputPolyData->GetCellData()->GetNumberOfArrays() );
 
   // Pass data arrays
@@ -150,29 +123,39 @@ int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
     vtkDataArray* pOutArr = vtkDataArray::CreateDataArray( pInArr->GetDataType() );
     //
     pOutArr->SetName( pInArr->GetName() );
-    pOutArr->Allocate( idList->GetNumberOfIds() * pInArr->GetNumberOfComponents() );
-    pOutArr->SetNumberOfTuples( idList->GetNumberOfIds() );
+    pOutArr->Allocate( numOfRemainingCells * pInArr->GetNumberOfComponents() );
+    pOutArr->SetNumberOfTuples( numOfRemainingCells );
     pOutArr->SetNumberOfComponents( pInArr->GetNumberOfComponents() );
     //
     pOutputCellData->AddArray(pOutArr);
+
+    // Set array with sub-shape IDs as pedigree array
+    if ( !_strcmpi( pInArr->GetName(), ARRNAME_PART_SUBSHAPE_IDS ) )
+      pOutputCellData->SetPedigreeIds(pInArr);
   }
 
+  //###################################
   // Copy cells with ids from our list
-  pOutputPolyData->CopyCells(pInputPolyData, idList);
+  pOutputPolyData->CopyCells(pInputPolyData, cellIdsToPass);
 
-  // Copy filtered arrays data
-  vtkIdType outId, inId;
-  for ( int i = 0; i < pInputCellData->GetNumberOfArrays(); ++i )
+  //###################################
+  // Copy data arrays
+  for ( int i = 1; i < pInputCellData->GetNumberOfArrays(); ++i )
   {
     vtkDataArray* pInArr  = pInputCellData->GetArray(i);
     vtkDataArray* pOutArr = pOutputCellData->GetArray(i);
 
-    for ( outId = 0; outId < idList->GetNumberOfIds(); ++outId )
+    for ( vtkIdType outIdx = 0; outIdx < numOfRemainingCells; ++outIdx )
     {
-      inId = idList->GetId(outId);
-      pOutArr->SetTuple(outId, inId, pInArr);
+      vtkIdType cellId = cellIdsToPass->GetId(outIdx);
+      pOutArr->SetTuple(outIdx, cellId, pInArr);
     }
   }
+
+#if defined COUT_DEBUG
+  std::cout << "Number of arrays in the input cell data: " << pInputCellData->GetNumberOfArrays() << std::endl;
+  std::cout << "Number of arrays in the output cell data: " << pOutputCellData->GetNumberOfArrays() << std::endl;
+#endif
 
   // Return non-zero value in case of success
   return vtkPolyDataAlgorithm::RequestData(pInfo, pInputVector, pOutputVector);

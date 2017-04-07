@@ -29,7 +29,7 @@ asiVisu_ShapeData::asiVisu_ShapeData()
   m_subShapeIDs = vtkSmartPointer<vtkIdTypeArray>::New();
   m_subShapeIDs->SetName(ARRNAME_PART_SUBSHAPE_IDS);
   m_subShapeIDs->SetNumberOfComponents(1);
-  m_polyData->GetCellData()->AddArray(m_subShapeIDs);
+  m_polyData->GetCellData()->SetPedigreeIds(m_subShapeIDs);
 
   // Array to store cell types with B-Rep perspective. Pinned to cell data
   m_shapeCellTypes = vtkSmartPointer<vtkIdTypeArray>::New();

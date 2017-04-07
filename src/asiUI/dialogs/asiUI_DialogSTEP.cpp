@@ -325,7 +325,7 @@ void asiUI_DialogSTEP::proceed_Read()
   //
   M->OpenCommand(); // tx start
   {
-    asiEngine_Part(M, NULL).Update(shape);
+    asiEngine_Part(M).Update(shape, true);
   }
   M->CommitCommand(); // tx commit
 

@@ -14,6 +14,9 @@
 // asiAlgo includes
 #include <asiAlgo_Utils.h>
 
+// Active Data includes
+#include <ActData_ParameterFactory.h>
+
 // VTK includes
 #include <vtkProperty.h>
 
@@ -153,8 +156,11 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
 
 //! Updates part's geometry in a smart way, so all dependent attributes
 //! are also actualized.
-//! \param model [in] CAD part to set.
-void asiEngine_Part::Update(const TopoDS_Shape& model)
+//! \param model             [in] CAD part to set.
+//! \param doResetTessParams [in] indicates whether to reset tessellation
+//!                               parameters.
+void asiEngine_Part::Update(const TopoDS_Shape& model,
+                            const bool          doResetTessParams)
 {
   // Get Part Node
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
@@ -166,10 +172,21 @@ void asiEngine_Part::Update(const TopoDS_Shape& model)
   Clean();
 
   // Set working structures
-  part_n->SetShape(model);
-  part_n->SetLinearDeflection( asiAlgo_Utils::AutoSelectLinearDeflection(model) );
-  part_n->SetAngularDeflection( asiAlgo_Utils::AutoSelectAngularDeflection(model) );
-  part_n->SetAAG( new asiAlgo_AAG(model) );
+  Handle(ActData_ShapeParameter)
+    shapeParam = Handle(ActData_ShapeParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_Geometry) );
+  //
+  Handle(asiData_AAGParameter)
+    aagParam = Handle(asiData_AAGParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_AAG) );
+  //
+  shapeParam->SetShape(model);
+  aagParam->SetAAG( new asiAlgo_AAG(model) );
+
+  // Reset tessellation parameters if requested
+  if ( doResetTessParams )
+  {
+    part_n->SetLinearDeflection( asiAlgo_Utils::AutoSelectLinearDeflection(model) );
+    part_n->SetAngularDeflection( asiAlgo_Utils::AutoSelectAngularDeflection(model) );
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -360,32 +377,32 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
                                         const int                         color,
                                         const asiVisu_SelectionMode       selMode)
 {
-  // Get Part Node
-  Handle(asiData_PartNode) N = m_model->GetPartNode();
+  //// Get Part Node
+  //Handle(asiData_PartNode) N = m_model->GetPartNode();
 
-  // Get Presentation for the Part Node
-  Handle(asiVisu_GeomPrs)
-    prs = Handle(asiVisu_GeomPrs)::DownCast( m_prsMgr->GetPresentation(N) );
+  //// Get Presentation for the Part Node
+  //Handle(asiVisu_GeomPrs)
+  //  prs = Handle(asiVisu_GeomPrs)::DownCast( m_prsMgr->GetPresentation(N) );
 
-  // Prepare list to satisfy the API of Presentation Manager
-  Handle(ActAPI_HNodeList) dummyList = new ActAPI_HNodeList;
-  dummyList->Append(N);
+  //// Prepare list to satisfy the API of Presentation Manager
+  //Handle(ActAPI_HNodeList) dummyList = new ActAPI_HNodeList;
+  //dummyList->Append(N);
 
-  // Prepare selection object
-  asiVisu_ActorElemMap selection;
-  selection.Bind( prs->MainActor(), subShapeIndices );
+  //// Prepare selection object
+  //asiVisu_ActorElemMap selection;
+  //selection.Bind( prs->MainActor(), subShapeIndices );
 
-  // Set color
-  double prevColor[3];
-  QColor qcolor = ::IntToColor(color);
-  prs->GetPickPipeline()->Actor()->GetProperty()->GetColor( prevColor[0], prevColor[1], prevColor[2] );
-  prs->GetPickPipeline()->Actor()->GetProperty()->SetColor( qcolor.redF(), qcolor.greenF(), qcolor.blueF() );
+  //// Set color
+  //double prevColor[3];
+  //QColor qcolor = ::IntToColor(color);
+  //prs->GetPickPipeline()->Actor()->GetProperty()->GetColor( prevColor[0], prevColor[1], prevColor[2] );
+  //prs->GetPickPipeline()->Actor()->GetProperty()->SetColor( qcolor.redF(), qcolor.greenF(), qcolor.blueF() );
 
-  // Highlight
-  m_prsMgr->Highlight(dummyList, selection, selMode);
+  //// Highlight
+  //m_prsMgr->Highlight(dummyList, selection, selMode);
 
-  // Restore previous color
-  prs->GetPickPipeline()->Actor()->GetProperty()->SetColor( prevColor[0], prevColor[1], prevColor[2] );
+  //// Restore previous color
+  //prs->GetPickPipeline()->Actor()->GetProperty()->SetColor( prevColor[0], prevColor[1], prevColor[2] );
 }
 
 //-----------------------------------------------------------------------------
@@ -433,28 +450,28 @@ void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subSha
 //! \param subShapes [out] result collection.
 void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes)
 {
-  // Get the map of ALL shapes to extract topology by selected index which
-  // is global (related to full accessory graph)
-  const TopTools_IndexedMapOfShape&
-    M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
+  //// Get the map of ALL shapes to extract topology by selected index which
+  //// is global (related to full accessory graph)
+  //const TopTools_IndexedMapOfShape&
+  //  M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
 
-  // Get actual selection
-  const asiVisu_ActualSelection& sel      = m_prsMgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
-  const asiVisu_ActorElemMap&    elem_map = pick_res.GetPickMap();
-  //
-  // Prepare cumulative set of all picked element IDs
-  for ( asiVisu_ActorElemMap::Iterator it(elem_map); it.More(); it.Next() )
-  {
-    const TColStd_PackedMapOfInteger& subshape_mask = it.Value();
-    //
-    for ( TColStd_MapIteratorOfPackedMapOfInteger mit(subshape_mask); mit.More(); mit.Next() )
-    {
-      const int           subshape_idx = mit.Key();
-      const TopoDS_Shape& F            = M.FindKey(subshape_idx);
-      subShapes.Add(F);
-    }
-  }
+  //// Get actual selection
+  //const asiVisu_ActualSelection& sel      = m_prsMgr->GetCurrentSelection();
+  //const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  //const asiVisu_ActorElemMap&    elem_map = pick_res.GetPickMap();
+  ////
+  //// Prepare cumulative set of all picked element IDs
+  //for ( asiVisu_ActorElemMap::Iterator it(elem_map); it.More(); it.Next() )
+  //{
+  //  const TColStd_PackedMapOfInteger& subshape_mask = it.Value();
+  //  //
+  //  for ( TColStd_MapIteratorOfPackedMapOfInteger mit(subshape_mask); mit.More(); mit.Next() )
+  //  {
+  //    const int           subshape_idx = mit.Key();
+  //    const TopoDS_Shape& F            = M.FindKey(subshape_idx);
+  //    subShapes.Add(F);
+  //  }
+  //}
 }
 
 //-----------------------------------------------------------------------------

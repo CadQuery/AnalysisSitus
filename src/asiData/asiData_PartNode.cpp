@@ -45,8 +45,8 @@ void asiData_PartNode::Init()
   this->InitParameter(PID_Name, "Name");
 
   // Set empty initial B-Rep and AAG
-  this->SetShape( TopoDS_Shape() );
-  this->SetAAG(NULL);
+  this->setShape( TopoDS_Shape() );
+  this->setAAG(NULL);
 
   // Set default values to primitive Parameters
   this->SetLinearDeflection  (0.0);
@@ -79,24 +79,10 @@ void asiData_PartNode::SetName(const TCollection_ExtendedString& name)
 // Handy accessors
 //-----------------------------------------------------------------------------
 
-//! Sets shape to store.
-//! \param shape [in] shape to store.
-void asiData_PartNode::SetShape(const TopoDS_Shape& shape)
-{
-  ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(shape);
-}
-
 //! \return stored shape.
 TopoDS_Shape asiData_PartNode::GetShape() const
 {
   return ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
-}
-
-//! Sets AAG to store.
-//! \param aag [in] AAG to store.
-void asiData_PartNode::SetAAG(const Handle(asiAlgo_AAG)& aag)
-{
-  Handle(asiData_AAGParameter)::DownCast( this->Parameter(PID_AAG) )->SetAAG(aag);
 }
 
 //! \return stored AAG.
@@ -295,4 +281,20 @@ Handle(asiData_ContourNode) asiData_PartNode::GetContour() const
   }
 
   return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Sets shape to store.
+//! \param shape [in] shape to store.
+void asiData_PartNode::setShape(const TopoDS_Shape& shape)
+{
+  ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(shape);
+}
+
+//! Sets AAG to store.
+//! \param aag [in] AAG to store.
+void asiData_PartNode::setAAG(const Handle(asiAlgo_AAG)& aag)
+{
+  Handle(asiData_AAGParameter)::DownCast( this->Parameter(PID_AAG) )->SetAAG(aag);
 }

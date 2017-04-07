@@ -14,7 +14,8 @@
 #include <asiVisu_Prs.h>
 
 // Active Data (API) includes
-#include <ActAPI_IModel.h>
+#include <ActAPI_IPlotter.h>
+#include <ActAPI_IProgressNotifier.h>
 
 // VTK includes
 #include <vtkAxesActor.h>
@@ -32,11 +33,6 @@
 #include <QVTKWidget.h>
 #pragma warning(pop)
 
-// VIS includes
-#pragma warning(push, 0)
-#include <IVtkTools_ShapePicker.hxx>
-#pragma warning(pop)
-
 // OCCT includes
 #include <NCollection_DataMap.hxx>
 
@@ -46,8 +42,8 @@ class asiVisu_AxesBtnCallback;
 //! presentation manager controls QVTK widget along with all standard
 //! visualization suite like Renderer, Render Window, etc.
 //!
-//! presentation manager is a facade under visualization. It connects
-//! Data Model with viewer. Moreover, it manages interactive detection
+//! Presentation Manager is a facade under visualization. It connects
+//! Data Model with viewer. It also manages interactive detection
 //! and picking.
 //!
 //! This class inherits vtkObject in order to take advantage of VTK standard
@@ -193,7 +189,7 @@ public:
 public:
 
   asiVisu_EXPORT void
-    SetSelectionMode(const int node);
+    SetSelectionMode(const int mode);
 
   asiVisu_EXPORT int
     GetSelectionMode() const;
@@ -220,11 +216,6 @@ public:
 
   asiVisu_EXPORT void
     Highlight(const Handle(ActAPI_INode)& node);
-
-  asiVisu_EXPORT void
-    Highlight(const Handle(ActAPI_HNodeList)& nodeList,
-              const asiVisu_ActorElemMap&     actorElems,
-              const int                       modes);
 
   asiVisu_EXPORT void
     CleanDetection();
@@ -280,9 +271,6 @@ public:
   asiVisu_EXPORT const vtkSmartPointer<vtkCellPicker>&
     GetCellPicker() const;
 
-  asiVisu_EXPORT const vtkSmartPointer<IVtkTools_ShapePicker>&
-    GetShapePicker() const;
-
 public:
 
   void SetInteractionMode(const InteractionMode mode)
@@ -299,14 +287,11 @@ protected:
   asiVisu_EXPORT void
     adjustTrihedron();
 
-  asiVisu_EXPORT void
-    actualizeShapeSelectionMode();
-
 public:
 
-  double BlackIntensity;
-  double WhiteIntensity;
-  bool   isWhiteBackground;
+  double BlackIntensity;    //!< Variation of black color for part actor.
+  double WhiteIntensity;    //!< Variation of white color for part actor.
+  bool   isWhiteBackground; //!< Whether white background is set or not.
 
 // Presentation management:
 private:
@@ -330,9 +315,6 @@ private:
 
   //! Picker to select any point (not necessarily from point data).
   vtkSmartPointer<vtkWorldPointPicker> m_worldPicker;
-
-  //! Picker to select sub-shapes.
-  vtkSmartPointer<IVtkTools_ShapePicker> m_shapePicker;
 
   //! Currently selected Presentations.
   asiVisu_ActualSelection m_currentSelection;
@@ -378,6 +360,12 @@ private:
   //! provide possibility to perform custom actions when
   //! presentation manager is updating some of its presentations.
   NCollection_Sequence<unsigned long> m_updateCallbackIds;
+
+  //! Progress notifier.
+  ActAPI_ProgressEntry m_progress;
+
+  //! Imperative plotter.
+  ActAPI_PlotterEntry m_plotter;
 
 };
 

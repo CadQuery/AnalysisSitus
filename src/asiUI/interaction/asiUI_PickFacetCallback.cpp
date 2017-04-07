@@ -8,16 +8,19 @@
 // Own include
 #include <asiUI_PickFacetCallback.h>
 
-// Geometry includes
+// asiAlgo includes
 #include <asiAlgo_BVHFacets.h>
 #include <asiAlgo_HitFacet.h>
 
-// GUI includes
+// asiUI includes
 #include <asiUI_Common.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_PrsManager.h>
 #include <asiVisu_Utils.h>
+
+// OCCT includes
+#include <gp_Lin.hxx>
 
 //! Instantiation routine.
 //! \return instance of the callback class.

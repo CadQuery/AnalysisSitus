@@ -612,20 +612,26 @@ vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitLookupTable()
   // Set colors table for 3D shapes
   double range[2];
   range[0] = ShapePrimitive_Undefined;
-  range[1] = ShapePrimitive_Facet;
-  colorTable->Allocate(8);
-  colorTable->SetNumberOfTableValues(8);
+  range[1] = ShapePrimitive_LAST - 1;
+  //
+  colorTable->Allocate(ShapePrimitive_LAST);
+  colorTable->SetNumberOfTableValues(ShapePrimitive_LAST);
   colorTable->SetTableRange(range);
   colorTable->SetValueRange(0, 1);
-
+  //
   colorTable->SetTableValue(ShapePrimitive_Undefined,       0.0, 0.0, 0.0);
   colorTable->SetTableValue(ShapePrimitive_FreeVertex,      0.5, 0.0, 0.0);
   colorTable->SetTableValue(ShapePrimitive_SharedVertex,    0.0, 0.0, 0.0);
   colorTable->SetTableValue(ShapePrimitive_DanglingEdge,    1.0, 1.0, 0.0);
   colorTable->SetTableValue(ShapePrimitive_FreeEdge,        1.0, 0.0, 0.0);
   colorTable->SetTableValue(ShapePrimitive_ManifoldEdge,    0.1, 0.1, 0.1);
-  colorTable->SetTableValue(ShapePrimitive_NonManifoldEdge, 0.0, 0.0, 1.0);
-  colorTable->SetTableValue(ShapePrimitive_Facet,           1.0, 1.0, 1.0);
+  colorTable->SetTableValue(ShapePrimitive_NonManifoldEdge, 1.0, 0.5, 0.0);
+  colorTable->SetTableValue(ShapePrimitive_Facet,           0.9, 0.9, 0.9);
+  //
+  colorTable->SetTableValue(ShapePrimitive_DetectedLink,    0.0, 1.0, 1.0);
+  colorTable->SetTableValue(ShapePrimitive_DetectedFacet,   0.0, 1.0, 1.0);
+  colorTable->SetTableValue(ShapePrimitive_SelectedLink,    1.0, 1.0, 0.0);
+  colorTable->SetTableValue(ShapePrimitive_SelectedFacet,   1.0, 1.0, 0.0);
 
   return colorTable;
 }

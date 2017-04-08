@@ -165,9 +165,9 @@ void asiVisu_GeomCurvePrs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomCurvePrs::highlight(vtkRenderer*                   theRenderer,
-                                     const asiVisu_PickResult&      thePickRes,
-                                     const asiVisu_SelectionNature& theSelNature) const
+void asiVisu_GeomCurvePrs::highlight(vtkRenderer*                  theRenderer,
+                                     const asiVisu_PickResult&     thePickRes,
+                                     const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
   asiVisu_NotUsed(thePickRes);
@@ -176,8 +176,8 @@ void asiVisu_GeomCurvePrs::highlight(vtkRenderer*                   theRenderer,
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomCurvePrs::unHighlight(vtkRenderer*                   theRenderer,
-                                       const asiVisu_SelectionNature& theSelNature) const
+void asiVisu_GeomCurvePrs::unHighlight(vtkRenderer*                  theRenderer,
+                                       const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
   asiVisu_NotUsed(theSelNature);

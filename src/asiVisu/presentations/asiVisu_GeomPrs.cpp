@@ -8,7 +8,7 @@
 // Own include
 #include <asiVisu_GeomPrs.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_DisplayMode.h>
 #include <asiVisu_PartDataProvider.h>
 #include <asiVisu_PartEdgesPipeline.h>
@@ -21,11 +21,6 @@
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
-
-// VIS includes
-#pragma warning(push, 0)
-#include <IVtkTools_ShapeObject.hxx>
-#pragma warning(pop)
 
 // OCCT includes
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
@@ -326,101 +321,25 @@ void asiVisu_GeomPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-//! \param theRenderer  [in] renderer.
-//! \param thePickRes   [in] picking results.
-//! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomPrs::highlight(vtkRenderer*                   theRenderer,
-                                const asiVisu_PickResult&      thePickRes,
-                                const asiVisu_SelectionNature& theSelNature) const
+//! \param renderer  [in] renderer.
+//! \param pickRes   [in] picking results.
+//! \param selNature [in] selection nature (picking or detecting).
+void asiVisu_GeomPrs::highlight(vtkRenderer*                  renderer,
+                                const asiVisu_PickResult&     pickRes,
+                                const asiVisu_SelectionNature selNature) const
 {
-  asiVisu_NotUsed(theRenderer);
+  asiVisu_NotUsed(renderer);
 
   Handle(asiVisu_PartPipeline)
     mainPl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
-  mainPl->SetPickedElements( thePickRes.GetPickedElementIds(), theSelNature );
-
-  /* =========================================================
-   *  Get the list of cells PIDs corresponding to the picking
-   *  results on the main actor
-   * ========================================================= */
-
-  //const TColStd_PackedMapOfInteger& pickedCellIds = thePickRes.GetPickedCellIds();
-
-  //// Cell PIDs (pedigree ids) are equal to sub-shape ids. Therefore,
-  //// it is necessary to extract all cells having the target PIDs and set
-  //// their scalars to colorize them properly
-
-  //vtkPolyData*
-  //  data = vtkPolyData::SafeDownCast( mainActor->GetMapper()->GetInputDataObject(0, 0) );
-  ////
-  //if ( !data )
-  //  return;
-
-  //vtkIdTypeArray*
-  //  shapePrimArr = vtkIdTypeArray::SafeDownCast( data->GetCellData()->GetArray(ARRNAME_PART_CELL_TYPES) );
-
-  //for ( TColStd_MapIteratorOfPackedMapOfInteger mit(pickedCellIds); mit.More(); mit.Next() )
-  //{
-  //  const int cellId = mit.Key();
-  //  shapePrimArr->SetTuple1(cellId, ShapePrimitive_DetectedLink);
-  //}
-
-  //// Set modification status for data and update
-  //data->Modified();
-  //mainActor->GetMapper()->Update();
-
-  // TODO
-
-  ///* ===============================
-  // *  Update highlighting pipelines
-  // * =============================== */
-
-  //// Access pipeline for highlighting
-  //Handle(asiVisu_ShapePipeline) hili_pl;
-  ////
-  //if ( theSelNature == SelectionNature_Pick )
-  //  hili_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() );
-  //else
-  //  hili_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
-
-  //if ( hili_pl.IsNull() )
-  //  return;
-
-  //// No sub-shapes -> no selection
-  //if ( thePickRes.IsSelectionSubShape() && aSubShapeIDs.IsEmpty() )
-  //{
-  //  hili_pl->VoidSubShapesOn();
-  //  return;
-  //}
-
-  //// Access its Data Provider
-  //Handle(asiVisu_ShapeDataProvider) hili_dp;
-  ////
-  //if ( theSelNature == SelectionNature_Pick )
-  //  hili_dp = Handle(asiVisu_ShapeDataProvider)::DownCast( this->dataProviderPick() );
-  //else
-  //  hili_dp = Handle(asiVisu_ShapeDataProvider)::DownCast( this->dataProviderDetect() );
-
-  //if ( hili_dp.IsNull() )
-  //  return;
-
-  //// For edges, we have to switch to a wireframe mode
-  //if ( thePickRes.IsSelectionEdge() )
-  //  hili_pl->WireframeModeOn();
-  //else
-  //  hili_pl->ShadingModeOn();
-
-  //// Re-initialize highlighting pipeline
-  //hili_dp->GetSubShapes()->ChangeMap() = aSubShapeIDs;
-  //hili_pl->VoidSubShapesOff();
-  //hili_pl->SetInput(hili_dp);
+  mainPl->SetPickedElements( pickRes.GetPickedElementIds(), selNature );
 }
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
 void asiVisu_GeomPrs::unHighlight(vtkRenderer*                   theRenderer,
-                                  const asiVisu_SelectionNature& theSelNature) const
+                                  const asiVisu_SelectionNature theSelNature) const
 {
   //asiVisu_NotUsed(theRenderer);
 

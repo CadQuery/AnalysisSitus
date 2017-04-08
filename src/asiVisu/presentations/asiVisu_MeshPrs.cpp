@@ -208,9 +208,9 @@ void asiVisu_MeshPrs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection kind.
-void asiVisu_MeshPrs::highlight(vtkRenderer*                   theRenderer,
-                                const asiVisu_PickResult&      thePickRes,
-                                const asiVisu_SelectionNature& theSelNature) const
+void asiVisu_MeshPrs::highlight(vtkRenderer*                  theRenderer,
+                                const asiVisu_PickResult&     thePickRes,
+                                const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
   asiVisu_NotUsed(thePickRes);
@@ -242,8 +242,8 @@ void asiVisu_MeshPrs::highlight(vtkRenderer*                   theRenderer,
 //! Callback for un-highlighting.
 //! \param theRenderer  [in] renderer.
 //! \param theSelNature [in] selection kind.
-void asiVisu_MeshPrs::unHighlight(vtkRenderer*                   theRenderer,
-                                  const asiVisu_SelectionNature& theSelNature) const
+void asiVisu_MeshPrs::unHighlight(vtkRenderer*                  theRenderer,
+                                  const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
 

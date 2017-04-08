@@ -107,9 +107,9 @@ void asiVisu_GeomFaceNormsPrs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomFaceNormsPrs::highlight(vtkRenderer*                   theRenderer,
-                                         const asiVisu_PickResult&      thePickRes,
-                                         const asiVisu_SelectionNature& theSelNature) const
+void asiVisu_GeomFaceNormsPrs::highlight(vtkRenderer*                  theRenderer,
+                                         const asiVisu_PickResult&     thePickRes,
+                                         const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
   asiVisu_NotUsed(thePickRes);
@@ -118,8 +118,8 @@ void asiVisu_GeomFaceNormsPrs::highlight(vtkRenderer*                   theRende
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomFaceNormsPrs::unHighlight(vtkRenderer*                   theRenderer,
-                                           const asiVisu_SelectionNature& theSelNature) const
+void asiVisu_GeomFaceNormsPrs::unHighlight(vtkRenderer*                  theRenderer,
+                                           const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
   asiVisu_NotUsed(theSelNature);

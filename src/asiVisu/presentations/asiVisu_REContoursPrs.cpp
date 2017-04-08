@@ -77,9 +77,9 @@ void asiVisu_REContoursPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-void asiVisu_REContoursPrs::highlight(vtkRenderer*                   theRenderer,
-                                      const asiVisu_PickResult&      thePickRes,
-                                      const asiVisu_SelectionNature& theSelNature) const
+void asiVisu_REContoursPrs::highlight(vtkRenderer*                  theRenderer,
+                                      const asiVisu_PickResult&     thePickRes,
+                                      const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
   asiVisu_NotUsed(thePickRes);
@@ -88,7 +88,7 @@ void asiVisu_REContoursPrs::highlight(vtkRenderer*                   theRenderer
 
 //! Callback for highlighting reset.
 void asiVisu_REContoursPrs::unHighlight(vtkRenderer*                   theRenderer,
-                                        const asiVisu_SelectionNature& theSelNature) const
+                                        const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
   asiVisu_NotUsed(theSelNature);

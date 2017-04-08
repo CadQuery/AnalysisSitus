@@ -37,9 +37,9 @@ void asiVisu_IVPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-void asiVisu_IVPrs::highlight(vtkRenderer*                   theRenderer,
-                              const asiVisu_PickResult&      thePickRes,
-                              const asiVisu_SelectionNature& theSelNature) const
+void asiVisu_IVPrs::highlight(vtkRenderer*                  theRenderer,
+                              const asiVisu_PickResult&     thePickRes,
+                              const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
   asiVisu_NotUsed(thePickRes);
@@ -47,8 +47,8 @@ void asiVisu_IVPrs::highlight(vtkRenderer*                   theRenderer,
 }
 
 //! Callback for highlighting reset.
-void asiVisu_IVPrs::unHighlight(vtkRenderer*                   theRenderer,
-                                const asiVisu_SelectionNature& theSelNature) const
+void asiVisu_IVPrs::unHighlight(vtkRenderer*                  theRenderer,
+                                const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
   asiVisu_NotUsed(theSelNature);

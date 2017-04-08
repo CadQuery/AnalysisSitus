@@ -1213,7 +1213,7 @@ void asiVisu_PrsManager::InitializePickers()
 {
   // Initialize cell picker
   m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
-  m_cellPicker->SetTolerance(0.015);
+  m_cellPicker->SetTolerance(0.005);
 
   // Initialize point picker
   m_pointPicker = vtkSmartPointer<vtkPointPicker>::New();

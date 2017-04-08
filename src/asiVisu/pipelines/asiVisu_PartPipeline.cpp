@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
+// Created on: 30 November 2016
 // Created by: Quaoar
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
@@ -15,9 +15,18 @@
 
 // VTK includes
 #include <vtkActor.h>
+#include <vtkCellData.h>
 #include <vtkInformation.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
+
+// OCCT includes
+#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
+
+#define COUT_DEBUG
+#if defined COUT_DEBUG
+  #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -87,9 +96,9 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
     return; // Do nothing
   }
 
-  /* ============================
-   *  Prepare polygonal data set
-   * ============================ */
+  /* ====================
+   *  Configure pipeline
+   * ==================== */
 
   if ( DP->MustExecute( this->GetMTime() ) )
   {
@@ -97,24 +106,8 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
     m_source->SetTessellationParams( DP->GetLinearDeflection(),
                                      DP->GetAngularDeflection() );
 
-    //static int ShapeID = 0; ++ShapeID;
-    //Handle(IVtkOCC_Shape) aShapeIntoVtk = new IVtkOCC_Shape(aShape);
-    //aShapeIntoVtk->SetId(ShapeID);
-
-    //// Re-use existing Data Source to benefit from its lightweight
-    //// transformation capabilities
-    //m_DS->SetShape(aShapeIntoVtk);
-
-    //// Bind actor to owning Node ID. Thus we set back reference from VTK
-    //// entity to data object
-    //if ( m_bIsBound2Node )
-
     // Bind to a Data Node using information key
     asiVisu_PartNodeInfo::Store( DP->GetNodeID(), this->Actor() );
-
-    //// Bind Shape DS with actor. This is necessary for VIS picker -- it will
-    //// not work without the corresponding Information key
-    //IVtkTools_ShapeObject::SetShapeSource( m_DS, this->Actor() );
 
     // Initialize pipeline
     this->SetInputConnection( m_source->GetOutputPort() );
@@ -122,6 +115,60 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
 
   // Update modification timestamp
   this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Highlights the passed elements according to the given selection nature.
+//! \param elementIds [in] element IDs.
+void asiVisu_PartPipeline::SetPickedElements(const TColStd_PackedMapOfInteger& elementIds,
+                                             const asiVisu_SelectionNature     selNature)
+{
+  if ( !elementIds.Extent() )
+    return;
+
+  // Get polygonal data
+  vtkPolyData*
+    pData = vtkPolyData::SafeDownCast( this->Mapper()->GetInputDataObject(0, 0) );
+  //
+  if ( !pData )
+    return;
+
+  // Get cell data
+  vtkCellData* pCellData       = pData->GetCellData();
+  const int    numOfInputCells = pCellData->GetNumberOfTuples();
+
+  // Get array of pedigree IDs
+  vtkIdTypeArray*
+    pPedigreeArr = vtkIdTypeArray::SafeDownCast( pCellData->GetPedigreeIds() );
+
+  // Get array of cell types
+  vtkIdTypeArray*
+    pShapePrimArr = vtkIdTypeArray::SafeDownCast( pCellData->GetArray(ARRNAME_PART_CELL_TYPES) );
+
+  // Choose proper scalar
+  asiVisu_ShapePrimitive prim;
+  if ( selNature == SelectionNature_Detection )
+    prim = ShapePrimitive_Detected;
+  else
+    prim = ShapePrimitive_Selected;
+
+  // Mark cells
+  for ( vtkIdType cellId = 0; cellId < numOfInputCells; ++cellId )
+  {
+    double pedigreeIdDbl;
+    pPedigreeArr->GetTuple(cellId, &pedigreeIdDbl);
+    const int pedigreeId = (int) pedigreeIdDbl;
+
+    if ( !elementIds.Contains(pedigreeId) )
+      continue;
+
+    pShapePrimArr->SetTuple1(cellId, prim);
+  }
+
+  // Set modification status for data and update
+  pData->Modified();
+  this->Mapper()->Update();
 }
 
 //-----------------------------------------------------------------------------

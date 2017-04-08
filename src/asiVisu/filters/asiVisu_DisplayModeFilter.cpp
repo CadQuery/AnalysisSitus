@@ -119,7 +119,11 @@ int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
   // Pass data arrays
   for ( int i = 0; i < pInputCellData->GetNumberOfArrays(); ++i )
   {
-    vtkDataArray* pInArr  = pInputCellData->GetArray(i);
+    vtkDataArray* pInArr = pInputCellData->GetArray(i);
+
+    if ( !_strcmpi( pInArr->GetName(), ARRNAME_PART_SUBSHAPE_IDS ) )
+      continue;
+
     vtkDataArray* pOutArr = vtkDataArray::CreateDataArray( pInArr->GetDataType() );
     //
     pOutArr->SetName( pInArr->GetName() );
@@ -129,28 +133,34 @@ int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
     //
     pOutputCellData->AddArray(pOutArr);
 
-    // Set array with sub-shape IDs as pedigree array
-    if ( !_strcmpi( pInArr->GetName(), ARRNAME_PART_SUBSHAPE_IDS ) )
-      pOutputCellData->SetPedigreeIds(pInArr);
-  }
-
-  //###################################
-  // Copy cells with ids from our list
-  pOutputPolyData->CopyCells(pInputPolyData, cellIdsToPass);
-
-  //###################################
-  // Copy data arrays
-  for ( int i = 1; i < pInputCellData->GetNumberOfArrays(); ++i )
-  {
-    vtkDataArray* pInArr  = pInputCellData->GetArray(i);
-    vtkDataArray* pOutArr = pOutputCellData->GetArray(i);
-
+    // Copy elements
     for ( vtkIdType outIdx = 0; outIdx < numOfRemainingCells; ++outIdx )
     {
       vtkIdType cellId = cellIdsToPass->GetId(outIdx);
       pOutArr->SetTuple(outIdx, cellId, pInArr);
     }
   }
+
+  // Transfer pedigree IDs
+  vtkSmartPointer<vtkIdTypeArray>
+    outPedigreeArr = vtkSmartPointer<vtkIdTypeArray>::New();
+  //
+  vtkIdTypeArray*
+    pInPedigreeArr = vtkIdTypeArray::SafeDownCast( pInputCellData->GetPedigreeIds() );
+  //
+  for ( vtkIdType outIdx = 0; outIdx < numOfRemainingCells; ++outIdx )
+  {
+    vtkIdType cellId = cellIdsToPass->GetId(outIdx);
+
+    double pedigreeIdDbl;
+    pInPedigreeArr->GetTuple(cellId, &pedigreeIdDbl);
+    outPedigreeArr->InsertNextTuple(&pedigreeIdDbl);
+  }
+  pOutputCellData->SetPedigreeIds(outPedigreeArr);
+
+  //###################################
+  // Copy cells with ids from our list
+  pOutputPolyData->CopyCells(pInputPolyData, cellIdsToPass);
 
 #if defined COUT_DEBUG
   std::cout << "Number of arrays in the input cell data: " << pInputCellData->GetNumberOfArrays() << std::endl;

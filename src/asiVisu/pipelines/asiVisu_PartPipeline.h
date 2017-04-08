@@ -11,6 +11,7 @@
 // A-Situs includes
 #include <asiVisu_DisplayModeFilter.h>
 #include <asiVisu_Pipeline.h>
+#include <asiVisu_Selection.h>
 #include <asiVisu_ShapeRobustSource.h>
 
 // Active Data includes
@@ -49,6 +50,10 @@ public:
 
   asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
+
+  asiVisu_EXPORT void
+    SetPickedElements(const TColStd_PackedMapOfInteger& elementIds,
+                      const asiVisu_SelectionNature     selNature);
 
 public:
 
@@ -98,6 +103,10 @@ protected:
 
   //! Display mode filter.
   vtkSmartPointer<asiVisu_DisplayModeFilter> m_dmFilter;
+
+  //! Faces (actually, their IDs) marked as detected (dynamic
+  //! highlight on mouse move).
+  TColStd_PackedMapOfInteger m_detectedFaces;
 
   //! Progress notifier.
   ActAPI_ProgressEntry m_progress;

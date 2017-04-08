@@ -25,6 +25,8 @@
 // OCCT includes
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Convert integer value to a color.
 //! \param color [in] integer value.
 //! \return converted value
@@ -35,6 +37,8 @@ static QColor IntToColor(const int color)
   unsigned char blue  =   color         & 0xFF;
   return QColor(red, green, blue);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Creates a Presentation object for the passed Part Node.
 //! \param N [in] Part Node to create a Presentation for.
@@ -71,62 +75,11 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   this->addPipeline        ( Pipeline_Contour, contour_pl );
   this->assignDataProvider ( Pipeline_Contour, dp );
 
-  ///* ======================
-  // *  Pipeline for picking
-  // * ====================== */
-
-  //double pick_color[3];
-  //asiVisu_Utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
-
-  //// Create pipeline for highlighting
-  //Handle(asiVisu_ShapePipeline) pick_pl = new asiVisu_ShapePipeline( false, true, true, false, pl->DataSource() );
-
-  //// Adjust props
-  //pick_pl->Actor()->GetProperty()->SetColor(pick_color[0], pick_color[1], pick_color[2]);
-  //pick_pl->Actor()->GetProperty()->SetLineWidth( asiVisu_Utils::DefaultPickLineWidth() );
-  //pick_pl->Actor()->GetProperty()->SetPointSize( asiVisu_Utils::DefaultHilightPointSize() );
-  //pick_pl->Actor()->SetPickable(0);
-  //pick_pl->Mapper()->ScalarVisibilityOff();
-  ////
-  //pick_pl->Actor()->GetProperty()->SetOpacity(1.0);
-  //pick_pl->Actor()->GetProperty()->SetAmbient(0.8);
-  //pick_pl->Actor()->GetProperty()->SetDiffuse(0.2);
-  //pick_pl->Actor()->GetProperty()->SetSpecular(0.9);
-  //pick_pl->Actor()->GetProperty()->SetSpecularPower(20);
-
-  //// Bind to the data provider
-  //this->installPickPipeline( pick_pl, DP );
-
-  ///* ========================
-  // *  Pipeline for detecting
-  // * ======================== */
-
-  //double detect_color[3];
-  //asiVisu_Utils::DefaultDetectionColor(detect_color[0], detect_color[1], detect_color[2]);
-
-  //// Create pipeline for highlighting
-  //Handle(asiVisu_ShapePipeline)
-  //  detect_pl = new asiVisu_ShapePipeline( false, true, true, false, pl->DataSource() );
-
-  //// Adjust props
-  //detect_pl->Actor()->GetProperty()->SetColor(detect_color[0], detect_color[1], detect_color[2]);
-  //detect_pl->Actor()->GetProperty()->SetLineWidth( asiVisu_Utils::DefaultDetectionLineWidth() );
-  //detect_pl->Actor()->GetProperty()->SetPointSize( asiVisu_Utils::DefaultHilightPointSize() );
-  //detect_pl->Actor()->SetPickable(0);
-  //detect_pl->Mapper()->ScalarVisibilityOff();
-  ////
-  //detect_pl->Actor()->GetProperty()->SetOpacity(1.0);
-  //detect_pl->Actor()->GetProperty()->SetAmbient(0.8);
-  //detect_pl->Actor()->GetProperty()->SetDiffuse(0.2);
-  //detect_pl->Actor()->GetProperty()->SetSpecular(0.9);
-  //detect_pl->Actor()->GetProperty()->SetSpecularPower(20);
-
-  //// Bind to the data provider
-  //this->installDetectPipeline( detect_pl, DP );
-
-  //---------------------------------------------------------------------------
+  // Resolve coincident topology between shaded facets and border links
   vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
 }
+
+//-----------------------------------------------------------------------------
 
 //! Factory method for Presentation.
 //! \param N [in] Geometry Node to create a Presentation for.
@@ -136,12 +89,16 @@ Handle(asiVisu_Prs) asiVisu_GeomPrs::Instance(const Handle(ActAPI_INode)& N)
   return new asiVisu_GeomPrs(N);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
 bool asiVisu_GeomPrs::IsVisible() const
 {
   return true;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Sets diagnostic tools for the presentation.
 //! \param progress [in] progress notifier.
@@ -160,6 +117,8 @@ void asiVisu_GeomPrs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
   pl->SetDiagnosticTools(m_progress, m_plotter);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Sets SHADING visualization mode.
 void asiVisu_GeomPrs::DoShading() const
 {
@@ -172,6 +131,8 @@ void asiVisu_GeomPrs::DoShading() const
   pl->ShadingModeOn();*/
 }
 
+//-----------------------------------------------------------------------------
+
 //! Sets WIREFRAME visualization mode.
 void asiVisu_GeomPrs::DoWireframe() const
 {
@@ -183,6 +144,8 @@ void asiVisu_GeomPrs::DoWireframe() const
 
   pl->WireframeModeOn();*/
 }
+
+//-----------------------------------------------------------------------------
 
 //! Sets custom color for the geometry.
 //! \param color [in] color to set.
@@ -203,6 +166,8 @@ void asiVisu_GeomPrs::DoColor(const QColor& color) const
                                         color.blueF() );
 }
 
+//-----------------------------------------------------------------------------
+
 //! Unsets custom color for the geometry.
 void asiVisu_GeomPrs::DoUnColor() const
 {
@@ -214,6 +179,8 @@ void asiVisu_GeomPrs::DoUnColor() const
 
   pl->Mapper()->ScalarVisibilityOn();
 }
+
+//-----------------------------------------------------------------------------
 
 //! Enables/disables visualization of vertices depending on the passed flag.
 //! \param on [in] true/false.
@@ -235,6 +202,8 @@ void asiVisu_GeomPrs::beforeInitPipelines()
 {
   // Do nothing...
 }
+
+//-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
 void asiVisu_GeomPrs::afterInitPipelines()
@@ -263,6 +232,8 @@ void asiVisu_GeomPrs::afterInitPipelines()
   //}
 }
 
+//-----------------------------------------------------------------------------
+
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
 void asiVisu_GeomPrs::beforeUpdatePipelines() const
@@ -275,6 +246,8 @@ void asiVisu_GeomPrs::beforeUpdatePipelines() const
   else
     this->DoWireframe();*/
 }
+
+//-----------------------------------------------------------------------------
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
@@ -320,6 +293,8 @@ void asiVisu_GeomPrs::afterUpdatePipelines() const
   //this->DoVertices( N->HasVertices() );
 }
 
+//-----------------------------------------------------------------------------
+
 //! Callback for highlighting.
 //! \param renderer  [in] renderer.
 //! \param pickRes   [in] picking results.
@@ -336,30 +311,27 @@ void asiVisu_GeomPrs::highlight(vtkRenderer*                  renderer,
   mainPl->SetPickedElements( pickRes.GetPickedElementIds(), selNature );
 }
 
+//-----------------------------------------------------------------------------
+
 //! Callback for highlighting reset.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomPrs::unHighlight(vtkRenderer*                   theRenderer,
-                                  const asiVisu_SelectionNature theSelNature) const
+//! \param renderer  [in] renderer.
+//! \param selNature [in] selection nature (picking or detecting).
+void asiVisu_GeomPrs::unHighlight(vtkRenderer*                  renderer,
+                                  const asiVisu_SelectionNature selNature) const
 {
-  //asiVisu_NotUsed(theRenderer);
+  asiVisu_NotUsed(renderer);
 
-  //Handle(asiVisu_ShapePipeline) hili_pl;
-  ////
-  //if ( theSelNature == SelectionNature_Pick )
-  //  hili_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() );
-  //else
-  //  hili_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
+  Handle(asiVisu_PartPipeline)
+    mainPl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
-  //if ( hili_pl.IsNull() )
-  //  return;
-
-  //// Block data pipelining
-  //hili_pl->VoidSubShapesOn();
+  mainPl->ResetPickedElements(selNature);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Callback for rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomPrs::renderPipelines(vtkRenderer* theRenderer) const
+//! \param renderer [in] renderer.
+void asiVisu_GeomPrs::renderPipelines(vtkRenderer* renderer) const
 {
   //Handle(asiVisu_ShapePipeline)
   //  pick_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() ),
@@ -377,9 +349,11 @@ void asiVisu_GeomPrs::renderPipelines(vtkRenderer* theRenderer) const
   ///* (2) */ pick_pl->AddToRenderer(theRenderer);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Callback for de-rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomPrs::deRenderPipelines(vtkRenderer* theRenderer) const
+//! \param renderer [in] renderer.
+void asiVisu_GeomPrs::deRenderPipelines(vtkRenderer* renderer) const
 {
   /*Handle(asiVisu_ShapePipeline)
     pick_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() ),

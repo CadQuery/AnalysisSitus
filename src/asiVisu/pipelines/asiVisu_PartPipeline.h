@@ -55,6 +55,9 @@ public:
     SetPickedElements(const TColStd_PackedMapOfInteger& elementIds,
                       const asiVisu_SelectionNature     selNature);
 
+  asiVisu_EXPORT void
+    ResetPickedElements(const asiVisu_SelectionNature selNature);
+
 public:
 
   //! \return data source.
@@ -91,6 +94,15 @@ private:
 
 protected:
 
+  //! Clears internal cache data maps.
+  void clearCache()
+  {
+    m_detectedCells.Clear();
+    m_selectedCells.Clear();
+  }
+
+protected:
+
   //! Technical flag indicating whether a GL-mapper is initialized with the
   //! custom color scheme or not.
   bool m_bMapperColorsSet;
@@ -113,6 +125,14 @@ protected:
 
   //! Imperative plotter.
   ActAPI_PlotterEntry m_plotter;
+
+  //! Data map of currently DETECTED cell IDs (for fast access). The value
+  //! is the original scalar.
+  NCollection_DataMap<vtkIdType, int> m_detectedCells;
+
+  //! Data map of currently SELECTED cell IDs (for fast access). The value
+  //! is the original scalar.
+  NCollection_DataMap<vtkIdType, int> m_selectedCells;
 
 };
 

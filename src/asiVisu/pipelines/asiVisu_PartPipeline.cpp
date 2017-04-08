@@ -102,6 +102,11 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
 
   if ( DP->MustExecute( this->GetMTime() ) )
   {
+    // Clear cached data which is by design actual for the current state of
+    // source only. The source changes, so the cache needs nullification
+    this->clearCache();
+
+    // Configure data source
     m_source->SetAAG( DP->GetAAG() );
     m_source->SetTessellationParams( DP->GetLinearDeflection(),
                                      DP->GetAngularDeflection() );
@@ -121,6 +126,7 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
 
 //! Highlights the passed elements according to the given selection nature.
 //! \param elementIds [in] element IDs.
+//! \param selNature  [in] selection nature (detection or selection).
 void asiVisu_PartPipeline::SetPickedElements(const TColStd_PackedMapOfInteger& elementIds,
                                              const asiVisu_SelectionNature     selNature)
 {
@@ -153,22 +159,72 @@ void asiVisu_PartPipeline::SetPickedElements(const TColStd_PackedMapOfInteger& e
   else
     prim = ShapePrimitive_Selected;
 
+  // Choose cache
+  NCollection_DataMap<vtkIdType, int>&
+    cache = ( selNature == SelectionNature_Detection ? m_detectedCells : m_selectedCells );
+
   // Mark cells
   for ( vtkIdType cellId = 0; cellId < numOfInputCells; ++cellId )
   {
+    // Check pedigree ID of the cell. Continue only for those which are
+    // requested by the caller code
     double pedigreeIdDbl;
     pPedigreeArr->GetTuple(cellId, &pedigreeIdDbl);
     const int pedigreeId = (int) pedigreeIdDbl;
-
+    //
     if ( !elementIds.Contains(pedigreeId) )
       continue;
 
+    // Save the original scalar in cache
+    if ( cache.IsBound(cellId) )
+      cache.UnBind(cellId);
+    //
+    cache.Bind( cellId, (int) pShapePrimArr->GetTuple1(cellId) );
+
+    // Change scalar
     pShapePrimArr->SetTuple1(cellId, prim);
   }
 
   // Set modification status for data and update
   pData->Modified();
   this->Mapper()->Update();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Resets initial scalars for the detected/selected cells.
+//! \param selNature [in] selection nature (detection or selection).
+void asiVisu_PartPipeline::ResetPickedElements(const asiVisu_SelectionNature selNature)
+{
+  // Get polygonal data
+  vtkPolyData*
+    pData = vtkPolyData::SafeDownCast( this->Mapper()->GetInputDataObject(0, 0) );
+  //
+  if ( !pData )
+    return;
+
+  // Get cell data
+  vtkCellData* pCellData       = pData->GetCellData();
+  const int    numOfInputCells = pCellData->GetNumberOfTuples();
+
+  // Get array of cell types
+  vtkIdTypeArray*
+    pShapePrimArr = vtkIdTypeArray::SafeDownCast( pCellData->GetArray(ARRNAME_PART_CELL_TYPES) );
+
+  // Choose cache
+  NCollection_DataMap<vtkIdType, int>&
+    cache = ( selNature == SelectionNature_Detection ? m_detectedCells : m_selectedCells );
+
+  // Reset cell scalars
+  for ( vtkIdType cellId = 0; cellId < numOfInputCells; ++cellId )
+  {
+    // Proceed for the cached cells only
+    if ( !cache.IsBound(cellId) )
+      continue;
+
+    // Reset scalar
+    pShapePrimArr->SetTuple1( cellId, cache.Find(cellId) );
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -27,6 +27,9 @@ bool asiAlgo_STEP::Read(const TCollection_AsciiString& filename,
                         const bool                     doHealing,
                         TopoDS_Shape&                  result)
 {
+  if ( filename.IsEmpty() )
+    return false;
+
   /* ==================================
    *  Prepare OCCT translation toolkit
    * ================================== */

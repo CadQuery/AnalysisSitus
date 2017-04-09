@@ -31,6 +31,7 @@ public:
                              asiUI_ViewerDomain*            wViewerDomain,
                              asiUI_ViewerSurface*           wViewerSurface,
                              const Handle(asiEngine_Model)& model,
+                             ActAPI_ProgressEntry           progress,
                              ActAPI_PlotterEntry            plotter);
 
   asiUI_EXPORT virtual
@@ -58,6 +59,7 @@ protected:
   asiUI_ViewerDomain*     m_wViewerDomain;  //!< Face domain viewer.
   asiUI_ViewerSurface*    m_wViewerSurface; //!< Surface viewer.
   Handle(asiEngine_Model) m_model;          //!< Data Model instance.
+  ActAPI_ProgressEntry    m_progress;       //!< Progress notifier.
   ActAPI_PlotterEntry     m_plotter;        //!< Imperative plotter.
 
 };

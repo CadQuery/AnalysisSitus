@@ -198,6 +198,7 @@ void exe_MainWindow::createDockWindows()
                                                          m_widgets.wViewerDomain,
                                                          m_widgets.wViewerSurface,
                                                          cf->Model,
+                                                         cf->ProgressNotifier,
                                                          cf->Plotter);
 
   // Signals-slots

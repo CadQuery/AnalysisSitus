@@ -218,6 +218,9 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_PlateOnEdges.h">
       <Filter>Header Files\Modeling</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_InvertFaces.h">
+      <Filter>Header Files\Modeling\Editing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.cpp">
@@ -345,6 +348,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_PlateOnEdges.cpp">
       <Filter>Source Files\Modeling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_InvertFaces.cpp">
+      <Filter>Source Files\Modeling\Editing</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

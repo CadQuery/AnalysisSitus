@@ -34,17 +34,20 @@
 //! \param wViewerDomain  [in] domain viewer.
 //! \param wViewerSurface [in] surface viewer.
 //! \param model          [in] Data Model instance.
+//! \param progress       [in] progress notifier.
 //! \param plotter        [in] imperative plotter.
 asiUI_ViewerPartListener::asiUI_ViewerPartListener(asiUI_ViewerPart*              wViewerPart,
                                                    asiUI_ViewerDomain*            wViewerDomain,
                                                    asiUI_ViewerSurface*           wViewerSurface,
                                                    const Handle(asiEngine_Model)& model,
+                                                   ActAPI_ProgressEntry           progress,
                                                    ActAPI_PlotterEntry            plotter)
 : QObject          (),
   m_wViewerPart    (wViewerPart),
   m_wViewerDomain  (wViewerDomain),
   m_wViewerSurface (wViewerSurface),
   m_model          (model),
+  m_progress       (progress),
   m_plotter        (plotter)
 {}
 
@@ -109,9 +112,20 @@ void asiUI_ViewerPartListener::onEdgePicked(const asiVisu_PickResult& pickRes)
 //! \param globalPos [in] click position in global coordinates.
 void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
 {
+  // Get highlighted faces
+  TColStd_PackedMapOfInteger faceIndices;
+  asiEngine_Part( m_model, m_wViewerPart->PrsMgr() ).GetHighlightedFaces(faceIndices);
+  //
+  if ( !faceIndices.Extent() )
+  {
+    m_progress.SendLogMessage( LogErr(Normal) << "No selected faces" );
+    return;
+  }
+
   QMenu menu;
-  QAction* pSaveBREPAction  = menu.addAction("Save to BREP...");
-  QAction* pShowNormsAction = menu.addAction("Show normal vectors");
+  QAction* pSaveBREPAction    = menu.addAction("Save to BREP...");
+  QAction* pShowNormsAction   = menu.addAction("Show normal vectors");
+  QAction* pInvertFacesAction = menu.addAction("Invert faces");
 
   // Execute
   QAction* selectedItem = menu.exec(globalPos);
@@ -148,7 +162,7 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
     // Save shape
     if ( !asiAlgo_Utils::WriteBRep( shape2Save, QStr2AsciiStr(filename) ) )
     {
-      std::cout << "Error: cannot save shape" << std::endl;
+      m_progress.SendLogMessage( LogErr(Normal) << "Cannot save shape" );
       return;
     }
   }
@@ -161,6 +175,16 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
 
     TIMER_FINISH
     TIMER_COUT_RESULT_MSG("Visualization of normals")
+  }
+  else if ( selectedItem == pInvertFacesAction )
+  {
+    TIMER_NEW
+    TIMER_GO
+
+    // TODO
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_MSG("Invert faces")
   }
   else
   {

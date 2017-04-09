@@ -463,9 +463,20 @@ void asiEngine_Part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices
   TopTools_IndexedMapOfShape subShapes;
   GetHighlightedSubShapes(subShapes);
 
+  // Get part
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+    return;
+
+  // Get AAG
+  Handle(asiAlgo_AAG) aag = part_n->GetAAG();
+  //
+  if ( aag.IsNull() )
+    return;
+
   // Take all faces
-  const TopTools_IndexedMapOfShape&
-    allFaces = m_model->GetPartNode()->GetAAG()->GetMapOfFaces();
+  const TopTools_IndexedMapOfShape& allFaces = aag->GetMapOfFaces();
 
   // Filter out non-selected faces
   for ( int f = 1; f <= allFaces.Extent(); ++f )

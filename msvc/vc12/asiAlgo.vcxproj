@@ -137,6 +137,7 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_EulerPoincare.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_FindNonmanifold.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_FindSameHosts.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_InvertFaces.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_JoinEdges.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_RehostFaces.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_SuppressFaces.h" />
@@ -188,6 +189,7 @@
     <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_EulerPoincare.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_FindNonmanifold.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_FindSameHosts.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_InvertFaces.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_JoinEdges.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_RehostFaces.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_SuppressFaces.cpp" />

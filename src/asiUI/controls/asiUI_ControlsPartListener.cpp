@@ -58,12 +58,6 @@ void asiUI_ControlsPartListener::Connect()
   connect( m_wControls, SIGNAL ( verticesOff() ),
            this,        SLOT   ( onVerticesOff() ) );
   //
-  connect( m_wControls, SIGNAL ( normalsOn() ),
-           this,        SLOT   ( onNormalsOn() ) );
-  //
-  connect( m_wControls, SIGNAL ( normalsOff() ),
-           this,        SLOT   ( onNormalsOff() ) );
-  //
   connect( m_wControls, SIGNAL ( selectionFacesOn() ),
            this,        SLOT   ( onSelectionFacesOn() ) );
   //
@@ -104,22 +98,6 @@ void asiUI_ControlsPartListener::onVerticesOn()
 void asiUI_ControlsPartListener::onVerticesOff()
 {
   this->onPartModified(); // TODO: this is completely weird
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on enabling visualization of normals.
-void asiUI_ControlsPartListener::onNormalsOn()
-{
-  // NYI
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on disabling visualization of normals.
-void asiUI_ControlsPartListener::onNormalsOff()
-{
-  // NYI
 }
 
 //-----------------------------------------------------------------------------

@@ -71,8 +71,6 @@ signals:
   void partModified     ();
   void verticesOn       ();
   void verticesOff      ();
-  void normalsOn        ();
-  void normalsOff       ();
   void selectionFacesOn ();
   void selectionEdgesOn ();
 

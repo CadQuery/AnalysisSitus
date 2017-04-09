@@ -46,8 +46,6 @@ protected slots:
   asiUI_EXPORT void onPartModified     ();
   asiUI_EXPORT void onVerticesOn       ();
   asiUI_EXPORT void onVerticesOff      ();
-  asiUI_EXPORT void onNormalsOn        ();
-  asiUI_EXPORT void onNormalsOff       ();
   asiUI_EXPORT void onSelectionFacesOn ();
   asiUI_EXPORT void onSelectionEdgesOn ();
 

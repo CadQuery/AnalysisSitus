@@ -861,17 +861,25 @@ ActAPI_DataObjectIdList
       m_widget->repaint();
       return result; // Nothing has been picked
     }
-    //
-    pickRes.SetPickedActor(pickedActor);
+
+    // Check consistency of the picked actor with the already recorded one (if any)
+    if ( pickRes.GetPickedActor().GetPointer() &&
+         pickRes.GetPickedActor() != pickedActor )
+    {
+      vtkErrorMacro( << "Selection logic error: attempt to accumulate cell IDs from different actors to a single picking result" );
+      return result;
+    }
+    if ( !pickRes.GetPickedActor().GetPointer() )
+      pickRes.SetPickedActor(pickedActor);
 
     // Push ID to result
     if ( pid != -1 )
-      pickRes.SetPickedElementId(pid);
+      pickRes.AddPickedElementId(pid);
     else if ( gid != -1 )
-      pickRes.SetPickedElementId(gid);
+      pickRes.AddPickedElementId(gid);
 
     // Set picked cell ID
-    pickRes.SetPickedCellId(cellId);
+    pickRes.AddPickedCellId(cellId);
   }
   else if ( pickType == PickType_Point )
   {
@@ -891,9 +899,19 @@ ActAPI_DataObjectIdList
       return result; // Nothing has been picked
     }
 
+    // Check consistency of the picked actor with the already recorded one (if any)
+    if ( pickRes.GetPickedActor().GetPointer() &&
+         pickRes.GetPickedActor() != pickedActor )
+    {
+      vtkErrorMacro( << "Selection logic error: attempt to accumulate cell IDs from different actors to a single picking result" );
+      return result;
+    }
+
     // Push ID to result
-    pickRes.SetPickedActor(pickedActor);
-    pickRes.SetPickedPointId(pointId);
+    if ( !pickRes.GetPickedActor().GetPointer() )
+      pickRes.SetPickedActor(pickedActor);
+    //
+    pickRes.AddPickedPointId(pointId);
 
     if ( pointId != -1 )
     {

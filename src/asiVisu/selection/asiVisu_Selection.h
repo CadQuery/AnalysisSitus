@@ -127,16 +127,25 @@ public:
     SetPickedElementId(const vtkIdType elemId);
 
   asiVisu_EXPORT void
+    AddPickedElementId(const vtkIdType elemId);
+
+  asiVisu_EXPORT void
     SetPickedElementIds(const TColStd_PackedMapOfInteger& elemIds);
 
   asiVisu_EXPORT void
     SetPickedPointId(const vtkIdType pointId);
 
   asiVisu_EXPORT void
+    AddPickedPointId(const vtkIdType pointId);
+
+  asiVisu_EXPORT void
     SetPickedPointIds(const TColStd_PackedMapOfInteger& pointIds);
 
   asiVisu_EXPORT void
     SetPickedCellId(const vtkIdType cellId);
+
+  asiVisu_EXPORT void
+    AddPickedCellId(const vtkIdType cellId);
 
   asiVisu_EXPORT void
     SetPickedCellIds(const TColStd_PackedMapOfInteger& cellIds);

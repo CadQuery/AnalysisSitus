@@ -58,6 +58,16 @@ void asiVisu_PickResult::SetPickedElementId(const vtkIdType elemId)
 
 //-----------------------------------------------------------------------------
 
+//! Adds ID of the picked element. This ID is application-specific, e.g.
+//! a sub-shape ID of a B-Rep part.
+//! \param elemId [in] ID to add.
+void asiVisu_PickResult::AddPickedElementId(const vtkIdType elemId)
+{
+  m_pickedElementIds.Add(elemId);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Sets IDs of the picked elements. These IDs are application-specific, e.g.
 //! sub-shape IDs of a B-Rep part.
 //! \param elemIds [in] IDs to set.
@@ -78,6 +88,15 @@ void asiVisu_PickResult::SetPickedPointId(const vtkIdType pointId)
 
 //-----------------------------------------------------------------------------
 
+//! Adds ID of the picked point.
+//! \param pointId [in] ID to add.
+void asiVisu_PickResult::AddPickedPointId(const vtkIdType pointId)
+{
+  m_pickedPointIds.Add(pointId);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Sets IDs of the picked VTK points.
 //! \param pointIds [in] ID to set.
 void asiVisu_PickResult::SetPickedPointIds(const TColStd_PackedMapOfInteger& pointIds)
@@ -92,6 +111,15 @@ void asiVisu_PickResult::SetPickedPointIds(const TColStd_PackedMapOfInteger& poi
 void asiVisu_PickResult::SetPickedCellId(const vtkIdType cellId)
 {
   m_pickedCellIds.Clear();
+  m_pickedCellIds.Add(cellId);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Adds ID of the picked cell.
+//! \param cellId [in] ID to add.
+void asiVisu_PickResult::AddPickedCellId(const vtkIdType cellId)
+{
   m_pickedCellIds.Add(cellId);
 }
 

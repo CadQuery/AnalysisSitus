@@ -153,11 +153,11 @@ void asiVisu_PartPipeline::SetPickedElements(const TColStd_PackedMapOfInteger& e
     pShapePrimArr = vtkIdTypeArray::SafeDownCast( pCellData->GetArray(ARRNAME_PART_CELL_TYPES) );
 
   // Choose proper scalar
-  asiVisu_ShapePrimitive prim;
+  asiVisu_ShapePrimitive requestedPrim;
   if ( selNature == SelectionNature_Detection )
-    prim = ShapePrimitive_Detected;
+    requestedPrim = ShapePrimitive_Detected;
   else
-    prim = ShapePrimitive_Selected;
+    requestedPrim = ShapePrimitive_Selected;
 
   // Choose cache
   NCollection_DataMap<vtkIdType, int>&
@@ -177,10 +177,10 @@ void asiVisu_PartPipeline::SetPickedElements(const TColStd_PackedMapOfInteger& e
 
     // Get the current scalar
     const int
-      sPrim = (int) pShapePrimArr->GetTuple1(cellId);
+      currentPrim = (int) pShapePrimArr->GetTuple1(cellId);
 
     // Save the original scalar in cache
-    if ( sPrim != ShapePrimitive_Detected && sPrim != ShapePrimitive_Selected )
+    if ( currentPrim != ShapePrimitive_Detected && currentPrim != ShapePrimitive_Selected )
     {
       if ( cache.IsBound(cellId) )
         cache.UnBind(cellId);
@@ -188,8 +188,11 @@ void asiVisu_PartPipeline::SetPickedElements(const TColStd_PackedMapOfInteger& e
       cache.Bind( cellId, (int) pShapePrimArr->GetTuple1(cellId) );
     }
 
+    if ( currentPrim == ShapePrimitive_Selected && requestedPrim == ShapePrimitive_Detected )
+      continue; // Detection must not override selection
+
     // Change scalar
-    pShapePrimArr->SetTuple1(cellId, prim);
+    pShapePrimArr->SetTuple1(cellId, requestedPrim);
   }
 
   // Set modification status for data and update
@@ -227,6 +230,15 @@ void asiVisu_PartPipeline::ResetPickedElements(const asiVisu_SelectionNature sel
   {
     // Proceed for the cached cells only
     if ( !cache.IsBound(cellId) )
+      continue;
+
+    // Get the current scalar
+    const int
+      currentPrim = (int) pShapePrimArr->GetTuple1(cellId);
+
+    // Do not restore the original scalar if the cell is in selected state,
+    // given that the request on reset is yielded for detection
+    if ( currentPrim == ShapePrimitive_Selected && selNature == SelectionNature_Detection )
       continue;
 
     // Reset scalar

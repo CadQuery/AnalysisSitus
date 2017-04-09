@@ -175,11 +175,18 @@ void asiVisu_PartPipeline::SetPickedElements(const TColStd_PackedMapOfInteger& e
     if ( !elementIds.Contains(pedigreeId) )
       continue;
 
+    // Get the current scalar
+    const int
+      sPrim = (int) pShapePrimArr->GetTuple1(cellId);
+
     // Save the original scalar in cache
-    if ( cache.IsBound(cellId) )
-      cache.UnBind(cellId);
-    //
-    cache.Bind( cellId, (int) pShapePrimArr->GetTuple1(cellId) );
+    if ( sPrim != ShapePrimitive_Detected && sPrim != ShapePrimitive_Selected )
+    {
+      if ( cache.IsBound(cellId) )
+        cache.UnBind(cellId);
+      //
+      cache.Bind( cellId, (int) pShapePrimArr->GetTuple1(cellId) );
+    }
 
     // Change scalar
     pShapePrimArr->SetTuple1(cellId, prim);
@@ -225,6 +232,10 @@ void asiVisu_PartPipeline::ResetPickedElements(const asiVisu_SelectionNature sel
     // Reset scalar
     pShapePrimArr->SetTuple1( cellId, cache.Find(cellId) );
   }
+
+  // Set modification status for data and update
+  pData->Modified();
+  this->Mapper()->Update();
 }
 
 //-----------------------------------------------------------------------------

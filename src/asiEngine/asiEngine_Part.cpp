@@ -377,32 +377,17 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
                                         const int                         color,
                                         const asiVisu_SelectionMode       selMode)
 {
-  //// Get Part Node
-  //Handle(asiData_PartNode) N = m_model->GetPartNode();
+  // Get Part Node
+  Handle(asiData_PartNode) N = m_model->GetPartNode();
 
-  //// Get Presentation for the Part Node
-  //Handle(asiVisu_GeomPrs)
-  //  prs = Handle(asiVisu_GeomPrs)::DownCast( m_prsMgr->GetPresentation(N) );
+  // Get Presentation for the Part Node
+  Handle(asiVisu_GeomPrs)
+    prs = Handle(asiVisu_GeomPrs)::DownCast( m_prsMgr->GetPresentation(N) );
 
-  //// Prepare list to satisfy the API of Presentation Manager
-  //Handle(ActAPI_HNodeList) dummyList = new ActAPI_HNodeList;
-  //dummyList->Append(N);
+  // Highlight
+  m_prsMgr->Highlight(N, prs->MainActor(), subShapeIndices, selMode);
 
-  //// Prepare selection object
-  //asiVisu_ActorElemMap selection;
-  //selection.Bind( prs->MainActor(), subShapeIndices );
-
-  //// Set color
-  //double prevColor[3];
-  //QColor qcolor = ::IntToColor(color);
-  //prs->GetPickPipeline()->Actor()->GetProperty()->GetColor( prevColor[0], prevColor[1], prevColor[2] );
-  //prs->GetPickPipeline()->Actor()->GetProperty()->SetColor( qcolor.redF(), qcolor.greenF(), qcolor.blueF() );
-
-  //// Highlight
-  //m_prsMgr->Highlight(dummyList, selection, selMode);
-
-  //// Restore previous color
-  //prs->GetPickPipeline()->Actor()->GetProperty()->SetColor( prevColor[0], prevColor[1], prevColor[2] );
+  // TODO: color is not applied at the moment
 }
 
 //-----------------------------------------------------------------------------
@@ -450,28 +435,23 @@ void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subSha
 //! \param subShapes [out] result collection.
 void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes)
 {
-  //// Get the map of ALL shapes to extract topology by selected index which
-  //// is global (related to full accessory graph)
-  //const TopTools_IndexedMapOfShape&
-  //  M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
+  // Get the map of ALL shapes to extract topology by selected index which
+  // is global (related to full accessory graph)
+  const TopTools_IndexedMapOfShape&
+    M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
 
-  //// Get actual selection
-  //const asiVisu_ActualSelection& sel      = m_prsMgr->GetCurrentSelection();
-  //const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
-  //const asiVisu_ActorElemMap&    elem_map = pick_res.GetPickMap();
-  ////
-  //// Prepare cumulative set of all picked element IDs
-  //for ( asiVisu_ActorElemMap::Iterator it(elem_map); it.More(); it.Next() )
-  //{
-  //  const TColStd_PackedMapOfInteger& subshape_mask = it.Value();
-  //  //
-  //  for ( TColStd_MapIteratorOfPackedMapOfInteger mit(subshape_mask); mit.More(); mit.Next() )
-  //  {
-  //    const int           subshape_idx = mit.Key();
-  //    const TopoDS_Shape& F            = M.FindKey(subshape_idx);
-  //    subShapes.Add(F);
-  //  }
-  //}
+  // Get actual selection
+  const asiVisu_ActualSelection&    sel           = m_prsMgr->GetCurrentSelection();
+  const asiVisu_PickResult&         pick_res      = sel.PickResult(SelectionNature_Pick);
+  const TColStd_PackedMapOfInteger& subshape_mask = pick_res.GetPickedElementIds();
+  //
+  for ( TColStd_MapIteratorOfPackedMapOfInteger mit(subshape_mask); mit.More(); mit.Next() )
+  {
+    const int           subshape_idx = mit.Key();
+    const TopoDS_Shape& subshape     = M.FindKey(subshape_idx);
+    //
+    subShapes.Add(subshape);
+  }
 }
 
 //-----------------------------------------------------------------------------

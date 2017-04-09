@@ -1112,6 +1112,47 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)& node)
 
 //-----------------------------------------------------------------------------
 
+//! This method stands for programmatic API of selection.
+//! \param node       [in] Data Node to highlight.
+//! \param actor      [in] actor to pick.
+//! \param elementIds [in] element IDs to pick.
+//! \param modes      [in] active selection modes.
+void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)&       node,
+                                   const vtkSmartPointer<vtkActor>&  actor,
+                                   const TColStd_PackedMapOfInteger& elementIds,
+                                   const int                         modes)
+{
+  // Get Presentation for the target Node. The idea is to ask Presentation
+  // to highlight itself as it "knows better" how to do that ;)
+  Handle(asiVisu_Prs) prs3D = this->GetPresentation(node);
+  //
+  if ( prs3D.IsNull() )
+  {
+    vtkErrorMacro( << "No presentation to highlight" );
+    return;
+  }
+
+  // Reset current selection (if any)
+  m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
+
+  // Populate Pick resulting structure to be used by Presentation's
+  // highlight method
+  asiVisu_PickResult& pickRes = m_currentSelection.ChangePickResult(SelectionNature_Pick);
+  pickRes.Clear();
+  pickRes.SetSelectionModes(modes);
+  pickRes.SetPickedActor(actor);
+  pickRes.SetPickedElementIds(elementIds);
+
+  // Push selection to renderer
+  m_currentSelection.PushToRender(prs3D, m_renderer, SelectionNature_Pick);
+
+  // Update view window
+  if ( m_widget )
+    m_widget->repaint();
+}
+
+//-----------------------------------------------------------------------------
+
 //! Cleans up detection.
 void asiVisu_PrsManager::CleanDetection()
 {

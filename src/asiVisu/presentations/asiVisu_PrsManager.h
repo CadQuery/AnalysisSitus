@@ -218,6 +218,12 @@ public:
     Highlight(const Handle(ActAPI_INode)& node);
 
   asiVisu_EXPORT void
+    Highlight(const Handle(ActAPI_INode)&       node,
+              const vtkSmartPointer<vtkActor>&  actor,
+              const TColStd_PackedMapOfInteger& elementIds,
+              const int                         modes);
+
+  asiVisu_EXPORT void
     CleanDetection();
 
   asiVisu_EXPORT Handle(ActAPI_HNodeList)

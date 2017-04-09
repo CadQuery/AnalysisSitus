@@ -44,37 +44,34 @@ void GetPickedSubshapeIds(const asiVisu_PickResult&         pick_res,
                           std::vector<int>&                 picked_subshape_IDs,
                           std::vector<ActAPI_DataObjectId>& picked_node_IDs)
 {
-//  const asiVisu_ActorElemMap& elem_map = pick_res.GetPickMap();
-//
-//  // Prepare cumulative set of all picked element IDs
-//  for ( asiVisu_ActorElemMap::Iterator it(elem_map); it.More(); it.Next() )
-//  {
-//    const vtkSmartPointer<vtkActor>&  picked_actor  = it.Key();
-//    const TColStd_PackedMapOfInteger& subshape_mask = it.Value();
-//
-//    // Retrieve the corresponding Node ID by picked Actor
-//    ActAPI_DataObjectId
-//      picked_node_id = asiVisu_NodeInfo::Retrieve(picked_actor)->GetNodeId();
-//
-//    // Fill coherent collections of references: sub-shape IDs against owning Nodes
-//    for ( TColStd_MapIteratorOfPackedMapOfInteger maskIt(subshape_mask); maskIt.More(); maskIt.Next() )
-//    {
-//      picked_subshape_IDs.push_back( maskIt.Key() );
-//      picked_node_IDs.push_back(picked_node_id);
-//    }
-//  }
-//
-//#if defined COUT_DEBUG
-//  if ( picked_subshape_IDs.size() )
-//  {
-//    std::cout << "Picked sub-shapes:";
-//    for ( size_t k = 0; k < picked_subshape_IDs.size(); ++k )
-//    {
-//      std::cout << " " << picked_subshape_IDs[k] << " [" << picked_node_IDs[k].ToCString() << "]";
-//    }
-//    std::cout << std::endl;
-//  }
-//#endif
+  const vtkSmartPointer<vtkActor>&  picked_actor  = pick_res.GetPickedActor();
+  const TColStd_PackedMapOfInteger& subshape_mask = pick_res.GetPickedElementIds();
+
+  if ( !picked_actor.GetPointer() )
+    return; // Nothing selected
+
+  // Retrieve the corresponding Node ID by picked Actor
+  ActAPI_DataObjectId
+    picked_node_id = asiVisu_NodeInfo::Retrieve(picked_actor)->GetNodeId();
+
+  // Fill coherent collections of references: sub-shape IDs against owning Nodes
+  for ( TColStd_MapIteratorOfPackedMapOfInteger maskIt(subshape_mask); maskIt.More(); maskIt.Next() )
+  {
+    picked_subshape_IDs.push_back( maskIt.Key() );
+    picked_node_IDs.push_back(picked_node_id);
+  }
+
+#if defined COUT_DEBUG
+  if ( picked_subshape_IDs.size() )
+  {
+    std::cout << "Picked sub-shapes:";
+    for ( size_t k = 0; k < picked_subshape_IDs.size(); ++k )
+    {
+      std::cout << " " << picked_subshape_IDs[k] << " [" << picked_node_IDs[k].ToCString() << "]";
+    }
+    std::cout << std::endl;
+  }
+#endif
 }
 
 //-----------------------------------------------------------------------------

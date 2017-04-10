@@ -53,7 +53,7 @@ public:
 public:
 
   //! \return mesh data structure.
-  virtual Handle(Mesh) GetMeshDS() const
+  virtual Handle(ActData_Mesh) GetMeshDS() const
   {
     return m_mesh;
   }
@@ -82,7 +82,7 @@ protected:
 
 protected:
 
-  Handle(Mesh) m_mesh; //!< Mesh representing the cube to draw.
+  Handle(ActData_Mesh) m_mesh; //!< Mesh representing the cube to draw.
 
 };
 

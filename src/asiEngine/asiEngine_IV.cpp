@@ -406,7 +406,7 @@ Handle(asiData_IVTessItemNode)
   item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
 
   // Convert to AD mesh
-  Handle(Mesh) mesh;
+  Handle(ActData_Mesh) mesh;
   if ( !asiAlgo_MeshConvert::ToPersistent(tess, mesh) )
     return NULL;
 

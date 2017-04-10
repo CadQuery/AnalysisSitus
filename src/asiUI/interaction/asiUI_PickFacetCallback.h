@@ -17,9 +17,6 @@
 // asiEngine includes
 #include <asiEngine_Model.h>
 
-// VIS includes
-#include <IVtk_Types.hxx>
-
 // VTK includes
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>

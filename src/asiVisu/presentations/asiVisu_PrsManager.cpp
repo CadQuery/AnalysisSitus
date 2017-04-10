@@ -14,7 +14,6 @@
 #include <asiVisu_Prs.h>
 #include <asiVisu_Pipeline.h>
 #include <asiVisu_Selection.h>
-#include <asiVisu_ShapeDataSource.h>
 #include <asiVisu_Utils.h>
 
 // Qr includes
@@ -35,6 +34,7 @@
 #include <vtkWidgetRepresentation.h>
 
 // OCCT includes
+#include <gp_Lin.hxx>
 #include <NCollection_Sequence.hxx>
 
 #define COUT_DEBUG

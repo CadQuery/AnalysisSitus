@@ -18,7 +18,7 @@ asiVisu_MeshDataProvider::asiVisu_MeshDataProvider() : asiVisu_DataProvider() {}
 //! \param theNodeId    [in] ID of the target Data Node.
 //! \param theParamList [in] source Parameters.
 asiVisu_MeshDataProvider::asiVisu_MeshDataProvider(const ActAPI_DataObjectId&           theNodeId,
-                                                 const Handle(ActAPI_HParameterList)& theParamList)
+                                                   const Handle(ActAPI_HParameterList)& theParamList)
 : asiVisu_DataProvider()
 {
   m_nodeID = theNodeId;
@@ -36,7 +36,7 @@ ActAPI_DataObjectId asiVisu_MeshDataProvider::GetNodeID() const
 
 //! Returns Mesh Data Structures used as the main source for pipelining.
 //! \return tessellation DS.
-Handle(Mesh) asiVisu_MeshDataProvider::GetMeshDS() const
+Handle(ActData_Mesh) asiVisu_MeshDataProvider::GetMeshDS() const
 {
   return ActParamTool::AsMesh( m_params->Value(1) )->GetMesh();
 }

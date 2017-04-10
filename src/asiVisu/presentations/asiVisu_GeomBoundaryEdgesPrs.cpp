@@ -10,7 +10,6 @@
 
 // A-Situs (visualization) includes
 #include <asiVisu_ShapeDataProvider.h>
-#include <asiVisu_ShapePipeline.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -21,57 +20,57 @@
 //! \param N [in] Node to create a Presentation for.
 asiVisu_GeomBoundaryEdgesPrs::asiVisu_GeomBoundaryEdgesPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
 {
-  // Create Data Providers
-  Handle(asiVisu_ShapeDataProvider) DP_convex =
-    new asiVisu_ShapeDataProvider( N->GetId(),
-                                   ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Green) );
-  //
-  Handle(asiVisu_ShapeDataProvider) DP_concave =
-    new asiVisu_ShapeDataProvider( N->GetId(),
-                                   ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Red) );
-  //
-  Handle(asiVisu_ShapeDataProvider) DP_undefined =
-    new asiVisu_ShapeDataProvider( N->GetId(),
-                                   ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Ordinary) );
+  //// Create Data Providers
+  //Handle(asiVisu_ShapeDataProvider) DP_convex =
+  //  new asiVisu_ShapeDataProvider( N->GetId(),
+  //                                 ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Green) );
+  ////
+  //Handle(asiVisu_ShapeDataProvider) DP_concave =
+  //  new asiVisu_ShapeDataProvider( N->GetId(),
+  //                                 ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Red) );
+  ////
+  //Handle(asiVisu_ShapeDataProvider) DP_undefined =
+  //  new asiVisu_ShapeDataProvider( N->GetId(),
+  //                                 ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Ordinary) );
 
-  //---------------------------------------------------------------------------
-  // Pipeline for convex edges
-  Handle(asiVisu_ShapePipeline) pl_convex = new asiVisu_ShapePipeline(false, false, false, false);
-  //
-  this->addPipeline        ( Pipeline_Convex, pl_convex );
-  this->assignDataProvider ( Pipeline_Convex, DP_convex );
-  //
-  pl_convex->Actor()->GetProperty()->SetLineWidth(2.0f);
-  pl_convex->Actor()->GetProperty()->SetColor(0.1, 0.7, 0.0);
-  pl_convex->Mapper()->ScalarVisibilityOff();
-  pl_convex->WireframeModeOn();
+  ////---------------------------------------------------------------------------
+  //// Pipeline for convex edges
+  //Handle(asiVisu_ShapePipeline) pl_convex = new asiVisu_ShapePipeline(false, false, false, false);
+  ////
+  //this->addPipeline        ( Pipeline_Convex, pl_convex );
+  //this->assignDataProvider ( Pipeline_Convex, DP_convex );
+  ////
+  //pl_convex->Actor()->GetProperty()->SetLineWidth(2.0f);
+  //pl_convex->Actor()->GetProperty()->SetColor(0.1, 0.7, 0.0);
+  //pl_convex->Mapper()->ScalarVisibilityOff();
+  //pl_convex->WireframeModeOn();
 
-  //---------------------------------------------------------------------------
-  // Pipeline for concave edges
-  Handle(asiVisu_ShapePipeline) pl_concave = new asiVisu_ShapePipeline(false, false, false, false);
-  //
-  this->addPipeline        ( Pipeline_Concave, pl_concave );
-  this->assignDataProvider ( Pipeline_Concave, DP_concave );
-  //
-  pl_concave->Actor()->GetProperty()->SetLineWidth(2.0f);
-  pl_concave->Actor()->GetProperty()->SetColor(0.7, 0.0, 0.0);
-  pl_concave->Mapper()->ScalarVisibilityOff();
-  pl_concave->WireframeModeOn();
+  ////---------------------------------------------------------------------------
+  //// Pipeline for concave edges
+  //Handle(asiVisu_ShapePipeline) pl_concave = new asiVisu_ShapePipeline(false, false, false, false);
+  ////
+  //this->addPipeline        ( Pipeline_Concave, pl_concave );
+  //this->assignDataProvider ( Pipeline_Concave, DP_concave );
+  ////
+  //pl_concave->Actor()->GetProperty()->SetLineWidth(2.0f);
+  //pl_concave->Actor()->GetProperty()->SetColor(0.7, 0.0, 0.0);
+  //pl_concave->Mapper()->ScalarVisibilityOff();
+  //pl_concave->WireframeModeOn();
 
-  //---------------------------------------------------------------------------
-  // Pipeline for undefined edges
-  Handle(asiVisu_ShapePipeline) pl_undefined = new asiVisu_ShapePipeline(false, false, false, false);
-  //
-  this->addPipeline        ( Pipeline_Undefined, pl_undefined );
-  this->assignDataProvider ( Pipeline_Undefined, DP_undefined );
-  //
-  pl_undefined->Actor()->GetProperty()->SetLineWidth(2.0f);
-  pl_undefined->Actor()->GetProperty()->SetColor(0.5, 0.5, 0.5);
-  pl_undefined->Mapper()->ScalarVisibilityOff();
-  pl_undefined->WireframeModeOn();
+  ////---------------------------------------------------------------------------
+  //// Pipeline for undefined edges
+  //Handle(asiVisu_ShapePipeline) pl_undefined = new asiVisu_ShapePipeline(false, false, false, false);
+  ////
+  //this->addPipeline        ( Pipeline_Undefined, pl_undefined );
+  //this->assignDataProvider ( Pipeline_Undefined, DP_undefined );
+  ////
+  //pl_undefined->Actor()->GetProperty()->SetLineWidth(2.0f);
+  //pl_undefined->Actor()->GetProperty()->SetColor(0.5, 0.5, 0.5);
+  //pl_undefined->Mapper()->ScalarVisibilityOff();
+  //pl_undefined->WireframeModeOn();
 
-  //---------------------------------------------------------------------------
-  vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
+  ////---------------------------------------------------------------------------
+  //vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
 }
 
 //! Factory method for Presentation.

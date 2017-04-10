@@ -22,8 +22,8 @@
 //! \param source [in]  source shape (mesh keeper).
 //! \param result [out] mesh in a persistent form.
 //! \return true in case of success, false -- otherwise.
-bool asiAlgo_MeshConvert::ToPersistent(const TopoDS_Shape& source,
-                                       Handle(Mesh)&       result)
+bool asiAlgo_MeshConvert::ToPersistent(const TopoDS_Shape&   source,
+                                       Handle(ActData_Mesh)& result)
 {
   asiAlgo_MeshMerge conglomerate(source, asiAlgo_MeshMerge::Mode_Mesh);
   result = conglomerate.GetResultMesh();
@@ -37,9 +37,9 @@ bool asiAlgo_MeshConvert::ToPersistent(const TopoDS_Shape& source,
 //! \param result [out] mesh in a persistent form.
 //! \return true in case of success, false -- otherwise.
 bool asiAlgo_MeshConvert::ToPersistent(const Handle(Poly_Triangulation)& source,
-                                       Handle(Mesh)&                     result)
+                                       Handle(ActData_Mesh)&             result)
 {
-  result = new Mesh(source);
+  result = new ActData_Mesh(source);
   return true;
 }
 
@@ -49,13 +49,13 @@ bool asiAlgo_MeshConvert::ToPersistent(const Handle(Poly_Triangulation)& source,
 //! \param source [in]  VTK polygonal data set.
 //! \param result [out] persistent mesh.
 //! \return true in case of success, false -- otherwise.
-bool asiAlgo_MeshConvert::ToPersistent(vtkPolyData*  source,
-                                       Handle(Mesh)& result)
+bool asiAlgo_MeshConvert::ToPersistent(vtkPolyData*          source,
+                                       Handle(ActData_Mesh)& result)
 {
   // Elements
   const vtkIdType numCells = source->GetNumberOfCells();
   if ( numCells )
-    result = new Mesh;
+    result = new ActData_Mesh;
 
   // Mapping between VTK nodes against stored nodes
   NCollection_DataMap<vtkIdType, int> NodeMap;

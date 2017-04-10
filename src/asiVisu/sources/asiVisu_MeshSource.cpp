@@ -63,7 +63,7 @@ void asiVisu_MeshSource::EmptyGroupForAllModeOff()
 
 //! Sets the instance of Mesh DS being used as an input for Data Source.
 //! \param theMesh [in] input Mesh DS.
-void asiVisu_MeshSource::SetInputMesh(const Handle(Mesh)& theMesh)
+void asiVisu_MeshSource::SetInputMesh(const Handle(ActData_Mesh)& theMesh)
 {
   m_mesh = theMesh;
 }
@@ -77,7 +77,7 @@ void asiVisu_MeshSource::SetInputElemGroup(const Handle(Mesh_Group)& theGroup)
 
 //! Accessor for the input Mesh DS.
 //! \return requested Mesh DS.
-const Handle(Mesh)& asiVisu_MeshSource::GetInputMesh() const
+const Handle(ActData_Mesh)& asiVisu_MeshSource::GetInputMesh() const
 {
   return m_mesh;
 }

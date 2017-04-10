@@ -43,12 +43,12 @@ public:
     EmptyGroupForAllModeOff();
 
   void
-    SetInputMesh(const Handle(Mesh)& theMesh);
+    SetInputMesh(const Handle(ActData_Mesh)& theMesh);
 
   void
     SetInputElemGroup(const Handle(Mesh_Group)& theGroup);
 
-  const Handle(Mesh)&
+  const Handle(ActData_Mesh)&
     GetInputMesh() const;
 
   const Handle(Mesh_Group)&
@@ -93,7 +93,7 @@ private:
 private:
   
   //! Initial Mesh DS being converted to VTK polygonal data.
-  Handle(Mesh) m_mesh;
+  Handle(ActData_Mesh) m_mesh;
 
   //! Group of mesh elements to be extracted from the input data set. If this
   //! group is empty, the entire mesh is taken as-is, without any filtering.

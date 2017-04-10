@@ -8,9 +8,8 @@
 // Own include
 #include <asiVisu_IVTopoItemPrs.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_ShapeDataProvider.h>
-#include <asiVisu_ShapePipeline.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -22,14 +21,14 @@
 asiVisu_IVTopoItemPrs::asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& theNode)
 : asiVisu_IVPrs(theNode)
 {
-  // Create Data Provider
-  Handle(asiVisu_ShapeDataProvider)
-    DP = new asiVisu_ShapeDataProvider( theNode->GetId(),
-                                       ActParamStream() << theNode->Parameter(asiData_IVTopoItemNode::PID_Geometry) );
+  //// Create Data Provider
+  //Handle(asiVisu_ShapeDataProvider)
+  //  DP = new asiVisu_ShapeDataProvider( theNode->GetId(),
+  //                                     ActParamStream() << theNode->Parameter(asiData_IVTopoItemNode::PID_Geometry) );
 
-  // Pipeline for contours
-  this->addPipeline        ( Pipeline_Main, new asiVisu_ShapePipeline(false) );
-  this->assignDataProvider ( Pipeline_Main, DP );
+  //// Pipeline for contours
+  //this->addPipeline        ( Pipeline_Main, new asiVisu_ShapePipeline(false) );
+  //this->assignDataProvider ( Pipeline_Main, DP );
 }
 
 //! Factory method for Presentation.

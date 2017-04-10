@@ -21,11 +21,6 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 
-// VIS includes
-#pragma warning(push, 0)
-#include <IVtkTools_ShapePicker.hxx>
-#pragma warning(pop)
-
 //! Instantiation routine.
 //! \return instance of the callback class.
 asiUI_PickCallback* asiUI_PickCallback::New()

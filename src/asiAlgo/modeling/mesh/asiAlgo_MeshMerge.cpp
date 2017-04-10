@@ -276,7 +276,7 @@ void asiAlgo_MeshMerge::build()
 
   if ( m_mode == Mode_Mesh )
     if ( !m_resultPoly->GetTriangulation().IsNull() )
-      m_resultMesh = new Mesh( m_resultPoly->GetTriangulation() );
+      m_resultMesh = new ActData_Mesh( m_resultPoly->GetTriangulation() );
 }
 
 //-----------------------------------------------------------------------------

@@ -278,7 +278,7 @@ void asiUI_ControlsPart::onSavePly()
   QString filename = asiUI_Common::selectPlyFile(asiUI_Common::OpenSaveAction_Save);
 
   // Convert shape's inherent mesh to a storable mesh
-  Handle(Mesh) storedMesh;
+  Handle(ActData_Mesh) storedMesh;
   if ( !asiAlgo_MeshConvert::ToPersistent(part, storedMesh) )
   {
     std::cout << "Error: cannot convert mesh to persistent form" << std::endl;

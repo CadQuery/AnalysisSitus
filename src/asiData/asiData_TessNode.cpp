@@ -41,7 +41,7 @@ void asiData_TessNode::Init()
   this->InitParameter(PID_Name, "Name");
 
   // Set empty initial mesh
-  ActParamTool::AsMesh( this->Parameter(PID_Mesh) )->SetMesh(new Mesh, MT_Silent);
+  ActParamTool::AsMesh( this->Parameter(PID_Mesh) )->SetMesh(new ActData_Mesh, MT_Silent);
 
   // Set Presentation values
   this->SetHasColor(false);
@@ -72,14 +72,14 @@ void asiData_TessNode::SetName(const TCollection_ExtendedString& theName)
 //-----------------------------------------------------------------------------
 
 //! \return stored tessellation.
-Handle(Mesh) asiData_TessNode::GetMesh() const
+Handle(ActData_Mesh) asiData_TessNode::GetMesh() const
 {
   return ActParamTool::AsMesh( this->Parameter(PID_Mesh) )->GetMesh();
 }
 
 //! Sets tessellation to store.
 //! \param mesh [in] tessellation to store.
-void asiData_TessNode::SetMesh(const Handle(Mesh)& mesh)
+void asiData_TessNode::SetMesh(const Handle(ActData_Mesh)& mesh)
 {
   ActParamTool::AsMesh( this->Parameter(PID_Mesh) )->SetMesh(mesh);
 }

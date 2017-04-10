@@ -87,7 +87,7 @@ public:
   }
 
   //! \return result.
-  const Handle(Mesh)& GetResultMesh() const
+  const Handle(ActData_Mesh)& GetResultMesh() const
   {
     return m_resultMesh;
   }
@@ -123,7 +123,7 @@ protected:
   Mode                               m_mode;             //!< Conversion mode.
   bool                               m_bCollectBnd;      //!< Whether to preserve boundary.
   Handle(Poly_CoherentTriangulation) m_resultPoly;       //!< Result tessellation.
-  Handle(Mesh)                       m_resultMesh;       //!< Result mesh.
+  Handle(ActData_Mesh)               m_resultMesh;       //!< Result mesh.
   t_link_set                         m_freeLinks;        //!< Free links.
   t_link_set                         m_manifoldLinks;    //!< Manifold links.
   t_link_set                         m_nonManifoldLinks; //!< Non-manifold links.

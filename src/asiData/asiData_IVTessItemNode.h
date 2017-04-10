@@ -66,11 +66,11 @@ public:
 // Handy accessors to the stored data:
 public:
 
-  asiData_EXPORT Handle(Mesh)
+  asiData_EXPORT Handle(ActData_Mesh)
     GetMesh() const;
 
   asiData_EXPORT void
-    SetMesh(const Handle(Mesh)& mesh);
+    SetMesh(const Handle(ActData_Mesh)& mesh);
 
 // Initialization:
 public:

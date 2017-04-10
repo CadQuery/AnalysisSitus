@@ -25,16 +25,16 @@
 namespace asiAlgo_MeshConvert
 {
   asiAlgo_EXPORT bool
-    ToPersistent(const TopoDS_Shape& source,
-                 Handle(Mesh)&       result);
+    ToPersistent(const TopoDS_Shape&   source,
+                 Handle(ActData_Mesh)& result);
 
   asiAlgo_EXPORT bool
     ToPersistent(const Handle(Poly_Triangulation)& source,
-                 Handle(Mesh)&                     result);
+                 Handle(ActData_Mesh)&             result);
 
   asiAlgo_EXPORT bool
-    ToPersistent(vtkPolyData*  source,
-                 Handle(Mesh)& result);
+    ToPersistent(vtkPolyData*          source,
+                 Handle(ActData_Mesh)& result);
 };
 
 #endif

@@ -12,6 +12,7 @@
 #include <asiAlgo_Timer.h>
 
 // OCCT includes
+#include <Adaptor3d_CurveOnSurface.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_HCurve2d.hxx>
 #include <BRepAdaptor_Surface.hxx>
@@ -24,6 +25,7 @@
 #include <Geom_BSplineSurface.hxx>
 #include <GeomAdaptor_HSurface.hxx>
 #include <GeomPlate_BuildPlateSurface.hxx>
+#include <GeomPlate_HArray1OfHCurveOnSurface.hxx>
 #include <GeomPlate_MakeApprox.hxx>
 #include <GeomPlate_PlateG0Criterion.hxx>
 #include <ShapeExtend_WireData.hxx>

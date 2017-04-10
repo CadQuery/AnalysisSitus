@@ -41,7 +41,7 @@ void asiUI_RotationCenterProvider::Init(const double x,
                                         const double z,
                                         const double side)
 {
-  m_mesh = new Mesh;
+  m_mesh = new ActData_Mesh;
   const int vertices[] = { m_mesh->AddNode(x + side, y - side, z - side),
                            m_mesh->AddNode(x + side, y + side, z - side),
                            m_mesh->AddNode(x - side, y + side, z - side),

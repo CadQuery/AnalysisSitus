@@ -37,9 +37,6 @@
 #include <vtkTextWidget.h>
 #pragma warning(pop)
 
-// IVtk includes
-#include <IVtk_Types.hxx>
-
 // OCCT includes
 #include <NCollection_DataMap.hxx>
 #include <NCollection_Sequence.hxx>
@@ -190,22 +187,22 @@ public:
   asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
     InitLookupTable();
 
-  asiVisu_EXPORT static void
-    SetLookupTableColor(vtkLookupTable* theColorTable,
-                        const IVtk_MeshType theColorRole,
-                        const double theR, const double theG, const double theB,
-                        const double /*theA*/);
+  //asiVisu_EXPORT static void
+  //  SetLookupTableColor(vtkLookupTable* theColorTable,
+  //                      const IVtk_MeshType theColorRole,
+  //                      const double theR, const double theG, const double theB,
+  //                      const double /*theA*/);
 
-  asiVisu_EXPORT static void
-    GetLookupTableColor(vtkLookupTable* theColorTable,
-                        const IVtk_MeshType theColorRole,
-                        double &theR, double &theG, double &theB);
+  //asiVisu_EXPORT static void
+  //  GetLookupTableColor(vtkLookupTable* theColorTable,
+  //                      const IVtk_MeshType theColorRole,
+  //                      double &theR, double &theG, double &theB);
 
-  asiVisu_EXPORT static void
-    GetLookupTableColor(vtkLookupTable* theColorTable,
-                        const IVtk_MeshType theColorRole,
-                        double &theR, double &theG, double &theB,
-                        double &theA);
+  //asiVisu_EXPORT static void
+  //  GetLookupTableColor(vtkLookupTable* theColorTable,
+  //                      const IVtk_MeshType theColorRole,
+  //                      double &theR, double &theG, double &theB,
+  //                      double &theA);
 
   asiVisu_EXPORT static void
     InitShapeMapper(vtkMapper* theMapper);

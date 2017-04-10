@@ -38,7 +38,7 @@ namespace asiAlgo_PLY
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     Read(const TCollection_AsciiString&     theFilename,
-         Handle(Mesh)&                      theMesh,
+         Handle(ActData_Mesh)&              theMesh,
          NCollection_Sequence<TNamedArray>& theNodeArrays,
          NCollection_Sequence<TNamedArray>& theElemArrays);
 
@@ -47,7 +47,7 @@ namespace asiAlgo_PLY
   //! \param theFilename [in] target filename.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    Write(const Handle(Mesh)&            theMesh,
+    Write(const Handle(ActData_Mesh)&    theMesh,
           const TCollection_AsciiString& theFilename);
 
 //-----------------------------------------------------------------------------
@@ -57,7 +57,7 @@ namespace asiAlgo_PLY
   //! \param theFilename [in] target filename.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    _writeNodes(const Handle(Mesh)&            theMesh,
+    _writeNodes(const Handle(ActData_Mesh)&    theMesh,
                 const TCollection_AsciiString& theFilename);
 
   //! Save the elements only from the passed tessellation into a ply file.
@@ -66,7 +66,7 @@ namespace asiAlgo_PLY
   //! \param theFilename [in] target filename.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    _writeElements(const Handle(Mesh)&            theMesh,
+    _writeElements(const Handle(ActData_Mesh)&    theMesh,
                    const int                      theShift,
                    const TCollection_AsciiString& theFilename);
 

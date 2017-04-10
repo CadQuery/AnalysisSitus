@@ -39,7 +39,7 @@ public:
   asiVisu_EXPORT virtual ActAPI_DataObjectId
     GetNodeID() const;
 
-  asiVisu_EXPORT virtual Handle(Mesh)
+  asiVisu_EXPORT virtual Handle(ActData_Mesh)
     GetMeshDS() const;
 
   asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)

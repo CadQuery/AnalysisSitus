@@ -23,10 +23,10 @@
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
-                       Handle(Mesh)&                      theMesh,
+                       Handle(ActData_Mesh)&              theMesh,
                        NCollection_Sequence<TNamedArray>& theNodeArrays,
                        NCollection_Sequence<TNamedArray>& theElemArrays)
-    {
+{
   std::ifstream FILE( theFilename.ToCString() );
   if ( !FILE.is_open() )
   {
@@ -34,7 +34,7 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
   }
 
   // Create container for mesh
-  Handle(Mesh) MeshDS = new Mesh;
+  Handle(ActData_Mesh) MeshDS = new ActData_Mesh;
 
   // Working variables
   int nVertices = 0, nFaces = 0;
@@ -179,7 +179,7 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_PLY::Write(const Handle(Mesh)&            theMesh,
+bool asiAlgo_PLY::Write(const Handle(ActData_Mesh)&    theMesh,
                         const TCollection_AsciiString& theFilename)
 {
   std::ofstream FILE( theFilename.ToCString() );
@@ -211,7 +211,7 @@ bool asiAlgo_PLY::Write(const Handle(Mesh)&            theMesh,
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_PLY::_writeNodes(const Handle(Mesh)&            theMesh,
+bool asiAlgo_PLY::_writeNodes(const Handle(ActData_Mesh)&    theMesh,
                               const TCollection_AsciiString& theFilename)
 {
   std::ofstream FILE(theFilename.ToCString(), std::ofstream::app);
@@ -234,9 +234,11 @@ bool asiAlgo_PLY::_writeNodes(const Handle(Mesh)&            theMesh,
   return true;
 }
 
-bool asiAlgo_PLY::_writeElements(const Handle(Mesh)&            theMesh,
-                              const int                      theShift,
-                              const TCollection_AsciiString& theFilename)
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_PLY::_writeElements(const Handle(ActData_Mesh)&    theMesh,
+                                 const int                      theShift,
+                                 const TCollection_AsciiString& theFilename)
 {
   std::ofstream FILE(theFilename.ToCString(), std::ofstream::app);
   if ( !FILE.is_open() )

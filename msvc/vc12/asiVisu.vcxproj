@@ -70,7 +70,7 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\libd\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.1.lib;vtkCommonDataModel-7.1.lib;vtkCommonExecutionModel-7.1.lib;vtkCommonMath-7.1.lib;vtkCommonTransforms-7.1.lib;vtkCommonMisc-7.1.lib;vtkRenderingCore-7.1.lib;vtkRenderingOpenGL2-7.1.lib;vtkRenderingAnnotation-7.1.lib;vtkRenderingLabel-7.1.lib;vtkRenderingFreeType-7.1.lib;vtkRenderingContext2D-7.1.lib;vtkRenderingContextOpenGL2-7.1.lib;vtkFiltersCore-7.1.lib;vtkFiltersGeneral-7.1.lib;vtkFiltersSources-7.1.lib;vtkFiltersGeometry-7.1.lib;vtkFiltersParallel-7.1.lib;vtkFiltersExtraction-7.1.lib;vtkFiltersModeling-7.1.lib;vtkIOCore-7.1.lib;vtkIOImage-7.1.lib;vtkImagingCore-7.1.lib;vtkInteractionStyle-7.1.lib;vtkInteractionWidgets-7.1.lib;vtkInfovisLayout-7.1.lib;vtkGUISupportQt-7.1.lib;vtkViewsCore-7.1.lib;vtkViewsContext2D-7.1.lib;vtkViewsInfovis-7.1.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.1.lib;vtkCommonDataModel-7.1.lib;vtkCommonExecutionModel-7.1.lib;vtkCommonMath-7.1.lib;vtkCommonTransforms-7.1.lib;vtkCommonMisc-7.1.lib;vtkRenderingCore-7.1.lib;vtkRenderingOpenGL2-7.1.lib;vtkRenderingAnnotation-7.1.lib;vtkRenderingLabel-7.1.lib;vtkRenderingFreeType-7.1.lib;vtkRenderingContext2D-7.1.lib;vtkRenderingContextOpenGL2-7.1.lib;vtkFiltersCore-7.1.lib;vtkFiltersGeneral-7.1.lib;vtkFiltersSources-7.1.lib;vtkFiltersGeometry-7.1.lib;vtkFiltersParallel-7.1.lib;vtkFiltersExtraction-7.1.lib;vtkFiltersModeling-7.1.lib;vtkIOCore-7.1.lib;vtkIOImage-7.1.lib;vtkImagingCore-7.1.lib;vtkInteractionStyle-7.1.lib;vtkInteractionWidgets-7.1.lib;vtkInfovisLayout-7.1.lib;vtkGUISupportQt-7.1.lib;vtkViewsCore-7.1.lib;vtkViewsContext2D-7.1.lib;vtkViewsInfovis-7.1.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -102,7 +102,7 @@
       <ImportLibrary>..\..\win$(ARCH)\$(VCVER)\lib\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>$(TBB_LIB);$(QR_LIB);$(AD_LIB);$(CAS_LIB64);$(QT_LIB);$(VTK_LIB)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKIVtk.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.1.lib;vtkCommonDataModel-7.1.lib;vtkCommonExecutionModel-7.1.lib;vtkCommonMath-7.1.lib;vtkCommonTransforms-7.1.lib;vtkCommonMisc-7.1.lib;vtkRenderingCore-7.1.lib;vtkRenderingOpenGL2-7.1.lib;vtkRenderingAnnotation-7.1.lib;vtkRenderingLabel-7.1.lib;vtkRenderingFreeType-7.1.lib;vtkRenderingContext2D-7.1.lib;vtkRenderingContextOpenGL2-7.1.lib;vtkFiltersCore-7.1.lib;vtkFiltersGeneral-7.1.lib;vtkFiltersSources-7.1.lib;vtkFiltersGeometry-7.1.lib;vtkFiltersParallel-7.1.lib;vtkFiltersExtraction-7.1.lib;vtkFiltersModeling-7.1.lib;vtkIOCore-7.1.lib;vtkIOImage-7.1.lib;vtkImagingCore-7.1.lib;vtkInteractionStyle-7.1.lib;vtkInteractionWidgets-7.1.lib;vtkInfovisLayout-7.1.lib;vtkGUISupportQt-7.1.lib;vtkViewsCore-7.1.lib;vtkViewsContext2D-7.1.lib;vtkViewsInfovis-7.1.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>QrCore.lib;QrGeom3D.lib;QrTools.lib;ActiveDataAux.lib;ActiveDataAPI.lib;ActiveData.lib;TKernel.lib;TKBool.lib;TKMath.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG2d.lib;TKG3d.lib;TKTopAlgo.lib;TKBRep.lib;TKV3d.lib;TKPrim.lib;TKLCAF.lib;TKCAF.lib;TKXCAF.lib;TKVCAF.lib;TKCDF.lib;TKService.lib;TKSTL.lib;TKXSBase.lib;TKSTEP.lib;TKIGES.lib;TKShHealing.lib;TKOffset.lib;TKMesh.lib;TKBO.lib;TKHLR.lib;TKFeat.lib;vtkCommonCore-7.1.lib;vtkCommonDataModel-7.1.lib;vtkCommonExecutionModel-7.1.lib;vtkCommonMath-7.1.lib;vtkCommonTransforms-7.1.lib;vtkCommonMisc-7.1.lib;vtkRenderingCore-7.1.lib;vtkRenderingOpenGL2-7.1.lib;vtkRenderingAnnotation-7.1.lib;vtkRenderingLabel-7.1.lib;vtkRenderingFreeType-7.1.lib;vtkRenderingContext2D-7.1.lib;vtkRenderingContextOpenGL2-7.1.lib;vtkFiltersCore-7.1.lib;vtkFiltersGeneral-7.1.lib;vtkFiltersSources-7.1.lib;vtkFiltersGeometry-7.1.lib;vtkFiltersParallel-7.1.lib;vtkFiltersExtraction-7.1.lib;vtkFiltersModeling-7.1.lib;vtkIOCore-7.1.lib;vtkIOImage-7.1.lib;vtkImagingCore-7.1.lib;vtkInteractionStyle-7.1.lib;vtkInteractionWidgets-7.1.lib;vtkInfovisLayout-7.1.lib;vtkGUISupportQt-7.1.lib;vtkViewsCore-7.1.lib;vtkViewsContext2D-7.1.lib;vtkViewsInfovis-7.1.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -144,7 +144,6 @@
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_RESurfacesPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_SectionsPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_ShadedSurfacePipeline.h" />
-    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_ShapePipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_PartPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_AxesBtnCallback.h" />
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_CalculusLawPrs.h" />
@@ -208,8 +207,6 @@
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PDomainSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PointsSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeData.h" />
-    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeDataSource.h" />
-    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeMesher.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeRobustSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeRobustTessellator.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_SurfaceSource.h" />
@@ -249,7 +246,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_RESurfacesPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_ShadedSurfacePipeline.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_ShapePipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PartPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_AxesBtnCallback.cpp" />
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_CalculusLawPrs.cpp" />
@@ -313,8 +309,6 @@
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PDomainSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PointsSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeData.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeDataSource.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeMesher.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_ShapeRobustSource.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>

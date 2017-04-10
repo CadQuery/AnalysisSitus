@@ -12,6 +12,7 @@
 #include <asiUI_Common.h>
 
 // asiAlgo includes
+#include <asiAlgo_InvertFaces.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -122,6 +123,16 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
     return;
   }
 
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+  {
+    m_progress.SendLogMessage( LogErr(Normal) << "Part Node is null or bad-formed" );
+    return;
+  }
+
+  // Prepare the context menu items
   QMenu menu;
   QAction* pSaveBREPAction    = menu.addAction("Save to BREP...");
   QAction* pShowNormsAction   = menu.addAction("Show normal vectors");
@@ -181,7 +192,24 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
     TIMER_NEW
     TIMER_GO
 
-    // TODO
+    asiAlgo_InvertFaces InvertFaces( part_n->GetAAG() );
+    //
+    if ( !InvertFaces.Perform(faceIndices) )
+    {
+      m_progress.SendLogMessage( LogErr(Normal) << "Face inversion failed" );
+      return;
+    }
+
+    // Update Data Model
+    m_model->OpenCommand();
+    {
+      asiEngine_Part(m_model).Update( InvertFaces.GetResult() );
+    }
+    m_model->CommitCommand();
+
+    // Actualize
+    m_wViewerPart->PrsMgr()->Actualize(part_n);
+    m_wViewerPart->PrsMgr()->Actualize( m_model->GetPartNode()->GetNormsRepresentation() );
 
     TIMER_FINISH
     TIMER_COUT_RESULT_MSG("Invert faces")

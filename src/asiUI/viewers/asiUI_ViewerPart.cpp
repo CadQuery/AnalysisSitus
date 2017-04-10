@@ -50,9 +50,14 @@ void GetPickedSubshapeIds(const asiVisu_PickResult&         pick_res,
   if ( !picked_actor.GetPointer() )
     return; // Nothing selected
 
+  // Retrieve Node information
+  asiVisu_NodeInfo* pNodeInfo = asiVisu_NodeInfo::Retrieve(picked_actor);
+  //
+  if ( !pNodeInfo )
+    return;
+
   // Retrieve the corresponding Node ID by picked Actor
-  ActAPI_DataObjectId
-    picked_node_id = asiVisu_NodeInfo::Retrieve(picked_actor)->GetNodeId();
+  ActAPI_DataObjectId picked_node_id = pNodeInfo->GetNodeId();
 
   // Fill coherent collections of references: sub-shape IDs against owning Nodes
   for ( TColStd_MapIteratorOfPackedMapOfInteger maskIt(subshape_mask); maskIt.More(); maskIt.Next() )

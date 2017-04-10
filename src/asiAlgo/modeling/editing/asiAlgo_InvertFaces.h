@@ -11,15 +11,20 @@
 // asiAlgo includes
 #include <asiAlgo_AAG.h>
 
+// Active Data includes
+#include <ActAPI_IAlgorithm.h>
+
 //-----------------------------------------------------------------------------
 
 //! Utility to invert orientations of faces.
-class asiAlgo_InvertFaces
+class asiAlgo_InvertFaces : public ActAPI_IAlgorithm
 {
 public:
 
   asiAlgo_EXPORT
-    asiAlgo_InvertFaces(const Handle(asiAlgo_AAG)& aag);
+    asiAlgo_InvertFaces(const Handle(asiAlgo_AAG)& aag,
+                        ActAPI_ProgressEntry       progress = NULL,
+                        ActAPI_PlotterEntry        plotter = NULL);
 
 public:
 
@@ -36,8 +41,16 @@ public:
 
 protected:
 
-  Handle(asiAlgo_AAG) m_aag;    //!< Master AAG.
-  TopoDS_Shape        m_result; //!< Result model.
+  void seek(const TopoDS_Shape& root,
+            const TopoDS_Shape& face2Invert,
+            TopoDS_Shape&       result) const;
+
+protected:
+
+  Handle(asiAlgo_AAG)  m_aag;      //!< Master AAG.
+  TopoDS_Shape         m_result;   //!< Result model.
+  ActAPI_ProgressEntry m_progress; //!< Progress entry.
+  ActAPI_PlotterEntry  m_plotter;  //!< Plotter entry.
 
 };
 

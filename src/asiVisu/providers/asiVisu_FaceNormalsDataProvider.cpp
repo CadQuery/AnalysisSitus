@@ -166,7 +166,9 @@ Handle(ActAPI_HParameterList) asiVisu_FaceNormalsDataProvider::translationSource
     return out;
 
   // Register Parameter as sensitive
-  out << face_n->Parameter(asiData_FaceNormsNode::PID_SelectedFace);
+  out << face_n->Parameter(asiData_FaceNormsNode::PID_SelectedFace)
+      << m_partNode->Parameter(asiData_PartNode::PID_Geometry)
+      << m_partNode->Parameter(asiData_PartNode::PID_AAG);
 
   return out;
 }

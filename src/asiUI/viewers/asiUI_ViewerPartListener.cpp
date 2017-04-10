@@ -200,6 +200,9 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
       return;
     }
 
+    TIMER_FINISH
+    TIMER_COUT_RESULT_MSG("Invert faces")
+
     // Update Data Model
     m_model->OpenCommand();
     {
@@ -210,9 +213,6 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
     // Actualize
     m_wViewerPart->PrsMgr()->Actualize(part_n);
     m_wViewerPart->PrsMgr()->Actualize( m_model->GetPartNode()->GetNormsRepresentation() );
-
-    TIMER_FINISH
-    TIMER_COUT_RESULT_MSG("Invert faces")
   }
   else
   {

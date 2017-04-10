@@ -10,8 +10,6 @@
 
 // OCCT includes
 #include <BRep_Builder.hxx>
-#include <BRepBuilderAPI_Copy.hxx>
-#include <BRepTools_ReShape.hxx>
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopoDS_Iterator.hxx>
 
@@ -105,52 +103,22 @@ asiAlgo_InvertFaces::asiAlgo_InvertFaces(const Handle(asiAlgo_AAG)& aag,
 //! \return true in case of success, false -- otherwise.
 bool asiAlgo_InvertFaces::Perform(const TColStd_PackedMapOfInteger& faceIds)
 {
-  Handle(BRepTools_ReShape) ReShape = new BRepTools_ReShape;
-  TopoDS_Shape master = m_aag->GetMasterCAD();
+  const TopoDS_Shape& master = m_aag->GetMasterCAD();
 
-  ///
-  const int fid = faceIds.GetMinimalMapped();
-  const TopoDS_Shape& current_face = m_aag->GetFace(fid);
-
-  ///
+  // Prepare root
   m_result = makeShape( master.ShapeType() );
 
-  this->seek(master, current_face, m_result);
-
-  //// Invert faces one by one
-  //for ( TColStd_MapIteratorOfPackedMapOfInteger mit(faceIds); mit.More(); mit.Next() )
-  //{
-  //  const int fid = mit.Key();
-  //  //
-  //  if ( !m_aag->HasFace(fid) )
-  //  {
-  //    m_progress.SendLogMessage(LogWarn(Normal) << "No face with ID %1" << fid);
-  //    continue;
-  //  }
-
-  //  BRep_Builder BB;
-  //  BB.Remove()
-
-  //  // Get face to invert
-  //  const TopoDS_Shape& current_face = m_aag->GetFace(fid);
-
-  //  // Copy face
-  //  //BRepBuilderAPI_Copy copier(current_face, false);
-  //  //const TopoDS_Shape& copy = copier.Shape();
-
-  //  ReShape->Replace( current_face, current_face.Reversed() );
-  //}
-
-  //m_result = ReShape->Apply(master);
+  // Rebuild topology graph recursively
+  this->buildTopoGraphLevel(master, faceIds, m_result);
 
   return true; // Success
 }
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_InvertFaces::seek(const TopoDS_Shape& root,
-                               const TopoDS_Shape& face2Invert,
-                               TopoDS_Shape&       result) const
+void asiAlgo_InvertFaces::buildTopoGraphLevel(const TopoDS_Shape&               root,
+                                              const TColStd_PackedMapOfInteger& faces2Invert,
+                                              TopoDS_Shape&                     result) const
 {
   BRep_Builder BB;
   for ( TopoDS_Iterator it(root, false, false); it.More(); it.Next() )
@@ -159,16 +127,23 @@ void asiAlgo_InvertFaces::seek(const TopoDS_Shape& root,
     TopoDS_Shape newResult;
 
     if ( currentShape.ShapeType() < TopAbs_FACE )
+    {
       newResult = makeShape( currentShape.ShapeType() );
+      this->buildTopoGraphLevel( currentShape, faces2Invert, newResult );
+    }
     else
     {
-      if ( currentShape.ShapeType() == TopAbs_FACE && currentShape == face2Invert )
-        newResult = currentShape.Reversed();
+      if ( currentShape.ShapeType() == TopAbs_FACE )
+      {
+        // Get index of the current face
+        const int fid = m_aag->GetFaceId(currentShape);
+
+        // Reverse if requested
+        newResult = ( faces2Invert.Contains(fid) ) ? currentShape.Reversed() : currentShape;
+      }
       else
         newResult = currentShape;
     }
     BB.Add(result, newResult);
-
-    this->seek( currentShape, face2Invert, newResult );
   }
 }

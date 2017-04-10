@@ -41,9 +41,10 @@ public:
 
 protected:
 
-  void seek(const TopoDS_Shape& root,
-            const TopoDS_Shape& face2Invert,
-            TopoDS_Shape&       result) const;
+  asiAlgo_EXPORT void
+    buildTopoGraphLevel(const TopoDS_Shape&               root,
+                        const TColStd_PackedMapOfInteger& faces2Invert,
+                        TopoDS_Shape&                     result) const;
 
 protected:
 

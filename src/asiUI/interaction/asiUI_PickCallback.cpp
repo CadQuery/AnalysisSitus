@@ -9,7 +9,7 @@
 #include <asiUI_PickCallback.h>
 
 // asiUI includes
-#include <asiUI_ViewerPart.h>
+#include <asiUI_Viewer.h>
 
 // asiVisu includes
 #include <asiVisu_PrsManager.h>
@@ -25,21 +25,28 @@
 //! \return instance of the callback class.
 asiUI_PickCallback* asiUI_PickCallback::New()
 {
-  return new asiUI_PickCallback(NULL);
+  return new asiUI_PickCallback(NULL, NULL);
 }
 
 //! Instantiation routine accepting viewer.
+//! \param model   [in] Data Model instance.
 //! \param pViewer [in] viewer to bind callback object to.
 //! \return instance of the callback class.
-asiUI_PickCallback* asiUI_PickCallback::New(asiUI_Viewer* pViewer)
+asiUI_PickCallback*
+  asiUI_PickCallback::New(const Handle(asiEngine_Model)& model,
+                          asiUI_Viewer*                  pViewer)
 {
-  return new asiUI_PickCallback(pViewer);
+  return new asiUI_PickCallback(model, pViewer);
 }
 
 //! Constructor accepting owning viewer as a parameter.
+//! \param model   [in] Data Model instance.
 //! \param pViewer [in] owning viewer.
-asiUI_PickCallback::asiUI_PickCallback(asiUI_Viewer* pViewer)
-: asiUI_ViewerCallback(pViewer), m_pickType(PickType_World)
+asiUI_PickCallback::asiUI_PickCallback(const Handle(asiEngine_Model)& model,
+                                       asiUI_Viewer*                  pViewer)
+: asiUI_ViewerCallback(pViewer),
+  m_model(model),
+  m_pickType(PickType_World)
 {}
 
 //! Default destructor.
@@ -71,10 +78,6 @@ void asiUI_PickCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
   // Skip for disabled selection
   if ( selMode & SelectionMode_None )
     return;
-
-  // Do not allow detection on global selection
-  /*if ( (selMode & SelectionMode_Workpiece) && eventId == EVENT_DETECT_DEFAULT )
-    return;*/
 
   // Now pick
   asiVisu_PickInput* pickInput = reinterpret_cast<asiVisu_PickInput*>(pCallData);

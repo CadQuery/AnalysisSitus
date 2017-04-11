@@ -1031,7 +1031,12 @@ void asiVisu_PrsManager::SetPickList(const Handle(ActAPI_HNodeList)& nodeList)
   ActAPI_NodeList::Iterator listIt( *m_bAllowedNodes.operator->() );
   for ( ; listIt.More(); listIt.Next() )
   {
-    Handle(asiVisu_Prs) prs = this->GetPresentation(listIt.Value());
+    const Handle(ActAPI_INode)& node = listIt.Value();
+    //
+    if ( !this->IsPresented(node) && !this->SetPresentation(node) )
+      continue;
+
+    Handle(asiVisu_Prs) prs = this->GetPresentation(node);
     //
     if ( prs.IsNull() )
       continue;

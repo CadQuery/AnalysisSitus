@@ -154,4 +154,11 @@ void asiUI_ControlsPartListener::reinitializeEverything()
   m_notifier.SetProgressStatus(Progress_Succeeded);
 
   m_wViewerPart->PrsMgr()->InitializePickers();
+
+  // Set Part Node as the only pickable object. This prevents UI from
+  // any reaction on "useless" actors, e.g. normal fields, etc.
+  Handle(ActAPI_HNodeList) pickableNodes = new ActAPI_HNodeList;
+  pickableNodes->Append( m_model->GetPartNode() );
+  m_wViewerPart->PrsMgr()->SetPickFromList(true);
+  m_wViewerPart->PrsMgr()->SetPickList(pickableNodes);
 }

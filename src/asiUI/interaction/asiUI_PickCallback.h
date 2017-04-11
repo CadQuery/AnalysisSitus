@@ -11,6 +11,9 @@
 // asiUI includes
 #include <asiUI_ViewerCallback.h>
 
+// asiEngine includes
+#include <asiEngine_Model.h>
+
 // asiVisu includes
 #include <asiVisu_Selection.h>
 
@@ -43,7 +46,8 @@ public:
     New();
 
   asiUI_EXPORT static asiUI_PickCallback*
-    New(asiUI_Viewer* pViewer);
+    New(const Handle(asiEngine_Model)& model,
+        asiUI_Viewer*                  pViewer);
 
   vtkTypeMacro(asiUI_PickCallback, asiUI_ViewerCallback);
 
@@ -55,6 +59,13 @@ public:
             void*         pCallData);
 
 public:
+
+  //! Sets Data Model instance.
+  //! \param model [in] Data Model instance to set.
+  void SetModel(const Handle(asiEngine_Model)& model)
+  {
+    m_model = model;
+  }
 
   //! Sets type of picker for a workpiece.
   //! \param type [in] type of picker to set.
@@ -76,14 +87,16 @@ signals:
 protected:
 
   asiUI_EXPORT
-    asiUI_PickCallback(asiUI_Viewer* pViewer);
+    asiUI_PickCallback(const Handle(asiEngine_Model)& model,
+                       asiUI_Viewer*                  pViewer);
 
   asiUI_EXPORT
     ~asiUI_PickCallback();
 
 protected:
 
-  asiVisu_PickType m_pickType; //!< Type of picker for a workpiece.
+  Handle(asiEngine_Model) m_model;    //!< Data Model instance.
+  asiVisu_PickType        m_pickType; //!< Type of picker for a workpiece.
 
 };
 

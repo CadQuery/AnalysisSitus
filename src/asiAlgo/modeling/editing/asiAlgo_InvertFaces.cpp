@@ -85,10 +85,6 @@ static TopoDS_Shape makeShape(const TopAbs_ShapeEnum type)
 
 //-----------------------------------------------------------------------------
 
-//! Constructor.
-//! \param aag      [in] AAG instance of the part to modify.
-//! \param progress [in] progress notifier.
-//! \param plotter  [in] imperative plotter.
 asiAlgo_InvertFaces::asiAlgo_InvertFaces(const Handle(asiAlgo_AAG)& aag,
                                          ActAPI_ProgressEntry       progress,
                                          ActAPI_PlotterEntry        plotter)
@@ -98,18 +94,29 @@ asiAlgo_InvertFaces::asiAlgo_InvertFaces(const Handle(asiAlgo_AAG)& aag,
 
 //-----------------------------------------------------------------------------
 
-//! Performs face inversion.
-//! \param faceIds [in] IDs of the faces to invert.
-//! \return true in case of success, false -- otherwise.
 bool asiAlgo_InvertFaces::Perform(const TColStd_PackedMapOfInteger& faceIds)
 {
   const TopoDS_Shape& master = m_aag->GetMasterCAD();
 
-  // Prepare root
-  m_result = makeShape( master.ShapeType() );
+  if ( master.ShapeType() == TopAbs_FACE )
+  {
+    m_result = master.Reversed();
+    m_progress.SendLogMessage(LogInfo(Normal) << "Reverse isolated face");
+  }
+  else if ( master.ShapeType() > TopAbs_FACE )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot invert a shape of a topological "
+                                                "type which does not contain faces");
+    return false;
+  }
+  else
+  {
+    // Prepare root
+    m_result = makeShape( master.ShapeType() );
 
-  // Rebuild topology graph recursively
-  this->buildTopoGraphLevel(master, faceIds, m_result);
+    // Rebuild topology graph recursively
+    this->buildTopoGraphLevel(master, faceIds, m_result);
+  }
 
   return true; // Success
 }

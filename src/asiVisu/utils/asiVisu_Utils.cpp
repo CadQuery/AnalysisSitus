@@ -26,9 +26,6 @@
 #include <vtkTextRepresentation.h>
 #pragma warning(pop)
 
-// IVtk includes
-#include <IVtkVTK_ShapeData.hxx>
-
 // OCCT includes
 #include <gp_XYZ.hxx>
 #include <Precision.hxx>

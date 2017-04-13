@@ -219,6 +219,15 @@ void asiVisu_Prs::UnHighlight(vtkRenderer*                  theRenderer,
   this->unHighlight(theRenderer, theSelNature);
 }
 
+//! Allows sub-classes to re-initialize the working cell picker according
+//! to their particular needs. E.g. a Presentation may prepare a cell
+//! locator tool on the available VTK data for fast picking.
+//! \param picker [in] picker to initialize at Presentation level.
+void asiVisu_Prs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
+{
+  asiVisu_NotUsed(picker); // Do nothing at super-class
+}
+
 //! Sets diagnostic tools to all existing Presentations.
 //! \param progress [in] progress notifier.
 //! \param plotter  [in] imperative plotter.

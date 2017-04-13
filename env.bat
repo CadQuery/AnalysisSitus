@@ -120,7 +120,7 @@ rem ===========================================================================
 rem Adjust PATH variable
 rem ===========================================================================
 
-set "PATH=%AS_BIN%;%CAS_BIN64%;%FREETYPE_BIN%;%AD_BIN%;%QR_BIN%;%VTK_BIN%;%QT_BIN%;%TBB_BIN%;%INNOSETUP_ROOT%;%PATH%"
+set "PATH=%AS_BIN%;%CAS_BIN64%;%FREEIMAGE_DIR%;%FREETYPE_DIR%;%AD_BIN%;%QR_BIN%;%VTK_BIN%;%QT_BIN%;%TBB_BIN%;%INNOSETUP_ROOT%;%PATH%"
 
 rem ===========================================================================
 rem Customize OCCT environment variables
@@ -144,6 +144,8 @@ echo VTK_INC               = %VTK_INC%
 echo CASROOT               = %CASROOT%
 echo CAS_BIN64             = %CAS_BIN64%
 echo CASDEB                = %CASDEB%
+echo FREEIMAGE_DIR         = %FREEIMAGE_DIR%
+echo FREETYPE_DIR          = %FREETYPE_DIR%
 echo CSF_PluginDefaults    = %CSF_PluginDefaults% 
 echo CSF_ResourcesDefaults = %CSF_ResourcesDefaults%
 echo ... 

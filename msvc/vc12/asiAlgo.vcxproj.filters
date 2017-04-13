@@ -191,9 +191,6 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_IntersectionPointCC.h">
       <Filter>Header Files\Modeling</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_KNeighborsHull.h">
-      <Filter>Header Files\Modeling</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_Membership.h">
       <Filter>Header Files\Modeling</Filter>
     </ClInclude>
@@ -326,9 +323,6 @@
       <Filter>Source Files\Modeling</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_HitFacet.cpp">
-      <Filter>Source Files\Modeling</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_KNeighborsHull.cpp">
       <Filter>Source Files\Modeling</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_QuickHull2d.cpp">

@@ -11,6 +11,10 @@
 // asiVisu includes
 #include <asiVisu_GeomPrs.h>
 
+// VTK includes
+#include <vtkCellTreeLocator.h>
+#include <vtkMapper.h>
+
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting all necessary facilities.
@@ -81,7 +85,9 @@ void asiUI_ControlsPartListener::onPartModified()
   this->cleanViewers();
   //
   m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, false);
-  m_wViewerPart->PrsMgr()->InitializePickers();
+
+  // Re-initialize pickers
+  this->reinitializePickers();
 }
 
 //-----------------------------------------------------------------------------
@@ -153,6 +159,15 @@ void asiUI_ControlsPartListener::reinitializeEverything()
   m_notifier.StepProgress(1, 1);
   m_notifier.SetProgressStatus(Progress_Succeeded);
 
+  // Re-initialize pickers
+  this->reinitializePickers();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reinitialize pickers.
+void asiUI_ControlsPartListener::reinitializePickers()
+{
   m_wViewerPart->PrsMgr()->InitializePickers();
 
   // Set Part Node as the only pickable object. This prevents UI from

@@ -301,6 +301,7 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& node,
       this->InitPresentation(node);
       this->RenderPresentation(node); // Render before update to adjust trihedron correctly
       this->UpdatePresentation(node, false);
+      this->InitPicker(node);
     }
     else
     {
@@ -715,6 +716,29 @@ void asiVisu_PrsManager::DeleteAllPresentations()
     this->DeletePresentation( it.Value() );
   //
   m_nodePresentations.Clear();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_PrsManager::InitPicker(const Handle(ActAPI_INode)& node)
+{
+  this->InitPicker( node->GetId() );
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_PrsManager::InitPicker(const ActAPI_DataObjectId& nodeId)
+{
+  if ( !m_nodePresentations.IsBound(nodeId) )
+  {
+    vtkErrorMacro( << "Presentation does not exist" );
+    return;
+  }
+
+  // Ask presentation to initialize picker
+  const Handle(asiVisu_Prs)& prs = m_nodePresentations.Find(nodeId);
+  //
+  prs->InitializePicker(m_cellPicker);
 }
 
 //-----------------------------------------------------------------------------

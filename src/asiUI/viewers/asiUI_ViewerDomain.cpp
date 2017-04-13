@@ -306,7 +306,6 @@ void asiUI_ViewerDomain::onKillEdges()
 
   // Update viewer
   this->PrsMgr()->DeleteAllPresentations();
-  this->PrsMgr()->InitializePickers();
   this->PrsMgr()->Actualize( N.get() );
 
   // Notify
@@ -349,6 +348,5 @@ void asiUI_ViewerDomain::onJoinEdges()
 
   // Update viewer
   this->PrsMgr()->DeleteAllPresentations();
-  this->PrsMgr()->InitializePickers();
   this->PrsMgr()->Actualize( N.get() );
 }

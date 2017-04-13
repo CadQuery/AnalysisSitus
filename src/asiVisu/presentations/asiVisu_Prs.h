@@ -24,6 +24,7 @@
 #include <NCollection_Sequence.hxx>
 
 // VTK includes
+#include <vtkCellPicker.h>
 #include <vtkRenderer.h>
 
 //-----------------------------------------------------------------------------
@@ -100,6 +101,11 @@ public:
   asiVisu_EXPORT void
     UnHighlight(vtkRenderer*                  theRenderer,
                 const asiVisu_SelectionNature theSelNature) const;
+
+public:
+
+  asiVisu_EXPORT virtual void
+    InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const;
 
 public:
 

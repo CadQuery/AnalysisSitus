@@ -678,7 +678,6 @@ void asiUI_ControlsFeature::onDetachSelected()
 
   // Update viewer
   m_partViewer->PrsMgr()->DeleteAllPresentations();
-  m_partViewer->PrsMgr()->InitializePickers();
   m_partViewer->PrsMgr()->Actualize( part_n.get() );
 }
 
@@ -724,7 +723,6 @@ void asiUI_ControlsFeature::onDeleteSelected()
 
   // Update viewer
   m_partViewer->PrsMgr()->DeleteAllPresentations();
-  m_partViewer->PrsMgr()->InitializePickers();
   m_partViewer->PrsMgr()->Actualize( part_n.get() );
 }
 
@@ -770,7 +768,6 @@ void asiUI_ControlsFeature::onDeleteSelectedFull()
 
   // Update viewer
   m_partViewer->PrsMgr()->DeleteAllPresentations();
-  m_partViewer->PrsMgr()->InitializePickers();
   m_partViewer->PrsMgr()->Actualize( part_n.get() );
 }
 

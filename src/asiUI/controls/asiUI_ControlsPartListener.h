@@ -57,6 +57,9 @@ protected:
   asiUI_EXPORT virtual void
     reinitializeEverything();
 
+  asiUI_EXPORT void
+    reinitializePickers();
+
 protected:
 
   asiUI_ControlsPart*     m_wControls;      //!< Controls.

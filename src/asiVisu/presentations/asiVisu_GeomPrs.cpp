@@ -16,6 +16,7 @@
 
 // VTK includes
 #include <vtkCellData.h>
+#include <vtkCellTreeLocator.h>
 #include <vtkIdTypeArray.h>
 #include <vtkMapper.h>
 #include <vtkPolyData.h>
@@ -193,6 +194,21 @@ void asiVisu_GeomPrs::DoVertices(const bool on) const
     return;
 
   on ? pl->SharedVerticesOn() : pl->SharedVerticesOff();*/
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_GeomPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
+{
+  // Set octee locator to speed up cell picking
+  vtkSmartPointer<vtkCellTreeLocator>
+    cellLocator = vtkSmartPointer<vtkCellTreeLocator>::New();
+  //
+  cellLocator->SetDataSet( this->MainActor()->GetMapper()->GetInput() );
+  cellLocator->AutomaticOn();
+  cellLocator->BuildLocator();
+  //
+  picker->AddLocator(cellLocator);
 }
 
 //-----------------------------------------------------------------------------

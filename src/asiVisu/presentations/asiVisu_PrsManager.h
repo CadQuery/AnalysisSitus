@@ -185,6 +185,14 @@ public:
 
 //-----------------------------------------------------------------------------
 
+  asiVisu_EXPORT virtual void
+    InitPicker(const Handle(ActAPI_INode)& node);
+
+  asiVisu_EXPORT virtual void
+    InitPicker(const ActAPI_DataObjectId& nodeId);
+
+//-----------------------------------------------------------------------------
+
 // Selection management:
 public:
 

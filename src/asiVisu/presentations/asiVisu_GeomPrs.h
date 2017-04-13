@@ -20,6 +20,7 @@
 
 // VTK includes
 #include <vtkActor.h>
+#include <vtkCellPicker.h>
 
 DEFINE_STANDARD_HANDLE(asiVisu_GeomPrs, asiVisu_Prs)
 
@@ -64,6 +65,11 @@ public:
   asiVisu_EXPORT void DoColor(const QColor& color) const;
   asiVisu_EXPORT void DoUnColor() const;
   asiVisu_EXPORT void DoVertices(const bool on) const;
+
+public:
+
+  asiVisu_EXPORT virtual void
+    InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const;
 
 public:
 

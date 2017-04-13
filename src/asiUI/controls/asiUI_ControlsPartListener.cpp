@@ -154,13 +154,15 @@ void asiUI_ControlsPartListener::reinitializeEverything()
     m_wViewerPart->PrsMgr()->SetPresentation( m_model->GetPartNode() );
   //
   m_wViewerPart->PrsMgr()->SetDiagnosticTools(m_notifier, NULL);
+
+  // Re-initialize pickers
+  this->reinitializePickers();
+
+  // Actualize
   m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, true);
 
   m_notifier.StepProgress(1, 1);
   m_notifier.SetProgressStatus(Progress_Succeeded);
-
-  // Re-initialize pickers
-  this->reinitializePickers();
 }
 
 //-----------------------------------------------------------------------------

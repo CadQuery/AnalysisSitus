@@ -208,6 +208,7 @@ void asiVisu_GeomPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& pic
   cellLocator->AutomaticOn();
   cellLocator->BuildLocator();
   //
+  picker->RemoveAllLocators();
   picker->AddLocator(cellLocator);
 }
 

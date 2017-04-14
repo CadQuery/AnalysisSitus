@@ -274,54 +274,11 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& node,
                                    const bool                  doFitContents,
                                    const bool                  withRepaint)
 {
-  if ( node.IsNull() )
-    return;
+  Handle(ActAPI_HNodeList) oneNodeList = new ActAPI_HNodeList;
+  oneNodeList->Append(node);
 
-  // Filter Nodes with bad domain-specific data
-  if ( !node->IsValidData() )
-    return;
-
-  // Initialize Presentation if not yet
-  bool isPrsOk = true;
-  if ( !this->IsPresented(node) )
-  {
-    if ( !this->SetPresentation(node) )
-      isPrsOk = false;
-  }
-
-  if ( isPrsOk )
-  {
-    // Clean up current selection
-    m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
-    m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
-
-    // Finally, update Presentation
-    if ( this->GetPresentation(node)->IsVisible() )
-    {
-      this->InitPresentation(node);
-      this->RenderPresentation(node); // Render before update to adjust trihedron correctly
-      this->UpdatePresentation(node, false);
-      this->InitPicker(node);
-    }
-    else
-    {
-      this->DeRenderPresentation(node);
-    }
-  }
-
-  // Proceed with children if requested
-  if ( withChildren )
-  {
-    for ( Handle(ActAPI_IChildIterator) it = node->GetChildIterator(); it->More(); it->Next() )
-      this->Actualize(it->Value(), true, false, false);
-  }
-
-  if ( doFitContents )
-    asiVisu_Utils::AdjustCamera( m_renderer, this->PropsByTrihedron() );
-
-  // Update view window
-  if ( withRepaint && m_widget )
-    m_widget->repaint();
+  // Call common method
+  this->Actualize(oneNodeList, withChildren, doFitContents, withRepaint);
 }
 
 //-----------------------------------------------------------------------------
@@ -341,8 +298,52 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& nodeList,
   if ( nodeList.IsNull() )
     return;
 
+  // Re-initialize all pickers (otherwise picking gives strange results...)
+  this->InitializePickers();
+
+  // Actualize each Node from the list individually
   for ( ActAPI_NodeList::Iterator nit( *nodeList.operator->() ); nit.More(); nit.Next() )
-    this->Actualize(nit.Value(), withChildren, false, false);
+  {
+    const Handle(ActAPI_INode)& node = nit.Value();
+    //
+    if ( node.IsNull() || !node->IsValidData() )
+      return;
+
+    // Initialize Presentation if not yet
+    bool isPrsOk = true;
+    if ( !this->IsPresented(node) )
+    {
+      if ( !this->SetPresentation(node) )
+        isPrsOk = false;
+    }
+
+    if ( isPrsOk )
+    {
+      // Clean up current selection
+      m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
+      m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
+
+      // Finally, update Presentation
+      if ( this->GetPresentation(node)->IsVisible() )
+      {
+        this->InitPresentation(node);
+        this->RenderPresentation(node); // Render before update to adjust trihedron correctly
+        this->UpdatePresentation(node, false);
+        this->InitPicker(node);
+      }
+      else
+      {
+        this->DeRenderPresentation(node);
+      }
+    }
+
+    // Proceed with children if requested
+    if ( withChildren )
+    {
+      for ( Handle(ActAPI_IChildIterator) child_it = node->GetChildIterator(); child_it->More(); child_it->Next() )
+        this->Actualize(child_it->Value(), true, false, false);
+    }
+  }
 
   if ( doFitContents )
     asiVisu_Utils::AdjustCamera( m_renderer, this->PropsByTrihedron() );

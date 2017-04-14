@@ -653,7 +653,7 @@ void asiUI_ControlsFeature::onDetachSelected()
   TIMER_NEW
   TIMER_GO
 
-  // Delete selected faces
+  // Deatch selected faces
   asiAlgo_DetachFaces detacher(part);
   if ( !detacher.Perform(selected) )
   {

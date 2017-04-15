@@ -157,7 +157,7 @@ asiVisu_PrsManager::asiVisu_PrsManager()
   m_renderer->SetBackground(0.15, 0.15, 0.15);
 
   // Initialize employed pickers
-  this->InitializePickers();
+  this->InitializePickers(  Handle(ActAPI_INode)() );
 
   // Set default selection mode
   m_iSelectionModes = SelectionMode_None;
@@ -298,9 +298,6 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& nodeList,
   if ( nodeList.IsNull() )
     return;
 
-  // Re-initialize all pickers (otherwise picking gives strange results...)
-  this->InitializePickers();
-
   // Actualize each Node from the list individually
   for ( ActAPI_NodeList::Iterator nit( *nodeList.operator->() ); nit.More(); nit.Next() )
   {
@@ -329,7 +326,6 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& nodeList,
         this->InitPresentation(node);
         this->RenderPresentation(node); // Render before update to adjust trihedron correctly
         this->UpdatePresentation(node, false);
-        this->InitPicker(node);
       }
       else
       {
@@ -344,6 +340,9 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& nodeList,
         this->Actualize(child_it->Value(), true, false, false);
     }
   }
+
+  // Re-initialize all pickers (otherwise picking gives strange results...)
+  this->InitializePickers(nodeList);
 
   if ( doFitContents )
     asiVisu_Utils::AdjustCamera( m_renderer, this->PropsByTrihedron() );
@@ -883,6 +882,9 @@ ActAPI_DataObjectIdList
     //
     if ( !pickedActor )
     {
+#if defined COUT_DEBUG
+      std::cout << "No picked actor" << std::endl;
+#endif
       m_widget->repaint();
       return result; // Nothing has been picked
     }
@@ -1011,7 +1013,12 @@ ActAPI_DataObjectIdList
   // Retrieve the corresponding Presentation by data object's ID
   asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve(pickedActor);
   if ( !nodeInfo )
+  {
+#if defined COUT_DEBUG
+    std::cout << "NULL Node information key: highlight will not happen" << std::endl;
+#endif
     return result;
+  }
   //
   ActAPI_DataObjectId nodeId = nodeInfo->GetNodeId();
   result.Append(nodeId);
@@ -1294,11 +1301,25 @@ void asiVisu_PrsManager::Initialize(QWidget* pWidget, const bool isOffscreen)
 
 //-----------------------------------------------------------------------------
 
-//! The following logic is normally a part of ctor, but we have it as a
-//! distinct method... Shame of us... But the problem is that OCCT picker
-//! seems to be not that good to survive without re-initialization from
-//! time to time...
-void asiVisu_PrsManager::InitializePickers()
+//! Initializes pickers and lets Data Model participate in such initialization.
+//! \param nodeList [in] list of Data Nodes which may want to perform some
+//!                      additional initializations (e.g. to construct and
+//!                      settle down accelerating structures).
+void asiVisu_PrsManager::InitializePickers(const Handle(ActAPI_INode)& node)
+{
+  Handle(ActAPI_HNodeList) oneNodeList = new ActAPI_HNodeList;
+  oneNodeList->Append(node);
+  //
+  this->InitializePickers(oneNodeList);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Initializes pickers and lets Data Model participate in such initialization.
+//! \param nodeList [in] list of Data Nodes which may want to perform some
+//!                      additional initializations (e.g. to construct and
+//!                      settle down accelerating structures).
+void asiVisu_PrsManager::InitializePickers(const Handle(ActAPI_HNodeList)& nodeList)
 {
   // Initialize cell picker
   m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
@@ -1310,6 +1331,22 @@ void asiVisu_PrsManager::InitializePickers()
 
   // Initialize world picker
   m_worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
+
+  if ( nodeList.IsNull() || nodeList->IsEmpty() )
+    return;
+
+  // Actualize each Node from the list individually
+  for ( ActAPI_NodeList::Iterator nit( *nodeList.operator->() ); nit.More(); nit.Next() )
+  {
+    const Handle(ActAPI_INode)& node = nit.Value();
+    //
+    if ( node.IsNull() || !node->IsValidData() )
+      return;
+
+    // Finally, update Presentation
+    if ( this->GetPresentation(node) )
+      this->InitPicker(node);
+  }
 }
 
 //-----------------------------------------------------------------------------

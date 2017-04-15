@@ -26,6 +26,11 @@
 // OCCT includes
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
+#define COUT_DEBUG
+#if defined COUT_DEBUG
+  #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
+
 //-----------------------------------------------------------------------------
 
 //! Convert integer value to a color.
@@ -187,16 +192,23 @@ void asiVisu_GeomPrs::DoUnColor() const
 
 void asiVisu_GeomPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
 {
-  // Set octee locator to speed up cell picking
-  vtkSmartPointer<vtkCellTreeLocator>
-    cellLocator = vtkSmartPointer<vtkCellTreeLocator>::New();
-  //
-  cellLocator->SetDataSet( this->MainActor()->GetMapper()->GetInput() );
-  cellLocator->AutomaticOn();
-  cellLocator->BuildLocator();
-  //
   picker->RemoveAllLocators();
-  picker->AddLocator(cellLocator);
+
+  // Set octee locators to speed up cell picking
+  if ( this->MainActor() )
+  {
+    vtkSmartPointer<vtkCellTreeLocator>
+      facetLocator = vtkSmartPointer<vtkCellTreeLocator>::New();
+    //
+    facetLocator->SetDataSet( this->MainActor()->GetMapper()->GetInput() );
+    facetLocator->AutomaticOn();
+    facetLocator->BuildLocator();
+    //
+    picker->AddLocator(facetLocator);
+  }
+
+  // NOTICE: we do not apply cell locator for selection of edges as it seems
+  //         to work weird (at least for vtkCellTreeLocator)
 }
 
 //-----------------------------------------------------------------------------
@@ -212,28 +224,7 @@ void asiVisu_GeomPrs::beforeInitPipelines()
 //! Callback for initialization of Presentation pipelines.
 void asiVisu_GeomPrs::afterInitPipelines()
 {
-  //// Access pipelines dedicated for highlighting
-  //const Handle(asiVisu_ShapePipeline)&
-  //  pick_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() ),
-  //  detect_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
-  ////
-  //const Handle(asiVisu_ShapeDataProvider)&
-  //  pick_dp = Handle(asiVisu_ShapeDataProvider)::DownCast( this->dataProviderPick() ),
-  //  detect_dp = Handle(asiVisu_ShapeDataProvider)::DownCast( this->dataProviderDetect() );
-
-  //if ( !pick_dp.IsNull() )
-  //{
-  //  pick_dp->SetSubShapes(new TColStd_HPackedMapOfInteger);
-  //  pick_pl->VoidSubShapesOn(); // Block selection pipelining initially
-  //  pick_pl->SetInput(pick_dp); // Init them as well (as selection pipelines are not automated)
-  //}
-
-  //if ( !detect_dp.IsNull() )
-  //{
-  //  detect_dp->SetSubShapes(new TColStd_HPackedMapOfInteger);
-  //  detect_pl->VoidSubShapesOn(); // Block selection pipelining initially
-  //  detect_pl->SetInput(detect_dp); // Init them as well (as selection pipelines are not automated)
-  //}
+  // Do nothing...
 }
 
 //-----------------------------------------------------------------------------
@@ -242,13 +233,7 @@ void asiVisu_GeomPrs::afterInitPipelines()
 //! kernel update routine starts.
 void asiVisu_GeomPrs::beforeUpdatePipelines() const
 {
-  /*Handle(asiData_PartNode) N = Handle(asiData_PartNode)::DownCast( this->GetNode() );
-
-  asiVisu_DisplayMode aDMode = (asiVisu_DisplayMode) N->GetDisplayMode();
-  if ( aDMode == DisplayMode_Undefined || aDMode == DisplayMode_Shading )
-    this->DoShading();
-  else
-    this->DoWireframe();*/
+  // Do nothing...
 }
 
 //-----------------------------------------------------------------------------
@@ -257,44 +242,7 @@ void asiVisu_GeomPrs::beforeUpdatePipelines() const
 //! kernel update routine completes.
 void asiVisu_GeomPrs::afterUpdatePipelines() const
 {
-  ///* ====================================
-  // *  Update selection pipelines as well
-  // * ==================================== */
-
-  //// Access pipelines dedicated for highlighting
-  //const Handle(asiVisu_ShapePipeline)&
-  //  pick_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() ),
-  //  detect_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
-
-  //// IMPORTANT: We update our highlighting pipelines here just to make things
-  //// faster. The better place to do that is "highlight" method, because
-  //// we do not really need to build highlighting pipelines just after
-  //// the Nodal Presentation is created. Logically, we would better to prepare
-  //// this pipeline only on actual selection request from user. However, in the
-  //// latter case the reactivity of application might significantly slow down
-  //if ( !pick_pl.IsNull() )
-  //  pick_pl->Update();
-  ////
-  //if ( !detect_pl.IsNull() )
-  //  detect_pl->Update();
-
-  ///* ====================================
-  // *  Actualize visualization properties
-  // * ==================================== */
-
-  //Handle(asiData_PartNode) N = Handle(asiData_PartNode)::DownCast( this->GetNode() );
-
-  //// Custom color (if any)
-  //if ( N->HasColor() )
-  //{
-  //  QColor color = ::IntToColor( N->GetColor() );
-  //  this->DoColor(color);
-  //}
-  //else
-  //  this->DoUnColor();
-
-  //// Visualization of vertices
-  //this->DoVertices( N->HasVertices() );
+  // Do nothing...
 }
 
 //-----------------------------------------------------------------------------
@@ -309,10 +257,32 @@ void asiVisu_GeomPrs::highlight(vtkRenderer*                  renderer,
 {
   asiVisu_NotUsed(renderer);
 
-  Handle(asiVisu_PartPipeline)
-    mainPl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  // #################################################
+  // FACE selection
+  if ( pickRes.GetPickedActor() == this->MainActor() )
+  {
+#if defined COUT_DEBUG
+    std::cout << "Picked MAIN actor" << std::endl;
+#endif
 
-  mainPl->SetPickedElements( pickRes.GetPickedElementIds(), selNature );
+    Handle(asiVisu_PartPipeline)
+      mainPl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+
+    mainPl->SetPickedElements( pickRes.GetPickedElementIds(), selNature );
+  }
+  // #################################################
+  // EDGE selection
+  else if ( pickRes.GetPickedActor() == this->ContourActor() )
+  {
+#if defined COUT_DEBUG
+    std::cout << "Picked CONTOUR actor" << std::endl;
+#endif
+
+    Handle(asiVisu_PartEdgesPipeline)
+      contourPl = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
+
+    contourPl->SetPickedElements( pickRes.GetPickedElementIds(), selNature );
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -327,8 +297,11 @@ void asiVisu_GeomPrs::unHighlight(vtkRenderer*                  renderer,
 
   Handle(asiVisu_PartPipeline)
     mainPl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_PartEdgesPipeline)
+    contourPl = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
 
   mainPl->ResetPickedElements(selNature);
+  contourPl->ResetPickedElements(selNature);
 }
 
 //-----------------------------------------------------------------------------
@@ -337,20 +310,9 @@ void asiVisu_GeomPrs::unHighlight(vtkRenderer*                  renderer,
 //! \param renderer [in] renderer.
 void asiVisu_GeomPrs::renderPipelines(vtkRenderer* renderer) const
 {
-  //Handle(asiVisu_ShapePipeline)
-  //  pick_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() ),
-  //  detect_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
+  asiVisu_NotUsed(renderer);
 
-  //if ( pick_pl.IsNull() || detect_pl.IsNull() )
-  //  return;
-
-  //// Detection is initially blocked
-  //detect_pl->VoidSubShapesOn();
-
-  //// Picking pipeline must be added to renderer the LAST (!). Otherwise
-  //// we experience some strange coloring bug because of their coincidence
-  ///* (1) */ detect_pl->AddToRenderer(theRenderer);
-  ///* (2) */ pick_pl->AddToRenderer(theRenderer);
+  // Do nothing...
 }
 
 //-----------------------------------------------------------------------------
@@ -359,13 +321,7 @@ void asiVisu_GeomPrs::renderPipelines(vtkRenderer* renderer) const
 //! \param renderer [in] renderer.
 void asiVisu_GeomPrs::deRenderPipelines(vtkRenderer* renderer) const
 {
-  /*Handle(asiVisu_ShapePipeline)
-    pick_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPickPipeline() ),
-    detect_pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetDetectPipeline() );
+  asiVisu_NotUsed(renderer);
 
-  if ( !pick_pl.IsNull() )
-    pick_pl->RemoveFromRenderer(theRenderer);
-
-  if ( !detect_pl.IsNull() )
-    detect_pl->RemoveFromRenderer(theRenderer);*/
+  // Do nothing...
 }

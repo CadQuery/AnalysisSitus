@@ -74,7 +74,12 @@ public:
 
   vtkActor* MainActor() const
   {
-    return this->GetPipeline(Pipeline_Main)->Actor();
+    return this->GetPipeline(Pipeline_Main).IsNull() ? NULL : this->GetPipeline(Pipeline_Main)->Actor();
+  }
+
+  vtkActor* ContourActor() const
+  {
+    return this->GetPipeline(Pipeline_Contour).IsNull() ? NULL : this->GetPipeline(Pipeline_Contour)->Actor();
   }
 
 private:

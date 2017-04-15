@@ -14,6 +14,7 @@
 #include <asiVisu_Prs.h>
 
 // Active Data (API) includes
+#include <ActAPI_INode.h>
 #include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
 
@@ -265,7 +266,10 @@ public:
                const bool isOffscreen = false);
 
   asiVisu_EXPORT void
-    InitializePickers();
+    InitializePickers(const Handle(ActAPI_INode)& node);
+
+  asiVisu_EXPORT void
+    InitializePickers(const Handle(ActAPI_HNodeList)& nodeList);
 
   asiVisu_EXPORT QVTKWidget*
     GetQVTKWidget() const;

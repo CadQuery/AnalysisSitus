@@ -101,7 +101,7 @@ void asiUI_ControlsPartListener::onVerticesOn()
   prs->VerticesOn();
 
   // Re-initialize pickers as the data set has changed
-  m_wViewerPart->PrsMgr()->InitializePickers();
+  m_wViewerPart->PrsMgr()->InitializePickers( Handle(ActAPI_INode)() );
   m_wViewerPart->Repaint();
 }
 
@@ -116,7 +116,7 @@ void asiUI_ControlsPartListener::onVerticesOff()
   prs->VerticesOff();
 
   // Re-initialize pickers as the data set has changed
-  m_wViewerPart->PrsMgr()->InitializePickers();
+  m_wViewerPart->PrsMgr()->InitializePickers( Handle(ActAPI_INode)() );
   m_wViewerPart->Repaint();
 }
 
@@ -125,7 +125,11 @@ void asiUI_ControlsPartListener::onVerticesOff()
 //! Reaction on enabling selection of faces.
 void asiUI_ControlsPartListener::onSelectionFacesOn()
 {
-  this->onPartModified(); // TODO: this is completely weird
+  Handle(asiVisu_GeomPrs)
+    prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+
+  prs->MainActor()->SetPickable(1);
+  prs->ContourActor()->SetPickable(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -133,7 +137,11 @@ void asiUI_ControlsPartListener::onSelectionFacesOn()
 //! Reaction on enabling selection of edges.
 void asiUI_ControlsPartListener::onSelectionEdgesOn()
 {
-  this->onPartModified(); // TODO: this is completely weird
+  Handle(asiVisu_GeomPrs)
+    prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+
+  prs->MainActor()->SetPickable(0);
+  prs->ContourActor()->SetPickable(1);
 }
 
 //-----------------------------------------------------------------------------

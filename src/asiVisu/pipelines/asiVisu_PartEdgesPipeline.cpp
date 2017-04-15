@@ -10,36 +10,21 @@
 
 // asiVisu includes
 #include <asiVisu_PartDataProvider.h>
+#include <asiVisu_PartNodeInfo.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkActor.h>
 #include <vtkInformation.h>
-#include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 
 //-----------------------------------------------------------------------------
 
 asiVisu_PartEdgesPipeline::asiVisu_PartEdgesPipeline(const vtkSmartPointer<asiVisu_ShapeRobustSource>& source)
 //
-: asiVisu_Pipeline   ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
-  m_bMapperColorsSet ( false ),
-  m_source           ( source )
+: asiVisu_PartPipelineBase(source)
 {
-  /* ========================
-   *  Prepare custom filters
-   * ======================== */
-
-  // Display mode filter
-  m_dmFilter = vtkSmartPointer<asiVisu_DisplayModeFilter>::New();
   m_dmFilter->SetDisplayMode(DisplayMode_Wireframe);
-
-  // Set line width
-  this->Actor()->GetProperty()->SetLineWidth(1);
-  this->Actor()->GetProperty()->SetPointSize(8);
-
-  // Compose pipeline
-  this->append(m_dmFilter);
 }
 
 //-----------------------------------------------------------------------------
@@ -71,37 +56,17 @@ void asiVisu_PartEdgesPipeline::SetInput(const Handle(asiVisu_DataProvider)& dat
 
   if ( DP->MustExecute( this->GetMTime() ) )
   {
+    // Clear cached data which is by design actual for the current state of
+    // source only. The source changes, so the cache needs nullification
+    this->clearCache();
+
+    // Bind to a Data Node using information key
+    asiVisu_PartNodeInfo::Store( DP->GetNodeID(), this->Actor() );
+
     // Initialize pipeline
     this->SetInputConnection( m_source->GetOutputPort() );
   }
 
   // Update modification timestamp
   this->Modified();
-}
-
-//-----------------------------------------------------------------------------
-
-//! Callback for AddToRenderer() routine. Good place to adjust visualization
-//! properties of the pipeline's actor.
-void asiVisu_PartEdgesPipeline::callback_add_to_renderer(vtkRenderer*)
-{
-  this->Actor()->GetProperty()->SetInterpolationToPhong();
-}
-
-//-----------------------------------------------------------------------------
-
-//! Callback for RemoveFromRenderer() routine.
-void asiVisu_PartEdgesPipeline::callback_remove_from_renderer(vtkRenderer*)
-{}
-
-//-----------------------------------------------------------------------------
-
-//! Callback for Update() routine.
-void asiVisu_PartEdgesPipeline::callback_update()
-{
-  if ( !m_bMapperColorsSet )
-  {
-    asiVisu_Utils::InitShapeMapper(m_mapper);
-    m_bMapperColorsSet = true;
-  }
 }

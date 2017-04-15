@@ -35,10 +35,10 @@
 void asiUI_JournalIV::CLEAN()
 {
   this->prsManager2d()->DeleteAllPresentations();
-  this->prsManager2d()->InitializePickers();
+  this->prsManager2d()->InitializePickers( Handle(ActAPI_INode)() );
   //
   this->prsManager3d()->DeleteAllPresentations();
-  this->prsManager3d()->InitializePickers();
+  this->prsManager3d()->InitializePickers( Handle(ActAPI_INode)() );
 }
 
 //---------------------------------------------------------------------------//

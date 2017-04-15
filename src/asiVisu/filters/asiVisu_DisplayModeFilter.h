@@ -38,6 +38,18 @@ public:
   asiVisu_EXPORT asiVisu_DisplayMode
     GetDisplayMode() const;
 
+  //! Adds primitive to the current list of shape primitives.
+  //! This method is used for customization of predefined display modes.
+  //! \param prim [in] primitive type to add.
+  asiVisu_EXPORT void
+    AddPrimitive(const asiVisu_ShapePrimitive prim);
+
+  //! Removes primitive from the current list of shape primitives.
+  //! This method is used for customization of predefined display modes.
+  //! \param prim [in] primitive type to remove.
+  asiVisu_EXPORT void
+    RemovePrimitive(const asiVisu_ShapePrimitive prim);
+
 protected:
 
   asiVisu_EXPORT virtual int
@@ -52,7 +64,8 @@ protected:
 
 protected:
 
-  asiVisu_DisplayMode m_displayMode; //!< Display mode.
+  asiVisu_DisplayMode        m_displayMode;        //!< Display mode.
+  TColStd_PackedMapOfInteger m_modePrimitiveTypes; //!< Primitive types corresponding to the display mode.
 
 };
 

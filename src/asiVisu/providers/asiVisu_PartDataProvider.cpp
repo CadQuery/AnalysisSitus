@@ -78,6 +78,13 @@ double asiVisu_PartDataProvider::GetAngularDeflection() const
 
 //-----------------------------------------------------------------------------
 
+bool asiVisu_PartDataProvider::HasVertices() const
+{
+  return m_node->HasVertices();
+}
+
+//-----------------------------------------------------------------------------
+
 //! \return copy.
 Handle(asiVisu_PartDataProvider) asiVisu_PartDataProvider::Clone() const
 {
@@ -96,7 +103,8 @@ Handle(ActAPI_HParameterList) asiVisu_PartDataProvider::translationSources() con
   params << m_node->Parameter(asiData_PartNode::PID_Geometry)
          << m_node->Parameter(asiData_PartNode::PID_AAG)
          << m_node->Parameter(asiData_PartNode::PID_TessLinDefl)
-         << m_node->Parameter(asiData_PartNode::PID_TessAngDefl);
+         << m_node->Parameter(asiData_PartNode::PID_TessAngDefl)
+         << m_node->Parameter(asiData_PartNode::PID_HasVertices);
 
   return params.List;
 }

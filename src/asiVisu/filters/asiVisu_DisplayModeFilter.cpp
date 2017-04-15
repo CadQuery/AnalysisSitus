@@ -38,9 +38,14 @@ asiVisu_DisplayModeFilter::asiVisu_DisplayModeFilter()
 
 void asiVisu_DisplayModeFilter::SetDisplayMode(const asiVisu_DisplayMode mode)
 {
-  if ( m_displayMode != mode )
+  // Get primitive types employed in the display mode
+  TColStd_PackedMapOfInteger
+    modePrimitiveTypes = asiVisu_DisplayModeProvider::GetPrimitivesForMode(mode);
+
+  if ( !m_modePrimitiveTypes.IsEqual(modePrimitiveTypes) )
   {
-    m_displayMode = mode;
+    m_displayMode        = mode;
+    m_modePrimitiveTypes = modePrimitiveTypes;
 
     this->Modified();
   }
@@ -55,6 +60,30 @@ asiVisu_DisplayMode asiVisu_DisplayModeFilter::GetDisplayMode() const
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_DisplayModeFilter::AddPrimitive(const asiVisu_ShapePrimitive prim)
+{
+  if ( !m_modePrimitiveTypes.Contains(prim) )
+  {
+    m_modePrimitiveTypes.Add(prim);
+    //
+    this->Modified();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_DisplayModeFilter::RemovePrimitive(const asiVisu_ShapePrimitive prim)
+{
+  if ( m_modePrimitiveTypes.Contains(prim) )
+  {
+    m_modePrimitiveTypes.Remove(prim);
+    //
+    this->Modified();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
                                            vtkInformationVector** pInputVector,
                                            vtkInformationVector*  pOutputVector)
@@ -64,10 +93,6 @@ int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
     vtkErrorMacro( << "asiVisu_DisplayModeFilter executed with undefined display mode" );
     return 0;
   }
-
-  // Get primitive types employed in the display mode
-  TColStd_PackedMapOfInteger
-    modePrimitiveTypes = asiVisu_DisplayModeProvider::GetPrimitivesForMode(m_displayMode);
 
   // Get the input and output
   vtkInformation* pInInfo  = pInputVector[0]->GetInformationObject(0);
@@ -104,7 +129,7 @@ int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
   {
     const int primTypeOfACell = (int) pInputCellTypeArray->GetValue(cellId);
 
-    if ( modePrimitiveTypes.Contains(primTypeOfACell) )
+    if ( m_modePrimitiveTypes.Contains(primTypeOfACell) )
     {
       // Add a cell id to output if it's value is in the set
       cellIdsToPass->InsertNextId(cellId);

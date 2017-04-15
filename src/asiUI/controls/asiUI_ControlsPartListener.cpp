@@ -95,7 +95,8 @@ void asiUI_ControlsPartListener::onPartModified()
 //! Reaction on enabling visualization of vertices.
 void asiUI_ControlsPartListener::onVerticesOn()
 {
-  this->onPartModified(); // TODO: this is completely weird
+  // Actualize as this visualization property (vertices on/off) is persistent
+  m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -103,7 +104,8 @@ void asiUI_ControlsPartListener::onVerticesOn()
 //! Reaction on disabling visualization of vertices.
 void asiUI_ControlsPartListener::onVerticesOff()
 {
-  this->onPartModified(); // TODO: this is completely weird
+  // Actualize as this visualization property (vertices on/off) is persistent
+  m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -170,8 +172,6 @@ void asiUI_ControlsPartListener::reinitializeEverything()
 //! Reinitialize pickers.
 void asiUI_ControlsPartListener::reinitializePickers()
 {
-  m_wViewerPart->PrsMgr()->InitializePickers();
-
   // Set Part Node as the only pickable object. This prevents UI from
   // any reaction on "useless" actors, e.g. normal fields, etc.
   Handle(ActAPI_HNodeList) pickableNodes = new ActAPI_HNodeList;

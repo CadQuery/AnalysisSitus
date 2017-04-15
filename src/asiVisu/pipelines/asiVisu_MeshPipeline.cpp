@@ -26,7 +26,7 @@
 //! Creates new Mesh Pipeline instance.
 asiVisu_MeshPipeline::asiVisu_MeshPipeline()
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                 vtkSmartPointer<vtkActor>::New() )
+                    vtkSmartPointer<vtkActor>::New() )
 {
   this->EmptyGroupForAllModeOn();
 

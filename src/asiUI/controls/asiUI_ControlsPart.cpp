@@ -89,7 +89,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   m_widgets.pShowVertices  = new QPushButton("Show/hide vertices");
   m_widgets.pSelectFaces   = new QPushButton("Select faces");
   m_widgets.pSelectEdges   = new QPushButton("Select edges");
-  m_widgets.pPickEdge      = new QPushButton("Pick edge");
   //
   m_widgets.pLoadBRep      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pLoadSTEP      -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -107,10 +106,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   m_widgets.pShowVertices  -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectFaces   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectEdges   -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pPickEdge      -> setMinimumWidth(BTN_MIN_WIDTH);
-
-  // Other configurations
-  m_widgets.pPickEdge -> setCheckable(true);
 
   // Group box for data interoperability
   QGroupBox*   pExchangeGroup = new QGroupBox("Data Exchange");
@@ -144,7 +139,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   pVisuLay->addWidget(m_widgets.pShowVertices);
   pVisuLay->addWidget(m_widgets.pSelectFaces);
   pVisuLay->addWidget(m_widgets.pSelectEdges);
-  //pVisuLay->addWidget(m_widgets.pPickEdge); // TODO
 
   // Set layout
   m_pMainLayout->addWidget(pExchangeGroup);
@@ -173,7 +167,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   connect( m_widgets.pShowVertices,  SIGNAL( clicked() ), SLOT( onShowVertices  () ) );
   connect( m_widgets.pSelectFaces,   SIGNAL( clicked() ), SLOT( onSelectFaces   () ) );
   connect( m_widgets.pSelectEdges,   SIGNAL( clicked() ), SLOT( onSelectEdges   () ) );
-  connect( m_widgets.pPickEdge,      SIGNAL( clicked() ), SLOT( onPickEdge      () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -545,45 +538,4 @@ void asiUI_ControlsPart::onSelectEdges()
 
   // Notify
   emit selectionEdgesOn();
-}
-
-//-----------------------------------------------------------------------------
-
-//! Allows to pick an edge in the part viewer.
-void asiUI_ControlsPart::onPickEdge()
-{
-  Handle(asiData_PartNode) part_n;
-  TopoDS_Shape             part;
-  //
-  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
-
-  const bool isOn = m_widgets.pPickEdge->isChecked();
-
-  // Depending on the state of the control, either let user pick an
-  // edge or finalize picking
-  if ( isOn )
-  {
-    // Enable an appropriate selection mode
-    m_iPrevSelMode = m_partViewer->PrsMgr()->GetSelectionMode();
-    m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Workpiece);
-
-    // Add observer which takes responsibility to interact with user
-    if ( !m_partViewer->PrsMgr()->HasObserver(EVENT_PICK_WORLD_POINT) )
-    {
-      vtkSmartPointer<asiUI_PickEdgeCallback>
-        cb = vtkSmartPointer<asiUI_PickEdgeCallback>::New();
-      //
-      cb->SetModel(m_model);
-
-      // Add observer
-      m_partViewer->PrsMgr()->AddObserver(EVENT_PICK_WORLD_POINT, cb);
-    }
-  }
-  else
-  {
-    // Restore original selection mode
-    m_partViewer->PrsMgr()->SetSelectionMode(m_iPrevSelMode);
-    //
-    m_partViewer->PrsMgr()->RemoveObserver(EVENT_PICK_WORLD_POINT);
-  }
 }

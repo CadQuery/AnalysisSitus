@@ -955,7 +955,10 @@ ActAPI_DataObjectIdList
                 << ")" << std::endl;
 #endif
 
-      this->InvokeEvent(EVENT_PICK_WORLD_POINT, &pickRes);
+      if ( selNature == SelectionNature_Detection )
+        this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &pickRes);
+      else
+        this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &pickRes);
     }
   }
   else // World picker
@@ -995,7 +998,10 @@ ActAPI_DataObjectIdList
               << ")" << std::endl;
 #endif
 
-    this->InvokeEvent(EVENT_PICK_WORLD_POINT, &pickRay);
+    if ( selNature == SelectionNature_Detection )
+      this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &pickRay);
+    else
+      this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &pickRay);
   }
 
   if ( !pickedActor )

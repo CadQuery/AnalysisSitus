@@ -194,6 +194,7 @@ void asiVisu_PickResult::Clear()
   m_pickedActor = NULL;
   m_pickedElementIds.Clear();
   m_pickedCellIds.Clear();
+  m_pickedPointIds.Clear();
   m_pickPos[0] = m_pickPos[1] = m_pickPos[2] = 0.0;
 }
 

@@ -62,7 +62,6 @@ public slots:
   void onShowVertices  ();
   void onSelectFaces   ();
   void onSelectEdges   ();
-  void onPickEdge      ();
 
 signals:
 
@@ -97,7 +96,6 @@ private:
     QPushButton* pShowVertices;  //!< Shows vertices of the model.
     QPushButton* pSelectFaces;   //!< Enables selection by faces.
     QPushButton* pSelectEdges;   //!< Enables selection by edges.
-    QPushButton* pPickEdge;      //!< Picks a single edge.
 
     t_widgets() : pLoadBRep      (NULL),
                   pLoadSTEP      (NULL),
@@ -114,8 +112,7 @@ private:
                   //
                   pShowVertices  (NULL),
                   pSelectFaces   (NULL),
-                  pSelectEdges   (NULL),
-                  pPickEdge      (NULL)
+                  pSelectEdges   (NULL)
     {}
 
     void Release()
@@ -136,7 +133,6 @@ private:
       delete pShowVertices;  pShowVertices  = NULL;
       delete pSelectFaces;   pSelectFaces   = NULL;
       delete pSelectEdges;   pSelectEdges   = NULL;
-      delete pPickEdge;      pPickEdge      = NULL;
     }
   };
 

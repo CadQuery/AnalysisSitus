@@ -150,26 +150,25 @@ void asiUI_DialogGapFilling::onPerform()
   Handle(Geom_BSplineSurface) supportSurf;
   TopoDS_Face patchFace;
   BRep_Builder BB;
+
+  // Perform gap filling
+  asiAlgo_PlateOnEdges PlateOnEdges(m_model->GetPartNode()->GetAAG(), m_notifier, m_plotter);
   //
+  if ( !PlateOnEdges.Build(edgeIndices, continuity, supportSurf, patchFace) )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Gap filling failed");
+    return;
+  }
+
+  // Build a compound of the original geometry and a patch
+  TopoDS_Compound comp;
+  BB.MakeCompound(comp);
+  BB.Add(comp, part);
+  BB.Add(comp, patchFace);
+
+  // Update Data Model
   m_model->OpenCommand();
   {
-    // Perform gap filling
-    asiAlgo_PlateOnEdges PlateOnEdges(m_model->GetPartNode()->GetAAG(), m_notifier, m_plotter);
-    //
-    if ( !PlateOnEdges.Build(edgeIndices, continuity, supportSurf, patchFace) )
-    {
-      m_notifier.SendLogMessage(LogErr(Normal) << "Gap filling failed");
-      //
-      // m_model->AbortCommand(); // NEVER ABORT IF IV IS USED !!!
-      return;
-    }
-
-    // Build a compound of the original geometry and a patch
-    TopoDS_Compound comp;
-    BB.MakeCompound(comp);
-    BB.Add(comp, part);
-    BB.Add(comp, patchFace);
-
     // Set new geometry
     asiEngine_Part(m_model, m_prsMgr).Update(comp);
   }

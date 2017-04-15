@@ -676,7 +676,6 @@ void asiUI_ControlsFeature::onDetachSelected()
   m_model->CommitCommand(); // tx commit
 
   // Update viewer
-  m_partViewer->PrsMgr()->DeleteAllPresentations();
   m_partViewer->PrsMgr()->Actualize( part_n.get() );
 }
 
@@ -721,7 +720,6 @@ void asiUI_ControlsFeature::onDeleteSelected()
   m_model->CommitCommand(); // tx commit
 
   // Update viewer
-  m_partViewer->PrsMgr()->DeleteAllPresentations();
   m_partViewer->PrsMgr()->Actualize( part_n.get() );
 }
 
@@ -766,7 +764,6 @@ void asiUI_ControlsFeature::onDeleteSelectedFull()
   m_model->CommitCommand(); // tx commit
 
   // Update viewer
-  m_partViewer->PrsMgr()->DeleteAllPresentations();
   m_partViewer->PrsMgr()->Actualize( part_n.get() );
 }
 

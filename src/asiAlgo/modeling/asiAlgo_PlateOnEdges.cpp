@@ -130,7 +130,16 @@ bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
 
   // Build plate
   GeomPlate_BuildPlateSurface BuildPlate(nbPtsCur, fronts, tang, 3);
-  BuildPlate.Perform();
+  //
+  try
+  {
+    BuildPlate.Perform();
+  }
+  catch ( ... )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Exception in OCCT plate surface builder");
+    return false;
+  }
   //
   if ( !BuildPlate.IsDone() )
   {

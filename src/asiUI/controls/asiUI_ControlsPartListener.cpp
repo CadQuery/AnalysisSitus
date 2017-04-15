@@ -82,8 +82,6 @@ void asiUI_ControlsPartListener::onPartLoaded()
 //! Reaction on part modification.
 void asiUI_ControlsPartListener::onPartModified()
 {
-  this->cleanViewers();
-  //
   m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, false);
 
   // Re-initialize pickers
@@ -129,10 +127,17 @@ void asiUI_ControlsPartListener::onSelectionFacesOn()
   m_wViewerPart->PrsMgr()->SetSelectionMode(SelectionMode_Face);
 
   // Clean tool viewers
-  m_wViewerDomain->PrsMgr()->DeleteAllPresentations();
-  m_wViewerSurface->PrsMgr()->DeleteAllPresentations();
-  m_wViewerDomain->Repaint();
-  m_wViewerSurface->Repaint();
+  if ( m_wViewerDomain )
+  {
+    m_wViewerDomain->PrsMgr()->DeRenderAllPresentations();
+    m_wViewerDomain->Repaint();
+  }
+  //
+  if ( m_wViewerSurface )
+  {
+    m_wViewerSurface->PrsMgr()->DeRenderAllPresentations();
+    m_wViewerSurface->Repaint();
+  }
 
   Handle(asiVisu_GeomPrs)
     prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
@@ -150,10 +155,17 @@ void asiUI_ControlsPartListener::onSelectionEdgesOn()
   m_wViewerPart->PrsMgr()->SetSelectionMode(SelectionMode_Edge);
 
   // Clean tool viewers
-  m_wViewerDomain->PrsMgr()->DeleteAllPresentations();
-  m_wViewerSurface->PrsMgr()->DeleteAllPresentations();
-  m_wViewerDomain->Repaint();
-  m_wViewerSurface->Repaint();
+  if ( m_wViewerDomain )
+  {
+    m_wViewerDomain->PrsMgr()->DeleteAllPresentations();
+    m_wViewerDomain->Repaint();
+  }
+  //
+  if ( m_wViewerSurface )
+  {
+    m_wViewerSurface->PrsMgr()->DeleteAllPresentations();
+    m_wViewerSurface->Repaint();
+  }
 
   Handle(asiVisu_GeomPrs)
     prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );

@@ -385,7 +385,10 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
     prs = Handle(asiVisu_GeomPrs)::DownCast( m_prsMgr->GetPresentation(N) );
 
   // Highlight
-  m_prsMgr->Highlight(N, prs->MainActor(), subShapeIndices, selMode);
+  if ( selMode == SelectionMode_Face )
+    m_prsMgr->Highlight(N, prs->MainActor(), subShapeIndices, selMode);
+  else if ( selMode == SelectionMode_Edge )
+    m_prsMgr->Highlight(N, prs->ContourActor(), subShapeIndices, selMode);
 
   // TODO: color is not applied at the moment
 }

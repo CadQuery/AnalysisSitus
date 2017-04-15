@@ -616,20 +616,29 @@ TopoDS_Shape
 //-----------------------------------------------------------------------------
 
 //! Calculates bounding box for the given shape.
-//! \param shape [in]  input shape.
-//! \param XMin  [out] min X.
-//! \param YMin  [out] min Y.
-//! \param ZMin  [out] min Z.
-//! \param XMax  [out] max X.
-//! \param YMax  [out] max Y.
-//! \param ZMax  [out] max Z.
-void asiAlgo_Utils::Bounds(const TopoDS_Shape& shape,
+//! \param shape     [in]  input shape.
+//! \param XMin      [out] min X.
+//! \param YMin      [out] min Y.
+//! \param ZMin      [out] min Z.
+//! \param XMax      [out] max X.
+//! \param YMax      [out] max Y.
+//! \param ZMax      [out] max Z.
+//! \param tolerance [in]  tolerance to enlarge the bounding box with.
+//! \return false if bounding box is void.
+bool asiAlgo_Utils::Bounds(const TopoDS_Shape& shape,
                            double& XMin, double& YMin, double& ZMin,
-                           double& XMax, double& YMax, double& ZMax)
+                           double& XMax, double& YMax, double& ZMax,
+                           const double tolerance)
 {
   Bnd_Box bndBox;
   BRepBndLib::Add(shape, bndBox);
+  //
+  if ( bndBox.IsVoid() )
+    return false;
+
   bndBox.Get(XMin, YMin, ZMin, XMax, YMax, ZMax);
+  bndBox.Enlarge(tolerance);
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1324,7 +1333,11 @@ bool asiAlgo_Utils::InvertFace(const TopoDS_Face&    face,
 double asiAlgo_Utils::AutoSelectLinearDeflection(const TopoDS_Shape& model)
 {
   double xMin, yMix, zMin, xMax, yMax, zMax;
-  Bounds(model, xMin, yMix, zMin, xMax, yMax, zMax);
+  if ( !Bounds(model, xMin, yMix, zMin, xMax, yMax, zMax, 0.0001) )
+  {
+    xMin = yMix = zMin = 0.0;
+    xMax = yMax = zMax = 1.0;
+  }
 
   // Use a fraction of a bounding diagonal
   const double diag = ( gp_XYZ(xMin, yMix, zMin) - gp_XYZ(xMax, yMax, zMax) ).Modulus();

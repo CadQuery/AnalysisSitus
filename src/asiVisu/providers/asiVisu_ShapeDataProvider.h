@@ -43,28 +43,6 @@ public:
   asiVisu_EXPORT virtual TopoDS_Shape
     GetShape() const;
 
-  asiVisu_EXPORT virtual Handle(TColStd_HPackedMapOfInteger)
-    GetSubShapes() const;
-
-  asiVisu_EXPORT virtual void
-    SetSubShapes(const Handle(TColStd_HPackedMapOfInteger)& theSubShapes);
-
-  asiVisu_EXPORT virtual bool
-    HasPosition() const;
-
-  asiVisu_EXPORT virtual bool
-    HasPositionAndRotation() const;
-
-  asiVisu_EXPORT virtual void
-    GetPosition(double& thePosX,
-                double& thePosY,
-                double& thePosZ) const;
-
-  asiVisu_EXPORT virtual void
-    GetRotation(double& theAngleAroundX,
-                double& theAngleAroundY,
-                double& theAngleAroundZ) const;
-
 public:
 
   asiVisu_EXPORT Handle(asiVisu_ShapeDataProvider)
@@ -82,9 +60,6 @@ protected:
 
   //! Source Parameters.
   Handle(ActAPI_HParameterList) m_params;
-
-  //! Mask of sub-shape IDs.
-  Handle(TColStd_HPackedMapOfInteger) m_subShapes;
 
 };
 

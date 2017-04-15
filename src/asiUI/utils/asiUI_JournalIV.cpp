@@ -15,6 +15,7 @@
 #include <asiVisu_IVPointSetPrs.h>
 #include <asiVisu_IVTopoItemPrs.h>
 #include <asiVisu_PointsPipeline.h>
+#include <asiVisu_ShapePipeline.h>
 #include <asiVisu_Utils.h>
 
 // asiAlgo includes
@@ -396,71 +397,65 @@ void asiUI_JournalIV::visualize(const bool                  is2d,
                                 const double                opacity,
                                 const bool                  isWireframe) const
 {
-  //if ( !this->prsManager(is2d)->IsPresented(node) )
-  //  this->prsManager(is2d)->SetPresentation(node);
+  if ( !this->prsManager(is2d)->IsPresented(node) )
+    this->prsManager(is2d)->SetPresentation(node);
 
-  //// Set visualization properties
-  //Handle(asiVisu_Prs) prs = this->prsManager(is2d)->GetPresentation(node);
+  // Set visualization properties
+  Handle(asiVisu_Prs) prs = this->prsManager(is2d)->GetPresentation(node);
 
-  //// Specific treatment for predefined pipelines
-  //if ( prs->IsKind( STANDARD_TYPE(asiVisu_IVTopoItemPrs) ) )
-  //{
-  //  Handle(asiVisu_IVTopoItemPrs)
-  //    topo_prs = Handle(asiVisu_IVTopoItemPrs)::DownCast(prs);
-  //  //
-  //  Handle(asiVisu_ShapePipeline)
-  //    pl = Handle(asiVisu_ShapePipeline)::DownCast( topo_prs->GetPipeline(asiVisu_IVTopoItemPrs::Pipeline_Main) );
+  // Specific treatment for predefined pipelines
+  if ( prs->IsKind( STANDARD_TYPE(asiVisu_IVTopoItemPrs) ) )
+  {
+    Handle(asiVisu_IVTopoItemPrs)
+      topo_prs = Handle(asiVisu_IVTopoItemPrs)::DownCast(prs);
+    //
+    Handle(asiVisu_ShapePipeline)
+      pl = Handle(asiVisu_ShapePipeline)::DownCast( topo_prs->GetPipeline(asiVisu_IVTopoItemPrs::Pipeline_Main) );
 
-  //  // Configure shape visualization
-  //  TopoDS_Shape shape = Handle(asiData_IVTopoItemNode)::DownCast(node)->GetShape();
-  //  //
-  //  if ( !shape.IsNull() )
-  //  {
-  //    if ( shape.ShapeType() == TopAbs_EDGE || shape.ShapeType() == TopAbs_WIRE )
-  //    {
-  //      pl->WireframeModeOn();
-  //      pl->Actor()->GetProperty()->SetLineWidth(3.0);
-  //    }
-  //    else if ( isWireframe )
-  //      pl->WireframeModeOn();
-  //  }
+    // Configure shape visualization
+    TopoDS_Shape shape = Handle(asiData_IVTopoItemNode)::DownCast(node)->GetShape();
+    //
+    if ( isWireframe )
+    {
+      pl->GetDisplayModeFilter()->SetDisplayMode(DisplayMode_Wireframe);
+    }
 
-  //  // Process color
-  //  if ( hasColor )
-  //  {
-  //    pl->Mapper()->ScalarVisibilityOff();
-  //    pl->Actor()->GetProperty()->SetColor( color.Red(),
-  //                                          color.Green(),
-  //                                          color.Blue() );
-  //    pl->Actor()->GetProperty()->SetOpacity(opacity);
-  //    //
-  //    pl->Actor()->GetProperty()->SetAmbient(0.8);
-  //    pl->Actor()->GetProperty()->SetDiffuse(0.2);
-  //    pl->Actor()->GetProperty()->SetSpecular(0.0);
-  //  }
-  //}
-  //else
-  //{
-  //  // Set common properties for all pipelines
-  //  Handle(asiVisu_HPipelineList) pipelines = prs->GetPipelineList();
-  //  for ( int p = 1; p <= pipelines->Length(); ++p )
-  //  {
-  //    if ( hasColor )
-  //    {
-  //      pipelines->Value(p)->Mapper()->ScalarVisibilityOff();
-  //      pipelines->Value(p)->Actor()->GetProperty()->SetColor( color.Red(),
-  //                                                             color.Green(),
-  //                                                             color.Blue() );
-  //    }
-  //    //
-  //    pipelines->Value(p)->Actor()->GetProperty()->SetOpacity(opacity);
-  //  }
-  //}
+    // Process color
+    if ( hasColor )
+    {
+      pl->Mapper()->ScalarVisibilityOff();
+      pl->Actor()->GetProperty()->SetColor( color.Red(),
+                                            color.Green(),
+                                            color.Blue() );
+      pl->Actor()->GetProperty()->SetOpacity(opacity);
+      //
+      pl->Actor()->GetProperty()->SetAmbient(0.8);
+      pl->Actor()->GetProperty()->SetDiffuse(0.2);
+      pl->Actor()->GetProperty()->SetSpecular(0.0);
+    }
+  }
+  else
+  {
+    // Set common properties for all pipelines
+    Handle(asiVisu_HPipelineList) pipelines = prs->GetPipelineList();
+    for ( int p = 1; p <= pipelines->Length(); ++p )
+    {
+      if ( hasColor )
+      {
+        pipelines->Value(p)->Mapper()->ScalarVisibilityOff();
+        pipelines->Value(p)->Actor()->GetProperty()->SetColor( color.Red(),
+                                                               color.Green(),
+                                                               color.Blue() );
+      }
+      //
+      pipelines->Value(p)->Actor()->GetProperty()->SetOpacity(opacity);
+    }
+  }
 
-  //// Update UI
-  //this->prsManager(is2d)->Actualize(node.get(), false, false, true);
-  ////
-  //m_pBrowser->Populate();
+  // Update UI
+  this->prsManager(is2d)->Actualize(node.get(), false, false, true);
+  //
+  m_pBrowser->Populate();
 }
 
 //----------------------------------------------------------------------------//

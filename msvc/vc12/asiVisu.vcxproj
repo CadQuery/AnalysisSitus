@@ -140,6 +140,7 @@
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_Pipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_PointsPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_REContoursPipeline.h" />
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_ShapePipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_VectorsPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_RESurfacesPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_SectionsPipeline.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_Pipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PointsPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_REContoursPipeline.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_ShapePipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_VectorsPipeline.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>

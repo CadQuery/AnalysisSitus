@@ -362,6 +362,9 @@
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_PartEdgesPipeline.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_ShapePipeline.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_MeshENScalarFilter.cpp">
@@ -656,6 +659,9 @@
       <Filter>Source Files\Filters</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PartEdgesPipeline.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_ShapePipeline.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>

@@ -57,9 +57,7 @@ asiVisu_PartPipeline::asiVisu_PartPipeline()
 
   // Compose pipeline
   this->append(m_dmFilter);
-  //
-  if ( m_dmFilter->GetDisplayMode() == DisplayMode_Shaded )
-    this->append(m_normalsFilter);
+  this->append(m_normalsFilter);
 }
 
 //-----------------------------------------------------------------------------

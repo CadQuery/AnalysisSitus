@@ -241,10 +241,11 @@ public:
   asiAlgo_EXPORT static TopoDS_Shape
     AssembleShapes(const TopTools_ListOfShape& theShapes);
 
-  asiAlgo_EXPORT static void
+  asiAlgo_EXPORT static bool
     Bounds(const TopoDS_Shape& shape,
            double& XMin, double& YMin, double& ZMin,
-           double& XMax, double& YMax, double& ZMax);
+           double& XMax, double& YMax, double& ZMax,
+           const double tolerance = 0.0);
 
   asiAlgo_EXPORT static bool
     CheckShape(const TopoDS_Shape&  shape,

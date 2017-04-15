@@ -65,7 +65,7 @@ Source: {#ASitusDir}\data\*;                                              DestDi
 ; Third-party products
 Source: {#ProductsDir}\{#occt}\src\*;                                      DestDir: {app}\products\{#occt}\src;                    Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: {#ProductsDir}\{#occt}\*.bat;                                      DestDir: {app}\products\{#occt};                        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: {#ProductsDir}\{#occt}\win64\vc12\bin\FreeImage.dll;               DestDir: {app}\products\{#occt}\win64\vc12\bin;
+Source: {#ProductsDir}\{#freeimage}\bin\FreeImage.dll;                     DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKBin.dll;                   DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKBinL.dll;                  DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKBO.dll;                    DestDir: {app}\products\{#occt}\win64\vc12\bin;
@@ -81,7 +81,6 @@ Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKGeomAlgo.dll;              DestD
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKGeomBase.dll;              DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKHLR.dll;                   DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKIGES.dll;                  DestDir: {app}\products\{#occt}\win64\vc12\bin;
-Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKIVtk.dll;                  DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKLCAF.dll;                  DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKMath.dll;                  DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKMesh.dll;                  DestDir: {app}\products\{#occt}\win64\vc12\bin;

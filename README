@@ -42,6 +42,16 @@ on your particular problems.
 ===============================================================================
 Release notes
 -------------------------------------------------------------------------------
+v0.1.5, 15 April 2017
+-------------------------------------------------------------------------------
+- Get rid of OpenCascade visualization modules. Everything is now based on
+  in-house VTK integration code and conventional VTK interactive services.
+- Add face inversion function (context menu in the viewer).
+- Add visualization of face normals (context menu in the viewer).
+- Add tessellation refinement controls (Ctrl+T hotkey).
+- Add gap filling function (button at main controls panel).
+- General bugfix and tiny improvements are also there.
+-------------------------------------------------------------------------------
 v0.1.4, 02 February 2017
 -------------------------------------------------------------------------------
 - Make AAG the driving container for all sub-shapes. AAG is now used to get

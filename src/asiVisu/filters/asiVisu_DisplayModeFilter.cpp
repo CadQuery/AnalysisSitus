@@ -22,7 +22,7 @@
 
 vtkStandardNewMacro(asiVisu_DisplayModeFilter)
 
-#define COUT_DEBUG
+#undef COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif

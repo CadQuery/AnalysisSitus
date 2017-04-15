@@ -125,6 +125,15 @@ void asiUI_ControlsPartListener::onVerticesOff()
 //! Reaction on enabling selection of faces.
 void asiUI_ControlsPartListener::onSelectionFacesOn()
 {
+  // Enable the corresponding selection mode
+  m_wViewerPart->PrsMgr()->SetSelectionMode(SelectionMode_Face);
+
+  // Clean tool viewers
+  m_wViewerDomain->PrsMgr()->DeleteAllPresentations();
+  m_wViewerSurface->PrsMgr()->DeleteAllPresentations();
+  m_wViewerDomain->Repaint();
+  m_wViewerSurface->Repaint();
+
   Handle(asiVisu_GeomPrs)
     prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
 
@@ -137,6 +146,15 @@ void asiUI_ControlsPartListener::onSelectionFacesOn()
 //! Reaction on enabling selection of edges.
 void asiUI_ControlsPartListener::onSelectionEdgesOn()
 {
+  // Enable the corresponding selection mode
+  m_wViewerPart->PrsMgr()->SetSelectionMode(SelectionMode_Edge);
+
+  // Clean tool viewers
+  m_wViewerDomain->PrsMgr()->DeleteAllPresentations();
+  m_wViewerSurface->PrsMgr()->DeleteAllPresentations();
+  m_wViewerDomain->Repaint();
+  m_wViewerSurface->Repaint();
+
   Handle(asiVisu_GeomPrs)
     prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
 

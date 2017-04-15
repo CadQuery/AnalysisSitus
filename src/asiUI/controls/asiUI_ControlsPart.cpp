@@ -529,9 +529,6 @@ void asiUI_ControlsPart::onSelectFaces()
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
-  // Enable the corresponding selection mode
-  m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Face);
-
   // Notify
   emit selectionFacesOn();
 }
@@ -545,9 +542,6 @@ void asiUI_ControlsPart::onSelectEdges()
   TopoDS_Shape             part;
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
-
-  // Enable the corresponding selection mode
-  m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Edge);
 
   // Notify
   emit selectionEdgesOn();

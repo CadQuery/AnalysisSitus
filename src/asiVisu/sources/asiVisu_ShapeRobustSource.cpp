@@ -45,7 +45,10 @@ asiVisu_ShapeRobustSource::~asiVisu_ShapeRobustSource()
 
 void asiVisu_ShapeRobustSource::SetAAG(const Handle(asiAlgo_AAG)& aag)
 {
-  m_aag = aag;
+  m_aag   = aag;
+  m_shape = m_aag->GetMasterCAD();
+  //
+  this->Modified();
 }
 
 //-----------------------------------------------------------------------------
@@ -53,6 +56,23 @@ void asiVisu_ShapeRobustSource::SetAAG(const Handle(asiAlgo_AAG)& aag)
 const Handle(asiAlgo_AAG)& asiVisu_ShapeRobustSource::GetAAG() const
 {
   return m_aag;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_ShapeRobustSource::SetShape(const TopoDS_Shape& shape)
+{
+  m_aag.Nullify();
+  m_shape = shape;
+  //
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
+const TopoDS_Shape& asiVisu_ShapeRobustSource::GetShape() const
+{
+  return m_shape;
 }
 
 //-----------------------------------------------------------------------------
@@ -99,11 +119,18 @@ int asiVisu_ShapeRobustSource::RequestData(vtkInformation*        pInfo,
   vtkSmartPointer<asiVisu_ShapeRobustTessellator>
     tessGen = vtkSmartPointer<asiVisu_ShapeRobustTessellator>::New();
   //
-  tessGen->Initialize(m_aag,
-                      m_fLinDeflection,
-                      m_fAngDeflectionDeg,
-                      m_progress,
-                      m_plotter);
+  if ( m_aag.IsNull() )
+    tessGen->Initialize(m_shape,
+                        m_fLinDeflection,
+                        m_fAngDeflectionDeg,
+                        m_progress,
+                        m_plotter);
+  else
+    tessGen->Initialize(m_aag,
+                        m_fLinDeflection,
+                        m_fAngDeflectionDeg,
+                        m_progress,
+                        m_plotter);
   tessGen->Build();
   //
   const Handle(asiVisu_ShapeData)&    tessResult         = tessGen->GetResult();

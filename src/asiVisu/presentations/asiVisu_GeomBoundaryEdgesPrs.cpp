@@ -22,15 +22,15 @@
 asiVisu_GeomBoundaryEdgesPrs::asiVisu_GeomBoundaryEdgesPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
 {
   // Create Data Providers
-  Handle(asiVisu_ShapeDataProvider) DP_convex =
+  Handle(asiVisu_ShapeDataProvider) dp_convex =
     new asiVisu_ShapeDataProvider( N->GetId(),
                                    ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Green) );
   //
-  Handle(asiVisu_ShapeDataProvider) DP_concave =
+  Handle(asiVisu_ShapeDataProvider) dp_concave =
     new asiVisu_ShapeDataProvider( N->GetId(),
                                    ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Red) );
   //
-  Handle(asiVisu_ShapeDataProvider) DP_undefined =
+  Handle(asiVisu_ShapeDataProvider) dp_undefined =
     new asiVisu_ShapeDataProvider( N->GetId(),
                                    ActParamStream() << N->Parameter(asiData_BoundaryEdgesNode::PID_Ordinary) );
 
@@ -39,7 +39,7 @@ asiVisu_GeomBoundaryEdgesPrs::asiVisu_GeomBoundaryEdgesPrs(const Handle(ActAPI_I
   Handle(asiVisu_ShapePipeline) pl_convex = new asiVisu_ShapePipeline(false);
   //
   this->addPipeline        ( Pipeline_Convex, pl_convex );
-  this->assignDataProvider ( Pipeline_Convex, DP_convex );
+  this->assignDataProvider ( Pipeline_Convex, dp_convex );
   //
   pl_convex->Actor()->GetProperty()->SetLineWidth(2.0f);
   pl_convex->Actor()->GetProperty()->SetColor(0.1, 0.7, 0.0);
@@ -50,7 +50,7 @@ asiVisu_GeomBoundaryEdgesPrs::asiVisu_GeomBoundaryEdgesPrs(const Handle(ActAPI_I
   Handle(asiVisu_ShapePipeline) pl_concave = new asiVisu_ShapePipeline(false);
   //
   this->addPipeline        ( Pipeline_Concave, pl_concave );
-  this->assignDataProvider ( Pipeline_Concave, DP_concave );
+  this->assignDataProvider ( Pipeline_Concave, dp_concave );
   //
   pl_concave->Actor()->GetProperty()->SetLineWidth(2.0f);
   pl_concave->Actor()->GetProperty()->SetColor(0.7, 0.0, 0.0);
@@ -61,7 +61,7 @@ asiVisu_GeomBoundaryEdgesPrs::asiVisu_GeomBoundaryEdgesPrs(const Handle(ActAPI_I
   Handle(asiVisu_ShapePipeline) pl_undefined = new asiVisu_ShapePipeline(false);
   //
   this->addPipeline        ( Pipeline_Undefined, pl_undefined );
-  this->assignDataProvider ( Pipeline_Undefined, DP_undefined );
+  this->assignDataProvider ( Pipeline_Undefined, dp_undefined );
   //
   pl_undefined->Actor()->GetProperty()->SetLineWidth(2.0f);
   pl_undefined->Actor()->GetProperty()->SetColor(0.5, 0.5, 0.5);

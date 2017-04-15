@@ -101,7 +101,7 @@ void asiVisu_ShapePipeline::SetInput(const Handle(asiVisu_DataProvider)& dataPro
     TopoDS_Shape shape = DP->GetShape();
 
     // Configure data source
-    m_source->SetAAG( new asiAlgo_AAG(shape) );
+    m_source->SetShape(shape);
 
     // Initialize pipeline
     this->SetInputConnection( m_source->GetOutputPort() );
@@ -110,7 +110,6 @@ void asiVisu_ShapePipeline::SetInput(const Handle(asiVisu_DataProvider)& dataPro
   // Update modification timestamp
   this->Modified();
 }
-
 
 //-----------------------------------------------------------------------------
 

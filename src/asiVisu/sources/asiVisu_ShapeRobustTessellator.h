@@ -74,12 +74,25 @@ public:
                ActAPI_ProgressEntry       progress = NULL,
                ActAPI_PlotterEntry        plotter  = NULL);
 
+  asiVisu_EXPORT void
+    Initialize(const TopoDS_Shape&  shape,
+               const double         linearDeflection = 0,
+               const double         angularDeflection_deg = 0,
+               ActAPI_ProgressEntry progress = NULL,
+               ActAPI_PlotterEntry  plotter  = NULL);
+
 public:
 
   //! \return AAG instance.
   const Handle(asiAlgo_AAG)& GetAAG() const
   {
     return m_aag;
+  }
+
+  //! \return master shape.
+  const TopoDS_Shape& GetShape() const
+  {
+    return m_shape;
   }
 
   //! \return result shape data.
@@ -94,6 +107,12 @@ public:
     Build();
 
 protected:
+
+  asiVisu_EXPORT void
+    internalInit(const double         linearDeflection,
+                 const double         angularDeflection_deg,
+                 ActAPI_ProgressEntry progress,
+                 ActAPI_PlotterEntry  plotter);
 
   asiVisu_EXPORT virtual void
     internalBuild();
@@ -113,6 +132,7 @@ protected:
 protected:
 
   Handle(asiAlgo_AAG)       m_aag;               //!< AAG to access the topological elements.
+  TopoDS_Shape              m_shape;             //!< Input shape.
   Handle(asiVisu_ShapeData) m_data;              //!< Visualization data.
   double                    m_fLinDeflection;    //!< Linear deflection.
   double                    m_fAngDeflectionDeg; //!< Angular deflection.

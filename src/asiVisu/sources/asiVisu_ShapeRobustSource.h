@@ -43,6 +43,12 @@ public:
     GetAAG() const;
 
   asiVisu_EXPORT void
+    SetShape(const TopoDS_Shape& shape);
+
+  asiVisu_EXPORT const TopoDS_Shape&
+    GetShape() const;
+
+  asiVisu_EXPORT void
     SetDiagnosticTools(ActAPI_ProgressEntry progress,
                        ActAPI_PlotterEntry  plotter);
 
@@ -76,7 +82,8 @@ private:
 
 protected:
 
-  Handle(asiAlgo_AAG)       m_aag;               //!< AAG of the original B-Rep shape.
+  Handle(asiAlgo_AAG)       m_aag;               //!< (Optional) AAG of the original B-Rep shape.
+  TopoDS_Shape              m_shape;             //!< Original B-Rep shape.
   Handle(asiVisu_ShapeData) m_shapeData;         //!< Polygonal data container.
   double                    m_fLinDeflection;    //!< Linear deflection.
   double                    m_fAngDeflectionDeg; //!< Angular deflection.

@@ -287,12 +287,13 @@ void asiUI_ControlsFeature::onNonManifoldEdges()
   }
 
   // Save to model
-  Handle(asiData_BoundaryEdgesNode)
-    BN = part_n->GetBoundaryEdgesRepresentation();
+  Handle(asiData_BoundaryEdgesNode) BN = part_n->GetBoundaryEdgesRepresentation();
   //
   m_model->OpenCommand();
   {
-    ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Red) )->SetShape(nmEdgesComp);
+    ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Red) )        ->SetShape( nmEdgesComp );
+    ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Green) )      ->SetShape( TopoDS_Shape() );
+    ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Ordinary)   ) ->SetShape( TopoDS_Shape() );
   }
   m_model->CommitCommand();
 
@@ -307,10 +308,10 @@ void asiUI_ControlsFeature::onNonManifoldEdges()
   }
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
-  //
   NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
-  //
- m_partViewer->PrsMgr()->Actualize( BN.get() );
+
+  // Actualize presentation of edges
+  m_partViewer->PrsMgr()->Actualize( BN.get() );
 }
 
 //-----------------------------------------------------------------------------
@@ -344,7 +345,6 @@ void asiUI_ControlsFeature::onCheckDihedralAngles()
     Handle(asiAlgo_AAG) aag = new asiAlgo_AAG(part);
 
     // Loop over the faces
-    //
     Handle(asiAlgo_AAGRandomIterator) it = new asiAlgo_AAGRandomIterator(aag);
     for ( ; it->More(); it->Next() )
     {
@@ -464,10 +464,9 @@ void asiUI_ControlsFeature::onCheckDihedralAngles()
   }
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
-  //
-  if ( !NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour).IsNull() )
-    NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
-  //
+  NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
+
+  // Actualize presentation of edges
   m_partViewer->PrsMgr()->Actualize( BN.get() );
 }
 

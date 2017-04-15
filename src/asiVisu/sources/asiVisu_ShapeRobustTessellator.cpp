@@ -56,25 +56,30 @@ void asiVisu_ShapeRobustTessellator::Initialize(const Handle(asiAlgo_AAG)& aag,
                                                 ActAPI_ProgressEntry       progress,
                                                 ActAPI_PlotterEntry        plotter)
 {
-  m_aag      = aag;
-  m_progress = progress;
-  m_plotter  = plotter;
-
-  // Set linear deflection
-  if ( Abs(linearDeflection) < asiAlgo_TooSmallValue )
-    m_fLinDeflection = asiAlgo_Utils::AutoSelectLinearDeflection( m_aag->GetMasterCAD() );
-  else
-    m_fLinDeflection = linearDeflection;
+  m_aag   = aag;
+  m_shape = m_aag->GetMasterCAD();
   //
-  m_progress.SendLogMessage(LogInfo(Normal) << "Faceter linear deflection is %1" << m_fLinDeflection);
+  this->internalInit(linearDeflection, angularDeflection_deg, progress, plotter);
+}
 
-  // Set angular deflection
-  if ( Abs(angularDeflection_deg) < asiAlgo_TooSmallValue )
-    m_fAngDeflectionDeg = asiAlgo_Utils::AutoSelectAngularDeflection( m_aag->GetMasterCAD() );
-  else
-    m_fAngDeflectionDeg = angularDeflection_deg;
+//-----------------------------------------------------------------------------
+
+//! Initializes tessellation tool.
+//! \param shape                 [in] shape.
+//! \param linearDeflection      [in] linear deflection.
+//! \param angularDeflection_deg [in] angular deflection in degrees.
+//! \param progress              [in] progress notifier.
+//! \param plotter               [in] imperative plotter.
+void asiVisu_ShapeRobustTessellator::Initialize(const TopoDS_Shape&  shape,
+                                                const double         linearDeflection,
+                                                const double         angularDeflection_deg,
+                                                ActAPI_ProgressEntry progress,
+                                                ActAPI_PlotterEntry  plotter)
+{
+  m_aag.Nullify();
+  m_shape = shape;
   //
-  m_progress.SendLogMessage(LogInfo(Normal) << "Faceter angular deflection is %1 deg." << m_fAngDeflectionDeg);
+  this->internalInit(linearDeflection, angularDeflection_deg, progress, plotter);
 }
 
 //-----------------------------------------------------------------------------
@@ -87,12 +92,37 @@ void asiVisu_ShapeRobustTessellator::Build()
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_ShapeRobustTessellator::internalInit(const double         linearDeflection,
+                                                  const double         angularDeflection_deg,
+                                                  ActAPI_ProgressEntry progress,
+                                                  ActAPI_PlotterEntry  plotter)
+{
+  m_progress = progress;
+  m_plotter  = plotter;
+
+  // Set linear deflection
+  if ( Abs(linearDeflection) < asiAlgo_TooSmallValue )
+    m_fLinDeflection = asiAlgo_Utils::AutoSelectLinearDeflection(m_shape);
+  else
+    m_fLinDeflection = linearDeflection;
+  //
+  m_progress.SendLogMessage(LogInfo(Normal) << "Faceter linear deflection is %1" << m_fLinDeflection);
+
+  // Set angular deflection
+  if ( Abs(angularDeflection_deg) < asiAlgo_TooSmallValue )
+    m_fAngDeflectionDeg = asiAlgo_Utils::AutoSelectAngularDeflection(m_shape);
+  else
+    m_fAngDeflectionDeg = angularDeflection_deg;
+  //
+  m_progress.SendLogMessage(LogInfo(Normal) << "Faceter angular deflection is %1 deg." << m_fAngDeflectionDeg);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Internal method which builds the polygonal data.
 void asiVisu_ShapeRobustTessellator::internalBuild()
 {
-  const TopoDS_Shape& master = m_aag->GetMasterCAD();
-  //
-  if ( master.IsNull() )
+  if ( m_shape.IsNull() )
     return;
 
   TIMER_NEW
@@ -100,15 +130,28 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
 
   // Build map of shapes and their parents
   TopTools_IndexedDataMapOfShapeListOfShape verticesOnEdges;
-  TopExp::MapShapesAndAncestors(master, TopAbs_VERTEX, TopAbs_EDGE, verticesOnEdges);
+  TopExp::MapShapesAndAncestors(m_shape, TopAbs_VERTEX, TopAbs_EDGE, verticesOnEdges);
   //
   TopTools_IndexedDataMapOfShapeListOfShape edgesOnFaces;
-  TopExp::MapShapesAndAncestors(master, TopAbs_EDGE, TopAbs_FACE, edgesOnFaces);
+  TopExp::MapShapesAndAncestors(m_shape, TopAbs_EDGE, TopAbs_FACE, edgesOnFaces);
 
-  // Cached maps
-  const TopTools_IndexedMapOfShape& allVertices  = m_aag->GetMapOfVertices();
-  const TopTools_IndexedMapOfShape& allEdges     = m_aag->GetMapOfEdges();
-  const TopTools_IndexedMapOfShape& allSubShapes = m_aag->GetMapOfSubShapes();
+  // Get maps of sub-shapes (either cached in AAG or not)
+  TopTools_IndexedMapOfShape allVertices;
+  TopTools_IndexedMapOfShape allEdges;
+  TopTools_IndexedMapOfShape allSubShapes;
+  //
+  if ( m_aag.IsNull() )
+  {
+    TopExp::MapShapes(m_shape, TopAbs_VERTEX, allVertices);
+    TopExp::MapShapes(m_shape, TopAbs_EDGE, allEdges);
+    TopExp::MapShapes(m_shape, allSubShapes);
+  }
+  else
+  {
+    allVertices  = m_aag->GetMapOfVertices();
+    allEdges     = m_aag->GetMapOfEdges();
+    allSubShapes = m_aag->GetMapOfSubShapes();
+  }
 
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: build topology maps")
@@ -151,7 +194,7 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
 
   // Discretize B-Rep model to produce visualization facets
   asiAlgo_MeshInfo meshInfo;
-  if ( !asiAlgo_MeshGen::DoNative(master,
+  if ( !asiAlgo_MeshGen::DoNative(m_shape,
                                   m_fLinDeflection,
                                   m_fAngDeflectionDeg,
                                   meshInfo) )
@@ -203,7 +246,7 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   TIMER_GO
 
   // Loop over the faces
-  for ( TopExp_Explorer exp(master, TopAbs_FACE); exp.More(); exp.Next() )
+  for ( TopExp_Explorer exp(m_shape, TopAbs_FACE); exp.More(); exp.Next() )
   {
     const TopoDS_Face& face = TopoDS::Face( exp.Current() );
     //

@@ -60,11 +60,10 @@ public:
 // Visualization commands:
 public:
 
-  asiVisu_EXPORT void DoShading() const;
-  asiVisu_EXPORT void DoWireframe() const;
+  asiVisu_EXPORT void VerticesOn() const;
+  asiVisu_EXPORT void VerticesOff() const;
   asiVisu_EXPORT void DoColor(const QColor& color) const;
   asiVisu_EXPORT void DoUnColor() const;
-  asiVisu_EXPORT void DoVertices(const bool on) const;
 
 public:
 

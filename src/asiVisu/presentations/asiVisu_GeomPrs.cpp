@@ -120,30 +120,32 @@ void asiVisu_GeomPrs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
 
 //-----------------------------------------------------------------------------
 
-//! Sets SHADING visualization mode.
-void asiVisu_GeomPrs::DoShading() const
+//! Enables visualization of vertices.
+void asiVisu_GeomPrs::VerticesOn() const
 {
-  /*Handle(asiVisu_PartPipeline)
+  Handle(asiVisu_PartPipeline)
     pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
   if ( pl.IsNull() )
     return;
 
-  pl->ShadingModeOn();*/
+  // Configure display mode
+  pl->GetDisplayModeFilter()->AddPrimitive(ShapePrimitive_SharedVertex);
 }
 
 //-----------------------------------------------------------------------------
 
-//! Sets WIREFRAME visualization mode.
-void asiVisu_GeomPrs::DoWireframe() const
+//! Disables visualization of vertices.
+void asiVisu_GeomPrs::VerticesOff() const
 {
-  /*Handle(asiVisu_PartPipeline)
+  Handle(asiVisu_PartPipeline)
     pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
   if ( pl.IsNull() )
     return;
 
-  pl->WireframeModeOn();*/
+  // Configure display mode
+  pl->GetDisplayModeFilter()->RemovePrimitive(ShapePrimitive_SharedVertex);
 }
 
 //-----------------------------------------------------------------------------
@@ -179,21 +181,6 @@ void asiVisu_GeomPrs::DoUnColor() const
     return;
 
   pl->Mapper()->ScalarVisibilityOn();
-}
-
-//-----------------------------------------------------------------------------
-
-//! Enables/disables visualization of vertices depending on the passed flag.
-//! \param on [in] true/false.
-void asiVisu_GeomPrs::DoVertices(const bool on) const
-{
-  /*Handle(asiVisu_PartPipeline)
-    pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
-
-  if ( pl.IsNull() )
-    return;
-
-  on ? pl->SharedVerticesOn() : pl->SharedVerticesOff();*/
 }
 
 //-----------------------------------------------------------------------------

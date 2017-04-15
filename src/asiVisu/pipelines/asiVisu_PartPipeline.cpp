@@ -111,12 +111,6 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
     m_source->SetTessellationParams( DP->GetLinearDeflection(),
                                      DP->GetAngularDeflection() );
 
-    // Configure display mode
-    if ( DP->HasVertices() )
-      m_dmFilter->AddPrimitive(ShapePrimitive_SharedVertex);
-    else
-      m_dmFilter->RemovePrimitive(ShapePrimitive_SharedVertex);
-
     // Bind to a Data Node using information key
     asiVisu_PartNodeInfo::Store( DP->GetNodeID(), this->Actor() );
 

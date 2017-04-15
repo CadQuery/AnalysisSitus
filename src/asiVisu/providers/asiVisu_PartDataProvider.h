@@ -54,9 +54,6 @@ public:
   asiVisu_EXPORT double
     GetAngularDeflection() const;
 
-  asiVisu_EXPORT bool
-    HasVertices() const;
-
 public:
 
   asiVisu_EXPORT Handle(asiVisu_PartDataProvider)

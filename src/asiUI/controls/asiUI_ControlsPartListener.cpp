@@ -95,8 +95,14 @@ void asiUI_ControlsPartListener::onPartModified()
 //! Reaction on enabling visualization of vertices.
 void asiUI_ControlsPartListener::onVerticesOn()
 {
-  // Actualize as this visualization property (vertices on/off) is persistent
-  m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, false);
+  Handle(asiVisu_GeomPrs)
+    prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+  //
+  prs->VerticesOn();
+
+  // Re-initialize pickers as the data set has changed
+  m_wViewerPart->PrsMgr()->InitializePickers();
+  m_wViewerPart->Repaint();
 }
 
 //-----------------------------------------------------------------------------
@@ -104,8 +110,14 @@ void asiUI_ControlsPartListener::onVerticesOn()
 //! Reaction on disabling visualization of vertices.
 void asiUI_ControlsPartListener::onVerticesOff()
 {
-  // Actualize as this visualization property (vertices on/off) is persistent
-  m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, false);
+  Handle(asiVisu_GeomPrs)
+    prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+  //
+  prs->VerticesOff();
+
+  // Re-initialize pickers as the data set has changed
+  m_wViewerPart->PrsMgr()->InitializePickers();
+  m_wViewerPart->Repaint();
 }
 
 //-----------------------------------------------------------------------------

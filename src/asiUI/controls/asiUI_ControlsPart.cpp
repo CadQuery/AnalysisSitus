@@ -86,7 +86,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   m_widgets.pMaximizeFaces = new QPushButton("Maximize faces");
   m_widgets.pFillGap       = new QPushButton("Fill gap");
   //
-  m_widgets.pShowVertices  = new QPushButton("Show vertices");
+  m_widgets.pShowVertices  = new QPushButton("Show/hide vertices");
   m_widgets.pSelectFaces   = new QPushButton("Select faces");
   m_widgets.pSelectEdges   = new QPushButton("Select edges");
   m_widgets.pPickEdge      = new QPushButton("Pick edge");
@@ -110,8 +110,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   m_widgets.pPickEdge      -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Other configurations
-  m_widgets.pShowVertices -> setCheckable(true);
-  m_widgets.pPickEdge     -> setCheckable(true);
+  m_widgets.pPickEdge -> setCheckable(true);
 
   // Group box for data interoperability
   QGroupBox*   pExchangeGroup = new QGroupBox("Data Exchange");
@@ -507,17 +506,17 @@ void asiUI_ControlsPart::onShowVertices()
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
-  const bool isOn = m_widgets.pShowVertices->isChecked();
+  const bool isOn = part_n->HasVertices();
 
   // Modify data
   m_model->OpenCommand();
   {
-    part_n->SetHasVertices(isOn);
+    part_n->SetHasVertices(!isOn);
   }
   m_model->CommitCommand();
 
   // Notify
-  isOn ? emit verticesOn() : emit verticesOff();
+  isOn ? emit verticesOff() : emit verticesOn();
 }
 
 //-----------------------------------------------------------------------------

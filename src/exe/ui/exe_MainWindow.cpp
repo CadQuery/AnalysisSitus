@@ -83,6 +83,8 @@ void exe_MainWindow::createPartViewer()
   cf->Prs.Part   = m_widgets.wViewerPart->PrsMgr();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Creates main dockable widgets.
 void exe_MainWindow::createDockWindows()
 {
@@ -231,4 +233,18 @@ void exe_MainWindow::createDockWindows()
   cf->Logger           = new asiUI_Logger(m_widgets.wLogger);
   cf->ProgressListener = new asiUI_ProgressListener(statusBar, cf->ProgressNotifier, cf->Logger);
   cf->ProgressListener->Connect();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Creates menus.
+void exe_MainWindow::createMenus()
+{
+}
+
+//-----------------------------------------------------------------------------
+
+//! Creates toolbar.
+void exe_MainWindow::createToolbar()
+{
 }

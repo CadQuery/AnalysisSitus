@@ -8,7 +8,8 @@
 // Own include
 #include <asiVisu_PointsPipeline.h>
 
-// Visualization includes
+// asiVisu includes
+#include <asiVisu_NodeInfo.h>
 #include <asiVisu_PointsSource.h>
 #include <asiVisu_PointsDataProvider.h>
 
@@ -67,6 +68,10 @@ void asiVisu_PointsPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
       src = vtkSmartPointer< asiVisu_PointsSource<double> >::New();
     //
     src->SetInputPoints(points);
+    src->SetFilter( provider->GetIndices() );
+
+    // Bind to a Data Node using information key
+    asiVisu_NodeInfo::Store( provider->GetNodeID(), this->Actor() );
 
     // Initialize pipeline
     this->SetInputConnection( src->GetOutputPort() );

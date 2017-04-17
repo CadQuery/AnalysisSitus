@@ -39,6 +39,8 @@ private:
 
   void createPartViewer();
   void createDockWindows();
+  void createMenus();
+  void createToolbar();
 
 private:
 
@@ -91,8 +93,20 @@ private:
     }
   };
 
+  //! Menu items.
+  struct t_menus
+  {
+  };
+
+  //! Toolbar items.
+  struct t_toolbar
+  {
+  };
+
   t_widgets   m_widgets;
   t_listeners m_listeners;
+  t_menus     m_menus;
+  t_toolbar   m_toolbar;
 
 };
 

@@ -32,28 +32,33 @@ public:
 // Kernel methods:
 public:
 
-  void SetInputPoints(const Handle(asiAlgo_BaseCloud<REAL_TYPE>)& points);
+  asiVisu_EXPORT void
+    SetInputPoints(const Handle(asiAlgo_BaseCloud<REAL_TYPE>)& points);
+
+  asiVisu_EXPORT void
+    SetFilter(const Handle(TColStd_HPackedMapOfInteger)& filter);
 
 protected:
 
-  virtual int RequestData(vtkInformation*        request,
-                          vtkInformationVector** inputVector,
-                          vtkInformationVector*  outputVector);
+  asiVisu_EXPORT virtual int
+    RequestData(vtkInformation*        request,
+                vtkInformationVector** inputVector,
+                vtkInformationVector*  outputVector);
 
 protected:
 
-  vtkIdType
+  asiVisu_EXPORT vtkIdType
     registerGridPoint(const gp_Pnt& point,
                       vtkPolyData*  polyData);
 
-  vtkIdType
+  asiVisu_EXPORT vtkIdType
     registerVertex(const vtkIdType n,
                    vtkPolyData*    polyData);
 
 protected:
 
-  asiVisu_PointsSource();
-  ~asiVisu_PointsSource();
+  asiVisu_EXPORT asiVisu_PointsSource();
+  asiVisu_EXPORT ~asiVisu_PointsSource();
 
 private:
 
@@ -62,7 +67,8 @@ private:
 
 private:
 
-  Handle(asiAlgo_BaseCloud<REAL_TYPE>) m_points; //!< Points to visualize.
+  Handle(asiAlgo_BaseCloud<REAL_TYPE>) m_points;  //!< Points to visualize.
+  Handle(TColStd_HPackedMapOfInteger)  m_indices; //!< Point indices to keep (if filter is set).
 
 };
 

@@ -32,6 +32,14 @@ Handle(asiAlgo_BaseCloud<double>) asiVisu_REPointsDataProvider::GetPoints() cons
 
 //-----------------------------------------------------------------------------
 
+//! \return NULL filter.
+Handle(TColStd_HPackedMapOfInteger) asiVisu_REPointsDataProvider::GetIndices() const
+{
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.

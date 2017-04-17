@@ -62,6 +62,17 @@ void asiVisu_PointsSource<REAL_TYPE>::SetInputPoints(const Handle(asiAlgo_BaseCl
 
 //-----------------------------------------------------------------------------
 
+//! Sets filter on the indices. The filter will have effect only if the passed
+//! map of indices is not null. Otherwise, the filter is assumed non-existing.
+//! \param filter [in] point indices to visualize.
+template <typename REAL_TYPE>
+void asiVisu_PointsSource<REAL_TYPE>::SetFilter(const Handle(TColStd_HPackedMapOfInteger)& filter)
+{
+  m_indices = filter;
+}
+
+//-----------------------------------------------------------------------------
+
 //! This is called by the superclass. Creates VTK polygonal data set
 //! from the input arrays.
 //! \param request      [in] information about data object.
@@ -105,8 +116,16 @@ int asiVisu_PointsSource<REAL_TYPE>::RequestData(vtkInformation*        request,
   for ( int i = coords->Lower(); i <= coords->Upper() - 2; i += 3 )
   {
     gp_Pnt P( coords->Value(i), coords->Value(i + 1), coords->Value(i + 2) );
-    //
-    this->registerVertex( this->registerGridPoint(P, polyOutput), polyOutput );
+
+    vtkIdType pointIndex = this->registerGridPoint(P, polyOutput);
+
+    // NOTE: this is for sure not the best practice to register all points
+    //       and create cells only for those which are not filtered out.
+    //       Though, this looks as a simplest possible solution.
+
+    if (  m_indices.IsNull() || // Filter is not set, so pass any point
+         !m_indices.IsNull() && m_indices->Map().Contains(pointIndex) )
+      this->registerVertex( pointIndex, polyOutput );
   }
 
   return Superclass::RequestData(request, inputVector, outputVector);

@@ -33,31 +33,64 @@ Handle(asiAlgo_BaseCloud<double>) asiVisu_RESegmentDataProvider::GetPoints() con
   if ( segment_n.IsNull() || !segment_n->IsWellFormed() )
     return NULL;
 
-  // Get indices of the points in a segment
-  Handle(TColStd_HPackedMapOfInteger) hindices = segment_n->GetIndices();
-  //
-  if ( hindices.IsNull() )
-    return NULL;
-
   // Get the entire point cloud
   Handle(ActAPI_INode)              points_base = segment_n->GetParentNode()  // Segments
                                                            ->GetParentNode(); // Points
   Handle(asiData_REPointsNode)      points_n    = Handle(asiData_REPointsNode)::DownCast(points_base);
   Handle(asiAlgo_BaseCloud<double>) universum   = points_n->GetPoints();
-
-  // Points to visualize
-  Handle(asiAlgo_BaseCloud<double>) result  = new asiAlgo_BaseCloud<double>;
-  const TColStd_PackedMapOfInteger& indices = hindices->Map();
   //
-  for ( TColStd_MapIteratorOfPackedMapOfInteger it(indices); it.More(); it.Next() )
-  {
-    const int pidx = it.Key();
-    double x, y, z;
-    universum->GetElement(pidx, x, y, z);
-    result->AddElement(x, y, z);
-  }
+  return universum;
 
-  return result;
+  /////////////////////////////////////////////////////////////////////////////
+  //Handle(asiData_RESegmentNode)
+  //  segment_n = Handle(asiData_RESegmentNode)::DownCast(m_node);
+  ////
+  //if ( segment_n.IsNull() || !segment_n->IsWellFormed() )
+  //  return NULL;
+
+  //// Get indices of the points in a segment
+  //Handle(TColStd_HPackedMapOfInteger) hindices = segment_n->GetIndices();
+  ////
+  //if ( hindices.IsNull() )
+  //  return NULL;
+
+  //// Get the entire point cloud
+  //Handle(ActAPI_INode)              points_base = segment_n->GetParentNode()  // Segments
+  //                                                         ->GetParentNode(); // Points
+  //Handle(asiData_REPointsNode)      points_n    = Handle(asiData_REPointsNode)::DownCast(points_base);
+  //Handle(asiAlgo_BaseCloud<double>) universum   = points_n->GetPoints();
+
+  //// Points to visualize
+  //Handle(asiAlgo_BaseCloud<double>) result  = new asiAlgo_BaseCloud<double>;
+  //const TColStd_PackedMapOfInteger& indices = hindices->Map();
+  ////
+  //for ( TColStd_MapIteratorOfPackedMapOfInteger it(indices); it.More(); it.Next() )
+  //{
+  //  const int pidx = it.Key();
+  //  double x, y, z;
+  //  universum->GetElement(pidx, x, y, z);
+  //  result->AddElement(x, y, z);
+  //}
+
+  //return result;
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return indices of points to extract from the input point cloud. This
+//!         opens the door to working on point cloud regions while keeping
+//!         a link to the original data.
+Handle(TColStd_HPackedMapOfInteger)
+  asiVisu_RESegmentDataProvider::GetIndices() const
+{
+  Handle(asiData_RESegmentNode)
+    segment_n = Handle(asiData_RESegmentNode)::DownCast(m_node);
+  //
+  if ( segment_n.IsNull() || !segment_n->IsWellFormed() )
+    return NULL;
+
+  // Get indices of the points in a segment
+  return segment_n->GetIndices();
 }
 
 //-----------------------------------------------------------------------------
@@ -70,14 +103,20 @@ Handle(ActAPI_HParameterList) asiVisu_RESegmentDataProvider::translationSources(
   // Resulting Parameters
   ActParamStream out;
 
+  // Get Segment Node
   Handle(asiData_RESegmentNode)
     segment_n = Handle(asiData_RESegmentNode)::DownCast(m_node);
   //
   if ( segment_n.IsNull() || !segment_n->IsWellFormed() )
     return out;
 
-  // Register Parameter as sensitive
-  out << segment_n->Parameter(asiData_RESegmentNode::PID_Indices);
+  // Get the entire point cloud
+  Handle(ActAPI_INode) points_n = segment_n->GetParentNode()  // Segments
+                                           ->GetParentNode(); // Points
+
+  // Register Parameters as sensitive: both input point cloud and its filter
+  out << points_n->Parameter(asiData_REPointsNode::PID_Points)
+      << segment_n->Parameter(asiData_RESegmentNode::PID_Indices);
 
   return out;
 }

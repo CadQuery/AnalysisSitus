@@ -50,6 +50,14 @@ Handle(asiAlgo_BaseCloud<double>) asiVisu_IVPointSet2dDataProvider::GetPoints() 
 
 //-----------------------------------------------------------------------------
 
+//! \return NULL filter.
+Handle(TColStd_HPackedMapOfInteger) asiVisu_IVPointSet2dDataProvider::GetIndices() const
+{
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.

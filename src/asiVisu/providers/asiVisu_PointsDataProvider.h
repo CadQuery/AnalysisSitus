@@ -8,11 +8,14 @@
 #ifndef asiVisu_PointsDataProvider_h
 #define asiVisu_PointsDataProvider_h
 
-// A-Situs visualization includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
+
+// OCCT includes
+#include <TColStd_HPackedMapOfInteger.hxx>
 
 DEFINE_STANDARD_HANDLE(asiVisu_PointsDataProvider, asiVisu_DataProvider)
 
@@ -38,6 +41,9 @@ public:
 
   virtual Handle(asiAlgo_BaseCloud<double>)
     GetPoints() const = 0;
+
+  virtual Handle(TColStd_HPackedMapOfInteger)
+    GetIndices() const = 0;
 
 protected:
 

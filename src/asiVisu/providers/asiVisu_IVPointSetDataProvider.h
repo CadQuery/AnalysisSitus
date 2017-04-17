@@ -32,6 +32,9 @@ public:
   asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<double>)
     GetPoints() const;
 
+  asiVisu_EXPORT virtual Handle(TColStd_HPackedMapOfInteger)
+    GetIndices() const;
+
 private:
 
   virtual Handle(ActAPI_HParameterList)

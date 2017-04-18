@@ -51,6 +51,12 @@
     <Filter Include="Source Files\Modeling\Editing">
       <UniqueIdentifier>{f7f098bc-2149-4d36-8f36-b8eb6794f8ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Opt">
+      <UniqueIdentifier>{009c08ab-0bf4-46fa-908e-9edced8299a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Opt">
+      <UniqueIdentifier>{eb05e33f-1720-4eaf-8d24-c1fba966e423}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.h">
@@ -218,6 +224,12 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_InvertFaces.h">
       <Filter>Header Files\Modeling\Editing</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\opt\asiAlgo_Function.h">
+      <Filter>Header Files\Opt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\opt\asiAlgo_PSO.h">
+      <Filter>Header Files\Opt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.cpp">
@@ -345,6 +357,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_InvertFaces.cpp">
       <Filter>Source Files\Modeling\Editing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\opt\asiAlgo_Function.cpp">
+      <Filter>Source Files\Opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\opt\asiAlgo_PSO.cpp">
+      <Filter>Source Files\Opt</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

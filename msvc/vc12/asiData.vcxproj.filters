@@ -128,6 +128,9 @@
     <ClInclude Include="..\..\src\asiData\asiData_FaceNormsNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiData\asiData_REPrimitiveNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiData\asiData_BoundaryEdgesNode.cpp">
@@ -242,6 +245,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiData\asiData_FaceNormsNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiData\asiData_REPrimitiveNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

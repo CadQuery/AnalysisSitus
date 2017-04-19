@@ -411,6 +411,12 @@ void asiUI_JournalIV::visualize(const bool                  is2d,
     //
     Handle(asiVisu_ShapePipeline)
       pl = Handle(asiVisu_ShapePipeline)::DownCast( topo_prs->GetPipeline(asiVisu_IVTopoItemPrs::Pipeline_Main) );
+    //
+    if ( pl.IsNull() )
+    {
+      std::cout << "Pipeline is NULL" << std::endl;
+      return;
+    }
 
     // Configure shape visualization
     TopoDS_Shape shape = Handle(asiData_IVTopoItemNode)::DownCast(node)->GetShape();

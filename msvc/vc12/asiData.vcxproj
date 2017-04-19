@@ -43,6 +43,7 @@
     <ClInclude Include="..\..\src\asiData\asiData_RENode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_RENormalsNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_REPointsNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_REPrimitiveNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_RESegmentNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_RESegmentsNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_RESurfaceNode.h" />
@@ -86,6 +87,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\src\asiData\asiData_REPointsNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_REPrimitiveNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_RESegmentNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_RESegmentsNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_RESurfaceNode.cpp" />

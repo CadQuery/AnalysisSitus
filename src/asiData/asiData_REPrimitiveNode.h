@@ -15,15 +15,15 @@
 #include <ActData_BaseNode.h>
 
 // OCCT includes
-#include <Geom_Surface.hxx>
+#include <TopoDS_Shape.hxx>
 
 //-----------------------------------------------------------------------------
 // Topological primitive as a result of Reverse Engineering
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_RESurfaceNode, ActData_BaseNode)
+DEFINE_STANDARD_HANDLE(asiData_REPrimitiveNode, ActData_BaseNode)
 
-//! Node representing a single topological primitive as a result of
+//! Node representing a single topological primitive being a result of
 //! reverse engineering.
 class asiData_REPrimitiveNode : public ActData_BaseNode
 {

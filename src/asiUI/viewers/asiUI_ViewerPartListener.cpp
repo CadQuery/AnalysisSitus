@@ -134,14 +134,18 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
 
   // Prepare the context menu items
   QMenu menu;
-  QAction* pSaveBREPAction    = menu.addAction("Save to BREP...");
-  QAction* pShowNormsAction   = menu.addAction("Show normal vectors");
+  QAction* pSaveBREPAction  = menu.addAction("Save to BREP...");
+  //
+  QAction* pShowNormsAction = NULL;
+  if ( m_wViewerPart->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceNormsNode) ) )
+    pShowNormsAction = menu.addAction("Show normal vectors");
+  //
   QAction* pInvertFacesAction = menu.addAction("Invert faces");
 
   // Execute
   QAction* selectedItem = menu.exec(globalPos);
   //
-  if ( selectedItem == pSaveBREPAction )
+  if ( selectedItem && selectedItem == pSaveBREPAction )
   {
     // Get highlighted sub-shapes
     TopTools_IndexedMapOfShape selected;
@@ -177,7 +181,7 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
       return;
     }
   }
-  else if ( selectedItem == pShowNormsAction )
+  else if ( selectedItem && selectedItem == pShowNormsAction )
   {
     TIMER_NEW
     TIMER_GO
@@ -187,7 +191,7 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
     TIMER_FINISH
     TIMER_COUT_RESULT_MSG("Visualization of normals")
   }
-  else if ( selectedItem == pInvertFacesAction )
+  else if ( selectedItem && selectedItem == pInvertFacesAction )
   {
     TIMER_NEW
     TIMER_GO

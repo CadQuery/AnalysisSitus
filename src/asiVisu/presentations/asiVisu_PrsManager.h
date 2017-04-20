@@ -126,6 +126,11 @@ public:
 //-----------------------------------------------------------------------------
 
   asiVisu_EXPORT virtual bool
+    IsPresentable(const Handle(Standard_Type)& nodeType);
+
+//-----------------------------------------------------------------------------
+
+  asiVisu_EXPORT virtual bool
     SetPresentation(const Handle(ActAPI_INode)& node);
 
 //-----------------------------------------------------------------------------

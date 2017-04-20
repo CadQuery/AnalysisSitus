@@ -416,6 +416,22 @@ bool asiVisu_PrsManager::IsPresented(const ActAPI_DataObjectId& nodeID)
 
 //-----------------------------------------------------------------------------
 
+//! Checks whether the passed Node type is presentable or not.
+//! \param nodeType [in] Node type to check.
+//! \return true/false.
+bool asiVisu_PrsManager::IsPresentable(const Handle(Standard_Type)& nodeType)
+{
+  const asiVisu_Utils::TPrsAllocMap& allocMap = asiVisu_Utils::GetAllocMap();
+  const char* nodeTypeName = nodeType->Name();
+
+  if ( !allocMap.IsBound(nodeTypeName) )
+    return false; // No Presentation exists for Node
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Sets up a presentation for the passed Node. If no presentation exists,
 //! this method returns false.
 //! \param node [in] Node to register a Presentation for.

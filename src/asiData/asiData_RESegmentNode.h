@@ -9,16 +9,13 @@
 #define asiData_RESegmentNode_h
 
 // asiData includes
-#include <asiData.h>
-
-// Active Data includes
-#include <ActData_BaseNode.h>
+#include <asiData_REPrimitiveNode.h>
 
 // OCCT includes
 #include <TColStd_HPackedMapOfInteger.hxx>
 
 //-----------------------------------------------------------------------------
-// Node for a single point cloud segment
+// Node for a single point cloud segment (region)
 //-----------------------------------------------------------------------------
 
 DEFINE_STANDARD_HANDLE(asiData_RESegmentNode, ActData_BaseNode)

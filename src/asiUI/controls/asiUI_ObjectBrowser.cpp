@@ -23,8 +23,9 @@
 //-----------------------------------------------------------------------------
 
 //! Creates a new instance of tree view.
-//! \param model  [in] Data Model instance.
-//! \param parent [in] parent widget.
+//! \param model       [in] Data Model instance.
+//! \param pPartViewer [in] part viewer.
+//! \param parent      [in] parent widget.
 asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
                                          asiUI_ViewerPart*            pPartViewer,
                                          QWidget*                     parent)
@@ -149,14 +150,13 @@ void asiUI_ObjectBrowser::onContextMenu(QPoint pos)
   Handle(ActAPI_INode) selected_n;
   if ( !this->selectedNode(selected_n) ) return;
 
-  if ( m_pPartViewer && m_pPartViewer->PrsMgr()->IsPresented(selected_n) )
-  {
-    QMenu* aMenu = new QMenu(this);
-    aMenu->addAction( "Show",      this, SLOT( onShow()     ) );
-    aMenu->addAction( "Show Only", this, SLOT( onShowOnly() ) );
-    aMenu->addAction( "Hide",      this, SLOT( onHide()     ) );
-    aMenu->popup( this->mapToGlobal(pos) );
-  }
+  // Create and populate the menu
+  QMenu* pMenu = new QMenu(this);
+  //
+  this->populateContextMenu(selected_n, pMenu);
+  //
+  if ( !pMenu->isEmpty() )
+    pMenu->popup( this->mapToGlobal(pos) );
 }
 
 //-----------------------------------------------------------------------------
@@ -208,6 +208,22 @@ void asiUI_ObjectBrowser::onHide()
   }
 
   emit hide( selected_n->GetId() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Populates context menu with actions.
+//! \param activeNode [in]      currently active Node.
+//! \param pMenu      [in, out] menu to populate.
+void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_INode)& activeNode,
+                                              QMenu*                      pMenu)
+{
+  if ( m_pPartViewer && m_pPartViewer->PrsMgr()->IsPresented(activeNode) )
+  {
+    pMenu->addAction( "Show",      this, SLOT( onShow()     ) );
+    pMenu->addAction( "Show Only", this, SLOT( onShowOnly() ) );
+    pMenu->addAction( "Hide",      this, SLOT( onHide()     ) );
+  }
 }
 
 //-----------------------------------------------------------------------------

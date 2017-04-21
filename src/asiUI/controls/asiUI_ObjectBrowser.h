@@ -66,6 +66,11 @@ protected slots:
   void onShowOnly         ();
   void onHide             ();
 
+protected:
+
+  virtual void populateContextMenu(const Handle(ActAPI_INode)& activeNode,
+                                   QMenu*                      pMenu);
+
 private:
 
   bool selectedNode(Handle(ActAPI_INode)& Node) const;

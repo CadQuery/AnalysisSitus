@@ -27,6 +27,9 @@ namespace asiAlgo_PointCloudUtils
 
   asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<float>)
     AsPointCloudf(const Handle(TColStd_HArray1OfReal)& arr);
+
+  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<double>)
+    PointCloudfAsPointCloudd(const Handle(asiAlgo_BaseCloud<float>)& pointCloud);
 };
 
 #endif

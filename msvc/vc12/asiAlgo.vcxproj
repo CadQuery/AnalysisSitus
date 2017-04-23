@@ -158,6 +158,7 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlaneOnPoints.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_BaseCloud.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PlateOnPoints.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_CloudRegion.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PointCloudUtils.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_PurifyCloud.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_ReorientNorms.h" />

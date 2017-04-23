@@ -230,6 +230,9 @@
     <ClInclude Include="..\..\src\asiAlgo\opt\asiAlgo_PSO.h">
       <Filter>Header Files\Opt</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_CloudRegion.h">
+      <Filter>Header Files\Modeling\Points</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.cpp">

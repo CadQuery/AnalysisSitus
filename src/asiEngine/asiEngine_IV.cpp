@@ -170,6 +170,27 @@ Handle(asiData_IVPointSet2dNode)
 
 //-----------------------------------------------------------------------------
 
+//! Creates a two-dimensional point set from a vector of gp_Pnt2d objects.
+//! \param points [in] vector to store.
+//! \param name   [in] desired object name.
+Handle(asiData_IVPointSet2dNode)
+  asiEngine_IV::Create_PointSet2d(const std::vector<gp_Pnt2d>&   points,
+                                  const TCollection_AsciiString& name)
+{
+  Handle(TColStd_HArray1OfReal) hcoords = new TColStd_HArray1OfReal(0, points.size()*2 - 1);
+  //
+  for ( size_t i = 0; i < points.size(); ++i )
+  {
+    hcoords->ChangeValue(i*2 + 0) = points[i].X();
+    hcoords->ChangeValue(i*2 + 1) = points[i].Y();
+  }
+
+  // Create from coordinates
+  return Create_PointSet2d(hcoords, name);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Deletes all Point Set 2D Nodes.
 void asiEngine_IV::Clean_Points2d()
 {

@@ -27,6 +27,9 @@
 #include <ActAPI_INode.h>
 #include <ActAPI_IPlotter.h>
 
+// STD includes
+#include <vector>
+
 DEFINE_STANDARD_HANDLE(asiUI_JournalIV, ActAPI_IPlotter)
 
 //! Interface for Imperative Viewer. A particular algorithm may benefit
@@ -178,6 +181,19 @@ public:
 
   asiUI_EXPORT virtual void
     DRAW_TEXT(const TCollection_AsciiString& text);
+
+// A-SITUS SPECIFIC:
+public:
+
+  asiUI_EXPORT void
+    DRAW_ASI_POINTSF(const Handle(asiAlgo_BaseCloud<float>)&,
+                     const Quantity_Color&,
+                     const TCollection_AsciiString&);
+
+  asiUI_EXPORT void
+    DRAW_ASI_POINTS(const std::vector<gp_Pnt2d>&,
+                    const Quantity_Color&,
+                    const TCollection_AsciiString&);
 
 public:
 

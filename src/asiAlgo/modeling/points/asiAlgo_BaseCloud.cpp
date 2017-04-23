@@ -146,6 +146,29 @@ void asiAlgo_BaseCloud<TCoordType>::ComputeBoundingBox(TCoordType& xMin, TCoordT
 
 //-----------------------------------------------------------------------------
 
+template <typename TCoordType>
+Handle(asiAlgo_BaseCloud<TCoordType>)
+  asiAlgo_BaseCloud<TCoordType>::ExtractRegion(const asiAlgo_CloudRegion& region) const
+{
+  // Extracted base cloud
+  Handle(asiAlgo_BaseCloud<TCoordType>) result  = new asiAlgo_BaseCloud<TCoordType>;
+
+  // Extract
+  for ( asiAlgo_CloudRegion::Iterator it(region.indices); it.More(); it.Next() )
+  {
+    const int pidx = it.Key();
+
+    TCoordType x, y, z;
+    this->GetElement(pidx, x, y, z);
+    result->AddElement(x, y, z);
+  }
+
+  // Return
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Reads base cloud recorded in the input file with common XYZ format. That
 //! is, the file contains just coordinate triples without any additional
 //! structuring information.

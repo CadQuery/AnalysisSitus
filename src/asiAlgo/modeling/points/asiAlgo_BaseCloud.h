@@ -8,8 +8,8 @@
 #ifndef asiAlgo_BaseCloud_h
 #define asiAlgo_BaseCloud_h
 
-// A-Situs includes
-#include <asiAlgo.h>
+// asiAlgo includes
+#include <asiAlgo_CloudRegion.h>
 
 // OCCT includes
 #include <Standard_Type.hxx>
@@ -62,6 +62,9 @@ public:
     ComputeBoundingBox(TCoordType& xMin, TCoordType& xMax,
                        TCoordType& yMin, TCoordType& yMax,
                        TCoordType& zMin, TCoordType& zMax) const;
+
+  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<TCoordType>)
+    ExtractRegion(const asiAlgo_CloudRegion& region) const;
 
 public:
 

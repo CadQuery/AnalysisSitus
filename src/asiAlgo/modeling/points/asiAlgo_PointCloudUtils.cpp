@@ -67,3 +67,22 @@ Handle(asiAlgo_BaseCloud<float>)
 
   return result;
 }
+
+//-----------------------------------------------------------------------------
+
+Handle(asiAlgo_BaseCloud<double>)
+  asiAlgo_PointCloudUtils::PointCloudfAsPointCloudd(const Handle(asiAlgo_BaseCloud<float>)& pointCloud)
+{
+  Handle(asiAlgo_BaseCloud<double>) result = new asiAlgo_BaseCloud<double>;
+  //
+  for ( int i = 0; i < pointCloud->GetNumberOfElements(); ++i )
+  {
+    float px, py, pz;
+    pointCloud->GetElement(i, px, py, pz);
+
+    // Add
+    result->AddElement(px, py, pz);
+  }
+
+  return result;
+}

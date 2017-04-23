@@ -390,6 +390,54 @@ void asiUI_JournalIV::DRAW_TEXT(const TCollection_AsciiString& text)
 
 //---------------------------------------------------------------------------//
 
+void asiUI_JournalIV::DRAW_ASI_POINTSF(const Handle(asiAlgo_BaseCloud<float>)& points,
+                                       const Quantity_Color&                   color,
+                                       const TCollection_AsciiString&          name)
+{
+  // Create a new Node for the given point set
+  bool isTx = false;
+  if ( !m_model->HasOpenCommand() )
+  {
+    m_model->OpenCommand();
+    isTx = true;
+  }
+  //
+  Handle(asiData_IVPointSetNode)
+    points_n = asiEngine_IV(m_model).Create_PointSet( asiAlgo_PointCloudUtils::PointCloudfAsPointCloudd(points), name );
+  //
+  if ( isTx )
+    m_model->CommitCommand();
+
+  // Visualize
+  this->visualize(false, points_n, true, color, 1.0, false);
+}
+
+//---------------------------------------------------------------------------//
+
+void asiUI_JournalIV::DRAW_ASI_POINTS(const std::vector<gp_Pnt2d>&   points,
+                                      const Quantity_Color&          color,
+                                      const TCollection_AsciiString& name)
+{
+  // Create a new Node for the given point set
+  bool isTx = false;
+  if ( !m_model->HasOpenCommand() )
+  {
+    m_model->OpenCommand();
+    isTx = true;
+  }
+  //
+  Handle(asiData_IVPointSet2dNode)
+    points_n = asiEngine_IV(m_model).Create_PointSet2d( points, name );
+  //
+  if ( isTx )
+    m_model->CommitCommand();
+
+  // Visualize
+  this->visualize(true, points_n, true, color, 1.0, false);
+}
+
+//---------------------------------------------------------------------------//
+
 void asiUI_JournalIV::visualize(const bool                  is2d,
                                 const Handle(ActAPI_INode)& node,
                                 const bool                  hasColor,

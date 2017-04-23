@@ -36,6 +36,10 @@ public:
     Create_PointSet2d(const Handle(TColStd_HArray1OfReal)& coords,
                       const TCollection_AsciiString&       name);
 
+  asiEngine_EXPORT Handle(asiData_IVPointSet2dNode)
+    Create_PointSet2d(const std::vector<gp_Pnt2d>&   points,
+                      const TCollection_AsciiString& name);
+
   asiEngine_EXPORT void
     Clean_Points2d();
 

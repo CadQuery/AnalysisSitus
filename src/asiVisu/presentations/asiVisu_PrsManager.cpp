@@ -1384,7 +1384,8 @@ QVTKWidget* asiVisu_PrsManager::GetQVTKWidget() const
 
 //! Returns default Interactor Style created by Presentation Manager.
 //! \return Interactor Style instance.
-vtkInteractorStyle* asiVisu_PrsManager::GetDefaultInteractorStyle() const
+const vtkSmartPointer<asiVisu_InteractorStylePick>&
+  asiVisu_PrsManager::GetDefaultInteractorStyle() const
 {
   return m_interactorStyleTrackball;
 }
@@ -1393,7 +1394,8 @@ vtkInteractorStyle* asiVisu_PrsManager::GetDefaultInteractorStyle() const
 
 //! Returns image Interactor Style created by Presentation Manager.
 //! \return Interactor Style instance.
-vtkInteractorStyle* asiVisu_PrsManager::GetImageInteractorStyle() const
+const vtkSmartPointer<asiVisu_InteractorStylePick2d>&
+  asiVisu_PrsManager::GetImageInteractorStyle() const
 {
   return m_interactorStyleImage;
 }

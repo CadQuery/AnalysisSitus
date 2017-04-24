@@ -8,23 +8,23 @@
 #ifndef asiUI_ViewerPart_h
 #define asiUI_ViewerPart_h
 
-// A-Situs includes
-#include <asiUI.h>
-
-// Common includes
-#include <asiEngine_Model.h>
-
-// GUI includes
+// asiUI includes
 #include <asiUI_PartCallback.h>
 #include <asiUI_PickCallback.h>
 #include <asiUI_RotationCallback.h>
 #include <asiUI_Viewer.h>
 
-// Visualization includes
+// asiEngine includes
+#include <asiEngine_Model.h>
+
+// asiVisu includes
 #include <asiVisu_InteractorStylePick.h>
 
 // VTK includes
 #include <vtkOrientationMarkerWidget.h>
+
+// Qt includes
+#include <QToolBar>
 
 //! Viewer for part.
 class asiUI_ViewerPart : public asiUI_Viewer
@@ -61,12 +61,22 @@ public slots:
   void onFindEdge();
   void onRefineTessellation();
   void onContextMenu(const QPoint&);
+  void onBackView();
+  void onBottomView();
+  void onFrontView();
+  void onLeftView();
+  void onRightView();
+  void onTopView();
 
 signals:
 
   void facePicked(const asiVisu_PickResult&);
   void edgePicked(const asiVisu_PickResult&);
   void contextMenu(const QPoint&);
+
+protected:
+
+  void createActions();
 
 protected:
 
@@ -84,6 +94,9 @@ protected:
 
   //! Orientation marker widget.
   vtkSmartPointer<vtkOrientationMarkerWidget> m_axesWidget;
+
+  //! Toolbar.
+  QToolBar* m_toolBar;
 
 };
 

@@ -98,10 +98,17 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
 
   // Widgets and layouts
   QVTKWidget*  pViewer     = m_prs_mgr->GetQVTKWidget();
-  QHBoxLayout* pBaseLayout = new QHBoxLayout();
+  QVBoxLayout* pBaseLayout = new QVBoxLayout();
+
+  // Create toolbar
+  m_toolBar = new QToolBar(this);
+
+  // Create actions
+  this->createActions();
 
   // Configure layout
   pBaseLayout->setSpacing(0);
+  pBaseLayout->addWidget(m_toolBar);
   pBaseLayout->addWidget(pViewer);
   pBaseLayout->setAlignment(Qt::AlignTop);
   pBaseLayout->setContentsMargins(0, 0, 0, 0);
@@ -218,6 +225,7 @@ void asiUI_ViewerPart::Repaint()
 void asiUI_ViewerPart::onResetView()
 {
   asiVisu_Utils::ResetCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
+  //
   this->Repaint();
 }
 
@@ -367,4 +375,91 @@ void asiUI_ViewerPart::onContextMenu(const QPoint& pos)
   QPoint      globalPos = pViewer->mapToGlobal(pos);
 
   emit contextMenu(globalPos);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ViewerPart::onBackView()
+{
+  asiVisu_Utils::CameraOnBack( m_prs_mgr->GetRenderer() );
+  asiVisu_Utils::AdjustCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
+  //
+  this->Repaint();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ViewerPart::onBottomView()
+{
+  asiVisu_Utils::CameraOnBottom( m_prs_mgr->GetRenderer() );
+  asiVisu_Utils::AdjustCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
+  //
+  this->Repaint();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ViewerPart::onFrontView()
+{
+  asiVisu_Utils::CameraOnFront( m_prs_mgr->GetRenderer() );
+  asiVisu_Utils::AdjustCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
+  //
+  this->Repaint();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ViewerPart::onLeftView()
+{
+  asiVisu_Utils::CameraOnLeft( m_prs_mgr->GetRenderer() );
+  asiVisu_Utils::AdjustCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
+  //
+  this->Repaint();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ViewerPart::onRightView()
+{
+  asiVisu_Utils::CameraOnRight( m_prs_mgr->GetRenderer() );
+  asiVisu_Utils::AdjustCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
+  //
+  this->Repaint();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ViewerPart::onTopView()
+{
+  asiVisu_Utils::CameraOnTop( m_prs_mgr->GetRenderer() );
+  asiVisu_Utils::AdjustCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
+  //
+  this->Repaint();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ViewerPart::createActions()
+{
+  QAction* pBackViewAction   = new QAction("Back", this);
+  QAction* pBottomViewAction = new QAction("Bottom", this);
+  QAction* pFrontViewAction  = new QAction("Front", this);
+  QAction* pLeftViewAction   = new QAction("Left", this);
+  QAction* pRightViewAction  = new QAction("Right", this);
+  QAction* pTopViewAction    = new QAction("Top", this);
+  //
+  connect( pBackViewAction,   SIGNAL( triggered() ), this, SLOT( onBackView   () ) );
+  connect( pBottomViewAction, SIGNAL( triggered() ), this, SLOT( onBottomView () ) );
+  connect( pFrontViewAction,  SIGNAL( triggered() ), this, SLOT( onFrontView  () ) );
+  connect( pLeftViewAction,   SIGNAL( triggered() ), this, SLOT( onLeftView   () ) );
+  connect( pRightViewAction,  SIGNAL( triggered() ), this, SLOT( onRightView  () ) );
+  connect( pTopViewAction,    SIGNAL( triggered() ), this, SLOT( onTopView    () ) );
+
+  // Add action to the toolbar
+  m_toolBar->addAction(pBackViewAction);
+  m_toolBar->addAction(pBottomViewAction);
+  m_toolBar->addAction(pFrontViewAction);
+  m_toolBar->addAction(pLeftViewAction);
+  m_toolBar->addAction(pRightViewAction);
+  m_toolBar->addAction(pTopViewAction);
 }

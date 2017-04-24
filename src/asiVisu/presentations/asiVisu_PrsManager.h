@@ -279,10 +279,10 @@ public:
   asiVisu_EXPORT QVTKWidget*
     GetQVTKWidget() const;
 
-  asiVisu_EXPORT vtkInteractorStyle*
+  asiVisu_EXPORT const vtkSmartPointer<asiVisu_InteractorStylePick>&
     GetDefaultInteractorStyle() const;
 
-  asiVisu_EXPORT vtkInteractorStyle*
+  asiVisu_EXPORT const vtkSmartPointer<asiVisu_InteractorStylePick2d>&
     GetImageInteractorStyle() const;
 
   asiVisu_EXPORT vtkAxesActor*

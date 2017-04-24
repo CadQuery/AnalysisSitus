@@ -23,6 +23,9 @@
 #include <BRep_Builder.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
+// VTK includes
+#include <vtkCamera.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QMenu>
@@ -116,12 +119,6 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
   // Get highlighted faces
   TColStd_PackedMapOfInteger faceIndices;
   asiEngine_Part( m_model, m_wViewerPart->PrsMgr() ).GetHighlightedFaces(faceIndices);
-  //
-  if ( !faceIndices.Extent() )
-  {
-    m_progress.SendLogMessage( LogErr(Normal) << "No selected faces" );
-    return;
-  }
 
   // Get Part Node
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
@@ -132,20 +129,55 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
     return;
   }
 
-  // Prepare the context menu items
+  // Context menu
   QMenu menu;
-  QAction* pSaveBREPAction  = menu.addAction("Save to BREP...");
-  //
-  QAction* pShowNormsAction = NULL;
-  if ( m_wViewerPart->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceNormsNode) ) )
-    pShowNormsAction = menu.addAction("Show normal vectors");
-  //
-  QAction* pInvertFacesAction = menu.addAction("Invert faces");
+
+  // Actions
+  QAction* pSaveBREPAction    = NULL;
+  QAction* pShowNormsAction   = NULL;
+  QAction* pInvertFacesAction = NULL;
+  QAction* pPickRotationPoint = NULL;
+
+  // Action for picking custom rotation point
+  pPickRotationPoint = menu.addAction("Set new focal point");
+
+  // Prepare the context menu items
+  if ( faceIndices.Extent() )
+  {
+    menu.addSeparator();
+    //
+    pSaveBREPAction = menu.addAction("Save to BREP...");
+    //
+    if ( m_wViewerPart->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceNormsNode) ) )
+      pShowNormsAction = menu.addAction("Show normal vectors");
+    //
+    pInvertFacesAction = menu.addAction("Invert faces");
+  }
 
   // Execute
   QAction* selectedItem = menu.exec(globalPos);
   //
-  if ( selectedItem && selectedItem == pSaveBREPAction )
+  if ( selectedItem && selectedItem == pPickRotationPoint )
+  {
+    // Take picked position from interactor
+    double pickedX = 0.0, pickedY = 0.0;
+    m_wViewerPart->PrsMgr()->GetDefaultInteractorStyle()->GetPickedPos(pickedX, pickedY);
+
+    // Pick world position
+    vtkSmartPointer<vtkWorldPointPicker>
+      worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
+    //
+    worldPicker->Pick( pickedX, pickedY, 0, m_wViewerPart->PrsMgr()->GetRenderer() );
+    double coord[3];
+    worldPicker->GetPickPosition(coord);
+
+    // The idea is to change focal point of the camera to the picked position because the
+    // focal point is the center of rotation.
+
+    m_wViewerPart->PrsMgr()->GetRenderer()->GetActiveCamera()->SetFocalPoint(coord[0], coord[1], coord[2]);
+    m_wViewerPart->Repaint();
+  }
+  else if ( selectedItem && selectedItem == pSaveBREPAction )
   {
     // Get highlighted sub-shapes
     TopTools_IndexedMapOfShape selected;

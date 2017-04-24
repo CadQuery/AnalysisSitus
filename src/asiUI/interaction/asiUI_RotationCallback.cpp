@@ -21,6 +21,8 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 
+#undef EXPERIMENTAL_ROTO_AROUND_POINT
+
 //-----------------------------------------------------------------------------
 // Data Provider
 //-----------------------------------------------------------------------------
@@ -88,8 +90,10 @@ asiUI_RotationCallback::asiUI_RotationCallback(asiUI_Viewer* pViewer)
   m_pl  = new asiVisu_MeshPipeline;
   m_prv = new asiUI_RotationCenterProvider;
 
+#if defined EXPERIMENTAL_ROTO_AROUND_POINT
   // Initialize world picker for center of rotation
   m_worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
+#endif
 }
 
 //! Destructor.
@@ -134,6 +138,10 @@ void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(pCaller),
     // Rotation center
     double X, Y, Z;
 
+    // Camera
+    vtkCamera* pCamera = renderer->GetActiveCamera();
+
+#if defined EXPERIMENTAL_ROTO_AROUND_POINT
     // Pick position
     asiVisu_PickInput* pickInput = reinterpret_cast<asiVisu_PickInput*>(pCallData);
     //
@@ -160,11 +168,12 @@ void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(pCaller),
       double xWindowCenter = -2.0 * ( (double) pickInput->Start.x() ) / xDisplayMax + 1;
       double yWindowCenter = -2.0 * ( (double) pickInput->Start.y() ) / yDisplayMax + 1;
       //
-      vtkCamera* pCamera = renderer->GetActiveCamera();
-      //
       pCamera->SetWindowCenter(xWindowCenter, yWindowCenter);
       pCamera->SetFocalPoint(X, Y, Z);
     }
+#else
+    pCamera->GetFocalPoint(X, Y, Z);
+#endif
 
     // Initialize Data Provider
     m_prv->Init( X, Y, Z, this->getScaledSize(renderer) );

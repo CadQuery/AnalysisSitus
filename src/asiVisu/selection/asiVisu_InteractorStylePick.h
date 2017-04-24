@@ -62,6 +62,14 @@ public:
   asiVisu_EXPORT virtual void
     OnKeyPress();
 
+public:
+
+  void GetPickedPos(double& x, double& y) const
+  {
+    x = m_PickedPos[0];
+    y = m_PickedPos[1];
+  }
+
 private:
 
   //! Copying prohibited.

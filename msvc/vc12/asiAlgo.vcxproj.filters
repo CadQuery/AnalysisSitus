@@ -233,6 +233,15 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_CloudRegion.h">
       <Filter>Header Files\Modeling\Points</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\opt\asiAlgo_ArmijoRule.h">
+      <Filter>Header Files\Opt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\opt\asiAlgo_FunctionWithGradient.h">
+      <Filter>Header Files\Opt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\opt\asiAlgo_GradientDescent.h">
+      <Filter>Header Files\Opt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.cpp">
@@ -365,6 +374,15 @@
       <Filter>Source Files\Opt</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\opt\asiAlgo_PSO.cpp">
+      <Filter>Source Files\Opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\opt\asiAlgo_ArmijoRule.cpp">
+      <Filter>Source Files\Opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\opt\asiAlgo_FunctionWithGradient.cpp">
+      <Filter>Source Files\Opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\opt\asiAlgo_GradientDescent.cpp">
       <Filter>Source Files\Opt</Filter>
     </ClCompile>
   </ItemGroup>

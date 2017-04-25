@@ -368,6 +368,12 @@
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_PartPipelineBase.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_REGaussMapPrs.h">
+      <Filter>Header Files\Presentations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_REGaussMapDataProvider.h">
+      <Filter>Header Files\Providers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_MeshENScalarFilter.cpp">
@@ -669,6 +675,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PartPipelineBase.cpp">
       <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_REGaussMapPrs.cpp">
+      <Filter>Source Files\Presentations</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_REGaussMapDataProvider.cpp">
+      <Filter>Source Files\Providers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

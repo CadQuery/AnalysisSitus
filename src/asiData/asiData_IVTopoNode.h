@@ -53,7 +53,7 @@ public:
     GetName();
 
   asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& theName);
+    SetName(const TCollection_ExtendedString& name);
 
 // Handy accessors to the stored data:
 public:

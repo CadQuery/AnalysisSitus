@@ -1,38 +1,38 @@
 //-----------------------------------------------------------------------------
-// Created on: 08 April 2016
+// Created on: 25 April 2017
 // Created by: Quaoar
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_IVSurfaceNode_h
-#define asiData_IVSurfaceNode_h
+#ifndef asiData_REGaussMapNode_h
+#define asiData_REGaussMapNode_h
 
 // asiData includes
 #include <asiData.h>
 
+// asiAlgo includes
+#include <asiAlgo_BaseCloud.h>
+
 // Active Data includes
 #include <ActData_BaseNode.h>
 
-// OCCT includes
-#include <Geom_Surface.hxx>
-
 //-----------------------------------------------------------------------------
-// Data Node representing a single surface in IV (Imperative Viewer)
+// Gauss map for Reverse Engineering
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_IVSurfaceNode, ActData_BaseNode)
+DEFINE_STANDARD_HANDLE(asiData_REGaussMapNode, ActData_BaseNode)
 
-//! Data Node representing a single surface in IV (Imperative Viewer).
-class asiData_IVSurfaceNode : public ActData_BaseNode
+//! Node representing Gauss map.
+class asiData_REGaussMapNode : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_IVSurfaceNode, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_REGaussMapNode, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_IVSurfaceNode, Instance)
+  DEFINE_NODE_FACTORY(asiData_REGaussMapNode, Instance)
 
 public:
 
@@ -44,9 +44,7 @@ public:
   //------------------//
     PID_Name,         //!< Name of the Node.
   //------------------//
-    PID_Geometry,     //!< Stored geometry.
-    PID_ULimit,       //!< Value to limit possibly infinite domain in U (absolute).
-    PID_VLimit,       //!< Value to limit possibly infinite domain in V (absolute).
+    PID_Vectors,      //!< Vectors (array of coordinates).
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -55,6 +53,12 @@ public:
 
   asiData_EXPORT static Handle(ActAPI_INode)
     Instance();
+
+// Initialization:
+public:
+
+  asiData_EXPORT void
+    Init();
 
 // Generic naming support:
 public:
@@ -68,29 +72,29 @@ public:
 // Handy accessors to the stored data:
 public:
 
-  asiData_EXPORT Handle(Geom_Surface)
-    GetSurface() const;
+  asiData_EXPORT gp_Vec
+    GetVector(const int zeroBasedIndex) const;
+
+  asiData_EXPORT Handle(asiAlgo_BaseCloud<double>)
+    GetVectors() const;
+
+  asiData_EXPORT Handle(asiAlgo_BaseCloud<float>)
+    GetVectorsf() const;
 
   asiData_EXPORT void
-    SetSurface(const Handle(Geom_Surface)& surface);
+    SetVectors(const Handle(asiAlgo_BaseCloud<double>)& vectors);
 
   asiData_EXPORT void
-    SetLimits(const double uLimit, const double vLimit);
+    SetVectorsf(const Handle(asiAlgo_BaseCloud<float>)& vectors);
 
-  asiData_EXPORT void
-    GetLimits(double& uLimit, double& vLimit) const;
-
-// Initialization:
-public:
-
-  asiData_EXPORT void
-    Init();
+  asiData_EXPORT bool
+    IsEmpty() const;
 
 protected:
 
   //! Allocation is allowed only via Instance method.
   asiData_EXPORT
-    asiData_IVSurfaceNode();
+    asiData_REGaussMapNode();
 
 };
 

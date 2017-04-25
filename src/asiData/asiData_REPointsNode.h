@@ -9,6 +9,7 @@
 #define asiData_REPointsNode_h
 
 // asiData includes
+#include <asiData_REGaussMapNode.h>
 #include <asiData_RENormalsNode.h>
 #include <asiData_RESegmentsNode.h>
 
@@ -68,7 +69,7 @@ public:
     GetName();
 
   asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& theName);
+    SetName(const TCollection_ExtendedString& name);
 
 // Handy accessors to the stored data:
 public:
@@ -84,6 +85,9 @@ public:
 
   asiData_EXPORT void
     SetPoints(const Handle(asiAlgo_BaseCloud<double>)& points);
+
+  asiData_EXPORT Handle(asiData_REGaussMapNode)
+    GetGaussMap();
 
   asiData_EXPORT Handle(asiData_RENormalsNode)
     GetNormals();
@@ -101,7 +105,8 @@ protected:
 
   enum Child
   {
-    Child_Normals = 1,
+    Child_GaussMap = 1,
+    Child_Normals,
     Child_Segments
   };
 

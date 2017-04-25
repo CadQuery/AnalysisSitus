@@ -50,6 +50,14 @@ Handle(asiAlgo_BaseCloud<float>) asiVisu_RENormalsDataProvider::GetVectorsf()
 
 //-----------------------------------------------------------------------------
 
+//! \return max modulus for a normal.
+double asiVisu_RENormalsDataProvider::GetMaxVectorModulus() const
+{
+  return 10.0;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
 //! translation process.
 //! \return source Parameters.
@@ -68,12 +76,4 @@ Handle(ActAPI_HParameterList) asiVisu_RENormalsDataProvider::translationSources(
   out << normals_n->Parameter(asiData_RENormalsNode::PID_Normals);
 
   return out;
-}
-
-//-----------------------------------------------------------------------------
-
-//! \return max modulus for a normal.
-double asiVisu_RENormalsDataProvider::GetMaxVectorModulus() const
-{
-  return 10.0;
 }

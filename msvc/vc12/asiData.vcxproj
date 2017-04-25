@@ -40,6 +40,7 @@
     <ClInclude Include="..\..\src\asiData\asiData_PartNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_REContourNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_REContoursNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_REGaussMapNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_RENode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_RENormalsNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_REPointsNode.h" />
@@ -81,6 +82,7 @@
     <ClCompile Include="..\..\src\asiData\asiData_PartNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_REContourNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_REContoursNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_REGaussMapNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_RENode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_RENormalsNode.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>

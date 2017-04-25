@@ -115,14 +115,26 @@ void asiData_REPointsNode::SetPoints(const Handle(asiAlgo_BaseCloud<double>)& po
   ActParamTool::AsRealArray( this->Parameter(PID_Points) )->SetArray(coords);
 }
 
+//! \return underlying Gauss map Node.
+Handle(asiData_REGaussMapNode) asiData_REPointsNode::GetGaussMap()
+{
+  Handle(asiData_REGaussMapNode)
+    gauss_n = Handle(asiData_REGaussMapNode)::DownCast( this->GetChildNode(Child_GaussMap) );
+  //
+  if ( !gauss_n.IsNull() && gauss_n->IsWellFormed() )
+    return gauss_n;
+  //
+  return NULL;
+}
+
 //! \return underlying normals Node.
 Handle(asiData_RENormalsNode) asiData_REPointsNode::GetNormals()
 {
   Handle(asiData_RENormalsNode)
-    normal_n = Handle(asiData_RENormalsNode)::DownCast( this->GetChildNode(Child_Normals) );
+    normals_n = Handle(asiData_RENormalsNode)::DownCast( this->GetChildNode(Child_Normals) );
   //
-  if ( !normal_n.IsNull() && normal_n->IsWellFormed() )
-    return normal_n;
+  if ( !normals_n.IsNull() && normals_n->IsWellFormed() )
+    return normals_n;
   //
   return NULL;
 }

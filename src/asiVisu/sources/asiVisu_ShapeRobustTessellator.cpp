@@ -329,32 +329,61 @@ void asiVisu_ShapeRobustTessellator::addEdge(const TopoDS_Edge&           edge,
   if ( edge.IsNull() || BRep_Tool::Degenerated(edge) )
     return;
 
+  // IDs of the edge points
+  vtkSmartPointer<vtkIdList> pids = vtkSmartPointer<vtkIdList>::New();
+
+  // Take polygon on triangulation
   Handle(Poly_PolygonOnTriangulation) polyOn;
   Handle(Poly_Triangulation) poly;
   TopLoc_Location loc;
   //
   BRep_Tool::PolygonOnTriangulation(edge, polyOn, poly, loc);
 
+  // If the edge is not associated with any triangulation (e.g. the master
+  // shape is a wire), it may still have an explicitly defined 3D polygon
   if ( polyOn.IsNull() || poly.IsNull() )
-    return;
-
-  // Add node indices to the collection of boundary nodes
-  const TColStd_Array1OfInteger& polygonOnTriNodes = polyOn->Nodes();
-  vtkSmartPointer<vtkIdList> pids = vtkSmartPointer<vtkIdList>::New();
-  //
-  for ( int k = polygonOnTriNodes.Lower(); k <= polygonOnTriNodes.Upper(); ++k )
   {
-    const int pidx = polygonOnTriNodes(k);
-    gp_Pnt P = poly->Nodes()(pidx);
+    const Handle(Poly_Polygon3D)& polygon3d = BRep_Tool::Polygon3D(edge, loc);
     //
-    if ( !loc.IsIdentity() )
-      P.Transform(loc);
+    if ( polygon3d.IsNull() )
+      return;
 
-    // Insert VTK point
-    vtkIdType pid = m_data->InsertCoordinate( P.X(), P.Y(), P.Z() );
-    //
-    pids->InsertNextId(pid);
+    const TColgp_Array1OfPnt& points = polygon3d->Nodes();
+
+    // Add points to VTK geometry set
+    for ( int pidx = points.Lower(); pidx <= points.Upper(); ++pidx )
+    {
+      gp_Pnt P = points(pidx);
+      //
+      if ( !loc.IsIdentity() )
+        P.Transform(loc);
+
+      // Insert VTK point
+      vtkIdType pid = m_data->InsertCoordinate( P.X(), P.Y(), P.Z() );
+      //
+      pids->InsertNextId(pid);
+    }
   }
-  //
+  else
+  {
+    // Add node indices to the collection of boundary nodes
+    const TColStd_Array1OfInteger& polygonOnTriNodes = polyOn->Nodes();
+    //
+    for ( int k = polygonOnTriNodes.Lower(); k <= polygonOnTriNodes.Upper(); ++k )
+    {
+      const int pidx = polygonOnTriNodes(k);
+      gp_Pnt P = poly->Nodes()(pidx);
+      //
+      if ( !loc.IsIdentity() )
+        P.Transform(loc);
+
+      // Insert VTK point
+      vtkIdType pid = m_data->InsertCoordinate( P.X(), P.Y(), P.Z() );
+      //
+      pids->InsertNextId(pid);
+    }
+  }
+
+  // Create VTK topology
   m_data->InsertPolyline(shapeId, pids, scType);
 }

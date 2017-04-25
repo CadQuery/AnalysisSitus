@@ -8,10 +8,11 @@
 // Own include
 #include <asiVisu_GeomContourPrs.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_ContourDataProvider.h>
 #include <asiVisu_ContourPointsDataProvider.h>
 #include <asiVisu_PointsPipeline.h>
+#include <asiVisu_ShapePipeline.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -26,44 +27,45 @@
 asiVisu_GeomContourPrs::asiVisu_GeomContourPrs(const Handle(ActAPI_INode)& theNode)
 : asiVisu_Prs(theNode)
 {
-  //Handle(asiData_ContourNode) contour_n = Handle(asiData_ContourNode)::DownCast(theNode);
+  Handle(asiData_ContourNode) contour_n = Handle(asiData_ContourNode)::DownCast(theNode);
 
-  //// Create Data Provider for polyline
-  //Handle(asiVisu_ContourDataProvider)
-  //  DP_contour = new asiVisu_ContourDataProvider(contour_n);
+  // Create Data Provider for polyline
+  Handle(asiVisu_ContourDataProvider)
+    DP_contour = new asiVisu_ContourDataProvider(contour_n);
 
-  //// Create Data Provider for points
-  //Handle(asiVisu_ContourPointsDataProvider)
-  //  DP_points = new asiVisu_ContourPointsDataProvider(contour_n);
+  // Create Data Provider for points
+  Handle(asiVisu_ContourPointsDataProvider)
+    DP_points = new asiVisu_ContourPointsDataProvider(contour_n);
 
-  //// Pipeline for contour
-  //Handle(asiVisu_ShapePipeline) shape_pl = new asiVisu_ShapePipeline();
-  //shape_pl->WireframeModeOn();
-  ////
-  //this->addPipeline        ( Pipeline_Main, shape_pl );
-  //this->assignDataProvider ( Pipeline_Main, DP_contour );
+  // Pipeline for contour
+  Handle(asiVisu_ShapePipeline) shape_pl = new asiVisu_ShapePipeline(false);
+  shape_pl->GetDisplayModeFilter()->SetDisplayMode(DisplayMode_Wireframe);
+  shape_pl->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
+  //
+  this->addPipeline        ( Pipeline_Main, shape_pl );
+  this->assignDataProvider ( Pipeline_Main, DP_contour );
 
-  //// Pipeline for points
-  //Handle(asiVisu_PointsPipeline) points_pl = new asiVisu_PointsPipeline;
-  ////
-  //this->addPipeline        ( Pipeline_Points, points_pl );
-  //this->assignDataProvider ( Pipeline_Points, DP_points );
+  // Pipeline for points
+  Handle(asiVisu_PointsPipeline) points_pl = new asiVisu_PointsPipeline;
+  //
+  this->addPipeline        ( Pipeline_Points, points_pl );
+  this->assignDataProvider ( Pipeline_Points, DP_points );
 
-  //// Configure presentation
-  //shape_pl  -> Actor()->GetProperty()->SetLineWidth(2.0f);
-  //shape_pl  -> Actor()->GetProperty()->SetLighting(0);
-  //shape_pl  -> Mapper()->SetScalarVisibility(0);
-  //points_pl -> Actor()->GetProperty()->SetColor(0.0, 0.0, 1.0);
-  //points_pl -> Actor()->GetProperty()->SetPointSize(5.0f);
+  // Configure presentation
+  shape_pl  -> Actor()->GetProperty()->SetLineWidth(2.0f);
+  shape_pl  -> Actor()->GetProperty()->SetLighting(0);
+  shape_pl  -> Mapper()->SetScalarVisibility(0);
+  points_pl -> Actor()->GetProperty()->SetColor(0.0, 0.0, 1.0);
+  points_pl -> Actor()->GetProperty()->SetPointSize(5.0f);
 
-  //// Make contour be visualized always on top of the scene
-  //shape_pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
-  //shape_pl->Mapper()->SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-66000);
-  //shape_pl->Mapper()->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);
-  ////
-  //points_pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
-  //points_pl->Mapper()->SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-66000);
-  //points_pl->Mapper()->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);
+  // Make contour be visualized always on top of the scene
+  shape_pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
+  shape_pl->Mapper()->SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-66000);
+  shape_pl->Mapper()->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);
+  //
+  points_pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
+  points_pl->Mapper()->SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-66000);
+  points_pl->Mapper()->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);
 }
 
 //! Factory method for Presentation.

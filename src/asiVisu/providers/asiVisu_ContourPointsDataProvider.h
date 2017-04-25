@@ -8,7 +8,7 @@
 #ifndef asiVisu_ContourPointsDataProvider_h
 #define asiVisu_ContourPointsDataProvider_h
 
-// A-Situs visualization includes
+// asiVisu includes
 #include <asiVisu_PointsDataProvider.h>
 
 // asiData includes
@@ -33,6 +33,13 @@ public:
 
   asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<double>)
     GetPoints() const;
+
+public:
+
+  virtual Handle(TColStd_HPackedMapOfInteger) GetIndices() const
+  {
+    return NULL;
+  }
 
 private:
 

@@ -9,7 +9,9 @@
 #include <asiVisu_REGaussMapPrs.h>
 
 // asiVisu includes
+#include <asiVisu_REGaussMapAxisDataProvider.h>
 #include <asiVisu_REGaussMapDataProvider.h>
+#include <asiVisu_REGaussMapRefinedAxisDataProvider.h>
 #include <asiVisu_Utils.h>
 #include <asiVisu_VectorsPipeline.h>
 
@@ -25,13 +27,36 @@ asiVisu_REGaussMapPrs::asiVisu_REGaussMapPrs(const Handle(ActAPI_INode)& node)
   Handle(asiData_REGaussMapNode)
     gauss_n = Handle(asiData_REGaussMapNode)::DownCast(node);
 
-  // Create Data Provider
+  // Create Data Provider for Gauss Map
   Handle(asiVisu_REGaussMapDataProvider)
     DP = new asiVisu_REGaussMapDataProvider(gauss_n);
 
-  // Pipeline for points
-  this->addPipeline        ( Pipeline_Main, new asiVisu_VectorsPipeline );
-  this->assignDataProvider ( Pipeline_Main, DP );
+  // Create Data Provider for axis vector
+  Handle(asiVisu_REGaussMapAxisDataProvider)
+    DPAxis = new asiVisu_REGaussMapAxisDataProvider(gauss_n);
+
+  // Create Data Provider for refined axis vector
+  Handle(asiVisu_REGaussMapRefinedAxisDataProvider)
+    DPRefinedAxis = new asiVisu_REGaussMapRefinedAxisDataProvider(gauss_n);
+
+  // Pipeline for vectors
+  this->addPipeline        ( Pipeline_GaussMap, new asiVisu_VectorsPipeline );
+  this->assignDataProvider ( Pipeline_GaussMap, DP );
+
+  // Pipeline for main axis
+  this->addPipeline        ( Pipeline_Axis, new asiVisu_VectorsPipeline );
+  this->assignDataProvider ( Pipeline_Axis, DPAxis );
+
+  // Pipeline for refined axis
+  this->addPipeline        ( Pipeline_RefinedAxis, new asiVisu_VectorsPipeline );
+  this->assignDataProvider ( Pipeline_RefinedAxis, DPRefinedAxis );
+
+  // Adjust colors
+  this->GetPipeline(Pipeline_Axis)->Mapper()->ScalarVisibilityOff();
+  this->GetPipeline(Pipeline_Axis)->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
+  //
+  this->GetPipeline(Pipeline_RefinedAxis)->Mapper()->ScalarVisibilityOff();
+  this->GetPipeline(Pipeline_RefinedAxis)->Actor()->GetProperty()->SetColor(0.0, 1.0, 0.0);
 }
 
 //! Factory method for Presentation.

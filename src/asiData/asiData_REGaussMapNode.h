@@ -23,6 +23,7 @@
 
 DEFINE_STANDARD_HANDLE(asiData_REGaussMapNode, ActData_BaseNode)
 
+//! \todo move this Node to ABR.
 //! Node representing Gauss map.
 class asiData_REGaussMapNode : public ActData_BaseNode
 {
@@ -48,6 +49,9 @@ public:
     PID_AxisX,        //!< X coordinate of a central axis.
     PID_AxisY,        //!< Y coordinate of a central axis.
     PID_AxisZ,        //!< Z coordinate of a central axis.
+    PID_RefinedAxisX, //!< X coordinate of a refined axis.
+    PID_RefinedAxisY, //!< Y coordinate of a refined axis.
+    PID_RefinedAxisZ, //!< Z coordinate of a refined axis.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -98,6 +102,12 @@ public:
 
   asiData_EXPORT void
     GetCentralAxis(double& x, double& y, double& z) const;
+
+  asiData_EXPORT void
+    SetRefinedAxis(const double x, const double y, const double z);
+
+  asiData_EXPORT void
+    GetRefinedAxis(double& x, double& y, double& z) const;
 
 protected:
 

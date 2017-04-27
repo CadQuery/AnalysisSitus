@@ -21,6 +21,12 @@ asiData_REGaussMapNode::asiData_REGaussMapNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,      PID_Name);
   REGISTER_PARAMETER(RealArray, PID_Vectors);
+  REGISTER_PARAMETER(Real,      PID_AxisX);
+  REGISTER_PARAMETER(Real,      PID_AxisY);
+  REGISTER_PARAMETER(Real,      PID_AxisZ);
+  REGISTER_PARAMETER(Real,      PID_RefinedAxisX);
+  REGISTER_PARAMETER(Real,      PID_RefinedAxisY);
+  REGISTER_PARAMETER(Real,      PID_RefinedAxisZ);
 }
 
 //! Returns new DETACHED instance of the Node ensuring its correct
@@ -38,6 +44,12 @@ void asiData_REGaussMapNode::Init()
   this->InitParameter(PID_Name, "Name");
   //
   ActParamTool::AsRealArray( this->Parameter(PID_Vectors) )->SetArray(NULL);
+
+  // Set coordinates of the central axis
+  this->SetCentralAxis(0.0, 0.0, 0.0);
+
+  // Set coordinates of the refined axis
+  this->SetRefinedAxis(0.0, 0.0, 0.0);
 }
 
 //-----------------------------------------------------------------------------
@@ -137,7 +149,45 @@ bool asiData_REGaussMapNode::IsEmpty() const
 }
 
 //! Sets central axis in a Gauss map.
-void asiData_REGaussMapNode::SetCentralAxis(const double x, const double y, const double z);
+//! \param x [in] x coordinate.
+//! \param y [in] y coordinate.
+//! \param z [in] z coordinate.
+void asiData_REGaussMapNode::SetCentralAxis(const double x, const double y, const double z)
+{
+  ActParamTool::AsReal( this->Parameter(PID_AxisX) )->SetValue(x);
+  ActParamTool::AsReal( this->Parameter(PID_AxisY) )->SetValue(y);
+  ActParamTool::AsReal( this->Parameter(PID_AxisZ) )->SetValue(z);
+}
 
-void
-  GetCentralAxis(double& x, double& y, double& z) const;
+//! Returns coordinates of the central axis.
+//! \param x [out] x coordinate.
+//! \param y [out] y coordinate.
+//! \param z [out] z coordinate.
+void asiData_REGaussMapNode::GetCentralAxis(double& x, double& y, double& z) const
+{
+  x = ActParamTool::AsReal( this->Parameter(PID_AxisX) )->GetValue();
+  y = ActParamTool::AsReal( this->Parameter(PID_AxisY) )->GetValue();
+  z = ActParamTool::AsReal( this->Parameter(PID_AxisZ) )->GetValue();
+}
+
+//! Sets refined axis in a Gauss map.
+//! \param x [in] x coordinate.
+//! \param y [in] y coordinate.
+//! \param z [in] z coordinate.
+void asiData_REGaussMapNode::SetRefinedAxis(const double x, const double y, const double z)
+{
+  ActParamTool::AsReal( this->Parameter(PID_RefinedAxisX) )->SetValue(x);
+  ActParamTool::AsReal( this->Parameter(PID_RefinedAxisY) )->SetValue(y);
+  ActParamTool::AsReal( this->Parameter(PID_RefinedAxisZ) )->SetValue(z);
+}
+
+//! Returns coordinates of the refined axis.
+//! \param x [out] x coordinate.
+//! \param y [out] y coordinate.
+//! \param z [out] z coordinate.
+void asiData_REGaussMapNode::GetRefinedAxis(double& x, double& y, double& z) const
+{
+  x = ActParamTool::AsReal( this->Parameter(PID_RefinedAxisX) )->GetValue();
+  y = ActParamTool::AsReal( this->Parameter(PID_RefinedAxisY) )->GetValue();
+  z = ActParamTool::AsReal( this->Parameter(PID_RefinedAxisZ) )->GetValue();
+}

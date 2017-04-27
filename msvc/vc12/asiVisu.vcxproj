@@ -188,7 +188,9 @@
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_LawDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_MeshDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_PartDataProvider.h" />
+    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_REGaussMapAxisDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_REGaussMapDataProvider.h" />
+    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_REGaussMapRefinedAxisDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_VectorsDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_PointsDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_REContoursDataProvider.h" />
@@ -294,7 +296,9 @@
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_LawDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_MeshDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_PartDataProvider.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_REGaussMapAxisDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_REGaussMapDataProvider.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_REGaussMapRefinedAxisDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_VectorsDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_PointsDataProvider.cpp" />
     <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_REContoursDataProvider.cpp" />

@@ -33,7 +33,9 @@ public:
   //! Pipelines.
   enum PipelineId
   {
-    Pipeline_Main = 1
+    Pipeline_GaussMap = 1,
+    Pipeline_Axis,
+    Pipeline_RefinedAxis
   };
 
 public:

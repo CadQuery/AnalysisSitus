@@ -14,7 +14,7 @@
 // STD includes
 #include <vector>
 
-#undef COUT_DEBUG
+#define COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif
@@ -108,7 +108,11 @@ public:
             int num_armijo_iters = 0;
 
             if ( !Armijo.Perform(Armijo_params, num_armijo_iters, actual_step) )
-              actual_step = m_params.step;
+            {
+              // Convergence impossible. No sense to proceed, let's stop
+              m_argmin = pos;
+              doStop   = true;
+            }
           }
           else
             actual_step = m_params.step;
@@ -118,6 +122,7 @@ public:
 
           ///
           pos.Dump(std::cout);
+          ///
 #if defined COUT_DEBUG
           std::cout << "F[" << num_iters << ", step " << actual_step
                     << "] = " << m_params.pFunc->Value(pos) << std::endl;

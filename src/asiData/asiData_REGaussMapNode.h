@@ -45,6 +45,9 @@ public:
     PID_Name,         //!< Name of the Node.
   //------------------//
     PID_Vectors,      //!< Vectors (array of coordinates).
+    PID_AxisX,        //!< X coordinate of a central axis.
+    PID_AxisY,        //!< Y coordinate of a central axis.
+    PID_AxisZ,        //!< Z coordinate of a central axis.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -89,6 +92,12 @@ public:
 
   asiData_EXPORT bool
     IsEmpty() const;
+
+  asiData_EXPORT void
+    SetCentralAxis(const double x, const double y, const double z);
+
+  asiData_EXPORT void
+    GetCentralAxis(double& x, double& y, double& z) const;
 
 protected:
 

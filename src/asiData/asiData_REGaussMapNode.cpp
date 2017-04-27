@@ -135,3 +135,9 @@ bool asiData_REGaussMapNode::IsEmpty() const
 
   return coords.IsNull();
 }
+
+//! Sets central axis in a Gauss map.
+void asiData_REGaussMapNode::SetCentralAxis(const double x, const double y, const double z);
+
+void
+  GetCentralAxis(double& x, double& y, double& z) const;

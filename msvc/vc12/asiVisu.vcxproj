@@ -52,7 +52,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\selection;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\opt;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\selection;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiVisu_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -84,7 +84,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\selection;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(QT_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\opt;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;$(AS_ROOT)\src\asiVisu;$(AS_ROOT)\src\asiVisu\filters;$(AS_ROOT)\src\asiVisu\pipelines;$(AS_ROOT)\src\asiVisu\presentations;$(AS_ROOT)\src\asiVisu\providers;$(AS_ROOT)\src\asiVisu\selection;$(AS_ROOT)\src\asiVisu\sources;$(AS_ROOT)\src\asiVisu\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiVisu_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -128,6 +128,7 @@
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_EdgeDomainPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_FaceDomainPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_FaceSurfacePipeline.h" />
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_FuncLevelsPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_IVSurfacePipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_LawPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshContourPipeline.h" />
@@ -181,6 +182,7 @@
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_EdgeDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_FaceDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_FaceNormalsDataProvider.h" />
+    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_FuncDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_IVCurveDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_IVPointSet2dDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_IVPointSetDataProvider.h" />
@@ -207,6 +209,7 @@
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_BCurveKnotsSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_BCurvePolesSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_CurveSource.h" />
+    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_FuncLevelsSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_LawSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_MeshSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PCurveSource.h" />
@@ -235,6 +238,7 @@
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_EdgeDomainPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_FaceDomainPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_FaceSurfacePipeline.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_FuncLevelsPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_IVSurfacePipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_LawPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshContourPipeline.cpp" />
@@ -315,6 +319,7 @@
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_BCurveKnotsSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_BCurvePolesSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_CurveSource.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_FuncLevelsSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_LawSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_MeshSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PCurveSource.cpp" />

@@ -1,35 +1,37 @@
 //-----------------------------------------------------------------------------
-// Created on: 05 April 2016
+// Created on: 02 May 2017
 // Created by: Quaoar
 //-----------------------------------------------------------------------------
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_RENode_h
-#define asiData_RENode_h
+#ifndef asiData_REAnalysisNode_h
+#define asiData_REAnalysisNode_h
 
 // asiData includes
-#include <asiData_REAnalysisNode.h>
-#include <asiData_REContoursNode.h>
-#include <asiData_REPointsNode.h>
-#include <asiData_RESurfacesNode.h>
+#include <asiData_REFunctionsNode.h>
+#include <asiData_REGaussMapNode.h>
+
+// Active Data includes
+#include <ActData_BaseNode.h>
 
 //-----------------------------------------------------------------------------
-// Reverse Engineering Node
+// Analysis group for Reverse Engineering
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_RENode, ActData_BaseNode)
+DEFINE_STANDARD_HANDLE(asiData_REAnalysisNode, ActData_BaseNode)
 
-//! Node representing reverse engineering data.
-class asiData_RENode : public ActData_BaseNode
+//! Node representing a collection of specific analysis Nodes employed
+//! in reverse engineering.
+class asiData_REAnalysisNode : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_RENode, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_REAnalysisNode, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_RENode, Instance)
+  DEFINE_NODE_FACTORY(asiData_REAnalysisNode, Instance)
 
 public:
 
@@ -58,41 +60,33 @@ public:
   asiData_EXPORT virtual void
     SetName(const TCollection_ExtendedString& name);
 
-// Handy accessors to the stored data:
-public:
-
-  asiData_EXPORT Handle(asiData_REAnalysisNode)
-    GetAnalysis();
-
-  asiData_EXPORT Handle(asiData_RESurfacesNode)
-    GetSurfaces();
-
-  asiData_EXPORT Handle(asiData_REContoursNode)
-    GetContours();
-
-  asiData_EXPORT Handle(asiData_REPointsNode)
-    GetPoints();
-
 // Initialization:
 public:
 
   asiData_EXPORT void
     Init();
 
+// Handy methods:
+public:
+
+  asiData_EXPORT Handle(asiData_REGaussMapNode)
+    GetGaussMap();
+
+  asiData_EXPORT Handle(asiData_REFunctionsNode)
+    GetFunctions();
+
 protected:
 
   //! Allocation is allowed only via Instance method.
   asiData_EXPORT
-    asiData_RENode();
+    asiData_REAnalysisNode();
 
-private:
+protected:
 
   enum Child
   {
-    Child_Analysis = 1,
-    Child_Surfaces,
-    Child_Contours,
-    Child_Points
+    Child_GaussMap = 1,
+    Child_Functions
   };
 
 };

@@ -35,7 +35,7 @@ public:
 
   //! Constructor accepting GID.
   //! \param GID [in] GID.
-  asiData_AAGDTO(const ActAPI_ParameterGID& GID) : ActData_ParameterDTO(GID, Parameter_AAG) {}
+  asiData_AAGDTO(const ActAPI_ParameterGID& GID) : ActData_ParameterDTO(GID, Parameter_UNDEFINED) {}
 
 public:
 

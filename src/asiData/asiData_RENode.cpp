@@ -56,6 +56,18 @@ void asiData_RENode::SetName(const TCollection_ExtendedString& theName)
 // Handy accessors
 //-----------------------------------------------------------------------------
 
+//! \return underlying analysis Node.
+Handle(asiData_REAnalysisNode) asiData_RENode::GetAnalysis()
+{
+  Handle(asiData_REAnalysisNode)
+    analysis_n = Handle(asiData_REAnalysisNode)::DownCast( this->GetChildNode(Child_Analysis) );
+  //
+  if ( !analysis_n.IsNull() && analysis_n->IsWellFormed() )
+    return analysis_n;
+  //
+  return NULL;
+}
+
 //! \return underlying surfaces.
 Handle(asiData_RESurfacesNode) asiData_RENode::GetSurfaces()
 {

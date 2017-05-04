@@ -21,6 +21,8 @@
     <ClInclude Include="..\..\src\asiData\asiData_EdgeNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_FaceNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_FaceNormsNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_FuncAttr.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_FuncParameter.h" />
     <ClInclude Include="..\..\src\asiData\asiData_IVCurveNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_IVCurvesNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_IVNode.h" />
@@ -38,8 +40,11 @@
     <ClInclude Include="..\..\src\asiData\asiData_IVTopoNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_Partition.h" />
     <ClInclude Include="..\..\src\asiData\asiData_PartNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_REAnalysisNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_REContourNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_REContoursNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_REFunctionNode.h" />
+    <ClInclude Include="..\..\src\asiData\asiData_REFunctionsNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_REGaussMapNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_RENode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_RENormalsNode.h" />
@@ -63,6 +68,8 @@
     <ClCompile Include="..\..\src\asiData\asiData_EdgeNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_FaceNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_FaceNormsNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_FuncAttr.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_FuncParameter.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_IVCurveNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_IVCurvesNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_IVNode.cpp" />
@@ -80,8 +87,11 @@
     <ClCompile Include="..\..\src\asiData\asiData_IVTopoNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_Partition.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_PartNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_REAnalysisNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_REContourNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_REContoursNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_REFunctionNode.cpp" />
+    <ClCompile Include="..\..\src\asiData\asiData_REFunctionsNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_REGaussMapNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_RENode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_RENormalsNode.cpp">
@@ -145,7 +155,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\editing;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\editing;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiAlgo\opt;$(AS_ROOT)\src\asiData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiData_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -177,7 +187,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\editing;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CAS_INC);$(AD_INC);$(VTK_INC);$(TBB_INC);$(QR_INC);$(AS_ROOT)\src\asiAlgo;$(AS_ROOT)\src\asiAlgo\interop;$(AS_ROOT)\src\asiAlgo\modeling;$(AS_ROOT)\src\asiAlgo\modeling\editing;$(AS_ROOT)\src\asiAlgo\modeling\mesh;$(AS_ROOT)\src\asiAlgo\modeling\points;$(AS_ROOT)\src\asiAlgo\modeling\features;$(AS_ROOT)\src\asiAlgo\utils;$(AS_ROOT)\src\asiAlgo\opt;$(AS_ROOT)\src\asiData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>asiData_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>

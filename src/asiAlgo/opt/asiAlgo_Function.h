@@ -14,13 +14,13 @@
 // OCCT includes
 #include <Standard_Transient.hxx>
 
-//! Target function to optimize.
-template <typename T_DIMENSION>
+//! Abstract class for a scalar-valued function of an arbitrary argument.
+template <typename T_ARGUMENT>
 class asiAlgo_Function : public Standard_Transient
 {
 public:
 
-  typedef T_DIMENSION t_argument;
+  typedef T_ARGUMENT t_argument;
 
 public:
 

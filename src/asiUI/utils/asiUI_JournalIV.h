@@ -213,6 +213,20 @@ public:
     m_pBrowser = pBrowser;
   }
 
+  //! Sets presentation manager for 3D visualization.
+  //! \param prsMgr [in] presentation manager to set.
+  void SetPrsMgr3d(const vtkSmartPointer<asiVisu_PrsManager>& prsMgr)
+  {
+    m_prsMgr3d = prsMgr;
+  }
+
+  //! Sets presentation manager for 3D visualization.
+  //! \param prsMgr [in] presentation manager to set.
+  void SetPrsMgr2d(const vtkSmartPointer<asiVisu_PrsManager>& prsMgr)
+  {
+    m_prsMgr2d = prsMgr;
+  }
+
 protected:
 
   asiUI_EXPORT void

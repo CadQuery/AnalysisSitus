@@ -52,7 +52,7 @@ void asiData_AAGParameter::SetAAG(const Handle(asiAlgo_AAG)&    aag,
   // Reset Parameter's validity flag if requested
   RESET_VALIDITY(doResetValidity)
   // Reset Parameter's PENDING property
-  RESET_PENDING(doResetPending);
+  RESET_PENDING(doResetPending)
 }
 
 //! Accessor for the stored AAG.

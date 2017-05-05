@@ -60,6 +60,9 @@ public:
   {
     // Initialize name Parameter
     this->InitParameter(PID_Name, "Name");
+
+    // Initialize function
+    this->SetFunction(NULL);
   }
 
 // Generic naming support:

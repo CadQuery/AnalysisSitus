@@ -64,12 +64,6 @@ public:
   asiData_EXPORT Handle(asiData_REAnalysisNode)
     GetAnalysis();
 
-  asiData_EXPORT Handle(asiData_RESurfacesNode)
-    GetSurfaces();
-
-  asiData_EXPORT Handle(asiData_REContoursNode)
-    GetContours();
-
   asiData_EXPORT Handle(asiData_REPointsNode)
     GetPoints();
 
@@ -89,10 +83,8 @@ private:
 
   enum Child
   {
-    Child_Analysis = 1,
-    Child_Surfaces,
-    Child_Contours,
-    Child_Points
+    Child_Points = 1,
+    Child_Analysis
   };
 
 };

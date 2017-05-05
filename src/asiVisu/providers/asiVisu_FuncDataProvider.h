@@ -28,6 +28,12 @@ public:
   virtual Handle(asiAlgo_Function<T_VARIABLE>)
     GetFunction() const = 0;
 
+  virtual T_VARIABLE
+    GetMinCorner() const = 0;
+
+  virtual T_VARIABLE
+    GetMaxCorner() const = 0;
+
 };
 
 #endif

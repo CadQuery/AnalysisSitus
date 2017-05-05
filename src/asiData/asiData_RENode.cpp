@@ -68,30 +68,6 @@ Handle(asiData_REAnalysisNode) asiData_RENode::GetAnalysis()
   return NULL;
 }
 
-//! \return underlying surfaces.
-Handle(asiData_RESurfacesNode) asiData_RENode::GetSurfaces()
-{
-  Handle(asiData_RESurfacesNode)
-    surf_n = Handle(asiData_RESurfacesNode)::DownCast( this->GetChildNode(Child_Surfaces) );
-  //
-  if ( !surf_n.IsNull() && surf_n->IsWellFormed() )
-    return surf_n;
-  //
-  return NULL;
-}
-
-//! \return underlying contours.
-Handle(asiData_REContoursNode) asiData_RENode::GetContours()
-{
-  Handle(asiData_REContoursNode)
-    cont_n = Handle(asiData_REContoursNode)::DownCast( this->GetChildNode(Child_Contours) );
-  //
-  if ( !cont_n.IsNull() && cont_n->IsWellFormed() )
-    return cont_n;
-  //
-  return NULL;
-}
-
 //! \return underlying points.
 Handle(asiData_REPointsNode) asiData_RENode::GetPoints()
 {

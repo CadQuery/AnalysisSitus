@@ -15,6 +15,7 @@
 #include <asiAlgo_Function.h>
 
 // OCCT includes
+#include <Standard_GUID.hxx>
 #include <TDF_Attribute.hxx>
 #include <TDF_Label.hxx>
 
@@ -30,42 +31,88 @@ public:
 // Construction & settling-down routines:
 public:
 
-  asiData_EXPORT
-    asiData_FuncAttr();
+  //! Default constructor.
+  asiData_FuncAttr() : TDF_Attribute() {}
 
-  asiData_EXPORT static Handle(asiData_FuncAttr)
-    Set(const TDF_Label& Label);
+  //! Settles down new Attribute to the given OCAF Label.
+  //! \param[in] Label TDF Label to settle down the new Attribute to.
+  //! \return newly created Attribute settled down onto the target Label.
+  static Handle(asiData_FuncAttr) Set(const TDF_Label& Label)
+  {
+    Handle(asiData_FuncAttr<T_ARGUMENT>) A;
+    //
+    if ( !Label.FindAttribute(GUID(), A) )
+    {
+      A = new asiData_FuncAttr<T_ARGUMENT>();
+      Label.AddAttribute(A);
+    }
+    return A;
+  }
 
 // GUID accessors:
 public:
 
-  asiData_EXPORT static const Standard_GUID&
-    GUID();
+  //! Returns statically defined GUID for the Attribute.
+  //! \return statically defined GUID.
+  static const Standard_GUID& GUID()
+  {
+    static Standard_GUID AttrGUID("A8DC530F-16E8-4591-8D7E-1D2C19E8B7EB");
+    return AttrGUID;
+  }
 
-  asiData_EXPORT virtual const Standard_GUID&
-    ID() const;
+  //! Accessor for GUID associated with this kind of OCAF Attribute.
+  //! \return GUID of the OCAF Attribute.
+  virtual const Standard_GUID& ID() const
+  {
+    return GUID();
+  }
 
 // Attribute's kernel methods:
 public:
 
-  asiData_EXPORT virtual Handle(TDF_Attribute)
-    NewEmpty() const;
+  //! Creates new instance of the Attribute which is not initially populated
+  //! with any data structures.
+  //! \return new instance of the Attribute.
+  virtual Handle(TDF_Attribute) NewEmpty() const
+  {
+    return new asiData_FuncAttr<T_ARGUMENT>();
+  }
 
-  asiData_EXPORT virtual void
-    Restore(const Handle(TDF_Attribute)& mainAttr);
+  //! Performs data transferring from the given OCAF Attribute to this one.
+  //! This method is mainly used by OCAF Undo/Redo kernel as a part of
+  //! backup functionality.
+  //! \param[in] MainAttr OCAF Attribute to copy data from.
+  virtual void Restore(const Handle(TDF_Attribute)& mainAttr)
+  {
+    // Nothing is here
+  }
 
-  asiData_EXPORT virtual void
-    Paste(const Handle(TDF_Attribute)&       into,
-          const Handle(TDF_RelocationTable)& relocTable) const;
+  //! Supporting method for Copy/Paste functionality. Performs full copying of
+  //! the underlying data.
+  //! \param[in] Into       where to paste.
+  //! \param[in] RelocTable relocation table.
+  virtual void Paste(const Handle(TDF_Attribute)&       into,
+                     const Handle(TDF_RelocationTable)& relocTable) const
+  {
+    // Nothing is here
+  }
 
 // Accessors for domain-specific data:
 public:
 
-  asiData_EXPORT void
-    SetFunction(const Handle(asiAlgo_Function<T_ARGUMENT>)& func);
+  //! Sets function object to store.
+  //! \param[in] func function object to store.
+  void SetFunction(const Handle(asiAlgo_Function<T_ARGUMENT>)& func)
+  {
+    m_func = func;
+  }
 
-  asiData_EXPORT const Handle(asiAlgo_Function<T_ARGUMENT>)&
-    GetFunction() const;
+  //! Returns the stored function object.
+  //! \return stored function object.
+  const Handle(asiAlgo_Function<T_ARGUMENT>)& GetFunction() const
+  {
+    return m_func;
+  }
 
 // Members:
 private:

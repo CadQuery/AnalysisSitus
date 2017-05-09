@@ -9,7 +9,10 @@
 #define asiData_RESegmentsNode_h
 
 // asiData includes
-#include <asiData_RESegmentNode.h>
+#include <asiData.h>
+
+// Active Data includes
+#include <ActData_BaseNode.h>
 
 //-----------------------------------------------------------------------------
 // Root Node for a collection of point cloud segments

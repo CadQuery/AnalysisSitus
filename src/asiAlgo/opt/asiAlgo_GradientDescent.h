@@ -53,6 +53,8 @@ public:
 
 public:
 
+  asiAlgo_GradientDescent() {}
+
   asiAlgo_GradientDescent(const t_search_params& params) : m_params(params) {}
 
 public:
@@ -70,6 +72,16 @@ public:
   }
 
 public:
+
+  void Reset()
+  {
+    m_samples.clear();
+  }
+
+  void Init(const t_search_params& params)
+  {
+    m_params = params;
+  }
 
   bool Perform(int& num_iters)
   {

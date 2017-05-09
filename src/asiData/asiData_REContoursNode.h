@@ -8,8 +8,11 @@
 #ifndef asiData_REContoursNode_h
 #define asiData_REContoursNode_h
 
-// Geometry includes
-#include <asiData_REContourNode.h>
+// asiData includes
+#include <asiData.h>
+
+// Active Data includes
+#include <ActData_BaseNode.h>
 
 //-----------------------------------------------------------------------------
 // Contours for Reverse Engineering
@@ -54,18 +57,6 @@ public:
 
   asiData_EXPORT virtual void
     SetName(const TCollection_ExtendedString& name);
-
-// Handy accessors to the stored data:
-public:
-
-  asiData_EXPORT Handle(asiData_REContourNode)
-    Contour(const int oneBased_idx);
-
-  asiData_EXPORT Handle(asiData_REContourNode)
-    TX_AddContour(const TopoDS_Wire& contour);
-
-  asiData_EXPORT void
-    TX_CleanContours();
 
 // Initialization:
 public:

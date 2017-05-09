@@ -8,6 +8,9 @@
 // Own include
 #include <asiVisu_RESurfacesDataProvider.h>
 
+// asiData includes
+#include <asiData_RESurfaceNode.h>
+
 //-----------------------------------------------------------------------------
 
 //! Constructor.
@@ -64,7 +67,9 @@ Handle(Geom_Surface)
     return NULL;
 
   // Access individual surface
-  Handle(asiData_RESurfaceNode) surface_n = m_surfaces->Surface(oneBased_idx);
+  Handle(asiData_RESurfaceNode)
+    surface_n = Handle(asiData_RESurfaceNode)::DownCast( m_surfaces->GetChildNode(oneBased_idx) );
+  //
   if ( surface_n.IsNull() || !surface_n->IsWellFormed() )
     return NULL;
 

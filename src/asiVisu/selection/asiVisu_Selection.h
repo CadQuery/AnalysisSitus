@@ -81,8 +81,8 @@ enum asiVisu_SelectionMode
 //! shoot the actual picking request.
 struct asiVisu_PickInput
 {
-  QPoint Start;      //!< Picked X coordinate.
-  QPoint Finish;     //!< Picked Y coordinate.
+  QPoint Start;      //!< Picked (X, Y) coordinates of start event.
+  QPoint Finish;     //!< Picked (X, Y) coordinates of finish event.
   bool   IsMultiple; //!< Indicates whether the multiple picking is enabled.
 
   //! Default constructor

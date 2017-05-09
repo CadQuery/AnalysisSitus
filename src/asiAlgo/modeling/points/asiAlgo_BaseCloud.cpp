@@ -154,7 +154,7 @@ Handle(asiAlgo_BaseCloud<TCoordType>)
   Handle(asiAlgo_BaseCloud<TCoordType>) result  = new asiAlgo_BaseCloud<TCoordType>;
 
   // Extract
-  for ( asiAlgo_CloudRegion::Iterator it(region.indices); it.More(); it.Next() )
+  for ( asiAlgo_CloudRegion::Iterator it(region); it.More(); it.Next() )
   {
     const int pidx = it.Key();
 

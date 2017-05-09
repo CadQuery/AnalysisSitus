@@ -8,6 +8,9 @@
 // Own include
 #include <asiVisu_REContoursDataProvider.h>
 
+// asiData includes
+#include <asiData_REContourNode.h>
+
 //-----------------------------------------------------------------------------
 
 //! Constructor.
@@ -60,7 +63,9 @@ TopoDS_Wire
     return TopoDS_Wire();
 
   // Access individual contour
-  Handle(asiData_REContourNode) contour_n = m_contours->Contour(oneBased_idx);
+  Handle(asiData_REContourNode)
+    contour_n = Handle(asiData_REContourNode)::DownCast( m_contours->GetChildNode(oneBased_idx) );
+  //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
     return TopoDS_Wire();
 

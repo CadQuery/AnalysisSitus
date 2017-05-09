@@ -140,7 +140,7 @@ asiVisu_GeomSurfPrs::asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& theNode)
   asiVisu_MeshResultUtils::InitScalarBarWidget(m_scalarBarWidget);
 
   // Button to switch between visualization modes
-  m_modeButton = vtkSmartPointer<vtkButtonWidget>::New();
+  m_modeButton   = vtkSmartPointer<vtkButtonWidget>::New();
   m_modeCallback = vtkSmartPointer<asiVisu_SurfBtnCallback>::New();
   //
   m_modeCallback->SetPresentation(this);

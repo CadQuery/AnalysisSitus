@@ -51,29 +51,3 @@ void asiData_REAnalysisNode::SetName(const TCollection_ExtendedString& name)
 {
   ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
 }
-
-//-----------------------------------------------------------------------------
-
-//! \return underlying Gauss map Node.
-Handle(asiData_REGaussMapNode) asiData_REAnalysisNode::GetGaussMap()
-{
-  Handle(asiData_REGaussMapNode)
-    gauss_n = Handle(asiData_REGaussMapNode)::DownCast( this->GetChildNode(Child_GaussMap) );
-  //
-  if ( !gauss_n.IsNull() && gauss_n->IsWellFormed() )
-    return gauss_n;
-  //
-  return NULL;
-}
-
-//! \return function Node.
-Handle(asiData_REFunctionsNode) asiData_REAnalysisNode::GetFunctions()
-{
-  Handle(asiData_REFunctionsNode)
-    functions_n = Handle(asiData_REFunctionsNode)::DownCast( this->GetChildNode(Child_Functions) );
-  //
-  if ( !functions_n.IsNull() && functions_n->IsWellFormed() )
-    return functions_n;
-  //
-  return NULL;
-}

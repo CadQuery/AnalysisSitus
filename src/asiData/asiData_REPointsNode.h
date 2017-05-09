@@ -9,8 +9,7 @@
 #define asiData_REPointsNode_h
 
 // asiData includes
-#include <asiData_RENormalsNode.h>
-#include <asiData_RESegmentsNode.h>
+#include <asiData.h>
 
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
@@ -85,25 +84,11 @@ public:
   asiData_EXPORT void
     SetPoints(const Handle(asiAlgo_BaseCloud<double>)& points);
 
-  asiData_EXPORT Handle(asiData_RENormalsNode)
-    GetNormals();
-
-  asiData_EXPORT Handle(asiData_RESegmentsNode)
-    GetSegments();
-
 protected:
 
   //! Allocation is allowed only via Instance method.
   asiData_EXPORT
     asiData_REPointsNode();
-
-protected:
-
-  enum Child
-  {
-    Child_Normals = 1,
-    Child_Segments
-  };
 
 };
 

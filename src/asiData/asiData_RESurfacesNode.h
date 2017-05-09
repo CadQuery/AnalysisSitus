@@ -9,7 +9,10 @@
 #define asiData_RESurfacesNode_h
 
 // Geometry includes
-#include <asiData_RESurfaceNode.h>
+#include <asiData.h>
+
+// Active Data includes
+#include <ActData_BaseNode.h>
 
 // OCCT includes
 #include <TColGeom_SequenceOfSurface.hxx>
@@ -57,12 +60,6 @@ public:
 
   asiData_EXPORT virtual void
     SetName(const TCollection_ExtendedString& name);
-
-// Handy accessors to the stored data:
-public:
-
-  asiData_EXPORT Handle(asiData_RESurfaceNode)
-    Surface(const int oneBased_idx);
 
 // Initialization:
 public:

@@ -51,31 +51,3 @@ void asiData_RENode::SetName(const TCollection_ExtendedString& theName)
 {
   ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(theName);
 }
-
-//-----------------------------------------------------------------------------
-// Handy accessors
-//-----------------------------------------------------------------------------
-
-//! \return underlying analysis Node.
-Handle(asiData_REAnalysisNode) asiData_RENode::GetAnalysis()
-{
-  Handle(asiData_REAnalysisNode)
-    analysis_n = Handle(asiData_REAnalysisNode)::DownCast( this->GetChildNode(Child_Analysis) );
-  //
-  if ( !analysis_n.IsNull() && analysis_n->IsWellFormed() )
-    return analysis_n;
-  //
-  return NULL;
-}
-
-//! \return underlying points.
-Handle(asiData_REPointsNode) asiData_RENode::GetPoints()
-{
-  Handle(asiData_REPointsNode)
-    points_n = Handle(asiData_REPointsNode)::DownCast( this->GetChildNode(Child_Points) );
-  //
-  if ( !points_n.IsNull() && points_n->IsWellFormed() )
-    return points_n;
-  //
-  return NULL;
-}

@@ -56,7 +56,7 @@ public:
 
     const double  beta      = 0.2; // Interval reduction coefficient
     const double  mu        = 1.0e-2;
-    const double  min_alpha = 1.0e-8;
+    const double  min_alpha = 1.0e-14;
     const t_coord gradient  = params.pFunc->Gradient(params.x_k);
     const double  f         = params.pFunc->Value(params.x_k);
     const double  phi_deriv = gradient.Dot(params.d_k);

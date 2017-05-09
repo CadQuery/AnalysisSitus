@@ -9,10 +9,10 @@
 #define asiData_RENode_h
 
 // asiData includes
-#include <asiData_REAnalysisNode.h>
-#include <asiData_REContoursNode.h>
-#include <asiData_REPointsNode.h>
-#include <asiData_RESurfacesNode.h>
+#include <asiData.h>
+
+// Active Data includes
+#include <ActData_BaseNode.h>
 
 //-----------------------------------------------------------------------------
 // Reverse Engineering Node
@@ -58,15 +58,6 @@ public:
   asiData_EXPORT virtual void
     SetName(const TCollection_ExtendedString& name);
 
-// Handy accessors to the stored data:
-public:
-
-  asiData_EXPORT Handle(asiData_REAnalysisNode)
-    GetAnalysis();
-
-  asiData_EXPORT Handle(asiData_REPointsNode)
-    GetPoints();
-
 // Initialization:
 public:
 
@@ -78,14 +69,6 @@ protected:
   //! Allocation is allowed only via Instance method.
   asiData_EXPORT
     asiData_RENode();
-
-private:
-
-  enum Child
-  {
-    Child_Points = 1,
-    Child_Analysis
-  };
 
 };
 

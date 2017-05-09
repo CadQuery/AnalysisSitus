@@ -254,7 +254,7 @@ public:
   //! Cleans up the internal collection.
   //! \param theRenderer  [in] renderer to remove the Presentations from.
   //! \param theSelNature [in] selection kind.
-  void PopAll(vtkRenderer*                   theRenderer,
+  void PopAll(vtkRenderer*                  theRenderer,
               const asiVisu_SelectionNature theSelNature)
   {
     PrsSeq::Iterator anIt( m_prsSet.Find(theSelNature) );

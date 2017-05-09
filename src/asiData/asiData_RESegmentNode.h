@@ -9,7 +9,10 @@
 #define asiData_RESegmentNode_h
 
 // asiData includes
-#include <asiData_REPrimitiveNode.h>
+#include <asiData.h>
+
+// Active Data includes
+#include <ActData_BaseNode.h>
 
 // OCCT includes
 #include <TColStd_HPackedMapOfInteger.hxx>

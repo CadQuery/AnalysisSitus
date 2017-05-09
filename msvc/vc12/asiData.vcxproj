@@ -43,7 +43,6 @@
     <ClInclude Include="..\..\src\asiData\asiData_REAnalysisNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_REContourNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_REContoursNode.h" />
-    <ClInclude Include="..\..\src\asiData\asiData_REFunctionNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_REFunctionsNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_REGaussMapNode.h" />
     <ClInclude Include="..\..\src\asiData\asiData_RENode.h" />
@@ -90,7 +89,6 @@
     <ClCompile Include="..\..\src\asiData\asiData_REAnalysisNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_REContourNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_REContoursNode.cpp" />
-    <ClCompile Include="..\..\src\asiData\asiData_REFunctionNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_REFunctionsNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_REGaussMapNode.cpp" />
     <ClCompile Include="..\..\src\asiData\asiData_RENode.cpp" />

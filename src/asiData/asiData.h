@@ -23,7 +23,9 @@
 // Custom Active Data Parameters
 //-----------------------------------------------------------------------------
 
-#define Parameter_AAG      Parameter_LASTFREE
-#define Parameter_Function Parameter_LASTFREE + 1
+#define Parameter_AAG             Parameter_LASTFREE
+#define Parameter_Function        Parameter_LASTFREE + 1
+//
+#define Parameter_LASTFREE_ASITUS Parameter_Function
 
 #endif

@@ -5,12 +5,12 @@
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_FuncLevelsPipeline_h
-#define asiVisu_FuncLevelsPipeline_h
+#ifndef asiVisu_FuncLevelsPipeline3d_h
+#define asiVisu_FuncLevelsPipeline3d_h
 
 // asiVisu includes
 #include <asiVisu_FuncDataProvider.h>
-#include <asiVisu_FuncLevelsSource.h>
+#include <asiVisu_FuncLevelsSource3d.h>
 #include <asiVisu_Pipeline.h>
 
 // VTK includes
@@ -22,17 +22,17 @@
 
 //! Visualization pipeline for function level sets.
 template <typename T_VARIABLE>
-class asiVisu_FuncLevelsPipeline : public asiVisu_Pipeline
+class asiVisu_FuncLevelsPipeline3d : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FuncLevelsPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FuncLevelsPipeline3d, asiVisu_Pipeline)
 
 public:
 
-  asiVisu_FuncLevelsPipeline() : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                                                   vtkSmartPointer<vtkActor>::New() )
+  asiVisu_FuncLevelsPipeline3d() : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+                                                     vtkSmartPointer<vtkActor>::New() )
   {
     this->Actor()->GetProperty()->SetPointSize(3.0);
     this->Mapper()->ScalarVisibilityOn();
@@ -69,10 +69,9 @@ public:
 
     if ( provider->MustExecute( this->GetMTime() ) )
     {
-      // Source for points
-      vtkSmartPointer< asiVisu_FuncLevelsSource<T_VARIABLE> >
-        src = vtkSmartPointer< asiVisu_FuncLevelsSource<T_VARIABLE> >::New();
-      //
+      vtkSmartPointer< asiVisu_FuncLevelsSource3d<T_VARIABLE> >
+        src = vtkSmartPointer< asiVisu_FuncLevelsSource3d<T_VARIABLE> >::New();
+
       src->SetInputFunction( func,
                              provider->GetMinCorner(),
                              provider->GetMaxCorner() );
@@ -94,10 +93,10 @@ private:
 private:
 
   //! Copying prohibited.
-  asiVisu_FuncLevelsPipeline(const asiVisu_FuncLevelsPipeline&);
+  asiVisu_FuncLevelsPipeline3d(const asiVisu_FuncLevelsPipeline3d&);
 
   //! Assignment prohibited.
-  asiVisu_FuncLevelsPipeline& operator=(const asiVisu_FuncLevelsPipeline&);
+  asiVisu_FuncLevelsPipeline3d& operator=(const asiVisu_FuncLevelsPipeline3d&);
 
 };
 

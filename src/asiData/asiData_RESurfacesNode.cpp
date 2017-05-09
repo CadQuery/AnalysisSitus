@@ -51,29 +51,3 @@ void asiData_RESurfacesNode::SetName(const TCollection_ExtendedString& theName)
 {
   ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(theName);
 }
-
-//-----------------------------------------------------------------------------
-// Handy API
-//-----------------------------------------------------------------------------
-
-//! Accessor for an individual persistent surface.
-//! \param oneBased_idx [in] 1-based surface index.
-//! \return Surface Node.
-Handle(asiData_RESurfaceNode) asiData_RESurfacesNode::Surface(const int oneBased_idx)
-{
-  int idx = 1;
-  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
-  {
-    if ( oneBased_idx == idx )
-    {
-      Handle(asiData_RESurfaceNode)
-        surf_n = Handle(asiData_RESurfaceNode)::DownCast( cit->Value() );
-      //
-      return surf_n;
-    }
-
-    ++idx;
-  }
-
-  return NULL;
-}

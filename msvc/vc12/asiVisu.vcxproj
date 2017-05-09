@@ -128,7 +128,8 @@
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_EdgeDomainPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_FaceDomainPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_FaceSurfacePipeline.h" />
-    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_FuncLevelsPipeline.h" />
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_FuncLevelsPipeline2d.h" />
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_FuncLevelsPipeline3d.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_IVSurfacePipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_LawPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshContourPipeline.h" />
@@ -209,7 +210,9 @@
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_BCurveKnotsSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_BCurvePolesSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_CurveSource.h" />
-    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_FuncLevelsSource.h" />
+    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_FuncLevelsSource2d.h" />
+    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_FuncLevelsSource3d.h" />
+    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_FuncLevelsSourceBase.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_LawSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_MeshSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PCurveSource.h" />
@@ -238,7 +241,6 @@
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_EdgeDomainPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_FaceDomainPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_FaceSurfacePipeline.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_FuncLevelsPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_IVSurfacePipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_LawPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshContourPipeline.cpp" />
@@ -319,7 +321,6 @@
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_BCurveKnotsSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_BCurvePolesSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_CurveSource.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_FuncLevelsSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_LawSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_MeshSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PCurveSource.cpp" />

@@ -9,8 +9,7 @@
 #define asiData_REAnalysisNode_h
 
 // asiData includes
-#include <asiData_REFunctionsNode.h>
-#include <asiData_REGaussMapNode.h>
+#include <asiData.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
@@ -66,28 +65,11 @@ public:
   asiData_EXPORT void
     Init();
 
-// Handy methods:
-public:
-
-  asiData_EXPORT Handle(asiData_REGaussMapNode)
-    GetGaussMap();
-
-  asiData_EXPORT Handle(asiData_REFunctionsNode)
-    GetFunctions();
-
 protected:
 
   //! Allocation is allowed only via Instance method.
   asiData_EXPORT
     asiData_REAnalysisNode();
-
-protected:
-
-  enum Child
-  {
-    Child_GaussMap = 1,
-    Child_Functions
-  };
 
 };
 

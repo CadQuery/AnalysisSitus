@@ -51,29 +51,3 @@ void asiData_REContoursNode::SetName(const TCollection_ExtendedString& theName)
 {
   ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(theName);
 }
-
-//-----------------------------------------------------------------------------
-// Handy API
-//-----------------------------------------------------------------------------
-
-//! Accessor for a single persistent contour.
-//! \param oneBased_idx [in] 1-based contour index.
-//! \return Contour Node.
-Handle(asiData_REContourNode) asiData_REContoursNode::Contour(const int oneBased_idx)
-{
-  int idx = 1;
-  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
-  {
-    if ( oneBased_idx == idx )
-    {
-      Handle(asiData_REContourNode)
-        contour_n = Handle(asiData_REContourNode)::DownCast( cit->Value() );
-      //
-      return contour_n;
-    }
-
-    ++idx;
-  }
-
-  return NULL;
-}

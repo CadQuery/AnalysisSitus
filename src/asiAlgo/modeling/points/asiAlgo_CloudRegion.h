@@ -37,13 +37,13 @@ struct asiAlgo_CloudRegion
     for ( size_t k = 0; k < vector.size(); ++k ) indices->ChangeMap().Add(vector[k]);
   }
 
-  void add      (const int pidx)       { indices->ChangeMap().Add(pidx);                 }
-  int  size     ()               const { return indices->ChangeMap().Extent();           }
-  bool is_empty ()               const { return indices->ChangeMap().IsEmpty();          }
-  void del      (const int pidx)       { indices->ChangeMap().Remove(pidx);              }
-  bool contains (const int pidx) const { return indices->ChangeMap().Contains(pidx);     }
-  int  any      ()               const { return indices->ChangeMap().GetMinimalMapped(); }
-  void clear    ()                     { indices->ChangeMap().Clear();                   }
+  void add      (const int pidx)       { indices->ChangeMap().Add(pidx);                        }
+  int  size     ()               const { return indices->ChangeMap().Extent();                  }
+  bool is_empty ()               const { return indices->ChangeMap().IsEmpty();                 }
+  void del      (const int pidx)       { indices->ChangeMap().Remove(pidx);                     }
+  bool contains (const int pidx) const { return indices->ChangeMap().Contains(pidx);            }
+  int  any      ()               const { return indices->ChangeMap().GetMinimalMapped();        }
+  void clear    ()                     { if ( !indices.IsNull() ) indices->ChangeMap().Clear(); }
 
   asiAlgo_CloudRegion operator-(const asiAlgo_CloudRegion& op) const
   {

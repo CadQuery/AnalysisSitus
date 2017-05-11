@@ -337,7 +337,42 @@ void asiVisu_ShapeRobustTessellator::addEdge(const TopoDS_Edge&           edge,
   Handle(Poly_Triangulation) poly;
   TopLoc_Location loc;
   //
-  BRep_Tool::PolygonOnTriangulation(edge, polyOn, poly, loc);
+  {
+    Handle(Poly_PolygonOnTriangulation) polyOn1, polyOn2;
+    Handle(Poly_Triangulation) poly1, poly2;
+    TopLoc_Location loc1, loc2;
+    //
+    BRep_Tool::PolygonOnTriangulation(edge, polyOn1, poly1, loc1, 1);
+    BRep_Tool::PolygonOnTriangulation(edge, polyOn2, poly2, loc2, 2);
+    //
+    if ( !polyOn1.IsNull() && !polyOn2.IsNull() )
+    {
+      if ( polyOn2->Nodes().Length() != polyOn1->Nodes().Length() )
+        m_progress.SendLogMessage(LogWarn(Normal) << "*** Different number of nodes in polygons on triangulation");
+
+      // Choose more rich polygon. This is weird, but it may happen that even
+      // for conformal mesh the number of nodes in polygons are different.
+      // It looks like a bug in OCCT faceter...
+      if ( polyOn2->Nodes().Length() > polyOn1->Nodes().Length() )
+      {
+        polyOn = polyOn2;
+        poly   = poly2;
+        loc    = loc2;
+      }
+      else
+      {
+        polyOn = polyOn1;
+        poly   = poly1;
+        loc    = loc1;
+      }
+    }
+    else
+    {
+      polyOn = polyOn1; // Take the default polygon on triangulation which is the first one
+      poly   = poly1;
+      loc    = loc1;
+    }
+  }
 
   // If the edge is not associated with any triangulation (e.g. the master
   // shape is a wire), it may still have an explicitly defined 3D polygon

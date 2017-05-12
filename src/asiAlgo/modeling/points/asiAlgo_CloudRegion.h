@@ -26,17 +26,35 @@ struct asiAlgo_CloudRegion
 
   //-------------------------------------------------------------------------//
 
-  asiAlgo_CloudRegion() {}
+  asiAlgo_CloudRegion()
+  {
+    indices = new TColStd_HPackedMapOfInteger;
+  }
   //
-  asiAlgo_CloudRegion(const int oneSeed) { indices->ChangeMap().Add(oneSeed); }
+  asiAlgo_CloudRegion(const int oneSeed)
+  {
+    indices = new TColStd_HPackedMapOfInteger;
+    indices->ChangeMap().Add(oneSeed);
+  }
   //
-  asiAlgo_CloudRegion(const TColStd_PackedMapOfInteger& set) { indices->ChangeMap() = set; }
+  asiAlgo_CloudRegion(const TColStd_PackedMapOfInteger& set)
+  {
+    indices = new TColStd_HPackedMapOfInteger;
+    indices->ChangeMap() = set;
+  }
   //
-  asiAlgo_CloudRegion(const Handle(TColStd_HPackedMapOfInteger)& set) { indices = set; }
+  asiAlgo_CloudRegion(const Handle(TColStd_HPackedMapOfInteger)& set)
+  {
+    indices = new TColStd_HPackedMapOfInteger;
+    indices->ChangeMap() = set->Map();
+  }
   //
   asiAlgo_CloudRegion(const std::vector<int>& vector)
   {
-    for ( size_t k = 0; k < vector.size(); ++k ) indices->ChangeMap().Add(vector[k]);
+    indices = new TColStd_HPackedMapOfInteger;
+    //
+    for ( size_t k = 0; k < vector.size(); ++k )
+      indices->ChangeMap().Add(vector[k]);
   }
 
   //-------------------------------------------------------------------------//

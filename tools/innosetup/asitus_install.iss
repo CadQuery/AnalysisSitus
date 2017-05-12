@@ -66,6 +66,7 @@ Source: {#ASitusDir}\data\*;                                              DestDi
 Source: {#ProductsDir}\{#occt}\src\*;                                      DestDir: {app}\products\{#occt}\src;                    Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: {#ProductsDir}\{#occt}\*.bat;                                      DestDir: {app}\products\{#occt};                        Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: {#ProductsDir}\{#freeimage}\bin\FreeImage.dll;                     DestDir: {app}\products\{#occt}\win64\vc12\bin;
+Source: {#ProductsDir}\{#freetype}\bin\freetype.dll;                       DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKBin.dll;                   DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKBinL.dll;                  DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKBO.dll;                    DestDir: {app}\products\{#occt}\win64\vc12\bin;
@@ -79,7 +80,6 @@ Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKG2d.dll;                   DestD
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKG3d.dll;                   DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKGeomAlgo.dll;              DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKGeomBase.dll;              DestDir: {app}\products\{#occt}\win64\vc12\bin;
-Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKHLR.dll;                   DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKIGES.dll;                  DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKLCAF.dll;                  DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKMath.dll;                  DestDir: {app}\products\{#occt}\win64\vc12\bin;
@@ -94,10 +94,8 @@ Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKSTEP.dll;                  DestD
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKSTEP209.dll;               DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKSTEPAttr.dll;              DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKSTEPBase.dll;              DestDir: {app}\products\{#occt}\win64\vc12\bin;
-Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKSTL.dll;                   DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKTopAlgo.dll;               DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKTopTest.dll;               DestDir: {app}\products\{#occt}\win64\vc12\bin;
-Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKV3d.dll;                   DestDir: {app}\products\{#occt}\win64\vc12\bin;
 Source: {#ProductsDir}\{#occt}\win64\vc12\bin\TKXSBase.dll;                DestDir: {app}\products\{#occt}\win64\vc12\bin;
 ;
 Source: {#ProductsDir}\{#ad}\win64\vc12\bin\ActiveDataAPI.dll;             DestDir: {app}\products\{#ad}\win64\vc12\bin;
@@ -111,8 +109,6 @@ Source: {#ProductsDir}\{#qr}\win64\vc12\bin\QrCore.dll;                    DestD
 Source: {#ProductsDir}\{#qr}\win64\vc12\bin\QrGeom2D.dll;                  DestDir: {app}\products\{#qr}\win64\vc12\bin;
 Source: {#ProductsDir}\{#qr}\win64\vc12\bin\QrGeom3D.dll;                  DestDir: {app}\products\{#qr}\win64\vc12\bin;
 Source: {#ProductsDir}\{#qr}\win64\vc12\bin\QrTools.dll;                   DestDir: {app}\products\{#qr}\win64\vc12\bin;
-;
-Source: {#ProductsDir}\{#freetype}\bin\*;                                  DestDir: {app}\products\{#freetype}\bin;                Flags: recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 ;
 Source: {#ProductsDir}\{#qt}\bin\Qt5Core.dll;                              DestDir: {app}\products\{#qt}\bin;
 Source: {#ProductsDir}\{#qt}\bin\Qt5Gui.dll;                               DestDir: {app}\products\{#qt}\bin;

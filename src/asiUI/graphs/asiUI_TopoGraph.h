@@ -16,7 +16,6 @@
 #include <asiAlgo_AAG.h>
 
 // OCCT includes
-#include <SelectMgr_EntityOwner.hxx>
 #include <TopTools_DataMapOfShapeInteger.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopoDS_Face.hxx>

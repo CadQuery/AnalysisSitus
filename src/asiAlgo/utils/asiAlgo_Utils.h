@@ -259,10 +259,6 @@ public:
              TopoDS_Shape&                  theShape);
 
   asiAlgo_EXPORT static bool
-    ReadSTL(const TCollection_AsciiString& theFilename,
-            TopoDS_Shape&                  theShape);
-
-  asiAlgo_EXPORT static bool
     WriteBRep(const TopoDS_Shape&            theShape,
               const TCollection_AsciiString& theFilename);
 

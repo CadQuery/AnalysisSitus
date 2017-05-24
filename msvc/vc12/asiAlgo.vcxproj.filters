@@ -242,6 +242,9 @@
     <ClInclude Include="..\..\src\asiAlgo\opt\asiAlgo_GradientDescent.h">
       <Filter>Header Files\Opt</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_FindFree.h">
+      <Filter>Header Files\Modeling\Editing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.cpp">
@@ -384,6 +387,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\opt\asiAlgo_GradientDescent.cpp">
       <Filter>Source Files\Opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_FindFree.cpp">
+      <Filter>Source Files\Modeling\Editing</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

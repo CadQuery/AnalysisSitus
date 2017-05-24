@@ -49,6 +49,7 @@ public slots:
   void onShowAAG             ();
   void onElimSelected        ();
   //
+  void onFreeEdges           ();
   void onNonManifoldEdges    ();
   void onCheckDihedralAngles ();
   void onFindSmoothEdges     ();
@@ -57,6 +58,8 @@ public slots:
   void onDetachSelected      ();
   void onDeleteSelected      ();
   void onDeleteSelectedFull  ();
+  void onDivideClosedEdges   ();
+  void onDivideAngle         ();
 
 protected:
 
@@ -85,6 +88,7 @@ private:
     QPushButton* pShowAAG;            //!< Show Attributed Adjacency Graph.
     QPushButton* pElimSelected;       //!< Removes convex-only faces from AAG.
     //
+    QPushButton* pFreeEdges;          //!< Finds non-manifold edges.
     QPushButton* pNonManifoldEdges;   //!< Finds non-manifold edges.
     QPushButton* pCheckDihAngles;     //!< Checks dihedral angles on convexity / concavity.
     QPushButton* pFindSmoothEdges;    //!< Finds C1 smooth edges.
@@ -93,11 +97,14 @@ private:
     QPushButton* pDetachSelected;     //!< Detaches selected faces from B-Rep.
     QPushButton* pDeleteSelected;     //!< Deletes selected faces (only).
     QPushButton* pDeleteSelectedFull; //!< Deletes selected faces with all contours.
+    QPushButton* pDivideClosedEdges;  //!< Divides closed edges in the model.
+    QPushButton* pDivideAngle;        //!< Divides faces by angles.
 
     t_widgets() : pShowTOPOGraph      (NULL),
                   pShowAAG            (NULL),
                   pElimSelected       (NULL),
                   //
+                  pFreeEdges          (NULL),
                   pNonManifoldEdges   (NULL),
                   pCheckDihAngles     (NULL),
                   pFindSmoothEdges    (NULL),
@@ -105,7 +112,9 @@ private:
                   //
                   pDetachSelected     (NULL),
                   pDeleteSelected     (NULL),
-                  pDeleteSelectedFull (NULL)
+                  pDeleteSelectedFull (NULL),
+                  pDivideClosedEdges  (NULL),
+                  pDivideAngle        (NULL)
     {}
 
     void Release()
@@ -114,6 +123,7 @@ private:
       delete pShowAAG;            pShowAAG            = NULL;
       delete pElimSelected;       pElimSelected       = NULL;
       //
+      delete pFreeEdges;          pFreeEdges          = NULL;
       delete pNonManifoldEdges;   pNonManifoldEdges   = NULL;
       delete pCheckDihAngles;     pCheckDihAngles     = NULL;
       delete pFindSmoothEdges;    pFindSmoothEdges    = NULL;
@@ -122,6 +132,8 @@ private:
       delete pDetachSelected;     pDetachSelected     = NULL;
       delete pDeleteSelected;     pDeleteSelected     = NULL;
       delete pDeleteSelectedFull; pDeleteSelectedFull = NULL;
+      delete pDivideClosedEdges;  pDivideClosedEdges  = NULL;
+      delete pDivideAngle;        pDivideAngle        = NULL;
     }
   };
 

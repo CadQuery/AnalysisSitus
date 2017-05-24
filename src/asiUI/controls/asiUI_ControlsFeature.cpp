@@ -18,6 +18,7 @@
 #include <asiAlgo_AAGIterator.h>
 #include <asiAlgo_DetachFaces.h>
 #include <asiAlgo_DihedralAngle.h>
+#include <asiAlgo_FindFree.h>
 #include <asiAlgo_FindNonmanifold.h>
 #include <asiAlgo_FindSameHosts.h>
 #include <asiAlgo_MeshConvert.h>
@@ -40,6 +41,8 @@
 // OCCT includes
 #include <BRep_Builder.hxx>
 #include <Precision.hxx>
+#include <ShapeUpgrade_ShapeDivideAngle.hxx>
+#include <ShapeUpgrade_ShapeDivideClosedEdges.hxx>
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -84,7 +87,8 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   m_widgets.pShowAAG             = new QPushButton("Show AA graph");
   m_widgets.pElimSelected        = new QPushButton("Show AA graph w/o selected");
   //
-  m_widgets.pNonManifoldEdges    = new QPushButton("Non-manifold edges");
+  m_widgets.pFreeEdges           = new QPushButton("Find free edges");
+  m_widgets.pNonManifoldEdges    = new QPushButton("Find non-manifold edges");
   m_widgets.pCheckDihAngles      = new QPushButton("Classify dihedral angles");
   m_widgets.pFindSmoothEdges     = new QPushButton("Find smooth edges");
   m_widgets.pFindConvexOnly      = new QPushButton("Find convex-only");
@@ -92,11 +96,14 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   m_widgets.pDetachSelected      = new QPushButton("Detach selected faces");
   m_widgets.pDeleteSelected      = new QPushButton("Delete selected faces");
   m_widgets.pDeleteSelectedFull  = new QPushButton("Delete selected faces (FULL)");
+  m_widgets.pDivideClosedEdges   = new QPushButton("Divide all closed edges");
+  m_widgets.pDivideAngle         = new QPushButton("Divide faces by angle");
   //
   m_widgets.pShowTOPOGraph       -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pShowAAG             -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pElimSelected        -> setMinimumWidth(BTN_MIN_WIDTH);
   //
+  m_widgets.pFreeEdges           -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pNonManifoldEdges    -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pCheckDihAngles      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pFindSmoothEdges     -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -105,6 +112,8 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   m_widgets.pDetachSelected      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pDeleteSelected      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pDeleteSelectedFull  -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pDivideClosedEdges   -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pDivideAngle         -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Group for analysis
   QGroupBox*   pAnalysisGroup = new QGroupBox("Analysis");
@@ -118,6 +127,7 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   QGroupBox*   pFeaturesGroup = new QGroupBox("Features");
   QVBoxLayout* pFeaturesLay   = new QVBoxLayout(pFeaturesGroup);
   //
+  pFeaturesLay->addWidget(m_widgets.pFreeEdges);
   pFeaturesLay->addWidget(m_widgets.pNonManifoldEdges);
   pFeaturesLay->addWidget(m_widgets.pCheckDihAngles);
   pFeaturesLay->addWidget(m_widgets.pFindSmoothEdges);
@@ -130,6 +140,8 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   pDyModelingLay->addWidget(m_widgets.pDeleteSelected);
   pDyModelingLay->addWidget(m_widgets.pDetachSelected);
   pDyModelingLay->addWidget(m_widgets.pDeleteSelectedFull);
+  pDyModelingLay->addWidget(m_widgets.pDivideClosedEdges);
+  pDyModelingLay->addWidget(m_widgets.pDivideAngle);
 
   // Set layout
   m_pMainLayout->addWidget(pAnalysisGroup);
@@ -145,6 +157,7 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   connect( m_widgets.pShowAAG,            SIGNAL( clicked() ), SLOT( onShowAAG             () ) );
   connect( m_widgets.pElimSelected,       SIGNAL( clicked() ), SLOT( onElimSelected        () ) );
   //
+  connect( m_widgets.pFreeEdges,          SIGNAL( clicked() ), SLOT( onFreeEdges           () ) );
   connect( m_widgets.pNonManifoldEdges,   SIGNAL( clicked() ), SLOT( onNonManifoldEdges    () ) );
   connect( m_widgets.pCheckDihAngles,     SIGNAL( clicked() ), SLOT( onCheckDihedralAngles () ) );
   connect( m_widgets.pFindSmoothEdges,    SIGNAL( clicked() ), SLOT( onFindSmoothEdges     () ) );
@@ -153,6 +166,8 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   connect( m_widgets.pDetachSelected,     SIGNAL( clicked() ), SLOT( onDetachSelected      () ) );
   connect( m_widgets.pDeleteSelected,     SIGNAL( clicked() ), SLOT( onDeleteSelected      () ) );
   connect( m_widgets.pDeleteSelectedFull, SIGNAL( clicked() ), SLOT( onDeleteSelectedFull  () ) );
+  connect( m_widgets.pDivideClosedEdges,  SIGNAL( clicked() ), SLOT( onDivideClosedEdges   () ) );
+  connect( m_widgets.pDivideAngle,        SIGNAL( clicked() ), SLOT( onDivideAngle         () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -258,6 +273,60 @@ void asiUI_ControlsFeature::onElimSelected()
     undirected = asiUI_AAGAdaptor::Convert(aag);
   //
   pGraphView->Render(undirected, part, asiUI_TopoGraph::Regime_AAG);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Finds free edges.
+void asiUI_ControlsFeature::onFreeEdges()
+{
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+
+  // Find free edges
+  TopTools_IndexedMapOfShape freeEdges;
+  asiAlgo_FindFree::FindEdges(part, freeEdges, m_notifier);
+  //
+  std::cout << "Number of free edges: " << freeEdges.Extent() << std::endl;
+
+  // Prepare compound of edges
+  TopoDS_Compound freeEdgesComp;
+  BRep_Builder BB;
+  BB.MakeCompound(freeEdgesComp);
+  //
+  for ( int e = 1; e <= freeEdges.Extent(); ++e )
+  {
+    BB.Add( freeEdgesComp, freeEdges(e) );
+  }
+
+  // Save to model
+  Handle(asiData_BoundaryEdgesNode) BN = part_n->GetBoundaryEdgesRepresentation();
+  //
+  m_model->OpenCommand();
+  {
+    ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Red) )        ->SetShape( freeEdgesComp );
+    ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Green) )      ->SetShape( TopoDS_Shape() );
+    ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Ordinary)   ) ->SetShape( TopoDS_Shape() );
+  }
+  m_model->CommitCommand();
+
+  // Update viewer
+  Handle(asiVisu_GeomPrs)
+    NPrs = Handle(asiVisu_GeomPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation(part_n) );
+  //
+  if ( NPrs.IsNull() )
+  {
+    std::cout << "Error: there is no available presentation for part" << std::endl;
+    return;
+  }
+  //
+  NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
+  NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
+
+  // Actualize presentation of edges
+  m_partViewer->PrsMgr()->Actualize( BN.get() );
 }
 
 //-----------------------------------------------------------------------------
@@ -752,6 +821,89 @@ void asiUI_ControlsFeature::onDeleteSelectedFull()
   TIMER_COUT_RESULT_MSG("FULL faces deletion")
 
   const TopoDS_Shape& result = eraser.GetResult();
+
+  // Save to model
+  m_model->Clear();
+  //
+  // Update part
+  m_model->OpenCommand(); // tx start
+  {
+    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(result);
+  }
+  m_model->CommitCommand(); // tx commit
+
+  // Update viewer
+  m_partViewer->PrsMgr()->Actualize( part_n.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Divides all closed edges.
+void asiUI_ControlsFeature::onDivideClosedEdges()
+{
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Divide closed edges
+  ShapeUpgrade_ShapeDivideClosedEdges divider(part);
+  divider.SetNbSplitPoints(1);
+  //
+  if ( !divider.Perform() )
+  {
+    std::cout << "Error: cannot divide edges" << std::endl;
+    return;
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("Divide closed edges")
+
+  const TopoDS_Shape& result = divider.Result();
+
+  // Save to model
+  m_model->Clear();
+  //
+  // Update part
+  m_model->OpenCommand(); // tx start
+  {
+    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(result);
+  }
+  m_model->CommitCommand(); // tx commit
+
+  // Update viewer
+  m_partViewer->PrsMgr()->Actualize( part_n.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Divides faces by angle.
+void asiUI_ControlsFeature::onDivideAngle()
+{
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Divide
+  ShapeUpgrade_ShapeDivideAngle divider(45.0, part);
+  //
+  if ( !divider.Perform() )
+  {
+    std::cout << "Error: cannot divide by angle" << std::endl;
+    return;
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("Divide by angle")
+
+  const TopoDS_Shape& result = divider.Result();
 
   // Save to model
   m_model->Clear();

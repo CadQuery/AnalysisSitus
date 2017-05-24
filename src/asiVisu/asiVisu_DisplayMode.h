@@ -19,10 +19,11 @@
 //! Enumerates display modes.
 enum asiVisu_DisplayMode
 {
-  DisplayMode_Undefined = 0x0000, //!< Undefined display mode.
-  DisplayMode_Shaded    = 0x0001, //!< Shaded.
-  DisplayMode_Wireframe = 0x0002, //!< Wireframe.
-  DisplayMode_Vertices  = 0x0004  //!< Vertices
+  DisplayMode_Undefined            = 0x0000, //!< Undefined display mode.
+  DisplayMode_Shaded               = 0x0001, //!< Shaded.
+  DisplayMode_Wireframe            = 0x0002, //!< Wireframe.
+  DisplayMode_Vertices             = 0x0004, //!< Vertices
+  DisplayMode_WireframeAndVertices = 0x0008  //!< Wireframe with vertices.
 };
 
 //-----------------------------------------------------------------------------
@@ -59,6 +60,16 @@ public:
     return mode;
   }
 
+  //! \return collection of shape primitives employed in WIREFRAME and VERTICES mode.
+  static TColStd_PackedMapOfInteger WIREFRAME_AND_VERTICES()
+  {
+    TColStd_PackedMapOfInteger mode = WIREFRAME();
+    //
+    mode.Add(ShapePrimitive_SharedVertex);
+    //
+    return mode;
+  }
+
   //! \return collection of shape primitives employed in VERTICES mode.
   static TColStd_PackedMapOfInteger VERTICES()
   {
@@ -77,9 +88,10 @@ public:
   {
     switch ( mode )
     {
-      case DisplayMode_Shaded:    return SHADED();
-      case DisplayMode_Wireframe: return WIREFRAME();
-      case DisplayMode_Vertices:  return VERTICES();
+      case DisplayMode_Shaded:               return SHADED();
+      case DisplayMode_Wireframe:            return WIREFRAME();
+      case DisplayMode_Vertices:             return VERTICES();
+      case DisplayMode_WireframeAndVertices: return WIREFRAME_AND_VERTICES();
       //
       default: break;
     }

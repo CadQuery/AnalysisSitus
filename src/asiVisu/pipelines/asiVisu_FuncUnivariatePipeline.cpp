@@ -10,7 +10,7 @@
 
 // asiVisu includes
 #include <asiVisu_FuncUnivariateSource.h>
-#include <asiVisu_LawDataProvider.h>
+#include <asiVisu_FuncUnivariateDataProvider.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -33,8 +33,8 @@ asiVisu_FuncUnivariatePipeline::asiVisu_FuncUnivariatePipeline()
 //! \param DP [in] Data Provider.
 void asiVisu_FuncUnivariatePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  Handle(asiVisu_LawDataProvider)
-    provider = Handle(asiVisu_LawDataProvider)::DownCast(DP);
+  Handle(asiVisu_FuncUnivariateDataProvider)
+    provider = Handle(asiVisu_FuncUnivariateDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters

@@ -131,7 +131,7 @@
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_FuncLevelsPipeline2d.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_FuncLevelsPipeline3d.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_IVSurfacePipeline.h" />
-    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_LawPipeline.h" />
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_FuncUnivariatePipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshContourPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshENScalarPipeline.h" />
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_MeshEScalarPipeline.h" />
@@ -184,6 +184,7 @@
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_FaceDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_FaceNormalsDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_FuncDataProvider.h" />
+    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_FuncUnivariateDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_IVCurveDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_IVPointSet2dDataProvider.h" />
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_IVPointSetDataProvider.h" />
@@ -213,7 +214,7 @@
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_FuncLevelsSource2d.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_FuncLevelsSource3d.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_FuncLevelsSourceBase.h" />
-    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_LawSource.h" />
+    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_FuncUnivariateSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_MeshSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PCurveSource.h" />
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_PDomainSource.h" />
@@ -242,7 +243,7 @@
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_FaceDomainPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_FaceSurfacePipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_IVSurfacePipeline.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_LawPipeline.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_FuncUnivariatePipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshContourPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshENScalarPipeline.cpp" />
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_MeshEScalarPipeline.cpp" />
@@ -321,7 +322,7 @@
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_BCurveKnotsSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_BCurvePolesSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_CurveSource.cpp" />
-    <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_LawSource.cpp" />
+    <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_FuncUnivariateSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_MeshSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PCurveSource.cpp" />
     <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_PDomainSource.cpp" />

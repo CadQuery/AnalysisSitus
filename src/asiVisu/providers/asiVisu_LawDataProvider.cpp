@@ -11,13 +11,13 @@
 //! Creates data provider for the given design parameter's law.
 //! \param N [in] law Node.
 asiVisu_LawDataProvider::asiVisu_LawDataProvider(const Handle(asiData_DesignLawNode)& N)
-: asiVisu_DataProvider(),
+: asiVisu_FuncUnivariateDataProvider(),
   m_node(N)
 {}
 
 //! Extracts X or Y evolution law from a persistent object.
 //! \return X or Y evolution law.
-Handle(asiAlgo_DesignLaw) asiVisu_LawDataProvider::GetLaw() const
+Handle(asiAlgo_FuncUnivariate) asiVisu_LawDataProvider::GetFunc() const
 {
   // Let's take all persistent properties and create a transient law
   return m_node->AsLaw();
@@ -37,4 +37,3 @@ Handle(ActAPI_HParameterList) asiVisu_LawDataProvider::translationSources() cons
                           << m_node->Parameter(asiData_DesignLawNode::PID_Mults)
                           << m_node->Parameter(asiData_DesignLawNode::PID_Poles);
 }
-

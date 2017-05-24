@@ -5,29 +5,29 @@
 // Web: http://dev.opencascade.org/, http://quaoar.su/blog
 //-----------------------------------------------------------------------------
 
-#ifndef visu_law_func_pipeline_h
-#define visu_law_func_pipeline_h
+#ifndef asiVisu_FuncUnivariatePipeline_h
+#define asiVisu_FuncUnivariatePipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_LawPipeline, asiVisu_Pipeline)
+DEFINE_STANDARD_HANDLE(asiVisu_FuncUnivariatePipeline, asiVisu_Pipeline)
 
-//! Visualization pipeline for explicit design laws.
-class asiVisu_LawPipeline : public asiVisu_Pipeline
+//! Visualization pipeline for explicit univariate functions.
+class asiVisu_FuncUnivariatePipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_LawPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FuncUnivariatePipeline, asiVisu_Pipeline)
 
 public:
 
   asiVisu_EXPORT
-    asiVisu_LawPipeline();
+    asiVisu_FuncUnivariatePipeline();
 
 public:
 
@@ -43,10 +43,10 @@ private:
 private:
 
   //! Copying prohibited.
-  asiVisu_LawPipeline(const asiVisu_LawPipeline&);
+  asiVisu_FuncUnivariatePipeline(const asiVisu_FuncUnivariatePipeline&);
 
   //! Assignment prohibited.
-  asiVisu_LawPipeline& operator=(const asiVisu_LawPipeline&);
+  asiVisu_FuncUnivariatePipeline& operator=(const asiVisu_FuncUnivariatePipeline&);
 
 };
 

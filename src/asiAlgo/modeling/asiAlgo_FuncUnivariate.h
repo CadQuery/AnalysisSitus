@@ -26,9 +26,9 @@ public:
 
 public:
 
-  virtual double operator() (const double x)       = 0;
-  virtual double Min_X      ()               const = 0;
-  virtual double Max_X      ()               const = 0;
+  virtual double operator()(const double x) = 0;
+  virtual double Min_X() const = 0;
+  virtual double Max_X() const = 0;
 
 };
 

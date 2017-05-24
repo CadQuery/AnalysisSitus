@@ -8,22 +8,19 @@
 #ifndef asiVisu_LawDataProvider_h
 #define asiVisu_LawDataProvider_h
 
-// A-Situs (visualization) includes
-#include <asiVisu_DataProvider.h>
+// asiVisu includes
+#include <asiVisu_FuncUnivariateDataProvider.h>
 
-// A-Situs (calculus) includes
-#include <asiAlgo_DesignLaw.h>
+// asiData includes
 #include <asiData_DesignLawNode.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_LawDataProvider, asiVisu_DataProvider)
-
 //! Data provider for explicitly defined design law.
-class asiVisu_LawDataProvider : public asiVisu_DataProvider
+class asiVisu_LawDataProvider : public asiVisu_FuncUnivariateDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_LawDataProvider, asiVisu_DataProvider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_LawDataProvider, asiVisu_FuncUnivariateDataProvider)
 
 public:
 
@@ -32,8 +29,8 @@ public:
 
 public:
 
-  asiVisu_EXPORT virtual Handle(asiAlgo_DesignLaw)
-    GetLaw() const;
+  asiVisu_EXPORT virtual Handle(asiAlgo_FuncUnivariate)
+    GetFunc() const;
 
   asiVisu_EXPORT virtual ActAPI_DataObjectId
     GetNodeID() const;

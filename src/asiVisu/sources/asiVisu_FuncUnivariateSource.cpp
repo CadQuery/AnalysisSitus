@@ -6,9 +6,9 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_LawSource.h>
+#include <asiVisu_FuncUnivariateSource.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -18,43 +18,42 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_LawSource);
+vtkStandardNewMacro(asiVisu_FuncUnivariateSource);
 
 //! Default constructor.
-asiVisu_LawSource::asiVisu_LawSource() : asiVisu_CurveSource()
+asiVisu_FuncUnivariateSource::asiVisu_FuncUnivariateSource() : asiVisu_CurveSource()
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
 }
 
 //! Destructor.
-asiVisu_LawSource::~asiVisu_LawSource()
-{
-}
+asiVisu_FuncUnivariateSource::~asiVisu_FuncUnivariateSource()
+{}
 
 //-----------------------------------------------------------------------------
 // Kernel methods
 //-----------------------------------------------------------------------------
 
 //! Sets input data.
-//! \param law [in] law function to convert.
-void asiVisu_LawSource::SetLaw(const Handle(asiAlgo_DesignLaw)& law)
+//! \param func [in] function to convert.
+void asiVisu_FuncUnivariateSource::SetFunc(const Handle(asiAlgo_FuncUnivariate)& func)
 {
-  if ( law.IsNull() )
+  if ( func.IsNull() )
   {
-    vtkErrorMacro( << "Invalid domain: law is NULL" );
+    vtkErrorMacro( << "Invalid domain: function is NULL" );
     return;
   }
 
-  m_law = law;
+  m_func = func;
 
   /* ============================================
    *  Prepare Cartesian arrays for visualization
    * ============================================ */
 
   const int    nSteps  = 1000;
-  const double x_min   = m_law->Min_X();
-  const double x_max   = m_law->Max_X();
+  const double x_min   = m_func->Min_X();
+  const double x_max   = m_func->Max_X();
   const double x_delta = (x_max - x_min) / nSteps;
 
   // Allocate arrays
@@ -69,7 +68,7 @@ void asiVisu_LawSource::SetLaw(const Handle(asiAlgo_DesignLaw)& law)
       x = x_max;
 
     // Evaluate
-    const double f = (*m_law)(x);
+    const double f = (*m_func)(x);
     //
     xCoords->ChangeValue(i) = x;
     yCoords->ChangeValue(i) = f;

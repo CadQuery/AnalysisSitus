@@ -6,11 +6,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_LawPipeline.h>
+#include <asiVisu_FuncUnivariatePipeline.h>
 
-// Visualization includes
+// asiVisu includes
+#include <asiVisu_FuncUnivariateSource.h>
 #include <asiVisu_LawDataProvider.h>
-#include <asiVisu_LawSource.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -20,9 +20,9 @@
 //-----------------------------------------------------------------------------
 
 //! Creates new pipeline initialized by default VTK mapper and actor.
-asiVisu_LawPipeline::asiVisu_LawPipeline()
+asiVisu_FuncUnivariatePipeline::asiVisu_FuncUnivariatePipeline()
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                 vtkSmartPointer<vtkActor>::New() )
+                    vtkSmartPointer<vtkActor>::New() )
 {
   this->Actor()->GetProperty()->SetLineWidth(2.0);
 }
@@ -31,7 +31,7 @@ asiVisu_LawPipeline::asiVisu_LawPipeline()
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void asiVisu_LawPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
+void asiVisu_FuncUnivariatePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
   Handle(asiVisu_LawDataProvider)
     provider = Handle(asiVisu_LawDataProvider)::DownCast(DP);
@@ -40,8 +40,9 @@ void asiVisu_LawPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
    *  Validate input Parameters
    * =========================== */
 
-  Handle(asiAlgo_DesignLaw) law = provider->GetLaw();
-  if ( law.IsNull() )
+  Handle(asiAlgo_FuncUnivariate) func = provider->GetFunc();
+  //
+  if ( func.IsNull() )
   {
     // Pass empty data set in order to have valid pipeline
     vtkSmartPointer<vtkPolyData> aDummyDS = vtkSmartPointer<vtkPolyData>::New();
@@ -57,10 +58,11 @@ void asiVisu_LawPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
   if ( provider->MustExecute( this->GetMTime() ) )
   {
     // Allocate Data Source
-    vtkSmartPointer<asiVisu_LawSource> src = vtkSmartPointer<asiVisu_LawSource>::New();
+    vtkSmartPointer<asiVisu_FuncUnivariateSource>
+      src = vtkSmartPointer<asiVisu_FuncUnivariateSource>::New();
 
     // Initialize data source
-    src->SetLaw(law);
+    src->SetFunc(func);
 
     // Initialize pipeline
     this->SetInputConnection( src->GetOutputPort() );
@@ -74,13 +76,13 @@ void asiVisu_LawPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void asiVisu_LawPipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_FuncUnivariatePipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void asiVisu_LawPipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_FuncUnivariatePipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void asiVisu_LawPipeline::callback_update()
+void asiVisu_FuncUnivariatePipeline::callback_update()
 {}

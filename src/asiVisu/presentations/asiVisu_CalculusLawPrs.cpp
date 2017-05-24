@@ -8,9 +8,9 @@
 // Own include
 #include <asiVisu_CalculusLawPrs.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
+#include <asiVisu_FuncUnivariatePipeline.h>
 #include <asiVisu_LawDataProvider.h>
-#include <asiVisu_LawPipeline.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -22,7 +22,7 @@ asiVisu_CalculusLawPrs::asiVisu_CalculusLawPrs(const Handle(ActAPI_INode)& N)
 : asiVisu_Prs(N)
 {
   // Pipeline for law
-  this->addPipeline        ( Pipeline_Law, new asiVisu_LawPipeline() );
+  this->addPipeline        ( Pipeline_Law, new asiVisu_FuncUnivariatePipeline() );
   this->assignDataProvider ( Pipeline_Law, new asiVisu_LawDataProvider( Handle(asiData_DesignLawNode)::DownCast(N) ) );
 }
 

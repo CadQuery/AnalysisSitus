@@ -29,6 +29,9 @@ asiVisu_IVPointSet2dPrs::asiVisu_IVPointSet2dPrs(const Handle(ActAPI_INode)& the
   // Pipeline for points
   this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
+
+  // Adjust point size
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetPointSize(8.0);
 }
 
 //! Factory method for Presentation.

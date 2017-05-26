@@ -30,6 +30,9 @@ asiVisu_IVPointSetPrs::asiVisu_IVPointSetPrs(const Handle(ActAPI_INode)& theNode
   this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 
+  // Adjust point size
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetPointSize(8.0);
+
   // Initialize text widget used for annotations
   m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
   asiVisu_Utils::InitTextWidget(m_textWidget);

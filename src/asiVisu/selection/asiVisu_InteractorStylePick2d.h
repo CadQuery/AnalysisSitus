@@ -8,7 +8,7 @@
 #ifndef asiVisu_InteractorStylePick2d_h
 #define asiVisu_InteractorStylePick2d_h
 
-// A-Situs (UI) includes
+// asiVisu includes
 #include <asiVisu_Selection.h>
 
 // VTK includes
@@ -48,6 +48,14 @@ public:
   virtual void
     OnKeyPress();
 
+public:
+
+  void GetPickedPos(double& x, double& y) const
+  {
+    x = m_PickedPos[0];
+    y = m_PickedPos[1];
+  }
+
 private:
 
   //! Copying prohibited.
@@ -68,6 +76,9 @@ private:
 
   //! Pick input data.
   asiVisu_PickInput* m_pPickInput;
+
+  //! Currently picked display position.
+  int m_PickedPos[2];
 
 };
 

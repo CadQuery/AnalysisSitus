@@ -25,6 +25,8 @@ asiVisu_InteractorStylePick2d::asiVisu_InteractorStylePick2d()
 : vtkInteractorStyleImage()
 {
   m_pPickInput = new asiVisu_PickInput();
+  //
+  m_PickedPos[0] = m_PickedPos[1] = 0;
 }
 
 //! Default destructor.
@@ -86,10 +88,10 @@ void asiVisu_InteractorStylePick2d::OnLeftButtonDown()
   if ( this->CurrentRenderer == NULL )
     return;
 
-  const int pos[2] = { this->Interactor->GetEventPosition()[0],
-                       this->Interactor->GetEventPosition()[1] };
+  m_PickedPos[0] = this->Interactor->GetEventPosition()[0];
+  m_PickedPos[1] = this->Interactor->GetEventPosition()[1];
   //
-  QPoint aPickPoint(pos[0], pos[1]);
+  QPoint aPickPoint(m_PickedPos[0], m_PickedPos[1]);
   m_pPickInput->Start  = aPickPoint;
   m_pPickInput->Finish = aPickPoint;
 

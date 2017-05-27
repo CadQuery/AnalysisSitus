@@ -8,7 +8,7 @@
 #ifndef asiVisu_InteractorStylePick_h
 #define asiVisu_InteractorStylePick_h
 
-// A-Situs (UI) includes
+// asiVisu includes
 #include <asiVisu_Selection.h>
 
 // VTK includes

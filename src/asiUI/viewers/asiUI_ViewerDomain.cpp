@@ -8,16 +8,16 @@
 // Own include
 #include <asiUI_ViewerDomain.h>
 
-// Geometry includes
+// asiAlgo includes
 #include <asiAlgo_DeleteEdges.h>
 #include <asiAlgo_JoinEdges.h>
 #include <asiAlgo_Utils.h>
 
-// Engine includes
+// asiEngine includes
 #include <asiEngine_Domain.h>
 #include <asiEngine_Part.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -267,6 +267,20 @@ void asiUI_ViewerDomain::onDomainPicked()
   //  m_textWidget->On();
   //}
   //this->Repaint();
+
+  // Take picked position from interactor
+  double pickedX = 0.0, pickedY = 0.0;
+  this->PrsMgr()->GetImageInteractorStyle()->GetPickedPos(pickedX, pickedY);
+
+  // Pick world position
+  vtkSmartPointer<vtkWorldPointPicker>
+    worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
+  //
+  worldPicker->Pick( pickedX, pickedY, 0, this->PrsMgr()->GetRenderer() );
+  double coord[3];
+  worldPicker->GetPickPosition(coord);
+  //
+  emit pointPicked(coord[0], coord[1]);
 }
 
 //-----------------------------------------------------------------------------

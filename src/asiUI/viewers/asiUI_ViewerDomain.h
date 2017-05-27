@@ -8,15 +8,12 @@
 #ifndef asiUI_ViewerDomain_h
 #define asiUI_ViewerDomain_h
 
-// A-Situs includes
-#include <asiUI.h>
-
-// A-Situs (GUI) includes
+// asiUI includes
 #include <asiUI_PDomainCallback.h>
 #include <asiUI_PickCallback.h>
 #include <asiUI_Viewer.h>
 
-// A-Situs (engine) includes
+// asiEngine includes
 #include <asiEngine_Model.h>
 
 // VTK includes
@@ -49,6 +46,7 @@ public slots:
 
 signals:
 
+  void pointPicked(const double x, const double y);
   void partModified();
 
 private:

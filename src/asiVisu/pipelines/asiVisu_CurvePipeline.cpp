@@ -74,7 +74,7 @@ void asiVisu_CurvePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
       // Set tip size
       const double tipSize = Max( 0.1, (curve->Value(l).XYZ() - curve->Value(f).XYZ() ).Modulus()*0.1 );
       //
-      src->SetTipSize(tipSize);
+      src->SetTipSize(0/*tipSize*/);
     }
     else
       Standard_ProgramError::Raise("Not yet implemented");

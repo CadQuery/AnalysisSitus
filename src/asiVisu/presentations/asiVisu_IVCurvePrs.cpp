@@ -28,6 +28,9 @@ asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& theNode)
   // Pipeline for contours
   this->addPipeline        ( Pipeline_Main, new asiVisu_CurvePipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
+
+  // Adjust line width
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetLineWidth(3.0f);
 }
 
 //! Factory method for Presentation.

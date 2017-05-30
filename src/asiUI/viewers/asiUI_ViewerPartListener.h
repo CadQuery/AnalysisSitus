@@ -20,37 +20,36 @@
 #include <QObject>
 
 //! Default slots for part viewer.
-class asiUI_ViewerPartListener : public QObject
+class asiUI_EXPORT asiUI_ViewerPartListener : public QObject
 {
   Q_OBJECT
 
 public:
 
-  asiUI_EXPORT
-    asiUI_ViewerPartListener(asiUI_ViewerPart*              wViewerPart,
-                             asiUI_ViewerDomain*            wViewerDomain,
-                             asiUI_ViewerSurface*           wViewerSurface,
-                             const Handle(asiEngine_Model)& model,
-                             ActAPI_ProgressEntry           progress,
-                             ActAPI_PlotterEntry            plotter);
+  asiUI_ViewerPartListener(asiUI_ViewerPart*              wViewerPart,
+                           asiUI_ViewerDomain*            wViewerDomain,
+                           asiUI_ViewerSurface*           wViewerSurface,
+                           const Handle(asiEngine_Model)& model,
+                           ActAPI_ProgressEntry           progress,
+                           ActAPI_PlotterEntry            plotter);
 
-  asiUI_EXPORT virtual
+  virtual
     ~asiUI_ViewerPartListener();
 
 public:
 
-  asiUI_EXPORT virtual void
+  virtual void
     Connect();
 
 protected slots:
 
-  asiUI_EXPORT void
+  void
     onFacePicked(const asiVisu_PickResult& pickRes);
 
-  asiUI_EXPORT void
+  void
     onEdgePicked(const asiVisu_PickResult& pickRes);
 
-  asiUI_EXPORT void
+  void
     onContextMenu(const QPoint&);
 
 protected:

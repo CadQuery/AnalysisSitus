@@ -8,11 +8,11 @@
 // Own include
 #include <asiUI_ViewerPart.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_NodeInfo.h>
 #include <asiVisu_Utils.h>
 
-// GUI includes
+// asiUI includes
 #include <asiUI_ControlsPart.h>
 #include <asiUI_DialogFindEdge.h>
 #include <asiUI_DialogFindFace.h>
@@ -152,6 +152,7 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
 
   // Get notified once a sub-shape is picked
   connect( m_pickCallback, SIGNAL( picked() ), this, SLOT( onSubShapesPicked() ) );
+  connect( m_pickCallback, SIGNAL( picked() ), this, SLOT( onWhateverPicked() ) );
 
   // Get notified about part events
   connect( m_partCallback, SIGNAL( findFace() ),           this, SLOT( onFindFace() ) );
@@ -227,6 +228,23 @@ void asiUI_ViewerPart::onResetView()
   asiVisu_Utils::ResetCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
   //
   this->Repaint();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Callback for picking event.
+void asiUI_ViewerPart::onWhateverPicked()
+{
+  // Access picking results
+  const asiVisu_ActualSelection& sel      = m_prs_mgr->GetCurrentSelection();
+  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+
+  // Get picked position without any attempt to interpret what's happening
+  double x, y, z;
+  pick_res.GetPickedPos(x, y, z);
+
+  // We don't care of picking logic here and let the listener react
+  emit pointPicked(x, y, z);
 }
 
 //-----------------------------------------------------------------------------

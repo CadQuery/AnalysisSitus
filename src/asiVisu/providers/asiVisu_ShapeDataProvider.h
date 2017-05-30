@@ -50,7 +50,7 @@ public:
 
 protected:
 
-  virtual Handle(ActAPI_HParameterList)
+  asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
     translationSources() const;
 
 protected:

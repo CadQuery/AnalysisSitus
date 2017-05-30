@@ -8,7 +8,7 @@
 #ifndef asiVisu_ShapePipeline_h
 #define asiVisu_ShapePipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DisplayModeFilter.h>
 #include <asiVisu_Pipeline.h>
 #include <asiVisu_Selection.h>

@@ -435,8 +435,10 @@ void asiUI_TopoGraph::onViewerClosed()
 //! \param vid        [in] graph vertex ID.
 void asiUI_TopoGraph::onVertexPicked(const int              subShapeId,
                                      const TopAbs_ShapeEnum shapeType,
-                                     const vtkIdType        asiVisu_NotUsed(vid))
+                                     const vtkIdType        vid)
 {
+  asiVisu_NotUsed(vid);
+
   if ( subShapeId > 0 && m_partViewer )
   {
     // Get sub-shape by index

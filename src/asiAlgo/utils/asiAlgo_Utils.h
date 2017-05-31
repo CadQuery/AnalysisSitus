@@ -8,7 +8,7 @@
 #ifndef asiAlgo_Utils_h
 #define asiAlgo_Utils_h
 
-// A-Situs includes
+// asiAlgo includes
 #include <asiAlgo.h>
 
 // Active Data (API) includes
@@ -33,6 +33,7 @@
 #include <Geom_SurfaceOfRevolution.hxx>
 #include <Geom_SweptSurface.hxx>
 #include <Geom_ToroidalSurface.hxx>
+#include <Geom2d_BSplineCurve.hxx>
 #include <gp_Trsf.hxx>
 #include <NCollection_IndexedDataMap.hxx>
 #include <TopoDS_Compound.hxx>
@@ -319,6 +320,12 @@ public:
 
   asiAlgo_EXPORT static double
     AutoSelectAngularDeflection(const TopoDS_Shape& model);
+
+  asiAlgo_EXPORT static Handle(Geom_BSplineCurve)
+    PolylineAsSpline(const std::vector<gp_XYZ>& trace);
+
+  asiAlgo_EXPORT static Handle(Geom2d_BSplineCurve)
+    PolylineAsSpline(const std::vector<gp_XY>& trace);
 
 private:
 

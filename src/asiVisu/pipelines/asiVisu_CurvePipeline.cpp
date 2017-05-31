@@ -8,7 +8,7 @@
 // Own include
 #include <asiVisu_CurvePipeline.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_CurveSource.h>
 #include <asiVisu_CurveDataProvider.h>
 

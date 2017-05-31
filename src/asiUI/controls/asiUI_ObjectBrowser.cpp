@@ -23,13 +23,11 @@
 //-----------------------------------------------------------------------------
 
 //! Creates a new instance of tree view.
-//! \param model       [in] Data Model instance.
-//! \param pPartViewer [in] part viewer.
-//! \param parent      [in] parent widget.
+//! \param model   [in] Data Model instance.
+//! \param parent  [in] parent widget.
 asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
-                                         asiUI_ViewerPart*            pPartViewer,
                                          QWidget*                     parent)
-: QTreeWidget(parent), m_model(model), m_pPartViewer(pPartViewer)
+: QTreeWidget(parent), m_model(model)
 {
   // Configure
   this->setMinimumWidth(TREEVIEW_MINSIZE);
@@ -58,6 +56,16 @@ asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
 //! Destructor.
 asiUI_ObjectBrowser::~asiUI_ObjectBrowser()
 {}
+
+//-----------------------------------------------------------------------------
+
+//! Adds a viewer to be connected with the object browser to enable typical
+//! visualization commands such as "show", "hide", "show only".
+//! \param[in] pViewer viewer to associate.
+void asiUI_ObjectBrowser::AddAssociatedViewer(asiUI_Viewer* pViewer)
+{
+  m_viewers.push_back(pViewer);
+}
 
 //-----------------------------------------------------------------------------
 
@@ -105,6 +113,18 @@ void asiUI_ObjectBrowser::SetSelected(const ActAPI_DataObjectId& nodeId)
     else
       ++it;
   }
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return selected Node or NULL if nothing is selected.
+Handle(ActAPI_INode) asiUI_ObjectBrowser::GetSelected() const
+{
+  Handle(ActAPI_INode) selected;
+  if ( !this->selectedNode(selected) )
+    return NULL;
+
+  return selected;
 }
 
 //-----------------------------------------------------------------------------
@@ -167,11 +187,14 @@ void asiUI_ObjectBrowser::onShow()
   Handle(ActAPI_INode) selected_n;
   if ( !this->selectedNode(selected_n) ) return;
 
-  if ( m_pPartViewer && m_pPartViewer->PrsMgr()->IsPresented(selected_n) )
-  {
-    m_pPartViewer->PrsMgr()->DeRenderPresentation(selected_n);
-    m_pPartViewer->PrsMgr()->Actualize(selected_n);
-  }
+  // Iterate over the associated viewer to find the one where the selected
+  // Node is presented
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
+    {
+      m_viewers[k]->PrsMgr()->DeRenderPresentation(selected_n);
+      m_viewers[k]->PrsMgr()->Actualize(selected_n);
+    }
 
   emit show( selected_n->GetId() );
 }
@@ -184,11 +207,14 @@ void asiUI_ObjectBrowser::onShowOnly()
   Handle(ActAPI_INode) selected_n;
   if ( !this->selectedNode(selected_n) ) return;
 
-  if ( m_pPartViewer && m_pPartViewer->PrsMgr()->IsPresented(selected_n) )
-  {
-    m_pPartViewer->PrsMgr()->DeRenderAllPresentations();
-    m_pPartViewer->PrsMgr()->Actualize(selected_n);
-  }
+  // Iterate over the associated viewer to find the one where the selected
+  // Node is presented
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
+    {
+      m_viewers[k]->PrsMgr()->DeRenderAllPresentations();
+      m_viewers[k]->PrsMgr()->Actualize(selected_n);
+    }
 
   emit showOnly( selected_n->GetId() );
 }
@@ -201,11 +227,14 @@ void asiUI_ObjectBrowser::onHide()
   Handle(ActAPI_INode) selected_n;
   if ( !this->selectedNode(selected_n) ) return;
 
-  if ( m_pPartViewer && m_pPartViewer->PrsMgr()->IsPresented(selected_n) )
-  {
-    m_pPartViewer->PrsMgr()->DeRenderPresentation(selected_n);
-    m_pPartViewer->Repaint();
-  }
+  // Iterate over the associated viewer to find the one where the selected
+  // Node is presented
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
+    {
+      m_viewers[k]->PrsMgr()->DeRenderPresentation(selected_n);
+      m_viewers[k]->Repaint();
+    }
 
   emit hide( selected_n->GetId() );
 }
@@ -218,7 +247,19 @@ void asiUI_ObjectBrowser::onHide()
 void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_INode)& activeNode,
                                               QMenu*                      pMenu)
 {
-  if ( m_pPartViewer && m_pPartViewer->PrsMgr()->IsPresented(activeNode) )
+  // Iterate over the associated viewer to find the one where the selected
+  // Node is presented
+  bool isPresented = false;
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+  {
+    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(activeNode) )
+    {
+      isPresented = true;
+      break;
+    }
+  }
+
+  if ( isPresented )
   {
     pMenu->addAction( "Show",      this, SLOT( onShow()     ) );
     pMenu->addAction( "Show Only", this, SLOT( onShowOnly() ) );

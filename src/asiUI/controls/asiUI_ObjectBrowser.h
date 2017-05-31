@@ -34,7 +34,6 @@ class asiUI_EXPORT asiUI_ObjectBrowser : public QTreeWidget
 public:
 
   asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
-                      asiUI_ViewerPart*            pPartViewer,
                       QWidget*                     parent = NULL);
 
   virtual
@@ -42,8 +41,17 @@ public:
 
 public:
 
-  void Populate();
-  void SetSelected(const ActAPI_DataObjectId& nodeId);
+  void
+    AddAssociatedViewer(asiUI_Viewer* pViewer);
+
+  void
+    Populate();
+
+  void
+    SetSelected(const ActAPI_DataObjectId& nodeId);
+
+  Handle(ActAPI_INode)
+    GetSelected() const;
 
 protected:
 
@@ -77,8 +85,8 @@ protected:
 
 protected:
 
-  Handle(ActAPI_IModel) m_model;       //!< Data Model.
-  asiUI_ViewerPart*     m_pPartViewer; //!< Part viewer.
+  Handle(ActAPI_IModel)      m_model;   //!< Data Model.
+  std::vector<asiUI_Viewer*> m_viewers; //!< Associated viewers.
 
 };
 

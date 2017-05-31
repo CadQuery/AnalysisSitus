@@ -8,7 +8,7 @@
 #ifndef asiVisu_CurvePipeline_h
 #define asiVisu_CurvePipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 

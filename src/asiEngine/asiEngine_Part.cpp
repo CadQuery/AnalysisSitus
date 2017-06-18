@@ -384,6 +384,9 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
   Handle(asiVisu_GeomPrs)
     prs = Handle(asiVisu_GeomPrs)::DownCast( m_prsMgr->GetPresentation(N) );
 
+  if ( prs.IsNull() )
+    return;
+
   // Highlight
   if ( selMode == SelectionMode_Face )
     m_prsMgr->Highlight(N, prs->MainActor(), subShapeIndices, selMode);

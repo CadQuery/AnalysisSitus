@@ -8,7 +8,7 @@
 // Own include
 #include <asiVisu_BCurvePolesSource.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -121,8 +121,8 @@ bool asiVisu_BCurvePolesSource::SetInputCurve2d(const Handle(Geom2d_BSplineCurve
 //!                          in this method.
 //! \return status.
 int asiVisu_BCurvePolesSource::RequestData(vtkInformation*        request,
-                                          vtkInformationVector** inputVector,
-                                          vtkInformationVector*  outputVector)
+                                           vtkInformationVector** inputVector,
+                                           vtkInformationVector*  outputVector)
 {
   if ( m_poles.IsNull() )
   {
@@ -213,7 +213,7 @@ int asiVisu_BCurvePolesSource::RequestData(vtkInformation*        request,
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK point.
 vtkIdType asiVisu_BCurvePolesSource::registerGridPoint(const int    index,
-                                                      vtkPolyData* polyData)
+                                                       vtkPolyData* polyData)
 {
   // Access necessary arrays
   vtkPoints* aPoints = polyData->GetPoints();
@@ -232,8 +232,8 @@ vtkIdType asiVisu_BCurvePolesSource::registerGridPoint(const int    index,
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
 vtkIdType asiVisu_BCurvePolesSource::registerLine(const vtkIdType pid0,
-                                                 const vtkIdType pid1,
-                                                 vtkPolyData*    polyData)
+                                                  const vtkIdType pid1,
+                                                  vtkPolyData*    polyData)
 {
   std::vector<vtkIdType> aPids;
   aPids.push_back(pid0);
@@ -263,7 +263,7 @@ vtkIdType asiVisu_BCurvePolesSource::registerLine(const vtkIdType pid0,
 //! \param polyData [in/out] polygonal data set being populated.
 //! \return ID of the just added VTK cell.
 vtkIdType asiVisu_BCurvePolesSource::registerVertex(const vtkIdType pid,
-                                                   vtkPolyData*    polyData)
+                                                    vtkPolyData*    polyData)
 {
   std::vector<vtkIdType> aPids;
   aPids.push_back(pid);

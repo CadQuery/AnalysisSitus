@@ -60,13 +60,6 @@ public:
     vtkSmartPointer<asiVisu_PrsManager> Host;   //!< Host geometry.
   //---------------------------------------------------------------------------
 
-    void ActualizeAll()
-    {
-      if ( Part )   Part   ->Actualize(exe_CommonFacilities::Instance()->Model->GetRootNode(), true);
-      if ( Domain ) Domain ->Actualize(exe_CommonFacilities::Instance()->Model->GetRootNode(), true);
-      if ( Host )   Host   ->Actualize(exe_CommonFacilities::Instance()->Model->GetRootNode(), true);
-    }
-
     void DeleteAll()
     {
       if ( Part )   Part   ->DeleteAllPresentations();

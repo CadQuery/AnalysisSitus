@@ -619,7 +619,7 @@ vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitLookupTable()
   colorTable->SetTableValue(ShapePrimitive_Undefined,       0.0, 0.0, 0.0);
   colorTable->SetTableValue(ShapePrimitive_FreeVertex,      0.5, 0.0, 0.0);
   colorTable->SetTableValue(ShapePrimitive_SharedVertex,    0.0, 0.0, 0.0);
-  colorTable->SetTableValue(ShapePrimitive_DanglingEdge,    1.0, 1.0, 0.0);
+  colorTable->SetTableValue(ShapePrimitive_DanglingEdge,    0.0, 0.5, 1.0);
   colorTable->SetTableValue(ShapePrimitive_FreeEdge,        1.0, 0.0, 0.0);
   colorTable->SetTableValue(ShapePrimitive_ManifoldEdge,    0.1, 0.1, 0.1);
   colorTable->SetTableValue(ShapePrimitive_NonManifoldEdge, 1.0, 0.5, 0.0);

@@ -221,7 +221,9 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     const TopTools_ListOfShape& faces = edgesOnFaces.FindFromKey(e);
 
     asiVisu_ShapePrimitive type;
-    if ( faces.Extent() == 1 )
+    if ( !faces.Extent() )
+      type = ShapePrimitive_DanglingEdge;
+    else if ( faces.Extent() == 1 )
       type = ShapePrimitive_FreeEdge;
     else if ( faces.Extent() > 2 )
       type = ShapePrimitive_NonManifoldEdge;

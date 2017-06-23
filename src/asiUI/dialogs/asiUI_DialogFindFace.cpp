@@ -11,19 +11,19 @@
 // GUI includes
 #include <asiUI_Common.h>
 
-// Geometry includes
+// asiAlgo includes
 #include <asiAlgo_Utils.h>
 
-// Engine includes
+// asiEngine includes
 #include <asiEngine_Part.h>
+
+// OCCT includes
+#include <TopExp.hxx>
 
 // Qt includes
 #include <QGroupBox>
 #include <QLabel>
 #include <QSizePolicy>
-
-// OCCT includes
-#include <TopExp.hxx>
 
 //-----------------------------------------------------------------------------
 

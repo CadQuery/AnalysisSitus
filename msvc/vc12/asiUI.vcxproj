@@ -322,6 +322,16 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\dialogs\asiUI_DialogOCAFDump.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
+moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating moc file for %(Filename).h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating moc file for %(Filename).h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="..\..\src\asiUI\graphs\asiUI_AAGAdaptor.h" />
     <CustomBuild Include="..\..\src\asiUI\graphs\asiUI_TopoGraph.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
@@ -454,6 +464,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogFindEdge.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogFindFace.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogGapFilling.cpp" />
+    <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogOCAFDump.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogRefineTessellation.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogSewing.cpp" />
     <ClCompile Include="..\..\src\asiUI\dialogs\asiUI_DialogSmoothAngleTol.cpp" />
@@ -495,6 +506,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogFindEdge.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogFindFace.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogGapFilling.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogOCAFDump.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogSewing.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogSmoothAngleTol.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_DialogRefineTessellation.cpp" />

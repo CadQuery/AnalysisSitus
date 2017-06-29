@@ -1,8 +1,26 @@
 //-----------------------------------------------------------------------------
 // Created on: 21 December 2016
-// Created by: Quaoar
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/blog
+// Copyright (c) 2017 Sergey Slyadnev
+// Code covered by the MIT License
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -20,16 +38,16 @@ asiData_AAGAttr::asiData_AAGAttr() : TDF_Attribute()
 {}
 
 //! Settles down new AAG Attribute to the given OCAF Label.
-//! \param[in] Label TDF Label to settle down the new Attribute to.
+//! \param[in] label TDF Label to settle down the new Attribute to.
 //! \return newly created Attribute settled down onto the target Label.
-Handle(asiData_AAGAttr) asiData_AAGAttr::Set(const TDF_Label& Label)
+Handle(asiData_AAGAttr) asiData_AAGAttr::Set(const TDF_Label& label)
 {
   Handle(asiData_AAGAttr) A;
   //
-  if ( !Label.FindAttribute(GUID(), A) )
+  if ( !label.FindAttribute(GUID(), A) )
   {
     A = new asiData_AAGAttr();
-    Label.AddAttribute(A);
+    label.AddAttribute(A);
   }
   return A;
 }
@@ -68,7 +86,7 @@ Handle(TDF_Attribute) asiData_AAGAttr::NewEmpty() const
 //! Performs data transferring from the given OCAF Attribute to this one.
 //! This method is mainly used by OCAF Undo/Redo kernel as a part of
 //! backup functionality.
-//! \param[in] MainAttr OCAF Attribute to copy data from.
+//! \param[in] mainAttr OCAF Attribute to copy data from.
 void asiData_AAGAttr::Restore(const Handle(TDF_Attribute)& asiData_NotUsed(mainAttr))
 {
   // Nothing is here
@@ -76,8 +94,8 @@ void asiData_AAGAttr::Restore(const Handle(TDF_Attribute)& asiData_NotUsed(mainA
 
 //! Supporting method for Copy/Paste functionality. Performs full copying of
 //! the underlying data.
-//! \param[in] Into       where to paste.
-//! \param[in] RelocTable relocation table.
+//! \param[in] into       where to paste.
+//! \param[in] relocTable relocation table.
 void asiData_AAGAttr::Paste(const Handle(TDF_Attribute)&       asiData_NotUsed(into),
                             const Handle(TDF_RelocationTable)& asiData_NotUsed(relocTable)) const
 {

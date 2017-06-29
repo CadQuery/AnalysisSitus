@@ -1,8 +1,26 @@
 //-----------------------------------------------------------------------------
 // Created on: 21 September 2016
-// Created by: Quaoar
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/blog
+// Copyright (c) 2017 Sergey Slyadnev
+// Code covered by the MIT License
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
 #ifndef asiAlgo_BVHFacets_h
@@ -26,12 +44,9 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiAlgo_BVHFacets, Standard_Transient)
-
 //! BVH-based accelerating structure representing CAD model's
 //! facets in computations.
-class asiAlgo_BVHFacets : public BVH_PrimitiveSet<double, 4>,
-                          public Standard_Transient
+class asiAlgo_BVHFacets : public BVH_PrimitiveSet<double, 4>
 {
 public:
 
@@ -51,11 +66,6 @@ public:
     Builder_Binned,
     Builder_Linear
   };
-
-public:
-
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_BVHFacets, Standard_Transient)
 
 public:
 

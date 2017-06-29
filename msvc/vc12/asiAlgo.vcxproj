@@ -118,8 +118,14 @@
     <ClInclude Include="..\..\src\asiAlgo\interop\asiAlgo_STEP.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BorderTrihedron.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BuildContours.h" />
-    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHFacets.h" />
-    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHFacets.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_Classifier.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_ClassifyPointFace.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\asiAlgo_CompleteEdgeLoop.h" />
@@ -179,8 +185,14 @@
     <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_PLY.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_STEP.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BuildContours.cpp" />
-    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHFacets.cpp" />
-    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.cpp" />
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHFacets.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_BVHIterator.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_Classifier.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_ClassifyPointFace.cpp" />
     <ClCompile Include="..\..\src\asiAlgo\modeling\asiAlgo_CompleteEdgeLoop.cpp" />

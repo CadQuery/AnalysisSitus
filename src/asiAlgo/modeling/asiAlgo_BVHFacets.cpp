@@ -1,8 +1,26 @@
 //-----------------------------------------------------------------------------
 // Created on: 21 September 2016
-// Created by: Quaoar
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/blog
+// Copyright (c) 2017 Sergey Slyadnev
+// Code covered by the MIT License
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -37,7 +55,6 @@ asiAlgo_BVHFacets::asiAlgo_BVHFacets(const TopoDS_Shape&  model,
                                      ActAPI_ProgressEntry progress,
                                      ActAPI_PlotterEntry  plotter)
 : BVH_PrimitiveSet<double, 4> (),
-  Standard_Transient          (),
   m_progress                  (progress),
   m_plotter                   (plotter),
   m_fBoundingDiag             (0.0)
@@ -130,7 +147,8 @@ double asiAlgo_BVHFacets::GetBoundingDiag() const
 void asiAlgo_BVHFacets::Dump(ActAPI_PlotterEntry IV)
 {
   // Access (build) hierarchy of boxes
-  const NCollection_Handle< BVH_Tree<double, 4> >& bvh = this->BVH();
+  const opencascade::handle<BVH_Tree<double, 4>>& bvh = this->BVH();
+  //
   if ( bvh.IsNull() )
   {
     std::cout << "Error: BVH construction failed" << std::endl;

@@ -1,8 +1,26 @@
 //-----------------------------------------------------------------------------
 // Created on: 23 September 2016
-// Created by: Quaoar
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/blog
+// Copyright (c) 2017 Sergey Slyadnev
+// Code covered by the MIT License
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
 #ifndef asiAlgo_BVHIterator_h
@@ -14,6 +32,7 @@
 // OCCT includes
 #include <BVH_Types.hxx>
 #include <BVH_PrimitiveSet.hxx>
+#include <NCollection_Handle.hxx>
 #include <TColStd_PackedMapOfInteger.hxx>
 
 //! Depth-first iterator for BVH structure.
@@ -37,7 +56,7 @@ class asiAlgo_BVHIterator
 public:
 
   asiAlgo_EXPORT
-    asiAlgo_BVHIterator(const NCollection_Handle<BVH_Tree<double, 4> >& bvh);
+    asiAlgo_BVHIterator(const opencascade::handle<BVH_Tree<double, 4> >& bvh);
 
 public:
 
@@ -64,7 +83,7 @@ public:
 
 protected:
 
-  NCollection_Handle< BVH_Tree<double, 4> > m_bvh; //!< Structure to iterate over.
+  opencascade::handle< BVH_Tree<double, 4> > m_bvh; //!< Structure to iterate over.
 
   // Iteration state variables
   BVH_Item                   m_stack[96];   //!< Non-traversed nodes to return.

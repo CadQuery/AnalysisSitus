@@ -1,8 +1,26 @@
 //-----------------------------------------------------------------------------
 // Created on: 27 November 2015
-// Created by: Quaoar
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/blog
+// Copyright (c) 2017 Sergey Slyadnev
+// Code covered by the MIT License
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -252,10 +270,21 @@ void asiUI_ViewerPart::onWhateverPicked()
 //! Callback for picking event.
 void asiUI_ViewerPart::onSubShapesPicked()
 {
+  // Access picking results
+  const asiVisu_ActualSelection& sel      = m_prs_mgr->GetCurrentSelection();
+  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+
+  // Special processing for Part Node
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
   //
   if ( geom_n.IsNull() || !geom_n->IsWellFormed() )
   {
+    if ( pick_res.IsSelectionFace() )
+      emit facePicked(pick_res);
+    //
+    else if ( pick_res.IsSelectionEdge() )
+      emit edgePicked(pick_res);
+
     std::cout << "Geometry Node is not accessible" << std::endl;
     return; // No target Node to proceed with
   }
@@ -266,10 +295,6 @@ void asiUI_ViewerPart::onSubShapesPicked()
   //---------------------------------------------------------------------------
   // Retrieve current selection
   //---------------------------------------------------------------------------
-
-  // Access picking results
-  const asiVisu_ActualSelection& sel      = m_prs_mgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
 
   if ( pick_res.IsSelectionFace() )
   {

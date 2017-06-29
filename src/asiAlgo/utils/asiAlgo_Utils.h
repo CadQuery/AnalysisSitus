@@ -1,8 +1,26 @@
 //-----------------------------------------------------------------------------
 // Created on: 20 November 2015
-// Created by: Quaoar
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/blog
+// Copyright (c) 2017 Sergey Slyadnev
+// Code covered by the MIT License
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
 #ifndef asiAlgo_Utils_h
@@ -20,6 +38,7 @@
 
 // OCCT includes
 #include <BRep_Tool.hxx>
+#include <BRepAlgoAPI_Cut.hxx>
 #include <Geom_BezierSurface.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <Geom_BSplineSurface.hxx>
@@ -305,6 +324,19 @@ public:
                const double        fuzzy = 0.0);
 
   asiAlgo_EXPORT static TopoDS_Shape
+    BooleanCut(const TopoDS_Shape&         Object,
+               const TopTools_ListOfShape& Tools,
+               const bool                  isParallel,
+               const double                fuzzy = 0.0);
+
+  asiAlgo_EXPORT static TopoDS_Shape
+    BooleanCut(const TopoDS_Shape&         Object,
+               const TopTools_ListOfShape& Tools,
+               const bool                  isParallel,
+               const double                fuzzy,
+               BRepAlgoAPI_Cut&            API);
+
+  asiAlgo_EXPORT static TopoDS_Shape
     BooleanFuse(const TopTools_ListOfShape& objects);
 
   asiAlgo_EXPORT static void
@@ -326,6 +358,14 @@ public:
 
   asiAlgo_EXPORT static Handle(Geom2d_BSplineCurve)
     PolylineAsSpline(const std::vector<gp_XY>& trace);
+
+  asiAlgo_EXPORT static bool
+    Contains(const TopoDS_Shape& shape,
+             const TopoDS_Shape& subShape);
+
+  asiAlgo_EXPORT static TopoDS_Shape
+    GetImage(const TopoDS_Shape&       source,
+             BRepBuilderAPI_MakeShape& API);
 
 private:
 

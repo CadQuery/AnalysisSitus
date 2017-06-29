@@ -1,8 +1,26 @@
 //-----------------------------------------------------------------------------
 // Created on: 20 November 2015
-// Created by: Quaoar
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/blog
+// Copyright (c) 2017 Sergey Slyadnev
+// Code covered by the MIT License
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -1238,6 +1256,51 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& Object,
 
 //-----------------------------------------------------------------------------
 
+TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape&         Object,
+                                       const TopTools_ListOfShape& Tools,
+                                       const bool                  isParallel,
+                                       const double                fuzzy)
+{
+  BRepAlgoAPI_Cut API;
+  //
+  return BooleanCut(Object, Tools, isParallel, fuzzy, API);
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape&         Object,
+                                       const TopTools_ListOfShape& Tools,
+                                       const bool                  isParallel,
+                                       const double                fuzzy,
+                                       BRepAlgoAPI_Cut&            API)
+{
+  // Prepare the arguments
+  TopTools_ListOfShape Objects;
+  Objects.Append(Object);
+
+  // Set the arguments
+  API.SetArguments(Objects);
+  API.SetTools(Tools);
+  API.SetRunParallel(isParallel);
+  API.SetFuzzyValue(fuzzy);
+
+  // Run the algorithm 
+  API.Build(); 
+
+  // Check the result
+  const int iErr = API.ErrorStatus();
+  //
+  if ( iErr )
+  {
+    std::cout << "Error: cannot cut the part model from the stock model" << std::endl;
+    return TopoDS_Shape();
+  }
+
+  return API.Shape();
+}
+
+//-----------------------------------------------------------------------------
+
 //! Performs Boolean fuse operation on the passed objects.
 //! \param objects [in] shapes to fuse.
 //! \return result of fuse.
@@ -1412,4 +1475,69 @@ Handle(Geom2d_BSplineCurve) asiAlgo_Utils::PolylineAsSpline(const std::vector<gp
   mults(k + 2) = 2;
 
   return new Geom2d_BSplineCurve(poles, knots, mults, 1);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::Contains(const TopoDS_Shape& shape,
+                             const TopoDS_Shape& subShape)
+{
+  TopTools_IndexedMapOfShape allSubShapes;
+  TopExp::MapShapes(shape, allSubShapes);
+
+  return allSubShapes.Contains(subShape);
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Shape asiAlgo_Utils::GetImage(const TopoDS_Shape&       source,
+                                     BRepBuilderAPI_MakeShape& API)
+{
+  const TopTools_ListOfShape& modified = API.Modified(source);
+  //
+  if ( modified.Extent() == 1 )
+    return modified.First();
+  //
+  if ( modified.Extent() )
+  {
+    TopoDS_Compound C;
+    BRep_Builder().MakeCompound(C);
+
+    for ( TopTools_ListIteratorOfListOfShape lit(modified); lit.More(); lit.Next() )
+    {
+      const TopoDS_Shape& image = lit.Value();
+      BRep_Builder().Add(C, image);
+    }
+
+    return C;
+  }
+
+  const TopTools_ListOfShape& generated = API.Generated(source);
+  //
+  if ( generated.Extent() == 1 )
+    return generated.First();
+  //
+  if ( generated.Extent() )
+  {
+    TopoDS_Compound C;
+    BRep_Builder().MakeCompound(C);
+
+    for ( TopTools_ListIteratorOfListOfShape lit(generated); lit.More(); lit.Next() )
+    {
+      const TopoDS_Shape& image = lit.Value();
+      BRep_Builder().Add(C, image);
+    }
+
+    return C;
+  }
+
+  // This check is placed after all other checks intentionally. The idea is
+  // that for edges we may have GENERATED faces from them, while the edges
+  // themselves are DELETED. Since our focus is on features (which are
+  // essentially just sets of faces), we prefer returning an image face
+  // rather than null shape for a deleted edge (like it happens in filleting).
+  if ( API.IsDeleted(source) )
+    return TopoDS_Shape();
+
+  return source;
 }

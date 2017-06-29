@@ -1,8 +1,26 @@
 //-----------------------------------------------------------------------------
 // Created on: 30 November 2016
-// Created by: Quaoar
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/, http://quaoar.su/blog
+// Copyright (c) 2017 Sergey Slyadnev
+// Code covered by the MIT License
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
 // Own include
@@ -125,8 +143,10 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   if ( m_shape.IsNull() )
     return;
 
+#if defined COUT_DEBUG
   TIMER_NEW
   TIMER_GO
+#endif
 
   // Build map of shapes and their parents
   TopTools_IndexedDataMapOfShapeListOfShape verticesOnEdges;
@@ -153,15 +173,19 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     allSubShapes = m_aag->GetMapOfSubShapes();
   }
 
+#if defined COUT_DEBUG
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: build topology maps")
+#endif
 
   /* =========================================
    *  STAGE 1: fill data source with vertices
    * ========================================= */
 
+#if defined COUT_DEBUG
   TIMER_RESET
   TIMER_GO
+#endif
 
   // Add vertices
   for ( int vidx = 1; vidx <= allVertices.Extent(); ++vidx )
@@ -182,15 +206,19 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     this->addVertex(v, ssId, type);
   }
 
+#if defined COUT_DEBUG
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: add vertices as VTK cells")
+#endif
 
   /* ===============
    *  STAGE 2: mesh
    * =============== */
 
+#if defined COUT_DEBUG
   TIMER_RESET
   TIMER_GO
+#endif
 
   // Discretize B-Rep model to produce visualization facets
   asiAlgo_MeshInfo meshInfo;
@@ -204,15 +232,19 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     return;
   }
 
+#if defined COUT_DEBUG
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: B-Rep mesh")
+#endif
 
   /* ======================================
    *  STAGE 3: fill data source with edges
    * ====================================== */
 
+#if defined COUT_DEBUG
   TIMER_RESET
   TIMER_GO
+#endif
 
   // Add edges
   for ( int eidx = 1; eidx <= allEdges.Extent(); ++eidx )
@@ -237,15 +269,19 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     this->addEdge(e, ssId, type);
   }
 
+#if defined COUT_DEBUG
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: add edges as VTK cells")
+#endif
 
   /* ======================================
    *  STAGE 4: fill data source with faces
    * ====================================== */
 
+#if defined COUT_DEBUG
   TIMER_RESET
   TIMER_GO
+#endif
 
   // Loop over the faces
   for ( TopExp_Explorer exp(m_shape, TopAbs_FACE); exp.More(); exp.Next() )
@@ -301,8 +337,10 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     }
   }
 
+#if defined COUT_DEBUG
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("asiVisu_ShapeRobustTessellator: add faces as VTK cells")
+#endif
 }
 
 //-----------------------------------------------------------------------------

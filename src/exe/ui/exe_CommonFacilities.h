@@ -89,13 +89,7 @@ public:
 public:
 
   //! \return single instance of facilities.
-  static Handle(exe_CommonFacilities) Instance()
-  {
-    if ( m_ref.IsNull() )
-      m_ref = new exe_CommonFacilities;
-
-    return m_ref;
-  }
+  static Handle(exe_CommonFacilities) Instance();
 
 private:
 
@@ -123,10 +117,6 @@ private:
     // Initialize notifier
     ProgressNotifier = new asiUI_ProgressNotifier;
   }
-
-private:
-
-  static Handle(exe_CommonFacilities) m_ref; //!< Single instance of facilities.
 
 };
 

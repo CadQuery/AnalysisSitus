@@ -26,4 +26,9 @@
 // Own include
 #include <exe_CommonFacilities.h>
 
-Handle(exe_CommonFacilities) exe_CommonFacilities::m_ref;
+Handle(exe_CommonFacilities) exe_CommonFacilities::Instance()
+{
+  static Handle(exe_CommonFacilities) ref = new exe_CommonFacilities;
+
+  return ref;
+}

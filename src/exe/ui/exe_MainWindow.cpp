@@ -133,7 +133,7 @@ void exe_MainWindow::createDockWindows()
 
   // Face Domain viewer
   {
-    QDockWidget* pDock = new QDockWidget("Face Domain", this);
+    QDockWidget* pDock = new QDockWidget("Domain", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
     m_widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, pDock);
@@ -147,12 +147,12 @@ void exe_MainWindow::createDockWindows()
     cf->Prs.Domain   = m_widgets.wViewerDomain->PrsMgr();
   }
 
-  // Surface viewer
+  // Host geometry viewer
   {
-    QDockWidget* pDock = new QDockWidget("Host Surface", this);
+    QDockWidget* pDock = new QDockWidget("Host Geometry", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerSurface = new asiUI_ViewerSurface(pDock);
+    m_widgets.wViewerSurface = new asiUI_ViewerHost(pDock);
     pDock->setWidget(m_widgets.wViewerSurface);
     pDock->setMinimumWidth(width);
     //

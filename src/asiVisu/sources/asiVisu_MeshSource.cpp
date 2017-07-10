@@ -26,7 +26,7 @@
 // Own include
 #include <asiVisu_MeshSource.h>
 
-// Visualization includes
+// asiUI includes
 #include <asiVisu_MeshUtils.h>
 #include <asiVisu_Utils.h>
 
@@ -39,6 +39,8 @@
 #include <vtkPolyData.h>
 
 // Mesh (Active Data) includes
+#include <Mesh_Edge.h>
+#include <Mesh_EdgesIterator.h>
 #include <Mesh_ElementsIterator.h>
 #include <Mesh_Node.h>
 #include <Mesh_Quadrangle.h>
@@ -50,6 +52,8 @@
 
 vtkStandardNewMacro(asiVisu_MeshSource);
 
+//-----------------------------------------------------------------------------
+
 //! Default constructor.
 asiVisu_MeshSource::asiVisu_MeshSource()
 {
@@ -57,6 +61,8 @@ asiVisu_MeshSource::asiVisu_MeshSource()
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
 }
+
+//-----------------------------------------------------------------------------
 
 //! Destructor.
 asiVisu_MeshSource::~asiVisu_MeshSource()
@@ -73,11 +79,15 @@ void asiVisu_MeshSource::EmptyGroupForAllModeOn()
   m_bIsEmptyGroupForAll = true;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Switches OFF inverse mode of filtering.
 void asiVisu_MeshSource::EmptyGroupForAllModeOff()
 {
   m_bIsEmptyGroupForAll = false;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Sets the instance of Mesh DS being used as an input for Data Source.
 //! \param theMesh [in] input Mesh DS.
@@ -86,12 +96,16 @@ void asiVisu_MeshSource::SetInputMesh(const Handle(ActData_Mesh)& theMesh)
   m_mesh = theMesh;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Sets the Mesh Group used to filter the input mesh.
 //! \param theGroup [in] input Mesh Group.
 void asiVisu_MeshSource::SetInputElemGroup(const Handle(Mesh_Group)& theGroup)
 {
   m_elemGroup = theGroup;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Accessor for the input Mesh DS.
 //! \return requested Mesh DS.
@@ -100,12 +114,16 @@ const Handle(ActData_Mesh)& asiVisu_MeshSource::GetInputMesh() const
   return m_mesh;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Accessor for the input Mesh Group.
 //! \return requested Mesh Group.
 const Handle(Mesh_Group)& asiVisu_MeshSource::GetInputElemGroup() const
 {
   return m_elemGroup;
 }
+
+//-----------------------------------------------------------------------------
 
 //! This is called by the superclass. Creates VTK polygonal data set
 //! from the input Mesh DS.
@@ -163,14 +181,16 @@ int asiVisu_MeshSource::RequestData(vtkInformation*        theRequest,
   // able to track free nodes
   m_mesh->RebuildAllInverseConnections();
 
+  // Debug cout
+  m_mesh->DebugStats(std::cout);
+
   // Iterate over the entire collection of nodes to cumulate them into
   // a sequence and prepare a single VTK cell for all detected free nodes
   NCollection_Sequence<int> aFreeNodeIDs;
-  Mesh_ElementsIterator aMeshNodesIt(m_mesh, Mesh_ET_Node);
-  for ( ; aMeshNodesIt.More(); aMeshNodesIt.Next() )
+  for ( Mesh_ElementsIterator nit(m_mesh, Mesh_ET_Node); nit.More(); nit.Next() )
   {
     // Access next node
-    Handle(Mesh_Node) aNode = Handle(Mesh_Node)::DownCast( aMeshNodesIt.GetValue() );
+    Handle(Mesh_Node) aNode = Handle(Mesh_Node)::DownCast( nit.GetValue() );
     const Mesh_ListOfElements& lstInvElements = aNode->InverseElements();
 
     // Skip connected nodes as we're looking for free ones here
@@ -179,8 +199,25 @@ int asiVisu_MeshSource::RequestData(vtkInformation*        theRequest,
 
     aFreeNodeIDs.Append( aNode->GetID() );
   }
-
+  //
   this->registerFreeNodesCell(aFreeNodeIDs, aPolyOutput);
+
+  // Iterate over the entire collection of edges and collect free ones
+  for ( ActData_MeshEdgesIterator eit(m_mesh); eit.More(); eit.Next() )
+  {
+    // Access next edge
+    Handle(Mesh_Edge) anEdge = Handle(Mesh_Edge)::DownCast( eit.GetValue() );
+    const Mesh_ListOfElements& lstInvElements = anEdge->InverseElements();
+
+    // Skip connected nodes as we're looking for free ones here
+    if ( lstInvElements.Extent() < 2 )
+      continue;
+
+    int anEdgeNode1, anEdgeNode2;
+    anEdge->GetEdgeDefinedByNodes(2, anEdgeNode1, anEdgeNode2);
+    //
+    this->registerFreeEdgeCell(anEdgeNode1, anEdgeNode2, aPolyOutput);
+  }
 
   /* =======================================
    *  Pass mesh elements to VTK data source
@@ -202,6 +239,8 @@ int asiVisu_MeshSource::RequestData(vtkInformation*        theRequest,
 
   return Superclass::RequestData(theRequest, theInputVector, theOutputVector);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Translates the passed mesh element to VTK polygonal cell.
 //! \param theElem     [in]     Mesh element to translate.
@@ -232,6 +271,8 @@ void asiVisu_MeshSource::translateElement(const Handle(Mesh_Element)& theElem,
     this->registerMeshFace(aQuadElem->GetID(), aQuadNodeIds, aNbNodes, thePolyData);
   }
 }
+
+//-----------------------------------------------------------------------------
 
 //! Adds a mesh node as a point to the passed polygonal data.
 //! \param theNodeID   [in]     node ID.
@@ -265,6 +306,8 @@ vtkIdType asiVisu_MeshSource::registerMeshNode(const int    theNodeID,
 
   return aResPid;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Adds the mesh element with the given ID to VTK polygonal data as a
 //! Triangle or Quadrangle VTK element depending on the actual number
@@ -326,6 +369,8 @@ vtkIdType asiVisu_MeshSource::registerMeshFace(const int    theFaceID,
   return aCellID;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Registers the passed mesh nodes as free nodes by pushing them into a
 //! dedicated VTK cell of VTK_POLY_VERTEX type.
 //! \param theNodeIDs  [in] collection of free node IDs.
@@ -352,6 +397,30 @@ vtkIdType
   vtkIntArray* aTypeArr =
     vtkIntArray::SafeDownCast( thePolyData->GetCellData()->GetArray(ARRNAME_MESH_ITEM_TYPE) );
   aTypeArr->InsertNextValue(MeshItem_FreeNode);
+
+  return aCellID;
+}
+
+//-----------------------------------------------------------------------------
+
+vtkIdType
+  asiVisu_MeshSource::registerFreeEdgeCell(const int    theNodeID1,
+                                           const int    theNodeID2,
+                                           vtkPolyData* thePolyData)
+{
+  if ( theNodeID1 == VTK_BAD_ID || theNodeID2 == VTK_BAD_ID )
+    return VTK_BAD_ID;
+
+  std::vector<vtkIdType> aPids;
+  aPids.push_back( this->registerMeshNode(theNodeID1, thePolyData) );
+  aPids.push_back( this->registerMeshNode(theNodeID2, thePolyData) );
+
+  vtkIdType aCellID =
+    thePolyData->InsertNextCell( VTK_LINE, (int) aPids.size(), &aPids[0] );
+
+  vtkIntArray* aTypeArr =
+    vtkIntArray::SafeDownCast( thePolyData->GetCellData()->GetArray(ARRNAME_MESH_ITEM_TYPE) );
+  aTypeArr->InsertNextValue(MeshItem_FreeEdge);
 
   return aCellID;
 }

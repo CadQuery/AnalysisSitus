@@ -26,7 +26,7 @@
 #ifndef asiVisu_MeshSource_h
 #define asiVisu_MeshSource_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu.h>
 
 // VTK includes
@@ -97,6 +97,11 @@ private:
   vtkIdType
     registerFreeNodesCell(const NCollection_Sequence<int>& theNodeIDs,
                           vtkPolyData*                     thePolyData);
+
+  vtkIdType
+    registerFreeEdgeCell(const int    theNodeID1,
+                         const int    theNodeID2,
+                         vtkPolyData* thePolyData);
 
 private:
 

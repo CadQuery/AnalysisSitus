@@ -29,8 +29,8 @@
 // asiUI includes
 #include <asiUI_ControlsPart.h>
 #include <asiUI_ViewerDomain.h>
+#include <asiUI_ViewerHost.h>
 #include <asiUI_ViewerPart.h>
-#include <asiUI_ViewerSurface.h>
 
 // Qt includes
 #include <QObject>
@@ -46,7 +46,7 @@ public:
     asiUI_ControlsPartListener(asiUI_ControlsPart*            wControls,
                                asiUI_ViewerPart*              wViewerPart,
                                asiUI_ViewerDomain*            wViewerDomain,
-                               asiUI_ViewerSurface*           wViewerSurface,
+                               asiUI_ViewerHost*              wViewerSurface,
                                const Handle(asiEngine_Model)& model,
                                ActAPI_ProgressEntry           notifier);
 
@@ -83,7 +83,7 @@ protected:
   asiUI_ControlsPart*     m_wControls;      //!< Controls.
   asiUI_ViewerPart*       m_wViewerPart;    //!< Part viewer.
   asiUI_ViewerDomain*     m_wViewerDomain;  //!< Face domain viewer.
-  asiUI_ViewerSurface*    m_wViewerSurface; //!< Surface viewer.
+  asiUI_ViewerHost*       m_wViewerSurface; //!< Surface viewer.
   Handle(asiEngine_Model) m_model;          //!< Data Model instance.
   ActAPI_ProgressEntry    m_notifier;       //!< Progress notifier.
 

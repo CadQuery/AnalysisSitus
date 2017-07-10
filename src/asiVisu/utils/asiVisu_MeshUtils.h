@@ -43,6 +43,7 @@ enum visu_mesh_items
   MeshItem_Triangle   = 0,
   MeshItem_Quadrangle = 1,
   MeshItem_FreeNode   = 2,
+  MeshItem_FreeEdge   = 3,
   MeshItem_Last
 };
 

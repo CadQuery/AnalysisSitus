@@ -35,7 +35,7 @@
 //! \param model          [in] Data Model instance.
 asiUI_ViewerDomainListener::asiUI_ViewerDomainListener(asiUI_ViewerPart*              wViewerPart,
                                                        asiUI_ViewerDomain*            wViewerDomain,
-                                                       asiUI_ViewerSurface*           wViewerSurface,
+                                                       asiUI_ViewerHost*              wViewerSurface,
                                                        const Handle(asiEngine_Model)& model)
 : QObject          (),
   m_wViewerPart    (wViewerPart),

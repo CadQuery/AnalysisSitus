@@ -60,7 +60,7 @@
 //! \param plotter        [in] imperative plotter.
 asiUI_ViewerPartListener::asiUI_ViewerPartListener(asiUI_ViewerPart*              wViewerPart,
                                                    asiUI_ViewerDomain*            wViewerDomain,
-                                                   asiUI_ViewerSurface*           wViewerSurface,
+                                                   asiUI_ViewerHost*           wViewerSurface,
                                                    const Handle(asiEngine_Model)& model,
                                                    ActAPI_ProgressEntry           progress,
                                                    ActAPI_PlotterEntry            plotter)

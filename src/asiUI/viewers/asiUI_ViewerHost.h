@@ -23,27 +23,24 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_ViewerSurface_h
-#define asiUI_ViewerSurface_h
+#ifndef asiUI_ViewerHost_h
+#define asiUI_ViewerHost_h
 
-// A-Situs includes
-#include <asiUI.h>
-
-// GUI includes
+// asiUI includes
 #include <asiUI_Viewer.h>
 
 //! Viewer for surface.
-class asiUI_ViewerSurface : public asiUI_Viewer
+class asiUI_ViewerHost : public asiUI_Viewer
 {
   Q_OBJECT
 
 public:
 
   asiUI_EXPORT
-    asiUI_ViewerSurface(QWidget* parent = NULL);
+    asiUI_ViewerHost(QWidget* parent = NULL);
 
   asiUI_EXPORT virtual
-    ~asiUI_ViewerSurface();
+    ~asiUI_ViewerHost();
 
 public:
 

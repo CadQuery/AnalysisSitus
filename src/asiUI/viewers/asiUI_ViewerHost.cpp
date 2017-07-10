@@ -24,9 +24,9 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_ViewerSurface.h>
+#include <asiUI_ViewerHost.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_Utils.h>
 
 // Qt-VTK includes
@@ -41,7 +41,7 @@
 
 //! Creates a new instance of viewer.
 //! \param parent [in] parent widget.
-asiUI_ViewerSurface::asiUI_ViewerSurface(QWidget* parent) : asiUI_Viewer(parent)
+asiUI_ViewerHost::asiUI_ViewerHost(QWidget* parent) : asiUI_Viewer(parent)
 {
   // Initialize presentation manager along with QVTK widget
   m_prs_mgr = vtkSmartPointer<asiVisu_PrsManager>::New();
@@ -69,19 +69,25 @@ asiUI_ViewerSurface::asiUI_ViewerSurface(QWidget* parent) : asiUI_Viewer(parent)
   this->onResetView();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Destructor.
-asiUI_ViewerSurface::~asiUI_ViewerSurface()
+asiUI_ViewerHost::~asiUI_ViewerHost()
 {
 }
 
+//-----------------------------------------------------------------------------
+
 //! Updates viewer.
-void asiUI_ViewerSurface::Repaint()
+void asiUI_ViewerHost::Repaint()
 {
   m_prs_mgr->GetQVTKWidget()->repaint();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Resets view.
-void asiUI_ViewerSurface::onResetView()
+void asiUI_ViewerHost::onResetView()
 {
   asiVisu_Utils::ResetCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
   this->Repaint();

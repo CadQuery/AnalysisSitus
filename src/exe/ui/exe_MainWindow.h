@@ -68,7 +68,7 @@ private:
     asiUI_ObjectBrowser*   wBrowser;         //!< Object browser.
     asiUI_ViewerDomain*    wViewerDomain;    //!< Parametric domain viewer.
     asiUI_ViewerPart*      wViewerPart;      //!< Part viewer.
-    asiUI_ViewerSurface*   wViewerSurface;   //!< Surface viewer.
+    asiUI_ViewerHost*   wViewerSurface;   //!< Surface viewer.
     asiUI_ControlsPart*    wControlsPart;    //!< Part controls.
     asiUI_ControlsFeature* wControlsFeature; //!< Feature controls.
     QTextEdit*             wLogger;          //!< Logger.

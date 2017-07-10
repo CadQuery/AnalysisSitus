@@ -105,7 +105,7 @@ void asiVisu_MeshPipeline::EmptyGroupForAllModeOff()
 void asiVisu_MeshPipeline::callback_add_to_renderer(vtkRenderer*)
 {
   this->Actor()->GetProperty()->SetPointSize( asiVisu_MeshUtils::DefaultPointSize() );
-  this->Actor()->GetProperty()->SetInterpolationToGouraud();
+  this->Actor()->GetProperty()->SetInterpolationToFlat();
 }
 
 //! Callback for RemoveFromRenderer base routine.

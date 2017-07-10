@@ -45,7 +45,7 @@
 asiUI_ControlsPartListener::asiUI_ControlsPartListener(asiUI_ControlsPart*            wControls,
                                                        asiUI_ViewerPart*              wViewerPart,
                                                        asiUI_ViewerDomain*            wViewerDomain,
-                                                       asiUI_ViewerSurface*           wViewerSurface,
+                                                       asiUI_ViewerHost*              wViewerSurface,
                                                        const Handle(asiEngine_Model)& model,
                                                        ActAPI_ProgressEntry           notifier)
 : QObject          (),

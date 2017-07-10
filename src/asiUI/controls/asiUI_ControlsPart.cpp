@@ -55,12 +55,12 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 
-// Qt include
-#include <QGroupBox>
-
 // VTK includes
 #include <vtkActor.h>
 #include <vtkProperty.h>
+
+// Qt include
+#include <QGroupBox>
 
 //-----------------------------------------------------------------------------
 

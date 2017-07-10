@@ -26,10 +26,10 @@
 // Own include
 #include <asiUI_RotationCallback.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_Utils.h>
 
-// A-Situs (GUI) includes
+// asiUI includes
 #include <asiUI_ViewerPart.h>
 
 // VTK includes

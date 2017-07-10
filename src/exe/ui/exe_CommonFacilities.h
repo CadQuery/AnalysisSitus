@@ -40,7 +40,7 @@
 #include <asiUI_ProgressNotifier.h>
 #include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerPart.h>
-#include <asiUI_ViewerSurface.h>
+#include <asiUI_ViewerHost.h>
 
 DEFINE_STANDARD_HANDLE(exe_CommonFacilities, Standard_Transient)
 
@@ -61,7 +61,7 @@ public:
   //
   asiUI_ViewerPart*                ViewerPart;       //!< Viewer for part.
   asiUI_ViewerDomain*              ViewerDomain;     //!< Viewer for face parametric domain.
-  asiUI_ViewerSurface*             ViewerHost;       //!< Viewer for host geometry.
+  asiUI_ViewerHost*             ViewerHost;       //!< Viewer for host geometry.
   //
   Handle(ActAPI_IProgressNotifier) ProgressNotifier; //!< Progress notifier.
   asiUI_ProgressListener*          ProgressListener; //!< Progress listener.

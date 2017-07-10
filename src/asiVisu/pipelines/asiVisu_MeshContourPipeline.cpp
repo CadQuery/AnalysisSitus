@@ -26,11 +26,12 @@
 // Own include
 #include <asiVisu_MeshContourPipeline.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_MeshUtils.h>
 
 // VTK includes
 #include <vtkExtractEdges.h>
+#include <vtkProperty.h>
 
 //! Creates new Mesh Contour Pipeline instance.
 //! \param doUseDefaultColor [in] indicates whether to use default color.
@@ -46,6 +47,12 @@ asiVisu_MeshContourPipeline::asiVisu_MeshContourPipeline(const bool doUseDefault
 
   m_fOpacity = asiVisu_MeshUtils::DefaultContourOpacity();
   m_fLineWidth = 1.0;
+
+  // Set visual properties
+  this->Actor()->GetProperty()->SetColor(m_fColor[0], m_fColor[1], m_fColor[2]);
+  this->Actor()->GetProperty()->SetOpacity(m_fOpacity);
+  this->Actor()->GetProperty()->SetLineWidth(m_fLineWidth);
+  this->Actor()->SetPickable(0);
 
   /* ========================
    *  Prepare custom filters

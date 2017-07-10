@@ -432,7 +432,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)moc\moc_%(Filename).cpp</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerSurface.h">
+    <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerHost.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
 moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">if not exist $(IntDir)moc mkdir $(IntDir)moc
@@ -496,7 +496,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerFuncUnivariate.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerPart.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerPartListener.cpp" />
-    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerSurface.cpp" />
+    <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerHost.cpp" />
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_VtkWindow.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsFeature.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ControlsPart.cpp" />
@@ -523,7 +523,7 @@ moc %(FullPath) -o $(IntDir)moc\moc_%(Filename).cpp</Command>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerFuncUnivariate.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerPart.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerPartListener.cpp" />
-    <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerSurface.cpp" />
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_ViewerHost.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_VtkWindow.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_OverrideCursor.cpp" />
     <ClCompile Include="$(IntDir)moc\moc_asiUI_TopoGraph.cpp" />

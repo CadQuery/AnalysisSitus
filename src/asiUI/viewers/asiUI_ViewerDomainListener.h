@@ -28,8 +28,8 @@
 
 // asiUI includes
 #include <asiUI_ViewerDomain.h>
+#include <asiUI_ViewerHost.h>
 #include <asiUI_ViewerPart.h>
-#include <asiUI_ViewerSurface.h>
 
 // Qt includes
 #include <QObject>
@@ -44,7 +44,7 @@ public:
   asiUI_EXPORT
     asiUI_ViewerDomainListener(asiUI_ViewerPart*              wViewerPart,
                                asiUI_ViewerDomain*            wViewerDomain,
-                               asiUI_ViewerSurface*           wViewerSurface,
+                               asiUI_ViewerHost*              wViewerSurface,
                                const Handle(asiEngine_Model)& model);
 
   asiUI_EXPORT virtual
@@ -59,7 +59,7 @@ protected:
 
   asiUI_ViewerPart*       m_wViewerPart;    //!< Part viewer.
   asiUI_ViewerDomain*     m_wViewerDomain;  //!< Face domain viewer.
-  asiUI_ViewerSurface*    m_wViewerSurface; //!< Surface viewer.
+  asiUI_ViewerHost*       m_wViewerSurface; //!< Surface viewer.
   Handle(asiEngine_Model) m_model;          //!< Data Model instance.
 
 };

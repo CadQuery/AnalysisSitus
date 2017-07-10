@@ -39,6 +39,7 @@ vtkSmartPointer<vtkLookupTable> asiVisu_MeshUtils::InitLookupTable()
   aLookup->SetTableValue(MeshItem_Triangle,   1.0, 1.0, 1.0);
   aLookup->SetTableValue(MeshItem_Quadrangle, 0.9, 0.9, 0.9);
   aLookup->SetTableValue(MeshItem_FreeNode,   1.0, 0.0, 0.0);
+  aLookup->SetTableValue(MeshItem_FreeEdge,   1.0, 0.0, 0.0);
 
   return aLookup;
 }
@@ -89,10 +90,10 @@ double asiVisu_MeshUtils::DefaultPointSize()
 //! Returns default color for mesh contour.
 //! \param fR [out] red component [0;1].
 //! \param fG [out] green component [0;1].
-//! \param fB [out] blud component [0;1].
+//! \param fB [out] blue component [0;1].
 void asiVisu_MeshUtils::DefaultContourColor(double& fR,
-                                          double& fG,
-                                          double& fB)
+                                            double& fG,
+                                            double& fB)
 {
   fR = fG = fB = 0.0; // Everything is BLACK
 }

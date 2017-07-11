@@ -285,7 +285,7 @@ void asiUI_ControlsPart::onSavePly()
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
   //
-  QString filename = asiUI_Common::selectPlyFile(asiUI_Common::OpenSaveAction_Save);
+  QString filename = asiUI_Common::selectPLYFile(asiUI_Common::OpenSaveAction_Save);
 
   // Convert shape's inherent mesh to a storable mesh
   Handle(ActData_Mesh) storedMesh;

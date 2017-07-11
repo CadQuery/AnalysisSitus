@@ -65,7 +65,7 @@ QString asiUI_Common::selectSTEPFile(const OpenSaveAction action)
 //! Allows to select filename for ply format.
 //! \param action [in] open or save.
 //! \return selected filename.
-QString asiUI_Common::selectPlyFile(const OpenSaveAction action)
+QString asiUI_Common::selectPLYFile(const OpenSaveAction action)
 {
   QStringList filter;
   filter << "PLY (*.ply)";

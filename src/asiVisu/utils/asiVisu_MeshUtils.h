@@ -37,16 +37,6 @@
 // OCCT includes
 #include <Standard_Type.hxx>
 
-//! Mesh items.
-enum visu_mesh_items
-{
-  MeshItem_Triangle   = 0,
-  MeshItem_Quadrangle = 1,
-  MeshItem_FreeNode   = 2,
-  MeshItem_FreeEdge   = 3,
-  MeshItem_Last
-};
-
 //! Auxiliary functions supporting mesh presentations in VTK viewer.
 namespace asiVisu_MeshUtils
 {
@@ -54,9 +44,9 @@ namespace asiVisu_MeshUtils
     InitLookupTable();
 
   void
-    InitMapper(vtkMapper* theMapper,
+    InitMapper(vtkMapper*      theMapper,
                vtkLookupTable* theLookup,
-               const char* theScalarsArrName);
+               const char*     theScalarsArrName);
 
   void
     InitMapper(vtkMapper* theMapper,

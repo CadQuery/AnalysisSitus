@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 15 April 2017
+// Created on: 11 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -24,12 +24,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_PartPipelineBase.h>
+#include <asiVisu_TriangulationPipelineBase.h>
 
 // asiVisu includes
+#include <asiVisu_MeshUtils.h>
 #include <asiVisu_PartDataProvider.h>
 #include <asiVisu_PartNodeInfo.h>
-#include <asiVisu_Utils.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -48,7 +48,7 @@
 
 //-----------------------------------------------------------------------------
 
-asiVisu_PartPipelineBase::asiVisu_PartPipelineBase(const vtkSmartPointer<asiVisu_ShapeRobustSource>& source)
+asiVisu_TriangulationPipelineBase::asiVisu_TriangulationPipelineBase(const vtkSmartPointer<asiVisu_TriangulationSource>& source)
 //
 : asiVisu_Pipeline   ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
   m_bMapperColorsSet ( false )
@@ -59,25 +59,21 @@ asiVisu_PartPipelineBase::asiVisu_PartPipelineBase(const vtkSmartPointer<asiVisu
 
   // Initialize Data Source
   if ( !source.GetPointer() )
-    m_source = vtkSmartPointer<asiVisu_ShapeRobustSource>::New();
+    m_source = vtkSmartPointer<asiVisu_TriangulationSource>::New();
   else
     m_source = source;
 
-  // Filter for normals
-  m_normalsFilter = vtkSmartPointer<vtkPolyDataNormals>::New();
-
   // Display mode filter
-  m_dmFilter = vtkSmartPointer<asiVisu_ShapeDisplayModeFilter>::New();
+  m_dmFilter = vtkSmartPointer<asiVisu_TriangulationDisplayModeFilter>::New();
 
   // Compose pipeline
   this->append(m_dmFilter);
-  this->append(m_normalsFilter);
 }
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_PartPipelineBase::SetDiagnosticTools(ActAPI_ProgressEntry progress,
-                                                  ActAPI_PlotterEntry  plotter)
+void asiVisu_TriangulationPipelineBase::SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                                                           ActAPI_PlotterEntry  plotter)
 {
   m_progress = progress;
   m_plotter  = plotter;
@@ -90,8 +86,8 @@ void asiVisu_PartPipelineBase::SetDiagnosticTools(ActAPI_ProgressEntry progress,
 //! Highlights the passed elements according to the given selection nature.
 //! \param elementIds [in] element IDs.
 //! \param selNature  [in] selection nature (detection or selection).
-void asiVisu_PartPipelineBase::SetPickedElements(const TColStd_PackedMapOfInteger& elementIds,
-                                                 const asiVisu_SelectionNature     selNature)
+void asiVisu_TriangulationPipelineBase::SetPickedElements(const TColStd_PackedMapOfInteger& elementIds,
+                                                          const asiVisu_SelectionNature     selNature)
 {
   if ( !elementIds.Extent() )
     return;
@@ -116,11 +112,11 @@ void asiVisu_PartPipelineBase::SetPickedElements(const TColStd_PackedMapOfIntege
     pShapePrimArr = vtkIdTypeArray::SafeDownCast( pCellData->GetArray(ARRNAME_PART_CELL_TYPES) );
 
   // Choose proper scalar
-  asiVisu_ShapePrimitive requestedPrim;
+  asiVisu_MeshPrimitive requestedPrim;
   if ( selNature == SelectionNature_Detection )
-    requestedPrim = ShapePrimitive_Detected;
+    requestedPrim = MeshPrimitive_Detected;
   else
-    requestedPrim = ShapePrimitive_Selected;
+    requestedPrim = MeshPrimitive_Selected;
 
   // Choose cache
   NCollection_DataMap<vtkIdType, int>&
@@ -143,7 +139,7 @@ void asiVisu_PartPipelineBase::SetPickedElements(const TColStd_PackedMapOfIntege
       currentPrim = (int) pShapePrimArr->GetTuple1(cellId);
 
     // Save the original scalar in cache
-    if ( currentPrim != ShapePrimitive_Detected && currentPrim != ShapePrimitive_Selected )
+    if ( currentPrim != MeshPrimitive_Detected && currentPrim != MeshPrimitive_Selected )
     {
       if ( cache.IsBound(cellId) )
         cache.UnBind(cellId);
@@ -151,7 +147,7 @@ void asiVisu_PartPipelineBase::SetPickedElements(const TColStd_PackedMapOfIntege
       cache.Bind( cellId, (int) pShapePrimArr->GetTuple1(cellId) );
     }
 
-    if ( currentPrim == ShapePrimitive_Selected && requestedPrim == ShapePrimitive_Detected )
+    if ( currentPrim == MeshPrimitive_Selected && requestedPrim == MeshPrimitive_Detected )
       continue; // Detection must not override selection
 
     // Change scalar
@@ -167,7 +163,7 @@ void asiVisu_PartPipelineBase::SetPickedElements(const TColStd_PackedMapOfIntege
 
 //! Resets initial scalars for the detected/selected cells.
 //! \param selNature [in] selection nature (detection or selection).
-void asiVisu_PartPipelineBase::ResetPickedElements(const asiVisu_SelectionNature selNature)
+void asiVisu_TriangulationPipelineBase::ResetPickedElements(const asiVisu_SelectionNature selNature)
 {
   // Get polygonal data
   vtkPolyData*
@@ -201,7 +197,7 @@ void asiVisu_PartPipelineBase::ResetPickedElements(const asiVisu_SelectionNature
 
     // Do not restore the original scalar if the cell is in selected state,
     // given that the request on reset is yielded for detection
-    if ( currentPrim == ShapePrimitive_Selected && selNature == SelectionNature_Detection )
+    if ( currentPrim == MeshPrimitive_Selected && selNature == SelectionNature_Detection )
       continue;
 
     // Reset scalar
@@ -217,7 +213,7 @@ void asiVisu_PartPipelineBase::ResetPickedElements(const asiVisu_SelectionNature
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void asiVisu_PartPipelineBase::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_TriangulationPipelineBase::callback_add_to_renderer(vtkRenderer*)
 {
   this->Actor()->GetProperty()->SetInterpolationToPhong();
 }
@@ -225,17 +221,17 @@ void asiVisu_PartPipelineBase::callback_add_to_renderer(vtkRenderer*)
 //-----------------------------------------------------------------------------
 
 //! Callback for RemoveFromRenderer() routine.
-void asiVisu_PartPipelineBase::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_TriangulationPipelineBase::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //-----------------------------------------------------------------------------
 
 //! Callback for Update() routine.
-void asiVisu_PartPipelineBase::callback_update()
+void asiVisu_TriangulationPipelineBase::callback_update()
 {
   if ( !m_bMapperColorsSet )
   {
-    asiVisu_Utils::InitShapeMapper(m_mapper);
+    asiVisu_MeshUtils::InitMapper(m_mapper, ARRNAME_MESH_ITEM_TYPE);
     m_bMapperColorsSet = true;
   }
 }

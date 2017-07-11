@@ -38,7 +38,7 @@ vtkStandardNewMacro(asiVisu_PartNodeInfo);
 asiVisu_PartNodeInfo::asiVisu_PartNodeInfo()
 {}
 
-//! Default destructor.
+//! Destructor.
 asiVisu_PartNodeInfo::~asiVisu_PartNodeInfo()
 {}
 
@@ -80,7 +80,9 @@ void asiVisu_PartNodeInfo::Store(const ActAPI_DataObjectId& nodeId,
     actor->SetPropertyKeys( vtkSmartPointer<vtkInformation>::New() );
 
   // Create new wrapper for Node ID
-  vtkSmartPointer<asiVisu_PartNodeInfo> nodeInfo = vtkSmartPointer<asiVisu_PartNodeInfo>::New();
+  vtkSmartPointer<asiVisu_PartNodeInfo>
+    nodeInfo = vtkSmartPointer<asiVisu_PartNodeInfo>::New();
+  //
   nodeInfo->SetNodeId(nodeId);
 
   // Set Information property

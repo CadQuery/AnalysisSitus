@@ -91,15 +91,13 @@ void asiVisu_PointsSource<REAL_TYPE>::SetFilter(const Handle(TColStd_HPackedMapO
 
 //-----------------------------------------------------------------------------
 
-//! This is called by the superclass. Creates VTK polygonal data set
-//! from the input arrays.
-//! \param request      [in] information about data object.
-//! \param inputVector  [in] the input data. As a data source is the start
-//!                          stage of the VTK pipeline, the Input Vector is
-//!                          empty and not used (no input port).
-//! \param outputVector [in] the pointer to output data, that is filled
-//!                          in this method.
-//! \return status.
+//! This method (called by superclass) performs conversion of OCCT
+//! data structures to VTK polygonal representation.
+//!
+//! \param request      [in]  describes "what" algorithm should do. This is
+//!                           typically just one key such as REQUEST_INFORMATION.
+//! \param inputVector  [in]  inputs of the algorithm.
+//! \param outputVector [out] outputs of the algorithm.
 template <typename REAL_TYPE>
 int asiVisu_PointsSource<REAL_TYPE>::RequestData(vtkInformation*        request,
                                                  vtkInformationVector** inputVector,
@@ -107,7 +105,7 @@ int asiVisu_PointsSource<REAL_TYPE>::RequestData(vtkInformation*        request,
 {
   if ( m_points.IsNull() )
   {
-    vtkErrorMacro( << "Invalid domain: NULL point cloud" );
+    vtkErrorMacro( << "Invalid input: NULL point cloud" );
     return 0;
   }
 
@@ -115,7 +113,7 @@ int asiVisu_PointsSource<REAL_TYPE>::RequestData(vtkInformation*        request,
   //
   if ( coords.IsNull() )
   {
-    vtkErrorMacro( << "Invalid domain: NULL point cloud" );
+    vtkErrorMacro( << "Invalid input: NULL point cloud" );
     return 0;
   }
 

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 09 December 2016
+// Created on: 11 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,44 +23,30 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_Common_h
-#define asiVisu_Common_h
+#ifndef asiVisu_MeshPrimitive_h
+#define asiVisu_MeshPrimitive_h
 
 // asiVisu includes
 #include <asiVisu.h>
 
-// Active Data (auxiliary) includes
-#include <ActAux_Common.h>
-
-// OCCT includes
-#include <NCollection_SparseArray.hxx>
-
-//-----------------------------------------------------------------------------
-
-//! Elementary data chunk representing vector value.
-struct asiVisu_VectorTuple
+//! Possible cell types for mesh elements.
+enum asiVisu_MeshPrimitive
 {
-  double F[3];
-
-  asiVisu_VectorTuple()
-  {
-    F[0] = 0.0; F[1] = 0.0; F[2] = 0.0;
-  }
-
-  asiVisu_VectorTuple(const double _F1,
-                      const double _F2,
-                      const double _F3)
-  {
-    F[0] = _F1; F[1] = _F2; F[2] = _F3;
-  }
+  MeshPrimitive_Undefined       = 0,  //!< Undefined cell type.
+  //
+  MeshPrimitive_FreeNode        = 1,  //!< Cell type for free node.
+  MeshPrimitive_SharedNode      = 2,  //!< Cell type for shared node.
+  MeshPrimitive_DanglingLink    = 3,  //!< Cell type for dangling link.
+  MeshPrimitive_FreeLink        = 4,  //!< Cell type for free link.
+  MeshPrimitive_ManifoldLink    = 5,  //!< Cell type for manifold link.
+  MeshPrimitive_NonManifoldLink = 6,  //!< Cell type for non-manifold link.
+  MeshPrimitive_FacetTriangle   = 7,  //!< Cell type for triangle facet.
+  MeshPrimitive_FacetQuad       = 8,  //!< Cell type for quad facet.
+  //
+  MeshPrimitive_Detected        = 9,  //!< Detected boundary element.
+  MeshPrimitive_Selected        = 10, //!< Selected boundary element.
+  //
+  MeshPrimitive_LAST
 };
-
-//-----------------------------------------------------------------------------
-
-//! Collection of vector values associated with sparse integer IDs.
-typedef NCollection_SparseArray<asiVisu_VectorTuple> asiVisu_VectorMap;
-typedef NCollection_Shared<asiVisu_VectorMap>        asiVisu_HVectorMap;
-
-//-----------------------------------------------------------------------------
 
 #endif

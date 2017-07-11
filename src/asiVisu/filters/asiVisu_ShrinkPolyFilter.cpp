@@ -49,11 +49,13 @@ asiVisu_ShrinkPolyFilter::asiVisu_ShrinkPolyFilter()
 asiVisu_ShrinkPolyFilter::~asiVisu_ShrinkPolyFilter()
 {}
 
-//! Filtering routine.
-//! \param request      [in] not used request data.
-//! \param inputVector  [in] input information vector.
-//! \param outputVector [in] output information vector.
-//! \return execution status.
+//! This method (called by superclass) performs conversion of OCCT
+//! data structures to VTK polygonal representation.
+//!
+//! \param request      [in]  describes "what" algorithm should do. This is
+//!                           typically just one key such as REQUEST_INFORMATION.
+//! \param inputVector  [in]  inputs of the algorithm.
+//! \param outputVector [out] outputs of the algorithm.
 int asiVisu_ShrinkPolyFilter::RequestData(vtkInformation*        vtkNotUsed(request),
                                           vtkInformationVector** inputVector,
                                           vtkInformationVector*  outputVector)

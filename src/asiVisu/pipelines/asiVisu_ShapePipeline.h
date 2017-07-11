@@ -27,9 +27,9 @@
 #define asiVisu_ShapePipeline_h
 
 // asiVisu includes
-#include <asiVisu_DisplayModeFilter.h>
 #include <asiVisu_Pipeline.h>
 #include <asiVisu_Selection.h>
+#include <asiVisu_ShapeDisplayModeFilter.h>
 #include <asiVisu_ShapeRobustSource.h>
 
 // Active Data includes
@@ -82,7 +82,7 @@ public:
   }
 
   //! \return display mode filter.
-  const vtkSmartPointer<asiVisu_DisplayModeFilter>& GetDisplayModeFilter() const
+  const vtkSmartPointer<asiVisu_ShapeDisplayModeFilter>& GetDisplayModeFilter() const
   {
     return m_dmFilter;
   }
@@ -117,7 +117,7 @@ protected:
   vtkSmartPointer<vtkPolyDataNormals> m_normalsFilter;
 
   //! Display mode filter.
-  vtkSmartPointer<asiVisu_DisplayModeFilter> m_dmFilter;
+  vtkSmartPointer<asiVisu_ShapeDisplayModeFilter> m_dmFilter;
 
   //! Progress notifier.
   ActAPI_ProgressEntry m_progress;

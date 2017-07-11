@@ -26,22 +26,40 @@
 // Own include
 #include <asiVisu_MeshUtils.h>
 
+// asiVisu includes
+#include <asiVisu_MeshPrimitive.h>
+
 //! Initializes VTK lookup table charged with default color scheme for meshes.
 //! \return VTK lookup table.
 vtkSmartPointer<vtkLookupTable> asiVisu_MeshUtils::InitLookupTable()
 {
-  vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
+  vtkSmartPointer<vtkLookupTable>
+    colorTable = vtkSmartPointer<vtkLookupTable>::New();
 
-  double aRange[2] = {0, MeshItem_FreeNode};
-  aLookup->SetRange(aRange);
-  aLookup->SetNumberOfColors(MeshItem_Last);
+  // Set colors table for 3D shapes
+  double range[2];
+  range[0] = MeshPrimitive_Undefined;
+  range[1] = MeshPrimitive_LAST - 1;
+  //
+  colorTable->Allocate(MeshPrimitive_LAST);
+  colorTable->SetNumberOfTableValues(MeshPrimitive_LAST);
+  colorTable->SetTableRange(range);
+  colorTable->SetValueRange(0, 1);
+  //
+  colorTable->SetTableValue(MeshPrimitive_Undefined,       0.0, 0.0, 0.0);
+  colorTable->SetTableValue(MeshPrimitive_FreeNode,        0.5, 0.0, 0.0);
+  colorTable->SetTableValue(MeshPrimitive_SharedNode,      0.0, 0.0, 0.0);
+  colorTable->SetTableValue(MeshPrimitive_DanglingLink,    0.0, 0.5, 1.0);
+  colorTable->SetTableValue(MeshPrimitive_FreeLink,        1.0, 0.0, 0.0);
+  colorTable->SetTableValue(MeshPrimitive_ManifoldLink,    0.1, 0.1, 0.1);
+  colorTable->SetTableValue(MeshPrimitive_NonManifoldLink, 1.0, 0.5, 0.0);
+  colorTable->SetTableValue(MeshPrimitive_FacetTriangle,   0.9, 0.9, 0.9);
+  colorTable->SetTableValue(MeshPrimitive_FacetQuad,       0.7, 0.7, 0.7);
+  //
+  colorTable->SetTableValue(MeshPrimitive_Detected,        0.0, 1.0, 1.0);
+  colorTable->SetTableValue(MeshPrimitive_Selected,        1.0, 1.0, 0.0);
 
-  aLookup->SetTableValue(MeshItem_Triangle,   1.0, 1.0, 1.0);
-  aLookup->SetTableValue(MeshItem_Quadrangle, 0.9, 0.9, 0.9);
-  aLookup->SetTableValue(MeshItem_FreeNode,   1.0, 0.0, 0.0);
-  aLookup->SetTableValue(MeshItem_FreeEdge,   1.0, 0.0, 0.0);
-
-  return aLookup;
+  return colorTable;
 }
 
 //! Initializes the passed VTK mapper with the given Lookup Table.

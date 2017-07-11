@@ -245,6 +245,9 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\editing\asiAlgo_FindFree.h">
       <Filter>Header Files\Modeling\Editing</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshLink.h">
+      <Filter>Header Files\Modeling\Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\asiAlgo\interop\asiAlgo_IGES.cpp">

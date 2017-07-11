@@ -62,8 +62,8 @@ asiVisu_ShapePipeline::asiVisu_ShapePipeline(bool isScalarMode)
   m_normalsFilter = vtkSmartPointer<vtkPolyDataNormals>::New();
 
   // Display mode filter
-  m_dmFilter = vtkSmartPointer<asiVisu_DisplayModeFilter>::New();
-  m_dmFilter->SetDisplayMode(DisplayMode_Shaded);
+  m_dmFilter = vtkSmartPointer<asiVisu_ShapeDisplayModeFilter>::New();
+  m_dmFilter->SetDisplayMode(ShapeDisplayMode_Shaded);
 
   // Set line width
   this->Actor()->GetProperty()->SetLineWidth(1);

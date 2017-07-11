@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 09 December 2016
+// Created on: 11 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,44 +23,43 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_Common_h
-#define asiVisu_Common_h
+#ifndef asiVisu_TriangulationNodeInfo_h
+#define asiVisu_TriangulationNodeInfo_h
 
 // asiVisu includes
-#include <asiVisu.h>
+#include <asiVisu_NodeInfo.h>
 
-// Active Data (auxiliary) includes
-#include <ActAux_Common.h>
-
-// OCCT includes
-#include <NCollection_SparseArray.hxx>
-
-//-----------------------------------------------------------------------------
-
-//! Elementary data chunk representing vector value.
-struct asiVisu_VectorTuple
+//! This is a sub-class for generic asiVisu_NodeInfo. Use this key to
+//! distinguish between triangulation presentations and other presentations
+//! bounded to Active Data Nodes.
+class asiVisu_TriangulationNodeInfo : public asiVisu_NodeInfo
 {
-  double F[3];
+public:
 
-  asiVisu_VectorTuple()
-  {
-    F[0] = 0.0; F[1] = 0.0; F[2] = 0.0;
-  }
+  vtkTypeMacro(asiVisu_TriangulationNodeInfo, vtkObject);
 
-  asiVisu_VectorTuple(const double _F1,
-                      const double _F2,
-                      const double _F3)
-  {
-    F[0] = _F1; F[1] = _F2; F[2] = _F3;
-  }
+  asiVisu_EXPORT static asiVisu_TriangulationNodeInfo*
+    New();
+
+public:
+
+  asiVisu_EXPORT static vtkInformationObjectBaseKey*
+    GetKey();
+
+  asiVisu_EXPORT static asiVisu_TriangulationNodeInfo*
+    Retrieve(vtkActor* actor);
+
+  asiVisu_EXPORT static void
+    Store(const ActAPI_DataObjectId& nodeId,
+          vtkActor*                  actor);
+
+private:
+
+  asiVisu_TriangulationNodeInfo();
+  asiVisu_TriangulationNodeInfo(const asiVisu_TriangulationNodeInfo&);
+  asiVisu_TriangulationNodeInfo& operator=(const asiVisu_TriangulationNodeInfo&);
+  ~asiVisu_TriangulationNodeInfo();
+
 };
-
-//-----------------------------------------------------------------------------
-
-//! Collection of vector values associated with sparse integer IDs.
-typedef NCollection_SparseArray<asiVisu_VectorTuple> asiVisu_VectorMap;
-typedef NCollection_Shared<asiVisu_VectorMap>        asiVisu_HVectorMap;
-
-//-----------------------------------------------------------------------------
 
 #endif

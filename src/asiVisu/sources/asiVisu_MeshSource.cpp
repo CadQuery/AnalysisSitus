@@ -26,7 +26,8 @@
 // Own include
 #include <asiVisu_MeshSource.h>
 
-// asiUI includes
+// asiVisu includes
+#include <asiVisu_MeshPrimitive.h>
 #include <asiVisu_MeshUtils.h>
 #include <asiVisu_Utils.h>
 
@@ -125,15 +126,13 @@ const Handle(Mesh_Group)& asiVisu_MeshSource::GetInputElemGroup() const
 
 //-----------------------------------------------------------------------------
 
-//! This is called by the superclass. Creates VTK polygonal data set
-//! from the input Mesh DS.
-//! \param theRequest      [in] information about data object.
-//! \param theInputVector  [in] the input data. As a data source is the start
-//!                             stage of the VTK pipeline, theInputVector is
-//!                             empty and not used (no input port).
-//! \param theOutputVector [in] the pointer to output data, that is filled
-//!                             in this method.
-//! \return status.
+//! This method (called by superclass) performs conversion of OCCT
+//! data structures to VTK polygonal representation.
+//!
+//! \param request      [in]  describes "what" algorithm should do. This is
+//!                           typically just one key such as REQUEST_INFORMATION.
+//! \param inputVector  [in]  inputs of the algorithm.
+//! \param outputVector [out] outputs of the algorithm.
 int asiVisu_MeshSource::RequestData(vtkInformation*        theRequest,
                                     vtkInformationVector** theInputVector,
                                     vtkInformationVector*  theOutputVector)
@@ -201,23 +200,6 @@ int asiVisu_MeshSource::RequestData(vtkInformation*        theRequest,
   }
   //
   this->registerFreeNodesCell(aFreeNodeIDs, aPolyOutput);
-
-  // Iterate over the entire collection of edges and collect free ones
-  for ( ActData_MeshEdgesIterator eit(m_mesh); eit.More(); eit.Next() )
-  {
-    // Access next edge
-    Handle(Mesh_Edge) anEdge = Handle(Mesh_Edge)::DownCast( eit.GetValue() );
-    const Mesh_ListOfElements& lstInvElements = anEdge->InverseElements();
-
-    // Skip connected nodes as we're looking for free ones here
-    if ( lstInvElements.Extent() < 2 )
-      continue;
-
-    int anEdgeNode1, anEdgeNode2;
-    anEdge->GetEdgeDefinedByNodes(2, anEdgeNode1, anEdgeNode2);
-    //
-    this->registerFreeEdgeCell(anEdgeNode1, anEdgeNode2, aPolyOutput);
-  }
 
   /* =======================================
    *  Pass mesh elements to VTK data source
@@ -355,7 +337,7 @@ vtkIdType asiVisu_MeshSource::registerMeshFace(const int    theFaceID,
 
   vtkIntArray* aTypeArr =
     vtkIntArray::SafeDownCast( thePolyData->GetCellData()->GetArray(ARRNAME_MESH_ITEM_TYPE) );
-  int aType = (aCellType == VTK_TRIANGLE ? MeshItem_Triangle : MeshItem_Quadrangle);
+  int aType = (aCellType == VTK_TRIANGLE ? MeshPrimitive_FacetTriangle : MeshPrimitive_FacetQuad);
   aTypeArr->InsertNextValue(aType);
 
   /* =========================================================
@@ -396,31 +378,7 @@ vtkIdType
 
   vtkIntArray* aTypeArr =
     vtkIntArray::SafeDownCast( thePolyData->GetCellData()->GetArray(ARRNAME_MESH_ITEM_TYPE) );
-  aTypeArr->InsertNextValue(MeshItem_FreeNode);
-
-  return aCellID;
-}
-
-//-----------------------------------------------------------------------------
-
-vtkIdType
-  asiVisu_MeshSource::registerFreeEdgeCell(const int    theNodeID1,
-                                           const int    theNodeID2,
-                                           vtkPolyData* thePolyData)
-{
-  if ( theNodeID1 == VTK_BAD_ID || theNodeID2 == VTK_BAD_ID )
-    return VTK_BAD_ID;
-
-  std::vector<vtkIdType> aPids;
-  aPids.push_back( this->registerMeshNode(theNodeID1, thePolyData) );
-  aPids.push_back( this->registerMeshNode(theNodeID2, thePolyData) );
-
-  vtkIdType aCellID =
-    thePolyData->InsertNextCell( VTK_LINE, (int) aPids.size(), &aPids[0] );
-
-  vtkIntArray* aTypeArr =
-    vtkIntArray::SafeDownCast( thePolyData->GetCellData()->GetArray(ARRNAME_MESH_ITEM_TYPE) );
-  aTypeArr->InsertNextValue(MeshItem_FreeEdge);
+  aTypeArr->InsertNextValue(MeshPrimitive_FreeNode);
 
   return aCellID;
 }

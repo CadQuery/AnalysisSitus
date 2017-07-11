@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 09 December 2016
+// Created on: 11 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,44 +23,47 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_Common_h
-#define asiVisu_Common_h
+#ifndef asiAlgo_MeshLink_h
+#define asiAlgo_MeshLink_h
 
-// asiVisu includes
-#include <asiVisu.h>
-
-// Active Data (auxiliary) includes
-#include <ActAux_Common.h>
+// asiAlgo includes
+#include <asiAlgo.h>
 
 // OCCT includes
-#include <NCollection_SparseArray.hxx>
+#include <NCollection_IndexedMap.hxx>
 
-//-----------------------------------------------------------------------------
-
-//! Elementary data chunk representing vector value.
-struct asiVisu_VectorTuple
+//! Auxiliary unoriented link structure.
+struct asiAlgo_MeshLink
 {
-  double F[3];
+  int N1; //!< First node.
+  int N2; //!< Second node.
 
-  asiVisu_VectorTuple()
+  //! ctor default.
+  asiAlgo_MeshLink() : N1(0), N2(0) {}
+
+  //! ctor with parameters.
+  asiAlgo_MeshLink(const int _N1, const int _N2) : N1(_N1), N2(_N2) {}
+
+  //! \return hash code for the arc.
+  static int HashCode(const asiAlgo_MeshLink& arc, const int upper)
   {
-    F[0] = 0.0; F[1] = 0.0; F[2] = 0.0;
+    int key = arc.N1 + arc.N2;
+    key += (key << 10);
+    key ^= (key >> 6);
+    key += (key << 3);
+    key ^= (key >> 11);
+    return (key & 0x7fffffff) % upper;
   }
 
-  asiVisu_VectorTuple(const double _F1,
-                      const double _F2,
-                      const double _F3)
+  //! \return true if two links are equal.
+  static int IsEqual(const asiAlgo_MeshLink& arc1,
+                     const asiAlgo_MeshLink& arc2)
   {
-    F[0] = _F1; F[1] = _F2; F[2] = _F3;
+    return arc1.N1 == arc2.N1 && arc1.N2 == arc2.N2 ||
+           arc1.N2 == arc2.N1 && arc1.N1 == arc2.N2;
   }
 };
 
-//-----------------------------------------------------------------------------
-
-//! Collection of vector values associated with sparse integer IDs.
-typedef NCollection_SparseArray<asiVisu_VectorTuple> asiVisu_VectorMap;
-typedef NCollection_Shared<asiVisu_VectorMap>        asiVisu_HVectorMap;
-
-//-----------------------------------------------------------------------------
+typedef NCollection_IndexedMap<asiAlgo_MeshLink, asiAlgo_MeshLink> asiAlgo_MeshLinkSet;
 
 #endif

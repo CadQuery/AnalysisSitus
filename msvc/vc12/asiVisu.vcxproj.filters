@@ -263,9 +263,6 @@
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_IVTopoItemPrs.h">
       <Filter>Header Files\Presentations</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_MeshPrs.h">
-      <Filter>Header Files\Presentations</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_Prs.h">
       <Filter>Header Files\Presentations</Filter>
     </ClInclude>
@@ -295,9 +292,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_InteractorStylePick2d.h">
       <Filter>Header Files\Selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\asiVisu_DisplayMode.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_ShapeRobustTessellator.h">
       <Filter>Header Files\Sources</Filter>
@@ -350,9 +344,6 @@
     <ClInclude Include="..\..\src\asiVisu\asiVisu_ShapePrimitive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_DisplayModeFilter.h">
-      <Filter>Header Files\Filters</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_PartEdgesPipeline.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
@@ -400,6 +391,42 @@
     </ClInclude>
     <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_FuncUnivariateDataProvider.h">
       <Filter>Header Files\Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\presentations\asiVisu_TriangulationPrs.h">
+      <Filter>Header Files\Presentations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\sources\asiVisu_TriangulationSource.h">
+      <Filter>Header Files\Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_ShapeDisplayModeFilter.h">
+      <Filter>Header Files\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\asiVisu_ShapeDisplayMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\asiVisu_MeshDisplayMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\asiVisu_MeshPrimitive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_TriangulationPipelineBase.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\filters\asiVisu_TriangulationDisplayModeFilter.h">
+      <Filter>Header Files\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_TriangulationLinksPipeline.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\pipelines\asiVisu_TriangulationPipeline.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\providers\asiVisu_TriangulationDataProvider.h">
+      <Filter>Header Files\Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\asiVisu\selection\asiVisu_TriangulationNodeInfo.h">
+      <Filter>Header Files\Selection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -610,9 +637,6 @@
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_IVTopoItemPrs.cpp">
       <Filter>Source Files\Presentations</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_MeshPrs.cpp">
-      <Filter>Source Files\Presentations</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_Prs.cpp">
       <Filter>Source Files\Presentations</Filter>
     </ClCompile>
@@ -685,9 +709,6 @@
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PartPipeline.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_DisplayModeFilter.cpp">
-      <Filter>Source Files\Filters</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_PartEdgesPipeline.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
@@ -714,6 +735,33 @@
     </ClCompile>
     <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_FuncUnivariatePipeline.cpp">
       <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\presentations\asiVisu_TriangulationPrs.cpp">
+      <Filter>Source Files\Presentations</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\sources\asiVisu_TriangulationSource.cpp">
+      <Filter>Source Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_ShapeDisplayModeFilter.cpp">
+      <Filter>Source Files\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\filters\asiVisu_TriangulationDisplayModeFilter.cpp">
+      <Filter>Source Files\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_TriangulationPipelineBase.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_TriangulationLinksPipeline.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\pipelines\asiVisu_TriangulationPipeline.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\providers\asiVisu_TriangulationDataProvider.cpp">
+      <Filter>Source Files\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\asiVisu\selection\asiVisu_TriangulationNodeInfo.cpp">
+      <Filter>Source Files\Selection</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

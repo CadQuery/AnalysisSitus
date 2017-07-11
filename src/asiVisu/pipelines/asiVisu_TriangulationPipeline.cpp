@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 30 November 2016
+// Created on: 11 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -24,11 +24,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_PartPipeline.h>
+#include <asiVisu_TriangulationPipeline.h>
 
-// Visualization includes
-#include <asiVisu_PartDataProvider.h>
-#include <asiVisu_PartNodeInfo.h>
+// asiVisu includes
+#include <asiVisu_TriangulationDataProvider.h>
+#include <asiVisu_TriangulationNodeInfo.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -43,9 +43,10 @@
 
 //-----------------------------------------------------------------------------
 
-asiVisu_PartPipeline::asiVisu_PartPipeline() : asiVisu_PartPipelineBase(NULL)
+asiVisu_TriangulationPipeline::asiVisu_TriangulationPipeline()
+: asiVisu_TriangulationPipelineBase(NULL)
 {
-  m_dmFilter->SetDisplayMode(ShapeDisplayMode_Shaded);
+  m_dmFilter->SetDisplayMode(MeshDisplayMode_Shaded);
 
   // Apply lightning rules
   asiVisu_Utils::ApplyLightingRules( this->Actor() );
@@ -55,17 +56,18 @@ asiVisu_PartPipeline::asiVisu_PartPipeline() : asiVisu_PartPipelineBase(NULL)
 
 //! Sets input data for the pipeline.
 //! \param dataProvider [in] Data Provider.
-void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
+void asiVisu_TriangulationPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
 {
-  Handle(asiVisu_PartDataProvider)
-    DP = Handle(asiVisu_PartDataProvider)::DownCast(dataProvider);
+  Handle(asiVisu_TriangulationDataProvider)
+    DP = Handle(asiVisu_TriangulationDataProvider)::DownCast(dataProvider);
 
   /* ===========================
    *  Validate input Parameters
    * =========================== */
 
-  TopoDS_Shape shape = DP->GetShape();
-  if ( shape.IsNull() )
+  Handle(Poly_Triangulation) triangulation = DP->GetTriangulation();
+  //
+  if ( triangulation.IsNull() )
   {
     // Pass empty data set in order to have valid pipeline
     vtkSmartPointer<vtkPolyData> dummyData = vtkSmartPointer<vtkPolyData>::New();
@@ -85,12 +87,10 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
     this->clearCache();
 
     // Configure data source
-    m_source->SetAAG( DP->GetAAG() );
-    m_source->SetTessellationParams( DP->GetLinearDeflection(),
-                                     DP->GetAngularDeflection() );
+    m_source->SetInputTriangulation(triangulation);
 
     // Bind to a Data Node using information key
-    asiVisu_PartNodeInfo::Store( DP->GetNodeID(), this->Actor() );
+    asiVisu_TriangulationNodeInfo::Store( DP->GetNodeID(), this->Actor() );
 
     // Initialize pipeline
     this->SetInputConnection( m_source->GetOutputPort() );

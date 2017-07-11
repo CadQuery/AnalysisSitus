@@ -42,7 +42,7 @@ asiVisu_PartEdgesPipeline::asiVisu_PartEdgesPipeline(const vtkSmartPointer<asiVi
 //
 : asiVisu_PartPipelineBase(source)
 {
-  m_dmFilter->SetDisplayMode(DisplayMode_Wireframe);
+  m_dmFilter->SetDisplayMode(ShapeDisplayMode_Wireframe);
 }
 
 //-----------------------------------------------------------------------------

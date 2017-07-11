@@ -23,11 +23,11 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_DisplayModeFilter_h
-#define asiVisu_DisplayModeFilter_h
+#ifndef asiVisu_ShapeDisplayModeFilter_h
+#define asiVisu_ShapeDisplayModeFilter_h
 
 // asiVisu includes
-#include <asiVisu_DisplayMode.h>
+#include <asiVisu_ShapeDisplayMode.h>
 
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
@@ -36,13 +36,13 @@
 //! to the desired type of shape visualization primitive. The cells remaining
 //! after such extraction compose a specific display mode. There is a predefined
 //! set of display modes, e.g. shaded, wireframe, vertices, etc.
-class asiVisu_DisplayModeFilter : public vtkPolyDataAlgorithm
+class asiVisu_ShapeDisplayModeFilter : public vtkPolyDataAlgorithm
 {
 public:
 
-  vtkTypeMacro(asiVisu_DisplayModeFilter, vtkPolyDataAlgorithm)
+  vtkTypeMacro(asiVisu_ShapeDisplayModeFilter, vtkPolyDataAlgorithm)
 
-  asiVisu_EXPORT static asiVisu_DisplayModeFilter*
+  asiVisu_EXPORT static asiVisu_ShapeDisplayModeFilter*
     New();
 
 public:
@@ -50,10 +50,10 @@ public:
   //! Sets display mode.
   //! \param mode [in] display mode to set.
   asiVisu_EXPORT void
-    SetDisplayMode(const asiVisu_DisplayMode mode);
+    SetDisplayMode(const asiVisu_ShapeDisplayMode mode);
 
   //! \return display mode.
-  asiVisu_EXPORT asiVisu_DisplayMode
+  asiVisu_EXPORT asiVisu_ShapeDisplayMode
     GetDisplayMode() const;
 
   //! Adds primitive to the current list of shape primitives.
@@ -78,11 +78,11 @@ protected:
 protected:
 
   asiVisu_EXPORT
-    asiVisu_DisplayModeFilter();
+    asiVisu_ShapeDisplayModeFilter();
 
 protected:
 
-  asiVisu_DisplayMode        m_displayMode;        //!< Display mode.
+  asiVisu_ShapeDisplayMode   m_displayMode;        //!< Display mode.
   TColStd_PackedMapOfInteger m_modePrimitiveTypes; //!< Primitive types corresponding to the display mode.
 
 };

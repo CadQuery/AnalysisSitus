@@ -61,7 +61,7 @@ asiVisu_GeomBoundaryEdgesPrs::asiVisu_GeomBoundaryEdgesPrs(const Handle(ActAPI_I
   //
   pl_convex->Actor()->GetProperty()->SetLineWidth(2.0f);
   pl_convex->Actor()->GetProperty()->SetColor(0.1, 0.7, 0.0);
-  pl_convex->GetDisplayModeFilter()->SetDisplayMode(DisplayMode_WireframeAndVertices);
+  pl_convex->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_WireframeAndVertices);
 
   //---------------------------------------------------------------------------
   // Pipeline for concave edges
@@ -72,7 +72,7 @@ asiVisu_GeomBoundaryEdgesPrs::asiVisu_GeomBoundaryEdgesPrs(const Handle(ActAPI_I
   //
   pl_concave->Actor()->GetProperty()->SetLineWidth(2.0f);
   pl_concave->Actor()->GetProperty()->SetColor(0.7, 0.0, 0.0);
-  pl_concave->GetDisplayModeFilter()->SetDisplayMode(DisplayMode_WireframeAndVertices);
+  pl_concave->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_WireframeAndVertices);
 
   //---------------------------------------------------------------------------
   // Pipeline for undefined edges
@@ -83,7 +83,7 @@ asiVisu_GeomBoundaryEdgesPrs::asiVisu_GeomBoundaryEdgesPrs(const Handle(ActAPI_I
   //
   pl_undefined->Actor()->GetProperty()->SetLineWidth(2.0f);
   pl_undefined->Actor()->GetProperty()->SetColor(0.5, 0.5, 0.5);
-  pl_undefined->GetDisplayModeFilter()->SetDisplayMode(DisplayMode_WireframeAndVertices);
+  pl_undefined->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_WireframeAndVertices);
 
   //---------------------------------------------------------------------------
   vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();

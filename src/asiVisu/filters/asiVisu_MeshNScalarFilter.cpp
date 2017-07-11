@@ -71,11 +71,13 @@ int asiVisu_MeshNScalarFilter::FillInputPortInformation(int, vtkInformation* inf
   return 1;
 }
 
-//! Main processing routine.
-//! \param theInfo   [not used] information object.
-//! \param theInput  [in]       input data.
-//! \param theOutput [out]      output data.
-//! \return result code.
+//! This method (called by superclass) performs conversion of OCCT
+//! data structures to VTK polygonal representation.
+//!
+//! \param request      [in]  describes "what" algorithm should do. This is
+//!                           typically just one key such as REQUEST_INFORMATION.
+//! \param inputVector  [in]  inputs of the algorithm.
+//! \param outputVector [out] outputs of the algorithm.
 int asiVisu_MeshNScalarFilter::RequestData(vtkInformation*,
                                            vtkInformationVector** theInputVector,
                                            vtkInformationVector*  theOutputVector)

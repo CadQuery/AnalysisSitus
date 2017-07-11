@@ -57,7 +57,7 @@ asiVisu_GeomContourPrs::asiVisu_GeomContourPrs(const Handle(ActAPI_INode)& theNo
 
   // Pipeline for contour
   Handle(asiVisu_ShapePipeline) shape_pl = new asiVisu_ShapePipeline(false);
-  shape_pl->GetDisplayModeFilter()->SetDisplayMode(DisplayMode_Wireframe);
+  shape_pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Wireframe);
   shape_pl->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
   //
   this->addPipeline        ( Pipeline_Main, shape_pl );

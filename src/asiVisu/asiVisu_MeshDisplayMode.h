@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 26 November 2015
+// Created on: 11 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,11 +23,11 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_DisplayMode_h
-#define asiVisu_DisplayMode_h
+#ifndef asiVisu_MeshDisplayMode_h
+#define asiVisu_MeshDisplayMode_h
 
 // asiVisu includes
-#include <asiVisu_ShapePrimitive.h>
+#include <asiVisu_MeshPrimitive.h>
 
 // OCCT includes
 #include <TColStd_PackedMapOfInteger.hxx>
@@ -35,19 +35,18 @@
 //-----------------------------------------------------------------------------
 
 //! Enumerates display modes.
-enum asiVisu_DisplayMode
+enum asiVisu_MeshDisplayMode
 {
-  DisplayMode_Undefined            = 0x0000, //!< Undefined display mode.
-  DisplayMode_Shaded               = 0x0001, //!< Shaded.
-  DisplayMode_Wireframe            = 0x0002, //!< Wireframe.
-  DisplayMode_Vertices             = 0x0004, //!< Vertices
-  DisplayMode_WireframeAndVertices = 0x0008  //!< Wireframe with vertices.
+  MeshDisplayMode_Undefined  = 0x0000, //!< Undefined display mode.
+  MeshDisplayMode_Shaded     = 0x0001, //!< Shaded.
+  MeshDisplayMode_Shrunk     = 0x0002, //!< Shrunk.
+  MeshDisplayMode_Wireframe  = 0x0004  //!< Wireframe.
 };
 
 //-----------------------------------------------------------------------------
 
 //! Provides display modes for a display mode filter.
-class asiVisu_DisplayModeProvider
+class asiVisu_MeshDisplayModeProvider
 {
 public:
 
@@ -56,10 +55,21 @@ public:
   {
     TColStd_PackedMapOfInteger mode;
     //
-    mode.Add(ShapePrimitive_FreeVertex);
-    mode.Add(ShapePrimitive_DanglingEdge);
-    mode.Add(ShapePrimitive_NonManifoldEdge);
-    mode.Add(ShapePrimitive_Facet);
+    mode.Add(MeshPrimitive_FreeNode);
+    mode.Add(MeshPrimitive_DanglingLink);
+    mode.Add(MeshPrimitive_NonManifoldLink);
+    mode.Add(MeshPrimitive_FacetTriangle);
+    mode.Add(MeshPrimitive_FacetQuad);
+    //
+    return mode;
+  }
+
+  //! \return collection of shape primitives employed in WIREFRAME and VERTICES mode.
+  static TColStd_PackedMapOfInteger SHRUNK()
+  {
+    TColStd_PackedMapOfInteger mode = WIREFRAME();
+    //
+    mode.Add(MeshPrimitive_SharedNode);
     //
     return mode;
   }
@@ -69,32 +79,11 @@ public:
   {
     TColStd_PackedMapOfInteger mode;
     //
-    mode.Add(ShapePrimitive_FreeVertex);
-    mode.Add(ShapePrimitive_DanglingEdge);
-    mode.Add(ShapePrimitive_FreeEdge);
-    mode.Add(ShapePrimitive_ManifoldEdge);
-    mode.Add(ShapePrimitive_NonManifoldEdge);
-    //
-    return mode;
-  }
-
-  //! \return collection of shape primitives employed in WIREFRAME and VERTICES mode.
-  static TColStd_PackedMapOfInteger WIREFRAME_AND_VERTICES()
-  {
-    TColStd_PackedMapOfInteger mode = WIREFRAME();
-    //
-    mode.Add(ShapePrimitive_SharedVertex);
-    //
-    return mode;
-  }
-
-  //! \return collection of shape primitives employed in VERTICES mode.
-  static TColStd_PackedMapOfInteger VERTICES()
-  {
-    TColStd_PackedMapOfInteger mode;
-    //
-    mode.Add(ShapePrimitive_FreeVertex);
-    mode.Add(ShapePrimitive_SharedVertex);
+    mode.Add(MeshPrimitive_FreeNode);
+    mode.Add(MeshPrimitive_DanglingLink);
+    mode.Add(MeshPrimitive_FreeLink);
+    mode.Add(MeshPrimitive_ManifoldLink);
+    mode.Add(MeshPrimitive_NonManifoldLink);
     //
     return mode;
   }
@@ -102,14 +91,13 @@ public:
   //! Returns shape primitives employed in the given display mode.
   //! \param mode [in] display mode of interest.
   //! \return collection of primitive types.
-  static TColStd_PackedMapOfInteger GetPrimitivesForMode(const asiVisu_DisplayMode mode)
+  static TColStd_PackedMapOfInteger GetPrimitivesForMode(const asiVisu_MeshDisplayMode mode)
   {
     switch ( mode )
     {
-      case DisplayMode_Shaded:               return SHADED();
-      case DisplayMode_Wireframe:            return WIREFRAME();
-      case DisplayMode_Vertices:             return VERTICES();
-      case DisplayMode_WireframeAndVertices: return WIREFRAME_AND_VERTICES();
+      case MeshDisplayMode_Shaded:    return SHADED();
+      case MeshDisplayMode_Shrunk:    return SHRUNK();
+      case MeshDisplayMode_Wireframe: return WIREFRAME();
       //
       default: break;
     }

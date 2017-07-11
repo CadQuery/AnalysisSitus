@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 April 2017
+// Created on: 11 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -24,10 +24,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_DisplayModeFilter.h>
-
-// asiVisu includes
-#include <asiVisu_ShapePrimitive.h>
+#include <asiVisu_TriangulationDisplayModeFilter.h>
 
 // OCCT includes
 #include <TColStd_PackedMapOfInteger.hxx>
@@ -38,27 +35,27 @@
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro(asiVisu_DisplayModeFilter)
+vtkStandardNewMacro(asiVisu_TriangulationDisplayModeFilter)
 
-#undef COUT_DEBUG
+#define COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif
 
 //-----------------------------------------------------------------------------
 
-asiVisu_DisplayModeFilter::asiVisu_DisplayModeFilter()
+asiVisu_TriangulationDisplayModeFilter::asiVisu_TriangulationDisplayModeFilter()
 : vtkPolyDataAlgorithm(),
-  m_displayMode(DisplayMode_Undefined)
+  m_displayMode(MeshDisplayMode_Undefined)
 {}
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_DisplayModeFilter::SetDisplayMode(const asiVisu_DisplayMode mode)
+void asiVisu_TriangulationDisplayModeFilter::SetDisplayMode(const asiVisu_MeshDisplayMode mode)
 {
   // Get primitive types employed in the display mode
   TColStd_PackedMapOfInteger
-    modePrimitiveTypes = asiVisu_DisplayModeProvider::GetPrimitivesForMode(mode);
+    modePrimitiveTypes = asiVisu_MeshDisplayModeProvider::GetPrimitivesForMode(mode);
 
   if ( !m_modePrimitiveTypes.IsEqual(modePrimitiveTypes) )
   {
@@ -71,14 +68,14 @@ void asiVisu_DisplayModeFilter::SetDisplayMode(const asiVisu_DisplayMode mode)
 
 //-----------------------------------------------------------------------------
 
-asiVisu_DisplayMode asiVisu_DisplayModeFilter::GetDisplayMode() const
+asiVisu_MeshDisplayMode asiVisu_TriangulationDisplayModeFilter::GetDisplayMode() const
 {
   return m_displayMode;
 }
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_DisplayModeFilter::AddPrimitive(const asiVisu_ShapePrimitive prim)
+void asiVisu_TriangulationDisplayModeFilter::AddPrimitive(const asiVisu_MeshPrimitive prim)
 {
   if ( !m_modePrimitiveTypes.Contains(prim) )
   {
@@ -90,7 +87,7 @@ void asiVisu_DisplayModeFilter::AddPrimitive(const asiVisu_ShapePrimitive prim)
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_DisplayModeFilter::RemovePrimitive(const asiVisu_ShapePrimitive prim)
+void asiVisu_TriangulationDisplayModeFilter::RemovePrimitive(const asiVisu_MeshPrimitive prim)
 {
   if ( m_modePrimitiveTypes.Contains(prim) )
   {
@@ -102,13 +99,13 @@ void asiVisu_DisplayModeFilter::RemovePrimitive(const asiVisu_ShapePrimitive pri
 
 //-----------------------------------------------------------------------------
 
-int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
-                                           vtkInformationVector** pInputVector,
-                                           vtkInformationVector*  pOutputVector)
+int asiVisu_TriangulationDisplayModeFilter::RequestData(vtkInformation*        pInfo,
+                                                        vtkInformationVector** pInputVector,
+                                                        vtkInformationVector*  pOutputVector)
 {
-  if ( m_displayMode == DisplayMode_Undefined )
+  if ( m_displayMode == MeshDisplayMode_Undefined )
   {
-    vtkErrorMacro( << "asiVisu_DisplayModeFilter executed with undefined display mode" );
+    vtkErrorMacro( << "asiVisu_TriangulationDisplayModeFilter executed with undefined display mode" );
     return 0;
   }
 
@@ -122,7 +119,7 @@ int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
   vtkCellData*
     pInputCellData = pInputPolyData->GetCellData();
   vtkIdTypeArray*
-    pInputCellTypeArray = vtkIdTypeArray::SafeDownCast( pInputCellData->GetArray(ARRNAME_PART_CELL_TYPES) );
+    pInputCellTypeArray = vtkIdTypeArray::SafeDownCast( pInputCellData->GetArray(ARRNAME_MESH_ITEM_TYPE) );
 
   // Output
   vtkPolyData*
@@ -162,11 +159,7 @@ int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
   // Pass data arrays
   for ( int i = 0; i < pInputCellData->GetNumberOfArrays(); ++i )
   {
-    vtkDataArray* pInArr = pInputCellData->GetArray(i);
-
-    if ( !_strcmpi( pInArr->GetName(), ARRNAME_PART_SUBSHAPE_IDS ) )
-      continue;
-
+    vtkDataArray* pInArr  = pInputCellData->GetArray(i);
     vtkDataArray* pOutArr = vtkDataArray::CreateDataArray( pInArr->GetDataType() );
     //
     pOutArr->SetName( pInArr->GetName() );
@@ -185,21 +178,24 @@ int asiVisu_DisplayModeFilter::RequestData(vtkInformation*        pInfo,
   }
 
   // Transfer pedigree IDs
-  vtkSmartPointer<vtkIdTypeArray>
-    outPedigreeArr = vtkSmartPointer<vtkIdTypeArray>::New();
-  //
   vtkIdTypeArray*
     pInPedigreeArr = vtkIdTypeArray::SafeDownCast( pInputCellData->GetPedigreeIds() );
   //
-  for ( vtkIdType outIdx = 0; outIdx < numOfRemainingCells; ++outIdx )
+  if ( pInPedigreeArr )
   {
-    vtkIdType cellId = cellIdsToPass->GetId(outIdx);
+    vtkSmartPointer<vtkIdTypeArray>
+      outPedigreeArr = vtkSmartPointer<vtkIdTypeArray>::New();
+    //
+    for ( vtkIdType outIdx = 0; outIdx < numOfRemainingCells; ++outIdx )
+    {
+      vtkIdType cellId = cellIdsToPass->GetId(outIdx);
 
-    double pedigreeIdDbl;
-    pInPedigreeArr->GetTuple(cellId, &pedigreeIdDbl);
-    outPedigreeArr->InsertNextTuple(&pedigreeIdDbl);
+      double pedigreeIdDbl;
+      pInPedigreeArr->GetTuple(cellId, &pedigreeIdDbl);
+      outPedigreeArr->InsertNextTuple(&pedigreeIdDbl);
+    }
+    pOutputCellData->SetPedigreeIds(outPedigreeArr);
   }
-  pOutputCellData->SetPedigreeIds(outPedigreeArr);
 
   //###################################
   // Copy cells with ids from our list

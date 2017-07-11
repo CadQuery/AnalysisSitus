@@ -157,6 +157,7 @@
     <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshConvert.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshGen.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshInfo.h" />
+    <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshLink.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshMerge.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\mesh\asiAlgo_MeshParams.h" />
     <ClInclude Include="..\..\src\asiAlgo\modeling\points\asiAlgo_Cloudify.h" />

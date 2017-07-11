@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 26 November 2015
+// Created on: 11 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,18 +23,15 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_MeshPrs_h
-#define asiVisu_MeshPrs_h
+#ifndef asiVisu_TriangulationPrs_h
+#define asiVisu_TriangulationPrs_h
 
-// A-Situs includes
-#include <asiVisu.h>
-
-// A-Situs (mesh) includes
-#include <asiData_TessNode.h>
-
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_Prs.h>
 #include <asiVisu_Utils.h>
+
+// asiData includes
+#include <asiData_TriangulationNode.h>
 
 // OCCT includes
 #include <Standard_Type.hxx>
@@ -42,27 +39,25 @@
 // Qt includes
 #include <QColor>
 
-DEFINE_STANDARD_HANDLE(asiVisu_MeshPrs, asiVisu_Prs)
-
-//! Presentation class for Mesh Node.
-class asiVisu_MeshPrs : public asiVisu_Prs
+//! Presentation class for Triangulation Node.
+class asiVisu_TriangulationPrs : public asiVisu_Prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshPrs, asiVisu_Prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_TriangulationPrs, asiVisu_Prs)
 
   // Allows to register this Presentation class in runtime.
   // Notice that the first parameter is NODE TYPE, not the Presentation one
-  DEFINE_PRESENTATION_FACTORY(asiData_TessNode, Instance)
+  DEFINE_PRESENTATION_FACTORY(asiData_TriangulationNode, Instance)
 
 public:
 
   //! Pipelines of Presentation.
   enum PipelineId
   {
-    Pipeline_Mesh = 1,
-    Pipeline_MeshContour
+    Pipeline_Triangulation = 1,
+    Pipeline_TriangulationLinks
   };
 
 public:
@@ -73,34 +68,55 @@ public:
   asiVisu_EXPORT virtual bool
     IsVisible() const;
 
+  asiVisu_EXPORT void
+    SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                       ActAPI_PlotterEntry  plotter);
+
 // Visualization commands:
 public:
 
   asiVisu_EXPORT void doShading() const;
   asiVisu_EXPORT void doWireframe() const;
 
-  asiVisu_EXPORT void doColor(const QColor& theColor) const;
+  asiVisu_EXPORT void doColor(const QColor& color) const;
   asiVisu_EXPORT void doUnColor() const;
+
+public:
+
+  asiVisu_EXPORT virtual void
+    InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const;
+
+public:
+
+  vtkActor* MainActor() const
+  {
+    return this->GetPipeline(Pipeline_Triangulation).IsNull() ? NULL : this->GetPipeline(Pipeline_Triangulation)->Actor();
+  }
+
+  vtkActor* ContourActor() const
+  {
+    return this->GetPipeline(Pipeline_TriangulationLinks).IsNull() ? NULL : this->GetPipeline(Pipeline_TriangulationLinks)->Actor();
+  }
 
 private:
 
   //! Allocation is allowed only via Instance method.
-  asiVisu_MeshPrs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_TriangulationPrs(const Handle(ActAPI_INode)& N);
 
 // Callbacks:
 private:
 
   virtual void beforeInitPipelines   ();
   virtual void afterInitPipelines    ();
-  virtual void beforeUpdatePipelines ()                                           const;
-  virtual void afterUpdatePipelines  ()                                           const;
-  virtual void highlight             (vtkRenderer*                  theRenderer,
-                                      const asiVisu_PickResult&     thePickRes,
-                                      const asiVisu_SelectionNature theSelNature) const;
-  virtual void unHighlight           (vtkRenderer*                  theRenderer,
-                                      const asiVisu_SelectionNature theSelNature) const;
-  virtual void renderPipelines       (vtkRenderer*                  theRenderer)  const;
-  virtual void deRenderPipelines     (vtkRenderer*                  theRenderer)  const;
+  virtual void beforeUpdatePipelines ()                                        const;
+  virtual void afterUpdatePipelines  ()                                        const;
+  virtual void highlight             (vtkRenderer*                  renderer,
+                                      const asiVisu_PickResult&     pickRes,
+                                      const asiVisu_SelectionNature selNature) const;
+  virtual void unHighlight           (vtkRenderer*                  renderer,
+                                      const asiVisu_SelectionNature selNature) const;
+  virtual void renderPipelines       (vtkRenderer*                  renderer)  const;
+  virtual void deRenderPipelines     (vtkRenderer*                  renderer)  const;
 
 };
 

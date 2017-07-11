@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 09 December 2016
+// Created on: 11 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,44 +23,32 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_Common_h
-#define asiVisu_Common_h
+#ifndef asiVisu_TriangulationLinksPipeline_h
+#define asiVisu_TriangulationLinksPipeline_h
 
 // asiVisu includes
-#include <asiVisu.h>
-
-// Active Data (auxiliary) includes
-#include <ActAux_Common.h>
-
-// OCCT includes
-#include <NCollection_SparseArray.hxx>
+#include <asiVisu_TriangulationPipelineBase.h>
 
 //-----------------------------------------------------------------------------
 
-//! Elementary data chunk representing vector value.
-struct asiVisu_VectorTuple
+//! Visualization pipeline for wireframe of OCCT surface triangulation.
+class asiVisu_TriangulationLinksPipeline : public asiVisu_TriangulationPipelineBase
 {
-  double F[3];
+public:
 
-  asiVisu_VectorTuple()
-  {
-    F[0] = 0.0; F[1] = 0.0; F[2] = 0.0;
-  }
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_TriangulationLinksPipeline, asiVisu_Pipeline)
 
-  asiVisu_VectorTuple(const double _F1,
-                      const double _F2,
-                      const double _F3)
-  {
-    F[0] = _F1; F[1] = _F2; F[2] = _F3;
-  }
+public:
+
+  asiVisu_EXPORT
+    asiVisu_TriangulationLinksPipeline(const vtkSmartPointer<asiVisu_TriangulationSource>& source);
+
+public:
+
+  asiVisu_EXPORT virtual void
+    SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
+
 };
-
-//-----------------------------------------------------------------------------
-
-//! Collection of vector values associated with sparse integer IDs.
-typedef NCollection_SparseArray<asiVisu_VectorTuple> asiVisu_VectorMap;
-typedef NCollection_Shared<asiVisu_VectorMap>        asiVisu_HVectorMap;
-
-//-----------------------------------------------------------------------------
 
 #endif

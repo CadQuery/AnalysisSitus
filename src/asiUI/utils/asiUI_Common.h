@@ -147,7 +147,7 @@ public:
     selectSTEPFile(const OpenSaveAction action);
 
   asiUI_EXPORT static QString
-    selectPlyFile(const OpenSaveAction action);
+    selectPLYFile(const OpenSaveAction action);
 
   asiUI_EXPORT static QString
     selectXBFFile(const OpenSaveAction action);

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 09 December 2016
+// Created on: 11 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,44 +23,61 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_Common_h
-#define asiVisu_Common_h
+#ifndef asiVisu_TriangulationDataProvider_h
+#define asiVisu_TriangulationDataProvider_h
 
 // asiVisu includes
-#include <asiVisu.h>
+#include <asiVisu_DataProvider.h>
 
-// Active Data (auxiliary) includes
-#include <ActAux_Common.h>
+// asiData includes
+#include <asiData_TriangulationNode.h>
 
-// OCCT includes
-#include <NCollection_SparseArray.hxx>
+DEFINE_STANDARD_HANDLE(asiVisu_TriangulationDataProvider, asiVisu_DataProvider)
 
-//-----------------------------------------------------------------------------
-
-//! Elementary data chunk representing vector value.
-struct asiVisu_VectorTuple
+//! Data provider from Triangulation Node to Presentation.
+class asiVisu_TriangulationDataProvider : public asiVisu_DataProvider
 {
-  double F[3];
+public:
 
-  asiVisu_VectorTuple()
-  {
-    F[0] = 0.0; F[1] = 0.0; F[2] = 0.0;
-  }
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_TriangulationDataProvider, asiVisu_DataProvider)
 
-  asiVisu_VectorTuple(const double _F1,
-                      const double _F2,
-                      const double _F3)
-  {
-    F[0] = _F1; F[1] = _F2; F[2] = _F3;
-  }
+public:
+
+  asiVisu_EXPORT
+    asiVisu_TriangulationDataProvider(const Handle(asiData_TriangulationNode)& N);
+
+protected:
+
+  asiVisu_EXPORT
+    asiVisu_TriangulationDataProvider();
+
+public:
+
+  asiVisu_EXPORT virtual ActAPI_DataObjectId
+    GetNodeID() const;
+
+  asiVisu_EXPORT virtual Handle(asiData_TriangulationNode)
+    GetTriangulationNode() const;
+
+  asiVisu_EXPORT virtual Handle(Poly_Triangulation)
+    GetTriangulation() const;
+
+public:
+
+  asiVisu_EXPORT Handle(asiVisu_TriangulationDataProvider)
+    Clone() const;
+
+protected:
+
+  virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
+
+protected:
+
+  //! Source Node.
+  Handle(asiData_TriangulationNode) m_node;
+
 };
-
-//-----------------------------------------------------------------------------
-
-//! Collection of vector values associated with sparse integer IDs.
-typedef NCollection_SparseArray<asiVisu_VectorTuple> asiVisu_VectorMap;
-typedef NCollection_Shared<asiVisu_VectorMap>        asiVisu_HVectorMap;
-
-//-----------------------------------------------------------------------------
 
 #endif

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 15 April 2017
+// Created on: 11 November 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,36 +23,32 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_PartPipelineBase_h
-#define asiVisu_PartPipelineBase_h
+#ifndef asiVisu_TriangulationPipelineBase_h
+#define asiVisu_TriangulationPipelineBase_h
 
 // asiVisu includes
+#include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 #include <asiVisu_Selection.h>
-#include <asiVisu_ShapeDisplayModeFilter.h>
-#include <asiVisu_ShapeRobustSource.h>
+#include <asiVisu_TriangulationDisplayModeFilter.h>
+#include <asiVisu_TriangulationSource.h>
 
 // Active Data includes
 #include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
 
-// VTK includes
-#include <vtkPolyDataNormals.h>
-
-//-----------------------------------------------------------------------------
-
-//! Base class for all pipelines associated with Part Node.
-class asiVisu_PartPipelineBase : public asiVisu_Pipeline
+//! Base class for all surface triangulation pipelines.
+class asiVisu_TriangulationPipelineBase : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_PartPipelineBase, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_TriangulationPipelineBase, asiVisu_Pipeline)
 
 public:
 
   asiVisu_EXPORT
-    asiVisu_PartPipelineBase(const vtkSmartPointer<asiVisu_ShapeRobustSource>& source);
+    asiVisu_TriangulationPipelineBase(const vtkSmartPointer<asiVisu_TriangulationSource>& source);
 
 public:
 
@@ -70,19 +66,13 @@ public:
 public:
 
   //! \return data source.
-  const vtkSmartPointer<asiVisu_ShapeRobustSource>& GetSource() const
+  const vtkSmartPointer<asiVisu_TriangulationSource>& GetSource() const
   {
     return m_source;
   }
 
-  //! \return normals calculation filter.
-  const vtkSmartPointer<vtkPolyDataNormals>& GetNormalsFilter() const
-  {
-    return m_normalsFilter;
-  }
-
   //! \return display mode filter.
-  const vtkSmartPointer<asiVisu_ShapeDisplayModeFilter>& GetDisplayModeFilter() const
+  const vtkSmartPointer<asiVisu_TriangulationDisplayModeFilter>& GetDisplayModeFilter() const
   {
     return m_dmFilter;
   }
@@ -96,10 +86,10 @@ private:
 private:
 
   //! Copying prohibited.
-  asiVisu_PartPipelineBase(const asiVisu_PartPipelineBase&);
+  asiVisu_TriangulationPipelineBase(const asiVisu_TriangulationPipelineBase&);
 
   //! Assignment prohibited.
-  asiVisu_PartPipelineBase& operator=(const asiVisu_PartPipelineBase&);
+  asiVisu_TriangulationPipelineBase& operator=(const asiVisu_TriangulationPipelineBase&);
 
 protected:
 
@@ -117,13 +107,10 @@ protected:
   bool m_bMapperColorsSet;
 
   //! Data source.
-  vtkSmartPointer<asiVisu_ShapeRobustSource> m_source;
-
-  //! Filter for normals.
-  vtkSmartPointer<vtkPolyDataNormals> m_normalsFilter;
+  vtkSmartPointer<asiVisu_TriangulationSource> m_source;
 
   //! Display mode filter.
-  vtkSmartPointer<asiVisu_ShapeDisplayModeFilter> m_dmFilter;
+  vtkSmartPointer<asiVisu_TriangulationDisplayModeFilter> m_dmFilter;
 
   //! Progress notifier.
   ActAPI_ProgressEntry m_progress;

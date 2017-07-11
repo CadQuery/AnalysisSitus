@@ -66,11 +66,13 @@ int asiVisu_PointsVectorFilter::FillInputPortInformation(int, vtkInformation* in
   return 1;
 }
 
-//! Main processing routine.
-//! \param info   [not used] information object.
-//! \param input  [in]       input data.
-//! \param output [out]      output data.
-//! \return result code.
+//! This method (called by superclass) performs conversion of OCCT
+//! data structures to VTK polygonal representation.
+//!
+//! \param request      [in]  describes "what" algorithm should do. This is
+//!                           typically just one key such as REQUEST_INFORMATION.
+//! \param inputVector  [in]  inputs of the algorithm.
+//! \param outputVector [out] outputs of the algorithm.
 int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
                                             vtkInformationVector** inputVector,
                                             vtkInformationVector*  outputVector)

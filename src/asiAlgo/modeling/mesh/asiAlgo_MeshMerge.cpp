@@ -250,7 +250,7 @@ void asiAlgo_MeshMerge::build()
 
           if ( k > polygonOnTriNodes.Lower() )
           {
-            t_unoriented_link bndLink(prevBndNode, globalBndIndex);
+            asiAlgo_MeshLink bndLink(prevBndNode, globalBndIndex);
 
             // Depending on the sharing type choose one or another collection
             if ( nFaces == 1 )
@@ -299,21 +299,21 @@ void asiAlgo_MeshMerge::build()
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_MeshMerge::addFreeLink(const t_unoriented_link& link)
+void asiAlgo_MeshMerge::addFreeLink(const asiAlgo_MeshLink& link)
 {
   m_freeLinks.Add(link);
 }
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_MeshMerge::addManifoldLink(const t_unoriented_link& link)
+void asiAlgo_MeshMerge::addManifoldLink(const asiAlgo_MeshLink& link)
 {
   m_manifoldLinks.Add(link);
 }
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_MeshMerge::addNonManifoldLink(const t_unoriented_link& link)
+void asiAlgo_MeshMerge::addNonManifoldLink(const asiAlgo_MeshLink& link)
 {
   m_nonManifoldLinks.Add(link);
 }

@@ -98,11 +98,6 @@ private:
     registerFreeNodesCell(const NCollection_Sequence<int>& theNodeIDs,
                           vtkPolyData*                     thePolyData);
 
-  vtkIdType
-    registerFreeEdgeCell(const int    theNodeID1,
-                         const int    theNodeID2,
-                         vtkPolyData* thePolyData);
-
 private:
 
   asiVisu_MeshSource();

@@ -23,13 +23,13 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_ShapeCellType_h
-#define asiVisu_ShapeCellType_h
+#ifndef asiVisu_ShapePrimitive_h
+#define asiVisu_ShapePrimitive_h
 
 // asiVisu includes
 #include <asiVisu.h>
 
-//! Possible cell types
+//! Possible cell types for shape boundary elements.
 enum asiVisu_ShapePrimitive
 {
   ShapePrimitive_Undefined       = 0, //!< Undefined cell type.

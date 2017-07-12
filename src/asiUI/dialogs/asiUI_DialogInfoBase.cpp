@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 23 June 2017
+// Created on: 12 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -24,10 +24,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_DialogOCAFDump.h>
-
-// Active Data includes
-#include <ActData_CAFDumper.h>
+#include <asiUI_DialogInfoBase.h>
 
 // Qt includes
 #include <QGroupBox>
@@ -46,7 +43,7 @@
 //! \param model    [in] Data Model instance.
 //! \param notifier [in] progress notifier.
 //! \param parent   [in] parent widget.
-asiUI_DialogOCAFDump::asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)&            model,
+asiUI_DialogInfoBase::asiUI_DialogInfoBase(const Handle(ActAPI_IModel)&            model,
                                            const Handle(ActAPI_IProgressNotifier)& notifier,
                                            QWidget*                                parent)
 : QDialog    (parent),
@@ -57,7 +54,7 @@ asiUI_DialogOCAFDump::asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)&         
   m_pMainLayout = new QVBoxLayout();
 
   // Group box for parameters
-  QGroupBox* pGroup = new QGroupBox("Contents of OCAF document");
+  QGroupBox* pGroup = new QGroupBox( this->groupBoxTitle() );
 
   // Editors
   m_widgets.pEditor = new QTextEdit();
@@ -100,7 +97,7 @@ asiUI_DialogOCAFDump::asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)&         
 
   this->setLayout(m_pMainLayout);
   this->setWindowModality(Qt::WindowModal);
-  this->setWindowTitle("OCAF dump");
+  this->setWindowTitle( this->dialogTitle() );
 
   // Set good initial size
   this->setMinimumSize( QSize(900, 600) );
@@ -112,28 +109,11 @@ asiUI_DialogOCAFDump::asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)&         
   this->initialize();
 }
 
-//-----------------------------------------------------------------------------
-
 //! Destructor.
-asiUI_DialogOCAFDump::~asiUI_DialogOCAFDump()
+asiUI_DialogInfoBase::~asiUI_DialogInfoBase()
 {
   delete m_pMainLayout;
   m_widgets.Release();
-}
-
-//-----------------------------------------------------------------------------
-// Initialization
-//-----------------------------------------------------------------------------
-
-//! Fills editor with OCAF dump.
-void asiUI_DialogOCAFDump::initialize()
-{
-  std::ostringstream buff;
-
-  if ( !ActData_CAFDumper::Dump(buff, m_model) )
-    m_widgets.pEditor->setText("### FAILED TO DUMP");
-  else
-    m_widgets.pEditor->setText( buff.str().c_str() );
 }
 
 //-----------------------------------------------------------------------------
@@ -141,7 +121,7 @@ void asiUI_DialogOCAFDump::initialize()
 //-----------------------------------------------------------------------------
 
 //! Reaction on close.
-void asiUI_DialogOCAFDump::onClose()
+void asiUI_DialogInfoBase::onClose()
 {
   this->close();
 }

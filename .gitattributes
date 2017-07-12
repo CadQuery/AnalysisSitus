@@ -31,6 +31,7 @@
 *.plist     eol=lf
 *.java      eol=lf
 *.igs       eol=lf
+*.ply       eol=lf
 *.iges      eol=lf
 *.stp       eol=lf
 *.step      eol=lf

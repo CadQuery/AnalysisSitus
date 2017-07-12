@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 23 June 2017
+// Created on: 12 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,8 +23,8 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_DialogOCAFDump_h
-#define asiUI_DialogOCAFDump_h
+#ifndef asiUI_DialogInfoBase_h
+#define asiUI_DialogInfoBase_h
 
 // asiUI includes
 #include <asiUI.h>
@@ -40,28 +40,34 @@
 #include <QVBoxLayout>
 #pragma warning(pop)
 
-//! Text view for OCAF dumps.
-class asiUI_DialogOCAFDump : public QDialog
+//! Base class for dialogs to dump some text. Provides some stylization.
+class asiUI_EXPORT asiUI_DialogInfoBase : public QWidget
 {
   Q_OBJECT
 
 public:
 
-  asiUI_EXPORT
-    asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)&            model,
-                         const Handle(ActAPI_IProgressNotifier)& notifier,
-                         QWidget*                                parent = NULL);
+  asiUI_DialogInfoBase(const Handle(ActAPI_IModel)&            model,
+                       const Handle(ActAPI_IProgressNotifier)& notifier,
+                       QWidget*                                parent = NULL);
 
-  asiUI_EXPORT virtual
-    ~asiUI_DialogOCAFDump();
-
-protected:
-
-  virtual void initialize();
+  virtual
+    ~asiUI_DialogInfoBase();
 
 public slots:
 
   void onClose();
+
+protected:
+
+  virtual void
+    initialize() {}
+
+  virtual QString
+    groupBoxTitle() const { return "Noname"; }
+
+  virtual QString
+    dialogTitle() const { return "Noname"; }
 
 protected:
 

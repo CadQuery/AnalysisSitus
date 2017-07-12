@@ -180,9 +180,6 @@ int asiVisu_MeshSource::RequestData(vtkInformation*        theRequest,
   // able to track free nodes
   m_mesh->RebuildAllInverseConnections();
 
-  // Debug cout
-  m_mesh->DebugStats(std::cout);
-
   // Iterate over the entire collection of nodes to cumulate them into
   // a sequence and prepare a single VTK cell for all detected free nodes
   NCollection_Sequence<int> aFreeNodeIDs;

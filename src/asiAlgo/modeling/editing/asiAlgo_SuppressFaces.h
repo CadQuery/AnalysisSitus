@@ -32,6 +32,7 @@
 // OCCT includes
 #include <BRepTools_ReShape.hxx>
 #include <TColStd_PackedMapOfInteger.hxx>
+#include <TopTools_ListOfShape.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -48,6 +49,10 @@ public:
   asiAlgo_EXPORT virtual bool
     Perform(const TColStd_PackedMapOfInteger& faceIndices,
             const bool                        facesOnly);
+
+  asiAlgo_EXPORT virtual bool
+    Perform(const TopTools_ListOfShape& faces,
+            const bool                  facesOnly);
 
 public:
 

@@ -45,6 +45,8 @@ asiAlgo_SuppressFaces::asiAlgo_SuppressFaces(const TopoDS_Shape& masterCAD)
   m_reShape->ModeConsiderLocation() = 1; // We do not care of location today
 }
 
+//-----------------------------------------------------------------------------
+
 //! Removes the given faces from the master model.
 //! \param[in] faceIndices indices faces to suppress.
 //! \param[in] facesOnly   indicates whether to delete faces only.
@@ -57,6 +59,8 @@ bool asiAlgo_SuppressFaces::Perform(const TColStd_PackedMapOfInteger& faceIndice
   TopExp::MapShapes(m_master, TopAbs_FACE, faces);
 
   // Remove requested faces
+  TopTools_ListOfShape faceList;
+  //
   for ( TColStd_MapIteratorOfPackedMapOfInteger fit(faceIndices); fit.More(); fit.Next() )
   {
     const int face_idx = fit.Key();
@@ -64,7 +68,25 @@ bool asiAlgo_SuppressFaces::Perform(const TColStd_PackedMapOfInteger& faceIndice
     if ( face_idx < 1 || face_idx > faces.Extent() )
       continue;
 
-    const TopoDS_Shape& face = faces(face_idx);
+    faceList.Append( faces(face_idx) );
+  }
+
+  return this->Perform(faceList, facesOnly);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Removes the given faces from the master model.
+//! \param[in] faces     faces to suppress.
+//! \param[in] facesOnly indicates whether to delete faces only.
+//! \return true in case of success, false -- otherwise.
+bool asiAlgo_SuppressFaces::Perform(const TopTools_ListOfShape& faces,
+                                    const bool                  facesOnly)
+{
+  // Remove requested faces
+  for ( TopTools_ListIteratorOfListOfShape fit(faces); fit.More(); fit.Next() )
+  {
+    const TopoDS_Shape& face = fit.Value();
 
     m_reShape->Remove(face);
 

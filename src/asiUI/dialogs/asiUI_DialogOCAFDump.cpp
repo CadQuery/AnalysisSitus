@@ -60,21 +60,10 @@ asiUI_DialogOCAFDump::asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)&         
   QGroupBox* pGroup = new QGroupBox("Contents of OCAF document");
 
   // Editors
-  m_widgets.pEditor = new QTextEdit();
+  m_widgets.pEditor = new asiUI_StyledTextEdit();
   //
   QVBoxLayout* boxLayout = new QVBoxLayout(pGroup);
   boxLayout->addWidget(m_widgets.pEditor);
-
-  // Style
-  m_widgets.pEditor->setStyleSheet( QString::fromUtf8("background-color: rgb(30, 30, 30); color: rgb(230, 230, 230); font-size: 10pt") );
-
-  QTextCharFormat fmt = m_widgets.pEditor->currentCharFormat();
-  //
-  fmt.setFontFixedPitch(true);
-  fmt.setFontStyleHint(QFont::Monospace);
-  fmt.setFontFamily("monospace");
-  //
-  m_widgets.pEditor->setCurrentCharFormat(fmt);
 
   //---------------------------------------------------------------------------
   // Buttons

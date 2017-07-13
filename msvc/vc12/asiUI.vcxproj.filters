@@ -175,6 +175,9 @@
     <ClCompile Include="$(IntDir)moc\moc_asiUI_LineEdit.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)moc\moc_asiUI_StyledTextEdit.cpp">
+      <Filter>MOC</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)moc\moc_asiUI_ObjectBrowser.cpp">
       <Filter>MOC</Filter>
     </ClCompile>
@@ -319,6 +322,9 @@
     <ClCompile Include="..\..\src\asiUI\viewers\asiUI_ViewerHost.cpp">
       <Filter>Source Files\Viewers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\asiUI\controls\asiUI_StyledTextEdit.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerDomain.h">
@@ -419,6 +425,9 @@
     </CustomBuild>
     <CustomBuild Include="..\..\src\asiUI\viewers\asiUI_ViewerHost.h">
       <Filter>Header Files\Viewers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\asiUI\controls\asiUI_StyledTextEdit.h">
+      <Filter>Header Files\Controls</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

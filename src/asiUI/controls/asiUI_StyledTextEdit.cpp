@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 23 June 2017
+// Created on: 13 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,73 +23,19 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_DialogOCAFDump_h
-#define asiUI_DialogOCAFDump_h
-
-// asiUI includes
+// Own include
 #include <asiUI_StyledTextEdit.h>
 
-// Active Data includes
-#include <ActAPI_IModel.h>
-
-// Qt includes
-#pragma warning(push, 0)
-#include <QDialog>
-#include <QPushButton>
-#include <QVBoxLayout>
-#pragma warning(pop)
-
-//! Text view for OCAF dumps.
-class asiUI_DialogOCAFDump : public QDialog
+void asiUI_StyledTextEdit::stylize()
 {
-  Q_OBJECT
-
-public:
-
-  asiUI_EXPORT
-    asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)&            model,
-                         const Handle(ActAPI_IProgressNotifier)& notifier,
-                         QWidget*                                parent = NULL);
-
-  asiUI_EXPORT virtual
-    ~asiUI_DialogOCAFDump();
-
-protected:
-
-  virtual void initialize();
-
-public slots:
-
-  void onClose();
-
-protected:
-
-  QVBoxLayout* m_pMainLayout; //!< Layout of the widget.
-
-  //! Widgets.
-  struct t_base_widgets
-  {
-    QTextEdit*    pEditor; //!< Text editor.
-    QPushButton*  pClose;  //!< Close button.
-
-    t_base_widgets() : pEditor (NULL),
-                       pClose  (NULL)
-    {}
-
-    void Release()
-    {
-      delete pEditor; pEditor = NULL;
-      delete pClose;  pClose = NULL;
-    }
-  };
-
-  t_base_widgets m_widgets; //!< Involved widgets.
-
-protected:
-
-  Handle(ActAPI_IModel) m_model;    //!< Data Model instance.
-  ActAPI_ProgressEntry  m_notifier; //!< Progress Notifier.
-
-};
-
-#endif
+  // Style
+  this->setStyleSheet( QString::fromUtf8("background-color: rgb(30, 30, 30); color: rgb(230, 230, 230); font-size: 10pt") );
+  //
+  QTextCharFormat fmt = this->currentCharFormat();
+  //
+  fmt.setFontFixedPitch(true);
+  fmt.setFontStyleHint(QFont::Monospace);
+  fmt.setFontFamily("monospace");
+  //
+  this->setCurrentCharFormat(fmt);
+}

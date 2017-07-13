@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 23 June 2017
+// Created on: 13 July 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,72 +23,34 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_DialogOCAFDump_h
-#define asiUI_DialogOCAFDump_h
+#ifndef asiUI_StyledTextEdit_h
+#define asiUI_StyledTextEdit_h
 
 // asiUI includes
-#include <asiUI_StyledTextEdit.h>
-
-// Active Data includes
-#include <ActAPI_IModel.h>
+#include <asiUI.h>
 
 // Qt includes
 #pragma warning(push, 0)
-#include <QDialog>
-#include <QPushButton>
-#include <QVBoxLayout>
+#include <QTextEdit>
 #pragma warning(pop)
 
-//! Text view for OCAF dumps.
-class asiUI_DialogOCAFDump : public QDialog
+//! Editor with some cool styling.
+class asiUI_EXPORT asiUI_StyledTextEdit : public QTextEdit
 {
   Q_OBJECT
 
 public:
 
-  asiUI_EXPORT
-    asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)&            model,
-                         const Handle(ActAPI_IProgressNotifier)& notifier,
-                         QWidget*                                parent = NULL);
+  asiUI_StyledTextEdit(const QString& value,
+                       QWidget*       parent = 0)
+  : QTextEdit(value, parent) { this->stylize(); }
 
-  asiUI_EXPORT virtual
-    ~asiUI_DialogOCAFDump();
-
-protected:
-
-  virtual void initialize();
-
-public slots:
-
-  void onClose();
+  asiUI_StyledTextEdit(QWidget* parent = 0)
+  : QTextEdit(parent) { this->stylize(); }
 
 protected:
 
-  QVBoxLayout* m_pMainLayout; //!< Layout of the widget.
-
-  //! Widgets.
-  struct t_base_widgets
-  {
-    QTextEdit*    pEditor; //!< Text editor.
-    QPushButton*  pClose;  //!< Close button.
-
-    t_base_widgets() : pEditor (NULL),
-                       pClose  (NULL)
-    {}
-
-    void Release()
-    {
-      delete pEditor; pEditor = NULL;
-      delete pClose;  pClose = NULL;
-    }
-  };
-
-  t_base_widgets m_widgets; //!< Involved widgets.
-
-protected:
-
-  Handle(ActAPI_IModel) m_model;    //!< Data Model instance.
-  ActAPI_ProgressEntry  m_notifier; //!< Progress Notifier.
+  void stylize();
 
 };
 

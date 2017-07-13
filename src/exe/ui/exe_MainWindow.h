@@ -30,13 +30,13 @@
 #include <asiUI_ControlsFeature.h>
 #include <asiUI_ControlsPartListener.h>
 #include <asiUI_ObjectBrowser.h>
+#include <asiUI_StyledTextEdit.h>
 #include <asiUI_ViewerPartListener.h>
 
 // Qt includes
 #pragma warning(push, 0)
 #include <QCloseEvent>
 #include <QMainWindow>
-#include <QTextEdit>
 #pragma warning(pop)
 
 //! Main window for Analysis Situs.
@@ -68,10 +68,10 @@ private:
     asiUI_ObjectBrowser*   wBrowser;         //!< Object browser.
     asiUI_ViewerDomain*    wViewerDomain;    //!< Parametric domain viewer.
     asiUI_ViewerPart*      wViewerPart;      //!< Part viewer.
-    asiUI_ViewerHost*   wViewerSurface;   //!< Surface viewer.
+    asiUI_ViewerHost*      wViewerSurface;   //!< Surface viewer.
     asiUI_ControlsPart*    wControlsPart;    //!< Part controls.
     asiUI_ControlsFeature* wControlsFeature; //!< Feature controls.
-    QTextEdit*             wLogger;          //!< Logger.
+    asiUI_StyledTextEdit*  wLogger;          //!< Logger.
 
     t_widgets() : wBrowser         (NULL),
                   wViewerDomain    (NULL),

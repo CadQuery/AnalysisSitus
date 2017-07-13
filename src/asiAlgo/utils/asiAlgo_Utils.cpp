@@ -30,6 +30,7 @@
 #include <asiAlgo_Timer.h>
 
 // OCCT includes
+#include <BinTools.hxx>
 #include <Bnd_Box.hxx>
 #include <BOPAlgo_BOP.hxx>
 #include <BOPAlgo_PaveFiller.hxx>
@@ -80,6 +81,39 @@
 #define dump_filename_Bx "D:\\Bx_interp_log_OCCT.log"
 #define dump_filename_By "D:\\By_interp_log_OCCT.log"
 #define dump_filename_Bz "D:\\Bz_interp_log_OCCT.log"
+
+//-----------------------------------------------------------------------------
+
+bool IsASCII(const TCollection_AsciiString& filename)
+{
+  FILE* FILE;
+  fopen_s(&FILE, filename.ToCString(), "rb");
+  //
+  if ( FILE == NULL )
+    return false;
+
+  bool isAscii = true;
+  char buffer[128] = {};
+  //
+  if ( fread(buffer, 1, 84, FILE) != 84 )
+  {
+    fclose(FILE);
+    return false;
+  }
+
+  size_t readLen = fread(buffer, 1, 128, FILE);
+  for ( size_t byteIter = 0; byteIter < readLen; ++byteIter )
+  {
+    if ( (unsigned char) buffer[byteIter] > (unsigned char )'~' )
+    {
+      isAscii = false;
+      break;
+    }
+  }
+
+  fclose(FILE);
+  return isAscii;
+}
 
 //-----------------------------------------------------------------------------
 // Auxiliary functions
@@ -727,14 +761,20 @@ double asiAlgo_Utils::MaxTolerance(const TopoDS_Shape& shape)
 //-----------------------------------------------------------------------------
 
 //! Reads CAD model from native OCCT b-rep file.
-//! \param theFilename [in]  filename.
-//! \param theShape    [out] CAD model retrieved from file.
+//! \param filename [in]  filename.
+//! \param shape    [out] CAD model retrieved from file.
 //! \return true in case of success, false -- otherwise.
-bool asiAlgo_Utils::ReadBRep(const TCollection_AsciiString& theFilename,
-                             TopoDS_Shape&                  theShape)
+bool asiAlgo_Utils::ReadBRep(const TCollection_AsciiString& filename,
+                             TopoDS_Shape&                  shape)
 {
-  BRep_Builder BB;
-  return BRepTools::Read(theShape, theFilename.ToCString(), BB);
+  if ( IsASCII(filename) )
+  {
+    BRep_Builder BB;
+    return BRepTools::Read(shape, filename.ToCString(), BB);
+  }
+
+  // Try to read as binary
+  return BinTools::Read( shape, filename.ToCString() );
 }
 
 //-----------------------------------------------------------------------------

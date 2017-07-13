@@ -29,6 +29,7 @@
 // Qt includes
 #include <QColor>
 #include <QDateTime>
+#include <QScrollBar>
 
 //-----------------------------------------------------------------------------
 
@@ -330,4 +331,6 @@ void asiUI_Logger::putText(const QString& text, const QColor& color) const
   Q_UNUSED(color)
 
   m_widget->append(text);
+  QScrollBar* pSB = m_widget->verticalScrollBar();
+  pSB->setValue( pSB->maximum() );
 }

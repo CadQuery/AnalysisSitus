@@ -66,6 +66,8 @@ asiVisu_TriangulationSource::~asiVisu_TriangulationSource()
 void asiVisu_TriangulationSource::SetInputTriangulation(const Handle(Poly_Triangulation)& triangulation)
 {
   m_triangulation = triangulation;
+  //
+  this->Modified();
 }
 
 //-----------------------------------------------------------------------------
@@ -86,6 +88,8 @@ int asiVisu_TriangulationSource::RequestData(vtkInformation*        request,
     vtkErrorMacro( << "Invalid input: NULL triangulation" );
     return 0;
   }
+
+  m_regPoints.Clear();
 
   /* ================
    *  Prepare output

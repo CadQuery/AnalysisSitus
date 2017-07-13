@@ -175,7 +175,7 @@ asiVisu_PrsManager::asiVisu_PrsManager()
   m_renderer->SetBackground(0.15, 0.15, 0.15);
 
   // Initialize employed pickers
-  this->InitializePickers(  Handle(ActAPI_INode)() );
+  this->InitializePickers( Handle(ActAPI_INode)() );
 
   // Set default selection mode
   m_iSelectionModes = SelectionMode_None;

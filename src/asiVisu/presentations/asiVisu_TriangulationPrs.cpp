@@ -62,6 +62,9 @@ asiVisu_TriangulationPrs::asiVisu_TriangulationPrs(const Handle(ActAPI_INode)& N
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
   pl->Actor()->GetProperty()->SetLineWidth(1.5f);
 
+  // !!! For performance reasons !!!
+  pl->Actor()->SetPickable(0);
+
   /* =========================
    *  Pipeline for mesh links
    * ========================= */

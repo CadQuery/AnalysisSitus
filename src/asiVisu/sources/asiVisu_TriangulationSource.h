@@ -71,6 +71,8 @@ public:
   void CollectEdgesModeOn()
   {
     m_bEdgesOn = true;
+    //
+    this->Modified();
   }
 
   //! Disables collecting edges in the polygonal source. Edges are not
@@ -78,6 +80,8 @@ public:
   void CollectEdgesModeOff()
   {
     m_bEdgesOn = false;
+    //
+    this->Modified();
   }
 
   //! Initializes source with diagnostic tools: progress notifier and

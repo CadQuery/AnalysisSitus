@@ -35,9 +35,9 @@
 QString asiUI_Common::selectBRepFile(const OpenSaveAction action)
 {
   QStringList filter;
-  filter << "B-Rep (*.brep)";
+  filter << "BREP (*.brep; *.bin; *.binbrep)";
   //
-  return selectFile(filter, "Select B-Rep file", "Save B-Rep file", action);
+  return selectFile(filter, "Select BREP file", "Save BREP file", action);
 }
 
 //! Allows to select filename for IGES format.

@@ -34,8 +34,8 @@
 #include <asiVisu_Selection.h>
 #include <asiVisu_Utils.h>
 
-// Qr includes
-#include <QrCore.h>
+// Mobius includes
+#include <mobius/core.h>
 
 // VTK includes
 #include <vtkCamera.h>
@@ -77,7 +77,7 @@ static std::string ActorAddr(const vtkActor* pActor)
     pos++;
 
   if ( pos )
-    addr_str = QrCore::substr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
+    addr_str = core::substr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
 
   return addr_str;
 }

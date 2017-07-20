@@ -306,7 +306,7 @@ vtkSmartPointer<vtkGraph>
     //
     labelArr->InsertNextValue( asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str()
                              + std::string(": ")
-                             + QrCore::to_string(pid) );
+                             + core::to_string(pid) );
     //
     if ( shape.ShapeType() == TopAbs_COMPOUND )
       groupArr->InsertNextValue(ARRNAME_GROUP_COMPOUND);
@@ -402,7 +402,7 @@ void asiUI_TopoGraph::buildRecursively(const TopoDS_Shape&             rootShape
       if ( pLabelArr )
         pLabelArr->InsertNextValue( asiAlgo_Utils::ShapeAddrWithPrefix(subShape).c_str()
                                   + std::string(": ")
-                                  + QrCore::to_string(pid) );
+                                  + core::to_string(pid) );
 
       // Groups
       if ( pGroupArr )

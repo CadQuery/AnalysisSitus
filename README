@@ -42,6 +42,15 @@ on your particular problems.
 ===============================================================================
 Release notes
 -------------------------------------------------------------------------------
+v0.1.6, 20 July 2017
+-------------------------------------------------------------------------------
+- License under MIT license conditions.
+- Add CMake build system.
+- Set dark color scheme.
+- Add controls for projection views (top, left, front, etc.).
+- Add visualization facilities for OpenCascade's triangulation.
+- Bugfix and tiny improvements.
+-------------------------------------------------------------------------------
 v0.1.5, 15 April 2017
 -------------------------------------------------------------------------------
 - Get rid of OpenCascade visualization modules. Everything is now based on

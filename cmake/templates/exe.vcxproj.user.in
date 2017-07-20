@@ -2,8 +2,8 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|@X_COMPILER_BITNESS@'">
     <LocalDebuggerEnvironment>PATH=@3RDPARTY_DLL_PATH@;@CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE@;%PATH%
+QT_PLUGIN_PATH=@3RDPARTY_QT_DIR@/plugins
 CASROOT=@3RDPARTY_OCCT_DIR@
-CSF_ShadersDirectory=@3RDPARTY_OCCT_DIR@/src/Shaders
 CSF_PluginDefaults=@ASITUS_OCAF_PLUGIN_DIR@
 CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
     </LocalDebuggerEnvironment>
@@ -12,8 +12,8 @@ CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|@X_COMPILER_BITNESS@'">
     <LocalDebuggerEnvironment>PATH=@3RDPARTY_DLL_PATH@;@CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO@;%PATH%
+QT_PLUGIN_PATH=@3RDPARTY_QT_DIR@/plugins
 CASROOT=@3RDPARTY_OCCT_DIR@
-CSF_ShadersDirectory=@3RDPARTY_OCCT_DIR@/src/Shaders
 CSF_PluginDefaults=@ASITUS_OCAF_PLUGIN_DIR@
 CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
     </LocalDebuggerEnvironment>
@@ -22,8 +22,8 @@ CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|@X_COMPILER_BITNESS@'">
     <LocalDebuggerEnvironment>PATH=@3RDPARTY_DLL_DEB_PATH@;@CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG@;%PATH%
+QT_PLUGIN_PATH=@3RDPARTY_QT_DIR@/plugins
 CASROOT=@3RDPARTY_OCCT_DIR@
-CSF_ShadersDirectory=@3RDPARTY_OCCT_DIR@/src/Shaders
 CSF_PluginDefaults=@ASITUS_OCAF_PLUGIN_DIR@
 CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
     </LocalDebuggerEnvironment>

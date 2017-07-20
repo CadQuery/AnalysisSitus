@@ -50,7 +50,9 @@ class asiVisu_TriangulationSource : public vtkPolyDataAlgorithm
 public:
 
   vtkTypeMacro(asiVisu_TriangulationSource, vtkPolyDataAlgorithm);
-  static asiVisu_TriangulationSource* New();
+
+  asiVisu_EXPORT static asiVisu_TriangulationSource*
+    New();
 
 // Kernel:
 public:

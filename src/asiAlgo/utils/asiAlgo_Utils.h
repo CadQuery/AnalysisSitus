@@ -33,8 +33,8 @@
 #include <ActAPI_ILogger.h>
 #include <ActAPI_IProgressNotifier.h>
 
-// Qr includes
-#include <QrCore.h>
+// Mobius includes
+#include <mobius/core.h>
 
 // OCCT includes
 #include <BRep_Tool.hxx>
@@ -207,7 +207,7 @@ public:
       pos++;
 
     if ( pos )
-      addr_str = QrCore::substr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
+      addr_str = core::substr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
 
     return addr_str;
   }

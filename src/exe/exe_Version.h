@@ -30,17 +30,17 @@
 // A-Situs version
 //-----------------------------------------------------------------------------
 
-#define ASitus_Version_MAJOR 0 // Major: incremented by major releases
-#define ASitus_Version_MINOR 1 // Minor: incremented by minor releases
-#define ASitus_Version_PATCH 5 // Patch: incremented with bug-fix releases
+#define ASITUS_VERSION_MAJOR 0 // Major: incremented by major releases
+#define ASITUS_VERSION_MINOR 1 // Minor: incremented by minor releases
+#define ASITUS_VERSION_PATCH 6 // Patch: incremented with bug-fix releases
 
 //-----------------------------------------------------------------------------
 
 // Cumulative version: 8 bits for each version number
-#define ASitus_Version_HEX \
-( (ASitus_Version_MAJOR << 16) | (ASitus_Version_MINOR << 8) | ASitus_Version_PATCH )
+#define ASITUS_VERSION_HEX \
+( (ASITUS_VERSION_MAJOR << 16) | (ASITUS_VERSION_MINOR << 8) | ASITUS_VERSION_PATCH )
 
-#define ASitus_Version_STRING "0.1.5"
-#define ASitus_APP_NAME "Analysis Situs"
+#define ASITUS_VERSION_STRING "0.1.6"
+#define ASITUS_APP_NAME "Analysis Situs"
 
 #endif

@@ -37,8 +37,8 @@
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopoDS.hxx>
 
-// Qr includes
-#include <QrCore.h>
+// Mobius includes
+#include <mobius/core.h>
 
 // VTK includes
 #include <vtkIntArray.h>
@@ -91,7 +91,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
     // Fill property arrays
     std::string faceName = asiAlgo_Utils::FaceGeometryName( TopoDS::Face( Faces(f_idx) ) );
     faceName += ":";
-    faceName += QrCore::to_string<int>(f_idx).c_str();
+    faceName += core::to_string<int>(f_idx).c_str();
     labelArr->InsertNextValue(faceName);
     //
     if ( SelFaces.Contains(f_idx) )

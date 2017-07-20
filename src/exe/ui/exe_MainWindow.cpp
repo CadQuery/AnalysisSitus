@@ -36,6 +36,8 @@
 
 // Qt includes
 #pragma warning(push, 0)
+#include <QApplication>
+#include <QTextStream>
 #include <QDesktopWidget>
 #include <QDockWidget>
 #pragma warning(pop)
@@ -50,10 +52,26 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
   this->setCentralWidget(m_widgets.wViewerPart);
 
   // Prepare application name with the version number
-  TCollection_AsciiString appName(ASitus_APP_NAME);
-  appName += " ["; appName += ASitus_Version_STRING; appName += "]";
+  TCollection_AsciiString appName(ASITUS_APP_NAME);
+  appName += " ["; appName += ASITUS_VERSION_STRING; appName += "]";
   //
   this->setWindowTitle( appName.ToCString() );
+
+  //---------------------------------------------------------------------------
+  // Apply fantastic dark theme
+  //---------------------------------------------------------------------------
+
+  QFile f(":qdarkstyle/style.qss");
+  if ( !f.exists() )
+  {
+    printf("Unable to set stylesheet, file not found\n");
+  }
+  else
+  {
+    f.open(QFile::ReadOnly | QFile::Text);
+    QTextStream ts(&f);
+    qApp->setStyleSheet( ts.readAll() );
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -91,8 +109,8 @@ void exe_MainWindow::createPartViewer()
   // Desktop used for sizing
   QDesktopWidget desktop;
   const int side   = std::min( desktop.height(), desktop.width() );
-  const int width  = side*0.5;
-  const int height = side*0.5;
+  const int width  = side*0.25;
+  const int height = side*0.25;
   //
   m_widgets.wViewerPart->setMinimumSize(width, height);
 
@@ -109,7 +127,7 @@ void exe_MainWindow::createDockWindows()
   // Desktop used for sizing
   QDesktopWidget desktop;
   const int side  = std::min( desktop.height(), desktop.width() );
-  const int width = side*0.4;
+  const int width = side*0.15;
 
   // Common facilities instance
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
@@ -117,7 +135,7 @@ void exe_MainWindow::createDockWindows()
   // Object browser
   QDockWidget* pDockBrowser;
   {
-    pDockBrowser = new QDockWidget("Stored Objects", this);
+    pDockBrowser = new QDockWidget("Data", this);
     pDockBrowser->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
     m_widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, pDockBrowser);

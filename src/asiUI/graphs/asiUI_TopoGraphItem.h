@@ -32,6 +32,9 @@
 // OCCT includes
 #include <TopAbs_ShapeEnum.hxx>
 
+// Mobius includes
+#include <mobius/core.h>
+
 // VTK includes
 #include <vtkAbstractArray.h>
 #include <vtkColor.h>
@@ -46,9 +49,6 @@
 
 // Qt includes
 #include <QObject>
-
-// Qr includes
-#include <QrCore.h>
 
 #define ARRNAME_LABELS            "Labels"
 #define ARRNAME_PIDS              "Pids"

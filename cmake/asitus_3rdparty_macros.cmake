@@ -1,7 +1,7 @@
 # Useful macro to work with 3-rd parties
 
 # Include functions
-include (${CMAKE_SOURCE_DIR}/cmake/asitus_functions.cmake)
+include (${CMAKE_SOURCE_DIR}/cmake/ASITUS_functions.cmake)
 
 #-------------------------------------------------------------------------------
 # Name:    ASITUS_CHECK_PATH_FOR_CONSISTENCY
@@ -33,7 +33,7 @@ endmacro()
 
 #-------------------------------------------------------------------------------
 # Name:    ASITUS_THIRDPARTY_PRODUCT
-# Purpose: handles 3-rd party product
+# Purpose: handles a single 3-rd party product
 #-------------------------------------------------------------------------------
 macro (ASITUS_THIRDPARTY_PRODUCT
        PRODUCT_NAME
@@ -43,10 +43,13 @@ macro (ASITUS_THIRDPARTY_PRODUCT
 
   message (STATUS "Processing ${PRODUCT_NAME} 3-rd party")
 
+  # Determine platform specification
+  # Variables are PLATFORM, COMPILER and COMPILER_BITNESS
   ASITUS_MAKE_PLATFORM_SHORT_NAME ()
   ASITUS_MAKE_COMPILER_SHORT_NAME ()
   ASITUS_MAKE_COMPILER_BITNESS ()
 
+  # Root directories of products
   if (NOT DEFINED 3RDPARTY_${PRODUCT_NAME}_DIR)
     set (3RDPARTY_${PRODUCT_NAME}_DIR ""
          CACHE PATH
@@ -67,11 +70,17 @@ macro (ASITUS_THIRDPARTY_PRODUCT
   endif()
 
   if (NOT DEFINED 3RDPARTY_${PRODUCT_NAME}_INCLUDE_DIR)
-    set (3RDPARTY_${PRODUCT_NAME}_INCLUDE_DIR "" CACHE PATH "the path of ${HEADER_NAME}")
+    set (3RDPARTY_${PRODUCT_NAME}_INCLUDE_DIR "" CACHE PATH "The path of ${HEADER_NAME}")
   endif()
 
   if (NOT DEFINED 3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR)
     set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR "" CACHE PATH "The directory containing ${PRODUCT_NAME} library")
+  endif()
+  
+  if (WIN32)
+    if (NOT DEFINED 3RDPARTY_${PRODUCT_NAME}_DLL_DIR)
+      set (3RDPARTY_${PRODUCT_NAME}_DLL_DIR "" CACHE PATH "The directory containing ${PRODUCT_NAME} dynamic library (DLL)")
+    endif()
   endif()
 
   #----------------------------------------------------------------------------
@@ -122,7 +131,6 @@ macro (ASITUS_THIRDPARTY_PRODUCT
   #----------------------------------------------------------------------------
   # Libraries
   if (NOT 3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR OR NOT EXISTS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR}")
-
     message (STATUS "... Attempting to find path by hint library \"${LIBRARY_NAME}\"")
 
     # suffix for searching of library dirs
@@ -134,18 +142,17 @@ macro (ASITUS_THIRDPARTY_PRODUCT
     endif()
 
     message (STATUS "... Hint suffix for searching of libraries is ${LIB_SUFFIX_HINT}")
-
-    # set 3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR as not found, otherwise find_library can't assign a new value to 3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR
+    
     set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR "3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR-NOTFOUND" CACHE FILEPATH "The path to ${PRODUCT_NAME} libraries" FORCE)
 
     if (3RDPARTY_${PRODUCT_NAME}_DIR AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_DIR}")
-      find_path (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR NAMES ${LIBRARY_NAME}
+      find_path (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR NAMES ${LIBRARY_NAME}.lib ${LIBRARY_NAME}.so
                                                       PATHS ${3RDPARTY_${PRODUCT_NAME}_DIR}
                                                       PATH_SUFFIXES ${LIB_SUFFIX_HINT}
                                                       CMAKE_FIND_ROOT_PATH_BOTH
                                                       NO_DEFAULT_PATH)
     else()
-      find_path (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR NAMES ${LIBRARY_NAME}
+      find_path (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR NAMES ${LIBRARY_NAME}.lib ${LIBRARY_NAME}.so
                                                       PATH_SUFFIXES ${LIB_SUFFIX_HINT}
                                                       CMAKE_FIND_ROOT_PATH_BOTH)
     endif()
@@ -157,6 +164,42 @@ macro (ASITUS_THIRDPARTY_PRODUCT
     list (APPEND 3RDPARTY_NOT_INCLUDED 3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR)
 
     set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR "" CACHE FILEPATH "The path to ${PRODUCT_NAME} libraries" FORCE)
+  endif()
+  
+  #----------------------------------------------------------------------------
+  # DLLs for windows
+  if (WIN32)
+    if (NOT 3RDPARTY_${PRODUCT_NAME}_DLL_DIR OR NOT EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR}")
+      message (STATUS "... Attempting to find path by hint library \"${LIBRARY_NAME}\"")
+
+      # suffix for searching of library dirs
+      set (DLL_SUFFIX_HINT ${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bin bin)
+      if ("${COMPILER_BITNESS}" STREQUAL "64")
+        set (DLL_SUFFIX_HINT ${DLL_SUFFIX_HINT} bin/intel64/${COMPILER})
+      else()
+        set (DLL_SUFFIX_HINT ${DLL_SUFFIX_HINT} bin/ia32/${COMPILER})
+      endif()
+
+      message (STATUS "... Hint suffix for searching of DLLs is ${DLL_SUFFIX_HINT}")
+      
+      set (3RDPARTY_${PRODUCT_NAME}_DLL_DIR "3RDPARTY_${PRODUCT_NAME}_DLL_DIR-NOTFOUND" CACHE FILEPATH "The path to ${PRODUCT_NAME} DLLs" FORCE)
+
+      if (3RDPARTY_${PRODUCT_NAME}_DIR AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_DIR}")
+        find_path (3RDPARTY_${PRODUCT_NAME}_DLL_DIR NAMES ${LIBRARY_NAME}.dll
+                                                    PATHS ${3RDPARTY_${PRODUCT_NAME}_DIR}
+                                                    PATH_SUFFIXES ${DLL_SUFFIX_HINT}
+                                                    CMAKE_FIND_ROOT_PATH_BOTH
+                                                    NO_DEFAULT_PATH)
+      else()
+        find_path (3RDPARTY_${PRODUCT_NAME}_DLL_DIR NAMES ${LIBRARY_NAME}.dll
+                                                    PATH_SUFFIXES ${DLL_SUFFIX_HINT}
+                                                    CMAKE_FIND_ROOT_PATH_BOTH)
+      endif()
+    endif()
+    #
+    if (NOT 3RDPARTY_${PRODUCT_NAME}_DLL_DIR OR NOT EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR}")
+      set (3RDPARTY_${PRODUCT_NAME}_DLL_DIR "" CACHE FILEPATH "The path to ${PRODUCT_NAME} DLLs" FORCE)
+    endif()
   endif()
 
 endmacro()

@@ -26,7 +26,7 @@
 // Own include
 #include <asiUI_ControlsFeature.h>
 
-// exeFeatures includes
+// asiUI includes
 #include <asiUI_AAGAdaptor.h>
 #include <asiUI_Common.h>
 #include <asiUI_DialogSmoothAngleTol.h>

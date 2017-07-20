@@ -73,6 +73,9 @@
 // OCCT includes
 #include <OSD_Environment.hxx>
 
+// Qt includes
+#include <QTextStream>
+
 // Activate object factories
 VTK_MODULE_INIT(vtkRenderingContextOpenGL2);
 VTK_MODULE_INIT(vtkRenderingOpenGL2);
@@ -88,9 +91,7 @@ int main(int argc, char** argv)
 {
   QApplication app(argc, argv);
   //
-  TCollection_AsciiString ico_fn = OSD_Environment("AS_RESOURCES").Value();
-  ico_fn += "/asitus_icon_16x16.png";
-  QApplication::setWindowIcon( QIcon( ico_fn.ToCString() ) );
+  QApplication::setWindowIcon( QIcon(":icons/asitus/asitus_icon_16x16.png") );
 
   //---------------------------------------------------------------------------
   // Register Presentations

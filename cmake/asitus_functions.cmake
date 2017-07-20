@@ -1,7 +1,37 @@
 # Useful functions
 
 # Macro
-include (${CMAKE_SOURCE_DIR}/cmake/asitus_macros.cmake)
+include (${CMAKE_SOURCE_DIR}/cmake/ASITUS_macros.cmake)
+
+#-------------------------------------------------------------------------------
+# Name:    ASITUS_RETRIEVE_VERSION
+# Purpose: retrieves app version from version file
+#-------------------------------------------------------------------------------
+function (ASITUS_RETRIEVE_VERSION VERSION_FILE MAJOR MINOR PATCH)
+  file(STRINGS ${VERSION_FILE} VERSION_FILE_DATA)
+  foreach (line ${VERSION_FILE_DATA})
+    string(REGEX MATCH "ASITUS_VERSION_MAJOR *[0-9]" match ${line})
+    if (NOT "${match}" STREQUAL "")
+      separate_arguments(match)
+      list(GET match 1 num)
+      set (${MAJOR} ${num} PARENT_SCOPE)
+    endif()
+
+    string(REGEX MATCH "ASITUS_VERSION_MINOR *[0-9]" match ${line})
+    if (NOT "${match}" STREQUAL "")
+      separate_arguments(match)
+      list(GET match 1 num)
+      set (${MINOR} ${num} PARENT_SCOPE)
+    endif()
+
+    string(REGEX MATCH "ASITUS_VERSION_PATCH *[0-9]" match ${line})
+    if (NOT "${match}" STREQUAL "")
+      separate_arguments(match)
+      list(GET match 1 num)
+      set (${PATCH} ${num} PARENT_SCOPE)
+    endif()
+  endforeach()
+endfunction()
 
 #-------------------------------------------------------------------------------
 # Name:    ASITUS_SUBDIRECTORY_NAMES
@@ -73,4 +103,6 @@ function (ASITUS_FIND_PRODUCT_DIR ROOT_DIR PRODUCT_NAME RESULT)
     list (GET LOCAL_RESULT -1 DUMMY)
     set (${RESULT} ${DUMMY} PARENT_SCOPE)
   endif()
+
+  message(STATUS "... Found: ${RESULT} = ${DUMMY}")
 endfunction()

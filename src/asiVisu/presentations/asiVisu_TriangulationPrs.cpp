@@ -227,6 +227,14 @@ void asiVisu_TriangulationPrs::highlight(vtkRenderer*                  renderer,
 {
   asiVisu_NotUsed(renderer);
 
+  // There is one peculiarity in selection mechanism for mesh elements. To
+  // save memory, we do not store element IDs as pedigrees or global IDs in
+  // vtkPolyData. It is enough to have direct VTK cell IDs as element IDs.
+  // However, if we keep pedigrees and globals empty, the presentation
+  // manager will not populate the set of picked element IDs. Therefore,
+  // we have to handle it here by passing cell IDs as picked element IDs to
+  // the underlying pipelines.
+
   // #################################################
   // FACET selection
   if ( pickRes.GetPickedActor() == this->MainActor() )
@@ -238,7 +246,7 @@ void asiVisu_TriangulationPrs::highlight(vtkRenderer*                  renderer,
     Handle(asiVisu_TriangulationPipeline)
       mainPl = Handle(asiVisu_TriangulationPipeline)::DownCast( this->GetPipeline(Pipeline_Triangulation) );
 
-    mainPl->SetPickedElements( pickRes.GetPickedElementIds(), selNature );
+    mainPl->SetPickedElements( pickRes.GetPickedCellIds(), selNature );
   }
   // #################################################
   // LINK selection
@@ -251,7 +259,7 @@ void asiVisu_TriangulationPrs::highlight(vtkRenderer*                  renderer,
     Handle(asiVisu_TriangulationLinksPipeline)
       contourPl = Handle(asiVisu_TriangulationLinksPipeline)::DownCast( this->GetPipeline(Pipeline_TriangulationLinks) );
 
-    contourPl->SetPickedElements( pickRes.GetPickedElementIds(), selNature );
+    contourPl->SetPickedElements( pickRes.GetPickedCellIds(), selNature );
   }
 }
 

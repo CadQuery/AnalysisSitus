@@ -29,6 +29,7 @@
 // VTK includes
 #include <vtkCoordinate.h>
 #include <vtkGlyphSource2D.h>
+#include <vtkProperty.h>
 #include <vtkScalarBarRepresentation.h>
 #include <vtkTextProperty.h>
 #include <vtkTextRepresentation.h>
@@ -170,4 +171,13 @@ vtkSmartPointer<vtkTransform> asiVisu_MeshResultUtils::GetVectorGlyphTransform()
   vtkSmartPointer<vtkTransform> aResult = vtkSmartPointer<vtkTransform>::New();
   aResult->Translate(0.5, 0.0, 0.0);
   return aResult;
+}
+
+//! Sets the predefined lighting options to the passed Actor.
+//! \param actor [in] Actor to adjust lighting options.
+void asiVisu_MeshResultUtils::ApplySoftLightingRules(vtkActor* actor)
+{
+  actor->GetProperty()->SetAmbient(0.9);
+  actor->GetProperty()->SetDiffuse(0.1);
+  actor->GetProperty()->SetSpecular(0.1);
 }

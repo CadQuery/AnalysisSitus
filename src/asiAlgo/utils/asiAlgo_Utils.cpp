@@ -1581,3 +1581,24 @@ TopoDS_Shape asiAlgo_Utils::GetImage(const TopoDS_Shape&       source,
 
   return source;
 }
+
+//-----------------------------------------------------------------------------
+
+Handle(Poly_Triangulation)
+  asiAlgo_Utils::CreateTriangle(const gp_Pnt& P0,
+                                const gp_Pnt& P1,
+                                const gp_Pnt& P2)
+{
+  // Create array of nodes
+  TColgp_Array1OfPnt nodes(1, 3);
+  nodes(1) = P0;
+  nodes(2) = P1;
+  nodes(3) = P2;
+
+  // Prepare single triangle
+  Poly_Array1OfTriangle tris(1, 1);
+  tris(1) = Poly_Triangle(1, 2, 3);
+
+  // Create triangulation
+  return new Poly_Triangulation(nodes, tris);
+}

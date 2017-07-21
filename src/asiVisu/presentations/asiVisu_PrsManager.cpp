@@ -26,7 +26,7 @@
 // Own include
 #include <asiVisu_PrsManager.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_AxesBtnCallback.h>
 #include <asiVisu_PartNodeInfo.h>
 #include <asiVisu_Prs.h>
@@ -60,27 +60,27 @@
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif
 
-//-----------------------------------------------------------------------------
+#if defined COUT_DEBUG
+  //! Returns address as string.
+  //! \param pActor [in] pointer to extract the address for.
+  //! \return address as string.
+  static std::string ActorAddr(const vtkActor* pActor)
+  {
+    std::string addr_str;
+    std::ostringstream ost;
+    ost << pActor;
+    addr_str = ost.str();
 
-//! Returns address as string.
-//! \param pActor [in] pointer to extract the address for.
-//! \return address as string.
-static std::string ActorAddr(const vtkActor* pActor)
-{
-  std::string addr_str;
-  std::ostringstream ost;
-  ost << pActor;
-  addr_str = ost.str();
+    size_t pos = 0;
+    while ( addr_str[pos] == '0' )
+      pos++;
 
-  size_t pos = 0;
-  while ( addr_str[pos] == '0' )
-    pos++;
+    if ( pos )
+      addr_str = core::substr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
 
-  if ( pos )
-    addr_str = core::substr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
-
-  return addr_str;
-}
+    return addr_str;
+  }
+#endif
 
 //-----------------------------------------------------------------------------
 

@@ -367,6 +367,11 @@ public:
     GetImage(const TopoDS_Shape&       source,
              BRepBuilderAPI_MakeShape& API);
 
+  asiAlgo_EXPORT static Handle(Poly_Triangulation)
+    CreateTriangle(const gp_Pnt& P0,
+                   const gp_Pnt& P1,
+                   const gp_Pnt& P2);
+
 private:
 
   asiAlgo_Utils(); //!< Prohibited.

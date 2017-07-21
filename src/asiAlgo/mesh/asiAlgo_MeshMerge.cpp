@@ -162,25 +162,38 @@ namespace
 asiAlgo_MeshMerge::asiAlgo_MeshMerge(const TopoDS_Shape& body,
                                      const Mode          mode,
                                      const bool          collectBoundary)
-: m_body        (body),
-  m_mode        (mode),
-  m_bCollectBnd (collectBoundary)
 {
-  this->build();
+  this->build(body, mode, collectBoundary);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Constructor.
+//! \param triangulations [in] list of triangulations to merge into one.
+//! \param mode           [in] conversion mode.
+asiAlgo_MeshMerge::asiAlgo_MeshMerge(const std::vector<Handle(Poly_Triangulation)>& triangulations,
+                                     const Mode                                     mode)
+{
+  this->build(triangulations, mode);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Assembles many triangulations into a single one.
-void asiAlgo_MeshMerge::build()
+//! \param body            [in] CAD model to extract triangulation patches from.
+//! \param mode            [in] conversion mode.
+//! \param collectBoundary [in] indicates whether to preserve boundary links.
+void asiAlgo_MeshMerge::build(const TopoDS_Shape& body,
+                              const Mode          mode,
+                              const bool          collectBoundary)
 {
   // Create result as coherent triangulation
   m_resultPoly = new Poly_CoherentTriangulation;
 
   // Prepare map of edges and their parent faces
   TopTools_IndexedDataMapOfShapeListOfShape edgesOnFaces;
-  if ( m_bCollectBnd )
-    TopExp::MapShapesAndAncestors(m_body, TopAbs_EDGE, TopAbs_FACE, edgesOnFaces);
+  if ( collectBoundary )
+    TopExp::MapShapesAndAncestors(body, TopAbs_EDGE, TopAbs_FACE, edgesOnFaces);
 
   // Working tools and variables
   int globalNodeId = 0;
@@ -188,7 +201,7 @@ void asiAlgo_MeshMerge::build()
 
   //###########################################################################
   // [BEGIN] Iterate over the faces
-  for ( TopExp_Explorer exp(m_body, TopAbs_FACE); exp.More(); exp.Next() )
+  for ( TopExp_Explorer exp(body, TopAbs_FACE); exp.More(); exp.Next() )
   {
     const TopoDS_Face& F = TopoDS::Face( exp.Current() );
     NCollection_DataMap<int, int> FaceNodeIds_ToGlobalNodeIds;
@@ -222,7 +235,7 @@ void asiAlgo_MeshMerge::build()
     }
 
     // Collect local indices of the boundary nodes
-    if ( m_bCollectBnd )
+    if ( collectBoundary )
     {
       for ( TopExp_Explorer eexp(F, TopAbs_EDGE); eexp.More(); eexp.Next() )
       {
@@ -292,7 +305,72 @@ void asiAlgo_MeshMerge::build()
   // [END] Iterate over the faces
   //###########################################################################
 
-  if ( m_mode == Mode_Mesh )
+  if ( mode == Mode_Mesh )
+    if ( !m_resultPoly->GetTriangulation().IsNull() )
+      m_resultMesh = new ActData_Mesh( m_resultPoly->GetTriangulation() );
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_MeshMerge::build(const std::vector<Handle(Poly_Triangulation)>& triangulations,
+                              const Mode                                     mode)
+{
+  // Create result as coherent triangulation
+  m_resultPoly = new Poly_CoherentTriangulation;
+
+  // Working tools and variables
+  int globalNodeId = 0;
+  NCollection_CellFilter<InspectNode> NodeFilter( Precision::Confusion() );
+
+  //###########################################################################
+  // [BEGIN] Iterate over the faces
+  for ( size_t tidx = 0; tidx < triangulations.size(); ++tidx )
+  {
+    const Handle(Poly_Triangulation)& LocalTri = triangulations[tidx];
+    //
+    if ( LocalTri.IsNull() )
+      continue;
+    //
+    const int nLocalNodes     = LocalTri->NbNodes();
+    const int nLocalTriangles = LocalTri->NbTriangles();
+    //
+    NCollection_DataMap<int, int> FaceNodeIds_ToGlobalNodeIds;
+
+    // Add nodes with coincidence test
+    for ( int localNodeId = 1; localNodeId <= nLocalNodes; ++localNodeId )
+    {
+      gp_XYZ xyz = LocalTri->Nodes()(localNodeId).XYZ();
+
+      // Add node to the conglomerate after coincidence test
+      ::appendNodeInGlobalTri(localNodeId,                  // [in]     local node ID in a face
+                              globalNodeId,                 // [in,out] global node ID in the conglomerate mesh
+                              xyz,                          // [in]     coordinates for coincidence test
+                              m_resultPoly,                 // [in,out] result conglomerate mesh
+                              NodeFilter,                   // [in]     cell filter
+                              FaceNodeIds_ToGlobalNodeIds); // [in,out] face-conglomerate map of node IDs
+    }
+
+    // Add triangles to the result
+    for ( int i = 1; i <= nLocalTriangles; ++i )
+    {
+      int n1, n2, n3;
+      LocalTri->Triangles()(i).Get(n1, n2, n3);
+      int m[3] = {n1, n2, n3};
+
+      m[0] = FaceNodeIds_ToGlobalNodeIds.Find(m[0]);
+      m[1] = FaceNodeIds_ToGlobalNodeIds.Find(m[1]);
+      m[2] = FaceNodeIds_ToGlobalNodeIds.Find(m[2]);
+
+      if ( m[0] == m[1] || m[0] == m[2] || m[1] == m[2] )
+        continue;
+
+      m_resultPoly->AddTriangle(m[0], m[1], m[2]);
+    }
+  }
+  // [END] Iterate over the patches
+  //###########################################################################
+
+  if ( mode == Mode_Mesh )
     if ( !m_resultPoly->GetTriangulation().IsNull() )
       m_resultMesh = new ActData_Mesh( m_resultPoly->GetTriangulation() );
 }

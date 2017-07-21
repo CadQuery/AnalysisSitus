@@ -30,6 +30,7 @@
 #include <asiVisu.h>
 
 // VTK includes
+#include <vtkActor.h>
 #include <vtkLookupTable.h>
 #include <vtkMapper.h>
 #include <vtkPolyDataAlgorithm.h>
@@ -84,6 +85,9 @@ namespace asiVisu_MeshResultUtils
 
   asiVisu_EXPORT vtkSmartPointer<vtkTransform>
     GetVectorGlyphTransform();
+
+  asiVisu_EXPORT void
+    ApplySoftLightingRules(vtkActor* actor);
 };
 
 #endif

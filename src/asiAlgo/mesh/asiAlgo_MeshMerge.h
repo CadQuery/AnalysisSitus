@@ -62,6 +62,10 @@ public:
                       const Mode          mode            = Mode_PolyCoherentTriangulation,
                       const bool          collectBoundary = true);
 
+  asiAlgo_EXPORT
+    asiAlgo_MeshMerge(const std::vector<Handle(Poly_Triangulation)>& triangulations,
+                      const Mode                                     mode = Mode_PolyCoherentTriangulation);
+
 public:
 
   //! \return result.
@@ -96,16 +100,20 @@ public:
 
 protected:
 
-  void build();
+  void build(const TopoDS_Shape& body,
+             const Mode          mode,
+             const bool          collectBoundary);
+  //
+  void build(const std::vector<Handle(Poly_Triangulation)>& triangulations,
+             const Mode                                     mode);
+  //
   void addFreeLink(const asiAlgo_MeshLink& link);
   void addManifoldLink(const asiAlgo_MeshLink& link);
   void addNonManifoldLink(const asiAlgo_MeshLink& link);
 
+// OUTPUTS:
 protected:
 
-  TopoDS_Shape                       m_body;             //!< Working body.
-  Mode                               m_mode;             //!< Conversion mode.
-  bool                               m_bCollectBnd;      //!< Whether to preserve boundary.
   Handle(Poly_CoherentTriangulation) m_resultPoly;       //!< Result tessellation.
   Handle(ActData_Mesh)               m_resultMesh;       //!< Result mesh.
   asiAlgo_MeshLinkSet                m_freeLinks;        //!< Free links.

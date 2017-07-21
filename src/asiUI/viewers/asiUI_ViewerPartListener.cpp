@@ -44,11 +44,6 @@
 // VTK includes
 #include <vtkCamera.h>
 
-// Qt includes
-#pragma warning(push, 0)
-#include <QMenu>
-#pragma warning(pop)
-
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting all necessary facilities.
@@ -172,9 +167,16 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
     pInvertFacesAction = menu.addAction("Invert faces");
   }
 
+  // Let sub-classes populate menu
+  this->populateMenu(menu);
+
   // Execute
   QAction* selectedItem = menu.exec(globalPos);
-  //
+
+  // Let sub-classes react
+  this->executeAction(selectedItem);
+
+  // Default reactions
   if ( selectedItem && selectedItem == pPickRotationPoint )
   {
     // Take picked position from interactor

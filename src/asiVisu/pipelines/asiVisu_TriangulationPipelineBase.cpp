@@ -103,13 +103,9 @@ void asiVisu_TriangulationPipelineBase::SetPickedElements(const TColStd_PackedMa
   vtkCellData* pCellData       = pData->GetCellData();
   const int    numOfInputCells = pCellData->GetNumberOfTuples();
 
-  // Get array of pedigree IDs
-  vtkIdTypeArray*
-    pPedigreeArr = vtkIdTypeArray::SafeDownCast( pCellData->GetPedigreeIds() );
-
   // Get array of cell types
   vtkIdTypeArray*
-    pShapePrimArr = vtkIdTypeArray::SafeDownCast( pCellData->GetArray(ARRNAME_PART_CELL_TYPES) );
+    pShapePrimArr = vtkIdTypeArray::SafeDownCast( pCellData->GetArray(ARRNAME_MESH_ITEM_TYPE) );
 
   // Choose proper scalar
   asiVisu_MeshPrimitive requestedPrim;
@@ -125,13 +121,9 @@ void asiVisu_TriangulationPipelineBase::SetPickedElements(const TColStd_PackedMa
   // Mark cells
   for ( vtkIdType cellId = 0; cellId < numOfInputCells; ++cellId )
   {
-    // Check pedigree ID of the cell. Continue only for those which are
-    // requested by the caller code
-    double pedigreeIdDbl;
-    pPedigreeArr->GetTuple(cellId, &pedigreeIdDbl);
-    const int pedigreeId = (int) pedigreeIdDbl;
-    //
-    if ( !elementIds.Contains(pedigreeId) )
+    // NOTICE: unlike for B-Reps, here we can use cell IDs as element IDs.
+
+    if ( !elementIds.Contains(cellId) )
       continue;
 
     // Get the current scalar
@@ -178,7 +170,7 @@ void asiVisu_TriangulationPipelineBase::ResetPickedElements(const asiVisu_Select
 
   // Get array of cell types
   vtkIdTypeArray*
-    pShapePrimArr = vtkIdTypeArray::SafeDownCast( pCellData->GetArray(ARRNAME_PART_CELL_TYPES) );
+    pShapePrimArr = vtkIdTypeArray::SafeDownCast( pCellData->GetArray(ARRNAME_MESH_ITEM_TYPE) );
 
   // Choose cache
   NCollection_DataMap<vtkIdType, int>&

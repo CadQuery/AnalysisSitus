@@ -78,6 +78,7 @@ public slots:
   void onDeleteSelectedFull  ();
   void onDivideClosedEdges   ();
   void onDivideAngle         ();
+  void onBoundingBox         ();
 
 protected:
 
@@ -117,6 +118,7 @@ private:
     QPushButton* pDeleteSelectedFull; //!< Deletes selected faces with all contours.
     QPushButton* pDivideClosedEdges;  //!< Divides closed edges in the model.
     QPushButton* pDivideAngle;        //!< Divides faces by angles.
+    QPushButton* pBoundingBox;        //!< Calculates bounding box.
 
     t_widgets() : pShowTOPOGraph      (NULL),
                   pShowAAG            (NULL),
@@ -132,7 +134,8 @@ private:
                   pDeleteSelected     (NULL),
                   pDeleteSelectedFull (NULL),
                   pDivideClosedEdges  (NULL),
-                  pDivideAngle        (NULL)
+                  pDivideAngle        (NULL),
+                  pBoundingBox        (NULL)
     {}
 
     void Release()
@@ -152,6 +155,7 @@ private:
       delete pDeleteSelectedFull; pDeleteSelectedFull = NULL;
       delete pDivideClosedEdges;  pDivideClosedEdges  = NULL;
       delete pDivideAngle;        pDivideAngle        = NULL;
+      delete pBoundingBox;        pBoundingBox        = NULL;
     }
   };
 

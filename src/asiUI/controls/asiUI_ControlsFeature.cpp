@@ -58,6 +58,7 @@
 
 // OCCT includes
 #include <BRep_Builder.hxx>
+#include <BRepPrimAPI_MakeBox.hxx>
 #include <Precision.hxx>
 #include <ShapeUpgrade_ShapeDivideAngle.hxx>
 #include <ShapeUpgrade_ShapeDivideClosedEdges.hxx>
@@ -116,6 +117,7 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   m_widgets.pDeleteSelectedFull  = new QPushButton("Delete selected faces (FULL)");
   m_widgets.pDivideClosedEdges   = new QPushButton("Divide all closed edges");
   m_widgets.pDivideAngle         = new QPushButton("Divide faces by angle");
+  m_widgets.pBoundingBox         = new QPushButton("Compute bounding box");
   //
   m_widgets.pShowTOPOGraph       -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pShowAAG             -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -132,6 +134,7 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   m_widgets.pDeleteSelectedFull  -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pDivideClosedEdges   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pDivideAngle         -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pBoundingBox         -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Group for analysis
   QGroupBox*   pAnalysisGroup = new QGroupBox("Analysis");
@@ -160,6 +163,7 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   pDyModelingLay->addWidget(m_widgets.pDeleteSelectedFull);
   pDyModelingLay->addWidget(m_widgets.pDivideClosedEdges);
   pDyModelingLay->addWidget(m_widgets.pDivideAngle);
+  pDyModelingLay->addWidget(m_widgets.pBoundingBox);
 
   // Set layout
   m_pMainLayout->addWidget(pAnalysisGroup);
@@ -186,6 +190,7 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   connect( m_widgets.pDeleteSelectedFull, SIGNAL( clicked() ), SLOT( onDeleteSelectedFull  () ) );
   connect( m_widgets.pDivideClosedEdges,  SIGNAL( clicked() ), SLOT( onDivideClosedEdges   () ) );
   connect( m_widgets.pDivideAngle,        SIGNAL( clicked() ), SLOT( onDivideAngle         () ) );
+  connect( m_widgets.pBoundingBox,        SIGNAL( clicked() ), SLOT( onBoundingBox         () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -935,6 +940,35 @@ void asiUI_ControlsFeature::onDivideAngle()
 
   // Update viewer
   m_partViewer->PrsMgr()->Actualize( part_n.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Computes bounding box.
+void asiUI_ControlsFeature::onBoundingBox()
+{
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+
+  double xMin, yMin, zMin, xMax, yMax, zMax;
+  asiAlgo_Utils::Bounds(part, xMin, yMin, zMin, xMax, yMax, zMax);
+  //
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Bounding box:\n"
+                                                "\t X min = %1\n"
+                                                "\t Y min = %2\n"
+                                                "\t Z min = %3\n"
+                                                "\t X max = %4\n"
+                                                "\t Y max = %5\n"
+                                                "\t Z max = %6"
+                                             << xMin << yMin << zMin
+                                             << xMax << yMax << zMax );
+
+  // Create bounding box to draw it
+  TopoDS_Shape bndbox = BRepPrimAPI_MakeBox( gp_Pnt(xMin, yMin, zMin), gp_Pnt(xMax, yMax, zMax) );
+  //
+  m_plotter.DRAW_SHAPE(bndbox, Color_Yellow, 1.0, true, "bounding box");
 }
 
 //-----------------------------------------------------------------------------

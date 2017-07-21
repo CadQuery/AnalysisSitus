@@ -35,7 +35,9 @@
 #include <ActAPI_IPlotter.h>
 
 // Qt includes
-#include <QObject>
+#pragma warning(push, 0)
+#include <QMenu>
+#pragma warning(pop)
 
 //! Default slots for part viewer.
 class asiUI_EXPORT asiUI_ViewerPartListener : public QObject
@@ -69,6 +71,14 @@ protected slots:
 
   void
     onContextMenu(const QPoint&);
+
+protected:
+
+  virtual void
+    populateMenu(QMenu&) {}
+
+  virtual void
+    executeAction(QAction*) {}
 
 protected:
 

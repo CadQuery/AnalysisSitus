@@ -306,6 +306,11 @@ protected:
 
 protected:
 
+  asiEngine_EXPORT virtual void
+    clearCustom();
+
+protected:
+
   //! IDs of the registered Partitions.
   enum PartitionId
   {

@@ -190,6 +190,9 @@ int asiVisu_ShapeDisplayModeFilter::RequestData(vtkInformation*        pInfo,
     vtkSmartPointer<vtkIdTypeArray>
       outPedigreeArr = vtkSmartPointer<vtkIdTypeArray>::New();
     //
+    outPedigreeArr->SetName(ARRNAME_PART_SUBSHAPE_IDS);
+    outPedigreeArr->SetNumberOfComponents(1);
+    //
     for ( vtkIdType outIdx = 0; outIdx < numOfRemainingCells; ++outIdx )
     {
       vtkIdType cellId = cellIdsToPass->GetId(outIdx);

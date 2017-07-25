@@ -1,5 +1,10 @@
 ASITUS_THIRDPARTY_PRODUCT("mobius" "" "core.h" "mobiusCore")
 
+if (3RDPARTY_mobius_INCLUDE_DIR STREQUAL "")
+  list (REMOVE_ITEM 3RDPARTY_NOT_INCLUDED 3RDPARTY_mobius_INCLUDE_DIR)
+  set (3RDPARTY_mobius_INCLUDE_DIR ${3RDPARTY_mobius_DIR}/include CACHE FILEPATH "Non-conventional inc dir" FORCE)
+endif()
+
 message (STATUS "... Mobius Include dirs: ${3RDPARTY_mobius_INCLUDE_DIR}")
 message (STATUS "... Mobius Library dirs: ${3RDPARTY_mobius_LIBRARY_DIR}")
 message (STATUS "... Mobius Binary  dirs: ${3RDPARTY_mobius_DLL_DIR}")

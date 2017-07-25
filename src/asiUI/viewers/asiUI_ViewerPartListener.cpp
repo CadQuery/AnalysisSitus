@@ -37,6 +37,9 @@
 // asiEngine includes
 #include <asiEngine_Part.h>
 
+// asiVisu includes
+#include <asiVisu_PartNodeInfo.h>
+
 // OCCT includes
 #include <BRep_Builder.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -95,7 +98,11 @@ void asiUI_ViewerPartListener::Connect()
 //! \param pickRes [in] pick result.
 void asiUI_ViewerPartListener::onFacePicked(const asiVisu_PickResult& pickRes)
 {
-  asiUI_NotUsed(pickRes);
+  // Check if part is picked
+  asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pickRes.GetPickedActor() );
+  //
+  if ( !nodeInfo )
+    return;
 
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
   //
@@ -112,7 +119,11 @@ void asiUI_ViewerPartListener::onFacePicked(const asiVisu_PickResult& pickRes)
 //! \param pickRes [in] pick result.
 void asiUI_ViewerPartListener::onEdgePicked(const asiVisu_PickResult& pickRes)
 {
-  asiUI_NotUsed(pickRes);
+  // Check if part is picked
+  asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pickRes.GetPickedActor() );
+  //
+  if ( !nodeInfo )
+    return;
 
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
   //

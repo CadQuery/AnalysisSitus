@@ -65,6 +65,10 @@ public:
   //-------------------//
     PID_Triangulation, //!< Tessellation.
   //-------------------//
+  // Options           //
+  //-------------------//
+    PID_Options,       //!< Array of options (application-specific).
+  //-------------------//
   // Presentation      //
   //-------------------//
     PID_DisplayMode,   //!< Display mode.
@@ -96,6 +100,12 @@ public:
 
   asiData_EXPORT void
     SetTriangulation(const Handle(Poly_Triangulation)& triangulation);
+
+  asiData_EXPORT Handle(TColStd_HArray1OfReal)
+    GetOptions() const;
+
+  asiData_EXPORT void
+    SetOptions(const Handle(TColStd_HArray1OfReal)& options);
 
   asiData_EXPORT void
     SetHasColor(const bool hasColor) const;

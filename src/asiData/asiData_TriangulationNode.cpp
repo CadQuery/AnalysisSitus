@@ -36,6 +36,7 @@ asiData_TriangulationNode::asiData_TriangulationNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,          PID_Name);
   REGISTER_PARAMETER(Triangulation, PID_Triangulation);
+  REGISTER_PARAMETER(RealArray,     PID_Options);
   REGISTER_PARAMETER(Int,           PID_DisplayMode);
   REGISTER_PARAMETER(Bool,          PID_HasColor);
   REGISTER_PARAMETER(Int,           PID_Color);
@@ -55,8 +56,9 @@ void asiData_TriangulationNode::Init()
   // Initialize name Parameter
   this->InitParameter(PID_Name, "Name");
 
-  // Set empty initial mesh
+  // Set empty initial mesh with empty options
   this->SetTriangulation(NULL);
+  this->SetOptions(NULL);
 
   // Set Presentation values
   this->SetHasColor(false);
@@ -97,6 +99,20 @@ Handle(Poly_Triangulation) asiData_TriangulationNode::GetTriangulation() const
 void asiData_TriangulationNode::SetTriangulation(const Handle(Poly_Triangulation)& triangulation)
 {
   ActParamTool::AsTriangulation( this->Parameter(PID_Triangulation) )->SetTriangulation(triangulation);
+}
+
+//! Returns triangulation options.
+//! \return domain-specific triangulation options.
+Handle(TColStd_HArray1OfReal) asiData_TriangulationNode::GetOptions() const
+{
+  return ActParamTool::AsRealArray( this->Parameter(PID_Options) )->GetArray();
+}
+
+//! Sets domain-specific triangulation options.
+//! \param options [in] triangulation options to set.
+void asiData_TriangulationNode::SetOptions(const Handle(TColStd_HArray1OfReal)& options)
+{
+  ActParamTool::AsRealArray( this->Parameter(PID_Options) )->SetArray(options);
 }
 
 //! Sets the Boolean value indicating whether the color Parameter of this

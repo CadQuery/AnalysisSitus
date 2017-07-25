@@ -28,6 +28,7 @@
 
 // asiVisu includes
 #include <asiVisu_GeomPrs.h>
+#include <asiVisu_PartNodeInfo.h>
 
 // asiAlgo includes
 #include <asiAlgo_Utils.h>
@@ -465,8 +466,14 @@ void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShap
     M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
 
   // Get actual selection
-  const asiVisu_ActualSelection&    sel           = m_prsMgr->GetCurrentSelection();
-  const asiVisu_PickResult&         pick_res      = sel.PickResult(SelectionNature_Pick);
+  const asiVisu_ActualSelection& sel      = m_prsMgr->GetCurrentSelection();
+  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  //
+  asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pick_res.GetPickedActor() );
+  //
+  if ( !nodeInfo )
+    return;
+
   const TColStd_PackedMapOfInteger& subshape_mask = pick_res.GetPickedElementIds();
   //
   for ( TColStd_MapIteratorOfPackedMapOfInteger mit(subshape_mask); mit.More(); mit.Next() )

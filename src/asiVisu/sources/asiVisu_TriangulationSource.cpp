@@ -106,6 +106,12 @@ int asiVisu_TriangulationSource::RequestData(vtkInformation*        request,
   typeArr->SetNumberOfComponents(1);
   polyOutput->GetCellData()->AddArray(typeArr);
 
+  // Add array for mesh element IDs
+  vtkSmartPointer<vtkIdTypeArray> faceIDsArr = vtkSmartPointer<vtkIdTypeArray>::New();
+  faceIDsArr->SetName(ARRNAME_MESH_ELEM_IDS);
+  faceIDsArr->SetNumberOfComponents(1);
+  polyOutput->GetCellData()->SetPedigreeIds(faceIDsArr);
+
   /* ==============================================================
    *  Take care of free nodes by collecting them into a dedicated
    *  VTK_POLY_VERTEX cell. Notice that such cell (as well as
@@ -234,16 +240,16 @@ int asiVisu_TriangulationSource::RequestData(vtkInformation*        request,
    *  Add facets
    * ============ */
 
-  for ( int i = triangles.Lower(); i <= triangles.Upper(); ++i )
+  for ( int elemId = triangles.Lower(); elemId <= triangles.Upper(); ++elemId )
   {
-    const Poly_Triangle& tri = triangles(i);
+    const Poly_Triangle& tri = triangles(elemId);
 
     // Get nodes
     int n1, n2, n3;
     tri.Get(n1, n2, n3);
 
     // Register VTK cell
-    this->registerFacet(n1, n2, n3, polyOutput);
+    this->registerFacet(elemId, n1, n2, n3, polyOutput);
   }
 
   return Superclass::RequestData(request, inputVector, outputVector);
@@ -277,7 +283,8 @@ vtkIdType
 //-----------------------------------------------------------------------------
 
 vtkIdType
-  asiVisu_TriangulationSource::registerFacet(const int    nodeID1,
+  asiVisu_TriangulationSource::registerFacet(const int    elemId,
+                                             const int    nodeID1,
                                              const int    nodeID2,
                                              const int    nodeID3,
                                              vtkPolyData* polyData)
@@ -292,11 +299,17 @@ vtkIdType
   // Register cell
   vtkIdType cellID = polyData->InsertNextCell(VTK_TRIANGLE, 3, &pids[0]);
 
-  // Register type
+  // Store element type
   vtkIdTypeArray*
     typeArr = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_MESH_ITEM_TYPE) );
   //
   typeArr->InsertNextValue(MeshPrimitive_FacetTriangle);
+
+  // Store element ID
+  vtkIdTypeArray*
+    elemIDsArr = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_MESH_ELEM_IDS) );
+  //
+  elemIDsArr->InsertNextValue(elemId);
 
   return cellID;
 }
@@ -326,6 +339,13 @@ vtkIdType
     typeArr = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_MESH_ITEM_TYPE) );
   //
   typeArr->InsertNextValue(MeshPrimitive_FreeNode);
+
+  // Store element ID
+  vtkIdTypeArray*
+    elemIDsArr = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_MESH_ELEM_IDS) );
+  //
+  elemIDsArr->InsertNextValue(VTK_BAD_ID);
+
   return cellID;
 }
 
@@ -353,6 +373,12 @@ vtkIdType
     typeArr = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_MESH_ITEM_TYPE) );
   //
   typeArr->InsertNextValue(type);
+
+  // Store element ID
+  vtkIdTypeArray*
+    elemIDsArr = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_MESH_ELEM_IDS) );
+  //
+  elemIDsArr->InsertNextValue(VTK_BAD_ID);
 
   return cellID;
 }

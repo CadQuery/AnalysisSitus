@@ -155,6 +155,9 @@ void asiEngine_Model::Clear()
     // Delete all Nodes queued for removal
     for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
       this->DeleteNode( nit.Value()->GetId() );
+
+    // Let sub-classes do some job
+    this->clearCustom();
   }
   this->CommitCommand(); // tx end
 }
@@ -288,3 +291,9 @@ Handle(ActData_CAFConverter) asiEngine_Model::converterApp()
 {
   return NULL;
 }
+
+//-----------------------------------------------------------------------------
+
+//! Callback for custom Data Model clean up logic.
+void asiEngine_Model::clearCustom()
+{}

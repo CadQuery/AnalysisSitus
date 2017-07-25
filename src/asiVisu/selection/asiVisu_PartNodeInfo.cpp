@@ -60,7 +60,12 @@ vtkInformationObjectBaseKey* asiVisu_PartNodeInfo::GetKey()
 asiVisu_PartNodeInfo* asiVisu_PartNodeInfo::Retrieve(vtkActor* actor)
 {
   asiVisu_PartNodeInfo* result = NULL;
+  //
+  if ( !actor )
+    return result;
+
   vtkInformation* info = actor->GetPropertyKeys();
+  //
   if ( info )
   {
     vtkInformationObjectBaseKey* key = GetKey();

@@ -160,6 +160,10 @@ int asiVisu_TriangulationDisplayModeFilter::RequestData(vtkInformation*        p
   for ( int i = 0; i < pInputCellData->GetNumberOfArrays(); ++i )
   {
     vtkDataArray* pInArr  = pInputCellData->GetArray(i);
+
+    if ( !_strcmpi( pInArr->GetName(), ARRNAME_MESH_ELEM_IDS ) )
+      continue;
+
     vtkDataArray* pOutArr = vtkDataArray::CreateDataArray( pInArr->GetDataType() );
     //
     pOutArr->SetName( pInArr->GetName() );
@@ -185,6 +189,9 @@ int asiVisu_TriangulationDisplayModeFilter::RequestData(vtkInformation*        p
   {
     vtkSmartPointer<vtkIdTypeArray>
       outPedigreeArr = vtkSmartPointer<vtkIdTypeArray>::New();
+    //
+    outPedigreeArr->SetName(ARRNAME_MESH_ELEM_IDS);
+    outPedigreeArr->SetNumberOfComponents(1);
     //
     for ( vtkIdType outIdx = 0; outIdx < numOfRemainingCells; ++outIdx )
     {

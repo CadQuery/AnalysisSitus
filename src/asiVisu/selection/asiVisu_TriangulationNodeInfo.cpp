@@ -60,7 +60,12 @@ vtkInformationObjectBaseKey* asiVisu_TriangulationNodeInfo::GetKey()
 asiVisu_TriangulationNodeInfo* asiVisu_TriangulationNodeInfo::Retrieve(vtkActor* actor)
 {
   asiVisu_TriangulationNodeInfo* result = NULL;
+  //
+  if ( !actor )
+    return result;
+
   vtkInformation* info = actor->GetPropertyKeys();
+  //
   if ( info )
   {
     vtkInformationObjectBaseKey* key = GetKey();

@@ -125,13 +125,15 @@ private:
 
   //! Adds the mesh element with to VTK polygonal data.
   //!
+  //! \param elemId   [in]     1-based element ID in the original Poly_Triangulation.
   //! \param nodeID1  [in]     ID of the 1-st node.
   //! \param nodeID2  [in]     ID of the 2-nd node.
   //! \param nodeID3  [in]     ID of the 3-rd node.
   //! \param polyData [in,out] polygonal data being populated.
   //! \return ID of the just added VTK cell.
   vtkIdType
-    registerFacet(const int    nodeID1,
+    registerFacet(const int    elemId,
+                  const int    nodeID1,
                   const int    nodeID2,
                   const int    nodeID3,
                   vtkPolyData* polyData);

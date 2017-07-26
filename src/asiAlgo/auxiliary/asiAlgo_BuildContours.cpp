@@ -149,7 +149,7 @@ bool asiAlgo_BuildContours::operator()(const asiAlgo_IntersectionPointsCC& point
     WireHealer.FixReorder();
     W = WireHealer.Wire();
 
-    this->Plotter().CLEAN();
+    this->Plotter().ERASE_ALL();
     this->Plotter().DRAW_SHAPE(W, Color_Red, 0.5, false, "Wire");
 
     // Now build a face with a single outer wire

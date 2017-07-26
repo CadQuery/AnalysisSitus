@@ -198,7 +198,8 @@ public:
 public:
 
   asiUI_EXPORT virtual void
-    DRAW_TEXT(const TCollection_AsciiString& text);
+    DRAW_TEXT(const TCollection_AsciiString& text,
+              const TCollection_AsciiString& name);
 
 // A-SITUS SPECIFIC:
 public:

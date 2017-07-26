@@ -51,19 +51,6 @@
 
 //-----------------------------------------------------------------------------
 
-//! Convert integer value to a color.
-//! \param color [in] integer value.
-//! \return converted value
-static QColor IntToColor(const int color)
-{
-  unsigned char red   = ( color >> 16 ) & 0xFF;
-  unsigned char green = ( color >>  8 ) & 0xFF;
-  unsigned char blue  =   color         & 0xFF;
-  return QColor(red, green, blue);
-}
-
-//-----------------------------------------------------------------------------
-
 //! Creates a Presentation object for the passed Part Node.
 //! \param N [in] Part Node to create a Presentation for.
 asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)

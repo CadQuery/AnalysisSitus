@@ -135,7 +135,6 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
   {
     // Get the list of points for this cell
     input->GetCellPoints(cellId, oldPointIds);
-    vtkIdType aNbCellPoints = oldPointIds->GetNumberOfIds();
 
     // Create new points for this cell
     newPointIds->Reset();

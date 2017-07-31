@@ -56,10 +56,14 @@ asiUI_PickEdgeCallback::~asiUI_PickEdgeCallback()
 //! \param pCaller   [in] caller instance.
 //! \param eventId   [in] ID of the event triggered this listener.
 //! \param pCallData [in] invocation context.
-void asiUI_PickEdgeCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
-                                     unsigned long vtkNotUsed(eventId),
+void asiUI_PickEdgeCallback::Execute(vtkObject*    pCaller,
+                                     unsigned long eventId,
                                      void*         pCallData)
 {
+  asiUI_NotUsed(pCaller);
+  asiUI_NotUsed(eventId);
+  asiUI_NotUsed(pCallData);
+
   Handle(asiData_PartNode) part_n;
   TopoDS_Shape             part;
   //

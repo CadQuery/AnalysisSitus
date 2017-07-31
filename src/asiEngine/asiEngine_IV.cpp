@@ -26,10 +26,10 @@
 // Own include
 #include <asiEngine_IV.h>
 
-// Common includes
+// asiEngine includes
 #include <asiEngine_Model.h>
 
-// Mesh includes
+// asiAlgo includes
 #include <asiAlgo_MeshConvert.h>
 
 // Active Data includes
@@ -39,6 +39,8 @@
 #include <Geom_RectangularTrimmedSurface.hxx>
 #include <Geom_TrimmedCurve.hxx>
 #include <Precision.hxx>
+
+//-----------------------------------------------------------------------------
 
 //! \return newly created IV Node.
 Handle(asiData_IVNode) asiEngine_IV::Create_IV()
@@ -155,13 +157,84 @@ Handle(asiData_IVNode) asiEngine_IV::Create_IV()
 
 //-----------------------------------------------------------------------------
 
+//! Cleans all data objects related to imperative plotter.
+void asiEngine_IV::Clean_All()
+{
+  Clean_Curves();
+  Clean_Points();
+  Clean_Points2d();
+  Clean_Surfaces();
+  Clean_Tess();
+  Clean_Text();
+  Clean_Topo();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Cleans objects by name. If several objects with the given name are found,
+//! all them are deleted. The search is done in a tree branch rooted by
+//! Imperative Viewer Node.
+//!
+//! \param name [in] name of the target object.
+void asiEngine_IV::Clean(const TCollection_AsciiString& name)
+{
+  Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList;
+
+  // Find all Nodes with the given name
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->GetChildIterator(true); cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) node = cit->Value();
+    //
+    if ( node.IsNull() || !node->IsWellFormed() )
+      continue;
+
+    TCollection_ExtendedString nodeName = node->GetName();
+    //
+    if ( nodeName.IsEqual(name) )
+      nodesToDelete->Append(node);
+  }
+
+  // Delete all Nodes queued for removal
+  for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
+    m_model->DeleteNode( nit.Value()->GetId() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Finds Node with the given name. Returns null if nothing is found.
+//! \param name [in] target name.
+//! \return found Node (the first one if several exist) or null.
+Handle(asiData_IVPointSet2dNode)
+  asiEngine_IV::Find_PointSet2d(const TCollection_AsciiString& name)
+{
+  // Find the first Node with the given name
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->Points2d()->GetChildIterator(true); cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) node = cit->Value();
+    //
+    if ( node.IsNull() || !node->IsWellFormed() )
+      continue;
+
+    TCollection_ExtendedString nodeName = node->GetName();
+    //
+    if ( nodeName.IsEqual(name) )
+      return Handle(asiData_IVPointSet2dNode)::DownCast(node);
+  }
+
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Creates Point Set 2D Node.
-//! \param coords [in] target point cloud.
-//! \param name   [in] name to set (auto-generated if empty).
+//! \param coords        [in] target point cloud.
+//! \param name          [in] name to set (auto-generated if empty).
+//! \param useAutoNaming [in] indicates whether to auto-name entities.
 //! \return Point Set 2D Node.
 Handle(asiData_IVPointSet2dNode)
   asiEngine_IV::Create_PointSet2d(const Handle(TColStd_HArray1OfReal)& coords,
-                                  const TCollection_AsciiString&       name)
+                                  const TCollection_AsciiString&       name,
+                                  const bool                           useAutoNaming)
 {
   // Access Model and parent Node
   Handle(asiData_IVPoints2dNode) IV_Parent = m_model->GetIVNode()->Points2d();
@@ -172,7 +245,8 @@ Handle(asiData_IVPointSet2dNode)
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Point Set 2D" : name );
-  item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
+  if ( useAutoNaming )
+    item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
 
   // Initialize
   item_n->Init();
@@ -189,11 +263,13 @@ Handle(asiData_IVPointSet2dNode)
 //-----------------------------------------------------------------------------
 
 //! Creates a two-dimensional point set from a vector of gp_Pnt2d objects.
-//! \param points [in] vector to store.
-//! \param name   [in] desired object name.
+//! \param points        [in] vector to store.
+//! \param name          [in] desired object name.
+//! \param useAutoNaming [in] indicates whether to auto-name entities.
 Handle(asiData_IVPointSet2dNode)
   asiEngine_IV::Create_PointSet2d(const std::vector<gp_Pnt2d>&   points,
-                                  const TCollection_AsciiString& name)
+                                  const TCollection_AsciiString& name,
+                                  const bool                     useAutoNaming)
 {
   Handle(TColStd_HArray1OfReal) hcoords = new TColStd_HArray1OfReal(0, points.size()*2 - 1);
   //
@@ -204,7 +280,7 @@ Handle(asiData_IVPointSet2dNode)
   }
 
   // Create from coordinates
-  return Create_PointSet2d(hcoords, name);
+  return Create_PointSet2d(hcoords, name, useAutoNaming);
 }
 
 //-----------------------------------------------------------------------------
@@ -220,13 +296,40 @@ void asiEngine_IV::Clean_Points2d()
 
 //-----------------------------------------------------------------------------
 
+//! Finds Node with the given name. Returns null if nothing is found.
+//! \param name [in] target name.
+//! \return found Node (the first one if several exist) or null.
+Handle(asiData_IVPointSetNode)
+  asiEngine_IV::Find_PointSet(const TCollection_AsciiString& name)
+{
+  // Find the first Node with the given name
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->Points()->GetChildIterator(true); cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) node = cit->Value();
+    //
+    if ( node.IsNull() || !node->IsWellFormed() )
+      continue;
+
+    TCollection_ExtendedString nodeName = node->GetName();
+    //
+    if ( nodeName.IsEqual(name) )
+      return Handle(asiData_IVPointSetNode)::DownCast(node);
+  }
+
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Creates Point Set Node.
-//! \param points [in] target point cloud.
-//! \param name   [in] name to set (auto-generated if empty).
+//! \param points        [in] target point cloud.
+//! \param name          [in] name to set (auto-generated if empty).
+//! \param useAutoNaming [in] indicates whether to auto-name entities.
 //! \return Point Set Node.
 Handle(asiData_IVPointSetNode)
   asiEngine_IV::Create_PointSet(const Handle(asiAlgo_BaseCloud<double>)& points,
-                                const TCollection_AsciiString&           name)
+                                const TCollection_AsciiString&           name,
+                                const bool                               useAutoNaming)
 {
   // Access Model and parent Node
   Handle(asiData_IVPointsNode) IV_Parent = m_model->GetIVNode()->Points();
@@ -237,7 +340,8 @@ Handle(asiData_IVPointSetNode)
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Point Set" : name );
-  item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
+  if ( useAutoNaming )
+    item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
 
   // Initialize
   item_n->Init();
@@ -264,15 +368,42 @@ void asiEngine_IV::Clean_Points()
 
 //-----------------------------------------------------------------------------
 
+//! Finds Node with the given name. Returns null if nothing is found.
+//! \param name [in] target name.
+//! \return found Node (the first one if several exist) or null.
+Handle(asiData_IVCurveNode)
+  asiEngine_IV::Find_Curve(const TCollection_AsciiString& name)
+{
+  // Find the first Node with the given name
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->Curves()->GetChildIterator(true); cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) node = cit->Value();
+    //
+    if ( node.IsNull() || !node->IsWellFormed() )
+      continue;
+
+    TCollection_ExtendedString nodeName = node->GetName();
+    //
+    if ( nodeName.IsEqual(name) )
+      return Handle(asiData_IVCurveNode)::DownCast(node);
+  }
+
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Creates Curve Node.
-//! \param curve  [in] parametric curve to store.
-//! \param uLimit [in] absolute value to bound infinite parametric domain.
-//! \param name   [in] name to set (auto-generated if empty).
+//! \param curve         [in] parametric curve to store.
+//! \param uLimit        [in] absolute value to bound infinite parametric domain.
+//! \param name          [in] name to set (auto-generated if empty).
+//! \param useAutoNaming [in] indicates whether to auto-name entities.
 //! \return newly created Node.
 Handle(asiData_IVCurveNode)
   asiEngine_IV::Create_Curve(const Handle(Geom_Curve)&      curve,
                              const double                   uLimit,
-                             const TCollection_AsciiString& name)
+                             const TCollection_AsciiString& name,
+                             const bool                     useAutoNaming)
 {
   if ( curve.IsNull() )
     return NULL;
@@ -286,8 +417,31 @@ Handle(asiData_IVCurveNode)
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Curve" : name );
-  item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
+  if ( useAutoNaming )
+    item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
+  //
+  item_n->SetName(item_name);
 
+  // Initialize Node
+  Update_Curve(item_n, curve, uLimit);
+
+  // Add as child
+  IV_Parent->AddChildNode(item_n);
+
+  // Return the just created Node
+  return item_n;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Updates Curve Node with the passed curve data.
+//! \param node   [in] Curve Node to update.
+//! \param curve  [in] parametric curve to store.
+//! \param uLimit [in] absolute value to bound infinite parametric domain.
+void asiEngine_IV::Update_Curve(const Handle(asiData_IVCurveNode)& node,
+                                const Handle(Geom_Curve)&          curve,
+                                const double                       uLimit)
+{
   // Handle infinite domains
   double             f      = curve->FirstParameter();
   double             l      = curve->LastParameter();
@@ -311,16 +465,11 @@ Handle(asiData_IVCurveNode)
     geometry = curve;
 
   // Initialize
-  item_n->Init();
-  item_n->SetName(item_name);
-  item_n->SetCurve(geometry, f, l);
-
-  // Add as child
-  IV_Parent->AddChildNode(item_n);
-
-  // Return the just created Node
-  return item_n;
+  node->Init();
+  node->SetCurve(geometry, f, l);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Deletes all Curve Nodes.
 void asiEngine_IV::Clean_Curves()
@@ -333,17 +482,44 @@ void asiEngine_IV::Clean_Curves()
 
 //-----------------------------------------------------------------------------
 
+//! Finds Node with the given name. Returns null if nothing is found.
+//! \param name [in] target name.
+//! \return found Node (the first one if several exist) or null.
+Handle(asiData_IVSurfaceNode)
+  asiEngine_IV::Find_Surface(const TCollection_AsciiString& name)
+{
+  // Find the first Node with the given name
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->Surfaces()->GetChildIterator(true); cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) node = cit->Value();
+    //
+    if ( node.IsNull() || !node->IsWellFormed() )
+      continue;
+
+    TCollection_ExtendedString nodeName = node->GetName();
+    //
+    if ( nodeName.IsEqual(name) )
+      return Handle(asiData_IVSurfaceNode)::DownCast(node);
+  }
+
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Creates Surface Node.
-//! \param surface [in] parametric surface to store.
-//! \param uLimit  [in] absolute value to bound infinite parametric domain in U.
-//! \param vLimit  [in] absolute value to bound infinite parametric domain in V.
-//! \param name    [in] name to set (auto-generated if empty).
+//! \param surface       [in] parametric surface to store.
+//! \param uLimit        [in] absolute value to bound infinite parametric domain in U.
+//! \param vLimit        [in] absolute value to bound infinite parametric domain in V.
+//! \param name          [in] name to set (auto-generated if empty).
+//! \param useAutoNaming [in] indicates whether to auto-name entities.
 //! \return newly created Node.
 Handle(asiData_IVSurfaceNode)
   asiEngine_IV::Create_Surface(const Handle(Geom_Surface)&    surface,
                                const double                   uLimit,
                                const double                   vLimit,
-                               const TCollection_AsciiString& name)
+                               const TCollection_AsciiString& name,
+                               const bool                     useAutoNaming)
 {
   if ( surface.IsNull() )
     return NULL;
@@ -357,13 +533,13 @@ Handle(asiData_IVSurfaceNode)
 
   // Generate unique name if a good name is not passed
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Surface" : name );
-  item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
+  if ( useAutoNaming )
+    item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
+  //
+  item_n->SetName(item_name);
 
   // Initialize
-  item_n->Init();
-  item_n->SetName(item_name);
-  item_n->SetSurface(surface);
-  item_n->SetLimits(uLimit, vLimit);
+  Update_Surface(item_n, surface, uLimit, vLimit);
 
   // Add as child
   IV_Parent->AddChildNode(item_n);
@@ -371,6 +547,26 @@ Handle(asiData_IVSurfaceNode)
   // Return the just created Node
   return item_n;
 }
+
+//-----------------------------------------------------------------------------
+
+//! Updates Surface Node.
+//! \param node    [in] Data Node to update.
+//! \param surface [in] parametric surface to store.
+//! \param uLimit  [in] absolute value to bound infinite parametric domain in U.
+//! \param vLimit  [in] absolute value to bound infinite parametric domain in V.
+void asiEngine_IV::Update_Surface(const Handle(asiData_IVSurfaceNode)& node,
+                                  const Handle(Geom_Surface)&          surface,
+                                  const double                         uLimit,
+                                  const double                         vLimit)
+{
+  // Initialize
+  node->Init();
+  node->SetSurface(surface);
+  node->SetLimits(uLimit, vLimit);
+}
+
+//-----------------------------------------------------------------------------
 
 //! Deletes all Surface Nodes.
 void asiEngine_IV::Clean_Surfaces()
@@ -383,13 +579,40 @@ void asiEngine_IV::Clean_Surfaces()
 
 //-----------------------------------------------------------------------------
 
+//! Finds Node with the given name. Returns null if nothing is found.
+//! \param name [in] target name.
+//! \return found Node (the first one if several exist) or null.
+Handle(asiData_IVTopoItemNode)
+  asiEngine_IV::Find_TopoItem(const TCollection_AsciiString& name)
+{
+  // Find the first Node with the given name
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->Topology()->GetChildIterator(true); cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) node = cit->Value();
+    //
+    if ( node.IsNull() || !node->IsWellFormed() )
+      continue;
+
+    TCollection_ExtendedString nodeName = node->GetName();
+    //
+    if ( nodeName.IsEqual(name) )
+      return Handle(asiData_IVTopoItemNode)::DownCast(node);
+  }
+
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Creates Topological Item Node.
-//! \param shape [in] shape to store.
-//! \param name  [in] name to set (auto-generated if empty).
+//! \param shape         [in] shape to store.
+//! \param name          [in] name to set (auto-generated if empty).
+//! \param useAutoNaming [in] indicates whether to auto-name entities.
 //! \return newly created Node.
 Handle(asiData_IVTopoItemNode)
   asiEngine_IV::Create_TopoItem(const TopoDS_Shape&            shape,
-                                const TCollection_AsciiString& name)
+                                const TCollection_AsciiString& name,
+                                const bool                     useAutoNaming)
 {
   // Access Model and parent Node
   Handle(asiData_IVTopoNode) IV_Parent = m_model->GetIVNode()->Topology();
@@ -400,12 +623,13 @@ Handle(asiData_IVTopoItemNode)
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Shape" : name );
-  item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
+  if ( useAutoNaming )
+    item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
+  //
+  item_n->SetName(item_name);
 
   // Initialize
-  item_n->Init();
-  item_n->SetName(item_name);
-  item_n->SetShape(shape);
+  Update_TopoItem(item_n, shape);
 
   // Add as child
   IV_Parent->AddChildNode(item_n);
@@ -413,6 +637,21 @@ Handle(asiData_IVTopoItemNode)
   // Return the just created Node
   return item_n;
 }
+
+//-----------------------------------------------------------------------------
+
+//! Updates Topo Item Node.
+//! \param node  [in] Data Node to update.
+//! \param shape [in] B-Rep shape to store.
+void asiEngine_IV::Update_TopoItem(const Handle(asiData_IVTopoItemNode)& node,
+                                   const TopoDS_Shape&                   shape)
+{
+  // Initialize
+  node->Init();
+  node->SetShape(shape);
+}
+
+//-----------------------------------------------------------------------------
 
 //! Deletes all topological items.
 void asiEngine_IV::Clean_Topo()
@@ -425,13 +664,40 @@ void asiEngine_IV::Clean_Topo()
 
 //-----------------------------------------------------------------------------
 
+//! Finds Node with the given name. Returns null if nothing is found.
+//! \param name [in] target name.
+//! \return found Node (the first one if several exist) or null.
+Handle(asiData_IVTessItemNode)
+  asiEngine_IV::Find_TessItem(const TCollection_AsciiString& name)
+{
+  // Find the first Node with the given name
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->Tessellation()->GetChildIterator(true); cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) node = cit->Value();
+    //
+    if ( node.IsNull() || !node->IsWellFormed() )
+      continue;
+
+    TCollection_ExtendedString nodeName = node->GetName();
+    //
+    if ( nodeName.IsEqual(name) )
+      return Handle(asiData_IVTessItemNode)::DownCast(node);
+  }
+
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Creates tessellation item.
-//! \param tess [in] surface triangulation to create a tessellation item from.
-//! \param name [in] name of the tessellation item.
+//! \param tess          [in] surface triangulation to create a tessellation item from.
+//! \param name          [in] name of the tessellation item.
+//! \param useAutoNaming [in] indicates whether to auto-name entities.
 //! \return newly created tessellation item.
 Handle(asiData_IVTessItemNode)
   asiEngine_IV::Create_TessItem(const Handle(Poly_Triangulation)& tess,
-                                const TCollection_AsciiString&    name)
+                                const TCollection_AsciiString&    name,
+                                const bool                        useAutoNaming)
 {
   // Access Model and parent Node
   Handle(asiData_IVTessNode) IV_Parent = m_model->GetIVNode()->Tessellation();
@@ -442,17 +708,13 @@ Handle(asiData_IVTessItemNode)
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Mesh" : name );
-  item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
-
-  // Convert to AD mesh
-  Handle(ActData_Mesh) mesh;
-  if ( !asiAlgo_MeshConvert::ToPersistent(tess, mesh) )
-    return NULL;
+  if ( useAutoNaming )
+    item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
+  //
+  item_n->SetName(item_name);
 
   // Initialize
-  item_n->Init();
-  item_n->SetName(item_name);
-  item_n->SetMesh(mesh);
+  Update_TessItem(item_n, tess);
 
   // Add as child
   IV_Parent->AddChildNode(item_n);
@@ -460,6 +722,26 @@ Handle(asiData_IVTessItemNode)
   // Return the just created Node
   return item_n;
 }
+
+//-----------------------------------------------------------------------------
+
+//! Updates Tessellation Item Node.
+//! \param node [in] Data Node to update.
+//! \param tess [in] triangulation to store.
+void asiEngine_IV::Update_TessItem(const Handle(asiData_IVTessItemNode)& node,
+                                   const Handle(Poly_Triangulation)&     tess)
+{
+  // Convert to AD mesh
+  Handle(ActData_Mesh) mesh;
+  if ( !asiAlgo_MeshConvert::ToPersistent(tess, mesh) )
+    return;
+
+  // Initialize
+  node->Init();
+  node->SetMesh(mesh);
+}
+
+//-----------------------------------------------------------------------------
 
 //! Deletes all tessellation items.
 void asiEngine_IV::Clean_Tess()
@@ -472,11 +754,40 @@ void asiEngine_IV::Clean_Tess()
 
 //-----------------------------------------------------------------------------
 
+//! Finds Node with the given name. Returns null if nothing is found.
+//! \param name [in] target name.
+//! \return found Node (the first one if several exist) or null.
+Handle(asiData_IVTextItemNode)
+  asiEngine_IV::Find_TextItem(const TCollection_AsciiString& name)
+{
+  // Find the first Node with the given name
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->Text()->GetChildIterator(true); cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) node = cit->Value();
+    //
+    if ( node.IsNull() || !node->IsWellFormed() )
+      continue;
+
+    TCollection_ExtendedString nodeName = node->GetName();
+    //
+    if ( nodeName.IsEqual(name) )
+      return Handle(asiData_IVTextItemNode)::DownCast(node);
+  }
+
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Creates text item.
-//! \param text [in] text to store in the persistent item.
+//! \param text          [in] text to store in the persistent item.
+//! \param name          [in] name to set.
+//! \param useAutoNaming [in] indicates whether to auto-name entities.
 //! \return newly created text item.
 Handle(asiData_IVTextItemNode)
-  asiEngine_IV::Create_TextItem(const TCollection_AsciiString& text)
+  asiEngine_IV::Create_TextItem(const TCollection_AsciiString& text,
+                                const TCollection_AsciiString& name,
+                                const bool                     useAutoNaming)
 {
   // Access Model and parent Node
   Handle(asiData_IVTextNode) IV_Parent = m_model->GetIVNode()->Text();
@@ -485,25 +796,32 @@ Handle(asiData_IVTextItemNode)
   Handle(asiData_IVTextItemNode) item_n = Handle(asiData_IVTextItemNode)::DownCast( asiData_IVTextItemNode::Instance() );
   m_model->GetIVTextItemPartition()->AddNode(item_n);
 
-  // Generate unique name
+  // Generate name from text
   TCollection_ExtendedString item_name;
-  //
-  if ( text.IsEmpty() )
-    item_name = "Text";
-  else
+  if ( name.IsEmpty() )
   {
-    item_name = text.SubString( 1, Min(text.Length(), 16) );
+    //
+    if ( text.IsEmpty() )
+      item_name = "Text";
+    else
+    {
+      item_name = text.SubString( 1, Min(text.Length(), 16) );
 
-    if ( text.Length() > item_name.Length() )
-      item_name += "...";
+      if ( text.Length() > item_name.Length() )
+        item_name += "...";
+    }
   }
+  else
+    item_name = name;
+
+  // Generate unique
+  if ( useAutoNaming )
+    item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
   //
-  item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
+  item_n->SetName(item_name);
 
   // Initialize
-  item_n->Init();
-  item_n->SetName(item_name);
-  item_n->SetText(text);
+  Update_TextItem(item_n, text);
 
   // Add as child
   IV_Parent->AddChildNode(item_n);
@@ -511,6 +829,20 @@ Handle(asiData_IVTextItemNode)
   // Return the just created Node
   return item_n;
 }
+
+//-----------------------------------------------------------------------------
+
+//! Updates Text Item Node.
+//! \param node [in] Data Node to update.
+//! \param text [in] text to store.
+void asiEngine_IV::Update_TextItem(const Handle(asiData_IVTextItemNode)& node,
+                                   const TCollection_AsciiString&        text)
+{
+  node->Init();
+  node->SetText(text);
+}
+
+//-----------------------------------------------------------------------------
 
 //! Deletes all text items.
 void asiEngine_IV::Clean_Text()

@@ -124,10 +124,13 @@ asiUI_RotationCallback::~asiUI_RotationCallback()
 //! \param pCaller   [in] caller instance.
 //! \param eventId   [in] ID of the event triggered this listener.
 //! \param pCallData [in] invocation context.
-void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(pCaller),
+void asiUI_RotationCallback::Execute(vtkObject*    pCaller,
                                      unsigned long eventId,
                                      void*         pCallData)
 {
+  asiVisu_NotUsed(pCaller);
+  asiVisu_NotUsed(pCallData);
+
   /* =======================================
    *  Check if the calling context is valid
    * ======================================= */

@@ -127,20 +127,9 @@ void asiEngine_Model::Populate()
 //! Clears the Model.
 void asiEngine_Model::Clear()
 {
-  // Nodes to delete
-  Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList;
-
   // NOTE: Part Node is not touched as it is structural. No sense in
   //       removing it since we will have to create it again once a new
   //       part is loaded. The same rule applies to other structural Nodes.
-
-  ::PrepareForRemoval(this->GetIVNode()->Points2d(),     nodesToDelete);
-  ::PrepareForRemoval(this->GetIVNode()->Points(),       nodesToDelete);
-  ::PrepareForRemoval(this->GetIVNode()->Curves(),       nodesToDelete);
-  ::PrepareForRemoval(this->GetIVNode()->Surfaces(),     nodesToDelete);
-  ::PrepareForRemoval(this->GetIVNode()->Topology(),     nodesToDelete);
-  ::PrepareForRemoval(this->GetIVNode()->Tessellation(), nodesToDelete);
-  ::PrepareForRemoval(this->GetIVNode()->Text(),         nodesToDelete);
 
   // Perform deletion
   this->OpenCommand(); // tx start
@@ -152,9 +141,8 @@ void asiEngine_Model::Clear()
     this->GetPartNode()->GetEdgeRepresentation()    ->SetSelectedEdge(0);
     this->GetPartNode()->GetCurveRepresentation()   ->SetSelectedEdge(0);
 
-    // Delete all Nodes queued for removal
-    for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
-      this->DeleteNode( nit.Value()->GetId() );
+    // Delete all Nodes serving imperative visualization
+    asiEngine_IV(this).Clean_All();
 
     // Let sub-classes do some job
     this->clearCustom();

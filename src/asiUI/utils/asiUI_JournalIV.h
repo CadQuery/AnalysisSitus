@@ -48,11 +48,9 @@
 // STD includes
 #include <vector>
 
-DEFINE_STANDARD_HANDLE(asiUI_JournalIV, ActAPI_IPlotter)
-
 //! Interface for Imperative Viewer. A particular algorithm may benefit
 //! from immediate plotting of its geometric variables in a unified way
-//! thanks to this abstract class.
+//! thanks to this tool.
 class asiUI_JournalIV : public ActAPI_IPlotter
 {
 public:
@@ -82,7 +80,10 @@ public:
 public:
 
   asiUI_EXPORT virtual void
-    CLEAN();
+    ERASE_ALL();
+
+  asiUI_EXPORT virtual void
+    ERASE(const TCollection_AsciiString&);
 
 // GEOMETRY:
 public:
@@ -108,15 +109,34 @@ public:
                const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
+    REDRAW_POINT(const TCollection_AsciiString&,
+                 const gp_XY&,
+                 const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_POINT(const TCollection_AsciiString&,
+                 const gp_Pnt2d&,
+                 const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_POINT(const TCollection_AsciiString&,
+                 const gp_XYZ&,
+                 const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_POINT(const TCollection_AsciiString&,
+                 const gp_Pnt&,
+                 const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
     DRAW_POINTS(const Handle(HRealArray)&,
                 const Quantity_Color&,
                 const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
-    DRAW_LINK(const gp_Pnt&,
-              const gp_Pnt&,
-              const Quantity_Color&,
-              const TCollection_AsciiString&);
+    REDRAW_POINTS(const TCollection_AsciiString&,
+                  const Handle(HRealArray)&,
+                  const Quantity_Color&);
 
   asiUI_EXPORT virtual void
     DRAW_VECTOR_AT(const gp_Pnt&,
@@ -125,11 +145,22 @@ public:
                    const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
+    REDRAW_VECTOR_AT(const TCollection_AsciiString&,
+                     const gp_Pnt&,
+                     const gp_Vec&,
+                     const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
     DRAW_CURVE(const Handle(Geom_Curve)&,
                const Quantity_Color&,
                const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
+    REDRAW_CURVE(const TCollection_AsciiString&,
+                 const Handle(Geom_Curve)&,
+                 const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
     DRAW_SURFACE(const Handle(Geom_Surface)&,
                  const Quantity_Color&,
                  const TCollection_AsciiString&);
@@ -154,6 +185,32 @@ public:
                  const Quantity_Color&,
                  const double, // opacity
                  const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_SURFACE(const TCollection_AsciiString&,
+                   const Handle(Geom_Surface)&,
+                   const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_SURFACE(const TCollection_AsciiString&,
+                   const Handle(Geom_Surface)&,
+                   const Quantity_Color&,
+                   const double); // opacity
+
+  asiUI_EXPORT virtual void
+    REDRAW_SURFACE(const TCollection_AsciiString&,
+                   const Handle(Geom_Surface)&,
+                   const double, // U limit
+                   const double, // V limit
+                   const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_SURFACE(const TCollection_AsciiString&,
+                   const Handle(Geom_Surface)&,
+                   const double, // U limit
+                   const double, // V limit
+                   const Quantity_Color&,
+                   const double); // opacity
 
 // TOPOLOGY:
 public:
@@ -185,8 +242,159 @@ public:
                const bool, // is wireframe
                const TCollection_AsciiString&);
 
+  asiUI_EXPORT virtual void
+    REDRAW_SHAPE(const TCollection_AsciiString&,
+                 const TopoDS_Shape&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_SHAPE(const TCollection_AsciiString&,
+                 const TopoDS_Shape&,
+                 const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_SHAPE(const TCollection_AsciiString&,
+                 const TopoDS_Shape&,
+                 const double); // opacity
+
+  asiUI_EXPORT virtual void
+    REDRAW_SHAPE(const TCollection_AsciiString&,
+                 const TopoDS_Shape&,
+                 const Quantity_Color&,
+                 const double); // opacity
+
+  asiUI_EXPORT virtual void
+    REDRAW_SHAPE(const TCollection_AsciiString&,
+                 const TopoDS_Shape&,
+                 const Quantity_Color&,
+                 const double, // opacity
+                 const bool); // is wireframe
+
 // TESSELLATION:
 public:
+
+  asiUI_EXPORT virtual void
+    DRAW_LINK(const gp_Pnt&,
+              const gp_Pnt&,
+              const Quantity_Color&,
+              const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    DRAW_LINK(const gp_XYZ&,
+              const gp_XYZ&,
+              const Quantity_Color&,
+              const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    DRAW_LINK(const gp_Pnt2d&,
+              const gp_Pnt2d&,
+              const Quantity_Color&,
+              const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    DRAW_LINK(const gp_XY&,
+              const gp_XY&,
+              const Quantity_Color&,
+              const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_LINK(const TCollection_AsciiString&,
+                const gp_Pnt&,
+                const gp_Pnt&,
+                const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_LINK(const TCollection_AsciiString&,
+                const gp_XYZ&,
+                const gp_XYZ&,
+                const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_LINK(const TCollection_AsciiString&,
+                const gp_Pnt2d&,
+                const gp_Pnt2d&,
+                const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_LINK(const TCollection_AsciiString&,
+                const gp_XY&,
+                const gp_XY&,
+                const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    DRAW_POLYLINE(const std::vector<gp_XYZ>&,
+                  const Quantity_Color&,
+                  const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    DRAW_POLYLINE(const std::vector<gp_XY>&,
+                  const Quantity_Color&,
+                  const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_POLYLINE(const TCollection_AsciiString&,
+                    const std::vector<gp_XYZ>&,
+                    const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_POLYLINE(const TCollection_AsciiString&,
+                    const std::vector<gp_XY>&,
+                    const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    DRAW_TRIANGLE(const gp_Pnt&,
+                  const gp_Pnt&,
+                  const gp_Pnt&,
+                  const Quantity_Color&,
+                  const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    DRAW_TRIANGLE(const gp_XYZ&,
+                  const gp_XYZ&,
+                  const gp_XYZ&,
+                  const Quantity_Color&,
+                  const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    DRAW_TRIANGLE(const gp_Pnt2d&,
+                  const gp_Pnt2d&,
+                  const gp_Pnt2d&,
+                  const Quantity_Color&,
+                  const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    DRAW_TRIANGLE(const gp_XY&,
+                  const gp_XY&,
+                  const gp_XY&,
+                  const Quantity_Color&,
+                  const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_TRIANGLE(const TCollection_AsciiString&,
+                    const gp_Pnt&,
+                    const gp_Pnt&,
+                    const gp_Pnt&,
+                    const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_TRIANGLE(const TCollection_AsciiString&,
+                    const gp_XYZ&,
+                    const gp_XYZ&,
+                    const gp_XYZ&,
+                    const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_TRIANGLE(const TCollection_AsciiString&,
+                    const gp_Pnt2d&,
+                    const gp_Pnt2d&,
+                    const gp_Pnt2d&,
+                    const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_TRIANGLE(const TCollection_AsciiString&,
+                    const gp_XY&,
+                    const gp_XY&,
+                    const gp_XY&,
+                    const Quantity_Color&);
 
   asiUI_EXPORT virtual void
     DRAW_TRIANGULATION(const Handle(Poly_Triangulation)&,
@@ -194,12 +402,22 @@ public:
                        const double, // opacity
                        const TCollection_AsciiString&);
 
+  asiUI_EXPORT virtual void
+    REDRAW_TRIANGULATION(const TCollection_AsciiString&,
+                         const Handle(Poly_Triangulation)&,
+                         const Quantity_Color&,
+                         const double); // opacity
+
 // TEXT
 public:
 
   asiUI_EXPORT virtual void
     DRAW_TEXT(const TCollection_AsciiString& text,
               const TCollection_AsciiString& name);
+
+  asiUI_EXPORT virtual void
+    REDRAW_TEXT(const TCollection_AsciiString& name,
+                const TCollection_AsciiString& text);
 
 // A-SITUS SPECIFIC:
 public:
@@ -264,6 +482,114 @@ protected:
 
   asiUI_EXPORT const vtkSmartPointer<asiVisu_PrsManager>&
     prsManager2d() const;
+
+protected:
+
+  asiUI_EXPORT void
+    draw_point(const gp_XY&                   coord,
+               const Quantity_Color&          color,
+               const TCollection_AsciiString& name,
+               const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_points(const Handle(HRealArray)&      coords,
+                const Quantity_Color&          color,
+                const TCollection_AsciiString& name,
+                const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_curve(const Handle(Geom_Curve)&      curve,
+               const Quantity_Color&          color,
+               const TCollection_AsciiString& name,
+               const bool                     is2d,
+               const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_surface(const Handle(Geom_Surface)&    surface,
+                 const double                   uLimit,
+                 const double                   vLimit,
+                 const Quantity_Color&          color,
+                 const double                   opacity,
+                 const TCollection_AsciiString& name,
+                 const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_shape(const TopoDS_Shape&            shape,
+               const bool                     hasColor,
+               const Quantity_Color&          color,
+               const double                   opacity,
+               const bool                     isWireframe,
+               const TCollection_AsciiString& name,
+               const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_link(const gp_XYZ&                  p1,
+              const gp_XYZ&                  p2,
+              const Quantity_Color&          color,
+              const TCollection_AsciiString& name,
+              const bool                     is2d,
+              const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_link(const gp_XYZ&                  p1,
+              const gp_XYZ&                  p2,
+              const Quantity_Color&          color,
+              const TCollection_AsciiString& name,
+              const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_link(const gp_XY&                   p1,
+              const gp_XY&                   p2,
+              const Quantity_Color&          color,
+              const TCollection_AsciiString& name,
+              const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_polyline(const std::vector<gp_XYZ>&     poles,
+                  const Quantity_Color&          color,
+                  const TCollection_AsciiString& name,
+                  const bool                     is2d,
+                  const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_polyline(const std::vector<gp_XYZ>&     poles,
+                  const Quantity_Color&          color,
+                  const TCollection_AsciiString& name,
+                  const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_polyline(const std::vector<gp_XY>&      poles,
+                  const Quantity_Color&          color,
+                  const TCollection_AsciiString& name,
+                  const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_triangle(const gp_XYZ&                  p1,
+                  const gp_XYZ&                  p2,
+                  const gp_XYZ&                  p3,
+                  const Quantity_Color&          color,
+                  const TCollection_AsciiString& name,
+                  const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_triangle(const gp_XY&                   p1,
+                  const gp_XY&                   p2,
+                  const gp_XY&                   p3,
+                  const Quantity_Color&          color,
+                  const TCollection_AsciiString& name,
+                  const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_triangulation(const Handle(Poly_Triangulation)& tris,
+                       const Quantity_Color&             color,
+                       const double                      opacity,
+                       const TCollection_AsciiString&    name,
+                       const bool                        newPrimitive);
+
+  asiUI_EXPORT void
+    draw_text(const TCollection_AsciiString& text,
+              const TCollection_AsciiString& name,
+              const bool                     newPrimitive);
 
 protected:
 

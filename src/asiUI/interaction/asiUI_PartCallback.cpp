@@ -63,11 +63,12 @@ asiUI_PartCallback::~asiUI_PartCallback()
 //! \param pCaller   [in] caller instance.
 //! \param eventId   [in] ID of the event triggered this listener.
 //! \param pCallData [in] invocation context.
-void asiUI_PartCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
+void asiUI_PartCallback::Execute(vtkObject*    pCaller,
                                  unsigned long eventId,
-                                 void*         asiVisu_NotUsed(pCallData))
+                                 void*         pCallData)
 {
-  const vtkSmartPointer<asiVisu_PrsManager>& mgr = this->GetViewer()->PrsMgr();
+  asiVisu_NotUsed(pCaller);
+  asiVisu_NotUsed(pCallData);
 
   if ( eventId == EVENT_FIND_FACE )
     emit findFace();

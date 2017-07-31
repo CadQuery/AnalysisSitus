@@ -50,13 +50,26 @@ public:
 
 //---------------------------------------------------------------------------//
 
+  asiEngine_EXPORT void
+    Clean_All();
+
+  asiEngine_EXPORT void
+    Clean(const TCollection_AsciiString& name);
+
+//---------------------------------------------------------------------------//
+
+  asiEngine_EXPORT Handle(asiData_IVPointSet2dNode)
+    Find_PointSet2d(const TCollection_AsciiString& name);
+
   asiEngine_EXPORT Handle(asiData_IVPointSet2dNode)
     Create_PointSet2d(const Handle(TColStd_HArray1OfReal)& coords,
-                      const TCollection_AsciiString&       name);
+                      const TCollection_AsciiString&       name,
+                      const bool                           useAutoNaming);
 
   asiEngine_EXPORT Handle(asiData_IVPointSet2dNode)
     Create_PointSet2d(const std::vector<gp_Pnt2d>&   points,
-                      const TCollection_AsciiString& name);
+                      const TCollection_AsciiString& name,
+                      const bool                     useAutoNaming);
 
   asiEngine_EXPORT void
     Clean_Points2d();
@@ -64,8 +77,12 @@ public:
 //---------------------------------------------------------------------------//
 
   asiEngine_EXPORT Handle(asiData_IVPointSetNode)
+    Find_PointSet(const TCollection_AsciiString& name);
+
+  asiEngine_EXPORT Handle(asiData_IVPointSetNode)
     Create_PointSet(const Handle(asiAlgo_BaseCloud<double>)& points,
-                    const TCollection_AsciiString&           name);
+                    const TCollection_AsciiString&           name,
+                    const bool                               useAutoNaming);
 
   asiEngine_EXPORT void
     Clean_Points();
@@ -73,9 +90,18 @@ public:
 //---------------------------------------------------------------------------//
 
   asiEngine_EXPORT Handle(asiData_IVCurveNode)
+    Find_Curve(const TCollection_AsciiString& name);
+
+  asiEngine_EXPORT Handle(asiData_IVCurveNode)
     Create_Curve(const Handle(Geom_Curve)&      curve,
                  const double                   uLimit,
-                 const TCollection_AsciiString& name);
+                 const TCollection_AsciiString& name,
+                 const bool                     useAutoNaming);
+
+  asiEngine_EXPORT void
+    Update_Curve(const Handle(asiData_IVCurveNode)& node,
+                 const Handle(Geom_Curve)&          curve,
+                 const double                       uLimit);
 
   asiEngine_EXPORT void
     Clean_Curves();
@@ -83,10 +109,20 @@ public:
 //---------------------------------------------------------------------------//
 
   asiEngine_EXPORT Handle(asiData_IVSurfaceNode)
+    Find_Surface(const TCollection_AsciiString& name);
+
+  asiEngine_EXPORT Handle(asiData_IVSurfaceNode)
     Create_Surface(const Handle(Geom_Surface)&    surface,
                    const double                   uLimit,
                    const double                   vLimit,
-                   const TCollection_AsciiString& name);
+                   const TCollection_AsciiString& name,
+                   const bool                     useAutoNaming);
+
+  asiEngine_EXPORT void
+    Update_Surface(const Handle(asiData_IVSurfaceNode)& node,
+                   const Handle(Geom_Surface)&          surface,
+                   const double                         uLimit,
+                   const double                         vLimit);
 
   asiEngine_EXPORT void
     Clean_Surfaces();
@@ -94,8 +130,16 @@ public:
 //---------------------------------------------------------------------------//
 
   asiEngine_EXPORT Handle(asiData_IVTopoItemNode)
+    Find_TopoItem(const TCollection_AsciiString& name);
+
+  asiEngine_EXPORT Handle(asiData_IVTopoItemNode)
     Create_TopoItem(const TopoDS_Shape&            shape,
-                    const TCollection_AsciiString& name);
+                    const TCollection_AsciiString& name,
+                    const bool                     useAutoNaming);
+
+  asiEngine_EXPORT void
+    Update_TopoItem(const Handle(asiData_IVTopoItemNode)& node,
+                    const TopoDS_Shape&                   shape);
 
   asiEngine_EXPORT void
     Clean_Topo();
@@ -103,8 +147,16 @@ public:
 //---------------------------------------------------------------------------//
 
   asiEngine_EXPORT Handle(asiData_IVTessItemNode)
+    Find_TessItem(const TCollection_AsciiString& name);
+
+  asiEngine_EXPORT Handle(asiData_IVTessItemNode)
     Create_TessItem(const Handle(Poly_Triangulation)& tess,
-                    const TCollection_AsciiString&    name);
+                    const TCollection_AsciiString&    name,
+                    const bool                        useAutoNaming);
+
+  asiEngine_EXPORT void
+    Update_TessItem(const Handle(asiData_IVTessItemNode)& node,
+                    const Handle(Poly_Triangulation)&     tess);
 
   asiEngine_EXPORT void
     Clean_Tess();
@@ -112,7 +164,16 @@ public:
 //---------------------------------------------------------------------------//
 
   asiEngine_EXPORT Handle(asiData_IVTextItemNode)
-    Create_TextItem(const TCollection_AsciiString& text);
+    Find_TextItem(const TCollection_AsciiString& name);
+
+  asiEngine_EXPORT Handle(asiData_IVTextItemNode)
+    Create_TextItem(const TCollection_AsciiString& text,
+                    const TCollection_AsciiString& name,
+                    const bool                     useAutoNaming);
+
+  asiEngine_EXPORT void
+    Update_TextItem(const Handle(asiData_IVTextItemNode)& node,
+                    const TCollection_AsciiString&        text);
 
   asiEngine_EXPORT void
     Clean_Text();

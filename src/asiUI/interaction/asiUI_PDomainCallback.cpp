@@ -63,10 +63,13 @@ asiUI_PDomainCallback::~asiUI_PDomainCallback()
 //! \param pCaller   [in] caller instance.
 //! \param eventId   [in] ID of the event triggered this listener.
 //! \param pCallData [in] invocation context.
-void asiUI_PDomainCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
+void asiUI_PDomainCallback::Execute(vtkObject*    pCaller,
                                     unsigned long eventId,
-                                    void*         asiVisu_NotUsed(pCallData))
+                                    void*         pCallData)
 {
+  asiVisu_NotUsed(pCaller);
+  asiVisu_NotUsed(pCallData);
+
   vtkSmartPointer<asiVisu_PrsManager> mgr = this->GetViewer()->PrsMgr();
 
   if ( eventId == EVENT_DELETE )

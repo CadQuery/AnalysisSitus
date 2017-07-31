@@ -48,7 +48,7 @@ asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& theNode)
   this->assignDataProvider ( Pipeline_Main, DP );
 
   // Adjust line width
-  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetLineWidth(3.0f);
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetLineWidth(1.0f);
 }
 
 //! Factory method for Presentation.

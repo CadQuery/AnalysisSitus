@@ -26,7 +26,7 @@
 // Own include
 #include <asiVisu_IVCurvePrs.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_CurvePipeline.h>
 #include <asiVisu_IVCurveDataProvider.h>
 #include <asiVisu_Utils.h>

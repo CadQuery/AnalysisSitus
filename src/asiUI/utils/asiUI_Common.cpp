@@ -117,6 +117,17 @@ QString asiUI_Common::selectSTLFile(const OpenSaveAction action)
   return selectFile(filter, "Select STL file", "Save STL file", action);
 }
 
+//! Allows to select filename for DOT format.
+//! \param action [in] open or save.
+//! \return selected filename.
+QString asiUI_Common::selectDOTFile(const OpenSaveAction action)
+{
+  QStringList filter;
+  filter << "DOT graph (*.dot)";
+  //
+  return selectFile(filter, "Select DOT file", "Save DOT file", action);
+}
+
 //! Selects filename for opening or saving.
 //! \param filter    [in] filter for extensions.
 //! \param openTitle [in] title for open dialog.

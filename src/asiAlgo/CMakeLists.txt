@@ -181,6 +181,7 @@ set (points_CPP_FILES
 
 set (utils_H_FILES
   utils/asiAlgo_Logger.h
+  utils/asiAlgo_MemChecker.h
   utils/asiAlgo_Timer.h
   utils/asiAlgo_Utils.h
   utils/asiAlgo_Variable.h

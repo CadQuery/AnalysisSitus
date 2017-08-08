@@ -161,6 +161,9 @@ public:
   asiUI_EXPORT static QString
     selectSTLFile(const OpenSaveAction action);
 
+  asiUI_EXPORT static QString
+    selectDOTFile(const OpenSaveAction action);
+
 //-----------------------------------------------------------------------------
 
   asiUI_EXPORT static QString

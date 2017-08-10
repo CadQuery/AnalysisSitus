@@ -108,7 +108,7 @@
     Notifier->SendLogMessage(LogInfo(Normal) << "\tMemory after [delta]:    %1 MiB [%2]" \
                                              << __aux_debug_memcheck_after \
                                              << (__aux_debug_memcheck_after - __aux_debug_memcheck_before) ); \
-    Notifier->SendLogMessage(LogInfo(Normal) << "============================================="); \
+    Notifier->SendLogMessage(LogInfo(Normal) << "... Finished."); \
   }
 
 #endif

@@ -53,6 +53,7 @@ public:
 
   asiUI_EXPORT
     asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
+                     const bool                     enableInteraction,
                      QWidget*                       parent = NULL);
 
   asiUI_EXPORT virtual

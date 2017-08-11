@@ -100,9 +100,11 @@ void GetPickedSubshapeIds(const asiVisu_PickResult&         pick_res,
 //-----------------------------------------------------------------------------
 
 //! Creates a new instance of viewer.
-//! \param model  [in] Data Model instance.
-//! \param parent [in] parent widget.
+//! \param model             [in] Data Model instance.
+//! \param enableInteraction [in] enables/disables interaction mechanisms.
+//! \param parent            [in] parent widget.
 asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
+                                   const bool                     enableInteraction,
                                    QWidget*                       parent)
 : asiUI_Viewer(parent), m_model(model)
 {
@@ -138,67 +140,70 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
    *  Setting up picking infrastructure
    * =================================== */
 
-  // Initialize Callback instance for Pick operation
-  m_pickCallback = vtkSmartPointer<asiUI_PickCallback>::New();
-  m_pickCallback->SetViewer(this);
-  m_pickCallback->SetModel(m_model);
-  m_pickCallback->SetPickerType(PickType_Cell);
+  if ( enableInteraction )
+  {
+    // Initialize Callback instance for Pick operation
+    m_pickCallback = vtkSmartPointer<asiUI_PickCallback>::New();
+    m_pickCallback->SetViewer(this);
+    m_pickCallback->SetModel(m_model);
+    m_pickCallback->SetPickerType(PickType_Cell);
 
-  // Initialize Callback instance for handling events related to Part viewer
-  m_partCallback = vtkSmartPointer<asiUI_PartCallback>::New();
-  m_partCallback->SetViewer(this);
+    // Initialize Callback instance for handling events related to Part viewer
+    m_partCallback = vtkSmartPointer<asiUI_PartCallback>::New();
+    m_partCallback->SetViewer(this);
 
-  // Set observer for picking
-  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_PICK_DEFAULT) )
-    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_PICK_DEFAULT, m_pickCallback);
+    // Set observer for picking
+    if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_PICK_DEFAULT) )
+      m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_PICK_DEFAULT, m_pickCallback);
 
-  // Set observer for detection
-  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_DETECT_DEFAULT) )
-    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_DETECT_DEFAULT, m_pickCallback);
+    // Set observer for detection
+    if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_DETECT_DEFAULT) )
+      m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_DETECT_DEFAULT, m_pickCallback);
 
-  // Set observer for finding face
-  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_FIND_FACE) )
-    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_FIND_FACE, m_partCallback);
+    // Set observer for finding face
+    if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_FIND_FACE) )
+      m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_FIND_FACE, m_partCallback);
 
-  // Set observer for finding edge
-  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_FIND_EDGE) )
-    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_FIND_EDGE, m_partCallback);
+    // Set observer for finding edge
+    if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_FIND_EDGE) )
+      m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_FIND_EDGE, m_partCallback);
 
-  // Set observer for tessellation refinement
-  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_REFINE_TESSELLATION) )
-    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_REFINE_TESSELLATION, m_partCallback);
+    // Set observer for tessellation refinement
+    if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_REFINE_TESSELLATION) )
+      m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_REFINE_TESSELLATION, m_partCallback);
 
-  // Get notified once a sub-shape is picked
-  connect( m_pickCallback, SIGNAL( picked() ), this, SLOT( onSubShapesPicked() ) );
-  connect( m_pickCallback, SIGNAL( picked() ), this, SLOT( onWhateverPicked() ) );
+    // Get notified once a sub-shape is picked
+    connect( m_pickCallback, SIGNAL( picked() ), this, SLOT( onSubShapesPicked() ) );
+    connect( m_pickCallback, SIGNAL( picked() ), this, SLOT( onWhateverPicked() ) );
 
-  // Get notified about part events
-  connect( m_partCallback, SIGNAL( findFace() ),           this, SLOT( onFindFace() ) );
-  connect( m_partCallback, SIGNAL( findEdge() ),           this, SLOT( onFindEdge() ) );
-  connect( m_partCallback, SIGNAL( refineTessellation() ), this, SLOT( onRefineTessellation() ) );
+    // Get notified about part events
+    connect( m_partCallback, SIGNAL( findFace() ),           this, SLOT( onFindFace() ) );
+    connect( m_partCallback, SIGNAL( findEdge() ),           this, SLOT( onFindEdge() ) );
+    connect( m_partCallback, SIGNAL( refineTessellation() ), this, SLOT( onRefineTessellation() ) );
 
-  /* ===============================
-   *  Setting up rotation callbacks
-   * =============================== */
+    /* ===============================
+     *  Setting up rotation callbacks
+     * =============================== */
 
-  // Initialize Callback instance for rotation
-  m_rotoCallback = vtkSmartPointer<asiUI_RotationCallback>::New();
-  m_rotoCallback->SetViewer(this);
+    // Initialize Callback instance for rotation
+    m_rotoCallback = vtkSmartPointer<asiUI_RotationCallback>::New();
+    m_rotoCallback->SetViewer(this);
 
-  // Set observer for starting rotation
-  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_ROTATION_START) )
-    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_ROTATION_START, m_rotoCallback);
+    // Set observer for starting rotation
+    if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_ROTATION_START) )
+      m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_ROTATION_START, m_rotoCallback);
 
-  // Set observer for ending rotation
-  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_ROTATION_END) )
-    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_ROTATION_END, m_rotoCallback);
+    // Set observer for ending rotation
+    if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_ROTATION_END) )
+      m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_ROTATION_END, m_rotoCallback);
+  }
 
   /* ========================
    *  Initialize axes widget
    * ======================== */
 
   vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
-  vtkSmartPointer<vtkAssembly> assm = vtkSmartPointer<vtkAssembly>::New();
+  vtkSmartPointer<vtkAssembly>  assm = vtkSmartPointer<vtkAssembly>::New();
   assm->AddPart(axes);
   //
   m_axesWidget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();

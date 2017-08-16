@@ -54,6 +54,7 @@
 // OCCT includes
 #include <gp_Lin.hxx>
 #include <NCollection_Sequence.hxx>
+#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
 #undef COUT_DEBUG
 #if defined COUT_DEBUG
@@ -165,88 +166,31 @@ asiVisu_PrsManager::asiVisu_PrsManager()
   WhiteIntensity    (1.0),
   isWhiteBackground (false)
 {
-  // Initialize renderer
-  m_renderer = vtkSmartPointer<vtkRenderer>::New();
-  m_renderer->GetActiveCamera()->ParallelProjectionOn();
-  m_renderer->LightFollowCameraOn();
-  m_renderer->TwoSidedLightingOn();
+  this->init();
+}
 
-  // Set background color
-  m_renderer->SetBackground(0.15, 0.15, 0.15);
+//-----------------------------------------------------------------------------
 
-  // Initialize employed pickers
-  this->InitializePickers( Handle(ActAPI_INode)() );
+//! Constructs presentation manager.
+//! \param model [in] Data Model instance.
+asiVisu_PrsManager::asiVisu_PrsManager(const Handle(ActAPI_IModel)& model)
+: vtkObject         (),
+  m_model           (model),
+  m_widget          (NULL),
+  BlackIntensity    (0.0),
+  WhiteIntensity    (1.0),
+  isWhiteBackground (false)
+{
+  this->init();
+}
 
-  // Set default selection mode
-  m_iSelectionModes = SelectionMode_None;
+//-----------------------------------------------------------------------------
 
-  // Initialize Render Window
-  m_renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-  m_renderWindow->AddRenderer(m_renderer);
-  m_renderWindow->SetMultiSamples(8);
-
-  // Initialize Interactor Style instance for normal operation mode
-  m_interactorStyleTrackball = vtkSmartPointer<asiVisu_InteractorStylePick>::New();
-
-  // Initialize Interactor Style instance for 2D scenes
-  m_interactorStyleImage = vtkSmartPointer<asiVisu_InteractorStylePick2d>::New();
-
-  // Initialize Render Window Interactor
-  m_renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-  m_renderWindowInteractor->SetRenderWindow(m_renderWindow);
-  m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
-
-  /* =======================
-   *  Button to toggle axes
-   * ======================= */
-
-  // Initialize trihedron
-  m_trihedron = vtkSmartPointer<vtkAxesActor>::New();
-  m_trihedron->SetAxisLabels(0);
-  m_trihedron->SetConeRadius(0);
-  m_renderer->AddActor(m_trihedron);
-
-  // Button to switch between visualization modes
-  m_axesButton = vtkSmartPointer<vtkButtonWidget>::New();
-  m_axesCallback = vtkSmartPointer<asiVisu_AxesBtnCallback>::New();
-  //
-  m_axesCallback->SetAxesActor(m_trihedron);
-  m_axesCallback->SetRenderer(m_renderer);
-  m_axesCallback->SetManager(this);
-  m_axesButton->AddObserver(vtkCommand::StateChangedEvent, m_axesCallback);
-
-  // Create images for textures
-  vtkSmartPointer<vtkImageData> image1 = vtkSmartPointer<vtkImageData>::New();
-  vtkSmartPointer<vtkImageData> image2 = vtkSmartPointer<vtkImageData>::New();
-  vtkSmartPointer<vtkImageData> image3 = vtkSmartPointer<vtkImageData>::New();
-  vtkSmartPointer<vtkImageData> image4 = vtkSmartPointer<vtkImageData>::New();
-  //
-  unsigned char color1[3] = {255, 0,   0};
-  unsigned char color2[3] = {0,   255, 0};
-  unsigned char color3[3] = {0,   0,   255};
-  unsigned char color4[3] = {0,   255, 255};
-  //
-  CreateImage(image1, color1, color1);
-  CreateImage(image2, color2, color2);
-  CreateImage(image3, color3, color3);
-  CreateImage(image4, color4, color4);
-
-  // Create the widget and its representation
-  vtkSmartPointer<vtkTexturedButtonRepresentation2D>
-    buttonRepresentation = vtkSmartPointer<vtkTexturedButtonRepresentation2D>::New();
-  //
-  buttonRepresentation->SetNumberOfStates(4);
-  buttonRepresentation->SetButtonTexture(0, image1);
-  buttonRepresentation->SetButtonTexture(1, image2);
-  buttonRepresentation->SetButtonTexture(2, image3);
-  buttonRepresentation->SetButtonTexture(3, image4);
-
-  m_axesButton->SetInteractor( m_renderer->GetRenderWindow()->GetInteractor() );
-  m_axesButton->SetRepresentation(buttonRepresentation);
-  //
-  m_axesButton->On();
-  //
-  PlaceButton(m_axesButton, m_renderer);
+//! Sets Data Model instance.
+//! \param model [in] Data Model instance to set.
+void asiVisu_PrsManager::SetModel(const Handle(ActAPI_IModel)& model)
+{
+  m_model = model;
 }
 
 //-----------------------------------------------------------------------------
@@ -699,7 +643,9 @@ void asiVisu_PrsManager::UpdatePresentation(const ActAPI_DataObjectId& nodeId,
   }
 
   // Adjust trihedron
-  this->adjustTrihedron();
+  asiVisu_Utils::AdjustTrihedron( m_renderer,
+                                  m_trihedron,
+                                  this->PropsByTrihedron() );
 
   // Adjust camera if requested
   if ( doFitContents )
@@ -1063,6 +1009,45 @@ ActAPI_DataObjectIdList
   ActAPI_DataObjectId nodeId = nodeInfo->GetNodeId();
   result.Append(nodeId);
 
+  // Eliminate elements of improper type for the picking result. This functionality
+  // is available for master Nodes only.
+  if ( !m_model.IsNull() && dynamic_cast<asiVisu_PartNodeInfo*>(nodeInfo) )
+  {
+    // Get part Node
+    asiVisu_PartNodeInfo* partInfo = dynamic_cast<asiVisu_PartNodeInfo*>(nodeInfo);
+    //
+    Handle(asiData_PartNode)
+      partNode = Handle(asiData_PartNode)::DownCast( m_model->FindNode( partInfo->GetNodeId() ) );
+
+    // Get AAG
+    Handle(asiAlgo_AAG) aag = partNode->GetAAG();
+    //
+    if ( !aag.IsNull() )
+    {
+      // Filter sub-shape IDs
+      TColStd_PackedMapOfInteger subShapes2Highlight;
+      const TColStd_PackedMapOfInteger& pickedSubshapes = pickRes.GetPickedElementIds();
+      //
+      for ( TColStd_MapIteratorOfPackedMapOfInteger mit(pickedSubshapes); mit.More(); mit.Next() )
+      {
+        if ( pickRes.IsSelectionFace() )
+        {
+          if ( aag->GetMapOfSubShapes().FindKey( mit.Key() ).ShapeType() == TopAbs_FACE )
+            subShapes2Highlight.Add( mit.Key() );
+        }
+        else if ( pickRes.IsSelectionEdge() )
+        {
+          if ( aag->GetMapOfSubShapes().FindKey( mit.Key() ).ShapeType() == TopAbs_EDGE )
+            subShapes2Highlight.Add( mit.Key() );
+        }
+      }
+
+      // Re-initialize IDs of the picked elements
+      pickRes.SetPickedElementIds(subShapes2Highlight);
+    }
+  }
+
+  // Get presentation
   Handle(asiVisu_Prs) prs3D = this->GetPresentation(nodeId);
   //
   if ( prs3D.IsNull() )
@@ -1449,13 +1434,91 @@ const vtkSmartPointer<vtkCellPicker>& asiVisu_PrsManager::GetCellPicker() const
 
 //-----------------------------------------------------------------------------
 
-//! Modifies the size of the trihedron so that to make its size comparable to
-//! the bounding box of the currently rendered scene.
-void asiVisu_PrsManager::adjustTrihedron()
+//! Initializes presentation manager.
+void asiVisu_PrsManager::init()
 {
-  asiVisu_Utils::AdjustTrihedron( m_renderer,
-                                  m_trihedron,
-                                  this->PropsByTrihedron() );
+  // Initialize renderer
+  m_renderer = vtkSmartPointer<vtkRenderer>::New();
+  m_renderer->GetActiveCamera()->ParallelProjectionOn();
+  m_renderer->LightFollowCameraOn();
+  m_renderer->TwoSidedLightingOn();
+
+  // Set background color
+  m_renderer->SetBackground(0.15, 0.15, 0.15);
+
+  // Initialize employed pickers
+  this->InitializePickers( Handle(ActAPI_INode)() );
+
+  // Set default selection mode
+  m_iSelectionModes = SelectionMode_None;
+
+  // Initialize Render Window
+  m_renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+  m_renderWindow->AddRenderer(m_renderer);
+  m_renderWindow->SetMultiSamples(8);
+
+  // Initialize Interactor Style instance for normal operation mode
+  m_interactorStyleTrackball = vtkSmartPointer<asiVisu_InteractorStylePick>::New();
+
+  // Initialize Interactor Style instance for 2D scenes
+  m_interactorStyleImage = vtkSmartPointer<asiVisu_InteractorStylePick2d>::New();
+
+  // Initialize Render Window Interactor
+  m_renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+  m_renderWindowInteractor->SetRenderWindow(m_renderWindow);
+  m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
+
+  /* =======================
+   *  Button to toggle axes
+   * ======================= */
+
+  // Initialize trihedron
+  m_trihedron = vtkSmartPointer<vtkAxesActor>::New();
+  m_trihedron->SetAxisLabels(0);
+  m_trihedron->SetConeRadius(0);
+  m_renderer->AddActor(m_trihedron);
+
+  // Button to switch between visualization modes
+  m_axesButton = vtkSmartPointer<vtkButtonWidget>::New();
+  m_axesCallback = vtkSmartPointer<asiVisu_AxesBtnCallback>::New();
+  //
+  m_axesCallback->SetAxesActor(m_trihedron);
+  m_axesCallback->SetRenderer(m_renderer);
+  m_axesCallback->SetManager(this);
+  m_axesButton->AddObserver(vtkCommand::StateChangedEvent, m_axesCallback);
+
+  // Create images for textures
+  vtkSmartPointer<vtkImageData> image1 = vtkSmartPointer<vtkImageData>::New();
+  vtkSmartPointer<vtkImageData> image2 = vtkSmartPointer<vtkImageData>::New();
+  vtkSmartPointer<vtkImageData> image3 = vtkSmartPointer<vtkImageData>::New();
+  vtkSmartPointer<vtkImageData> image4 = vtkSmartPointer<vtkImageData>::New();
+  //
+  unsigned char color1[3] = {255, 0,   0};
+  unsigned char color2[3] = {0,   255, 0};
+  unsigned char color3[3] = {0,   0,   255};
+  unsigned char color4[3] = {0,   255, 255};
+  //
+  CreateImage(image1, color1, color1);
+  CreateImage(image2, color2, color2);
+  CreateImage(image3, color3, color3);
+  CreateImage(image4, color4, color4);
+
+  // Create the widget and its representation
+  vtkSmartPointer<vtkTexturedButtonRepresentation2D>
+    buttonRepresentation = vtkSmartPointer<vtkTexturedButtonRepresentation2D>::New();
+  //
+  buttonRepresentation->SetNumberOfStates(4);
+  buttonRepresentation->SetButtonTexture(0, image1);
+  buttonRepresentation->SetButtonTexture(1, image2);
+  buttonRepresentation->SetButtonTexture(2, image3);
+  buttonRepresentation->SetButtonTexture(3, image4);
+
+  m_axesButton->SetInteractor( m_renderer->GetRenderWindow()->GetInteractor() );
+  m_axesButton->SetRepresentation(buttonRepresentation);
+  //
+  m_axesButton->On();
+  //
+  PlaceButton(m_axesButton, m_renderer);
 }
 
 //-----------------------------------------------------------------------------

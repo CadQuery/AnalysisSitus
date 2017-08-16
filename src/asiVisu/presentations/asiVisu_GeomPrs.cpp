@@ -273,7 +273,7 @@ void asiVisu_GeomPrs::highlight(vtkRenderer*                  renderer,
     Handle(asiVisu_PartPipeline)
       mainPl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
-    mainPl->SetPickedElements( pickRes.GetPickedElementIds(), selNature );
+    mainPl->SetPickedElements(pickRes.GetPickedElementIds(), selNature);
   }
   // #################################################
   // EDGE selection
@@ -286,7 +286,7 @@ void asiVisu_GeomPrs::highlight(vtkRenderer*                  renderer,
     Handle(asiVisu_PartEdgesPipeline)
       contourPl = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
 
-    contourPl->SetPickedElements( pickRes.GetPickedElementIds(), selNature );
+    contourPl->SetPickedElements(pickRes.GetPickedElementIds(), selNature);
   }
 }
 

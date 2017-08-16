@@ -71,7 +71,7 @@ Handle(asiAlgo_BaseCloud<float>) asiVisu_RENormalsDataProvider::GetVectorsf()
 //! \return max modulus for a normal.
 double asiVisu_RENormalsDataProvider::GetMaxVectorModulus() const
 {
-  return 10.0;
+  return 0.1;
 }
 
 //-----------------------------------------------------------------------------

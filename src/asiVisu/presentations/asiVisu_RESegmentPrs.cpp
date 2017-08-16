@@ -49,6 +49,11 @@ asiVisu_RESegmentPrs::asiVisu_RESegmentPrs(const Handle(ActAPI_INode)& N)
   // Pipeline for points
   this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
+
+  // Set specific visual style for reverse engineering point clouds
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetPointSize(1.0);
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetColor(0.75, 0.75, 0.75);
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetOpacity(1.0);
 }
 
 //! Factory method for Presentation.

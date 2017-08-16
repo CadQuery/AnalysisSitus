@@ -54,23 +54,32 @@ public:
   static TColStd_PackedMapOfInteger SHADED()
   {
     TColStd_PackedMapOfInteger mode;
-    //
+
+    // Add anomaly node types
     mode.Add(MeshPrimitive_FreeNode);
+    mode.Add(MeshPrimitive_BorderNode);
+
+    // Add anomaly link types
+    mode.Add(MeshPrimitive_FreeLink);
     mode.Add(MeshPrimitive_DanglingLink);
+    mode.Add(MeshPrimitive_BorderLink);
     mode.Add(MeshPrimitive_NonManifoldLink);
+
+    // Add facets
     mode.Add(MeshPrimitive_FacetTriangle);
     mode.Add(MeshPrimitive_FacetQuad);
-    //
+
     return mode;
   }
 
-  //! \return collection of shape primitives employed in WIREFRAME and VERTICES mode.
+  //! \return collection of shape primitives employed in SHRUNK mode.
   static TColStd_PackedMapOfInteger SHRUNK()
   {
     TColStd_PackedMapOfInteger mode = WIREFRAME();
-    //
+
+    // TODO: NYI
     mode.Add(MeshPrimitive_SharedNode);
-    //
+
     return mode;
   }
 
@@ -78,13 +87,18 @@ public:
   static TColStd_PackedMapOfInteger WIREFRAME()
   {
     TColStd_PackedMapOfInteger mode;
-    //
+
+    // Add anomaly node types
     mode.Add(MeshPrimitive_FreeNode);
-    mode.Add(MeshPrimitive_DanglingLink);
+    mode.Add(MeshPrimitive_BorderNode);
+
+    // Add all types of links
     mode.Add(MeshPrimitive_FreeLink);
+    mode.Add(MeshPrimitive_DanglingLink);
+    mode.Add(MeshPrimitive_BorderLink);
     mode.Add(MeshPrimitive_ManifoldLink);
     mode.Add(MeshPrimitive_NonManifoldLink);
-    //
+
     return mode;
   }
 

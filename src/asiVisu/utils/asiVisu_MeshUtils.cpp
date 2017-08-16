@@ -46,15 +46,20 @@ vtkSmartPointer<vtkLookupTable> asiVisu_MeshUtils::InitLookupTable()
   colorTable->SetTableRange(range);
   colorTable->SetValueRange(0, 1);
   //
-  colorTable->SetTableValue(MeshPrimitive_Undefined,       0.0, 0.0, 0.0);
-  colorTable->SetTableValue(MeshPrimitive_FreeNode,        0.5, 0.0, 0.0);
-  colorTable->SetTableValue(MeshPrimitive_SharedNode,      0.0, 0.0, 0.0);
-  colorTable->SetTableValue(MeshPrimitive_DanglingLink,    0.0, 0.5, 1.0);
-  colorTable->SetTableValue(MeshPrimitive_FreeLink,        1.0, 0.0, 0.0);
-  colorTable->SetTableValue(MeshPrimitive_ManifoldLink,    0.1, 0.1, 0.1);
-  colorTable->SetTableValue(MeshPrimitive_NonManifoldLink, 1.0, 0.5, 0.0);
-  colorTable->SetTableValue(MeshPrimitive_FacetTriangle,   0.9, 0.9, 0.9);
-  colorTable->SetTableValue(MeshPrimitive_FacetQuad,       0.7, 0.7, 0.7);
+  colorTable->SetTableValue(MeshPrimitive_Undefined,       0.0,  0.0, 0.0);
+  //
+  colorTable->SetTableValue(MeshPrimitive_FreeNode,        0.75, 0.0, 0.0);
+  colorTable->SetTableValue(MeshPrimitive_BorderNode,      1.0,  0.0, 0.0);
+  colorTable->SetTableValue(MeshPrimitive_SharedNode,      0.0,  0.0, 0.0);
+  //
+  colorTable->SetTableValue(MeshPrimitive_FreeLink,        0.75, 0.0, 0.0);
+  colorTable->SetTableValue(MeshPrimitive_DanglingLink,    1.0,  0.0, 0.0);
+  colorTable->SetTableValue(MeshPrimitive_BorderLink,      1.0,  0.0, 0.0);
+  colorTable->SetTableValue(MeshPrimitive_ManifoldLink,    0.1,  0.1, 0.1);
+  colorTable->SetTableValue(MeshPrimitive_NonManifoldLink, 1.0,  1.0, 0.0);
+  //
+  colorTable->SetTableValue(MeshPrimitive_FacetTriangle,   0.9,  0.9, 0.9);
+  colorTable->SetTableValue(MeshPrimitive_FacetQuad,       0.7,  0.7, 0.7);
   //
   colorTable->SetTableValue(MeshPrimitive_Detected,        0.0, 1.0, 1.0);
   colorTable->SetTableValue(MeshPrimitive_Selected,        1.0, 1.0, 0.0);

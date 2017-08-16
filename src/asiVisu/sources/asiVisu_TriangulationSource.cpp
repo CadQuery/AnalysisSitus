@@ -205,10 +205,11 @@ int asiVisu_TriangulationSource::RequestData(vtkInformation*        request,
     for ( NCollection_DataMap<asiAlgo_MeshLink, int, asiAlgo_MeshLink>::Iterator lit(linkOccurenceMap); lit.More(); lit.Next() )
     {
       asiVisu_MeshPrimitive linkType;
+
       if ( lit.Value() == 1 )
       {
         numFreeLinks++;
-        linkType = MeshPrimitive_FreeLink;
+        linkType = MeshPrimitive_BorderLink;
       }
       else if ( lit.Value() == 2 )
       {

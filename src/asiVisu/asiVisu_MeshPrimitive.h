@@ -35,16 +35,20 @@ enum asiVisu_MeshPrimitive
   MeshPrimitive_Undefined       = 0,  //!< Undefined cell type.
   //
   MeshPrimitive_FreeNode        = 1,  //!< Cell type for free node.
-  MeshPrimitive_SharedNode      = 2,  //!< Cell type for shared node.
-  MeshPrimitive_DanglingLink    = 3,  //!< Cell type for dangling link.
-  MeshPrimitive_FreeLink        = 4,  //!< Cell type for free link.
-  MeshPrimitive_ManifoldLink    = 5,  //!< Cell type for manifold link.
-  MeshPrimitive_NonManifoldLink = 6,  //!< Cell type for non-manifold link.
-  MeshPrimitive_FacetTriangle   = 7,  //!< Cell type for triangle facet.
-  MeshPrimitive_FacetQuad       = 8,  //!< Cell type for quad facet.
+  MeshPrimitive_BorderNode      = 2,  //!< Cell type for border node.
+  MeshPrimitive_SharedNode      = 3,  //!< Cell type for shared node.
   //
-  MeshPrimitive_Detected        = 9,  //!< Detected boundary element.
-  MeshPrimitive_Selected        = 10, //!< Selected boundary element.
+  MeshPrimitive_FreeLink        = 4,  //!< Cell type for free link.
+  MeshPrimitive_DanglingLink    = 5,  //!< Cell type for dangling link.
+  MeshPrimitive_BorderLink      = 6,  //!< Cell type for border link.
+  MeshPrimitive_ManifoldLink    = 7,  //!< Cell type for manifold link.
+  MeshPrimitive_NonManifoldLink = 8,  //!< Cell type for non-manifold link.
+  //
+  MeshPrimitive_FacetTriangle   = 9,  //!< Cell type for triangle facet.
+  MeshPrimitive_FacetQuad       = 10, //!< Cell type for quad facet.
+  //
+  MeshPrimitive_Detected        = 11, //!< Detected boundary element.
+  MeshPrimitive_Selected        = 12, //!< Selected boundary element.
   //
   MeshPrimitive_LAST
 };

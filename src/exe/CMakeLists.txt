@@ -114,6 +114,7 @@ foreach (FILE ${CPP_FILES})
 endforeach (FILE)
 
 foreach (FILE ${ui_H_FILES})
+  set (src_files ${src_files} ${FILE})
   source_group ("Header Files\\UI" FILES "${FILE}")
 endforeach (FILE)
 

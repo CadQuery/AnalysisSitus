@@ -382,8 +382,8 @@ void asiUI_ControlsPart::onTolerance()
 
   if ( selected.IsEmpty() )
   {
-    const double tol = asiAlgo_Utils::MaxTolerance(part);
-    std::cout << "Tolerance: " << tol << std::endl;
+    const double maxTol = asiAlgo_Utils::MaxTolerance(part);
+    m_notifier.SendLogMessage(LogInfo(Normal) << "Max tolerance: %1" << maxTol);
   }
   else
   {
@@ -393,7 +393,7 @@ void asiUI_ControlsPart::onTolerance()
       const double tol = asiAlgo_Utils::MaxTolerance( selected(i) );
       maxTol = std::max(tol, maxTol);
     }
-    std::cout << "Tolerance (sub-shapes): " << maxTol << std::endl;
+    m_notifier.SendLogMessage(LogInfo(Normal) << "Max tolerance for selected sub-shape: %1" << maxTol);
   }
 }
 

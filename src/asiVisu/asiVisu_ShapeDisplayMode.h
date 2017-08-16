@@ -55,12 +55,20 @@ public:
   static TColStd_PackedMapOfInteger SHADED()
   {
     TColStd_PackedMapOfInteger mode;
-    //
+
+    // Add anomaly vertex types
     mode.Add(ShapePrimitive_FreeVertex);
+    mode.Add(ShapePrimitive_BorderVertex);
+
+    // Add anomaly edge types
+    mode.Add(ShapePrimitive_FreeEdge);
     mode.Add(ShapePrimitive_DanglingEdge);
+    mode.Add(ShapePrimitive_BorderEdge);
     mode.Add(ShapePrimitive_NonManifoldEdge);
+
+    // Add facets
     mode.Add(ShapePrimitive_Facet);
-    //
+
     return mode;
   }
 
@@ -68,13 +76,18 @@ public:
   static TColStd_PackedMapOfInteger WIREFRAME()
   {
     TColStd_PackedMapOfInteger mode;
-    //
+
+    // Add anomaly vertex types
     mode.Add(ShapePrimitive_FreeVertex);
-    mode.Add(ShapePrimitive_DanglingEdge);
+    mode.Add(ShapePrimitive_BorderVertex);
+
+    // Add all types of edges
     mode.Add(ShapePrimitive_FreeEdge);
+    mode.Add(ShapePrimitive_DanglingEdge);
+    mode.Add(ShapePrimitive_BorderEdge);
     mode.Add(ShapePrimitive_ManifoldEdge);
     mode.Add(ShapePrimitive_NonManifoldEdge);
-    //
+
     return mode;
   }
 
@@ -83,6 +96,8 @@ public:
   {
     TColStd_PackedMapOfInteger mode = WIREFRAME();
     //
+    mode.Add(ShapePrimitive_FreeVertex);
+    mode.Add(ShapePrimitive_BorderVertex);
     mode.Add(ShapePrimitive_SharedVertex);
     //
     return mode;
@@ -94,6 +109,7 @@ public:
     TColStd_PackedMapOfInteger mode;
     //
     mode.Add(ShapePrimitive_FreeVertex);
+    mode.Add(ShapePrimitive_BorderVertex);
     mode.Add(ShapePrimitive_SharedVertex);
     //
     return mode;

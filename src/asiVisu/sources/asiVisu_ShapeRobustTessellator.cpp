@@ -37,6 +37,7 @@
 
 // OCCT includes
 #include <BRep_Tool.hxx>
+#include <ShapeAnalysis_Edge.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
@@ -196,6 +197,8 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     asiVisu_ShapePrimitive type;
     if ( edges.IsEmpty() )
       type = ShapePrimitive_FreeVertex;
+    if ( edges.Extent() == 1 )
+      type = ShapePrimitive_BorderVertex;
     else
       type = ShapePrimitive_SharedVertex;
 
@@ -254,9 +257,24 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
 
     asiVisu_ShapePrimitive type;
     if ( !faces.Extent() )
-      type = ShapePrimitive_DanglingEdge;
+    {
+      // If there are no faces for the edge, it can be either free or dangling.
+      // The difference is in the number of parent edges for the vertices
+      // in question. If there is only one parent (the edge itself), then
+      // we conclude that the edge is free. If there are more than one parents,
+      // the edge is said to be dangling.
+
+      TopoDS_Vertex Vf = ShapeAnalysis_Edge().FirstVertex(e);
+      TopoDS_Vertex Vl = ShapeAnalysis_Edge().LastVertex(e);
+      //
+      if ( verticesOnEdges.FindFromKey(Vf).Extent() > 1 ||
+           verticesOnEdges.FindFromKey(Vl).Extent() > 1 )
+        type = ShapePrimitive_DanglingEdge;
+      else
+        type = ShapePrimitive_FreeEdge;
+    }
     else if ( faces.Extent() == 1 )
-      type = ShapePrimitive_FreeEdge;
+      type = ShapePrimitive_BorderEdge;
     else if ( faces.Extent() > 2 )
       type = ShapePrimitive_NonManifoldEdge;
     else

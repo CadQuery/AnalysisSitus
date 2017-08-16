@@ -26,12 +26,16 @@
 #ifndef asiVisu_PrsManager_h
 #define asiVisu_PrsManager_h
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_InteractorStylePick.h>
 #include <asiVisu_InteractorStylePick2d.h>
 #include <asiVisu_Prs.h>
 
+// asiData includes
+#include <asiData_PartNode.h>
+
 // Active Data (API) includes
+#include <ActAPI_IModel.h>
 #include <ActAPI_INode.h>
 #include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
@@ -104,7 +108,13 @@ public:
   asiVisu_EXPORT
     asiVisu_PrsManager();
 
+  asiVisu_EXPORT
+    asiVisu_PrsManager(const Handle(ActAPI_IModel)& model);
+
 public:
+
+  asiVisu_EXPORT void
+    SetModel(const Handle(ActAPI_IModel)& model);
 
   asiVisu_EXPORT void
     SetBlackAndWhiteIntensity(const double black,
@@ -326,13 +336,18 @@ public:
 protected:
 
   asiVisu_EXPORT void
-    adjustTrihedron();
+    init();
 
 public:
 
   double BlackIntensity;    //!< Variation of black color for part actor.
   double WhiteIntensity;    //!< Variation of white color for part actor.
   bool   isWhiteBackground; //!< Whether white background is set or not.
+
+// Data Model:
+private:
+
+  Handle(ActAPI_IModel) m_model; //!< Data Model instance.
 
 // Presentation management:
 private:

@@ -1270,8 +1270,8 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& Object,
   DSFiller.Perform();
 
   // Check data structure
-  int iErr = DSFiller.ErrorStatus();
-  if ( iErr )
+  bool hasErr = DSFiller.HasErrors();
+  if ( hasErr )
   {
     std::cout << "Error: cannot cut" << std::endl;
     return TopoDS_Shape();
@@ -1284,8 +1284,8 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& Object,
   BOP.SetRunParallel(0);
   BOP.SetOperation(BOPAlgo_CUT);
   BOP.PerformWithFiller(DSFiller);
-  iErr = BOP.ErrorStatus();
-  if ( iErr )
+  hasErr = BOP.HasErrors();
+  if ( hasErr )
   {
     std::cout << "Error: cannot cut the part model from the stock model" << std::endl;
     return TopoDS_Shape();
@@ -1328,9 +1328,9 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape&         Object,
   API.Build(); 
 
   // Check the result
-  const int iErr = API.ErrorStatus();
+  const bool hasErr = API.HasErrors();
   //
-  if ( iErr )
+  if ( hasErr )
   {
     std::cout << "Error: cannot cut the part model from the stock model" << std::endl;
     return TopoDS_Shape();

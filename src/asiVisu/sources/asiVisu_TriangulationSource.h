@@ -43,6 +43,10 @@
 #include <vtkSmartPointer.h>
 #include <vtkType.h>
 
+//! \todo Free links are not recognized yet.
+//! \todo Dangling links are not recognized yet.
+//! \todo Border nodes are not recognized yet.
+//!
 //! Source of polygonal data representing surface triangulation.
 class asiVisu_TriangulationSource : public vtkPolyDataAlgorithm
 {

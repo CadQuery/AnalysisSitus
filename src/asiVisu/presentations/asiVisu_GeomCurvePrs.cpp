@@ -26,12 +26,15 @@
 // Own include
 #include <asiVisu_GeomCurvePrs.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_BCurveKnotsPipeline.h>
 #include <asiVisu_BCurvePolesPipeline.h>
 #include <asiVisu_EdgeDataProvider.h>
 #include <asiVisu_EdgeCurvePipeline.h>
 #include <asiVisu_Utils.h>
+
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
 
 // VTK includes
 #include <vtkMapper.h>
@@ -117,6 +120,8 @@ void asiVisu_GeomCurvePrs::afterInitPipelines()
   TCollection_AsciiString TITLE("Edge (#");
   TITLE += E_idx;
   TITLE += "): ";
+  TITLE += asiAlgo_Utils::OrientationToString(E);
+  TITLE += " / ";
   TITLE += ( C.IsNull() ? "NONE" : C->DynamicType()->Name() );
 
   // Trimmed Curve

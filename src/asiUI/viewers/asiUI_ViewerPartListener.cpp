@@ -101,7 +101,7 @@ void asiUI_ViewerPartListener::onFacePicked(const asiVisu_PickResult& pickRes)
   // Check if part is picked
   asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pickRes.GetPickedActor() );
   //
-  if ( !nodeInfo )
+  if ( pickRes.GetPickedActor() && !nodeInfo )
     return;
 
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
@@ -122,7 +122,7 @@ void asiUI_ViewerPartListener::onEdgePicked(const asiVisu_PickResult& pickRes)
   // Check if part is picked
   asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pickRes.GetPickedActor() );
   //
-  if ( !nodeInfo )
+  if ( pickRes.GetPickedActor() && !nodeInfo )
     return;
 
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();

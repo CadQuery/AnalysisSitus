@@ -230,6 +230,20 @@ void asiEngine_Part::Clean()
 
 //-----------------------------------------------------------------------------
 
+//! \return shape stored in Part Node.
+TopoDS_Shape asiEngine_Part::GetShape()
+{
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+    return TopoDS_Shape();
+
+  return part_n->GetShape();
+}
+
+//-----------------------------------------------------------------------------
+
 //! Extracts sub-shape indices for the given collection of face indices.
 //! \param faceIndices [in]  indices of faces.
 //! \param indices     [out] their corresponding indices among all sub-shapes.

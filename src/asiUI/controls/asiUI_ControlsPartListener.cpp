@@ -71,6 +71,9 @@ void asiUI_ControlsPartListener::Connect()
   connect( m_wControls, SIGNAL ( partLoaded() ),
            this,        SLOT   ( onPartLoaded() ) );
   //
+  connect( m_wControls, SIGNAL ( partAdded() ),
+           this,        SLOT   ( onPartAdded() ) );
+  //
   connect( m_wControls, SIGNAL ( partModified() ),
            this,        SLOT   ( onPartModified() ) );
   //
@@ -91,6 +94,14 @@ void asiUI_ControlsPartListener::Connect()
 
 //! Reaction on part loading.
 void asiUI_ControlsPartListener::onPartLoaded()
+{
+  this->reinitializeEverything();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on part adding.
+void asiUI_ControlsPartListener::onPartAdded()
 {
   this->reinitializeEverything();
 }

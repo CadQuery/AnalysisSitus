@@ -74,28 +74,6 @@ REGISTER_NODE_TYPE(asiData_IVTextNode)
 
 //-----------------------------------------------------------------------------
 
-static void PrepareForRemoval(const Handle(ActAPI_INode)&     root_n,
-                              const Handle(ActAPI_HNodeList)& nodesToDelete)
-{
-  if ( root_n.IsNull() || !root_n->IsWellFormed() )
-    return;
-
-  // Loop over direct children of a given Node
-  for ( Handle(ActAPI_IChildIterator) cit = root_n->GetChildIterator(); cit->More(); cit->Next() )
-  {
-    Handle(ActAPI_INode) child_n = cit->Value();
-
-    // Check if the given Node is consistent
-    if ( child_n.IsNull() || !child_n->IsWellFormed() )
-      continue;
-
-    // Set Node for deletion
-    nodesToDelete->Append(child_n);
-  }
-}
-
-//-----------------------------------------------------------------------------
-
 //! Default constructor. Initializes Base Model foundation object so that
 //! to enable Extended Transaction Mode.
 asiEngine_Model::asiEngine_Model() : ActData_BaseModel(true)

@@ -79,6 +79,7 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
     contour_pl = new asiVisu_PartEdgesPipeline( pl->GetSource() );
 
   // Adjust props
+  contour_pl->Actor()->GetProperty()->SetPointSize(5.0f);
   contour_pl->Actor()->GetProperty()->SetOpacity(0.5);
   contour_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
   contour_pl->Actor()->SetPickable(0);
@@ -133,14 +134,14 @@ void asiVisu_GeomPrs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
 //! Enables visualization of vertices.
 void asiVisu_GeomPrs::VerticesOn() const
 {
-  Handle(asiVisu_PartPipeline)
-    pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_PartEdgesPipeline)
+    pl = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
 
   if ( pl.IsNull() )
     return;
 
   // Configure display mode
-  pl->GetDisplayModeFilter()->AddPrimitive(ShapePrimitive_SharedVertex);
+  pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_WireframeAndVertices);
 }
 
 //-----------------------------------------------------------------------------
@@ -148,14 +149,14 @@ void asiVisu_GeomPrs::VerticesOn() const
 //! Disables visualization of vertices.
 void asiVisu_GeomPrs::VerticesOff() const
 {
-  Handle(asiVisu_PartPipeline)
-    pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_PartEdgesPipeline)
+    pl = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
 
   if ( pl.IsNull() )
     return;
 
   // Configure display mode
-  pl->GetDisplayModeFilter()->RemovePrimitive(ShapePrimitive_SharedVertex);
+  pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Wireframe);
 }
 
 //-----------------------------------------------------------------------------

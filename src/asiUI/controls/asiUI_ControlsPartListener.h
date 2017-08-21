@@ -61,6 +61,7 @@ public:
 protected slots:
 
   asiUI_EXPORT void onPartLoaded       ();
+  asiUI_EXPORT void onPartAdded        ();
   asiUI_EXPORT void onPartModified     ();
   asiUI_EXPORT void onVerticesOn       ();
   asiUI_EXPORT void onVerticesOff      ();

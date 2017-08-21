@@ -92,6 +92,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
 
   // Buttons
   m_widgets.pLoadBRep      = new QPushButton("Load BREP");
+  m_widgets.pAddBRep       = new QPushButton("Add BREP");
   m_widgets.pLoadSTEP      = new QPushButton("Load STEP");
   m_widgets.pSavePly       = new QPushButton("Save facets (ply)");
   m_widgets.pSaveBRep      = new QPushButton("Save BREP");
@@ -109,6 +110,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   m_widgets.pSelectEdges   = new QPushButton("Select edges");
   //
   m_widgets.pLoadBRep      -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pAddBRep       -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pLoadSTEP      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSaveSTEP      -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSavePly       -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -130,6 +132,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   QVBoxLayout* pExchangeLay   = new QVBoxLayout(pExchangeGroup);
   //
   pExchangeLay->addWidget(m_widgets.pLoadBRep);
+  pExchangeLay->addWidget(m_widgets.pAddBRep);
   pExchangeLay->addWidget(m_widgets.pLoadSTEP);
   pExchangeLay->addWidget(m_widgets.pSavePly);
   pExchangeLay->addWidget(m_widgets.pSaveBRep);
@@ -170,6 +173,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
 
   // Connect signals to slots
   connect( m_widgets.pLoadBRep,      SIGNAL( clicked() ), SLOT( onLoadBRep      () ) );
+  connect( m_widgets.pAddBRep,       SIGNAL( clicked() ), SLOT( onAddBRep       () ) );
   connect( m_widgets.pLoadSTEP,      SIGNAL( clicked() ), SLOT( onLoadSTEP      () ) );
   connect( m_widgets.pSaveSTEP,      SIGNAL( clicked() ), SLOT( onSaveSTEP      () ) );
   connect( m_widgets.pSavePly,       SIGNAL( clicked() ), SLOT( onSavePly       () ) );
@@ -210,10 +214,10 @@ void asiUI_ControlsPart::onLoadBRep()
   TopoDS_Shape shape;
   if ( !asiAlgo_Utils::ReadBRep(QStr2AsciiStr(filename), shape) )
   {
-    std::cout << "Error: cannot read b-rep file" << std::endl;
+    m_notifier.SendLogMessage(LogErr(Normal) << "Cannot read BREP file.");
     return;
   }
-  m_notifier.SendLogMessage( LogInfo(Normal) << "Part loaded from BREP file %1" << QStr2AsciiStr(filename) );
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Part loaded from BREP file %1." << QStr2AsciiStr(filename) );
   m_notifier.StepProgress(1, 1);
   m_notifier.SetMessageKey("Update accelerating structures");
 
@@ -232,6 +236,50 @@ void asiUI_ControlsPart::onLoadBRep()
 
   // Notify
   emit partLoaded();
+}
+
+//-----------------------------------------------------------------------------
+
+//! On BREP adding.
+void asiUI_ControlsPart::onAddBRep()
+{
+  QString filename = asiUI_Common::selectBRepFile(asiUI_Common::OpenSaveAction_Open);
+
+  m_notifier.SetMessageKey("Add BREP");
+  m_notifier.Init(2);
+
+  // Read BREP
+  TopoDS_Shape shape;
+  if ( !asiAlgo_Utils::ReadBRep(QStr2AsciiStr(filename), shape) )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Cannot read BREP file.");
+    return;
+  }
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Part loaded from BREP file %1" << QStr2AsciiStr(filename) );
+  m_notifier.StepProgress(1, 1);
+  m_notifier.SetMessageKey("Update accelerating structures");
+
+  // Get existing CAD part
+  TopoDS_Shape partShape = asiEngine_Part(m_model).GetShape();
+
+  // Build a compound of two shapes
+  TopoDS_Compound comp;
+  BRep_Builder().MakeCompound(comp);
+  BRep_Builder().Add(comp, partShape);
+  BRep_Builder().Add(comp, shape);
+
+  // Update part
+  m_model->OpenCommand(); // tx start
+  {
+    asiEngine_Part(m_model).Update(comp, true);
+  }
+  m_model->CommitCommand(); // tx commit
+  //
+  m_notifier.StepProgress(1, 1);
+  m_notifier.SetProgressStatus(Progress_Succeeded);
+
+  // Notify
+  emit partAdded();
 }
 
 //-----------------------------------------------------------------------------

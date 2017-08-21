@@ -66,6 +66,9 @@ public:
   asiEngine_EXPORT void
     Clean();
 
+  asiEngine_EXPORT TopoDS_Shape
+    GetShape();
+
   asiEngine_EXPORT void
     GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                        TColStd_PackedMapOfInteger&       indices);

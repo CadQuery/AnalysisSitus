@@ -65,6 +65,7 @@ public:
 public slots:
 
   void onLoadBRep      ();
+  void onAddBRep       ();
   void onLoadSTEP      ();
   void onSaveSTEP      ();
   void onSavePly       ();
@@ -84,6 +85,7 @@ public slots:
 signals:
 
   void partLoaded       ();
+  void partAdded        ();
   void partSaved        ();
   void partModified     ();
   void verticesOn       ();
@@ -99,6 +101,7 @@ private:
   struct t_widgets
   {
     QPushButton* pLoadBRep;      //!< Button for BREP loading.
+    QPushButton* pAddBRep;       //!< Button for adding BREP.
     QPushButton* pLoadSTEP;      //!< Button for STEP loading.
     QPushButton* pSaveSTEP;      //!< Save shape to STEP.
     QPushButton* pSavePly;       //!< Save triangulation to ply.
@@ -116,6 +119,7 @@ private:
     QPushButton* pSelectEdges;   //!< Enables selection by edges.
 
     t_widgets() : pLoadBRep      (NULL),
+                  pAddBRep       (NULL),
                   pLoadSTEP      (NULL),
                   pSaveSTEP      (NULL),
                   pSavePly       (NULL),
@@ -136,6 +140,7 @@ private:
     void Release()
     {
       delete pLoadBRep;      pLoadBRep      = NULL;
+      delete pAddBRep;       pAddBRep       = NULL;
       delete pLoadSTEP;      pLoadSTEP      = NULL;
       delete pSaveSTEP;      pSaveSTEP      = NULL;
       delete pSavePly;       pSavePly       = NULL;

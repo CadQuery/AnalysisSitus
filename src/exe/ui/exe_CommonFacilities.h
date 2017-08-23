@@ -42,7 +42,8 @@
 #include <asiUI_ViewerPart.h>
 #include <asiUI_ViewerHost.h>
 
-DEFINE_STANDARD_HANDLE(exe_CommonFacilities, Standard_Transient)
+// asiTcl includes
+#include <asiTcl_Interp.h>
 
 //! Common tools and objects for A-Situs application.
 class exe_CommonFacilities : public Standard_Transient
@@ -68,6 +69,8 @@ public:
   Handle(ActAPI_IPlotter)          Plotter;          //!< Imperative plotter.
   Handle(asiUI_IStatusBar)         StatusBar;        //!< Status bar of the main window.
   Handle(asiUI_Logger)             Logger;           //!< Logger.
+  //
+  Handle(asiTcl_Interp)            Interp;           //!< Tcl interpreter.
 
   //! Visualization facilities.
   struct t_prs

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
+// Created on: 23 August 2017
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
@@ -24,15 +24,32 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_h
-#define asiUI_h
+#ifndef cmdMisc_h
+#define cmdMisc_h
 
-#define asiUI_NotUsed(x) x
+#define cmdMisc_NotUsed(x) x
 
-#ifdef asiUI_EXPORTS
-  #define asiUI_EXPORT __declspec(dllexport)
+#ifdef cmdMisc_EXPORTS
+  #define cmdMisc_EXPORT __declspec(dllexport)
 #else
-  #define asiUI_EXPORT __declspec(dllimport)
+  #define cmdMisc_EXPORT __declspec(dllimport)
 #endif
+
+//-----------------------------------------------------------------------------
+
+// asiTcl includes
+#include <asiTcl_Interp.h>
+
+//-----------------------------------------------------------------------------
+
+//! Miscellaneous commands.
+class cmdMisc
+{
+public:
+
+  cmdMisc_EXPORT static void
+    Factory(const Handle(asiTcl_Interp)& interp);
+
+};
 
 #endif

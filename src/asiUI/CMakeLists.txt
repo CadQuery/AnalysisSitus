@@ -16,6 +16,7 @@ set (controls_H_FILES
   controls/asiUI_IStatusBar.h
 )
 set (controls_H_UI_FILES
+  controls/asiUI_Console.h
   controls/asiUI_ControlsFeature.h
   controls/asiUI_ControlsPart.h
   controls/asiUI_ControlsPartListener.h
@@ -27,6 +28,7 @@ set (controls_H_UI_FILES
   controls/asiUI_StyledTextEdit.h
 )
 set (controls_CPP_FILES 
+  controls/asiUI_Console.cpp
   controls/asiUI_ControlsFeature.cpp
   controls/asiUI_ControlsPart.cpp
   controls/asiUI_ControlsPartListener.cpp
@@ -372,11 +374,13 @@ set (asiUI_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
 set (asiUI_include_dir ${asiUI_include_dir_loc} PARENT_SCOPE)
 
 include_directories ( ${asiUI_include_dir_loc}
+                      ${asiTcl_include_dir}
                       ${asiAlgo_include_dir}
                       ${asiData_include_dir}
                       ${asiVisu_include_dir}
                       ${asiEngine_include_dir}
                       ${3RDPARTY_OCCT_INCLUDE_DIR}
+                      ${3RDPARTY_tcl_INCLUDE_DIR}
                       ${3RDPARTY_active_data_INCLUDE_DIR}
                       ${3RDPARTY_mobius_INCLUDE_DIR}
                       ${3RDPARTY_EIGEN_DIR}
@@ -401,7 +405,7 @@ add_library (asiUI SHARED
 # Dependencies
 #------------------------------------------------------------------------------
 
-target_link_libraries(asiUI asiAlgo asiData asiVisu asiEngine)
+target_link_libraries(asiUI asiTcl asiAlgo asiData asiVisu asiEngine)
 
 qt5_use_modules(asiUI Core Widgets)
 

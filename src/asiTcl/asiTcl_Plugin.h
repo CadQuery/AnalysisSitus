@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
+// Created on: 23 August 2017
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
@@ -24,15 +24,24 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_h
-#define asiUI_h
+#ifndef asiTcl_Plugin_h
+#define asiTcl_Plugin_h
 
-#define asiUI_NotUsed(x) x
+// asiTcl includes
+#include <asiTcl_Interp.h>
 
-#ifdef asiUI_EXPORTS
-  #define asiUI_EXPORT __declspec(dllexport)
-#else
-  #define asiUI_EXPORT __declspec(dllimport)
-#endif
+// OCCT includes
+#include <TCollection_AsciiString.hxx>
+
+//! Utility to work with Tcl plugins for Analysis Situs.
+class asiTcl_Plugin
+{
+public:
+
+  asiTcl_EXPORT static bool
+    Load(const Handle(asiTcl_Interp)&   interp,
+         const TCollection_AsciiString& pluginName);
+
+};
 
 #endif

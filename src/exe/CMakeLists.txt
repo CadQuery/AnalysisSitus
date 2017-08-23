@@ -146,6 +146,7 @@ set (exe_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
 set (exe_include_dir ${exe_include_dir_loc} PARENT_SCOPE)
 
 include_directories ( ${exe_include_dir_loc}
+                      ${asiTcl_include_dir}
                       ${asiAlgo_include_dir}
                       ${asiData_include_dir}
                       ${asiVisu_include_dir}
@@ -187,7 +188,7 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/templates/exe.vcxproj.user.in
 
 qt5_use_modules(exe Core Widgets)
 
-target_link_libraries(exe asiAlgo asiData asiVisu asiEngine asiUI)
+target_link_libraries(exe asiTcl asiAlgo asiData asiVisu asiEngine asiUI)
 
 if (3RDPARTY_tbb_LIBRARY_DIR_DEBUG)
   link_directories(${3RDPARTY_tbb_LIBRARY_DIR_DEBUG})

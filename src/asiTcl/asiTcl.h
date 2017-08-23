@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
+// Created on: 22 August 2017
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
@@ -24,15 +24,15 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_h
-#define asiUI_h
+#ifndef asiTcl_h
+#define asiTcl_h
 
-#define asiUI_NotUsed(x) x
+#define asiTcl_NotUsed(x) x
 
-#ifdef asiUI_EXPORTS
-  #define asiUI_EXPORT __declspec(dllexport)
+#ifdef asiTcl_EXPORTS
+  #define asiTcl_EXPORT __declspec(dllexport)
 #else
-  #define asiUI_EXPORT __declspec(dllimport)
+  #define asiTcl_EXPORT __declspec(dllimport)
 #endif
 
 #endif

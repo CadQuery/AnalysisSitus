@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
+// Created on: 23 August 2017
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
@@ -24,15 +24,13 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_h
-#define asiUI_h
+#ifndef asiTcl_PluginMacro_h
+#define asiTcl_PluginMacro_h
 
-#define asiUI_NotUsed(x) x
-
-#ifdef asiUI_EXPORTS
-  #define asiUI_EXPORT __declspec(dllexport)
-#else
-  #define asiUI_EXPORT __declspec(dllimport)
-#endif
+#define ASIPLUGIN(name) \
+extern "C" {name##_EXPORT void PLUGINFACTORY(const Handle(asiTcl_Interp)&);} \
+void  PLUGINFACTORY(const Handle(asiTcl_Interp)& interp) { \
+        name::Factory(interp);} \
+\
 
 #endif

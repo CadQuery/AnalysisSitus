@@ -27,10 +27,10 @@
 #define exe_MainWindow_h
 
 // asiUI includes
+#include <asiUI_Console.h>
 #include <asiUI_ControlsFeature.h>
 #include <asiUI_ControlsPartListener.h>
 #include <asiUI_ObjectBrowser.h>
-#include <asiUI_StyledTextEdit.h>
 #include <asiUI_ViewerPartListener.h>
 
 // Qt includes
@@ -72,6 +72,7 @@ private:
     asiUI_ControlsPart*    wControlsPart;    //!< Part controls.
     asiUI_ControlsFeature* wControlsFeature; //!< Feature controls.
     asiUI_StyledTextEdit*  wLogger;          //!< Logger.
+    asiUI_Console*         wConsole;         //!< Console for scripting.
 
     t_widgets() : wBrowser         (NULL),
                   wViewerDomain    (NULL),
@@ -79,7 +80,8 @@ private:
                   wViewerSurface   (NULL),
                   wControlsPart    (NULL),
                   wControlsFeature (NULL),
-                  wLogger          (NULL)
+                  wLogger          (NULL),
+                  wConsole         (NULL)
     {}
 
     void Release()
@@ -91,6 +93,7 @@ private:
       delete wControlsPart;    wControlsPart    = NULL;
       delete wControlsFeature; wControlsFeature = NULL;
       delete wLogger;          wLogger          = NULL;
+      delete wConsole;         wConsole         = NULL;
     }
   };
 

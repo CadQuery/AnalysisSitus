@@ -34,6 +34,9 @@
 #include <asiUI_StatusBar.h>
 #include <asiUI_StatusBarImpl.h>
 
+// asiTcl includes
+#include <asiTcl_Plugin.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QApplication>
@@ -149,7 +152,7 @@ void exe_MainWindow::createDockWindows()
     cf->ObjectBrowser = m_widgets.wBrowser;
   }
 
-  // Face Domain viewer
+  // Domain viewer
   {
     QDockWidget* pDock = new QDockWidget("Domain", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -165,9 +168,9 @@ void exe_MainWindow::createDockWindows()
     cf->Prs.Domain   = m_widgets.wViewerDomain->PrsMgr();
   }
 
-  // Host geometry viewer
+  // Host viewer
   {
-    QDockWidget* pDock = new QDockWidget("Host Geometry", this);
+    QDockWidget* pDock = new QDockWidget("Host", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
     m_widgets.wViewerSurface = new asiUI_ViewerHost(pDock);
@@ -270,6 +273,36 @@ void exe_MainWindow::createDockWindows()
   cf->Logger           = new asiUI_Logger(m_widgets.wLogger);
   cf->ProgressListener = new asiUI_ProgressListener(statusBar, cf->ProgressNotifier, cf->Logger);
   cf->ProgressListener->Connect();
+
+  /* ==================================
+   *  Tcl console with custom commands
+   * ================================== */
+
+  // Construct the interpreter
+  cf->Interp = new asiTcl_Interp;
+  cf->Interp->Init();
+  cf->Interp->SetPlotter(cf->Plotter);
+  cf->Interp->SetProgress(cf->ProgressNotifier);
+  cf->Interp->SetModel(cf->Model);
+
+  // Load commands
+  if ( !asiTcl_Plugin::Load(cf->Interp, "cmdMisc") )
+    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "Cannot load cmdMisc commands.");
+  else
+    cf->ProgressNotifier->SendLogMessage(LogInfo(Normal) << "Loaded cmdMisc commands.");
+
+  // Console window
+  QDockWidget* pDockConsoleWindow;
+  {
+    pDockConsoleWindow = new QDockWidget("Console", this);
+    pDockConsoleWindow->setAllowedAreas(Qt::BottomDockWidgetArea);
+    //
+    m_widgets.wConsole = new asiUI_Console(cf->Interp, pDockLogWindow);
+    //
+    pDockConsoleWindow->setWidget(m_widgets.wConsole);
+    //
+    this->addDockWidget(Qt::BottomDockWidgetArea, pDockConsoleWindow);
+  }
 }
 
 //-----------------------------------------------------------------------------

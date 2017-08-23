@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
+// Created on: 23 August 2017
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
@@ -24,15 +24,37 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_h
-#define asiUI_h
+// Own include
+#include <asiTcl_Plugin.h>
 
-#define asiUI_NotUsed(x) x
+// OCCT includes
+#include <OSD_SharedLibrary.hxx>
 
-#ifdef asiUI_EXPORTS
-  #define asiUI_EXPORT __declspec(dllexport)
-#else
-  #define asiUI_EXPORT __declspec(dllimport)
-#endif
+//-----------------------------------------------------------------------------
 
-#endif
+bool asiTcl_Plugin::Load(const Handle(asiTcl_Interp)&   interp,
+                         const TCollection_AsciiString& pluginName)
+{
+  OSD_SharedLibrary SharedLibrary( pluginName.ToCString() );
+
+  if ( !SharedLibrary.DlOpen(OSD_RTLD_LAZY) )
+  {
+    std::cout << "Error: cannot load " << pluginName.ToCString() << std::endl;
+    return false;
+  }
+
+  OSD_Function f = SharedLibrary.DlSymb("PLUGINFACTORY");
+  if ( f == NULL )
+  {
+    std::cout << "Error: cannot find factory (function PLUGINFACTORY) in " << pluginName.ToCString() << std::endl;
+    return false;
+  }
+
+  // Cast
+  void (*fp) (const Handle(asiTcl_Interp)&) = NULL;
+  fp = (void (*)(const Handle(asiTcl_Interp)&)) f;
+
+  // Call
+  (*fp) (interp);
+  return true;
+}

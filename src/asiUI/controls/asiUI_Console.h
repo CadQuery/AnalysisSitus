@@ -1,6 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
-// Created by: Sergey SLYADNEV
+// Created on: 23 August 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -24,15 +23,51 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_h
-#define asiUI_h
+#ifndef asiUI_Console_h
+#define asiUI_Console_h
 
-#define asiUI_NotUsed(x) x
+// asiUI includes
+#include <asiUI_StyledTextEdit.h>
 
-#ifdef asiUI_EXPORTS
-  #define asiUI_EXPORT __declspec(dllexport)
-#else
-  #define asiUI_EXPORT __declspec(dllimport)
-#endif
+// asiTcl includes
+#include <asiTcl_Interp.h>
+
+// Qt includes
+#pragma warning(push, 0)
+#include <QKeyEvent>
+#pragma warning(pop)
+
+//! Console window.
+class asiUI_EXPORT asiUI_Console : public asiUI_StyledTextEdit
+{
+  Q_OBJECT
+
+public:
+
+  //! Constructs UI console and initializes it with Tcl interpreter.
+  //! \param[in] interp Tcl interpreter to use.
+  //! \param[in] parent parent Qt widget.
+  asiUI_Console(const Handle(asiTcl_Interp)& interp,
+                QWidget*                     parent = 0);
+
+protected:
+
+  virtual void keyPressEvent(QKeyEvent* e);
+
+protected:
+
+  bool eval(const TCollection_AsciiString& cmd);
+
+  TCollection_AsciiString
+    currentCommand(const QTextCursor& cursor) const;
+
+  QTextLine
+    currentTextLine(const QTextCursor& cursor) const;
+
+protected:
+
+  Handle(asiTcl_Interp) m_interp; //!< Tcl interpreter.
+
+};
 
 #endif

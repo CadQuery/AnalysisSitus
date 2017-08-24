@@ -20,6 +20,10 @@ ASITUS_THIRDPARTY_PRODUCT("tbb" "tbb" "tbb.h" "tbb")
 # Installation
 if (WIN32)
 
+  # Tcl
+  install (FILES ${3RDPARTY_tcl_DIR}/bin/tcl86.dll DESTINATION bin)
+  install (FILES ${3RDPARTY_tcl_DIR}/bin/zlib1.dll DESTINATION bin)
+
   # TBB
   install (FILES ${3RDPARTY_tbb_DIR}/bin/intel64/vc12/tbb.dll       DESTINATION bin)
   install (FILES ${3RDPARTY_tbb_DIR}/bin/intel64/vc12/tbbmalloc.dll DESTINATION bin)

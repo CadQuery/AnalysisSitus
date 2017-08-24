@@ -32,8 +32,9 @@
 
 //-----------------------------------------------------------------------------
 
-bool asiTcl_Plugin::Load(const Handle(asiTcl_Interp)&   interp,
-                         const TCollection_AsciiString& pluginName)
+bool asiTcl_Plugin::Load(const Handle(asiTcl_Interp)&      interp,
+                         const Handle(Standard_Transient)& data,
+                         const TCollection_AsciiString&    pluginName)
 {
   OSD_SharedLibrary SharedLibrary( pluginName.ToCString() );
 
@@ -51,10 +52,10 @@ bool asiTcl_Plugin::Load(const Handle(asiTcl_Interp)&   interp,
   }
 
   // Cast
-  void (*fp) (const Handle(asiTcl_Interp)&) = NULL;
-  fp = (void (*)(const Handle(asiTcl_Interp)&)) f;
+  void (*fp) (const Handle(asiTcl_Interp)&, const Handle(Standard_Transient)& ) = NULL;
+  fp = (void (*)(const Handle(asiTcl_Interp)&, const Handle(Standard_Transient)&)) f;
 
   // Call
-  (*fp) (interp);
+  (*fp) (interp, data);
   return true;
 }

@@ -141,8 +141,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiData)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiVisu)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiEngine)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiUI)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdMisc)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/exe)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdInspector)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdMisc)
 
 #-------------------------------------------------------------------------------
 # Setup compiler
@@ -157,18 +158,20 @@ endif()
 #-------------------------------------------------------------------------------
 
 ################################################################################
-set_property(TARGET asiAlgo   PROPERTY FOLDER Framework)
-set_property(TARGET asiData   PROPERTY FOLDER Framework)
-set_property(TARGET asiVisu   PROPERTY FOLDER Framework)
-set_property(TARGET asiEngine PROPERTY FOLDER Framework)
-set_property(TARGET asiUI     PROPERTY FOLDER Framework)
+set_property(TARGET asiAlgo      PROPERTY FOLDER Framework)
+set_property(TARGET asiData      PROPERTY FOLDER Framework)
+set_property(TARGET asiVisu      PROPERTY FOLDER Framework)
+set_property(TARGET asiEngine    PROPERTY FOLDER Framework)
+set_property(TARGET asiUI        PROPERTY FOLDER Framework)
 ################################################################################
-set_property(TARGET exe       PROPERTY FOLDER Executables)
+set_property(TARGET exe          PROPERTY FOLDER Executables)
 ################################################################################
-set_property(TARGET setup     PROPERTY FOLDER Utilities)
+set_property(TARGET setup        PROPERTY FOLDER Utilities)
 ################################################################################
-set_property(TARGET asiTcl    PROPERTY FOLDER Batch)
-set_property(TARGET cmdMisc   PROPERTY FOLDER Commands)
+set_property(TARGET asiTcl       PROPERTY FOLDER Batch)
+################################################################################
+set_property(TARGET cmdInspector PROPERTY FOLDER Commands)
+set_property(TARGET cmdMisc      PROPERTY FOLDER Commands)
 ################################################################################
 
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)

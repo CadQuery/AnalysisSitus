@@ -123,6 +123,16 @@ bool asiTcl_Interp::AddCommand(const TCollection_AsciiString& name,
 
 //-----------------------------------------------------------------------------
 
+int asiTcl_Interp::ErrorOnWrongArgs(const char* cmd)
+{
+  std::cerr << "Error: wrong number of arguments in command " << cmd;
+  this->GetProgress().SendLogMessage(LogErr(Normal) << "Wrong number of arguments in command %1." << cmd);
+
+  return TCL_ERROR;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiTcl_Interp::addCommand(const TCollection_AsciiString& name,
                                const TCollection_AsciiString& help,
                                const TCollection_AsciiString& filename,

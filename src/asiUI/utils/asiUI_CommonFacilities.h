@@ -1,6 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 23 August 2017
-// Created by: Sergey SLYADNEV
+// Created on: 24 August 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -24,32 +23,19 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef cmdMisc_h
-#define cmdMisc_h
+#ifndef asiUI_CommonFacilities_h
+#define asiUI_CommonFacilities_h
 
-#define cmdMisc_NotUsed(x) x
+// asiUI includes
+#include <asiUI_Common.h>
 
-#ifdef cmdMisc_EXPORTS
-  #define cmdMisc_EXPORT __declspec(dllexport)
-#else
-  #define cmdMisc_EXPORT __declspec(dllimport)
-#endif
-
-//-----------------------------------------------------------------------------
-
-// asiTcl includes
-#include <asiTcl_Interp.h>
-
-//-----------------------------------------------------------------------------
-
-//! Miscellaneous commands.
-class cmdMisc
+//! Base class for common facilities.
+class asiUI_CommonFacilities : public Standard_Transient
 {
 public:
 
-  cmdMisc_EXPORT static void
-    Factory(const Handle(asiTcl_Interp)&      interp,
-            const Handle(Standard_Transient)& data);
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiUI_CommonFacilities, Standard_Transient)
 
 };
 

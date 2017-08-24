@@ -337,18 +337,13 @@ int TEST(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-void cmdMisc::Factory(const Handle(asiTcl_Interp)& interp)
+void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
+                      const Handle(Standard_Transient)& data)
 {
-  // TODO: create commands from cmdMisc asset here
-  std::cout << "*** cmdMisc loaded" << std::endl;
-
   // Add commands
   interp->AddCommand("box", "", __FILE__, BOX);
   //
   interp->AddCommand("test", "", __FILE__, TEST);
-
-  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
-  std::cout << "*** M: " << M->DynamicType()->Name() << std::endl;
 }
 
 // Declare entry point PLUGINFACTORY

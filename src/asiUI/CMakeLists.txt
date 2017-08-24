@@ -114,6 +114,7 @@ set (interaction_CPP_FILES
 
 set (utils_H_FILES
   utils/asiUI_Common.h
+  utils/asiUI_CommonFacilities.h
   utils/asiUI_DataAdaptor.h
   utils/asiUI_JournalIV.h
   utils/asiUI_Logger.h

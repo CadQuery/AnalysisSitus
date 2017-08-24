@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 23 August 2017
+// Created on: 24 August 2017
 // Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
@@ -24,15 +24,15 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef cmdMisc_h
-#define cmdMisc_h
+#ifndef cmdInspector_h
+#define cmdInspector_h
 
-#define cmdMisc_NotUsed(x) x
+#define cmdInspector_NotUsed(x) x
 
-#ifdef cmdMisc_EXPORTS
-  #define cmdMisc_EXPORT __declspec(dllexport)
+#ifdef cmdInspector_EXPORTS
+  #define cmdInspector_EXPORT __declspec(dllexport)
 #else
-  #define cmdMisc_EXPORT __declspec(dllimport)
+  #define cmdInspector_EXPORT __declspec(dllimport)
 #endif
 
 //-----------------------------------------------------------------------------
@@ -40,16 +40,31 @@
 // asiTcl includes
 #include <asiTcl_Interp.h>
 
+// asiEngine includes
+#include <asiEngine_Model.h>
+
+// exe includes
+#include <exe_CommonFacilities.h>
+
 //-----------------------------------------------------------------------------
 
-//! Miscellaneous commands.
-class cmdMisc
+//! B-Rep inspection commands.
+class cmdInspector
 {
 public:
 
-  cmdMisc_EXPORT static void
+  cmdInspector_EXPORT static void
     Factory(const Handle(asiTcl_Interp)&      interp,
             const Handle(Standard_Transient)& data);
+
+public:
+
+  cmdInspector_EXPORT static void
+    UpdateUI();
+
+public:
+
+  static Handle(exe_CommonFacilities) cf; //!< Common facilities.
 
 };
 

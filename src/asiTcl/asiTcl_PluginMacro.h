@@ -28,9 +28,11 @@
 #define asiTcl_PluginMacro_h
 
 #define ASIPLUGIN(name) \
-extern "C" {name##_EXPORT void PLUGINFACTORY(const Handle(asiTcl_Interp)&);} \
-void  PLUGINFACTORY(const Handle(asiTcl_Interp)& interp) { \
-        name::Factory(interp);} \
+extern "C" {name##_EXPORT void PLUGINFACTORY(const Handle(asiTcl_Interp)&,\
+                                             const Handle(Standard_Transient)&);} \
+void PLUGINFACTORY(const Handle(asiTcl_Interp)&      interp, \
+                   const Handle(Standard_Transient)& data) { \
+        name::Factory(interp, data);} \
 \
 
 #endif

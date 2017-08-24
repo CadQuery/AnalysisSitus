@@ -45,6 +45,16 @@
 #include <QDockWidget>
 #pragma warning(pop)
 
+#define EXE_LOAD_MODULE(name) \
+{ \
+  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();\
+  \
+  if ( !asiTcl_Plugin::Load(cf->Interp, cf, name) ) \
+    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "Cannot load %1 commands." << name); \
+  else \
+    cf->ProgressNotifier->SendLogMessage(LogInfo(Normal) << "Loaded %1 commands." << name); \
+}
+
 //-----------------------------------------------------------------------------
 
 //! Constructor.
@@ -283,13 +293,10 @@ void exe_MainWindow::createDockWindows()
   cf->Interp->Init();
   cf->Interp->SetPlotter(cf->Plotter);
   cf->Interp->SetProgress(cf->ProgressNotifier);
-  cf->Interp->SetModel(cf->Model);
 
   // Load commands
-  if ( !asiTcl_Plugin::Load(cf->Interp, "cmdMisc") )
-    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "Cannot load cmdMisc commands.");
-  else
-    cf->ProgressNotifier->SendLogMessage(LogInfo(Normal) << "Loaded cmdMisc commands.");
+  EXE_LOAD_MODULE("cmdMisc")
+  EXE_LOAD_MODULE("cmdInspector")
 
   // Console window
   QDockWidget* pDockConsoleWindow;

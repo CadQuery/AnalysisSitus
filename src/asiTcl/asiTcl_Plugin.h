@@ -39,8 +39,9 @@ class asiTcl_Plugin
 public:
 
   asiTcl_EXPORT static bool
-    Load(const Handle(asiTcl_Interp)&   interp,
-         const TCollection_AsciiString& pluginName);
+    Load(const Handle(asiTcl_Interp)&      interp,
+         const Handle(Standard_Transient)& data,
+         const TCollection_AsciiString&    pluginName);
 
 };
 

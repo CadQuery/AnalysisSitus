@@ -33,6 +33,7 @@
 #include <asiEngine_Model.h>
 
 // asiUI includes
+#include <asiUI_CommonFacilities.h>
 #include <asiUI_IStatusBar.h>
 #include <asiUI_JournalIV.h>
 #include <asiUI_ObjectBrowser.h>
@@ -46,12 +47,12 @@
 #include <asiTcl_Interp.h>
 
 //! Common tools and objects for A-Situs application.
-class exe_CommonFacilities : public Standard_Transient
+class exe_CommonFacilities : public asiUI_CommonFacilities
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(exe_CommonFacilities, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(exe_CommonFacilities, asiUI_CommonFacilities)
 
 public:
 

@@ -31,12 +31,14 @@
 #include <asiTcl.h>
 
 // Active Data includes
-#include <ActAPI_IModel.h>
 #include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
 
 // OCCT includes
 #include <TCollection_AsciiString.hxx>
+
+#define TCL_ERROR 1
+#define TCL_OK 0
 
 struct Tcl_Interp; // Forward declaration for Tcl C structure.
 
@@ -120,19 +122,6 @@ public:
     return m_progress;
   }
 
-  //! Sets Data Model instance.
-  //! \param[in] model Data Model instance.
-  void SetModel(const Handle(ActAPI_IModel)& model)
-  {
-    m_model = model;
-  }
-
-  //! \return Data Model instance.
-  const Handle(ActAPI_IModel)& GetModel()
-  {
-    return m_model;
-  }
-
 public:
 
   //! Initializes interpreter.
@@ -157,6 +146,13 @@ public:
                const TCollection_AsciiString& filename,
                t_user_func                    func);
 
+  //! Default reaction of interpreter when wrong arguments are passed to
+  //! a command.
+  //! \param[in] cmd name of the command being executed.
+  //! \return Tcl error code (1 == TCL_ERROR).
+  asiTcl_EXPORT int
+    ErrorOnWrongArgs(const char* cmd);
+
 protected:
 
   //! Internal method to add command to Tcl interpreter.
@@ -173,10 +169,9 @@ protected:
 
 protected:
 
-  Tcl_Interp*           m_pInterp;  //!< Internal pointer to Tcl interpreter.
-  ActAPI_ProgressEntry  m_progress; //!< Progress sentry.
-  ActAPI_PlotterEntry   m_plotter;  //!< Imperative plotter sentry.
-  Handle(ActAPI_IModel) m_model;    //!< Data Model instance.
+  Tcl_Interp*          m_pInterp;  //!< Internal pointer to Tcl interpreter.
+  ActAPI_ProgressEntry m_progress; //!< Progress sentry.
+  ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter sentry.
 
 };
 

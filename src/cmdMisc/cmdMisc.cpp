@@ -102,7 +102,9 @@ TopoDS_Shape intersectionShape(TopoDS_Shape srf1,TopoDS_Shape srf2)
 	return R;
 }
 
-std::vector<gp_Pnt> slicePnts(TopoDS_Shape& sbendStep, gp_Pln& pln, gp_Dir& normalPl)
+std::vector<gp_Pnt> slicePnts(TopoDS_Shape& sbendStep, gp_Pln& pln, gp_Dir& normalPl,
+                              gp_Vec& refDir,
+                              ActAPI_PlotterEntry plotter)
 {
   TopoDS_Shape facePln = BRepBuilderAPI_MakeFace(pln);   
   TopoDS_Shape intShape = intersectionShape(sbendStep, facePln);
@@ -121,7 +123,8 @@ std::vector<gp_Pnt> slicePnts(TopoDS_Shape& sbendStep, gp_Pln& pln, gp_Dir& norm
   Standard_Real last = 1.;
   BRep_Tool fromEdgeToCurve;
   std::vector<Handle(Geom_Curve)> edgeWireCurve;
-  for ( int k = 0; k < edgesWireMap.Extent(); ++k )
+
+  for ( int k = 0; k < edgesWireMap.Extent(); ++k)
     edgeWireCurve.push_back(NULL);
 
   std::vector<Standard_Real> listOfCurveLength;
@@ -152,20 +155,48 @@ std::vector<gp_Pnt> slicePnts(TopoDS_Shape& sbendStep, gp_Pln& pln, gp_Dir& norm
   Handle(Adaptor3d_HCurve) adaptor3d =  wireConverter.Trim(wireConverter.FirstParameter(), wireConverter.LastParameter(), 10e-6);   
   Handle(Geom_BSplineCurve) bsWire = GeomConvert_ApproxCurve(adaptor3d, 10e-6, GeomAbs_C1, 30, 14).Curve();
   //DrawTrSurf::Set("bspline" ,bsCurve);
+
+  plotter.DRAW_CURVE(bsWire, Color_Red, "bsWire");
   
   // uniform sampling of the points onto the wire
   
-  int totalSlicePnts = 24;
+  int totalSlicePnts = 48;
   std::vector<gp_Pnt>  sampledPoints;
 
   BRepAdaptor_Curve BAC(BRepBuilderAPI_MakeEdge(bsWire).Edge());           
   GCPnts_UniformAbscissa pntSamplingTool (BAC, totalSlicePnts, -1); 
-  for ( int pt_idx = 1; pt_idx <= pntSamplingTool.NbPoints(); ++pt_idx )
+
+  gp_Pnt P0;
+  bsWire->D0(pntSamplingTool.Parameter(1), P0);
+  sampledPoints.push_back(P0);
+
+  gp_Vec ori;
+  bool isReverse = false;
+  for ( int pt_idx = 2; pt_idx <= pntSamplingTool.NbPoints(); ++pt_idx )
   {
     gp_Pnt aPnt;
     bsWire->D0(pntSamplingTool.Parameter(pt_idx), aPnt);
-    sampledPoints.push_back(aPnt);
+
+    if ( refDir.Magnitude() > RealEpsilon() && pt_idx == 2 )
+    {
+      ori = aPnt.XYZ() - P0.XYZ();
+      double a1 = refDir.Angle( ori );
+      double a2 = refDir.Angle( ori.Reversed() );
+      //
+      std::cout << "\ta1 = " << a1 << std::endl;
+      std::cout << "\ta2 = " << a2 << std::endl;
+      //
+      if ( Abs(a2) < Abs(a1) )
+        isReverse = true;
+    }
+
+    if ( isReverse )
+      sampledPoints.insert(sampledPoints.begin(), aPnt);
+    else
+      sampledPoints.push_back(aPnt);
   }    
+
+  refDir = sampledPoints[1].XYZ() - sampledPoints[0].XYZ();
   
   // pushback again the first point
   
@@ -190,12 +221,12 @@ std::vector<gp_Pnt> slicePnts(TopoDS_Shape& sbendStep, gp_Pln& pln, gp_Dir& norm
  cout << "pnts displayed " << endl;
  
  return sampledPoints;
- 	
 }
 
 //-----------------------------------------------------------------------------
 
-#define nbSlices 5
+#define nbSlices 15
+#define maxSlice nbSlices
 
 int TEST(const Handle(asiTcl_Interp)& interp,
          int                          argc,
@@ -205,16 +236,12 @@ int TEST(const Handle(asiTcl_Interp)& interp,
 
   interp->GetProgress().SendLogMessage(LogInfo(Normal) << "sbend created");
   interp->GetPlotter().DRAW_SHAPE(sbendStep, "sbend");
-
-  ////////////////
-
-  int maxSlice = nbSlices;
    
   // extract sbend slice
   gp_Dir normalPl(0.437226519089472, -1.74144587639091e-11, -0.899351416858229);  
   std::vector<gp_Pln> pln; 
-  std::vector<Handle(Geom_Plane)> planePln;
-
+  std::vector<Handle(Geom_Plane)> planePln;  
+  
   //pln.push_back(gp_Pln(gp_Pnt(570.570007014, 79.2900000001, (365.)), normalPl));
   //planePln.push_back(new Geom_Plane(pln[0]));  
     
@@ -224,61 +251,136 @@ int TEST(const Handle(asiTcl_Interp)& interp,
   // evaluate first point of the first slice
   
   gp_Pln firstPln(gp_Pnt(570.570007014, 79.2900000001, (365.)), normalPl);
-
- 
-  std::vector<gp_Pnt> firstPnts = slicePnts(sbendStep, firstPln, normalPl);
-
+  
+  gp_Vec refDir;
+  std::vector<gp_Pnt> firstPnts = slicePnts(sbendStep, firstPln, normalPl, refDir, interp->GetPlotter());
   firstPnt = firstPnts[0];
   TColgp_Array2OfPnt pntsMatrix(1, firstPnts.size(), 1, maxSlice);   
   for(Standard_Integer n = 0; n < maxSlice; ++n)
   {
-    pln.push_back(gp_Pln(gp_Pnt(570.570007014, 79.2900000001, (365. -n*5.)), normalPl));
-    planePln.push_back(new Geom_Plane(pln.at(n)));
-
-    pnts = slicePnts(sbendStep, pln.at(n), normalPl);
-
-    TCollection_AsciiString ptname("slicepoints_"); ptname += n;
+	pln.push_back(gp_Pln(gp_Pnt(570.570007014, 79.2900000001, (365. -n*5.)), normalPl));
+    planePln.push_back(new Geom_Plane(pln.at(n)));  
+        
+    pnts = slicePnts(sbendStep, pln.at(n), normalPl, refDir, interp->GetPlotter());
         
     for(int firstIndx = 0; firstIndx < pnts.size(); ++firstIndx)
     {
-      pntsMatrix.SetValue(firstIndx+1, n+1, pnts[firstIndx]);
-
-      interp->GetPlotter().DRAW_POINT(pnts[firstIndx], Color_Red, ptname.ToCString());
-
+	  pntsMatrix.SetValue(firstIndx+1, n+1, pnts[firstIndx]);
+	  
+    TCollection_AsciiString name("pnt s"); name += n;
+    //interp->GetPlotter().DRAW_POINT(pnts[firstIndx], Color_Red, name);
 	  //TCollection_AsciiString name("pnts"); name += (firstIndx + 1);
       //DrawTrSurf::Set( name.ToCString(), pntsMatrix.Value(firstIndx+1, n+1) );
 	  			
-	}
+	} 
   }
+  
+  cout << "pntsMatrix colLength is " << pntsMatrix.ColLength() << endl;
+  cout << "pntsMatrix rowLength is " << pntsMatrix.RowLength() << endl;
+
+  //return 1;
+
+  // =============================================================================================================
+  
+  // PntsMatrix is the matrix of the pnts uniformly sampled onto the step file. I need to reorder them properly:
+  
+  // =============================================================================================================
+
 
 	TColgp_Array2OfPnt finalPntsMatrix(1, firstPnts.size(), 1, maxSlice);
-	for(int k = 1; k <= pntsMatrix.ColLength(); ++k) finalPntsMatrix.SetValue(k, 1, pntsMatrix.Value(k, 1));
-	std::vector<gp_Pnt> pntsVec;
-    double minDist = 0.;
-	int minDistInx = 0;	
+	//for(int k = 1; k <= pntsMatrix.ColLength(); ++k) finalPntsMatrix.SetValue(k, 1, pntsMatrix.Value(k, 1));
+  //finalPntsMatrix = pntsMatrix;
 
-	for(int n = 1; n < maxSlice; ++n)
-	{
-	  gp_Pnt pnt1 = pntsMatrix.Value(1, n);
-	  for(int cmpInd = 2; cmpInd <= pntsMatrix.ColLength(); ++cmpInd) 
-	  {
+  // Copy first column as-as. It will play as a reference.
+  for ( int r = 1; r <= pntsMatrix.ColLength(); ++r )
+    finalPntsMatrix.SetValue( r, 1, pntsMatrix(r, 1) );
 
-	    minDist = pnt1.Distance(pntsMatrix.Value(1, n+1));
-	    if(pnt1.Distance(pntsMatrix.Value(cmpInd, n+1)) < minDist) 
-	    {
-	       minDist = pnt1.Distance(pntsMatrix.Value(cmpInd, n+1));
-	       minDistInx = cmpInd;
-	    }		    
-	  }
-	
-      for(int indPnts2 = minDistInx; indPnts2 <= pntsMatrix.ColLength(); ++indPnts2) 
+  const int numPtsInCol = pntsMatrix.ColLength();
+
+  gp_Pnt refPoint = pntsMatrix(1, 1);
+
+  // Copy all other rows
+  for ( int c = 2; c <= pntsMatrix.RowLength(); ++c )
+  {
+    double minDist = DBL_MAX;
+
+    int startRow = 0;
+
+    interp->GetPlotter().DRAW_POINT(refPoint, Color_Yellow, "refPoint");
+
+    // Find index to start
+    for ( int r = 1; r < pntsMatrix.ColLength(); ++r )
+    {
+      if ( pntsMatrix(r, c).Distance(refPoint) < minDist )
       {
-	    //pntsVec.push_back(pntsMatrix(indPnts2, n+2));
-	    finalPntsMatrix.SetValue(indPnts2-minDistInx+1, n+1, pntsMatrix.Value(indPnts2, n+1));
+        minDist = pntsMatrix(r, c).Distance(refPoint);
+        startRow = r;
       }
-      for(int indPnts3 = 2; indPnts3 <= minDistInx; ++indPnts3)  finalPntsMatrix.SetValue(pntsMatrix.ColLength()-minDistInx+indPnts3, n+1, pntsMatrix.Value(indPnts3-1, n+1)); //pntsVec.push_back(pntsMatrix(indPnts3, n+2));//	  
+    }
 
-	} 
+    refPoint = pntsMatrix(startRow, c);
+
+    // Copy points starting from the found column index
+    int pt = 0;
+    int rr = startRow - 1;
+    do
+    {
+      pt++;
+      rr++;
+
+      if ( rr > pntsMatrix.ColLength() )
+        rr -= pntsMatrix.ColLength();
+
+      TCollection_AsciiString name("reordered pnt col = "); name += c;
+      //interp->GetPlotter().DRAW_POINT(pntsMatrix(rr, c), Color_Red, name);
+
+      finalPntsMatrix.SetValue( pt, c, pntsMatrix(rr, c) );
+    }
+    while ( pt < numPtsInCol );
+  }
+
+
+
+	//std::vector<gp_Pnt> pntsVec;
+	//double minDist[maxSlice];	  
+	//int minDistInx[maxSlice];	
+	//gp_Pnt pnt1[maxSlice];
+	//for (int arraInd = 0; arraInd < maxSlice; ++arraInd)
+	//{
+	//  minDist[arraInd] = 0.;	  
+	//  minDistInx[arraInd] = 1;
+	//}
+	//int n = 1;
+	//while(n < maxSlice)  //for(int n = 1; n < maxSlice; ++n)
+	//{
+	//  pnt1[n-1] = pntsMatrix.Value(1, n);
+	//  	
+	//  for(int cmpInd = 2; cmpInd <= pntsMatrix.ColLength(); ++cmpInd) 
+	//  {
+	//	//minDist.assign(n-1, 0.);	  
+	//    //minDistInx.assign(n-1, 1);
+	//    minDist[n-1] = pnt1[n-1].Distance(pntsMatrix.Value(1, n+1));
+	//    if(pnt1[n-1].Distance(pntsMatrix.Value(cmpInd, n+1)) < minDist[n-1]) 
+	//    {
+	//       minDist[n-1] = pnt1[n-1].Distance(pntsMatrix.Value(cmpInd, n+1));
+	//       minDistInx[n-1] = cmpInd;
+	//    }		    
+	//  }
+	//  
+	//  cout << "minDist is " << minDist[n-1] << endl;
+	//  cout << "minDistInx is " << minDistInx[n-1] << endl;
+	//  
+	//  int indPnts2 = 0;
+ //     for(indPnts2 = minDistInx[n-1]; indPnts2 <= pntsMatrix.ColLength(); ++indPnts2) 
+ //     {
+	//    //pntsVec.push_back(pntsMatrix(indPnts2, n+2));
+	//    finalPntsMatrix.SetValue(indPnts2-minDistInx[n-1]+1, n+1, pntsMatrix.Value(indPnts2, n+1));
+ //     }
+ //     int indPnts3 = 0;
+	//  for(indPnts3 = 2; indPnts3 <= minDistInx[n-1]; ++indPnts3) finalPntsMatrix.SetValue(pntsMatrix.ColLength()-minDistInx[n-1]+indPnts3, n+1, pntsMatrix.Value(indPnts3-1, n+1)); 
+	//  //pntsVec.push_back(pntsMatrix(indPnts3, n+2));//		  
+	//++n;
+	//} 
   
   Standard_Integer uDegree = 3;	
   Standard_Integer uNumberCP = finalPntsMatrix.ColLength();
@@ -330,8 +432,14 @@ int TEST(const Handle(asiTcl_Interp)& interp,
   //Handle(Geom_BSplineSurface) bsplineSurf = pntsToBS.Surface();
   Handle(Geom_BSplineSurface) bsplineSurf = new Geom_BSplineSurface(finalPntsMatrix, uKnots, vKnots, uMults, vMults, uDegree, vDegree, false, false); //pntsToBS.Surface();
   //if(pntsToBS.IsDone())cout << "surface done " << endl;
-  interp->GetPlotter().REDRAW_SURFACE("finalSurf", bsplineSurf, Color_Blue);
-
+  //DrawTrSurf::Set("finalSurf", bsplineSurf);
+  interp->GetPlotter().REDRAW_SURFACE("finalSurf", bsplineSurf, Color_White);
+  
+  TopoDS_Face face = BRepBuilderAPI_MakeFace (bsplineSurf, 10e-3);
+  interp->GetPlotter().REDRAW_SHAPE("finalFace", face, Color_White);
+  //DBRep::Set("face", face);*/
+  
+    
   return 0;
 }
 

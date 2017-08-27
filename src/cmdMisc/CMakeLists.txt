@@ -67,3 +67,21 @@ target_link_libraries(cmdMisc asiTcl asiAlgo asiData asiVisu asiEngine asiUI)
 #------------------------------------------------------------------------------
 
 install (TARGETS cmdMisc RUNTIME DESTINATION bin COMPONENT Runtime)
+
+#------------------------------------------------------------------------------
+# Installation of Analysis Situs as a framework
+#------------------------------------------------------------------------------
+
+install (TARGETS cmdMisc
+         RUNTIME DESTINATION framework/bin COMPONENT Runtime
+         CONFIGURATIONS Release
+         ARCHIVE DESTINATION framework/lib COMPONENT Library
+         CONFIGURATIONS Release)
+
+install (TARGETS cmdMisc
+         RUNTIME DESTINATION framework/bind COMPONENT Runtime
+         CONFIGURATIONS Debug
+         ARCHIVE DESTINATION framework/libd COMPONENT Library
+         CONFIGURATIONS Debug)
+
+install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/cmdMisc.pdb DESTINATION framework/bind CONFIGURATIONS Debug)

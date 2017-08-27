@@ -1602,3 +1602,30 @@ Handle(Poly_Triangulation)
   // Create triangulation
   return new Poly_Triangulation(nodes, tris);
 }
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Utils::HexagonPoles(const gp_XY& center,
+                                 const double dist2Pole,
+                                 gp_XY&       P1,
+                                 gp_XY&       P2,
+                                 gp_XY&       P3,
+                                 gp_XY&       P4,
+                                 gp_XY&       P5,
+                                 gp_XY&       P6)
+{
+  std::vector<gp_XY*> res = {&P1, &P2, &P3, &P4, &P5, &P6};
+
+  // Taken from http://www.redblobgames.com/grids/hexagons/
+  for ( int i = 0; i < 6; ++i )
+  {
+    const double angle_deg = 60*i + 30;
+    const double angle_rad = angle_deg / 180.0 * M_PI;
+
+    const double x = center.X() + dist2Pole * Cos(angle_rad);
+    const double y = center.X() + dist2Pole * Sin(angle_rad);
+
+    res[i]->SetX(x);
+    res[i]->SetY(y);
+  }
+}

@@ -372,6 +372,16 @@ public:
                    const gp_Pnt& P1,
                    const gp_Pnt& P2);
 
+  asiAlgo_EXPORT static void
+    HexagonPoles(const gp_XY& center,
+                 const double dist2Pole,
+                 gp_XY&       P1,
+                 gp_XY&       P2,
+                 gp_XY&       P3,
+                 gp_XY&       P4,
+                 gp_XY&       P5,
+                 gp_XY&       P6);
+
 private:
 
   asiAlgo_Utils(); //!< Prohibited.

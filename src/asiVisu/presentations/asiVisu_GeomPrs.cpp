@@ -68,7 +68,9 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
 
   // Set point size and line width
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
-  pl->Actor()->GetProperty()->SetLineWidth(1.5f);
+  pl->Actor()->GetProperty()->SetLineWidth(2.5f);
+  pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
+  pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
 
   /* ====================
    *  Pipeline for edges
@@ -79,9 +81,10 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
     contour_pl = new asiVisu_PartEdgesPipeline( pl->GetSource() );
 
   // Adjust props
-  contour_pl->Actor()->GetProperty()->SetPointSize(5.0f);
+  contour_pl->Actor()->GetProperty()->SetPointSize(8.0f);
   contour_pl->Actor()->GetProperty()->SetOpacity(0.5);
   contour_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
+  contour_pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
   contour_pl->Actor()->SetPickable(0);
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
@@ -198,20 +201,20 @@ void asiVisu_GeomPrs::DoUnColor() const
 
 void asiVisu_GeomPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
 {
-  picker->RemoveAllLocators();
+  //picker->RemoveAllLocators();
 
-  // Set octee locators to speed up cell picking
-  if ( this->MainActor() )
-  {
-    vtkSmartPointer<vtkCellTreeLocator>
-      facetLocator = vtkSmartPointer<vtkCellTreeLocator>::New();
-    //
-    facetLocator->SetDataSet( this->MainActor()->GetMapper()->GetInput() );
-    facetLocator->AutomaticOn();
-    facetLocator->BuildLocator();
-    //
-    picker->AddLocator(facetLocator);
-  }
+  //// Set octee locators to speed up cell picking
+  //if ( this->MainActor() )
+  //{
+  //  vtkSmartPointer<vtkCellTreeLocator>
+  //    facetLocator = vtkSmartPointer<vtkCellTreeLocator>::New();
+  //  //
+  //  facetLocator->SetDataSet( this->MainActor()->GetMapper()->GetInput() );
+  //  facetLocator->AutomaticOn();
+  //  facetLocator->BuildLocator();
+  //  //
+  //  picker->AddLocator(facetLocator);
+  //}
 
   // NOTICE: we do not apply cell locator for selection of edges as it seems
   //         to work weird (at least for vtkCellTreeLocator)

@@ -253,6 +253,18 @@ public:
     return ret_val;
   }
 
+  double static Trim(const double val,
+                     const double limit)
+  {
+    double ret_val = val;
+    if ( val > limit )
+      ret_val = limit;
+    else if ( val < -limit )
+      ret_val = -limit;
+
+    return ret_val;
+  }
+
 private:
 
   static TPrsAllocMap m_allocMap; //!< Presentation factory.

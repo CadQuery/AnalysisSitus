@@ -47,6 +47,7 @@
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
 #include <BRepCheck_Result.hxx>
 #include <BRepCheck_Status.hxx>
+#include <BRepCheck_Wire.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepTools.hxx>
 #include <GC_MakeCircle.hxx>
@@ -719,6 +720,43 @@ bool
   if ( Journal.Access() )
     CheckShapeAux::StructuralDump(Journal, Checker, shape);
 
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Checks whether the passed face has all contours (wires)
+//! geometrically closed.
+//! \param face [in] face to check.
+bool asiAlgo_Utils::IsClosed(const TopoDS_Face& face)
+{
+  for ( TopoDS_Iterator it(face); it.More(); it.Next() )
+  {
+    TopoDS_Wire wire = TopoDS::Wire( it.Value() );
+
+    BRepCheck_Wire wireChecker(wire);
+    if ( wireChecker.Closed2d(face) == BRepCheck_NotClosed )
+      return false;
+    if ( wireChecker.Closed() == BRepCheck_NotClosed )
+      return false;
+  }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Checks whether the passed face contains any edges without vertices.
+//! \param face [in] face to check.
+bool asiAlgo_Utils::HasEdgesWithoutVertices(const TopoDS_Face& face)
+{
+  for ( TopExp_Explorer exp(face, TopAbs_EDGE); exp.More(); exp.Next() )
+  {
+    TopTools_IndexedMapOfShape vertices;
+    TopExp::MapShapes(exp.Current(), TopAbs_VERTEX, vertices);
+
+    if ( vertices.IsEmpty() )
+      return true;
+  }
   return false;
 }
 

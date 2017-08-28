@@ -45,9 +45,10 @@ enum asiVisu_ShapePrimitive
   ShapePrimitive_NonManifoldEdge = 8,  //!< Cell type for non-manifold edge.
   //
   ShapePrimitive_Facet           = 9,  //!< Cell type for facet.
+  ShapePrimitive_Isoline         = 10, //!< Isoparametric line.
   //
-  ShapePrimitive_Detected        = 10,  //!< Detected boundary element.
-  ShapePrimitive_Selected        = 11, //!< Selected boundary element.
+  ShapePrimitive_Detected        = 11, //!< Detected boundary element.
+  ShapePrimitive_Selected        = 12, //!< Selected boundary element.
   //
   ShapePrimitive_LAST
 };

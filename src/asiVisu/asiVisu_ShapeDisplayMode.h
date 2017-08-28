@@ -59,6 +59,9 @@ public:
     // Add facets
     mode.Add(ShapePrimitive_Facet);
 
+    // Add isolines for bad faces
+    mode.Add(ShapePrimitive_Isoline);
+
     return mode;
   }
 

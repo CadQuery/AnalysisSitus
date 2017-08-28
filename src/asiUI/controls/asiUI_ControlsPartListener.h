@@ -36,47 +36,46 @@
 #include <QObject>
 
 //! Default slots for controls operating with parts.
-class asiUI_ControlsPartListener : public QObject
+class asiUI_EXPORT asiUI_ControlsPartListener : public QObject
 {
   Q_OBJECT
 
 public:
 
-  asiUI_EXPORT
-    asiUI_ControlsPartListener(asiUI_ControlsPart*            wControls,
-                               asiUI_ViewerPart*              wViewerPart,
-                               asiUI_ViewerDomain*            wViewerDomain,
-                               asiUI_ViewerHost*              wViewerSurface,
-                               const Handle(asiEngine_Model)& model,
-                               ActAPI_ProgressEntry           notifier);
+  asiUI_ControlsPartListener(asiUI_ControlsPart*            wControls,
+                             asiUI_ViewerPart*              wViewerPart,
+                             asiUI_ViewerDomain*            wViewerDomain,
+                             asiUI_ViewerHost*              wViewerSurface,
+                             const Handle(asiEngine_Model)& model,
+                             ActAPI_ProgressEntry           notifier);
 
-  asiUI_EXPORT virtual
+  virtual
     ~asiUI_ControlsPartListener();
 
 public:
 
-  asiUI_EXPORT virtual void
+  virtual void
     Connect();
 
 protected slots:
 
-  asiUI_EXPORT void onPartLoaded       ();
-  asiUI_EXPORT void onPartAdded        ();
-  asiUI_EXPORT void onPartModified     ();
-  asiUI_EXPORT void onVerticesOn       ();
-  asiUI_EXPORT void onVerticesOff      ();
-  asiUI_EXPORT void onSelectionFacesOn ();
-  asiUI_EXPORT void onSelectionEdgesOn ();
+  void onPartLoaded       ();
+  void onPartAdded        ();
+  void onPartModified     ();
+  void onVerticesOn       ();
+  void onVerticesOff      ();
+  void onSelectionFacesOn ();
+  void onSelectionEdgesOn ();
 
 protected:
 
-  asiUI_EXPORT void
+  void
     cleanViewers();
 
-  asiUI_EXPORT virtual void
+  virtual void
     reinitializeEverything();
 
-  asiUI_EXPORT void
+  void
     reinitializePickers();
 
 protected:

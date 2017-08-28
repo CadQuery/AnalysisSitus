@@ -140,7 +140,7 @@ void exe_MainWindow::createDockWindows()
   // Desktop used for sizing
   QDesktopWidget desktop;
   const int side  = std::min( desktop.height(), desktop.width() );
-  const int width = side*0.3;
+  const int width = side*0.05;
 
   // Common facilities instance
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();

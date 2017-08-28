@@ -271,6 +271,12 @@ public:
     CheckShape(const TopoDS_Shape&  shape,
                ActAPI_ProgressEntry Journal);
 
+  asiAlgo_EXPORT static bool
+    IsClosed(const TopoDS_Face& face);
+
+  asiAlgo_EXPORT static bool
+    HasEdgesWithoutVertices(const TopoDS_Face& face);
+
   asiAlgo_EXPORT static double
     MaxTolerance(const TopoDS_Shape& shape);
 

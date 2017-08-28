@@ -801,17 +801,26 @@ ActAPI_DataObjectIdList
   //
   pickRes.SetSelectionModes(m_iSelectionModes);
 
-  if ( pickType == PickType_Cell ) // Cell (topology) picker
+  // Use try-catch as sometimes VTK 7.1 crashes if cell locators are used
+  try
   {
-    m_cellPicker->Pick(xStart, yStart, 0, m_renderer);
+    if ( pickType == PickType_Cell ) // Cell (topology) picker
+    {
+      m_cellPicker->Pick(xStart, yStart, 0, m_renderer);
+    }
+    else if ( pickType == PickType_Point ) // Point (geometry) picker
+    {
+      m_pointPicker->Pick(xStart, yStart, 0, m_renderer);
+    }
+    else if ( pickType == PickType_World ) // World (any visible point) picker
+    {
+      m_worldPicker->Pick(xStart, yStart, 0, m_renderer);
+    }
   }
-  else if ( pickType == PickType_Point ) // Point (geometry) picker
+  catch ( ... )
   {
-    m_pointPicker->Pick(xStart, yStart, 0, m_renderer);
-  }
-  else if ( pickType == PickType_World ) // World (any visible point) picker
-  {
-    m_worldPicker->Pick(xStart, yStart, 0, m_renderer);
+    std::cerr << "VTK picker raised an exception" << std::endl;
+    return result;
   }
 
   // Extract cell ID

@@ -135,6 +135,9 @@ protected:
   asiVisu_EXPORT virtual void
     internalBuild();
 
+  asiVisu_EXPORT bool
+    isValidFace(const TopoDS_Face& face) const;
+
 protected:
 
   asiVisu_EXPORT void
@@ -145,7 +148,27 @@ protected:
   asiVisu_EXPORT void
     addEdge(const TopoDS_Edge&           edge,
             const vtkIdType              shapeId,
+            const int                    edgeId,
             const asiVisu_ShapePrimitive scType);
+
+  asiVisu_EXPORT void
+    addFace(const TopoDS_Face& face,
+            const vtkIdType    shapeId,
+            const int          faceId,
+            const bool         isValid);
+
+  asiVisu_EXPORT void
+    addCurve(const Handle(Geom_Curve)&    curve,
+             const double                 tMin,
+             const double                 tMax,
+             const vtkIdType              shapeId,
+             const asiVisu_ShapePrimitive scType);
+
+  asiVisu_EXPORT void
+    addBrokenEdgeCurve(const TopoDS_Edge&           edge,
+                       const vtkIdType              shapeId,
+                       const int                    edgeId,
+                       const asiVisu_ShapePrimitive scType);
 
 protected:
 

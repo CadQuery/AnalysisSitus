@@ -91,6 +91,10 @@ protected slots:
   void onShow             ();
   void onShowOnly         ();
   void onHide             ();
+  //
+  void onHidePartEdges    ();
+  void onShowPartEdges    ();
+  void onResetPartPrs     ();
 
 protected:
 

@@ -53,16 +53,23 @@
 
 void asiUI_JournalIV::ERASE_ALL()
 {
-  if ( this->prsManager2d() )
+  // Loop over the imperative plotter's objects
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->GetChildIterator(true);
+        cit->More(); cit->Next() )
   {
-    this->prsManager2d()->DeleteAllPresentations();
-    this->prsManager2d()->InitializePickers( Handle(ActAPI_INode)() );
-  }
-  //
-  if ( this->prsManager3d() )
-  {
-    this->prsManager3d()->DeleteAllPresentations();
-    this->prsManager3d()->InitializePickers( Handle(ActAPI_INode)() );
+    Handle(ActAPI_INode) node = cit->Value();
+
+    if ( this->prsManager2d() )
+    {
+      if ( this->prsManager2d()->IsPresented(node) )
+        this->prsManager2d()->DeletePresentation(node);
+    }
+    //
+    if ( this->prsManager3d() )
+    {
+      if ( this->prsManager3d()->IsPresented(node) )
+        this->prsManager3d()->DeletePresentation(node);
+    }
   }
 
   // Clean up Data Model objects
@@ -83,16 +90,26 @@ void asiUI_JournalIV::ERASE_ALL()
 
 void asiUI_JournalIV::ERASE(const TCollection_AsciiString& name)
 {
-  if ( this->prsManager2d() )
+  // Loop over the imperative plotter's objects
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->GetChildIterator(true);
+        cit->More(); cit->Next() )
   {
-    this->prsManager2d()->DeleteAllPresentations();
-    this->prsManager2d()->InitializePickers( Handle(ActAPI_INode)() );
-  }
-  //
-  if ( this->prsManager3d() )
-  {
-    this->prsManager3d()->DeleteAllPresentations();
-    this->prsManager3d()->InitializePickers( Handle(ActAPI_INode)() );
+    Handle(ActAPI_INode) node = cit->Value();
+    //
+    if ( node->GetName() != name )
+      continue;
+
+    if ( this->prsManager2d() )
+    {
+      if ( this->prsManager2d()->IsPresented(node) )
+        this->prsManager2d()->DeletePresentation(node);
+    }
+    //
+    if ( this->prsManager3d() )
+    {
+      if ( this->prsManager3d()->IsPresented(node) )
+        this->prsManager3d()->DeletePresentation(node);
+    }
   }
 
   // Clean up Data Model objects

@@ -26,8 +26,11 @@
 // Own include
 #include <asiUI_ObjectBrowser.h>
 
-// UI includes
+// asiUI includes
 #include <asiUI_Common.h>
+
+// asiVisu includes
+#include <asiVisu_GeomPrs.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -259,6 +262,68 @@ void asiUI_ObjectBrowser::onHide()
 
 //-----------------------------------------------------------------------------
 
+void asiUI_ObjectBrowser::onHidePartEdges()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
+    return;
+
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
+    {
+      Handle(asiVisu_GeomPrs)
+        prs = Handle(asiVisu_GeomPrs)::DownCast( m_viewers[k]->PrsMgr()->GetPresentation(selected_n) );
+
+      prs->ContourActor()->SetVisibility(0);
+
+      m_viewers[k]->Repaint();
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::onShowPartEdges()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
+    return;
+
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
+    {
+      Handle(asiVisu_GeomPrs)
+        prs = Handle(asiVisu_GeomPrs)::DownCast( m_viewers[k]->PrsMgr()->GetPresentation(selected_n) );
+
+      prs->ContourActor()->SetVisibility(1);
+
+      m_viewers[k]->Repaint();
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::onResetPartPrs()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
+    return;
+
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
+    {
+      m_viewers[k]->PrsMgr()->DeletePresentation(selected_n);
+      m_viewers[k]->PrsMgr()->Actualize(selected_n, false, true);
+    }
+}
+
+//-----------------------------------------------------------------------------
+
 //! Populates context menu with actions.
 //! \param activeNode [in]      currently active Node.
 //! \param pMenu      [in, out] menu to populate.
@@ -282,6 +347,14 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_INode)& active
     pMenu->addAction( "Show",      this, SLOT( onShow()     ) );
     pMenu->addAction( "Show Only", this, SLOT( onShowOnly() ) );
     pMenu->addAction( "Hide",      this, SLOT( onHide()     ) );
+
+    if ( activeNode->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
+    {
+      pMenu->addSeparator();
+      pMenu->addAction( "Hide edges",         this, SLOT( onHidePartEdges() ) );
+      pMenu->addAction( "Show edges",         this, SLOT( onShowPartEdges() ) );
+      pMenu->addAction( "Reset presentation", this, SLOT( onResetPartPrs() ) );
+    }
   }
 }
 

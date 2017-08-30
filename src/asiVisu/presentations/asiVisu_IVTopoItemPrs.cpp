@@ -45,9 +45,15 @@ asiVisu_IVTopoItemPrs::asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& theNode
     DP = new asiVisu_ShapeDataProvider( theNode->GetId(),
                                         ActParamStream() << theNode->Parameter(asiData_IVTopoItemNode::PID_Geometry) );
 
+  // Main pipeline
+  Handle(asiVisu_ShapePipeline) pl = new asiVisu_ShapePipeline(false);
+
   // Pipeline for contours
-  this->addPipeline        ( Pipeline_Main, new asiVisu_ShapePipeline(false) );
+  this->addPipeline        ( Pipeline_Main, pl );
   this->assignDataProvider ( Pipeline_Main, DP );
+
+  // Configure
+  pl->Actor()->GetProperty()->SetPointSize(5.0f);
 }
 
 //! Factory method for Presentation.

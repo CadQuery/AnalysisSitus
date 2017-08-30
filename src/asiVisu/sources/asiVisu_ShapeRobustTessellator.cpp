@@ -209,7 +209,7 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     asiVisu_ShapePrimitive type;
     if ( edges.IsEmpty() )
       type = ShapePrimitive_FreeVertex;
-    if ( edges.Extent() == 1 )
+    else if ( edges.Extent() == 1 )
       type = ShapePrimitive_BorderVertex;
     else
       type = ShapePrimitive_SharedVertex;
@@ -278,9 +278,14 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
 
       TopoDS_Vertex Vf = ShapeAnalysis_Edge().FirstVertex(e);
       TopoDS_Vertex Vl = ShapeAnalysis_Edge().LastVertex(e);
-      //
-      if ( verticesOnEdges.FindFromKey(Vf).Extent() > 1 ||
-           verticesOnEdges.FindFromKey(Vl).Extent() > 1 )
+
+      if ( Vf.IsNull() || Vl.IsNull() )
+      {
+        m_progress.SendLogMessage(LogWarn(Normal) << "*** First or last vertex is null for edge.");
+        type = ShapePrimitive_FreeEdge;
+      }
+      else if ( verticesOnEdges.FindFromKey(Vf).Extent() > 1 ||
+                verticesOnEdges.FindFromKey(Vl).Extent() > 1 )
         type = ShapePrimitive_DanglingEdge;
       else
         type = ShapePrimitive_FreeEdge;

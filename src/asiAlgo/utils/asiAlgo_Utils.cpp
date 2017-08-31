@@ -683,7 +683,16 @@ bool asiAlgo_Utils::Bounds(const TopoDS_Shape& shape,
                            const double tolerance)
 {
   Bnd_Box bndBox;
-  BRepBndLib::Add(shape, bndBox);
+
+  // Yeah, BRepBndLib::Add() may throw exceptions, did you know that?!
+  try
+  {
+    BRepBndLib::Add(shape, bndBox);
+  }
+  catch ( ... )
+  {
+    return false;
+  }
   //
   if ( bndBox.IsVoid() )
     return false;

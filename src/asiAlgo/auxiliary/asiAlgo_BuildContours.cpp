@@ -100,7 +100,7 @@ bool asiAlgo_BuildContours::operator()(const asiAlgo_IntersectionPointsCC& point
       // Find extremities for the given curve
       const Handle(asiAlgo_IntersectionCurveSS)& section = genCurves(c);
       asiAlgo_IntersectionPointsCC               extremities;
-      std::vector<double>                       parameters;
+      std::vector<double>                        parameters;
       //
       for ( int p = 1; p <= genPoints.Extent(); ++p )
       {

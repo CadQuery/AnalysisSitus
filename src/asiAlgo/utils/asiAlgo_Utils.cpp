@@ -743,11 +743,19 @@ bool asiAlgo_Utils::IsClosed(const TopoDS_Face& face)
   {
     TopoDS_Wire wire = TopoDS::Wire( it.Value() );
 
-    BRepCheck_Wire wireChecker(wire);
-    if ( wireChecker.Closed2d(face) == BRepCheck_NotClosed )
+    // May issue an exception in case of corrupted topology
+    try
+    {
+      BRepCheck_Wire wireChecker(wire);
+      if ( wireChecker.Closed2d(face) == BRepCheck_NotClosed )
+        return false;
+      if ( wireChecker.Closed() == BRepCheck_NotClosed )
+        return false;
+    }
+    catch ( ... )
+    {
       return false;
-    if ( wireChecker.Closed() == BRepCheck_NotClosed )
-      return false;
+    }
   }
   return true;
 }

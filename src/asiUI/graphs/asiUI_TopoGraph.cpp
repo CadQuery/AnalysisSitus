@@ -284,6 +284,11 @@ vtkSmartPointer<vtkGraph>
     labelArr->SetNumberOfComponents(1);
     labelArr->SetName(ARRNAME_LABELS);
 
+    // Array for attributes associated with arcs
+    vtkNew<vtkIntArray> childOriArr;
+    childOriArr->SetNumberOfComponents(1);
+    childOriArr->SetName(ARRNAME_CHILD_ORIENTATION);
+
     // Array for pedigree indices (sub-shape IDs)
     vtkNew<vtkIntArray> idsArr;
     idsArr->SetNumberOfComponents(1);
@@ -327,13 +332,15 @@ vtkSmartPointer<vtkGraph>
                            directed_result,
                            labelArr.GetPointer(),
                            groupArr.GetPointer(),
+                           childOriArr.GetPointer(),
                            idsArr.GetPointer(),
                            M);
 
     // Set arrays
-    result->GetVertexData()->AddArray( labelArr.GetPointer() );
-    result->GetVertexData()->AddArray( groupArr.GetPointer() );
-    result->GetVertexData()->AddArray( idsArr.GetPointer() );
+    result->GetVertexData() ->AddArray( labelArr.GetPointer() );
+    result->GetVertexData() ->AddArray( groupArr.GetPointer() );
+    result->GetEdgeData()   ->AddArray( childOriArr.GetPointer() );
+    result->GetVertexData() ->AddArray( idsArr.GetPointer() );
   }
   else if ( regime == Regime_AAG )
   {
@@ -354,6 +361,7 @@ vtkSmartPointer<vtkGraph>
 //! \param pDS           [in/out] data structure being filled.
 //! \param pLabelArr     [in/out] array for labels associated with vertices.
 //! \param pGroupArr     [in/out] array for vertex groups.
+//! \param pChildOriArr  [in/out] array for child orientation flags.
 //! \param pIdsArr       [in/out] array of pedigree ids.
 //! \param shapeVertices [in/out] map of shapes against their registered graph vertices.
 void asiUI_TopoGraph::buildRecursively(const TopoDS_Shape&             rootShape,
@@ -362,6 +370,7 @@ void asiUI_TopoGraph::buildRecursively(const TopoDS_Shape&             rootShape
                                        vtkMutableDirectedGraph*        pDS,
                                        vtkStringArray*                 pLabelArr,
                                        vtkStringArray*                 pGroupArr,
+                                       vtkIntArray*                    pChildOriArr,
                                        vtkIntArray*                    pIdsArr,
                                        TopTools_DataMapOfShapeInteger& shapeVertices)
 {
@@ -421,15 +430,31 @@ void asiUI_TopoGraph::buildRecursively(const TopoDS_Shape&             rootShape
           pGroupArr->InsertNextValue(ARRNAME_GROUP_ORDINARY);
       }
     }
-    //
+
+    // Add arc
     pDS->AddEdge(rootId, childId);
-    //
+
+    // Add arc attribute
+    if ( pChildOriArr )
+    {
+      if ( subShape.Orientation() == TopAbs_FORWARD )
+        pChildOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_F);
+      else if ( subShape.Orientation() == TopAbs_REVERSED )
+        pChildOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_R);
+      else if ( subShape.Orientation() == TopAbs_INTERNAL )
+        pChildOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_I);
+      else // EXTERNAL
+        pChildOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_E);
+    }
+
+    // Continue recursively
     this->buildRecursively(subShape,
                            childId,
                            leafType,
                            pDS,
                            pLabelArr,
                            pGroupArr,
+                           pChildOriArr,
                            pIdsArr,
                            shapeVertices);
   }

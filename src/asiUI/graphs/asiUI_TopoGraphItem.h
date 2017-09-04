@@ -54,6 +54,7 @@
 #define ARRNAME_PIDS              "Pids"
 #define ARRNAME_COLORS            "Colors"
 #define ARRNAME_ANGLES            "Angles"
+#define ARRNAME_CHILD_ORIENTATION "ChildOrientation"
 #define ARRNAME_GROUP             "Group"
 #define ARRNAME_GROUP_ORDINARY    "Ordinary"
 #define ARRNAME_GROUP_HIGHLIGHTED "Highlighted"
@@ -63,6 +64,11 @@
 #define ARRNAME_GROUP_WIRE        "Wire"
 #define ARRNAME_GROUP_EDGE        "Edge"
 #define ARRNAME_GROUP_VERTEX      "Vertex"
+//
+#define ARRNAME_CHILD_ORIENTATION_F 0
+#define ARRNAME_CHILD_ORIENTATION_R 1
+#define ARRNAME_CHILD_ORIENTATION_I 2
+#define ARRNAME_CHILD_ORIENTATION_E 3
 
 //! Item of topology graph.
 class asiUI_TopoGraphItem : public QObject,
@@ -135,14 +141,30 @@ protected:
   //---------------------------------------------------------------------------
   virtual vtkColor4ub EdgeColor(vtkIdType line, vtkIdType /*point*/)
   {
+    // AAG only
     vtkAbstractArray* angles = this->GetGraph()->GetEdgeData()->GetAbstractArray(ARRNAME_ANGLES);
     if ( angles )
     {
       const int attr = angles->GetVariantValue(line).ToInt();
       if ( attr == Angle_Convex )
         return vtkColor4ub(40, 190, 0, 255);
-      if ( attr == Angle_Concave )
+      else if ( attr == Angle_Concave )
         return vtkColor4ub(190, 40, 0, 255);
+    }
+
+    // Topology graph only
+    vtkAbstractArray* oris = this->GetGraph()->GetEdgeData()->GetAbstractArray(ARRNAME_CHILD_ORIENTATION);
+    if ( oris )
+    {
+      const int attr = oris->GetVariantValue(line).ToInt();
+      if ( attr == ARRNAME_CHILD_ORIENTATION_F )
+        return vtkColor4ub(250, 70, 40, 255);
+      else if ( attr == ARRNAME_CHILD_ORIENTATION_R )
+        return vtkColor4ub(40, 170, 250, 255);
+      else if ( attr == ARRNAME_CHILD_ORIENTATION_I )
+        return vtkColor4ub(190, 190, 0, 255);
+      else // EXTERNAL orientation
+        return vtkColor4ub(0, 190, 190, 255);
     }
 
     return vtkColor4ub(128, 128, 128, 128);
@@ -152,6 +174,12 @@ protected:
   virtual float EdgeWidth(vtkIdType /*line*/, vtkIdType /*point*/)
   {
     return 1.0f;
+  }
+
+  //---------------------------------------------------------------------------
+  virtual float VertexSize(vtkIdType)
+  {
+    return 12.0f;
   }
 
   //---------------------------------------------------------------------------

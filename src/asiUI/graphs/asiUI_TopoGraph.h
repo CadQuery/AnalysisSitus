@@ -114,6 +114,7 @@ protected:
                      vtkMutableDirectedGraph*        pDS,
                      vtkStringArray*                 pLabelArr,
                      vtkStringArray*                 pGroupArr,
+                     vtkIntArray*                    pChildOriArr,
                      vtkIntArray*                    pIdsArr,
                      TopTools_DataMapOfShapeInteger& shapeVertices);
 

@@ -221,20 +221,21 @@ void asiUI_ControlsFeature::onShowTOPOGraph()
     targetShape = N->GetShape();
   else
   {
-    const int f_idx = FN->GetSelectedFace();
+    // Get selected faces
+    TColStd_PackedMapOfInteger faceIds;
+    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedFaces(faceIds);
 
-    // Get all sub-shapes
-    const TopTools_IndexedMapOfShape&
-      M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
-
-    const TopoDS_Shape& shape = M.FindKey(f_idx);
+    // Put all faces to compound
+    TopoDS_Compound comp;
+    BRep_Builder().MakeCompound(comp);
     //
-    if ( shape.ShapeType() == TopAbs_FACE )
+    for ( TColStd_MapIteratorOfPackedMapOfInteger fit(faceIds); fit.More(); fit.Next() )
     {
-      const TopoDS_Face& F = TopoDS::Face(shape);
-      //
-      targetShape = F;
+      TopoDS_Face face = m_model->GetPartNode()->GetAAG()->GetFace( fit.Key() );
+      BRep_Builder().Add(comp, face);
     }
+
+    targetShape = comp;
   }
 
   // No shape, no graph

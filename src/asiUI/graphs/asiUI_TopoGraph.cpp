@@ -131,9 +131,7 @@ void asiUI_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
 
   // Renderer
   vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-  renderer->SetGradientBackground(true);
-  renderer->SetBackground(0.0, 0.0, 0.0);
-  renderer->SetBackground(0.1, 0.1, 0.1);
+  renderer->SetBackground(0.15, 0.15, 0.15);
 
   // Render window
   vtkNew<vtkRenderWindow> renderWindow;

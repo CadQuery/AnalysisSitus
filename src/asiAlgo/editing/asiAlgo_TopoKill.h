@@ -34,6 +34,7 @@
 
 // OCCT includes
 #include <NCollection_IndexedMap.hxx>
+#include <TopTools_ShapeMapHasher.hxx>
 
 //! Utility for killing topological entities and reduction of topological
 //! graph. Such reduction is possible in two ways:
@@ -166,10 +167,10 @@ protected:
 protected:
 
   //! Sub-shapes to remove.
-  NCollection_IndexedMap<TopoDS_Shape> m_toRemove;
+  NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher> m_toRemove;
 
   //! Sub-shapes to replace.
-  NCollection_DataMap<TopoDS_Shape, TopoDS_Shape> m_toReplace;
+  NCollection_DataMap<TopoDS_Shape, TopoDS_Shape, TopTools_ShapeMapHasher> m_toReplace;
 
 };
 

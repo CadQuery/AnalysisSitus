@@ -1041,7 +1041,9 @@ ActAPI_DataObjectIdList
       {
         if ( pickRes.IsSelectionFace() )
         {
-          if ( aag->GetMapOfSubShapes().FindKey( mit.Key() ).ShapeType() == TopAbs_FACE )
+          TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
+          //
+          if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_FACE )
             subShapes2Highlight.Add( mit.Key() );
         }
         else if ( pickRes.IsSelectionEdge() )

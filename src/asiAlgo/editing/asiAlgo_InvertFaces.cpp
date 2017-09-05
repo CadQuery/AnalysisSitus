@@ -33,76 +33,6 @@
 
 //-----------------------------------------------------------------------------
 
-static TopoDS_Shape makeShape(const TopAbs_ShapeEnum type)
-{
-  TopoDS_Shape result;
-  BRep_Builder BB;
-  switch ( type )
-  {
-    case TopAbs_COMPOUND:
-    {
-      TopoDS_Compound compound;
-      BB.MakeCompound(compound);
-      result = compound;
-      break;
-    }
-    case TopAbs_COMPSOLID:
-    {
-      TopoDS_CompSolid compSolid;
-      BB.MakeCompSolid(compSolid);
-      result = compSolid;
-      break;
-    }
-    case TopAbs_SOLID:
-    {
-      TopoDS_Solid solid;
-      BB.MakeSolid(solid);
-      result = solid;
-      break;
-    }
-    case TopAbs_SHELL:
-    {
-      TopoDS_Shell shell;
-      BB.MakeShell(shell);
-      result = shell;
-      break;
-    }
-    case TopAbs_FACE:
-    {
-      TopoDS_Face face;
-      BB.MakeFace(face);
-      result = face;
-      break;
-    }
-    case TopAbs_WIRE:
-    {
-      TopoDS_Wire wire;
-      BB.MakeWire(wire);
-      result = wire;
-      break;
-    }
-    case TopAbs_EDGE:
-    {
-      TopoDS_Edge edge;
-      BB.MakeEdge(edge);
-      result = edge;
-      break;
-    }
-    case TopAbs_VERTEX:
-    {
-      TopoDS_Vertex vertex;
-      BB.MakeVertex(vertex);
-      result = vertex;
-      break;
-    }
-    default: return TopoDS_Shape();
-  }
-
-  return result;
-}
-
-//-----------------------------------------------------------------------------
-
 asiAlgo_InvertFaces::asiAlgo_InvertFaces(const Handle(asiAlgo_AAG)& aag,
                                          ActAPI_ProgressEntry       progress,
                                          ActAPI_PlotterEntry        plotter)
@@ -130,7 +60,7 @@ bool asiAlgo_InvertFaces::Perform(const TColStd_PackedMapOfInteger& faceIds)
   else
   {
     // Prepare root
-    m_result = makeShape( master.ShapeType() );
+    m_result = master.EmptyCopied();
 
     // Rebuild topology graph recursively
     this->buildTopoGraphLevel(master, faceIds, m_result);
@@ -153,7 +83,7 @@ void asiAlgo_InvertFaces::buildTopoGraphLevel(const TopoDS_Shape&               
 
     if ( currentShape.ShapeType() < TopAbs_FACE )
     {
-      newResult = makeShape( currentShape.ShapeType() );
+      newResult = currentShape.EmptyCopied();
       this->buildTopoGraphLevel( currentShape, faces2Invert, newResult );
     }
     else

@@ -147,16 +147,6 @@ protected:
     buildTopoGraphLevel(const TopoDS_Shape& root,
                         TopoDS_Shape&       result) const;
 
-  //! Constructs a new empty shape of the given type. Shapes are lightweight
-  //! containers of data which, according to OCCT rules, are not modified
-  //! but re-created whenever necessary. This method is here because
-  //! OpenCascade does.not.allow.constructing.shapes.in.one.line.of.code!
-  //!
-  //! \param[in] type type of shape to construct.
-  //! \return new empty shape.
-  asiAlgo_EXPORT TopoDS_Shape
-    makeShape(const TopAbs_ShapeEnum type) const;
-
 // Input and output:
 protected:
 
@@ -165,6 +155,14 @@ protected:
 
 // Requests:
 protected:
+
+  // NOTICE: in both maps below, an unoriented hasher is used. This is because
+  //         the nodes in a formal topology graph do not encode orientations.
+  //         In formal topology graph, orientation is a property of an arc, i.e.
+  //         it is a property of INCLUSION of one shape into another. Since
+  //         in the topological killer we work only with nodes and preserve
+  //         orientations, we do not need to distinguish between differently
+  //         oriented entities.
 
   //! Sub-shapes to remove.
   NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher> m_toRemove;

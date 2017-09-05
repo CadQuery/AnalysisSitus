@@ -323,6 +323,7 @@ void asiUI_ViewerPart::onSubShapesPicked()
         geom_n->GetFaceRepresentation()    ->SetSelectedFace(picked_face_IDs[0]);
         geom_n->GetNormsRepresentation()   ->SetSelectedFace(picked_face_IDs[0]);
         geom_n->GetSurfaceRepresentation() ->SetSelectedFace(picked_face_IDs[0]);
+        geom_n->GetContourRepresentation() ->SetSelectedFace(picked_face_IDs[0]);
         //
         std::cout << "Active face has been stored..." << std::endl;
       }
@@ -331,6 +332,7 @@ void asiUI_ViewerPart::onSubShapesPicked()
         geom_n->GetFaceRepresentation()    ->SetSelectedFace(0);
         geom_n->GetNormsRepresentation()   ->SetSelectedFace(0);
         geom_n->GetSurfaceRepresentation() ->SetSelectedFace(0);
+        geom_n->GetContourRepresentation() ->SetSelectedFace(0);
         //
         std::cout << "Active face has been reset..." << std::endl;
       }

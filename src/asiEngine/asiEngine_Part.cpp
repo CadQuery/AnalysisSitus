@@ -125,6 +125,20 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
     geom_n->AddChildNode(geom_surf_n);
   }
 
+  // Create underlying contour representation Node
+  {
+    Handle(ActAPI_INode) geom_face_contour_base = asiData_FaceContourNode::Instance();
+    m_model->GetGeomFaceContourPartition()->AddNode(geom_face_contour_base);
+
+    // Initialize
+    Handle(asiData_FaceContourNode) geom_face_contour_n = Handle(asiData_FaceContourNode)::DownCast(geom_face_contour_base);
+    geom_face_contour_n->Init();
+    geom_face_contour_n->SetName("Face contour");
+
+    // Set as child
+    geom_n->AddChildNode(geom_face_contour_n);
+  }
+
   // Create underlying edge representation Node
   {
     Handle(ActAPI_INode) geom_edge_base = asiData_EdgeNode::Instance();

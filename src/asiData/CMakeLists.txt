@@ -13,6 +13,7 @@ set (H_FILES
   asiData_CurveNode.h
   asiData_DesignLawNode.h
   asiData_EdgeNode.h
+  asiData_FaceContourNode.h
   asiData_FaceNode.h
   asiData_FaceNormsNode.h
   asiData_FuncAttr.h
@@ -62,6 +63,7 @@ set (CPP_FILES
   asiData_DesignLawNode.cpp
   asiData_EdgeNode.cpp
   asiData_FaceNode.cpp
+  asiData_FaceContourNode.cpp
   asiData_FaceNormsNode.cpp
   asiData_FuncAttr.cpp
   asiData_FuncParameter.cpp

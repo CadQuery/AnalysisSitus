@@ -48,6 +48,7 @@ set (pipelines_H_FILES
   pipelines/asiVisu_CurvePipeline.h
   pipelines/asiVisu_EdgeCurvePipeline.h
   pipelines/asiVisu_EdgeDomainPipeline.h
+  pipelines/asiVisu_FaceContourPipeline.h
   pipelines/asiVisu_FaceDomainPipeline.h
   pipelines/asiVisu_FaceSurfacePipeline.h
   pipelines/asiVisu_FuncLevelsPipeline2d.h
@@ -80,6 +81,7 @@ set (pipelines_CPP_FILES
   pipelines/asiVisu_CurvePipeline.cpp
   pipelines/asiVisu_EdgeCurvePipeline.cpp
   pipelines/asiVisu_EdgeDomainPipeline.cpp
+  pipelines/asiVisu_FaceContourPipeline.cpp
   pipelines/asiVisu_FaceDomainPipeline.cpp
   pipelines/asiVisu_FaceSurfacePipeline.cpp
   pipelines/asiVisu_FuncUnivariatePipeline.cpp
@@ -116,6 +118,7 @@ set (presentations_H_FILES
   presentations/asiVisu_GeomContourPrs.h
   presentations/asiVisu_GeomCurvePrs.h
   presentations/asiVisu_GeomEdgePrs.h
+  presentations/asiVisu_GeomFaceContourPrs.h
   presentations/asiVisu_GeomFaceNormsPrs.h
   presentations/asiVisu_GeomFacePrs.h
   presentations/asiVisu_GeomPrs.h
@@ -145,6 +148,7 @@ set (presentations_CPP_FILES
   presentations/asiVisu_GeomContourPrs.cpp
   presentations/asiVisu_GeomCurvePrs.cpp
   presentations/asiVisu_GeomEdgePrs.cpp
+  presentations/asiVisu_GeomFaceContourPrs.cpp
   presentations/asiVisu_GeomFaceNormsPrs.cpp
   presentations/asiVisu_GeomFacePrs.cpp
   presentations/asiVisu_GeomPrs.cpp
@@ -178,6 +182,7 @@ set (providers_H_FILES
   providers/asiVisu_CurveDataProvider.h
   providers/asiVisu_DataProvider.h
   providers/asiVisu_EdgeDataProvider.h
+  providers/asiVisu_FaceContourDataProvider.h
   providers/asiVisu_FaceDataProvider.h
   providers/asiVisu_FaceNormalsDataProvider.h
   providers/asiVisu_FuncDataProvider.h
@@ -208,6 +213,7 @@ set (providers_CPP_FILES
   providers/asiVisu_CurveDataProvider.cpp
   providers/asiVisu_DataProvider.cpp
   providers/asiVisu_EdgeDataProvider.cpp
+  providers/asiVisu_FaceContourDataProvider.cpp
   providers/asiVisu_FaceDataProvider.cpp
   providers/asiVisu_FaceNormalsDataProvider.cpp
   providers/asiVisu_IVCurveDataProvider.cpp

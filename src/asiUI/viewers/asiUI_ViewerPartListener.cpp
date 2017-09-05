@@ -160,6 +160,7 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
   QAction* pSaveBREPAction    = NULL;
   QAction* pShowNormsAction   = NULL;
   QAction* pInvertFacesAction = NULL;
+  QAction* pShowOriContour    = NULL;
   QAction* pPickRotationPoint = NULL;
 
   // Action for picking custom rotation point
@@ -173,7 +174,9 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
     pSaveBREPAction = menu.addAction("Save to BREP...");
     //
     if ( m_wViewerPart->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceNormsNode) ) )
-      pShowNormsAction = menu.addAction("Show normal vectors");
+      pShowNormsAction = menu.addAction("Show face normals");
+    if ( m_wViewerPart->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceContourNode) ) )
+      pShowOriContour = menu.addAction("Show face oriented contour");
     //
     pInvertFacesAction = menu.addAction("Invert faces");
   }
@@ -253,6 +256,16 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
 
     TIMER_FINISH
     TIMER_COUT_RESULT_MSG("Visualization of normals")
+  }
+  else if ( selectedItem && selectedItem == pShowOriContour )
+  {
+    TIMER_NEW
+    TIMER_GO
+
+    m_wViewerPart->PrsMgr()->Actualize( m_model->GetPartNode()->GetContourRepresentation() );
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_MSG("Visualization of oriented contour")
   }
   else if ( selectedItem && selectedItem == pInvertFacesAction )
   {

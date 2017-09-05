@@ -47,6 +47,8 @@ public:
 public:
 
   void SetFace(const TopoDS_Face& face);
+  void SetPCurveModeOn();
+  void Set3DCurveModeOn();
 
 protected:
 
@@ -70,7 +72,8 @@ private:
 
 private:
 
-  TopoDS_Face m_face; //!< Face to convert t.
+  TopoDS_Face m_face;        //!< Face to convert.
+  bool        m_bPCurveMode; //!< Indicates whether p-curve mode is activated.
 
 };
 

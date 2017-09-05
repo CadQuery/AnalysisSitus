@@ -26,7 +26,7 @@
 // Own include
 #include <asiVisu_PCurveSource.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_Utils.h>
 
 // VTK includes

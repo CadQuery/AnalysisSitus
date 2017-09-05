@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 December 2015
+// Created on: 05 September 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,46 +23,50 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_PCurveSource_h
-#define asiVisu_PCurveSource_h
+#ifndef asiVisu_FaceContourDataProvider_h
+#define asiVisu_FaceContourDataProvider_h
 
 // asiVisu includes
-#include <asiVisu_CurveSource.h>
+#include <asiVisu_DataProvider.h>
 
-// OCCT includes
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Face.hxx>
+// asiData includes
+#include <asiData_PartNode.h>
 
-//! Source of polygonal data representing a curve on surface.
-class asiVisu_PCurveSource : public asiVisu_CurveSource
+//! Data provider for b-rep face contour.
+class asiVisu_FaceContourDataProvider : public asiVisu_DataProvider
 {
-// RTTI and construction:
 public:
 
-  vtkTypeMacro(asiVisu_PCurveSource, vtkPolyDataAlgorithm);
-  static asiVisu_PCurveSource* New();
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FaceContourDataProvider, asiVisu_DataProvider)
 
-// Kernel methods:
 public:
 
-  void
-    SetEdgeOnFace(const TopoDS_Edge& edge,
-                  const TopoDS_Face& face);
+  asiVisu_EXPORT
+    asiVisu_FaceContourDataProvider(const Handle(asiData_FaceContourNode)& faceNode);
+
+public:
+
+  asiVisu_EXPORT TopoDS_Face
+    GetFace() const;
+
+public:
+
+  //! \return ID of the source Node.
+  virtual ActAPI_DataObjectId GetNodeID() const
+  {
+    return m_source->GetId();
+  }
+
+private:
+
+  virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
 
 protected:
 
-  asiVisu_PCurveSource();
-  ~asiVisu_PCurveSource();
-
-private:
-
-  asiVisu_PCurveSource(const asiVisu_PCurveSource&);
-  asiVisu_PCurveSource& operator=(const asiVisu_PCurveSource&);
-
-private:
-
-  TopoDS_Edge m_edge; //!< Edge.
-  TopoDS_Face m_face; //!< Face.
+  Handle(asiData_FaceContourNode) m_source;   //!< Face Contour Node.
+  Handle(asiData_PartNode)        m_partNode; //!< Owning Part Node.
 
 };
 

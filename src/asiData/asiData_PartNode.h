@@ -32,6 +32,7 @@
 #include <asiData_ContourNode.h>
 #include <asiData_CurveNode.h>
 #include <asiData_EdgeNode.h>
+#include <asiData_FaceContourNode.h>
 #include <asiData_FaceNode.h>
 #include <asiData_FaceNormsNode.h>
 #include <asiData_SurfNode.h>
@@ -152,6 +153,9 @@ public:
 
   asiData_EXPORT Handle(asiData_SurfNode)
     GetSurfaceRepresentation() const;
+
+  asiData_EXPORT Handle(asiData_FaceContourNode)
+    GetContourRepresentation() const;
 
   asiData_EXPORT Handle(asiData_EdgeNode)
     GetEdgeRepresentation() const;

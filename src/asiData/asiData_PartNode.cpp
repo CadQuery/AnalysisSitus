@@ -241,6 +241,21 @@ Handle(asiData_SurfNode) asiData_PartNode::GetSurfaceRepresentation() const
   return NULL;
 }
 
+//! \return underlying Face Contour Node.
+Handle(asiData_FaceContourNode) asiData_PartNode::GetContourRepresentation() const
+{
+  Handle(asiData_FaceContourNode) contour_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    contour_n = Handle(asiData_FaceContourNode)::DownCast( cit->Value() );
+
+    if ( !contour_n.IsNull() && contour_n->IsWellFormed() )
+      return contour_n;
+  }
+
+  return NULL;
+}
+
 //! \return underlying boundary edges representation Node.
 Handle(asiData_BoundaryEdgesNode) asiData_PartNode::GetBoundaryEdgesRepresentation() const
 {

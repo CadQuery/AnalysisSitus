@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 December 2015
+// Created on: 05 September 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,46 +23,58 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_PCurveSource_h
-#define asiVisu_PCurveSource_h
+#ifndef asiVisu_FaceContourPipeline_h
+#define asiVisu_FaceContourPipeline_h
 
 // asiVisu includes
-#include <asiVisu_CurveSource.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
-// OCCT includes
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Face.hxx>
+// VTK includes
+#include <vtkExtractSelection.h>
+#include <vtkGeometryFilter.h>
+#include <vtkIdTypeArray.h>
+#include <vtkPolyDataAlgorithm.h>
+#include <vtkSelection.h>
+#include <vtkSelectionNode.h>
 
-//! Source of polygonal data representing a curve on surface.
-class asiVisu_PCurveSource : public asiVisu_CurveSource
+//-----------------------------------------------------------------------------
+
+//! Visualization pipeline for face contour.
+class asiVisu_FaceContourPipeline : public asiVisu_Pipeline
 {
-// RTTI and construction:
 public:
 
-  vtkTypeMacro(asiVisu_PCurveSource, vtkPolyDataAlgorithm);
-  static asiVisu_PCurveSource* New();
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FaceContourPipeline, asiVisu_Pipeline)
 
-// Kernel methods:
 public:
 
-  void
-    SetEdgeOnFace(const TopoDS_Edge& edge,
-                  const TopoDS_Face& face);
+  asiVisu_EXPORT
+    asiVisu_FaceContourPipeline();
+
+public:
+
+  asiVisu_EXPORT virtual void
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
+
+private:
+
+  virtual void callback_add_to_renderer      (vtkRenderer* renderer);
+  virtual void callback_remove_from_renderer (vtkRenderer* renderer);
+  virtual void callback_update               ();
+
+private:
+
+  //! Copying prohibited.
+  asiVisu_FaceContourPipeline(const asiVisu_FaceContourPipeline&);
+
+  //! Assignment prohibited.
+  asiVisu_FaceContourPipeline& operator=(const asiVisu_FaceContourPipeline&);
 
 protected:
 
-  asiVisu_PCurveSource();
-  ~asiVisu_PCurveSource();
-
-private:
-
-  asiVisu_PCurveSource(const asiVisu_PCurveSource&);
-  asiVisu_PCurveSource& operator=(const asiVisu_PCurveSource&);
-
-private:
-
-  TopoDS_Edge m_edge; //!< Edge.
-  TopoDS_Face m_face; //!< Face.
+  bool m_bMapperColorsSet;
 
 };
 

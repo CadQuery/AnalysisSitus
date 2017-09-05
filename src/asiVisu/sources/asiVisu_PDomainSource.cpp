@@ -26,7 +26,7 @@
 // Own include
 #include <asiVisu_PDomainSource.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_PCurveSource.h>
 #include <asiVisu_Utils.h>
 
@@ -48,10 +48,12 @@
 vtkStandardNewMacro(asiVisu_PDomainSource);
 
 //! Default constructor.
-asiVisu_PDomainSource::asiVisu_PDomainSource() : vtkPolyDataAlgorithm()
+asiVisu_PDomainSource::asiVisu_PDomainSource()
+: vtkPolyDataAlgorithm()
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
+  this->SetPCurveModeOn();
 }
 
 //! Destructor.
@@ -68,6 +70,18 @@ asiVisu_PDomainSource::~asiVisu_PDomainSource()
 void asiVisu_PDomainSource::SetFace(const TopoDS_Face& face)
 {
   m_face = face;
+}
+
+//! Enables p-curve visualization mode.
+void asiVisu_PDomainSource::SetPCurveModeOn()
+{
+  m_bPCurveMode = true;
+}
+
+//! Enables 3D curve visualization mode.
+void asiVisu_PDomainSource::Set3DCurveModeOn()
+{
+  m_bPCurveMode = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -103,26 +117,55 @@ int asiVisu_PDomainSource::RequestData(vtkInformation*        request,
   vtkSmartPointer<vtkAppendPolyData>
     appendFilter = vtkSmartPointer<vtkAppendPolyData>::New();
 
-  // Explode by edges
+  // Explode by edges. In "p-curves mode", orientation of face in question
+  // is set to FORWARD in order to prevent explorer from multiplying it to
+  // the orientations of sub-shapes. That's important because we see parametric
+  // domain from direction of the natural surface normal (this is by
+  // definition of "parametric domain"). However, when we look at the oriented
+  // contour in 3D, we have to take into account the face orientation flag
+  // in order to respect the "material-on-the-left" rule.
+  TopoDS_Face face2Iterate;
+  //
+  if ( m_bPCurveMode )
+    face2Iterate = TopoDS::Face( m_face.Oriented(TopAbs_FORWARD) );
+  else
+    face2Iterate = m_face;
+  //
   int edgeId = 0;
-  for ( TopExp_Explorer exp(m_face.Oriented(TopAbs_FORWARD), TopAbs_EDGE); exp.More(); exp.Next() )
+  for ( TopExp_Explorer exp(face2Iterate, TopAbs_EDGE); exp.More(); exp.Next() )
   {
+    // Current edge
     ++edgeId;
-
-    // Allocate Data Source
-    vtkSmartPointer<asiVisu_PCurveSource>
-      pcurveSource = vtkSmartPointer<asiVisu_PCurveSource>::New();
-
-    // Access edge
     const TopoDS_Edge& E = TopoDS::Edge( exp.Current() );
 
-    // Initialize data source
-    pcurveSource->SetEdgeOnFace(E, m_face);
-    pcurveSource->SetTipSize(tip_size);
-    pcurveSource->SetPedigreeId(edgeId);
+    // Prepare curve source
+    vtkSmartPointer<asiVisu_CurveSource> curveSource;
+
+    // Allocate source wrt the desired visualization mode
+    if ( m_bPCurveMode )
+    {
+      curveSource = vtkSmartPointer<asiVisu_PCurveSource>::New();
+
+      asiVisu_PCurveSource*
+        pcurveSource = asiVisu_PCurveSource::SafeDownCast(curveSource);
+
+      // Initialize data source
+      pcurveSource->SetEdgeOnFace(E, m_face);
+    }
+    else
+    {
+      curveSource = vtkSmartPointer<asiVisu_CurveSource>::New();
+
+      // Initialize data source
+      curveSource->SetInputEdge(E);
+    }
+
+    // Common settings
+    curveSource->SetTipSize(tip_size);
+    curveSource->SetPedigreeId(edgeId);
 
     // Append poly data
-    appendFilter->AddInputConnection( pcurveSource->GetOutputPort() );
+    appendFilter->AddInputConnection( curveSource->GetOutputPort() );
   }
 
   appendFilter->Update();

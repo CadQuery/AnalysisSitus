@@ -554,6 +554,13 @@ void asiVisu_ShapeRobustTessellator::addFace(const TopoDS_Face& face,
 
     // Get host surface
     Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
+    //
+    if ( surf.IsNull() )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Cannot process face %1 without surface."
+                                               << faceId);
+      return;
+    }
 
     // Get natural bounds
     double uMin, uMax, vMin, vMax;

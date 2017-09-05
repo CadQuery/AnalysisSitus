@@ -57,6 +57,7 @@ set (editing_H_FILES
   editing/asiAlgo_JoinEdges.h
   editing/asiAlgo_RehostFaces.h
   editing/asiAlgo_SuppressFaces.h
+  editing/asiAlgo_TopoKill.h
 )
 set (editing_CPP_FILES 
   editing/asiAlgo_DeleteEdges.cpp
@@ -69,6 +70,7 @@ set (editing_CPP_FILES
   editing/asiAlgo_JoinEdges.cpp
   editing/asiAlgo_RehostFaces.cpp
   editing/asiAlgo_SuppressFaces.cpp
+  editing/asiAlgo_TopoKill.cpp
 )
 
 #------------------------------------------------------------------------------

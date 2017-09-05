@@ -332,13 +332,13 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
       continue;
     }
 
+    // Get face ID
+    int faceId = allFaces.FindIndex(face);
+
     if ( !this->isValidFace(face) )
     {
       // Get sub-shape ID
       vtkIdType ssId = allSubShapes.FindIndex(face);
-
-      // Get face ID
-      int faceId = allFaces.FindIndex(face);
 
       // Add face to the data source
       this->addFace(face, ssId, faceId, false);

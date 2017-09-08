@@ -64,7 +64,7 @@ vtkStandardNewMacro(asiVisu_ShapeRobustTessellator);
 
 //! ctor.
 asiVisu_ShapeRobustTessellator::asiVisu_ShapeRobustTessellator()
-: vtkObject()
+: vtkObject(), m_fGlobalBndDiag(0.0)
 {
   m_data = new asiVisu_ShapeData; // Allocate data for visualization primitives
                                   // (i.e. VTK points, cells, arrays)
@@ -143,6 +143,13 @@ void asiVisu_ShapeRobustTessellator::internalInit(const double         linearDef
     m_fAngDeflectionDeg = angularDeflection_deg;
   //
   m_progress.SendLogMessage(LogInfo(Normal) << "Faceter angular deflection is %1 deg." << m_fAngDeflectionDeg);
+
+  // Calculate global bounding box which will be used for calibration of
+  // auxiliary visualization primitives
+  double xmin, ymin, zmin, xmax, ymax, zmax;
+  asiAlgo_Utils::Bounds(m_shape, xmin, ymin, zmin, xmax, ymax, zmax);
+  //
+  m_fGlobalBndDiag = asiVisu_Utils::TrimInf( gp_Pnt(xmax, ymax, zmax).Distance( gp_Pnt(xmin, ymin, zmin) ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -563,24 +570,37 @@ void asiVisu_ShapeRobustTessellator::addFace(const TopoDS_Face& face,
     }
 
     // Get natural bounds
-    double uMin, uMax, vMin, vMax;
-    surf->Bounds(uMin, uMax, vMin, vMax);
+    double uMin, uMax, vMin, vMax, uMinSurf, uMaxSurf, vMinSurf, vMaxSurf;
+    surf->Bounds(uMinSurf, uMaxSurf, vMinSurf, vMaxSurf);
 
     // Get parametric bound
     double uMinParam, uMaxParam, vMinParam, vMaxParam;
     BRepTools::UVBounds(face, uMinParam, uMaxParam, vMinParam, vMaxParam);
 
     // Choose min and max
-    uMin = Max(uMin, uMinParam);
-    uMax = Min(uMax, uMaxParam);
-    vMin = Max(vMin, vMinParam);
-    vMax = Min(vMax, vMaxParam);
+    uMin = Max(uMinSurf, uMinParam);
+    uMax = Min(uMaxSurf, uMaxParam);
+    vMin = Max(vMinSurf, vMinParam);
+    vMax = Min(vMaxSurf, vMaxParam);
 
     // Trim natural bounds by the face bounds
     uMin = asiVisu_Utils::Trim(uMin, diag);
     uMax = asiVisu_Utils::Trim(uMax, diag);
     vMin = asiVisu_Utils::Trim(vMin, diag);
     vMax = asiVisu_Utils::Trim(vMax, diag);
+
+    // Boundary is very ill-defined. If min and max parameter values coincide,
+    // we cannot draw even surface isolines, so let's try to expand...
+    if ( Abs(uMin - uMax) < RealEpsilon() )
+    {
+      uMin = asiVisu_Utils::TrimInf(uMinSurf, m_fGlobalBndDiag*0.5);
+      uMax = asiVisu_Utils::TrimInf(uMaxSurf, m_fGlobalBndDiag*0.5);
+    }
+    if ( Abs(vMin - vMax) < RealEpsilon() )
+    {
+      vMin = asiVisu_Utils::TrimInf(vMinSurf, m_fGlobalBndDiag*0.5);
+      vMax = asiVisu_Utils::TrimInf(vMaxSurf, m_fGlobalBndDiag*0.5);
+    }
 
     const double uStep = (uMax - uMin) / NUMISOS;
     const double vStep = (vMax - vMin) / NUMISOS;

@@ -172,6 +172,7 @@ protected:
 
 protected:
 
+  double                    m_fGlobalBndDiag;    //!< Diagonal of AABB for calibration.
   Handle(asiAlgo_AAG)       m_aag;               //!< AAG to access the topological elements.
   TopoDS_Shape              m_shape;             //!< Input shape.
   Handle(asiVisu_ShapeData) m_data;              //!< Visualization data.

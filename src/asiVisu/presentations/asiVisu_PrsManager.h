@@ -209,10 +209,12 @@ public:
 //-----------------------------------------------------------------------------
 
   asiVisu_EXPORT virtual bool
-    DeletePresentation(const Handle(ActAPI_INode)& node);
+    DeletePresentation(const Handle(ActAPI_INode)& node,
+                       const bool                  withChildren = false);
 
   asiVisu_EXPORT virtual bool
-    DeletePresentation(const ActAPI_DataObjectId& nodeId);
+    DeletePresentation(const ActAPI_DataObjectId& nodeId,
+                       const bool                 withChildren = false);
 
   asiVisu_EXPORT virtual void
     DeleteAllPresentations();

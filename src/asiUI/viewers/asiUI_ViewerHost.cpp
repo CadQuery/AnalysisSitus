@@ -29,6 +29,9 @@
 // asiVisu includes
 #include <asiVisu_Utils.h>
 
+// asiEngine includes
+#include <asiEngine_Model.h>
+
 // Qt-VTK includes
 #include <QVTKWidget.h>
 
@@ -40,12 +43,15 @@
 //-----------------------------------------------------------------------------
 
 //! Creates a new instance of viewer.
+//! \param model  [in] Data Model instance.
 //! \param parent [in] parent widget.
-asiUI_ViewerHost::asiUI_ViewerHost(QWidget* parent) : asiUI_Viewer(parent)
+asiUI_ViewerHost::asiUI_ViewerHost(const Handle(asiEngine_Model)& model,
+                                   QWidget*                       parent) : asiUI_Viewer(parent)
 {
   // Initialize presentation manager along with QVTK widget
   m_prs_mgr = vtkSmartPointer<asiVisu_PrsManager>::New();
   //
+  m_prs_mgr->SetModel(model);
   m_prs_mgr->Initialize(this);
   m_prs_mgr->SetInteractionMode(asiVisu_PrsManager::InteractionMode_3D);
 

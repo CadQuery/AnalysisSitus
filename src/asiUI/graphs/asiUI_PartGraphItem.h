@@ -23,8 +23,8 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_TopoGraphItem_h
-#define asiUI_TopoGraphItem_h
+#ifndef asiUI_PartGraphItem_h
+#define asiUI_PartGraphItem_h
 
 // asiAlgo includes
 #include <asiAlgo_FeatureAngle.h>
@@ -59,29 +59,32 @@
 #define ARRNAME_GROUP_ORDINARY    "Ordinary"
 #define ARRNAME_GROUP_HIGHLIGHTED "Highlighted"
 //
-#define ARRNAME_GROUP_COMPOUND    "Compound"
-#define ARRNAME_GROUP_FACE        "Face"
-#define ARRNAME_GROUP_WIRE        "Wire"
-#define ARRNAME_GROUP_EDGE        "Edge"
-#define ARRNAME_GROUP_VERTEX      "Vertex"
+#define ARRNAME_GROUP_COMPOUND  "Compound"
+#define ARRNAME_GROUP_COMPSOLID "CompSolid"
+#define ARRNAME_GROUP_SOLID     "Solid"
+#define ARRNAME_GROUP_SHELL     "Shell"
+#define ARRNAME_GROUP_FACE      "Face"
+#define ARRNAME_GROUP_WIRE      "Wire"
+#define ARRNAME_GROUP_EDGE      "Edge"
+#define ARRNAME_GROUP_VERTEX    "Vertex"
 //
 #define ARRNAME_CHILD_ORIENTATION_F 0
 #define ARRNAME_CHILD_ORIENTATION_R 1
 #define ARRNAME_CHILD_ORIENTATION_I 2
 #define ARRNAME_CHILD_ORIENTATION_E 3
 
-//! Item of topology graph.
-class asiUI_TopoGraphItem : public QObject,
+//! Item of topology or adjacency graph.
+class asiUI_PartGraphItem : public QObject,
                             public vtkGraphItem
 {
   Q_OBJECT
 
 public:
 
-  static asiUI_TopoGraphItem* New();
-  vtkTypeMacro(asiUI_TopoGraphItem, vtkGraphItem);
+  static asiUI_PartGraphItem* New();
+  vtkTypeMacro(asiUI_PartGraphItem, vtkGraphItem);
 
-  virtual ~asiUI_TopoGraphItem();
+  virtual ~asiUI_PartGraphItem();
 
 signals:
 
@@ -94,7 +97,7 @@ protected:
   vtkIdType focusedVertex;
 
   //---------------------------------------------------------------------------
-  asiUI_TopoGraphItem()
+  asiUI_PartGraphItem()
   {
     focusedVertex = -1;
   }
@@ -111,6 +114,15 @@ protected:
       return vtkColor4ub(255, 255, 0, 255);
 
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_COMPOUND )
+      return vtkColor4ub(218, 0, 170, 255);
+
+    if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_COMPSOLID )
+      return vtkColor4ub(228, 11, 180, 255);
+
+    if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_SOLID )
+      return vtkColor4ub(238, 21, 190, 255);
+
+    if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_SHELL )
       return vtkColor4ub(248, 31, 209, 255);
 
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_FACE )

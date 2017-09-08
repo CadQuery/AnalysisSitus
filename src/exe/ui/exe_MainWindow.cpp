@@ -183,7 +183,7 @@ void exe_MainWindow::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Host", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerSurface = new asiUI_ViewerHost(pDock);
+    m_widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, pDock);
     pDock->setWidget(m_widgets.wViewerSurface);
     pDock->setMinimumWidth(width);
     //

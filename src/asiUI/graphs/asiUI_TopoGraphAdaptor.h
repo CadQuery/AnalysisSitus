@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 February 2016
+// Created on: 08 September 2016 (*)
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,14 +23,22 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiUI_TopoGraphItem.h>
+#ifndef asiUI_TopoGraphAdaptor_h
+#define asiUI_TopoGraphAdaptor_h
+
+// asiAlgo includes
+#include <asiAlgo_TopoGraph.h>
 
 // VTK includes
-#include <vtkObjectFactory.h>
+#include <vtkMutableDirectedGraph.h>
+#include <vtkSmartPointer.h>
 
-vtkStandardNewMacro(asiUI_TopoGraphItem);
+//! Converter of topology graph to VTK presentable graph data structure.
+namespace asiUI_TopoGraphAdaptor
+{
+  vtkSmartPointer<vtkMutableDirectedGraph>
+    Convert(const Handle(asiAlgo_TopoGraph)& topograph,
+            const TopAbs_ShapeEnum           leafType);
+};
 
-//! Destructor.
-asiUI_TopoGraphItem::~asiUI_TopoGraphItem()
-{}
+#endif

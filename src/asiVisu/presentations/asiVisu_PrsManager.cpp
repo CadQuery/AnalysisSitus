@@ -657,26 +657,54 @@ void asiVisu_PrsManager::UpdatePresentation(const ActAPI_DataObjectId& nodeId,
 //! Unbinds the Presentation instance for the given Node. If a Presentation
 //! does not exist, returns false, otherwise -- true.
 //!
-//! \param node [in] Node to remove the Presentation for.
+//! \param node         [in] Node to remove the Presentation for.
+//! \param withChildren [in] whether to kill presentations for child Nodes.
 //! \return true/false.
-bool asiVisu_PrsManager::DeletePresentation(const Handle(ActAPI_INode)& node)
+bool asiVisu_PrsManager::DeletePresentation(const Handle(ActAPI_INode)& node,
+                                            const bool                  withChildren)
 {
-  return this->DeletePresentation( node->GetId() );
+  return this->DeletePresentation(node->GetId(), withChildren);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Unbinds the Presentation instance for the given Node. If a Presentation
 //! does not exist, returns false, otherwise -- true.
-//! \param nodeId [in] ID of the Node to remove the Presentation for.
+//!
+//! \param nodeId       [in] ID of the Node to remove the Presentation for.
+//! \param withChildren [in] whether to kill presentations for child Nodes.
 //! \return true/false.
-bool asiVisu_PrsManager::DeletePresentation(const ActAPI_DataObjectId& nodeId)
+bool asiVisu_PrsManager::DeletePresentation(const ActAPI_DataObjectId& nodeId,
+                                            const bool                 withChildren)
 {
-  if ( !this->IsPresented(nodeId) )
+  if ( m_model.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Data Model is null.");
+    return false;
+  }
+
+  Handle(ActAPI_INode) node = m_model->FindNode(nodeId);
+
+  if ( !this->IsPresented(node) )
     return false;
 
-  this->DeRenderPresentation(nodeId);
+  this->DeRenderPresentation(node);
   m_nodePresentations.UnBind(nodeId);
+
+  if ( withChildren )
+  {
+    for ( Handle(ActAPI_IChildIterator) child_it = node->GetChildIterator(); child_it->More(); child_it->Next() )
+    {
+      Handle(ActAPI_INode) childNode = child_it->Value();
+
+      if ( !this->IsPresented(childNode) )
+        return false;
+
+      this->DeRenderPresentation(childNode);
+      m_nodePresentations.UnBind( childNode->GetId() );
+    }
+  }
+
   return true;
 }
 

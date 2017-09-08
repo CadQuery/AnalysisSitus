@@ -30,7 +30,7 @@
 #include <asiUI_AAGAdaptor.h>
 #include <asiUI_Common.h>
 #include <asiUI_DialogSmoothAngleTol.h>
-#include <asiUI_TopoGraph.h>
+#include <asiUI_PartGraph.h>
 
 // asiAlgo includes
 #include <asiAlgo_AAGIterator.h>
@@ -246,8 +246,8 @@ void asiUI_ControlsFeature::onShowTOPOGraph()
   }
 
   // Show graph
-  asiUI_TopoGraph* pGraphView = new asiUI_TopoGraph(m_model, m_partViewer);
-  pGraphView->RenderFull(targetShape, TopAbs_VERTEX);
+  asiUI_PartGraph* pGraphView = new asiUI_PartGraph(m_model, m_partViewer);
+  pGraphView->RenderTopology(targetShape, TopAbs_VERTEX);
 }
 
 //-----------------------------------------------------------------------------
@@ -265,7 +265,7 @@ void asiUI_ControlsFeature::onShowAAG()
   asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedSubShapes(selected);
 
   // Show graph
-  asiUI_TopoGraph* pGraphView = new asiUI_TopoGraph(m_model, m_partViewer);
+  asiUI_PartGraph* pGraphView = new asiUI_PartGraph(m_model, m_partViewer);
   pGraphView->RenderAdjacency(part, selected);
 }
 
@@ -290,13 +290,13 @@ void asiUI_ControlsFeature::onElimSelected()
   aag->Remove(selected);
 
   // Show graph
-  asiUI_TopoGraph* pGraphView = new asiUI_TopoGraph(m_model, m_partViewer);
+  asiUI_PartGraph* pGraphView = new asiUI_PartGraph(m_model, m_partViewer);
   pGraphView->SetAAG(aag);
   //
   vtkSmartPointer<vtkMutableUndirectedGraph>
     undirected = asiUI_AAGAdaptor::Convert(aag);
   //
-  pGraphView->Render(undirected, part, asiUI_TopoGraph::Regime_AAG);
+  pGraphView->Render(undirected, part, asiUI_PartGraph::Regime_AAG);
 }
 
 //-----------------------------------------------------------------------------

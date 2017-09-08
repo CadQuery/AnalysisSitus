@@ -208,14 +208,17 @@ void asiUI_ControlsPartListener::onSelectionEdgesOn()
 //! Cleans up the managed viewers.
 void asiUI_ControlsPartListener::cleanViewers()
 {
+  // Erase part with all related data from Part Viewer...
   if ( m_wViewerPart )
-    m_wViewerPart->PrsMgr()->DeleteAllPresentations();
+    m_wViewerPart->PrsMgr()->DeletePresentation( m_model->GetPartNode(), true );
 
+  // ... Domain Viewer...
   if ( m_wViewerDomain )
-    m_wViewerDomain->PrsMgr()->DeleteAllPresentations();
+    m_wViewerDomain->PrsMgr()->DeletePresentation( m_model->GetPartNode(), true );
 
+  // ... and Host Viewer.
   if ( m_wViewerSurface )
-    m_wViewerSurface->PrsMgr()->DeleteAllPresentations();
+    m_wViewerSurface->PrsMgr()->DeletePresentation( m_model->GetPartNode(), true );
 }
 
 //-----------------------------------------------------------------------------

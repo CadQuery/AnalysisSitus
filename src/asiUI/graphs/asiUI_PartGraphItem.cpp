@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 04 December 2015
+// Created on: 25 February 2016
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,37 +23,14 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_ViewerHost_h
-#define asiUI_ViewerHost_h
+// Own include
+#include <asiUI_PartGraphItem.h>
 
-// asiUI includes
-#include <asiUI_Viewer.h>
+// VTK includes
+#include <vtkObjectFactory.h>
 
-// asiEngine includes
-#include <asiEngine_Model.h>
+vtkStandardNewMacro(asiUI_PartGraphItem);
 
-//! Viewer for surface.
-class asiUI_ViewerHost : public asiUI_Viewer
-{
-  Q_OBJECT
-
-public:
-
-  asiUI_EXPORT
-    asiUI_ViewerHost(const Handle(asiEngine_Model)& model,
-                     QWidget*                       parent = NULL);
-
-  asiUI_EXPORT virtual
-    ~asiUI_ViewerHost();
-
-public:
-
-  void Repaint();
-
-public slots:
-
-  void onResetView();
-
-};
-
-#endif
+//! Destructor.
+asiUI_PartGraphItem::~asiUI_PartGraphItem()
+{}

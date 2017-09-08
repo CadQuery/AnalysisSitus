@@ -132,6 +132,64 @@ int INSPECTOR_KillEdge(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int INSPECTOR_KillFace(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const int fidx = atoi(argv[1]);
+  //
+  if ( fidx < 1 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face index should be 1-based.");
+    return TCL_ERROR;
+  }
+
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = cmdInspector::cf->Model->GetPartNode();
+
+  // Get map of faces with respect to those the passed index is relevant
+  const TopTools_IndexedMapOfShape& allFaces = part_n->GetAAG()->GetMapOfFaces();
+
+  // Prepare killer
+  asiAlgo_TopoKill killer( cmdInspector::cf->Model->GetPartNode()->GetShape(),
+                           interp->GetProgress(),
+                           interp->GetPlotter() );
+  //
+  if ( !killer.AskRemove( allFaces(fidx) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of face %1 was rejected." << fidx);
+    return TCL_OK;
+  }
+
+  if ( !killer.Apply() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Topological killer failed.");
+    return TCL_OK;
+  }
+
+  // Get result
+  const TopoDS_Shape& result = killer.GetResult();
+
+  // Modify Data Model
+  cmdInspector::cf->Model->OpenCommand();
+  {
+    asiEngine_Part(cmdInspector::cf->Model, NULL).Update(result);
+  }
+  cmdInspector::cf->Model->CommitCommand();
+
+  // Update UI
+  cmdInspector::UpdateUI();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdInspector::UpdateUI()
 {
   cf->ViewerPart->PrsMgr()->Actualize(cf->Model->GetPartNode(), false, true);
@@ -161,6 +219,7 @@ void cmdInspector::Factory(const Handle(asiTcl_Interp)&      interp,
   // Add commands
   interp->AddCommand("set-as-part", "", __FILE__, INSPECTOR_SetAsPart);
   interp->AddCommand("kill-edge",   "", __FILE__, INSPECTOR_KillEdge);
+  interp->AddCommand("kill-face",   "", __FILE__, INSPECTOR_KillFace);
 }
 
 // Declare entry point PLUGINFACTORY

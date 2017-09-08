@@ -23,8 +23,8 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_TopoGraph_h
-#define asiUI_TopoGraph_h
+#ifndef asiUI_PartGraph_h
+#define asiUI_PartGraph_h
 
 // asiUI includes
 #include <asiUI_ViewerPart.h>
@@ -32,6 +32,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_AAG.h>
+#include <asiAlgo_TopoGraph.h>
 
 // OCCT includes
 #include <TopTools_DataMapOfShapeInteger.hxx>
@@ -47,8 +48,8 @@
 #include <vtkStringArray.h>
 #include <vtkTextWidget.h>
 
-//! Visualizes topology graph.
-class asiUI_TopoGraph : public QObject
+//! Visualizes topology or adjacency graph.
+class asiUI_PartGraph : public QObject
 {
   Q_OBJECT
 
@@ -57,18 +58,18 @@ public:
   //! Type of graph to visualize (e.g. topology, AAG, etc.).
   enum Regime
   {
-    Regime_Full,
+    Regime_Topology,
     Regime_AAG
   };
 
 public:
 
   asiUI_EXPORT
-    asiUI_TopoGraph(const Handle(asiEngine_Model)& model,
+    asiUI_PartGraph(const Handle(asiEngine_Model)& model,
                     asiUI_ViewerPart*              pPartViewer);
 
   asiUI_EXPORT
-    ~asiUI_TopoGraph();
+    ~asiUI_PartGraph();
 
 public:
 
@@ -84,8 +85,8 @@ public:
            const TopAbs_ShapeEnum            leafType);
 
   asiUI_EXPORT void
-    RenderFull(const TopoDS_Shape&    shape,
-               const TopAbs_ShapeEnum leafType);
+    RenderTopology(const TopoDS_Shape&    shape,
+                   const TopAbs_ShapeEnum leafType);
 
   asiUI_EXPORT void
     RenderAdjacency(const TopoDS_Shape&               shape,
@@ -107,17 +108,6 @@ protected:
                    const Regime                      regime,
                    const TopAbs_ShapeEnum            leafType);
 
-  asiUI_EXPORT void
-    buildRecursively(const TopoDS_Shape&             rootShape,
-                     const vtkIdType                 rootId,
-                     const TopAbs_ShapeEnum          leafType,
-                     vtkMutableDirectedGraph*        pDS,
-                     vtkStringArray*                 pLabelArr,
-                     vtkStringArray*                 pGroupArr,
-                     vtkIntArray*                    pChildOriArr,
-                     vtkIntArray*                    pIdsArr,
-                     TopTools_DataMapOfShapeInteger& shapeVertices);
-
 protected slots:
 
   void onViewerClosed();
@@ -125,17 +115,13 @@ protected slots:
 
 protected:
 
-  asiUI_VtkWindow*        m_pWidget;       //!< Widget.
-  vtkTextWidget*          m_textWidget;    //!< Text.
-  vtkTextWidget*          m_summaryWidget; //!< Summary.
-  Handle(asiAlgo_AAG)     m_aag;           //!< AAG.
-  Handle(asiEngine_Model) m_model;         //!< Data Model instance.
-  asiUI_ViewerPart*       m_partViewer;    //!< Part viewer.
-  //
-  TopTools_IndexedMapOfShape m_faces;     //!< Faces.
-  TopTools_IndexedMapOfShape m_edges;     //!< Edges.
-  TopTools_IndexedMapOfShape m_vertices;  //!< Vertices.
-  TopTools_IndexedMapOfShape m_subShapes; //!< All sub-shapes.
+  asiUI_VtkWindow*          m_pWidget;       //!< Widget.
+  vtkTextWidget*            m_textWidget;    //!< Text.
+  vtkTextWidget*            m_summaryWidget; //!< Summary.
+  Handle(asiAlgo_TopoGraph) m_topoGraph;     //!< Topology graph.
+  Handle(asiAlgo_AAG)       m_aag;           //!< AAG.
+  Handle(asiEngine_Model)   m_model;         //!< Data Model instance.
+  asiUI_ViewerPart*         m_partViewer;    //!< Part viewer.
 
 };
 

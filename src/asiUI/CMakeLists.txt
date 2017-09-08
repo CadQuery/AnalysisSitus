@@ -72,15 +72,17 @@ set (dialogs_CPP_FILES
 
 set (graphs_H_FILES
   graphs/asiUI_AAGAdaptor.h
+  graphs/asiUI_TopoGraphAdaptor.h
 )
 set (graphs_H_UI_FILES
-  graphs/asiUI_TopoGraph.h
-  graphs/asiUI_TopoGraphItem.h
+  graphs/asiUI_PartGraph.h
+  graphs/asiUI_PartGraphItem.h
 )
 set (graphs_CPP_FILES 
   graphs/asiUI_AAGAdaptor.cpp
-  graphs/asiUI_TopoGraph.cpp
-  graphs/asiUI_TopoGraphItem.cpp
+  graphs/asiUI_PartGraph.cpp
+  graphs/asiUI_PartGraphItem.cpp
+  graphs/asiUI_TopoGraphAdaptor.cpp
 )
 
 #------------------------------------------------------------------------------

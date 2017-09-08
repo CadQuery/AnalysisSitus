@@ -71,6 +71,7 @@ asiUI_ViewerDomain::asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
   // Initialize presentation manager along with QVTK widget
   m_prs_mgr = vtkSmartPointer<asiVisu_PrsManager>::New();
   //
+  m_prs_mgr->SetModel(model);
   m_prs_mgr->Initialize(this);
   m_prs_mgr->SetInteractionMode(asiVisu_PrsManager::InteractionMode_2D);
   m_prs_mgr->SetSelectionMode(SelectionMode_Workpiece);

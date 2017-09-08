@@ -24,11 +24,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_TopoGraph.h>
+#include <asiUI_PartGraph.h>
 
 // asiUI includes
 #include <asiUI_AAGAdaptor.h>
-#include <asiUI_TopoGraphItem.h>
+#include <asiUI_TopoGraphAdaptor.h>
+#include <asiUI_PartGraphItem.h>
 
 // asiVisu includes
 #include <asiVisu_Utils.h>
@@ -69,13 +70,17 @@
 #define LEGEND_TITLE_ACCESSORY "Topology graph"
 #define LEGEND_TITLE_ADJACENCY "AAG"
 
+//-----------------------------------------------------------------------------
+
 #define VTK_CREATE(Type, Name) \
   vtkSmartPointer<Type> Name = vtkSmartPointer<Type>::New()
+
+//-----------------------------------------------------------------------------
 
 //! Constructor.
 //! \param[in] model       Data Model instance.
 //! \param[in] pPartViewer part viewer.
-asiUI_TopoGraph::asiUI_TopoGraph(const Handle(asiEngine_Model)& model,
+asiUI_PartGraph::asiUI_PartGraph(const Handle(asiEngine_Model)& model,
                                  asiUI_ViewerPart*              pPartViewer)
 : m_textWidget    (NULL),
   m_summaryWidget (NULL),
@@ -83,15 +88,19 @@ asiUI_TopoGraph::asiUI_TopoGraph(const Handle(asiEngine_Model)& model,
   m_partViewer    (pPartViewer)
 {}
 
+//-----------------------------------------------------------------------------
+
 //! Destructor.
-asiUI_TopoGraph::~asiUI_TopoGraph()
+asiUI_PartGraph::~asiUI_PartGraph()
 {}
+
+//-----------------------------------------------------------------------------
 
 //! Renders graph.
 //! \param graph  [in] VTK presentable graph.
 //! \param shape  [in] master shape.
 //! \param regime [in] kind of graph to render.
-void asiUI_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
+void asiUI_PartGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
                              const TopoDS_Shape&              shape,
                              const Regime                     regime)
 {
@@ -110,7 +119,7 @@ void asiUI_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
   graphLayout->Update();
 
   // Graph item
-  vtkSmartPointer<asiUI_TopoGraphItem> graphItem = vtkSmartPointer<asiUI_TopoGraphItem>::New();
+  vtkSmartPointer<asiUI_PartGraphItem> graphItem = vtkSmartPointer<asiUI_PartGraphItem>::New();
   graphItem->SetGraph( graphLayout->GetOutput() );
 
   connect( graphItem, SIGNAL( vertexPicked(const int, const TopAbs_ShapeEnum, const vtkIdType) ),
@@ -168,7 +177,7 @@ void asiUI_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
   vtkSmartPointer<vtkTextActor> textActor = vtkSmartPointer<vtkTextActor>::New();
   textRep->SetTextActor(textActor);
   //
-  m_textWidget->GetTextActor()->SetInput( regime == Regime_Full ? LEGEND_TITLE_ACCESSORY : LEGEND_TITLE_ADJACENCY );
+  m_textWidget->GetTextActor()->SetInput( regime == Regime_Topology ? LEGEND_TITLE_ACCESSORY : LEGEND_TITLE_ADJACENCY );
   m_textWidget->SetInteractor( m_pWidget->GetInteractor() );
   m_textWidget->SetDefaultRenderer( renderer );
   m_textWidget->SetCurrentRenderer( renderer );
@@ -190,7 +199,7 @@ void asiUI_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
    * =================== */
 
   renderWindow->SetLineSmoothing(true);
-  renderWindow->SetWindowName( regime == Regime_Full ? "Accessory Graph" : "Adjacency Graph" );
+  renderWindow->SetWindowName( regime == Regime_Topology ? "Topology Graph" : "Face Adjacency Graph" );
   //
   graphItem->StartLayoutAnimation( m_pWidget->GetInteractor() );
   //
@@ -199,11 +208,13 @@ void asiUI_TopoGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
   m_pWidget->show();
 
   // Set callback on rendering
-  m_pWidget->GetRenderWindow()->AddObserver(vtkCommand::RenderEvent, this, &asiUI_TopoGraph::RenderEventCallback);
+  m_pWidget->GetRenderWindow()->AddObserver(vtkCommand::RenderEvent, this, &asiUI_PartGraph::RenderEventCallback);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Callback to adjust text widgets.
-void asiUI_TopoGraph::RenderEventCallback()
+void asiUI_PartGraph::RenderEventCallback()
 {
   if ( !m_textWidget->GetEnabled() )
     m_textWidget->On();
@@ -212,21 +223,19 @@ void asiUI_TopoGraph::RenderEventCallback()
     m_summaryWidget->On();
 }
 
-//! Renders topology graph in the requested regime.
+//-----------------------------------------------------------------------------
+
+//! Renders part graph in the requested regime.
 //! \param shape         [in] target shape.
 //! \param selectedFaces [in] selected faces.
 //! \param regime        [in] regime of interest.
 //! \param leafType      [in] target leaf type for FULL regime.
-void asiUI_TopoGraph::Render(const TopoDS_Shape&               shape,
+void asiUI_PartGraph::Render(const TopoDS_Shape&               shape,
                              const TopTools_IndexedMapOfShape& selectedFaces,
                              const Regime                      regime,
                              const TopAbs_ShapeEnum            leafType)
 {
-  // Prepare maps of sub-shapes
-  TopExp::MapShapes(shape, TopAbs_FACE,   m_faces);
-  TopExp::MapShapes(shape, TopAbs_EDGE,   m_edges);
-  TopExp::MapShapes(shape, TopAbs_VERTEX, m_vertices);
-  TopExp::MapShapes(shape, m_subShapes);
+  
 
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph> graph = this->convertToGraph(shape, selectedFaces, regime, leafType);
@@ -235,23 +244,29 @@ void asiUI_TopoGraph::Render(const TopoDS_Shape&               shape,
   this->Render(graph, shape, regime);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Renders topology graph.
 //! \param shape    [in] target shape.
 //! \param leafType [in] target leaf type.
-void asiUI_TopoGraph::RenderFull(const TopoDS_Shape&    shape,
-                                 const TopAbs_ShapeEnum leafType)
+void asiUI_PartGraph::RenderTopology(const TopoDS_Shape&    shape,
+                                     const TopAbs_ShapeEnum leafType)
 {
-  this->Render(shape, TopTools_IndexedMapOfShape(), Regime_Full, leafType);
+  this->Render(shape, TopTools_IndexedMapOfShape(), Regime_Topology, leafType);
 }
 
-//! Renders AA graph.
+//-----------------------------------------------------------------------------
+
+//! Renders face adjacency graph.
 //! \param shape         [in] target shape.
 //! \param selectedFaces [in] selected faces.
-void asiUI_TopoGraph::RenderAdjacency(const TopoDS_Shape&               shape,
+void asiUI_PartGraph::RenderAdjacency(const TopoDS_Shape&               shape,
                                       const TopTools_IndexedMapOfShape& selectedFaces)
 {
   this->Render(shape, selectedFaces, Regime_AAG, TopAbs_SHAPE);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Builds one or another graph (depending on the desired regime).
 //! \param shape         [in] master model.
@@ -260,90 +275,27 @@ void asiUI_TopoGraph::RenderAdjacency(const TopoDS_Shape&               shape,
 //! \param leafType      [in] leaf type for FULL regime.
 //! \return graph instance.
 vtkSmartPointer<vtkGraph>
-  asiUI_TopoGraph::convertToGraph(const TopoDS_Shape&               shape,
+  asiUI_PartGraph::convertToGraph(const TopoDS_Shape&               shape,
                                   const TopTools_IndexedMapOfShape& selectedFaces,
                                   const Regime                      regime,
                                   const TopAbs_ShapeEnum            leafType)
 {
   vtkSmartPointer<vtkGraph> result;
   //
-  if ( regime == Regime_Full )
+  if ( regime == Regime_Topology )
   {
-    result = vtkSmartPointer<vtkMutableDirectedGraph>::New();
-    vtkMutableDirectedGraph* directed_result = dynamic_cast<vtkMutableDirectedGraph*>( result.GetPointer() );
-
-    // Array for groups
-    vtkNew<vtkStringArray> groupArr;
-    groupArr->SetNumberOfComponents(1);
-    groupArr->SetName(ARRNAME_GROUP);
-
-    // Array for vertex labels
-    vtkNew<vtkStringArray> labelArr;
-    labelArr->SetNumberOfComponents(1);
-    labelArr->SetName(ARRNAME_LABELS);
-
-    // Array for attributes associated with arcs
-    vtkNew<vtkIntArray> childOriArr;
-    childOriArr->SetNumberOfComponents(1);
-    childOriArr->SetName(ARRNAME_CHILD_ORIENTATION);
-
-    // Array for pedigree indices (sub-shape IDs)
-    vtkNew<vtkIntArray> idsArr;
-    idsArr->SetNumberOfComponents(1);
-    idsArr->SetName(ARRNAME_PIDS);
-
-    // Create VTK data set for graph data
-    const vtkIdType root_vid = directed_result->AddVertex();
-    TopTools_DataMapOfShapeInteger M;
-    M.Bind(shape, root_vid);
+    m_topoGraph = new asiAlgo_TopoGraph(shape);
+    vtkSmartPointer<vtkMutableDirectedGraph>
+      directed = asiUI_TopoGraphAdaptor::Convert(m_topoGraph, leafType);
     //
-    int pid = 0;
-    if ( shape.ShapeType() == TopAbs_FACE )
-      pid = m_faces.FindIndex(shape);
-    else if ( shape.ShapeType() == TopAbs_EDGE )
-      pid = m_edges.FindIndex(shape);
-    else if ( shape.ShapeType() == TopAbs_VERTEX )
-      pid = m_vertices.FindIndex(shape);
-    //
-    idsArr->InsertNextValue(pid);
-    //
-    labelArr->InsertNextValue( asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str()
-                             + std::string(": ")
-                             + core::to_string(pid) );
-    //
-    if ( shape.ShapeType() == TopAbs_COMPOUND )
-      groupArr->InsertNextValue(ARRNAME_GROUP_COMPOUND);
-    else if ( shape.ShapeType() == TopAbs_FACE )
-      groupArr->InsertNextValue(ARRNAME_GROUP_FACE);
-    else if ( shape.ShapeType() == TopAbs_WIRE )
-      groupArr->InsertNextValue(ARRNAME_GROUP_WIRE);
-    else if ( shape.ShapeType() == TopAbs_EDGE )
-      groupArr->InsertNextValue(ARRNAME_GROUP_EDGE);
-    else if ( shape.ShapeType() == TopAbs_VERTEX )
-      groupArr->InsertNextValue(ARRNAME_GROUP_VERTEX);
-    else
-      groupArr->InsertNextValue(ARRNAME_GROUP_ORDINARY);
-    //
-    this->buildRecursively(shape,
-                           root_vid,
-                           leafType,
-                           directed_result,
-                           labelArr.GetPointer(),
-                           groupArr.GetPointer(),
-                           childOriArr.GetPointer(),
-                           idsArr.GetPointer(),
-                           M);
-
-    // Set arrays
-    result->GetVertexData() ->AddArray( labelArr.GetPointer() );
-    result->GetVertexData() ->AddArray( groupArr.GetPointer() );
-    result->GetEdgeData()   ->AddArray( childOriArr.GetPointer() );
-    result->GetVertexData() ->AddArray( idsArr.GetPointer() );
+    result = directed;
   }
   else if ( regime == Regime_AAG )
   {
     m_aag = new asiAlgo_AAG(shape, selectedFaces);
-    vtkSmartPointer<vtkMutableUndirectedGraph> undirected = asiUI_AAGAdaptor::Convert(m_aag);
+    vtkSmartPointer<vtkMutableUndirectedGraph>
+      undirected = asiUI_AAGAdaptor::Convert(m_aag);
+    //
     result = undirected;
   }
   else
@@ -352,114 +304,10 @@ vtkSmartPointer<vtkGraph>
   return result;
 }
 
-//! Builds data structures for visualization recursively.
-//! \param rootShape     [in]     root shape.
-//! \param rootId        [in]     ID of the root vertex.
-//! \param leafType      [in]     topological type for leafs.
-//! \param pDS           [in/out] data structure being filled.
-//! \param pLabelArr     [in/out] array for labels associated with vertices.
-//! \param pGroupArr     [in/out] array for vertex groups.
-//! \param pChildOriArr  [in/out] array for child orientation flags.
-//! \param pIdsArr       [in/out] array of pedigree ids.
-//! \param shapeVertices [in/out] map of shapes against their registered graph vertices.
-void asiUI_TopoGraph::buildRecursively(const TopoDS_Shape&             rootShape,
-                                       const vtkIdType                 rootId,
-                                       const TopAbs_ShapeEnum          leafType,
-                                       vtkMutableDirectedGraph*        pDS,
-                                       vtkStringArray*                 pLabelArr,
-                                       vtkStringArray*                 pGroupArr,
-                                       vtkIntArray*                    pChildOriArr,
-                                       vtkIntArray*                    pIdsArr,
-                                       TopTools_DataMapOfShapeInteger& shapeVertices)
-{
-  // Check if it is time to stop
-  if ( rootShape.ShapeType() == leafType )
-    return;
-
-  // Iterate over the sub-shape
-  for ( TopoDS_Iterator it(rootShape, 0, 0); it.More(); it.Next() )
-  {
-    const TopoDS_Shape& subShape = it.Value();
-
-    vtkIdType childId;
-    if ( shapeVertices.IsBound(subShape) )
-    {
-      childId = shapeVertices.Find(subShape);
-    }
-    else
-    {
-      childId = pDS->AddVertex();
-      shapeVertices.Bind(subShape, childId);
-
-      // Indices
-      int pid = 0;
-      if ( pIdsArr )
-      {
-        if ( subShape.ShapeType() == TopAbs_FACE )
-          pid = m_faces.FindIndex(subShape);
-        else if ( subShape.ShapeType() == TopAbs_EDGE )
-          pid = m_edges.FindIndex(subShape);
-        else if ( subShape.ShapeType() == TopAbs_VERTEX )
-          pid = m_vertices.FindIndex(subShape);
-
-        pIdsArr->InsertNextValue(pid);
-      }
-
-      // Labels
-      if ( pLabelArr )
-        pLabelArr->InsertNextValue( asiAlgo_Utils::ShapeAddrWithPrefix(subShape).c_str()
-                                  + std::string(": ")
-                                  + core::to_string(pid) );
-
-      // Groups
-      if ( pGroupArr )
-      {
-        if ( subShape.ShapeType() == TopAbs_COMPOUND )
-          pGroupArr->InsertNextValue(ARRNAME_GROUP_COMPOUND);
-        else if ( subShape.ShapeType() == TopAbs_FACE )
-          pGroupArr->InsertNextValue(ARRNAME_GROUP_FACE);
-        else if ( subShape.ShapeType() == TopAbs_WIRE )
-          pGroupArr->InsertNextValue(ARRNAME_GROUP_WIRE);
-        else if ( subShape.ShapeType() == TopAbs_EDGE )
-          pGroupArr->InsertNextValue(ARRNAME_GROUP_EDGE);
-        else if ( subShape.ShapeType() == TopAbs_VERTEX )
-          pGroupArr->InsertNextValue(ARRNAME_GROUP_VERTEX);
-        else
-          pGroupArr->InsertNextValue(ARRNAME_GROUP_ORDINARY);
-      }
-    }
-
-    // Add arc
-    pDS->AddEdge(rootId, childId);
-
-    // Add arc attribute
-    if ( pChildOriArr )
-    {
-      if ( subShape.Orientation() == TopAbs_FORWARD )
-        pChildOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_F);
-      else if ( subShape.Orientation() == TopAbs_REVERSED )
-        pChildOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_R);
-      else if ( subShape.Orientation() == TopAbs_INTERNAL )
-        pChildOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_I);
-      else // EXTERNAL
-        pChildOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_E);
-    }
-
-    // Continue recursively
-    this->buildRecursively(subShape,
-                           childId,
-                           leafType,
-                           pDS,
-                           pLabelArr,
-                           pGroupArr,
-                           pChildOriArr,
-                           pIdsArr,
-                           shapeVertices);
-  }
-}
+//-----------------------------------------------------------------------------
 
 //! Reaction on closing the viewer.
-void asiUI_TopoGraph::onViewerClosed()
+void asiUI_PartGraph::onViewerClosed()
 {
   // NOTE: the important point is to remove widget after all items which
   //       may listen to it
@@ -470,28 +318,43 @@ void asiUI_TopoGraph::onViewerClosed()
   delete this;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Reaction on vertex picking.
 //! \param subShapeId [in] sub-shape ID.
 //! \param shapeType  [in] sub-shape type.
 //! \param vid        [in] graph vertex ID.
-void asiUI_TopoGraph::onVertexPicked(const int              subShapeId,
+void asiUI_PartGraph::onVertexPicked(const int              subShapeId,
                                      const TopAbs_ShapeEnum shapeType,
                                      const vtkIdType        vid)
 {
   asiVisu_NotUsed(vid);
+
+  // Prepare maps of sub-shapes
+  const TopTools_IndexedMapOfShape&
+    mapOfFaces = m_aag.IsNull() ? m_topoGraph->GetMapOfFaces() : m_aag->GetMapOfFaces();
+  //
+  const TopTools_IndexedMapOfShape&
+    mapOfEdges = m_aag.IsNull() ? m_topoGraph->GetMapOfEdges() : m_aag->GetMapOfEdges();
+  //
+  const TopTools_IndexedMapOfShape&
+    mapOfVertices = m_aag.IsNull() ? m_topoGraph->GetMapOfVertices() : m_aag->GetMapOfVertices();
+  //
+  const TopTools_IndexedMapOfShape&
+    mapOfSubShapes = m_aag.IsNull() ? m_topoGraph->GetMapOfSubShapes() : m_aag->GetMapOfSubShapes();
 
   if ( subShapeId > 0 && m_partViewer )
   {
     // Get sub-shape by index
     TopoDS_Shape subShape;
     if ( shapeType == TopAbs_FACE )
-      subShape = m_faces.FindKey(subShapeId);
+      subShape = mapOfFaces.FindKey(subShapeId);
     else if ( shapeType == TopAbs_EDGE )
-      subShape = m_edges.FindKey(subShapeId);
+      subShape = mapOfEdges.FindKey(subShapeId);
     else if ( shapeType == TopAbs_VERTEX )
-      subShape = m_vertices.FindKey(subShapeId);
+      subShape = mapOfVertices.FindKey(subShapeId);
     else
-      subShape = m_subShapes(subShapeId);
+      subShape = mapOfSubShapes(subShapeId);
 
     // Highlight in the main viewer
     TopTools_IndexedMapOfShape selected;

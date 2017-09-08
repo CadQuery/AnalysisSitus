@@ -27,7 +27,7 @@
 #include <asiUI_AAGAdaptor.h>
 
 // asiUI includes
-#include <asiUI_TopoGraphItem.h>
+#include <asiUI_PartGraphItem.h>
 
 // asiAlgo includes
 #include <asiAlgo_FeatureAttrAngle.h>

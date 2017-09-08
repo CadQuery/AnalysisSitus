@@ -26,7 +26,7 @@
 #ifndef asiUI_AAGAdaptor_h
 #define asiUI_AAGAdaptor_h
 
-// asAlgo includes
+// asiAlgo includes
 #include <asiAlgo_AAG.h>
 
 // VTK includes

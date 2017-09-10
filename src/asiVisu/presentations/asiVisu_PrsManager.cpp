@@ -685,7 +685,7 @@ bool asiVisu_PrsManager::DeletePresentation(const ActAPI_DataObjectId& nodeId,
 
   Handle(ActAPI_INode) node = m_model->FindNode(nodeId);
 
-  if ( !this->IsPresented(node) )
+  if ( !this->IsPresented(node) && !withChildren )
     return false;
 
   this->DeRenderPresentation(node);
@@ -698,7 +698,7 @@ bool asiVisu_PrsManager::DeletePresentation(const ActAPI_DataObjectId& nodeId,
       Handle(ActAPI_INode) childNode = child_it->Value();
 
       if ( !this->IsPresented(childNode) )
-        return false;
+        continue;
 
       this->DeRenderPresentation(childNode);
       m_nodePresentations.UnBind( childNode->GetId() );

@@ -245,6 +245,10 @@ void asiUI_ControlsPartListener::reinitializeEverything()
   // Actualize
   m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, true);
 
+  // Repaint other viewers which may have been affected
+  m_wViewerSurface->Repaint();
+  m_wViewerDomain->Repaint();
+
   m_notifier.StepProgress(1, 1);
   m_notifier.SetProgressStatus(Progress_Succeeded);
 }

@@ -31,6 +31,9 @@
 #include <asiVisu_PDomainSource.h>
 #include <asiVisu_Utils.h>
 
+// OCCT includes
+#include <BRep_Tool.hxx>
+
 // VTK includes
 #include <vtkLookupTable.h>
 #include <vtkPolyDataMapper.h>
@@ -83,6 +86,23 @@ void asiVisu_FaceContourPipeline::SetInput(const Handle(asiVisu_DataProvider)& D
     //
     source->SetFace(face);
     source->Set3DCurveModeOn(); // Enable 3D mode
+
+    // Get norm at the middle point
+    Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
+
+    // Get natural bounds
+    double uMin, uMax, vMin, vMax;
+    surf->Bounds(uMin, uMax, vMin, vMax);
+
+    // Calculate norm
+    gp_Pnt sP;
+    gp_Vec sD1U, sD1V;
+    surf->D1( (uMin + uMax)*0.5, (vMin + vMax)*0.5, sP, sD1U, sD1V );
+    //
+    gp_Vec snorm = sD1U^sD1V;
+
+    // Set plane for tips
+    source->SetTipNorm(snorm);
 
     // Chain pipeline
     this->SetInputConnection( source->GetOutputPort() );

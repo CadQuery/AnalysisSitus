@@ -70,18 +70,30 @@ asiVisu_PDomainSource::~asiVisu_PDomainSource()
 void asiVisu_PDomainSource::SetFace(const TopoDS_Face& face)
 {
   m_face = face;
+  this->Modified();
 }
 
 //! Enables p-curve visualization mode.
 void asiVisu_PDomainSource::SetPCurveModeOn()
 {
   m_bPCurveMode = true;
+  this->Modified();
 }
 
 //! Enables 3D curve visualization mode.
 void asiVisu_PDomainSource::Set3DCurveModeOn()
 {
   m_bPCurveMode = false;
+  this->Modified();
+}
+
+//! Sets optional normal vector for plane where tip of the curves
+//! composing a parametric domain will be defined.
+//! \param[in] tipNorm normal vector to set.
+void asiVisu_PDomainSource::SetTipNorm(const gp_Vec& tipNorm)
+{
+  m_tipNorm = tipNorm;
+  this->Modified();
 }
 
 //-----------------------------------------------------------------------------
@@ -111,7 +123,7 @@ int asiVisu_PDomainSource::RequestData(vtkInformation*        request,
   polyOutput->Allocate();
 
   // Compute tip size for the orientation markers
-  const double tip_size = this->computeTipSize();
+  const double tipSize = this->computeTipSize();
 
   // Append filter
   vtkSmartPointer<vtkAppendPolyData>
@@ -161,7 +173,8 @@ int asiVisu_PDomainSource::RequestData(vtkInformation*        request,
     }
 
     // Common settings
-    curveSource->SetTipSize(tip_size);
+    curveSource->SetTipSize(tipSize);
+    curveSource->SetTipNorm(m_tipNorm);
     curveSource->SetPedigreeId(edgeId);
 
     // Append poly data

@@ -306,7 +306,7 @@ int asiVisu_CurveSource::RequestData(vtkInformation*        request,
   if ( m_fOriTipSize > RealEpsilon() )
   {
     // Derive tangent
-    if ( m_oriN.Magnitude() < RealEpsilon() )
+    if ( m_oriT.Magnitude() < RealEpsilon() )
       m_oriT = gp_XYZ( m_XCoords->Value( m_XCoords->Upper() ),
                        m_YCoords->Value( m_YCoords->Upper() ),
                        m_ZCoords->Value( m_ZCoords->Upper() ) )

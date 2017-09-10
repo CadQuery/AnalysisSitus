@@ -46,9 +46,10 @@ public:
 // Kernel methods:
 public:
 
-  void SetFace(const TopoDS_Face& face);
-  void SetPCurveModeOn();
-  void Set3DCurveModeOn();
+  void SetFace          (const TopoDS_Face& face);
+  void SetPCurveModeOn  ();
+  void Set3DCurveModeOn ();
+  void SetTipNorm       (const gp_Vec& tipNorm);
 
 protected:
 
@@ -74,6 +75,7 @@ private:
 
   TopoDS_Face m_face;        //!< Face to convert.
   bool        m_bPCurveMode; //!< Indicates whether p-curve mode is activated.
+  gp_Vec      m_tipNorm;     //!< Optional normal vector for tips.
 
 };
 

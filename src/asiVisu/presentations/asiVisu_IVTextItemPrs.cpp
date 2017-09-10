@@ -70,6 +70,7 @@ void asiVisu_IVTextItemPrs::renderPipelines(vtkRenderer* theRenderer) const
     m_textWidget->SetDefaultRenderer ( theRenderer );
     m_textWidget->SetCurrentRenderer ( theRenderer );
     m_textWidget->On                 ( );
+    m_textWidget->ReleaseFocus       ( );
   }
 }
 

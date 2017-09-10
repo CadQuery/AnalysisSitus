@@ -765,6 +765,7 @@ void asiVisu_Utils::InitTextWidget(vtkTextWidget* theTextWidget)
 {
   vtkTextRepresentation* textRep = vtkTextRepresentation::SafeDownCast( theTextWidget->GetRepresentation() );
   theTextWidget->SelectableOff();
+  theTextWidget->SetManagesCursor(0); // To avoid annoying bug with changing cursor at On() method
 
   vtkSmartPointer<vtkTextActor> textActor = vtkSmartPointer<vtkTextActor>::New();
   textRep->SetTextActor(textActor);

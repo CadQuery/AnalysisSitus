@@ -35,4 +35,9 @@
   #define asiUI_EXPORT __declspec(dllimport)
 #endif
 
+// There are some warning which we do not care of...
+#ifdef WIN32
+#pragma warning (disable : 4251)
+#endif
+
 #endif

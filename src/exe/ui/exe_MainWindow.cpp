@@ -85,6 +85,12 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
     QTextStream ts(&f);
     qApp->setStyleSheet( ts.readAll() );
   }
+
+  //---------------------------------------------------------------------------
+  // Set focus on Tcl console
+  //---------------------------------------------------------------------------
+
+  m_widgets.wConsole->setFocus();
 }
 
 //-----------------------------------------------------------------------------
@@ -119,14 +125,6 @@ void exe_MainWindow::createPartViewer()
   // Create viewer
   m_widgets.wViewerPart = new asiUI_ViewerPart(cf->Model, true);
 
-  // Desktop used for sizing
-  QDesktopWidget desktop;
-  const int side   = std::min( desktop.height(), desktop.width() );
-  const int width  = side*0.25;
-  const int height = side*0.25;
-  //
-  m_widgets.wViewerPart->setMinimumSize(width, height);
-
   // Initialize desktop
   cf->ViewerPart = m_widgets.wViewerPart;
   cf->Prs.Part   = m_widgets.wViewerPart->PrsMgr();
@@ -137,11 +135,6 @@ void exe_MainWindow::createPartViewer()
 //! Creates main dockable widgets.
 void exe_MainWindow::createDockWindows()
 {
-  // Desktop used for sizing
-  QDesktopWidget desktop;
-  const int side  = std::min( desktop.height(), desktop.width() );
-  const int width = side*0.05;
-
   // Common facilities instance
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
 
@@ -169,7 +162,6 @@ void exe_MainWindow::createDockWindows()
     //
     m_widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, pDock);
     pDock->setWidget(m_widgets.wViewerDomain);
-    pDock->setMinimumWidth(width);
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDock);
 
@@ -185,7 +177,6 @@ void exe_MainWindow::createDockWindows()
     //
     m_widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, pDock);
     pDock->setWidget(m_widgets.wViewerSurface);
-    pDock->setMinimumWidth(width);
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDock);
 

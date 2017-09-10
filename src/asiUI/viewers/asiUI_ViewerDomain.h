@@ -37,7 +37,7 @@
 // VTK includes
 #include <vtkTextWidget.h>
 
-//! Viewer for face domain.
+//! Viewer for domains of topological entities (edges, faces).
 class asiUI_ViewerDomain : public asiUI_Viewer
 {
   Q_OBJECT
@@ -50,6 +50,11 @@ public:
 
   asiUI_EXPORT virtual
     ~asiUI_ViewerDomain();
+
+public:
+
+  asiUI_EXPORT QSize
+    sizeHint() const;
 
 public:
 

@@ -50,11 +50,19 @@ public:
   asiUI_Console(const Handle(asiTcl_Interp)& interp,
                 QWidget*                     parent = 0);
 
+public:
+
+  QSize sizeHint() const;
+
 protected:
 
   virtual void keyPressEvent(QKeyEvent* e);
 
 protected:
+
+  void addText(const QString& str,
+               const bool     newBlock,
+               const bool     isError);
 
   bool eval(const TCollection_AsciiString& cmd);
 
@@ -66,6 +74,11 @@ protected:
 
 protected:
 
+  int promptSize() const { return m_prompt.size(); }
+
+protected:
+
+  QString               m_prompt; //!< Prompt prefix.
   Handle(asiTcl_Interp) m_interp; //!< Tcl interpreter.
 
 };

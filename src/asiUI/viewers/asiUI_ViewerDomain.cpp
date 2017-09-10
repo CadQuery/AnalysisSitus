@@ -50,6 +50,7 @@
 
 // Qt includes
 #pragma warning(push, 0)
+#include <QDesktopWidget>
 #include <QVBoxLayout>
 #pragma warning(pop)
 
@@ -60,6 +61,8 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
+
+//-----------------------------------------------------------------------------
 
 //! Creates a new instance of viewer.
 //! \param model  [in] Data Model instance.
@@ -152,16 +155,36 @@ asiUI_ViewerDomain::asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
   this->onResetView();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Destructor.
 asiUI_ViewerDomain::~asiUI_ViewerDomain()
 {
 }
+
+//-----------------------------------------------------------------------------
+
+//! \return size hint.
+QSize asiUI_ViewerDomain::sizeHint() const
+{
+  QDesktopWidget desktop;
+  const int side   = std::min( desktop.height(), desktop.width() );
+  const int width  = (int) (side*0.25);
+  const int height = (int) (side*0.25);
+
+  QSize s(width, height);
+  return s;
+}
+
+//-----------------------------------------------------------------------------
 
 //! Updates viewer.
 void asiUI_ViewerDomain::Repaint()
 {
   m_prs_mgr->GetQVTKWidget()->repaint();
 }
+
+//-----------------------------------------------------------------------------
 
 //! Resets view.
 void asiUI_ViewerDomain::onResetView()
@@ -344,6 +367,8 @@ void asiUI_ViewerDomain::onKillEdges()
   // Notify
   emit partModified();
 }
+
+//-----------------------------------------------------------------------------
 
 //! Callback for edges joining.
 void asiUI_ViewerDomain::onJoinEdges()

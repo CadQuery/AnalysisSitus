@@ -271,9 +271,9 @@ Handle(asiData_IVPointSet2dNode)
                                   const TCollection_AsciiString& name,
                                   const bool                     useAutoNaming)
 {
-  Handle(TColStd_HArray1OfReal) hcoords = new TColStd_HArray1OfReal(0, points.size()*2 - 1);
+  Handle(TColStd_HArray1OfReal) hcoords = new TColStd_HArray1OfReal(0, (int) points.size()*2 - 1);
   //
-  for ( size_t i = 0; i < points.size(); ++i )
+  for ( int i = 0; i < (int) points.size(); ++i )
   {
     hcoords->ChangeValue(i*2 + 0) = points[i].X();
     hcoords->ChangeValue(i*2 + 1) = points[i].Y();

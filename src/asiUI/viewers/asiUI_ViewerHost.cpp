@@ -37,6 +37,7 @@
 
 // Qt includes
 #pragma warning(push, 0)
+#include <QDesktopWidget>
 #include <QVBoxLayout>
 #pragma warning(pop)
 
@@ -80,6 +81,20 @@ asiUI_ViewerHost::asiUI_ViewerHost(const Handle(asiEngine_Model)& model,
 //! Destructor.
 asiUI_ViewerHost::~asiUI_ViewerHost()
 {
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return size hint.
+QSize asiUI_ViewerHost::sizeHint() const
+{
+  QDesktopWidget desktop;
+  const int side   = std::min( desktop.height(), desktop.width() );
+  const int width  = (int) (side*0.25);
+  const int height = (int) (side*0.25);
+
+  QSize s(width, height);
+  return s;
 }
 
 //-----------------------------------------------------------------------------

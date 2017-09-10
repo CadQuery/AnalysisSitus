@@ -37,8 +37,14 @@
 
 // Qt includes
 #pragma warning(push, 0)
+#include <QDesktopWidget>
 #include <QTextBlock>
 #pragma warning(pop)
+
+//-----------------------------------------------------------------------------
+
+static QString READY_PROMPT = "> ";
+static QString DOTS_PROMPT  = "... ";
 
 //-----------------------------------------------------------------------------
 
@@ -48,12 +54,39 @@ asiUI_Console::asiUI_Console(const Handle(asiTcl_Interp)& interp,
 : m_interp(interp),
   asiUI_StyledTextEdit(parent)
 {
-  this->append( QString("Tcl version: %1 [%2.%3.%4.%5]\n***\n")
-               .arg(TCL_VERSION)
-               .arg(TCL_MAJOR_VERSION)
-               .arg(TCL_MINOR_VERSION)
-               .arg(TCL_RELEASE_LEVEL)
-               .arg(TCL_RELEASE_SERIAL) );
+  this->setUndoRedoEnabled( false );
+  this->setLineWrapMode( QTextEdit::WidgetWidth );
+  this->setWordWrapMode( QTextOption::WrapAnywhere );
+  this->setAcceptRichText( false );
+  this->setReadOnly( false );
+
+  // unset busy cursor
+  this->viewport()->unsetCursor();
+
+  this->addText( QString("Tcl version: %1 [%2.%3.%4.%5]\n***")
+                 .arg(TCL_VERSION)
+                 .arg(TCL_MAJOR_VERSION)
+                 .arg(TCL_MINOR_VERSION)
+                 .arg(TCL_RELEASE_LEVEL)
+                 .arg(TCL_RELEASE_SERIAL), false, false );
+
+  // Add prompt
+  m_prompt = READY_PROMPT;
+  this->addText(READY_PROMPT, true, false);
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return size hint.
+QSize asiUI_Console::sizeHint() const
+{
+  QDesktopWidget desktop;
+  const int side   = std::min( desktop.height(), desktop.width() );
+  const int width  = (int) (side*0.25);
+  const int height = (int) (side*0.35);
+
+  QSize s(width, height);
+  return s;
 }
 
 //-----------------------------------------------------------------------------
@@ -75,30 +108,60 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
       else
         std::cout << "\t ... OK" << std::endl;
 
+      // Position cursor at the end
+      c.movePosition(QTextCursor::End);
+      this->setTextCursor(c);
+
+      // Add next prompt
+      this->addText(READY_PROMPT, true, false);
+
       break;
     }
     default:
-      break;
+      asiUI_StyledTextEdit::keyPressEvent(e);
   }
+}
 
-  asiUI_StyledTextEdit::keyPressEvent(e);
+//-----------------------------------------------------------------------------
+
+void asiUI_Console::addText(const QString& str,
+                            const bool     newBlock,
+                            const bool     isError)
+{
+  QTextCursor cursor = this->textCursor();
+  QTextCharFormat cf = this->currentCharFormat();
+
+  this->moveCursor( QTextCursor::End );
+  if ( newBlock )
+    cursor.insertBlock();
+  if ( isError )
+    cf.setForeground( QBrush( Qt::red ) );
+
+  cursor.insertText( str, cf );
+  this->moveCursor( QTextCursor::End );
+  this->ensureCursorVisible();
 }
 
 //-----------------------------------------------------------------------------
 
 bool asiUI_Console::eval(const TCollection_AsciiString& cmd)
 {
-  if ( m_interp->Eval(cmd) == TCL_OK )
-    return true;
+  const bool isOk = ( m_interp->Eval(cmd) == TCL_OK );
 
-  return false;
+  return isOk;
 }
 
 //-----------------------------------------------------------------------------
 
 TCollection_AsciiString asiUI_Console::currentCommand(const QTextCursor& cursor) const
 {
-  return QStr2AsciiStr( cursor.block().text().trimmed() );
+  // Get text from text area
+  QString cmd = cursor.block().text().trimmed();
+
+  // Cut prompt prefix
+  cmd = cmd.remove( 0, this->promptSize() );
+
+  return QStr2AsciiStr(cmd);
 }
 
 //-----------------------------------------------------------------------------

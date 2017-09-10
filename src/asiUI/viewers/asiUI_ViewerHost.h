@@ -48,6 +48,11 @@ public:
 
 public:
 
+  asiUI_EXPORT QSize
+    sizeHint() const;
+
+public:
+
   void Repaint();
 
 public slots:

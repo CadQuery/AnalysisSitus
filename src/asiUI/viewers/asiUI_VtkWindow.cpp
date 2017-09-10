@@ -39,7 +39,9 @@ asiUI_VtkWindow::~asiUI_VtkWindow()
 
 //! Custom reaction on close event.
 //! \param pEvent [in] event instance.
-void asiUI_VtkWindow::closeEvent(QCloseEvent* asiUI_NotUsed(pEvent))
+void asiUI_VtkWindow::closeEvent(QCloseEvent* pEvent)
 {
+  asiUI_NotUsed(pEvent);
+
   emit windowClosed();
 }

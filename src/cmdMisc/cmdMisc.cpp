@@ -41,6 +41,10 @@
 #include <STEPControl_Reader.hxx>
 #include <Geom_Plane.hxx>
 
+#define pntsPerSlice 48
+#define nbSlices 50//4
+#define deltaValue 5
+
 TopoDS_Shape StepReader(const char *filename)
 {
   //cout << string(filename)<<endl;
@@ -106,7 +110,6 @@ TopoDS_Shape intersectionShape(TopoDS_Shape srf1,TopoDS_Shape srf2)
 }
 
 std::vector<gp_Pnt> slicePnts(TopoDS_Shape& sbendStep, gp_Pln& pln, gp_Dir& normalPl,
-                              gp_Vec& refDir,
                               ActAPI_PlotterEntry plotter)
 {
   TopoDS_Shape facePln = BRepBuilderAPI_MakeFace(pln);   
@@ -147,7 +150,7 @@ std::vector<gp_Pnt> slicePnts(TopoDS_Shape& sbendStep, gp_Pln& pln, gp_Dir& norm
   
   Handle(TopTools_HSequenceOfShape) wireList;
   ShapeAnalysis_FreeBounds freeBounds;  
-  freeBounds.ConnectEdgesToWires(edgesList, 3., true, wireList);
+  freeBounds.ConnectEdgesToWires(edgesList, 10e-3, true, wireList);
   cout << "wireList length is " << wireList->Length() << endl;
   TopoDS_Wire resultingWire = TopoDS::Wire(wireList->Value(1));
   
@@ -163,7 +166,7 @@ std::vector<gp_Pnt> slicePnts(TopoDS_Shape& sbendStep, gp_Pln& pln, gp_Dir& norm
   
   // uniform sampling of the points onto the wire
   
-  int totalSlicePnts = 48;
+  int totalSlicePnts = pntsPerSlice;//48;
   std::vector<gp_Pnt>  sampledPoints;
 
   BRepAdaptor_Curve BAC(BRepBuilderAPI_MakeEdge(bsWire).Edge());           
@@ -173,34 +176,14 @@ std::vector<gp_Pnt> slicePnts(TopoDS_Shape& sbendStep, gp_Pln& pln, gp_Dir& norm
   bsWire->D0(pntSamplingTool.Parameter(1), P0);
   sampledPoints.push_back(P0);
 
-  gp_Vec ori;
   bool isReverse = false;
   for ( int pt_idx = 2; pt_idx <= pntSamplingTool.NbPoints(); ++pt_idx )
   {
     gp_Pnt aPnt;
     bsWire->D0(pntSamplingTool.Parameter(pt_idx), aPnt);
+    sampledPoints.push_back(aPnt);
+  }
 
-    if ( refDir.Magnitude() > RealEpsilon() && pt_idx == 2 )
-    {
-      ori = aPnt.XYZ() - P0.XYZ();
-      double a1 = refDir.Angle( ori );
-      double a2 = refDir.Angle( ori.Reversed() );
-      //
-      std::cout << "\ta1 = " << a1 << std::endl;
-      std::cout << "\ta2 = " << a2 << std::endl;
-      //
-      if ( Abs(a2) < Abs(a1) )
-        isReverse = true;
-    }
-
-    if ( isReverse )
-      sampledPoints.insert(sampledPoints.begin(), aPnt);
-    else
-      sampledPoints.push_back(aPnt);
-  }    
-
-  refDir = sampledPoints[1].XYZ() - sampledPoints[0].XYZ();
-  
   // pushback again the first point
   
   //sampledPoints.push_back(sampledPoints.at(0));
@@ -228,7 +211,6 @@ std::vector<gp_Pnt> slicePnts(TopoDS_Shape& sbendStep, gp_Pln& pln, gp_Dir& norm
 
 //-----------------------------------------------------------------------------
 
-#define nbSlices 15
 #define maxSlice nbSlices
 
 int TEST(const Handle(asiTcl_Interp)& interp,
@@ -253,18 +235,18 @@ int TEST(const Handle(asiTcl_Interp)& interp,
     
   // evaluate first point of the first slice
   
-  gp_Pln firstPln(gp_Pnt(570.570007014, 79.2900000001, (365.)), normalPl);
+  gp_Pln firstPln(gp_Pnt(570.570007014, 79.2900000001, 275.), normalPl); //(365.)), normalPl);
+  double delta = deltaValue;
   
-  gp_Vec refDir;
-  std::vector<gp_Pnt> firstPnts = slicePnts(sbendStep, firstPln, normalPl, refDir, interp->GetPlotter());
+  std::vector<gp_Pnt> firstPnts = slicePnts(sbendStep, firstPln, normalPl, interp->GetPlotter());
   firstPnt = firstPnts[0];
   TColgp_Array2OfPnt pntsMatrix(1, firstPnts.size(), 1, maxSlice);   
   for(Standard_Integer n = 0; n < maxSlice; ++n)
   {
-	pln.push_back(gp_Pln(gp_Pnt(570.570007014, 79.2900000001, (365. -n*5.)), normalPl));
+	pln.push_back(gp_Pln(gp_Pnt(570.570007014, 79.2900000001, 365. - n*delta), normalPl)); //(365. -n*delta)), normalPl));
     planePln.push_back(new Geom_Plane(pln.at(n)));  
         
-    pnts = slicePnts(sbendStep, pln.at(n), normalPl, refDir, interp->GetPlotter());
+    pnts = slicePnts(sbendStep, pln.at(n), normalPl, interp->GetPlotter());
         
     for(int firstIndx = 0; firstIndx < pnts.size(); ++firstIndx)
     {
@@ -290,13 +272,16 @@ int TEST(const Handle(asiTcl_Interp)& interp,
   // =============================================================================================================
 
 
-	TColgp_Array2OfPnt finalPntsMatrix(1, firstPnts.size(), 1, maxSlice);
+	TColgp_Array2OfPnt finalPntsMatrix(1, firstPnts.size()+1, 1, maxSlice);
 	//for(int k = 1; k <= pntsMatrix.ColLength(); ++k) finalPntsMatrix.SetValue(k, 1, pntsMatrix.Value(k, 1));
   //finalPntsMatrix = pntsMatrix;
 
   // Copy first column as-as. It will play as a reference.
   for ( int r = 1; r <= pntsMatrix.ColLength(); ++r )
     finalPntsMatrix.SetValue( r, 1, pntsMatrix(r, 1) );
+
+  gp_Vec refDir = finalPntsMatrix(2, 1).XYZ() - finalPntsMatrix(1, 1).XYZ();
+  interp->GetPlotter().DRAW_VECTOR_AT(finalPntsMatrix(1, 1), refDir, Color_Green, "refDir");
 
   const int numPtsInCol = pntsMatrix.ColLength();
 
@@ -312,7 +297,7 @@ int TEST(const Handle(asiTcl_Interp)& interp,
     interp->GetPlotter().DRAW_POINT(refPoint, Color_Yellow, "refPoint");
 
     // Find index to start
-    for ( int r = 1; r < pntsMatrix.ColLength(); ++r )
+    for ( int r = 1; r <= pntsMatrix.ColLength(); ++r )
     {
       if ( pntsMatrix(r, c).Distance(refPoint) < minDist )
       {
@@ -324,6 +309,7 @@ int TEST(const Handle(asiTcl_Interp)& interp,
     refPoint = pntsMatrix(startRow, c);
 
     // Copy points starting from the found column index
+    std::vector<gp_Pnt> reorderedPoints;
     int pt = 0;
     int rr = startRow - 1;
     do
@@ -334,12 +320,43 @@ int TEST(const Handle(asiTcl_Interp)& interp,
       if ( rr > pntsMatrix.ColLength() )
         rr -= pntsMatrix.ColLength();
 
-      TCollection_AsciiString name("reordered pnt col = "); name += c;
-      //interp->GetPlotter().DRAW_POINT(pntsMatrix(rr, c), Color_Red, name);
+      bool isReverse = false;
+      if ( pt == 2 )
+      {
+        gp_Vec ori = pntsMatrix(rr, c).XYZ() - pntsMatrix(rr-1, c).XYZ();
+        double a1 = refDir.Angle( ori );
+        double a2 = refDir.Angle( ori.Reversed() );
+        //
+        std::cout << "\ta1 = " << a1 << std::endl;
+        std::cout << "\ta2 = " << a2 << std::endl;
+        //
+        if ( Abs(a2) < Abs(a1) )
+          isReverse = true;
+      }
 
-      finalPntsMatrix.SetValue( pt, c, pntsMatrix(rr, c) );
+      if ( pt == 1 || pt == 2 )
+      {
+        TCollection_AsciiString name("reordered pnt col = "); name += c;
+        interp->GetPlotter().DRAW_POINT(pntsMatrix(rr, c), Color_Blue, name);
+      }
+
+    if ( isReverse )
+      reorderedPoints.insert( reorderedPoints.begin(), pntsMatrix(rr, c) );
+    else
+      reorderedPoints.push_back( pntsMatrix(rr, c) );
     }
     while ( pt < numPtsInCol );
+
+    // Set to matrix
+    pt = 0;
+    do
+    {
+      pt++;
+      finalPntsMatrix.SetValue( pt, c, reorderedPoints[pt-1] );
+    }
+    while ( pt < numPtsInCol );
+
+    refDir = finalPntsMatrix(2, c).XYZ() - finalPntsMatrix(1, c).XYZ();
   }
 
 

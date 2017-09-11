@@ -83,7 +83,7 @@ QSize asiUI_Console::sizeHint() const
   QDesktopWidget desktop;
   const int side   = std::min( desktop.height(), desktop.width() );
   const int width  = (int) (side*0.25);
-  const int height = (int) (side*0.35);
+  const int height = (int) (side*0.1);
 
   QSize s(width, height);
   return s;

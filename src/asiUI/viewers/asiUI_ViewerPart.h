@@ -61,6 +61,11 @@ public:
 
 public:
 
+  asiUI_EXPORT QSize
+    sizeHint() const;
+
+public:
+
   asiUI_EXPORT void
     Repaint();
 

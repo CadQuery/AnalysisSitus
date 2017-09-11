@@ -45,6 +45,7 @@
 
 // Qt includes
 #pragma warning(push, 0)
+#include <QDesktopWidget>
 #include <QVBoxLayout>
 #pragma warning(pop)
 
@@ -123,6 +124,7 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
 
   // Create toolbar
   m_toolBar = new QToolBar(this);
+  m_toolBar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
   // Create actions
   this->createActions();
@@ -235,6 +237,20 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
 //! Destructor.
 asiUI_ViewerPart::~asiUI_ViewerPart()
 {}
+
+//-----------------------------------------------------------------------------
+
+//! \return size hint.
+QSize asiUI_ViewerPart::sizeHint() const
+{
+  QDesktopWidget desktop;
+  const int side   = std::min( desktop.height(), desktop.width() );
+  const int width  = (int) (side*0.25);
+  const int height = (int) (side*0.5);
+
+  QSize s(width, height);
+  return s;
+}
 
 //-----------------------------------------------------------------------------
 

@@ -35,6 +35,9 @@
 // asiAlgo includes
 #include <asiAlgo_TopoKill.h>
 
+// OCCT includes
+#include <ShapeFix_Shape.hxx>
+
 //-----------------------------------------------------------------------------
 
 Handle(exe_CommonFacilities) cmdInspector::cf = NULL;
@@ -63,6 +66,38 @@ int INSPECTOR_SetAsPart(const Handle(asiTcl_Interp)& interp,
   cmdInspector::cf->Model->OpenCommand();
   {
     asiEngine_Part(cmdInspector::cf->Model, NULL).Update( node->GetShape() );
+  }
+  cmdInspector::cf->Model->CommitCommand();
+
+  // Update UI
+  cmdInspector::UpdateUI();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int INSPECTOR_FixPart(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = cmdInspector::cf->Model->GetPartNode();
+
+  // Fix shape
+  ShapeFix_Shape fix( part_n->GetShape() );
+  fix.Perform();
+  TopoDS_Shape result = fix.Shape();
+
+  // Modify Data Model
+  cmdInspector::cf->Model->OpenCommand();
+  {
+    asiEngine_Part(cmdInspector::cf->Model, NULL).Update(result);
   }
   cmdInspector::cf->Model->CommitCommand();
 
@@ -218,6 +253,7 @@ void cmdInspector::Factory(const Handle(asiTcl_Interp)&      interp,
 
   // Add commands
   interp->AddCommand("set-as-part", "", __FILE__, INSPECTOR_SetAsPart);
+  interp->AddCommand("fix-part",    "", __FILE__, INSPECTOR_FixPart);
   interp->AddCommand("kill-edge",   "", __FILE__, INSPECTOR_KillEdge);
   interp->AddCommand("kill-face",   "", __FILE__, INSPECTOR_KillFace);
 }

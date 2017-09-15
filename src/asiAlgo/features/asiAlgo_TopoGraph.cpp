@@ -87,7 +87,7 @@ void asiAlgo_TopoGraph::Dump(Standard_OStream& out) const
   out << "\n";
 
   // Dump nodes with attributes
-  const NCollection_IndexedMap<TopoDS_Shape>& nodes = this->GetNodes();
+  const NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher>& nodes = this->GetNodes();
   //
   for ( int n = 1; n <= nodes.Extent(); ++n )
   {
@@ -197,8 +197,13 @@ void asiAlgo_TopoGraph::addSubshapes(const TopoDS_Shape& parent,
   {
     const TopoDS_Shape& subShape = it.Value();
 
-    // Add node
-    const int iChildId = m_nodes.Add(subShape);
+    // Add or take the existing node
+    int iChildId;
+    //
+    if ( !m_nodes.Contains(subShape) )
+      iChildId = m_nodes.Add(subShape);
+    else
+      iChildId = m_nodes.FindIndex(subShape);
 
     // Add arc
     if ( !m_arcs.IsBound(iParentId) )

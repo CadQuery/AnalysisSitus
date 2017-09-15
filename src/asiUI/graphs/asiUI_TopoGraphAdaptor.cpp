@@ -88,7 +88,7 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   NCollection_DataMap<int, vtkIdType> ShapeNodeMap;
 
   // Add nodes for (sub-)shapes
-  const NCollection_IndexedMap<TopoDS_Shape>& nodes = topograph->GetNodes();
+  const NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher>& nodes = topograph->GetNodes();
   //
   for ( int n = 1; n <= nodes.Extent(); ++n )
   {

@@ -221,7 +221,7 @@ public:
 
   //! \brief Returns the unordered set of graph nodes.
   //! \return graph nodes.
-  const NCollection_IndexedMap<TopoDS_Shape>& GetNodes() const
+  const NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher>& GetNodes() const
   {
     return m_nodes;
   }
@@ -275,13 +275,13 @@ protected:
 // OUTPUTS
 protected:
 
-  int                                  m_iRoot;     //!< ID of the root node.
-  NCollection_IndexedMap<TopoDS_Shape> m_nodes;     //!< Graph nodes.
-  t_adjacency                          m_arcs;      //!< Shape/sub-shape relations.
-  TopTools_IndexedMapOfShape           m_subShapes; //!< All sub-shapes.
-  TopTools_IndexedMapOfShape           m_faces;     //!< All faces of the master model.
-  TopTools_IndexedMapOfShape           m_edges;     //!< All edges of the master model.
-  TopTools_IndexedMapOfShape           m_vertices;  //!< All vertices of the master model.
+  int                                                           m_iRoot;     //!< ID of the root node.
+  NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher> m_nodes;     //!< Graph nodes.
+  t_adjacency                                                   m_arcs;      //!< Shape/sub-shape relations.
+  TopTools_IndexedMapOfShape                                    m_subShapes; //!< All sub-shapes.
+  TopTools_IndexedMapOfShape                                    m_faces;     //!< All faces of the master model.
+  TopTools_IndexedMapOfShape                                    m_edges;     //!< All edges of the master model.
+  TopTools_IndexedMapOfShape                                    m_vertices;  //!< All vertices of the master model.
 
 };
 

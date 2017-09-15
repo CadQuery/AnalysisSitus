@@ -227,7 +227,7 @@ int INSPECTOR_KillFace(const Handle(asiTcl_Interp)& interp,
 
 void cmdInspector::UpdateUI()
 {
-  cf->ViewerPart->PrsMgr()->Actualize(cf->Model->GetPartNode(), false, true);
+  cf->ViewerPart->PrsMgr()->Actualize(cf->Model->GetPartNode(), false, false, true);
 }
 
 //-----------------------------------------------------------------------------

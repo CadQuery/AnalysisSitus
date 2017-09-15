@@ -1069,15 +1069,23 @@ ActAPI_DataObjectIdList
       {
         if ( pickRes.IsSelectionFace() )
         {
-          TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
-          //
-          if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_FACE )
-            subShapes2Highlight.Add( mit.Key() );
+          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances
+          {
+            TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
+            //
+            if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_FACE )
+              subShapes2Highlight.Add( mit.Key() );
+          }
         }
         else if ( pickRes.IsSelectionEdge() )
         {
-          if ( aag->GetMapOfSubShapes().FindKey( mit.Key() ).ShapeType() == TopAbs_EDGE )
-            subShapes2Highlight.Add( mit.Key() );
+          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances
+          {
+            TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
+            //
+            if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_EDGE )
+              subShapes2Highlight.Add( mit.Key() );
+          }
         }
       }
 

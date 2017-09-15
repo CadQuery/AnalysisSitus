@@ -272,7 +272,13 @@ public:
                ActAPI_ProgressEntry Journal);
 
   asiAlgo_EXPORT static bool
-    IsClosed(const TopoDS_Face& face);
+    HasAllClosedWires(const TopoDS_Face& face,
+                      const double       coincConfusion);
+
+  asiAlgo_EXPORT static bool
+    IsClosedGeometrically(const TopoDS_Wire& wire,
+                          const TopoDS_Face& face,
+                          const double       coincConfusion);
 
   asiAlgo_EXPORT static bool
     HasEdgesWithoutVertices(const TopoDS_Face& face);

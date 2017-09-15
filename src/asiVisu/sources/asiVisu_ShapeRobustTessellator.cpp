@@ -400,7 +400,14 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
 
 bool asiVisu_ShapeRobustTessellator::isValidFace(const TopoDS_Face& face) const
 {
-  return asiAlgo_Utils::IsClosed(face) &&
+  // Notice that in the check of wire closeness, we do not enable
+  // "check sharing" flag. This is because a faceter usually does not have
+  // any troubles with tessellating geometrically but not topologically closed
+  // faces.
+
+  const double tol = asiAlgo_Utils::MaxTolerance(face);
+
+  return asiAlgo_Utils::HasAllClosedWires(face, tol) &&
         !asiAlgo_Utils::HasEdgesWithoutVertices(face);
 }
 
@@ -555,9 +562,11 @@ void asiVisu_ShapeRobustTessellator::addFace(const TopoDS_Face& face,
     // Get bounding box of the face
     double xMin, yMin, zMin, xMax, yMax, zMax;
     asiAlgo_Utils::Bounds(face, xMin, yMin, zMin, xMax, yMax, zMax);
-    //
+
+    // Trim diagonal to avoid infinite here. This can happen for single infinite
+    // cylindrical faces for example.
     const double
-      diag = gp_Pnt(xMax, yMax, zMax).Distance( gp_Pnt(xMin, yMin, zMin) );
+      diag = Min( gp_Pnt(xMax, yMax, zMax).Distance( gp_Pnt(xMin, yMin, zMin) ), m_fGlobalBndDiag);
 
     // Get host surface
     Handle(Geom_Surface) surf = BRep_Tool::Surface(face);

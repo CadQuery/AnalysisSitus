@@ -58,6 +58,8 @@
 #include <math_Matrix.hxx>
 #include <NCollection_IncAllocator.hxx>
 #include <Precision.hxx>
+#include <ShapeAnalysis_Edge.hxx>
+#include <ShapeExtend_WireData.hxx>
 #include <ShapeFix_Face.hxx>
 #include <ShapeUpgrade_UnifySameDomain.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
@@ -82,6 +84,11 @@
 #define dump_filename_Bx "D:\\Bx_interp_log_OCCT.log"
 #define dump_filename_By "D:\\By_interp_log_OCCT.log"
 #define dump_filename_Bz "D:\\Bz_interp_log_OCCT.log"
+
+#define COUT_DEBUG
+#if defined COUT_DEBUG
+  #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -736,27 +743,179 @@ bool
 
 //! Checks whether the passed face has all contours (wires)
 //! geometrically closed.
-//! \param face [in] face to check.
-bool asiAlgo_Utils::IsClosed(const TopoDS_Face& face)
+//! \param face           [in] face to check.
+//! \param coincConfusion [in] coincidence confusion tolerance. This value
+//!                            is used to recognize points as coincident.
+//! \return true if face is Ok, false -- otherwise.
+bool asiAlgo_Utils::HasAllClosedWires(const TopoDS_Face& face,
+                                      const double       coincConfusion)
 {
   for ( TopoDS_Iterator it(face); it.More(); it.Next() )
   {
-    TopoDS_Wire wire = TopoDS::Wire( it.Value() );
+    const TopoDS_Wire& wire = TopoDS::Wire( it.Value() );
 
-    // May issue an exception in case of corrupted topology
-    try
-    {
-      BRepCheck_Wire wireChecker(wire);
-      if ( wireChecker.Closed2d(face) == BRepCheck_NotClosed )
-        return false;
-      if ( wireChecker.Closed() == BRepCheck_NotClosed )
-        return false;
-    }
-    catch ( ... )
-    {
+    // Check each wire individually
+    if ( !IsClosedGeometrically(wire, face, coincConfusion) )
       return false;
-    }
   }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Checks whether the passed wire is closed and well-oriented.
+//! \param wire           [in] wire to check.
+//! \param face           [in] face owning the wire.
+//! \param coincConfusion [in] coincidence confusion tolerance. This value
+//!                            is used to recognize points as coincident.
+//! \return true if wire is Ok, false -- otherwise.
+bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
+                                          const TopoDS_Face& face,
+                                          const double       coincConfusion)
+{
+  // This method takes into account topological orientation of the wire
+  // in question. However, it does not check any orientation flags. It simply
+  // tests all extremities of one edge with all extremities of another edge.
+
+  // It should be noted that in OpenCascade there is no restriction for a
+  // wire to contain all edges in the order of traverse. That is, a wire
+  // traversed as E1->E2->E3->E4 may physically contain those edges in
+  // the order like E1, E2, E4, E3. Therefore, simple sequential iteration
+  // from previous to next edge is not enough to check that all extremities
+  // of all edges are 1-manifold. To check this, we use an auxiliary map of
+  // edges together with valences of their extremities. For example:
+  //
+  //  Edge | <Extremity 1; Extremity 2> <-> <Valence 1; Valence 2>
+  // ------+------------------------------------------------------
+  //   E1  | <(0,0); (0,1)>             <-> <2, 2>
+  //   E2  | <(1,1); (0,1)>             <-> <1, 2>
+  //  ...
+  //
+  // This map allows making verdict on closeness of the wire in question.
+  // Apparently, in a well-defined contour, all edges should have all
+  // extremities with valence 2.
+  //
+  // NOTICE: to avoid degeneracies in 3D for special cases like cylinders,
+  //         cones, spheres, tori, etc., we use (u, v) parametric space
+  //         for extremity coordinates. We make use of the fact, that a valid
+  //         parametric domain is a topological rectangle. Our reasoning of
+  //         valences is valid only in this assumption.
+
+  struct t_extremities
+  {
+    gp_Pnt2d P1, P2;
+  };
+  struct t_valences
+  {
+    int V1, V2;
+  };
+  typedef NCollection_DataMap< TopoDS_Edge, std::pair<t_extremities, t_valences> > t_valence_map;
+
+  // Prepare valence map
+  t_valence_map valenceMap;
+
+  // Prepare wire data
+  Handle(ShapeExtend_WireData) WD = new ShapeExtend_WireData(wire);
+  const int nEdges = WD->NbEdges();
+  //
+  if ( !nEdges )
+    return false;
+  //
+  if ( nEdges == 1 )
+  {
+    double f, l;
+    Handle(Geom_Curve) C = BRep_Tool::Curve( WD->Edge(1), f, l );
+
+    if ( C.IsNull() )
+      return false;
+
+    if ( C->IsPeriodic() )
+      return true;
+
+    gp_Pnt Pf = C->Value( C->FirstParameter() );
+    gp_Pnt Pl = C->Value( C->LastParameter() );
+
+    // The following condition is Ok for closed curves
+    return Pf.Distance(Pl) < gp::Resolution();
+  }
+
+  // Check connectivity
+  for ( int e = 1; e <= nEdges; ++e )
+  {
+    TopoDS_Edge E = WD->Edge(e);
+
+    gp_Pnt2d Pf, Pl;
+    BRep_Tool::UVPoints(E, face, Pf, Pl);
+
+    // Add initial valence record for the new edge
+    valenceMap.Bind( E, std::pair<t_extremities, t_valences>() );
+    valenceMap(E).first.P1  = Pf;
+    valenceMap(E).first.P2  = Pl;
+    valenceMap(E).second.V1 = 1;
+    valenceMap(E).second.V2 = 1;
+
+    // Update valence map wrt new record
+    for ( t_valence_map::Iterator it2(valenceMap); it2.More(); it2.Next() )
+    {
+      const TopoDS_Edge& otherEdge = it2.Key();
+      //
+      if ( otherEdge.IsPartner(E) )
+        continue;
+
+      std::pair<t_extremities, t_valences>& otherRecord = it2.ChangeValue();
+
+      const gp_Pnt2d& otherPf = otherRecord.first.P1;
+      const gp_Pnt2d& otherPl = otherRecord.first.P2;
+
+      if ( Pf.Distance(otherPf) < coincConfusion )
+      {
+        valenceMap(E).second.V1++;
+        otherRecord.second.V1++;
+      }
+      if ( Pf.Distance(otherPl) < coincConfusion )
+      {
+        valenceMap(E).second.V1++;
+        otherRecord.second.V2++;
+      }
+      if ( Pl.Distance(otherPf) < coincConfusion )
+      {
+        valenceMap(E).second.V2++;
+        otherRecord.second.V1++;
+      }
+      if ( Pl.Distance(otherPl) < coincConfusion )
+      {
+        valenceMap(E).second.V2++;
+        otherRecord.second.V2++;
+      }
+    } // end update valence map
+  } // end accumulating of valence map
+
+#if defined COUT_DEBUG
+  for ( t_valence_map::Iterator it(valenceMap); it.More(); it.Next() )
+  {
+    const TopoDS_Edge&                          E      = it.Key();
+    const std::pair<t_extremities, t_valences>& record = it.Value();
+
+    std::cout << ShapeAddrWithPrefix(E).c_str() << std::endl;
+    std::cout << "\t(" << record.first.P1.X() << ", "
+                       << record.first.P1.Y() << ") ~ "
+                       << record.second.V1 << std::endl;
+    std::cout << "\t(" << record.first.P2.X() << ", "
+                       << record.first.P2.Y() << ") ~ "
+                       << record.second.V2 << std::endl;
+  }
+  std::cout << "***" << std::endl;
+#endif
+
+  // Now check valence map. If any record with valence < 2 exists, return false.
+  for ( t_valence_map::Iterator it(valenceMap); it.More(); it.Next() )
+  {
+    const std::pair<t_extremities, t_valences>& record = it.Value();
+    //
+    if ( record.second.V1 < 2 || record.second.V2 < 2 )
+      return false;
+  }
+
   return true;
 }
 

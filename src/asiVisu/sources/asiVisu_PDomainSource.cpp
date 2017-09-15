@@ -181,6 +181,14 @@ int asiVisu_PDomainSource::RequestData(vtkInformation*        request,
     appendFilter->AddInputConnection( curveSource->GetOutputPort() );
   }
 
+  if ( !edgeId ) // Empty dataset
+  {
+    // Feed append filter with empty dataset just in order to have some
+    // fictive input
+    vtkSmartPointer<vtkPolyData> dummyData = vtkSmartPointer<vtkPolyData>::New();
+    appendFilter->SetInputData(dummyData);
+  }
+
   appendFilter->Update();
   //
   polyOutput->DeepCopy( appendFilter->GetOutput() );

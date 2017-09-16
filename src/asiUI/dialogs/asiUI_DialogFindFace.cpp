@@ -131,6 +131,9 @@ asiUI_DialogFindFace::asiUI_DialogFindFace(const Handle(asiEngine_Model)&       
 
   // Adjust initial state
   this->onUseAddress();
+
+  // Set initial focus to reduce excessive clicks
+  m_widgets.pIndex->setFocus();
 }
 
 //! Destructor.

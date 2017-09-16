@@ -74,8 +74,14 @@ asiVisu_CurveSource::~asiVisu_CurveSource()
 //! \return true if poly data has been produced.
 bool asiVisu_CurveSource::SetInputEdge(const TopoDS_Edge& edge)
 {
+  if ( BRep_Tool::Degenerated(edge) )
+    return false;
+
   double f, l;
   Handle(Geom_Curve) crv = BRep_Tool::Curve(edge, f, l);
+  //
+  if ( crv.IsNull() )
+    return false;
 
   // Build a trimmed curve in order to put trimming parameters of a curve
   // right into it

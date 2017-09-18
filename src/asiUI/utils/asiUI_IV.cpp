@@ -24,7 +24,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_JournalIV.h>
+#include <asiUI_IV.h>
 
 // asiEngine includes
 #include <asiEngine_IV.h>
@@ -51,7 +51,7 @@
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::ERASE_ALL()
+void asiUI_IV::ERASE_ALL()
 {
   // Loop over the imperative plotter's objects
   for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->GetChildIterator(true);
@@ -59,16 +59,16 @@ void asiUI_JournalIV::ERASE_ALL()
   {
     Handle(ActAPI_INode) node = cit->Value();
 
-    if ( this->prsManager2d() )
+    if ( m_prsMgr2d )
     {
-      if ( this->prsManager2d()->IsPresented(node) )
-        this->prsManager2d()->DeletePresentation(node);
+      if ( m_prsMgr2d->IsPresented(node) )
+        m_prsMgr2d->DeletePresentation(node);
     }
     //
-    if ( this->prsManager3d() )
+    if ( m_prsMgr3d )
     {
-      if ( this->prsManager3d()->IsPresented(node) )
-        this->prsManager3d()->DeletePresentation(node);
+      if ( m_prsMgr3d->IsPresented(node) )
+        m_prsMgr3d->DeletePresentation(node);
     }
   }
 
@@ -88,7 +88,7 @@ void asiUI_JournalIV::ERASE_ALL()
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::ERASE(const TCollection_AsciiString& name)
+void asiUI_IV::ERASE(const TCollection_AsciiString& name)
 {
   // Loop over the imperative plotter's objects
   for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->GetChildIterator(true);
@@ -99,16 +99,16 @@ void asiUI_JournalIV::ERASE(const TCollection_AsciiString& name)
     if ( node->GetName() != name )
       continue;
 
-    if ( this->prsManager2d() )
+    if ( m_prsMgr2d )
     {
-      if ( this->prsManager2d()->IsPresented(node) )
-        this->prsManager2d()->DeletePresentation(node);
+      if ( m_prsMgr2d->IsPresented(node) )
+        m_prsMgr2d->DeletePresentation(node);
     }
     //
-    if ( this->prsManager3d() )
+    if ( m_prsMgr3d )
     {
-      if ( this->prsManager3d()->IsPresented(node) )
-        this->prsManager3d()->DeletePresentation(node);
+      if ( m_prsMgr3d->IsPresented(node) )
+        m_prsMgr3d->DeletePresentation(node);
     }
   }
 
@@ -128,27 +128,27 @@ void asiUI_JournalIV::ERASE(const TCollection_AsciiString& name)
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_POINT(const gp_XY&                   coord,
-                                 const Quantity_Color&          color,
-                                 const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_POINT(const gp_XY&                   coord,
+                          const Quantity_Color&          color,
+                          const TCollection_AsciiString& name)
 {
   this->draw_point(coord, color, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_POINT(const gp_Pnt2d&                point,
-                                 const Quantity_Color&          color,
-                                 const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_POINT(const gp_Pnt2d&                point,
+                          const Quantity_Color&          color,
+                          const TCollection_AsciiString& name)
 {
   this->DRAW_POINT(point.XY(), color, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_POINT(const gp_XYZ&                  coord,
-                                 const Quantity_Color&          color,
-                                 const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_POINT(const gp_XYZ&                  coord,
+                          const Quantity_Color&          color,
+                          const TCollection_AsciiString& name)
 {
   Handle(HRealArray) coords = new HRealArray(0, 2);
   //
@@ -161,36 +161,36 @@ void asiUI_JournalIV::DRAW_POINT(const gp_XYZ&                  coord,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_POINT(const gp_Pnt&                  point,
-                                 const Quantity_Color&          color,
-                                 const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_POINT(const gp_Pnt&                  point,
+                          const Quantity_Color&          color,
+                          const TCollection_AsciiString& name)
 {
   this->DRAW_POINT(point.XYZ(), color, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_POINT(const TCollection_AsciiString& name,
-                                   const gp_XY&                   coord,
-                                   const Quantity_Color&          color)
+void asiUI_IV::REDRAW_POINT(const TCollection_AsciiString& name,
+                            const gp_XY&                   coord,
+                            const Quantity_Color&          color)
 {
   this->draw_point(coord, color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_POINT(const TCollection_AsciiString& name,
-                                   const gp_Pnt2d&                coord,
-                                   const Quantity_Color&          color)
+void asiUI_IV::REDRAW_POINT(const TCollection_AsciiString& name,
+                            const gp_Pnt2d&                coord,
+                            const Quantity_Color&          color)
 {
   this->draw_point(coord.XY(), color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_POINT(const TCollection_AsciiString& name,
-                                   const gp_XYZ&                  coord,
-                                   const Quantity_Color&          color)
+void asiUI_IV::REDRAW_POINT(const TCollection_AsciiString& name,
+                            const gp_XYZ&                  coord,
+                            const Quantity_Color&          color)
 {
   Handle(HRealArray) coords = new HRealArray(0, 2);
   //
@@ -203,492 +203,492 @@ void asiUI_JournalIV::REDRAW_POINT(const TCollection_AsciiString& name,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_POINT(const TCollection_AsciiString& name,
-                                   const gp_Pnt&                  coords,
-                                   const Quantity_Color&          color)
+void asiUI_IV::REDRAW_POINT(const TCollection_AsciiString& name,
+                            const gp_Pnt&                  coords,
+                            const Quantity_Color&          color)
 {
   this->REDRAW_POINT(name, coords.XYZ(), color);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_POINTS(const Handle(HRealArray)&      coords,
-                                  const Quantity_Color&          color,
-                                  const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_POINTS(const Handle(HRealArray)&      coords,
+                           const Quantity_Color&          color,
+                           const TCollection_AsciiString& name)
 {
   this->draw_points(coords, color, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_POINTS(const TCollection_AsciiString& name,
-                                    const Handle(HRealArray)&      coords,
-                                    const Quantity_Color&          color)
+void asiUI_IV::REDRAW_POINTS(const TCollection_AsciiString& name,
+                             const Handle(HRealArray)&      coords,
+                             const Quantity_Color&          color)
 {
   this->draw_points(coords, color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_VECTOR_AT(const gp_Pnt&                  P,
-                                     const gp_Vec&                  V,
-                                     const Quantity_Color&          color,
-                                     const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_VECTOR_AT(const gp_Pnt&                  P,
+                              const gp_Vec&                  V,
+                              const Quantity_Color&          color,
+                              const TCollection_AsciiString& name)
 {
   this->DRAW_LINK(P, P.XYZ() + V.XYZ(), color, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_VECTOR_AT(const TCollection_AsciiString& name,
-                                       const gp_Pnt&                  P,
-                                       const gp_Vec&                  V,
-                                       const Quantity_Color&          color)
+void asiUI_IV::REDRAW_VECTOR_AT(const TCollection_AsciiString& name,
+                                const gp_Pnt&                  P,
+                                const gp_Vec&                  V,
+                                const Quantity_Color&          color)
 {
   this->REDRAW_LINK(name, P, P.XYZ() + V.XYZ(), color);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_CURVE(const Handle(Geom_Curve)&      curve,
-                                 const Quantity_Color&          color,
-                                 const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_CURVE(const Handle(Geom_Curve)&      curve,
+                          const Quantity_Color&          color,
+                          const TCollection_AsciiString& name)
 {
   this->draw_curve(curve, color, name, false, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_CURVE(const TCollection_AsciiString& name,
-                                   const Handle(Geom_Curve)&      curve,
-                                   const Quantity_Color&          color)
+void asiUI_IV::REDRAW_CURVE(const TCollection_AsciiString& name,
+                            const Handle(Geom_Curve)&      curve,
+                            const Quantity_Color&          color)
 {
   this->draw_curve(curve, color, name, false, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
-                                   const Quantity_Color&          color,
-                                   const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
+                            const Quantity_Color&          color,
+                            const TCollection_AsciiString& name)
 {
   this->DRAW_SURFACE(surface, 1000, 1000, color, 1.0, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
-                                   const Quantity_Color&          color,
-                                   const double                   opacity,
-                                   const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
+                            const Quantity_Color&          color,
+                            const double                   opacity,
+                            const TCollection_AsciiString& name)
 {
   this->DRAW_SURFACE(surface, 1000, 1000, color, opacity, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
-                                   const double                   uLimit,
-                                   const double                   vLimit,
-                                   const Quantity_Color&          color,
-                                   const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
+                            const double                   uLimit,
+                            const double                   vLimit,
+                            const Quantity_Color&          color,
+                            const TCollection_AsciiString& name)
 {
   this->DRAW_SURFACE(surface, uLimit, vLimit, color, 1.0, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
-                                   const double                   uLimit,
-                                   const double                   vLimit,
-                                   const Quantity_Color&          color,
-                                   const double                   opacity,
-                                   const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
+                            const double                   uLimit,
+                            const double                   vLimit,
+                            const Quantity_Color&          color,
+                            const double                   opacity,
+                            const TCollection_AsciiString& name)
 {
   this->draw_surface(surface, uLimit, vLimit, color, opacity, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_SURFACE(const TCollection_AsciiString& name,
-                                     const Handle(Geom_Surface)&    surface,
-                                     const Quantity_Color&          color)
+void asiUI_IV::REDRAW_SURFACE(const TCollection_AsciiString& name,
+                              const Handle(Geom_Surface)&    surface,
+                              const Quantity_Color&          color)
 {
   this->REDRAW_SURFACE(name, surface, 1000, 1000, color, 1.0);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_SURFACE(const TCollection_AsciiString& name,
-                                     const Handle(Geom_Surface)&    surface,
-                                     const Quantity_Color&          color,
-                                     const double                   opacity)
+void asiUI_IV::REDRAW_SURFACE(const TCollection_AsciiString& name,
+                              const Handle(Geom_Surface)&    surface,
+                              const Quantity_Color&          color,
+                              const double                   opacity)
 {
   this->REDRAW_SURFACE(name, surface, 1000, 1000, color, opacity);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_SURFACE(const TCollection_AsciiString& name,
-                                     const Handle(Geom_Surface)&    surface,
-                                     const double                   uLimit,
-                                     const double                   vLimit,
-                                     const Quantity_Color&          color)
+void asiUI_IV::REDRAW_SURFACE(const TCollection_AsciiString& name,
+                              const Handle(Geom_Surface)&    surface,
+                              const double                   uLimit,
+                              const double                   vLimit,
+                              const Quantity_Color&          color)
 {
   this->REDRAW_SURFACE(name, surface, uLimit, vLimit, color, 1.0);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_SURFACE(const TCollection_AsciiString& name,
-                                     const Handle(Geom_Surface)&    surface,
-                                     const double                   uLimit,
-                                     const double                   vLimit,
-                                     const Quantity_Color&          color,
-                                     const double                   opacity)
+void asiUI_IV::REDRAW_SURFACE(const TCollection_AsciiString& name,
+                              const Handle(Geom_Surface)&    surface,
+                              const double                   uLimit,
+                              const double                   vLimit,
+                              const Quantity_Color&          color,
+                              const double                   opacity)
 {
   this->draw_surface(surface, uLimit, vLimit, color, opacity, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
-                                 const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_SHAPE(const TopoDS_Shape&            shape,
+                          const TCollection_AsciiString& name)
 {
   this->DRAW_SHAPE(shape, 1.0, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
-                                 const Quantity_Color&          color,
-                                 const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_SHAPE(const TopoDS_Shape&            shape,
+                          const Quantity_Color&          color,
+                          const TCollection_AsciiString& name)
 {
   this->DRAW_SHAPE(shape, color, 1.0, name);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
-                                 const double                   opacity,
-                                 const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_SHAPE(const TopoDS_Shape&            shape,
+                          const double                   opacity,
+                          const TCollection_AsciiString& name)
 {
   this->draw_shape(shape, false, Quantity_Color(), opacity, false, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
-                                 const Quantity_Color&          color,
-                                 const double                   opacity,
-                                 const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_SHAPE(const TopoDS_Shape&            shape,
+                          const Quantity_Color&          color,
+                          const double                   opacity,
+                          const TCollection_AsciiString& name)
 {
   this->draw_shape(shape, true, color, opacity, false, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_SHAPE(const TopoDS_Shape&            shape,
-                                 const Quantity_Color&          color,
-                                 const double                   opacity,
-                                 const bool                     isWireframe,
-                                 const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_SHAPE(const TopoDS_Shape&            shape,
+                          const Quantity_Color&          color,
+                          const double                   opacity,
+                          const bool                     isWireframe,
+                          const TCollection_AsciiString& name)
 {
   this->draw_shape(shape, true, color, opacity, isWireframe, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_SHAPE(const TCollection_AsciiString& name,
-                                   const TopoDS_Shape&            shape)
+void asiUI_IV::REDRAW_SHAPE(const TCollection_AsciiString& name,
+                            const TopoDS_Shape&            shape)
 {
   this->REDRAW_SHAPE(name, shape, 1.0);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_SHAPE(const TCollection_AsciiString& name,
-                                   const TopoDS_Shape&            shape,
-                                   const Quantity_Color&          color)
+void asiUI_IV::REDRAW_SHAPE(const TCollection_AsciiString& name,
+                            const TopoDS_Shape&            shape,
+                            const Quantity_Color&          color)
 {
   this->REDRAW_SHAPE(name, shape, color, 1.0);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_SHAPE(const TCollection_AsciiString& name,
-                                   const TopoDS_Shape&            shape,
-                                   const double                   opacity)
+void asiUI_IV::REDRAW_SHAPE(const TCollection_AsciiString& name,
+                            const TopoDS_Shape&            shape,
+                            const double                   opacity)
 {
   this->draw_shape(shape, false, Quantity_Color(), opacity, false, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_SHAPE(const TCollection_AsciiString& name,
-                                   const TopoDS_Shape&            shape,
-                                   const Quantity_Color&          color,
-                                   const double                   opacity)
+void asiUI_IV::REDRAW_SHAPE(const TCollection_AsciiString& name,
+                            const TopoDS_Shape&            shape,
+                            const Quantity_Color&          color,
+                            const double                   opacity)
 {
   this->draw_shape(shape, true, color, opacity, false, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_SHAPE(const TCollection_AsciiString& name,
-                                   const TopoDS_Shape&            shape,
-                                   const Quantity_Color&          color,
-                                   const double                   opacity,
-                                   const bool                     isWireframe)
+void asiUI_IV::REDRAW_SHAPE(const TCollection_AsciiString& name,
+                            const TopoDS_Shape&            shape,
+                            const Quantity_Color&          color,
+                            const double                   opacity,
+                            const bool                     isWireframe)
 {
   this->draw_shape(shape, true, color, opacity, isWireframe, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_LINK(const gp_Pnt&                  p1,
-                                const gp_Pnt&                  p2,
-                                const Quantity_Color&          color,
-                                const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_LINK(const gp_Pnt&                  p1,
+                         const gp_Pnt&                  p2,
+                         const Quantity_Color&          color,
+                         const TCollection_AsciiString& name)
 {
   this->draw_link(p1.XYZ(), p2.XYZ(), color, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_LINK(const gp_XYZ&                  p1,
-                                const gp_XYZ&                  p2,
-                                const Quantity_Color&          color,
-                                const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_LINK(const gp_XYZ&                  p1,
+                         const gp_XYZ&                  p2,
+                         const Quantity_Color&          color,
+                         const TCollection_AsciiString& name)
 {
   this->draw_link(p1, p2, color, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_LINK(const gp_Pnt2d&                p1,
-                                const gp_Pnt2d&                p2,
-                                const Quantity_Color&          color,
-                                const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_LINK(const gp_Pnt2d&                p1,
+                         const gp_Pnt2d&                p2,
+                         const Quantity_Color&          color,
+                         const TCollection_AsciiString& name)
 {
   this->draw_link(p1.XY(), p2.XY(), color, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_LINK(const gp_XY&                   p1,
-                                const gp_XY&                   p2,
-                                const Quantity_Color&          color,
-                                const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_LINK(const gp_XY&                   p1,
+                         const gp_XY&                   p2,
+                         const Quantity_Color&          color,
+                         const TCollection_AsciiString& name)
 {
   this->draw_link(p1, p2, color, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_LINK(const TCollection_AsciiString& name,
-                                  const gp_Pnt&                  p1,
-                                  const gp_Pnt&                  p2,
-                                  const Quantity_Color&          color)
+void asiUI_IV::REDRAW_LINK(const TCollection_AsciiString& name,
+                           const gp_Pnt&                  p1,
+                           const gp_Pnt&                  p2,
+                           const Quantity_Color&          color)
 {
   this->draw_link(p1.XYZ(), p2.XYZ(), color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_LINK(const TCollection_AsciiString& name,
-                                  const gp_XYZ&                  p1,
-                                  const gp_XYZ&                  p2,
-                                  const Quantity_Color&          color)
+void asiUI_IV::REDRAW_LINK(const TCollection_AsciiString& name,
+                           const gp_XYZ&                  p1,
+                           const gp_XYZ&                  p2,
+                           const Quantity_Color&          color)
 {
   this->draw_link(p1, p2, color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_LINK(const TCollection_AsciiString& name,
-                                  const gp_Pnt2d&                p1,
-                                  const gp_Pnt2d&                p2,
-                                  const Quantity_Color&          color)
+void asiUI_IV::REDRAW_LINK(const TCollection_AsciiString& name,
+                           const gp_Pnt2d&                p1,
+                           const gp_Pnt2d&                p2,
+                           const Quantity_Color&          color)
 {
   this->draw_link(p1.XY(), p2.XY(), color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_LINK(const TCollection_AsciiString& name,
-                                  const gp_XY&                   p1,
-                                  const gp_XY&                   p2,
-                                  const Quantity_Color&          color)
+void asiUI_IV::REDRAW_LINK(const TCollection_AsciiString& name,
+                           const gp_XY&                   p1,
+                           const gp_XY&                   p2,
+                           const Quantity_Color&          color)
 {
   this->draw_link(p1, p2, color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_POLYLINE(const std::vector<gp_XYZ>&     poles,
-                                    const Quantity_Color&          color,
-                                    const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_POLYLINE(const std::vector<gp_XYZ>&     poles,
+                             const Quantity_Color&          color,
+                             const TCollection_AsciiString& name)
 {
   this->draw_polyline(poles, color, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_POLYLINE(const std::vector<gp_XY>&      poles,
-                                    const Quantity_Color&          color,
-                                    const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_POLYLINE(const std::vector<gp_XY>&      poles,
+                             const Quantity_Color&          color,
+                             const TCollection_AsciiString& name)
 {
   this->draw_polyline(poles, color, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_POLYLINE(const TCollection_AsciiString& name,
-                                      const std::vector<gp_XY>&      poles,
-                                      const Quantity_Color&          color)
+void asiUI_IV::REDRAW_POLYLINE(const TCollection_AsciiString& name,
+                               const std::vector<gp_XY>&      poles,
+                               const Quantity_Color&          color)
 {
   this->draw_polyline(poles, color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_POLYLINE(const TCollection_AsciiString& name,
-                                      const std::vector<gp_XYZ>&     poles,
-                                      const Quantity_Color&          color)
+void asiUI_IV::REDRAW_POLYLINE(const TCollection_AsciiString& name,
+                               const std::vector<gp_XYZ>&     poles,
+                               const Quantity_Color&          color)
 {
   this->draw_polyline(poles, color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_TRIANGLE(const gp_Pnt&                  p1,
-                                    const gp_Pnt&                  p2,
-                                    const gp_Pnt&                  p3,
-                                    const Quantity_Color&          color,
-                                    const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_TRIANGLE(const gp_Pnt&                  p1,
+                             const gp_Pnt&                  p2,
+                             const gp_Pnt&                  p3,
+                             const Quantity_Color&          color,
+                             const TCollection_AsciiString& name)
 {
   this->draw_triangle(p1.XYZ(), p2.XYZ(), p3.XYZ(), color, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_TRIANGLE(const gp_XYZ&                  p1,
-                                    const gp_XYZ&                  p2,
-                                    const gp_XYZ&                  p3,
-                                    const Quantity_Color&          color,
-                                    const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_TRIANGLE(const gp_XYZ&                  p1,
+                             const gp_XYZ&                  p2,
+                             const gp_XYZ&                  p3,
+                             const Quantity_Color&          color,
+                             const TCollection_AsciiString& name)
 {
   this->draw_triangle(p1, p2, p3, color, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_TRIANGLE(const gp_Pnt2d&                p1,
-                                    const gp_Pnt2d&                p2,
-                                    const gp_Pnt2d&                p3,
-                                    const Quantity_Color&          color,
-                                    const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_TRIANGLE(const gp_Pnt2d&                p1,
+                             const gp_Pnt2d&                p2,
+                             const gp_Pnt2d&                p3,
+                             const Quantity_Color&          color,
+                             const TCollection_AsciiString& name)
 {
   this->draw_triangle(p1.XY(), p2.XY(), p3.XY(), color, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_TRIANGLE(const gp_XY&                   p1,
-                                    const gp_XY&                   p2,
-                                    const gp_XY&                   p3,
-                                    const Quantity_Color&          color,
-                                    const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_TRIANGLE(const gp_XY&                   p1,
+                             const gp_XY&                   p2,
+                             const gp_XY&                   p3,
+                             const Quantity_Color&          color,
+                             const TCollection_AsciiString& name)
 {
   this->draw_triangle(p1, p2, p3, color, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_TRIANGLE(const TCollection_AsciiString& name,
-                                      const gp_Pnt&                  p1,
-                                      const gp_Pnt&                  p2,
-                                      const gp_Pnt&                  p3,
-                                      const Quantity_Color&          color)
+void asiUI_IV::REDRAW_TRIANGLE(const TCollection_AsciiString& name,
+                               const gp_Pnt&                  p1,
+                               const gp_Pnt&                  p2,
+                               const gp_Pnt&                  p3,
+                               const Quantity_Color&          color)
 {
   this->draw_triangle(p1.XYZ(), p2.XYZ(), p3.XYZ(), color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_TRIANGLE(const TCollection_AsciiString& name,
-                                      const gp_XYZ&                  p1,
-                                      const gp_XYZ&                  p2,
-                                      const gp_XYZ&                  p3,
-                                      const Quantity_Color&          color)
+void asiUI_IV::REDRAW_TRIANGLE(const TCollection_AsciiString& name,
+                               const gp_XYZ&                  p1,
+                               const gp_XYZ&                  p2,
+                               const gp_XYZ&                  p3,
+                               const Quantity_Color&          color)
 {
   this->draw_triangle(p1, p2, p3, color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_TRIANGLE(const TCollection_AsciiString& name,
-                                      const gp_Pnt2d&                p1,
-                                      const gp_Pnt2d&                p2,
-                                      const gp_Pnt2d&                p3,
-                                      const Quantity_Color&          color)
+void asiUI_IV::REDRAW_TRIANGLE(const TCollection_AsciiString& name,
+                               const gp_Pnt2d&                p1,
+                               const gp_Pnt2d&                p2,
+                               const gp_Pnt2d&                p3,
+                               const Quantity_Color&          color)
 {
   this->draw_triangle(p1.XY(), p2.XY(), p3.XY(), color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_TRIANGLE(const TCollection_AsciiString& name,
-                                      const gp_XY&                   p1,
-                                      const gp_XY&                   p2,
-                                      const gp_XY&                   p3,
-                                      const Quantity_Color&          color)
+void asiUI_IV::REDRAW_TRIANGLE(const TCollection_AsciiString& name,
+                               const gp_XY&                   p1,
+                               const gp_XY&                   p2,
+                               const gp_XY&                   p3,
+                               const Quantity_Color&          color)
 {
   this->draw_triangle(p1, p2, p3, color, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_TRIANGULATION(const Handle(Poly_Triangulation)& tris,
-                                         const Quantity_Color&             color,
-                                         const double                      opacity,
-                                         const TCollection_AsciiString&    name)
+void asiUI_IV::DRAW_TRIANGULATION(const Handle(Poly_Triangulation)& tris,
+                                  const Quantity_Color&             color,
+                                  const double                      opacity,
+                                  const TCollection_AsciiString&    name)
 {
   this->draw_triangulation(tris, color, opacity, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_TRIANGULATION(const TCollection_AsciiString&    name,
-                                           const Handle(Poly_Triangulation)& tris,
-                                           const Quantity_Color&             color,
-                                           const double                      opacity)
+void asiUI_IV::REDRAW_TRIANGULATION(const TCollection_AsciiString&    name,
+                                    const Handle(Poly_Triangulation)& tris,
+                                    const Quantity_Color&             color,
+                                    const double                      opacity)
 {
   this->draw_triangulation(tris, color, opacity, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_TEXT(const TCollection_AsciiString& text,
-                                const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_TEXT(const TCollection_AsciiString& text,
+                         const TCollection_AsciiString& name)
 {
   this->draw_text(text, name, true);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::REDRAW_TEXT(const TCollection_AsciiString& name,
-                                  const TCollection_AsciiString& text)
+void asiUI_IV::REDRAW_TEXT(const TCollection_AsciiString& name,
+                           const TCollection_AsciiString& text)
 {
   this->draw_text(text, name, false);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_ASI_POINTSF(const Handle(asiAlgo_BaseCloud<float>)& points,
-                                       const Quantity_Color&                   color,
-                                       const TCollection_AsciiString&          name)
+void asiUI_IV::DRAW_ASI_POINTSF(const Handle(asiAlgo_BaseCloud<float>)& points,
+                                const Quantity_Color&                   color,
+                                const TCollection_AsciiString&          name)
 {
   // Create a new Node for the given point set
   bool isTx = false;
@@ -710,9 +710,9 @@ void asiUI_JournalIV::DRAW_ASI_POINTSF(const Handle(asiAlgo_BaseCloud<float>)& p
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::DRAW_ASI_POINTS(const std::vector<gp_Pnt2d>&   points,
-                                      const Quantity_Color&          color,
-                                      const TCollection_AsciiString& name)
+void asiUI_IV::DRAW_ASI_POINTS(const std::vector<gp_Pnt2d>&   points,
+                               const Quantity_Color&          color,
+                               const TCollection_AsciiString& name)
 {
   // Create a new Node for the given point set
   bool isTx = false;
@@ -734,12 +734,12 @@ void asiUI_JournalIV::DRAW_ASI_POINTS(const std::vector<gp_Pnt2d>&   points,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::visualize(const bool                  is2d,
-                                const Handle(ActAPI_INode)& node,
-                                const bool                  hasColor,
-                                const Quantity_Color&       color,
-                                const double                opacity,
-                                const bool                  isWireframe) const
+void asiUI_IV::visualize(const bool                  is2d,
+                         const Handle(ActAPI_INode)& node,
+                         const bool                  hasColor,
+                         const Quantity_Color&       color,
+                         const double                opacity,
+                         const bool                  isWireframe) const
 {
   if ( !this->prsManager(is2d)->IsPresented(node) )
     this->prsManager(is2d)->SetPresentation(node);
@@ -810,31 +810,17 @@ void asiUI_JournalIV::visualize(const bool                  is2d,
 
 //---------------------------------------------------------------------------//
 
-const vtkSmartPointer<asiVisu_PrsManager>& asiUI_JournalIV::prsManager(const bool is2d) const
+const vtkSmartPointer<asiVisu_PrsManager>& asiUI_IV::prsManager(const bool is2d) const
 {
-  return is2d ? this->prsManager2d() : this->prsManager3d();
+  return is2d ? this->GetPrsMgr2d() : this->GetPrsMgr3d();
 }
 
 //---------------------------------------------------------------------------//
 
-const vtkSmartPointer<asiVisu_PrsManager>& asiUI_JournalIV::prsManager3d() const
-{
-  return m_prsMgr3d;
-}
-
-//---------------------------------------------------------------------------//
-
-const vtkSmartPointer<asiVisu_PrsManager>& asiUI_JournalIV::prsManager2d() const
-{
-  return m_prsMgr2d;
-}
-
-//---------------------------------------------------------------------------//
-
-void asiUI_JournalIV::draw_point(const gp_XY&                   coord,
-                                 const Quantity_Color&          color,
-                                 const TCollection_AsciiString& name,
-                                 const bool                     newPrimitive)
+void asiUI_IV::draw_point(const gp_XY&                   coord,
+                          const Quantity_Color&          color,
+                          const TCollection_AsciiString& name,
+                          const bool                     newPrimitive)
 {
   Handle(HRealArray) coords = new HRealArray(0, 1);
   //
@@ -879,10 +865,10 @@ void asiUI_JournalIV::draw_point(const gp_XY&                   coord,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_points(const Handle(HRealArray)&      coords,
-                                  const Quantity_Color&          color,
-                                  const TCollection_AsciiString& name,
-                                  const bool                     newPrimitive)
+void asiUI_IV::draw_points(const Handle(HRealArray)&      coords,
+                           const Quantity_Color&          color,
+                           const TCollection_AsciiString& name,
+                           const bool                     newPrimitive)
 {
   // Open transaction
   bool isTx = false;
@@ -922,11 +908,11 @@ void asiUI_JournalIV::draw_points(const Handle(HRealArray)&      coords,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_curve(const Handle(Geom_Curve)&      curve,
-                                 const Quantity_Color&          color,
-                                 const TCollection_AsciiString& name,
-                                 const bool                     is2d,
-                                 const bool                     newPrimitive)
+void asiUI_IV::draw_curve(const Handle(Geom_Curve)&      curve,
+                          const Quantity_Color&          color,
+                          const TCollection_AsciiString& name,
+                          const bool                     is2d,
+                          const bool                     newPrimitive)
 {
   // Open transaction
   bool isTx = false;
@@ -966,13 +952,13 @@ void asiUI_JournalIV::draw_curve(const Handle(Geom_Curve)&      curve,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_surface(const Handle(Geom_Surface)&    surface,
-                                   const double                   uLimit,
-                                   const double                   vLimit,
-                                   const Quantity_Color&          color,
-                                   const double                   opacity,
-                                   const TCollection_AsciiString& name,
-                                   const bool                     newPrimitive)
+void asiUI_IV::draw_surface(const Handle(Geom_Surface)&    surface,
+                            const double                   uLimit,
+                            const double                   vLimit,
+                            const Quantity_Color&          color,
+                            const double                   opacity,
+                            const TCollection_AsciiString& name,
+                            const bool                     newPrimitive)
 {
   // Open transaction
   bool isTx = false;
@@ -1012,13 +998,13 @@ void asiUI_JournalIV::draw_surface(const Handle(Geom_Surface)&    surface,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_shape(const TopoDS_Shape&            shape,
-                                 const bool                     hasColor,
-                                 const Quantity_Color&          color,
-                                 const double                   opacity,
-                                 const bool                     isWireframe,
-                                 const TCollection_AsciiString& name,
-                                 const bool                     newPrimitive)
+void asiUI_IV::draw_shape(const TopoDS_Shape&            shape,
+                          const bool                     hasColor,
+                          const Quantity_Color&          color,
+                          const double                   opacity,
+                          const bool                     isWireframe,
+                          const TCollection_AsciiString& name,
+                          const bool                     newPrimitive)
 {
   // Open transaction
   bool isTx = false;
@@ -1058,12 +1044,12 @@ void asiUI_JournalIV::draw_shape(const TopoDS_Shape&            shape,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_link(const gp_XYZ&                  p1,
-                                const gp_XYZ&                  p2,
-                                const Quantity_Color&          color,
-                                const TCollection_AsciiString& name,
-                                const bool                     is2d,
-                                const bool                     newPrimitive)
+void asiUI_IV::draw_link(const gp_XYZ&                  p1,
+                         const gp_XYZ&                  p2,
+                         const Quantity_Color&          color,
+                         const TCollection_AsciiString& name,
+                         const bool                     is2d,
+                         const bool                     newPrimitive)
 {
   if ( (p1 - p2).Modulus() < 1.0e-5 )
     return;
@@ -1109,22 +1095,22 @@ void asiUI_JournalIV::draw_link(const gp_XYZ&                  p1,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_link(const gp_XYZ&                  p1,
-                                const gp_XYZ&                  p2,
-                                const Quantity_Color&          color,
-                                const TCollection_AsciiString& name,
-                                const bool                     newPrimitive)
+void asiUI_IV::draw_link(const gp_XYZ&                  p1,
+                         const gp_XYZ&                  p2,
+                         const Quantity_Color&          color,
+                         const TCollection_AsciiString& name,
+                         const bool                     newPrimitive)
 {
   this->draw_link(p1, p2, color, name, false, newPrimitive);
 }
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_link(const gp_XY&                   p1,
-                                const gp_XY&                   p2,
-                                const Quantity_Color&          color,
-                                const TCollection_AsciiString& name,
-                                const bool                     newPrimitive)
+void asiUI_IV::draw_link(const gp_XY&                   p1,
+                         const gp_XY&                   p2,
+                         const Quantity_Color&          color,
+                         const TCollection_AsciiString& name,
+                         const bool                     newPrimitive)
 {
   gp_XYZ p1_3d(p1.X(), p1.Y(), 0.0), p2_3d(p2.X(), p2.Y(), 0.0);
 
@@ -1133,11 +1119,11 @@ void asiUI_JournalIV::draw_link(const gp_XY&                   p1,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_polyline(const std::vector<gp_XYZ>&     poles,
-                                    const Quantity_Color&          color,
-                                    const TCollection_AsciiString& name,
-                                    const bool                     is2d,
-                                    const bool                     newPrimitive)
+void asiUI_IV::draw_polyline(const std::vector<gp_XYZ>&     poles,
+                             const Quantity_Color&          color,
+                             const TCollection_AsciiString& name,
+                             const bool                     is2d,
+                             const bool                     newPrimitive)
 {
   Handle(Geom_BSplineCurve) curve = asiAlgo_Utils::PolylineAsSpline(poles);
 
@@ -1146,10 +1132,10 @@ void asiUI_JournalIV::draw_polyline(const std::vector<gp_XYZ>&     poles,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_polyline(const std::vector<gp_XYZ>&     poles,
-                                    const Quantity_Color&          color,
-                                    const TCollection_AsciiString& name,
-                                    const bool                     newPrimitive)
+void asiUI_IV::draw_polyline(const std::vector<gp_XYZ>&     poles,
+                             const Quantity_Color&          color,
+                             const TCollection_AsciiString& name,
+                             const bool                     newPrimitive)
 {
   Handle(Geom_BSplineCurve) curve = asiAlgo_Utils::PolylineAsSpline(poles);
 
@@ -1158,10 +1144,10 @@ void asiUI_JournalIV::draw_polyline(const std::vector<gp_XYZ>&     poles,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_polyline(const std::vector<gp_XY>&      poles,
-                                    const Quantity_Color&          color,
-                                    const TCollection_AsciiString& name,
-                                    const bool                     newPrimitive)
+void asiUI_IV::draw_polyline(const std::vector<gp_XY>&      poles,
+                             const Quantity_Color&          color,
+                             const TCollection_AsciiString& name,
+                             const bool                     newPrimitive)
 {
   // Convert 2-dimensional poles to 3-dimensional poles for unification
   std::vector<gp_XYZ> poles3d;
@@ -1176,12 +1162,12 @@ void asiUI_JournalIV::draw_polyline(const std::vector<gp_XY>&      poles,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_triangle(const gp_XYZ&                  p1,
-                                    const gp_XYZ&                  p2,
-                                    const gp_XYZ&                  p3,
-                                    const Quantity_Color&          color,
-                                    const TCollection_AsciiString& name,
-                                    const bool                     newPrimitive)
+void asiUI_IV::draw_triangle(const gp_XYZ&                  p1,
+                             const gp_XYZ&                  p2,
+                             const gp_XYZ&                  p3,
+                             const Quantity_Color&          color,
+                             const TCollection_AsciiString& name,
+                             const bool                     newPrimitive)
 {
   std::vector<gp_XYZ> poles = {p1, p2, p3, p1};
 
@@ -1190,12 +1176,12 @@ void asiUI_JournalIV::draw_triangle(const gp_XYZ&                  p1,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_triangle(const gp_XY&                   p1,
-                                    const gp_XY&                   p2,
-                                    const gp_XY&                   p3,
-                                    const Quantity_Color&          color,
-                                    const TCollection_AsciiString& name,
-                                    const bool                     newPrimitive)
+void asiUI_IV::draw_triangle(const gp_XY&                   p1,
+                             const gp_XY&                   p2,
+                             const gp_XY&                   p3,
+                             const Quantity_Color&          color,
+                             const TCollection_AsciiString& name,
+                             const bool                     newPrimitive)
 {
   std::vector<gp_XY> poles = {p1, p2, p3, p1};
 
@@ -1204,11 +1190,11 @@ void asiUI_JournalIV::draw_triangle(const gp_XY&                   p1,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_triangulation(const Handle(Poly_Triangulation)& tris,
-                                         const Quantity_Color&             color,
-                                         const double                      opacity,
-                                         const TCollection_AsciiString&    name,
-                                         const bool                        newPrimitive)
+void asiUI_IV::draw_triangulation(const Handle(Poly_Triangulation)& tris,
+                                  const Quantity_Color&             color,
+                                  const double                      opacity,
+                                  const TCollection_AsciiString&    name,
+                                  const bool                        newPrimitive)
 {
   // Open transaction
   bool isTx = false;
@@ -1248,9 +1234,9 @@ void asiUI_JournalIV::draw_triangulation(const Handle(Poly_Triangulation)& tris,
 
 //---------------------------------------------------------------------------//
 
-void asiUI_JournalIV::draw_text(const TCollection_AsciiString& text,
-                                const TCollection_AsciiString& name,
-                                const bool                     newPrimitive)
+void asiUI_IV::draw_text(const TCollection_AsciiString& text,
+                         const TCollection_AsciiString& name,
+                         const bool                     newPrimitive)
 {
   // Open transaction
   bool isTx = false;

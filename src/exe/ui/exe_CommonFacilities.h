@@ -35,7 +35,7 @@
 // asiUI includes
 #include <asiUI_CommonFacilities.h>
 #include <asiUI_IStatusBar.h>
-#include <asiUI_JournalIV.h>
+#include <asiUI_IV.h>
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ProgressListener.h>
 #include <asiUI_ProgressNotifier.h>
@@ -46,7 +46,7 @@
 // asiTcl includes
 #include <asiTcl_Interp.h>
 
-//! Common tools and objects for A-Situs application.
+//! Common tools and objects for B-Rep inspector application.
 class exe_CommonFacilities : public asiUI_CommonFacilities
 {
 public:

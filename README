@@ -42,6 +42,17 @@ on your particular problems.
 ===============================================================================
 Release notes
 -------------------------------------------------------------------------------
+v0.1.7, 18 September 2017
+-------------------------------------------------------------------------------
+- Improve visualization tools for meshes (SDK only).
+- Extend API of imperative plotter (SDK only).
+- Introduce button to add B-Reps to existing part.
+- Introduce Tcl scripting.
+- Introduce error-resistant visualization based on face validity analysis.
+- Enhance topology graph visualization with information on orientations.
+- Implement topologicall killer (kill-edge and kill-face commands).
+- Bugfix and tiny improvements in ergonomics.
+-------------------------------------------------------------------------------
 v0.1.6, 20 July 2017
 -------------------------------------------------------------------------------
 - License under MIT license conditions.

@@ -23,19 +23,16 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_JournalIV_h
-#define asiUI_JournalIV_h
+#ifndef asiUI_IV_h
+#define asiUI_IV_h
 
-// A-Situs includes
-#include <asiUI.h>
-
-// UI includes
+// asiUI includes
 #include <asiUI_ObjectBrowser.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_PrsManager.h>
 
-// Engine includes
+// asiEngine includes
 #include <asiEngine_Model.h>
 
 // OCCT includes
@@ -51,20 +48,20 @@
 //! Interface for Imperative Viewer. A particular algorithm may benefit
 //! from immediate plotting of its geometric variables in a unified way
 //! thanks to this tool.
-class asiUI_JournalIV : public ActAPI_IPlotter
+class asiUI_IV : public ActAPI_IPlotter
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiUI_JournalIV, ActAPI_IPlotter)
+  DEFINE_STANDARD_RTTI_INLINE(asiUI_IV, ActAPI_IPlotter)
 
 public:
 
   //! Constructor.
-  asiUI_JournalIV(const Handle(asiEngine_Model)&             model,
-                  const vtkSmartPointer<asiVisu_PrsManager>& prsMgr3d,
-                  const vtkSmartPointer<asiVisu_PrsManager>& prsMgr2d,
-                  asiUI_ObjectBrowser*                       pBrowser)
+  asiUI_IV(const Handle(asiEngine_Model)&             model,
+           const vtkSmartPointer<asiVisu_PrsManager>& prsMgr3d,
+           const vtkSmartPointer<asiVisu_PrsManager>& prsMgr2d,
+           asiUI_ObjectBrowser*                       pBrowser)
   //
   : ActAPI_IPlotter (),
     m_model         (model),
@@ -74,7 +71,7 @@ public:
   {}
 
   //! Destructor.
-  virtual ~asiUI_JournalIV() {}
+  virtual ~asiUI_IV() {}
 
 // COMMON:
 public:
@@ -464,6 +461,18 @@ public:
     m_prsMgr2d = prsMgr;
   }
 
+  //! \return presentation manager for 3D visualization.
+  const vtkSmartPointer<asiVisu_PrsManager>& GetPrsMgr3d() const
+  {
+    return m_prsMgr3d;
+  }
+
+  //! \return presentation manager for 2D visualization.
+  const vtkSmartPointer<asiVisu_PrsManager>& GetPrsMgr2d() const
+  {
+    return m_prsMgr2d;
+  }
+
 protected:
 
   asiUI_EXPORT void
@@ -476,12 +485,6 @@ protected:
 
   asiUI_EXPORT const vtkSmartPointer<asiVisu_PrsManager>&
     prsManager(const bool is2d) const;
-
-  asiUI_EXPORT const vtkSmartPointer<asiVisu_PrsManager>&
-    prsManager3d() const;
-
-  asiUI_EXPORT const vtkSmartPointer<asiVisu_PrsManager>&
-    prsManager2d() const;
 
 protected:
 

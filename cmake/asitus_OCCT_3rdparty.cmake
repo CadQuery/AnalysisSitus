@@ -28,14 +28,4 @@ if (WIN32)
   install (FILES ${3RDPARTY_tbb_DIR}/bin/intel64/vc12/tbb.dll       DESTINATION bin)
   install (FILES ${3RDPARTY_tbb_DIR}/bin/intel64/vc12/tbbmalloc.dll DESTINATION bin)
 
-  # FreeImage
-  install (FILES ${3RDPARTY_freeimage_DIR}/bin/FreeImage.dll     DESTINATION bin)
-  install (FILES ${3RDPARTY_freeimage_DIR}/bin/FreeImagePlus.dll DESTINATION bin)
-
-  # Freetype
-  install (FILES ${3RDPARTY_freetype_DIR}/bin/freetype.dll DESTINATION bin)
-
-  # gl2ps
-  install (FILES ${3RDPARTY_gl2ps_DIR}/bin/gl2ps.dll DESTINATION bin)
-
 endif()

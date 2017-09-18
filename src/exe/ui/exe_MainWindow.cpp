@@ -186,7 +186,7 @@ void exe_MainWindow::createDockWindows()
   }
 
   // Now we have everything to initialize an imperative plotter
-  cf->Plotter = new asiUI_JournalIV(cf->Model, cf->Prs.Part, cf->Prs.Domain, cf->ObjectBrowser);
+  cf->Plotter = new asiUI_IV(cf->Model, cf->Prs.Part, cf->Prs.Domain, cf->ObjectBrowser);
 
   // Feature controls
   QDockWidget* pDockFeature;

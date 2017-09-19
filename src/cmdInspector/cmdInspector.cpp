@@ -235,6 +235,8 @@ void cmdInspector::UpdateUI()
 void cmdInspector::Factory(const Handle(asiTcl_Interp)&      interp,
                            const Handle(Standard_Transient)& data)
 {
+  static const char* group = "cmdInspector";
+
   /* ==============================
    *  Initialize common facilities
    * ============================== */
@@ -252,10 +254,10 @@ void cmdInspector::Factory(const Handle(asiTcl_Interp)&      interp,
    * ===================== */
 
   // Add commands
-  interp->AddCommand("set-as-part", "", __FILE__, INSPECTOR_SetAsPart);
-  interp->AddCommand("fix-part",    "", __FILE__, INSPECTOR_FixPart);
-  interp->AddCommand("kill-edge",   "", __FILE__, INSPECTOR_KillEdge);
-  interp->AddCommand("kill-face",   "", __FILE__, INSPECTOR_KillFace);
+  interp->AddCommand("set-as-part", "", __FILE__, group, INSPECTOR_SetAsPart);
+  interp->AddCommand("fix-part",    "", __FILE__, group, INSPECTOR_FixPart);
+  interp->AddCommand("kill-edge",   "", __FILE__, group, INSPECTOR_KillEdge);
+  interp->AddCommand("kill-face",   "", __FILE__, group, INSPECTOR_KillFace);
 }
 
 // Declare entry point PLUGINFACTORY

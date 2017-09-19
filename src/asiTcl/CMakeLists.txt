@@ -6,6 +6,7 @@ project(asiTcl)
 
 set (H_FILES
   asiTcl.h
+  asiTcl_CommandInfo.h
   asiTcl_Interp.h
   asiTcl_Plugin.h
   asiTcl_PluginMacro.h

@@ -30,6 +30,9 @@
 // Tcl includes
 #include <tcl.h>
 
+// OCCT includes
+#include <OSD_Path.hxx>
+
 //-----------------------------------------------------------------------------
 
 //! Function to pass to Tcl_CreateCommand as an entry point to any user-defined
@@ -118,15 +121,16 @@ int asiTcl_Interp::Eval(const TCollection_AsciiString& cmd)
 bool asiTcl_Interp::AddCommand(const TCollection_AsciiString& name,
                                const TCollection_AsciiString& help,
                                const TCollection_AsciiString& filename,
+                               const TCollection_AsciiString& group,
                                t_user_func                    func)
 {
   t_tcl_callback* pCallback = new t_tcl_callback(this, func);
-  return this->addCommand(name, help, filename, pCallback);
+  return this->addCommand(name, help, filename, group, pCallback);
 }
 
 //-----------------------------------------------------------------------------
 
-void asiTcl_Interp::GetAvailableCommandNames(std::vector<asiAlgo_Variable>& commands) const
+void asiTcl_Interp::GetAvailableCommands(std::vector<asiTcl_CommandInfo>& commands) const
 {
 }
 
@@ -145,11 +149,9 @@ int asiTcl_Interp::ErrorOnWrongArgs(const char* cmd)
 bool asiTcl_Interp::addCommand(const TCollection_AsciiString& name,
                                const TCollection_AsciiString& help,
                                const TCollection_AsciiString& filename,
+                               const TCollection_AsciiString& group,
                                t_tcl_callback*                callback)
 {
-  asiTcl_NotUsed(help);
-  asiTcl_NotUsed(filename);
-
   if ( !m_pInterp )
     return false;
 
@@ -178,7 +180,38 @@ bool asiTcl_Interp::addCommand(const TCollection_AsciiString& name,
   // - asi_Files
   // - asi_Groups
 
-  // TODO: work with aux vars
+  // Help line
+  Tcl_SetVar2(m_pInterp, "asi_Help",  name.ToCString(), help.ToCString(),
+              TCL_GLOBAL_ONLY);
+
+  // Source filename
+  if ( !filename.IsEmpty() )
+  {
+    // The following code for manipulation with paths is taken from
+    // OpenCascade's Draw package.
+
+    OSD_Path path(filename);
+    for ( int i = 2; i < path.TrekLength(); ++i )
+    {
+      path.RemoveATrek(1);
+    }
+    path.SetDisk("");
+    path.SetNode("");
+    //
+    TCollection_AsciiString srcPath;
+    path.SystemName(srcPath);
+    //
+    if ( srcPath.Value(1) == '/' )
+      srcPath.Remove(1);
+
+    // Filename
+    Tcl_SetVar2(m_pInterp, "asi_Files", name.ToCString(), srcPath.ToCString(),
+                TCL_GLOBAL_ONLY);
+  }
+
+  // Group
+  Tcl_SetVar2(m_pInterp, "asi_Groups", group.ToCString(), name.ToCString(),
+              TCL_GLOBAL_ONLY | TCL_APPEND_VALUE | TCL_LIST_ELEMENT);
 
   return true;
 }

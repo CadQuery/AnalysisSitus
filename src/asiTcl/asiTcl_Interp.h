@@ -28,7 +28,7 @@
 #define asiTcl_Interp_h
 
 // asiTcl includes
-#include <asiTcl.h>
+#include <asiTcl_CommandInfo.h>
 
 // asiAlgo includes
 #include <asiAlgo_Variable.h>
@@ -155,19 +155,21 @@ public:
   //! \param[in] name     command name.
   //! \param[in] help     help string.
   //! \param[in] filename filename where command is implemented.
+  //! \param[in] group    group the command to add belongs to.
   //! \param[in] func     pointer to function implementing command.
   //! \return true in case of success, false -- otherwise.
   asiTcl_EXPORT bool
     AddCommand(const TCollection_AsciiString& name,
                const TCollection_AsciiString& help,
                const TCollection_AsciiString& filename,
+               const TCollection_AsciiString& group,
                t_user_func                    func);
 
   //! Takes all available commands from Tcl interpreter and pushes their
   //! names together with additional info to the provided output list.
   //! \param[out] commands output list.
   asiTcl_EXPORT void
-    GetAvailableCommandNames(std::vector<asiAlgo_Variable>& commands) const;
+    GetAvailableCommands(std::vector<asiTcl_CommandInfo>& commands) const;
 
   //! Default reaction of interpreter when wrong arguments are passed to
   //! a command.
@@ -182,12 +184,14 @@ protected:
   //! \param[in] name     command name.
   //! \param[in] help     help string.
   //! \param[in] filename filename where command is implemented.
+  //! \param[in] group    group the command to add belongs to.
   //! \param[in] callback callback.
   //! \return true in case of success, false -- otherwise.
   asiTcl_EXPORT bool
     addCommand(const TCollection_AsciiString& name,
                const TCollection_AsciiString& help,
                const TCollection_AsciiString& filename,
+               const TCollection_AsciiString& group,
                t_tcl_callback*                callback);
 
 protected:

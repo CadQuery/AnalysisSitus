@@ -159,6 +159,8 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
 {
   cmdEngine_NotUsed(data);
 
+  static const char* group = "cmdEngine";
+
   /* ================================
    *  Initialize Data Model instance
    * ================================ */
@@ -176,11 +178,9 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
    * ===================== */
 
   // Add commands
-  interp->AddCommand("commands", "", __FILE__, ENGINE_Commands);
-  //
-  interp->AddCommand("part-explode", "", __FILE__, ENGINE_PartExplode);
-  //
-  interp->AddCommand("part-summary", "", __FILE__, ENGINE_PartSummary);
+  interp->AddCommand("commands",     "", __FILE__, group, ENGINE_Commands);
+  interp->AddCommand("part-explode", "", __FILE__, group, ENGINE_PartExplode);
+  interp->AddCommand("part-summary", "", __FILE__, group, ENGINE_PartSummary);
 }
 
 // Declare entry point PLUGINFACTORY

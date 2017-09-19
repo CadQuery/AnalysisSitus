@@ -196,10 +196,11 @@ int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
+  static const char* group = "cmdMisc";
+
   // Add commands
-  interp->AddCommand("box", "", __FILE__, MISC_Box);
-  //
-  interp->AddCommand("test-hexagon-bops", "", __FILE__, MISC_TestHexagonBops);
+  interp->AddCommand("box",               "", __FILE__, group, MISC_Box);
+  interp->AddCommand("test-hexagon-bops", "", __FILE__, group, MISC_TestHexagonBops);
 }
 
 // Declare entry point PLUGINFACTORY

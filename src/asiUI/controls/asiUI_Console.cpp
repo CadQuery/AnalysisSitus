@@ -108,12 +108,36 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
       else
         m_interp->GetProgress().SendLogMessage(LogInfo(Normal) << "\t ... TCL_OK");
 
-      // Position cursor at the end
-      c.movePosition(QTextCursor::End);
-      this->setTextCursor(c);
+      // The following piece of code realizes "intelligent" movement of cursor.
+      // The code checks whether next line is available by consulting block
+      // number. If the block number if different after "Down" movement, then
+      // it means that another line exists (if it does not, the cursor will not
+      // move). If another line exists, we check the text at this line. If
+      // the text is nothing but a prompt prefix ("> "), then we do not insert
+      // new block, but simply let the cursor move to this prompt line
+      // and reuse it so.
 
-      // Add next prompt
-      this->addText(READY_PROMPT, true, false);
+      const int bbefore = c.blockNumber();
+      c.movePosition(QTextCursor::Down);
+      const int bafter = c.blockNumber();
+      //
+      if ( bbefore == bafter ) // No next block exists, so the cursor did not move
+      {
+        // Add next block with a new prompt
+        this->addText(READY_PROMPT, true, false);
+      }
+      else
+      {
+        QString nextStr = c.block().text(); // Check text at the next line
+        //
+        if ( nextStr != READY_PROMPT ) // If that's not a prompt, then work as usually
+        {
+          // Add next prompt
+          this->addText(READY_PROMPT, true, false);
+        }
+        else
+          this->setTextCursor(c); // If that's new line is a prompt, reuse it
+      }
 
       break;
     }

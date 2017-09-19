@@ -32,6 +32,9 @@
 // asiVisu includes
 #include <asiVisu_GeomPrs.h>
 
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QHeaderView>
@@ -324,6 +327,29 @@ void asiUI_ObjectBrowser::onResetPartPrs()
 
 //-----------------------------------------------------------------------------
 
+void asiUI_ObjectBrowser::onSaveToBREP()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
+    return;
+
+  Handle(asiData_IVTopoItemNode)
+    topoNode = Handle(asiData_IVTopoItemNode)::DownCast(selected_n);
+
+  QString filename = asiUI_Common::selectBRepFile(asiUI_Common::OpenSaveAction_Save);
+
+  // Save shape
+  if ( !asiAlgo_Utils::WriteBRep( topoNode->GetShape(), QStr2AsciiStr(filename) ) )
+  {
+    std::cout << "Error: cannot save shape" << std::endl;
+    return;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 //! Populates context menu with actions.
 //! \param activeNode [in]      currently active Node.
 //! \param pMenu      [in, out] menu to populate.
@@ -354,6 +380,12 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_INode)& active
       pMenu->addAction( "Hide edges",         this, SLOT( onHidePartEdges() ) );
       pMenu->addAction( "Show edges",         this, SLOT( onShowPartEdges() ) );
       pMenu->addAction( "Reset presentation", this, SLOT( onResetPartPrs() ) );
+    }
+
+    if ( activeNode->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
+    {
+      pMenu->addSeparator();
+      pMenu->addAction( "Save to BREP...", this, SLOT( onSaveToBREP() ) );
     }
   }
 }

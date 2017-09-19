@@ -44,6 +44,8 @@ set (controls_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (dialogs_H_UI_FILES
+  dialogs/asiUI_DialogCommands.h
+  dialogs/asiUI_DialogCommandsDelegate.h
   dialogs/asiUI_DialogFindEdge.h
   dialogs/asiUI_DialogFindFace.h
   dialogs/asiUI_DialogGapFilling.h
@@ -55,6 +57,8 @@ set (dialogs_H_UI_FILES
   dialogs/asiUI_DialogSTEPDelegate.h
 )
 set (dialogs_CPP_FILES 
+  dialogs/asiUI_DialogCommands.cpp
+  dialogs/asiUI_DialogCommandsDelegate.cpp
   dialogs/asiUI_DialogFindEdge.cpp
   dialogs/asiUI_DialogFindFace.cpp
   dialogs/asiUI_DialogGapFilling.cpp

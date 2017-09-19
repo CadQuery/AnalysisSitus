@@ -152,14 +152,11 @@ public:
     return "unknown";
   }
 
-  //! Returns shape address as string with a prefix indicating its type,
-  //! e.g. "e05FB0" is an edge and "f780A1" is a face.
-  //! \param shape [in] shape to extract the address for.
-  //! \return address of TShape as string prefixed by type indicator.
-  static std::string ShapeAddrWithPrefix(const TopoDS_Shape& shape)
+  //! Returns shape type as string.
+  //! \param shape [in] shape to get type string for.
+  //! \return type string.
+  static std::string ShapeTypeStr(const TopoDS_Shape& shape)
   {
-    std::string addr_str = ShapeAddr( shape.TShape() );
-
     std::string prefix;
     const TopAbs_ShapeEnum type = shape.ShapeType();
     if ( type == TopAbs_COMPOUND )
@@ -187,6 +184,18 @@ public:
       prefix = "VERTEX";
     else
       prefix = "SHAPE";
+
+    return prefix;
+  }
+
+  //! Returns shape address as string with a prefix indicating its type,
+  //! e.g. "e05FB0" is an edge and "f780A1" is a face.
+  //! \param shape [in] shape to extract the address for.
+  //! \return address of TShape as string prefixed by type indicator.
+  static std::string ShapeAddrWithPrefix(const TopoDS_Shape& shape)
+  {
+    std::string addr_str = ShapeAddr    ( shape.TShape() );
+    std::string prefix   = ShapeTypeStr ( shape );
 
     // Notice extra spacing for better visualization
     return "    " + prefix + " [" + addr_str + "]";

@@ -56,6 +56,7 @@ set (asiTcl_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};")
 set (asiTcl_include_dir ${asiTcl_include_dir_loc} PARENT_SCOPE)
 
 include_directories ( ${asiTcl_include_dir_loc}
+                      ${asiAlgo_include_dir}
                       ${3RDPARTY_OCCT_INCLUDE_DIR}
                       ${3RDPARTY_tcl_INCLUDE_DIR}
                       ${3RDPARTY_active_data_INCLUDE_DIR}
@@ -68,6 +69,8 @@ include_directories ( ${asiTcl_include_dir_loc}
 add_library (asiTcl SHARED
   ${H_FILES} ${CPP_FILES}
 )
+
+target_link_libraries(asiTcl asiAlgo)
 
 #------------------------------------------------------------------------------
 # Set linker inputs

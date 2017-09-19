@@ -104,9 +104,9 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
       std::cout << "Command entered: " << cmdName.ToCString() << std::endl;
       //
       if ( !this->eval(cmdName) )
-        std::cout << "\t ... NOK" << std::endl;
+        m_interp->GetProgress().SendLogMessage(LogErr(Normal) << "\t ... TCL_ERROR");
       else
-        std::cout << "\t ... OK" << std::endl;
+        m_interp->GetProgress().SendLogMessage(LogInfo(Normal) << "\t ... TCL_OK");
 
       // Position cursor at the end
       c.movePosition(QTextCursor::End);

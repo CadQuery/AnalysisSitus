@@ -1,5 +1,6 @@
 //-----------------------------------------------------------------------------
-// Created on: 16 May 2016
+// Created on: 19 September 2017
+// Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,51 +24,39 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_DialogSTEPDelegate_h
-#define asiUI_DialogSTEPDelegate_h
+#ifndef cmdEngine_h
+#define cmdEngine_h
 
-// asiUI includes
-#include <asiUI.h>
+#define cmdEngine_NotUsed(x) x
 
-// Qt includes
-#pragma warning(push, 0)
-#include <QStyledItemDelegate>
-#pragma warning(pop)
+#ifdef cmdEngine_EXPORTS
+  #define cmdEngine_EXPORT __declspec(dllexport)
+#else
+  #define cmdEngine_EXPORT __declspec(dllimport)
+#endif
 
-class QObject;
+//-----------------------------------------------------------------------------
 
-//! Delegate for the table of STEP interoperability options.
-class asiUI_DialogSTEPDelegate : public QStyledItemDelegate
+// asiTcl includes
+#include <asiTcl_Interp.h>
+
+// asiEngine includes
+#include <asiEngine_Model.h>
+
+//-----------------------------------------------------------------------------
+
+//! B-Rep inspection commands.
+class cmdEngine
 {
-  Q_OBJECT
+public:
+
+  cmdEngine_EXPORT static void
+    Factory(const Handle(asiTcl_Interp)&      interp,
+            const Handle(Standard_Transient)& data);
 
 public:
 
-  //! Data roles.
-  enum Roles
-  {
-    WidgetRole = Qt::UserRole + 1
-  };
-
-public:
-
-  asiUI_DialogSTEPDelegate(QObject* parent);
-
-public:
-
-  virtual QWidget*
-    createEditor(QWidget*                    parent,
-                 const QStyleOptionViewItem& option,
-                 const QModelIndex&          index) const;
-
-  virtual void
-    setEditorData(QWidget*           editor,
-                  const QModelIndex& index) const;
-
-  virtual void
-    setModelData(QWidget*            editor,
-                 QAbstractItemModel* model,
-                 const QModelIndex&  index) const;
+  static Handle(asiEngine_Model) model; //!< Data Model instance.
 
 };
 

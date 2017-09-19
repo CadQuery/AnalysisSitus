@@ -23,8 +23,8 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_Variableiable_h
-#define asiAlgo_Variableiable_h
+#ifndef asiAlgo_Variable_h
+#define asiAlgo_Variable_h
 
 //-----------------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 16 May 2016
+// Created on: 19 September 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,8 +23,8 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_DialogSTEPDelegate_h
-#define asiUI_DialogSTEPDelegate_h
+#ifndef asiUI_DialogCommandsDelegate_h
+#define asiUI_DialogCommandsDelegate_h
 
 // asiUI includes
 #include <asiUI.h>
@@ -36,8 +36,8 @@
 
 class QObject;
 
-//! Delegate for the table of STEP interoperability options.
-class asiUI_DialogSTEPDelegate : public QStyledItemDelegate
+//! Delegate for the table of Tcl commands.
+class asiUI_DialogCommandsDelegate : public QStyledItemDelegate
 {
   Q_OBJECT
 
@@ -51,7 +51,7 @@ public:
 
 public:
 
-  asiUI_DialogSTEPDelegate(QObject* parent);
+  asiUI_DialogCommandsDelegate(QObject* parent);
 
 public:
 

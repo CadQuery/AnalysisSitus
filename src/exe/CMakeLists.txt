@@ -1,4 +1,4 @@
-project(exe)
+project(BRepInspectorExe)
 
 #------------------------------------------------------------------------------
 # Common
@@ -171,7 +171,7 @@ source_group ("Generated" FILES "${RCC_FILE}")
 # Create executable
 #------------------------------------------------------------------------------
 
-add_executable(exe ${ui_moc_files} ${src_files} ${RCC_FILE})
+add_executable(BRepInspectorExe ${ui_moc_files} ${src_files} ${RCC_FILE})
 
 #------------------------------------------------------------------------------
 # Configure template
@@ -179,16 +179,16 @@ add_executable(exe ${ui_moc_files} ${src_files} ${RCC_FILE})
 
 set (X_COMPILER_BITNESS "x${COMPILER_BITNESS}")
 
-configure_file(${CMAKE_SOURCE_DIR}/cmake/templates/exe.vcxproj.user.in
-               ${exe_BINARY_DIR}/exe.vcxproj.user @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/templates/BRepInspectorExe.vcxproj.user.in
+               ${exe_BINARY_DIR}/BRepInspectorExe.vcxproj.user @ONLY)
 
 #------------------------------------------------------------------------------
 # Dependencies
 #------------------------------------------------------------------------------
 
-qt5_use_modules(exe Core Widgets)
+qt5_use_modules(BRepInspectorExe Core Widgets)
 
-target_link_libraries(exe asiTcl asiAlgo asiData asiVisu asiEngine asiUI)
+target_link_libraries(BRepInspectorExe asiTcl asiAlgo asiData asiVisu asiEngine asiUI)
 
 if (3RDPARTY_tbb_LIBRARY_DIR_DEBUG)
   link_directories(${3RDPARTY_tbb_LIBRARY_DIR_DEBUG})
@@ -204,10 +204,10 @@ foreach (LIB_FILE ${OCCT_LIB_FILES})
   endif()
 
   if (3RDPARTY_OCCT_LIBRARY_DIR_DEBUG AND EXISTS "${3RDPARTY_OCCT_LIBRARY_DIR_DEBUG}/${LIB_FILENAME}")
-    target_link_libraries (exe debug ${3RDPARTY_OCCT_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
-    target_link_libraries (exe optimized ${3RDPARTY_OCCT_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (BRepInspectorExe debug ${3RDPARTY_OCCT_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
+    target_link_libraries (BRepInspectorExe optimized ${3RDPARTY_OCCT_LIBRARY_DIR}/${LIB_FILENAME})
   else()
-    target_link_libraries (exe ${3RDPARTY_OCCT_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (BRepInspectorExe ${3RDPARTY_OCCT_LIBRARY_DIR}/${LIB_FILENAME})
   endif()
 endforeach()
 
@@ -219,10 +219,10 @@ foreach (LIB_FILE ${AD_LIB_FILES})
   endif()
 
   if (3RDPARTY_active_data_LIBRARY_DIR_DEBUG AND EXISTS "${3RDPARTY_active_data_LIBRARY_DIR_DEBUG}/${LIB_FILENAME}")
-    target_link_libraries (exe debug ${3RDPARTY_active_data_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
-    target_link_libraries (exe optimized ${3RDPARTY_active_data_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (BRepInspectorExe debug ${3RDPARTY_active_data_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
+    target_link_libraries (BRepInspectorExe optimized ${3RDPARTY_active_data_LIBRARY_DIR}/${LIB_FILENAME})
   else()
-    target_link_libraries (exe ${3RDPARTY_active_data_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (BRepInspectorExe ${3RDPARTY_active_data_LIBRARY_DIR}/${LIB_FILENAME})
   endif()
 endforeach()
 
@@ -234,10 +234,10 @@ foreach (LIB_FILE ${VTK_LIB_FILES})
   endif()
 
   if (3RDPARTY_vtk_LIBRARY_DIR_DEBUG AND EXISTS "${3RDPARTY_vtk_LIBRARY_DIR_DEBUG}/${LIB_FILENAME}")
-    target_link_libraries (exe debug ${3RDPARTY_vtk_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
-    target_link_libraries (exe optimized ${3RDPARTY_vtk_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (BRepInspectorExe debug ${3RDPARTY_vtk_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
+    target_link_libraries (BRepInspectorExe optimized ${3RDPARTY_vtk_LIBRARY_DIR}/${LIB_FILENAME})
   else()
-    target_link_libraries (exe ${3RDPARTY_vtk_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (BRepInspectorExe ${3RDPARTY_vtk_LIBRARY_DIR}/${LIB_FILENAME})
   endif()
 endforeach()
 
@@ -250,14 +250,14 @@ foreach (LIB_FILE ${TBB_LIB_FILES})
     set (LIB_FILENAME_DEBUG "lib${LIB_FILE}_debug${CMAKE_SHARED_LIBRARY_SUFFIX}")
   endif()
 
-  target_link_libraries (exe debug ${3RDPARTY_tbb_LIBRARY_DIR}/${LIB_FILENAME_DEBUG})
-  target_link_libraries (exe optimized ${3RDPARTY_tbb_LIBRARY_DIR}/${LIB_FILENAME})
+  target_link_libraries (BRepInspectorExe debug ${3RDPARTY_tbb_LIBRARY_DIR}/${LIB_FILENAME_DEBUG})
+  target_link_libraries (BRepInspectorExe optimized ${3RDPARTY_tbb_LIBRARY_DIR}/${LIB_FILENAME})
 endforeach()
 
 #------------------------------------------------------------------------------
 # Installation of Analysis Situs as a software
 #------------------------------------------------------------------------------
 
-install (TARGETS exe RUNTIME DESTINATION bin COMPONENT Runtime)
+install (TARGETS BRepInspectorExe RUNTIME DESTINATION bin COMPONENT Runtime)
 install (FILES resources/asitus/icon.ico DESTINATION bin)
 install (FILES resources/asitus/icon64.ico DESTINATION bin)

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 16 May 2016
+// Created on: 19 September 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,51 +23,64 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_DialogSTEPDelegate_h
-#define asiUI_DialogSTEPDelegate_h
+#ifndef asiUI_DialogCommands_h
+#define asiUI_DialogCommands_h
 
 // asiUI includes
 #include <asiUI.h>
 
+// asiTcl includes
+#include <asiTcl_Interp.h>
+
+// asiAlgo includes
+#include <asiAlgo_Variable.h>
+
 // Qt includes
 #pragma warning(push, 0)
-#include <QStyledItemDelegate>
+#include <QDialog>
+#include <QPushButton>
+#include <QTableWidget>
+#include <QVBoxLayout>
 #pragma warning(pop)
 
-class QObject;
-
-//! Delegate for the table of STEP interoperability options.
-class asiUI_DialogSTEPDelegate : public QStyledItemDelegate
+//! Dialog to dump all available commands.
+class asiUI_EXPORT asiUI_DialogCommands : public QDialog
 {
   Q_OBJECT
 
 public:
 
-  //! Data roles.
-  enum Roles
+  asiUI_DialogCommands(const Handle(asiTcl_Interp)& interp,
+                       ActAPI_ProgressEntry         notifier,
+                       QWidget*                     parent = NULL);
+
+  virtual ~asiUI_DialogCommands();
+
+protected:
+
+  void initialize();
+
+private:
+
+  QVBoxLayout* m_pMainLayout; //!< Layout of the widget.
+
+  //! Widgets.
+  struct t_widgets
   {
-    WidgetRole = Qt::UserRole + 1
+    QTableWidget* pCommands; //!< Table with commands.
+
+    t_widgets() : pCommands(NULL) {}
+
+    void Release()
+    {
+      delete pCommands; pCommands = NULL;
+    }
   };
 
-public:
-
-  asiUI_DialogSTEPDelegate(QObject* parent);
-
-public:
-
-  virtual QWidget*
-    createEditor(QWidget*                    parent,
-                 const QStyleOptionViewItem& option,
-                 const QModelIndex&          index) const;
-
-  virtual void
-    setEditorData(QWidget*           editor,
-                  const QModelIndex& index) const;
-
-  virtual void
-    setModelData(QWidget*            editor,
-                 QAbstractItemModel* model,
-                 const QModelIndex&  index) const;
+  t_widgets                m_widgets;  //!< Involved widgets.
+  //
+  Handle(asiTcl_Interp)    m_interp;   //!< Tcl interpreter.
+  ActAPI_ProgressEntry     m_notifier; //!< Progress Notifier.
 
 };
 

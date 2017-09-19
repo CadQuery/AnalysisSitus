@@ -30,7 +30,11 @@
 // asiTcl includes
 #include <asiTcl.h>
 
+// asiAlgo includes
+#include <asiAlgo_Variable.h>
+
 // Active Data includes
+#include <ActAPI_IModel.h>
 #include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
 
@@ -96,6 +100,19 @@ public:
 
 public:
 
+  //! Sets Data Model.
+  //! \param[in] model Data Model instance.
+  void SetModel(const Handle(ActAPI_IModel)& model)
+  {
+    m_model = model;
+  }
+
+  //! \return Data Model instance.
+  const Handle(ActAPI_IModel)& GetModel() const
+  {
+    return m_model;
+  }
+
   //! Sets imperative plotter.
   //! \param[in] plotter imperative plotter to set.
   void SetPlotter(const Handle(ActAPI_IPlotter)& plotter)
@@ -146,6 +163,12 @@ public:
                const TCollection_AsciiString& filename,
                t_user_func                    func);
 
+  //! Takes all available commands from Tcl interpreter and pushes their
+  //! names together with additional info to the provided output list.
+  //! \param[out] commands output list.
+  asiTcl_EXPORT void
+    GetAvailableCommandNames(std::vector<asiAlgo_Variable>& commands) const;
+
   //! Default reaction of interpreter when wrong arguments are passed to
   //! a command.
   //! \param[in] cmd name of the command being executed.
@@ -169,9 +192,11 @@ protected:
 
 protected:
 
-  Tcl_Interp*          m_pInterp;  //!< Internal pointer to Tcl interpreter.
-  ActAPI_ProgressEntry m_progress; //!< Progress sentry.
-  ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter sentry.
+  Tcl_Interp*           m_pInterp;  //!< Internal pointer to Tcl interpreter.
+  //
+  Handle(ActAPI_IModel) m_model;    //!< Data Model instance.
+  ActAPI_ProgressEntry  m_progress; //!< Progress sentry.
+  ActAPI_PlotterEntry   m_plotter;  //!< Imperative plotter sentry.
 
 };
 

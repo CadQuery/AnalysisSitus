@@ -95,6 +95,8 @@ protected slots:
   void onHidePartEdges    ();
   void onShowPartEdges    ();
   void onResetPartPrs     ();
+  //
+  void onSaveToBREP       ();
 
 protected:
 

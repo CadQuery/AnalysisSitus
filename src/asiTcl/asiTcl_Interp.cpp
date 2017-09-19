@@ -104,7 +104,10 @@ void asiTcl_Interp::Init()
 int asiTcl_Interp::Eval(const TCollection_AsciiString& cmd)
 {
   if ( !m_pInterp )
+  {
+    this->GetProgress().SendLogMessage(LogErr(Normal) << "Tcl command has finished with TCL_ERROR");
     return TCL_ERROR;
+  }
 
   int ret = Tcl_Eval( m_pInterp, cmd.ToCString() );
   return ret;
@@ -119,6 +122,12 @@ bool asiTcl_Interp::AddCommand(const TCollection_AsciiString& name,
 {
   t_tcl_callback* pCallback = new t_tcl_callback(this, func);
   return this->addCommand(name, help, filename, pCallback);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiTcl_Interp::GetAvailableCommandNames(std::vector<asiAlgo_Variable>& commands) const
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -144,8 +153,6 @@ bool asiTcl_Interp::addCommand(const TCollection_AsciiString& name,
   if ( !m_pInterp )
     return false;
 
-  // TODO: "help" and "getsource" functions are not yet implemented.
-
   Tcl_Command cmd = Tcl_CreateCommand(m_pInterp,
                                       name.ToCString(),
                                       TclProcInvoke,
@@ -153,7 +160,25 @@ bool asiTcl_Interp::addCommand(const TCollection_AsciiString& name,
                                       TclProcDelete);
 
   if ( cmd == NULL )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Tcl_CreateCommand has returned NULL.");
     return false;
+  }
+
+  // Each custom Tcl command of Analysis Situs is supported with the following
+  // additional information:
+  //
+  // - help string;
+  // - filename of the source file where the command is implemented;
+  // - group name to organize Tcl commands logically.
+  //
+  // All this is stored by means of dedicated Tcl variables (correspondingly):
+  //
+  // - asi_Help
+  // - asi_Files
+  // - asi_Groups
+
+  // TODO: work with aux vars
 
   return true;
 }

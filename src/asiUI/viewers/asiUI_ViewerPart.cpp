@@ -446,6 +446,16 @@ void asiUI_ViewerPart::onContextMenu(const QPoint& pos)
 
 //-----------------------------------------------------------------------------
 
+void asiUI_ViewerPart::onDefaultView()
+{
+  asiVisu_Utils::ResetCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
+  asiVisu_Utils::AdjustCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
+  //
+  this->Repaint();
+}
+
+//-----------------------------------------------------------------------------
+
 void asiUI_ViewerPart::onBackView()
 {
   asiVisu_Utils::CameraOnBack( m_prs_mgr->GetRenderer() );
@@ -508,6 +518,7 @@ void asiUI_ViewerPart::onTopView()
 
 void asiUI_ViewerPart::createActions()
 {
+  QAction* pResetViewAction  = new QAction("Reset", this);
   QAction* pBackViewAction   = new QAction("Back", this);
   QAction* pBottomViewAction = new QAction("Bottom", this);
   QAction* pFrontViewAction  = new QAction("Front", this);
@@ -515,14 +526,16 @@ void asiUI_ViewerPart::createActions()
   QAction* pRightViewAction  = new QAction("Right", this);
   QAction* pTopViewAction    = new QAction("Top", this);
   //
-  connect( pBackViewAction,   SIGNAL( triggered() ), this, SLOT( onBackView   () ) );
-  connect( pBottomViewAction, SIGNAL( triggered() ), this, SLOT( onBottomView () ) );
-  connect( pFrontViewAction,  SIGNAL( triggered() ), this, SLOT( onFrontView  () ) );
-  connect( pLeftViewAction,   SIGNAL( triggered() ), this, SLOT( onLeftView   () ) );
-  connect( pRightViewAction,  SIGNAL( triggered() ), this, SLOT( onRightView  () ) );
-  connect( pTopViewAction,    SIGNAL( triggered() ), this, SLOT( onTopView    () ) );
+  connect( pResetViewAction,  SIGNAL( triggered() ), this, SLOT( onDefaultView () ) );
+  connect( pBackViewAction,   SIGNAL( triggered() ), this, SLOT( onBackView    () ) );
+  connect( pBottomViewAction, SIGNAL( triggered() ), this, SLOT( onBottomView  () ) );
+  connect( pFrontViewAction,  SIGNAL( triggered() ), this, SLOT( onFrontView   () ) );
+  connect( pLeftViewAction,   SIGNAL( triggered() ), this, SLOT( onLeftView    () ) );
+  connect( pRightViewAction,  SIGNAL( triggered() ), this, SLOT( onRightView   () ) );
+  connect( pTopViewAction,    SIGNAL( triggered() ), this, SLOT( onTopView     () ) );
 
   // Add action to the toolbar
+  m_toolBar->addAction(pResetViewAction);
   m_toolBar->addAction(pBackViewAction);
   m_toolBar->addAction(pBottomViewAction);
   m_toolBar->addAction(pFrontViewAction);

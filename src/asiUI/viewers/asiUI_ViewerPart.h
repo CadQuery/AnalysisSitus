@@ -86,6 +86,7 @@ public slots:
   void onFindEdge();
   void onRefineTessellation();
   void onContextMenu(const QPoint&);
+  void onDefaultView();
   void onBackView();
   void onBottomView();
   void onFrontView();

@@ -12,37 +12,9 @@
 Debug your B-Rep.
 
 ===============================================================================
-
-Analysis Situs software is aimed to assist developers who use OpenCascade or
-other CAD modeling libraries. You can benefit from this software if:
-
-- you're a computational geometer, and you need an ecosystem to prototype and
-  profile your algos.
-
-- you're OpenCascade user or developer, and you need a handy tool to inspect
-  your geometries.
-
-Some real examples of its usage are as follows:
-
-ex 01. Implement Feature Recognition and Suppression utilities. If you're
-       working in this field, then you normally need to inspect CAD models
-       closely: find faces and edges, check their types, analyze their
-       geometries, etc.
-
-ex 02. Implement Reverse Engineering utilities. If you're working in this
-       field, you need to study differential properties of your geometries,
-       reconstruct valid topologies, etc.
-
-ex 03. Implement custom geometric modeling algorithms.
-
-Analysis Situs is yet another tool to drop into your CAD geometer's tool box.
-The idea is to simplify your daily geometrical challenges, and let you focus
-on your particular problems.
-
-===============================================================================
 Release notes
 -------------------------------------------------------------------------------
-v0.1.7, 18 September 2017
+v0.1.7, 19 September 2017
 -------------------------------------------------------------------------------
 - Improve visualization tools for meshes (SDK only).
 - Extend API of imperative plotter (SDK only).

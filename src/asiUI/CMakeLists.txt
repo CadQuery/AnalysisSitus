@@ -16,6 +16,8 @@ set (controls_H_FILES
   controls/asiUI_IStatusBar.h
 )
 set (controls_H_UI_FILES
+  controls/asiUI_BgColorDialog.h
+  controls/asiUI_ColorButton.h
   controls/asiUI_Console.h
   controls/asiUI_ControlsFeature.h
   controls/asiUI_ControlsPart.h
@@ -28,6 +30,8 @@ set (controls_H_UI_FILES
   controls/asiUI_StyledTextEdit.h
 )
 set (controls_CPP_FILES 
+  controls/asiUI_BgColorDialog.cpp
+  controls/asiUI_ColorButton.cpp
   controls/asiUI_Console.cpp
   controls/asiUI_ControlsFeature.cpp
   controls/asiUI_ControlsPart.cpp

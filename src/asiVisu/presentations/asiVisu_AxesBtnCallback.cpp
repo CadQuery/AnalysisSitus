@@ -57,6 +57,7 @@ void asiVisu_AxesBtnCallback::Execute(vtkObject* caller,
   }
   else if ( state == 2 )
   {
+    m_renderer->SetGradientBackground(false);
     m_renderer->SetBackground(1.0, 1.0, 1.0);
     //
     this->colorizeActors();
@@ -69,6 +70,7 @@ void asiVisu_AxesBtnCallback::Execute(vtkObject* caller,
   }
   else
   {
+    m_renderer->SetGradientBackground(false);
     m_renderer->SetBackground(0.15, 0.15, 0.15);
     //
     this->colorizeActors();

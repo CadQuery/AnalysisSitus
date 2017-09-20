@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 04 December 2015
+// Created on: 20 September 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017 Sergey Slyadnev
 // Code covered by the MIT License
@@ -23,44 +23,65 @@
 // DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_Viewer_h
-#define asiUI_Viewer_h
+#ifndef asiUI_BgColorDialog_h
+#define asiUI_BgColorDialog_h
 
-// A-Situs includes
-#include <asiUI.h>
-
-// A-Situs (visualization) includes
-#include <asiVisu_PrsManager.h>
+// asiUI includes
+#include <asiUI_ColorButton.h>
 
 // Qt includes
 #pragma warning(push, 0)
-#include <QWidget>
+#include <QDialog>
 #pragma warning(pop)
 
-//-----------------------------------------------------------------------------
-
-//! Base class for all viewers.
-class asiUI_EXPORT asiUI_Viewer : public QWidget
+//! Dialog to choose background color.
+class asiUI_EXPORT asiUI_BgColorDialog : public QDialog
 {
   Q_OBJECT
 
 public:
 
-  asiUI_Viewer(QWidget* parent = NULL);
-
-  virtual ~asiUI_Viewer();
+  enum FillType
+  {
+    FT_Solid,
+    FT_Gradient
+  };
+  
+  enum ColorID
+  {
+    CLR_Solid,
+    CLR_GradientStart,
+    CLR_GradientEnd
+  };
 
 public:
 
-  virtual void Repaint() = 0;
+  asiUI_BgColorDialog(QWidget* parent = 0);
 
 public:
 
-  const vtkSmartPointer<asiVisu_PrsManager>& PrsMgr() const { return m_prs_mgr; }
+  int
+    GetFillType() const;
+  
+  void
+    SetFillType(const int id) const;
 
-protected:
+  void
+    SetColor(const ColorID id, const QColor& color);
 
-  vtkSmartPointer<asiVisu_PrsManager> m_prs_mgr; //!< Presentation Manager.
+  QColor
+    GetColor(const ColorID id);
+
+public slots:
+  
+  void onButtonSelected(const int id);
+
+private:
+
+  asiUI_ColorButton* m_pSolidColor;    //!< Button to pick sole color.
+  asiUI_ColorButton* m_pGradientStart; //!< Button to pick the first color of gradient.
+  asiUI_ColorButton* m_pGradientEnd;   //!< Button to pick the second color of gradient.
+  QButtonGroup*      m_pSelectGroup;   //!< Group of buttons.
 
 };
 

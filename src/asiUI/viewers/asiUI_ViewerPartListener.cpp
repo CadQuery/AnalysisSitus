@@ -27,6 +27,7 @@
 #include <asiUI_ViewerPartListener.h>
 
 // asiUI includes
+#include <asiUI_BgColorDialog.h>
 #include <asiUI_Common.h>
 
 // asiAlgo includes
@@ -162,9 +163,11 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
   QAction* pInvertFacesAction = NULL;
   QAction* pShowOriContour    = NULL;
   QAction* pPickRotationPoint = NULL;
+  QAction* pChangeBg          = NULL;
 
   // Action for picking custom rotation point
   pPickRotationPoint = menu.addAction("Set new focal point");
+  pChangeBg          = menu.addAction("Set background color");
 
   // Prepare the context menu items
   if ( faceIndices.Extent() )
@@ -210,6 +213,77 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
 
     m_wViewerPart->PrsMgr()->GetRenderer()->GetActiveCamera()->SetFocalPoint(coord[0], coord[1], coord[2]);
     m_wViewerPart->Repaint();
+  }
+  else if ( selectedItem && selectedItem == pChangeBg )
+  {
+    asiUI_BgColorDialog* pChangeBgDlg = new asiUI_BgColorDialog(m_wViewerPart);
+
+    // Get renderer
+    vtkRenderer* pRenderer = m_wViewerPart->PrsMgr()->GetRenderer();
+
+    if ( !pRenderer->GetGradientBackground() )
+    {
+      double* aSolid = pRenderer->GetBackground();
+      QColor aSolidClr;
+      aSolidClr.setRedF(aSolid[0]);
+      aSolidClr.setGreenF(aSolid[1]);
+      aSolidClr.setBlueF(aSolid[2]);
+
+      pChangeBgDlg->SetFillType(asiUI_BgColorDialog::FT_Solid);
+      pChangeBgDlg->SetColor(asiUI_BgColorDialog::CLR_Solid, aSolidClr);
+    }
+    else
+    {
+      double* aGradientStart = pRenderer->GetBackground2();
+      double* aGradientEnd   = pRenderer->GetBackground();
+      pChangeBgDlg->SetFillType(asiUI_BgColorDialog::FT_Gradient);
+
+      QColor aStartClr, aEndClr;
+      aStartClr.setRedF(aGradientStart[0]);
+      aStartClr.setGreenF(aGradientStart[1]);
+      aStartClr.setBlueF(aGradientStart[2]);
+
+      aEndClr.setRedF(aGradientEnd[0]);
+      aEndClr.setGreenF(aGradientEnd[1]);
+      aEndClr.setBlueF(aGradientEnd[2]);
+
+      pChangeBgDlg->SetFillType(asiUI_BgColorDialog::FT_Gradient);
+      pChangeBgDlg->SetColor(asiUI_BgColorDialog::CLR_GradientStart, aStartClr);
+      pChangeBgDlg->SetColor(asiUI_BgColorDialog::CLR_GradientEnd, aEndClr);
+    }
+
+    if ( pChangeBgDlg->exec() )
+    {
+      // save and apply new colors
+      QColor aColors[2];
+      if ( pChangeBgDlg->GetFillType() == asiUI_BgColorDialog::FT_Solid )
+      {
+        aColors[0] = pChangeBgDlg->GetColor(asiUI_BgColorDialog::CLR_Solid);
+      }
+      else
+      {
+        aColors[0] = pChangeBgDlg->GetColor(asiUI_BgColorDialog::CLR_GradientStart);
+        aColors[1] = pChangeBgDlg->GetColor(asiUI_BgColorDialog::CLR_GradientEnd);
+      }
+
+      // Apply colors
+      if ( !aColors[1].isValid() )
+      {
+        // solid color fill
+        pRenderer->SetBackground(aColors[0].redF(),
+            aColors[0].greenF(), aColors[0].blueF());
+        pRenderer->SetGradientBackground(false);
+      }
+      else
+      {
+        // gradient color fill
+        pRenderer->SetBackground(aColors[1].redF(),
+            aColors[1].greenF(), aColors[1].blueF());
+        pRenderer->SetBackground2(aColors[0].redF(),
+            aColors[0].greenF(),  aColors[0].blueF());
+        pRenderer->SetGradientBackground(true);
+      }
+    }
   }
   else if ( selectedItem && selectedItem == pSaveBREPAction )
   {

@@ -834,23 +834,19 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
     //
     // - 3D curve is closed
     // - 2D curve is closed
-    //
-    // It is not enough to check the host curve on periodicity as a
-    // periodic curve is not obligated to bound a finite area in (u,v)
-    // parametric space.
 
     gp_Pnt Pf = C->Value( C->FirstParameter() );
     gp_Pnt Pl = C->Value( C->LastParameter() );
 
     // The following condition is Ok for closed curves
-    const bool isOk3d = ( Pf.Distance(Pl) < gp::Resolution() );
+    const bool isOk3d = ( Pf.Distance(Pl) < coincConfusion );
 
     // Check 2d
     gp_Pnt2d Pf2d, Pl2d;
     BRep_Tool::UVPoints(WD->Edge(1), face, Pf2d, Pl2d);
 
     // The following condition is Ok for closed curves
-    const bool isOk2d = ( Pf2d.Distance(Pl2d) < gp::Resolution() );
+    const bool isOk2d = ( Pf2d.Distance(Pl2d) < coincConfusion );
 
     return isOk3d && isOk2d;
   }

@@ -199,8 +199,25 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
   static const char* group = "cmdMisc";
 
   // Add commands
-  interp->AddCommand("box",               "", __FILE__, group, MISC_Box);
-  interp->AddCommand("test-hexagon-bops", "", __FILE__, group, MISC_TestHexagonBops);
+  // ...
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("box",
+    //
+    "box \n"
+    "\t No arguments are expected. This command is a kind of 'hello world' \n"
+    "\t just to draw something on the screen.",
+    //
+    __FILE__, group, MISC_Box);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-hexagon-bops",
+    //
+    "test-hexagon-bops \n"
+    "\t No arguments are expected. This command demonstrates solid Booleans \n"
+    "\t of OpenCascade. It cuts many cylinders from a hexagonal prism.",
+    //
+    __FILE__, group, MISC_TestHexagonBops);
 }
 
 // Declare entry point PLUGINFACTORY

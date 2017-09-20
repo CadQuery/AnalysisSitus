@@ -49,6 +49,8 @@ struct Tcl_Interp; // Forward declaration for Tcl C structure.
 //! Tcl interpreter interface in Analysis Situs.
 class asiTcl_Interp : public Standard_Transient
 {
+friend class asiTcl_Plugin;
+
 public:
 
   //! Type definition for function pointer representing C++ implementation
@@ -196,7 +198,8 @@ protected:
 
 protected:
 
-  Tcl_Interp*           m_pInterp;  //!< Internal pointer to Tcl interpreter.
+  Tcl_Interp*                          m_pInterp; //!< Internal pointer to Tcl interpreter.
+  std::vector<TCollection_AsciiString> m_plugins; //!< List of loaded plugins.
   //
   Handle(ActAPI_IModel) m_model;    //!< Data Model instance.
   ActAPI_ProgressEntry  m_progress; //!< Progress sentry.

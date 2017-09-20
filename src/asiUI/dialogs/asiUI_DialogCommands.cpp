@@ -61,14 +61,14 @@ asiUI_DialogCommands::asiUI_DialogCommands(const Handle(asiTcl_Interp)& interp,
   // Configure table with options
   QStringList headers;
   headers.append("Name");
-  headers.append("Help string");
+  headers.append("Module");
+  headers.append("Source");
   //
   m_widgets.pCommands->setColumnCount( headers.size() );
   m_widgets.pCommands->setHorizontalHeaderLabels( headers );
   m_widgets.pCommands->horizontalHeader()->setStretchLastSection( true );
   m_widgets.pCommands->verticalHeader()->setVisible( false );
   m_widgets.pCommands->setSelectionMode( QAbstractItemView::SingleSelection );
-  m_widgets.pCommands->setSelectionBehavior( QAbstractItemView::SelectRows );
   m_widgets.pCommands->setItemDelegateForColumn( 1, new asiUI_DialogCommandsDelegate(this) );
 
   // Set layout
@@ -103,37 +103,36 @@ asiUI_DialogCommands::~asiUI_DialogCommands()
 void asiUI_DialogCommands::initialize()
 {
   // Collect variables
-  NCollection_Sequence<asiAlgo_Variable> vars;
+  std::vector<asiTcl_CommandInfo> commands;
+  m_interp->GetAvailableCommands(commands);
 
   // Prepare properties to access the item
   const Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 
   // Populate table
   int current_row = 0;
-  for ( int v = 1; v <= vars.Length(); ++v )
+  for ( int c = 0; c < (int) commands.size(); ++c )
   {
-    const asiAlgo_Variable& var = vars(v);
+    const asiTcl_CommandInfo& cmd = commands[c];
 
     // Insert table row
     m_widgets.pCommands->insertRow(current_row);
 
     // Table item for name
-    QTableWidgetItem* pNameItem = new QTableWidgetItem( AsciiStr2QStr(var.Name) );
+    QTableWidgetItem* pNameItem = new QTableWidgetItem( cmd.Name.c_str() );
     pNameItem->setFlags(flags);
-    pNameItem->setToolTip( AsciiStr2QStr(var.Description) );
+    pNameItem->setToolTip( cmd.Help.c_str() );
     m_widgets.pCommands->setItem(current_row, 0, pNameItem);
 
-    // Get variable value from statics if it is available there
-    QString valueStr;
-    Standard_CString cname = var.Name.ToCString();
-    //
-    valueStr = "UNDEFINED";
+    // Table item for module
+    QTableWidgetItem* pModuleItem = new QTableWidgetItem( cmd.Group.c_str() );
+    pModuleItem->setFlags(flags);
+    m_widgets.pCommands->setItem(current_row, 1, pModuleItem);
 
-    // Table widget item for value with the flag for editing
-    QTableWidgetItem *pValueItem = new QTableWidgetItem(valueStr);
-    pValueItem->setData( asiUI_DialogCommandsDelegate::WidgetRole, QVariant(var.Type) );
-    pValueItem->setFlags( flags | Qt::ItemIsEditable );
-    m_widgets.pCommands->setItem(current_row, 1, pValueItem);
+    // Table item for source
+    QTableWidgetItem* pSourceItem = new QTableWidgetItem( cmd.Filename.c_str() );
+    pSourceItem->setFlags(flags);
+    m_widgets.pCommands->setItem(current_row, 2, pSourceItem);
 
     // Switch to the next row
     current_row++;

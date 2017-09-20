@@ -32,9 +32,6 @@
 // asiTcl includes
 #include <asiTcl_Interp.h>
 
-// asiAlgo includes
-#include <asiAlgo_Variable.h>
-
 // Qt includes
 #pragma warning(push, 0)
 #include <QDialog>

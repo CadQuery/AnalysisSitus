@@ -37,6 +37,7 @@
 //! as it is seen from caller code.
 struct asiTcl_CommandInfo
 {
+  std::string Group;    //!< Plugin the command belongs to.
   std::string Name;     //!< Command name.
   std::string Help;     //!< Help line.
   std::string Filename; //!< Filename which points to the source of command.

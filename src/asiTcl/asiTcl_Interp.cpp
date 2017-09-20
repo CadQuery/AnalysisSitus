@@ -35,6 +35,52 @@
 
 //-----------------------------------------------------------------------------
 
+//! Splits the passed string by the given delimiter. Note that the
+//! passed output vector is not cleaned up beforehand.
+//! \param source_str [in]  input string to split.
+//! \param delim_str  [in]  delimiter string.
+//! \param result     [out] resulting collection of tokens after split.
+static void splitstr(const std::string&        source_str,
+                     const std::string&        delim_str,
+                     std::vector<std::string>& result)
+{
+  // Initialize collection of strings to split
+  std::vector<std::string> chunks;
+  chunks.push_back(source_str);
+
+  // Split by each delimiter consequently
+  for ( size_t delim_idx = 0; delim_idx < delim_str.length(); ++delim_idx )
+  {
+    std::vector<std::string> new_chunks;
+    const char delim = delim_str[delim_idx];
+
+    // Split each chunk
+    for ( size_t chunk_idx = 0; chunk_idx < chunks.size(); ++chunk_idx )
+    {
+      const std::string& source = chunks[chunk_idx];
+      std::string::size_type currPos = 0, prevPos = 0;
+      while ( (currPos = source.find(delim, prevPos) ) != std::string::npos )
+      {
+        std::string item = source.substr(prevPos, currPos - prevPos);
+        if ( item.size() > 0 )
+        {
+          new_chunks.push_back(item);
+        }
+        prevPos = currPos + 1;
+      }
+      new_chunks.push_back( source.substr(prevPos) );
+    }
+
+    // Set new collection of chunks for splitting by the next delimiter
+    chunks = new_chunks;
+  }
+
+  // Set result
+  result = chunks;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Function to pass to Tcl_CreateCommand as an entry point to any user-defined
 //! command.
 //! \param[in] pClientData callback.
@@ -63,8 +109,10 @@ static int TclProcInvoke(void*       pClientData,
   }
   catch ( ... )
   {
-    std::cout << "Error: exception occurred" << std::endl;
+    std::cerr << "Error: exception occurred" << std::endl;
     code = TCL_ERROR;
+    //
+    std::cerr << "\t*** " << Tcl_GetStringResult(pInterpTcl) << std::endl;
   }
   return code;
 }
@@ -132,6 +180,39 @@ bool asiTcl_Interp::AddCommand(const TCollection_AsciiString& name,
 
 void asiTcl_Interp::GetAvailableCommands(std::vector<asiTcl_CommandInfo>& commands) const
 {
+  for ( size_t p = 0; p < m_plugins.size(); ++p )
+  {
+    std::string
+      commandsInGroupStr = Tcl_GetVar2(m_pInterp, "asi_Groups", m_plugins[p].ToCString(),
+                                       TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
+
+    std::vector<std::string> commandsInGroup;
+    splitstr(commandsInGroupStr, " ", commandsInGroup);
+
+    for ( size_t c = 0; c < commandsInGroup.size(); ++c )
+    {
+      asiTcl_CommandInfo cmdInfo;
+      cmdInfo.Group = m_plugins[p].ToCString();
+      cmdInfo.Name  = commandsInGroup[c];
+
+      // Help
+      std::string
+        commandHelp = Tcl_GetVar2(m_pInterp, "asi_Help", cmdInfo.Name.c_str(),
+                                  TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
+      //
+      cmdInfo.Help = commandHelp;
+
+      // Source
+      std::string
+        commandSrc = Tcl_GetVar2(m_pInterp, "asi_Files", cmdInfo.Name.c_str(),
+                                 TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
+      //
+      cmdInfo.Filename = commandSrc;
+
+      // Set to output
+      commands.push_back(cmdInfo);
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -181,7 +262,7 @@ bool asiTcl_Interp::addCommand(const TCollection_AsciiString& name,
   // - asi_Groups
 
   // Help line
-  Tcl_SetVar2(m_pInterp, "asi_Help",  name.ToCString(), help.ToCString(),
+  Tcl_SetVar2(m_pInterp, "asi_Help", name.ToCString(), help.ToCString(),
               TCL_GLOBAL_ONLY);
 
   // Source filename

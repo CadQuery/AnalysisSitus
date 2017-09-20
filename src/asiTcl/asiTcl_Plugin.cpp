@@ -55,6 +55,9 @@ bool asiTcl_Plugin::Load(const Handle(asiTcl_Interp)&      interp,
   void (*fp) (const Handle(asiTcl_Interp)&, const Handle(Standard_Transient)& ) = NULL;
   fp = (void (*)(const Handle(asiTcl_Interp)&, const Handle(Standard_Transient)&)) f;
 
+  // Let interpreter store all loaded plugins
+  interp->m_plugins.push_back(pluginName);
+
   // Call
   (*fp) (interp, data);
   return true;

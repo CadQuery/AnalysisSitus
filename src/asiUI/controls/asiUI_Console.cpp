@@ -123,6 +123,11 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
       //
       if ( bbefore == bafter ) // No next block exists, so the cursor did not move
       {
+        // To avoid breaking command words if <Enter> is pressed not in the
+        // end of line
+        c.movePosition(QTextCursor::End);
+        this->setTextCursor(c);
+
         // Add next block with a new prompt
         this->addText(READY_PROMPT, true, false);
       }

@@ -249,15 +249,50 @@ void cmdInspector::Factory(const Handle(asiTcl_Interp)&      interp,
     return;
   }
 
-  /* =====================
-   *  Add custom commands
-   * ===================== */
-
   // Add commands
-  interp->AddCommand("set-as-part", "", __FILE__, group, INSPECTOR_SetAsPart);
-  interp->AddCommand("fix-part",    "", __FILE__, group, INSPECTOR_FixPart);
-  interp->AddCommand("kill-edge",   "", __FILE__, group, INSPECTOR_KillEdge);
-  interp->AddCommand("kill-face",   "", __FILE__, group, INSPECTOR_KillFace);
+  // ...
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("set-as-part",
+    //
+    "set-as-part varName\n"
+    "\t Sets the object with the given name as a part for analysis. \n"
+    "\t The object is expected to exist as a topological item in \n"
+    "\t imperative plotter.",
+    //
+    __FILE__, group, INSPECTOR_SetAsPart);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("fix-part",
+    //
+    "fix-part\n"
+    "\t Performs automatic shape repair on the active part.",
+    //
+    __FILE__, group, INSPECTOR_FixPart);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("kill-edge",
+    //
+    "kill-edge edgeIndex\n"
+    "\t Kills edge with the passed 1-based index from the active part. \n"
+    "\t This is a pure topological operation which does not attempt to \n"
+    "\t modify geometry. Moreover, unlike Euler operator, this function \n"
+    "\t does not preserve the topological consistency of the CAD part. \n"
+    "\t We have introduced this function to ground Euler operators on it.",
+    //
+    __FILE__, group, INSPECTOR_KillEdge);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("kill-face",
+    //
+    "kill-face faceIndex\n"
+    "\t Kills face with the passed 1-based index from the active part. \n"
+    "\t This is a pure topological operation which does not attempt to \n"
+    "\t modify geometry. Moreover, unlike Euler operator, this function \n"
+    "\t does not preserve the topological consistency of the CAD part. \n"
+    "\t We have introduced this function to ground Euler operators on it.",
+    //
+    __FILE__, group, INSPECTOR_KillFace);
 }
 
 // Declare entry point PLUGINFACTORY

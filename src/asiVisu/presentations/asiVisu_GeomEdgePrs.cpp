@@ -102,9 +102,11 @@ void asiVisu_GeomEdgePrs::afterInitPipelines()
   TITLE += E_idx; TITLE += "): ";
   TITLE += asiAlgo_Utils::OrientationToString(E);
 
-  // Add orientation of all vertices
+  // Add orientation of all vertices. We are interested in relative orientations
+  // of vertices wrt the owner edge. Therefore, exploration is done for edge
+  // whose orientation is reset to FORWARD.
   int vertex_idx = 0;
-  for ( TopExp_Explorer exp(E, TopAbs_VERTEX); exp.More(); exp.Next() )
+  for ( TopExp_Explorer exp(E.Oriented(TopAbs_FORWARD), TopAbs_VERTEX); exp.More(); exp.Next() )
   {
     ++vertex_idx;
     const TopoDS_Vertex& V = TopoDS::Vertex( exp.Current() );

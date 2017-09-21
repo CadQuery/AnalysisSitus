@@ -197,7 +197,8 @@ void asiAlgo_TopoGraph::addSubshapes(const TopoDS_Shape& parent,
   {
     const TopoDS_Shape& subShape = it.Value();
 
-    // Add or take the existing node
+    // Add or take the existing node. The nodes in the graph correspond to
+    // topological elements with identical TShapes.
     int iChildId;
     //
     if ( !m_nodes.Contains(subShape) )
@@ -210,6 +211,9 @@ void asiAlgo_TopoGraph::addSubshapes(const TopoDS_Shape& parent,
       m_arcs.Bind( iParentId, TColStd_PackedMapOfInteger() );
     //
     m_arcs(iParentId).Add(iChildId);
+
+    // Bind orientation attribute
+    m_arc_attributes.Bind( t_arc(iParentId, iChildId), subShape.Orientation() );
 
     // Process children: add sub-shapes recursively
     if ( !subShape.IsNull() )

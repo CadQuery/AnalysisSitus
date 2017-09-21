@@ -118,6 +118,44 @@ public:
   //! links are realized in the topology graph.
   typedef NCollection_DataMap<int, TColStd_PackedMapOfInteger> t_adjacency;
 
+  //---------------------------------------------------------------------------
+
+  //! Arc between two nodes of topology graph. The arc is the explicit
+  //! representation for containment relation.
+  struct t_arc
+  {
+    int iParent; //!< Parent shape.
+    int iChild;  //!< Child shape.
+
+    //! ctor default.
+    t_arc() : iParent(0), iChild(0) {}
+
+    //! ctor with parameters.
+    t_arc(const int _iParent, const int _iChild) : iParent(_iParent), iChild(_iChild) {}
+
+    //! \return hash code for the arc.
+    static int HashCode(const t_arc& arc, const int upper)
+    {
+      int key = arc.iParent + arc.iChild;
+      key += (key << 10);
+      key ^= (key >> 6);
+      key += (key << 3);
+      key ^= (key >> 11);
+      return (key & 0x7fffffff) % upper;
+    }
+
+    //! \return true if two links are equal.
+    static int IsEqual(const t_arc& arc1, const t_arc& arc2)
+    {
+      return arc1.iParent == arc2.iParent && arc1.iChild == arc2.iChild;
+    }
+  };
+
+  //---------------------------------------------------------------------------
+
+  //! Arc attributes to store orientation of sub-shape in its parent shape.
+  typedef NCollection_DataMap<t_arc, TopAbs_Orientation, t_arc> t_arc_attributes;
+
 public:
 
   //! \brief Initializes topology graph from shape.
@@ -252,6 +290,14 @@ public:
     return numArcs;
   }
 
+  //! Returns arc attribute (orientation).
+  //! \param[in] arc arc in question.
+  //! \return attribute.
+  TopAbs_Orientation GetArcAttribute(const t_arc& arc) const
+  {
+    return m_arc_attributes(arc);
+  }
+
 protected:
 
   //! Builds graph out of TopoDS_Shape structure.
@@ -275,13 +321,14 @@ protected:
 // OUTPUTS
 protected:
 
-  int                                                           m_iRoot;     //!< ID of the root node.
-  NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher> m_nodes;     //!< Graph nodes.
-  t_adjacency                                                   m_arcs;      //!< Shape/sub-shape relations.
-  TopTools_IndexedMapOfShape                                    m_subShapes; //!< All sub-shapes.
-  TopTools_IndexedMapOfShape                                    m_faces;     //!< All faces of the master model.
-  TopTools_IndexedMapOfShape                                    m_edges;     //!< All edges of the master model.
-  TopTools_IndexedMapOfShape                                    m_vertices;  //!< All vertices of the master model.
+  int                                                           m_iRoot;          //!< ID of the root node.
+  NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher> m_nodes;          //!< Graph nodes.
+  t_adjacency                                                   m_arcs;           //!< Shape/sub-shape relations.
+  t_arc_attributes                                              m_arc_attributes; //!< Stores attributes associated with each arc.
+  TopTools_IndexedMapOfShape                                    m_subShapes;      //!< All sub-shapes.
+  TopTools_IndexedMapOfShape                                    m_faces;          //!< All faces of the master model.
+  TopTools_IndexedMapOfShape                                    m_edges;          //!< All edges of the master model.
+  TopTools_IndexedMapOfShape                                    m_vertices;       //!< All vertices of the master model.
 
 };
 

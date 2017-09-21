@@ -158,9 +158,11 @@ void asiVisu_GeomFacePrs::afterInitPipelines()
   TITLE += F_idx; TITLE += "): ";
   TITLE += asiAlgo_Utils::OrientationToString(F);
 
-  // Add orientation of all wires
+  // Add orientation of all wires. We are interested in relative orientations
+  // of wires wrt the owner face. Therefore, exploration is done for face
+  // whose orientation is reset to FORWARD.
   int wire_idx = 0;
-  for ( TopExp_Explorer exp(F, TopAbs_WIRE); exp.More(); exp.Next() )
+  for ( TopExp_Explorer exp(F.Oriented(TopAbs_FORWARD), TopAbs_WIRE); exp.More(); exp.Next() )
   {
     ++wire_idx;
     const TopoDS_Wire& W = TopoDS::Wire( exp.Current() );

@@ -161,12 +161,16 @@ vtkSmartPointer<vtkMutableDirectedGraph>
       // Add arc
       result->AddEdge( ShapeNodeMap(parentId), ShapeNodeMap(childId) );
 
-      // Add arc attribute
-      if ( subShape.Orientation() == TopAbs_FORWARD )
+      // Get orientation attribute available as arc attribute in topology graph
+      TopAbs_Orientation
+        ori = topograph->GetArcAttribute( asiAlgo_TopoGraph::t_arc(parentId, childId) );
+
+      // Set arc scalar
+      if ( ori == TopAbs_FORWARD )
         childOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_F);
-      else if ( subShape.Orientation() == TopAbs_REVERSED )
+      else if ( ori == TopAbs_REVERSED )
         childOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_R);
-      else if ( subShape.Orientation() == TopAbs_INTERNAL )
+      else if ( ori == TopAbs_INTERNAL )
         childOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_I);
       else // EXTERNAL
         childOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_E);

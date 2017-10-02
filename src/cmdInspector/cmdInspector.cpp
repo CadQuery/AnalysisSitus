@@ -37,6 +37,9 @@
 
 // OCCT includes
 #include <ShapeFix_Shape.hxx>
+#include <TopExp.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Solid.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -225,6 +228,95 @@ int INSPECTOR_KillFace(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int INSPECTOR_KillSolidByFace(const Handle(asiTcl_Interp)& interp,
+                              int                          argc,
+                              const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const int fidx = atoi(argv[1]);
+  //
+  if ( fidx < 1 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face index should be 1-based.");
+    return TCL_ERROR;
+  }
+
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = cmdInspector::cf->Model->GetPartNode();
+
+  // Get map of faces with respect to those the passed index is relevant
+  const TopTools_IndexedMapOfShape& allFaces = part_n->GetAAG()->GetMapOfFaces();
+
+  // Get face in question
+  TopoDS_Face face = TopoDS::Face( allFaces(fidx) );
+
+  // Get owner solid
+  TopTools_IndexedDataMapOfShapeListOfShape faceOwners;
+  TopExp::MapShapesAndAncestors(part_n->GetShape(), TopAbs_FACE, TopAbs_SOLID, faceOwners);
+  //
+  if ( faceOwners.IsEmpty() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find parent solid for face %1." << fidx);
+    return TCL_OK;
+  }
+
+  // Get owner shapes
+  TopTools_ListOfShape owners = faceOwners.FindFromKey(face);
+  //
+  if ( owners.IsEmpty() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "There are no parents for face %1. Cannot proceed." << fidx);
+    return TCL_OK;
+  }
+
+  // Get solid
+  TopoDS_Solid ownerSolid = TopoDS::Solid( owners.First() );
+  //
+  if ( ownerSolid.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Owner solid is null. Cannot proceed." << fidx);
+    return TCL_OK;
+  }
+
+  // Prepare killer
+  asiAlgo_TopoKill killer( cmdInspector::cf->Model->GetPartNode()->GetShape(),
+                           interp->GetProgress(),
+                           interp->GetPlotter() );
+  //
+  if ( !killer.AskRemove(ownerSolid) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of solid was rejected." << fidx);
+    return TCL_OK;
+  }
+
+  if ( !killer.Apply() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Topological killer failed.");
+    return TCL_OK;
+  }
+
+  // Get result
+  const TopoDS_Shape& result = killer.GetResult();
+
+  // Modify Data Model
+  cmdInspector::cf->Model->OpenCommand();
+  {
+    asiEngine_Part(cmdInspector::cf->Model, NULL).Update(result);
+  }
+  cmdInspector::cf->Model->CommitCommand();
+
+  // Update UI
+  cmdInspector::UpdateUI();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdInspector::UpdateUI()
 {
   cf->ViewerPart->PrsMgr()->Actualize(cf->Model->GetPartNode(), false, false, true);
@@ -293,6 +385,14 @@ void cmdInspector::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t We have introduced this function to ground Euler operators on it.",
     //
     __FILE__, group, INSPECTOR_KillFace);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("kill-solid-by-face",
+	  //
+	  "kill-solid-by-face faceIndex\n"
+	  "\t Kills solid which contains a face with the passed 1-based index.",
+	  //
+	  __FILE__, group, INSPECTOR_KillSolidByFace);
 }
 
 // Declare entry point PLUGINFACTORY

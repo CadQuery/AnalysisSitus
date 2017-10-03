@@ -27,7 +27,9 @@
 #define asiUI_CommonFacilities_h
 
 // asiUI includes
-#include <asiUI_Common.h>
+#include <asiUI_ViewerDomain.h>
+#include <asiUI_ViewerPart.h>
+#include <asiUI_ViewerHost.h>
 
 //! Base class for common facilities.
 class asiUI_CommonFacilities : public Standard_Transient
@@ -36,6 +38,21 @@ public:
 
   // OCCT RTTI
   DEFINE_STANDARD_RTTI_INLINE(asiUI_CommonFacilities, Standard_Transient)
+
+public:
+
+  // Default ctor.
+  asiUI_CommonFacilities() : Standard_Transient (),
+                             ViewerPart         (NULL),
+                             ViewerDomain       (NULL),
+                             ViewerHost         (NULL)
+  {}
+
+public:
+
+  asiUI_ViewerPart*   ViewerPart;   //!< Viewer for part.
+  asiUI_ViewerDomain* ViewerDomain; //!< Viewer for face parametric domain.
+  asiUI_ViewerHost*   ViewerHost;   //!< Viewer for host geometry.
 
 };
 

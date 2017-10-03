@@ -39,9 +39,6 @@
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ProgressListener.h>
 #include <asiUI_ProgressNotifier.h>
-#include <asiUI_ViewerDomain.h>
-#include <asiUI_ViewerPart.h>
-#include <asiUI_ViewerHost.h>
 
 // asiTcl includes
 #include <asiTcl_Interp.h>
@@ -60,10 +57,6 @@ public:
   //
   asiUI_ObjectBrowser*             ObjectBrowser;    //!< Object browser.
   Handle(ActAPI_INode)             CurrentNode;      //!< Currently selected Node.
-  //
-  asiUI_ViewerPart*                ViewerPart;       //!< Viewer for part.
-  asiUI_ViewerDomain*              ViewerDomain;     //!< Viewer for face parametric domain.
-  asiUI_ViewerHost*                ViewerHost;       //!< Viewer for host geometry.
   //
   Handle(ActAPI_IProgressNotifier) ProgressNotifier; //!< Progress notifier.
   asiUI_ProgressListener*          ProgressListener; //!< Progress listener.
@@ -99,11 +92,9 @@ private:
 
   exe_CommonFacilities() //!< ctor.
   //
-    : ObjectBrowser    (NULL),
-      ViewerPart       (NULL),
-      ViewerDomain     (NULL),
-      ViewerHost       (NULL),
-      ProgressListener (NULL)
+    : asiUI_CommonFacilities (),
+      ObjectBrowser          (NULL),
+      ProgressListener       (NULL)
   {
     // Create Data Model
     Model = new asiEngine_Model;

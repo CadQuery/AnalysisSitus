@@ -43,6 +43,9 @@
 // asiEngine includes
 #include <asiEngine_Model.h>
 
+// asiUI includes
+#include <asiUI_ViewerPart.h>
+
 //-----------------------------------------------------------------------------
 
 //! B-Rep inspection commands.
@@ -56,7 +59,8 @@ public:
 
 public:
 
-  static Handle(asiEngine_Model) model; //!< Data Model instance.
+  static Handle(asiEngine_Model) model;       //!< Data Model instance.
+  static asiUI_ViewerPart*       pViewerPart; //!< Part viewer.
 
 };
 

@@ -27,7 +27,7 @@
 #include <asiVisu_FaceNormalsDataProvider.h>
 
 // asiAlgo includes
-#include <asiAlgo_ClassifyPointFace.h>
+#include <asiAlgo_Utils.h>
 
 // OCCT includes
 #include <Bnd_Box.hxx>
@@ -57,63 +57,8 @@ Handle(asiAlgo_BaseCloud<float>) asiVisu_FaceNormalsDataProvider::GetPointsf()
   if ( face.IsNull() )
     return NULL;
 
-  // Prepare a point cloud as a result
-  m_points  = new asiAlgo_BaseCloud<float>;
-  m_vectors = new asiAlgo_BaseCloud<float>;
-
-  // Take surface
-  Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
-
-  // Take face domain
-  double uMin, uMax, vMin, vMax;
-  BRepTools::UVBounds(face, uMin, uMax, vMin, vMax);
-  //
-  const double uStep = (uMax - uMin)*0.05;
-  const double vStep = (vMax - vMin)*0.05;
-
-  // Prepare classifier
-  asiAlgo_ClassifyPointFace classifier(face, BRep_Tool::Tolerance(face), 0.01);
-
-  // Sample points
-  double u = uMin;
-  bool uStop = false;
-  while ( !uStop )
-  {
-    if ( u > uMax )
-    {
-      u     = uMax;
-      uStop = true;
-    }
-
-    double v = vMin;
-    bool vStop = false;
-    while ( !vStop )
-    {
-      if ( v > vMax )
-      {
-        v     = vMax;
-        vStop = true;
-      }
-
-      // Perform point membership classification
-      asiAlgo_Membership pmc = classifier(gp_Pnt2d(u, v), NULL);
-      //
-      if ( pmc & Membership_InOn )
-      {
-        gp_Pnt P;
-        gp_Vec D1U, D1V;
-        surf->D1(u, v, P, D1U, D1V);
-        gp_Vec N = (D1U^D1V).Normalized();
-        //
-        m_points->AddElement( (float) P.X(), (float) P.Y(), (float) P.Z() );
-        m_vectors->AddElement( (float) N.X(), (float) N.Y(), (float) N.Z() );
-      }
-
-      v += vStep;
-    }
-
-    u += uStep;
-  }
+  if ( !asiAlgo_Utils::CalculateFaceNormals(face, m_points, m_vectors) )
+    return NULL;
 
   // Return
   return m_points;

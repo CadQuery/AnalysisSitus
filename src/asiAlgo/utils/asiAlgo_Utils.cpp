@@ -27,6 +27,7 @@
 #include <asiAlgo_Utils.h>
 
 // asiAlgo includes
+#include <asiAlgo_ClassifyPointFace.h>
 #include <asiAlgo_Timer.h>
 
 // OCCT includes
@@ -1854,4 +1855,73 @@ void asiAlgo_Utils::HexagonPoles(const gp_XY& center,
     res[i]->SetX(x);
     res[i]->SetY(y);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::CalculateFaceNormals(const TopoDS_Face&                face,
+                                         Handle(asiAlgo_BaseCloud<float>)& points,
+                                         Handle(asiAlgo_BaseCloud<float>)& vectors)
+{
+  // Take surface
+  Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
+  //
+  if ( surf.IsNull() )
+    return false;
+
+  // Prepare a point cloud as a result
+  points  = new asiAlgo_BaseCloud<float>;
+  vectors = new asiAlgo_BaseCloud<float>;
+
+  // Take face domain
+  double uMin, uMax, vMin, vMax;
+  BRepTools::UVBounds(face, uMin, uMax, vMin, vMax);
+  //
+  const double uStep = (uMax - uMin)*0.05;
+  const double vStep = (vMax - vMin)*0.05;
+
+  // Prepare classifier
+  asiAlgo_ClassifyPointFace classifier(face, BRep_Tool::Tolerance(face), 0.01);
+
+  // Sample points
+  double u = uMin;
+  bool uStop = false;
+  while ( !uStop )
+  {
+    if ( u > uMax )
+    {
+      u     = uMax;
+      uStop = true;
+    }
+
+    double v = vMin;
+    bool vStop = false;
+    while ( !vStop )
+    {
+      if ( v > vMax )
+      {
+        v     = vMax;
+        vStop = true;
+      }
+
+      // Perform point membership classification
+      asiAlgo_Membership pmc = classifier(gp_Pnt2d(u, v), NULL);
+      //
+      if ( pmc & Membership_InOn )
+      {
+        gp_Pnt P;
+        gp_Vec D1U, D1V;
+        surf->D1(u, v, P, D1U, D1V);
+        gp_Vec N = (D1U^D1V).Normalized();
+        //
+        points->AddElement( (float) P.X(), (float) P.Y(), (float) P.Z() );
+        vectors->AddElement( (float) N.X(), (float) N.Y(), (float) N.Z() );
+      }
+
+      v += vStep;
+    }
+
+    u += uStep;
+  }
+  return true;
 }

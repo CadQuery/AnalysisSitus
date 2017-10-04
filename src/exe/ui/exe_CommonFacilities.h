@@ -92,9 +92,9 @@ private:
 
   exe_CommonFacilities() //!< ctor.
   //
-    : asiUI_CommonFacilities (),
-      ObjectBrowser          (NULL),
-      ProgressListener       (NULL)
+  : asiUI_CommonFacilities (),
+    ObjectBrowser          (NULL),
+    ProgressListener       (NULL)
   {
     // Create Data Model
     Model = new asiEngine_Model;

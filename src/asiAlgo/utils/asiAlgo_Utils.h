@@ -27,7 +27,7 @@
 #define asiAlgo_Utils_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_BaseCloud.h>
 
 // Active Data (API) includes
 #include <ActAPI_ILogger.h>
@@ -402,6 +402,11 @@ public:
                  gp_XY&       P4,
                  gp_XY&       P5,
                  gp_XY&       P6);
+
+  asiAlgo_EXPORT static bool
+    CalculateFaceNormals(const TopoDS_Face&                face,
+                         Handle(asiAlgo_BaseCloud<float>)& points,
+                         Handle(asiAlgo_BaseCloud<float>)& vectors);
 
 private:
 

@@ -289,7 +289,6 @@ void exe_MainWindow::createDockWindows()
   // Load commands
   EXE_LOAD_MODULE("cmdMisc")
   EXE_LOAD_MODULE("cmdEngine")
-  EXE_LOAD_MODULE("cmdInspector")
 
   // Console window
   QDockWidget* pDockConsoleWindow;

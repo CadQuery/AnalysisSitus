@@ -142,7 +142,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiVisu)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiEngine)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiUI)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/exe)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdInspector)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdEngine)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdMisc)
 
@@ -171,7 +170,6 @@ set_property(TARGET setup            PROPERTY FOLDER Utilities)
 ################################################################################
 set_property(TARGET asiTcl           PROPERTY FOLDER Batch)
 ################################################################################
-set_property(TARGET cmdInspector     PROPERTY FOLDER Commands)
 set_property(TARGET cmdEngine        PROPERTY FOLDER Commands)
 set_property(TARGET cmdMisc          PROPERTY FOLDER Commands)
 ################################################################################

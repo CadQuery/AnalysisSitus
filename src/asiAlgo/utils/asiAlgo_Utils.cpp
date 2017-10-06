@@ -1526,11 +1526,11 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& Object,
 TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape&         Object,
                                        const TopTools_ListOfShape& Tools,
                                        const bool                  isParallel,
-                                       const double                fuzzy)
+                                       const double                fuzz)
 {
   BRepAlgoAPI_Cut API;
   //
-  return BooleanCut(Object, Tools, isParallel, fuzzy, API);
+  return BooleanCut(Object, Tools, isParallel, fuzz, API);
 }
 
 //-----------------------------------------------------------------------------
@@ -1538,7 +1538,7 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape&         Object,
 TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape&         Object,
                                        const TopTools_ListOfShape& Tools,
                                        const bool                  isParallel,
-                                       const double                fuzzy,
+                                       const double                fuzz,
                                        BRepAlgoAPI_Cut&            API)
 {
   // Prepare the arguments
@@ -1549,7 +1549,7 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape&         Object,
   API.SetArguments(Objects);
   API.SetTools(Tools);
   API.SetRunParallel(isParallel);
-  API.SetFuzzyValue(fuzzy);
+  API.SetFuzzyValue(fuzz);
 
   // Run the algorithm 
   API.Build(); 
@@ -1584,6 +1584,43 @@ TopoDS_Shape asiAlgo_Utils::BooleanFuse(const TopTools_ListOfShape& objects)
   }
 
   return result;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Performs general fuse operator on the given shapes.
+//! \param objects [in] shapes to fuse.
+//! \param fuzz    [in] fuzzy value.
+//! \return result of fuse.
+TopoDS_Shape asiAlgo_Utils::BooleanGeneralFuse(const TopTools_ListOfShape& objects,
+                                               const double                fuzz,
+                                               BOPAlgo_Builder&            API)
+{
+  const bool bRunParallel = false;
+
+  BOPAlgo_PaveFiller DSFiller;
+  DSFiller.SetArguments(objects);
+  DSFiller.SetRunParallel(bRunParallel);
+  DSFiller.SetFuzzyValue(fuzz);
+  DSFiller.Perform();
+  bool hasErr = DSFiller.HasErrors();
+  //
+  if ( hasErr )
+  {
+    return TopoDS_Shape();
+  }
+
+  API.SetArguments(objects);
+  API.SetRunParallel(bRunParallel);
+  API.PerformWithFiller(DSFiller);
+  hasErr = API.HasErrors();
+  //
+  if ( hasErr )
+  {
+    return TopoDS_Shape();
+  }
+
+  return API.Shape();
 }
 
 //-----------------------------------------------------------------------------

@@ -342,23 +342,28 @@ public:
   asiAlgo_EXPORT static TopoDS_Shape
     BooleanCut(const TopoDS_Shape& Object,
                const TopoDS_Shape& Tool,
-               const double        fuzzy = 0.0);
+               const double        fuzz = 0.0);
 
   asiAlgo_EXPORT static TopoDS_Shape
     BooleanCut(const TopoDS_Shape&         Object,
                const TopTools_ListOfShape& Tools,
                const bool                  isParallel,
-               const double                fuzzy = 0.0);
+               const double                fuzz = 0.0);
 
   asiAlgo_EXPORT static TopoDS_Shape
     BooleanCut(const TopoDS_Shape&         Object,
                const TopTools_ListOfShape& Tools,
                const bool                  isParallel,
-               const double                fuzzy,
+               const double                fuzz,
                BRepAlgoAPI_Cut&            API);
 
   asiAlgo_EXPORT static TopoDS_Shape
     BooleanFuse(const TopTools_ListOfShape& objects);
+
+  asiAlgo_EXPORT static TopoDS_Shape
+    BooleanGeneralFuse(const TopTools_ListOfShape& objects,
+                       const double                fuzz,
+                       BOPAlgo_Builder&            API);
 
   asiAlgo_EXPORT static void
     ExplodeBySolids(const TopoDS_Shape&   model,

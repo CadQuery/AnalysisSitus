@@ -30,6 +30,9 @@
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
+// asiUI includes
+#include <asiUI_CommonFacilities.h>
+
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
 
@@ -45,6 +48,8 @@
 #include <GeomAPI.hxx>
 #include <IntTools_FClass2d.hxx>
 #include <gp_Pln.hxx>
+#include <TopExp.hxx>
+#include <BRepAlgoAPI_Fuse.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -193,6 +198,34 @@ int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_PushPull(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  TopoDS_Shape
+    partShape = Handle(asiEngine_Model)::DownCast( interp->GetModel() )->GetPartNode()->GetShape();
+
+  int faceId = atoi(argv[1]); // 1-based
+
+  TopTools_IndexedMapOfShape M;
+  TopExp::MapShapes(partShape, TopAbs_FACE, M);
+  TopoDS_Shape faceShape = M.FindKey(faceId);
+
+  interp->GetPlotter().DRAW_SHAPE(faceShape, Color_Blue, 1.0, true, "faceShape");
+
+  gp_Vec offset = gp::DX().XYZ() * atof(argv[2]);
+
+  TopoDS_Shape prism = BRepPrimAPI_MakePrism(faceShape, offset);
+  interp->GetPlotter().REDRAW_SHAPE("prism", prism, Color_Blue);
+
+  TopoDS_Shape fused = BRepAlgoAPI_Fuse(prism, partShape);
+  interp->GetPlotter().REDRAW_SHAPE("fused", fused, Color_Green);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -218,6 +251,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t of OpenCascade. It cuts many cylinders from a hexagonal prism.",
     //
     __FILE__, group, MISC_TestHexagonBops);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("push-pull",
+    //
+    "push-pull faceId offset \n"
+    "\t Push/pull operation.",
+    //
+    __FILE__, group, MISC_PushPull);
 }
 
 // Declare entry point PLUGINFACTORY

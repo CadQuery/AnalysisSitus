@@ -79,7 +79,7 @@ int ENGINE_Explode(const Handle(asiTcl_Interp)& interp,
                    int                          argc,
                    const char**                 argv)
 {
-  if ( argc != 1 )
+  if ( argc != 1 && argc != 2 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -89,18 +89,60 @@ int ENGINE_Explode(const Handle(asiTcl_Interp)& interp,
   //
   TopoDS_Shape partShape = partNode->GetShape();
 
-  // Explode
-  TCollection_AsciiString basename = "exp ";
-  for ( TopoDS_Iterator it(partShape); it.More(); it.Next() )
+  if ( argc == 1 )
   {
-    const TopoDS_Shape& subShape = it.Value();
+    // Explode
+    for ( TopoDS_Iterator it(partShape); it.More(); it.Next() )
+    {
+      const TopoDS_Shape& subShape = it.Value();
 
-    // Generate name
-    TCollection_AsciiString name = basename + asiAlgo_Utils::ShapeTypeStr(subShape).c_str();
+      // Generate name
+      TCollection_AsciiString name = asiAlgo_Utils::ShapeTypeStr(subShape).c_str();
 
-    // Draw imperatively (populates Data Model)
-    interp->GetPlotter().DRAW_SHAPE(subShape, name);
-    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "\t%1" << name);
+      // Draw imperatively (populates Data Model)
+      interp->GetPlotter().DRAW_SHAPE(subShape, name);
+    }
+  }
+  else
+  {
+    // Get qualifier of sub-shape
+    TopAbs_ShapeEnum subshapeType;
+
+    if ( TCollection_AsciiString(argv[1]) == "-vertex" )
+      subshapeType = TopAbs_VERTEX;
+    //
+    else if ( TCollection_AsciiString(argv[1]) == "-edge" )
+      subshapeType = TopAbs_EDGE;
+    //
+    else if ( TCollection_AsciiString(argv[1]) == "-wire" )
+      subshapeType = TopAbs_WIRE;
+    //
+    else if ( TCollection_AsciiString(argv[1]) == "-face" )
+      subshapeType = TopAbs_FACE;
+    //
+    else if ( TCollection_AsciiString(argv[1]) == "-shell" )
+      subshapeType = TopAbs_SHELL;
+    //
+    else if ( TCollection_AsciiString(argv[1]) == "-solid" )
+      subshapeType = TopAbs_SOLID;
+    //
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected sub-shape qualifier.");
+      return TCL_ERROR;
+    }
+
+    // Explode
+    for ( TopExp_Explorer exp(partShape, subshapeType); exp.More(); exp.Next() )
+    {
+      const TopoDS_Shape& subShape = exp.Current();
+
+      // Generate name
+      TCollection_AsciiString name = asiAlgo_Utils::ShapeTypeStr(subShape).c_str();
+
+      // Draw imperatively (populates Data Model)
+      interp->GetPlotter().DRAW_SHAPE(subShape, name);
+    }
   }
 
   return TCL_OK;
@@ -514,8 +556,10 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("explode",
     //
-    "explode\n"
-    "\t Explodes active part to its direct children.",
+    "explode [-vertex|-edge|-wire|-face|-shell|-solid]\n"
+    "\t Explodes active part to sub-shapes of interest. If no sub-shape \n"
+    "\t qualifier is passed, this command explodes the part to its direct \n"
+    "\t children (e.g. edges for wire, wires for face, etc.).",
     //
     __FILE__, group, ENGINE_Explode);
 

@@ -603,6 +603,9 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
   m_bAllowSmooth      = allowSmooth;
   m_fSmoothAngularTol = smoothAngularTol;
 
+  if ( masterCAD.IsNull() )
+    return;
+
   //---------------------------------------------------------------------------
 
   ShapeAnalysis_Edge sae;

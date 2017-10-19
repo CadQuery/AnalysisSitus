@@ -61,9 +61,10 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   TopoDS_Shape masterShape = topograph->GetShape( topograph->GetRoot() );
 
   // Prepare maps of sub-shapes
-  const TopTools_IndexedMapOfShape& mapOfFaces    = topograph->GetMapOfFaces();
-  const TopTools_IndexedMapOfShape& mapOfEdges    = topograph->GetMapOfEdges();
-  const TopTools_IndexedMapOfShape& mapOfVertices = topograph->GetMapOfVertices();
+  const TopTools_IndexedMapOfShape& mapOfFaces     = topograph->GetMapOfFaces();
+  const TopTools_IndexedMapOfShape& mapOfEdges     = topograph->GetMapOfEdges();
+  const TopTools_IndexedMapOfShape& mapOfVertices  = topograph->GetMapOfVertices();
+  const TopTools_IndexedMapOfShape& mapOfSubshapes = topograph->GetMapOfSubShapes();
 
   // Array for groups
   vtkNew<vtkStringArray> groupArr;
@@ -104,6 +105,7 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     ShapeNodeMap.Bind(n, root_vid);
 
     // Sub-shape ID
+    int gid = mapOfSubshapes.FindIndex(shape);
     int pid = 0;
     if ( shape.ShapeType() == TopAbs_FACE )
       pid = mapOfFaces.FindIndex(shape);
@@ -114,10 +116,18 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     //
     idsArr->InsertNextValue(pid);
 
-    // Label
-    labelArr->InsertNextValue( asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str()
-                             + std::string(": ")
-                             + core::to_string(pid) );
+    // Prepare label
+    std::string label = asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str();
+    //
+    if ( pid )
+    {
+      label += std::string(": ");
+      label += core::to_string(pid);
+    }
+    label += std::string(" // GID: ");
+    label += core::to_string(gid);
+    //
+    labelArr->InsertNextValue(label);
 
     // Node type
     if ( shape.ShapeType() == TopAbs_COMPOUND )

@@ -117,14 +117,17 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     idsArr->InsertNextValue(pid);
 
     // Prepare label
-    std::string label = asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str();
+    std::string label = core::to_string(n);
+    //
+    label += " // ";
+    label += asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str();
     //
     if ( pid )
     {
       label += std::string(": ");
       label += core::to_string(pid);
     }
-    label += std::string(" // GID: ");
+    label += std::string(" // Sub-shape ID: ");
     label += core::to_string(gid);
     //
     labelArr->InsertNextValue(label);

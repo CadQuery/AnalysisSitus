@@ -512,6 +512,38 @@ int ENGINE_LoadStep(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_FaceAddr(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const int fidx = atoi(argv[1]);
+  //
+  if ( fidx < 1 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face index should be 1-based.");
+    return TCL_ERROR;
+  }
+
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get face
+  const TopoDS_Face& face = part_n->GetAAG()->GetFace(fidx);
+
+  // Output
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Face %1: %2"
+                                                        << fidx
+                                                        << asiAlgo_Utils::ShapeAddr(face).c_str() );
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
                         const Handle(Standard_Transient)& data)
 {
@@ -628,6 +660,14 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Loads STEP file to the active part.",
     //
     __FILE__, group, ENGINE_LoadStep);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("face-addr",
+    //
+    "face-addr faceIndex \n"
+    "\t Prints physical address of the given face.",
+    //
+    __FILE__, group, ENGINE_FaceAddr);
 }
 
 // Declare entry point PLUGINFACTORY

@@ -135,12 +135,7 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
       {
         QString nextStr = c.block().text(); // Check text at the next line
         //
-        if ( nextStr != READY_PROMPT ) // If that's not a prompt, then work as usually
-        {
-          // Add next prompt
-          this->addText(READY_PROMPT, true, false);
-        }
-        else
+        if ( nextStr == READY_PROMPT ) // If that's not a prompt, then work as usually
           this->setTextCursor(c); // If that's new line is a prompt, reuse it
       }
 

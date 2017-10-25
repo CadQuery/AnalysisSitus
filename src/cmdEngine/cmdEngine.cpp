@@ -42,6 +42,9 @@
 #include <asiUI_CommonFacilities.h>
 #include <asiUI_DialogCommands.h>
 
+// asiVisu includes
+#include <asiVisu_Utils.h>
+
 // OCCT includes
 #include <ShapeFix_Shape.hxx>
 #include <TopExp.hxx>
@@ -544,6 +547,114 @@ int ENGINE_FaceAddr(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_Erase(const Handle(asiTcl_Interp)& interp,
+                 int                          argc,
+                 const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find node
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
+    return TCL_ERROR;
+  }
+
+  // Hide
+  if ( cmdEngine::pViewerPart->PrsMgr()->IsPresented(node) )
+  {
+    cmdEngine::pViewerPart->PrsMgr()->DeRenderPresentation(node);
+  }
+  else
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[1]);
+
+  // Repaint
+  cmdEngine::pViewerPart->Repaint();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_DOnly(const Handle(asiTcl_Interp)& interp,
+                 int                          argc,
+                 const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find node
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
+    return TCL_ERROR;
+  }
+
+  // Display only
+  cmdEngine::pViewerPart->PrsMgr()->DeRenderAllPresentations();
+  //
+  if ( cmdEngine::pViewerPart->PrsMgr()->IsPresented(node) )
+  {
+    cmdEngine::pViewerPart->PrsMgr()->RenderPresentation(node);
+  }
+  else
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[1]);
+
+  // Repaint
+  cmdEngine::pViewerPart->Repaint();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_EraseAll(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  cmdEngine::pViewerPart->PrsMgr()->DeRenderAllPresentations();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_Fit(const Handle(asiTcl_Interp)& interp,
+               int                          argc,
+               const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  asiVisu_Utils::ResetCamera( cmdEngine::pViewerPart->PrsMgr()->GetRenderer(),
+                              cmdEngine::pViewerPart->PrsMgr()->PropsByTrihedron() );
+  //
+  asiVisu_Utils::AdjustCamera( cmdEngine::pViewerPart->PrsMgr()->GetRenderer(),
+                               cmdEngine::pViewerPart->PrsMgr()->PropsByTrihedron() );
+  //
+  cmdEngine::pViewerPart->Repaint();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
                         const Handle(Standard_Transient)& data)
 {
@@ -668,6 +779,38 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Prints physical address of the given face.",
     //
     __FILE__, group, ENGINE_FaceAddr);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("erase",
+    //
+    "erase varName \n"
+    "\t Hides object in viewer.",
+    //
+    __FILE__, group, ENGINE_Erase);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("donly",
+    //
+    "donly varName \n"
+    "\t Shows only the given object in viewer.",
+    //
+    __FILE__, group, ENGINE_DOnly);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("erase-all",
+    //
+    "erase-all \n"
+    "\t Erases all objects from the scene.",
+    //
+    __FILE__, group, ENGINE_EraseAll);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("fit",
+    //
+    "fit \n"
+    "\t Fits camera to the scene contents.",
+    //
+    __FILE__, group, ENGINE_Fit);
 }
 
 // Declare entry point PLUGINFACTORY

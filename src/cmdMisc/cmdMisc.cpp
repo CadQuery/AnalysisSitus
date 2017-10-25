@@ -324,7 +324,7 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
   // Create bounding box to draw it
   TopoDS_Shape bndbox = BRepPrimAPI_MakeBox( gp_Pnt(xMin, yMin, zMin), gp_Pnt(xMax, yMax, zMax) );
   //
-  interp->GetPlotter().DRAW_SHAPE(bndbox, Color_Yellow, 1.0, true, "bounding box");
+  interp->GetPlotter().REDRAW_SHAPE("bounding box", bndbox, Color_Yellow, 1.0, true);
 
   /* ======================
    *  Build section planes
@@ -345,9 +345,9 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
   maxDelta += maxDelta*0.1;
 
   // Draw
-  interp->GetPlotter().DRAW_SURFACE(nX_plane, maxDelta, maxDelta, Color_Red,   0.7, "nX_plane");
-  interp->GetPlotter().DRAW_SURFACE(nY_plane, maxDelta, maxDelta, Color_Green, 0.7, "nY_plane");
-  interp->GetPlotter().DRAW_SURFACE(nZ_plane, maxDelta, maxDelta, Color_Blue,  0.7, "nZ_plane");
+  interp->GetPlotter().REDRAW_SURFACE("nX_plane", nX_plane, maxDelta, maxDelta, Color_Red,   0.7);
+  interp->GetPlotter().REDRAW_SURFACE("nY_plane", nY_plane, maxDelta, maxDelta, Color_Green, 0.7);
+  interp->GetPlotter().REDRAW_SURFACE("nZ_plane", nZ_plane, maxDelta, maxDelta, Color_Blue,  0.7);
 
   // Choose the working section plane
   Handle(Geom_Plane) sectionPlane;
@@ -391,7 +391,7 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
   // Get result
   const TopoDS_Shape& resVols = mkSplit.Shape();
   //
-  interp->GetPlotter().REDRAW_SHAPE("resVols", resVols);
+  //interp->GetPlotter().REDRAW_SHAPE("resVols", resVols);
 
   // Get output solids: there should be two
   std::vector<TopoDS_Solid> solids;
@@ -401,9 +401,9 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
     solids.push_back( TopoDS::Solid( exp.Current() ) );
   }
   //
-  if ( solids.size() != 2 )
+  if ( solids.size() < 2 )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "BOP splitter is expected to return 2 solids while returned %1."
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "BOP splitter is expected to return several solids while returned %1."
                                                         << int ( solids.size() ) );
     return TCL_ERROR;
   }
@@ -426,19 +426,21 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
    *  Prepare deep copy to resolve non-manifold face
    * ================================================ */
 
-  solids[0] = TopoDS::Solid( BRepBuilderAPI_Copy(solids[0]) );
+  // This code is bad. It should be reworked to copy non-manifold face only
+  for ( size_t s = 0; s < solids.size(); ++s )
+    solids[s] = TopoDS::Solid( BRepBuilderAPI_Copy(solids[s]) );
 
   // Redraw
-  for ( size_t s = 0; s < solids.size(); ++s )
-  {
-    interp->GetPlotter().DRAW_SHAPE(solids[s], "spart");
-  }
+  //for ( size_t s = 0; s < solids.size(); ++s )
+  //{
+  //  interp->GetPlotter().DRAW_SHAPE(solids[s], "spart");
+  //}
 
   /* ======================================================
    *  Attribute solids as belonging to up/down half-spaces
    * ====================================================== */
 
-  TopoDS_Solid upSolid, downSolid;
+  std::vector<TopoDS_Solid> upSolids, downSolids;
 
   for ( size_t s = 0; s < solids.size(); ++s )
   {
@@ -450,14 +452,14 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
 
     // Classify wrt half-space
     if ( SignedDistance(sectionPlane->Pln(), P_mid) > 0 )
-      upSolid = solids[s];
+      upSolids.push_back(solids[s]);
     else
-      downSolid = solids[s];
+      downSolids.push_back(solids[s]);
   }
 
   // Redraw
-  interp->GetPlotter().REDRAW_SHAPE("upSolid", upSolid, Color_Red, 0.5);
-  interp->GetPlotter().REDRAW_SHAPE("downSolid", downSolid, Color_Blue, 0.5);
+  //interp->GetPlotter().REDRAW_SHAPE("upSolid", upSolid, Color_Red, 0.5);
+  //interp->GetPlotter().REDRAW_SHAPE("downSolid", downSolid, Color_Blue, 0.5);
 
   /* ======================================
    *  Move solids wrt the passed direction
@@ -468,14 +470,16 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
     // Prepare transformation
     gp_Trsf T; T.SetTranslation( gp_Vec( sectionPlane->Axis().Direction() )*offset );
 
-    upSolid = TopoDS::Solid( BRepBuilderAPI_Transform(upSolid, T, true) );
+    for ( size_t s = 0; s < upSolids.size(); ++s )
+      upSolids[s] = TopoDS::Solid( BRepBuilderAPI_Transform(upSolids[s], T, true) );
   }
   else if ( dir == dir_down )
   {
     // Prepare transformation
     gp_Trsf T; T.SetTranslation( gp_Vec( sectionPlane->Axis().Direction() ).Reversed()*offset );
 
-    downSolid = TopoDS::Solid( BRepBuilderAPI_Transform(downSolid, T, true) );
+    for ( size_t s = 0; s < downSolids.size(); ++s )
+      downSolids[s] = TopoDS::Solid( BRepBuilderAPI_Transform(downSolids[s], T, true) );
   }
   else if ( dir == dir_both )
   {
@@ -483,15 +487,28 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
     gp_Trsf T_down; T_down.SetTranslation( gp_Vec( sectionPlane->Axis().Direction() ).Reversed()*offset*0.5 );
     gp_Trsf T_up; T_up.SetTranslation( gp_Vec( sectionPlane->Axis().Direction() )*offset*0.5 );
 
-    downSolid = TopoDS::Solid( BRepBuilderAPI_Transform(downSolid, T_down, true) );
-    upSolid = TopoDS::Solid( BRepBuilderAPI_Transform(upSolid, T_up, true) );
+    for ( size_t s = 0; s < downSolids.size(); ++s )
+      downSolids[s] = TopoDS::Solid( BRepBuilderAPI_Transform(downSolids[s], T_down, true) );
+
+    for ( size_t s = 0; s < upSolids.size(); ++s )
+      upSolids[s] = TopoDS::Solid( BRepBuilderAPI_Transform(upSolids[s], T_up, true) );
   }
 
+  TopoDS_Compound upSolidsComp, downSolidsComp;
+  BRep_Builder().MakeCompound(upSolidsComp);
+  BRep_Builder().MakeCompound(downSolidsComp);
+  //
+  for ( size_t s = 0; s < upSolids.size(); ++s )
+    BRep_Builder().Add(upSolidsComp, upSolids[s]);
+  //
+  for ( size_t s = 0; s < downSolids.size(); ++s )
+    BRep_Builder().Add(downSolidsComp, downSolids[s]);
+
   // Redraw
-  interp->GetPlotter().REDRAW_SHAPE("upSolid_moved_shaded",   upSolid,   Color_Red,   0.5, false);
-  interp->GetPlotter().REDRAW_SHAPE("downSolid_moved_shaded", downSolid, Color_Blue,  0.5, false);
-  interp->GetPlotter().REDRAW_SHAPE("upSolid_moved",          upSolid,   Color_White, 1.0, true);
-  interp->GetPlotter().REDRAW_SHAPE("downSolid_moved",        downSolid, Color_White, 1.0, true);
+  {
+    interp->GetPlotter().REDRAW_SHAPE("upSolid_moved",   upSolidsComp,   Color_White, 1.0, true);
+    interp->GetPlotter().REDRAW_SHAPE("downSolid_moved", downSolidsComp, Color_White, 1.0, true);
+  }
 
   /* =====================
    *  Prepare tool object
@@ -532,7 +549,38 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
   //
   interp->GetPlotter().REDRAW_SHAPE("toolObj", toolObj, Color_Magenta);
 
-  // TODO: NYI
+  /* ===================================
+   *  Fuse tool object with other parts
+   * =================================== */
+
+  // Prepare objects to fuse
+  TopTools_ListOfShape objects2Fuse;
+  //
+  for ( TopoDS_Iterator it(upSolidsComp); it.More(); it.Next() )
+  {
+    objects2Fuse.Append( it.Value() );
+  }
+  //
+  for ( TopoDS_Iterator it(downSolidsComp); it.More(); it.Next() )
+  {
+    objects2Fuse.Append( it.Value() );
+  }
+  //
+  if ( toolObj.ShapeType() == TopAbs_COMPOUND )
+  {
+    for ( TopoDS_Iterator it(toolObj); it.More(); it.Next() )
+    {
+      objects2Fuse.Append( it.Value() );
+    }
+  }
+  else
+    objects2Fuse.Append(toolObj);
+
+  TopoDS_Shape result = asiAlgo_Utils::BooleanFuse(objects2Fuse);
+
+  asiAlgo_Utils::MaximizeFaces(result);
+
+  interp->GetPlotter().REDRAW_SHAPE("result", result);
 
   return TCL_OK;
 }

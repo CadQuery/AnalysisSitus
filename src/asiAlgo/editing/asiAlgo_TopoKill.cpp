@@ -206,6 +206,17 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
     }
 
     if ( !excludeSubshape )
+    {
+      // Have a look at the following shitty code. We have to reverse
+      // orientation a sub-shape, because TopoDS_Builder will reverse all
+      // sub-shapes of a REVERSED parent. To avoid this effect, we corrupt
+      // out shape here, in order to let TopoDS_Builder corrupt it again...
+      //
+      // For more, see issue #29264 in OpenCascade bugtracker.
+      if ( result.Orientation() == TopAbs_REVERSED )
+        newResult.Reverse();
+
       BB.Add(result, newResult);
+    }
   }
 }

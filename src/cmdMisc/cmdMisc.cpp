@@ -587,6 +587,42 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_TestBuilder(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  BRep_Builder BB;
+
+  // Construct any face
+  TopoDS_Face face;
+  BB.MakeFace(face);
+  face.Orientation(TopAbs_REVERSED);
+
+  // Construct any wire
+  TopoDS_Wire wire;
+  BB.MakeWire(wire);
+  wire.Orientation(TopAbs_REVERSED);
+
+  // Add wire to face
+  BB.Add(face, wire);
+
+  for ( TopoDS_Iterator it(face, false, false); it.More(); it.Next() )
+  {
+    // We don't care of internal/external here
+    std::cout << "Orientation of sub-shape is "
+              << (it.Value().Orientation() == TopAbs_FORWARD ? "forward" : "reversed");
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -631,6 +667,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t - offset: offset to apply (can be positive or negative).",
     //
     __FILE__, group, MISC_TestExtend);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-builder",
+    //
+    "test-builder \n"
+    "\t Reproducer for issue with BRep_Builder.",
+    //
+    __FILE__, group, MISC_TestBuilder);
 }
 
 // Declare entry point PLUGINFACTORY

@@ -712,6 +712,30 @@ bool asiAlgo_Utils::Bounds(const TopoDS_Shape& shape,
 
 //-----------------------------------------------------------------------------
 
+//! Calculates bounding box for the given triangulation.
+//! \param tris      [in]  input triangulation.
+//! \param XMin      [out] min X.
+//! \param YMin      [out] min Y.
+//! \param ZMin      [out] min Z.
+//! \param XMax      [out] max X.
+//! \param YMax      [out] max Y.
+//! \param ZMax      [out] max Z.
+//! \param tolerance [in]  tolerance to enlarge the bounding box with.
+//! \return false if bounding box is void.
+bool asiAlgo_Utils::Bounds(const Handle(Poly_Triangulation)& tris,
+                           double& XMin, double& YMin, double& ZMin,
+                           double& XMax, double& YMax, double& ZMax,
+                           const double tolerance)
+{
+  TopoDS_Face fictiveFace;
+  BRep_Builder().MakeFace(fictiveFace);
+  BRep_Builder().UpdateFace(fictiveFace, tris);
+
+  return Bounds(fictiveFace, XMin, YMin, ZMin, XMax, YMax, ZMax, tolerance);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Checks OCCT validity rules of the given shape.
 //! \param shape   [in] shape to check.
 //! \param Journal [in] Logger instance to cumulate all meaningful messages.

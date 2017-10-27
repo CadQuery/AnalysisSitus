@@ -277,6 +277,12 @@ public:
            const double tolerance = 0.0);
 
   asiAlgo_EXPORT static bool
+    Bounds(const Handle(Poly_Triangulation)& tris,
+           double& XMin, double& YMin, double& ZMin,
+           double& XMax, double& YMax, double& ZMax,
+           const double tolerance = 0.0);
+
+  asiAlgo_EXPORT static bool
     CheckShape(const TopoDS_Shape&  shape,
                ActAPI_ProgressEntry Journal);
 

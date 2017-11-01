@@ -32,8 +32,6 @@
 // asiData includes
 #include <asiData_PartNode.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_PartDataProvider, asiVisu_DataProvider)
-
 //! Data provider from Part Node to Presentation.
 class asiVisu_PartDataProvider : public asiVisu_DataProvider
 {

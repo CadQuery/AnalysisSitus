@@ -32,8 +32,6 @@
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_VectorsDataProvider, asiVisu_DataProvider)
-
 //! Data provider for a vector field.
 class asiVisu_VectorsDataProvider : public asiVisu_DataProvider
 {

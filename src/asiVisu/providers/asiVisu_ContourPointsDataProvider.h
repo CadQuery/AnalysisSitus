@@ -32,8 +32,6 @@
 // asiData includes
 #include <asiData_ContourNode.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_ContourPointsDataProvider, asiVisu_PointsDataProvider)
-
 //! Data provider for base points of a contour.
 class asiVisu_ContourPointsDataProvider : public asiVisu_PointsDataProvider
 {

@@ -26,11 +26,11 @@
 #ifndef asiVisu_IVPointSetDataProvider_h
 #define asiVisu_IVPointSetDataProvider_h
 
-// Visualization includes
-#include <asiData_IVPointSetNode.h>
+// asiVisu includes
 #include <asiVisu_PointsDataProvider.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_IVPointSetDataProvider, asiVisu_PointsDataProvider)
+// asiData includes
+#include <asiData_IVPointSetNode.h>
 
 //! Data provider for a point cloud represented in IV.
 class asiVisu_IVPointSetDataProvider : public asiVisu_PointsDataProvider

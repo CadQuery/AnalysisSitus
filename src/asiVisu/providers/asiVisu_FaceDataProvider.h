@@ -26,7 +26,7 @@
 #ifndef asiVisu_FaceDataProvider_h
 #define asiVisu_FaceDataProvider_h
 
-// A-Situs visualization includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 
 // asiData includes
@@ -34,8 +34,6 @@
 
 // OCCT includes
 #include <TopTools_IndexedMapOfShape.hxx>
-
-DEFINE_STANDARD_HANDLE(asiVisu_FaceDataProvider, asiVisu_DataProvider)
 
 //! Data provider for face geometry.
 class asiVisu_FaceDataProvider : public asiVisu_DataProvider

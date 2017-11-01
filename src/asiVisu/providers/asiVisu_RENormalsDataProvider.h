@@ -33,8 +33,6 @@
 #include <asiData_RENormalsNode.h>
 #include <asiData_REPointsNode.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_RENormalsDataProvider, asiVisu_VectorsDataProvider)
-
 //! Data provider for re-engineering normals.
 class asiVisu_RENormalsDataProvider : public asiVisu_VectorsDataProvider
 {

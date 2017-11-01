@@ -26,16 +26,14 @@
 #ifndef asiVisu_CurveDataProvider_h
 #define asiVisu_CurveDataProvider_h
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 
 // OCCT includes
 #include <Geom_Curve.hxx>
 #include <Geom2d_Curve.hxx>
 
-DEFINE_STANDARD_HANDLE(asiVisu_CurveDataProvider, asiVisu_DataProvider)
-
-//! Data provider for parametric curves.
+//! Data provider for parametric curves (either 3D or 2D).
 class asiVisu_CurveDataProvider : public asiVisu_DataProvider
 {
 public:

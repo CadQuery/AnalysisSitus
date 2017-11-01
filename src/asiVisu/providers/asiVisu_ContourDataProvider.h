@@ -26,13 +26,11 @@
 #ifndef asiVisu_ContourDataProvider_h
 #define asiVisu_ContourDataProvider_h
 
-// A-Situs visualization includes
+// asiVisu includes
 #include <asiVisu_ShapeDataProvider.h>
 
 // asiData includes
 #include <asiData_ContourNode.h>
-
-DEFINE_STANDARD_HANDLE(asiVisu_ContourDataProvider, asiVisu_ShapeDataProvider)
 
 //! Data provider for contour shape.
 class asiVisu_ContourDataProvider : public asiVisu_ShapeDataProvider

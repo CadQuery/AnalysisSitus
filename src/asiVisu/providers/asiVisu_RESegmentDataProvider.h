@@ -32,8 +32,6 @@
 // asiData includes
 #include <asiData_RESegmentNode.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_RESegmentDataProvider, asiVisu_PointsDataProvider)
-
 //! Data provider for a segment of re-engineering point cloud.
 class asiVisu_RESegmentDataProvider : public asiVisu_PointsDataProvider
 {

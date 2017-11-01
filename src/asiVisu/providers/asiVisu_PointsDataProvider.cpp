@@ -28,13 +28,12 @@
 
 //-----------------------------------------------------------------------------
 
-//! Constructor.
+//! Ctor.
 //! \param N [in] source Node.
 asiVisu_PointsDataProvider::asiVisu_PointsDataProvider(const Handle(ActAPI_INode)& N)
 : asiVisu_DataProvider(),
   m_node(N)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 

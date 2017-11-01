@@ -26,7 +26,7 @@
 #ifndef asiVisu_REContoursDataProvider_h
 #define asiVisu_REContoursDataProvider_h
 
-// A-Situs visualization includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 
 // asiData includes
@@ -34,8 +34,6 @@
 
 // OCCT includes
 #include <TopoDS_Wire.hxx>
-
-DEFINE_STANDARD_HANDLE(asiVisu_REContoursDataProvider, asiVisu_DataProvider)
 
 //! Data provider for re-engineering contours.
 class asiVisu_REContoursDataProvider : public asiVisu_DataProvider

@@ -26,14 +26,12 @@
 #ifndef asiVisu_MeshDataProvider_h
 #define asiVisu_MeshDataProvider_h
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 
 // Mesh (Active Data) includes
 #include <Mesh.h>
 #include <Mesh_Group.h>
-
-DEFINE_STANDARD_HANDLE(asiVisu_MeshDataProvider, asiVisu_DataProvider)
 
 //! Provides data necessary for visualization of mesh structures.
 class asiVisu_MeshDataProvider : public asiVisu_DataProvider

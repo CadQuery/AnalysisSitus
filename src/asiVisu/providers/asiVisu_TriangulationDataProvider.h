@@ -32,8 +32,6 @@
 // asiData includes
 #include <asiData_TriangulationNode.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_TriangulationDataProvider, asiVisu_DataProvider)
-
 //! Data provider from Triangulation Node to Presentation.
 class asiVisu_TriangulationDataProvider : public asiVisu_DataProvider
 {

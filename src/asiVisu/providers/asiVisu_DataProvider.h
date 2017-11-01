@@ -26,7 +26,7 @@
 #ifndef asiVisu_DataProvider_h
 #define asiVisu_DataProvider_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu.h>
 
 // Active Data (API) includes
@@ -35,8 +35,6 @@
 
 // Active Data (auxiliary) includes
 #include <ActAux_TimeStamp.h>
-
-DEFINE_STANDARD_HANDLE(asiVisu_DataProvider, Standard_Transient)
 
 //! The instances of this class are normally used to supply data to the VTK
 //! visualization pipelines. The main idea behind this class is to provide

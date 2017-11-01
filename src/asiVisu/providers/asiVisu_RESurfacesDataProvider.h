@@ -26,7 +26,7 @@
 #ifndef asiVisu_RESurfacesDataProvider_h
 #define asiVisu_RESurfacesDataProvider_h
 
-// A-Situs visualization includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 
 // asiData includes
@@ -34,8 +34,6 @@
 
 // OCCT includes
 #include <Geom_Surface.hxx>
-
-DEFINE_STANDARD_HANDLE(asiVisu_RESurfacesDataProvider, asiVisu_DataProvider)
 
 //! Data provider for re-engineering surfaces.
 class asiVisu_RESurfacesDataProvider : public asiVisu_DataProvider

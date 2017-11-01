@@ -35,8 +35,6 @@
 // OCCT includes
 #include <TColStd_HPackedMapOfInteger.hxx>
 
-DEFINE_STANDARD_HANDLE(asiVisu_PointsDataProvider, asiVisu_DataProvider)
-
 //! Data provider for a single point cloud.
 class asiVisu_PointsDataProvider : public asiVisu_DataProvider
 {

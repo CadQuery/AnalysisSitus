@@ -26,13 +26,11 @@
 #ifndef asiVisu_ShapeDataProvider_h
 #define asiVisu_ShapeDataProvider_h
 
-// A-Situs visualization includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 
 // OCCT includes
 #include <TColStd_HPackedMapOfInteger.hxx>
-
-DEFINE_STANDARD_HANDLE(asiVisu_ShapeDataProvider, asiVisu_DataProvider)
 
 //! Data provider from geometry Node to Presentation.
 class asiVisu_ShapeDataProvider : public asiVisu_DataProvider

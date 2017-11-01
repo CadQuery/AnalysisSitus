@@ -26,7 +26,7 @@
 #ifndef asiVisu_EdgeDataProvider_h
 #define asiVisu_EdgeDataProvider_h
 
-// A-Situs visualization includes
+// asiVisu includes
 #include <asiVisu_CurveDataProvider.h>
 
 // asiData includes
@@ -35,8 +35,6 @@
 // OCCT includes
 #include <TopoDS_Edge.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
-
-DEFINE_STANDARD_HANDLE(asiVisu_EdgeDataProvider, asiVisu_CurveDataProvider)
 
 //! Data provider for edge geometry.
 class asiVisu_EdgeDataProvider : public asiVisu_CurveDataProvider

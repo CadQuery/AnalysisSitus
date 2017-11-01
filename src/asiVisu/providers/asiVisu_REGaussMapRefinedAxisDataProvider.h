@@ -32,8 +32,6 @@
 // asiData includes
 #include <asiData_REGaussMapNode.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_REGaussMapRefinedAxisDataProvider, asiVisu_VectorsDataProvider)
-
 //! Data provider for a refined axis vector stored in re-engineering Gauss map.
 class asiVisu_REGaussMapRefinedAxisDataProvider : public asiVisu_VectorsDataProvider
 {

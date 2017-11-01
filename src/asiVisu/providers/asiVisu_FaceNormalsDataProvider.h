@@ -32,8 +32,6 @@
 // asiData includes
 #include <asiData_PartNode.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_FaceNormalsDataProvider, asiVisu_VectorsDataProvider)
-
 //! Data provider for b-rep face normals.
 class asiVisu_FaceNormalsDataProvider : public asiVisu_VectorsDataProvider
 {

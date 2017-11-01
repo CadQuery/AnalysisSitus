@@ -26,10 +26,8 @@
 #ifndef asiVisu_IVCurveDataProvider_h
 #define asiVisu_IVCurveDataProvider_h
 
-// A-Situs visualization includes
+// asiVisu includes
 #include <asiVisu_CurveDataProvider.h>
-
-DEFINE_STANDARD_HANDLE(asiVisu_IVCurveDataProvider, asiVisu_CurveDataProvider)
 
 //! Data provider for a single curve in IV.
 class asiVisu_IVCurveDataProvider : public asiVisu_CurveDataProvider

@@ -26,13 +26,11 @@
 #ifndef asiVisu_REPointsDataProvider_h
 #define asiVisu_REPointsDataProvider_h
 
-// A-Situs visualization includes
+// asiVisu includes
 #include <asiVisu_PointsDataProvider.h>
 
 // asiData includes
 #include <asiData_REPointsNode.h>
-
-DEFINE_STANDARD_HANDLE(asiVisu_REPointsDataProvider, asiVisu_PointsDataProvider)
 
 //! Data provider for re-engineering point cloud.
 class asiVisu_REPointsDataProvider : public asiVisu_PointsDataProvider

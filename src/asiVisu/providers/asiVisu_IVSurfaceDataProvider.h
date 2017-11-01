@@ -26,13 +26,11 @@
 #ifndef asiVisu_IVSurfaceDataProvider_h
 #define asiVisu_IVSurfaceDataProvider_h
 
-// A-Situs visualization includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 
 // OCCT includes
 #include <Geom_Surface.hxx>
-
-DEFINE_STANDARD_HANDLE(asiVisu_IVSurfaceDataProvider, asiVisu_DataProvider)
 
 //! Data provider for a surface in IV.
 class asiVisu_IVSurfaceDataProvider : public asiVisu_DataProvider

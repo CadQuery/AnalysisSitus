@@ -180,7 +180,7 @@ add_executable(BRepInspectorExe ${ui_moc_files} ${src_files} ${RCC_FILE})
 set (X_COMPILER_BITNESS "x${COMPILER_BITNESS}")
 
 configure_file(${CMAKE_SOURCE_DIR}/cmake/templates/BRepInspectorExe.vcxproj.user.in
-               ${exe_BINARY_DIR}/BRepInspectorExe.vcxproj.user @ONLY)
+               ${BRepInspectorExe_BINARY_DIR}/BRepInspectorExe.vcxproj.user @ONLY)
 
 #------------------------------------------------------------------------------
 # Dependencies

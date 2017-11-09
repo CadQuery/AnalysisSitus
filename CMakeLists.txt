@@ -8,7 +8,7 @@ set (INSTALL_DIR "" CACHE PATH "Where to install" )
 set (CMAKE_INSTALL_PREFIX "${INSTALL_DIR}" CACHE INTERNAL "" FORCE )
 
 # Path to data files for testing
-set (TEST_DATA_DIR "" CACHE PATH "Directory with data for unit-testing" )
+# set (TEST_DATA_DIR "" CACHE PATH "Directory with data for unit-testing" )
 
 # Build configurations
 set (CMAKE_CONFIGURATION_TYPES Release Debug RelWithDebInfo CACHE INTERNAL "" FORCE)

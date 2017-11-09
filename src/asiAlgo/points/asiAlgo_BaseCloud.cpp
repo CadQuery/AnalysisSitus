@@ -181,17 +181,27 @@ Handle(asiAlgo_BaseCloud<TCoordType>)
     result->AddElement(x, y, z);
   }
 
-  // Return
   return result;
 }
 
 //-----------------------------------------------------------------------------
 
-//! Reads base cloud recorded in the input file with common XYZ format. That
-//! is, the file contains just coordinate triples without any additional
-//! structuring information.
-//! \param filename [in] file to read.
-//! \return true in case of success, false -- otherwise.
+template <typename TCoordType>
+void asiAlgo_BaseCloud<TCoordType>::Merge(const Handle(asiAlgo_BaseCloud<TCoordType>)& cloud)
+{
+  const int nElems2Add = cloud->GetNumberOfElements();
+  //
+  for ( int e = 0; e < nElems2Add; ++e )
+  {
+    TCoordType x, y, z;
+    cloud->GetElement(e, x, y, z);
+
+    this->AddElement(x, y, z);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 template <typename TCoordType>
 bool asiAlgo_BaseCloud<TCoordType>::Load(const char* filename)
 {
@@ -226,9 +236,6 @@ bool asiAlgo_BaseCloud<TCoordType>::Load(const char* filename)
 
 //-----------------------------------------------------------------------------
 
-//! Writes base cloud to file with given filename.
-//! \param filename [in] file to write into.
-//! \return true in case of success, false -- otherwise.
 template <typename TCoordType>
 bool asiAlgo_BaseCloud<TCoordType>::SaveAs(const char* filename) const
 {

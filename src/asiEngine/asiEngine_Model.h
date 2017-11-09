@@ -26,10 +26,10 @@
 #ifndef asiEngine_Model_h
 #define asiEngine_Model_h
 
-// A-Situs includes
+// asiEngine includes
 #include <asiEngine.h>
 
-// A-Situs (data) includes
+// asiData includes
 #include <asiData_BoundaryEdgesNode.h>
 #include <asiData_IVCurveNode.h>
 #include <asiData_IVCurvesNode.h>

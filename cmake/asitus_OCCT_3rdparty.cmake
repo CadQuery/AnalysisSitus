@@ -10,10 +10,9 @@ ASITUS_THIRDPARTY_PRODUCT("freeimage" "" "FreeImage.h" "FreeImage")
 if (3RDPARTY_freeimage_DIR AND NOT 3RDPARTY_freeimageplus_DIR)
   set (3RDPARTY_freeimageplus_DIR "${3RDPARTY_freeimage_DIR}" CACHE PATH "The directory containing freeimageplus" FORCE)
 endif()
-ASITUS_THIRDPARTY_PRODUCT("freeimageplus" "" "FreeImagePlus.h" "FreeImagePlus")
 
+ASITUS_THIRDPARTY_PRODUCT("freeimageplus" "" "FreeImagePlus.h" "FreeImagePlus")
 ASITUS_THIRDPARTY_PRODUCT("freetype" "" "ft2build.h" "freetype")
-ASITUS_THIRDPARTY_PRODUCT("gl2ps" "" "gl2ps.h" "gl2ps")
 ASITUS_THIRDPARTY_PRODUCT("tbb" "tbb" "tbb.h" "tbb")
 
 #--------------------------------------------------------------------------

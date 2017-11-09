@@ -84,11 +84,22 @@ public:
   asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<TCoordType>)
     ExtractRegion(const asiAlgo_CloudRegion& region) const;
 
+  asiAlgo_EXPORT void
+    Merge(const Handle(asiAlgo_BaseCloud<TCoordType>)& cloud);
+
 public:
 
+  //! Reads base cloud recorded in the input file with common XYZ format. That
+  //! is, the file contains just coordinate triples without any additional
+  //! structuring information.
+  //! \param filename [in] file to read.
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     Load(const char* filename);
 
+  //! Writes base cloud to file with given filename.
+  //! \param filename [in] file to write into.
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     SaveAs(const char* filename) const;
 

@@ -36,8 +36,7 @@
 #include <ActAPI_IProgressNotifier.h>
 
 // TBB includes
-#include <concurrent_unordered_map.h>
-#include <task.h>
+#include <atomic.h>
 
 // QT includes
 #pragma warning(push, 0)
@@ -46,21 +45,7 @@
 
 //-----------------------------------------------------------------------------
 
-//! Task-oriented progress accumulator providing a simple mean of collecting
-//! information about execution progress. Each logical task (e.g. Intel
-//! TBB one) publishes its current unitless progress value into a dedicated
-//! slot of Notifier instance. In order to consult the current percentage of
-//! execution completeness, one should sum up the overall progress values by
-//! the entire collection of slots and compare it against the declared
-//! collector's capacity. This approach appeals to the simplest case of
-//! fully deterministic progress indication, when the number of algorithmic
-//! steps is known a priori. If not, you may choose to keep a default value
-//! for capacity (infinite number). In the latter case, the capacity is
-//! suggested as "unknown" and you can just report the number of processed
-//! data chunks instead of percentage calculation.
-//!
-//! Besides pure accumulation purposes, this class also provides mechanism of
-//! messaging based on Qt signals.
+//! Progress notification tool.
 class asiUI_ProgressNotifier : public ActAPI_IProgressNotifier
 {
   class Signal;
@@ -136,14 +121,13 @@ public:
 public:
 
   asiUI_EXPORT virtual int
-    SummaryProgress() const;
-
-  asiUI_EXPORT void
-    DumpProgressMap(Standard_OStream& out) const;
+    CurrentProgress() const;
 
   asiUI_EXPORT virtual void
-    StepProgress(const int taskID,
-                 const int progressStep);
+    StepProgress(const int progressStep);
+
+  asiUI_EXPORT virtual void
+    SetProgress(const int progress);
 
   asiUI_EXPORT virtual void
     SendLogMessage(const TCollection_AsciiString&  message,
@@ -154,18 +138,11 @@ public:
   asiUI_EXPORT virtual void
     SendLogMessage(const ActAPI_LogStream& logStream);
 
-private:
-
-  //! Short-cut for the used type of concurrent collection. We use TBB
-  //! UNORDERED MAP in order to be able to safely iterate and change its
-  //! buckets concurrently.
-  typedef tbb::concurrent_unordered_map<int, int> CMap;
-
 // Concurrent collections:
 private:
 
-  //! Storage for cumulative progress.
-  CMap m_CMap;
+  //! Storage for progress.
+  tbb::atomic<int> m_iProgress;
 
   //! Storage for logging messages.
   Handle(asiAlgo_Logger) m_logger;

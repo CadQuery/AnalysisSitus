@@ -46,8 +46,6 @@ asiUI_ProgressNotifier::asiUI_ProgressNotifier()
 //! Resets Progress Notifier.
 void asiUI_ProgressNotifier::Reset()
 {
-  // Clean up the cumulative collections
-  m_CMap.clear();
   m_logger->Clear();
 
   // Reset other members
@@ -55,6 +53,7 @@ void asiUI_ProgressNotifier::Reset()
   m_iCapacity       = 0;
   m_msgKey          = TCollection_AsciiString();
   m_bIsCancellation = false;
+  m_iProgress       = 0;
 
   // Inform observers that progress is reset
   m_pSignal->EmitStatusChanged(Progress_Undefined);
@@ -66,9 +65,6 @@ void asiUI_ProgressNotifier::Reset()
 //! \param capacity [in] capacity value to set.
 void asiUI_ProgressNotifier::Init(const int capacity)
 {
-  // Clean up the cumulative collections
-  m_CMap.clear();
-
   // NOTICE:
   // --------------------------------------------------------------------
   // Notice that we do not clean up the internal Logger here as it might
@@ -78,6 +74,7 @@ void asiUI_ProgressNotifier::Init(const int capacity)
   // Reset other members
   m_status    = Progress_Running;
   m_iCapacity = capacity;
+  m_iProgress = 0;
 
   // Inform observers that progress gets running
   m_pSignal->EmitStatusChanged(Progress_Running);
@@ -160,43 +157,27 @@ bool asiUI_ProgressNotifier::IsFailed()
  *  Section: Thread-safe methods
  * ========================================================================= */
 
-//! Collects the currently cumulated progress summing up the progress
-//! values for all registered tasks.
-//! \return cumulative progress value.
-int asiUI_ProgressNotifier::SummaryProgress() const
+//! \return current progress.
+int asiUI_ProgressNotifier::CurrentProgress() const
 {
-  int result = 0;
-  //
-  for ( CMap::const_iterator cit = m_CMap.begin(); cit != m_CMap.end(); cit++ )
-  {
-    result += cit->second;
-  }
-
-  return result;
+  return m_iProgress;
 }
 
-//! Dumps the contents of the internal thread-safe collector slots to the
-//! passed output stream.
-//! \param out [in/out] output stream to dump data to.
-void asiUI_ProgressNotifier::DumpProgressMap(Standard_OStream& out) const
-{
-  for ( CMap::const_iterator cit = m_CMap.begin(); cit != m_CMap.end(); cit++ )
-  {
-    out << cit->first << " :: " << cit->second << "\n";
-  }
-}
-
-//! Use this method to report the next progress value in your task. The passed
-//! value will be added into cumulative progress collection.
-//! \param taskID       [in] ID of the task reporting the progress.
+//! Use this method to report the next progress value.
 //! \param stepProgress [in] next progress value.
-void asiUI_ProgressNotifier::StepProgress(const int taskID,
-                                          const int stepProgress)
+void asiUI_ProgressNotifier::StepProgress(const int stepProgress)
 {
-  if ( m_CMap.find(taskID) == m_CMap.end() )
-    m_CMap[taskID] = stepProgress;
-  else
-    m_CMap[taskID] += stepProgress;
+  m_iProgress += stepProgress;
+
+  // Inform observers that progress value is updated
+  m_pSignal->EmitProgressUpdated();
+}
+
+//! Use this method to report the next progress value.
+//! \param progress [in] next progress value.
+void asiUI_ProgressNotifier::SetProgress(const int progress)
+{
+  m_iProgress = progress;
 
   // Inform observers that progress value is updated
   m_pSignal->EmitProgressUpdated();

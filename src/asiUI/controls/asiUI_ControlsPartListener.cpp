@@ -249,7 +249,7 @@ void asiUI_ControlsPartListener::reinitializeEverything()
   m_wViewerSurface->Repaint();
   m_wViewerDomain->Repaint();
 
-  m_notifier.StepProgress(1, 1);
+  m_notifier.StepProgress(1);
   m_notifier.SetProgressStatus(Progress_Succeeded);
 }
 

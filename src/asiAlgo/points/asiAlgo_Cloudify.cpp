@@ -137,9 +137,8 @@ bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape&                model,
       u += uStep;
     }
 
-    { // Progress [begin]
-      this->Progress().StepProgress(1, 1);
-    } // Progress [end]
+    // Progress
+    this->Progress().StepProgress(1);
   }
 
   return true;

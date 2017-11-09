@@ -218,7 +218,7 @@ void asiUI_ControlsPart::onLoadBRep()
     return;
   }
   m_notifier.SendLogMessage( LogInfo(Normal) << "Part loaded from BREP file %1." << QStr2AsciiStr(filename) );
-  m_notifier.StepProgress(1, 1);
+  m_notifier.StepProgress(1);
   m_notifier.SetMessageKey("Update accelerating structures");
 
   // Clean up the Model
@@ -231,7 +231,7 @@ void asiUI_ControlsPart::onLoadBRep()
   }
   m_model->CommitCommand(); // tx commit
   //
-  m_notifier.StepProgress(1, 1);
+  m_notifier.StepProgress(1);
   m_notifier.SetProgressStatus(Progress_Succeeded);
 
   // Notify
@@ -256,7 +256,7 @@ void asiUI_ControlsPart::onAddBRep()
     return;
   }
   m_notifier.SendLogMessage( LogInfo(Normal) << "Part loaded from BREP file %1" << QStr2AsciiStr(filename) );
-  m_notifier.StepProgress(1, 1);
+  m_notifier.StepProgress(1);
   m_notifier.SetMessageKey("Update accelerating structures");
 
   // Get existing CAD part
@@ -275,7 +275,7 @@ void asiUI_ControlsPart::onAddBRep()
   }
   m_model->CommitCommand(); // tx commit
   //
-  m_notifier.StepProgress(1, 1);
+  m_notifier.StepProgress(1);
   m_notifier.SetProgressStatus(Progress_Succeeded);
 
   // Notify

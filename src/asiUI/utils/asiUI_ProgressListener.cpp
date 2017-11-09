@@ -114,7 +114,7 @@ void asiUI_ProgressListener::onStep()
     const int Capacity = m_notifier->Capacity();
     if ( Capacity )
     {
-      double Progress = (double) m_notifier->SummaryProgress() / Capacity;
+      double Progress = (double) m_notifier->CurrentProgress() / Capacity;
 
       pStatusBar->UpdateProgress(Progress * 100);
     }
@@ -123,7 +123,7 @@ void asiUI_ProgressListener::onStep()
   }
   else
   {
-    int Progress = m_notifier->SummaryProgress();
+    int Progress = m_notifier->CurrentProgress();
 
     // Enrich message with summary step
     TCollection_AsciiString Msg = m_notifier->MessageKey();

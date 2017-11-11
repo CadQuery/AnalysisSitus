@@ -38,7 +38,7 @@
 Handle(TColStd_HArray1OfReal)
   asiAlgo_PointCloudUtils::AsRealArray(const Handle(asiAlgo_BaseCloud<double>)& pointCloud)
 {
-  if ( pointCloud.IsNull() )
+  if ( pointCloud.IsNull() || pointCloud->IsEmpty() )
     return NULL;
 
   Handle(TColStd_HArray1OfReal)
@@ -55,7 +55,7 @@ Handle(TColStd_HArray1OfReal)
 Handle(TColStd_HArray1OfReal)
   asiAlgo_PointCloudUtils::AsRealArray(const Handle(asiAlgo_BaseCloud<float>)& pointCloud)
 {
-  if ( pointCloud.IsNull() )
+  if ( pointCloud.IsNull() || pointCloud->IsEmpty() )
     return NULL;
 
   Handle(TColStd_HArray1OfReal)

@@ -68,6 +68,9 @@ public:
   asiAlgo_EXPORT int
     GetNumberOfElements() const;
 
+  asiAlgo_EXPORT bool
+    IsEmpty() const;
+
   asiAlgo_EXPORT void
     AddElement(const TCoordType x, const TCoordType y, const TCoordType z);
 

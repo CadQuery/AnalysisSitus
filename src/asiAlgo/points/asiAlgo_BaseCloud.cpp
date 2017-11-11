@@ -75,6 +75,14 @@ int asiAlgo_BaseCloud<TCoordType>::GetNumberOfElements() const
 //-----------------------------------------------------------------------------
 
 template <typename TCoordType>
+bool asiAlgo_BaseCloud<TCoordType>::IsEmpty() const
+{
+  return m_coords.size() == 0;
+}
+
+//-----------------------------------------------------------------------------
+
+template <typename TCoordType>
 void asiAlgo_BaseCloud<TCoordType>::AddElement(const TCoordType x,
                                                const TCoordType y,
                                                const TCoordType z)

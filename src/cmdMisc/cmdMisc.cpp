@@ -56,6 +56,7 @@
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepPrimAPI_MakePrism.hxx>
+#include <BRepTools.hxx>
 #include <GeomAPI.hxx>
 #include <gp_Pln.hxx>
 #include <IntTools_FClass2d.hxx>
@@ -233,11 +234,28 @@ int MISC_PushPull(const Handle(asiTcl_Interp)& interp,
 
   TopTools_IndexedMapOfShape M;
   TopExp::MapShapes(partShape, TopAbs_FACE, M);
-  TopoDS_Shape faceShape = M.FindKey(faceId);
+  TopoDS_Face faceShape = TopoDS::Face( M.FindKey(faceId) );
 
   interp->GetPlotter().DRAW_SHAPE(faceShape, Color_Blue, 1.0, true, "faceShape");
 
-  gp_Vec offset = gp::DX().XYZ() * atof(argv[2]);
+  Handle(Geom_Surface) surf = BRep_Tool::Surface(faceShape);
+
+  double uMin, uMax, vMin, vMax;
+  BRepTools::UVBounds(faceShape, uMin, uMax, vMin, vMax);
+
+  double uMid = (uMin + uMax)*0.5;
+  double vMid = (vMin + vMax)*0.5;
+
+  gp_Pnt P;
+  gp_Vec dS_dU, dS_dV;
+  surf->D1(uMid, vMid, P, dS_dU, dS_dV);
+
+  gp_Dir norm = dS_dU^dS_dV;
+
+  if ( faceShape.Orientation() == TopAbs_REVERSED )
+    norm.Reverse();
+
+  gp_Vec offset = norm.XYZ() * atof(argv[2]);
 
   TopoDS_Shape prism = BRepPrimAPI_MakePrism(faceShape, offset);
   interp->GetPlotter().REDRAW_SHAPE("prism", prism, Color_Blue);

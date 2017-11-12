@@ -37,9 +37,6 @@
 // OCCT includes
 #include <TopAbs_ShapeEnum.hxx>
 
-// Mobius includes
-#include <mobius/core.h>
-
 // VTK includes
 #include <vtkAbstractArray.h>
 #include <vtkColor.h>

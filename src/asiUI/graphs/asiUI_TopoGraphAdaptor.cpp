@@ -42,9 +42,6 @@
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 
-// Mobius includes
-#include <mobius/core.h>
-
 // VTK includes
 #include <vtkIntArray.h>
 #include <vtkNew.h>
@@ -122,7 +119,7 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     idsArr->InsertNextValue(pid);
 
     // Prepare label
-    std::string label = core::to_string(n);
+    std::string label = asiAlgo_Utils::ToString(n);
     //
     label += " // ";
     label += asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str();
@@ -130,10 +127,10 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     if ( pid )
     {
       label += std::string(": ");
-      label += core::to_string(pid);
+      label += asiAlgo_Utils::ToString(pid);
     }
     label += std::string(" // Sub-shape ID: ");
-    label += core::to_string(gid);
+    label += asiAlgo_Utils::ToString(gid);
     //
     labelArr->InsertNextValue(label);
 

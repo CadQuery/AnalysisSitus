@@ -392,7 +392,6 @@ include_directories ( ${asiUI_include_dir_loc}
                       ${3RDPARTY_OCCT_INCLUDE_DIR}
                       ${3RDPARTY_tcl_INCLUDE_DIR}
                       ${3RDPARTY_active_data_INCLUDE_DIR}
-                      ${3RDPARTY_mobius_INCLUDE_DIR}
                       ${3RDPARTY_EIGEN_DIR}
                       ${3RDPARTY_vtk_INCLUDE_DIR}
                       ${3RDPARTY_tbb_INCLUDE_DIR} )

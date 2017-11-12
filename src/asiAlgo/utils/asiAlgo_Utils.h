@@ -38,9 +38,6 @@
 #include <ActAPI_ILogger.h>
 #include <ActAPI_IProgressNotifier.h>
 
-// Mobius includes
-#include <mobius/core.h>
-
 // OCCT includes
 #include <BRep_Tool.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
@@ -77,6 +74,31 @@
 class asiAlgo_Utils
 {
 public:
+
+  //! Extracts substring from the passed source.
+  //! \param source [in] input string to extract substring from.
+  //! \param idx_F  [in] 0-based index to start extraction from (inclusively).
+  //! \param length [in] number of characters to extract.
+  //! \return resulting substring.
+  static std::string SubStr(const std::string& source,
+                            const int          idx_F,
+                            const int          length)
+  {
+    return source.substr(idx_F, length);
+  }
+
+  //! Converts the passed value to string. This function is used to
+  //! substitute std::to_string() for compilers incompatible with
+  //! C++ 11.
+  //! \param value [in] value to convert.
+  //! \return string.
+  template <typename T>
+  static std::string ToString(T value)
+  {
+    std::ostringstream os;
+    os << value;
+    return os.str();
+  }
 
   //! Returns geometry of a face as a string label.
   //! \param face [in] face to inspect.
@@ -221,7 +243,7 @@ public:
       pos++;
 
     if ( pos )
-      addr_str = core::substr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
+      addr_str = SubStr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
 
     return addr_str;
   }

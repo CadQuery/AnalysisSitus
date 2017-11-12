@@ -242,9 +242,12 @@ Handle(ActAPI_INode) asiEngine_Model::getRootNode() const
 //! in Copy/Paste operation.
 //! \param FuncGUIDs [in/out] Function GUIDs to pass.
 //! \param Refs      [in/out] Reference Parameters to pass.
-void asiEngine_Model::invariantCopyRefs(ActAPI_FuncGUIDStream&         asiEngine_NotUsed(FuncGUIDs),
-                                        ActAPI_ParameterLocatorStream& asiEngine_NotUsed(Refs)) const
-{}
+void asiEngine_Model::invariantCopyRefs(ActAPI_FuncGUIDStream&         FuncGUIDs,
+                                        ActAPI_ParameterLocatorStream& Refs) const
+{
+  asiEngine_NotUsed(FuncGUIDs);
+  asiEngine_NotUsed(Refs);
+}
 
 //-----------------------------------------------------------------------------
 

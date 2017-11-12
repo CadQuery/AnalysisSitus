@@ -38,9 +38,6 @@ include (${CMAKE_SOURCE_DIR}/cmake/asitus_Qt.cmake)
 # Active Data
 include (${CMAKE_SOURCE_DIR}/cmake/asitus_ActiveData.cmake)
 
-# Mobius
-include (${CMAKE_SOURCE_DIR}/cmake/asitus_Mobius.cmake)
-
 # Eigen
 include (${CMAKE_SOURCE_DIR}/cmake/asitus_Eigen.cmake)
 

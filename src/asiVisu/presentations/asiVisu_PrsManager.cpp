@@ -39,9 +39,6 @@
 #include <asiVisu_Selection.h>
 #include <asiVisu_Utils.h>
 
-// Mobius includes
-#include <mobius/core.h>
-
 // VTK includes
 #include <vtkCamera.h>
 #include <vtkCellData.h>
@@ -82,7 +79,7 @@
       pos++;
 
     if ( pos )
-      addr_str = core::substr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
+      addr_str = asiAlgo_Utils::SubStr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
 
     return addr_str;
   }

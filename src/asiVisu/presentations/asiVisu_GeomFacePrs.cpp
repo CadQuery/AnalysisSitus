@@ -282,6 +282,8 @@ void asiVisu_GeomFacePrs::highlight(vtkRenderer*                  theRenderer,
                                     const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
+  asiVisu_NotUsed(thePickRes);
+  asiVisu_NotUsed(theSelNature);
 
   //// Get target actor which is the only sensitive
   //Handle(asiVisu_Pipeline) poles_pl = this->GetPipeline(Pipeline_Main);
@@ -333,6 +335,7 @@ void asiVisu_GeomFacePrs::unHighlight(vtkRenderer*                  theRenderer,
                                       const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
+  asiVisu_NotUsed(theSelNature);
 
   //// Access pipeline for highlighting
   //Handle(asiVisu_FaceDomainPipeline) hili_pl;

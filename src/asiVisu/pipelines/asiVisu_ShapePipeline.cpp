@@ -123,9 +123,6 @@ void asiVisu_ShapePipeline::SetInput(const Handle(asiVisu_DataProvider)& dataPro
 
   if ( DP->MustExecute( this->GetMTime() ) )
   {
-    // Get shape
-    TopoDS_Shape shape = DP->GetShape();
-
     // Configure data source
     m_source->SetShape(shape);
 

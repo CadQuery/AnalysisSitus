@@ -14,6 +14,7 @@ set (H_FILES
 
 set (controls_H_FILES
   controls/asiUI_IStatusBar.h
+  controls/asiUI_StatusBarImpl.h
 )
 set (controls_H_UI_FILES
   controls/asiUI_BgColorDialog.h
@@ -22,11 +23,9 @@ set (controls_H_UI_FILES
   controls/asiUI_ControlsFeature.h
   controls/asiUI_ControlsPart.h
   controls/asiUI_ControlsPartListener.h
-  controls/asiUI_IStatusBar.h
   controls/asiUI_LineEdit.h
   controls/asiUI_ObjectBrowser.h
   controls/asiUI_StatusBar.h
-  controls/asiUI_StatusBarImpl.h
   controls/asiUI_StyledTextEdit.h
 )
 set (controls_CPP_FILES 

@@ -101,8 +101,8 @@ void asiVisu_PrsManager::PlaceButton(vtkButtonWidget* pButton,
   upperRight->SetCoordinateSystemToNormalizedDisplay();
   upperRight->SetValue(1.0, 1.0);
 
-  const double displaySize[2] = { upperRight->GetComputedDisplayValue(pRenderer)[0],
-                                  upperRight->GetComputedDisplayValue(pRenderer)[1] };
+  const double displaySize[2] = { (double) upperRight->GetComputedDisplayValue(pRenderer)[0],
+                                  (double) upperRight->GetComputedDisplayValue(pRenderer)[1] };
 
   double bds[6];
   const double size = 25.0;

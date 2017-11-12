@@ -66,6 +66,11 @@ void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)&      
                                            TopTools_IndexedMapOfShape&                edges,
                                            TopoDS_Face&                               face)
 {
+  asiEngine_NotUsed(partNode);
+  asiEngine_NotUsed(prsMgr);
+  asiEngine_NotUsed(edges);
+  asiEngine_NotUsed(face);
+
   //// Get Part shape
   //TopoDS_Shape part = partNode->GetShape();
 

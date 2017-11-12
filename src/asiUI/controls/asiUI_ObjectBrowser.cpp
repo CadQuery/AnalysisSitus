@@ -135,8 +135,8 @@ void asiUI_ObjectBrowser::SetSelected(const ActAPI_DataObjectId& nodeId)
   //
   while ( *it )
   {
-    QString data = (*it)->data(0, BrowserRoleNodeId).toString();
-    if ( QStr2AsciiStr(data) == nodeId )
+    QString itemData = (*it)->data(0, BrowserRoleNodeId).toString();
+    if ( QStr2AsciiStr(itemData) == nodeId )
     {
       (*it)->setSelected(true);
       break;

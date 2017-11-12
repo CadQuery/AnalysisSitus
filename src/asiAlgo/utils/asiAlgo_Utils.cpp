@@ -81,7 +81,9 @@
 #include <TopTools_MapOfShape.hxx>
 
 // Eigen includes
+#pragma warning(push, 0)
 #include <Eigen/Dense>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 
@@ -647,13 +649,13 @@ TopoDS_Shape
 {
   TopoDS_Shape aResult;
 
-  TopoDS_Shape aShape;
+  TopoDS_Shape aSingleShape;
   int aNbShapes = 0;
   for ( TopTools_ListIteratorOfListOfShape it(theShapes); it.More(); it.Next() )
     if ( !it.Value().IsNull() )
     {
       ++aNbShapes;
-      aShape = it.Value();
+      aSingleShape = it.Value();
     }
 
   if ( aNbShapes > 1)
@@ -675,7 +677,7 @@ TopoDS_Shape
     aResult = aCmp;
   }
   else
-    aResult = aShape;
+    aResult = aSingleShape;
 
   return aResult;
 }

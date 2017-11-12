@@ -265,7 +265,7 @@ asiAlgo_FeatureAngle
     else
     {
       ShapeAnalysis_Surface SAS(S2);
-      gp_Pnt2d ST = SAS.ValueOfUV(A, 1.0e-7);
+      ST = SAS.ValueOfUV(A, 1.0e-7);
     }
 
     // N (Vz)

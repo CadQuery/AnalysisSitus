@@ -208,6 +208,8 @@ void asiVisu_GeomPrs::DoUnColor() const
 
 void asiVisu_GeomPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
 {
+  asiVisu_NotUsed(picker);
+
   //picker->RemoveAllLocators();
 
   //// Set octee locators to speed up cell picking

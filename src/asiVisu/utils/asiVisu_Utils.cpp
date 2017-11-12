@@ -438,28 +438,6 @@ void asiVisu_Utils::TranslateView(vtkRenderer* theRenderer,
 
 //-----------------------------------------------------------------------------
 
-//! Dumps view contents to Qt Image object.
-//! \param theRenderWindow [in] Render Window to dump the contents for.
-//! \return resulting Qt Image object.
-QImage asiVisu_Utils::DumpView(vtkRenderWindow* theRenderWindow)
-{
-  int* aSize = theRenderWindow->GetSize();
-  int aWidth = aSize[0];
-  int aHeight = aSize[1];
-
-  unsigned char* aData =
-    theRenderWindow->GetRGBACharPixelData(0, 0, aWidth - 1, aHeight - 1, 1);
-
-  QImage anImage(aData, aWidth, aHeight, QImage::Format_ARGB32);
-
-  anImage = anImage.rgbSwapped();
-  anImage = anImage.mirrored();
-
-  return anImage;
-}
-
-//-----------------------------------------------------------------------------
-
 //! Modifies the size of the trihedron so that to make its size comparable to
 //! the bounding box of the currently rendered scene.
 //! \param theRenderer    [in] the scene renderer.

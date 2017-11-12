@@ -167,9 +167,6 @@ public:
                   const int    theNewX,
                   const int    theNewY);
 
-  asiVisu_EXPORT static QImage
-    DumpView(vtkRenderWindow* theRenderWindow);
-
   asiVisu_EXPORT static void
     AdjustTrihedron(vtkRenderer*       theRenderer,
                     vtkAxesActor*      theActor,

@@ -66,19 +66,6 @@ static int ColorToInt(const QColor& color)
 
 //-----------------------------------------------------------------------------
 
-//! Convert integer value to a color.
-//! \param color [in] integer value.
-//! \return converted value
-static QColor IntToColor(const int color)
-{
-  unsigned char red   = ( color >> 16 ) & 0xFF;
-  unsigned char green = ( color >>  8 ) & 0xFF;
-  unsigned char blue  =   color         & 0xFF;
-  return QColor(red, green, blue);
-}
-
-//-----------------------------------------------------------------------------
-
 //! \return newly created Part Node.
 Handle(asiData_PartNode) asiEngine_Part::Create()
 {
@@ -431,6 +418,8 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
                                         const int                         color,
                                         const asiVisu_SelectionMode       selMode)
 {
+  asiEngine_NotUsed(color);
+
   // Get Part Node
   Handle(asiData_PartNode) N = m_model->GetPartNode();
 

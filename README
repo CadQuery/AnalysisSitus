@@ -99,22 +99,7 @@ at your model as a composition of surface patches trimmed by contours. And you
 can also extend the software with your tools as the architecture is incredibly
 simple.
 
-The software relies on the following essential components:
-
-- Active Data for organizing the data of the application hierarchically.
-- Quaoar for some CAGD primitives and algorithms.
-- Eigen for linear algebra.
-- Qt for user interfaces.
-- VTK for visualization.
-- OpenCascade for CAD geometry.
-
-Analysis Situs allows working with the CAD geometry approximately at the same level
-as the OpenCascade's DRAW tool does. However, Analysis Situs is not designed to
-substitute DRAW even in plain geometric workflows. DRAW is an entry point to OpenCascade.
-Analysis Situs is not. Either it is not a CAD system (heaven forbid). It is a tool for
-geometric modeling developers, learners, and researchers.
-
-Several decades ago there was a CAD system PADL connecting the academia with industry.
+Several decades ago there was a CAD system PADL connecting academia with industry.
 Practice shows that such a combination of the academic roots playing on the industrial
 ground is somewhat very fruitful. Pioneer researchers like A. Requicha who participated
 in PADL brought a lot of new seminal concepts to the field (for this A. Requicha and

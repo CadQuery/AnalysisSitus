@@ -46,7 +46,7 @@
 asiVisu_IVSurfacePipeline::asiVisu_IVSurfacePipeline()
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                  vtkSmartPointer<vtkActor>::New() ),
-  m_iStepsNumber(20)
+  m_iStepsNumber(100)
 {
   this->Actor()->GetProperty()->SetLineWidth(1.0);
 }

@@ -31,7 +31,7 @@
 // Own include
 #include <asiVisu_IVSurfacePipeline.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_IVSurfaceDataProvider.h>
 #include <asiVisu_SurfaceSource.h>
 
@@ -45,7 +45,7 @@
 //! Creates new Pipeline initialized by default VTK mapper and actor.
 asiVisu_IVSurfacePipeline::asiVisu_IVSurfacePipeline()
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                 vtkSmartPointer<vtkActor>::New() ),
+                    vtkSmartPointer<vtkActor>::New() ),
   m_iStepsNumber(100)
 {
   this->Actor()->GetProperty()->SetLineWidth(1.0);
@@ -73,8 +73,8 @@ void asiVisu_IVSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
   if ( surface.IsNull() )
   {
     // Pass empty data set in order to have valid pipeline
-    vtkSmartPointer<vtkPolyData> aDummyDS = vtkSmartPointer<vtkPolyData>::New();
-    this->SetInputData(aDummyDS);
+    vtkSmartPointer<vtkPolyData> dummyDS = vtkSmartPointer<vtkPolyData>::New();
+    this->SetInputData(dummyDS);
     this->Modified(); // Update modification timestamp
     return; // Do nothing
   }

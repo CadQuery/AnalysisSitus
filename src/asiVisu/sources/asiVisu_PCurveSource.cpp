@@ -68,7 +68,7 @@ asiVisu_PCurveSource::~asiVisu_PCurveSource()
 //! \param edge [in] edge to retrieve the p-curve from.
 //! \param face [in] host face.
 void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
-                                       const TopoDS_Face& face)
+                                         const TopoDS_Face& face)
 {
   if ( edge.IsNull() )
   {

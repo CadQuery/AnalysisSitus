@@ -786,8 +786,14 @@ bool asiAlgo_Utils::HasAllClosedWires(const TopoDS_Face& face,
   {
     const TopoDS_Wire& wire = TopoDS::Wire( it.Value() );
 
+    // Let's be a bit more tolerant to compensate small inaccuracies in the
+    // local shape tolerances. This is something which should not be necessary,
+    // but in practice it happens that tolerances are not shielding geometric
+    // singularities to the full extent.
+    const double tolerantConfusion = coincConfusion + Precision::Confusion();
+
     // Check each wire individually
-    if ( !IsClosedGeometrically(wire, face, coincConfusion) )
+    if ( !IsClosedGeometrically(wire, face, tolerantConfusion) )
       return false;
   }
   return true;
@@ -833,22 +839,10 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
   //         parametric domain is a topological rectangle. Our reasoning of
   //         valences is valid only in this assumption.
 
-  struct t_extremities
-  {
-    gp_Pnt2d P1, P2;
-  };
-  struct t_valences
-  {
-    int V1, V2;
-  };
-  typedef NCollection_DataMap< TopoDS_Edge, std::pair<t_extremities, t_valences> > t_valence_map;
-
-  // Prepare valence map
-  t_valence_map valenceMap;
-
-  // Prepare wire data
-  Handle(ShapeExtend_WireData) WD = new ShapeExtend_WireData(wire);
-  const int nEdges = WD->NbEdges();
+  // Check number of edges
+  TopTools_IndexedMapOfShape edges;
+  TopExp::MapShapes(wire, TopAbs_EDGE, edges);
+  const int nEdges = edges.Extent();
   //
   if ( !nEdges )
     return false;
@@ -856,7 +850,7 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
   if ( nEdges == 1 )
   {
     double f, l;
-    Handle(Geom_Curve) C = BRep_Tool::Curve( WD->Edge(1), f, l );
+    Handle(Geom_Curve) C = BRep_Tool::Curve( TopoDS::Edge( edges(1) ), f, l );
 
     if ( C.IsNull() )
       return false;
@@ -875,7 +869,7 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
 
     // Check 2d
     gp_Pnt2d Pf2d, Pl2d;
-    BRep_Tool::UVPoints(WD->Edge(1), face, Pf2d, Pl2d);
+    BRep_Tool::UVPoints(TopoDS::Edge( edges(1) ), face, Pf2d, Pl2d);
 
     // The following condition is Ok for closed curves
     const bool isOk2d = ( Pf2d.Distance(Pl2d) < coincConfusion );
@@ -883,13 +877,41 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
     return isOk3d && isOk2d;
   }
 
-  // Check connectivity
-  for ( int e = 1; e <= nEdges; ++e )
+  struct t_extremities
   {
-    TopoDS_Edge E = WD->Edge(e);
+    gp_Pnt2d P1, P2;
+  };
+  struct t_valences
+  {
+    int V1, V2;
+  };
+  typedef NCollection_DataMap< TopoDS_Edge, std::pair<t_extremities, t_valences> > t_valence_map;
 
+  // Prepare valence map
+  t_valence_map valenceMap;
+
+  // Check connectivity. We use explorer to loop over the wire, because we need
+  // all coedges to participate in that loop. E.g. a single seam edge should be
+  // iterated twice as it has two p-curves.
+  for ( TopExp_Explorer exp(wire, TopAbs_EDGE); exp.More(); exp.Next() )
+  {
+    TopoDS_Edge E = TopoDS::Edge( exp.Current() );
+
+    // Get 2D points. Notice that we get 2D points as extermities of CONS
+    // (Curve ON Surface) and not with UVPoints() method of BRep_Tool. This
+    // is because the latter method returns pre-evaluated UV coordinates
+    // which suffer from instability when it comes to periodic surfaces.
+    // E.g., U coordinate may be either 0 or 2*PI depending on how to evaluate
+    // the corresponding UV pair. However, if we use pcurve explicitly, such
+    // instability does not happen as we essentially use geometry which we see
+    // in parametric domain of a face (always a finite boundedregion without
+    // any weird periodicity anomalies).
     gp_Pnt2d Pf, Pl;
-    BRep_Tool::UVPoints(E, face, Pf, Pl);
+    double f, l;
+    Handle(Geom2d_Curve) c2d = BRep_Tool::CurveOnSurface(E, face, f, l);
+    //
+    Pf = c2d->Value(f);
+    Pl = c2d->Value(l);
 
     // Add initial valence record for the new edge
     valenceMap.Bind( E, std::pair<t_extremities, t_valences>() );

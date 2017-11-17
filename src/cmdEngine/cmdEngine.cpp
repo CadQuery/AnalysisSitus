@@ -210,163 +210,6 @@ int ENGINE_Summary(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_KillSolidByFace(const Handle(asiTcl_Interp)& interp,
-                           int                          argc,
-                           const char**                 argv)
-{
-  if ( argc != 2 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  const int fidx = atoi(argv[1]);
-  //
-  if ( fidx < 1 )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face index should be 1-based.");
-    return TCL_ERROR;
-  }
-
-  // Get Part Node
-  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
-
-  // Get map of faces with respect to those the passed index is relevant
-  const TopTools_IndexedMapOfShape& allFaces = part_n->GetAAG()->GetMapOfFaces();
-
-  // Get face in question
-  TopoDS_Face face = TopoDS::Face( allFaces(fidx) );
-
-  // Get owner solid
-  TopTools_IndexedDataMapOfShapeListOfShape faceOwners;
-  TopExp::MapShapesAndAncestors(part_n->GetShape(), TopAbs_FACE, TopAbs_SOLID, faceOwners);
-  //
-  if ( faceOwners.IsEmpty() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find parent solid for face %1." << fidx);
-    return TCL_OK;
-  }
-
-  // Get owner shapes
-  TopTools_ListOfShape owners = faceOwners.FindFromKey(face);
-  //
-  if ( owners.IsEmpty() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "There are no parents for face %1. Cannot proceed." << fidx);
-    return TCL_OK;
-  }
-
-  // Get solid
-  TopoDS_Solid ownerSolid = TopoDS::Solid( owners.First() );
-  //
-  if ( ownerSolid.IsNull() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Owner solid is null. Cannot proceed." << fidx);
-    return TCL_OK;
-  }
-
-  // Prepare killer
-  asiAlgo_TopoKill killer( cmdEngine::model->GetPartNode()->GetShape(),
-                           interp->GetProgress(),
-                           interp->GetPlotter() );
-  //
-  if ( !killer.AskRemove(ownerSolid) )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of solid was rejected." << fidx);
-    return TCL_OK;
-  }
-
-  if ( !killer.Apply() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Topological killer failed.");
-    return TCL_OK;
-  }
-
-  // Get result
-  const TopoDS_Shape& result = killer.GetResult();
-
-  // Modify Data Model
-  cmdEngine::model->OpenCommand();
-  {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
-  }
-  cmdEngine::model->CommitCommand();
-
-  // Update UI
-  if ( cmdEngine::pViewerPart )
-    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
-
-  return TCL_OK;
-}
-
-//-----------------------------------------------------------------------------
-
-int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
-                     int                          argc,
-                     const char**                 argv)
-{
-  if ( argc != 2 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  Handle(asiData_IVTopoItemNode)
-    node = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
-  //
-  if ( node.IsNull() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
-    return TCL_ERROR;
-  }
-
-  // Modify Data Model
-  cmdEngine::model->OpenCommand();
-  {
-    asiEngine_Part(cmdEngine::model, NULL).Update( node->GetShape() );
-  }
-  cmdEngine::model->CommitCommand();
-
-  // Update UI
-  if ( cmdEngine::pViewerPart )
-    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
-
-  return TCL_OK;
-}
-
-//-----------------------------------------------------------------------------
-
-int ENGINE_Repair(const Handle(asiTcl_Interp)& interp,
-                  int                          argc,
-                  const char**                 argv)
-{
-  if ( argc != 1 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  // Get Part Node
-  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
-
-  // Fix shape
-  ShapeFix_Shape fix( part_n->GetShape() );
-  fix.Perform();
-  TopoDS_Shape result = fix.Shape();
-
-  // Modify Data Model
-  cmdEngine::model->OpenCommand();
-  {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
-  }
-  cmdEngine::model->CommitCommand();
-
-  // Update UI
-  if ( cmdEngine::pViewerPart )
-    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
-
-  return TCL_OK;
-}
-
-//-----------------------------------------------------------------------------
-
 int ENGINE_KillEdge(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
@@ -468,6 +311,201 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
 
   // Get result
   const TopoDS_Shape& result = killer.GetResult();
+
+  // Modify Data Model
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI
+  if ( cmdEngine::pViewerPart )
+    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_KillSolidByFace(const Handle(asiTcl_Interp)& interp,
+                           int                          argc,
+                           const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const int fidx = atoi(argv[1]);
+  //
+  if ( fidx < 1 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face index should be 1-based.");
+    return TCL_ERROR;
+  }
+
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get map of faces with respect to those the passed index is relevant
+  const TopTools_IndexedMapOfShape& allFaces = part_n->GetAAG()->GetMapOfFaces();
+
+  // Get face in question
+  TopoDS_Face face = TopoDS::Face( allFaces(fidx) );
+
+  // Get owner solid
+  TopTools_IndexedDataMapOfShapeListOfShape faceOwners;
+  TopExp::MapShapesAndAncestors(part_n->GetShape(), TopAbs_FACE, TopAbs_SOLID, faceOwners);
+  //
+  if ( faceOwners.IsEmpty() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find parent solid for face %1." << fidx);
+    return TCL_OK;
+  }
+
+  // Get owner shapes
+  TopTools_ListOfShape owners = faceOwners.FindFromKey(face);
+  //
+  if ( owners.IsEmpty() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "There are no parents for face %1. Cannot proceed." << fidx);
+    return TCL_OK;
+  }
+
+  // Get solid
+  TopoDS_Solid ownerSolid = TopoDS::Solid( owners.First() );
+  //
+  if ( ownerSolid.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Owner solid is null. Cannot proceed." << fidx);
+    return TCL_OK;
+  }
+
+  // Prepare killer
+  asiAlgo_TopoKill killer( cmdEngine::model->GetPartNode()->GetShape(),
+                           interp->GetProgress(),
+                           interp->GetPlotter() );
+  //
+  if ( !killer.AskRemove(ownerSolid) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of solid was rejected." << fidx);
+    return TCL_OK;
+  }
+
+  if ( !killer.Apply() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Topological killer failed.");
+    return TCL_OK;
+  }
+
+  // Get result
+  const TopoDS_Shape& result = killer.GetResult();
+
+  // Modify Data Model
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI
+  if ( cmdEngine::pViewerPart )
+    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_MoveByFace(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const int fidx = atoi(argv[1]);
+  //
+  if ( fidx < 1 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face index should be 1-based.");
+    return TCL_ERROR;
+  }
+
+  // ...
+
+  // Get result
+  //const TopoDS_Shape& result = ...;
+
+  //// Modify Data Model
+  //cmdEngine::model->OpenCommand();
+  //{
+  //  asiEngine_Part(cmdEngine::model, NULL).Update(result);
+  //}
+  //cmdEngine::model->CommitCommand();
+
+  //// Update UI
+  //if ( cmdEngine::pViewerPart )
+  //  cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiData_IVTopoItemNode)
+    node = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
+  //
+  if ( node.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
+    return TCL_ERROR;
+  }
+
+  // Modify Data Model
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update( node->GetShape() );
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI
+  if ( cmdEngine::pViewerPart )
+    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_Repair(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Fix shape
+  ShapeFix_Shape fix( part_n->GetShape() );
+  fix.Perform();
+  TopoDS_Shape result = fix.Shape();
 
   // Modify Data Model
   cmdEngine::model->OpenCommand();
@@ -720,32 +758,6 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_Summary);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("kill-solid-by-face",
-    //
-    "kill-solid-by-face faceIndex\n"
-    "\t Kills solid which contains a face with the passed 1-based index.",
-    //
-    __FILE__, group, ENGINE_KillSolidByFace);
-
-    //-------------------------------------------------------------------------//
-  interp->AddCommand("set-as-part",
-    //
-    "set-as-part varName\n"
-    "\t Sets the object with the given name as a part for analysis. \n"
-    "\t The object is expected to exist as a topological item in \n"
-    "\t imperative plotter.",
-    //
-    __FILE__, group, ENGINE_SetAsPart);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("repair",
-    //
-    "repair\n"
-    "\t Performs automatic shape repair on the active part.",
-    //
-    __FILE__, group, ENGINE_Repair);
-
-  //-------------------------------------------------------------------------//
   interp->AddCommand("kill-edge",
     //
     "kill-edge edgeIndex\n"
@@ -768,6 +780,43 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t We have introduced this function to ground Euler operators on it.",
     //
     __FILE__, group, ENGINE_KillFace);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("kill-solid-by-face",
+    //
+    "kill-solid-by-face faceIndex\n"
+    "\t Kills solid which contains a face with the passed 1-based index.",
+    //
+    __FILE__, group, ENGINE_KillSolidByFace);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("move-by-face",
+    //
+    "move-by-face faceIndex offset\n"
+    "\t Moves part in direction determined by orientation of the given face \n."
+    "\t The passed offset value can be positive or negative. In the case of \n"
+    "\t positive offset, the movement is done along the face normal. In the \n"
+    "\t case of negative offset, the direction of movement is reversed.",
+    //
+    __FILE__, group, ENGINE_MoveByFace);
+
+    //-------------------------------------------------------------------------//
+  interp->AddCommand("set-as-part",
+    //
+    "set-as-part varName\n"
+    "\t Sets the object with the given name as a part for analysis. \n"
+    "\t The object is expected to exist as a topological item in \n"
+    "\t imperative plotter.",
+    //
+    __FILE__, group, ENGINE_SetAsPart);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("repair",
+    //
+    "repair\n"
+    "\t Performs automatic shape repair on the active part.",
+    //
+    __FILE__, group, ENGINE_Repair);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("load-step",

@@ -41,6 +41,7 @@
 #include <BOPAlgo_BOP.hxx>
 #include <BOPAlgo_PaveFiller.hxx>
 #include <BRep_Builder.hxx>
+#include <BRepAdaptor_Surface.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
@@ -782,18 +783,13 @@ bool
 bool asiAlgo_Utils::HasAllClosedWires(const TopoDS_Face& face,
                                       const double       coincConfusion)
 {
+  // Loop over the wires
   for ( TopoDS_Iterator it(face); it.More(); it.Next() )
   {
     const TopoDS_Wire& wire = TopoDS::Wire( it.Value() );
 
-    // Let's be a bit more tolerant to compensate small inaccuracies in the
-    // local shape tolerances. This is something which should not be necessary,
-    // but in practice it happens that tolerances are not shielding geometric
-    // singularities to the full extent.
-    const double tolerantConfusion = coincConfusion + Precision::Confusion();
-
-    // Check each wire individually
-    if ( !IsClosedGeometrically(wire, face, tolerantConfusion) )
+    // Check each wire individually.
+    if ( !IsClosedGeometrically(wire, face, coincConfusion) )
       return false;
   }
   return true;
@@ -811,6 +807,13 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
                                           const TopoDS_Face& face,
                                           const double       coincConfusion)
 {
+  // Convert spatial tolerance to UV-parametric tolerance using resolutions.
+  BRepAdaptor_Surface bas(face);
+  //
+  const double uToler      = bas.UResolution(coincConfusion);
+  const double vToler      = bas.VResolution(coincConfusion);
+  const double uvConfusion = Min(uToler, vToler);
+
   // This method takes into account topological orientation of the wire
   // in question. However, it does not check any orientation flags. It simply
   // tests all extremities of one edge with all extremities of another edge.
@@ -865,14 +868,14 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
     gp_Pnt Pl = C->Value( C->LastParameter() );
 
     // The following condition is Ok for closed curves
-    const bool isOk3d = ( Pf.Distance(Pl) < coincConfusion );
+    const bool isOk3d = ( Pf.Distance(Pl) < uvConfusion );
 
     // Check 2d
     gp_Pnt2d Pf2d, Pl2d;
     BRep_Tool::UVPoints(TopoDS::Edge( edges(1) ), face, Pf2d, Pl2d);
 
     // The following condition is Ok for closed curves
-    const bool isOk2d = ( Pf2d.Distance(Pl2d) < coincConfusion );
+    const bool isOk2d = ( Pf2d.Distance(Pl2d) < uvConfusion );
 
     return isOk3d && isOk2d;
   }
@@ -933,22 +936,22 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
       const gp_Pnt2d& otherPf = otherRecord.first.P1;
       const gp_Pnt2d& otherPl = otherRecord.first.P2;
 
-      if ( Pf.Distance(otherPf) < coincConfusion )
+      if ( Pf.Distance(otherPf) < uvConfusion )
       {
         valenceMap(E).second.V1++;
         otherRecord.second.V1++;
       }
-      if ( Pf.Distance(otherPl) < coincConfusion )
+      if ( Pf.Distance(otherPl) < uvConfusion )
       {
         valenceMap(E).second.V1++;
         otherRecord.second.V2++;
       }
-      if ( Pl.Distance(otherPf) < coincConfusion )
+      if ( Pl.Distance(otherPf) < uvConfusion )
       {
         valenceMap(E).second.V2++;
         otherRecord.second.V1++;
       }
-      if ( Pl.Distance(otherPl) < coincConfusion )
+      if ( Pl.Distance(otherPl) < uvConfusion )
       {
         valenceMap(E).second.V2++;
         otherRecord.second.V2++;

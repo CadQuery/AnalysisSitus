@@ -51,6 +51,9 @@
 #include <asiVisu_Utils.h>
 
 // OCCT includes
+#include <BRepLProp_SLProps.hxx>
+#include <BRepOffsetAPI_MakeThickSolid.hxx>
+#include <BRepTools.hxx>
 #include <ShapeFix_Shape.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -427,6 +430,7 @@ int ENGINE_MoveByFace(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
+  // Get face index
   const int fidx = atoi(argv[1]);
   //
   if ( fidx < 1 )
@@ -435,21 +439,96 @@ int ENGINE_MoveByFace(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
-  // ...
+  // Get offset value
+  const double offset = atof(argv[2]);
 
-  // Get result
-  //const TopoDS_Shape& result = ...;
+  // Get part
+  TopoDS_Shape
+    partShape = Handle(asiEngine_Model)::DownCast(interp->GetModel())->GetPartNode()->GetShape();
 
-  //// Modify Data Model
-  //cmdEngine::model->OpenCommand();
-  //{
-  //  asiEngine_Part(cmdEngine::model, NULL).Update(result);
-  //}
-  //cmdEngine::model->CommitCommand();
+  // Get face
+  TopTools_IndexedMapOfShape M;
+  TopExp::MapShapes(partShape, TopAbs_FACE, M);
+  TopoDS_Face faceShape = TopoDS::Face( M.FindKey(fidx) );
 
-  //// Update UI
-  //if ( cmdEngine::pViewerPart )
-  //  cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  double uMin, uMax, vMin, vMax;
+  BRepTools::UVBounds(faceShape, uMin, uMax, vMin, vMax);
+
+  double uMid = (uMin + uMax)*0.5;
+  double vMid = (vMin + vMax)*0.5;
+
+  BRepLProp_SLProps lprops( BRepAdaptor_Surface(faceShape), uMid, vMid, 1, Precision::Confusion() );
+  //
+  if ( !lprops.IsNormalDefined() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Normal undefined.");
+    return TCL_ERROR;
+  }
+  //
+  gp_Dir n = lprops.Normal();
+  //
+  if ( faceShape.Orientation() == TopAbs_REVERSED )
+    n.Reverse();
+
+  // Prepare transformation
+  gp_Trsf T;
+  T.SetTranslation(gp_Vec(n)*offset);
+
+  // Move
+  TopoDS_Shape moved = partShape.Moved(T);
+
+  // Modify Data Model
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(moved);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI
+  if ( cmdEngine::pViewerPart )
+    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_ThickenShell(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get part shape
+  TopoDS_Shape
+    partShape = Handle(asiEngine_Model)::DownCast(interp->GetModel())->GetPartNode()->GetShape();
+
+  // Get offset value
+  const double offsetVal = atof(argv[1]);
+
+  // Make offset
+  BRepOffsetAPI_MakeThickSolid mkOffset;
+  mkOffset.MakeThickSolidBySimple(partShape, offsetVal);
+  //
+  if ( !mkOffset.IsDone() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Offset not done.");
+    return TCL_ERROR;
+  }
+
+  // Modify Data Model
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update( mkOffset.Shape() );
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI
+  if ( cmdEngine::pViewerPart )
+    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
 }
@@ -799,6 +878,15 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t case of negative offset, the direction of movement is reversed.",
     //
     __FILE__, group, ENGINE_MoveByFace);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("thicken-shell",
+    //
+    "thicken-shell offset\n"
+    "\t Thickens part (it should be a topological shell) on the given offset \n"
+    "\t value. Thickenning is performed in direction of face normals.",
+    //
+    __FILE__, group, ENGINE_ThickenShell);
 
     //-------------------------------------------------------------------------//
   interp->AddCommand("set-as-part",

@@ -51,8 +51,6 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
-#include <BRepLProp_SLProps.hxx>
-#include <BRepOffsetAPI_MakeThickSolid.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepPrimAPI_MakePrism.hxx>
@@ -270,76 +268,6 @@ int MISC_PushPull(const Handle(asiTcl_Interp)& interp,
   interp->GetPlotter().REDRAW_SHAPE("fused", fused, Color_Green);
 
   return TCL_OK;
-}
-
-//-----------------------------------------------------------------------------
-
-int MISC_Move(const Handle(asiTcl_Interp)& interp,
-              int                          argc,
-              const char**                 argv)
-{
-  TopoDS_Shape
-    partShape = Handle(asiEngine_Model)::DownCast(interp->GetModel())->GetPartNode()->GetShape();
-
-  const int faceId = atoi(argv[1]); // 1-based
-
-  const double offset = atof(argv[2]);
-
-  TopTools_IndexedMapOfShape M;
-  TopExp::MapShapes(partShape, TopAbs_FACE, M);
-  TopoDS_Face faceShape = TopoDS::Face(M.FindKey(faceId));
-
-  double uMin, uMax, vMin, vMax;
-  BRepTools::UVBounds(faceShape, uMin, uMax, vMin, vMax);
-
-  double uMid = (uMin + uMax)*0.5;
-  double vMid = (vMin + vMax)*0.5;
-
-  BRepLProp_SLProps lprops( BRepAdaptor_Surface(faceShape), uMid, vMid, 1, Precision::Confusion() );
-  //
-  if ( !lprops.IsNormalDefined() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Normal undefined.");
-    return TCL_ERROR;
-  }
-  //
-  gp_Dir n = lprops.Normal();
-  if ( faceShape.Orientation() == TopAbs_REVERSED )
-    n.Reverse();
-
-  interp->GetPlotter().DRAW_VECTOR_AT(lprops.Value(), gp_Vec(n)*10.0, Color_Red, "normal");
-
-  gp_Trsf T;
-  T.SetTranslation(gp_Vec(n)*offset);
-  TopoDS_Shape moved = partShape.Moved(T);
-
-  interp->GetPlotter().REDRAW_SHAPE("moved", moved, Color_Green);
-
-  return TCL_OK;
-}
-
-//-----------------------------------------------------------------------------
-
-int MISC_Offset(const Handle(asiTcl_Interp)& interp,
-                int                          argc,
-                const char**                 argv)
-{
-  TopoDS_Shape
-    partShape = Handle(asiEngine_Model)::DownCast(interp->GetModel())->GetPartNode()->GetShape();
-
-  const double offsetVal = atof(argv[1]);
-
-  BRepOffsetAPI_MakeThickSolid mkOffset;
-  mkOffset.MakeThickSolidBySimple(partShape, offsetVal);
-  //
-  if (!mkOffset.IsDone())
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Offset not done.");
-    return TCL_ERROR;
-  }
-
-  interp->GetPlotter().REDRAW_SHAPE("offset", mkOffset.Shape(), Color_Green);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -757,22 +685,6 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Push/pull operation.",
     //
     __FILE__, group, MISC_PushPull);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("move",
-    //
-    "move-by-face faceId offset \n"
-    "\t Move along face operation.",
-    //
-    __FILE__, group, MISC_MoveByFace);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("offset",
-    //
-    "offset offsetVal \n"
-    "\t Offset operation.",
-    //
-    __FILE__, group, MISC_Offset);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("test-extend",

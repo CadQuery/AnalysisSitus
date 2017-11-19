@@ -130,11 +130,22 @@ void asiVisu_FaceSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& D
         uStop = true;
       }
 
-      Handle(Geom_Curve) uIso = S->UIso(u);
-      if ( uIso.IsNull() )
-        continue;
+      // We use try-catch because OpenCascade likes to crash even on such basic stuff...
+      Handle(Geom_Curve) uIso;
+      //
+      try
+      {
+        uIso = S->UIso(u);
+      }
+      catch ( ... )
+      {
+        std::cout << "Crash on constructing u-isoline" << std::endl;
+      }
 
       u += uStep;
+
+      if ( uIso.IsNull() )
+        continue;
 
       // Allocate Data Source
       vtkSmartPointer<asiVisu_CurveSource>
@@ -159,11 +170,22 @@ void asiVisu_FaceSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& D
         vStop = true;
       }
 
-      Handle(Geom_Curve) vIso = S->VIso(v);
-      if ( vIso.IsNull() )
-        continue;
+      // We use try-catch because OpenCascade likes to crash even on such basic stuff...
+      Handle(Geom_Curve) vIso;
+      //
+      try
+      {
+        vIso = S->VIso(v);
+      }
+      catch ( ... )
+      {
+        std::cout << "Crash on constructing v-isoline" << std::endl;
+      }
 
       v += vStep;
+
+      if ( vIso.IsNull() )
+        continue;
 
       // Allocate Data Source
       vtkSmartPointer<asiVisu_CurveSource>

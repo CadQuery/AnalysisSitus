@@ -50,6 +50,7 @@
 #include <asiVisu_Utils.h>
 
 // OCCT includes
+#include <BRepBuilderAPI_Transform.hxx>
 #include <BRepLProp_SLProps.hxx>
 #include <BRepOffsetAPI_MakeThickSolid.hxx>
 #include <BRepTools.hxx>
@@ -518,7 +519,7 @@ int ENGINE_MoveByFace(const Handle(asiTcl_Interp)& interp,
   T.SetTranslation(gp_Vec(n)*offset);
 
   // Move
-  TopoDS_Shape moved = partShape.Moved(T);
+  TopoDS_Shape moved = BRepBuilderAPI_Transform(partShape, T, true);
 
   // Modify Data Model
   cmdEngine::model->OpenCommand();
@@ -953,7 +954,11 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Moves part in direction determined by orientation of the given face \n."
     "\t The passed offset value can be positive or negative. In the case of \n"
     "\t positive offset, the movement is done along the face normal. In the \n"
-    "\t case of negative offset, the direction of movement is reversed.",
+    "\t case of negative offset, the direction of movement is reversed. \n"
+    "\n"
+    "\t CAUTION: this command makes deep copy of the part. Our experience shows \n"
+    "\t that simply assigning location may cause very weird behaviour on subsequent \n"
+    "\t modeling operations.",
     //
     __FILE__, group, ENGINE_MoveByFace);
 

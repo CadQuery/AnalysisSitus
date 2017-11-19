@@ -92,6 +92,12 @@ void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
   // Access p-curve
   double f, l;
   Handle(Geom2d_Curve) c2d = BRep_Tool::CurveOnSurface(m_edge, m_face, f, l);
+  //
+  if ( c2d.IsNull() )
+  {
+    vtkErrorMacro( << "Null p-curve" );
+    return;
+  }
 
   // Discretize
   Geom2dAdaptor_Curve gac(c2d, f, l);

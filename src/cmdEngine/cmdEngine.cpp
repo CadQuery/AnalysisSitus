@@ -44,7 +44,6 @@
 #include <asiEngine_Part.h>
 
 // asiUI includes
-#include <asiUI_CommonFacilities.h>
 #include <asiUI_DialogCommands.h>
 
 // asiVisu includes
@@ -62,8 +61,52 @@
 
 //-----------------------------------------------------------------------------
 
-Handle(asiEngine_Model) cmdEngine::model       = NULL;
-asiUI_ViewerPart*       cmdEngine::pViewerPart = NULL;
+Handle(asiEngine_Model)        cmdEngine::model = NULL;
+Handle(asiUI_CommonFacilities) cmdEngine::cf    = NULL;
+
+//-----------------------------------------------------------------------------
+
+void onUndoRedo(const Handle(ActAPI_HParameterMap)& affectedParams)
+{
+  if ( affectedParams.IsNull() )
+    return;
+
+  // Loop over the affected Parameters to get the affected Nodes. These Nodes
+  // are placed into a map to have them unique.
+  Handle(ActAPI_HNodeMap) affectedNodes = new ActAPI_HNodeMap;
+  //
+  for ( ActAPI_HParameterMap::Iterator pit(*affectedParams); pit.More(); pit.Next() )
+  {
+    // Get Node
+    Handle(ActAPI_INode) N = pit.Value()->GetNode();
+    //
+    affectedNodes->Add(N);
+  }
+
+  // Get all presentation managers
+  const vtkSmartPointer<asiVisu_PrsManager>& partPM   = cmdEngine::cf->ViewerPart->PrsMgr();
+  const vtkSmartPointer<asiVisu_PrsManager>& hostPM   = cmdEngine::cf->ViewerHost->PrsMgr();
+  const vtkSmartPointer<asiVisu_PrsManager>& domainPM = cmdEngine::cf->ViewerDomain->PrsMgr();
+
+  // Loop over the unique Nodes to actualize them
+  for ( ActAPI_HNodeMap::Iterator nit(*affectedNodes); nit.More(); nit.Next() )
+  {
+    const Handle(ActAPI_INode)& N = nit.Value();
+
+    // Actualize
+    if ( partPM->IsPresented(N) )
+      partPM->Actualize(N);
+    //
+    if ( hostPM->IsPresented(N) )
+      hostPM->Actualize(N);
+    //
+    if ( domainPM->IsPresented(N) )
+      domainPM->Actualize(N);
+  }
+
+  // Update object browser
+  cmdEngine::cf->ObjectBrowser->Populate();
+}
 
 //-----------------------------------------------------------------------------
 
@@ -264,8 +307,8 @@ int ENGINE_KillEdge(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::pViewerPart )
-    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
 }
@@ -323,8 +366,8 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::pViewerPart )
-    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
 }
@@ -413,8 +456,8 @@ int ENGINE_KillSolidByFace(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::pViewerPart )
-    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
 }
@@ -485,8 +528,8 @@ int ENGINE_MoveByFace(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::pViewerPart )
-    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
 }
@@ -527,8 +570,8 @@ int ENGINE_ThickenShell(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::pViewerPart )
-    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
 }
@@ -561,8 +604,8 @@ int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::pViewerPart )
-    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
 }
@@ -594,8 +637,8 @@ int ENGINE_Repair(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::pViewerPart )
-    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
 }
@@ -629,8 +672,8 @@ int ENGINE_LoadStep(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::pViewerPart )
-    cmdEngine::pViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
 }
@@ -688,15 +731,15 @@ int ENGINE_Erase(const Handle(asiTcl_Interp)& interp,
   }
 
   // Hide
-  if ( cmdEngine::pViewerPart->PrsMgr()->IsPresented(node) )
+  if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
   {
-    cmdEngine::pViewerPart->PrsMgr()->DeRenderPresentation(node);
+    cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderPresentation(node);
   }
   else
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[1]);
 
   // Repaint
-  cmdEngine::pViewerPart->Repaint();
+  cmdEngine::cf->ViewerPart->Repaint();
 
   return TCL_OK;
 }
@@ -722,17 +765,17 @@ int ENGINE_DOnly(const Handle(asiTcl_Interp)& interp,
   }
 
   // Display only
-  cmdEngine::pViewerPart->PrsMgr()->DeRenderAllPresentations();
+  cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderAllPresentations();
   //
-  if ( cmdEngine::pViewerPart->PrsMgr()->IsPresented(node) )
+  if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
   {
-    cmdEngine::pViewerPart->PrsMgr()->RenderPresentation(node);
+    cmdEngine::cf->ViewerPart->PrsMgr()->RenderPresentation(node);
   }
   else
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[1]);
 
   // Repaint
-  cmdEngine::pViewerPart->Repaint();
+  cmdEngine::cf->ViewerPart->Repaint();
 
   return TCL_OK;
 }
@@ -748,7 +791,7 @@ int ENGINE_EraseAll(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  cmdEngine::pViewerPart->PrsMgr()->DeRenderAllPresentations();
+  cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderAllPresentations();
 
   return TCL_OK;
 }
@@ -764,13 +807,47 @@ int ENGINE_Fit(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  asiVisu_Utils::ResetCamera( cmdEngine::pViewerPart->PrsMgr()->GetRenderer(),
-                              cmdEngine::pViewerPart->PrsMgr()->PropsByTrihedron() );
+  asiVisu_Utils::ResetCamera( cmdEngine::cf->ViewerPart->PrsMgr()->GetRenderer(),
+                              cmdEngine::cf->ViewerPart->PrsMgr()->PropsByTrihedron() );
   //
-  asiVisu_Utils::AdjustCamera( cmdEngine::pViewerPart->PrsMgr()->GetRenderer(),
-                               cmdEngine::pViewerPart->PrsMgr()->PropsByTrihedron() );
+  asiVisu_Utils::AdjustCamera( cmdEngine::cf->ViewerPart->PrsMgr()->GetRenderer(),
+                               cmdEngine::cf->ViewerPart->PrsMgr()->PropsByTrihedron() );
   //
-  cmdEngine::pViewerPart->Repaint();
+  cmdEngine::cf->ViewerPart->Repaint();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_Undo(const Handle(asiTcl_Interp)& interp,
+                int                          argc,
+                const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Undo and process the affected Parameters
+  onUndoRedo( cmdEngine::model->Undo() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_Redo(const Handle(asiTcl_Interp)& interp,
+                int                          argc,
+                const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Redo and process the affected Parameters
+  onUndoRedo( cmdEngine::model->Redo() );
 
   return TCL_OK;
 }
@@ -787,12 +864,13 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
    * ========================== */
 
   // Get common facilities
-  Handle(asiUI_CommonFacilities) cf = Handle(asiUI_CommonFacilities)::DownCast(data);
+  Handle(asiUI_CommonFacilities)
+    passedCF = Handle(asiUI_CommonFacilities)::DownCast(data);
   //
-  if ( cf.IsNull() )
+  if ( passedCF.IsNull() )
     interp->GetProgress().SendLogMessage(LogWarn(Normal) << "[cmdEngine] No UI facilities are available. GUI will not be updated!");
   else
-    pViewerPart = cf->ViewerPart;
+    cf = passedCF;
 
   /* ================================
    *  Initialize Data Model instance
@@ -953,6 +1031,22 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Fits camera to the scene contents.",
     //
     __FILE__, group, ENGINE_Fit);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("undo",
+    //
+    "undo \n"
+    "\t Undoes model changes.",
+    //
+    __FILE__, group, ENGINE_Undo);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("redo",
+    //
+    "redo \n"
+    "\t Redoes model changes.",
+    //
+    __FILE__, group, ENGINE_Redo);
 }
 
 // Declare entry point PLUGINFACTORY

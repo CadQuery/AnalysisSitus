@@ -60,9 +60,6 @@ public:
 
   Handle(asiEngine_Model)          Model;            //!< Data Model instance.
   //
-  asiUI_ObjectBrowser*             ObjectBrowser;    //!< Object browser.
-  Handle(ActAPI_INode)             CurrentNode;      //!< Currently selected Node.
-  //
   Handle(ActAPI_IProgressNotifier) ProgressNotifier; //!< Progress notifier.
   asiUI_ProgressListener*          ProgressListener; //!< Progress listener.
   Handle(ActAPI_IPlotter)          Plotter;          //!< Imperative plotter.
@@ -98,7 +95,6 @@ private:
   exe_CommonFacilities() //!< ctor.
   //
   : asiUI_CommonFacilities (),
-    ObjectBrowser          (NULL),
     ProgressListener       (NULL)
   {
     // Create Data Model

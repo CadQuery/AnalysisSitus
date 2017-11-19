@@ -32,6 +32,7 @@
 #define asiUI_CommonFacilities_h
 
 // asiUI includes
+#include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerPart.h>
 #include <asiUI_ViewerHost.h>
@@ -48,6 +49,7 @@ public:
 
   // Default ctor.
   asiUI_CommonFacilities() : Standard_Transient (),
+                             ObjectBrowser      (NULL),
                              ViewerPart         (NULL),
                              ViewerDomain       (NULL),
                              ViewerHost         (NULL)
@@ -55,9 +57,10 @@ public:
 
 public:
 
-  asiUI_ViewerPart*   ViewerPart;   //!< Viewer for part.
-  asiUI_ViewerDomain* ViewerDomain; //!< Viewer for face parametric domain.
-  asiUI_ViewerHost*   ViewerHost;   //!< Viewer for host geometry.
+  asiUI_ObjectBrowser* ObjectBrowser; //!< Object browser.
+  asiUI_ViewerPart*    ViewerPart;    //!< Viewer for part.
+  asiUI_ViewerDomain*  ViewerDomain;  //!< Viewer for face parametric domain.
+  asiUI_ViewerHost*    ViewerHost;    //!< Viewer for host geometry.
 
 };
 

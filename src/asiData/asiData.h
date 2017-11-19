@@ -31,7 +31,7 @@
 #ifndef asiData_h
 #define asiData_h
 
-#define asiData_NotUsed(x)
+#define asiData_NotUsed(x) x
 
 #ifdef asiData_EXPORTS
   #define asiData_EXPORT __declspec(dllexport)

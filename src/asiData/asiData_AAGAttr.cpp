@@ -92,19 +92,23 @@ Handle(TDF_Attribute) asiData_AAGAttr::NewEmpty() const
 //! This method is mainly used by OCAF Undo/Redo kernel as a part of
 //! backup functionality.
 //! \param[in] mainAttr OCAF Attribute to copy data from.
-void asiData_AAGAttr::Restore(const Handle(TDF_Attribute)& asiData_NotUsed(mainAttr))
+void asiData_AAGAttr::Restore(const Handle(TDF_Attribute)& mainAttr)
 {
-  // Nothing is here
+  Handle(asiData_AAGAttr) fromCasted = Handle(asiData_AAGAttr)::DownCast(mainAttr);
+  m_aag = fromCasted->GetAAG();
 }
 
 //! Supporting method for Copy/Paste functionality. Performs full copying of
 //! the underlying data.
 //! \param[in] into       where to paste.
 //! \param[in] relocTable relocation table.
-void asiData_AAGAttr::Paste(const Handle(TDF_Attribute)&       asiData_NotUsed(into),
-                            const Handle(TDF_RelocationTable)& asiData_NotUsed(relocTable)) const
+void asiData_AAGAttr::Paste(const Handle(TDF_Attribute)&       into,
+                            const Handle(TDF_RelocationTable)& relocTable) const
 {
-  // Nothing is here
+  asiData_NotUsed(relocTable);
+
+  Handle(asiData_AAGAttr) intoCasted = Handle(asiData_AAGAttr)::DownCast(into);
+  intoCasted->SetAAG(m_aag);
 }
 
 //-----------------------------------------------------------------------------
@@ -115,6 +119,8 @@ void asiData_AAGAttr::Paste(const Handle(TDF_Attribute)&       asiData_NotUsed(i
 //! \param[in] aag AAG to store.
 void asiData_AAGAttr::SetAAG(const Handle(asiAlgo_AAG)& aag)
 {
+  this->Backup();
+
   m_aag = aag;
 }
 

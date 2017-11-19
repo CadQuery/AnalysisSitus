@@ -49,7 +49,7 @@
 #include <asiEngine_Model.h>
 
 // asiUI includes
-#include <asiUI_ViewerPart.h>
+#include <asiUI_CommonFacilities.h>
 
 //-----------------------------------------------------------------------------
 
@@ -64,8 +64,8 @@ public:
 
 public:
 
-  static Handle(asiEngine_Model) model;       //!< Data Model instance.
-  static asiUI_ViewerPart*       pViewerPart; //!< Part viewer.
+  static Handle(asiEngine_Model)        model;  //!< Data Model instance.
+  static Handle(asiUI_CommonFacilities) cf;     //!< UI common facilities.
 
 };
 

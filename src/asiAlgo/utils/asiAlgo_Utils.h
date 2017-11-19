@@ -111,6 +111,7 @@ public:
 
   //! Converts orientation of the given shape to string.
   //! \param shape [in] shape to access orientation.
+  //! \return string representation of orientation.
   static TCollection_AsciiString
     OrientationToString(const TopoDS_Shape& shape)
   {
@@ -127,6 +128,48 @@ public:
       oriStr = "EXTERNAL";
 
     return oriStr;
+  }
+
+  //! Converts the passed location to string.
+  //! \param loc [in] location to convert.
+  //! \return string representation of location.
+  static TCollection_AsciiString
+    LocationToString(const TopLoc_Location& loc)
+  {
+    const gp_Trsf& T      = loc.Transformation();
+    gp_Mat         T_roto = T.VectorialPart();
+    const gp_XYZ&  T_move = T.TranslationPart();
+    gp_TrsfForm    T_form = T.Form();
+
+    TCollection_AsciiString result;
+    result += "\n---\nTransformation: ";
+    if ( T_form == gp_Identity )
+      result += "identity";
+    else if ( T_form == gp_Rotation )
+      result += "rotation";
+    else if ( T_form == gp_Translation )
+      result += "translation";
+    else if ( T_form == gp_PntMirror )
+      result += "point mirror (central symmetry)";
+    else if ( T_form == gp_Ax1Mirror )
+      result += "axis mirror (rotational symmetry)";
+    else if ( T_form == gp_Ax2Mirror )
+      result += "plane mirror (bilateral symmetry)";
+    else if ( T_form == gp_Scale )
+      result += "scaling";
+    else if ( T_form == gp_CompoundTrsf )
+      result += "combination of orthogonal transformations";
+    else
+      result += "non-orthogonal transformation";
+    //
+    result += "\n---\n";
+    result += T_roto(1, 1); result += " "; result += T_roto(1, 2); result += " "; result += T_roto(1, 3); result += "\n";
+    result += T_roto(2, 1); result += " "; result += T_roto(2, 2); result += " "; result += T_roto(2, 3); result += "\n";
+    result += T_roto(3, 1); result += " "; result += T_roto(3, 2); result += " "; result += T_roto(3, 3);
+    result += "\n---\n";
+    result += T_move.X(); result += " "; result += T_move.Y(); result += " "; result += T_move.Z();
+
+    return result;
   }
 
   //! Returns human-readable surface name.

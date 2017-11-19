@@ -108,7 +108,7 @@ bool asiAlgo_TopoKill::IsAsked(const TopoDS_Shape& subshape,
   // apply the same check to the direct children of the shape in question
   if ( checkRecursively )
   {
-    for ( TopoDS_Iterator it(subshape, false, false); it.More(); it.Next() )
+    for ( TopoDS_Iterator it(subshape, false, true); it.More(); it.Next() )
     {
       const TopoDS_Shape& currentShape = it.Value();
 
@@ -160,9 +160,12 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
 {
   BRep_Builder BB;
 
-  // The two "false" flags passed to the iterator below mean that we do not
-  // want to accumulate orientations and locations of sub-shapes.
-  for ( TopoDS_Iterator it(root, false, false); it.More(); it.Next() )
+  // The "false" flag passed to the iterator below means that we do not
+  // want to accumulate orientations of sub-shapes. These orientations we
+  // manage ourselves attempting to keep them untouched. At the same time,
+  // we do accumulate locations as otherwise we lose local placement of
+  // the part.
+  for ( TopoDS_Iterator it(root, false, true); it.More(); it.Next() )
   {
     const TopoDS_Shape& currentShape = it.Value();
     TopoDS_Shape newResult;

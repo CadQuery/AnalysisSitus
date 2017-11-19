@@ -86,6 +86,9 @@ set (features_H_FILES
   features/asiAlgo_FeatureAttr.h
   features/asiAlgo_FeatureAttrAdjacency.h
   features/asiAlgo_FeatureAttrAngle.h
+  features/asiAlgo_TopoAttr.h
+  features/asiAlgo_TopoAttrLocation.h
+  features/asiAlgo_TopoAttrOrientation.h
   features/asiAlgo_TopoGraph.h
 )
 set (features_CPP_FILES 

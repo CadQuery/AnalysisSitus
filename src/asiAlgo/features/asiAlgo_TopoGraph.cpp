@@ -31,6 +31,10 @@
 // Own include
 #include <asiAlgo_TopoGraph.h>
 
+// asiAlgo includes
+#include <asiAlgo_TopoAttrLocation.h>
+#include <asiAlgo_TopoAttrOrientation.h>
+
 // OCCT includes
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
@@ -217,8 +221,22 @@ void asiAlgo_TopoGraph::addSubshapes(const TopoDS_Shape& parent,
     //
     m_arcs(iParentId).Add(iChildId);
 
-    // Bind orientation attribute
-    m_arc_attributes.Bind( t_arc(iParentId, iChildId), subShape.Orientation() );
+    // Bind orientation & location attributes
+    t_attr_set attrSet;
+    {
+      Handle(asiAlgo_TopoAttrOrientation)
+        oriAttr = new asiAlgo_TopoAttrOrientation( subShape.Orientation() );
+      //
+      attrSet.Add(oriAttr);
+    }
+    //
+    {
+      Handle(asiAlgo_TopoAttrLocation)
+        locAttr = new asiAlgo_TopoAttrLocation( subShape.Location() );
+      //
+      attrSet.Add(locAttr);
+    }
+    m_arc_attributes.Bind(t_arc(iParentId, iChildId), attrSet);
 
     // Process children: add sub-shapes recursively
     if ( !subShape.IsNull() )

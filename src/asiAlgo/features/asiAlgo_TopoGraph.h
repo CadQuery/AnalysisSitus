@@ -32,7 +32,7 @@
 #define asiAlgo_TopoGraph_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_TopoAttr.h>
 
 // OCCT includes
 #include <NCollection_DataMap.hxx>
@@ -158,8 +158,54 @@ public:
 
   //---------------------------------------------------------------------------
 
+  //! Collection of attributes.
+  class t_attr_set
+  {
+  public:
+
+    t_attr_set() {} //!< Default ctor.
+
+    //! Constructor accepting a single attribute to populate the internal set.
+    //! \param[in] single_attr single attribute to populate the set with.
+    t_attr_set(const Handle(asiAlgo_TopoAttr)& single_attr)
+    {
+      this->Add(single_attr);
+    }
+
+  public:
+
+    //! Finds attribute by its global type ID.
+    //! \param[in] id attribute's global ID.
+    //! \return attribute instance.
+    const Handle(asiAlgo_TopoAttr)& operator()(const Standard_GUID& id) const
+    {
+      return m_set(id);
+    }
+
+    //! Adds the given attribute to the set.
+    //! \param[in] attr attribute to add.
+    void Add(const Handle(asiAlgo_TopoAttr)& attr)
+    {
+      m_set.Bind(attr->GetGUID(), attr);
+    }
+
+    //! \return internal collection.
+    const NCollection_DataMap<Standard_GUID, Handle(asiAlgo_TopoAttr), Standard_GUID>& GetMap() const
+    {
+      return m_set;
+    }
+
+  private:
+
+    //! Internal set storing attributes in association with their global IDs.
+    NCollection_DataMap<Standard_GUID, Handle(asiAlgo_TopoAttr), Standard_GUID> m_set;
+
+  };
+
+  //---------------------------------------------------------------------------
+
   //! Arc attributes to store orientation of sub-shape in its parent shape.
-  typedef NCollection_DataMap<t_arc, TopAbs_Orientation, t_arc> t_arc_attributes;
+  typedef NCollection_DataMap<t_arc, t_attr_set, t_arc> t_arc_attributes;
 
 public:
 
@@ -295,12 +341,14 @@ public:
     return numArcs;
   }
 
-  //! Returns arc attribute (orientation).
-  //! \param[in] arc arc in question.
+  //! Returns arc attribute.
+  //! \param[in] arc  arc in question.
+  //! \param[in] guid GUID of the attribute in question.
   //! \return attribute.
-  TopAbs_Orientation GetArcAttribute(const t_arc& arc) const
+  Handle(asiAlgo_TopoAttr) GetArcAttribute(const t_arc&         arc,
+                                           const Standard_GUID& guid) const
   {
-    return m_arc_attributes(arc);
+    return m_arc_attributes(arc)(guid);
   }
 
 protected:

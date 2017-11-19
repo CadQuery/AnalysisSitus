@@ -35,6 +35,8 @@
 #include <asiUI_PartGraphItem.h>
 
 // asiAlgo includes
+#include <asiAlgo_TopoAttrLocation.h>
+#include <asiAlgo_TopoAttrOrientation.h>
 #include <asiAlgo_Utils.h>
 
 // OCCT includes
@@ -78,10 +80,15 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   labelArr->SetNumberOfComponents(1);
   labelArr->SetName(ARRNAME_LABELS);
 
-  // Array for attributes associated with arcs
+  // Array for orientation attributes associated with arcs
   vtkNew<vtkIntArray> childOriArr;
   childOriArr->SetNumberOfComponents(1);
   childOriArr->SetName(ARRNAME_CHILD_ORIENTATION);
+
+  // Array for location attributes associated with arcs
+  vtkNew<vtkStringArray> childLocArr;
+  childLocArr->SetNumberOfComponents(1);
+  childLocArr->SetName(ARRNAME_CHILD_LOCATION);
 
   // Array for pedigree indices (sub-shape IDs)
   vtkNew<vtkIntArray> idsArr;
@@ -177,18 +184,38 @@ vtkSmartPointer<vtkMutableDirectedGraph>
       result->AddEdge( ShapeNodeMap(parentId), ShapeNodeMap(childId) );
 
       // Get orientation attribute available as arc attribute in topology graph
-      TopAbs_Orientation
-        ori = topograph->GetArcAttribute( asiAlgo_TopoGraph::t_arc(parentId, childId) );
+      Handle(asiAlgo_TopoAttr)
+        topoAttr = topograph->GetArcAttribute( asiAlgo_TopoGraph::t_arc(parentId, childId),
+                                               asiAlgo_TopoAttrOrientation::GUID() );
+      //
+      if ( !topoAttr.IsNull() )
+      {
+        TopAbs_Orientation
+          ori = Handle(asiAlgo_TopoAttrOrientation)::DownCast(topoAttr)->GetOrientation();
 
-      // Set arc scalar
-      if ( ori == TopAbs_FORWARD )
-        childOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_F);
-      else if ( ori == TopAbs_REVERSED )
-        childOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_R);
-      else if ( ori == TopAbs_INTERNAL )
-        childOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_I);
-      else // EXTERNAL
-        childOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_E);
+        // Set scalar
+        if ( ori == TopAbs_FORWARD )
+          childOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_F);
+        else if ( ori == TopAbs_REVERSED )
+          childOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_R);
+        else if ( ori == TopAbs_INTERNAL )
+          childOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_I);
+        else // EXTERNAL
+          childOriArr->InsertNextValue(ARRNAME_CHILD_ORIENTATION_E);
+      }
+
+      // Get location attribute available as arc attribute in topology graph
+      topoAttr = topograph->GetArcAttribute( asiAlgo_TopoGraph::t_arc(parentId, childId),
+                                             asiAlgo_TopoAttrLocation::GUID() );
+      //
+      if ( !topoAttr.IsNull() )
+      {
+        const TopLoc_Location&
+          loc = Handle(asiAlgo_TopoAttrLocation)::DownCast(topoAttr)->GetLocation();
+
+        // Set string
+        childLocArr->InsertNextValue( asiAlgo_Utils::LocationToString(loc).ToCString() );
+      }
     }
   }
 
@@ -196,6 +223,7 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   result->GetVertexData() ->AddArray( labelArr.GetPointer() );
   result->GetVertexData() ->AddArray( groupArr.GetPointer() );
   result->GetEdgeData()   ->AddArray( childOriArr.GetPointer() );
+  result->GetEdgeData()   ->AddArray( childLocArr.GetPointer() );
   result->GetVertexData() ->AddArray( idsArr.GetPointer() );
 
   return result;

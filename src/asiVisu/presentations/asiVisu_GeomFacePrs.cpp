@@ -184,37 +184,7 @@ void asiVisu_GeomFacePrs::afterInitPipelines()
     TopLoc_Location loc;
     Handle(Geom_Surface) surf = BRep_Tool::Surface(F, loc);
     //
-    const gp_Trsf& T      = loc.Transformation();
-    gp_Mat         T_roto = T.VectorialPart();
-    const gp_XYZ&  T_move = T.TranslationPart();
-    gp_TrsfForm    T_form = T.Form();
-    //
-    TITLE += "\n---\nTransformation: ";
-    if ( T_form == gp_Identity )
-      TITLE += "identity";
-    else if ( T_form == gp_Rotation )
-      TITLE += "rotation";
-    else if ( T_form == gp_Translation )
-      TITLE += "translation";
-    else if ( T_form == gp_PntMirror )
-      TITLE += "point mirror (central symmetry)";
-    else if ( T_form == gp_Ax1Mirror )
-      TITLE += "axis mirror (rotational symmetry)";
-    else if ( T_form == gp_Ax2Mirror )
-      TITLE += "plane mirror (bilateral symmetry)";
-    else if ( T_form == gp_Scale )
-      TITLE += "scaling";
-    else if ( T_form == gp_CompoundTrsf )
-      TITLE += "combination of orthogonal transformations";
-    else
-      TITLE += "non-orthogonal transformation";
-    //
-    TITLE += "\n---\n";
-    TITLE += T_roto(1, 1); TITLE += " "; TITLE += T_roto(1, 2); TITLE += " "; TITLE += T_roto(1, 3); TITLE += "\n";
-    TITLE += T_roto(2, 1); TITLE += " "; TITLE += T_roto(2, 2); TITLE += " "; TITLE += T_roto(2, 3); TITLE += "\n";
-    TITLE += T_roto(3, 1); TITLE += " "; TITLE += T_roto(3, 2); TITLE += " "; TITLE += T_roto(3, 3);
-    TITLE += "\n---\n";
-    TITLE += T_move.X(); TITLE += " "; TITLE += T_move.Y(); TITLE += " "; TITLE += T_move.Z();
+    TITLE = asiAlgo_Utils::LocationToString(loc);
   }
 
   // Update text on the annotation

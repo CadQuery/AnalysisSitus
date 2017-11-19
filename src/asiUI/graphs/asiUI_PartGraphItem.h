@@ -57,6 +57,7 @@
 #define ARRNAME_COLORS            "Colors"
 #define ARRNAME_ANGLES            "Angles"
 #define ARRNAME_CHILD_ORIENTATION "ChildOrientation"
+#define ARRNAME_CHILD_LOCATION    "ChildLocation"
 #define ARRNAME_GROUP             "Group"
 #define ARRNAME_GROUP_ORDINARY    "Ordinary"
 #define ARRNAME_GROUP_HIGHLIGHTED "Highlighted"

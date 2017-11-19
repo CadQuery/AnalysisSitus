@@ -184,7 +184,7 @@ void asiVisu_GeomFacePrs::afterInitPipelines()
     TopLoc_Location loc;
     Handle(Geom_Surface) surf = BRep_Tool::Surface(F, loc);
     //
-    TITLE = asiAlgo_Utils::LocationToString(loc);
+    TITLE += asiAlgo_Utils::LocationToString(loc);
   }
 
   // Update text on the annotation

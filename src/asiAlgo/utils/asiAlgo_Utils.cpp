@@ -913,8 +913,16 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
     double f, l;
     Handle(Geom2d_Curve) c2d = BRep_Tool::CurveOnSurface(E, face, f, l);
     //
-    Pf = c2d->Value(f);
-    Pl = c2d->Value(l);
+    if ( !c2d.IsNull() )
+    {
+      Pf = c2d->Value(f);
+      Pl = c2d->Value(l);
+    }
+    else
+    {
+      // Use cached points if p-curve is not available...
+      BRep_Tool::UVPoints(E, face, Pf, Pl);
+    }
 
     // Add initial valence record for the new edge
     valenceMap.Bind( E, std::pair<t_extremities, t_valences>() );

@@ -66,6 +66,7 @@
 #include <NCollection_IncAllocator.hxx>
 #include <Precision.hxx>
 #include <ShapeAnalysis_Edge.hxx>
+#include <ShapeAnalysis_ShapeTolerance.hxx>
 #include <ShapeExtend_WireData.hxx>
 #include <ShapeFix_Face.hxx>
 #include <ShapeUpgrade_UnifySameDomain.hxx>
@@ -1020,33 +1021,10 @@ bool asiAlgo_Utils::HasEdgesWithoutVertices(const TopoDS_Face& face)
 //! \return maximum tolerance value.
 double asiAlgo_Utils::MaxTolerance(const TopoDS_Shape& shape)
 {
-  double aMaxToler = Precision::Confusion();
+  ShapeAnalysis_ShapeTolerance TolerChecker;
+  const double maxToler = TolerChecker.Tolerance(shape, 1); // 1 means max
 
-  // Tolerance by faces
-  for ( TopExp_Explorer exp(shape, TopAbs_FACE); exp.More(); exp.Next() )
-  {
-    double aTol = BRep_Tool::Tolerance( TopoDS::Face( exp.Current() ) );
-    if ( aTol > aMaxToler )
-      aMaxToler = aTol;
-  }
-
-  // Tolerance by edges
-  for ( TopExp_Explorer exp(shape, TopAbs_EDGE); exp.More(); exp.Next() )
-  {
-    double aTol = BRep_Tool::Tolerance( TopoDS::Edge( exp.Current() ) );
-    if ( aTol > aMaxToler )
-      aMaxToler = aTol;
-  }
-
-  // Tolerance by vertices
-  for ( TopExp_Explorer exp(shape, TopAbs_VERTEX); exp.More(); exp.Next() )
-  {
-    double aTol = BRep_Tool::Tolerance( TopoDS::Vertex( exp.Current() ) );
-    if ( aTol > aMaxToler )
-      aMaxToler = aTol;
-  }
-
-  return aMaxToler;
+  return maxToler;
 }
 
 //-----------------------------------------------------------------------------

@@ -52,7 +52,7 @@
 // OCCT includes
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepLProp_SLProps.hxx>
-#include <BRepOffsetAPI_MakeThickSolid.hxx>
+#include <BRepOffset_MakeOffset.hxx>
 #include <BRepTools.hxx>
 #include <ShapeFix_Shape.hxx>
 #include <TopExp.hxx>
@@ -64,6 +64,21 @@
 
 Handle(asiEngine_Model)        cmdEngine::model = NULL;
 Handle(asiUI_CommonFacilities) cmdEngine::cf    = NULL;
+
+//-----------------------------------------------------------------------------
+
+void ClearViewers()
+{
+  // Get all presentation managers
+  const vtkSmartPointer<asiVisu_PrsManager>& partPM   = cmdEngine::cf->ViewerPart->PrsMgr();
+  const vtkSmartPointer<asiVisu_PrsManager>& hostPM   = cmdEngine::cf->ViewerHost->PrsMgr();
+  const vtkSmartPointer<asiVisu_PrsManager>& domainPM = cmdEngine::cf->ViewerDomain->PrsMgr();
+
+  // Update viewers
+  partPM  ->DeleteAllPresentations();
+  hostPM  ->DeleteAllPresentations();
+  domainPM->DeleteAllPresentations();
+}
 
 //-----------------------------------------------------------------------------
 
@@ -554,8 +569,9 @@ int ENGINE_ThickenShell(const Handle(asiTcl_Interp)& interp,
   const double offsetVal = atof(argv[1]);
 
   // Make offset
-  BRepOffsetAPI_MakeThickSolid mkOffset;
-  mkOffset.MakeThickSolidBySimple(partShape, offsetVal);
+  BRepOffset_MakeOffset mkOffset;
+  mkOffset.Initialize(partShape, offsetVal, 1.0e-3, BRepOffset_Skin, true, false, GeomAbs_Arc, true);
+  mkOffset.MakeThickSolid();
   //
   if ( !mkOffset.IsDone() )
   {
@@ -665,6 +681,12 @@ int ENGINE_LoadStep(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
+  // Clear viewers
+  ClearViewers();
+
+  // Clear data
+  cmdEngine::model->Clear();
+
   // Modify Data Model
   cmdEngine::model->OpenCommand();
   {
@@ -672,9 +694,11 @@ int ENGINE_LoadStep(const Handle(asiTcl_Interp)& interp,
   }
   cmdEngine::model->CommitCommand();
 
-  // Update UI
-  if ( cmdEngine::cf->ViewerPart )
-    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  // Update viewer
+  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  // Update object browser
+  cmdEngine::cf->ObjectBrowser->Populate();
 
   return TCL_OK;
 }

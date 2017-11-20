@@ -561,6 +561,9 @@ void asiVisu_PrsManager::RenderPresentation(const ActAPI_DataObjectId& nodeId)
 //! \param node [in] Node to de-render the Presentation for.
 void asiVisu_PrsManager::DeRenderPresentation(const Handle(ActAPI_INode)& node)
 {
+  if ( node.IsNull() )
+    return;
+
   this->DeRenderPresentation( node->GetId() );
 }
 
@@ -687,7 +690,7 @@ bool asiVisu_PrsManager::DeletePresentation(const ActAPI_DataObjectId& nodeId,
 
   Handle(ActAPI_INode) node = m_model->FindNode(nodeId);
 
-  if ( !this->IsPresented(node) && !withChildren )
+  if ( !node.IsNull() && !this->IsPresented(node) && !withChildren )
     return false;
 
   this->DeRenderPresentation(node);

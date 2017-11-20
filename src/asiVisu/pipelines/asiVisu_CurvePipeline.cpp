@@ -85,7 +85,7 @@ void asiVisu_CurvePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
       src->SetInputCurve2d(curve, f, l);
 
       // Set tip size
-      const double tipSize = Max( 0.1, (curve->Value(l).XY() - curve->Value(f).XY() ).Modulus()*0.1 );
+      const double tipSize = (curve->Value(l).XY() - curve->Value(f).XY() ).Modulus()*0.1;
       //
       src->SetTipSize(tipSize);
     }
@@ -95,9 +95,9 @@ void asiVisu_CurvePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
       src->SetInputCurve(curve, f, l);
 
       // Set tip size
-      const double tipSize = Max( 0.1, (curve->Value(l).XYZ() - curve->Value(f).XYZ() ).Modulus()*0.1 );
+      const double tipSize = (curve->Value(l).XYZ() - curve->Value(f).XYZ() ).Modulus()*0.1;
       //
-      src->SetTipSize(tipSize*10);
+      src->SetTipSize(tipSize);
     }
     else
       Standard_ProgramError::Raise("Not yet implemented");

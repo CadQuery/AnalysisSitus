@@ -652,6 +652,22 @@ int MISC_TestBuilder(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_StartContour(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // TODO: NYI
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -704,6 +720,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Reproducer for issue with BRep_Builder.",
     //
     __FILE__, group, MISC_TestBuilder);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("start-contour",
+    //
+    "start-contour \n"
+    "\t Enables interactive contour picking.",
+    //
+    __FILE__, group, MISC_StartContour);
 }
 
 // Declare entry point PLUGINFACTORY

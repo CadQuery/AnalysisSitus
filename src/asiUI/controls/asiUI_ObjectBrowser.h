@@ -102,6 +102,7 @@ protected slots:
   void onResetPartPrs     ();
   //
   void onSaveToBREP       ();
+  void onSetAsPart        ();
 
 protected:
 

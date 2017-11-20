@@ -34,6 +34,9 @@
 // asiUI includes
 #include <asiUI_Common.h>
 
+// asiEngine includes
+#include <asiEngine_Part.h>
+
 // asiVisu includes
 #include <asiVisu_GeomPrs.h>
 
@@ -355,6 +358,42 @@ void asiUI_ObjectBrowser::onSaveToBREP()
 
 //-----------------------------------------------------------------------------
 
+void asiUI_ObjectBrowser::onSetAsPart()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
+    return;
+
+  // Convert to the only supported type
+  Handle(asiData_IVTopoItemNode)
+    topoNode = Handle(asiData_IVTopoItemNode)::DownCast(selected_n);
+
+  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(m_model);
+
+  // Modify Data Model
+  M->OpenCommand();
+  {
+    asiEngine_Part(M, NULL).Update( topoNode->GetShape() );
+  }
+  M->CommitCommand();
+
+  // Update UI
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+  {
+    // Clear topological item
+    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(topoNode) )
+      m_viewers[k]->PrsMgr()->DeRenderPresentation(topoNode);
+
+    // Actualize part
+    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented( M->GetPartNode() ) )
+      m_viewers[k]->PrsMgr()->Actualize( M->GetPartNode() );
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 //! Populates context menu with actions.
 //! \param activeNode [in]      currently active Node.
 //! \param pMenu      [in, out] menu to populate.
@@ -391,6 +430,7 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_INode)& active
     {
       pMenu->addSeparator();
       pMenu->addAction( "Save to BREP...", this, SLOT( onSaveToBREP() ) );
+      pMenu->addAction( "Set as part", this, SLOT( onSetAsPart() ) );
     }
   }
 }

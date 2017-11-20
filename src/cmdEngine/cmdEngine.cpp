@@ -622,7 +622,10 @@ int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
 
   // Update UI
   if ( cmdEngine::cf->ViewerPart )
+  {
+    cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderPresentation( node );
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  }
 
   return TCL_OK;
 }

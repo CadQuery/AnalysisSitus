@@ -9,6 +9,8 @@ set (H_FILES
   asiData_AAGAttr.h
   asiData_AAGParameter.h
   asiData_BoundaryEdgesNode.h
+  asiData_BVHAttr.h
+  asiData_BVHParameter.h
   asiData_ContourNode.h
   asiData_CurveNode.h
   asiData_DesignLawNode.h
@@ -35,19 +37,6 @@ set (H_FILES
   asiData_IVTopoNode.h
   asiData_Partition.h
   asiData_PartNode.h
-  asiData_REAnalysisNode.h
-  asiData_REContourNode.h
-  asiData_REContoursNode.h
-  asiData_REFunctionsNode.h
-  asiData_REGaussMapNode.h
-  asiData_RENode.h
-  asiData_RENormalsNode.h
-  asiData_REPointsNode.h
-  asiData_REPrimitiveNode.h
-  asiData_RESegmentNode.h
-  asiData_RESegmentsNode.h
-  asiData_RESurfaceNode.h
-  asiData_RESurfacesNode.h
   asiData_RootNode.h
   asiData_SurfNode.h
   asiData_TessNode.h
@@ -58,6 +47,8 @@ set (CPP_FILES
   asiData_AAGAttr.cpp
   asiData_AAGParameter.cpp
   asiData_BoundaryEdgesNode.cpp
+  asiData_BVHAttr.cpp
+  asiData_BVHParameter.cpp
   asiData_ContourNode.cpp
   asiData_CurveNode.cpp
   asiData_DesignLawNode.cpp
@@ -84,19 +75,6 @@ set (CPP_FILES
   asiData_IVTopoNode.cpp
   asiData_Partition.cpp
   asiData_PartNode.cpp
-  asiData_REAnalysisNode.cpp
-  asiData_REContourNode.cpp
-  asiData_REContoursNode.cpp
-  asiData_REFunctionsNode.cpp
-  asiData_REGaussMapNode.cpp
-  asiData_RENode.cpp
-  asiData_RENormalsNode.cpp
-  asiData_REPointsNode.cpp
-  asiData_REPrimitiveNode.cpp
-  asiData_RESegmentNode.cpp
-  asiData_RESegmentsNode.cpp
-  asiData_RESurfaceNode.cpp
-  asiData_RESurfacesNode.cpp
   asiData_RootNode.cpp
   asiData_SurfNode.cpp
   asiData_TessNode.cpp

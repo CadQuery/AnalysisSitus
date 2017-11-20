@@ -77,6 +77,16 @@ public:
     m_model = model;
   }
 
+  //! Sets diagnotics tools for the callback.
+  //! \param progress [in] progress notifier.
+  //! \param plotter  [in] imperative plotter.
+  void SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                          ActAPI_PlotterEntry  plotter)
+  {
+    m_notifier = progress;
+    m_plotter  = plotter;
+  }
+
 private:
 
   asiUI_EXPORT

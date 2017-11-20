@@ -149,7 +149,7 @@ void exe_MainWindow::createDockWindows()
     pDockBrowser = new QDockWidget("Data", this);
     pDockBrowser->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, pDockBrowser);
+    m_widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, cf->ProgressNotifier, pDockBrowser);
     m_widgets.wBrowser->AddAssociatedViewer(cf->ViewerPart);
     //
     pDockBrowser->setWidget(m_widgets.wBrowser);

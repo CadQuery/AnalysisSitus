@@ -57,6 +57,7 @@ class asiUI_EXPORT asiUI_ObjectBrowser : public QTreeWidget
 public:
 
   asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
+                      ActAPI_ProgressEntry         progress,
                       QWidget*                     parent = NULL);
 
   virtual
@@ -103,6 +104,8 @@ protected slots:
   //
   void onSaveToBREP       ();
   void onSetAsPart        ();
+  //
+  void onPrintParameters  ();
 
 protected:
 
@@ -116,7 +119,8 @@ protected:
 protected:
 
   Handle(ActAPI_IModel)      m_model;   //!< Data Model.
-  std::vector<asiUI_Viewer*> m_viewers; //!< Associated viewers.
+  std::vector<asiUI_Viewer*> m_viewers;  //!< Associated viewers.
+  ActAPI_ProgressEntry       m_progress; //!< Progress notifier.
 
 };
 

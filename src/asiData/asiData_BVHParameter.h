@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 19 April 2017
+// Created on: 20 November 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -28,82 +28,99 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_REPrimitiveNode_h
-#define asiData_REPrimitiveNode_h
+#ifndef asiData_BVHParameter_h
+#define asiData_BVHParameter_h
 
 // asiData includes
-#include <asiData.h>
+#include <asiData_BVHAttr.h>
 
 // Active Data includes
-#include <ActData_BaseNode.h>
-
-// OCCT includes
-#include <TopoDS_Shape.hxx>
+#include <ActData_UserParameter.h>
+#include <ActData_Common.h>
+#include <ActData_ParameterDTO.h>
 
 //-----------------------------------------------------------------------------
-// Topological primitive as a result of Reverse Engineering
+// Parameter DTO
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_REPrimitiveNode, ActData_BaseNode)
-
-//! Node representing a single topological primitive being a result of
-//! reverse engineering.
-class asiData_REPrimitiveNode : public ActData_BaseNode
+//! Data Transfer Object (DTO) corresponding to data wrapped with
+//! BVH Parameter without any OCAF connectivity.
+class asiData_BVHDTO : public ActData_ParameterDTO
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_REPrimitiveNode, ActData_BaseNode)
-
-  // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_REPrimitiveNode, Instance)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_BVHDTO, ActData_ParameterDTO)
 
 public:
 
-  //! IDs for the underlying Parameters.
-  enum ParamId
-  {
-    PID_Name,         //!< Name of the Node.
-  //------------------//
-    PID_Geometry,     //!< Geometry.
-  //------------------//
-    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
-  };
+  //! Constructor accepting GID.
+  //! \param GID [in] GID.
+  asiData_BVHDTO(const ActAPI_ParameterGID& GID) : ActData_ParameterDTO(GID, Parameter_UNDEFINED) {}
 
 public:
 
-  asiData_EXPORT static Handle(ActAPI_INode)
+  Handle(asiAlgo_BVHFacets) BVH; //!< Bounding Volume Hierarchy.
+
+};
+
+//-----------------------------------------------------------------------------
+// Parameter
+//-----------------------------------------------------------------------------
+
+//! Node Parameter representing Bounding Volume Hierarchy.
+class asiData_BVHParameter : public ActData_UserParameter
+{
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiData_BVHParameter, ActData_UserParameter)
+
+public:
+
+  asiData_EXPORT static Handle(asiData_BVHParameter)
     Instance();
 
-// Generic naming support:
-public:
-
-  asiData_EXPORT virtual TCollection_ExtendedString
-    GetName();
-
-  asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& name);
-
-// Initialization:
 public:
 
   asiData_EXPORT void
-    Init(const TopoDS_Shape& primitive);
+    SetBVH(const Handle(asiAlgo_BVHFacets)& BVH,
+           const ActAPI_ModificationType    MType           = MT_Touched,
+           const bool                       doResetValidity = true,
+           const bool                       doResetPending  = true);
 
-// Convenience methods:
-public:
-
-  asiData_EXPORT void
-    SetShape(const TopoDS_Shape& primitive);
-
-  asiData_EXPORT TopoDS_Shape
-    GetShape() const;
+  asiData_EXPORT Handle(asiAlgo_BVHFacets)
+    GetBVH();
 
 protected:
 
-  //! Allocation is allowed only via Instance method.
   asiData_EXPORT
-    asiData_REPrimitiveNode();
+    asiData_BVHParameter();
+
+private:
+
+  virtual bool isWellFormed() const;
+  virtual int parameterType() const;
+
+private:
+
+  virtual void
+    setFromDTO(const Handle(ActData_ParameterDTO)& DTO,
+               const ActAPI_ModificationType       MType = MT_Touched,
+               const bool                          doResetValidity = true,
+               const bool                          doResetPending = true);
+
+  virtual Handle(ActData_ParameterDTO)
+    createDTO(const ActAPI_ParameterGID& GID);
+
+protected:
+
+  //! Tags for the underlying CAF Labels.
+  enum Datum
+  {
+    DS_BVH = ActData_UserParameter::DS_DatumLast,
+    DS_DatumLast = DS_BVH + RESERVED_DATUM_RANGE
+  };
 
 };
 

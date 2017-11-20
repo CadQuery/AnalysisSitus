@@ -55,11 +55,13 @@
 //-----------------------------------------------------------------------------
 
 //! Creates a new instance of tree view.
-//! \param model   [in] Data Model instance.
-//! \param parent  [in] parent widget.
+//! \param[in] model    Data Model instance.
+//! \param[in] progress progress notifier.
+//! \param[in] parent   parent widget.
 asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
+                                         ActAPI_ProgressEntry         progress,
                                          QWidget*                     parent)
-: QTreeWidget(parent), m_model(model)
+: QTreeWidget(parent), m_progress(progress), m_model(model)
 {
   // Configure
   this->setMinimumWidth(TREEVIEW_MINSIZE);
@@ -394,6 +396,35 @@ void asiUI_ObjectBrowser::onSetAsPart()
 
 //-----------------------------------------------------------------------------
 
+void asiUI_ObjectBrowser::onPrintParameters()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  // Loop over the parameters
+  TCollection_AsciiString dump("Parameters of \'");
+  dump += selected_n->GetName();
+  dump += "\' [";
+  dump += selected_n->GetId();
+  dump += "]:\n";
+  //
+  for ( Handle(ActAPI_IParamIterator) pit = selected_n->GetParamIterator(); pit->More(); pit->Next() )
+  {
+    const Handle(ActAPI_IUserParameter)& P = pit->Value();
+
+    dump += "\t";
+    dump += "[";
+    dump += pit->Key();
+    dump += "] ";
+    dump += P->DynamicType()->Name();
+    dump += "\n";
+  }
+
+  m_progress.SendLogMessage(LogInfo(Normal) << dump);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Populates context menu with actions.
 //! \param activeNode [in]      currently active Node.
 //! \param pMenu      [in, out] menu to populate.
@@ -412,10 +443,13 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_INode)& active
     }
   }
 
+  pMenu->addAction( "Print parameters", this, SLOT( onPrintParameters() ) );
+  //
   if ( isPresented )
   {
+    pMenu->addSeparator();
     pMenu->addAction( "Show",      this, SLOT( onShow()     ) );
-    pMenu->addAction( "Show Only", this, SLOT( onShowOnly() ) );
+    pMenu->addAction( "Show only", this, SLOT( onShowOnly() ) );
     pMenu->addAction( "Hide",      this, SLOT( onHide()     ) );
 
     if ( activeNode->IsKind( STANDARD_TYPE(asiData_PartNode) ) )

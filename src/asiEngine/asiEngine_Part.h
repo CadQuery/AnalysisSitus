@@ -46,12 +46,16 @@ class asiEngine_Part
 public:
 
   //! ctor.
-  //! \param model  [in] Data Model instance.
-  //! \param prsMgr [in] Presentation Manager for visual commands.
+  //! \param model    [in] Data Model instance.
+  //! \param prsMgr   [in] Presentation Manager for visual commands.
+  //! \param progress [in] progress notifier.
+  //! \param plotter  [in] imperative plotter.
   asiEngine_Part(const Handle(asiEngine_Model)&             model,
-                 const vtkSmartPointer<asiVisu_PrsManager>& prsMgr)
+                 const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
+                 ActAPI_ProgressEntry                       progress = NULL,
+                 ActAPI_PlotterEntry                        plotter  = NULL)
   //
-  : m_model(model), m_prsMgr(prsMgr) {}
+  : m_model(model), m_prsMgr(prsMgr), m_progress(progress), m_plotter(plotter) {}
 
   //! ctor.
   //! \param model [in] Data Model instance.
@@ -67,6 +71,9 @@ public:
   asiEngine_EXPORT void
     Update(const TopoDS_Shape& model,
            const bool          doResetTessParams = false);
+
+  asiEngine_EXPORT void
+    BuildBVH();
 
   asiEngine_EXPORT void
     Clean();
@@ -131,8 +138,10 @@ public:
 
 protected:
 
-  Handle(asiEngine_Model)             m_model;  //!< Data Model instance.
-  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr; //!< Presentation Manager.
+  Handle(asiEngine_Model)             m_model;    //!< Data Model instance.
+  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr;   //!< Presentation Manager.
+  ActAPI_ProgressEntry                m_progress; //!< Progress notifier.
+  ActAPI_PlotterEntry                 m_plotter;  //!< Imperative plotter.
 
 };
 

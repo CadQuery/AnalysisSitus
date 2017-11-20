@@ -82,6 +82,8 @@ void asiUI_PickFacetCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
   // Get picking ray
   gp_Lin pickRay = *( (gp_Lin*) pCallData );
 
+  m_plotter.DRAW_LINK( pickRay.Location().XYZ(), pickRay.Location().XYZ() + pickRay.Direction().XYZ()*100, Color_Red, "ray" );
+
   // Prepare a tool to find the intersected facet
   asiAlgo_HitFacet HitFacet(m_bvh, m_notifier, m_plotter);
 

@@ -39,7 +39,7 @@
 //! Default constructor. Registers all involved Parameters.
 asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
 {
-  // Register standard Active Data Parameters
+  // Register standard Active Data Parameters.
   REGISTER_PARAMETER(Name,  PID_Name);
   REGISTER_PARAMETER(Shape, PID_Geometry);
   REGISTER_PARAMETER(Real,  PID_TessLinDefl);
@@ -49,8 +49,9 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Int,   PID_Color);
   REGISTER_PARAMETER(Bool,  PID_HasVertices);
 
-  // Register custom Analysis Situs Parameters
+  // Register custom Parameters specific to Analysis Situs application.
   this->registerParameter(PID_AAG, asiData_AAGParameter::Instance(), false);
+  this->registerParameter(PID_BVH, asiData_BVHParameter::Instance(), false);
 }
 
 //! Returns new DETACHED instance of Geometry Node ensuring its correct
@@ -70,6 +71,7 @@ void asiData_PartNode::Init()
   // Set empty initial B-Rep and AAG
   this->setShape( TopoDS_Shape() );
   this->setAAG(NULL);
+  this->setBVH(NULL);
 
   // Set default values to primitive Parameters
   this->SetLinearDeflection  (0.0);
@@ -112,6 +114,12 @@ TopoDS_Shape asiData_PartNode::GetShape() const
 Handle(asiAlgo_AAG) asiData_PartNode::GetAAG() const
 {
   return Handle(asiData_AAGParameter)::DownCast( this->Parameter(PID_AAG) )->GetAAG();
+}
+
+//! \return stored BVH.
+Handle(asiAlgo_BVHFacets) asiData_PartNode::GetBVH() const
+{
+  return Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->GetBVH();
 }
 
 //! Sets linear deflection.
@@ -335,4 +343,11 @@ void asiData_PartNode::setShape(const TopoDS_Shape& shape)
 void asiData_PartNode::setAAG(const Handle(asiAlgo_AAG)& aag)
 {
   Handle(asiData_AAGParameter)::DownCast( this->Parameter(PID_AAG) )->SetAAG(aag);
+}
+
+//! Sets BVH to store.
+//! \param bvh [in] BVH to store.
+void asiData_PartNode::setBVH(const Handle(asiAlgo_BVHFacets)& bvh)
+{
+  Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->SetBVH(bvh);
 }

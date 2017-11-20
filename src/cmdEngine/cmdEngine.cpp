@@ -45,6 +45,7 @@
 
 // asiUI includes
 #include <asiUI_DialogCommands.h>
+#include <asiUI_PickFacetCallback.h>
 
 // asiVisu includes
 #include <asiVisu_Utils.h>
@@ -882,6 +883,91 @@ int ENGINE_Redo(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_StartContour(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Build BVH for facets.
+  asiEngine_Part partAPI(cmdEngine::model, NULL, interp->GetProgress(), interp->GetPlotter() );
+  //
+  cmdEngine::model->OpenCommand();
+  {
+    partAPI.BuildBVH();
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get Part presentation manager.
+  const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdEngine::cf->ViewerPart->PrsMgr();
+
+  // Set picker type to world picker.
+  cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerType(PickType_World);
+
+  // Set selection mode.
+  PM->SetSelectionMode(SelectionMode_Workpiece);
+
+  // Add observer which takes responsibility to interact with the user.
+  if ( !PM->HasObserver(EVENT_SELECT_WORLD_POINT) )
+  {
+    vtkSmartPointer<asiUI_PickFacetCallback>
+      cb = vtkSmartPointer<asiUI_PickFacetCallback>::New();
+    //
+    cb->SetModel(cmdEngine::model);
+    cb->SetBVH( part_n->GetBVH() );
+    cb->SetDiagnosticTools( interp->GetProgress(), interp->GetPlotter() );
+
+    // Add observer.
+    PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
+  }
+
+  // TODO: NYI
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_FinishContour(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get Part presentation manager.
+  const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdEngine::cf->ViewerPart->PrsMgr();
+
+  // Set picker type to cell picker.
+  cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerType(PickType_World);
+
+  // Set selection mode.
+  PM->SetSelectionMode(SelectionMode_Face);
+
+  // Remove observer.
+  if ( PM->HasObserver(EVENT_SELECT_WORLD_POINT) )
+  {
+    PM->RemoveObserver(EVENT_SELECT_WORLD_POINT);
+  }
+
+  // TODO: NYI
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
                         const Handle(Standard_Transient)& data)
 {
@@ -1079,6 +1165,22 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Redoes model changes.",
     //
     __FILE__, group, ENGINE_Redo);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("start-contour",
+    //
+    "start-contour \n"
+    "\t Enables interactive contour picking.",
+    //
+    __FILE__, group, ENGINE_StartContour);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("finish-contour",
+    //
+    "finish-contour \n"
+    "\t Finalizes interactive contour picking.",
+    //
+    __FILE__, group, ENGINE_FinishContour);
 }
 
 // Declare entry point PLUGINFACTORY

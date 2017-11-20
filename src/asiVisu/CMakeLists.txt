@@ -66,8 +66,6 @@ set (pipelines_H_FILES
   pipelines/asiVisu_PartPipelineBase.h
   pipelines/asiVisu_Pipeline.h
   pipelines/asiVisu_PointsPipeline.h
-  pipelines/asiVisu_REContoursPipeline.h
-  pipelines/asiVisu_RESurfacesPipeline.h
   pipelines/asiVisu_ShadedSurfacePipeline.h
   pipelines/asiVisu_ShapePipeline.h
   pipelines/asiVisu_TriangulationLinksPipeline.h
@@ -97,8 +95,6 @@ set (pipelines_CPP_FILES
   pipelines/asiVisu_PartPipelineBase.cpp
   pipelines/asiVisu_Pipeline.cpp
   pipelines/asiVisu_PointsPipeline.cpp
-  pipelines/asiVisu_REContoursPipeline.cpp
-  pipelines/asiVisu_RESurfacesPipeline.cpp
   pipelines/asiVisu_ShadedSurfacePipeline.cpp
   pipelines/asiVisu_ShapePipeline.cpp
   pipelines/asiVisu_TriangulationLinksPipeline.cpp
@@ -133,12 +129,6 @@ set (presentations_H_FILES
   presentations/asiVisu_IVTopoItemPrs.h
   presentations/asiVisu_Prs.h
   presentations/asiVisu_PrsManager.h
-  presentations/asiVisu_REContoursPrs.h
-  presentations/asiVisu_REGaussMapPrs.h
-  presentations/asiVisu_RENormalsPrs.h
-  presentations/asiVisu_REPointsPrs.h
-  presentations/asiVisu_RESegmentPrs.h
-  presentations/asiVisu_RESurfacesPrs.h
   presentations/asiVisu_TriangulationPrs.h
 )
 set (presentations_CPP_FILES 
@@ -163,12 +153,6 @@ set (presentations_CPP_FILES
   presentations/asiVisu_IVTopoItemPrs.cpp
   presentations/asiVisu_Prs.cpp
   presentations/asiVisu_PrsManager.cpp
-  presentations/asiVisu_REContoursPrs.cpp
-  presentations/asiVisu_REGaussMapPrs.cpp
-  presentations/asiVisu_RENormalsPrs.cpp
-  presentations/asiVisu_REPointsPrs.cpp
-  presentations/asiVisu_RESegmentPrs.cpp
-  presentations/asiVisu_RESurfacesPrs.cpp
   presentations/asiVisu_TriangulationPrs.cpp
 )
 
@@ -195,14 +179,6 @@ set (providers_H_FILES
   providers/asiVisu_MeshDataProvider.h
   providers/asiVisu_PartDataProvider.h
   providers/asiVisu_PointsDataProvider.h
-  providers/asiVisu_REContoursDataProvider.h
-  providers/asiVisu_REGaussMapAxisDataProvider.h
-  providers/asiVisu_REGaussMapDataProvider.h
-  providers/asiVisu_REGaussMapRefinedAxisDataProvider.h
-  providers/asiVisu_RENormalsDataProvider.h
-  providers/asiVisu_REPointsDataProvider.h
-  providers/asiVisu_RESegmentDataProvider.h
-  providers/asiVisu_RESurfacesDataProvider.h
   providers/asiVisu_ShapeDataProvider.h
   providers/asiVisu_TriangulationDataProvider.h
   providers/asiVisu_VectorsDataProvider.h
@@ -224,14 +200,6 @@ set (providers_CPP_FILES
   providers/asiVisu_MeshDataProvider.cpp
   providers/asiVisu_PartDataProvider.cpp
   providers/asiVisu_PointsDataProvider.cpp
-  providers/asiVisu_REContoursDataProvider.cpp
-  providers/asiVisu_REGaussMapAxisDataProvider.cpp
-  providers/asiVisu_REGaussMapDataProvider.cpp
-  providers/asiVisu_REGaussMapRefinedAxisDataProvider.cpp
-  providers/asiVisu_RENormalsDataProvider.cpp
-  providers/asiVisu_REPointsDataProvider.cpp
-  providers/asiVisu_RESegmentDataProvider.cpp
-  providers/asiVisu_RESurfacesDataProvider.cpp
   providers/asiVisu_ShapeDataProvider.cpp
   providers/asiVisu_TriangulationDataProvider.cpp
   providers/asiVisu_VectorsDataProvider.cpp

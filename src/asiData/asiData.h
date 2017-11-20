@@ -47,7 +47,8 @@
 //-----------------------------------------------------------------------------
 
 #define Parameter_AAG             Parameter_LASTFREE
-#define Parameter_Function        Parameter_LASTFREE + 1
+#define Parameter_BVH             Parameter_LASTFREE + 1
+#define Parameter_Function        Parameter_LASTFREE + 2
 //
 #define Parameter_LASTFREE_ASITUS Parameter_Function
 

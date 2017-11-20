@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 05 April 2016
+// Created on: 20 November 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -28,49 +28,73 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiData_RESurfacesNode.h>
+#ifndef asiData_BVHAttr_h
+#define asiData_BVHAttr_h
 
-// Active Data includes
-#include <ActData_ParameterFactory.h>
+// asiData includes
+#include <asiData.h>
 
-//-----------------------------------------------------------------------------
+// asiAlgo includes
+#include <asiAlgo_BVHFacets.h>
 
-//! Default constructor. Registers all involved Parameters.
-asiData_RESurfacesNode::asiData_RESurfacesNode() : ActData_BaseNode()
+// OCCT includes
+#include <TDF_Attribute.hxx>
+#include <TDF_Label.hxx>
+
+//! OCAF Attribute representing Bounding Volume Hierarchy (BVH) of facets.
+class asiData_BVHAttr : public TDF_Attribute
 {
-  REGISTER_PARAMETER(Name, PID_Name);
-}
+public:
 
-//! Returns new DETACHED instance of the Node ensuring its correct
-//! allocation in a heap.
-//! \return new instance of the Node.
-Handle(ActAPI_INode) asiData_RESurfacesNode::Instance()
-{
-  return new asiData_RESurfacesNode();
-}
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiData_BVHAttr, TDF_Attribute)
 
-//! Performs initial actions required to make Node WELL-FORMED.
-void asiData_RESurfacesNode::Init()
-{
-  // Initialize name Parameter
-  this->InitParameter(PID_Name, "Name");
-}
+// Construction & settling-down routines:
+public:
 
-//-----------------------------------------------------------------------------
-// Generic naming
-//-----------------------------------------------------------------------------
+  asiData_EXPORT
+    asiData_BVHAttr();
 
-//! Accessor for the Node's name.
-//! \return name of the Node.
-TCollection_ExtendedString asiData_RESurfacesNode::GetName()
-{
-  return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
-}
+  asiData_EXPORT static Handle(asiData_BVHAttr)
+    Set(const TDF_Label& Label);
 
-//! Sets name for the Node.
-//! \param theName [in] name to set.
-void asiData_RESurfacesNode::SetName(const TCollection_ExtendedString& theName)
-{
-  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(theName);
-}
+// GUID accessors:
+public:
+
+  asiData_EXPORT static const Standard_GUID&
+    GUID();
+
+  asiData_EXPORT virtual const Standard_GUID&
+    ID() const;
+
+// Attribute's kernel methods:
+public:
+
+  asiData_EXPORT virtual Handle(TDF_Attribute)
+    NewEmpty() const;
+
+  asiData_EXPORT virtual void
+    Restore(const Handle(TDF_Attribute)& mainAttr);
+
+  asiData_EXPORT virtual void
+    Paste(const Handle(TDF_Attribute)&       into,
+          const Handle(TDF_RelocationTable)& relocTable) const;
+
+// Accessors for domain-specific data:
+public:
+
+  asiData_EXPORT void
+    SetBVH(const Handle(asiAlgo_BVHFacets)& BVH);
+
+  asiData_EXPORT const Handle(asiAlgo_BVHFacets)&
+    GetBVH() const;
+
+// Members:
+private:
+
+  //! Stored BVH.
+  Handle(asiAlgo_BVHFacets) m_BVH;
+
+};
+
+#endif

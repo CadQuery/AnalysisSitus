@@ -216,6 +216,29 @@ void asiEngine_Part::Update(const TopoDS_Shape& model,
 
 //-----------------------------------------------------------------------------
 
+//! Constructs BVH structure for the visualization facets stored in the
+//! part shape.
+void asiEngine_Part::BuildBVH()
+{
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+
+  // Build BVH for facets
+  Handle(asiAlgo_BVHFacets)
+    bvh = new asiAlgo_BVHFacets(part_n->GetShape(),
+                                asiAlgo_BVHFacets::Builder_Binned,
+                                m_progress,
+                                m_plotter);
+
+  // Store in OCAF
+  Handle(asiData_BVHParameter)
+    bvhParam = Handle(asiData_BVHParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_BVH) );
+  //
+  bvhParam->SetBVH(bvh);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Cleans up Data Model structure related to the Part Node.
 void asiEngine_Part::Clean()
 {

@@ -34,6 +34,7 @@
 // asiData includes
 #include <asiData_AAGParameter.h>
 #include <asiData_BoundaryEdgesNode.h>
+#include <asiData_BVHParameter.h>
 #include <asiData_ContourNode.h>
 #include <asiData_CurveNode.h>
 #include <asiData_EdgeNode.h>
@@ -48,8 +49,6 @@
 //-----------------------------------------------------------------------------
 // Part Node
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiData_PartNode, ActData_BaseNode)
 
 //! Node representing b-rep part.
 class asiData_PartNode : public ActData_BaseNode
@@ -76,6 +75,7 @@ public:
   //------------------//
     PID_Geometry,     //!< B-Rep structure.
     PID_AAG,          //!< AAG structure.
+    PID_BVH,          //!< BVH structure.
   //------------------//
   // Presentation     //
   //------------------//
@@ -111,6 +111,9 @@ public:
 
   asiData_EXPORT Handle(asiAlgo_AAG)
     GetAAG() const;
+
+  asiData_EXPORT Handle(asiAlgo_BVHFacets)
+    GetBVH() const;
 
   asiData_EXPORT void
     SetLinearDeflection(const double);
@@ -197,6 +200,10 @@ protected:
   //! See comment for setShape() method.
   asiData_EXPORT void
     setAAG(const Handle(asiAlgo_AAG)&);
+
+  //! See comment for setShape() method.
+  asiData_EXPORT void
+    setBVH(const Handle(asiAlgo_BVHFacets)&);
 
 };
 

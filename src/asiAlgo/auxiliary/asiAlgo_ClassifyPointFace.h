@@ -61,11 +61,11 @@ public:
 
   asiAlgo_EXPORT asiAlgo_Membership
     operator()(const gp_Pnt& P,
-               const bool    checkGap);
+               const bool    checkDistance = true);
 
   asiAlgo_EXPORT asiAlgo_Membership
     operator()(const gp_Pnt& P,
-               const bool    checkGap,
+               const bool    checkDistance,
                gp_Pnt2d&     UV);
 
 protected:

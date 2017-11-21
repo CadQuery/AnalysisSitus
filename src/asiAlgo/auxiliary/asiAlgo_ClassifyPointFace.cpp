@@ -89,25 +89,43 @@ asiAlgo_Membership
 }
 
 //! Performs point-face classification.
-//! \param P        [in] point to classify.
-//! \param checkGap [in] indicates whether to check gap.
+//! \param P             [in] point to classify.
+//! \param checkDistance [in] indicates whether to check distance from the
+//!                           three-dimensional point (the one being classified)
+//!                           and the host surface of the face. As point inversion
+//!                           is essentially a projection, even a distant point
+//!                           may yield UV coordinates lying INSIDE the face
+//!                           domain. To avoid this, <checkGap> argument should be
+//!                           turned ON. If you are Ok with such false-positives,
+//!                           or if you a priori know that the point is close to
+//!                           the face (i.e. in visually lies on the face), then
+//!                           this flag can be turned off.
 //! \return classification result.
 asiAlgo_Membership
   asiAlgo_ClassifyPointFace::operator()(const gp_Pnt& P,
-                                        const bool    checkGap)
+                                        const bool    checkDistance)
 {
   gp_Pnt2d UV;
-  return this->operator()(P, checkGap, UV);
+  return this->operator()(P, checkDistance, UV);
 }
 
 //! Performs point-face classification.
-//! \param P        [in]  point to classify.
-//! \param checkGap [in]  indicates whether to check gap.
-//! \param UV       [out] image of point on a surface.
+//! \param P             [in]  point to classify.
+//! \param checkDistance [in]  indicates whether to check distance from the
+//!                            three-dimensional point (the one being classified)
+//!                            and the host surface of the face. As point inversion
+//!                            is essentially a projection, even a distant point
+//!                            may yield UV coordinates lying INSIDE the face
+//!                            domain. To avoid this, <checkGap> argument should be
+//!                            turned ON. If you are Ok with such false-positives,
+//!                            or if you a priori know that the point is close to
+//!                            the face (i.e. in visually lies on the face), then
+//!                            this flag can be turned off.
+//! \param UV            [out] image of point on a surface.
 //! \return classification result.
 asiAlgo_Membership
   asiAlgo_ClassifyPointFace::operator()(const gp_Pnt& P,
-                                        const bool    checkGap,
+                                        const bool    checkDistance,
                                         gp_Pnt2d&     UV)
 {
   Handle(Geom_Surface) S = Handle(Geom_Surface)::DownCast( BRep_Tool::Surface(m_F)->Copy() );
@@ -140,7 +158,7 @@ asiAlgo_Membership
   proj.Parameters(1, PU, PV);
   UV = gp_Pnt2d(PU, PV);
   //
-  if ( checkGap && (proj.Distance(1) > 100*m_fInaccuracy) ) // We are quite tolerant here
+  if ( checkDistance && (proj.Distance(1) > 100*m_fInaccuracy) ) // We are quite tolerant here
     return Membership_Out;
 
   return this->operator()(UV);

@@ -155,6 +155,10 @@ asiAlgo_Membership
   // Invert point
   double PU, PV;
   GeomAPI_ProjectPointOnSurf proj(P, S, m_fUmin, m_fUmax, m_fVmin, m_fVmax);
+  //
+  if ( !proj.IsDone() || proj.NbPoints() < 1 )
+    return Membership_Out;
+
   proj.Parameters(1, PU, PV);
   UV = gp_Pnt2d(PU, PV);
   //

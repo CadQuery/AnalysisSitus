@@ -70,7 +70,7 @@ Handle(asiUI_CommonFacilities) cmdEngine::cf    = NULL;
 
 //-----------------------------------------------------------------------------
 
-void ClearViewers()
+void ClearViewers(const bool repaint = true)
 {
   // Get all presentation managers
   const vtkSmartPointer<asiVisu_PrsManager>& partPM   = cmdEngine::cf->ViewerPart->PrsMgr();
@@ -81,6 +81,13 @@ void ClearViewers()
   partPM  ->DeleteAllPresentations();
   hostPM  ->DeleteAllPresentations();
   domainPM->DeleteAllPresentations();
+
+  if ( repaint )
+  {
+    cmdEngine::cf->ViewerPart->Repaint();
+    cmdEngine::cf->ViewerHost->Repaint();
+    cmdEngine::cf->ViewerDomain->Repaint();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -829,6 +836,29 @@ int ENGINE_EraseAll(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_Clear(const Handle(asiTcl_Interp)& interp,
+                 int                          argc,
+                 const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Clear viewers
+  ClearViewers();
+
+  // Clear data
+  cmdEngine::model->Clear();
+
+  // Update object browser
+  cmdEngine::cf->ObjectBrowser->Populate();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_Fit(const Handle(asiTcl_Interp)& interp,
                int                          argc,
                const char**                 argv)
@@ -1340,6 +1370,14 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Erases all objects from the scene.",
     //
     __FILE__, group, ENGINE_EraseAll);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("clear",
+    //
+    "clear \n"
+    "\t Cleans up project data.",
+    //
+    __FILE__, group, ENGINE_Clear);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("fit",

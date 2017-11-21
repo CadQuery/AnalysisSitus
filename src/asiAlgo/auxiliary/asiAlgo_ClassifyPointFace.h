@@ -39,6 +39,7 @@
 #include <TopoDS_Face.hxx>
 
 // Active Data includes
+#include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
 
 //! Point-Face classifier.
@@ -47,26 +48,25 @@ class asiAlgo_ClassifyPointFace
 public:
 
   asiAlgo_EXPORT
-    asiAlgo_ClassifyPointFace(const TopoDS_Face& F,
-                              const double       inaccuracy,
-                              const double       precision);
+    asiAlgo_ClassifyPointFace(const TopoDS_Face&   F,
+                              const double         inaccuracy,
+                              const double         precision,
+                              ActAPI_ProgressEntry progress = NULL,
+                              ActAPI_PlotterEntry  plotter = NULL);
 
 public:
 
   asiAlgo_EXPORT asiAlgo_Membership
-    operator()(const gp_Pnt2d&      PonS,
-               ActAPI_ProgressEntry Journal);
+    operator()(const gp_Pnt2d& PonS);
 
   asiAlgo_EXPORT asiAlgo_Membership
-    operator()(const gp_Pnt&        P,
-               const bool           checkGap,
-               ActAPI_ProgressEntry Journal);
+    operator()(const gp_Pnt& P,
+               const bool    checkGap);
 
   asiAlgo_EXPORT asiAlgo_Membership
-    operator()(const gp_Pnt&        P,
-               const bool           checkGap,
-               gp_Pnt2d&            UV,
-               ActAPI_ProgressEntry Journal);
+    operator()(const gp_Pnt& P,
+               const bool    checkGap,
+               gp_Pnt2d&     UV);
 
 protected:
 
@@ -74,6 +74,13 @@ protected:
   double            m_fPrecision;  //!< Precision of optimization method.
   double            m_fInaccuracy; //!< Inaccuracy in the input geometry.
   IntTools_FClass2d m_fclass;      //!< Internal classifier.
+  double            m_fUmin;       //!< U min parametric boundary of the face.
+  double            m_fUmax;       //!< U max parametric boundary of the face.
+  double            m_fVmin;       //!< V min parametric boundary of the face.
+  double            m_fVmax;       //!< V max parametric boundary of the face.
+  //
+  ActAPI_ProgressEntry m_progress; //!< Progress notifier.
+  ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter.
 
 };
 

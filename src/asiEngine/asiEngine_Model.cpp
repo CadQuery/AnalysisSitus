@@ -61,6 +61,7 @@ REGISTER_NODE_TYPE(asiData_FaceContourNode)
 REGISTER_NODE_TYPE(asiData_EdgeNode)
 REGISTER_NODE_TYPE(asiData_CurveNode)
 REGISTER_NODE_TYPE(asiData_BoundaryEdgesNode)
+REGISTER_NODE_TYPE(asiData_ContourNode)
 //
 REGISTER_NODE_TYPE(asiData_IVCurveNode)
 REGISTER_NODE_TYPE(asiData_IVCurvesNode)
@@ -180,6 +181,7 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_EdgeNode>,          Partition_GeomEdge);
   REGISTER_PARTITION(asiData_Partition<asiData_CurveNode>,         Partition_GeomCurve);
   REGISTER_PARTITION(asiData_Partition<asiData_BoundaryEdgesNode>, Partition_GeomBoundaryEdges);
+  REGISTER_PARTITION(asiData_Partition<asiData_ContourNode>,       Partition_GeomContour);
   //
   REGISTER_PARTITION(asiData_Partition<asiData_IVNode>,            Partition_IV);
   REGISTER_PARTITION(asiData_Partition<asiData_IVPoints2dNode>,    Partition_IV_Points2d);

@@ -36,6 +36,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_STEP.h>
+#include <asiAlgo_Timer.h>
 #include <asiAlgo_TopoGraph.h>
 #include <asiAlgo_TopoKill.h>
 #include <asiAlgo_Utils.h>
@@ -45,7 +46,7 @@
 
 // asiUI includes
 #include <asiUI_DialogCommands.h>
-#include <asiUI_PickFacetCallback.h>
+#include <asiUI_PickContourCallback.h>
 
 // asiVisu includes
 #include <asiVisu_Utils.h>
@@ -55,6 +56,7 @@
 #include <BRepLProp_SLProps.hxx>
 #include <BRepOffset_MakeOffset.hxx>
 #include <BRepTools.hxx>
+#include <BRepExtrema_DistShapeShape.hxx>
 #include <ShapeFix_Shape.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -892,17 +894,30 @@ int ENGINE_StartContour(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // Build BVH for facets.
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get Contour Node.
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
+  //
+  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "No persistent data for contour available.");
+    return TCL_OK;
+  }
+
+  // Prepare data model.
   asiEngine_Part partAPI(cmdEngine::model, NULL, interp->GetProgress(), interp->GetPlotter() );
   //
   cmdEngine::model->OpenCommand();
   {
+    // First we build BVH for facets.
     partAPI.BuildBVH();
+
+    // Clear existing contour.
+    contour_n->Init();
   }
   cmdEngine::model->CommitCommand();
-
-  // Get Part Node
-  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
 
   // Get Part presentation manager.
   const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdEngine::cf->ViewerPart->PrsMgr();
@@ -916,18 +931,17 @@ int ENGINE_StartContour(const Handle(asiTcl_Interp)& interp,
   // Add observer which takes responsibility to interact with the user.
   if ( !PM->HasObserver(EVENT_SELECT_WORLD_POINT) )
   {
-    vtkSmartPointer<asiUI_PickFacetCallback>
-      cb = vtkSmartPointer<asiUI_PickFacetCallback>::New();
+    vtkSmartPointer<asiUI_PickContourCallback>
+      cb = vtkSmartPointer<asiUI_PickContourCallback>::New();
     //
-    cb->SetModel(cmdEngine::model);
+    cb->SetViewer( cmdEngine::cf->ViewerPart );
+    cb->SetModel( cmdEngine::model );
     cb->SetBVH( part_n->GetBVH() );
     cb->SetDiagnosticTools( interp->GetProgress(), interp->GetPlotter() );
 
     // Add observer.
     PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
   }
-
-  // TODO: NYI
 
   return TCL_OK;
 }
@@ -946,22 +960,207 @@ int ENGINE_FinishContour(const Handle(asiTcl_Interp)& interp,
   // Get Part Node
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
 
+  // Get Contour Node.
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
+  //
+  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "No persistent data for contour available.");
+    return TCL_OK;
+  }
+
+  cmdEngine::model->OpenCommand();
+  {
+    // Finalize contour by setting it closed. Setting this flag does not
+    // make any difference unless you ask the Contour Node to build a wire.
+    contour_n->SetClosed(true);
+  }
+  cmdEngine::model->CommitCommand();
+
   // Get Part presentation manager.
   const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdEngine::cf->ViewerPart->PrsMgr();
 
   // Set picker type to cell picker.
-  cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerType(PickType_World);
+  cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerType(PickType_Cell);
 
   // Set selection mode.
   PM->SetSelectionMode(SelectionMode_Face);
 
   // Remove observer.
-  if ( PM->HasObserver(EVENT_SELECT_WORLD_POINT) )
+  PM->RemoveObserver(EVENT_SELECT_WORLD_POINT);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_ContourToWire(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  if ( argc != 2 )
   {
-    PM->RemoveObserver(EVENT_SELECT_WORLD_POINT);
+    return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // TODO: NYI
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get Contour Node.
+  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
+  //
+  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "No persistent data for contour available.");
+    return TCL_OK;
+  }
+
+  // Ask Contour Node to return a wire.
+  TopoDS_Wire contourGeom = contour_n->AsShape(false);
+
+  // Draw it to pass to the Data Model.
+  interp->GetPlotter().REDRAW_SHAPE(argv[1], contourGeom, Color_Red, 1.0, true);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_Imprint(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get topological item to imprint.
+  Handle(asiData_IVTopoItemNode)
+    topoItem_n = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
+  //
+  if ( topoItem_n.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
+    return TCL_ERROR;
+  }
+
+  // Put all arguments to the list.
+  TopTools_ListOfShape arguments;
+  arguments.Append( part_n->GetShape() );
+  arguments.Append( topoItem_n->GetShape() );
+
+  // Initialize General Fuse tool for imprinting.
+  BRepAlgoAPI_BuilderAlgo GeneralFuse;
+  //
+  GeneralFuse.SetArguments(arguments);
+  GeneralFuse.SetRunParallel(true);
+  //
+  GeneralFuse.Build();
+  //
+  if ( GeneralFuse.HasErrors() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Boolean operation failed.");
+    return TCL_ERROR;
+  }
+
+  // Take the result
+  const TopoDS_Shape& fused = GeneralFuse.Shape();
+
+  // Modify Data Model
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(fused);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_SetAsVar(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Draw.
+  interp->GetPlotter().REDRAW_SHAPE( argv[1], part_n->GetShape() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_Dist(const Handle(asiTcl_Interp)& interp,
+                int                          argc,
+                const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get topological item to imprint.
+  Handle(asiData_IVTopoItemNode)
+    topoItem_n = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
+  //
+  if ( topoItem_n.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
+    return TCL_ERROR;
+  }
+
+  TIMER_NEW
+  TIMER_GO
+
+  BRepExtrema_DistShapeShape distSS(part_n->GetShape(),
+                                    topoItem_n->GetShape(),
+                                    Extrema_ExtFlag_MIN);
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Shape-shape distance")
+
+  if ( !distSS.IsDone() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Extrema not done.");
+    return TCL_ERROR;
+  }
+
+  // Get number of solutions.
+  const int numSol = distSS.NbSolution();
+  //
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Number of extrema solutions: %1." << numSol);
+
+  for ( int k = 1; k <= numSol; ++k )
+  {
+    const gp_Pnt& P1 = distSS.PointOnShape1(k);
+    const gp_Pnt& P2 = distSS.PointOnShape2(k);
+
+    interp->GetPlotter().DRAW_POINT(P1, Color_Red, "dist_P1");
+    interp->GetPlotter().DRAW_POINT(P2, Color_Red, "dist_P2");
+    interp->GetPlotter().DRAW_LINK(P1, P2, Color_Red, "dist_P1P2");
+  }
+
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Distance: %1."
+                                                        << distSS.Value() );
 
   return TCL_OK;
 }
@@ -1181,6 +1380,39 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Finalizes interactive contour picking.",
     //
     __FILE__, group, ENGINE_FinishContour);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("contour-to-wire",
+    //
+    "contour-to-wire varName \n"
+    "\t Converts contour to topological wire.",
+    //
+    __FILE__, group, ENGINE_ContourToWire);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("imprint",
+    //
+    "imprint varName \n"
+    "\t Imprints the passed topological object to the working part. \n"
+    "\t This operation is essenially the General Fuse algorithm of OpenCascde.",
+    //
+    __FILE__, group, ENGINE_Imprint);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("set-as-var",
+    //
+    "set-as-var varName \n"
+    "\t Copies part shape to a topological variable.",
+    //
+    __FILE__, group, ENGINE_SetAsVar);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("dist",
+    //
+    "dist varName \n"
+    "\t Computes distance between the part and the given topological object.",
+    //
+    __FILE__, group, ENGINE_Dist);
 }
 
 // Declare entry point PLUGINFACTORY

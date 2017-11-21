@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 19 September 2015
+// Created on: 21 November 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -29,14 +29,13 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_PickFacetCallback.h>
+#include <asiUI_PickContourCallback.h>
 
 // asiAlgo includes
-#include <asiAlgo_BVHFacets.h>
 #include <asiAlgo_HitFacet.h>
 
 // asiUI includes
-#include <asiUI_Common.h>
+#include <asiUI_ViewerPart.h>
 
 // asiVisu includes
 #include <asiVisu_PrsManager.h>
@@ -47,40 +46,35 @@
 
 //! Instantiation routine.
 //! \return instance of the callback class.
-asiUI_PickFacetCallback* asiUI_PickFacetCallback::New()
+asiUI_PickContourCallback* asiUI_PickContourCallback::New()
 {
-  return new asiUI_PickFacetCallback(NULL, NULL);
+  return new asiUI_PickContourCallback(NULL);
 }
 
 //! Constructor accepting owning viewer as a parameter.
-//! \param[in] bvh_facets accelerating structure for picking.
-//! \param[in] viewer     owning viewer.
-asiUI_PickFacetCallback::asiUI_PickFacetCallback(const Handle(asiAlgo_BVHFacets)& bvh_facets,
-                                                 asiUI_Viewer*                    viewer)
-: asiUI_ViewerCallback(viewer), m_bvh(bvh_facets)
+//! \param theViewer [in] owning viewer.
+asiUI_PickContourCallback::asiUI_PickContourCallback(asiUI_Viewer* theViewer)
+: asiUI_ViewerCallback(theViewer)
 {}
 
 //! Destructor.
-asiUI_PickFacetCallback::~asiUI_PickFacetCallback()
+asiUI_PickContourCallback::~asiUI_PickContourCallback()
 {}
 
 //-----------------------------------------------------------------------------
 
 //! Listens to a dedicated event. Performs all useful operations.
-//! \param pCaller   [in] caller instance.
-//! \param eventId   [in] ID of the event triggered this listener.
-//! \param pCallData [in] invocation context.
-void asiUI_PickFacetCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
-                                      unsigned long vtkNotUsed(eventId),
-                                      void*         pCallData)
+//! \param theCaller   [in] caller instance.
+//! \param theEventId  [in] ID of the event triggered this listener.
+//! \param theCallData [in] invocation context.
+void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
+                                        unsigned long vtkNotUsed(theEventId),
+                                        void*         theCallData)
 {
-  Handle(asiData_PartNode) part_n;
-  TopoDS_Shape             part;
-  //
-  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+  const vtkSmartPointer<asiVisu_PrsManager>& mgr = this->GetViewer()->PrsMgr();
 
   // Get picking ray
-  gp_Lin pickRay = *( (gp_Lin*) pCallData );
+  gp_Lin pickRay = *( (gp_Lin*) theCallData );
 
   // Prepare a tool to find the intersected facet
   asiAlgo_HitFacet HitFacet(m_bvh, m_notifier, m_plotter);
@@ -89,7 +83,36 @@ void asiUI_PickFacetCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
   gp_XYZ hit;
   int facet_idx;
   if ( !HitFacet(pickRay, facet_idx, hit) )
+  {
     m_notifier.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet.");
-  else
-    m_plotter.DRAW_POINT(hit, Color_Red);
+    return;
+  }
+
+  // Get object to store the contour
+  Handle(asiData_ContourNode)
+    contour_n = m_model->GetPartNode()->GetContour();
+  //
+  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+  {
+    m_notifier.SendLogMessage(LogWarn(Normal) << "No persistent data for contour available.");
+    return;
+  }
+
+  // Get active face index
+  const int fidx = m_bvh->GetFacet(facet_idx).FaceIndex;
+  //
+  m_notifier.SendLogMessage(LogInfo(Normal) << "Picked point (%1, %2, %3) on face %4"
+                                            << hit.X()
+                                            << hit.Y()
+                                            << hit.Z()
+                                            << fidx);
+
+  // Modify data
+  m_model->OpenCommand();
+  {
+    contour_n->AddPoint(hit, fidx);
+  }
+  m_model->CommitCommand();
+  //
+  mgr->Actualize( contour_n.get() );
 }

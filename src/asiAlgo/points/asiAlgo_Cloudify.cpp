@@ -128,7 +128,7 @@ bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape&                model,
         }
 
         // Perform point membership classification
-        asiAlgo_Membership pmc = classifier(gp_Pnt2d(u, v), NULL);
+        asiAlgo_Membership pmc = classifier( gp_Pnt2d(u, v) );
         //
         if ( pmc & Membership_InOn )
         {

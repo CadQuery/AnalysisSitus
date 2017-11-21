@@ -81,7 +81,7 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
   facet_index = -1;
 
   // Limit of the ray for hit test
-  const double ray_limit = m_facets->GetBoundingDiag();
+  const double ray_limit = m_facets->GetBoundingDiag()*100;
 
   // Precision for fast intersection test on AABB
   const double prec = Precision::Confusion();
@@ -90,9 +90,8 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
   double resultRayParam = RealLast();
 
 #if defined DRAW_DEBUG
-  this->Plotter().CLEAN();
-  this->Plotter().DRAW_POINT(ray.Location(), Color_Red, "ray_origin");
-  this->Plotter().DRAW_LINK(ray.Location(), ray.Location().XYZ() + ray.Direction().XYZ()*ray_limit, Color_Green, "ray");
+  this->Plotter().REDRAW_POINT("ray_origin", ray.Location(), Color_Red);
+  this->Plotter().REDRAW_LINK("ray", ray.Location(), ray.Location().XYZ() + ray.Direction().XYZ()*ray_limit, Color_Green);
 #endif
 
   // Traverse BVH

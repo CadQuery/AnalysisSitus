@@ -1984,7 +1984,7 @@ bool asiAlgo_Utils::CalculateFaceNormals(const TopoDS_Face&                face,
       }
 
       // Perform point membership classification
-      asiAlgo_Membership pmc = classifier(gp_Pnt2d(u, v), NULL);
+      asiAlgo_Membership pmc = classifier( gp_Pnt2d(u, v) );
       //
       if ( pmc & Membership_InOn )
       {

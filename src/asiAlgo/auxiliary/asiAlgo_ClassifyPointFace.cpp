@@ -32,11 +32,13 @@
 #include <asiAlgo_ClassifyPointFace.h>
 
 // OCCT includes
+#include <Bnd_Box.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepTools.hxx>
 #include <BRepBndLib.hxx>
 #include <Geom_BoundedSurface.hxx>
+#include <GeomAPI_ProjectPointOnSurf.hxx>
 #include <GeomLib.hxx>
-#include <ShapeAnalysis_Surface.hxx>
 
 #undef DRAW_DEBUG
 #if defined DRAW_DEBUG
@@ -49,21 +51,30 @@
 //! \param F          [in] face to classify the point against.
 //! \param inaccuracy [in] inaccuracy of the input geometry.
 //! \param precision  [in] numerical precision for optimization.
-asiAlgo_ClassifyPointFace::asiAlgo_ClassifyPointFace(const TopoDS_Face& F,
-                                                     const double       inaccuracy,
-                                                     const double       precision)
-: m_F(F), m_fInaccuracy(inaccuracy), m_fPrecision(precision)
+//! \param progress   [in] progress notifier.
+//! \param plotter    [in] imperative plotter.
+asiAlgo_ClassifyPointFace::asiAlgo_ClassifyPointFace(const TopoDS_Face&   F,
+                                                     const double         inaccuracy,
+                                                     const double         precision,
+                                                     ActAPI_ProgressEntry progress,
+                                                     ActAPI_PlotterEntry  plotter)
+: m_F(F),
+  m_fInaccuracy(inaccuracy),
+  m_fPrecision(precision),
+  m_progress(progress),
+  m_plotter(plotter)
 {
   m_fclass.Init(m_F, precision);
+
+  // Get U-V bounds.
+  BRepTools::UVBounds(m_F, m_fUmin, m_fUmax, m_fVmin, m_fVmax);
 }
 
 //! Performs point-face classification.
-//! \param PonS    [in]     point to classify.
-//! \param Journal [in/out] journal instance.
+//! \param PonS [in] point to classify.
 //! \return classification result.
 asiAlgo_Membership
-  asiAlgo_ClassifyPointFace::operator()(const gp_Pnt2d&      PonS,
-                                        ActAPI_ProgressEntry Journal)
+  asiAlgo_ClassifyPointFace::operator()(const gp_Pnt2d& PonS)
 {
   const TopAbs_State state = m_fclass.Perform(PonS);
 
@@ -78,30 +89,26 @@ asiAlgo_Membership
 }
 
 //! Performs point-face classification.
-//! \param P        [in]     point to classify.
-//! \param checkGap [in]     indicates whether to check gap.
-//! \param Journal  [in/out] journal instance.
+//! \param P        [in] point to classify.
+//! \param checkGap [in] indicates whether to check gap.
 //! \return classification result.
 asiAlgo_Membership
-  asiAlgo_ClassifyPointFace::operator()(const gp_Pnt&        P,
-                                        const bool           checkGap,
-                                        ActAPI_ProgressEntry Journal)
+  asiAlgo_ClassifyPointFace::operator()(const gp_Pnt& P,
+                                        const bool    checkGap)
 {
   gp_Pnt2d UV;
-  return this->operator()(P, checkGap, UV, Journal);
+  return this->operator()(P, checkGap, UV);
 }
 
 //! Performs point-face classification.
-//! \param P        [in]     point to classify.
-//! \param checkGap [in]     indicates whether to check gap.
-//! \param UV       [out]    image of point on a surface.
-//! \param Journal  [in/out] journal instance.
+//! \param P        [in]  point to classify.
+//! \param checkGap [in]  indicates whether to check gap.
+//! \param UV       [out] image of point on a surface.
 //! \return classification result.
 asiAlgo_Membership
-  asiAlgo_ClassifyPointFace::operator()(const gp_Pnt&        P,
-                                        const bool           checkGap,
-                                        gp_Pnt2d&            UV,
-                                        ActAPI_ProgressEntry Journal)
+  asiAlgo_ClassifyPointFace::operator()(const gp_Pnt& P,
+                                        const bool    checkGap,
+                                        gp_Pnt2d&     UV)
 {
   Handle(Geom_Surface) S = Handle(Geom_Surface)::DownCast( BRep_Tool::Surface(m_F)->Copy() );
 
@@ -127,17 +134,16 @@ asiAlgo_Membership
     S = BS;
   }
 
-  ShapeAnalysis_Surface sas(S);
-  UV = sas.ValueOfUV(P, m_fPrecision);
-  if ( checkGap && (sas.Gap() > 100*m_fInaccuracy) ) // We are quite tolerant here
+  // Invert point
+  double PU, PV;
+  GeomAPI_ProjectPointOnSurf proj(P, S, m_fUmin, m_fUmax, m_fVmin, m_fVmax);
+  proj.Parameters(1, PU, PV);
+  UV = gp_Pnt2d(PU, PV);
+  //
+  if ( checkGap && (proj.Distance(1) > 100*m_fInaccuracy) ) // We are quite tolerant here
     return Membership_Out;
 
-#if defined DRAW_DEBUG
-  DRAW_INITGROUP(asiAlgo_ClassifyPointFace)
-  DRAW_POINT(UV, asiAlgo_ClassifyPointFace, Draw_rouge, Draw_Plus)
-#endif
-
-  return this->operator()(UV, Journal);
+  return this->operator()(UV);
 
   // NOTICE: it is not easy to classify a 3D point even if we know how to classify
   //         the 2D one. Indeed, if we attempt simply to project the 3D point

@@ -58,6 +58,7 @@
 #include <gp_Trsf.hxx>
 #include <NCollection_IndexedDataMap.hxx>
 #include <TopoDS_Compound.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <TopoDS_Wire.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -310,6 +311,21 @@ public:
       return true;
 
     return false;
+  }
+
+  static bool IsEmptyShape(const TopoDS_Shape& shape)
+  {
+    if ( shape.IsNull() )
+      return true;
+
+    if ( shape.ShapeType() >= TopAbs_FACE )
+      return false;
+
+    int numSubShapes = 0;
+    for ( TopoDS_Iterator it(shape); it.More(); it.Next() )
+      numSubShapes++;
+
+    return numSubShapes == 0;
   }
 
 //-----------------------------------------------------------------------------

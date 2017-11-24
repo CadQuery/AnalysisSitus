@@ -39,7 +39,7 @@
 #include <TopoDS_Shape.hxx>
 
 // Mesh (Active Data) includes
-#include <Mesh.h>
+#include <ActData_Mesh.h>
 
 // VTK includes
 #include <vtkPolyData.h>

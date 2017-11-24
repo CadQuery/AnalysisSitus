@@ -120,7 +120,7 @@ set (interop_CPP_FILES
 # Mesh
 #------------------------------------------------------------------------------
 
-set (mesh_H_FILES
+set (ActData_Mesh_H_FILES
   mesh/asiAlgo_MeshConvert.h
   mesh/asiAlgo_MeshGen.h
   mesh/asiAlgo_MeshInfo.h
@@ -128,7 +128,7 @@ set (mesh_H_FILES
   mesh/asiAlgo_MeshMerge.h
   mesh/asiAlgo_MeshParams.h
 )
-set (mesh_CPP_FILES 
+set (ActData_Mesh_CPP_FILES 
   mesh/asiAlgo_MeshConvert.cpp
   mesh/asiAlgo_MeshGen.cpp
   mesh/asiAlgo_MeshInfo.cpp
@@ -306,11 +306,11 @@ foreach (FILE ${interop_CPP_FILES})
   source_group ("Source Files\\Interoperability" FILES "${FILE}")
 endforeach (FILE)
 
-foreach (FILE ${mesh_H_FILES})
+foreach (FILE ${ActData_Mesh_H_FILES})
   source_group ("Header Files\\Mesh" FILES "${FILE}")
 endforeach (FILE)
 
-foreach (FILE ${mesh_CPP_FILES})
+foreach (FILE ${ActData_Mesh_CPP_FILES})
   source_group ("Source Files\\Mesh" FILES "${FILE}")
 endforeach (FILE)
 
@@ -372,7 +372,7 @@ add_library (asiAlgo SHARED
   ${editing_H_FILES}  ${editing_CPP_FILES}
   ${features_H_FILES} ${features_CPP_FILES}
   ${interop_H_FILES}  ${interop_CPP_FILES}
-  ${mesh_H_FILES}     ${mesh_CPP_FILES}
+  ${ActData_Mesh_H_FILES}     ${ActData_Mesh_CPP_FILES}
   ${opt_H_FILES}      ${opt_CPP_FILES}
   ${points_H_FILES}   ${points_CPP_FILES}
   ${utils_H_FILES}    ${utils_CPP_FILES}
@@ -475,7 +475,7 @@ install (FILES ${aux_H_FILES}      DESTINATION framework/include)
 install (FILES ${editing_H_FILES}  DESTINATION framework/include)
 install (FILES ${features_H_FILES} DESTINATION framework/include)
 install (FILES ${interop_H_FILES}  DESTINATION framework/include)
-install (FILES ${mesh_H_FILES}     DESTINATION framework/include)
+install (FILES ${ActData_Mesh_H_FILES}     DESTINATION framework/include)
 install (FILES ${opt_H_FILES}      DESTINATION framework/include)
 install (FILES ${points_H_FILES}   DESTINATION framework/include)
 install (FILES ${utils_H_FILES}    DESTINATION framework/include)

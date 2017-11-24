@@ -38,7 +38,7 @@
 #include <ActData_BaseNode.h>
 
 // Active Data includes
-#include <Mesh.h>
+#include <ActData_Mesh.h>
 
 //-----------------------------------------------------------------------------
 // Data Node representing a single tessellation item in IV (Imperative Viewer)

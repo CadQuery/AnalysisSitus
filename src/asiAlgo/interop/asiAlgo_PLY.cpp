@@ -38,10 +38,10 @@
 #include <iostream>
 
 // Active Data (mesh) includes
-#include <Mesh_ElementsIterator.h>
-#include <Mesh_Node.h>
-#include <Mesh_Quadrangle.h>
-#include <Mesh_Triangle.h>
+#include <ActData_Mesh_ElementsIterator.h>
+#include <ActData_Mesh_Node.h>
+#include <ActData_Mesh_Quadrangle.h>
+#include <ActData_Mesh_Triangle.h>
 
 //-----------------------------------------------------------------------------
 
@@ -271,23 +271,23 @@ bool asiAlgo_PLY::_writeElements(const Handle(ActData_Mesh)&    theMesh,
   }
 
   // Loop over the mesh elements
-  for ( Mesh_ElementsIterator it(theMesh, Mesh_ET_Face); it.More(); it.Next() )
+  for ( ActData_Mesh_ElementsIterator it(theMesh, ActData_Mesh_ET_Face); it.More(); it.Next() )
   {
-    const Handle(Mesh_Element)& E = it.GetValue();
+    const Handle(ActData_Mesh_Element)& E = it.GetValue();
 
     // Get node IDs resolving the actual element's type
     int node_idx[4] = {0, 0, 0, 0};
     int nNodes      = 0;
     //
-    if ( E->IsInstance( STANDARD_TYPE(Mesh_Triangle) ) )
+    if ( E->IsInstance( STANDARD_TYPE(ActData_Mesh_Triangle) ) )
     {
-      Handle(Mesh_Triangle) TE = Handle(Mesh_Triangle)::DownCast(E);
+      Handle(ActData_Mesh_Triangle) TE = Handle(ActData_Mesh_Triangle)::DownCast(E);
       //
       TE->GetFaceDefinedByNodes(3, node_idx, nNodes);
     }
-    else if ( E->IsInstance( STANDARD_TYPE(Mesh_Quadrangle) ) )
+    else if ( E->IsInstance( STANDARD_TYPE(ActData_Mesh_Quadrangle) ) )
     {
-      Handle(Mesh_Quadrangle) QE = Handle(Mesh_Quadrangle)::DownCast(E);
+      Handle(ActData_Mesh_Quadrangle) QE = Handle(ActData_Mesh_Quadrangle)::DownCast(E);
       //
       QE->GetFaceDefinedByNodes(4, node_idx, nNodes);
     }

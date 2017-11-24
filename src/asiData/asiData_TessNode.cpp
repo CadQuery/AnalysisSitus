@@ -35,7 +35,7 @@
 #include <ActData_ParameterFactory.h>
 
 // Mesh (Active Data) includes
-#include <Mesh_Node.h>
+#include <ActData_Mesh_Node.h>
 
 //-----------------------------------------------------------------------------
 

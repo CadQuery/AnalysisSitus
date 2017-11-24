@@ -2004,3 +2004,69 @@ bool asiAlgo_Utils::CalculateFaceNormals(const TopoDS_Face&                face,
   }
   return true;
 }
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::GetFaceAnyInteriorPoint(const TopoDS_Face& face,
+                                            gp_Pnt2d&          uv,
+                                            gp_Pnt&            xyz)
+{
+  // Take surface
+  Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
+  //
+  if ( surf.IsNull() )
+    return false;
+
+  // Take face domain
+  double uMin, uMax, vMin, vMax;
+  BRepTools::UVBounds(face, uMin, uMax, vMin, vMax);
+  //
+  const double uStep = (uMax - uMin)*0.05;
+  const double vStep = (vMax - vMin)*0.05;
+
+  // Prepare classifier
+  asiAlgo_ClassifyPointFace classifier(face, BRep_Tool::Tolerance(face), 0.01);
+
+  // Sample points
+  double u = uMin;
+  bool uStop = false;
+  while ( !uStop )
+  {
+    if ( u > uMax )
+    {
+      u     = uMax;
+      uStop = true;
+    }
+
+    double v = vMin;
+    bool vStop = false;
+    while ( !vStop )
+    {
+      if ( v > vMax )
+      {
+        v     = vMax;
+        vStop = true;
+      }
+
+      // Perform point membership classification
+      asiAlgo_Membership pmc = classifier( gp_Pnt2d(u, v) );
+      //
+      if ( pmc & Membership_In )
+      {
+        gp_Pnt P;
+        gp_Vec D1U, D1V;
+        surf->D0(u, v, P);
+
+        uv.SetCoord( u, v );
+        xyz.SetCoord( P.X(), P.Y(), P.Z() );
+
+        return true;
+      }
+
+      v += vStep;
+    }
+
+    u += uStep;
+  }
+  return false;
+}

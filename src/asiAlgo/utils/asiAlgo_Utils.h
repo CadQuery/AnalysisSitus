@@ -505,6 +505,11 @@ public:
                          Handle(asiAlgo_BaseCloud<float>)& points,
                          Handle(asiAlgo_BaseCloud<float>)& vectors);
 
+  asiAlgo_EXPORT static bool
+    GetFaceAnyInteriorPoint(const TopoDS_Face& face,
+                            gp_Pnt2d&          uv,
+                            gp_Pnt&            xyz);
+
 private:
 
   asiAlgo_Utils(); //!< Prohibited.

@@ -45,12 +45,12 @@
 #include <vtkPolyData.h>
 
 // Mesh (Active Data) includes
-#include <Mesh_Edge.h>
-#include <Mesh_EdgesIterator.h>
-#include <Mesh_ElementsIterator.h>
-#include <Mesh_Node.h>
-#include <Mesh_Quadrangle.h>
-#include <Mesh_Triangle.h>
+#include <ActData_Mesh_Edge.h>
+#include <ActData_Mesh_EdgesIterator.h>
+#include <ActData_Mesh_ElementsIterator.h>
+#include <ActData_Mesh_Node.h>
+#include <ActData_Mesh_Quadrangle.h>
+#include <ActData_Mesh_Triangle.h>
 
 //-----------------------------------------------------------------------------
 // Construction
@@ -106,7 +106,7 @@ void asiVisu_MeshSource::SetInputMesh(const Handle(ActData_Mesh)& theMesh)
 
 //! Sets the Mesh Group used to filter the input mesh.
 //! \param theGroup [in] input Mesh Group.
-void asiVisu_MeshSource::SetInputElemGroup(const Handle(Mesh_Group)& theGroup)
+void asiVisu_MeshSource::SetInputElemGroup(const Handle(ActData_Mesh_Group)& theGroup)
 {
   m_elemGroup = theGroup;
 }
@@ -124,7 +124,7 @@ const Handle(ActData_Mesh)& asiVisu_MeshSource::GetInputMesh() const
 
 //! Accessor for the input Mesh Group.
 //! \return requested Mesh Group.
-const Handle(Mesh_Group)& asiVisu_MeshSource::GetInputElemGroup() const
+const Handle(ActData_Mesh_Group)& asiVisu_MeshSource::GetInputElemGroup() const
 {
   return m_elemGroup;
 }
@@ -188,11 +188,11 @@ int asiVisu_MeshSource::RequestData(vtkInformation*        theRequest,
   // Iterate over the entire collection of nodes to cumulate them into
   // a sequence and prepare a single VTK cell for all detected free nodes
   NCollection_Sequence<int> aFreeNodeIDs;
-  for ( Mesh_ElementsIterator nit(m_mesh, Mesh_ET_Node); nit.More(); nit.Next() )
+  for ( ActData_Mesh_ElementsIterator nit(m_mesh, ActData_Mesh_ET_Node); nit.More(); nit.Next() )
   {
     // Access next node
-    Handle(Mesh_Node) aNode = Handle(Mesh_Node)::DownCast( nit.GetValue() );
-    const Mesh_ListOfElements& lstInvElements = aNode->InverseElements();
+    Handle(ActData_Mesh_Node) aNode = Handle(ActData_Mesh_Node)::DownCast( nit.GetValue() );
+    const ActData_Mesh_ListOfElements& lstInvElements = aNode->InverseElements();
 
     // Skip connected nodes as we're looking for free ones here
     if ( lstInvElements.Extent() > 0 )
@@ -209,14 +209,14 @@ int asiVisu_MeshSource::RequestData(vtkInformation*        theRequest,
 
   if ( m_elemGroup.IsNull() && m_bIsEmptyGroupForAll ) // No filtering by group enabled
   {
-    Mesh_ElementsIterator aMeshElemsIt(m_mesh, Mesh_ET_Face);
+    ActData_Mesh_ElementsIterator aMeshElemsIt(m_mesh, ActData_Mesh_ET_Face);
     for ( ; aMeshElemsIt.More(); aMeshElemsIt.Next() )
       this->translateElement(aMeshElemsIt.GetValue(), aPolyOutput);
   }
   else if ( !m_elemGroup.IsNull() )
   {
-    const Mesh_MapOfElements& aGroupElems = m_elemGroup->Elements();
-    Mesh_MapOfElements::Iterator aGroupIt(aGroupElems);
+    const ActData_Mesh_MapOfElements& aGroupElems = m_elemGroup->Elements();
+    ActData_Mesh_MapOfElements::Iterator aGroupIt(aGroupElems);
     for ( ; aGroupIt.More(); aGroupIt.Next() )
       this->translateElement(aGroupIt.Key(), aPolyOutput);
   }
@@ -229,14 +229,14 @@ int asiVisu_MeshSource::RequestData(vtkInformation*        theRequest,
 //! Translates the passed mesh element to VTK polygonal cell.
 //! \param theElem     [in]     Mesh element to translate.
 //! \param thePolyData [in/out] output polygonal data.
-void asiVisu_MeshSource::translateElement(const Handle(Mesh_Element)& theElem,
+void asiVisu_MeshSource::translateElement(const Handle(ActData_Mesh_Element)& theElem,
                                           vtkPolyData*                thePolyData)
 {
   // Proceed with TRIANGLE elements
-  if ( theElem->IsInstance( STANDARD_TYPE(Mesh_Triangle) ) )
+  if ( theElem->IsInstance( STANDARD_TYPE(ActData_Mesh_Triangle) ) )
   {
     // Access element data
-    Handle(Mesh_Triangle) aTriElem = Handle(Mesh_Triangle)::DownCast(theElem);
+    Handle(ActData_Mesh_Triangle) aTriElem = Handle(ActData_Mesh_Triangle)::DownCast(theElem);
     int aTriNodeIds[3], aNbNodes;
     aTriElem->GetFaceDefinedByNodes(3, aTriNodeIds, aNbNodes);
 
@@ -244,10 +244,10 @@ void asiVisu_MeshSource::translateElement(const Handle(Mesh_Element)& theElem,
     this->registerMeshFace(aTriElem->GetID(), aTriNodeIds, aNbNodes, thePolyData);
   }
   // Proceed with QUADRANGLE elements
-  else if ( theElem->IsInstance( STANDARD_TYPE(Mesh_Quadrangle) ) )
+  else if ( theElem->IsInstance( STANDARD_TYPE(ActData_Mesh_Quadrangle) ) )
   {
     // Access element data
-    Handle(Mesh_Quadrangle) aQuadElem = Handle(Mesh_Quadrangle)::DownCast(theElem);
+    Handle(ActData_Mesh_Quadrangle) aQuadElem = Handle(ActData_Mesh_Quadrangle)::DownCast(theElem);
     int aQuadNodeIds[4], aNbNodes;
     aQuadElem->GetFaceDefinedByNodes(4, aQuadNodeIds, aNbNodes);
 
@@ -271,7 +271,7 @@ vtkIdType asiVisu_MeshSource::registerMeshNode(const int    theNodeID,
     vtkIntArray::SafeDownCast( thePolyData->GetPointData()->GetArray(ARRNAME_MESH_NODE_IDS) );
 
   // Access mesh node
-  Handle(Mesh_Node) aNode = m_mesh->FindNode(theNodeID);
+  Handle(ActData_Mesh_Node) aNode = m_mesh->FindNode(theNodeID);
 
   vtkIdType aResPid;
   if ( !m_regPoints.IsBound(theNodeID) )

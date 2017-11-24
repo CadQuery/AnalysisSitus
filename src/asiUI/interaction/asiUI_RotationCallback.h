@@ -44,7 +44,7 @@
 #include <vtkWorldPointPicker.h>
 
 // Mesh (Active Data) includes
-#include <Mesh.h>
+#include <ActData_Mesh.h>
 
 //-----------------------------------------------------------------------------
 // Rotation center provider

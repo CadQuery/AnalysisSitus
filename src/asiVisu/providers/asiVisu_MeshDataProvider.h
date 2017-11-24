@@ -35,8 +35,8 @@
 #include <asiVisu_DataProvider.h>
 
 // Mesh (Active Data) includes
-#include <Mesh.h>
-#include <Mesh_Group.h>
+#include <ActData_Mesh.h>
+#include <ActData_Mesh_Group.h>
 
 //! Provides data necessary for visualization of mesh structures.
 class asiVisu_MeshDataProvider : public asiVisu_DataProvider

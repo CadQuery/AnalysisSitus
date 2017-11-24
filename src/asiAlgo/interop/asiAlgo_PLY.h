@@ -42,7 +42,7 @@
 #include <ActAux_Common.h>
 
 // Mesh includes
-#include <Mesh.h>
+#include <ActData_Mesh.h>
 
 //! Services to work with ply files.
 namespace asiAlgo_PLY

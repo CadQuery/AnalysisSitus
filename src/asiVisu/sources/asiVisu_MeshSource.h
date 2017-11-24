@@ -40,8 +40,8 @@
 #include <vtkType.h>
 
 // Mesh (Active Data) includes
-#include <Mesh.h>
-#include <Mesh_Group.h>
+#include <ActData_Mesh.h>
+#include <ActData_Mesh_Group.h>
 
 // OCCT includes
 #include <NCollection_DataMap.hxx>
@@ -69,12 +69,12 @@ public:
     SetInputMesh(const Handle(ActData_Mesh)& theMesh);
 
   void
-    SetInputElemGroup(const Handle(Mesh_Group)& theGroup);
+    SetInputElemGroup(const Handle(ActData_Mesh_Group)& theGroup);
 
   const Handle(ActData_Mesh)&
     GetInputMesh() const;
 
-  const Handle(Mesh_Group)&
+  const Handle(ActData_Mesh_Group)&
     GetInputElemGroup() const;
 
 protected:
@@ -86,7 +86,7 @@ protected:
 private:
 
   void
-    translateElement(const Handle(Mesh_Element)& theElem,
+    translateElement(const Handle(ActData_Mesh_Element)& theElem,
                      vtkPolyData*                thePolyData);
 
   vtkIdType
@@ -120,7 +120,7 @@ private:
 
   //! Group of mesh elements to be extracted from the input data set. If this
   //! group is empty, the entire mesh is taken as-is, without any filtering.
-  Handle(Mesh_Group) m_elemGroup;
+  Handle(ActData_Mesh_Group) m_elemGroup;
 
   //! Registered VTK points.
   NCollection_DataMap<int, vtkIdType> m_regPoints;

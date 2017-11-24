@@ -35,7 +35,7 @@
 #include <asiAlgo_MeshLink.h>
 
 // Active Data includes
-#include <Mesh.h>
+#include <ActData_Mesh.h>
 
 // OCCT includes
 #include <Poly_CoherentTriangulation.hxx>

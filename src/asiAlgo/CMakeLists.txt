@@ -53,8 +53,10 @@ set (editing_H_FILES
   editing/asiAlgo_FindFree.h
   editing/asiAlgo_FindNonmanifold.h
   editing/asiAlgo_FindSameHosts.h
+  editing/asiAlgo_History.h
   editing/asiAlgo_InvertFaces.h
   editing/asiAlgo_JoinEdges.h
+  editing/asiAlgo_Naming.h
   editing/asiAlgo_RehostFaces.h
   editing/asiAlgo_SuppressFaces.h
   editing/asiAlgo_TopoKill.h
@@ -66,8 +68,10 @@ set (editing_CPP_FILES
   editing/asiAlgo_FindFree.cpp
   editing/asiAlgo_FindNonmanifold.cpp
   editing/asiAlgo_FindSameHosts.cpp
+  editing/asiAlgo_History.cpp
   editing/asiAlgo_InvertFaces.cpp
   editing/asiAlgo_JoinEdges.cpp
+  editing/asiAlgo_Naming.cpp
   editing/asiAlgo_RehostFaces.cpp
   editing/asiAlgo_SuppressFaces.cpp
   editing/asiAlgo_TopoKill.cpp

@@ -410,7 +410,9 @@ bool asiVisu_ShapeRobustTessellator::isValidFace(const TopoDS_Face& face) const
   // any troubles with tessellating geometrically but not topologically closed
   // faces.
 
-  const double tol = asiAlgo_Utils::MaxTolerance(face);
+  // This calibrated value is used to compensate weird tolerances which
+  // happen to be insufficient to cover tiny contour gaps.
+  const double tol = asiAlgo_Utils::MaxTolerance(face)*5.0;
 
   return asiAlgo_Utils::HasAllClosedWires(face, tol) &&
         !asiAlgo_Utils::HasEdgesWithoutVertices(face);

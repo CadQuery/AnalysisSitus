@@ -809,11 +809,15 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
                                           const double       coincConfusion)
 {
   // Convert spatial tolerance to UV-parametric tolerance using resolutions.
+  // This is actually a weak check as sometimes correction according to
+  // resolution gives unreliable 2D tolerances. However, we think that using
+  // such resolutions is still better than application of three-dimensional
+  // tolerances in two-dimensional space.
   BRepAdaptor_Surface bas(face);
   //
   const double uToler      = bas.UResolution(coincConfusion);
   const double vToler      = bas.VResolution(coincConfusion);
-  const double uvConfusion = Min(uToler, vToler);
+  const double uvConfusion = Max(uToler, vToler);
 
   // This method takes into account topological orientation of the wire
   // in question. However, it does not check any orientation flags. It simply
@@ -869,7 +873,7 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
     gp_Pnt Pl = C->Value( C->LastParameter() );
 
     // The following condition is Ok for closed curves
-    const bool isOk3d = ( Pf.Distance(Pl) < uvConfusion );
+    const bool isOk3d = ( Pf.Distance(Pl) < coincConfusion );
 
     // Check 2d
     gp_Pnt2d Pf2d, Pl2d;

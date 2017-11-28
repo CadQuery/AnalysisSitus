@@ -32,7 +32,11 @@
 #define asiAlgo_Naming_h
 
 // asiAlgo includes
+#include <asiAlgo_History.h>
 #include <asiAlgo_TopoGraph.h>
+
+// Active Data includes
+#include <ActAPI_IProgressNotifier.h>
 
 //! \brief Naming service for a B-Rep part.
 class asiAlgo_Naming : public Standard_Transient
@@ -48,17 +52,52 @@ public:
   //! \param[in] topograph topology graph which allows for a more formal
   //!                      view on a CAD-model together with caching its
   //!                      sub-shapes under serial indices.
+  //! \param[in] progress  progress notifier.
   asiAlgo_EXPORT
-    asiAlgo_Naming(const Handle(asiAlgo_TopoGraph)& topograph);
+    asiAlgo_Naming(const Handle(asiAlgo_TopoGraph)& topograph,
+                   ActAPI_ProgressEntry             progress);
 
   //! \brief Constructs naming tool from B-Rep shape.
-  //! \param[in] shape master CAD shape to build topology graph from.
+  //! \param[in] shape    master CAD shape to build topology graph from.
+  //! \param[in] progress progress notifier.
   asiAlgo_EXPORT
-    asiAlgo_Naming(const TopoDS_Shape& shape);
+    asiAlgo_Naming(const TopoDS_Shape&  shape,
+                   ActAPI_ProgressEntry progress);
+
+public:
+
+  //! \brief Initializes CAD model with names.
+  //!
+  //! This method should be used to set names for existing topological
+  //! elements. Internally it generates unique ASCII string names for all
+  //! topological items and populates the working topology graph with
+  //! dedicated name attributes.
+  //!
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    InitNames();
+
+  //! \brief Generates a unique name for the passed sub-shape.
+  //! \param[in] shape shape to generate a name for.
+  //! \return generated name as ASCII string.
+  asiAlgo_EXPORT TCollection_AsciiString
+    GenerateName(const TopoDS_Shape& shape);
 
 protected:
 
+  /** @name Core members
+   *  Members constituting core of the naming service.
+   */
+  //@{
   Handle(asiAlgo_TopoGraph) m_topograph; //!< Formal topology graph.
+  Handle(asiAlgo_History)   m_history;   //!< History of modification.
+  //@}
+
+  //! Progress notification tool.
+  ActAPI_ProgressEntry m_progress;
+
+  //! The used indices distributed by shape type.
+  NCollection_DataMap<TopAbs_ShapeEnum, int> m_nameIds;
 
 };
 

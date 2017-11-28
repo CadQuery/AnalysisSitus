@@ -374,12 +374,12 @@ public:
 
   asiAlgo_EXPORT static bool
     HasAllClosedWires(const TopoDS_Face& face,
-                      const double       coincConfusion);
+                      const double       coincConfusion3d);
 
   asiAlgo_EXPORT static bool
     IsClosedGeometrically(const TopoDS_Wire& wire,
                           const TopoDS_Face& face,
-                          const double       coincConfusion);
+                          const double       coincConfusion3d);
 
   asiAlgo_EXPORT static bool
     HasEdgesWithoutVertices(const TopoDS_Face& face);
@@ -500,11 +500,36 @@ public:
                  gp_XY&       P5,
                  gp_XY&       P6);
 
+  //! Calculates normal vectors at interior face points. This method uses
+  //! point membership classification to ensure that inner points only are
+  //! used.
+  //!
+  //! CAUTION: Face orientation is not taken into account. The returned
+  //!          normal vectors represent geometric orientation of
+  //!          the face (i.e., the cross product of its partials).
+  //!
+  //! \param[in]  face    topological face in question.
+  //! \param[out] test    points (internal or lying on the boundary).
+  //! \param[out] vectors computed normal field.
+  //!
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT static bool
     CalculateFaceNormals(const TopoDS_Face&                face,
                          Handle(asiAlgo_BaseCloud<float>)& points,
                          Handle(asiAlgo_BaseCloud<float>)& vectors);
 
+  //! This function takes "just any" interior point on a face.
+  //!
+  //! CAUTION: This function is not super-fast as it follows generate-and-test
+  //!          approach, i.e., it samples many points and selects the one lying
+  //!          INSIDE the face. Therefore, do not use this method in heavy loops.
+  //!
+  //! \param[in]  face topological face in question.
+  //! \param[out] uv   UV coordinates of the selected point.
+  //! \param[out] xyz  Cartesian coordinates of the selected point in the 
+  //!                  modeling space.
+  //!
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT static bool
     GetFaceAnyInteriorPoint(const TopoDS_Face& face,
                             gp_Pnt2d&          uv,

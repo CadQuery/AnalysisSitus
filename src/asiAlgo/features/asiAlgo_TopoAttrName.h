@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 19 November 2017
+// Created on: 28 November 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -28,38 +28,36 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_TopoAttrLocation_h
-#define asiAlgo_TopoAttrLocation_h
+#ifndef asiAlgo_TopoAttrName_h
+#define asiAlgo_TopoAttrName_h
 
 // asiAlo includes
 #include <asiAlgo_TopoAttr.h>
 
 // OCCT includes
-#include <TopLoc_Location.hxx>
+#include <TCollection_AsciiString.hxx>
 
 //-----------------------------------------------------------------------------
 
-//! Attribute storing locations of sub-shapes.
-class asiAlgo_TopoAttrLocation : public asiAlgo_TopoAttr
+//! Attribute storing names of sub-shapes. This attribute was originally
+//! developed to support topological naming services.
+class asiAlgo_TopoAttrName : public asiAlgo_TopoAttr
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_TopoAttrLocation, asiAlgo_TopoAttr)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_TopoAttrName, asiAlgo_TopoAttr)
 
 public:
 
   //! Creates non-initialized attribute.
-  asiAlgo_TopoAttrLocation() 
-  : asiAlgo_TopoAttr ( ),
-    m_location       ( TopLoc_Location() )
-  {}
+  asiAlgo_TopoAttrName() : asiAlgo_TopoAttr() {}
 
-  //! Creates attribute.
-  //! \param[in] loc location to set.
-  asiAlgo_TopoAttrLocation(const TopLoc_Location& loc)
+  //! Creates attribute with name.
+  //! \param[in] name sub-shape name to set.
+  asiAlgo_TopoAttrName(const TCollection_AsciiString& name)
   : asiAlgo_TopoAttr (),
-    m_location       (loc)
+    m_name           (name)
   {}
 
 public:
@@ -67,7 +65,7 @@ public:
   //! \return static GUID associated with this type of attribute.
   static const Standard_GUID& GUID()
   {
-    static Standard_GUID guid("1670B986-AD0B-42C0-85AF-19BEE0B83110");
+    static Standard_GUID guid("1C4C10E9-58CC-49F3-B3C6-BF786E73469E");
     return guid;
   }
 
@@ -79,16 +77,16 @@ public:
 
 public:
 
-  //! \return location.
-  const TopLoc_Location& GetLocation() const { return m_location; }
+  //! \return name of a sub-shape.
+  const TCollection_AsciiString& GetName() const { return m_name; }
 
-  //! Sets location.
-  //! \param[in] loc location to set.
-  void SetLocation(const TopLoc_Location& loc) { m_location = loc; }
+  //! Sets name.
+  //! \param[in] name ASCII string to set as a sub-shape name.
+  void SetName(const TCollection_AsciiString& name) { m_name = name; }
 
 protected:
 
-  TopLoc_Location m_location; //!< Location.
+  TCollection_AsciiString m_name; //!< Sub-shape name as ASCII string.
 
 };
 

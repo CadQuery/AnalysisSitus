@@ -31,18 +31,93 @@
 // Own include
 #include <asiAlgo_Naming.h>
 
+// asiAlgo includes
+#include <asiAlgo_TopoAttrName.h>
+
 //-----------------------------------------------------------------------------
 
-asiAlgo_Naming::asiAlgo_Naming(const Handle(asiAlgo_TopoGraph)& topograph)
+asiAlgo_Naming::asiAlgo_Naming(const Handle(asiAlgo_TopoGraph)& topograph,
+                               ActAPI_ProgressEntry             progress)
 : Standard_Transient()
 {
   m_topograph = topograph;
+  m_progress  = progress;
 }
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_Naming::asiAlgo_Naming(const TopoDS_Shape& shape)
+asiAlgo_Naming::asiAlgo_Naming(const TopoDS_Shape&  shape,
+                               ActAPI_ProgressEntry progress)
 : Standard_Transient()
 {
   m_topograph = new asiAlgo_TopoGraph(shape);
+  m_progress  = progress;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Naming::InitNames()
+{
+  if ( m_topograph.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Topology graph is not initialized.");
+    return false;
+  }
+
+  // Loop over the topology graph and generate names for its items.
+  for ( asiAlgo_TopoGraph::Iterator git(m_topograph); git.More(); git.Next() )
+  {
+    // Get current topological item.
+    const int           itemIndex = git.GetCurrentIndex();
+    const TopoDS_Shape& itemShape = git.GetCurrentNode();
+
+    // Generate unique name.
+    TCollection_AsciiString itemName = this->GenerateName(itemShape);
+
+    // Prepare nodal attribute to store the name in the topology graph.
+    Handle(asiAlgo_TopoAttrName) itemAttr = new asiAlgo_TopoAttrName(itemName);
+    //
+    m_topograph->AddNodeAttribute(itemIndex, itemAttr);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+TCollection_AsciiString asiAlgo_Naming::GenerateName(const TopoDS_Shape& shape)
+{
+  const TopAbs_ShapeEnum shapeType = shape.ShapeType();
+
+  // Generate base name which corresponds to the topological type.
+  TCollection_AsciiString baseName;
+  //
+  switch ( shapeType )
+  {
+    case TopAbs_COMPOUND:
+      baseName = "compound"; break;
+    case TopAbs_COMPSOLID:
+      baseName = "compsolid"; break;
+    case TopAbs_SOLID:
+      baseName = "solid"; break;
+    case TopAbs_SHELL:
+      baseName = "shell"; break;
+    case TopAbs_FACE:
+      baseName = "face"; break;
+    case TopAbs_WIRE:
+      baseName = "wire"; break;
+    case TopAbs_EDGE:
+      baseName = "edge"; break;
+    case TopAbs_VERTEX:
+      baseName = "vertex"; break;
+    case TopAbs_SHAPE:
+      baseName = "shape"; break;
+  }
+
+  // Add 1-based index as a suffix to make the name unique.
+  if ( !m_nameIds.IsBound(shapeType) )
+    m_nameIds.Bind(shapeType, 1);
+  else
+    m_nameIds(shapeType) += 1;
+  //
+  baseName += "_";
+  baseName += m_nameIds(shapeType);
 }

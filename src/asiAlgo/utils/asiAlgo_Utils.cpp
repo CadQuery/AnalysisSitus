@@ -777,12 +777,12 @@ bool
 
 //! Checks whether the passed face has all contours (wires)
 //! geometrically closed.
-//! \param face           [in] face to check.
-//! \param coincConfusion [in] coincidence confusion tolerance. This value
-//!                            is used to recognize points as coincident.
+//! \param face             [in] face to check.
+//! \param coincConfusion3d [in] coincidence confusion tolerance. This value
+//!                              is used to recognize points as coincident.
 //! \return true if face is Ok, false -- otherwise.
 bool asiAlgo_Utils::HasAllClosedWires(const TopoDS_Face& face,
-                                      const double       coincConfusion)
+                                      const double       coincConfusion3d)
 {
   // Loop over the wires
   for ( TopoDS_Iterator it(face); it.More(); it.Next() )
@@ -790,7 +790,7 @@ bool asiAlgo_Utils::HasAllClosedWires(const TopoDS_Face& face,
     const TopoDS_Wire& wire = TopoDS::Wire( it.Value() );
 
     // Check each wire individually.
-    if ( !IsClosedGeometrically(wire, face, coincConfusion) )
+    if ( !IsClosedGeometrically(wire, face, coincConfusion3d) )
       return false;
   }
   return true;
@@ -798,15 +798,15 @@ bool asiAlgo_Utils::HasAllClosedWires(const TopoDS_Face& face,
 
 //-----------------------------------------------------------------------------
 
-//! Checks whether the passed wire is closed and well-oriented.
-//! \param wire           [in] wire to check.
-//! \param face           [in] face owning the wire.
-//! \param coincConfusion [in] coincidence confusion tolerance. This value
-//!                            is used to recognize points as coincident.
+//! Checks whether the passed wire is closed.
+//! \param wire             [in] wire to check.
+//! \param face             [in] face owning the wire.
+//! \param coincConfusion3d [in] coincidence confusion tolerance. This value
+//!                              is used to recognize points as coincident.
 //! \return true if wire is Ok, false -- otherwise.
 bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
                                           const TopoDS_Face& face,
-                                          const double       coincConfusion)
+                                          const double       coincConfusion3d)
 {
   // Convert spatial tolerance to UV-parametric tolerance using resolutions.
   // This is actually a weak check as sometimes correction according to
@@ -815,8 +815,8 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
   // tolerances in two-dimensional space.
   BRepAdaptor_Surface bas(face);
   //
-  const double uToler      = bas.UResolution(coincConfusion);
-  const double vToler      = bas.VResolution(coincConfusion);
+  const double uToler      = bas.UResolution(coincConfusion3d);
+  const double vToler      = bas.VResolution(coincConfusion3d);
   const double uvConfusion = Max(uToler, vToler);
 
   // This method takes into account topological orientation of the wire
@@ -873,7 +873,7 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
     gp_Pnt Pl = C->Value( C->LastParameter() );
 
     // The following condition is Ok for closed curves
-    const bool isOk3d = ( Pf.Distance(Pl) < coincConfusion );
+    const bool isOk3d = ( Pf.Distance(Pl) < coincConfusion3d );
 
     // Check 2d
     gp_Pnt2d Pf2d, Pl2d;
@@ -1634,10 +1634,10 @@ TopoDS_Shape asiAlgo_Utils::BooleanFuse(const TopTools_ListOfShape& objects)
 
 //-----------------------------------------------------------------------------
 
-//! Performs general fuse operator on the given shapes.
-//! \param objects [in] shapes to fuse.
-//! \param fuzz    [in] fuzzy value.
-//! \return result of fuse.
+//! Performs Boolean General Fuse for the passed objects.
+//! \param[in]  objects objects to fuse in non-manifold manner.
+//! \param[in]  fuzz    fuzzy value to control the tolerance.
+//! \param[out] API     Boolean algorithm to access history.
 TopoDS_Shape asiAlgo_Utils::BooleanGeneralFuse(const TopTools_ListOfShape& objects,
                                                const double                fuzz,
                                                BOPAlgo_Builder&            API)

@@ -35,20 +35,14 @@
 #include <asiAlgo.h>
 
 // OCCT includes
-#include <Standard_Type.hxx>
+#include <TopoDS_Shape.hxx>
+
+// Standard includes
+#include <vector>
 
 //! \brief History graph for topological elements.
 //!
 //! This utility class serves tracking history of topological modifications.
-//! At the same time, in OpenCascade any geometric modification should be
-//! reflected by constructing a new topological item, so this class can be
-//! used to trace any modifications on a CAD model.
-//!
-//! The idea behind this class is to make history as transparent and convenient
-//! as possible. However, OpenCascade modeling operators work with their
-//! own history structures, so you cannot simple pass this guy to a modeling
-//! operators. That is why to use this history with native OpenCascade tools
-//! you need to provide 
 class asiAlgo_History : public Standard_Transient
 {
 public:
@@ -59,13 +53,27 @@ public:
 public:
 
   //! Node in the history graph.
-  struct t_node
+  struct t_item
+  {
+    int                 Op;           //!< Operation index.
+    TopoDS_Shape        TransientPtr; //!< Shape as a transient pointer.
+    std::vector<t_item> Generated;    //!< List of items generated from this one.
+    std::vector<t_item> Modified;     //!< List of items substituted this one.
+    bool                IsDeleted;    //!< Identifies the item as deleted one.
+
+    //! Ctor.
+    t_item() : Op(0), IsDeleted(false) {}
+  };
 
 public:
 
   //! \brief Initializes history graph.
   asiAlgo_EXPORT
     asiAlgo_History();
+
+protected:
+
+  std::vector<t_item> m_roots; //!< Root items in the history.
 
 };
 

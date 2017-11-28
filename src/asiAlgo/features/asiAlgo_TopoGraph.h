@@ -99,9 +99,15 @@ public:
     }
 
     //! \return 1-based ID of the current node.
-    int GetCurrentNode() const
+    int GetCurrentIndex() const
     {
       return m_iCurrentIndex;
+    }
+
+    //! \return current node as topological shape.
+    const TopoDS_Shape& GetCurrentNode() const
+    {
+      return m_graph->GetNode(m_iCurrentIndex);
     }
 
     //! Moves iterator to the next position.
@@ -118,6 +124,11 @@ public:
   };
 
 public:
+
+  //! Type definition for indexed nodes.
+  typedef NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher> t_nodes;
+
+  //---------------------------------------------------------------------------
 
   //! Type definition for graph adjacency matrix. This is how shape/sub-shape
   //! links are realized in the topology graph.
@@ -195,6 +206,15 @@ public:
       return m_set;
     }
 
+    //! Checks whether the attribute set already contains an attribute with
+    //! the given GUID.
+    //! \param[in] guid GUID of the attribute to check.
+    //! \return true/false.
+    bool Contains(const Standard_GUID& guid) const
+    {
+      return m_set.IsBound(guid);
+    }
+
   private:
 
     //! Internal set storing attributes in association with their global IDs.
@@ -204,8 +224,11 @@ public:
 
   //---------------------------------------------------------------------------
 
-  //! Arc attributes to store orientation of sub-shape in its parent shape.
+  //! Arc attributes (e.g. to store orientation of sub-shapes).
   typedef NCollection_DataMap<t_arc, t_attr_set, t_arc> t_arc_attributes;
+
+  //! Node attributes.
+  typedef NCollection_DataMap<int, t_attr_set> t_node_attributes;
 
 public:
 
@@ -219,15 +242,19 @@ public:
 
 public:
 
+  //! \brief Returns map of indexed faces.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     GetMapOfFaces() const;
 
+  //! \brief Returns map of indexed edges.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     GetMapOfEdges() const;
 
+  //! \brief Returns map of indexed vertices.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     GetMapOfVertices() const;
 
+  //! \brief Returns map of all indexed sub-shapes.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     GetMapOfSubShapes() const;
 
@@ -270,6 +297,14 @@ public:
   int GetRoot() const
   {
     return m_iRoot;
+  }
+
+  //! \brief Returns topological item (TopoDS_Shape) by its index.
+  //! \param[in] node 1-based index of the topological node in question.
+  //! \return node as shape.
+  const TopoDS_Shape& GetNode(const int node) const
+  {
+    return m_nodes(node);
   }
 
   //! \brief Checks whether the topology graph contains (n1, n2) directed arc.
@@ -351,6 +386,35 @@ public:
     return m_arc_attributes(arc)(guid);
   }
 
+  //! Returns node attribute.
+  //! \param[in] node 1-based node in question.
+  //! \param[in] guid GUID of the attribute in question.
+  //! \return attribute.
+  Handle(asiAlgo_TopoAttr) GetNodeAttribute(const int            node,
+                                            const Standard_GUID& guid) const
+  {
+    return m_node_attributes(node)(guid);
+  }
+
+  //! Adds the passed attribute to the collection of nodal attributes
+  //! associated with the given graph node.
+  //! \param[in] node 1-based index of the graph node in question.
+  //! \param[in] attr graph attribute to add.
+  //! \return true in case of success, false -- otherwise.
+  bool AddNodeAttribute(const int                       node,
+                        const Handle(asiAlgo_TopoAttr)& attr)
+  {
+    if ( m_node_attributes.IsBound(node) &&
+         m_node_attributes(node).Contains( attr->GetGUID() ) )
+      return false; // Such attribute already exists.
+
+    // Add attribute.
+    if ( !m_node_attributes.IsBound(node) )
+      m_node_attributes.Bind( node, t_attr_set() );
+    //
+    m_node_attributes(node).Add(attr);
+  }
+
 protected:
 
   //! Builds graph out of TopoDS_Shape structure.
@@ -374,14 +438,26 @@ protected:
 // OUTPUTS
 protected:
 
-  int                                                           m_iRoot;          //!< ID of the root node.
-  NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher> m_nodes;          //!< Graph nodes.
-  t_adjacency                                                   m_arcs;           //!< Shape/sub-shape relations.
-  t_arc_attributes                                              m_arc_attributes; //!< Stores attributes associated with each arc.
-  TopTools_IndexedMapOfShape                                    m_subShapes;      //!< All sub-shapes.
-  TopTools_IndexedMapOfShape                                    m_faces;          //!< All faces of the master model.
-  TopTools_IndexedMapOfShape                                    m_edges;          //!< All edges of the master model.
-  TopTools_IndexedMapOfShape                                    m_vertices;       //!< All vertices of the master model.
+  /** @name Core members
+   *  Members defining the topology graph with attributes.
+   */
+  //@{
+  int               m_iRoot;           //!< ID of the root node.
+  t_nodes           m_nodes;           //!< Graph nodes.
+  t_adjacency       m_arcs;            //!< Shape/sub-shape relations.
+  t_node_attributes m_node_attributes; //!< Stores attributes associated with each node.
+  t_arc_attributes  m_arc_attributes;  //!< Stores attributes associated with each arc.
+  //@}
+
+  /** @name Cached sub-shapes
+   *  Members storing the cached sub-shapes with indices.
+   */
+  //@{
+  TopTools_IndexedMapOfShape  m_subShapes; //!< All sub-shapes.
+  TopTools_IndexedMapOfShape  m_faces;     //!< All faces of the master model.
+  TopTools_IndexedMapOfShape  m_edges;     //!< All edges of the master model.
+  TopTools_IndexedMapOfShape  m_vertices;  //!< All vertices of the master model.
+  //@}
 
 };
 

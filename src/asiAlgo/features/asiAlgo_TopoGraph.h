@@ -413,6 +413,8 @@ public:
       m_node_attributes.Bind( node, t_attr_set() );
     //
     m_node_attributes(node).Add(attr);
+
+    return true;
   }
 
 protected:

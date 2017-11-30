@@ -59,6 +59,7 @@
 #include <GeomAPI.hxx>
 #include <gp_Pln.hxx>
 #include <IntTools_FClass2d.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
 #include <ShapeUpgrade_UnifySameDomain.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -653,6 +654,28 @@ int MISC_TestBuilder(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_SetFaceTolerance(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  TopoDS_Shape
+    partShape = Handle(asiEngine_Model)::DownCast( interp->GetModel() )->GetPartNode()->GetShape();
+
+  const int faceId = atoi(argv[1]); // 1-based
+  const double toler = atof(argv[2]);
+
+  TopTools_IndexedMapOfShape allFaces;
+  TopExp::MapShapes(partShape, TopAbs_FACE, allFaces);
+  TopoDS_Face faceShape = TopoDS::Face( allFaces.FindKey(faceId) );
+
+  ShapeFix_ShapeTolerance fixToler;
+  fixToler.SetTolerance(faceShape, toler);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -705,6 +728,18 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Reproducer for issue with BRep_Builder.",
     //
     __FILE__, group, MISC_TestBuilder);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("set-face-tolerance",
+    //
+    "set-tolerance faceId toler \n"
+    "\t Forces the face with the given index to have the passed tolerance. \n"
+    "\t In OpenCascade, there is a rule that a tolerance of a face should be \n"
+    "\t not greater than tolerances of its edges (the same rule applies to \n"
+    "\t edges and vertices). Therefore, this function updates tolerance not \n"
+    "\t only for face but also for its sub-shapes.",
+    //
+    __FILE__, group, MISC_SetFaceTolerance);
 }
 
 // Declare entry point PLUGINFACTORY

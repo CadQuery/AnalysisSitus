@@ -79,6 +79,8 @@ bool asiAlgo_Naming::InitNames()
     //
     m_topograph->AddNodeAttribute(itemIndex, itemAttr);
   }
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -120,4 +122,6 @@ TCollection_AsciiString asiAlgo_Naming::GenerateName(const TopoDS_Shape& shape)
   //
   baseName += "_";
   baseName += m_nameIds(shapeType);
+
+  return baseName;
 }

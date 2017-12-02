@@ -106,6 +106,7 @@ protected slots:
   void onSetAsPart        ();
   //
   void onPrintParameters  ();
+  void onCopyName         ();
 
 protected:
 

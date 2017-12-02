@@ -45,6 +45,8 @@
 
 // Qt includes
 #pragma warning(push, 0)
+#include <QApplication>
+#include <QClipboard>
 #include <QHeaderView>
 #include <QMenu>
 #include <QTreeWidgetItemIterator>
@@ -353,7 +355,7 @@ void asiUI_ObjectBrowser::onSaveToBREP()
   // Save shape
   if ( !asiAlgo_Utils::WriteBRep( topoNode->GetShape(), QStr2AsciiStr(filename) ) )
   {
-    std::cout << "Error: cannot save shape" << std::endl;
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot save shape.");
     return;
   }
 }
@@ -425,6 +427,22 @@ void asiUI_ObjectBrowser::onPrintParameters()
 
 //-----------------------------------------------------------------------------
 
+void asiUI_ObjectBrowser::onCopyName()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  // Set to clipboard
+  QClipboard* clipboard = QApplication::clipboard();
+  clipboard->setText( ExtStr2QStr( selected_n->GetName() ) );
+
+  // Notify
+  m_progress.SendLogMessage( LogInfo(Normal) << "Selected Node's : %1"
+                                             << selected_n->GetName() );
+}
+
+//-----------------------------------------------------------------------------
+
 //! Populates context menu with actions.
 //! \param activeNode [in]      currently active Node.
 //! \param pMenu      [in, out] menu to populate.
@@ -444,6 +462,7 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_INode)& active
   }
 
   pMenu->addAction( "Print parameters", this, SLOT( onPrintParameters() ) );
+  pMenu->addAction( "Copy name",        this, SLOT( onCopyName()        ) );
   //
   if ( isPresented )
   {

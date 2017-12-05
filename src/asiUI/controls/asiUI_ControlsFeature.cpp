@@ -989,35 +989,37 @@ void asiUI_ControlsFeature::classifyDihAngle(const TopoDS_Face&          F,
                                              TopoDS_Compound&            concaveEdgesComp,
                                              TopoDS_Compound&            undefinedEdgesComp,
                                              TopoDS_Compound&            smoothEdgesComp,
-                                             const bool                  usePlotter,
+                                             const bool                  verboseOutput,
                                              const bool                  allowSmooth,
                                              const double                smoothAngularTol) const
 {
   // Check angle between the two faces
   TopTools_IndexedMapOfShape commonEdges;
   asiAlgo_DihedralAngle dihAngle(m_notifier,
-                                 usePlotter ? m_plotter : NULL);
+                                 verboseOutput ? m_plotter : NULL);
   //
-  asiAlgo_FeatureAngle angle = dihAngle.AngleBetweenFaces(F,
-                                                          G,
-                                                          allowSmooth,
-                                                          smoothAngularTol,
-                                                          commonEdges);
+  double angRad = 0.0;
+  asiAlgo_FeatureAngle angleType = dihAngle.AngleBetweenFaces(F,
+                                                              G,
+                                                              allowSmooth,
+                                                              smoothAngularTol,
+                                                              commonEdges,
+                                                              angRad);
   //
   TopTools_IndexedMapOfShape* pTargetMap;
   TopoDS_Compound*            pTargetComp;
   //
-  if ( angle == Angle_Convex )
+  if ( angleType == Angle_Convex )
   {
     pTargetMap  = &convexEdges;
     pTargetComp = &convexEdgesComp;
   }
-  else if ( angle == Angle_Concave )
+  else if ( angleType == Angle_Concave )
   {
     pTargetMap  = &concaveEdges;
     pTargetComp = &concaveEdgesComp;
   }
-  else if ( angle == Angle_Smooth )
+  else if ( angleType == Angle_Smooth )
   {
     pTargetMap  = &smoothEdges;
     pTargetComp = &smoothEdgesComp;
@@ -1033,4 +1035,7 @@ void asiUI_ControlsFeature::classifyDihAngle(const TopoDS_Face&          F,
     pTargetMap->Add( commonEdges(i) );
     BRep_Builder().Add( *pTargetComp, commonEdges(i) );
   }
+
+  if ( verboseOutput )
+    m_notifier.SendLogMessage(LogInfo(Normal) << "Angle between faces: %1." << angRad*180.0/M_PI);
 }

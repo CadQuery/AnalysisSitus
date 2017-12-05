@@ -67,13 +67,15 @@ asiAlgo_DihedralAngle::asiAlgo_DihedralAngle(ActAPI_ProgressEntry progress,
 //!                              but still smooth by the design intent. With
 //!                              this parameter you're able to control it.
 //! \param[out] commonEdges      common edges.
+//! \param[out] angRad           angle in radians.
 //! \return angle between faces.
 asiAlgo_FeatureAngle
   asiAlgo_DihedralAngle::AngleBetweenFaces(const TopoDS_Face&          F,
                                            const TopoDS_Face&          G,
                                            const bool                  allowSmooth,
                                            const double                smoothAngularTol,
-                                           TopTools_IndexedMapOfShape& commonEdges) const
+                                           TopTools_IndexedMapOfShape& commonEdges,
+                                           double&                     angRad) const
 {
   TopoDS_Edge commonEdge = m_commonEdge;
   bool        isSeam     = false;
@@ -288,7 +290,8 @@ asiAlgo_FeatureAngle
     //this->Plotter().DRAW_VECTOR_AT(A, Vy, Color_Violet, "S2_Vy");
   }
 
-  double angle = TF.AngleWithRef(TG, Ref);
+  // Calculate dihedral angle
+  angRad = TF.AngleWithRef(TG, Ref);
 
 #if defined COUT_DEBUG
   std::cout << "Angle is " << angle << std::endl;
@@ -296,7 +299,7 @@ asiAlgo_FeatureAngle
 
   const double ang_tol = Max(smoothAngularTol, 1.0e-4);
   //
-  if ( Abs(Abs(angle) - M_PI) < ang_tol )
+  if ( Abs(Abs(angRad) - M_PI) < ang_tol )
   {
     if ( allowSmooth )
       return Angle_Smooth;
@@ -328,7 +331,7 @@ asiAlgo_FeatureAngle
     TF_precised = ( S1_P.XYZ() - A.XYZ() );
     TG_precised = ( S2_P.XYZ() - A.XYZ() );
 
-    angle = TF_precised.AngleWithRef(TG_precised, Ref);
+    angRad = TF_precised.AngleWithRef(TG_precised, Ref);
 
     this->Plotter().DRAW_POINT( UV_shifted, Color_Yellow, "S1_UV" );
     this->Plotter().DRAW_POINT( ST_shifted, Color_Red,    "S2_ST" );
@@ -342,7 +345,7 @@ asiAlgo_FeatureAngle
 
   // Classify angle
   asiAlgo_FeatureAngle angleType = Angle_Undefined;
-  if ( angle < 0 )
+  if ( angRad < 0 )
     angleType = Angle_Convex;
   else
     angleType = Angle_Concave;

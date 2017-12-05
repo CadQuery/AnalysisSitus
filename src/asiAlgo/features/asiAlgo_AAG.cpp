@@ -649,8 +649,10 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
         // Notice that smooth transitions are not allowed here. This is because
         // the following treatment is designed for periodic faces, and we normally
         // have self-transition of quality C1 and better there
+        double angRad = 0.0;
+        //
         const asiAlgo_FeatureAngle
-          face_angle = solid_angle.AngleBetweenFaces(face, face, false, 0.0, edges);
+          face_angle = solid_angle.AngleBetweenFaces(face, face, false, 0.0, edges, angRad);
 
         // Bind attribute
         m_node_attributes.Bind( f, t_attr_set( new asiAlgo_FeatureAttrAngle(face_angle) ) );
@@ -727,12 +729,15 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
       // Here we let client code decide whether to allow smooth transitions
       // or not. Smooth transition normally requires additional processing
       // in order to classify feature angle as concave or convex
+      double angRad = 0.0;
+      //
       const asiAlgo_FeatureAngle
         angle = solid_angle.AngleBetweenFaces(face,
                                               linked_face,
                                               m_bAllowSmooth,
                                               m_fSmoothAngularTol,
-                                              commonEdges);
+                                              commonEdges,
+                                              angRad);
 
       // Bind attribute
       m_arc_attributes.Bind( arc, new asiAlgo_FeatureAttrAngle(angle, commonEdges) );

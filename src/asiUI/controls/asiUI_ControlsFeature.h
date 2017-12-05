@@ -97,7 +97,7 @@ protected:
                         TopoDS_Compound&            concaveEdgesComp,
                         TopoDS_Compound&            undefinedEdgesComp,
                         TopoDS_Compound&            smoothEdgesComp,
-                        const bool                  usePlotter,
+                        const bool                  verboseOutput,
                         const bool                  allowSmooth,
                         const double                smoothAngularTol) const;
 

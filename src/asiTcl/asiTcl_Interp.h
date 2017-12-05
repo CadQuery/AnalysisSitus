@@ -185,6 +185,14 @@ public:
   asiTcl_EXPORT int
     ErrorOnWrongArgs(const char* cmd);
 
+  //! Returns true if the passed command line option specifies the expected key.
+  //! \param[in] opt option to check.
+  //! \param[in] key keyword to check (without any "-" prefix).
+  //! \return true/false.
+  asiTcl_EXPORT bool
+    IsKeyword(const TCollection_AsciiString& opt,
+              const TCollection_AsciiString& key) const;
+
 protected:
 
   //! Internal method to add command to Tcl interpreter.

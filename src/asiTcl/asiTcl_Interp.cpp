@@ -232,6 +232,19 @@ int asiTcl_Interp::ErrorOnWrongArgs(const char* cmd)
 
 //-----------------------------------------------------------------------------
 
+bool asiTcl_Interp::IsKeyword(const TCollection_AsciiString& opt,
+                              const TCollection_AsciiString& key) const
+{
+  TCollection_AsciiString key2check("-"); key2check += key;
+  //
+  if ( opt == key2check )
+    return true;
+
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiTcl_Interp::addCommand(const TCollection_AsciiString& name,
                                const TCollection_AsciiString& help,
                                const TCollection_AsciiString& filename,

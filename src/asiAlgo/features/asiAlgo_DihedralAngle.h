@@ -67,7 +67,8 @@ public:
                       const TopoDS_Face&          G,
                       const bool                  allowSmooth,
                       const double                smoothAngularTol,
-                      TopTools_IndexedMapOfShape& commonEdges) const;
+                      TopTools_IndexedMapOfShape& commonEdges,
+                      double&                     angRad) const;
 
 public:
 

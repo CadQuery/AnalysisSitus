@@ -52,9 +52,11 @@
 #include <asiVisu_Utils.h>
 
 // OCCT includes
+#include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepLProp_SLProps.hxx>
 #include <BRepOffset_MakeOffset.hxx>
+#include <BRepOffset_MakeSimpleOffset.hxx>
 #include <BRepTools.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <ShapeFix_Shape.hxx>
@@ -450,7 +452,7 @@ int ENGINE_KillSolidByFace(const Handle(asiTcl_Interp)& interp,
   //
   if ( ownerSolid.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Owner solid is null. Cannot proceed." << fidx);
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Owner solid is null. Cannot proceed.");
     return TCL_OK;
   }
 
@@ -461,7 +463,7 @@ int ENGINE_KillSolidByFace(const Handle(asiTcl_Interp)& interp,
   //
   if ( !killer.AskRemove(ownerSolid) )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of solid was rejected." << fidx);
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of solid was rejected.");
     return TCL_OK;
   }
 
@@ -562,37 +564,93 @@ int ENGINE_MoveByFace(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_ThickenShell(const Handle(asiTcl_Interp)& interp,
-                        int                          argc,
-                        const char**                 argv)
+int ENGINE_OffsetShell(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
 {
-  if ( argc != 2 )
+  if ( argc != 2 && argc != 3 && argc != 4 && argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
   // Get part shape
   TopoDS_Shape
-    partShape = Handle(asiEngine_Model)::DownCast(interp->GetModel())->GetPartNode()->GetShape();
+    partShape = Handle(asiEngine_Model)::DownCast( interp->GetModel() )->GetPartNode()->GetShape();
 
   // Get offset value
   const double offsetVal = atof(argv[1]);
 
-  // Make offset
-  BRepOffset_MakeOffset mkOffset;
-  mkOffset.Initialize(partShape, offsetVal, 1.0e-3, BRepOffset_Skin, true, false, GeomAbs_Arc, true);
-  mkOffset.MakeThickSolid();
-  //
-  if ( !mkOffset.IsDone() )
+  // Check whether topology of the result should be preserved
+  bool isSimple = false, isSolid = false, isKeep = false;
+  if ( argc > 2 )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Offset not done.");
-    return TCL_ERROR;
+    for ( int k = 2; k < argc; ++k )
+    {
+      if ( !isSimple && interp->IsKeyword(argv[k], "simple") )
+        isSimple = true;
+
+      if ( !isSolid && interp->IsKeyword(argv[k], "solid") )
+        isSolid = true;
+
+      if ( !isKeep && interp->IsKeyword(argv[k], "keep") )
+        isKeep = true;
+    }
   }
+
+  // Make offset
+  TopoDS_Shape offsetShape;
+  if ( isSimple )
+  {
+    BRepOffset_MakeSimpleOffset mkOffset;
+    mkOffset.Initialize(partShape, offsetVal);
+    mkOffset.SetBuildSolidFlag(isSolid);
+    mkOffset.Perform();
+    //
+    if ( !mkOffset.IsDone() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Simple offset not done.");
+      return TCL_ERROR;
+    }
+    offsetShape = mkOffset.GetResultShape();
+  }
+  else
+  {
+    BRepOffset_MakeOffset mkOffset;
+    mkOffset.Initialize(partShape, offsetVal, 1.0e-3, BRepOffset_Skin, true, false, GeomAbs_Arc, isSolid);
+    //
+    if ( isSolid )
+      mkOffset.MakeThickSolid();
+    else
+      mkOffset.MakeOffsetShape();
+    //
+    if ( !mkOffset.IsDone() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Offset not done.");
+      return TCL_ERROR;
+    }
+    offsetShape = mkOffset.Shape();
+  }
+
+  TopoDS_Shape resultShape;
+
+  // If this flag is enabled, the initial geometry is not substituted
+  if ( isKeep )
+  {
+    TopoDS_Compound resComp;
+    BRep_Builder().MakeCompound(resComp);
+    //
+    BRep_Builder().Add(resComp, partShape);
+    BRep_Builder().Add(resComp, offsetShape);
+    //
+    resultShape = resComp;
+  }
+  else
+    resultShape = offsetShape;
 
   // Modify Data Model
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update( mkOffset.Shape() );
+    asiEngine_Part(cmdEngine::model, NULL).Update(resultShape);
   }
   cmdEngine::model->CommitCommand();
 
@@ -1285,7 +1343,7 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("kill-solid-by-face",
     //
     "kill-solid-by-face faceIndex\n"
-    "\t Kills solid which contains a face with the passed 1-based index.",
+    "\t Kills a solid which contains a face with the passed 1-based index.",
     //
     __FILE__, group, ENGINE_KillSolidByFace);
 
@@ -1305,13 +1363,18 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_MoveByFace);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("thicken-shell",
+  interp->AddCommand("offset-shell",
     //
-    "thicken-shell offset\n"
-    "\t Thickens part (it should be a topological shell) on the given offset \n"
-    "\t value. Thickenning is performed in direction of face normals.",
+    "offset-shell offset [-simple] [-solid] [-keep]\n"
+    "\t Offsets part (it should be a topological shell) on the given offset \n"
+    "\t value. Offsetting is performed in the direction of face normals. If the \n"
+    "\t option '-simple' is passed, this operation will attempt to preserve \n"
+    "\t the topology of the base shell. If the option '-solid' is passed, this \n"
+    "\t operation will build a solid instead of an offset shell. If the option \n"
+    "\t '-keep' is passed, the original part is not substituted with the offset \n"
+    "\t shape, and the offset is added to the part.",
     //
-    __FILE__, group, ENGINE_ThickenShell);
+    __FILE__, group, ENGINE_OffsetShell);
 
     //-------------------------------------------------------------------------//
   interp->AddCommand("set-as-part",

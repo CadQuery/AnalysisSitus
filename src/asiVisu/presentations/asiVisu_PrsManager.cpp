@@ -1507,7 +1507,9 @@ void asiVisu_PrsManager::init()
   // Initialize Render Window
   m_renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
   m_renderWindow->AddRenderer(m_renderer);
-  m_renderWindow->SetMultiSamples(8);
+  m_renderWindow->SetMultiSamples(16);
+  m_renderWindow->SetLineSmoothing(true);
+  m_renderWindow->SetPolygonSmoothing(false);
 
   // Initialize Interactor Style instance for normal operation mode
   m_interactorStyleTrackball = vtkSmartPointer<asiVisu_InteractorStylePick>::New();

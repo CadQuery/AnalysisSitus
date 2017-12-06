@@ -85,18 +85,25 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   Handle(asiVisu_PartEdgesPipeline)
     contour_pl = new asiVisu_PartEdgesPipeline( pl->GetSource() );
 
-  // Adjust props
+  // Adjust props. Notice that for the edges we disable lightning as we
+  // do not want to allow color blending (colors are too meaningful to be
+  // changed).
   contour_pl->Actor()->GetProperty()->SetPointSize(8.0f);
-  contour_pl->Actor()->GetProperty()->SetOpacity(0.5);
+  contour_pl->Actor()->GetProperty()->SetOpacity(0.75);
   contour_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
+  contour_pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
   contour_pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
   contour_pl->Actor()->SetPickable(0);
+  contour_pl->Actor()->GetProperty()->LightingOff();
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
   this->assignDataProvider ( Pipeline_Contour, dp );
 
   // Resolve coincident topology between shaded facets and border links
-  vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
+  contour_pl->Mapper()->SetResolveCoincidentTopologyToShiftZBuffer();
+  contour_pl->Mapper()->SetResolveCoincidentTopologyZShift(-0.15);
+  pl->Mapper()->SetResolveCoincidentTopologyToShiftZBuffer();
+  pl->Mapper()->SetResolveCoincidentTopologyZShift(0.15);
 }
 
 //-----------------------------------------------------------------------------

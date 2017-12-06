@@ -246,23 +246,23 @@ set (TBB_LIB_FILES
 )
 #------------------------------------------------------------------------------
 set (VTK_LIB_FILES
-  vtkCommonCore-7.1
-  vtkCommonDataModel-7.1
-  vtkCommonExecutionModel-7.1
-  vtkCommonMath-7.1
-  vtkCommonTransforms-7.1
-  vtkCommonMisc-7.1
-  vtkFiltersCore-7.1
-  vtkFiltersGeneral-7.1
-  vtkFiltersSources-7.1
-  vtkFiltersGeometry-7.1
-  vtkFiltersParallel-7.1
-  vtkFiltersExtraction-7.1
-  vtkFiltersModeling-7.1
-  vtkIOCore-7.1
-  vtkIOImage-7.1
-  vtkImagingCore-7.1
-  vtkInteractionStyle-7.1
+  vtkCommonCore-8.0
+  vtkCommonDataModel-8.0
+  vtkCommonExecutionModel-8.0
+  vtkCommonMath-8.0
+  vtkCommonTransforms-8.0
+  vtkCommonMisc-8.0
+  vtkFiltersCore-8.0
+  vtkFiltersGeneral-8.0
+  vtkFiltersSources-8.0
+  vtkFiltersGeometry-8.0
+  vtkFiltersParallel-8.0
+  vtkFiltersExtraction-8.0
+  vtkFiltersModeling-8.0
+  vtkIOCore-8.0
+  vtkIOImage-8.0
+  vtkImagingCore-8.0
+  vtkInteractionStyle-8.0
 )
 
 #------------------------------------------------------------------------------

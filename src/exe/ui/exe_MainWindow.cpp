@@ -91,11 +91,13 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
     qApp->setStyleSheet( ts.readAll() );
   }
 
-  //---------------------------------------------------------------------------
   // Set focus on Tcl console
-  //---------------------------------------------------------------------------
-
   m_widgets.wConsole->setFocus();
+
+  // Set this main window to common facilities
+  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
+  //
+  cf->MainWindow = this;
 }
 
 //-----------------------------------------------------------------------------
@@ -235,10 +237,8 @@ void exe_MainWindow::createDockWindows()
 
   // Listener for part controls
   m_listeners.pControlsPart = new asiUI_ControlsPartListener(m_widgets.wControlsPart,
-                                                             m_widgets.wViewerPart,
-                                                             m_widgets.wViewerDomain,
-                                                             m_widgets.wViewerSurface,
                                                              cf->Model,
+                                                             cf,
                                                              cf->ProgressNotifier);
 
   // Listener for part viewer

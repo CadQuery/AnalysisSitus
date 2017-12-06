@@ -89,8 +89,8 @@ public slots:
 
 signals:
 
-  void partLoaded       ();
-  void partAdded        ();
+  void partLoaded       (const QString&);
+  void partAdded        (const QString&);
   void partSaved        ();
   void partModified     ();
   void verticesOn       ();

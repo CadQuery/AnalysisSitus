@@ -38,28 +38,25 @@
 #include <vtkCellTreeLocator.h>
 #include <vtkMapper.h>
 
+// Qt includes
+#include <QMainWindow>
+
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting all necessary facilities.
-//! \param wControls      [in] controls.
-//! \param wViewerPart    [in] part viewer.
-//! \param wViewerDomain  [in] domain viewer.
-//! \param wViewerSurface [in] host geometry viewer.
-//! \param model          [in] Data Model instance.
-//! \param notifier       [in] progress notifier.
-asiUI_ControlsPartListener::asiUI_ControlsPartListener(asiUI_ControlsPart*            wControls,
-                                                       asiUI_ViewerPart*              wViewerPart,
-                                                       asiUI_ViewerDomain*            wViewerDomain,
-                                                       asiUI_ViewerHost*              wViewerSurface,
-                                                       const Handle(asiEngine_Model)& model,
-                                                       ActAPI_ProgressEntry           notifier)
-: QObject          (),
-  m_wControls      (wControls),
-  m_wViewerPart    (wViewerPart),
-  m_wViewerDomain  (wViewerDomain),
-  m_wViewerSurface (wViewerSurface),
-  m_model          (model),
-  m_notifier       (notifier)
+//! \param wControls [in] controls.
+//! \param model     [in] Data Model instance.
+//! \param cf        [in] commonf facilities.
+//! \param notifier  [in] progress notifier.
+asiUI_ControlsPartListener::asiUI_ControlsPartListener(asiUI_ControlsPart*                   wControls,
+                                                       const Handle(asiEngine_Model)&        model,
+                                                       const Handle(asiUI_CommonFacilities)& cf,
+                                                       ActAPI_ProgressEntry                  notifier)
+: QObject     (),
+  m_wControls (wControls),
+  m_model     (model),
+  m_cf        (cf),
+  m_notifier  (notifier)
 {}
 
 //-----------------------------------------------------------------------------
@@ -73,11 +70,11 @@ asiUI_ControlsPartListener::~asiUI_ControlsPartListener()
 //! Connects this listener to the controls widget.
 void asiUI_ControlsPartListener::Connect()
 {
-  connect( m_wControls, SIGNAL ( partLoaded() ),
-           this,        SLOT   ( onPartLoaded() ) );
+  connect( m_wControls, SIGNAL ( partLoaded(const QString&) ),
+           this,        SLOT   ( onPartLoaded(const QString&) ) );
   //
-  connect( m_wControls, SIGNAL ( partAdded() ),
-           this,        SLOT   ( onPartAdded() ) );
+  connect( m_wControls, SIGNAL ( partAdded(const QString&) ),
+           this,        SLOT   ( onPartAdded(const QString&) ) );
   //
   connect( m_wControls, SIGNAL ( partModified() ),
            this,        SLOT   ( onPartModified() ) );
@@ -98,15 +95,18 @@ void asiUI_ControlsPartListener::Connect()
 //-----------------------------------------------------------------------------
 
 //! Reaction on part loading.
-void asiUI_ControlsPartListener::onPartLoaded()
+//! \param[in] filename filename of the loaded part.
+void asiUI_ControlsPartListener::onPartLoaded(const QString& filename)
 {
+  m_cf->MainWindow->setWindowTitle("Analysis of [" + filename + "]");
+
   this->reinitializeEverything();
 }
 
 //-----------------------------------------------------------------------------
 
 //! Reaction on part adding.
-void asiUI_ControlsPartListener::onPartAdded()
+void asiUI_ControlsPartListener::onPartAdded(const QString&)
 {
   this->reinitializeEverything();
 }
@@ -116,7 +116,7 @@ void asiUI_ControlsPartListener::onPartAdded()
 //! Reaction on part modification.
 void asiUI_ControlsPartListener::onPartModified()
 {
-  m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, false);
+  m_cf->ViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, false);
 
   // Re-initialize pickers
   this->reinitializePickers();
@@ -128,13 +128,13 @@ void asiUI_ControlsPartListener::onPartModified()
 void asiUI_ControlsPartListener::onVerticesOn()
 {
   Handle(asiVisu_GeomPrs)
-    prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+    prs = Handle(asiVisu_GeomPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
   //
   prs->VerticesOn();
 
   // Re-initialize pickers as the data set has changed
-  m_wViewerPart->PrsMgr()->InitializePickers( Handle(ActAPI_INode)() );
-  m_wViewerPart->Repaint();
+  m_cf->ViewerPart->PrsMgr()->InitializePickers( Handle(ActAPI_INode)() );
+  m_cf->ViewerPart->Repaint();
 }
 
 //-----------------------------------------------------------------------------
@@ -143,13 +143,13 @@ void asiUI_ControlsPartListener::onVerticesOn()
 void asiUI_ControlsPartListener::onVerticesOff()
 {
   Handle(asiVisu_GeomPrs)
-    prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+    prs = Handle(asiVisu_GeomPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
   //
   prs->VerticesOff();
 
   // Re-initialize pickers as the data set has changed
-  m_wViewerPart->PrsMgr()->InitializePickers( Handle(ActAPI_INode)() );
-  m_wViewerPart->Repaint();
+  m_cf->ViewerPart->PrsMgr()->InitializePickers( Handle(ActAPI_INode)() );
+  m_cf->ViewerPart->Repaint();
 }
 
 //-----------------------------------------------------------------------------
@@ -158,23 +158,23 @@ void asiUI_ControlsPartListener::onVerticesOff()
 void asiUI_ControlsPartListener::onSelectionFacesOn()
 {
   // Enable the corresponding selection mode
-  m_wViewerPart->PrsMgr()->SetSelectionMode(SelectionMode_Face);
+  m_cf->ViewerPart->PrsMgr()->SetSelectionMode(SelectionMode_Face);
 
   // Clean tool viewers
-  if ( m_wViewerDomain )
+  if ( m_cf->ViewerDomain )
   {
-    m_wViewerDomain->PrsMgr()->DeRenderAllPresentations();
-    m_wViewerDomain->Repaint();
+    m_cf->ViewerDomain->PrsMgr()->DeRenderAllPresentations();
+    m_cf->ViewerDomain->Repaint();
   }
   //
-  if ( m_wViewerSurface )
+  if ( m_cf->ViewerHost )
   {
-    m_wViewerSurface->PrsMgr()->DeRenderAllPresentations();
-    m_wViewerSurface->Repaint();
+    m_cf->ViewerHost->PrsMgr()->DeRenderAllPresentations();
+    m_cf->ViewerHost->Repaint();
   }
 
   Handle(asiVisu_GeomPrs)
-    prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+    prs = Handle(asiVisu_GeomPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
 
   prs->MainActor()->SetPickable(1);
   prs->ContourActor()->SetPickable(0);
@@ -186,23 +186,23 @@ void asiUI_ControlsPartListener::onSelectionFacesOn()
 void asiUI_ControlsPartListener::onSelectionEdgesOn()
 {
   // Enable the corresponding selection mode
-  m_wViewerPart->PrsMgr()->SetSelectionMode(SelectionMode_Edge);
+  m_cf->ViewerPart->PrsMgr()->SetSelectionMode(SelectionMode_Edge);
 
   // Clean tool viewers
-  if ( m_wViewerDomain )
+  if ( m_cf->ViewerDomain )
   {
-    m_wViewerDomain->PrsMgr()->DeleteAllPresentations();
-    m_wViewerDomain->Repaint();
+    m_cf->ViewerDomain->PrsMgr()->DeleteAllPresentations();
+    m_cf->ViewerDomain->Repaint();
   }
   //
-  if ( m_wViewerSurface )
+  if ( m_cf->ViewerHost )
   {
-    m_wViewerSurface->PrsMgr()->DeleteAllPresentations();
-    m_wViewerSurface->Repaint();
+    m_cf->ViewerHost->PrsMgr()->DeleteAllPresentations();
+    m_cf->ViewerHost->Repaint();
   }
 
   Handle(asiVisu_GeomPrs)
-    prs = Handle(asiVisu_GeomPrs)::DownCast( m_wViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+    prs = Handle(asiVisu_GeomPrs)::DownCast(m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
 
   prs->MainActor()->SetPickable(0);
   prs->ContourActor()->SetPickable(1);
@@ -214,16 +214,16 @@ void asiUI_ControlsPartListener::onSelectionEdgesOn()
 void asiUI_ControlsPartListener::cleanViewers()
 {
   // Erase part with all related data from Part Viewer...
-  if ( m_wViewerPart )
-    m_wViewerPart->PrsMgr()->DeletePresentation( m_model->GetPartNode(), true );
+  if ( m_cf->ViewerPart )
+    m_cf->ViewerPart->PrsMgr()->DeletePresentation( m_model->GetPartNode(), true );
 
   // ... Domain Viewer...
-  if ( m_wViewerDomain )
-    m_wViewerDomain->PrsMgr()->DeletePresentation( m_model->GetPartNode(), true );
+  if ( m_cf->ViewerDomain )
+    m_cf->ViewerDomain->PrsMgr()->DeletePresentation( m_model->GetPartNode(), true );
 
   // ... and Host Viewer.
-  if ( m_wViewerSurface )
-    m_wViewerSurface->PrsMgr()->DeletePresentation( m_model->GetPartNode(), true );
+  if ( m_cf->ViewerHost )
+    m_cf->ViewerHost->PrsMgr()->DeletePresentation( m_model->GetPartNode(), true );
 }
 
 //-----------------------------------------------------------------------------
@@ -239,20 +239,20 @@ void asiUI_ControlsPartListener::reinitializeEverything()
   // Set all necessary diagnostic tools
   ActAPI_DataObjectId partId = m_model->GetPartNode()->GetId();
   //
-  if ( !m_wViewerPart->PrsMgr()->IsPresented(partId) )
-    m_wViewerPart->PrsMgr()->SetPresentation( m_model->GetPartNode() );
+  if ( !m_cf->ViewerPart->PrsMgr()->IsPresented(partId) )
+    m_cf->ViewerPart->PrsMgr()->SetPresentation( m_model->GetPartNode() );
   //
-  m_wViewerPart->PrsMgr()->SetDiagnosticTools(m_notifier, NULL);
+  m_cf->ViewerPart->PrsMgr()->SetDiagnosticTools(m_notifier, NULL);
 
   // Re-initialize pickers
   this->reinitializePickers();
 
   // Actualize
-  m_wViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, true);
+  m_cf->ViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, true);
 
   // Repaint other viewers which may have been affected
-  m_wViewerSurface->Repaint();
-  m_wViewerDomain->Repaint();
+  m_cf->ViewerHost->Repaint();
+  m_cf->ViewerDomain->Repaint();
 
   m_notifier.StepProgress(1);
   m_notifier.SetProgressStatus(Progress_Succeeded);
@@ -267,6 +267,6 @@ void asiUI_ControlsPartListener::reinitializePickers()
   // any reaction on "useless" actors, e.g. normal fields, etc.
   Handle(ActAPI_HNodeList) pickableNodes = new ActAPI_HNodeList;
   pickableNodes->Append( m_model->GetPartNode() );
-  m_wViewerPart->PrsMgr()->SetPickFromList(true);
-  m_wViewerPart->PrsMgr()->SetPickList(pickableNodes);
+  m_cf->ViewerPart->PrsMgr()->SetPickFromList(true);
+  m_cf->ViewerPart->PrsMgr()->SetPickList(pickableNodes);
 }

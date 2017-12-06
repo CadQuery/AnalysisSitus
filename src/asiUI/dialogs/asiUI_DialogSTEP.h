@@ -68,6 +68,10 @@ public:
 
 public:
 
+  QString Filename; //!< Selected filename.
+
+public:
+
   asiUI_DialogSTEP(const Handle(ActAPI_IModel)&    model,
                    const Handle(asiData_PartNode)& part_n,
                    const Mode                      mode,

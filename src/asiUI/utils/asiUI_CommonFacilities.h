@@ -37,6 +37,8 @@
 #include <asiUI_ViewerPart.h>
 #include <asiUI_ViewerHost.h>
 
+class QMainWindow;
+
 //! Base class for common facilities.
 class asiUI_CommonFacilities : public Standard_Transient
 {
@@ -49,6 +51,7 @@ public:
 
   // Default ctor.
   asiUI_CommonFacilities() : Standard_Transient (),
+                             MainWindow         (NULL),
                              ObjectBrowser      (NULL),
                              ViewerPart         (NULL),
                              ViewerDomain       (NULL),
@@ -57,6 +60,7 @@ public:
 
 public:
 
+  QMainWindow*         MainWindow;    //!< Main window.
   asiUI_ObjectBrowser* ObjectBrowser; //!< Object browser.
   asiUI_ViewerPart*    ViewerPart;    //!< Viewer for part.
   asiUI_ViewerDomain*  ViewerDomain;  //!< Viewer for face parametric domain.

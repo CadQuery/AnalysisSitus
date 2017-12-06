@@ -320,7 +320,7 @@ void asiUI_DialogSTEP::proceed_Write()
 //! Reads STEP.
 void asiUI_DialogSTEP::proceed_Read()
 {
-  QString filename = asiUI_Common::selectSTEPFile(asiUI_Common::OpenSaveAction_Open);
+  this->Filename = asiUI_Common::selectSTEPFile(asiUI_Common::OpenSaveAction_Open);
 
   // Check Geometry Node
   if ( m_part.IsNull() || !m_part->IsWellFormed() )
@@ -333,13 +333,13 @@ void asiUI_DialogSTEP::proceed_Read()
 
   // Read STEP
   TopoDS_Shape shape;
-  if ( !asiAlgo_STEP::Read(QStr2AsciiStr(filename), false, shape) )
+  if ( !asiAlgo_STEP::Read(QStr2AsciiStr(this->Filename), false, shape) )
   {
     std::cout << "Error: cannot read STEP file" << std::endl;
     QApplication::restoreOverrideCursor();
     return;
   }
-  m_notifier.SendLogMessage( LogInfo(Normal) << "Part loaded from STEP file %1" << QStr2AsciiStr(filename) );
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Part loaded from STEP file %1" << QStr2AsciiStr(this->Filename) );
   m_notifier.StepProgress(1);
   m_notifier.SetMessageKey("Update accelerating structures");
 

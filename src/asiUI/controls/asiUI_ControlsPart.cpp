@@ -240,7 +240,7 @@ void asiUI_ControlsPart::onLoadBRep()
   m_notifier.SetProgressStatus(Progress_Succeeded);
 
   // Notify
-  emit partLoaded();
+  emit partLoaded(filename);
 }
 
 //-----------------------------------------------------------------------------
@@ -284,7 +284,7 @@ void asiUI_ControlsPart::onAddBRep()
   m_notifier.SetProgressStatus(Progress_Succeeded);
 
   // Notify
-  emit partAdded();
+  emit partAdded(filename);
 }
 
 //-----------------------------------------------------------------------------
@@ -303,7 +303,7 @@ void asiUI_ControlsPart::onLoadSTEP()
   pDlg->exec();
 
   // Notify
-  emit partLoaded();
+  emit partLoaded(pDlg->Filename);
 }
 
 //-----------------------------------------------------------------------------

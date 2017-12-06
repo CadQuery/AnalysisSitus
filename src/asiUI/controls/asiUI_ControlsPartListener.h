@@ -32,10 +32,8 @@
 #define asiUI_ControlsPartListener_h
 
 // asiUI includes
+#include <asiUI_CommonFacilities.h>
 #include <asiUI_ControlsPart.h>
-#include <asiUI_ViewerDomain.h>
-#include <asiUI_ViewerHost.h>
-#include <asiUI_ViewerPart.h>
 
 // Qt includes
 #include <QObject>
@@ -47,12 +45,10 @@ class asiUI_EXPORT asiUI_ControlsPartListener : public QObject
 
 public:
 
-  asiUI_ControlsPartListener(asiUI_ControlsPart*            wControls,
-                             asiUI_ViewerPart*              wViewerPart,
-                             asiUI_ViewerDomain*            wViewerDomain,
-                             asiUI_ViewerHost*              wViewerSurface,
-                             const Handle(asiEngine_Model)& model,
-                             ActAPI_ProgressEntry           notifier);
+  asiUI_ControlsPartListener(asiUI_ControlsPart*                   wControls,
+                             const Handle(asiEngine_Model)&        model,
+                             const Handle(asiUI_CommonFacilities)& cf,
+                             ActAPI_ProgressEntry                  notifier);
 
   virtual
     ~asiUI_ControlsPartListener();
@@ -64,8 +60,8 @@ public:
 
 protected slots:
 
-  void onPartLoaded       ();
-  void onPartAdded        ();
+  void onPartLoaded       (const QString&);
+  void onPartAdded        (const QString&);
   void onPartModified     ();
   void onVerticesOn       ();
   void onVerticesOff      ();
@@ -85,12 +81,10 @@ protected:
 
 protected:
 
-  asiUI_ControlsPart*     m_wControls;      //!< Controls.
-  asiUI_ViewerPart*       m_wViewerPart;    //!< Part viewer.
-  asiUI_ViewerDomain*     m_wViewerDomain;  //!< Face domain viewer.
-  asiUI_ViewerHost*       m_wViewerSurface; //!< Surface viewer.
-  Handle(asiEngine_Model) m_model;          //!< Data Model instance.
-  ActAPI_ProgressEntry    m_notifier;       //!< Progress notifier.
+  asiUI_ControlsPart*            m_wControls; //!< Controls.
+  Handle(asiUI_CommonFacilities) m_cf;        //!< Common facilities.
+  Handle(asiEngine_Model)        m_model;     //!< Data Model instance.
+  ActAPI_ProgressEntry           m_notifier;  //!< Progress notifier.
 
 };
 

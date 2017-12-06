@@ -1529,7 +1529,7 @@ void asiVisu_PrsManager::init()
   m_iSelectionModes = SelectionMode_None;
 
   // Initialize render window
-  this->InitializeRenderWindow(8);
+  this->InitializeRenderWindow(16);
 
   /* =======================
    *  Button to toggle axes

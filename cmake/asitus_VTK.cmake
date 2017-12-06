@@ -89,5 +89,6 @@ if (WIN32)
   install (FILES ${3RDPARTY_vtk_DLL_DIR}/vtkViewsCore-8.0.dll                   DESTINATION bin)
   install (FILES ${3RDPARTY_vtk_DLL_DIR}/vtkViewsInfovis-8.0.dll                DESTINATION bin)
   install (FILES ${3RDPARTY_vtk_DLL_DIR}/vtkzlib-8.0.dll                        DESTINATION bin)
+  install (FILES ${3RDPARTY_vtk_DLL_DIR}/vtklz4-8.0.dll                         DESTINATION bin)
 
 endif()

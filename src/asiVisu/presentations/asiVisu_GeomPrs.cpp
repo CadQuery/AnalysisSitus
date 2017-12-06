@@ -89,7 +89,7 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   // do not want to allow color blending (colors are too meaningful to be
   // changed).
   contour_pl->Actor()->GetProperty()->SetPointSize(8.0f);
-  contour_pl->Actor()->GetProperty()->SetOpacity(0.75);
+  contour_pl->Actor()->GetProperty()->SetOpacity(0.65);
   contour_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
   contour_pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
   contour_pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
@@ -98,12 +98,6 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
   this->assignDataProvider ( Pipeline_Contour, dp );
-
-  // Resolve coincident topology between shaded facets and border links
-  contour_pl->Mapper()->SetResolveCoincidentTopologyToShiftZBuffer();
-  contour_pl->Mapper()->SetResolveCoincidentTopologyZShift(-0.15);
-  pl->Mapper()->SetResolveCoincidentTopologyToShiftZBuffer();
-  pl->Mapper()->SetResolveCoincidentTopologyZShift(0.15);
 }
 
 //-----------------------------------------------------------------------------

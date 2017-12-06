@@ -1255,6 +1255,35 @@ int ENGINE_Dist(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_SetAAMS(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const int aams = atoi(argv[1]);
+
+  if ( aams < 1 || aams > 32 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Please, set value in range [1,32].");
+    return TCL_OK;
+  }
+
+  cmdEngine::cf->ViewerPart   ->PrsMgr()->InitializeRenderWindow(aams);
+  cmdEngine::cf->ViewerPart   ->PrsMgr()->Initialize(cmdEngine::cf->ViewerPart);
+  /*
+  cmdEngine::cf->ViewerPart   ->PrsMgr()->GetRenderWindow()->Render();
+  cmdEngine::cf->ViewerDomain ->PrsMgr()->GetRenderWindow()->SetMultiSamples(aams);
+  cmdEngine::cf->ViewerHost   ->PrsMgr()->GetRenderWindow()->SetMultiSamples(aams);*/
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
                         const Handle(Standard_Transient)& data)
 {
@@ -1514,6 +1543,14 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Computes distance between the part and the given topological object.",
     //
     __FILE__, group, ENGINE_Dist);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("set-aams",
+    //
+    "set-aams num \n"
+    "\t Sets multi-samples for anti-aliasing.",
+    //
+    __FILE__, group, ENGINE_SetAAMS);
 }
 
 // Declare entry point PLUGINFACTORY

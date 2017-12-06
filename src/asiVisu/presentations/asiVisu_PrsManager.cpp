@@ -1379,6 +1379,29 @@ void asiVisu_PrsManager::Initialize(QWidget* pWidget, const bool isOffscreen)
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_PrsManager::InitializeRenderWindow(const int aams)
+{
+  // Initialize Render Window
+  m_renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+  m_renderWindow->AddRenderer(m_renderer);
+  m_renderWindow->SetMultiSamples(aams);
+  m_renderWindow->SetLineSmoothing(true);
+  m_renderWindow->SetPolygonSmoothing(false);
+
+  // Initialize Interactor Style instance for normal operation mode
+  m_interactorStyleTrackball = vtkSmartPointer<asiVisu_InteractorStylePick>::New();
+
+  // Initialize Interactor Style instance for 2D scenes
+  m_interactorStyleImage = vtkSmartPointer<asiVisu_InteractorStylePick2d>::New();
+
+  // Initialize Render Window Interactor
+  m_renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+  m_renderWindowInteractor->SetRenderWindow(m_renderWindow);
+  m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Initializes pickers and lets Data Model participate in such initialization.
 //! \param nodeList [in] list of Data Nodes which may want to perform some
 //!                      additional initializations (e.g. to construct and
@@ -1505,23 +1528,8 @@ void asiVisu_PrsManager::init()
   // Set default selection mode
   m_iSelectionModes = SelectionMode_None;
 
-  // Initialize Render Window
-  m_renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-  m_renderWindow->AddRenderer(m_renderer);
-  m_renderWindow->SetMultiSamples(16);
-  m_renderWindow->SetLineSmoothing(true);
-  m_renderWindow->SetPolygonSmoothing(false);
-
-  // Initialize Interactor Style instance for normal operation mode
-  m_interactorStyleTrackball = vtkSmartPointer<asiVisu_InteractorStylePick>::New();
-
-  // Initialize Interactor Style instance for 2D scenes
-  m_interactorStyleImage = vtkSmartPointer<asiVisu_InteractorStylePick2d>::New();
-
-  // Initialize Render Window Interactor
-  m_renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-  m_renderWindowInteractor->SetRenderWindow(m_renderWindow);
-  m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
+  // Initialize render window
+  this->InitializeRenderWindow(0);
 
   /* =======================
    *  Button to toggle axes

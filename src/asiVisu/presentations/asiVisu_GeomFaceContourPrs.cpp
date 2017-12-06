@@ -63,9 +63,10 @@ asiVisu_GeomFaceContourPrs::asiVisu_GeomFaceContourPrs(const Handle(ActAPI_INode
 
   // Configure presentation
   pl -> Actor()->GetProperty()->SetLineWidth(2.0f);
-  pl -> Actor()->GetProperty()->SetLighting(0);
+  pl -> Actor()->GetProperty()->SetLighting(false);
   
   // Make contour be visualized always on top of the scene
+  pl->Mapper()->SetResolveCoincidentTopologyToPolygonOffset();
   pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
   pl->Mapper()->SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-66000);
   pl->Mapper()->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);

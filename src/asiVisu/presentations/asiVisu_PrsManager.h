@@ -309,6 +309,9 @@ public:
                const bool isOffscreen = false);
 
   asiVisu_EXPORT void
+    InitializeRenderWindow(const int aams);
+
+  asiVisu_EXPORT void
     InitializePickers(const Handle(ActAPI_INode)& node);
 
   asiVisu_EXPORT void

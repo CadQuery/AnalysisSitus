@@ -49,6 +49,7 @@
 #include <vtkMapper.h>
 #include <vtkProperty.h>
 #include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 
 //! Creates a Presentation object for the passed Geometry Face Node.
 //! \param N [in] Face Node to create a Presentation for.
@@ -138,6 +139,17 @@ Handle(asiVisu_Prs) asiVisu_GeomFacePrs::Instance(const Handle(ActAPI_INode)& th
 bool asiVisu_GeomFacePrs::IsVisible() const
 {
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_GeomFacePrs::SetColor(const QColor& color) const
+{
+  asiVisu_Prs::SetColor(color);
+
+  // Adjust color of text.
+  vtkTextActor* actor = m_textWidget->GetTextActor();
+  actor->GetTextProperty()->SetColor( color.redF(), color.greenF(), color.blueF() );
 }
 
 //-----------------------------------------------------------------------------

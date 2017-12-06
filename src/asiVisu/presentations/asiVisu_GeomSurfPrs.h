@@ -48,8 +48,6 @@ class asiVisu_SurfBtnCallback;
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_GeomSurfPrs, asiVisu_Prs)
-
 //! Presentation class for a host surface of a b-rep face.
 class asiVisu_GeomSurfPrs : public asiVisu_Prs
 {
@@ -81,6 +79,8 @@ public:
 //-----------------------------------------------------------------------------
 public:
 
+  asiVisu_EXPORT void SetColor(const QColor& color) const override;
+  //
   asiVisu_EXPORT void DoWireframe();
   asiVisu_EXPORT void DoShaded();
   asiVisu_EXPORT void DoShadedAndGaussian();
@@ -88,6 +88,13 @@ public:
   //
   asiVisu_EXPORT bool IsShaded() const;
   asiVisu_EXPORT bool IsShadedAndScalars() const;
+
+public:
+
+  bool IsColorizable() const
+  {
+    return true;
+  }
 
 private:
 

@@ -176,41 +176,6 @@ void asiVisu_GeomPrs::VerticesOff() const
 
 //-----------------------------------------------------------------------------
 
-//! Sets custom color for the geometry.
-//! \param color [in] color to set.
-void asiVisu_GeomPrs::DoColor(const QColor& color) const
-{
-  if ( !color.isValid() )
-    return;
-
-  Handle(asiVisu_PartPipeline)
-    pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
-
-  if ( pl.IsNull() )
-    return;
-
-  pl->Mapper()->ScalarVisibilityOff();
-  pl->Actor()->GetProperty()->SetColor( color.redF(),
-                                        color.greenF(),
-                                        color.blueF() );
-}
-
-//-----------------------------------------------------------------------------
-
-//! Unsets custom color for the geometry.
-void asiVisu_GeomPrs::DoUnColor() const
-{
-  Handle(asiVisu_PartPipeline)
-    pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
-
-  if ( pl.IsNull() )
-    return;
-
-  pl->Mapper()->ScalarVisibilityOn();
-}
-
-//-----------------------------------------------------------------------------
-
 void asiVisu_GeomPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
 {
   asiVisu_NotUsed(picker);

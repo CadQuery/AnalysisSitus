@@ -37,6 +37,11 @@
 // OCCT includes
 #include <Standard_ProgramError.hxx>
 
+// VTK includes
+#include <vtkProperty.h>
+
+//-----------------------------------------------------------------------------
+
 //! Creates Presentation object for the passed Node.
 //! \param theNode [in] Node to create the presentation object for.
 asiVisu_Prs::asiVisu_Prs(const Handle(ActAPI_INode)& theNode)
@@ -53,6 +58,32 @@ asiVisu_Prs::asiVisu_Prs(const Handle(ActAPI_INode)& theNode)
   m_dataPrvRepo.Bind( Group_Pick,   DataProviderMap() );
   m_dataPrvRepo.Bind( Group_Detect, DataProviderMap() );
 }
+
+//-----------------------------------------------------------------------------
+
+bool asiVisu_Prs::IsColorizable() const
+{
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_Prs::SetColor(const QColor& color) const
+{
+  for ( PipelineMap::Iterator pit( m_pipelineRepo.Find(Group_Prs) ); pit.More(); pit.Next() )
+  {
+    // Get pipeline and actor.
+    const Handle(asiVisu_Pipeline)& pipeline = pit.Value();
+    //
+    vtkActor*    actor = pipeline->Actor();
+    vtkProperty* prop  = actor->GetProperty();
+
+    // Set color for VTK property.
+    prop->SetColor( color.redF(), color.greenF(), color.blueF() );
+  }
+}
+
+//-----------------------------------------------------------------------------
 
 //! Initializes the underlying pipelines by calling their SetInput() methods
 //! passing the actual Node Parameters there. This normally results in
@@ -89,6 +120,8 @@ void asiVisu_Prs::InitPipelines()
   this->afterInitPipelines();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Attempts to build the underlying pipelines (if not yet) and then
 //! sends VTK Update request in order to re-pass them.
 void asiVisu_Prs::UpdatePipelines() const
@@ -109,6 +142,8 @@ void asiVisu_Prs::UpdatePipelines() const
   this->afterUpdatePipelines();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Accessor for a visualization pipeline by its ID.
 //! \param theId [in] pipeline ID.
 //! \return requested visualization pipeline.
@@ -121,6 +156,8 @@ Handle(asiVisu_Pipeline) asiVisu_Prs::GetPipeline(const int theId) const
 
   return aPLMap.Find(theId);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Gets list of visualization pipelines.
 //! Highlighting pipelines are not included in the list.
@@ -135,6 +172,8 @@ Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPipelineList() const
   return aList;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Accessor for a visualization pipeline used for picking.
 //! \param theIdx [in] index of the picking pipeline to access.
 //! \return requested visualization pipeline.
@@ -148,6 +187,8 @@ Handle(asiVisu_Pipeline) asiVisu_Prs::GetPickPipeline(const int theIdx) const
   return aPLMap.Find(theIdx);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Gets list of picking pipelines.
 //! \return list of picking pipeline.
 Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPickPipelineList() const
@@ -159,6 +200,8 @@ Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPickPipelineList() const
 
   return aList;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Accessor for a visualization pipeline used for detection.
 //! \param theIdx [in] index of the detection pipeline to access.
@@ -173,6 +216,8 @@ Handle(asiVisu_Pipeline) asiVisu_Prs::GetDetectPipeline(const int theIdx) const
   return aPLMap.Find(theIdx);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Gets list of detection pipelines.
 //! \return list of detection pipeline.
 Handle(asiVisu_HPipelineList) asiVisu_Prs::GetDetectPipelineList() const
@@ -185,12 +230,16 @@ Handle(asiVisu_HPipelineList) asiVisu_Prs::GetDetectPipelineList() const
   return aList;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Return the associated data object.
 //! \return data object.
 Handle(ActAPI_INode) asiVisu_Prs::GetNode() const
 {
   return m_node;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Adds the underlying pipelines to the passed renderer.
 //! \param theRenderer [in] render to add the pipelines to.
@@ -207,6 +256,8 @@ void asiVisu_Prs::RenderPipelines(vtkRenderer* theRenderer) const
   this->renderPipelines(theRenderer);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Removes the underlying pipelines from the passed renderer.
 //! \param theRenderer [in] render to remove the pipelines from.
 void asiVisu_Prs::DeRenderPipelines(vtkRenderer* theRenderer) const
@@ -222,6 +273,8 @@ void asiVisu_Prs::DeRenderPipelines(vtkRenderer* theRenderer) const
   this->deRenderPipelines(theRenderer);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Default highlighting actions.
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] results of interactive picking.
@@ -233,6 +286,8 @@ void asiVisu_Prs::Highlight(vtkRenderer*                  theRenderer,
   this->highlight(theRenderer, thePickRes, theSelNature);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Default un-highlighting actions.
 //! \param theRenderer  [in] renderer.
 //! \param theSelNature [in] selection nature (picking or detection).
@@ -242,6 +297,8 @@ void asiVisu_Prs::UnHighlight(vtkRenderer*                  theRenderer,
   this->unHighlight(theRenderer, theSelNature);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Allows sub-classes to re-initialize the working cell picker according
 //! to their particular needs. E.g. a Presentation may prepare a cell
 //! locator tool on the available VTK data for fast picking.
@@ -250,6 +307,8 @@ void asiVisu_Prs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker)
 {
   asiVisu_NotUsed(picker); // Do nothing at super-class
 }
+
+//-----------------------------------------------------------------------------
 
 //! Sets diagnostic tools to all existing Presentations.
 //! \param progress [in] progress notifier.
@@ -261,6 +320,8 @@ void asiVisu_Prs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
   m_plotter  = plotter;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Adds a pipeline to the Presentation object. This method should be used
 //! by descendant classes in order to construct custom Presentation objects.
 //! \param theId       [in] ID of the new pipeline.
@@ -270,6 +331,8 @@ void asiVisu_Prs::addPipeline(const int                       theId,
 {
   m_pipelineRepo.ChangeFind(Group_Prs).Bind(theId, thePipeline);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Assigns Data Provider instance to the given Pipeline.
 //! \param theId           [in] ID of the pipeline to bind Data Provider to.
@@ -285,6 +348,8 @@ void asiVisu_Prs::assignDataProvider(const int                           theId,
   aDataPrvMap.Bind(theId, theDataProvider);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Accessor for Data Provider associated with a pipeline referenced to by the
 //! passed ID.
 //! \param theId [in] ID of the pipeline to get Data Provider for.
@@ -298,6 +363,8 @@ Handle(asiVisu_DataProvider) asiVisu_Prs::dataProvider(const int theId) const
 
   return aDataPrvMap.Find(theId);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Accessor for Data Provider associated with the given pipeline.
 //! \param theId [in] pipeline to get Data Provider for.
@@ -326,6 +393,8 @@ Handle(asiVisu_DataProvider)
   return aDataPrvMap.Find(ID);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Accessor for Data Provider associated with a pipeline referenced to by the
 //! passed ID. This method is specialized for PICKING pipelines.
 //! \param theId [in] ID of the pipeline to get Data Provider for.
@@ -339,6 +408,8 @@ Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderPick(const int theId) cons
 
   return aDataPrvMap.Find(theId);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Accessor for Data Provider associated with a pipeline referenced to by the
 //! passed ID. This method is specialized for DETECTION pipelines.
@@ -354,6 +425,8 @@ Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderDetect(const int theId) co
   return aDataPrvMap.Find(theId);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Sets up a specific pipeline used for picking.
 //! \param thePipeline     [in] pipeline to set.
 //! \param theDataProvider [in] Data Provider for the pipeline.
@@ -365,6 +438,8 @@ void asiVisu_Prs::installPickPipeline(const Handle(asiVisu_Pipeline)&     thePip
   m_pipelineRepo.ChangeFind(Group_Pick).Bind(theIdx, thePipeline);
   m_dataPrvRepo.ChangeFind(Group_Pick).Bind(theIdx, theDataProvider);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Sets up a specific pipeline used for mouse tracking detection.
 //! \param thePipeline     [in] pipeline to set.

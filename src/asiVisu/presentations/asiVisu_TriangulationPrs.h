@@ -83,9 +83,6 @@ public:
   asiVisu_EXPORT void doShading() const;
   asiVisu_EXPORT void doWireframe() const;
 
-  asiVisu_EXPORT void doColor(const QColor& color) const;
-  asiVisu_EXPORT void doUnColor() const;
-
 public:
 
   asiVisu_EXPORT virtual void

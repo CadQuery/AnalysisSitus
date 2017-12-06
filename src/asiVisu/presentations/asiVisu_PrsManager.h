@@ -126,6 +126,9 @@ public:
                               const double white);
 
   asiVisu_EXPORT void
+    AdjustColors();
+
+  asiVisu_EXPORT void
     SetDiagnosticTools(ActAPI_ProgressEntry progress,
                        ActAPI_PlotterEntry  plotter);
 

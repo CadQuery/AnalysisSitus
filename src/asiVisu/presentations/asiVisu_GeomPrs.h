@@ -38,9 +38,6 @@
 // asiData includes
 #include <asiData_PartNode.h>
 
-// Qt includes
-#include <QColor>
-
 // VTK includes
 #include <vtkActor.h>
 #include <vtkCellPicker.h>
@@ -79,13 +76,18 @@ public:
     SetDiagnosticTools(ActAPI_ProgressEntry progress,
                        ActAPI_PlotterEntry  plotter);
 
+public:
+
+  bool IsColorizable() const
+  {
+    return true;
+  }
+
 // Visualization commands:
 public:
 
   asiVisu_EXPORT void VerticesOn() const;
   asiVisu_EXPORT void VerticesOff() const;
-  asiVisu_EXPORT void DoColor(const QColor& color) const;
-  asiVisu_EXPORT void DoUnColor() const;
 
 public:
 

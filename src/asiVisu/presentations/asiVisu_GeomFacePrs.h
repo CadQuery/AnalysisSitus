@@ -41,8 +41,6 @@
 // VTK includes
 #include <vtkTextWidget.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_GeomFacePrs, asiVisu_Prs)
-
 //! Presentation class for a B-Rep face.
 class asiVisu_GeomFacePrs : public asiVisu_Prs
 {
@@ -69,6 +67,16 @@ public:
 
   asiVisu_EXPORT virtual bool
     IsVisible() const;
+
+  asiVisu_EXPORT virtual void
+    SetColor(const QColor& color) const override;
+
+public:
+
+  bool IsColorizable() const
+  {
+    return true;
+  }
 
 private:
 

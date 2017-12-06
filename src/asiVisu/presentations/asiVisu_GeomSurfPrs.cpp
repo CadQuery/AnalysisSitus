@@ -44,6 +44,7 @@
 #include <vtkMapper.h>
 #include <vtkProperty.h>
 #include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 #include <vtkTexturedButtonRepresentation2D.h>
 
 // OCCT includes
@@ -183,6 +184,17 @@ Handle(asiVisu_Prs) asiVisu_GeomSurfPrs::Instance(const Handle(ActAPI_INode)& th
 bool asiVisu_GeomSurfPrs::IsVisible() const
 {
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_GeomSurfPrs::SetColor(const QColor& color) const
+{
+  asiVisu_Prs::SetColor(color);
+
+  // Adjust color of text.
+  vtkTextActor* actor = m_textWidget->GetTextActor();
+  actor->GetTextProperty()->SetColor( color.redF(), color.greenF(), color.blueF() );
 }
 
 //-----------------------------------------------------------------------------

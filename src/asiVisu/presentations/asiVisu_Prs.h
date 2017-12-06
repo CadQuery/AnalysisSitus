@@ -50,11 +50,12 @@
 #include <vtkCellPicker.h>
 #include <vtkRenderer.h>
 
+// Qt includes
+#include <QColor>
+
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_Prs, Standard_Transient)
-
-//! Base class for all kinds of Node presentations which can be visualized
+//! Base class for all kinds of Node Presentations which can be visualized
 //! in 3D viewer.
 class asiVisu_Prs : public Standard_Transient
 {
@@ -80,6 +81,12 @@ public:
 
 // Interface methods:
 public:
+
+  asiVisu_EXPORT virtual bool
+    IsColorizable() const;
+
+  asiVisu_EXPORT virtual void
+    SetColor(const QColor& color) const;
 
   asiVisu_EXPORT virtual void
     InitPipelines();

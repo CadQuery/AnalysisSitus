@@ -130,41 +130,6 @@ void asiVisu_TriangulationPrs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
 
 //-----------------------------------------------------------------------------
 
-//! Sets custom color for the geometry.
-//! \param color [in] color to set.
-void asiVisu_TriangulationPrs::doColor(const QColor& color) const
-{
-  if ( !color.isValid() )
-    return;
-
-  Handle(asiVisu_TriangulationPipeline)
-    pl = Handle(asiVisu_TriangulationPipeline)::DownCast( this->GetPipeline(Pipeline_Triangulation) );
-
-  if ( pl.IsNull() )
-    return;
-
-  pl->Mapper()->ScalarVisibilityOff();
-  pl->Actor()->GetProperty()->SetColor( color.redF(),
-                                        color.greenF(),
-                                        color.blueF() );
-}
-
-//-----------------------------------------------------------------------------
-
-//! Unsets custom color for the geometry.
-void asiVisu_TriangulationPrs::doUnColor() const
-{
-  Handle(asiVisu_TriangulationPipeline)
-    pl = Handle(asiVisu_TriangulationPipeline)::DownCast( this->GetPipeline(Pipeline_Triangulation) );
-
-  if ( pl.IsNull() )
-    return;
-
-  pl->Mapper()->ScalarVisibilityOn();
-}
-
-//-----------------------------------------------------------------------------
-
 void asiVisu_TriangulationPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
 {
   picker->RemoveAllLocators();

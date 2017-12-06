@@ -34,6 +34,7 @@
 // Visualization includes
 #include <asiVisu_CurveSource.h>
 #include <asiVisu_FaceDataProvider.h>
+#include <asiVisu_NodeInfo.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -198,6 +199,9 @@ void asiVisu_FaceSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& D
       // Append poly data
       appendFilter->AddInputConnection( curveSource->GetOutputPort() );
     }
+
+    // Bind to a Data Node using information key
+    asiVisu_NodeInfo::Store( DP->GetNodeID(), this->Actor() );
 
     // Initialize pipeline
     this->SetInputConnection( appendFilter->GetOutputPort() );

@@ -209,6 +209,34 @@ void asiVisu_PrsManager::SetBlackAndWhiteIntensity(const double black,
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_PrsManager::AdjustColors()
+{
+  // Choose color.
+  QColor color;
+  if ( this->isWhiteBackground )
+    color.setRgbF(this->BlackIntensity,
+                  this->BlackIntensity,
+                  this->BlackIntensity);
+  else
+    color.setRgbF(this->WhiteIntensity,
+                  this->WhiteIntensity,
+                  this->WhiteIntensity);
+
+  // Now ask each Presentation to colorize itself.
+  for ( TNodePrsMap::Iterator it(m_nodePresentations); it.More(); it.Next() )
+  {
+    // Get Presentation instance.
+    const Handle(asiVisu_Prs)& prs = it.Value();
+    //
+    if ( prs.IsNull() || !prs->IsColorizable() )
+      continue;
+
+    prs->SetColor(color);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 //! Sets diagnostic tools to all existing Presentations.
 //! \param progress [in] progress notifier.
 //! \param plotter  [in] imperative plotter.
@@ -484,35 +512,8 @@ void asiVisu_PrsManager::InitPresentation(const ActAPI_DataObjectId& nodeId)
   const Handle(asiVisu_Prs)& prs = m_nodePresentations.Find(nodeId);
   prs->InitPipelines();
 
-  // Set viewer-specific visual settings
-  Handle(asiVisu_HPipelineList) pipelines = prs->GetPipelineList();
-  //
-  for ( asiVisu_HPipelineList::Iterator pit(*pipelines); pit.More(); pit.Next() )
-  {
-    vtkActor* actor = pit.Value()->Actor();
-
-    // Attempt to extract binding to Node. Black & white color scheme makes
-    // difference for those actors which are bounded to Data Nodes and those
-    // which are not. This is an adequate filter since such a bounding exists
-    // for domain data and does not exist for whatever technical stuff, e.g.
-    // axes. Probably, this is not the best way to implement this idea, but
-    // we found it reasonable in our narrow context.
-
-    asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve(actor);
-    //
-    if ( !nodeInfo )
-      continue;
-
-    // Color affects visual properties even if scalar mapping is used
-    if ( this->isWhiteBackground )
-      actor->GetProperty()->SetColor(this->BlackIntensity,
-                                     this->BlackIntensity,
-                                     this->BlackIntensity);
-    else
-      actor->GetProperty()->SetColor(this->WhiteIntensity,
-                                     this->WhiteIntensity,
-                                     this->WhiteIntensity);
-  }
+  // Adjust viewer-specific colors.
+  this->AdjustColors();
 }
 
 //-----------------------------------------------------------------------------

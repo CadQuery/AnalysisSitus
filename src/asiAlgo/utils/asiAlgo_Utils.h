@@ -224,39 +224,39 @@ public:
   }
 
   //! Returns shape type as string.
+  //! \param shapeType [in] shape type in question.
+  //! \return type as string.
+  static std::string ShapeTypeStr(const TopAbs_ShapeEnum& shapeType)
+  {
+    std::string name;
+    if ( shapeType == TopAbs_COMPOUND )
+      name = "COMPOUND";
+    else if ( shapeType == TopAbs_COMPSOLID )
+      name = "COMPSOLID";
+    else if ( shapeType == TopAbs_SOLID )
+      name = "SOLID";
+    else if ( shapeType == TopAbs_SHELL )
+      name = "SHELL";
+    else if ( shapeType == TopAbs_FACE )
+      name = "FACE";
+    else if ( shapeType == TopAbs_WIRE )
+      name = "WIRE";
+    else if ( shapeType == TopAbs_EDGE )
+      name = "EDGE";
+    else if ( shapeType == TopAbs_VERTEX )
+      name = "VERTEX";
+    else
+      name = "SHAPE";
+
+    return name;
+  }
+
+  //! Returns shape type as string.
   //! \param shape [in] shape to get type string for.
   //! \return type string.
   static std::string ShapeTypeStr(const TopoDS_Shape& shape)
   {
-    std::string prefix;
-    const TopAbs_ShapeEnum type = shape.ShapeType();
-    if ( type == TopAbs_COMPOUND )
-      prefix = "COMPOUND";
-    else if ( type == TopAbs_COMPSOLID )
-      prefix = "COMPSOLID";
-    else if ( type == TopAbs_SOLID )
-      prefix = "SOLID";
-    else if ( type == TopAbs_SHELL )
-    {
-      if ( shape.Closed() )
-        prefix = "CLOSED";
-      else
-        prefix = "OPEN";
-
-      prefix += " SHELL";
-    }
-    else if ( type == TopAbs_FACE )
-      prefix = "FACE";
-    else if ( type == TopAbs_WIRE )
-      prefix = "WIRE";
-    else if ( type == TopAbs_EDGE )
-      prefix = "EDGE";
-    else if ( type == TopAbs_VERTEX )
-      prefix = "VERTEX";
-    else
-      prefix = "SHAPE";
-
-    return prefix;
+    return ShapeTypeStr( shape.ShapeType() );
   }
 
   //! Returns shape address as string with a prefix indicating its type,
@@ -269,7 +269,7 @@ public:
     std::string prefix   = ShapeTypeStr ( shape );
 
     // Notice extra spacing for better visualization
-    return "    " + prefix + " [" + addr_str + "]";
+    return prefix + " [" + addr_str + "]";
   }
 
   //! Returns TShape address as string.

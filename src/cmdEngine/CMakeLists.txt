@@ -9,6 +9,13 @@ set (H_FILES
 )
 set (CPP_FILES
   cmdEngine.cpp
+  cmdEngine_Data.cpp
+  cmdEngine_Editing.cpp
+  cmdEngine_Inspection.cpp
+  cmdEngine_Interactive.cpp
+  cmdEngine_Interop.cpp
+  cmdEngine_Naming.cpp
+  cmdEngine_Viewer.cpp
 )
 
 #------------------------------------------------------------------------------

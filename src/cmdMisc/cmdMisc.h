@@ -47,7 +47,10 @@
 
 //-----------------------------------------------------------------------------
 
-//! Miscellaneous commands.
+//! Miscellaneous commands. This package is an ideal fit for those commands
+//! which are not mature enough to be passed to cmdEngine module. Basically,
+//! you are encouraged to put here experimental stuff to see how it goes and
+//! decide whether to industrialize your work or throw it away.
 class cmdMisc
 {
 public:

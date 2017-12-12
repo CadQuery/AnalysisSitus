@@ -437,7 +437,7 @@ void asiUI_ObjectBrowser::onCopyName()
   clipboard->setText( ExtStr2QStr( selected_n->GetName() ) );
 
   // Notify
-  m_progress.SendLogMessage( LogInfo(Normal) << "Selected Node's : %1"
+  m_progress.SendLogMessage( LogInfo(Normal) << "Selected Node's name: %1"
                                              << selected_n->GetName() );
 }
 

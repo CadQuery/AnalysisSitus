@@ -289,15 +289,23 @@ vtkSmartPointer<vtkGraph>
   //
   if ( regime == Regime_Topology )
   {
-    m_topoGraph = new asiAlgo_TopoGraph(shape);
+    // Create new topology graph or take the existing one from Naming
+    if ( m_naming.IsNull() )
+      m_topoGraph = new asiAlgo_TopoGraph(shape);
+    else
+      m_topoGraph = m_naming->GetTopoGraph();
+
+    // Convert
     vtkSmartPointer<vtkMutableDirectedGraph>
-      directed = asiUI_TopoGraphAdaptor::Convert(m_topoGraph, leafType);
+      directed = asiUI_TopoGraphAdaptor::Convert(m_topoGraph, m_naming, leafType);
     //
     result = directed;
   }
   else if ( regime == Regime_AAG )
   {
     m_aag = new asiAlgo_AAG(shape, selectedFaces);
+
+    // Convert
     vtkSmartPointer<vtkMutableUndirectedGraph>
       undirected = asiUI_AAGAdaptor::Convert(m_aag);
     //

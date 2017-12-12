@@ -230,6 +230,41 @@ void asiEngine_Part::Update(const TopoDS_Shape& model,
 
 //-----------------------------------------------------------------------------
 
+void asiEngine_Part::InitializeNaming()
+{
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+    return;
+
+  // Get part shape.
+  TopoDS_Shape partShape = part_n->GetShape();
+  //
+  if ( partShape.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Part contains no B-Rep.");
+    return;
+  }
+
+  // Prepare naming service.
+  Handle(asiAlgo_Naming) naming = new asiAlgo_Naming(partShape, m_progress);
+  //
+  if ( !naming->InitNames() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Naming initialization failed.");
+    return;
+  }
+
+  // Set naming service to part.
+  Handle(asiData_NamingParameter)
+    namingParam = Handle(asiData_NamingParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_Naming) );
+  //
+  namingParam->SetNaming(naming);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Constructs BVH structure for the visualization facets stored in the
 //! part shape.
 void asiEngine_Part::BuildBVH()

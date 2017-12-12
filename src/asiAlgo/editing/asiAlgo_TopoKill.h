@@ -32,7 +32,7 @@
 #define asiAlgo_TopoKill_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_History.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
@@ -136,6 +136,12 @@ public:
     return m_result;
   }
 
+  //! \return modification history.
+  const Handle(asiAlgo_History)& GetHistory() const
+  {
+    return m_history;
+  }
+
 protected:
 
   //! Recursive routine which builds a new topological graph in bottom-up
@@ -155,8 +161,9 @@ protected:
 // Input and output:
 protected:
 
-  TopoDS_Shape m_master; //!< Master CAD model.
-  TopoDS_Shape m_result; //!< Result CAD model.
+  TopoDS_Shape            m_master;  //!< Master CAD model.
+  TopoDS_Shape            m_result;  //!< Result CAD model.
+  Handle(asiAlgo_History) m_history; //!< History of modification.
 
 // Requests:
 protected:

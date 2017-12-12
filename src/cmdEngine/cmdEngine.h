@@ -64,8 +64,43 @@ public:
 
 public:
 
-  static Handle(asiEngine_Model)        model;  //!< Data Model instance.
-  static Handle(asiUI_CommonFacilities) cf;     //!< UI common facilities.
+  cmdEngine_EXPORT static void
+    Commands_Data(const Handle(asiTcl_Interp)&      interp,
+                  const Handle(Standard_Transient)& data);
+
+  cmdEngine_EXPORT static void
+    Commands_Editing(const Handle(asiTcl_Interp)&      interp,
+                     const Handle(Standard_Transient)& data);
+
+  cmdEngine_EXPORT static void
+    Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
+                        const Handle(Standard_Transient)& data);
+
+  cmdEngine_EXPORT static void
+    Commands_Interactive(const Handle(asiTcl_Interp)&      interp,
+                         const Handle(Standard_Transient)& data);
+
+  cmdEngine_EXPORT static void
+    Commands_Interop(const Handle(asiTcl_Interp)&      interp,
+                     const Handle(Standard_Transient)& data);
+
+  cmdEngine_EXPORT static void
+    Commands_Naming(const Handle(asiTcl_Interp)&      interp,
+                    const Handle(Standard_Transient)& data);
+
+  cmdEngine_EXPORT static void
+    Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
+                    const Handle(Standard_Transient)& data);
+
+public:
+
+  cmdEngine_EXPORT static void
+    ClearViewers(const bool repaint = true);
+
+public:
+
+  static Handle(asiEngine_Model)        model; //!< Data Model instance.
+  static Handle(asiUI_CommonFacilities) cf;    //!< UI common facilities.
 
 };
 

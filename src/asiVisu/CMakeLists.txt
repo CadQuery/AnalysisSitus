@@ -119,6 +119,7 @@ set (presentations_H_FILES
   presentations/asiVisu_GeomFacePrs.h
   presentations/asiVisu_GeomPrs.h
   presentations/asiVisu_GeomSurfPrs.h
+  presentations/asiVisu_IVCurve2dPrs.h
   presentations/asiVisu_IVCurvePrs.h
   presentations/asiVisu_IVPointSet2dPrs.h
   presentations/asiVisu_IVPointSetPrs.h
@@ -143,6 +144,7 @@ set (presentations_CPP_FILES
   presentations/asiVisu_GeomFacePrs.cpp
   presentations/asiVisu_GeomPrs.cpp
   presentations/asiVisu_GeomSurfPrs.cpp
+  presentations/asiVisu_IVCurve2dPrs.cpp
   presentations/asiVisu_IVCurvePrs.cpp
   presentations/asiVisu_IVPointSet2dPrs.cpp
   presentations/asiVisu_IVPointSetPrs.cpp
@@ -171,6 +173,7 @@ set (providers_H_FILES
   providers/asiVisu_FaceNormalsDataProvider.h
   providers/asiVisu_FuncDataProvider.h
   providers/asiVisu_FuncUnivariateDataProvider.h
+  providers/asiVisu_IVCurve2dDataProvider.h
   providers/asiVisu_IVCurveDataProvider.h
   providers/asiVisu_IVPointSet2dDataProvider.h
   providers/asiVisu_IVPointSetDataProvider.h
@@ -192,6 +195,7 @@ set (providers_CPP_FILES
   providers/asiVisu_FaceContourDataProvider.cpp
   providers/asiVisu_FaceDataProvider.cpp
   providers/asiVisu_FaceNormalsDataProvider.cpp
+  providers/asiVisu_IVCurve2dDataProvider.cpp
   providers/asiVisu_IVCurveDataProvider.cpp
   providers/asiVisu_IVPointSet2dDataProvider.cpp
   providers/asiVisu_IVPointSetDataProvider.cpp

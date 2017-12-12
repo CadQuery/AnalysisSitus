@@ -65,6 +65,8 @@ REGISTER_NODE_TYPE(asiData_ContourNode)
 //
 REGISTER_NODE_TYPE(asiData_IVCurveNode)
 REGISTER_NODE_TYPE(asiData_IVCurvesNode)
+REGISTER_NODE_TYPE(asiData_IVCurve2dNode)
+REGISTER_NODE_TYPE(asiData_IVCurves2dNode)
 REGISTER_NODE_TYPE(asiData_IVNode)
 REGISTER_NODE_TYPE(asiData_IVPoints2dNode)
 REGISTER_NODE_TYPE(asiData_IVPointsNode)
@@ -190,6 +192,8 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_IVPointSetNode>,    Partition_IV_PointSet);
   REGISTER_PARTITION(asiData_Partition<asiData_IVCurvesNode>,      Partition_IV_Curves);
   REGISTER_PARTITION(asiData_Partition<asiData_IVCurveNode>,       Partition_IV_Curve);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVCurves2dNode>,    Partition_IV_Curves2d);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVCurve2dNode>,     Partition_IV_Curve2d);
   REGISTER_PARTITION(asiData_Partition<asiData_IVSurfacesNode>,    Partition_IV_Surfaces);
   REGISTER_PARTITION(asiData_Partition<asiData_IVSurfaceNode>,     Partition_IV_Surface);
   REGISTER_PARTITION(asiData_Partition<asiData_IVTopoNode>,        Partition_IV_Topo);
@@ -212,8 +216,7 @@ void asiEngine_Model::initFunctionDrivers()
 
 //! Returns a Partition of Data Nodes representing Variables for Expression
 //! Evaluation mechanism.
-//! \param varType [in] type of Variable to return the dedicated
-//!                     Partition for.
+//! \param varType [in] type of Variable to return the dedicated Partition for.
 //! \return Variable Partition.
 Handle(ActAPI_IPartition)
   asiEngine_Model::getVariablePartition(const VariableType& varType) const

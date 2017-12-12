@@ -214,7 +214,7 @@ protected:
       vtkVector2f    pos = this->VertexPosition(focusedVertex);
       vtkStdString label = this->VertexTooltip(focusedVertex);
 
-      painter->GetTextProp()->SetFontSize(12);
+      painter->GetTextProp()->SetFontSize(14);
       painter->DrawString(pos.GetX(), pos.GetY(), label);
     }
   }

@@ -103,6 +103,18 @@ Handle(asiData_IVPointsNode) asiData_IVNode::Points()
   return NULL;
 }
 
+//! \return underlying curves 2D Node.
+Handle(asiData_IVCurves2dNode) asiData_IVNode::Curves2d()
+{
+  Handle(asiData_IVCurves2dNode)
+    curves2d_n = Handle(asiData_IVCurves2dNode)::DownCast( this->GetChildNode(Child_Curves2d) );
+  //
+  if ( !curves2d_n.IsNull() && curves2d_n->IsWellFormed() )
+    return curves2d_n;
+  //
+  return NULL;
+}
+
 //! \return underlying curves.
 Handle(asiData_IVCurvesNode) asiData_IVNode::Curves()
 {

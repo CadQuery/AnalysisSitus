@@ -163,6 +163,16 @@ public:
                  const Quantity_Color&);
 
   asiUI_EXPORT virtual void
+    DRAW_CURVE2D(const Handle(Geom2d_Curve)&,
+                 const Quantity_Color&,
+                 const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_CURVE2D(const TCollection_AsciiString&,
+                   const Handle(Geom2d_Curve)&,
+                   const Quantity_Color&);
+
+  asiUI_EXPORT virtual void
     DRAW_SURFACE(const Handle(Geom_Surface)&,
                  const Quantity_Color&,
                  const TCollection_AsciiString&);
@@ -509,8 +519,14 @@ protected:
     draw_curve(const Handle(Geom_Curve)&      curve,
                const Quantity_Color&          color,
                const TCollection_AsciiString& name,
-               const bool                     is2d,
+               const bool                     is2dViewer,
                const bool                     newPrimitive);
+
+  asiUI_EXPORT void
+    draw_curve2d(const Handle(Geom2d_Curve)&    curve,
+                 const Quantity_Color&          color,
+                 const TCollection_AsciiString& name,
+                 const bool                     newPrimitive);
 
   asiUI_EXPORT void
     draw_surface(const Handle(Geom_Surface)&    surface,
@@ -535,7 +551,7 @@ protected:
               const gp_XYZ&                  p2,
               const Quantity_Color&          color,
               const TCollection_AsciiString& name,
-              const bool                     is2d,
+              const bool                     is2dViewer,
               const bool                     newPrimitive);
 
   asiUI_EXPORT void
@@ -556,7 +572,7 @@ protected:
     draw_polyline(const std::vector<gp_XYZ>&     poles,
                   const Quantity_Color&          color,
                   const TCollection_AsciiString& name,
-                  const bool                     is2d,
+                  const bool                     is2dViewer,
                   const bool                     newPrimitive);
 
   asiUI_EXPORT void

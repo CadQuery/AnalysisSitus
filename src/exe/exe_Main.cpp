@@ -46,6 +46,7 @@
 #include <asiVisu_GeomFacePrs.h>
 #include <asiVisu_GeomPrs.h>
 #include <asiVisu_GeomSurfPrs.h>
+#include <asiVisu_IVCurve2dPrs.h>
 #include <asiVisu_IVCurvePrs.h>
 #include <asiVisu_IVPointSet2dPrs.h>
 #include <asiVisu_IVPointSetPrs.h>
@@ -117,6 +118,7 @@ int main(int argc, char** argv)
   // Imperative viewer
   REGISTER_PRESENTATION(asiVisu_IVPointSet2dPrs)
   REGISTER_PRESENTATION(asiVisu_IVPointSetPrs)
+  REGISTER_PRESENTATION(asiVisu_IVCurve2dPrs)
   REGISTER_PRESENTATION(asiVisu_IVCurvePrs)
   REGISTER_PRESENTATION(asiVisu_IVSurfacePrs)
   REGISTER_PRESENTATION(asiVisu_IVTessItemPrs)

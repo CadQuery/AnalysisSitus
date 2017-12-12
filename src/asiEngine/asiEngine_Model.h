@@ -36,7 +36,9 @@
 
 // asiData includes
 #include <asiData_BoundaryEdgesNode.h>
+#include <asiData_IVCurve2dNode.h>
 #include <asiData_IVCurveNode.h>
+#include <asiData_IVCurves2dNode.h>
 #include <asiData_IVCurvesNode.h>
 #include <asiData_IVNode.h>
 #include <asiData_IVPointSet2dNode.h>
@@ -59,8 +61,6 @@
 #include <ActData_BaseModel.h>
 
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiEngine_Model, ActData_BaseModel)
 
 //! Standard implementation of Data Model in Analysis Situs. This
 //! standard implementation answers many typical needs related to analysis.
@@ -240,6 +240,20 @@ public:
     return Handle(asiData_Partition<asiData_IVCurveNode>)::DownCast( this->Partition(Partition_IV_Curve) );
   }
 
+  //! Accessor for a Partition instance dedicated to IV 2D Curves Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_IVCurves2dNode>) GetIVCurves2dPartition() const
+  {
+    return Handle(asiData_Partition<asiData_IVCurves2dNode>)::DownCast( this->Partition(Partition_IV_Curves2d) );
+  }
+
+  //! Accessor for a Partition instance dedicated to IV 2D Curve Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_IVCurve2dNode>) GetIVCurve2dPartition() const
+  {
+    return Handle(asiData_Partition<asiData_IVCurve2dNode>)::DownCast( this->Partition(Partition_IV_Curve2d) );
+  }
+
   //! Accessor for a Partition instance dedicated to IV Surfaces Nodes.
   //! \return requested Partition.
   Handle(asiData_Partition<asiData_IVSurfacesNode>) GetIVSurfacesPartition() const
@@ -355,6 +369,8 @@ protected:
     Partition_IV_PointSet,
     Partition_IV_Curves,
     Partition_IV_Curve,
+    Partition_IV_Curves2d,
+    Partition_IV_Curve2d,
     Partition_IV_Surfaces,
     Partition_IV_Surface,
     Partition_IV_Topo,

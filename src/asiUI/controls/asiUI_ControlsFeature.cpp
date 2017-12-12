@@ -35,6 +35,7 @@
 #include <asiUI_AAGAdaptor.h>
 #include <asiUI_Common.h>
 #include <asiUI_DialogSmoothAngleTol.h>
+#include <asiUI_DialogTopoGraphDepth.h>
 #include <asiUI_PartGraph.h>
 
 // asiAlgo includes
@@ -251,8 +252,10 @@ void asiUI_ControlsFeature::onShowTOPOGraph()
   }
 
   // Show graph
-  asiUI_PartGraph* pGraphView = new asiUI_PartGraph(m_model, m_partViewer);
-  pGraphView->RenderTopology(targetShape, TopAbs_VERTEX);
+  asiUI_DialogTopoGraphDepth*
+    pDlg = new asiUI_DialogTopoGraphDepth(m_model, targetShape, m_partViewer, m_notifier, this);
+  //
+  pDlg->open();
 }
 
 //-----------------------------------------------------------------------------

@@ -43,6 +43,7 @@
 // OCCT includes
 #include <Geom_RectangularTrimmedSurface.hxx>
 #include <Geom_TrimmedCurve.hxx>
+#include <Geom2d_TrimmedCurve.hxx>
 #include <Precision.hxx>
 
 //-----------------------------------------------------------------------------
@@ -84,6 +85,20 @@ Handle(asiData_IVNode) asiEngine_IV::Create_IV()
 
     // Add as child
     iv_n->AddChildNode(iv_points_n);
+  }
+
+  // Create underlying Curves 2D
+  {
+    Handle(ActAPI_INode) iv_curves2d_base = asiData_IVCurves2dNode::Instance();
+    m_model->GetIVCurves2dPartition()->AddNode(iv_curves2d_base);
+
+    // Initialize
+    Handle(asiData_IVCurves2dNode) iv_curves2d_n = Handle(asiData_IVCurves2dNode)::DownCast(iv_curves2d_base);
+    iv_curves2d_n->Init();
+    iv_curves2d_n->SetName("Curves 2D");
+
+    // Add as child
+    iv_n->AddChildNode(iv_curves2d_n);
   }
 
   // Create underlying Curves
@@ -166,6 +181,7 @@ Handle(asiData_IVNode) asiEngine_IV::Create_IV()
 void asiEngine_IV::Clean_All()
 {
   Clean_Curves();
+  Clean_Curves2d();
   Clean_Points();
   Clean_Points2d();
   Clean_Surfaces();
@@ -481,6 +497,124 @@ void asiEngine_IV::Clean_Curves()
 {
   Handle(asiData_IVCurvesNode)
     IV_Parent = m_model->GetIVNode()->Curves();
+  //
+  _cleanChildren(IV_Parent);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Finds Node with the given name. Returns null if nothing is found.
+//! \param name [in] target name.
+//! \return found Node (the first one if several exist) or null.
+Handle(asiData_IVCurve2dNode)
+  asiEngine_IV::Find_Curve2d(const TCollection_AsciiString& name)
+{
+  // Find the first Node with the given name
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->Curves2d()->GetChildIterator(true); cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) node = cit->Value();
+    //
+    if ( node.IsNull() || !node->IsWellFormed() )
+      continue;
+
+    TCollection_ExtendedString nodeName = node->GetName();
+    //
+    if ( nodeName.IsEqual(name) )
+      return Handle(asiData_IVCurve2dNode)::DownCast(node);
+  }
+
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Creates Curve 2D Node.
+//! \param curve         [in] parametric curve to store.
+//! \param surface       [in] host surface.
+//! \param uLimit        [in] absolute value to bound infinite parametric domain.
+//! \param name          [in] name to set (auto-generated if empty).
+//! \param useAutoNaming [in] indicates whether to auto-name entities.
+//! \return newly created Node.
+Handle(asiData_IVCurve2dNode)
+  asiEngine_IV::Create_Curve2d(const Handle(Geom2d_Curve)&    curve,
+                               const Handle(Geom_Surface)&    surface,
+                               const double                   uLimit,
+                               const TCollection_AsciiString& name,
+                               const bool                     useAutoNaming)
+{
+  if ( curve.IsNull() )
+    return NULL;
+
+  // Access Model and parent Node
+  Handle(asiData_IVCurves2dNode) IV_Parent = m_model->GetIVNode()->Curves2d();
+
+  // Add Curve Node to Partition
+  Handle(asiData_IVCurve2dNode) item_n = Handle(asiData_IVCurve2dNode)::DownCast( asiData_IVCurve2dNode::Instance() );
+  m_model->GetIVCurve2dPartition()->AddNode(item_n);
+
+  // Generate unique name
+  TCollection_ExtendedString item_name = ( name.IsEmpty() ? "CONS" : name );
+  if ( useAutoNaming )
+    item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
+  //
+  item_n->SetName(item_name);
+
+  // Initialize Node
+  Update_Curve2d(item_n, curve, surface, uLimit);
+
+  // Add as child
+  IV_Parent->AddChildNode(item_n);
+
+  // Return the just created Node
+  return item_n;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Updates Curve Node with the passed curve data.
+//! \param node    [in] Curve Node to update.
+//! \param curve   [in] parametric curve to store.
+//! \param surface [in] host surface.
+//! \param uLimit  [in] absolute value to bound infinite parametric domain.
+void asiEngine_IV::Update_Curve2d(const Handle(asiData_IVCurve2dNode)& node,
+                                  const Handle(Geom2d_Curve)&          curve,
+                                  const Handle(Geom_Surface)&          surface,
+                                  const double                         uLimit)
+{
+  // Handle infinite domains
+  double               f      = curve->FirstParameter();
+  double               l      = curve->LastParameter();
+  bool                 toTrim = false;
+  Handle(Geom2d_Curve) geometry;
+  //
+  if ( Precision::IsInfinite(f) )
+  {
+    f      = -uLimit;
+    toTrim = true;
+  }
+  if ( Precision::IsInfinite(l) )
+  {
+    l = uLimit;
+    if ( !toTrim ) toTrim = true;
+  }
+  //
+  if ( toTrim )
+    geometry = new Geom2d_TrimmedCurve(curve, f, l);
+  else
+    geometry = curve;
+
+  // Initialize
+  node->Init();
+  node->SetCONS(geometry, surface, f, l);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Deletes all Curve 2D Nodes.
+void asiEngine_IV::Clean_Curves2d()
+{
+  Handle(asiData_IVCurves2dNode)
+    IV_Parent = m_model->GetIVNode()->Curves2d();
   //
   _cleanChildren(IV_Parent);
 }

@@ -73,6 +73,9 @@ public:
            const bool          doResetTessParams = false);
 
   asiEngine_EXPORT void
+    InitializeNaming();
+
+  asiEngine_EXPORT void
     BuildBVH();
 
   asiEngine_EXPORT void

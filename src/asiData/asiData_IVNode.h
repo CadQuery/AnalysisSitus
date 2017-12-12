@@ -32,6 +32,7 @@
 #define asiData_IVNode_h
 
 // Visualization includes
+#include <asiData_IVCurves2dNode.h>
 #include <asiData_IVCurvesNode.h>
 #include <asiData_IVPoints2dNode.h>
 #include <asiData_IVPointsNode.h>
@@ -93,6 +94,9 @@ public:
   asiData_EXPORT Handle(asiData_IVPointsNode)
     Points();
 
+  asiData_EXPORT Handle(asiData_IVCurves2dNode)
+    Curves2d();
+
   asiData_EXPORT Handle(asiData_IVCurvesNode)
     Curves();
 
@@ -126,6 +130,7 @@ private:
   {
     Child_Points2d = 1,
     Child_Points,
+    Child_Curves2d,
     Child_Curves,
     Child_Surfaces,
     Child_Topology,

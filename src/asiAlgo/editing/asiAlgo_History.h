@@ -35,6 +35,7 @@
 #include <asiAlgo.h>
 
 // OCCT includes
+#include <NCollection_DataMap.hxx>
 #include <TopoDS_Shape.hxx>
 
 // Standard includes
@@ -55,14 +56,24 @@ public:
   //! Node in the history graph.
   struct t_item
   {
-    int                 Op;           //!< Operation index.
-    TopoDS_Shape        TransientPtr; //!< Shape as a transient pointer.
-    std::vector<t_item> Generated;    //!< List of items generated from this one.
-    std::vector<t_item> Modified;     //!< List of items substituted this one.
-    bool                IsDeleted;    //!< Identifies the item as deleted one.
+    int                  Op;           //!< Operation index.
+    TopoDS_Shape         TransientPtr; //!< Shape as a transient pointer.
+    std::vector<t_item*> Generated;    //!< List of items generated from this one.
+    std::vector<t_item*> Modified;     //!< List of items substituted this one.
+    bool                 IsDeleted;    //!< Identifies the item as deleted one.
 
-    //! Ctor.
+    //! Constructor.
     t_item() : Op(0), IsDeleted(false) {}
+
+    //! Destructor.
+    ~t_item()
+    {
+      for ( size_t k = 0; k < Generated.size(); ++k )
+        delete Generated[k];
+
+      for ( size_t k = 0; k < Modified.size(); ++k )
+        delete Modified[k];
+    }
   };
 
 public:
@@ -71,9 +82,101 @@ public:
   asiAlgo_EXPORT
     asiAlgo_History();
 
+  //! \brief Releases occupied memory.
+  asiAlgo_EXPORT
+    ~asiAlgo_History();
+
+public:
+
+  //! \brief Adds modification record to the history.
+  //!
+  //! \param[in] before shape (transient pointer) before modification.
+  //! \param[in] after  shape (transient pointer) after modification.
+  //! \param[in] create Boolean flag indicating whether this function is
+  //!                   allowed to create another root node for the 'before'
+  //!                   shape in case it does not exist.
+  //! \param[in] opId   auxiliary operation ID which can be useful for
+  //!                   composing feature trees.
+  //!
+  //! \return true in case of success, false -- otherwise. E.g., this function
+  //!         may return false in case when modification record is requested
+  //!         for a node which has 'IsDeleted' flag turned on.
+  asiAlgo_EXPORT bool
+    AddModified(const TopoDS_Shape& before,
+                const TopoDS_Shape& after,
+                const bool          create = true,
+                const int           opId = 0);
+
+  //! \brief Adds deletion record to the history.
+  //!
+  //! If a history node corresponding to the given shape already exists,
+  //! a "deletion record" is nothing but indicating that this node is the
+  //! ultimate one (by turning on the corresponding Boolean flag).
+  //!
+  //! \param[in] shaoe  shape (transient pointer) to mark as deleted.
+  //! \param[in] create Boolean flag indicating whether this function is
+  //!                   allowed to create another root node for the 'shape'
+  //!                   shape in case it does not exist.
+  //! \param[in] opId   auxiliary operation ID which can be useful for
+  //!                   composing feature trees.
+  //!
+  //! \return true in case of success, false -- otherwise. E.g., this function
+  //!         may return false in case when deletion is requested for a node
+  //!         which does not exist while 'create' flag is turned off.
+  asiAlgo_EXPORT bool
+    SetDeleted(const TopoDS_Shape& shape,
+               const bool          create = true,
+               const int           opId = 0);
+
 protected:
 
-  std::vector<t_item> m_roots; //!< Root items in the history.
+  //! Finds or creates history item for the given shape.
+  //! \param[in] shape  shape to create a history item for.
+  //! \param[in] opId   auxiliary operation ID.
+  //! \param[in] create whether to create a new item if it does not exist.
+  //! \return history item.
+  asiAlgo_EXPORT t_item*
+    findActiveItem(const TopoDS_Shape& shape,
+                   const int           opId,
+                   const bool          create = true);
+
+  //! Creates history item for the given shape.
+  //! \param[in] shape shape to create a history item for.
+  //! \param[in] opId  auxiliary operation ID.
+  //! \return history item.
+  asiAlgo_EXPORT t_item*
+    makeItem(const TopoDS_Shape& shape,
+             const int           opId) const;
+
+protected:
+
+  //! Hasher which does not take into account neither locations nor
+  //! orientations of shapes. Our killer is extremely cruel in this regard...
+  class t_partner_hasher
+  {
+  public:
+
+    static int HashCode(const TopoDS_Shape& S, const int Upper)
+    {
+      const int I  = (int) ptrdiff_t( S.TShape().operator->() );
+      const int HS = ::HashCode(I, Upper);
+      //
+      return HS;
+    }
+
+    static bool IsEqual(const TopoDS_Shape& S1, const TopoDS_Shape& S2)
+    {
+      return S1.IsPartner(S2);
+    }
+  };
+
+protected:
+
+  //! Root items in the history.
+  std::vector<t_item*> m_roots;
+
+  //! Shapes and their corresponding active history items.
+  NCollection_DataMap<TopoDS_Shape, t_item*, t_partner_hasher> m_activeItems;
 
 };
 

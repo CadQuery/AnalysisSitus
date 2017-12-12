@@ -32,7 +32,7 @@
 #define asiUI_TopoGraphAdaptor_h
 
 // asiAlgo includes
-#include <asiAlgo_TopoGraph.h>
+#include <asiAlgo_Naming.h>
 
 // VTK includes
 #include <vtkMutableDirectedGraph.h>
@@ -43,6 +43,7 @@ namespace asiUI_TopoGraphAdaptor
 {
   vtkSmartPointer<vtkMutableDirectedGraph>
     Convert(const Handle(asiAlgo_TopoGraph)& topograph,
+            const Handle(asiAlgo_Naming)&    naming,
             const TopAbs_ShapeEnum           leafType);
 };
 

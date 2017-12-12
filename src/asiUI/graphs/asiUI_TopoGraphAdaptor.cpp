@@ -35,6 +35,7 @@
 #include <asiUI_PartGraphItem.h>
 
 // asiAlgo includes
+#include <asiAlgo_TopoAttrName.h>
 #include <asiAlgo_TopoAttrLocation.h>
 #include <asiAlgo_TopoAttrOrientation.h>
 #include <asiAlgo_Utils.h>
@@ -51,11 +52,13 @@
 
 //! Converts topology graph to VTK presentable form.
 //! \param topograph [in] topology graph to convert.
+//! \param naming    [in] optional naming service.
 //! \param leafType  [in] type of leafs. This argument allows to stop recursion
 //!                       at a certain sub-shape type level.
 //! \return VTK graph.
 vtkSmartPointer<vtkMutableDirectedGraph>
   asiUI_TopoGraphAdaptor::Convert(const Handle(asiAlgo_TopoGraph)& topograph,
+                                  const Handle(asiAlgo_Naming)&    naming,
                                   const TopAbs_ShapeEnum           leafType)
 {
   vtkSmartPointer<vtkMutableDirectedGraph>
@@ -126,18 +129,39 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     idsArr->InsertNextValue(pid);
 
     // Prepare label
-    std::string label = asiAlgo_Utils::ToString(n);
+    std::string label;
     //
-    label += " // ";
+    label += "Node ID: ";
+    label += asiAlgo_Utils::ToString(n);
+    label += "\n";
+    //
+    label += "Shape: ";
     label += asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str();
+    label += "\n";
     //
     if ( pid )
     {
-      label += std::string(": ");
+      label += "Sub-shape pedigree ID: ";
       label += asiAlgo_Utils::ToString(pid);
+      label += "\n";
     }
-    label += std::string(" // Sub-shape ID: ");
+    //
+    label += "Sub-shape global ID: ";
     label += asiAlgo_Utils::ToString(gid);
+    //
+    if ( !naming.IsNull() )
+    {
+      // If naming is available, the topology graph is enriched with names.
+      Handle(asiAlgo_TopoAttr)
+        nameAttrBase = topograph->GetNodeAttribute( n, asiAlgo_TopoAttrName::GUID() );
+      //
+      Handle(asiAlgo_TopoAttrName)
+        nameAttr = Handle(asiAlgo_TopoAttrName)::DownCast(nameAttrBase);
+      //
+      label += "\n";
+      label += "Topo name: ";
+      label += nameAttr->GetName().ToCString();
+    }
     //
     labelArr->InsertNextValue(label);
 

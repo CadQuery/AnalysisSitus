@@ -44,6 +44,9 @@ asiAlgo_TopoKill::asiAlgo_TopoKill(const TopoDS_Shape&  masterCAD,
 : ActAPI_IAlgorithm(progress, plotter)
 {
   m_master = masterCAD;
+
+  // Construct history.
+  m_history = new asiAlgo_History;
 }
 
 //-----------------------------------------------------------------------------
@@ -65,21 +68,21 @@ bool asiAlgo_TopoKill::AskRemove(const TopoDS_Shape& subshape)
 bool asiAlgo_TopoKill::AskReplace(const TopoDS_Shape& what,
                                   const TopoDS_Shape& with)
 {
-  // Check replacement type
+  // Check replacement type.
   if ( what.ShapeType() != with.ShapeType() )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot kill by replacement with different type.");
     return false;
   }
 
-  // Check if any replacement is already recorded for the target sub-shape
+  // Check if any replacement is already recorded for the target sub-shape.
   if ( m_toReplace.IsBound(what) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Such replacement is already asked.");
     return false;
   }
 
-  // Check if removal is already recorded for the target sub-shape
+  // Check if removal is already recorded for the target sub-shape.
   if ( m_toRemove.Contains(what) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Removal is already asked for the shape you want to replace.");
@@ -98,14 +101,14 @@ bool asiAlgo_TopoKill::IsAsked(const TopoDS_Shape& subshape,
                                bool&               forReplacement) const
 {
   if ( checkRecursively && (forRemoval || forReplacement) )
-    return true; // Stop recursion
+    return true; // Stop recursion.
 
-  // Check the shape itself (without recursion)
+  // Check the shape itself (without recursion).
   if ( this->IsAsked(subshape, forRemoval, forReplacement) )
     return true;
 
   // If the shape itself is not asked and the check is recursive, then
-  // apply the same check to the direct children of the shape in question
+  // apply the same check to the direct children of the shape in question.
   if ( checkRecursively )
   {
     for ( TopoDS_Iterator it(subshape, false, true); it.More(); it.Next() )
@@ -144,10 +147,12 @@ bool asiAlgo_TopoKill::Apply()
     return false;
   }
 
-  // Prepare root of the same type as a master shape
+  // Prepare root of the same type as a master shape.
   m_result = m_master.EmptyCopied();
+  //
+  m_history->AddModified(m_master, m_result);
 
-  // Rebuild topology graph recursively
+  // Rebuild topology graph recursively.
   this->buildTopoGraphLevel(m_master, m_result);
 
   return true;
@@ -179,7 +184,7 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
     //
     if ( !this->IsAsked(currentShape, true, forRemoval, forReplacement) )
     {
-      newResult = currentShape; // Just take the shape itself as a new shape
+      newResult = currentShape; // Just take the shape itself as a new shape.
 
       // NOTICE: the recursion is stopped here because the assignment above
       //         takes effect for sub-shapes also. This assignment actually
@@ -198,7 +203,11 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
         if ( forRemoval )
           excludeSubshape = true;
         else // Replacement
+        {
           newResult = m_toReplace(currentShape);
+          //
+          m_history->AddModified(currentShape, newResult);
+        }
       }
       else // Shape itself is not touched, but some children are
       {
@@ -206,9 +215,11 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
         // to construct another shape. That's because in OpenCascade it is
         // impossible to modify the existing shape handler.
         newResult = currentShape.EmptyCopied();
+        //
+        m_history->AddModified(currentShape, newResult);
       }
 
-      // Proceed recursively
+      // Proceed recursively.
       if ( !forRemoval && !forReplacement )
         this->buildTopoGraphLevel(currentShape, newResult);
     }

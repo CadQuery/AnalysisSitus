@@ -41,6 +41,7 @@
 #include <asiData_FaceContourNode.h>
 #include <asiData_FaceNode.h>
 #include <asiData_FaceNormsNode.h>
+#include <asiData_NamingParameter.h>
 #include <asiData_SurfNode.h>
 
 // Active Data includes
@@ -76,6 +77,7 @@ public:
     PID_Geometry,     //!< B-Rep structure.
     PID_AAG,          //!< AAG structure.
     PID_BVH,          //!< BVH structure.
+    PID_Naming,       //!< Topology naming service.
   //------------------//
   // Presentation     //
   //------------------//
@@ -114,6 +116,9 @@ public:
 
   asiData_EXPORT Handle(asiAlgo_BVHFacets)
     GetBVH() const;
+
+  asiData_EXPORT Handle(asiAlgo_Naming)
+    GetNaming() const;
 
   asiData_EXPORT void
     SetLinearDeflection(const double);
@@ -204,6 +209,10 @@ protected:
   //! See comment for setShape() method.
   asiData_EXPORT void
     setBVH(const Handle(asiAlgo_BVHFacets)&);
+
+  //! See comment for setShape() method.
+  asiData_EXPORT void
+    setNaming(const Handle(asiAlgo_Naming)&);
 
 };
 

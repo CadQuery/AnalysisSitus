@@ -31,10 +31,10 @@
 #ifndef asiEngine_IV_h
 #define asiEngine_IV_h
 
-// A-Situs includes
+// asiEngine includes
 #include <asiEngine_Model.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_PrsManager.h>
 
 //! API for imperative viewer (IV).
@@ -110,6 +110,27 @@ public:
 
   asiEngine_EXPORT void
     Clean_Curves();
+
+//---------------------------------------------------------------------------//
+
+  asiEngine_EXPORT Handle(asiData_IVCurve2dNode)
+    Find_Curve2d(const TCollection_AsciiString& name);
+
+  asiEngine_EXPORT Handle(asiData_IVCurve2dNode)
+    Create_Curve2d(const Handle(Geom2d_Curve)&    curve,
+                   const Handle(Geom_Surface)&    surface,
+                   const double                   uLimit,
+                   const TCollection_AsciiString& name,
+                   const bool                     useAutoNaming);
+
+  asiEngine_EXPORT void
+    Update_Curve2d(const Handle(asiData_IVCurve2dNode)& node,
+                   const Handle(Geom2d_Curve)&          curve,
+                   const Handle(Geom_Surface)&          surface,
+                   const double                         uLimit);
+
+  asiEngine_EXPORT void
+    Clean_Curves2d();
 
 //---------------------------------------------------------------------------//
 

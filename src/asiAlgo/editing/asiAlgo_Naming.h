@@ -83,6 +83,20 @@ public:
   asiAlgo_EXPORT TCollection_AsciiString
     GenerateName(const TopoDS_Shape& shape);
 
+public:
+
+  //! \return topology graph.
+  const Handle(asiAlgo_TopoGraph)& GetTopoGraph() const
+  {
+    return m_topograph;
+  }
+
+  //! \return history.
+  const Handle(asiAlgo_History)& GetHistory() const
+  {
+    return m_history;
+  }
+
 protected:
 
   /** @name Core members

@@ -50,8 +50,9 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Bool,  PID_HasVertices);
 
   // Register custom Parameters specific to Analysis Situs application.
-  this->registerParameter(PID_AAG, asiData_AAGParameter::Instance(), false);
-  this->registerParameter(PID_BVH, asiData_BVHParameter::Instance(), false);
+  this->registerParameter(PID_AAG,    asiData_AAGParameter::Instance(),    false);
+  this->registerParameter(PID_BVH,    asiData_BVHParameter::Instance(),    false);
+  this->registerParameter(PID_Naming, asiData_NamingParameter::Instance(), false);
 }
 
 //! Returns new DETACHED instance of Geometry Node ensuring its correct
@@ -69,9 +70,10 @@ void asiData_PartNode::Init()
   this->InitParameter(PID_Name, "Name");
 
   // Set empty initial B-Rep and AAG
-  this->setShape( TopoDS_Shape() );
-  this->setAAG(NULL);
-  this->setBVH(NULL);
+  this->setShape  ( TopoDS_Shape() );
+  this->setAAG    ( NULL );
+  this->setBVH    ( NULL );
+  this->setNaming ( NULL );
 
   // Set default values to primitive Parameters
   this->SetLinearDeflection  (0.0);
@@ -120,6 +122,12 @@ Handle(asiAlgo_AAG) asiData_PartNode::GetAAG() const
 Handle(asiAlgo_BVHFacets) asiData_PartNode::GetBVH() const
 {
   return Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->GetBVH();
+}
+
+//! \return stored naming service.
+Handle(asiAlgo_Naming) asiData_PartNode::GetNaming() const
+{
+  return Handle(asiData_NamingParameter)::DownCast( this->Parameter(PID_Naming) )->GetNaming();
 }
 
 //! Sets linear deflection.
@@ -350,4 +358,11 @@ void asiData_PartNode::setAAG(const Handle(asiAlgo_AAG)& aag)
 void asiData_PartNode::setBVH(const Handle(asiAlgo_BVHFacets)& bvh)
 {
   Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->SetBVH(bvh);
+}
+
+//! Sets naming service to store.
+//! \param naming [in] naming service to store.
+void asiData_PartNode::setNaming(const Handle(asiAlgo_Naming)& naming)
+{
+  Handle(asiData_NamingParameter)::DownCast( this->Parameter(PID_Naming) )->SetNaming(naming);
 }

@@ -273,6 +273,24 @@ void asiUI_IV::REDRAW_CURVE(const TCollection_AsciiString& name,
 
 //---------------------------------------------------------------------------//
 
+void asiUI_IV::DRAW_CURVE2D(const Handle(Geom2d_Curve)&    curve,
+                            const Quantity_Color&          color,
+                            const TCollection_AsciiString& name)
+{
+  this->draw_curve2d(curve, color, name, true);
+}
+
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::REDRAW_CURVE2D(const TCollection_AsciiString& name,
+                              const Handle(Geom2d_Curve)&    curve,
+                              const Quantity_Color&          color)
+{
+  this->draw_curve2d(curve, color, name, false);
+}
+
+//---------------------------------------------------------------------------//
+
 void asiUI_IV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
                             const Quantity_Color&          color,
                             const TCollection_AsciiString& name)
@@ -916,7 +934,7 @@ void asiUI_IV::draw_points(const Handle(HRealArray)&      coords,
 void asiUI_IV::draw_curve(const Handle(Geom_Curve)&      curve,
                           const Quantity_Color&          color,
                           const TCollection_AsciiString& name,
-                          const bool                     is2d,
+                          const bool                     is2dViewer,
                           const bool                     newPrimitive)
 {
   // Open transaction
@@ -952,7 +970,53 @@ void asiUI_IV::draw_curve(const Handle(Geom_Curve)&      curve,
     m_model->CommitCommand();
 
   // Visualize
-  this->visualize(is2d, curve_n, true, color, 1.0, false);
+  this->visualize(is2dViewer, curve_n, true, color, 1.0, false);
+}
+
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::draw_curve2d(const Handle(Geom2d_Curve)&    curve,
+                            const Quantity_Color&          color,
+                            const TCollection_AsciiString& name,
+                            const bool                     newPrimitive)
+{
+  // Open transaction
+  bool isTx = false;
+  if ( !m_model->HasOpenCommand() )
+  {
+    m_model->OpenCommand();
+    isTx = true;
+  }
+
+  // Prepare host surface
+  Handle(Geom_Plane) hostPlane = new Geom_Plane( gp::Origin(), gp::DZ() );
+
+  // Modify data
+  Handle(asiData_IVCurve2dNode) curve_n;
+  //
+  bool doCreate = newPrimitive;
+  //
+  if ( !doCreate )
+  {
+    curve_n = asiEngine_IV(m_model).Find_Curve2d(name);
+    //
+    if ( !curve_n.IsNull() )
+      asiEngine_IV(m_model).Update_Curve2d(curve_n, curve, hostPlane, 1000);
+    else
+      doCreate = true;
+  }
+
+  if ( doCreate )
+  {
+    curve_n = asiEngine_IV(m_model).Create_Curve2d(curve, hostPlane, 1000, name, newPrimitive);
+  }
+
+  // Commit transaction
+  if ( isTx )
+    m_model->CommitCommand();
+
+  // Visualize
+  this->visualize(true, curve_n, true, color, 1.0, false);
 }
 
 //---------------------------------------------------------------------------//
@@ -1053,7 +1117,7 @@ void asiUI_IV::draw_link(const gp_XYZ&                  p1,
                          const gp_XYZ&                  p2,
                          const Quantity_Color&          color,
                          const TCollection_AsciiString& name,
-                         const bool                     is2d,
+                         const bool                     is2dViewer,
                          const bool                     newPrimitive)
 {
   if ( (p1 - p2).Modulus() < 1.0e-5 )
@@ -1095,7 +1159,7 @@ void asiUI_IV::draw_link(const gp_XYZ&                  p1,
     m_model->CommitCommand();
 
   // Visualize
-  this->visualize(is2d, curve_n, true, color, 1.0, false);
+  this->visualize(is2dViewer, curve_n, true, color, 1.0, false);
 }
 
 //---------------------------------------------------------------------------//
@@ -1127,12 +1191,12 @@ void asiUI_IV::draw_link(const gp_XY&                   p1,
 void asiUI_IV::draw_polyline(const std::vector<gp_XYZ>&     poles,
                              const Quantity_Color&          color,
                              const TCollection_AsciiString& name,
-                             const bool                     is2d,
+                             const bool                     is2dViewer,
                              const bool                     newPrimitive)
 {
   Handle(Geom_BSplineCurve) curve = asiAlgo_Utils::PolylineAsSpline(poles);
 
-  this->draw_curve(curve, color, name, is2d, newPrimitive);
+  this->draw_curve(curve, color, name, is2dViewer, newPrimitive);
 }
 
 //---------------------------------------------------------------------------//

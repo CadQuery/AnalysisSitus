@@ -313,7 +313,7 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
   else
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected dimension.");
-    return TCL_ERROR;
+    return TCL_OK;
   }
 
   // Take direction of interest
@@ -329,7 +329,7 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
   else
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected direction.");
-    return TCL_ERROR;
+    return TCL_OK;
   }
 
   // Take offset value
@@ -416,7 +416,7 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
   if ( mkSplit.HasErrors() )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "BOP splitter failed.");
-    return TCL_ERROR;
+    return TCL_OK;
   }
 
   // Get result
@@ -436,7 +436,7 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "BOP splitter is expected to return several solids while returned %1."
                                                         << int ( solids.size() ) );
-    return TCL_ERROR;
+    return TCL_OK;
   }
 
   // Get image of the section face. This image is necessary to prepare the

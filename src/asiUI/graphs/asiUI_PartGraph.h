@@ -40,10 +40,10 @@
 #include <asiAlgo_TopoGraph.h>
 
 // OCCT includes
-#include <TopTools_DataMapOfShapeInteger.hxx>
-#include <TopTools_ListOfShape.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TopTools_DataMapOfShapeInteger.hxx>
+#include <TopTools_ListOfShape.hxx>
 
 // VTK includes
 #include <vtkCommand.h>
@@ -105,6 +105,9 @@ public:
   //! Allows to initialize presentable graph with externally constructed AAG.
   void SetAAG(const Handle(asiAlgo_AAG)& aag) { m_aag = aag; }
 
+  //! Allows to initialize presentable graph with externally defined naming service.
+  void SetNaming(const Handle(asiAlgo_Naming)& naming) { m_naming = naming; }
+
 protected:
 
   asiUI_EXPORT vtkSmartPointer<vtkGraph>
@@ -123,10 +126,13 @@ protected:
   asiUI_VtkWindow*          m_pWidget;       //!< Widget.
   vtkTextWidget*            m_textWidget;    //!< Text.
   vtkTextWidget*            m_summaryWidget; //!< Summary.
+  asiUI_ViewerPart*         m_partViewer;    //!< Part viewer.
+  //
+  Handle(asiAlgo_Naming)    m_naming;        //!< Optional naming service.
   Handle(asiAlgo_TopoGraph) m_topoGraph;     //!< Topology graph.
   Handle(asiAlgo_AAG)       m_aag;           //!< AAG.
   Handle(asiEngine_Model)   m_model;         //!< Data Model instance.
-  asiUI_ViewerPart*         m_partViewer;    //!< Part viewer.
+  
 
 };
 

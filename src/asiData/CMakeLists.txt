@@ -20,7 +20,9 @@ set (H_FILES
   asiData_FaceNormsNode.h
   asiData_FuncAttr.h
   asiData_FuncParameter.h
+  asiData_IVCurve2dNode.h
   asiData_IVCurveNode.h
+  asiData_IVCurves2dNode.h
   asiData_IVCurvesNode.h
   asiData_IVNode.h
   asiData_IVPoints2dNode.h
@@ -35,6 +37,8 @@ set (H_FILES
   asiData_IVTextNode.h
   asiData_IVTopoItemNode.h
   asiData_IVTopoNode.h
+  asiData_NamingAttr.h
+  asiData_NamingParameter.h
   asiData_Partition.h
   asiData_PartNode.h
   asiData_RootNode.h
@@ -58,7 +62,9 @@ set (CPP_FILES
   asiData_FaceNormsNode.cpp
   asiData_FuncAttr.cpp
   asiData_FuncParameter.cpp
+  asiData_IVCurve2dNode.cpp
   asiData_IVCurveNode.cpp
+  asiData_IVCurves2dNode.cpp
   asiData_IVCurvesNode.cpp
   asiData_IVNode.cpp
   asiData_IVPoints2dNode.cpp
@@ -73,6 +79,8 @@ set (CPP_FILES
   asiData_IVTextNode.cpp
   asiData_IVTopoItemNode.cpp
   asiData_IVTopoNode.cpp
+  asiData_NamingAttr.cpp
+  asiData_NamingParameter.cpp
   asiData_Partition.cpp
   asiData_PartNode.cpp
   asiData_RootNode.cpp

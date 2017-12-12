@@ -58,6 +58,7 @@ set (dialogs_H_UI_FILES
   dialogs/asiUI_DialogSmoothAngleTol.h
   dialogs/asiUI_DialogSTEP.h
   dialogs/asiUI_DialogSTEPDelegate.h
+  dialogs/asiUI_DialogTopoGraphDepth.h
 )
 set (dialogs_CPP_FILES 
   dialogs/asiUI_DialogCommands.cpp
@@ -71,6 +72,7 @@ set (dialogs_CPP_FILES
   dialogs/asiUI_DialogSmoothAngleTol.cpp
   dialogs/asiUI_DialogSTEP.cpp
   dialogs/asiUI_DialogSTEPDelegate.cpp
+  dialogs/asiUI_DialogTopoGraphDepth.cpp
 )
 
 #------------------------------------------------------------------------------

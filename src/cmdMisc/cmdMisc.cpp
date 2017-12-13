@@ -49,14 +49,17 @@
 #include <BOPAlgo_Splitter.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepPrimAPI_MakePrism.hxx>
 #include <BRepTools.hxx>
 #include <GeomAPI.hxx>
+#include <gp_Circ.hxx>
 #include <gp_Pln.hxx>
 #include <IntTools_FClass2d.hxx>
 #include <ShapeFix_ShapeTolerance.hxx>
@@ -676,6 +679,64 @@ int MISC_SetFaceTolerance(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_TestComposite(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc != 1 )
+    return TCL_ERROR;
+
+  // Build rectangular face.
+  TopoDS_Face R;
+  {
+    gp_Pnt P1(0, 0, 0),
+           P2(1, 0, 0),
+           P3(1, 1, 0),
+           P4(0, 1, 0);
+
+    TopoDS_Edge E1 = BRepBuilderAPI_MakeEdge(P1, P2);
+    TopoDS_Edge E2 = BRepBuilderAPI_MakeEdge(P2, P3);
+    TopoDS_Edge E3 = BRepBuilderAPI_MakeEdge(P3, P4);
+    TopoDS_Edge E4 = BRepBuilderAPI_MakeEdge(P4, P1);
+    TopoDS_Wire W = BRepBuilderAPI_MakeWire(E1, E2, E3, E4);
+
+    R = BRepBuilderAPI_MakeFace(W);
+  }
+
+  // Build circular face.
+  TopoDS_Face C1;
+  {
+    gp_Ax2 localAxes = gp::XOY();
+    TopoDS_Edge E = BRepBuilderAPI_MakeEdge( gp_Circ(localAxes, 0.25), 0, 2*M_PI );
+    TopoDS_Wire W = BRepBuilderAPI_MakeWire(E);
+
+    C1 = BRepBuilderAPI_MakeFace(W);
+  }
+
+  gp_Trsf T1; T1.SetTranslation( gp_Vec(1, 0, 0) );
+  TopoDS_Face C2 = TopoDS::Face( BRepBuilderAPI_Transform(C1, T1, true) );
+
+  gp_Trsf T2; T2.SetTranslation( gp_Vec(0, 1, 0) );
+  TopoDS_Face C3 = TopoDS::Face( BRepBuilderAPI_Transform(C2, T2, true) );
+
+  gp_Trsf T3; T3.SetTranslation( gp_Vec(-1, 0, 0) );
+  TopoDS_Face C4 = TopoDS::Face( BRepBuilderAPI_Transform(C3, T3, true) );
+
+  gp_Trsf T4; T4.SetTranslation( gp_Vec(0.5, 0.5, 0) );
+  TopoDS_Face C5 = TopoDS::Face( BRepBuilderAPI_Transform(C1, T4, true) );
+
+  interp->GetPlotter().REDRAW_SHAPE("R", R, Color_Red, 1.0);
+  interp->GetPlotter().REDRAW_SHAPE("C1", C1, Color_Blue, 1.0);
+  interp->GetPlotter().REDRAW_SHAPE("C2", C2, Color_Blue, 1.0);
+  interp->GetPlotter().REDRAW_SHAPE("C3", C3, Color_Blue, 1.0);
+  interp->GetPlotter().REDRAW_SHAPE("C4", C4, Color_Blue, 1.0);
+  interp->GetPlotter().REDRAW_SHAPE("C5", C5, Color_Blue, 1.0);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -740,6 +801,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t only for face but also for its sub-shapes.",
     //
     __FILE__, group, MISC_SetFaceTolerance);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-composite",
+    //
+    "test-composite \n"
+    "\t Constructs sample non-manifold CAD model.",
+    //
+    __FILE__, group, MISC_TestComposite);
 }
 
 // Declare entry point PLUGINFACTORY

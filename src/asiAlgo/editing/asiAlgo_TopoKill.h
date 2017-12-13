@@ -142,6 +142,18 @@ public:
     return m_history;
   }
 
+  //! \brief Sets an externally defined history.
+  //!
+  //! The passed history will not be cleared, so that a pipeline of
+  //! modeling tools will grow its history graph as long as the history
+  //! object is continuously passed from one tool to another.
+  //!
+  //! \param[in] history history to set.
+  void SetHistory(const Handle(asiAlgo_History)& history)
+  {
+    m_history = history;
+  }
+
 protected:
 
   //! Recursive routine which builds a new topological graph in bottom-up

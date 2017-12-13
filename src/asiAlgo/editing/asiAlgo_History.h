@@ -107,13 +107,82 @@ public:
                 const bool          create = true,
                 const int           opId = 0);
 
+  //! \brief Gathers modifications of the given shape.
+  //!
+  //! This function does not perform deep search in a history. It only takes
+  //! the direct children of a history record, i.e., gives a one-step history
+  //! delta.
+  //!
+  //! \param[in]  shape    (sub-)shape in question.
+  //! \param[out] modified image (sub-)shapes.
+  //!
+  //! \return false if no modified (sub-)shapes are available for
+  //!         the (sub-)shape in question.
+  asiAlgo_EXPORT bool
+    GetModified(const TopoDS_Shape&        shape,
+                std::vector<TopoDS_Shape>& modified) const;
+
+  //! \brief Checks whether the given (sub-)shape is modified.
+  //!
+  //! This method simply checks if there are any modification records for
+  //! a history item corresponding to the given (sub-)shape.
+  //!
+  //! \param[in] shape (sub-)shape in question.
+  //!
+  //! \return true/false.
+  asiAlgo_EXPORT bool
+    IsModified(const TopoDS_Shape& shape) const;
+
+  //! \brief Adds generation record to the history.
+  //!
+  //! \param[in] source   shape (transient pointer) which is a source.
+  //! \param[in] creation shape (transient pointer) which was generated from source.
+  //! \param[in] create   Boolean flag indicating whether this function is
+  //!                     allowed to create another root node for the 'before'
+  //!                     shape in case it does not exist.
+  //! \param[in] opId     auxiliary operation ID which can be useful for
+  //!                     composing feature trees.
+  //!
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    AddGenerated(const TopoDS_Shape& source,
+                 const TopoDS_Shape& creation,
+                 const bool          create = true,
+                 const int           opId = 0);
+
+  //! \brief Gathers generated (sub-)shapes for the given shape.
+  //!
+  //! This function does not perform deep search in a history. It only takes
+  //! the direct children of a history record, i.e., gives a one-step history
+  //! delta.
+  //!
+  //! \param[in]  shape     (sub-)shape in question.
+  //! \param[out] generated image (sub-)shapes.
+  //!
+  //! \return false if no generated (sub-)shapes are available for
+  //!         the (sub-)shape in question.
+  asiAlgo_EXPORT bool
+    GetGenerated(const TopoDS_Shape&        shape,
+                 std::vector<TopoDS_Shape>& generated) const;
+
+  //! \brief Checks whether the given (sub-)shape has generated any (sub-)shapes.
+  //!
+  //! This method simply checks if there are any generation records for
+  //! a history item corresponding to the given (sub-)shape.
+  //!
+  //! \param[in] shape (sub-)shape in question.
+  //!
+  //! \return true/false.
+  asiAlgo_EXPORT bool
+    HasGenerated(const TopoDS_Shape& shape) const;
+
   //! \brief Adds deletion record to the history.
   //!
   //! If a history node corresponding to the given shape already exists,
   //! a "deletion record" is nothing but indicating that this node is the
   //! ultimate one (by turning on the corresponding Boolean flag).
   //!
-  //! \param[in] shaoe  shape (transient pointer) to mark as deleted.
+  //! \param[in] shape  shape (transient pointer) to mark as deleted.
   //! \param[in] create Boolean flag indicating whether this function is
   //!                   allowed to create another root node for the 'shape'
   //!                   shape in case it does not exist.
@@ -128,7 +197,21 @@ public:
                const bool          create = true,
                const int           opId = 0);
 
+  //! \brief Checks whether the given (sub-)shape is marked as deleted.
+  //!
+  //! \param[in] shape (sub-)shape in question.
+  //!
+  //! \return true/false.
+  asiAlgo_EXPORT bool
+    IsDeleted(const TopoDS_Shape& shape) const;
+
 protected:
+
+  //! Finds history item for the given shape.
+  //! \param[in] shape shape to find a history item for.
+  //! \return history item for a shape or null if no such item exists.
+  asiAlgo_EXPORT t_item*
+    findItem(const TopoDS_Shape& shape) const;
 
   //! Finds or creates history item for the given shape.
   //! \param[in] shape  shape to create a history item for.
@@ -136,9 +219,9 @@ protected:
   //! \param[in] create whether to create a new item if it does not exist.
   //! \return history item.
   asiAlgo_EXPORT t_item*
-    findActiveItem(const TopoDS_Shape& shape,
-                   const int           opId,
-                   const bool          create = true);
+    findItem(const TopoDS_Shape& shape,
+             const int           opId,
+             const bool          create = true);
 
   //! Creates history item for the given shape.
   //! \param[in] shape shape to create a history item for.
@@ -146,7 +229,7 @@ protected:
   //! \return history item.
   asiAlgo_EXPORT t_item*
     makeItem(const TopoDS_Shape& shape,
-             const int           opId) const;
+             const int           opId);
 
 protected:
 
@@ -175,8 +258,8 @@ protected:
   //! Root items in the history.
   std::vector<t_item*> m_roots;
 
-  //! Shapes and their corresponding active history items.
-  NCollection_DataMap<TopoDS_Shape, t_item*, t_partner_hasher> m_activeItems;
+  //! Shapes and their corresponding history items.
+  NCollection_DataMap<TopoDS_Shape, t_item*, t_partner_hasher> m_items;
 
 };
 

@@ -120,6 +120,9 @@ public:
   asiData_EXPORT Handle(asiAlgo_Naming)
     GetNaming() const;
 
+  asiData_EXPORT bool
+    HasNaming() const;
+
   asiData_EXPORT void
     SetLinearDeflection(const double);
 

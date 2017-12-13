@@ -85,6 +85,9 @@ int ENGINE_KillEdge(const Handle(asiTcl_Interp)& interp,
                            interp->GetProgress(),
                            interp->GetPlotter() );
   //
+  if ( part_n->HasNaming() )
+    killer.SetHistory( part_n->GetNaming()->GetHistory() );
+  //
   if ( !killer.AskRemove( allEdges(eidx) ) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of edge %1 was rejected." << eidx);
@@ -109,7 +112,7 @@ int ENGINE_KillEdge(const Handle(asiTcl_Interp)& interp,
 
   // Update UI
   if ( cmdEngine::cf->ViewerPart )
-    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
   return TCL_OK;
 }
@@ -144,6 +147,9 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
                            interp->GetProgress(),
                            interp->GetPlotter() );
   //
+  if ( part_n->HasNaming() )
+    killer.SetHistory( part_n->GetNaming()->GetHistory() );
+  //
   if ( !killer.AskRemove( allFaces(fidx) ) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of face %1 was rejected." << fidx);
@@ -168,7 +174,7 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
 
   // Update UI
   if ( cmdEngine::cf->ViewerPart )
-    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
   return TCL_OK;
 }
@@ -234,6 +240,9 @@ int ENGINE_KillSolidByFace(const Handle(asiTcl_Interp)& interp,
                            interp->GetProgress(),
                            interp->GetPlotter() );
   //
+  if ( part_n->HasNaming() )
+    killer.SetHistory( part_n->GetNaming()->GetHistory() );
+  //
   if ( !killer.AskRemove(ownerSolid) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of solid was rejected.");
@@ -258,7 +267,7 @@ int ENGINE_KillSolidByFace(const Handle(asiTcl_Interp)& interp,
 
   // Update UI
   if ( cmdEngine::cf->ViewerPart )
-    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
   return TCL_OK;
 }

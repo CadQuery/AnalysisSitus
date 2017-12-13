@@ -130,6 +130,12 @@ Handle(asiAlgo_Naming) asiData_PartNode::GetNaming() const
   return Handle(asiData_NamingParameter)::DownCast( this->Parameter(PID_Naming) )->GetNaming();
 }
 
+//! \return true if naming service is initialized.
+bool asiData_PartNode::HasNaming() const
+{
+  return !this->GetNaming().IsNull();
+}
+
 //! Sets linear deflection.
 //! \param defl [in] value to set.
 void asiData_PartNode::SetLinearDeflection(const double defl)

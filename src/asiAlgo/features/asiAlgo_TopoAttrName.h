@@ -75,6 +75,13 @@ public:
     return GUID();
   }
 
+  //! \return copy of this attribute.
+  virtual Handle(asiAlgo_TopoAttr) Copy() const
+  {
+    Handle(asiAlgo_TopoAttr) res = new asiAlgo_TopoAttrName(m_name);
+    return res;
+  }
+
 public:
 
   //! \return name of a sub-shape.

@@ -83,6 +83,13 @@ public:
   asiAlgo_EXPORT TCollection_AsciiString
     GenerateName(const TopoDS_Shape& shape);
 
+  //! Actualizes the naming attributes stored in the topology graph according
+  //! to the current state of history. This method should be called in a
+  //! modeling algorithm which takes care of persistent naming.
+  //! \param[in] newShape modified shape to actualize naming on.
+  asiAlgo_EXPORT void
+    Actualize(const TopoDS_Shape& newShape);
+
 public:
 
   //! \return topology graph.
@@ -96,6 +103,19 @@ public:
   {
     return m_history;
   }
+
+protected:
+
+  //! Helper (internal) method to transfer naming attribute from old shape
+  //! to its images.
+  //! \param[in] images       images of the old shape to set naming attribute for.
+  //! \param[in] newTopograph topology graph where images can be found.
+  //! \param[in] attr2Pass    attribute to pass.
+  asiAlgo_EXPORT void
+    actualizeImages(const std::vector<TopoDS_Shape>& images,
+                    const Handle(asiAlgo_TopoGraph)& newTopograph,
+                    const Handle(asiAlgo_TopoAttr)&  attr2Pass,
+                    const bool                       isGenerated) const;
 
 protected:
 

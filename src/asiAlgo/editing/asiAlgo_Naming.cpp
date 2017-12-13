@@ -125,3 +125,73 @@ TCollection_AsciiString asiAlgo_Naming::GenerateName(const TopoDS_Shape& shape)
 
   return baseName;
 }
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Naming::Actualize(const TopoDS_Shape& newShape)
+{
+  // Construct new topology graph.
+  Handle(asiAlgo_TopoGraph) newTopograph = new asiAlgo_TopoGraph(newShape);
+
+  // Loop over the previous topology graph and try finding images for
+  // its topological elements using the history.
+  for ( asiAlgo_TopoGraph::Iterator oldIt(m_topograph); oldIt.More(); oldIt.Next() )
+  {
+    const int           oldIndex = oldIt.GetCurrentIndex();
+    const TopoDS_Shape& oldShape = oldIt.GetCurrentNode();
+
+    // Get name of the old shape.
+    Handle(asiAlgo_TopoAttr)
+      nameAttrBase = m_topograph->GetNodeAttribute( oldIndex, asiAlgo_TopoAttrName::GUID() );
+
+    // Get all topological elements which substitute the old shape.
+    std::vector<TopoDS_Shape> modified;
+    //
+    if ( m_history->GetModified(oldShape, modified) )
+      this->actualizeImages(modified, newTopograph, nameAttrBase, false);
+
+    // Get all topological elements which were generated from the old shape.
+    std::vector<TopoDS_Shape> generated;
+    //
+    if ( m_history->GetGenerated(oldShape, generated) )
+      this->actualizeImages(modified, newTopograph, nameAttrBase, true);
+  }
+
+  // Replace topology graph.
+  m_topograph = newTopograph;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Naming::actualizeImages(const std::vector<TopoDS_Shape>& images,
+                                     const Handle(asiAlgo_TopoGraph)& newTopograph,
+                                     const Handle(asiAlgo_TopoAttr)&  attr2Pass,
+                                     const bool                       isGenerated) const
+{
+  // Make a copy of this attribute.
+  Handle(asiAlgo_TopoAttrName)
+    namingAttr = Handle(asiAlgo_TopoAttrName)::DownCast( attr2Pass->Copy() );
+
+  // Add prefix for generated items.
+  if ( isGenerated )
+  {
+    const TCollection_AsciiString& name = namingAttr->GetName();
+    TCollection_AsciiString imageName("Generated from ");
+    imageName += name;
+
+    namingAttr->SetName(name);
+  }
+
+  // Loop over the images to populate them with the attribute.
+  for ( size_t k = 0; k < images.size(); ++k )
+  {
+    const TopoDS_Shape& image = images[k];
+
+    const int imageNodeIdx = newTopograph->GetNodeIndex(image);
+    //
+    if ( imageNodeIdx )
+    {
+      newTopograph->AddNodeAttribute(imageNodeIdx, namingAttr);
+    }
+  }
+}

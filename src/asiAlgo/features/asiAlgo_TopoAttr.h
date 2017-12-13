@@ -56,6 +56,9 @@ public:
   virtual const Standard_GUID&
     GetGUID() const = 0;
 
+  virtual Handle(asiAlgo_TopoAttr)
+    Copy() const = 0;
+
 public:
 
   virtual void Dump(Standard_OStream&) const {}

@@ -44,9 +44,6 @@ asiAlgo_TopoKill::asiAlgo_TopoKill(const TopoDS_Shape&  masterCAD,
 : ActAPI_IAlgorithm(progress, plotter)
 {
   m_master = masterCAD;
-
-  // Construct history.
-  m_history = new asiAlgo_History;
 }
 
 //-----------------------------------------------------------------------------
@@ -139,6 +136,9 @@ bool asiAlgo_TopoKill::IsAsked(const TopoDS_Shape& subshape,
 
 bool asiAlgo_TopoKill::Apply()
 {
+  if ( m_history.IsNull() )
+    m_history = new asiAlgo_History; // Construct history if not externally defined.
+
   bool forRemoval = false, forReplacement = false;
   //
   if ( !this->IsAsked(m_master, true, forRemoval, forReplacement) )

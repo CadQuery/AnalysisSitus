@@ -51,8 +51,8 @@ bool asiAlgo_History::AddModified(const TopoDS_Shape& before,
                                   const bool          create,
                                   const int           opId)
 {
-  // Get or create active item.
-  t_item* pActiveItem = this->findActiveItem(before, opId, create);
+  // Get or create item.
+  t_item* pActiveItem = this->findItem(before, opId, create);
   //
   if ( !pActiveItem || pActiveItem->IsDeleted )
     return false;
@@ -67,12 +67,95 @@ bool asiAlgo_History::AddModified(const TopoDS_Shape& before,
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_History::GetModified(const TopoDS_Shape&        shape,
+                                  std::vector<TopoDS_Shape>& modified) const
+{
+  // Get item for the shape in question.
+  t_item* pActiveItem = this->findItem(shape);
+  //
+  if ( !pActiveItem || !pActiveItem->Modified.size() )
+    return false;
+
+  // Gather target items.
+  for ( int k = 0; k < pActiveItem->Modified.size(); ++k )
+    modified.push_back(pActiveItem->Modified[k]->TransientPtr);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_History::IsModified(const TopoDS_Shape& shape) const
+{
+  // Get item for the shape in question.
+  t_item* pActiveItem = this->findItem(shape);
+  //
+  if ( !pActiveItem )
+    return false;
+
+  return pActiveItem->Modified.size() > 0;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_History::AddGenerated(const TopoDS_Shape& source,
+                                   const TopoDS_Shape& creation,
+                                   const bool          create,
+                                   const int           opId)
+{
+  // Get or create item.
+  t_item* pActiveItem = this->findItem(source, opId, create);
+  //
+  if ( !pActiveItem )
+    return false;
+
+  // Construct item for the creation.
+  t_item* pChildItem = this->makeItem(creation, opId);
+  //
+  pActiveItem->Generated.push_back(pChildItem);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_History::GetGenerated(const TopoDS_Shape&        shape,
+                                   std::vector<TopoDS_Shape>& generated) const
+{
+  // Get item for the shape in question.
+  t_item* pActiveItem = this->findItem(shape);
+  //
+  if ( !pActiveItem || !pActiveItem->Generated.size() )
+    return false;
+
+  // Gather target items.
+  for ( int k = 0; k < pActiveItem->Generated.size(); ++k )
+    generated.push_back(pActiveItem->Generated[k]->TransientPtr);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_History::HasGenerated(const TopoDS_Shape& shape) const
+{
+  // Get item for the shape in question.
+  t_item* pActiveItem = this->findItem(shape);
+  //
+  if ( !pActiveItem )
+    return false;
+
+  return pActiveItem->Generated.size() > 0;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_History::SetDeleted(const TopoDS_Shape& shape,
                                  const bool          create,
                                  const int           opId)
 {
-  // Get or create active item.
-  t_item* pActiveItem = this->findActiveItem(shape, opId, create);
+  // Get or create item.
+  t_item* pActiveItem = this->findItem(shape, opId, create);
 
   if ( !pActiveItem )
     return false;
@@ -85,13 +168,37 @@ bool asiAlgo_History::SetDeleted(const TopoDS_Shape& shape,
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_History::IsDeleted(const TopoDS_Shape& shape) const
+{
+  // Get item for the shape in question.
+  t_item* pActiveItem = this->findItem(shape);
+  //
+  if ( !pActiveItem )
+    return false;
+
+  return pActiveItem->IsDeleted;
+}
+
+//-----------------------------------------------------------------------------
+
 asiAlgo_History::t_item*
-  asiAlgo_History::findActiveItem(const TopoDS_Shape& shape,
-                                  const int           opId,
-                                  const bool          create)
+  asiAlgo_History::findItem(const TopoDS_Shape& shape) const
+{
+  if ( !m_items.IsBound(shape) )
+    return NULL;
+
+  return m_items(shape);
+}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_History::t_item*
+  asiAlgo_History::findItem(const TopoDS_Shape& shape,
+                            const int           opId,
+                            const bool          create)
 {
   // Check if there is any active item to continue growing a history on.
-  if ( !m_activeItems.IsBound(shape) )
+  if ( !m_items.IsBound(shape) )
   {
     if ( create )
     {
@@ -103,20 +210,19 @@ asiAlgo_History::t_item*
       return NULL;
   }
 
-  // Get active item.
-  t_item* pActiveItem = m_activeItems(shape);
-  //
-  return pActiveItem;
+  return m_items(shape);
 }
 
 //-----------------------------------------------------------------------------
 
 asiAlgo_History::t_item* asiAlgo_History::makeItem(const TopoDS_Shape& shape,
-                                                   const int           opId) const
+                                                   const int           opId)
 {
   t_item* pItem = new t_item;
   pItem->TransientPtr = shape;
   pItem->Op           = opId;
   //
+  m_items.Bind(shape, pItem);
+
   return pItem;
 }

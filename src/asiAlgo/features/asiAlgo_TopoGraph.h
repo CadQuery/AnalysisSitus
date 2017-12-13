@@ -307,6 +307,18 @@ public:
     return m_nodes(node);
   }
 
+  //! \brief Returns index of the node which corresponds to the
+  //!        passed (sub-)shape.
+  //! \param[in] shape (sub-)shape in question.
+  //! \return one-based index of the graph node or zero if no such node exists.
+  int GetNodeIndex(const TopoDS_Shape& shape) const
+  {
+    if ( !m_nodes.Contains(shape) )
+      return 0;
+
+    return m_nodes.FindIndex(shape);
+  }
+
   //! \brief Checks whether the topology graph contains (n1, n2) directed arc.
   //! \param[in] n1 one-based ID of the first node.
   //! \param[in] n2 one-based ID of the second node.

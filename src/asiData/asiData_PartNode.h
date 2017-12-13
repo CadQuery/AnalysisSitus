@@ -189,7 +189,7 @@ public:
 public:
 
   asiData_EXPORT void
-    Init();
+    Init(const bool resetNaming);
 
 protected:
 

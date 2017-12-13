@@ -41,6 +41,7 @@ asiAlgo_Naming::asiAlgo_Naming(const Handle(asiAlgo_TopoGraph)& topograph,
 : Standard_Transient()
 {
   m_topograph = topograph;
+  m_history   = new asiAlgo_History;
   m_progress  = progress;
 }
 
@@ -51,6 +52,7 @@ asiAlgo_Naming::asiAlgo_Naming(const TopoDS_Shape&  shape,
 : Standard_Transient()
 {
   m_topograph = new asiAlgo_TopoGraph(shape);
+  m_history   = new asiAlgo_History;
   m_progress  = progress;
 }
 
@@ -130,6 +132,12 @@ TCollection_AsciiString asiAlgo_Naming::GenerateName(const TopoDS_Shape& shape)
 
 void asiAlgo_Naming::Actualize(const TopoDS_Shape& newShape)
 {
+  if ( m_history.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "No history to actualize naming.");
+    return;
+  }
+
   // Construct new topology graph.
   Handle(asiAlgo_TopoGraph) newTopograph = new asiAlgo_TopoGraph(newShape);
 
@@ -149,6 +157,8 @@ void asiAlgo_Naming::Actualize(const TopoDS_Shape& newShape)
     //
     if ( m_history->GetModified(oldShape, modified) )
       this->actualizeImages(modified, newTopograph, nameAttrBase, false);
+    else
+      this->passIntact(oldShape, newTopograph, nameAttrBase);
 
     // Get all topological elements which were generated from the old shape.
     std::vector<TopoDS_Shape> generated;
@@ -190,8 +200,22 @@ void asiAlgo_Naming::actualizeImages(const std::vector<TopoDS_Shape>& images,
     const int imageNodeIdx = newTopograph->GetNodeIndex(image);
     //
     if ( imageNodeIdx )
-    {
       newTopograph->AddNodeAttribute(imageNodeIdx, namingAttr);
-    }
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Naming::passIntact(const TopoDS_Shape&              shape,
+                                const Handle(asiAlgo_TopoGraph)& newTopograph,
+                                const Handle(asiAlgo_TopoAttr)&  attr2Pass) const
+{
+  // Make a copy of this attribute.
+  Handle(asiAlgo_TopoAttrName)
+    namingAttr = Handle(asiAlgo_TopoAttrName)::DownCast( attr2Pass->Copy() );
+
+  const int imageNodeIdx = newTopograph->GetNodeIndex(shape);
+  //
+  if ( imageNodeIdx )
+    newTopograph->AddNodeAttribute(imageNodeIdx, namingAttr);
 }

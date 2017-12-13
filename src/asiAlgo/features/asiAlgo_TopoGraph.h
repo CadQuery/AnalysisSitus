@@ -395,6 +395,12 @@ public:
   Handle(asiAlgo_TopoAttr) GetArcAttribute(const t_arc&         arc,
                                            const Standard_GUID& guid) const
   {
+    if ( !m_arc_attributes.IsBound(arc) )
+      return NULL;
+
+    if ( !m_arc_attributes(arc).Contains(guid) )
+      return NULL;
+
     return m_arc_attributes(arc)(guid);
   }
 
@@ -405,6 +411,12 @@ public:
   Handle(asiAlgo_TopoAttr) GetNodeAttribute(const int            node,
                                             const Standard_GUID& guid) const
   {
+    if ( !m_node_attributes.IsBound(node) )
+      return NULL;
+
+    if ( !m_node_attributes(node).Contains(guid) )
+      return NULL;
+
     return m_node_attributes(node)(guid);
   }
 

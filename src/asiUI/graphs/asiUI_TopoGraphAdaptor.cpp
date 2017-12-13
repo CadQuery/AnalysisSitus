@@ -155,12 +155,15 @@ vtkSmartPointer<vtkMutableDirectedGraph>
       Handle(asiAlgo_TopoAttr)
         nameAttrBase = topograph->GetNodeAttribute( n, asiAlgo_TopoAttrName::GUID() );
       //
-      Handle(asiAlgo_TopoAttrName)
-        nameAttr = Handle(asiAlgo_TopoAttrName)::DownCast(nameAttrBase);
-      //
-      label += "\n";
-      label += "Topo name: ";
-      label += nameAttr->GetName().ToCString();
+      if ( !nameAttrBase.IsNull() )
+      {
+        Handle(asiAlgo_TopoAttrName)
+          nameAttr = Handle(asiAlgo_TopoAttrName)::DownCast(nameAttrBase);
+        //
+        label += "\n";
+        label += "Topo name: ";
+        label += nameAttr->GetName().ToCString();
+      }
     }
     //
     labelArr->InsertNextValue(label);

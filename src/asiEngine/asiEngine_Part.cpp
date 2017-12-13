@@ -72,7 +72,7 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
   m_model->GetPartPartition()->AddNode(geom_n);
 
   // Initialize geometry
-  geom_n->Init();
+  geom_n->Init(true);
   geom_n->SetName("Part");
 
   // Create underlying face representation Node
@@ -207,8 +207,8 @@ void asiEngine_Part::Update(const TopoDS_Shape& model,
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
     return;
 
-  // Reset data
-  Clean();
+  // Reset data while not reseting naming
+  Clean(false);
 
   // Set working structures
   Handle(ActData_ShapeParameter)
@@ -293,7 +293,7 @@ void asiEngine_Part::BuildBVH()
 //-----------------------------------------------------------------------------
 
 //! Cleans up Data Model structure related to the Part Node.
-void asiEngine_Part::Clean()
+void asiEngine_Part::Clean(const bool resetNaming)
 {
   // Get Part Node
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
@@ -302,7 +302,7 @@ void asiEngine_Part::Clean()
     return;
 
   // Reset data
-  part_n                                   ->Init();
+  part_n                                   ->Init(resetNaming);
   part_n->GetFaceRepresentation()          ->Init();
   part_n->GetSurfaceRepresentation()       ->Init();
   part_n->GetEdgeRepresentation()          ->Init();

@@ -111,11 +111,22 @@ protected:
   //! \param[in] images       images of the old shape to set naming attribute for.
   //! \param[in] newTopograph topology graph where images can be found.
   //! \param[in] attr2Pass    attribute to pass.
+  //! \param[in] isGenerated  whether "generated" evolution is processed.
   asiAlgo_EXPORT void
     actualizeImages(const std::vector<TopoDS_Shape>& images,
                     const Handle(asiAlgo_TopoGraph)& newTopograph,
                     const Handle(asiAlgo_TopoAttr)&  attr2Pass,
                     const bool                       isGenerated) const;
+
+  //! Helper (internal) method to pass naming attribute to unmodified
+  //! topological entity.
+  //! \param[in] shape        (sub-)shape in question.
+  //! \param[in] newTopograph topology graph where images can be found.
+  //! \param[in] attr2Pass    attribute to pass.
+  asiAlgo_EXPORT void
+    passIntact(const TopoDS_Shape&              shape,
+               const Handle(asiAlgo_TopoGraph)& newTopograph,
+               const Handle(asiAlgo_TopoAttr)&  attr2Pass) const;
 
 protected:
 

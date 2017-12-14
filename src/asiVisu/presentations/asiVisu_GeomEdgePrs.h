@@ -70,6 +70,16 @@ public:
   asiVisu_EXPORT virtual bool
     IsVisible() const;
 
+  asiVisu_EXPORT virtual void
+    SetColor(const QColor& color) const override;
+
+public:
+
+  bool IsColorizable() const
+  {
+    return true;
+  }
+
 private:
 
   //! Allocation is allowed only via Instance method.

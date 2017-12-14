@@ -101,7 +101,7 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   NCollection_DataMap<int, vtkIdType> ShapeNodeMap;
 
   // Add nodes for (sub-)shapes
-  const NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher>& nodes = topograph->GetNodes();
+  const NCollection_IndexedMap<TopoDS_Shape, asiAlgo_TopoGraph::t_partner_hasher>& nodes = topograph->GetNodes();
   //
   for ( int n = 1; n <= nodes.Extent(); ++n )
   {
@@ -206,6 +206,9 @@ vtkSmartPointer<vtkMutableDirectedGraph>
 
       // Get sub-shape
       TopoDS_Shape subShape = topograph->GetShape(childId);
+      //
+      if ( subShape.ShapeType() > leafType )
+        continue;
 
       // Add arc
       result->AddEdge( ShapeNodeMap(parentId), ShapeNodeMap(childId) );

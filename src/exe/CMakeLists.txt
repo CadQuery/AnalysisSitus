@@ -172,6 +172,15 @@ source_group ("Generated" FILES "${RCC_FILE}")
 
 add_executable(BRepInspectorExe ${ui_moc_files} ${src_files} ${RCC_FILE})
 
+set (USE_CONSOLE OFF CACHE BOOL "Using of debug console")
+if (WIN32 AND MSVC)
+  if (USE_CONSOLE)
+    set_target_properties(BRepInspectorExe PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE /ENTRY:mainCRTStartup" OUTPUT_NAME "BRepInspectorExe")
+  else ()
+    set_target_properties(BRepInspectorExe PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup" OUTPUT_NAME "BRepInspectorExe")
+  endif ()
+endif()
+
 #------------------------------------------------------------------------------
 # Configure template
 #------------------------------------------------------------------------------

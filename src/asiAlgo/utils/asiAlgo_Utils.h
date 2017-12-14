@@ -116,17 +116,26 @@ public:
   static TCollection_AsciiString
     OrientationToString(const TopoDS_Shape& shape)
   {
+    return OrientationToString( shape.Orientation() );
+  }
+
+  //! Converts the passed orientation to string.
+  //! \param ori [in] orientation to convert.
+  //! \return string representation of orientation.
+  static TCollection_AsciiString
+    OrientationToString(const TopAbs_Orientation ori)
+  {
     TCollection_AsciiString oriStr;
 
     // Check orientation
-    if ( shape.Orientation() == TopAbs_FORWARD )
-      oriStr = "FORWARD";
-    else if ( shape.Orientation() == TopAbs_REVERSED )
-      oriStr = "REVERSED";
-    else if ( shape.Orientation() == TopAbs_INTERNAL )
-      oriStr = "INTERNAL";
-    else if ( shape.Orientation() == TopAbs_EXTERNAL )
-      oriStr = "EXTERNAL";
+    if ( ori == TopAbs_FORWARD )
+      oriStr = "forward";
+    else if ( ori == TopAbs_REVERSED )
+      oriStr = "reversed";
+    else if ( ori == TopAbs_INTERNAL )
+      oriStr = "internal";
+    else if ( ori == TopAbs_EXTERNAL )
+      oriStr = "external";
 
     return oriStr;
   }

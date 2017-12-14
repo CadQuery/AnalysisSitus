@@ -50,10 +50,73 @@
 #include <BRepTools.hxx>
 #include <Precision.hxx>
 #include <ShapeFix_Shape.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Solid.hxx>
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_KillVertex(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const int vidx = atoi(argv[1]);
+  //
+  if ( vidx < 1 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Vertex index should be 1-based.");
+    return TCL_OK;
+  }
+
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get map of vertices with respect to those the passed index is relevant
+  const TopTools_IndexedMapOfShape& allVertices = part_n->GetAAG()->GetMapOfVertices();
+
+  // Prepare killer
+  asiAlgo_TopoKill killer( cmdEngine::model->GetPartNode()->GetShape(),
+                           interp->GetProgress(),
+                           interp->GetPlotter() );
+  //
+  if ( part_n->HasNaming() )
+    killer.SetHistory( part_n->GetNaming()->GetHistory() );
+  //
+  if ( !killer.AskRemove( allVertices(vidx) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of vertex %1 was rejected." << vidx);
+    return TCL_OK;
+  }
+
+  if ( !killer.Apply() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Topological killer failed.");
+    return TCL_OK;
+  }
+
+  // Get result
+  const TopoDS_Shape& result = killer.GetResult();
+
+  // Modify Data Model
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
+
+  return TCL_OK;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -553,12 +616,103 @@ int ENGINE_Repair(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_SetFaceTolerance(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
+    return TCL_OK;
+  }
+
+  // Get part shape.
+  TopoDS_Shape partShape = part_n->GetShape();
+  //
+  if ( partShape.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part contains no B-Rep.");
+    return TCL_OK;
+  }
+
+  const int    faceId = atoi(argv[1]); // 1-based
+  const double toler  = atof(argv[2]);
+
+  TopTools_IndexedMapOfShape allFaces;
+  TopExp::MapShapes(partShape, TopAbs_FACE, allFaces);
+  TopoDS_Face faceShape = TopoDS::Face( allFaces.FindKey(faceId) );
+
+  ShapeFix_ShapeTolerance fixToler;
+  fixToler.SetTolerance(faceShape, toler);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int MISC_SetTolerance(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
+    return TCL_OK;
+  }
+
+  // Get part shape.
+  TopoDS_Shape partShape = part_n->GetShape();
+  //
+  if ( partShape.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part contains no B-Rep.");
+    return TCL_OK;
+  }
+
+  const double toler = atof(argv[1]);
+
+  ShapeFix_ShapeTolerance fixToler;
+  fixToler.SetTolerance(partShape, toler);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
   cmdEngine_NotUsed(data);
   //
   static const char* group = "cmdEngine";
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("kill-vertex",
+    //
+    "kill-vertex vertexIndex\n"
+    "\t Kills vertex with the passed 1-based index from the active part. \n"
+    "\t This is a pure topological operation which does not attempt to \n"
+    "\t modify geometry. Moreover, unlike Euler operator, this function \n"
+    "\t does not preserve the topological consistency of the CAD part. \n"
+    "\t We have introduced this function to ground Euler operators on it.",
+    //
+    __FILE__, group, ENGINE_KillVertex);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-edge",
@@ -637,4 +791,24 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t Performs automatic shape repair on the active part.",
     //
     __FILE__, group, ENGINE_Repair);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("set-face-tolerance",
+    //
+    "set-face-tolerance faceId toler \n"
+    "\t Forces the face with the given index to have the passed tolerance. \n"
+    "\t In OpenCascade, there is a rule that a tolerance of a face should be \n"
+    "\t not greater than tolerances of its edges (the same rule applies to \n"
+    "\t edges and vertices). Therefore, this function updates tolerance not \n"
+    "\t only for face but also for its sub-shapes.",
+    //
+    __FILE__, group, MISC_SetFaceTolerance);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("set-tolerance",
+    //
+    "set-face-tolerance toler \n"
+    "\t Forces the part to have the passed tolerance in all its sub-shapes.",
+    //
+    __FILE__, group, MISC_SetTolerance);
 }

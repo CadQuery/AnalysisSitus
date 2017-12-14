@@ -34,6 +34,7 @@
 // asiAlgo includes
 #include <asiAlgo_TopoAttrLocation.h>
 #include <asiAlgo_TopoAttrOrientation.h>
+#include <asiAlgo_Utils.h>
 
 // OCCT includes
 #include <TCollection_AsciiString.hxx>
@@ -96,13 +97,13 @@ void asiAlgo_TopoGraph::Dump(Standard_OStream& out) const
   out << "\n";
 
   // Dump nodes with attributes
-  const NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher>& nodes = this->GetNodes();
+  const NCollection_IndexedMap<TopoDS_Shape, t_partner_hasher>& nodes = this->GetNodes();
   //
   for ( int n = 1; n <= nodes.Extent(); ++n )
   {
     // Generate label
     TCollection_AsciiString label;
-    label += "\\n"; label += nodes(n).TShape()->DynamicType()->Name();
+    label += nodes(n).TShape()->DynamicType()->Name();
 
     // Dump node with label
     out << Whitespace << NodeLetter << n << " [label=\"" << label.ToCString() << "\"];\n";
@@ -120,10 +121,23 @@ void asiAlgo_TopoGraph::Dump(Standard_OStream& out) const
     {
       const int childId = cit.Key();
 
+      // Get orientation attribute
+      Handle(asiAlgo_TopoAttr)
+        oriAttrBase = this->GetArcAttribute( t_arc(parentId, childId),
+                                             asiAlgo_TopoAttrOrientation::GUID() );
+      //
+      Handle(asiAlgo_TopoAttrOrientation)
+        oriAttr = Handle(asiAlgo_TopoAttrOrientation)::DownCast(oriAttrBase);
+
+      // Generate label
+      TCollection_AsciiString label;
+      label += asiAlgo_Utils::OrientationToString( oriAttr->GetOrientation() );
+
       out << Whitespace
           << NodeLetter << parentId
           << " -> "
           << NodeLetter << childId
+          << " [label=\"" << label.ToCString() << "\"]"
           << ";\n";
     }
   }

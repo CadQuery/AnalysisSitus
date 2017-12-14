@@ -49,6 +49,7 @@
 #include <vtkMapper.h>
 #include <vtkProperty.h>
 #include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 
 //! Creates a Presentation object for the passed Geometry Edge Node.
 //! \param theNode [in] Geometry Edge Node to create a Presentation for.
@@ -82,6 +83,17 @@ Handle(asiVisu_Prs) asiVisu_GeomEdgePrs::Instance(const Handle(ActAPI_INode)& th
 bool asiVisu_GeomEdgePrs::IsVisible() const
 {
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_GeomEdgePrs::SetColor(const QColor& color) const
+{
+  asiVisu_Prs::SetColor(color);
+
+  // Adjust color of text.
+  vtkTextActor* actor = m_textWidget->GetTextActor();
+  actor->GetTextProperty()->SetColor( color.redF(), color.greenF(), color.blueF() );
 }
 
 //-----------------------------------------------------------------------------

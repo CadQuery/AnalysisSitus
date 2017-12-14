@@ -52,6 +52,9 @@
 //! </pre>
 //!
 //! Using this tool, you can map B-Rep model to a formal graph structure.
+//! All nodes of the graph are indexed on population. These indices are
+//! 1-based and are equal to the global IDs of the corresponding sub-shapes
+//! in the original CAD part.
 //!
 //! \note Being TopoDS-agnostic does not mean "OpenCascade-agnostic". Each
 //!       node in the graph has a type corresponding to one or another
@@ -125,8 +128,28 @@ public:
 
 public:
 
+  //! Hasher which does not take into account neither locations nor
+  //! orientations of shapes. Our killer is extremely cruel in this regard...
+  class t_partner_hasher
+  {
+  public:
+
+    static int HashCode(const TopoDS_Shape& S, const int Upper)
+    {
+      const int I  = (int) ptrdiff_t( S.TShape().operator->() );
+      const int HS = ::HashCode(I, Upper);
+      //
+      return HS;
+    }
+
+    static bool IsEqual(const TopoDS_Shape& S1, const TopoDS_Shape& S2)
+    {
+      return S1.IsPartner(S2);
+    }
+  };
+
   //! Type definition for indexed nodes.
-  typedef NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher> t_nodes;
+  typedef NCollection_IndexedMap<TopoDS_Shape, t_partner_hasher> t_nodes;
 
   //---------------------------------------------------------------------------
 
@@ -299,6 +322,15 @@ public:
     return m_iRoot;
   }
 
+  //! \brief Checks whether the topology graph contains a node with
+  //!        the given one-based index.
+  //! \param[in] n ID of the node to check (one-based is expected).
+  //! \return true/false.
+  bool HasNode(const int n) const
+  {
+    return n >= 1 && n <= m_nodes.Extent();
+  }
+
   //! \brief Returns topological item (TopoDS_Shape) by its index.
   //! \param[in] node 1-based index of the topological node in question.
   //! \return node as shape.
@@ -355,9 +387,17 @@ public:
     return m_nodes(oneBasedNodeId);
   }
 
+  //! \brief returns shape type by node ID.
+  //! \param[in] oneBasedNodeId one-based node ID.
+  //! \return shape type.
+  TopAbs_ShapeEnum GetNodeType(const int oneBasedNodeId) const
+  {
+    return this->GetShape(oneBasedNodeId).ShapeType();
+  }
+
   //! \brief Returns the unordered set of graph nodes.
   //! \return graph nodes.
-  const NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher>& GetNodes() const
+  const NCollection_IndexedMap<TopoDS_Shape, t_partner_hasher>& GetNodes() const
   {
     return m_nodes;
   }

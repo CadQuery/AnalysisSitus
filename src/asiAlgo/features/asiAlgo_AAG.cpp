@@ -125,6 +125,30 @@ const TopoDS_Shape& asiAlgo_AAG::GetMasterCAD() const
 
 //-----------------------------------------------------------------------------
 
+//! \brief Returns map of indexed sub-shapes of the given type.
+//!
+//! \param[in]  ssType sub-shape type (TopAbs_VERTEX, TopAbs_EDGE or TopAbs_FACE).
+//! \param[out] map    requested map of sub-shapes.
+void asiAlgo_AAG::GetMapOf(const TopAbs_ShapeEnum      ssType,
+                           TopTools_IndexedMapOfShape& map) const
+{
+  switch ( ssType )
+  {
+    case TopAbs_VERTEX:
+      map = this->GetMapOfVertices();
+      break;
+    case TopAbs_EDGE:
+      map = this->GetMapOfEdges();
+      break;
+    case TopAbs_FACE:
+      map = this->GetMapOfFaces();
+      break;
+    default: break;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 //! \return map of faces.
 const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfFaces() const
 {

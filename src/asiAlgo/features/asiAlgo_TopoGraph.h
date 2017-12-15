@@ -265,6 +265,14 @@ public:
 
 public:
 
+  //! \brief Returns map of indexed sub-shapes of the given type.
+  //!
+  //! \param[in]  ssType sub-shape type (TopAbs_VERTEX, TopAbs_EDGE or TopAbs_FACE).
+  //! \param[out] map    requested map of sub-shapes.
+  asiAlgo_EXPORT void
+    GetMapOf(const TopAbs_ShapeEnum      ssType,
+             TopTools_IndexedMapOfShape& map) const;
+
   //! \brief Returns map of indexed faces.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     GetMapOfFaces() const;

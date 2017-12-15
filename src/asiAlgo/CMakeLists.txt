@@ -49,6 +49,9 @@ set (aux_CPP_FILES
 set (editing_H_FILES
   editing/asiAlgo_DeleteEdges.h
   editing/asiAlgo_DetachFaces.h
+  editing/asiAlgo_Euler.h
+  editing/asiAlgo_EulerKEF.h
+  editing/asiAlgo_EulerKEV.h
   editing/asiAlgo_EulerPoincare.h
   editing/asiAlgo_FindFree.h
   editing/asiAlgo_FindNonmanifold.h
@@ -64,6 +67,9 @@ set (editing_H_FILES
 set (editing_CPP_FILES 
   editing/asiAlgo_DeleteEdges.cpp
   editing/asiAlgo_DetachFaces.cpp
+  editing/asiAlgo_Euler.cpp
+  editing/asiAlgo_EulerKEF.cpp
+  editing/asiAlgo_EulerKEV.cpp
   editing/asiAlgo_EulerPoincare.cpp
   editing/asiAlgo_FindFree.cpp
   editing/asiAlgo_FindNonmanifold.cpp

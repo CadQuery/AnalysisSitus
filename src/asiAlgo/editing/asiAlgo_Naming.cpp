@@ -76,6 +76,14 @@ bool asiAlgo_Naming::InitNames()
     // Generate unique name.
     TCollection_AsciiString itemName = this->GenerateName(itemShape);
 
+    // Bind to map for fast access.
+    if ( !this->registerNamedShape(itemName, itemShape) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Attempt to register shape under non-unique name '%1'."
+                                               << itemName);
+      return false;
+    }
+
     // Prepare nodal attribute to store the name in the topology graph.
     Handle(asiAlgo_TopoAttrName) itemAttr = new asiAlgo_TopoAttrName(itemName);
     //
@@ -130,12 +138,12 @@ TCollection_AsciiString asiAlgo_Naming::GenerateName(const TopoDS_Shape& shape)
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_Naming::Actualize(const TopoDS_Shape& newShape)
+bool asiAlgo_Naming::Actualize(const TopoDS_Shape& newShape)
 {
   if ( m_history.IsNull() )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "No history to actualize naming.");
-    return;
+    return false;
   }
 
   // Construct new topology graph.
@@ -169,6 +177,7 @@ void asiAlgo_Naming::Actualize(const TopoDS_Shape& newShape)
 
   // Replace topology graph.
   m_topograph = newTopograph;
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -176,28 +185,40 @@ void asiAlgo_Naming::Actualize(const TopoDS_Shape& newShape)
 void asiAlgo_Naming::actualizeImages(const std::vector<TopoDS_Shape>& images,
                                      const Handle(asiAlgo_TopoGraph)& newTopograph,
                                      const Handle(asiAlgo_TopoAttr)&  attr2Pass,
-                                     const bool                       isGenerated) const
+                                     const bool                       isGenerated)
 {
+  if ( attr2Pass.IsNull() )
+    return;
+
   // Make a copy of this attribute.
   Handle(asiAlgo_TopoAttrName)
     namingAttr = Handle(asiAlgo_TopoAttrName)::DownCast( attr2Pass->Copy() );
 
+  // Prepare name.
+  const TCollection_AsciiString& name = namingAttr->GetName();
+  TCollection_AsciiString imageName;
+
   // Add prefix for generated items.
   if ( isGenerated )
   {
-    const TCollection_AsciiString& name = namingAttr->GetName();
-    TCollection_AsciiString imageName("Generated from ");
+    imageName = "Generated from ";
     imageName += name;
 
     namingAttr->SetName(name);
   }
+  else
+    imageName = name;
 
   // Loop over the images to populate them with the attribute.
   for ( size_t k = 0; k < images.size(); ++k )
   {
-    const TopoDS_Shape& image = images[k];
+    const TopoDS_Shape& imageShape = images[k];
 
-    const int imageNodeIdx = newTopograph->GetNodeIndex(image);
+    // Bind to map for fast access (rewrite on).
+    this->registerNamedShape(imageName, imageShape, true);
+
+    // Add attribute to the topology graph.
+    const int imageNodeIdx = newTopograph->GetNodeIndex(imageShape);
     //
     if ( imageNodeIdx )
       newTopograph->AddNodeAttribute(imageNodeIdx, namingAttr);
@@ -208,14 +229,39 @@ void asiAlgo_Naming::actualizeImages(const std::vector<TopoDS_Shape>& images,
 
 void asiAlgo_Naming::passIntact(const TopoDS_Shape&              shape,
                                 const Handle(asiAlgo_TopoGraph)& newTopograph,
-                                const Handle(asiAlgo_TopoAttr)&  attr2Pass) const
+                                const Handle(asiAlgo_TopoAttr)&  attr2Pass)
 {
+  if ( attr2Pass.IsNull() )
+    return;
+
   // Make a copy of this attribute.
   Handle(asiAlgo_TopoAttrName)
     namingAttr = Handle(asiAlgo_TopoAttrName)::DownCast( attr2Pass->Copy() );
 
+  // Bind to map for fast access (rewrite on).
+  this->registerNamedShape(namingAttr->GetName(), shape, true);
+
+  // Add attribute to the topology graph.
   const int imageNodeIdx = newTopograph->GetNodeIndex(shape);
   //
   if ( imageNodeIdx )
     newTopograph->AddNodeAttribute(imageNodeIdx, namingAttr);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Naming::registerNamedShape(const TCollection_AsciiString& name,
+                                        const TopoDS_Shape&            shape,
+                                        const bool                     rewrite)
+{
+  if ( m_namedShapes.IsBound(name) )
+  {
+    if ( rewrite )
+      m_namedShapes.UnBind(name);
+    else
+      return false; // Not unique name passed.
+  }
+
+  m_namedShapes.Bind(name, shape);
+  return true;
 }

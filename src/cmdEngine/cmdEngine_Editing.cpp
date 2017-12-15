@@ -38,11 +38,14 @@
 #include <asiTcl_PluginMacro.h>
 
 // asiAlgo includes
+#include <asiAlgo_EulerKEF.h>
+#include <asiAlgo_EulerKEV.h>
 #include <asiAlgo_TopoKill.h>
 
 // OCCT includes
 #include <BRep_Builder.hxx>
 #include <BRepAlgoAPI_BuilderAlgo.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepLProp_SLProps.hxx>
 #include <BRepOffset_MakeOffset.hxx>
@@ -58,77 +61,16 @@
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_KillVertex(const Handle(asiTcl_Interp)& interp,
-                      int                          argc,
-                      const char**                 argv)
+int ENGINE_KEV(const Handle(asiTcl_Interp)& interp,
+               int                          argc,
+               const char**                 argv)
 {
-  if ( argc != 2 )
+  if ( argc != 3 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  const int vidx = atoi(argv[1]);
-  //
-  if ( vidx < 1 )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Vertex index should be 1-based.");
-    return TCL_OK;
-  }
-
-  // Get Part Node
-  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
-
-  // Get map of vertices with respect to those the passed index is relevant
-  const TopTools_IndexedMapOfShape& allVertices = part_n->GetAAG()->GetMapOfVertices();
-
-  // Prepare killer
-  asiAlgo_TopoKill killer( cmdEngine::model->GetPartNode()->GetShape(),
-                           interp->GetProgress(),
-                           interp->GetPlotter() );
-  //
-  if ( part_n->HasNaming() )
-    killer.SetHistory( part_n->GetNaming()->GetHistory() );
-  //
-  if ( !killer.AskRemove( allVertices(vidx) ) )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of vertex %1 was rejected." << vidx);
-    return TCL_OK;
-  }
-
-  if ( !killer.Apply() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Topological killer failed.");
-    return TCL_OK;
-  }
-
-  // Get result
-  const TopoDS_Shape& result = killer.GetResult();
-
-  // Modify Data Model
-  cmdEngine::model->OpenCommand();
-  {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
-  }
-  cmdEngine::model->CommitCommand();
-
-  // Update UI
-  if ( cmdEngine::cf->ViewerPart )
-    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
-
-  return TCL_OK;
-}
-
-//-----------------------------------------------------------------------------
-
-int ENGINE_KillEdge(const Handle(asiTcl_Interp)& interp,
-                    int                          argc,
-                    const char**                 argv)
-{
-  if ( argc != 2 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
+  // Get edge index.
   const int eidx = atoi(argv[1]);
   //
   if ( eidx < 1 )
@@ -137,43 +79,50 @@ int ENGINE_KillEdge(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
-  // Get Part Node
+  // Get vertex index.
+  const int vidx = atoi(argv[2]);
+  //
+  if ( vidx < 1 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Vertex index should be 1-based.");
+    return TCL_OK;
+  }
+
+  // Get Part Node.
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
 
-  // Get map of edges with respect to those the passed index is relevant
-  const TopTools_IndexedMapOfShape& allEdges = part_n->GetAAG()->GetMapOfEdges();
+  // Get maps of sub-shapes with respect to those the passed indices are relevant.
+  const TopTools_IndexedMapOfShape& allEdges    = part_n->GetAAG()->GetMapOfEdges();
+  const TopTools_IndexedMapOfShape& allVertices = part_n->GetAAG()->GetMapOfVertices();
 
-  // Prepare killer
-  asiAlgo_TopoKill killer( cmdEngine::model->GetPartNode()->GetShape(),
-                           interp->GetProgress(),
-                           interp->GetPlotter() );
+  // Get topological elements.
+  const TopoDS_Edge&   E = TopoDS::Edge( allEdges(eidx) );
+  const TopoDS_Vertex& V = TopoDS::Vertex( allVertices(vidx) );
+
+  // Prepare KEV utility.
+  asiAlgo_EulerKEV KEV( part_n->GetShape(),
+                        E,
+                        V,
+                        false,
+                        interp->GetProgress(),
+                        interp->GetPlotter() );
   //
-  if ( part_n->HasNaming() )
-    killer.SetHistory( part_n->GetNaming()->GetHistory() );
-  //
-  if ( !killer.AskRemove( allEdges(eidx) ) )
+  if ( !KEV.Perform() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of edge %1 was rejected." << eidx);
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "KEV failed.");
     return TCL_OK;
   }
+  //
+  const TopoDS_Shape& result = KEV.GetResult();
 
-  if ( !killer.Apply() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Topological killer failed.");
-    return TCL_OK;
-  }
-
-  // Get result
-  const TopoDS_Shape& result = killer.GetResult();
-
-  // Modify Data Model
+  // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
     asiEngine_Part(cmdEngine::model, NULL).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
-  // Update UI
+  // Update UI.
   if ( cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
@@ -182,16 +131,26 @@ int ENGINE_KillEdge(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
-                    int                          argc,
-                    const char**                 argv)
+int ENGINE_KEF(const Handle(asiTcl_Interp)& interp,
+               int                          argc,
+               const char**                 argv)
 {
-  if ( argc != 2 )
+  if ( argc != 3 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  const int fidx = atoi(argv[1]);
+  // Get edge index.
+  const int eidx = atoi(argv[1]);
+  //
+  if ( eidx < 1 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Edge index should be 1-based.");
+    return TCL_OK;
+  }
+
+  // Get face index.
+  const int fidx = atoi(argv[2]);
   //
   if ( fidx < 1 )
   {
@@ -199,13 +158,109 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
-  // Get Part Node
+  // Get Part Node.
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
 
-  // Get map of faces with respect to those the passed index is relevant
+  // Get maps of sub-shapes with respect to those the passed indices are relevant.
+  const TopTools_IndexedMapOfShape& allEdges = part_n->GetAAG()->GetMapOfEdges();
   const TopTools_IndexedMapOfShape& allFaces = part_n->GetAAG()->GetMapOfFaces();
 
-  // Prepare killer
+  // Get topological elements.
+  const TopoDS_Edge& E = TopoDS::Edge( allEdges(eidx) );
+  const TopoDS_Face& F = TopoDS::Face( allFaces(fidx) );
+
+  // Prepare KEF utility.
+  asiAlgo_EulerKEF KEF( part_n->GetShape(),
+                        F,
+                        E,
+                        interp->GetProgress(),
+                        interp->GetPlotter() );
+  //
+  if ( !KEF.Perform() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "KEF failed.");
+    return TCL_OK;
+  }
+  //
+  const TopoDS_Shape& result = KEF.GetResult();
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv,
+                        const TopAbs_ShapeEnum       ssType)
+{
+  if ( argc != 2 && argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Check whether naming service is active.
+  const bool hasNaming = !part_n->GetNaming().IsNull();
+
+  // Sub-shape in question.
+  TopoDS_Shape subshape;
+
+  // Check if naming service is active. If so, the user may ask to access
+  // a sub-shape in question by its unique name.
+  if ( hasNaming && argc == 3 )
+  {
+    if ( !interp->IsKeyword(argv[1], "name") )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Keyword '-name' is expected.");
+      return TCL_ERROR;
+    }
+    else
+    {
+      TCollection_AsciiString name(argv[2]);
+      //
+      subshape = part_n->GetNaming()->GetShape(name);
+      //
+      if ( subshape.IsNull() || subshape.ShapeType() != ssType )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed sub-shape is null "
+                                                               "or not of a proper type.");
+        return TCL_OK;
+      }
+    }
+  }
+  else // Naming is not used to access the argument.
+  {
+    const int ssidx = atoi(argv[1]);
+    //
+    if ( ssidx < 1 )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Sub-shape index should be 1-based.");
+      return TCL_OK;
+    }
+
+    // Get map of sub-shapes with respect to those the passed index is relevant.
+    TopTools_IndexedMapOfShape subShapesOfType;
+    part_n->GetAAG()->GetMapOf(ssType, subShapesOfType);
+
+    // Get sub-shape in question.
+    subshape = subShapesOfType(ssidx);
+  }
+
+  // Prepare killer.
   asiAlgo_TopoKill killer( cmdEngine::model->GetPartNode()->GetShape(),
                            interp->GetProgress(),
                            interp->GetPlotter() );
@@ -213,9 +268,9 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
   if ( part_n->HasNaming() )
     killer.SetHistory( part_n->GetNaming()->GetHistory() );
   //
-  if ( !killer.AskRemove( allFaces(fidx) ) )
+  if ( !killer.AskRemove(subshape) )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of face %1 was rejected." << fidx);
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal rejected.");
     return TCL_OK;
   }
 
@@ -225,21 +280,141 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
-  // Get result
+  // Get result.
   const TopoDS_Shape& result = killer.GetResult();
 
-  // Modify Data Model
+  // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
     asiEngine_Part(cmdEngine::model, NULL).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
-  // Update UI
+  // Update UI.
   if ( cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
   return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_MergeVertices(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  if ( argc < 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Check whether naming service is active.
+  const bool hasNaming = !part_n->GetNaming().IsNull();
+  //
+  if ( !hasNaming )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "This function is available "
+                                                           "for named shapes only.");
+    return TCL_OK;
+  }
+
+  // Loop over the arguments to collect vertices to merge.
+  TopTools_ListOfShape vertices;
+  //
+  for ( int k = 1; k < argc - 1; k += 2 )
+  {
+    if ( !interp->IsKeyword(argv[k], "name") )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Keyword '-name' is expected.");
+      return TCL_ERROR;
+    }
+
+    // Get named sub-shape.
+    TopoDS_Shape subshape = part_n->GetNaming()->GetShape(argv[k+1]);
+    //
+    if ( subshape.IsNull() || subshape.ShapeType() != TopAbs_VERTEX )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed sub-shape is null "
+                                                              "or not of a proper type.");
+      return TCL_OK;
+    }
+    //
+    vertices.Append(subshape);
+  }
+
+  // Create new vertex.
+  TopoDS_Vertex V = BRepBuilderAPI_MakeVertex( gp::Origin() );
+
+  // Prepare killer.
+  asiAlgo_TopoKill killer( cmdEngine::model->GetPartNode()->GetShape(),
+                           interp->GetProgress(),
+                           interp->GetPlotter() );
+  //
+  killer.SetHistory( part_n->GetNaming()->GetHistory() );
+
+  // Put requests on replacement.
+  for ( TopTools_ListIteratorOfListOfShape lit(vertices); lit.More(); lit.Next() )
+  {
+    const TopoDS_Shape& operand = lit.Value();
+    //
+    if ( !killer.AskReplace(operand, V) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal rejected.");
+      return TCL_OK;
+    }
+  }
+
+  if ( !killer.Apply() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Topological killer failed.");
+    return TCL_OK;
+  }
+
+  // Get result.
+  const TopoDS_Shape& result = killer.GetResult();
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_KillVertex(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  return ENGINE_KillSubShape(interp, argc, argv, TopAbs_VERTEX);
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_KillEdge(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  return ENGINE_KillSubShape(interp, argc, argv, TopAbs_EDGE);
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  return ENGINE_KillSubShape(interp, argc, argv, TopAbs_FACE);
 }
 
 //-----------------------------------------------------------------------------
@@ -616,9 +791,9 @@ int ENGINE_Repair(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int MISC_SetFaceTolerance(const Handle(asiTcl_Interp)& interp,
-                          int                          argc,
-                          const char**                 argv)
+int ENGINE_SetFaceTolerance(const Handle(asiTcl_Interp)& interp,
+                            int                          argc,
+                            const char**                 argv)
 {
   if ( argc != 3 )
   {
@@ -658,9 +833,9 @@ int MISC_SetFaceTolerance(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int MISC_SetTolerance(const Handle(asiTcl_Interp)& interp,
-                      int                          argc,
-                      const char**                 argv)
+int ENGINE_SetTolerance(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
 {
   if ( argc != 2 )
   {
@@ -703,9 +878,33 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   static const char* group = "cmdEngine";
 
   //-------------------------------------------------------------------------//
+  interp->AddCommand("kev",
+    //
+    "kev edgeIndex vertexIndex \n"
+    "\t KEV (Kill-Edge-Vertex) Euler operator.",
+    //
+    __FILE__, group, ENGINE_KEV);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("kef",
+    //
+    "kef edgeIndex faceIndex \n"
+    "\t KEF (Kill-Edge-Face) Euler operator.",
+    //
+    __FILE__, group, ENGINE_KEF);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("merge-vertices",
+    //
+    "merge-vertices <-name 'vertexName1' ... -name 'vertexNameK'>\n"
+    "\t Merges several vertices into one.",
+    //
+    __FILE__, group, ENGINE_MergeVertices);
+
+  //-------------------------------------------------------------------------//
   interp->AddCommand("kill-vertex",
     //
-    "kill-vertex vertexIndex\n"
+    "kill-vertex <vertexIndex|-name 'vertexName'>\n"
     "\t Kills vertex with the passed 1-based index from the active part. \n"
     "\t This is a pure topological operation which does not attempt to \n"
     "\t modify geometry. Moreover, unlike Euler operator, this function \n"
@@ -717,7 +916,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-edge",
     //
-    "kill-edge edgeIndex\n"
+    "kill-edge <edgeIndex|-name 'edgeName'>\n"
     "\t Kills edge with the passed 1-based index from the active part. \n"
     "\t This is a pure topological operation which does not attempt to \n"
     "\t modify geometry. Moreover, unlike Euler operator, this function \n"
@@ -729,7 +928,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-face",
     //
-    "kill-face faceIndex\n"
+    "kill-face <faceIndex|-name 'faceName'>\n"
     "\t Kills face with the passed 1-based index from the active part. \n"
     "\t This is a pure topological operation which does not attempt to \n"
     "\t modify geometry. Moreover, unlike Euler operator, this function \n"
@@ -802,7 +1001,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t edges and vertices). Therefore, this function updates tolerance not \n"
     "\t only for face but also for its sub-shapes.",
     //
-    __FILE__, group, MISC_SetFaceTolerance);
+    __FILE__, group, ENGINE_SetFaceTolerance);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("set-tolerance",
@@ -810,5 +1009,5 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "set-face-tolerance toler \n"
     "\t Forces the part to have the passed tolerance in all its sub-shapes.",
     //
-    __FILE__, group, MISC_SetTolerance);
+    __FILE__, group, ENGINE_SetTolerance);
 }

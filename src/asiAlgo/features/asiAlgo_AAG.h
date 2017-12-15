@@ -185,6 +185,10 @@ public:
   asiAlgo_EXPORT const TopoDS_Shape&
     GetMasterCAD() const;
 
+  asiAlgo_EXPORT void
+    GetMapOf(const TopAbs_ShapeEnum      ssType,
+             TopTools_IndexedMapOfShape& map) const;
+
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     GetMapOfFaces() const;
 

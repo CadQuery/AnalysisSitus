@@ -98,7 +98,8 @@ void asiUI_ControlsPartListener::Connect()
 //! \param[in] filename filename of the loaded part.
 void asiUI_ControlsPartListener::onPartLoaded(const QString& filename)
 {
-  m_cf->MainWindow->setWindowTitle("Analysis of [" + filename + "]");
+  if ( m_cf->MainWindow )
+    m_cf->MainWindow->setWindowTitle("Analysis of [" + filename + "]");
 
   this->reinitializeEverything();
 }

@@ -58,6 +58,26 @@ asiAlgo_TopoGraph::asiAlgo_TopoGraph(const TopoDS_Shape& shape)
 
 //-----------------------------------------------------------------------------
 
+void asiAlgo_TopoGraph::GetMapOf(const TopAbs_ShapeEnum      ssType,
+                                 TopTools_IndexedMapOfShape& map) const
+{
+  switch ( ssType )
+  {
+    case TopAbs_VERTEX:
+      map = this->GetMapOfVertices();
+      break;
+    case TopAbs_EDGE:
+      map = this->GetMapOfEdges();
+      break;
+    case TopAbs_FACE:
+      map = this->GetMapOfFaces();
+      break;
+    default: break;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 //! \return map of faces.
 const TopTools_IndexedMapOfShape& asiAlgo_TopoGraph::GetMapOfFaces() const
 {

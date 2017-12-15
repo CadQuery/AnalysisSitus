@@ -87,7 +87,7 @@ bool asiAlgo_TopoKill::AskReplace(const TopoDS_Shape& what,
   }
 
   m_toReplace.Bind(what, with);
-  return false;
+  return true;
 }
 
 //-----------------------------------------------------------------------------

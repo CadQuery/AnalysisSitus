@@ -87,7 +87,8 @@ public:
   //! to the current state of history. This method should be called in a
   //! modeling algorithm which takes care of persistent naming.
   //! \param[in] newShape modified shape to actualize naming on.
-  asiAlgo_EXPORT void
+  //! \return false if actualization is impossible (e.g. non-unique names are used).
+  asiAlgo_EXPORT bool
     Actualize(const TopoDS_Shape& newShape);
 
 public:
@@ -104,6 +105,15 @@ public:
     return m_history;
   }
 
+  //! \return transient pointer by persistent name.
+  TopoDS_Shape GetShape(const TCollection_AsciiString& name) const
+  {
+    if ( !m_namedShapes.IsBound(name) )
+      return TopoDS_Shape();
+
+    return m_namedShapes(name);
+  }
+
 protected:
 
   //! Helper (internal) method to transfer naming attribute from old shape
@@ -116,7 +126,7 @@ protected:
     actualizeImages(const std::vector<TopoDS_Shape>& images,
                     const Handle(asiAlgo_TopoGraph)& newTopograph,
                     const Handle(asiAlgo_TopoAttr)&  attr2Pass,
-                    const bool                       isGenerated) const;
+                    const bool                       isGenerated);
 
   //! Helper (internal) method to pass naming attribute to unmodified
   //! topological entity.
@@ -126,7 +136,17 @@ protected:
   asiAlgo_EXPORT void
     passIntact(const TopoDS_Shape&              shape,
                const Handle(asiAlgo_TopoGraph)& newTopograph,
-               const Handle(asiAlgo_TopoAttr)&  attr2Pass) const;
+               const Handle(asiAlgo_TopoAttr)&  attr2Pass);
+
+  //! Adds named shape to the internal map for fast access.
+  //! \param[in] name    string to use as a name. This name should be unique.
+  //! \param[in] shape   shape to register.
+  //! \param[in] rewrite indicates whether to rewrite possible existing record.
+  //! \return false if the passed name is not unique while 'rewrite' is 'false'.
+  asiAlgo_EXPORT bool
+    registerNamedShape(const TCollection_AsciiString& name,
+                       const TopoDS_Shape&            shape,
+                       const bool                     rewrite = false);
 
 protected:
 
@@ -134,15 +154,24 @@ protected:
    *  Members constituting core of the naming service.
    */
   //@{
-  Handle(asiAlgo_TopoGraph) m_topograph; //!< Formal topology graph.
-  Handle(asiAlgo_History)   m_history;   //!< History of modification.
+
+  //! Formal topology graph.
+  Handle(asiAlgo_TopoGraph) m_topograph;
+
+  //! History of modification.
+  Handle(asiAlgo_History)   m_history;
+
+  //! The used indices distributed by shape type.
+  NCollection_DataMap<TopAbs_ShapeEnum, int> m_nameIds;
+
+  //! Map of unique names and their corresponding shapes. This is actually
+  //! a collection of alive shapes.
+  NCollection_DataMap<TCollection_AsciiString, TopoDS_Shape> m_namedShapes;
+
   //@}
 
   //! Progress notification tool.
   ActAPI_ProgressEntry m_progress;
-
-  //! The used indices distributed by shape type.
-  NCollection_DataMap<TopAbs_ShapeEnum, int> m_nameIds;
 
 };
 

@@ -132,6 +132,7 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
   Commands_Inspection  (interp, data);
   Commands_Interactive (interp, data);
   Commands_Interop     (interp, data);
+  Commands_Modeling    (interp, data);
   Commands_Naming      (interp, data);
   Commands_Viewer      (interp, data);
 }

@@ -48,8 +48,6 @@
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepLProp_SLProps.hxx>
-#include <BRepOffset_MakeOffset.hxx>
-#include <BRepOffset_MakeSimpleOffset.hxx>
 #include <BRepTools.hxx>
 #include <Precision.hxx>
 #include <ShapeFix_Shape.hxx>
@@ -584,105 +582,6 @@ int ENGINE_MoveByFace(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_OffsetShell(const Handle(asiTcl_Interp)& interp,
-                       int                          argc,
-                       const char**                 argv)
-{
-  if ( argc != 2 && argc != 3 && argc != 4 && argc != 5 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  // Get part shape
-  TopoDS_Shape
-    partShape = Handle(asiEngine_Model)::DownCast( interp->GetModel() )->GetPartNode()->GetShape();
-
-  // Get offset value
-  const double offsetVal = atof(argv[1]);
-
-  // Check whether topology of the result should be preserved
-  bool isSimple = false, isSolid = false, isKeep = false;
-  if ( argc > 2 )
-  {
-    for ( int k = 2; k < argc; ++k )
-    {
-      if ( !isSimple && interp->IsKeyword(argv[k], "simple") )
-        isSimple = true;
-
-      if ( !isSolid && interp->IsKeyword(argv[k], "solid") )
-        isSolid = true;
-
-      if ( !isKeep && interp->IsKeyword(argv[k], "keep") )
-        isKeep = true;
-    }
-  }
-
-  // Make offset
-  TopoDS_Shape offsetShape;
-  if ( isSimple )
-  {
-    BRepOffset_MakeSimpleOffset mkOffset;
-    mkOffset.Initialize(partShape, offsetVal);
-    mkOffset.SetBuildSolidFlag(isSolid);
-    mkOffset.Perform();
-    //
-    if ( !mkOffset.IsDone() )
-    {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Simple offset not done.");
-      return TCL_OK;
-    }
-    offsetShape = mkOffset.GetResultShape();
-  }
-  else
-  {
-    BRepOffset_MakeOffset mkOffset;
-    mkOffset.Initialize(partShape, offsetVal, 1.0e-3, BRepOffset_Skin, true, false, GeomAbs_Arc, isSolid);
-    //
-    if ( isSolid )
-      mkOffset.MakeThickSolid();
-    else
-      mkOffset.MakeOffsetShape();
-    //
-    if ( !mkOffset.IsDone() )
-    {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Offset not done.");
-      return TCL_OK;
-    }
-    offsetShape = mkOffset.Shape();
-  }
-
-  TopoDS_Shape resultShape;
-
-  // If this flag is enabled, the initial geometry is not substituted
-  if ( isKeep )
-  {
-    TopoDS_Compound resComp;
-    BRep_Builder().MakeCompound(resComp);
-    //
-    BRep_Builder().Add(resComp, partShape);
-    BRep_Builder().Add(resComp, offsetShape);
-    //
-    resultShape = resComp;
-  }
-  else
-    resultShape = offsetShape;
-
-  // Modify Data Model
-  cmdEngine::model->OpenCommand();
-  {
-    asiEngine_Part(cmdEngine::model, NULL).Update(resultShape);
-  }
-  cmdEngine::model->CommitCommand();
-
-  // Update UI
-  if ( cmdEngine::cf->ViewerPart )
-    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
-
-  return TCL_OK;
-}
-
-//-----------------------------------------------------------------------------
-
 int ENGINE_Imprint(const Handle(asiTcl_Interp)& interp,
                    int                          argc,
                    const char**                 argv)
@@ -959,20 +858,6 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t modeling operations.",
     //
     __FILE__, group, ENGINE_MoveByFace);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("offset-shell",
-    //
-    "offset-shell offset [-simple] [-solid] [-keep]\n"
-    "\t Offsets part (it should be a topological shell) on the given offset \n"
-    "\t value. Offsetting is performed in the direction of face normals. If the \n"
-    "\t option '-simple' is passed, this operation will attempt to preserve \n"
-    "\t the topology of the base shell. If the option '-solid' is passed, this \n"
-    "\t operation will build a solid instead of an offset shell. If the option \n"
-    "\t '-keep' is passed, the original part is not substituted with the offset \n"
-    "\t shape, and the offset is added to the part.",
-    //
-    __FILE__, group, ENGINE_OffsetShell);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("imprint",

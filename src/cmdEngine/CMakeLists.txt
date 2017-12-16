@@ -14,6 +14,7 @@ set (CPP_FILES
   cmdEngine_Inspection.cpp
   cmdEngine_Interactive.cpp
   cmdEngine_Interop.cpp
+  cmdEngine_Modeling.cpp
   cmdEngine_Naming.cpp
   cmdEngine_Viewer.cpp
 )

@@ -85,6 +85,10 @@ public:
                      const Handle(Standard_Transient)& data);
 
   cmdEngine_EXPORT static void
+    Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
+                      const Handle(Standard_Transient)& data);
+
+  cmdEngine_EXPORT static void
     Commands_Naming(const Handle(asiTcl_Interp)&      interp,
                     const Handle(Standard_Transient)& data);
 

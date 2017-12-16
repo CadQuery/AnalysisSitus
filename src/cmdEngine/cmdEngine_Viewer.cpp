@@ -73,21 +73,55 @@ int ENGINE_Erase(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_DOnly(const Handle(asiTcl_Interp)& interp,
-                 int                          argc,
-                 const char**                 argv)
+int ENGINE_Show(const Handle(asiTcl_Interp)& interp,
+                int                          argc,
+                const char**                 argv)
 {
   if ( argc != 2 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // Find node
+  // Find Node
   Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
   //
   if ( node.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[1]);
+    return TCL_OK;
+  }
+
+  // Display
+  if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
+  {
+    cmdEngine::cf->ViewerPart->PrsMgr()->RenderPresentation(node);
+  }
+  else
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[1]);
+
+  // Repaint
+  cmdEngine::cf->ViewerPart->Repaint();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_ShowOnly(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Node
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[1]);
     return TCL_OK;
   }
 
@@ -186,12 +220,20 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_Erase);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("donly",
+  interp->AddCommand("show",
     //
-    "donly varName \n"
+    "show varName \n"
+    "\t Shows the given object in viewer.",
+    //
+    __FILE__, group, ENGINE_Show);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("show-only",
+    //
+    "show-only varName \n"
     "\t Shows only the given object in viewer.",
     //
-    __FILE__, group, ENGINE_DOnly);
+    __FILE__, group, ENGINE_ShowOnly);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("erase-all",

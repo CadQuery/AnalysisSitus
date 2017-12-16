@@ -106,12 +106,11 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
     case Qt::Key_Enter:
     {
       TCollection_AsciiString cmdName = this->currentCommand(c);
-      std::cout << "Command entered: " << cmdName.ToCString() << std::endl;
       //
       if ( !this->eval(cmdName) )
-        m_interp->GetProgress().SendLogMessage(LogErr(Normal) << "\t ... TCL_ERROR");
+        m_interp->GetProgress().SendLogMessage(LogErr(Normal) << "\t %1 ... TCL_ERROR" << cmdName);
       else
-        m_interp->GetProgress().SendLogMessage(LogInfo(Normal) << "\t ... TCL_OK");
+        m_interp->GetProgress().SendLogMessage(LogInfo(Normal) << "\t %1 ... TCL_OK" << cmdName);
 
       // The following piece of code realizes "intelligent" movement of cursor.
       // The code checks whether next line is available by consulting block

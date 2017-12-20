@@ -45,6 +45,7 @@
 #include <vtkMapper.h>
 #include <vtkProperty.h>
 #include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 
 // OCCT includes
 #include <BRep_Tool.hxx>
@@ -99,6 +100,17 @@ Handle(asiVisu_Prs) asiVisu_GeomCurvePrs::Instance(const Handle(ActAPI_INode)& t
 bool asiVisu_GeomCurvePrs::IsVisible() const
 {
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_GeomCurvePrs::SetColor(const QColor& color) const
+{
+  asiVisu_Prs::SetColor(color);
+
+  // Adjust color of text.
+  vtkTextActor* actor = m_textWidget->GetTextActor();
+  actor->GetTextProperty()->SetColor( color.redF(), color.greenF(), color.blueF() );
 }
 
 //-----------------------------------------------------------------------------

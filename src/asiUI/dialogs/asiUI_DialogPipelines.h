@@ -56,7 +56,7 @@ public:
                         ActAPI_ProgressEntry       notifier,
                         QWidget*                   parent = NULL);
 
-  virtual ~asiUI_DialogCommands();
+  virtual ~asiUI_DialogPipelines();
 
 protected:
 
@@ -69,20 +69,20 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    QTableWidget* pCommands; //!< Table with commands.
+    QTableWidget* pPipelines; //!< Table with pipelines.
 
-    t_widgets() : pCommands(NULL) {}
+    t_widgets() : pPipelines(NULL) {}
 
     void Release()
     {
-      delete pCommands; pCommands = NULL;
+      delete pPipelines; pPipelines = NULL;
     }
   };
 
-  t_widgets                m_widgets;  //!< Involved widgets.
+  t_widgets            m_widgets;  //!< Involved widgets.
+  ActAPI_ProgressEntry m_notifier; //!< Progress Notifier.
   //
-  Handle(asiTcl_Interp)    m_interp;   //!< Tcl interpreter.
-  ActAPI_ProgressEntry     m_notifier; //!< Progress Notifier.
+  Handle(asiVisu_Prs)  m_prs;      //!< Presentation to analyze.
 
 };
 

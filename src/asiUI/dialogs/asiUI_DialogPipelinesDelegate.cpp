@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 19 September 2016
+// Created on: 20 December 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_DialogCommandsDelegate.h>
+#include <asiUI_DialogPipelinesDelegate.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -41,7 +41,7 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-asiUI_DialogCommandsDelegate::asiUI_DialogCommandsDelegate(QObject* parent)
+asiUI_DialogPipelinesDelegate::asiUI_DialogPipelinesDelegate(QObject* parent)
 : QStyledItemDelegate(parent)
 {}
 
@@ -49,9 +49,9 @@ asiUI_DialogCommandsDelegate::asiUI_DialogCommandsDelegate(QObject* parent)
 
 //! Qt overridden function to create an editor widget to edit item.
 QWidget*
-  asiUI_DialogCommandsDelegate::createEditor(QWidget*                    parent,
-                                             const QStyleOptionViewItem& /*option*/,
-                                             const QModelIndex&          index) const
+  asiUI_DialogPipelinesDelegate::createEditor(QWidget*                    parent,
+                                              const QStyleOptionViewItem& /*option*/,
+                                              const QModelIndex&          index) const
 {
   QWidget* wEditor = NULL;
   //
@@ -97,8 +97,8 @@ QWidget*
 //-----------------------------------------------------------------------------
 
 //! Qt overridden function to initialize the editor with the item's current data.
-void asiUI_DialogCommandsDelegate::setEditorData(QWidget*           editor,
-                                                 const QModelIndex& index) const
+void asiUI_DialogPipelinesDelegate::setEditorData(QWidget*           editor,
+                                                  const QModelIndex& index) const
 {
   if ( !index.column() )
     return;
@@ -137,9 +137,9 @@ void asiUI_DialogCommandsDelegate::setEditorData(QWidget*           editor,
 //-----------------------------------------------------------------------------
 
 //! Qt overridden function to store data from editor widget in specified model.
-void asiUI_DialogCommandsDelegate::setModelData(QWidget*            editor,
-                                                QAbstractItemModel* model,
-                                                const QModelIndex&  index) const
+void asiUI_DialogPipelinesDelegate::setModelData(QWidget*            editor,
+                                                 QAbstractItemModel* model,
+                                                 const QModelIndex&  index) const
 {
   if ( !index.column() )
     return;

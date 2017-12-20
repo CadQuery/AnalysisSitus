@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 19 September 2017
+// Created on: 20 December 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_DialogCommandsDelegate_h
-#define asiUI_DialogCommandsDelegate_h
+#ifndef asiUI_DialogPipelinesDelegate_h
+#define asiUI_DialogPipelinesDelegate_h
 
 // asiUI includes
 #include <asiUI.h>
@@ -41,8 +41,8 @@
 
 class QObject;
 
-//! Delegate for the table of Tcl commands.
-class asiUI_DialogCommandsDelegate : public QStyledItemDelegate
+//! Delegate for the table of pipelines.
+class asiUI_DialogPipelinesDelegate : public QStyledItemDelegate
 {
   Q_OBJECT
 
@@ -56,7 +56,7 @@ public:
 
 public:
 
-  asiUI_DialogCommandsDelegate(QObject* parent);
+  asiUI_DialogPipelinesDelegate(QObject* parent);
 
 public:
 

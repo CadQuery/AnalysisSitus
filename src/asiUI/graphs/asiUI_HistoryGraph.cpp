@@ -105,7 +105,7 @@ void asiUI_HistoryGraph::Render()
    * =================================== */
 
   // Populate graph data from history graph
-  vtkSmartPointer<vtkGraph> graph = this->convertToGraph(m_history);
+  vtkSmartPointer<vtkGraph> graph = this->convertToGraph();
 
   // Layout strategy
   vtkNew<vtkSimple2DLayoutStrategy> simple2DStrategy;
@@ -210,13 +210,11 @@ void asiUI_HistoryGraph::RenderEventCallback()
 //-----------------------------------------------------------------------------
 
 //! Builds VTK graph from history graph.
-//! \param[in] history history graph to visualizr.
 //! \return graph instance.
-vtkSmartPointer<vtkGraph>
-  asiUI_HistoryGraph::convertToGraph(const Handle(asiAlgo_History)& history)
+vtkSmartPointer<vtkGraph> asiUI_HistoryGraph::convertToGraph()
 {
   vtkSmartPointer<vtkGraph>
-    result = asiUI_HistoryGraphAdaptor::Convert(history, m_progress);
+    result = asiUI_HistoryGraphAdaptor::Convert(m_history, m_progress);
 
   return result;
 }

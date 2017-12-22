@@ -73,7 +73,7 @@ public:
 protected:
 
   asiUI_EXPORT vtkSmartPointer<vtkGraph>
-    convertToGraph(const Handle(asiAlgo_History)& history);
+    convertToGraph();
 
 protected slots:
 

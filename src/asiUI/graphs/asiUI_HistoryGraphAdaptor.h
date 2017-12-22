@@ -42,9 +42,11 @@
 #include <vtkSmartPointer.h>
 
 //! Converter of history graph to VTK presentable graph data structure.
-namespace asiUI_HistoryGraphAdaptor
+class asiUI_HistoryGraphAdaptor
 {
-  vtkSmartPointer<vtkMutableDirectedGraph>
+public:
+
+  static vtkSmartPointer<vtkMutableDirectedGraph>
     Convert(const Handle(asiAlgo_History)& history,
             ActAPI_ProgressEntry           progress);
 };

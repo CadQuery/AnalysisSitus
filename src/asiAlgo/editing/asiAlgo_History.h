@@ -35,7 +35,7 @@
 #include <asiAlgo.h>
 
 // OCCT includes
-#include <NCollection_DataMap.hxx>
+#include <NCollection_IndexedDataMap.hxx>
 #include <TopoDS_Shape.hxx>
 
 // Standard includes
@@ -61,9 +61,10 @@ public:
     std::vector<t_item*> Generated;    //!< List of items generated from this one.
     std::vector<t_item*> Modified;     //!< List of items substituted this one.
     bool                 IsDeleted;    //!< Identifies the item as deleted one.
+    bool                 IsActive;     //!< Indicates whether this sub-shape is alive in the model.
 
     //! Constructor.
-    t_item() : Op(0), IsDeleted(false) {}
+    t_item() : Op(0), IsDeleted(false), IsActive(false) {}
 
     //! Destructor.
     ~t_item()
@@ -74,6 +75,103 @@ public:
       for ( size_t k = 0; k < Modified.size(); ++k )
         delete Modified[k];
     }
+
+    //! Hasher for using history items in OCCT data maps.
+    struct Hasher
+    {
+      static int HashCode(const t_item* pItem, const int Upper)
+      {
+        const int I  = (int) ptrdiff_t(pItem);
+        const int HS = ::HashCode(I, Upper);
+        //
+        return HS;
+      }
+
+      static bool IsEqual(const t_item* pItem1, const t_item* pItem2)
+      {
+        return pItem1 == pItem2;
+      }
+    };
+  };
+
+  //! Hasher which does not take into account neither locations nor
+  //! orientations of shapes.
+  class t_partner_hasher
+  {
+  public:
+
+    static int HashCode(const TopoDS_Shape& S, const int Upper)
+    {
+      const int I  = (int) ptrdiff_t( S.TShape().operator->() );
+      const int HS = ::HashCode(I, Upper);
+      //
+      return HS;
+    }
+
+    static bool IsEqual(const TopoDS_Shape& S1, const TopoDS_Shape& S2)
+    {
+      return S1.IsPartner(S2);
+    }
+  };
+
+  //! Convenience alias for indexed map of shapes-vs-items.
+  typedef NCollection_IndexedDataMap<TopoDS_Shape, t_item*, t_partner_hasher> t_shapeItemMap;
+
+public:
+
+  //! \brief History graph iterator.
+  class Iterator
+  {
+  public:
+
+    //! ctor accepting the history graph to iterate.
+    //! \param[in] historyGraph history graph to iterate.
+    Iterator(const Handle(asiAlgo_History)& historyGraph)
+    {
+      m_graph  = historyGraph;
+      m_iIndex = 1;
+    }
+
+  public:
+
+    //! Checks if there are more graph nodes to iterate.
+    //! \return true/false.
+    bool More() const
+    {
+      return m_iIndex <= m_graph->GetNodes().Extent();
+    }
+
+    int GetIndex() const
+    {
+      return m_iIndex;
+    }
+
+    //! \return current node.
+    t_item* GetItem()
+    {
+      return m_graph->GetNodes().FindFromIndex(m_iIndex);
+    }
+
+    //! \return current shape.
+    const TopoDS_Shape& GetShape() const
+    {
+      return m_graph->GetNodes().FindKey(m_iIndex);
+    }
+
+    //! Moves iterator to the next position.
+    void Next()
+    {
+      m_iIndex++;
+    }
+
+  protected:
+
+    //! History graph.
+    Handle(asiAlgo_History) m_graph;
+
+    //! Internal index.
+    int m_iIndex;
+
   };
 
 public:
@@ -205,6 +303,33 @@ public:
   asiAlgo_EXPORT bool
     IsDeleted(const TopoDS_Shape& shape) const;
 
+  //! \brief Checks whether the given (sub-)shape is marked as active.
+  //!
+  //! \param[in] shape (sub-)shape in question.
+  //!
+  //! \return true/false.
+  asiAlgo_EXPORT bool
+    IsActive(const TopoDS_Shape& shape) const;
+
+public:
+
+  //! Returns history node by the given 1-based index.
+  //! \param[in] nid ID of the graph node to access.
+  //! \return history item or null if such item does not exist.
+  t_item* GetNode(const int nid) const
+  {
+    if ( nid <= 0 || nid > m_items.Extent() )
+      return NULL;
+
+    return m_items(nid);
+  }
+
+  //! \return collection of sub-shapes and their graph nodes.
+  const t_shapeItemMap& GetNodes() const
+  {
+    return m_items;
+  }
+
 protected:
 
   //! Finds history item for the given shape.
@@ -233,33 +358,12 @@ protected:
 
 protected:
 
-  //! Hasher which does not take into account neither locations nor
-  //! orientations of shapes. Our killer is extremely cruel in this regard...
-  class t_partner_hasher
-  {
-  public:
-
-    static int HashCode(const TopoDS_Shape& S, const int Upper)
-    {
-      const int I  = (int) ptrdiff_t( S.TShape().operator->() );
-      const int HS = ::HashCode(I, Upper);
-      //
-      return HS;
-    }
-
-    static bool IsEqual(const TopoDS_Shape& S1, const TopoDS_Shape& S2)
-    {
-      return S1.IsPartner(S2);
-    }
-  };
-
-protected:
-
   //! Root items in the history.
   std::vector<t_item*> m_roots;
 
-  //! Shapes and their corresponding history items.
-  NCollection_DataMap<TopoDS_Shape, t_item*, t_partner_hasher> m_items;
+  //! Shapes and their corresponding history items. The map is indexed to
+  //! have a persistent key.
+  t_shapeItemMap m_items;
 
 };
 

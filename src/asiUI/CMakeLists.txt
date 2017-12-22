@@ -85,14 +85,20 @@ set (dialogs_CPP_FILES
 
 set (graphs_H_FILES
   graphs/asiUI_AAGAdaptor.h
+  graphs/asiUI_HistoryGraphAdaptor.h
   graphs/asiUI_TopoGraphAdaptor.h
 )
 set (graphs_H_UI_FILES
+  graphs/asiUI_HistoryGraph.h
+  graphs/asiUI_HistoryGraphItem.h
   graphs/asiUI_PartGraph.h
   graphs/asiUI_PartGraphItem.h
 )
 set (graphs_CPP_FILES 
   graphs/asiUI_AAGAdaptor.cpp
+  graphs/asiUI_HistoryGraph.cpp
+  graphs/asiUI_HistoryGraphAdaptor.cpp
+  graphs/asiUI_HistoryGraphItem.cpp
   graphs/asiUI_PartGraph.cpp
   graphs/asiUI_PartGraphItem.cpp
   graphs/asiUI_TopoGraphAdaptor.cpp

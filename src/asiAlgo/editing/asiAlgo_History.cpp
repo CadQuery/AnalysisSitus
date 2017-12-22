@@ -62,6 +62,10 @@ bool asiAlgo_History::AddModified(const TopoDS_Shape& before,
   //
   pActiveItem->Modified.push_back(pChildItem);
 
+  // Make successor "alive" instead of this one.
+  pActiveItem->IsActive = false;
+  pChildItem->IsActive  = true;
+
   return true;
 }
 
@@ -114,6 +118,9 @@ bool asiAlgo_History::AddGenerated(const TopoDS_Shape& source,
   //
   pActiveItem->Generated.push_back(pChildItem);
 
+  // Make successor "alive" together with the current item.
+  pChildItem->IsActive = true;
+
   return true;
 }
 
@@ -162,6 +169,7 @@ bool asiAlgo_History::SetDeleted(const TopoDS_Shape& shape,
 
   // Set as deleted.
   pActiveItem->IsDeleted = true;
+  pActiveItem->IsActive  = false;
 
   return true;
 }
@@ -181,13 +189,26 @@ bool asiAlgo_History::IsDeleted(const TopoDS_Shape& shape) const
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_History::IsActive(const TopoDS_Shape& shape) const
+{
+  // Get item for the shape in question.
+  t_item* pActiveItem = this->findItem(shape);
+  //
+  if ( !pActiveItem )
+    return false;
+
+  return pActiveItem->IsActive;
+}
+
+//-----------------------------------------------------------------------------
+
 asiAlgo_History::t_item*
   asiAlgo_History::findItem(const TopoDS_Shape& shape) const
 {
-  if ( !m_items.IsBound(shape) )
+  if ( !m_items.Contains(shape) )
     return NULL;
 
-  return m_items(shape);
+  return m_items.FindFromKey(shape);
 }
 
 //-----------------------------------------------------------------------------
@@ -198,7 +219,7 @@ asiAlgo_History::t_item*
                             const bool          create)
 {
   // Check if there is any active item to continue growing a history on.
-  if ( !m_items.IsBound(shape) )
+  if ( !m_items.Contains(shape) )
   {
     if ( create )
     {
@@ -210,7 +231,7 @@ asiAlgo_History::t_item*
       return NULL;
   }
 
-  return m_items(shape);
+  return m_items.FindFromKey(shape);
 }
 
 //-----------------------------------------------------------------------------
@@ -222,7 +243,7 @@ asiAlgo_History::t_item* asiAlgo_History::makeItem(const TopoDS_Shape& shape,
   pItem->TransientPtr = shape;
   pItem->Op           = opId;
   //
-  m_items.Bind(shape, pItem);
+  m_items.Add(shape, pItem);
 
   return pItem;
 }

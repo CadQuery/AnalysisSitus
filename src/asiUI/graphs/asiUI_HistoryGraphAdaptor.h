@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 12 (*) April 2016
+// Created on: 21 December 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -28,45 +28,25 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiVisu_IVTopoItemPrs.h>
+#ifndef asiUI_HistoryGraphAdaptor_h
+#define asiUI_HistoryGraphAdaptor_h
 
-// asiVisu includes
-#include <asiVisu_ShapeDataProvider.h>
-#include <asiVisu_ShapePipeline.h>
-#include <asiVisu_Utils.h>
+// asiAlgo includes
+#include <asiAlgo_History.h>
+
+// Active Data includes
+#include <ActAPI_IProgressNotifier.h>
 
 // VTK includes
-#include <vtkMapper.h>
-#include <vtkProperty.h>
+#include <vtkMutableDirectedGraph.h>
+#include <vtkSmartPointer.h>
 
-//! Creates a Presentation object for the passed Node.
-//! \param theNode [in] Node to create a Presentation for.
-asiVisu_IVTopoItemPrs::asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_IVPrs(theNode)
+//! Converter of history graph to VTK presentable graph data structure.
+namespace asiUI_HistoryGraphAdaptor
 {
-  // Create Data Provider
-  Handle(asiVisu_ShapeDataProvider)
-    DP = new asiVisu_ShapeDataProvider( theNode->GetId(),
-                                        ActParamStream() << theNode->Parameter(asiData_IVTopoItemNode::PID_Geometry) );
+  vtkSmartPointer<vtkMutableDirectedGraph>
+    Convert(const Handle(asiAlgo_History)& history,
+            ActAPI_ProgressEntry           progress);
+};
 
-  // Main pipeline
-  Handle(asiVisu_ShapePipeline) pl = new asiVisu_ShapePipeline(false);
-  //
-  pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_ShadedAndWireframe);
-
-  // Pipeline for contours
-  this->addPipeline        ( Pipeline_Main, pl );
-  this->assignDataProvider ( Pipeline_Main, DP );
-
-  // Configure
-  pl->Actor()->GetProperty()->SetPointSize(5.0f);
-}
-
-//! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
-//! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_IVTopoItemPrs::Instance(const Handle(ActAPI_INode)& theNode)
-{
-  return new asiVisu_IVTopoItemPrs(theNode);
-}
+#endif

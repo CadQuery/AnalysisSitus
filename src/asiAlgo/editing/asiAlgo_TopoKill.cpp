@@ -201,7 +201,11 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
       if ( this->IsAsked(currentShape, forRemoval, forReplacement) )
       {
         if ( forRemoval )
+        {
           excludeSubshape = true;
+          //
+          m_history->SetDeleted(currentShape);
+        }
         else // Replacement
         {
           newResult = m_toReplace(currentShape);

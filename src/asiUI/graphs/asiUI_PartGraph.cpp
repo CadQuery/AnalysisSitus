@@ -87,7 +87,9 @@
 //! \param[in] pPartViewer part viewer.
 asiUI_PartGraph::asiUI_PartGraph(const Handle(asiEngine_Model)& model,
                                  asiUI_ViewerPart*              pPartViewer)
-: m_textWidget    (NULL),
+: 
+  m_pWidget       (NULL),
+  m_textWidget    (NULL),
   m_summaryWidget (NULL),
   m_model         (model),
   m_partViewer    (pPartViewer)
@@ -240,8 +242,6 @@ void asiUI_PartGraph::Render(const TopoDS_Shape&               shape,
                              const Regime                      regime,
                              const TopAbs_ShapeEnum            leafType)
 {
-  
-
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph> graph = this->convertToGraph(shape, selectedFaces, regime, leafType);
 

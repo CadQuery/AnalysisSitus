@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 12 (*) April 2016
+// Created on: 21 December 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -29,44 +29,13 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_IVTopoItemPrs.h>
-
-// asiVisu includes
-#include <asiVisu_ShapeDataProvider.h>
-#include <asiVisu_ShapePipeline.h>
-#include <asiVisu_Utils.h>
+#include <asiUI_HistoryGraphItem.h>
 
 // VTK includes
-#include <vtkMapper.h>
-#include <vtkProperty.h>
+#include <vtkObjectFactory.h>
 
-//! Creates a Presentation object for the passed Node.
-//! \param theNode [in] Node to create a Presentation for.
-asiVisu_IVTopoItemPrs::asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_IVPrs(theNode)
-{
-  // Create Data Provider
-  Handle(asiVisu_ShapeDataProvider)
-    DP = new asiVisu_ShapeDataProvider( theNode->GetId(),
-                                        ActParamStream() << theNode->Parameter(asiData_IVTopoItemNode::PID_Geometry) );
+vtkStandardNewMacro(asiUI_HistoryGraphItem);
 
-  // Main pipeline
-  Handle(asiVisu_ShapePipeline) pl = new asiVisu_ShapePipeline(false);
-  //
-  pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_ShadedAndWireframe);
-
-  // Pipeline for contours
-  this->addPipeline        ( Pipeline_Main, pl );
-  this->assignDataProvider ( Pipeline_Main, DP );
-
-  // Configure
-  pl->Actor()->GetProperty()->SetPointSize(5.0f);
-}
-
-//! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
-//! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_IVTopoItemPrs::Instance(const Handle(ActAPI_INode)& theNode)
-{
-  return new asiVisu_IVTopoItemPrs(theNode);
-}
+//! Destructor.
+asiUI_HistoryGraphItem::~asiUI_HistoryGraphItem()
+{}

@@ -265,10 +265,13 @@ void asiAlgo_TopoGraph::addSubshapes(const TopoDS_Shape& parent,
     }
     //
     {
-      Handle(asiAlgo_TopoAttrLocation)
-        locAttr = new asiAlgo_TopoAttrLocation( subShape.Location() );
-      //
-      attrSet.Add(locAttr);
+      if ( !subShape.Location().IsIdentity() )
+      {
+        Handle(asiAlgo_TopoAttrLocation)
+          locAttr = new asiAlgo_TopoAttrLocation( subShape.Location() );
+        //
+        attrSet.Add(locAttr);
+      }
     }
     m_arc_attributes.Bind(t_arc(iParentId, iChildId), attrSet);
 

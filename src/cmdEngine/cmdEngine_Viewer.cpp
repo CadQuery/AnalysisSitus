@@ -31,6 +31,9 @@
 // cmdEngine includes
 #include <cmdEngine.h>
 
+// asiUI includes
+#include <asiUI_HistoryGraph.h>
+
 // asiVisu includes
 #include <asiVisu_Utils.h>
 
@@ -67,6 +70,39 @@ int ENGINE_Erase(const Handle(asiTcl_Interp)& interp,
 
   // Repaint
   cmdEngine::cf->ViewerPart->Repaint();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_ShowHistory(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node and its history (from naming)
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+  Handle(asiAlgo_Naming)   naming = part_n->GetNaming();
+  //
+  if ( naming.IsNull() || naming->GetHistory().IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "History is not initialized.");
+    return TCL_OK;
+  }
+
+  // Visualize history in graph view
+  asiUI_HistoryGraph*
+    pGraph = new asiUI_HistoryGraph( cmdEngine::model,
+                                     naming->GetHistory(),
+                                     interp->GetProgress(),
+                                     interp->GetPlotter() );
+  //
+  pGraph->Render();
 
   return TCL_OK;
 }
@@ -218,6 +254,14 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
     "\t Hides object in viewer.",
     //
     __FILE__, group, ENGINE_Erase);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("show-history",
+    //
+    "show-history \n"
+    "\t Shows modification history associated with the active part.",
+    //
+    __FILE__, group, ENGINE_ShowHistory);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("show",

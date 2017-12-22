@@ -192,7 +192,7 @@ protected:
   }
 
   //---------------------------------------------------------------------------
-  virtual float VertexSize(vtkIdType)
+  virtual float VertexSize(vtkIdType /*vertex*/)
   {
     return 12.0f;
   }

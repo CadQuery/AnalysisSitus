@@ -46,7 +46,8 @@ enum asiVisu_ShapeDisplayMode
   ShapeDisplayMode_Shaded               = 0x0001, //!< Shaded.
   ShapeDisplayMode_Wireframe            = 0x0002, //!< Wireframe.
   ShapeDisplayMode_Vertices             = 0x0004, //!< Vertices.
-  ShapeDisplayMode_WireframeAndVertices = 0x0008  //!< Wireframe with vertices.
+  ShapeDisplayMode_WireframeAndVertices = 0x0008, //!< Wireframe with vertices.
+  ShapeDisplayMode_ShadedAndWireframe   = 0x0010  //!< Shaded and wireframe.
 };
 
 //-----------------------------------------------------------------------------
@@ -89,6 +90,18 @@ public:
     return mode;
   }
 
+  //! \return collection of shape primitives employed in VERTICES mode.
+  static TColStd_PackedMapOfInteger VERTICES()
+  {
+    TColStd_PackedMapOfInteger mode;
+    //
+    mode.Add(ShapePrimitive_FreeVertex);
+    mode.Add(ShapePrimitive_BorderVertex);
+    mode.Add(ShapePrimitive_SharedVertex);
+    //
+    return mode;
+  }
+
   //! \return collection of shape primitives employed in WIREFRAME and VERTICES mode.
   static TColStd_PackedMapOfInteger WIREFRAME_AND_VERTICES()
   {
@@ -101,14 +114,12 @@ public:
     return mode;
   }
 
-  //! \return collection of shape primitives employed in VERTICES mode.
-  static TColStd_PackedMapOfInteger VERTICES()
+  //! \return collection of shape primitives employed in SHADED and WIREFRAME mode.
+  static TColStd_PackedMapOfInteger SHADED_AND_WIREFRAME()
   {
-    TColStd_PackedMapOfInteger mode;
+    TColStd_PackedMapOfInteger mode = SHADED();
     //
-    mode.Add(ShapePrimitive_FreeVertex);
-    mode.Add(ShapePrimitive_BorderVertex);
-    mode.Add(ShapePrimitive_SharedVertex);
+    mode.Unite( WIREFRAME() );
     //
     return mode;
   }
@@ -124,6 +135,7 @@ public:
       case ShapeDisplayMode_Wireframe:            return WIREFRAME();
       case ShapeDisplayMode_Vertices:             return VERTICES();
       case ShapeDisplayMode_WireframeAndVertices: return WIREFRAME_AND_VERTICES();
+      case ShapeDisplayMode_ShadedAndWireframe:   return SHADED_AND_WIREFRAME();
       //
       default: break;
     }

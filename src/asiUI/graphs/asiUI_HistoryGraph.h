@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 12 (*) April 2016
+// Created on: 21 December 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -28,45 +28,68 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiVisu_IVTopoItemPrs.h>
+#ifndef asiUI_HistoryGraph_h
+#define asiUI_HistoryGraph_h
 
-// asiVisu includes
-#include <asiVisu_ShapeDataProvider.h>
-#include <asiVisu_ShapePipeline.h>
-#include <asiVisu_Utils.h>
+// asiUI includes
+#include <asiUI_ViewerPart.h>
+#include <asiUI_VtkWindow.h>
+
+// asiAlgo includes
+#include <asiAlgo_History.h>
 
 // VTK includes
-#include <vtkMapper.h>
-#include <vtkProperty.h>
+#include <vtkCommand.h>
+#include <vtkIntArray.h>
+#include <vtkMutableDirectedGraph.h>
+#include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
+#include <vtkTextWidget.h>
 
-//! Creates a Presentation object for the passed Node.
-//! \param theNode [in] Node to create a Presentation for.
-asiVisu_IVTopoItemPrs::asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_IVPrs(theNode)
+//! Visualizes history graph.
+class asiUI_HistoryGraph : public QObject
 {
-  // Create Data Provider
-  Handle(asiVisu_ShapeDataProvider)
-    DP = new asiVisu_ShapeDataProvider( theNode->GetId(),
-                                        ActParamStream() << theNode->Parameter(asiData_IVTopoItemNode::PID_Geometry) );
+  Q_OBJECT
 
-  // Main pipeline
-  Handle(asiVisu_ShapePipeline) pl = new asiVisu_ShapePipeline(false);
+public:
+
+  asiUI_EXPORT
+    asiUI_HistoryGraph(const Handle(asiEngine_Model)& model,
+                       const Handle(asiAlgo_History)& history,
+                       ActAPI_ProgressEntry           progress,
+                       ActAPI_PlotterEntry            plotter);
+
+  asiUI_EXPORT
+    ~asiUI_HistoryGraph();
+
+public:
+
+  asiUI_EXPORT void
+    Render();
+
+  asiUI_EXPORT void
+    RenderEventCallback();
+
+protected:
+
+  asiUI_EXPORT vtkSmartPointer<vtkGraph>
+    convertToGraph(const Handle(asiAlgo_History)& history);
+
+protected slots:
+
+  void onViewerClosed();
+  void onVertexPicked(const int, const vtkIdType);
+
+protected:
+
+  asiUI_VtkWindow* m_pWidget;    //!< Widget.
+  vtkTextWidget*   m_textWidget; //!< Text.
   //
-  pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_ShadedAndWireframe);
+  Handle(asiEngine_Model) m_model;    //!< Data Model instance.
+  Handle(asiAlgo_History) m_history;  //!< Modification history.
+  ActAPI_ProgressEntry    m_progress; //!< Progress notifier.
+  ActAPI_PlotterEntry     m_plotter;  //!< Imperative plotter.
 
-  // Pipeline for contours
-  this->addPipeline        ( Pipeline_Main, pl );
-  this->assignDataProvider ( Pipeline_Main, DP );
+};
 
-  // Configure
-  pl->Actor()->GetProperty()->SetPointSize(5.0f);
-}
-
-//! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
-//! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_IVTopoItemPrs::Instance(const Handle(ActAPI_INode)& theNode)
-{
-  return new asiVisu_IVTopoItemPrs(theNode);
-}
+#endif

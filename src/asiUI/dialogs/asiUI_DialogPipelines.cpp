@@ -152,7 +152,6 @@ void asiUI_DialogPipelines::initialize()
 
     // Table widget item for value with the flag for editing.
     QTableWidgetItem* pValueItem = new QTableWidgetItem;
-    pValueItem->setTextAlignment(Qt::AlignCenter);
     pValueItem->setCheckState(isPipelineVisible ? Qt::Checked : Qt::Unchecked);
     pValueItem->setData(Qt::UserRole, current_row + 1); // Store index of the pipeline
     m_widgets.pPipelines->setItem(current_row, 1, pValueItem);

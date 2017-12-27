@@ -35,7 +35,7 @@
 #include <asiUI.h>
 
 // asiVisu includes
-#include <asiVisu_Prs.h>
+#include <asiVisu_PrsManager.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -52,15 +52,22 @@ class asiUI_EXPORT asiUI_DialogPipelines : public QDialog
 
 public:
 
-  asiUI_DialogPipelines(const Handle(asiVisu_Prs)& prs,
-                        ActAPI_ProgressEntry       notifier,
-                        QWidget*                   parent = NULL);
+  asiUI_DialogPipelines(const Handle(asiVisu_Prs)&                 prs,
+                        const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
+                        ActAPI_ProgressEntry                       notifier,
+                        QWidget*                                   parent = NULL);
 
   virtual ~asiUI_DialogPipelines();
+
+public slots:
+
+  void onStateChanged(QTableWidgetItem*);
 
 protected:
 
   void initialize();
+  bool isPipelineVisible(const Handle(asiVisu_Pipeline)& pl) const;
+  void toggleVisibility(const Handle(asiVisu_Pipeline)& pl) const;
 
 private:
 
@@ -82,7 +89,8 @@ private:
   t_widgets            m_widgets;  //!< Involved widgets.
   ActAPI_ProgressEntry m_notifier; //!< Progress Notifier.
   //
-  Handle(asiVisu_Prs)  m_prs;      //!< Presentation to analyze.
+  Handle(asiVisu_Prs)                 m_prs;    //!< Presentation to analyze.
+  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr; //!< Presentation manager.
 
 };
 

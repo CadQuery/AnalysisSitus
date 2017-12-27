@@ -33,6 +33,7 @@
 
 // asiUI includes
 #include <asiUI_Common.h>
+#include <asiUI_DialogPipelines.h>
 
 // asiEngine includes
 #include <asiEngine_Part.h>
@@ -263,7 +264,7 @@ void asiUI_ObjectBrowser::onHide()
   Handle(ActAPI_INode) selected_n;
   if ( !this->selectedNode(selected_n) ) return;
 
-  // Iterate over the associated viewer to find the one where the selected
+  // Iterate over the associated viewers to find the one where the selected
   // Node is presented
   for ( size_t k = 0; k < m_viewers.size(); ++k )
     if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
@@ -273,6 +274,38 @@ void asiUI_ObjectBrowser::onHide()
     }
 
   emit hide( selected_n->GetId() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on "manage pipelines" action.
+void asiUI_ObjectBrowser::onManagePipelines()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  // Iterate over the associated viewers to find presentation.
+  Handle(asiVisu_Prs)                 prs;
+  vtkSmartPointer<asiVisu_PrsManager> prsMgr;
+  //
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
+    {
+      prsMgr = m_viewers[k]->PrsMgr();
+      prs    = prsMgr->GetPresentation(selected_n);
+      break;
+    }
+
+  // Show dialog to manage presentation.
+  if ( !prs.IsNull() )
+  {
+    asiUI_DialogPipelines* pDlg = new asiUI_DialogPipelines(prs, prsMgr, m_progress, this);
+    pDlg->show();
+  }
+  else
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot manage pipelines for a non-presented Node.");
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -461,29 +494,30 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_INode)& active
     }
   }
 
-  pMenu->addAction( "Print parameters", this, SLOT( onPrintParameters() ) );
-  pMenu->addAction( "Copy name",        this, SLOT( onCopyName()        ) );
+  pMenu->addAction( "Print parameters", this, SLOT( onPrintParameters () ) );
+  pMenu->addAction( "Copy name",        this, SLOT( onCopyName        () ) );
   //
   if ( isPresented )
   {
     pMenu->addSeparator();
-    pMenu->addAction( "Show",      this, SLOT( onShow()     ) );
-    pMenu->addAction( "Show only", this, SLOT( onShowOnly() ) );
-    pMenu->addAction( "Hide",      this, SLOT( onHide()     ) );
+    pMenu->addAction( "Show",                this, SLOT( onShow            () ) );
+    pMenu->addAction( "Show only",           this, SLOT( onShowOnly        () ) );
+    pMenu->addAction( "Hide",                this, SLOT( onHide            () ) );
+    pMenu->addAction( "Manage pipelines...", this, SLOT( onManagePipelines () ) );
 
     if ( activeNode->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
     {
       pMenu->addSeparator();
-      pMenu->addAction( "Hide edges",         this, SLOT( onHidePartEdges() ) );
-      pMenu->addAction( "Show edges",         this, SLOT( onShowPartEdges() ) );
-      pMenu->addAction( "Reset presentation", this, SLOT( onResetPartPrs() ) );
+      pMenu->addAction( "Hide edges",         this, SLOT( onHidePartEdges () ) );
+      pMenu->addAction( "Show edges",         this, SLOT( onShowPartEdges () ) );
+      pMenu->addAction( "Reset presentation", this, SLOT( onResetPartPrs  () ) );
     }
 
     if ( activeNode->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
     {
       pMenu->addSeparator();
-      pMenu->addAction( "Save to BREP...", this, SLOT( onSaveToBREP() ) );
-      pMenu->addAction( "Set as part", this, SLOT( onSetAsPart() ) );
+      pMenu->addAction( "Save to BREP...", this, SLOT( onSaveToBREP () ) );
+      pMenu->addAction( "Set as part",     this, SLOT( onSetAsPart  () ) );
     }
   }
 }

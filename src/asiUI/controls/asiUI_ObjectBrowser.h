@@ -97,6 +97,7 @@ protected slots:
   void onShow             ();
   void onShowOnly         ();
   void onHide             ();
+  void onManagePipelines  ();
   //
   void onHidePartEdges    ();
   void onShowPartEdges    ();

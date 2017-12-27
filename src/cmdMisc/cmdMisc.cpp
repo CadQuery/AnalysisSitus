@@ -54,6 +54,7 @@
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
+#include <BRepOffsetAPI_MakeThickSolid.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepPrimAPI_MakePrism.hxx>
@@ -714,6 +715,95 @@ int MISC_TestComposite(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_TestOffset(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc != 1 )
+    return TCL_ERROR;
+
+  // Build rectangular face.
+  TopoDS_Face R;
+  TopoDS_Edge E1, E2, E3, E4;
+  {
+    gp_Pnt P1(0, 0, 0),
+           P2(1, 0, 0),
+           P3(1, 1, 0),
+           P4(0, 1, 0);
+
+    E1 = BRepBuilderAPI_MakeEdge(P1, P2);
+    E2 = BRepBuilderAPI_MakeEdge(P2, P3);
+    E3 = BRepBuilderAPI_MakeEdge(P3, P4);
+    E4 = BRepBuilderAPI_MakeEdge(P4, P1);
+
+    BRepBuilderAPI_MakeWire mkWire;
+    mkWire.Add(E1); E1 = mkWire.Edge();
+    mkWire.Add(E2); E2 = mkWire.Edge();
+    mkWire.Add(E3); E3 = mkWire.Edge();
+    mkWire.Add(E4); E4 = mkWire.Edge();
+
+    R = BRepBuilderAPI_MakeFace( mkWire.Wire() );
+  }
+
+  // Make offset (use any offset value)
+  BRepOffsetAPI_MakeThickSolid mkOffset;
+  mkOffset.MakeThickSolidBySimple(R, 0.5);
+
+  // Get result
+  TopoDS_Shape result;
+  if ( mkOffset.IsDone() )
+  {
+    result = mkOffset.Shape();
+  }
+
+  // Images of E1
+  {
+    // MODIFIED
+    const TopTools_ListOfShape& MODIFIED = mkOffset.Modified(E1);
+    //
+    if ( !MODIFIED.IsEmpty() )
+    {
+      for ( TopTools_ListIteratorOfListOfShape lit(MODIFIED); lit.More(); lit.Next() )
+        interp->GetPlotter().DRAW_SHAPE(lit.Value(), "E1 MODIFIED");
+    }
+
+    // GENERATED
+    const TopTools_ListOfShape& GENERATED = mkOffset.Generated(E1);
+    //
+    if ( !GENERATED.IsEmpty() )
+    {
+      for ( TopTools_ListIteratorOfListOfShape lit(GENERATED); lit.More(); lit.Next() )
+        interp->GetPlotter().DRAW_SHAPE(lit.Value(), "E1 GENERATED");
+    }
+  }
+
+  // Images of R
+  {
+    // MODIFIED
+    const TopTools_ListOfShape& MODIFIED = mkOffset.Modified(R);
+    //
+    if ( !MODIFIED.IsEmpty() )
+    {
+      for ( TopTools_ListIteratorOfListOfShape lit(MODIFIED); lit.More(); lit.Next() )
+        interp->GetPlotter().DRAW_SHAPE(lit.Value(), "R MODIFIED");
+    }
+
+    // GENERATED
+    const TopTools_ListOfShape& GENERATED = mkOffset.Generated(R);
+    //
+    if ( !GENERATED.IsEmpty() )
+    {
+      for ( TopTools_ListIteratorOfListOfShape lit(GENERATED); lit.More(); lit.Next() )
+        interp->GetPlotter().DRAW_SHAPE(lit.Value(), "R GENERATED");
+    }
+  }
+
+  interp->GetPlotter().REDRAW_SHAPE("result", result);
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -774,7 +864,15 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Constructs sample non-manifold CAD model.",
     //
     __FILE__, group, MISC_TestComposite);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-offset",
+    //
+    "test-offset \n"
+    "\t Constructs simple solid by offset.",
+    //
+    __FILE__, group, MISC_TestOffset);
 }
 
-// Declare entry point PLUGINFACTORY
+// Declare entry point
 ASIPLUGIN(cmdMisc)

@@ -166,6 +166,7 @@ set (utils_CPP_FILES
 
 set (viewers_H_UI_FILES
   viewers/asiUI_Viewer.h
+  viewers/asiUI_Viewer3dListener.h
   viewers/asiUI_ViewerCurve2d.h
   viewers/asiUI_ViewerDomain.h
   viewers/asiUI_ViewerDomainListener.h
@@ -177,6 +178,7 @@ set (viewers_H_UI_FILES
 )
 set (viewers_CPP_FILES 
   viewers/asiUI_Viewer.cpp
+  viewers/asiUI_Viewer3dListener.cpp
   viewers/asiUI_ViewerCurve2d.cpp
   viewers/asiUI_ViewerDomain.cpp
   viewers/asiUI_ViewerDomainListener.cpp

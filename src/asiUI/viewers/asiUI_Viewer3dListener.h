@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 11 April 2016
+// Created on: 07 November 2016 (99 years of October Revolution)
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -28,35 +28,72 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiVisu_IVSurfacePrs.h>
+#ifndef asiUI_ViewerPartListener_h
+#define asiUI_ViewerPartListener_h
 
-// asiVisu includes
-#include <asiVisu_IVSurfacePipeline.h>
-#include <asiVisu_IVSurfaceDataProvider.h>
-#include <asiVisu_Utils.h>
+// asiUI includes
+#include <asiUI_ViewerDomain.h>
+#include <asiUI_ViewerHost.h>
+#include <asiUI_ViewerPart.h>
 
-// VTK includes
-#include <vtkMapper.h>
-#include <vtkProperty.h>
+// Active Data includes
+#include <ActAPI_IPlotter.h>
 
-//! Creates a Presentation object for the passed Node.
-//! \param theNode [in] Node to create a Presentation for.
-asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_IVPrs(theNode)
+// Qt includes
+#pragma warning(push, 0)
+#include <QMenu>
+#pragma warning(pop)
+
+//! Default slots for part viewer.
+class asiUI_EXPORT asiUI_ViewerPartListener : public QObject
 {
-  // Create Data Provider
-  Handle(asiVisu_IVSurfaceDataProvider) DP = new asiVisu_IVSurfaceDataProvider(theNode);
+  Q_OBJECT
 
-  // Pipeline for contours
-  this->addPipeline        ( Pipeline_Main, new asiVisu_IVSurfacePipeline );
-  this->assignDataProvider ( Pipeline_Main, DP );
-}
+public:
 
-//! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
-//! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_IVSurfacePrs::Instance(const Handle(ActAPI_INode)& theNode)
-{
-  return new asiVisu_IVSurfacePrs(theNode);
-}
+  asiUI_ViewerPartListener(asiUI_ViewerPart*              wViewerPart,
+                           asiUI_ViewerDomain*            wViewerDomain,
+                           asiUI_ViewerHost*              wViewerSurface,
+                           const Handle(asiEngine_Model)& model,
+                           ActAPI_ProgressEntry           progress,
+                           ActAPI_PlotterEntry            plotter);
+
+  virtual
+    ~asiUI_ViewerPartListener();
+
+public:
+
+  virtual void
+    Connect();
+
+protected slots:
+
+  void
+    onFacePicked(const asiVisu_PickResult& pickRes);
+
+  void
+    onEdgePicked(const asiVisu_PickResult& pickRes);
+
+  void
+    onContextMenu(const QPoint&);
+
+protected:
+
+  virtual void
+    populateMenu(QMenu&) {}
+
+  virtual void
+    executeAction(QAction*) {}
+
+protected:
+
+  asiUI_ViewerPart*       m_wViewerPart;    //!< Part viewer.
+  asiUI_ViewerDomain*     m_wViewerDomain;  //!< Face domain viewer.
+  asiUI_ViewerHost*       m_wViewerSurface; //!< Surface viewer.
+  Handle(asiEngine_Model) m_model;          //!< Data Model instance.
+  ActAPI_ProgressEntry    m_progress;       //!< Progress notifier.
+  ActAPI_PlotterEntry     m_plotter;        //!< Imperative plotter.
+
+};
+
+#endif

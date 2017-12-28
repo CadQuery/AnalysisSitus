@@ -127,7 +127,7 @@ public:
   {
     TCollection_AsciiString oriStr;
 
-    // Check orientation
+    // Check orientation.
     if ( ori == TopAbs_FORWARD )
       oriStr = "forward";
     else if ( ori == TopAbs_REVERSED )
@@ -138,6 +138,30 @@ public:
       oriStr = "external";
 
     return oriStr;
+  }
+
+  //! Converts the passed continuity to string.
+  //! \param[in] cont continuity.
+  //! \return string representation of continuity.
+  static TCollection_AsciiString
+    ContinuityToString(const GeomAbs_Shape cont)
+  {
+    TCollection_AsciiString contStr;
+
+    // Check continuity.
+    switch ( cont )
+    {
+      case GeomAbs_C0 : contStr = "C0"; break;
+      case GeomAbs_C1 : contStr = "C1"; break;
+      case GeomAbs_C2 : contStr = "C2"; break;
+      case GeomAbs_C3 : contStr = "C3"; break;
+      case GeomAbs_CN : contStr = "CN"; break;
+      case GeomAbs_G1 : contStr = "G1"; break;
+      case GeomAbs_G2 : contStr = "G2"; break;
+      default: break;
+    }
+
+    return contStr;
   }
 
   //! Converts the passed location to string.
@@ -543,6 +567,14 @@ public:
     GetFaceAnyInteriorPoint(const TopoDS_Face& face,
                             gp_Pnt2d&          uv,
                             gp_Pnt&            xyz);
+
+  //! Prints some useful analytics for the passed surface to the given
+  //! output stream.
+  //! \param[in]  surf parametric surface in question.
+  //! \param[out] out  output stream.
+  asiAlgo_EXPORT static void
+    PrintSurfaceDetails(const Handle(Geom_Surface)& surf,
+                        Standard_OStream&           out);
 
 private:
 

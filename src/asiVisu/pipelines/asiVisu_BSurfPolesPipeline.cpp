@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 11 April 2016
+// Created on: 28 December 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -29,48 +29,51 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_IVSurfacePipeline.h>
+#include <asiVisu_BSurfPolesPipeline.h>
 
 // asiVisu includes
-#include <asiVisu_IVSurfaceDataProvider.h>
-#include <asiVisu_SurfaceSource.h>
+#include <asiVisu_BSurfPolesSource.h>
+#include <asiVisu_SurfaceDataProvider.h>
+#include <asiVisu_NodeInfo.h>
+
+// Active Data includes
+#include <ActData_ParameterFactory.h>
 
 // VTK includes
-#include <vtkActor.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 
 //-----------------------------------------------------------------------------
 
 //! Creates new Pipeline initialized by default VTK mapper and actor.
-asiVisu_IVSurfacePipeline::asiVisu_IVSurfacePipeline()
+asiVisu_BSurfPolesPipeline::asiVisu_BSurfPolesPipeline()
+//
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                    vtkSmartPointer<vtkActor>::New() ),
-  m_iStepsNumber(100)
+                    vtkSmartPointer<vtkActor>::New() )
 {
   this->Actor()->GetProperty()->SetLineWidth(1.0);
+  this->Actor()->GetProperty()->SetLineStipplePattern(0xf0f0);
+  this->Actor()->GetProperty()->SetLineStippleRepeatFactor(1);
+  this->Actor()->GetProperty()->SetPointSize(5.0f);
+  this->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void asiVisu_IVSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
+void asiVisu_BSurfPolesPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  if ( !m_iStepsNumber )
-    return;
-
-  Handle(asiVisu_IVSurfaceDataProvider)
-    provider = Handle(asiVisu_IVSurfaceDataProvider)::DownCast(DP);
+  Handle(asiVisu_SurfaceDataProvider)
+    dp = Handle(asiVisu_SurfaceDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
    * =========================== */
 
-  double uMin, uMax, vMin, vMax;
-  Handle(Geom_Surface) surface = provider->GetSurface(uMin, uMax, vMin, vMax);
+  Handle(Standard_Type) surfType = dp->GetSurfaceType();
   //
-  if ( surface.IsNull() )
+  if ( surfType.IsNull() )
   {
     // Pass empty data set in order to have valid pipeline
     vtkSmartPointer<vtkPolyData> dummyDS = vtkSmartPointer<vtkPolyData>::New();
@@ -83,21 +86,34 @@ void asiVisu_IVSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
    *  Prepare polygonal data set
    * ============================ */
 
-  if ( provider->MustExecute( this->GetMTime() ) )
+  if ( dp->MustExecute( this->GetMTime() ) )
   {
-    // Trim
-    const double uLimit = std::fmax( Abs(uMin), Abs(uMax) );
-    const double vLimit = std::fmax( Abs(vMin), Abs(vMax) );
+    // Bind to Node
+    asiVisu_NodeInfo::Store( dp->GetNodeID(), this->Actor() );
 
-    vtkSmartPointer<asiVisu_SurfaceSource>
-      src = vtkSmartPointer<asiVisu_SurfaceSource>::New();
-    //
-    src->SetInputSurface  (surface);
-    src->SetNumberOfSteps (m_iStepsNumber);
-    src->SetTrimValues    (uLimit, vLimit);
+    // Access surface
+    double uMin, uMax, vMin, vMax;
+    Handle(Geom_Surface) surf = dp->GetSurface(uMin, uMax, vMin, vMax);
 
-    // Initialize pipeline
-    this->SetInputConnection( src->GetOutputPort() );
+    // B-surface poles
+    if ( !surf.IsNull() && surf->IsKind( STANDARD_TYPE(Geom_BSplineSurface) ) )
+    {
+      Handle(Geom_BSplineSurface) bsurf = Handle(Geom_BSplineSurface)::DownCast(surf);
+      //
+      vtkSmartPointer<asiVisu_BSurfPolesSource>
+        bpolesSrc = vtkSmartPointer<asiVisu_BSurfPolesSource>::New();
+      //
+      bpolesSrc->SetInputSurface(bsurf);
+
+      // Chain pipeline
+      this->SetInputConnection( bpolesSrc->GetOutputPort() );
+    }
+    else
+    {
+      // Pass empty data set in order to have valid pipeline
+      vtkSmartPointer<vtkPolyData> dummyDS = vtkSmartPointer<vtkPolyData>::New();
+      this->SetInputData(dummyDS);
+    }
   }
 
   // Update modification timestamp
@@ -108,13 +124,17 @@ void asiVisu_IVSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void asiVisu_IVSurfacePipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_BSurfPolesPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
+
+//-----------------------------------------------------------------------------
 
 //! Callback for RemoveFromRenderer() routine.
-void asiVisu_IVSurfacePipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_BSurfPolesPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
+//-----------------------------------------------------------------------------
+
 //! Callback for Update() routine.
-void asiVisu_IVSurfacePipeline::callback_update()
+void asiVisu_BSurfPolesPipeline::callback_update()
 {}

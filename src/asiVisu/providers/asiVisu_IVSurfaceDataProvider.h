@@ -32,18 +32,15 @@
 #define asiVisu_IVSurfaceDataProvider_h
 
 // asiVisu includes
-#include <asiVisu_DataProvider.h>
+#include <asiVisu_SurfaceDataProvider.h>
 
-// OCCT includes
-#include <Geom_Surface.hxx>
-
-//! Data provider for a surface in IV.
-class asiVisu_IVSurfaceDataProvider : public asiVisu_DataProvider
+//! Data provider for a surface in imperative viewer (IV).
+class asiVisu_IVSurfaceDataProvider : public asiVisu_SurfaceDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVSurfaceDataProvider, asiVisu_DataProvider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVSurfaceDataProvider, asiVisu_SurfaceDataProvider)
 
 public:
 
@@ -57,8 +54,14 @@ public:
 
 public:
 
-  asiVisu_EXPORT Handle(Geom_Surface)
-    GetSurface(double& uLimit, double& vLimit) const;
+  asiVisu_EXPORT virtual Handle(Standard_Type)
+    GetSurfaceType() const;
+
+  asiVisu_EXPORT virtual Handle(Geom_Surface)
+    GetSurface(double& uMin,
+               double& uMax,
+               double& vMin,
+               double& vMax) const;
 
 private:
 

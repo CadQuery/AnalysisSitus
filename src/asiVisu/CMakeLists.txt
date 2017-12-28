@@ -45,6 +45,7 @@ set (filters_CPP_FILES
 set (pipelines_H_FILES
   pipelines/asiVisu_BCurveKnotsPipeline.h
   pipelines/asiVisu_BCurvePolesPipeline.h
+  pipelines/asiVisu_BSurfPolesPipeline.h
   pipelines/asiVisu_CurvePipeline.h
   pipelines/asiVisu_EdgeCurvePipeline.h
   pipelines/asiVisu_EdgeDomainPipeline.h
@@ -76,6 +77,7 @@ set (pipelines_H_FILES
 set (pipelines_CPP_FILES 
   pipelines/asiVisu_BCurveKnotsPipeline.cpp
   pipelines/asiVisu_BCurvePolesPipeline.cpp
+  pipelines/asiVisu_BSurfPolesPipeline.cpp
   pipelines/asiVisu_CurvePipeline.cpp
   pipelines/asiVisu_EdgeCurvePipeline.cpp
   pipelines/asiVisu_EdgeDomainPipeline.cpp
@@ -183,13 +185,13 @@ set (providers_H_FILES
   providers/asiVisu_PartDataProvider.h
   providers/asiVisu_PointsDataProvider.h
   providers/asiVisu_ShapeDataProvider.h
+  providers/asiVisu_SurfaceDataProvider.h
   providers/asiVisu_TriangulationDataProvider.h
   providers/asiVisu_VectorsDataProvider.h
 )
 set (providers_CPP_FILES 
   providers/asiVisu_ContourDataProvider.cpp
   providers/asiVisu_ContourPointsDataProvider.cpp
-  providers/asiVisu_CurveDataProvider.cpp
   providers/asiVisu_DataProvider.cpp
   providers/asiVisu_EdgeDataProvider.cpp
   providers/asiVisu_FaceContourDataProvider.cpp
@@ -237,6 +239,7 @@ set (selection_CPP_FILES
 set (sources_H_FILES
   sources/asiVisu_BCurveKnotsSource.h
   sources/asiVisu_BCurvePolesSource.h
+  sources/asiVisu_BSurfPolesSource.h
   sources/asiVisu_CurveSource.h
   sources/asiVisu_FuncLevelsSource2d.h
   sources/asiVisu_FuncLevelsSource3d.h
@@ -255,6 +258,7 @@ set (sources_H_FILES
 set (sources_CPP_FILES 
   sources/asiVisu_BCurveKnotsSource.cpp
   sources/asiVisu_BCurvePolesSource.cpp
+  sources/asiVisu_BSurfPolesSource.cpp
   sources/asiVisu_CurveSource.cpp
   sources/asiVisu_FuncUnivariateSource.cpp
   sources/asiVisu_MeshSource.cpp

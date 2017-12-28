@@ -51,7 +51,7 @@
 //! Creates new Pipeline initialized by default VTK mapper and actor.
 asiVisu_BCurvePolesPipeline::asiVisu_BCurvePolesPipeline()
 //
-: asiVisu_Pipeline      ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
+: asiVisu_Pipeline   ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
   m_bMapperColorsSet (false),
   m_bForced          (false)
 {

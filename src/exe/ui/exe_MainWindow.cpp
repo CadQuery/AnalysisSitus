@@ -145,23 +145,6 @@ void exe_MainWindow::createDockWindows()
   // Common facilities instance
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
 
-  // Object browser
-  QDockWidget* pDockBrowser;
-  {
-    pDockBrowser = new QDockWidget("Data", this);
-    pDockBrowser->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    //
-    m_widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, cf->ProgressNotifier, pDockBrowser);
-    m_widgets.wBrowser->AddAssociatedViewer(cf->ViewerPart);
-    //
-    pDockBrowser->setWidget(m_widgets.wBrowser);
-    //
-    this->addDockWidget(Qt::LeftDockWidgetArea, pDockBrowser);
-
-    // Initialize desktop
-    cf->ObjectBrowser = m_widgets.wBrowser;
-  }
-
   // Domain viewer
   {
     QDockWidget* pDock = new QDockWidget("Domain", this);
@@ -190,6 +173,25 @@ void exe_MainWindow::createDockWindows()
     // Initialize desktop
     cf->ViewerHost = m_widgets.wViewerSurface;
     cf->Prs.Host   = m_widgets.wViewerSurface->PrsMgr();
+  }
+
+  // Object browser
+  QDockWidget* pDockBrowser;
+  {
+    pDockBrowser = new QDockWidget("Data", this);
+    pDockBrowser->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    //
+    m_widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, cf->ProgressNotifier, pDockBrowser);
+    m_widgets.wBrowser->AddAssociatedViewer(cf->ViewerPart);
+    m_widgets.wBrowser->AddAssociatedViewer(cf->ViewerDomain);
+    m_widgets.wBrowser->AddAssociatedViewer(cf->ViewerHost);
+    //
+    pDockBrowser->setWidget(m_widgets.wBrowser);
+    //
+    this->addDockWidget(Qt::LeftDockWidgetArea, pDockBrowser);
+
+    // Initialize desktop
+    cf->ObjectBrowser = m_widgets.wBrowser;
   }
 
   // Now we have everything to initialize an imperative plotter

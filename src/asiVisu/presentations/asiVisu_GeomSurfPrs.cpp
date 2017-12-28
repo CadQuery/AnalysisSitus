@@ -31,12 +31,16 @@
 // Own include
 #include <asiVisu_GeomSurfPrs.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
+#include <asiVisu_BSurfPolesPipeline.h>
 #include <asiVisu_FaceDataProvider.h>
 #include <asiVisu_FaceSurfacePipeline.h>
 #include <asiVisu_MeshResultUtils.h>
 #include <asiVisu_ShadedSurfacePipeline.h>
 #include <asiVisu_Utils.h>
+
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
 
 // VTK includes
 #include <vtkCoordinate.h>
@@ -120,12 +124,11 @@ void CreateImage(vtkSmartPointer<vtkImageData> image,
 //-----------------------------------------------------------------------------
 
 //! Creates a Presentation object for the passed Geometry Surface Node.
-//! \param theNode [in] Geometry Surface Node to create a Presentation for.
-asiVisu_GeomSurfPrs::asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_Prs(theNode)
+//! \param N [in] Geometry Surface Node to create a Presentation for.
+asiVisu_GeomSurfPrs::asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& N)
+: asiVisu_Prs(N)
 {
-  Handle(asiData_SurfNode)
-    face_n = Handle(asiData_SurfNode)::DownCast(theNode);
+  Handle(asiData_SurfNode) face_n = Handle(asiData_SurfNode)::DownCast(N);
 
   // Create Data Provider
   Handle(asiVisu_FaceDataProvider) DP = new asiVisu_FaceDataProvider(face_n);
@@ -150,6 +153,16 @@ asiVisu_GeomSurfPrs::asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& theNode)
   //
   shaded_pl->Actor()->SetVisibility(0);
   shaded_pl->SetStepsNumber(200);
+
+  //---------------------------------------------------------------------------
+  // Control network for B-surfaces
+  //---------------------------------------------------------------------------
+
+  // Pipeline for surface isolines
+  this->addPipeline        ( Pipeline_BPoles, new asiVisu_BSurfPolesPipeline );
+  this->assignDataProvider ( Pipeline_BPoles, DP );
+  //
+  this->GetPipeline(Pipeline_BPoles)->Actor()->SetVisibility(0);
 
   //---------------------------------------------------------------------------
   // Additional widgets
@@ -314,74 +327,18 @@ void asiVisu_GeomSurfPrs::afterInitPipelines()
   // Prepare main title
   TCollection_AsciiString TITLE("Face (#");
   TITLE += F_idx;
-  TITLE += "): ";
-  TITLE += ( S.IsNull() ? "NONE" : S->DynamicType()->Name() );
+  TITLE += ")";
 
-  // Rectangular Trimmed Surface
-  if ( !S.IsNull() && S->IsInstance( STANDARD_TYPE(Geom_RectangularTrimmedSurface) ) )
+  if ( S.IsNull() )
   {
-    Handle(Geom_RectangularTrimmedSurface)
-      RS = Handle(Geom_RectangularTrimmedSurface)::DownCast(S);
-
-    // Let's check basis surface
-    Handle(Geom_Surface) BS = RS->BasisSurface();
-    //
-    TITLE += "\nBasis surface: ";
-    TITLE += ( BS.IsNull() ? "NONE" : BS->DynamicType()->Name() );
+    TITLE += " : NONE";
   }
-
-  // B-surface
-  if ( !S.IsNull() && S->IsInstance( STANDARD_TYPE(Geom_BSplineSurface) ) )
+  if ( !S.IsNull() )
   {
-    Handle(Geom_BSplineSurface) BS = Handle(Geom_BSplineSurface)::DownCast(S);
-
-    // Get surface properties
-    TITLE += "\nU degree: "; TITLE += BS->UDegree();
-    TITLE += "\nV degree: "; TITLE += BS->VDegree();
-    TITLE += "\nContinuity: ";
-    //
-    const GeomAbs_Shape cont = BS->Continuity();
-    switch ( cont )
-    {
-      case GeomAbs_C0 : TITLE += "C0"; break;
-      case GeomAbs_C1 : TITLE += "C1"; break;
-      case GeomAbs_C2 : TITLE += "C2"; break;
-      case GeomAbs_C3 : TITLE += "C3"; break;
-      case GeomAbs_CN : TITLE += "CN"; break;
-      case GeomAbs_G1 : TITLE += "G1"; break;
-      case GeomAbs_G2 : TITLE += "G2"; break;
-      default: break;
-    }
-
-    if ( BS->IsUPeriodic() )
-      TITLE += "\nU-periodic";
-    else
-      TITLE += "\nNot U-periodic";
-
-    if ( BS->IsVPeriodic() )
-      TITLE += "\nV-periodic";
-    else
-      TITLE += "\nNot V-periodic";
-  }
-  else if ( !S.IsNull() && S->IsInstance( STANDARD_TYPE(Geom_CylindricalSurface) ) )
-  {
-    Handle(Geom_CylindricalSurface) CS = Handle(Geom_CylindricalSurface)::DownCast(S);
-    const double r = CS->Radius();
-    TITLE += "\nRadius: "; TITLE += r;
-  }
-  else if ( !S.IsNull() && S->IsInstance( STANDARD_TYPE(Geom_SphericalSurface) ) )
-  {
-    Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
-    const double r = SS->Radius();
-    TITLE += "\nRadius: "; TITLE += r;
-  }
-  else if ( !S.IsNull() && S->IsInstance( STANDARD_TYPE(Geom_ToroidalSurface) ) )
-  {
-    Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
-    const double minr = TS->MinorRadius();
-    const double majr = TS->MajorRadius();
-    TITLE += "\nMinor radius: "; TITLE += minr;
-    TITLE += "\nMajor radius: "; TITLE += majr;
+    TITLE += "\n";
+    std::ostringstream out;
+    asiAlgo_Utils::PrintSurfaceDetails(S, out);
+    TITLE += out.str().c_str();
   }
 
   // Update text on the annotation

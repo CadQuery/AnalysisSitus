@@ -32,7 +32,7 @@
 #define asiVisu_FaceDataProvider_h
 
 // asiVisu includes
-#include <asiVisu_DataProvider.h>
+#include <asiVisu_SurfaceDataProvider.h>
 
 // asiData includes
 #include <asiData_PartNode.h>
@@ -41,7 +41,7 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 
 //! Data provider for face geometry.
-class asiVisu_FaceDataProvider : public asiVisu_DataProvider
+class asiVisu_FaceDataProvider : public asiVisu_SurfaceDataProvider
 {
 public:
 
@@ -65,10 +65,21 @@ public:
     GetFaceIndexAmongSubshapes() const;
 
   asiVisu_EXPORT int
-    GetFaceIndexAmongFaces();
+    GetFaceIndexAmongFaces() const;
 
   asiVisu_EXPORT TopoDS_Face
-    ExtractFace();
+    ExtractFace() const;
+
+public:
+
+  asiVisu_EXPORT virtual Handle(Standard_Type)
+    GetSurfaceType() const;
+
+  asiVisu_EXPORT virtual Handle(Geom_Surface)
+    GetSurface(double& uMin,
+               double& uMax,
+               double& vMin,
+               double& vMax) const;
 
 public:
 

@@ -161,19 +161,7 @@ void asiVisu_GeomCurvePrs::afterInitPipelines()
     // Get curve properties
     TITLE += "\nDegree: "; TITLE += BC->Degree();
     TITLE += "\nContinuity: ";
-    //
-    const GeomAbs_Shape cont = BC->Continuity();
-    switch ( cont )
-    {
-      case GeomAbs_C0 : TITLE += "C0"; break;
-      case GeomAbs_C1 : TITLE += "C1"; break;
-      case GeomAbs_C2 : TITLE += "C2"; break;
-      case GeomAbs_C3 : TITLE += "C3"; break;
-      case GeomAbs_CN : TITLE += "CN"; break;
-      case GeomAbs_G1 : TITLE += "G1"; break;
-      case GeomAbs_G2 : TITLE += "G2"; break;
-      default: break;
-    }
+    TITLE += asiAlgo_Utils::ContinuityToString( BC->Continuity() );
 
     if ( BC->IsPeriodic() )
       TITLE += "\nPeriodic";

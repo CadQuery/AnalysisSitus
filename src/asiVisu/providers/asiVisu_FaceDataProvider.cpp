@@ -35,6 +35,7 @@
 #include <ActData_ParameterFactory.h>
 
 // OCCT includes
+#include <BRep_Tool.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 
@@ -43,7 +44,7 @@
 //! Constructor.
 //! \param face_n [in] source Data Node.
 asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const Handle(asiData_FaceNode)& face_n)
-: asiVisu_DataProvider()
+: asiVisu_SurfaceDataProvider()
 {
   this->init(face_n);
 }
@@ -53,7 +54,7 @@ asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const Handle(asiData_FaceNode
 //! Constructor.
 //! \param surf_n [in] source Data Node.
 asiVisu_FaceDataProvider::asiVisu_FaceDataProvider(const Handle(asiData_SurfNode)& surf_n)
-: asiVisu_DataProvider()
+: asiVisu_SurfaceDataProvider()
 {
   this->init(surf_n);
 }
@@ -69,6 +70,8 @@ ActAPI_DataObjectId asiVisu_FaceDataProvider::GetNodeID() const
   return m_node->GetId();
 }
 
+//-----------------------------------------------------------------------------
+
 //! \return global index of the OCCT face to be visualized.
 int asiVisu_FaceDataProvider::GetFaceIndexAmongSubshapes() const
 {
@@ -82,8 +85,10 @@ int asiVisu_FaceDataProvider::GetFaceIndexAmongSubshapes() const
   return globalId;
 }
 
+//-----------------------------------------------------------------------------
+
 //! \return local index of the OCCT face to be visualized.
-int asiVisu_FaceDataProvider::GetFaceIndexAmongFaces()
+int asiVisu_FaceDataProvider::GetFaceIndexAmongFaces() const
 {
   const int globalId = this->GetFaceIndexAmongSubshapes();
 
@@ -101,8 +106,10 @@ int asiVisu_FaceDataProvider::GetFaceIndexAmongFaces()
   return 0;
 }
 
+//-----------------------------------------------------------------------------
+
 //! \return topological face extracted from the part by its stored ID.
-TopoDS_Face asiVisu_FaceDataProvider::ExtractFace()
+TopoDS_Face asiVisu_FaceDataProvider::ExtractFace() const
 {
   const int fIdx = this->GetFaceIndexAmongSubshapes();
   if ( !fIdx )
@@ -119,6 +126,52 @@ TopoDS_Face asiVisu_FaceDataProvider::ExtractFace()
   // Access face by the stored index
   const TopoDS_Face& F = TopoDS::Face(shape);
   return F;
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return surface type.
+Handle(Standard_Type) asiVisu_FaceDataProvider::GetSurfaceType() const
+{
+  // Get face
+  TopoDS_Face F = this->ExtractFace();
+  //
+  if ( F.IsNull() )
+    return NULL;
+
+  // Get host surface
+  Handle(Geom_Surface) surf = BRep_Tool::Surface(F);
+
+  return surf->DynamicType();
+}
+
+//-----------------------------------------------------------------------------
+
+// Accessor for the parametric surface.
+//! \param uMin [out] min bound for U curvilinear axis.
+//! \param uMax [out] max bound for U curvilinear axis.
+//! \param vMin [out] min bound for V curvilinear axis.
+//! \param vMax [out] max bound for V curvilinear axis.
+//! \return surface.
+Handle(Geom_Surface)
+  asiVisu_FaceDataProvider::GetSurface(double& uMin,
+                                       double& uMax,
+                                       double& vMin,
+                                       double& vMax) const
+{
+  // Get face
+  TopoDS_Face F = this->ExtractFace();
+  //
+  if ( F.IsNull() )
+    return NULL;
+
+  // Get host surface
+  Handle(Geom_Surface) surf = BRep_Tool::Surface(F);
+
+  // Initialize parametric bounds
+  surf->Bounds(uMin, uMax, vMin, vMax);
+
+  return surf;
 }
 
 //-----------------------------------------------------------------------------

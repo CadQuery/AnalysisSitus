@@ -39,7 +39,7 @@
 //! Constructor.
 //! \param N [in] source Node.
 asiVisu_IVSurfaceDataProvider::asiVisu_IVSurfaceDataProvider(const Handle(ActAPI_INode)& N)
-: asiVisu_DataProvider(),
+: asiVisu_SurfaceDataProvider(),
   m_node(N)
 {}
 
@@ -53,12 +53,31 @@ ActAPI_DataObjectId asiVisu_IVSurfaceDataProvider::GetNodeID() const
 
 //-----------------------------------------------------------------------------
 
+//! \return surface type.
+Handle(Standard_Type) asiVisu_IVSurfaceDataProvider::GetSurfaceType() const
+{
+  Handle(asiData_IVSurfaceNode)
+    surface_n = Handle(asiData_IVSurfaceNode)::DownCast(m_node);
+  //
+  if ( surface_n.IsNull() || !surface_n->IsWellFormed() )
+    return NULL;
+
+  return surface_n->GetSurface()->DynamicType();
+}
+
+//-----------------------------------------------------------------------------
+
 // Accessor for the parametric surface.
-//! \param uLimit [out] absolute bound for U curvilinear axis.
-//! \param vLimit [out] absolute bound for V curvilinear axis.
+//! \param uMin [out] min bound for U curvilinear axis.
+//! \param uMax [out] max bound for U curvilinear axis.
+//! \param vMin [out] min bound for V curvilinear axis.
+//! \param vMax [out] max bound for V curvilinear axis.
 //! \return surface.
 Handle(Geom_Surface)
-  asiVisu_IVSurfaceDataProvider::GetSurface(double& uLimit, double& vLimit) const
+  asiVisu_IVSurfaceDataProvider::GetSurface(double& uMin,
+                                            double& uMax,
+                                            double& vMin,
+                                            double& vMax) const
 {
   Handle(asiData_IVSurfaceNode)
     surface_n = Handle(asiData_IVSurfaceNode)::DownCast(m_node);
@@ -67,7 +86,14 @@ Handle(Geom_Surface)
     return NULL;
 
   // Access data from the Node
+  double uLimit, vLimit;
   surface_n->GetLimits(uLimit, vLimit);
+  //
+  uMin = -uLimit;
+  uMax =  uLimit;
+  vMin = -vLimit;
+  vMax =  vLimit;
+
   return surface_n->GetSurface();
 }
 

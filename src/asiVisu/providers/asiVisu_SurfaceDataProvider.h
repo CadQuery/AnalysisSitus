@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 10 February 2016
+// Created on: 28 December 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -28,5 +28,31 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiVisu_CurveDataProvider.h>
+#ifndef asiVisu_SurfaceDataProvider_h
+#define asiVisu_SurfaceDataProvider_h
+
+// asiVisu includes
+#include <asiVisu_DataProvider.h>
+
+// OCCT includes
+#include <Geom_Surface.hxx>
+
+//! Data provider for a parametric surface.
+class asiVisu_SurfaceDataProvider : public asiVisu_DataProvider
+{
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_SurfaceDataProvider, asiVisu_DataProvider)
+
+public:
+
+  virtual Handle(Standard_Type) GetSurfaceType ()             const = 0;
+  virtual Handle(Geom_Surface)  GetSurface     (double& uMin,
+                                                double& uMax,
+                                                double& vMin,
+                                                double& vMax) const = 0;
+
+};
+
+#endif

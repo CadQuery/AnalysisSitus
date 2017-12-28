@@ -31,11 +31,11 @@
 #ifndef asiVisu_GeomSurfPrs_h
 #define asiVisu_GeomSurfPrs_h
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_Prs.h>
 #include <asiVisu_Utils.h>
 
-// A-Situs (geometry) includes
+// asiData includes
 #include <asiData_PartNode.h>
 
 // VTK includes
@@ -65,7 +65,8 @@ public:
   enum PipelineId
   {
     Pipeline_Main = 1,
-    Pipeline_Shaded
+    Pipeline_Shaded,
+    Pipeline_BPoles // For b-spline surfaces only.
   };
 
 public:

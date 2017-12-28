@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 11 April 2016
+// Created on: 28 December 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -28,35 +28,71 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiVisu_IVSurfacePrs.h>
+#ifndef asiVisu_BSurfPolesSource_h
+#define asiVisu_BSurfPolesSource_h
 
 // asiVisu includes
-#include <asiVisu_IVSurfacePipeline.h>
-#include <asiVisu_IVSurfaceDataProvider.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
-#include <vtkMapper.h>
-#include <vtkProperty.h>
+#include <vtkPolyDataAlgorithm.h>
+#include <vtkSmartPointer.h>
+#include <vtkType.h>
 
-//! Creates a Presentation object for the passed Node.
-//! \param theNode [in] Node to create a Presentation for.
-asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_IVPrs(theNode)
+// OCCT includes
+#include <Geom_BSplineSurface.hxx>
+#include <TColgp_HArray2OfPnt.hxx>
+
+//! Data source giving a control net of a b-surface.
+class asiVisu_BSurfPolesSource : public vtkPolyDataAlgorithm
 {
-  // Create Data Provider
-  Handle(asiVisu_IVSurfaceDataProvider) DP = new asiVisu_IVSurfaceDataProvider(theNode);
+// RTTI and construction:
+public:
 
-  // Pipeline for contours
-  this->addPipeline        ( Pipeline_Main, new asiVisu_IVSurfacePipeline );
-  this->assignDataProvider ( Pipeline_Main, DP );
-}
+  vtkTypeMacro(asiVisu_BSurfPolesSource, vtkPolyDataAlgorithm);
+  static asiVisu_BSurfPolesSource* New();
 
-//! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
-//! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_IVSurfacePrs::Instance(const Handle(ActAPI_INode)& theNode)
-{
-  return new asiVisu_IVSurfacePrs(theNode);
-}
+// Kernel methods:
+public:
+
+  bool SetInputSurface(const Handle(Geom_BSplineSurface)& bsurf);
+
+protected:
+
+  virtual int RequestData(vtkInformation*        request,
+                          vtkInformationVector** inputVector,
+                          vtkInformationVector*  outputVector);
+
+protected:
+
+  vtkIdType
+    registerGridPoint(const int    row,
+                      const int    col,
+                      vtkPolyData* polyData);
+
+  vtkIdType
+    registerLine(const vtkIdType pid0,
+                 const vtkIdType pid1,
+                 vtkPolyData*    polyData);
+
+  vtkIdType
+    registerVertex(const vtkIdType pid,
+                   vtkPolyData*    polyData);
+
+protected:
+
+  asiVisu_BSurfPolesSource();
+  ~asiVisu_BSurfPolesSource();
+
+private:
+
+  asiVisu_BSurfPolesSource(const asiVisu_BSurfPolesSource&);
+  asiVisu_BSurfPolesSource& operator=(const asiVisu_BSurfPolesSource&);
+
+private:
+
+  Handle(TColgp_HArray2OfPnt) m_poles; //!< Poles to visualize.
+
+};
+
+#endif

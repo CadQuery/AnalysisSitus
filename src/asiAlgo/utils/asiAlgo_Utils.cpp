@@ -2074,3 +2074,87 @@ bool asiAlgo_Utils::GetFaceAnyInteriorPoint(const TopoDS_Face& face,
   }
   return false;
 }
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Utils::PrintSurfaceDetails(const Handle(Geom_Surface)& surf,
+                                        Standard_OStream&           out)
+{
+  // Print common header.
+  out << "Surface type: " << surf->DynamicType()->Name() << "\n";
+
+  // Rectangular Trimmed Surface.
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_RectangularTrimmedSurface) ) )
+  {
+    Handle(Geom_RectangularTrimmedSurface)
+      RS = Handle(Geom_RectangularTrimmedSurface)::DownCast(surf);
+
+    // Let's check basis surface.
+    Handle(Geom_Surface) BS = RS->BasisSurface();
+    //
+    out << "Basis surface: ";
+    out << ( BS.IsNull() ? "NONE" : BS->DynamicType()->Name() ) << "\n";
+  }
+
+  // B-surface
+  else if ( surf->IsKind( STANDARD_TYPE(Geom_BSplineSurface) ) )
+  {
+    // Downcast.
+    Handle(Geom_BSplineSurface)
+      bsurf = Handle(Geom_BSplineSurface)::DownCast(surf);
+
+    out << "U degree: "   << bsurf->UDegree()                          << "\n";
+    out << "V degree: "   << bsurf->VDegree()                          << "\n";
+    out << "Continuity: " << ContinuityToString( bsurf->Continuity() ) << "\n";
+
+    if ( bsurf->IsUPeriodic() )
+      out << "U-periodic\n";
+    else
+      out << "Not U-periodic\n";
+
+    if ( bsurf->IsVPeriodic() )
+      out << "V-periodic\n";
+    else
+      out << "Not V-periodic\n";
+
+    // Get number of control points.
+    const int numPoles = bsurf->Poles().ColLength() * bsurf->Poles().RowLength();
+    //
+    out << "Num. of poles: " << numPoles << "\n";
+  }
+
+  // Cylindrical surface.
+  else if ( surf->IsKind( STANDARD_TYPE(Geom_CylindricalSurface) ) )
+  {
+    Handle(Geom_CylindricalSurface)
+      CS = Handle(Geom_CylindricalSurface)::DownCast(surf);
+
+    const double r = CS->Radius();
+    //
+    out << "Radius: " << r << "\n";
+  }
+
+  // Spherical surface.
+  else if ( surf->IsKind( STANDARD_TYPE(Geom_SphericalSurface) ) )
+  {
+    Handle(Geom_SphericalSurface)
+      SS = Handle(Geom_SphericalSurface)::DownCast(surf);
+
+    const double r = SS->Radius();
+    //
+    out << "Radius: " << r << "\n";
+  }
+
+  // Toroidal surface.
+  else if ( surf->IsKind( STANDARD_TYPE(Geom_ToroidalSurface) ) )
+  {
+    Handle(Geom_ToroidalSurface)
+      TS = Handle(Geom_ToroidalSurface)::DownCast(surf);
+
+    const double minr = TS->MinorRadius();
+    const double majr = TS->MajorRadius();
+    //
+    out << "\nMinor radius: " << minr << "\n";
+    out << "\nMajor radius: " << majr << "\n";
+  }
+}

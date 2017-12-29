@@ -55,6 +55,9 @@
 #include <asiVisu_IVTextItemPrs.h>
 #include <asiVisu_IVTopoItemPrs.h>
 
+// asiAlgo includes
+#include <asiAlgo_FileFormat.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QApplication>
@@ -81,6 +84,7 @@
 #include <OSD_Environment.hxx>
 
 // Qt includes
+#include <QDir>
 #include <QTextStream>
 
 // Activate object factories
@@ -137,6 +141,62 @@ int main(int argc, char** argv)
   //
   pMainWindow->move(center_x/2, center_y/2); // Move to a handy position
   pMainWindow->show();
+
+  //---------------------------------------------------------------------------
+  // Get command line arguments
+  //---------------------------------------------------------------------------
+
+  for ( int i = 0; i < argc; ++i )
+    std::cout << "Passed arg[" << i << "]: " << argv[i] << std::endl;
+
+  if ( argc == 2 )
+  {
+    QStringList qtArgs = QApplication::arguments();
+    //
+    TCollection_AsciiString
+      filename = QStr2AsciiStr( QDir::fromNativeSeparators( qtArgs.at(1) ) );
+
+    // Get Tcl interpeter.
+    const Handle(asiTcl_Interp)& interp = pMainWindow->GetConsole()->GetInterp();
+
+    // Auto-recognize file format
+    asiAlgo_FileFormat
+      format = asiAlgo_FileFormatTools::FormatFromFileContent(filename);
+    //
+    if ( format == FileFormat_Unknown )
+    {
+      // Recognize file format from file extension
+      format = asiAlgo_FileFormatTools::FormatFromFileExtension(filename);
+    }
+
+    // Prepare Tcl command.
+    TCollection_AsciiString cmd;
+    //
+    if ( format == FileFormat_STEP )
+    {
+      cmd = "load-step"; cmd += " "; cmd += filename;
+    }
+    else if ( format == FileFormat_BREP )
+    {
+      cmd = "load-brep"; cmd += " "; cmd += filename;
+    }
+    else
+      std::cout << "Unexpected or not supported file format." << std::endl;
+
+    // Execute command.
+    if ( !cmd.IsEmpty() )
+    {
+      QApplication::processEvents(QEventLoop::AllEvents, 100);
+
+      if ( interp->Eval(cmd) != TCL_OK )
+        std::cout << "Tcl finished with error." << std::endl;
+
+      QApplication::processEvents(QEventLoop::AllEvents, 100);
+
+      if ( interp->Eval("fit") != TCL_OK )
+        std::cout << "Tcl finished with error." << std::endl;
+    }
+  }
 
   //---------------------------------------------------------------------------
   // Run event loop

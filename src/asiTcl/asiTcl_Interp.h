@@ -193,6 +193,78 @@ public:
     IsKeyword(const TCollection_AsciiString& opt,
               const TCollection_AsciiString& key) const;
 
+  //! Appends the passed string to the result of command execution.
+  //! \param[in] str string to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    Append(const char* str);
+
+  //! Appends the passed string to the result of command execution.
+  //! \param[in] str string to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    operator<<(const char* str);
+
+  //! Appends the passed string to the result of command execution.
+  //! \param[in] str string to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    Append(const TCollection_AsciiString& str);
+
+  //! Appends the passed string to the result of command execution.
+  //! \param[in] str string to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    operator<<(const TCollection_AsciiString& str);
+
+  //! Appends the passed string to the result of command execution.
+  //! \param[in] str string to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    Append(const TCollection_ExtendedString& str);
+
+  //! Appends the passed string to the result of command execution.
+  //! \param[in] str string to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    operator<<(const TCollection_ExtendedString& str);
+
+  //! Appends the passed string to the result of command execution.
+  //! \param[in] str string to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    Append(const std::string& str);
+
+  //! Appends the passed string to the result of command execution.
+  //! \param[in] str string to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    operator<<(const std::string& str);
+
+  //! Appends the passed integer to the result of command execution.
+  //! \param[in] value integer value to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    Append(const int value);
+
+  //! Appends the passed integer to the result of command execution.
+  //! \param[in] value integer value to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    operator<<(const int value);
+
+  //! Appends the passed double to the result of command execution.
+  //! \param[in] value double value to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    Append(const double value);
+
+  //! Appends the passed double to the result of command execution.
+  //! \param[in] value double value to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    operator<<(const double value);
+
 protected:
 
   //! Internal method to add command to Tcl interpreter.

@@ -39,6 +39,31 @@
 
 // asiAlgo includes
 #include <asiAlgo_STEP.h>
+#include <asiAlgo_Utils.h>
+
+//-----------------------------------------------------------------------------
+
+void onModelLoaded(const TopoDS_Shape& loadedShape)
+{
+    // Clear viewers
+  cmdEngine::ClearViewers();
+
+  // Clear data
+  cmdEngine::model->Clear();
+
+  // Modify Data Model
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(loadedShape);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update viewer
+  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  // Update object browser
+  cmdEngine::cf->ObjectBrowser->Populate();
+}
 
 //-----------------------------------------------------------------------------
 
@@ -61,24 +86,33 @@ int ENGINE_LoadStep(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
-  // Clear viewers
-  cmdEngine::ClearViewers();
+  onModelLoaded(shape);
 
-  // Clear data
-  cmdEngine::model->Clear();
+  return TCL_OK;
+}
 
-  // Modify Data Model
-  cmdEngine::model->OpenCommand();
+//-----------------------------------------------------------------------------
+
+int ENGINE_LoadBRep(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 2 )
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(shape);
+    return interp->ErrorOnWrongArgs(argv[0]);
   }
-  cmdEngine::model->CommitCommand();
 
-  // Update viewer
-  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  TCollection_AsciiString filename(argv[1]);
 
-  // Update object browser
-  cmdEngine::cf->ObjectBrowser->Populate();
+  // Read BREP
+  TopoDS_Shape shape;
+  if ( !asiAlgo_Utils::ReadBRep(filename, shape) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot read BREP file.");
+    return TCL_OK;
+  }
+
+  onModelLoaded(shape);
 
   return TCL_OK;
 }
@@ -99,4 +133,12 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
     "\t Loads STEP file to the active part.",
     //
     __FILE__, group, ENGINE_LoadStep);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("load-brep",
+    //
+    "load-brep filename\n"
+    "\t Loads BREP file to the active part.",
+    //
+    __FILE__, group, ENGINE_LoadBRep);
 }

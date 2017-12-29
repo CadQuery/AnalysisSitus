@@ -58,6 +58,14 @@ public:
 
 public:
 
+  //! \return Tcl console.
+  asiUI_Console* GetConsole() const
+  {
+    return m_widgets.wConsole;
+  }
+
+public:
+
   void closeEvent(QCloseEvent* evt);
 
 private:

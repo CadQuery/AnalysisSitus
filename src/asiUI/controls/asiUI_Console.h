@@ -59,6 +59,14 @@ public:
 
   QSize sizeHint() const;
 
+public:
+
+  //! \return Tcl interpreter.
+  const Handle(asiTcl_Interp)& GetInterp() const
+  {
+    return m_interp;
+  }
+
 protected:
 
   virtual void keyPressEvent(QKeyEvent* e);

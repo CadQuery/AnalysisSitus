@@ -245,6 +245,108 @@ bool asiTcl_Interp::IsKeyword(const TCollection_AsciiString& opt,
 
 //-----------------------------------------------------------------------------
 
+asiTcl_Interp& asiTcl_Interp::Append(const char* str)
+{
+  // Convert string to UTF-8 format for Tcl.
+  Tcl_DString TclString;
+  Tcl_ExternalToUtfDString(NULL, str, -1, &TclString);
+  Tcl_AppendResult(m_pInterp, Tcl_DStringValue(&TclString), (const char*) 0);
+  Tcl_DStringFree(&TclString);
+  //
+  return *this;
+}
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp& asiTcl_Interp::operator<<(const char* str)
+{
+  return this->Append(str);
+}
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp& asiTcl_Interp::Append(const TCollection_AsciiString& str)
+{
+  return this->Append( str.ToCString() );
+}
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp& asiTcl_Interp::operator<<(const TCollection_AsciiString& str)
+{
+  return this->Append(str);
+}
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp& asiTcl_Interp::Append(const TCollection_ExtendedString& str)
+{
+  // Convert string to UTF-8 format for Tcl
+  char *buff = new char[str.LengthOfCString() + 1];
+  str.ToUTF8CString(buff);
+  Tcl_AppendResult(m_pInterp, buff, (const char*) 0);
+  delete[] buff;
+  //
+  return *this;
+}
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp& asiTcl_Interp::operator<<(const TCollection_ExtendedString& str)
+{
+  return this->Append(str);
+}
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp& asiTcl_Interp::Append(const std::string& str)
+{
+  return this->Append( str.c_str() );
+}
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp& asiTcl_Interp::operator<<(const std::string& str)
+{
+  return this->Append(str);
+}
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp& asiTcl_Interp::Append(const int value)
+{
+  char c[100];
+  Sprintf(c, "%d", value);
+  Tcl_AppendResult(m_pInterp, c, (const char*) 0);
+  return *this;
+}
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp& asiTcl_Interp::operator<<(const int value)
+{
+  return this->Append(value);
+}
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp& asiTcl_Interp::Append(const double value)
+{
+  char s[100];
+  Sprintf(s, "%.17g", value);
+  Tcl_AppendResult(m_pInterp, s, (const char*) 0);
+  return *this;
+}
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp& asiTcl_Interp::operator<<(const double value)
+{
+  return this->Append(value);
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiTcl_Interp::addCommand(const TCollection_AsciiString& name,
                                const TCollection_AsciiString& help,
                                const TCollection_AsciiString& filename,

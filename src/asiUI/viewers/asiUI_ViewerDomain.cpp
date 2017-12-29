@@ -157,6 +157,11 @@ asiUI_ViewerDomain::asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
   textActor->GetTextProperty()->SetJustificationToLeft();
   textActor->GetTextProperty()->SetVerticalJustificationToTop();
 
+  // Enable context menu
+  pViewer->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect( pViewer, SIGNAL ( customContextMenuRequested(const QPoint&) ),
+           this,    SLOT   ( onContextMenu(const QPoint&) ) );
+
   this->onResetView();
 }
 
@@ -412,4 +417,14 @@ void asiUI_ViewerDomain::onJoinEdges()
   // Update viewer
   this->PrsMgr()->DeleteAllPresentations();
   this->PrsMgr()->Actualize( N.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ViewerDomain::onContextMenu(const QPoint& pos)
+{
+  QVTKWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
+  QPoint      globalPos = pViewer->mapToGlobal(pos);
+
+  emit contextMenu(globalPos);
 }

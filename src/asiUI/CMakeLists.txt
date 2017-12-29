@@ -172,6 +172,7 @@ set (viewers_H_UI_FILES
   viewers/asiUI_ViewerDomainListener.h
   viewers/asiUI_ViewerFuncUnivariate.h
   viewers/asiUI_ViewerHost.h
+  viewers/asiUI_ViewerHostListener.h
   viewers/asiUI_ViewerPart.h
   viewers/asiUI_ViewerPartListener.h
   viewers/asiUI_VtkWindow.h
@@ -184,6 +185,7 @@ set (viewers_CPP_FILES
   viewers/asiUI_ViewerDomainListener.cpp
   viewers/asiUI_ViewerFuncUnivariate.cpp
   viewers/asiUI_ViewerHost.cpp
+  viewers/asiUI_ViewerHostListener.cpp
   viewers/asiUI_ViewerPart.cpp
   viewers/asiUI_ViewerPartListener.cpp
   viewers/asiUI_VtkWindow.cpp

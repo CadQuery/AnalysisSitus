@@ -36,6 +36,8 @@
 #include <asiUI_ControlsFeature.h>
 #include <asiUI_ControlsPartListener.h>
 #include <asiUI_ObjectBrowser.h>
+#include <asiUI_ViewerDomainListener.h>
+#include <asiUI_ViewerHostListener.h>
 #include <asiUI_ViewerPartListener.h>
 
 // Qt includes
@@ -107,15 +109,21 @@ private:
   {
     asiUI_ControlsPartListener* pControlsPart; //!< Listener for part controls.
     asiUI_ViewerPartListener*   pViewerPart;   //!< Listener for part viewer.
+    asiUI_ViewerDomainListener* pViewerDomain; //!< Listener for domain viewer.
+    asiUI_ViewerHostListener*   pViewerHost;   //!< Listener for host viewer.
 
     t_listeners() : pControlsPart (NULL),
-                    pViewerPart   (NULL)
+                    pViewerPart   (NULL),
+                    pViewerDomain (NULL),
+                    pViewerHost   (NULL)
     {}
 
     void Release()
     {
       delete pControlsPart; pControlsPart = NULL;
       delete pViewerPart;   pViewerPart   = NULL;
+      delete pViewerDomain; pViewerDomain = NULL;
+      delete pViewerHost;   pViewerHost   = NULL;
     }
   };
 

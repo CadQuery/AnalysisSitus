@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 07 November 2016 (99 years of October Revolution)
+// Created on: 29 December 2017
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -28,13 +28,14 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_ViewerPartListener_h
-#define asiUI_ViewerPartListener_h
+#ifndef asiUI_Viewer3dListener_h
+#define asiUI_Viewer3dListener_h
 
 // asiUI includes
-#include <asiUI_ViewerDomain.h>
-#include <asiUI_ViewerHost.h>
-#include <asiUI_ViewerPart.h>
+#include <asiUI_Viewer.h>
+
+// asiEngine includes
+#include <asiEngine_Model.h>
 
 // Active Data includes
 #include <ActAPI_IPlotter.h>
@@ -44,22 +45,20 @@
 #include <QMenu>
 #pragma warning(pop)
 
-//! Default slots for part viewer.
-class asiUI_EXPORT asiUI_ViewerPartListener : public QObject
+//! Default slots for 3D viewers.
+class asiUI_EXPORT asiUI_Viewer3dListener : public QObject
 {
   Q_OBJECT
 
 public:
 
-  asiUI_ViewerPartListener(asiUI_ViewerPart*              wViewerPart,
-                           asiUI_ViewerDomain*            wViewerDomain,
-                           asiUI_ViewerHost*              wViewerSurface,
-                           const Handle(asiEngine_Model)& model,
-                           ActAPI_ProgressEntry           progress,
-                           ActAPI_PlotterEntry            plotter);
+  asiUI_Viewer3dListener(asiUI_Viewer*                  pViewer,
+                         const Handle(asiEngine_Model)& model,
+                         ActAPI_ProgressEntry           progress,
+                         ActAPI_PlotterEntry            plotter);
 
   virtual
-    ~asiUI_ViewerPartListener();
+    ~asiUI_Viewer3dListener();
 
 public:
 
@@ -68,13 +67,7 @@ public:
 
 protected slots:
 
-  void
-    onFacePicked(const asiVisu_PickResult& pickRes);
-
-  void
-    onEdgePicked(const asiVisu_PickResult& pickRes);
-
-  void
+  virtual void
     onContextMenu(const QPoint&);
 
 protected:
@@ -87,12 +80,10 @@ protected:
 
 protected:
 
-  asiUI_ViewerPart*       m_wViewerPart;    //!< Part viewer.
-  asiUI_ViewerDomain*     m_wViewerDomain;  //!< Face domain viewer.
-  asiUI_ViewerHost*       m_wViewerSurface; //!< Surface viewer.
-  Handle(asiEngine_Model) m_model;          //!< Data Model instance.
-  ActAPI_ProgressEntry    m_progress;       //!< Progress notifier.
-  ActAPI_PlotterEntry     m_plotter;        //!< Imperative plotter.
+  asiUI_Viewer*           m_pViewer;  //!< Manager 3D viewer.
+  Handle(asiEngine_Model) m_model;    //!< Data Model instance.
+  ActAPI_ProgressEntry    m_progress; //!< Progress notifier.
+  ActAPI_PlotterEntry     m_plotter;  //!< Imperative plotter.
 
 };
 

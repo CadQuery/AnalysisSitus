@@ -71,6 +71,7 @@ public slots:
   void onDomainPicked();
   void onKillEdges();
   void onJoinEdges();
+  void onContextMenu(const QPoint&);
 
 signals:
 

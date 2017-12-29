@@ -104,7 +104,6 @@ signals:
   void pointPicked(const double, const double, const double);
   void facePicked(const asiVisu_PickResult&);
   void edgePicked(const asiVisu_PickResult&);
-  void contextMenu(const QPoint&);
 
 protected:
 

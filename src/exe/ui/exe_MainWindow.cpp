@@ -251,9 +251,27 @@ void exe_MainWindow::createDockWindows()
                                                          cf->ProgressNotifier,
                                                          cf->Plotter);
 
+  // Listener for domain viewer
+  m_listeners.pViewerDomain = new asiUI_ViewerDomainListener(m_widgets.wViewerPart,
+                                                             m_widgets.wViewerDomain,
+                                                             m_widgets.wViewerSurface,
+                                                             cf->Model,
+                                                             cf->ProgressNotifier,
+                                                             cf->Plotter);
+
+  // Listener for host viewer
+  m_listeners.pViewerHost = new asiUI_ViewerHostListener(m_widgets.wViewerPart,
+                                                         m_widgets.wViewerDomain,
+                                                         m_widgets.wViewerSurface,
+                                                         cf->Model,
+                                                         cf->ProgressNotifier,
+                                                         cf->Plotter);
+
   // Signals-slots
-  m_listeners.pControlsPart->Connect();
-  m_listeners.pViewerPart->Connect();
+  m_listeners.pControlsPart ->Connect();
+  m_listeners.pViewerPart   ->Connect();
+  m_listeners.pViewerDomain ->Connect();
+  m_listeners.pViewerHost   ->Connect();
 
   // Log window
   QDockWidget* pDockLogWindow;

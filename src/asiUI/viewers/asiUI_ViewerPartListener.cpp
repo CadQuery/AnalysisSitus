@@ -56,25 +56,25 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting all necessary facilities.
-//! \param wViewerPart    [in] part viewer.
-//! \param wViewerDomain  [in] domain viewer.
-//! \param wViewerSurface [in] surface viewer.
-//! \param model          [in] Data Model instance.
-//! \param progress       [in] progress notifier.
-//! \param plotter        [in] imperative plotter.
+//! \param[in] wViewerPart   part viewer.
+//! \param[in] wViewerDomain domain viewer.
+//! \param[in] wViewerHost   host viewer.
+//! \param[in] model         Data Model instance.
+//! \param[in] progress      progress notifier.
+//! \param[in] plotter       imperative plotter.
 asiUI_ViewerPartListener::asiUI_ViewerPartListener(asiUI_ViewerPart*              wViewerPart,
                                                    asiUI_ViewerDomain*            wViewerDomain,
-                                                   asiUI_ViewerHost*              wViewerSurface,
+                                                   asiUI_ViewerHost*              wViewerHost,
                                                    const Handle(asiEngine_Model)& model,
                                                    ActAPI_ProgressEntry           progress,
                                                    ActAPI_PlotterEntry            plotter)
-: QObject          (),
-  m_wViewerPart    (wViewerPart),
-  m_wViewerDomain  (wViewerDomain),
-  m_wViewerSurface (wViewerSurface),
-  m_model          (model),
-  m_progress       (progress),
-  m_plotter        (plotter)
+: asiUI_Viewer3dListener (wViewerPart, model, progress, plotter),
+  m_wViewerDomain        (wViewerDomain),
+  m_wViewerHost          (wViewerHost),
+  m_pSaveBREPAction      (NULL),
+  m_pShowNormsAction     (NULL),
+  m_pInvertFacesAction   (NULL),
+  m_pShowOriContour      (NULL)
 {}
 
 //-----------------------------------------------------------------------------
@@ -88,20 +88,19 @@ asiUI_ViewerPartListener::~asiUI_ViewerPartListener()
 //! Connects this listener to the target widget.
 void asiUI_ViewerPartListener::Connect()
 {
-  connect( m_wViewerPart, SIGNAL ( facePicked(const asiVisu_PickResult&) ),
-           this,          SLOT   ( onFacePicked(const asiVisu_PickResult&) ) );
+  asiUI_Viewer3dListener::Connect(); // Connect basic reactions.
+
+  connect( m_pViewer, SIGNAL ( facePicked(const asiVisu_PickResult&) ),
+           this,      SLOT   ( onFacePicked(const asiVisu_PickResult&) ) );
   //
-  connect( m_wViewerPart, SIGNAL ( edgePicked(const asiVisu_PickResult&) ),
-           this,          SLOT   ( onEdgePicked(const asiVisu_PickResult&) ) );
-  //
-  connect( m_wViewerPart, SIGNAL ( contextMenu(const QPoint&) ),
-           this,          SLOT   ( onContextMenu(const QPoint&) ) );
+  connect( m_pViewer, SIGNAL ( edgePicked(const asiVisu_PickResult&) ),
+           this,      SLOT   ( onEdgePicked(const asiVisu_PickResult&) ) );
 }
 
 //-----------------------------------------------------------------------------
 
 //! Reaction on face picking.
-//! \param pickRes [in] pick result.
+//! \param[in] pickRes pick result.
 void asiUI_ViewerPartListener::onFacePicked(const asiVisu_PickResult& pickRes)
 {
   // Check if part is picked
@@ -115,14 +114,14 @@ void asiUI_ViewerPartListener::onFacePicked(const asiVisu_PickResult& pickRes)
   if ( m_wViewerDomain )
     m_wViewerDomain->PrsMgr()->Actualize(geom_n->GetFaceRepresentation().get(), false, true);
   //
-  if ( m_wViewerSurface )
-    m_wViewerSurface->PrsMgr()->Actualize(geom_n->GetSurfaceRepresentation().get(), false, true);
+  if ( m_wViewerHost )
+    m_wViewerHost->PrsMgr()->Actualize(geom_n->GetSurfaceRepresentation().get(), false, true);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Reaction on edge picking.
-//! \param pickRes [in] pick result.
+//! \param[in] pickRes pick result.
 void asiUI_ViewerPartListener::onEdgePicked(const asiVisu_PickResult& pickRes)
 {
   // Check if part is picked
@@ -136,19 +135,19 @@ void asiUI_ViewerPartListener::onEdgePicked(const asiVisu_PickResult& pickRes)
   if ( m_wViewerDomain )
     m_wViewerDomain->PrsMgr()->Actualize(geom_n->GetEdgeRepresentation().get(), false, true);
   //
-  if ( m_wViewerSurface )
-    m_wViewerSurface->PrsMgr()->Actualize(geom_n->GetCurveRepresentation().get(), false, true);
+  if ( m_wViewerHost )
+    m_wViewerHost->PrsMgr()->Actualize(geom_n->GetCurveRepresentation().get(), false, true);
 }
 
 //-----------------------------------------------------------------------------
 
-//! Reaction on context menu invocation.
-//! \param globalPos [in] click position in global coordinates.
-void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
+//! Populates the passed Qt menu with actions specific to Part viewer.
+//! \param[in] menu Qt menu to populate.
+void asiUI_ViewerPartListener::populateMenu(QMenu& menu)
 {
   // Get highlighted faces
   TColStd_PackedMapOfInteger faceIndices;
-  asiEngine_Part( m_model, m_wViewerPart->PrsMgr() ).GetHighlightedFaces(faceIndices);
+  asiEngine_Part( m_model, m_pViewer->PrsMgr() ).GetHighlightedFaces(faceIndices);
 
   // Get Part Node
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
@@ -159,142 +158,39 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
     return;
   }
 
-  // Context menu
-  QMenu menu;
-
-  // Actions
-  QAction* pSaveBREPAction    = NULL;
-  QAction* pShowNormsAction   = NULL;
-  QAction* pInvertFacesAction = NULL;
-  QAction* pShowOriContour    = NULL;
-  QAction* pPickRotationPoint = NULL;
-  QAction* pChangeBg          = NULL;
-
-  // Action for picking custom rotation point
-  pPickRotationPoint = menu.addAction("Set new focal point");
-  pChangeBg          = menu.addAction("Set background color");
-
   // Prepare the context menu items
   if ( faceIndices.Extent() )
   {
     menu.addSeparator();
     //
-    pSaveBREPAction = menu.addAction("Save to BREP...");
+    m_pSaveBREPAction = menu.addAction("Save to BREP...");
     //
-    if ( m_wViewerPart->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceNormsNode) ) )
-      pShowNormsAction = menu.addAction("Show face normals");
-    if ( m_wViewerPart->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceContourNode) ) )
-      pShowOriContour = menu.addAction("Show face oriented contour");
+    if ( m_pViewer->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceNormsNode) ) )
+      m_pShowNormsAction = menu.addAction("Show face normals");
+    if ( m_pViewer->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceContourNode) ) )
+      m_pShowOriContour = menu.addAction("Show face oriented contour");
     //
-    pInvertFacesAction = menu.addAction("Invert faces");
+    m_pInvertFacesAction = menu.addAction("Invert faces");
   }
+}
 
-  // Let sub-classes populate menu
-  this->populateMenu(menu);
+//-----------------------------------------------------------------------------
 
-  // Execute
-  QAction* selectedItem = menu.exec(globalPos);
+//! Executes the passed Qt action.
+//! \param[in] pAction Qt action to execute.
+void asiUI_ViewerPartListener::executeAction(QAction* pAction)
+{
+  if ( !pAction )
+    return;
 
-  // Let sub-classes react
-  this->executeAction(selectedItem);
-
-  // Default reactions
-  if ( selectedItem && selectedItem == pPickRotationPoint )
-  {
-    // Take picked position from interactor
-    double pickedX = 0.0, pickedY = 0.0;
-    m_wViewerPart->PrsMgr()->GetDefaultInteractorStyle()->GetPickedPos(pickedX, pickedY);
-
-    // Pick world position
-    vtkSmartPointer<vtkWorldPointPicker>
-      worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
-    //
-    worldPicker->Pick( pickedX, pickedY, 0, m_wViewerPart->PrsMgr()->GetRenderer() );
-    double coord[3];
-    worldPicker->GetPickPosition(coord);
-
-    // The idea is to change focal point of the camera to the picked position because the
-    // focal point is the center of rotation.
-
-    m_wViewerPart->PrsMgr()->GetRenderer()->GetActiveCamera()->SetFocalPoint(coord[0], coord[1], coord[2]);
-    m_wViewerPart->Repaint();
-  }
-  else if ( selectedItem && selectedItem == pChangeBg )
-  {
-    asiUI_BgColorDialog* pChangeBgDlg = new asiUI_BgColorDialog(m_wViewerPart);
-
-    // Get renderer
-    vtkRenderer* pRenderer = m_wViewerPart->PrsMgr()->GetRenderer();
-
-    if ( !pRenderer->GetGradientBackground() )
-    {
-      double* aSolid = pRenderer->GetBackground();
-      QColor aSolidClr;
-      aSolidClr.setRedF(aSolid[0]);
-      aSolidClr.setGreenF(aSolid[1]);
-      aSolidClr.setBlueF(aSolid[2]);
-
-      pChangeBgDlg->SetFillType(asiUI_BgColorDialog::FT_Solid);
-      pChangeBgDlg->SetColor(asiUI_BgColorDialog::CLR_Solid, aSolidClr);
-    }
-    else
-    {
-      double* aGradientStart = pRenderer->GetBackground2();
-      double* aGradientEnd   = pRenderer->GetBackground();
-      pChangeBgDlg->SetFillType(asiUI_BgColorDialog::FT_Gradient);
-
-      QColor aStartClr, aEndClr;
-      aStartClr.setRedF(aGradientStart[0]);
-      aStartClr.setGreenF(aGradientStart[1]);
-      aStartClr.setBlueF(aGradientStart[2]);
-
-      aEndClr.setRedF(aGradientEnd[0]);
-      aEndClr.setGreenF(aGradientEnd[1]);
-      aEndClr.setBlueF(aGradientEnd[2]);
-
-      pChangeBgDlg->SetFillType(asiUI_BgColorDialog::FT_Gradient);
-      pChangeBgDlg->SetColor(asiUI_BgColorDialog::CLR_GradientStart, aStartClr);
-      pChangeBgDlg->SetColor(asiUI_BgColorDialog::CLR_GradientEnd, aEndClr);
-    }
-
-    if ( pChangeBgDlg->exec() )
-    {
-      // save and apply new colors
-      QColor aColors[2];
-      if ( pChangeBgDlg->GetFillType() == asiUI_BgColorDialog::FT_Solid )
-      {
-        aColors[0] = pChangeBgDlg->GetColor(asiUI_BgColorDialog::CLR_Solid);
-      }
-      else
-      {
-        aColors[0] = pChangeBgDlg->GetColor(asiUI_BgColorDialog::CLR_GradientStart);
-        aColors[1] = pChangeBgDlg->GetColor(asiUI_BgColorDialog::CLR_GradientEnd);
-      }
-
-      // Apply colors
-      if ( !aColors[1].isValid() )
-      {
-        // solid color fill
-        pRenderer->SetBackground(aColors[0].redF(),
-            aColors[0].greenF(), aColors[0].blueF());
-        pRenderer->SetGradientBackground(false);
-      }
-      else
-      {
-        // gradient color fill
-        pRenderer->SetBackground(aColors[1].redF(),
-            aColors[1].greenF(), aColors[1].blueF());
-        pRenderer->SetBackground2(aColors[0].redF(),
-            aColors[0].greenF(),  aColors[0].blueF());
-        pRenderer->SetGradientBackground(true);
-      }
-    }
-  }
-  else if ( selectedItem && selectedItem == pSaveBREPAction )
+  //---------------------------------------------------------------------------
+  // ACTION: save BREP
+  //---------------------------------------------------------------------------
+  if ( pAction == m_pSaveBREPAction )
   {
     // Get highlighted sub-shapes
     TopTools_IndexedMapOfShape selected;
-    asiEngine_Part( m_model, m_wViewerPart->PrsMgr() ).GetHighlightedSubShapes(selected);
+    asiEngine_Part( m_model, m_pViewer->PrsMgr() ).GetHighlightedSubShapes(selected);
 
     // Let user choose a filename
     QString filename = asiUI_Common::selectBRepFile(asiUI_Common::OpenSaveAction_Save);
@@ -326,28 +222,53 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
       return;
     }
   }
-  else if ( selectedItem && selectedItem == pShowNormsAction )
+
+  //---------------------------------------------------------------------------
+  // ACTION: show normal field
+  //---------------------------------------------------------------------------
+  else if ( pAction == m_pShowNormsAction )
   {
     TIMER_NEW
     TIMER_GO
 
-    m_wViewerPart->PrsMgr()->Actualize( m_model->GetPartNode()->GetNormsRepresentation() );
+    m_pViewer->PrsMgr()->Actualize( m_model->GetPartNode()->GetNormsRepresentation() );
 
     TIMER_FINISH
     TIMER_COUT_RESULT_MSG("Visualization of normals")
   }
-  else if ( selectedItem && selectedItem == pShowOriContour )
+
+  //---------------------------------------------------------------------------
+  // ACTION: show oriented contour
+  //---------------------------------------------------------------------------
+  else if ( pAction == m_pShowOriContour )
   {
     TIMER_NEW
     TIMER_GO
 
-    m_wViewerPart->PrsMgr()->Actualize( m_model->GetPartNode()->GetContourRepresentation() );
+    m_pViewer->PrsMgr()->Actualize( m_model->GetPartNode()->GetContourRepresentation() );
 
     TIMER_FINISH
     TIMER_COUT_RESULT_MSG("Visualization of oriented contour")
   }
-  else if ( selectedItem && selectedItem == pInvertFacesAction )
+
+  //---------------------------------------------------------------------------
+  // ACTION: invert faces
+  //---------------------------------------------------------------------------
+  else if ( pAction == m_pInvertFacesAction )
   {
+    // Get highlighted faces
+    TColStd_PackedMapOfInteger faceIndices;
+    asiEngine_Part( m_model, m_pViewer->PrsMgr() ).GetHighlightedFaces(faceIndices);
+
+    // Get Part Node
+    Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+    //
+    if ( part_n.IsNull() || !part_n->IsWellFormed() )
+    {
+      m_progress.SendLogMessage( LogErr(Normal) << "Part Node is null or bad-formed" );
+      return;
+    }
+
     TIMER_NEW
     TIMER_GO
 
@@ -370,11 +291,7 @@ void asiUI_ViewerPartListener::onContextMenu(const QPoint& globalPos)
     m_model->CommitCommand();
 
     // Actualize
-    m_wViewerPart->PrsMgr()->Actualize(part_n);
-    m_wViewerPart->PrsMgr()->Actualize( m_model->GetPartNode()->GetNormsRepresentation() );
-  }
-  else
-  {
-    // Nothing was chosen
+    m_pViewer->PrsMgr()->Actualize(part_n);
+    m_pViewer->PrsMgr()->Actualize( m_model->GetPartNode()->GetNormsRepresentation() );
   }
 }

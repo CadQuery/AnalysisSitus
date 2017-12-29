@@ -337,12 +337,25 @@ public:
 
 public:
 
+  //! Sets interaction mode to either 2D or 3D.
+  //! \param[in] mode interaction mode to set.
   void SetInteractionMode(const InteractionMode mode)
   {
     if ( mode == InteractionMode_3D )
       m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleTrackball);
     if ( mode == InteractionMode_2D )
       m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
+  }
+
+  //! \return 2D or 3D interaction mode depending on the current interaction style.
+  InteractionMode GetInteractionMode() const
+  {
+    vtkInteractorObserver* pStyle = m_renderWindowInteractor->GetInteractorStyle();
+    //
+    if ( pStyle == m_interactorStyleImage.GetPointer() )
+      return InteractionMode_2D;
+
+    return InteractionMode_3D;
   }
 
 // Auxiliary methods:

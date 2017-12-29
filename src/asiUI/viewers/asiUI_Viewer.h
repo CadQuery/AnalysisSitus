@@ -31,10 +31,10 @@
 #ifndef asiUI_Viewer_h
 #define asiUI_Viewer_h
 
-// A-Situs includes
+// asiUI includes
 #include <asiUI.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_PrsManager.h>
 
 // Qt includes
@@ -58,6 +58,10 @@ public:
 public:
 
   virtual void Repaint() = 0;
+
+signals:
+
+  void contextMenu(const QPoint&);
 
 public:
 

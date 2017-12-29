@@ -32,6 +32,7 @@
 #define asiUI_ViewerPartListener_h
 
 // asiUI includes
+#include <asiUI_Viewer3dListener.h>
 #include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerHost.h>
 #include <asiUI_ViewerPart.h>
@@ -39,13 +40,8 @@
 // Active Data includes
 #include <ActAPI_IPlotter.h>
 
-// Qt includes
-#pragma warning(push, 0)
-#include <QMenu>
-#pragma warning(pop)
-
 //! Default slots for part viewer.
-class asiUI_EXPORT asiUI_ViewerPartListener : public QObject
+class asiUI_EXPORT asiUI_ViewerPartListener : public asiUI_Viewer3dListener
 {
   Q_OBJECT
 
@@ -53,7 +49,7 @@ public:
 
   asiUI_ViewerPartListener(asiUI_ViewerPart*              wViewerPart,
                            asiUI_ViewerDomain*            wViewerDomain,
-                           asiUI_ViewerHost*              wViewerSurface,
+                           asiUI_ViewerHost*              wViewerHost,
                            const Handle(asiEngine_Model)& model,
                            ActAPI_ProgressEntry           progress,
                            ActAPI_PlotterEntry            plotter);
@@ -74,25 +70,24 @@ protected slots:
   void
     onEdgePicked(const asiVisu_PickResult& pickRes);
 
-  void
-    onContextMenu(const QPoint&);
-
 protected:
 
   virtual void
-    populateMenu(QMenu&) {}
+    populateMenu(QMenu&);
 
   virtual void
-    executeAction(QAction*) {}
+    executeAction(QAction*);
 
 protected:
 
-  asiUI_ViewerPart*       m_wViewerPart;    //!< Part viewer.
-  asiUI_ViewerDomain*     m_wViewerDomain;  //!< Face domain viewer.
-  asiUI_ViewerHost*       m_wViewerSurface; //!< Surface viewer.
-  Handle(asiEngine_Model) m_model;          //!< Data Model instance.
-  ActAPI_ProgressEntry    m_progress;       //!< Progress notifier.
-  ActAPI_PlotterEntry     m_plotter;        //!< Imperative plotter.
+  asiUI_ViewerDomain* m_wViewerDomain; //!< Domain viewer.
+  asiUI_ViewerHost*   m_wViewerHost;   //!< Host viewer.
+
+  //! Custom actions.
+  QAction* m_pSaveBREPAction;
+  QAction* m_pShowNormsAction;
+  QAction* m_pInvertFacesAction;
+  QAction* m_pShowOriContour;
 
 };
 

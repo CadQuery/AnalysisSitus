@@ -2154,7 +2154,7 @@ void asiAlgo_Utils::PrintSurfaceDetails(const Handle(Geom_Surface)& surf,
     const double minr = TS->MinorRadius();
     const double majr = TS->MajorRadius();
     //
-    out << "\nMinor radius: " << minr << "\n";
-    out << "\nMajor radius: " << majr << "\n";
+    out << "Minor radius: " << minr << "\n";
+    out << "Major radius: " << majr << "\n";
   }
 }

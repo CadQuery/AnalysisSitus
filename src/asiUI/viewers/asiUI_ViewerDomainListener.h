@@ -32,15 +32,13 @@
 #define asiUI_ViewerDomainListener_h
 
 // asiUI includes
+#include <asiUI_Viewer3dListener.h>
 #include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerHost.h>
 #include <asiUI_ViewerPart.h>
 
-// Qt includes
-#include <QObject>
-
 //! Default slots for domain viewer.
-class asiUI_ViewerDomainListener : public QObject
+class asiUI_ViewerDomainListener : public asiUI_Viewer3dListener
 {
   Q_OBJECT
 
@@ -49,8 +47,10 @@ public:
   asiUI_EXPORT
     asiUI_ViewerDomainListener(asiUI_ViewerPart*              wViewerPart,
                                asiUI_ViewerDomain*            wViewerDomain,
-                               asiUI_ViewerHost*              wViewerSurface,
-                               const Handle(asiEngine_Model)& model);
+                               asiUI_ViewerHost*              wViewerHost,
+                               const Handle(asiEngine_Model)& model,
+                               ActAPI_ProgressEntry           progress,
+                               ActAPI_PlotterEntry            plotter);
 
   asiUI_EXPORT virtual
     ~asiUI_ViewerDomainListener();
@@ -62,10 +62,8 @@ public:
 
 protected:
 
-  asiUI_ViewerPart*       m_wViewerPart;    //!< Part viewer.
-  asiUI_ViewerDomain*     m_wViewerDomain;  //!< Face domain viewer.
-  asiUI_ViewerHost*       m_wViewerSurface; //!< Surface viewer.
-  Handle(asiEngine_Model) m_model;          //!< Data Model instance.
+  asiUI_ViewerPart* m_wViewerPart; //!< Part viewer.
+  asiUI_ViewerHost* m_wViewerHost; //!< Host viewer.
 
 };
 

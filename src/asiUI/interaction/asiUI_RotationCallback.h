@@ -31,10 +31,10 @@
 #ifndef asiUI_RotationCallback_h
 #define asiUI_RotationCallback_h
 
-// A-Situs (UI) includes
+// asiUI includes
 #include <asiUI_ViewerCallback.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_MeshDataProvider.h>
 #include <asiVisu_MeshPipeline.h>
 
@@ -49,8 +49,6 @@
 //-----------------------------------------------------------------------------
 // Rotation center provider
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiUI_RotationCenterProvider, asiVisu_MeshDataProvider)
 
 //! Data Provider for rotation center.
 class asiUI_RotationCenterProvider : public asiVisu_MeshDataProvider
@@ -152,10 +150,9 @@ protected:
 
 protected:
 
-  Handle(asiVisu_MeshPipeline)         m_pl;          //!< Pipeline for rotation center.
-  Handle(asiUI_RotationCenterProvider) m_prv;         //!< Data Provider.
-  bool                                 m_bIsStarted;  //!< Used for optimization only.
-  vtkSmartPointer<vtkWorldPointPicker> m_worldPicker; //!< World picker.
+  Handle(asiVisu_MeshPipeline)         m_pl;         //!< Pipeline for rotation center.
+  Handle(asiUI_RotationCenterProvider) m_prv;        //!< Data Provider.
+  bool                                 m_bIsStarted; //!< Used for optimization only.
 
 };
 

@@ -34,19 +34,21 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting all necessary facilities.
-//! \param wViewerPart    [in] part viewer.
-//! \param wViewerDomain  [in] domain viewer.
-//! \param wViewerSurface [in] host geometry viewer.
-//! \param model          [in] Data Model instance.
+//! \param[in] wViewerPart   part viewer.
+//! \param[in] wViewerDomain domain viewer.
+//! \param[in] wViewerHost   host geometry viewer.
+//! \param[in] model         Data Model instance.
+//! \param[in] progress      progress notifier.
+//! \param[in] plotter       imperative plotter.
 asiUI_ViewerDomainListener::asiUI_ViewerDomainListener(asiUI_ViewerPart*              wViewerPart,
                                                        asiUI_ViewerDomain*            wViewerDomain,
-                                                       asiUI_ViewerHost*              wViewerSurface,
-                                                       const Handle(asiEngine_Model)& model)
-: QObject          (),
-  m_wViewerPart    (wViewerPart),
-  m_wViewerDomain  (wViewerDomain),
-  m_wViewerSurface (wViewerSurface),
-  m_model          (model)
+                                                       asiUI_ViewerHost*              wViewerHost,
+                                                       const Handle(asiEngine_Model)& model,
+                                                       ActAPI_ProgressEntry           progress,
+                                                       ActAPI_PlotterEntry            plotter)
+: asiUI_Viewer3dListener (wViewerDomain, model, progress, plotter),
+  m_wViewerPart          (wViewerPart),
+  m_wViewerHost          (wViewerHost)
 {}
 
 //-----------------------------------------------------------------------------
@@ -60,5 +62,5 @@ asiUI_ViewerDomainListener::~asiUI_ViewerDomainListener()
 //! Connects this listener to the target widget.
 void asiUI_ViewerDomainListener::Connect()
 {
-  // Nothing yet
+  asiUI_Viewer3dListener::Connect(); // Connect basic reactions.
 }

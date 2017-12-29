@@ -74,9 +74,30 @@ asiUI_ViewerHost::asiUI_ViewerHost(const Handle(asiEngine_Model)& model,
   // Set central widget
   this->setLayout(pBaseLayout);
 
+  /* ===============================
+   *  Setting up rotation callbacks
+   * =============================== */
+
+  // Initialize Callback instance for rotation
+  m_rotoCallback = vtkSmartPointer<asiUI_RotationCallback>::New();
+  m_rotoCallback->SetViewer(this);
+
+  // Set observer for starting rotation
+  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_ROTATION_START) )
+    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_ROTATION_START, m_rotoCallback);
+
+  // Set observer for ending rotation
+  if ( !m_prs_mgr->GetDefaultInteractorStyle()->HasObserver(EVENT_ROTATION_END) )
+    m_prs_mgr->GetDefaultInteractorStyle()->AddObserver(EVENT_ROTATION_END, m_rotoCallback);
+
   /* =====================================
    *  Finalize initial state of the scene
    * ===================================== */
+
+  // Enable context menu
+  pViewer->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect( pViewer, SIGNAL ( customContextMenuRequested(const QPoint&) ),
+           this,    SLOT   ( onContextMenu(const QPoint&) ) );
 
   this->onResetView();
 }
@@ -117,4 +138,14 @@ void asiUI_ViewerHost::onResetView()
 {
   asiVisu_Utils::ResetCamera( m_prs_mgr->GetRenderer(), m_prs_mgr->PropsByTrihedron() );
   this->Repaint();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ViewerHost::onContextMenu(const QPoint& pos)
+{
+  QVTKWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
+  QPoint      globalPos = pViewer->mapToGlobal(pos);
+
+  emit contextMenu(globalPos);
 }

@@ -32,6 +32,7 @@
 #define asiUI_ViewerHost_h
 
 // asiUI includes
+#include <asiUI_RotationCallback.h>
 #include <asiUI_Viewer.h>
 
 // asiEngine includes
@@ -63,6 +64,12 @@ public:
 public slots:
 
   void onResetView();
+  void onContextMenu(const QPoint&);
+
+protected:
+
+  //! Rotation callback.
+  vtkSmartPointer<asiUI_RotationCallback> m_rotoCallback;
 
 };
 

@@ -174,6 +174,34 @@ int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_GetId(const Handle(asiTcl_Interp)& interp,
+                 int                          argc,
+                 const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[1]);
+    return TCL_OK;
+  }
+
+  // Get ID of the object
+  ActAPI_DataObjectId id = node->GetId();
+
+  // Send to interpreter
+  *interp << id;
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -214,4 +242,16 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
     "\t imperative plotter.",
     //
     __FILE__, group, ENGINE_SetAsPart);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("get-id",
+    //
+    "get-id [parentObjectName / [parentObjectName / [...]]] objectName\n"
+    "\t Finds a data object with the given name and returns its persistent ID. \n"
+    "\t If the object name is not unique, you may specify a list of parents \n"
+    "\t to narrow your request. The names of the parent objects are separated \n"
+    "\t by direct slash. You should always specify a direct parent of an object. \n"
+    "\t It is not allowed to leave intermediate parents unspecified.",
+    //
+    __FILE__, group, ENGINE_GetId);
 }

@@ -98,11 +98,6 @@ namespace asiAlgo_FileFormatTools
   asiAlgo_EXPORT asiAlgo_FileFormat
     FormatFromFileContent(const TCollection_AsciiString& path);
 
-  //! Splits string into lines.
-  asiAlgo_EXPORT void
-    SplitLines(const TCollection_AsciiString&                   string,
-               NCollection_IndexedMap<TCollection_AsciiString>& lines);
-
   //! Returns true if export to the passed format is supported.
   asiAlgo_EXPORT bool
     IsExportSupported(const asiAlgo_FileFormat& format);

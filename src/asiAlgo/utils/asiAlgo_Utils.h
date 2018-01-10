@@ -76,6 +76,50 @@ class asiAlgo_Utils
 {
 public:
 
+  //! Splits the passed string by the given delimiter. Note that the
+  //! passed output vector is not cleaned up beforehand.
+  //! \param source_str [in]  input string to split.
+  //! \param delim_str  [in]  delimiter string.
+  //! \param result     [out] resulting collection of tokens after split.
+  static void SplitStr(const std::string&        source_str,
+                       const std::string&        delim_str,
+                       std::vector<std::string>& result)
+  {
+    // Initialize collection of strings to split
+    std::vector<std::string> chunks;
+    chunks.push_back(source_str);
+
+    // Split by each delimiter consequently
+    for ( size_t delim_idx = 0; delim_idx < delim_str.length(); ++delim_idx )
+    {
+      std::vector<std::string> new_chunks;
+      const char delim = delim_str[delim_idx];
+
+      // Split each chunk
+      for ( size_t chunk_idx = 0; chunk_idx < chunks.size(); ++chunk_idx )
+      {
+        const std::string& source = chunks[chunk_idx];
+        std::string::size_type currPos = 0, prevPos = 0;
+        while ( (currPos = source.find(delim, prevPos) ) != std::string::npos )
+        {
+          std::string item = source.substr(prevPos, currPos - prevPos);
+          if ( item.size() > 0 )
+          {
+            new_chunks.push_back(item);
+          }
+          prevPos = currPos + 1;
+        }
+        new_chunks.push_back( source.substr(prevPos) );
+      }
+
+      // Set new collection of chunks for splitting by the next delimiter
+      chunks = new_chunks;
+    }
+
+    // Set result
+    result = chunks;
+  }
+
   //! Extracts substring from the passed source.
   //! \param source [in] input string to extract substring from.
   //! \param idx_F  [in] 0-based index to start extraction from (inclusively).

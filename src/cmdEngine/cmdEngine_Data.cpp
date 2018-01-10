@@ -34,6 +34,9 @@
 // asiEngine includes
 #include <asiEngine_Part.h>
 
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
+
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
 
@@ -183,7 +186,28 @@ int ENGINE_GetId(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  // Get name of the target Node as a path
+  std::string namePath(argv[1]);
+
+  // Split by delimeter
+  std::vector<std::string> names;
+  //
+  asiAlgo_Utils::SplitStr(namePath, "/", names);
+
+  // Prepare a collection of object names for Active Data
+  std::vector<TCollection_ExtendedString> adNames;
+  //
+  for ( size_t k = 0; k < names.size(); ++k )
+  {
+    TCollection_AsciiString adName( names[k].c_str() );
+    adName.LeftAdjust();
+    adName.RightAdjust();
+    //
+    adNames.push_back(adName);
+  }
+
+  // Find Node
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByNames(adNames);
   //
   if ( node.IsNull() )
   {
@@ -193,6 +217,8 @@ int ENGINE_GetId(const Handle(asiTcl_Interp)& interp,
 
   // Get ID of the object
   ActAPI_DataObjectId id = node->GetId();
+  //
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Object ID: %1." << id);
 
   // Send to interpreter
   *interp << id;

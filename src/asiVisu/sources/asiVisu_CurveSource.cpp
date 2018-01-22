@@ -31,9 +31,6 @@
 // Own include
 #include <asiVisu_CurveSource.h>
 
-// Visualization includes
-#include <asiVisu_Utils.h>
-
 // VTK includes
 #include <vtkCellData.h>
 #include <vtkDataObject.h>

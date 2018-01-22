@@ -240,6 +240,7 @@ set (sources_H_FILES
   sources/asiVisu_BCurveKnotsSource.h
   sources/asiVisu_BCurvePolesSource.h
   sources/asiVisu_BSurfPolesSource.h
+  sources/asiVisu_CurvatureCombsSource.h
   sources/asiVisu_CurveSource.h
   sources/asiVisu_FuncLevelsSource2d.h
   sources/asiVisu_FuncLevelsSource3d.h
@@ -259,6 +260,7 @@ set (sources_CPP_FILES
   sources/asiVisu_BCurveKnotsSource.cpp
   sources/asiVisu_BCurvePolesSource.cpp
   sources/asiVisu_BSurfPolesSource.cpp
+  sources/asiVisu_CurvatureCombsSource.cpp
   sources/asiVisu_CurveSource.cpp
   sources/asiVisu_FuncUnivariateSource.cpp
   sources/asiVisu_MeshSource.cpp

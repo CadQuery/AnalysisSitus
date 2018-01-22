@@ -804,6 +804,52 @@ int MISC_TestOffset(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+#include <BRepOffsetAPI_MakePipeShell.hxx>
+#include <GC_MakeArcOfCircle.hxx>
+#include <BRepAdaptor_CompCurve.hxx>
+
+int MISC_TestPipe(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  BRepBuilderAPI_MakeEdge edgeMaker1(gp_Pnt(0.0,0.0,0.0),gp_Pnt(0.0,1.0,0.0));
+  const TopoDS_Edge e1=edgeMaker1.Edge();
+  BRepBuilderAPI_MakeWire wireMaker1(e1);
+  BRepBuilderAPI_MakeEdge edgeMaker2(gp_Pnt(0.0,0.0,0.0),gp_Pnt(0.0,0.0,1.0));
+  const TopoDS_Edge e2=edgeMaker2.Edge();
+  BRepBuilderAPI_MakeWire wireMaker2(e2);
+  const TopoDS_Wire w1=wireMaker1.Wire();
+  const TopoDS_Wire w2=wireMaker2.Wire();
+  BRepOffsetAPI_MakePipeShell mps(w1);
+  mps.Add(w2);
+  mps.Build();
+  printf("mps.Generated(e1).Extent() = %d\n",mps.Generated(e1).Extent());fflush(stdout);
+
+  const Standard_Real r45=M_PI/4.0,r225=3.0*M_PI/4.0;
+
+  GC_MakeArcOfCircle arcMaker(gp_Circ(gp_Ax2(gp_Pnt(0.0,0.0,0.0), gp_Dir(0.0,0.0,1.0),gp_Dir(1.0,0.0,0.0)),1.0),r45,r225,Standard_True);
+  BRepBuilderAPI_MakeEdge edgeMaker(arcMaker.Value());
+  BRepBuilderAPI_MakeWire wireMaker(edgeMaker.Edge());
+  const TopoDS_Wire circle=wireMaker.Wire();
+
+  BRepAdaptor_CompCurve curve(circle);
+  printf("curve.FirstParameter() = %g\n",curve.FirstParameter());
+  printf("curve.LastParameter()  = %g\n",curve.LastParameter());
+  const gp_Pnt start=curve.Value(curve.FirstParameter());
+  const gp_Pnt end=curve.Value(curve.LastParameter());
+  printf("start = (%g,%g,%g)\n",start.X(),start.Y(),start.Z());fflush(stdout);
+  printf("end   = (%g,%g,%g)\n",end.X(),end.Y(),end.Z());fflush(stdout);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -872,6 +918,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Constructs simple solid by offset.",
     //
     __FILE__, group, MISC_TestOffset);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-pipe",
+    //
+    "test-pipe \n"
+    "\t Problem reproducer for pipes.",
+    //
+    __FILE__, group, MISC_TestPipe);
 }
 
 // Declare entry point

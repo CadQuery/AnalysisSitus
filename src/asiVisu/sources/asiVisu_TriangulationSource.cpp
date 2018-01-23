@@ -309,7 +309,7 @@ vtkIdType
   vtkIdTypeArray*
     typeArr = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_MESH_ITEM_TYPE) );
   //
-  typeArr->InsertNextValue(MeshPrimitive_FacetTriangle);
+  typeArr->InsertNextValue(MeshPrimitive_CellTriangle);
 
   // Store element ID
   vtkIdTypeArray*

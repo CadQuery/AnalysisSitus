@@ -63,8 +63,10 @@ vtkSmartPointer<vtkLookupTable> asiVisu_MeshUtils::InitLookupTable()
   colorTable->SetTableValue(MeshPrimitive_ManifoldLink,    0.1,  0.1, 0.1);
   colorTable->SetTableValue(MeshPrimitive_NonManifoldLink, 1.0,  1.0, 0.0);
   //
-  colorTable->SetTableValue(MeshPrimitive_FacetTriangle,   0.9,  0.9, 0.9);
-  colorTable->SetTableValue(MeshPrimitive_FacetQuad,       0.7,  0.7, 0.7);
+  colorTable->SetTableValue(MeshPrimitive_CellTriangle,   0.9,  0.9, 0.9);
+  colorTable->SetTableValue(MeshPrimitive_CellQuad,       0.7,  0.7, 0.7);
+  colorTable->SetTableValue(MeshPrimitive_CellTetra,      0.9,  0.9, 0.9);
+  colorTable->SetTableValue(MeshPrimitive_CellHexa,       0.7,  0.7, 0.7);
   //
   colorTable->SetTableValue(MeshPrimitive_Detected,        0.0, 1.0, 1.0);
   colorTable->SetTableValue(MeshPrimitive_Selected,        1.0, 1.0, 0.0);

@@ -49,11 +49,13 @@ enum asiVisu_MeshPrimitive
   MeshPrimitive_ManifoldLink    = 7,  //!< Cell type for manifold link.
   MeshPrimitive_NonManifoldLink = 8,  //!< Cell type for non-manifold link.
   //
-  MeshPrimitive_FacetTriangle   = 9,  //!< Cell type for triangle facet.
-  MeshPrimitive_FacetQuad       = 10, //!< Cell type for quad facet.
+  MeshPrimitive_CellTriangle    = 9,  //!< Cell type for triangle facet.
+  MeshPrimitive_CellQuad        = 10, //!< Cell type for quad facet.
+  MeshPrimitive_CellTetra       = 11, //!< Cell type for tetrahedron.
+  MeshPrimitive_CellHexa        = 12, //!< Cell type for hexahedron.
   //
-  MeshPrimitive_Detected        = 11, //!< Detected boundary element.
-  MeshPrimitive_Selected        = 12, //!< Selected boundary element.
+  MeshPrimitive_Detected        = 13, //!< Detected boundary element.
+  MeshPrimitive_Selected        = 14, //!< Selected boundary element.
   //
   MeshPrimitive_LAST
 };

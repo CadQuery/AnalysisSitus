@@ -45,33 +45,33 @@
 //! Auxiliary functions supporting mesh presentations in VTK viewer.
 namespace asiVisu_MeshUtils
 {
-  vtkSmartPointer<vtkLookupTable>
+  asiVisu_EXPORT vtkSmartPointer<vtkLookupTable>
     InitLookupTable();
 
-  void
+  asiVisu_EXPORT void
     InitMapper(vtkMapper*      theMapper,
                vtkLookupTable* theLookup,
                const char*     theScalarsArrName);
 
-  void
+  asiVisu_EXPORT void
     InitMapper(vtkMapper* theMapper,
                const char* theScalarsArrName);
 
-  double
+  asiVisu_EXPORT double
     DefaultShrinkFactor();
 
-  double
+  asiVisu_EXPORT double
     DefaultPointSize();
 
-  void
+  asiVisu_EXPORT void
     DefaultContourColor(double& fR,
                         double& fG,
                         double& fB);
 
-  double
+  asiVisu_EXPORT double
     DefaultContourLineWidth();
 
-  double
+  asiVisu_EXPORT double
     DefaultContourOpacity();
 };
 

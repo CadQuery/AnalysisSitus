@@ -70,9 +70,11 @@ public:
     mode.Add(MeshPrimitive_BorderLink);
     mode.Add(MeshPrimitive_NonManifoldLink);
 
-    // Add facets
-    mode.Add(MeshPrimitive_FacetTriangle);
-    mode.Add(MeshPrimitive_FacetQuad);
+    // Add 2D and 3D cells
+    mode.Add(MeshPrimitive_CellTriangle);
+    mode.Add(MeshPrimitive_CellQuad);
+    mode.Add(MeshPrimitive_CellTetra);
+    mode.Add(MeshPrimitive_CellHexa);
 
     return mode;
   }

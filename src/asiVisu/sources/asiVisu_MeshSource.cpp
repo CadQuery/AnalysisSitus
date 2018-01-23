@@ -339,7 +339,7 @@ vtkIdType asiVisu_MeshSource::registerMeshFace(const int    theFaceID,
 
   vtkIntArray* aTypeArr =
     vtkIntArray::SafeDownCast( thePolyData->GetCellData()->GetArray(ARRNAME_MESH_ITEM_TYPE) );
-  int aType = (aCellType == VTK_TRIANGLE ? MeshPrimitive_FacetTriangle : MeshPrimitive_FacetQuad);
+  int aType = (aCellType == VTK_TRIANGLE ? MeshPrimitive_CellTriangle : MeshPrimitive_CellQuad);
   aTypeArr->InsertNextValue(aType);
 
   /* =========================================================

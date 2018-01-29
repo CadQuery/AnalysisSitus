@@ -32,6 +32,7 @@
 #include <asiEngine_Model.h>
 
 // asiEngine includes
+#include <asiEngine_Curve.h>
 #include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
 
@@ -56,10 +57,11 @@ REGISTER_NODE_TYPE(asiData_RootNode)
 REGISTER_NODE_TYPE(asiData_PartNode)
 REGISTER_NODE_TYPE(asiData_FaceNode)
 REGISTER_NODE_TYPE(asiData_FaceNormsNode)
-REGISTER_NODE_TYPE(asiData_SurfNode)
 REGISTER_NODE_TYPE(asiData_FaceContourNode)
+REGISTER_NODE_TYPE(asiData_SurfNode)
 REGISTER_NODE_TYPE(asiData_EdgeNode)
 REGISTER_NODE_TYPE(asiData_CurveNode)
+REGISTER_NODE_TYPE(asiData_CurvatureCombsNode)
 REGISTER_NODE_TYPE(asiData_BoundaryEdgesNode)
 REGISTER_NODE_TYPE(asiData_ContourNode)
 //
@@ -132,6 +134,9 @@ void asiEngine_Model::Clear()
     // Delete all Nodes serving imperative visualization
     asiEngine_IV(this).Clean_All();
 
+    // Delete nodes under the Curve
+    asiEngine_Curve(this).Clean_All( this->GetPartNode()->GetCurveRepresentation() );
+
     // Let sub-classes do some job
     this->clearCustom();
   }
@@ -173,17 +178,18 @@ Handle(asiData_IVNode) asiEngine_Model::GetIVNode() const
 //! Initializes Partitions.
 void asiEngine_Model::initPartitions()
 {
-  REGISTER_PARTITION(asiData_Partition<asiData_RootNode>,          Partition_Root);
+  REGISTER_PARTITION(asiData_Partition<asiData_RootNode>,           Partition_Root);
   //
-  REGISTER_PARTITION(asiData_Partition<asiData_PartNode>,          Partition_GeomPart);
-  REGISTER_PARTITION(asiData_Partition<asiData_FaceNode>,          Partition_GeomFace);
-  REGISTER_PARTITION(asiData_Partition<asiData_FaceNormsNode>,     Partition_GeomFaceNorms);
-  REGISTER_PARTITION(asiData_Partition<asiData_SurfNode>,          Partition_GeomFaceSurf);
-  REGISTER_PARTITION(asiData_Partition<asiData_FaceContourNode>,   Partition_GeomFaceContour);
-  REGISTER_PARTITION(asiData_Partition<asiData_EdgeNode>,          Partition_GeomEdge);
-  REGISTER_PARTITION(asiData_Partition<asiData_CurveNode>,         Partition_GeomCurve);
-  REGISTER_PARTITION(asiData_Partition<asiData_BoundaryEdgesNode>, Partition_GeomBoundaryEdges);
-  REGISTER_PARTITION(asiData_Partition<asiData_ContourNode>,       Partition_GeomContour);
+  REGISTER_PARTITION(asiData_Partition<asiData_PartNode>,           Partition_Part);
+  REGISTER_PARTITION(asiData_Partition<asiData_FaceNode>,           Partition_Face);
+  REGISTER_PARTITION(asiData_Partition<asiData_FaceNormsNode>,      Partition_FaceNorms);
+  REGISTER_PARTITION(asiData_Partition<asiData_FaceContourNode>,    Partition_FaceContour);
+  REGISTER_PARTITION(asiData_Partition<asiData_SurfNode>,           Partition_Surf);
+  REGISTER_PARTITION(asiData_Partition<asiData_EdgeNode>,           Partition_Edge);
+  REGISTER_PARTITION(asiData_Partition<asiData_CurveNode>,          Partition_Curve);
+  REGISTER_PARTITION(asiData_Partition<asiData_CurvatureCombsNode>, Partition_CurvatureCombs);
+  REGISTER_PARTITION(asiData_Partition<asiData_BoundaryEdgesNode>,  Partition_BoundaryEdges);
+  REGISTER_PARTITION(asiData_Partition<asiData_ContourNode>,        Partition_Contour);
   //
   REGISTER_PARTITION(asiData_Partition<asiData_IVNode>,            Partition_IV);
   REGISTER_PARTITION(asiData_Partition<asiData_IVPoints2dNode>,    Partition_IV_Points2d);

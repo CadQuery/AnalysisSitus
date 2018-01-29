@@ -12,6 +12,7 @@ set (H_FILES
   asiData_BVHAttr.h
   asiData_BVHParameter.h
   asiData_ContourNode.h
+  asiData_CurvatureCombsNode.h
   asiData_CurveNode.h
   asiData_DesignLawNode.h
   asiData_EdgeNode.h
@@ -54,6 +55,7 @@ set (CPP_FILES
   asiData_BVHAttr.cpp
   asiData_BVHParameter.cpp
   asiData_ContourNode.cpp
+  asiData_CurvatureCombsNode.cpp
   asiData_CurveNode.cpp
   asiData_DesignLawNode.cpp
   asiData_EdgeNode.cpp

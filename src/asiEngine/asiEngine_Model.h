@@ -36,6 +36,7 @@
 
 // asiData includes
 #include <asiData_BoundaryEdgesNode.h>
+#include <asiData_CurvatureCombsNode.h>
 #include <asiData_IVCurve2dNode.h>
 #include <asiData_IVCurveNode.h>
 #include <asiData_IVCurves2dNode.h>
@@ -116,7 +117,7 @@ public:
 // Partitions:
 public:
 
-  //! Accessor for a Partition instance dedicated to root Nodes.
+  //! Accessor for a Partition instance dedicated to Root Nodes.
   //! \return requested Partition.
   Handle(asiData_Partition<asiData_RootNode>) GetRootPartition() const
   {
@@ -125,68 +126,75 @@ public:
 
 //-----------------------------------------------------------------------------
 
-  //! Accessor for a Partition instance dedicated to Geometry Part Nodes.
+  //! Accessor for a Partition instance dedicated to Part Nodes.
   //! \return requested Partition.
   Handle(asiData_Partition<asiData_PartNode>) GetPartPartition() const
   {
-    return Handle(asiData_Partition<asiData_PartNode>)::DownCast( this->Partition(Partition_GeomPart) );
+    return Handle(asiData_Partition<asiData_PartNode>)::DownCast( this->Partition(Partition_Part) );
   }
 
-  //! Accessor for a Partition instance dedicated to Geometry Face Nodes.
+  //! Accessor for a Partition instance dedicated to Face Nodes.
   //! \return requested Partition.
-  Handle(asiData_Partition<asiData_FaceNode>) GetGeomFacePartition() const
+  Handle(asiData_Partition<asiData_FaceNode>) GetFacePartition() const
   {
-    return Handle(asiData_Partition<asiData_FaceNode>)::DownCast( this->Partition(Partition_GeomFace) );
+    return Handle(asiData_Partition<asiData_FaceNode>)::DownCast( this->Partition(Partition_Face) );
   }
 
   //! Accessor for a Partition instance dedicated to Face Norms Nodes.
   //! \return requested Partition.
-  Handle(asiData_Partition<asiData_FaceNormsNode>) GetGeomFaceNormsPartition() const
+  Handle(asiData_Partition<asiData_FaceNormsNode>) GetFaceNormsPartition() const
   {
-    return Handle(asiData_Partition<asiData_FaceNormsNode>)::DownCast( this->Partition(Partition_GeomFaceNorms) );
+    return Handle(asiData_Partition<asiData_FaceNormsNode>)::DownCast( this->Partition(Partition_FaceNorms) );
   }
 
-  //! Accessor for a Partition instance dedicated to Geometry Surface Nodes.
+  //! Accessor for a Partition instance dedicated to Surf Nodes.
   //! \return requested Partition.
-  Handle(asiData_Partition<asiData_SurfNode>) GetGeomSurfacePartition() const
+  Handle(asiData_Partition<asiData_SurfNode>) GetSurfPartition() const
   {
-    return Handle(asiData_Partition<asiData_SurfNode>)::DownCast( this->Partition(Partition_GeomFaceSurf) );
+    return Handle(asiData_Partition<asiData_SurfNode>)::DownCast( this->Partition(Partition_Surf) );
   }
 
   //! Accessor for a Partition instance dedicated to Face Contour Nodes.
   //! \return requested Partition.
-  Handle(asiData_Partition<asiData_FaceContourNode>) GetGeomFaceContourPartition() const
+  Handle(asiData_Partition<asiData_FaceContourNode>) GetFaceContourPartition() const
   {
-    return Handle(asiData_Partition<asiData_FaceContourNode>)::DownCast( this->Partition(Partition_GeomFaceContour) );
+    return Handle(asiData_Partition<asiData_FaceContourNode>)::DownCast( this->Partition(Partition_FaceContour) );
   }
 
 
-  //! Accessor for a Partition instance dedicated to Geometry Edge Nodes.
+  //! Accessor for a Partition instance dedicated to Edge Nodes.
   //! \return requested Partition.
-  Handle(asiData_Partition<asiData_EdgeNode>) GetGeomEdgePartition() const
+  Handle(asiData_Partition<asiData_EdgeNode>) GetEdgePartition() const
   {
-    return Handle(asiData_Partition<asiData_EdgeNode>)::DownCast( this->Partition(Partition_GeomEdge) );
+    return Handle(asiData_Partition<asiData_EdgeNode>)::DownCast( this->Partition(Partition_Edge) );
   }
 
-  //! Accessor for a Partition instance dedicated to Geometry Curve Nodes.
+  //! Accessor for a Partition instance dedicated to Curve Nodes.
   //! \return requested Partition.
-  Handle(asiData_Partition<asiData_CurveNode>) GetGeomCurvePartition() const
+  Handle(asiData_Partition<asiData_CurveNode>) GetCurvePartition() const
   {
-    return Handle(asiData_Partition<asiData_CurveNode>)::DownCast( this->Partition(Partition_GeomCurve) );
+    return Handle(asiData_Partition<asiData_CurveNode>)::DownCast( this->Partition(Partition_Curve) );
+  }
+
+  //! Accessor for a Partition instance dedicated to Curvature Combs Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_CurvatureCombsNode>) GetCurvatureCombsPartition() const
+  {
+    return Handle(asiData_Partition<asiData_CurvatureCombsNode>)::DownCast( this->Partition(Partition_CurvatureCombs) );
   }
 
   //! Accessor for a Partition instance dedicated to Geometry Boundary Edges Nodes.
   //! \return requested Partition.
-  Handle(asiData_Partition<asiData_BoundaryEdgesNode>) GetGeomBoundaryEdgesPartition() const
+  Handle(asiData_Partition<asiData_BoundaryEdgesNode>) GetBoundaryEdgesPartition() const
   {
-    return Handle(asiData_Partition<asiData_BoundaryEdgesNode>)::DownCast( this->Partition(Partition_GeomBoundaryEdges) );
+    return Handle(asiData_Partition<asiData_BoundaryEdgesNode>)::DownCast( this->Partition(Partition_BoundaryEdges) );
   }
 
-  //! Accessor for a Partition instance dedicated to Geometry Contour Nodes.
+  //! Accessor for a Partition instance dedicated to Contour Nodes.
   //! \return requested Partition.
   Handle(asiData_Partition<asiData_ContourNode>) GetContourPartition() const
   {
-    return Handle(asiData_Partition<asiData_ContourNode>)::DownCast( this->Partition(Partition_GeomContour) );
+    return Handle(asiData_Partition<asiData_ContourNode>)::DownCast( this->Partition(Partition_Contour) );
   }
 
 //-----------------------------------------------------------------------------
@@ -352,15 +360,16 @@ protected:
   //---------------------------------------------------------------------------
     Partition_Root,
   //---------------------------------------------------------------------------
-    Partition_GeomPart,
-    Partition_GeomFace,
-    Partition_GeomFaceNorms,
-    Partition_GeomFaceSurf,
-    Partition_GeomFaceContour,
-    Partition_GeomEdge,
-    Partition_GeomCurve,
-    Partition_GeomBoundaryEdges,
-    Partition_GeomContour,
+    Partition_Part,
+    Partition_Face,
+    Partition_FaceNorms,
+    Partition_FaceContour,
+    Partition_Surf,
+    Partition_Edge,
+    Partition_Curve,
+    Partition_CurvatureCombs,
+    Partition_BoundaryEdges,
+    Partition_Contour,
   //---------------------------------------------------------------------------
     Partition_IV,
     Partition_IV_Points2d,

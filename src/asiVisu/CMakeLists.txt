@@ -46,6 +46,7 @@ set (pipelines_H_FILES
   pipelines/asiVisu_BCurveKnotsPipeline.h
   pipelines/asiVisu_BCurvePolesPipeline.h
   pipelines/asiVisu_BSurfPolesPipeline.h
+  pipelines/asiVisu_CurvatureCombsPipeline.h
   pipelines/asiVisu_CurvePipeline.h
   pipelines/asiVisu_EdgeCurvePipeline.h
   pipelines/asiVisu_EdgeDomainPipeline.h
@@ -78,6 +79,7 @@ set (pipelines_CPP_FILES
   pipelines/asiVisu_BCurveKnotsPipeline.cpp
   pipelines/asiVisu_BCurvePolesPipeline.cpp
   pipelines/asiVisu_BSurfPolesPipeline.cpp
+  pipelines/asiVisu_CurvatureCombsPipeline.cpp
   pipelines/asiVisu_CurvePipeline.cpp
   pipelines/asiVisu_EdgeCurvePipeline.cpp
   pipelines/asiVisu_EdgeDomainPipeline.cpp

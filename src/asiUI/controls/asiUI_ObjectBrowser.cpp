@@ -441,7 +441,11 @@ void asiUI_ObjectBrowser::onPrintParameters()
   dump += selected_n->GetName();
   dump += "\' [";
   dump += selected_n->GetId();
-  dump += "]:\n";
+  dump += "]";
+  dump += " (";
+  dump += selected_n->DynamicType()->Name();
+  dump += ")";
+  dump += ":\n";
   //
   for ( Handle(ActAPI_IParamIterator) pit = selected_n->GetParamIterator(); pit->More(); pit->Next() )
   {

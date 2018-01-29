@@ -31,6 +31,9 @@
 // Own include
 #include <asiEngine_Part.h>
 
+// asiEngine includes
+#include <asiEngine_Curve.h>
+
 // asiVisu includes
 #include <asiVisu_GeomPrs.h>
 #include <asiVisu_PartNodeInfo.h>
@@ -78,7 +81,7 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
   // Create underlying face representation Node
   {
     Handle(ActAPI_INode) geom_face_base = asiData_FaceNode::Instance();
-    m_model->GetGeomFacePartition()->AddNode(geom_face_base);
+    m_model->GetFacePartition()->AddNode(geom_face_base);
 
     // Initialize
     Handle(asiData_FaceNode) geom_face_n = Handle(asiData_FaceNode)::DownCast(geom_face_base);
@@ -92,7 +95,7 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
   // Create underlying face norms representation Node
   {
     Handle(ActAPI_INode) geom_face_norms_base = asiData_FaceNormsNode::Instance();
-    m_model->GetGeomFaceNormsPartition()->AddNode(geom_face_norms_base);
+    m_model->GetFaceNormsPartition()->AddNode(geom_face_norms_base);
 
     // Initialize
     Handle(asiData_FaceNormsNode) geom_face_norms_n = Handle(asiData_FaceNormsNode)::DownCast(geom_face_norms_base);
@@ -106,7 +109,7 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
   // Create underlying surface representation Node
   {
     Handle(ActAPI_INode) geom_surf_base = asiData_SurfNode::Instance();
-    m_model->GetGeomSurfacePartition()->AddNode(geom_surf_base);
+    m_model->GetSurfPartition()->AddNode(geom_surf_base);
 
     // Initialize
     Handle(asiData_SurfNode) geom_surf_n = Handle(asiData_SurfNode)::DownCast(geom_surf_base);
@@ -120,7 +123,7 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
   // Create underlying contour representation Node
   {
     Handle(ActAPI_INode) geom_face_contour_base = asiData_FaceContourNode::Instance();
-    m_model->GetGeomFaceContourPartition()->AddNode(geom_face_contour_base);
+    m_model->GetFaceContourPartition()->AddNode(geom_face_contour_base);
 
     // Initialize
     Handle(asiData_FaceContourNode) geom_face_contour_n = Handle(asiData_FaceContourNode)::DownCast(geom_face_contour_base);
@@ -134,7 +137,7 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
   // Create underlying edge representation Node
   {
     Handle(ActAPI_INode) geom_edge_base = asiData_EdgeNode::Instance();
-    m_model->GetGeomEdgePartition()->AddNode(geom_edge_base);
+    m_model->GetEdgePartition()->AddNode(geom_edge_base);
 
     // Initialize
     Handle(asiData_EdgeNode) geom_edge_n = Handle(asiData_EdgeNode)::DownCast(geom_edge_base);
@@ -147,27 +150,18 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
 
   // Create underlying curve representation Node
   {
-    Handle(ActAPI_INode) geom_curve_base = asiData_CurveNode::Instance();
-    m_model->GetGeomCurvePartition()->AddNode(geom_curve_base);
-
-    // Initialize
-    Handle(asiData_CurveNode) geom_curve_n = Handle(asiData_CurveNode)::DownCast(geom_curve_base);
-    geom_curve_n->Init();
-    geom_curve_n->SetName("Host curve");
-
-    // Set as child
-    geom_n->AddChildNode(geom_curve_n);
+    asiEngine_Curve(m_model).Create("Host curve", geom_n);
   }
 
   // Create underlying boundary edges representation Node
   {
     Handle(ActAPI_INode) geom_edges_base = asiData_BoundaryEdgesNode::Instance();
-    m_model->GetGeomBoundaryEdgesPartition()->AddNode(geom_edges_base);
+    m_model->GetBoundaryEdgesPartition()->AddNode(geom_edges_base);
 
     // Initialize
     Handle(asiData_BoundaryEdgesNode) geom_edges_n = Handle(asiData_BoundaryEdgesNode)::DownCast(geom_edges_base);
     geom_edges_n->Init();
-    geom_edges_n->SetName("Boundary");
+    geom_edges_n->SetName("Boundary edges");
 
     // Set as child
     geom_n->AddChildNode(geom_edges_n);

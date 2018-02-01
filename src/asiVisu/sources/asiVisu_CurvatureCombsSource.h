@@ -75,6 +75,9 @@ public:
   asiVisu_EXPORT void
     SetNumOfPoints(const int numPts);
 
+  asiVisu_EXPORT void
+    SetScaleFactor(const double scaleFactor);
+
 protected:
 
   asiVisu_EXPORT virtual int
@@ -118,6 +121,7 @@ private:
 private:
 
   int                m_iNumPoints; //!< Number of discretization points.
+  double             m_fScale;     //!< Scale factor.
   Handle(Geom_Curve) m_curve;      //!< Curve to analyze.
   double             m_fFirst;     //!< Leading parameter on a curve.
   double             m_fLast;      //!< Trailing parameter on a curve.

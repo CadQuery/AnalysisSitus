@@ -59,6 +59,7 @@
 #include <BRepTools.hxx>
 #include <GC_MakeCircle.hxx>
 #include <GeomConvert.hxx>
+#include <GeomLProp_CLProps.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Quaternion.hxx>
 #include <gp_Vec.hxx>
@@ -2157,4 +2158,45 @@ void asiAlgo_Utils::PrintSurfaceDetails(const Handle(Geom_Surface)& surf,
     out << "Minor radius: " << minr << "\n";
     out << "Major radius: " << majr << "\n";
   }
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::CalculateCurvatureComb(const Handle(Geom_Curve)& curve,
+                                           const double              u,
+                                           gp_Pnt&                   p,
+                                           gp_Vec&                   c)
+{
+  p = curve->Value(u);
+
+  GeomLProp_CLProps lProps( curve, u, 2, gp::Resolution() );
+  //
+  if ( !lProps.IsTangentDefined() )
+    return false;
+
+  // Calculate the first derivative.
+  const gp_Vec& x_1 = lProps.D1();
+  //
+  if ( x_1.Magnitude() < 1.0e-7 )
+    return false;
+
+  // Calculate the second derivative.
+  const gp_Vec& x_2 = lProps.D2();
+  //
+  if ( x_2.Magnitude() < 1.0e-7 )
+    return false;
+
+  // Calculate binormal.
+  gp_Dir b = x_1 ^ x_2;
+
+  // Calculate normal.
+  gp_Dir n = b ^ x_1;
+
+  // Calculate curvature.
+  const double k = lProps.Curvature();
+
+  // Calculate comb.
+  c = p.XYZ() - k*n.XYZ();
+
+  return true;
 }

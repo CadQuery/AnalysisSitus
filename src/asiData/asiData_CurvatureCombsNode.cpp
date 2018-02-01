@@ -43,6 +43,9 @@ asiData_CurvatureCombsNode::asiData_CurvatureCombsNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Name,      PID_Name);
   REGISTER_PARAMETER(RealArray, PID_Points);
   REGISTER_PARAMETER(RealArray, PID_Combs);
+  REGISTER_PARAMETER(Reference, PID_RefCurve);
+  REGISTER_PARAMETER(Int,       PID_NumPts);
+  REGISTER_PARAMETER(Real,      PID_ScaleFactor);
 }
 
 //-----------------------------------------------------------------------------
@@ -61,13 +64,19 @@ Handle(ActAPI_INode) asiData_CurvatureCombsNode::Instance()
 void asiData_CurvatureCombsNode::Init()
 {
   // Initialize Parameters
-  this->InitParameter(PID_Name,   "Name");
-  this->InitParameter(PID_Points, "Discretization points");
-  this->InitParameter(PID_Combs,  "Comb vectors");
+  this->InitParameter(PID_Name,        "Name");
+  this->InitParameter(PID_Points,      "Discretization points");
+  this->InitParameter(PID_Combs,       "Comb vectors");
+  this->InitParameter(PID_NumPts,      "Number of discretization points");
+  this->InitParameter(PID_ScaleFactor, "Scale factor");
 
   // Initialize arrays
   ActParamTool::AsRealArray( this->Parameter(PID_Points) )->SetArray(NULL);
   ActParamTool::AsRealArray( this->Parameter(PID_Combs) )->SetArray(NULL);
+
+  // Set default values
+  this->SetNumPoints(100);
+  this->SetScaleFactor(1.0);
 }
 
 //-----------------------------------------------------------------------------
@@ -146,4 +155,32 @@ void asiData_CurvatureCombsNode::GetCombs(std::vector<gp_Vec>& combs) const
     return;
 
   ActAux_ArrayUtils::FromCoords3d<gp_Vec>(coords, combs);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_CurvatureCombsNode::SetNumPoints(const int numPoints)
+{
+  ActParamTool::AsInt( this->Parameter(PID_NumPts) )->SetValue(numPoints);
+}
+
+//-----------------------------------------------------------------------------
+
+int asiData_CurvatureCombsNode::GetNumPoints() const
+{
+  return ActParamTool::AsInt( this->Parameter(PID_NumPts) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_CurvatureCombsNode::SetScaleFactor(const double scaleFactor)
+{
+  ActParamTool::AsReal( this->Parameter(PID_ScaleFactor) )->SetValue(scaleFactor);
+}
+
+//-----------------------------------------------------------------------------
+
+double asiData_CurvatureCombsNode::GetScaleFactor() const
+{
+  return ActParamTool::AsReal( this->Parameter(PID_ScaleFactor) )->GetValue();
 }

@@ -34,6 +34,9 @@
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
 
+// asiEngine includes
+#include <asiEngine_Curve.h>
+
 // asiAlgo includes
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
@@ -279,6 +282,70 @@ int ENGINE_Dist(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc != 1 && argc != 2 && argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  double scaleFactor = 1.0;
+  int numPts = 100;
+  //
+  if ( argc >= 2 )
+    numPts = atoi(argv[1]);
+  if ( argc >= 3 )
+    scaleFactor = atof(argv[2]);
+
+  // Get Part Node to access the selected edge.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+
+  // Curve Node is expected.
+  Handle(asiData_CurveNode) curveNode = partNode->GetCurveRepresentation();
+  //
+  if ( curveNode.IsNull() || !curveNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Curve Node is null or ill-defined.");
+    return TCL_OK;
+  }
+
+  // Get ID of the selected edge.
+  const int edgeIdx = curveNode->GetSelectedEdge();
+  //
+  if ( edgeIdx <= 0 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Please, select edge first.");
+    return TCL_OK;
+  }
+
+  // Create curvature combs.
+  asiEngine_Curve CurveAPI( cmdEngine::model, interp->GetProgress(), interp->GetPlotter() );
+  //
+  Handle(asiData_CurvatureCombsNode) combsNode;
+  //
+  cmdEngine::model->OpenCommand();
+  {
+    combsNode = CurveAPI.CreateOrUpdateCurvatureCombs(curveNode, numPts, scaleFactor);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Actualize
+  cmdEngine::cf->ObjectBrowser->Populate();
+  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(combsNode);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -320,4 +387,13 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     //
     __FILE__, group, ENGINE_Dist);
 
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-curvature",
+    //
+    "check-curvature [numPts [scaleFactor]] \n"
+    "\t Checks curvature of the selected edge. As a result, curvature combs \n"
+    "\t plot is visualized in 3D. You can control its scale factor with \n"
+    "\t <scaleFactor> argument and also its density with <numPts> argument.",
+    //
+    __FILE__, group, ENGINE_CheckCurvature);
 }

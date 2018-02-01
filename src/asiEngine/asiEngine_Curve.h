@@ -63,10 +63,25 @@ public:
            const Handle(ActAPI_INode)&       parent);
 
   //! Creates Data Node represening curvature combs.
-  //! \param[in] parent parent Data Node representing a curve.
+  //! \param[in] parent      parent Data Node representing a curve.
+  //! \param[in] numPts      number of discretization points.
+  //! \param[in] scaleFactor scale factor.
   //! \return newly constructed Curvature Combs Node.
   asiEngine_EXPORT Handle(asiData_CurvatureCombsNode)
-    CreateCurvatureCombs(const Handle(asiData_CurveNode)& parent);
+    CreateCurvatureCombs(const Handle(asiData_CurveNode)& parent,
+                         const int                        numPts,
+                         const double                     scaleFactor);
+
+  //! Creates Data Node represening curvature combs if it does not exist.
+  //! If such Node already exists, it is updated.
+  //! \param[in] parent      parent Data Node representing a curve.
+  //! \param[in] numPts      number of discretization points.
+  //! \param[in] scaleFactor scale factor.
+  //! \return newly constructed Curvature Combs Node.
+  asiEngine_EXPORT Handle(asiData_CurvatureCombsNode)
+    CreateOrUpdateCurvatureCombs(const Handle(asiData_CurveNode)& parent,
+                                 const int                        numPts,
+                                 const double                     scaleFactor);
 
   //! Deletes all sub-Nodes for the given Curve Node.
   //! \param[in] parent parent Curve Node to clean the underlying objects for.

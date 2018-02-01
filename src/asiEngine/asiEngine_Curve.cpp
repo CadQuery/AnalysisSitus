@@ -54,7 +54,9 @@ Handle(asiData_CurveNode)
 //-----------------------------------------------------------------------------
 
 Handle(asiData_CurvatureCombsNode)
-  asiEngine_Curve::CreateCurvatureCombs(const Handle(asiData_CurveNode)& parent)
+  asiEngine_Curve::CreateCurvatureCombs(const Handle(asiData_CurveNode)& parent,
+                                        const int                        numPts,
+                                        const double                     scaleFactor)
 {
   Handle(ActAPI_INode) node = asiData_CurvatureCombsNode::Instance();
   m_model->GetCurvatureCombsPartition()->AddNode(node);
@@ -63,11 +65,44 @@ Handle(asiData_CurvatureCombsNode)
   Handle(asiData_CurvatureCombsNode) combs = Handle(asiData_CurvatureCombsNode)::DownCast(node);
   combs->Init();
   combs->SetName("Curvature combs");
+  combs->SetNumPoints(numPts);
+  combs->SetScaleFactor(scaleFactor);
+  //
+  combs->ConnectReference(asiData_CurvatureCombsNode::PID_RefCurve, parent);
 
   // Set as child
   parent->AddChildNode(combs);
 
   return combs;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_CurvatureCombsNode)
+  asiEngine_Curve::CreateOrUpdateCurvatureCombs(const Handle(asiData_CurveNode)& parent,
+                                                const int                        numPts,
+                                                const double                     scaleFactor)
+{
+  Handle(ActAPI_IPartition)
+    combsPartition = m_model->GetCurvatureCombsPartition();
+
+  Handle(ActAPI_INode) node = combsPartition->GetNode(1);
+  //
+  if ( node.IsNull() )
+  {
+    node = this->CreateCurvatureCombs(parent, numPts, scaleFactor);
+  }
+  else
+  {
+    Handle(asiData_CurvatureCombsNode)
+      combsNode = Handle(asiData_CurvatureCombsNode)::DownCast(node);
+
+    // Update
+    combsNode->SetNumPoints(numPts);
+    combsNode->SetScaleFactor(scaleFactor);
+  }
+
+  return Handle(asiData_CurvatureCombsNode)::DownCast(node);
 }
 
 //-----------------------------------------------------------------------------

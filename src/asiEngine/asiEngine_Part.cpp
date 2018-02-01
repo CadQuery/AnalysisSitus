@@ -429,8 +429,8 @@ void asiEngine_Part::HighlightFace(const int     faceIndex,
 //-----------------------------------------------------------------------------
 
 //! Highlights faces.
-//! \param faceIndices [in] faces to highlight.
-//! \param color       [in] highlighting color.
+//! \param[in] faceIndices faces to highlight.
+//! \param[in] color       highlighting color.
 void asiEngine_Part::HighlightFaces(const TColStd_PackedMapOfInteger& faceIndices,
                                     const QColor&                     color)
 {

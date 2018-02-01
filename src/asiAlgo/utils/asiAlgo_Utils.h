@@ -620,6 +620,23 @@ public:
     PrintSurfaceDetails(const Handle(Geom_Surface)& surf,
                         Standard_OStream&           out);
 
+  //! Calculates curvature comb for the passed curve at the given parameter
+  //! value. The method follows the paper "Farin, G. 2016. Curvature combs
+  //! and curvature plots. CAD Computer Aided Design 80, 6–8."
+  //!
+  //! \param[in]  curve parametric curve to analyze.
+  //! \param[in]  u     parameter value.
+  //! \param[out] p     point on curve at the given parameter value.
+  //! \param[out] c     curvature comb.
+  //!
+  //! \return false if a comb cannot be calculated. NOTE: the output argument
+  //!         <p> will be calculated anyway.
+  asiAlgo_EXPORT static bool
+    CalculateCurvatureComb(const Handle(Geom_Curve)& curve,
+                           const double              u,
+                           gp_Pnt&                   p,
+                           gp_Vec&                   c);
+
 private:
 
   asiAlgo_Utils(); //!< Prohibited.

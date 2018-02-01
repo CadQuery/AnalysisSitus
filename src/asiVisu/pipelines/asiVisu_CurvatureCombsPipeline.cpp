@@ -32,8 +32,8 @@
 #include <asiVisu_CurvatureCombsPipeline.h>
 
 // asiVisu includes
+#include <asiVisu_CurvatureCombsDataProvider.h>
 #include <asiVisu_CurvatureCombsSource.h>
-#include <asiVisu_CurveDataProvider.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -52,7 +52,8 @@ asiVisu_CurvatureCombsPipeline::asiVisu_CurvatureCombsPipeline()
 //! \param[in] DP Data Provider.
 void asiVisu_CurvatureCombsPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  Handle(asiVisu_CurveDataProvider) dp = Handle(asiVisu_CurveDataProvider)::DownCast(DP);
+  Handle(asiVisu_CurvatureCombsDataProvider)
+    dp = Handle(asiVisu_CurvatureCombsDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
@@ -79,6 +80,9 @@ void asiVisu_CurvatureCombsPipeline::SetInput(const Handle(asiVisu_DataProvider)
     double f, l;
     vtkSmartPointer<asiVisu_CurvatureCombsSource>
       src = vtkSmartPointer<asiVisu_CurvatureCombsSource>::New();
+    //
+    src->SetNumOfPoints( dp->GetNumPoints() );
+    src->SetScaleFactor( dp->GetScaleFactor() );
     //
     if ( curve_type->SubType( STANDARD_TYPE(Geom_Curve) ) )
     {

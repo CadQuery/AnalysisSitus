@@ -31,6 +31,9 @@
 // Own include
 #include <asiVisu_CurvatureCombsSource.h>
 
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
+
 // VTK includes
 #include <vtkCellData.h>
 #include <vtkDataObject.h>
@@ -101,6 +104,18 @@ void asiVisu_CurvatureCombsSource::SetNumOfPoints(const int numPts)
 
 //-----------------------------------------------------------------------------
 
+//! Sets scale factor for a curvature comb.
+//! \param[in] scaleFactor scale factor to use.
+void asiVisu_CurvatureCombsSource::SetScaleFactor(const double scaleFactor)
+{
+  m_fScale = scaleFactor;
+
+  // Update modification time for the source
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
 //! This method (called by superclass) performs conversion of OCCT
 //! data structures to VTK polygonal representation.
 //!
@@ -128,21 +143,6 @@ int asiVisu_CurvatureCombsSource::RequestData(vtkInformation*        request,
     return false;
   }
 
-  // Allocate arrays
-  Handle(HRealArray) xCoords = new HRealArray(0, m_iNumPoints - 1, 0.0),
-                     yCoords = new HRealArray(0, m_iNumPoints - 1, 0.0),
-                     zCoords = new HRealArray(0, m_iNumPoints - 1, 0.0);
-
-  for ( int k = 1; k <= m_iNumPoints; ++k )
-  {
-    const int param = Defl.Parameter(k);
-    gp_Pnt    P     = m_curve->Value(param);
-    //
-    xCoords->ChangeValue(k - 1) = P.X();
-    yCoords->ChangeValue(k - 1) = P.Y();
-    zCoords->ChangeValue(k - 1) = P.Z();
-  }
-
   /* ==============================
    *  Prepare involved collections
    * ============================== */
@@ -153,45 +153,39 @@ int asiVisu_CurvatureCombsSource::RequestData(vtkInformation*        request,
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
   polyOutput->SetPoints(points);
 
-  /* =====================================================================
-   *  Assuming the input arrays ordered, we build series of line segments
-   *  representing our curve in a tabular form. Each segment is
-   *  defined as the following pair:
-   *
-   *   seg = (x[i], y[i], z[i]), (x[i+1], y[i+1], z[i+1])
-   *
-   *  Take care of degenerated case: single point
-   * ===================================================================== */
+  /* ======================
+   *  Build polygonal data
+   * ====================== */
 
-  const int nbX = xCoords->Length(),
-            nbY = yCoords->Length(),
-            nbZ = zCoords->Length();
-
-  if ( nbX == 0 || nbY == 0 || nbZ == 0 )
-    return 0;
-
-  if ( nbX == 1 && nbY == 1 && nbZ == 1 )
+  // Calculate curvature points and combs.
+  std::vector<gp_Pnt> pointsVec;
+  std::vector<gp_Vec> combsVec;
+  std::vector<bool>   combsOk;
+  //
+  for ( int k = 1; k <= m_iNumPoints; ++k )
   {
-    gp_Pnt P( xCoords->Value(0),
-              yCoords->Value(0),
-              zCoords->Value(0) );
+    const double param = Defl.Parameter(k);
 
-    this->registerVertex(P, polyOutput);
+    gp_Pnt p;
+    gp_Vec comb;
+    //
+    const bool isOk = asiAlgo_Utils::CalculateCurvatureComb(m_curve, param, p, comb);
+
+    combsOk   .push_back(isOk);
+    pointsVec .push_back(p);
+    combsVec  .push_back(comb.XYZ() * m_fScale);
   }
-  else
-  {
-    for ( int i = 0; i < nbX - 1; i++ )
-    {
-      gp_Pnt P1( xCoords->Value(i),
-                 yCoords->Value(i),
-                 zCoords->Value(i) );
-      //
-      gp_Pnt P2( xCoords->Value(i + 1),
-                 yCoords->Value(i + 1),
-                 zCoords->Value(i + 1) );
 
-      this->registerLine(P1, P2, polyOutput);
-    }
+  // Add points.
+  for ( size_t k = 0; k < pointsVec.size(); ++k )
+  {
+    this->registerVertex(pointsVec[k], polyOutput);
+  }
+
+  // Add lines.
+  for ( size_t k = 0; k < pointsVec.size(); ++k )
+  {
+    this->registerLine(pointsVec[k], pointsVec[k].XYZ() + combsVec[k].XYZ(), polyOutput);
   }
 
   return Superclass::RequestData(request, inputVector, outputVector);

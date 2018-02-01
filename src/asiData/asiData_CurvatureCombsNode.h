@@ -32,10 +32,11 @@
 #define asiData_CurvatureCombsNode_h
 
 // asiData includes
-#include <asiData.h>
+#include <asiData_CurveNode.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
+#include <ActData_ParameterFactory.h>
 
 //! Data Node to store curvature combs.
 class asiData_CurvatureCombsNode : public ActData_BaseNode
@@ -53,9 +54,12 @@ public:
   //! IDs for the underlying Parameters.
   enum ParamId
   {
-    PID_Name,   //!< Name of the Node.
-    PID_Points, //!< Discretization points.
-    PID_Combs,  //!< Comb vectors.
+    PID_Name,        //!< Name of the Node.
+    PID_Points,      //!< Discretization points.
+    PID_Combs,       //!< Comb vectors.
+    PID_RefCurve,    //!< Reference to Curve Node.
+    PID_NumPts,      //!< Number of discretization points.
+    PID_ScaleFactor, //!< Scale factor.
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
@@ -93,6 +97,26 @@ public:
 
   asiData_EXPORT void
     GetCombs(std::vector<gp_Vec>& combs) const;
+
+  asiData_EXPORT void
+    SetNumPoints(const int numPoints);
+
+  asiData_EXPORT int
+    GetNumPoints() const;
+
+  asiData_EXPORT void
+    SetScaleFactor(const double scaleFactor);
+
+  asiData_EXPORT double
+    GetScaleFactor() const;
+
+public:
+
+  //! \return referenced Curve Node.
+  Handle(asiData_CurveNode) GetRefCurve() const
+  {
+    return Handle(asiData_CurveNode)::DownCast( ActParamTool::AsReference( this->Parameter(PID_RefCurve) )->GetTarget() );
+  }
 
 protected:
 

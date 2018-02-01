@@ -404,10 +404,10 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
    * ============= */
 
   // Prepare objects and tools
-  BOPCol_ListOfShape objects;
+  TopTools_ListOfShape objects;
   objects.Append(partShape);
   //
-  BOPCol_ListOfShape tools;
+  TopTools_ListOfShape tools;
   tools.Append(sectionFace);
 
   BOPAlgo_Splitter mkSplit;

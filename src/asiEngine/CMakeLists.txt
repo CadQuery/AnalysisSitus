@@ -116,6 +116,10 @@ include_directories ( ${asiEngine_include_dir_loc}
                       ${3RDPARTY_vtk_INCLUDE_DIR}
                       ${3RDPARTY_tbb_INCLUDE_DIR} )
 
+if (USE_MOBIUS)
+  include_directories(${3RDPARTY_mobius_INCLUDE_DIR})
+endif()
+
 #------------------------------------------------------------------------------
 # Create library
 #------------------------------------------------------------------------------

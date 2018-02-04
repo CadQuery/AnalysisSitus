@@ -1,6 +1,19 @@
 project(cmdMisc)
 
 #------------------------------------------------------------------------------
+# Mobius libraries
+#------------------------------------------------------------------------------
+
+if (USE_MOBIUS)
+  set (MOBIUS_LIB_FILES
+    mobiusBSpl
+    mobiusCascade
+    mobiusCore
+    mobiusGeom
+  )
+endif()
+
+#------------------------------------------------------------------------------
 # Common
 #------------------------------------------------------------------------------
 
@@ -47,6 +60,10 @@ include_directories ( ${cmdMisc_include_dir_loc}
                       ${3RDPARTY_vtk_INCLUDE_DIR}
                       ${3RDPARTY_tbb_INCLUDE_DIR} )
 
+if (USE_MOBIUS)
+  include_directories(${3RDPARTY_mobius_INCLUDE_DIR})
+endif()
+
 #------------------------------------------------------------------------------
 # Create library
 #------------------------------------------------------------------------------
@@ -60,6 +77,23 @@ add_library (cmdMisc SHARED
 #------------------------------------------------------------------------------
 
 target_link_libraries(cmdMisc asiTcl asiAlgo asiData asiVisu asiEngine asiUI)
+
+if (USE_MOBIUS)
+  foreach (LIB_FILE ${MOBIUS_LIB_FILES})
+    if (WIN32)
+      set (LIB_FILENAME "${LIB_FILE}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    else()
+      set (LIB_FILENAME "lib${LIB_FILE}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+    endif()
+
+    if (3RDPARTY_mobius_LIBRARY_DIR_DEBUG AND EXISTS "${3RDPARTY_mobius_LIBRARY_DIR_DEBUG}/${LIB_FILENAME}")
+      target_link_libraries (cmdMisc debug ${3RDPARTY_mobius_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
+      target_link_libraries (cmdMisc optimized ${3RDPARTY_mobius_LIBRARY_DIR}/${LIB_FILENAME})
+    else()
+      target_link_libraries (cmdMisc ${3RDPARTY_mobius_LIBRARY_DIR}/${LIB_FILENAME})
+    endif()
+  endforeach()
+endif()
 
 #------------------------------------------------------------------------------
 # Installation of Analysis Situs as a software

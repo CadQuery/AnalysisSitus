@@ -60,6 +60,7 @@
 #include <BRepPrimAPI_MakePrism.hxx>
 #include <BRepTools.hxx>
 #include <GeomAPI.hxx>
+#include <GeomAPI_Interpolate.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Pln.hxx>
 #include <IntTools_FClass2d.hxx>
@@ -850,6 +851,104 @@ int MISC_TestPipe(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_TestLoft(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  std::ifstream FILE(argv[1]);
+  //
+  if ( !FILE.is_open() )
+    return TCL_ERROR;
+
+  std::vector< std::vector<gp_XYZ> > sectionsPts;
+  sectionsPts.push_back( std::vector<gp_XYZ>() );
+  //
+  int point_idx = 0;
+  //
+  while ( !FILE.eof() )
+  {
+    double x, x_prev;
+
+    if ( point_idx == 0 )
+      x = x_prev = 0.0;
+
+    bool stop = false;
+    do
+    {
+      char str[256];
+      FILE.getline(str, 256);
+
+      std::vector<std::string> tokens;
+      std::istringstream iss(str);
+      std::copy( std::istream_iterator<std::string>(iss),
+                 std::istream_iterator<std::string>(),
+                 std::back_inserter< std::vector<std::string> >(tokens) );
+
+      if ( tokens.empty() )
+        if ( !FILE.eof() )
+          continue;
+        else
+          break;
+
+             x = atof(tokens[0].c_str());
+      double y = atof(tokens[1].c_str());
+      double z = atof(tokens[2].c_str());
+      //
+      gp_XYZ P(x, y, z);
+      //
+      point_idx++;
+
+      if ( x != x_prev )
+      {
+        sectionsPts.push_back( std::vector<gp_XYZ>() );
+        stop = true;;
+      }
+
+      sectionsPts[sectionsPts.size() - 1].push_back(P);
+      x_prev = x;
+    }
+    while ( !stop );
+  }
+  FILE.close();
+
+  // Draw
+  for ( size_t k = 0; k < sectionsPts.size(); ++k )
+  {
+    const std::vector<gp_XYZ>&  sectionPts = sectionsPts[k];
+    Handle(TColgp_HArray1OfPnt) pts        = new TColgp_HArray1OfPnt( 1, sectionPts.size() );
+
+    Handle(HRealArray) coords = new HRealArray(0, sectionPts.size()*3 - 1);
+
+    int idx = 0;
+    for ( size_t kk = 0; kk < sectionPts.size(); ++kk )
+    {
+      coords->ChangeValue(idx++) = sectionPts[kk].X();
+      coords->ChangeValue(idx++) = sectionPts[kk].Y();
+      coords->ChangeValue(idx++) = sectionPts[kk].Z();
+
+      pts->ChangeValue(kk + 1) = sectionPts[kk];
+    }
+    //
+    interp->GetPlotter().DRAW_POINTS(coords, Color_White, "section points");
+
+    // Interpolate points
+    GeomAPI_Interpolate interpolator( pts, false, Precision::Confusion() );
+    interpolator.Perform();
+    const Handle(Geom_BSplineCurve)& bcurve = interpolator.Curve();
+    //
+    interp->GetPlotter().DRAW_CURVE(bcurve, Color_Red, "interp");
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -926,6 +1025,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Problem reproducer for pipes.",
     //
     __FILE__, group, MISC_TestPipe);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-loft",
+    //
+    "test-loft \n"
+    "\t Test for lofting.",
+    //
+    __FILE__, group, MISC_TestLoft);
 }
 
 // Declare entry point

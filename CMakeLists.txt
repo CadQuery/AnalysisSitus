@@ -53,6 +53,12 @@ include (${CMAKE_SOURCE_DIR}/cmake/asitus_OCCT_3rdparty.cmake)
 # Inno Setup for installation
 include (${CMAKE_SOURCE_DIR}/cmake/asitus_InnoSetup.cmake)
 
+# Mobius is optional
+set (USE_MOBIUS OFF CACHE BOOL "Mobius is optional 3-rd party. It gives alternative tools for CAGD.")
+
+# Mobius
+include (${CMAKE_SOURCE_DIR}/cmake/asitus_Mobius.cmake)
+
 set (3RDPARTY_DLL_PATH "${3RDPARTY_tcl_DLL_DIR};\
 ${3RDPARTY_tk_DLL_DIR};\
 ${3RDPARTY_freetype_DLL_DIR};\
@@ -73,6 +79,14 @@ endif()
 
 if (3RDPARTY_vtk_DLL_DIR_DEBUG AND EXISTS "${3RDPARTY_vtk_DLL_DIR_DEBUG}")
   set (3RDPARTY_DLL_DEB_PATH "${3RDPARTY_DLL_DEB_PATH};${3RDPARTY_vtk_DLL_DIR_DEBUG}")
+endif()
+
+if (USE_MOBIUS)
+  if (3RDPARTY_mobius_DLL_DIR_DEBUG AND EXISTS "${3RDPARTY_mobius_DLL_DIR_DEBUG}")
+    set (3RDPARTY_DLL_DEB_PATH "${3RDPARTY_DLL_DEB_PATH};${3RDPARTY_mobius_DLL_DIR_DEBUG}")
+  endif()
+
+  set (3RDPARTY_DLL_PATH "${3RDPARTY_DLL_PATH};${3RDPARTY_mobius_DLL_DIR}")
 endif()
 
 set (3RDPARTY_DLL_PATH "${3RDPARTY_DLL_PATH};\

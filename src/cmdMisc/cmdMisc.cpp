@@ -45,6 +45,16 @@
 #include <asiEngine_Model.h>
 #include <asiEngine_Part.h>
 
+#if defined USE_MOBIUS
+  // Mobius includes
+  #include <mobius/core_HeapAlloc.h>
+  #include <mobius/bspl_KnotsAverage.h>
+  #include <mobius/bspl_ParamsCentripetal.h>
+  #include <mobius/cascade_BSplineCurve3D.h>
+  #include <mobius/cascade_BSplineSurface.h>
+  #include <mobius/geom_InterpolateCurve.h>
+#endif
+
 // OCCT includes
 #include <BOPAlgo_Splitter.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
@@ -61,6 +71,7 @@
 #include <BRepTools.hxx>
 #include <GeomAPI.hxx>
 #include <GeomAPI_Interpolate.hxx>
+#include <GeomAPI_PointsToBSpline.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Pln.hxx>
 #include <IntTools_FClass2d.hxx>
@@ -916,33 +927,156 @@ int MISC_TestLoft(const Handle(asiTcl_Interp)& interp,
   }
   FILE.close();
 
-  // Draw
-  for ( size_t k = 0; k < sectionsPts.size(); ++k )
+  TopTools_SequenceOfShape sectionShapes;
+
+  TIMER_NEW
+  TIMER_GO
+
+  /// Last section is ill-defined
+  for ( size_t k = 0; k < sectionsPts.size() - 1; ++k )
   {
-    const std::vector<gp_XYZ>&  sectionPts = sectionsPts[k];
-    Handle(TColgp_HArray1OfPnt) pts        = new TColgp_HArray1OfPnt( 1, sectionPts.size() );
-
-    Handle(HRealArray) coords = new HRealArray(0, sectionPts.size()*3 - 1);
-
-    int idx = 0;
-    for ( size_t kk = 0; kk < sectionPts.size(); ++kk )
+    // One side
+    Handle(TColgp_HArray1OfPnt) pts_left;
     {
-      coords->ChangeValue(idx++) = sectionPts[kk].X();
-      coords->ChangeValue(idx++) = sectionPts[kk].Y();
-      coords->ChangeValue(idx++) = sectionPts[kk].Z();
+      const std::vector<gp_XYZ>&  sectionPts      = sectionsPts[k];
+      ///
+      const int                   numPtsInSection = sectionPts.size() / 2;
+      ///
+      pts_left                                    = new TColgp_HArray1OfPnt( 1, numPtsInSection );
+      Handle(HRealArray)          coords          = new HRealArray(0, numPtsInSection*3 - 1);
 
-      pts->ChangeValue(kk + 1) = sectionPts[kk];
+      ///
+      //if ( k != 1 )
+      //  continue;
+
+      int idx = 0, pt_idx = 1;
+      for ( size_t kk = 0; kk < numPtsInSection; ++kk )
+      {
+        coords->ChangeValue(idx++) = sectionPts[kk].X();
+        coords->ChangeValue(idx++) = sectionPts[kk].Y();
+        coords->ChangeValue(idx++) = sectionPts[kk].Z();
+
+        pts_left->ChangeValue(pt_idx++) = sectionPts[kk];
+
+        //if ( k == 1 )
+        //{
+        //  TCollection_AsciiString ptName("test pt "); ptName += (int) kk;
+        //  interp->GetPlotter().REDRAW_POINT(ptName, sectionPts[kk], Color_Red);
+        //}
+      }
+      //
+      TCollection_AsciiString ptsName("section points left "); ptsName += (int) k;
+      interp->GetPlotter().REDRAW_POINTS(ptsName, coords, Color_White);
     }
-    //
-    interp->GetPlotter().DRAW_POINTS(coords, Color_White, "section points");
 
-    // Interpolate points
-    GeomAPI_Interpolate interpolator( pts, false, Precision::Confusion() );
-    interpolator.Perform();
-    const Handle(Geom_BSplineCurve)& bcurve = interpolator.Curve();
-    //
-    interp->GetPlotter().DRAW_CURVE(bcurve, Color_Red, "interp");
+    // Another side
+    Handle(TColgp_HArray1OfPnt) pts_right;
+    {
+      const std::vector<gp_XYZ>&  sectionPts      = sectionsPts[k];
+      ///
+      const int                   numPtsInSection = sectionPts.size() / 2;
+      ///
+      pts_right                                   = new TColgp_HArray1OfPnt( 1, numPtsInSection );
+      Handle(HRealArray)          coords          = new HRealArray(0, numPtsInSection*3 - 1);
+
+      ///
+      //if ( k != 1 )
+      //  continue;
+
+      int idx = 0, pt_idx = 1;
+      for ( size_t kk = sectionPts.size() / 2; kk < sectionPts.size(); ++kk )
+      {
+        coords->ChangeValue(idx++) = sectionPts[kk].X();
+        coords->ChangeValue(idx++) = sectionPts[kk].Y();
+        coords->ChangeValue(idx++) = sectionPts[kk].Z();
+
+        pts_right->ChangeValue(pt_idx++) = sectionPts[kk];
+
+        //if ( k == 1 )
+        //{
+        //  TCollection_AsciiString ptName("test pt "); ptName += (int) kk;
+        //  interp->GetPlotter().REDRAW_POINT(ptName, sectionPts[kk], Color_Red);
+        //}
+      }
+      //
+      TCollection_AsciiString ptsName("section points right "); ptsName += (int) k;
+      interp->GetPlotter().REDRAW_POINTS(ptsName, coords, Color_White);
+    }
+
+    TopoDS_Wire W;
+    BRepBuilderAPI_MakeWire mkWire;
+
+    // Interpolate left points
+    try
+    {
+      Handle(Geom_BSplineCurve) bcurve;
+
+      {
+        GeomAPI_Interpolate interpolator( pts_left, false, Precision::Confusion() );
+        interpolator.Perform();
+        bcurve = interpolator.Curve();
+      }
+
+      /*
+      {
+        GeomAPI_PointsToBSpline approximator(pts->Array1(), 2, 3, GeomAbs_C2);
+        bcurve = approximator.Curve();
+      }
+      */
+
+      // Draw section
+      interp->GetPlotter().DRAW_CURVE(bcurve, Color_Red, "approx section left");
+
+      TopoDS_Edge E = BRepBuilderAPI_MakeEdge(bcurve);
+      mkWire.Add(E);
+    }
+    catch ( ... )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to interpolate section %1." << (int) k);
+      continue;
+    }
+
+    // Interpolate right points
+    try
+    {
+      Handle(Geom_BSplineCurve) bcurve;
+
+      {
+        GeomAPI_Interpolate interpolator( pts_right, false, Precision::Confusion() );
+        interpolator.Perform();
+        bcurve = interpolator.Curve();
+      }
+
+      /*
+      {
+        GeomAPI_PointsToBSpline approximator(pts->Array1(), 2, 3, GeomAbs_C2);
+        bcurve = approximator.Curve();
+      }
+      */
+
+      // Draw section
+      interp->GetPlotter().DRAW_CURVE(bcurve, Color_Red, "approx section right");
+
+      TopoDS_Edge E = BRepBuilderAPI_MakeEdge(bcurve);
+      mkWire.Add(E);
+    }
+    catch ( ... )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to interpolate section %1." << (int) k);
+      continue;
+    }
+
+    W = mkWire.Wire();
+    sectionShapes.Append(W);
   }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Reconstruct sections")
+
+  // Skin and draw
+  TopoDS_Shape skinnedShape = asiAlgo_Utils::MakeSkin(sectionShapes);
+  //
+  interp->GetPlotter().REDRAW_SHAPE("result", skinnedShape);
 
   return TCL_OK;
 }

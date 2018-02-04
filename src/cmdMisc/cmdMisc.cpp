@@ -1011,18 +1011,17 @@ int MISC_TestLoft(const Handle(asiTcl_Interp)& interp,
     {
       Handle(Geom_BSplineCurve) bcurve;
 
-      {
+      /*{
         GeomAPI_Interpolate interpolator( pts_left, false, Precision::Confusion() );
         interpolator.Perform();
         bcurve = interpolator.Curve();
-      }
+      }*/
 
-      /*
+      
       {
-        GeomAPI_PointsToBSpline approximator(pts->Array1(), 2, 3, GeomAbs_C2);
+        GeomAPI_PointsToBSpline approximator(pts_left->Array1(), 3, 3, GeomAbs_C2, 1.0);
         bcurve = approximator.Curve();
       }
-      */
 
       // Draw section
       interp->GetPlotter().DRAW_CURVE(bcurve, Color_Red, "approx section left");
@@ -1041,18 +1040,16 @@ int MISC_TestLoft(const Handle(asiTcl_Interp)& interp,
     {
       Handle(Geom_BSplineCurve) bcurve;
 
-      {
-        GeomAPI_Interpolate interpolator( pts_right, false, Precision::Confusion() );
-        interpolator.Perform();
-        bcurve = interpolator.Curve();
-      }
+      //{
+      //  GeomAPI_Interpolate interpolator( pts_right, false, Precision::Confusion() );
+      //  interpolator.Perform();
+      //  bcurve = interpolator.Curve();
+      //}
 
-      /*
       {
-        GeomAPI_PointsToBSpline approximator(pts->Array1(), 2, 3, GeomAbs_C2);
+        GeomAPI_PointsToBSpline approximator(pts_right->Array1(), 3, 3, GeomAbs_C2, 1.0);
         bcurve = approximator.Curve();
       }
-      */
 
       // Draw section
       interp->GetPlotter().DRAW_CURVE(bcurve, Color_Red, "approx section right");

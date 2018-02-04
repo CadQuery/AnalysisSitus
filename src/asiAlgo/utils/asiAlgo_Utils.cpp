@@ -1235,7 +1235,7 @@ TopoDS_Shape asiAlgo_Utils::MakeSkin(const TopTools_SequenceOfShape& wires)
   // Initialize and build
   BRepOffsetAPI_ThruSections ThruSections(false, false, 1.0e-1);
   ThruSections.SetSmoothing(false);
-  ThruSections.SetMaxDegree(8);
+  ThruSections.SetMaxDegree(3);
   //
   for ( int k = 1; k <= wires.Length(); ++k )
   {

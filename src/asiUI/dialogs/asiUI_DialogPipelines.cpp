@@ -90,7 +90,10 @@ asiUI_DialogPipelines::asiUI_DialogPipelines(const Handle(asiVisu_Prs)&         
   connect( m_widgets.pPipelines, SIGNAL ( itemChanged(QTableWidgetItem*) ),
            this,                 SLOT   ( onStateChanged(QTableWidgetItem*) ) );
 
-  TCollection_AsciiString title("Pipelines of "); title += m_prs->DynamicType()->Name();
+  TCollection_AsciiString title;
+  title += m_prs->GetNode()->GetId();
+  title += " pipelines";
+  //
   this->setWindowTitle( title.ToCString() );
 }
 

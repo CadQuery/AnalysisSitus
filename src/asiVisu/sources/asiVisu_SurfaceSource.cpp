@@ -224,13 +224,16 @@ int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
         GeomLProp_SLProps lProps( m_surf, U[i], V[j], 2, gp::Resolution() );
         double k = 0.0;
         //
-        if ( m_scalars == Scalars_GaussianCurvature )
-          k = lProps.GaussianCurvature();
-        if ( m_scalars == Scalars_MeanCurvature )
-          k = lProps.MeanCurvature();
-        //
-        if ( k < m_fMinScalar ) m_fMinScalar = k;
-        if ( k > m_fMaxScalar ) m_fMaxScalar = k;
+        if ( lProps.IsCurvatureDefined() )
+        {
+          if ( m_scalars == Scalars_GaussianCurvature )
+            k = lProps.GaussianCurvature();
+          if ( m_scalars == Scalars_MeanCurvature )
+            k = lProps.MeanCurvature();
+          //
+          if ( k < m_fMinScalar ) m_fMinScalar = k;
+          if ( k > m_fMaxScalar ) m_fMaxScalar = k;
+        }
         //
         curvature->InsertNextValue(k);
       }

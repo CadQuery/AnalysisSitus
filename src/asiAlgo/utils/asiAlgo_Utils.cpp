@@ -2200,3 +2200,34 @@ bool asiAlgo_Utils::CalculateCurvatureComb(const Handle(Geom_Curve)& curve,
 
   return true;
 }
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::ReparametrizeBSpl(const Handle(Geom2d_Curve)&  curve,
+                                      const double                 newFirst,
+                                      const double                 newLast,
+                                      const bool                   toCopy,
+                                      Handle(Geom2d_BSplineCurve)& result)
+{
+  Handle(Geom2d_BSplineCurve)
+    curveBSpl = Handle(Geom2d_BSplineCurve)::DownCast(curve);
+  //
+  if ( curveBSpl.IsNull() )
+    return false;
+
+  // Prepare a copy if necessary.
+  if ( toCopy )
+    result = Handle(Geom2d_BSplineCurve)::DownCast( curveBSpl->Copy() );
+  else
+    result = curveBSpl;
+
+  // Reparameterize.
+  const int numKnots = result->NbKnots();
+  //
+  TColStd_Array1OfReal knots(1, numKnots);
+  result->Knots(knots);
+  BSplCLib::Reparametrize(newFirst, newLast, knots);
+  result->SetKnots(knots);
+  //
+  return true;
+}

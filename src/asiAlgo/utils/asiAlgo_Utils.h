@@ -637,10 +637,27 @@ public:
                            gp_Pnt&                   p,
                            gp_Vec&                   c);
 
+  //! Reparametrizes the given B-spline curve applying the passed new range
+  //! for its knot vector.
+  //!
+  //! \param[in]  curve    B-spline curve to reparametrize.
+  //! \param[in]  newFirst new first parameter value.
+  //! \param[in]  newLast  new last parameter value.
+  //! \param[in]  toCopy   indicates whether to prepare a copy of the
+  //!                      input curve instead of directly modifying it.
+  //! \param[out] result   reparametrized curve.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT static bool
+    ReparametrizeBSpl(const Handle(Geom2d_Curve)&  curve,
+                      const double                 newFirst,
+                      const double                 newLast,
+                      const bool                   toCopy,
+                      Handle(Geom2d_BSplineCurve)& result);
+
 private:
 
-  asiAlgo_Utils(); //!< Prohibited.
-  asiAlgo_Utils(const asiAlgo_Utils&); //!< Prohibited.
+  asiAlgo_Utils() = delete;
+  asiAlgo_Utils(const asiAlgo_Utils&) = delete;
 
 };
 

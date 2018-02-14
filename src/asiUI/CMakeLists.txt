@@ -103,6 +103,17 @@ set (graphs_CPP_FILES
 )
 
 #------------------------------------------------------------------------------
+# Plots
+#------------------------------------------------------------------------------
+
+set (plots_H_UI_FILES
+  plots/asiUI_CurvaturePlot.h
+)
+set (plots_CPP_FILES 
+  plots/asiUI_CurvaturePlot.cpp
+)
+
+#------------------------------------------------------------------------------
 # Interaction
 #------------------------------------------------------------------------------
 
@@ -234,6 +245,7 @@ set (TBB_LIB_FILES
 )
 #------------------------------------------------------------------------------
 set (VTK_LIB_FILES
+  vtkChartsCore-8.0
   vtkCommonCore-8.0
   vtkCommonDataModel-8.0
   vtkCommonExecutionModel-8.0
@@ -328,6 +340,22 @@ foreach (FILE ${graphs_CPP_FILES})
   source_group ("Source Files\\Graphs" FILES "${FILE}")
 endforeach (FILE)
 
+foreach (FILE ${plots_H_UI_FILES})
+  set (src_files ${src_files} ${FILE})
+  #
+  unset (MOC_FILE)
+  qt5_wrap_cpp(MOC_FILE ${FILE})
+  message (STATUS "... Info: next MOC file ${MOC_FILE}")
+  set (ui_moc_files ${ui_moc_files} ${MOC_FILE})
+  #
+  source_group ("Generated" FILES "${MOC_FILE}")
+  source_group ("Header Files\\Plots" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${plots_CPP_FILES})
+  source_group ("Source Files\\Plots" FILES "${FILE}")
+endforeach (FILE)
+
 foreach (FILE ${interaction_H_FILES})
   source_group ("Header Files\\Interaction" FILES "${FILE}")
 endforeach (FILE)
@@ -393,6 +421,7 @@ set (asiUI_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
   ${CMAKE_CURRENT_SOURCE_DIR}/controls;\
   ${CMAKE_CURRENT_SOURCE_DIR}/dialogs;\
   ${CMAKE_CURRENT_SOURCE_DIR}/graphs;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/plots;\
   ${CMAKE_CURRENT_SOURCE_DIR}/interaction;\
   ${CMAKE_CURRENT_SOURCE_DIR}/utils;\
   ${CMAKE_CURRENT_SOURCE_DIR}/viewers;")
@@ -425,6 +454,7 @@ add_library (asiUI SHARED
   ${controls_H_FILES}     ${controls_H_UI_FILES}    ${controls_CPP_FILES}
   ${dialogs_H_FILES}      ${dialogs_H_UI_FILES}     ${dialogs_CPP_FILES}
   ${graphs_H_FILES}       ${graphs_H_UI_FILES}      ${graphs_CPP_FILES}
+  ${plots_H_FILES}        ${plots_H_UI_FILES}       ${plots_CPP_FILES}
   ${interaction_H_FILES}  ${interaction_H_UI_FILES} ${interaction_CPP_FILES}
   ${utils_H_FILES}        ${utils_H_UI_FILES}       ${utils_CPP_FILES}
   ${viewers_H_FILES}      ${viewers_H_UI_FILES}     ${viewers_CPP_FILES}
@@ -533,6 +563,7 @@ install (FILES ${dialogs_H_FILES}        DESTINATION framework/include)
 install (FILES ${dialogs_H_UI_FILES}     DESTINATION framework/include)
 install (FILES ${graphs_H_FILES}         DESTINATION framework/include)
 install (FILES ${graphs_H_UI_FILES}      DESTINATION framework/include)
+install (FILES ${plots_H_UI_FILES}       DESTINATION framework/include)
 install (FILES ${interaction_H_FILES}    DESTINATION framework/include)
 install (FILES ${interaction_H_UI_FILES} DESTINATION framework/include)
 install (FILES ${utils_H_FILES}          DESTINATION framework/include)

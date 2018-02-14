@@ -73,10 +73,13 @@ public:
                   const double              last);
 
   asiVisu_EXPORT void
-    SetNumOfPoints(const int numPts);
+    SetScaleFactor(const double scaleFactor);
 
   asiVisu_EXPORT void
-    SetScaleFactor(const double scaleFactor);
+    SetCurvatureField(const std::vector<gp_Pnt>& points,
+                      const std::vector<double>& params,
+                      const std::vector<double>& curvatures,
+                      const std::vector<gp_Vec>& combs);
 
 protected:
 
@@ -120,11 +123,14 @@ private:
 
 private:
 
-  int                m_iNumPoints; //!< Number of discretization points.
-  double             m_fScale;     //!< Scale factor.
-  Handle(Geom_Curve) m_curve;      //!< Curve to analyze.
-  double             m_fFirst;     //!< Leading parameter on a curve.
-  double             m_fLast;      //!< Trailing parameter on a curve.
+  double               m_fScale;     //!< Scale factor.
+  Handle(Geom_Curve)   m_curve;      //!< Curve to analyze.
+  double               m_fFirst;     //!< Leading parameter on a curve.
+  double               m_fLast;      //!< Trailing parameter on a curve.
+  std::vector<gp_Pnt>  m_points;     //!< Discretization points.
+  std::vector<double>  m_params;     //!< Parameters at discretization points.
+  std::vector<double>  m_curvatures; //!< Curvature values at discretization points.
+  std::vector<gp_Vec>  m_combs;      //!< Curvature combs at discretization points.
 
 };
 

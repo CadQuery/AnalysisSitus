@@ -108,16 +108,38 @@ public:
 
 public:
 
-  //! \return number of discretization points.
-  int GetNumPoints() const
-  {
-    return m_combsNode->GetNumPoints();
-  }
-
   //! \return scale factor.
   double GetScaleFactor() const
   {
     return m_combsNode->GetScaleFactor();
+  }
+
+  //! Returns data vector of discretization points.
+  //! \param[out] points vector of discretization points.
+  void GetPoints(std::vector<gp_Pnt>& points)
+  {
+    m_combsNode->GetPoints(points);
+  }
+
+  //! Returns data vector of discretization parameters.
+  //! \param[out] params vector of discretization parameters.
+  void GetParameters(std::vector<double>& params)
+  {
+    m_combsNode->GetParameters(params);
+  }
+
+  //! Returns data vector of curvature values.
+  //! \param[out] curvatures vector of curvature values.
+  void GetCurvatures(std::vector<double>& curvatures)
+  {
+    m_combsNode->GetCurvatures(curvatures);
+  }
+
+  //! Returns data vector of curvature combs.
+  //! \param[out] combs vector of curvature combs.
+  void GetCombs(std::vector<gp_Vec>& combs)
+  {
+    m_combsNode->GetCombs(combs);
   }
 
 public:
@@ -142,8 +164,10 @@ protected:
 
     out << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_Combs)
         << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_Points)
+        << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_Parameters)
+        << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_Curvatures)
+        << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_Combs)
         << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_RefCurve)
-        << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_NumPts)
         << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_ScaleFactor);
 
     return out.List;

@@ -69,6 +69,7 @@ set (TBB_LIB_FILES
 )
 #------------------------------------------------------------------------------
 set (VTK_LIB_FILES
+  vtkChartsCore-8.0
   vtkCommonCore-8.0
   vtkCommonDataModel-8.0
   vtkCommonExecutionModel-8.0

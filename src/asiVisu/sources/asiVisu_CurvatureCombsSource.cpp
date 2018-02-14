@@ -42,11 +42,6 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 
-// OCCT includes
-#include <BRep_Tool.hxx>
-#include <GCPnts_QuasiUniformAbscissa.hxx>
-#include <GeomAdaptor_Curve.hxx>
-
 //-----------------------------------------------------------------------------
 
 vtkStandardNewMacro(asiVisu_CurvatureCombsSource);
@@ -56,7 +51,6 @@ vtkStandardNewMacro(asiVisu_CurvatureCombsSource);
 //! Default constructor.
 asiVisu_CurvatureCombsSource::asiVisu_CurvatureCombsSource()
   : vtkPolyDataAlgorithm (),
-    m_iNumPoints         (10), // Default value.
     m_fFirst             (0.0),
     m_fLast              (0.0)
 {
@@ -92,11 +86,11 @@ bool asiVisu_CurvatureCombsSource::SetInputCurve(const Handle(Geom_Curve)& curve
 
 //-----------------------------------------------------------------------------
 
-//! Sets the number of discretization points for a curvature comb.
-//! \param[in] numPts number of discretization points to use.
-void asiVisu_CurvatureCombsSource::SetNumOfPoints(const int numPts)
+//! Sets scale factor for a curvature comb.
+//! \param[in] scaleFactor scale factor to use.
+void asiVisu_CurvatureCombsSource::SetScaleFactor(const double scaleFactor)
 {
-  m_iNumPoints = numPts;
+  m_fScale = scaleFactor;
 
   // Update modification time for the source
   this->Modified();
@@ -104,11 +98,20 @@ void asiVisu_CurvatureCombsSource::SetNumOfPoints(const int numPts)
 
 //-----------------------------------------------------------------------------
 
-//! Sets scale factor for a curvature comb.
-//! \param[in] scaleFactor scale factor to use.
-void asiVisu_CurvatureCombsSource::SetScaleFactor(const double scaleFactor)
+//! Sets data vectors to visualize.
+//! \param[in] points     discretization points.
+//! \param[in] params     parameters of discretization points.
+//! \param[in] curvatures curvature values at discretization points.
+//! \param[in] combs      curvature combs at discretization points.
+void asiVisu_CurvatureCombsSource::SetCurvatureField(const std::vector<gp_Pnt>& points,
+                                                     const std::vector<double>& params,
+                                                     const std::vector<double>& curvatures,
+                                                     const std::vector<gp_Vec>& combs)
 {
-  m_fScale = scaleFactor;
+  m_points     = points;
+  m_params     = params;
+  m_curvatures = curvatures;
+  m_combs      = combs;
 
   // Update modification time for the source
   this->Modified();
@@ -133,13 +136,9 @@ int asiVisu_CurvatureCombsSource::RequestData(vtkInformation*        request,
     return 0;
   }
 
-  // Discretize with a uniform curvilinear step
-  GeomAdaptor_Curve gac(m_curve, m_fFirst, m_fLast);
-  GCPnts_QuasiUniformAbscissa Defl(gac, m_iNumPoints);
-  //
-  if ( !Defl.IsDone() )
+  if ( !m_points.size() )
   {
-    vtkErrorMacro( << "Cannot discretize curve" );
+    vtkErrorMacro( << "No discretization points" );
     return false;
   }
 
@@ -157,35 +156,16 @@ int asiVisu_CurvatureCombsSource::RequestData(vtkInformation*        request,
    *  Build polygonal data
    * ====================== */
 
-  // Calculate curvature points and combs.
-  std::vector<gp_Pnt> pointsVec;
-  std::vector<gp_Vec> combsVec;
-  std::vector<bool>   combsOk;
-  //
-  for ( int k = 1; k <= m_iNumPoints; ++k )
-  {
-    const double param = Defl.Parameter(k);
-
-    gp_Pnt p;
-    gp_Vec comb;
-    //
-    const bool isOk = asiAlgo_Utils::CalculateCurvatureComb(m_curve, param, p, comb);
-
-    combsOk   .push_back(isOk);
-    pointsVec .push_back(p);
-    combsVec  .push_back(comb.XYZ() * m_fScale);
-  }
-
   // Add points.
-  for ( size_t k = 0; k < pointsVec.size(); ++k )
+  for ( size_t k = 0; k < m_points.size(); ++k )
   {
-    this->registerVertex(pointsVec[k], polyOutput);
+    this->registerVertex(m_points[k], polyOutput);
   }
 
   // Add lines.
-  for ( size_t k = 0; k < pointsVec.size(); ++k )
+  for ( size_t k = 0; k < m_points.size(); ++k )
   {
-    this->registerLine(pointsVec[k], pointsVec[k].XYZ() + combsVec[k].XYZ(), polyOutput);
+    this->registerLine(m_points[k], m_points[k].XYZ() + m_combs[k].XYZ()*m_fScale, polyOutput);
   }
 
   return Superclass::RequestData(request, inputVector, outputVector);

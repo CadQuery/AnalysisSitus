@@ -42,9 +42,10 @@ asiData_CurvatureCombsNode::asiData_CurvatureCombsNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,      PID_Name);
   REGISTER_PARAMETER(RealArray, PID_Points);
+  REGISTER_PARAMETER(RealArray, PID_Parameters);
+  REGISTER_PARAMETER(RealArray, PID_Curvatures);
   REGISTER_PARAMETER(RealArray, PID_Combs);
   REGISTER_PARAMETER(Reference, PID_RefCurve);
-  REGISTER_PARAMETER(Int,       PID_NumPts);
   REGISTER_PARAMETER(Real,      PID_ScaleFactor);
 }
 
@@ -66,16 +67,18 @@ void asiData_CurvatureCombsNode::Init()
   // Initialize Parameters
   this->InitParameter(PID_Name,        "Name");
   this->InitParameter(PID_Points,      "Discretization points");
+  this->InitParameter(PID_Parameters,  "Discretization parameters");
+  this->InitParameter(PID_Curvatures,  "Curvatures");
   this->InitParameter(PID_Combs,       "Comb vectors");
-  this->InitParameter(PID_NumPts,      "Number of discretization points");
   this->InitParameter(PID_ScaleFactor, "Scale factor");
 
   // Initialize arrays
-  ActParamTool::AsRealArray( this->Parameter(PID_Points) )->SetArray(NULL);
-  ActParamTool::AsRealArray( this->Parameter(PID_Combs) )->SetArray(NULL);
+  ActParamTool::AsRealArray( this->Parameter(PID_Points) )     ->SetArray(NULL);
+  ActParamTool::AsRealArray( this->Parameter(PID_Parameters) ) ->SetArray(NULL);
+  ActParamTool::AsRealArray( this->Parameter(PID_Curvatures) ) ->SetArray(NULL);
+  ActParamTool::AsRealArray( this->Parameter(PID_Combs) )      ->SetArray(NULL);
 
   // Set default values
-  this->SetNumPoints(100);
   this->SetScaleFactor(1.0);
 }
 
@@ -131,6 +134,64 @@ void asiData_CurvatureCombsNode::GetPoints(std::vector<gp_Pnt>& points) const
 
 //-----------------------------------------------------------------------------
 
+void asiData_CurvatureCombsNode::SetParameters(const std::vector<double>& params)
+{
+  // Prepare the array of parameter values
+  Handle(HRealArray) values;
+  //
+  if ( params.size() != 0 )
+    ActAux_ArrayUtils::ToRealArray(params, values);
+
+  // Store in OCAF
+  ActParamTool::AsRealArray( this->Parameter(PID_Parameters) )->SetArray(values);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_CurvatureCombsNode::GetParameters(std::vector<double>& params) const
+{
+  // Get array of parameter values from OCAF
+  Handle(HRealArray)
+    values = ActParamTool::AsRealArray( this->Parameter(PID_Parameters) )->GetArray();
+  //
+  if ( values.IsNull() )
+    return;
+
+  // Fill the vector
+  ActAux_ArrayUtils::FromRealArray(values, params);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_CurvatureCombsNode::SetCurvatures(const std::vector<double>& curvatures)
+{
+  // Prepare the array of curvature values
+  Handle(HRealArray) values;
+  //
+  if ( curvatures.size() != 0 )
+    ActAux_ArrayUtils::ToRealArray(curvatures, values);
+
+  // Store in OCAF
+  ActParamTool::AsRealArray( this->Parameter(PID_Curvatures) )->SetArray(values);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_CurvatureCombsNode::GetCurvatures(std::vector<double>& curvatures) const
+{
+  // Get array of curvature values from OCAF
+  Handle(HRealArray)
+    values = ActParamTool::AsRealArray( this->Parameter(PID_Curvatures) )->GetArray();
+  //
+  if ( values.IsNull() )
+    return;
+
+  // Fill the vector
+  ActAux_ArrayUtils::FromRealArray(values, curvatures);
+}
+
+//-----------------------------------------------------------------------------
+
 void asiData_CurvatureCombsNode::SetCombs(const std::vector<gp_Vec>& combs)
 {
   // Prepare the array of coordinates
@@ -155,20 +216,6 @@ void asiData_CurvatureCombsNode::GetCombs(std::vector<gp_Vec>& combs) const
     return;
 
   ActAux_ArrayUtils::FromCoords3d<gp_Vec>(coords, combs);
-}
-
-//-----------------------------------------------------------------------------
-
-void asiData_CurvatureCombsNode::SetNumPoints(const int numPoints)
-{
-  ActParamTool::AsInt( this->Parameter(PID_NumPts) )->SetValue(numPoints);
-}
-
-//-----------------------------------------------------------------------------
-
-int asiData_CurvatureCombsNode::GetNumPoints() const
-{
-  return ActParamTool::AsInt( this->Parameter(PID_NumPts) )->GetValue();
 }
 
 //-----------------------------------------------------------------------------

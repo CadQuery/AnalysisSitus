@@ -55,11 +55,15 @@ public:
 protected:
 
   virtual void
-    closeEvent(QCloseEvent* pEvent);
+    closeEvent(QCloseEvent*);
+
+  virtual void
+    wheelEvent(QWheelEvent*);
 
 signals:
 
   void windowClosed();
+  void wheelEventOccured();
 
 };
 

@@ -689,25 +689,25 @@ bool asiVisu_PrsManager::DeletePresentation(const ActAPI_DataObjectId& nodeId,
     return false;
   }
 
-  Handle(ActAPI_INode) node = m_model->FindNode(nodeId);
-
-  if ( !node.IsNull() && !this->IsPresented(node) && !withChildren )
-    return false;
-
-  this->DeRenderPresentation(node);
+  this->DeRenderPresentation(nodeId);
   m_nodePresentations.UnBind(nodeId);
 
   if ( withChildren )
   {
-    for ( Handle(ActAPI_IChildIterator) child_it = node->GetChildIterator(); child_it->More(); child_it->Next() )
+    Handle(ActAPI_INode) node = m_model->FindNode(nodeId);
+
+    if ( !node.IsNull() )
     {
-      Handle(ActAPI_INode) childNode = child_it->Value();
+      for ( Handle(ActAPI_IChildIterator) child_it = node->GetChildIterator(); child_it->More(); child_it->Next() )
+      {
+        Handle(ActAPI_INode) childNode = child_it->Value();
 
-      if ( !this->IsPresented(childNode) )
-        continue;
+        if ( !this->IsPresented(childNode) )
+          continue;
 
-      this->DeRenderPresentation(childNode);
-      m_nodePresentations.UnBind( childNode->GetId() );
+        this->DeRenderPresentation(childNode);
+        m_nodePresentations.UnBind( childNode->GetId() );
+      }
     }
   }
 

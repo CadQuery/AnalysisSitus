@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 01 March 2016
+// Created on: 14 February 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,32 +28,51 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
+#ifndef asiUI_CurvaturePlot_h
+#define asiUI_CurvaturePlot_h
+
+// asiUI includes
 #include <asiUI_VtkWindow.h>
 
-//! Constructor.
-//! \param parent [in] parent widget.
-//! \param f      [in] window flags.
-asiUI_VtkWindow::asiUI_VtkWindow(QWidget* parent, Qt::WindowFlags f)
-: QVTKWidget(parent, f)
-{}
+// asiEngine includes
+#include <asiEngine_Model.h>
 
-//! Destructor.
-asiUI_VtkWindow::~asiUI_VtkWindow()
-{}
+// VTK includes
+#include <vtkContextView.h>
 
-//! Custom reaction on close event.
-//! \param pEvent [in] event instance.
-void asiUI_VtkWindow::closeEvent(QCloseEvent* pEvent)
+//! Visualizes curvature plot.
+class asiUI_CurvaturePlot : public QObject
 {
-  asiUI_NotUsed(pEvent);
+  Q_OBJECT
 
-  emit windowClosed();
-}
+public:
 
-void asiUI_VtkWindow::wheelEvent(QWheelEvent* pEvent)
-{
-  QVTKWidget::wheelEvent(pEvent);
+  asiUI_EXPORT
+    asiUI_CurvaturePlot(ActAPI_ProgressEntry progress,
+                        ActAPI_PlotterEntry  plotter,
+                        QObject*             parent = NULL);
 
-  emit wheelEventOccured();
-}
+  asiUI_EXPORT
+    ~asiUI_CurvaturePlot();
+
+public:
+
+  asiUI_EXPORT void
+    Render(const std::vector<double>& params,
+           const std::vector<double>& curvatures);
+
+public slots:
+
+  asiUI_EXPORT void
+    onMouseEvent();
+
+protected:
+
+  vtkSmartPointer<vtkContextView> m_contextView; //!< VTK context view.
+  asiUI_VtkWindow*                m_pWidget;     //!< Widget.
+  ActAPI_ProgressEntry            m_progress;    //!< Progress notifier.
+  ActAPI_PlotterEntry             m_plotter;     //!< Imperative plotter.
+
+};
+
+#endif

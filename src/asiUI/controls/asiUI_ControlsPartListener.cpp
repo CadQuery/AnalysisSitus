@@ -216,15 +216,15 @@ void asiUI_ControlsPartListener::cleanViewers()
 {
   // Erase part with all related data from Part Viewer...
   if ( m_cf->ViewerPart )
-    m_cf->ViewerPart->PrsMgr()->DeletePresentation( m_model->GetPartNode(), true );
+    m_cf->ViewerPart->PrsMgr()->DeleteAllPresentations();
 
   // ... Domain Viewer...
   if ( m_cf->ViewerDomain )
-    m_cf->ViewerDomain->PrsMgr()->DeletePresentation( m_model->GetPartNode(), true );
+    m_cf->ViewerDomain->PrsMgr()->DeleteAllPresentations();
 
   // ... and Host Viewer.
   if ( m_cf->ViewerHost )
-    m_cf->ViewerHost->PrsMgr()->DeletePresentation( m_model->GetPartNode(), true );
+    m_cf->ViewerHost->PrsMgr()->DeleteAllPresentations();
 }
 
 //-----------------------------------------------------------------------------
@@ -254,6 +254,9 @@ void asiUI_ControlsPartListener::reinitializeEverything()
   // Repaint other viewers which may have been affected
   m_cf->ViewerHost->Repaint();
   m_cf->ViewerDomain->Repaint();
+
+  // Repopulate object browser
+  m_cf->ObjectBrowser->Populate();
 
   m_notifier.StepProgress(1);
   m_notifier.SetProgressStatus(Progress_Succeeded);

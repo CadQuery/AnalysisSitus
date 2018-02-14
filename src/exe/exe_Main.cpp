@@ -31,6 +31,9 @@
 // Windows includes
 #include <Windows.h>
 
+#undef VTK_TEST
+#ifndef VTK_TEST
+
 // exe includes
 #include <exe_CommonFacilities.h>
 #include <exe_MainWindow.h>
@@ -206,3 +209,90 @@ int main(int argc, char** argv)
 
   return app.exec();
 }
+
+#else
+
+#include <vtkAxis.h>
+#include <vtkTextProperty.h>
+#include <vtkVersion.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderWindow.h>
+#include <vtkSmartPointer.h>
+#include <vtkChartXY.h>
+#include <vtkTable.h>
+#include <vtkPlot.h>
+#include <vtkFloatArray.h>
+#include <vtkContextView.h>
+#include <vtkContextScene.h>
+#include <vtkPen.h>
+
+// VTK init
+#include <vtkAutoInit.h>
+
+// Activate object factories
+VTK_MODULE_INIT(vtkRenderingContextOpenGL2);
+VTK_MODULE_INIT(vtkRenderingOpenGL2);
+VTK_MODULE_INIT(vtkInteractionStyle);
+VTK_MODULE_INIT(vtkRenderingFreeType)
+
+int main(int, char *[])
+{
+  // Create a table with some points in it
+  vtkSmartPointer<vtkTable> table = vtkSmartPointer<vtkTable>::New();
+
+  vtkSmartPointer<vtkFloatArray> arrX = vtkSmartPointer<vtkFloatArray>::New();
+  arrX->SetName("Parameter");
+  table->AddColumn(arrX);
+
+  vtkSmartPointer<vtkFloatArray> arrC = vtkSmartPointer<vtkFloatArray>::New();
+  arrC->SetName("Curvature");
+  table->AddColumn(arrC);
+
+  // Fill in the table with some example values
+  int numPoints = 69;
+  float inc = 7.5 / (numPoints-1);
+  table->SetNumberOfRows(numPoints);
+  for (int i = 0; i < numPoints; ++i)
+  {
+    table->SetValue(i, 0, i * inc);
+    table->SetValue(i, 1, cos(i * inc));
+  }
+
+  // Set up the view
+  vtkSmartPointer<vtkContextView> view = vtkSmartPointer<vtkContextView>::New();
+
+  view->GetRenderer()->SetBackground(1.0, 1.0, 1.0);
+
+  // Add multiple line plots, setting the colors etc
+  vtkSmartPointer<vtkChartXY> chart = vtkSmartPointer<vtkChartXY>::New();
+  view->GetScene()->AddItem(chart);
+  vtkPlot* line = chart->AddPlot(vtkChart::LINE);
+  line->SetInputData(table, 0, 1);
+  line->SetColor(225, 0, 0, 255);
+  line->SetWidth(2.0f);
+  //
+  line->GetXAxis()->SetTitle("Parameter");
+  line->GetXAxis()->GetTitleProperties()->BoldOff();
+  line->GetXAxis()->GetTitleProperties()->SetLineOffset(8);
+  line->GetXAxis()->GetLabelProperties()->BoldOff();
+  line->GetXAxis()->GetLabelProperties()->SetColor(0.25, 0.25, 0.25);
+  line->GetXAxis()->GetLabelProperties()->SetLineOffset(4);
+  //
+  line->GetYAxis()->SetTitle("Curvature");
+  line->GetYAxis()->GetTitleProperties()->BoldOff();
+  line->GetYAxis()->GetTitleProperties()->SetLineOffset(8);
+  line->GetYAxis()->GetLabelProperties()->BoldOff();
+  line->GetYAxis()->GetLabelProperties()->SetColor(0.25, 0.25, 0.25);
+  line->GetYAxis()->GetLabelProperties()->SetLineOffset(4);
+
+  view->GetRenderWindow()->SetMultiSamples(8);
+
+  // Start interactor
+  view->GetInteractor()->Initialize();
+  view->GetInteractor()->Start();
+
+  return EXIT_SUCCESS;
+}
+
+#endif

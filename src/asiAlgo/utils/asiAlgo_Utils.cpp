@@ -58,6 +58,8 @@
 #include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepTools.hxx>
 #include <GC_MakeCircle.hxx>
+#include <GCPnts_QuasiUniformAbscissa.hxx>
+#include <GeomAdaptor_Curve.hxx>
 #include <GeomConvert.hxx>
 #include <GeomLProp_CLProps.hxx>
 #include <gp_Circ.hxx>
@@ -2165,6 +2167,7 @@ void asiAlgo_Utils::PrintSurfaceDetails(const Handle(Geom_Surface)& surf,
 bool asiAlgo_Utils::CalculateCurvatureComb(const Handle(Geom_Curve)& curve,
                                            const double              u,
                                            gp_Pnt&                   p,
+                                           double&                   k,
                                            gp_Vec&                   c)
 {
   p = curve->Value(u);
@@ -2193,10 +2196,51 @@ bool asiAlgo_Utils::CalculateCurvatureComb(const Handle(Geom_Curve)& curve,
   gp_Dir n = b ^ x_1;
 
   // Calculate curvature.
-  const double k = lProps.Curvature();
+  k = lProps.Curvature();
 
   // Calculate comb.
   c = p.XYZ() - k*n.XYZ();
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::CalculateCurvatureCombs(const Handle(Geom_Curve)& curve,
+                                            const double              f,
+                                            const double              l,
+                                            const int                 numPts,
+                                            std::vector<gp_Pnt>&      points,
+                                            std::vector<double>&      params,
+                                            std::vector<double>&      curvatures,
+                                            std::vector<gp_Vec>&      combs,
+                                            std::vector<bool>&        combsOk)
+{
+  // Discretize with a uniform curvilinear step.
+  GeomAdaptor_Curve gac(curve, f, l);
+  GCPnts_QuasiUniformAbscissa Defl(gac, numPts);
+  //
+  if ( !Defl.IsDone() )
+    return false;
+
+  // Calculate combs at discretization points.
+  for ( int i = 1; i <= numPts; ++i )
+  {
+    const double param = Defl.Parameter(i);
+
+    gp_Pnt p;
+    double curvature;
+    gp_Vec comb;
+    //
+    const bool isOk = asiAlgo_Utils::CalculateCurvatureComb(curve, param, p, curvature, comb);
+
+    // Fill result arrays.
+    combsOk    .push_back( isOk );
+    points     .push_back( p );
+    params     .push_back( param );
+    curvatures .push_back( curvature );
+    combs      .push_back( comb.XYZ() );
+  }
 
   return true;
 }

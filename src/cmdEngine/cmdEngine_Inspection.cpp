@@ -41,9 +41,13 @@
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
+// asiUI includes
+#include <asiUI_CurvaturePlot.h>
+
 // OCCT includes
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Iterator.hxx>
 
 //-----------------------------------------------------------------------------
@@ -307,6 +311,8 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
     return TCL_OK;
   }
+  //
+  const TopTools_IndexedMapOfShape& subShapes = partNode->GetAAG()->GetMapOfSubShapes();
 
   // Curve Node is expected.
   Handle(asiData_CurveNode) curveNode = partNode->GetCurveRepresentation();
@@ -326,20 +332,65 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
+  // Get host curve of the selected edge.
+  const TopoDS_Shape& edgeShape = subShapes(edgeIdx);
+  //
+  if ( edgeShape.ShapeType() != TopAbs_EDGE )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected topological type of the selected edge.");
+    return TCL_OK;
+  }
+  //
+  double f, l;
+  Handle(Geom_Curve) curve = BRep_Tool::Curve( TopoDS::Edge(edgeShape), f, l );
+
   // Create curvature combs.
   asiEngine_Curve CurveAPI( cmdEngine::model, interp->GetProgress(), interp->GetPlotter() );
   //
   Handle(asiData_CurvatureCombsNode) combsNode;
   //
+  std::vector<gp_Pnt> points;
+  std::vector<double> params;
+  std::vector<double> curvatures;
+  std::vector<gp_Vec> combs;
+  std::vector<bool>   combsOk;
+  //
   cmdEngine::model->OpenCommand();
   {
-    combsNode = CurveAPI.CreateOrUpdateCurvatureCombs(curveNode, numPts, scaleFactor);
+    // Calculate curvature field.
+    if ( !asiAlgo_Utils::CalculateCurvatureCombs(curve,
+                                                 f,
+                                                 l,
+                                                 numPts,
+                                                 points,
+                                                 params,
+                                                 curvatures,
+                                                 combs,
+                                                 combsOk) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot calculate curvature field.");
+      return TCL_OK;
+    }
+
+    // Create persistent object.
+    combsNode = CurveAPI.CreateOrUpdateCurvatureCombs(curveNode,
+                                                      scaleFactor,
+                                                      points,
+                                                      params,
+                                                      curvatures,
+                                                      combs);
   }
   cmdEngine::model->CommitCommand();
 
-  // Actualize
+  // Actualize.
   cmdEngine::cf->ObjectBrowser->Populate();
   cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(combsNode);
+
+  // Open curvature plot.
+  asiUI_CurvaturePlot*
+    cPlot = new asiUI_CurvaturePlot( interp->GetProgress(),
+                                     interp->GetPlotter() );
+  cPlot->Render(params, curvatures);
 
   return TCL_OK;
 }

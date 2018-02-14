@@ -76,13 +76,23 @@ void asiVisu_CurvatureCombsPipeline::SetInput(const Handle(asiVisu_DataProvider)
 
   if ( dp->MustExecute( this->GetMTime() ) )
   {
+    std::vector<gp_Pnt> points;
+    std::vector<double> params;
+    std::vector<double> curvatures;
+    std::vector<gp_Vec> combs;
+    //
+    dp->GetPoints     (points);
+    dp->GetParameters (params);
+    dp->GetCurvatures (curvatures);
+    dp->GetCombs      (combs);
+
     // Curvature combs source
     double f, l;
     vtkSmartPointer<asiVisu_CurvatureCombsSource>
       src = vtkSmartPointer<asiVisu_CurvatureCombsSource>::New();
     //
-    src->SetNumOfPoints( dp->GetNumPoints() );
-    src->SetScaleFactor( dp->GetScaleFactor() );
+    src->SetScaleFactor    ( dp->GetScaleFactor() );
+    src->SetCurvatureField ( points, params, curvatures, combs );
     //
     if ( curve_type->SubType( STANDARD_TYPE(Geom_Curve) ) )
     {

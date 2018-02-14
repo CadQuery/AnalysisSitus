@@ -56,9 +56,10 @@ public:
   {
     PID_Name,        //!< Name of the Node.
     PID_Points,      //!< Discretization points.
+    PID_Parameters,  //!< Parameter values corresponding to the discr. points.
+    PID_Curvatures,  //!< Curvature values at discretization points.
     PID_Combs,       //!< Comb vectors.
     PID_RefCurve,    //!< Reference to Curve Node.
-    PID_NumPts,      //!< Number of discretization points.
     PID_ScaleFactor, //!< Scale factor.
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -93,16 +94,22 @@ public:
     GetPoints(std::vector<gp_Pnt>& points) const;
 
   asiData_EXPORT void
+    SetParameters(const std::vector<double>& params);
+
+  asiData_EXPORT void
+    GetParameters(std::vector<double>& params) const;
+
+  asiData_EXPORT void
+    SetCurvatures(const std::vector<double>& curvatures);
+
+  asiData_EXPORT void
+    GetCurvatures(std::vector<double>& curvatures) const;
+
+  asiData_EXPORT void
     SetCombs(const std::vector<gp_Vec>& combs);
 
   asiData_EXPORT void
     GetCombs(std::vector<gp_Vec>& combs) const;
-
-  asiData_EXPORT void
-    SetNumPoints(const int numPoints);
-
-  asiData_EXPORT int
-    GetNumPoints() const;
 
   asiData_EXPORT void
     SetScaleFactor(const double scaleFactor);

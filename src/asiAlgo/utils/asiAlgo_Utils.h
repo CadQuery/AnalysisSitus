@@ -627,6 +627,7 @@ public:
   //! \param[in]  curve parametric curve to analyze.
   //! \param[in]  u     parameter value.
   //! \param[out] p     point on curve at the given parameter value.
+  //! \param[out] k     curvature at the given parameter value.
   //! \param[out] c     curvature comb.
   //!
   //! \return false if a comb cannot be calculated. NOTE: the output argument
@@ -635,7 +636,32 @@ public:
     CalculateCurvatureComb(const Handle(Geom_Curve)& curve,
                            const double              u,
                            gp_Pnt&                   p,
+                           double&                   k,
                            gp_Vec&                   c);
+
+  //! Calculates curvature combs along the given curve.
+  //!
+  //! \param[in]  curve      parametric curve to analyze.
+  //! \param[in]  f          first parameter of the range of interest.
+  //! \param[in]  l          last parameter of the range of interest.
+  //! \param[in]  numPts     number of discretization points.
+  //! \param[out] points     discretization points.
+  //! \param[out] params     discretization parameters.
+  //! \param[out] curvatures curvatures.
+  //! \param[out] combs      curvature combs.
+  //! \param[out] combsOk    statuses of combs calculation.
+  //!
+  //! \return false if combs calculation is not possible on the passed data.
+  asiAlgo_EXPORT static bool
+    CalculateCurvatureCombs(const Handle(Geom_Curve)& curve,
+                            const double              f,
+                            const double              l,
+                            const int                 numPts,
+                            std::vector<gp_Pnt>&      points,
+                            std::vector<double>&      params,
+                            std::vector<double>&      curvatures,
+                            std::vector<gp_Vec>&      combs,
+                            std::vector<bool>&        combsOk);
 
   //! Reparametrizes the given B-spline curve applying the passed new range
   //! for its knot vector.

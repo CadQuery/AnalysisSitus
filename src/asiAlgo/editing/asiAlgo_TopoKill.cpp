@@ -161,7 +161,7 @@ bool asiAlgo_TopoKill::Apply()
 //-----------------------------------------------------------------------------
 
 void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
-                                           TopoDS_Shape&       result) const
+                                           TopoDS_Shape&       result)
 {
   BRep_Builder BB;
 
@@ -174,6 +174,13 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
   {
     const TopoDS_Shape& currentShape = it.Value();
     TopoDS_Shape newResult;
+
+    // This flag indicates whether the twin element for the current entity
+    // has been already built. If so, we only need to link the newly
+    // built parent with the already existing (also newly built but in
+    // a different branch of recursion) child, not reconstructing the child
+    // iteself.
+    bool isAlreadyBuilt = false;
 
     // Check recursively if the current sub-shape is asked for modification.
     // The modification can be asked for the shape itself or for any of its
@@ -209,22 +216,46 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
         else // Replacement
         {
           newResult = m_toReplace(currentShape);
-          //
+
+          // If no orientation is passed, it means that the orientation
+          // should be defined in-context.
+          if ( newResult.Orientation() == TopAbs_EXTERNAL )
+            newResult.Orientation( currentShape.Orientation() );
+
+          // Set history record.
           m_history->AddModified(currentShape, newResult);
         }
       }
       else // Shape itself is not touched, but some children are
       {
-        // If any sub-shape or the shape itself was touched, then we have
-        // to construct another shape. That's because in OpenCascade it is
-        // impossible to modify the existing shape handler.
-        newResult = currentShape.EmptyCopied();
-        //
+        if ( !m_newElements.IsBound(currentShape) )
+        {
+          // If any sub-shape or the shape itself was touched, then we have
+          // to construct another shape. That's because in OpenCascade it is
+          // impossible to modify the existing shape handler.
+          newResult = currentShape.EmptyCopied();
+
+          // Bind element for reuse. Otherwise, adjacent elements (e.g. edges
+          // sharing a vertex being replaced) will be replicated.
+          m_newElements.Bind(currentShape, newResult);
+        }
+        else
+        {
+          newResult = m_newElements(currentShape); // Take the already created one.
+
+          // Apply right orientation.
+          newResult.Orientation( currentShape.Orientation() );
+
+          // Turn off a flag to prevent recursion on this element.
+          isAlreadyBuilt = true;
+        }
+
+        // Set history record.
         m_history->AddModified(currentShape, newResult);
       }
 
       // Proceed recursively.
-      if ( !forRemoval && !forReplacement )
+      if ( !isAlreadyBuilt && !forRemoval && !forReplacement )
         this->buildTopoGraphLevel(currentShape, newResult);
     }
 

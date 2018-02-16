@@ -39,7 +39,7 @@
 
 //-----------------------------------------------------------------------------
 
-//! Attribute storing information about sub-shape orientation.
+//! Attribute storing sub-shape orientation.
 class asiAlgo_TopoAttrOrientation : public asiAlgo_TopoAttr
 {
 public:

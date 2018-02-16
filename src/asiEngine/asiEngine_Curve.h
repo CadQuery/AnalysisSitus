@@ -66,6 +66,7 @@ public:
   //! \param[in] parent      parent Data Node representing a curve.
   //! \param[in] scaleFactor scale factor.
   //! \param[in] points      discretization points.
+  //! \param[in] pointsOk    statuses of discretization points.
   //! \param[in] params      discretization parameters.
   //! \param[in] curvatures  curvatures.
   //! \param[in] combs       curvature combs.
@@ -74,6 +75,7 @@ public:
     CreateCurvatureCombs(const Handle(asiData_CurveNode)& parent,
                          const double                     scaleFactor,
                          const std::vector<gp_Pnt>&       points,
+                         const std::vector<bool>&         pointsOk,
                          const std::vector<double>&       params,
                          const std::vector<double>&       curvatures,
                          const std::vector<gp_Vec>&       combs);
@@ -83,6 +85,7 @@ public:
   //! \param[in] parent      parent Data Node representing a curve.
   //! \param[in] scaleFactor scale factor.
   //! \param[in] points      discretization points.
+  //! \param[in] pointsOk    statuses of discretization points.
   //! \param[in] params      discretization parameters.
   //! \param[in] curvatures  curvatures.
   //! \param[in] combs       curvature combs.
@@ -91,6 +94,7 @@ public:
     CreateOrUpdateCurvatureCombs(const Handle(asiData_CurveNode)& parent,
                                  const double                     scaleFactor,
                                  const std::vector<gp_Pnt>&       points,
+                                 const std::vector<bool>&         pointsOk,
                                  const std::vector<double>&       params,
                                  const std::vector<double>&       curvatures,
                                  const std::vector<gp_Vec>&       combs);

@@ -90,6 +90,9 @@ void asiUI_ControlsPartListener::Connect()
   //
   connect( m_wControls, SIGNAL ( selectionEdgesOn() ),
            this,        SLOT   ( onSelectionEdgesOn() ) );
+  //
+  connect( m_wControls, SIGNAL ( selectionVerticesOn() ),
+           this,        SLOT   ( onSelectionVerticesOn() ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -207,6 +210,34 @@ void asiUI_ControlsPartListener::onSelectionEdgesOn()
 
   prs->MainActor()->SetPickable(0);
   prs->ContourActor()->SetPickable(1);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on enabling selection of vertices.
+void asiUI_ControlsPartListener::onSelectionVerticesOn()
+{
+  // Enable the corresponding selection mode
+  m_cf->ViewerPart->PrsMgr()->SetSelectionMode(SelectionMode_Vertex);
+
+  // Clean tool viewers
+  if ( m_cf->ViewerDomain )
+  {
+    m_cf->ViewerDomain->PrsMgr()->DeleteAllPresentations();
+    m_cf->ViewerDomain->Repaint();
+  }
+  //
+  if ( m_cf->ViewerHost )
+  {
+    m_cf->ViewerHost->PrsMgr()->DeleteAllPresentations();
+    m_cf->ViewerHost->Repaint();
+  }
+
+  Handle(asiVisu_GeomPrs)
+    prs = Handle(asiVisu_GeomPrs)::DownCast(m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+
+  prs->MainActor()->SetPickable(0);
+  prs->ContourActor()->SetPickable(1); // Vertices are visualized with contour actor
 }
 
 //-----------------------------------------------------------------------------

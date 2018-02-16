@@ -708,7 +708,7 @@ vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitDomainLookupTable()
 {
   vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
 
-  double aRange[3] = {0, VisuOri_External};
+  double aRange[2] = {VisuOri_Forward, VisuOri_External};
   aLookup->SetRange(aRange);
   aLookup->SetNumberOfColors(VisuOri_Last);
 
@@ -716,6 +716,26 @@ vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitDomainLookupTable()
   aLookup->SetTableValue(VisuOri_Reversed, 0.2, 0.4, 1.0);
   aLookup->SetTableValue(VisuOri_Internal, 1.0, 1.0, 0.0);
   aLookup->SetTableValue(VisuOri_External, 0.0, 1.0, 1.0);
+
+  return aLookup;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Initializes VTK lookup table charged with a color scheme for curvature combs.
+//! \return VTK lookup table.
+vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitCurvatureCombsLookupTable()
+{
+  vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
+
+  double aRange[2] = {VisuCurvComb_PointOk, VisuCurvComb_Envelope};
+  aLookup->SetRange(aRange);
+  aLookup->SetNumberOfColors(VisuCurvComb_Last);
+
+  aLookup->SetTableValue(VisuCurvComb_PointOk,      0.0, 0.8, 0.0);
+  aLookup->SetTableValue(VisuCurvComb_PointFailure, 0.8, 0.0, 0.0);
+  aLookup->SetTableValue(VisuCurvComb_Comb,         0.6, 0.6, 0.6);
+  aLookup->SetTableValue(VisuCurvComb_Envelope,     0.0, 0.3, 1.0);
 
   return aLookup;
 }

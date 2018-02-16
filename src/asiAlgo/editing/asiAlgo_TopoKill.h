@@ -168,7 +168,7 @@ protected:
   //! \param[out] result newly created topological element.
   asiAlgo_EXPORT void
     buildTopoGraphLevel(const TopoDS_Shape& root,
-                        TopoDS_Shape&       result) const;
+                        TopoDS_Shape&       result);
 
 // Input and output:
 protected:
@@ -212,6 +212,9 @@ protected:
 
   //! Sub-shapes to replace.
   NCollection_DataMap<TopoDS_Shape, TopoDS_Shape, t_partner_hasher> m_toReplace;
+
+  //! Newly created sub-shapes.
+  NCollection_DataMap<TopoDS_Shape, TopoDS_Shape, t_partner_hasher> m_newElements;
 
 };
 

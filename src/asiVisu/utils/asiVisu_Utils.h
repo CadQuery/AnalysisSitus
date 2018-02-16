@@ -100,6 +100,19 @@ enum asiVisu_Orientation
 
 //-----------------------------------------------------------------------------
 
+//! Curvature combs.
+enum asiVisu_CurvatureCombElem
+{
+  VisuCurvComb_Undefined    = -1,
+  VisuCurvComb_PointOk      =  0,
+  VisuCurvComb_PointFailure =  1,
+  VisuCurvComb_Comb         =  2,
+  VisuCurvComb_Envelope     =  3,
+  VisuCurvComb_Last
+};
+
+//-----------------------------------------------------------------------------
+
 //! Common visualization utilities.
 class asiVisu_Utils
 {
@@ -232,6 +245,9 @@ public:
 
   asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
     InitDomainLookupTable();
+
+  asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
+    InitCurvatureCombsLookupTable();
 
   asiVisu_EXPORT static void
     InitMapper(vtkMapper*      theMapper,

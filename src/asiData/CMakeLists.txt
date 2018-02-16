@@ -46,6 +46,7 @@ set (H_FILES
   asiData_SurfNode.h
   asiData_TessNode.h
   asiData_TriangulationNode.h
+  asiData_VertexNode.h
 )
 
 set (CPP_FILES 
@@ -89,6 +90,7 @@ set (CPP_FILES
   asiData_SurfNode.cpp
   asiData_TessNode.cpp
   asiData_TriangulationNode.cpp
+  asiData_VertexNode.cpp
 )
 
 #------------------------------------------------------------------------------

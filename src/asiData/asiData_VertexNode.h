@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 29 January 2018
+// Created on: 16 February 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017-2018, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,53 +28,81 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_CurvatureCombsPipeline_h
-#define asiVisu_CurvatureCombsPipeline_h
+#ifndef asiData_VertexNode_h
+#define asiData_VertexNode_h
 
-// asiVisu includes
-#include <asiVisu_DataProvider.h>
-#include <asiVisu_Pipeline.h>
+// asiData includes
+#include <asiData.h>
 
-// VTK includes
-#include <vtkPolyDataAlgorithm.h>
+// Active Data includes
+#include <ActData_BaseNode.h>
 
 //-----------------------------------------------------------------------------
+// Individual vertex Node
+//-----------------------------------------------------------------------------
 
-//! Visualization pipeline for a curvature comb.
-class asiVisu_CurvatureCombsPipeline : public asiVisu_Pipeline
+//! Node representing a single b-rep vertex.
+class asiData_VertexNode : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_CurvatureCombsPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_VertexNode, ActData_BaseNode)
+
+  // Automatic registration of Node type in global factory
+  DEFINE_NODE_FACTORY(asiData_VertexNode, Instance)
 
 public:
 
-  asiVisu_EXPORT
-    asiVisu_CurvatureCombsPipeline();
+  //! IDs for the underlying Parameters.
+  enum ParamId
+  {
+  //--------------------//
+  // Common             //
+  //--------------------//
+    PID_Name,           //!< Name of the Node.
+  //--------------------//
+  // Geometry           //
+  //--------------------//
+    PID_SelectedVertex, //!< ID of the selected vertex.
+  //--------------------//
+    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
+  };
 
 public:
 
-  asiVisu_EXPORT virtual void
-    SetInput(const Handle(asiVisu_DataProvider)& DP);
+  asiData_EXPORT static Handle(ActAPI_INode)
+    Instance();
 
-private:
+// Generic naming support:
+public:
 
-  virtual void callback_add_to_renderer      (vtkRenderer* renderer);
-  virtual void callback_remove_from_renderer (vtkRenderer* renderer);
-  virtual void callback_update               ();
+  asiData_EXPORT virtual TCollection_ExtendedString
+    GetName();
 
-private:
+  asiData_EXPORT virtual void
+    SetName(const TCollection_ExtendedString& name);
 
-  //! Copying prohibited.
-  asiVisu_CurvatureCombsPipeline(const asiVisu_CurvatureCombsPipeline&);
+// Handy accessors to the stored data:
+public:
 
-  //! Assignment prohibited.
-  asiVisu_CurvatureCombsPipeline& operator=(const asiVisu_CurvatureCombsPipeline&);
+  asiData_EXPORT void
+    SetSelectedVertex(const int vertexId);
+
+  asiData_EXPORT int
+    GetSelectedVertex() const;
+
+// Initialization:
+public:
+
+  asiData_EXPORT void
+    Init();
 
 protected:
 
-  bool m_bMapperColorsSet; //!< Indicates whether scalars are set.
+  //! Allocation is allowed only via Instance method.
+  asiData_EXPORT
+    asiData_VertexNode();
 
 };
 

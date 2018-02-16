@@ -31,12 +31,12 @@
 // Own include
 #include <asiVisu_GeomEdgePrs.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_EdgeDataProvider.h>
 #include <asiVisu_EdgeDomainPipeline.h>
 #include <asiVisu_Utils.h>
 
-// Geometry includes
+// asiAlgo includes
 #include <asiAlgo_Utils.h>
 
 // OCCT includes
@@ -57,6 +57,9 @@ asiVisu_GeomEdgePrs::asiVisu_GeomEdgePrs(const Handle(ActAPI_INode)& theNode)
 : asiVisu_Prs(theNode)
 {
   Handle(asiData_EdgeNode) edge_n = Handle(asiData_EdgeNode)::DownCast(theNode);
+
+  // Initialize working part
+  m_partNode = Handle(asiData_PartNode)::DownCast( edge_n->GetParentNode() );
 
   // Create Data Provider
   Handle(asiVisu_EdgeDataProvider) DP = new asiVisu_EdgeDataProvider(edge_n);
@@ -118,6 +121,19 @@ void asiVisu_GeomEdgePrs::afterInitPipelines()
   TCollection_AsciiString TITLE("Edge (#");
   TITLE += E_idx; TITLE += "): ";
   TITLE += asiAlgo_Utils::OrientationToString(E);
+
+  // If naming service is alive, add persistent name
+  if ( !m_partNode->GetNaming().IsNull() )
+  {
+    TCollection_AsciiString namingName;
+
+    if ( m_partNode->GetNaming()->FindName(E, namingName) )
+    {
+      TITLE += " [";
+      TITLE += namingName;
+      TITLE += "]";
+    }
+  }
 
   // Add orientation of all vertices. We are interested in relative orientations
   // of vertices wrt the owner edge. Therefore, exploration is done for edge

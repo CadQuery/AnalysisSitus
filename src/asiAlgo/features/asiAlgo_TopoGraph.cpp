@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_TopoAttrLocation.h>
+#include <asiAlgo_TopoAttrName.h>
 #include <asiAlgo_TopoAttrOrientation.h>
 #include <asiAlgo_Utils.h>
 
@@ -79,7 +80,8 @@ void asiAlgo_TopoGraph::GetMapOf(const TopAbs_ShapeEnum      ssType,
 //-----------------------------------------------------------------------------
 
 //! \return map of faces.
-const TopTools_IndexedMapOfShape& asiAlgo_TopoGraph::GetMapOfFaces() const
+const TopTools_IndexedMapOfShape&
+  asiAlgo_TopoGraph::GetMapOfFaces() const
 {
   return m_faces;
 }
@@ -87,7 +89,8 @@ const TopTools_IndexedMapOfShape& asiAlgo_TopoGraph::GetMapOfFaces() const
 //-----------------------------------------------------------------------------
 
 //! \return map of edges.
-const TopTools_IndexedMapOfShape& asiAlgo_TopoGraph::GetMapOfEdges() const
+const TopTools_IndexedMapOfShape&
+  asiAlgo_TopoGraph::GetMapOfEdges() const
 {
   return m_edges;
 }
@@ -95,7 +98,8 @@ const TopTools_IndexedMapOfShape& asiAlgo_TopoGraph::GetMapOfEdges() const
 //-----------------------------------------------------------------------------
 
 //! \return map of vertices.
-const TopTools_IndexedMapOfShape& asiAlgo_TopoGraph::GetMapOfVertices() const
+const TopTools_IndexedMapOfShape&
+  asiAlgo_TopoGraph::GetMapOfVertices() const
 {
   return m_vertices;
 }
@@ -103,7 +107,8 @@ const TopTools_IndexedMapOfShape& asiAlgo_TopoGraph::GetMapOfVertices() const
 //-----------------------------------------------------------------------------
 
 //! \return map of sub-shapes.
-const TopTools_IndexedMapOfShape& asiAlgo_TopoGraph::GetMapOfSubShapes() const
+const TopTools_IndexedMapOfShape&
+  asiAlgo_TopoGraph::GetMapOfSubShapes() const
 {
   return m_subShapes;
 }
@@ -121,9 +126,22 @@ void asiAlgo_TopoGraph::Dump(Standard_OStream& out) const
   //
   for ( int n = 1; n <= nodes.Extent(); ++n )
   {
-    // Generate label
     TCollection_AsciiString label;
-    label += nodes(n).TShape()->DynamicType()->Name();
+
+    // Get persistent name (if any)
+    Handle(asiAlgo_TopoAttr)
+      namingAttrBase = this->GetNodeAttribute( n,
+                                               asiAlgo_TopoAttrName::GUID() );
+    //
+    if ( !namingAttrBase.IsNull() )
+    {
+      Handle(asiAlgo_TopoAttrName)
+        namingAttr = Handle(asiAlgo_TopoAttrName)::DownCast(namingAttrBase);
+
+      label = namingAttr->GetName();
+    }
+    else
+      label = nodes(n).TShape()->DynamicType()->Name();
 
     // Dump node with label
     out << Whitespace << NodeLetter << n << " [label=\"" << label.ToCString() << "\"];\n";
@@ -206,6 +224,33 @@ void asiAlgo_TopoGraph::CalculateSummary(int& numCompounds,
 
 //-----------------------------------------------------------------------------
 
+Handle(asiAlgo_TopoGraph)
+  asiAlgo_TopoGraph::SubGraph(const TopoDS_Shape& shape) const
+{
+  Handle(asiAlgo_TopoGraph) result = new asiAlgo_TopoGraph(shape);
+
+  // Transfer names which might be available if naming service is active
+  for ( Iterator it(result); it.More(); it.Next() )
+  {
+    const TopoDS_Shape& shapeInRes = it.GetCurrentNode();
+
+    // Find node in the source graph
+    const int nodeInSource = this->GetNodeIndex(shapeInRes);
+
+    // Get naming attribute
+    Handle(asiAlgo_TopoAttr)
+      attr = this->GetNodeAttribute( nodeInSource, asiAlgo_TopoAttrName::GUID() );
+
+    // Transfer attribute to the new graph
+    if ( !attr.IsNull() )
+      result->AddNodeAttribute(it.GetCurrentIndex(), attr);
+  }
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
 void asiAlgo_TopoGraph::buildGraph()
 {
   // Extract all sub-shapes with unique indices from the master CAD
@@ -245,7 +290,7 @@ void asiAlgo_TopoGraph::addSubshapes(const TopoDS_Shape& parent,
     int iChildId;
     //
     if ( !m_nodes.Contains(subShape) )
-      iChildId = m_nodes.Add(subShape);
+      iChildId = m_nodes.Add( subShape.Oriented(TopAbs_EXTERNAL) );
     else
       iChildId = m_nodes.FindIndex(subShape);
 

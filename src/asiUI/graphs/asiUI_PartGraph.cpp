@@ -293,7 +293,7 @@ vtkSmartPointer<vtkGraph>
     if ( m_naming.IsNull() )
       m_topoGraph = new asiAlgo_TopoGraph(shape);
     else
-      m_topoGraph = m_naming->GetTopoGraph();
+      m_topoGraph = m_naming->GetTopoGraph()->SubGraph(shape);
 
     // Convert
     vtkSmartPointer<vtkMutableDirectedGraph>

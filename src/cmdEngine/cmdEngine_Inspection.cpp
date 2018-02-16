@@ -290,18 +290,21 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
                           int                          argc,
                           const char**                 argv)
 {
-  if ( argc != 1 && argc != 2 && argc != 3 )
+  if ( argc != 1 && argc != 2 && argc != 3 && argc != 4 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
+  int    numPts      = 100;
   double scaleFactor = 1.0;
-  int numPts = 100;
+  double amplFactor  = 1.0;
   //
   if ( argc >= 2 )
     numPts = atoi(argv[1]);
   if ( argc >= 3 )
     scaleFactor = atof(argv[2]);
+  if ( argc >= 4 )
+    amplFactor = atof(argv[3]);
 
   // Get Part Node to access the selected edge.
   Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
@@ -362,6 +365,7 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
                                                  f,
                                                  l,
                                                  numPts,
+                                                 amplFactor,
                                                  points,
                                                  params,
                                                  curvatures,
@@ -376,6 +380,7 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
     combsNode = CurveAPI.CreateOrUpdateCurvatureCombs(curveNode,
                                                       scaleFactor,
                                                       points,
+                                                      combsOk,
                                                       params,
                                                       curvatures,
                                                       combs);
@@ -441,10 +446,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-curvature",
     //
-    "check-curvature [numPts [scaleFactor]] \n"
+    "check-curvature [numPts [scaleFactor [curvAmpl]]] \n"
     "\t Checks curvature of the selected edge. As a result, curvature combs \n"
     "\t plot is visualized in 3D. You can control its scale factor with \n"
-    "\t <scaleFactor> argument and also its density with <numPts> argument.",
+    "\t <scaleFactor> argument and also its density with <numPts> argument. \n"
+    "\t To bring out the salient features of the comb, <curvAmpl> amplification \n"
+    "\t factor can be used.",
     //
     __FILE__, group, ENGINE_CheckCurvature);
 }

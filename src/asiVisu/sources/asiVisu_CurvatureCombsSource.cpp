@@ -51,6 +51,7 @@ vtkStandardNewMacro(asiVisu_CurvatureCombsSource);
 //! Default constructor.
 asiVisu_CurvatureCombsSource::asiVisu_CurvatureCombsSource()
   : vtkPolyDataAlgorithm (),
+    m_fCombScale         (1.0),
     m_fFirst             (0.0),
     m_fLast              (0.0)
 {
@@ -88,9 +89,9 @@ bool asiVisu_CurvatureCombsSource::SetInputCurve(const Handle(Geom_Curve)& curve
 
 //! Sets scale factor for a curvature comb.
 //! \param[in] scaleFactor scale factor to use.
-void asiVisu_CurvatureCombsSource::SetScaleFactor(const double scaleFactor)
+void asiVisu_CurvatureCombsSource::SetCombScaleFactor(const double scaleFactor)
 {
-  m_fScale = scaleFactor;
+  m_fCombScale = scaleFactor;
 
   // Update modification time for the source
   this->Modified();
@@ -100,15 +101,18 @@ void asiVisu_CurvatureCombsSource::SetScaleFactor(const double scaleFactor)
 
 //! Sets data vectors to visualize.
 //! \param[in] points     discretization points.
+//! \param[in] pointsOk   statuses of discretization points.
 //! \param[in] params     parameters of discretization points.
 //! \param[in] curvatures curvature values at discretization points.
 //! \param[in] combs      curvature combs at discretization points.
 void asiVisu_CurvatureCombsSource::SetCurvatureField(const std::vector<gp_Pnt>& points,
+                                                     const std::vector<bool>&   pointsOk,
                                                      const std::vector<double>& params,
                                                      const std::vector<double>& curvatures,
                                                      const std::vector<gp_Vec>& combs)
 {
   m_points     = points;
+  m_pointsOk   = pointsOk;
   m_params     = params;
   m_curvatures = curvatures;
   m_combs      = combs;
@@ -152,6 +156,13 @@ int asiVisu_CurvatureCombsSource::RequestData(vtkInformation*        request,
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
   polyOutput->SetPoints(points);
 
+  // Access cell data.
+  vtkCellData* cellData = polyOutput->GetCellData();
+
+  // Array for element types.
+  vtkSmartPointer<vtkIntArray> typeArr = asiVisu_Utils::InitIntArray(ARRNAME_CURVCOMBS_SCALARS);
+  cellData->AddArray(typeArr);
+
   /* ======================
    *  Build polygonal data
    * ====================== */
@@ -159,13 +170,31 @@ int asiVisu_CurvatureCombsSource::RequestData(vtkInformation*        request,
   // Add points.
   for ( size_t k = 0; k < m_points.size(); ++k )
   {
-    this->registerVertex(m_points[k], polyOutput);
+    this->registerVertex(m_points[k],
+                         m_pointsOk[k] ? VisuCurvComb_PointOk : VisuCurvComb_PointFailure,
+                         polyOutput);
   }
 
   // Add lines.
+  std::vector<gp_Pnt> envelopePoles;
   for ( size_t k = 0; k < m_points.size(); ++k )
   {
-    this->registerLine(m_points[k], m_points[k].XYZ() + m_combs[k].XYZ()*m_fScale, polyOutput);
+    envelopePoles.push_back(m_points[k].XYZ() + m_combs[k].XYZ()*m_fCombScale);
+
+    this->registerLine(m_points[k],
+                       envelopePoles[k],
+                       VisuCurvComb_Comb,
+                       polyOutput);
+  }
+
+  // Add envelope.
+  for ( size_t k = 1; k < m_points.size(); ++k )
+  {
+    if ( m_pointsOk[k-1] && m_pointsOk[k] )
+      this->registerLine(envelopePoles[k-1],
+                         envelopePoles[k],
+                         VisuCurvComb_Envelope,
+                         polyOutput);
   }
 
   return Superclass::RequestData(request, inputVector, outputVector);
@@ -196,11 +225,13 @@ vtkIdType asiVisu_CurvatureCombsSource::registerGridPoint(const gp_Pnt& point,
 //! Adds a line cell into the polygonal data set.
 //! \param[in]     pointStart first point.
 //! \param[in]     pointEnd   second point.
+//! \param[in]     type       type of curvature comb element.
 //! \param[in,out] polyData   polygonal data set being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType asiVisu_CurvatureCombsSource::registerLine(const gp_Pnt& pointStart,
-                                                     const gp_Pnt& pointEnd,
-                                                     vtkPolyData*  polyData)
+vtkIdType asiVisu_CurvatureCombsSource::registerLine(const gp_Pnt&                   pointStart,
+                                                     const gp_Pnt&                   pointEnd,
+                                                     const asiVisu_CurvatureCombElem type,
+                                                     vtkPolyData*                    polyData)
 {
   std::vector<vtkIdType> pids;
   pids.push_back( this->registerGridPoint(pointStart, polyData) );
@@ -209,6 +240,12 @@ vtkIdType asiVisu_CurvatureCombsSource::registerLine(const gp_Pnt& pointStart,
   vtkIdType cellID =
     polyData->InsertNextCell( VTK_LINE, (int) pids.size(), &pids[0] );
 
+  // Set element type.
+  vtkIntArray*
+    typeArr = vtkIntArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_CURVCOMBS_SCALARS) );
+  //
+  typeArr->InsertNextValue(type);
+
   return cellID;
 }
 
@@ -216,16 +253,25 @@ vtkIdType asiVisu_CurvatureCombsSource::registerLine(const gp_Pnt& pointStart,
 
 //! Adds a vertex cell into the polygonal data set.
 //! \param[in]     point    point to add as a vertex cell.
+//! \param[in]     type       type of curvature comb element.
 //! \param[in,out] polyData polygonal data set being populated.
 //! \return ID of the just added VTK cell.
-vtkIdType asiVisu_CurvatureCombsSource::registerVertex(const gp_Pnt& point,
-                                                       vtkPolyData*  polyData)
+vtkIdType
+  asiVisu_CurvatureCombsSource::registerVertex(const gp_Pnt&                   point,
+                                               const asiVisu_CurvatureCombElem type,
+                                               vtkPolyData*                    polyData)
 {
   std::vector<vtkIdType> pids;
   pids.push_back( this->registerGridPoint(point, polyData) );
 
-  vtkIdType cellID =
-    polyData->InsertNextCell( VTK_VERTEX, (int) pids.size(), &pids[0] );
+  vtkIdType
+    cellID = polyData->InsertNextCell( VTK_VERTEX, (int) pids.size(), &pids[0] );
+
+  // Set element type.
+  vtkIntArray*
+    typeArr = vtkIntArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_CURVCOMBS_SCALARS) );
+  //
+  typeArr->InsertNextValue(type);
 
   return cellID;
 }

@@ -121,6 +121,13 @@ public:
     m_combsNode->GetPoints(points);
   }
 
+  //! Returns data vector containing the statuses of discretization points.
+  //! \param[out] points vector of statuses.
+  void GetPointsStatuses(std::vector<bool>& pointsOk)
+  {
+    m_combsNode->GetPointsStatuses(pointsOk);
+  }
+
   //! Returns data vector of discretization parameters.
   //! \param[out] params vector of discretization parameters.
   void GetParameters(std::vector<double>& params)
@@ -164,6 +171,7 @@ protected:
 
     out << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_Combs)
         << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_Points)
+        << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_PointsStatuses)
         << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_Parameters)
         << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_Curvatures)
         << m_combsNode->Parameter(asiData_CurvatureCombsNode::PID_Combs)

@@ -69,34 +69,36 @@ public:
 
 public slots:
 
-  void onLoadBRep      ();
-  void onAddBRep       ();
-  void onLoadSTEP      ();
-  void onSaveSTEP      ();
-  void onSavePly       ();
-  void onSaveBRep      ();
+  void onLoadBRep       ();
+  void onAddBRep        ();
+  void onLoadSTEP       ();
+  void onSaveSTEP       ();
+  void onSavePly        ();
+  void onSaveBRep       ();
   //
-  void onCheckShape    ();
-  void onTolerance     ();
+  void onCheckShape     ();
+  void onTolerance      ();
   //
-  void onSewing        ();
-  void onMaximizeFaces ();
-  void onFillGap       ();
+  void onSewing         ();
+  void onMaximizeFaces  ();
+  void onFillGap        ();
   //
-  void onShowVertices  ();
-  void onSelectFaces   ();
-  void onSelectEdges   ();
+  void onShowVertices   ();
+  void onSelectFaces    ();
+  void onSelectEdges    ();
+  void onSelectVertices ();
 
 signals:
 
-  void partLoaded       (const QString&);
-  void partAdded        (const QString&);
-  void partSaved        ();
-  void partModified     ();
-  void verticesOn       ();
-  void verticesOff      ();
-  void selectionFacesOn ();
-  void selectionEdgesOn ();
+  void partLoaded          (const QString&);
+  void partAdded           (const QString&);
+  void partSaved           ();
+  void partModified        ();
+  void verticesOn          ();
+  void verticesOff         ();
+  void selectionFacesOn    ();
+  void selectionEdgesOn    ();
+  void selectionVerticesOn ();
 
 private:
 
@@ -105,62 +107,65 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    QPushButton* pLoadBRep;      //!< Button for BREP loading.
-    QPushButton* pAddBRep;       //!< Button for adding BREP.
-    QPushButton* pLoadSTEP;      //!< Button for STEP loading.
-    QPushButton* pSaveSTEP;      //!< Save shape to STEP.
-    QPushButton* pSavePly;       //!< Save triangulation to ply.
-    QPushButton* pSaveBRep;      //!< Save shape to BREP.
+    QPushButton* pLoadBRep;       //!< Button for BREP loading.
+    QPushButton* pAddBRep;        //!< Button for adding BREP.
+    QPushButton* pLoadSTEP;       //!< Button for STEP loading.
+    QPushButton* pSaveSTEP;       //!< Save shape to STEP.
+    QPushButton* pSavePly;        //!< Save triangulation to ply.
+    QPushButton* pSaveBRep;       //!< Save shape to BREP.
     //
-    QPushButton* pCheckShape;    //!< Runs shape validity checker.
-    QPushButton* pTolerance;     //!< Checks tolerance.
+    QPushButton* pCheckShape;     //!< Runs shape validity checker.
+    QPushButton* pTolerance;      //!< Checks tolerance.
     //
-    QPushButton* pSewing;        //!< Performs sewing.
-    QPushButton* pMaximizeFaces; //!< Performs face maximization.
-    QPushButton* pFillGap;       //!< Performs gap filling.
+    QPushButton* pSewing;         //!< Performs sewing.
+    QPushButton* pMaximizeFaces;  //!< Performs face maximization.
+    QPushButton* pFillGap;        //!< Performs gap filling.
     //
-    QPushButton* pShowVertices;  //!< Shows vertices of the model.
-    QPushButton* pSelectFaces;   //!< Enables selection by faces.
-    QPushButton* pSelectEdges;   //!< Enables selection by edges.
+    QPushButton* pShowVertices;   //!< Shows vertices of the model.
+    QPushButton* pSelectFaces;    //!< Enables selection by faces.
+    QPushButton* pSelectEdges;    //!< Enables selection by edges.
+    QPushButton* pSelectVertices; //!< Enables selection by vertices.
 
-    t_widgets() : pLoadBRep      (NULL),
-                  pAddBRep       (NULL),
-                  pLoadSTEP      (NULL),
-                  pSaveSTEP      (NULL),
-                  pSavePly       (NULL),
-                  pSaveBRep      (NULL),
+    t_widgets() : pLoadBRep       (NULL),
+                  pAddBRep        (NULL),
+                  pLoadSTEP       (NULL),
+                  pSaveSTEP       (NULL),
+                  pSavePly        (NULL),
+                  pSaveBRep       (NULL),
                   //
-                  pCheckShape    (NULL),
-                  pTolerance     (NULL),
+                  pCheckShape     (NULL),
+                  pTolerance      (NULL),
                   //
-                  pSewing        (NULL),
-                  pMaximizeFaces (NULL),
-                  pFillGap       (NULL),
+                  pSewing         (NULL),
+                  pMaximizeFaces  (NULL),
+                  pFillGap        (NULL),
                   //
-                  pShowVertices  (NULL),
-                  pSelectFaces   (NULL),
-                  pSelectEdges   (NULL)
+                  pShowVertices   (NULL),
+                  pSelectFaces    (NULL),
+                  pSelectEdges    (NULL),
+                  pSelectVertices (NULL)
     {}
 
     void Release()
     {
-      delete pLoadBRep;      pLoadBRep      = NULL;
-      delete pAddBRep;       pAddBRep       = NULL;
-      delete pLoadSTEP;      pLoadSTEP      = NULL;
-      delete pSaveSTEP;      pSaveSTEP      = NULL;
-      delete pSavePly;       pSavePly       = NULL;
-      delete pSaveBRep;      pSaveBRep      = NULL;
+      delete pLoadBRep;       pLoadBRep      = NULL;
+      delete pAddBRep;        pAddBRep       = NULL;
+      delete pLoadSTEP;       pLoadSTEP      = NULL;
+      delete pSaveSTEP;       pSaveSTEP      = NULL;
+      delete pSavePly;        pSavePly       = NULL;
+      delete pSaveBRep;       pSaveBRep      = NULL;
       //
-      delete pCheckShape;    pCheckShape    = NULL;
-      delete pTolerance;     pTolerance     = NULL;
+      delete pCheckShape;     pCheckShape    = NULL;
+      delete pTolerance;      pTolerance     = NULL;
       //
-      delete pSewing;        pSewing        = NULL;
-      delete pMaximizeFaces; pMaximizeFaces = NULL;
-      delete pFillGap;       pFillGap       = NULL;
+      delete pSewing;         pSewing        = NULL;
+      delete pMaximizeFaces;  pMaximizeFaces = NULL;
+      delete pFillGap;        pFillGap       = NULL;
       //
-      delete pShowVertices;  pShowVertices  = NULL;
-      delete pSelectFaces;   pSelectFaces   = NULL;
-      delete pSelectEdges;   pSelectEdges   = NULL;
+      delete pShowVertices;   pShowVertices  = NULL;
+      delete pSelectFaces;    pSelectFaces   = NULL;
+      delete pSelectEdges;    pSelectEdges   = NULL;
+      delete pSelectVertices; pSelectEdges   = NULL;
     }
   };
 

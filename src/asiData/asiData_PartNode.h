@@ -43,6 +43,7 @@
 #include <asiData_FaceNormsNode.h>
 #include <asiData_NamingParameter.h>
 #include <asiData_SurfNode.h>
+#include <asiData_VertexNode.h>
 
 // Active Data includes
 #include <ActData_ShapeParameter.h>
@@ -184,6 +185,9 @@ public:
 
   asiData_EXPORT Handle(asiData_ContourNode)
     GetContour() const;
+
+  asiData_EXPORT Handle(asiData_VertexNode)
+    GetVertexRepresentation() const;
 
 // Initialization:
 public:

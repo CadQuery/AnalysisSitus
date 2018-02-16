@@ -62,6 +62,9 @@ asiVisu_GeomCurvePrs::asiVisu_GeomCurvePrs(const Handle(ActAPI_INode)& theNode)
 {
   Handle(asiData_CurveNode) curve_n = Handle(asiData_CurveNode)::DownCast(theNode);
 
+  // Initialize working part
+  m_partNode = Handle(asiData_PartNode)::DownCast( curve_n->GetParentNode() );
+
   // Create Data Provider
   Handle(asiVisu_EdgeDataProvider) DP = new asiVisu_EdgeDataProvider(curve_n);
 
@@ -106,7 +109,20 @@ bool asiVisu_GeomCurvePrs::IsVisible() const
 
 void asiVisu_GeomCurvePrs::SetColor(const QColor& color) const
 {
-  asiVisu_Prs::SetColor(color);
+  for ( PipelineMap::Iterator pit( m_pipelineRepo.Find(Group_Prs) ); pit.More(); pit.Next() )
+  {
+    if ( pit.Key() == Pipeline_Knots )
+      continue;
+
+    // Get pipeline and actor.
+    const Handle(asiVisu_Pipeline)& pipeline = pit.Value();
+    //
+    vtkActor*    actor = pipeline->Actor();
+    vtkProperty* prop  = actor->GetProperty();
+
+    // Set color for VTK property.
+    prop->SetColor( color.redF(), color.greenF(), color.blueF() );
+  }
 
   // Adjust color of text.
   vtkTextActor* actor = m_textWidget->GetTextActor();
@@ -140,6 +156,19 @@ void asiVisu_GeomCurvePrs::afterInitPipelines()
   TITLE += asiAlgo_Utils::OrientationToString(E);
   TITLE += " / ";
   TITLE += ( C.IsNull() ? "NONE" : C->DynamicType()->Name() );
+
+  // If naming service is alive, add persistent name
+  if ( !m_partNode->GetNaming().IsNull() )
+  {
+    TCollection_AsciiString namingName;
+
+    if ( m_partNode->GetNaming()->FindName(E, namingName) )
+    {
+      TITLE += " [";
+      TITLE += namingName;
+      TITLE += "]";
+    }
+  }
 
   // Trimmed Curve
   if ( !C.IsNull() && C->IsInstance( STANDARD_TYPE(Geom_TrimmedCurve) ) )

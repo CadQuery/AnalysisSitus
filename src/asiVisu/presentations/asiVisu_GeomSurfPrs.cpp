@@ -128,7 +128,11 @@ void CreateImage(vtkSmartPointer<vtkImageData> image,
 asiVisu_GeomSurfPrs::asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& N)
 : asiVisu_Prs(N)
 {
-  Handle(asiData_SurfNode) face_n = Handle(asiData_SurfNode)::DownCast(N);
+  Handle(asiData_SurfNode)
+    face_n = Handle(asiData_SurfNode)::DownCast(N);
+
+  // Initialize working part
+  m_partNode = Handle(asiData_PartNode)::DownCast( face_n->GetParentNode() );
 
   // Create Data Provider
   Handle(asiVisu_FaceDataProvider) DP = new asiVisu_FaceDataProvider(face_n);
@@ -328,6 +332,19 @@ void asiVisu_GeomSurfPrs::afterInitPipelines()
   TCollection_AsciiString TITLE("Face (#");
   TITLE += F_idx;
   TITLE += ")";
+
+  // If naming service is alive, add persistent name
+  if ( !m_partNode->GetNaming().IsNull() )
+  {
+    TCollection_AsciiString namingName;
+
+    if ( m_partNode->GetNaming()->FindName(F, namingName) )
+    {
+      TITLE += " [";
+      TITLE += namingName;
+      TITLE += " ]";
+    }
+  }
 
   if ( S.IsNull() )
   {

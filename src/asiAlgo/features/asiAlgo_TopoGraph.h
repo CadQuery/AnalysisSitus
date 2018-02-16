@@ -321,7 +321,22 @@ public:
                      int& numEdges,
                      int& numVertices) const;
 
+  //! Constructs a sub-graph containing topological elements of the given
+  //! shape only.
+  //!
+  //! \param[in] shape shape to construct a sub-graph for.
+  //!
+  //! \return new graph which is a sub-graph corresponding to the passed shape.
+  asiAlgo_EXPORT Handle(asiAlgo_TopoGraph)
+    SubGraph(const TopoDS_Shape& shape) const;
+
 public:
+
+  //! \return master CAD.
+  const TopoDS_Shape& GetMasterCAD() const
+  {
+    return m_model;
+  }
 
   //! \brief Returns ID of the root node.
   //! \return ID of the root node.
@@ -330,13 +345,35 @@ public:
     return m_iRoot;
   }
 
+  //! \brief Finds all parent nodes for the given node (1-based index).
+  //! \param[in]  node        ID of the node to check (one-based is expected).
+  //! \param[out] parentNodes found parent nodes.
+  //! \return false if not parents found.
+  bool FindParents(const int                   node,
+                   TColStd_PackedMapOfInteger& parentNodes) const
+  {
+    if ( !this->HasNode(node) )
+      return false;
+
+    // Loop over the adjacency graph to find parents by part-child relations.
+    for ( t_adjacency::Iterator ait(m_arcs); ait.More(); ait.Next() )
+    {
+      const TColStd_PackedMapOfInteger& tuple = ait.Value();
+
+      if ( tuple.Contains(node) )
+        parentNodes.Add( ait.Key() );
+    }
+
+    return !parentNodes.IsEmpty();
+  }
+
   //! \brief Checks whether the topology graph contains a node with
   //!        the given one-based index.
   //! \param[in] n ID of the node to check (one-based is expected).
   //! \return true/false.
-  bool HasNode(const int n) const
+  bool HasNode(const int node) const
   {
-    return n >= 1 && n <= m_nodes.Extent();
+    return node >= 1 && node <= m_nodes.Extent();
   }
 
   //! \brief Returns topological item (TopoDS_Shape) by its index.

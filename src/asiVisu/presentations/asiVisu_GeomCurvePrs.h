@@ -31,19 +31,17 @@
 #ifndef asiVisu_GeomCurvePrs_h
 #define asiVisu_GeomCurvePrs_h
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_Prs.h>
 #include <asiVisu_Utils.h>
 
-// A-Situs (geometry) includes
+// asiData includes
 #include <asiData_PartNode.h>
 
 // VTK includes
 #include <vtkTextWidget.h>
 
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiVisu_GeomCurvePrs, asiVisu_Prs)
 
 //! Presentation class for a host curve of a b-rep edge.
 class asiVisu_GeomCurvePrs : public asiVisu_Prs
@@ -107,6 +105,9 @@ private:
 private:
 
   vtkSmartPointer<vtkTextWidget> m_textWidget; //!< Annotation.
+
+  //! Working Part Node.
+  Handle(asiData_PartNode) m_partNode;
 
 };
 

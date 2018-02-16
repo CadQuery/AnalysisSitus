@@ -102,6 +102,9 @@ private:
 
   vtkSmartPointer<vtkTextWidget> m_textWidget; //!< Annotation.
 
+  //! Working Part Node.
+  Handle(asiData_PartNode) m_partNode;
+
 };
 
 #endif

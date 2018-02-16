@@ -73,10 +73,11 @@ public:
                   const double              last);
 
   asiVisu_EXPORT void
-    SetScaleFactor(const double scaleFactor);
+    SetCombScaleFactor(const double scaleFactor);
 
   asiVisu_EXPORT void
     SetCurvatureField(const std::vector<gp_Pnt>& points,
+                      const std::vector<bool>&   pointsOk,
                       const std::vector<double>& params,
                       const std::vector<double>& curvatures,
                       const std::vector<gp_Vec>& combs);
@@ -95,18 +96,16 @@ protected:
                       vtkPolyData*  polyData);
 
   asiVisu_EXPORT vtkIdType
-    registerGridPoint(const int    index,
-                      vtkPolyData* polyData);
-
-  asiVisu_EXPORT vtkIdType
-    registerLine(const gp_Pnt& pointStart,
-                 const gp_Pnt& pointEnd,
-                 vtkPolyData*  polyData);
+    registerLine(const gp_Pnt&                   pointStart,
+                 const gp_Pnt&                   pointEnd,
+                 const asiVisu_CurvatureCombElem type,
+                 vtkPolyData*                    polyData);
 
 
   asiVisu_EXPORT vtkIdType
-    registerVertex(const gp_Pnt& point,
-                   vtkPolyData*  polyData);
+    registerVertex(const gp_Pnt&                   point,
+                   const asiVisu_CurvatureCombElem type,
+                   vtkPolyData*                    polyData);
 
 protected:
 
@@ -123,11 +122,12 @@ private:
 
 private:
 
-  double               m_fScale;     //!< Scale factor.
+  double               m_fCombScale; //!< Scale factor for combs.
   Handle(Geom_Curve)   m_curve;      //!< Curve to analyze.
   double               m_fFirst;     //!< Leading parameter on a curve.
   double               m_fLast;      //!< Trailing parameter on a curve.
   std::vector<gp_Pnt>  m_points;     //!< Discretization points.
+  std::vector<bool>    m_pointsOk;   //!< Statuses of discretization points (OK/NOK).
   std::vector<double>  m_params;     //!< Parameters at discretization points.
   std::vector<double>  m_curvatures; //!< Curvature values at discretization points.
   std::vector<gp_Vec>  m_combs;      //!< Curvature combs at discretization points.

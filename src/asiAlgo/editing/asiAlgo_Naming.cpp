@@ -95,7 +95,8 @@ bool asiAlgo_Naming::InitNames()
 
 //-----------------------------------------------------------------------------
 
-TCollection_AsciiString asiAlgo_Naming::GenerateName(const TopoDS_Shape& shape)
+TCollection_AsciiString
+  asiAlgo_Naming::GenerateName(const TopoDS_Shape& shape)
 {
   const TopAbs_ShapeEnum shapeType = shape.ShapeType();
 
@@ -262,6 +263,16 @@ bool asiAlgo_Naming::registerNamedShape(const TCollection_AsciiString& name,
       return false; // Not unique name passed.
   }
 
-  m_namedShapes.Bind(name, shape);
+  // We bound the named shape with EXTERNAL orientation as actually orientation
+  // has no sense for a boundary element alone. Imagine a vertex which is shared
+  // by two edges. Imagine also that we store oriented entities here. Then,
+  // once the topological naming service is initialized, all boundary elements
+  // are used to populate the map of names. To populate that map, we iterate
+  // the topograph which distinguishes only partner elements because orientations
+  // are stored as arc attributes. Imagine that you first iterate a Co-Vertex
+  // from the first edge and the topograph returns REVERSED entity. In such case,
+  // the topological naming map will always store the vertex boundary element
+  // in a reversed state even though the second edge may forward-include it.
+  m_namedShapes.Bind( name, shape.Oriented(TopAbs_EXTERNAL) );
   return true;
 }

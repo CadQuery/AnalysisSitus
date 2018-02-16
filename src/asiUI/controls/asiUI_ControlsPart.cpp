@@ -96,41 +96,43 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   m_pMainLayout = new QVBoxLayout();
 
   // Buttons
-  m_widgets.pLoadBRep      = new QPushButton("Load BREP");
-  m_widgets.pAddBRep       = new QPushButton("Add BREP");
-  m_widgets.pLoadSTEP      = new QPushButton("Load STEP");
-  m_widgets.pSavePly       = new QPushButton("Save facets (ply)");
-  m_widgets.pSaveBRep      = new QPushButton("Save BREP");
-  m_widgets.pSaveSTEP      = new QPushButton("Save STEP");
+  m_widgets.pLoadBRep       = new QPushButton("Load BREP");
+  m_widgets.pAddBRep        = new QPushButton("Add BREP");
+  m_widgets.pLoadSTEP       = new QPushButton("Load STEP");
+  m_widgets.pSavePly        = new QPushButton("Save facets (ply)");
+  m_widgets.pSaveBRep       = new QPushButton("Save BREP");
+  m_widgets.pSaveSTEP       = new QPushButton("Save STEP");
   //
-  m_widgets.pCheckShape    = new QPushButton("Check shape");
-  m_widgets.pTolerance     = new QPushButton("Tolerance");
+  m_widgets.pCheckShape     = new QPushButton("Check shape");
+  m_widgets.pTolerance      = new QPushButton("Tolerance");
   //
-  m_widgets.pSewing        = new QPushButton("Sewing");
-  m_widgets.pMaximizeFaces = new QPushButton("Maximize faces");
-  m_widgets.pFillGap       = new QPushButton("Fill gap");
+  m_widgets.pSewing         = new QPushButton("Sewing");
+  m_widgets.pMaximizeFaces  = new QPushButton("Maximize faces");
+  m_widgets.pFillGap        = new QPushButton("Fill gap");
   //
-  m_widgets.pShowVertices  = new QPushButton("Show/hide vertices");
-  m_widgets.pSelectFaces   = new QPushButton("Select faces");
-  m_widgets.pSelectEdges   = new QPushButton("Select edges");
+  m_widgets.pShowVertices   = new QPushButton("Show/hide vertices");
+  m_widgets.pSelectFaces    = new QPushButton("Select faces");
+  m_widgets.pSelectEdges    = new QPushButton("Select edges");
+  m_widgets.pSelectVertices = new QPushButton("Select vertices");
   //
-  m_widgets.pLoadBRep      -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pAddBRep       -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pLoadSTEP      -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pSaveSTEP      -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pSavePly       -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pSaveBRep      -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pLoadBRep       -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pAddBRep        -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pLoadSTEP       -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSaveSTEP       -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSavePly        -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSaveBRep       -> setMinimumWidth(BTN_MIN_WIDTH);
   //
-  m_widgets.pCheckShape    -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pTolerance     -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pCheckShape     -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pTolerance      -> setMinimumWidth(BTN_MIN_WIDTH);
   //
-  m_widgets.pSewing        -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pMaximizeFaces -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pFillGap       -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSewing         -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pMaximizeFaces  -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pFillGap        -> setMinimumWidth(BTN_MIN_WIDTH);
   //
-  m_widgets.pShowVertices  -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pSelectFaces   -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pSelectEdges   -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pShowVertices   -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSelectFaces    -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSelectEdges    -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSelectVertices -> setMinimumWidth(BTN_MIN_WIDTH);
 
   // Group box for data interoperability
   QGroupBox*   pExchangeGroup = new QGroupBox("Data Exchange");
@@ -165,6 +167,7 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   pVisuLay->addWidget(m_widgets.pShowVertices);
   pVisuLay->addWidget(m_widgets.pSelectFaces);
   pVisuLay->addWidget(m_widgets.pSelectEdges);
+  pVisuLay->addWidget(m_widgets.pSelectVertices);
 
   // Set layout
   m_pMainLayout->addWidget(pExchangeGroup);
@@ -177,23 +180,24 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   this->setLayout(m_pMainLayout);
 
   // Connect signals to slots
-  connect( m_widgets.pLoadBRep,      SIGNAL( clicked() ), SLOT( onLoadBRep      () ) );
-  connect( m_widgets.pAddBRep,       SIGNAL( clicked() ), SLOT( onAddBRep       () ) );
-  connect( m_widgets.pLoadSTEP,      SIGNAL( clicked() ), SLOT( onLoadSTEP      () ) );
-  connect( m_widgets.pSaveSTEP,      SIGNAL( clicked() ), SLOT( onSaveSTEP      () ) );
-  connect( m_widgets.pSavePly,       SIGNAL( clicked() ), SLOT( onSavePly       () ) );
-  connect( m_widgets.pSaveBRep,      SIGNAL( clicked() ), SLOT( onSaveBRep      () ) );
+  connect( m_widgets.pLoadBRep,       SIGNAL( clicked() ), SLOT( onLoadBRep       () ) );
+  connect( m_widgets.pAddBRep,        SIGNAL( clicked() ), SLOT( onAddBRep        () ) );
+  connect( m_widgets.pLoadSTEP,       SIGNAL( clicked() ), SLOT( onLoadSTEP       () ) );
+  connect( m_widgets.pSaveSTEP,       SIGNAL( clicked() ), SLOT( onSaveSTEP       () ) );
+  connect( m_widgets.pSavePly,        SIGNAL( clicked() ), SLOT( onSavePly        () ) );
+  connect( m_widgets.pSaveBRep,       SIGNAL( clicked() ), SLOT( onSaveBRep       () ) );
   //
-  connect( m_widgets.pCheckShape,    SIGNAL( clicked() ), SLOT( onCheckShape    () ) );
-  connect( m_widgets.pTolerance,     SIGNAL( clicked() ), SLOT( onTolerance     () ) );
+  connect( m_widgets.pCheckShape,     SIGNAL( clicked() ), SLOT( onCheckShape     () ) );
+  connect( m_widgets.pTolerance,      SIGNAL( clicked() ), SLOT( onTolerance      () ) );
   //
-  connect( m_widgets.pSewing,        SIGNAL( clicked() ), SLOT( onSewing        () ) );
-  connect( m_widgets.pMaximizeFaces, SIGNAL( clicked() ), SLOT( onMaximizeFaces () ) );
-  connect( m_widgets.pFillGap,       SIGNAL( clicked() ), SLOT( onFillGap       () ) );
+  connect( m_widgets.pSewing,         SIGNAL( clicked() ), SLOT( onSewing         () ) );
+  connect( m_widgets.pMaximizeFaces,  SIGNAL( clicked() ), SLOT( onMaximizeFaces  () ) );
+  connect( m_widgets.pFillGap,        SIGNAL( clicked() ), SLOT( onFillGap        () ) );
   //
-  connect( m_widgets.pShowVertices,  SIGNAL( clicked() ), SLOT( onShowVertices  () ) );
-  connect( m_widgets.pSelectFaces,   SIGNAL( clicked() ), SLOT( onSelectFaces   () ) );
-  connect( m_widgets.pSelectEdges,   SIGNAL( clicked() ), SLOT( onSelectEdges   () ) );
+  connect( m_widgets.pShowVertices,   SIGNAL( clicked() ), SLOT( onShowVertices   () ) );
+  connect( m_widgets.pSelectFaces,    SIGNAL( clicked() ), SLOT( onSelectFaces    () ) );
+  connect( m_widgets.pSelectEdges,    SIGNAL( clicked() ), SLOT( onSelectEdges    () ) );
+  connect( m_widgets.pSelectVertices, SIGNAL( clicked() ), SLOT( onSelectVertices () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -609,4 +613,18 @@ void asiUI_ControlsPart::onSelectEdges()
 
   // Notify
   emit selectionEdgesOn();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Switches to selection by vertices.
+void asiUI_ControlsPart::onSelectVertices()
+{
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+
+  // Notify
+  emit selectionVerticesOn();
 }

@@ -54,13 +54,14 @@ public:
   //! IDs for the underlying Parameters.
   enum ParamId
   {
-    PID_Name,        //!< Name of the Node.
-    PID_Points,      //!< Discretization points.
-    PID_Parameters,  //!< Parameter values corresponding to the discr. points.
-    PID_Curvatures,  //!< Curvature values at discretization points.
-    PID_Combs,       //!< Comb vectors.
-    PID_RefCurve,    //!< Reference to Curve Node.
-    PID_ScaleFactor, //!< Scale factor.
+    PID_Name,           //!< Name of the Node.
+    PID_Points,         //!< Discretization points.
+    PID_PointsStatuses, //!< Statuses of the discretization points.
+    PID_Parameters,     //!< Parameter values corresponding to the discr. points.
+    PID_Curvatures,     //!< Curvature values at discretization points.
+    PID_Combs,          //!< Comb vectors.
+    PID_RefCurve,       //!< Reference to Curve Node.
+    PID_ScaleFactor,    //!< Scale factor.
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
@@ -92,6 +93,12 @@ public:
 
   asiData_EXPORT void
     GetPoints(std::vector<gp_Pnt>& points) const;
+
+  asiData_EXPORT void
+    SetPointsStatuses(const std::vector<bool>& statuses);
+
+  asiData_EXPORT void
+    GetPointsStatuses(std::vector<bool>& statuses) const;
 
   asiData_EXPORT void
     SetParameters(const std::vector<double>& params);

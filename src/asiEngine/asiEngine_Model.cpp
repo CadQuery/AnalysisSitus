@@ -64,6 +64,7 @@ REGISTER_NODE_TYPE(asiData_CurveNode)
 REGISTER_NODE_TYPE(asiData_CurvatureCombsNode)
 REGISTER_NODE_TYPE(asiData_BoundaryEdgesNode)
 REGISTER_NODE_TYPE(asiData_ContourNode)
+REGISTER_NODE_TYPE(asiData_VertexNode)
 //
 REGISTER_NODE_TYPE(asiData_IVCurveNode)
 REGISTER_NODE_TYPE(asiData_IVCurvesNode)
@@ -124,12 +125,13 @@ void asiEngine_Model::Clear()
   this->OpenCommand(); // tx start
   {
     // Clean up persistent selection
-    this->GetPartNode()->GetFaceRepresentation()    ->SetSelectedFace(0);
-    this->GetPartNode()->GetNormsRepresentation()   ->SetSelectedFace(0);
-    this->GetPartNode()->GetSurfaceRepresentation() ->SetSelectedFace(0);
-    this->GetPartNode()->GetContourRepresentation() ->SetSelectedFace(0);
-    this->GetPartNode()->GetEdgeRepresentation()    ->SetSelectedEdge(0);
-    this->GetPartNode()->GetCurveRepresentation()   ->SetSelectedEdge(0);
+    this->GetPartNode()->GetFaceRepresentation()    ->SetSelectedFace   (0);
+    this->GetPartNode()->GetNormsRepresentation()   ->SetSelectedFace   (0);
+    this->GetPartNode()->GetSurfaceRepresentation() ->SetSelectedFace   (0);
+    this->GetPartNode()->GetContourRepresentation() ->SetSelectedFace   (0);
+    this->GetPartNode()->GetEdgeRepresentation()    ->SetSelectedEdge   (0);
+    this->GetPartNode()->GetCurveRepresentation()   ->SetSelectedEdge   (0);
+    this->GetPartNode()->GetVertexRepresentation()  ->SetSelectedVertex (0);
 
     // Delete all Nodes serving imperative visualization
     asiEngine_IV(this).Clean_All();
@@ -190,6 +192,7 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_CurvatureCombsNode>, Partition_CurvatureCombs);
   REGISTER_PARTITION(asiData_Partition<asiData_BoundaryEdgesNode>,  Partition_BoundaryEdges);
   REGISTER_PARTITION(asiData_Partition<asiData_ContourNode>,        Partition_Contour);
+  REGISTER_PARTITION(asiData_Partition<asiData_VertexNode>,         Partition_Vertex);
   //
   REGISTER_PARTITION(asiData_Partition<asiData_IVNode>,            Partition_IV);
   REGISTER_PARTITION(asiData_Partition<asiData_IVPoints2dNode>,    Partition_IV_Points2d);

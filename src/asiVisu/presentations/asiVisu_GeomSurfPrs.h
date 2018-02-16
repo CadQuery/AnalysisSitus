@@ -124,6 +124,9 @@ private:
   vtkSmartPointer<vtkButtonWidget>         m_modeButton;      //!< Button to switch visualization modes.
   vtkSmartPointer<asiVisu_SurfBtnCallback> m_modeCallback;    //!< Callback for visualization mode button.
 
+  //! Working Part Node.
+  Handle(asiData_PartNode) m_partNode;
+
 };
 
 //-----------------------------------------------------------------------------

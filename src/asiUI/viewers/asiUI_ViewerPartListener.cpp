@@ -68,6 +68,7 @@ asiUI_ViewerPartListener::asiUI_ViewerPartListener(asiUI_ViewerPart*            
                                                    const Handle(asiEngine_Model)& model,
                                                    ActAPI_ProgressEntry           progress,
                                                    ActAPI_PlotterEntry            plotter)
+//
 : asiUI_Viewer3dListener (wViewerPart, model, progress, plotter),
   m_wViewerDomain        (wViewerDomain),
   m_wViewerHost          (wViewerHost),
@@ -95,6 +96,9 @@ void asiUI_ViewerPartListener::Connect()
   //
   connect( m_pViewer, SIGNAL ( edgePicked(const asiVisu_PickResult&) ),
            this,      SLOT   ( onEdgePicked(const asiVisu_PickResult&) ) );
+  //
+  connect( m_pViewer, SIGNAL ( vertexPicked(const asiVisu_PickResult&) ),
+           this,      SLOT   ( onVertexPicked(const asiVisu_PickResult&) ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -137,6 +141,58 @@ void asiUI_ViewerPartListener::onEdgePicked(const asiVisu_PickResult& pickRes)
   //
   if ( m_wViewerHost )
     m_wViewerHost->PrsMgr()->Actualize(geom_n->GetCurveRepresentation().get(), false, true);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on vertex picking.
+//! \param[in] pickRes pick result.
+void asiUI_ViewerPartListener::onVertexPicked(const asiVisu_PickResult& pickRes)
+{
+  // Check if part is picked
+  asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pickRes.GetPickedActor() );
+  //
+  if ( pickRes.GetPickedActor() && !nodeInfo )
+    return;
+
+  Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
+
+  // Get index of the active vertex.
+  const int
+    globalId = geom_n->GetVertexRepresentation()->GetSelectedVertex();
+  //
+  if ( globalId == 0 )
+    return;
+
+  // Get active vertex as a sub-shape.
+  const TopTools_IndexedMapOfShape&
+    allSubShapes = geom_n->GetAAG()->GetMapOfSubShapes();
+  //
+  if ( globalId < 1 || globalId > allSubShapes.Extent() )
+    return;
+
+  // It should be of vertex type.
+  const TopoDS_Shape& subShape = allSubShapes(globalId);
+  //
+  if ( subShape.ShapeType() != TopAbs_VERTEX )
+    return;
+
+  TCollection_AsciiString msg("Vertex picked:");
+  msg += "\n\t Global ID: "; msg += globalId;
+  msg += "\n\t Address: ";   msg += asiAlgo_Utils::ShapeAddr(subShape).c_str();
+  //
+  if ( geom_n->HasNaming() )
+  {
+    msg += "\n\t Name: ";
+
+    TCollection_AsciiString vertexLabel;
+    geom_n->GetNaming()->FindName(subShape, vertexLabel);
+    //
+    msg += vertexLabel;
+  }
+
+  // Send message to logger.
+  m_progress.SendLogMessage( LogInfo(Normal) << msg.ToCString() );
 }
 
 //-----------------------------------------------------------------------------

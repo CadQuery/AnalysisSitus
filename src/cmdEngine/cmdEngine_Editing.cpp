@@ -40,11 +40,14 @@
 // asiAlgo includes
 #include <asiAlgo_EulerKEF.h>
 #include <asiAlgo_EulerKEV.h>
+#include <asiAlgo_TopoAttrOrientation.h>
 #include <asiAlgo_TopoKill.h>
 
 // OCCT includes
 #include <BRep_Builder.hxx>
 #include <BRepAlgoAPI_BuilderAlgo.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepLProp_SLProps.hxx>
@@ -198,6 +201,104 @@ int ENGINE_KEF(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_MergeSubShapes(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv,
+                          const TopAbs_ShapeEnum       ssType)
+{
+  if ( argc < 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get naming service.
+  Handle(asiAlgo_Naming) naming = part_n->GetNaming();
+
+  // Check whether naming service is active.
+  const bool hasNaming = !naming.IsNull();
+  //
+  if ( !hasNaming )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "This function is available "
+                                                           "for named shapes only.");
+    return TCL_OK;
+  }
+
+  // Loop over the arguments to collect sub-shapes to merge.
+  TopTools_ListOfShape subShapes;
+  //
+  for ( int k = 1; k < argc - 1; k += 2 )
+  {
+    if ( !interp->IsKeyword(argv[k], "name") )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Keyword '-name' is expected.");
+      return TCL_ERROR;
+    }
+
+    // Get named sub-shape.
+    TopoDS_Shape subshape = naming->GetShape(argv[k + 1]);
+    //
+    if ( subshape.IsNull() || subshape.ShapeType() != ssType )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed sub-shape is null "
+                                                              "or not of a proper type.");
+      return TCL_OK;
+    }
+
+    subShapes.Append(subshape);
+  }
+
+  // Prepare a replacement shape as the first shape.
+  const TopoDS_Shape& replacement = subShapes.First();
+
+  // Prepare killer.
+  asiAlgo_TopoKill killer( cmdEngine::model->GetPartNode()->GetShape(),
+                           interp->GetProgress(),
+                           interp->GetPlotter() );
+  //
+  killer.SetHistory( part_n->GetNaming()->GetHistory() );
+
+  // Put requests on replacement.
+  for ( TopTools_ListIteratorOfListOfShape lit(subShapes); lit.More(); lit.Next() )
+  {
+    const TopoDS_Shape& operand = lit.Value();
+
+    // Notice that the substitution sub-shape is oriented like the operand.
+    if ( !killer.AskReplace( operand, replacement.Oriented( operand.Orientation() ) ) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on replacement rejected.");
+      return TCL_OK;
+    }
+  }
+
+  if ( !killer.Apply() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Topological killer failed.");
+    return TCL_OK;
+  }
+
+  // Get result.
+  const TopoDS_Shape& result = killer.GetResult();
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
                         int                          argc,
                         const char**                 argv,
@@ -297,95 +398,20 @@ int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_MergeEdges(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  return ENGINE_MergeSubShapes(interp, argc, argv, TopAbs_EDGE);
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_MergeVertices(const Handle(asiTcl_Interp)& interp,
                          int                          argc,
                          const char**                 argv)
 {
-  if ( argc < 3 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  // Get Part Node.
-  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
-
-  // Check whether naming service is active.
-  const bool hasNaming = !part_n->GetNaming().IsNull();
-  //
-  if ( !hasNaming )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "This function is available "
-                                                           "for named shapes only.");
-    return TCL_OK;
-  }
-
-  // Loop over the arguments to collect vertices to merge.
-  TopTools_ListOfShape vertices;
-  //
-  for ( int k = 1; k < argc - 1; k += 2 )
-  {
-    if ( !interp->IsKeyword(argv[k], "name") )
-    {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Keyword '-name' is expected.");
-      return TCL_ERROR;
-    }
-
-    // Get named sub-shape.
-    TopoDS_Shape subshape = part_n->GetNaming()->GetShape(argv[k+1]);
-    //
-    if ( subshape.IsNull() || subshape.ShapeType() != TopAbs_VERTEX )
-    {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed sub-shape is null "
-                                                              "or not of a proper type.");
-      return TCL_OK;
-    }
-    //
-    vertices.Append(subshape);
-  }
-
-  // Create new vertex.
-  TopoDS_Vertex V = BRepBuilderAPI_MakeVertex( gp::Origin() );
-
-  // Prepare killer.
-  asiAlgo_TopoKill killer( cmdEngine::model->GetPartNode()->GetShape(),
-                           interp->GetProgress(),
-                           interp->GetPlotter() );
-  //
-  killer.SetHistory( part_n->GetNaming()->GetHistory() );
-
-  // Put requests on replacement.
-  for ( TopTools_ListIteratorOfListOfShape lit(vertices); lit.More(); lit.Next() )
-  {
-    const TopoDS_Shape& operand = lit.Value();
-    //
-    if ( !killer.AskReplace(operand, V) )
-    {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal rejected.");
-      return TCL_OK;
-    }
-  }
-
-  if ( !killer.Apply() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Topological killer failed.");
-    return TCL_OK;
-  }
-
-  // Get result.
-  const TopoDS_Shape& result = killer.GetResult();
-
-  // Modify Data Model.
-  cmdEngine::model->OpenCommand();
-  {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
-  }
-  cmdEngine::model->CommitCommand();
-
-  // Update UI.
-  if ( cmdEngine::cf->ViewerPart )
-    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
-
-  return TCL_OK;
+  return ENGINE_MergeSubShapes(interp, argc, argv, TopAbs_VERTEX);
 }
 
 //-----------------------------------------------------------------------------
@@ -799,6 +825,14 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t Merges several vertices into one.",
     //
     __FILE__, group, ENGINE_MergeVertices);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("merge-edges",
+    //
+    "merge-edges <-name 'edgeName1' ... -name 'edgeNameK'>\n"
+    "\t Merges several edges into one.",
+    //
+    __FILE__, group, ENGINE_MergeEdges);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-vertex",

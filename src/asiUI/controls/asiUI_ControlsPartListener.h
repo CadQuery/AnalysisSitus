@@ -60,13 +60,14 @@ public:
 
 protected slots:
 
-  void onPartLoaded       (const QString&);
-  void onPartAdded        (const QString&);
-  void onPartModified     ();
-  void onVerticesOn       ();
-  void onVerticesOff      ();
-  void onSelectionFacesOn ();
-  void onSelectionEdgesOn ();
+  void onPartLoaded          (const QString&);
+  void onPartAdded           (const QString&);
+  void onPartModified        ();
+  void onVerticesOn          ();
+  void onVerticesOff         ();
+  void onSelectionFacesOn    ();
+  void onSelectionEdgesOn    ();
+  void onSelectionVerticesOn ();
 
 protected:
 

@@ -2166,6 +2166,7 @@ void asiAlgo_Utils::PrintSurfaceDetails(const Handle(Geom_Surface)& surf,
 
 bool asiAlgo_Utils::CalculateCurvatureComb(const Handle(Geom_Curve)& curve,
                                            const double              u,
+                                           const double              curvAmpl,
                                            gp_Pnt&                   p,
                                            double&                   k,
                                            gp_Vec&                   c)
@@ -2199,7 +2200,7 @@ bool asiAlgo_Utils::CalculateCurvatureComb(const Handle(Geom_Curve)& curve,
   k = lProps.Curvature();
 
   // Calculate comb.
-  c = p.XYZ() - k*n.XYZ();
+  c = p.XYZ() - curvAmpl*k*n.XYZ();
 
   return true;
 }
@@ -2210,6 +2211,7 @@ bool asiAlgo_Utils::CalculateCurvatureCombs(const Handle(Geom_Curve)& curve,
                                             const double              f,
                                             const double              l,
                                             const int                 numPts,
+                                            const double              curvAmpl,
                                             std::vector<gp_Pnt>&      points,
                                             std::vector<double>&      params,
                                             std::vector<double>&      curvatures,
@@ -2232,7 +2234,13 @@ bool asiAlgo_Utils::CalculateCurvatureCombs(const Handle(Geom_Curve)& curve,
     double curvature;
     gp_Vec comb;
     //
-    const bool isOk = asiAlgo_Utils::CalculateCurvatureComb(curve, param, p, curvature, comb);
+    const bool
+      isOk = asiAlgo_Utils::CalculateCurvatureComb(curve,
+                                                   param,
+                                                   curvAmpl,
+                                                   p,
+                                                   curvature,
+                                                   comb);
 
     // Fill result arrays.
     combsOk    .push_back( isOk );

@@ -37,13 +37,15 @@
 
 // VTK includes
 #include <vtkActor.h>
+#include <vtkLookupTable.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 
 //! Creates new Pipeline initialized by default VTK mapper and actor.
 asiVisu_CurvatureCombsPipeline::asiVisu_CurvatureCombsPipeline()
 //
-: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() )
+: asiVisu_Pipeline   ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
+  m_bMapperColorsSet ( false )
 {
   this->Actor()->GetProperty()->SetLineWidth(2.0);
 }
@@ -77,22 +79,24 @@ void asiVisu_CurvatureCombsPipeline::SetInput(const Handle(asiVisu_DataProvider)
   if ( dp->MustExecute( this->GetMTime() ) )
   {
     std::vector<gp_Pnt> points;
+    std::vector<bool>   pointsOk;
     std::vector<double> params;
     std::vector<double> curvatures;
     std::vector<gp_Vec> combs;
     //
-    dp->GetPoints     (points);
-    dp->GetParameters (params);
-    dp->GetCurvatures (curvatures);
-    dp->GetCombs      (combs);
+    dp->GetPoints         (points);
+    dp->GetPointsStatuses (pointsOk);
+    dp->GetParameters     (params);
+    dp->GetCurvatures     (curvatures);
+    dp->GetCombs          (combs);
 
     // Curvature combs source
     double f, l;
     vtkSmartPointer<asiVisu_CurvatureCombsSource>
       src = vtkSmartPointer<asiVisu_CurvatureCombsSource>::New();
     //
-    src->SetScaleFactor    ( dp->GetScaleFactor() );
-    src->SetCurvatureField ( points, params, curvatures, combs );
+    src->SetCombScaleFactor ( dp->GetScaleFactor() );
+    src->SetCurvatureField  ( points, pointsOk, params, curvatures, combs );
     //
     if ( curve_type->SubType( STANDARD_TYPE(Geom_Curve) ) )
     {
@@ -123,4 +127,11 @@ void asiVisu_CurvatureCombsPipeline::callback_remove_from_renderer(vtkRenderer*)
 
 //! Callback for Update() routine.
 void asiVisu_CurvatureCombsPipeline::callback_update()
-{}
+{
+  if ( !m_bMapperColorsSet )
+  {
+    vtkSmartPointer<vtkLookupTable> aLookup = asiVisu_Utils::InitCurvatureCombsLookupTable();
+    asiVisu_Utils::InitMapper(m_mapper, aLookup, ARRNAME_CURVCOMBS_SCALARS);
+    m_bMapperColorsSet = true;
+  }
+}

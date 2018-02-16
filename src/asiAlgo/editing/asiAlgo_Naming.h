@@ -55,14 +55,14 @@ public:
   //! \param[in] progress  progress notifier.
   asiAlgo_EXPORT
     asiAlgo_Naming(const Handle(asiAlgo_TopoGraph)& topograph,
-                   ActAPI_ProgressEntry             progress);
+                   ActAPI_ProgressEntry             progress = NULL);
 
   //! \brief Constructs naming tool from B-Rep shape.
   //! \param[in] shape    master CAD shape to build topology graph from.
   //! \param[in] progress progress notifier.
   asiAlgo_EXPORT
     asiAlgo_Naming(const TopoDS_Shape&  shape,
-                   ActAPI_ProgressEntry progress);
+                   ActAPI_ProgressEntry progress = NULL);
 
 public:
 
@@ -105,6 +105,8 @@ public:
     return m_history;
   }
 
+  //! Accessor for shape by its name.
+  //! \param[in] name name of the shape to find.
   //! \return transient pointer by persistent name.
   TopoDS_Shape GetShape(const TCollection_AsciiString& name) const
   {
@@ -112,6 +114,26 @@ public:
       return TopoDS_Shape();
 
     return m_namedShapes(name);
+  }
+
+  //! Attempts to find a name registered for the passed shape.
+  //! \param[in]  shape shape in question.
+  //! \param[out] name  found name.
+  //! \return false if name cannot be found.
+  bool FindName(const TopoDS_Shape&      shape,
+                TCollection_AsciiString& name) const
+  {
+    for ( NCollection_DataMap<TCollection_AsciiString, TopoDS_Shape>::Iterator
+          it(m_namedShapes); it.More(); it.Next() )
+    {
+      if ( it.Value().IsPartner(shape) )
+      {
+        name = it.Key();
+        return true;
+      }
+    }
+
+    return false;
   }
 
 protected:
@@ -168,10 +190,10 @@ protected:
   //! a collection of alive shapes.
   NCollection_DataMap<TCollection_AsciiString, TopoDS_Shape> m_namedShapes;
 
-  //@}
-
   //! Progress notification tool.
   ActAPI_ProgressEntry m_progress;
+
+  //@}
 
 };
 

@@ -345,6 +345,21 @@ Handle(asiData_ContourNode) asiData_PartNode::GetContour() const
   return NULL;
 }
 
+//! \return underlying vertex Node.
+Handle(asiData_VertexNode) asiData_PartNode::GetVertexRepresentation() const
+{
+  Handle(asiData_VertexNode) vertex_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    vertex_n = Handle(asiData_VertexNode)::DownCast( cit->Value() );
+
+    if ( !vertex_n.IsNull() && vertex_n->IsWellFormed() )
+      return vertex_n;
+  }
+
+  return NULL;
+}
+
 //-----------------------------------------------------------------------------
 
 //! Sets shape to store.

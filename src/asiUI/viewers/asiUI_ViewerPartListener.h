@@ -70,6 +70,9 @@ protected slots:
   void
     onEdgePicked(const asiVisu_PickResult& pickRes);
 
+  void
+    onVertexPicked(const asiVisu_PickResult& pickRes);
+
 protected:
 
   virtual void

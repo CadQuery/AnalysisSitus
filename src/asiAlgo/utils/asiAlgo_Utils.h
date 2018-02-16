@@ -624,17 +624,20 @@ public:
   //! value. The method follows the paper "Farin, G. 2016. Curvature combs
   //! and curvature plots. CAD Computer Aided Design 80, 6–8."
   //!
-  //! \param[in]  curve parametric curve to analyze.
-  //! \param[in]  u     parameter value.
-  //! \param[out] p     point on curve at the given parameter value.
-  //! \param[out] k     curvature at the given parameter value.
-  //! \param[out] c     curvature comb.
+  //! \param[in]  curve    parametric curve to analyze.
+  //! \param[in]  u        parameter value.
+  //! \param[in]  curvAmpl curvature amplification factor used to bring out
+  //!                      salient features of the comb.
+  //! \param[out] p        point on curve at the given parameter value.
+  //! \param[out] k        curvature at the given parameter value.
+  //! \param[out] c        curvature comb.
   //!
   //! \return false if a comb cannot be calculated. NOTE: the output argument
   //!         <p> will be calculated anyway.
   asiAlgo_EXPORT static bool
     CalculateCurvatureComb(const Handle(Geom_Curve)& curve,
                            const double              u,
+                           const double              curvAmpl,
                            gp_Pnt&                   p,
                            double&                   k,
                            gp_Vec&                   c);
@@ -645,6 +648,8 @@ public:
   //! \param[in]  f          first parameter of the range of interest.
   //! \param[in]  l          last parameter of the range of interest.
   //! \param[in]  numPts     number of discretization points.
+  //! \param[in]  curvAmpl   curvature amplification factor used to bring out
+  //!                        salient features of the comb.
   //! \param[out] points     discretization points.
   //! \param[out] params     discretization parameters.
   //! \param[out] curvatures curvatures.
@@ -657,6 +662,7 @@ public:
                             const double              f,
                             const double              l,
                             const int                 numPts,
+                            const double              curvAmpl,
                             std::vector<gp_Pnt>&      points,
                             std::vector<double>&      params,
                             std::vector<double>&      curvatures,

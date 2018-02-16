@@ -57,6 +57,7 @@ Handle(asiData_CurvatureCombsNode)
   asiEngine_Curve::CreateCurvatureCombs(const Handle(asiData_CurveNode)& parent,
                                         const double                     scaleFactor,
                                         const std::vector<gp_Pnt>&       points,
+                                        const std::vector<bool>&         pointsOk,
                                         const std::vector<double>&       params,
                                         const std::vector<double>&       curvatures,
                                         const std::vector<gp_Vec>&       combs)
@@ -70,6 +71,7 @@ Handle(asiData_CurvatureCombsNode)
   combs_n->SetName("Curvature combs");
   combs_n->SetScaleFactor(scaleFactor);
   combs_n->SetPoints(points);
+  combs_n->SetPointsStatuses(pointsOk);
   combs_n->SetParameters(params);
   combs_n->SetCurvatures(curvatures);
   combs_n->SetCombs(combs);
@@ -88,6 +90,7 @@ Handle(asiData_CurvatureCombsNode)
   asiEngine_Curve::CreateOrUpdateCurvatureCombs(const Handle(asiData_CurveNode)& parent,
                                                 const double                     scaleFactor,
                                                 const std::vector<gp_Pnt>&       points,
+                                                const std::vector<bool>&         pointsOk,
                                                 const std::vector<double>&       params,
                                                 const std::vector<double>&       curvatures,
                                                 const std::vector<gp_Vec>&       combs)
@@ -99,7 +102,13 @@ Handle(asiData_CurvatureCombsNode)
   //
   if ( node.IsNull() )
   {
-    node = this->CreateCurvatureCombs(parent, scaleFactor, points, params, curvatures, combs);
+    node = this->CreateCurvatureCombs(parent,
+                                      scaleFactor,
+                                      points,
+                                      pointsOk,
+                                      params,
+                                      curvatures,
+                                      combs);
   }
   else
   {
@@ -109,6 +118,7 @@ Handle(asiData_CurvatureCombsNode)
     // Update
     combs_n->SetScaleFactor(scaleFactor);
     combs_n->SetPoints(points);
+    combs_n->SetPointsStatuses(pointsOk);
     combs_n->SetParameters(params);
     combs_n->SetCurvatures(curvatures);
     combs_n->SetCombs(combs);

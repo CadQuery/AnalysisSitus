@@ -181,6 +181,20 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
     geom_n->AddChildNode(geom_contour_n);
   }
 
+  // Create underlying vertex representation Node
+  {
+    Handle(ActAPI_INode) geom_vertex_base = asiData_VertexNode::Instance();
+    m_model->GetVertexPartition()->AddNode(geom_vertex_base);
+
+    // Initialize
+    Handle(asiData_VertexNode) geom_vertex_n = Handle(asiData_VertexNode)::DownCast(geom_vertex_base);
+    geom_vertex_n->Init();
+    geom_vertex_n->SetName("Vertex");
+
+    // Set as child
+    geom_n->AddChildNode(geom_vertex_n);
+  }
+
   // Return the just created Node
   return geom_n;
 }

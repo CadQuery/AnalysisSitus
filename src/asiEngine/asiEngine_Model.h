@@ -197,6 +197,13 @@ public:
     return Handle(asiData_Partition<asiData_ContourNode>)::DownCast( this->Partition(Partition_Contour) );
   }
 
+  //! Accessor for a Partition instance dedicated to Vertex Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_VertexNode>) GetVertexPartition() const
+  {
+    return Handle(asiData_Partition<asiData_VertexNode>)::DownCast( this->Partition(Partition_Vertex) );
+  }
+
 //-----------------------------------------------------------------------------
 
   //! Accessor for a Partition instance dedicated to IV Nodes.
@@ -370,6 +377,7 @@ protected:
     Partition_CurvatureCombs,
     Partition_BoundaryEdges,
     Partition_Contour,
+    Partition_Vertex,
   //---------------------------------------------------------------------------
     Partition_IV,
     Partition_IV_Points2d,

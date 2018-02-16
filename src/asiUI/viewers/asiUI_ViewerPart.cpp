@@ -311,6 +311,9 @@ void asiUI_ViewerPart::onSubShapesPicked()
     //
     else if ( pick_res.IsSelectionEdge() )
       emit edgePicked(pick_res);
+    //
+    else if ( pick_res.IsSelectionVertex() )
+      emit vertexPicked(pick_res);
 
     std::cout << "Geometry Node is not accessible" << std::endl;
     return; // No target Node to proceed with
@@ -404,6 +407,43 @@ void asiUI_ViewerPart::onSubShapesPicked()
     //-------------------------------------------------------------------------
 
     emit edgePicked(pick_res);
+  }
+  else if ( pick_res.IsSelectionVertex() )
+  {
+    // Prepare arrays for selected elements
+    std::vector<int>                 picked_vertex_IDs;
+    std::vector<ActAPI_DataObjectId> picked_node_IDs;
+
+    // Prepare cumulative set of all picked element IDs
+    GetPickedSubshapeIds(pick_res, picked_vertex_IDs, picked_node_IDs);
+
+    //-------------------------------------------------------------------------
+    // Store active selection in the Data Model
+    //-------------------------------------------------------------------------
+
+    m_model->OpenCommand(); // tx start
+    {
+      // Store index of the active edge
+      if ( picked_vertex_IDs.size() )
+      {
+        geom_n->GetVertexRepresentation()->SetSelectedVertex(picked_vertex_IDs[0]);
+        //
+        std::cout << "Active vertex has been stored..." << std::endl;
+      }
+      else // Reset stored indices
+      {
+        geom_n->GetVertexRepresentation()->SetSelectedVertex(0);
+        //
+        std::cout << "Active vertex has been reset..." << std::endl;
+      }
+    }
+    m_model->CommitCommand(); // tx commit
+
+    //-------------------------------------------------------------------------
+    // Notify
+    //-------------------------------------------------------------------------
+
+    emit vertexPicked(pick_res);
   }
 }
 

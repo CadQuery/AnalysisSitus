@@ -31,7 +31,7 @@
 #ifndef asiVisu_Selection_h
 #define asiVisu_Selection_h
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu.h>
 
 // OCCT includes

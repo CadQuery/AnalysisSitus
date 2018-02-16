@@ -1093,6 +1093,16 @@ ActAPI_DataObjectIdList
               subShapes2Highlight.Add( mit.Key() );
           }
         }
+        else if ( pickRes.IsSelectionVertex() )
+        {
+          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances
+          {
+            TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
+            //
+            if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_VERTEX )
+              subShapes2Highlight.Add( mit.Key() );
+          }
+        }
       }
 
       // Re-initialize IDs of the picked elements

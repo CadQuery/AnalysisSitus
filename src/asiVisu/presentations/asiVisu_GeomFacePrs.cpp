@@ -31,12 +31,12 @@
 // Own include
 #include <asiVisu_GeomFacePrs.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_FaceDataProvider.h>
 #include <asiVisu_FaceDomainPipeline.h>
 #include <asiVisu_Utils.h>
 
-// Geometry includes
+// asiAlgo includes
 #include <asiAlgo_Utils.h>
 
 // OCCT includes
@@ -52,11 +52,14 @@
 #include <vtkTextProperty.h>
 
 //! Creates a Presentation object for the passed Geometry Face Node.
-//! \param N [in] Face Node to create a Presentation for.
+//! \param[in] N Face Node to create a Presentation for.
 asiVisu_GeomFacePrs::asiVisu_GeomFacePrs(const Handle(ActAPI_INode)& N)
 : asiVisu_Prs(N)
 {
   Handle(asiData_FaceNode) face_n = Handle(asiData_FaceNode)::DownCast(N);
+
+  // Initialize working part
+  m_partNode = Handle(asiData_PartNode)::DownCast( face_n->GetParentNode() );
 
   // Create Data Provider
   Handle(asiVisu_FaceDataProvider) DP = new asiVisu_FaceDataProvider(face_n);
@@ -174,6 +177,19 @@ void asiVisu_GeomFacePrs::afterInitPipelines()
   TCollection_AsciiString TITLE("Face (#");
   TITLE += F_idx; TITLE += "): ";
   TITLE += asiAlgo_Utils::OrientationToString(F);
+
+  // If naming service is alive, add persistent name
+  if ( !m_partNode->GetNaming().IsNull() )
+  {
+    TCollection_AsciiString namingName;
+
+    if ( m_partNode->GetNaming()->FindName(F, namingName) )
+    {
+      TITLE += " [";
+      TITLE += namingName;
+      TITLE += " ]";
+    }
+  }
 
   // Add orientation of all wires. We are interested in relative orientations
   // of wires wrt the owner face. Therefore, exploration is done for face

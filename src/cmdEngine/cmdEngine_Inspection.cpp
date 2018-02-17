@@ -43,6 +43,7 @@
 
 // asiUI includes
 #include <asiUI_CurvaturePlot.h>
+#include <asiUI_DialogEuler.h>
 
 // OCCT includes
 #include <BRepExtrema_DistShapeShape.hxx>
@@ -402,6 +403,25 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckEuler(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  asiUI_DialogEuler* pEuler = new asiUI_DialogEuler( cmdEngine::model,
+                                                     interp->GetProgress() );
+  //
+  pEuler->show();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -454,4 +474,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t factor can be used.",
     //
     __FILE__, group, ENGINE_CheckCurvature);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-euler",
+    //
+    "check-euler \n"
+    "\t Opens dialog to check Euler-Poincare property of the Part geometry.",
+    //
+    __FILE__, group, ENGINE_CheckEuler);
 }

@@ -68,6 +68,9 @@ void onUndoRedo(const Handle(ActAPI_HParameterMap)& affectedParams)
   for ( ActAPI_HNodeMap::Iterator nit(*affectedNodes); nit.More(); nit.Next() )
   {
     const Handle(ActAPI_INode)& N = nit.Value();
+    //
+    if ( N.IsNull() || !N->IsWellFormed() )
+      continue;
 
     // Actualize
     if ( partPM->IsPresented(N) )

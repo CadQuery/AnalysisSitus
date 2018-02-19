@@ -22,8 +22,10 @@ set (aux_H_FILES
   auxiliary/asiAlgo_DesignLaw.h
   auxiliary/asiAlgo_FuncUnivariate.h
   auxiliary/asiAlgo_HitFacet.h
+  auxiliary/asiAlgo_IntersectCC.h
   auxiliary/asiAlgo_IntersectionCurveSS.h
   auxiliary/asiAlgo_IntersectionPointCC.h
+  auxiliary/asiAlgo_IntersectSS.h
   auxiliary/asiAlgo_Membership.h
   auxiliary/asiAlgo_PlateOnEdges.h
   auxiliary/asiAlgo_QuickHull2d.h
@@ -38,6 +40,8 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_DesignLaw.cpp
   auxiliary/asiAlgo_FuncUnivariate.cpp
   auxiliary/asiAlgo_HitFacet.cpp
+  auxiliary/asiAlgo_IntersectCC.cpp
+  auxiliary/asiAlgo_IntersectSS.cpp
   auxiliary/asiAlgo_PlateOnEdges.cpp
   auxiliary/asiAlgo_QuickHull2d.cpp
 )
@@ -59,6 +63,9 @@ set (editing_H_FILES
   editing/asiAlgo_History.h
   editing/asiAlgo_InvertFaces.h
   editing/asiAlgo_JoinEdges.h
+  editing/asiAlgo_ModBase.h
+  editing/asiAlgo_ModConstructEdge.h
+  editing/asiAlgo_ModEdgeInfo.h
   editing/asiAlgo_Naming.h
   editing/asiAlgo_RehostFaces.h
   editing/asiAlgo_SuppressFaces.h
@@ -77,6 +84,8 @@ set (editing_CPP_FILES
   editing/asiAlgo_History.cpp
   editing/asiAlgo_InvertFaces.cpp
   editing/asiAlgo_JoinEdges.cpp
+  editing/asiAlgo_ModBase.cpp
+  editing/asiAlgo_ModConstructEdge.cpp
   editing/asiAlgo_Naming.cpp
   editing/asiAlgo_RehostFaces.cpp
   editing/asiAlgo_SuppressFaces.cpp

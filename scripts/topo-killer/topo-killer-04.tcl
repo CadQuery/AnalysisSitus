@@ -7,6 +7,8 @@
 # Target CAD file: data/cad/boxblend_01.brep
 #===============================================================================
 
+load-brep D:/OCC/CAD_files/blends/boxblend_01.brep
+
 # Initialize naming to better preserve modeling intent.
 init-naming
 

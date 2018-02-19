@@ -40,6 +40,7 @@
 // asiAlgo includes
 #include <asiAlgo_EulerKEF.h>
 #include <asiAlgo_EulerKEV.h>
+#include <asiAlgo_ModConstructEdge.h>
 #include <asiAlgo_TopoAttrOrientation.h>
 #include <asiAlgo_TopoKill.h>
 
@@ -795,6 +796,101 @@ int ENGINE_SetTolerance(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  /* ================
+   *  Prepare inputs
+   * ================ */
+
+  // Get ID of the edge in question.
+  const int eId = atoi(argv[1]);
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
+    return TCL_OK;
+  }
+
+  // Get master shape.
+  TopoDS_Shape partShape = part_n->GetShape();
+
+  // Get AAG.
+  Handle(asiAlgo_AAG) aag = part_n->GetAAG();
+
+  // Get edge of interest.
+  const TopTools_IndexedMapOfShape& allEdges = aag->GetMapOfEdges();
+  //
+  if ( eId < 1 || eId > allEdges.Extent() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Edge ID %1 is out of range.");
+    return TCL_OK;
+  }
+  //
+  const TopoDS_Edge& edge = TopoDS::Edge( allEdges(eId) );
+
+  /* ======================
+   *  Perform modification
+   * ====================== */
+
+  // Prepare Modification.
+  Handle(asiAlgo_ModConstructEdge)
+    Mod = new asiAlgo_ModConstructEdge( aag,
+                                        interp->GetProgress(),
+                                        interp->GetPlotter() );
+
+  // Initialize Modification.
+  if ( !Mod->Init(edge) )
+    return false;
+
+  // Initialize Modifier.
+  BRepTools_Modifier Modifier;
+  Modifier.Init(partShape);
+
+  // Perform Modification.
+  Modifier.Perform(Mod);
+
+  // Check.
+  if ( !Modifier.IsDone() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "BRepTools_Modifier is not done.");
+    return false;
+  }
+
+  // Get result.
+  TopoDS_Shape result = Modifier.ModifiedShape(partShape);
+
+  //interp->GetPlotter().REDRAW_SHAPE("result", result, Color_Blue, 0.8, true);
+
+  /* =======================
+   *  Finalize modification
+   * ======================= */
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -929,4 +1025,12 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t Forces the part to have the passed tolerance in all its sub-shapes.",
     //
     __FILE__, group, ENGINE_SetTolerance);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("rebuild-edge",
+    //
+    "rebuild-edge edgeId\n"
+    "\t Rebuilds edge with the given ID.",
+    //
+    __FILE__, group, ENGINE_RebuildEdge);
 }

@@ -40,8 +40,6 @@
 // OCCT includes
 #include <gp_Pnt.hxx>
 
-DEFINE_STANDARD_HANDLE(asiAlgo_IntersectionPointCC, Standard_Transient)
-
 //! Point representing 0-dimensional intersection between two curves in 3D. The
 //! first intersected curve corresponds to the parameters with index 1, e.g. W1.
 class asiAlgo_IntersectionPointCC : public Standard_Transient
@@ -62,7 +60,7 @@ public:
 
   //! Constructor.
   //! \param _P [in] three-dimensional point.
-  inline asiAlgo_IntersectionPointCC(const gp_Pnt& _P)
+  asiAlgo_IntersectionPointCC(const gp_Pnt& _P)
   : P           (_P),
     W1          (0.0),
     W2          (0.0),

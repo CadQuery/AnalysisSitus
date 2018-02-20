@@ -96,7 +96,7 @@ asiUI_DialogFindEdge::asiUI_DialogFindEdge(const Handle(asiEngine_Model)&       
   // Sizing
   m_widgets.pFind->setMaximumWidth(CONTROL_BTN_WIDTH);
 
-  // Reaction
+  // Reactions
   connect( m_widgets.pUseAddress, SIGNAL( clicked() ), this, SLOT( onUseAddress () ) );
   connect( m_widgets.pFind,       SIGNAL( clicked() ), this, SLOT( onFind       () ) );
 

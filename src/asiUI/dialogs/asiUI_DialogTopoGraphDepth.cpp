@@ -64,11 +64,12 @@ asiUI_DialogTopoGraphDepth::asiUI_DialogTopoGraphDepth(const Handle(asiEngine_Mo
                                                        ActAPI_ProgressEntry           progress,
                                                        QWidget*                       parent)
 //
-: QDialog       (parent),
-  m_model       (model),
-  m_partShape   (partShape),
-  m_pPartViewer (partViewer),
-  m_notifier    (progress)
+: QDialog        (parent),
+  m_model        (model),
+  m_partShape    (partShape),
+  m_bColorizeLoc (false),
+  m_pPartViewer  (partViewer),
+  m_notifier     (progress)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -76,7 +77,7 @@ asiUI_DialogTopoGraphDepth::asiUI_DialogTopoGraphDepth(const Handle(asiEngine_Mo
   // Group box for parameters
   QGroupBox* pGroup = new QGroupBox("Depth");
 
-  // Editors
+  // Graph traversal depth
   m_widgets.pDepth = new QComboBox();
   //
   m_widgets.pDepth->addItem(asiAlgo_Utils::ShapeTypeStr(TopAbs_COMPOUND).c_str(),  TopAbs_COMPOUND);
@@ -88,9 +89,11 @@ asiUI_DialogTopoGraphDepth::asiUI_DialogTopoGraphDepth(const Handle(asiEngine_Mo
   m_widgets.pDepth->addItem(asiAlgo_Utils::ShapeTypeStr(TopAbs_EDGE).c_str(),      TopAbs_EDGE);
   m_widgets.pDepth->addItem(asiAlgo_Utils::ShapeTypeStr(TopAbs_VERTEX).c_str(),    TopAbs_VERTEX);
   m_widgets.pDepth->addItem(asiAlgo_Utils::ShapeTypeStr(TopAbs_SHAPE).c_str(),     TopAbs_SHAPE);
-  
-  // Sizing
+  //
   m_widgets.pDepth->setMinimumWidth(CONTROL_EDIT_WIDTH);
+
+  // Whether to colorize graph according to locations of sub-shapes
+  m_widgets.pColorizeLocations = new QCheckBox;
 
   //---------------------------------------------------------------------------
   // Buttons
@@ -101,8 +104,9 @@ asiUI_DialogTopoGraphDepth::asiUI_DialogTopoGraphDepth(const Handle(asiEngine_Mo
   // Sizing
   m_widgets.pOpen->setMaximumWidth(CONTROL_BTN_WIDTH);
 
-  // Reaction
-  connect( m_widgets.pOpen, SIGNAL( clicked() ), this, SLOT( onOpen() ) );
+  // Reactions
+  connect( m_widgets.pColorizeLocations, SIGNAL( clicked() ), this, SLOT( onColorizeLocations () ) );
+  connect( m_widgets.pOpen,              SIGNAL( clicked() ), this, SLOT( onOpen              () ) );
 
   //---------------------------------------------------------------------------
   // Line editors
@@ -112,9 +116,10 @@ asiUI_DialogTopoGraphDepth::asiUI_DialogTopoGraphDepth(const Handle(asiEngine_Mo
   QGridLayout* pGrid = new QGridLayout(pGroup);
   pGrid->setSpacing(5);
   //
-  pGrid->addWidget(new QLabel("Depth:"), 0, 0);
-  //
-  pGrid->addWidget(m_widgets.pDepth, 0, 1);
+  pGrid->addWidget(new QLabel("Depth:"),              0, 0);
+  pGrid->addWidget(new QLabel("Colorize locations:"), 1, 0);
+  pGrid->addWidget(m_widgets.pDepth,                  0, 1);
+  pGrid->addWidget(m_widgets.pColorizeLocations,      1, 1);
   //
   pGrid->setColumnStretch(0, 0);
   pGrid->setColumnStretch(1, 1);
@@ -132,7 +137,7 @@ asiUI_DialogTopoGraphDepth::asiUI_DialogTopoGraphDepth(const Handle(asiEngine_Mo
 
   this->setLayout(m_pMainLayout);
   this->setWindowModality(Qt::WindowModal);
-  this->setWindowTitle("Depth of topology");
+  this->setWindowTitle("Show topology graph");
 }
 
 //! Destructor.
@@ -157,8 +162,16 @@ void asiUI_DialogTopoGraphDepth::onOpen()
   // Show graph
   asiUI_PartGraph* pGraphView = new asiUI_PartGraph(m_model, m_pPartViewer);
   pGraphView->SetNaming(naming);
-  pGraphView->RenderTopology(m_partShape, shapeType);
+  pGraphView->RenderTopology(m_partShape, shapeType, m_bColorizeLoc);
 
   // Close
   this->close();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Reaction on clicking "colorize locations" checkbox.
+void asiUI_DialogTopoGraphDepth::onColorizeLocations()
+{
+  m_bColorizeLoc = m_widgets.pColorizeLocations->isChecked();
 }

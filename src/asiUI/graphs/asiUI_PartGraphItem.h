@@ -95,6 +95,13 @@ signals:
                     const TopAbs_ShapeEnum subShapeType,
                     const vtkIdType        vertexId);
 
+public:
+
+  void SetColorizeByLocations(const bool isOn)
+  {
+    m_bColorizeLoc = isOn;
+  }
+
 protected:
 
   vtkIdType focusedVertex;
@@ -102,7 +109,8 @@ protected:
   //---------------------------------------------------------------------------
   asiUI_PartGraphItem()
   {
-    focusedVertex = -1;
+    focusedVertex  = -1;
+    m_bColorizeLoc = false;
   }
 
   //---------------------------------------------------------------------------
@@ -156,30 +164,53 @@ protected:
   //---------------------------------------------------------------------------
   virtual vtkColor4ub EdgeColor(vtkIdType line, vtkIdType /*point*/)
   {
-    // AAG only
-    vtkAbstractArray* angles = this->GetGraph()->GetEdgeData()->GetAbstractArray(ARRNAME_ANGLES);
-    if ( angles )
+    if ( m_bColorizeLoc )
     {
-      const int attr = angles->GetVariantValue(line).ToInt();
-      if ( attr == Angle_Convex )
-        return vtkColor4ub(40, 190, 0, 255);
-      else if ( attr == Angle_Concave )
-        return vtkColor4ub(190, 40, 0, 255);
-    }
+      vtkAbstractArray*
+        locations = this->GetGraph()->GetEdgeData()->GetAbstractArray(ARRNAME_CHILD_LOCATION);
+      //
+      if ( locations )
+      {
+        vtkVariant val = locations->GetVariantValue(line);
 
-    // Topology graph only
-    vtkAbstractArray* oris = this->GetGraph()->GetEdgeData()->GetAbstractArray(ARRNAME_CHILD_ORIENTATION);
-    if ( oris )
+        if ( val.IsValid() )
+        {
+          vtkStdString loc = locations->GetVariantValue(line).ToString();
+          //
+          if ( loc.length() )
+            return vtkColor4ub(255, 255, 0, 255);
+        }
+
+        return vtkColor4ub(45, 45, 45, 255);
+      }
+    }
+    else
     {
-      const int attr = oris->GetVariantValue(line).ToInt();
-      if ( attr == ARRNAME_CHILD_ORIENTATION_F )
-        return vtkColor4ub(250, 70, 40, 255);
-      else if ( attr == ARRNAME_CHILD_ORIENTATION_R )
-        return vtkColor4ub(40, 170, 250, 255);
-      else if ( attr == ARRNAME_CHILD_ORIENTATION_I )
-        return vtkColor4ub(190, 190, 0, 255);
-      else // EXTERNAL orientation
-        return vtkColor4ub(0, 190, 190, 255);
+      // AAG only
+      vtkAbstractArray* angles = this->GetGraph()->GetEdgeData()->GetAbstractArray(ARRNAME_ANGLES);
+      if ( angles )
+      {
+        const int attr = angles->GetVariantValue(line).ToInt();
+        if ( attr == Angle_Convex )
+          return vtkColor4ub(40, 190, 0, 255);
+        else if ( attr == Angle_Concave )
+          return vtkColor4ub(190, 40, 0, 255);
+      }
+
+      // Topology graph only
+      vtkAbstractArray* oris = this->GetGraph()->GetEdgeData()->GetAbstractArray(ARRNAME_CHILD_ORIENTATION);
+      if ( oris )
+      {
+        const int attr = oris->GetVariantValue(line).ToInt();
+        if ( attr == ARRNAME_CHILD_ORIENTATION_F )
+          return vtkColor4ub(250, 70, 40, 255);
+        else if ( attr == ARRNAME_CHILD_ORIENTATION_R )
+          return vtkColor4ub(40, 170, 250, 255);
+        else if ( attr == ARRNAME_CHILD_ORIENTATION_I )
+          return vtkColor4ub(190, 190, 0, 255);
+        else // EXTERNAL orientation
+          return vtkColor4ub(0, 190, 190, 255);
+      }
     }
 
     return vtkColor4ub(128, 128, 128, 128);
@@ -260,6 +291,10 @@ protected:
   {
     return true;
   }
+
+protected:
+
+  bool m_bColorizeLoc; //!< Indicates whether to colorize vertices by sub-shape locations.
 
 };
 

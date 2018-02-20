@@ -104,12 +104,16 @@ asiUI_PartGraph::~asiUI_PartGraph()
 //-----------------------------------------------------------------------------
 
 //! Renders graph.
-//! \param graph  [in] VTK presentable graph.
-//! \param shape  [in] master shape.
-//! \param regime [in] kind of graph to render.
+//! \param[in] graph             VTK presentable graph.
+//! \param[in] shape             master shape.
+//! \param[in] regime            kind of graph to render.
+//! \param[in] colorizeLocations indicates whether to colorize graph nodes
+//!                              in accordance with the locations of their
+//!                              corresponding sub-shapes.
 void asiUI_PartGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
                              const TopoDS_Shape&              shape,
-                             const Regime                     regime)
+                             const Regime                     regime,
+                             const bool                       colorizeLocations)
 {
   /* ===================================
    *  Prepare structures for attributes
@@ -126,8 +130,11 @@ void asiUI_PartGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
   graphLayout->Update();
 
   // Graph item
-  vtkSmartPointer<asiUI_PartGraphItem> graphItem = vtkSmartPointer<asiUI_PartGraphItem>::New();
-  graphItem->SetGraph( graphLayout->GetOutput() );
+  vtkSmartPointer<asiUI_PartGraphItem>
+    graphItem = vtkSmartPointer<asiUI_PartGraphItem>::New();
+  //
+  graphItem->SetGraph               ( graphLayout->GetOutput() );
+  graphItem->SetColorizeByLocations ( colorizeLocations );
 
   connect( graphItem, SIGNAL( vertexPicked(const int, const TopAbs_ShapeEnum, const vtkIdType) ),
            this,      SLOT( onVertexPicked(const int, const TopAbs_ShapeEnum, const vtkIdType) ) );
@@ -233,51 +240,67 @@ void asiUI_PartGraph::RenderEventCallback()
 //-----------------------------------------------------------------------------
 
 //! Renders part graph in the requested regime.
-//! \param shape         [in] target shape.
-//! \param selectedFaces [in] selected faces.
-//! \param regime        [in] regime of interest.
-//! \param leafType      [in] target leaf type for FULL regime.
+//! \param[in] shape             target shape.
+//! \param[in] selectedFaces     selected faces.
+//! \param[in] regime            regime of interest.
+//! \param[in] leafType          target leaf type for FULL regime.
+//! \param[in] colorizeLocations indicates whether to colorize graph nodes
+//!                              in accordance with the locations of their
+//!                              corresponding sub-shapes.
 void asiUI_PartGraph::Render(const TopoDS_Shape&               shape,
                              const TopTools_IndexedMapOfShape& selectedFaces,
                              const Regime                      regime,
-                             const TopAbs_ShapeEnum            leafType)
+                             const TopAbs_ShapeEnum            leafType,
+                             const bool                        colorizeLocations)
 {
   // Populate graph data from topology graph
-  vtkSmartPointer<vtkGraph> graph = this->convertToGraph(shape, selectedFaces, regime, leafType);
+  vtkSmartPointer<vtkGraph>
+    graph = this->convertToGraph(shape,
+                                 selectedFaces,
+                                 regime,
+                                 leafType);
 
   // Render VTK graph
-  this->Render(graph, shape, regime);
+  this->Render(graph, shape, regime, colorizeLocations);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Renders topology graph.
-//! \param shape    [in] target shape.
-//! \param leafType [in] target leaf type.
+//! \param[in] shape             target shape.
+//! \param[in] leafType          target leaf type.
+//! \param[in] colorizeLocations indicates whether to colorize graph nodes
+//!                              in accordance with the locations of their
+//!                              corresponding sub-shapes.
 void asiUI_PartGraph::RenderTopology(const TopoDS_Shape&    shape,
-                                     const TopAbs_ShapeEnum leafType)
+                                     const TopAbs_ShapeEnum leafType,
+                                     const bool             colorizeLocations)
 {
-  this->Render(shape, TopTools_IndexedMapOfShape(), Regime_Topology, leafType);
+  this->Render(shape,
+               TopTools_IndexedMapOfShape(),
+               Regime_Topology,
+               leafType,
+               colorizeLocations);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Renders face adjacency graph.
-//! \param shape         [in] target shape.
-//! \param selectedFaces [in] selected faces.
+//! \param[in] shape         target shape.
+//! \param[in] selectedFaces selected faces.
 void asiUI_PartGraph::RenderAdjacency(const TopoDS_Shape&               shape,
                                       const TopTools_IndexedMapOfShape& selectedFaces)
 {
-  this->Render(shape, selectedFaces, Regime_AAG, TopAbs_SHAPE);
+  this->Render(shape, selectedFaces, Regime_AAG, TopAbs_SHAPE, false);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Builds one or another graph (depending on the desired regime).
-//! \param shape         [in] master model.
-//! \param selectedFaces [in] optional selected faces.
-//! \param regime        [in] desired regime.
-//! \param leafType      [in] leaf type for FULL regime.
+//! \param[in] shape         master model.
+//! \param[in] selectedFaces optional selected faces.
+//! \param[in] regime        desired regime.
+//! \param[in] leafType      leaf type for FULL regime.
 //! \return graph instance.
 vtkSmartPointer<vtkGraph>
   asiUI_PartGraph::convertToGraph(const TopoDS_Shape&               shape,
@@ -334,9 +357,9 @@ void asiUI_PartGraph::onViewerClosed()
 //-----------------------------------------------------------------------------
 
 //! Reaction on vertex picking.
-//! \param subShapeId [in] sub-shape ID.
-//! \param shapeType  [in] sub-shape type.
-//! \param vid        [in] graph vertex ID.
+//! \param[in] subShapeId sub-shape ID.
+//! \param[in] shapeType  sub-shape type.
+//! \param[in] vid        graph vertex ID.
 void asiUI_PartGraph::onVertexPicked(const int              subShapeId,
                                      const TopAbs_ShapeEnum shapeType,
                                      const vtkIdType        vid)

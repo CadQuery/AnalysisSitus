@@ -65,6 +65,7 @@ public:
 public slots:
 
   void onOpen();
+  void onColorizeLocations();
 
 protected:
 
@@ -72,28 +73,32 @@ protected:
   struct t_widgets
   {
   //---------------------------------------------------------------------------
-    QPushButton* pOpen;  //!< Button to open topology graph.
+    QPushButton* pOpen;              //!< Button to open topology graph.
   //---------------------------------------------------------------------------
-    QComboBox*   pDepth; //!< Depth of traversal.
+    QComboBox*   pDepth;             //!< Depth of traversal.
+    QCheckBox*   pColorizeLocations; //!< Whether to colorize locations.
   //---------------------------------------------------------------------------
 
-    t_widgets() : pOpen  (NULL),
-                  pDepth (NULL)
+    t_widgets() : pOpen              (NULL),
+                  pDepth             (NULL),
+                  pColorizeLocations (NULL)
     {}
 
     void Release()
     {
-      delete pOpen;  pOpen  = NULL;
-      delete pDepth; pDepth = NULL;
+      delete pOpen;              pOpen              = NULL;
+      delete pDepth;             pDepth             = NULL;
+      delete pColorizeLocations; pColorizeLocations = NULL;
     }
   };
 
-  t_widgets               m_widgets;     //!< UI controls.
-  QVBoxLayout*            m_pMainLayout; //!< Layout of the widget.
-  Handle(asiEngine_Model) m_model;       //!< Data Model instance.
-  TopoDS_Shape            m_partShape;   //!< Part shape.
-  asiUI_ViewerPart*       m_pPartViewer; //!< Part viewer.
-  ActAPI_ProgressEntry    m_notifier;    //!< Progress Notifier.
+  t_widgets               m_widgets;      //!< UI controls.
+  QVBoxLayout*            m_pMainLayout;  //!< Layout of the widget.
+  Handle(asiEngine_Model) m_model;        //!< Data Model instance.
+  TopoDS_Shape            m_partShape;    //!< Part shape.
+  bool                    m_bColorizeLoc; //!< Indicates whether to colorize locations.
+  asiUI_ViewerPart*       m_pPartViewer;  //!< Part viewer.
+  ActAPI_ProgressEntry    m_notifier;     //!< Progress Notifier.
 
 };
 

@@ -304,7 +304,7 @@ void asiUI_ControlsFeature::onElimSelected()
   vtkSmartPointer<vtkMutableUndirectedGraph>
     undirected = asiUI_AAGAdaptor::Convert(aag);
   //
-  pGraphView->Render(undirected, part, asiUI_PartGraph::Regime_AAG);
+  pGraphView->Render(undirected, part, asiUI_PartGraph::Regime_AAG, false);
 }
 
 //-----------------------------------------------------------------------------

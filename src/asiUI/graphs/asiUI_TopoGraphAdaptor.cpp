@@ -51,10 +51,10 @@
 #include <vtkStringArray.h>
 
 //! Converts topology graph to VTK presentable form.
-//! \param topograph [in] topology graph to convert.
-//! \param naming    [in] optional naming service.
-//! \param leafType  [in] type of leafs. This argument allows to stop recursion
-//!                       at a certain sub-shape type level.
+//! \param[in] topograph topology graph to convert.
+//! \param[in] naming    optional naming service.
+//! \param[in] leafType  type of leafs. This argument allows to stop recursion
+//!                      at a certain sub-shape type level.
 //! \return VTK graph.
 vtkSmartPointer<vtkMutableDirectedGraph>
   asiUI_TopoGraphAdaptor::Convert(const Handle(asiAlgo_TopoGraph)& topograph,
@@ -246,6 +246,8 @@ vtkSmartPointer<vtkMutableDirectedGraph>
         // Set string
         childLocArr->InsertNextValue( asiAlgo_Utils::LocationToString(loc).ToCString() );
       }
+      else
+        childLocArr->InsertNextValue("");
     }
   }
 

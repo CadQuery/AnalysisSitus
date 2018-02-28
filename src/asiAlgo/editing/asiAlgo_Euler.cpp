@@ -50,18 +50,6 @@ asiAlgo_Euler::asiAlgo_Euler(const TopoDS_Shape&  masterCAD,
                              ActAPI_PlotterEntry  plotter)
 //
 : ActAPI_IAlgorithm(progress, plotter), m_master(masterCAD)
-{
-  m_ctx = new BRepTools_ReShape();
-}
-
-//-----------------------------------------------------------------------------
-
-asiAlgo_Euler::asiAlgo_Euler(const TopoDS_Shape&              masterCAD,
-                             const Handle(BRepTools_ReShape)& ctx,
-                             ActAPI_ProgressEntry             progress,
-                             ActAPI_PlotterEntry              plotter)
-//
-: ActAPI_IAlgorithm(progress, plotter), m_master(masterCAD), m_ctx(ctx)
 {}
 
 //-----------------------------------------------------------------------------
@@ -111,7 +99,7 @@ int asiAlgo_Euler::EulerPoincareCharacteristic(const TopoDS_Shape& shape,
     const TopoDS_Edge& edge = TopoDS::Edge(iterMapE.Value());
     bool isDegen = BRep_Tool::Degenerated(edge);
 
-    if (isDegen)
+    if ( isDegen )
       continue;
 
     E++;
@@ -120,7 +108,7 @@ int asiAlgo_Euler::EulerPoincareCharacteristic(const TopoDS_Shape& shape,
   // Routine to calculate number of the internal wires.
   int R = 0;
   TopExp_Explorer explF(shape, TopAbs_FACE);
-  for(; explF.More() ; explF.Next() )
+  for ( ; explF.More(); explF.Next() )
   {
     const TopoDS_Face& face = TopoDS::Face(explF.Current());
     TopoDS_Wire faceOuterWire = ShapeAnalysis::OuterWire(face);
@@ -130,7 +118,7 @@ int asiAlgo_Euler::EulerPoincareCharacteristic(const TopoDS_Shape& shape,
     {
       const TopoDS_Wire& wire = TopoDS::Wire(explW.Current());
 
-      if (wire.IsSame(faceOuterWire))
+      if  (wire.IsSame(faceOuterWire) )
         continue;
 
       R++;

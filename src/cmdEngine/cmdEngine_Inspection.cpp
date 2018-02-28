@@ -211,13 +211,13 @@ int ENGINE_FaceAddr(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
-  // Get Part Node
+  // Get Part Node.
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
 
-  // Get face
+  // Get face.
   const TopoDS_Face& face = part_n->GetAAG()->GetFace(fidx);
 
-  // Output
+  // Output.
   interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Face %1: %2"
                                                         << fidx
                                                         << asiAlgo_Utils::ShapeAddr(face).c_str() );
@@ -422,6 +422,47 @@ int ENGINE_CheckEuler(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_DumpTopograph(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Access or create topograph.
+  Handle(asiAlgo_TopoGraph) topograph;
+  //
+  if ( part_n->HasNaming() )
+    topograph = part_n->GetNaming()->GetTopoGraph(); // With names.
+  else
+    topograph = new asiAlgo_TopoGraph( part_n->GetShape() ); // Without names.
+
+  // Dump to buffer.
+  std::stringstream buff;
+  topograph->Dump(buff);
+
+  // Dump to file.
+  std::ofstream FILE(argv[1]);
+  if ( !FILE.is_open() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot open file for writing.");
+    return TCL_OK;
+  }
+  //
+  FILE << buff.str().c_str();
+  //
+  FILE.close();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -482,4 +523,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Opens dialog to check Euler-Poincare property of the Part geometry.",
     //
     __FILE__, group, ENGINE_CheckEuler);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("dump-topograph",
+    //
+    "dump-topograph filename\n"
+    "\t Dumps topology graph to file.",
+    //
+    __FILE__, group, ENGINE_DumpTopograph);
 }

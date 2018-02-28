@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
+#include <asiAlgo_Naming.h>
 
 // Active Data (API) includes
 #include <ActAPI_ILogger.h>
@@ -152,6 +153,33 @@ public:
   {
     Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
     return SurfaceName(surf);
+  }
+
+  //! Converts the passed named shape to string.
+  static TCollection_AsciiString
+    NamedShapeToString(const TopoDS_Shape&           subShape,
+                       const int                     globalId,
+                       const Handle(asiAlgo_Naming)& naming)
+  {
+    TCollection_AsciiString msg("Sub-shape: ");
+    msg += ShapeTypeStr(subShape).c_str();
+    msg += "\n\t Global ID: "; msg += globalId;
+    msg += "\n\t Address: ";   msg += ShapeAddr(subShape).c_str();
+    //
+    if ( !naming.IsNull() )
+    {
+      msg += "\n\t Name: ";
+
+      TCollection_AsciiString label;
+      naming->FindName(subShape, label);
+      //
+      if ( !label.IsEmpty() )
+        msg += label;
+      else
+        msg += "<empty>";
+    }
+
+    return msg;
   }
 
   //! Converts orientation of the given shape to string.

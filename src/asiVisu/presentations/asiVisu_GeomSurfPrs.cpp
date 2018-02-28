@@ -342,7 +342,7 @@ void asiVisu_GeomSurfPrs::afterInitPipelines()
     {
       TITLE += " [";
       TITLE += namingName;
-      TITLE += " ]";
+      TITLE += "]";
     }
   }
 

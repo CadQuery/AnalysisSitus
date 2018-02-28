@@ -32,13 +32,10 @@
 #define asiAlgo_Euler_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_TopoKill.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
-
-// OCCT includes
-#include <BRepTools_ReShape.hxx>
 
 //! Base class for Euler operators.
 class asiAlgo_Euler : public ActAPI_IAlgorithm
@@ -59,23 +56,16 @@ public:
                   ActAPI_ProgressEntry progress,
                   ActAPI_PlotterEntry  plotter);
 
-  //! Constructor.
-  //! \param[in] masterCAD full CAD model.
-  //! \param[in] ctx       Re-Shape tool.
-  //! \param[in] progress  Progress Notifier.
-  //! \param[in] plotter   Imperative Plotter.
-  asiAlgo_EXPORT
-    asiAlgo_Euler(const TopoDS_Shape&              masterCAD,
-                  const Handle(BRepTools_ReShape)& ctx,
-                  ActAPI_ProgressEntry             progress,
-                  ActAPI_PlotterEntry              plotter);
-
 public:
 
-  //! Static method to compute value of the Euler-Poincare characteristic for the given genus.
+  //! Static method to compute value of the Euler-Poincare characteristic for
+  //! the passed shape with the given (externally defined) genus.
+  //! \param[in] shape solid shape in question.
+  //! \param[in] genus genus of the shape considered as a closed 2-manifold.
+  //! \return Euler-Poincare number.
   asiAlgo_EXPORT static int
     EulerPoincareCharacteristic(const TopoDS_Shape& shape,
-                                const int genus = 0);
+                                const int           genus = 0);
 
 
 public:
@@ -88,29 +78,56 @@ public:
   asiAlgo_EXPORT virtual bool
     Perform(const bool doApply = true);
 
-private:
-
-  virtual bool perform(const bool doApply) = 0;
-
 public:
 
-  //! \return converted model.
+  //! \return modified model.
   const TopoDS_Shape& GetResult() const
   {
     return m_result;
   }
 
-  //! \return Reshape tool.
-  const Handle(BRepTools_ReShape)& GetContext() const
+  //! \return topology killer tool used in the "engine room".
+  const Handle(asiAlgo_TopoKill)& GetTopoKiller() const
   {
-    return m_ctx;
+    return m_killer;
   }
+
+  //! Sets topology killer to use. This method is useful when you want to pass
+  //! one instance of topology killer to several Euler operators.
+  //! \param[in] killer instance of topology killer to use for modification.
+  void SetTopoKiller(const Handle(asiAlgo_TopoKill)& killer)
+  {
+    m_killer = killer;
+  }
+
+  //! \return modification history.
+  const Handle(asiAlgo_History)& GetHistory() const
+  {
+    return m_history;
+  }
+
+  //! \brief Sets externally defined history.
+  //!
+  //! The passed history will not be cleared, so that a pipeline of
+  //! modeling tools will grow its history graph as long as the history
+  //! object is continuously passed from one tool to another.
+  //!
+  //! \param[in] history history to set.
+  void SetHistory(const Handle(asiAlgo_History)& history)
+  {
+    m_history = history;
+  }
+
+private:
+
+  virtual bool perform(const bool doApply) = 0;
 
 protected:
 
-  Handle(BRepTools_ReShape) m_ctx;    //!< Reshape tool.
-  TopoDS_Shape              m_master; //!< Master CAD.
-  TopoDS_Shape              m_result; //!< Result CAD.
+  Handle(asiAlgo_TopoKill) m_killer;  //!< Topology killer.
+  Handle(asiAlgo_History)  m_history; //!< Modification history.
+  TopoDS_Shape             m_master;  //!< Master CAD model.
+  TopoDS_Shape             m_result;  //!< Result CAD model.
 
 };
 

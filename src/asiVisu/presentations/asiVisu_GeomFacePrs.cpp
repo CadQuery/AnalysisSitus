@@ -187,7 +187,7 @@ void asiVisu_GeomFacePrs::afterInitPipelines()
     {
       TITLE += " [";
       TITLE += namingName;
-      TITLE += " ]";
+      TITLE += "]";
     }
   }
 

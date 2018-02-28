@@ -7,6 +7,8 @@
 # Target CAD file: data/cad/box_face.brep
 #===============================================================================
 
+load-brep F:/OCC/CAD_files/box_face.brep
+
 # Initialize naming to better preserve modeling intent.
 init-naming
 

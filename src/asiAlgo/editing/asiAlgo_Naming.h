@@ -110,10 +110,10 @@ public:
   //! \return transient pointer by persistent name.
   TopoDS_Shape GetShape(const TCollection_AsciiString& name) const
   {
-    if ( !m_namedShapes.IsBound(name) )
+    if ( !m_namedAliveShapes.IsBound(name) )
       return TopoDS_Shape();
 
-    return m_namedShapes(name);
+    return m_namedAliveShapes(name);
   }
 
   //! Attempts to find a name registered for the passed shape.
@@ -124,7 +124,7 @@ public:
                 TCollection_AsciiString& name) const
   {
     for ( NCollection_DataMap<TCollection_AsciiString, TopoDS_Shape>::Iterator
-          it(m_namedShapes); it.More(); it.Next() )
+          it(m_namedAliveShapes); it.More(); it.Next() )
     {
       if ( it.Value().IsPartner(shape) )
       {
@@ -161,14 +161,12 @@ protected:
                const Handle(asiAlgo_TopoAttr)&  attr2Pass);
 
   //! Adds named shape to the internal map for fast access.
-  //! \param[in] name    string to use as a name. This name should be unique.
-  //! \param[in] shape   shape to register.
-  //! \param[in] rewrite indicates whether to rewrite possible existing record.
-  //! \return false if the passed name is not unique while 'rewrite' is 'false'.
+  //! \param[in] name  string to use as a name. This name should be unique.
+  //! \param[in] shape shape to register.
+  //! \return false if the passed name is not unique and cannot be added so.
   asiAlgo_EXPORT bool
     registerNamedShape(const TCollection_AsciiString& name,
-                       const TopoDS_Shape&            shape,
-                       const bool                     rewrite = false);
+                       const TopoDS_Shape&            shape);
 
 protected:
 
@@ -181,14 +179,14 @@ protected:
   Handle(asiAlgo_TopoGraph) m_topograph;
 
   //! History of modification.
-  Handle(asiAlgo_History)   m_history;
+  Handle(asiAlgo_History) m_history;
 
   //! The used indices distributed by shape type.
   NCollection_DataMap<TopAbs_ShapeEnum, int> m_nameIds;
 
   //! Map of unique names and their corresponding shapes. This is actually
   //! a collection of alive shapes.
-  NCollection_DataMap<TCollection_AsciiString, TopoDS_Shape> m_namedShapes;
+  NCollection_DataMap<TCollection_AsciiString, TopoDS_Shape> m_namedAliveShapes;
 
   //! Progress notification tool.
   ActAPI_ProgressEntry m_progress;

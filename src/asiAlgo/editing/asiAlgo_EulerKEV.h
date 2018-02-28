@@ -40,7 +40,7 @@
 
 //-----------------------------------------------------------------------------
 
-//! KEV Euler operator.
+//! KEV (Kill Edge-Vertex) Euler operator.
 class asiAlgo_EulerKEV : public asiAlgo_Euler
 {
 public:
@@ -77,28 +77,10 @@ public:
                      ActAPI_ProgressEntry progress,
                      ActAPI_PlotterEntry  plotter);
 
-  //! Constructor.
-  //! \param[in] masterCAD full CAD model.
-  //! \param[in] edge      edge to kill.
-  //! \param[in] vertex    vertex to kill or save depending on the
-  //!                      flag which follows.
-  //! \param[in] toSurvive whether to kill or save the vertex.
-  //! \param[in] ctx       Re-Shape tool.
-  //! \param[in] progress  Progress Notifier.
-  //! \param[in] plotter   Imperative Plotter.
-  asiAlgo_EXPORT
-    asiAlgo_EulerKEV(const TopoDS_Shape&              masterCAD,
-                     const TopoDS_Edge&               edge,
-                     const TopoDS_Vertex&             vertex,
-                     const bool                       toSurvive,
-                     const Handle(BRepTools_ReShape)& ctx,
-                     ActAPI_ProgressEntry             progress,
-                     ActAPI_PlotterEntry              plotter);
-
 private:
 
   //! Performs Euler operator.
-  //! \param[in] doApply indicates whether to apply Re-Shape modification
+  //! \param[in] doApply indicates whether to apply modification
   //!                    requests right at the end (true) or let the caller
   //!                    code manage it explicitly (false).
   //! \return true in case of success, false -- otherwise.
@@ -108,7 +90,7 @@ protected:
 
   TopoDS_Edge   m_edge;     //!< Edge to kill.
   TopoDS_Vertex m_vertex;   //!< Vertex to kill or save.
-  bool          m_bSurvive; //!< Whether to kill or save.
+  bool          m_bSurvive; //!< Whether to kill or save the selected vertex.
 
 };
 

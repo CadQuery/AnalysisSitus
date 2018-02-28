@@ -63,43 +63,83 @@
 
 //-----------------------------------------------------------------------------
 
+bool FindNamedArg(const Handle(asiTcl_Interp)&  interp,
+                  const int                     argc,
+                  const char**                  argv,
+                  const Handle(asiAlgo_Naming)& naming,
+                  const char*                   ssKey,
+                  const TopAbs_ShapeEnum        ssType,
+                  TopTools_ListOfShape&         result)
+{
+  // Loop over the arguments to find a named sub-shape of the requested type.
+  TopTools_ListOfShape subShapes;
+  //
+  for ( int k = 1; k < argc - 1; k += 2 )
+  {
+    if ( interp->IsKeyword(argv[k], ssKey) )
+    {
+      // Get named sub-shape.
+      TopoDS_Shape subshape = naming->GetShape(argv[k + 1]);
+      //
+      if ( subshape.IsNull() || subshape.ShapeType() != ssType )
+        continue;
+
+      // Set result and return.
+      result.Append(subshape);
+    }
+  }
+
+  return !result.IsEmpty();
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_KEV(const Handle(asiTcl_Interp)& interp,
                int                          argc,
                const char**                 argv)
 {
-  if ( argc != 3 )
+  if ( argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  // Get edge index.
-  const int eidx = atoi(argv[1]);
-  //
-  if ( eidx < 1 )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Edge index should be 1-based.");
-    return TCL_OK;
-  }
-
-  // Get vertex index.
-  const int vidx = atoi(argv[2]);
-  //
-  if ( vidx < 1 )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Vertex index should be 1-based.");
-    return TCL_OK;
   }
 
   // Get Part Node.
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
 
-  // Get maps of sub-shapes with respect to those the passed indices are relevant.
-  const TopTools_IndexedMapOfShape& allEdges    = part_n->GetAAG()->GetMapOfEdges();
-  const TopTools_IndexedMapOfShape& allVertices = part_n->GetAAG()->GetMapOfVertices();
+  // Get naming service.
+  Handle(asiAlgo_Naming) naming = part_n->GetNaming();
+
+  // Check whether naming service is active.
+  const bool hasNaming = !naming.IsNull();
+  //
+  if ( !hasNaming )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "This function is available "
+                                                           "for named shapes only.");
+    return TCL_OK;
+  }
+
+  // Find edge to kill.
+  TopTools_ListOfShape edges;
+  //
+  if ( !FindNamedArg(interp, argc, argv, naming, "edge", TopAbs_EDGE, edges) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find edge to kill.");
+    return TCL_OK;
+  }
+
+  // Find vertex to kill.
+  TopTools_ListOfShape vertices;
+  //
+  if ( !FindNamedArg(interp, argc, argv, naming, "vertex", TopAbs_VERTEX, vertices) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find vertex to kill.");
+    return TCL_OK;
+  }
 
   // Get topological elements.
-  const TopoDS_Edge&   E = TopoDS::Edge( allEdges(eidx) );
-  const TopoDS_Vertex& V = TopoDS::Vertex( allVertices(vidx) );
+  const TopoDS_Edge&   E = TopoDS::Edge( edges.First() );
+  const TopoDS_Vertex& V = TopoDS::Vertex( vertices.First() );
 
   // Prepare KEV utility.
   asiAlgo_EulerKEV KEV( part_n->GetShape(),
@@ -108,6 +148,8 @@ int ENGINE_KEV(const Handle(asiTcl_Interp)& interp,
                         false,
                         interp->GetProgress(),
                         interp->GetPlotter() );
+  //
+  KEV.SetHistory( naming->GetHistory() );
   //
   if ( !KEV.Perform() )
   {
@@ -137,54 +179,94 @@ int ENGINE_KEF(const Handle(asiTcl_Interp)& interp,
                int                          argc,
                const char**                 argv)
 {
-  if ( argc != 3 )
+  if ( argc < 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  // Get edge index.
-  const int eidx = atoi(argv[1]);
-  //
-  if ( eidx < 1 )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Edge index should be 1-based.");
-    return TCL_OK;
-  }
-
-  // Get face index.
-  const int fidx = atoi(argv[2]);
-  //
-  if ( fidx < 1 )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face index should be 1-based.");
-    return TCL_OK;
   }
 
   // Get Part Node.
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
 
-  // Get maps of sub-shapes with respect to those the passed indices are relevant.
-  const TopTools_IndexedMapOfShape& allEdges = part_n->GetAAG()->GetMapOfEdges();
-  const TopTools_IndexedMapOfShape& allFaces = part_n->GetAAG()->GetMapOfFaces();
+  // Get naming service.
+  Handle(asiAlgo_Naming) naming = part_n->GetNaming();
+
+  // Check whether naming service is active.
+  const bool hasNaming = !naming.IsNull();
+  //
+  if ( !hasNaming )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "This function is available "
+                                                           "for named shapes only.");
+    return TCL_OK;
+  }
+
+  // Find face to kill.
+  TopTools_ListOfShape faces;
+  //
+  if ( !FindNamedArg(interp, argc, argv, naming, "face", TopAbs_FACE, faces) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find face to kill.");
+    return TCL_OK;
+  }
+
+  // Find edge to kill. The edge to kill may be specified with 'edge' or 
+  // 'kedge' keyword. In case of 'edge', it means that no edges-to-survive
+  // are defined.
+  TopTools_ListOfShape edges2Kill;
+  //
+  if ( !FindNamedArg(interp, argc, argv, naming, "kedge", TopAbs_EDGE, edges2Kill) &&
+       !FindNamedArg(interp, argc, argv, naming, "edge", TopAbs_EDGE, edges2Kill) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find edge to kill.");
+    return TCL_OK;
+  }
+
+  // Find edge to survive.
+  TopTools_ListOfShape edges2Survive;
+  //
+  if ( !FindNamedArg(interp, argc, argv, naming, "sedge", TopAbs_EDGE, edges2Survive) )
+  {
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "No edge-to-survive is defined.");
+  }
+
+  Handle(asiAlgo_EulerKEF) KEF;
 
   // Get topological elements.
-  const TopoDS_Edge& E = TopoDS::Edge( allEdges(eidx) );
-  const TopoDS_Face& F = TopoDS::Face( allFaces(fidx) );
-
-  // Prepare KEF utility.
-  asiAlgo_EulerKEF KEF( part_n->GetShape(),
-                        F,
-                        E,
-                        interp->GetProgress(),
-                        interp->GetPlotter() );
+  const TopoDS_Face& F  = TopoDS::Face( faces.First() );
+  const TopoDS_Edge& EK = TopoDS::Edge( edges2Kill.First() );
   //
-  if ( !KEF.Perform() )
+  if ( edges2Survive.Extent() )
+  {
+    const TopoDS_Edge& ES = TopoDS::Edge( edges2Survive.First() );
+
+    // Prepare KEF utility.
+    KEF = new asiAlgo_EulerKEF( part_n->GetShape(),
+                                F,
+                                EK,
+                                ES,
+                                interp->GetProgress(),
+                                interp->GetPlotter() );
+  }
+  else
+  {
+    // Prepare KEF utility.
+    KEF = new asiAlgo_EulerKEF( part_n->GetShape(),
+                                F,
+                                EK,
+                                interp->GetProgress(),
+                                interp->GetPlotter() );
+  }
+
+  // Set history and perform.
+  KEF->SetHistory( naming->GetHistory() );
+  //
+  if ( !KEF->Perform() )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "KEF failed.");
     return TCL_OK;
   }
   //
-  const TopoDS_Shape& result = KEF.GetResult();
+  const TopoDS_Shape& result = KEF->GetResult();
 
   // Modify Data Model.
   cmdEngine::model->OpenCommand();

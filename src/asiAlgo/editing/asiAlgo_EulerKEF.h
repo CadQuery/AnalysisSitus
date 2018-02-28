@@ -40,7 +40,7 @@
 
 //-----------------------------------------------------------------------------
 
-//! KEF Euler operator.
+//! KEF (Kill Edge-Face) Euler operator.
 class asiAlgo_EulerKEF : public asiAlgo_Euler
 {
 public:
@@ -50,31 +50,20 @@ public:
 
 public:
 
-  //! Constructor accepting face and selecting just any edge for
-  //! suppression.
-  //! \param[in] masterCAD full CAD model.
-  //! \param[in] face      face to kill.
-  //! \param[in] progress  Progress Notifier.
-  //! \param[in] plotter   Imperative Plotter
+  //! Constructor.
+  //! \param[in] masterCAD    full CAD model.
+  //! \param[in] face         face to kill.
+  //! \param[in] edge2Kill    edge to kill.
+  //! \param[in] edge2Survive edge to survive.
+  //! \param[in] progress     Progress Notifier.
+  //! \param[in] plotter      Imperative Plotter
   asiAlgo_EXPORT
     asiAlgo_EulerKEF(const TopoDS_Shape&  masterCAD,
                      const TopoDS_Face&   face,
+                     const TopoDS_Edge&   edge2Kill,
+                     const TopoDS_Edge&   edge2Survive,
                      ActAPI_ProgressEntry progress,
                      ActAPI_PlotterEntry  plotter);
-
-  //! Constructor accepting face and selecting just any edge for
-  //! suppression.
-  //! \param[in] masterCAD full CAD model.
-  //! \param[in] face      face to kill.
-  //! \param[in] ctx       Re-Shape tool.
-  //! \param[in] progress  Progress Notifier.
-  //! \param[in] plotter   Imperative Plotter
-  asiAlgo_EXPORT
-    asiAlgo_EulerKEF(const TopoDS_Shape&              masterCAD,
-                     const TopoDS_Face&               face,
-                     const Handle(BRepTools_ReShape)& ctx,
-                     ActAPI_ProgressEntry             progress,
-                     ActAPI_PlotterEntry              plotter);
 
   //! Constructor.
   //! \param[in] masterCAD full CAD model.
@@ -89,21 +78,6 @@ public:
                      ActAPI_ProgressEntry progress,
                      ActAPI_PlotterEntry  plotter);
 
-  //! Constructor.
-  //! \param[in] masterCAD full CAD model.
-  //! \param[in] face      face to kill.
-  //! \param[in] edge      edge to kill.
-  //! \param[in] ctx       Re-Shape tool.
-  //! \param[in] progress  Progress Notifier.
-  //! \param[in] plotter   Imperative Plotter.
-  asiAlgo_EXPORT
-    asiAlgo_EulerKEF(const TopoDS_Shape&              masterCAD,
-                     const TopoDS_Face&               face,
-                     const TopoDS_Edge&               edge,
-                     const Handle(BRepTools_ReShape)& ctx,
-                     ActAPI_ProgressEntry             progress,
-                     ActAPI_PlotterEntry              plotter);
-
 private:
 
   //! Performs Euler operator.
@@ -115,8 +89,9 @@ private:
 
 protected:
 
-  TopoDS_Face m_face; //!< Face to kill.
-  TopoDS_Edge m_edge; //!< Edge to kill.
+  TopoDS_Face m_face;         //!< Face to kill.
+  TopoDS_Edge m_edge2Kill;    //!< Edge to kill.
+  TopoDS_Edge m_edge2Survive; //!< Edge to survive.
 
 };
 

@@ -120,6 +120,35 @@ void asiUI_ViewerPartListener::onFacePicked(const asiVisu_PickResult& pickRes)
   //
   if ( m_wViewerHost )
     m_wViewerHost->PrsMgr()->Actualize(geom_n->GetSurfaceRepresentation().get(), false, true);
+
+  /* =============================
+   *  Dump textual info to logger
+   * ============================= */
+
+  // Get index of the active sub-shape.
+  const int
+    globalId = geom_n->GetFaceRepresentation()->GetSelectedFace();
+  //
+  if ( globalId == 0 )
+    return;
+
+  // Get sub-shapes map.
+  const TopTools_IndexedMapOfShape&
+    allSubShapes = geom_n->GetAAG()->GetMapOfSubShapes();
+  //
+  if ( globalId < 1 || globalId > allSubShapes.Extent() )
+    return;
+
+  // Get sub-shape.
+  const TopoDS_Shape& subShape = allSubShapes(globalId);
+
+  // Send message to logger.
+  TCollection_AsciiString
+    msg = asiAlgo_Utils::NamedShapeToString( subShape,
+                                             globalId,
+                                             geom_n->GetNaming() );
+  //
+  m_progress.SendLogMessage( LogInfo(Normal) << msg.ToCString() );
 }
 
 //-----------------------------------------------------------------------------
@@ -141,6 +170,35 @@ void asiUI_ViewerPartListener::onEdgePicked(const asiVisu_PickResult& pickRes)
   //
   if ( m_wViewerHost )
     m_wViewerHost->PrsMgr()->Actualize(geom_n->GetCurveRepresentation().get(), false, true);
+
+  /* =============================
+   *  Dump textual info to logger
+   * ============================= */
+
+  // Get index of the active sub-shape.
+  const int
+    globalId = geom_n->GetEdgeRepresentation()->GetSelectedEdge();
+  //
+  if ( globalId == 0 )
+    return;
+
+  // Get sub-shapes map.
+  const TopTools_IndexedMapOfShape&
+    allSubShapes = geom_n->GetAAG()->GetMapOfSubShapes();
+  //
+  if ( globalId < 1 || globalId > allSubShapes.Extent() )
+    return;
+
+  // Get sub-shape.
+  const TopoDS_Shape& subShape = allSubShapes(globalId);
+
+  // Send message to logger.
+  TCollection_AsciiString
+    msg = asiAlgo_Utils::NamedShapeToString( subShape,
+                                             globalId,
+                                             geom_n->GetNaming() );
+  //
+  m_progress.SendLogMessage( LogInfo(Normal) << msg.ToCString() );
 }
 
 //-----------------------------------------------------------------------------
@@ -157,41 +215,33 @@ void asiUI_ViewerPartListener::onVertexPicked(const asiVisu_PickResult& pickRes)
 
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
 
-  // Get index of the active vertex.
+  /* =============================
+   *  Dump textual info to logger
+   * ============================= */
+
+  // Get index of the active sub-shape.
   const int
     globalId = geom_n->GetVertexRepresentation()->GetSelectedVertex();
   //
   if ( globalId == 0 )
     return;
 
-  // Get active vertex as a sub-shape.
+  // Get sub-shapes map.
   const TopTools_IndexedMapOfShape&
     allSubShapes = geom_n->GetAAG()->GetMapOfSubShapes();
   //
   if ( globalId < 1 || globalId > allSubShapes.Extent() )
     return;
 
-  // It should be of vertex type.
+  // Get sub-shape.
   const TopoDS_Shape& subShape = allSubShapes(globalId);
-  //
-  if ( subShape.ShapeType() != TopAbs_VERTEX )
-    return;
-
-  TCollection_AsciiString msg("Vertex picked:");
-  msg += "\n\t Global ID: "; msg += globalId;
-  msg += "\n\t Address: ";   msg += asiAlgo_Utils::ShapeAddr(subShape).c_str();
-  //
-  if ( geom_n->HasNaming() )
-  {
-    msg += "\n\t Name: ";
-
-    TCollection_AsciiString vertexLabel;
-    geom_n->GetNaming()->FindName(subShape, vertexLabel);
-    //
-    msg += vertexLabel;
-  }
 
   // Send message to logger.
+  TCollection_AsciiString
+    msg = asiAlgo_Utils::NamedShapeToString( subShape,
+                                             globalId,
+                                             geom_n->GetNaming() );
+  //
   m_progress.SendLogMessage( LogInfo(Normal) << msg.ToCString() );
 }
 

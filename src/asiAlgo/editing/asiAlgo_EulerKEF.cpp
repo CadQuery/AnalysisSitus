@@ -44,34 +44,16 @@
 
 asiAlgo_EulerKEF::asiAlgo_EulerKEF(const TopoDS_Shape&  masterCAD,
                                    const TopoDS_Face&   face,
+                                   const TopoDS_Edge&   edge2Kill,
+                                   const TopoDS_Edge&   edge2Survive,
                                    ActAPI_ProgressEntry progress,
                                    ActAPI_PlotterEntry  plotter)
 //
-: asiAlgo_Euler (masterCAD, progress, plotter),
-  m_face        (face)
-{
-  TopTools_IndexedMapOfShape edges;
-  TopExp::MapShapes(m_face, TopAbs_EDGE, edges);
-  //
-  m_edge = TopoDS::Edge( edges.FindKey(1) );
-}
-
-//-----------------------------------------------------------------------------
-
-asiAlgo_EulerKEF::asiAlgo_EulerKEF(const TopoDS_Shape&              masterCAD,
-                                   const TopoDS_Face&               face,
-                                   const Handle(BRepTools_ReShape)& ctx,
-                                   ActAPI_ProgressEntry             progress,
-                                   ActAPI_PlotterEntry              plotter)
-//
-: asiAlgo_Euler (masterCAD, ctx, progress, plotter),
-  m_face        (face)
-{
-  TopTools_IndexedMapOfShape edges;
-  TopExp::MapShapes(m_face, TopAbs_EDGE, edges);
-  //
-  m_edge = TopoDS::Edge( edges.FindKey(1) );
-}
+: asiAlgo_Euler  (masterCAD, progress, plotter),
+  m_face         (face),
+  m_edge2Kill    (edge2Kill),
+  m_edge2Survive (edge2Survive)
+{}
 
 //-----------------------------------------------------------------------------
 
@@ -81,56 +63,74 @@ asiAlgo_EulerKEF::asiAlgo_EulerKEF(const TopoDS_Shape&  masterCAD,
                                    ActAPI_ProgressEntry progress,
                                    ActAPI_PlotterEntry  plotter)
 //
-: asiAlgo_Euler (masterCAD, progress, plotter),
-  m_face        (face),
-  m_edge        (edge)
-{}
-
-//-----------------------------------------------------------------------------
-
-asiAlgo_EulerKEF::asiAlgo_EulerKEF(const TopoDS_Shape&              masterCAD,
-                                   const TopoDS_Face&               face,
-                                   const TopoDS_Edge&               edge,
-                                   const Handle(BRepTools_ReShape)& ctx,
-                                   ActAPI_ProgressEntry             progress,
-                                   ActAPI_PlotterEntry              plotter)
-//
-: asiAlgo_Euler (masterCAD, ctx, progress, plotter),
-  m_face        (face),
-  m_edge        (edge)
+: asiAlgo_Euler  (masterCAD, progress, plotter),
+  m_face         (face),
+  m_edge2Kill    (edge)
 {}
 
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_EulerKEF::perform(const bool doApply)
 {
-  TopTools_IndexedMapOfShape faces;
-  TopExp::MapShapes(m_master, TopAbs_FACE, faces);
+  /* ======================================
+   *  Prepare tools from the "engine room"
+   * ====================================== */
 
-  if ( !faces.Contains(m_face) )
+  // Prepare history.
+  if ( m_history.IsNull() )
+    m_history = new asiAlgo_History;
+
+  // Prepare killer.
+  if ( m_killer.IsNull() )
   {
-    // Face to delete does not belong to the master.
-    return false; // Failure
+    m_killer = new asiAlgo_TopoKill(m_master, m_progress, m_plotter);
+    m_killer->SetHistory(m_history);
   }
 
-  TopTools_IndexedMapOfShape faceEdges;
-  TopExp::MapShapes(m_face, TopAbs_EDGE, faceEdges);
+  /* =============================
+   *  Define modification request
+   * ============================= */
 
-  if ( !faceEdges.Contains(m_edge) )
+  // Set modification request.
+  if ( !m_killer->AskRemove(m_face) )
   {
-    // Edge to delete does not belong to the face
-    return false; // Failure
+    m_progress.SendLogMessage(LogErr(Normal) << "Request on face removal rejected.");
+    return false;
   }
 
-  // Prepare modification: remove edge
-  m_ctx->Remove(m_edge);
+  // Merge edges if an edge-to-survive is defined.
+  if ( !m_edge2Survive.IsNull() )
+  {
+    if ( !m_killer->AskReplace( m_edge2Kill, m_edge2Survive.Oriented( m_edge2Kill.Orientation() ) ) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Request on edge merging rejected.");
+      return false;
+    }
+  }
+  else
+  {
+    if ( !m_killer->AskRemove(m_edge2Kill) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Request on edge removal rejected.");
+      return false;
+    }
+  }
 
-  // Prepare modification: remove face
-  m_ctx->Remove(m_face);
+  /* =================================
+   *  Apply modification and finalize
+   * ================================= */
 
-  // Apply modification
   if ( doApply )
-    m_result = m_ctx->Apply(m_master);
+  {
+    if ( !m_killer->Apply() )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Topological killer failed.");
+      return false;
+    }
+
+    // Get result.
+    m_result = m_killer->GetResult();
+  }
 
   return true; // Success
 }

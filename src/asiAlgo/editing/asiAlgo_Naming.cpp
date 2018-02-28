@@ -147,6 +147,9 @@ bool asiAlgo_Naming::Actualize(const TopoDS_Shape& newShape)
     return false;
   }
 
+  // Clean up the map of alive sub-shapes.
+  m_namedAliveShapes.Clear();
+
   // Construct new topology graph.
   Handle(asiAlgo_TopoGraph) newTopograph = new asiAlgo_TopoGraph(newShape);
 
@@ -160,14 +163,29 @@ bool asiAlgo_Naming::Actualize(const TopoDS_Shape& newShape)
     // Get name of the old shape.
     Handle(asiAlgo_TopoAttr)
       nameAttrBase = m_topograph->GetNodeAttribute( oldIndex, asiAlgo_TopoAttrName::GUID() );
+    //
+    TCollection_AsciiString name;
+    //
+    if ( !nameAttrBase.IsNull() )
+    {
+      Handle(asiAlgo_TopoAttrName)
+        nameAttr = Handle(asiAlgo_TopoAttrName)::DownCast(nameAttrBase);
+      //
+      name = nameAttr->GetName();
+    }
 
-    // Get all topological elements which substitute the old shape.
+    // Adjust mapping between names and alive sub-shapes.
     std::vector<TopoDS_Shape> modified;
     //
     if ( m_history->GetModified(oldShape, modified) )
+    {
+      // Get all topological elements which substitute the old shape.
       this->actualizeImages(modified, newTopograph, nameAttrBase, false);
-    else
+    }
+    else if ( !m_history->IsDeleted(oldShape) )
+    {
       this->passIntact(oldShape, newTopograph, nameAttrBase);
+    }
 
     // Get all topological elements which were generated from the old shape.
     std::vector<TopoDS_Shape> generated;
@@ -215,14 +233,20 @@ void asiAlgo_Naming::actualizeImages(const std::vector<TopoDS_Shape>& images,
   {
     const TopoDS_Shape& imageShape = images[k];
 
-    // Bind to map for fast access (rewrite on).
-    this->registerNamedShape(imageName, imageShape, true);
-
     // Add attribute to the topology graph.
     const int imageNodeIdx = newTopograph->GetNodeIndex(imageShape);
     //
     if ( imageNodeIdx )
-      newTopograph->AddNodeAttribute(imageNodeIdx, namingAttr);
+    {
+      // Add name attribute. Notice that the map of labels will be updated
+      // only in case if the topology graph accepts the passed name
+      // attribute. This is done for better data consistency.
+      if ( newTopograph->AddNodeAttribute(imageNodeIdx, namingAttr) )
+      {
+        // Bind to map for fast access (rewrite on).
+        this->registerNamedShape(imageName, imageShape);
+      }
+    }
   }
 }
 
@@ -240,7 +264,7 @@ void asiAlgo_Naming::passIntact(const TopoDS_Shape&              shape,
     namingAttr = Handle(asiAlgo_TopoAttrName)::DownCast( attr2Pass->Copy() );
 
   // Bind to map for fast access (rewrite on).
-  this->registerNamedShape(namingAttr->GetName(), shape, true);
+  this->registerNamedShape(namingAttr->GetName(), shape);
 
   // Add attribute to the topology graph.
   const int imageNodeIdx = newTopograph->GetNodeIndex(shape);
@@ -252,16 +276,10 @@ void asiAlgo_Naming::passIntact(const TopoDS_Shape&              shape,
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_Naming::registerNamedShape(const TCollection_AsciiString& name,
-                                        const TopoDS_Shape&            shape,
-                                        const bool                     rewrite)
+                                        const TopoDS_Shape&            shape)
 {
-  if ( m_namedShapes.IsBound(name) )
-  {
-    if ( rewrite )
-      m_namedShapes.UnBind(name);
-    else
-      return false; // Not unique name passed.
-  }
+  if ( m_namedAliveShapes.IsBound(name) )
+    return false; // Not unique name passed.
 
   // We bound the named shape with EXTERNAL orientation as actually orientation
   // has no sense for a boundary element alone. Imagine a vertex which is shared
@@ -273,6 +291,6 @@ bool asiAlgo_Naming::registerNamedShape(const TCollection_AsciiString& name,
   // from the first edge and the topograph returns REVERSED entity. In such case,
   // the topological naming map will always store the vertex boundary element
   // in a reversed state even though the second edge may forward-include it.
-  m_namedShapes.Bind( name, shape.Oriented(TopAbs_EXTERNAL) );
+  m_namedAliveShapes.Bind( name, shape.Oriented(TopAbs_EXTERNAL) );
   return true;
 }

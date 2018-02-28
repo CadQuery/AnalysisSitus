@@ -142,7 +142,7 @@ public:
     return m_history;
   }
 
-  //! \brief Sets an externally defined history.
+  //! \brief Sets externally defined history.
   //!
   //! The passed history will not be cleared, so that a pipeline of
   //! modeling tools will grow its history graph as long as the history

@@ -638,47 +638,6 @@ vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitLookupTable()
   return colorTable;
 }
 
-////-----------------------------------------------------------------------------
-//
-//void asiVisu_Utils::SetLookupTableColor(vtkLookupTable*     theColorTable,
-//                                        const IVtk_MeshType theColorRole,
-//                                        const double        theR,
-//                                        const double        theG,
-//                                        const double        theB,
-//                                        const double        theA)
-//{
-//  asiVisu_NotUsed(theA);
-//  theColorTable->SetTableValue(theColorRole + 1, theR, theG, theB);
-//}
-//
-////-----------------------------------------------------------------------------
-//
-//void asiVisu_Utils::GetLookupTableColor(vtkLookupTable*     theColorTable,
-//                                        const IVtk_MeshType theColorRole,
-//                                        double&             theR,
-//                                        double&             theG,
-//                                        double&             theB)
-//{
-//  double aRgb[3];
-//  theColorTable->GetColor(theColorRole + 1, aRgb);
-//  theR = aRgb[0];
-//  theG = aRgb[1];
-//  theB = aRgb[2];
-//}
-//
-////-----------------------------------------------------------------------------
-//
-//void asiVisu_Utils::GetLookupTableColor(vtkLookupTable*     theColorTable,
-//                                        const IVtk_MeshType theColorRole,
-//                                        double&             theR,
-//                                        double&             theG,
-//                                        double&             theB,
-//                                        double&             theA)
-//{
-//  theA = theColorTable->GetOpacity (theColorRole + 1);
-//  GetLookupTableColor(theColorTable, theColorRole, theR, theG, theB);
-//}
-
 //-----------------------------------------------------------------------------
 
 void asiVisu_Utils::InitShapeMapper(vtkMapper* theMapper)

@@ -35,6 +35,7 @@
 #include <BRep_Tool.hxx>
 #include <Geom_Line.hxx>
 #include <Geom_TrimmedCurve.hxx>
+#include <GeomAPI_IntCS.hxx>
 #include <GeomConvert.hxx>
 #include <Precision.hxx>
 #include <ShapeAnalysis_Curve.hxx>
@@ -167,70 +168,55 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
        !V.IsPartner(m_edgeInfo.situation.v_last) )
     return false;
 
-  // First curve is taken from the neighbor edge.
-  Handle(Geom_Curve) C1, C1_alt;
-  double f1 = 0.0, l1 = 0.0, f1_alt = 0.0, l1_alt = 0.0;
-
-  // Second curve is the intersection curve.
-  Handle(Geom_Curve) C2 = m_edgeInfo.resolution.icurve->C;
-  double f2 = -100; // TODO: rework
-  double l2 = +100; // TODO: rework
-
-  // Result.
+  // Intersection point.
   Handle(asiAlgo_IntersectionPointCC)* ipoint = NULL;
+
+  // Curve and surface to intersect.
+  Handle(Geom_Curve)   icurve = m_edgeInfo.resolution.icurve->C;
+  Handle(Geom_Surface) isurf;
 
   // First vertex.
   if ( V.IsPartner(m_edgeInfo.situation.v_first) )
   {
-    // Get curve from the neighbor edge.
-    C1     = BRep_Tool::Curve(m_edgeInfo.situation.e_1_prev, f1, l1);
-    C1_alt = BRep_Tool::Curve(m_edgeInfo.situation.e_2_next, f1_alt, l1_alt);
-
-    // Choose where to store the intersection point.
+    isurf  = BRep_Tool::Surface(m_edgeInfo.situation.f_first);
     ipoint = &m_edgeInfo.resolution.ivf;
   }
-  // Last vertex.
-  else if ( V.IsPartner(m_edgeInfo.situation.v_last) )
+  else if ( V.IsPartner(m_edgeInfo.situation.v_last) ) // Last vertex.
   {
-    // Get curve from the neighbor edge.
-    C1     = BRep_Tool::Curve(m_edgeInfo.situation.e_1_next, f1, l1);
-    C1_alt = BRep_Tool::Curve(m_edgeInfo.situation.e_2_prev, f1_alt, l1_alt);
-
-    // Choose where to store the intersection point.
+    isurf  = BRep_Tool::Surface(m_edgeInfo.situation.f_last);
     ipoint = &m_edgeInfo.resolution.ivl;
   }
 
-  // Choose parametric ranges for intersection.
-  f1     -= 100;
-  l1     += 100;
-  f1_alt -= 100;
-  l1_alt += 100;
-  f2     -= 100;
-  l2     += 100;
-
-  // Intersect curves.
-  if ( !this->intersectCurves(C1, f1, l1,
-                              C2, f2, l2,
-                              *ipoint) &&
-                              //
-       !this->intersectCurves(C1_alt, f1_alt, l1_alt,
-                              C2, f2, l2,
-                              *ipoint) )
+  // Intersect.
+  GeomAPI_IntCS intCS(icurve, isurf);
+  //
+  if ( !intCS.IsDone() )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Cannot intersect curves.");
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot intersect curve and surface.");
+    return false;
+  }
+  //
+  if ( intCS.NbPoints() != 1 )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Ambiguous intersection point.");
     return false;
   }
 
+  // Initialize intersection point.
+  const gp_Pnt& ipnt = intCS.Point(1);
+  //
+  (*ipoint) = new asiAlgo_IntersectionPointCC(ipnt);
+
 #if defined DRAW_DEBUG
   if ( V.IsPartner(m_edgeInfo.situation.v_first) )
-    m_plotter.DRAW_POINT((*ipoint)->P, Color_Red, "NewPoint:P (v first)");
+    m_plotter.DRAW_POINT(ipnt, Color_Red, "NewPoint:P (v first)");
   else
-    m_plotter.DRAW_POINT((*ipoint)->P, Color_Blue, "NewPoint:P (v last)");
+    m_plotter.DRAW_POINT(ipnt, Color_Blue, "NewPoint:P (v last)");
 #endif
 
   // Set updated data for the caller
-  P   = (*ipoint)->P;
-  tol = (*ipoint)->Uncertainty;
+  P   = ipnt;
+  tol = Precision::Confusion();
   //
   return true;
 }
@@ -494,6 +480,32 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
          !m_edgeInfo.situation.e_2_next.IsNull() )
       break;
   }
+
+  const int f1_id = m_aag->GetFaceId(m_edgeInfo.situation.f_1);
+
+  // Initialize f_first.
+  const TColStd_PackedMapOfInteger&
+    f1_prev_neighbors = m_aag->GetNeighborsThru(f1_id, m_edgeInfo.situation.e_1_prev);
+  //
+  if ( f1_prev_neighbors.Extent() != 1 )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood.");
+    return false;
+  }
+  //
+  m_edgeInfo.situation.f_first = m_aag->GetFace( f1_prev_neighbors.GetMinimalMapped() );
+
+  // Initialize f_last.
+  const TColStd_PackedMapOfInteger&
+    f1_next_neighbors = m_aag->GetNeighborsThru(f1_id, m_edgeInfo.situation.e_1_next);
+  //
+  if ( f1_next_neighbors.Extent() != 1 )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood.");
+    return false;
+  }
+  //
+  m_edgeInfo.situation.f_last = m_aag->GetFace( f1_next_neighbors.GetMinimalMapped() );
 
 #if defined DRAW_DEBUG
   m_edgeInfo.DumpSituation(m_plotter);

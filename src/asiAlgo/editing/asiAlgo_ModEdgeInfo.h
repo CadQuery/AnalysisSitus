@@ -63,6 +63,8 @@ public:
     TopoDS_Edge   e_2_next; //!< Next edge on the owner face 2.
     TopoDS_Face   f_1;      //!< Owner face 1.
     TopoDS_Face   f_2;      //!< Owner face 2.
+    TopoDS_Face   f_first;  //!< Face adjacent to f1 via e_1_next.
+    TopoDS_Face   f_last;   //!< Face adjacent to f1 via e_1_prev
     TopoDS_Vertex v_first;  //!< First vertex of the edge.
     TopoDS_Vertex v_last;   //!< Last vertex of the edge.
   };
@@ -92,8 +94,10 @@ public:
     plotter.REDRAW_SHAPE("Situation.e_2_prev", situation.e_2_prev, Color_Blue, 1.0, true);
     plotter.REDRAW_SHAPE("Situation.e_2_next", situation.e_2_next, Color_Blue, 1.0, true);
     //
-    plotter.REDRAW_SHAPE("Situation.f_1", situation.f_1, Color_Red,  0.25);
-    plotter.REDRAW_SHAPE("Situation.f_2", situation.f_2, Color_Blue, 0.25);
+    plotter.REDRAW_SHAPE("Situation.f_1",     situation.f_1,     Color_Red,  0.25);
+    plotter.REDRAW_SHAPE("Situation.f_2",     situation.f_2,     Color_Blue, 0.25);
+    plotter.REDRAW_SHAPE("Situation.f_first", situation.f_first, Color_Red,  0.95, true);
+    plotter.REDRAW_SHAPE("Situation.f_last",  situation.f_last,  Color_Blue, 0.95, true);
     //
     plotter.REDRAW_SHAPE("Situation.v_first", situation.v_first, Color_Red,  1.0, true);
     plotter.REDRAW_SHAPE("Situation.v_last",  situation.v_last,  Color_Blue, 1.0, true);

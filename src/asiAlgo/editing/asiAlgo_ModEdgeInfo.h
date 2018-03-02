@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_IntersectionCurveSS.h>
+#include <asiAlgo_IntersectionPointCS.h>
 
 // Active Data includes
 #include <ActAPI_IPlotter.h>
@@ -76,10 +77,10 @@ public:
     Handle(asiAlgo_IntersectionCurveSS) icurve;
 
     //! Intersection point to recover the geometric support of v_first;
-    Handle(asiAlgo_IntersectionPointCC) ivf;
+    gp_Pnt ivf;
 
     //! Intersection point to recover the geometric support of v_last;
-    Handle(asiAlgo_IntersectionPointCC) ivl;
+    gp_Pnt ivl;
   };
 
 public:

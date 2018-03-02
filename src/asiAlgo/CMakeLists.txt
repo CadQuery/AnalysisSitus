@@ -23,8 +23,10 @@ set (aux_H_FILES
   auxiliary/asiAlgo_FuncUnivariate.h
   auxiliary/asiAlgo_HitFacet.h
   auxiliary/asiAlgo_IntersectCC.h
+  auxiliary/asiAlgo_IntersectCS.h
   auxiliary/asiAlgo_IntersectionCurveSS.h
   auxiliary/asiAlgo_IntersectionPointCC.h
+  auxiliary/asiAlgo_IntersectionPointCS.h
   auxiliary/asiAlgo_IntersectSS.h
   auxiliary/asiAlgo_Membership.h
   auxiliary/asiAlgo_PlateOnEdges.h
@@ -41,6 +43,7 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_FuncUnivariate.cpp
   auxiliary/asiAlgo_HitFacet.cpp
   auxiliary/asiAlgo_IntersectCC.cpp
+  auxiliary/asiAlgo_IntersectCS.cpp
   auxiliary/asiAlgo_IntersectSS.cpp
   auxiliary/asiAlgo_PlateOnEdges.cpp
   auxiliary/asiAlgo_QuickHull2d.cpp

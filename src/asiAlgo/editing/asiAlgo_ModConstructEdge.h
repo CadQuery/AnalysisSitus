@@ -148,6 +148,14 @@ protected:
   asiAlgo_EXPORT bool
     initSituation(const TopoDS_Edge& targetEdge);
 
+  //! Reconstructs p-curve for the given edge on the passed face.
+  //! \param[in] E edge in question.
+  //! \param[in] F face in question.
+  //! \return reconstructed p-curve.
+  asiAlgo_EXPORT Handle(Geom2d_Curve)
+    buildPCurve(const TopoDS_Edge& E,
+                const TopoDS_Face& F);
+
 protected:
 
   //! Attributed Adjacency Graph.

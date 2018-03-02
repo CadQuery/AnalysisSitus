@@ -505,8 +505,18 @@ void asiVisu_ShapeRobustTessellator::addEdge(const TopoDS_Edge&           edge,
     {
       m_progress.SendLogMessage(LogWarn(Normal) << "*** No polygons available for edge %1."
                                                 << edgeId);
-      //
-      this->addBrokenEdgeCurve(edge, shapeId, edgeId, scType);
+
+      // When working with a "broken" element, it is a good idea to
+      // wrap with try-catch.
+      try
+      {
+        this->addBrokenEdgeCurve(edge, shapeId, edgeId, scType);
+      }
+      catch ( ... )
+      {
+        m_progress.SendLogMessage(LogWarn(Normal) << "*** Cannot visualize anything for edge %1."
+                                                  << edgeId);
+      }
       return;
     }
 

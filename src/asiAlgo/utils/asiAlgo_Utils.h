@@ -45,6 +45,7 @@
 #include <Geom_BezierSurface.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <Geom_BSplineSurface.hxx>
+#include <Geom_Circle.hxx>
 #include <Geom_ConicalSurface.hxx>
 #include <Geom_CylindricalSurface.hxx>
 #include <Geom_OffsetSurface.hxx>
@@ -55,6 +56,7 @@
 #include <Geom_SurfaceOfRevolution.hxx>
 #include <Geom_SweptSurface.hxx>
 #include <Geom_ToroidalSurface.hxx>
+#include <Geom_TrimmedCurve.hxx>
 #include <Geom2d_BSplineCurve.hxx>
 #include <gp_Trsf.hxx>
 #include <NCollection_IndexedDataMap.hxx>
@@ -431,6 +433,25 @@ public:
       numSubShapes++;
 
     return numSubShapes == 0;
+  }
+
+  //! Checks whether the curve or its basic curve is circular.
+  //! \param[in] curve curve to check.
+  //! \return true/false.
+  static bool IsBasisCircular(const Handle(Geom_Curve)& curve)
+  {
+    if ( curve->IsKind( STANDARD_TYPE(Geom_Circle) ) )
+      return true;
+
+    if ( curve->IsInstance( STANDARD_TYPE(Geom_TrimmedCurve) ) )
+    {
+      Handle(Geom_TrimmedCurve) tcurve = Handle(Geom_TrimmedCurve)::DownCast(curve);
+      //
+      if ( tcurve->BasisCurve()->IsKind( STANDARD_TYPE(Geom_Circle) ) )
+        return true;
+    }
+
+    return false;
   }
 
 //-----------------------------------------------------------------------------

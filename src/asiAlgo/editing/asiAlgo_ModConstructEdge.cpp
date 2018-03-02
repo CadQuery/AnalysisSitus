@@ -31,11 +31,13 @@
 // Own include
 #include <asiAlgo_ModConstructEdge.h>
 
+// asiAlgo includes
+#include <asiAlgo_IntersectCS.h>
+
 // OCCT includes
 #include <BRep_Tool.hxx>
 #include <Geom_Line.hxx>
 #include <Geom_TrimmedCurve.hxx>
-#include <GeomAPI_IntCS.hxx>
 #include <GeomConvert.hxx>
 #include <Precision.hxx>
 #include <ShapeAnalysis_Curve.hxx>
@@ -58,48 +60,6 @@
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif
-
-Handle(Geom2d_Curve) pcu(const TopoDS_Edge& E, const TopoDS_Face& F)
-{
-  Handle(ShapeConstruct_ProjectCurveOnSurface) myProjector = new ShapeConstruct_ProjectCurveOnSurface;
-
-  double f, l;
-  Handle(Geom_Curve) c3d = BRep_Tool::Curve(E, f, l);
-
-  Handle(Geom2d_Curve) c2d;
-  Standard_Real a1, b1;
-
-  Standard_Real TolFirst = -1, TolLast = -1;
-  TopoDS_Vertex V1, V2;
-  TopExp::Vertices(E, V1, V2);
-  if (!V1.IsNull())
-    TolFirst = BRep_Tool::Tolerance(V1);
-  if (!V2.IsNull())
-    TolLast = BRep_Tool::Tolerance(V2);
-      
-  Handle(ShapeAnalysis_Surface)
-    sas = new ShapeAnalysis_Surface( BRep_Tool::Surface(F) );
-
-  try
-  {
-    myProjector->Init ( sas, Precision::Confusion() );
-    myProjector->Perform (c3d,f,l,c2d,TolFirst,TolLast);
-  }
-  catch ( ... )
-  {
-    // Let's convert our curve to b-curve.
-    c3d = GeomConvert::CurveToBSplineCurve(c3d, Convert_QuasiAngular);
-
-    myProjector->Perform (c3d,f,l,c2d,TolFirst,TolLast);
-  }
-
-  //ShapeFix_Edge sfe;
-  //sfe.FixAddPCurve(E, F, false);
-  //double f,l;
-  //c2d = BRep_Tool::CurveOnSurface(E, F, f, l);
-
-  return c2d;
-}
 
 //-----------------------------------------------------------------------------
 
@@ -129,6 +89,13 @@ bool asiAlgo_ModConstructEdge::NewSurface(const TopoDS_Face&    F,
                                           bool&                 revWires,
                                           bool&                 revFace)
 {
+  asiAlgo_NotUsed(F);
+  asiAlgo_NotUsed(S);
+  asiAlgo_NotUsed(L);
+  asiAlgo_NotUsed(tol);
+  asiAlgo_NotUsed(revWires);
+  asiAlgo_NotUsed(revFace);
+
   // Surfaces are not changed.
   return false;
 }
@@ -169,7 +136,7 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
     return false;
 
   // Intersection point.
-  Handle(asiAlgo_IntersectionPointCC)* ipoint = NULL;
+  gp_Pnt* ipoint = NULL;
 
   // Curve and surface to intersect.
   Handle(Geom_Curve)   icurve = m_edgeInfo.resolution.icurve->C;
@@ -188,35 +155,73 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
   }
 
   // Intersect.
-  GeomAPI_IntCS intCS(icurve, isurf);
+  asiAlgo_IntersectCS intCS(m_progress, m_plotter);
   //
-  if ( !intCS.IsDone() )
+  asiAlgo_IntersectionPointsCS ipoints;
+  //
+  if ( !intCS(isurf, icurve, ipoints) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot intersect curve and surface.");
     return false;
   }
+
+  // Check the number of computed intersection points.
+  double    uncertainty = 0.0;
+  const int numInterPts = ipoints.Length();
   //
-  if ( intCS.NbPoints() != 1 )
+  if ( !numInterPts )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Ambiguous intersection point.");
+    m_progress.SendLogMessage(LogErr(Normal) << "No intersection points found.");
     return false;
   }
+  else if ( numInterPts > 1 )
+  {
+    m_progress.SendLogMessage(LogWarn(Normal) << "Ambiguous intersection point (%1 points computed)."
+                                              << numInterPts);
 
-  // Initialize intersection point.
-  const gp_Pnt& ipnt = intCS.Point(1);
-  //
-  (*ipoint) = new asiAlgo_IntersectionPointCC(ipnt);
+    // In case of ambiguous intersection, we take the average point. Ambiguous
+    // intersection may occur, for example, if the surface and the line to
+    // intersect are touching each other.
+    gp_XYZ averagePt;
+    //
+    for ( int k = 1; k <= numInterPts; ++k )
+    {
+#if defined DRAW_DEBUG
+      TCollection_AsciiString ipointname;
+      ipointname += "[";
+      ipointname += k;
+      ipointname += "]";
+      ipointname += " Ambiguous intersection point";
+      //
+      m_plotter.DRAW_POINT(ipoints(k)->P, Color_Red, ipointname);
+#endif
+
+      uncertainty =  Max(uncertainty, ipoints(k)->Uncertainty);
+      averagePt   += ipoints(k)->P.XYZ();
+    }
+    averagePt /= numInterPts;
+
+    // Initialize intersection point.
+    (*ipoint) = averagePt;
+  }
+  else // One intersection point.
+  {
+    uncertainty = ipoints(1)->Uncertainty;
+
+    // Initialize intersection point.
+    (*ipoint) = ipoints(1)->P;
+  }
 
 #if defined DRAW_DEBUG
   if ( V.IsPartner(m_edgeInfo.situation.v_first) )
-    m_plotter.DRAW_POINT(ipnt, Color_Red, "NewPoint:P (v first)");
+    m_plotter.DRAW_POINT(*ipoint, Color_Red, "NewPoint:P (v first)");
   else
-    m_plotter.DRAW_POINT(ipnt, Color_Blue, "NewPoint:P (v last)");
+    m_plotter.DRAW_POINT(*ipoint, Color_Blue, "NewPoint:P (v last)");
 #endif
 
-  // Set updated data for the caller
-  P   = ipnt;
-  tol = Precision::Confusion();
+  // Set updated data for the caller.
+  P   = *ipoint;
+  tol = uncertainty;
   //
   return true;
 }
@@ -230,10 +235,13 @@ bool asiAlgo_ModConstructEdge::NewCurve2d(const TopoDS_Edge&    E,
                                           Handle(Geom2d_Curve)& C,
                                           double&               tol)
 {
+  asiAlgo_NotUsed(F);
+
   if ( !E.IsPartner(m_edgeInfo.situation.e) )
     return false;
 
-  Handle(Geom2d_Curve) c2d = pcu(NewE, NewF);
+  Handle(Geom2d_Curve) c2d = this->buildPCurve(NewE, NewF);
+  //
   if ( c2d.IsNull() )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot fix p-curve");
@@ -269,10 +277,15 @@ bool asiAlgo_ModConstructEdge::NewParameter(const TopoDS_Vertex& V,
       gp_Pnt proj;
       ShapeAnalysis_Curve sac;
       sac.Project(m_edgeInfo.resolution.icurve->C,
-                  m_edgeInfo.resolution.ivf->P,
+                  m_edgeInfo.resolution.ivf,
                   Precision::Confusion(),
                   proj,
                   p);
+
+      // Adjust period.
+      if ( asiAlgo_Utils::IsBasisCircular(m_edgeInfo.resolution.icurve->C) )
+        if ( p - M_PI > 0 )
+          p = p - 2*M_PI;
 
       m_plotter.DRAW_POINT(proj, Color_Yellow, "P in NewParameter for v_first on target edge");
       m_plotter.DRAW_POINT(proj, Color_Yellow, "P in NewParameter for v_first on target edge");
@@ -284,10 +297,15 @@ bool asiAlgo_ModConstructEdge::NewParameter(const TopoDS_Vertex& V,
       gp_Pnt proj;
       ShapeAnalysis_Curve sac;
       sac.Project(m_edgeInfo.resolution.icurve->C,
-                  m_edgeInfo.resolution.ivl->P,
+                  m_edgeInfo.resolution.ivl,
                   Precision::Confusion(),
                   proj,
                   p);
+
+      // Adjust period.
+      if ( asiAlgo_Utils::IsBasisCircular(m_edgeInfo.resolution.icurve->C) )
+        if ( p - M_PI > 0 )
+          p = p - 2*M_PI;
 
       m_plotter.DRAW_POINT(proj, Color_Yellow, "P in NewParameter for v_last on target edge");
     }
@@ -309,6 +327,10 @@ GeomAbs_Shape
                                        const TopoDS_Face& NewF1,
                                        const TopoDS_Face& NewF2)
 {
+  asiAlgo_NotUsed(NewE);
+  asiAlgo_NotUsed(NewF1);
+  asiAlgo_NotUsed(NewF2);
+
   return BRep_Tool::Continuity(E, F1, F2);
 }
 
@@ -535,5 +557,58 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
     return false;
   }
 
+#if defined DRAW_DEBUG
+  m_plotter.REDRAW_CURVE("Resolution.icurve", m_edgeInfo.resolution.icurve->C, Color_Green);
+#endif
+
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(Geom2d_Curve) asiAlgo_ModConstructEdge::buildPCurve(const TopoDS_Edge& E,
+                                                           const TopoDS_Face& F)
+{
+
+  Handle(ShapeConstruct_ProjectCurveOnSurface)
+    myProjector = new ShapeConstruct_ProjectCurveOnSurface;
+
+  double f, l;
+  Handle(Geom_Curve) c3d = BRep_Tool::Curve(E, f, l);
+
+#if defined DRAW_DEBUG
+  m_plotter.REDRAW_CURVE("buildPCurve:E(curve)", new Geom_TrimmedCurve(c3d, f, l), Color_Red);
+  m_plotter.REDRAW_SHAPE("buildPCurve:F", F);
+#endif
+
+  Handle(Geom2d_Curve) c2d;
+  Standard_Real TolFirst = -1, TolLast = -1;
+  TopoDS_Vertex V1, V2;
+  TopExp::Vertices(E, V1, V2);
+  if (!V1.IsNull())
+    TolFirst = BRep_Tool::Tolerance(V1);
+  if (!V2.IsNull())
+    TolLast = BRep_Tool::Tolerance(V2);
+      
+  Handle(ShapeAnalysis_Surface)
+    sas = new ShapeAnalysis_Surface( BRep_Tool::Surface(F) );
+
+  try
+  {
+    myProjector->Init ( sas, Precision::Confusion() );
+    myProjector->Perform (c3d,f,l,c2d,TolFirst,TolLast);
+  }
+  catch ( ... )
+  {
+    // Let's convert our curve to b-curve.
+    c3d = GeomConvert::CurveToBSplineCurve(c3d, Convert_QuasiAngular);
+
+    myProjector->Perform (c3d,f,l,c2d,TolFirst,TolLast);
+  }
+
+  /*ShapeFix_Edge sfe;
+  sfe.FixAddPCurve(E, F, false);
+  c2d = BRep_Tool::CurveOnSurface(E, F, f, l);*/
+
+  return c2d;
 }

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 18 February 2018
+// Created on: 02 March 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,49 +29,58 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiAlgo_IntersectSS.h>
+#include <asiAlgo_IntersectCS.h>
 
 // OCCT includes
-#include <GeomAPI_IntSS.hxx>
+#include <GeomAPI_IntCS.hxx>
+#include <Precision.hxx>
 
 //-----------------------------------------------------------------------------
 
 //! Constructor.
 //! \param[in] progress progress notifier.
 //! \param[in] plotter  imperative plotter.
-asiAlgo_IntersectSS::asiAlgo_IntersectSS(ActAPI_ProgressEntry progress,
+asiAlgo_IntersectCS::asiAlgo_IntersectCS(ActAPI_ProgressEntry progress,
                                          ActAPI_PlotterEntry  plotter)
 : ActAPI_IAlgorithm(progress, plotter)
 {}
 
 //-----------------------------------------------------------------------------
 
-//! Performs surface-surface intersection.
-//! \param[in]  S1        first surface.
-//! \param[in]  S2        second surface.
-//! \param[in]  precision precision.
-//! \param[out] result    intersection curves.
+//! Performs curve-surface intersection.
+//! \param[in]  S      surface.
+//! \param[in]  C      curve to intersect with the surface.
+//! \param[out] result intersection points.
 //! \return true in case of success, false -- otherwise.
-bool asiAlgo_IntersectSS::operator()(const Handle(Geom_Surface)&   S1,
-                                     const Handle(Geom_Surface)&   S2,
-                                     const double                  precision,
-                                     asiAlgo_IntersectionCurvesSS& result)
+bool asiAlgo_IntersectCS::operator()(const Handle(Geom_Surface)&   S,
+                                     const Handle(Geom_Curve)&     C,
+                                     asiAlgo_IntersectionPointsCS& result)
 {
-  GeomAPI_IntSS intSS(S1, S2, precision);
+  GeomAPI_IntCS intCS(C, S);
   //
-  if ( !intSS.IsDone() )
+  if ( !intCS.IsDone() )
   {
-    m_progress.SendLogMessage( LogErr(Normal) << "Surface/surface intersection failed" );
+    m_progress.SendLogMessage( LogErr(Normal) << "Curvature/surface intersection failed" );
     return false;
   }
 
-  // Collect intersection results
-  for ( int k = 1; k <= intSS.NbLines(); ++k )
+  // Collect intersection results.
+  for ( int k = 1; k <= intCS.NbPoints(); ++k )
   {
-    Handle(asiAlgo_IntersectionCurveSS)
-      icurve = new asiAlgo_IntersectionCurveSS(precision, intSS.Line(k), S1, S2);
+    // Get parameters of the intersection point.
+    double u, v, w;
+    intCS.Parameters(k, u, v, w);
+
+    // Initialize intersection point structure. Notice that the uncertainty
+    // is initialized as precision confusion since API of OpenCascade we use
+    // does not provide the reached numerical precision.
+    Handle(asiAlgo_IntersectionPointCS)
+      ipoint = new asiAlgo_IntersectionPointCS( intCS.Point(k),
+                                                w,
+                                                gp_Pnt2d(u, v),
+                                                Precision::Confusion() );
     //
-    result.Append(icurve);
+    result.Append(ipoint);
   }
   return true;
 }

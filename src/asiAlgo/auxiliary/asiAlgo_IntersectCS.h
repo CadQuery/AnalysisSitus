@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 18 February 2018
+// Created on: 02 March 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,50 +28,35 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiAlgo_IntersectSS.h>
+#ifndef asiAlgo_IntersectCS_h
+#define asiAlgo_IntersectCS_h
+
+// asiAlgo includes
+#include <asiAlgo_IntersectionPointCS.h>
+
+// Active Data includes
+#include <ActAPI_IAlgorithm.h>
 
 // OCCT includes
-#include <GeomAPI_IntSS.hxx>
+#include <Geom_Curve.hxx>
+#include <Geom_Surface.hxx>
 
-//-----------------------------------------------------------------------------
-
-//! Constructor.
-//! \param[in] progress progress notifier.
-//! \param[in] plotter  imperative plotter.
-asiAlgo_IntersectSS::asiAlgo_IntersectSS(ActAPI_ProgressEntry progress,
-                                         ActAPI_PlotterEntry  plotter)
-: ActAPI_IAlgorithm(progress, plotter)
-{}
-
-//-----------------------------------------------------------------------------
-
-//! Performs surface-surface intersection.
-//! \param[in]  S1        first surface.
-//! \param[in]  S2        second surface.
-//! \param[in]  precision precision.
-//! \param[out] result    intersection curves.
-//! \return true in case of success, false -- otherwise.
-bool asiAlgo_IntersectSS::operator()(const Handle(Geom_Surface)&   S1,
-                                     const Handle(Geom_Surface)&   S2,
-                                     const double                  precision,
-                                     asiAlgo_IntersectionCurvesSS& result)
+//! Curve-Surface intersection tool.
+class asiAlgo_IntersectCS : public ActAPI_IAlgorithm
 {
-  GeomAPI_IntSS intSS(S1, S2, precision);
-  //
-  if ( !intSS.IsDone() )
-  {
-    m_progress.SendLogMessage( LogErr(Normal) << "Surface/surface intersection failed" );
-    return false;
-  }
+public:
 
-  // Collect intersection results
-  for ( int k = 1; k <= intSS.NbLines(); ++k )
-  {
-    Handle(asiAlgo_IntersectionCurveSS)
-      icurve = new asiAlgo_IntersectionCurveSS(precision, intSS.Line(k), S1, S2);
-    //
-    result.Append(icurve);
-  }
-  return true;
-}
+  asiAlgo_EXPORT
+    asiAlgo_IntersectCS(ActAPI_ProgressEntry progress,
+                        ActAPI_PlotterEntry  plotter);
+
+public:
+
+  asiAlgo_EXPORT bool
+    operator()(const Handle(Geom_Surface)&   S,
+               const Handle(Geom_Curve)&     C,
+               asiAlgo_IntersectionPointsCS& result);
+
+};
+
+#endif

@@ -790,7 +790,12 @@ bool asiAlgo_Utils::HasAllClosedWires(const TopoDS_Face& face,
   // Loop over the wires
   for ( TopoDS_Iterator it(face); it.More(); it.Next() )
   {
-    const TopoDS_Wire& wire = TopoDS::Wire( it.Value() );
+    const TopoDS_Shape& subshape = it.Value();
+    //
+    if ( subshape.ShapeType() != TopAbs_WIRE )
+      continue;
+
+    const TopoDS_Wire& wire = TopoDS::Wire(subshape);
 
     // Check each wire individually.
     if ( !IsClosedGeometrically(wire, face, coincConfusion3d) )

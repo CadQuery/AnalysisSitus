@@ -42,13 +42,13 @@
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_FairingAijFunc::asiAlgo_FairingAijFunc(const std::vector<double>& U,
-                                               const int                  p,
-                                               const int                  i,
-                                               const int                  j)
-: math_Function()
+asiAlgo_FairingAijFunc::asiAlgo_FairingAijFunc(const TColStd_Array1OfReal& U,
+                                               const int                   p,
+                                               const int                   i,
+                                               const int                   j,
+                                               const double                lambda)
+: asiAlgo_FairingCoeffFunc(lambda), m_U(U)
 {
-  m_U       = U;
   m_iDegree = p;
   m_iIndex1 = i;
   m_iIndex2 = j;
@@ -58,18 +58,11 @@ asiAlgo_FairingAijFunc::asiAlgo_FairingAijFunc(const std::vector<double>& U,
 
 bool asiAlgo_FairingAijFunc::Value(const double u, double& f)
 {
-  const int p = m_iDegree;
-  const int m = int( m_U.size() ) - 1;
-
-  // Convert to flat knots
-  TColStd_Array1OfReal flatKnots(1, m + 1);
-  for ( int k = 0; k <= m; ++k )
-    flatKnots(k + 1) = m_U[k];
+  const int order = m_iDegree + 1;
 
   int firstNonZeroIdx;
-  math_Matrix N_mx(1, 3, 1, p + 1);
-  const int order = m_iDegree + 1;
-  BSplCLib::EvalBsplineBasis(2, order, flatKnots, u, firstNonZeroIdx, N_mx);
+  math_Matrix N_mx(1, 3, 1, order);
+  BSplCLib::EvalBsplineBasis(2, order, m_U, u, firstNonZeroIdx, N_mx);
 
 #if defined COUT_DEBUG
   // Dump
@@ -88,20 +81,20 @@ bool asiAlgo_FairingAijFunc::Value(const double u, double& f)
 
   // For indices in a band of width (p + 1), we can query what
   // OpenCascade returns. Otherwise, the derivative vanishes.
-  if ( (oneBasedIndex1 >= firstNonZeroIdx) && (oneBasedIndex1 < firstNonZeroIdx + p + 1) )
+  if ( (oneBasedIndex1 >= firstNonZeroIdx) && (oneBasedIndex1 < firstNonZeroIdx + m_iDegree + 1) )
     Ni = N_mx(1, oneBasedIndex1 - firstNonZeroIdx + 1);
   //
-  if ( (oneBasedIndex2 >= firstNonZeroIdx) && (oneBasedIndex2 < firstNonZeroIdx + p + 1) )
+  if ( (oneBasedIndex2 >= firstNonZeroIdx) && (oneBasedIndex2 < firstNonZeroIdx + m_iDegree + 1) )
     Nj = N_mx(1, oneBasedIndex2 - firstNonZeroIdx + 1);
 
   // Derivatives.
-  if ( (oneBasedIndex1 >= firstNonZeroIdx) && (oneBasedIndex1 < firstNonZeroIdx + p + 1) )
+  if ( (oneBasedIndex1 >= firstNonZeroIdx) && (oneBasedIndex1 < firstNonZeroIdx + m_iDegree + 1) )
     d2Ni = N_mx(3, oneBasedIndex1 - firstNonZeroIdx + 1);
   //
-  if ( (oneBasedIndex2 >= firstNonZeroIdx) && (oneBasedIndex2 < firstNonZeroIdx + p + 1) )
+  if ( (oneBasedIndex2 >= firstNonZeroIdx) && (oneBasedIndex2 < firstNonZeroIdx + m_iDegree + 1) )
     d2Nj = N_mx(3, oneBasedIndex2 - firstNonZeroIdx + 1);
 
-  f = Ni*Nj + FAIRING_LAMBDA*d2Ni*d2Nj;
+  f = Ni*Nj + this->GetLambda()*d2Ni*d2Nj;
 
   return true;
 }

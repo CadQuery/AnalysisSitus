@@ -29,91 +29,64 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiAlgo_FairingRhsFunc.h>
-
-// Mobius includes
-#include <mobius/bspl_EffectiveNDers.h>
-#include <mobius/bspl_FindSpan.h>
+#include <asiAlgo_FairingBjFunc.h>
 
 // OCCT includes
 #include <BSplCLib.hxx>
 #include <math_Matrix.hxx>
 
+#undef COUT_DEBUG
+#if defined COUT_DEBUG
+  #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
+
 //-----------------------------------------------------------------------------
 
-asiAlgo_FairingRhsFunc::asiAlgo_FairingRhsFunc(const Handle(Geom_BSplineCurve)& curve,
-                                                   const int                        coord,
-                                                   const std::vector<double>&       U,
-                                                   const int                        p,
-                                                   const int                        i)
-: math_Function()
+asiAlgo_FairingBjFunc::asiAlgo_FairingBjFunc(const Handle(Geom_BSplineCurve)& curve,
+                                             const int                        coord,
+                                             const TColStd_Array1OfReal&      U,
+                                             const int                        p,
+                                             const int                        i,
+                                             const double                     lambda)
+: asiAlgo_FairingCoeffFunc(lambda), m_U(U)
 {
   m_curve   = curve;
   m_iCoord  = coord;
-  m_U       = U;
   m_iDegree = p;
   m_iIndex  = i;
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_FairingRhsFunc::Value(const double u, double& f)
+bool asiAlgo_FairingBjFunc::Value(const double u, double& f)
 {
   /* ==================================================================
    *  Calculate 2-nd derivative of basis spline at the given parameter
    * ================================================================== */
 
-  const int p = m_iDegree;
-  const int m = int( m_U.size() ) - 1;
-
-  // Convert to flat knots
-  TColStd_Array1OfReal flatKnots(1, m + 1);
-  for ( int k = 0; k <= m; ++k )
-    flatKnots(k + 1) = m_U[k];
+  const int order = m_iDegree + 1;
 
   int firstNonZeroIdx;
-  math_Matrix N_mx(1, 3, 1, p + 1);
-  const int order = m_iDegree + 1;
-  BSplCLib::EvalBsplineBasis(2, order, flatKnots, u, firstNonZeroIdx, N_mx);
+  math_Matrix N_mx(1, 3, 1, order);
+  BSplCLib::EvalBsplineBasis(2, order, m_U, u, firstNonZeroIdx, N_mx);
 
+#if defined COUT_DEBUG
   // Dump
-  //std::cout << "\tFirst Non-Zero Index for " << u << " is " << firstNonZeroIdx << std::endl;
-  //for ( int kk = 1; kk <= p + 1; ++kk )
-  //{
-  //  std::cout << "\t" << N_mx(3, kk);
-  //}
-  //std::cout << std::endl;
+  std::cout << "\tFirst Non-Zero Index for " << u << " is " << firstNonZeroIdx << std::endl;
+  for ( int kk = 1; kk <= p + 1; ++kk )
+  {
+    std::cout << "\t" << N_mx(3, kk);
+  }
+  std::cout << std::endl;
+#endif
 
-  double d2N = 0;
+  double d2N = 0.0;
   const int oneBasedIndex = m_iIndex + 1;
 
   // For indices in a band of width (p + 1), we can query what
   // OpenCascade returns. Otherwise, the derivative vanishes.
-  if ( (oneBasedIndex >= firstNonZeroIdx) && (oneBasedIndex < firstNonZeroIdx + p + 1) )
+  if ( (oneBasedIndex >= firstNonZeroIdx) && (oneBasedIndex < firstNonZeroIdx + m_iDegree + 1) )
     d2N = N_mx(3, oneBasedIndex - firstNonZeroIdx + 1);
-
-
-  //Standard_Integer aSpanIndex = 0;
-  //Standard_Real aNewU(u);
-  ////PeriodicNormalization(aNewU);
-  //BSplCLib::LocateParameter( m_iDegree,
-  //                           m_curve->Knots(),
-  //                           &m_curve->Multiplicities(),
-  //                           u,
-  //                           false,
-  //                           aSpanIndex,
-  //                           aNewU );
-
-  //if ( aNewU < m_curve->Knots().Value(aSpanIndex) )
-  //  aSpanIndex--;
-  ////
-  //gp_Pnt P;
-  //gp_Vec V1, V2;
-  ////
-  //BSplCLib::D2(aNewU,aSpanIndex,m_iDegree,false,m_curve->Poles(),
-  //    BSplCLib::NoWeights(),
-  //    m_curve->Knots(), &m_curve->Multiplicities(),
-  //    P, V1, V2);
 
   /* ====================================================
    *  Calculate 2-nd derivative of the curve in question
@@ -128,7 +101,7 @@ bool asiAlgo_FairingRhsFunc::Value(const double u, double& f)
                                                    // while OCCT operates with 1-based indices.
 
   // Calculate the result.
-  f = FAIRING_LAMBDA*d2N*d2C_proj;
+  f = this->GetLambda()*d2N*d2C_proj;
 
   return true;
 }

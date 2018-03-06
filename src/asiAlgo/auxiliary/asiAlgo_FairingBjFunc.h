@@ -32,33 +32,32 @@
 #define asiAlgo_FairingBjFunc_HeaderFile
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_FairingCoeffFunc.h>
 
 // OCCT includes
 #include <Geom_BSplineCurve.hxx>
-#include <math_Function.hxx>
-
-// Standard includes
-#include <vector>
+#include <TColStd_Array1OfReal.hxx>
 
 //! Univariate function to interface right-hand-side of fairing linear problem
 //! via OpenCascade math_Function API.
-class asiAlgo_FairingBjFunc : public math_Function
+class asiAlgo_FairingBjFunc : public asiAlgo_FairingCoeffFunc
 {
 public:
 
   //! ctor.
-  //! \param[in] curve B-spline curve in question (the one to fair).
-  //! \param[in] coord index of coordinate to use (0 for X, 1 for Y, and 2 for Z).
-  //! \param[in] U     knot vector.
-  //! \param[in] p     B-spline degree.
-  //! \param[in] i     0-based index of the B-spline function.
+  //! \param[in] curve  B-spline curve in question (the one to fair).
+  //! \param[in] coord  index of coordinate to use (0 for X, 1 for Y, and 2 for Z).
+  //! \param[in] U      knot vector.
+  //! \param[in] p      B-spline degree.
+  //! \param[in] i      0-based index of the B-spline function.
+  //! \param[in] lambda fairing coefficent.
   asiAlgo_EXPORT
     asiAlgo_FairingBjFunc(const Handle(Geom_BSplineCurve)& curve,
-                            const int                        coord,
-                            const std::vector<double>&       U,
-                            const int                        p,
-                            const int                        i);
+                          const int                        coord,
+                          const TColStd_Array1OfReal&      U,
+                          const int                        p,
+                          const int                        i,
+                          const double                     lambda);
 
 public:
 
@@ -67,19 +66,18 @@ public:
   asiAlgo_EXPORT bool
     Value(const double u, double& f);
 
+private:
+
+  asiAlgo_FairingBjFunc() = delete;
+  void operator=(const asiAlgo_FairingBjFunc&) = delete;
+
 protected:
 
-  Handle(Geom_BSplineCurve) m_curve;   //!< Curve in question.
-  int                       m_iCoord;  //!< Coordinate in question.
-  std::vector<double>       m_U;       //!< Knot vector.
-  int                       m_iDegree; //!< Degree of the spline function.
-  int                       m_iIndex;  //!< 0-based index of the spline function.
-
-  //! Memory allocator.
-  mobius::core_HeapAlloc2D<double> m_alloc;
-
-  //! Table of B-spline derivatives.
-  double** m_dN;
+  Handle(Geom_BSplineCurve)   m_curve;   //!< Curve in question.
+  int                         m_iCoord;  //!< Coordinate in question.
+  const TColStd_Array1OfReal& m_U;       //!< Knot vector ("flat" knots).
+  int                         m_iDegree; //!< Degree of the spline function.
+  int                         m_iIndex;  //!< 0-based index of the spline function.
 
 };
 

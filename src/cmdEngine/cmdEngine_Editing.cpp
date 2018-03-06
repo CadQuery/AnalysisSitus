@@ -40,6 +40,7 @@
 // asiAlgo includes
 #include <asiAlgo_EulerKEF.h>
 #include <asiAlgo_EulerKEV.h>
+#include <asiAlgo_FairBCurve.h>
 #include <asiAlgo_ModConstructEdge.h>
 #include <asiAlgo_TopoAttrOrientation.h>
 #include <asiAlgo_TopoKill.h>
@@ -973,6 +974,65 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVCurveNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a curve."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVCurveNode)
+    curveNode = Handle(asiData_IVCurveNode)::DownCast(node);
+
+  // Get B-curve.
+  double f, l;
+  Handle(Geom_BSplineCurve)
+    occtBCurve = Handle(Geom_BSplineCurve)::DownCast( curveNode->GetCurve(f, l) );
+  //
+  if ( occtBCurve.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is not a B-spline curve.");
+    return TCL_OK;
+  }
+
+  // Get fairing coefficient.
+  const double lambda = Atof(argv[2]);
+
+  // Perform fairing algorithm.
+  asiAlgo_FairBCurve fairing( occtBCurve,
+                              lambda,
+                              interp->GetProgress(),
+                              interp->GetPlotter() );
+  //
+  if ( !fairing.Perform() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Fairing failed.");
+    return TCL_OK;
+  }
+
+  // Draw result.
+  TCollection_AsciiString resName(argv[1]);
+  resName += "faired";
+  //
+  interp->GetPlotter().REDRAW_CURVE("faired", fairing.GetResult(), Color_Green);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -1115,4 +1175,13 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t Rebuilds edge with the given ID.",
     //
     __FILE__, group, ENGINE_RebuildEdge);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("fair-curve",
+    //
+    "fair-curve varName fairingCoeff \n"
+    "\t Fairs curve with the given name. The passed fairing coefficient \n"
+    "\t is a weight of a fairing term in the goal function.",
+    //
+    __FILE__, group, ENGINE_FairCurve);
 }

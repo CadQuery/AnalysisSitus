@@ -850,6 +850,40 @@ int MISC_TestPipe(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+#include <GProp_GProps.hxx>
+#include <BRepGProp.hxx>
+
+int MISC_Test(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  TopoDS_Shape
+    partShape = Handle(asiEngine_Model)::DownCast( interp->GetModel() )->GetPartNode()->GetShape();
+
+  // Test scaling.
+  GProp_GProps props;
+  BRepGProp::VolumeProperties(partShape, props);
+  gp_Pnt center = props.CentreOfMass();
+  //
+  gp_Trsf S;
+  S.SetScale(center, 1.5);
+  //
+  BRepBuilderAPI_Transform transformScale(partShape, S, true);
+
+  TopoDS_Shape result = transformScale.Shape();
+
+  interp->GetPlotter().DRAW_SHAPE(result, "transform");
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -926,6 +960,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Problem reproducer for pipes.",
     //
     __FILE__, group, MISC_TestPipe);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test",
+    //
+    "test \n"
+    "\t Problem reproducer for anything.",
+    //
+    __FILE__, group, MISC_Test);
 }
 
 // Declare entry point

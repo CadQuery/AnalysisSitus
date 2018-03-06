@@ -44,38 +44,30 @@ class asiAlgo_FairingCoeffFunc : public math_Function
 public:
 
   //! ctor.
-  //! \param[in] curve B-spline curve in question (the one to fair).
-  //! \param[in] coord index of coordinate to use (0 for X, 1 for Y, and 2 for Z).
-  //! \param[in] U     knot vector.
-  //! \param[in] p     B-spline degree.
-  //! \param[in] i     0-based index of the B-spline function.
-  asiAlgo_EXPORT
-    asiAlgo_FairingBjFunc(const Handle(Geom_BSplineCurve)& curve,
-                            const int                        coord,
-                            const std::vector<double>&       U,
-                            const int                        p,
-                            const int                        i);
+  //! \param[in] lambda fairing coefficient.
+  asiAlgo_FairingCoeffFunc(const double lambda) : math_Function()
+  {
+    m_fLambda = lambda;
+  }
 
 public:
 
-  //! Evaluates function.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT bool
-    Value(const double u, double& f);
+  //! \return fairing coefficient.
+  double GetLambda() const
+  {
+    return m_fLambda;
+  }
+
+  //! Sets fairing coefficient.
+  //! \param[in] lambda fairing coefficient.
+  double SetLambda(const double lambda)
+  {
+    m_fLambda = lambda;
+  }
 
 protected:
 
-  Handle(Geom_BSplineCurve) m_curve;   //!< Curve in question.
-  int                       m_iCoord;  //!< Coordinate in question.
-  std::vector<double>       m_U;       //!< Knot vector.
-  int                       m_iDegree; //!< Degree of the spline function.
-  int                       m_iIndex;  //!< 0-based index of the spline function.
-
-  //! Memory allocator.
-  mobius::core_HeapAlloc2D<double> m_alloc;
-
-  //! Table of B-spline derivatives.
-  double** m_dN;
+  double m_fLambda; //!< Fairing coefficient.
 
 };
 

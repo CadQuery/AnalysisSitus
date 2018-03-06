@@ -29,106 +29,138 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiAlgo_FairingRhsFunc.h>
+#include <asiAlgo_FairBCurve.h>
 
-// Mobius includes
-#include <mobius/bspl_EffectiveNDers.h>
-#include <mobius/bspl_FindSpan.h>
+// asiAlgo includes
+#include <asiAlgo_FairingAijFunc.h>
+#include <asiAlgo_FairingBjFunc.h>
 
 // OCCT includes
 #include <BSplCLib.hxx>
-#include <math_Matrix.hxx>
+
+// Eigen includes
+#include <Eigen/Dense>
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_FairingRhsFunc::asiAlgo_FairingRhsFunc(const Handle(Geom_BSplineCurve)& curve,
-                                                   const int                        coord,
-                                                   const std::vector<double>&       U,
-                                                   const int                        p,
-                                                   const int                        i)
-: math_Function()
+#undef COUT_DEBUG
+#if defined COUT_DEBUG
+  #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
+
+#undef DRAW_DEBUG
+#if defined DRAW_DEBUG
+  #pragma message("===== warning: DRAW_DEBUG is enabled")
+#endif
+
+//-----------------------------------------------------------------------------
+
+#define NUM_INTEGRATION_BINS 1000
+
+//-----------------------------------------------------------------------------
+
+double Integral(math_Function& F, double a, double b, int n)
 {
-  m_curve   = curve;
-  m_iCoord  = coord;
-  m_U       = U;
-  m_iDegree = p;
-  m_iIndex  = i;
+  double step = (b - a) / n;  // width of each small rectangle
+  double area = 0.0;  // signed area
+  for (int i = 0; i < n; i ++)
+  {
+    double val = 0.0;
+    F.Value(a + (i + 0.5) * step, val);
+    area +=  val*step; // sum up each small rectangle
+  }
+  return area;
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_FairingRhsFunc::Value(const double u, double& f)
+asiAlgo_FairBCurve::asiAlgo_FairBCurve(const Handle(Geom_BSplineCurve)& curve,
+                                       const double                     lambda,
+                                       ActAPI_ProgressEntry             progress,
+                                       ActAPI_PlotterEntry              plotter)
+: ActAPI_IAlgorithm(progress, plotter)
 {
-  /* ==================================================================
-   *  Calculate 2-nd derivative of basis spline at the given parameter
-   * ================================================================== */
+  m_inputCurve = curve;
+  m_fLambda    = lambda;
+}
 
-  const int p = m_iDegree;
-  const int m = int( m_U.size() ) - 1;
+//-----------------------------------------------------------------------------
 
-  // Convert to flat knots
-  TColStd_Array1OfReal flatKnots(1, m + 1);
-  for ( int k = 0; k <= m; ++k )
-    flatKnots(k + 1) = m_U[k];
+bool asiAlgo_FairBCurve::Perform()
+{
+  // Prepare flat sequence of knots and other working vars.
+  const TColStd_Array1OfReal& U   = m_inputCurve->KnotSequence();
+  const int                   p   = m_inputCurve->Degree();
+  const int                   m   = U.Length() - 1;
+  const int                   n   = m - p - 1;
+  const int                   dim = n + 1;
 
-  int firstNonZeroIdx;
-  math_Matrix N_mx(1, 3, 1, p + 1);
-  const int order = m_iDegree + 1;
-  BSplCLib::EvalBsplineBasis(2, order, flatKnots, u, firstNonZeroIdx, N_mx);
+  // Initialize matrix from the passed row pointer
+  Eigen::MatrixXd eigen_A_mx(dim, dim);
+  for ( int r = 0; r < dim; ++r )
+  {
+    for ( int c = 0; c < dim; ++c )
+    {
+      asiAlgo_FairingAijFunc N2(U, p, r, c, m_fLambda);
 
-  // Dump
-  //std::cout << "\tFirst Non-Zero Index for " << u << " is " << firstNonZeroIdx << std::endl;
-  //for ( int kk = 1; kk <= p + 1; ++kk )
-  //{
-  //  std::cout << "\t" << N_mx(3, kk);
-  //}
-  //std::cout << std::endl;
+      // Compute integral.
+      const double val = Integral(N2, U.First(), U.Last(), NUM_INTEGRATION_BINS);
 
-  double d2N = 0;
-  const int oneBasedIndex = m_iIndex + 1;
+      eigen_A_mx(r, c) = val;
+    }
+  }
 
-  // For indices in a band of width (p + 1), we can query what
-  // OpenCascade returns. Otherwise, the derivative vanishes.
-  if ( (oneBasedIndex >= firstNonZeroIdx) && (oneBasedIndex < firstNonZeroIdx + p + 1) )
-    d2N = N_mx(3, oneBasedIndex - firstNonZeroIdx + 1);
+#if defined COUT_DEBUG
+  std::cout << "Here is the matrix A:\n" << eigen_A_mx << std::endl;
+#endif
 
+  // Initialize vector of right hand side.
+  Eigen::MatrixXd eigen_B_mx(dim, 3);
+  for ( int r = 0; r < dim; ++r )
+  {
+    asiAlgo_FairingBjFunc rhs_x(m_inputCurve, 0, U, p, r, m_fLambda);
+    asiAlgo_FairingBjFunc rhs_y(m_inputCurve, 1, U, p, r, m_fLambda);
+    asiAlgo_FairingBjFunc rhs_z(m_inputCurve, 2, U, p, r, m_fLambda);
 
-  //Standard_Integer aSpanIndex = 0;
-  //Standard_Real aNewU(u);
-  ////PeriodicNormalization(aNewU);
-  //BSplCLib::LocateParameter( m_iDegree,
-  //                           m_curve->Knots(),
-  //                           &m_curve->Multiplicities(),
-  //                           u,
-  //                           false,
-  //                           aSpanIndex,
-  //                           aNewU );
+    // Compute integrals.
+    const double val_x = Integral(rhs_x, U.First(), U.Last(), NUM_INTEGRATION_BINS);
+    const double val_y = Integral(rhs_y, U.First(), U.Last(), NUM_INTEGRATION_BINS);
+    const double val_z = Integral(rhs_z, U.First(), U.Last(), NUM_INTEGRATION_BINS);
 
-  //if ( aNewU < m_curve->Knots().Value(aSpanIndex) )
-  //  aSpanIndex--;
-  ////
-  //gp_Pnt P;
-  //gp_Vec V1, V2;
-  ////
-  //BSplCLib::D2(aNewU,aSpanIndex,m_iDegree,false,m_curve->Poles(),
-  //    BSplCLib::NoWeights(),
-  //    m_curve->Knots(), &m_curve->Multiplicities(),
-  //    P, V1, V2);
+    eigen_B_mx(r, 0) = -val_x;
+    eigen_B_mx(r, 1) = -val_y;
+    eigen_B_mx(r, 2) = -val_z;
+  }
 
-  /* ====================================================
-   *  Calculate 2-nd derivative of the curve in question
-   * ==================================================== */
+#if defined COUT_DEBUG
+  std::cout << "Here is the matrix B:\n" << eigen_B_mx << std::endl;
+#endif
 
-  gp_Pnt P;
-  gp_Vec d1C, d2C;
-  m_curve->D2(u, P, d1C, d2C);
+  // Solve
+  Eigen::ColPivHouseholderQR<Eigen::MatrixXd> QR(eigen_A_mx);
+  Eigen::MatrixXd eigen_X_mx = QR.solve(eigen_B_mx);
 
-  // Get projection of the second derivative.
-  const double d2C_proj = d2C.Coord(m_iCoord + 1); // As the passed coord is 0-based,
-                                                   // while OCCT operates with 1-based indices.
+#if defined COUT_DEBUG
+  std::cout << "Here is the matrix X (solution):\n" << eigen_X_mx << std::endl;
+#endif
 
-  // Calculate the result.
-  f = FAIRING_LAMBDA*d2N*d2C_proj;
+  m_resultCurve = Handle(Geom_BSplineCurve)::DownCast( m_inputCurve->Copy() );
+
+  // Apply perturbations to poles.
+  const TColgp_Array1OfPnt& poles = m_resultCurve->Poles();
+  int                       r     = 0;
+  //
+  for ( int p = poles.Lower(); p <= poles.Upper(); ++p, ++r )
+  {
+    gp_XYZ P = poles(p).XYZ();
+    gp_XYZ D = gp_XYZ( eigen_X_mx(r, 0), eigen_X_mx(r, 1), eigen_X_mx(r, 2) );
+    //
+    m_resultCurve->SetPole(p, P + D);
+  }
+
+#if defined DRAW_DEBUG
+  m_plotter.REDRAW_CURVE("faired", m_resultCurve, Color_Green);
+#endif
 
   return true;
 }

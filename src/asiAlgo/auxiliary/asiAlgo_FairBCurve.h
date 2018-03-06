@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 03 March 2018
+// Created on: 05 March 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
@@ -28,61 +28,59 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_FairingBjFunc_HeaderFile
-#define asiAlgo_FairingBjFunc_HeaderFile
+#ifndef asiAlgo_FairBCurve_HeaderFile
+#define asiAlgo_FairBCurve_HeaderFile
 
 // asiAlgo includes
 #include <asiAlgo.h>
 
-// Mobius includes
-#include <mobius/core_HeapAlloc.h>
-
 // OCCT includes
 #include <Geom_BSplineCurve.hxx>
-#include <math_Function.hxx>
 
-// Standard includes
-#include <vector>
+// Active Data includes
+#include <ActAPI_IAlgorithm.h>
 
-//! Univariate function to interface right-hand-side of fairing linear problem
-//! via OpenCascade math_Function API.
-class asiAlgo_FairingBjFunc : public math_Function
+//! Fairing algorithm for B-spline curves.
+class asiAlgo_FairBCurve : public ActAPI_IAlgorithm
 {
 public:
 
   //! ctor.
-  //! \param[in] curve B-spline curve in question (the one to fair).
-  //! \param[in] coord index of coordinate to use (0 for X, 1 for Y, and 2 for Z).
-  //! \param[in] U     knot vector.
-  //! \param[in] p     B-spline degree.
-  //! \param[in] i     0-based index of the B-spline function.
+  //! \param[in] curve    B-spline curve in question (the one to fair).
+  //! \param[in] lambda   fairing coefficient.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_FairingBjFunc(const Handle(Geom_BSplineCurve)& curve,
-                            const int                        coord,
-                            const std::vector<double>&       U,
-                            const int                        p,
-                            const int                        i);
+    asiAlgo_FairBCurve(const Handle(Geom_BSplineCurve)& curve,
+                       const double                     lambda,
+                       ActAPI_ProgressEntry             progress,
+                       ActAPI_PlotterEntry              plotter);
 
 public:
 
-  //! Evaluates function.
+  //! Performs fairing.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    Value(const double u, double& f);
+    Perform();
+
+public:
+
+  //! \return resulting curve.
+  Handle(Geom_BSplineCurve) GetResult() const
+  {
+    return m_resultCurve;
+  }
 
 protected:
 
-  Handle(Geom_BSplineCurve) m_curve;   //!< Curve in question.
-  int                       m_iCoord;  //!< Coordinate in question.
-  std::vector<double>       m_U;       //!< Knot vector.
-  int                       m_iDegree; //!< Degree of the spline function.
-  int                       m_iIndex;  //!< 0-based index of the spline function.
+  //! Curve to fair.
+  Handle(Geom_BSplineCurve) m_inputCurve;
 
-  //! Memory allocator.
-  mobius::core_HeapAlloc2D<double> m_alloc;
+  //! Result of fairing.
+  Handle(Geom_BSplineCurve) m_resultCurve;
 
-  //! Table of B-spline derivatives.
-  double** m_dN;
+  //! Fairing coefficient.
+  double m_fLambda;
 
 };
 

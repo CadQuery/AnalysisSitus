@@ -32,30 +32,29 @@
 #define asiAlgo_FairingAijFunc_HeaderFile
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_FairingCoeffFunc.h>
 
 // OCCT includes
-#include <math_Function.hxx>
-
-// Standard includes
-#include <vector>
+#include <TColStd_Array1OfReal.hxx>
 
 //! Univariate function to interface fairing coefficients via OpenCascade
 //! math_Function API.
-class asiAlgo_FairingAijFunc : public math_Function
+class asiAlgo_FairingAijFunc : public asiAlgo_FairingCoeffFunc
 {
 public:
 
   //! ctor.
-  //! \param[in] U knot vector.
-  //! \param[in] p B-spline degree.
-  //! \param[in] i 0-based index 1.
-  //! \param[in] j 0-based index 2.
+  //! \param[in] U      knot vector.
+  //! \param[in] p      B-spline degree.
+  //! \param[in] i      0-based index 1.
+  //! \param[in] j      0-based index 2.
+  //! \param[in] lambda fairing coefficent.
   asiAlgo_EXPORT
-    asiAlgo_FairingAijFunc(const std::vector<double>& U,
-                           const int                  p,
-                           const int                  i,
-                           const int                  j);
+    asiAlgo_FairingAijFunc(const TColStd_Array1OfReal& U,
+                           const int                   p,
+                           const int                   i,
+                           const int                   j,
+                           const double                lambda);
 
 public:
 
@@ -64,12 +63,17 @@ public:
   asiAlgo_EXPORT bool
     Value(const double u, double& f);
 
+private:
+
+  asiAlgo_FairingAijFunc() = delete;
+  void operator=(const asiAlgo_FairingAijFunc&) = delete;
+
 protected:
 
-  std::vector<double> m_U;       //!< Knot vector.
-  int                 m_iDegree; //!< Degree of the spline function.
-  int                 m_iIndex1; //!< 0-based index 1.
-  int                 m_iIndex2; //!< 0-based index 2.
+  const TColStd_Array1OfReal& m_U;       //!< Knot vector ("flat" knots).
+  int                         m_iDegree; //!< Degree of the spline function.
+  int                         m_iIndex1; //!< 0-based index 1.
+  int                         m_iIndex2; //!< 0-based index 2.
 
 };
 

@@ -49,6 +49,7 @@
 #include <BRepOffset_MakeOffset.hxx>
 #include <BRepOffset_MakeSimpleOffset.hxx>
 #include <Precision.hxx>
+#include <TopoDS.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -230,6 +231,64 @@ int ENGINE_MakeFace(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_MakeCurve(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node to access the selected edge.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  const TopTools_IndexedMapOfShape& subShapes = partNode->GetAAG()->GetMapOfSubShapes();
+
+  // Curve Node is expected.
+  Handle(asiData_CurveNode) curveNode = partNode->GetCurveRepresentation();
+  //
+  if ( curveNode.IsNull() || !curveNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Curve Node is null or ill-defined.");
+    return TCL_OK;
+  }
+
+  // Get ID of the selected edge.
+  const int edgeIdx = curveNode->GetSelectedEdge();
+  //
+  if ( edgeIdx <= 0 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Please, select edge first.");
+    return TCL_OK;
+  }
+
+  // Get host curve of the selected edge.
+  const TopoDS_Shape& edgeShape = subShapes(edgeIdx);
+  //
+  if ( edgeShape.ShapeType() != TopAbs_EDGE )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected topological type of the selected edge.");
+    return TCL_OK;
+  }
+  //
+  double f, l;
+  Handle(Geom_Curve) curve = BRep_Tool::Curve( TopoDS::Edge(edgeShape), f, l );
+
+  // Set result.
+  interp->GetPlotter().REDRAW_CURVE(argv[1], curve, Color_White);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                                   const Handle(Standard_Transient)& data)
 {
@@ -268,5 +327,13 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t as a Surface object in the scene graph of imperative plotter.",
     //
     __FILE__, group, ENGINE_MakeFace);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("make-curve",
+    //
+    "make-curve curveName\n"
+    "\t Creates a curve from the selected edge.",
+    //
+    __FILE__, group, ENGINE_MakeCurve);
 
 }

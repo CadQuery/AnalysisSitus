@@ -72,10 +72,13 @@ public:
     Populate();
 
   void
-    SetSelected(const ActAPI_DataObjectId& nodeId);
+    SetSelectedNode(const ActAPI_DataObjectId& nodeId);
 
   Handle(ActAPI_INode)
-    GetSelected() const;
+    GetSelectedNode() const;
+
+  Handle(ActAPI_HNodeList)
+    GetSelectedNodes() const;
 
 protected:
 
@@ -111,12 +114,13 @@ protected slots:
 
 protected:
 
-  virtual void populateContextMenu(const Handle(ActAPI_INode)& activeNode,
-                                   QMenu*                      pMenu);
+  virtual void populateContextMenu(const Handle(ActAPI_HNodeList)& activeNodes,
+                                   QMenu*                          pMenu);
 
 protected:
 
-  bool selectedNode(Handle(ActAPI_INode)& Node) const;
+  bool selectedNode  (Handle(ActAPI_INode)&     Node) const;
+  bool selectedNodes (Handle(ActAPI_HNodeList)& Nodes) const;
 
 protected:
 

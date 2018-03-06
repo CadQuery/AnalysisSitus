@@ -66,21 +66,21 @@ asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
                                          QWidget*                     parent)
 : QTreeWidget(parent), m_progress(progress), m_model(model)
 {
-  // Configure
+  // Configure.
   this->setMinimumWidth(TREEVIEW_MINSIZE);
   this->setEditTriggers(QAbstractItemView::NoEditTriggers);
   this->header()->hide();
   this->setColumnCount(1);
   this->setAutoExpandDelay(0);
 
-  // Populate
+  // Populate.
   this->Populate();
 
-  // Configure selection
-  this->setSelectionMode(QAbstractItemView::SingleSelection);
+  // Configure selection.
+  this->setSelectionMode(QAbstractItemView::ExtendedSelection);
   this->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-  // Reactions
+  // Reactions.
   connect( this, SIGNAL( itemSelectionChanged() ), this, SLOT( onSelectionChanged() ) );
   //
   this->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -109,10 +109,10 @@ void asiUI_ObjectBrowser::AddAssociatedViewer(asiUI_Viewer* pViewer)
 //! Populates tree view from the Data Model.
 void asiUI_ObjectBrowser::Populate()
 {
-  // Clean up the existing contents
+  // Clean up the existing contents.
   this->clear();
 
-  // Add root node
+  // Add root node.
   Handle(ActAPI_INode) root_n = m_model->GetRootNode();
   //
   if ( root_n.IsNull() || !root_n->IsWellFormed() )
@@ -124,18 +124,18 @@ void asiUI_ObjectBrowser::Populate()
   //
   this->addTopLevelItem(root_ui);
 
-  // Add child nodes
+  // Add child nodes.
   this->addChildren(root_n, root_ui);
 
-  // Expand tree
+  // Expand tree.
   this->expandAll();
 }
 
 //-----------------------------------------------------------------------------
 
 //! Searches for an item with the given index and set that item selected.
-//! \param nodeId [in] target Node ID.
-void asiUI_ObjectBrowser::SetSelected(const ActAPI_DataObjectId& nodeId)
+//! \param[in] nodeId target Node ID.
+void asiUI_ObjectBrowser::SetSelectedNode(const ActAPI_DataObjectId& nodeId)
 {
   QTreeWidgetItemIterator it(this);
   //
@@ -155,7 +155,7 @@ void asiUI_ObjectBrowser::SetSelected(const ActAPI_DataObjectId& nodeId)
 //-----------------------------------------------------------------------------
 
 //! \return selected Node or NULL if nothing is selected.
-Handle(ActAPI_INode) asiUI_ObjectBrowser::GetSelected() const
+Handle(ActAPI_INode) asiUI_ObjectBrowser::GetSelectedNode() const
 {
   Handle(ActAPI_INode) selected;
   if ( !this->selectedNode(selected) )
@@ -166,9 +166,21 @@ Handle(ActAPI_INode) asiUI_ObjectBrowser::GetSelected() const
 
 //-----------------------------------------------------------------------------
 
+//! \return selected Nodes or empty list if nothing is selected.
+Handle(ActAPI_HNodeList) asiUI_ObjectBrowser::GetSelectedNodes() const
+{
+  Handle(ActAPI_HNodeList) selected;
+  if ( !this->selectedNodes(selected) )
+    return NULL;
+
+  return selected;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Adds all child items under the given root.
-//! \param root_n  [in] root Node in a Data Model.
-//! \param root_ui [in] root item in a tree view.
+//! \param[in] root_n  root Node in a Data Model.
+//! \param[in] root_ui root item in a tree view.
 void asiUI_ObjectBrowser::addChildren(const Handle(ActAPI_INode)& root_n,
                                       QTreeWidgetItem*            root_ui)
 {
@@ -185,7 +197,7 @@ void asiUI_ObjectBrowser::addChildren(const Handle(ActAPI_INode)& root_n,
     //
     root_ui->addChild(child_ui);
 
-    // Repeat recursively
+    // Repeat recursively.
     this->addChildren(child_n, child_ui);
   }
 }
@@ -201,13 +213,13 @@ void asiUI_ObjectBrowser::onSelectionChanged()
 //-----------------------------------------------------------------------------
 
 //! Reaction on context menu opening.
-//! \param pos [in] position.
+//! \param[in] pos position.
 void asiUI_ObjectBrowser::onContextMenu(QPoint pos)
 {
-  Handle(ActAPI_INode) selected_n;
-  if ( !this->selectedNode(selected_n) ) return;
+  Handle(ActAPI_HNodeList) selected_n;
+  if ( !this->selectedNodes(selected_n) ) return;
 
-  // Create and populate the menu
+  // Create and populate the menu.
   QMenu* pMenu = new QMenu(this);
   //
   this->populateContextMenu(selected_n, pMenu);
@@ -221,19 +233,24 @@ void asiUI_ObjectBrowser::onContextMenu(QPoint pos)
 //! Reaction on "show" action.
 void asiUI_ObjectBrowser::onShow()
 {
-  Handle(ActAPI_INode) selected_n;
-  if ( !this->selectedNode(selected_n) ) return;
+  Handle(ActAPI_HNodeList) selected_n;
+  if ( !this->selectedNodes(selected_n) ) return;
 
-  // Iterate over the associated viewer to find the one where the selected
-  // Node is presented
-  for ( size_t k = 0; k < m_viewers.size(); ++k )
-    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
-    {
-      m_viewers[k]->PrsMgr()->DeRenderPresentation(selected_n);
-      m_viewers[k]->PrsMgr()->Actualize(selected_n);
-    }
+  for ( ActAPI_HNodeList::Iterator nit(*selected_n); nit.More(); nit.Next() )
+  {
+    const Handle(ActAPI_INode)& N = nit.Value();
 
-  emit show( selected_n->GetId() );
+    // Iterate over the associated viewer to find the one where the selected
+    // Node is presented.
+    for ( size_t k = 0; k < m_viewers.size(); ++k )
+      if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(N) )
+      {
+        m_viewers[k]->PrsMgr()->DeRenderPresentation(N);
+        m_viewers[k]->PrsMgr()->Actualize(N);
+      }
+
+    emit show( N->GetId() );
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -241,19 +258,26 @@ void asiUI_ObjectBrowser::onShow()
 //! Reaction on "show only" action.
 void asiUI_ObjectBrowser::onShowOnly()
 {
-  Handle(ActAPI_INode) selected_n;
-  if ( !this->selectedNode(selected_n) ) return;
+  Handle(ActAPI_HNodeList) selected_n;
+  if ( !this->selectedNodes(selected_n) ) return;
 
-  // Iterate over the associated viewer to find the one where the selected
-  // Node is presented
+  // Derender all presentations.
   for ( size_t k = 0; k < m_viewers.size(); ++k )
-    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
-    {
+    if ( m_viewers[k] )
       m_viewers[k]->PrsMgr()->DeRenderAllPresentations();
-      m_viewers[k]->PrsMgr()->Actualize(selected_n);
-    }
 
-  emit showOnly( selected_n->GetId() );
+  for ( ActAPI_HNodeList::Iterator nit(*selected_n); nit.More(); nit.Next() )
+  {
+    const Handle(ActAPI_INode)& N = nit.Value();
+
+    // Iterate over the associated viewer to find the one where the selected
+    // Node is presented.
+    for ( size_t k = 0; k < m_viewers.size(); ++k )
+      if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(N) )
+        m_viewers[k]->PrsMgr()->Actualize(N);
+
+    emit showOnly( N->GetId() );
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -261,19 +285,24 @@ void asiUI_ObjectBrowser::onShowOnly()
 //! Reaction on "hide" action.
 void asiUI_ObjectBrowser::onHide()
 {
-  Handle(ActAPI_INode) selected_n;
-  if ( !this->selectedNode(selected_n) ) return;
+  Handle(ActAPI_HNodeList) selected_n;
+  if ( !this->selectedNodes(selected_n) ) return;
 
-  // Iterate over the associated viewers to find the one where the selected
-  // Node is presented
-  for ( size_t k = 0; k < m_viewers.size(); ++k )
-    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
-    {
-      m_viewers[k]->PrsMgr()->DeRenderPresentation(selected_n);
-      m_viewers[k]->Repaint();
-    }
+  for ( ActAPI_HNodeList::Iterator nit(*selected_n); nit.More(); nit.Next() )
+  {
+    const Handle(ActAPI_INode)& N = nit.Value();
 
-  emit hide( selected_n->GetId() );
+    // Iterate over the associated viewers to find the one where the selected
+    // Node is presented.
+    for ( size_t k = 0; k < m_viewers.size(); ++k )
+      if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(N) )
+      {
+        m_viewers[k]->PrsMgr()->DeRenderPresentation(N);
+        m_viewers[k]->Repaint();
+      }
+
+    emit hide( N->GetId() );
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -385,7 +414,7 @@ void asiUI_ObjectBrowser::onSaveToBREP()
 
   QString filename = asiUI_Common::selectBRepFile(asiUI_Common::OpenSaveAction_Save);
 
-  // Save shape
+  // Save shape.
   if ( !asiAlgo_Utils::WriteBRep( topoNode->GetShape(), QStr2AsciiStr(filename) ) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot save shape.");
@@ -403,27 +432,27 @@ void asiUI_ObjectBrowser::onSetAsPart()
   if ( !selected_n->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
     return;
 
-  // Convert to the only supported type
+  // Convert to the only supported type.
   Handle(asiData_IVTopoItemNode)
     topoNode = Handle(asiData_IVTopoItemNode)::DownCast(selected_n);
 
   Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(m_model);
 
-  // Modify Data Model
+  // Modify Data Model.
   M->OpenCommand();
   {
     asiEngine_Part(M, NULL).Update( topoNode->GetShape() );
   }
   M->CommitCommand();
 
-  // Update UI
+  // Update UI.
   for ( size_t k = 0; k < m_viewers.size(); ++k )
   {
-    // Clear topological item
+    // Clear topological item.
     if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(topoNode) )
       m_viewers[k]->PrsMgr()->DeRenderPresentation(topoNode);
 
-    // Actualize part
+    // Actualize part.
     if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented( M->GetPartNode() ) )
       m_viewers[k]->PrsMgr()->Actualize( M->GetPartNode() );
   }
@@ -436,7 +465,7 @@ void asiUI_ObjectBrowser::onPrintParameters()
   Handle(ActAPI_INode) selected_n;
   if ( !this->selectedNode(selected_n) ) return;
 
-  // Loop over the parameters
+  // Loop over the parameters.
   TCollection_AsciiString dump("Parameters of \'");
   dump += selected_n->GetName();
   dump += "\' [";
@@ -469,11 +498,11 @@ void asiUI_ObjectBrowser::onCopyName()
   Handle(ActAPI_INode) selected_n;
   if ( !this->selectedNode(selected_n) ) return;
 
-  // Set to clipboard
+  // Set to clipboard.
   QClipboard* clipboard = QApplication::clipboard();
   clipboard->setText( ExtStr2QStr( selected_n->GetName() ) );
 
-  // Notify
+  // Notify.
   m_progress.SendLogMessage( LogInfo(Normal) << "Selected Node's name: %1"
                                              << selected_n->GetName() );
 }
@@ -481,25 +510,56 @@ void asiUI_ObjectBrowser::onCopyName()
 //-----------------------------------------------------------------------------
 
 //! Populates context menu with actions.
-//! \param activeNode [in]      currently active Node.
-//! \param pMenu      [in, out] menu to populate.
-void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_INode)& activeNode,
-                                              QMenu*                      pMenu)
+//! \param[in]     activeNodes currently active Nodes.
+//! \param[in,out] pMenu       menu to populate.
+void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& activeNodes,
+                                              QMenu*                          pMenu)
 {
+  if ( activeNodes.IsNull() || activeNodes->IsEmpty() )
+    return;
+
+  // Get type of the first Node.
+  const int             numSelected = activeNodes->Length();
+  Handle(ActAPI_INode)  node        = activeNodes->First();
+  Handle(Standard_Type) type        = node->DynamicType();
+
+  // Check whether other Nodes are of the same type.
+  bool isOfSameType = true;
+  //
+  for ( ActAPI_HNodeList::Iterator nit(*activeNodes); nit.More(); nit.Next() )
+  {
+    const Handle(ActAPI_INode)& N = nit.Value();
+    //
+    if ( N->DynamicType() != type )
+    {
+      isOfSameType = false;
+      break;
+    }
+  }
+  //
+  if ( !isOfSameType )
+  {
+    m_progress.SendLogMessage(LogWarn(Normal) << "Selected Nodes are of different types.");
+    return;
+  }
+
   // Iterate over the associated viewer to find the one where the selected
-  // Node is presented
+  // Node is presented.
   bool isPresented = false;
   for ( size_t k = 0; k < m_viewers.size(); ++k )
   {
-    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(activeNode) )
+    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(node) )
     {
       isPresented = true;
       break;
     }
   }
 
-  pMenu->addAction( "Print parameters", this, SLOT( onPrintParameters () ) );
-  pMenu->addAction( "Copy name",        this, SLOT( onCopyName        () ) );
+  if ( numSelected == 1 )
+  {
+    pMenu->addAction( "Print parameters", this, SLOT( onPrintParameters () ) );
+    pMenu->addAction( "Copy name",        this, SLOT( onCopyName        () ) );
+  }
   //
   if ( isPresented )
   {
@@ -507,21 +567,25 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_INode)& active
     pMenu->addAction( "Show",                this, SLOT( onShow            () ) );
     pMenu->addAction( "Show only",           this, SLOT( onShowOnly        () ) );
     pMenu->addAction( "Hide",                this, SLOT( onHide            () ) );
-    pMenu->addAction( "Manage pipelines...", this, SLOT( onManagePipelines () ) );
 
-    if ( activeNode->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
+    if ( numSelected == 1 )
     {
-      pMenu->addSeparator();
-      pMenu->addAction( "Hide edges",         this, SLOT( onHidePartEdges () ) );
-      pMenu->addAction( "Show edges",         this, SLOT( onShowPartEdges () ) );
-      pMenu->addAction( "Reset presentation", this, SLOT( onResetPartPrs  () ) );
-    }
+      pMenu->addAction( "Manage pipelines...", this, SLOT( onManagePipelines () ) );
 
-    if ( activeNode->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
-    {
-      pMenu->addSeparator();
-      pMenu->addAction( "Save to BREP...", this, SLOT( onSaveToBREP () ) );
-      pMenu->addAction( "Set as part",     this, SLOT( onSetAsPart  () ) );
+      if ( node->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
+      {
+        pMenu->addSeparator();
+        pMenu->addAction( "Hide edges",         this, SLOT( onHidePartEdges () ) );
+        pMenu->addAction( "Show edges",         this, SLOT( onShowPartEdges () ) );
+        pMenu->addAction( "Reset presentation", this, SLOT( onResetPartPrs  () ) );
+      }
+
+      if ( node->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
+      {
+        pMenu->addSeparator();
+        pMenu->addAction( "Save to BREP...", this, SLOT( onSaveToBREP () ) );
+        pMenu->addAction( "Set as part",     this, SLOT( onSetAsPart  () ) );
+      }
     }
   }
 }
@@ -529,7 +593,7 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_INode)& active
 //-----------------------------------------------------------------------------
 
 //! Returns the currently active Node.
-//! \param Node [out] requested Node.
+//! \param[out] Node requested Node.
 //! \return true in case of success, false -- otherwise.
 bool asiUI_ObjectBrowser::selectedNode(Handle(ActAPI_INode)& Node) const
 {
@@ -551,5 +615,39 @@ bool asiUI_ObjectBrowser::selectedNode(Handle(ActAPI_INode)& Node) const
 
   // Set result
   Node = selected_n;
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Returns the currently active Nodes.
+//! \param[out] Nodes requested Nodes.
+//! \return true in case of success, false -- otherwise.
+bool asiUI_ObjectBrowser::selectedNodes(Handle(ActAPI_HNodeList)& Nodes) const
+{
+  QList<QTreeWidgetItem*> items = this->selectedItems();
+  if ( !items.length() )
+    return false;
+
+  Nodes = new ActAPI_HNodeList;
+
+  for ( QList<QTreeWidgetItem*>::iterator it = items.begin(); it != items.end(); ++it )
+  {
+    QTreeWidgetItem* item = *it;
+    TCollection_AsciiString entry = QStr2AsciiStr( item->data(0, BrowserRoleNodeId).toString() );
+
+    // Take the corresponding data object.
+    Handle(ActAPI_INode) selected_n = m_model->FindNode(entry);
+    //
+    if ( selected_n.IsNull() || !selected_n->IsWellFormed() )
+    {
+      m_progress.SendLogMessage(LogWarn(Normal) << "Selected Node is invalid");
+      continue;
+    }
+
+    // Populate the output list.
+    Nodes->Append(selected_n);
+  }
+
   return true;
 }

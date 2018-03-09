@@ -47,6 +47,7 @@
 
 // OCCT includes
 #include <BOPAlgo_Splitter.hxx>
+#include <BRep_Builder.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -862,22 +863,47 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  TopoDS_Shape
-    partShape = Handle(asiEngine_Model)::DownCast( interp->GetModel() )->GetPartNode()->GetShape();
+  BRep_Builder BB;
 
-  // Test scaling.
-  GProp_GProps props;
-  BRepGProp::VolumeProperties(partShape, props);
-  gp_Pnt center = props.CentreOfMass();
+  TopoDS_Shape operand1;
+  BRepTools::Read(operand1, "D:/fusionShape.brep", BB);
+  TopoDS_Shape operand2;
+  BRepTools::Read(operand2, "D:/createdCylinder.brep", BB);
+
+  BRepAlgoAPI_Fuse API;
+
+  // Prepare the arguments
+  TopTools_ListOfShape Objects;
+  Objects.Append(operand1);
+
+  // Prepare the tools
+  TopTools_ListOfShape Tools;
+  Tools.Append(operand2);
+
+  // Set the arguments
+  API.SetArguments(Objects);
+  API.SetTools(Tools);
+  API.SetRunParallel(false);
+  API.SetFuzzyValue(1e-1);
+
+  // Run the algorithm 
+  API.Build(); 
+
+  // Check the result
+  const bool hasErr = API.HasErrors();
   //
-  gp_Trsf S;
-  S.SetScale(center, 1.5);
-  //
-  BRepBuilderAPI_Transform transformScale(partShape, S, true);
+  if ( hasErr )
+  {
+    const Handle(Message_Report)& report = API.GetReport();
+    report->Dump(std::cout);
 
-  TopoDS_Shape result = transformScale.Shape();
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Error: BOPs return error.");
+    return TCL_OK;
+  }
 
-  interp->GetPlotter().DRAW_SHAPE(result, "transform");
+  TopoDS_Shape fusionShape = API.Shape();
+
+  interp->GetPlotter().REDRAW_SHAPE("result", fusionShape);
 
   return TCL_OK;
 }

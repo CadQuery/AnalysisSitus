@@ -104,7 +104,7 @@ void asiUI_ControlsPartListener::onPartLoaded(const QString& filename)
   if ( m_cf->MainWindow )
     m_cf->MainWindow->setWindowTitle("Analysis of [" + filename + "]");
 
-  this->reinitializeEverything();
+  this->reinitializeEverything(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ void asiUI_ControlsPartListener::onPartLoaded(const QString& filename)
 //! Reaction on part adding.
 void asiUI_ControlsPartListener::onPartAdded(const QString&)
 {
-  this->reinitializeEverything();
+  this->reinitializeEverything(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -261,7 +261,8 @@ void asiUI_ControlsPartListener::cleanViewers()
 //-----------------------------------------------------------------------------
 
 //! Performs full re-initialization of everything.
-void asiUI_ControlsPartListener::reinitializeEverything()
+//! \param[in] fitAll indicates whether to fit the scene.
+void asiUI_ControlsPartListener::reinitializeEverything(const bool fitAll)
 {
   m_notifier.SetMessageKey("Actualize presentations");
   m_notifier.Init(1);
@@ -280,7 +281,7 @@ void asiUI_ControlsPartListener::reinitializeEverything()
   this->reinitializePickers();
 
   // Actualize
-  m_cf->ViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, true);
+  m_cf->ViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, fitAll);
 
   // Repaint other viewers which may have been affected
   m_cf->ViewerHost->Repaint();
@@ -302,6 +303,7 @@ void asiUI_ControlsPartListener::reinitializePickers()
   // any reaction on "useless" actors, e.g. normal fields, etc.
   Handle(ActAPI_HNodeList) pickableNodes = new ActAPI_HNodeList;
   pickableNodes->Append( m_model->GetPartNode() );
+  //
   m_cf->ViewerPart->PrsMgr()->SetPickFromList(true);
   m_cf->ViewerPart->PrsMgr()->SetPickList(pickableNodes);
 }

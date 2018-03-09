@@ -75,7 +75,7 @@ protected:
     cleanViewers();
 
   virtual void
-    reinitializeEverything();
+    reinitializeEverything(const bool fitAll = true);
 
   void
     reinitializePickers();

@@ -47,9 +47,11 @@
 
 // OCCT includes
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Iterator.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -291,11 +293,29 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
                           int                          argc,
                           const char**                 argv)
 {
-  if ( argc != 1 && argc != 2 && argc != 3 && argc != 4 )
+  if ( argc > 6 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
+  /* ================
+   *  Prepare inputs
+   * ================ */
+
+  // Find control keys.
+  bool noPlot           = false;
+  bool noAlongCurvature = false;
+  //
+  for ( int i = 1; i < argc; ++i )
+  {
+    if ( interp->IsKeyword(argv[i], "noplot") )
+      noPlot = true;
+
+    if ( interp->IsKeyword(argv[i], "noalong") )
+      noAlongCurvature = true;
+  }
+
+  // Get numerical values.
   int    numPts      = 100;
   double scaleFactor = 1.0;
   double amplFactor  = 1.0;
@@ -316,6 +336,7 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
   //
+  TopoDS_Shape                      partShape = partNode->GetShape();
   const TopTools_IndexedMapOfShape& subShapes = partNode->GetAAG()->GetMapOfSubShapes();
 
   // Curve Node is expected.
@@ -347,6 +368,10 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
   //
   double f, l;
   Handle(Geom_Curve) curve = BRep_Tool::Curve( TopoDS::Edge(edgeShape), f, l );
+
+  /* ==========================
+   *  Evaluate curvature combs
+   * ========================== */
 
   // Create curvature combs.
   asiEngine_Curve CurveAPI( cmdEngine::model, interp->GetProgress(), interp->GetPlotter() );
@@ -392,11 +417,53 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
   cmdEngine::cf->ObjectBrowser->Populate();
   cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(combsNode);
 
-  // Open curvature plot.
-  asiUI_CurvaturePlot*
-    cPlot = new asiUI_CurvaturePlot( interp->GetProgress(),
-                                     interp->GetPlotter() );
-  cPlot->Render(params, curvatures);
+  /* ======================
+   *  Build curvature plot
+   * ====================== */
+
+  if ( !noPlot )
+  {
+    // Open curvature plot.
+    asiUI_CurvaturePlot*
+      cPlot = new asiUI_CurvaturePlot( interp->GetProgress(),
+                                       interp->GetPlotter() );
+    cPlot->Render(params, curvatures);
+  }
+
+  /* ========================================
+   *  Check along-curvature (if faces exist)
+   * ======================================== */
+
+  if ( !noAlongCurvature )
+  {
+    // Get owner faces
+    TopTools_IndexedDataMapOfShapeListOfShape M;
+    TopExp::MapShapesAndAncestors(partShape, TopAbs_EDGE, TopAbs_FACE, M);
+    //
+    const TopTools_ListOfShape& edgeFaces = M.FindFromKey(edgeShape);
+    //
+    for ( TopTools_ListIteratorOfListOfShape fit(edgeFaces); fit.More(); fit.Next() )
+    {
+      const TopoDS_Face& faceShape = TopoDS::Face( fit.Value() );
+
+      // Evaluate along curvature
+      double k;
+      if ( !asiAlgo_Utils::EvaluateAlongCurvature(faceShape, TopoDS::Edge(edgeShape), k) )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot evaluate along-curvature.");
+        continue;
+      }
+      else
+      {
+        interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Along curvature: %1." << k);
+
+        if ( Abs(k) < 1.e-5 )
+          interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Curvature radius is infinite." );
+        else
+          interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Curvature radius: %1." << Abs(1.0 / k) );
+      }
+    }
+  }
 
   return TCL_OK;
 }
@@ -507,12 +574,14 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-curvature",
     //
-    "check-curvature [numPts [scaleFactor [curvAmpl]]] \n"
+    "check-curvature [numPts [scaleFactor [curvAmpl]]] [-noplot] [-noalong] \n"
     "\t Checks curvature of the selected edge. As a result, curvature combs \n"
-    "\t plot is visualized in 3D. You can control its scale factor with \n"
+    "\t are visualized in 3D. You can control its scale factor with \n"
     "\t <scaleFactor> argument and also its density with <numPts> argument. \n"
     "\t To bring out the salient features of the comb, <curvAmpl> amplification \n"
-    "\t factor can be used.",
+    "\t factor can be used. If -noplot key is passed, the curvature plot is not \n"
+    "\t constructed. If -noalong key is passed, the along-curvature value for \n"
+    "\t the selected edges is not computed.",
     //
     __FILE__, group, ENGINE_CheckCurvature);
 

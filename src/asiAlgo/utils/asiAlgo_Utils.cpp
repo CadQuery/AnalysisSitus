@@ -55,6 +55,7 @@
 #include <BRepCheck_Result.hxx>
 #include <BRepCheck_Status.hxx>
 #include <BRepCheck_Wire.hxx>
+#include <BRepLProp_SLProps.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepTools.hxx>
 #include <GC_MakeCircle.hxx>
@@ -2287,4 +2288,75 @@ bool asiAlgo_Utils::ReparametrizeBSpl(const Handle(Geom2d_Curve)&  curve,
   result->SetKnots(knots);
   //
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::EvaluateAlongCurvature(const TopoDS_Face& face,
+                                           const TopoDS_Edge& edge,
+                                           const double       t,
+                                           double&            k)
+{
+  // Get host geometries
+  double f, l;
+  Handle(Geom2d_Curve) c2d = BRep_Tool::CurveOnSurface(edge, face, f, l);
+  BRepAdaptor_Surface surf(face);
+
+  // Evaluate curve
+  gp_Pnt2d UV;
+  gp_Vec2d T;
+  c2d->D1(t, UV, T);
+
+  // Calculate differential properties
+  BRepLProp_SLProps Props(surf, UV.X(), UV.Y(), 2, 1e-7);
+  //
+  if ( !Props.IsCurvatureDefined() )
+  {
+#if defined COUT_DEBUG
+    std::cout << "Error: curvature is not defined" << std::endl;
+#endif
+    return false;
+  }
+
+  // Get differential properties
+  const gp_Vec Xu  = Props.D1U();
+  const gp_Vec Xv  = Props.D1V();
+  const gp_Vec Xuu = Props.D2U();
+  const gp_Vec Xuv = Props.DUV();
+  const gp_Vec Xvv = Props.D2V();
+  const gp_Vec n   = Props.Normal();
+
+  // Coefficients of the FFF
+  const double E = Xu.Dot(Xu);
+  const double F = Xu.Dot(Xv);
+  const double G = Xv.Dot(Xv);
+
+  // Coefficients of the SFF
+  const double L = n.Dot(Xuu);
+  const double M = n.Dot(Xuv);
+  const double N = n.Dot(Xvv);
+
+  // Calculate curvature using the coefficients of both fundamental forms
+  if ( Abs( T.X() ) < 1.0e-5 )
+    k = N / G;
+  else
+  {
+    const double lambda = T.Y() / T.X();
+    k = (L + 2*M*lambda + N*lambda*lambda) / (E + 2*F*lambda + G*lambda*lambda);
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::EvaluateAlongCurvature(const TopoDS_Face& face,
+                                           const TopoDS_Edge& edge,
+                                           double&            k)
+{
+  double f, l;
+  BRep_Tool::Range(edge, f, l);
+  const double t = (f + l)*0.5;
+
+  return EvaluateAlongCurvature(face, edge, t, k);
 }

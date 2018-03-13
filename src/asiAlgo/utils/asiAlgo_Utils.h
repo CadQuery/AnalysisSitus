@@ -735,6 +735,34 @@ public:
                       const bool                   toCopy,
                       Handle(Geom2d_BSplineCurve)& result);
 
+  //! This function is designed to evaluate curvature of the surface along the
+  //! the given edge. It takes the tangency direction of the edge's curve for
+  //! the passed parameter value and calculates the normal curvature at the
+  //! corresponding point on surface.
+  //! \param[in]  face face of interest.
+  //! \param[in]  edge edge of interest.
+  //! \param[in]  t    parameter on the edge's curve to evaluate curvature for.
+  //! \param[out] k    evaluated curvature.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT static bool
+    EvaluateAlongCurvature(const TopoDS_Face& face,
+                           const TopoDS_Edge& edge,
+                           const double       t,
+                           double&            k);
+
+  //! This function is designed to evaluate curvature of the surface along the
+  //! the given edge. It takes the tangency direction of the edge's curve for
+  //! the middle parameter value and calculates the normal curvature at the
+  //! corresponding point on surface.
+  //! \param[in]  face face of interest.
+  //! \param[in]  edge edge of interest.
+  //! \param[out] k    evaluated curvature.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT static bool
+    EvaluateAlongCurvature(const TopoDS_Face& face,
+                           const TopoDS_Edge& edge,
+                           double&            k);
+
 private:
 
   asiAlgo_Utils() = delete;

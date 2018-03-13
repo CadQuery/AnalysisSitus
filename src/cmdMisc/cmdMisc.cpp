@@ -58,6 +58,7 @@
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepOffsetAPI_MakeThickSolid.hxx>
+#include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepPrimAPI_MakePrism.hxx>
@@ -72,7 +73,7 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 
-#define DRAW_DEBUG
+#undef DRAW_DEBUG
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif
@@ -1105,8 +1106,10 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
+#if defined DRAW_DEBUG
   // Draw seed face.
   interp->GetPlotter().REDRAW_SHAPE("seedFace", seedFace, Color_Green);
+#endif
 
   // Find tentative faces.
   bool                                 isOk = true;
@@ -1142,13 +1145,14 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
   }
 #endif
 
-  /* ==================================
-   *  Stage 02: extract cross-polygons
-   * ================================== */
+  /* ==================================================
+   *  Stage 02: extract cross-circles and medial curve
+   * ================================================== */
 
   const int isos = 10;
 
-  std::vector<gp_XYZ> medialPoles;
+  std::vector<gp_Circ> crossCircles;
+  std::vector<gp_XYZ>  medialPoles;
 
   // Loop over the tentative faces.
   for ( size_t f = 0; f < tentativeFaces.size(); ++f )
@@ -1253,7 +1257,9 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
 
     for ( int k = 0; k < crossSections.size(); ++k )
     {
+#if defined DRAW_DEBUG
       //interp->GetPlotter().DRAW_CURVE(crossSections[k], Color_Red, "crossSection");
+#endif
 
       // Build center point.
       double crossSectionK, crossSectionR;
@@ -1271,20 +1277,101 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
         return TCL_OK;
       }
       //
+#if defined DRAW_DEBUG
       interp->GetPlotter().DRAW_POINT(crossSectionCenter, Color_Yellow, "crossSectionCenter");
+#endif
+
       medialPoles.push_back( crossSectionCenter.XYZ() );
 
       // Build osculating circle in the cross-sectional plane.
       gp_Vec crossSectionNorm = crossSectionT^gp_Vec( crossSectionCenter.XYZ() - crossSectionP.XYZ() );
-      gp_Ax2 crossSectionAx2(crossSectionCenter, crossSectionNorm);
+      gp_Ax2 crossSectionAx2(crossSectionCenter, crossSectionNorm, crossSectionT);
       gp_Circ crossSectionCirc(crossSectionAx2, crossSectionR);
       //
+      crossCircles.push_back(crossSectionCirc);
+
+#if defined DRAW_DEBUG
       interp->GetPlotter().DRAW_CURVE(new Geom_Circle(crossSectionCirc), Color_Green, "crossSectionCirc");
+      interp->GetPlotter().DRAW_VECTOR_AT(crossSectionCenter, crossSectionAx2.XDirection(), Color_Red,   "crossSectionAxisX");
+      interp->GetPlotter().DRAW_VECTOR_AT(crossSectionCenter, crossSectionAx2.YDirection(), Color_Green, "crossSectionAxisY");
+      interp->GetPlotter().DRAW_VECTOR_AT(crossSectionCenter, crossSectionAx2.Direction(),  Color_Blue,  "crossSectionAxisZ");
+#endif
     }
   }
 
   // Draw medial curve.
   interp->GetPlotter().REDRAW_POLYLINE("medialCurve", medialPoles, Color_Yellow);
+
+  /* ==========================================================
+   *  Stage 03: substiture cross-circles with regular polygons
+   * ========================================================== */
+
+  const int numPolyPoles = 3;
+
+  std::vector<TopoDS_Wire> polySections;
+
+  for ( size_t c = 0; c < crossCircles.size(); ++c )
+  {
+    const gp_Circ& circ = crossCircles[c];
+
+    // Build regular polygon.
+    std::vector<gp_XY> polyPoles;
+    asiAlgo_Utils::PolygonPoles( gp::Origin2d().XY(),
+                                 circ.Radius(),
+                                 numPolyPoles,
+                                 polyPoles );
+
+    const gp_Ax2& sectionAx2 = circ.Position();
+
+    // Choose working plane.
+    Handle(Geom_Plane)
+      circPlane = new Geom_Plane( gp_Pln( gp_Ax3(sectionAx2) ) );
+
+    // Populate wire builder.
+    BRepBuilderAPI_MakePolygon mkPoly;
+    for ( int k = 0; k < numPolyPoles; ++k )
+      mkPoly.Add( circPlane->Value( polyPoles[k].X(), polyPoles[k].Y() ) );
+    //
+    mkPoly.Add( circPlane->Value( polyPoles[0].X(), polyPoles[0].Y() ) );
+
+    // Build wire.
+    mkPoly.Build();
+    const TopoDS_Wire& polyWire = mkPoly.Wire();
+    //
+    polySections.push_back(polyWire);
+
+#if defined DRAW_DEBUG
+    interp->GetPlotter().DRAW_SHAPE(polyWire, Color_Yellow, 1.0, true, "polyWire");
+#endif
+  }
+
+  /* =========================
+   *  Stage 04: define facets
+   * ========================= */
+
+  // Initialize and build
+  BRepOffsetAPI_ThruSections ThruSections(true, true, 1.0e-1);
+  ThruSections.SetSmoothing(false);
+  ThruSections.SetMaxDegree(1);
+  ThruSections.CheckCompatibility(false);
+  //
+  for ( size_t k = 0; k < polySections.size(); ++k )
+  {
+    ThruSections.AddWire(polySections[k]);
+  }
+  try
+  {
+    ThruSections.Build();
+  }
+  catch ( ... )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Crash in BRepOffsetAPI_ThruSections.");
+    return TCL_OK;
+  }
+  //
+  const TopoDS_Shape& thru = ThruSections.Shape();
+
+  interp->GetPlotter().REDRAW_SHAPE("thru", thru);
 
   return TCL_OK;
 }

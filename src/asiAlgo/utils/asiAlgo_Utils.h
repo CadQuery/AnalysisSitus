@@ -626,6 +626,12 @@ public:
                  gp_XY&       P5,
                  gp_XY&       P6);
 
+  asiAlgo_EXPORT static void
+    PolygonPoles(const gp_XY&        center,
+                 const double        dist2Pole,
+                 const int           numPoles,
+                 std::vector<gp_XY>& poles);
+
   //! Calculates normal vectors at interior face points. This method uses
   //! point membership classification to ensure that inner points only are
   //! used.

@@ -1924,6 +1924,7 @@ Handle(Poly_Triangulation)
 
 //-----------------------------------------------------------------------------
 
+//! Originally taken from http://www.redblobgames.com/grids/hexagons/.
 void asiAlgo_Utils::HexagonPoles(const gp_XY& center,
                                  const double dist2Pole,
                                  gp_XY&       P1,
@@ -1935,17 +1936,32 @@ void asiAlgo_Utils::HexagonPoles(const gp_XY& center,
 {
   std::vector<gp_XY*> res = {&P1, &P2, &P3, &P4, &P5, &P6};
 
-  // Taken from http://www.redblobgames.com/grids/hexagons/
-  for ( int i = 0; i < 6; ++i )
+  std::vector<gp_XY> poles;
+  PolygonPoles(center, dist2Pole, 6, poles);
+  //
+  for ( int k = 0; k < 6; ++k )
+    *res[k] = poles[k];
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Utils::PolygonPoles(const gp_XY&        center,
+                                 const double        dist2Pole,
+                                 const int           numPoles,
+                                 std::vector<gp_XY>& poles)
+{
+  const double angStep  = 360.0/numPoles;
+  const double angDelta = angStep/2;
+
+  for ( int i = 0; i < numPoles; ++i )
   {
-    const double angle_deg = 60*i + 30;
+    const double angle_deg = angStep*i + angDelta;
     const double angle_rad = angle_deg / 180.0 * M_PI;
 
     const double x = center.X() + dist2Pole * Cos(angle_rad);
     const double y = center.X() + dist2Pole * Sin(angle_rad);
 
-    res[i]->SetX(x);
-    res[i]->SetY(y);
+    poles.push_back( gp_XY(x, y) );
   }
 }
 

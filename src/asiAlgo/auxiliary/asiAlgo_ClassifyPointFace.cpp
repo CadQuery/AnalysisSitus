@@ -42,9 +42,7 @@
 
 #undef DRAW_DEBUG
 #if defined DRAW_DEBUG
-  #include <common_draw_test_suite.h>
   #pragma message("===== warning: DRAW_DEBUG is enabled")
-  #pragma comment(lib, "TKDraw.lib")
 #endif
 
 //! Constructor.

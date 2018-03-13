@@ -62,7 +62,7 @@ asiAlgo_PlaneOnPoints::asiAlgo_PlaneOnPoints(ActAPI_ProgressEntry progress,
 //! \param points [in]  point set to build a fitting plane for.
 //! \param result [out] result plane.
 //! \return true in case of success, false -- otherwise.
-bool asiAlgo_PlaneOnPoints::Build(const std::vector<gp_Pnt>& points,
+bool asiAlgo_PlaneOnPoints::Build(const std::vector<gp_XYZ>& points,
                                   gp_Pln&                    result)
 {
   const int nPts = (int) points.size();
@@ -74,7 +74,7 @@ bool asiAlgo_PlaneOnPoints::Build(const std::vector<gp_Pnt>& points,
   gp_XYZ mu;
   for ( size_t i = 0; i < points.size(); ++i )
   {
-    mu += points[i].XYZ();
+    mu += points[i];
   }
   mu /= nPts;
 
@@ -93,7 +93,7 @@ bool asiAlgo_PlaneOnPoints::Build(const std::vector<gp_Pnt>& points,
 
   for ( size_t i = 0; i < points.size(); ++i )
   {
-    const gp_XYZ& p      = points[i].XYZ();
+    const gp_XYZ& p      = points[i];
     gp_XYZ        p_dash = p - mu;
 
     for ( int j = 1; j <= 3; ++j )

@@ -32,6 +32,7 @@
 #include <cmdMisc.h>
 
 // asiAlgo includes
+#include <asiAlgo_PlaneOnPoints.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -49,6 +50,7 @@
 #include <BOPAlgo_Splitter.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
+#include <BRepAlgoAPI_Section.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -60,6 +62,7 @@
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepPrimAPI_MakePrism.hxx>
 #include <BRepTools.hxx>
+#include <GCPnts_QuasiUniformAbscissa.hxx>
 #include <GeomAPI.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Pln.hxx>
@@ -68,6 +71,11 @@
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
+
+#define DRAW_DEBUG
+#if defined DRAW_DEBUG
+  #pragma message("===== warning: DRAW_DEBUG is enabled")
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -851,59 +859,432 @@ int MISC_TestPipe(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-#include <GProp_GProps.hxx>
-#include <BRepGProp.hxx>
+struct t_edge_with_curvature
+{
+  TopoDS_Edge edge; //!< Edge.
+  double      K;    //!< Curvature.
+  double      r;    //!< Curvature radius.
+
+  t_edge_with_curvature() : K(0.0), r(0.0) {} //!< Default ctor.
+
+  //! Constructs the structure initializing it with the edge and curvature.
+  //! \param[in] _edge      edge in question.
+  //! \param[in] _curvature curvature value.
+  //! \param[in] _radius    curvature radius.
+  t_edge_with_curvature(const TopoDS_Edge& _edge,
+                        const double       _curvature,
+                        const double       _radius)
+  {
+    edge = _edge;
+    K    = _curvature;
+    r    = _radius;
+  }
+
+  //! Comparison operator.
+  //! \param[in] Other other edge with curvature.
+  //! \return true if this curvature is greater, false -- otherwise.
+  bool operator>(const t_edge_with_curvature& Other) const
+  {
+    return this->r > Other.r;
+  }
+
+  //! Comparison operator.
+  //! \param[in] Other other edge with curvature.
+  //! \return true if this curvature is less, false -- otherwise.
+  bool operator<(const t_edge_with_curvature& Other) const
+  {
+    return this->r < Other.r;
+  }
+
+  //! Comparison operator.
+  //! \param[in] Other other edge with curvature.
+  //! \return true if curvatures are equal, false -- otherwise.
+  bool operator==(const t_edge_with_curvature& Other) const
+  {
+    return this->r == Other.r;
+  }
+};
+
+struct t_face_with_cross_edges
+{
+  TopoDS_Face                        face;       //!< Face.
+  std::vector<t_edge_with_curvature> crossEdges; //!< Detected cross edges.
+  double                             avrRadius;  //!< Average curvature radius in cross-edges.
+
+  t_face_with_cross_edges() //!< Default ctor.
+  {}
+
+  t_face_with_cross_edges(const TopoDS_Face&                        _face,
+                          const std::vector<t_edge_with_curvature>& _edges,
+                          const double                              _avrRadius)
+  {
+    face       = _face;
+    crossEdges = _edges;
+    avrRadius  = _avrRadius;
+  }
+};
+
+bool findCrossEdges(const TopoDS_Face&                  face,
+                    std::vector<t_edge_with_curvature>& crossEdgesWithCurvature,
+                    ActAPI_ProgressEntry                progress,
+                    ActAPI_PlotterEntry                 plotter)
+{
+  // Find cross edges of the current face.
+  std::vector<t_edge_with_curvature> edgesWithCurvature;
+  //
+  for ( TopExp_Explorer eexp(face, TopAbs_EDGE); eexp.More(); eexp.Next() )
+  {
+    const TopoDS_Edge& edge = TopoDS::Edge( eexp.Current() );
+
+    // Evaluate along curvature.
+    double k, radius;
+    if ( !asiAlgo_Utils::EvaluateAlongCurvature(face, edge, k) )
+    {
+      progress.SendLogMessage(LogErr(Normal) << "Cannot evaluate along-curvature.");
+      return false;
+    }
+    else
+    {
+      progress.SendLogMessage(LogInfo(Normal) << "Along curvature: %1." << k);
+
+      if ( Abs(k) < 1.e-5 )
+      {
+        radius = Precision::Infinite();
+        progress.SendLogMessage( LogInfo(Normal) << "Curvature radius is infinite." );
+      }
+      else
+      {
+        radius = Abs(1.0 / k);
+        progress.SendLogMessage( LogInfo(Normal) << "Curvature radius: %1." << radius );
+      }
+    }
+
+    // Populate the list of edges with their along-curvatures.
+    edgesWithCurvature.push_back( t_edge_with_curvature(edge, k, radius) );
+  }
+
+  // Sort by curvature.
+  std::sort( edgesWithCurvature.begin(), edgesWithCurvature.end() );
+  //
+  if ( edgesWithCurvature.size() != 4 )
+  {
+    progress.SendLogMessage(LogErr(Normal) << "Unexpected number of edges.");
+    return false;
+  }
+
+  // Get cross-edges.
+  crossEdgesWithCurvature.push_back( edgesWithCurvature[0] );
+  crossEdgesWithCurvature.push_back( edgesWithCurvature[1] );
+
+  return true;
+}
+
+void findTentativeFaces(const int                             seedFaceId,
+                        const Handle(asiAlgo_AAG)&            aag,
+                        TColStd_PackedMapOfInteger&           traversed,
+                        bool&                                 isOk,
+                        std::vector<t_face_with_cross_edges>& faces,
+                        ActAPI_ProgressEntry                  progress,
+                        ActAPI_PlotterEntry                   plotter)
+{
+  // Protect from traversing the already visited faces.
+  if ( traversed.Contains(seedFaceId) )
+    return;
+  //
+  traversed.Add(seedFaceId);
+
+  const TopoDS_Face& currentFace = aag->GetFace(seedFaceId);
+
+  // Take just any B-surface.
+  if ( !asiAlgo_Utils::IsTypeOf<Geom_BSplineSurface>(currentFace) )
+    return;
+
+  // Find cross edges of the current face.
+  std::vector<t_edge_with_curvature> crossEdgesWithCurvature;
+  //
+  if ( !findCrossEdges(currentFace,
+                       crossEdgesWithCurvature,
+                       progress,
+                       plotter) )
+  {
+    progress.SendLogMessage(LogErr(Normal) << "Cannot find cross-edges.");
+    isOk = false;
+    return;
+  }
+
+  // Calculate average curvature radius.
+  double avrRadius = 0.0;
+  //
+  for ( size_t e = 0; e < crossEdgesWithCurvature.size(); ++e )
+    avrRadius += crossEdgesWithCurvature[e].r;
+  //
+  avrRadius /= int( crossEdgesWithCurvature.size() );
+
+  // Push to result.
+  faces.push_back( t_face_with_cross_edges(currentFace, crossEdgesWithCurvature, avrRadius) );
+
+  // Get neighbor faces.
+  TColStd_PackedMapOfInteger neighbors;
+  for ( size_t k = 0; k < crossEdgesWithCurvature.size(); ++k )
+  {
+    const TopoDS_Edge& crossEdge = crossEdgesWithCurvature[k].edge;
+
+    TColStd_PackedMapOfInteger
+      neighborsThroughCross = aag->GetNeighborsThru(seedFaceId, crossEdge);
+    //
+    neighbors.Unite(neighborsThroughCross);
+  }
+
+  // Continue on neighbors.
+  for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbors); nit.More(); nit.Next() )
+  {
+    const int neighborId = nit.Key();
+
+    // Continue recursion.
+    findTentativeFaces(neighborId, aag, traversed, isOk, faces, progress, plotter);
+
+    if ( !isOk )
+      return;
+  }
+}
 
 int MISC_Test(const Handle(asiTcl_Interp)& interp,
-                  int                          argc,
-                  const char**                 argv)
+              int                          argc,
+              const char**                 argv)
 {
   if ( argc != 1 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  BRep_Builder BB;
+  /* ================
+   *  Prepare inputs
+   * ================ */
 
-  TopoDS_Shape operand1;
-  BRepTools::Read(operand1, "D:/fusionShape.brep", BB);
-  TopoDS_Shape operand2;
-  BRepTools::Read(operand2, "D:/createdCylinder.brep", BB);
+  // Data Model instance.
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
 
-  BRepAlgoAPI_Fuse API;
+  // Get Part Node.
+  Handle(asiData_PartNode)
+    partNode = M->GetPartNode();
 
-  // Prepare the arguments
-  TopTools_ListOfShape Objects;
-  Objects.Append(operand1);
+  // Get Part shape.
+  TopoDS_Shape
+    partShape = partNode->GetShape();
 
-  // Prepare the tools
-  TopTools_ListOfShape Tools;
-  Tools.Append(operand2);
-
-  // Set the arguments
-  API.SetArguments(Objects);
-  API.SetTools(Tools);
-  API.SetRunParallel(false);
-  API.SetFuzzyValue(1e-1);
-
-  // Run the algorithm 
-  API.Build(); 
-
-  // Check the result
-  const bool hasErr = API.HasErrors();
+  // Get AAG and working maps.
+  Handle(asiAlgo_AAG)
+    partAAG = partNode->GetAAG();
   //
-  if ( hasErr )
-  {
-    const Handle(Message_Report)& report = API.GetReport();
-    report->Dump(std::cout);
+  const TopTools_IndexedMapOfShape&
+    allFaces = partAAG->GetMapOfFaces();
 
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Error: BOPs return error.");
+  /* ================================
+   *  Stage 01: find tentative faces
+   * ================================ */
+
+  // Pick up the seed face.
+  TopoDS_Face seedFace;
+  //
+  for ( int f = 1; f <= allFaces.Extent(); ++f )
+  {
+    const TopoDS_Face& face = TopoDS::Face( allFaces(f) );
+
+    // Take just any B-surface.
+    if ( asiAlgo_Utils::IsTypeOf<Geom_BSplineSurface>(face) )
+    {
+      seedFace = face;
+      break;
+    }
+  }
+  //
+  if ( seedFace.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot selected seed face.");
     return TCL_OK;
   }
 
-  TopoDS_Shape fusionShape = API.Shape();
+  // Draw seed face.
+  interp->GetPlotter().REDRAW_SHAPE("seedFace", seedFace, Color_Green);
 
-  interp->GetPlotter().REDRAW_SHAPE("result", fusionShape);
+  // Find tentative faces.
+  bool                                 isOk = true;
+  TColStd_PackedMapOfInteger           traversedFaces;
+  std::vector<t_face_with_cross_edges> tentativeFaces;
+  //
+  findTentativeFaces( partAAG->GetFaceId(seedFace),
+                      partAAG,
+                      traversedFaces,
+                      isOk,
+                      tentativeFaces,
+                      interp->GetProgress(),
+                      interp->GetPlotter() );
+  //
+  if ( !isOk )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find tentative faces.");
+    return TCL_OK;
+  }
+
+#if defined DRAW_DEBUG
+  // Draw tentative faces with their cross-edges.
+  for ( size_t f = 0; f < tentativeFaces.size(); ++f )
+  {
+    const t_face_with_cross_edges& F = tentativeFaces[f];
+    //
+    interp->GetPlotter().DRAW_SHAPE(F.face, "tentativeFace");
+
+    for ( size_t e = 0; e < F.crossEdges.size(); ++e )
+    {
+      interp->GetPlotter().DRAW_SHAPE(F.crossEdges[e].edge, Color_Red, 1.0, true, "crossEdge");
+    }
+  }
+#endif
+
+  /* ==================================
+   *  Stage 02: extract cross-polygons
+   * ================================== */
+
+  const int isos = 10;
+
+  std::vector<gp_XYZ> medialPoles;
+
+  // Loop over the tentative faces.
+  for ( size_t f = 0; f < tentativeFaces.size(); ++f )
+  {
+    const t_face_with_cross_edges& F = tentativeFaces[f];
+
+    // Get host surface of the tentative face.
+    TopLoc_Location loc;
+    const Handle(Geom_Surface)& surf = BRep_Tool::Surface(F.face, loc);
+    //
+    if ( !surf->IsKind( STANDARD_TYPE(Geom_BSplineSurface) ) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Host surface is not a B-surface.");
+      return TCL_OK;
+    }
+
+    // Downcast to B-surface.
+    Handle(Geom_BSplineSurface)
+      bsurf = Handle(Geom_BSplineSurface)::DownCast(surf);
+
+    // Get parameteric bounds of the surface.
+    double uMin, uMax, vMin, vMax;
+    BRepTools::UVBounds(F.face, uMin, uMax, vMin, vMax);
+
+    // Chose which curvilinear direction is effective.
+    bool               isU  = false;
+    Handle(Geom_Curve) uIso = bsurf->UIso(uMin);
+    Handle(Geom_Curve) vIso = bsurf->VIso(vMin);
+    //
+    double uIsoK, uIsoR, vIsoK, vIsoR;
+    if ( !asiAlgo_Utils::CalculateMidCurvature(uIso, uIsoK, uIsoR) ||
+         !asiAlgo_Utils::CalculateMidCurvature(vIso, vIsoK, vIsoR) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Iso-curve is irregular.");
+      return TCL_OK;
+    }
+    //
+    if ( Abs(uIsoR - F.avrRadius) < Abs(vIsoR - F.avrRadius) )
+      isU = true; // Curvature radius in U direction is closer to cross-edge curvature
+                  // than such in V direction. Therefore, we decide that U curvilinear
+                  // axis is effective.
+
+    // Populate cross-sections.
+    std::vector<Handle(Geom_Curve)> crossSections;
+    //
+    if ( isU )
+    {
+      const double uStep = (uMax - uMin) / isos;
+
+      // Generate u-isos
+      double u     = uMin;
+      bool   uStop = false;
+      while ( !uStop )
+      {
+        if ( u > uMax )
+        {
+          u     = uMax;
+          uStop = true;
+        }
+
+        // We use try-catch because OpenCascade likes to crash even on such basic stuff...
+        Handle(Geom_Curve) uIso;
+        //
+        uIso = bsurf->UIso(u);
+        //
+        u += uStep;
+
+        if ( uIso.IsNull() )
+          continue;
+
+        crossSections.push_back(uIso);
+      }
+    }
+    else
+    {
+      const double vStep = (vMax - vMin) / isos;
+
+      // Generate v-isos
+      double v     = vMin;
+      bool   vStop = false;
+      while ( !vStop )
+      {
+        if ( v > vMax )
+        {
+          v     = vMax;
+          vStop = true;
+        }
+
+        // We use try-catch because OpenCascade likes to crash even on such basic stuff...
+        Handle(Geom_Curve) vIso;
+        //
+        vIso = bsurf->VIso(v);
+        //
+        v += vStep;
+
+        if ( vIso.IsNull() )
+          continue;
+
+        crossSections.push_back(vIso);
+      }
+    }
+
+    for ( int k = 0; k < crossSections.size(); ++k )
+    {
+      //interp->GetPlotter().DRAW_CURVE(crossSections[k], Color_Red, "crossSection");
+
+      // Build center point.
+      double crossSectionK, crossSectionR;
+      gp_Pnt crossSectionP, crossSectionCenter;
+      gp_Dir crossSectionT;
+      //
+      if ( !asiAlgo_Utils::CalculateMidCurvature(crossSections[k],
+                                                 crossSectionP,
+                                                 crossSectionT,
+                                                 crossSectionK,
+                                                 crossSectionR,
+                                                 crossSectionCenter) )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cross-section curve is irregular.");
+        return TCL_OK;
+      }
+      //
+      interp->GetPlotter().DRAW_POINT(crossSectionCenter, Color_Yellow, "crossSectionCenter");
+      medialPoles.push_back( crossSectionCenter.XYZ() );
+
+      // Build osculating circle in the cross-sectional plane.
+      gp_Vec crossSectionNorm = crossSectionT^gp_Vec( crossSectionCenter.XYZ() - crossSectionP.XYZ() );
+      gp_Ax2 crossSectionAx2(crossSectionCenter, crossSectionNorm);
+      gp_Circ crossSectionCirc(crossSectionAx2, crossSectionR);
+      //
+      interp->GetPlotter().DRAW_CURVE(new Geom_Circle(crossSectionCirc), Color_Green, "crossSectionCirc");
+    }
+  }
+
+  // Draw medial curve.
+  interp->GetPlotter().REDRAW_POLYLINE("medialCurve", medialPoles, Color_Yellow);
 
   return TCL_OK;
 }
@@ -914,9 +1295,6 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
   static const char* group = "cmdMisc";
-
-  // Add commands
-  // ...
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("box",

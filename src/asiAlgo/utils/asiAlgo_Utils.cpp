@@ -2360,3 +2360,61 @@ bool asiAlgo_Utils::EvaluateAlongCurvature(const TopoDS_Face& face,
 
   return EvaluateAlongCurvature(face, edge, t, k);
 }
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::CalculateMidCurvature(const Handle(Geom_Curve)& curve,
+                                          gp_Pnt&                   P,
+                                          gp_Dir&                   T,
+                                          double&                   k,
+                                          double&                   r,
+                                          gp_Pnt&                   center)
+{
+  const double uMid = ( curve->FirstParameter() + curve->LastParameter() )*0.5;
+
+  GeomLProp_CLProps lProps( curve, uMid, 2, gp::Resolution() );
+  //
+  if ( !lProps.IsTangentDefined() )
+    return false;
+
+  // Calculate point and tangent.
+  P = lProps.Value();
+  //
+  lProps.Tangent(T);
+
+  // Calculate curvature.
+  k = lProps.Curvature();
+  //
+  if ( Abs(k) < 1.e-5 )
+    r = Precision::Infinite();
+  else
+  {
+    r = Abs(1.0 / k);
+    //
+    lProps.CentreOfCurvature(center);
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::CalculateMidCurvature(const Handle(Geom_Curve)& curve,
+                                          double&                   k,
+                                          double&                   r,
+                                          gp_Pnt&                   center)
+{
+  gp_Pnt P;
+  gp_Dir T;
+  return CalculateMidCurvature(curve, P, T, k, r, center);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::CalculateMidCurvature(const Handle(Geom_Curve)& curve,
+                                          double&                   k,
+                                          double&                   r)
+{
+  gp_Pnt center;
+  return CalculateMidCurvature(curve, k, r, center);
+}

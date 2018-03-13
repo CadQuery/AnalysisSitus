@@ -763,6 +763,44 @@ public:
                            const TopoDS_Edge& edge,
                            double&            k);
 
+  //! Calculates curvature in the middle of the passed curve.
+  //! \param[in]  curve  curve in question.
+  //! \param[out] P      point on curve.
+  //! \param[out] T      tangent vector on curve.
+  //! \param[out] k      evaluated curvature.
+  //! \param[out] r      equivalent curvature radius.
+  //! \param[out] center center of curvature.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT static bool
+    CalculateMidCurvature(const Handle(Geom_Curve)& curve,
+                          gp_Pnt&                   P,
+                          gp_Dir&                   T,
+                          double&                   k,
+                          double&                   r,
+                          gp_Pnt&                   center);
+
+  //! Calculates curvature in the middle of the passed curve.
+  //! \param[in]  curve  curve in question.
+  //! \param[out] k      evaluated curvature.
+  //! \param[out] r      equivalent curvature radius.
+  //! \param[out] center center of curvature.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT static bool
+    CalculateMidCurvature(const Handle(Geom_Curve)& curve,
+                          double&                   k,
+                          double&                   r,
+                          gp_Pnt&                   center);
+
+  //! Calculates curvature in the middle of the passed curve.
+  //! \param[in]  curve curve in question.
+  //! \param[out] k     evaluated curvature.
+  //! \param[out] r     equivalent curvature radius.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT static bool
+    CalculateMidCurvature(const Handle(Geom_Curve)& curve,
+                          double&                   k,
+                          double&                   r);
+
 private:
 
   asiAlgo_Utils() = delete;

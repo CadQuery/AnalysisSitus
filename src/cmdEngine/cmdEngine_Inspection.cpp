@@ -436,7 +436,7 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
 
   if ( !noAlongCurvature )
   {
-    // Get owner faces
+    // Get owner faces.
     TopTools_IndexedDataMapOfShapeListOfShape M;
     TopExp::MapShapesAndAncestors(partShape, TopAbs_EDGE, TopAbs_FACE, M);
     //
@@ -446,7 +446,7 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
     {
       const TopoDS_Face& faceShape = TopoDS::Face( fit.Value() );
 
-      // Evaluate along curvature
+      // Evaluate along curvature.
       double k;
       if ( !asiAlgo_Utils::EvaluateAlongCurvature(faceShape, TopoDS::Edge(edgeShape), k) )
       {

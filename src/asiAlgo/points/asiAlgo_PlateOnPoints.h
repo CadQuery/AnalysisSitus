@@ -59,7 +59,7 @@ public:
 public:
 
   asiAlgo_EXPORT bool
-    Build(const std::vector<gp_Pnt>&   points,
+    Build(const std::vector<gp_XYZ>&   points,
           Handle(Geom_BSplineSurface)& result);
 
 };

@@ -597,12 +597,23 @@ public:
   asiAlgo_EXPORT static double
     AutoSelectAngularDeflection(const TopoDS_Shape& model);
 
+  //! Constructs B-spline curve of degree 1 from the passed poles.
+  //! \param[in] trace poles of the curve to construct.
+  //! \return 1-degree spline curve.
   asiAlgo_EXPORT static Handle(Geom_BSplineCurve)
     PolylineAsSpline(const std::vector<gp_XYZ>& trace);
 
+  //! Constructs 2D B-spline curve of degree 1 from the passed poles.
+  //! \param[in] trace poles of the curve to construct.
+  //! \return 1-degree 2D spline curve.
   asiAlgo_EXPORT static Handle(Geom2d_BSplineCurve)
     PolylineAsSpline(const std::vector<gp_XY>& trace);
 
+  //! Checks whether the given shape contains the given sub-shape. This method
+  //! builds a map of sub-shapes, so it is quite slow.
+  //! \param[in] shape    master shape to check.
+  //! \param[in] subShape sub-shape in question.
+  //! \return true/false.
   asiAlgo_EXPORT static bool
     Contains(const TopoDS_Shape& shape,
              const TopoDS_Shape& subShape);
@@ -626,6 +637,11 @@ public:
                  gp_XY&       P5,
                  gp_XY&       P6);
 
+  //! Constructs a two-dimensional regular polygon.
+  //! \param[in]  center    center point.
+  //! \param[in]  dist2Pole radius of circumcircle.
+  //! \param[in]  numPoles  number of poles in the resulting regular polygon.
+  //! \param[out] poles     calculated poles.
   asiAlgo_EXPORT static void
     PolygonPoles(const gp_XY&        center,
                  const double        dist2Pole,

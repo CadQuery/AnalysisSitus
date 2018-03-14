@@ -64,6 +64,7 @@
 #include <BRepPrimAPI_MakePrism.hxx>
 #include <BRepTools.hxx>
 #include <GCPnts_QuasiUniformAbscissa.hxx>
+#include <GCPnts_TangentialDeflection.hxx>
 #include <GeomAPI.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Pln.hxx>
@@ -1053,10 +1054,13 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
               int                          argc,
               const char**                 argv)
 {
-  if ( argc != 1 )
+  if ( argc != 3 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
+
+  const double numPathPoints    = Atof(argv[1]);
+  const double numSectionPoints = Atof(argv[2]);
 
   /* ================
    *  Prepare inputs
@@ -1149,7 +1153,7 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
    *  Stage 02: extract cross-circles and medial curve
    * ================================================== */
 
-  const int isos = 10;
+  const int isos = 30;
 
   std::vector<gp_Circ> crossCircles;
   std::vector<gp_XYZ>  medialPoles;
@@ -1302,23 +1306,75 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
   // Draw medial curve.
   interp->GetPlotter().REDRAW_POLYLINE("medialCurve", medialPoles, Color_Yellow);
 
+  // Represent polyline as 1-degree spline.
+  Handle(Geom_BSplineCurve)
+    medialCurve = asiAlgo_Utils::PolylineAsSpline(medialPoles);
+
+  // Discretize path curve.
+  GeomAdaptor_Curve medialCurveAdt(medialCurve);
+  GCPnts_QuasiUniformAbscissa discretizer(medialCurveAdt, numPathPoints);
+  //
+  if ( !discretizer.IsDone() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot discretize path curve.");
+    return TCL_OK;
+  }
+
+  // Magnify the available circles.
+  std::vector<gp_Circ>       sparsedCrossCircles;
+  TColStd_PackedMapOfInteger visitedCircles;
+  //
+  for ( int p = 1; p <= discretizer.NbPoints(); ++p )
+  {
+    const double param = discretizer.Parameter(p);
+    gp_Pnt       point = medialCurveAdt.Value(param);
+
+#if defined DRAW_DEBUG
+    interp->GetPlotter().DRAW_POINT(point, Color_Blue, "discr");
+#endif
+
+    // Find the closest circle.
+    double minDist          = DBL_MAX;
+    int    closestCircIndex = -1;
+    //
+    for ( size_t c = 0; c < crossCircles.size(); ++c )
+    {
+      const gp_Pnt& circCenter = crossCircles[c].Location();
+      const double  dist       = circCenter.Distance(point);
+
+      if ( dist < minDist )
+      {
+        minDist          = dist;
+        closestCircIndex = int(c);
+      }
+    }
+
+    if ( visitedCircles.Contains(closestCircIndex) )
+      continue;
+
+    visitedCircles.Add(closestCircIndex);
+    sparsedCrossCircles.push_back(crossCircles[closestCircIndex]);
+
+#if defined DRAW_DEBUG
+    interp->GetPlotter().DRAW_CURVE(new Geom_Circle(crossCircles[closestCircIndex]), Color_Blue, "sparsedCrossSectionCirc");
+#endif
+  }
+
   /* ==========================================================
    *  Stage 03: substiture cross-circles with regular polygons
    * ========================================================== */
 
-  const int numPolyPoles = 3;
-
   std::vector<TopoDS_Wire> polySections;
 
-  for ( size_t c = 0; c < crossCircles.size(); ++c )
+  for ( size_t c = 0; c < sparsedCrossCircles.size(); ++c )
   {
-    const gp_Circ& circ = crossCircles[c];
+    const gp_Circ& circ = sparsedCrossCircles[c];
 
     // Build regular polygon.
     std::vector<gp_XY> polyPoles;
     asiAlgo_Utils::PolygonPoles( gp::Origin2d().XY(),
                                  circ.Radius(),
-                                 numPolyPoles,
+                                 numSectionPoints,
                                  polyPoles );
 
     const gp_Ax2& sectionAx2 = circ.Position();
@@ -1329,7 +1385,7 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
 
     // Populate wire builder.
     BRepBuilderAPI_MakePolygon mkPoly;
-    for ( int k = 0; k < numPolyPoles; ++k )
+    for ( int k = 0; k < numSectionPoints; ++k )
       mkPoly.Add( circPlane->Value( polyPoles[k].X(), polyPoles[k].Y() ) );
     //
     mkPoly.Add( circPlane->Value( polyPoles[0].X(), polyPoles[0].Y() ) );
@@ -1349,7 +1405,7 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
    *  Stage 04: define facets
    * ========================= */
 
-  // Initialize and build
+  // Initialize and build.
   BRepOffsetAPI_ThruSections ThruSections(true, true, 1.0e-1);
   ThruSections.SetSmoothing(false);
   ThruSections.SetMaxDegree(1);

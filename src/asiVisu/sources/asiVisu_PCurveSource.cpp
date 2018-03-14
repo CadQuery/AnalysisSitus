@@ -40,6 +40,7 @@
 // OCCT includes
 #include <BRep_Tool.hxx>
 #include <GCPnts_QuasiUniformDeflection.hxx>
+#include <GCPnts_TangentialDeflection.hxx>
 #include <Geom2dAdaptor_Curve.hxx>
 
 //-----------------------------------------------------------------------------
@@ -99,15 +100,48 @@ void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
     return;
   }
 
-  // Discretize
-  Geom2dAdaptor_Curve gac(c2d, f, l);
-  GCPnts_QuasiUniformDeflection Defl(gac, 0.0001);
-  if ( !Defl.IsDone() )
+  // Discretize with different methods (if onw fails, try another).
+  std::vector<gp_Pnt> points;
+  int nPts = 0;
+  //
   {
-    vtkErrorMacro( << "Cannot discretize p-curve" );
-    return;
+    Geom2dAdaptor_Curve gac(c2d, f, l);
+    GCPnts_QuasiUniformDeflection QUDefl(gac, 1e-4);
+    //
+    if ( !QUDefl.IsDone() )
+    {
+      std::cout << "Warning: quasi-uniform deflection failed." << std::endl;
+
+      GCPnts_TangentialDeflection TDefl(gac, 1.0, 1e-4);
+      //
+      if ( !TDefl.NbPoints() )
+      {
+        vtkErrorMacro( << "Cannot discretize p-curve" );
+        return;
+      }
+      else
+      {
+        nPts = TDefl.NbPoints();
+
+        for ( int p = 1; p <= nPts; ++p )
+        {
+          gp_Pnt point = TDefl.Value(p);
+          points.push_back(point);
+        }
+      }
+    }
+    else
+    {
+      nPts = QUDefl.NbPoints();
+
+      for ( int p = 1; p <= nPts; ++p )
+      {
+        gp_Pnt point = QUDefl.Value(p);
+        points.push_back(point);
+      }
+    }
   }
-  const int nPts = Defl.NbPoints();
+
   if ( !nPts )
   {
     vtkErrorMacro( << "No points in discretization" );
@@ -121,7 +155,7 @@ void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
 
   for ( int k = 1; k <= nPts; ++k )
   {
-    gp_Pnt P = Defl.Value(k);
+    const gp_Pnt& P = points[k-1];
     //
     xCoords->ChangeValue(k - 1) = P.X();
     yCoords->ChangeValue(k - 1) = P.Y();

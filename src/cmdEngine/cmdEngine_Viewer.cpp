@@ -46,27 +46,30 @@ int ENGINE_Erase(const Handle(asiTcl_Interp)& interp,
                  int                          argc,
                  const char**                 argv)
 {
-  if ( argc != 2 )
+  if ( argc < 2 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // Find node
-  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
-  //
-  if ( node.IsNull() )
+  for ( int k = 1; k < argc; ++k )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
-    return TCL_OK;
-  }
+    // Find node
+    Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[k]);
+    //
+    if ( node.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[k]);
+      continue;
+    }
 
-  // Hide
-  if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
-  {
-    cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderPresentation(node);
+    // Hide
+    if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
+    {
+      cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderPresentation(node);
+    }
+    else
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[k]);
   }
-  else
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[1]);
 
   // Repaint
   cmdEngine::cf->ViewerPart->Repaint();
@@ -113,27 +116,30 @@ int ENGINE_Show(const Handle(asiTcl_Interp)& interp,
                 int                          argc,
                 const char**                 argv)
 {
-  if ( argc != 2 )
+  if ( argc < 2 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // Find Node
-  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
-  //
-  if ( node.IsNull() )
+  for ( int k = 1; k < argc; ++k )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[1]);
-    return TCL_OK;
-  }
+    // Find Node
+    Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[k]);
+    //
+    if ( node.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[k]);
+      continue;
+    }
 
-  // Display
-  if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
-  {
-    cmdEngine::cf->ViewerPart->PrsMgr()->RenderPresentation(node);
+    // Display
+    if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
+    {
+      cmdEngine::cf->ViewerPart->PrsMgr()->RenderPresentation(node);
+    }
+    else
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[k]);
   }
-  else
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[1]);
 
   // Repaint
   cmdEngine::cf->ViewerPart->Repaint();
@@ -147,29 +153,32 @@ int ENGINE_ShowOnly(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
 {
-  if ( argc != 2 )
+  if ( argc < 2 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // Find Node
-  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
-  //
-  if ( node.IsNull() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[1]);
-    return TCL_OK;
-  }
-
-  // Display only
   cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderAllPresentations();
   //
-  if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
+  for ( int k = 1; k < argc; ++k )
   {
-    cmdEngine::cf->ViewerPart->PrsMgr()->RenderPresentation(node);
+    // Find Node
+    Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[k]);
+    //
+    if ( node.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[k]);
+      continue;
+    }
+
+    // Display only
+    if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
+    {
+      cmdEngine::cf->ViewerPart->PrsMgr()->RenderPresentation(node);
+    }
+    else
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[k]);
   }
-  else
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[1]);
 
   // Repaint
   cmdEngine::cf->ViewerPart->Repaint();
@@ -189,29 +198,6 @@ int ENGINE_EraseAll(const Handle(asiTcl_Interp)& interp,
   }
 
   cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderAllPresentations();
-
-  return TCL_OK;
-}
-
-//-----------------------------------------------------------------------------
-
-int ENGINE_Clear(const Handle(asiTcl_Interp)& interp,
-                 int                          argc,
-                 const char**                 argv)
-{
-  if ( argc != 1 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  // Clear viewers
-  cmdEngine::ClearViewers();
-
-  // Clear data
-  cmdEngine::model->Clear();
-
-  // Update object browser
-  cmdEngine::cf->ObjectBrowser->Populate();
 
   return TCL_OK;
 }
@@ -247,10 +233,18 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //
   static const char* group = "cmdEngine";
 
-//-------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
   interp->AddCommand("erase",
     //
-    "erase varName \n"
+    "erase varName1 [varName2 ...] \n"
+    "\t Hides object in viewer.",
+    //
+    __FILE__, group, ENGINE_Erase);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("hide",
+    //
+    "hide varName1 [varName2 ...] \n"
     "\t Hides object in viewer.",
     //
     __FILE__, group, ENGINE_Erase);
@@ -266,7 +260,15 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("show",
     //
-    "show varName \n"
+    "show varName1 [varName2 ...] \n"
+    "\t Shows the given object in viewer.",
+    //
+    __FILE__, group, ENGINE_Show);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("display",
+    //
+    "display varName1 [varName2 ...] \n"
     "\t Shows the given object in viewer.",
     //
     __FILE__, group, ENGINE_Show);
@@ -274,8 +276,16 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("show-only",
     //
-    "show-only varName \n"
-    "\t Shows only the given object in viewer.",
+    "show-only varName1 [varName2 ...] \n"
+    "\t Shows only the given objects in viewer.",
+    //
+    __FILE__, group, ENGINE_ShowOnly);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("donly",
+    //
+    "donly varName1 [varName2 ...] \n"
+    "\t Shows only the given objects in viewer.",
     //
     __FILE__, group, ENGINE_ShowOnly);
 
@@ -286,14 +296,6 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
     "\t Erases all objects from the scene.",
     //
     __FILE__, group, ENGINE_EraseAll);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("clear",
-    //
-    "clear \n"
-    "\t Cleans up project data.",
-    //
-    __FILE__, group, ENGINE_Clear);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("fit",

@@ -231,6 +231,29 @@ int ENGINE_GetId(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_Clear(const Handle(asiTcl_Interp)& interp,
+                 int                          argc,
+                 const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Clear viewers
+  cmdEngine::ClearViewers();
+
+  // Clear data
+  cmdEngine::model->Clear();
+
+  // Update object browser
+  cmdEngine::cf->ObjectBrowser->Populate();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -283,4 +306,12 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
     "\t It is not allowed to leave intermediate parents unspecified.",
     //
     __FILE__, group, ENGINE_GetId);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("clear",
+    //
+    "clear \n"
+    "\t Cleans up project data.",
+    //
+    __FILE__, group, ENGINE_Clear);
 }

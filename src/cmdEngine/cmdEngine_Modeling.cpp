@@ -231,6 +231,101 @@ int ENGINE_MakeFace(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_MakeShell(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  if ( argc < 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  TopoDS_Shell result;
+  BRep_Builder BB;
+  BB.MakeShell(result);
+
+  // Add faces to the resulting shell.
+  for ( int k = 2; k < argc; ++k )
+  {
+    // Get Topology Item Node.
+    Handle(asiData_IVTopoItemNode)
+      node = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[k]) );
+    //
+    if ( node.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[k]);
+      return TCL_OK;
+    }
+
+    // Get item shape.
+    TopoDS_Shape itemShape = node->GetShape();
+    //
+    if ( itemShape.ShapeType() != TopAbs_FACE )
+    {
+      interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Object %1 is not face. Skipped." << argv[k]);
+      continue;
+    }
+    //
+    TopoDS_Face itemFace = TopoDS::Face(itemShape);
+
+    // Add face to the shell being constructed.
+    BB.Add(result, itemFace);
+  }
+
+  // Draw in IV.
+  interp->GetPlotter().REDRAW_SHAPE(argv[1], result, Color_White, 1.0, false);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_AddSubShape(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get parent item Node.
+  Handle(asiData_IVTopoItemNode)
+    parentNode = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
+  //
+  if ( parentNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[1]);
+    return TCL_OK;
+  }
+
+  // Get child item Node.
+  Handle(asiData_IVTopoItemNode)
+    childNode = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[2]) );
+  //
+  if ( childNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[2]);
+    return TCL_OK;
+  }
+
+  // Get parent shape.
+  TopoDS_Shape parentShape = parentNode->GetShape();
+
+  // Get child shape.
+  TopoDS_Shape childShape = childNode->GetShape();
+
+  // Add sub-shape.
+  BRep_Builder().Add(parentShape, childShape);
+
+  // Draw in IV.
+  interp->GetPlotter().REDRAW_SHAPE(argv[1], parentShape, Color_White, 1.0, false);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_MakeCurve(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
@@ -327,6 +422,22 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t as a Surface object in the scene graph of imperative plotter.",
     //
     __FILE__, group, ENGINE_MakeFace);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("make-shell",
+    //
+    "make-shell result face1 [face2 [...]]\n"
+    "\t Creates shell from the passed faces.",
+    //
+    __FILE__, group, ENGINE_MakeShell);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("add-subshape",
+    //
+    "add-subshape parent child\n"
+    "\t Adds <child> to <parent>.",
+    //
+    __FILE__, group, ENGINE_AddSubShape);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-curve",

@@ -85,6 +85,9 @@ protected:
   QTextLine
     currentTextLine(const QTextCursor& cursor) const;
 
+  bool adoptSourceCmd(const TCollection_AsciiString& cmd,
+                      TCollection_AsciiString&       adopted) const;
+
 protected:
 
   int promptSize() const { return m_prompt.size(); }

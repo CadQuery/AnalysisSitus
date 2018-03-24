@@ -34,6 +34,9 @@
 // asiUI includes
 #include <asiUI_Common.h>
 
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
+
 // OCCT includes
 #include <TCollection_AsciiString.hxx>
 
@@ -106,7 +109,9 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
     case Qt::Key_Enter:
     {
       TCollection_AsciiString cmdName = this->currentCommand(c);
-      //
+
+      this->adoptSourceCmd(cmdName, cmdName);
+
       if ( !this->eval(cmdName) )
         m_interp->GetProgress().SendLogMessage(LogErr(Normal) << "\t %1 ... TCL_ERROR" << cmdName);
       else
@@ -206,4 +211,31 @@ QTextLine asiUI_Console::currentTextLine(const QTextCursor& cursor) const
 
   const int relativePos = cursor.position() - block.position();
   return layout->lineForTextPosition(relativePos);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiUI_Console::adoptSourceCmd(const TCollection_AsciiString& cmd,
+                                   TCollection_AsciiString&       adopted) const
+{
+  std::vector<std::string> argv;
+  asiAlgo_Utils::SplitStr(cmd.ToCString(), " ", argv);
+
+  // Change back slashes with forward slashes.
+  if ( argv[0] == "source" )
+  {
+    if ( argv.size() == 2 )
+    {
+      std::replace(argv[1].begin(), argv[1].end(), '\\', '/');
+      //
+      adopted = TCollection_AsciiString( argv[0].c_str() )
+              + " "
+              + TCollection_AsciiString( argv[1].c_str() );
+
+      return true;
+    }
+  }
+
+  adopted = cmd; // Keep as-is.
+  return false;
 }

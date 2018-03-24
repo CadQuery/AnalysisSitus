@@ -974,6 +974,15 @@ void asiUI_ControlsFeature::onBoundingBox()
                                              << xMin << yMin << zMin
                                              << xMax << yMax << zMax );
 
+  const double inf = Precision::Infinite()*0.1;
+  //
+  if ( Abs(xMin) >= inf || Abs(yMin) >= inf || Abs(zMin) >= inf ||
+       Abs(xMax) >= inf || Abs(yMax) >= inf || Abs(zMax) >= inf )
+  {
+    m_notifier.SendLogMessage(LogWarn(Normal) << "Bounding box is infitine.");
+    return;
+  }
+
   // Create bounding box to draw it
   TopoDS_Shape bndbox = BRepPrimAPI_MakeBox( gp_Pnt(xMin, yMin, zMin), gp_Pnt(xMax, yMax, zMax) );
   //

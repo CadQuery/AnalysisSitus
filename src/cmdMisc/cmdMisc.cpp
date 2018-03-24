@@ -110,9 +110,13 @@ int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
                          int                          argc,
                          const char**                 argv)
 {
-  /* =====================
-   *  Build solid hexagon
-   * ===================== */
+  const double r = 0.02;
+  const double h = 0.25;
+  const double step = 0.08;
+
+  /* =======================
+   *  Build hexagonal prism
+   * ======================= */
 
   TIMER_NEW
   TIMER_GO
@@ -146,10 +150,10 @@ int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
   TopoDS_Face face = BRepBuilderAPI_MakeFace(wire);
 
   // Build prism
-  TopoDS_Shape prism = BRepPrimAPI_MakePrism(face, gp_Vec( workPlane->Axis().Direction() )*0.25);
+  TopoDS_Shape prism = BRepPrimAPI_MakePrism(face, gp_Vec( workPlane->Axis().Direction() )*h);
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Build hexagon solid")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Build hexagonal solid")
 
   interp->GetPlotter().REDRAW_SHAPE("contour", wire, Color_Red, 1.0, true);
   interp->GetPlotter().REDRAW_SHAPE("face", face);
@@ -165,10 +169,6 @@ int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
   // Build bounding box for the hexa
   double xMin, yMin, zMin, xMax, yMax, zMax;
   asiAlgo_Utils::Bounds(prism, xMin, yMin, zMin, xMax, yMax, zMax);
-
-  const double r = 0.02;
-  const double h = 0.25;
-  const double step = 0.08;
 
   BRep_Builder BB;
   TopoDS_Compound cyls;
@@ -197,7 +197,7 @@ int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
       if ( state == TopAbs_IN )
       {
         gp_Pnt cylcenter(xcurr, ycurr, 0.0);
-        TopoDS_Shape cyl = BRepPrimAPI_MakeCylinder( gp_Ax2(cylcenter, gp::DZ() ), r, 0.25 );
+        TopoDS_Shape cyl = BRepPrimAPI_MakeCylinder( gp_Ax2(cylcenter, gp::DZ() ), r, h );
         //
         BB.Add(cyls, cyl);
         tools.Append(cyl);
@@ -230,6 +230,151 @@ int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
 
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Cut cylinders")
+
+  interp->GetPlotter().REDRAW_SHAPE("result", result);
+
+  return 0;
+}
+
+//-----------------------------------------------------------------------------
+
+int MISC_TestHexagonBopsFaces(const Handle(asiTcl_Interp)& interp,
+                              int                          argc,
+                              const char**                 argv)
+{
+  const double r = 0.02;
+  const double h = 0.25;
+  const double step = 0.06;
+
+  /* ===============
+   *  Build hexagon
+   * =============== */
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Get hexagon poles in 2D
+  gp_XY Poles2d[6];
+  asiAlgo_Utils::HexagonPoles(gp::Origin2d().XY(),
+                              1.0,
+                              Poles2d[0],
+                              Poles2d[1],
+                              Poles2d[2],
+                              Poles2d[3],
+                              Poles2d[4],
+                              Poles2d[5]);
+
+  // Choose working plane
+  Handle(Geom_Plane) workPlane = new Geom_Plane( gp_Pln( gp::Origin(), gp::DZ() ) );
+
+  // Populate wire builder
+  BRepBuilderAPI_MakePolygon mkPoly;
+  for ( int k = 0; k < 6; ++k )
+    mkPoly.Add( workPlane->Value( Poles2d[k].X(), Poles2d[k].Y() ) );
+  //
+  mkPoly.Add( workPlane->Value( Poles2d[0].X(), Poles2d[0].Y() ) );
+
+  // Build wire
+  mkPoly.Build();
+  const TopoDS_Wire& wire = mkPoly.Wire();
+
+  // Build face
+  TopoDS_Face face = BRepBuilderAPI_MakeFace(wire);
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Build hexagon")
+
+  interp->GetPlotter().REDRAW_SHAPE("contour", wire, Color_Red, 1.0, true);
+  interp->GetPlotter().REDRAW_SHAPE("face", face);
+
+  /* ===============
+   *  Build circles
+   * =============== */
+
+  TIMER_RESET
+  TIMER_GO
+
+  // Build bounding box for the hexa
+  double xMin, yMin, zMin, xMax, yMax, zMax;
+  asiAlgo_Utils::Bounds(face, xMin, yMin, zMin, xMax, yMax, zMax);
+
+  BRep_Builder BB;
+  TopoDS_Compound circles;
+  BB.MakeCompound(circles);
+
+  // List for cutter
+  TopTools_ListOfShape tools;
+
+  // Prepare two-dimensional classifier
+  IntTools_FClass2d classifier;
+  classifier.Init( face, Precision::Confusion() );
+
+  // Count number of primitives which pass the test
+  int circCount = 0;
+
+  double xcurr = xMin;
+  do
+  {
+    double ycurr = yMin;
+
+    do
+    {
+      // Classify center point
+      const TopAbs_State state = classifier.TestOnRestriction( gp_Pnt2d(xcurr, ycurr), 0.05 );
+      //
+      if ( state == TopAbs_IN )
+      {
+        gp_Pnt       circcenter(xcurr, ycurr, 0.0);
+        gp_Circ      circ(gp_Ax2(circcenter, gp::DZ() ), r);
+        TopoDS_Wire  circWire = BRepBuilderAPI_MakeWire( BRepBuilderAPI_MakeEdge(circ) );
+        TopoDS_Shape circFace = BRepBuilderAPI_MakeFace(circWire);
+        //
+        BB.Add(circles, circFace);
+        tools.Append(circFace);
+
+        circCount++;
+      }
+
+      ycurr += step;
+    }
+    while ( ycurr < yMax );
+
+    xcurr += step;
+  }
+  while ( xcurr < xMax );
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Build circles")
+
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Number of circles: %1" << circCount);
+  interp->GetPlotter().REDRAW_SHAPE("circles", circles, Color_Yellow);
+
+  /* ================
+   *  Cut primitives
+   * ================ */
+
+  TIMER_RESET
+  TIMER_GO
+
+  TopoDS_Shape cutres = asiAlgo_Utils::BooleanCut(face, tools, false);
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Cut circles")
+
+  interp->GetPlotter().REDRAW_SHAPE("cutres", cutres);
+
+  /* =========
+   *  Extrude
+   * ========= */
+
+  TIMER_RESET
+  TIMER_GO
+
+  // Build prism
+  TopoDS_Shape result = BRepPrimAPI_MakePrism(cutres, gp_Vec( workPlane->Axis().Direction() )*h);
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Extrude")
 
   interp->GetPlotter().REDRAW_SHAPE("result", result);
 
@@ -899,6 +1044,16 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t of OpenCascade. It cuts many cylinders from a hexagonal prism.",
     //
     __FILE__, group, MISC_TestHexagonBops);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-hexagon-bops-faces",
+    //
+    "test-hexagon-bops-faces \n"
+    "\t No arguments are expected. This command demonstrates solid Booleans \n"
+    "\t of OpenCascade. It cuts many circles from a hexagon and then \n"
+    "\t constructs a prism.",
+    //
+    __FILE__, group, MISC_TestHexagonBopsFaces);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("push-pull",

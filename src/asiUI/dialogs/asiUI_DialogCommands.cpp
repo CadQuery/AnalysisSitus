@@ -107,42 +107,59 @@ asiUI_DialogCommands::~asiUI_DialogCommands()
 //! Initializes table of commands.
 void asiUI_DialogCommands::initialize()
 {
-  // Collect variables
+  // Collect variables.
   std::vector<asiTcl_CommandInfo> commands;
   m_interp->GetAvailableCommands(commands);
 
-  // Prepare properties to access the item
-  const Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-
-  // Populate table
-  int current_row = 0;
+  // Gather all command names for sorting.
+  std::vector<int>         indices;
+  std::vector<std::string> commandNames;
+  //
   for ( int c = 0; c < (int) commands.size(); ++c )
   {
-    const asiTcl_CommandInfo& cmd = commands[c];
+    indices.push_back(c);
+    commandNames.push_back(commands[c].Name);
+  }
 
-    // Insert table row
+  // Sort commands by names.
+  std::sort( indices.begin(), indices.end(),
+             [&](const int a, const int b)
+             {
+               return commandNames[a] < commandNames[b];
+             } );
+
+  // Prepare properties to access the item.
+  const Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+
+  // Populate table.
+  int current_row = 0;
+  for ( int c = 0; c < (int) indices.size(); ++c )
+  {
+    const asiTcl_CommandInfo& cmd = commands[indices[c]];
+
+    // Insert table row.
     m_widgets.pCommands->insertRow(current_row);
 
-    // Table item for name
+    // Table item for name.
     QTableWidgetItem* pNameItem = new QTableWidgetItem( cmd.Name.c_str() );
     pNameItem->setFlags(flags);
     pNameItem->setToolTip( cmd.Help.c_str() );
     m_widgets.pCommands->setItem(current_row, 0, pNameItem);
 
-    // Table item for module
+    // Table item for module.
     QTableWidgetItem* pModuleItem = new QTableWidgetItem( cmd.Group.c_str() );
     pModuleItem->setFlags(flags);
     m_widgets.pCommands->setItem(current_row, 1, pModuleItem);
 
-    // Table item for source
+    // Table item for source.
     QTableWidgetItem* pSourceItem = new QTableWidgetItem( cmd.Filename.c_str() );
     pSourceItem->setFlags(flags);
     m_widgets.pCommands->setItem(current_row, 2, pSourceItem);
 
-    // Switch to the next row
+    // Switch to the next row.
     current_row++;
   }
 
-  // Choose good ratio of column sizes
+  // Choose good ratio of column sizes.
   m_widgets.pCommands->resizeColumnsToContents();
 }

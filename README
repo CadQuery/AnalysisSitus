@@ -14,6 +14,20 @@ Debug your B-Rep.
 ===============================================================================
 Release notes
 -------------------------------------------------------------------------------
+v0.2.4, 26 March 2018
+-------------------------------------------------------------------------------
+- Add dialog to manage visibility of pipelines for presented objects.
+- Add visualization of control net for B-surfaces.
+- Improve ergonomics of secondary viewers.
+- Enable loading BREP/STEP by double click on filename.
+- Add many useful Tcl commands.
+- Add visualization of curvature combs and plots for curves.
+- Introduce functionality for edge reconstruction by local topology analysis.
+- Enable visualization of sub-shape locations as colored arcs in topology graphs.
+- Develop curve fairing method in asiAlgo_Utils.
+- Bugfix everywhere.
+- Improve ergonomics of Tcl console and Commands dialog.
+-------------------------------------------------------------------------------
 v0.2.3, 22 December 2017
 -------------------------------------------------------------------------------
 - Bugfix.

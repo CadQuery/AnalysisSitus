@@ -557,6 +557,11 @@ public:
                       const int                  p,
                       Handle(Geom_BSplineCurve)& result);
 
+  asiAlgo_EXPORT static bool
+    InterpolatePoints(const Handle(asiAlgo_BaseCloud<double>)& points,
+                      const int                                p,
+                      Handle(Geom_BSplineCurve)&               result);
+
   asiAlgo_EXPORT static TopoDS_Shape
     BooleanCut(const TopoDS_Shape& Object,
                const TopoDS_Shape& Tool,

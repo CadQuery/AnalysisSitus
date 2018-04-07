@@ -1528,6 +1528,26 @@ bool asiAlgo_Utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_Utils::InterpolatePoints(const Handle(asiAlgo_BaseCloud<double>)& points,
+                                      const int                                p,
+                                      Handle(Geom_BSplineCurve)&               result)
+{
+  std::vector<gp_Pnt> occPts;
+
+  // Repack data points.
+  for ( int i = 0; i < points->GetNumberOfElements(); ++i )
+  {
+    double x, y, z;
+    points->GetElement(i, x, y, z);
+    //
+    occPts.push_back( gp_Pnt(x, y, z) );
+  }
+
+  return InterpolatePoints(occPts, p, result);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Performs Boolean Cut of a tool shape from the given object shape.
 //! \param Object [in] object to cut from.
 //! \param Tool   [in] tool to cut out.

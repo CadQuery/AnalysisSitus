@@ -44,8 +44,6 @@
 // Data Node representing a point cloud in IV (Imperative Viewer)
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_IVPointSetNode, ActData_BaseNode)
-
 //! Data Node representing a point cloud in IV (Imperative Viewer).
 class asiData_IVPointSetNode : public ActData_BaseNode
 {

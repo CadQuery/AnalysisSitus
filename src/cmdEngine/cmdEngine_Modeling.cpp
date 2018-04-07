@@ -41,6 +41,7 @@
 #include <asiAlgo_EulerKEF.h>
 #include <asiAlgo_EulerKEV.h>
 #include <asiAlgo_TopoKill.h>
+#include <asiAlgo_Utils.h>
 
 // OCCT includes
 #include <BRep_Builder.hxx>
@@ -384,6 +385,48 @@ int ENGINE_MakeCurve(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_InterpolatePoints(const Handle(asiTcl_Interp)& interp,
+                             int                          argc,
+                             const char**                 argv)
+{
+  if ( argc != 4 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Points Node.
+  Handle(asiData_IVPointSetNode)
+    pointsNode = Handle(asiData_IVPointSetNode)::DownCast( cmdEngine::model->FindNodeByName(argv[2]) );
+  //
+  if ( pointsNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find Points Node with name %1." << argv[2]);
+    return TCL_OK;
+  }
+
+  // Get degree.
+  const int degree = atoi(argv[3]);
+
+  // Get Cartesian points to interpolate.
+  Handle(asiAlgo_BaseCloud<double>) ptsCloud = pointsNode->GetPoints();
+
+  // Interpolate.
+  Handle(Geom_BSplineCurve) interpolant;
+  //
+  if ( !asiAlgo_Utils::InterpolatePoints(ptsCloud, degree, interpolant) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Interpolation failed.");
+    return TCL_OK;
+  }
+
+  // Set result.
+  interp->GetPlotter().REDRAW_CURVE(argv[1], interpolant, Color_Red);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                                   const Handle(Standard_Transient)& data)
 {
@@ -446,5 +489,13 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Creates a curve from the selected edge.",
     //
     __FILE__, group, ENGINE_MakeCurve);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("interpolate-points",
+    //
+    "interpolate-points curveName pointsName deg\n"
+    "\t Creates a curve from the passed point series by interpolation.",
+    //
+    __FILE__, group, ENGINE_InterpolatePoints);
 
 }

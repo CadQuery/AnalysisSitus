@@ -56,7 +56,9 @@
 
 //-----------------------------------------------------------------------------
 
-#define NUM_INTEGRATION_BINS 500
+#define NUM_CONSTRAINED_POLES_LEADING  10
+#define NUM_CONSTRAINED_POLES_TRAILING 10
+#define NUM_INTEGRATION_BINS           500
 
 //-----------------------------------------------------------------------------
 
@@ -97,15 +99,15 @@ bool asiAlgo_FairBCurve::Perform()
   const int                   p   = m_inputCurve->Degree();
   const int                   m   = U.Length() - 1;
   const int                   n   = m - p - 1;
-  const int                   dim = n + 1;
+  const int                   dim = n + 1 - NUM_CONSTRAINED_POLES_LEADING - NUM_CONSTRAINED_POLES_TRAILING;
 
-  // Initialize matrix from the passed row pointer
+  // Initialize matrix from the passed row pointer.
   Eigen::MatrixXd eigen_A_mx(dim, dim);
   for ( int r = 0; r < dim; ++r )
   {
     for ( int c = 0; c < dim; ++c )
     {
-      asiAlgo_FairingAijFunc N2(U, p, r, c, m_fLambda);
+      asiAlgo_FairingAijFunc N2(U, p, r + NUM_CONSTRAINED_POLES_LEADING, c + NUM_CONSTRAINED_POLES_LEADING, m_fLambda);
 
       // Compute integral.
       const double val = Integral(N2, U.First(), U.Last(), NUM_INTEGRATION_BINS);
@@ -122,9 +124,9 @@ bool asiAlgo_FairBCurve::Perform()
   Eigen::MatrixXd eigen_B_mx(dim, 3);
   for ( int r = 0; r < dim; ++r )
   {
-    asiAlgo_FairingBjFunc rhs_x(m_inputCurve, 0, U, p, r, m_fLambda);
-    asiAlgo_FairingBjFunc rhs_y(m_inputCurve, 1, U, p, r, m_fLambda);
-    asiAlgo_FairingBjFunc rhs_z(m_inputCurve, 2, U, p, r, m_fLambda);
+    asiAlgo_FairingBjFunc rhs_x(m_inputCurve, 0, U, p, r + NUM_CONSTRAINED_POLES_LEADING, m_fLambda);
+    asiAlgo_FairingBjFunc rhs_y(m_inputCurve, 1, U, p, r + NUM_CONSTRAINED_POLES_LEADING, m_fLambda);
+    asiAlgo_FairingBjFunc rhs_z(m_inputCurve, 2, U, p, r + NUM_CONSTRAINED_POLES_LEADING, m_fLambda);
 
     // Compute integrals.
     const double val_x = Integral(rhs_x, U.First(), U.Last(), NUM_INTEGRATION_BINS);
@@ -140,7 +142,7 @@ bool asiAlgo_FairBCurve::Perform()
   std::cout << "Here is the matrix B:\n" << eigen_B_mx << std::endl;
 #endif
 
-  // Solve
+  // Solve.
   Eigen::ColPivHouseholderQR<Eigen::MatrixXd> QR(eigen_A_mx);
   Eigen::MatrixXd eigen_X_mx = QR.solve(eigen_B_mx);
 
@@ -154,7 +156,7 @@ bool asiAlgo_FairBCurve::Perform()
   const TColgp_Array1OfPnt& poles = m_resultCurve->Poles();
   int                       r     = 0;
   //
-  for ( int p = poles.Lower(); p <= poles.Upper(); ++p, ++r )
+  for ( int p = poles.Lower() + NUM_CONSTRAINED_POLES_LEADING; p <= poles.Upper() - NUM_CONSTRAINED_POLES_TRAILING; ++p, ++r )
   {
     gp_XYZ P = poles(p).XYZ();
     gp_XYZ D = gp_XYZ( eigen_X_mx(r, 0), eigen_X_mx(r, 1), eigen_X_mx(r, 2) );

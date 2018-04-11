@@ -414,8 +414,12 @@ bool asiVisu_ShapeRobustTessellator::isValidFace(const TopoDS_Face& face) const
   // happen to be insufficient to cover tiny contour gaps.
   const double tol = asiAlgo_Utils::MaxTolerance(face)*5.0;
 
+  // Location just to access triangulation.
+  TopLoc_Location loc;
+
   return asiAlgo_Utils::HasAllClosedWires(face, tol) &&
-        !asiAlgo_Utils::HasEdgesWithoutVertices(face);
+        !asiAlgo_Utils::HasEdgesWithoutVertices(face) &&
+        !BRep_Tool::Triangulation(face, loc).IsNull();
 }
 
 //-----------------------------------------------------------------------------

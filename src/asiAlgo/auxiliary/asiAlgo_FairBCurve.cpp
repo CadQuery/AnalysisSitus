@@ -56,8 +56,8 @@
 
 //-----------------------------------------------------------------------------
 
-#define NUM_CONSTRAINED_POLES_LEADING  10
-#define NUM_CONSTRAINED_POLES_TRAILING 10
+#define NUM_CONSTRAINED_POLES_LEADING  1
+#define NUM_CONSTRAINED_POLES_TRAILING 1
 #define NUM_INTEGRATION_BINS           500
 
 //-----------------------------------------------------------------------------

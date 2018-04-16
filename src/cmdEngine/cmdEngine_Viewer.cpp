@@ -236,7 +236,7 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("erase",
     //
-    "erase varName1 [varName2 ...] \n"
+    "erase varName1 [varName2 ...]\n"
     "\t Hides object in viewer.",
     //
     __FILE__, group, ENGINE_Erase);
@@ -244,7 +244,7 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("hide",
     //
-    "hide varName1 [varName2 ...] \n"
+    "hide varName1 [varName2 ...]\n"
     "\t Hides object in viewer.",
     //
     __FILE__, group, ENGINE_Erase);
@@ -252,7 +252,7 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("show-history",
     //
-    "show-history \n"
+    "show-history\n"
     "\t Shows modification history associated with the active part.",
     //
     __FILE__, group, ENGINE_ShowHistory);
@@ -260,7 +260,7 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("show",
     //
-    "show varName1 [varName2 ...] \n"
+    "show varName1 [varName2 ...]\n"
     "\t Shows the given object in viewer.",
     //
     __FILE__, group, ENGINE_Show);
@@ -268,7 +268,7 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("display",
     //
-    "display varName1 [varName2 ...] \n"
+    "display varName1 [varName2 ...]\n"
     "\t Shows the given object in viewer.",
     //
     __FILE__, group, ENGINE_Show);
@@ -276,7 +276,7 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("show-only",
     //
-    "show-only varName1 [varName2 ...] \n"
+    "show-only varName1 [varName2 ...]\n"
     "\t Shows only the given objects in viewer.",
     //
     __FILE__, group, ENGINE_ShowOnly);
@@ -284,7 +284,7 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("donly",
     //
-    "donly varName1 [varName2 ...] \n"
+    "donly varName1 [varName2 ...]\n"
     "\t Shows only the given objects in viewer.",
     //
     __FILE__, group, ENGINE_ShowOnly);
@@ -292,7 +292,7 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("erase-all",
     //
-    "erase-all \n"
+    "erase-all\n"
     "\t Erases all objects from the scene.",
     //
     __FILE__, group, ENGINE_EraseAll);
@@ -300,7 +300,7 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("fit",
     //
-    "fit \n"
+    "fit\n"
     "\t Fits camera to the scene contents.",
     //
     __FILE__, group, ENGINE_Fit);

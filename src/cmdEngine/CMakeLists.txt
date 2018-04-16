@@ -1,6 +1,19 @@
 project(cmdEngine)
 
 #------------------------------------------------------------------------------
+# Mobius libraries
+#------------------------------------------------------------------------------
+
+if (USE_MOBIUS)
+  set (MOBIUS_LIB_FILES
+    mobiusBSpl
+    mobiusCascade
+    mobiusCore
+    mobiusGeom
+  )
+endif()
+
+#------------------------------------------------------------------------------
 # Common
 #------------------------------------------------------------------------------
 
@@ -72,6 +85,23 @@ add_library (cmdEngine SHARED
 #------------------------------------------------------------------------------
 
 target_link_libraries(cmdEngine asiTcl asiAlgo asiData asiVisu asiEngine asiUI)
+
+if (USE_MOBIUS)
+  foreach (LIB_FILE ${MOBIUS_LIB_FILES})
+    if (WIN32)
+      set (LIB_FILENAME "${LIB_FILE}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    else()
+      set (LIB_FILENAME "lib${LIB_FILE}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+    endif()
+
+    if (3RDPARTY_mobius_LIBRARY_DIR_DEBUG AND EXISTS "${3RDPARTY_mobius_LIBRARY_DIR_DEBUG}/${LIB_FILENAME}")
+      target_link_libraries (cmdEngine debug ${3RDPARTY_mobius_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
+      target_link_libraries (cmdEngine optimized ${3RDPARTY_mobius_LIBRARY_DIR}/${LIB_FILENAME})
+    else()
+      target_link_libraries (cmdEngine ${3RDPARTY_mobius_LIBRARY_DIR}/${LIB_FILENAME})
+    endif()
+  endforeach()
+endif()
 
 #------------------------------------------------------------------------------
 # Installation of Analysis Situs as a software

@@ -45,6 +45,10 @@
 #include <asiUI_CurvaturePlot.h>
 #include <asiUI_DialogEuler.h>
 
+#ifdef USE_MOBIUS
+  #include <mobius/cascade_BSplineCurve3D.h>
+#endif
+
 // OCCT includes
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <TopExp.hxx>
@@ -530,6 +534,385 @@ int ENGINE_DumpTopograph(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  if ( argc < 4 || argc > 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Curve Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVCurveNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a curve."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVCurveNode)
+    curveNode = Handle(asiData_IVCurveNode)::DownCast(node);
+
+  // Get curve.
+  double f, l;
+  Handle(Geom_Curve) occtCurve = curveNode->GetCurve(f, l);
+  //
+  if ( occtCurve.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is NULL.");
+    return TCL_OK;
+  }
+
+  // Get parameter value.
+  const double u = atof(argv[2]);
+
+  // Get order.
+  const int order = atoi(argv[3]);
+  //
+  if ( order < 0 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Negative order is meaningless.");
+    return TCL_OK;
+  }
+
+  // Check whether Mobius evaluation is requested.
+  bool isMobius = interp->HasKeyword(argc, argv, "mobius");
+
+  // Evaluate curve.
+  TCollection_AsciiString Message("\n========================================");
+  Message                      += "\n Curve evaluation";
+  Message                      += "\n----------------------------------------";
+  //
+  if ( !isMobius )
+  {
+    Message += "\nMethod: OpenCascade";
+
+    if ( order == 0 )
+    {
+      gp_Pnt eval_P;
+      occtCurve->D0(u, eval_P);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += eval_P.X();
+      Message += ", ";
+      Message += eval_P.Y();
+      Message += ", ";
+      Message += eval_P.Z();
+      Message += ")";
+    }
+    else if ( order == 1 )
+    {
+      gp_Pnt eval_P;
+      gp_Vec eval_D1;
+      occtCurve->D1(u, eval_P, eval_D1);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1", eval_P, eval_D1, Color_Yellow);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += eval_P.X();
+      Message += ", ";
+      Message += eval_P.Y();
+      Message += ", ";
+      Message += eval_P.Z();
+      Message += ")";
+      //
+      Message += "\nD1(X, Y, Z): (";
+      Message += eval_D1.X();
+      Message += ", ";
+      Message += eval_D1.Y();
+      Message += ", ";
+      Message += eval_D1.Z();
+      Message += ")";
+    }
+    else if ( order == 2 )
+    {
+      gp_Pnt eval_P;
+      gp_Vec eval_D1, eval_D2;
+      occtCurve->D2(u, eval_P, eval_D1, eval_D2);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1", eval_P, eval_D1, Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D2", eval_P, eval_D2, Color_Yellow);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += eval_P.X();
+      Message += ", ";
+      Message += eval_P.Y();
+      Message += ", ";
+      Message += eval_P.Z();
+      Message += ")";
+      //
+      Message += "\nD1(X, Y, Z): (";
+      Message += eval_D1.X();
+      Message += ", ";
+      Message += eval_D1.Y();
+      Message += ", ";
+      Message += eval_D1.Z();
+      Message += ")";
+      //
+      Message += "\nD2(X, Y, Z): (";
+      Message += eval_D2.X();
+      Message += ", ";
+      Message += eval_D2.Y();
+      Message += ", ";
+      Message += eval_D2.Z();
+      Message += ")";
+    }
+    else if ( order == 3 )
+    {
+      gp_Pnt eval_P;
+      gp_Vec eval_D1, eval_D2, eval_D3;
+      occtCurve->D3(u, eval_P, eval_D1, eval_D2, eval_D3);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1", eval_P, eval_D1, Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D2", eval_P, eval_D2, Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D3", eval_P, eval_D3, Color_Yellow);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += eval_P.X();
+      Message += ", ";
+      Message += eval_P.Y();
+      Message += ", ";
+      Message += eval_P.Z();
+      Message += ")";
+      //
+      Message += "\nD1(X, Y, Z): (";
+      Message += eval_D1.X();
+      Message += ", ";
+      Message += eval_D1.Y();
+      Message += ", ";
+      Message += eval_D1.Z();
+      Message += ")";
+      //
+      Message += "\nD2(X, Y, Z): (";
+      Message += eval_D2.X();
+      Message += ", ";
+      Message += eval_D2.Y();
+      Message += ", ";
+      Message += eval_D2.Z();
+      Message += ")";
+      //
+      Message += "\nD3(X, Y, Z): (";
+      Message += eval_D3.X();
+      Message += ", ";
+      Message += eval_D3.Y();
+      Message += ", ";
+      Message += eval_D3.Z();
+      Message += ")";
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Order %1 is not supported for OpenCascade method."
+                                                          << order);
+      return TCL_OK;
+    }
+  }
+  else
+  {
+#ifndef USE_MOBIUS
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius module is disabled.");
+    return TCL_ERROR;
+#else
+    Message += "\nMethod: Mobius";
+
+    Handle(Geom_BSplineCurve)
+      occtBCurve = Handle(Geom_BSplineCurve)::DownCast(occtCurve);
+    //
+    if ( occtBCurve.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is not a B-curve.");
+      return TCL_OK;
+    }
+
+    // Convert to Mobius curve.
+    mobius::cascade_BSplineCurve3D converter(occtBCurve);
+    converter.DirectConvert();
+    //
+    const mobius::Ptr<mobius::bcurve>&
+      mobCurve = converter.GetMobiusCurve();
+
+    // Evaluate.
+    if ( order == 0 )
+    {
+      mobius::xyz eval_P;
+      mobCurve->Eval(u, eval_P);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P",
+                                        gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
+                                        Color_Yellow);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += eval_P.X();
+      Message += ", ";
+      Message += eval_P.Y();
+      Message += ", ";
+      Message += eval_P.Z();
+      Message += ")";
+    }
+    else if ( order == 1 )
+    {
+      mobius::xyz eval_P;
+      mobCurve->Eval(u, eval_P);
+      //
+      mobius::xyz eval_D1;
+      mobCurve->Eval_Dk(u, 1, eval_D1);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P",
+                                        gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
+                                        Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1",
+                                            gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
+                                            gp_Vec( eval_D1.X(), eval_D1.Y(), eval_D1.Z() ),
+                                            Color_Yellow);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += eval_P.X();
+      Message += ", ";
+      Message += eval_P.Y();
+      Message += ", ";
+      Message += eval_P.Z();
+      Message += ")";
+      //
+      Message += "\nD1(X, Y, Z): (";
+      Message += eval_D1.X();
+      Message += ", ";
+      Message += eval_D1.Y();
+      Message += ", ";
+      Message += eval_D1.Z();
+      Message += ")";
+    }
+    else if ( order == 2 )
+    {
+      mobius::xyz eval_P;
+      mobCurve->Eval(u, eval_P);
+      //
+      mobius::xyz eval_D1;
+      mobCurve->Eval_Dk(u, 1, eval_D1);
+      //
+      mobius::xyz eval_D2;
+      mobCurve->Eval_Dk(u, 2, eval_D2);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P",
+                                        gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
+                                        Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1",
+                                            gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
+                                            gp_Vec( eval_D1.X(), eval_D1.Y(), eval_D1.Z() ),
+                                            Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D2",
+                                            gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
+                                            gp_Vec( eval_D2.X(), eval_D2.Y(), eval_D2.Z() ),
+                                            Color_Yellow);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += eval_P.X();
+      Message += ", ";
+      Message += eval_P.Y();
+      Message += ", ";
+      Message += eval_P.Z();
+      Message += ")";
+      //
+      Message += "\nD1(X, Y, Z): (";
+      Message += eval_D1.X();
+      Message += ", ";
+      Message += eval_D1.Y();
+      Message += ", ";
+      Message += eval_D1.Z();
+      Message += ")";
+      //
+      Message += "\nD2(X, Y, Z): (";
+      Message += eval_D2.X();
+      Message += ", ";
+      Message += eval_D2.Y();
+      Message += ", ";
+      Message += eval_D2.Z();
+      Message += ")";
+    }
+    else if ( order == 3 )
+    {
+      mobius::xyz eval_P;
+      mobCurve->Eval(u, eval_P);
+      //
+      mobius::xyz eval_D1;
+      mobCurve->Eval_Dk(u, 1, eval_D1);
+      //
+      mobius::xyz eval_D2;
+      mobCurve->Eval_Dk(u, 2, eval_D2);
+      //
+      mobius::xyz eval_D3;
+      mobCurve->Eval_Dk(u, 3, eval_D3);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P",
+                                        gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
+                                        Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1",
+                                            gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
+                                            gp_Vec( eval_D1.X(), eval_D1.Y(), eval_D1.Z() ),
+                                            Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D2",
+                                            gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
+                                            gp_Vec( eval_D2.X(), eval_D2.Y(), eval_D2.Z() ),
+                                            Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D3",
+                                            gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
+                                            gp_Vec( eval_D3.X(), eval_D3.Y(), eval_D3.Z() ),
+                                            Color_Yellow);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += eval_P.X();
+      Message += ", ";
+      Message += eval_P.Y();
+      Message += ", ";
+      Message += eval_P.Z();
+      Message += ")";
+      //
+      Message += "\nD1(X, Y, Z): (";
+      Message += eval_D1.X();
+      Message += ", ";
+      Message += eval_D1.Y();
+      Message += ", ";
+      Message += eval_D1.Z();
+      Message += ")";
+      //
+      Message += "\nD2(X, Y, Z): (";
+      Message += eval_D2.X();
+      Message += ", ";
+      Message += eval_D2.Y();
+      Message += ", ";
+      Message += eval_D2.Z();
+      Message += ")";
+      //
+      Message += "\nD3(X, Y, Z): (";
+      Message += eval_D3.X();
+      Message += ", ";
+      Message += eval_D3.Y();
+      Message += ", ";
+      Message += eval_D3.Z();
+      Message += ")";
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Order %1 is not supported for Mobius method."
+                                                          << order);
+      return TCL_OK;
+    }
+#endif
+  }
+  Message += "\n----------------------------------------";
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << Message);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -541,8 +924,8 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("explode",
     //
     "explode [-vertex|-edge|-wire|-face|-shell|-solid]\n"
-    "\t Explodes active part to sub-shapes of interest. If no sub-shape \n"
-    "\t qualifier is passed, this command explodes the part to its direct \n"
+    "\t Explodes active part to sub-shapes of interest. If no sub-shape\n"
+    "\t qualifier is passed, this command explodes the part to its direct\n"
     "\t children (e.g. edges for wire, wires for face, etc.).",
     //
     __FILE__, group, ENGINE_Explode);
@@ -558,7 +941,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("face-addr",
     //
-    "face-addr faceIndex \n"
+    "face-addr faceIndex\n"
     "\t Prints physical address of the given face.",
     //
     __FILE__, group, ENGINE_FaceAddr);
@@ -566,7 +949,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("dist",
     //
-    "dist varName \n"
+    "dist varName\n"
     "\t Computes distance between the part and the given topological object.",
     //
     __FILE__, group, ENGINE_Dist);
@@ -574,13 +957,13 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-curvature",
     //
-    "check-curvature [numPts [scaleFactor [curvAmpl]]] [-noplot] [-noalong] \n"
-    "\t Checks curvature of the selected edge. As a result, curvature combs \n"
-    "\t are visualized in 3D. You can control its scale factor with \n"
-    "\t <scaleFactor> argument and also its density with <numPts> argument. \n"
-    "\t To bring out the salient features of the comb, <curvAmpl> amplification \n"
-    "\t factor can be used. If -noplot key is passed, the curvature plot is not \n"
-    "\t constructed. If -noalong key is passed, the along-curvature value for \n"
+    "check-curvature [numPts [scaleFactor [curvAmpl]]] [-noplot] [-noalong]\n"
+    "\t Checks curvature of the selected edge. As a result, curvature combs\n"
+    "\t are visualized in 3D. You can control its scale factor with\n"
+    "\t <scaleFactor> argument and also its density with <numPts> argument.\n"
+    "\t To bring out the salient features of the comb, <curvAmpl> amplification\n"
+    "\t factor can be used. If -noplot key is passed, the curvature plot is not\n"
+    "\t constructed. If -noalong key is passed, the along-curvature value for\n"
     "\t the selected edges is not computed.",
     //
     __FILE__, group, ENGINE_CheckCurvature);
@@ -588,7 +971,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-euler",
     //
-    "check-euler \n"
+    "check-euler\n"
     "\t Opens dialog to check Euler-Poincare property of the Part geometry.",
     //
     __FILE__, group, ENGINE_CheckEuler);
@@ -600,4 +983,15 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Dumps topology graph to file.",
     //
     __FILE__, group, ENGINE_DumpTopograph);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("eval-curve",
+    //
+    "eval-curve curveName u order [-mobius]\n"
+    "\t Evaluates curve <curveName> for the given parameter value <u>.\n"
+    "\t If <-mobius> keyword is used, evaluation is performed using Mobius\n"
+    "\t functions. The argument <order> specifies the order of derivatives\n"
+    "\t to evaluate (0 for value evaluation).",
+    //
+    __FILE__, group, ENGINE_EvalCurve);
 }

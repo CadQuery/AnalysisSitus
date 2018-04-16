@@ -82,7 +82,7 @@ void cmdEngine::Commands_Naming(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("init-naming",
     //
-    "init-naming \n"
+    "init-naming\n"
     "\t Initializes topological naming service for the active part.",
     //
     __FILE__, group, ENGINE_InitNaming);

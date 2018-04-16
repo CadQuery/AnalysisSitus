@@ -193,6 +193,17 @@ public:
     IsKeyword(const TCollection_AsciiString& opt,
               const TCollection_AsciiString& key) const;
 
+  //! Checks whether the passed command line arguments contain the given
+  //! key.
+  //! \param[in] argc number of command line arguments.
+  //! \param[in] argv command line arguments.
+  //! \param[in] key  keyword in question.
+  //! \return true/false.
+  asiTcl_EXPORT bool
+    HasKeyword(const int                      argc,
+               const char**                   argv,
+               const TCollection_AsciiString& key) const;
+
   //! Appends the passed string to the result of command execution.
   //! \param[in] str string to append.
   //! \return this for subsequent appends.

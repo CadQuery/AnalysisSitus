@@ -202,6 +202,20 @@ bool asiTcl_Interp::IsKeyword(const TCollection_AsciiString& opt,
 
 //-----------------------------------------------------------------------------
 
+bool asiTcl_Interp::HasKeyword(const int                      argc,
+                               const char**                   argv,
+                               const TCollection_AsciiString& key) const
+{
+  for ( int k = 1; k < argc; ++k )
+  {
+    if ( this->IsKeyword(argv[k], key) )
+      return true;
+  }
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
 asiTcl_Interp& asiTcl_Interp::Append(const char* str)
 {
   // Convert string to UTF-8 format for Tcl.

@@ -64,7 +64,9 @@ bool asiAlgo_FairingBjFunc::Value(const double u, double& f)
    *  Calculate 2-nd derivative of basis spline at the given parameter
    * ================================================================== */
 
-  const int order = m_iDegree + 1;
+  const int order    = m_iDegree + 1;
+  double    d2N      = 0.0;
+  double    d2C_proj = 0.0;
 
   int firstNonZeroIdx;
   math_Matrix N_mx(1, 3, 1, order);
@@ -73,14 +75,14 @@ bool asiAlgo_FairingBjFunc::Value(const double u, double& f)
 #if defined COUT_DEBUG
   // Dump
   std::cout << "\tFirst Non-Zero Index for " << u << " is " << firstNonZeroIdx << std::endl;
-  for ( int kk = 1; kk <= p + 1; ++kk )
+  for ( int kk = 1; kk <= order; ++kk )
   {
     std::cout << "\t" << N_mx(3, kk);
   }
   std::cout << std::endl;
 #endif
 
-  double d2N = 0.0;
+  
   const int oneBasedIndex = m_iIndex + 1;
 
   // For indices in a band of width (p + 1), we can query what
@@ -97,8 +99,8 @@ bool asiAlgo_FairingBjFunc::Value(const double u, double& f)
   m_curve->D2(u, P, d1C, d2C);
 
   // Get projection of the second derivative.
-  const double d2C_proj = d2C.Coord(m_iCoord + 1); // As the passed coord is 0-based,
-                                                   // while OCCT operates with 1-based indices.
+  d2C_proj = d2C.Coord(m_iCoord + 1); // As the passed coord is 0-based,
+                                      // while OCCT operates with 1-based indices.
 
   // Calculate the result.
   f = this->GetLambda()*d2N*d2C_proj;

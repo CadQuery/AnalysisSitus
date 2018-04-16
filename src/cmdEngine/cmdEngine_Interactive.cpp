@@ -193,7 +193,7 @@ void cmdEngine::Commands_Interactive(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("start-contour",
     //
-    "start-contour \n"
+    "start-contour\n"
     "\t Enables interactive contour picking.",
     //
     __FILE__, group, ENGINE_StartContour);
@@ -201,7 +201,7 @@ void cmdEngine::Commands_Interactive(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("finish-contour",
     //
-    "finish-contour \n"
+    "finish-contour\n"
     "\t Finalizes interactive contour picking.",
     //
     __FILE__, group, ENGINE_FinishContour);
@@ -209,7 +209,7 @@ void cmdEngine::Commands_Interactive(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("contour-to-wire",
     //
-    "contour-to-wire varName \n"
+    "contour-to-wire varName\n"
     "\t Converts contour to topological wire.",
     //
     __FILE__, group, ENGINE_ContourToWire);

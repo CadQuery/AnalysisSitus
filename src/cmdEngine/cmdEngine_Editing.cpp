@@ -1043,7 +1043,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kev",
     //
-    "kev edgeIndex vertexIndex \n"
+    "kev edgeIndex vertexIndex\n"
     "\t KEV (Kill-Edge-Vertex) Euler operator.",
     //
     __FILE__, group, ENGINE_KEV);
@@ -1051,7 +1051,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kef",
     //
-    "kef edgeIndex faceIndex \n"
+    "kef edgeIndex faceIndex\n"
     "\t KEF (Kill-Edge-Face) Euler operator.",
     //
     __FILE__, group, ENGINE_KEF);
@@ -1076,10 +1076,10 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("kill-vertex",
     //
     "kill-vertex <vertexIndex|-name 'vertexName'>\n"
-    "\t Kills vertex with the passed 1-based index from the active part. \n"
-    "\t This is a pure topological operation which does not attempt to \n"
-    "\t modify geometry. Moreover, unlike Euler operator, this function \n"
-    "\t does not preserve the topological consistency of the CAD part. \n"
+    "\t Kills vertex with the passed 1-based index from the active part.\n"
+    "\t This is a pure topological operation which does not attempt to\n"
+    "\t modify geometry. Moreover, unlike Euler operator, this function\n"
+    "\t does not preserve the topological consistency of the CAD part.\n"
     "\t We have introduced this function to ground Euler operators on it.",
     //
     __FILE__, group, ENGINE_KillVertex);
@@ -1088,10 +1088,10 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("kill-edge",
     //
     "kill-edge <edgeIndex|-name 'edgeName'>\n"
-    "\t Kills edge with the passed 1-based index from the active part. \n"
-    "\t This is a pure topological operation which does not attempt to \n"
-    "\t modify geometry. Moreover, unlike Euler operator, this function \n"
-    "\t does not preserve the topological consistency of the CAD part. \n"
+    "\t Kills edge with the passed 1-based index from the active part.\n"
+    "\t This is a pure topological operation which does not attempt to\n"
+    "\t modify geometry. Moreover, unlike Euler operator, this function\n"
+    "\t does not preserve the topological consistency of the CAD part.\n"
     "\t We have introduced this function to ground Euler operators on it.",
     //
     __FILE__, group, ENGINE_KillEdge);
@@ -1100,10 +1100,10 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("kill-face",
     //
     "kill-face <faceIndex|-name 'faceName'>\n"
-    "\t Kills face with the passed 1-based index from the active part. \n"
-    "\t This is a pure topological operation which does not attempt to \n"
-    "\t modify geometry. Moreover, unlike Euler operator, this function \n"
-    "\t does not preserve the topological consistency of the CAD part. \n"
+    "\t Kills face with the passed 1-based index from the active part.\n"
+    "\t This is a pure topological operation which does not attempt to\n"
+    "\t modify geometry. Moreover, unlike Euler operator, this function\n"
+    "\t does not preserve the topological consistency of the CAD part.\n"
     "\t We have introduced this function to ground Euler operators on it.",
     //
     __FILE__, group, ENGINE_KillFace);
@@ -1120,13 +1120,13 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("move-by-face",
     //
     "move-by-face faceIndex offset\n"
-    "\t Moves part in direction determined by orientation of the given face \n."
-    "\t The passed offset value can be positive or negative. In the case of \n"
-    "\t positive offset, the movement is done along the face normal. In the \n"
-    "\t case of negative offset, the direction of movement is reversed. \n"
+    "\t Moves part in direction determined by orientation of the given face\n."
+    "\t The passed offset value can be positive or negative. In the case of\n"
+    "\t positive offset, the movement is done along the face normal. In the\n"
+    "\t case of negative offset, the direction of movement is reversed.\n"
     "\n"
-    "\t CAUTION: this command makes deep copy of the part. Our experience shows \n"
-    "\t that simply assigning location may cause very weird behaviour on subsequent \n"
+    "\t CAUTION: this command makes deep copy of the part. Our experience shows\n"
+    "\t that simply assigning location may cause very weird behaviour on subsequent\n"
     "\t modeling operations.",
     //
     __FILE__, group, ENGINE_MoveByFace);
@@ -1134,8 +1134,8 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("imprint",
     //
-    "imprint varName \n"
-    "\t Imprints the passed topological object to the working part. \n"
+    "imprint varName\n"
+    "\t Imprints the passed topological object to the working part.\n"
     "\t This operation is essenially the General Fuse algorithm of OpenCascde.",
     //
     __FILE__, group, ENGINE_Imprint);
@@ -1151,11 +1151,11 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("set-face-tolerance",
     //
-    "set-face-tolerance faceId toler \n"
-    "\t Forces the face with the given index to have the passed tolerance. \n"
-    "\t In OpenCascade, there is a rule that a tolerance of a face should be \n"
-    "\t not greater than tolerances of its edges (the same rule applies to \n"
-    "\t edges and vertices). Therefore, this function updates tolerance not \n"
+    "set-face-tolerance faceId toler\n"
+    "\t Forces the face with the given index to have the passed tolerance.\n"
+    "\t In OpenCascade, there is a rule that a tolerance of a face should be\n"
+    "\t not greater than tolerances of its edges (the same rule applies to\n"
+    "\t edges and vertices). Therefore, this function updates tolerance not\n"
     "\t only for face but also for its sub-shapes.",
     //
     __FILE__, group, ENGINE_SetFaceTolerance);
@@ -1163,7 +1163,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("set-tolerance",
     //
-    "set-face-tolerance toler \n"
+    "set-face-tolerance toler\n"
     "\t Forces the part to have the passed tolerance in all its sub-shapes.",
     //
     __FILE__, group, ENGINE_SetTolerance);
@@ -1179,8 +1179,8 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("fair-curve",
     //
-    "fair-curve varName fairingCoeff \n"
-    "\t Fairs curve with the given name. The passed fairing coefficient \n"
+    "fair-curve curveName fairingCoeff\n"
+    "\t Fairs curve with the given name <curveName>. The passed fairing coefficient\n"
     "\t is a weight of a fairing term in the goal function.",
     //
     __FILE__, group, ENGINE_FairCurve);

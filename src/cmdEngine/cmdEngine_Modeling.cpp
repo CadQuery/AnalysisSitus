@@ -438,12 +438,12 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("offset-shell",
     //
     "offset-shell offset [-simple] [-solid] [-keep]\n"
-    "\t Offsets part (it should be a topological shell) on the given offset \n"
-    "\t value. Offsetting is performed in the direction of face normals. If the \n"
-    "\t option '-simple' is passed, this operation will attempt to preserve \n"
-    "\t the topology of the base shell. If the option '-solid' is passed, this \n"
-    "\t operation will build a solid instead of an offset shell. If the option \n"
-    "\t '-keep' is passed, the original part is not substituted with the offset \n"
+    "\t Offsets part (it should be a topological shell) on the given offset\n"
+    "\t value. Offsetting is performed in the direction of face normals. If the\n"
+    "\t option '-simple' is passed, this operation will attempt to preserve\n"
+    "\t the topology of the base shell. If the option '-solid' is passed, this\n"
+    "\t operation will build a solid instead of an offset shell. If the option\n"
+    "\t '-keep' is passed, the original part is not substituted with the offset\n"
     "\t shape, and the offset is added to the part.",
     //
     __FILE__, group, ENGINE_OffsetShell);
@@ -452,7 +452,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("make-edge",
     //
     "make-edge result curveName\n"
-    "\t Creates edge from a curve. The <curveName> variable should exist \n"
+    "\t Creates edge from a curve. The <curveName> variable should exist\n"
     "\t as a Curve object in the scene graph of imperative plotter.",
     //
     __FILE__, group, ENGINE_MakeEdge);
@@ -461,7 +461,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("make-face",
     //
     "make-face result surfaceName\n"
-    "\t Creates face from a surface. The <surfaceName> variable should exist \n"
+    "\t Creates face from a surface. The <surfaceName> variable should exist\n"
     "\t as a Surface object in the scene graph of imperative plotter.",
     //
     __FILE__, group, ENGINE_MakeFace);

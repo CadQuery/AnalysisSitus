@@ -264,7 +264,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("undo",
     //
-    "undo \n"
+    "undo\n"
     "\t Undoes model changes.",
     //
     __FILE__, group, ENGINE_Undo);
@@ -272,7 +272,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("redo",
     //
-    "redo \n"
+    "redo\n"
     "\t Redoes model changes.",
     //
     __FILE__, group, ENGINE_Redo);
@@ -280,7 +280,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("set-as-var",
     //
-    "set-as-var varName \n"
+    "set-as-var varName\n"
     "\t Copies part shape to a topological variable.",
     //
     __FILE__, group, ENGINE_SetAsVar);
@@ -289,8 +289,8 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("set-as-part",
     //
     "set-as-part varName\n"
-    "\t Sets the object with the given name as a part for analysis. \n"
-    "\t The object is expected to exist as a topological item in \n"
+    "\t Sets the object with the given name as a part for analysis.\n"
+    "\t The object is expected to exist as a topological item in\n"
     "\t imperative plotter.",
     //
     __FILE__, group, ENGINE_SetAsPart);
@@ -299,10 +299,10 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("get-id",
     //
     "get-id [parentObjectName / [parentObjectName / [...]]] objectName\n"
-    "\t Finds a data object with the given name and returns its persistent ID. \n"
-    "\t If the object name is not unique, you may specify a list of parents \n"
-    "\t to narrow your request. The names of the parent objects are separated \n"
-    "\t by direct slash. You should always specify a direct parent of an object. \n"
+    "\t Finds a data object with the given name and returns its persistent ID.\n"
+    "\t If the object name is not unique, you may specify a list of parents\n"
+    "\t to narrow your request. The names of the parent objects are separated\n"
+    "\t by direct slash. You should always specify a direct parent of an object.\n"
     "\t It is not allowed to leave intermediate parents unspecified.",
     //
     __FILE__, group, ENGINE_GetId);
@@ -310,7 +310,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("clear",
     //
-    "clear \n"
+    "clear\n"
     "\t Cleans up project data.",
     //
     __FILE__, group, ENGINE_Clear);

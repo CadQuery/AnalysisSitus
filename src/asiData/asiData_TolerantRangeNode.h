@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 22 March 2016
+// Created on: 18 April 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_BoundaryEdgesNode_h
-#define asiData_BoundaryEdgesNode_h
+#ifndef asiData_TolerantRangeNode_h
+#define asiData_TolerantRangeNode_h
 
 // A-Situs includes
 #include <asiData.h>
@@ -38,16 +38,16 @@
 #include <ActData_BaseNode.h>
 #include <ActData_ShapeParameter.h>
 
-//! Node representing b-rep boundary edges.
-class asiData_BoundaryEdgesNode : public ActData_BaseNode
+//! Node representing shapes with tolerances within a certain range.
+class asiData_TolerantRangeNode : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_BoundaryEdgesNode, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_TolerantRangeNode, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_BoundaryEdgesNode, Instance)
+  DEFINE_NODE_FACTORY(asiData_TolerantRangeNode, Instance)
 
 public:
 
@@ -61,9 +61,9 @@ public:
   //------------------//
   // Geometry         //
   //------------------//
-    PID_Green,        //!< "Green" (good) edges.
-    PID_Red,          //!< "Red" (bad) edges.
-    PID_Ordinary,     //!< "Ordinary" (nothing special) edges.
+    PID_Shape,        //!< Tolerant shapes (packed in a compound).
+    PID_TolerMin,     //!< Min tolerance.
+    PID_TolerMax,     //!< Max tolerance.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -88,11 +88,32 @@ public:
   asiData_EXPORT void
     Init();
 
+// Convenience methods:
+public:
+
+  asiData_EXPORT TopoDS_Shape
+    GetShape() const;
+
+  asiData_EXPORT void
+    SetShape(const TopoDS_Shape& shape);
+
+  asiData_EXPORT double
+    GetMinToler() const;
+
+  asiData_EXPORT void
+    SetMinToler(const double value);
+
+  asiData_EXPORT double
+    GetMaxToler() const;
+
+  asiData_EXPORT void
+    SetMaxToler(const double value);
+
 protected:
 
   //! Allocation is allowed only via Instance method.
   asiData_EXPORT
-    asiData_BoundaryEdgesNode();
+    asiData_TolerantRangeNode();
 
 };
 

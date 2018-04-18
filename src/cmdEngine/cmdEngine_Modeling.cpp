@@ -427,6 +427,49 @@ int ENGINE_InterpolatePoints(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_Fuse(const Handle(asiTcl_Interp)& interp,
+                int                          argc,
+                const char**                 argv)
+{
+  if ( argc != 4 && argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get topological items which are the operands.
+  Handle(asiData_IVTopoItemNode)
+    topoItem1 = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[2]) );
+  //
+  Handle(asiData_IVTopoItemNode)
+    topoItem2 = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[3]) );
+  //
+  if ( topoItem1.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[2]);
+    return TCL_OK;
+  }
+  //
+  if ( topoItem2.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[3]);
+    return TCL_OK;
+  }
+
+  // Put all arguments to the list.
+  TopTools_ListOfShape arguments;
+  arguments.Append( topoItem1->GetShape() );
+  arguments.Append( topoItem2->GetShape() );
+
+  // Fuse.
+  TopoDS_Shape fused = asiAlgo_Utils::BooleanFuse(arguments);
+  //
+  interp->GetPlotter().REDRAW_SHAPE("fused", fused, Color_White);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                                   const Handle(Standard_Transient)& data)
 {
@@ -497,5 +540,14 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Creates a curve from the passed point series by interpolation.",
     //
     __FILE__, group, ENGINE_InterpolatePoints);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("fuse",
+    //
+    "fuse result op1 op2 [fuzz]\n"
+    "\t Fuses the passed two operands using Boolean Fuse operation.\n"
+    "\t It is possible to affect the fusion tolerance with <fuzz> argument.",
+    //
+    __FILE__, group, ENGINE_Fuse);
 
 }

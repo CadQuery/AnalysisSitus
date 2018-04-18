@@ -181,7 +181,7 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
     geom_n->AddChildNode(geom_contour_n);
   }
 
-  // Create underlying vertex representation Node
+  // Create underlying Vertex Node
   {
     Handle(ActAPI_INode) geom_vertex_base = asiData_VertexNode::Instance();
     m_model->GetVertexPartition()->AddNode(geom_vertex_base);
@@ -193,6 +193,22 @@ Handle(asiData_PartNode) asiEngine_Part::Create()
 
     // Set as child
     geom_n->AddChildNode(geom_vertex_n);
+  }
+
+  // Create underlying Tolerant Shapes Node
+  {
+    Handle(ActAPI_INode) tolshapes_base = asiData_TolerantShapesNode::Instance();
+    m_model->GetTolerantShapesPartition()->AddNode(tolshapes_base);
+
+    // Initialize
+    Handle(asiData_TolerantShapesNode)
+      tolshapes_n = Handle(asiData_TolerantShapesNode)::DownCast(tolshapes_base);
+    //
+    tolshapes_n->Init();
+    tolshapes_n->SetName("Tolerant shapes");
+
+    // Set as child
+    geom_n->AddChildNode(tolshapes_n);
   }
 
   // Return the just created Node

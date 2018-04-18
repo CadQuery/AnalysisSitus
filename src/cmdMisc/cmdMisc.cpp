@@ -1006,16 +1006,83 @@ int MISC_TestPipe(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+#include <TDocStd_Application.hxx>
+#include <TNaming_Builder.hxx>
+#include <TNaming_NamedShape.hxx>
+
+//! Initializes CAF document.
+//! \return CAF document.
+Handle(TDocStd_Document) initCAFDocument()
+{
+  Handle(TDocStd_Document) doc;
+  Handle(TDocStd_Application) app = new TDocStd_Application;
+  app->NewDocument("BinOcaf", doc);
+  doc->SetModificationMode(true);
+  doc->SetUndoLimit(10);
+  return doc;
+}
+
+//-----------------------------------------------------------------------------
+
 int MISC_Test(const Handle(asiTcl_Interp)& interp,
               int                          argc,
               const char**                 argv)
 {
-  if ( argc != 3 )
+  if ( argc != 1 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // TODO: NYI
+  Handle(TDocStd_Document) doc = initCAFDocument();
+
+  TDF_Label aDataLab = doc->Main();
+
+  TopoDS_Shape
+    face = BRepBuilderAPI_MakeFace( gp_Pln( gp::Origin(), gp::DZ() ) );
+
+  // Orientation is FORWARD initially.
+  std::cout << "Expected orientation: "
+            << ( (face.Orientation() == TopAbs_FORWARD) ? "forward" : "reversed" ) << std::endl;
+  
+  // Set shape.
+  doc->NewCommand();
+  {
+    TNaming_Builder aNBuilder(aDataLab);
+    aNBuilder.Generated(face);
+  }
+  doc->CommitCommand();
+
+  // Get shape.
+  Handle(TNaming_NamedShape) aShapeAttr;
+  aDataLab.FindAttribute(TNaming_NamedShape::GetID(), aShapeAttr);
+  face = aShapeAttr->Get();
+
+  // Orientation is forward (OK).
+  std::cout << "Orientation in OCAF: "
+            << ( (face.Orientation() == TopAbs_FORWARD) ? "forward" : "reversed" ) << std::endl;
+
+  // Reverse shape before storing.
+  face.Reverse();
+
+  // Orientation is now REVERSED.
+  std::cout << "Expected orientation: "
+            << ( (face.Orientation() == TopAbs_FORWARD) ? "forward" : "reversed" ) << std::endl;
+
+  // Set reversed shape.
+  doc->NewCommand();
+  {
+    TNaming_Builder aNBuilder(aDataLab);
+    aNBuilder.Generated(face);
+  }
+  doc->CommitCommand();
+
+  // Get shape.
+  aDataLab.FindAttribute(TNaming_NamedShape::GetID(), aShapeAttr);
+  face = aShapeAttr->Get();
+
+  // Orientation is still forward (NOK).
+  std::cout << "Orientation in OCAF: "
+            << ( (face.Orientation() == TopAbs_FORWARD) ? "forward" : "reversed" ) << std::endl;
 
   return TCL_OK;
 }

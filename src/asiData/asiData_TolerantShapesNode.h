@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 22 March 2016
+// Created on: 18 April 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,26 +28,25 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_BoundaryEdgesNode_h
-#define asiData_BoundaryEdgesNode_h
+#ifndef asiData_TolerantShapesNode_h
+#define asiData_TolerantShapesNode_h
 
-// A-Situs includes
+// asiData includes
 #include <asiData.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
-#include <ActData_ShapeParameter.h>
 
-//! Node representing b-rep boundary edges.
-class asiData_BoundaryEdgesNode : public ActData_BaseNode
+//! Node to group tolerant topological elements for validity check.
+class asiData_TolerantShapesNode : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_BoundaryEdgesNode, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_TolerantShapesNode, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_BoundaryEdgesNode, Instance)
+  DEFINE_NODE_FACTORY(asiData_TolerantShapesNode, Instance)
 
 public:
 
@@ -58,12 +57,6 @@ public:
   // Common           //
   //------------------//
     PID_Name,         //!< Name of the Node.
-  //------------------//
-  // Geometry         //
-  //------------------//
-    PID_Green,        //!< "Green" (good) edges.
-    PID_Red,          //!< "Red" (bad) edges.
-    PID_Ordinary,     //!< "Ordinary" (nothing special) edges.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -92,7 +85,7 @@ protected:
 
   //! Allocation is allowed only via Instance method.
   asiData_EXPORT
-    asiData_BoundaryEdgesNode();
+    asiData_TolerantShapesNode();
 
 };
 

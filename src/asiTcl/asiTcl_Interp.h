@@ -204,6 +204,19 @@ public:
                const char**                   argv,
                const TCollection_AsciiString& key) const;
 
+  //! Searches for the specified key in the list of command line arguments.
+  //! If such a key exists, its succeeding argument is taken as value.
+  //! \param[in]  argc  number of command line arguments.
+  //! \param[in]  argv  command line arguments.
+  //! \param[in]  key   keyword in question.
+  //! \param[out] value value after the keyword.
+  //! \return false if there is no such key or there is no value.
+  asiTcl_EXPORT bool
+    GetKeyValue(const int                      argc,
+                const char**                   argv,
+                const TCollection_AsciiString& key,
+                TCollection_AsciiString&       value) const;
+
   //! Appends the passed string to the result of command execution.
   //! \param[in] str string to append.
   //! \return this for subsequent appends.

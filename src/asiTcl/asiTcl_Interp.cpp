@@ -216,6 +216,24 @@ bool asiTcl_Interp::HasKeyword(const int                      argc,
 
 //-----------------------------------------------------------------------------
 
+bool asiTcl_Interp::GetKeyValue(const int                      argc,
+                                const char**                   argv,
+                                const TCollection_AsciiString& key,
+                                TCollection_AsciiString&       value) const
+{
+  for ( int k = 1; k < argc - 1; k += 2 )
+  {
+    if ( this->IsKeyword(argv[k], key) )
+    {
+      value = argv[k+1];
+      return true;
+    }
+  }
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
 asiTcl_Interp& asiTcl_Interp::Append(const char* str)
 {
   // Convert string to UTF-8 format for Tcl.

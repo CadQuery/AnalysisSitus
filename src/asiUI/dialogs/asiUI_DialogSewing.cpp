@@ -155,7 +155,9 @@ void asiUI_DialogSewing::onPerform()
     //
     std::cout << "Sewing tolerance = " << toler << std::endl;
     //
-    if ( !asiAlgo_Utils::Sew(part, toler) )
+    TopoDS_Shape sewnPart;
+    //
+    if ( !asiAlgo_Utils::Sew(part, toler, sewnPart) )
     {
       std::cout << "Error: sewing failed" << std::endl;
       this->close();
@@ -163,7 +165,7 @@ void asiUI_DialogSewing::onPerform()
     //
     std::cout << "Sewing done. Visualizing..." << std::endl;
     //
-    asiEngine_Part(m_model).Update(part);
+    asiEngine_Part(m_model).Update(sewnPart);
   }
   m_model->CommitCommand();
 

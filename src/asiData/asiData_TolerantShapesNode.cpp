@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 22 March 2016
+// Created on: 18 April 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,72 +28,49 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_BoundaryEdgesNode_h
-#define asiData_BoundaryEdgesNode_h
-
-// A-Situs includes
-#include <asiData.h>
+// Own include
+#include <asiData_TolerantShapesNode.h>
 
 // Active Data includes
-#include <ActData_BaseNode.h>
-#include <ActData_ShapeParameter.h>
+#include <ActData_ParameterFactory.h>
 
-//! Node representing b-rep boundary edges.
-class asiData_BoundaryEdgesNode : public ActData_BaseNode
+//-----------------------------------------------------------------------------
+
+//! Default constructor. Registers all involved Parameters.
+asiData_TolerantShapesNode::asiData_TolerantShapesNode() : ActData_BaseNode()
 {
-public:
+  REGISTER_PARAMETER(Name, PID_Name);
+}
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_BoundaryEdgesNode, ActData_BaseNode)
+//! Returns new DETACHED instance of the Node ensuring its correct
+//! allocation in a heap.
+//! \return new instance of the Node.
+Handle(ActAPI_INode) asiData_TolerantShapesNode::Instance()
+{
+  return new asiData_TolerantShapesNode();
+}
 
-  // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_BoundaryEdgesNode, Instance)
+//! Performs initial actions required to make this Node WELL-FORMED.
+void asiData_TolerantShapesNode::Init()
+{
+  // Initialize name Parameter
+  this->InitParameter(PID_Name, "Name");
+}
 
-public:
+//-----------------------------------------------------------------------------
+// Generic naming
+//-----------------------------------------------------------------------------
 
-  //! IDs for the underlying Parameters.
-  enum ParamId
-  {
-  //------------------//
-  // Common           //
-  //------------------//
-    PID_Name,         //!< Name of the Node.
-  //------------------//
-  // Geometry         //
-  //------------------//
-    PID_Green,        //!< "Green" (good) edges.
-    PID_Red,          //!< "Red" (bad) edges.
-    PID_Ordinary,     //!< "Ordinary" (nothing special) edges.
-  //------------------//
-    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
-  };
+//! Accessor for the Node's name.
+//! \return name of the Node.
+TCollection_ExtendedString asiData_TolerantShapesNode::GetName()
+{
+  return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
+}
 
-public:
-
-  asiData_EXPORT static Handle(ActAPI_INode)
-    Instance();
-
-// Generic naming support:
-public:
-
-  asiData_EXPORT virtual TCollection_ExtendedString
-    GetName();
-
-  asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& name);
-
-// Initialization:
-public:
-
-  asiData_EXPORT void
-    Init();
-
-protected:
-
-  //! Allocation is allowed only via Instance method.
-  asiData_EXPORT
-    asiData_BoundaryEdgesNode();
-
-};
-
-#endif
+//! Sets name for the Node.
+//! \param[in] name name to set.
+void asiData_TolerantShapesNode::SetName(const TCollection_ExtendedString& name)
+{
+  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
+}

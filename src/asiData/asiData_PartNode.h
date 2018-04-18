@@ -44,6 +44,7 @@
 #include <asiData_NamingParameter.h>
 #include <asiData_SurfNode.h>
 #include <asiData_VertexNode.h>
+#include <asiData_TolerantShapesNode.h>
 
 // Active Data includes
 #include <ActData_ShapeParameter.h>
@@ -188,6 +189,9 @@ public:
 
   asiData_EXPORT Handle(asiData_VertexNode)
     GetVertexRepresentation() const;
+
+  asiData_EXPORT Handle(asiData_TolerantShapesNode)
+    GetTolerantShapes() const;
 
 // Initialization:
 public:

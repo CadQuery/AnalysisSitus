@@ -345,7 +345,7 @@ Handle(asiData_ContourNode) asiData_PartNode::GetContour() const
   return NULL;
 }
 
-//! \return underlying vertex Node.
+//! \return underlying Vertex Node.
 Handle(asiData_VertexNode) asiData_PartNode::GetVertexRepresentation() const
 {
   Handle(asiData_VertexNode) vertex_n;
@@ -355,6 +355,21 @@ Handle(asiData_VertexNode) asiData_PartNode::GetVertexRepresentation() const
 
     if ( !vertex_n.IsNull() && vertex_n->IsWellFormed() )
       return vertex_n;
+  }
+
+  return NULL;
+}
+
+//! \return underlying Node representing the group of tolerant shapes.
+Handle(asiData_TolerantShapesNode) asiData_PartNode::GetTolerantShapes() const
+{
+  Handle(asiData_TolerantShapesNode) tolShapes_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    tolShapes_n = Handle(asiData_TolerantShapesNode)::DownCast( cit->Value() );
+
+    if ( !tolShapes_n.IsNull() && tolShapes_n->IsWellFormed() )
+      return tolShapes_n;
   }
 
   return NULL;

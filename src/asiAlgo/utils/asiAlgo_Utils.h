@@ -454,8 +454,17 @@ public:
     return false;
   }
 
-//-----------------------------------------------------------------------------
-
+  //! Applies the passed transformation to the given shape. Returns another shape
+  //! as a result (no deep copy of geometry is performed, only location is
+  //! changed).
+  //! \param theShape  [in] shape to apply transformation to.
+  //! \param theXPos   [in] X position.
+  //! \param theYPos   [in] Y position.
+  //! \param theZPos   [in] Z position.
+  //! \param theAngleA [in] rotation angle A.
+  //! \param theAngleB [in] rotation angle B.
+  //! \param theAngleC [in] rotation angle C.
+  //! \return relocated shape.
   asiAlgo_EXPORT static TopoDS_Shape
     ApplyTransformation(const TopoDS_Shape& theShape,
                         const double        theXPos,
@@ -466,6 +475,15 @@ public:
                         const double        theAngleC,
                         const bool          doCopy);
 
+  //! Returns OCCT transformation structure for the given elemental
+  //! transformations.
+  //! \param theXPos   [in] X position.
+  //! \param theYPos   [in] Y position.
+  //! \param theZPos   [in] Z position.
+  //! \param theAngleA [in] rotation angle A.
+  //! \param theAngleB [in] rotation angle B.
+  //! \param theAngleC [in] rotation angle C.
+  //! \return OCCT transformation structure.
   asiAlgo_EXPORT static gp_Trsf
     Transformation(const double theXPos,
                    const double theYPos,
@@ -474,53 +492,145 @@ public:
                    const double theAngleB,
                    const double theAngleC);
 
+  //! Applies the passed transformation to the given shape.
+  //! \param theShape     [in] shape to transform.
+  //! \param theTransform [in] transformation to apply.
+  //! \param doCopy       [in] indicates whether to construct a deep copy.
+  //! \return transformed shape.
   asiAlgo_EXPORT static TopoDS_Shape
     ApplyTransformation(const TopoDS_Shape& theShape,
                         const gp_Trsf&      theTransform,
                         const bool          doCopy);
 
+  //! Creates a compound from the given list of shapes. If the list contains
+  //! only one not-null shape, this single shape is returned as-is.
+  //! \param[in] shapes source shapes.
+  //! \return resulting compound.
   asiAlgo_EXPORT static TopoDS_Shape
-    AssembleShapes(const TopTools_ListOfShape& theShapes);
+    AssembleShapes(const TopTools_ListOfShape& shapes);
 
+  //! Creates a compound from the given sequence of shapes. If the sequence
+  //! contains only one not-null shape, this single shape is returned as-is.
+  //! If the sequence is NULL or empty, then null shape is returned.
+  //! \param[in] shapes source shapes.
+  //! \return resulting compound.
+  asiAlgo_EXPORT static TopoDS_Shape
+    AssembleShapes(const Handle(TopTools_HSequenceOfShape)& shapes);
+
+  //! Calculates bounding box for the given shape.
+  //! \param shape     [in]  input shape.
+  //! \param XMin      [out] min X.
+  //! \param YMin      [out] min Y.
+  //! \param ZMin      [out] min Z.
+  //! \param XMax      [out] max X.
+  //! \param YMax      [out] max Y.
+  //! \param ZMax      [out] max Z.
+  //! \param tolerance [in]  tolerance to enlarge the bounding box with.
+  //! \return false if bounding box is void.
   asiAlgo_EXPORT static bool
     Bounds(const TopoDS_Shape& shape,
            double& XMin, double& YMin, double& ZMin,
            double& XMax, double& YMax, double& ZMax,
            const double tolerance = 0.0);
 
+  //! Calculates bounding box for the given triangulation.
+  //! \param tris      [in]  input triangulation.
+  //! \param XMin      [out] min X.
+  //! \param YMin      [out] min Y.
+  //! \param ZMin      [out] min Z.
+  //! \param XMax      [out] max X.
+  //! \param YMax      [out] max Y.
+  //! \param ZMax      [out] max Z.
+  //! \param tolerance [in]  tolerance to enlarge the bounding box with.
+  //! \return false if bounding box is void.
   asiAlgo_EXPORT static bool
     Bounds(const Handle(Poly_Triangulation)& tris,
            double& XMin, double& YMin, double& ZMin,
            double& XMax, double& YMax, double& ZMax,
            const double tolerance = 0.0);
 
+  //! Checks OCCT validity rules of the given shape.
+  //! \param shape   [in] shape to check.
+  //! \param Journal [in] Logger instance to cumulate all meaningful messages.
+  //! \return true if shape is valid, false -- otherwise.
   asiAlgo_EXPORT static bool
     CheckShape(const TopoDS_Shape&  shape,
                ActAPI_ProgressEntry Journal);
 
+  //! Checks whether the passed face has all contours (wires)
+  //! geometrically closed.
+  //! \param face             [in] face to check.
+  //! \param coincConfusion3d [in] coincidence confusion tolerance. This value
+  //!                              is used to recognize points as coincident.
+  //! \return true if face is Ok, false -- otherwise.
   asiAlgo_EXPORT static bool
     HasAllClosedWires(const TopoDS_Face& face,
                       const double       coincConfusion3d);
 
+  //! Checks whether the passed wire is closed.
+  //! \param wire             [in] wire to check.
+  //! \param face             [in] face owning the wire.
+  //! \param coincConfusion3d [in] coincidence confusion tolerance. This value
+  //!                              is used to recognize points as coincident.
+  //! \return true if wire is Ok, false -- otherwise.
   asiAlgo_EXPORT static bool
     IsClosedGeometrically(const TopoDS_Wire& wire,
                           const TopoDS_Face& face,
                           const double       coincConfusion3d);
 
+  //! Checks whether the passed face contains any edges without vertices.
+  //! \param face [in] face to check.
   asiAlgo_EXPORT static bool
     HasEdgesWithoutVertices(const TopoDS_Face& face);
 
+  //! Returns maximum tolerance value bound to the passed shape.
+  //! \param shape [in] shape to check.
+  //! \return maximum tolerance value.
   asiAlgo_EXPORT static double
     MaxTolerance(const TopoDS_Shape& shape);
 
-  asiAlgo_EXPORT static bool
-    ReadBRep(const TCollection_AsciiString& theFilename,
-             TopoDS_Shape&                  theShape);
+  //! This function checks the tolerances of sub-shapes in the given part.
+  //! The caller code should pass the vector of tolerance values which define
+  //! the ranges for visual diagnostics.
+  //!
+  //! \param[in]  part        part of interest.
+  //! \param[in]  tolerRanges tolerance ranges to use in diagnostics.
+  //! \param[out] tolerShapes sub-shapes distributed by tolerance ranges.
+  //! \param[in]  shapeType   type of sub-shapes to check.
+  asiAlgo_EXPORT static void
+    CheckTolerances(const TopoDS_Shape&        part,
+                    const std::vector<double>& tolerRanges,
+                    std::vector<TopoDS_Shape>& tolerShapes,
+                    const TopAbs_ShapeEnum     shapeType = TopAbs_SHAPE);
 
+  //! Reads CAD model from native OCCT b-rep file.
+  //! \param filename [in]  filename.
+  //! \param shape    [out] CAD model retrieved from file.
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT static bool
-    WriteBRep(const TopoDS_Shape&            theShape,
-              const TCollection_AsciiString& theFilename);
+    ReadBRep(const TCollection_AsciiString& filename,
+             TopoDS_Shape&                  shape);
 
+  //! Writes shape to B-Rep format.
+  //! \param theShape    [in] shape to write.
+  //! \param theFilename [in] filename.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT static bool
+    WriteBRep(const TopoDS_Shape&            shape,
+              const TCollection_AsciiString& filename);
+
+  //! Collects summary information for the given shape.
+  //! \param shape        [in]  input shape.
+  //! \param nbCompsolids [out] number of compsolids.
+  //! \param nbCompounds  [out] number of compounds.
+  //! \param nbSolids     [out] number of solids.
+  //! \param nbShells     [out] number of shells.
+  //! \param nbFaces      [out] number of faces.
+  //! \param nbWires      [out] number of wires.
+  //! \param nbOuterWires [out] number of outer wires.
+  //! \param nbInnerWires [out] number of inner wires.
+  //! \param nbEdges      [out] number of edges.
+  //! \param nbVertexes   [out] number of vertices.
   asiAlgo_EXPORT static void
     ShapeSummary(const TopoDS_Shape& shape,
                  int&                nbCompsolids,
@@ -535,23 +645,47 @@ public:
                  int&                nbDegenEdges,
                  int&                nbVertexes);
 
+  //! Collects summary information of the given shape: returns the number
+  //! of sub-shapes of each type.
+  //! \param shape [in]  shape to analyze.
+  //! \param info  [out] shape summary as string.
   asiAlgo_EXPORT static void
     ShapeSummary(const TopoDS_Shape&      shape,
                  TCollection_AsciiString& info);
 
+  //! Creates a circular wire with the given radius.
+  //! \param radius [in] radius of the host circle.
+  //! \return created wire.
   asiAlgo_EXPORT static TopoDS_Wire
     CreateCircularWire(const double radius);
 
+  //! Skins a surface through the passed sections.
+  //! \param wires [in] sections to skin.
+  //! \return skinning result.
   asiAlgo_EXPORT static TopoDS_Shape
     MakeSkin(const TopTools_SequenceOfShape& wires);
 
+  //! Performs sewing.
+  //! \param[in] shape     shape to sew.
+  //! \param[in] tolerance sewing tolerance.
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT static bool
-    Sew(TopoDS_Shape& shape,
-        const double  tolerance);
+    Sew(const TopoDS_Shape& shape,
+        const double        tolerance,
+        TopoDS_Shape&       result);
 
+  //! Performs "same domain" expansion on faces and edges.
+  //! \param shape [in/out] shape to modify.
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT static bool
     MaximizeFaces(TopoDS_Shape& shape);
 
+  //! Interpolates the given collection of points with B-curve of the
+  //! desired degree.
+  //! \param points [in]  points to interpolate.
+  //! \param p      [in]  degree to use.
+  //! \param result [out] interpolant.
+  //! \return true om case of success, false -- otherwise.
   asiAlgo_EXPORT static bool
     InterpolatePoints(const std::vector<gp_Pnt>& points,
                       const int                  p,
@@ -562,6 +696,11 @@ public:
                       const int                                p,
                       Handle(Geom_BSplineCurve)&               result);
 
+  //! Performs Boolean Cut of a tool shape from the given object shape.
+  //! \param Object [in] object to cut from.
+  //! \param Tool   [in] tool to cut out.
+  //! \param fuzzy  [in] fuzzy tolerance.
+  //! \return result shape.
   asiAlgo_EXPORT static TopoDS_Shape
     BooleanCut(const TopoDS_Shape& Object,
                const TopoDS_Shape& Tool,

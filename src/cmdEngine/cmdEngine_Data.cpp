@@ -147,33 +147,101 @@ int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
                      int                          argc,
                      const char**                 argv)
 {
-  if ( argc != 2 )
+  if ( argc != 2 && argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  Handle(asiData_IVTopoItemNode)
-    node = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
+  // Extract shape to set as a part.
+  TopoDS_Shape shapeToSet;
   //
-  if ( node.IsNull() )
+  if ( argc == 2 )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
-    return TCL_OK;
+    Handle(asiData_IVTopoItemNode)
+      node = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
+    //
+    if ( node.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
+      return TCL_OK;
+    }
+
+    // Set shape to convert.
+    shapeToSet = node->GetShape();
+
+    // It is usually convenient to erase the source Node.
+    if ( cmdEngine::cf->ViewerPart )
+      cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderPresentation(node);
+  }
+  else
+  {
+    TCollection_AsciiString nodeIdStr, paramIdStr;
+    //
+    if ( !interp->GetKeyValue(argc, argv, "node", nodeIdStr) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected format of arguments.");
+      return TCL_OK;
+    }
+    //
+    if ( !interp->GetKeyValue(argc, argv, "param", paramIdStr) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected format of arguments.");
+      return TCL_OK;
+    }
+
+    // Get Data Node.
+    Handle(ActAPI_INode) node = cmdEngine::model->FindNode(nodeIdStr);
+    //
+    if ( node.IsNull() || !node->IsWellFormed() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Data object with ID %1 does not exist."
+                                                          << nodeIdStr);
+      return TCL_OK;
+    }
+
+    // Get Parameter.
+    if ( !paramIdStr.IsIntegerValue() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Parameter ID %1 is not numerical."
+                                                          << paramIdStr);
+      return TCL_OK;
+    }
+    //
+    const int                     PID   = paramIdStr.IntegerValue();
+    Handle(ActAPI_IUserParameter) param = node->Parameter(PID);
+    //
+    if ( param.IsNull() || !param->IsWellFormed() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Parameter with ID %1 does not exist."
+                                                          << PID);
+      return TCL_OK;
+    }
+
+    // Convert to Shape Parameter.
+    Handle(ActData_ShapeParameter)
+      shapeParam = Handle(ActData_ShapeParameter)::DownCast(param);
+    //
+    if ( shapeParam.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Parameter with ID %1 is not of Shape type."
+                                                          << PID);
+      return TCL_OK;
+    }
+
+    // Set shape to convert.
+    shapeToSet = shapeParam->GetShape();
   }
 
-  // Modify Data Model
+  // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update( node->GetShape() );
+    asiEngine_Part(cmdEngine::model, NULL).Update(shapeToSet);
   }
   cmdEngine::model->CommitCommand();
 
-  // Update UI
+  // Update UI.
   if ( cmdEngine::cf->ViewerPart )
-  {
-    cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderPresentation( node );
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
-  }
 
   return TCL_OK;
 }
@@ -288,7 +356,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("set-as-part",
     //
-    "set-as-part varName\n"
+    "set-as-part [varName | -node id -param id]\n"
     "\t Sets the object with the given name as a part for analysis.\n"
     "\t The object is expected to exist as a topological item in\n"
     "\t imperative plotter.",

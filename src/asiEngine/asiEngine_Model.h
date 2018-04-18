@@ -204,6 +204,13 @@ public:
     return Handle(asiData_Partition<asiData_VertexNode>)::DownCast( this->Partition(Partition_Vertex) );
   }
 
+  //! Accessor for a Partition instance dedicated to Tolerant Shapes Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_TolerantShapesNode>) GetTolerantShapesPartition() const
+  {
+    return Handle(asiData_Partition<asiData_TolerantShapesNode>)::DownCast( this->Partition(Partition_TolerantShapes) );
+  }
+
 //-----------------------------------------------------------------------------
 
   //! Accessor for a Partition instance dedicated to IV Nodes.
@@ -378,6 +385,7 @@ protected:
     Partition_BoundaryEdges,
     Partition_Contour,
     Partition_Vertex,
+    Partition_TolerantShapes,
   //---------------------------------------------------------------------------
     Partition_IV,
     Partition_IV_Points2d,

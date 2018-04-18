@@ -561,20 +561,7 @@ namespace CheckShapeAux
 };
 
 //-----------------------------------------------------------------------------
-// Shape Utilities
-//-----------------------------------------------------------------------------
 
-//! Applies the passed transformation to the given shape. Returns another shape
-//! as a result (no deep copy of geometry is performed, only location is
-//! changed).
-//! \param theShape  [in] shape to apply transformation to.
-//! \param theXPos   [in] X position.
-//! \param theYPos   [in] Y position.
-//! \param theZPos   [in] Z position.
-//! \param theAngleA [in] rotation angle A.
-//! \param theAngleB [in] rotation angle B.
-//! \param theAngleC [in] rotation angle C.
-//! \return relocated shape.
 TopoDS_Shape asiAlgo_Utils::ApplyTransformation(const TopoDS_Shape& theShape,
                                                 const double        theXPos,
                                                 const double        theYPos,
@@ -592,15 +579,6 @@ TopoDS_Shape asiAlgo_Utils::ApplyTransformation(const TopoDS_Shape& theShape,
 
 //-----------------------------------------------------------------------------
 
-//! Returns OCCT transformation structure for the given elemental
-//! transformations.
-//! \param theXPos   [in] X position.
-//! \param theYPos   [in] Y position.
-//! \param theZPos   [in] Z position.
-//! \param theAngleA [in] rotation angle A.
-//! \param theAngleB [in] rotation angle B.
-//! \param theAngleC [in] rotation angle C.
-//! \return OCCT transformation structure.
 gp_Trsf asiAlgo_Utils::Transformation(const double theXPos,
                                       const double theYPos,
                                       const double theZPos,
@@ -623,11 +601,6 @@ gp_Trsf asiAlgo_Utils::Transformation(const double theXPos,
 
 //-----------------------------------------------------------------------------
 
-//! Applies the passed transformation to the given shape.
-//! \param theShape     [in] shape to transform.
-//! \param theTransform [in] transformation to apply.
-//! \param doCopy       [in] indicates whether to construct a deep copy.
-//! \return transformed shape.
 TopoDS_Shape
   asiAlgo_Utils::ApplyTransformation(const TopoDS_Shape& theShape,
                                      const gp_Trsf&      theTransform,
@@ -644,60 +617,63 @@ TopoDS_Shape
 
 //-----------------------------------------------------------------------------
 
-//! Creates a compound from the given list of shapes. If the list contains
-//! only one not-null shape, this single shape is returned as-is.
-//! \param theShapes [in] source shapes.
-//! \return resulting compound.
 TopoDS_Shape
-  asiAlgo_Utils::AssembleShapes(const TopTools_ListOfShape& theShapes)
+  asiAlgo_Utils::AssembleShapes(const TopTools_ListOfShape& shapes)
 {
-  TopoDS_Shape aResult;
+  TopoDS_Shape result, singleShape;
+  int numShapes = 0;
 
-  TopoDS_Shape aSingleShape;
-  int aNbShapes = 0;
-  for ( TopTools_ListIteratorOfListOfShape it(theShapes); it.More(); it.Next() )
+  for ( TopTools_ListIteratorOfListOfShape it(shapes); it.More(); it.Next() )
+  {
     if ( !it.Value().IsNull() )
     {
-      ++aNbShapes;
-      aSingleShape = it.Value();
+      ++numShapes;
+      singleShape = it.Value();
     }
+  }
 
-  if ( aNbShapes > 1)
+  if ( numShapes > 1)
   {
-    TopoDS_Compound aCmp;
+    TopoDS_Compound compound;
     BRep_Builder B;
-    B.MakeCompound(aCmp);
+    B.MakeCompound(compound);
 
-    for ( TopTools_ListIteratorOfListOfShape it(theShapes); it.More(); it.Next() )
+    for ( TopTools_ListIteratorOfListOfShape it(shapes); it.More(); it.Next() )
     {
-      const TopoDS_Shape& aShape = it.Value();
-      if ( aShape.IsNull() )
+      const TopoDS_Shape& shape = it.Value();
+      //
+      if ( shape.IsNull() )
         continue;
 
-      ++aNbShapes;
-      B.Add( aCmp, it.Value() );
+      ++numShapes;
+      B.Add(compound, shape);
     }
 
-    aResult = aCmp;
+    result = compound;
   }
   else
-    aResult = aSingleShape;
+    result = singleShape;
 
-  return aResult;
+  return result;
 }
 
 //-----------------------------------------------------------------------------
 
-//! Calculates bounding box for the given shape.
-//! \param shape     [in]  input shape.
-//! \param XMin      [out] min X.
-//! \param YMin      [out] min Y.
-//! \param ZMin      [out] min Z.
-//! \param XMax      [out] max X.
-//! \param YMax      [out] max Y.
-//! \param ZMax      [out] max Z.
-//! \param tolerance [in]  tolerance to enlarge the bounding box with.
-//! \return false if bounding box is void.
+TopoDS_Shape
+  asiAlgo_Utils::AssembleShapes(const Handle(TopTools_HSequenceOfShape)& shapes)
+{
+  TopTools_ListOfShape shapeList;
+
+  // Repack as list for unification.
+  if ( !shapes.IsNull() )
+    for ( TopTools_SequenceOfShape::Iterator it(*shapes); it.More(); it.Next() )
+      shapeList.Append( it.Value() );
+
+  return AssembleShapes(shapeList);
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_Utils::Bounds(const TopoDS_Shape& shape,
                            double& XMin, double& YMin, double& ZMin,
                            double& XMax, double& YMax, double& ZMax,
@@ -725,16 +701,6 @@ bool asiAlgo_Utils::Bounds(const TopoDS_Shape& shape,
 
 //-----------------------------------------------------------------------------
 
-//! Calculates bounding box for the given triangulation.
-//! \param tris      [in]  input triangulation.
-//! \param XMin      [out] min X.
-//! \param YMin      [out] min Y.
-//! \param ZMin      [out] min Z.
-//! \param XMax      [out] max X.
-//! \param YMax      [out] max Y.
-//! \param ZMax      [out] max Z.
-//! \param tolerance [in]  tolerance to enlarge the bounding box with.
-//! \return false if bounding box is void.
 bool asiAlgo_Utils::Bounds(const Handle(Poly_Triangulation)& tris,
                            double& XMin, double& YMin, double& ZMin,
                            double& XMax, double& YMax, double& ZMax,
@@ -749,13 +715,8 @@ bool asiAlgo_Utils::Bounds(const Handle(Poly_Triangulation)& tris,
 
 //-----------------------------------------------------------------------------
 
-//! Checks OCCT validity rules of the given shape.
-//! \param shape   [in] shape to check.
-//! \param Journal [in] Logger instance to cumulate all meaningful messages.
-//! \return true if shape is valid, false -- otherwise.
-bool
-  asiAlgo_Utils::CheckShape(const TopoDS_Shape&  shape,
-                            ActAPI_ProgressEntry Journal)
+bool asiAlgo_Utils::CheckShape(const TopoDS_Shape&  shape,
+                               ActAPI_ProgressEntry Journal)
 {
   BRepCheck_Analyzer Checker(shape);
 
@@ -779,12 +740,6 @@ bool
 
 //-----------------------------------------------------------------------------
 
-//! Checks whether the passed face has all contours (wires)
-//! geometrically closed.
-//! \param face             [in] face to check.
-//! \param coincConfusion3d [in] coincidence confusion tolerance. This value
-//!                              is used to recognize points as coincident.
-//! \return true if face is Ok, false -- otherwise.
 bool asiAlgo_Utils::HasAllClosedWires(const TopoDS_Face& face,
                                       const double       coincConfusion3d)
 {
@@ -807,12 +762,6 @@ bool asiAlgo_Utils::HasAllClosedWires(const TopoDS_Face& face,
 
 //-----------------------------------------------------------------------------
 
-//! Checks whether the passed wire is closed.
-//! \param wire             [in] wire to check.
-//! \param face             [in] face owning the wire.
-//! \param coincConfusion3d [in] coincidence confusion tolerance. This value
-//!                              is used to recognize points as coincident.
-//! \return true if wire is Ok, false -- otherwise.
 bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
                                           const TopoDS_Face& face,
                                           const double       coincConfusion3d)
@@ -1012,8 +961,6 @@ bool asiAlgo_Utils::IsClosedGeometrically(const TopoDS_Wire& wire,
 
 //-----------------------------------------------------------------------------
 
-//! Checks whether the passed face contains any edges without vertices.
-//! \param face [in] face to check.
 bool asiAlgo_Utils::HasEdgesWithoutVertices(const TopoDS_Face& face)
 {
   for ( TopExp_Explorer exp(face, TopAbs_EDGE); exp.More(); exp.Next() )
@@ -1029,9 +976,6 @@ bool asiAlgo_Utils::HasEdgesWithoutVertices(const TopoDS_Face& face)
 
 //-----------------------------------------------------------------------------
 
-//! Returns maximum tolerance value bound to the passed shape.
-//! \param shape [in] shape to check.
-//! \return maximum tolerance value.
 double asiAlgo_Utils::MaxTolerance(const TopoDS_Shape& shape)
 {
   ShapeAnalysis_ShapeTolerance TolerChecker;
@@ -1042,10 +986,32 @@ double asiAlgo_Utils::MaxTolerance(const TopoDS_Shape& shape)
 
 //-----------------------------------------------------------------------------
 
-//! Reads CAD model from native OCCT b-rep file.
-//! \param filename [in]  filename.
-//! \param shape    [out] CAD model retrieved from file.
-//! \return true in case of success, false -- otherwise.
+void asiAlgo_Utils::CheckTolerances(const TopoDS_Shape&        part,
+                                    const std::vector<double>& tolerRanges,
+                                    std::vector<TopoDS_Shape>& tolerShapes,
+                                    const TopAbs_ShapeEnum     shapeType)
+{
+  ShapeAnalysis_ShapeTolerance TolerChecker;
+
+  // Loop over the tolerance ranges to find sub-shapes whose tolerances
+  // lie within every range.
+  for ( size_t k = 0; k < tolerRanges.size() - 1; ++k )
+  {
+    const double tolMin = tolerRanges[k];
+    const double tolMax = tolerRanges[k + 1];
+
+    Handle(TopTools_HSequenceOfShape)
+      subShapes = TolerChecker.InTolerance(part, tolMin, tolMax, shapeType);
+
+    // Store shapes in the result.
+    TopoDS_Shape subShapesComp = AssembleShapes(subShapes);
+    //
+    tolerShapes.push_back(subShapesComp);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_Utils::ReadBRep(const TCollection_AsciiString& filename,
                              TopoDS_Shape&                  shape)
 {
@@ -1061,10 +1027,6 @@ bool asiAlgo_Utils::ReadBRep(const TCollection_AsciiString& filename,
 
 //-----------------------------------------------------------------------------
 
-//! Writes shape to B-Rep format.
-//! \param theShape    [in] shape to write.
-//! \param theFilename [in] filename.
-//! \return true in case of success, false -- otherwise.
 bool asiAlgo_Utils::WriteBRep(const TopoDS_Shape&            theShape,
                               const TCollection_AsciiString& theFilename)
 {
@@ -1073,18 +1035,6 @@ bool asiAlgo_Utils::WriteBRep(const TopoDS_Shape&            theShape,
 
 //-----------------------------------------------------------------------------
 
-//! Collects summary information for the given shape.
-//! \param shape        [in]  input shape.
-//! \param nbCompsolids [out] number of compsolids.
-//! \param nbCompounds  [out] number of compounds.
-//! \param nbSolids     [out] number of solids.
-//! \param nbShells     [out] number of shells.
-//! \param nbFaces      [out] number of faces.
-//! \param nbWires      [out] number of wires.
-//! \param nbOuterWires [out] number of outer wires.
-//! \param nbInnerWires [out] number of inner wires.
-//! \param nbEdges      [out] number of edges.
-//! \param nbVertexes   [out] number of vertices.
 void asiAlgo_Utils::ShapeSummary(const TopoDS_Shape& shape,
                                  int&                nbCompsolids,
                                  int&                nbCompounds,
@@ -1165,10 +1115,6 @@ void asiAlgo_Utils::ShapeSummary(const TopoDS_Shape& shape,
 
 //-----------------------------------------------------------------------------
 
-//! Collects summary information of the given shape: returns the number
-//! of sub-shapes of each type.
-//! \param shape [in]  shape to analyze.
-//! \param info  [out] shape summary as string.
 void asiAlgo_Utils::ShapeSummary(const TopoDS_Shape&      shape,
                                  TCollection_AsciiString& info)
 {
@@ -1213,9 +1159,6 @@ void asiAlgo_Utils::ShapeSummary(const TopoDS_Shape&      shape,
 
 //-----------------------------------------------------------------------------
 
-//! Creates a circular wire with the given radius.
-//! \param radius [in] radius of the host circle.
-//! \return created wire.
 TopoDS_Wire asiAlgo_Utils::CreateCircularWire(const double radius)
 {
   Handle(Geom_Circle) C = GC_MakeCircle(gp_Ax1( gp::Origin(), gp::DZ() ), radius);
@@ -1229,9 +1172,6 @@ TopoDS_Wire asiAlgo_Utils::CreateCircularWire(const double radius)
 
 //-----------------------------------------------------------------------------
 
-//! Skins a surface through the passed sections.
-//! \param wires [in] sections to skin.
-//! \return skinning result.
 TopoDS_Shape asiAlgo_Utils::MakeSkin(const TopTools_SequenceOfShape& wires)
 {
   if ( wires.Length() < 2 )
@@ -1284,27 +1224,21 @@ TopoDS_Shape asiAlgo_Utils::MakeSkin(const TopTools_SequenceOfShape& wires)
 
 //-----------------------------------------------------------------------------
 
-//! Performs sewing.
-//! \param shape     [in/out] shape to sew.
-//! \param tolerance [in]     sewing tolerance.
-//! \return true in case of success, false -- otherwise.
-bool asiAlgo_Utils::Sew(TopoDS_Shape& shape,
-                        const double  tolerance)
+bool asiAlgo_Utils::Sew(const TopoDS_Shape& shape,
+                        const double        tolerance,
+                        TopoDS_Shape&       result)
 {
   BRepBuilderAPI_Sewing Sewer(tolerance);
   Sewer.Load(shape);
 
   // Perform sewing
   Sewer.Perform();
-  shape = Sewer.SewedShape();
+  result = Sewer.SewedShape();
   return true;
 }
 
 //-----------------------------------------------------------------------------
 
-//! Performs "same domain" expansion on faces and edges.
-//! \param shape [in/out] shape to modify.
-//! \return true in case of success, false -- otherwise.
 bool asiAlgo_Utils::MaximizeFaces(TopoDS_Shape& shape)
 {
   ShapeUpgrade_UnifySameDomain Unify(shape);
@@ -1322,12 +1256,6 @@ bool asiAlgo_Utils::MaximizeFaces(TopoDS_Shape& shape)
 
 //-----------------------------------------------------------------------------
 
-//! Interpolates the given collection of points with B-curve of the
-//! desired degree.
-//! \param points [in]  points to interpolate.
-//! \param p      [in]  degree to use.
-//! \param result [out] interpolant.
-//! \return true om case of success, false -- otherwise.
 bool asiAlgo_Utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
                                       const int                  p,
                                       Handle(Geom_BSplineCurve)& result)
@@ -1548,11 +1476,6 @@ bool asiAlgo_Utils::InterpolatePoints(const Handle(asiAlgo_BaseCloud<double>)& p
 
 //-----------------------------------------------------------------------------
 
-//! Performs Boolean Cut of a tool shape from the given object shape.
-//! \param Object [in] object to cut from.
-//! \param Tool   [in] tool to cut out.
-//! \param fuzzy  [in] fuzzy tolerance.
-//! \return result shape.
 TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& Object,
                                        const TopoDS_Shape& Tool,
                                        const double        fuzzy)

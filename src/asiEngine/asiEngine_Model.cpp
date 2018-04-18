@@ -65,6 +65,7 @@ REGISTER_NODE_TYPE(asiData_CurvatureCombsNode)
 REGISTER_NODE_TYPE(asiData_BoundaryEdgesNode)
 REGISTER_NODE_TYPE(asiData_ContourNode)
 REGISTER_NODE_TYPE(asiData_VertexNode)
+REGISTER_NODE_TYPE(asiData_TolerantShapesNode)
 //
 REGISTER_NODE_TYPE(asiData_IVCurveNode)
 REGISTER_NODE_TYPE(asiData_IVCurvesNode)
@@ -193,6 +194,7 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_BoundaryEdgesNode>,  Partition_BoundaryEdges);
   REGISTER_PARTITION(asiData_Partition<asiData_ContourNode>,        Partition_Contour);
   REGISTER_PARTITION(asiData_Partition<asiData_VertexNode>,         Partition_Vertex);
+  REGISTER_PARTITION(asiData_Partition<asiData_TolerantShapesNode>, Partition_TolerantShapes);
   //
   REGISTER_PARTITION(asiData_Partition<asiData_IVNode>,            Partition_IV);
   REGISTER_PARTITION(asiData_Partition<asiData_IVPoints2dNode>,    Partition_IV_Points2d);
@@ -225,7 +227,7 @@ void asiEngine_Model::initFunctionDrivers()
 
 //! Returns a Partition of Data Nodes representing Variables for Expression
 //! Evaluation mechanism.
-//! \param varType [in] type of Variable to return the dedicated Partition for.
+//! \param[in] varType type of Variable to return the dedicated Partition for.
 //! \return Variable Partition.
 Handle(ActAPI_IPartition)
   asiEngine_Model::getVariablePartition(const VariableType& varType) const
@@ -254,8 +256,8 @@ Handle(ActAPI_INode) asiEngine_Model::getRootNode() const
 
 //! Populates the passed collections of references to pass out-scope filtering
 //! in Copy/Paste operation.
-//! \param FuncGUIDs [in/out] Function GUIDs to pass.
-//! \param Refs      [in/out] Reference Parameters to pass.
+//! \param[in,out] FuncGUIDs Function GUIDs to pass.
+//! \param[in,out] Refs      Reference Parameters to pass.
 void asiEngine_Model::invariantCopyRefs(ActAPI_FuncGUIDStream&         FuncGUIDs,
                                         ActAPI_ParameterLocatorStream& Refs) const
 {

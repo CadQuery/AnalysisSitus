@@ -62,8 +62,12 @@ public:
   // Geometry         //
   //------------------//
     PID_Shape,        //!< Tolerant shapes (packed in a compound).
+  //------------------//
+  // Other Parameters //
+  //------------------//
     PID_TolerMin,     //!< Min tolerance.
     PID_TolerMax,     //!< Max tolerance.
+    PID_Color,        //!< Color.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -96,6 +100,12 @@ public:
 
   asiData_EXPORT void
     SetShape(const TopoDS_Shape& shape);
+
+  asiData_EXPORT void
+    SetColor(const int);
+
+  asiData_EXPORT int
+    GetColor() const;
 
   asiData_EXPORT double
     GetMinToler() const;

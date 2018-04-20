@@ -43,7 +43,7 @@
 //! Creates a Presentation object for the passed Node.
 //! \param N [in] Node to create a Presentation for.
 asiVisu_IVCurve2dPrs::asiVisu_IVCurve2dPrs(const Handle(ActAPI_INode)& N)
-: asiVisu_IVPrs(N)
+: asiVisu_DefaultPrs(N)
 {
   // Create Data Provider
   Handle(asiVisu_IVCurve2dDataProvider) DP = new asiVisu_IVCurve2dDataProvider(N);

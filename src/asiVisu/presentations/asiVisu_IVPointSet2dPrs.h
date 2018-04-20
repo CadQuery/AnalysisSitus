@@ -31,21 +31,19 @@
 #ifndef asiVisu_IVPointSet2dPrs_h
 #define asiVisu_IVPointSet2dPrs_h
 
-// A-Situs (visualization) includes
-#include <asiVisu_IVPrs.h>
+// asiVisu includes
+#include <asiVisu_DefaultPrs.h>
 
-// A-Situs (visualization) includes
+// asiData includes
 #include <asiData_IVPointSet2dNode.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_IVPointSet2dPrs, asiVisu_IVPrs)
-
 //! Presentation class for a single 2D point cloud in IV.
-class asiVisu_IVPointSet2dPrs : public asiVisu_IVPrs
+class asiVisu_IVPointSet2dPrs : public asiVisu_DefaultPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVPointSet2dPrs, asiVisu_IVPrs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVPointSet2dPrs, asiVisu_DefaultPrs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_IVPointSet2dNode, Instance)

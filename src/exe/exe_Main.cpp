@@ -58,6 +58,7 @@
 #include <asiVisu_IVTessItemPrs.h>
 #include <asiVisu_IVTextItemPrs.h>
 #include <asiVisu_IVTopoItemPrs.h>
+#include <asiVisu_TolerantRangePrs.h>
 
 // asiAlgo includes
 #include <asiAlgo_FileFormat.h>
@@ -123,6 +124,7 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_GeomContourPrs)
   REGISTER_PRESENTATION(asiVisu_CalculusLawPrs)
   REGISTER_PRESENTATION(asiVisu_CurvatureCombsPrs)
+  REGISTER_PRESENTATION(asiVisu_TolerantRangePrs)
 
   // Imperative viewer
   REGISTER_PRESENTATION(asiVisu_IVPointSet2dPrs)

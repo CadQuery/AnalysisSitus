@@ -36,6 +36,7 @@
 
 // asiEngine includes
 #include <asiEngine_Curve.h>
+#include <asiEngine_TolerantShapes.h>
 
 // asiAlgo includes
 #include <asiAlgo_Timer.h>
@@ -913,6 +914,42 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckToler(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 1 && argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const int numRanges = ((argc == 2) ? atoi(argv[1]) : 10);
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Prepare API to analyze tolerances.
+  asiEngine_TolerantShapes TolInfo( M,
+                                    cmdEngine::cf->ViewerPart->PrsMgr(),
+                                    interp->GetProgress(),
+                                    interp->GetPlotter() );
+
+  // Perform tolerance analysis.
+  M->OpenCommand();
+  {
+    TolInfo.Clean_All();
+    TolInfo.Populate(numRanges);
+  }
+  M->CommitCommand();
+
+  // Update UI.
+  cmdEngine::cf->ObjectBrowser->Populate();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -994,4 +1031,14 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t to evaluate (0 for value evaluation).",
     //
     __FILE__, group, ENGINE_EvalCurve);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-toler",
+    //
+    "check-toler [numRanges]\n"
+    "\t Checks local tolerances in the part shape and distributes sub-shapes\n."
+    "\t by tolerance ranges. You can control the fineness of tolerance ranges\n"
+    "\t using <numRanges> optional argument.",
+    //
+    __FILE__, group, ENGINE_CheckToler);
 }

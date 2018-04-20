@@ -589,20 +589,6 @@ public:
   asiAlgo_EXPORT static double
     MaxTolerance(const TopoDS_Shape& shape);
 
-  //! This function checks the tolerances of sub-shapes in the given part.
-  //! The caller code should pass the vector of tolerance values which define
-  //! the ranges for visual diagnostics.
-  //!
-  //! \param[in]  part        part of interest.
-  //! \param[in]  tolerRanges tolerance ranges to use in diagnostics.
-  //! \param[out] tolerShapes sub-shapes distributed by tolerance ranges.
-  //! \param[in]  shapeType   type of sub-shapes to check.
-  asiAlgo_EXPORT static void
-    CheckTolerances(const TopoDS_Shape&        part,
-                    const std::vector<double>& tolerRanges,
-                    std::vector<TopoDS_Shape>& tolerShapes,
-                    const TopAbs_ShapeEnum     shapeType = TopAbs_SHAPE);
-
   //! Reads CAD model from native OCCT b-rep file.
   //! \param filename [in]  filename.
   //! \param shape    [out] CAD model retrieved from file.

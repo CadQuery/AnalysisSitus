@@ -37,6 +37,7 @@
 // asiVisu includes
 #include <asiVisu_GeomPrs.h>
 #include <asiVisu_PartNodeInfo.h>
+#include <asiVisu_Utils.h>
 
 // asiAlgo includes
 #include <asiAlgo_Utils.h>
@@ -51,19 +52,6 @@
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
-
-//-----------------------------------------------------------------------------
-
-//! Converts color value to an integer representation.
-//! \param color [in] color.
-//! \return converted value
-static int ColorToInt(const QColor& color)
-{
-  unsigned char red   = (unsigned char) color.red();
-  unsigned char green = (unsigned char) color.green();
-  unsigned char blue  = (unsigned char) color.blue();
-  return red << 16 | green << 8 | blue;
-}
 
 //-----------------------------------------------------------------------------
 
@@ -469,7 +457,7 @@ void asiEngine_Part::HighlightFaces(const TColStd_PackedMapOfInteger& faceIndice
   GetSubShapeIndicesByFaceIndices(faceIndices, ssIndices);
 
   // Highlight
-  HighlightSubShapes(ssIndices, ::ColorToInt(color), SelectionMode_Face);
+  HighlightSubShapes(ssIndices, asiVisu_Utils::ColorToInt(color), SelectionMode_Face);
 }
 
 //-----------------------------------------------------------------------------
@@ -485,7 +473,7 @@ void asiEngine_Part::HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndice
   GetSubShapeIndicesByEdgeIndices(edgeIndices, ssIndices);
 
   // Highlight
-  HighlightSubShapes(ssIndices, ::ColorToInt(color), SelectionMode_Edge);
+  HighlightSubShapes(ssIndices, asiVisu_Utils::ColorToInt(color), SelectionMode_Edge);
 }
 
 //-----------------------------------------------------------------------------
@@ -503,7 +491,7 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
   color.setGreenF (pick_color[1]);
   color.setBlueF  (pick_color[2]);
   //
-  HighlightSubShapes( subShapeIndices, ::ColorToInt(color), selMode );
+  HighlightSubShapes( subShapeIndices, asiVisu_Utils::ColorToInt(color), selMode );
 }
 
 //-----------------------------------------------------------------------------
@@ -550,7 +538,7 @@ void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subSha
   color.setGreenF (pick_color[1]);
   color.setBlueF  (pick_color[2]);
   //
-  HighlightSubShapes( subShapes, ::ColorToInt(color) );
+  HighlightSubShapes( subShapes, asiVisu_Utils::ColorToInt(color) );
 }
 
 //-----------------------------------------------------------------------------

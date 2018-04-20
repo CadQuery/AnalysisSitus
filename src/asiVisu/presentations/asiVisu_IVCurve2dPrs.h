@@ -35,15 +35,15 @@
 #include <asiData_IVCurve2dNode.h>
 
 // asiVisu includes
-#include <asiVisu_IVPrs.h>
+#include <asiVisu_DefaultPrs.h>
 
 //! Presentation class for 2D curves in IV.
-class asiVisu_IVCurve2dPrs : public asiVisu_IVPrs
+class asiVisu_IVCurve2dPrs : public asiVisu_DefaultPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVCurve2dPrs, asiVisu_IVPrs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVCurve2dPrs, asiVisu_DefaultPrs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_IVCurve2dNode, Instance)

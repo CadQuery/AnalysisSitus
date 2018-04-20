@@ -40,7 +40,7 @@
 //! Creates a Presentation object for the passed Node.
 //! \param theNode [in] Node to create a Presentation for.
 asiVisu_IVTextItemPrs::asiVisu_IVTextItemPrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_IVPrs(theNode)
+: asiVisu_DefaultPrs(theNode)
 {
   // Initialize text widget used for annotations
   m_textWidget = vtkSmartPointer<vtkTextWidget>::New();

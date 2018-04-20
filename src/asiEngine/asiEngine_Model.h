@@ -57,6 +57,7 @@
 #include <asiData_Partition.h>
 #include <asiData_PartNode.h>
 #include <asiData_RootNode.h>
+#include <asiData_TolerantRangeNode.h>
 
 // Active Data includes
 #include <ActData_BaseModel.h>
@@ -209,6 +210,13 @@ public:
   Handle(asiData_Partition<asiData_TolerantShapesNode>) GetTolerantShapesPartition() const
   {
     return Handle(asiData_Partition<asiData_TolerantShapesNode>)::DownCast( this->Partition(Partition_TolerantShapes) );
+  }
+
+  //! Accessor for a Partition instance dedicated to Tolerant Range Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_TolerantRangeNode>) GetTolerantRangePartition() const
+  {
+    return Handle(asiData_Partition<asiData_TolerantRangeNode>)::DownCast( this->Partition(Partition_TolerantRange) );
   }
 
 //-----------------------------------------------------------------------------
@@ -386,6 +394,7 @@ protected:
     Partition_Contour,
     Partition_Vertex,
     Partition_TolerantShapes,
+    Partition_TolerantRange,
   //---------------------------------------------------------------------------
     Partition_IV,
     Partition_IV_Points2d,

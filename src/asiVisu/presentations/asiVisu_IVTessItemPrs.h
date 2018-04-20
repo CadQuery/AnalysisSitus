@@ -31,19 +31,19 @@
 #ifndef asiVisu_IVTessItemPrs_h
 #define asiVisu_IVTessItemPrs_h
 
-// Visualization includes
-#include <asiVisu_IVPrs.h>
+// asiVisu includes
+#include <asiVisu_DefaultPrs.h>
+
+// asiData includes
 #include <asiData_IVTessItemNode.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_IVTessItemPrs, asiVisu_IVPrs)
-
 //! Presentation class for tessellation items in IV.
-class asiVisu_IVTessItemPrs : public asiVisu_IVPrs
+class asiVisu_IVTessItemPrs : public asiVisu_DefaultPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVTessItemPrs, asiVisu_IVPrs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVTessItemPrs, asiVisu_DefaultPrs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_IVTessItemNode, Instance)

@@ -41,6 +41,7 @@ asiData_TolerantRangeNode::asiData_TolerantRangeNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,  PID_Name);
   REGISTER_PARAMETER(Shape, PID_Shape);
+  REGISTER_PARAMETER(Int,   PID_Color);
   REGISTER_PARAMETER(Real,  PID_TolerMin);
   REGISTER_PARAMETER(Real,  PID_TolerMax);
 }
@@ -65,6 +66,7 @@ void asiData_TolerantRangeNode::Init()
 
   // Initialize Parameters with default values.
   this->SetShape    ( TopoDS_Shape() );
+  this->SetColor    ( -1 );
   this->SetMinToler ( 0.0 );
   this->SetMaxToler ( 0.0 );
 }
@@ -102,6 +104,24 @@ TopoDS_Shape asiData_TolerantRangeNode::GetShape() const
 void asiData_TolerantRangeNode::SetShape(const TopoDS_Shape& shape)
 {
   ActParamTool::AsShape( this->Parameter(PID_Shape) )->SetShape(shape);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Sets color.
+//! \param[in] color color to set.
+void asiData_TolerantRangeNode::SetColor(const int color)
+{
+  ActParamTool::AsInt( this->Parameter(PID_Color) )->SetValue(color);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Accessor for the stored color value.
+//! \return color value.
+int asiData_TolerantRangeNode::GetColor() const
+{
+  return ActParamTool::AsInt( this->Parameter(PID_Color) )->GetValue();
 }
 
 //-----------------------------------------------------------------------------

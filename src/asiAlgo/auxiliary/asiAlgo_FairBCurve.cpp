@@ -169,7 +169,7 @@ bool asiAlgo_FairBCurve::Perform()
 #endif
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("B-curve fairing")
+  TIMER_COUT_RESULT_NOTIFIER(m_progress.Access(), "B-curve fairing")
 
   return true;
 }

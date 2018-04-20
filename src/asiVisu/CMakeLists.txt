@@ -115,6 +115,7 @@ set (presentations_H_FILES
   presentations/asiVisu_AxesBtnCallback.h
   presentations/asiVisu_CalculusLawPrs.h
   presentations/asiVisu_CurvatureCombsPrs.h
+  presentations/asiVisu_DefaultPrs.h
   presentations/asiVisu_GeomBoundaryEdgesPrs.h
   presentations/asiVisu_GeomContourPrs.h
   presentations/asiVisu_GeomCurvePrs.h
@@ -128,19 +129,20 @@ set (presentations_H_FILES
   presentations/asiVisu_IVCurvePrs.h
   presentations/asiVisu_IVPointSet2dPrs.h
   presentations/asiVisu_IVPointSetPrs.h
-  presentations/asiVisu_IVPrs.h
   presentations/asiVisu_IVSurfacePrs.h
   presentations/asiVisu_IVTessItemPrs.h
   presentations/asiVisu_IVTextItemPrs.h
   presentations/asiVisu_IVTopoItemPrs.h
   presentations/asiVisu_Prs.h
   presentations/asiVisu_PrsManager.h
+  presentations/asiVisu_TolerantRangePrs.h
   presentations/asiVisu_TriangulationPrs.h
 )
 set (presentations_CPP_FILES 
   presentations/asiVisu_AxesBtnCallback.cpp
   presentations/asiVisu_CalculusLawPrs.cpp
   presentations/asiVisu_CurvatureCombsPrs.cpp
+  presentations/asiVisu_DefaultPrs.cpp
   presentations/asiVisu_GeomBoundaryEdgesPrs.cpp
   presentations/asiVisu_GeomContourPrs.cpp
   presentations/asiVisu_GeomCurvePrs.cpp
@@ -154,13 +156,13 @@ set (presentations_CPP_FILES
   presentations/asiVisu_IVCurvePrs.cpp
   presentations/asiVisu_IVPointSet2dPrs.cpp
   presentations/asiVisu_IVPointSetPrs.cpp
-  presentations/asiVisu_IVPrs.cpp
   presentations/asiVisu_IVSurfacePrs.cpp
   presentations/asiVisu_IVTessItemPrs.cpp
   presentations/asiVisu_IVTextItemPrs.cpp
   presentations/asiVisu_IVTopoItemPrs.cpp
   presentations/asiVisu_Prs.cpp
   presentations/asiVisu_PrsManager.cpp
+  presentations/asiVisu_TolerantRangePrs.cpp
   presentations/asiVisu_TriangulationPrs.cpp
 )
 

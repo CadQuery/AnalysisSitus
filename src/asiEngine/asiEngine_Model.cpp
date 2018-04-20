@@ -35,6 +35,7 @@
 #include <asiEngine_Curve.h>
 #include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
+#include <asiEngine_TolerantShapes.h>
 
 // Active Data includes
 #include <ActData_CAFConverter.h>
@@ -66,6 +67,7 @@ REGISTER_NODE_TYPE(asiData_BoundaryEdgesNode)
 REGISTER_NODE_TYPE(asiData_ContourNode)
 REGISTER_NODE_TYPE(asiData_VertexNode)
 REGISTER_NODE_TYPE(asiData_TolerantShapesNode)
+REGISTER_NODE_TYPE(asiData_TolerantRangeNode)
 //
 REGISTER_NODE_TYPE(asiData_IVCurveNode)
 REGISTER_NODE_TYPE(asiData_IVCurvesNode)
@@ -134,11 +136,14 @@ void asiEngine_Model::Clear()
     this->GetPartNode()->GetCurveRepresentation()   ->SetSelectedEdge   (0);
     this->GetPartNode()->GetVertexRepresentation()  ->SetSelectedVertex (0);
 
-    // Delete all Nodes serving imperative visualization
-    asiEngine_IV(this).Clean_All();
-
     // Delete nodes under the Curve
     asiEngine_Curve(this).Clean_All( this->GetPartNode()->GetCurveRepresentation() );
+
+    // Delete all tolerant ranges.
+    asiEngine_TolerantShapes(this, NULL).Clean_All();
+
+    // Delete all Nodes serving imperative visualization
+    asiEngine_IV(this).Clean_All();
 
     // Let sub-classes do some job
     this->clearCustom();
@@ -195,6 +200,7 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_ContourNode>,        Partition_Contour);
   REGISTER_PARTITION(asiData_Partition<asiData_VertexNode>,         Partition_Vertex);
   REGISTER_PARTITION(asiData_Partition<asiData_TolerantShapesNode>, Partition_TolerantShapes);
+  REGISTER_PARTITION(asiData_Partition<asiData_TolerantRangeNode>,  Partition_TolerantRange);
   //
   REGISTER_PARTITION(asiData_Partition<asiData_IVNode>,            Partition_IV);
   REGISTER_PARTITION(asiData_Partition<asiData_IVPoints2dNode>,    Partition_IV_Points2d);

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 23 May 2016
+// Created on: 11 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,47 +28,63 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiVisu_IVTessItemPrs.h>
+#ifndef asiVisu_IVPrs_h
+#define asiVisu_IVPrs_h
 
-// A-Situs (visualization) includes
-#include <asiVisu_MeshContourPipeline.h>
-#include <asiVisu_MeshDataProvider.h>
-#include <asiVisu_MeshPipeline.h>
+// asiVisu includes
+#include <asiVisu_Prs.h>
 #include <asiVisu_Utils.h>
 
-// VTK includes
-#include <vtkMapper.h>
-#include <vtkProperty.h>
-
-//! Creates a Presentation object for the passed Node.
-//! \param theNode [in] Node to create a Presentation for.
-asiVisu_IVTessItemPrs::asiVisu_IVTessItemPrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_DefaultPrs(theNode)
+//! Base class for default non-interactive presentations.
+class asiVisu_DefaultPrs : public asiVisu_Prs
 {
-  // Create Data Provider
-  Handle(asiVisu_MeshDataProvider)
-    DP = new asiVisu_MeshDataProvider( theNode->GetId(),
-                                      ActParamStream() << theNode->Parameter(asiData_IVTessItemNode::PID_Mesh) );
+public:
 
-  // Pipeline for contours
-  this->addPipeline        ( Pipeline_Main, new asiVisu_MeshPipeline );
-  this->assignDataProvider ( Pipeline_Main, DP );
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_DefaultPrs, asiVisu_Prs)
 
-  // Pipeline for mesh contour
-  this->addPipeline(Pipeline_MeshContour, new asiVisu_MeshContourPipeline);
-  this->assignDataProvider(Pipeline_MeshContour, DP);
+public:
 
-  // We use CONTOUR mesh pipeline along with an ordinary one. Thus it is
-  // really necessary to resolve coincident primitives to avoid blinking
-  // on mesh edges
-  vtkMapper::SetResolveCoincidentTopology(1);
-}
+  virtual bool IsVisible() const
+  {
+    return true;
+  }
 
-//! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
-//! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_IVTessItemPrs::Instance(const Handle(ActAPI_INode)& theNode)
-{
-  return new asiVisu_IVTessItemPrs(theNode);
-}
+// Callbacks:
+private:
+
+  virtual void
+    beforeInitPipelines();
+
+  virtual void
+    afterInitPipelines();
+
+  virtual void
+    beforeUpdatePipelines() const;
+
+  virtual void
+    afterUpdatePipelines() const;
+
+  virtual void
+    highlight(vtkRenderer*                  renderer,
+              const asiVisu_PickResult&     pickRes,
+              const asiVisu_SelectionNature selNature) const;
+
+  virtual void
+    unHighlight(vtkRenderer*                  renderer,
+                const asiVisu_SelectionNature selNature) const;
+
+  virtual void
+    renderPipelines(vtkRenderer* renderer) const;
+
+  virtual void
+    deRenderPipelines(vtkRenderer* renderer) const;
+
+protected:
+
+  asiVisu_EXPORT
+    asiVisu_DefaultPrs(const Handle(ActAPI_INode)& node) : asiVisu_Prs(node) {}
+
+};
+
+#endif

@@ -986,32 +986,6 @@ double asiAlgo_Utils::MaxTolerance(const TopoDS_Shape& shape)
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_Utils::CheckTolerances(const TopoDS_Shape&        part,
-                                    const std::vector<double>& tolerRanges,
-                                    std::vector<TopoDS_Shape>& tolerShapes,
-                                    const TopAbs_ShapeEnum     shapeType)
-{
-  ShapeAnalysis_ShapeTolerance TolerChecker;
-
-  // Loop over the tolerance ranges to find sub-shapes whose tolerances
-  // lie within every range.
-  for ( size_t k = 0; k < tolerRanges.size() - 1; ++k )
-  {
-    const double tolMin = tolerRanges[k];
-    const double tolMax = tolerRanges[k + 1];
-
-    Handle(TopTools_HSequenceOfShape)
-      subShapes = TolerChecker.InTolerance(part, tolMin, tolMax, shapeType);
-
-    // Store shapes in the result.
-    TopoDS_Shape subShapesComp = AssembleShapes(subShapes);
-    //
-    tolerShapes.push_back(subShapesComp);
-  }
-}
-
-//-----------------------------------------------------------------------------
-
 bool asiAlgo_Utils::ReadBRep(const TCollection_AsciiString& filename,
                              TopoDS_Shape&                  shape)
 {

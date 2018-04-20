@@ -31,19 +31,19 @@
 #ifndef asiVisu_IVSurfacePrs_h
 #define asiVisu_IVSurfacePrs_h
 
-// Visualization includes
-#include <asiData_IVSurfaceNode.h>
-#include <asiVisu_IVPrs.h>
+// asiVisu includes
+#include <asiVisu_DefaultPrs.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_IVSurfacePrs, asiVisu_IVPrs)
+// asiData includes
+#include <asiData_IVSurfaceNode.h>
 
 //! Presentation class for surfaces in IV.
-class asiVisu_IVSurfacePrs : public asiVisu_IVPrs
+class asiVisu_IVSurfacePrs : public asiVisu_DefaultPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVSurfacePrs, asiVisu_IVPrs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVSurfacePrs, asiVisu_DefaultPrs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_IVSurfaceNode, Instance)

@@ -266,6 +266,40 @@ public:
     return ret_val;
   }
 
+  //! Converts RGB color to integer.
+  //! \param[in] rgb color.
+  //! \return converted value.
+  static int ColorToInt(double rgb[3])
+  {
+    unsigned char red   = unsigned char( floor(rgb[0] >= 1.0 ? 255 : rgb[0] * 256.0) );
+    unsigned char green = unsigned char( floor(rgb[1] >= 1.0 ? 255 : rgb[1] * 256.0) );
+    unsigned char blue  = unsigned char( floor(rgb[2] >= 1.0 ? 255 : rgb[2] * 256.0) );
+    //
+    return red << 16 | green << 8 | blue;
+  }
+
+  //! Converts color value to an integer representation.
+  //! \param theColor [in] color.
+  //! \return converted value
+  static int ColorToInt(const QColor& theColor)
+  {
+    unsigned char aRed   = (unsigned char) theColor.red();
+    unsigned char aGreen = (unsigned char) theColor.green();
+    unsigned char aBlue  = (unsigned char) theColor.blue();
+    return aRed << 16 | aGreen << 8 | aBlue;
+  }
+
+  //! Converts integer value to a color.
+  //! \param theColor [in] integer value.
+  //! \return converted value
+  static QColor IntToColor(const int theColor)
+  {
+    unsigned char aRed   = ( theColor >> 16 ) & 0xFF;
+    unsigned char aGreen = ( theColor >>  8 ) & 0xFF;
+    unsigned char aBlue  =   theColor         & 0xFF;
+    return QColor(aRed, aGreen, aBlue);
+  }
+
 private:
 
   static TPrsAllocMap m_allocMap; //!< Presentation factory.

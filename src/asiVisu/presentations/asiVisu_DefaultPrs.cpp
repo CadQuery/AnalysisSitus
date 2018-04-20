@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 11 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,50 +28,63 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_IVPrs_h
-#define asiVisu_IVPrs_h
+// Own include
+#include <asiVisu_DefaultPrs.h>
 
-// A-Situs (visualization) includes
-#include <asiVisu_Prs.h>
-#include <asiVisu_Utils.h>
+//-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_IVPrs, asiVisu_Prs)
-
-//! Base presentation class for IV.
-class asiVisu_IVPrs : public asiVisu_Prs
+//! Callback for initialization of Presentation pipelines.
+void asiVisu_DefaultPrs::beforeInitPipelines()
 {
-public:
+  // Do nothing...
+}
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVPrs, asiVisu_Prs)
+//! Callback for initialization of Presentation pipelines.
+void asiVisu_DefaultPrs::afterInitPipelines()
+{
+  // Do nothing...
+}
 
-public:
+//! Callback for updating of Presentation pipelines invoked before the
+//! kernel update routine starts.
+void asiVisu_DefaultPrs::beforeUpdatePipelines() const
+{
+  // Do nothing...
+}
 
-  virtual bool IsVisible() const
-  {
-    return true;
-  }
+//! Callback for updating of Presentation pipelines invoked after the
+//! kernel update routine completes.
+void asiVisu_DefaultPrs::afterUpdatePipelines() const
+{
+  // Do nothing...
+}
 
-// Callbacks:
-private:
+//! Callback for highlighting.
+void asiVisu_DefaultPrs::highlight(vtkRenderer*                  renderer,
+                                   const asiVisu_PickResult&     pickRes,
+                                   const asiVisu_SelectionNature selNature) const
+{
+  asiVisu_NotUsed(renderer);
+  asiVisu_NotUsed(pickRes);
+  asiVisu_NotUsed(selNature);
+}
 
-  virtual void beforeInitPipelines();
-  virtual void afterInitPipelines();
-  virtual void beforeUpdatePipelines() const;
-  virtual void afterUpdatePipelines() const;
-  virtual void highlight(vtkRenderer* theRenderer,
-                         const asiVisu_PickResult& thePickRes,
-                         const asiVisu_SelectionNature theSelNature) const;
-  virtual void unHighlight(vtkRenderer* theRenderer,
-                           const asiVisu_SelectionNature theSelNature) const;
-  virtual void renderPipelines(vtkRenderer* theRenderer) const;
-  virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
+//! Callback for highlighting reset.
+void asiVisu_DefaultPrs::unHighlight(vtkRenderer*                  renderer,
+                                     const asiVisu_SelectionNature selNature) const
+{
+  asiVisu_NotUsed(renderer);
+  asiVisu_NotUsed(selNature);
+}
 
-protected:
+//! Callback for rendering.
+void asiVisu_DefaultPrs::renderPipelines(vtkRenderer* renderer) const
+{
+  asiVisu_NotUsed(renderer);
+}
 
-  asiVisu_EXPORT
-    asiVisu_IVPrs(const Handle(ActAPI_INode)& node) : asiVisu_Prs(node) {}
-
-};
-
-#endif
+//! Callback for de-rendering.
+void asiVisu_DefaultPrs::deRenderPipelines(vtkRenderer* renderer) const
+{
+  asiVisu_NotUsed(renderer);
+}

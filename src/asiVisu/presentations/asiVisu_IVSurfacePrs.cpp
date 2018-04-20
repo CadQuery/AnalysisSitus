@@ -43,7 +43,7 @@
 //! Creates a Presentation object for the passed Node.
 //! \param theNode [in] Node to create a Presentation for.
 asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_IVPrs(theNode)
+: asiVisu_DefaultPrs(theNode)
 {
   // Create Data Provider
   Handle(asiVisu_IVSurfaceDataProvider) DP = new asiVisu_IVSurfaceDataProvider(theNode);

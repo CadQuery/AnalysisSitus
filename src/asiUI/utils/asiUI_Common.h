@@ -97,28 +97,6 @@ public:
     return aRes;
   }
 
-  //! Converts color value to an integer representation.
-  //! \param theColor [in] color.
-  //! \return converted value
-  static int ColorToInt(const QColor& theColor)
-  {
-    unsigned char aRed   = (unsigned char) theColor.red();
-    unsigned char aGreen = (unsigned char) theColor.green();
-    unsigned char aBlue  = (unsigned char) theColor.blue();
-    return aRed << 16 | aGreen << 8 | aBlue;
-  }
-
-  //! Converts integer value to a color.
-  //! \param theColor [in] integer value.
-  //! \return converted value
-  static QColor IntToColor(const int theColor)
-  {
-    unsigned char aRed   = ( theColor >> 16 ) & 0xFF;
-    unsigned char aGreen = ( theColor >>  8 ) & 0xFF;
-    unsigned char aBlue  =   theColor         & 0xFF;
-    return QColor(aRed, aGreen, aBlue);
-  }
-
   //! Converts timestamp to QDateTime value.
   //! \param timeStamp [in] timestamp.
   //! \return date and time as QDateTime.

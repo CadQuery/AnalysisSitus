@@ -47,7 +47,7 @@
 //! \return VTK lookup table.
 vtkSmartPointer<vtkLookupTable>
   asiVisu_MeshResultUtils::InitLookupTable(const double theRangeMin,
-                                          const double theRangeMax)
+                                           const double theRangeMax)
 {
   vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
   aLookup->SetTableRange(theRangeMin, theRangeMax);

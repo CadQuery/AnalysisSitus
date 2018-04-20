@@ -32,7 +32,7 @@
 #define asiVisu_IVTextItemPrs_h
 
 // A-Situs (visualization) includes
-#include <asiVisu_IVPrs.h>
+#include <asiVisu_DefaultPrs.h>
 
 // A-Situs (visualization) includes
 #include <asiData_IVTextItemNode.h>
@@ -40,15 +40,15 @@
 // VTK includes
 #include <vtkTextWidget.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_IVTextItemPrs, asiVisu_IVPrs)
+DEFINE_STANDARD_HANDLE(asiVisu_IVTextItemPrs, asiVisu_DefaultPrs)
 
 //! Presentation class for a single text label in IV.
-class asiVisu_IVTextItemPrs : public asiVisu_IVPrs
+class asiVisu_IVTextItemPrs : public asiVisu_DefaultPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVTextItemPrs, asiVisu_IVPrs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVTextItemPrs, asiVisu_DefaultPrs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_IVTextItemNode, Instance)

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 05 March 2018
+// Created on: 20 April 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
@@ -28,59 +28,63 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_FairBCurve_HeaderFile
-#define asiAlgo_FairBCurve_HeaderFile
+#ifndef asiAlgo_CheckToler_HeaderFile
+#define asiAlgo_CheckToler_HeaderFile
 
 // asiAlgo includes
-#include <asiAlgo.h>
-
-// OCCT includes
-#include <Geom_BSplineCurve.hxx>
+#include <asiAlgo_TopoGraph.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
 
-//! Fairing algorithm for B-spline curves.
-class asiAlgo_FairBCurve : public ActAPI_IAlgorithm
+//! Utility to check tolerances in a B-Rep model.
+class asiAlgo_CheckToler : public ActAPI_IAlgorithm
 {
 public:
 
   //! ctor.
-  //! \param[in] curve    B-spline curve in question (the one to fair).
-  //! \param[in] lambda   fairing coefficient.
+  //! \param[in] shape    B-Rep shape to check.
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_FairBCurve(const Handle(Geom_BSplineCurve)& curve,
-                       const double                     lambda,
-                       ActAPI_ProgressEntry             progress,
-                       ActAPI_PlotterEntry              plotter);
+    asiAlgo_CheckToler(const TopoDS_Shape&  shape,
+                       ActAPI_ProgressEntry progress,
+                       ActAPI_PlotterEntry  plotter);
 
 public:
 
-  //! Performs fairing.
+  //! Performs tolerance analysis for the given tolerance ranges.
+  //! \param[in]  tolerRanges   tolerance ranges.
+  //! \param[out] tolerShapes   sub-shapes falling into the tolerance ranges.
+  //! \param[out] outOfRangeMin sub-shape with a tolerance less than min passed.
+  //! \param[out] outOfRangeMax sub-shape with a tolerance greater than max passed.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    Perform();
+    PerformRanges(const std::vector<double>& tolerRanges,
+                  std::vector<TopoDS_Shape>& tolerShapes,
+                  TopoDS_Shape&              outOfRangeMin,
+                  TopoDS_Shape&              outOfRangeMax) const;
 
 public:
 
-  //! \return resulting curve.
-  const Handle(Geom_BSplineCurve)& GetResult() const
+  //! \return shape to analyze.
+  const TopoDS_Shape& GetShape() const
   {
-    return m_resultCurve;
+    return m_shape;
   }
 
 protected:
 
-  //! Curve to fair.
-  Handle(Geom_BSplineCurve) m_inputCurve;
+  void analyzeSubShape(const TopoDS_Shape&        subshape,
+                       const std::vector<double>& tolerRanges,
+                       std::vector<TopoDS_Shape>& tolerShapes,
+                       TopoDS_Shape&              outOfRangeMin,
+                       TopoDS_Shape&              outOfRangeMax) const;
 
-  //! Result of fairing.
-  Handle(Geom_BSplineCurve) m_resultCurve;
+protected:
 
-  //! Fairing coefficient.
-  double m_fLambda;
+  //! Shape to analyze.
+  TopoDS_Shape m_shape;
 
 };
 

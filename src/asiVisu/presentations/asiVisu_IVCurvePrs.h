@@ -33,17 +33,15 @@
 
 // Visualization includes
 #include <asiData_IVCurveNode.h>
-#include <asiVisu_IVPrs.h>
-
-DEFINE_STANDARD_HANDLE(asiVisu_IVCurvePrs, asiVisu_IVPrs)
+#include <asiVisu_DefaultPrs.h>
 
 //! Presentation class for curves in IV.
-class asiVisu_IVCurvePrs : public asiVisu_IVPrs
+class asiVisu_IVCurvePrs : public asiVisu_DefaultPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVCurvePrs, asiVisu_IVPrs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVCurvePrs, asiVisu_DefaultPrs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_IVCurveNode, Instance)

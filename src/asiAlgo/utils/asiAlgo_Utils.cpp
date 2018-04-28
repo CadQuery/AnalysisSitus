@@ -42,6 +42,8 @@
 #include <BOPAlgo_PaveFiller.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepAdaptor_Surface.hxx>
+#include <BRepAlgo_Common.hxx>
+#include <BRepAlgoAPI_Common.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
@@ -1004,6 +1006,7 @@ bool asiAlgo_Utils::ReadBRep(const TCollection_AsciiString& filename,
 bool asiAlgo_Utils::WriteBRep(const TopoDS_Shape&            theShape,
                               const TCollection_AsciiString& theFilename)
 {
+  BRepTools::Clean(theShape);
   return BRepTools::Write( theShape, theFilename.ToCString() );
 }
 
@@ -1541,7 +1544,7 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape&         Object,
 //-----------------------------------------------------------------------------
 
 //! Performs Boolean fuse operation on the passed objects.
-//! \param objects [in] shapes to fuse.
+//! \param[in] objects shapes to fuse.
 //! \return result of fuse.
 TopoDS_Shape asiAlgo_Utils::BooleanFuse(const TopTools_ListOfShape& objects)
 {
@@ -1553,6 +1556,26 @@ TopoDS_Shape asiAlgo_Utils::BooleanFuse(const TopTools_ListOfShape& objects)
   {
     TopoDS_Shape arg = it.Value();
     result = BRepAlgoAPI_Fuse(result, arg);
+  }
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Performs Boolean intersection operation on the passed objects.
+//! \param[in] objects shapes to intersect.
+//! \return result of intersection.
+TopoDS_Shape asiAlgo_Utils::BooleanIntersect(const TopTools_ListOfShape& objects)
+{
+  TopTools_ListIteratorOfListOfShape it(objects);
+  TopoDS_Shape result = it.Value();
+  it.Next();
+
+  for ( ; it.More(); it.Next() )
+  {
+    TopoDS_Shape arg = it.Value();
+    result = BRepAlgoAPI_Common(result, arg);
   }
 
   return result;

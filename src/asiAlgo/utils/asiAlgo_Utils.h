@@ -709,6 +709,9 @@ public:
     BooleanFuse(const TopTools_ListOfShape& objects);
 
   asiAlgo_EXPORT static TopoDS_Shape
+    BooleanIntersect(const TopTools_ListOfShape& objects);
+
+  asiAlgo_EXPORT static TopoDS_Shape
     BooleanGeneralFuse(const TopTools_ListOfShape& objects,
                        const double                fuzz,
                        BOPAlgo_Builder&            API);

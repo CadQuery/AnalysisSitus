@@ -1006,23 +1006,7 @@ int MISC_TestPipe(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-#include <TDocStd_Application.hxx>
-#include <TNaming_Builder.hxx>
-#include <TNaming_NamedShape.hxx>
-
-//! Initializes CAF document.
-//! \return CAF document.
-Handle(TDocStd_Document) initCAFDocument()
-{
-  Handle(TDocStd_Document) doc;
-  Handle(TDocStd_Application) app = new TDocStd_Application;
-  app->NewDocument("BinOcaf", doc);
-  doc->SetModificationMode(true);
-  doc->SetUndoLimit(10);
-  return doc;
-}
-
-//-----------------------------------------------------------------------------
+#include <asiAlgo_IneqOpt.h>
 
 int MISC_Test(const Handle(asiTcl_Interp)& interp,
               int                          argc,
@@ -1033,56 +1017,197 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  Handle(TDocStd_Document) doc = initCAFDocument();
+  /* ======================
+   *  Set input parameters
+   * ====================== */
 
-  TDF_Label aDataLab = doc->Main();
+  const int numVariables   = 6;
+  const int numConstraints = 6;
 
-  TopoDS_Shape
-    face = BRepBuilderAPI_MakeFace( gp_Pln( gp::Origin(), gp::DZ() ) );
+  // Coefficients.
+  std::vector<asiAlgo_IneqSystem::t_ncoord<double>>
+    coeffs = { asiAlgo_IneqSystem::t_ncoord<double>({1.0, -30.0, 0.0, 0.0, 0.0,  0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({1.0,  30.0, 0.0, 0.0, 0.0,  0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({0.0,   0.0, 1.0, 0.0, 0.0,  0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({0.0,   0.0, 0.0, 1.0, 0.0,  0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({0.0,   0.0, 0.0, 0.0, 1.0, -5.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({0.0,   0.0, 0.0, 0.0, 1.0,  5.0})
+             };
 
-  // Orientation is FORWARD initially.
-  std::cout << "Expected orientation: "
-            << ( (face.Orientation() == TopAbs_FORWARD) ? "forward" : "reversed" ) << std::endl;
-  
-  // Set shape.
-  doc->NewCommand();
+  // Limits.
+  std::vector<asiAlgo_IneqSystem::t_range>
+    ANu = { asiAlgo_IneqSystem::t_range(-1.0,  1.0),
+            asiAlgo_IneqSystem::t_range(-1.0,  1.0),
+            asiAlgo_IneqSystem::t_range(-0.8,  0.8),
+            asiAlgo_IneqSystem::t_range(-1.0,  1.0),
+            asiAlgo_IneqSystem::t_range(-2.0,  2.0),
+            asiAlgo_IneqSystem::t_range(-2.0,  2.0)
+          };
+  //
+  std::vector<asiAlgo_IneqSystem::t_range>
+    AS0Nu = { asiAlgo_IneqSystem::t_range( 0.9,  1.0),
+              asiAlgo_IneqSystem::t_range(-1.0, -0.9),
+              asiAlgo_IneqSystem::t_range( 0.7,  0.8),
+              asiAlgo_IneqSystem::t_range( 0.9,  1.0),
+              asiAlgo_IneqSystem::t_range( 1.5,  2.0),
+              asiAlgo_IneqSystem::t_range( 1.5,  2.0)
+            };
+
+  /*
+  const int numVariables   = 3;
+  const int numConstraints = 4;
+
+  // Coefficients.
+  std::vector<asiAlgo_IneqSystem::t_ncoord<double>>
+    coeffs = { asiAlgo_IneqSystem::t_ncoord<double>({-0.5,   0.0,  0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({ 0.0,   3.0,  0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({ 1.0,  -1.2,  2.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({ 0.5,  -0.2,  1.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({-0.15, -0.02, 3.0}) };
+
+  // Limits.
+  std::vector<asiAlgo_IneqSystem::t_range>
+    ANu = { asiAlgo_IneqSystem::t_range(0.0,   40.0),
+            asiAlgo_IneqSystem::t_range(0.0,   40.0),
+            asiAlgo_IneqSystem::t_range(30.0,  120.0),
+            asiAlgo_IneqSystem::t_range(10.0,  40.0),
+            asiAlgo_IneqSystem::t_range(20.0,  80.0) };
+  //
+  std::vector<asiAlgo_IneqSystem::t_range>
+    AS0Nu = { asiAlgo_IneqSystem::t_range(20.0, 40.0),
+              asiAlgo_IneqSystem::t_range(30.0, 30.0),
+              asiAlgo_IneqSystem::t_range(50.0, 120.0),
+              asiAlgo_IneqSystem::t_range(20.0, 30.0),
+              asiAlgo_IneqSystem::t_range(25.0, 70.0) };
+  */
+
+  /*
+  const int numVariables   = 3;
+  const int numConstraints = 3;
+
+  // Coefficients.
+  std::vector<asiAlgo_IneqSystem::t_ncoord<double>>
+    coeffs = { asiAlgo_IneqSystem::t_ncoord<double>({0.5, 0.0, 0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 3.0, 0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({1.0, 1.2, 2.0}) };
+
+  // Limits.
+  std::vector<asiAlgo_IneqSystem::t_range>
+    ANu = { asiAlgo_IneqSystem::t_range(0.0,   40.0),
+            asiAlgo_IneqSystem::t_range(0.0,   40.0),
+            asiAlgo_IneqSystem::t_range(30.0,  120.0) };
+  //
+  std::vector<asiAlgo_IneqSystem::t_range>
+    AS0Nu = { asiAlgo_IneqSystem::t_range(20.0, 40.0),
+              asiAlgo_IneqSystem::t_range(20.0, 30.0),
+              asiAlgo_IneqSystem::t_range(50.0, 120.0) };
+  */
+
+  /*
+  const int numVariables   = 6;
+  const int numConstraints = 9;
+
+  // Coefficients.
+  std::vector<asiAlgo_IneqSystem::t_ncoord<double>>
+    coeffs = { asiAlgo_IneqSystem::t_ncoord<double>({1.0, 1.0, 1.0, 1.0, 1.0, 1.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({1.0, 1.0, 1.0, 0.0, 0.0, 0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 0.0, 0.0, 1.0, 1.0, 1.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({1.0, 0.0, 0.0, 0.0, 0.0, 0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 1.0, 0.0, 0.0, 0.0, 0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 0.0, 1.0, 0.0, 0.0, 0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 0.0, 0.0, 1.0, 0.0, 0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 0.0, 0.0, 0.0, 1.0, 0.0}),
+               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 0.0, 0.0, 0.0, 0.0, 1.0})
+             };
+
+  // Limits.
+  std::vector<asiAlgo_IneqSystem::t_range>
+    ANu = { asiAlgo_IneqSystem::t_range(50.0, 80.0),
+            asiAlgo_IneqSystem::t_range(10.0, 22.0),
+            asiAlgo_IneqSystem::t_range(40.0, 60.0),
+            asiAlgo_IneqSystem::t_range(9.0,  12.0),
+            asiAlgo_IneqSystem::t_range(5.0,  11.0),
+            asiAlgo_IneqSystem::t_range(3.0,  9.0),
+            asiAlgo_IneqSystem::t_range(6.0,  6.0),
+            asiAlgo_IneqSystem::t_range(10.0, 24.0),
+            asiAlgo_IneqSystem::t_range(5.0,  19.0)
+          };
+  //
+  std::vector<asiAlgo_IneqSystem::t_range>
+    AS0Nu = { asiAlgo_IneqSystem::t_range(70.0, 80.0),
+              asiAlgo_IneqSystem::t_range(10.0, 15.0),
+              asiAlgo_IneqSystem::t_range(40.0, 60.0),
+              asiAlgo_IneqSystem::t_range(9.0,  12.0),
+              asiAlgo_IneqSystem::t_range(5.0,  11.0),
+              asiAlgo_IneqSystem::t_range(3.0,  9.0),
+              asiAlgo_IneqSystem::t_range(6.0,  6.0),
+              asiAlgo_IneqSystem::t_range(10.0, 24.0),
+              asiAlgo_IneqSystem::t_range(5.0,  19.0)
+            };
+
+  */
+
+  // Prepare parameters for the inequality optimizer.
+  Handle(asiAlgo_IneqOptParams) params = new asiAlgo_IneqOptParams;
+  //
+  params->SetN (numVariables);
+  params->SetM (numConstraints);
+  //
+  for ( int nu = 1; nu <= numConstraints; ++nu )
   {
-    TNaming_Builder aNBuilder(aDataLab);
-    aNBuilder.Generated(face);
+    // Set the two-sided inequality constraint.
+    params->SetAMinus (nu, ANu[nu-1].values.first);
+    params->SetAPlus  (nu, ANu[nu-1].values.second);
+
+    // Set 0-penalty ranges.
+    params->SetInterval0(nu, AS0Nu[nu-1].values.first, AS0Nu[nu-1].values.second);
+
+    // Set coefficients.
+    params->SetCoeffs(nu, coeffs[nu-1]);
   }
-  doc->CommitCommand();
 
-  // Get shape.
-  Handle(TNaming_NamedShape) aShapeAttr;
-  aDataLab.FindAttribute(TNaming_NamedShape::GetID(), aShapeAttr);
-  face = aShapeAttr->Get();
+  /* ===============
+   *  Run optimizer
+   * =============== */
 
-  // Orientation is forward (OK).
-  std::cout << "Orientation in OCAF: "
-            << ( (face.Orientation() == TopAbs_FORWARD) ? "forward" : "reversed" ) << std::endl;
-
-  // Reverse shape before storing.
-  face.Reverse();
-
-  // Orientation is now REVERSED.
-  std::cout << "Expected orientation: "
-            << ( (face.Orientation() == TopAbs_FORWARD) ? "forward" : "reversed" ) << std::endl;
-
-  // Set reversed shape.
-  doc->NewCommand();
+  asiAlgo_IneqOpt Optimizer( params, interp->GetProgress(), interp->GetPlotter() );
+  //
+  if ( !Optimizer.Perform() )
   {
-    TNaming_Builder aNBuilder(aDataLab);
-    aNBuilder.Generated(face);
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Optimizer failed.");
+    return TCL_OK;
   }
-  doc->CommitCommand();
 
-  // Get shape.
-  aDataLab.FindAttribute(TNaming_NamedShape::GetID(), aShapeAttr);
-  face = aShapeAttr->Get();
+  // Get solution.
+  const asiAlgo_IneqSystem::t_ncoord<int>&    SolR = Optimizer.GetSolR();
+  const asiAlgo_IneqSystem::t_ncoord<double>& SolX = Optimizer.GetSolX();
 
-  // Orientation is still forward (NOK).
-  std::cout << "Orientation in OCAF: "
-            << ( (face.Orientation() == TopAbs_FORWARD) ? "forward" : "reversed" ) << std::endl;
+  // Draw solution.
+  if ( numVariables == 2 )
+    interp->GetPlotter().DRAW_POINT(gp_Pnt2d(SolX.V[0], SolX.V[1]), Color_Green, "SolX");
+  else if ( numVariables == 3 )
+    interp->GetPlotter().DRAW_POINT(gp_Pnt(SolX.V[0], SolX.V[1], SolX.V[2]), Color_Green, "SolX");
+
+  TCollection_AsciiString SolRStr, SolXStr;
+  //
+  for ( size_t k = 0; k < SolR.Dim; ++k )
+  {
+    SolRStr += SolR.V[k];
+
+    if ( k < SolR.Dim - 1 )
+      SolRStr += " ";
+  }
+  //
+  for ( size_t k = 0; k < SolX.Dim; ++k )
+  {
+    SolXStr += SolX.V[k];
+
+    if ( k < SolX.Dim - 1 )
+      SolXStr += " ";
+  }
+
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Optimizer converged with\n\tX = %1\n\tR = %2."
+                                                       << SolXStr << SolRStr);
 
   return TCL_OK;
 }

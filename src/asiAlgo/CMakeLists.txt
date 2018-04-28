@@ -179,6 +179,9 @@ set (opt_H_FILES
   opt/asiAlgo_Function.h
   opt/asiAlgo_FunctionWithGradient.h
   opt/asiAlgo_GradientDescent.h
+  opt/asiAlgo_IneqOpt.h
+  opt/asiAlgo_IneqOptParams.h
+  opt/asiAlgo_IneqSystem.h
   opt/asiAlgo_PSO.h
 )
 set (opt_CPP_FILES 
@@ -186,6 +189,9 @@ set (opt_CPP_FILES
   opt/asiAlgo_Function.cpp
   opt/asiAlgo_FunctionWithGradient.cpp
   opt/asiAlgo_GradientDescent.cpp
+  opt/asiAlgo_IneqOpt.cpp
+  opt/asiAlgo_IneqOptParams.cpp
+  opt/asiAlgo_IneqSystem.cpp
   opt/asiAlgo_PSO.cpp
 )
 

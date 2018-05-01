@@ -85,33 +85,31 @@ public:
 public:
 
   //! \return system which worked.
-  const asiAlgo_IneqSystem::t_ncoord<int>& GetSolR() const
+  const t_ineqNCoord<int>& GetSolR() const
   {
     return m_R;
   }
 
   //! \return solution X.
-  const asiAlgo_IneqSystem::t_ncoord<double>& GetSolX() const
+  const t_ineqNCoord<double>& GetSolX() const
   {
     return m_X;
   }
 
 private:
 
-  //! Calculates all permutations of an M-dimensional vector having <numOnes>
-  //! quantity of 1's and all other coordinates 0's.
-  //! \param[in]  dim     dimension of the vector.
-  //! \param[in]  numOnes number of non-zero coordinates.
-  //! \param[out] gridPts computed grid points.
-  void computePermutations(const int                                         dim,
-                           const int                                         numOnes,
-                           std::vector< asiAlgo_IneqSystem::t_ncoord<int> >& gridPts) const;
+  //! Calculates all permutations of an M-dimensional vector representing
+  //! grid point.
+  void populateLexicographic(const int                         dim,
+                             const int                         minVal,
+                             const int                         maxVal,
+                             std::vector< t_ineqNCoord<int> >& gridPts) const;
 
 protected:
 
-  Handle(asiAlgo_IneqOptParams)        m_params; //!< Optimization problem.
-  asiAlgo_IneqSystem::t_ncoord<int>    m_R;      //!< Polytope which worked.
-  asiAlgo_IneqSystem::t_ncoord<double> m_X;      //!< Final solution.
+  Handle(asiAlgo_IneqOptParams) m_params; //!< Optimization problem.
+  t_ineqNCoord<int>             m_R;      //!< Polytope which worked.
+  t_ineqNCoord<double>          m_X;      //!< Final solution.
 
 };
 

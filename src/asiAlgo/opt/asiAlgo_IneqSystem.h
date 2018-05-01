@@ -38,6 +38,139 @@
 #include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
 
+//-----------------------------------------------------------------------------
+
+//! Range of a two-sided inequality.
+struct t_ineqRange
+{
+  std::pair<double, double> values;
+
+  t_ineqRange() {}
+
+  t_ineqRange(const double left, const double right)
+  {
+    values.first  = left;
+    values.second = right;
+  }
+};
+
+//-----------------------------------------------------------------------------
+
+//! N-dimensional coordinates (vector or point).
+template <typename T>
+struct t_ineqNCoord
+{
+  std::vector<T> V;   //!< Coordinates.
+  int            Dim; //!< Dimension.
+
+  t_ineqNCoord() : Dim(0) {} //!< Default ctor.
+
+  //! Ctor to create n-dimensional origin.
+  //! \param[in] dim dimension.
+  //! \param[in] val value to set for all <dim> coordinates.
+  t_ineqNCoord(const int dim, const T val = 0) : Dim(dim)
+  {
+    for ( size_t j = 0; j < Dim; ++j )
+      V.push_back(val);
+  }
+
+  //! Ctor with initialization of coordinates.
+  //! \param[in] coords coordinates to set.
+  t_ineqNCoord(const std::vector<T>& coords) : V(coords), Dim( int(coords.size()) ) {}
+
+  //! Initialize all coordinates with <val>.
+  void Init(const T val)
+  {
+    for ( size_t j = 0; j < Dim; ++j )
+      V[j] = val;
+  }
+
+  //! Calculates modulus of this n-dimensional tuple.
+  //! \return modulus.
+  double Modulus() const
+  {
+    double modulus2 = 0;
+    //
+    for ( size_t j = 0; j < Dim; ++j )
+      modulus2 += V[j]*V[j];
+    //
+    return Sqrt(modulus2);
+  }
+
+  //! Computes dot product between this tuple and the passed tuple.
+  //! \param[in] coords coordinates of the operand tuple.
+  //! \return dot product.
+  double Dot(const t_ineqNCoord<T>& coords) const
+  {
+    double dot = 0.0;
+    //
+    for ( size_t j = 0; j < Dim; ++j )
+      dot += V[j]*coords.V[j];
+
+    return dot;
+  }
+
+  void operator*=(const T val)
+  {
+    for ( size_t j = 0; j < Dim; ++j )
+      V[j] *= val;
+  }
+
+  //! Adds the passed value to each coordinate of the tuple.
+  t_ineqNCoord<T> operator+(const T val) const
+  {
+    t_ineqNCoord<T> res = *this;
+    //
+    for ( size_t j = 0; j < Dim; ++j )
+      res.V[j] += val;
+
+    return res;
+  }
+
+  t_ineqNCoord<T> operator+(const t_ineqNCoord<T>& other) const
+  {
+    t_ineqNCoord<T> res = *this;
+    //
+    for ( size_t j = 0; j < Dim; ++j )
+      res.V[j] += other.V[j];
+
+    return res;
+  }
+
+  t_ineqNCoord<T> operator-(const t_ineqNCoord<T>& other) const
+  {
+    t_ineqNCoord<T> res = *this;
+    //
+    for ( size_t j = 0; j < Dim; ++j )
+      res.V[j] -= other.V[j];
+
+    return res;
+  }
+
+  t_ineqNCoord<T> operator*(const T val) const
+  {
+    t_ineqNCoord<T> res = *this;
+    //
+    for ( size_t j = 0; j < Dim; ++j )
+      res.V[j] *= val;
+
+    return res;
+  }
+
+  //! Subtracts the passed value from each coordinate of the tuple.
+  t_ineqNCoord<T> operator-(const T val) const
+  {
+    t_ineqNCoord<T> res = *this;
+    //
+    for ( size_t j = 0; j < Dim; ++j )
+      res.V[j] -= val;
+
+    return res;
+  }
+};
+
+//-----------------------------------------------------------------------------
+
 //! System of inequalities.
 class asiAlgo_IneqSystem : public Standard_Transient
 {
@@ -45,135 +178,6 @@ public:
 
   // OCCT RTTI.
   DEFINE_STANDARD_RTTI_INLINE(asiAlgo_IneqSystem, Standard_Transient)
-
-public:
-
-  //! Range of a two-sided inequality.
-  struct t_range
-  {
-    std::pair<double, double> values;
-
-    t_range() {}
-
-    t_range(const double left, const double right)
-    {
-      values.first  = left;
-      values.second = right;
-    }
-  };
-
-  //! N-dimensional coordinates (vector or point).
-  template <typename T>
-  struct t_ncoord
-  {
-    std::vector<T> V;   //!< Coordinates.
-    int            Dim; //!< Dimension.
-
-    t_ncoord() : Dim(0) {} //!< Default ctor.
-
-    //! Ctor to create n-dimensional origin.
-    //! \param[in] dim dimension.
-    //! \param[in] val value to set for all <dim> coordinates.
-    t_ncoord(const int dim, const T val = 0) : Dim(dim)
-    {
-      for ( size_t j = 0; j < Dim; ++j )
-        V.push_back(val);
-    }
-
-    //! Ctor with initialization of coordinates.
-    //! \param[in] coords coordinates to set.
-    t_ncoord(const std::vector<T>& coords) : V(coords), Dim(coords.size()) {}
-
-    //! Initialize all coordinates with <val>.
-    void Init(const T val)
-    {
-      for ( size_t j = 0; j < Dim; ++j )
-        V[j] = val;
-    }
-
-    //! Calculates modulus of this n-dimensional tuple.
-    //! \return modulus.
-    double Modulus() const
-    {
-      double modulus2 = 0;
-      //
-      for ( size_t j = 0; j < Dim; ++j )
-        modulus2 += V[j]*V[j];
-      //
-      return Sqrt(modulus2);
-    }
-
-    //! Computes dot product between this tuple and the passed tuple.
-    //! \param[in] coords coordinates of the operand tuple.
-    //! \return dot product.
-    double Dot(const t_ncoord<T>& coords) const
-    {
-      double dot = 0.0;
-      //
-      for ( size_t j = 0; j < Dim; ++j )
-        dot += V[j]*coords.V[j];
-
-      return dot;
-    }
-
-    void operator*=(const T val)
-    {
-      for ( size_t j = 0; j < Dim; ++j )
-        V[j] *= val;
-    }
-
-    //! Adds the passed value to each coordinate of the tuple.
-    t_ncoord<T> operator+(const T val) const
-    {
-      t_ncoord<T> res = *this;
-      //
-      for ( size_t j = 0; j < Dim; ++j )
-        res.V[j] += val;
-
-      return res;
-    }
-
-    t_ncoord<T> operator+(const t_ncoord<T>& other) const
-    {
-      t_ncoord<T> res = *this;
-      //
-      for ( size_t j = 0; j < Dim; ++j )
-        res.V[j] += other.V[j];
-
-      return res;
-    }
-
-    t_ncoord<T> operator-(const t_ncoord<T>& other) const
-    {
-      t_ncoord<T> res = *this;
-      //
-      for ( size_t j = 0; j < Dim; ++j )
-        res.V[j] -= other.V[j];
-
-      return res;
-    }
-
-    t_ncoord<T> operator*(const T val) const
-    {
-      t_ncoord<T> res = *this;
-      //
-      for ( size_t j = 0; j < Dim; ++j )
-        res.V[j] *= val;
-
-      return res;
-    }
-
-    //! Subtracts the passed value from each coordinate of the tuple.
-    t_ncoord<T> operator-(const T val) const
-    {
-      t_ncoord<T> res = *this;
-      //
-      for ( size_t j = 0; j < Dim; ++j )
-        res.V[j] -= val;
-
-      return res;
-    }
-  };
 
 public:
 
@@ -187,28 +191,30 @@ public:
   //! \param[in] ANu    <m> ranges for all inequalities.
   //! \param[in] coeffs <m> vectors of coefficients for all inequalities.
   asiAlgo_EXPORT
-    asiAlgo_IneqSystem(const int                            n,
-                       const int                            m,
-                       const std::vector<t_range>&          ANu,
-                       const std::vector<t_ncoord<double>>& coeffs);
+    asiAlgo_IneqSystem(const int                                n,
+                       const int                                m,
+                       const std::vector<t_ineqRange>&          ANu,
+                       const std::vector<t_ineqNCoord<double>>& coeffs);
 
 public:
 
   asiAlgo_EXPORT bool
-    Solve(const t_ncoord<double>& x0,
-          t_ncoord<double>&       sol,
-          ActAPI_ProgressEntry    progress,
-          ActAPI_PlotterEntry     plotter) const;
+    Solve(const t_ineqNCoord<double>& x0,
+          t_ineqNCoord<double>&       sol,
+          ActAPI_ProgressEntry        progress,
+          ActAPI_PlotterEntry         plotter) const;
 
   asiAlgo_EXPORT bool
-    IsConsistent(const t_ncoord<double>& x,
-                 int&                    nuViolated) const;
+    IsConsistent(const t_ineqNCoord<double>& x,
+                 int&                        nuViolated) const;
 
 public:
 
   asiAlgo_EXPORT void
-    Dump(ActAPI_PlotterEntry   plotter,
-         const Quantity_Color& color);
+    Dump(ActAPI_PlotterEntry            plotter,
+         const Quantity_Color&          color,
+         const TCollection_AsciiString& name,
+         const bool                     isWireframe);
 
 public:
 
@@ -231,22 +237,22 @@ public:
     SetM(const int m);
 
   //! \return bounds of inequalities.
-  asiAlgo_EXPORT const std::vector<t_range>&
+  asiAlgo_EXPORT const std::vector<t_ineqRange>&
     GetANu() const;
 
   //! Sets bounds of inequalities.
   //! \param[in] ANu bounds to set.
   asiAlgo_EXPORT void
-    SetANu(const std::vector<t_range>& ANu);
+    SetANu(const std::vector<t_ineqRange>& ANu);
 
   //! \return coefficients of inequalities.
-  asiAlgo_EXPORT const std::vector<t_ncoord<double>>&
+  asiAlgo_EXPORT const std::vector<t_ineqNCoord<double>>&
     GetCoeffs() const;
 
   //! \brief Sets the coefficients of inequalities.
   //! \param[in] coeffs coefficients to set.
   asiAlgo_EXPORT void
-    SetCoeffs(const std::vector<t_ncoord<double>>& coeffs);
+    SetCoeffs(const std::vector<t_ineqNCoord<double>>& coeffs);
 
   //! \brief Returns the global min bound for a particular two-sided
   //!        inequality.
@@ -280,22 +286,30 @@ public:
   //! \param[in]  nu     1-based index of the inequality in question.
   //! \param[out] coeffs coefficients for the inequality number <nu>.
   asiAlgo_EXPORT void
-    GetCoeffs(const int         nu,
-              t_ncoord<double>& coeffs) const;
+    GetCoeffs(const int             nu,
+              t_ineqNCoord<double>& coeffs) const;
 
   //! \brief Sets the coefficients of the inequality number <nu>.
   //! \param[in] nu     1-based index of the inequality in question.
   //! \param[in] coeffs coefficients to set.
   asiAlgo_EXPORT void
     SetCoeffs(const int               nu,
-              const t_ncoord<double>& coeffs);
+              const t_ineqNCoord<double>& coeffs);
+
+public:
+
+  //! \return series of points illustrating how the algorithm converged.
+  const std::vector< t_ineqNCoord<double> >& GetTraceOfConvergence() const
+  {
+    return m_trace;
+  }
 
 protected:
 
   asiAlgo_EXPORT void
-    nextX(const t_ncoord<double>& x_prev,
-          const int               nuViolated,
-          t_ncoord<double>&       x_next) const;
+    nextX(const t_ineqNCoord<double>& x_prev,
+          const int                   nuViolated,
+          t_ineqNCoord<double>&       x_next) const;
 
 protected:
 
@@ -306,10 +320,13 @@ protected:
   int m_iM;
 
   //! Inequality bounds.
-  std::vector<t_range> m_ANu;
+  std::vector<t_ineqRange> m_ANu;
 
   //! Coefficients for the variables.
-  std::vector<t_ncoord<double>> m_coeffs;
+  std::vector< t_ineqNCoord<double> > m_coeffs;
+
+  //! Trace of convergence.
+  mutable std::vector< t_ineqNCoord<double> > m_trace;
 
 };
 

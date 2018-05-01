@@ -31,15 +31,18 @@
 // Own include
 #include <asiAlgo_IneqOpt.h>
 
+// asiAlgo includes
+#include <asiAlgo_Timer.h>
+
 // Standard includes
 #include <algorithm>
 
-#define COUT_DEBUG
+#undef COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif
 
-#define DRAW_DEBUG
+#undef DRAW_DEBUG
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif
@@ -67,7 +70,7 @@ bool asiAlgo_IneqOpt::Perform()
 {
   // Get dimensions of the problem.
   const int N = m_params->GetN();
-  const int M = m_params->GetM();
+  int       M = m_params->GetM();
 
   /* ===================================================================
    *  Prepare a grid of M-dimensional points corresponding to different
@@ -75,29 +78,41 @@ bool asiAlgo_IneqOpt::Perform()
    * =================================================================== */
 
   // Grid.
-  std::vector< asiAlgo_IneqSystem::t_ncoord<int> > MGrid;
-  std::vector<int>                                 indices;
+  std::vector< t_ineqNCoord<int> > MGrid;
+  std::vector<int>                 indices;
 
-  // Create M-dimensional origin point and add it to the grid.
-  asiAlgo_IneqSystem::t_ncoord<int> MOrigin(M, 0);
-  //
-  MGrid.push_back(MOrigin);
+  TIMER_NEW
+  TIMER_GO
 
-  // Calculate all permutations of all possible combinations of 1's and 0's.
-  for ( int j = 1; j < M; ++j )
+  const int pMin =  (m_params->IsInversionMode() ? -2 : 0);
+  const int pMax =  1;
+
+  this->populateLexicographic(M, pMin, pMax, MGrid);
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(m_progress.Access(), "Populate M-dimensional grid")
+
+  for ( int k = 0; k < MGrid.size(); ++k )
   {
-    this->computePermutations(M, j, MGrid);
+    indices.push_back(k);
+
+#if defined COUT_DEBUG
+    TCollection_AsciiString rName;
+
+    for ( size_t j = 0; j < MGrid[k].Dim; ++j )
+    {
+      rName += MGrid[k].V[j];
+
+      if ( j < MGrid[k].Dim - 1 )
+        rName += " ";
+    }
+
+    std::cout << "Next grid point: (" << rName << ")" << std::endl;
+#endif
   }
 
-  // Add all 1's.
-  asiAlgo_IneqSystem::t_ncoord<int> MOnes(M, 1);
-  //
-  MGrid.push_back(MOnes);
-  //
-  indices.push_back( int( indices.size() ) );
-
   // Check.
-  const int numPtsExpected = int( Pow(2, M) );
+  const int numPtsExpected = int( Pow(pMax - pMin + 1, M) );
   //
   if ( MGrid.size() != numPtsExpected )
   {
@@ -109,14 +124,11 @@ bool asiAlgo_IneqOpt::Perform()
                                             << int( MGrid.size() ) << M);
 
 #if defined DRAW_DEBUG
-  if ( M == 2 || M == 3 )
+  if ( M == 3 )
   {
     for ( size_t k = 0; k < MGrid.size(); ++k )
     {
-      if ( M == 2 )
-        m_plotter.DRAW_POINT( gp_Pnt2d(MGrid[k].V[0], MGrid[k].V[1]), Color_White, "MGrid" );
-      else
-        m_plotter.DRAW_POINT( gp_Pnt(MGrid[k].V[0], MGrid[k].V[1], MGrid[k].V[2]), Color_White, "MGrid" );
+      m_plotter.DRAW_POINT( gp_Pnt(MGrid[k].V[0], MGrid[k].V[1], MGrid[k].V[2]), Color_White, "MGrid" );
     }
   }
 #endif
@@ -129,7 +141,7 @@ bool asiAlgo_IneqOpt::Perform()
               } );
 
 #if defined DRAW_DEBUG
-  if ( N == 2 || N ==3 )
+  if ( N == 2 || N == 3 )
   {
     std::vector<Quantity_Color> colors = {Quantity_NOC_GREEN,
                                           Quantity_NOC_YELLOW,
@@ -139,9 +151,9 @@ bool asiAlgo_IneqOpt::Perform()
     int    colorIndex  = -1;
     double prevModulus = -1;
     //
-    for ( size_t k = 0; k < MGrid.size(); ++k )
+    for ( size_t k = 0; k < indices.size(); ++k )
     {
-      const double modulus = MGrid[k].Modulus();
+      const double modulus = MGrid[ indices[k] ].Modulus();
       //
       if ( modulus > prevModulus )
       {
@@ -153,10 +165,25 @@ bool asiAlgo_IneqOpt::Perform()
       std::cout << "Next modulus: " << modulus << std::endl;
 #endif
 
+      TCollection_AsciiString rName, polytopeName;
+      //
+      for ( size_t j = 0; j < MGrid[k].Dim; ++j )
+      {
+        rName += MGrid[k].V[j];
+
+        if ( j < MGrid[k].Dim - 1 )
+          rName += " ";
+      }
+      //
+      polytopeName = "polytope ("; polytopeName += rName; polytopeName += ")";
+
       // Get system for a particular sub-domain.
       Handle(asiAlgo_IneqSystem) system = m_params->GetSystem(MGrid[k]);
       //
-      system->Dump(m_plotter, (colorIndex >= colors.size() ? colors[colors.size() - 1] : colors[colorIndex]));
+      system->Dump( m_plotter,
+                   (colorIndex >= colors.size() ? colors[colors.size() - 1] : colors[colorIndex]),
+                    polytopeName,
+                    false );
     }
   }
 #endif
@@ -165,20 +192,30 @@ bool asiAlgo_IneqOpt::Perform()
    *  Search for the optimal grid point
    * =================================== */
 
-  asiAlgo_IneqSystem::t_ncoord<double> x0(N, 0), xsol;
-  asiAlgo_IneqSystem::t_ncoord<int>    r(M, 1);
-  bool isOk = true;
+  t_ineqNCoord<double>       x0(N, 0), xsol;
+  t_ineqNCoord<int>          r(M, pMax);
+  bool                       isOk = true;
+  Handle(asiAlgo_IneqSystem) convergedSys;
 
   for ( int nu = 1; nu <= M; ++nu )
   {
-    r.V[nu-1] = 0;
-    bool isSolved = m_params->GetSystem(r)->Solve(x0, xsol, m_progress, m_plotter);
-    //
-    if ( !isSolved )
+    bool isSolved = false;
+    int  pVal     = pMin;
+
+    do
     {
-      r.V[nu-1] = 1;
-      isSolved = m_params->GetSystem(r)->Solve(x0, xsol, m_progress, m_plotter);
+      r.V[nu-1] = pVal;
+      //
+      Handle(asiAlgo_IneqSystem) nextSys = m_params->GetSystem(r);
+      //
+      isSolved = nextSys->Solve(x0, xsol, m_progress, m_plotter);
+
+      if ( isSolved )
+        convergedSys = nextSys;
+      else
+        pVal++;
     }
+    while ( !isSolved && pVal <= pMax );
 
     if ( !isSolved )
     {
@@ -188,9 +225,23 @@ bool asiAlgo_IneqOpt::Perform()
     }
   }
 
+#if defined DRAW_DEBUG
+  if ( isOk && N == 3 )
+  {
+    const std::vector< t_ineqNCoord<double> >&
+      trace = convergedSys->GetTraceOfConvergence();
+
+    std::vector<gp_XYZ> tracePts;
+    for ( size_t jj = 0; jj < trace.size(); ++jj )
+      tracePts.push_back( gp_XYZ(trace[jj].V[0], trace[jj].V[1], trace[jj].V[2]) );
+
+    m_plotter.DRAW_POLYLINE(tracePts, Color_Yellow, "convergence" );
+  }
+#endif
+
   //// Check best possible system.
-  //asiAlgo_IneqSystem::t_ncoord<int> r(M, 0);
-  //bool isOk = m_params->GetSystem(r)->Solve(x0, xsol, m_progress, m_plotter);
+  //t_ineqNCoord<int> r(M, 0);
+  //bool isOk = m_params->GetCentralSystem(r)->Solve(x0, xsol, m_progress, m_plotter);
 
   // Set result.
   m_R = r;
@@ -201,39 +252,44 @@ bool asiAlgo_IneqOpt::Perform()
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_IneqOpt::computePermutations(const int                                         dim,
-                                          const int                                         numOnes,
-                                          std::vector< asiAlgo_IneqSystem::t_ncoord<int> >& gridPts) const
+void asiAlgo_IneqOpt::populateLexicographic(const int                         dim,
+                                            const int                         minVal,
+                                            const int                         maxVal,
+                                            std::vector< t_ineqNCoord<int> >& gridPts) const
 {
-  std::string bitmask(numOnes, 1);
-  bitmask.resize(dim, 0);
+  if ( dim <= 0 )
+    return;
 
-  do
+  t_ineqNCoord<int> gridPt(dim, minVal);
+  gridPts.push_back(gridPt);
+
+  // Loop over the vector components.
+  for ( int k = dim - 1; k >= 0; --k )
   {
-    asiAlgo_IneqSystem::t_ncoord<int> nextGridPt(dim);
+    gridPt.Init(minVal);
 
-#if defined COUT_DEBUG
-    std::cout << " \t";
-#endif
-
-    for ( int i = 0; i < dim; ++i )
+    // Loop over the possible component values.
+    int currentVal = minVal + 1;
+    //
+    while ( currentVal <= maxVal )
     {
-      if ( bitmask[i] )
-        nextGridPt.V[i] = 1;
-      else
-        nextGridPt.V[i] = 0;
+      gridPt.V[k] = currentVal;
 
-#if defined COUT_DEBUG
-      std::cout << " " << nextGridPt.V[i];
-#endif
+      std::vector< t_ineqNCoord<int> > restPositions;
+      this->populateLexicographic(dim - k - 1, minVal, maxVal, restPositions);
+      //
+      for ( int j = 0; j < restPositions.size(); ++j )
+      {
+        for ( int jj = 0; jj < restPositions[j].Dim; ++jj )
+        {
+          gridPt.V[k + jj + 1] = restPositions[j].V[jj];
+        }
+        gridPts.push_back(gridPt);
+      }
+      if ( !restPositions.size() )
+        gridPts.push_back(gridPt);
+
+      currentVal++;
     }
-
-#if defined COUT_DEBUG
-    std::cout << std::endl;
-#endif
-
-    // Add to the result.
-    gridPts.push_back(nextGridPt);
   }
-  while ( std::prev_permutation( bitmask.begin(), bitmask.end() ) );
 }

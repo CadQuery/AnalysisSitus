@@ -94,8 +94,8 @@ double SignedDistance(const gp_Pln& pln, const gp_Pnt& P)
 //-----------------------------------------------------------------------------
 
 int MISC_Box(const Handle(asiTcl_Interp)& interp,
-             int                          argc,
-             const char**                 argv)
+             int                          /*argc*/,
+             const char**                 /*argv*/)
 {
   TopoDS_Shape box = BRepPrimAPI_MakeBox(1, 1, 1);
 
@@ -107,8 +107,8 @@ int MISC_Box(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
-                         int                          argc,
-                         const char**                 argv)
+                         int                          /*argc*/,
+                         const char**                 /*argv*/)
 {
   const double r = 0.02;
   const double h = 0.25;
@@ -239,8 +239,8 @@ int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 int MISC_TestHexagonBopsFaces(const Handle(asiTcl_Interp)& interp,
-                              int                          argc,
-                              const char**                 argv)
+                              int                          /*argc*/,
+                              const char**                 /*argv*/)
 {
   const double r = 0.02;
   const double h = 0.25;
@@ -384,7 +384,7 @@ int MISC_TestHexagonBopsFaces(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 int MISC_PushPull(const Handle(asiTcl_Interp)& interp,
-                  int                          argc,
+                  int                          /*argc*/,
                   const char**                 argv)
 {
   TopoDS_Shape
@@ -815,7 +815,7 @@ int MISC_TestBuilder(const Handle(asiTcl_Interp)& interp,
 
 int MISC_TestComposite(const Handle(asiTcl_Interp)& interp,
                        int                          argc,
-                       const char**                 argv)
+                       const char**                 /*argv*/)
 {
   if ( argc != 1 )
     return TCL_ERROR;
@@ -872,8 +872,8 @@ int MISC_TestComposite(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 int MISC_TestOffset(const Handle(asiTcl_Interp)& interp,
-                       int                          argc,
-                       const char**                 argv)
+                    int                          argc,
+                    const char**                 /*argv*/)
 {
   if ( argc != 1 )
     return TCL_ERROR;
@@ -1021,135 +1021,172 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
    *  Set input parameters
    * ====================== */
 
-  const int numVariables   = 6;
-  const int numConstraints = 6;
+  //---------------------------------------------------------------------------
 
-  // Coefficients.
-  std::vector<asiAlgo_IneqSystem::t_ncoord<double>>
-    coeffs = { asiAlgo_IneqSystem::t_ncoord<double>({1.0, -30.0, 0.0, 0.0, 0.0,  0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({1.0,  30.0, 0.0, 0.0, 0.0,  0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({0.0,   0.0, 1.0, 0.0, 0.0,  0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({0.0,   0.0, 0.0, 1.0, 0.0,  0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({0.0,   0.0, 0.0, 0.0, 1.0, -5.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({0.0,   0.0, 0.0, 0.0, 1.0,  5.0})
-             };
+  // Prepare inversion mode.
+  Handle(asiAlgo_IneqOptParams) params = new asiAlgo_IneqOptParams(true);
 
-  // Limits.
-  std::vector<asiAlgo_IneqSystem::t_range>
-    ANu = { asiAlgo_IneqSystem::t_range(-1.0,  1.0),
-            asiAlgo_IneqSystem::t_range(-1.0,  1.0),
-            asiAlgo_IneqSystem::t_range(-0.8,  0.8),
-            asiAlgo_IneqSystem::t_range(-1.0,  1.0),
-            asiAlgo_IneqSystem::t_range(-2.0,  2.0),
-            asiAlgo_IneqSystem::t_range(-2.0,  2.0)
-          };
-  //
-  std::vector<asiAlgo_IneqSystem::t_range>
-    AS0Nu = { asiAlgo_IneqSystem::t_range( 0.9,  1.0),
-              asiAlgo_IneqSystem::t_range(-1.0, -0.9),
-              asiAlgo_IneqSystem::t_range( 0.7,  0.8),
-              asiAlgo_IneqSystem::t_range( 0.9,  1.0),
-              asiAlgo_IneqSystem::t_range( 1.5,  2.0),
-              asiAlgo_IneqSystem::t_range( 1.5,  2.0)
-            };
-
-  /*
-  const int numVariables   = 3;
-  const int numConstraints = 4;
-
-  // Coefficients.
-  std::vector<asiAlgo_IneqSystem::t_ncoord<double>>
-    coeffs = { asiAlgo_IneqSystem::t_ncoord<double>({-0.5,   0.0,  0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({ 0.0,   3.0,  0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({ 1.0,  -1.2,  2.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({ 0.5,  -0.2,  1.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({-0.15, -0.02, 3.0}) };
-
-  // Limits.
-  std::vector<asiAlgo_IneqSystem::t_range>
-    ANu = { asiAlgo_IneqSystem::t_range(0.0,   40.0),
-            asiAlgo_IneqSystem::t_range(0.0,   40.0),
-            asiAlgo_IneqSystem::t_range(30.0,  120.0),
-            asiAlgo_IneqSystem::t_range(10.0,  40.0),
-            asiAlgo_IneqSystem::t_range(20.0,  80.0) };
-  //
-  std::vector<asiAlgo_IneqSystem::t_range>
-    AS0Nu = { asiAlgo_IneqSystem::t_range(20.0, 40.0),
-              asiAlgo_IneqSystem::t_range(30.0, 30.0),
-              asiAlgo_IneqSystem::t_range(50.0, 120.0),
-              asiAlgo_IneqSystem::t_range(20.0, 30.0),
-              asiAlgo_IneqSystem::t_range(25.0, 70.0) };
-  */
-
-  /*
   const int numVariables   = 3;
   const int numConstraints = 3;
 
   // Coefficients.
-  std::vector<asiAlgo_IneqSystem::t_ncoord<double>>
-    coeffs = { asiAlgo_IneqSystem::t_ncoord<double>({0.5, 0.0, 0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 3.0, 0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({1.0, 1.2, 2.0}) };
-
-  // Limits.
-  std::vector<asiAlgo_IneqSystem::t_range>
-    ANu = { asiAlgo_IneqSystem::t_range(0.0,   40.0),
-            asiAlgo_IneqSystem::t_range(0.0,   40.0),
-            asiAlgo_IneqSystem::t_range(30.0,  120.0) };
+  const double bestPositionalTolerAbs = 0.99;
+  const double bestAngularTolerAbs    = 0.99;
   //
-  std::vector<asiAlgo_IneqSystem::t_range>
-    AS0Nu = { asiAlgo_IneqSystem::t_range(20.0, 40.0),
-              asiAlgo_IneqSystem::t_range(20.0, 30.0),
-              asiAlgo_IneqSystem::t_range(50.0, 120.0) };
-  */
-
-  /*
-  const int numVariables   = 6;
-  const int numConstraints = 9;
-
-  // Coefficients.
-  std::vector<asiAlgo_IneqSystem::t_ncoord<double>>
-    coeffs = { asiAlgo_IneqSystem::t_ncoord<double>({1.0, 1.0, 1.0, 1.0, 1.0, 1.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({1.0, 1.0, 1.0, 0.0, 0.0, 0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 0.0, 0.0, 1.0, 1.0, 1.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({1.0, 0.0, 0.0, 0.0, 0.0, 0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 1.0, 0.0, 0.0, 0.0, 0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 0.0, 1.0, 0.0, 0.0, 0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 0.0, 0.0, 1.0, 0.0, 0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 0.0, 0.0, 0.0, 1.0, 0.0}),
-               asiAlgo_IneqSystem::t_ncoord<double>({0.0, 0.0, 0.0, 0.0, 0.0, 1.0})
+  std::vector< t_ineqNCoord<double> >
+    coeffs = { t_ineqNCoord<double>({1.0, -30.0, 0.0}),
+               t_ineqNCoord<double>({1.0,  30.0, 0.0}),
+               t_ineqNCoord<double>({0.0,   0.0, 1.0})
              };
 
   // Limits.
-  std::vector<asiAlgo_IneqSystem::t_range>
-    ANu = { asiAlgo_IneqSystem::t_range(50.0, 80.0),
-            asiAlgo_IneqSystem::t_range(10.0, 22.0),
-            asiAlgo_IneqSystem::t_range(40.0, 60.0),
-            asiAlgo_IneqSystem::t_range(9.0,  12.0),
-            asiAlgo_IneqSystem::t_range(5.0,  11.0),
-            asiAlgo_IneqSystem::t_range(3.0,  9.0),
-            asiAlgo_IneqSystem::t_range(6.0,  6.0),
-            asiAlgo_IneqSystem::t_range(10.0, 24.0),
-            asiAlgo_IneqSystem::t_range(5.0,  19.0)
+  std::vector<t_ineqRange>
+    ANu = { t_ineqRange(-1.0, 1.0),
+            t_ineqRange(-1.0, 1.0),
+            t_ineqRange(-1.0, 1.0)
           };
   //
-  std::vector<asiAlgo_IneqSystem::t_range>
-    AS0Nu = { asiAlgo_IneqSystem::t_range(70.0, 80.0),
-              asiAlgo_IneqSystem::t_range(10.0, 15.0),
-              asiAlgo_IneqSystem::t_range(40.0, 60.0),
-              asiAlgo_IneqSystem::t_range(9.0,  12.0),
-              asiAlgo_IneqSystem::t_range(5.0,  11.0),
-              asiAlgo_IneqSystem::t_range(3.0,  9.0),
-              asiAlgo_IneqSystem::t_range(6.0,  6.0),
-              asiAlgo_IneqSystem::t_range(10.0, 24.0),
-              asiAlgo_IneqSystem::t_range(5.0,  19.0)
+  std::vector<t_ineqRange>
+    AKNu = { t_ineqRange(-bestPositionalTolerAbs, bestPositionalTolerAbs),
+             t_ineqRange(-bestPositionalTolerAbs, bestPositionalTolerAbs),
+             t_ineqRange(-bestAngularTolerAbs,    bestAngularTolerAbs)
             };
 
-  */
+  //---------------------------------------------------------------------------
+
+  //const int numVariables   = 6;
+  //const int numConstraints = 6;
+
+  //// Coefficients.
+  //std::vector<t_ineqNCoord<double>>
+  //  coeffs = { t_ineqNCoord<double>({1.0, -30.0, 0.0, 0.0, 0.0,  0.0}),
+  //             t_ineqNCoord<double>({1.0,  30.0, 0.0, 0.0, 0.0,  0.0}),
+  //             t_ineqNCoord<double>({0.0,   0.0, 1.0, 0.0, 0.0,  0.0}),
+  //             t_ineqNCoord<double>({0.0,   0.0, 0.0, 1.0, 0.0,  0.0}),
+  //             t_ineqNCoord<double>({0.0,   0.0, 0.0, 0.0, 1.0, -5.0}),
+  //             t_ineqNCoord<double>({0.0,   0.0, 0.0, 0.0, 1.0,  5.0})
+  //           };
+
+  //// Limits.
+  //std::vector<t_ineqRange>
+  //  ANu = { t_ineqRange(-1.0,  1.0),
+  //          t_ineqRange(-1.0,  1.0),
+  //          t_ineqRange(-0.8,  0.8),
+  //          t_ineqRange(-1.0,  1.0),
+  //          t_ineqRange(-2.0,  2.0),
+  //          t_ineqRange(-2.0,  2.0)
+  //        };
+  ////
+  //std::vector<t_ineqRange>
+  //  AKNu = { t_ineqRange(0.9,  1.0),
+  //            t_ineqRange(0.5,  1.0),
+  //            t_ineqRange(0.7,  0.8),
+  //            t_ineqRange(0.9,  1.0),
+  //            t_ineqRange(1.5,  2.0),
+  //            t_ineqRange(1.5,  2.0)
+  //          };
+
+  //Handle(asiAlgo_IneqOptParams) params = new asiAlgo_IneqOptParams(false);
+  ////
+  //const int numVariables   = 3;
+  //const int numConstraints = 4;
+
+  //// Coefficients.
+  //std::vector<t_ineqNCoord<double>>
+  //  coeffs = { t_ineqNCoord<double>({-0.5,   0.0,  0.0}),
+  //             t_ineqNCoord<double>({ 0.0,   3.0,  0.0}),
+  //             t_ineqNCoord<double>({ 1.0,  -1.2,  2.0}),
+  //             t_ineqNCoord<double>({ 0.5,  -0.2,  1.0}),
+  //             t_ineqNCoord<double>({-0.15, -0.02, 3.0}) };
+
+  //// Limits.
+  //std::vector<t_ineqRange>
+  //  ANu = { t_ineqRange(0.0,   40.0),
+  //          t_ineqRange(0.0,   40.0),
+  //          t_ineqRange(30.0,  120.0),
+  //          t_ineqRange(10.0,  40.0),
+  //          t_ineqRange(20.0,  80.0) };
+  ////
+  //std::vector<t_ineqRange>
+  //  AKNu = { t_ineqRange(20.0, 40.0),
+  //           t_ineqRange(30.0, 30.0),
+  //           t_ineqRange(50.0, 120.0),
+  //           t_ineqRange(20.0, 30.0),
+  //           t_ineqRange(25.0, 70.0) };
+
+  //---------------------------------------------------------------------------
+
+  //Handle(asiAlgo_IneqOptParams) params = new asiAlgo_IneqOptParams(false);
+  //const int numVariables   = 3;
+  //const int numConstraints = 5;
+
+  //// Coefficients.
+  //std::vector<t_ineqNCoord<double>>
+  //  coeffs = { t_ineqNCoord<double>({0.5, 0.0,  0.0}),
+  //             t_ineqNCoord<double>({0.0, 3.0,  0.0}),
+  //             t_ineqNCoord<double>({0.5, 0.5,  0.0}),
+  //             t_ineqNCoord<double>({0.0, 0.25, 0.25}),
+  //             t_ineqNCoord<double>({1.0, 1.2,  1.6}) };
+
+  //// Limits.
+  //std::vector<t_ineqRange>
+  //  ANu = { t_ineqRange(0.0,   70.0),
+  //          t_ineqRange(0.0,   80.0),
+  //          t_ineqRange(0.0,   80.0),
+  //          t_ineqRange(10.0,  100.0),
+  //          t_ineqRange(10.0,  250.0) };
+  ////
+  //std::vector<t_ineqRange>
+  //  AKNu = { t_ineqRange(20.0, 45.0),
+  //           t_ineqRange(20.0, 30.0),
+  //           t_ineqRange(40.0, 70.0),
+  //           t_ineqRange(10.0, 50.0),
+  //           t_ineqRange(50.0, 110.0) };
+
+  //---------------------------------------------------------------------------
+
+  //const int numVariables   = 3;
+  //const int numConstraints = 9;
+
+  //// Coefficients.
+  //std::vector<t_ineqNCoord<double>>
+  //  coeffs = { t_ineqNCoord<double>({1.0, 1.0, 1.0, 1.0, 1.0, 1.0}),
+  //             t_ineqNCoord<double>({1.0, 1.0, 1.0, 0.0, 0.0, 0.0}),
+  //             t_ineqNCoord<double>({0.0, 0.0, 0.0, 1.0, 1.0, 1.0}),
+  //             t_ineqNCoord<double>({1.0, 0.0, 0.0, 0.0, 0.0, 0.0}),
+  //             t_ineqNCoord<double>({0.0, 1.0, 0.0, 0.0, 0.0, 0.0}),
+  //             t_ineqNCoord<double>({0.0, 0.0, 1.0, 0.0, 0.0, 0.0}),
+  //             t_ineqNCoord<double>({0.0, 0.0, 0.0, 1.0, 0.0, 0.0}),
+  //             t_ineqNCoord<double>({0.0, 0.0, 0.0, 0.0, 1.0, 0.0}),
+  //             t_ineqNCoord<double>({0.0, 0.0, 0.0, 0.0, 0.0, 1.0})
+  //           };
+
+  //// Limits.
+  //std::vector<t_ineqRange>
+  //  ANu = { t_ineqRange(50.0, 80.0),
+  //          t_ineqRange(10.0, 22.0),
+  //          t_ineqRange(40.0, 60.0),
+  //          t_ineqRange(9.0,  12.0),
+  //          t_ineqRange(5.0,  11.0),
+  //          t_ineqRange(3.0,  9.0),
+  //          t_ineqRange(6.0,  6.0),
+  //          t_ineqRange(10.0, 24.0),
+  //          t_ineqRange(5.0,  19.0)
+  //        };
+  ////
+  //std::vector<t_ineqRange>
+  //  AKNu = { t_ineqRange(70.0, 80.0),
+  //            t_ineqRange(10.0, 15.0),
+  //            t_ineqRange(40.0, 60.0),
+  //            t_ineqRange(9.0,  12.0),
+  //            t_ineqRange(5.0,  11.0),
+  //            t_ineqRange(3.0,  9.0),
+  //            t_ineqRange(6.0,  6.0),
+  //            t_ineqRange(10.0, 24.0),
+  //            t_ineqRange(5.0,  19.0)
+  //          };
 
   // Prepare parameters for the inequality optimizer.
-  Handle(asiAlgo_IneqOptParams) params = new asiAlgo_IneqOptParams;
-  //
   params->SetN (numVariables);
   params->SetM (numConstraints);
   //
@@ -1160,7 +1197,7 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
     params->SetAPlus  (nu, ANu[nu-1].values.second);
 
     // Set 0-penalty ranges.
-    params->SetInterval0(nu, AS0Nu[nu-1].values.first, AS0Nu[nu-1].values.second);
+    params->SetInterval0(nu, AKNu[nu-1].values.first, AKNu[nu-1].values.second);
 
     // Set coefficients.
     params->SetCoeffs(nu, coeffs[nu-1]);
@@ -1179,13 +1216,13 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
   }
 
   // Get solution.
-  const asiAlgo_IneqSystem::t_ncoord<int>&    SolR = Optimizer.GetSolR();
-  const asiAlgo_IneqSystem::t_ncoord<double>& SolX = Optimizer.GetSolX();
+  const t_ineqNCoord<int>&    SolR = Optimizer.GetSolR();
+  const t_ineqNCoord<double>& SolX = Optimizer.GetSolX();
 
   // Draw solution.
-  if ( numVariables == 2 )
+  if ( SolX.Dim && numVariables == 2 )
     interp->GetPlotter().DRAW_POINT(gp_Pnt2d(SolX.V[0], SolX.V[1]), Color_Green, "SolX");
-  else if ( numVariables == 3 )
+  else if ( SolX.Dim && numVariables == 3 )
     interp->GetPlotter().DRAW_POINT(gp_Pnt(SolX.V[0], SolX.V[1], SolX.V[2]), Color_Green, "SolX");
 
   TCollection_AsciiString SolRStr, SolXStr;
@@ -1215,7 +1252,7 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
-                      const Handle(Standard_Transient)& data)
+                      const Handle(Standard_Transient)& /*data*/)
 {
   static const char* group = "cmdMisc";
 

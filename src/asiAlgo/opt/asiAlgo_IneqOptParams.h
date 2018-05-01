@@ -48,9 +48,13 @@ public:
 public:
 
   asiAlgo_EXPORT
-    asiAlgo_IneqOptParams();
+    asiAlgo_IneqOptParams(const bool isInversionMode);
 
 public:
+
+  //! \return true if inversion mode for ranges is enabled.
+  asiAlgo_EXPORT bool
+    IsInversionMode() const;
 
   //! \return number of variables in the optimization problem.
   asiAlgo_EXPORT int
@@ -102,15 +106,15 @@ public:
   //! \param[in]  nu     1-based index of the inequality constraint in question.
   //! \param[out] coeffs coefficients for the constraint number <nu>.
   asiAlgo_EXPORT void
-    GetCoeffs(const int                             nu,
-              asiAlgo_IneqSystem::t_ncoord<double>& coeffs) const;
+    GetCoeffs(const int             nu,
+              t_ineqNCoord<double>& coeffs) const;
 
   //! \brief Sets the coefficients of the inequality constraint number <nu>.
   //! \param[in] nu     1-based index of the inequality constraint in question.
   //! \param[in] coeffs coefficients to set.
   asiAlgo_EXPORT void
-    SetCoeffs(const int                                   nu,
-              const asiAlgo_IneqSystem::t_ncoord<double>& coeffs);
+    SetCoeffs(const int                   nu,
+              const t_ineqNCoord<double>& coeffs);
 
   //! \brief Returns the 0-penalty interval for the constraint number <nu>.
   //! \param[in]  nu    1-based index of the inequality constraint in question.
@@ -130,15 +134,18 @@ public:
                  const double left,
                  const double right);
 
-  //! \brief Constructs an explicit system of inequalities for the given
+  //! \brief Constructs explicit system of inequalities for the given
   //!        value of penalty.
   //!
   //! Penalty is defined as M-dimensional point with each coordinate determining
   //! the target sub-domain of the corresponding inequality criterion.
   asiAlgo_EXPORT Handle(asiAlgo_IneqSystem)
-    GetSystem(const asiAlgo_IneqSystem::t_ncoord<int>& penalties) const;
+    GetSystem(const t_ineqNCoord<int>& penalties) const;
 
 protected:
+
+  //! Special inversion mode.
+  bool m_bInvertedRanges;
 
   //! Number of variables.
   int m_iN;
@@ -147,13 +154,13 @@ protected:
   int m_iM;
 
   //! Global bounds for the constraints.
-  std::vector<asiAlgo_IneqSystem::t_range> m_ANu;
+  std::vector<t_ineqRange> m_ANu;
 
   //! Coefficients for the constraints.
-  std::vector<asiAlgo_IneqSystem::t_ncoord<double>> m_coeffs;
+  std::vector<t_ineqNCoord<double>> m_coeffs;
 
   //! 0-pentalty intervals for the constraints.
-  std::vector<asiAlgo_IneqSystem::t_range> m_S0Nu;
+  std::vector<t_ineqRange> m_K0Nu;
 
 };
 

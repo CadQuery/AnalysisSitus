@@ -33,9 +33,16 @@
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_IneqOptParams::asiAlgo_IneqOptParams()
-: m_iN(0), m_iM(0)
+asiAlgo_IneqOptParams::asiAlgo_IneqOptParams(const bool isInversionMode)
+: m_bInvertedRanges(isInversionMode), m_iN(0), m_iM(0)
 {}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_IneqOptParams::IsInversionMode() const
+{
+  return m_bInvertedRanges;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -77,7 +84,7 @@ double asiAlgo_IneqOptParams::GetAMinus(const int nu) const
 void asiAlgo_IneqOptParams::SetAMinus(const int nu, const double a)
 {
   if ( nu > m_ANu.size() )
-    m_ANu.push_back( asiAlgo_IneqSystem::t_range() );
+    m_ANu.push_back( t_ineqRange() );
 
   m_ANu[nu-1].values.first = a;
 }
@@ -94,26 +101,26 @@ double asiAlgo_IneqOptParams::GetAPlus(const int nu) const
 void asiAlgo_IneqOptParams::SetAPlus(const int nu, const double a)
 {
   if ( nu > m_ANu.size() )
-    m_ANu.push_back( asiAlgo_IneqSystem::t_range() );
+    m_ANu.push_back( t_ineqRange() );
 
   m_ANu[nu-1].values.second = a;
 }
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_IneqOptParams::GetCoeffs(const int                             nu,
-                                      asiAlgo_IneqSystem::t_ncoord<double>& coeffs) const
+void asiAlgo_IneqOptParams::GetCoeffs(const int             nu,
+                                      t_ineqNCoord<double>& coeffs) const
 {
   coeffs = m_coeffs[nu-1];
 }
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_IneqOptParams::SetCoeffs(const int                                   nu,
-                                      const asiAlgo_IneqSystem::t_ncoord<double>& coeffs)
+void asiAlgo_IneqOptParams::SetCoeffs(const int                   nu,
+                                      const t_ineqNCoord<double>& coeffs)
 {
   if ( nu > m_coeffs.size() )
-    m_coeffs.push_back( asiAlgo_IneqSystem::t_ncoord<double>() );
+    m_coeffs.push_back( t_ineqNCoord<double>() );
 
   m_coeffs[nu-1] = coeffs;
 }
@@ -124,8 +131,8 @@ void asiAlgo_IneqOptParams::GetInterval0(const int nu,
                                          double&   left,
                                          double&   right) const
 {
-  left  = m_S0Nu[nu-1].values.first;
-  right = m_S0Nu[nu-1].values.second;
+  left  = m_K0Nu[nu-1].values.first;
+  right = m_K0Nu[nu-1].values.second;
 }
 
 //-----------------------------------------------------------------------------
@@ -134,17 +141,17 @@ void asiAlgo_IneqOptParams::SetInterval0(const int    nu,
                                          const double left,
                                          const double right)
 {
-  if ( nu > m_S0Nu.size() )
-    m_S0Nu.push_back( asiAlgo_IneqSystem::t_range() );
+  if ( nu > m_K0Nu.size() )
+    m_K0Nu.push_back( t_ineqRange() );
 
-  m_S0Nu[nu-1].values.first  = left;
-  m_S0Nu[nu-1].values.second = right;
+  m_K0Nu[nu-1].values.first  = left;
+  m_K0Nu[nu-1].values.second = right;
 }
 
 //-----------------------------------------------------------------------------
 
 Handle(asiAlgo_IneqSystem)
-  asiAlgo_IneqOptParams::GetSystem(const asiAlgo_IneqSystem::t_ncoord<int>& penalties) const
+  asiAlgo_IneqOptParams::GetSystem(const t_ineqNCoord<int>& penalties) const
 {
   // Get globally constrained inequalities.
   Handle(asiAlgo_IneqSystem)
@@ -153,13 +160,21 @@ Handle(asiAlgo_IneqSystem)
   // Adjust boundaries according to the requested penalties.
   for ( int k = 0; k < m_iM; ++k )
   {
+    double left, right;
+    this->GetInterval0(k+1, left, right);
+
     if ( penalties.V[k] == 0 )
     {
-      double left, right;
-      this->GetInterval0(k+1, left, right);
-      //
       system->SetAMinus(k+1, left);
       system->SetAPlus(k+1, right);
+    }
+    else if ( penalties.V[k] == -2 )
+    {
+      system->SetAPlus(k+1, left);
+    }
+    else if ( penalties.V[k] == -1 )
+    {
+      system->SetAMinus(k+1, right);
     }
   }
 

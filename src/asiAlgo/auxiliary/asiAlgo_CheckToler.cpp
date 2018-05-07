@@ -37,7 +37,7 @@
 // OCCT includes
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
-#include <TopExp_Explorer.hxx>
+#include <TopExp.hxx>
 #include <TopoDS.hxx>
 
 //-----------------------------------------------------------------------------
@@ -64,17 +64,22 @@ bool asiAlgo_CheckToler::PerformRanges(const std::vector<double>& tolerRanges,
   for ( size_t k = 0; k < tolerRanges.size() - 1; ++k )
     tolerShapes.push_back( TopoDS_Shape() );
 
+  TopTools_IndexedMapOfShape allVertices, allEdges, allFaces;
+  TopExp::MapShapes(m_shape, TopAbs_VERTEX, allVertices);
+  TopExp::MapShapes(m_shape, TopAbs_EDGE,   allEdges);
+  TopExp::MapShapes(m_shape, TopAbs_FACE,   allFaces);
+
   // Analyze vertices.
-  for ( TopExp_Explorer exp(m_shape, TopAbs_VERTEX); exp.More(); exp.Next() )
-    this->analyzeSubShape(exp.Current(), tolerRanges, tolerShapes, outOfRangeMin, outOfRangeMax);
+  for ( int k = 1; k <= allVertices.Extent(); ++k )
+    this->analyzeSubShape(allVertices(k), tolerRanges, tolerShapes, outOfRangeMin, outOfRangeMax);
 
   // Analyze edges.
-  for ( TopExp_Explorer exp(m_shape, TopAbs_EDGE); exp.More(); exp.Next() )
-    this->analyzeSubShape(exp.Current(), tolerRanges, tolerShapes, outOfRangeMin, outOfRangeMax);
+  for ( int k = 1; k <= allEdges.Extent(); ++k )
+    this->analyzeSubShape(allEdges(k), tolerRanges, tolerShapes, outOfRangeMin, outOfRangeMax);
 
   // Analyze faces.
-  for ( TopExp_Explorer exp(m_shape, TopAbs_FACE); exp.More(); exp.Next() )
-    this->analyzeSubShape(exp.Current(), tolerRanges, tolerShapes, outOfRangeMin, outOfRangeMax);
+  for ( int k = 1; k <= allFaces.Extent(); ++k )
+    this->analyzeSubShape(allFaces(k), tolerRanges, tolerShapes, outOfRangeMin, outOfRangeMax);
 
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(m_progress.Access(), "Check tolerances")
@@ -101,8 +106,11 @@ void asiAlgo_CheckToler::analyzeSubShape(const TopoDS_Shape&        subshape,
   else
     tolerance = BRep_Tool::Tolerance( TopoDS::Vertex(subshape) );
 
+  const double veryMinTol = tolerRanges[0];
+  const double veryMaxTol = tolerRanges[tolerRanges.size() - 1];
+
   // Find the corresponding range.
-  if ( tolerance < tolerRanges[0] )
+  if ( tolerance < veryMinTol )
   {
     if ( outOfRangeMin.IsNull() )
     {
@@ -113,7 +121,7 @@ void asiAlgo_CheckToler::analyzeSubShape(const TopoDS_Shape&        subshape,
 
     BRep_Builder().Add(TopoDS::Compound(outOfRangeMin), subshape);
   }
-  else if ( tolerance > tolerRanges[tolerRanges.size() - 1] )
+  else if ( tolerance > veryMaxTol )
   {
     if ( outOfRangeMax.IsNull() )
     {

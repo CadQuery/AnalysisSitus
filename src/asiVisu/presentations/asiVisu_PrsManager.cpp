@@ -1438,7 +1438,7 @@ void asiVisu_PrsManager::InitializePickers(const Handle(ActAPI_HNodeList)& nodeL
 
   // Initialize point picker
   m_pointPicker = vtkSmartPointer<vtkPointPicker>::New();
-  m_pointPicker->SetTolerance(0.005);
+  m_pointPicker->SetTolerance(0.1);
 
   // Initialize world picker
   m_worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();

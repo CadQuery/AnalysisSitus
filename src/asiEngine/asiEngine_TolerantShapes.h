@@ -66,9 +66,11 @@ public:
 public:
 
   //! Populates Tolerant Shapes Node with the results of tolerance analysis.
+  //! \param[in] shape     shape in question.
   //! \param[in] numRanges number of tolerance ranges to use.
   asiEngine_EXPORT void
-    Populate(const int numRanges);
+    Populate(const TopoDS_Shape& shape,
+             const int           numRanges);
 
   //! Cleans all nested ranges.
   asiEngine_EXPORT void

@@ -36,6 +36,7 @@
 
 // asiEngine includes
 #include <asiEngine_Curve.h>
+#include <asiEngine_Part.h>
 #include <asiEngine_TolerantShapes.h>
 
 // asiAlgo includes
@@ -51,7 +52,10 @@
 #endif
 
 // OCCT includes
+#include <BRep_Builder.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepGProp.hxx>
+#include <GProp_GProps.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
@@ -928,6 +932,38 @@ int ENGINE_CheckToler(const Handle(asiTcl_Interp)& interp,
   Handle(asiEngine_Model)
     M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
 
+  // Attempt to get the highlighted sub-shapes. If no sub-shapes are selected,
+  // we work on the full part.
+  TopTools_IndexedMapOfShape selectedSubShapes;
+  //
+  if ( cmdEngine::cf->ViewerPart )
+  {
+    asiEngine_Part PartAPI( M,
+                            cmdEngine::cf->ViewerPart->PrsMgr(),
+                            interp->GetProgress(),
+                            interp->GetPlotter() );
+    //
+    PartAPI.GetHighlightedSubShapes(selectedSubShapes);
+  }
+
+  // Choose shape to check.
+  TopoDS_Shape shape2Check;
+  //
+  if ( selectedSubShapes.Extent() )
+  {
+    TopoDS_Compound comp;
+    BRep_Builder().MakeCompound(comp);
+    //
+    for ( int k = 1; k <= selectedSubShapes.Extent(); ++k )
+      BRep_Builder().Add( comp, selectedSubShapes(k) );
+
+    shape2Check = comp;
+  }
+  else
+  {
+    shape2Check = M->GetPartNode()->GetShape();
+  }
+
   // Prepare API to analyze tolerances.
   asiEngine_TolerantShapes TolInfo( M,
                                     cmdEngine::cf->ViewerPart->PrsMgr(),
@@ -938,12 +974,60 @@ int ENGINE_CheckToler(const Handle(asiTcl_Interp)& interp,
   M->OpenCommand();
   {
     TolInfo.Clean_All();
-    TolInfo.Populate(numRanges);
+    TolInfo.Populate(shape2Check, numRanges);
   }
   M->CommitCommand();
 
   // Update UI.
   cmdEngine::cf->ObjectBrowser->Populate();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_CheckLength(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Attempt to get the highlighted sub-shapes.
+  TColStd_PackedMapOfInteger selectedEdgeIds;
+  //
+  if ( cmdEngine::cf->ViewerPart )
+  {
+    asiEngine_Part PartAPI( M,
+                            cmdEngine::cf->ViewerPart->PrsMgr(),
+                            interp->GetProgress(),
+                            interp->GetPlotter() );
+    //
+    PartAPI.GetHighlightedEdges(selectedEdgeIds);
+  }
+
+  // Get total length.
+  double len = 0.0;
+  for ( TColStd_MapIteratorOfPackedMapOfInteger eit(selectedEdgeIds); eit.More(); eit.Next() )
+  {
+    const int edgeId = eit.Key();
+
+    // Get edge.
+    const TopoDS_Shape&
+      edge = M->GetPartNode()->GetAAG()->GetMapOfEdges()(edgeId);
+
+    // Calculate global properties.
+    GProp_GProps props;
+    BRepGProp::LinearProperties(edge, props);
+    len += props.Mass();
+  }
+
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Length: %1." << len);
 
   return TCL_OK;
 }
@@ -1041,4 +1125,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t using <numRanges> optional argument.",
     //
     __FILE__, group, ENGINE_CheckToler);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-length",
+    //
+    "check-length\n"
+    "\t Checks length of the selected edges.",
+    //
+    __FILE__, group, ENGINE_CheckLength);
 }

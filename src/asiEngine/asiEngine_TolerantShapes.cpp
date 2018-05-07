@@ -41,27 +41,19 @@
 
 //-----------------------------------------------------------------------------
 
-void asiEngine_TolerantShapes::Populate(const int numRanges)
+void asiEngine_TolerantShapes::Populate(const TopoDS_Shape& shape,
+                                        const int           numRanges)
 {
   if ( numRanges < 1 )
     return;
 
-  // Get Part Node to access the part shape.
-  Handle(asiData_PartNode)
-    part_n = Handle(asiData_PartNode)::DownCast( m_tolShapes->GetParentNode() );
-  //
-  if ( part_n.IsNull() || !part_n->IsWellFormed() )
-    Standard_ProgramError::Raise("Data inconsistency");
-
-  // Get part shape.
-  TopoDS_Shape partShape = part_n->GetShape();
-  //
-  if ( partShape.IsNull() )
-    return;
+  // Use small value to expand a bit the extreme tolerance ranges to
+  // compensate round-off errors.
+  const double resolution = Precision::Confusion()*0.1;
 
   // Get max and min possible tolerances.
-  const double minToler  = Precision::Confusion();
-  const double maxToler  = asiAlgo_Utils::MaxTolerance(partShape);
+  const double minToler  = Precision::Confusion() - resolution;
+  const double maxToler  = asiAlgo_Utils::MaxTolerance(shape) + resolution;
   const double tolerStep = (maxToler - minToler) / numRanges;
 
   // Initialize lookup table.
@@ -84,7 +76,7 @@ void asiEngine_TolerantShapes::Populate(const int numRanges)
   TopoDS_Shape outOfRangeMin, outOfRangeMax;
 
   // Analyze tolerances.
-  asiAlgo_CheckToler CheckTolerances(partShape, m_progress, m_plotter);
+  asiAlgo_CheckToler CheckTolerances(shape, m_progress, m_plotter);
   //
   if ( !CheckTolerances.PerformRanges(tolerRanges,
                                       tolerShapes,

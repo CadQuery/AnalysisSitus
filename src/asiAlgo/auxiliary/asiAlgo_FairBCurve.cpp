@@ -164,6 +164,10 @@ bool asiAlgo_FairBCurve::Perform()
     m_resultCurve->SetPole(p, P + D);
   }
 
+#if defined COUT_DEBUG
+  std::cout << "Num poles: " << m_resultCurve->Poles().Length() << std::endl;
+#endif
+
 #if defined DRAW_DEBUG
   m_plotter.REDRAW_CURVE("faired", m_resultCurve, Color_Green);
 #endif

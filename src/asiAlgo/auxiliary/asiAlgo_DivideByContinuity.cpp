@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 December 2017
+// Created on: 18 May 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,33 +28,57 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_HistoryGraphAdaptor_h
-#define asiUI_HistoryGraphAdaptor_h
+// Own include
+#include <asiAlgo_DivideByContinuity.h>
 
-// asiAlgo includes
-#include <asiAlgo_Naming.h>
+// OCCT includes
+#include <ShapeUpgrade_ShapeDivideContinuity.hxx>
 
-// Active Data includes
-#include <ActAPI_IProgressNotifier.h>
+//-----------------------------------------------------------------------------
 
-// VTK includes
-#include <vtkMutableDirectedGraph.h>
-#include <vtkSmartPointer.h>
+asiAlgo_DivideByContinuity::asiAlgo_DivideByContinuity(ActAPI_ProgressEntry progress,
+                                                       ActAPI_PlotterEntry  plotter)
+: ActAPI_IAlgorithm(progress, plotter)
+{}
 
-//! Converter of history graph to VTK presentable graph data structure.
-class asiUI_HistoryGraphAdaptor
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_DivideByContinuity::Perform(TopoDS_Shape&       shape,
+                                         const GeomAbs_Shape criterion,
+                                         const double        tolerance) const
 {
-public:
+  try
+  {
+    ShapeUpgrade_ShapeDivideContinuity tool(shape);
+    tool.SetTolerance(tolerance);
+    tool.SetBoundaryCriterion(criterion);
 
-  //! Converts history graph to VTK presentable form.
-  //! \param[in] history  history graph to convert.
-  //! \param[in] naming   optional naming service.
-  //! \param[in] progress progress notifier.
-  //! \return VTK graph.
-  static vtkSmartPointer<vtkMutableDirectedGraph>
-    Convert(const Handle(asiAlgo_History)& history,
-            const Handle(asiAlgo_Naming)&  naming,
-            ActAPI_ProgressEntry           progress);
-};
+    // Perform.
+    tool.Perform();
 
-#endif
+    if ( tool.Status(ShapeExtend_OK) )
+    {
+      m_progress.SendLogMessage(LogInfo(Normal) << "Shape division tool has nothing to do.");
+      return true;
+    }
+
+    if ( tool.Status(ShapeExtend_FAIL) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Shape division tool failed.");
+      return false;
+    }
+
+    if ( tool.Status(ShapeExtend_DONE) )
+    {
+      m_progress.SendLogMessage(LogInfo(Normal) << "Shape division tool finished successfully.");
+      shape = tool.Result();
+      return true;
+    }
+  }
+  catch ( ... )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Shape division tool crashed.");
+  }
+
+  return false;
+}

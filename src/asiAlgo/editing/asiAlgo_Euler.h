@@ -58,18 +58,6 @@ public:
 
 public:
 
-  //! Static method to compute value of the Euler-Poincare characteristic for
-  //! the passed shape with the given (externally defined) genus.
-  //! \param[in] shape solid shape in question.
-  //! \param[in] genus genus of the shape considered as a closed 2-manifold.
-  //! \return Euler-Poincare number.
-  asiAlgo_EXPORT static int
-    EulerPoincareCharacteristic(const TopoDS_Shape& shape,
-                                const int           genus = 0);
-
-
-public:
-
   //! Performs Euler operation.
   //! \param[in] doApply indicates whether to apply Re-Shape modification
   //!                    requests right at the end (true) or let the caller

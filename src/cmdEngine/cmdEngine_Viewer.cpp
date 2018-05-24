@@ -101,7 +101,7 @@ int ENGINE_ShowHistory(const Handle(asiTcl_Interp)& interp,
   // Visualize history in graph view
   asiUI_HistoryGraph*
     pGraph = new asiUI_HistoryGraph( cmdEngine::model,
-                                     naming->GetHistory(),
+                                     naming,
                                      interp->GetProgress(),
                                      interp->GetPlotter() );
   //

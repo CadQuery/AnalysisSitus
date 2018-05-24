@@ -31,8 +31,11 @@
 #ifndef asiAlgo_EulerPoincare_h
 #define asiAlgo_EulerPoincare_h
 
-// Analysis Situs includes
+// asiAlgo includes
 #include <asiAlgo.h>
+
+// Active Data includes
+#include <ActAPI_IProgressNotifier.h>
 
 // OCCT includes
 #include <TopoDS_Shape.hxx>
@@ -41,8 +44,9 @@
 namespace asiAlgo_EulerPoincare
 {
   asiAlgo_EXPORT bool
-    Check(const TopoDS_Shape& shape,
-          const int           genus);
+    Check(const TopoDS_Shape&  shape,
+          const int            genus,
+          ActAPI_ProgressEntry progress = NULL);
 };
 
 #endif

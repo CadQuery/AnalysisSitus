@@ -47,6 +47,7 @@
 #include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepOffset.hxx>
 #include <BRepOffset_MakeOffset.hxx>
 #include <BRepOffset_MakeSimpleOffset.hxx>
 #include <Precision.hxx>
@@ -58,7 +59,7 @@ int ENGINE_OffsetShell(const Handle(asiTcl_Interp)& interp,
                        int                          argc,
                        const char**                 argv)
 {
-  if ( argc != 2 && argc != 3 && argc != 4 && argc != 5 )
+  if ( argc > 7 || argc < 2 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -87,15 +88,33 @@ int ENGINE_OffsetShell(const Handle(asiTcl_Interp)& interp,
     }
   }
 
+  // Take tolerance for suppressing singularities
+  double toler = 0.0;
+  TCollection_AsciiString tolerStr;
+  //
+  if ( interp->GetKeyValue(argc, argv, "toler", tolerStr) )
+  {
+    toler = tolerStr.RealValue();
+
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Passed tolerance value %1."
+                                                         << toler);
+  }
+
   // Make offset
   TopoDS_Shape offsetShape;
   if ( isSimple )
   {
+    // Initialize
     BRepOffset_MakeSimpleOffset mkOffset;
     mkOffset.Initialize(partShape, offsetVal);
     mkOffset.SetBuildSolidFlag(isSolid);
-    mkOffset.Perform();
     //
+    if ( toler )
+      mkOffset.SetTolerance(toler);
+
+    // Perform
+    mkOffset.Perform();
+    // 
     if ( !mkOffset.IsDone() )
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Simple offset not done.");
@@ -431,7 +450,7 @@ int ENGINE_Fuse(const Handle(asiTcl_Interp)& interp,
                 int                          argc,
                 const char**                 argv)
 {
-  if ( argc != 4 && argc != 5 )
+  if ( argc != 4 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -470,6 +489,52 @@ int ENGINE_Fuse(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_FuseGen(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
+{
+  if ( argc != 4 && argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get topological items which are the operands.
+  Handle(asiData_IVTopoItemNode)
+    topoItem1 = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[2]) );
+  //
+  Handle(asiData_IVTopoItemNode)
+    topoItem2 = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[3]) );
+  //
+  if ( topoItem1.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[2]);
+    return TCL_OK;
+  }
+  //
+  if ( topoItem2.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[3]);
+    return TCL_OK;
+  }
+
+  // Fuzzy value.
+  const double fuzz = (argc == 5 ? Atof(argv[4]) : 0.0);
+
+  // Put all arguments to the list.
+  TopTools_ListOfShape arguments;
+  arguments.Append( topoItem1->GetShape() );
+  arguments.Append( topoItem2->GetShape() );
+
+  // Fuse.
+  TopoDS_Shape fused = asiAlgo_Utils::BooleanGeneralFuse(arguments, fuzz);
+  //
+  interp->GetPlotter().REDRAW_SHAPE("fused", fused, Color_White);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                                   const Handle(Standard_Transient)& data)
 {
@@ -480,14 +545,16 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("offset-shell",
     //
-    "offset-shell offset [-simple] [-solid] [-keep]\n"
+    "offset-shell offset [-simple] [-solid] [-keep] [-toler <val>]\n"
     "\t Offsets part (it should be a topological shell) on the given offset\n"
     "\t value. Offsetting is performed in the direction of face normals. If the\n"
     "\t option '-simple' is passed, this operation will attempt to preserve\n"
     "\t the topology of the base shell. If the option '-solid' is passed, this\n"
     "\t operation will build a solid instead of an offset shell. If the option\n"
     "\t '-keep' is passed, the original part is not substituted with the offset\n"
-    "\t shape, and the offset is added to the part.",
+    "\t shape, and the offset is added to the part. If the option '-toler' is\n"
+    "\t passed and '-simple' key is used, an optional tolerance for suppressing\n"
+    "\t singularities on triangular surface patches is used.",
     //
     __FILE__, group, ENGINE_OffsetShell);
 
@@ -544,10 +611,18 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("fuse",
     //
-    "fuse result op1 op2 [fuzz]\n"
-    "\t Fuses the passed two operands using Boolean Fuse operation.\n"
-    "\t It is possible to affect the fusion tolerance with <fuzz> argument.",
+    "fuse result op1 op2\n"
+    "\t Fuses the passed two operands using Boolean Fuse operation.",
     //
     __FILE__, group, ENGINE_Fuse);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("fuse-gen",
+    //
+    "fuse-gen result op1 op2 [fuzz]\n"
+    "\t Fuses the passed two operands using Boolean General Fuse operation.\n"
+    "\t It is possible to affect the fusion tolerance with <fuzz> argument.",
+    //
+    __FILE__, group, ENGINE_FuseGen);
 
 }

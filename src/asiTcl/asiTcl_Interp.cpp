@@ -221,7 +221,7 @@ bool asiTcl_Interp::GetKeyValue(const int                      argc,
                                 const TCollection_AsciiString& key,
                                 TCollection_AsciiString&       value) const
 {
-  for ( int k = 1; k < argc - 1; k += 2 )
+  for ( int k = 1; k < argc - 1; ++k )
   {
     if ( this->IsKeyword(argv[k], key) )
     {

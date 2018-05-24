@@ -1527,7 +1527,7 @@ void asiVisu_PrsManager::init()
   m_renderer = vtkSmartPointer<vtkRenderer>::New();
   m_renderer->GetActiveCamera()->ParallelProjectionOn();
   m_renderer->LightFollowCameraOn();
-  m_renderer->TwoSidedLightingOn();
+  m_renderer->TwoSidedLightingOff();
 
   // Set background color
   m_renderer->SetBackground(0.15, 0.15, 0.15);

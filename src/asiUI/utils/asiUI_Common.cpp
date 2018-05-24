@@ -34,6 +34,17 @@
 // Qt includes
 #include <QFileDialog>
 
+//! Allows to select filename for graphics format.
+//! \param action [in] open or save.
+//! \return selected filename.
+QString asiUI_Common::selectGraphicsFile(const OpenSaveAction action)
+{
+  QStringList filter;
+  filter << "Graphics (*.svg)";
+  //
+  return selectFile(filter, "Select graphics file", "Save graphics file", action);
+}
+
 //! Allows to select filename for B-Rep format.
 //! \param action [in] open or save.
 //! \return selected filename.

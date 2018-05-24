@@ -37,11 +37,13 @@
 //! Checks the passed shape against Euler-Poincare formula. Notice that
 //! genus of the manifold has to be selected by user as we have no idea
 //! how to perform this tricky genus analysis.
-//! \param shape [in] shape to check.
-//! \param genus [in] genus of the manifold.
+//! \param[in] shape    shape to check.
+//! \param[in] genus    genus of the manifold.
+//! \param[in] progress progress notifier.
 //! \return true if the check has passed, false -- otherwise.
-bool asiAlgo_EulerPoincare::Check(const TopoDS_Shape& shape,
-                                  const int           genus)
+bool asiAlgo_EulerPoincare::Check(const TopoDS_Shape&  shape,
+                                  const int            genus,
+                                  ActAPI_ProgressEntry progress)
 {
   // Summary
   int nbCompsolids = 0,
@@ -58,17 +60,17 @@ bool asiAlgo_EulerPoincare::Check(const TopoDS_Shape& shape,
 
   // Extract summary
   asiAlgo_Utils::ShapeSummary(shape,
-                           nbCompsolids,
-                           nbCompounds,
-                           nbSolids,
-                           nbShells,
-                           nbFaces,
-                           nbWires,
-                           nbOuterWires,
-                           nbInnerWires,
-                           nbEdges,
-                           nbDegenEdges,
-                           nbVertexes);
+                              nbCompsolids,
+                              nbCompounds,
+                              nbSolids,
+                              nbShells,
+                              nbFaces,
+                              nbWires,
+                              nbOuterWires,
+                              nbInnerWires,
+                              nbEdges,
+                              nbDegenEdges,
+                              nbVertexes);
 
   // Prepare output string with the gathered summary
   std::cout << "Shape summary:\n";
@@ -91,8 +93,15 @@ bool asiAlgo_EulerPoincare::Check(const TopoDS_Shape& shape,
   const int h = genus;
   const int r = nbInnerWires;
 
-  const int E = v - e + f - 2*(s - h) - r;
+  const int res = v - e + f - 2*(s - h) - r;
 
-  std::cout << "Euler number (E = v - e + f - 2*(s - h) - r): " << E << std::endl;
-  return (E == 0);
+  progress.SendLogMessage(LogInfo(Normal) << "V = %1." << v);
+  progress.SendLogMessage(LogInfo(Normal) << "E = %1." << e);
+  progress.SendLogMessage(LogInfo(Normal) << "F = %1." << f);
+  progress.SendLogMessage(LogInfo(Normal) << "R = %1." << r);
+  progress.SendLogMessage(LogInfo(Normal) << "S = %1." << s);
+  progress.SendLogMessage(LogInfo(Normal) << "H = %1." << h);
+  progress.SendLogMessage(LogInfo(Normal) << "V - E + F - R - 2*(S - H) = %1." << res);
+
+  return (res == 0);
 }

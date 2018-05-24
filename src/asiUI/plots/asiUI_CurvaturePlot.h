@@ -41,7 +41,7 @@
 #include <vtkContextView.h>
 
 //! Visualizes curvature plot.
-class asiUI_CurvaturePlot : public QObject
+class asiUI_CurvaturePlot : public QWidget
 {
   Q_OBJECT
 
@@ -50,7 +50,7 @@ public:
   asiUI_EXPORT
     asiUI_CurvaturePlot(ActAPI_ProgressEntry progress,
                         ActAPI_PlotterEntry  plotter,
-                        QObject*             parent = NULL);
+                        QWidget*             parent = NULL);
 
   asiUI_EXPORT
     ~asiUI_CurvaturePlot();
@@ -66,10 +66,13 @@ public slots:
   asiUI_EXPORT void
     onMouseEvent();
 
+  asiUI_EXPORT void
+    onDumpGraphics();
+
 protected:
 
   vtkSmartPointer<vtkContextView> m_contextView; //!< VTK context view.
-  asiUI_VtkWindow*                m_pWidget;     //!< Widget.
+  asiUI_VtkWindow*                m_pViewer;     //!< Viewer widget.
   ActAPI_ProgressEntry            m_progress;    //!< Progress notifier.
   ActAPI_PlotterEntry             m_plotter;     //!< Imperative plotter.
 

@@ -40,6 +40,7 @@
 
 // VTK includes
 #include <vtkCamera.h>
+#include <vtkGL2PSExporter.h>
 
 //-----------------------------------------------------------------------------
 
@@ -86,12 +87,15 @@ void asiUI_Viewer3dListener::onContextMenu(const QPoint& globalPos)
   // Actions
   QAction* pPickRotationPoint = NULL;
   QAction* pChangeBg          = NULL;
+  QAction* pDumpGraphics      = NULL;
 
   // Action for picking custom rotation point
   if ( m_pViewer->PrsMgr()->GetInteractionMode() != asiVisu_PrsManager::InteractionMode_2D )
     pPickRotationPoint = menu.addAction("Set new focal point");
-  //
-  pChangeBg = menu.addAction("Set background color");
+
+  // Other actions
+  pChangeBg     = menu.addAction("Set background color");
+  pDumpGraphics = menu.addAction("Dump graphics");
 
   // Let sub-classes populate menu
   this->populateMenu(menu);
@@ -206,6 +210,28 @@ void asiUI_Viewer3dListener::onContextMenu(const QPoint& globalPos)
       }
 
       m_pViewer->Repaint();
+    }
+  }
+  //---------------------------------------------------------------------------
+  // ACTION: dump graphics
+  //---------------------------------------------------------------------------
+  else if ( selectedItem && selectedItem == pDumpGraphics )
+  {
+    vtkSmartPointer<vtkGL2PSExporter>
+      gl2psExporter = vtkSmartPointer<vtkGL2PSExporter>::New();
+
+    if ( gl2psExporter )
+    {
+      gl2psExporter->SetRenderWindow( m_pViewer->PrsMgr()->GetRenderWindow() );
+      gl2psExporter->Write3DPropsAsRasterImageOff();
+
+      QString
+        filename = asiUI_Common::selectGraphicsFile(asiUI_Common::OpenSaveAction_Save).section(".", 0, 0);
+
+      gl2psExporter->SetFilePrefix( QStr2AsciiStr(filename).ToCString() );
+      gl2psExporter->SetFileFormatToSVG();
+      gl2psExporter->CompressOff();
+      gl2psExporter->Write();
     }
   }
 }

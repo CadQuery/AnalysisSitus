@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 December 2017
+// Created on: 14 May (*) 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,33 +28,44 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_HistoryGraphAdaptor_h
-#define asiUI_HistoryGraphAdaptor_h
+#ifndef asiEngine_Editing_h
+#define asiEngine_Editing_h
 
-// asiAlgo includes
-#include <asiAlgo_Naming.h>
+// asiEngine includes
+#include <asiEngine_Model.h>
 
-// Active Data includes
-#include <ActAPI_IProgressNotifier.h>
-
-// VTK includes
-#include <vtkMutableDirectedGraph.h>
-#include <vtkSmartPointer.h>
-
-//! Converter of history graph to VTK presentable graph data structure.
-class asiUI_HistoryGraphAdaptor
+//! API for direct editing functionality.
+class asiEngine_Editing
 {
 public:
 
-  //! Converts history graph to VTK presentable form.
-  //! \param[in] history  history graph to convert.
-  //! \param[in] naming   optional naming service.
+  //! ctor.
+  //! \param[in] model    Data Model instance.
   //! \param[in] progress progress notifier.
-  //! \return VTK graph.
-  static vtkSmartPointer<vtkMutableDirectedGraph>
-    Convert(const Handle(asiAlgo_History)& history,
-            const Handle(asiAlgo_Naming)&  naming,
-            ActAPI_ProgressEntry           progress);
+  //! \param[in] plotter  imperative plotter.
+  asiEngine_Editing(const Handle(asiEngine_Model)& model,
+                    ActAPI_ProgressEntry           progress = NULL,
+                    ActAPI_PlotterEntry            plotter  = NULL)
+  //
+  : m_model    (model),
+    m_progress (progress),
+    m_plotter  (plotter)
+  {}
+
+public:
+
+  //! Checks Euler-Poincare relation for the Part Node.
+  //! \param[in] genus genus of the manifold.
+  //! \return true if the Euler-Poincare relation holds.
+  asiEngine_EXPORT bool
+    CheckEulerPoincare(const int genus);
+
+protected:
+
+  Handle(asiEngine_Model) m_model;    //!< Data Model instance.
+  ActAPI_ProgressEntry    m_progress; //!< Progress notifier.
+  ActAPI_PlotterEntry     m_plotter;  //!< Imperative plotter.
+
 };
 
 #endif

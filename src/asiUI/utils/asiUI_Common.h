@@ -121,6 +121,9 @@ public:
 public:
 
   asiUI_EXPORT static QString
+    selectGraphicsFile(const OpenSaveAction action);
+
+  asiUI_EXPORT static QString
     selectBRepFile(const OpenSaveAction action);
 
   asiUI_EXPORT static QString

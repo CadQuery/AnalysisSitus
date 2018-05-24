@@ -31,11 +31,8 @@
 // Own include
 #include <asiUI_DialogEuler.h>
 
-// asiUI includes
-#include <asiUI_Common.h>
-
-// asiAlgo includes
-#include <asiAlgo_EulerPoincare.h>
+// asiEngine includes
+#include <asiEngine_Editing.h>
 
 // Qt includes
 #include <QGroupBox>
@@ -132,20 +129,12 @@ asiUI_DialogEuler::~asiUI_DialogEuler()
 //! Reaction on check.
 void asiUI_DialogEuler::onCheck()
 {
-  // Convert user input to integer
+  // Convert user input to integer.
   const int genus = QVariant( m_widgets.pGenus->text() ).toInt();
 
-  Handle(asiData_PartNode) part_n;
-  TopoDS_Shape             part;
-  //
-  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+  // Calculate the Euler-Poincare property for the active part.
+  asiEngine_Editing(m_model, m_progress, NULL).CheckEulerPoincare(genus);
 
-  // Calculate the Euler-Poincare property
-  if ( !asiAlgo_EulerPoincare::Check(part, genus) )
-    m_progress.SendLogMessage(LogInfo(Normal) << "Euler-Poincare: false.");
-  else
-    m_progress.SendLogMessage(LogInfo(Normal) << "Euler-Poincare property holds.");
-
-  // Close
+  // Close.
   this->close();
 }

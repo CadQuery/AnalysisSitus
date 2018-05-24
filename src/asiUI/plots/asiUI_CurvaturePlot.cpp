@@ -31,6 +31,9 @@
 // Own include
 #include <asiUI_CurvaturePlot.h>
 
+// asiUI includes
+#include <asiUI_Common.h>
+
 // asiVisu includes
 #include <asiVisu_Utils.h>
 
@@ -42,6 +45,7 @@
 #include <vtkChartXY.h>
 #include <vtkContextScene.h>
 #include <vtkContextView.h>
+#include <vtkGL2PSExporter.h>
 #include <vtkFloatArray.h>
 #include <vtkPen.h>
 #include <vtkPlot.h>
@@ -55,6 +59,9 @@
 
 // Qt includes
 #include <QApplication>
+#include <QMenu>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 //-----------------------------------------------------------------------------
 
@@ -62,13 +69,13 @@
 //! \param[in] progress progress notifier.
 //! \param[in] plotter  imperative plotter.
 //! \param[in] parent   parent object.
-asiUI_CurvaturePlot::asiUI_CurvaturePlot(ActAPI_ProgressEntry           progress,
-                                         ActAPI_PlotterEntry            plotter,
-                                         QObject*                       parent)
-: QObject        (parent),
-  m_pWidget      (NULL),
-  m_progress     (progress),
-  m_plotter      (plotter)
+asiUI_CurvaturePlot::asiUI_CurvaturePlot(ActAPI_ProgressEntry progress,
+                                         ActAPI_PlotterEntry  plotter,
+                                         QWidget*             parent)
+: QWidget    (parent),
+  m_pViewer  (NULL),
+  m_progress (progress),
+  m_plotter  (plotter)
 {}
 
 //-----------------------------------------------------------------------------
@@ -122,8 +129,8 @@ void asiUI_CurvaturePlot::Render(const std::vector<double>& params,
 
   // Create Qt window. NOTICE that interactor should be already given to
   // the render window at this stage.
-  m_pWidget = new asiUI_VtkWindow();
-  m_pWidget->SetRenderWindow( m_contextView->GetRenderWindow() );
+  m_pViewer = new asiUI_VtkWindow();
+  m_pViewer->SetRenderWindow( m_contextView->GetRenderWindow() );
 
   // Add multiple line plots, setting the colors, etc.
   vtkSmartPointer<vtkChartXY> chart = vtkSmartPointer<vtkChartXY>::New();
@@ -148,29 +155,65 @@ void asiUI_CurvaturePlot::Render(const std::vector<double>& params,
   line->GetYAxis()->GetLabelProperties()->SetColor(0.25, 0.25, 0.25);
   line->GetYAxis()->GetLabelProperties()->SetLineOffset(4);
 
+  /* =====================
+   *  Prepare main widget
+   * ===================== */
+
+  QPushButton* pDump = new QPushButton("Dump graphics", this);
+  QVBoxLayout* pVLay = new QVBoxLayout(this);
+  //
+  pVLay->addWidget(m_pViewer);
+  pVLay->addWidget(pDump);
+
   /* ===================
    *  Start interaction
    * =================== */
 
   // Set callback on mouse events: otherwise QVTKWindow is
   // not updated for some reason.
-  connect( m_pWidget, SIGNAL( mouseEvent(QMouseEvent*) ),
+  connect( m_pViewer, SIGNAL( mouseEvent(QMouseEvent*) ),
            this,      SLOT( onMouseEvent() ) );
   //
-  connect( m_pWidget, SIGNAL( wheelEventOccured() ),
+  connect( m_pViewer, SIGNAL( wheelEventOccured() ),
            this,      SLOT( onMouseEvent() ) );
+  //
+  connect( pDump, SIGNAL( clicked() ),
+           this,  SLOT( onDumpGraphics() ) );
 
   m_contextView->GetRenderWindow()->SetWindowName("Curvature plot");
   //
   m_contextView->GetInteractor()->Initialize();
-  //
-  m_pWidget->resize(400, 400);
-  m_pWidget->show();
+
+  this->resize(400, 400);
+  this->show();
 }
 
 //-----------------------------------------------------------------------------
 
 void asiUI_CurvaturePlot::onMouseEvent()
 {
-  m_pWidget->repaint();
+  m_pViewer->repaint();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Dumps graphics to file.
+void asiUI_CurvaturePlot::onDumpGraphics()
+{
+  vtkSmartPointer<vtkGL2PSExporter>
+    gl2psExporter = vtkSmartPointer<vtkGL2PSExporter>::New();
+
+  if ( gl2psExporter )
+  {
+    gl2psExporter->SetRenderWindow( m_contextView->GetRenderWindow() );
+    gl2psExporter->Write3DPropsAsRasterImageOff();
+
+    QString
+      filename = asiUI_Common::selectGraphicsFile(asiUI_Common::OpenSaveAction_Save).section(".", 0, 0);
+
+    gl2psExporter->SetFilePrefix( QStr2AsciiStr(filename).ToCString() );
+    gl2psExporter->SetFileFormatToSVG();
+    gl2psExporter->CompressOff();
+    gl2psExporter->Write();
+  }
 }

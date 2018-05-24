@@ -140,6 +140,15 @@ public:
                const TopoDS_Face& NewF1,
                const TopoDS_Face& NewF2) override;
 
+public:
+
+  //! Get topological situation around the edge.
+  //! \return structure containing all sub-shapes surrounding the edge.
+  const asiAlgo_ModEdgeInfo& GetEdgeInfo() const
+  {
+    return m_edgeInfo;
+  }
+
 protected:
 
   //! Initializes topological situation near the target edge.

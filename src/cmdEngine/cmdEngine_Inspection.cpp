@@ -36,6 +36,7 @@
 
 // asiEngine includes
 #include <asiEngine_Curve.h>
+#include <asiEngine_Editing.h>
 #include <asiEngine_Part.h>
 #include <asiEngine_TolerantShapes.h>
 
@@ -479,19 +480,150 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_CheckEuler(const Handle(asiTcl_Interp)& interp,
-                      int                          argc,
-                      const char**                 argv)
+int ENGINE_CheckContinuity(const Handle(asiTcl_Interp)& interp,
+                           int                          argc,
+                           const char**                 argv)
 {
   if ( argc != 1 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  asiUI_DialogEuler* pEuler = new asiUI_DialogEuler( cmdEngine::model,
-                                                     interp->GetProgress() );
+  /* ================
+   *  Prepare inputs
+   * ================ */
+
+  // Get Part Node to access the selected face.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
   //
-  pEuler->show();
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  TopoDS_Shape                      partShape = partNode->GetShape();
+  const TopTools_IndexedMapOfShape& subShapes = partNode->GetAAG()->GetMapOfSubShapes();
+
+  // Surf Node is expected.
+  Handle(asiData_SurfNode) surfNode = partNode->GetSurfaceRepresentation();
+  //
+  if ( surfNode.IsNull() || !surfNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Surface Node is null or ill-defined.");
+    return TCL_OK;
+  }
+
+  // Get ID of the selected face.
+  const int faceIdx = surfNode->GetSelectedFace();
+  //
+  if ( faceIdx <= 0 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Please, select face first.");
+    return TCL_OK;
+  }
+
+  // Get host surface of the selected face.
+  const TopoDS_Shape& faceShape = subShapes(faceIdx);
+  //
+  if ( faceShape.ShapeType() != TopAbs_FACE )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected topological type of the selected face.");
+    return TCL_OK;
+  }
+  //
+  Handle(Geom_Surface)
+    surface = BRep_Tool::Surface( TopoDS::Face(faceShape) );
+
+  // Only B-surfaces are allowed.
+  Handle(Geom_BSplineSurface)
+    bsurf = Handle(Geom_BSplineSurface)::DownCast(surface);
+  //
+  if ( bsurf.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Only B-surfaces are allowed in this function.");
+    return TCL_OK;
+  }
+
+  /* =====================
+   *  Evaluate continuity
+   * ===================== */
+
+  const TColStd_Array1OfReal&    uKnots = bsurf->UKnots();
+  const TColStd_Array1OfReal&    vKnots = bsurf->VKnots();
+  const TColStd_Array1OfInteger& uMults = bsurf->UMultiplicities();
+  const TColStd_Array1OfInteger& vMults = bsurf->VMultiplicities();
+
+  // Draw U defects.
+  for ( int i = 1; i <= uKnots.Length(); ++i )
+  {
+    const double u     = uKnots(i);
+    const int    uMult = uMults(i);
+
+    if ( uMult > 1 )
+    {
+      Handle(Geom_Curve) iso = bsurf->UIso(u);
+
+      TCollection_AsciiString isoName("mult=");
+      isoName += uMult;
+      isoName += " u=";
+      isoName += u;
+
+      interp->GetPlotter().REDRAW_CURVE(isoName, iso, Color_Red);
+    }
+  }
+
+  // Draw V defects.
+  for ( int i = 1; i <= vKnots.Length(); ++i )
+  {
+    const double v     = vKnots(i);
+    const int    vMult = vMults(i);
+
+    if ( vMult > 1 )
+    {
+      Handle(Geom_Curve) iso = bsurf->VIso(v);
+
+      TCollection_AsciiString isoName("mult=");
+      isoName += vMult;
+      isoName += " v=";
+      isoName += v;
+
+      interp->GetPlotter().REDRAW_CURVE(isoName, iso, Color_Red);
+    }
+  }
+
+  // TODO
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_CheckEuler(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 1 && argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  if ( argc == 1 )
+  {
+    asiUI_DialogEuler* pEuler = new asiUI_DialogEuler( cmdEngine::model,
+                                                       interp->GetProgress() );
+    //
+    pEuler->show();
+  }
+  else
+  {
+    const int genus = atoi(argv[1]);
+
+    // Calculate the Euler-Poincare property for the active part.
+    asiEngine_Editing( cmdEngine::model,
+                       interp->GetProgress(),
+                       interp->GetPlotter() ).CheckEulerPoincare(genus);
+  }
 
   return TCL_OK;
 }
@@ -1090,10 +1222,20 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_CheckCurvature);
 
   //-------------------------------------------------------------------------//
+  interp->AddCommand("check-continuity",
+    //
+    "check-continuity\n"
+    "\t Checks continuity of the selected face.",
+    //
+    __FILE__, group, ENGINE_CheckContinuity);
+
+  //-------------------------------------------------------------------------//
   interp->AddCommand("check-euler",
     //
-    "check-euler\n"
-    "\t Opens dialog to check Euler-Poincare property of the Part geometry.",
+    "check-euler [genus]\n"
+    "\t Opens dialog to check Euler-Poincare property of the Part geometry.\n"
+    "\t If <genus> parameter is not specified, this command will open a prompt\n"
+    "\t dialog to ask the user to type genus.",
     //
     __FILE__, group, ENGINE_CheckEuler);
 

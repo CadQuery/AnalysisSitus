@@ -42,12 +42,11 @@
 #include <vtkNew.h>
 #include <vtkStringArray.h>
 
-//! Converts history graph to VTK presentable form.
-//! \param[in] history  history graph to convert.
-//! \param[in] progress progress notifier.
-//! \return VTK graph.
+//-----------------------------------------------------------------------------
+
 vtkSmartPointer<vtkMutableDirectedGraph>
   asiUI_HistoryGraphAdaptor::Convert(const Handle(asiAlgo_History)& history,
+                                     const Handle(asiAlgo_Naming)&  naming,
                                      ActAPI_ProgressEntry           progress)
 {
   vtkSmartPointer<vtkMutableDirectedGraph>
@@ -103,6 +102,16 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     label += "Shape: ";
     label += asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str();
     //
+    if ( !naming.IsNull() )
+    {
+      TCollection_AsciiString shapeName;
+      naming->FindName(shape, shapeName);
+      //
+      label += " / ";
+      label += ( shapeName.IsEmpty() ? "<empty>" : shapeName.ToCString() );
+    }
+
+    // Add label
     labelArr->InsertNextValue(label);
 
     // State

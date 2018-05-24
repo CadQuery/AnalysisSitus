@@ -132,5 +132,5 @@ bool asiAlgo_EulerKEF::perform(const bool doApply)
     m_result = m_killer->GetResult();
   }
 
-  return true; // Success
+  return true; // Success.
 }

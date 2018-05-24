@@ -53,6 +53,14 @@ public:
 
 public:
 
+  //! Possible evolution of a sub-shape.
+  enum EvolutionType
+  {
+    Evolution_Modified,
+    Evolution_Generated,
+    Evolution_Deleted
+  };
+
   //! Node in the history graph.
   struct t_item
   {
@@ -74,6 +82,21 @@ public:
 
       for ( size_t k = 0; k < Modified.size(); ++k )
         delete Modified[k];
+    }
+
+    //! Returns child items realizing the given evolution type.
+    //! \param[in]  evolution evolution type of interest. Expected values are
+    //!                       either "generated" or "modified".
+    //! \param[out] children  child items.
+    void GetChildren(const EvolutionType   evolution,
+                     std::vector<t_item*>& children) const
+    {
+      switch ( evolution )
+      {
+        case Evolution_Generated: children = this->Generated; break;
+        case Evolution_Modified:  children = this->Modified;  break;
+        default: break;
+      }
     }
 
     //! Hasher for using history items in OCCT data maps.
@@ -355,6 +378,15 @@ protected:
   asiAlgo_EXPORT t_item*
     makeItem(const TopoDS_Shape& shape,
              const int           opId);
+
+  //! Collects leaf items for the given seed and evolution type.
+  //! \param[in]  pSeed     seed item.
+  //! \param[in]  evolution evolution type.
+  //! \param[out] leafs     collected nodes.
+  asiAlgo_EXPORT void
+    gatherLeafs(t_item*               pSeed,
+                const EvolutionType   evolution,
+                std::vector<t_item*>& leafs) const;
 
 protected:
 

@@ -36,7 +36,7 @@
 #include <asiUI_VtkWindow.h>
 
 // asiAlgo includes
-#include <asiAlgo_History.h>
+#include <asiAlgo_Naming.h>
 
 // VTK includes
 #include <vtkCommand.h>
@@ -52,6 +52,12 @@ class asiUI_HistoryGraph : public QObject
   Q_OBJECT
 
 public:
+
+  asiUI_EXPORT
+    asiUI_HistoryGraph(const Handle(asiEngine_Model)& model,
+                       const Handle(asiAlgo_Naming)&  naming,
+                       ActAPI_ProgressEntry           progress,
+                       ActAPI_PlotterEntry            plotter);
 
   asiUI_EXPORT
     asiUI_HistoryGraph(const Handle(asiEngine_Model)& model,
@@ -86,6 +92,7 @@ protected:
   vtkTextWidget*   m_textWidget; //!< Text.
   //
   Handle(asiEngine_Model) m_model;    //!< Data Model instance.
+  Handle(asiAlgo_Naming)  m_naming;   //!< Naming service (optional).
   Handle(asiAlgo_History) m_history;  //!< Modification history.
   ActAPI_ProgressEntry    m_progress; //!< Progress notifier.
   ActAPI_PlotterEntry     m_plotter;  //!< Imperative plotter.

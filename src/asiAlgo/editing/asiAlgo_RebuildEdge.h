@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 15 December 2017
+// Created on: 14 May (*) 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,70 +28,86 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_EulerKEF_h
-#define asiAlgo_EulerKEF_h
+#ifndef asiAlgo_RebuildEdge_h
+#define asiAlgo_RebuildEdge_h
 
 // asiAlgo includes
-#include <asiAlgo_Euler.h>
+#include <asiAlgo_AAG.h>
+#include <asiAlgo_History.h>
+
+// Active Data includes
+#include <ActAPI_IAlgorithm.h>
 
 // OCCT includes
-#include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
 
-//-----------------------------------------------------------------------------
-
-//! KEF (Kill Edge-Face) Euler operator.
-class asiAlgo_EulerKEF : public asiAlgo_Euler
+//! Geometric operator to rebuild edge from its adjacent surfaces.
+class asiAlgo_RebuildEdge : public ActAPI_IAlgorithm
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_EulerKEF, asiAlgo_Euler)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_RebuildEdge, ActAPI_IAlgorithm)
 
 public:
 
   //! Constructor.
-  //! \param[in] masterCAD    full CAD model.
-  //! \param[in] face         face to kill.
-  //! \param[in] edge2Kill    edge to kill.
-  //! \param[in] edge2Survive edge to survive.
-  //! \param[in] progress     Progress Notifier.
-  //! \param[in] plotter      Imperative Plotter
+  //! \param[in] masterCAD full CAD model.
+  //! \param[in] progress  Progress Notifier.
+  //! \param[in] plotter   Imperative Plotter.
   asiAlgo_EXPORT
-    asiAlgo_EulerKEF(const TopoDS_Shape&  masterCAD,
-                     const TopoDS_Face&   face,
-                     const TopoDS_Edge&   edge2Kill,
-                     const TopoDS_Edge&   edge2Survive,
-                     ActAPI_ProgressEntry progress,
-                     ActAPI_PlotterEntry  plotter);
+    asiAlgo_RebuildEdge(const TopoDS_Shape&  masterCAD,
+                        ActAPI_ProgressEntry progress,
+                        ActAPI_PlotterEntry  plotter);
 
   //! Constructor.
-  //! \param[in] masterCAD full CAD model.
-  //! \param[in] face      face to kill.
-  //! \param[in] edge      edge to kill.
-  //! \param[in] progress  Progress Notifier.
-  //! \param[in] plotter   Imperative Plotter
+  //! \param[in] aag      AAG of the full CAD model.
+  //! \param[in] progress Progress Notifier.
+  //! \param[in] plotter  Imperative Plotter.
   asiAlgo_EXPORT
-    asiAlgo_EulerKEF(const TopoDS_Shape&  masterCAD,
-                     const TopoDS_Face&   face,
-                     const TopoDS_Edge&   edge,
-                     ActAPI_ProgressEntry progress,
-                     ActAPI_PlotterEntry  plotter);
+    asiAlgo_RebuildEdge(const Handle(asiAlgo_AAG)& aag,
+                        ActAPI_ProgressEntry       progress,
+                        ActAPI_PlotterEntry        plotter);
 
-private:
+public:
 
-  //! Performs Euler operator.
-  //! \param[in] doApply indicates whether to apply modification
-  //!                    requests right at the end (true) or let the caller
-  //!                    code manage it explicitly (false).
+  //! Performs operator.
+  //! \param[in] edge edge to rebuild.
   //! \return true in case of success, false -- otherwise.
-  virtual bool perform(const bool doApply);
+  asiAlgo_EXPORT virtual bool
+    Perform(const TopoDS_Edge& edge);
+
+public:
+
+  //! \return modified model.
+  const TopoDS_Shape& GetResult() const
+  {
+    return m_result;
+  }
+
+  //! \return modification history.
+  const Handle(asiAlgo_History)& GetHistory() const
+  {
+    return m_history;
+  }
+
+  //! \brief Sets externally defined history.
+  //!
+  //! The passed history will not be cleared, so that a pipeline of
+  //! modeling tools will grow its history graph as long as the history
+  //! object is continuously passed from one tool to another.
+  //!
+  //! \param[in] history history to set.
+  void SetHistory(const Handle(asiAlgo_History)& history)
+  {
+    m_history = history;
+  }
 
 protected:
 
-  TopoDS_Face m_face;         //!< Face to kill.
-  TopoDS_Edge m_edge2Kill;    //!< Edge to kill.
-  TopoDS_Edge m_edge2Survive; //!< Edge to survive.
+  Handle(asiAlgo_History) m_history; //!< Modification history.
+  Handle(asiAlgo_AAG)     m_aag;     //!< AAG of the master CAD model.
+  TopoDS_Shape            m_result;  //!< Result CAD model.
 
 };
 

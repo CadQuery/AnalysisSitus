@@ -75,14 +75,17 @@ bool asiAlgo_History::GetModified(const TopoDS_Shape&        shape,
                                   std::vector<TopoDS_Shape>& modified) const
 {
   // Get item for the shape in question.
-  t_item* pActiveItem = this->findItem(shape);
+  t_item* pSeedItem = this->findItem(shape);
   //
-  if ( !pActiveItem || !pActiveItem->Modified.size() )
+  if ( !pSeedItem || !pSeedItem->Modified.size() )
     return false;
 
-  // Gather target items.
-  for ( int k = 0; k < pActiveItem->Modified.size(); ++k )
-    modified.push_back(pActiveItem->Modified[k]->TransientPtr);
+  // Collect leafs of MODIFIED evolution.
+  std::vector<t_item*> leafItems;
+  this->gatherLeafs(pSeedItem, Evolution_Modified, leafItems);
+  //
+  for ( size_t k = 0; k < leafItems.size(); ++k )
+    modified.push_back(leafItems[k]->TransientPtr);
 
   return true;
 }
@@ -130,14 +133,17 @@ bool asiAlgo_History::GetGenerated(const TopoDS_Shape&        shape,
                                    std::vector<TopoDS_Shape>& generated) const
 {
   // Get item for the shape in question.
-  t_item* pActiveItem = this->findItem(shape);
+  t_item* pSeedItem = this->findItem(shape);
   //
-  if ( !pActiveItem || !pActiveItem->Generated.size() )
+  if ( !pSeedItem || !pSeedItem->Generated.size() )
     return false;
 
-  // Gather target items.
-  for ( int k = 0; k < pActiveItem->Generated.size(); ++k )
-    generated.push_back(pActiveItem->Generated[k]->TransientPtr);
+  // Collect leafs of GENERATED evolution.
+  std::vector<t_item*> leafItems;
+  this->gatherLeafs(pSeedItem, Evolution_Generated, leafItems);
+  //
+  for ( size_t k = 0; k < leafItems.size(); ++k )
+    generated.push_back(leafItems[k]->TransientPtr);
 
   return true;
 }
@@ -246,4 +252,20 @@ asiAlgo_History::t_item* asiAlgo_History::makeItem(const TopoDS_Shape& shape,
   m_items.Add(shape, pItem);
 
   return pItem;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_History::gatherLeafs(t_item*               pSeed,
+                                  const EvolutionType   evolution,
+                                  std::vector<t_item*>& leafs) const
+{
+  std::vector<t_item*> evolved;
+  pSeed->GetChildren(evolution, evolved);
+
+  if ( !evolved.size() )
+    leafs.push_back(pSeed); // Add to result if no further evolution exists.
+  else
+    for ( int k = 0; k < evolved.size(); ++k )
+      this->gatherLeafs(evolved[k], evolution, leafs); // Proceed recursively.
 }

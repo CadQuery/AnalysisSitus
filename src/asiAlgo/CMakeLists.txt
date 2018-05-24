@@ -21,6 +21,7 @@ set (aux_H_FILES
   auxiliary/asiAlgo_ClassifyPointFace.h
   auxiliary/asiAlgo_CompleteEdgeLoop.h
   auxiliary/asiAlgo_DesignLaw.h
+  auxiliary/asiAlgo_DivideByContinuity.h
   auxiliary/asiAlgo_FairBCurve.h
   auxiliary/asiAlgo_FairingAijFunc.h
   auxiliary/asiAlgo_FairingBjFunc.h
@@ -46,6 +47,7 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_ClassifyPointFace.cpp
   auxiliary/asiAlgo_CompleteEdgeLoop.cpp
   auxiliary/asiAlgo_DesignLaw.cpp
+  auxiliary/asiAlgo_DivideByContinuity.cpp
   auxiliary/asiAlgo_FairBCurve.cpp
   auxiliary/asiAlgo_FairingAijFunc.cpp
   auxiliary/asiAlgo_FairingBjFunc.cpp
@@ -68,6 +70,7 @@ set (editing_H_FILES
   editing/asiAlgo_Euler.h
   editing/asiAlgo_EulerKEF.h
   editing/asiAlgo_EulerKEV.h
+  editing/asiAlgo_EulerKFMV.h
   editing/asiAlgo_EulerPoincare.h
   editing/asiAlgo_FindFree.h
   editing/asiAlgo_FindNonmanifold.h
@@ -79,6 +82,7 @@ set (editing_H_FILES
   editing/asiAlgo_ModConstructEdge.h
   editing/asiAlgo_ModEdgeInfo.h
   editing/asiAlgo_Naming.h
+  editing/asiAlgo_RebuildEdge.h
   editing/asiAlgo_RehostFaces.h
   editing/asiAlgo_SuppressFaces.h
   editing/asiAlgo_TopoKill.h
@@ -89,6 +93,7 @@ set (editing_CPP_FILES
   editing/asiAlgo_Euler.cpp
   editing/asiAlgo_EulerKEF.cpp
   editing/asiAlgo_EulerKEV.cpp
+  editing/asiAlgo_EulerKFMV.cpp
   editing/asiAlgo_EulerPoincare.cpp
   editing/asiAlgo_FindFree.cpp
   editing/asiAlgo_FindNonmanifold.cpp
@@ -99,6 +104,7 @@ set (editing_CPP_FILES
   editing/asiAlgo_ModBase.cpp
   editing/asiAlgo_ModConstructEdge.cpp
   editing/asiAlgo_Naming.cpp
+  editing/asiAlgo_RebuildEdge.cpp
   editing/asiAlgo_RehostFaces.cpp
   editing/asiAlgo_SuppressFaces.cpp
   editing/asiAlgo_TopoKill.cpp
@@ -296,6 +302,7 @@ set (VTK_LIB_FILES
   vtkFiltersModeling-8.0
   vtkIOCore-8.0
   vtkIOImage-8.0
+  vtkIOExport-8.0
   vtkImagingCore-8.0
   vtkInteractionStyle-8.0
 )

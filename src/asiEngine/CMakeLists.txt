@@ -8,6 +8,7 @@ set (H_FILES
   asiEngine.h
   asiEngine_Curve.h
   asiEngine_Domain.h
+  asiEngine_Editing.h
   asiEngine_IV.h
   asiEngine_Model.h
   asiEngine_Part.h
@@ -17,6 +18,7 @@ set (H_FILES
 set (CPP_FILES
   asiEngine_Curve.cpp
   asiEngine_Domain.cpp
+  asiEngine_Editing.cpp
   asiEngine_IV.cpp
   asiEngine_Model.cpp
   asiEngine_Part.cpp

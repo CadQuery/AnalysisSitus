@@ -31,10 +31,10 @@
 #ifndef asiEngine_Part_h
 #define asiEngine_Part_h
 
-// A-Situs includes
+// asiEngine includes
 #include <asiEngine_Model.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_PrsManager.h>
 
 // OCCT includes

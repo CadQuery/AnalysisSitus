@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 December 2017
+// Created on: 14 May (*) 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,33 +28,52 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_HistoryGraphAdaptor_h
-#define asiUI_HistoryGraphAdaptor_h
+#ifndef asiAlgo_EulerKFMV_h
+#define asiAlgo_EulerKFMV_h
 
 // asiAlgo includes
-#include <asiAlgo_Naming.h>
+#include <asiAlgo_Euler.h>
 
-// Active Data includes
-#include <ActAPI_IProgressNotifier.h>
+// OCCT includes
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Edge.hxx>
 
-// VTK includes
-#include <vtkMutableDirectedGraph.h>
-#include <vtkSmartPointer.h>
+//-----------------------------------------------------------------------------
 
-//! Converter of history graph to VTK presentable graph data structure.
-class asiUI_HistoryGraphAdaptor
+//! KFMV (Kill Face Make Vertex) Euler operator.
+class asiAlgo_EulerKFMV : public asiAlgo_Euler
 {
 public:
 
-  //! Converts history graph to VTK presentable form.
-  //! \param[in] history  history graph to convert.
-  //! \param[in] naming   optional naming service.
-  //! \param[in] progress progress notifier.
-  //! \return VTK graph.
-  static vtkSmartPointer<vtkMutableDirectedGraph>
-    Convert(const Handle(asiAlgo_History)& history,
-            const Handle(asiAlgo_Naming)&  naming,
-            ActAPI_ProgressEntry           progress);
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_EulerKFMV, asiAlgo_Euler)
+
+public:
+
+  //! Constructor.
+  //! \param[in] masterCAD full CAD model.
+  //! \param[in] face      face to kill.
+  //! \param[in] progress  Progress Notifier.
+  //! \param[in] plotter   Imperative Plotter
+  asiAlgo_EXPORT
+    asiAlgo_EulerKFMV(const TopoDS_Shape&  masterCAD,
+                      const TopoDS_Face&   face,
+                      ActAPI_ProgressEntry progress,
+                      ActAPI_PlotterEntry  plotter);
+
+private:
+
+  //! Performs Euler operator.
+  //! \param[in] doApply indicates whether to apply modification
+  //!                    requests right at the end (true) or let the caller
+  //!                    code manage it explicitly (false).
+  //! \return true in case of success, false -- otherwise.
+  virtual bool perform(const bool doApply);
+
+protected:
+
+  TopoDS_Face m_face; //!< Face to kill.
+
 };
 
 #endif

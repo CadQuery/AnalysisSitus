@@ -74,6 +74,26 @@
 
 //! Constructor.
 //! \param[in] model    Data Model instance.
+//! \param[in] naming   naming service.
+//! \param[in] progress progress notifier.
+//! \param[in] plotter  imperative plotter.
+asiUI_HistoryGraph::asiUI_HistoryGraph(const Handle(asiEngine_Model)& model,
+                                       const Handle(asiAlgo_Naming)&  naming,
+                                       ActAPI_ProgressEntry           progress,
+                                       ActAPI_PlotterEntry            plotter)
+: m_pWidget    ( NULL ),
+  m_textWidget ( NULL ),
+  m_model      ( model ),
+  m_naming     ( naming ),
+  m_history    ( naming->GetHistory() ),
+  m_progress   ( progress ),
+  m_plotter    ( plotter )
+{}
+
+//-----------------------------------------------------------------------------
+
+//! Constructor.
+//! \param[in] model    Data Model instance.
 //! \param[in] history  modification history.
 //! \param[in] progress progress notifier.
 //! \param[in] plotter  imperative plotter.
@@ -214,7 +234,7 @@ void asiUI_HistoryGraph::RenderEventCallback()
 vtkSmartPointer<vtkGraph> asiUI_HistoryGraph::convertToGraph()
 {
   vtkSmartPointer<vtkGraph>
-    result = asiUI_HistoryGraphAdaptor::Convert(m_history, m_progress);
+    result = asiUI_HistoryGraphAdaptor::Convert(m_history, m_naming, m_progress);
 
   return result;
 }

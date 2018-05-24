@@ -1620,6 +1620,19 @@ TopoDS_Shape asiAlgo_Utils::BooleanGeneralFuse(const TopTools_ListOfShape& objec
 
 //-----------------------------------------------------------------------------
 
+//! Performs Boolean General Fuse for the passed objects.
+//! \param[in]  objects objects to fuse in non-manifold manner.
+//! \param[in]  fuzz    fuzzy value to control the tolerance.
+//! \param[out] API     Boolean algorithm to access history.
+TopoDS_Shape asiAlgo_Utils::BooleanGeneralFuse(const TopTools_ListOfShape& objects,
+                                               const double                fuzz)
+{
+  BOPAlgo_Builder API;
+  return BooleanGeneralFuse(objects, fuzz, API);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Explodes the passed shape by solids.
 //! \param model  [in]  input CAD part.
 //! \param solids [out] extracted solids.

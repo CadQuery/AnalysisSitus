@@ -87,6 +87,7 @@ set (VTK_LIB_FILES
   vtkInfovisLayout-8.0
   vtkIOCore-8.0
   vtkIOImage-8.0
+  vtkIOExportOpenGL2-8.0
   vtkImagingCore-8.0
   vtkInteractionStyle-8.0
   vtkInteractionWidgets-8.0
@@ -96,6 +97,7 @@ set (VTK_LIB_FILES
   vtkRenderingCore-8.0
   vtkRenderingFreeType-8.0
   vtkRenderingOpenGL2-8.0
+  vtkRenderingGL2PSOpenGL2-8.0
   vtkViewsContext2D-8.0
   vtkViewsInfovis-8.0
 )

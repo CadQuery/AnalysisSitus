@@ -47,7 +47,12 @@ asiAlgo_EulerKEV::asiAlgo_EulerKEV(const TopoDS_Shape&  masterCAD,
   m_edge        (edge),
   m_bSurvive    (false)
 {
-  m_vertex = ShapeAnalysis_Edge().FirstVertex(m_edge);
+  ShapeAnalysis_Edge sae;
+
+  m_vertex = TopoDS::Vertex( sae.FirstVertex(m_edge).Oriented(TopAbs_EXTERNAL) );
+
+  if ( m_vertex.IsNull() )
+    m_vertex = TopoDS::Vertex( sae.LastVertex(m_edge).Oriented(TopAbs_EXTERNAL) );
 }
 
 //-----------------------------------------------------------------------------

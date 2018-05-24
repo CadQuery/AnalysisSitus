@@ -716,6 +716,10 @@ public:
                        const double                fuzz,
                        BOPAlgo_Builder&            API);
 
+  asiAlgo_EXPORT static TopoDS_Shape
+    BooleanGeneralFuse(const TopTools_ListOfShape& objects,
+                       const double                fuzz);
+
   asiAlgo_EXPORT static void
     ExplodeBySolids(const TopoDS_Shape&   model,
                     TopTools_ListOfShape& solids);

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 December 2017
+// Created on: 14 May (*) 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,33 +28,26 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_HistoryGraphAdaptor_h
-#define asiUI_HistoryGraphAdaptor_h
+// Own include
+#include <asiEngine_Editing.h>
 
 // asiAlgo includes
-#include <asiAlgo_Naming.h>
+#include <asiAlgo_EulerPoincare.h>
 
-// Active Data includes
-#include <ActAPI_IProgressNotifier.h>
+//-----------------------------------------------------------------------------
 
-// VTK includes
-#include <vtkMutableDirectedGraph.h>
-#include <vtkSmartPointer.h>
-
-//! Converter of history graph to VTK presentable graph data structure.
-class asiUI_HistoryGraphAdaptor
+bool asiEngine_Editing::CheckEulerPoincare(const int genus)
 {
-public:
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  TopoDS_Shape             part   = part_n->GetShape();
 
-  //! Converts history graph to VTK presentable form.
-  //! \param[in] history  history graph to convert.
-  //! \param[in] naming   optional naming service.
-  //! \param[in] progress progress notifier.
-  //! \return VTK graph.
-  static vtkSmartPointer<vtkMutableDirectedGraph>
-    Convert(const Handle(asiAlgo_History)& history,
-            const Handle(asiAlgo_Naming)&  naming,
-            ActAPI_ProgressEntry           progress);
-};
+  // Calculate the Euler-Poincare property.
+  const bool result = asiAlgo_EulerPoincare::Check(part, genus, m_progress);
+  //
+  if ( !result )
+    m_progress.SendLogMessage(LogInfo(Normal) << "Euler-Poincare: false.");
+  else
+    m_progress.SendLogMessage(LogInfo(Normal) << "Euler-Poincare property holds.");
 
-#endif
+  return result;
+}

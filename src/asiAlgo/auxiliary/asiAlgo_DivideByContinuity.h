@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 December 2017
+// Created on: 18 May 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,33 +28,43 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_HistoryGraphAdaptor_h
-#define asiUI_HistoryGraphAdaptor_h
+#ifndef asiAlgo_DivideByContinuity_h
+#define asiAlgo_DivideByContinuity_h
 
 // asiAlgo includes
-#include <asiAlgo_Naming.h>
+#include <asiAlgo.h>
 
 // Active Data includes
-#include <ActAPI_IProgressNotifier.h>
+#include <ActAPI_IAlgorithm.h>
 
-// VTK includes
-#include <vtkMutableDirectedGraph.h>
-#include <vtkSmartPointer.h>
+// OCCT includes
+#include <GeomAbs_Shape.hxx>
+#include <TopoDS_Shell.hxx>
 
-//! Converter of history graph to VTK presentable graph data structure.
-class asiUI_HistoryGraphAdaptor
+//! Tool to split shape by continuity.
+class asiAlgo_DivideByContinuity : public ActAPI_IAlgorithm
 {
 public:
 
-  //! Converts history graph to VTK presentable form.
-  //! \param[in] history  history graph to convert.
-  //! \param[in] naming   optional naming service.
+  //! Ctor.
   //! \param[in] progress progress notifier.
-  //! \return VTK graph.
-  static vtkSmartPointer<vtkMutableDirectedGraph>
-    Convert(const Handle(asiAlgo_History)& history,
-            const Handle(asiAlgo_Naming)&  naming,
-            ActAPI_ProgressEntry           progress);
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_EXPORT
+    asiAlgo_DivideByContinuity(ActAPI_ProgressEntry progress,
+                               ActAPI_PlotterEntry  plotter);
+
+public:
+
+  //! Performs splitting by continuity.
+  //! \param[in,out] shape     shape to split.
+  //! \param[in]     criterion smoothness criterion to split by.
+  //! \param[in]     tolerance tolerance to use.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    Perform(TopoDS_Shape&       shape,
+            const GeomAbs_Shape criterion,
+            const double        tolerance) const;
+
 };
 
 #endif

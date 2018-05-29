@@ -47,6 +47,7 @@
 #include <Geom_BSplineSurface.hxx>
 #include <Geom_Circle.hxx>
 #include <Geom_ConicalSurface.hxx>
+#include <Geom_Curve.hxx>
 #include <Geom_CylindricalSurface.hxx>
 #include <Geom_OffsetSurface.hxx>
 #include <Geom_Plane.hxx>
@@ -60,6 +61,7 @@
 #include <Geom2d_BSplineCurve.hxx>
 #include <gp_Trsf.hxx>
 #include <NCollection_IndexedDataMap.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Wire.hxx>
@@ -179,6 +181,33 @@ public:
         msg += label;
       else
         msg += "<empty>";
+    }
+    //
+    if ( subShape.ShapeType() == TopAbs_EDGE )
+    {
+      const TopoDS_Edge& edge = TopoDS::Edge(subShape);
+
+      // Get host curve.
+      double f, l;
+      Handle(Geom_Curve) curve = BRep_Tool::Curve(edge, f, l);
+      //
+      msg += "\n\t Curve: ";
+      msg += curve->DynamicType()->Name();
+      msg += "\n\t Min parameter: ";
+      msg += curve->FirstParameter();
+      msg += "\n\t Max parameter: ";
+      msg += curve->LastParameter();
+
+      if ( curve->IsInstance( STANDARD_TYPE(Geom_BSplineCurve) ) )
+      {
+        Handle(Geom_BSplineCurve)
+          bcurve = Handle(Geom_BSplineCurve)::DownCast(curve);
+        //
+        msg += "\n\t Degree: ";
+        msg += bcurve->Degree();
+        msg += "\n\t Num poles: ";
+        msg += bcurve->NbPoles();
+      }
     }
 
     return msg;

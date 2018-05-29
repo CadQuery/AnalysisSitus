@@ -1166,6 +1166,54 @@ int ENGINE_CheckLength(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckArea(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Attempt to get the highlighted sub-shapes.
+  TColStd_PackedMapOfInteger selectedFaceIds;
+  //
+  if ( cmdEngine::cf->ViewerPart )
+  {
+    asiEngine_Part PartAPI( M,
+                            cmdEngine::cf->ViewerPart->PrsMgr(),
+                            interp->GetProgress(),
+                            interp->GetPlotter() );
+    //
+    PartAPI.GetHighlightedFaces(selectedFaceIds);
+  }
+
+  // Get total area.
+  double area = 0.0;
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(selectedFaceIds); fit.More(); fit.Next() )
+  {
+    const int faceId = fit.Key();
+
+    // Get face.
+    const TopoDS_Shape&
+      face = M->GetPartNode()->GetAAG()->GetMapOfFaces()(faceId);
+
+    // Calculate global properties.
+    GProp_GProps props;
+    BRepGProp::SurfaceProperties(face, props);
+    area += props.Mass();
+  }
+
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Area: %1." << area);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -1275,4 +1323,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Checks length of the selected edges.",
     //
     __FILE__, group, ENGINE_CheckLength);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-area",
+    //
+    "check-area\n"
+    "\t Checks area of the selected faces.",
+    //
+    __FILE__, group, ENGINE_CheckArea);
 }

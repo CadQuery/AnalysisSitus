@@ -74,6 +74,10 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 
+#ifdef USE_MOBIUS
+  #include <mobius/cascade_BSplineCurve3D.h>
+#endif
+
 #undef DRAW_DEBUG
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
@@ -1251,6 +1255,116 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_TestEvalCurve(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc < 4 || argc > 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Curve Node by name.
+  Handle(ActAPI_INode) node = interp->GetModel()->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVCurveNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a curve."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVCurveNode)
+    curveNode = Handle(asiData_IVCurveNode)::DownCast(node);
+
+  // Get curve.
+  double f, l;
+  Handle(Geom_Curve) occtCurve = curveNode->GetCurve(f, l);
+  //
+  if ( occtCurve.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is NULL.");
+    return TCL_OK;
+  }
+
+  // Get parameter value.
+  const double u = atof(argv[2]);
+
+  // Get number of iterations.
+  const int numIters = atoi(argv[3]);
+  //
+  if ( numIters <= 0 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Number of iterations should be positive.");
+    return TCL_OK;
+  }
+
+  // Check whether Mobius evaluation is requested.
+  bool isMobius = interp->HasKeyword(argc, argv, "mobius");
+
+  TIMER_NEW
+
+  // Evaluate curve.
+  if ( !isMobius )
+  {
+    TIMER_GO
+
+    gp_Pnt eval_P;
+    for ( int i = 0; i < numIters; ++i )
+    {
+      occtCurve->D0(u, eval_P);
+    }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Curve evaluation OCCT")
+
+    interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
+  }
+  else
+  {
+#ifndef USE_MOBIUS
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius module is disabled.");
+    return TCL_ERROR;
+#else
+
+    Handle(Geom_BSplineCurve)
+      occtBCurve = Handle(Geom_BSplineCurve)::DownCast(occtCurve);
+    //
+    if ( occtBCurve.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is not a B-curve.");
+      return TCL_OK;
+    }
+
+    // Convert to Mobius curve.
+    mobius::cascade_BSplineCurve3D converter(occtBCurve);
+    converter.DirectConvert();
+    //
+    const mobius::Ptr<mobius::bcurve>&
+      mobCurve = converter.GetMobiusCurve();
+
+    TIMER_GO
+
+    mobius::xyz eval_P;
+    for ( int i = 0; i < numIters; ++i )
+    {
+      mobCurve->Eval(u, eval_P);
+    }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Curve evaluation Mobius")
+
+    interp->GetPlotter().REDRAW_POINT("eval_P",
+                                       gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
+                                       Color_Yellow);
+#endif
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& /*data*/)
 {
@@ -1342,6 +1456,17 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Problem reproducer for anything.",
     //
     __FILE__, group, MISC_Test);
+
+    //-------------------------------------------------------------------------//
+  interp->AddCommand("test-eval-curve",
+    //
+    "test-eval-curve curveName u num [-mobius]\n"
+    "\t Evaluates curve <curveName> for the given parameter value <u>.\n"
+    "\t If <-mobius> keyword is used, evaluation is performed using Mobius\n"
+    "\t functions. The argument <num> specifies how many iterations to use.\n"
+    "\t This function is used to test performance of curve evaluation.",
+    //
+    __FILE__, group, MISC_TestEvalCurve);
 }
 
 // Declare entry point

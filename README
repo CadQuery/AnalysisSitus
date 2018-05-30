@@ -14,6 +14,15 @@ Debug your B-Rep.
 ===============================================================================
 Release notes
 -------------------------------------------------------------------------------
+v0.2.5, 30 May 2018
+-------------------------------------------------------------------------------
+- Ported to OpenCascade 7.3.0.
+- Add analysis of geometric tolerances.
+- Add inequality solver.
+- Add many useful Tcl commands.
+- Add gl2ps integration.
+- Bugfix.
+-------------------------------------------------------------------------------
 v0.2.4, 26 March 2018
 -------------------------------------------------------------------------------
 - Add dialog to manage visibility of pipelines for presented objects.

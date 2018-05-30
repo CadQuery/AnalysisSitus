@@ -50,6 +50,7 @@
 
 #ifdef USE_MOBIUS
   #include <mobius/cascade_BSplineCurve3D.h>
+  #include <mobius/cascade_BSplineSurface.h>
 #endif
 
 // OCCT includes
@@ -1050,6 +1051,237 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_EvalSurf(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc < 5 || argc > 6 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Surface Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Get surface.
+  Handle(Geom_Surface) occtSurface = surfNode->GetSurface();
+  //
+  if ( occtSurface.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is NULL.");
+    return TCL_OK;
+  }
+
+  // Get parameter values.
+  const double u = atof(argv[2]);
+  const double v = atof(argv[3]);
+
+  // Get order.
+  const int order = atoi(argv[4]);
+  //
+  if ( order < 0 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Negative order is meaningless.");
+    return TCL_OK;
+  }
+
+  // Check whether Mobius evaluation is requested.
+  bool isMobius = interp->HasKeyword(argc, argv, "mobius");
+
+  // Evaluate surface.
+  TCollection_AsciiString Message("\n========================================");
+  Message                      += "\n Surface evaluation";
+  Message                      += "\n----------------------------------------";
+  //
+  if ( !isMobius )
+  {
+    Message += "\nMethod: OpenCascade";
+
+    if ( order == 0 )
+    {
+      gp_Pnt eval_P;
+      occtSurface->D0(u, v, eval_P);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += eval_P.X();
+      Message += ", ";
+      Message += eval_P.Y();
+      Message += ", ";
+      Message += eval_P.Z();
+      Message += ")";
+    }
+    else if ( order == 1 )
+    {
+      gp_Pnt eval_P;
+      gp_Vec eval_D1u, eval_D1v;
+      occtSurface->D1(u, v, eval_P, eval_D1u, eval_D1v);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1u", eval_P, eval_D1u, Color_Red);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1v", eval_P, eval_D1v, Color_Green);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += eval_P.X();
+      Message += ", ";
+      Message += eval_P.Y();
+      Message += ", ";
+      Message += eval_P.Z();
+      Message += ")";
+      //
+      Message += "\nD1u(X, Y, Z): (";
+      Message += eval_D1u.X();
+      Message += ", ";
+      Message += eval_D1u.Y();
+      Message += ", ";
+      Message += eval_D1u.Z();
+      Message += ")";
+      //
+      Message += "\nD1v(X, Y, Z): (";
+      Message += eval_D1v.X();
+      Message += ", ";
+      Message += eval_D1v.Y();
+      Message += ", ";
+      Message += eval_D1v.Z();
+      Message += ")";
+    }
+    else if ( order == 2 )
+    {
+      gp_Pnt eval_P;
+      gp_Vec eval_D1u, eval_D1v, eval_D2u, eval_D2v, eval_D2uv;
+      occtSurface->D2(u, v, eval_P, eval_D1u, eval_D1v, eval_D2u, eval_D2v, eval_D2uv);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1u", eval_P, eval_D1u, Color_Red);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1v", eval_P, eval_D1v, Color_Green);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D2u", eval_P, eval_D2u, Color_Red);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D2v", eval_P, eval_D2v, Color_Green);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D2uv", eval_P, eval_D2uv, Color_Yellow);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += eval_P.X();
+      Message += ", ";
+      Message += eval_P.Y();
+      Message += ", ";
+      Message += eval_P.Z();
+      Message += ")";
+      //
+      Message += "\nD1u(X, Y, Z): (";
+      Message += eval_D1u.X();
+      Message += ", ";
+      Message += eval_D1u.Y();
+      Message += ", ";
+      Message += eval_D1u.Z();
+      Message += ")";
+      //
+      Message += "\nD1v(X, Y, Z): (";
+      Message += eval_D1v.X();
+      Message += ", ";
+      Message += eval_D1v.Y();
+      Message += ", ";
+      Message += eval_D1v.Z();
+      Message += ")";
+      //
+      Message += "\nD2u(X, Y, Z): (";
+      Message += eval_D2u.X();
+      Message += ", ";
+      Message += eval_D2u.Y();
+      Message += ", ";
+      Message += eval_D2u.Z();
+      Message += ")";
+      //
+      Message += "\nD2v(X, Y, Z): (";
+      Message += eval_D2v.X();
+      Message += ", ";
+      Message += eval_D2v.Y();
+      Message += ", ";
+      Message += eval_D2v.Z();
+      Message += ")";
+      //
+      Message += "\nD2uv(X, Y, Z): (";
+      Message += eval_D2uv.X();
+      Message += ", ";
+      Message += eval_D2uv.Y();
+      Message += ", ";
+      Message += eval_D2uv.Z();
+      Message += ")";
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Order %1 is not supported for OpenCascade method."
+                                                          << order);
+      return TCL_OK;
+    }
+  }
+  else
+  {
+#ifndef USE_MOBIUS
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius module is disabled.");
+    return TCL_ERROR;
+#else
+    Message += "\nMethod: Mobius";
+
+    Handle(Geom_BSplineSurface)
+      occtBSurface = Handle(Geom_BSplineSurface)::DownCast(occtSurface);
+    //
+    if ( occtBSurface.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a B-surface.");
+      return TCL_OK;
+    }
+
+    // Convert to Mobius surface.
+    mobius::cascade_BSplineSurface converter(occtBSurface);
+    converter.DirectConvert();
+    //
+    const mobius::Ptr<mobius::bsurf>&
+      mobSurface = converter.GetMobiusSurface();
+
+    // Evaluate.
+    if ( order == 0 )
+    {
+      mobius::xyz eval_P;
+      mobSurface->Eval(u, v, eval_P);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P",
+                                        gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
+                                        Color_Yellow);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += eval_P.X();
+      Message += ", ";
+      Message += eval_P.Y();
+      Message += ", ";
+      Message += eval_P.Z();
+      Message += ")";
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Order %1 is not supported for Mobius method."
+                                                          << order);
+      return TCL_OK;
+    }
+#endif
+  }
+  Message += "\n----------------------------------------";
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << Message);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_CheckToler(const Handle(asiTcl_Interp)& interp,
                       int                          argc,
                       const char**                 argv)
@@ -1305,6 +1537,17 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t to evaluate (0 for value evaluation).",
     //
     __FILE__, group, ENGINE_EvalCurve);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("eval-surf",
+    //
+    "eval-surf surfName u v order [-mobius]\n"
+    "\t Evaluates surface <surfName> for the given parameter pair <u, v>.\n"
+    "\t If <-mobius> keyword is used, evaluation is performed using Mobius\n"
+    "\t functions. The argument <order> specifies the order of derivatives\n"
+    "\t to evaluate (0 for value evaluation).",
+    //
+    __FILE__, group, ENGINE_EvalSurf);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-toler",

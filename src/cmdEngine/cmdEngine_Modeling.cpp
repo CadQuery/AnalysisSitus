@@ -364,7 +364,8 @@ int ENGINE_MakeCurve(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
   //
-  const TopTools_IndexedMapOfShape& subShapes = partNode->GetAAG()->GetMapOfSubShapes();
+  const TopTools_IndexedMapOfShape&
+    subShapes = partNode->GetAAG()->GetMapOfSubShapes();
 
   // Curve Node is expected.
   Handle(asiData_CurveNode) curveNode = partNode->GetCurveRepresentation();
@@ -398,6 +399,64 @@ int ENGINE_MakeCurve(const Handle(asiTcl_Interp)& interp,
 
   // Set result.
   interp->GetPlotter().REDRAW_CURVE(argv[1], curve, Color_White);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_MakeSurf(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node to access the selected face.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  const TopTools_IndexedMapOfShape&
+    subShapes = partNode->GetAAG()->GetMapOfSubShapes();
+
+  // Surface Node is expected.
+  Handle(asiData_SurfNode) surfNode = partNode->GetSurfaceRepresentation();
+  //
+  if ( surfNode.IsNull() || !surfNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Surface Node is null or ill-defined.");
+    return TCL_OK;
+  }
+
+  // Get ID of the selected face.
+  const int faceIdx = surfNode->GetSelectedFace();
+  //
+  if ( faceIdx <= 0 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Please, select face first.");
+    return TCL_OK;
+  }
+
+  // Get host surface of the selected face.
+  const TopoDS_Shape& faceShape = subShapes(faceIdx);
+  //
+  if ( faceShape.ShapeType() != TopAbs_FACE )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected topological type of the selected face.");
+    return TCL_OK;
+  }
+  //
+  Handle(Geom_Surface) surf = BRep_Tool::Surface( TopoDS::Face(faceShape) );
+
+  // Set result.
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], surf, Color_White);
 
   return TCL_OK;
 }
@@ -599,6 +658,14 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Creates a curve from the selected edge.",
     //
     __FILE__, group, ENGINE_MakeCurve);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("make-surf",
+    //
+    "make-surf surfName\n"
+    "\t Creates a surface from the selected face.",
+    //
+    __FILE__, group, ENGINE_MakeSurf);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("interpolate-points",

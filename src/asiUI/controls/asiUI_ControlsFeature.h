@@ -81,6 +81,7 @@ public slots:
   void onDetachSelected      ();
   void onDeleteSelected      ();
   void onDeleteSelectedFull  ();
+  void onDeleteSelectedSmart ();
   void onDivideClosedEdges   ();
   void onDivideAngle         ();
   void onBoundingBox         ();
@@ -108,59 +109,62 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    QPushButton* pShowTOPOGraph;      //!< Show topology graph.
-    QPushButton* pShowAAG;            //!< Show Attributed Adjacency Graph.
-    QPushButton* pElimSelected;       //!< Removes convex-only faces from AAG.
+    QPushButton* pShowTOPOGraph;       //!< Show topology graph.
+    QPushButton* pShowAAG;             //!< Show Attributed Adjacency Graph.
+    QPushButton* pElimSelected;        //!< Removes convex-only faces from AAG.
     //
-    QPushButton* pFreeEdges;          //!< Finds non-manifold edges.
-    QPushButton* pNonManifoldEdges;   //!< Finds non-manifold edges.
-    QPushButton* pCheckDihAngles;     //!< Checks dihedral angles on convexity / concavity.
-    QPushButton* pFindSmoothEdges;    //!< Finds C1 smooth edges.
-    QPushButton* pFindConvexOnly;     //!< Finds convex-only faces.
+    QPushButton* pFreeEdges;           //!< Finds non-manifold edges.
+    QPushButton* pNonManifoldEdges;    //!< Finds non-manifold edges.
+    QPushButton* pCheckDihAngles;      //!< Checks dihedral angles on convexity / concavity.
+    QPushButton* pFindSmoothEdges;     //!< Finds C1 smooth edges.
+    QPushButton* pFindConvexOnly;      //!< Finds convex-only faces.
     //
-    QPushButton* pDetachSelected;     //!< Detaches selected faces from B-Rep.
-    QPushButton* pDeleteSelected;     //!< Deletes selected faces (only).
-    QPushButton* pDeleteSelectedFull; //!< Deletes selected faces with all contours.
-    QPushButton* pDivideClosedEdges;  //!< Divides closed edges in the model.
-    QPushButton* pDivideAngle;        //!< Divides faces by angles.
-    QPushButton* pBoundingBox;        //!< Calculates bounding box.
+    QPushButton* pDetachSelected;      //!< Detaches selected faces from B-Rep.
+    QPushButton* pDeleteSelected;      //!< Deletes selected faces (only).
+    QPushButton* pDeleteSelectedFull;  //!< Deletes selected faces with all contours.
+    QPushButton* pDeleteSelectedSmart; //!< Deletes selected faces and stitches neighbors.
+    QPushButton* pDivideClosedEdges;   //!< Divides closed edges in the model.
+    QPushButton* pDivideAngle;         //!< Divides faces by angles.
+    QPushButton* pBoundingBox;         //!< Calculates bounding box.
 
-    t_widgets() : pShowTOPOGraph      (NULL),
-                  pShowAAG            (NULL),
-                  pElimSelected       (NULL),
+    t_widgets() : pShowTOPOGraph       (NULL),
+                  pShowAAG             (NULL),
+                  pElimSelected        (NULL),
                   //
-                  pFreeEdges          (NULL),
-                  pNonManifoldEdges   (NULL),
-                  pCheckDihAngles     (NULL),
-                  pFindSmoothEdges    (NULL),
-                  pFindConvexOnly     (NULL),
+                  pFreeEdges           (NULL),
+                  pNonManifoldEdges    (NULL),
+                  pCheckDihAngles      (NULL),
+                  pFindSmoothEdges     (NULL),
+                  pFindConvexOnly      (NULL),
                   //
-                  pDetachSelected     (NULL),
-                  pDeleteSelected     (NULL),
-                  pDeleteSelectedFull (NULL),
-                  pDivideClosedEdges  (NULL),
-                  pDivideAngle        (NULL),
-                  pBoundingBox        (NULL)
+                  pDetachSelected      (NULL),
+                  pDeleteSelected      (NULL),
+                  pDeleteSelectedFull  (NULL),
+                  pDeleteSelectedSmart (NULL),
+                  pDivideClosedEdges   (NULL),
+                  pDivideAngle         (NULL),
+                  pBoundingBox         (NULL)
     {}
 
     void Release()
     {
-      delete pShowTOPOGraph;      pShowTOPOGraph      = NULL;
-      delete pShowAAG;            pShowAAG            = NULL;
-      delete pElimSelected;       pElimSelected       = NULL;
+      delete pShowTOPOGraph;       pShowTOPOGraph       = NULL;
+      delete pShowAAG;             pShowAAG             = NULL;
+      delete pElimSelected;        pElimSelected        = NULL;
       //
-      delete pFreeEdges;          pFreeEdges          = NULL;
-      delete pNonManifoldEdges;   pNonManifoldEdges   = NULL;
-      delete pCheckDihAngles;     pCheckDihAngles     = NULL;
-      delete pFindSmoothEdges;    pFindSmoothEdges    = NULL;
-      delete pFindConvexOnly;     pFindConvexOnly     = NULL;
+      delete pFreeEdges;           pFreeEdges           = NULL;
+      delete pNonManifoldEdges;    pNonManifoldEdges    = NULL;
+      delete pCheckDihAngles;      pCheckDihAngles      = NULL;
+      delete pFindSmoothEdges;     pFindSmoothEdges     = NULL;
+      delete pFindConvexOnly;      pFindConvexOnly      = NULL;
       //
-      delete pDetachSelected;     pDetachSelected     = NULL;
-      delete pDeleteSelected;     pDeleteSelected     = NULL;
-      delete pDeleteSelectedFull; pDeleteSelectedFull = NULL;
-      delete pDivideClosedEdges;  pDivideClosedEdges  = NULL;
-      delete pDivideAngle;        pDivideAngle        = NULL;
-      delete pBoundingBox;        pBoundingBox        = NULL;
+      delete pDetachSelected;      pDetachSelected      = NULL;
+      delete pDeleteSelected;      pDeleteSelected      = NULL;
+      delete pDeleteSelectedFull;  pDeleteSelectedFull  = NULL;
+      delete pDeleteSelectedSmart; pDeleteSelectedSmart = NULL;
+      delete pDivideClosedEdges;   pDivideClosedEdges   = NULL;
+      delete pDivideAngle;         pDivideAngle         = NULL;
+      delete pBoundingBox;         pBoundingBox         = NULL;
     }
   };
 

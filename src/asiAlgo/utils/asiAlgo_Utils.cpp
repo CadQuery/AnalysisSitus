@@ -31,6 +31,9 @@
 // Own include
 #include <asiAlgo_Utils.h>
 
+// OS dependent
+#include <windows.h>
+
 // asiAlgo includes
 #include <asiAlgo_ClassifyPointFace.h>
 #include <asiAlgo_Timer.h>
@@ -44,6 +47,7 @@
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepAlgo_Common.hxx>
 #include <BRepAlgoAPI_Common.hxx>
+#include <BRepAlgoAPI_Defeaturing.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
@@ -87,9 +91,9 @@
 #include <TopTools_MapOfShape.hxx>
 
 // Eigen includes
-#pragma warning(push, 0)
+#pragma warning(disable : 4701 4702)
 #include <Eigen/Dense>
-#pragma warning(pop)
+#pragma warning(default : 4701 4702)
 
 //-----------------------------------------------------------------------------
 
@@ -100,6 +104,8 @@
 #define dump_filename_Bx "D:\\Bx_interp_log_OCCT.log"
 #define dump_filename_By "D:\\By_interp_log_OCCT.log"
 #define dump_filename_Bz "D:\\Bz_interp_log_OCCT.log"
+
+#define BUFSIZE           1000
 
 #undef COUT_DEBUG
 #if defined COUT_DEBUG
@@ -137,6 +143,484 @@ bool IsASCII(const TCollection_AsciiString& filename)
 
   fclose(FILE);
   return isAscii;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Utils::Str::Split(const std::string&        source_str,
+                               const std::string&        delim_str,
+                               std::vector<std::string>& result)
+{
+  // Initialize collection of strings to split
+  std::vector<std::string> chunks;
+  chunks.push_back(source_str);
+
+  // Split by each delimiter consequently
+  for ( size_t delim_idx = 0; delim_idx < delim_str.length(); ++delim_idx )
+  {
+    std::vector<std::string> new_chunks;
+    const char delim = delim_str[delim_idx];
+
+    // Split each chunk
+    for ( size_t chunk_idx = 0; chunk_idx < chunks.size(); ++chunk_idx )
+    {
+      const std::string& source = chunks[chunk_idx];
+      std::string::size_type currPos = 0, prevPos = 0;
+      while ( (currPos = source.find(delim, prevPos) ) != std::string::npos )
+      {
+        std::string item = source.substr(prevPos, currPos - prevPos);
+        if ( item.size() > 0 )
+        {
+          new_chunks.push_back(item);
+        }
+        prevPos = currPos + 1;
+      }
+      new_chunks.push_back( source.substr(prevPos) );
+    }
+
+    // Set new collection of chunks for splitting by the next delimiter
+    chunks = new_chunks;
+  }
+
+  // Set result
+  result = chunks;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Utils::Str::ReplaceAll(std::string&       str,
+                                    const std::string& what,
+                                    const std::string& with)
+{
+  for ( size_t pos = 0; ; pos += with.length() )
+  {
+    pos = str.find(what, pos); // Locate the substring to replace
+    if ( pos == std::string::npos )
+      break; // Not found
+
+    // Replace by erasing and inserting
+    str.erase( pos, what.length() );
+    str.insert(pos, with);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+std::string asiAlgo_Utils::Str::SubStr(const std::string& source,
+                                       const int          idx_F,
+                                       const int          length)
+{
+  return source.substr(idx_F, length);
+}
+
+//-----------------------------------------------------------------------------
+
+std::string asiAlgo_Utils::Str::Slashed(const std::string& strIN)
+{
+  if ( !strIN.length() )
+    return strIN;
+
+  char c = strIN.at(strIN.length() - 1);
+  if ( c == *asiAlgo_SlashStr )
+    return strIN;
+
+  std::string strOUT(strIN);
+  strOUT.append(asiAlgo_SlashStr);
+  return strOUT;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Returns value of ASI_TEST_DATA environment variable. This variable is used to
+//! refer to the directory containing all data files playing as inputs for
+//! unit tests.
+//! \return value of ASI_TEST_DATA variable.
+std::string asiAlgo_Utils::Env::AsiTestData()
+{
+  return GetVariable(ASI_TEST_DATA);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Returns value of ASI_TEST_DUMPING environment variable. This variable is
+//! used to refer to the directory containing all temporary files utilized by
+//! unit tests.
+//! \return value of ASI_TEST_DUMPING variable.
+std::string asiAlgo_Utils::Env::AsiTestDumping()
+{
+  return GetVariable(ASI_TEST_DUMPING);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Returns value of ASI_TEST_DESCR environment variable. This variable is used
+//! to refer to the directory containing all temporary files utilized by unit
+//! tests.
+//! \return value of ASI_TEST_DESCR variable.
+std::string asiAlgo_Utils::Env::AsiTestDescr()
+{
+  return GetVariable(ASI_TEST_DESCR);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Returns value of the environment variable with the passed name.
+//! \param varName [in] variable name.
+//! \return value of the variable.
+std::string asiAlgo_Utils::Env::GetVariable(const char* varName)
+{
+  TCHAR chNewEnv[BUFSIZE];
+  GetEnvironmentVariable(varName, chNewEnv, BUFSIZE);
+  return chNewEnv;
+}
+
+//-----------------------------------------------------------------------------
+
+std::string asiAlgo_Utils::FaceGeometryName(const TopoDS_Face& face)
+{
+  Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
+  return SurfaceName(surf);
+}
+
+//-----------------------------------------------------------------------------
+
+TCollection_AsciiString
+  asiAlgo_Utils::NamedShapeToString(const TopoDS_Shape&           subShape,
+                                    const int                     globalId,
+                                    const Handle(asiAlgo_Naming)& naming)
+{
+  TCollection_AsciiString msg("Sub-shape: ");
+  msg += ShapeTypeStr(subShape).c_str();
+  msg += "\n\t Global ID: "; msg += globalId;
+  msg += "\n\t Address: ";   msg += ShapeAddr(subShape).c_str();
+  //
+  if ( !naming.IsNull() )
+  {
+    msg += "\n\t Name: ";
+
+    TCollection_AsciiString label;
+    naming->FindName(subShape, label);
+    //
+    if ( !label.IsEmpty() )
+      msg += label;
+    else
+      msg += "<empty>";
+  }
+  //
+  if ( subShape.ShapeType() == TopAbs_EDGE )
+  {
+    const TopoDS_Edge& edge = TopoDS::Edge(subShape);
+
+    // Get host curve.
+    double f, l;
+    Handle(Geom_Curve) curve = BRep_Tool::Curve(edge, f, l);
+    //
+    msg += "\n\t Curve: ";
+    msg += curve->DynamicType()->Name();
+    msg += "\n\t Min parameter: ";
+    msg += curve->FirstParameter();
+    msg += "\n\t Max parameter: ";
+    msg += curve->LastParameter();
+
+    if ( curve->IsInstance( STANDARD_TYPE(Geom_BSplineCurve) ) )
+    {
+      Handle(Geom_BSplineCurve)
+        bcurve = Handle(Geom_BSplineCurve)::DownCast(curve);
+      //
+      msg += "\n\t Degree: ";
+      msg += bcurve->Degree();
+      msg += "\n\t Num poles: ";
+      msg += bcurve->NbPoles();
+    }
+  }
+  //
+  else if ( subShape.ShapeType() == TopAbs_FACE )
+  {
+    const TopoDS_Face& face = TopoDS::Face(subShape);
+
+    // Get host surface.
+    Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
+
+    // Get parametric bounds.
+    double uMin, uMax, vMin, vMax;
+    surf->Bounds(uMin, uMax, vMin, vMax);
+
+    // Dump.
+    msg += "\n\t Surface: ";
+    msg += surf->DynamicType()->Name();
+    msg += "\n\t Min U parameter: ";
+    msg += uMin;
+    msg += "\n\t Max U parameter: ";
+    msg += uMax;
+    msg += "\n\t Min V parameter: ";
+    msg += vMin;
+    msg += "\n\t Max V parameter: ";
+    msg += vMax;
+
+    if ( surf->IsInstance( STANDARD_TYPE(Geom_BSplineSurface) ) )
+    {
+      Handle(Geom_BSplineSurface)
+        bsurf = Handle(Geom_BSplineSurface)::DownCast(surf);
+      //
+      msg += "\n\t Degree U: ";
+      msg += bsurf->UDegree();
+      msg += "\n\t Degree V: ";
+      msg += bsurf->VDegree();
+      msg += "\n\t Num poles U: ";
+      msg += bsurf->NbUPoles();
+      msg += "\n\t Num poles V: ";
+      msg += bsurf->NbVPoles();
+    }
+  }
+
+  return msg;
+}
+
+//-----------------------------------------------------------------------------
+
+TCollection_AsciiString
+  asiAlgo_Utils::OrientationToString(const TopoDS_Shape& shape)
+{
+  return OrientationToString( shape.Orientation() );
+}
+
+//-----------------------------------------------------------------------------
+
+TCollection_AsciiString
+  asiAlgo_Utils::OrientationToString(const TopAbs_Orientation ori)
+{
+  TCollection_AsciiString oriStr;
+
+  // Check orientation.
+  if ( ori == TopAbs_FORWARD )
+    oriStr = "forward";
+  else if ( ori == TopAbs_REVERSED )
+    oriStr = "reversed";
+  else if ( ori == TopAbs_INTERNAL )
+    oriStr = "internal";
+  else if ( ori == TopAbs_EXTERNAL )
+    oriStr = "external";
+
+  return oriStr;
+}
+
+//-----------------------------------------------------------------------------
+
+TCollection_AsciiString
+  asiAlgo_Utils::ContinuityToString(const GeomAbs_Shape cont)
+{
+  TCollection_AsciiString contStr;
+
+  // Check continuity.
+  switch ( cont )
+  {
+    case GeomAbs_C0 : contStr = "C0"; break;
+    case GeomAbs_C1 : contStr = "C1"; break;
+    case GeomAbs_C2 : contStr = "C2"; break;
+    case GeomAbs_C3 : contStr = "C3"; break;
+    case GeomAbs_CN : contStr = "CN"; break;
+    case GeomAbs_G1 : contStr = "G1"; break;
+    case GeomAbs_G2 : contStr = "G2"; break;
+    default: break;
+  }
+
+  return contStr;
+}
+
+//-----------------------------------------------------------------------------
+
+TCollection_AsciiString
+  asiAlgo_Utils::LocationToString(const TopLoc_Location& loc)
+{
+  const gp_Trsf& T      = loc.Transformation();
+  gp_Mat         T_roto = T.VectorialPart();
+  const gp_XYZ&  T_move = T.TranslationPart();
+  gp_TrsfForm    T_form = T.Form();
+
+  TCollection_AsciiString result;
+  result += "\n---\nTransformation: ";
+  if ( T_form == gp_Identity )
+    result += "identity";
+  else if ( T_form == gp_Rotation )
+    result += "rotation";
+  else if ( T_form == gp_Translation )
+    result += "translation";
+  else if ( T_form == gp_PntMirror )
+    result += "point mirror (central symmetry)";
+  else if ( T_form == gp_Ax1Mirror )
+    result += "axis mirror (rotational symmetry)";
+  else if ( T_form == gp_Ax2Mirror )
+    result += "plane mirror (bilateral symmetry)";
+  else if ( T_form == gp_Scale )
+    result += "scaling";
+  else if ( T_form == gp_CompoundTrsf )
+    result += "combination of orthogonal transformations";
+  else
+    result += "non-orthogonal transformation";
+  //
+  result += "\n---\n";
+  result += T_roto(1, 1); result += " "; result += T_roto(1, 2); result += " "; result += T_roto(1, 3); result += "\n";
+  result += T_roto(2, 1); result += " "; result += T_roto(2, 2); result += " "; result += T_roto(2, 3); result += "\n";
+  result += T_roto(3, 1); result += " "; result += T_roto(3, 2); result += " "; result += T_roto(3, 3);
+  result += "\n---\n";
+  result += T_move.X(); result += " "; result += T_move.Y(); result += " "; result += T_move.Z();
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
+std::string asiAlgo_Utils::SurfaceName(const Handle(Geom_Surface)& surf)
+{
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_Plane) ) )
+    return "plane";
+  //
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_CylindricalSurface) ) )
+    return "cylinder";
+  //
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_BezierSurface) ) )
+    return "bezier";
+  //
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_BSplineSurface) ) )
+    return "b-surface";
+  //
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_ConicalSurface) ) )
+    return "cone";
+  //
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_OffsetSurface) ) )
+  {
+    Handle(Geom_OffsetSurface) os = Handle(Geom_OffsetSurface)::DownCast(surf);
+    return std::string("offset on ") + SurfaceName( os->BasisSurface() );
+  }
+  //
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_RectangularTrimmedSurface) ) )
+  {
+    Handle(Geom_RectangularTrimmedSurface) ts = Handle(Geom_RectangularTrimmedSurface)::DownCast(surf);
+    return std::string("rect trimmed on ") + SurfaceName( ts->BasisSurface() );
+  }
+  //
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_SphericalSurface) ) )
+    return "sphere";
+  //
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_SurfaceOfLinearExtrusion) ) )
+    return "ruled";
+  //
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_SurfaceOfRevolution) ) )
+    return "revolution";
+  //
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_SweptSurface) ) )
+    return "sweep";
+  //
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_ToroidalSurface) ) )
+    return "torus";
+
+  return "unknown";
+}
+
+//-----------------------------------------------------------------------------
+
+std::string asiAlgo_Utils::ShapeTypeStr(const TopAbs_ShapeEnum& shapeType)
+{
+  std::string name;
+  if ( shapeType == TopAbs_COMPOUND )
+    name = "COMPOUND";
+  else if ( shapeType == TopAbs_COMPSOLID )
+    name = "COMPSOLID";
+  else if ( shapeType == TopAbs_SOLID )
+    name = "SOLID";
+  else if ( shapeType == TopAbs_SHELL )
+    name = "SHELL";
+  else if ( shapeType == TopAbs_FACE )
+    name = "FACE";
+  else if ( shapeType == TopAbs_WIRE )
+    name = "WIRE";
+  else if ( shapeType == TopAbs_EDGE )
+    name = "EDGE";
+  else if ( shapeType == TopAbs_VERTEX )
+    name = "VERTEX";
+  else
+    name = "SHAPE";
+
+  return name;
+}
+
+//-----------------------------------------------------------------------------
+
+std::string asiAlgo_Utils::ShapeTypeStr(const TopoDS_Shape& shape)
+{
+  return ShapeTypeStr( shape.ShapeType() );
+}
+
+//-----------------------------------------------------------------------------
+
+std::string asiAlgo_Utils::ShapeAddrWithPrefix(const TopoDS_Shape& shape)
+{
+  std::string addr_str = ShapeAddr    ( shape.TShape() );
+  std::string prefix   = ShapeTypeStr ( shape );
+
+  // Notice extra spacing for better visualization
+  return prefix + " [" + addr_str + "]";
+}
+
+//-----------------------------------------------------------------------------
+
+std::string asiAlgo_Utils::ShapeAddr(const Handle(TopoDS_TShape)& tshape)
+{
+  std::string addr_str;
+  std::ostringstream ost;
+  ost << tshape.get();
+  addr_str = ost.str();
+
+  size_t pos = 0;
+  while ( addr_str[pos] == '0' )
+    pos++;
+
+  if ( pos )
+    addr_str = Str::SubStr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
+
+  return addr_str;
+}
+
+//-----------------------------------------------------------------------------
+
+std::string asiAlgo_Utils::ShapeAddr(const TopoDS_Shape& shape)
+{
+  return ShapeAddr( shape.TShape() );
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::IsEmptyShape(const TopoDS_Shape& shape)
+{
+  if ( shape.IsNull() )
+    return true;
+
+  if ( shape.ShapeType() >= TopAbs_FACE )
+    return false;
+
+  int numSubShapes = 0;
+  for ( TopoDS_Iterator it(shape); it.More(); it.Next() )
+    numSubShapes++;
+
+  return numSubShapes == 0;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::IsBasisCircular(const Handle(Geom_Curve)& curve)
+{
+  if ( curve->IsKind( STANDARD_TYPE(Geom_Circle) ) )
+    return true;
+
+  if ( curve->IsInstance( STANDARD_TYPE(Geom_TrimmedCurve) ) )
+  {
+    Handle(Geom_TrimmedCurve) tcurve = Handle(Geom_TrimmedCurve)::DownCast(curve);
+    //
+    if ( tcurve->BasisCurve()->IsKind( STANDARD_TYPE(Geom_Circle) ) )
+      return true;
+  }
+
+  return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -1616,6 +2100,65 @@ TopoDS_Shape asiAlgo_Utils::BooleanGeneralFuse(const TopTools_ListOfShape& objec
   }
 
   return API.Shape();
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::BooleanRemoveFaces(const TopoDS_Shape&  shape,
+                                       const TopoDS_Shape&  face2Remove,
+                                       const bool           runParallel,
+                                       const bool           trackHistory,
+                                       TopoDS_Shape&        result,
+                                       ActAPI_ProgressEntry progress)
+{
+  TopTools_ListOfShape faces2Remove; faces2Remove.Append(face2Remove);
+
+  return BooleanRemoveFaces(shape,
+                            faces2Remove,
+                            runParallel,
+                            trackHistory,
+                            result,
+                            progress);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::BooleanRemoveFaces(const TopoDS_Shape&         shape,
+                                       const TopTools_ListOfShape& faces2Remove,
+                                       const bool                  runParallel,
+                                       const bool                  trackHistory,
+                                       TopoDS_Shape&               result,
+                                       ActAPI_ProgressEntry        progress)
+{
+  // Prepare tool.
+  BRepAlgoAPI_Defeaturing API;
+  //
+  API.SetShape         (shape);
+  API.AddFacesToRemove (faces2Remove);
+  API.SetRunParallel   (runParallel);
+  API.TrackHistory     (trackHistory);
+
+  // Perform.
+  API.Build();
+  //
+  if ( !API.IsDone() )
+  {
+    progress.SendLogMessage(LogErr(Normal) << "Smart face removal is not done.");
+    return false;
+  }
+  //
+  if ( API.HasWarnings() )
+  {
+    std::ostringstream out;
+    API.DumpWarnings(out);
+
+    progress.SendLogMessage( LogWarn(Normal) << "Smart face removal finished with warnings:\n\t %1"
+                                             << out.str().c_str() );
+  }
+
+  // Set result.
+  result = API.Shape();
+  return true;
 }
 
 //-----------------------------------------------------------------------------

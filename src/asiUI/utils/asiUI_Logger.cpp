@@ -32,9 +32,11 @@
 #include <asiUI_Logger.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QColor>
 #include <QDateTime>
 #include <QScrollBar>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

@@ -44,8 +44,10 @@
 #include <asiAlgo_EulerKFMV.h>
 #include <asiAlgo_FairBCurve.h>
 #include <asiAlgo_RebuildEdge.h>
+#include <asiAlgo_Timer.h>
 #include <asiAlgo_TopoAttrOrientation.h>
 #include <asiAlgo_TopoKill.h>
+#include <asiAlgo_Utils.h>
 
 // OCCT includes
 #include <BRep_Builder.hxx>
@@ -606,7 +608,61 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
 {
-  return ENGINE_KillSubShape(interp, argc, argv, TopAbs_FACE);
+  if ( !interp->HasKeyword(argc, argv, "defeat") )
+    return ENGINE_KillSubShape(interp, argc, argv, TopAbs_FACE);
+
+  /* ========================
+   *  Smart face suppression
+   * ======================== */
+
+  // Get face index.
+  const int fidx = atoi(argv[1]);
+  //
+  if ( fidx < 1 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face index should be 1-based.");
+    return TCL_OK;
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+  TopoDS_Shape             part   = part_n->GetShape();
+
+  // Get map of sub-shapes with respect to those the passed index is relevant.
+  const TopoDS_Shape& face2Kill = part_n->GetAAG()->GetMapOfFaces()(fidx);
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Perform Boolean operation for face removal.
+  TopoDS_Shape result;
+  //
+  if ( !asiAlgo_Utils::BooleanRemoveFaces( part,
+                                           face2Kill,
+                                           false, // Parallel mode.
+                                           false, // Whether to track history.
+                                           result,
+                                           interp->GetProgress() ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Smart face removal failed.");
+    return TCL_OK;
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Smart face removal")
+
+  // Modify Data Model
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
+
+  return TCL_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -1263,12 +1319,15 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-face",
     //
-    "kill-face <faceIndex|-name 'faceName'>\n"
+    "kill-face <faceIndex|-name 'faceName'> [-defeat]\n"
     "\t Kills face with the passed 1-based index from the active part.\n"
     "\t This is a pure topological operation which does not attempt to\n"
     "\t modify geometry. Moreover, unlike Euler operator, this function\n"
     "\t does not preserve the topological consistency of the CAD part.\n"
-    "\t We have introduced this function to ground Euler operators on it.",
+    "\t We have introduced this function to ground Euler operators on it.\n"
+    "\t If '-defeat' key is passed, another algorithm of smart face removal\n"
+    "\t will be used. The 'smart' algorithm not only removes a face but also\n"
+    "\t stitches the neighbor faces to produce a sound solid model as a result.",
     //
     __FILE__, group, ENGINE_KillFace);
 

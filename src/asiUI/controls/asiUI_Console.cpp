@@ -219,7 +219,7 @@ bool asiUI_Console::adoptSourceCmd(const TCollection_AsciiString& cmd,
                                    TCollection_AsciiString&       adopted) const
 {
   std::vector<std::string> argv;
-  asiAlgo_Utils::SplitStr(cmd.ToCString(), " ", argv);
+  asiAlgo_Utils::Str::Split(cmd.ToCString(), " ", argv);
 
   // Change back slashes with forward slashes.
   if ( argv[0] == "source" )

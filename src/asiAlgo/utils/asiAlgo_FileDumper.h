@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 13 July 2016
+// Created on: 04 November 2013
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2013-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,57 +28,64 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_PartCallback_h
-#define asiUI_PartCallback_h
+#ifndef asiAlgo_FileDumper_HeaderFile
+#define asiAlgo_FileDumper_HeaderFile
 
-// asiUI includes
-#include <asiUI_ViewerCallback.h>
+// asiAlgo includes
+#include <asiAlgo.h>
 
-// VTK includes
-#include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
+// STD includes
+#include <fstream>
 
-// Qt includes
-#pragma warning(push, 0)
-#include <QObject>
-#pragma warning(pop)
-
-//! Callback for operations in Part viewer.
-class asiUI_PartCallback : public QObject,
-                           public asiUI_ViewerCallback
+//! Utility class providing functionality for dumping of algorithmic data
+//! to ASCII files in different manners.
+class asiAlgo_FileDumper
 {
-  Q_OBJECT
+public:
+
+  asiAlgo_EXPORT
+    asiAlgo_FileDumper();
+
+  asiAlgo_EXPORT
+    asiAlgo_FileDumper(const std::string& filename);
+
+  asiAlgo_EXPORT
+    ~asiAlgo_FileDumper();
 
 public:
 
-  asiUI_EXPORT static asiUI_PartCallback*
-    New();
+  asiAlgo_EXPORT bool
+    Open(const std::string& filename);
 
-  asiUI_EXPORT static asiUI_PartCallback*
-    New(asiUI_Viewer* pViewer);
+  asiAlgo_EXPORT void
+    Dump(const std::string& msg);
 
-  vtkTypeMacro(asiUI_PartCallback, asiUI_ViewerCallback);
+  asiAlgo_EXPORT void
+    Dump(const int          val,
+         const std::string& msg = "");
 
-public:
+  asiAlgo_EXPORT void
+    Dump(const double       val,
+         const std::string& msg = "");
 
-  asiUI_EXPORT virtual void
-    Execute(vtkObject*    pCaller,
-            unsigned long eventId,
-            void*         pCallData);
+  asiAlgo_EXPORT void
+    Dump(const bool         val,
+         const std::string& msg = "");
 
-signals:
+  asiAlgo_EXPORT void
+    Dump(const double*      arr,
+         const int          numElems,
+         const std::string& msg = "");
 
-  void findFace();
-  void findEdge();
-  void refineTessellation();
+  asiAlgo_EXPORT void
+    Dump(const double*      mx,
+         const int          numRows,
+         const int          numCols,
+         const std::string& msg = "");
 
 private:
 
-  asiUI_EXPORT
-    asiUI_PartCallback(asiUI_Viewer* pViewer);
-
-  asiUI_EXPORT
-    ~asiUI_PartCallback();
+  std::ofstream m_FILE; //!< File stream.
 
 };
 

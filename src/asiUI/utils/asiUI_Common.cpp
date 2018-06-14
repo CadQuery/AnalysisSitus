@@ -32,7 +32,9 @@
 #include <asiUI_Common.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QFileDialog>
+#pragma warning(pop)
 
 //! Allows to select filename for graphics format.
 //! \param action [in] open or save.

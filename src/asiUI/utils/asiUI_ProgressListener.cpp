@@ -121,7 +121,7 @@ void asiUI_ProgressListener::onStep()
     {
       double Progress = (double) m_notifier->CurrentProgress() / Capacity;
 
-      pStatusBar->UpdateProgress(Progress * 100);
+      pStatusBar->UpdateProgress( int(Progress * 100) );
     }
     else
       pStatusBar->UpdateProgress(0);

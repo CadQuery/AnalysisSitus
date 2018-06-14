@@ -32,7 +32,9 @@
 #include <asiAlgo_PlaneOnPoints.h>
 
 // Eigen includes
+#pragma warning(disable : 4701 4702)
 #include <Eigen/Dense>
+#pragma warning(default : 4701 4702)
 
 #undef COUT_DEBUG
 #if defined COUT_DEBUG

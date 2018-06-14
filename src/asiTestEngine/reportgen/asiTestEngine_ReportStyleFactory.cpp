@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 13 July 2016
+// Created on: 26 November 2013
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2013-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,58 +28,23 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_PartCallback_h
-#define asiUI_PartCallback_h
+// asiTestEngine includes
+#include <asiTestEngine_ReportStyleFactory.h>
 
-// asiUI includes
-#include <asiUI_ViewerCallback.h>
-
-// VTK includes
-#include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
-
-// Qt includes
-#pragma warning(push, 0)
-#include <QObject>
-#pragma warning(pop)
-
-//! Callback for operations in Part viewer.
-class asiUI_PartCallback : public QObject,
-                           public asiUI_ViewerCallback
+//! CSS style with background color suitable for highlighting of "bad" data.
+//! \return requested style.
+asiTestEngine_ReportStyle asiTestEngine_ReportStyleFactory::Bad()
 {
-  Q_OBJECT
+  asiTestEngine_ReportStyle ResStyle;
+  ResStyle.SetBgColor( asiTestEngine_ReportStyle::Color(240, 100, 100) );
+  return ResStyle;
+}
 
-public:
-
-  asiUI_EXPORT static asiUI_PartCallback*
-    New();
-
-  asiUI_EXPORT static asiUI_PartCallback*
-    New(asiUI_Viewer* pViewer);
-
-  vtkTypeMacro(asiUI_PartCallback, asiUI_ViewerCallback);
-
-public:
-
-  asiUI_EXPORT virtual void
-    Execute(vtkObject*    pCaller,
-            unsigned long eventId,
-            void*         pCallData);
-
-signals:
-
-  void findFace();
-  void findEdge();
-  void refineTessellation();
-
-private:
-
-  asiUI_EXPORT
-    asiUI_PartCallback(asiUI_Viewer* pViewer);
-
-  asiUI_EXPORT
-    ~asiUI_PartCallback();
-
-};
-
-#endif
+//! CSS style with background color suitable for highlighting of "good" data.
+//! \return requested style.
+asiTestEngine_ReportStyle asiTestEngine_ReportStyleFactory::Good()
+{
+  asiTestEngine_ReportStyle ResStyle;
+  ResStyle.SetBgColor( asiTestEngine_ReportStyle::Color(190, 235, 100) );
+  return ResStyle;
+}

@@ -149,7 +149,7 @@ void asiTcl_Interp::GetAvailableCommands(std::vector<asiTcl_CommandInfo>& comman
                                        TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
 
     std::vector<std::string> commandsInGroup;
-    asiAlgo_Utils::SplitStr(commandsInGroupStr, " ", commandsInGroup);
+    asiAlgo_Utils::Str::Split(commandsInGroupStr, " ", commandsInGroup);
 
     for ( size_t c = 0; c < commandsInGroup.size(); ++c )
     {

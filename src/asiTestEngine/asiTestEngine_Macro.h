@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 13 July 2016
+// Created on: 30 November 2013
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2013-2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,58 +28,35 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_PartCallback_h
-#define asiUI_PartCallback_h
+#ifndef asiTestEngine_Macro_HeaderFile
+#define asiTestEngine_Macro_HeaderFile
 
-// asiUI includes
-#include <asiUI_ViewerCallback.h>
+// asiTestEngine includes
+#include <asiTestEngine.h>
 
-// VTK includes
-#include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
-
-// Qt includes
-#pragma warning(push, 0)
-#include <QObject>
-#pragma warning(pop)
-
-//! Callback for operations in Part viewer.
-class asiUI_PartCallback : public QObject,
-                           public asiUI_ViewerCallback
-{
-  Q_OBJECT
-
-public:
-
-  asiUI_EXPORT static asiUI_PartCallback*
-    New();
-
-  asiUI_EXPORT static asiUI_PartCallback*
-    New(asiUI_Viewer* pViewer);
-
-  vtkTypeMacro(asiUI_PartCallback, asiUI_ViewerCallback);
-
-public:
-
-  asiUI_EXPORT virtual void
-    Execute(vtkObject*    pCaller,
-            unsigned long eventId,
-            void*         pCallData);
-
-signals:
-
-  void findFace();
-  void findEdge();
-  void refineTessellation();
-
-private:
-
-  asiUI_EXPORT
-    asiUI_PartCallback(asiUI_Viewer* pViewer);
-
-  asiUI_EXPORT
-    ~asiUI_PartCallback();
-
-};
+#define asiTestEngine_Macro_NAMESPACE    "::"
+#define asiTestEngine_Macro_BUFLEN       256
+#define asiTestEngine_Macro_VAR_MARKER   "%%"
+#define asiTestEngine_Macro_SEC_TITLE    "[TITLE]"
+#define asiTestEngine_Macro_SEC_OVERVIEW ":OVERVIEW]"
+#define asiTestEngine_Macro_SEC_DETAILS  ":DETAILS]"
+#define asiTestEngine_Macro_DOT          '.'
+#define asiTestEngine_Macro_SLASH        '/'
+#define asiTestEngine_Macro_RSLASH       '\\'
+#define asiTestEngine_Macro_WHITESPACE   ' '
+#define asiTestEngine_Macro_COLON        ':'
+#define asiTestEngine_Macro_NL           '\n'
+#define asiTestEngine_Macro_NL_STR       "\n"
+#define asiTestEngine_Macro_MINUS        '-'
+#define asiTestEngine_Macro_BR           "<br>"
+#define asiTestEngine_Macro_SUBSEC_PRE_O "<pre>"
+#define asiTestEngine_Macro_SUBSEC_PRE_C "</pre>"
+#define asiTestEngine_Macro_REPORT_FN    "report"
+#define asiTestEngine_Macro_REPORT_EXT   "html"
+#define asiTestEngine_Macro_DESCR_EXT    "descr"
+#define asiTestEngine_Macro_RESULT       "Result"
+#define asiTestEngine_Macro_TEST         "Test"
+#define asiTestEngine_Macro_FAILED       "Failed"
+#define asiTestEngine_Macro_OK           "Ok"
 
 #endif

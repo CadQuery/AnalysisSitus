@@ -132,7 +132,7 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     std::string label;
     //
     label += "Node ID: ";
-    label += asiAlgo_Utils::ToString(n);
+    label += asiAlgo_Utils::Str::ToString(n);
     label += "\n";
     //
     label += "Shape: ";
@@ -142,12 +142,12 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     if ( pid )
     {
       label += "Sub-shape pedigree ID: ";
-      label += asiAlgo_Utils::ToString(pid);
+      label += asiAlgo_Utils::Str::ToString(pid);
       label += "\n";
     }
     //
     label += "Sub-shape global ID: ";
-    label += asiAlgo_Utils::ToString(gid);
+    label += asiAlgo_Utils::Str::ToString(gid);
     //
     if ( !naming.IsNull() )
     {

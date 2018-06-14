@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 31 March 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -39,8 +39,6 @@
 
 // TBB includes
 #include <concurrent_queue.h>
-
-DEFINE_STANDARD_HANDLE(asiAlgo_Logger, ActAPI_ILogger)
 
 //! Logger for algorithmic messages.
 class asiAlgo_Logger : public ActAPI_ILogger

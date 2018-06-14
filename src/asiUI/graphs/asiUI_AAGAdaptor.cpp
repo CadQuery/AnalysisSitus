@@ -93,7 +93,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
     // Fill property arrays
     std::string faceName = asiAlgo_Utils::FaceGeometryName( TopoDS::Face( Faces(f_idx) ) );
     faceName += ":";
-    faceName += asiAlgo_Utils::ToString<int>(f_idx).c_str();
+    faceName += asiAlgo_Utils::Str::ToString<int>(f_idx).c_str();
     labelArr->InsertNextValue(faceName);
     //
     if ( SelFaces.Contains(f_idx) )

@@ -45,7 +45,9 @@
 #include <vtkSmartPointer.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QObject>
+#pragma warning(pop)
 
 //! Callback for pick operation. Cooperates with VTK Selector via Qt signals
 //! and with VTK window via VTK Command pattern. Therefore, this class is a

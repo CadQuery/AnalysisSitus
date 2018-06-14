@@ -47,7 +47,9 @@
 #include <vtkOrientationMarkerWidget.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QToolBar>
+#pragma warning(pop)
 
 //! Viewer for part.
 class asiUI_ViewerPart : public asiUI_Viewer

@@ -75,7 +75,9 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 
 // Qt include
+#pragma warning(push, 0)
 #include <QGroupBox>
+#pragma warning(pop)
 
 // VTK includes
 #include <vtkActor.h>
@@ -121,6 +123,7 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   m_widgets.pDetachSelected      = new QPushButton("Detach selected faces");
   m_widgets.pDeleteSelected      = new QPushButton("Delete selected faces");
   m_widgets.pDeleteSelectedFull  = new QPushButton("Delete selected faces (FULL)");
+  m_widgets.pDeleteSelectedSmart = new QPushButton("Delete selected faces (smart)");
   m_widgets.pDivideClosedEdges   = new QPushButton("Divide all closed edges");
   m_widgets.pDivideAngle         = new QPushButton("Divide faces by angle");
   m_widgets.pBoundingBox         = new QPushButton("Compute bounding box");
@@ -165,8 +168,9 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   QVBoxLayout* pDyModelingLay   = new QVBoxLayout(pDyModelingGroup);
   //
   pDyModelingLay->addWidget(m_widgets.pDeleteSelected);
-  pDyModelingLay->addWidget(m_widgets.pDetachSelected);
   pDyModelingLay->addWidget(m_widgets.pDeleteSelectedFull);
+  pDyModelingLay->addWidget(m_widgets.pDeleteSelectedSmart);
+  pDyModelingLay->addWidget(m_widgets.pDetachSelected);
   pDyModelingLay->addWidget(m_widgets.pDivideClosedEdges);
   pDyModelingLay->addWidget(m_widgets.pDivideAngle);
   pDyModelingLay->addWidget(m_widgets.pBoundingBox);
@@ -181,22 +185,23 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   this->setLayout(m_pMainLayout);
 
   // Connect signals to slots
-  connect( m_widgets.pShowTOPOGraph,      SIGNAL( clicked() ), SLOT( onShowTOPOGraph       () ) );
-  connect( m_widgets.pShowAAG,            SIGNAL( clicked() ), SLOT( onShowAAG             () ) );
-  connect( m_widgets.pElimSelected,       SIGNAL( clicked() ), SLOT( onElimSelected        () ) );
+  connect( m_widgets.pShowTOPOGraph,       SIGNAL( clicked() ), SLOT( onShowTOPOGraph       () ) );
+  connect( m_widgets.pShowAAG,             SIGNAL( clicked() ), SLOT( onShowAAG             () ) );
+  connect( m_widgets.pElimSelected,        SIGNAL( clicked() ), SLOT( onElimSelected        () ) );
   //
-  connect( m_widgets.pFreeEdges,          SIGNAL( clicked() ), SLOT( onFreeEdges           () ) );
-  connect( m_widgets.pNonManifoldEdges,   SIGNAL( clicked() ), SLOT( onNonManifoldEdges    () ) );
-  connect( m_widgets.pCheckDihAngles,     SIGNAL( clicked() ), SLOT( onCheckDihedralAngles () ) );
-  connect( m_widgets.pFindSmoothEdges,    SIGNAL( clicked() ), SLOT( onFindSmoothEdges     () ) );
-  connect( m_widgets.pFindConvexOnly,     SIGNAL( clicked() ), SLOT( onFindConvexOnly      () ) );
+  connect( m_widgets.pFreeEdges,           SIGNAL( clicked() ), SLOT( onFreeEdges           () ) );
+  connect( m_widgets.pNonManifoldEdges,    SIGNAL( clicked() ), SLOT( onNonManifoldEdges    () ) );
+  connect( m_widgets.pCheckDihAngles,      SIGNAL( clicked() ), SLOT( onCheckDihedralAngles () ) );
+  connect( m_widgets.pFindSmoothEdges,     SIGNAL( clicked() ), SLOT( onFindSmoothEdges     () ) );
+  connect( m_widgets.pFindConvexOnly,      SIGNAL( clicked() ), SLOT( onFindConvexOnly      () ) );
   //
-  connect( m_widgets.pDetachSelected,     SIGNAL( clicked() ), SLOT( onDetachSelected      () ) );
-  connect( m_widgets.pDeleteSelected,     SIGNAL( clicked() ), SLOT( onDeleteSelected      () ) );
-  connect( m_widgets.pDeleteSelectedFull, SIGNAL( clicked() ), SLOT( onDeleteSelectedFull  () ) );
-  connect( m_widgets.pDivideClosedEdges,  SIGNAL( clicked() ), SLOT( onDivideClosedEdges   () ) );
-  connect( m_widgets.pDivideAngle,        SIGNAL( clicked() ), SLOT( onDivideAngle         () ) );
-  connect( m_widgets.pBoundingBox,        SIGNAL( clicked() ), SLOT( onBoundingBox         () ) );
+  connect( m_widgets.pDetachSelected,      SIGNAL( clicked() ), SLOT( onDetachSelected      () ) );
+  connect( m_widgets.pDeleteSelected,      SIGNAL( clicked() ), SLOT( onDeleteSelected      () ) );
+  connect( m_widgets.pDeleteSelectedFull,  SIGNAL( clicked() ), SLOT( onDeleteSelectedFull  () ) );
+  connect( m_widgets.pDeleteSelectedSmart, SIGNAL( clicked() ), SLOT( onDeleteSelectedSmart () ) );
+  connect( m_widgets.pDivideClosedEdges,   SIGNAL( clicked() ), SLOT( onDivideClosedEdges   () ) );
+  connect( m_widgets.pDivideAngle,         SIGNAL( clicked() ), SLOT( onDivideAngle         () ) );
+  connect( m_widgets.pBoundingBox,         SIGNAL( clicked() ), SLOT( onBoundingBox         () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -801,18 +806,15 @@ void asiUI_ControlsFeature::onDeleteSelected()
   asiAlgo_SuppressFaces eraser(part);
   if ( !eraser.Perform(selected, true) )
   {
-    std::cout << "Error: cannot delete faces" << std::endl;
+    m_notifier.SendLogMessage(LogErr(Normal) << "Cannot delete faces.");
     return;
   }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("Faces ONLY deletion")
+  TIMER_COUT_RESULT_NOTIFIER(m_notifier.Access(), "Faces deletion");
 
   const TopoDS_Shape& result = eraser.GetResult();
 
-  // Save to model
-  m_model->Clear();
-  //
   // Update part
   m_model->OpenCommand(); // tx start
   {
@@ -845,18 +847,15 @@ void asiUI_ControlsFeature::onDeleteSelectedFull()
   asiAlgo_SuppressFaces eraser(part);
   if ( !eraser.Perform(selected, false) )
   {
-    std::cout << "Error: cannot delete faces" << std::endl;
+    m_notifier.SendLogMessage(LogErr(Normal) << "Cannot delete faces.");
     return;
   }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("FULL faces deletion")
+  TIMER_COUT_RESULT_NOTIFIER(m_notifier.Access(), "FULL faces deletion");
 
   const TopoDS_Shape& result = eraser.GetResult();
 
-  // Save to model
-  m_model->Clear();
-  //
   // Update part
   m_model->OpenCommand(); // tx start
   {
@@ -865,6 +864,59 @@ void asiUI_ControlsFeature::onDeleteSelectedFull()
   m_model->CommitCommand(); // tx commit
 
   // Update viewer
+  m_partViewer->PrsMgr()->Actualize( part_n.get() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Deletes selected faces and stitches the neighbor ones.
+void asiUI_ControlsFeature::onDeleteSelectedSmart()
+{
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+
+  // Get highlighted faces.
+  TColStd_PackedMapOfInteger selected;
+  asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedFaces(selected);
+
+  // Repack faces.
+  TopTools_ListOfShape faces2Kill;
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(selected); fit.More(); fit.Next() )
+  {
+    const TopoDS_Shape& faceSh = part_n->GetAAG()->GetMapOfFaces()( fit.Key() );
+    faces2Kill.Append(faceSh);
+  }
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Perform Boolean operation for face removal.
+  TopoDS_Shape result;
+  //
+  if ( !asiAlgo_Utils::BooleanRemoveFaces( part,
+                                           faces2Kill,
+                                           false, // Parallel mode.
+                                           true, // Whether to track history.
+                                           result,
+                                           m_notifier ) )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Smart face removal failed.");
+    return;
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(m_notifier.Access(), "Smart faces deletion");
+
+  // Update part.
+  m_model->OpenCommand(); // tx start.
+  {
+    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(result);
+  }
+  m_model->CommitCommand(); // tx commit.
+
+  // Update viewer.
   m_partViewer->PrsMgr()->Actualize( part_n.get() );
 }
 

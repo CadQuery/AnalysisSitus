@@ -31,6 +31,8 @@
 // SALOME platform (see http://www.salome-platform.org/).
 //-----------------------------------------------------------------------------
 
+#pragma warning(disable : 4718)
+
 // Own include
 #include <asiUI_ColorButton.h>
 
@@ -310,3 +312,5 @@ QList<QColor> asiUI_ColorButton::colorsList() const
   }
   return lst;
 }
+
+#pragma warning(default : 4718)

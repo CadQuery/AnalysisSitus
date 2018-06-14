@@ -46,8 +46,10 @@
 #include <TopoDS_Shape.hxx>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QColor>
 #include <QDateTime>
+#pragma warning(pop)
 
 //! GUI utilities.
 class asiUI_Common

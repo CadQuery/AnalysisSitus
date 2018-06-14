@@ -263,7 +263,7 @@ int ENGINE_GetId(const Handle(asiTcl_Interp)& interp,
   // Split by delimeter
   std::vector<std::string> names;
   //
-  asiAlgo_Utils::SplitStr(namePath, "/", names);
+  asiAlgo_Utils::Str::Split(namePath, "/", names);
 
   // Prepare a collection of object names for Active Data
   std::vector<TCollection_ExtendedString> adNames;

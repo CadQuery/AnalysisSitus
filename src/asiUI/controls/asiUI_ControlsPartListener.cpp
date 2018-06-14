@@ -39,7 +39,9 @@
 #include <vtkMapper.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QMainWindow>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

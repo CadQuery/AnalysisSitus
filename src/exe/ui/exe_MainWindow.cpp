@@ -282,8 +282,6 @@ void exe_MainWindow::createDockWindows()
     m_widgets.wLogger = new asiUI_StyledTextEdit(pDockLogWindow);
     //
     pDockLogWindow->setWidget(m_widgets.wLogger);
-    //
-    this->addDockWidget(Qt::BottomDockWidgetArea, pDockLogWindow);
   }
 
   // Create status bar
@@ -326,6 +324,7 @@ void exe_MainWindow::createDockWindows()
     pDockConsoleWindow->setWidget(m_widgets.wConsole);
     //
     this->addDockWidget(Qt::BottomDockWidgetArea, pDockConsoleWindow);
+    this->addDockWidget(Qt::BottomDockWidgetArea, pDockLogWindow);
   }
 }
 

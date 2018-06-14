@@ -41,7 +41,9 @@
 #include <ActAPI_ILogger.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QTextEdit>
+#pragma warning(pop)
 
 //! Logging tool connecting algorithmic logger with GUI.
 class asiUI_Logger : public ActAPI_ILogger

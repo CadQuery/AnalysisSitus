@@ -73,368 +73,151 @@
 //-----------------------------------------------------------------------------
 
 #define asiAlgo_TooSmallValue 1.0e-4
+#define asiAlgo_SlashStr      "/"
 
 //-----------------------------------------------------------------------------
 
 //! Auxiliary functions facilitating working with OCCT topological shapes.
-class asiAlgo_Utils
+namespace asiAlgo_Utils
 {
-public:
-
-  //! Splits the passed string by the given delimiter. Note that the
-  //! passed output vector is not cleaned up beforehand.
-  //! \param source_str [in]  input string to split.
-  //! \param delim_str  [in]  delimiter string.
-  //! \param result     [out] resulting collection of tokens after split.
-  static void SplitStr(const std::string&        source_str,
-                       const std::string&        delim_str,
-                       std::vector<std::string>& result)
+  //! Functions to work with strings.
+  namespace Str
   {
-    // Initialize collection of strings to split
-    std::vector<std::string> chunks;
-    chunks.push_back(source_str);
+    //! Splits the passed string by the given delimiter. Note that the
+    //! passed output vector is not cleaned up beforehand.
+    //! \param source_str [in]  input string to split.
+    //! \param delim_str  [in]  delimiter string.
+    //! \param result     [out] resulting collection of tokens after split.
+    asiAlgo_EXPORT void
+      Split(const std::string&        source_str,
+            const std::string&        delim_str,
+            std::vector<std::string>& result);
 
-    // Split by each delimiter consequently
-    for ( size_t delim_idx = 0; delim_idx < delim_str.length(); ++delim_idx )
+    //! Replaces all occurrences of {what} with {with} in string {str}.
+    //! \param str [in/out] target string.
+    //! \param what [in] sub-string to replace.
+    //! \param with [in] string to replace with.
+    asiAlgo_EXPORT void
+      ReplaceAll(std::string&       str,
+                 const std::string& what,
+                 const std::string& with);
+
+    //! Extracts substring from the passed source.
+    //! \param source [in] input string to extract substring from.
+    //! \param idx_F  [in] 0-based index to start extraction from (inclusively).
+    //! \param length [in] number of characters to extract.
+    //! \return resulting substring.
+    asiAlgo_EXPORT std::string
+      SubStr(const std::string& source,
+             const int          idx_F,
+             const int          length);
+
+    //! Returns the passed string ensuring that it has a trailing slash.
+    asiAlgo_EXPORT std::string
+      Slashed(const std::string& strIN);
+
+    //! Converts the passed value to string. This function is used to
+    //! substitute std::to_string() for compilers incompatible with
+    //! C++ 11.
+    //! \param value [in] value to convert.
+    //! \return string.
+    template <typename T>
+    std::string ToString(T value)
     {
-      std::vector<std::string> new_chunks;
-      const char delim = delim_str[delim_idx];
-
-      // Split each chunk
-      for ( size_t chunk_idx = 0; chunk_idx < chunks.size(); ++chunk_idx )
-      {
-        const std::string& source = chunks[chunk_idx];
-        std::string::size_type currPos = 0, prevPos = 0;
-        while ( (currPos = source.find(delim, prevPos) ) != std::string::npos )
-        {
-          std::string item = source.substr(prevPos, currPos - prevPos);
-          if ( item.size() > 0 )
-          {
-            new_chunks.push_back(item);
-          }
-          prevPos = currPos + 1;
-        }
-        new_chunks.push_back( source.substr(prevPos) );
-      }
-
-      // Set new collection of chunks for splitting by the next delimiter
-      chunks = new_chunks;
+      std::ostringstream os;
+      os << value;
+      return os.str();
     }
+  };
 
-    // Set result
-    result = chunks;
-  }
-
-  //! Extracts substring from the passed source.
-  //! \param source [in] input string to extract substring from.
-  //! \param idx_F  [in] 0-based index to start extraction from (inclusively).
-  //! \param length [in] number of characters to extract.
-  //! \return resulting substring.
-  static std::string SubStr(const std::string& source,
-                            const int          idx_F,
-                            const int          length)
+  //! Functions for working with environment.
+  namespace Env
   {
-    return source.substr(idx_F, length);
-  }
+    asiAlgo_EXPORT
+      std::string AsiTestData();
 
-  //! Converts the passed value to string. This function is used to
-  //! substitute std::to_string() for compilers incompatible with
-  //! C++ 11.
-  //! \param value [in] value to convert.
-  //! \return string.
-  template <typename T>
-  static std::string ToString(T value)
-  {
-    std::ostringstream os;
-    os << value;
-    return os.str();
+    asiAlgo_EXPORT
+      std::string AsiTestDumping();
+
+    asiAlgo_EXPORT
+      std::string AsiTestDescr();
+
+    asiAlgo_EXPORT
+      std::string GetVariable(const char* varName);
   }
 
   //! Returns geometry of a face as a string label.
   //! \param face [in] face to inspect.
   //! \return label.
-  static std::string FaceGeometryName(const TopoDS_Face& face)
-  {
-    Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
-    return SurfaceName(surf);
-  }
+  asiAlgo_EXPORT std::string
+    FaceGeometryName(const TopoDS_Face& face);
 
   //! Converts the passed named shape to string.
-  static TCollection_AsciiString
+  asiAlgo_EXPORT TCollection_AsciiString
     NamedShapeToString(const TopoDS_Shape&           subShape,
                        const int                     globalId,
-                       const Handle(asiAlgo_Naming)& naming)
-  {
-    TCollection_AsciiString msg("Sub-shape: ");
-    msg += ShapeTypeStr(subShape).c_str();
-    msg += "\n\t Global ID: "; msg += globalId;
-    msg += "\n\t Address: ";   msg += ShapeAddr(subShape).c_str();
-    //
-    if ( !naming.IsNull() )
-    {
-      msg += "\n\t Name: ";
-
-      TCollection_AsciiString label;
-      naming->FindName(subShape, label);
-      //
-      if ( !label.IsEmpty() )
-        msg += label;
-      else
-        msg += "<empty>";
-    }
-    //
-    if ( subShape.ShapeType() == TopAbs_EDGE )
-    {
-      const TopoDS_Edge& edge = TopoDS::Edge(subShape);
-
-      // Get host curve.
-      double f, l;
-      Handle(Geom_Curve) curve = BRep_Tool::Curve(edge, f, l);
-      //
-      msg += "\n\t Curve: ";
-      msg += curve->DynamicType()->Name();
-      msg += "\n\t Min parameter: ";
-      msg += curve->FirstParameter();
-      msg += "\n\t Max parameter: ";
-      msg += curve->LastParameter();
-
-      if ( curve->IsInstance( STANDARD_TYPE(Geom_BSplineCurve) ) )
-      {
-        Handle(Geom_BSplineCurve)
-          bcurve = Handle(Geom_BSplineCurve)::DownCast(curve);
-        //
-        msg += "\n\t Degree: ";
-        msg += bcurve->Degree();
-        msg += "\n\t Num poles: ";
-        msg += bcurve->NbPoles();
-      }
-    }
-
-    return msg;
-  }
+                       const Handle(asiAlgo_Naming)& naming);
 
   //! Converts orientation of the given shape to string.
   //! \param shape [in] shape to access orientation.
   //! \return string representation of orientation.
-  static TCollection_AsciiString
-    OrientationToString(const TopoDS_Shape& shape)
-  {
-    return OrientationToString( shape.Orientation() );
-  }
+  asiAlgo_EXPORT TCollection_AsciiString
+    OrientationToString(const TopoDS_Shape& shape);
 
   //! Converts the passed orientation to string.
   //! \param ori [in] orientation to convert.
   //! \return string representation of orientation.
-  static TCollection_AsciiString
-    OrientationToString(const TopAbs_Orientation ori)
-  {
-    TCollection_AsciiString oriStr;
-
-    // Check orientation.
-    if ( ori == TopAbs_FORWARD )
-      oriStr = "forward";
-    else if ( ori == TopAbs_REVERSED )
-      oriStr = "reversed";
-    else if ( ori == TopAbs_INTERNAL )
-      oriStr = "internal";
-    else if ( ori == TopAbs_EXTERNAL )
-      oriStr = "external";
-
-    return oriStr;
-  }
+  asiAlgo_EXPORT TCollection_AsciiString
+    OrientationToString(const TopAbs_Orientation ori);
 
   //! Converts the passed continuity to string.
   //! \param[in] cont continuity.
   //! \return string representation of continuity.
-  static TCollection_AsciiString
-    ContinuityToString(const GeomAbs_Shape cont)
-  {
-    TCollection_AsciiString contStr;
-
-    // Check continuity.
-    switch ( cont )
-    {
-      case GeomAbs_C0 : contStr = "C0"; break;
-      case GeomAbs_C1 : contStr = "C1"; break;
-      case GeomAbs_C2 : contStr = "C2"; break;
-      case GeomAbs_C3 : contStr = "C3"; break;
-      case GeomAbs_CN : contStr = "CN"; break;
-      case GeomAbs_G1 : contStr = "G1"; break;
-      case GeomAbs_G2 : contStr = "G2"; break;
-      default: break;
-    }
-
-    return contStr;
-  }
+  asiAlgo_EXPORT TCollection_AsciiString
+    ContinuityToString(const GeomAbs_Shape cont);
 
   //! Converts the passed location to string.
   //! \param loc [in] location to convert.
   //! \return string representation of location.
-  static TCollection_AsciiString
-    LocationToString(const TopLoc_Location& loc)
-  {
-    const gp_Trsf& T      = loc.Transformation();
-    gp_Mat         T_roto = T.VectorialPart();
-    const gp_XYZ&  T_move = T.TranslationPart();
-    gp_TrsfForm    T_form = T.Form();
-
-    TCollection_AsciiString result;
-    result += "\n---\nTransformation: ";
-    if ( T_form == gp_Identity )
-      result += "identity";
-    else if ( T_form == gp_Rotation )
-      result += "rotation";
-    else if ( T_form == gp_Translation )
-      result += "translation";
-    else if ( T_form == gp_PntMirror )
-      result += "point mirror (central symmetry)";
-    else if ( T_form == gp_Ax1Mirror )
-      result += "axis mirror (rotational symmetry)";
-    else if ( T_form == gp_Ax2Mirror )
-      result += "plane mirror (bilateral symmetry)";
-    else if ( T_form == gp_Scale )
-      result += "scaling";
-    else if ( T_form == gp_CompoundTrsf )
-      result += "combination of orthogonal transformations";
-    else
-      result += "non-orthogonal transformation";
-    //
-    result += "\n---\n";
-    result += T_roto(1, 1); result += " "; result += T_roto(1, 2); result += " "; result += T_roto(1, 3); result += "\n";
-    result += T_roto(2, 1); result += " "; result += T_roto(2, 2); result += " "; result += T_roto(2, 3); result += "\n";
-    result += T_roto(3, 1); result += " "; result += T_roto(3, 2); result += " "; result += T_roto(3, 3);
-    result += "\n---\n";
-    result += T_move.X(); result += " "; result += T_move.Y(); result += " "; result += T_move.Z();
-
-    return result;
-  }
+  asiAlgo_EXPORT TCollection_AsciiString
+    LocationToString(const TopLoc_Location& loc);
 
   //! Returns human-readable surface name.
   //! \param surf [in] surface to inspect.
   //! \return surface name.
-  static std::string SurfaceName(const Handle(Geom_Surface)& surf)
-  {
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_Plane) ) )
-      return "plane";
-    //
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_CylindricalSurface) ) )
-      return "cylinder";
-    //
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_BezierSurface) ) )
-      return "bezier";
-    //
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_BSplineSurface) ) )
-      return "b-surface";
-    //
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_ConicalSurface) ) )
-      return "cone";
-    //
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_OffsetSurface) ) )
-    {
-      Handle(Geom_OffsetSurface) os = Handle(Geom_OffsetSurface)::DownCast(surf);
-      return std::string("offset on ") + SurfaceName( os->BasisSurface() );
-    }
-    //
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_RectangularTrimmedSurface) ) )
-    {
-      Handle(Geom_RectangularTrimmedSurface) ts = Handle(Geom_RectangularTrimmedSurface)::DownCast(surf);
-      return std::string("rect trimmed on ") + SurfaceName( ts->BasisSurface() );
-    }
-    //
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_SphericalSurface) ) )
-      return "sphere";
-    //
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_SurfaceOfLinearExtrusion) ) )
-      return "ruled";
-    //
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_SurfaceOfRevolution) ) )
-      return "revolution";
-    //
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_SweptSurface) ) )
-      return "sweep";
-    //
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_ToroidalSurface) ) )
-      return "torus";
-
-    return "unknown";
-  }
+  asiAlgo_EXPORT std::string
+    SurfaceName(const Handle(Geom_Surface)& surf);
 
   //! Returns shape type as string.
   //! \param shapeType [in] shape type in question.
   //! \return type as string.
-  static std::string ShapeTypeStr(const TopAbs_ShapeEnum& shapeType)
-  {
-    std::string name;
-    if ( shapeType == TopAbs_COMPOUND )
-      name = "COMPOUND";
-    else if ( shapeType == TopAbs_COMPSOLID )
-      name = "COMPSOLID";
-    else if ( shapeType == TopAbs_SOLID )
-      name = "SOLID";
-    else if ( shapeType == TopAbs_SHELL )
-      name = "SHELL";
-    else if ( shapeType == TopAbs_FACE )
-      name = "FACE";
-    else if ( shapeType == TopAbs_WIRE )
-      name = "WIRE";
-    else if ( shapeType == TopAbs_EDGE )
-      name = "EDGE";
-    else if ( shapeType == TopAbs_VERTEX )
-      name = "VERTEX";
-    else
-      name = "SHAPE";
-
-    return name;
-  }
+  asiAlgo_EXPORT std::string
+    ShapeTypeStr(const TopAbs_ShapeEnum& shapeType);
 
   //! Returns shape type as string.
   //! \param shape [in] shape to get type string for.
   //! \return type string.
-  static std::string ShapeTypeStr(const TopoDS_Shape& shape)
-  {
-    return ShapeTypeStr( shape.ShapeType() );
-  }
+  asiAlgo_EXPORT std::string
+    ShapeTypeStr(const TopoDS_Shape& shape);
 
   //! Returns shape address as string with a prefix indicating its type,
   //! e.g. "e05FB0" is an edge and "f780A1" is a face.
   //! \param shape [in] shape to extract the address for.
   //! \return address of TShape as string prefixed by type indicator.
-  static std::string ShapeAddrWithPrefix(const TopoDS_Shape& shape)
-  {
-    std::string addr_str = ShapeAddr    ( shape.TShape() );
-    std::string prefix   = ShapeTypeStr ( shape );
-
-    // Notice extra spacing for better visualization
-    return prefix + " [" + addr_str + "]";
-  }
+  asiAlgo_EXPORT std::string
+    ShapeAddrWithPrefix(const TopoDS_Shape& shape);
 
   //! Returns TShape address as string.
   //! \param tshape [in] TShape pointer to extract the address for.
   //! \return address of TShape as string.
-  static std::string ShapeAddr(const Handle(TopoDS_TShape)& tshape)
-  {
-    std::string addr_str;
-    std::ostringstream ost;
-    ost << tshape.get();
-    addr_str = ost.str();
-
-    size_t pos = 0;
-    while ( addr_str[pos] == '0' )
-      pos++;
-
-    if ( pos )
-      addr_str = SubStr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
-
-    return addr_str;
-  }
+  asiAlgo_EXPORT std::string
+    ShapeAddr(const Handle(TopoDS_TShape)& tshape);
 
   //! Returns TShape address as string.
   //! \param shape [in] shape to extract the address for.
   //! \return address of TShape as string.
-  static std::string ShapeAddr(const TopoDS_Shape& shape)
-  {
-    return ShapeAddr( shape.TShape() );
-  }
+  asiAlgo_EXPORT std::string
+    ShapeAddr(const TopoDS_Shape& shape);
 
   //! Checks face type.
   //! \param[in] face face to check.
@@ -449,39 +232,15 @@ public:
     return false;
   }
 
-  static bool IsEmptyShape(const TopoDS_Shape& shape)
-  {
-    if ( shape.IsNull() )
-      return true;
-
-    if ( shape.ShapeType() >= TopAbs_FACE )
-      return false;
-
-    int numSubShapes = 0;
-    for ( TopoDS_Iterator it(shape); it.More(); it.Next() )
-      numSubShapes++;
-
-    return numSubShapes == 0;
-  }
+  //! Checks whether the passed shape is empty.
+  asiAlgo_EXPORT bool
+    IsEmptyShape(const TopoDS_Shape& shape);
 
   //! Checks whether the curve or its basic curve is circular.
   //! \param[in] curve curve to check.
   //! \return true/false.
-  static bool IsBasisCircular(const Handle(Geom_Curve)& curve)
-  {
-    if ( curve->IsKind( STANDARD_TYPE(Geom_Circle) ) )
-      return true;
-
-    if ( curve->IsInstance( STANDARD_TYPE(Geom_TrimmedCurve) ) )
-    {
-      Handle(Geom_TrimmedCurve) tcurve = Handle(Geom_TrimmedCurve)::DownCast(curve);
-      //
-      if ( tcurve->BasisCurve()->IsKind( STANDARD_TYPE(Geom_Circle) ) )
-        return true;
-    }
-
-    return false;
-  }
+  asiAlgo_EXPORT bool
+    IsBasisCircular(const Handle(Geom_Curve)& curve);
 
   //! Applies the passed transformation to the given shape. Returns another shape
   //! as a result (no deep copy of geometry is performed, only location is
@@ -494,7 +253,7 @@ public:
   //! \param theAngleB [in] rotation angle B.
   //! \param theAngleC [in] rotation angle C.
   //! \return relocated shape.
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     ApplyTransformation(const TopoDS_Shape& theShape,
                         const double        theXPos,
                         const double        theYPos,
@@ -513,7 +272,7 @@ public:
   //! \param theAngleB [in] rotation angle B.
   //! \param theAngleC [in] rotation angle C.
   //! \return OCCT transformation structure.
-  asiAlgo_EXPORT static gp_Trsf
+  asiAlgo_EXPORT gp_Trsf
     Transformation(const double theXPos,
                    const double theYPos,
                    const double theZPos,
@@ -526,7 +285,7 @@ public:
   //! \param theTransform [in] transformation to apply.
   //! \param doCopy       [in] indicates whether to construct a deep copy.
   //! \return transformed shape.
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     ApplyTransformation(const TopoDS_Shape& theShape,
                         const gp_Trsf&      theTransform,
                         const bool          doCopy);
@@ -535,7 +294,7 @@ public:
   //! only one not-null shape, this single shape is returned as-is.
   //! \param[in] shapes source shapes.
   //! \return resulting compound.
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     AssembleShapes(const TopTools_ListOfShape& shapes);
 
   //! Creates a compound from the given sequence of shapes. If the sequence
@@ -543,7 +302,7 @@ public:
   //! If the sequence is NULL or empty, then null shape is returned.
   //! \param[in] shapes source shapes.
   //! \return resulting compound.
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     AssembleShapes(const Handle(TopTools_HSequenceOfShape)& shapes);
 
   //! Calculates bounding box for the given shape.
@@ -556,7 +315,7 @@ public:
   //! \param ZMax      [out] max Z.
   //! \param tolerance [in]  tolerance to enlarge the bounding box with.
   //! \return false if bounding box is void.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     Bounds(const TopoDS_Shape& shape,
            double& XMin, double& YMin, double& ZMin,
            double& XMax, double& YMax, double& ZMax,
@@ -572,7 +331,7 @@ public:
   //! \param ZMax      [out] max Z.
   //! \param tolerance [in]  tolerance to enlarge the bounding box with.
   //! \return false if bounding box is void.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     Bounds(const Handle(Poly_Triangulation)& tris,
            double& XMin, double& YMin, double& ZMin,
            double& XMax, double& YMax, double& ZMax,
@@ -582,7 +341,7 @@ public:
   //! \param shape   [in] shape to check.
   //! \param Journal [in] Logger instance to cumulate all meaningful messages.
   //! \return true if shape is valid, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     CheckShape(const TopoDS_Shape&  shape,
                ActAPI_ProgressEntry Journal);
 
@@ -592,7 +351,7 @@ public:
   //! \param coincConfusion3d [in] coincidence confusion tolerance. This value
   //!                              is used to recognize points as coincident.
   //! \return true if face is Ok, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     HasAllClosedWires(const TopoDS_Face& face,
                       const double       coincConfusion3d);
 
@@ -602,27 +361,27 @@ public:
   //! \param coincConfusion3d [in] coincidence confusion tolerance. This value
   //!                              is used to recognize points as coincident.
   //! \return true if wire is Ok, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     IsClosedGeometrically(const TopoDS_Wire& wire,
                           const TopoDS_Face& face,
                           const double       coincConfusion3d);
 
   //! Checks whether the passed face contains any edges without vertices.
   //! \param face [in] face to check.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     HasEdgesWithoutVertices(const TopoDS_Face& face);
 
   //! Returns maximum tolerance value bound to the passed shape.
   //! \param shape [in] shape to check.
   //! \return maximum tolerance value.
-  asiAlgo_EXPORT static double
+  asiAlgo_EXPORT double
     MaxTolerance(const TopoDS_Shape& shape);
 
   //! Reads CAD model from native OCCT b-rep file.
   //! \param filename [in]  filename.
   //! \param shape    [out] CAD model retrieved from file.
   //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     ReadBRep(const TCollection_AsciiString& filename,
              TopoDS_Shape&                  shape);
 
@@ -630,7 +389,7 @@ public:
   //! \param theShape    [in] shape to write.
   //! \param theFilename [in] filename.
   //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     WriteBRep(const TopoDS_Shape&            shape,
               const TCollection_AsciiString& filename);
 
@@ -646,7 +405,7 @@ public:
   //! \param nbInnerWires [out] number of inner wires.
   //! \param nbEdges      [out] number of edges.
   //! \param nbVertexes   [out] number of vertices.
-  asiAlgo_EXPORT static void
+  asiAlgo_EXPORT void
     ShapeSummary(const TopoDS_Shape& shape,
                  int&                nbCompsolids,
                  int&                nbCompounds,
@@ -664,27 +423,27 @@ public:
   //! of sub-shapes of each type.
   //! \param shape [in]  shape to analyze.
   //! \param info  [out] shape summary as string.
-  asiAlgo_EXPORT static void
+  asiAlgo_EXPORT void
     ShapeSummary(const TopoDS_Shape&      shape,
                  TCollection_AsciiString& info);
 
   //! Creates a circular wire with the given radius.
   //! \param radius [in] radius of the host circle.
   //! \return created wire.
-  asiAlgo_EXPORT static TopoDS_Wire
+  asiAlgo_EXPORT TopoDS_Wire
     CreateCircularWire(const double radius);
 
   //! Skins a surface through the passed sections.
   //! \param wires [in] sections to skin.
   //! \return skinning result.
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     MakeSkin(const TopTools_SequenceOfShape& wires);
 
   //! Performs sewing.
   //! \param[in] shape     shape to sew.
   //! \param[in] tolerance sewing tolerance.
   //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     Sew(const TopoDS_Shape& shape,
         const double        tolerance,
         TopoDS_Shape&       result);
@@ -692,7 +451,7 @@ public:
   //! Performs "same domain" expansion on faces and edges.
   //! \param shape [in/out] shape to modify.
   //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     MaximizeFaces(TopoDS_Shape& shape);
 
   //! Interpolates the given collection of points with B-curve of the
@@ -701,12 +460,12 @@ public:
   //! \param p      [in]  degree to use.
   //! \param result [out] interpolant.
   //! \return true om case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     InterpolatePoints(const std::vector<gp_Pnt>& points,
                       const int                  p,
                       Handle(Geom_BSplineCurve)& result);
 
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     InterpolatePoints(const Handle(asiAlgo_BaseCloud<double>)& points,
                       const int                                p,
                       Handle(Geom_BSplineCurve)&               result);
@@ -716,63 +475,79 @@ public:
   //! \param Tool   [in] tool to cut out.
   //! \param fuzzy  [in] fuzzy tolerance.
   //! \return result shape.
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     BooleanCut(const TopoDS_Shape& Object,
                const TopoDS_Shape& Tool,
                const double        fuzz = 0.0);
 
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     BooleanCut(const TopoDS_Shape&         Object,
                const TopTools_ListOfShape& Tools,
                const bool                  isParallel,
                const double                fuzz = 0.0);
 
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     BooleanCut(const TopoDS_Shape&         Object,
                const TopTools_ListOfShape& Tools,
                const bool                  isParallel,
                const double                fuzz,
                BRepAlgoAPI_Cut&            API);
 
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     BooleanFuse(const TopTools_ListOfShape& objects);
 
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     BooleanIntersect(const TopTools_ListOfShape& objects);
 
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     BooleanGeneralFuse(const TopTools_ListOfShape& objects,
                        const double                fuzz,
                        BOPAlgo_Builder&            API);
 
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     BooleanGeneralFuse(const TopTools_ListOfShape& objects,
                        const double                fuzz);
 
-  asiAlgo_EXPORT static void
+  asiAlgo_EXPORT bool
+    BooleanRemoveFaces(const TopoDS_Shape&  shape,
+                       const TopoDS_Shape&  face2Remove,
+                       const bool           runParallel,
+                       const bool           trackHistory,
+                       TopoDS_Shape&        result,
+                       ActAPI_ProgressEntry progress);
+
+  asiAlgo_EXPORT bool
+    BooleanRemoveFaces(const TopoDS_Shape&         shape,
+                       const TopTools_ListOfShape& faces2Remove,
+                       const bool                  runParallel,
+                       const bool                  trackHistory,
+                       TopoDS_Shape&               result,
+                       ActAPI_ProgressEntry        progress);
+
+  asiAlgo_EXPORT void
     ExplodeBySolids(const TopoDS_Shape&   model,
                     TopTools_ListOfShape& solids);
 
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     InvertFace(const TopoDS_Face&    face,
                TopTools_ListOfShape& inverted);
 
-  asiAlgo_EXPORT static double
+  asiAlgo_EXPORT double
     AutoSelectLinearDeflection(const TopoDS_Shape& model);
 
-  asiAlgo_EXPORT static double
+  asiAlgo_EXPORT double
     AutoSelectAngularDeflection(const TopoDS_Shape& model);
 
   //! Constructs B-spline curve of degree 1 from the passed poles.
   //! \param[in] trace poles of the curve to construct.
   //! \return 1-degree spline curve.
-  asiAlgo_EXPORT static Handle(Geom_BSplineCurve)
+  asiAlgo_EXPORT Handle(Geom_BSplineCurve)
     PolylineAsSpline(const std::vector<gp_XYZ>& trace);
 
   //! Constructs 2D B-spline curve of degree 1 from the passed poles.
   //! \param[in] trace poles of the curve to construct.
   //! \return 1-degree 2D spline curve.
-  asiAlgo_EXPORT static Handle(Geom2d_BSplineCurve)
+  asiAlgo_EXPORT Handle(Geom2d_BSplineCurve)
     PolylineAsSpline(const std::vector<gp_XY>& trace);
 
   //! Checks whether the given shape contains the given sub-shape. This method
@@ -780,20 +555,20 @@ public:
   //! \param[in] shape    master shape to check.
   //! \param[in] subShape sub-shape in question.
   //! \return true/false.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     Contains(const TopoDS_Shape& shape,
              const TopoDS_Shape& subShape);
 
-  asiAlgo_EXPORT static TopoDS_Shape
+  asiAlgo_EXPORT TopoDS_Shape
     GetImage(const TopoDS_Shape&       source,
              BRepBuilderAPI_MakeShape& API);
 
-  asiAlgo_EXPORT static Handle(Poly_Triangulation)
+  asiAlgo_EXPORT Handle(Poly_Triangulation)
     CreateTriangle(const gp_Pnt& P0,
                    const gp_Pnt& P1,
                    const gp_Pnt& P2);
 
-  asiAlgo_EXPORT static void
+  asiAlgo_EXPORT void
     HexagonPoles(const gp_XY& center,
                  const double dist2Pole,
                  gp_XY&       P1,
@@ -808,7 +583,7 @@ public:
   //! \param[in]  dist2Pole radius of circumcircle.
   //! \param[in]  numPoles  number of poles in the resulting regular polygon.
   //! \param[out] poles     calculated poles.
-  asiAlgo_EXPORT static void
+  asiAlgo_EXPORT void
     PolygonPoles(const gp_XY&        center,
                  const double        dist2Pole,
                  const int           numPoles,
@@ -827,7 +602,7 @@ public:
   //! \param[out] vectors computed normal field.
   //!
   //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     CalculateFaceNormals(const TopoDS_Face&                face,
                          Handle(asiAlgo_BaseCloud<float>)& points,
                          Handle(asiAlgo_BaseCloud<float>)& vectors);
@@ -844,7 +619,7 @@ public:
   //!                  modeling space.
   //!
   //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     GetFaceAnyInteriorPoint(const TopoDS_Face& face,
                             gp_Pnt2d&          uv,
                             gp_Pnt&            xyz);
@@ -853,7 +628,7 @@ public:
   //! output stream.
   //! \param[in]  surf parametric surface in question.
   //! \param[out] out  output stream.
-  asiAlgo_EXPORT static void
+  asiAlgo_EXPORT void
     PrintSurfaceDetails(const Handle(Geom_Surface)& surf,
                         Standard_OStream&           out);
 
@@ -871,7 +646,7 @@ public:
   //!
   //! \return false if a comb cannot be calculated. NOTE: the output argument
   //!         <p> will be calculated anyway.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     CalculateCurvatureComb(const Handle(Geom_Curve)& curve,
                            const double              u,
                            const double              curvAmpl,
@@ -894,7 +669,7 @@ public:
   //! \param[out] combsOk    statuses of combs calculation.
   //!
   //! \return false if combs calculation is not possible on the passed data.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     CalculateCurvatureCombs(const Handle(Geom_Curve)& curve,
                             const double              f,
                             const double              l,
@@ -916,7 +691,7 @@ public:
   //!                      input curve instead of directly modifying it.
   //! \param[out] result   reparametrized curve.
   //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     ReparametrizeBSpl(const Handle(Geom2d_Curve)&  curve,
                       const double                 newFirst,
                       const double                 newLast,
@@ -932,7 +707,7 @@ public:
   //! \param[in]  t    parameter on the edge's curve to evaluate curvature for.
   //! \param[out] k    evaluated curvature.
   //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     EvaluateAlongCurvature(const TopoDS_Face& face,
                            const TopoDS_Edge& edge,
                            const double       t,
@@ -946,7 +721,7 @@ public:
   //! \param[in]  edge edge of interest.
   //! \param[out] k    evaluated curvature.
   //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     EvaluateAlongCurvature(const TopoDS_Face& face,
                            const TopoDS_Edge& edge,
                            double&            k);
@@ -959,7 +734,7 @@ public:
   //! \param[out] r      equivalent curvature radius.
   //! \param[out] center center of curvature.
   //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     CalculateMidCurvature(const Handle(Geom_Curve)& curve,
                           gp_Pnt&                   P,
                           gp_Dir&                   T,
@@ -973,7 +748,7 @@ public:
   //! \param[out] r      equivalent curvature radius.
   //! \param[out] center center of curvature.
   //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     CalculateMidCurvature(const Handle(Geom_Curve)& curve,
                           double&                   k,
                           double&                   r,
@@ -984,15 +759,10 @@ public:
   //! \param[out] k     evaluated curvature.
   //! \param[out] r     equivalent curvature radius.
   //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     CalculateMidCurvature(const Handle(Geom_Curve)& curve,
                           double&                   k,
                           double&                   r);
-
-private:
-
-  asiAlgo_Utils() = delete;
-  asiAlgo_Utils(const asiAlgo_Utils&) = delete;
 
 };
 

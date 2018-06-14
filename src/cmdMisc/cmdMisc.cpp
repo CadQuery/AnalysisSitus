@@ -76,6 +76,8 @@
 
 #ifdef USE_MOBIUS
   #include <mobius/cascade_BSplineCurve3D.h>
+  #include <mobius/cascade_BSplineSurface.h>
+  #include <mobius/core_HeapAlloc.h>
 #endif
 
 #undef DRAW_DEBUG
@@ -1259,7 +1261,7 @@ int MISC_TestEvalCurve(const Handle(asiTcl_Interp)& interp,
                        int                          argc,
                        const char**                 argv)
 {
-  if ( argc < 4 || argc > 5 )
+  if ( argc < 5 || argc > 6 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -1299,6 +1301,9 @@ int MISC_TestEvalCurve(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
+  // Get order of derivative to compute.
+  const int order = atoi(argv[4]);
+
   // Check whether Mobius evaluation is requested.
   bool isMobius = interp->HasKeyword(argc, argv, "mobius");
 
@@ -1309,16 +1314,16 @@ int MISC_TestEvalCurve(const Handle(asiTcl_Interp)& interp,
   {
     TIMER_GO
 
-    gp_Pnt eval_P;
+    gp_Vec eval_DN;
     for ( int i = 0; i < numIters; ++i )
     {
-      occtCurve->D0(u, eval_P);
+      eval_DN = occtCurve->DN(u, order);
     }
 
     TIMER_FINISH
     TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Curve evaluation OCCT")
 
-    interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
+    interp->GetPlotter().REDRAW_VECTOR_AT("eval_DN", gp::Origin(), eval_DN, Color_Yellow);
   }
   else
   {
@@ -1345,14 +1350,135 @@ int MISC_TestEvalCurve(const Handle(asiTcl_Interp)& interp,
 
     TIMER_GO
 
-    mobius::xyz eval_P;
+    // Prepare matrix to hold evaluation results.
+    mobius::core_HeapAlloc2D<double> Alloc;
+    double** dN = Alloc.Allocate(mobCurve->Degree() + 1,
+                                 mobCurve->Degree() + 1,
+                                 true);
+
+    // Evaluate.
+    mobius::xyz eval_DN;
     for ( int i = 0; i < numIters; ++i )
     {
-      mobCurve->Eval(u, eval_P);
+      mobCurve->Eval_Dk(dN, u, order, eval_DN);
     }
 
     TIMER_FINISH
     TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Curve evaluation Mobius")
+
+    interp->GetPlotter().REDRAW_VECTOR_AT("eval_DN",
+                                          gp::Origin(),
+                                          gp_Vec( eval_DN.X(), eval_DN.Y(), eval_DN.Z() ),
+                                          Color_Yellow);
+#endif
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc < 5 || argc > 6 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Surface Node by name.
+  Handle(ActAPI_INode) node = interp->GetModel()->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Get surface.
+  Handle(Geom_Surface) occtSurface = surfNode->GetSurface();
+  //
+  if ( occtSurface.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is NULL.");
+    return TCL_OK;
+  }
+
+  // Get parameter pair.
+  const double u = atof(argv[2]);
+  const double v = atof(argv[3]);
+
+  // Get number of iterations.
+  const int numIters = atoi(argv[4]);
+  //
+  if ( numIters <= 0 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Number of iterations should be positive.");
+    return TCL_OK;
+  }
+
+  // Get order of derivative to compute.
+  const int order = atoi(argv[5]);
+
+  // Check whether Mobius evaluation is requested.
+  bool isMobius = interp->HasKeyword(argc, argv, "mobius");
+
+  TIMER_NEW
+
+  // Evaluate surface.
+  if ( !isMobius )
+  {
+    TIMER_GO
+
+    gp_Pnt eval_P;
+    for ( int i = 0; i < numIters; ++i )
+    {
+      occtSurface->D0(u, v, eval_P);
+    }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Surface evaluation OCCT")
+
+    interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
+  }
+  else
+  {
+#ifndef USE_MOBIUS
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius module is disabled.");
+    return TCL_ERROR;
+#else
+
+    Handle(Geom_BSplineSurface)
+      occtBSurf = Handle(Geom_BSplineSurface)::DownCast(occtSurface);
+    //
+    if ( occtBSurf.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a B-surface.");
+      return TCL_OK;
+    }
+
+    // Convert to Mobius surface.
+    mobius::cascade_BSplineSurface converter(occtBSurf);
+    converter.DirectConvert();
+    //
+    const mobius::Ptr<mobius::bsurf>&
+      mobBSurf = converter.GetMobiusSurface();
+
+    TIMER_GO
+
+    mobius::xyz eval_P;
+    for ( int i = 0; i < numIters; ++i )
+    {
+      mobBSurf->Eval(u, v, eval_P);
+    }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Surface evaluation Mobius")
 
     interp->GetPlotter().REDRAW_POINT("eval_P",
                                        gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
@@ -1457,16 +1583,27 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     //
     __FILE__, group, MISC_Test);
 
-    //-------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
   interp->AddCommand("test-eval-curve",
     //
-    "test-eval-curve curveName u num [-mobius]\n"
+    "test-eval-curve curveName u num order [-mobius]\n"
     "\t Evaluates curve <curveName> for the given parameter value <u>.\n"
     "\t If <-mobius> keyword is used, evaluation is performed using Mobius\n"
     "\t functions. The argument <num> specifies how many iterations to use.\n"
     "\t This function is used to test performance of curve evaluation.",
     //
     __FILE__, group, MISC_TestEvalCurve);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-eval-surf",
+    //
+    "test-eval-surf surfName u v num order [-mobius]\n"
+    "\t Evaluates surface <surfName> for the given parameter pair <u, v>.\n"
+    "\t If <-mobius> keyword is used, evaluation is performed using Mobius\n"
+    "\t functions. The argument <num> specifies how many iterations to use.\n"
+    "\t This function is used to test performance of surface evaluation.",
+    //
+    __FILE__, group, MISC_TestEvalSurf);
 }
 
 // Declare entry point

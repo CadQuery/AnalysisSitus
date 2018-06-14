@@ -19,6 +19,8 @@ endif()
 
 set (H_FILES
   cmdEngine.h
+  BRepOffset_MakeSimpleOffset1.hxx
+  BRepOffset_SimpleOffset1.hxx
 )
 set (CPP_FILES
   cmdEngine.cpp
@@ -30,6 +32,8 @@ set (CPP_FILES
   cmdEngine_Modeling.cpp
   cmdEngine_Naming.cpp
   cmdEngine_Viewer.cpp
+  BRepOffset_SimpleOffset1.cxx
+  BRepOffset_MakeSimpleOffset1.cxx
 )
 
 #------------------------------------------------------------------------------

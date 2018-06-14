@@ -49,7 +49,7 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepOffset.hxx>
 #include <BRepOffset_MakeOffset.hxx>
-#include <BRepOffset_MakeSimpleOffset.hxx>
+#include <BRepOffset_MakeSimpleOffset1.hxx>
 #include <Precision.hxx>
 #include <TopoDS.hxx>
 
@@ -105,7 +105,7 @@ int ENGINE_OffsetShell(const Handle(asiTcl_Interp)& interp,
   if ( isSimple )
   {
     // Initialize
-    BRepOffset_MakeSimpleOffset mkOffset;
+    BRepOffset_MakeSimpleOffset1 mkOffset;
     mkOffset.Initialize(partShape, offsetVal);
     mkOffset.SetBuildSolidFlag(isSolid);
     //

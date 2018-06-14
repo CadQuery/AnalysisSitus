@@ -42,10 +42,14 @@ static const Standard_Integer NCONTROL=22;
 //function : BRepOffset_SimpleOffset1
 //purpose  : Constructor
 //=============================================================================
-BRepOffset_SimpleOffset1::BRepOffset_SimpleOffset1(const TopoDS_Shape& theInputShape,
-                                                 const Standard_Real theOffsetValue,
-                                                 const Standard_Real theTolerance)
-: myOffsetValue(theOffsetValue),
+BRepOffset_SimpleOffset1::BRepOffset_SimpleOffset1(ActAPI_ProgressEntry progress,
+                                                   ActAPI_PlotterEntry  plotter,
+                                                   const TopoDS_Shape& theInputShape,
+                                                   const Standard_Real theOffsetValue,
+                                                   const Standard_Real theTolerance)
+: m_progress(progress),
+  m_plotter(plotter),
+  myOffsetValue(theOffsetValue),
   myTolerance(theTolerance)
 {
   FillOffsetData(theInputShape);

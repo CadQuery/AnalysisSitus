@@ -26,6 +26,8 @@
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <NCollection_DataMap.hxx>
 
+#include <ActAPI_IAlgorithm.h>
+
 
 class BRepOffset_SimpleOffset1;
 DEFINE_STANDARD_HANDLE(BRepOffset_SimpleOffset1, BRepTools_Modification)
@@ -49,9 +51,11 @@ public:
   //! @param theInputShape shape to be offset
   //! @param theOffsetValue offset distance (signed)
   //! @param theTolerance tolerance for handling singular points
-  Standard_EXPORT BRepOffset_SimpleOffset1(const TopoDS_Shape& theInputShape,
-                                          const Standard_Real theOffsetValue,
-                                          const Standard_Real theTolerance);
+  Standard_EXPORT BRepOffset_SimpleOffset1(ActAPI_ProgressEntry progress,
+                                           ActAPI_PlotterEntry  plotter,
+                                           const TopoDS_Shape& theInputShape,
+                                           const Standard_Real theOffsetValue,
+                                           const Standard_Real theTolerance);
 
   //! Returns Standard_True  if  the face  <F> has  been
   //! modified.  In this  case, <S> is the new geometric
@@ -185,6 +189,9 @@ private:
 
   //! Tolerance.
   Standard_Real myTolerance;
+
+  ActAPI_ProgressEntry m_progress;
+  ActAPI_PlotterEntry  m_plotter;
 };
 
 #endif // _BRepOffset_SimpleOffset1_HeaderFile

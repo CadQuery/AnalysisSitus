@@ -49,8 +49,10 @@
 //function : BRepOffset_MakeSimpleOffset1
 //purpose  : Constructor
 //=============================================================================
-BRepOffset_MakeSimpleOffset1::BRepOffset_MakeSimpleOffset1()
-: myOffsetValue(0.),
+BRepOffset_MakeSimpleOffset1::BRepOffset_MakeSimpleOffset1(ActAPI_ProgressEntry progress,
+                                                           ActAPI_PlotterEntry  plotter)
+: ActAPI_IAlgorithm(progress, plotter),
+  myOffsetValue(0.),
   myTolerance(Precision::Confusion()),
   myIsBuildSolid(Standard_False),
   myMaxAngle(0.0),
@@ -64,9 +66,12 @@ BRepOffset_MakeSimpleOffset1::BRepOffset_MakeSimpleOffset1()
 //function : BRepOffset_MakeSimpleOffset1
 //purpose  : Constructor
 //=============================================================================
-BRepOffset_MakeSimpleOffset1::BRepOffset_MakeSimpleOffset1(const TopoDS_Shape& theInputShape,
-                                                         const Standard_Real theOffsetValue)
-: myInputShape(theInputShape),
+BRepOffset_MakeSimpleOffset1::BRepOffset_MakeSimpleOffset1(ActAPI_ProgressEntry progress,
+                                                           ActAPI_PlotterEntry  plotter,
+                                                           const TopoDS_Shape& theInputShape,
+                                                           const Standard_Real theOffsetValue)
+: ActAPI_IAlgorithm(progress, plotter),
+  myInputShape(theInputShape),
   myOffsetValue(theOffsetValue),
   myTolerance(Precision::Confusion()),
   myIsBuildSolid(Standard_False),
@@ -82,7 +87,7 @@ BRepOffset_MakeSimpleOffset1::BRepOffset_MakeSimpleOffset1(const TopoDS_Shape& t
 //purpose  :
 //=============================================================================
 void BRepOffset_MakeSimpleOffset1::Initialize(const TopoDS_Shape& theInputShape,
-                                             const Standard_Real theOffsetValue)
+                                              const Standard_Real theOffsetValue)
 {
   myInputShape = theInputShape;
   myOffsetValue = theOffsetValue;
@@ -180,7 +185,7 @@ void BRepOffset_MakeSimpleOffset1::Perform()
     ComputeMaxAngle();
 
   myBuilder.Init(myInputShape);
-  Handle(BRepOffset_SimpleOffset1) aMapper = new BRepOffset_SimpleOffset1(myInputShape, myOffsetValue, myTolerance);
+  Handle(BRepOffset_SimpleOffset1) aMapper = new BRepOffset_SimpleOffset1(m_progress, m_plotter, myInputShape, myOffsetValue, myTolerance);
   myBuilder.Perform(aMapper);
 
   if (!myBuilder.IsDone())

@@ -27,6 +27,8 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Shape.hxx>
 
+#include <ActAPI_IAlgorithm.h>
+
 
 enum BRepOffsetSimple_Status
 {
@@ -57,17 +59,20 @@ enum BRepOffsetSimple_Status
 //! It should be noted that the actual tolerance growth depends on the offset distance and the quality of 
 //! joints between the input faces. Anyway the good input shell (smooth connections between adjacent faces)
 //! will lead to good result.
-class BRepOffset_MakeSimpleOffset1
+class BRepOffset_MakeSimpleOffset1 : public ActAPI_IAlgorithm
 {
 public:
 
 
   //! Constructor. Does nothing.
-  Standard_EXPORT BRepOffset_MakeSimpleOffset1();
+  Standard_EXPORT BRepOffset_MakeSimpleOffset1(ActAPI_ProgressEntry progress,
+                                               ActAPI_PlotterEntry  plotter);
 
   //! Constructor.
-  Standard_EXPORT BRepOffset_MakeSimpleOffset1(const TopoDS_Shape& theInputShape,
-                                              const Standard_Real theOffsetValue);
+  Standard_EXPORT BRepOffset_MakeSimpleOffset1(ActAPI_ProgressEntry progress,
+                                               ActAPI_PlotterEntry  plotter,
+                                               const TopoDS_Shape& theInputShape,
+                                               const Standard_Real theOffsetValue);
 
   //! Initialies shape for modifications.
   Standard_EXPORT void Initialize(const TopoDS_Shape& theInputShape,

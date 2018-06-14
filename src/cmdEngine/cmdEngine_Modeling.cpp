@@ -105,7 +105,7 @@ int ENGINE_OffsetShell(const Handle(asiTcl_Interp)& interp,
   if ( isSimple )
   {
     // Initialize
-    BRepOffset_MakeSimpleOffset1 mkOffset;
+    BRepOffset_MakeSimpleOffset1 mkOffset( interp->GetProgress(), interp->GetPlotter() );
     mkOffset.Initialize(partShape, offsetVal);
     mkOffset.SetBuildSolidFlag(isSolid);
     //

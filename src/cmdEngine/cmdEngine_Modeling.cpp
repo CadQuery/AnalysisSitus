@@ -49,6 +49,7 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepOffset.hxx>
 #include <BRepOffset_MakeOffset.hxx>
+//#include <BRepOffset_MakeSimpleOffset.hxx>
 #include <BRepOffset_MakeSimpleOffset1.hxx>
 #include <Precision.hxx>
 #include <TopoDS.hxx>

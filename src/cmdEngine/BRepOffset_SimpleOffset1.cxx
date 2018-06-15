@@ -35,6 +35,8 @@
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
 
+#include <Geom_BSplineCurve.hxx>
+
 static const Standard_Integer NCONTROL=22;
 
 
@@ -112,10 +114,18 @@ Standard_Boolean BRepOffset_SimpleOffset1::NewPoint (const TopoDS_Vertex& V,
   if (!myVertexInfo.IsBound(V))
     return Standard_False;
 
+  static int count = 0;
+  count++;
+
   const NewVertexData& aNVD = myVertexInfo.Find(V);
+
+  gp_Pnt oldPnt = BRep_Tool::Pnt(V);
 
   P = aNVD.myP;
   Tol = aNVD.myTol;
+
+  /*m_plotter.DRAW_POINT(oldPnt, Color_Red,   "oldPnt");
+  m_plotter.DRAW_POINT(P,      Color_Green, "newPnt");*/
 
   return Standard_True;
 }
@@ -205,12 +215,13 @@ void BRepOffset_SimpleOffset1::FillOffsetData(const TopoDS_Shape& theShape)
   }
 
   // Iterate over vertices to compute new vertex.
-  TopTools_IndexedDataMapOfShapeListOfShape aVertexEdgeMap;
+  TopTools_IndexedDataMapOfShapeListOfShape aVertexEdgeMap, aVertexFaceMap;
   TopExp::MapShapesAndAncestors(theShape, TopAbs_VERTEX, TopAbs_EDGE, aVertexEdgeMap);
+  TopExp::MapShapesAndUniqueAncestors(theShape, TopAbs_VERTEX, TopAbs_FACE, aVertexFaceMap);
   for (Standard_Integer anIdx = 1; anIdx <= aVertexEdgeMap.Size(); ++anIdx)
   {
     const TopoDS_Vertex & aCurrVertex = TopoDS::Vertex(aVertexEdgeMap.FindKey(anIdx));
-    FillVertexData(aCurrVertex, aVertexEdgeMap, anIdx);
+    FillVertexData(aCurrVertex, aVertexEdgeMap, aVertexFaceMap, anIdx);
   }
 }
 
@@ -271,6 +282,9 @@ void BRepOffset_SimpleOffset1::FillEdgeData(const TopoDS_Edge& theEdge,
   Standard_Real aF, aL;
   Handle(Geom2d_Curve) aC2d = BRep_Tool::CurveOnSurface(theEdge, aCurrFace, aF, aL);
 
+  if ( theIdx == 13 )
+    m_plotter.DRAW_CURVE2D(aC2d, Color_Green, "aC2d_13");
+
   BRepBuilderAPI_MakeEdge anEdgeMaker(aC2d, anOffsetSurf, aF, aL);
   TopoDS_Edge aNewEdge = anEdgeMaker.Edge();
 
@@ -281,6 +295,20 @@ void BRepOffset_SimpleOffset1::FillEdgeData(const TopoDS_Edge& theEdge,
 
   NewEdgeData aNED;
   aNED.myOffsetC = BRep_Tool::Curve(aNewEdge, aNED.myL, aF, aL);
+
+  Handle(Geom_BSplineCurve)::DownCast(aNED.myOffsetC)->Degree();
+
+  /*if ( theIdx == 14 )
+  {
+    m_plotter.DRAW_SURFACE(anOffsetSurf, Color_Green, "anOffsetSurf");
+  }*/
+  if ( !aNED.myOffsetC.IsNull() )
+  {
+    TCollection_AsciiString name("aNED.myOffsetC_");
+    name += theIdx;
+    m_plotter.REDRAW_CURVE(name, aNED.myOffsetC, Color_Green);
+  }
+  /*}*/
 
   // Iterate over adjacent faces for the current edge and compute max deviation.
   Standard_Real anEdgeTol = 0.0;
@@ -318,6 +346,7 @@ void BRepOffset_SimpleOffset1::FillEdgeData(const TopoDS_Edge& theEdge,
 //=============================================================================
 void BRepOffset_SimpleOffset1::FillVertexData(const TopoDS_Vertex& theVertex,
                                              const TopTools_IndexedDataMapOfShapeListOfShape& theVertexEdgeMap,
+                                             const TopTools_IndexedDataMapOfShapeListOfShape& theVertexFaceMap,
                                              const Standard_Integer theIdx)
 {
   // Algorithm:
@@ -329,6 +358,7 @@ void BRepOffset_SimpleOffset1::FillVertexData(const TopoDS_Vertex& theVertex,
   gp_Pnt aCurrPnt = BRep_Tool::Pnt(theVertex);
 
   const TopTools_ListOfShape& aEdgesList = theVertexEdgeMap(theIdx);
+  const TopTools_ListOfShape& aFacesList = theVertexFaceMap(theIdx);
 
   if (aEdgesList.Size() == 0)
     return; // Free verices are skipped.
@@ -358,6 +388,13 @@ void BRepOffset_SimpleOffset1::FillVertexData(const TopoDS_Vertex& theVertex,
     const gp_Pnt aPntF = aC3d->Value(aF);
     const gp_Pnt aPntL = aC3d->Value(aL);
 
+    if ( theIdx == 14 )
+    {
+      m_plotter.DRAW_SHAPE(aCurrEdge, Color_Red, "aCurrEdge");
+      m_plotter.DRAW_POINT(aPntF, Color_Red, "aPntF");
+      m_plotter.DRAW_POINT(aPntL, Color_Red, "aPntL");
+    }
+
     const Standard_Real aSqDistF = aPntF.SquareDistance(aCurrPnt);
     const Standard_Real aSqDistL = aPntL.SquareDistance(aCurrPnt);
 
@@ -370,8 +407,58 @@ void BRepOffset_SimpleOffset1::FillVertexData(const TopoDS_Vertex& theVertex,
 
     // Compute point on offset edge.
     const NewEdgeData& aNED = myEdgeInfo.Find(aCurrEdge);
+
     const Handle(Geom_Curve) &anOffsetCurve = aNED.myOffsetC;
-    const gp_Pnt anOffsetPoint = anOffsetCurve->Value(aMinParam);
+
+    double fff = anOffsetCurve->FirstParameter();
+    double lll = anOffsetCurve->LastParameter();
+
+    gp_Pnt anOriginalPoint = aC3d->Value(aMinParam);
+    /*const*/ gp_Pnt anOffsetPoint = anOffsetCurve->Value(aMinParam);
+
+    std::cout << "Distance: " << anOriginalPoint.Distance(anOffsetPoint) << std::endl;
+
+    gp_XYZ anOffsetPointOnFaces;
+    int aNumFaces = 0;
+    for ( TopTools_ListIteratorOfListOfShape aFaceIter(aFacesList); aFaceIter.More(); aFaceIter.Next() )
+    {
+      aNumFaces++;
+      const TopoDS_Face& aFace = TopoDS::Face( aFaceIter.Value() );
+
+      gp_Pnt2d aUV = BRep_Tool::Parameters(theVertex, aFace);
+
+      if ( theIdx == 14 )
+      {
+        std::cout << "U = " << aUV.X() << std::endl;
+        std::cout << "V = " << aUV.Y() << std::endl;
+      }
+
+      double uMin, uMax, vMin, vMax;
+      myFaceInfo.Find(aFace).myOffsetS->Bounds(uMin, uMax, vMin, vMax);
+
+      gp_XYZ anOffsetPointOnSurf = myFaceInfo.Find(aFace).myOffsetS->Value( aUV.X() > uMax ? uMax : aUV.X(),
+                                                                            aUV.Y() > vMax ? vMax : aUV.Y() ).XYZ();
+
+      // 5.2866714434994027
+      // 5.2866714434994000
+      // (5219.35, -1079.95, 619.74)
+
+      
+
+      anOffsetPointOnFaces += anOffsetPointOnSurf;
+    }
+    if ( aNumFaces )
+      anOffsetPointOnFaces /= aNumFaces;
+
+    if ( theIdx == 14 )
+    {
+      m_plotter.DRAW_CURVE(anOffsetCurve, Color_Green, "anOffsetCurve");
+      m_plotter.DRAW_POINT(anOffsetPoint, Color_Green, "anOffsetPoint");
+      m_plotter.DRAW_POINT(anOffsetPointOnFaces, Color_Green, "anOffsetPointOnFaces");
+    }
+
+    anOffsetPoint = anOffsetPointOnFaces;
+
     anOffsetPointVec.Append(anOffsetPoint);
 
     // Handle situation when edge is closed.

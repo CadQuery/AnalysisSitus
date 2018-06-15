@@ -144,6 +144,7 @@ private:
   //! Method to fill new vertex data for single vertex.
   void FillVertexData(const TopoDS_Vertex& theVertex,
                       const TopTools_IndexedDataMapOfShapeListOfShape& theVertexEdgeMap,
+                      const TopTools_IndexedDataMapOfShapeListOfShape& theVertexFaceMap,
                       const Standard_Integer theIdx);
 
   struct NewFaceData

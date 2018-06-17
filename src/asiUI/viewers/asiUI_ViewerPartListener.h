@@ -91,6 +91,7 @@ protected:
   QAction* m_pShowNormsAction;
   QAction* m_pInvertFacesAction;
   QAction* m_pShowOriContour;
+  QAction* m_pCopyAsString;
 
 };
 

@@ -146,6 +146,18 @@ namespace asiAlgo_Utils
       std::string GetVariable(const char* varName);
   }
 
+  //! Functions providing JSON representations of primitives.
+  namespace JSON
+  {
+    asiAlgo_EXPORT void
+      DumpCurve(const Handle(Geom_Curve)& curve,
+                Standard_OStream&         out);
+
+    asiAlgo_EXPORT void
+      DumpSurface(const Handle(Geom_Surface)& surface,
+                  Standard_OStream&           out);
+  }
+
   //! Returns geometry of a face as a string label.
   //! \param face [in] face to inspect.
   //! \return label.
@@ -181,6 +193,12 @@ namespace asiAlgo_Utils
   //! \return string representation of location.
   asiAlgo_EXPORT TCollection_AsciiString
     LocationToString(const TopLoc_Location& loc);
+
+  //! Returns human-readable curve name.
+  //! \param curve [in] curve to inspect.
+  //! \return curve name.
+  asiAlgo_EXPORT std::string
+    CurveName(const Handle(Geom_Curve)& curve);
 
   //! Returns human-readable surface name.
   //! \param surf [in] surface to inspect.

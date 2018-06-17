@@ -53,6 +53,12 @@
 // VTK includes
 #include <vtkCamera.h>
 
+// Qt includes
+#pragma warning(push, 0)
+#include <QApplication>
+#include <QClipboard>
+#pragma warning(pop)
+
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting all necessary facilities.
@@ -251,11 +257,13 @@ void asiUI_ViewerPartListener::onVertexPicked(const asiVisu_PickResult& pickRes)
 //! \param[in] menu Qt menu to populate.
 void asiUI_ViewerPartListener::populateMenu(QMenu& menu)
 {
-  // Get highlighted faces
-  TColStd_PackedMapOfInteger faceIndices;
+  // Get highlighted faces and edges.
+  TColStd_PackedMapOfInteger faceIndices, edgeIndices;
+  //
   asiEngine_Part( m_model, m_pViewer->PrsMgr() ).GetHighlightedFaces(faceIndices);
+  asiEngine_Part( m_model, m_pViewer->PrsMgr() ).GetHighlightedEdges(edgeIndices);
 
-  // Get Part Node
+  // Get Part Node.
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
   //
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
@@ -264,19 +272,31 @@ void asiUI_ViewerPartListener::populateMenu(QMenu& menu)
     return;
   }
 
-  // Prepare the context menu items
-  if ( faceIndices.Extent() )
+  // Prepare the context menu items.
+  if ( faceIndices.Extent() || edgeIndices.Extent() )
   {
+    // Add items specific to faces.
+    if ( faceIndices.Extent() )
+    {
+      menu.addSeparator();
+      //
+      if ( m_pViewer->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceNormsNode) ) )
+        m_pShowNormsAction = menu.addAction("Show face normals");
+      if ( m_pViewer->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceContourNode) ) )
+        m_pShowOriContour = menu.addAction("Show face oriented contour");
+      //
+      m_pInvertFacesAction = menu.addAction("Invert faces");
+    }
+
     menu.addSeparator();
     //
     m_pSaveBREPAction = menu.addAction("Save to BREP...");
-    //
-    if ( m_pViewer->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceNormsNode) ) )
-      m_pShowNormsAction = menu.addAction("Show face normals");
-    if ( m_pViewer->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceContourNode) ) )
-      m_pShowOriContour = menu.addAction("Show face oriented contour");
-    //
-    m_pInvertFacesAction = menu.addAction("Invert faces");
+
+    // Add items which work for single-element selection.
+    if ( faceIndices.Extent() == 1 || edgeIndices.Extent() == 1 )
+    {
+      m_pCopyAsString = menu.addAction("Copy as JSON");
+    }
   }
 }
 
@@ -327,6 +347,58 @@ void asiUI_ViewerPartListener::executeAction(QAction* pAction)
       m_progress.SendLogMessage( LogErr(Normal) << "Cannot save shape" );
       return;
     }
+  }
+
+  //---------------------------------------------------------------------------
+  // ACTION: copy as string
+  //---------------------------------------------------------------------------
+  else if ( pAction == m_pCopyAsString )
+  {
+    // Get highlighted sub-shapes.
+    TopTools_IndexedMapOfShape selected;
+    asiEngine_Part( m_model, m_pViewer->PrsMgr() ).GetHighlightedSubShapes(selected);
+
+    // Dump to JSON string.
+    TCollection_AsciiString jsonStr;
+    //
+    for ( int k = 1; k <= selected.Extent(); ++k )
+    {
+      std::ostringstream jsonStream;
+
+      // Get selected shape.
+      const TopoDS_Shape& selectedSh = selected(k);
+
+      if ( selectedSh.ShapeType() == TopAbs_EDGE )
+      {
+        const TopoDS_Edge& selectedEdge = TopoDS::Edge(selectedSh);
+
+        // Get curve.
+        double f, l;
+        Handle(Geom_Curve) curve = BRep_Tool::Curve(selectedEdge, f, l);
+
+        // Dump.
+        asiAlgo_Utils::JSON::DumpCurve(curve, jsonStream);
+      }
+      else if ( selectedSh.ShapeType() == TopAbs_FACE )
+      {
+        const TopoDS_Face& selectedFace = TopoDS::Face(selectedSh);
+
+        // Get surface.
+        Handle(Geom_Surface) surface = BRep_Tool::Surface(selectedFace);
+
+        // Dump.
+        asiAlgo_Utils::JSON::DumpSurface(surface, jsonStream);
+      }
+
+      jsonStr += jsonStream.str().c_str();
+    }
+
+    // Set to clipboard.
+    QClipboard* clipboard = QApplication::clipboard();
+    clipboard->setText( AsciiStr2QStr(jsonStr) );
+
+    // Notify.
+    m_progress.SendLogMessage( LogInfo(Normal) << "JSON was copied to clipboard." );
   }
 
   //---------------------------------------------------------------------------

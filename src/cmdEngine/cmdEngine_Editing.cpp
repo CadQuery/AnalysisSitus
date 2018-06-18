@@ -1251,18 +1251,18 @@ int ENGINE_ExtendSurf(const Handle(asiTcl_Interp)& interp,
                       int                          argc,
                       const char**                 argv)
 {
-  if ( argc != 4 )
+  if ( argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
   // Find Surface Node by name.
-  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[2]);
   //
   if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
-                                                        << argv[1]);
+                                                        << argv[2]);
     return TCL_OK;
   }
   //
@@ -1289,10 +1289,10 @@ int ENGINE_ExtendSurf(const Handle(asiTcl_Interp)& interp,
   }
 
   // Get length.
-  const double L = atof(argv[2]);
+  const double L = atof(argv[3]);
 
   // Get extension qualifier.
-  TCollection_AsciiString qualifier(argv[3]);
+  TCollection_AsciiString qualifier(argv[4]);
 
   if ( qualifier == "umin" )
     GeomLib::ExtendSurfByLength(BS, L, 1, 1, 0);
@@ -1303,16 +1303,57 @@ int ENGINE_ExtendSurf(const Handle(asiTcl_Interp)& interp,
   else if ( qualifier == "vmax" )
     GeomLib::ExtendSurfByLength(BS, L, 1, 0, 1);
 
-  // Modify Data Model.
-  cmdEngine::model->OpenCommand();
-  {
-    surfNode->SetSurface(BS);
-  }
-  cmdEngine::model->CommitCommand();
+  // Create surface.
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], BS, Color_White);
 
-  // Update UI.
-  if ( cmdEngine::cf->ViewerPart )
-    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(surfNode);
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_TrimCurve(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  if ( argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[2]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVCurveNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a curve."
+                                                        << argv[2]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVCurveNode)
+    curveNode = Handle(asiData_IVCurveNode)::DownCast(node);
+
+  // Get B-curve.
+  double f, l;
+  Handle(Geom_BSplineCurve)
+    occtBCurve = Handle(Geom_BSplineCurve)::DownCast( curveNode->GetCurve(f, l) );
+  //
+  if ( occtBCurve.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is not a B-spline curve.");
+    return TCL_OK;
+  }
+
+  // Read parameter range.
+  const double u0 = atof(argv[3]);
+  const double u1 = atof(argv[4]);
+
+  // Trim curve.
+  Handle(Geom_Curve)
+    trimmedCurve = new Geom_TrimmedCurve(occtBCurve, u0, u1);
+
+  // Create object.
+  interp->GetPlotter().REDRAW_CURVE(argv[1], trimmedCurve, Color_White);
 
   return TCL_OK;
 }
@@ -1493,8 +1534,18 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("extend-surf",
     //
-    "extend-surf s length <umax|umin|vmax|vmin>\n"
-    "\t Extends surface <s> by length <length> in the given parameter's direction.",
+    "extend-surf resName surfName length <umax|umin|vmax|vmin>\n"
+    "\t Extends surface <surfName> by length <length> in the given\n"
+    "\t parameter's direction.",
     //
     __FILE__, group, ENGINE_ExtendSurf);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("trim-curve",
+    //
+    "trim-curve resName curveName u0 u1\n"
+    "\t Trims curve with the given name <curveName> by the passed\n"
+    "\t parameter values <u0> and <u1>.",
+    //
+    __FILE__, group, ENGINE_TrimCurve);
 }

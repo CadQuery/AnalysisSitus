@@ -20,12 +20,15 @@
 #include <Adaptor3d_CurveOnSurface.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepLib.hxx>
+#include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepOffset.hxx>
+#include <Geom_BSplineCurve.hxx>
 #include <Geom_OffsetSurface.hxx>
 #include <GeomAdaptor_Curve.hxx>
 #include <Geom2dAdaptor_HCurve.hxx>
 #include <GeomAdaptor_HSurface.hxx>
+#include <GeomLib.hxx>
 #include <NCollection_Vector.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <TopExp.hxx>
@@ -35,185 +38,14 @@
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
 
-#include <Geom_BSplineCurve.hxx>
-
-#include <AdvApprox_EvaluatorFunction.hxx>
-
+// Custom
+#include <BRepOffset_HCONSAdaptor.hxx>
 
 static const Standard_Integer NCONTROL=22;
 
-Handle(Adaptor3d_HCurve) Offset_Adaptor3dCurveOnSurface::Trim (const Standard_Real First, const Standard_Real Last, const Standard_Real Tol) const
-  {
-    Handle(Offset_HAdaptor3dCurveOnSurface) HCS = new Offset_HAdaptor3dCurveOnSurface();
-    HCS->ChangeCurve().Load(myCurve->Trim(First,Last,Tol), mySurface);
-    return HCS;
-  }
-
-
-class Offset_CurveOnSurfaceEvaluator : public AdvApprox_EvaluatorFunction
-{
- public:
-  Offset_CurveOnSurfaceEvaluator (Adaptor3d_CurveOnSurface& theCurveOnSurface,
-                                   Standard_Real theFirst, Standard_Real theLast,
-                                   ActAPI_ProgressEntry progress,
-                                   ActAPI_PlotterEntry  plotter)
-    : CurveOnSurface(theCurveOnSurface), FirstParam(theFirst), LastParam(theLast),
-      m_progress(progress), m_plotter(plotter) {}
-  
-  virtual void Evaluate (Standard_Integer *Dimension,
-		         Standard_Real     StartEnd[2],
-                         Standard_Real    *Parameter,
-                         Standard_Integer *DerivativeRequest,
-                         Standard_Real    *Result, // [Dimension]
-                         Standard_Integer *ErrorCode);
-  
- private:
-  Adaptor3d_CurveOnSurface& CurveOnSurface;
-  Standard_Real FirstParam;
-  Standard_Real LastParam;
-  gp_Pnt PrevPt;
-
-  Handle(Adaptor3d_HCurve) TrimCurve;
-
-  ActAPI_ProgressEntry m_progress;
-  ActAPI_PlotterEntry  m_plotter;
-};
-
-void Offset_CurveOnSurfaceEvaluator::Evaluate (Standard_Integer *,/*Dimension*/
-                                                Standard_Real     DebutFin[2],
-                                                Standard_Real    *Parameter,
-                                                Standard_Integer *DerivativeRequest,
-                                                Standard_Real    *Result,// [Dimension]
-                                                Standard_Integer *ReturnCode)
-{
-  gp_Pnt Point;
-
-  //Gestion des positionnements gauche / droite
-  if ((DebutFin[0] != FirstParam) || (DebutFin[1] != LastParam)) 
-    { 
-      TrimCurve = CurveOnSurface.Trim(DebutFin[0], DebutFin[1], Precision::PConfusion());
-      FirstParam = DebutFin[0];
-      LastParam  = DebutFin[1];
-    }
-
-  //Positionemment
-  if (*DerivativeRequest == 0)
-    {
-      const double t = (*Parameter);
-     TrimCurve->D0((*Parameter), Point) ;
-
-     //m_plotter.DRAW_POINT(Point, Color_Green, "D0_Point");
-
-     std::cout << "D0_Point[p=" << (*Parameter) << "] = " << Point.X() << ", " << Point.Y() << ", " << Point.Z() << std::endl;
-   
-     for (Standard_Integer ii = 0 ; ii < 3 ; ii++)
-       Result[ii] = Point.Coord(ii + 1);
-   }
-  if (*DerivativeRequest == 1) 
-    {
-      gp_Vec Vector;
-      TrimCurve->D1((*Parameter), Point, Vector);
-
-      //m_plotter.DRAW_POINT(Point, Color_Blue, "D1_Point");
-      //m_plotter.DRAW_VECTOR_AT(Point, Vector, Color_Blue, "D1_Vector");
-
-      for (Standard_Integer ii = 0 ; ii < 3 ; ii++)
-        Result[ii] = Vector.Coord(ii + 1) ;
-    }
-  if (*DerivativeRequest == 2) 
-    {
-      gp_Vec Vector, VecBis;
-      TrimCurve->D2((*Parameter), Point, VecBis, Vector);
-      for (Standard_Integer ii = 0 ; ii < 3 ; ii++)
-        Result[ii] = Vector.Coord(ii + 1) ;
-    }
-  ReturnCode[0] = 0;
-}
-
-#include <Geom_RectangularTrimmedSurface.hxx>
-#include <AdvApprox_PrefAndRec.hxx>
-#include <AdvApprox_ApproxAFunction.hxx>
-#include <GeomLib_MakeCurvefromApprox.hxx>
-
-#include <AdvApprox_DichoCutting.hxx>
-
-void Approx_BuildCurve3d(const Standard_Real           Tolerance,
-			   Adaptor3d_CurveOnSurface&       Curve, 
-			   const Standard_Real           FirstParameter,
-			   const Standard_Real           LastParameter,
-			   Handle(Geom_Curve)&            NewCurvePtr, 
-			   Standard_Real&                MaxDeviation,
-			   Standard_Real&                AverageDeviation,
-			   const GeomAbs_Shape           Continuity,
-			   const Standard_Integer        MaxDegree,
-			   const Standard_Integer        MaxSegment,
-         ActAPI_ProgressEntry progress,
-         ActAPI_PlotterEntry  plotter) 
-
-{
-   
-
-  Standard_Integer curve_not_computed = 1 ;
-  MaxDeviation     = 0.0e0 ;
-  AverageDeviation = 0.0e0 ;
-  Handle(GeomAdaptor_HSurface) geom_adaptor_surface_ptr (Handle(GeomAdaptor_HSurface)::DownCast(Curve.GetSurface()) );
-  Handle(Geom2dAdaptor_HCurve) geom_adaptor_curve_ptr (Handle(Geom2dAdaptor_HCurve)::DownCast(Curve.GetCurve()) );
- 
-      //
-      // Entree
-      //
-    Handle(TColStd_HArray1OfReal)   Tolerance1DPtr,Tolerance2DPtr; 
-    Handle(TColStd_HArray1OfReal) Tolerance3DPtr =
-      new TColStd_HArray1OfReal(1,1) ;
-    Tolerance3DPtr->SetValue(1,Tolerance);
-
-     // Recherche des discontinuitees
-     Standard_Integer NbIntervalC2 = Curve.NbIntervals(GeomAbs_C2);
-     TColStd_Array1OfReal Param_de_decoupeC2 (1, NbIntervalC2+1);
-     Curve.Intervals(Param_de_decoupeC2, GeomAbs_C2);
-     
-     Standard_Integer NbIntervalC3 = Curve.NbIntervals(GeomAbs_C3);
-     TColStd_Array1OfReal Param_de_decoupeC3 (1, NbIntervalC3+1);
-     Curve.Intervals(Param_de_decoupeC3, GeomAbs_C3);
-
-     // Note extension of the parameteric range  
-     // Pour forcer le Trim au premier appel de l'evaluateur
-     Offset_CurveOnSurfaceEvaluator ev (Curve, FirstParameter - 1., LastParameter  + 1., progress, plotter);
-                                         
-     // Approximation avec decoupe preferentiel
-     //AdvApprox_PrefAndRec Preferentiel(Param_de_decoupeC2,
-				 //      Param_de_decoupeC3);
-     AdvApprox_DichoCutting dicho;
-     AdvApprox_ApproxAFunction  anApproximator(0,
-					      0,
-					      1,
-					      Tolerance1DPtr,
-					      Tolerance2DPtr,
-					      Tolerance3DPtr,
-					      FirstParameter,
-					      LastParameter,
-					      Continuity,
-					      MaxDegree,  
-					      MaxSegment,
-					      ev,
-					      /*Preferentiel*/
-                dicho) ;
-    
-    if (anApproximator.HasResult()) {
-      GeomLib_MakeCurvefromApprox 
-	aCurveBuilder(anApproximator) ;    
-
-      Handle(Geom_BSplineCurve) aCurvePtr = 
-	aCurveBuilder.Curve(1) ;
-      // On rend les resultats de l'approx
-      MaxDeviation = anApproximator.MaxError(3,1) ;
-      AverageDeviation = anApproximator.AverageError(3,1) ;
-      NewCurvePtr = aCurvePtr ;
-    }
- }
-
-static Standard_Integer evaluateMaxSegment(const Standard_Integer aMaxSegment,
-  const Adaptor3d_CurveOnSurface& aCurveOnSurface)
+static Standard_Integer
+  evaluateMaxSegment(const Standard_Integer aMaxSegment,
+                     const Adaptor3d_CurveOnSurface& aCurveOnSurface)
 {
   if (aMaxSegment != 0) return aMaxSegment;
 
@@ -233,15 +65,12 @@ static Standard_Integer evaluateMaxSegment(const Standard_Integer aMaxSegment,
   return aReturn;
 }
 
-#include <BRep_Builder.hxx>
-
-Standard_Boolean  Offset_BuildCurve3d(const TopoDS_Edge& AnEdge,
-  const Standard_Real Tolerance,
-  const GeomAbs_Shape Continuity,
-  const Standard_Integer MaxDegree,
-  const Standard_Integer MaxSegment,
-  ActAPI_ProgressEntry progress,
-  ActAPI_PlotterEntry  plotter)
+Standard_Boolean
+  Offset_BuildCurve3d(const TopoDS_Edge& AnEdge,
+                      const Standard_Real Tolerance,
+                      const GeomAbs_Shape Continuity,
+                      const Standard_Integer MaxDegree,
+                      const Standard_Integer MaxSegment)
 {
   Standard_Integer //ErrorCode,
     //                   ReturnCode = 0,
@@ -308,12 +137,12 @@ Standard_Boolean  Offset_BuildCurve3d(const TopoDS_Edge& AnEdge,
         new Geom2dAdaptor_HCurve(AnAdaptor3dCurve2d) ;
       Handle(GeomAdaptor_HSurface) AnAdaptor3dSurfacePtr =
         new GeomAdaptor_HSurface (AnAdaptor3dSurface) ;
-      Offset_Adaptor3dCurveOnSurface  CurveOnSurface( AnAdaptor3dCurve2dPtr,
+      BRepOffset_CONSAdaptor CurveOnSurface( AnAdaptor3dCurve2dPtr,
         AnAdaptor3dSurfacePtr) ;
 
       Handle(Geom_Curve) NewCurvePtr ;
 
-      Approx_BuildCurve3d(Tolerance,
+      GeomLib::BuildCurve3d(Tolerance,
         CurveOnSurface,
         f,
         l,
@@ -322,7 +151,7 @@ Standard_Boolean  Offset_BuildCurve3d(const TopoDS_Edge& AnEdge,
         average_deviation,
         Continuity,
         MaxDegree,
-        evaluateMaxSegment(MaxSegment,CurveOnSurface), progress, plotter) ;
+        evaluateMaxSegment(MaxSegment,CurveOnSurface) ) ;
       BRep_Builder B;	
       tolerance = BRep_Tool::Tolerance(AnEdge) ;
       //Patch
@@ -604,7 +433,7 @@ void BRepOffset_SimpleOffset1::FillEdgeData(const TopoDS_Edge& theEdge,
   //const bool isOk = BRepLib::BuildCurves3d(aNewEdge, aTol, GeomAbs_C0, 1/*, GeomAbs_C0, 3, 500*/);
   bool isOk = false;
   //if ( theIdx == 13 )
-    isOk = Offset_BuildCurve3d(aNewEdge, aTol, GeomAbs_C0, 14, 0, m_progress, m_plotter);
+    isOk = Offset_BuildCurve3d(aNewEdge, aTol, GeomAbs_C1, 14, 0);
 
   std::cout << "BuildCurves3d [" << theIdx << "]: " << isOk << std::endl;
 
@@ -646,7 +475,7 @@ void BRepOffset_SimpleOffset1::FillEdgeData(const TopoDS_Edge& theEdge,
     const Handle(Geom2d_Curve) aC2dNew = BRep_Tool::CurveOnSurface(theEdge, aCurFace, aF, aL);
     const Handle(Adaptor2d_HCurve2d) aHCurve2d = new Geom2dAdaptor_HCurve(aC2dNew, aF, aL);
     const Handle(Adaptor3d_HSurface) aHSurface = new GeomAdaptor_HSurface(myFaceInfo.Find(aCurFace).myOffsetS);
-    Offset_Adaptor3dCurveOnSurface aCurveOnSurf(aHCurve2d, aHSurface);
+    BRepOffset_CONSAdaptor aCurveOnSurf(aHCurve2d, aHSurface);
 
     // Extract 3d-curve (it is not null).
     const GeomAdaptor_Curve aCurve3d(aNED.myOffsetC, aF, aL);
@@ -779,7 +608,7 @@ void BRepOffset_SimpleOffset1::FillVertexData(const TopoDS_Vertex& theVertex,
       m_plotter.DRAW_POINT(anOffsetPointOnFaces, Color_Green, "anOffsetPointOnFaces");
     }
 
-    anOffsetPoint = anOffsetPointOnFaces;
+    //anOffsetPoint = anOffsetPointOnFaces;
 
     anOffsetPointVec.Append(anOffsetPoint);
 

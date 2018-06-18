@@ -21,6 +21,8 @@ set (H_FILES
   cmdEngine.h
   BRepOffset_MakeSimpleOffset1.hxx
   BRepOffset_SimpleOffset1.hxx
+  BRepOffset_CONSAdaptor.hxx
+  BRepOffset_HCONSAdaptor.hxx
 )
 set (CPP_FILES
   cmdEngine.cpp
@@ -34,6 +36,7 @@ set (CPP_FILES
   cmdEngine_Viewer.cpp
   BRepOffset_SimpleOffset1.cxx
   BRepOffset_MakeSimpleOffset1.cxx
+  BRepOffset_CONSAdaptor.cxx
 )
 
 #------------------------------------------------------------------------------

@@ -58,6 +58,8 @@
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepLProp_SLProps.hxx>
 #include <BRepTools.hxx>
+#include <Geom_BoundedSurface.hxx>
+#include <GeomLib.hxx>
 #include <Precision.hxx>
 #include <ShapeFix_Shape.hxx>
 #include <ShapeFix_ShapeTolerance.hxx>
@@ -1245,6 +1247,78 @@ int ENGINE_SplitByContinuity(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_ExtendSurf(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 4 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Surface Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Get surface.
+  Handle(Geom_Surface) occtSurface = surfNode->GetSurface();
+  //
+  if ( occtSurface.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is NULL.");
+    return TCL_OK;
+  }
+
+  // Convert to bounded surface.
+  Handle(Geom_BoundedSurface)
+    BS = Handle(Geom_BoundedSurface)::DownCast( occtSurface->Copy() );
+  //
+  if ( BS.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not bounded.");
+    return TCL_OK;
+  }
+
+  // Get length.
+  const double L = atof(argv[2]);
+
+  // Get extension qualifier.
+  TCollection_AsciiString qualifier(argv[3]);
+
+  if ( qualifier == "umin" )
+    GeomLib::ExtendSurfByLength(BS, L, 1, 1, 0);
+  else if ( qualifier == "umax" )
+    GeomLib::ExtendSurfByLength(BS, L, 1, 1, 1);
+  else if ( qualifier == "vmin" )
+    GeomLib::ExtendSurfByLength(BS, L, 1, 0, 0);
+  else if ( qualifier == "vmax" )
+    GeomLib::ExtendSurfByLength(BS, L, 1, 0, 1);
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    surfNode->SetSurface(BS);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(surfNode);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -1415,4 +1489,12 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t Splits part by continuity.",
     //
     __FILE__, group, ENGINE_SplitByContinuity);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("extend-surf",
+    //
+    "extend-surf s length <umax|umin|vmax|vmin>\n"
+    "\t Extends surface <s> by length <length> in the given parameter's direction.",
+    //
+    __FILE__, group, ENGINE_ExtendSurf);
 }

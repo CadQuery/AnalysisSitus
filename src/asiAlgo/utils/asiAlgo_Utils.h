@@ -158,6 +158,12 @@ namespace asiAlgo_Utils
                   Standard_OStream&           out);
   }
 
+  //! Converts the passed double value to string with max precision.
+  //! \param[in] val value to convert.
+  //! \return string representation.
+  asiAlgo_EXPORT std::string
+    DoubleToString(const double val);
+
   //! Returns geometry of a face as a string label.
   //! \param face [in] face to inspect.
   //! \return label.

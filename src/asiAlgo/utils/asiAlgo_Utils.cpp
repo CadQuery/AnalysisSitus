@@ -451,6 +451,16 @@ void
 
 //-----------------------------------------------------------------------------
 
+std::string asiAlgo_Utils::DoubleToString(const double val)
+{
+  std::stringstream ss;
+  ss << std::setprecision( std::numeric_limits<double>::max_digits10 );
+  ss << val;
+  return ss.str();
+}
+
+//-----------------------------------------------------------------------------
+
 std::string asiAlgo_Utils::FaceGeometryName(const TopoDS_Face& face)
 {
   Handle(Geom_Surface) surf = BRep_Tool::Surface(face);

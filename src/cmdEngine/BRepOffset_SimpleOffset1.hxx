@@ -28,6 +28,165 @@
 
 #include <ActAPI_IAlgorithm.h>
 
+#include <Adaptor2d_HCurve2d.hxx>
+#include <Adaptor3d_HCurve.hxx>
+#include <Adaptor3d_Surface.hxx>
+#include <Adaptor3d_HSurface.hxx>
+#include <Adaptor3d_CurveOnSurface.hxx>
+
+class Offset_HAdaptor3dCurveOnSurface;
+
+class Offset_Adaptor3dCurveOnSurface : public Adaptor3d_CurveOnSurface
+{
+public:
+
+  Offset_Adaptor3dCurveOnSurface() : Adaptor3d_CurveOnSurface() {}
+  
+  Offset_Adaptor3dCurveOnSurface(const Handle(Adaptor3d_HSurface)& S) : Adaptor3d_CurveOnSurface(S) {}
+  
+  //! Creates a CurveOnSurface from the 2d curve <C> and
+  //! the surface <S>.
+  Offset_Adaptor3dCurveOnSurface(const Handle(Adaptor2d_HCurve2d)& C, const Handle(Adaptor3d_HSurface)& S) : Adaptor3d_CurveOnSurface(C, S) {
+    myCurve = C;
+    mySurface = S;
+
+    myUmin = mySurface->FirstUParameter();
+    myUmax = mySurface->LastUParameter();
+    myVmin = mySurface->FirstVParameter();
+    myVmax = mySurface->LastVParameter();
+  }
+
+  void Load (const Handle(Adaptor2d_HCurve2d)& C, const Handle(Adaptor3d_HSurface)& S)
+  {
+    Adaptor3d_CurveOnSurface::Load(C, S);
+    myCurve = C;
+    mySurface = S;
+
+    myUmin = mySurface->FirstUParameter();
+    myUmax = mySurface->LastUParameter();
+    myVmin = mySurface->FirstVParameter();
+    myVmax = mySurface->LastVParameter();
+  }
+
+  Handle(Adaptor3d_HCurve) Trim (const Standard_Real First, const Standard_Real Last, const Standard_Real Tol) const Standard_OVERRIDE;
+
+  //! Computes the point of parameter U on the curve.
+  void D0 (const Standard_Real U, gp_Pnt& P) const Standard_OVERRIDE
+  {
+    gp_Pnt2d Puv;
+  
+    myCurve->D0(U,Puv);
+    mySurface->D0(Puv.X() > myUmax ? myUmax : Puv.X(),
+                  Puv.Y() > myVmax ? myVmax : Puv.Y(),
+                  P);
+  }
+  //
+  ////! Computes the point of parameter U on the curve with its
+  ////! first derivative.
+  ////! Raised if the continuity of the current interval
+  ////! is not C1.
+  //void D1 (const Standard_Real U, gp_Pnt& P, gp_Vec& V) const Standard_OVERRIDE
+  //{
+  //    gp_Pnt2d Puv;
+  //  gp_Vec2d Duv;
+  //  gp_Vec D1U,D1V;
+  //
+  //  Standard_Real FP = myCurve->FirstParameter();
+  //  Standard_Real LP = myCurve->LastParameter();
+  //
+  //  Standard_Real Tol= Precision::PConfusion()/10; 
+  //  if( ( Abs(U-FP)<Tol)&&(!myFirstSurf.IsNull()) )
+  //    {
+  //      myCurve->D1(U,Puv,Duv);
+  //      myFirstSurf->D1(Puv.X(),Puv.Y(),P,D1U,D1V);
+  //      V.SetLinearForm(Duv.X(),D1U,Duv.Y(),D1V);
+  //    }
+  //  else
+  //    if( (Abs(U-LP)<Tol)&&(!myLastSurf.IsNull()) )
+  //      {
+	 // myCurve->D1(U,Puv,Duv);
+	 // myLastSurf->D1(Puv.X(),Puv.Y(),P,D1U,D1V);
+	 // V.SetLinearForm(Duv.X(),D1U,Duv.Y(),D1V);
+  //      }
+  //    else
+  //      if      (myType == GeomAbs_Line  ) ElCLib::D1(U,myLin ,P,V);
+  //      else if (myType == GeomAbs_Circle) ElCLib::D1(U,myCirc,P,V);
+  //      else {
+	 // myCurve->D1(U,Puv,Duv);
+	 // mySurface->D1(Puv.X(),Puv.Y(),P,D1U,D1V);
+	 // V.SetLinearForm(Duv.X(),D1U,Duv.Y(),D1V);
+  //      }
+  //}
+
+protected:
+
+  Handle(Adaptor3d_HSurface) mySurface;
+  Handle(Adaptor2d_HCurve2d) myCurve;
+
+  double myUmin, myUmax, myVmin, myVmax;
+
+};
+
+class Offset_HAdaptor3dCurveOnSurface : public Adaptor3d_HCurve
+{
+
+public:
+
+  
+  //! Creates an empty GenHCurve.
+  Offset_HAdaptor3dCurveOnSurface() : Adaptor3d_HCurve() {}
+  
+  //! Creates a GenHCurve from a Curve
+  Offset_HAdaptor3dCurveOnSurface(const Offset_Adaptor3dCurveOnSurface& C)
+  {
+    myCurve = C;
+  }
+  
+  //! Sets the field of the GenHCurve.
+  void Set (const Offset_Adaptor3dCurveOnSurface& C)
+  {
+    myCurve = C;
+  }
+  
+  //! Returns the curve used to create the GenHCurve.
+  //! This is redefined from HCurve, cannot be inline.
+  const Adaptor3d_Curve& Curve() const Standard_OVERRIDE
+  {
+    return myCurve;
+  }
+  
+  //! Returns the curve used to create the GenHCurve.
+  //! This is redefined from HCurve, cannot be inline.
+  Adaptor3d_Curve& GetCurve() Standard_OVERRIDE
+  {
+    return myCurve;
+  }
+  
+  //! Returns the curve used to create the GenHCurve.
+  Offset_Adaptor3dCurveOnSurface& ChangeCurve()
+  {
+    return myCurve;
+  }
+
+
+
+
+  DEFINE_STANDARD_RTTI_INLINE(Offset_HAdaptor3dCurveOnSurface,Adaptor3d_HCurve)
+
+protected:
+
+
+  Offset_Adaptor3dCurveOnSurface myCurve;
+
+
+private:
+
+
+
+
+};
+
+
 
 class BRepOffset_SimpleOffset1;
 DEFINE_STANDARD_HANDLE(BRepOffset_SimpleOffset1, BRepTools_Modification)

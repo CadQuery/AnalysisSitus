@@ -109,7 +109,6 @@ endif()
 
 install (TARGETS cmdEngine RUNTIME DESTINATION bin COMPONENT Runtime)
 
-
 #------------------------------------------------------------------------------
 # Installation of Analysis Situs as a framework
 #------------------------------------------------------------------------------

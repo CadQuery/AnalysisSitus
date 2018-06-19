@@ -90,6 +90,9 @@ public:
 public:
 
   asiData_EXPORT Handle(Geom_Curve)
+    GetCurve() const;
+
+  asiData_EXPORT Handle(Geom_Curve)
     GetCurve(double& f, double& l) const;
 
   asiData_EXPORT void

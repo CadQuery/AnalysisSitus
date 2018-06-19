@@ -89,6 +89,14 @@ void asiData_IVCurveNode::SetName(const TCollection_ExtendedString& theName)
 //-----------------------------------------------------------------------------
 
 //! Returns the stored geometry.
+//! \return stored geometry.
+Handle(Geom_Curve) asiData_IVCurveNode::GetCurve() const
+{
+  double f, l;
+  return this->GetCurve(f, l);
+}
+
+//! Returns the stored geometry.
 //! \param f [out] first parameter.
 //! \param l [out] last parameter.
 //! \return stored geometry.

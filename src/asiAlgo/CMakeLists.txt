@@ -234,6 +234,7 @@ set (points_CPP_FILES
 
 set (utils_H_FILES
   utils/asiAlgo_FileDumper.h
+  utils/asiAlgo_JSON.h
   utils/asiAlgo_Logger.h
   utils/asiAlgo_MemChecker.h
   utils/asiAlgo_Timer.h
@@ -243,6 +244,7 @@ set (utils_H_FILES
 )
 set (utils_CPP_FILES 
   utils/asiAlgo_FileDumper.cpp
+  utils/asiAlgo_JSON.cpp
   utils/asiAlgo_Logger.cpp
   utils/asiAlgo_TimeStamp.cpp
   utils/asiAlgo_Utils.cpp
@@ -284,6 +286,7 @@ set (OCCT_LIB_FILES
   TKIGES
   TKXDESTEP
   TKXDEIGES
+  TKHLR
 )
 #------------------------------------------------------------------------------
 set (TBB_LIB_FILES

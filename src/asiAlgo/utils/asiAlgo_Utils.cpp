@@ -239,6 +239,15 @@ std::string asiAlgo_Utils::Str::Slashed(const std::string& strIN)
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_Utils::Str::IsNumber(const std::string& str)
+{
+  char* cnv;
+  strtod(str.c_str(), &cnv);
+  return cnv != str.data();
+}
+
+//-----------------------------------------------------------------------------
+
 //! Returns value of ASI_TEST_DATA environment variable. This variable is used to
 //! refer to the directory containing all data files playing as inputs for
 //! unit tests.
@@ -284,183 +293,6 @@ std::string asiAlgo_Utils::Env::GetVariable(const char* varName)
 
 //-----------------------------------------------------------------------------
 
-void
-  asiAlgo_Utils::JSON::DumpCurve(const Handle(Geom_Curve)& curve,
-                                 Standard_OStream&         out)
-{
-  // Get parametric bounds.
-  const double uMin = curve->FirstParameter();
-  const double uMax = curve->LastParameter();
-
-  out << std::setprecision( std::numeric_limits<double>::max_digits10 );
-  out << "{";
-  out <<  "\n    entity: curve";
-  out << ",\n    type: " << CurveName(curve);
-  out << ",\n    continuity: " << ContinuityToString( curve->Continuity() );
-
-  out << ",\n    domain: {"; // Begin 'domain'.
-  out <<  "\n        U_min: " << uMin;
-  out << ",\n        U_max: " << uMax;
-  out <<  "\n    }"; // End 'domain'.
-
-  if ( curve->IsInstance( STANDARD_TYPE(Geom_BSplineCurve) ) )
-  {
-    Handle(Geom_BSplineCurve)
-      bcurve = Handle(Geom_BSplineCurve)::DownCast(curve);
-
-    out << ",\n    flags: {"; // Begin 'flags'.
-    out <<  "\n        is_rational: " << bcurve->IsRational();
-    out << ",\n        is_periodic: " << bcurve->IsPeriodic();
-    out << ",\n        is_closed: "   << bcurve->IsClosed();
-    out <<  "\n    }"; // End 'flags'.
-
-    out << ",\n    properties: {"; // Begin 'properties'.
-    out <<  "\n        degree: "     << bcurve->Degree();
-
-    // Dump U knots.
-    const TColStd_Array1OfReal& knots = bcurve->KnotSequence();
-    out << ",\n        knots: [";
-    //
-    for ( int k = knots.Lower(); k <= knots.Upper(); ++k )
-    {
-      out << knots(k);
-
-      if ( k < knots.Upper() )
-        out << ", ";
-    }
-    out << "]";
-
-    // Dump poles.
-    const TColgp_Array1OfPnt& poles = bcurve->Poles();
-    //
-    out << ",\n        num_poles: " << bcurve->NbPoles();
-    out << ",\n        poles: [";
-    //
-    for ( int uIdx = poles.Lower(); uIdx <= poles.Upper(); ++uIdx )
-    {
-      const gp_Pnt& P = poles(uIdx);
-
-      out << "[" << P.X() << ", " << P.Y() << ", " << P.Z() << "]";
-
-      if ( uIdx < poles.Upper() )
-        out << ", ";
-    }
-    out << "]";
-    out << "\n    }"; // End 'properties'.
-  }
-
-  out << "\n}";
-}
-
-//-----------------------------------------------------------------------------
-
-void
-  asiAlgo_Utils::JSON::DumpSurface(const Handle(Geom_Surface)& surface,
-                                   Standard_OStream&           out)
-{
-  // Get parametric bounds.
-  double uMin, uMax, vMin, vMax;
-  surface->Bounds(uMin, uMax, vMin, vMax);
-
-  out << std::setprecision( std::numeric_limits<double>::max_digits10 );
-  out << "{";
-  out <<  "\n    entity: surface";
-  out << ",\n    type: " << SurfaceName(surface);
-  out << ",\n    continuity: " << ContinuityToString( surface->Continuity() );
-
-  out << ",\n    domain: {"; // Begin 'domain'.
-  out <<  "\n        U_min: " << uMin;
-  out << ",\n        U_max: " << uMax;
-  out << ",\n        V_min: " << vMin;
-  out << ",\n        V_max: " << vMax;
-  out <<  "\n    }"; // End 'domain'.
-
-  if ( surface->IsInstance( STANDARD_TYPE(Geom_BSplineSurface) ) )
-  {
-    Handle(Geom_BSplineSurface)
-      bsurf = Handle(Geom_BSplineSurface)::DownCast(surface);
-
-    out << ",\n    flags: {"; // Begin 'flags'.
-    out <<  "\n        is_U_rational: " << bsurf->IsURational();
-    out << ",\n        is_V_rational: " << bsurf->IsVRational();
-    out << ",\n        is_U_periodic: " << bsurf->IsUPeriodic();
-    out << ",\n        is_V_periodic: " << bsurf->IsVPeriodic();
-    out << ",\n        is_U_closed: "   << bsurf->IsUClosed();
-    out << ",\n        is_V_closed: "   << bsurf->IsVClosed();
-    out <<  "\n    }"; // End 'flags'.
-
-    out << ",\n    properties: {"; // Begin 'properties'.
-    out <<  "\n        U_degree: "   << bsurf->UDegree();
-    out << ",\n        V_degree: "   << bsurf->VDegree();
-
-    // Dump U knots.
-    const TColStd_Array1OfReal& U_knots = bsurf->UKnotSequence();
-    out << ",\n        U_knots: [";
-    //
-    for ( int k = U_knots.Lower(); k <= U_knots.Upper(); ++k )
-    {
-      out << U_knots(k);
-
-      if ( k < U_knots.Upper() )
-        out << ", ";
-    }
-    out << "]";
-
-    // Dump V knots.
-    const TColStd_Array1OfReal& V_knots = bsurf->VKnotSequence();
-    out << ",\n        V_knots: [";
-    //
-    for ( int k = V_knots.Lower(); k <= V_knots.Upper(); ++k )
-    {
-      out << V_knots(k);
-
-      if ( k < V_knots.Upper() )
-        out << ", ";
-    }
-    out << "]";
-
-    // Dump poles.
-    const TColgp_Array2OfPnt& poles = bsurf->Poles();
-    //
-    out << ",\n        num_poles_in_U_axis: " << bsurf->NbUPoles();
-    out << ",\n        num_poles_in_V_axis: " << bsurf->NbVPoles();
-    out << ",\n        poles: {"; // Begin 'poles'.
-    //
-    for ( int uIdx = poles.LowerRow(); uIdx <= poles.UpperRow(); ++uIdx )
-    {
-      out << "\n            u[" << (uIdx - 1) << "]: [";
-      for ( int vIdx = poles.LowerCol(); vIdx <= poles.UpperCol(); ++vIdx )
-      {
-        const gp_Pnt& P = poles(uIdx, vIdx);
-
-        out << "[" << P.X() << ", " << P.Y() << ", " << P.Z() << "]";
-
-        if ( vIdx < poles.UpperCol() )
-          out << ", ";
-      }
-      out << "]";
-      if ( uIdx < poles.UpperRow() )
-        out << ",";
-    }
-    out << "\n        }"; // End 'poles'.
-    out << "\n    }"; // End 'properties'.
-  }
-
-  out << "\n}";
-}
-
-//-----------------------------------------------------------------------------
-
-std::string asiAlgo_Utils::DoubleToString(const double val)
-{
-  std::stringstream ss;
-  ss << std::setprecision( std::numeric_limits<double>::max_digits10 );
-  ss << val;
-  return ss.str();
-}
-
-//-----------------------------------------------------------------------------
-
 std::string asiAlgo_Utils::FaceGeometryName(const TopoDS_Face& face)
 {
   Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
@@ -500,22 +332,27 @@ TCollection_AsciiString
     double f, l;
     Handle(Geom_Curve) curve = BRep_Tool::Curve(edge, f, l);
     //
-    msg += "\n\t Curve: ";
-    msg += curve->DynamicType()->Name();
-    msg += "\n\t Min parameter: ";
-    msg += curve->FirstParameter();
-    msg += "\n\t Max parameter: ";
-    msg += curve->LastParameter();
-
-    if ( curve->IsInstance( STANDARD_TYPE(Geom_BSplineCurve) ) )
+    if ( curve.IsNull() )
+      msg += "\n\t Curve: null";
+    else
     {
-      Handle(Geom_BSplineCurve)
-        bcurve = Handle(Geom_BSplineCurve)::DownCast(curve);
-      //
-      msg += "\n\t Degree: ";
-      msg += bcurve->Degree();
-      msg += "\n\t Num poles: ";
-      msg += bcurve->NbPoles();
+      msg += "\n\t Curve: ";
+      msg += curve->DynamicType()->Name();
+      msg += "\n\t Min parameter: ";
+      msg += curve->FirstParameter();
+      msg += "\n\t Max parameter: ";
+      msg += curve->LastParameter();
+
+      if ( curve->IsInstance( STANDARD_TYPE(Geom_BSplineCurve) ) )
+      {
+        Handle(Geom_BSplineCurve)
+          bcurve = Handle(Geom_BSplineCurve)::DownCast(curve);
+        //
+        msg += "\n\t Degree: ";
+        msg += bcurve->Degree();
+        msg += "\n\t Num poles: ";
+        msg += bcurve->NbPoles();
+      }
     }
   }
   //

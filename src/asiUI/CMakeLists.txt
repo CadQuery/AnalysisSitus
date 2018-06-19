@@ -53,6 +53,7 @@ set (dialogs_H_UI_FILES
   dialogs/asiUI_DialogFindEdge.h
   dialogs/asiUI_DialogFindFace.h
   dialogs/asiUI_DialogGapFilling.h
+  dialogs/asiUI_DialogGeomDef.h
   dialogs/asiUI_DialogOCAFDump.h
   dialogs/asiUI_DialogPipelines.h
   dialogs/asiUI_DialogRefineTessellation.h
@@ -69,6 +70,7 @@ set (dialogs_CPP_FILES
   dialogs/asiUI_DialogFindEdge.cpp
   dialogs/asiUI_DialogFindFace.cpp
   dialogs/asiUI_DialogGapFilling.cpp
+  dialogs/asiUI_DialogGeomDef.cpp
   dialogs/asiUI_DialogOCAFDump.cpp
   dialogs/asiUI_DialogPipelines.cpp
   dialogs/asiUI_DialogRefineTessellation.cpp

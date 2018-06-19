@@ -37,6 +37,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_InvertFaces.h>
+#include <asiAlgo_JSON.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -377,7 +378,7 @@ void asiUI_ViewerPartListener::executeAction(QAction* pAction)
         Handle(Geom_Curve) curve = BRep_Tool::Curve(selectedEdge, f, l);
 
         // Dump.
-        asiAlgo_Utils::JSON::DumpCurve(curve, jsonStream);
+        asiAlgo_JSON::DumpCurve(curve, jsonStream);
       }
       else if ( selectedSh.ShapeType() == TopAbs_FACE )
       {
@@ -387,7 +388,7 @@ void asiUI_ViewerPartListener::executeAction(QAction* pAction)
         Handle(Geom_Surface) surface = BRep_Tool::Surface(selectedFace);
 
         // Dump.
-        asiAlgo_Utils::JSON::DumpSurface(surface, jsonStream);
+        asiAlgo_JSON::DumpSurface(surface, jsonStream);
       }
 
       jsonStr += jsonStream.str().c_str();

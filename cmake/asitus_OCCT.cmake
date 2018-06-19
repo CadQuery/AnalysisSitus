@@ -59,5 +59,6 @@ if (WIN32)
   install (FILES ${3RDPARTY_OCCT_DLL_DIR}/TKSTEPBase.dll  DESTINATION bin)
   install (FILES ${3RDPARTY_OCCT_DLL_DIR}/TKTopAlgo.dll   DESTINATION bin)
   install (FILES ${3RDPARTY_OCCT_DLL_DIR}/TKXSBase.dll    DESTINATION bin)
+  install (FILES ${3RDPARTY_OCCT_DLL_DIR}/TKHLR.dll       DESTINATION bin)
 
 endif()

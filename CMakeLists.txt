@@ -193,6 +193,8 @@ set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 # Installation
 #-------------------------------------------------------------------------------
 
+install (DIRECTORY data DESTINATION bin)
+
 if (EXISTS "${3RDPARTY_DIR}/Redistributable/msvcp120.dll")
   install (FILES "${3RDPARTY_DIR}/Redistributable/msvcp120.dll" DESTINATION bin)
 endif()

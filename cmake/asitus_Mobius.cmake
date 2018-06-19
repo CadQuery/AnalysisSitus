@@ -46,4 +46,6 @@ message (STATUS "... Mobius Debug Binary  dirs: ${3RDPARTY_mobius_DLL_DIR_DEBUG}
 if (WIN32)
   install (FILES ${3RDPARTY_mobius_DLL_DIR}/mobiusCore.dll DESTINATION bin)
   install (FILES ${3RDPARTY_mobius_DLL_DIR}/mobiusBSpl.dll DESTINATION bin)
+  install (FILES ${3RDPARTY_mobius_DLL_DIR}/mobiusGeom.dll DESTINATION bin)
+  install (FILES ${3RDPARTY_mobius_DLL_DIR}/mobiusCascade.dll DESTINATION bin)
 endif()

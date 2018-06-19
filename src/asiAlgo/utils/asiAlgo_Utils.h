@@ -116,6 +116,12 @@ namespace asiAlgo_Utils
     asiAlgo_EXPORT std::string
       Slashed(const std::string& strIN);
 
+    //! Checks whether the passed string is number or not.
+    //! \param str [in] string to check.
+    //! \return true/false.
+    asiAlgo_EXPORT bool
+      IsNumber(const std::string& str);
+
     //! Converts the passed value to string. This function is used to
     //! substitute std::to_string() for compilers incompatible with
     //! C++ 11.
@@ -125,8 +131,23 @@ namespace asiAlgo_Utils
     std::string ToString(T value)
     {
       std::ostringstream os;
+      os << std::setprecision( std::numeric_limits<double>::max_digits10 );
       os << value;
       return os.str();
+    }
+
+    //! Converts the passed string to number.
+    //! \param str           [in] string to convert.
+    //! \param default_value [in] default value to use.
+    //! \return string.
+    template <typename T>
+    static T ToNumber(const std::string& str,
+                       const T            default_value = 0)
+    {
+      std::istringstream is(str);
+      T result;
+      (is >> result) ? result : default_value;
+      return result;
     }
   };
 
@@ -145,24 +166,6 @@ namespace asiAlgo_Utils
     asiAlgo_EXPORT
       std::string GetVariable(const char* varName);
   }
-
-  //! Functions providing JSON representations of primitives.
-  namespace JSON
-  {
-    asiAlgo_EXPORT void
-      DumpCurve(const Handle(Geom_Curve)& curve,
-                Standard_OStream&         out);
-
-    asiAlgo_EXPORT void
-      DumpSurface(const Handle(Geom_Surface)& surface,
-                  Standard_OStream&           out);
-  }
-
-  //! Converts the passed double value to string with max precision.
-  //! \param[in] val value to convert.
-  //! \return string representation.
-  asiAlgo_EXPORT std::string
-    DoubleToString(const double val);
 
   //! Returns geometry of a face as a string label.
   //! \param face [in] face to inspect.

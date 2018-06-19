@@ -736,11 +736,11 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
       interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
       //
       Message += "\nP(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
     }
     else if ( order == 1 )
@@ -753,19 +753,19 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
       interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1", eval_P, eval_D1, Color_Yellow);
       //
       Message += "\nP(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD1(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.Z() ).c_str();
       Message += ")";
     }
     else if ( order == 2 )
@@ -779,27 +779,27 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
       interp->GetPlotter().REDRAW_VECTOR_AT("eval_D2", eval_P, eval_D2, Color_Yellow);
       //
       Message += "\nP(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD1(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD2(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2.Z() ).c_str();
       Message += ")";
     }
     else if ( order == 3 )
@@ -814,35 +814,35 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
       interp->GetPlotter().REDRAW_VECTOR_AT("eval_D3", eval_P, eval_D3, Color_Yellow);
       //
       Message += "\nP(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD1(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD2(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD3(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D3.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D3.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D3.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D3.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D3.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D3.Z() ).c_str();
       Message += ")";
     }
     else
@@ -887,11 +887,11 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
                                         Color_Yellow);
       //
       Message += "\nP(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
     }
     else if ( order == 1 )
@@ -911,19 +911,19 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
                                             Color_Yellow);
       //
       Message += "\nP(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD1(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.Z() ).c_str();
       Message += ")";
     }
     else if ( order == 2 )
@@ -950,27 +950,27 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
                                             Color_Yellow);
       //
       Message += "\nP(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD1(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD2(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2.Z() ).c_str();
       Message += ")";
     }
     else if ( order == 3 )
@@ -1004,35 +1004,35 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
                                             Color_Yellow);
       //
       Message += "\nP(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD1(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD2(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD3(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D3.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D3.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D3.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D3.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D3.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D3.Z() ).c_str();
       Message += ")";
     }
     else
@@ -1115,11 +1115,11 @@ int ENGINE_EvalSurf(const Handle(asiTcl_Interp)& interp,
       interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
       //
       Message += "\nP(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
     }
     else if ( order == 1 )
@@ -1133,27 +1133,27 @@ int ENGINE_EvalSurf(const Handle(asiTcl_Interp)& interp,
       interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1v", eval_P, eval_D1v, Color_Green);
       //
       Message += "\nP(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD1u(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1u.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1u.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1u.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1u.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1u.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1u.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD1v(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1v.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1v.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1v.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1v.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1v.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1v.Z() ).c_str();
       Message += ")";
     }
     else if ( order == 2 )
@@ -1170,51 +1170,51 @@ int ENGINE_EvalSurf(const Handle(asiTcl_Interp)& interp,
       interp->GetPlotter().REDRAW_VECTOR_AT("eval_D2uv", eval_P, eval_D2uv, Color_Yellow);
       //
       Message += "\nP(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD1u(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1u.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1u.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1u.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1u.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1u.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1u.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD1v(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1v.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1v.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1v.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1v.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D1v.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1v.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD2u(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2u.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2u.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2u.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2u.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2u.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2u.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD2v(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2v.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2v.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2v.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2v.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2v.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2v.Z() ).c_str();
       Message += ")";
       //
       Message += "\nD2uv(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2uv.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2uv.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2uv.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2uv.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_D2uv.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2uv.Z() ).c_str();
       Message += ")";
     }
     else
@@ -1259,11 +1259,11 @@ int ENGINE_EvalSurf(const Handle(asiTcl_Interp)& interp,
                                         Color_Yellow);
       //
       Message += "\nP(X, Y, Z): (";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.X() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Y() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
       Message += ", ";
-      Message += asiAlgo_Utils::DoubleToString( eval_P.Z() ).c_str();
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
     }
     else

@@ -99,19 +99,6 @@ double SignedDistance(const gp_Pln& pln, const gp_Pnt& P)
 
 //-----------------------------------------------------------------------------
 
-int MISC_Box(const Handle(asiTcl_Interp)& interp,
-             int                          /*argc*/,
-             const char**                 /*argv*/)
-{
-  TopoDS_Shape box = BRepPrimAPI_MakeBox(1, 1, 1);
-
-  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Box created");
-  interp->GetPlotter().DRAW_SHAPE(box, "box");
-  return 0;
-}
-
-//-----------------------------------------------------------------------------
-
 int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
                          int                          /*argc*/,
                          const char**                 /*argv*/)
@@ -1495,15 +1482,6 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& /*data*/)
 {
   static const char* group = "cmdMisc";
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("box",
-    //
-    "box \n"
-    "\t No arguments are expected. This command is a kind of 'hello world' \n"
-    "\t just to draw something on the screen.",
-    //
-    __FILE__, group, MISC_Box);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("test-hexagon-bops",

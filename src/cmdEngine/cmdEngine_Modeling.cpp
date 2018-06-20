@@ -309,6 +309,47 @@ int ENGINE_MakeShell(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_MakeCompound(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
+{
+  if ( argc < 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  TopoDS_Compound result;
+  BRep_Builder BB;
+  BB.MakeCompound(result);
+
+  // Add shapes to the resulting compound.
+  for ( int k = 2; k < argc; ++k )
+  {
+    // Get Topology Item Node.
+    Handle(asiData_IVTopoItemNode)
+      node = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[k]) );
+    //
+    if ( node.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[k]);
+      return TCL_OK;
+    }
+
+    // Get item shape.
+    TopoDS_Shape itemShape = node->GetShape();
+
+    // Add face to the shell being constructed.
+    BB.Add(result, itemShape);
+  }
+
+  // Draw in IV.
+  interp->GetPlotter().REDRAW_SHAPE(argv[1], result, Color_White, 1.0, false);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_AddSubShape(const Handle(asiTcl_Interp)& interp,
                        int                          argc,
                        const char**                 argv)
@@ -518,7 +559,7 @@ int ENGINE_Cut(const Handle(asiTcl_Interp)& interp,
                int                          argc,
                const char**                 argv)
 {
-  if ( argc != 4 )
+  if ( argc != 4 && argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -542,10 +583,15 @@ int ENGINE_Cut(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
+  // Read fuzzy value.
+  double fuzz = 0.0;
+  if ( argc == 5 )
+    fuzz = atof(argv[4]);
+
   // Cut.
   TopoDS_Shape
     result = asiAlgo_Utils::BooleanCut( topoItem1->GetShape(),
-                                        topoItem2->GetShape() );
+                                        topoItem2->GetShape(), fuzz );
   //
   interp->GetPlotter().REDRAW_SHAPE(argv[1], result);
 
@@ -856,6 +902,14 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_MakeShell);
 
   //-------------------------------------------------------------------------//
+  interp->AddCommand("make-compound",
+    //
+    "make-compound result [shape1 [shape2 [...]]]\n"
+    "\t Creates compound from the passed shapes.",
+    //
+    __FILE__, group, ENGINE_MakeCompound);
+
+  //-------------------------------------------------------------------------//
   interp->AddCommand("add-subshape",
     //
     "add-subshape parent child\n"
@@ -890,7 +944,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("cut",
     //
-    "cut result op1 op2\n"
+    "cut result op1 op2 [fuzz]\n"
     "\t Cuts <op2> from <op1> using Boolean Cut operation.",
     //
     __FILE__, group, ENGINE_Cut);

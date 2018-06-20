@@ -1001,9 +1001,9 @@ int MISC_TestPipe(const Handle(asiTcl_Interp)& interp,
 
 #include <asiAlgo_IneqOpt.h>
 
-int MISC_Test(const Handle(asiTcl_Interp)& interp,
-              int                          argc,
-              const char**                 argv)
+int MISC_TestIneq(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
 {
   if ( argc != 1 )
   {
@@ -1478,6 +1478,34 @@ int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+#include <BRepPrimAPI_MakeHalfSpace.hxx>
+#include <BRepAlgoAPI_Common.hxx>
+
+int MISC_Test(const Handle(asiTcl_Interp)& interp,
+              int                          argc,
+              const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+
+  TopoDS_Shape
+    model = Handle(asiEngine_Model)::DownCast( interp->GetModel() )->GetPartNode()->GetShape();
+
+  gp_Pln pln = gp_Pln(gp_Pnt(0.,0.,0.),gp_Dir(0.,0.,1.));
+  TopoDS_Face face = BRepBuilderAPI_MakeFace(pln);
+  TopoDS_Shape half = BRepPrimAPI_MakeHalfSpace(face, gp_Pnt(0.0,0.0,1.0)).Solid();
+
+  BRepAlgoAPI_Common common(model, half);
+
+  interp->GetPlotter().REDRAW_SHAPE("common", common.Shape());
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& /*data*/)
 {
@@ -1554,12 +1582,12 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, MISC_TestPipe);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("test",
+  interp->AddCommand("test-ineq",
     //
-    "test \n"
-    "\t Problem reproducer for anything.",
+    "test-ineq \n"
+    "\t Test for inequality solver.",
     //
-    __FILE__, group, MISC_Test);
+    __FILE__, group, MISC_TestIneq);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("test-eval-curve",
@@ -1582,6 +1610,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t This function is used to test performance of surface evaluation.",
     //
     __FILE__, group, MISC_TestEvalSurf);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test",
+    //
+    "test \n"
+    "\t Problem reproducer for anything.",
+    //
+    __FILE__, group, MISC_Test);
 }
 
 // Declare entry point

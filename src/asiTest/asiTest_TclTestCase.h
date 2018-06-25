@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 22 June 2018
+// Created on: 25 June 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,57 +28,25 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiTest_SuppressIsolatedBlend.h>
+#ifndef asiTest_TclTestCase_HeaderFile
+#define asiTest_TclTestCase_HeaderFile
 
-//-----------------------------------------------------------------------------
+// asiTest includes
+#include <asiTest.h>
 
-// Filenames are specified relatively to ASI_TEST_SCRIPTS environment variable.
-#define filename_test001 "editing/suppress_blend_001.tcl"
-#define filename_test002 "editing/suppress_blend_002.tcl"
-#define filename_test003 "editing/suppress_blend_003.tcl"
+// asiTestEngine includes
+#include <asiTestEngine_TestCase.h>
 
-//-----------------------------------------------------------------------------
-
-//! Test scenario 001.
-//! \param[in] funcID ID of the Test Function.
-//! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressIsolatedBlend::test001(const int funcID)
+//! Base class for all test cases which employ Tcl scripting.
+class asiTest_TclTestCase : public asiTestEngine_TestCase
 {
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test001);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
+protected:
 
-  return evaluate(filename);
-}
+  //! Evaluates Tcl script using the available Tcl interpretor.
+  //! \param[in] scriptFilename full script's filename.
+  //! \return true if Tcl returns TCL_OK, false -- otherwise.
+  static bool evaluate(const TCollection_AsciiString& scriptFilename);
 
-//-----------------------------------------------------------------------------
+};
 
-//! Test scenario 002.
-//! \param[in] funcID ID of the Test Function.
-//! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressIsolatedBlend::test002(const int funcID)
-{
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test002);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
-
-  return evaluate(filename);
-}
-
-//-----------------------------------------------------------------------------
-
-//! Test scenario 003.
-//! \param[in] funcID ID of the Test Function.
-//! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressIsolatedBlend::test003(const int funcID)
-{
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test003);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
-
-  return evaluate(filename);
-}
+#endif

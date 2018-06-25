@@ -11,3 +11,25 @@
   <b>Run to reproduce:</b>
   <br>
   <tt>source %%filename%%</tt>
+
+[2:OVERVIEW]
+
+  This test suppresses blend chain on a simple box shape. No vertex blends exist in that case.
+  The chain is not closed.
+
+[2:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+
+[3:OVERVIEW]
+
+  This test suppresses blend chain on a simple box shape. A single spherical vertex blend exists in that case.
+  The chain is not closed.
+
+[3:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>

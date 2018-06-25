@@ -33,12 +33,10 @@
 
 // asiTest includes
 #include <asiTest_CaseIDs.h>
-
-// asiTestEngine includes
-#include <asiTestEngine_TestCase.h>
+#include <asiTest_TclTestCase.h>
 
 //! Test functions for suppressing isolated blends.
-class asiTest_SuppressIsolatedBlend : public asiTestEngine_TestCase
+class asiTest_SuppressIsolatedBlend : public asiTest_TclTestCase
 {
 public:
 
@@ -67,12 +65,16 @@ public:
   //! \param[out] functions output collection of pointers.
   static void Functions(AsiTestFunctions& functions)
   {
-    functions << &test001;
+    functions << &test001
+              << &test002
+              << &test003;
   }
 
 private:
 
   static bool test001(const int funcID);
+  static bool test002(const int funcID);
+  static bool test003(const int funcID);
 
 };
 

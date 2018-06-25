@@ -173,7 +173,7 @@ int ENGINE_OffsetShell(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
@@ -697,6 +697,9 @@ int ENGINE_DefineGeom(const Handle(asiTcl_Interp)& interp,
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
+
+  if ( !cmdEngine::cf )
+    return TCL_OK;
 
   asiUI_DialogGeomDef* pDlg = new asiUI_DialogGeomDef( cmdEngine::model,
                                                        interp->GetProgress(),

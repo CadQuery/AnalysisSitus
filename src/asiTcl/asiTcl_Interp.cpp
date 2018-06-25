@@ -401,6 +401,14 @@ void asiTcl_Interp::Init()
 
 //-----------------------------------------------------------------------------
 
+void asiTcl_Interp::PrintLastError()
+{
+  m_progress.SendLogMessage( LogErr(Normal) << "Tcl result: %1."
+                                            << Tcl_GetStringResult(m_pInterp) );
+}
+
+//-----------------------------------------------------------------------------
+
 int asiTcl_Interp::Eval(const TCollection_AsciiString& cmd)
 {
   if ( !m_pInterp )
@@ -517,6 +525,15 @@ bool asiTcl_Interp::GetKeyValue(const int                      argc,
     }
   }
   return false;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiTcl_Interp::SetVar(const char* name,
+                           const char* val)
+{
+  Tcl_UnsetVar (m_pInterp, name, 0);
+  Tcl_SetVar   (m_pInterp, name, val, 0);
 }
 
 //-----------------------------------------------------------------------------

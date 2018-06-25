@@ -106,7 +106,7 @@ add_custom_command(
 # Dependencies
 #------------------------------------------------------------------------------
 
-target_link_libraries(asiTest asiAlgo asiData asiEngine asiTestEngine asiTcl)
+target_link_libraries(asiTest asiAlgo asiData asiEngine asiTestEngine asiTcl cmdEngine cmdMisc)
 
 #------------------------------------------------------------------------------
 # Installation

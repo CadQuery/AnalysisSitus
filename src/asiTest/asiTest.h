@@ -33,4 +33,6 @@
 
 #define asiTest_NotUsed(x) x
 
+#define asiTest_SourceCmd(filename) TCollection_AsciiString("source ").Cat(filename)
+
 #endif

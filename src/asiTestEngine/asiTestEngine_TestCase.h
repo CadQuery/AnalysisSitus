@@ -304,6 +304,16 @@ public:
     return m_varExpansion;
   }
 
+public:
+
+  //! Returns full filename for the test script by appending the script's filename
+  //! to the slashed path defined at ASI_TEST_SCRIPTS environment variable.
+  //! \param[in] scriptName name of the script defined relatively to the
+  //!                       path contained at ASI_TEST_SCRIPTS variable.
+  //! \return full filename.
+  asiTestEngine_EXPORT static TCollection_AsciiString
+    GetFilename(const char* scriptName);
+
 private:
 
   //! Returns variable name using namespace of the Test Function.

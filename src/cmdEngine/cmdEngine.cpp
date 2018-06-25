@@ -53,6 +53,9 @@ int ENGINE_Commands(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
+  if ( !cmdEngine::cf )
+    return TCL_OK;
+
   asiUI_DialogCommands*
     pDlg = new asiUI_DialogCommands(interp, interp->GetProgress(), NULL);
   //
@@ -65,6 +68,9 @@ int ENGINE_Commands(const Handle(asiTcl_Interp)& interp,
 
 void cmdEngine::ClearViewers(const bool repaint)
 {
+  if ( cf.IsNull() )
+    return;
+
   // Get all presentation managers
   const vtkSmartPointer<asiVisu_PrsManager>& partPM   = cf->ViewerPart->PrsMgr();
   const vtkSmartPointer<asiVisu_PrsManager>& hostPM   = cf->ViewerHost->PrsMgr();

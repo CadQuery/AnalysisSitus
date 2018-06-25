@@ -47,6 +47,9 @@ void onUndoRedo(const Handle(ActAPI_HParameterMap)& affectedParams)
   if ( affectedParams.IsNull() )
     return;
 
+  if ( !cmdEngine::cf )
+    return;
+
   // Loop over the affected Parameters to get the affected Nodes. These Nodes
   // are placed into a map to have them unique.
   Handle(ActAPI_HNodeMap) affectedNodes = new ActAPI_HNodeMap;
@@ -135,8 +138,8 @@ int ENGINE_SetAsVar(const Handle(asiTcl_Interp)& interp,
   // Get Part Node.
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
 
-    // Erase Part Node for convenience.
-  if ( cmdEngine::cf->ViewerPart )
+  // Erase Part Node for convenience.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderPresentation(part_n);
 
   // Draw.
@@ -174,7 +177,7 @@ int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
     shapeToSet = node->GetShape();
 
     // It is usually convenient to erase the source Node.
-    if ( cmdEngine::cf->ViewerPart )
+    if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
       cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderPresentation(node);
   }
   else
@@ -244,7 +247,7 @@ int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI.
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
@@ -319,7 +322,8 @@ int ENGINE_Clear(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->Clear();
 
   // Update object browser
-  cmdEngine::cf->ObjectBrowser->Populate();
+  if ( cmdEngine::cf )
+    cmdEngine::cf->ObjectBrowser->Populate();
 
   return TCL_OK;
 }

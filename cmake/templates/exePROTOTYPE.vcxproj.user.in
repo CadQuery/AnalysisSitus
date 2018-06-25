@@ -8,6 +8,7 @@ CSF_PluginDefaults=@ASITUS_OCAF_PLUGIN_DIR@
 CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
 ASI_TEST_DUMPING=@ASI_TEST_DUMPING@
 ASI_TEST_DATA=@ASI_TEST_DATA@
+ASI_TEST_SCRIPTS=@ASI_TEST_SCRIPTS@
 ASI_TEST_DESCR=@ASI_TEST_DESCR@
     </LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
@@ -21,6 +22,7 @@ CSF_PluginDefaults=@ASITUS_OCAF_PLUGIN_DIR@
 CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
 ASI_TEST_DUMPING=@ASI_TEST_DUMPING@
 ASI_TEST_DATA=@ASI_TEST_DATA@
+ASI_TEST_SCRIPTS=@ASI_TEST_SCRIPTS@
 ASI_TEST_DESCR=@ASI_TEST_DESCR@
     </LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
@@ -34,6 +36,7 @@ CSF_PluginDefaults=@ASITUS_OCAF_PLUGIN_DIR@
 CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
 ASI_TEST_DUMPING=@ASI_TEST_DUMPING@
 ASI_TEST_DATA=@ASI_TEST_DATA@
+ASI_TEST_SCRIPTS=@ASI_TEST_SCRIPTS@
 ASI_TEST_DESCR=@ASI_TEST_DESCR@
     </LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>

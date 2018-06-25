@@ -141,9 +141,9 @@ int ENGINE_Explode(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_Summary(const Handle(asiTcl_Interp)& interp,
-                   int                          argc,
-                   const char**                 argv)
+int ENGINE_PrintSummary(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
 {
   if ( argc != 1 )
   {
@@ -199,8 +199,66 @@ int ENGINE_Summary(const Handle(asiTcl_Interp)& interp,
   //
   if ( !naming.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "\t... Naming initialized.");
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "\t... Naming service is active.");
   }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_GetSummary(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 9 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node and shape.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
+    return TCL_OK;
+  }
+  //
+  TopoDS_Shape partShape = partNode->GetShape();
+
+  // Build explicit topology graph
+  asiAlgo_TopoGraph topograph(partShape);
+
+  int numCompounds  = 0,
+      numCompSolids = 0,
+      numSolids     = 0,
+      numShells     = 0,
+      numFaces      = 0,
+      numWires      = 0,
+      numEdges      = 0,
+      numVertices   = 0;
+  //
+  topograph.CalculateSummary(numCompounds,
+                             numCompSolids,
+                             numSolids,
+                             numShells,
+                             numFaces,
+                             numWires,
+                             numEdges,
+                             numVertices);
+
+  // Set Tcl variables.
+  int varIdx = 0;
+  //
+  interp->SetVar<int>(argv[++varIdx], numCompounds);
+  interp->SetVar<int>(argv[++varIdx], numCompSolids);
+  interp->SetVar<int>(argv[++varIdx], numSolids);
+  interp->SetVar<int>(argv[++varIdx], numShells);
+  interp->SetVar<int>(argv[++varIdx], numFaces);
+  interp->SetVar<int>(argv[++varIdx], numWires);
+  interp->SetVar<int>(argv[++varIdx], numEdges);
+  interp->SetVar<int>(argv[++varIdx], numVertices);
 
   return TCL_OK;
 }
@@ -425,14 +483,17 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Actualize.
-  cmdEngine::cf->ObjectBrowser->Populate();
-  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(combsNode);
+  if ( cmdEngine::cf )
+  {
+    cmdEngine::cf->ObjectBrowser->Populate();
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(combsNode);
+  }
 
   /* ======================
    *  Build curvature plot
    * ====================== */
 
-  if ( !noPlot )
+  if ( cmdEngine::cf && !noPlot )
   {
     // Open curvature plot.
     asiUI_CurvaturePlot*
@@ -609,7 +670,7 @@ int ENGINE_CheckEuler(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  if ( argc == 1 )
+  if ( cmdEngine::cf && (argc == 1) )
   {
     asiUI_DialogEuler* pEuler = new asiUI_DialogEuler( cmdEngine::model,
                                                        interp->GetProgress() );
@@ -621,9 +682,13 @@ int ENGINE_CheckEuler(const Handle(asiTcl_Interp)& interp,
     const int genus = atoi(argv[1]);
 
     // Calculate the Euler-Poincare property for the active part.
-    asiEngine_Editing( cmdEngine::model,
-                       interp->GetProgress(),
-                       interp->GetPlotter() ).CheckEulerPoincare(genus);
+    const bool
+      isOk = asiEngine_Editing( cmdEngine::model,
+                                interp->GetProgress(),
+                                interp->GetPlotter() ).CheckEulerPoincare(genus);
+
+    // Append result to the interpreter.
+    *interp << isOk;
   }
 
   return TCL_OK;
@@ -1291,7 +1356,7 @@ int ENGINE_CheckToler(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  const int numRanges = ((argc == 2) ? atoi(argv[1]) : 10);
+  const int numRanges = ( (argc == 2) ? atoi(argv[1]) : 10 );
 
   Handle(asiEngine_Model)
     M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
@@ -1343,7 +1408,8 @@ int ENGINE_CheckToler(const Handle(asiTcl_Interp)& interp,
   M->CommitCommand();
 
   // Update UI.
-  cmdEngine::cf->ObjectBrowser->Populate();
+  if ( cmdEngine::cf )
+    cmdEngine::cf->ObjectBrowser->Populate();
 
   return TCL_OK;
 }
@@ -1365,7 +1431,7 @@ int ENGINE_CheckLength(const Handle(asiTcl_Interp)& interp,
   // Attempt to get the highlighted sub-shapes.
   TColStd_PackedMapOfInteger selectedEdgeIds;
   //
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
   {
     asiEngine_Part PartAPI( M,
                             cmdEngine::cf->ViewerPart->PrsMgr(),
@@ -1413,7 +1479,7 @@ int ENGINE_CheckArea(const Handle(asiTcl_Interp)& interp,
   // Attempt to get the highlighted sub-shapes.
   TColStd_PackedMapOfInteger selectedFaceIds;
   //
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
   {
     asiEngine_Part PartAPI( M,
                             cmdEngine::cf->ViewerPart->PrsMgr(),
@@ -1446,6 +1512,35 @@ int ENGINE_CheckArea(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckValidity(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get Part shape.
+  TopoDS_Shape partSh = part_n->GetShape();
+
+  if ( !asiAlgo_Utils::CheckShape( partSh, interp->GetProgress() ) )
+  {
+    *interp << 0;
+  }
+  else
+  {
+    *interp << 1;
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -1464,12 +1559,20 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_Explode);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("summary",
+  interp->AddCommand("print-summary",
     //
-    "summary\n"
-    "\t Shows summary (number of sub-shapes) for the active part.",
+    "print-summary\n"
+    "\t Prints summary (number of sub-shapes) for the active part.",
     //
-    __FILE__, group, ENGINE_Summary);
+    __FILE__, group, ENGINE_PrintSummary);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("get-summary",
+    //
+    "get-summary <compounds> <compsolids> <solids> <shells> <faces> <wires> <edges> <vertices>\n"
+    "\t Returns summary (number of sub-shapes) to the specified output variables.",
+    //
+    __FILE__, group, ENGINE_GetSummary);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("face-addr",
@@ -1574,4 +1677,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Checks area of the selected faces.",
     //
     __FILE__, group, ENGINE_CheckArea);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-validity",
+    //
+    "check-validity\n"
+    "\t Checks validity of the part shape.",
+    //
+    __FILE__, group, ENGINE_CheckValidity);
 }

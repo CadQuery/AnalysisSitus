@@ -33,21 +33,30 @@
 
 //-----------------------------------------------------------------------------
 
-// Filenames are specified relatively to ASI_TEST_DATA environment variable.
-#define filename_as1 "data/cad/boxblend_01.brep"
+// Filenames are specified relatively to ASI_TEST_SCRIPTS environment variable.
+#define filename_test001 "editing/suppress_blend_001.tcl"
 
 //-----------------------------------------------------------------------------
 
 //! Test scenario 001.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressIsolatedBlend::test1(const int funcID)
+bool asiTest_SuppressIsolatedBlend::test001(const int funcID)
 {
+  // Get filename of script to execute.
+  TCollection_AsciiString filename = GetFilename(filename_test001);
+  //
+  SetVarDescr("filename", filename, ID(), funcID);
+
+  // Get common facilities.
   Handle(asiTest_CommonFacilities) cf = asiTest_CommonFacilities::Instance();
 
-  const int ret = cf->Interp->Eval("set x 1");
+  // Execute script.
+  const int ret = cf->Interp->Eval( asiTest_SourceCmd(filename) );
 
-  // TODO: NYI
+  // Check result.
+  if ( ret != TCL_OK )
+    cf->Interp->PrintLastError();
 
   return ret == TCL_OK;
 }

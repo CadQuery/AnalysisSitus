@@ -45,24 +45,27 @@
 
 void onModelLoaded(const TopoDS_Shape& loadedShape)
 {
-    // Clear viewers
+  // Clear viewers.
   cmdEngine::ClearViewers();
 
-  // Clear data
+  // Clear data.
   cmdEngine::model->Clear();
 
-  // Modify Data Model
+  // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
     asiEngine_Part(cmdEngine::model, NULL).Update(loadedShape);
   }
   cmdEngine::model->CommitCommand();
 
-  // Update viewer
-  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  if ( cmdEngine::cf )
+  {
+    // Update viewer.
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
-  // Update object browser
-  cmdEngine::cf->ObjectBrowser->Populate();
+    // Update object browser.
+    cmdEngine::cf->ObjectBrowser->Populate();
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -1,25 +1,13 @@
 [TITLE]
 
-  Load assembly from STEP
+  Suppress blend
 
 [1:OVERVIEW]
 
-  This test loads assembly from a STEP file to CAD Processor's Data Model.
-  After that, assembly graph is prepared and the number of nodes in this
-  graph is checked.
+  This test suppresses isolated blend on a simple box shape. Only one edge is blended.
 
 [1:DETAILS]
 
-  Execution time (CPU): %%cpuTime%% [sec].
-
-  <br><br>
-
-  Inputs:
-  <ul>
-    <li>Input file: %%filenameIn%%.
-  </ul>
-
-  Outputs:
-  <ul>
-    <li>Num. of generic objects: %%numGenericObjects%%.
-  </ul>
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>

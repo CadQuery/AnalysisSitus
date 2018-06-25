@@ -30,3 +30,21 @@
 
 // asiTestEngine includes
 #include <asiTestEngine_TestCase.h>
+
+// OCCT includes
+#include <OSD_Environment.hxx>
+
+//-----------------------------------------------------------------------------
+
+TCollection_AsciiString
+  asiTestEngine_TestCase::GetFilename(const char* scriptName)
+{
+  std::string
+    dir = asiAlgo_Utils::Str::Slashed( OSD_Environment("ASI_TEST_SCRIPTS").Value().ToCString() );
+
+  TCollection_AsciiString filename( dir.c_str() );
+  filename += TCollection_AsciiString(scriptName);
+
+  return filename;
+}
+

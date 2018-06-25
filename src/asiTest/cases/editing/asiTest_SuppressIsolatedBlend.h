@@ -67,12 +67,12 @@ public:
   //! \param[out] functions output collection of pointers.
   static void Functions(AsiTestFunctions& functions)
   {
-    functions << &test1;
+    functions << &test001;
   }
 
 private:
 
-  static bool test1(const int funcID);
+  static bool test001(const int funcID);
 
 };
 

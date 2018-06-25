@@ -9,8 +9,9 @@ set (CMAKE_INSTALL_PREFIX "${INSTALL_DIR}" CACHE INTERNAL "" FORCE )
 
 # Directories for embedded unit tests.
 set (ASI_TEST_DUMPING "${CMAKE_BINARY_DIR}" CACHE PATH "Dumping directory for tests.")
-set (ASI_TEST_DATA    "${CMAKE_SOURCE_DIR}/data" CACHE PATH "Data directory for tests.")
-set (ASI_TEST_DESCR   "${CMAKE_SOURCE_DIR}/src/asiTest/cases" CACHE PATH "Data directory for tests.")
+set (ASI_TEST_DATA    "${CMAKE_SOURCE_DIR}/data" CACHE PATH "Directory which contains test data.")
+set (ASI_TEST_SCRIPTS "${CMAKE_SOURCE_DIR}/scripts" CACHE PATH "Directory which contains test scripts.")
+set (ASI_TEST_DESCR   "${CMAKE_SOURCE_DIR}/src/asiTest/cases" CACHE PATH "Directory which contains descriptions of tests.")
 
 # Build configurations
 set (CMAKE_CONFIGURATION_TYPES Release Debug RelWithDebInfo CACHE INTERNAL "" FORCE)

@@ -187,7 +187,7 @@ int ENGINE_KEV(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI.
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
   return TCL_OK;
@@ -296,7 +296,7 @@ int ENGINE_KEF(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI.
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
   return TCL_OK;
@@ -365,7 +365,7 @@ int ENGINE_KFMV(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI.
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
   return TCL_OK;
@@ -463,7 +463,7 @@ int ENGINE_MergeSubShapes(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI.
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
   return TCL_OK;
@@ -562,7 +562,7 @@ int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI.
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
   return TCL_OK;
@@ -661,7 +661,7 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
   return TCL_OK;
@@ -754,7 +754,7 @@ int ENGINE_KillSolidByFace(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
   return TCL_OK;
@@ -826,7 +826,7 @@ int ENGINE_MoveByFace(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
@@ -886,7 +886,7 @@ int ENGINE_Imprint(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
@@ -934,7 +934,7 @@ int ENGINE_Repair(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI.
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
@@ -1117,7 +1117,7 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI.
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
@@ -1239,7 +1239,7 @@ int ENGINE_SplitByContinuity(const Handle(asiTcl_Interp)& interp,
   cmdEngine::model->CommitCommand();
 
   // Update UI.
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;

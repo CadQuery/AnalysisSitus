@@ -161,6 +161,10 @@ public:
   asiTcl_EXPORT void
     Init();
 
+  //! Prints last error.
+  asiTcl_EXPORT void
+    PrintLastError();
+
   //! Evaluates command.
   //! \param[in] cmd command to evaluate.
   //! \return error code (0 == TCL_OK, 1 == TCL_ERROR).
@@ -225,6 +229,24 @@ public:
                 const char**                   argv,
                 const TCollection_AsciiString& key,
                 TCollection_AsciiString&       value) const;
+
+  //! Sets Tcl variable.
+  //! \param[in] name variable name.
+  //! \param[in] val  variable value.
+  template<typename T>
+  void SetVar(const char* name,
+              const T     val)
+  {
+    std::string valStr = asiAlgo_Utils::Str::ToString<T>(val);
+    this->SetVar( name, valStr.c_str() );
+  }
+
+  //! Sets Tcl variable.
+  //! \param[in] name variable name.
+  //! \param[in] val  variable value.
+  asiTcl_EXPORT void
+    SetVar(const char* name,
+           const char* val);
 
   //! Appends the passed string to the result of command execution.
   //! \param[in] str string to append.

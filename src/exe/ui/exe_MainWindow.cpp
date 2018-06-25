@@ -303,11 +303,9 @@ void exe_MainWindow::createDockWindows()
    * ================================== */
 
   // Construct the interpreter
-  cf->Interp = new asiTcl_Interp;
+  cf->Interp = new asiTcl_Interp(cf->ProgressNotifier, cf->Plotter);
   cf->Interp->Init();
   cf->Interp->SetModel(cf->Model);
-  cf->Interp->SetPlotter(cf->Plotter);
-  cf->Interp->SetProgress(cf->ProgressNotifier);
 
   // Load commands
   EXE_LOAD_MODULE("cmdMisc")

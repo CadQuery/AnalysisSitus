@@ -161,6 +161,7 @@ set (interop_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (mesh_H_FILES
+  mesh/asiAlgo_MeshCheckInter.h
   mesh/asiAlgo_MeshConvert.h
   mesh/asiAlgo_MeshGen.h
   mesh/asiAlgo_MeshInfo.h
@@ -169,6 +170,7 @@ set (mesh_H_FILES
   mesh/asiAlgo_MeshParams.h
 )
 set (mesh_CPP_FILES 
+  mesh/asiAlgo_MeshCheckInter.cpp
   mesh/asiAlgo_MeshConvert.cpp
   mesh/asiAlgo_MeshGen.cpp
   mesh/asiAlgo_MeshInfo.cpp

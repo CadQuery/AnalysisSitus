@@ -7,8 +7,10 @@ project (AnalysisSitus CXX)
 set (INSTALL_DIR "" CACHE PATH "Where to install" )
 set (CMAKE_INSTALL_PREFIX "${INSTALL_DIR}" CACHE INTERNAL "" FORCE )
 
-# Path to data files for testing
-# set (TEST_DATA_DIR "" CACHE PATH "Directory with data for unit-testing" )
+# Directories for embedded unit tests.
+set (ASI_TEST_DUMPING "${CMAKE_BINARY_DIR}" CACHE PATH "Dumping directory for tests.")
+set (ASI_TEST_DATA    "${CMAKE_SOURCE_DIR}/data" CACHE PATH "Data directory for tests.")
+set (ASI_TEST_DESCR   "${CMAKE_SOURCE_DIR}/src/asiTest/cases" CACHE PATH "Data directory for tests.")
 
 # Build configurations
 set (CMAKE_CONFIGURATION_TYPES Release Debug RelWithDebInfo CACHE INTERNAL "" FORCE)
@@ -153,6 +155,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiVisu)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiEngine)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiUI)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiTestEngine)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/exe)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdEngine)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdMisc)
@@ -178,6 +181,7 @@ set_property(TARGET asiUI            PROPERTY FOLDER Framework)
 set_property(TARGET asiTestEngine    PROPERTY FOLDER Framework)
 ################################################################################
 set_property(TARGET BRepInspectorExe PROPERTY FOLDER Executables)
+set_property(TARGET asiTest          PROPERTY FOLDER Executables)
 ################################################################################
 set_property(TARGET setup            PROPERTY FOLDER Utilities)
 ################################################################################

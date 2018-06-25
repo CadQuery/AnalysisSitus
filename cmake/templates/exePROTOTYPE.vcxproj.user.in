@@ -6,6 +6,9 @@ QT_PLUGIN_PATH=@3RDPARTY_QT_DIR@/plugins
 CASROOT=@3RDPARTY_OCCT_DIR@
 CSF_PluginDefaults=@ASITUS_OCAF_PLUGIN_DIR@
 CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
+ASI_TEST_DUMPING=@ASI_TEST_DUMPING@
+ASI_TEST_DATA=@ASI_TEST_DATA@
+ASI_TEST_DESCR=@ASI_TEST_DESCR@
     </LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>@CMAKE_BINARY_DIR@</LocalDebuggerWorkingDirectory>
@@ -16,6 +19,9 @@ QT_PLUGIN_PATH=@3RDPARTY_QT_DIR@/plugins
 CASROOT=@3RDPARTY_OCCT_DIR@
 CSF_PluginDefaults=@ASITUS_OCAF_PLUGIN_DIR@
 CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
+ASI_TEST_DUMPING=@ASI_TEST_DUMPING@
+ASI_TEST_DATA=@ASI_TEST_DATA@
+ASI_TEST_DESCR=@ASI_TEST_DESCR@
     </LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>@CMAKE_BINARY_DIR@</LocalDebuggerWorkingDirectory>
@@ -26,6 +32,9 @@ QT_PLUGIN_PATH=@3RDPARTY_QT_DIR@/plugins
 CASROOT=@3RDPARTY_OCCT_DIR@
 CSF_PluginDefaults=@ASITUS_OCAF_PLUGIN_DIR@
 CSF_ResourcesDefaults=@ASITUS_OCAF_PLUGIN_DIR@
+ASI_TEST_DUMPING=@ASI_TEST_DUMPING@
+ASI_TEST_DATA=@ASI_TEST_DATA@
+ASI_TEST_DESCR=@ASI_TEST_DESCR@
     </LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>@CMAKE_BINARY_DIR@</LocalDebuggerWorkingDirectory>

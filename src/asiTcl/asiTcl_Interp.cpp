@@ -42,6 +42,242 @@
 #include <OSD_Path.hxx>
 
 //-----------------------------------------------------------------------------
+// Custom channel binding inspired by the code taken from tkConsole.c
+//-----------------------------------------------------------------------------
+
+/*
+ * Prototypes for local procedures defined in this file:
+ */
+
+static int  ConsoleClose(ClientData instanceData,
+                         Tcl_Interp* interp);
+
+static int  ConsoleHandle(ClientData  instanceData,
+                          int         direction,
+                          ClientData* handlePtr);
+
+static int  ConsoleInput(ClientData instanceData,
+                         char*      buf,
+                         int        toRead,
+                         int*       errorCode);
+
+static int  ConsoleOutput(ClientData  instanceData,
+                          const char* buf,
+                          int         toWrite,
+                          int*        errorCode);
+
+static void	ConsoleWatch(ClientData instanceData,
+                         int        mask);
+
+static const Tcl_ChannelType consoleChannelType = {
+    "console",              /* Type name. */
+    TCL_CHANNEL_VERSION_4,  /* v4 channel */
+    ConsoleClose,           /* Close proc. */
+    ConsoleInput,           /* Input proc. */
+    ConsoleOutput,          /* Output proc. */
+    NULL,                   /* Seek proc. */
+    NULL,                   /* Set option proc. */
+    NULL,                   /* Get option proc. */
+    ConsoleWatch,           /* Watch for events on console. */
+    ConsoleHandle,          /* Get a handle from the device. */
+    NULL,                   /* close2proc. */
+    NULL,                   /* Always non-blocking.*/
+    NULL,                   /* flush proc. */
+    NULL,                   /* handler proc. */
+    NULL,                   /* wide seek proc */
+    NULL,                   /* thread action proc */
+    NULL
+};
+
+/*
+ * Each console is associated with an instance of the ConsoleInfo struct.
+ * A refCount permits the struct to be shared as instance data
+ * by commands and by channels.
+ */
+
+struct ConsoleInfo
+{
+  Handle(asiTcl_Interp) asiInterp;
+  int                   refCount;
+
+  ConsoleInfo() : asiInterp(NULL), refCount(0) {} //!< Default ctor.
+};
+
+/*
+ * Each console channel holds an instance of the ChannelData struct as
+ * its instance data.  It contains ConsoleInfo, so the channel can work
+ * with the appropriate console window, and a type value to distinguish
+ * the stdout channel from the stderr channel.
+ */
+
+struct ChannelData
+{
+  ConsoleInfo* info;
+  int          type; /* TCL_STDOUT or TCL_STDERR */
+
+  ChannelData() : info(NULL), type(TCL_STDOUT) {} //!< Default ctor.
+};
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * ConsoleOutput
+ *
+ * Writes the given output on the IO channel. Returns count of how many
+ * characters were actually written, and an error indication.
+ *
+ * Results:
+ *    A count of how many characters were written is returned and an error
+ *    indication is returned in an output argument.
+ *
+ * Side effects:
+ *    Writes output on the actual channel.
+ *
+ *----------------------------------------------------------------------
+ */
+
+static int ConsoleOutput(ClientData  instanceData, /* Indicates which device to use. */
+                         const char* buf,          /* The data buffer. */
+                         int         toWrite,      /* How many bytes to write? */
+                         int*        errorCode)    /* Where to store error code. */
+{
+  ChannelData *data = (ChannelData*) instanceData;
+  ConsoleInfo *info = data->info;
+
+  *errorCode = 0;
+  Tcl_SetErrno(0);
+
+  TCollection_AsciiString bufStr(buf);
+
+  if ( info->asiInterp )
+    if ( bufStr != "\n" )
+      info->asiInterp->GetProgress().SendLogMessage(LogInfo(Normal) << bufStr);
+
+  return toWrite;
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * ConsoleInput
+ *
+ *  Reads input from the console. Not currently implemented.
+ *
+ * Results:
+ *    Always returns EOF.
+ *
+ * Side effects:
+ *    None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+static int ConsoleInput(ClientData instanceData, /* Unused. */
+                        char*      buf,          /* Where to store data read. */
+                        int        bufSize,      /* How much space is available in the buffer? */
+                        int*       errorCode)    /* Where to store error code. */
+{
+  asiTcl_NotUsed(instanceData);
+  asiTcl_NotUsed(buf);
+  asiTcl_NotUsed(bufSize);
+  asiTcl_NotUsed(errorCode);
+
+  return 0; /* Always return EOF. */
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * ConsoleClose
+ *
+ *  Closes the IO channel.
+ *
+ * Results:
+ *    Always returns 0 (success).
+ *
+ * Side effects:
+ *    Frees the dummy file associated with the channel.
+ *
+ *----------------------------------------------------------------------
+ */
+
+static int ConsoleClose(ClientData  instanceData,
+                        Tcl_Interp* interp)
+{
+  asiTcl_NotUsed(interp);
+
+  ChannelData *data = (ChannelData*) instanceData;
+  ConsoleInfo *info = data->info;
+
+  if ( info )
+  {
+    if ( --info->refCount <= 0 )
+    {
+      delete info;
+    }
+  }
+  delete data;
+  return 0;
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * ConsoleWatch
+ *
+ *  Called by the notifier to set up the console device so that events
+ *  will be noticed. Since there are no events on the console, this
+ *  routine just returns without doing anything.
+ *
+ * Results:
+ *    None.
+ *
+ * Side effects:
+ *    None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+static void ConsoleWatch(ClientData instanceData, /* Device ID for the channel. */
+                         int        mask)         /* OR-ed combination of TCL_READABLE,
+                                                   * TCL_WRITABLE and TCL_EXCEPTION, for the
+                                                   * events we are interested in. */
+{
+  asiTcl_NotUsed(instanceData);
+  asiTcl_NotUsed(mask);
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * ConsoleHandle
+ *
+ *  Invoked by the generic IO layer to get a handle from a channel.
+ *  Because console channels are not devices, this function always fails.
+ *
+ * Results:
+ *    Always returns TCL_ERROR.
+ *
+ * Side effects:
+ *    None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+static int ConsoleHandle(ClientData  instanceData, /* Device ID for the channel. */
+                         int         direction,    /* TCL_READABLE or TCL_WRITABLE to indicate
+                                                    * which direction of the channel is being
+                                                    * requested. */
+                         ClientData* handlePtr)    /* Where to store handle */
+{
+  asiTcl_NotUsed(instanceData);
+  asiTcl_NotUsed(direction);
+  asiTcl_NotUsed(handlePtr);
+
+  return TCL_ERROR;
+}
+
+//-----------------------------------------------------------------------------
 
 //! Function to pass to Tcl_CreateCommand as an entry point to any user-defined
 //! command.
@@ -59,7 +295,8 @@ static int TclProcInvoke(void*       pClientData,
 
   static int code;
   code = TCL_OK;
-  asiTcl_Interp::t_tcl_callback* pCallback = (asiTcl_Interp::t_tcl_callback*) pClientData;
+  asiTcl_Interp::t_tcl_callback*
+    pCallback = (asiTcl_Interp::t_tcl_callback*) pClientData;
 
   // Invoke
   try
@@ -83,16 +320,53 @@ static int TclProcInvoke(void*       pClientData,
 
 static void TclProcDelete(void* pClientData)
 {
-  asiTcl_Interp::t_tcl_callback* pCallback = (asiTcl_Interp::t_tcl_callback*) pClientData;
+  asiTcl_Interp::t_tcl_callback*
+    pCallback = (asiTcl_Interp::t_tcl_callback*) pClientData;
+
   delete pCallback;
 }
 
 //-----------------------------------------------------------------------------
 
-asiTcl_Interp::asiTcl_Interp() : Standard_Transient()
+static void OverrideTclChannel(const Handle(asiTcl_Interp)& interp,
+                               const int                    channelType)
 {
-  m_pInterp = NULL;
+  ConsoleInfo* info = new ConsoleInfo;
+  info->asiInterp   = interp;
+
+  ChannelData* data = new ChannelData;
+  data->info        = info;
+  data->type        = channelType;
+  data->info->refCount++;
+
+  // Configure channel.
+  Tcl_Channel nativeStdOut = Tcl_GetStdChannel(channelType);
+  Tcl_UnregisterChannel(interp->GetTclInterp(), nativeStdOut);
+  Tcl_Channel customStdOut = Tcl_CreateChannel(&consoleChannelType,
+                                               "console0",
+                                                data,
+                                                TCL_READABLE | TCL_WRITABLE);
+
+  if ( customStdOut != NULL )
+  {
+    Tcl_SetChannelOption(NULL, customStdOut, "-translation", "lf");
+    Tcl_SetChannelOption(NULL, customStdOut, "-buffering", "none");
+    Tcl_SetChannelOption(NULL, customStdOut, "-encoding", "utf-8");
+  }
+
+  Tcl_SetStdChannel(customStdOut, channelType);
+  Tcl_RegisterChannel(interp->GetTclInterp(), customStdOut);
 }
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp::asiTcl_Interp(ActAPI_ProgressEntry progress,
+                             ActAPI_PlotterEntry  plotter)
+: Standard_Transient (),
+  m_pInterp          (NULL),
+  m_progress         (progress),
+  m_plotter          (plotter)
+{}
 
 //-----------------------------------------------------------------------------
 
@@ -110,6 +384,19 @@ void asiTcl_Interp::Init()
     Tcl_DeleteInterp(m_pInterp);
 
   m_pInterp = Tcl_CreateInterp();
+
+  /* ================================
+   *  Override standard Tcl channels
+   * ================================ */
+
+  OverrideTclChannel(this, TCL_STDOUT);
+  OverrideTclChannel(this, TCL_STDERR);
+
+  // Output available channels.
+  Tcl_GetChannelNames(m_pInterp);
+  //
+  m_progress.SendLogMessage( LogInfo(Normal) << "Available channels: %1."
+                                             << Tcl_GetStringResult(m_pInterp) );
 }
 
 //-----------------------------------------------------------------------------
@@ -118,7 +405,7 @@ int asiTcl_Interp::Eval(const TCollection_AsciiString& cmd)
 {
   if ( !m_pInterp )
   {
-    this->GetProgress().SendLogMessage(LogErr(Normal) << "Tcl command has finished with TCL_ERROR");
+    m_progress.SendLogMessage(LogErr(Normal) << "Tcl command has finished with TCL_ERROR.");
     return TCL_ERROR;
   }
 
@@ -182,7 +469,7 @@ void asiTcl_Interp::GetAvailableCommands(std::vector<asiTcl_CommandInfo>& comman
 int asiTcl_Interp::ErrorOnWrongArgs(const char* cmd)
 {
   std::cerr << "Error: wrong number of arguments in command " << cmd;
-  this->GetProgress().SendLogMessage(LogErr(Normal) << "Wrong number of arguments in command %1." << cmd);
+  m_progress.SendLogMessage(LogErr(Normal) << "Wrong number of arguments in command %1." << cmd);
 
   return TCL_ERROR;
 }

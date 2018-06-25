@@ -190,7 +190,7 @@ endif()
 
 set (X_COMPILER_BITNESS "x${COMPILER_BITNESS}")
 
-configure_file(${CMAKE_SOURCE_DIR}/cmake/templates/BRepInspectorExe.vcxproj.user.in
+configure_file(${CMAKE_SOURCE_DIR}/cmake/templates/exePROTOTYPE.vcxproj.user.in
                ${BRepInspectorExe_BINARY_DIR}/BRepInspectorExe.vcxproj.user @ONLY)
 
 #------------------------------------------------------------------------------

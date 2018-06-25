@@ -98,14 +98,23 @@ public:
 public:
 
   //! Constructor.
+  //! \param[in] progress optional progress notifier.
+  //! \param[in] plotter  optional imperative plotter.
   asiTcl_EXPORT
-    asiTcl_Interp();
+    asiTcl_Interp(ActAPI_ProgressEntry progress = NULL,
+                  ActAPI_PlotterEntry  plotter  = NULL);
 
   //! Destructor.
   asiTcl_EXPORT
     ~asiTcl_Interp();
 
 public:
+
+  //! \return Tcl interpreter.
+  Tcl_Interp* GetTclInterp() const
+  {
+    return m_pInterp;
+  }
 
   //! Sets Data Model.
   //! \param[in] model Data Model instance.

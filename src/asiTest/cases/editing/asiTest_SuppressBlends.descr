@@ -119,7 +119,7 @@
 
 [10:OVERVIEW]
 
-  Removes single isolated blend on NIST model CTC-01.
+  Removes single isolated blend on NIST Combined Test Case CTC-01.
 
 [10:DETAILS]
 
@@ -131,7 +131,7 @@
 
 [11:OVERVIEW]
 
-  Removes two isolated blends on NIST model CTC-01.
+  Removes two isolated blends on NIST Combined Test Case CTC-01.
 
 [11:DETAILS]
 

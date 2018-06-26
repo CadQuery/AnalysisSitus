@@ -91,6 +91,7 @@ asiUI_DialogTopoGraphDepth::asiUI_DialogTopoGraphDepth(const Handle(asiEngine_Mo
   m_widgets.pDepth->addItem(asiAlgo_Utils::ShapeTypeStr(TopAbs_SHAPE).c_str(),     TopAbs_SHAPE);
   //
   m_widgets.pDepth->setMinimumWidth(CONTROL_EDIT_WIDTH);
+  m_widgets.pDepth->setCurrentIndex(TopAbs_SHAPE);
 
   // Whether to colorize graph according to locations of sub-shapes
   m_widgets.pColorizeLocations = new QCheckBox;

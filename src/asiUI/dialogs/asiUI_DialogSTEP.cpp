@@ -339,7 +339,7 @@ void asiUI_DialogSTEP::proceed_Read()
     QApplication::restoreOverrideCursor();
     return;
   }
-  m_notifier.SendLogMessage( LogInfo(Normal) << "Part loaded from STEP file %1" << QStr2AsciiStr(this->Filename) );
+  m_notifier.SendLogMessage( LogNotice(Normal) << "Part loaded from STEP file %1" << QStr2AsciiStr(this->Filename) );
   m_notifier.StepProgress(1);
   m_notifier.SetMessageKey("Update accelerating structures");
 

@@ -339,23 +339,27 @@ static void OverrideTclChannel(const Handle(asiTcl_Interp)& interp,
   data->type        = channelType;
   data->info->refCount++;
 
-  // Configure channel.
-  Tcl_Channel nativeStdOut = Tcl_GetStdChannel(channelType);
-  Tcl_UnregisterChannel(interp->GetTclInterp(), nativeStdOut);
-  Tcl_Channel customStdOut = Tcl_CreateChannel(&consoleChannelType,
+  // Unregister standard channel (if any).
+  Tcl_Channel nativeChannel = Tcl_GetStdChannel(channelType);
+  //
+  if ( nativeChannel != NULL )
+    Tcl_UnregisterChannel(interp->GetTclInterp(), nativeChannel);
+
+  // Create custom channel.
+  Tcl_Channel customChannel = Tcl_CreateChannel(&consoleChannelType,
                                                "console0",
                                                 data,
                                                 TCL_READABLE | TCL_WRITABLE);
 
-  if ( customStdOut != NULL )
+  if ( customChannel != NULL )
   {
-    Tcl_SetChannelOption(NULL, customStdOut, "-translation", "lf");
-    Tcl_SetChannelOption(NULL, customStdOut, "-buffering", "none");
-    Tcl_SetChannelOption(NULL, customStdOut, "-encoding", "utf-8");
-  }
+    Tcl_SetChannelOption(NULL, customChannel, "-translation", "lf");
+    Tcl_SetChannelOption(NULL, customChannel, "-buffering", "none");
+    Tcl_SetChannelOption(NULL, customChannel, "-encoding", "utf-8");
 
-  Tcl_SetStdChannel(customStdOut, channelType);
-  Tcl_RegisterChannel(interp->GetTclInterp(), customStdOut);
+    Tcl_SetStdChannel(customChannel, channelType);
+    Tcl_RegisterChannel(interp->GetTclInterp(), customChannel);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -395,15 +399,17 @@ void asiTcl_Interp::Init()
   // Output available channels.
   Tcl_GetChannelNames(m_pInterp);
   //
+  std::string channels = Tcl_GetStringResult(m_pInterp);
+  //
   m_progress.SendLogMessage( LogInfo(Normal) << "Available channels: %1."
-                                             << Tcl_GetStringResult(m_pInterp) );
+                                             << (channels.size() ? channels.c_str() : "none") );
 }
 
 //-----------------------------------------------------------------------------
 
 void asiTcl_Interp::PrintLastError()
 {
-  m_progress.SendLogMessage( LogErr(Normal) << "Tcl result: %1."
+  m_progress.SendLogMessage( LogErr(Normal) << "Tcl result: %1"
                                             << Tcl_GetStringResult(m_pInterp) );
 }
 

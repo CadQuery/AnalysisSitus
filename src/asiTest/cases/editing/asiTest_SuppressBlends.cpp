@@ -33,16 +33,22 @@
 
 //-----------------------------------------------------------------------------
 
-// Filenames are specified relatively to ASI_TEST_SCRIPTS environment variable.
-#define filename_test001 "editing/suppress_blend_001.tcl"
-#define filename_test002 "editing/suppress_blend_002.tcl"
-#define filename_test003 "editing/suppress_blend_003.tcl"
-#define filename_test004 "editing/suppress_blend_004.tcl"
-#define filename_test005 "editing/suppress_blend_005.tcl"
-#define filename_test006 "editing/suppress_blend_006.tcl"
-#define filename_test007 "editing/suppress_blend_007.tcl"
-#define filename_test008 "editing/suppress_blend_008.tcl"
-#define filename_test009 "editing/suppress_blend_009.tcl"
+outcome asiTest_SuppressBlends::runtest(const int   funcID,
+                                        const char* filename)
+{
+  // Get filename of script to execute.
+  TCollection_AsciiString fullFilename = GetFilename(filename);
+
+  // Execute test script.
+  outcome res = evaluate(fullFilename);
+
+  // Set description variables.
+  SetVarDescr("filename", fullFilename,       ID(), funcID);
+  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
+
+  // Return status.
+  return res;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -51,18 +57,7 @@
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_SuppressBlends::test001(const int funcID)
 {
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test001);
-
-  // Execute test script.
-  outcome res = evaluate(filename);
-
-  // Set description variables.
-  SetVarDescr("filename", filename,           ID(), funcID);
-  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
-
-  // Return status.
-  return res;
+  return runtest(funcID, "editing/suppress_blend_001.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -72,18 +67,7 @@ outcome asiTest_SuppressBlends::test001(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_SuppressBlends::test002(const int funcID)
 {
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test002);
-
-  // Execute test script.
-  outcome res = evaluate(filename);
-
-  // Set description variables.
-  SetVarDescr("filename", filename,           ID(), funcID);
-  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
-
-  // Return status.
-  return res;
+  return runtest(funcID, "editing/suppress_blend_002.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -93,18 +77,7 @@ outcome asiTest_SuppressBlends::test002(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_SuppressBlends::test003(const int funcID)
 {
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test003);
-
-  // Execute test script.
-  outcome res = evaluate(filename);
-
-  // Set description variables.
-  SetVarDescr("filename", filename,           ID(), funcID);
-  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
-
-  // Return status.
-  return res;
+  return runtest(funcID, "editing/suppress_blend_003.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -114,18 +87,7 @@ outcome asiTest_SuppressBlends::test003(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_SuppressBlends::test004(const int funcID)
 {
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test004);
-
-  // Execute test script.
-  outcome res = evaluate(filename);
-
-  // Set description variables.
-  SetVarDescr("filename", filename,           ID(), funcID);
-  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
-
-  // Return status.
-  return res;
+  return runtest(funcID, "editing/suppress_blend_004.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -135,18 +97,7 @@ outcome asiTest_SuppressBlends::test004(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_SuppressBlends::test005(const int funcID)
 {
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test005);
-
-  // Execute test script.
-  outcome res = evaluate(filename);
-
-  // Set description variables.
-  SetVarDescr("filename", filename,           ID(), funcID);
-  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
-
-  // Return status.
-  return res;
+  return runtest(funcID, "editing/suppress_blend_005.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -156,18 +107,7 @@ outcome asiTest_SuppressBlends::test005(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_SuppressBlends::test006(const int funcID)
 {
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test006);
-
-  // Execute test script.
-  outcome res = evaluate(filename);
-
-  // Set description variables.
-  SetVarDescr("filename", filename,           ID(), funcID);
-  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
-
-  // Return status.
-  return res;
+  return runtest(funcID, "editing/suppress_blend_006.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -177,18 +117,7 @@ outcome asiTest_SuppressBlends::test006(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_SuppressBlends::test007(const int funcID)
 {
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test007);
-
-  // Execute test script.
-  outcome res = evaluate(filename);
-
-  // Set description variables.
-  SetVarDescr("filename", filename,           ID(), funcID);
-  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
-
-  // Return status.
-  return res;
+  return runtest(funcID, "editing/suppress_blend_007.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -198,18 +127,7 @@ outcome asiTest_SuppressBlends::test007(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_SuppressBlends::test008(const int funcID)
 {
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test008);
-
-  // Execute test script.
-  outcome res = evaluate(filename);
-
-  // Set description variables.
-  SetVarDescr("filename", filename,           ID(), funcID);
-  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
-
-  // Return status.
-  return res;
+  return runtest(funcID, "editing/suppress_blend_008.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -219,16 +137,25 @@ outcome asiTest_SuppressBlends::test008(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_SuppressBlends::test009(const int funcID)
 {
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test009);
+  return runtest(funcID, "editing/suppress_blend_009.tcl");
+}
 
-  // Execute test script.
-  outcome res = evaluate(filename);
+//-----------------------------------------------------------------------------
 
-  // Set description variables.
-  SetVarDescr("filename", filename,           ID(), funcID);
-  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
+//! Test scenario 010.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::test010(const int funcID)
+{
+  return runtest(funcID, "editing/suppress_blend_010.tcl");
+}
 
-  // Return status.
-  return res;
+//-----------------------------------------------------------------------------
+
+//! Test scenario 011.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::test011(const int funcID)
+{
+  return runtest(funcID, "editing/suppress_blend_011.tcl");
 }

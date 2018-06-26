@@ -143,13 +143,23 @@ int main(int argc, char** argv)
   //---------------------------------------------------------------------------
 
   exe_MainWindow* pMainWindow = new exe_MainWindow;
-  //
+
+  // Let Qt do whatever it wants to do before showing UI. This helps
+  // to avoid some sort of blinking on launch.
+  QApplication::processEvents(QEventLoop::AllEvents, 10000);
+
+  // Move to a handy position.
   QRect screenGeometry = QApplication::desktop()->screenGeometry();
   const int center_x   = ( screenGeometry.width() - pMainWindow->width() ) / 2;
   const int center_y   = ( screenGeometry.height() - pMainWindow->height() ) / 2;
   //
-  pMainWindow->move(center_x/2, center_y/2); // Move to a handy position
+  pMainWindow->move(center_x/8, center_y/4);
+
+  // Show main window.
   pMainWindow->show();
+
+  // Set focus on Tcl console.
+  pMainWindow->Widgets.wConsole->setFocus();
 
   //---------------------------------------------------------------------------
   // Get command line arguments
@@ -166,7 +176,8 @@ int main(int argc, char** argv)
       filename = QStr2AsciiStr( QDir::fromNativeSeparators( qtArgs.at(1) ) );
 
     // Get Tcl interpeter.
-    const Handle(asiTcl_Interp)& interp = pMainWindow->GetConsole()->GetInterp();
+    const Handle(asiTcl_Interp)&
+      interp = pMainWindow->Widgets.wConsole->GetInterp();
 
     // Auto-recognize file format
     asiAlgo_FileFormat

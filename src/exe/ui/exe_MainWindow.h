@@ -58,14 +58,6 @@ public:
 
 public:
 
-  //! \return Tcl console.
-  asiUI_Console* GetConsole() const
-  {
-    return m_widgets.wConsole;
-  }
-
-public:
-
   void closeEvent(QCloseEvent* evt);
 
 private:
@@ -75,7 +67,7 @@ private:
   void createMenus();
   void createToolbar();
 
-private:
+public:
 
   //! Widgets.
   struct t_widgets
@@ -145,10 +137,10 @@ private:
   {
   };
 
-  t_widgets   m_widgets;
-  t_listeners m_listeners;
-  t_menus     m_menus;
-  t_toolbar   m_toolbar;
+  t_widgets   Widgets;
+  t_listeners Listeners;
+  t_menus     Menus;
+  t_toolbar   Toolbar;
 
 };
 

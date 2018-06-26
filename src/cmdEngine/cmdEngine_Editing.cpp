@@ -1088,6 +1088,9 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
    *  Perform modification
    * ====================== */
 
+  TIMER_NEW
+  TIMER_GO
+
   // Prepare algorithm.
   asiAlgo_RebuildEdge oper( part_n->GetAAG(),
                             interp->GetProgress(),
@@ -1102,6 +1105,9 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "BRepTools_Modifier is not done.");
     return false;
   }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Rebuild edge")
 
   // Get result.
   const TopoDS_Shape& result = oper.GetResult();

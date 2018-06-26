@@ -116,3 +116,27 @@
   <tt>source %%filename%%</tt>
   <br><br>
   Elapsed time [s]: %%time%%
+
+[10:OVERVIEW]
+
+  Removes single isolated blend on NIST model CTC-01.
+
+[10:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
+
+[11:OVERVIEW]
+
+  Removes two isolated blends on NIST model CTC-01.
+
+[11:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%

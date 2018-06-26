@@ -1271,7 +1271,7 @@ bool asiAlgo_Utils::CheckShape(const TopoDS_Shape&  shape,
   // Check validity
   if ( Checker.IsValid() )
   {
-    Journal.SendLogMessage(LogInfo(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_GOOD");
+    Journal.SendLogMessage(LogInfo(Normal) << "Part is topologically and geometrically sound.");
     return true;
   }
 

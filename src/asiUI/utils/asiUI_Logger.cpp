@@ -344,13 +344,19 @@ void asiUI_Logger::putText(const QString& text, const QColor& color) const
   const int green = qGreen(rgb);
   const int blue  = qBlue(rgb);
 
+  // Prepare text to output as HTML.
+  QString textAdapted = text;
+  //
+  textAdapted.replace('\n', "<br/>");
+  textAdapted.replace('\t', "&nbsp;&nbsp;&nbsp;&nbsp;");
+
   // Prepare string to add.
   QString line;
   line += QString("<div style='color:rgb(%1,%2,%3);font-family:Courier New;'>%4</div>")
          .arg(red)
          .arg(green)
          .arg(blue)
-         .arg(text);
+         .arg(textAdapted);
 
   // Append line to editor.
   m_widget->append(line);

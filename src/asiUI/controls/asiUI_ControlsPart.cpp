@@ -226,7 +226,7 @@ void asiUI_ControlsPart::onLoadBRep()
     m_notifier.SendLogMessage(LogErr(Normal) << "Cannot read BREP file.");
     return;
   }
-  m_notifier.SendLogMessage( LogInfo(Normal) << "Part loaded from BREP file %1." << QStr2AsciiStr(filename) );
+  m_notifier.SendLogMessage( LogNotice(Normal) << "Part loaded from BREP file %1." << QStr2AsciiStr(filename) );
   m_notifier.StepProgress(1);
   m_notifier.SetMessageKey("Update accelerating structures");
 
@@ -264,7 +264,7 @@ void asiUI_ControlsPart::onAddBRep()
     m_notifier.SendLogMessage(LogErr(Normal) << "Cannot read BREP file.");
     return;
   }
-  m_notifier.SendLogMessage( LogInfo(Normal) << "Part loaded from BREP file %1" << QStr2AsciiStr(filename) );
+  m_notifier.SendLogMessage( LogNotice(Normal) << "Part added from BREP file %1" << QStr2AsciiStr(filename) );
   m_notifier.StepProgress(1);
   m_notifier.SetMessageKey("Update accelerating structures");
 

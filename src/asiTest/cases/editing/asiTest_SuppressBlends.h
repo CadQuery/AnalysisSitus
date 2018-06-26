@@ -74,8 +74,15 @@ public:
               << &test007
               << &test008
               << &test009
+              << &test010
+              << &test011
     ; // Put semicolon here for convenient adding new functions above ;)
   }
+
+private:
+
+  static outcome runtest(const int   funcID,
+                         const char* filename);
 
 private:
 
@@ -88,6 +95,8 @@ private:
   static outcome test007(const int funcID);
   static outcome test008(const int funcID);
   static outcome test009(const int funcID);
+  static outcome test010(const int funcID);
+  static outcome test011(const int funcID);
 
 };
 

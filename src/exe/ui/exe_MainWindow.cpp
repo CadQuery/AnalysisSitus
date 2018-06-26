@@ -67,7 +67,7 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
 {
   this->createPartViewer();
   this->createDockWindows();
-  this->setCentralWidget(m_widgets.wViewerPart);
+  this->setCentralWidget(Widgets.wViewerPart);
 
   // Prepare application name with the version number
   TCollection_AsciiString appName(ASITUS_APP_NAME);
@@ -91,9 +91,6 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
     qApp->setStyleSheet( ts.readAll() );
   }
 
-  // Set focus on Tcl console
-  m_widgets.wConsole->setFocus();
-
   // Set this main window to common facilities
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
   //
@@ -116,7 +113,7 @@ void exe_MainWindow::closeEvent(QCloseEvent* evt)
   // order to avoid some side effects from VTK. E.g. if we don't kill the
   // widgets explicitly here, we may sometimes get a warning window of VTK
   // saying that it lacks some resources
-  m_widgets.Release();
+  Widgets.Release();
   //
   evt->accept();
 }
@@ -130,11 +127,11 @@ void exe_MainWindow::createPartViewer()
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
 
   // Create viewer
-  m_widgets.wViewerPart = new asiUI_ViewerPart(cf->Model, true);
+  Widgets.wViewerPart = new asiUI_ViewerPart(cf->Model, true);
 
   // Initialize desktop
-  cf->ViewerPart = m_widgets.wViewerPart;
-  cf->Prs.Part   = m_widgets.wViewerPart->PrsMgr();
+  cf->ViewerPart = Widgets.wViewerPart;
+  cf->Prs.Part   = Widgets.wViewerPart->PrsMgr();
 }
 
 //-----------------------------------------------------------------------------
@@ -150,14 +147,14 @@ void exe_MainWindow::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Domain", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, pDock);
-    pDock->setWidget(m_widgets.wViewerDomain);
+    Widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, pDock);
+    pDock->setWidget(Widgets.wViewerDomain);
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDock);
 
     // Initialize desktop
-    cf->ViewerDomain = m_widgets.wViewerDomain;
-    cf->Prs.Domain   = m_widgets.wViewerDomain->PrsMgr();
+    cf->ViewerDomain = Widgets.wViewerDomain;
+    cf->Prs.Domain   = Widgets.wViewerDomain->PrsMgr();
   }
 
   // Host viewer
@@ -165,14 +162,14 @@ void exe_MainWindow::createDockWindows()
     QDockWidget* pDock = new QDockWidget("Host", this);
     pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, pDock);
-    pDock->setWidget(m_widgets.wViewerSurface);
+    Widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, pDock);
+    pDock->setWidget(Widgets.wViewerSurface);
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDock);
 
     // Initialize desktop
-    cf->ViewerHost = m_widgets.wViewerSurface;
-    cf->Prs.Host   = m_widgets.wViewerSurface->PrsMgr();
+    cf->ViewerHost = Widgets.wViewerSurface;
+    cf->Prs.Host   = Widgets.wViewerSurface->PrsMgr();
   }
 
   // Object browser
@@ -181,17 +178,17 @@ void exe_MainWindow::createDockWindows()
     pDockBrowser = new QDockWidget("Data", this);
     pDockBrowser->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     //
-    m_widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, cf->ProgressNotifier, pDockBrowser);
-    m_widgets.wBrowser->AddAssociatedViewer(cf->ViewerPart);
-    m_widgets.wBrowser->AddAssociatedViewer(cf->ViewerDomain);
-    m_widgets.wBrowser->AddAssociatedViewer(cf->ViewerHost);
+    Widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, cf->ProgressNotifier, pDockBrowser);
+    Widgets.wBrowser->AddAssociatedViewer(cf->ViewerPart);
+    Widgets.wBrowser->AddAssociatedViewer(cf->ViewerDomain);
+    Widgets.wBrowser->AddAssociatedViewer(cf->ViewerHost);
     //
-    pDockBrowser->setWidget(m_widgets.wBrowser);
+    pDockBrowser->setWidget(Widgets.wBrowser);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockBrowser);
 
     // Initialize desktop
-    cf->ObjectBrowser = m_widgets.wBrowser;
+    cf->ObjectBrowser = Widgets.wBrowser;
   }
 
   // Now we have everything to initialize an imperative plotter
@@ -203,13 +200,13 @@ void exe_MainWindow::createDockWindows()
     pDockFeature = new QDockWidget("Features", this);
     pDockFeature->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
-    m_widgets.wControlsFeature = new asiUI_ControlsFeature(cf->Model,
+    Widgets.wControlsFeature = new asiUI_ControlsFeature(cf->Model,
                                                            cf->ViewerPart,
                                                            cf->ProgressNotifier,
                                                            cf->Plotter,
                                                            pDockFeature);
     //
-    pDockFeature->setWidget(m_widgets.wControlsFeature);
+    pDockFeature->setWidget(Widgets.wControlsFeature);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockFeature);
   }
@@ -223,13 +220,13 @@ void exe_MainWindow::createDockWindows()
     pDockPart = new QDockWidget("Part", this);
     pDockPart->setAllowedAreas(Qt::LeftDockWidgetArea);
     //
-    m_widgets.wControlsPart = new asiUI_ControlsPart(cf->Model,
+    Widgets.wControlsPart = new asiUI_ControlsPart(cf->Model,
                                                      cf->ViewerPart,
                                                      cf->ProgressNotifier,
                                                      cf->Plotter,
                                                      pDockPart);
     //
-    pDockPart->setWidget(m_widgets.wControlsPart);
+    pDockPart->setWidget(Widgets.wControlsPart);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockPart);
   }
@@ -238,40 +235,40 @@ void exe_MainWindow::createDockWindows()
   this->tabifyDockWidget(pDockFeature, pDockPart);
 
   // Listener for part controls
-  m_listeners.pControlsPart = new asiUI_ControlsPartListener(m_widgets.wControlsPart,
-                                                             cf->Model,
-                                                             cf,
-                                                             cf->ProgressNotifier);
+  Listeners.pControlsPart = new asiUI_ControlsPartListener(Widgets.wControlsPart,
+                                                           cf->Model,
+                                                           cf,
+                                                           cf->ProgressNotifier);
 
   // Listener for part viewer
-  m_listeners.pViewerPart = new asiUI_ViewerPartListener(m_widgets.wViewerPart,
-                                                         m_widgets.wViewerDomain,
-                                                         m_widgets.wViewerSurface,
-                                                         cf->Model,
-                                                         cf->ProgressNotifier,
-                                                         cf->Plotter);
+  Listeners.pViewerPart = new asiUI_ViewerPartListener(Widgets.wViewerPart,
+                                                       Widgets.wViewerDomain,
+                                                       Widgets.wViewerSurface,
+                                                       cf->Model,
+                                                       cf->ProgressNotifier,
+                                                       cf->Plotter);
 
   // Listener for domain viewer
-  m_listeners.pViewerDomain = new asiUI_ViewerDomainListener(m_widgets.wViewerPart,
-                                                             m_widgets.wViewerDomain,
-                                                             m_widgets.wViewerSurface,
-                                                             cf->Model,
-                                                             cf->ProgressNotifier,
-                                                             cf->Plotter);
+  Listeners.pViewerDomain = new asiUI_ViewerDomainListener(Widgets.wViewerPart,
+                                                           Widgets.wViewerDomain,
+                                                           Widgets.wViewerSurface,
+                                                           cf->Model,
+                                                           cf->ProgressNotifier,
+                                                           cf->Plotter);
 
   // Listener for host viewer
-  m_listeners.pViewerHost = new asiUI_ViewerHostListener(m_widgets.wViewerPart,
-                                                         m_widgets.wViewerDomain,
-                                                         m_widgets.wViewerSurface,
-                                                         cf->Model,
-                                                         cf->ProgressNotifier,
-                                                         cf->Plotter);
+  Listeners.pViewerHost = new asiUI_ViewerHostListener(Widgets.wViewerPart,
+                                                       Widgets.wViewerDomain,
+                                                       Widgets.wViewerSurface,
+                                                       cf->Model,
+                                                       cf->ProgressNotifier,
+                                                       cf->Plotter);
 
   // Signals-slots
-  m_listeners.pControlsPart ->Connect();
-  m_listeners.pViewerPart   ->Connect();
-  m_listeners.pViewerDomain ->Connect();
-  m_listeners.pViewerHost   ->Connect();
+  Listeners.pControlsPart ->Connect();
+  Listeners.pViewerPart   ->Connect();
+  Listeners.pViewerDomain ->Connect();
+  Listeners.pViewerHost   ->Connect();
 
   // Log window
   QDockWidget* pDockLogWindow;
@@ -279,9 +276,9 @@ void exe_MainWindow::createDockWindows()
     pDockLogWindow = new QDockWidget("Logger", this);
     pDockLogWindow->setAllowedAreas(Qt::BottomDockWidgetArea);
     //
-    m_widgets.wLogger = new asiUI_StyledTextEdit(pDockLogWindow);
+    Widgets.wLogger = new asiUI_StyledTextEdit(pDockLogWindow);
     //
-    pDockLogWindow->setWidget(m_widgets.wLogger);
+    pDockLogWindow->setWidget(Widgets.wLogger);
   }
 
   // Create status bar
@@ -294,7 +291,7 @@ void exe_MainWindow::createDockWindows()
   cf->StatusBar->SetStatusText("Load part from STEP or BREP to start analysis");
 
   // Initialize and connect progress listener
-  cf->Logger           = new asiUI_Logger(m_widgets.wLogger);
+  cf->Logger           = new asiUI_Logger(Widgets.wLogger);
   cf->ProgressListener = new asiUI_ProgressListener(statusBar, cf->ProgressNotifier, cf->Logger);
   cf->ProgressListener->Connect();
 
@@ -317,9 +314,9 @@ void exe_MainWindow::createDockWindows()
     pDockConsoleWindow = new QDockWidget("Console", this);
     pDockConsoleWindow->setAllowedAreas(Qt::BottomDockWidgetArea);
     //
-    m_widgets.wConsole = new asiUI_Console(cf->Interp, pDockLogWindow);
+    Widgets.wConsole = new asiUI_Console(cf->Interp, pDockLogWindow);
     //
-    pDockConsoleWindow->setWidget(m_widgets.wConsole);
+    pDockConsoleWindow->setWidget(Widgets.wConsole);
     //
     this->addDockWidget(Qt::BottomDockWidgetArea, pDockConsoleWindow);
     this->addDockWidget(Qt::BottomDockWidgetArea, pDockLogWindow);

@@ -1541,6 +1541,26 @@ int ENGINE_CheckValidity(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_GetTolerance(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Return max tolerance to the interpreter.
+  *interp << asiAlgo_Utils::MaxTolerance( part_n->GetShape() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -1685,4 +1705,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Checks validity of the part shape.",
     //
     __FILE__, group, ENGINE_CheckValidity);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("get-tolerance",
+    //
+    "get-tolerance\n"
+    "\t Returns max geometric tolerance of the part shape.",
+    //
+    __FILE__, group, ENGINE_GetTolerance);
 }

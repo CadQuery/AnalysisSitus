@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 30 December 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -42,9 +42,10 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting logging widget.
-//! \param pLogWindow [in] logging window.
+//! \param[in] pLogWindow logging window.
 asiUI_Logger::asiUI_Logger(QTextEdit* pLogWindow)
-: ActAPI_ILogger(), m_widget(pLogWindow)
+: ActAPI_ILogger (),
+  m_widget       (pLogWindow)
 {}
 
 //-----------------------------------------------------------------------------
@@ -56,7 +57,7 @@ asiUI_Logger::~asiUI_Logger()
 //-----------------------------------------------------------------------------
 
 //! Sets logging window to operate with.
-//! \param pLogWindow [in] logging window to set.
+//! \param[in] pLogWindow logging window to set.
 void asiUI_Logger::SetLogWindow(QTextEdit* pLogWindow)
 {
   m_widget = pLogWindow;
@@ -74,10 +75,10 @@ QTextEdit* asiUI_Logger::GetLogWindow() const
 //-----------------------------------------------------------------------------
 
 //! Puts INFORMATION message to the Log Window.
-//! \param message   [in] message to log.
-//! \param priority  [in] message priority.
-//! \param arguments [in] message arguments.
-//! \param timeStamp [in] application-specific timestamp.
+//! \param[in] message   message to log.
+//! \param[in] priority  message priority.
+//! \param[in] arguments message arguments.
+//! \param[in] timeStamp application-specific timestamp.
 void asiUI_Logger::Info(const TCollection_AsciiString&    message,
                         const ActAPI_LogMessagePriority   priority,
                         const ActAPI_LogArguments&        arguments,
@@ -89,10 +90,10 @@ void asiUI_Logger::Info(const TCollection_AsciiString&    message,
 //-----------------------------------------------------------------------------
 
 //! Puts NOTICE message to the Log Window.
-//! \param message   [in] message to log.
-//! \param priority  [in] message priority.
-//! \param arguments [in] message arguments.
-//! \param timeStamp [in] application-specific timestamp.
+//! \param[in] message   message to log.
+//! \param[in] priority  message priority.
+//! \param[in] arguments message arguments.
+//! \param[in] timeStamp application-specific timestamp.
 void asiUI_Logger::Notice(const TCollection_AsciiString&    message,
                           const ActAPI_LogMessagePriority   priority,
                           const ActAPI_LogArguments&        arguments,
@@ -104,10 +105,10 @@ void asiUI_Logger::Notice(const TCollection_AsciiString&    message,
 //-----------------------------------------------------------------------------
 
 //! Puts WARNING message to the Log Window.
-//! \param message   [in] message to log.
-//! \param priority  [in] message priority.
-//! \param arguments [in] message arguments.
-//! \param timeStamp [in] application-specific timestamp.
+//! \param[in] message   message to log.
+//! \param[in] priority  message priority.
+//! \param[in] arguments message arguments.
+//! \param[in] timeStamp application-specific timestamp.
 void asiUI_Logger::Warn(const TCollection_AsciiString&    message,
                         const ActAPI_LogMessagePriority   priority,
                         const ActAPI_LogArguments&        arguments,
@@ -119,10 +120,10 @@ void asiUI_Logger::Warn(const TCollection_AsciiString&    message,
 //-----------------------------------------------------------------------------
 
 //! Puts ERROR message to the Log Window.
-//! \param message   [in] message to log.
-//! \param priority  [in] message priority.
-//! \param arguments [in] message arguments.
-//! \param timeStamp [in] application-specific timestamp.
+//! \param[in] message   message to log.
+//! \param[in] priority  message priority.
+//! \param[in] arguments message arguments.
+//! \param[in] timeStamp application-specific timestamp.
 void asiUI_Logger::Error(const TCollection_AsciiString&     message,
                           const ActAPI_LogMessagePriority   priority,
                           const ActAPI_LogArguments&        arguments,
@@ -134,10 +135,10 @@ void asiUI_Logger::Error(const TCollection_AsciiString&     message,
 //-----------------------------------------------------------------------------
 
 //! Puts INFORMATION message to the Log Window.
-//! \param message   [in] message to log.
-//! \param priority  [in] message priority.
-//! \param arguments [in] message arguments.
-//! \param timeStamp [in] application-specific timestamp.
+//! \param[in] message   message to log.
+//! \param[in] priority  message priority.
+//! \param[in] arguments message arguments.
+//! \param[in] timeStamp application-specific timestamp.
 void asiUI_Logger::Info(const QString&                    message,
                         const ActAPI_LogMessagePriority   priority,
                         const ActAPI_LogArguments&        arguments,
@@ -149,10 +150,10 @@ void asiUI_Logger::Info(const QString&                    message,
 //-----------------------------------------------------------------------------
 
 //! Puts NOTICE message to the Log Window.
-//! \param message   [in] message to log.
-//! \param priority  [in] message priority.
-//! \param arguments [in] message arguments.
-//! \param timeStamp [in] application-specific timestamp.
+//! \param[in] message   message to log.
+//! \param[in] priority  message priority.
+//! \param[in] arguments message arguments.
+//! \param[in] timeStamp application-specific timestamp.
 void asiUI_Logger::Notice(const QString&                    message,
                           const ActAPI_LogMessagePriority   priority,
                           const ActAPI_LogArguments&        arguments,
@@ -164,10 +165,10 @@ void asiUI_Logger::Notice(const QString&                    message,
 //-----------------------------------------------------------------------------
 
 //! Puts WARNING message to the Log Window.
-//! \param message   [in] message to log.
-//! \param priority  [in] message priority.
-//! \param arguments [in] message arguments.
-//! \param timeStamp [in] application-specific timestamp.
+//! \param[in] message   message to log.
+//! \param[in] priority  message priority.
+//! \param[in] arguments message arguments.
+//! \param[in] timeStamp application-specific timestamp.
 void asiUI_Logger::Warn(const QString&                    message,
                         const ActAPI_LogMessagePriority   priority,
                         const ActAPI_LogArguments&        arguments,
@@ -179,10 +180,10 @@ void asiUI_Logger::Warn(const QString&                    message,
 //-----------------------------------------------------------------------------
 
 //! Puts ERROR message to the Log Window.
-//! \param message   [in] message to log.
-//! \param priority  [in] message priority.
-//! \param arguments [in] message arguments.
-//! \param timeStamp [in] application-specific timestamp.
+//! \param[in] message   message to log.
+//! \param[in] priority  message priority.
+//! \param[in] arguments message arguments.
+//! \param[in] timeStamp application-specific timestamp.
 void asiUI_Logger::Error(const QString&                    message,
                          const ActAPI_LogMessagePriority   priority,
                          const ActAPI_LogArguments&        arguments,
@@ -195,7 +196,7 @@ void asiUI_Logger::Error(const QString&                    message,
 
 //! Attempts to build a string representation of the passed value presuming
 //! that it has one of the acceptable primitive types.
-//! \param val [in] value to convert to string representation.
+//! \param[in] val value to convert to string representation.
 //! \return string representation or EMPTY string.
 QString asiUI_Logger::chooseString(const Handle(Standard_Transient)& val) const
 {
@@ -220,7 +221,7 @@ QString asiUI_Logger::chooseString(const Handle(Standard_Transient)& val) const
 //-----------------------------------------------------------------------------
 
 //! Converts the given value to string.
-//! \param val [in] value to convert.
+//! \param[in] val value to convert.
 //! \return string representation of the passed value.
 template<typename T>
 QString asiUI_Logger::toString(const Handle(Standard_Transient)& val) const
@@ -237,7 +238,7 @@ QString asiUI_Logger::toString(const Handle(Standard_Transient)& val) const
 
 //! Converts the passed timestamp data first to string representation
 //! of QDateTime.
-//! \param timeStamp [in] algorithmic timestamp to convert to readable form.
+//! \param[in] timeStamp algorithmic timestamp to convert to readable form.
 //! \return string representation of timestamp.
 QString asiUI_Logger::toString(const Handle(ActAux_TimeStamp)& timeStamp) const
 {
@@ -252,11 +253,11 @@ QString asiUI_Logger::toString(const Handle(ActAux_TimeStamp)& timeStamp) const
 //-----------------------------------------------------------------------------
 
 //! Internal logging method.
-//! \param message   [in] message to log.
-//! \param severity  [in] message severity.
-//! \param priority  [in] message priority.
-//! \param arguments [in] message arguments.
-//! \param timeStamp [in] application-specific timestamp.
+//! \param[in] message   message to log.
+//! \param[in] severity  message severity.
+//! \param[in] priority  message priority.
+//! \param[in] arguments message arguments.
+//! \param[in] timeStamp application-specific timestamp.
 void asiUI_Logger::logMessage(const TCollection_AsciiString&    message,
                               const ActAPI_LogMessageSeverity   severity,
                               const ActAPI_LogMessagePriority   priority,
@@ -273,11 +274,11 @@ void asiUI_Logger::logMessage(const TCollection_AsciiString&    message,
 //-----------------------------------------------------------------------------
 
 //! Internal logging method.
-//! \param message   [in] message to log.
-//! \param severity  [in] message severity.
-//! \param priority  [in] message priority.
-//! \param arguments [in] message arguments.
-//! \param timeStamp [in] application-specific timestamp.
+//! \param[in] message   message to log.
+//! \param[in] severity  message severity.
+//! \param[in] priority  message priority.
+//! \param[in] arguments message arguments.
+//! \param[in] timeStamp application-specific timestamp.
 void asiUI_Logger::logMessage(const QString&                    message,
                               const ActAPI_LogMessageSeverity   severity,
                               const ActAPI_LogMessagePriority   priority,
@@ -332,8 +333,8 @@ void asiUI_Logger::logMessage(const QString&                    message,
 //-----------------------------------------------------------------------------
 
 //! Puts text to the widget.
-//! \param text  [in] string to put.
-//! \param color [in] color to use.
+//! \param[in] text  string to put.
+//! \param[in] color color to use.
 void asiUI_Logger::putText(const QString& text, const QColor& color) const
 {
   // Get color components.

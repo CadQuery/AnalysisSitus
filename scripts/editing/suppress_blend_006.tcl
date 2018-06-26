@@ -19,6 +19,8 @@ if { [check-validity] != 1 } {
 }
 #
 print-summary
+#
+set initialToler [get-tolerance]
 
 # Apply topological operators.
 if { [check-euler 0] != 1 } {
@@ -83,4 +85,12 @@ if { $ne != $ref_ne } {
 }
 if { $nv != $ref_nv } {
   error "Unexpected number of vertices."
+}
+
+# Check that tolernace has not significantly degraded.
+set finalToler [get-tolerance]
+puts "Final tolerance ($finalToler) vs initial tolerance ($initialToler)"
+#
+if { [expr $finalToler - $initialToler] > 1e-3 } {
+  error "Significant tolerance degradation."
 }

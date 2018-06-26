@@ -949,7 +949,7 @@ namespace CheckShapeAux
     if ( Journal.Access().IsNull() )
       return; // Cannot dump to NULL Logger
 
-    Journal.SendLogMessage(LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_HAS_PROBLEMS");
+    Journal.SendLogMessage(LogErr(Normal) << "Shape is invalid.");
 
     // Initialize array storing the number of problems
     Handle(TColStd_HArray1OfInteger) NbProblems = new TColStd_HArray1OfInteger(1, BRepCheck_CheckFail);
@@ -962,147 +962,147 @@ namespace CheckShapeAux
     GetProblemShapes(theAna, theShape, sl, NbProblems, MAP);
 
     if ( NbProblems->Value(BRepCheck_InvalidPointOnCurve) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_POINT_ON_CURVE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid point on curve (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidPointOnCurve) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidPointOnCurveOnSurface) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_POINT_ON_CURVE_ON_SURFACE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid point on CONS (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidPointOnCurveOnSurface) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidPointOnSurface) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_POINT_ON_SURFACE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid point on surface (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidPointOnSurface) );
     //
     if ( NbProblems->Value(BRepCheck_No3DCurve) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_NO_3D_CURVE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Missing 3D curve (count: %1)."
                                               << NbProblems->Value(BRepCheck_No3DCurve) );
     //
     if ( NbProblems->Value(BRepCheck_Multiple3DCurve) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_MULTIPLE_3D_CURVE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Multiple 3D curve (count: %1)."
                                               << NbProblems->Value(BRepCheck_Multiple3DCurve) );
     //
     if ( NbProblems->Value(BRepCheck_Invalid3DCurve) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_3D_CURVE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid 3D curve (count: %1)."
                                               << NbProblems->Value(BRepCheck_Invalid3DCurve) );
     //
     if ( NbProblems->Value(BRepCheck_NoCurveOnSurface) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_NO_CURVE_ON_SURFACE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Missing p-curve (count: %1)."
                                               << NbProblems->Value(BRepCheck_NoCurveOnSurface) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidCurveOnSurface) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_CURVE_ON_SURFACE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid p-curve (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidCurveOnSurface) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidCurveOnClosedSurface) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_CURVE_ON_CLOSED_SURFACE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid p-curve on closed surface (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidCurveOnClosedSurface) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidSameRangeFlag) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_SAME_RANGE_FLAG"
+      Journal.SendLogMessage( LogWarn(Normal) << "Same-range flag is turned off (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidSameRangeFlag) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidSameParameterFlag) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_SAME_PARAMETER_FLAG"
+      Journal.SendLogMessage( LogWarn(Normal) << "Same-parameter flag is turned off (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidSameParameterFlag) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidDegeneratedFlag) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_DEGEN_FLAG"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid degenerated flag (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidDegeneratedFlag) );
     //
     if ( NbProblems->Value(BRepCheck_FreeEdge) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_FREE_EDGE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Unexpected free edge (count: %1)."
                                               << NbProblems->Value(BRepCheck_FreeEdge) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidMultiConnexity) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_MULTI_CONNEXITY"
+      Journal.SendLogMessage( LogWarn(Normal) << "Multi-connexity problem (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidMultiConnexity) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidRange) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_RANGE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid range (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidRange) );
     //
     if ( NbProblems->Value(BRepCheck_EmptyWire) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_EMPTY_WIRE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Empty wire (count: %1)."
                                               << NbProblems->Value(BRepCheck_EmptyWire) );
     //
     if ( NbProblems->Value(BRepCheck_RedundantEdge) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_REDUNDANT_EDGE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Redundant edge (count: %1)."
                                               << NbProblems->Value(BRepCheck_RedundantEdge) );
     //
     if ( NbProblems->Value(BRepCheck_SelfIntersectingWire) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_SELF_INTER_WIRE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Self-intersecting wire (count: %1)."
                                               << NbProblems->Value(BRepCheck_SelfIntersectingWire) );
     //
     if ( NbProblems->Value(BRepCheck_NoSurface) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_NO_SURFACE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Missing surface (count: %1)."
                                               << NbProblems->Value(BRepCheck_NoSurface) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidWire) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_WIRE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid wire (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidWire) );
     //
     if ( NbProblems->Value(BRepCheck_RedundantWire) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_REDUNDANT_WIRE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Redundant wire (count: %1)."
                                               << NbProblems->Value(BRepCheck_RedundantWire) );
     //
     if ( NbProblems->Value(BRepCheck_IntersectingWires) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INTER_WIRES"
+      Journal.SendLogMessage( LogWarn(Normal) << "Intersecting wires (count: %1)."
                                               << NbProblems->Value(BRepCheck_IntersectingWires) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidImbricationOfWires) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_IMBRICATION_OF_WIRES"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid imbrication of wires (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidImbricationOfWires) );
     //
     if ( NbProblems->Value(BRepCheck_EmptyShell) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_EMPTY_SHELL"
+      Journal.SendLogMessage( LogWarn(Normal) << "Empty shell (count: %1)."
                                               << NbProblems->Value(BRepCheck_EmptyShell) );
     //
     if ( NbProblems->Value(BRepCheck_RedundantFace) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_REDUNDANT_FACE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Redundant face (count: %1)."
                                               << NbProblems->Value(BRepCheck_RedundantFace) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidImbricationOfShells) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_IMBRICATION_OF_SHELLS"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid imbrication of shells (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidImbricationOfShells) );
     //
     if ( NbProblems->Value(BRepCheck_UnorientableShape) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_UNORIENTABLE_SHAPE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Unorientable shape (count: %1)."
                                               << NbProblems->Value(BRepCheck_UnorientableShape) );
     //
     if ( NbProblems->Value(BRepCheck_NotClosed) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_NOT_CLOSED"
+      Journal.SendLogMessage( LogWarn(Normal) << "Not closed (count: %1)."
                                               << NbProblems->Value(BRepCheck_NotClosed) );
     //
     if ( NbProblems->Value(BRepCheck_NotConnected) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_NOT_CONNECTED"
+      Journal.SendLogMessage( LogWarn(Normal) << "Not connected (count: %1)."
                                               << NbProblems->Value(BRepCheck_NotConnected) );
     //
     if ( NbProblems->Value(BRepCheck_SubshapeNotInShape) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_SUBSHAPE_NOT_IN_SHAPE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Sub-shape is not in shape (count: %1)."
                                               << NbProblems->Value(BRepCheck_SubshapeNotInShape) );
     //
     if ( NbProblems->Value(BRepCheck_BadOrientation) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_BAD_ORIENTATION"
+      Journal.SendLogMessage( LogWarn(Normal) << "Bad orientation (count: %1)."
                                               << NbProblems->Value(BRepCheck_BadOrientation) );
     //
     if ( NbProblems->Value(BRepCheck_BadOrientationOfSubshape) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_BAD_ORIENTATION_OF_SUBSHAPE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Bad orientation of sub-shape (count: %1)."
                                               << NbProblems->Value(BRepCheck_BadOrientationOfSubshape) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidPolygonOnTriangulation) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_POLYGON_ON_TRIANGULATION"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid polygon on triangulation (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidPolygonOnTriangulation) );
     //
     if ( NbProblems->Value(BRepCheck_InvalidToleranceValue) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_INV_TOLERANCE_VALUE"
+      Journal.SendLogMessage( LogWarn(Normal) << "Invalid tolerance value (count: %1)."
                                               << NbProblems->Value(BRepCheck_InvalidToleranceValue) );
     //
     if ( NbProblems->Value(BRepCheck_EnclosedRegion) > 0 )
-      Journal.SendLogMessage( LogWarn(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_ENCLOSED_REGION"
+      Journal.SendLogMessage( LogWarn(Normal) << "Enclosed region (count: %1)."
                                               << NbProblems->Value(BRepCheck_EnclosedRegion) );
     //
     if ( NbProblems->Value(BRepCheck_CheckFail) > 0 )
-      Journal.SendLogMessage( LogErr(Normal) << "ALGO_SHAPEUTILS_CHECKSHAPE_FAILED"
+      Journal.SendLogMessage( LogErr(Normal) << "Shape checker failed (count: %1)."
                                              << NbProblems->Value(BRepCheck_CheckFail) );
   }
 

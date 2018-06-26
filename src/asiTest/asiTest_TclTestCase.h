@@ -45,7 +45,7 @@ protected:
   //! Evaluates Tcl script using the available Tcl interpretor.
   //! \param[in] scriptFilename full script's filename.
   //! \return true if Tcl returns TCL_OK, false -- otherwise.
-  static bool evaluate(const TCollection_AsciiString& scriptFilename);
+  static outcome evaluate(const TCollection_AsciiString& scriptFilename);
 
 };
 

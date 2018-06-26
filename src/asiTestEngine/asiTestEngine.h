@@ -43,4 +43,6 @@
 
 #define asiTestEngine_NotUsed(x)
 
+#include <outcome.h>
+
 #endif

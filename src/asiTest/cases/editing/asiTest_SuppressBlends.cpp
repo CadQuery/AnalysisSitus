@@ -49,14 +49,20 @@
 //! Test scenario 001.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressBlends::test001(const int funcID)
+outcome asiTest_SuppressBlends::test001(const int funcID)
 {
   // Get filename of script to execute.
   TCollection_AsciiString filename = GetFilename(filename_test001);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
 
-  return evaluate(filename);
+  // Execute test script.
+  outcome res = evaluate(filename);
+
+  // Set description variables.
+  SetVarDescr("filename", filename,           ID(), funcID);
+  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
+
+  // Return status.
+  return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -64,14 +70,20 @@ bool asiTest_SuppressBlends::test001(const int funcID)
 //! Test scenario 002.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressBlends::test002(const int funcID)
+outcome asiTest_SuppressBlends::test002(const int funcID)
 {
   // Get filename of script to execute.
   TCollection_AsciiString filename = GetFilename(filename_test002);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
 
-  return evaluate(filename);
+  // Execute test script.
+  outcome res = evaluate(filename);
+
+  // Set description variables.
+  SetVarDescr("filename", filename,           ID(), funcID);
+  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
+
+  // Return status.
+  return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -79,14 +91,20 @@ bool asiTest_SuppressBlends::test002(const int funcID)
 //! Test scenario 003.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressBlends::test003(const int funcID)
+outcome asiTest_SuppressBlends::test003(const int funcID)
 {
   // Get filename of script to execute.
   TCollection_AsciiString filename = GetFilename(filename_test003);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
 
-  return evaluate(filename);
+  // Execute test script.
+  outcome res = evaluate(filename);
+
+  // Set description variables.
+  SetVarDescr("filename", filename,           ID(), funcID);
+  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
+
+  // Return status.
+  return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -94,14 +112,20 @@ bool asiTest_SuppressBlends::test003(const int funcID)
 //! Test scenario 004.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressBlends::test004(const int funcID)
+outcome asiTest_SuppressBlends::test004(const int funcID)
 {
   // Get filename of script to execute.
   TCollection_AsciiString filename = GetFilename(filename_test004);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
 
-  return evaluate(filename);
+  // Execute test script.
+  outcome res = evaluate(filename);
+
+  // Set description variables.
+  SetVarDescr("filename", filename,           ID(), funcID);
+  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
+
+  // Return status.
+  return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -109,14 +133,20 @@ bool asiTest_SuppressBlends::test004(const int funcID)
 //! Test scenario 005.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressBlends::test005(const int funcID)
+outcome asiTest_SuppressBlends::test005(const int funcID)
 {
   // Get filename of script to execute.
   TCollection_AsciiString filename = GetFilename(filename_test005);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
 
-  return evaluate(filename);
+  // Execute test script.
+  outcome res = evaluate(filename);
+
+  // Set description variables.
+  SetVarDescr("filename", filename,           ID(), funcID);
+  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
+
+  // Return status.
+  return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -124,14 +154,20 @@ bool asiTest_SuppressBlends::test005(const int funcID)
 //! Test scenario 006.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressBlends::test006(const int funcID)
+outcome asiTest_SuppressBlends::test006(const int funcID)
 {
   // Get filename of script to execute.
   TCollection_AsciiString filename = GetFilename(filename_test006);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
 
-  return evaluate(filename);
+  // Execute test script.
+  outcome res = evaluate(filename);
+
+  // Set description variables.
+  SetVarDescr("filename", filename,           ID(), funcID);
+  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
+
+  // Return status.
+  return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -139,14 +175,20 @@ bool asiTest_SuppressBlends::test006(const int funcID)
 //! Test scenario 007.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressBlends::test007(const int funcID)
+outcome asiTest_SuppressBlends::test007(const int funcID)
 {
   // Get filename of script to execute.
   TCollection_AsciiString filename = GetFilename(filename_test007);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
 
-  return evaluate(filename);
+  // Execute test script.
+  outcome res = evaluate(filename);
+
+  // Set description variables.
+  SetVarDescr("filename", filename,           ID(), funcID);
+  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
+
+  // Return status.
+  return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -154,14 +196,20 @@ bool asiTest_SuppressBlends::test007(const int funcID)
 //! Test scenario 008.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressBlends::test008(const int funcID)
+outcome asiTest_SuppressBlends::test008(const int funcID)
 {
   // Get filename of script to execute.
   TCollection_AsciiString filename = GetFilename(filename_test008);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
 
-  return evaluate(filename);
+  // Execute test script.
+  outcome res = evaluate(filename);
+
+  // Set description variables.
+  SetVarDescr("filename", filename,           ID(), funcID);
+  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
+
+  // Return status.
+  return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -169,12 +217,18 @@ bool asiTest_SuppressBlends::test008(const int funcID)
 //! Test scenario 009.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressBlends::test009(const int funcID)
+outcome asiTest_SuppressBlends::test009(const int funcID)
 {
   // Get filename of script to execute.
   TCollection_AsciiString filename = GetFilename(filename_test009);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
 
-  return evaluate(filename);
+  // Execute test script.
+  outcome res = evaluate(filename);
+
+  // Set description variables.
+  SetVarDescr("filename", filename,           ID(), funcID);
+  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
+
+  // Return status.
+  return res;
 }

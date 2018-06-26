@@ -36,8 +36,10 @@
 
 //-----------------------------------------------------------------------------
 
-bool asiTest_TclTestCase::evaluate(const TCollection_AsciiString& scriptFilename)
+outcome asiTest_TclTestCase::evaluate(const TCollection_AsciiString& scriptFilename)
 {
+  outcome res;
+
   // Get common facilities.
   Handle(asiTest_CommonFacilities) cf = asiTest_CommonFacilities::Instance();
 
@@ -48,5 +50,5 @@ bool asiTest_TclTestCase::evaluate(const TCollection_AsciiString& scriptFilename
   if ( ret != TCL_OK )
     cf->Interp->PrintLastError();
 
-  return ret == TCL_OK;
+  return (ret == TCL_OK) ? res.success() : res.failure();
 }

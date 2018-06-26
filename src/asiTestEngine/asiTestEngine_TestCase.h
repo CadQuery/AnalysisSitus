@@ -51,7 +51,7 @@
 //! Pointer to Test Function.
 //! Please note that {funcID} should be normally passed by Test Case. The
 //! convention is to have {funcID} as 1-based integer number.
-typedef bool (*AsiTestFunction)(const int funcID);
+typedef outcome (*AsiTestFunction)(const int funcID);
 
 //! Collection of pointers to Test Functions
 class AsiTestFunctions

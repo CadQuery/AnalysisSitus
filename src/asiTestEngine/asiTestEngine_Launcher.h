@@ -106,7 +106,7 @@ public:
     for ( int f = 0; f < (int) functions.Size(); ++f )
     {
       const AsiTestFunction& func = functions.Func(f);
-      const bool isOk = (*func)(f + 1);
+      const bool isOk = (*func)(f + 1).ok;
 
       m_funcResults.push_back(isOk);
       if ( !isOk && areAllOk )

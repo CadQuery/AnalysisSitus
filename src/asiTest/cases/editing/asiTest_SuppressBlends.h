@@ -79,15 +79,15 @@ public:
 
 private:
 
-  static bool test001(const int funcID);
-  static bool test002(const int funcID);
-  static bool test003(const int funcID);
-  static bool test004(const int funcID);
-  static bool test005(const int funcID);
-  static bool test006(const int funcID);
-  static bool test007(const int funcID);
-  static bool test008(const int funcID);
-  static bool test009(const int funcID);
+  static outcome test001(const int funcID);
+  static outcome test002(const int funcID);
+  static outcome test003(const int funcID);
+  static outcome test004(const int funcID);
+  static outcome test005(const int funcID);
+  static outcome test006(const int funcID);
+  static outcome test007(const int funcID);
+  static outcome test008(const int funcID);
+  static outcome test009(const int funcID);
 
 };
 

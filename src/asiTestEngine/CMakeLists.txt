@@ -9,6 +9,7 @@ set (H_FILES
   asiTestEngine_Launcher.h
   asiTestEngine_Macro.h
   asiTestEngine_TestCase.h
+  outcome.h
 )
 
 set (CPP_FILES

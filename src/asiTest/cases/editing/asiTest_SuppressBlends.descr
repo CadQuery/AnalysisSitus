@@ -1,6 +1,6 @@
 [TITLE]
 
-  Suppress blend
+  Suppress blends
 
 [1:OVERVIEW]
 
@@ -11,6 +11,8 @@
   <b>Run to reproduce:</b>
   <br>
   <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
 
 [2:OVERVIEW]
 
@@ -22,6 +24,8 @@
   <b>Run to reproduce:</b>
   <br>
   <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
 
 [3:OVERVIEW]
 
@@ -33,6 +37,8 @@
   <b>Run to reproduce:</b>
   <br>
   <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
 
 [4:OVERVIEW]
 
@@ -44,6 +50,8 @@
   <b>Run to reproduce:</b>
   <br>
   <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
 
 [5:OVERVIEW]
 
@@ -55,6 +63,8 @@
   <b>Run to reproduce:</b>
   <br>
   <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
 
 [6:OVERVIEW]
 
@@ -66,6 +76,8 @@
   <b>Run to reproduce:</b>
   <br>
   <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
 
 [7:OVERVIEW]
 
@@ -76,6 +88,8 @@
   <b>Run to reproduce:</b>
   <br>
   <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
 
 [8:OVERVIEW]
 
@@ -87,6 +101,8 @@
   <b>Run to reproduce:</b>
   <br>
   <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
 
 [9:OVERVIEW]
 
@@ -98,3 +114,5 @@
   <b>Run to reproduce:</b>
   <br>
   <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%

@@ -108,44 +108,58 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
     case Qt::Key_Return:
     case Qt::Key_Enter:
     {
-      TCollection_AsciiString cmdName = this->currentCommand(c);
+      // <SHIFT> modifier allows insertion of blank row instead of command execution.
+      bool doInsertBlankRow = false;
+      if ( e->modifiers() == Qt::ShiftModifier )
+        doInsertBlankRow = true;
 
-      this->adoptSourceCmd(cmdName, cmdName);
-
-      if ( !this->eval(cmdName) )
-        m_interp->GetProgress().SendLogMessage(LogErr(Normal) << "\t %1 ... TCL_ERROR" << cmdName);
-      else
-        m_interp->GetProgress().SendLogMessage(LogNotice(Normal) << "\t %1 ... TCL_OK" << cmdName);
-
-      // The following piece of code realizes "intelligent" movement of cursor.
-      // The code checks whether next line is available by consulting block
-      // number. If the block number if different after "Down" movement, then
-      // it means that another line exists (if it does not, the cursor will not
-      // move). If another line exists, we check the text at this line. If
-      // the text is nothing but a prompt prefix ("> "), then we do not insert
-      // new block, but simply let the cursor move to this prompt line
-      // and reuse it so.
-
-      const int bbefore = c.blockNumber();
-      c.movePosition(QTextCursor::Down);
-      const int bafter = c.blockNumber();
-      //
-      if ( bbefore == bafter ) // No next block exists, so the cursor did not move
+      if ( doInsertBlankRow )
       {
-        // To avoid breaking command words if <Enter> is pressed not in the
-        // end of line
-        c.movePosition(QTextCursor::End);
-        this->setTextCursor(c);
-
         // Add next block with a new prompt
-        this->addText(READY_PROMPT, true, false);
+        c.insertBlock();
+        c.insertText( READY_PROMPT, this->currentCharFormat() );
       }
       else
       {
-        QString nextStr = c.block().text(); // Check text at the next line
+        TCollection_AsciiString cmdName = this->currentCommand(c);
+
+        this->adoptSourceCmd(cmdName, cmdName);
+
+        if ( !this->eval(cmdName) )
+          m_interp->GetProgress().SendLogMessage(LogErr(Normal) << "\t %1 ... TCL_ERROR" << cmdName);
+        else
+          m_interp->GetProgress().SendLogMessage(LogNotice(Normal) << "\t %1 ... TCL_OK" << cmdName);
+
+        // The following piece of code realizes "intelligent" movement of cursor.
+        // The code checks whether next line is available by consulting block
+        // number. If the block number if different after "Down" movement, then
+        // it means that another line exists (if it does not, the cursor will not
+        // move). If another line exists, we check the text at this line. If
+        // the text is nothing but a prompt prefix ("> "), then we do not insert
+        // new block, but simply let the cursor move to this prompt line
+        // and reuse it so.
+
+        const int bbefore = c.blockNumber();
+        c.movePosition(QTextCursor::Down);
+        const int bafter = c.blockNumber();
         //
-        if ( nextStr == READY_PROMPT ) // If that's not a prompt, then work as usually
-          this->setTextCursor(c); // If that's new line is a prompt, reuse it
+        if ( bbefore == bafter ) // No next block exists, so the cursor did not move
+        {
+          // To avoid breaking command words if <Enter> is pressed not in the
+          // end of line
+          c.movePosition(QTextCursor::End);
+          this->setTextCursor(c);
+
+          // Add next block with a new prompt
+          this->addText(READY_PROMPT, true, false);
+        }
+        else
+        {
+          QString nextStr = c.block().text(); // Check text at the next line
+          //
+          if ( nextStr == READY_PROMPT ) // If that's not a prompt, then work as usually
+            this->setTextCursor(c); // If that's new line is a prompt, reuse it
+        }
       }
 
       break;

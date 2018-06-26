@@ -50,6 +50,7 @@
 #include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepFilletAPI_MakeFillet.hxx>
 #include <BRepOffset.hxx>
 #include <BRepOffset_MakeOffset.hxx>
 #include <BRepOffset_MakeSimpleOffset.hxx>
@@ -855,6 +856,78 @@ int ENGINE_HLR(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_Fillet(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Get radius.
+  const double R = atof(argv[1]);
+
+  // Get part.
+  Handle(asiData_PartNode) partNode = M->GetPartNode();
+  TopoDS_Shape             partSh   = partNode->GetShape();
+
+  // Attempt to get the highlighted sub-shapes.
+  TColStd_PackedMapOfInteger edgeIds;
+  //
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+  {
+    asiEngine_Part PartAPI( M,
+                            cmdEngine::cf->ViewerPart->PrsMgr(),
+                            interp->GetProgress(),
+                            interp->GetPlotter() );
+    //
+    PartAPI.GetHighlightedEdges(edgeIds);
+  }
+
+  // Initialize blending operator.
+  BRepFilletAPI_MakeFillet mkFillet(partSh);
+  //
+  for ( TColStd_MapIteratorOfPackedMapOfInteger eit(edgeIds); eit.More(); eit.Next() )
+  {
+    const int edgeId = eit.Key();
+
+    // Get edge to blend.
+    const TopoDS_Edge&
+      edge = TopoDS::Edge( partNode->GetAAG()->GetMapOfEdges()(edgeId) );
+
+    // Add edge to the blending operator.
+    mkFillet.Add(R, edge);
+  }
+
+  // Perform blending.
+  mkFillet.Build();
+  //
+  if ( !mkFillet.IsDone() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Blending not done.");
+    return TCL_OK;
+  }
+
+  // Get result and update part.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update( mkFillet.Shape() );
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                                   const Handle(Standard_Transient)& data)
 {
@@ -994,4 +1067,12 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t projection plane with <nX, nY, nZ> as its normal direction.",
     //
     __FILE__, group, ENGINE_HLR);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("fillet",
+    //
+    "fillet radius\n"
+    "\t Blends the selected edges with the given radius.",
+    //
+    __FILE__, group, ENGINE_Fillet);
 }

@@ -35,6 +35,7 @@
 #pragma warning(push, 0)
 #include <QColor>
 #include <QDateTime>
+#include <QRgb>
 #include <QScrollBar>
 #pragma warning(pop)
 
@@ -307,22 +308,22 @@ void asiUI_Logger::logMessage(const QString&                    message,
   if ( severity == Severity_Information )
   {
     prefix    = " [INFO] ";
-    hiliColor = QColor(0, 0, 0);
+    hiliColor = QColor(215, 215, 215);
   }
   else if ( severity == Severity_Notice )
   {
     prefix    = " [NOTICE] ";
-    hiliColor = QColor(0, 0, 200);
+    hiliColor = QColor(120, 200, 255);
   }
   else if ( severity == Severity_Warning )
   {
     prefix    = " [WARNING] ";
-    hiliColor = QColor(125, 0, 0);
+    hiliColor = QColor(250, 170, 70);
   }
   else if ( severity == Severity_Error )
   {
     prefix    = " [ERROR] ";
-    hiliColor = QColor(255, 0, 0);
+    hiliColor = QColor(255, 120, 120);
   }
 
   this->putText(this->toString(TS) + prefix + msg, hiliColor);
@@ -335,9 +336,25 @@ void asiUI_Logger::logMessage(const QString&                    message,
 //! \param color [in] color to use.
 void asiUI_Logger::putText(const QString& text, const QColor& color) const
 {
-  Q_UNUSED(color)
+  // Get color components.
+  QRgb rgb = color.rgb();
+  //
+  const int red   = qRed(rgb);
+  const int green = qGreen(rgb);
+  const int blue  = qBlue(rgb);
 
-  m_widget->append(text);
+  // Prepare string to add.
+  QString line;
+  line += QString("<div style='color:rgb(%1,%2,%3);font-family:Courier New;'>%4</div>")
+         .arg(red)
+         .arg(green)
+         .arg(blue)
+         .arg(text);
+
+  // Append line to editor.
+  m_widget->append(line);
+
+  // Autoscroll down.
   QScrollBar* pSB = m_widget->verticalScrollBar();
   pSB->setValue( pSB->maximum() );
 }

@@ -289,6 +289,7 @@ set (OCCT_LIB_FILES
   TKXDESTEP
   TKXDEIGES
   TKHLR
+  TKFillet
 )
 #------------------------------------------------------------------------------
 set (TBB_LIB_FILES

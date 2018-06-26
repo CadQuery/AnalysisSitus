@@ -28,57 +28,67 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiTest_SuppressIsolatedBlend.h>
+#ifndef asiTest_SuppressBlends_HeaderFile
+#define asiTest_SuppressBlends_HeaderFile
 
-//-----------------------------------------------------------------------------
+// asiTest includes
+#include <asiTest_CaseIDs.h>
+#include <asiTest_TclTestCase.h>
 
-// Filenames are specified relatively to ASI_TEST_SCRIPTS environment variable.
-#define filename_test001 "editing/suppress_blend_001.tcl"
-#define filename_test002 "editing/suppress_blend_002.tcl"
-#define filename_test003 "editing/suppress_blend_003.tcl"
-
-//-----------------------------------------------------------------------------
-
-//! Test scenario 001.
-//! \param[in] funcID ID of the Test Function.
-//! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressIsolatedBlend::test001(const int funcID)
+//! Test functions for suppressing blend chains.
+class asiTest_SuppressBlends : public asiTest_TclTestCase
 {
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test001);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
+public:
 
-  return evaluate(filename);
-}
+  //! Returns Test Case ID.
+  //! \return ID of the Test Case.
+  static int ID()
+  {
+    return CaseID_SuppressBlends;
+  }
 
-//-----------------------------------------------------------------------------
+  //! Returns filename for the description.
+  //! \return filename for the description of the Test Case.
+  static std::string DescriptionFn()
+  {
+    return "asiTest_SuppressBlends";
+  }
 
-//! Test scenario 002.
-//! \param[in] funcID ID of the Test Function.
-//! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressIsolatedBlend::test002(const int funcID)
-{
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test002);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
+  //! Returns Test Case description directory.
+  //! \return description directory for the Test Case.
+  static std::string DescriptionDir()
+  {
+    return "editing";
+  }
 
-  return evaluate(filename);
-}
+  //! Returns pointers to the Test Functions to launch.
+  //! \param[out] functions output collection of pointers.
+  static void Functions(AsiTestFunctions& functions)
+  {
+    functions << &test001
+              << &test002
+              << &test003
+              << &test004
+              << &test005
+              << &test006
+              << &test007
+              << &test008
+              << &test009
+    ; // Put semicolon here for convenient adding new functions above ;)
+  }
 
-//-----------------------------------------------------------------------------
+private:
 
-//! Test scenario 003.
-//! \param[in] funcID ID of the Test Function.
-//! \return true in case of success, false -- otherwise.
-bool asiTest_SuppressIsolatedBlend::test003(const int funcID)
-{
-  // Get filename of script to execute.
-  TCollection_AsciiString filename = GetFilename(filename_test003);
-  //
-  SetVarDescr("filename", filename, ID(), funcID);
+  static bool test001(const int funcID);
+  static bool test002(const int funcID);
+  static bool test003(const int funcID);
+  static bool test004(const int funcID);
+  static bool test005(const int funcID);
+  static bool test006(const int funcID);
+  static bool test007(const int funcID);
+  static bool test008(const int funcID);
+  static bool test009(const int funcID);
 
-  return evaluate(filename);
-}
+};
+
+#endif

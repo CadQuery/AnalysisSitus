@@ -129,7 +129,8 @@ int ENGINE_KEV(const Handle(asiTcl_Interp)& interp,
   // Find edge to kill.
   TopTools_ListOfShape edges;
   //
-  if ( !FindNamedArg(interp, argc, argv, naming, "edge", TopAbs_EDGE, edges) )
+  if ( !FindNamedArg(interp, argc, argv, naming, "edge", TopAbs_EDGE, edges) &&
+       !FindNamedArg(interp, argc, argv, naming, "name", TopAbs_EDGE, edges) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find edge to kill.");
     return TCL_OK;
@@ -1370,7 +1371,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kev",
     //
-    "kev <edgeIndex vertexIndex|-edge 'edgeName' -vertex 'vertexName'>\n"
+    "kev <edgeIndex vertexIndex|-edge 'edgeName' -vertex 'vertexName'|-name 'edgeName'>\n"
     "\t KEV (Kill-Edge-Vertex) Euler operator.",
     //
     __FILE__, group, ENGINE_KEV);

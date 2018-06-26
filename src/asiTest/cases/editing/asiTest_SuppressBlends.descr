@@ -1,0 +1,100 @@
+[TITLE]
+
+  Suppress blend
+
+[1:OVERVIEW]
+
+  This test suppresses isolated blend on a simple box shape. Only one edge is blended.
+
+[1:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+
+[2:OVERVIEW]
+
+  This test suppresses blend chain on a simple box shape. No vertex blends exist in that case.
+  The chain is not closed.
+
+[2:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+
+[3:OVERVIEW]
+
+  This test suppresses blend chain on a simple box shape. A single spherical vertex blend exists in that case.
+  The chain is not closed.
+
+[3:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+
+[4:OVERVIEW]
+
+  This test suppresses blend chain on a simple box shape. Three blends of different radii meet in a vertex.
+  The chain is not closed.
+
+[4:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+
+[5:OVERVIEW]
+
+  This test suppresses blend chain on internal contour where two box shapes are fused.
+  The chain is not closed.
+
+[5:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+
+[6:OVERVIEW]
+
+  This test suppresses blend chain on internal contour where two box shapes are fused.
+  The chain is not closed. The chain is terminated with vertex blend.
+
+[6:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+
+[7:OVERVIEW]
+
+  This test suppresses complex blend chains on two fused boxes.
+
+[7:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+
+[8:OVERVIEW]
+
+  This test suppresses all blends in a simple box. There are two blend chains with
+  different radii. Both chains are not closed.
+
+[8:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+
+[9:OVERVIEW]
+
+  This test suppresses all blends in a simple box. The box is fully blended with
+  fillets of different radii. All chains are closed.
+
+[9:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>

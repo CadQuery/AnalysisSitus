@@ -40,7 +40,7 @@
 //! IDs for Test Cases.
 enum test_CaseID
 {
-  CaseID_SuppressIsolatedBlend = 1,
+  CaseID_SuppressBlends = 1,
 
 /* ------------------------------------------------------------------------ */
 

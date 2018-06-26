@@ -30,7 +30,7 @@
 
 // asiTest includes
 #include <asiTest_CommonFacilities.h>
-#include <asiTest_SuppressIsolatedBlend.h>
+#include <asiTest_SuppressBlends.h>
 
 // asiTestEngine includes
 #include <asiTestEngine_Launcher.h>
@@ -70,9 +70,12 @@ DEFINE_TEST_VARIABLES
 
 //-----------------------------------------------------------------------------
 
-int main(int /*argc*/, char* /*argv[]*/)
+int main(int argc, char* argv[])
 {
-  // Load commands
+  asiTest_NotUsed(argc);
+  asiTest_NotUsed(argv);
+
+  // Load commands.
   TEST_LOAD_MODULE("cmdMisc")
   TEST_LOAD_MODULE("cmdEngine")
 
@@ -80,7 +83,7 @@ int main(int /*argc*/, char* /*argv[]*/)
   std::cout << "asiTest : main()" << std::endl;
   std::vector< Handle(asiTestEngine_CaseLauncherAPI) > CaseLaunchers;
   //
-  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_SuppressIsolatedBlend> );
+  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_SuppressBlends> );
 
   // Launcher of entire test suite
   asiTestEngine_Launcher Launcher;

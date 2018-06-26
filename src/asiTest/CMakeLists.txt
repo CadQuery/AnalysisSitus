@@ -23,10 +23,10 @@ set (CPP_FILES
 #------------------------------------------------------------------------------
 
 set (cases_editing_H_FILES
-  cases/editing/asiTest_SuppressIsolatedBlend.h
+  cases/editing/asiTest_SuppressBlends.h
 )
 set (cases_editing_CPP_FILES
-  cases/editing/asiTest_SuppressIsolatedBlend.cpp
+  cases/editing/asiTest_SuppressBlends.cpp
 )
 
 #------------------------------------------------------------------------------

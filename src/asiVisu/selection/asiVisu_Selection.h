@@ -153,6 +153,9 @@ public:
     AddPickedElementId(const vtkIdType elemId);
 
   asiVisu_EXPORT void
+    RemovePickedElementId(const vtkIdType elemId);
+
+  asiVisu_EXPORT void
     SetPickedElementIds(const TColStd_PackedMapOfInteger& elemIds);
 
   asiVisu_EXPORT void
@@ -169,6 +172,9 @@ public:
 
   asiVisu_EXPORT void
     AddPickedCellId(const vtkIdType cellId);
+
+  asiVisu_EXPORT void
+    RemovePickedCellId(const vtkIdType elemId);
 
   asiVisu_EXPORT void
     SetPickedCellIds(const TColStd_PackedMapOfInteger& cellIds);

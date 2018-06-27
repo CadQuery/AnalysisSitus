@@ -140,3 +140,15 @@
   <tt>source %%filename%%</tt>
   <br><br>
   Elapsed time [s]: %%time%%
+
+[12:OVERVIEW]
+
+  Removes several blend chains on NIST Combined Test Case CTC-04.
+
+[12:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%

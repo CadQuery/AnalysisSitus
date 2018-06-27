@@ -922,14 +922,30 @@ ActAPI_DataObjectIdList
     if ( !pickRes.GetPickedActor().GetPointer() )
       pickRes.SetPickedActor(pickedActor);
 
-    // Push ID to result
+    // Push ID to result: ID can be either a pedigree ID or a global ID
+    // depending on the context.
     if ( pid != -1 )
-      pickRes.AddPickedElementId(pid);
+    {
+      // Let the user unpick the already selected elements
+      if ( (selNature == SelectionNature_Pick) && pickRes.GetPickedElementIds().Contains(pid) )
+        pickRes.RemovePickedElementId(pid);
+      else
+        pickRes.AddPickedElementId(pid);
+    }
     else if ( gid != -1 )
-      pickRes.AddPickedElementId(gid);
+    {
+      // Let the user unpick the already selected elements
+      if ( (selNature == SelectionNature_Pick) && pickRes.GetPickedCellIds().Contains(gid) )
+        pickRes.RemovePickedElementId(gid);
+      else
+        pickRes.AddPickedElementId(gid);
+    }
 
-    // Set picked cell ID
-    pickRes.AddPickedCellId(cellId);
+    // Let the user unpick the already selected elements
+    if ( (selNature == SelectionNature_Pick) && pickRes.GetPickedCellIds().Contains(cellId) )
+      pickRes.RemovePickedCellId(cellId);
+    else
+      pickRes.AddPickedCellId(cellId);
   }
   else if ( pickType == PickType_Point )
   {

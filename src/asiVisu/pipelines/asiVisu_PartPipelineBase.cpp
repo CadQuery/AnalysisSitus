@@ -98,9 +98,6 @@ void asiVisu_PartPipelineBase::SetDiagnosticTools(ActAPI_ProgressEntry progress,
 void asiVisu_PartPipelineBase::SetPickedElements(const TColStd_PackedMapOfInteger& elementIds,
                                                  const asiVisu_SelectionNature     selNature)
 {
-  if ( !elementIds.Extent() )
-    return;
-
   // Get polygonal data
   vtkPolyData*
     pData = vtkPolyData::SafeDownCast( this->Mapper()->GetInputDataObject(0, 0) );
@@ -121,11 +118,11 @@ void asiVisu_PartPipelineBase::SetPickedElements(const TColStd_PackedMapOfIntege
     pShapePrimArr = vtkIdTypeArray::SafeDownCast( pCellData->GetArray(ARRNAME_PART_CELL_TYPES) );
 
   // Choose proper scalar
-  asiVisu_ShapePrimitive requestedPrim;
+  asiVisu_ShapePrimitive hiliPrim;
   if ( selNature == SelectionNature_Detection )
-    requestedPrim = ShapePrimitive_Detected;
+    hiliPrim = ShapePrimitive_Detected;
   else
-    requestedPrim = ShapePrimitive_Selected;
+    hiliPrim = ShapePrimitive_Selected;
 
   // Choose cache
   NCollection_DataMap<vtkIdType, int>&
@@ -134,36 +131,54 @@ void asiVisu_PartPipelineBase::SetPickedElements(const TColStd_PackedMapOfIntege
   // Mark cells
   for ( vtkIdType cellId = 0; cellId < numOfInputCells; ++cellId )
   {
-    // Check pedigree ID of the cell. Continue only for those which are
-    // requested by the caller code
+    // Check pedigree ID of the cell.
     double pedigreeIdDbl;
     pPedigreeArr->GetTuple(cellId, &pedigreeIdDbl);
     const int pedigreeId = (int) pedigreeIdDbl;
-    //
-    if ( !elementIds.Contains(pedigreeId) )
+
+    // Special treatment for detection.
+    if ( !elementIds.Contains(pedigreeId) && (selNature == SelectionNature_Detection) )
       continue;
 
-    // Get the current scalar
-    const int
-      currentPrim = (int) pShapePrimArr->GetTuple1(cellId);
-
-    // Save the original scalar in cache
-    if ( currentPrim != ShapePrimitive_Detected && currentPrim != ShapePrimitive_Selected )
+    // Substitute cell scalar.
+    asiVisu_ShapePrimitive prim2Set;
+    //
+    if ( !elementIds.Contains(pedigreeId) )
     {
-      if ( cache.IsBound(cellId) )
-        cache.UnBind(cellId);
-      //
-      cache.Bind( cellId, (int) pShapePrimArr->GetTuple1(cellId) );
+      if ( !cache.IsBound(cellId) )
+        continue;
+
+      // If the current cell is not requested, let's restore its original
+      // scalar. Thanks to this mechanics, we allow unselection on repeated
+      // click.
+      prim2Set = (asiVisu_ShapePrimitive) cache(cellId);
+    }
+    else
+    {
+      prim2Set = hiliPrim;
+
+      // Get the current scalar.
+      const int
+        currentPrim = (int) pShapePrimArr->GetTuple1(cellId);
+
+      // Save the original scalar in cache.
+      if ( currentPrim != ShapePrimitive_Detected && currentPrim != ShapePrimitive_Selected )
+      {
+        if ( cache.IsBound(cellId) )
+          cache.UnBind(cellId);
+        //
+        cache.Bind(cellId, currentPrim);
+      }
+
+      if ( currentPrim == ShapePrimitive_Selected && hiliPrim == ShapePrimitive_Detected )
+        continue; // Detection must not override selection.
     }
 
-    if ( currentPrim == ShapePrimitive_Selected && requestedPrim == ShapePrimitive_Detected )
-      continue; // Detection must not override selection
-
-    // Change scalar
-    pShapePrimArr->SetTuple1(cellId, requestedPrim);
+    // Set scalar value in array.
+    pShapePrimArr->SetTuple1(cellId, prim2Set);
   }
 
-  // Set modification status for data and update
+  // Set modification status for data and update.
   pData->Modified();
   this->Mapper()->Update();
 }

@@ -216,9 +216,6 @@ int ENGINE_Fit(const Handle(asiTcl_Interp)& interp,
   if ( cmdEngine::cf.IsNull() )
     return TCL_OK;
 
-  asiVisu_Utils::ResetCamera( cmdEngine::cf->ViewerPart->PrsMgr()->GetRenderer(),
-                              cmdEngine::cf->ViewerPart->PrsMgr()->PropsByTrihedron() );
-  //
   asiVisu_Utils::AdjustCamera( cmdEngine::cf->ViewerPart->PrsMgr()->GetRenderer(),
                                cmdEngine::cf->ViewerPart->PrsMgr()->PropsByTrihedron() );
   //

@@ -448,8 +448,10 @@ void asiVisu_ShapeRobustTessellator::addEdge(const TopoDS_Edge&           edge,
 {
   if ( edge.IsNull() || BRep_Tool::Degenerated(edge) )
   {
+#if defined COUT_DEBUG
     m_progress.SendLogMessage(LogWarn(Normal) << "*** Skip null or degenerated edge %1."
                                               << edgeId);
+#endif
     return;
   }
 

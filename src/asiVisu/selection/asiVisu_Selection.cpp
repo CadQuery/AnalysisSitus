@@ -91,6 +91,13 @@ void asiVisu_PickResult::AddPickedElementId(const vtkIdType elemId)
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_PickResult::RemovePickedElementId(const vtkIdType elemId)
+{
+  m_pickedElementIds.Remove(elemId);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Sets IDs of the picked elements. These IDs are application-specific, e.g.
 //! sub-shape IDs of a B-Rep part.
 //! \param elemIds [in] IDs to set.
@@ -144,6 +151,13 @@ void asiVisu_PickResult::SetPickedCellId(const vtkIdType cellId)
 void asiVisu_PickResult::AddPickedCellId(const vtkIdType cellId)
 {
   m_pickedCellIds.Add(cellId);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_PickResult::RemovePickedCellId(const vtkIdType cellId)
+{
+  m_pickedCellIds.Remove(cellId);
 }
 
 //-----------------------------------------------------------------------------

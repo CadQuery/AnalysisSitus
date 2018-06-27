@@ -159,3 +159,13 @@ outcome asiTest_SuppressBlends::test011(const int funcID)
 {
   return runtest(funcID, "editing/suppress_blend_011.tcl");
 }
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 012.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::test012(const int funcID)
+{
+  return runtest(funcID, "editing/suppress_blend_012.tcl");
+}

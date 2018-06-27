@@ -1541,6 +1541,50 @@ int ENGINE_CheckValidity(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckContours(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  if ( argc != 1 && argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Read tolerance.
+  double tolerance = ( (argc == 2) ? atof(argv[1]) : 0.0 );
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get Part shape.
+  TopoDS_Shape partSh = part_n->GetShape();
+
+  // Check each face individually.
+  bool isOk = true;
+  //
+  for ( TopExp_Explorer exp(partSh, TopAbs_FACE); exp.More(); exp.Next() )
+  {
+    const TopoDS_Face& face = TopoDS::Face( exp.Current() );
+
+    // Set default tolerance.
+    if ( !tolerance )
+      tolerance = asiAlgo_Utils::MaxTolerance(face)*5.0;
+
+    // Check closeness.
+    if ( !asiAlgo_Utils::HasAllClosedWires(face, tolerance) )
+    {
+      isOk = false;
+      break;
+    }
+  }
+
+  *interp << (isOk ? 1 : 0);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_GetTolerance(const Handle(asiTcl_Interp)& interp,
                         int                          argc,
                         const char**                 argv)
@@ -1705,6 +1749,14 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Checks validity of the part shape.",
     //
     __FILE__, group, ENGINE_CheckValidity);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-contours",
+    //
+    "check-contours [tolerance]\n"
+    "\t Checks whether all contours of the part shape are closed or not.",
+    //
+    __FILE__, group, ENGINE_CheckContours);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("get-tolerance",

@@ -1,0 +1,103 @@
+[TITLE]
+
+  Check if contour is closed
+
+[1:OVERVIEW]
+
+  A closed circular contour with two vertices.
+
+[1:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
+
+[2:OVERVIEW]
+
+  A completely broken contour with 1 curve.
+
+[2:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
+
+[3:OVERVIEW]
+
+  A face with closed contour and several internal contours (also closed).
+
+[3:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
+
+[4:OVERVIEW]
+
+  A solid representing a lattice structure with many canonical faces.
+  Among the faces, there are many triangular spherical patches.
+  All contours are expected to be closed.
+
+[4:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
+
+[5:OVERVIEW]
+
+  A single spherical patch surrounding pole. Its contour contains a seam edge,
+  a degenerated edge, and several custom edges. The contour is expected to be
+  closed.
+
+[5:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
+
+[6:OVERVIEW]
+
+  A polygonal contour with a circular hole. All contours are expected to be closed.
+
+[6:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
+
+[7:OVERVIEW]
+
+  A rectangular closed contour on a B-surface.
+
+[7:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%
+
+[8:OVERVIEW]
+
+  A broken contour with one missing edge.
+
+[8:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%

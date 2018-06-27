@@ -30,6 +30,7 @@
 
 // asiTest includes
 #include <asiTest_CommonFacilities.h>
+#include <asiTest_IsContourClosed.h>
 #include <asiTest_SuppressBlends.h>
 
 // asiTestEngine includes
@@ -84,6 +85,7 @@ int main(int argc, char* argv[])
   std::vector< Handle(asiTestEngine_CaseLauncherAPI) > CaseLaunchers;
   //
   CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_SuppressBlends> );
+  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_IsContourClosed> );
 
   // Launcher of entire test suite
   asiTestEngine_Launcher Launcher;

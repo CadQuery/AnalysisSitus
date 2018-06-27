@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 22 June 2018
+// Created on: 27 June 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,24 +28,69 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiTest_CaseIDs_HeaderFile
-#define asiTest_CaseIDs_HeaderFile
+#ifndef asiTest_IsContourClosed_HeaderFile
+#define asiTest_IsContourClosed_HeaderFile
 
-// Tests includes
-#include <asiTest_CommonFacilities.h>
+// asiTest includes
+#include <asiTest_CaseIDs.h>
+#include <asiTest_TclTestCase.h>
 
-// asiTestEngine includes
-#include <asiTestEngine.h>
-
-//! IDs for Test Cases.
-enum test_CaseID
+//! Test functions for the algorithm which checks a contour on closeness.
+class asiTest_IsContourClosed : public asiTest_TclTestCase
 {
-  CaseID_SuppressBlends = 1,
-  CaseID_IsContourClosed,
+public:
 
-/* ------------------------------------------------------------------------ */
+  //! Returns Test Case ID.
+  //! \return ID of the Test Case.
+  static int ID()
+  {
+    return CaseID_IsContourClosed;
+  }
 
-  CaseID_LAST
+  //! Returns filename for the description.
+  //! \return filename for the description of the Test Case.
+  static std::string DescriptionFn()
+  {
+    return "asiTest_IsContourClosed";
+  }
+
+  //! Returns Test Case description directory.
+  //! \return description directory for the Test Case.
+  static std::string DescriptionDir()
+  {
+    return "inspection";
+  }
+
+  //! Returns pointers to the Test Functions to launch.
+  //! \param[out] functions output collection of pointers.
+  static void Functions(AsiTestFunctions& functions)
+  {
+    functions << &test001
+              << &test002
+              << &test003
+              << &test004
+              << &test005
+              << &test006
+              << &test007
+              << &test008
+    ; // Put semicolon here for convenient adding new functions above ;)
+  }
+
+private:
+
+  static outcome runtest(const int   funcID,
+                         const char* filename);
+
+private:
+
+  static outcome test001(const int funcID);
+  static outcome test002(const int funcID);
+  static outcome test003(const int funcID);
+  static outcome test004(const int funcID);
+  static outcome test005(const int funcID);
+  static outcome test006(const int funcID);
+  static outcome test007(const int funcID);
+  static outcome test008(const int funcID);
 
 };
 

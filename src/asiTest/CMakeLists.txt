@@ -29,6 +29,13 @@ set (cases_editing_CPP_FILES
   cases/editing/asiTest_SuppressBlends.cpp
 )
 
+set (cases_inspection_H_FILES
+  cases/inspection/asiTest_IsContourClosed.h
+)
+set (cases_inspection_CPP_FILES
+  cases/inspection/asiTest_IsContourClosed.cpp
+)
+
 #------------------------------------------------------------------------------
 # Add sources
 #------------------------------------------------------------------------------
@@ -53,6 +60,16 @@ foreach (FILE ${cases_editing_CPP_FILES})
   source_group ("Source Files\\Cases\\Editing" FILES "${FILE}")
 endforeach (FILE)
 
+foreach (FILE ${cases_inspection_H_FILES})
+  set (src_files ${src_files} ${FILE})
+  source_group ("Header Files\\Cases\\Inspection" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${cases_inspection_CPP_FILES})
+  set (src_files ${src_files} ${FILE})
+  source_group ("Source Files\\Cases\\Inspection" FILES "${FILE}")
+endforeach (FILE)
+
 #------------------------------------------------------------------------------
 # Configure includes
 #------------------------------------------------------------------------------
@@ -60,7 +77,8 @@ endforeach (FILE)
 # Create include variable
 set (asiTest_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
   ${CMAKE_CURRENT_SOURCE_DIR}/cases;\
-  ${CMAKE_CURRENT_SOURCE_DIR}/cases/editing;")
+  ${CMAKE_CURRENT_SOURCE_DIR}/cases/editing;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/cases/inspection;")
 #
 set (asiTest_include_dir ${asiTest_include_dir_loc} PARENT_SCOPE)
 

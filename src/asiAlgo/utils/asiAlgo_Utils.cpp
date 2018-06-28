@@ -113,7 +113,8 @@
 #define dump_filename_By "D:\\By_interp_log_OCCT.log"
 #define dump_filename_Bz "D:\\Bz_interp_log_OCCT.log"
 
-#define BUFSIZE           1000
+#define BUFSIZE              1000
+#define NUM_INTEGRATION_BINS 500
 
 #undef COUT_DEBUG
 #if defined COUT_DEBUG
@@ -152,6 +153,51 @@ bool IsASCII(const TCollection_AsciiString& filename)
   fclose(FILE);
   return isAscii;
 }
+
+//-----------------------------------------------------------------------------
+
+//! Univariate function representing the squared second derivative of
+//! a parametric curve.
+class asiAlgo_CuuSquared : public math_Function
+{
+public:
+
+  //! ctor.
+  //! \param[in] curve parametric curve in question.
+  asiAlgo_CuuSquared(const Handle(Geom_Curve)& curve) : math_Function()
+  {
+    m_curve = curve;
+  }
+
+public:
+
+  //! Evaluates the second derivative squared.
+  //! \param[in]  u    parameter value.
+  //! \param[out] Cuu2 evaluated function.
+  //! \return true in case of success, false -- otherwise.
+  virtual bool Value(const double u, double& Cuu2)
+  {
+    gp_Pnt P;
+    gp_Vec D1, D2;
+    m_curve->D2(u, P, D1, D2);
+
+    Cuu2 = D2*D2;
+    return true;
+  }
+
+public:
+
+  //! \return curve in question.
+  const Handle(Geom_Curve)& GetCurve() const
+  {
+    return m_curve;
+  }
+
+protected:
+
+  Handle(Geom_Curve) m_curve; //!< Curve.
+
+};
 
 //-----------------------------------------------------------------------------
 
@@ -2835,6 +2881,20 @@ bool asiAlgo_Utils::CalculateCurvatureCombs(const Handle(Geom_Curve)& curve,
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_Utils::CalculateStrainEnergy(const Handle(Geom_Curve)& curve,
+                                          double&                   result)
+{
+  asiAlgo_CuuSquared Cuu2Func(curve);
+
+  result = IntegralRect( Cuu2Func,
+                         curve->FirstParameter(),
+                         curve->LastParameter(),
+                         NUM_INTEGRATION_BINS );
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_Utils::ReparametrizeBSpl(const Handle(Geom2d_Curve)&  curve,
                                       const double                 newFirst,
                                       const double                 newLast,
@@ -2991,4 +3051,22 @@ bool asiAlgo_Utils::CalculateMidCurvature(const Handle(Geom_Curve)& curve,
 {
   gp_Pnt center;
   return CalculateMidCurvature(curve, k, r, center);
+}
+
+//-----------------------------------------------------------------------------
+
+double asiAlgo_Utils::IntegralRect(math_Function& F,
+                                   const double   a,
+                                   const double   b,
+                                   const int      n)
+{
+  double step = (b - a) / n;  // width of each small rectangle.
+  double area = 0.0; // signed area.
+  for ( int i = 0; i < n; ++i )
+  {
+    double val = 0.0;
+    F.Value(a + (i + 0.5) * step, val);
+    area +=  val*step; // sum up each small rectangle
+  }
+  return area;
 }

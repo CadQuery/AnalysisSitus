@@ -1605,6 +1605,57 @@ int ENGINE_GetTolerance(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_GetStrain(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Curve Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVCurveNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a curve."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVCurveNode)
+    curveNode = Handle(asiData_IVCurveNode)::DownCast(node);
+
+  // Get curve.
+  double f, l;
+  Handle(Geom_Curve) occtCurve = curveNode->GetCurve(f, l);
+  //
+  if ( occtCurve.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is NULL.");
+    return TCL_OK;
+  }
+
+  // Calculate strain energy.
+  double energy = 0;
+  if ( !asiAlgo_Utils::CalculateStrainEnergy(occtCurve, energy) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot calculate strain energy.");
+    return TCL_OK;
+  }
+
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Approximate strain energy: %1."
+                                                       << energy);
+
+  // Add to interpreter.
+  *interp << energy;
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -1765,4 +1816,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Returns max geometric tolerance of the part shape.",
     //
     __FILE__, group, ENGINE_GetTolerance);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("get-strain",
+    //
+    "get-strain curveName\n"
+    "\t Returns strain energy of the passed curve.",
+    //
+    __FILE__, group, ENGINE_GetStrain);
 }

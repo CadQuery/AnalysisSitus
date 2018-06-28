@@ -1136,13 +1136,13 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
                      int                          argc,
                      const char**                 argv)
 {
-  if ( argc != 3 )
+  if ( argc != 4 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
   // Find Node by name.
-  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[2]);
   //
   if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVCurveNode) ) )
   {
@@ -1166,7 +1166,7 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
   }
 
   // Get fairing coefficient.
-  const double lambda = Atof(argv[2]);
+  const double lambda = Atof(argv[3]);
 
   // Perform fairing algorithm.
   asiAlgo_FairBCurve fairing( occtBCurve,
@@ -1181,10 +1181,7 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
   }
 
   // Draw result.
-  TCollection_AsciiString resName(argv[1]);
-  resName += "faired";
-  //
-  interp->GetPlotter().REDRAW_CURVE("faired", fairing.GetResult(), Color_Green);
+  interp->GetPlotter().REDRAW_CURVE(argv[1], fairing.GetResult(), Color_Green);
 
   return TCL_OK;
 }
@@ -1524,7 +1521,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("fair-curve",
     //
-    "fair-curve curveName fairingCoeff\n"
+    "fair-curve resName curveName fairingCoeff\n"
     "\t Fairs curve with the given name <curveName>. The passed fairing coefficient\n"
     "\t is a weight of a fairing term in the goal function.",
     //

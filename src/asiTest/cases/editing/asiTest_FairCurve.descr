@@ -1,0 +1,11 @@
+[TITLE]
+
+  Fair B-curve
+
+[1-3:OVERVIEW]
+
+  This test fairs B-curve with different smoothing coefficients and checks that strain energy decreases.
+
+[1-3:DETAILS]
+
+  Elapsed time [s]: %%time%%

@@ -136,6 +136,14 @@ public:
     return *this;
   }
 
+  //! Stops timer and returns the elapsed time.
+  //! \return elapsed time.
+  const std::string& time()
+  {
+    this->stopTimer();
+    return this->elapsedTimeSec;
+  }
+
 public:
 
   //! Dumps outcome to the passed output stream.

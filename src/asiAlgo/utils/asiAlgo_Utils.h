@@ -60,6 +60,7 @@
 #include <Geom_TrimmedCurve.hxx>
 #include <Geom2d_BSplineCurve.hxx>
 #include <gp_Trsf.hxx>
+#include <math_Function.hxx>
 #include <NCollection_IndexedDataMap.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
@@ -708,6 +709,16 @@ namespace asiAlgo_Utils
                             std::vector<gp_Vec>&      combs,
                             std::vector<bool>&        combsOk);
 
+  //! Calculates approximate strain energy of the passed curve. The strain
+  //! energy is calculated as an integral of squared second derivative
+  //! (instead of squared curvature).
+  //! \param[in]  curve  parametric curve to calculate strain energy for.
+  //! \param[out] result calculated strain energy.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    CalculateStrainEnergy(const Handle(Geom_Curve)& curve,
+                          double&                   result);
+
   //! Reparametrizes the given B-spline curve applying the passed new range
   //! for its knot vector.
   //!
@@ -790,6 +801,18 @@ namespace asiAlgo_Utils
     CalculateMidCurvature(const Handle(Geom_Curve)& curve,
                           double&                   k,
                           double&                   r);
+
+  //! Integrates the passed function by midpoint (rectangle) rule.
+  //! \param[in] F univariate function in question.
+  //! \param[in] a lower bound.
+  //! \param[in] a upper bound.
+  //! \param[in] n number of bins.
+  //! \return integral value.
+  asiAlgo_EXPORT double
+    IntegralRect(math_Function& F,
+                 const double   a,
+                 const double   b,
+                 const int      n);
 
 };
 

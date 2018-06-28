@@ -35,6 +35,7 @@
 #include <asiAlgo_FairingAijFunc.h>
 #include <asiAlgo_FairingBjFunc.h>
 #include <asiAlgo_Timer.h>
+#include <asiAlgo_Utils.h>
 
 // OCCT includes
 #include <BSplCLib.hxx>
@@ -61,21 +62,6 @@
 #define NUM_CONSTRAINED_POLES_LEADING  1
 #define NUM_CONSTRAINED_POLES_TRAILING 1
 #define NUM_INTEGRATION_BINS           500
-
-//-----------------------------------------------------------------------------
-
-double Integral(math_Function& F, double a, double b, int n)
-{
-  double step = (b - a) / n;  // width of each small rectangle
-  double area = 0.0;  // signed area
-  for (int i = 0; i < n; i ++)
-  {
-    double val = 0.0;
-    F.Value(a + (i + 0.5) * step, val);
-    area +=  val*step; // sum up each small rectangle
-  }
-  return area;
-}
 
 //-----------------------------------------------------------------------------
 
@@ -112,7 +98,7 @@ bool asiAlgo_FairBCurve::Perform()
       asiAlgo_FairingAijFunc N2(U, p, r + NUM_CONSTRAINED_POLES_LEADING, c + NUM_CONSTRAINED_POLES_LEADING, m_fLambda);
 
       // Compute integral.
-      const double val = Integral(N2, U.First(), U.Last(), NUM_INTEGRATION_BINS);
+      const double val = asiAlgo_Utils::IntegralRect(N2, U.First(), U.Last(), NUM_INTEGRATION_BINS);
 
       eigen_A_mx(r, c) = val;
     }
@@ -131,9 +117,9 @@ bool asiAlgo_FairBCurve::Perform()
     asiAlgo_FairingBjFunc rhs_z(m_inputCurve, 2, U, p, r + NUM_CONSTRAINED_POLES_LEADING, m_fLambda);
 
     // Compute integrals.
-    const double val_x = Integral(rhs_x, U.First(), U.Last(), NUM_INTEGRATION_BINS);
-    const double val_y = Integral(rhs_y, U.First(), U.Last(), NUM_INTEGRATION_BINS);
-    const double val_z = Integral(rhs_z, U.First(), U.Last(), NUM_INTEGRATION_BINS);
+    const double val_x = asiAlgo_Utils::IntegralRect(rhs_x, U.First(), U.Last(), NUM_INTEGRATION_BINS);
+    const double val_y = asiAlgo_Utils::IntegralRect(rhs_y, U.First(), U.Last(), NUM_INTEGRATION_BINS);
+    const double val_z = asiAlgo_Utils::IntegralRect(rhs_z, U.First(), U.Last(), NUM_INTEGRATION_BINS);
 
     eigen_B_mx(r, 0) = -val_x;
     eigen_B_mx(r, 1) = -val_y;

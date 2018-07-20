@@ -2244,7 +2244,7 @@ bool asiAlgo_Utils::BooleanRemoveFaces(const TopoDS_Shape&         shape,
   API.SetShape         (shape);
   API.AddFacesToRemove (faces2Remove);
   API.SetRunParallel   (runParallel);
-  API.TrackHistory     (trackHistory);
+  API.SetToFillHistory (trackHistory);
 
   // Perform.
   API.Build();

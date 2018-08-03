@@ -43,6 +43,7 @@
 #include <asiEngine_Part.h>
 
 // asiAlgo includes
+#include <asiAlgo_CheckValidity.h>
 #include <asiAlgo_CompleteEdgeLoop.h>
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_PLY.h>
@@ -396,13 +397,15 @@ void asiUI_ControlsPart::onCheckShape()
   //
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
+  asiAlgo_CheckValidity checker(m_notifier, m_plotter);
+
   // Get highlighted faces
   TopTools_IndexedMapOfShape selected;
   asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedSubShapes(selected);
 
   if ( selected.IsEmpty() )
   {
-    if ( !asiAlgo_Utils::CheckShape(part, m_notifier) )
+    if ( !checker.CheckBasic(part) )
     {
       std::cout << "Error: shape is invalid" << std::endl;
       return;
@@ -413,7 +416,7 @@ void asiUI_ControlsPart::onCheckShape()
   {
     for ( int i = 1; i <= selected.Extent(); ++i )
     {
-      if ( !asiAlgo_Utils::CheckShape(selected(i), m_notifier) )
+      if ( !checker.CheckBasic( selected(i) ) )
       {
         std::cout << "Error: sub-shape is invalid" << std::endl;
         return;
@@ -439,7 +442,7 @@ void asiUI_ControlsPart::onTolerance()
 
   if ( selected.IsEmpty() )
   {
-    const double maxTol = asiAlgo_Utils::MaxTolerance(part);
+    const double maxTol = asiAlgo_CheckValidity::MaxTolerance(part);
     m_notifier.SendLogMessage(LogInfo(Normal) << "Max tolerance: %1" << maxTol);
   }
   else
@@ -447,7 +450,7 @@ void asiUI_ControlsPart::onTolerance()
     double maxTol = 0.0;
     for ( int i = 1; i <= selected.Extent(); ++i )
     {
-      const double tol = asiAlgo_Utils::MaxTolerance( selected(i) );
+      const double tol = asiAlgo_CheckValidity::MaxTolerance( selected(i) );
       maxTol = std::max(tol, maxTol);
     }
     m_notifier.SendLogMessage(LogInfo(Normal) << "Max tolerance for selected sub-shape: %1" << maxTol);

@@ -603,6 +603,9 @@ void asiEngine_Part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices
 {
   TopTools_IndexedMapOfShape subShapes;
   GetHighlightedSubShapes(subShapes);
+  //
+  if ( subShapes.IsEmpty() )
+    return;
 
   // Get part
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
@@ -635,6 +638,9 @@ void asiEngine_Part::GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices
 {
   TopTools_IndexedMapOfShape subShapes;
   GetHighlightedSubShapes(subShapes);
+  //
+  if ( subShapes.IsEmpty() )
+    return;
 
   // Take all edges
   const TopTools_IndexedMapOfShape&

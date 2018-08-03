@@ -64,11 +64,11 @@ bool asiAlgo_FairingBjFunc::Value(const double u, double& f)
    *  Calculate 2-nd derivative of basis spline at the given parameter
    * ================================================================== */
 
-  const int order    = m_iDegree + 1;
-  double    d2N      = 0.0;
-  double    d2C_proj = 0.0;
-
-  int firstNonZeroIdx;
+  const int order           = m_iDegree + 1;
+  int       firstNonZeroIdx = 0;
+  double    d2N             = 0.0;
+  double    d2C_proj        = 0.0;
+  
   math_Matrix N_mx(1, 3, 1, order);
   BSplCLib::EvalBsplineBasis(2, order, m_U, u, firstNonZeroIdx, N_mx);
 
@@ -82,7 +82,6 @@ bool asiAlgo_FairingBjFunc::Value(const double u, double& f)
   std::cout << std::endl;
 #endif
 
-  
   const int oneBasedIndex = m_iIndex + 1;
 
   // For indices in a band of width (p + 1), we can query what
@@ -90,10 +89,7 @@ bool asiAlgo_FairingBjFunc::Value(const double u, double& f)
   if ( (oneBasedIndex >= firstNonZeroIdx) && (oneBasedIndex < firstNonZeroIdx + m_iDegree + 1) )
     d2N = N_mx(3, oneBasedIndex - firstNonZeroIdx + 1);
 
-  /* ====================================================
-   *  Calculate 2-nd derivative of the curve in question
-   * ==================================================== */
-
+  // Calculate 2-nd derivative of the curve in question.
   gp_Pnt P;
   gp_Vec d1C, d2C;
   m_curve->D2(u, P, d1C, d2C);

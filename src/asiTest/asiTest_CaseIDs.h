@@ -40,9 +40,13 @@
 //! IDs for Test Cases.
 enum test_CaseID
 {
-  CaseID_FairCurve = 1,
-  CaseID_SuppressBlends,
+  CaseID_SuppressBlends = 1,
+  CaseID_InvertShells,
+
+/* ------------------------------------------------------------------------ */
+
   CaseID_IsContourClosed,
+  CaseID_EdgeVexity,
 
 /* ------------------------------------------------------------------------ */
 

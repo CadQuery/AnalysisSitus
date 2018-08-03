@@ -51,7 +51,7 @@ public:
   asiAlgo_EXPORT
     asiAlgo_InvertFaces(const Handle(asiAlgo_AAG)& aag,
                         ActAPI_ProgressEntry       progress = NULL,
-                        ActAPI_PlotterEntry        plotter = NULL);
+                        ActAPI_PlotterEntry        plotter  = NULL);
 
 public:
 
@@ -90,10 +90,8 @@ protected:
 
 protected:
 
-  Handle(asiAlgo_AAG)  m_aag;      //!< Master AAG.
-  TopoDS_Shape         m_result;   //!< Result model.
-  ActAPI_ProgressEntry m_progress; //!< Progress entry.
-  ActAPI_PlotterEntry  m_plotter;  //!< Plotter entry.
+  Handle(asiAlgo_AAG)  m_aag;    //!< Master AAG.
+  TopoDS_Shape         m_result; //!< Result model.
 
 };
 

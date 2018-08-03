@@ -41,8 +41,13 @@
 #include <asiEngine_TolerantShapes.h>
 
 // asiAlgo includes
+#include <asiAlgo_CheckValidity.h>
+#include <asiAlgo_DihedralAngle.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
+
+// asiVisu includes
+#include <asiVisu_Utils.h>
 
 // asiUI includes
 #include <asiUI_CurvaturePlot.h>
@@ -938,7 +943,7 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
     mobius::cascade_BSplineCurve3D converter(occtBCurve);
     converter.DirectConvert();
     //
-    const mobius::Ptr<mobius::bcurve>&
+    const mobius::ptr<mobius::bcurve>&
       mobCurve = converter.GetMobiusCurve();
 
     // Evaluate.
@@ -1310,7 +1315,7 @@ int ENGINE_EvalSurf(const Handle(asiTcl_Interp)& interp,
     mobius::cascade_BSplineSurface converter(occtBSurface);
     converter.DirectConvert();
     //
-    const mobius::Ptr<mobius::bsurf>&
+    const mobius::ptr<mobius::bsurf>&
       mobSurface = converter.GetMobiusSurface();
 
     // Evaluate.
@@ -1521,13 +1526,15 @@ int ENGINE_CheckValidity(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
+  asiAlgo_CheckValidity checker( interp->GetProgress(), interp->GetPlotter() );
+
   // Get Part Node.
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
 
   // Get Part shape.
   TopoDS_Shape partSh = part_n->GetShape();
 
-  if ( !asiAlgo_Utils::CheckShape( partSh, interp->GetProgress() ) )
+  if ( !checker.CheckBasic(partSh) )
   {
     *interp << 0;
   }
@@ -1535,6 +1542,74 @@ int ENGINE_CheckValidity(const Handle(asiTcl_Interp)& interp,
   {
     *interp << 1;
   }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_CheckFinite(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get Part shape.
+  TopoDS_Shape partSh = part_n->GetShape();
+
+  // Get all contained solids.
+  TopTools_IndexedMapOfShape solids;
+  TopExp::MapShapes(partSh, TopAbs_SOLID, solids);
+  //
+  if ( solids.IsEmpty() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "There are no solids in the part.");
+    return TCL_ERROR;
+  }
+
+  // Check contained solids.
+  bool isOneSolid = (solids.Extent() == 1);
+  bool areAllOk   = true;
+  int  solidIdx   = 0;
+  //
+  for ( int k = 1; k <= solids.Extent(); ++k )
+  {
+    const TopoDS_Solid& solid = TopoDS::Solid( solids(k) );
+    solidIdx++;
+
+    // Check next solid.
+    const bool isNextOk = asiAlgo_CheckValidity::IsFinite(solid);
+    //
+    if ( !isNextOk && areAllOk )
+      areAllOk = false;
+
+    // Print message.
+    if ( isOneSolid )
+    {
+      if ( isNextOk )
+        interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Solid is finite.");
+      else
+        interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Solid is infinite.");
+    }
+    else
+    {
+      if ( isNextOk )
+        interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Solid %1 is finite."
+                                                             << solidIdx);
+      else
+        interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Solid %1 is infinite."
+                                                             << solidIdx);
+    }
+  }
+
+  // Add checker result to the interpretor.
+  *interp << (areAllOk ? 1 : 0);
 
   return TCL_OK;
 }
@@ -1568,10 +1643,10 @@ int ENGINE_CheckContours(const Handle(asiTcl_Interp)& interp,
 
     // Set default tolerance.
     if ( !tolerance )
-      tolerance = asiAlgo_Utils::MaxTolerance(face)*5.0;
+      tolerance = asiAlgo_CheckValidity::MaxTolerance(face)*5.0;
 
     // Check closeness.
-    if ( !asiAlgo_Utils::HasAllClosedWires(face, tolerance) )
+    if ( !asiAlgo_CheckValidity::HasAllClosedWires(face, tolerance) )
     {
       isOk = false;
       break;
@@ -1598,7 +1673,7 @@ int ENGINE_GetTolerance(const Handle(asiTcl_Interp)& interp,
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
 
   // Return max tolerance to the interpreter.
-  *interp << asiAlgo_Utils::MaxTolerance( part_n->GetShape() );
+  *interp << asiAlgo_CheckValidity::MaxTolerance( part_n->GetShape() );
 
   return TCL_OK;
 }
@@ -1650,6 +1725,152 @@ int ENGINE_GetStrain(const Handle(asiTcl_Interp)& interp,
 
   // Add to interpreter.
   *interp << energy;
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
+                           int                          argc,
+                           const char**                 argv)
+{
+  if ( argc != 2 && argc != 3 && argc != 4 && argc != 6 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node and shape.
+  Handle(asiData_PartNode) part_n    = cmdEngine::model->GetPartNode();
+  TopoDS_Shape             partShape = part_n->GetShape();
+
+  // Check whether naming service is active.
+  const bool hasNaming = !part_n->GetNaming().IsNull();
+
+  // Check whether "smooth" type is allowed.
+  const bool allowSmooth = interp->HasKeyword(argc, argv, "allow-smooth");
+
+  // Get tolerance for recognition of smooth edges.
+  double smoothToler = 0.0;
+  TCollection_AsciiString smoothTolerStr;
+  //
+  if ( interp->GetKeyValue(argc, argv, "smooth-toler", smoothTolerStr) )
+    smoothToler = smoothTolerStr.RealValue();
+
+  // Edge to check.
+  TopoDS_Edge edge;
+
+  // Check if naming service is active. If so, the user may ask to access
+  // a sub-shape in question by its unique name.
+  if ( hasNaming && argc == 3 )
+  {
+    if ( !interp->IsKeyword(argv[1], "name") )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Keyword '-name' is expected.");
+      return TCL_ERROR;
+    }
+    else
+    {
+      TCollection_AsciiString name(argv[2]);
+      //
+      TopoDS_Shape subshape = part_n->GetNaming()->GetShape(name);
+      //
+      if ( subshape.IsNull() || subshape.ShapeType() != TopAbs_EDGE )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed sub-shape is null "
+                                                               "or not of a proper type.");
+        return TCL_OK;
+      }
+      //
+      edge = TopoDS::Edge(subshape);
+    }
+  }
+  else // Naming is not used to access the argument.
+  {
+    const int ssidx = atoi(argv[1]);
+    //
+    if ( ssidx < 1 )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Sub-shape index should be 1-based.");
+      return TCL_OK;
+    }
+
+    // Get map of sub-shapes with respect to those the passed index is relevant.
+    TopTools_IndexedMapOfShape subShapesOfType;
+    part_n->GetAAG()->GetMapOf(TopAbs_EDGE, subShapesOfType);
+
+    // Get sub-shape in question.
+    edge = TopoDS::Edge( subShapesOfType(ssidx) );
+  }
+
+  interp->GetPlotter().REDRAW_SHAPE("edge", edge, Color_White, 1.0, true);
+
+  // Get faces owning the edge in question.
+  TopTools_IndexedDataMapOfShapeListOfShape edgeFaceMap;
+  TopExp::MapShapesAndAncestors(part_n->GetShape(), TopAbs_EDGE, TopAbs_FACE, edgeFaceMap);
+  //
+  if ( !edgeFaceMap.Contains(edge) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "No faces for edge.");
+    return TCL_OK;
+  }
+  //
+  const TopTools_ListOfShape& faces = edgeFaceMap.FindFromKey(edge);
+  //
+  if ( faces.Extent() != 2 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Edge should belong to exactly two faces.");
+    return TCL_OK;
+  }
+  //
+  const TopoDS_Face& F = TopoDS::Face( faces.First() );
+  const TopoDS_Face& G = TopoDS::Face( faces.Last() );
+
+  /* ===============
+   *  Perform check
+   * =============== */
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Prepare algorithm.
+  asiAlgo_DihedralAngle dihAngle( interp->GetProgress(),
+                                  interp->GetPlotter() );
+  //
+  dihAngle.SetCommonEdge(edge);
+
+  // Check.
+  TopTools_IndexedMapOfShape commonEdges;
+  //
+  double angleRad = 0.0;
+  //
+  const asiAlgo_FeatureAngle
+    angleType = dihAngle.AngleBetweenFaces(F, G, allowSmooth, smoothToler, commonEdges, angleRad);
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Check dihedral angle")
+
+  // Add as a result to interpreter.
+  *interp << angleType;
+
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Edge vexity: %1."
+                                                        << asiAlgo_Utils::FeaturAngleToString(angleType) );
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+  {
+    double colorR, colorG, colorB;
+    asiVisu_Utils::ColorForFeatureAngle(angleType, colorR, colorG, colorB);
+    //
+    interp->GetPlotter().REDRAW_SHAPE("vexity",
+                                       edge,
+                                       Quantity_Color(colorR,
+                                                      colorG,
+                                                      colorB,
+                                                      Quantity_TOC_RGB),
+                                       1.0,
+                                       true);
+  }
 
   return TCL_OK;
 }
@@ -1802,6 +2023,14 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_CheckValidity);
 
   //-------------------------------------------------------------------------//
+  interp->AddCommand("check-finite",
+    //
+    "check-finite\n"
+    "\t Checks finiteness of the part shape.",
+    //
+    __FILE__, group, ENGINE_CheckFinite);
+
+  //-------------------------------------------------------------------------//
   interp->AddCommand("check-contours",
     //
     "check-contours [tolerance]\n"
@@ -1824,4 +2053,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Returns strain energy of the passed curve.",
     //
     __FILE__, group, ENGINE_GetStrain);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-edge-vexity",
+    //
+    "check-edge-vexity <edgeIndex|-name 'edgeName'>\n"
+    "\t Rebuilds edge with the given ID or name.",
+    //
+    __FILE__, group, ENGINE_CheckEdgeVexity);
 }

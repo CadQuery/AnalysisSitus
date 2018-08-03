@@ -44,8 +44,6 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiAlgo_DihedralAngle, ActAPI_IAlgorithm)
-
 //! Utility to analyze dihedral angles.
 class asiAlgo_DihedralAngle : public ActAPI_IAlgorithm
 {

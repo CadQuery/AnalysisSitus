@@ -34,7 +34,6 @@
 // asiAlgo includes
 #include <asiAlgo_FairingAijFunc.h>
 #include <asiAlgo_FairingBjFunc.h>
-#include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
 // OCCT includes
@@ -79,9 +78,6 @@ asiAlgo_FairBCurve::asiAlgo_FairBCurve(const Handle(Geom_BSplineCurve)& curve,
 
 bool asiAlgo_FairBCurve::Perform()
 {
-  TIMER_NEW
-  TIMER_GO
-
   // Prepare flat sequence of knots and other working vars.
   const TColStd_Array1OfReal& U   = m_inputCurve->KnotSequence();
   const int                   p   = m_inputCurve->Degree();
@@ -159,9 +155,6 @@ bool asiAlgo_FairBCurve::Perform()
 #if defined DRAW_DEBUG
   m_plotter.REDRAW_CURVE("faired", m_resultCurve, Color_Green);
 #endif
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(m_progress.Access(), "B-curve fairing")
 
   return true;
 }

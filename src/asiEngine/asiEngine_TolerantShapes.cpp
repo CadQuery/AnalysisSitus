@@ -36,6 +36,7 @@
 #include <asiAlgo_Utils.h>
 
 // asiVisu includes
+#include <asiAlgo_CheckValidity.h>
 #include <asiVisu_MeshResultUtils.h>
 #include <asiVisu_Utils.h>
 
@@ -53,7 +54,7 @@ void asiEngine_TolerantShapes::Populate(const TopoDS_Shape& shape,
 
   // Get max and min possible tolerances.
   const double minToler  = Precision::Confusion() - resolution;
-  const double maxToler  = asiAlgo_Utils::MaxTolerance(shape) + resolution;
+  const double maxToler  = asiAlgo_CheckValidity::MaxTolerance(shape) + resolution;
   const double tolerStep = (maxToler - minToler) / numRanges;
 
   // Initialize lookup table.

@@ -1332,7 +1332,7 @@ int MISC_TestEvalCurve(const Handle(asiTcl_Interp)& interp,
     mobius::cascade_BSplineCurve3D converter(occtBCurve);
     converter.DirectConvert();
     //
-    const mobius::Ptr<mobius::bcurve>&
+    const mobius::ptr<mobius::bcurve>&
       mobCurve = converter.GetMobiusCurve();
 
     TIMER_GO
@@ -1453,7 +1453,7 @@ int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
     mobius::cascade_BSplineSurface converter(occtBSurf);
     converter.DirectConvert();
     //
-    const mobius::Ptr<mobius::bsurf>&
+    const mobius::ptr<mobius::bsurf>&
       mobBSurf = converter.GetMobiusSurface();
 
     TIMER_GO
@@ -1478,8 +1478,10 @@ int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-#include <BRepPrimAPI_MakeHalfSpace.hxx>
-#include <BRepAlgoAPI_Common.hxx>
+#include <math_Matrix.hxx>
+#include <GeomFill_Pipe.hxx>
+#include <Geom_BezierCurve.hxx>
+#include <GeomConvert.hxx>
 
 int MISC_Test(const Handle(asiTcl_Interp)& interp,
               int                          argc,
@@ -1490,17 +1492,43 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
+  TColgp_Array1OfPnt pathPoles(1, 3);
+  pathPoles(1) = gp_Pnt(0.0,    0.0,   0.0);
+  pathPoles(2) = gp_Pnt(100.0,  0.0,   0.0);
+  pathPoles(3) = gp_Pnt(100.0,  100.0, 0.0);
 
-  TopoDS_Shape
-    model = Handle(asiEngine_Model)::DownCast( interp->GetModel() )->GetPartNode()->GetShape();
+  Handle(Geom_BezierCurve) path = new Geom_BezierCurve(pathPoles);
 
-  gp_Pln pln = gp_Pln(gp_Pnt(0.,0.,0.),gp_Dir(0.,0.,1.));
-  TopoDS_Face face = BRepBuilderAPI_MakeFace(pln);
-  TopoDS_Shape half = BRepPrimAPI_MakeHalfSpace(face, gp_Pnt(0.0,0.0,1.0)).Solid();
+  Handle(Geom_Curve)
+    c1 = GeomConvert::CurveToBSplineCurve( new Geom_TrimmedCurve(new Geom_Circle(gp_Ax2( gp::Origin(), gp::DX() ), 10.0), 0, 2*M_PI), Convert_Polynomial );
+  //
+  Handle(Geom_Curve)
+    c2 = GeomConvert::CurveToBSplineCurve( new Geom_TrimmedCurve(new Geom_Circle(gp_Ax2( gp::Origin(), gp::DX() ), 20.0), 0, 2*M_PI), Convert_Polynomial );
 
-  BRepAlgoAPI_Common common(model, half);
+  GeomFill_Pipe Pipe(path, c1, c2);
+  Pipe.Perform();
 
-  interp->GetPlotter().REDRAW_SHAPE("common", common.Shape());
+  /*TColgp_Array1OfPnt pathPoles(1, 3);
+  pathPoles(1) = gp_Pnt(0,   0,   0);
+  pathPoles(2) = gp_Pnt(100, 0,   0);
+  pathPoles(3) = gp_Pnt(100, 100, 0);
+
+  Handle(Geom_BezierCurve) path = new Geom_BezierCurve(pathPoles);
+
+  Handle(Geom_Curve) c1 = new Geom_Circle( gp_Ax2(gp_Pnt(0,   0,   0), gp::DX() ), 10.0);
+  Handle(Geom_Curve) c2 = new Geom_Circle( gp_Ax2(gp_Pnt(100, 100, 0), gp::DY() ), 20.0);
+
+  interp->GetPlotter().REDRAW_CURVE("c1", c1, Color_Red);
+  interp->GetPlotter().REDRAW_CURVE("c2", c2, Color_Red);
+  interp->GetPlotter().REDRAW_CURVE("path", path, Color_Red);
+
+  GeomFill_Pipe Pipe(path, c1, c2);
+  Pipe.Perform();*/
+
+  const Handle(Geom_Surface)& result = Pipe.Surface();
+
+  interp->GetPlotter().REDRAW_SURFACE("result", result, Color_White);
+
   return TCL_OK;
 }
 

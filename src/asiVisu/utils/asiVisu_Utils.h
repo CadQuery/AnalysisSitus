@@ -31,11 +31,11 @@
 #ifndef asiVisu_Utils_h
 #define asiVisu_Utils_h
 
-// A-Situs includes
-#include <asiVisu.h>
-
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_Prs.h>
+
+// asiAlgo includes
+#include <asiAlgo_FeatureAngle.h>
 
 // Active Data (API) includes
 #include <ActAPI_INode.h>
@@ -241,6 +241,36 @@ public:
     InitTextWidget(vtkTextWidget* theTextWidget);
 
 public:
+
+  static void ColorForFeatureAngle(const asiAlgo_FeatureAngle angle,
+                                   double&                    redF,
+                                   double&                    greenF,
+                                   double&                    blueF)
+  {
+    switch ( angle )
+  {
+    case Angle_Concave:
+      redF   = 1.0;
+      greenF = 0.0;
+      blueF  = 0.0;
+      break;
+    case Angle_Convex:
+      redF   = 0.0;
+      greenF = 1.0;
+      blueF  = 0.0;
+      break;
+    case Angle_Smooth:
+      redF   = 0.0;
+      greenF = 0.0;
+      blueF  = 1.0;
+      break;
+    case Angle_Undefined:
+    default:
+      redF   = 1.0;
+      greenF = 1.0;
+      blueF  = 1.0;
+  }
+  }
 
   double static TrimInf(const double val,
                         const double limit = INF_LIMIT)

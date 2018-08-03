@@ -43,6 +43,7 @@
 #include <asiAlgo_EulerKEV.h>
 #include <asiAlgo_EulerKFMV.h>
 #include <asiAlgo_FairBCurve.h>
+#include <asiAlgo_InvertShells.h>
 #include <asiAlgo_RebuildEdge.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_TopoAttrOrientation.h>
@@ -67,6 +68,11 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Solid.hxx>
+
+#if defined USE_MOBIUS
+  #include <mobius/cascade_BSplineCurve3D.h>
+  #include <mobius/geom_FairBCurve.h>
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -1136,7 +1142,7 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
                      int                          argc,
                      const char**                 argv)
 {
-  if ( argc != 4 )
+  if ( argc != 4 && argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -1168,20 +1174,73 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
   // Get fairing coefficient.
   const double lambda = Atof(argv[3]);
 
-  // Perform fairing algorithm.
-  asiAlgo_FairBCurve fairing( occtBCurve,
-                              lambda,
-                              interp->GetProgress(),
-                              interp->GetPlotter() );
+  // Check whether Mobius operator is requested.
+  const bool isMobius = interp->HasKeyword(argc, argv, "mobius");
+
+  // Perform fairing.
+  Handle(Geom_BSplineCurve) result;
   //
-  if ( !fairing.Perform() )
+  if ( isMobius )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Fairing failed.");
-    return TCL_OK;
+#if defined USE_MOBIUS
+    // Convert to Mobius curve.
+    mobius::cascade_BSplineCurve3D toMobius(occtBCurve);
+    toMobius.DirectConvert();
+    const mobius::ptr<mobius::bcurve>& mobCurve = toMobius.GetMobiusCurve();
+
+    TIMER_NEW
+    TIMER_GO
+
+    // Perform fairing from Mobius.
+    mobius::geom_FairBCurve fairing(mobCurve, lambda, NULL, NULL);
+    //
+    if ( !fairing.Perform() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Fairing failed.");
+      return TCL_OK;
+    }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Mobius B-curve fairing")
+
+    // Get the faired curve.
+    const mobius::ptr<mobius::bcurve>& mobResult = fairing.GetResult();
+
+    // Convert to OpenCascade curve.
+    mobius::cascade_BSplineCurve3D toOpenCascade(mobResult);
+    toOpenCascade.DirectConvert();
+    result = toOpenCascade.GetOpenCascadeCurve();
+#else
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+    return TCL_ERROR;
+#endif
+  }
+  else
+  {
+    TIMER_NEW
+    TIMER_GO
+
+    // Perform fairing algorithm.
+    asiAlgo_FairBCurve fairing( occtBCurve,
+                                lambda,
+                                interp->GetProgress(),
+                                interp->GetPlotter() );
+    //
+    if ( !fairing.Perform() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Fairing failed.");
+      return TCL_OK;
+    }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Analysis Situs B-curve fairing")
+
+    // Get the faired curve.
+    result = fairing.GetResult();
   }
 
   // Draw result.
-  interp->GetPlotter().REDRAW_CURVE(argv[1], fairing.GetResult(), Color_Green);
+  interp->GetPlotter().REDRAW_CURVE(argv[1], result, Color_Green);
 
   return TCL_OK;
 }
@@ -1364,6 +1423,46 @@ int ENGINE_TrimCurve(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_InvertShells(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+  TopoDS_Shape             part   = part_n->GetShape();
+
+  // Invert all contained shells.
+  asiAlgo_InvertShells algo( part, interp->GetProgress(), interp->GetPlotter() );
+  //
+  if ( !algo.Perform() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Shell inversion failed.");
+    return TCL_OK;
+  }
+  //
+  const TopoDS_Shape& result = algo.GetResult();
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -1521,7 +1620,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("fair-curve",
     //
-    "fair-curve resName curveName fairingCoeff\n"
+    "fair-curve resName curveName fairingCoeff [-mobius]\n"
     "\t Fairs curve with the given name <curveName>. The passed fairing coefficient\n"
     "\t is a weight of a fairing term in the goal function.",
     //
@@ -1552,4 +1651,12 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t parameter values <u0> and <u1>.",
     //
     __FILE__, group, ENGINE_TrimCurve);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("invert-shells",
+    //
+    "invert-shells\n"
+    "\t Inverts orientations of all shells in the working part.",
+    //
+    __FILE__, group, ENGINE_InvertShells);
 }

@@ -54,24 +54,24 @@ bool asiAlgo_InvertFaces::Perform(const TColStd_PackedMapOfInteger& faceIds)
   if ( master.ShapeType() == TopAbs_FACE )
   {
     m_result = master.Reversed();
-    m_progress.SendLogMessage(LogInfo(Normal) << "Reverse isolated face");
+    m_progress.SendLogMessage(LogInfo(Normal) << "Reverse isolated face.");
   }
   else if ( master.ShapeType() > TopAbs_FACE )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot invert a shape of a topological "
-                                                "type which does not contain faces");
+                                                "type which does not contain faces.");
     return false;
   }
   else
   {
-    // Prepare root
+    // Prepare root.
     m_result = master.EmptyCopied();
 
-    // Rebuild topology graph recursively
+    // Rebuild topology graph recursively.
     this->buildTopoGraphLevel(master, faceIds, m_result);
   }
 
-  return true; // Success
+  return true; // Success.
 }
 
 //-----------------------------------------------------------------------------
@@ -81,7 +81,10 @@ void asiAlgo_InvertFaces::buildTopoGraphLevel(const TopoDS_Shape&               
                                               TopoDS_Shape&                     result) const
 {
   BRep_Builder BB;
-  for ( TopoDS_Iterator it(root, false, false); it.More(); it.Next() )
+
+  // NOTICE: we enable accumulation of locations because TopoDS_Builder::Add()
+  //         recomputes the relative transformations.
+  for ( TopoDS_Iterator it(root, false, true); it.More(); it.Next() )
   {
     const TopoDS_Shape& currentShape = it.Value();
     TopoDS_Shape newResult;
@@ -89,16 +92,16 @@ void asiAlgo_InvertFaces::buildTopoGraphLevel(const TopoDS_Shape&               
     if ( currentShape.ShapeType() < TopAbs_FACE )
     {
       newResult = currentShape.EmptyCopied();
-      this->buildTopoGraphLevel( currentShape, faces2Invert, newResult );
+      this->buildTopoGraphLevel(currentShape, faces2Invert, newResult);
     }
     else
     {
       if ( currentShape.ShapeType() == TopAbs_FACE )
       {
-        // Get index of the current face
+        // Get index of the current face.
         const int fid = m_aag->GetFaceId(currentShape);
 
-        // Reverse if requested
+        // Reverse if requested.
         newResult = ( faces2Invert.Contains(fid) ) ? currentShape.Reversed() : currentShape;
       }
       else

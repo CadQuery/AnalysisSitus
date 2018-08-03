@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
+#include <asiAlgo_FeatureAngle.h>
 #include <asiAlgo_Naming.h>
 
 // Active Data (API) includes
@@ -173,6 +174,10 @@ namespace asiAlgo_Utils
   //! \return label.
   asiAlgo_EXPORT std::string
     FaceGeometryName(const TopoDS_Face& face);
+
+  //! Converts the passed feature angle to string,
+  asiAlgo_EXPORT TCollection_AsciiString
+    FeaturAngleToString(const asiAlgo_FeatureAngle angle);
 
   //! Converts the passed named shape to string.
   asiAlgo_EXPORT TCollection_AsciiString
@@ -364,46 +369,6 @@ namespace asiAlgo_Utils
            double& XMin, double& YMin, double& ZMin,
            double& XMax, double& YMax, double& ZMax,
            const double tolerance = 0.0);
-
-  //! Checks OCCT validity rules of the given shape.
-  //! \param shape   [in] shape to check.
-  //! \param Journal [in] Logger instance to cumulate all meaningful messages.
-  //! \return true if shape is valid, false -- otherwise.
-  asiAlgo_EXPORT bool
-    CheckShape(const TopoDS_Shape&  shape,
-               ActAPI_ProgressEntry Journal);
-
-  //! Checks whether the passed face has all contours (wires)
-  //! geometrically closed.
-  //! \param face             [in] face to check.
-  //! \param coincConfusion3d [in] coincidence confusion tolerance. This value
-  //!                              is used to recognize points as coincident.
-  //! \return true if face is Ok, false -- otherwise.
-  asiAlgo_EXPORT bool
-    HasAllClosedWires(const TopoDS_Face& face,
-                      const double       coincConfusion3d);
-
-  //! Checks whether the passed wire is closed.
-  //! \param wire             [in] wire to check.
-  //! \param face             [in] face owning the wire.
-  //! \param coincConfusion3d [in] coincidence confusion tolerance. This value
-  //!                              is used to recognize points as coincident.
-  //! \return true if wire is Ok, false -- otherwise.
-  asiAlgo_EXPORT bool
-    IsClosedGeometrically(const TopoDS_Wire& wire,
-                          const TopoDS_Face& face,
-                          const double       coincConfusion3d);
-
-  //! Checks whether the passed face contains any edges without vertices.
-  //! \param face [in] face to check.
-  asiAlgo_EXPORT bool
-    HasEdgesWithoutVertices(const TopoDS_Face& face);
-
-  //! Returns maximum tolerance value bound to the passed shape.
-  //! \param shape [in] shape to check.
-  //! \return maximum tolerance value.
-  asiAlgo_EXPORT double
-    MaxTolerance(const TopoDS_Shape& shape);
 
   //! Reads CAD model from native OCCT b-rep file.
   //! \param filename [in]  filename.

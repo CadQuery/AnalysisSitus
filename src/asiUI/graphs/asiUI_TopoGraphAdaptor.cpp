@@ -137,6 +137,8 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     //
     label += "Shape: ";
     label += asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str();
+    if ( !shape.Location().IsIdentity() )
+      label += "(with location)";
     label += "\n";
     //
     if ( pid )

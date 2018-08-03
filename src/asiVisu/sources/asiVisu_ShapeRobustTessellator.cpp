@@ -35,6 +35,7 @@
 #include <asiVisu_CurveSource.h>
 
 // asiAlgo includes
+#include <asiAlgo_CheckValidity.h>
 #include <asiAlgo_MeshGen.h>
 #include <asiAlgo_MeshMerge.h>
 #include <asiAlgo_Timer.h>
@@ -412,13 +413,13 @@ bool asiVisu_ShapeRobustTessellator::isValidFace(const TopoDS_Face& face) const
 
   // This calibrated value is used to compensate weird tolerances which
   // happen to be insufficient to cover tiny contour gaps.
-  const double tol = asiAlgo_Utils::MaxTolerance(face)*5.0;
+  const double tol = asiAlgo_CheckValidity::MaxTolerance(face)*5.0;
 
   // Location just to access triangulation.
   TopLoc_Location loc;
 
-  return asiAlgo_Utils::HasAllClosedWires(face, tol) &&
-        !asiAlgo_Utils::HasEdgesWithoutVertices(face) &&
+  return asiAlgo_CheckValidity::HasAllClosedWires(face, tol) &&
+        !asiAlgo_CheckValidity::HasEdgesWithoutVertices(face) &&
         !BRep_Tool::Triangulation(face, loc).IsNull();
 }
 

@@ -58,16 +58,20 @@ asiAlgo_FairingAijFunc::asiAlgo_FairingAijFunc(const TColStd_Array1OfReal& U,
 
 bool asiAlgo_FairingAijFunc::Value(const double u, double& f)
 {
-  const int order = m_iDegree + 1;
+  const int order           = m_iDegree + 1;
+  double    Ni              = 0.0;
+  double    Nj              = 0.0;
+  double    d2Ni            = 0.0;
+  double    d2Nj            = 0.0;
+  int       firstNonZeroIdx = 0;
 
-  int firstNonZeroIdx;
   math_Matrix N_mx(1, 3, 1, order);
   BSplCLib::EvalBsplineBasis(2, order, m_U, u, firstNonZeroIdx, N_mx);
 
 #if defined COUT_DEBUG
-  // Dump
+  // Dump.
   std::cout << "\tFirst Non-Zero Index for " << u << " is " << firstNonZeroIdx << std::endl;
-  for ( int kk = 1; kk <= p + 1; ++kk )
+  for ( int kk = 1; kk <= order; ++kk )
   {
     std::cout << "\t" << N_mx(3, kk);
   }
@@ -77,21 +81,19 @@ bool asiAlgo_FairingAijFunc::Value(const double u, double& f)
   const int oneBasedIndex1 = m_iIndex1 + 1;
   const int oneBasedIndex2 = m_iIndex2 + 1;
 
-  double Ni = 0.0, Nj = 0.0, d2Ni = 0.0, d2Nj = 0.0;
-
   // For indices in a band of width (p + 1), we can query what
   // OpenCascade returns. Otherwise, the derivative vanishes.
-  if ( (oneBasedIndex1 >= firstNonZeroIdx) && (oneBasedIndex1 < firstNonZeroIdx + m_iDegree + 1) )
+  if ( (oneBasedIndex1 >= firstNonZeroIdx) && (oneBasedIndex1 < firstNonZeroIdx + order) )
     Ni = N_mx(1, oneBasedIndex1 - firstNonZeroIdx + 1);
   //
-  if ( (oneBasedIndex2 >= firstNonZeroIdx) && (oneBasedIndex2 < firstNonZeroIdx + m_iDegree + 1) )
+  if ( (oneBasedIndex2 >= firstNonZeroIdx) && (oneBasedIndex2 < firstNonZeroIdx + order) )
     Nj = N_mx(1, oneBasedIndex2 - firstNonZeroIdx + 1);
 
   // Derivatives.
-  if ( (oneBasedIndex1 >= firstNonZeroIdx) && (oneBasedIndex1 < firstNonZeroIdx + m_iDegree + 1) )
+  if ( (oneBasedIndex1 >= firstNonZeroIdx) && (oneBasedIndex1 < firstNonZeroIdx + order) )
     d2Ni = N_mx(3, oneBasedIndex1 - firstNonZeroIdx + 1);
   //
-  if ( (oneBasedIndex2 >= firstNonZeroIdx) && (oneBasedIndex2 < firstNonZeroIdx + m_iDegree + 1) )
+  if ( (oneBasedIndex2 >= firstNonZeroIdx) && (oneBasedIndex2 < firstNonZeroIdx + order) )
     d2Nj = N_mx(3, oneBasedIndex2 - firstNonZeroIdx + 1);
 
   f = Ni*Nj + this->GetLambda()*d2Ni*d2Nj;

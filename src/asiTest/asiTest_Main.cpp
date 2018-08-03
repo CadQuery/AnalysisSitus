@@ -30,7 +30,8 @@
 
 // asiTest includes
 #include <asiTest_CommonFacilities.h>
-#include <asiTest_FairCurve.h>
+#include <asiTest_EdgeVexity.h>
+#include <asiTest_InvertShells.h>
 #include <asiTest_IsContourClosed.h>
 #include <asiTest_SuppressBlends.h>
 
@@ -85,9 +86,10 @@ int main(int argc, char* argv[])
   std::cout << "asiTest : main()" << std::endl;
   std::vector< Handle(asiTestEngine_CaseLauncherAPI) > CaseLaunchers;
   //
-  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_FairCurve>       );
   CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_SuppressBlends>  );
+  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_InvertShells>    );
   CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_IsContourClosed> );
+  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_EdgeVexity>      );
 
   // Launcher of entire test suite
   asiTestEngine_Launcher Launcher;

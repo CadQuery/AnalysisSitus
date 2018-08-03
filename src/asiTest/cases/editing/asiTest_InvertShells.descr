@@ -1,0 +1,15 @@
+[TITLE]
+
+  Inverts shells to reverse orientations of solids
+
+[1:OVERVIEW]
+
+  This test performs double inversion of ANC101.
+
+[1:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%

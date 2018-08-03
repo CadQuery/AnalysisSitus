@@ -1,0 +1,15 @@
+[TITLE]
+
+  Check vexity of edges
+
+[1:OVERVIEW]
+
+  Test case 1.
+
+[1:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%

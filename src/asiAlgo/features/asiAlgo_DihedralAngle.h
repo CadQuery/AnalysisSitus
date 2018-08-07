@@ -54,19 +54,90 @@ public:
 
 public:
 
+  //! Constructor.
+  //! \param[in] progress Progress Entry.
+  //! \param[in] plotter  Imperative Plotter.
   asiAlgo_EXPORT
     asiAlgo_DihedralAngle(ActAPI_ProgressEntry progress,
                           ActAPI_PlotterEntry  plotter);
 
 public:
 
+  //! Calculates angle between two faces using midpoints to query the normal
+  //! vectors. Orientation of faces is also taken into account.
+  //! \param[in]  F                first face.
+  //! \param[in]  G                second face.
+  //! \param[in]  allowSmooth      indicates whether to process C1 smooth joints.
+  //! \param[in]  smoothAngularTol angular tolerance used for recognition
+  //!                              of smooth dihedral angles. A smooth angle
+  //!                              may appear to be imperfect by construction,
+  //!                              but still smooth by the design intent. With
+  //!                              this parameter you're able to control it.
+  //! \param[out] commonEdges      common edges.
+  //! \param[out] angRad           angle in radians.
+  //! \return angle between faces.
   asiAlgo_EXPORT asiAlgo_FeatureAngle
     AngleBetweenFaces(const TopoDS_Face&          F,
                       const TopoDS_Face&          G,
                       const bool                  allowSmooth,
                       const double                smoothAngularTol,
                       TopTools_IndexedMapOfShape& commonEdges,
-                      double&                     angRad) const;
+                      double&                     angleRad) const;
+
+  //! Calculates angle between two faces using midpoints to query the normal
+  //! vectors. Orientation of faces is also taken into account.
+  //! \param[in]  F                first face.
+  //! \param[in]  G                second face.
+  //! \param[in]  allowSmooth      indicates whether to process C1 smooth joints.
+  //! \param[in]  smoothAngularTol angular tolerance used for recognition
+  //!                              of smooth dihedral angles. A smooth angle
+  //!                              may appear to be imperfect by construction,
+  //!                              but still smooth by the design intent. With
+  //!                              this parameter you're able to control it.
+  //! \param[out] commonEdges      common edges.
+  //! \return angle between faces.
+  asiAlgo_EXPORT asiAlgo_FeatureAngle
+    AngleBetweenFaces(const TopoDS_Face&          F,
+                      const TopoDS_Face&          G,
+                      const bool                  allowSmooth,
+                      const double                smoothAngularTol,
+                      TopTools_IndexedMapOfShape& commonEdges) const;
+
+  //! Calculates angle between two faces using midpoints to query the normal
+  //! vectors. Orientation of faces is also taken into account.
+  //! \param[in] F                first face.
+  //! \param[in] G                second face.
+  //! \param[in] allowSmooth      indicates whether to process C1 smooth joints.
+  //! \param[in] smoothAngularTol angular tolerance used for recognition
+  //!                             of smooth dihedral angles. A smooth angle
+  //!                             may appear to be imperfect by construction,
+  //!                             but still smooth by the design intent. With
+  //!                             this parameter you're able to control it.
+  //! \return angle between faces.
+  asiAlgo_EXPORT asiAlgo_FeatureAngle
+    AngleBetweenFaces(const TopoDS_Face& F,
+                      const TopoDS_Face& G,
+                      const bool         allowSmooth,
+                      const double       smoothAngularTol) const;
+
+  //! Calculates angle between two faces using midpoints to query the normal
+  //! vectors. Orientation of faces is also taken into account.
+  //! \param[in]  F                first face.
+  //! \param[in]  G                second face.
+  //! \param[in]  allowSmooth      indicates whether to process C1 smooth joints.
+  //! \param[in]  smoothAngularTol angular tolerance used for recognition
+  //!                              of smooth dihedral angles. A smooth angle
+  //!                              may appear to be imperfect by construction,
+  //!                              but still smooth by the design intent. With
+  //!                              this parameter you're able to control it.
+  //! \param[out] angRad           angle in radians.
+  //! \return angle between faces.
+  asiAlgo_EXPORT asiAlgo_FeatureAngle
+    AngleBetweenFaces(const TopoDS_Face&          F,
+                      const TopoDS_Face&          G,
+                      const bool                  allowSmooth,
+                      const double                smoothAngularTol,
+                      double&                     angleRad) const;
 
 public:
 

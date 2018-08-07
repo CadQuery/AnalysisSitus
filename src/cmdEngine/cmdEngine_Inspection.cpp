@@ -1779,7 +1779,7 @@ int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
       {
         interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed sub-shape is null "
                                                                "or not of a proper type.");
-        return TCL_OK;
+        return TCL_ERROR;
       }
       //
       edge = TopoDS::Edge(subshape);
@@ -1792,7 +1792,7 @@ int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
     if ( ssidx < 1 )
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Sub-shape index should be 1-based.");
-      return TCL_OK;
+      return TCL_ERROR;
     }
 
     // Get map of sub-shapes with respect to those the passed index is relevant.
@@ -1812,7 +1812,7 @@ int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
   if ( !edgeFaceMap.Contains(edge) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "No faces for edge.");
-    return TCL_OK;
+    return TCL_ERROR;
   }
   //
   const TopTools_ListOfShape& faces = edgeFaceMap.FindFromKey(edge);
@@ -1820,7 +1820,7 @@ int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
   if ( faces.Extent() != 2 )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Edge should belong to exactly two faces.");
-    return TCL_OK;
+    return TCL_ERROR;
   }
   //
   const TopoDS_Face& F = TopoDS::Face( faces.First() );
@@ -1840,12 +1840,8 @@ int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
   dihAngle.SetCommonEdge(edge);
 
   // Check.
-  TopTools_IndexedMapOfShape commonEdges;
-  //
-  double angleRad = 0.0;
-  //
   const asiAlgo_FeatureAngle
-    angleType = dihAngle.AngleBetweenFaces(F, G, allowSmooth, smoothToler, commonEdges, angleRad);
+    angleType = dihAngle.AngleBetweenFaces(F, G, allowSmooth, smoothToler);
 
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Check dihedral angle")

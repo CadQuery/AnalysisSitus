@@ -45,6 +45,7 @@
 #include <asiAlgo_FairBCurve.h>
 #include <asiAlgo_InvertShells.h>
 #include <asiAlgo_RebuildEdge.h>
+#include <asiAlgo_SmallEdges.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_TopoAttrOrientation.h>
 #include <asiAlgo_TopoKill.h>
@@ -1463,6 +1464,50 @@ int ENGINE_InvertShells(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_HealSmallEdges(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+  TopoDS_Shape             part   = part_n->GetShape();
+
+  // Get parameters.
+  const double len     = atof(argv[1]);
+  const double ang_deg = atof(argv[2]);
+
+  // Heal small edges.
+  asiAlgo_SmallEdges algo( part, interp->GetProgress(), interp->GetPlotter() );
+  //
+  if ( !algo.Perform(len, ang_deg) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Healing operation failed.");
+    return TCL_OK;
+  }
+  //
+  const TopoDS_Shape& result = algo.GetResult();
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -1659,4 +1704,14 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t Inverts orientations of all shells in the working part.",
     //
     __FILE__, group, ENGINE_InvertShells);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("heal-small-edges",
+    //
+    "heal-small-edges len ang_deg\n"
+    "\t Heals (merges) small edges in the part. The argument <len> specifies\n"
+    "\t the linear threshold for merge. The argument <ang_deg> specifies the\n"
+    "\t the angular threshold for merge (in degrees).",
+    //
+    __FILE__, group, ENGINE_HealSmallEdges);
 }

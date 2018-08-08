@@ -369,3 +369,83 @@ outcome asiTest_EdgeVexity::test032(const int funcID)
 {
   return runtest(funcID, "inspection/edge_vexity_032.tcl");
 }
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 033.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_EdgeVexity::test033(const int funcID)
+{
+  return runtest(funcID, "inspection/edge_vexity_033.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 034.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_EdgeVexity::test034(const int funcID)
+{
+  return runtest(funcID, "inspection/edge_vexity_034.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 035.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_EdgeVexity::test035(const int funcID)
+{
+  return runtest(funcID, "inspection/edge_vexity_035.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 036.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_EdgeVexity::test036(const int funcID)
+{
+  return runtest(funcID, "inspection/edge_vexity_036.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 037.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_EdgeVexity::test037(const int funcID)
+{
+  return runtest(funcID, "inspection/edge_vexity_037.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 038.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_EdgeVexity::test038(const int funcID)
+{
+  return runtest(funcID, "inspection/edge_vexity_038.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 039.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_EdgeVexity::test039(const int funcID)
+{
+  return runtest(funcID, "inspection/edge_vexity_039.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 040.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_EdgeVexity::test040(const int funcID)
+{
+  return runtest(funcID, "inspection/edge_vexity_040.tcl");
+}

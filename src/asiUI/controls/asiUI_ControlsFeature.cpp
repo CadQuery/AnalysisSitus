@@ -450,6 +450,9 @@ void asiUI_ControlsFeature::onCheckDihedralAngles()
     // Build AAG
     Handle(asiAlgo_AAG) aag = new asiAlgo_AAG(part);
 
+    TIMER_NEW
+    TIMER_GO
+
     // Loop over the faces
     Handle(asiAlgo_AAGRandomIterator) it = new asiAlgo_AAGRandomIterator(aag);
     for ( ; it->More(); it->Next() )
@@ -481,6 +484,9 @@ void asiUI_ControlsFeature::onCheckDihedralAngles()
                                0.0);
       }
     }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(m_notifier.Access(), "Classify dihedral angles")
   }
   else
   {
@@ -1063,13 +1069,14 @@ void asiUI_ControlsFeature::classifyDihAngle(const TopoDS_Face&          F,
                                  verboseOutput ? m_plotter : NULL);
   //
   double angRad = 0.0;
+
   asiAlgo_FeatureAngle angleType = dihAngle.AngleBetweenFaces(F,
                                                               G,
                                                               allowSmooth,
                                                               smoothAngularTol,
                                                               commonEdges,
                                                               angRad);
-  //
+
   TopTools_IndexedMapOfShape* pTargetMap;
   TopoDS_Compound*            pTargetComp;
   //

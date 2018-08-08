@@ -1956,10 +1956,16 @@ bool asiAlgo_Utils::CalculateFaceNormals(const TopoDS_Face&                face,
         gp_Pnt P;
         gp_Vec D1U, D1V;
         surf->D1(u, v, P, D1U, D1V);
-        gp_Vec N = (D1U^D1V).Normalized();
+
+        gp_Vec N = D1U^D1V;
         //
-        points->AddElement( (float) P.X(), (float) P.Y(), (float) P.Z() );
-        vectors->AddElement( (float) N.X(), (float) N.Y(), (float) N.Z() );
+        if ( N.Magnitude() > 1e-10 )
+        {
+          N.Normalize();
+          //
+          points->AddElement( (float) P.X(), (float) P.Y(), (float) P.Z() );
+          vectors->AddElement( (float) N.X(), (float) N.Y(), (float) N.Z() );
+        }
       }
 
       v += vStep;

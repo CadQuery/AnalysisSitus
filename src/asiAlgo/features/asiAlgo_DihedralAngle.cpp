@@ -197,7 +197,7 @@ asiAlgo_FeatureAngle
     else
     {
       ShapeAnalysis_Surface SAS(S1);
-      UV = SAS.ValueOfUV(A, 1.0e-7);
+      UV = SAS.ValueOfUV(A, 1.0e-1);
     }
 
     // N (Vz)
@@ -253,7 +253,7 @@ asiAlgo_FeatureAngle
     else
     {
       ShapeAnalysis_Surface SAS(S2);
-      ST = SAS.ValueOfUV(A, 1.0e-7);
+      ST = SAS.ValueOfUV(A, 1.0e-1);
     }
 
     // N (Vz)
@@ -285,8 +285,8 @@ asiAlgo_FeatureAngle
   std::cout << "Angle is " << angle << std::endl;
 #endif
 
-  // 1-degree is the default angular tolerance to recognize smooth angles.
-  const double ang_tol = Max(smoothAngularTol, 1.0/180.0*M_PI);
+  // 3 degrees is the default angular tolerance to recognize smooth angles.
+  const double ang_tol = Max(smoothAngularTol, 3.0/180.0*M_PI);
   //
   if ( Abs(Abs(angRad) - M_PI) < ang_tol )
   {
@@ -308,28 +308,43 @@ asiAlgo_FeatureAngle
     // vectors we check are collinear. If we start from 2D there is no
     // such guarantee.
 
-    S1_P = A.XYZ() + TF.XYZ() * 0.1;
-    S2_P = A.XYZ() + TG.XYZ() * 0.1;
-
-    ShapeAnalysis_Surface SAS1(S1), SAS2(S2);
-    UV_shifted = SAS1.ValueOfUV(S1_P, 1.0e-3);
-    ST_shifted = SAS2.ValueOfUV(S2_P, 1.0e-3);
-    S1_P       = SAS1.Value(UV_shifted);
-    S2_P       = SAS2.Value(ST_shifted);
-
-    TF_precised = ( S1_P.XYZ() - A.XYZ() );
-    TG_precised = ( S2_P.XYZ() - A.XYZ() );
-
-    angRad = TF_precised.AngleWithRef(TG_precised, Ref);
-
-    this->Plotter().DRAW_POINT( UV_shifted, Color_Yellow, "S1_UV" );
-    this->Plotter().DRAW_POINT( ST_shifted, Color_Red,    "S2_ST" );
+    // Take average by several samples to be more robust. Initially, we do not
+    // know how far we have to go into the face interior to make reliable
+    // measurement.
+    int    inSamples   = 1;
+    double inStep      = 0.4;
+    double avrAngleRad = 0.0;
     //
-    this->Plotter().DRAW_VECTOR_AT(A, TF_precised, Color_Yellow, "TF_precised");
-    this->Plotter().DRAW_VECTOR_AT(A, TG_precised, Color_Red,    "TG_precised");
+    for ( int s = 1; s <= inSamples; ++s )
+    {
+      const double inDelta = inStep*s;
+
+      S1_P = A.XYZ() + TF.XYZ() * inDelta;
+      S2_P = A.XYZ() + TG.XYZ() * inDelta;
+
+      ShapeAnalysis_Surface SAS1(S1), SAS2(S2);
+      UV_shifted = SAS1.ValueOfUV(S1_P, 1.0e-1);
+      ST_shifted = SAS2.ValueOfUV(S2_P, 1.0e-1);
+      S1_P       = SAS1.Value(UV_shifted);
+      S2_P       = SAS2.Value(ST_shifted);
+
+      TF_precised = ( S1_P.XYZ() - A.XYZ() );
+      TG_precised = ( S2_P.XYZ() - A.XYZ() );
+
+      avrAngleRad += TF_precised.AngleWithRef(TG_precised, Ref);
+
+      this->Plotter().DRAW_POINT( UV_shifted, Color_Yellow, "S1_UV" );
+      this->Plotter().DRAW_POINT( ST_shifted, Color_Red,    "S2_ST" );
+      //
+      this->Plotter().DRAW_VECTOR_AT(A, TF_precised, Color_Yellow, "TF_precised");
+      this->Plotter().DRAW_VECTOR_AT(A, TG_precised, Color_Red,    "TG_precised");
+      //
+      this->Plotter().DRAW_POINT(S1_P, Color_Yellow, "S1_P");
+      this->Plotter().DRAW_POINT(S2_P, Color_Red, "S2_P");
+    }
     //
-    this->Plotter().DRAW_POINT(S1_P, Color_Yellow, "S1_P");
-    this->Plotter().DRAW_POINT(S2_P, Color_Red, "S2_P");
+    avrAngleRad /= inSamples;
+    angRad = avrAngleRad;
   }
 
   // Classify angle

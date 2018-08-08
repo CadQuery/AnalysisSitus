@@ -1021,8 +1021,20 @@ int ENGINE_SetTolerance(const Handle(asiTcl_Interp)& interp,
 
   const double toler = atof(argv[1]);
 
+  // Update tolerance.
   ShapeFix_ShapeTolerance fixToler;
   fixToler.SetTolerance(partShape, toler);
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(partShape);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI (tolerance may affect visualization).
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
 }

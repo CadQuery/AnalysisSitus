@@ -78,17 +78,20 @@ protected:
   //---------------------------------------------------------------------------
     QPushButton* pPerform;  //!< Button to perform.
   //---------------------------------------------------------------------------
-    QComboBox*   pOrder;    //!< Order of continuity to constraint pinpoints.
+    QComboBox*   pOrder;        //!< Order of continuity to constraint pinpoints.
+    QCheckBox*   pAutoComplete; //!< Indicates whether to complete edge loop.
   //---------------------------------------------------------------------------
 
-    t_widgets() : pPerform (NULL),
-                  pOrder   (NULL)
+    t_widgets() : pPerform      (NULL),
+                  pOrder        (NULL),
+                  pAutoComplete (NULL)
     {}
 
     void Release()
     {
-      delete pPerform; pPerform = NULL;
-      delete pOrder;   pOrder   = NULL;
+      delete pPerform;      pPerform      = NULL;
+      delete pOrder;        pOrder        = NULL;
+      delete pAutoComplete; pAutoComplete = NULL;
     }
   };
 

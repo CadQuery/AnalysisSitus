@@ -131,6 +131,8 @@ bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
     const TopoDS_Edge& E    = TopoDS::Edge( m_aag->GetMapOfEdges().FindKey(eidx) );
     const TopoDS_Face& F    = TopoDS::Face( M.FindFromKey(E).First() );
 
+    m_plotter.DRAW_SHAPE(E, Color_Red, 1.0, true, "asiAlgo_PlateOnEdges_E");
+
     // Get CONS for each edge and fill the constraint
     BRepAdaptor_Surface S(F);
     GeomAdaptor_Surface GAS = S.Surface();
@@ -249,7 +251,6 @@ bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
   {
     m_plotter.DRAW_SURFACE(support, Color_Red, "support");
     m_progress.SendLogMessage(LogWarn(Normal) << "Face is not valid");
-    return false;
   }
 
   // Set result

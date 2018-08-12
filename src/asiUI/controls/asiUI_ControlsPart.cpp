@@ -44,7 +44,6 @@
 
 // asiAlgo includes
 #include <asiAlgo_CheckValidity.h>
-#include <asiAlgo_CompleteEdgeLoop.h>
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_PLY.h>
 #include <asiAlgo_STEP.h>
@@ -534,20 +533,6 @@ void asiUI_ControlsPart::onFillGap()
     m_notifier.SendLogMessage(LogErr(Normal) << "No seed edges selected");
     return;
   }
-
-  // Complete edge loop
-  TColStd_PackedMapOfInteger loopIndices;
-  //
-  asiAlgo_CompleteEdgeLoop CompleteEdgeLoop(m_model->GetPartNode()->GetAAG(), m_notifier, m_plotter);
-  //
-  if ( !CompleteEdgeLoop(edgeIndices.GetMaximalMapped(), loopIndices) )
-  {
-    m_notifier.SendLogMessage(LogErr(Normal) << "Cannot find a closed loop of edges to fill");
-    return;
-  }
-
-  // Highlight detected edges
-  asiEngine_Part( m_model, m_partViewer->PrsMgr() ).HighlightEdges( loopIndices, QColor(255, 0, 0) );
 
   /* =====================
    *  Perform gap filling

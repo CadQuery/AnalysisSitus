@@ -35,6 +35,7 @@
 #include <asiUI_Common.h>
 
 // asiAlgo includes
+#include <asiAlgo_CompleteEdgeLoop.h>
 #include <asiAlgo_PlateOnEdges.h>
 #include <asiAlgo_Utils.h>
 
@@ -91,6 +92,9 @@ asiUI_DialogGapFilling::asiUI_DialogGapFilling(const Handle(asiEngine_Model)&   
   m_widgets.pOrder->addItem("0", 0);
   m_widgets.pOrder->addItem("1", 1);
   m_widgets.pOrder->addItem("2", 2);
+  //
+  m_widgets.pAutoComplete = new QCheckBox();
+  m_widgets.pAutoComplete->setChecked(true);
   
   // Sizing
   m_widgets.pOrder->setMinimumWidth(CONTROL_EDIT_WIDTH);
@@ -115,9 +119,11 @@ asiUI_DialogGapFilling::asiUI_DialogGapFilling(const Handle(asiEngine_Model)&   
   QGridLayout* pGrid = new QGridLayout(pGroup);
   pGrid->setSpacing(5);
   //
-  pGrid->addWidget(new QLabel("Order of continuity:"), 0, 0);
+  pGrid->addWidget(new QLabel("Order of continuity:"),   0, 0);
+  pGrid->addWidget(new QLabel("Auto-complete contour:"), 1, 0);
   //
-  pGrid->addWidget(m_widgets.pOrder, 0, 1);
+  pGrid->addWidget(m_widgets.pOrder,        0, 1);
+  pGrid->addWidget(m_widgets.pAutoComplete, 1, 1);
   //
   pGrid->setColumnStretch(0, 0);
   pGrid->setColumnStretch(1, 1);
@@ -164,6 +170,21 @@ void asiUI_DialogGapFilling::onPerform()
   {
     m_notifier.SendLogMessage(LogErr(Normal) << "No seed edges selected");
     return;
+  }
+
+  // Complete edge loop
+  if ( m_widgets.pAutoComplete->isChecked() )
+  {
+    asiAlgo_CompleteEdgeLoop CompleteEdgeLoop(m_model->GetPartNode()->GetAAG(), m_notifier, m_plotter);
+    //
+    if ( !CompleteEdgeLoop(edgeIndices.GetMaximalMapped(), edgeIndices) )
+    {
+      m_notifier.SendLogMessage(LogErr(Normal) << "Cannot find a closed loop of edges to fill");
+      return;
+    }
+
+    // Highlight detected edges
+    asiEngine_Part(m_model, m_prsMgr).HighlightEdges( edgeIndices, QColor(255, 0, 0) );
   }
 
   /* =====================

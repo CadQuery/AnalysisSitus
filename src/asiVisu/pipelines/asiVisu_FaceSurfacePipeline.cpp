@@ -44,13 +44,14 @@
 
 // OCCT includes
 #include <BRep_Tool.hxx>
+#include <Geom_BSplineSurface.hxx>
 
 //-----------------------------------------------------------------------------
 
 //! Creates new Face Surface Pipeline initialized by default VTK mapper and actor.
 asiVisu_FaceSurfacePipeline::asiVisu_FaceSurfacePipeline()
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                 vtkSmartPointer<vtkActor>::New() ),
+                    vtkSmartPointer<vtkActor>::New() ),
   m_iStepsNumber(40)
 {
   this->Actor()->GetProperty()->SetLineWidth(1.0);
@@ -158,6 +159,18 @@ void asiVisu_FaceSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& D
 
       // Append poly data
       appendFilter->AddInputConnection( curveSource->GetOutputPort() );
+    }
+
+    // For B-surfaces, add isolines for U knots
+    if ( S->IsKind( STANDARD_TYPE(Geom_BSplineSurface) ) )
+    {
+      Handle(Geom_BSplineSurface)
+        bsurf = Handle(Geom_BSplineSurface)::DownCast(S);
+
+      const TColStd_Array1OfReal& knots = bsurf->UKnots();
+      //
+      for ( int k = knots.Lower(); k <= knots.Upper(); ++k )
+        U.push_back( knots(k) );
     }
 
     // Generate v-isos

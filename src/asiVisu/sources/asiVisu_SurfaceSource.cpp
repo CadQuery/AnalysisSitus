@@ -43,7 +43,6 @@
 #include <vtkPolyData.h>
 
 // OCCT includes
-#include <Geom_BSplineSurface.hxx>
 #include <GeomLProp_SLProps.hxx>
 
 //-----------------------------------------------------------------------------
@@ -186,18 +185,6 @@ int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
 
     U.push_back(u);
     u += uStep;
-  }
-
-  // For B-surfaces, add isolines for U knots
-  if ( m_surf->IsKind( STANDARD_TYPE(Geom_BSplineSurface) ) )
-  {
-    Handle(Geom_BSplineSurface)
-      bsurf = Handle(Geom_BSplineSurface)::DownCast(m_surf);
-
-    const TColStd_Array1OfReal& knots = bsurf->UKnots();
-    //
-    for ( int k = knots.Lower(); k <= knots.Upper(); ++k )
-      U.push_back( knots(k) );
   }
 
   // Choose v values

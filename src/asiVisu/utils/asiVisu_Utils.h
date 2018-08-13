@@ -113,6 +113,19 @@ enum asiVisu_CurvatureCombElem
 
 //-----------------------------------------------------------------------------
 
+//! Isos continuity.
+enum asiVisu_IsosCont
+{
+  VisuIsosCont_Undefined = -1,
+  VisuIsosCont_C0        =  0,
+  VisuIsosCont_C1        =  1,
+  VisuIsosCont_C2        =  2,
+  VisuIsosCont_CN        =  3,
+  VisuIsosCont_Last
+};
+
+//-----------------------------------------------------------------------------
+
 //! Common visualization utilities.
 class asiVisu_Utils
 {
@@ -231,6 +244,9 @@ public:
 
   asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
     InitCurvatureCombsLookupTable();
+
+  asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
+    InitKnotsIsosLookupTable();
 
   asiVisu_EXPORT static void
     InitMapper(vtkMapper*      theMapper,

@@ -204,18 +204,6 @@ int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
     v += vStep;
   }
 
-  // For B-surfaces, add isolines for V knots
-  if ( m_surf->IsKind( STANDARD_TYPE(Geom_BSplineSurface) ) )
-  {
-    Handle(Geom_BSplineSurface)
-      bsurf = Handle(Geom_BSplineSurface)::DownCast(m_surf);
-
-    const TColStd_Array1OfReal& knots = bsurf->VKnots();
-    //
-    for ( int k = knots.Lower(); k <= knots.Upper(); ++k )
-      V.push_back( knots(k) );
-  }
-
   m_fMinScalar =  RealLast();
   m_fMaxScalar = -RealLast();
 

@@ -79,18 +79,18 @@ bool asiVisu_BSurfPolesSource::SetInputSurface(const Handle(Geom_BSplineSurface)
   int nPolesU, nPolesV;
   //
   if ( bsurf->IsUClosed() )
-    nPolesU = poles.RowLength() + 1;
+    nPolesU = poles.ColLength() + 1;
   else
-    nPolesU = poles.RowLength();
+    nPolesU = poles.ColLength();
   //
   if ( bsurf->IsVClosed() )
-    nPolesV = poles.ColLength() + 1;
+    nPolesV = poles.RowLength() + 1;
   else
-    nPolesV = poles.ColLength();
+    nPolesV = poles.RowLength();
 
   // Create a shared array of poles: notice that indexation is 0-based (!).
-  m_poles = new TColgp_HArray2OfPnt(0, nPolesV - 1,
-                                    0, nPolesU - 1);
+  m_poles = new TColgp_HArray2OfPnt(0, nPolesU - 1,
+                                    0, nPolesV - 1);
   //
   for ( int r = 0; r < poles.ColLength(); ++r )
     for ( int c = 0; c < poles.RowLength(); ++c )
@@ -98,12 +98,12 @@ bool asiVisu_BSurfPolesSource::SetInputSurface(const Handle(Geom_BSplineSurface)
 
   // Add trailing pole for a closed surface.
   if ( bsurf->IsUClosed() )
-    for ( int r = 0; r < poles.ColLength(); ++r )
-      m_poles->ChangeValue(r, nPolesU - 1) = m_poles->Value(r, 0);
+    for ( int c = 0; c < poles.RowLength(); ++c )
+      m_poles->ChangeValue(nPolesU - 1, c) = m_poles->Value(0, c);
   //
   if ( bsurf->IsVClosed() )
-    for ( int c = 0; c < poles.RowLength(); ++c )
-      m_poles->ChangeValue(nPolesV - 1, c) = m_poles->Value(0, c);
+    for ( int r = 0; r < poles.ColLength(); ++r )
+      m_poles->ChangeValue(r, nPolesV - 1) = m_poles->Value(r, 0);
 
   return true;
 }
@@ -150,19 +150,19 @@ int asiVisu_BSurfPolesSource::RequestData(vtkInformation*        request,
    *  Take care of degenerated case: single point
    * ===================================================================== */
 
-  const int nPolesU = m_poles->RowLength();
-  const int nPolesV = m_poles->ColLength();
+  const int nPolesU = m_poles->ColLength();
+  const int nPolesV = m_poles->RowLength();
   //
   if ( !nPolesU || !nPolesV )
     return 0;
 
   // Register all points once.
   std::vector< std::vector<vtkIdType> > pids;
-  for ( int r = 0; r < nPolesV; ++r )
+  for ( int r = 0; r < nPolesU; ++r )
   {
     std::vector<vtkIdType> rowPids;
 
-    for ( int c = 0; c < nPolesU; ++c )
+    for ( int c = 0; c < nPolesV; ++c )
     {
       rowPids.push_back( this->registerGridPoint(r, c, aPolyOutput) );
     }
@@ -198,20 +198,20 @@ int asiVisu_BSurfPolesSource::RequestData(vtkInformation*        request,
     //                strips (vtkTriangleStrip).
 
     // So first we populate poly data with vertices...
-    for ( int r = 0; r < nPolesV; ++r )
-      for ( int c = 0; c < nPolesU; ++c )
+    for ( int r = 0; r < nPolesU; ++r )
+      for ( int c = 0; c < nPolesV; ++c )
       {
         this->registerVertex(pids[r][c], aPolyOutput);
       }
     // ... and only then with lines
-    for ( int r = 0; r < nPolesV; ++r )
-      for ( int c = 0; c < nPolesU - 1; ++c )
+    for ( int r = 0; r < nPolesU; ++r )
+      for ( int c = 0; c < nPolesV - 1; ++c )
       {
         this->registerLine(pids[r][c], pids[r][c + 1], aPolyOutput);
       }
     //
-    for ( int c = 0; c < nPolesU; ++c )
-      for ( int r = 0; r < nPolesV - 1; ++r )
+    for ( int c = 0; c < nPolesV; ++c )
+      for ( int r = 0; r < nPolesU - 1; ++r )
       {
         this->registerLine(pids[r][c], pids[r + 1][c], aPolyOutput);
       }

@@ -120,6 +120,11 @@ void asiVisu_FaceSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& D
 
     const double uStep = (uMax - uMin) / m_iStepsNumber;
     const double vStep = (vMax - vMin) / m_iStepsNumber;
+    std::vector<double> uValues, vValues;
+
+    /* ===========================
+     *  Prepare values for U isos
+     * =========================== */
 
     // Generate u-isos
     double u     = uMin;
@@ -131,22 +136,52 @@ void asiVisu_FaceSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& D
         u     = uMax;
         uStop = true;
       }
+      //
+      uValues.push_back(u);
 
+      u += uStep;
+    }
+
+    /* ===========================
+     *  Prepare values for V isos
+     * =========================== */
+
+    // Generate v-isos
+    double v     = vMin;
+    bool   vStop = false;
+    while ( !vStop )
+    {
+      if ( v > vMax )
+      {
+        v     = vMax;
+        vStop = true;
+      }
+      //
+      vValues.push_back(v);
+
+      v += vStep;
+    }
+
+    /* =====================================
+     *  Add iso-curve sources to VTK filter
+     * ===================================== */
+
+    // Add U-iso sources to the append filter
+    for ( size_t k = 0; k < uValues.size(); ++k )
+    {
       // We use try-catch because OpenCascade likes to crash even on such basic stuff...
       Handle(Geom_Curve) uIso;
       //
       try
       {
-        uIso = S->UIso(u);
+        uIso = S->UIso(uValues[k]);
       }
       catch ( ... )
       {
         std::cout << "Crash on constructing u-isoline" << std::endl;
       }
 
-      u += uStep;
-
-      if ( uIso.IsNull() )
+       if ( uIso.IsNull() )
         continue;
 
       // Allocate Data Source
@@ -161,42 +196,20 @@ void asiVisu_FaceSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& D
       appendFilter->AddInputConnection( curveSource->GetOutputPort() );
     }
 
-    // For B-surfaces, add isolines for U knots
-    if ( S->IsKind( STANDARD_TYPE(Geom_BSplineSurface) ) )
+    // Add V-iso sources to the append filter
+    for ( size_t k = 0; k < vValues.size(); ++k )
     {
-      Handle(Geom_BSplineSurface)
-        bsurf = Handle(Geom_BSplineSurface)::DownCast(S);
-
-      const TColStd_Array1OfReal& knots = bsurf->UKnots();
-      //
-      for ( int k = knots.Lower(); k <= knots.Upper(); ++k )
-        U.push_back( knots(k) );
-    }
-
-    // Generate v-isos
-    double v     = vMin;
-    bool   vStop = false;
-    while ( !vStop )
-    {
-      if ( v > vMax )
-      {
-        v     = vMax;
-        vStop = true;
-      }
-
       // We use try-catch because OpenCascade likes to crash even on such basic stuff...
       Handle(Geom_Curve) vIso;
       //
       try
       {
-        vIso = S->VIso(v);
+        vIso = S->VIso(vValues[k]);
       }
       catch ( ... )
       {
         std::cout << "Crash on constructing v-isoline" << std::endl;
       }
-
-      v += vStep;
 
       if ( vIso.IsNull() )
         continue;

@@ -32,6 +32,7 @@
 #include <asiVisu_GeomSurfPrs.h>
 
 // asiVisu includes
+#include <asiVisu_BSurfKnotsPipeline.h>
 #include <asiVisu_BSurfPolesPipeline.h>
 #include <asiVisu_FaceDataProvider.h>
 #include <asiVisu_FaceSurfacePipeline.h>
@@ -162,11 +163,21 @@ asiVisu_GeomSurfPrs::asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& N)
   // Control network for B-surfaces
   //---------------------------------------------------------------------------
 
-  // Pipeline for surface isolines
+  // Pipeline for control net
   this->addPipeline        ( Pipeline_BPoles, new asiVisu_BSurfPolesPipeline );
   this->assignDataProvider ( Pipeline_BPoles, DP );
   //
   this->GetPipeline(Pipeline_BPoles)->Actor()->SetVisibility(0);
+
+  //---------------------------------------------------------------------------
+  // Knots isos for B-surfaces
+  //---------------------------------------------------------------------------
+
+  // Pipeline for surface isolines corresponding to knots
+  this->addPipeline        ( Pipeline_BKnotsIsos, new asiVisu_BSurfKnotsPipeline );
+  this->assignDataProvider ( Pipeline_BKnotsIsos, DP );
+  //
+  this->GetPipeline(Pipeline_BKnotsIsos)->Actor()->SetVisibility(0);
 
   //---------------------------------------------------------------------------
   // Additional widgets

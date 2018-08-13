@@ -701,6 +701,26 @@ vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitCurvatureCombsLookupTable()
 
 //-----------------------------------------------------------------------------
 
+//! Initializes VTK lookup table charged with a color scheme for knots isos.
+//! \return VTK lookup table.
+vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitKnotsIsosLookupTable()
+{
+  vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
+
+  double aRange[2] = {VisuIsosCont_C0, VisuIsosCont_CN};
+  aLookup->SetRange(aRange);
+  aLookup->SetNumberOfColors(VisuIsosCont_Last);
+
+  aLookup->SetTableValue(VisuIsosCont_C0, 1.0,       0.0,       0.0);
+  aLookup->SetTableValue(VisuIsosCont_C1, 1.0,       1.0,       0.0);
+  aLookup->SetTableValue(VisuIsosCont_C2, 153./255., 217./255., 1.0);
+  aLookup->SetTableValue(VisuIsosCont_CN, 1.0,       1.0,       1.0);
+
+  return aLookup;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Initializes the passed VTK mapper with the given Lookup Table.
 //! \param theMapper         [in/out] mapper to initialize.
 //! \param theLookup         [in]     Lookup Table to initialize the mapper with.

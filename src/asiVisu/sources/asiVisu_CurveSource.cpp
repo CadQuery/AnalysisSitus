@@ -31,6 +31,9 @@
 // Own include
 #include <asiVisu_CurveSource.h>
 
+// asiVisu includes
+#include <asiVisu_GeomUtils.h>
+
 // VTK includes
 #include <vtkCellData.h>
 #include <vtkDataObject.h>
@@ -46,70 +49,6 @@
 #include <Geom2dAdaptor_Curve.hxx>
 #include <GeomAdaptor_Curve.hxx>
 #include <gp_Ax1.hxx>
-
-//-----------------------------------------------------------------------------
-
-static void PlotCurve(const Adaptor3d_Curve& C,
-                      double&                f,
-                      const double           h,
-                      const gp_Pnt&          Pf,
-                      const gp_Pnt&          Pl,
-                      std::vector<gp_Pnt>&   result)
-{
-  double IsoRatio = 1.001;
-  gp_Pnt Pm = C.Value(f + h);
-
-  double dfLength = Pf.Distance(Pl);
-
-  if ( dfLength < Precision::Confusion() || 
-       Pm.Distance(Pf) + Pm.Distance(Pl) <= IsoRatio*dfLength )
-  {
-    result.push_back(Pl);
-  }
-  else
-  {
-    PlotCurve(C, f, h/2., Pf, Pm, result);
-    double t = f + h;
-    PlotCurve(C, t, h/2., Pm, Pl, result);
-  }
-}
-
-//-----------------------------------------------------------------------------
-
-static void PlotCurve(const Adaptor3d_Curve& C,
-                      const int              discrete,
-                      std::vector<gp_Pnt>&   result)
-{
-  const int numIntervals = C.NbIntervals(GeomAbs_CN);
-  TColStd_Array1OfReal TI(1, numIntervals + 1);
-  C.Intervals(TI, GeomAbs_CN);
-
-  gp_Pnt P = C.Value( C.FirstParameter() );
-  gp_Pnt firstP = P, nextP;
-
-  // Add first point.
-  result.push_back(P);
-
-  // Process intervals of constant continuity.
-  for ( int intrv = 1; intrv <= numIntervals; ++intrv )
-  {
-    double       t     =  TI(intrv);
-    const double step  = (TI(intrv + 1) - t) / discrete;
-    const int    nIter =  discrete / 2;
-
-    for ( int j = 1; j < nIter; ++j )
-    {
-      const double t1 = t + step*2.;
-      nextP = C.Value(t1);
-      PlotCurve(C, t, step, firstP, nextP, result);
-      firstP = nextP;
-      t = t1;
-    }
-  }
-
-  // Add last point.
-  result.push_back( C.Value( C.LastParameter() ) );
-}
 
 //-----------------------------------------------------------------------------
 // Construction
@@ -182,17 +121,17 @@ bool asiVisu_CurveSource::SetInputCurve(const Handle(Geom_Curve)& curve,
   const double f = asiVisu_Utils::TrimInf(first),
                l = asiVisu_Utils::TrimInf(last);
 
-  // Discretize
+  // Discretize curve.
   GeomAdaptor_Curve gac(curve, f, l);
   //
   std::vector<gp_Pnt> curvePts;
-  PlotCurve(gac, 100, curvePts);
+  asiVisu_GeomUtils::DiscretizeCurve(gac, 100, curvePts);
 
   const int nPts = int ( curvePts.size() );
   if ( !nPts )
     return false;
 
-  // Allocate arrays
+  // Allocate arrays.
   Handle(HRealArray) xCoords = new HRealArray(0, nPts - 1, 0.0),
                      yCoords = new HRealArray(0, nPts - 1, 0.0),
                      zCoords = new HRealArray(0, nPts - 1, 0.0);
@@ -206,7 +145,7 @@ bool asiVisu_CurveSource::SetInputCurve(const Handle(Geom_Curve)& curve,
     zCoords->ChangeValue(k) = P.Z();
   }
 
-  // Pass arrays as inputs
+  // Pass arrays as inputs.
   this->SetInputArrays(xCoords, yCoords, zCoords, ori);
   return true;
 }

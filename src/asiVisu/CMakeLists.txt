@@ -45,6 +45,7 @@ set (filters_CPP_FILES
 set (pipelines_H_FILES
   pipelines/asiVisu_BCurveKnotsPipeline.h
   pipelines/asiVisu_BCurvePolesPipeline.h
+  pipelines/asiVisu_BSurfKnotsPipeline.h
   pipelines/asiVisu_BSurfPolesPipeline.h
   pipelines/asiVisu_CurvatureCombsPipeline.h
   pipelines/asiVisu_CurvePipeline.h
@@ -78,6 +79,7 @@ set (pipelines_H_FILES
 set (pipelines_CPP_FILES 
   pipelines/asiVisu_BCurveKnotsPipeline.cpp
   pipelines/asiVisu_BCurvePolesPipeline.cpp
+  pipelines/asiVisu_BSurfKnotsPipeline.cpp
   pipelines/asiVisu_BSurfPolesPipeline.cpp
   pipelines/asiVisu_CurvatureCombsPipeline.cpp
   pipelines/asiVisu_CurvePipeline.cpp
@@ -246,6 +248,7 @@ set (selection_CPP_FILES
 set (sources_H_FILES
   sources/asiVisu_BCurveKnotsSource.h
   sources/asiVisu_BCurvePolesSource.h
+  sources/asiVisu_BSurfKnotsSource.h
   sources/asiVisu_BSurfPolesSource.h
   sources/asiVisu_CurvatureCombsSource.h
   sources/asiVisu_CurveSource.h
@@ -266,6 +269,7 @@ set (sources_H_FILES
 set (sources_CPP_FILES 
   sources/asiVisu_BCurveKnotsSource.cpp
   sources/asiVisu_BCurvePolesSource.cpp
+  sources/asiVisu_BSurfKnotsSource.cpp
   sources/asiVisu_BSurfPolesSource.cpp
   sources/asiVisu_CurvatureCombsSource.cpp
   sources/asiVisu_CurveSource.cpp
@@ -286,11 +290,13 @@ set (sources_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (utils_H_FILES
+  utils/asiVisu_GeomUtils.h
   utils/asiVisu_MeshResultUtils.h
   utils/asiVisu_MeshUtils.h
   utils/asiVisu_Utils.h
 )
-set (utils_CPP_FILES 
+set (utils_CPP_FILES
+  utils/asiVisu_GeomUtils.cpp
   utils/asiVisu_MeshResultUtils.cpp
   utils/asiVisu_MeshUtils.cpp
   utils/asiVisu_Utils.cpp

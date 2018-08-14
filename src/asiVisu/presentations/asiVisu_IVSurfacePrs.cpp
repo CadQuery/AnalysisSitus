@@ -32,6 +32,8 @@
 #include <asiVisu_IVSurfacePrs.h>
 
 // asiVisu includes
+#include <asiVisu_BSurfKnotsPipeline.h>
+#include <asiVisu_BSurfPolesPipeline.h>
 #include <asiVisu_IVSurfacePipeline.h>
 #include <asiVisu_IVSurfaceDataProvider.h>
 #include <asiVisu_Utils.h>
@@ -41,22 +43,46 @@
 #include <vtkProperty.h>
 
 //! Creates a Presentation object for the passed Node.
-//! \param theNode [in] Node to create a Presentation for.
-asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_DefaultPrs(theNode)
+//! \param[in] N Node to create a Presentation for.
+asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
+: asiVisu_DefaultPrs(N)
 {
   // Create Data Provider
-  Handle(asiVisu_IVSurfaceDataProvider) DP = new asiVisu_IVSurfaceDataProvider(theNode);
+  Handle(asiVisu_IVSurfaceDataProvider) DP = new asiVisu_IVSurfaceDataProvider(N);
 
-  // Pipeline for contours
+  //---------------------------------------------------------------------------
+  // Main pipeline
+  //---------------------------------------------------------------------------
+
+  // Pipeline for shaded surface
   this->addPipeline        ( Pipeline_Main, new asiVisu_IVSurfacePipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
+
+    //---------------------------------------------------------------------------
+  // Control network for B-surfaces
+  //---------------------------------------------------------------------------
+
+  // Pipeline for control net
+  this->addPipeline        ( Pipeline_BPoles, new asiVisu_BSurfPolesPipeline );
+  this->assignDataProvider ( Pipeline_BPoles, DP );
+  //
+  this->GetPipeline(Pipeline_BPoles)->Actor()->SetVisibility(0);
+
+  //---------------------------------------------------------------------------
+  // Knots isos for B-surfaces
+  //---------------------------------------------------------------------------
+
+  // Pipeline for surface isolines corresponding to knots
+  this->addPipeline        ( Pipeline_BKnotsIsos, new asiVisu_BSurfKnotsPipeline );
+  this->assignDataProvider ( Pipeline_BKnotsIsos, DP );
+  //
+  this->GetPipeline(Pipeline_BKnotsIsos)->Actor()->SetVisibility(0);
 }
 
 //! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
+//! \param[in] N Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_IVSurfacePrs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_IVSurfacePrs::Instance(const Handle(ActAPI_INode)& N)
 {
-  return new asiVisu_IVSurfacePrs(theNode);
+  return new asiVisu_IVSurfacePrs(N);
 }

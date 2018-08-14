@@ -53,7 +53,9 @@ public:
   //! Pipelines.
   enum PipelineId
   {
-    Pipeline_Main = 1
+    Pipeline_Main = 1,
+    Pipeline_BPoles,
+    Pipeline_BKnotsIsos
   };
 
 public:

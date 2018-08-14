@@ -379,12 +379,28 @@ namespace asiAlgo_Utils
              TopoDS_Shape&                  shape);
 
   //! Writes shape to B-Rep format.
-  //! \param theShape    [in] shape to write.
-  //! \param theFilename [in] filename.
+  //! \param shape    [in] shape to write.
+  //! \param filename [in] filename.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     WriteBRep(const TopoDS_Shape&            shape,
               const TCollection_AsciiString& filename);
+
+  //! Reads STL triangulation from file.
+  //! \param[in]  filename      source filename.
+  //! \param[out] triangulation output triangulation.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    ReadStl(const TCollection_AsciiString& filename,
+            Handle(Poly_Triangulation)&    triangulation);
+
+  //! Writes triangulation to STL file.
+  //! \param[in] triangulation triangulation to write.
+  //! \param[in] filename      target filename.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    WriteStl(const Handle(Poly_Triangulation)& triangulation,
+             const TCollection_AsciiString&    filename);
 
   //! Collects summary information for the given shape.
   //! \param shape        [in]  input shape.

@@ -58,6 +58,7 @@
 #include <asiData_PartNode.h>
 #include <asiData_RootNode.h>
 #include <asiData_TolerantRangeNode.h>
+#include <asiData_TriangulationNode.h>
 
 // Active Data includes
 #include <ActData_BaseModel.h>
@@ -99,6 +100,9 @@ public:
 
   asiEngine_EXPORT Handle(asiData_PartNode)
     GetPartNode() const;
+
+  asiEngine_EXPORT Handle(asiData_TriangulationNode)
+    GetTriangulationNode() const;
 
   asiEngine_EXPORT Handle(asiData_IVNode)
     GetIVNode() const;
@@ -217,6 +221,15 @@ public:
   Handle(asiData_Partition<asiData_TolerantRangeNode>) GetTolerantRangePartition() const
   {
     return Handle(asiData_Partition<asiData_TolerantRangeNode>)::DownCast( this->Partition(Partition_TolerantRange) );
+  }
+
+//-----------------------------------------------------------------------------
+
+  //! Accessor for a Partition instance dedicated to Triangulation Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_TriangulationNode>) GetTriangulationPartition() const
+  {
+    return Handle(asiData_Partition<asiData_TriangulationNode>)::DownCast( this->Partition(Partition_Triangulation) );
   }
 
 //-----------------------------------------------------------------------------
@@ -395,6 +408,8 @@ protected:
     Partition_Vertex,
     Partition_TolerantShapes,
     Partition_TolerantRange,
+  //---------------------------------------------------------------------------
+    Partition_Triangulation,
   //---------------------------------------------------------------------------
     Partition_IV,
     Partition_IV_Points2d,

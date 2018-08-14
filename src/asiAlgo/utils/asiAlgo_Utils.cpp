@@ -83,6 +83,7 @@
 #include <math_Matrix.hxx>
 #include <NCollection_IncAllocator.hxx>
 #include <Precision.hxx>
+#include <RWStl.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeAnalysis_ShapeTolerance.hxx>
 #include <ShapeExtend_WireData.hxx>
@@ -932,6 +933,27 @@ bool asiAlgo_Utils::WriteBRep(const TopoDS_Shape&            theShape,
 {
   BRepTools::Clean(theShape);
   return BRepTools::Write( theShape, theFilename.ToCString() );
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::ReadStl(const TCollection_AsciiString& filename,
+                            Handle(Poly_Triangulation)&    triangulation)
+{
+  triangulation = RWStl::ReadFile(filename);
+
+  if ( triangulation.IsNull() )
+    return false;
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::WriteStl(const Handle(Poly_Triangulation)& triangulation,
+                             const TCollection_AsciiString&    filename)
+{
+  return RWStl::WriteAscii(triangulation, filename);
 }
 
 //-----------------------------------------------------------------------------

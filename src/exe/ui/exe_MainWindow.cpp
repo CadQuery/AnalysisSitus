@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 07 December 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -210,9 +210,27 @@ void exe_MainWindow::createDockWindows()
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockFeature);
   }
-
-  // Tabify widgets
+  //
   this->tabifyDockWidget(pDockBrowser, pDockFeature);
+
+  // Mesh controls
+  QDockWidget* pDockMesh;
+  {
+    pDockMesh = new QDockWidget("Mesh", this);
+    pDockMesh->setAllowedAreas(Qt::LeftDockWidgetArea);
+    //
+    Widgets.wControlsMesh = new asiUI_ControlsMesh(cf->Model,
+                                                   cf->ViewerPart,
+                                                   cf->ProgressNotifier,
+                                                   cf->Plotter,
+                                                   pDockFeature);
+    //
+    pDockMesh->setWidget(Widgets.wControlsMesh);
+    //
+    this->addDockWidget(Qt::LeftDockWidgetArea, pDockMesh);
+  }
+  //
+  this->tabifyDockWidget(pDockFeature, pDockMesh);
 
   // Part controls
   QDockWidget* pDockPart;
@@ -232,7 +250,7 @@ void exe_MainWindow::createDockWindows()
   }
 
   // Tabify widgets
-  this->tabifyDockWidget(pDockFeature, pDockPart);
+  this->tabifyDockWidget(pDockMesh, pDockPart);
 
   // Listener for part controls
   Listeners.pControlsPart = new asiUI_ControlsPartListener(Widgets.wControlsPart,

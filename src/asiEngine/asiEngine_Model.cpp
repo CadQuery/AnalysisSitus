@@ -36,6 +36,7 @@
 #include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
 #include <asiEngine_TolerantShapes.h>
+#include <asiEngine_Triangulation.h>
 
 // Active Data includes
 #include <ActData_CAFConverter.h>
@@ -68,6 +69,8 @@ REGISTER_NODE_TYPE(asiData_ContourNode)
 REGISTER_NODE_TYPE(asiData_VertexNode)
 REGISTER_NODE_TYPE(asiData_TolerantShapesNode)
 REGISTER_NODE_TYPE(asiData_TolerantRangeNode)
+//
+REGISTER_NODE_TYPE(asiData_TriangulationNode)
 //
 REGISTER_NODE_TYPE(asiData_IVCurveNode)
 REGISTER_NODE_TYPE(asiData_IVCurvesNode)
@@ -109,7 +112,10 @@ void asiEngine_Model::Populate()
   root_n->SetName("Analysis Situs");
 
   // Add Part Node
-  root_n->AddChildNode( asiEngine_Part(this, NULL).Create() );
+  root_n->AddChildNode( asiEngine_Part(this, NULL).CreatePart() );
+
+  // Add Triangulation Node
+  root_n->AddChildNode( asiEngine_Triangulation(this, NULL).CreateTriangulation() );
 
   // Add Imperative Viewer Node
   root_n->AddChildNode( asiEngine_IV(this).Create_IV() );
@@ -168,6 +174,21 @@ Handle(asiData_PartNode) asiEngine_Model::GetPartNode() const
 
 //-----------------------------------------------------------------------------
 
+//! \return single Triangulation Node.
+Handle(asiData_TriangulationNode) asiEngine_Model::GetTriangulationNode() const
+{
+  for ( ActData_BasePartition::Iterator it( this->GetTriangulationPartition() ); it.More(); it.Next() )
+  {
+    Handle(asiData_TriangulationNode) N = Handle(asiData_TriangulationNode)::DownCast( it.Value() );
+    //
+    if ( !N.IsNull() && N->IsWellFormed() )
+      return N;
+  }
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
 //! \return single Imperative Viewer Node.
 Handle(asiData_IVNode) asiEngine_Model::GetIVNode() const
 {
@@ -202,23 +223,25 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_TolerantShapesNode>, Partition_TolerantShapes);
   REGISTER_PARTITION(asiData_Partition<asiData_TolerantRangeNode>,  Partition_TolerantRange);
   //
-  REGISTER_PARTITION(asiData_Partition<asiData_IVNode>,            Partition_IV);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVPoints2dNode>,    Partition_IV_Points2d);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVPointsNode>,      Partition_IV_Points);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVPointSet2dNode>,  Partition_IV_PointSet2d);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVPointSetNode>,    Partition_IV_PointSet);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVCurvesNode>,      Partition_IV_Curves);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVCurveNode>,       Partition_IV_Curve);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVCurves2dNode>,    Partition_IV_Curves2d);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVCurve2dNode>,     Partition_IV_Curve2d);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVSurfacesNode>,    Partition_IV_Surfaces);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVSurfaceNode>,     Partition_IV_Surface);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVTopoNode>,        Partition_IV_Topo);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVTopoItemNode>,    Partition_IV_TopoItem);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVTessNode>,        Partition_IV_Tess);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVTessItemNode>,    Partition_IV_TessItem);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVTextNode>,        Partition_IV_Text);
-  REGISTER_PARTITION(asiData_Partition<asiData_IVTextItemNode>,    Partition_IV_TextItem);
+  REGISTER_PARTITION(asiData_Partition<asiData_TriangulationNode>,  Partition_Triangulation);
+  //
+  REGISTER_PARTITION(asiData_Partition<asiData_IVNode>,             Partition_IV);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVPoints2dNode>,     Partition_IV_Points2d);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVPointsNode>,       Partition_IV_Points);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVPointSet2dNode>,   Partition_IV_PointSet2d);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVPointSetNode>,     Partition_IV_PointSet);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVCurvesNode>,       Partition_IV_Curves);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVCurveNode>,        Partition_IV_Curve);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVCurves2dNode>,     Partition_IV_Curves2d);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVCurve2dNode>,      Partition_IV_Curve2d);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVSurfacesNode>,     Partition_IV_Surfaces);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVSurfaceNode>,      Partition_IV_Surface);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVTopoNode>,         Partition_IV_Topo);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVTopoItemNode>,     Partition_IV_TopoItem);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVTessNode>,         Partition_IV_Tess);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVTessItemNode>,     Partition_IV_TessItem);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVTextNode>,         Partition_IV_Text);
+  REGISTER_PARTITION(asiData_Partition<asiData_IVTextItemNode>,     Partition_IV_TextItem);
 }
 
 //-----------------------------------------------------------------------------

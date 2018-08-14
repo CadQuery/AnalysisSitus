@@ -61,5 +61,6 @@ if (WIN32)
   install (FILES ${3RDPARTY_OCCT_DLL_DIR}/TKXSBase.dll    DESTINATION bin)
   install (FILES ${3RDPARTY_OCCT_DLL_DIR}/TKHLR.dll       DESTINATION bin)
   install (FILES ${3RDPARTY_OCCT_DLL_DIR}/TKFillet.dll    DESTINATION bin)
+  install (FILES ${3RDPARTY_OCCT_DLL_DIR}/TKSTL.dll       DESTINATION bin)
 
 endif()

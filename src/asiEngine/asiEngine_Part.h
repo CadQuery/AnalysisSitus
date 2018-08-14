@@ -66,7 +66,7 @@ public:
 public:
 
   asiEngine_EXPORT Handle(asiData_PartNode)
-    Create();
+    CreatePart();
 
   asiEngine_EXPORT void
     Update(const TopoDS_Shape& model,

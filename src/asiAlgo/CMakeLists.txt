@@ -296,6 +296,7 @@ set (OCCT_LIB_FILES
   TKXDEIGES
   TKHLR
   TKFillet
+  TKSTL
 )
 #------------------------------------------------------------------------------
 if (USE_MOBIUS)

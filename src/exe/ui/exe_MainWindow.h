@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 07 December 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@
 // asiUI includes
 #include <asiUI_Console.h>
 #include <asiUI_ControlsFeature.h>
+#include <asiUI_ControlsMesh.h>
 #include <asiUI_ControlsPartListener.h>
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerDomainListener.h>
@@ -78,6 +79,7 @@ public:
     asiUI_ViewerHost*      wViewerSurface;   //!< Surface viewer.
     asiUI_ControlsPart*    wControlsPart;    //!< Part controls.
     asiUI_ControlsFeature* wControlsFeature; //!< Feature controls.
+    asiUI_ControlsMesh*    wControlsMesh;    //!< Mesh controls.
     asiUI_StyledTextEdit*  wLogger;          //!< Logger.
     asiUI_Console*         wConsole;         //!< Console for scripting.
 
@@ -87,6 +89,7 @@ public:
                   wViewerSurface   (NULL),
                   wControlsPart    (NULL),
                   wControlsFeature (NULL),
+                  wControlsMesh    (NULL),
                   wLogger          (NULL),
                   wConsole         (NULL)
     {}
@@ -99,6 +102,7 @@ public:
       delete wViewerSurface;   wViewerSurface   = NULL;
       delete wControlsPart;    wControlsPart    = NULL;
       delete wControlsFeature; wControlsFeature = NULL;
+      delete wControlsMesh;    wControlsMesh    = NULL;
       delete wLogger;          wLogger          = NULL;
       delete wConsole;         wConsole         = NULL;
     }

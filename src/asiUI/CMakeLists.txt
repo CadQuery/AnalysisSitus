@@ -21,6 +21,7 @@ set (controls_H_UI_FILES
   controls/asiUI_ColorButton.h
   controls/asiUI_Console.h
   controls/asiUI_ControlsFeature.h
+  controls/asiUI_ControlsMesh.h
   controls/asiUI_ControlsPart.h
   controls/asiUI_ControlsPartListener.h
   controls/asiUI_LineEdit.h
@@ -33,6 +34,7 @@ set (controls_CPP_FILES
   controls/asiUI_ColorButton.cpp
   controls/asiUI_Console.cpp
   controls/asiUI_ControlsFeature.cpp
+  controls/asiUI_ControlsMesh.cpp
   controls/asiUI_ControlsPart.cpp
   controls/asiUI_ControlsPartListener.cpp
   controls/asiUI_LineEdit.cpp

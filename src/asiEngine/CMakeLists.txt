@@ -13,6 +13,7 @@ set (H_FILES
   asiEngine_Model.h
   asiEngine_Part.h
   asiEngine_TolerantShapes.h
+  asiEngine_Triangulation.h
 )
 
 set (CPP_FILES
@@ -23,6 +24,7 @@ set (CPP_FILES
   asiEngine_Model.cpp
   asiEngine_Part.cpp
   asiEngine_TolerantShapes.cpp
+  asiEngine_Triangulation.cpp
 )
 
 #------------------------------------------------------------------------------

@@ -56,7 +56,7 @@
 //-----------------------------------------------------------------------------
 
 //! \return newly created Part Node.
-Handle(asiData_PartNode) asiEngine_Part::Create()
+Handle(asiData_PartNode) asiEngine_Part::CreatePart()
 {
   // Add Part Node to Partition
   Handle(asiData_PartNode) geom_n = Handle(asiData_PartNode)::DownCast( asiData_PartNode::Instance() );

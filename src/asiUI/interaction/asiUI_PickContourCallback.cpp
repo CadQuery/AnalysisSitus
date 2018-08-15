@@ -76,43 +76,46 @@ void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
   // Get picking ray
   gp_Lin pickRay = *( (gp_Lin*) theCallData );
 
-  // Prepare a tool to find the intersected facet
-  asiAlgo_HitFacet HitFacet(m_bvh, m_notifier, m_plotter);
-
-  // Find intersection
-  gp_XYZ hit;
-  int facet_idx;
-  if ( !HitFacet(pickRay, facet_idx, hit) )
+  for ( size_t k = 0; k < m_bvhs.size(); ++k )
   {
-    m_notifier.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet.");
-    return;
-  }
+    // Prepare a tool to find the intersected facet
+    asiAlgo_HitFacet HitFacet(m_bvhs[k], m_notifier, m_plotter);
 
-  // Get object to store the contour
-  Handle(asiData_ContourNode)
-    contour_n = m_model->GetPartNode()->GetContour();
-  //
-  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
-  {
-    m_notifier.SendLogMessage(LogWarn(Normal) << "No persistent data for contour available.");
-    return;
-  }
+    // Find intersection
+    gp_XYZ hit;
+    int facet_idx;
+    if ( !HitFacet(pickRay, facet_idx, hit) )
+    {
+      m_notifier.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet.");
+      return;
+    }
 
-  // Get active face index
-  const int fidx = m_bvh->GetFacet(facet_idx).FaceIndex;
-  //
-  m_notifier.SendLogMessage(LogInfo(Normal) << "Picked point (%1, %2, %3) on face %4"
-                                            << hit.X()
-                                            << hit.Y()
-                                            << hit.Z()
-                                            << fidx);
+    // Get object to store the contour
+    Handle(asiData_ContourNode)
+      contour_n = m_model->GetPartNode()->GetContour();
+    //
+    if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+    {
+      m_notifier.SendLogMessage(LogWarn(Normal) << "No persistent data for contour available.");
+      return;
+    }
 
-  // Modify data
-  m_model->OpenCommand();
-  {
-    contour_n->AddPoint(hit, fidx);
+    // Get active face index
+    const int fidx = m_bvhs[k]->GetFacet(facet_idx).FaceIndex;
+    //
+    m_notifier.SendLogMessage(LogInfo(Normal) << "Picked point (%1, %2, %3) on face %4"
+                                              << hit.X()
+                                              << hit.Y()
+                                              << hit.Z()
+                                              << fidx);
+
+    // Modify data
+    m_model->OpenCommand();
+    {
+      contour_n->AddPoint(hit, fidx);
+    }
+    m_model->CommitCommand();
+    //
+    mgr->Actualize( contour_n.get() );
   }
-  m_model->CommitCommand();
-  //
-  mgr->Actualize( contour_n.get() );
 }

@@ -80,6 +80,12 @@ public:
                       ActAPI_ProgressEntry progress,
                       ActAPI_PlotterEntry  plotter);
 
+  asiAlgo_EXPORT
+    asiAlgo_BVHFacets(const Handle(Poly_Triangulation)& mesh,
+                      const BuilderType                 builderType,
+                      ActAPI_ProgressEntry              progress,
+                      ActAPI_PlotterEntry               plotter);
+
 public:
 
   asiAlgo_EXPORT virtual int
@@ -122,12 +128,6 @@ public:
     return m_facets[index];
   }
 
-  //! \return master CAD model.
-  const TopoDS_Shape& GetShape() const
-  {
-    return m_model;
-  }
-
 protected:
 
   asiAlgo_EXPORT bool
@@ -135,13 +135,19 @@ protected:
          const BuilderType   builderType);
 
   asiAlgo_EXPORT bool
+    init(const Handle(Poly_Triangulation)& mesh,
+         const BuilderType                 builderType);
+
+  asiAlgo_EXPORT bool
     addFace(const TopoDS_Face& face,
             const int          face_idx);
 
-protected:
+  asiAlgo_EXPORT bool
+    addTriangulation(const Handle(Poly_Triangulation)& triangulation,
+                     const TopLoc_Location&            loc,
+                     const int                         face_idx);
 
-  //! Master shape.
-  TopoDS_Shape m_model;
+protected:
 
   //! Array of facets.
   std::vector<t_facet> m_facets;

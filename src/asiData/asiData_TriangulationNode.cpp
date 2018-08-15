@@ -31,6 +31,9 @@
 // Own include
 #include <asiData_TriangulationNode.h>
 
+// asiData includes
+#include <asiData_BVHParameter.h>
+
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
@@ -45,6 +48,9 @@ asiData_TriangulationNode::asiData_TriangulationNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Int,           PID_DisplayMode);
   REGISTER_PARAMETER(Bool,          PID_HasColor);
   REGISTER_PARAMETER(Int,           PID_Color);
+
+  // Non-standard Parameters.
+  this->registerParameter(PID_BVH, asiData_BVHParameter::Instance(), false);
 }
 
 //! Returns new DETACHED instance of Mesh Node ensuring its correct
@@ -64,6 +70,7 @@ void asiData_TriangulationNode::Init()
   // Set empty initial mesh with empty options
   this->SetTriangulation(NULL);
   this->SetOptions(NULL);
+  this->SetBVH(NULL);
 
   // Set Presentation values
   this->SetHasColor(false);
@@ -104,6 +111,19 @@ Handle(Poly_Triangulation) asiData_TriangulationNode::GetTriangulation() const
 void asiData_TriangulationNode::SetTriangulation(const Handle(Poly_Triangulation)& triangulation)
 {
   ActParamTool::AsTriangulation( this->Parameter(PID_Triangulation) )->SetTriangulation(triangulation);
+}
+
+//! \return stored BVH.
+Handle(asiAlgo_BVHFacets) asiData_TriangulationNode::GetBVH() const
+{
+  return Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->GetBVH();
+}
+
+//! Sets BVH to store.
+//! \param bvh [in] BVH to store.
+void asiData_TriangulationNode::SetBVH(const Handle(asiAlgo_BVHFacets)& bvh)
+{
+  Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->SetBVH(bvh);
 }
 
 //! Returns triangulation options.

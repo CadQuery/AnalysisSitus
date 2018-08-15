@@ -60,6 +60,24 @@ Handle(asiData_TriangulationNode) asiEngine_Triangulation::CreateTriangulation()
 
 //-----------------------------------------------------------------------------
 
+void asiEngine_Triangulation::BuildBVH()
+{
+  // Get Triangulation Node
+  Handle(asiData_TriangulationNode) tris_n = m_model->GetTriangulationNode();
+
+  // Build BVH for facets
+  Handle(asiAlgo_BVHFacets)
+    bvh = new asiAlgo_BVHFacets(tris_n->GetTriangulation(),
+                                asiAlgo_BVHFacets::Builder_Binned,
+                                m_progress,
+                                m_plotter);
+
+  // Store in OCAF
+  tris_n->SetBVH(bvh);
+}
+
+//-----------------------------------------------------------------------------
+
 void asiEngine_Triangulation::GetHighlightedFacets(TColStd_PackedMapOfInteger& facetIndices)
 {
   // Get actual selection

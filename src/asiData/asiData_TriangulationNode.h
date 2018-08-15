@@ -34,6 +34,9 @@
 // asiData includes
 #include <asiData.h>
 
+// asiAlgo includes
+#include <asiAlgo_BVHFacets.h>
+
 // Active Data includes
 #include <ActData_BaseNode.h>
 #include <ActData_TriangulationParameter.h>
@@ -42,8 +45,6 @@
 //-----------------------------------------------------------------------------
 // Mesh Node
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiData_TriangulationNode, ActData_BaseNode)
 
 //! Node representing surface triangulation.
 class asiData_TriangulationNode : public ActData_BaseNode
@@ -69,6 +70,7 @@ public:
   // Geometry          //
   //-------------------//
     PID_Triangulation, //!< Tessellation.
+    PID_BVH,           //!< BVH structure.
   //-------------------//
   // Options           //
   //-------------------//
@@ -105,6 +107,12 @@ public:
 
   asiData_EXPORT void
     SetTriangulation(const Handle(Poly_Triangulation)& triangulation);
+
+  asiData_EXPORT Handle(asiAlgo_BVHFacets)
+    GetBVH() const;
+
+  asiData_EXPORT void
+    SetBVH(const Handle(asiAlgo_BVHFacets)&);
 
   asiData_EXPORT Handle(TColStd_HArray1OfReal)
     GetOptions() const;

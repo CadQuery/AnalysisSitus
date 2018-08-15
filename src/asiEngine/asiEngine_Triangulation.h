@@ -62,6 +62,10 @@ public:
   asiEngine_EXPORT Handle(asiData_TriangulationNode)
     CreateTriangulation();
 
+  //! Constructs BVH structure for the facets stored in the triangulation Node.
+  asiEngine_EXPORT void
+    BuildBVH();
+
   //! Returns highlighted facets.
   //! \param facetIndices [out] indices of highlighted facets.
   asiEngine_EXPORT void

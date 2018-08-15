@@ -70,6 +70,26 @@ asiAlgo_BVHFacets::asiAlgo_BVHFacets(const TopoDS_Shape&  model,
 
 //-----------------------------------------------------------------------------
 
+//! Creates the accelerating structure with immediate initialization.
+//! \param[in] mesh        triangulation to create the accelerating structure for.
+//! \param[in] builderType type of builder to use.
+//! \param[in] progress    progress notifier.
+//! \param[in] plotter     imperative plotter.
+asiAlgo_BVHFacets::asiAlgo_BVHFacets(const Handle(Poly_Triangulation)& mesh,
+                                     const BuilderType                 builderType,
+                                     ActAPI_ProgressEntry              progress,
+                                     ActAPI_PlotterEntry               plotter)
+: BVH_PrimitiveSet<double, 4> (),
+  m_progress                  (progress),
+  m_plotter                   (plotter),
+  m_fBoundingDiag             (0.0)
+{
+  this->init(mesh, builderType);
+  this->MarkDirty();
+}
+
+//-----------------------------------------------------------------------------
+
 //! \return number of stored facets.
 int asiAlgo_BVHFacets::Size() const
 {
@@ -293,7 +313,8 @@ void asiAlgo_BVHFacets::Dump(ActAPI_PlotterEntry IV)
 bool asiAlgo_BVHFacets::init(const TopoDS_Shape& model,
                              const BuilderType   builderType)
 {
-  m_model = model;
+  if ( model.IsNull() )
+    return false;
 
   // Prepare builder
   if ( builderType == Builder_Binned )
@@ -303,7 +324,7 @@ bool asiAlgo_BVHFacets::init(const TopoDS_Shape& model,
 
   // Explode shape on faces to get face indices
   TopTools_IndexedMapOfShape faces;
-  TopExp::MapShapes(m_model, TopAbs_FACE, faces);
+  TopExp::MapShapes(model, TopAbs_FACE, faces);
 
   // Initialize with facets taken from faces
   for ( int fidx = 1; fidx <= faces.Extent(); ++fidx )
@@ -316,7 +337,39 @@ bool asiAlgo_BVHFacets::init(const TopoDS_Shape& model,
 
   // Calculate bounding diagonal
   Bnd_Box aabb;
-  BRepBndLib::Add(m_model, aabb);
+  BRepBndLib::Add(model, aabb);
+  //
+  m_fBoundingDiag = ( aabb.CornerMax().XYZ() - aabb.CornerMin().XYZ() ).Modulus();
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Initializes the accelerating structure with the given CAD model.
+//! \param[in] model       CAD model to prepare the accelerating structure for.
+//! \param[in] builderType type of builder to use.
+//! \return true in case of success, false -- otherwise.
+bool asiAlgo_BVHFacets::init(const Handle(Poly_Triangulation)& mesh,
+                             const BuilderType                 builderType)
+{
+  // Prepare builder
+  if ( builderType == Builder_Binned )
+    myBuilder = new BVH_BinnedBuilder<double, 4, 32>(5, 32);
+  else
+    myBuilder = new BVH_LinearBuilder<double, 4>(5, 32);
+
+  // Initialize with the passed facets
+  if ( !this->addTriangulation(mesh, TopLoc_Location(), -1) )
+    return false;
+
+  // Calculate bounding diagonal using fictive face to satisfy OpenCascade's API
+  BRep_Builder BB;
+  TopoDS_Face F;
+  BB.MakeFace(F, mesh);
+  Bnd_Box aabb;
+  BRepBndLib::Add(F, aabb);
+  //
   m_fBoundingDiag = ( aabb.CornerMax().XYZ() - aabb.CornerMin().XYZ() ).Modulus();
 
   return true;
@@ -333,24 +386,38 @@ bool asiAlgo_BVHFacets::addFace(const TopoDS_Face& face,
 {
   TopLoc_Location loc;
   const Handle(Poly_Triangulation)& tris = BRep_Tool::Triangulation(face, loc);
-  //
-  if( tris.IsNull() )
+
+  return this->addTriangulation(tris, loc, face_idx);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Adds triangulation to the accelerating structure.
+//! \param[in] triangulation triangulation to add.
+//! \param[in] loc           location to apply.
+//! \param[in] face_idx      index of the corresponding face being.
+//! \return true in case of success, false -- otherwise.
+bool asiAlgo_BVHFacets::addTriangulation(const Handle(Poly_Triangulation)& triangulation,
+                                         const TopLoc_Location&            loc,
+                                         const int                         face_idx)
+{
+  if ( triangulation.IsNull() )
     return false;
 
-  for ( int t = 1; t <= tris->NbTriangles(); ++t )
+  for ( int t = 1; t <= triangulation->NbTriangles(); ++t )
   {
-    const Poly_Triangle& tri = tris->Triangles().Value(t);
+    const Poly_Triangle& tri = triangulation->Triangles().Value(t);
 
     int n1, n2, n3;
     tri.Get(n1, n2, n3);
 
-    gp_Pnt P0 = tris->Nodes().Value(n1);
+    gp_Pnt P0 = triangulation->Nodes().Value(n1);
     P0.Transform(loc);
     //
-    gp_Pnt P1 = tris->Nodes().Value(n2);
+    gp_Pnt P1 = triangulation->Nodes().Value(n2);
     P1.Transform(loc);
     //
-    gp_Pnt P2 = tris->Nodes().Value(n3);
+    gp_Pnt P2 = triangulation->Nodes().Value(n3);
     P2.Transform(loc);
 
     // Create a new facet and store it in the internal collection

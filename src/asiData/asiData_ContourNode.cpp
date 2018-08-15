@@ -117,6 +117,38 @@ Handle(HRealArray) asiData_ContourNode::GetCoords() const
   return ActParamTool::AsRealArray( this->Parameter(PID_Coords) )->GetArray();
 }
 
+//! Returns poles of the contour.
+//! \param[out] pts poles defined explicitly.
+void asiData_ContourNode::GetPoints(std::vector<gp_XYZ>& pts) const
+{
+  gp_XYZ P_center;
+  this->GetPoints(pts, P_center);
+}
+
+//! Returns poles of the contour.
+//! \param[out] pts    poles defined explicitly.
+//! \param[out] center center (average) point.
+void asiData_ContourNode::GetPoints(std::vector<gp_XYZ>& pts,
+                                    gp_XYZ&              center) const
+{
+  Handle(HRealArray) coords = this->GetCoords();
+  //
+  gp_XYZ P_center;
+  for ( int i = coords->Lower(); i <= coords->Upper() - 2; i += 3 )
+  {
+    gp_XYZ P( coords->Value(i),
+              coords->Value(i + 1),
+              coords->Value(i + 2) );
+    //
+    P_center += P;
+
+    pts.push_back(P);
+  }
+  //
+  P_center /= int( pts.size() );
+  center = P_center;
+}
+
 //! Replaces a point with the given 0-based index with the passed
 //! coordinates.
 //! \param[in] zeroBasedIndex 0-based index of the target point.

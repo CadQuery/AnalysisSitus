@@ -69,9 +69,9 @@ public:
 
   //! Sets accelerating structure to use for picking.
   //! \param bvh_facets [in] accelerating structure to set.
-  void SetBVH(const Handle(asiAlgo_BVHFacets)& bvh_facets)
+  void AddBVH(const Handle(asiAlgo_BVHFacets)& bvh_facets)
   {
-    m_bvh = bvh_facets;
+    m_bvhs.push_back(bvh_facets);
   }
 
   //! Sets Data Model instance to access the geometry to pick.
@@ -82,8 +82,8 @@ public:
   }
 
   //! Sets diagnotics tools for the callback.
-  //! \param progress [in] progress notifier.
-  //! \param plotter  [in] imperative plotter.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
   void SetDiagnosticTools(ActAPI_ProgressEntry progress,
                           ActAPI_PlotterEntry  plotter)
   {
@@ -98,10 +98,10 @@ private:
 
 private:
 
-  Handle(asiAlgo_BVHFacets) m_bvh;      //!< Accelerating structure for picking.
-  Handle(asiEngine_Model)   m_model;    //!< Data Model instance.
-  ActAPI_ProgressEntry      m_notifier; //!< Progress notifier.
-  ActAPI_PlotterEntry       m_plotter;  //!< Imperative plotter.
+  std::vector<Handle(asiAlgo_BVHFacets)> m_bvhs;     //!< Accelerating structure for picking.
+  Handle(asiEngine_Model)                m_model;    //!< Data Model instance.
+  ActAPI_ProgressEntry                   m_notifier; //!< Progress notifier.
+  ActAPI_PlotterEntry                    m_plotter;  //!< Imperative plotter.
 
 };
 

@@ -116,6 +116,13 @@ public:
     GetCoords() const;
 
   asiData_EXPORT void
+    GetPoints(std::vector<gp_XYZ>& pts) const;
+
+  asiData_EXPORT void
+    GetPoints(std::vector<gp_XYZ>& pts,
+              gp_XYZ&              center) const;
+
+  asiData_EXPORT void
     ReplacePoint(const int     zeroBasedIndex,
                  const gp_Pnt& point);
 

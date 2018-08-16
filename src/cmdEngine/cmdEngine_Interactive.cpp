@@ -825,7 +825,7 @@ int ENGINE_ProjectContourOnPlane(const Handle(asiTcl_Interp)& interp,
 
   const int                          deg_U      = 3;
   const int                          deg_V      = 3;
-  const mobius::bspl_ParamsSelection paramsType = mobius::ParamsSelection_Centripetal;
+  const mobius::bspl_ParamsSelection paramsType = mobius::ParamsSelection_ChordLength;
   const mobius::bspl_KnotsSelection  knotsType  = mobius::KnotsSelection_Average;
 
   // Interpolate.

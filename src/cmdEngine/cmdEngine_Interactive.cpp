@@ -414,11 +414,11 @@ void appendNodeInGlobalCollection(t_gridNode&                          node,
   }
 }
 
-int ENGINE_ProjectContourOnPlane(const Handle(asiTcl_Interp)& interp,
-                                 int                          argc,
-                                 const char**                 argv)
+int ENGINE_InterpolateSurfMesh(const Handle(asiTcl_Interp)& interp,
+                               int                          argc,
+                               const char**                 argv)
 {
-  if ( argc != 2 )
+  if ( argc != 4 && argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -695,7 +695,8 @@ int ENGINE_ProjectContourOnPlane(const Handle(asiTcl_Interp)& interp,
   // Sparse rows (in U direction)
   std::vector< std::vector<t_gridNode> > uvGridNodesSparsedU;
   //
-  double coincConf = 5.0;
+  double grain_factor = ( (argc == 5) ? atof(argv[4]) : 0.1 );
+  double coincConf    = size*grain_factor;
   {
     TColStd_PackedMapOfInteger keptIndices;
     RemoveCoincidentPoints(coincConf, uvGridNodes[0], keptIndices);
@@ -796,13 +797,20 @@ int ENGINE_ProjectContourOnPlane(const Handle(asiTcl_Interp)& interp,
     }
   }
 
+  Handle(HRealArray) pts = new HRealArray(0, uvGridNodesSparsed.size()*uvGridNodesSparsed[0].size()*3 - 1);
+  int ptidx = 0;
+  //
   for ( size_t i = 0; i < uvGridNodesSparsed.size(); ++i )
   {
     for ( size_t j = 0; j < uvGridNodesSparsed[i].size(); ++j )
     {
-      interp->GetPlotter().DRAW_POINT(uvGridNodesSparsed[i][j].xyz, uvGridNodesSparsed[i][j].isContourPoint ? Color_Red : Color_Blue, "vIsoNodes_xyz");
+      pts->SetValue( ptidx++, uvGridNodesSparsed[i][j].xyz.X() );
+      pts->SetValue( ptidx++, uvGridNodesSparsed[i][j].xyz.Y() );
+      pts->SetValue( ptidx++, uvGridNodesSparsed[i][j].xyz.Z() );
     }
   }
+  //
+  interp->GetPlotter().DRAW_POINTS(pts, Color_Blue, "vIsoNodes_xyz");
 
   /* ==================
    *  Interpolate grid
@@ -823,8 +831,8 @@ int ENGINE_ProjectContourOnPlane(const Handle(asiTcl_Interp)& interp,
     mobGrid.push_back(isoPoints);
   }
 
-  const int                          deg_U      = 3;
-  const int                          deg_V      = 3;
+  const int                          deg_U      = atoi(argv[2]);
+  const int                          deg_V      = atoi(argv[3]);
   const mobius::bspl_ParamsSelection paramsType = mobius::ParamsSelection_ChordLength;
   const mobius::bspl_KnotsSelection  knotsType  = mobius::KnotsSelection_Average;
 
@@ -848,7 +856,7 @@ int ENGINE_ProjectContourOnPlane(const Handle(asiTcl_Interp)& interp,
   toOpenCascade.DirectConvert();
   const Handle(Geom_Surface)& surf = toOpenCascade.GetOpenCascadeSurface();
 
-  interp->GetPlotter().REDRAW_SURFACE("surf", surf, Color_White);
+  interp->GetPlotter().DRAW_SURFACE(surf, Color_White, "surf");
 
   // TODO: NYI
 
@@ -897,10 +905,10 @@ void cmdEngine::Commands_Interactive(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_MakeContourPlane);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("project-contour-on-plane",
+  interp->AddCommand("interpolate-surf-mesh",
     //
-    "project-contour-on-plane planeName\n"
+    "interpolate-surf-mesh planeName udeg vdeg [grain_factor]\n"
     "\t Projects active contour to the plane with the given name.",
     //
-    __FILE__, group, ENGINE_ProjectContourOnPlane);
+    __FILE__, group, ENGINE_InterpolateSurfMesh);
 }

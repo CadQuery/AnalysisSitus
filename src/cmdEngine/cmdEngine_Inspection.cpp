@@ -1336,6 +1336,125 @@ int ENGINE_EvalSurf(const Handle(asiTcl_Interp)& interp,
       Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
       Message += ")";
     }
+    else if ( order == 1 )
+    {
+      mobius::xyz eval_P, eval_D1u, eval_D1v;
+      mobSurface->Eval_D1(u, v, eval_P, eval_D1u, eval_D1v);
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P",
+                                         gp_Pnt(eval_P.X(), eval_P.Y(), eval_P.Z()),
+                                         Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1u",
+                                             gp_Pnt(eval_P.X(), eval_P.Y(), eval_P.Z()),
+                                             gp_Vec(eval_D1u.X(), eval_D1u.Y(), eval_D1u.Z()),
+                                             Color_Red);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1v",
+                                             gp_Pnt(eval_P.X(), eval_P.Y(), eval_P.Z()),
+                                             gp_Vec(eval_D1v.X(), eval_D1v.Y(), eval_D1v.Z()),
+                                             Color_Green);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
+      Message += ")";
+      //
+      Message += "\nD1u(X, Y, Z): (";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1u.X() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1u.Y() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1u.Z() ).c_str();
+      Message += ")";
+      //
+      Message += "\nD1v(X, Y, Z): (";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1v.X() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1v.Y() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1v.Z() ).c_str();
+      Message += ")";
+    }
+    else if ( order == 2 )
+    {
+      mobius::xyz eval_P, eval_D1u, eval_D1v, eval_D2u, eval_D2v, eval_D2uv;
+      mobSurface->Eval_D2(u, v, eval_P, eval_D1u, eval_D1v, eval_D2u, eval_D2v, eval_D2uv);
+      //
+      //
+      interp->GetPlotter().REDRAW_POINT("eval_P",
+                                         gp_Pnt(eval_P.X(), eval_P.Y(), eval_P.Z()),
+                                         Color_Yellow);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1u",
+                                             gp_Pnt(eval_P.X(), eval_P.Y(), eval_P.Z()),
+                                             gp_Vec(eval_D1u.X(), eval_D1u.Y(), eval_D1u.Z()),
+                                             Color_Red);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D1v",
+                                             gp_Pnt(eval_P.X(), eval_P.Y(), eval_P.Z()),
+                                             gp_Vec(eval_D1v.X(), eval_D1v.Y(), eval_D1v.Z()),
+                                             Color_Green);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D2u",
+                                             gp_Pnt(eval_P.X(), eval_P.Y(), eval_P.Z()),
+                                             gp_Vec(eval_D2u.X(), eval_D2u.Y(), eval_D2u.Z()),
+                                             Color_Red);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D2v",
+                                             gp_Pnt(eval_P.X(), eval_P.Y(), eval_P.Z()),
+                                             gp_Vec(eval_D2v.X(), eval_D2v.Y(), eval_D2v.Z()),
+                                             Color_Green);
+      interp->GetPlotter().REDRAW_VECTOR_AT("eval_D2uv",
+                                             gp_Pnt(eval_P.X(), eval_P.Y(), eval_P.Z()),
+                                             gp_Vec(eval_D2uv.X(), eval_D2uv.Y(), eval_D2uv.Z()),
+                                             Color_Yellow);
+      //
+      Message += "\nP(X, Y, Z): (";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.X() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Y() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_P.Z() ).c_str();
+      Message += ")";
+      //
+      Message += "\nD1u(X, Y, Z): (";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1u.X() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1u.Y() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1u.Z() ).c_str();
+      Message += ")";
+      //
+      Message += "\nD1v(X, Y, Z): (";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1v.X() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1v.Y() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D1v.Z() ).c_str();
+      Message += ")";
+      //
+      Message += "\nD2u(X, Y, Z): (";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2u.X() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2u.Y() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2u.Z() ).c_str();
+      Message += ")";
+      //
+      Message += "\nD2v(X, Y, Z): (";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2v.X() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2v.Y() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2v.Z() ).c_str();
+      Message += ")";
+      //
+      Message += "\nD2uv(X, Y, Z): (";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2uv.X() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2uv.Y() ).c_str();
+      Message += ", ";
+      Message += asiAlgo_Utils::Str::ToString<double>( eval_D2uv.Z() ).c_str();
+      Message += ")";
+    }
     else
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Order %1 is not supported for Mobius method."

@@ -1478,10 +1478,51 @@ int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-#include <math_Matrix.hxx>
-#include <GeomFill_Pipe.hxx>
-#include <Geom_BezierCurve.hxx>
-#include <GeomConvert.hxx>
+#include <math_GaussSetIntegration.hxx>
+#include <math_FunctionSet.hxx>
+
+//! Test integrand as multivariate function {x y^2}.
+class test_Integral_XYSquared : public math_FunctionSet 
+{
+public:
+
+  //! Complete ctor.
+  test_Integral_XYSquared(const std::vector<double>& a,
+                          const std::vector<double>& b)
+  //
+  : m_a (a),
+    m_b (b)
+  {}
+
+public:
+
+  virtual int NbVariables() const
+  {
+    return 2;
+  }
+
+  virtual int NbEquations() const
+  {
+    return 1;
+  }
+
+  virtual bool Value (const math_Vector& X, math_Vector& F)
+  {
+    F(1) = X(1)*X(2)*X(2);
+    return true;
+  }
+
+private:
+
+  test_Integral_XYSquared(const test_Integral_XYSquared&) = delete;
+  void operator=(const test_Integral_XYSquared&) = delete;
+
+private:
+
+  const std::vector<double>& m_a; //!< Min variable.
+  const std::vector<double>& m_b; //!< Max variable.
+
+};
 
 int MISC_Test(const Handle(asiTcl_Interp)& interp,
               int                          argc,
@@ -1492,42 +1533,26 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  TColgp_Array1OfPnt pathPoles(1, 3);
-  pathPoles(1) = gp_Pnt(0.0,    0.0,   0.0);
-  pathPoles(2) = gp_Pnt(100.0,  0.0,   0.0);
-  pathPoles(3) = gp_Pnt(100.0,  100.0, 0.0);
+  const std::vector<double> a = {0, 1};
+  const std::vector<double> b = {0, 2};
 
-  Handle(Geom_BezierCurve) path = new Geom_BezierCurve(pathPoles);
-
-  Handle(Geom_Curve)
-    c1 = GeomConvert::CurveToBSplineCurve( new Geom_TrimmedCurve(new Geom_Circle(gp_Ax2( gp::Origin(), gp::DX() ), 10.0), 0, 2*M_PI), Convert_Polynomial );
+  test_Integral_XYSquared Func(a, b);
   //
-  Handle(Geom_Curve)
-    c2 = GeomConvert::CurveToBSplineCurve( new Geom_TrimmedCurve(new Geom_Circle(gp_Ax2( gp::Origin(), gp::DX() ), 20.0), 0, 2*M_PI), Convert_Polynomial );
+  math_IntegerVector Order(1, 2);
+  Order(1) = 60;
+  Order(2) = 60;
+  //
+  math_Vector Lower(1, 2);
+  Lower(1) = a[0];
+  Lower(2) = a[1];
+  //
+  math_Vector Upper(1, 2);
+  Upper(1) = b[0];
+  Upper(2) = b[1];
 
-  GeomFill_Pipe Pipe(path, c1, c2);
-  Pipe.Perform();
-
-  /*TColgp_Array1OfPnt pathPoles(1, 3);
-  pathPoles(1) = gp_Pnt(0,   0,   0);
-  pathPoles(2) = gp_Pnt(100, 0,   0);
-  pathPoles(3) = gp_Pnt(100, 100, 0);
-
-  Handle(Geom_BezierCurve) path = new Geom_BezierCurve(pathPoles);
-
-  Handle(Geom_Curve) c1 = new Geom_Circle( gp_Ax2(gp_Pnt(0,   0,   0), gp::DX() ), 10.0);
-  Handle(Geom_Curve) c2 = new Geom_Circle( gp_Ax2(gp_Pnt(100, 100, 0), gp::DY() ), 20.0);
-
-  interp->GetPlotter().REDRAW_CURVE("c1", c1, Color_Red);
-  interp->GetPlotter().REDRAW_CURVE("c2", c2, Color_Red);
-  interp->GetPlotter().REDRAW_CURVE("path", path, Color_Red);
-
-  GeomFill_Pipe Pipe(path, c1, c2);
-  Pipe.Perform();*/
-
-  const Handle(Geom_Surface)& result = Pipe.Surface();
-
-  interp->GetPlotter().REDRAW_SURFACE("result", result, Color_White);
+  math_GaussSetIntegration Integral(Func, Lower, Upper, Order);
+  //
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Integral value: %1." << Integral.Value()(1) );
 
   return TCL_OK;
 }

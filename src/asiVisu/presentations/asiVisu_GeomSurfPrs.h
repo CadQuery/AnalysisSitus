@@ -66,8 +66,9 @@ public:
   {
     Pipeline_Main = 1,
     Pipeline_Shaded,
-    Pipeline_BPoles,    // For b-spline surfaces only.
-    Pipeline_BKnotsIsos // For b-spline surfaces only.
+    Pipeline_BPoles,     // For b-spline surfaces only.
+    Pipeline_BKnotsIsos, // For b-spline surfaces only.
+    Pipeline_Axes
   };
 
 public:

@@ -77,6 +77,7 @@ bool asiVisu_BCurveKnotsSource::SetInputCurve(const Handle(Geom_BSplineCurve)& b
     return false;
 
   m_curve = bcurve;
+  this->Modified();
   return true;
 }
 

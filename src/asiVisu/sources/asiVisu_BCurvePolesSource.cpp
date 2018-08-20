@@ -97,6 +97,7 @@ bool asiVisu_BCurvePolesSource::SetInputCurve(const Handle(Geom_BSplineCurve)& b
   if ( bcurve->IsClosed() )
     m_poles->ChangeLast() = m_poles->First();
 
+  this->Modified();
   return true;
 }
 

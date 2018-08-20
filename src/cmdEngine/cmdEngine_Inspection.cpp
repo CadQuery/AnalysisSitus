@@ -1992,6 +1992,101 @@ int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_DrawCP(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  if ( argc != 4 && argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Surface Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Get parametric surface.
+  Handle(Geom_BSplineSurface)
+    occtSurf = Handle(Geom_BSplineSurface)::DownCast( surfNode->GetSurface() );
+  //
+  if ( occtSurf.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface is NULL or not a spline surface.");
+    return TCL_ERROR;
+  }
+
+  // Get indices of a control point in question.
+  const int i = atoi(argv[2]);
+  const int j = atoi(argv[3]);
+
+  const TColgp_Array2OfPnt& poles = occtSurf->Poles();
+  //
+  const int numRows = poles.ColLength();
+  const int numCols = poles.RowLength();
+  //
+  if ( i < 0 || i >= numRows )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "First index if out of range [0, %1]." << (numRows - 1));
+    return TCL_ERROR;
+  }
+  //
+  if ( j < 0 || j >= numCols )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Second index if out of range [0, %1]." << (numCols - 1));
+    return TCL_ERROR;
+  }
+
+  // Check whether Mobius operator is requested.
+  gp_Pnt P;
+  //
+  const bool isMobius = interp->HasKeyword(argc, argv, "mobius");
+  //
+  if ( isMobius )
+  {
+#if defined USE_MOBIUS
+    // Convert to Mobius surface.
+    mobius::cascade_BSplineSurface converter(occtSurf);
+    converter.DirectConvert();
+    //
+    const mobius::ptr<mobius::bsurf>& mobSurf = converter.GetMobiusSurface();
+
+    const mobius::xyz& mobP = mobSurf->Poles()[i][j];
+    //
+    P.SetX( mobP.X() );
+    P.SetY( mobP.Y() );
+    P.SetZ( mobP.Z() );
+#else
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+    return TCL_ERROR;
+#endif
+  }
+  else
+  {
+    P = poles(i + 1, j + 1);
+  }
+
+  // Draw control point.
+  TCollection_AsciiString PName("P_");
+  PName += i;
+  PName += "_";
+  PName += j;
+  //
+  interp->GetPlotter().REDRAW_POINT(PName, P, isMobius ? Color_Blue : Color_Red);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -2176,4 +2271,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Rebuilds edge with the given ID or name.",
     //
     __FILE__, group, ENGINE_CheckEdgeVexity);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("draw-cp",
+    //
+    "draw-cp surfName i_index j_index [-mobius]\n"
+    "\t Draws control point of a free-form surface.",
+    //
+    __FILE__, group, ENGINE_DrawCP);
 }

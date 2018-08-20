@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 11 April 2016
+// Created on: 20 August 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,46 +28,68 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_IVSurfacePrs_h
-#define asiVisu_IVSurfacePrs_h
+#ifndef asiVisu_BSurfAxesSource_h
+#define asiVisu_BSurfAxesSource_h
 
 // asiVisu includes
-#include <asiVisu_DefaultPrs.h>
+#include <asiVisu_Utils.h>
 
-// asiData includes
-#include <asiData_IVSurfaceNode.h>
+// VTK includes
+#include <vtkPolyDataAlgorithm.h>
+#include <vtkSmartPointer.h>
+#include <vtkType.h>
 
-//! Presentation class for surfaces in IV.
-class asiVisu_IVSurfacePrs : public asiVisu_DefaultPrs
+// OCCT includes
+#include <Geom_BSplineSurface.hxx>
+#include <TColgp_HArray2OfPnt.hxx>
+
+//! Data source giving local curvilinear axes of a b-surface.
+class asiVisu_BSurfAxesSource : public vtkPolyDataAlgorithm
 {
+// RTTI and construction:
 public:
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVSurfacePrs, asiVisu_DefaultPrs)
+  vtkTypeMacro(asiVisu_BSurfAxesSource, vtkPolyDataAlgorithm);
+  static asiVisu_BSurfAxesSource* New();
 
-  // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(asiData_IVSurfaceNode, Instance)
-
+// Kernel methods:
 public:
 
-  //! Pipelines.
-  enum PipelineId
-  {
-    Pipeline_Main = 1,
-    Pipeline_BPoles,
-    Pipeline_BKnotsIsos,
-    Pipeline_Axes
-  };
+  bool SetInputSurface(const Handle(Geom_BSplineSurface)& bsurf);
 
-public:
+protected:
 
-  asiVisu_EXPORT static Handle(asiVisu_Prs)
-    Instance(const Handle(ActAPI_INode)& theNode);
+  virtual int RequestData(vtkInformation*        request,
+                          vtkInformationVector** inputVector,
+                          vtkInformationVector*  outputVector);
+
+protected:
+
+  vtkIdType
+    registerPoint(const gp_Pnt& P,
+                  vtkPolyData*  polyData);
+
+  vtkIdType
+    registerAxis(const double u0,
+                 const double v0,
+                 const double u1,
+                 const double v1,
+                 const bool   isUAxis,
+                 vtkPolyData* polyData);
+
+protected:
+
+  asiVisu_BSurfAxesSource();
+  ~asiVisu_BSurfAxesSource();
 
 private:
 
-  //! Allocation is allowed only via Instance method.
-  asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_BSurfAxesSource(const asiVisu_BSurfAxesSource&);
+  asiVisu_BSurfAxesSource& operator=(const asiVisu_BSurfAxesSource&);
+
+protected:
+
+  Handle(Geom_BSplineSurface) m_surf; //!< Surface in question.
 
 };
 

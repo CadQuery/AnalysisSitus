@@ -32,6 +32,7 @@
 #include <asiVisu_GeomSurfPrs.h>
 
 // asiVisu includes
+#include <asiVisu_BSurfAxesPipeline.h>
 #include <asiVisu_BSurfKnotsPipeline.h>
 #include <asiVisu_BSurfPolesPipeline.h>
 #include <asiVisu_FaceDataProvider.h>
@@ -178,6 +179,12 @@ asiVisu_GeomSurfPrs::asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& N)
   this->assignDataProvider ( Pipeline_BKnotsIsos, DP );
   //
   this->GetPipeline(Pipeline_BKnotsIsos)->Actor()->SetVisibility(0);
+
+  // Pipeline for surface axes
+  this->addPipeline        ( Pipeline_Axes, new asiVisu_BSurfAxesPipeline );
+  this->assignDataProvider ( Pipeline_Axes, DP );
+  //
+  this->GetPipeline(Pipeline_Axes)->Actor()->SetVisibility(1);
 
   //---------------------------------------------------------------------------
   // Additional widgets

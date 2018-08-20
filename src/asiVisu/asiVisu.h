@@ -63,6 +63,7 @@
 #define ARRNAME_ORIENT_SCALARS     "arrname_domain_scalars"
 #define ARRNAME_CURVCOMBS_SCALARS  "arrname_curvature_combs_scalars"
 #define ARRNAME_ISOSMULTS_SCALARS  "arrname_isos_mults_scalars"
+#define ARRNAME_CURVIAXES_SCALARS  "arrname_curviaxes_scalars"
 #define ARRNAME_POINTCLOUD_VECTORS "arrname_pointcloud_vectors"
 //
 #define ARRNAME_SURF_CURVATURE     "arrname_surf_curvature"

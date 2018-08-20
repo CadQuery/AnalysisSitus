@@ -105,6 +105,7 @@ bool asiVisu_BSurfPolesSource::SetInputSurface(const Handle(Geom_BSplineSurface)
     for ( int r = 0; r < poles.ColLength(); ++r )
       m_poles->ChangeValue(r, nPolesV - 1) = m_poles->Value(r, 0);
 
+  this->Modified();
   return true;
 }
 

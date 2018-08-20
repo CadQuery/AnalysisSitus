@@ -126,6 +126,17 @@ enum asiVisu_IsosCont
 
 //-----------------------------------------------------------------------------
 
+//! Curvilinear axes.
+enum asiVisu_CurviAxis
+{
+  VisuCurviAxis_Undefined = -1,
+  VisuCurviAxis_U         =  0,
+  VisuCurviAxis_V         =  1,
+  VisuCurviAxis_Last
+};
+
+//-----------------------------------------------------------------------------
+
 //! Common visualization utilities.
 class asiVisu_Utils
 {
@@ -247,6 +258,9 @@ public:
 
   asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
     InitKnotsIsosLookupTable();
+
+  asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
+    InitCurviAxesLookupTable();
 
   asiVisu_EXPORT static void
     InitMapper(vtkMapper*      theMapper,

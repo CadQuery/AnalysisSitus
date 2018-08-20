@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 11 April 2016
+// Created on: 20 August 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,46 +28,50 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_IVSurfacePrs_h
-#define asiVisu_IVSurfacePrs_h
+#ifndef asiVisu_BSurfAxesPipeline_h
+#define asiVisu_BSurfAxesPipeline_h
 
 // asiVisu includes
-#include <asiVisu_DefaultPrs.h>
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
-// asiData includes
-#include <asiData_IVSurfaceNode.h>
+//-----------------------------------------------------------------------------
 
-//! Presentation class for surfaces in IV.
-class asiVisu_IVSurfacePrs : public asiVisu_DefaultPrs
+//! Visualization pipeline for local curvilinear axes of a B-spline surface.
+class asiVisu_BSurfAxesPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVSurfacePrs, asiVisu_DefaultPrs)
-
-  // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(asiData_IVSurfaceNode, Instance)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_BSurfAxesPipeline, asiVisu_Pipeline)
 
 public:
 
-  //! Pipelines.
-  enum PipelineId
-  {
-    Pipeline_Main = 1,
-    Pipeline_BPoles,
-    Pipeline_BKnotsIsos,
-    Pipeline_Axes
-  };
+  asiVisu_EXPORT
+    asiVisu_BSurfAxesPipeline();
 
 public:
 
-  asiVisu_EXPORT static Handle(asiVisu_Prs)
-    Instance(const Handle(ActAPI_INode)& theNode);
+  asiVisu_EXPORT virtual void
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:
 
-  //! Allocation is allowed only via Instance method.
-  asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& theNode);
+  virtual void callback_add_to_renderer      (vtkRenderer* renderer);
+  virtual void callback_remove_from_renderer (vtkRenderer* renderer);
+  virtual void callback_update               ();
+
+private:
+
+  //! Copying prohibited.
+  asiVisu_BSurfAxesPipeline(const asiVisu_BSurfAxesPipeline&);
+
+  //! Assignment prohibited.
+  asiVisu_BSurfAxesPipeline& operator=(const asiVisu_BSurfAxesPipeline&);
+
+protected:
+
+  bool m_bMapperColorsSet; //!< Indicates whether scalars are set.
 
 };
 

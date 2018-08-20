@@ -72,7 +72,9 @@
 
 #if defined USE_MOBIUS
   #include <mobius/cascade_BSplineCurve3D.h>
+  #include <mobius/cascade_BSplineSurface.h>
   #include <mobius/geom_FairBCurve.h>
+  #include <mobius/geom_FairBSurf.h>
 #endif
 
 //-----------------------------------------------------------------------------
@@ -1260,6 +1262,85 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 4 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[2]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Get B-surface.
+  Handle(Geom_BSplineSurface)
+    occtBSurface = Handle(Geom_BSplineSurface)::DownCast( surfNode->GetSurface() );
+  //
+  if ( occtBSurface.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a B-spline surface.");
+    return TCL_OK;
+  }
+
+  // Get fairing coefficient.
+  const double lambda = Atof(argv[3]);
+
+  Handle(Geom_BSplineSurface) result;
+
+#if defined USE_MOBIUS
+  // Convert to Mobius surface.
+  mobius::cascade_BSplineSurface converter(occtBSurface);
+  converter.DirectConvert();
+  //
+  const mobius::ptr<mobius::bsurf>& mobSurf = converter.GetMobiusSurface();
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Perform fairing.
+  mobius::geom_FairBSurf fairing(mobSurf, lambda, NULL, NULL);
+  //
+  if ( !fairing.Perform() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Fairing failed.");
+    return TCL_OK;
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Mobius B-surface fairing")
+
+  // Get the faired surface.
+  const mobius::ptr<mobius::bsurf>& mobResult = fairing.GetResult();
+
+  // Convert to OpenCascade surface.
+  mobius::cascade_BSplineSurface toOpenCascade(mobResult);
+  toOpenCascade.DirectConvert();
+  result = toOpenCascade.GetOpenCascadeSurface();
+#else
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return TCL_ERROR;
+#endif
+
+  // Draw result.
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], result, Color_Green);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_SplitByContinuity(const Handle(asiTcl_Interp)& interp,
                              int                          argc,
                              const char**                 argv)
@@ -1682,6 +1763,15 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t is a weight of a fairing term in the goal function.",
     //
     __FILE__, group, ENGINE_FairCurve);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("fair-surf",
+    //
+    "fair-surf resName surfName fairingCoeff\n"
+    "\t Fairs surface with the given name <surfName>. The passed fairing coefficient\n"
+    "\t is a weight of a fairing term in the goal function.",
+    //
+    __FILE__, group, ENGINE_FairSurf);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("split-by-continuity",

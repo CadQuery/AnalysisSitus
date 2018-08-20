@@ -1306,6 +1306,9 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   //
   const mobius::ptr<mobius::bsurf>& mobSurf = converter.GetMobiusSurface();
 
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Initial bending energy: %1"
+                                                        << mobSurf->ComputeBendingEnergy() );
+
   TIMER_NEW
   TIMER_GO
 
@@ -1323,6 +1326,9 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
 
   // Get the faired surface.
   const mobius::ptr<mobius::bsurf>& mobResult = fairing.GetResult();
+
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Resulting bending energy: %1"
+                                                        << mobResult->ComputeBendingEnergy() );
 
   // Convert to OpenCascade surface.
   mobius::cascade_BSplineSurface toOpenCascade(mobResult);

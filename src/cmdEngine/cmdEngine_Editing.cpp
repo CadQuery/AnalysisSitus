@@ -1306,14 +1306,32 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   //
   const mobius::ptr<mobius::bsurf>& mobSurf = converter.GetMobiusSurface();
 
-  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Initial bending energy: %1"
-                                                        << mobSurf->ComputeBendingEnergy() );
+  // Print bending energy.
+  const double initEnergy = mobSurf->ComputeBendingEnergy();
+  //
+  interp->GetProgress().SendLogMessage( LogNotice(Normal) << "Initial bending energy: %1"
+                                                          << initEnergy );
 
   TIMER_NEW
   TIMER_GO
 
   // Perform fairing.
   mobius::geom_FairBSurf fairing(mobSurf, lambda, NULL, NULL);
+  //
+  const int nPolesU = int( mobSurf->Poles().size() );
+  const int nPolesV = int( mobSurf->Poles()[0].size() );
+  //
+  for ( int i = 0; i < nPolesU; ++i )
+  {
+    fairing.AddPinnedPole( i, 0 );
+    fairing.AddPinnedPole( i, nPolesV - 1 );
+  }
+  //
+  for ( int j = 0; j < nPolesV; ++j )
+  {
+    fairing.AddPinnedPole( 0, j );
+    fairing.AddPinnedPole( nPolesU - 1, j );
+  }
   //
   if ( !fairing.Perform() )
   {
@@ -1327,8 +1345,11 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   // Get the faired surface.
   const mobius::ptr<mobius::bsurf>& mobResult = fairing.GetResult();
 
-  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Resulting bending energy: %1"
-                                                        << mobResult->ComputeBendingEnergy() );
+  // Print bending energy.
+  const double resEnergy = mobResult->ComputeBendingEnergy();
+  //
+  interp->GetProgress().SendLogMessage( LogNotice(Normal) << "Resulting bending energy: %1"
+                                                          << resEnergy );
 
   // Convert to OpenCascade surface.
   mobius::cascade_BSplineSurface toOpenCascade(mobResult);
@@ -1340,7 +1361,7 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
 #endif
 
   // Draw result.
-  interp->GetPlotter().REDRAW_SURFACE(argv[1], result, Color_Green);
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], result, (resEnergy < initEnergy) ? Color_Green : Color_Red);
 
   return TCL_OK;
 }

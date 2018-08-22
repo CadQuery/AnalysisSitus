@@ -28,6 +28,7 @@ set (aux_H_FILES
   auxiliary/asiAlgo_FairingCoeffFunc.h
   auxiliary/asiAlgo_FuncUnivariate.h
   auxiliary/asiAlgo_HitFacet.h
+  auxiliary/asiAlgo_InterpolateSurfMesh.h
   auxiliary/asiAlgo_IntersectCC.h
   auxiliary/asiAlgo_IntersectCS.h
   auxiliary/asiAlgo_IntersectionCurveSS.h
@@ -53,6 +54,7 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_FairingBjFunc.cpp
   auxiliary/asiAlgo_FuncUnivariate.cpp
   auxiliary/asiAlgo_HitFacet.cpp
+  auxiliary/asiAlgo_InterpolateSurfMesh.cpp
   auxiliary/asiAlgo_IntersectCC.cpp
   auxiliary/asiAlgo_IntersectCS.cpp
   auxiliary/asiAlgo_IntersectSS.cpp

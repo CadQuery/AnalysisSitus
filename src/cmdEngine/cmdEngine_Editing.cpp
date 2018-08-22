@@ -43,7 +43,9 @@
 #include <asiAlgo_EulerKEV.h>
 #include <asiAlgo_EulerKFMV.h>
 #include <asiAlgo_FairBCurve.h>
+#include <asiAlgo_InterpolateSurfMesh.h>
 #include <asiAlgo_InvertShells.h>
+#include <asiAlgo_MeshMerge.h>
 #include <asiAlgo_RebuildEdge.h>
 #include <asiAlgo_SmallEdges.h>
 #include <asiAlgo_Timer.h>
@@ -53,13 +55,16 @@
 
 // OCCT includes
 #include <BRep_Builder.hxx>
+#include <BRepAdaptor_Curve.hxx>
 #include <BRepAlgoAPI_BuilderAlgo.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepLProp_SLProps.hxx>
 #include <BRepTools.hxx>
+#include <GCPnts_QuasiUniformAbscissa.hxx>
 #include <Geom_BoundedSurface.hxx>
 #include <GeomLib.hxx>
 #include <Precision.hxx>
@@ -1628,6 +1633,141 @@ int ENGINE_HealSmallEdges(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_Repatch(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const int numPtsPerEdge = 10;
+
+  // Get Part Node to access the selected faces.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  Handle(asiAlgo_AAG) aag = partNode->GetAAG();
+
+  // Prepare a compound of faces in question.
+  TopoDS_Compound compFaces;
+  BRep_Builder().MakeCompound(compFaces);
+
+  // Get highlighted faces.
+  TColStd_PackedMapOfInteger fids;
+  asiEngine_Part partAPI( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() );
+  partAPI.GetHighlightedFaces(fids);
+  //
+  for ( TColStd_MapIteratorOfPackedMapOfInteger mit(fids); mit.More(); mit.Next() )
+  {
+    const int fid = mit.Key();
+    //
+    const TopoDS_Face& face = aag->GetFace(fid);
+
+    BRep_Builder().Add(compFaces, face);
+  }
+
+  // Build map of edges to extract free ones.
+  TopTools_IndexedDataMapOfShapeListOfShape edgesFaces;
+  TopExp::MapShapesAndAncestors(compFaces, TopAbs_EDGE, TopAbs_FACE, edgesFaces);
+
+  // Get free edges.
+  Handle(ShapeExtend_WireData) WD = new ShapeExtend_WireData;
+  std::vector<TopoDS_Edge> freeEdges;
+  //
+  for ( int k = 1; k <= edgesFaces.Extent(); ++k )
+  {
+    const TopTools_ListOfShape& faces = edgesFaces(k);
+    //
+    if ( faces.Extent() == 1 )
+    {
+      const TopoDS_Edge& E = TopoDS::Edge( edgesFaces.FindKey(k) );
+      //
+      if ( BRep_Tool::Degenerated(E) )
+        continue;
+
+      freeEdges.push_back(E);
+      //
+      WD->Add(E);
+
+      interp->GetPlotter().DRAW_SHAPE(freeEdges[freeEdges.size() - 1], Color_Red, 1.0, true, "freeEdge");
+    }
+  }
+  //
+  TopoDS_Wire repatchW = WD->WireAPIMake();
+
+  // Discretize edges.
+  std::vector<gp_XYZ> poles;
+  for ( int k = 0; k < freeEdges.size(); ++k )
+  {
+    // Discretize with a uniform curvilinear step.
+    BRepAdaptor_Curve gac( freeEdges[k] );
+    GCPnts_QuasiUniformAbscissa Defl(gac, numPtsPerEdge);
+    //
+    if ( !Defl.IsDone() )
+      return false;
+
+    // Calculate combs at discretization points.
+    for ( int i = 1; i <= numPtsPerEdge; ++i )
+    {
+      const double param = Defl.Parameter(i);
+
+      gp_XYZ P = gac.Value(param).XYZ();
+      //
+      poles.push_back(P);
+    }
+  }
+
+  Handle(HRealArray) ptsCoords = new HRealArray(0, int( poles.size() )*3 - 1);
+  int ptidx = 0;
+  //
+  for ( size_t i = 0; i < poles.size(); ++i )
+  {
+    ptsCoords->SetValue( ptidx++, poles[i].X() );
+    ptsCoords->SetValue( ptidx++, poles[i].Y() );
+    ptsCoords->SetValue( ptidx++, poles[i].Z() );
+  }
+  interp->GetPlotter().DRAW_POINTS(ptsCoords, Color_Blue, "ptsCoords");
+
+  // Get conglomerate mesh.
+  asiAlgo_MeshMerge conglomerate(partNode->GetShape(), asiAlgo_MeshMerge::Mode_PolyCoherentTriangulation);
+  Handle(Poly_Triangulation) tris = conglomerate.GetResultPoly()->GetTriangulation();
+
+  // Prepare interpolation tool.
+  asiAlgo_InterpolateSurfMesh interpAlgo( tris, interp->GetProgress(), interp->GetPlotter() );
+
+  // Interpolate.
+  Handle(Geom_BSplineSurface) repatchSurf;
+  //
+  if ( !interpAlgo.Perform(poles, 0.05, 3, 3, repatchSurf) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Interpolation failed.");
+    return TCL_OK;
+  }
+
+  // Set result.
+  interp->GetPlotter().DRAW_SURFACE(repatchSurf, Color_White, "repatch");
+
+  // Build face.
+  TopoDS_Face repatchF = BRepBuilderAPI_MakeFace(repatchSurf, repatchW, false);
+  //
+  ShapeFix_Face ShapeHealer(repatchF);
+  ShapeHealer.Perform();
+  repatchF = ShapeHealer.Face();
+
+  interp->GetPlotter().REDRAW_SHAPE("repatchW", repatchW, Color_Red, 1.0, true);
+  interp->GetPlotter().REDRAW_SHAPE("repatchF", repatchF);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -1843,4 +1983,12 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t the angular threshold for merge (in degrees).",
     //
     __FILE__, group, ENGINE_HealSmallEdges);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("repatch",
+    //
+    "repatch\n"
+    "\t Repatches the selected faces.",
+    //
+    __FILE__, group, ENGINE_Repatch);
 }

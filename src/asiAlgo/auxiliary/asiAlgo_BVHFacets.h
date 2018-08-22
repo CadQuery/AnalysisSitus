@@ -76,15 +76,15 @@ public:
 
   asiAlgo_EXPORT
     asiAlgo_BVHFacets(const TopoDS_Shape&  model,
-                      const BuilderType    builderType,
-                      ActAPI_ProgressEntry progress,
-                      ActAPI_PlotterEntry  plotter);
+                      const BuilderType    builderType = Builder_Binned,
+                      ActAPI_ProgressEntry progress    = NULL,
+                      ActAPI_PlotterEntry  plotter     = NULL);
 
   asiAlgo_EXPORT
     asiAlgo_BVHFacets(const Handle(Poly_Triangulation)& mesh,
-                      const BuilderType                 builderType,
-                      ActAPI_ProgressEntry              progress,
-                      ActAPI_PlotterEntry               plotter);
+                      const BuilderType                 builderType = Builder_Binned,
+                      ActAPI_ProgressEntry              progress    = NULL,
+                      ActAPI_PlotterEntry               plotter     = NULL);
 
 public:
 

@@ -44,6 +44,8 @@
 #include <BOPAlgo_BOP.hxx>
 #include <BOPAlgo_PaveFiller.hxx>
 #include <BRep_Builder.hxx>
+#include <BRep_GCurve.hxx>
+#include <BRep_TEdge.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepAlgo_Common.hxx>
 #include <BRepAlgoAPI_Common.hxx>
@@ -86,7 +88,9 @@
 #include <RWStl.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeAnalysis_ShapeTolerance.hxx>
+#include <ShapeBuild_Edge.hxx>
 #include <ShapeExtend_WireData.hxx>
+#include <ShapeFix_Edge.hxx>
 #include <ShapeFix_Face.hxx>
 #include <ShapeUpgrade_UnifySameDomain.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
@@ -2429,4 +2433,39 @@ double asiAlgo_Utils::IntegralRect(math_Function& F,
     area +=  val*step; // sum up each small rectangle
   }
   return area;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Utils::RebuildBounds(TopoDS_Shape& shape)
+{
+  for ( TopExp_Explorer exp(shape, TopAbs_EDGE); exp.More(); exp.Next() )
+  {
+    const TopoDS_Edge&                               E = TopoDS::Edge( exp.Current() );
+    const BRep_TEdge*                               TE = static_cast<const BRep_TEdge*>( E.TShape().get() );
+    const BRep_ListOfCurveRepresentation& listOfCurves = TE->Curves();
+
+    // Check if there is at least one p-curve. If not, we cannot
+    // reconstruct 3D curve
+    bool hasAnyPCurves = false;
+    for ( BRep_ListIteratorOfListOfCurveRepresentation cit(listOfCurves); cit.More(); cit.Next() )
+    {
+      const Handle(BRep_GCurve)&
+        fromGC = Handle(BRep_GCurve)::DownCast( cit.Value() );
+      //
+      if ( fromGC.IsNull() ) continue;
+      if ( fromGC->IsCurveOnSurface() )
+      {
+        hasAnyPCurves = true;
+        break;
+      }
+    }
+
+    if ( hasAnyPCurves )
+    {
+      // Rebuild 3D representation
+      ShapeBuild_Edge().RemoveCurve3d(E);
+      ShapeFix_Edge().FixAddCurve3d(E);
+    }
+  }
 }

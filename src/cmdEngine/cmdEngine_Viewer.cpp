@@ -153,32 +153,30 @@ int ENGINE_ShowOnly(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
 {
-  if ( argc < 2 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
   cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderAllPresentations();
   //
-  for ( int k = 1; k < argc; ++k )
+  if ( argc > 1 )
   {
-    // Find Node
-    Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[k]);
-    //
-    if ( node.IsNull() )
+    for ( int k = 1; k < argc; ++k )
     {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[k]);
-      continue;
-    }
+      // Find Node
+      Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[k]);
+      //
+      if ( node.IsNull() )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[k]);
+        continue;
+      }
 
-    // Display only
-    if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
-    {
-      cmdEngine::cf->ViewerPart->PrsMgr()->RenderPresentation(node);
+      // Display only
+      if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
+        cmdEngine::cf->ViewerPart->PrsMgr()->RenderPresentation(node);
+      else
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[k]);
     }
-    else
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[k]);
   }
+  else
+    cmdEngine::cf->ViewerPart->PrsMgr()->RenderPresentation( cmdEngine::model->GetPartNode() );
 
   // Repaint
   cmdEngine::cf->ViewerPart->Repaint();
@@ -276,16 +274,18 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("show-only",
     //
-    "show-only varName1 [varName2 ...]\n"
-    "\t Shows only the given objects in viewer.",
+    "show-only [varName1 [varName2 ...]]\n"
+    "\t Shows only the given objects in viewer. If no objects are passed, the\n"
+    "\t working part will be exclusively shown.",
     //
     __FILE__, group, ENGINE_ShowOnly);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("donly",
     //
-    "donly varName1 [varName2 ...]\n"
-    "\t Shows only the given objects in viewer.",
+    "donly [varName1 [varName2 ...]]\n"
+    "\t Shows only the given objects in viewer. If no objects are passed, the\n"
+    "\t working part will be exclusively shown.",
     //
     __FILE__, group, ENGINE_ShowOnly);
 

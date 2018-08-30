@@ -49,6 +49,7 @@
 // OCCT includes
 #include <BOPAlgo_Splitter.hxx>
 #include <BRep_Builder.hxx>
+#include <BRepAdaptor_Curve2d.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepAlgoAPI_Section.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
@@ -65,6 +66,7 @@
 #include <BRepTools.hxx>
 #include <GCPnts_QuasiUniformAbscissa.hxx>
 #include <GCPnts_TangentialDeflection.hxx>
+#include <GCPnts_UniformAbscissa.hxx>
 #include <GeomAPI.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Pln.hxx>
@@ -75,9 +77,12 @@
 #include <TopoDS.hxx>
 
 #ifdef USE_MOBIUS
+  #include <mobius/bspl_FindSpan.h>
   #include <mobius/cascade_BSplineCurve3D.h>
   #include <mobius/cascade_BSplineSurface.h>
   #include <mobius/core_HeapAlloc.h>
+  #include <mobius/geom_FairBCurve.h>
+  #include <mobius/geom_FairBSurf.h>
 #endif
 
 #undef DRAW_DEBUG
@@ -1557,6 +1562,190 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
   return TCL_OK;
 }
 
+#if defined USE_MOBIUS
+//-----------------------------------------------------------------------------
+
+int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node to access the selected faces.
+  Handle(asiData_PartNode)
+    partNode = Handle(asiEngine_Model)::DownCast( interp->GetModel() )->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
+  TopoDS_Shape        shape = partNode->GetShape();
+
+  // Get face.
+  const int fid = atoi(argv[1]);
+  //
+  if ( !partNode->GetAAG()->HasFace(fid) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face %1 does not exist in the working part."
+                                                        << fid);
+    return TCL_ERROR;
+  }
+  //
+  const TopoDS_Face& face = aag->GetFace(fid);
+
+  // Get host B-surface.
+  Handle(Geom_BSplineSurface)
+    occtBSurf = Handle(Geom_BSplineSurface)::DownCast( BRep_Tool::Surface(face) );
+  //
+  if ( occtBSurf.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face %1 is not based on B-spline surface."
+                                                        << fid);
+    return TCL_ERROR;
+  }
+
+  // Convert to Mobius B-surface.
+  mobius::cascade_BSplineSurface toMobius(occtBSurf);
+  toMobius.DirectConvert();
+  const mobius::ptr<mobius::bsurf>& mobSurf = toMobius.GetMobiusSurface();
+
+  // Print bending energy.
+  const double initEnergy = mobSurf->ComputeBendingEnergy();
+  //
+  interp->GetProgress().SendLogMessage( LogNotice(Normal) << "Initial bending energy: %1"
+                                                          << initEnergy );
+
+  // Utilities to find spans.
+  std::vector<double> U = mobSurf->Knots_U();
+  std::vector<double> V = mobSurf->Knots_V();
+  const int           p = mobSurf->Degree_U();
+  const int           q = mobSurf->Degree_V();
+  //
+  mobius::bspl_FindSpan findSpanU(U, p);
+  mobius::bspl_FindSpan findSpanV(V, q);
+
+  // Prepare fairing operator.
+  mobius::geom_FairBSurf F(mobSurf, 1.0, NULL, NULL);
+
+  // Calculate characteristics size for discretization of boundary.
+  double uMin, uMax, vMin, vMax;
+  BRepTools::UVBounds(face, uMin, uMax, vMin, vMax);
+  //
+  const double featSize = gp_Pnt2d(uMin, vMin).Distance( gp_Pnt2d(uMax, vMax) )*0.01;
+
+  // Get edges of the face which are the constraints to satisfy.
+  TopTools_IndexedMapOfShape faceEdges;
+  TopExp::MapShapes(face, TopAbs_EDGE, faceEdges);
+
+  // For each edge, take its parameteric curve and discretize it to obtain
+  // series of (u,v) coordinates. These coordinates will be used to find
+  // indices of the effective control points which should be constrained.
+  std::vector<gp_XY> pts;
+  for ( int eidx = 1; eidx <= faceEdges.Extent(); ++eidx )
+  {
+    const TopoDS_Edge& E = TopoDS::Edge( faceEdges(eidx) );
+
+    // Discretize with a uniform curvilinear step.
+    BRepAdaptor_Curve2d gac(E, face);
+    GCPnts_UniformAbscissa Defl(gac, featSize);
+    //
+    if ( !Defl.IsDone() )
+    {
+      interp->GetPlotter().DRAW_SHAPE(E, Color_Red, 1.0, true, "cannotDiscr");
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Edge discretization failed.");
+      return TCL_OK;
+    }
+
+    // Calculate discretization points.
+    for ( int i = 1; i <= Defl.NbPoints(); ++i )
+    {
+      gp_XY P = gac.Value( Defl.Parameter(i) ).XY();
+      //
+      pts.push_back(P);
+
+      //interp->GetPlotter().DRAW_POINT(P, Color_Red, "pts");
+
+      // Get (u,v) coordinates.
+      const double u = P.X();
+      const double v = P.Y();
+
+      // Find effective span.
+      const int spanU = findSpanU(u);
+      const int spanV = findSpanV(v);
+
+      std::cout << "Found span in [u,v]: [" << spanU << "," << spanV << "]" << std::endl;
+
+      gp_Pnt2d S1( U[spanU], V[spanV] );
+      gp_Pnt2d S2( U[spanU + 1], V[spanV] );
+      gp_Pnt2d S3( U[spanU + 1], V[spanV + 1] );
+      gp_Pnt2d S4( U[spanU], V[spanV + 1] );
+
+      /*interp->GetPlotter().DRAW_LINK(S1, S2, Color_Green, "S12");
+      interp->GetPlotter().DRAW_LINK(S2, S3, Color_Green, "S23");
+      interp->GetPlotter().DRAW_LINK(S3, S4, Color_Green, "S34");
+      interp->GetPlotter().DRAW_LINK(S4, S1, Color_Green, "S41");*/
+
+      const mobius::xyz& mobPole1 = mobSurf->Poles()[spanU][spanV];
+
+      // Pin point.
+      F.AddPinnedPole(spanU, spanV);
+
+      interp->GetPlotter().DRAW_POINT(gp_Pnt( mobPole1.X(), mobPole1.Y(), mobPole1.Z() ), Color_Blue, "mobPole");
+
+      for ( int k = 0; k < p; ++k )
+      {
+        //const mobius::xyz& PPP = mobSurf->Poles()[spanU - k][spanV];
+        F.AddPinnedPole(spanU-k, spanV);
+        //interp->GetPlotter().DRAW_POINT(gp_Pnt( PPP.X(), PPP.Y(), PPP.Z() ), Color_Red, "mobPoleU");
+      }
+
+      for ( int k = 0; k < q; ++k )
+      {
+        //const mobius::xyz& PPP = mobSurf->Poles()[spanU][spanV - k];
+        F.AddPinnedPole(spanU, spanV-k);
+        //interp->GetPlotter().DRAW_POINT(gp_Pnt( PPP.X(), PPP.Y(), PPP.Z() ), Color_Green, "mobPoleV");
+      }
+    }
+  }
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Perform fairing.
+  if ( !F.Perform() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Fairing failed.");
+    return TCL_OK;
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Fair surface")
+
+  // Get fairing result.
+  const mobius::ptr<mobius::bsurf>& mobFaired = F.GetResult();
+
+  // Print bending energy.
+  const double resEnergy = mobFaired->ComputeBendingEnergy();
+  //
+  interp->GetProgress().SendLogMessage( LogNotice(Normal) << "Resulting bending energy: %1"
+                                                          << resEnergy );
+
+  // Convert to OpenCascade surface.
+  mobius::cascade_BSplineSurface toOpenCascade(mobFaired);
+  toOpenCascade.DirectConvert();
+  const Handle(Geom_BSplineSurface)& occtFaired = toOpenCascade.GetOpenCascadeSurface();
+  //
+  interp->GetPlotter().DRAW_SURFACE(occtFaired, (resEnergy < initEnergy) ? Color_Green : Color_Red, "faired");
+
+  return TCL_OK;
+}
+#endif
+
 //-----------------------------------------------------------------------------
 
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
@@ -1671,6 +1860,16 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Problem reproducer for anything.",
     //
     __FILE__, group, MISC_Test);
+
+#if defined USE_MOBIUS
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-fair",
+    //
+    "test-fair fid\n"
+    "\t Test fairing function.",
+    //
+    __FILE__, group, MISC_TestFair);
+#endif
 }
 
 // Declare entry point

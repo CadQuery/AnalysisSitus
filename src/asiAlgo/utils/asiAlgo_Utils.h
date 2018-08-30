@@ -795,6 +795,11 @@ namespace asiAlgo_Utils
                  const double   b,
                  const int      n);
 
+  //! Attempts to rebuild shape boundaries.
+  //! \param[in] shape shape to refine.
+  asiAlgo_EXPORT void
+    RebuildBounds(TopoDS_Shape& shape);
+
 };
 
 #endif

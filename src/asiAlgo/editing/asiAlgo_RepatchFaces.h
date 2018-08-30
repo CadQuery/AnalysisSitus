@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 09 March 2017
+// Created on: 24 August 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,63 +28,47 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_PlateOnEdges_h
-#define asiAlgo_PlateOnEdges_h
+#ifndef asiAlgo_RepatchFaces_h
+#define asiAlgo_RepatchFaces_h
 
 // asiAlgo includes
-#include <asiAlgo_AAG.h>
+#include <asiAlgo.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
 
 // OCCT includes
-#include <Geom_BSplineSurface.hxx>
 #include <TopoDS_Face.hxx>
 
 //-----------------------------------------------------------------------------
 
-//! Utility to build a plate surface on the given edge set.
-class asiAlgo_PlateOnEdges : public ActAPI_IAlgorithm
+//! Utility to repatch faces.
+class asiAlgo_RepatchFaces : public ActAPI_IAlgorithm
 {
 public:
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_PlateOnEdges, ActAPI_IAlgorithm)
-
-public:
-
   asiAlgo_EXPORT
-    asiAlgo_PlateOnEdges(const Handle(asiAlgo_AAG)& aag,
-                         ActAPI_ProgressEntry       progress,
-                         ActAPI_PlotterEntry        plotter);
-
-  asiAlgo_EXPORT
-    asiAlgo_PlateOnEdges(const TopoDS_Shape&  shape,
+    asiAlgo_RepatchFaces(const TopoDS_Shape&  shape,
                          ActAPI_ProgressEntry progress,
                          ActAPI_PlotterEntry  plotter);
 
 public:
 
   asiAlgo_EXPORT bool
-    Build(const TColStd_PackedMapOfInteger& edgeIndices,
-          const unsigned int                continuity,
-          Handle(Geom_BSplineSurface)&      support,
-          TopoDS_Face&                      result);
+    Perform(const std::vector<TopoDS_Face>& faces);
 
-  asiAlgo_EXPORT bool
-    BuildSurf(const TColStd_PackedMapOfInteger& edgeIndices,
-              const unsigned int                continuity,
-              Handle(Geom_BSplineSurface)&      support);
+public:
 
-  asiAlgo_EXPORT bool
-    BuildSurf(const std::vector<TopoDS_Edge>& edges,
-              const unsigned int              continuity,
-              Handle(Geom_BSplineSurface)&    support);
+  //! \return result shape.
+  const TopoDS_Shape& GetResult() const
+  {
+    return m_result;
+  }
 
 protected:
 
-  TopoDS_Shape        m_shape; //!< Working shape.
-  Handle(asiAlgo_AAG) m_aag;   //!< AAG.
+  TopoDS_Shape m_input;  //!< Master model.
+  TopoDS_Shape m_result; //!< Result.
 
 };
 

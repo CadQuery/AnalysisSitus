@@ -37,6 +37,9 @@
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
 
+// OCCT includes
+#include <Geom_BSplineSurface.hxx>
+
 //-----------------------------------------------------------------------------
 
 //! Utility to build interpolation surface by mesh.
@@ -61,11 +64,11 @@ public:
 public:
 
   asiAlgo_EXPORT bool
-    Perform(const std::vector<gp_XYZ>& contour,
-            const double               grainCoeff,
-            const int                  degU,
-            const int                  degV,
-            Handle(Geom_Surface)&      result);
+    Perform(const std::vector<gp_XYZ>&   contour,
+            const double                 grainCoeff,
+            const int                    degU,
+            const int                    degV,
+            Handle(Geom_BSplineSurface)& result);
 
 public:
 
@@ -79,11 +82,11 @@ public:
 protected:
 
   asiAlgo_EXPORT bool
-    performInternal(const std::vector<gp_XYZ>& contour,
-                    const double               grainCoeff,
-                    const int                  degU,
-                    const int                  degV,
-                    Handle(Geom_Surface)&      result);
+    performInternal(const std::vector<gp_XYZ>&   contour,
+                    const double                 grainCoeff,
+                    const int                    degU,
+                    const int                    degV,
+                    Handle(Geom_BSplineSurface)& result);
 
 protected:
 

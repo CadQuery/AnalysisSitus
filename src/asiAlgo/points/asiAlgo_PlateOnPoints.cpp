@@ -62,8 +62,8 @@ asiAlgo_PlateOnPoints::asiAlgo_PlateOnPoints(ActAPI_ProgressEntry progress,
 //! \param points [in]  point set to build the approximation surface for.
 //! \param result [out] approximation surface.
 //! \return true in case of success, false -- otherwise.
-bool asiAlgo_PlateOnPoints::Build(const std::vector<gp_XYZ>&   points,
-                                  Handle(Geom_BSplineSurface)& result)
+bool asiAlgo_PlateOnPoints::Perform(const std::vector<gp_XYZ>&   points,
+                                    Handle(Geom_BSplineSurface)& result)
 {
   const int    Degree      = 3;
   const int    NbPtsOnCur  = 10;

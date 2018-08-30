@@ -87,6 +87,7 @@ set (editing_H_FILES
   editing/asiAlgo_Naming.h
   editing/asiAlgo_RebuildEdge.h
   editing/asiAlgo_RehostFaces.h
+  editing/asiAlgo_RepatchFaces.h
   editing/asiAlgo_SmallEdges.h
   editing/asiAlgo_SuppressFaces.h
   editing/asiAlgo_TopoKill.h
@@ -110,6 +111,7 @@ set (editing_CPP_FILES
   editing/asiAlgo_ModConstructEdge.cpp
   editing/asiAlgo_Naming.cpp
   editing/asiAlgo_RebuildEdge.cpp
+  editing/asiAlgo_RepatchFaces.cpp
   editing/asiAlgo_RehostFaces.cpp
   editing/asiAlgo_SmallEdges.cpp
   editing/asiAlgo_SuppressFaces.cpp

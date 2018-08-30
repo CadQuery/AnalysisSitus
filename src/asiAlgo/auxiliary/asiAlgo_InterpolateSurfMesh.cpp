@@ -47,6 +47,7 @@
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <GCE2d_MakeSegment.hxx>
 #include <Geom_Plane.hxx>
+#include <GeomLib.hxx>
 #include <NCollection_CellFilter.hxx>
 #include <Precision.hxx>
 #include <ShapeAnalysis_Surface.hxx>
@@ -188,7 +189,7 @@ private:
 
 //-----------------------------------------------------------------------------
 
-void appendNodeInGlobalCollection(t_gridNode&                          node,
+bool appendNodeInGlobalCollection(t_gridNode&                          node,
                                   int&                                 globalNodeId,
                                   std::vector<t_gridNode>&             allNodes,
                                   NCollection_CellFilter<InspectNode>& NodeFilter)
@@ -198,7 +199,7 @@ void appendNodeInGlobalCollection(t_gridNode&                          node,
   gp_XY XY_min = Inspect.Shift( node.uvInit, -prec );
   gp_XY XY_max = Inspect.Shift( node.uvInit,  prec );
 
-  // Coincidence test
+  // Coincidence test.
   NodeFilter.Inspect(XY_min, XY_max, Inspect);
   const bool isFound = Inspect.IsFound();
   //
@@ -209,9 +210,13 @@ void appendNodeInGlobalCollection(t_gridNode&                          node,
     NodeFilter.Add(node, node.uvInit);
     allNodes.push_back(node);
 
-    // (!!!) Increment global node ID
+    // (!!!) Increment global node ID.
     ++globalNodeId;
+
+    return true; // Added.
   }
+
+  return false; // Not added.
 }
 
 //-----------------------------------------------------------------------------
@@ -226,11 +231,11 @@ asiAlgo_InterpolateSurfMesh::asiAlgo_InterpolateSurfMesh(const Handle(Poly_Trian
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_InterpolateSurfMesh::Perform(const std::vector<gp_XYZ>& contour,
-                                          const double               grainCoeff,
-                                          const int                  degU,
-                                          const int                  degV,
-                                          Handle(Geom_Surface)&      result)
+bool asiAlgo_InterpolateSurfMesh::Perform(const std::vector<gp_XYZ>&   contour,
+                                          const double                 grainCoeff,
+                                          const int                    degU,
+                                          const int                    degV,
+                                          Handle(Geom_BSplineSurface)& result)
 {
   if ( m_bvh.IsNull() )
     m_bvh = new asiAlgo_BVHFacets(m_tris);
@@ -240,11 +245,11 @@ bool asiAlgo_InterpolateSurfMesh::Perform(const std::vector<gp_XYZ>& contour,
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>& contour,
-                                                  const double               grainCoeff,
-                                                  const int                  degU,
-                                                  const int                  degV,
-                                                  Handle(Geom_Surface)&      result)
+bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>&   contour,
+                                                  const double                 grainCoeff,
+                                                  const int                    degU,
+                                                  const int                    degV,
+                                                  Handle(Geom_BSplineSurface)& result)
 {
   // Get center point and bounding box of the contour.
   gp_XYZ  P_center;
@@ -299,7 +304,7 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>& con
   NCollection_CellFilter<InspectNode> NodeFilter( Precision::Confusion() );
 
   // Prepare a collection of grid points which will be interpolated ultimately.
-  std::vector<t_gridNode> allNodes;
+  std::vector<t_gridNode> allNodes, reperNodes;
 
   // Project points on surface.
   for ( size_t k = 0; k < contour.size(); ++k )
@@ -324,16 +329,16 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>& con
     node.uvInit          = UV.XY();
     node.xyzInit         = contour[k];
 
-    // Add node
-    ::appendNodeInGlobalCollection(node, curID, allNodes, NodeFilter);
+    // Add node.
+    ::appendNodeInGlobalCollection(node, curID, reperNodes, NodeFilter);
   }
 
   ShapeExtend_WireData mkWire;
-  for ( size_t k = 1; k < allNodes.size(); ++k )
+  for ( size_t k = 1; k < reperNodes.size(); ++k )
   {
-    mkWire.Add( BRepBuilderAPI_MakeEdge(GCE2d_MakeSegment(allNodes[k-1].uvInit, allNodes[k].uvInit).Value(), plane).Edge() );
+    mkWire.Add( BRepBuilderAPI_MakeEdge(GCE2d_MakeSegment(reperNodes[k-1].uvInit, reperNodes[k].uvInit).Value(), plane).Edge() );
   }
-  mkWire.Add( BRepBuilderAPI_MakeEdge(GCE2d_MakeSegment(allNodes[allNodes.size()-1].uvInit, allNodes[0].uvInit).Value(), plane).Edge() );
+  mkWire.Add( BRepBuilderAPI_MakeEdge(GCE2d_MakeSegment(reperNodes[reperNodes.size()-1].uvInit, reperNodes[0].uvInit).Value(), plane).Edge() );
   //
   const TopoDS_Wire& W = mkWire.WireAPIMake();
 
@@ -378,8 +383,8 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>& con
     node.uvInit          = UV.XY();
     node.xyzInit         = triNode.XYZ();
 
-    // Add node
-    ::appendNodeInGlobalCollection(node, curID, allNodes, NodeFilter);
+    // Add node.
+    ::appendNodeInGlobalCollection(node, curID, reperNodes, NodeFilter);
   }
 
   //for ( size_t k = 0; k < allNodes.size(); ++k )
@@ -387,8 +392,6 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>& con
   //  interp->GetPlotter().DRAW_POINT(allNodes[k].uvInit,  allNodes[k].isContourPoint ? Color_Red : Color_Blue, "uvInit");
   //  interp->GetPlotter().DRAW_POINT(allNodes[k].xyzInit, allNodes[k].isContourPoint ? Color_Red : Color_Blue, "xyzInit");
   //}
-
-  std::vector<t_gridNode> reperNodes = allNodes;
 
   /* ====================================================================
    *  For each image point, generate all possible variants of grid nodes
@@ -417,7 +420,7 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>& con
         node.uvInit          = gp_XY(u_k, v_s);
         node.xyzInit         = plane->Value( node.uvInit.X(), node.uvInit.Y() ).XYZ();
 
-        // Add node
+        // Add node.
         ::appendNodeInGlobalCollection(node, curID, allNodes, NodeFilter);
       }
 
@@ -519,7 +522,7 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>& con
   //
   std::vector<t_gridNode> col;
   //
-  for ( size_t i = 0; i < uvGridNodesSparsedU.size(); ++i )
+  for ( int i = 0; i < int( uvGridNodesSparsedU.size() ); ++i )
   {
     col.push_back(uvGridNodesSparsedU[i][0]);
   }
@@ -528,21 +531,21 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>& con
     TColStd_PackedMapOfInteger keptIndices;
     RemoveCoincidentPoints(coincConf, col, keptIndices);
     //
-    for ( size_t i = 0; i < uvGridNodesSparsedU.size(); ++i )
+    for ( int i = 0; i < int( uvGridNodesSparsedU.size() ); ++i )
     {
       if ( keptIndices.Contains(i) )
         uvGridNodesSparsed.push_back(uvGridNodesSparsedU[i]);
     }
   }
 
-  //for ( size_t i = 0; i < uvGridNodesSparsed.size(); ++i )
-  //{
-  //  for ( size_t j = 0; j < uvGridNodesSparsed[i].size(); ++j )
-  //  {
-  //    interp->GetPlotter().DRAW_POINT(uvGridNodesSparsed[i][j].uvInit,  uvGridNodesSparsed[i][j].isContourPoint ? Color_Red : Color_Blue, "uvInit");
-  //    interp->GetPlotter().DRAW_POINT(uvGridNodesSparsed[i][j].xyzInit, uvGridNodesSparsed[i][j].isContourPoint ? Color_Red : Color_Blue, "xyzInit");
-  //  }
-  //}
+  /*for ( size_t i = 0; i < uvGridNodesSparsed.size(); ++i )
+  {
+    for ( size_t j = 0; j < uvGridNodesSparsed[i].size(); ++j )
+    {
+      m_plotter.DRAW_POINT(uvGridNodesSparsed[i][j].uvInit,  uvGridNodesSparsed[i][j].isContourPoint ? Color_Red : Color_Blue, "uvInit");
+      m_plotter.DRAW_POINT(uvGridNodesSparsed[i][j].xyzInit, uvGridNodesSparsed[i][j].isContourPoint ? Color_Red : Color_Blue, "xyzInit");
+    }
+  }*/
 
   /* =========================================================
    *  Correct 3D positions of sampled nodes according to mesh
@@ -573,7 +576,6 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>& con
 #if defined DRAW_DEBUG
         m_plotter.DRAW_POINT(uvGridNodesSparsed[i][j].xyzInit, Color_Red, "cannot_precise");
 #endif
-        continue;
       }
       //
       if ( isOk1 && isOk2 )
@@ -588,6 +590,8 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>& con
         uvGridNodesSparsed[i][j].xyz = xyz1;
       else if ( isOk2 )
         uvGridNodesSparsed[i][j].xyz = xyz2;
+      else
+        uvGridNodesSparsed[i][j].xyz = uvGridNodesSparsed[i][j].xyzInit;
     }
   }
 
@@ -619,9 +623,11 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>& con
     std::vector<mobius::xyz> isoPoints;
 
     for ( size_t j = 0; j < uvGridNodesSparsed[i].size(); ++j )
+    {
       isoPoints.push_back( mobius::xyz( uvGridNodesSparsed[i][j].xyz.X(),
                                         uvGridNodesSparsed[i][j].xyz.Y(),
                                         uvGridNodesSparsed[i][j].xyz.Z() ) );
+    }
 
     mobGrid.push_back(isoPoints);
   }
@@ -648,6 +654,12 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>& con
   mobius::cascade_BSplineSurface toOpenCascade(mobSurf);
   toOpenCascade.DirectConvert();
   result = toOpenCascade.GetOpenCascadeSurface();
+
+  // Extend in all parametric directions
+  //GeomLib::ExtendSurfByLength(result, size*0.1, 1, 1, 0);
+  //GeomLib::ExtendSurfByLength(result, size*0.1, 1, 1, 1);
+  //GeomLib::ExtendSurfByLength(result, size*0.1, 1, 0, 0);
+  //GeomLib::ExtendSurfByLength(result, size*0.1, 1, 0, 1);
 
 #if defined DRAW_DEBUG
   m_plotter.DRAW_SURFACE(result, Color_White, "surf");

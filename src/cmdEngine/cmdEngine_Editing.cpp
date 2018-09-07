@@ -1369,13 +1369,13 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   mobius::cascade_BSplineSurface toOpenCascade(mobResult);
   toOpenCascade.DirectConvert();
   result = toOpenCascade.GetOpenCascadeSurface();
+
+  // Draw result.
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], result, (resEnergy < initEnergy) ? Color_Green : Color_Red);
 #else
   interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
   return TCL_ERROR;
 #endif
-
-  // Draw result.
-  interp->GetPlotter().REDRAW_SURFACE(argv[1], result, (resEnergy < initEnergy) ? Color_Green : Color_Red);
 
   return TCL_OK;
 }

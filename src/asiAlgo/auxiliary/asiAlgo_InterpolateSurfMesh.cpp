@@ -36,9 +36,11 @@
 #include <asiAlgo_HitFacet.h>
 #include <asiAlgo_PlaneOnPoints.h>
 
-// Mobius includes
-#include <mobius/cascade_BSplineSurface.h>
-#include <mobius/geom_InterpolateSurface.h>
+#ifdef USE_MOBIUS
+  // Mobius includes
+  #include <mobius/cascade_BSplineSurface.h>
+  #include <mobius/geom_InterpolateSurface.h>
+#endif
 
 // OCCT includes
 #include <Bnd_Box.hxx>
@@ -251,6 +253,7 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>&   c
                                                   const int                    degV,
                                                   Handle(Geom_BSplineSurface)& result)
 {
+#ifdef USE_MOBIUS
   // Get center point and bounding box of the contour.
   gp_XYZ  P_center;
   Bnd_Box contourAABB;
@@ -666,4 +669,15 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>&   c
 #endif
 
   return true;
+
+#else
+  asiAlgo_NotUsed(contour);
+  asiAlgo_NotUsed(grainCoeff);
+  asiAlgo_NotUsed(degU);
+  asiAlgo_NotUsed(degV);
+  asiAlgo_NotUsed(result);
+
+  m_progress.SendLogMessage(LogErr(Normal) << "Mobius library is not available.");
+  return false;
+#endif
 }

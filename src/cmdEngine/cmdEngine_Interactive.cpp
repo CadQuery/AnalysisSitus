@@ -45,9 +45,11 @@
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
 
-// Mobius includes
-#include <mobius/cascade_BSplineSurface.h>
-#include <mobius/geom_InterpolateSurface.h>
+#ifdef USE_MOBIUS
+  // Mobius includes
+  #include <mobius/cascade_BSplineSurface.h>
+  #include <mobius/geom_InterpolateSurface.h>
+#endif
 
 // OCCT includes
 #include <BRepBndLib.hxx>

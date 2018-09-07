@@ -1483,51 +1483,8 @@ int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-#include <math_GaussSetIntegration.hxx>
-#include <math_FunctionSet.hxx>
-
-//! Test integrand as multivariate function {x y^2}.
-class test_Integral_XYSquared : public math_FunctionSet 
-{
-public:
-
-  //! Complete ctor.
-  test_Integral_XYSquared(const std::vector<double>& a,
-                          const std::vector<double>& b)
-  //
-  : m_a (a),
-    m_b (b)
-  {}
-
-public:
-
-  virtual int NbVariables() const
-  {
-    return 2;
-  }
-
-  virtual int NbEquations() const
-  {
-    return 1;
-  }
-
-  virtual bool Value (const math_Vector& X, math_Vector& F)
-  {
-    F(1) = X(1)*X(2)*X(2);
-    return true;
-  }
-
-private:
-
-  test_Integral_XYSquared(const test_Integral_XYSquared&) = delete;
-  void operator=(const test_Integral_XYSquared&) = delete;
-
-private:
-
-  const std::vector<double>& m_a; //!< Min variable.
-  const std::vector<double>& m_b; //!< Max variable.
-
-};
+#include <Geom_BezierCurve.hxx>
+#include <GeomAPI_ExtremaCurveCurve.hxx>
 
 int MISC_Test(const Handle(asiTcl_Interp)& interp,
               int                          argc,
@@ -1538,26 +1495,43 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  const std::vector<double> a = {0, 1};
-  const std::vector<double> b = {0, 2};
+  TColgp_Array1OfPnt poles1(1, 5);
+  poles1(1) = gp_Pnt(0,0,0);
+  poles1(2) = gp_Pnt(1,2,0);
+  poles1(3) = gp_Pnt(2,0,0);
+  poles1(4) = gp_Pnt(3,1,0);
+  poles1(5) = gp_Pnt(4,0,0);
 
-  test_Integral_XYSquared Func(a, b);
-  //
-  math_IntegerVector Order(1, 2);
-  Order(1) = 60;
-  Order(2) = 60;
-  //
-  math_Vector Lower(1, 2);
-  Lower(1) = a[0];
-  Lower(2) = a[1];
-  //
-  math_Vector Upper(1, 2);
-  Upper(1) = b[0];
-  Upper(2) = b[1];
+  TColgp_Array1OfPnt poles2(1, 5);
+  poles2(1) = gp_Pnt(0,2,0);
+  poles2(2) = gp_Pnt(1,1,0);
+  poles2(3) = gp_Pnt(2,2,0);
+  poles2(4) = gp_Pnt(3,1,0);
+  poles2(5) = gp_Pnt(4,2,0);
 
-  math_GaussSetIntegration Integral(Func, Lower, Upper, Order);
+  Handle(Geom_BezierCurve) c1 = new Geom_BezierCurve(poles1);
+  Handle(Geom_BezierCurve) c2 = new Geom_BezierCurve(poles2);
   //
-  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Integral value: %1." << Integral.Value()(1) );
+  interp->GetPlotter().REDRAW_CURVE("c1", c1, Color_Red);
+  interp->GetPlotter().REDRAW_CURVE("c2", c2, Color_Magenta);
+
+  GeomAPI_ExtremaCurveCurve extCC(c1, c2);
+  //
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Num extrema: %1." << extCC.NbExtrema() );
+
+  for ( int i = 1; i <= extCC.NbExtrema(); ++i )
+  {
+    double u1, u2;
+    extCC.Parameters(i, u1, u2);
+
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "[sol. %1] Param on 1-st curve: %2." << i << u1 );
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "[sol. %1] Param on 2-nd curve: %2." << i << u2 );
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "[sol. %1] Distance: %2." << i << extCC.Distance(i) );
+
+    interp->GetPlotter().REDRAW_POINT("c1_p", c1->Value(u1), Color_Yellow);
+    interp->GetPlotter().REDRAW_POINT("c2_p", c2->Value(u2), Color_Yellow);
+    interp->GetPlotter().REDRAW_LINK("c1_c2", c1->Value(u1), c2->Value(u2), Color_Yellow);
+  }
 
   return TCL_OK;
 }

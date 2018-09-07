@@ -86,20 +86,20 @@ public:
 
 public slots:
 
-  void onResetView();
-  void onSubShapesPicked();
-  void onWhateverPicked();
-  void onFindFace();
-  void onFindEdge();
-  void onRefineTessellation();
-  void onContextMenu(const QPoint&);
-  void onDefaultView();
-  void onBackView();
-  void onBottomView();
-  void onFrontView();
-  void onLeftView();
-  void onRightView();
-  void onTopView();
+  asiUI_EXPORT void onResetView();
+  asiUI_EXPORT void onSubShapesPicked();
+  asiUI_EXPORT void onWhateverPicked();
+  asiUI_EXPORT void onFindFace();
+  asiUI_EXPORT void onFindEdge();
+  asiUI_EXPORT void onRefineTessellation();
+  asiUI_EXPORT void onContextMenu(const QPoint&);
+  asiUI_EXPORT void onDefaultView();
+  asiUI_EXPORT void onBackView();
+  asiUI_EXPORT void onBottomView();
+  asiUI_EXPORT void onFrontView();
+  asiUI_EXPORT void onLeftView();
+  asiUI_EXPORT void onRightView();
+  asiUI_EXPORT void onTopView();
 
 signals:
 

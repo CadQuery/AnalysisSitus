@@ -34,8 +34,15 @@
 // OCCT includes
 #include <BRepMesh_IncrementalMesh.hxx>
 #include <BRepTools.hxx>
+#include <OSD.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
+#include <Standard_ErrorHandler.hxx>
+
+#undef FILE_DEBUG
+#if defined FILE_DEBUG
+  #pragma message("===== warning: FILE_DEBUG is enabled")
+#endif
 
 //! Generates surface mesh by native OCCT tools.
 //! \param shape                 [in]  shape to tessellate.
@@ -54,6 +61,20 @@ bool asiAlgo_MeshGen::DoNative(const TopoDS_Shape& shape,
   // Tessellate
   try
   {
+    OCC_CATCH_SIGNALS
+
+#if defined FILE_DEBUG
+    static int callId = 0;
+    callId++;
+
+    std::cout << "Running b-rep mesh: " << callId << std::endl;
+    TCollection_AsciiString filename("C:/users/ssv/desktop/tmp/");
+    filename += callId;
+    filename += ".brep";
+    //
+    BRepTools::Write(shape, filename.ToCString());
+#endif
+
     // Notice that parallel mode is enabled
     BRepMesh_IncrementalMesh MeshGen(shape, linearDeflection, 0, angularDeflection_deg, 1);
   }

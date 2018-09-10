@@ -772,6 +772,12 @@ void asiVisu_ShapeRobustTessellator::addCurve(const Handle(Geom_Curve)&    curve
                                               const vtkIdType              shapeId,
                                               const asiVisu_ShapePrimitive scType)
 {
+  if ( tMin > tMax )
+  {
+    m_progress.SendLogMessage(LogWarn(Normal) << "Skip curve with invalid parametric range.");
+    return; // Protect from crashes.
+  }
+
   // Discretize
   GeomAdaptor_Curve gac(curve, tMin, tMax);
   GCPnts_QuasiUniformDeflection Defl(gac, ISOSDEFLECTION);

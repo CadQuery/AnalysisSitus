@@ -69,6 +69,8 @@ public:
            asiUI_ObjectBrowser*                       pBrowser)
   //
   : ActAPI_IPlotter (),
+    m_bBrowserOn    (true),
+    m_bVisuOn       (true),
     m_model         (model),
     m_prsMgr3d      (prsMgr3d),
     m_prsMgr2d      (prsMgr2d),
@@ -444,6 +446,18 @@ public:
                     const Quantity_Color&,
                     const TCollection_AsciiString&);
 
+  asiUI_EXPORT void
+    BROWSER_OFF();
+
+  asiUI_EXPORT void
+    BROWSER_ON();
+
+  asiUI_EXPORT void
+    VISUALIZATION_OFF();
+
+  asiUI_EXPORT void
+    VISUALIZATION_ON();
+
 public:
 
   //! Initializes imperative plotter.
@@ -617,10 +631,12 @@ protected:
 
 protected:
 
-  Handle(asiEngine_Model)             m_model;    //!< Data Model instance.
-  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr3d; //!< Presentation manager 3D.
-  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr2d; //!< Presentation manager 2D.
-  asiUI_ObjectBrowser*                m_pBrowser; //!< Object browser.
+  bool                                m_bBrowserOn; //!< Flag to enable/disable plotting.
+  bool                                m_bVisuOn;    //!< Flag to enable/disable plotting.
+  Handle(asiEngine_Model)             m_model;      //!< Data Model instance.
+  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr3d;   //!< Presentation manager 3D.
+  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr2d;   //!< Presentation manager 2D.
+  asiUI_ObjectBrowser*                m_pBrowser;   //!< Object browser.
 
 };
 

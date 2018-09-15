@@ -757,6 +757,34 @@ void asiUI_IV::DRAW_ASI_POINTS(const std::vector<gp_Pnt2d>&   points,
 
 //---------------------------------------------------------------------------//
 
+void asiUI_IV::BROWSER_OFF()
+{
+  m_bBrowserOn = false;
+}
+
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::BROWSER_ON()
+{
+  m_bBrowserOn = true;
+}
+
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::VISUALIZATION_OFF()
+{
+  m_bVisuOn = false;
+}
+
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::VISUALIZATION_ON()
+{
+  m_bVisuOn = true;
+}
+
+//---------------------------------------------------------------------------//
+
 void asiUI_IV::visualize(const bool                  is2d,
                          const Handle(ActAPI_INode)& node,
                          const bool                  hasColor,
@@ -764,13 +792,16 @@ void asiUI_IV::visualize(const bool                  is2d,
                          const double                opacity,
                          const bool                  isWireframe) const
 {
+  if ( m_bBrowserOn )
+    m_pBrowser->Populate();
+
   if ( !this->prsManager(is2d)->IsPresented(node) )
     this->prsManager(is2d)->SetPresentation(node);
 
-  // Set visualization properties
+  // Set visualization properties.
   Handle(asiVisu_Prs) prs = this->prsManager(is2d)->GetPresentation(node);
 
-  // Specific treatment for predefined pipelines
+  // Specific treatment for predefined pipelines.
   if ( prs->IsKind( STANDARD_TYPE(asiVisu_IVTopoItemPrs) ) )
   {
     Handle(asiVisu_IVTopoItemPrs)
@@ -785,7 +816,7 @@ void asiUI_IV::visualize(const bool                  is2d,
       return;
     }
 
-    // Configure shape visualization
+    // Configure shape visualization.
     TopoDS_Shape shape = Handle(asiData_IVTopoItemNode)::DownCast(node)->GetShape();
     //
     if ( isWireframe )
@@ -793,7 +824,7 @@ void asiUI_IV::visualize(const bool                  is2d,
       pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Wireframe);
     }
 
-    // Process color
+    // Process color.
     if ( hasColor )
     {
       pl->Mapper()->ScalarVisibilityOff();
@@ -809,7 +840,7 @@ void asiUI_IV::visualize(const bool                  is2d,
   }
   else
   {
-    // Set common properties for all pipelines
+    // Set common properties for all pipelines.
     Handle(asiVisu_HPipelineList) pipelines = prs->GetPipelineList();
     for ( int p = 1; p <= pipelines->Length(); ++p )
     {
@@ -825,10 +856,9 @@ void asiUI_IV::visualize(const bool                  is2d,
     }
   }
 
-  // Update UI
-  this->prsManager(is2d)->Actualize(node.get(), false, false, true);
-  //
-  m_pBrowser->Populate();
+  // Visualize.
+  if ( m_bVisuOn )
+    this->prsManager(is2d)->Actualize(node.get(), false, false, true);
 }
 
 //---------------------------------------------------------------------------//

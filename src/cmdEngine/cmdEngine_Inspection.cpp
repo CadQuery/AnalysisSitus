@@ -52,6 +52,7 @@
 // asiUI includes
 #include <asiUI_CurvaturePlot.h>
 #include <asiUI_DialogEuler.h>
+#include <asiUI_IV.h>
 
 #ifdef USE_MOBIUS
   #include <mobius/cascade_BSplineCurve3D.h>
@@ -79,6 +80,13 @@ int ENGINE_Explode(const Handle(asiTcl_Interp)& interp,
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
+
+  // Disable visualization for efficiency
+  Handle(asiUI_IV)
+    IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Plotter() );
+  //
+  IV->BROWSER_OFF();
+  IV->VISUALIZATION_OFF();
 
   // Get Part Node and shape
   Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
@@ -140,6 +148,13 @@ int ENGINE_Explode(const Handle(asiTcl_Interp)& interp,
       interp->GetPlotter().DRAW_SHAPE(subShape, name);
     }
   }
+
+  // Enable back UI updates.
+  IV->BROWSER_ON();
+  IV->VISUALIZATION_ON();
+
+  // Update browser.
+  cmdEngine::cf->ObjectBrowser->Populate();
 
   return TCL_OK;
 }
@@ -302,9 +317,9 @@ int ENGINE_FaceAddr(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_Dist(const Handle(asiTcl_Interp)& interp,
-                int                          argc,
-                const char**                 argv)
+int ENGINE_CheckDist(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
 {
   if ( argc != 2 )
   {
@@ -2129,12 +2144,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_FaceAddr);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("dist",
+  interp->AddCommand("check-dist",
     //
-    "dist varName\n"
+    "check-dist varName\n"
     "\t Computes distance between the part and the given topological object.",
     //
-    __FILE__, group, ENGINE_Dist);
+    __FILE__, group, ENGINE_CheckDist);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-curvature",

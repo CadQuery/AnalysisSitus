@@ -102,6 +102,10 @@
 
 #define TIMER_COUT_RESULT_NOTIFIER(Notifier, Msg) \
   { \
+    const int __aux_memcheck_delta = __aux_debug_memcheck_after - __aux_debug_memcheck_before; \
+    TCollection_AsciiString __aux_memcheck_delta_str; \
+    if ( __aux_memcheck_delta > 0 ) __aux_memcheck_delta_str = "+"; \
+    __aux_memcheck_delta_str += __aux_memcheck_delta; \
     Notifier->SendLogMessage(LogInfo(Normal) << "============================================="); \
     Notifier->SendLogMessage(LogInfo(Normal) << "%1" << Msg); \
     Notifier->SendLogMessage(LogInfo(Normal) << "---------------------------------------------"); \
@@ -112,7 +116,7 @@
     Notifier->SendLogMessage(LogInfo(Normal) << "\tMemory before:           %1 MiB" << __aux_debug_memcheck_before); \
     Notifier->SendLogMessage(LogInfo(Normal) << "\tMemory after [delta]:    %1 MiB [%2]" \
                                              << __aux_debug_memcheck_after \
-                                             << (__aux_debug_memcheck_after - __aux_debug_memcheck_before) ); \
+                                             << __aux_memcheck_delta_str); \
     Notifier->SendLogMessage(LogInfo(Normal) << "... Finished."); \
   }
 

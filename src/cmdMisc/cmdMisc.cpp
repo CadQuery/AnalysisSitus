@@ -1483,9 +1483,6 @@ int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-#include <Geom_BezierCurve.hxx>
-#include <GeomAPI_ExtremaCurveCurve.hxx>
-
 int MISC_Test(const Handle(asiTcl_Interp)& interp,
               int                          argc,
               const char**                 argv)
@@ -1495,44 +1492,7 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  TColgp_Array1OfPnt poles1(1, 5);
-  poles1(1) = gp_Pnt(0,0,0);
-  poles1(2) = gp_Pnt(1,2,0);
-  poles1(3) = gp_Pnt(2,0,0);
-  poles1(4) = gp_Pnt(3,1,0);
-  poles1(5) = gp_Pnt(4,0,0);
-
-  TColgp_Array1OfPnt poles2(1, 5);
-  poles2(1) = gp_Pnt(0,2,0);
-  poles2(2) = gp_Pnt(1,1,0);
-  poles2(3) = gp_Pnt(2,2,0);
-  poles2(4) = gp_Pnt(3,1,0);
-  poles2(5) = gp_Pnt(4,2,0);
-
-  Handle(Geom_BezierCurve) c1 = new Geom_BezierCurve(poles1);
-  Handle(Geom_BezierCurve) c2 = new Geom_BezierCurve(poles2);
-  //
-  interp->GetPlotter().REDRAW_CURVE("c1", c1, Color_Red);
-  interp->GetPlotter().REDRAW_CURVE("c2", c2, Color_Magenta);
-
-  GeomAPI_ExtremaCurveCurve extCC(c1, c2);
-  //
-  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Num extrema: %1." << extCC.NbExtrema() );
-
-  for ( int i = 1; i <= extCC.NbExtrema(); ++i )
-  {
-    double u1, u2;
-    extCC.Parameters(i, u1, u2);
-
-    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "[sol. %1] Param on 1-st curve: %2." << i << u1 );
-    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "[sol. %1] Param on 2-nd curve: %2." << i << u2 );
-    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "[sol. %1] Distance: %2." << i << extCC.Distance(i) );
-
-    interp->GetPlotter().REDRAW_POINT("c1_p", c1->Value(u1), Color_Yellow);
-    interp->GetPlotter().REDRAW_POINT("c2_p", c2->Value(u2), Color_Yellow);
-    interp->GetPlotter().REDRAW_LINK("c1_c2", c1->Value(u1), c2->Value(u2), Color_Yellow);
-  }
-
+  
   return TCL_OK;
 }
 

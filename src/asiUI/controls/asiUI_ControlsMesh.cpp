@@ -129,7 +129,7 @@ void asiUI_ControlsMesh::onLoadStl()
   // Load mesh
   Handle(Poly_Triangulation) triangulation;
   //
-  if ( !asiAlgo_Utils::ReadStl(QStr2AsciiStr(filename), triangulation) )
+  if ( !asiAlgo_Utils::ReadStl(QStr2AsciiStr(filename), triangulation, m_notifier) )
   {
     m_notifier.SendLogMessage( LogErr(Normal) << "Cannot read STL file" );
     return;

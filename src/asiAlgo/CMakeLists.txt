@@ -305,9 +305,10 @@ set (OCCT_LIB_FILES
 #------------------------------------------------------------------------------
 if (USE_MOBIUS)
   set (MOBIUS_LIB_FILES
+    mobiusCore
+    mobiusPoly
     mobiusBSpl
     mobiusCascade
-    mobiusCore
     mobiusGeom
   )
 endif()

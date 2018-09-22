@@ -389,10 +389,12 @@ namespace asiAlgo_Utils
   //! Reads STL triangulation from file.
   //! \param[in]  filename      source filename.
   //! \param[out] triangulation output triangulation.
+  //! \param[in]  progress      progress notifier.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     ReadStl(const TCollection_AsciiString& filename,
-            Handle(Poly_Triangulation)&    triangulation);
+            Handle(Poly_Triangulation)&    triangulation,
+            ActAPI_ProgressEntry           progress);
 
   //! Writes triangulation to STL file.
   //! \param[in] triangulation triangulation to write.

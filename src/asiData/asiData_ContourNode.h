@@ -122,9 +122,17 @@ public:
     GetPoints(std::vector<gp_XYZ>& pts,
               gp_XYZ&              center) const;
 
+  asiData_EXPORT gp_XYZ
+    GetPoint(const int zeroBasedIndex) const;
+
   asiData_EXPORT void
     ReplacePoint(const int     zeroBasedIndex,
                  const gp_Pnt& point);
+
+  asiData_EXPORT void
+    ReplacePoint(const int     zeroBasedIndex,
+                 const gp_Pnt& point,
+                 const int     face_idx);
 
   asiData_EXPORT void
     SetFaces(const Handle(HIntArray)& indices);
@@ -132,7 +140,7 @@ public:
   asiData_EXPORT Handle(HIntArray)
     GetFaces() const;
 
-  asiData_EXPORT void
+  asiData_EXPORT int
     AddPoint(const gp_XYZ& point,
              const int     face_idx);
 

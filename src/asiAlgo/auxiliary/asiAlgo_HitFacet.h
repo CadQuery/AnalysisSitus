@@ -60,13 +60,14 @@ public:
     operator() (const gp_Lin& ray, int& facet_index, gp_XYZ& result);
 
   asiAlgo_EXPORT double
-    operator() (const gp_Pnt& P, const double membership_prec, int& facet_index);
+    operator() (const gp_Pnt& P, const double membership_prec, gp_Pnt& P_proj, int& facet_index);
 
 protected:
 
   double testLeaf(const gp_Pnt&    P,
                   const BVH_Vec4i& leaf,
                   const double     membership_prec,
+                  gp_Pnt&          P_proj,
                   int&             resultFacet,
                   bool&            isInside) const;
 

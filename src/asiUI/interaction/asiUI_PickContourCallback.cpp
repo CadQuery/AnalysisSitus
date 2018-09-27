@@ -112,7 +112,30 @@ void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
     // Modify data
     m_model->OpenCommand();
     {
-      contour_n->AddPoint(hit, fidx);
+      const int nextPtIndex = contour_n->AddPoint(hit, fidx);
+
+      // Experiment with middle point
+      if ( nextPtIndex > 0 )
+      {
+        // Get previous point
+        const gp_XYZ prevPt = contour_n->GetPoint(nextPtIndex - 1);
+
+        // Get midpoint
+        const gp_XYZ midPt = 0.5*(hit + prevPt);
+
+        // Hit facet for the midpoint
+        gp_Pnt hitMidPt;
+        int mid_facet_idx;
+        if ( !HitFacet(midPt, 1.0e-3, hitMidPt, mid_facet_idx) )
+        {
+          m_notifier.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet for the middle point.");
+        }
+        else
+        {
+          contour_n->ReplacePoint(nextPtIndex, hitMidPt, mid_facet_idx);
+          contour_n->AddPoint(hit, fidx);
+        }
+      }
     }
     m_model->CommitCommand();
     //

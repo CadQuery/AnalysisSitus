@@ -149,6 +149,25 @@ void asiData_ContourNode::GetPoints(std::vector<gp_XYZ>& pts,
   center = P_center;
 }
 
+//! Returns a point by its zero-based index in the persistent array.
+//! \param[in] zeroBasedIndex 0-based index of the point to access.
+//! \return coordinates of the point in question.
+gp_XYZ asiData_ContourNode::GetPoint(const int zeroBasedIndex) const
+{
+  // Get array of coordinates
+  Handle(ActData_RealArrayParameter)
+    coords_p = ActParamTool::AsRealArray( this->Parameter(PID_Coords) );
+
+  // Construct a point
+  const int startIdx = zeroBasedIndex*3;
+  //
+  gp_XYZ res( coords_p->GetElement(startIdx),
+              coords_p->GetElement(startIdx + 1),
+              coords_p->GetElement(startIdx + 2) );
+
+  return res;
+}
+
 //! Replaces a point with the given 0-based index with the passed
 //! coordinates.
 //! \param[in] zeroBasedIndex 0-based index of the target point.
@@ -167,6 +186,32 @@ void asiData_ContourNode::ReplacePoint(const int     zeroBasedIndex,
   coords_p->SetElement( startIdx + 2, point.Z() );
 }
 
+//! Replaces a point with the given 0-based index with the passed
+//! coordinates.
+//! \param[in] zeroBasedIndex 0-based index of the target point.
+//! \param[in] point          new coordinates.
+//! \param[in] face_idx       face index to set.
+void asiData_ContourNode::ReplacePoint(const int     zeroBasedIndex,
+                                       const gp_Pnt& point,
+                                       const int     face_idx)
+{
+  // Get array of coordinates
+  Handle(ActData_RealArrayParameter)
+    coords_p = ActParamTool::AsRealArray( this->Parameter(PID_Coords) );
+
+  // Change values in the Real Array Parameter
+  const int startIdx = zeroBasedIndex*3;
+  coords_p->SetElement( startIdx,     point.X() );
+  coords_p->SetElement( startIdx + 1, point.Y() );
+  coords_p->SetElement( startIdx + 2, point.Z() );
+
+  // Change face index
+  Handle(HIntArray)
+    faces = ActParamTool::AsIntArray( this->Parameter(PID_Faces) )->GetArray();
+  //
+  faces->SetValue(zeroBasedIndex, face_idx);
+}
+
 //! Sets the array of face indices.
 //! \param[in] indices indices to set.
 void asiData_ContourNode::SetFaces(const Handle(HIntArray)& indices)
@@ -183,8 +228,9 @@ Handle(HIntArray) asiData_ContourNode::GetFaces() const
 //! Adds another point to the contour.
 //! \param[in] point    point to add.
 //! \param[in] face_idx index of the host face.
-void asiData_ContourNode::AddPoint(const gp_XYZ& point,
-                                   const int     face_idx)
+//! \return 0-based index of the just added point.
+int asiData_ContourNode::AddPoint(const gp_XYZ& point,
+                                  const int     face_idx)
 {
   // Change the array of coordinates
   Handle(HRealArray)
@@ -203,6 +249,10 @@ void asiData_ContourNode::AddPoint(const gp_XYZ& point,
   faces = ActAux_ArrayUtils::Append<HIntArray, Handle(HIntArray), int>(faces, face_idx);
   //
   this->SetFaces(faces);
+
+  // Get index of the just added point
+  const int newIndex = coords->Length() / 3 - 1;
+  return newIndex;
 }
 
 //! Sets closeness property for the contour.

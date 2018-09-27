@@ -166,10 +166,12 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
 //! Performs hit check for a point.
 //! \param[in]  P               probe point.
 //! \param[in]  membership_prec precision of membership test.
+//! \param[out] P_proj          projected point.
 //! \param[out] facet_index     nearest facet.
 //! \return distance to the nearest facet.
 double asiAlgo_HitFacet::operator()(const gp_Pnt& P,
                                     const double  membership_prec,
+                                    gp_Pnt&       P_proj,
                                     int&          facet_index)
 {
   const opencascade::handle< BVH_Tree<double, 4> >& bvh = m_facets->BVH();
@@ -195,13 +197,15 @@ double asiAlgo_HitFacet::operator()(const gp_Pnt& P,
       // If we are here, then we are close to solution. It is a right
       // time now to perform a precise check
 
-      int  facet_candidate = -1;
-      bool isInside        = false;
+      int    facet_candidate = -1;
+      bool   isInside        = false;
+      gp_Pnt pproj;
       //
-      const double dist = this->testLeaf(P, nodeData, membership_prec, facet_candidate, isInside);
+      const double dist = this->testLeaf(P, nodeData, membership_prec, pproj, facet_candidate, isInside);
       //
       if ( isInside && dist < minDist )
       {
+        P_proj      = pproj;
         facet_index = facet_candidate;
         minDist     = dist;
       }
@@ -256,12 +260,14 @@ double asiAlgo_HitFacet::operator()(const gp_Pnt& P,
 //! \param[in]  P               probe point.
 //! \param[in]  leaf            leaf node of the BVH tree.
 //! \param[in]  membership_prec precision of PMC.
+//! \param[out] P_proj          projected point.
 //! \param[out] resultFacet     found facet which yields the min distance.
 //! \param[out] isInside        indicates whether a point lies inside the triangle.
 //! \return distance from the point P to the facets of interest.
 double asiAlgo_HitFacet::testLeaf(const gp_Pnt&    P,
                                   const BVH_Vec4i& leaf,
                                   const double     membership_prec,
+                                  gp_Pnt&          P_proj,
                                   int&             resultFacet,
                                   bool&            isInside) const
 {
@@ -302,6 +308,7 @@ double asiAlgo_HitFacet::testLeaf(const gp_Pnt&    P,
 
     if ( this->isInsideBarycentric(pproj, p0, p1, p2, membership_prec) && Abs(dist) <= minDist )
     {
+      P_proj      = pproj;
       isInside    = true;
       minDist     = Abs(dist);
       resultFacet = fidx;

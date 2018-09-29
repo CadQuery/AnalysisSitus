@@ -420,13 +420,25 @@ bool asiAlgo_BVHFacets::addTriangulation(const Handle(Poly_Triangulation)& trian
     gp_Pnt P2 = triangulation->Nodes().Value(n3);
     P2.Transform(loc);
 
-    // Create a new facet and store it in the internal collection
+    // Create a new facet
     t_facet facet(face_idx);
-    //
+
+    // Initialize nodes
     facet.P0 = BVH_Vec4d(P0.X(), P0.Y(), P0.Z(), 0.0);
     facet.P1 = BVH_Vec4d(P1.X(), P1.Y(), P1.Z(), 0.0);
     facet.P2 = BVH_Vec4d(P2.X(), P2.Y(), P2.Z(), 0.0);
+
+    // Initialize normal
+    gp_Vec V1(P0, P1); V1.Normalize();
+    gp_Vec V2(P0, P2); V2.Normalize();
+    facet.N = V1.Crossed(V2);
     //
+    if ( facet.N.SquareMagnitude() < 1e-8 )
+      continue; // Skip invalid facet
+    //
+    facet.N.Normalize();
+
+    // Store facet in the internal collection
     m_facets.push_back(facet);
   }
 

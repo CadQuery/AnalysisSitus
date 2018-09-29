@@ -50,7 +50,7 @@ typedef int BVH_StackItem;
 
 //-----------------------------------------------------------------------------
 
-//! ctor accepting facets in form of accelerating structure. Initialized once,
+//! Ctor accepting facets in form of accelerating structure. Initialized once,
 //! this utility may perform multiple tests for different probe rays.
 //! \param[in] facets   BVH-based structure of facets to test.
 //! \param[in] progress progress notifier.
@@ -58,8 +58,7 @@ typedef int BVH_StackItem;
 asiAlgo_HitFacet::asiAlgo_HitFacet(const Handle(asiAlgo_BVHFacets)& facets,
                                    ActAPI_ProgressEntry             progress,
                                    ActAPI_PlotterEntry              plotter)
-: ActAPI_IAlgorithm(progress, plotter),
-  m_facets(facets)
+: asiAlgo_BVHAlgo(facets, progress, plotter)
 {}
 
 //-----------------------------------------------------------------------------
@@ -71,7 +70,7 @@ asiAlgo_HitFacet::asiAlgo_HitFacet(const Handle(asiAlgo_BVHFacets)& facets,
 //! \return true in case of success, false -- otherwise.
 bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
                                   int&          facet_index,
-                                  gp_XYZ&       result)
+                                  gp_XYZ&       result) const
 {
   const opencascade::handle< BVH_Tree<double, 4> >& bvh = m_facets->BVH();
   if ( bvh.IsNull() )
@@ -172,7 +171,7 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
 double asiAlgo_HitFacet::operator()(const gp_Pnt& P,
                                     const double  membership_prec,
                                     gp_Pnt&       P_proj,
-                                    int&          facet_index)
+                                    int&          facet_index) const
 {
   const opencascade::handle< BVH_Tree<double, 4> >& bvh = m_facets->BVH();
   if ( bvh.IsNull() )
@@ -217,8 +216,8 @@ double asiAlgo_HitFacet::operator()(const gp_Pnt& P,
       const BVH_Vec4d& minCorner_Right = bvh->MinPoint( nodeData.z() );
       const BVH_Vec4d& maxCorner_Right = bvh->MaxPoint( nodeData.z() );
 
-      const bool isLeftOut  = this->isOut(P, minCorner_Left, maxCorner_Left, intersectPrec);
-      const bool isRightOut = this->isOut(P, minCorner_Right, maxCorner_Right, intersectPrec);
+      const bool isLeftOut  = asiAlgo_BVHAlgo::isOut(minCorner_Left, maxCorner_Left, P, intersectPrec);
+      const bool isRightOut = asiAlgo_BVHAlgo::isOut(minCorner_Right, maxCorner_Right, P, intersectPrec);
 
       if ( isLeftOut )
         it.BlockLeft();
@@ -484,36 +483,6 @@ bool asiAlgo_HitFacet::isOut(const gp_Lin&    L,
     ymax = Max(par1, par2);
   }
   if (ymax < myYmin || myYmax < ymin)
-    return true;
-
-  return false;
-}
-
-//-----------------------------------------------------------------------------
-
-//! Conducts basic intersection test of the given point with respect to the
-//! bounding box defined by its corner points.
-//! \param[in] P      point to test.
-//! \param[in] boxMin lower corner of the box to test.
-//! \param[in] boxMax upper corner of the box to test.
-//! \return true/false.
-bool asiAlgo_HitFacet::isOut(const gp_Pnt&    P,
-                             const BVH_Vec4d& boxMin,
-                             const BVH_Vec4d& boxMax,
-                             const double     prec) const
-{
-  const double x = P.X(),
-               y = P.Y(),
-               z = P.Z();
-  const double xmin = boxMin.x() - prec,
-               ymin = boxMin.y() - prec,
-               zmin = boxMin.z() - prec,
-               xmax = boxMax.x() + prec,
-               ymax = boxMax.y() + prec,
-               zmax = boxMax.z() + prec;
-
-  if ( x < xmin || y < ymin || z < zmin ||
-       x > xmax || y > ymax || z > zmax )
     return true;
 
   return false;

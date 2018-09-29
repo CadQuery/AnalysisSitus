@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_HitFacet.h>
+#include <asiAlgo_ProjectPointOnMesh.h>
 
 // asiUI includes
 #include <asiUI_ViewerPart.h>
@@ -44,6 +45,44 @@
 // OCCT includes
 #include <gp_Lin.hxx>
 
+//-----------------------------------------------------------------------------
+
+void hitMidPoint(asiAlgo_ProjectPointOnMesh&        HitFacet,
+                 const Handle(asiData_ContourNode)& contourNode,
+                 const gp_XYZ&                      prevPt,
+                 const gp_XYZ&                      nextPt)
+{
+  if ( (nextPt - prevPt).Modulus() < 1e-2 )
+    return;
+
+  // Get midpoint.
+  const gp_XYZ midPt = 0.5*(prevPt + nextPt);
+
+  // Hit facet for the midpoint.
+  gp_Pnt hitMidPt = HitFacet.Perform(midPt);
+  int midPtFacetIndex = (HitFacet.GetTriIdx().size() ? HitFacet.GetTriIdx()[0] : -1);
+  //
+  const bool isProjected = (midPtFacetIndex != -1);
+  //if ( !HitFacet(midPt, 1.0e-3, hitMidPt, midPtFacetIndex) )
+  //
+    hitMidPoint(HitFacet, contourNode, prevPt, hitMidPt.XYZ());
+  //}
+  //else
+  //{
+  if ( isProjected )
+  {
+    gp_XYZ prevPersistent = contourNode->GetPoint(contourNode->GetNumPoints() - 1);
+
+    if ( (prevPersistent - hitMidPt.XYZ()).Modulus() > 1.0 )
+      contourNode->AddPoint(hitMidPt.XYZ(), midPtFacetIndex);
+  }
+
+  hitMidPoint(HitFacet, contourNode, hitMidPt.XYZ(), nextPt);
+  //}
+}
+
+//-----------------------------------------------------------------------------
+
 //! Instantiation routine.
 //! \return instance of the callback class.
 asiUI_PickContourCallback* asiUI_PickContourCallback::New()
@@ -51,11 +90,15 @@ asiUI_PickContourCallback* asiUI_PickContourCallback::New()
   return new asiUI_PickContourCallback(NULL);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Constructor accepting owning viewer as a parameter.
 //! \param theViewer [in] owning viewer.
 asiUI_PickContourCallback::asiUI_PickContourCallback(asiUI_Viewer* theViewer)
 : asiUI_ViewerCallback(theViewer)
 {}
+
+//-----------------------------------------------------------------------------
 
 //! Destructor.
 asiUI_PickContourCallback::~asiUI_PickContourCallback()
@@ -80,6 +123,7 @@ void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
   {
     // Prepare a tool to find the intersected facet
     asiAlgo_HitFacet HitFacet(m_bvhs[k], m_notifier, m_plotter);
+    asiAlgo_ProjectPointOnMesh HitFacet2(m_bvhs[k], NULL, NULL);
 
     // Find intersection
     gp_XYZ hit;
@@ -112,30 +156,20 @@ void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
     // Modify data
     m_model->OpenCommand();
     {
-      const int nextPtIndex = contour_n->AddPoint(hit, fidx);
+      const int numContourPts = contour_n->GetNumPoints();
 
       // Experiment with middle point
-      if ( nextPtIndex > 0 )
+      if ( numContourPts > 0 )
       {
         // Get previous point
-        const gp_XYZ prevPt = contour_n->GetPoint(nextPtIndex - 1);
+        const gp_XYZ prevPt = contour_n->GetPoint(numContourPts - 1);
 
-        // Get midpoint
-        const gp_XYZ midPt = 0.5*(hit + prevPt);
-
-        // Hit facet for the midpoint
-        gp_Pnt hitMidPt;
-        int mid_facet_idx;
-        if ( !HitFacet(midPt, 1.0e-3, hitMidPt, mid_facet_idx) )
-        {
-          m_notifier.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet for the middle point.");
-        }
-        else
-        {
-          contour_n->ReplacePoint(nextPtIndex, hitMidPt, mid_facet_idx);
-          contour_n->AddPoint(hit, fidx);
-        }
+        // Add midpoints
+        hitMidPoint(HitFacet2, contour_n, prevPt, hit);
       }
+
+      // Add hitted point
+      contour_n->AddPoint(hit, fidx);
     }
     m_model->CommitCommand();
     //

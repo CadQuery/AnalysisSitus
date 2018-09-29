@@ -115,6 +115,9 @@ public:
   asiData_EXPORT Handle(HRealArray)
     GetCoords() const;
 
+  asiData_EXPORT int
+    GetNumPoints() const;
+
   asiData_EXPORT void
     GetPoints(std::vector<gp_XYZ>& pts) const;
 

@@ -117,6 +117,17 @@ Handle(HRealArray) asiData_ContourNode::GetCoords() const
   return ActParamTool::AsRealArray( this->Parameter(PID_Coords) )->GetArray();
 }
 
+//! \return number of stored points.
+int asiData_ContourNode::GetNumPoints() const
+{
+  Handle(HRealArray) coords = this->GetCoords();
+  //
+  if ( coords.IsNull() )
+    return 0;
+
+  return coords->Length() / 3;
+}
+
 //! Returns poles of the contour.
 //! \param[out] pts poles defined explicitly.
 void asiData_ContourNode::GetPoints(std::vector<gp_XYZ>& pts) const

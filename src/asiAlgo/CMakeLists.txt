@@ -14,6 +14,7 @@ set (H_FILES
 
 set (aux_H_FILES
   auxiliary/asiAlgo_BuildContours.h
+  auxiliary/asiAlgo_BVHAlgo.h
   auxiliary/asiAlgo_BVHFacets.h
   auxiliary/asiAlgo_BVHIterator.h
   auxiliary/asiAlgo_CheckToler.h
@@ -37,10 +38,12 @@ set (aux_H_FILES
   auxiliary/asiAlgo_IntersectSS.h
   auxiliary/asiAlgo_Membership.h
   auxiliary/asiAlgo_PlateOnEdges.h
+  auxiliary/asiAlgo_ProjectPointOnMesh.h
   auxiliary/asiAlgo_QuickHull2d.h
 )
-set (aux_CPP_FILES 
+set (aux_CPP_FILES
   auxiliary/asiAlgo_BuildContours.cpp
+  auxiliary/asiAlgo_BVHAlgo.cpp
   auxiliary/asiAlgo_BVHFacets.cpp
   auxiliary/asiAlgo_BVHIterator.cpp
   auxiliary/asiAlgo_CheckToler.cpp
@@ -59,6 +62,7 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_IntersectCS.cpp
   auxiliary/asiAlgo_IntersectSS.cpp
   auxiliary/asiAlgo_PlateOnEdges.cpp
+  auxiliary/asiAlgo_ProjectPointOnMesh.cpp
   auxiliary/asiAlgo_QuickHull2d.cpp
 )
 

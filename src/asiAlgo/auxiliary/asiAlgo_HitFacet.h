@@ -31,21 +31,16 @@
 #ifndef asiAlgo_HitFacet_h
 #define asiAlgo_HitFacet_h
 
-// Geometry includes
-#include <asiAlgo_BVHFacets.h>
-
-// Active Data includes
-#include <ActAPI_IAlgorithm.h>
-
-DEFINE_STANDARD_HANDLE(asiAlgo_HitFacet, ActAPI_IAlgorithm)
+// asiAlgo includes
+#include <asiAlgo_BVHAlgo.h>
 
 //! Finds a facet which is intersected by the probe ray.
-class asiAlgo_HitFacet : public ActAPI_IAlgorithm
+class asiAlgo_HitFacet : public asiAlgo_BVHAlgo
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_HitFacet, ActAPI_IAlgorithm)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_HitFacet, asiAlgo_BVHAlgo)
 
 public:
 
@@ -57,10 +52,10 @@ public:
 public:
 
   asiAlgo_EXPORT bool
-    operator() (const gp_Lin& ray, int& facet_index, gp_XYZ& result);
+    operator() (const gp_Lin& ray, int& facet_index, gp_XYZ& result) const;
 
   asiAlgo_EXPORT double
-    operator() (const gp_Pnt& P, const double membership_prec, gp_Pnt& P_proj, int& facet_index);
+    operator() (const gp_Pnt& P, const double membership_prec, gp_Pnt& P_proj, int& facet_index) const;
 
 protected:
 
@@ -79,11 +74,6 @@ protected:
                 gp_XYZ&          hitPoint) const;
 
   bool isOut(const gp_Lin&    ray,
-             const BVH_Vec4d& boxMin,
-             const BVH_Vec4d& boxMax,
-             const double     prec) const;
-
-  bool isOut(const gp_Pnt&    P,
              const BVH_Vec4d& boxMin,
              const BVH_Vec4d& boxMax,
              const double     prec) const;
@@ -109,11 +99,6 @@ protected:
                      const gp_XYZ& pntTri3,
                      double&       hitParamNormalized,
                      gp_XYZ&       hitPoint) const;
-
-protected:
-
-  //! Facets in form of acceleration structure.
-  Handle(asiAlgo_BVHFacets) m_facets;
 
 };
 

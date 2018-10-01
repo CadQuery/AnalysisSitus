@@ -358,22 +358,22 @@ std::string asiAlgo_Utils::FaceGeometryName(const TopoDS_Face& face)
 //-----------------------------------------------------------------------------
 
 TCollection_AsciiString
-  asiAlgo_Utils::FeaturAngleToString(const asiAlgo_FeatureAngle angle)
+  asiAlgo_Utils::FeaturAngleToString(const asiAlgo_FeatureAngleType angle)
 {
   TCollection_AsciiString result;
 
   switch ( angle )
   {
-    case Angle_Concave:
+    case FeatureAngleType_Concave:
       result = "concave";
       break;
-    case Angle_Convex:
+    case FeatureAngleType_Convex:
       result = "convex";
       break;
-    case Angle_Smooth:
+    case FeatureAngleType_Smooth:
       result = "smooth";
       break;
-    case Angle_Undefined:
+    case FeatureAngleType_Undefined:
     default:
       result = "undefined";
   }

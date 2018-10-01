@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 March 2016
+// Created on: 01 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,74 +28,50 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_FeatureAttr_h
-#define asiAlgo_FeatureAttr_h
+#ifndef asiAlgo_BlendTopoConditionIsolated_h
+#define asiAlgo_BlendTopoConditionIsolated_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_BlendTopoCondition.h>
 
-// OCCT includes
-#include <Standard_GUID.hxx>
-
-//-----------------------------------------------------------------------------
-
-//! Base class for all feature attributes.
-class asiAlgo_FeatureAttr : public Standard_Transient
+//! Data transfer object for description of isolated blends.
+struct asiAlgo_BlendTopoConditionIsolated : public asiAlgo_BlendTopoCondition
 {
-friend class asiAlgo_AAG;
-
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_FeatureAttr, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_BlendTopoConditionIsolated, asiAlgo_BlendTopoCondition)
 
 public:
 
-  virtual ~asiAlgo_FeatureAttr() {}
+  TopoDS_Face   t1;       //!< Terminating face 1.
+  TopoDS_Face   t2;       //!< Terminating face 2.
+  TopoDS_Edge   s1_t1;    //!< Edge between s1 and t1.
+  TopoDS_Edge   s1_t2;    //!< Edge between s1 and t2.
+  TopoDS_Edge   s2_t1;    //!< Edge between s2 and t1.
+  TopoDS_Edge   s2_t2;    //!< Edge between s2 and t2.
+  TopoDS_Vertex s1_s2_t1; //!< Vertex between s1, s2 and t1.
+  TopoDS_Vertex s1_s2_t2; //!< Vertex between s1, s2 and t2.
 
-public:
-
-  virtual const Standard_GUID&
-    GetGUID() const = 0;
-
-public:
-
-  virtual void Dump(Standard_OStream&) const {}
-
-public:
-
-  //! Hasher for sets.
-  struct t_hasher
+  //! Modified geometry.
+  struct ModifGeom : public asiAlgo_BlendTopoCondition::ModifGeom
   {
-    static int HashCode(const Handle(asiAlgo_FeatureAttr)& attr, const int upper)
-    {
-      return Standard_GUID::HashCode(attr->GetGUID(), upper);
-    }
-
-    static bool IsEqual(const Handle(asiAlgo_FeatureAttr)& attr, const Handle(asiAlgo_FeatureAttr)& other)
-    {
-      return Standard_GUID::IsEqual( attr->GetGUID(), other->GetGUID() );
-    }
+    Handle(Geom_Surface) geom_t1;
+    Handle(Geom_Surface) geom_t2;
+    Handle(Geom_Curve)   geom_s1_t1;
+    Handle(Geom_Curve)   geom_s1_t2;
+    Handle(Geom_Curve)   geom_s2_t1;
+    Handle(Geom_Curve)   geom_s2_t2;
+    gp_Pnt               geom_s1_s2_t1;
+    gp_Pnt               geom_s1_s2_t2;
   };
 
-protected:
-
-  //! Sets back-pointer to AAG.
-  //! \param[in] pAAG owner AAG.
-  void setAAG(asiAlgo_AAG* pAAG)
+  //! \return type of blend condition.
+  virtual asiAlgo_BlendTopoConditionType GetType() const
   {
-    m_pAAG = pAAG;
+    return BlendTopoConditionType_Isolated;
   }
-
-  //! \return back-pointer to the owner AAG.
-  asiAlgo_AAG* getAAG() const
-  {
-    return m_pAAG;
-  }
-
-protected:
-
-  asiAlgo_AAG* m_pAAG; //!< Back-pointer to the owner AAG.
+};
 
 };
 

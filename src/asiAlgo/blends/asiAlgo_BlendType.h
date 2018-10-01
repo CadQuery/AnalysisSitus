@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 March 2016
+// Created on: 01 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,75 +28,19 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_FeatureAttr_h
-#define asiAlgo_FeatureAttr_h
+#ifndef asiAlgo_BlendType_h
+#define asiAlgo_BlendType_h
 
 // asiAlgo includes
 #include <asiAlgo.h>
 
-// OCCT includes
-#include <Standard_GUID.hxx>
-
-//-----------------------------------------------------------------------------
-
-//! Base class for all feature attributes.
-class asiAlgo_FeatureAttr : public Standard_Transient
+//! Blends types.
+enum asiAlgo_BlendType
 {
-friend class asiAlgo_AAG;
-
-public:
-
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_FeatureAttr, Standard_Transient)
-
-public:
-
-  virtual ~asiAlgo_FeatureAttr() {}
-
-public:
-
-  virtual const Standard_GUID&
-    GetGUID() const = 0;
-
-public:
-
-  virtual void Dump(Standard_OStream&) const {}
-
-public:
-
-  //! Hasher for sets.
-  struct t_hasher
-  {
-    static int HashCode(const Handle(asiAlgo_FeatureAttr)& attr, const int upper)
-    {
-      return Standard_GUID::HashCode(attr->GetGUID(), upper);
-    }
-
-    static bool IsEqual(const Handle(asiAlgo_FeatureAttr)& attr, const Handle(asiAlgo_FeatureAttr)& other)
-    {
-      return Standard_GUID::IsEqual( attr->GetGUID(), other->GetGUID() );
-    }
-  };
-
-protected:
-
-  //! Sets back-pointer to AAG.
-  //! \param[in] pAAG owner AAG.
-  void setAAG(asiAlgo_AAG* pAAG)
-  {
-    m_pAAG = pAAG;
-  }
-
-  //! \return back-pointer to the owner AAG.
-  asiAlgo_AAG* getAAG() const
-  {
-    return m_pAAG;
-  }
-
-protected:
-
-  asiAlgo_AAG* m_pAAG; //!< Back-pointer to the owner AAG.
-
+  BlendType_Uncertain = 0, //!< Uncertain blend type for recognizer.
+  BlendType_Ordinary,      //!< Ordinary blend.
+  BlendType_Vertex,        //!< Vertex blend.
+  BlendType_Cliff          //!< Cliff blend (a special case of ordinary blend).
 };
 
 #endif

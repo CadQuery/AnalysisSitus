@@ -32,7 +32,7 @@
 #define asiUI_PartGraphItem_h
 
 // asiAlgo includes
-#include <asiAlgo_FeatureAngle.h>
+#include <asiAlgo_FeatureAngleType.h>
 
 // OCCT includes
 #include <TopAbs_ShapeEnum.hxx>
@@ -191,9 +191,9 @@ protected:
       if ( angles )
       {
         const int attr = angles->GetVariantValue(line).ToInt();
-        if ( attr == Angle_Convex )
+        if ( attr == FeatureAngleType_Convex )
           return vtkColor4ub(40, 190, 0, 255);
-        else if ( attr == Angle_Concave )
+        else if ( attr == FeatureAngleType_Concave )
           return vtkColor4ub(190, 40, 0, 255);
       }
 

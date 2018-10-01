@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 March 2016
+// Created on: 01 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,74 +28,70 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_FeatureAttr_h
-#define asiAlgo_FeatureAttr_h
+#ifndef asiAlgo_AttrBlendCandidate_h
+#define asiAlgo_AttrBlendCandidate_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_BlendType.h>
+#include <asiAlgo_FeatureAttrFace.h>
 
-// OCCT includes
-#include <Standard_GUID.hxx>
+// Active Data includes
+#include <ActAPI_IPlotter.h>
 
 //-----------------------------------------------------------------------------
 
-//! Base class for all feature attributes.
-class asiAlgo_FeatureAttr : public Standard_Transient
+//! Attribute to mark a face as a blend candidate.
+class asiAlgo_AttrBlendCandidate : public asiAlgo_FeatureAttrFace
 {
-friend class asiAlgo_AAG;
+public:
+
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_AttrBlendCandidate, asiAlgo_FeatureAttrFace)
 
 public:
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_FeatureAttr, Standard_Transient)
+  //! Creates attribute with feature ID.
+  //! \param[in] featureId 1-based feature ID.
+  asiAlgo_AttrBlendCandidate(const int featureId)
+  : asiAlgo_FeatureAttrFace (featureId),
+    Kind                    (BlendType_Uncertain),
+    Confirmed               (false)
+  {}
 
 public:
 
-  virtual ~asiAlgo_FeatureAttr() {}
-
-public:
-
-  virtual const Standard_GUID&
-    GetGUID() const = 0;
-
-public:
-
-  virtual void Dump(Standard_OStream&) const {}
-
-public:
-
-  //! Hasher for sets.
-  struct t_hasher
+  //! \return static GUID associated with this type of attribute.
+  static const Standard_GUID& GUID()
   {
-    static int HashCode(const Handle(asiAlgo_FeatureAttr)& attr, const int upper)
-    {
-      return Standard_GUID::HashCode(attr->GetGUID(), upper);
-    }
-
-    static bool IsEqual(const Handle(asiAlgo_FeatureAttr)& attr, const Handle(asiAlgo_FeatureAttr)& other)
-    {
-      return Standard_GUID::IsEqual( attr->GetGUID(), other->GetGUID() );
-    }
-  };
-
-protected:
-
-  //! Sets back-pointer to AAG.
-  //! \param[in] pAAG owner AAG.
-  void setAAG(asiAlgo_AAG* pAAG)
-  {
-    m_pAAG = pAAG;
+    static Standard_GUID guid("7B7C2DD0-5BD6-429E-9B71-5F935BF1E815");
+    return guid;
   }
 
-  //! \return back-pointer to the owner AAG.
-  asiAlgo_AAG* getAAG() const
+  //! \return GUID associated with this type of attribute.
+  virtual const Standard_GUID& GetGUID() const override
   {
-    return m_pAAG;
+    return GUID();
   }
 
-protected:
+public:
 
-  asiAlgo_AAG* m_pAAG; //!< Back-pointer to the owner AAG.
+  //! Dumps this attribute to the passed output stream.
+  //! \param[in, out] target stream.
+  asiAlgo_EXPORT virtual void
+    Dump(Standard_OStream& out) const;
+
+  //! Dumps this attribute to the passed plotter.
+  //! \param[in, out] imperative plotter.
+  asiAlgo_EXPORT virtual void
+    Dump(ActAPI_PlotterEntry plotter) const;
+
+public:
+
+  asiAlgo_BlendType          Kind;                   //!< Blend type.
+  bool                       Confirmed;              //!< Confirmed/Unconfirmed blend.
+  TColStd_PackedMapOfInteger SmoothEdgeIndices;      //!< Smooth edges.
+  TColStd_PackedMapOfInteger SpringEdgeIndices;      //!< Spring edges.
+  TColStd_PackedMapOfInteger CrossEdgeIndices;       //!< Cross edges.
+  TColStd_PackedMapOfInteger TerminatingEdgeIndices; //!< Sharp terminating edges.
 
 };
 

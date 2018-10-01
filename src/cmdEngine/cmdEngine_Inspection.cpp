@@ -41,8 +41,8 @@
 #include <asiEngine_TolerantShapes.h>
 
 // asiAlgo includes
+#include <asiAlgo_CheckDihedralAngle.h>
 #include <asiAlgo_CheckValidity.h>
-#include <asiAlgo_DihedralAngle.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -1968,13 +1968,13 @@ int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
   TIMER_GO
 
   // Prepare algorithm.
-  asiAlgo_DihedralAngle dihAngle( interp->GetProgress(),
-                                  interp->GetPlotter() );
+  asiAlgo_CheckDihedralAngle dihAngle( interp->GetProgress(),
+                                       interp->GetPlotter() );
   //
   dihAngle.SetCommonEdge(edge);
 
   // Check.
-  const asiAlgo_FeatureAngle
+  const asiAlgo_FeatureAngleType
     angleType = dihAngle.AngleBetweenFaces(F, G, allowSmooth, smoothToler);
 
   TIMER_FINISH

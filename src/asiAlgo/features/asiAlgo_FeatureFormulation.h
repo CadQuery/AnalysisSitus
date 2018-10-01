@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 March 2016
+// Created on: 01 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,23 +28,18 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_FeatureAngle_h
-#define asiAlgo_FeatureAngle_h
+#ifndef asiAlgo_FeatureFormulation_h
+#define asiAlgo_FeatureFormulation_h
 
 // asiAlgo includes
 #include <asiAlgo.h>
 
-//-----------------------------------------------------------------------------
-
-//! Type of angle. Numerical values associated with the items are taken
-//! from fundamental paper of Joshi "Graph-based heuristics for recognition
-//! of machined features from a 3D solid model", 1988.
-enum asiAlgo_FeatureAngle
+//! Formulation for feature recognizers.
+enum asiAlgo_FeatureFormulation
 {
-  Angle_Undefined = -1,
-  Angle_Concave   =  0,
-  Angle_Convex    =  1,
-  Angle_Smooth    =  2
+  FeatureFormulation_Full,        //!< Check each and every CAD face.
+  FeatureFormulation_SupportFace, //!< Find features growing from the base (support) face.
+  FeatureFormulation_GuessFace    //!< Find feature taking the picked face as a guess.
 };
 
 #endif

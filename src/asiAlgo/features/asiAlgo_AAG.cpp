@@ -31,9 +31,10 @@
 // Own include
 #include <asiAlgo_AAG.h>
 
-// Geometry includes
+// asiAlgo includes
+#include <asiAlgo_CheckDihedralAngle.h>
 #include <asiAlgo_FeatureAttrAngle.h>
-#include <asiAlgo_DihedralAngle.h>
+#include <asiAlgo_FeatureAttrFace.h>
 
 // OCCT includes
 #include <ShapeAnalysis_Edge.hxx>
@@ -410,6 +411,13 @@ bool asiAlgo_AAG::SetNodeAttribute(const int                          node,
   if ( !existing.IsNull() )
     return false; // Already there
 
+  // Set owner AAG
+  attr->setAAG(this);
+
+  // Set face ID to the attribute representing a feature face
+  if ( attr->IsKind( STANDARD_TYPE(asiAlgo_FeatureAttrFace) ) )
+    Handle(asiAlgo_FeatureAttrFace)::DownCast(attr)->setFaceId(node);
+
   if ( !m_node_attributes.IsBound(node) )
     m_node_attributes.Bind( node, t_attr_set(attr) );
   else
@@ -451,7 +459,7 @@ bool asiAlgo_AAG::FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const
         attr = Handle(asiAlgo_FeatureAttrAngle)::DownCast( this->GetArcAttribute( t_arc(current_face_idx,
                                                                                         neighbor_face_idx) ) );
 
-      if ( attr->GetAngle() != Angle_Convex )
+      if ( attr->GetAngle() != FeatureAngleType_Convex )
       {
         isAllConvex = false;
 
@@ -497,7 +505,7 @@ bool asiAlgo_AAG::FindConcaveOnly(TopTools_IndexedMapOfShape& resultFaces) const
         attr = Handle(asiAlgo_FeatureAttrAngle)::DownCast( this->GetArcAttribute( t_arc(current_face_idx,
                                                                                         neighbor_face_idx) ) );
 
-      if ( attr->GetAngle() != Angle_Concave )
+      if ( attr->GetAngle() != FeatureAngleType_Concave )
       {
         isAllConcave = false;
 
@@ -668,15 +676,15 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
       if ( sae.IsSeam(edge, face) )
       {
         TopTools_IndexedMapOfShape edges;
-        asiAlgo_DihedralAngle solid_angle(NULL, NULL);
+        asiAlgo_CheckDihedralAngle checkDihAngle(NULL, NULL);
 
         // Notice that smooth transitions are not allowed here. This is because
         // the following treatment is designed for periodic faces, and we normally
         // have self-transition of quality C1 and better there
         double angRad = 0.0;
         //
-        const asiAlgo_FeatureAngle
-          face_angle = solid_angle.AngleBetweenFaces(face, face, false, 0.0, edges, angRad);
+        const asiAlgo_FeatureAngleType
+          face_angle = checkDihAngle.AngleBetweenFaces(face, face, false, 0.0, edges, angRad);
 
         // Bind attribute
         m_node_attributes.Bind( f, t_attr_set( new asiAlgo_FeatureAttrAngle(face_angle) ) );
@@ -714,7 +722,7 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
 void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
 {
   // Create solid angle calculation tool
-  asiAlgo_DihedralAngle solid_angle(NULL, NULL);
+  asiAlgo_CheckDihedralAngle checkDihAngle(NULL, NULL);
 
   // Now analyze the face pairs
   for ( TopTools_ListIteratorOfListOfShape lit(mateFaces); lit.More(); lit.Next() )
@@ -755,13 +763,13 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
       // in order to classify feature angle as concave or convex
       double angRad = 0.0;
       //
-      const asiAlgo_FeatureAngle
-        angle = solid_angle.AngleBetweenFaces(face,
-                                              linked_face,
-                                              m_bAllowSmooth,
-                                              m_fSmoothAngularTol,
-                                              commonEdges,
-                                              angRad);
+      const asiAlgo_FeatureAngleType
+        angle = checkDihAngle.AngleBetweenFaces(face,
+                                                linked_face,
+                                                m_bAllowSmooth,
+                                                m_fSmoothAngularTol,
+                                                commonEdges,
+                                                angRad);
 
       // Bind attribute
       m_arc_attributes.Bind( arc, new asiAlgo_FeatureAttrAngle(angle, commonEdges) );

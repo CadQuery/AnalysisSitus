@@ -33,7 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
-#include <asiAlgo_FeatureAngle.h>
+#include <asiAlgo_FeatureAngleType.h>
 #include <asiAlgo_Naming.h>
 
 // Active Data (API) includes
@@ -177,7 +177,7 @@ namespace asiAlgo_Utils
 
   //! Converts the passed feature angle to string,
   asiAlgo_EXPORT TCollection_AsciiString
-    FeaturAngleToString(const asiAlgo_FeatureAngle angle);
+    FeaturAngleToString(const asiAlgo_FeatureAngleType angle);
 
   //! Converts the passed named shape to string.
   asiAlgo_EXPORT TCollection_AsciiString

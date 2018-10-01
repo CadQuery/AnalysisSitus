@@ -35,7 +35,7 @@
 #include <asiVisu_Prs.h>
 
 // asiAlgo includes
-#include <asiAlgo_FeatureAngle.h>
+#include <asiAlgo_FeatureAngleType.h>
 
 // Active Data (API) includes
 #include <ActAPI_INode.h>
@@ -272,29 +272,29 @@ public:
 
 public:
 
-  static void ColorForFeatureAngle(const asiAlgo_FeatureAngle angle,
-                                   double&                    redF,
-                                   double&                    greenF,
-                                   double&                    blueF)
+  static void ColorForFeatureAngle(const asiAlgo_FeatureAngleType angle,
+                                   double&                        redF,
+                                   double&                        greenF,
+                                   double&                        blueF)
   {
     switch ( angle )
   {
-    case Angle_Concave:
+    case FeatureAngleType_Concave:
       redF   = 1.0;
       greenF = 0.0;
       blueF  = 0.0;
       break;
-    case Angle_Convex:
+    case FeatureAngleType_Convex:
       redF   = 0.0;
       greenF = 1.0;
       blueF  = 0.0;
       break;
-    case Angle_Smooth:
+    case FeatureAngleType_Smooth:
       redF   = 0.0;
       greenF = 0.0;
       blueF  = 1.0;
       break;
-    case Angle_Undefined:
+    case FeatureAngleType_Undefined:
     default:
       redF   = 1.0;
       greenF = 1.0;

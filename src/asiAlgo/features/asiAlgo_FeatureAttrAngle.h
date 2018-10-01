@@ -33,7 +33,7 @@
 
 // Feature includes
 #include <asiAlgo_FeatureAttrAdjacency.h>
-#include <asiAlgo_FeatureAngle.h>
+#include <asiAlgo_FeatureAngleType.h>
 
 //-----------------------------------------------------------------------------
 
@@ -51,19 +51,19 @@ public:
 
   //! Creates feature angle attribute.
   asiAlgo_FeatureAttrAngle()
-  : asiAlgo_FeatureAttrAdjacency(), m_angle(Angle_Undefined)
+  : asiAlgo_FeatureAttrAdjacency(), m_angle(FeatureAngleType_Undefined)
   {}
 
   //! Creates feature angle attribute.
   //! \param[in] angleProp angle property.
-  asiAlgo_FeatureAttrAngle(const asiAlgo_FeatureAngle angleProp)
+  asiAlgo_FeatureAttrAngle(const asiAlgo_FeatureAngleType angleProp)
   : asiAlgo_FeatureAttrAdjacency(), m_angle(angleProp)
   {}
 
   //! Creates feature angle attribute with common edges.
   //! \param[in] a           angle property.
   //! \param[in] commonEdges common edges.
-  asiAlgo_FeatureAttrAngle(const asiAlgo_FeatureAngle               a,
+  asiAlgo_FeatureAttrAngle(const asiAlgo_FeatureAngleType    a,
                            const TopTools_IndexedMapOfShape& commonEdges)
   : asiAlgo_FeatureAttrAdjacency(commonEdges), m_angle(a)
   {}
@@ -86,15 +86,15 @@ public:
 public:
 
   //! \return angle between faces.
-  asiAlgo_FeatureAngle GetAngle() const { return m_angle; }
+  asiAlgo_FeatureAngleType GetAngle() const { return m_angle; }
 
   //! Sets angle between faces.
   //! \param[in] a the angle value.
-  void SetAngle(const asiAlgo_FeatureAngle a) { m_angle = a; }
+  void SetAngle(const asiAlgo_FeatureAngleType a) { m_angle = a; }
 
 protected:
 
-  asiAlgo_FeatureAngle m_angle; //!< Angle property.
+  asiAlgo_FeatureAngleType m_angle; //!< Angle type.
 
 };
 

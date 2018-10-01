@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 March 2016
+// Created on: 01 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,74 +28,72 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_FeatureAttr_h
-#define asiAlgo_FeatureAttr_h
+#ifndef asiAlgo_BlendTopoCondition_h
+#define asiAlgo_BlendTopoCondition_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_BlendTopoConditionType.h>
 
 // OCCT includes
-#include <Standard_GUID.hxx>
+#include <Geom_Curve.hxx>
+#include <Geom_Surface.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Vertex.hxx>
 
 //-----------------------------------------------------------------------------
 
-//! Base class for all feature attributes.
-class asiAlgo_FeatureAttr : public Standard_Transient
+//! Base class for a topological condition.
+class asiAlgo_BlendTopoCondition : public Standard_Transient
 {
-friend class asiAlgo_AAG;
-
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_FeatureAttr, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_BlendTopoCondition, Standard_Transient)
 
 public:
 
-  virtual ~asiAlgo_FeatureAttr() {}
+  TopoDS_Face blend; //!< Blend face.
+  TopoDS_Face s1;    //!< Support face 1.
+  TopoDS_Face s2;    //!< Support face 2.
+  TopoDS_Edge s1_s2; //!< s1-s2 intersection edge.
 
-public:
-
-  virtual const Standard_GUID&
-    GetGUID() const = 0;
-
-public:
-
-  virtual void Dump(Standard_OStream&) const {}
-
-public:
-
-  //! Hasher for sets.
-  struct t_hasher
+  //! Modified geometry.
+  struct ModifGeom
   {
-    static int HashCode(const Handle(asiAlgo_FeatureAttr)& attr, const int upper)
-    {
-      return Standard_GUID::HashCode(attr->GetGUID(), upper);
-    }
-
-    static bool IsEqual(const Handle(asiAlgo_FeatureAttr)& attr, const Handle(asiAlgo_FeatureAttr)& other)
-    {
-      return Standard_GUID::IsEqual( attr->GetGUID(), other->GetGUID() );
-    }
+    Handle(Geom_Surface) geom_s1;
+    Handle(Geom_Surface) geom_s2;
+    Handle(Geom_Curve)   geom_s1_s2;
   };
 
-protected:
+  //! Default ctor.
+  asiAlgo_BlendTopoCondition() : pModifGeom(NULL) {}
 
-  //! Sets back-pointer to AAG.
-  //! \param[in] pAAG owner AAG.
-  void setAAG(asiAlgo_AAG* pAAG)
+  //! Dtor.
+  ~asiAlgo_BlendTopoCondition()
   {
-    m_pAAG = pAAG;
+    if ( pModifGeom )
+      delete pModifGeom;
   }
 
-  //! \return back-pointer to the owner AAG.
-  asiAlgo_AAG* getAAG() const
+  //! \return type of blend condition.
+  virtual asiAlgo_BlendTopoConditionType GetType() const
   {
-    return m_pAAG;
+    return BlendTopoConditionType_Base;
   }
 
-protected:
+  //! Sets geometric modification info to the bend condition. The blend
+  //! condition structure takes ownership of the info: the geometric info
+  //! will be deleted by dtor of the blend info.
+  //! \param[in] geometric modification info to set.
+  void LoadGeomInfo(ModifGeom* info)
+  {
+    pModifGeom = info;
+  }
 
-  asiAlgo_AAG* m_pAAG; //!< Back-pointer to the owner AAG.
+public:
+
+  ModifGeom* pModifGeom; //!< Geometric modification info.
 
 };
 

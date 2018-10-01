@@ -67,6 +67,33 @@ set (aux_CPP_FILES
 )
 
 #------------------------------------------------------------------------------
+# Blends
+#------------------------------------------------------------------------------
+
+set (blends_H_FILES
+  blends/asiAlgo_AttrBlendCandidate.h
+  blends/asiAlgo_BlendTopoCondition.h
+  blends/asiAlgo_BlendTopoConditionIsolated.h
+  blends/asiAlgo_BlendTopoConditionType.h
+  blends/asiAlgo_BlendType.h
+  blends/asiAlgo_FindBlendFaces.h
+  blends/asiAlgo_FindCrossEdges.h
+  blends/asiAlgo_FindSmoothEdges.h
+  blends/asiAlgo_FindSpringEdges.h
+  blends/asiAlgo_FindTermEdges.h
+  blends/asiAlgo_RecognizeBlends.h
+)
+set (blends_CPP_FILES
+  blends/asiAlgo_AttrBlendCandidate.cpp
+  blends/asiAlgo_FindBlendFaces.cpp
+  blends/asiAlgo_FindCrossEdges.cpp
+  blends/asiAlgo_FindSmoothEdges.cpp
+  blends/asiAlgo_FindSpringEdges.cpp
+  blends/asiAlgo_FindTermEdges.cpp
+  blends/asiAlgo_RecognizeBlends.cpp
+)
+
+#------------------------------------------------------------------------------
 # Editing
 #------------------------------------------------------------------------------
 
@@ -96,7 +123,7 @@ set (editing_H_FILES
   editing/asiAlgo_SuppressFaces.h
   editing/asiAlgo_TopoKill.h
 )
-set (editing_CPP_FILES 
+set (editing_CPP_FILES
   editing/asiAlgo_DeleteEdges.cpp
   editing/asiAlgo_DetachFaces.cpp
   editing/asiAlgo_Euler.cpp
@@ -130,21 +157,25 @@ set (features_H_FILES
   features/asiAlgo_AAG.h
   features/asiAlgo_AAGIterator.h
   features/asiAlgo_BorderTrihedron.h
-  features/asiAlgo_DihedralAngle.h
-  features/asiAlgo_FeatureAngle.h
+  features/asiAlgo_CheckDihedralAngle.h
+  features/asiAlgo_FeatureAngleType.h
   features/asiAlgo_FeatureAttr.h
   features/asiAlgo_FeatureAttrAdjacency.h
   features/asiAlgo_FeatureAttrAngle.h
+  features/asiAlgo_FeatureAttrFace.h
+  features/asiAlgo_FeatureFormulation.h
+  features/asiAlgo_Recognizer.h
   features/asiAlgo_TopoAttr.h
   features/asiAlgo_TopoAttrLocation.h
   features/asiAlgo_TopoAttrName.h
   features/asiAlgo_TopoAttrOrientation.h
   features/asiAlgo_TopoGraph.h
 )
-set (features_CPP_FILES 
+set (features_CPP_FILES
   features/asiAlgo_AAG.cpp
   features/asiAlgo_AAGIterator.cpp
-  features/asiAlgo_DihedralAngle.cpp
+  features/asiAlgo_CheckDihedralAngle.cpp
+  features/asiAlgo_Recognizer.cpp
   features/asiAlgo_TopoGraph.cpp
 )
 
@@ -160,7 +191,7 @@ set (interop_H_FILES
   interop/asiAlgo_PLY.h
   interop/asiAlgo_STEP.h
 )
-set (interop_CPP_FILES 
+set (interop_CPP_FILES
   interop/asiAlgo_FileFormat.cpp
   interop/asiAlgo_IGES.cpp
   interop/asiAlgo_OBJ.cpp
@@ -181,7 +212,7 @@ set (mesh_H_FILES
   mesh/asiAlgo_MeshMerge.h
   mesh/asiAlgo_MeshParams.h
 )
-set (mesh_CPP_FILES 
+set (mesh_CPP_FILES
   mesh/asiAlgo_MeshCheckInter.cpp
   mesh/asiAlgo_MeshConvert.cpp
   mesh/asiAlgo_MeshGen.cpp
@@ -204,7 +235,7 @@ set (opt_H_FILES
   opt/asiAlgo_IneqSystem.h
   opt/asiAlgo_PSO.h
 )
-set (opt_CPP_FILES 
+set (opt_CPP_FILES
   opt/asiAlgo_ArmijoRule.cpp
   opt/asiAlgo_Function.cpp
   opt/asiAlgo_FunctionWithGradient.cpp
@@ -231,7 +262,7 @@ set (points_H_FILES
   points/asiAlgo_PurifyCloud.h
   points/asiAlgo_ReorientNorms.h
 )
-set (points_CPP_FILES 
+set (points_CPP_FILES
   points/asiAlgo_BaseCloud.cpp
   points/asiAlgo_Cloudify.cpp
   points/asiAlgo_CommonCloud.cpp
@@ -257,7 +288,7 @@ set (utils_H_FILES
   utils/asiAlgo_Utils.h
   utils/asiAlgo_Variable.h
 )
-set (utils_CPP_FILES 
+set (utils_CPP_FILES
   utils/asiAlgo_CheckValidity.cpp
   utils/asiAlgo_FileDumper.cpp
   utils/asiAlgo_JSON.cpp
@@ -364,6 +395,14 @@ foreach (FILE ${aux_CPP_FILES})
   source_group ("Source Files\\Auxiliary" FILES "${FILE}")
 endforeach (FILE)
 
+foreach (FILE ${blends_H_FILES})
+  source_group ("Header Files\\Blends" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${blends_CPP_FILES})
+  source_group ("Source Files\\Blends" FILES "${FILE}")
+endforeach (FILE)
+
 foreach (FILE ${editing_H_FILES})
   source_group ("Header Files\\Editing" FILES "${FILE}")
 endforeach (FILE)
@@ -427,6 +466,7 @@ endforeach (FILE)
 # Create include variable
 set (asiAlgo_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
   ${CMAKE_CURRENT_SOURCE_DIR}/auxiliary;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/blends;\
   ${CMAKE_CURRENT_SOURCE_DIR}/editing;\
   ${CMAKE_CURRENT_SOURCE_DIR}/features;\
   ${CMAKE_CURRENT_SOURCE_DIR}/interop;\
@@ -455,6 +495,7 @@ endif()
 add_library (asiAlgo SHARED
   ${H_FILES}          ${CPP_FILES}
   ${aux_H_FILES}      ${aux_CPP_FILES}
+  ${blends_H_FILES}   ${blends_CPP_FILES}
   ${editing_H_FILES}  ${editing_CPP_FILES}
   ${features_H_FILES} ${features_CPP_FILES}
   ${interop_H_FILES}  ${interop_CPP_FILES}
@@ -575,6 +616,7 @@ install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMP
 
 install (FILES ${H_FILES}          DESTINATION framework/include)
 install (FILES ${aux_H_FILES}      DESTINATION framework/include)
+install (FILES ${blends_H_FILES}   DESTINATION framework/include)
 install (FILES ${editing_H_FILES}  DESTINATION framework/include)
 install (FILES ${features_H_FILES} DESTINATION framework/include)
 install (FILES ${interop_H_FILES}  DESTINATION framework/include)

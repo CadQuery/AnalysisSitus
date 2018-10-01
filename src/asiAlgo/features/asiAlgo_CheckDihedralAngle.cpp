@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 25 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiAlgo_DihedralAngle.h>
+#include <asiAlgo_CheckDihedralAngle.h>
 
 // OCCT includes
 #include <BRep_Tool.hxx>
@@ -50,20 +50,20 @@
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_DihedralAngle::asiAlgo_DihedralAngle(ActAPI_ProgressEntry progress,
-                                             ActAPI_PlotterEntry  plotter)
+asiAlgo_CheckDihedralAngle::asiAlgo_CheckDihedralAngle(ActAPI_ProgressEntry progress,
+                                                       ActAPI_PlotterEntry  plotter)
 : ActAPI_IAlgorithm(progress, plotter)
 {}
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_FeatureAngle
-  asiAlgo_DihedralAngle::AngleBetweenFaces(const TopoDS_Face&          F,
-                                           const TopoDS_Face&          G,
-                                           const bool                  allowSmooth,
-                                           const double                smoothAngularTol,
-                                           TopTools_IndexedMapOfShape& commonEdges,
-                                           double&                     angRad) const
+asiAlgo_FeatureAngleType
+  asiAlgo_CheckDihedralAngle::AngleBetweenFaces(const TopoDS_Face&          F,
+                                                const TopoDS_Face&          G,
+                                                const bool                  allowSmooth,
+                                                const double                smoothAngularTol,
+                                                TopTools_IndexedMapOfShape& commonEdges,
+                                                double&                     angRad) const
 {
   TopoDS_Edge commonEdge = m_commonEdge;
   bool        isSeam     = false;
@@ -113,7 +113,7 @@ asiAlgo_FeatureAngle
   }
 
   if ( commonEdge.IsNull() )
-    return Angle_Undefined;
+    return FeatureAngleType_Undefined;
 
   // Check whether the edge of interest possesses "same parameter" property.
   // If so, we may use its host spatial curves in conjunction with p-curves
@@ -150,7 +150,7 @@ asiAlgo_FeatureAngle
   Handle(Geom_Curve) probeCurve = BRep_Tool::Curve(commonEdge, f, l);
   //
   if ( probeCurve.IsNull() )
-    return Angle_Undefined;
+    return FeatureAngleType_Undefined;
 
   // Pick up two points on the curve
   const double midParam  = (f + l)*0.5;
@@ -175,7 +175,7 @@ asiAlgo_FeatureAngle
     // Vx
     gp_Vec Vx = B.XYZ() - A.XYZ();
     if ( Vx.Magnitude() < RealEpsilon() )
-      return Angle_Undefined;
+      return FeatureAngleType_Undefined;
     //
     if ( CumulOriOnF == TopAbs_REVERSED )
       Vx.Reverse();
@@ -190,7 +190,7 @@ asiAlgo_FeatureAngle
       c2d_F = BRep_Tool::CurveOnSurface(commonEdge, F, cons_f, cons_l);
       //
       if ( c2d_F.IsNull() )
-        return Angle_Undefined; // Face is invalid
+        return FeatureAngleType_Undefined; // Face is invalid
 
       UV = c2d_F->Value(A_param);
     }
@@ -207,7 +207,7 @@ asiAlgo_FeatureAngle
     //
     gp_Vec N = D1U.Crossed(D1V);
     if ( N.Magnitude() < RealEpsilon() )
-      return Angle_Undefined;
+      return FeatureAngleType_Undefined;
     //
     if ( F.Orientation() == TopAbs_REVERSED )
       N.Reverse();
@@ -217,7 +217,7 @@ asiAlgo_FeatureAngle
     // Vy
     gp_Vec Vy = N.Crossed(Vx);
     if ( Vy.Magnitude() < RealEpsilon() )
-      return Angle_Undefined;
+      return FeatureAngleType_Undefined;
     //
     TF = Vy.Normalized();
 
@@ -233,7 +233,7 @@ asiAlgo_FeatureAngle
     // Vx
     gp_Vec Vx = B.XYZ() - A.XYZ();
     if ( Vx.Magnitude() < RealEpsilon() )
-      return Angle_Undefined;
+      return FeatureAngleType_Undefined;
     //
     if ( CumulOriOnG == TopAbs_REVERSED )
       Vx.Reverse();
@@ -246,7 +246,7 @@ asiAlgo_FeatureAngle
       c2d_G = BRep_Tool::CurveOnSurface(commonEdge, G, cons_f, cons_l);
       //
       if ( c2d_G.IsNull() )
-        return Angle_Undefined; // Face is invalid
+        return FeatureAngleType_Undefined; // Face is invalid
 
       ST = c2d_G->Value(A_param);
     }
@@ -263,7 +263,7 @@ asiAlgo_FeatureAngle
     //
     gp_Vec N = D1S.Crossed(D1T);
     if ( N.Magnitude() < RealEpsilon() )
-      return Angle_Undefined;
+      return FeatureAngleType_Undefined;
     //
     if ( G.Orientation() == TopAbs_REVERSED )
       N.Reverse();
@@ -271,7 +271,7 @@ asiAlgo_FeatureAngle
     // Vy
     gp_Vec Vy = N.Crossed(Vx);
     if ( Vy.Magnitude() < RealEpsilon() )
-      return Angle_Undefined;
+      return FeatureAngleType_Undefined;
     //
     TG = Vy.Normalized();
 
@@ -291,7 +291,7 @@ asiAlgo_FeatureAngle
   if ( Abs(Abs(angRad) - M_PI) < ang_tol )
   {
     if ( allowSmooth )
-      return Angle_Smooth;
+      return FeatureAngleType_Smooth;
 
     // C1 joint requires additional analysis
     gp_Pnt2d UV_shifted, ST_shifted;
@@ -348,23 +348,23 @@ asiAlgo_FeatureAngle
   }
 
   // Classify angle
-  asiAlgo_FeatureAngle angleType = Angle_Undefined;
+  asiAlgo_FeatureAngleType angleType = FeatureAngleType_Undefined;
   if ( angRad < 0 )
-    angleType = Angle_Convex;
+    angleType = FeatureAngleType_Convex;
   else
-    angleType = Angle_Concave;
+    angleType = FeatureAngleType_Concave;
 
   return angleType;
 }
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_FeatureAngle
-  asiAlgo_DihedralAngle::AngleBetweenFaces(const TopoDS_Face&          F,
-                                           const TopoDS_Face&          G,
-                                           const bool                  allowSmooth,
-                                           const double                smoothAngularTol,
-                                           TopTools_IndexedMapOfShape& commonEdges) const
+asiAlgo_FeatureAngleType
+  asiAlgo_CheckDihedralAngle::AngleBetweenFaces(const TopoDS_Face&          F,
+                                                const TopoDS_Face&          G,
+                                                const bool                  allowSmooth,
+                                                const double                smoothAngularTol,
+                                                TopTools_IndexedMapOfShape& commonEdges) const
 {
   double angRad = 0.0;
   return this->AngleBetweenFaces(F, G, allowSmooth, smoothAngularTol, commonEdges, angRad);
@@ -372,11 +372,11 @@ asiAlgo_FeatureAngle
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_FeatureAngle
-  asiAlgo_DihedralAngle::AngleBetweenFaces(const TopoDS_Face& F,
-                                           const TopoDS_Face& G,
-                                           const bool         allowSmooth,
-                                           const double       smoothAngularTol) const
+asiAlgo_FeatureAngleType
+  asiAlgo_CheckDihedralAngle::AngleBetweenFaces(const TopoDS_Face& F,
+                                                const TopoDS_Face& G,
+                                                const bool         allowSmooth,
+                                                const double       smoothAngularTol) const
 {
   TopTools_IndexedMapOfShape commonEdges;
   double angRad = 0.0;
@@ -385,12 +385,12 @@ asiAlgo_FeatureAngle
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_FeatureAngle
-  asiAlgo_DihedralAngle::AngleBetweenFaces(const TopoDS_Face& F,
-                                           const TopoDS_Face& G,
-                                           const bool         allowSmooth,
-                                           const double       smoothAngularTol,
-                                           double&            angRad) const
+asiAlgo_FeatureAngleType
+  asiAlgo_CheckDihedralAngle::AngleBetweenFaces(const TopoDS_Face& F,
+                                                const TopoDS_Face& G,
+                                                const bool         allowSmooth,
+                                                const double       smoothAngularTol,
+                                                double&            angRad) const
 {
   TopTools_IndexedMapOfShape commonEdges;
   return this->AngleBetweenFaces(F, G, allowSmooth, smoothAngularTol, commonEdges, angRad);

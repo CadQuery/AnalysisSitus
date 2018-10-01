@@ -40,8 +40,8 @@
 
 // asiAlgo includes
 #include <asiAlgo_AAGIterator.h>
+#include <asiAlgo_CheckDihedralAngle.h>
 #include <asiAlgo_DetachFaces.h>
-#include <asiAlgo_DihedralAngle.h>
 #include <asiAlgo_FindFree.h>
 #include <asiAlgo_FindNonmanifold.h>
 #include <asiAlgo_FindSameHosts.h>
@@ -1065,32 +1065,33 @@ void asiUI_ControlsFeature::classifyDihAngle(const TopoDS_Face&          F,
 {
   // Check angle between the two faces
   TopTools_IndexedMapOfShape commonEdges;
-  asiAlgo_DihedralAngle dihAngle(m_notifier,
-                                 verboseOutput ? m_plotter : NULL);
+  asiAlgo_CheckDihedralAngle dihAngle(m_notifier,
+                                      verboseOutput ? m_plotter : NULL);
   //
   double angRad = 0.0;
 
-  asiAlgo_FeatureAngle angleType = dihAngle.AngleBetweenFaces(F,
-                                                              G,
-                                                              allowSmooth,
-                                                              smoothAngularTol,
-                                                              commonEdges,
-                                                              angRad);
+  asiAlgo_FeatureAngleType
+    angleType = dihAngle.AngleBetweenFaces(F,
+                                           G,
+                                           allowSmooth,
+                                           smoothAngularTol,
+                                           commonEdges,
+                                           angRad);
 
   TopTools_IndexedMapOfShape* pTargetMap;
   TopoDS_Compound*            pTargetComp;
   //
-  if ( angleType == Angle_Convex )
+  if ( angleType == FeatureAngleType_Convex )
   {
     pTargetMap  = &convexEdges;
     pTargetComp = &convexEdgesComp;
   }
-  else if ( angleType == Angle_Concave )
+  else if ( angleType == FeatureAngleType_Concave )
   {
     pTargetMap  = &concaveEdges;
     pTargetComp = &concaveEdgesComp;
   }
-  else if ( angleType == Angle_Smooth )
+  else if ( angleType == FeatureAngleType_Smooth )
   {
     pTargetMap  = &smoothEdges;
     pTargetComp = &smoothEdgesComp;

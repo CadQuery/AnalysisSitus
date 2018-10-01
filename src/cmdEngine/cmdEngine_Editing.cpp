@@ -1724,6 +1724,68 @@ int ENGINE_Repatch(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_KillFillet(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  const bool isInteractive = (argc == 1);
+
+  // Get Part Node to access the selected faces.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
+  TopoDS_Shape        shape = partNode->GetShape();
+
+  // Get index of the base face.
+  int fid = 0;
+  //
+  if ( isInteractive )
+  {
+    TColStd_PackedMapOfInteger fids;
+    //
+    asiEngine_Part partAPI( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() );
+    partAPI.GetHighlightedFaces(fids);
+
+    if ( fids.Extent() != 1 )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Please, select a single 'guess face'.");
+      return TCL_OK;
+    }
+    //
+    fid = fids.GetMinimalMapped();
+  }
+  else
+  {
+    TCollection_AsciiString argStr(argv[1]);
+    //
+    if ( !argStr.IsIntegerValue() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed face ID is not an integer value.");
+      return TCL_OK;
+    }
+
+    fid = atoi(argv[1]);
+    //
+    if ( !partNode->GetAAG()->HasFace(fid) )
+    {
+      interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Face %1 does not exist in the working part."
+                                                           << fid);
+      return TCL_OK;
+    }
+  }
+
+  // TODO: NYI
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -1948,4 +2010,13 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t arguments (1-based face IDs).",
     //
     __FILE__, group, ENGINE_Repatch);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("kill-fillet",
+    //
+    "kill-fillet [fid]\n"
+    "\t Attempts to defeature a fillet starting from the face selected\n"
+    "\t interactively or specified as 1-based face ID.",
+    //
+    __FILE__, group, ENGINE_KillFillet);
 }

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 March 2016
+// Created on: 01 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,74 +28,72 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_FeatureAttr_h
-#define asiAlgo_FeatureAttr_h
+#ifndef asiAlgo_FindBlendFaces_h
+#define asiAlgo_FindBlendFaces_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_Recognizer.h>
 
-// OCCT includes
-#include <Standard_GUID.hxx>
-
-//-----------------------------------------------------------------------------
-
-//! Base class for all feature attributes.
-class asiAlgo_FeatureAttr : public Standard_Transient
+//! Utility to detect ordinary (face-face) blends.
+class asiAlgo_FindBlendFaces : public asiAlgo_Recognizer
 {
-friend class asiAlgo_AAG;
-
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_FeatureAttr, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_FindBlendFaces, asiAlgo_Recognizer)
 
 public:
 
-  virtual ~asiAlgo_FeatureAttr() {}
+  //! Constructor.
+  //! \param[in] masterCAD full CAD model.
+  //! \param[in] progress  Progress Notifier.
+  //! \param[in] plotter   Imperative Plotter.
+  asiAlgo_EXPORT
+    asiAlgo_FindBlendFaces(const TopoDS_Shape&  masterCAD,
+                           ActAPI_ProgressEntry progress,
+                           ActAPI_PlotterEntry  plotter);
 
 public:
 
-  virtual const Standard_GUID&
-    GetGUID() const = 0;
+  //! Detects ordinary blends.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT virtual bool
+    Perform();
 
 public:
 
-  virtual void Dump(Standard_OStream&) const {}
-
-public:
-
-  //! Hasher for sets.
-  struct t_hasher
+  //! Sets faces to analyze exclusively.
+  //! \param[in] faces faces to analyze.
+  void SetFaces(const TColStd_PackedMapOfInteger& faces)
   {
-    static int HashCode(const Handle(asiAlgo_FeatureAttr)& attr, const int upper)
-    {
-      return Standard_GUID::HashCode(attr->GetGUID(), upper);
-    }
+    m_faces2Analyze = faces;
+  }
 
-    static bool IsEqual(const Handle(asiAlgo_FeatureAttr)& attr, const Handle(asiAlgo_FeatureAttr)& other)
+private:
+
+  //! Reaction to formulation changing.
+  //! \param[in] formulation activated formulation.
+  virtual void onFormulation(const asiAlgo_FeatureFormulation formulation) override
+  {
+    switch ( formulation )
     {
-      return Standard_GUID::IsEqual( attr->GetGUID(), other->GetGUID() );
+      case FeatureFormulation_GuessFace:
+      case FeatureFormulation_SupportFace:
+        Standard_ProgramError::Raise("Unsupported formulation");
+      case FeatureFormulation_Full:
+      default: break;
     }
-  };
+  }
 
 protected:
 
-  //! Sets back-pointer to AAG.
-  //! \param[in] pAAG owner AAG.
-  void setAAG(asiAlgo_AAG* pAAG)
-  {
-    m_pAAG = pAAG;
-  }
+  //-------------------------------------------------------------------------//
+  // IN
+  //-------------------------------------------------------------------------//
 
-  //! \return back-pointer to the owner AAG.
-  asiAlgo_AAG* getAAG() const
-  {
-    return m_pAAG;
-  }
-
-protected:
-
-  asiAlgo_AAG* m_pAAG; //!< Back-pointer to the owner AAG.
+  //! Optional collection of faces to analyze exclusively. If this set is
+  //! empty, then global recognition will be shot.
+  TColStd_PackedMapOfInteger m_faces2Analyze;
 
 };
 

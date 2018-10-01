@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 25 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,11 +28,11 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_DihedralAngle_h
-#define asiAlgo_DihedralAngle_h
+#ifndef asiAlgo_CheckDihedralAngle_h
+#define asiAlgo_CheckDihedralAngle_h
 
 // asiAlgo includes
-#include <asiAlgo_FeatureAngle.h>
+#include <asiAlgo_FeatureAngleType.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
@@ -45,12 +45,12 @@
 //-----------------------------------------------------------------------------
 
 //! Utility to analyze dihedral angles.
-class asiAlgo_DihedralAngle : public ActAPI_IAlgorithm
+class asiAlgo_CheckDihedralAngle : public ActAPI_IAlgorithm
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_DihedralAngle, ActAPI_IAlgorithm)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_CheckDihedralAngle, ActAPI_IAlgorithm)
 
 public:
 
@@ -58,8 +58,8 @@ public:
   //! \param[in] progress Progress Entry.
   //! \param[in] plotter  Imperative Plotter.
   asiAlgo_EXPORT
-    asiAlgo_DihedralAngle(ActAPI_ProgressEntry progress,
-                          ActAPI_PlotterEntry  plotter);
+    asiAlgo_CheckDihedralAngle(ActAPI_ProgressEntry progress,
+                               ActAPI_PlotterEntry  plotter);
 
 public:
 
@@ -76,7 +76,7 @@ public:
   //! \param[out] commonEdges      common edges.
   //! \param[out] angRad           angle in radians.
   //! \return angle between faces.
-  asiAlgo_EXPORT asiAlgo_FeatureAngle
+  asiAlgo_EXPORT asiAlgo_FeatureAngleType
     AngleBetweenFaces(const TopoDS_Face&          F,
                       const TopoDS_Face&          G,
                       const bool                  allowSmooth,
@@ -96,7 +96,7 @@ public:
   //!                              this parameter you're able to control it.
   //! \param[out] commonEdges      common edges.
   //! \return angle between faces.
-  asiAlgo_EXPORT asiAlgo_FeatureAngle
+  asiAlgo_EXPORT asiAlgo_FeatureAngleType
     AngleBetweenFaces(const TopoDS_Face&          F,
                       const TopoDS_Face&          G,
                       const bool                  allowSmooth,
@@ -114,7 +114,7 @@ public:
   //!                             but still smooth by the design intent. With
   //!                             this parameter you're able to control it.
   //! \return angle between faces.
-  asiAlgo_EXPORT asiAlgo_FeatureAngle
+  asiAlgo_EXPORT asiAlgo_FeatureAngleType
     AngleBetweenFaces(const TopoDS_Face& F,
                       const TopoDS_Face& G,
                       const bool         allowSmooth,
@@ -132,12 +132,12 @@ public:
   //!                              this parameter you're able to control it.
   //! \param[out] angRad           angle in radians.
   //! \return angle between faces.
-  asiAlgo_EXPORT asiAlgo_FeatureAngle
-    AngleBetweenFaces(const TopoDS_Face&          F,
-                      const TopoDS_Face&          G,
-                      const bool                  allowSmooth,
-                      const double                smoothAngularTol,
-                      double&                     angleRad) const;
+  asiAlgo_EXPORT asiAlgo_FeatureAngleType
+    AngleBetweenFaces(const TopoDS_Face& F,
+                      const TopoDS_Face& G,
+                      const bool         allowSmooth,
+                      const double       smoothAngularTol,
+                      double&            angleRad) const;
 
 public:
 

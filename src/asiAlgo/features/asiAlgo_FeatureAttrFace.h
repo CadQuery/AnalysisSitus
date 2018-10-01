@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 March 2016
+// Created on: 01 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,74 +28,72 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_FeatureAttr_h
-#define asiAlgo_FeatureAttr_h
+#ifndef asiAlgo_FeatureAttrFace_h
+#define asiAlgo_FeatureAttrFace_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
-
-// OCCT includes
-#include <Standard_GUID.hxx>
+#include <asiAlgo_FeatureAttr.h>
 
 //-----------------------------------------------------------------------------
 
-//! Base class for all feature attributes.
-class asiAlgo_FeatureAttr : public Standard_Transient
+//! Attribute for feature faces. This attribute brings feature ID which
+//! allows marking faces as belonging to the same group.
+class asiAlgo_FeatureAttrFace : public asiAlgo_FeatureAttr
 {
 friend class asiAlgo_AAG;
 
 public:
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_FeatureAttr, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_FeatureAttrFace, asiAlgo_FeatureAttr)
 
 public:
 
-  virtual ~asiAlgo_FeatureAttr() {}
+  //! Creates attribute.
+  //! \param[in] featureId feature ID.
+  asiAlgo_FeatureAttrFace(const int featureId)
+  : asiAlgo_FeatureAttr (),
+    m_iFeatureId        (featureId)
+  {}
 
 public:
 
-  virtual const Standard_GUID&
-    GetGUID() const = 0;
-
-public:
-
-  virtual void Dump(Standard_OStream&) const {}
-
-public:
-
-  //! Hasher for sets.
-  struct t_hasher
+  //! \return static GUID associated with this type of attribute.
+  static const Standard_GUID& GUID()
   {
-    static int HashCode(const Handle(asiAlgo_FeatureAttr)& attr, const int upper)
-    {
-      return Standard_GUID::HashCode(attr->GetGUID(), upper);
-    }
+    static Standard_GUID guid("4F752368-6519-457D-BCC2-9A2CCA3B02B1");
+    return guid;
+  }
 
-    static bool IsEqual(const Handle(asiAlgo_FeatureAttr)& attr, const Handle(asiAlgo_FeatureAttr)& other)
-    {
-      return Standard_GUID::IsEqual( attr->GetGUID(), other->GetGUID() );
-    }
-  };
+  //! \return GUID associated with this type of attribute.
+  virtual const Standard_GUID& GetGUID() const override
+  {
+    return GUID();
+  }
+
+public:
+
+  //! \return feature index.
+  int GetFeatureId() const { return m_iFeatureId; }
 
 protected:
 
-  //! Sets back-pointer to AAG.
-  //! \param[in] pAAG owner AAG.
-  void setAAG(asiAlgo_AAG* pAAG)
+  //! Sets face ID.
+  //! \param faceId [in] 1-based face ID.
+  void setFaceId(const int faceId)
   {
-    m_pAAG = pAAG;
+    m_iFaceId = faceId;
   }
 
-  //! \return back-pointer to the owner AAG.
-  asiAlgo_AAG* getAAG() const
+  //! \return face ID.
+  int getFaceId() const
   {
-    return m_pAAG;
+    return m_iFaceId;
   }
 
-protected:
+private:
 
-  asiAlgo_AAG* m_pAAG; //!< Back-pointer to the owner AAG.
+  int m_iFaceId;    //!< 1-based face ID.
+  int m_iFeatureId; //!< 1-based feature index.
 
 };
 

@@ -50,13 +50,9 @@ class asiAlgo_AAGRandomIterator;
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiAlgo_AAG, Standard_Transient)
-
 //! AAG.
 class asiAlgo_AAG : public Standard_Transient
 {
-friend class asiAlgo_AAGRandomIterator;
-
 public:
 
   //---------------------------------------------------------------------------
@@ -103,6 +99,60 @@ public:
   //! Collection of attributes.
   class t_attr_set
   {
+  public:
+
+    //! Convenience iterator for the set of attributes associated with
+    //! node or arc in AAG.
+    class Iterator
+    {
+    public:
+
+      //! Ctor accepting the set of attributes to iterate.
+      //! \param[in] attributes set of attributes to iterate.
+      Iterator(const t_attr_set& attributes) : m_attrs(attributes)
+      {
+        m_it.Initialize( m_attrs.GetMap() );
+      }
+
+      //! \return true if there is something more to iterate starting from
+      //!         current position, false -- otherwise.
+      bool More() const
+      {
+        return m_it.More();
+      }
+
+      //! Moves iterator to the next position.
+      void Next()
+      {
+        m_it.Next();
+      }
+
+      //! \return GUID of the currently iterated attribute.
+      const Standard_GUID& GetGUID() const
+      {
+        return m_it.Key();
+      }
+
+      //! \return currently iterated attribute.
+      const Handle(asiAlgo_FeatureAttr)& GetAttr() const
+      {
+        return m_it.Value();
+      }
+
+    protected:
+
+      //! Attributes to iterate over.
+      const t_attr_set& m_attrs;
+
+      //! Internal iterator.
+      NCollection_DataMap<Standard_GUID, Handle(asiAlgo_FeatureAttr)>::Iterator m_it;
+
+    private:
+
+      // To avoid C4512 "assignment operator could not be generated".
+      Iterator& operator=(const Iterator&) { return *this; }
+    };
+
   public:
 
     t_attr_set() {} //!< Default ctor.

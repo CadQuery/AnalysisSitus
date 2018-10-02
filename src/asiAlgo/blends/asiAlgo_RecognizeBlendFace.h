@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 22 June 2018
+// Created on: 01 October 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,30 +28,47 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiTest_CaseIDs_HeaderFile
-#define asiTest_CaseIDs_HeaderFile
+#ifndef asiAlgo_RecognizeBlendFace_h
+#define asiAlgo_RecognizeBlendFace_h
 
-// Tests includes
-#include <asiTest_CommonFacilities.h>
+// asiAlgo includes
+#include <asiAlgo_AAG.h>
 
-// asiTestEngine includes
-#include <asiTestEngine.h>
+// Active Data includes
+#include <ActAPI_IAlgorithm.h>
 
-//! IDs for Test Cases.
-enum test_CaseID
+//! Utility to recognize blend faces of different kinds. This utility accepts
+//! a single face and populates the corresponding AAG node with a blend
+//! candidate attribute if the recognition is successful.
+class asiAlgo_RecognizeBlendFace : public ActAPI_IAlgorithm
 {
-  CaseID_SuppressBlends = 1,
-  CaseID_InvertShells,
+public:
 
-/* ------------------------------------------------------------------------ */
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_RecognizeBlendFace, ActAPI_IAlgorithm)
 
-  CaseID_AAG,
-  CaseID_IsContourClosed,
-  CaseID_EdgeVexity,
+public:
 
-/* ------------------------------------------------------------------------ */
+  //! Ctor.
+  //! \param[in] aag      attributed adjacency graph.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_EXPORT
+    asiAlgo_RecognizeBlendFace(const Handle(asiAlgo_AAG)& aag,
+                               ActAPI_ProgressEntry       progress,
+                               ActAPI_PlotterEntry        plotter);
 
-  CaseID_LAST
+public:
+
+  //! Performs recognition for the given face.
+  //! \param[in] fid ID of the face in question.
+  //! \return true if the face was recognized as a blend face.
+  asiAlgo_EXPORT virtual bool
+    Perform(const int fid);
+
+protected:
+
+  Handle(asiAlgo_AAG) m_aag; //!< Attributed Adjacency Graph instance.
 
 };
 

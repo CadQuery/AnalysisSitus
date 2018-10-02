@@ -64,22 +64,24 @@ public:
                             ActAPI_ProgressEntry       progress,
                             ActAPI_PlotterEntry        plotter);
 
+  //! Ctor.
+  //! \param[in] aag      AAG (should not be NULL here).
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_EXPORT
+    asiAlgo_RecognizeBlends(const Handle(asiAlgo_AAG)& aag,
+                            ActAPI_ProgressEntry       progress,
+                            ActAPI_PlotterEntry        plotter);
+
 public:
 
   //! Performs recognition of fillets.
+  //! \param[in] faceId 1-based ID of the seed face.
   //! \param[in] radius radius of interest.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT virtual bool
-    Perform(const double radius);
-
-public:
-
-  //! Sets faces to analyze exclusively.
-  //! \param[in] faces faces to analyze.
-  void SetFaces(const TColStd_PackedMapOfInteger& faces)
-  {
-    m_faces2Analyze = faces;
-  }
+    Perform(const int    faceId,
+            const double radius = 1e100);
 
 private:
 
@@ -97,16 +99,6 @@ private:
       default: break;
     }
   }
-
-protected:
-
-  //-------------------------------------------------------------------------//
-  // IN
-  //-------------------------------------------------------------------------//
-
-  //! Optional collection of faces to analyze exclusively. If this set is
-  //! empty, then global recognition will be shot.
-  TColStd_PackedMapOfInteger m_faces2Analyze;
 
 };
 

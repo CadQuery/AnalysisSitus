@@ -55,7 +55,20 @@ asiAlgo_FindSpringEdges::asiAlgo_FindSpringEdges(const TopoDS_Shape&        mast
                                                  ActAPI_ProgressEntry       progress,
                                                  ActAPI_PlotterEntry        plotter)
 //
-: ActAPI_IAlgorithm(progress, plotter), m_master(masterCAD), m_aag(aag)
+: ActAPI_IAlgorithm ( progress, plotter ),
+  m_master          ( masterCAD ),
+  m_aag             ( aag )
+{}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_FindSpringEdges::asiAlgo_FindSpringEdges(const Handle(asiAlgo_AAG)& aag,
+                                                 ActAPI_ProgressEntry       progress,
+                                                 ActAPI_PlotterEntry        plotter)
+//
+: ActAPI_IAlgorithm ( progress, plotter ),
+  m_master          ( aag->GetMasterCAD() ),
+  m_aag             ( aag )
 {}
 
 //-----------------------------------------------------------------------------

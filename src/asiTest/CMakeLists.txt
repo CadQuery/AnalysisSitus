@@ -32,10 +32,12 @@ set (cases_editing_CPP_FILES
 )
 
 set (cases_inspection_H_FILES
+  cases/inspection/asiTest_AAG.h
   cases/inspection/asiTest_EdgeVexity.h
   cases/inspection/asiTest_IsContourClosed.h
 )
 set (cases_inspection_CPP_FILES
+  cases/inspection/asiTest_AAG.cpp
   cases/inspection/asiTest_EdgeVexity.cpp
   cases/inspection/asiTest_IsContourClosed.cpp
 )

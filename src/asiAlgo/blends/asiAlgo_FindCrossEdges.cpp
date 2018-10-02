@@ -52,9 +52,19 @@ asiAlgo_FindCrossEdges::asiAlgo_FindCrossEdges(const TopoDS_Shape&        master
                                                const Handle(asiAlgo_AAG)& aag,
                                                ActAPI_ProgressEntry       progress,
                                                ActAPI_PlotterEntry        plotter)
-: ActAPI_IAlgorithm (progress, plotter),
-  m_master          (masterCAD),
-  m_aag             (aag)
+: ActAPI_IAlgorithm ( progress, plotter ),
+  m_master          ( masterCAD ),
+  m_aag             ( aag )
+{}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_FindCrossEdges::asiAlgo_FindCrossEdges(const Handle(asiAlgo_AAG)& aag,
+                                               ActAPI_ProgressEntry       progress,
+                                               ActAPI_PlotterEntry        plotter)
+: ActAPI_IAlgorithm ( progress, plotter ),
+  m_master          ( aag->GetMasterCAD() ),
+  m_aag             ( aag )
 {}
 
 //-----------------------------------------------------------------------------

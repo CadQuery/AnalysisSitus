@@ -256,6 +256,7 @@ void asiUI_PartGraph::Render(const TopoDS_Shape&               shape,
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph>
     graph = this->convertToGraph(shape,
+                                 NULL,
                                  selectedFaces,
                                  regime,
                                  leafType);
@@ -296,14 +297,36 @@ void asiUI_PartGraph::RenderAdjacency(const TopoDS_Shape&               shape,
 
 //-----------------------------------------------------------------------------
 
+//! Renders face adjacency graph.
+//! \param[in] aag           target AAG.
+//! \param[in] selectedFaces selected faces.
+void asiUI_PartGraph::RenderAdjacency(const Handle(asiAlgo_AAG)&        aag,
+                                      const TopTools_IndexedMapOfShape& selectedFaces)
+{
+  // Populate graph data from topology graph
+  vtkSmartPointer<vtkGraph>
+    graph = this->convertToGraph(aag->GetMasterCAD(),
+                                 aag,
+                                 selectedFaces,
+                                 Regime_AAG,
+                                 TopAbs_SHAPE);
+
+  // Render VTK graph
+  this->Render(graph, aag->GetMasterCAD(), Regime_AAG, false);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Builds one or another graph (depending on the desired regime).
 //! \param[in] shape         master model.
+//! \param[in] aag           master AAG (optional).
 //! \param[in] selectedFaces optional selected faces.
 //! \param[in] regime        desired regime.
 //! \param[in] leafType      leaf type for FULL regime.
 //! \return graph instance.
 vtkSmartPointer<vtkGraph>
   asiUI_PartGraph::convertToGraph(const TopoDS_Shape&               shape,
+                                  const Handle(asiAlgo_AAG)&        aag,
                                   const TopTools_IndexedMapOfShape& selectedFaces,
                                   const Regime                      regime,
                                   const TopAbs_ShapeEnum            leafType)
@@ -326,7 +349,7 @@ vtkSmartPointer<vtkGraph>
   }
   else if ( regime == Regime_AAG )
   {
-    m_aag = new asiAlgo_AAG(shape, selectedFaces);
+    m_aag = (aag.IsNull() ? new asiAlgo_AAG(shape, selectedFaces) : aag);
 
     // Convert
     vtkSmartPointer<vtkMutableUndirectedGraph>

@@ -32,12 +32,76 @@
 #include <asiAlgo_RecognizeBlends.h>
 
 // asiAlgo includes
-#include <asiAlgo_FindBlendFaces.h>
+#include <asiAlgo_AAGIterator.h>
+#include <asiAlgo_AttrBlendCandidate.h>
+#include <asiAlgo_RecognizeBlendFace.h>
 
 #undef COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif
+
+//-----------------------------------------------------------------------------
+
+namespace asiAlgo_AAGIterationRule
+{
+  //! This rule is prevents further iteration starting from faces which are
+  //! not recognized as blend candidate faces.
+  class AllowBlendCandidates : public Standard_Transient
+  {
+  public:
+
+    // OCCT RTTI
+    DEFINE_STANDARD_RTTI_INLINE(AllowBlendCandidates, Standard_Transient)
+
+  public:
+
+    //! Ctor.
+    //! \param[in] aag      attributed adjacency graph keeping information on the
+    //!                     recognized properties of the model.
+    //! \param[in] progress progress notifier.
+    //! \param[in] plottter imperative plotter.
+    AllowBlendCandidates(const Handle(asiAlgo_AAG)& aag,
+                         ActAPI_ProgressEntry       progress,
+                         ActAPI_PlotterEntry        plotter)
+    : m_aag(aag)
+    {
+      m_localReco = new asiAlgo_RecognizeBlendFace(aag, progress, plotter);
+    }
+
+  public:
+
+    //! For the given face ID, this method decides whether to check its
+    //! neighbors or stop.
+    //! \param[in] fid 1-based ID of the face in question.
+    //! \return true if the face in question is a gatekeeper for further iteration.
+    bool IsBlocking(const int fid)
+    {
+      // If there are some nodal attributes for this face, we check whether
+      // it has already been recognized as a blend candidate.
+      if ( m_aag->HasNodeAttributes(fid) )
+      {
+        Handle(asiAlgo_FeatureAttr)
+          attr = m_aag->GetNodeAttribute( fid, asiAlgo_AttrBlendCandidate::GUID() );
+        //
+        if ( !attr.IsNull() )
+          return false; // Allow further iteration.
+      }
+
+      // If we are here, then the face in question is not attributed. We can now
+      // try to recognize it.
+      if ( !m_localReco->Perform(fid) )
+        return true; // Block further iterations.
+
+      return false;
+    }
+
+  protected:
+
+    Handle(asiAlgo_AAG)                m_aag;       //!< AAG instance.
+    Handle(asiAlgo_RecognizeBlendFace) m_localReco; //!< Local recognizer.
+  };
+};
 
 //-----------------------------------------------------------------------------
 
@@ -60,7 +124,17 @@ asiAlgo_RecognizeBlends::asiAlgo_RecognizeBlends(const TopoDS_Shape&        mast
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_RecognizeBlends::Perform(const double radius)
+asiAlgo_RecognizeBlends::asiAlgo_RecognizeBlends(const Handle(asiAlgo_AAG)& aag,
+                                                 ActAPI_ProgressEntry       progress,
+                                                 ActAPI_PlotterEntry        plotter)
+//
+: asiAlgo_Recognizer(aag->GetMasterCAD(), aag, progress, plotter)
+{}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
+                                      const double radius)
 {
   /* ====================
    *  Stage 1: build AAG
@@ -83,30 +157,23 @@ bool asiAlgo_RecognizeBlends::Perform(const double radius)
 #endif
   }
 
-  /* ==========================
-   *  Stage 2: attribute faces
-   * ========================== */
+  // Propagation rule.
+  Handle(asiAlgo_AAGIterationRule::AllowBlendCandidates)
+    itRule = new asiAlgo_AAGIterationRule::AllowBlendCandidates(m_aag,
+                                                                m_progress,
+                                                                m_plotter);
 
-  // Find candidate faces in AAG.
-  asiAlgo_FindBlendFaces attribution( m_master,
-                                      this->Progress(),
-                                      this->Plotter() );
-  attribution.SetAAG(m_aag);
-  attribution.SetFaces(m_faces2Analyze);
+  // Prepare neighborhood iterator with customized propagation rule.
+  int numIteratedFaces = 0;
   //
-  if ( !attribution.Perform() )
+  asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::AllowBlendCandidates>
+    nit( m_aag, faceId, itRule);
+  //
+  for ( ; nit.More(); nit.Next(), ++numIteratedFaces )
   {
-    this->Progress().SendLogMessage( LogErr(Normal) << "Failed to attribute blend faces." );
-    return false;
   }
 
-  /* ===============================
-   *  Stage 3: extract blend chains
-   * =============================== */
+  std::cout << "numIteratedFaces : " << numIteratedFaces << std::endl;
 
-  // Set results of attribution as final results.
-  m_result.ids   = attribution.GetResultIndices();
-  m_result.faces = attribution.GetResultFaces();
-  //
-  return true;
+  return false;
 }

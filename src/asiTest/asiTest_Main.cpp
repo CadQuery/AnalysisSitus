@@ -29,6 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // asiTest includes
+#include <asiTest_AAG.h>
 #include <asiTest_CommonFacilities.h>
 #include <asiTest_EdgeVexity.h>
 #include <asiTest_InvertShells.h>
@@ -88,6 +89,7 @@ int main(int argc, char* argv[])
   //
   CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_SuppressBlends>  );
   CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_InvertShells>    );
+  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_AAG>             );
   CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_IsContourClosed> );
   CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_EdgeVexity>      );
 

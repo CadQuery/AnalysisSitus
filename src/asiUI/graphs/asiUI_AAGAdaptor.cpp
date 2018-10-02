@@ -94,14 +94,35 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
     std::string faceName = asiAlgo_Utils::FaceGeometryName( TopoDS::Face( Faces(f_idx) ) );
     faceName += ":";
     faceName += asiAlgo_Utils::Str::ToString<int>(f_idx).c_str();
-    labelArr->InsertNextValue(faceName);
-    //
+
+    // Classify node depending on whether any attributes are available
+    // for it or not
     if ( SelFaces.Contains(f_idx) )
+    {
       groupArr->InsertNextValue(ARRNAME_GROUP_HIGHLIGHTED);
+    }
+    else if ( aag->HasNodeAttributes(f_idx) )
+    {
+      groupArr->InsertNextValue(ARRNAME_GROUP_ATTRIBUTED);
+
+      // Loop over the available attributes
+      for ( asiAlgo_AAG::t_attr_set::Iterator it( aag->GetNodeAttributes(f_idx) );
+            it.More(); it.Next() )
+      {
+        const Handle(asiAlgo_FeatureAttr)& attr = it.GetAttr();
+        faceName += " / ";
+        faceName += attr->DynamicType()->Name();
+      }
+    }
     else
+    {
       groupArr->InsertNextValue(ARRNAME_GROUP_ORDINARY);
+    }
     //
     idsArr->InsertNextValue( aag->GetMapOfSubShapes().FindIndex( aag->GetFace(f_idx) ) );
+
+    // Add label
+    labelArr->InsertNextValue(faceName);
   }
 
   // Set property arrays

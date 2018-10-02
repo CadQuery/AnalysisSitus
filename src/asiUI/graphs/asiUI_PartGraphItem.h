@@ -61,6 +61,7 @@
 #define ARRNAME_GROUP             "Group"
 #define ARRNAME_GROUP_ORDINARY    "Ordinary"
 #define ARRNAME_GROUP_HIGHLIGHTED "Highlighted"
+#define ARRNAME_GROUP_ATTRIBUTED  "Attributed"
 //
 #define ARRNAME_GROUP_COMPOUND  "Compound"
 #define ARRNAME_GROUP_COMPSOLID "CompSolid"
@@ -123,30 +124,34 @@ protected:
     //
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_HIGHLIGHTED )
       return vtkColor4ub(255, 255, 0, 255);
-
+    //
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_COMPOUND )
       return vtkColor4ub(218, 0, 170, 255);
-
+    //
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_COMPSOLID )
       return vtkColor4ub(228, 11, 180, 255);
-
+    //
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_SOLID )
       return vtkColor4ub(238, 21, 190, 255);
-
+    //
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_SHELL )
       return vtkColor4ub(248, 31, 209, 255);
-
+    //
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_FACE )
       return vtkColor4ub(61, 132, 218, 255);
-
+    //
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_WIRE )
       return vtkColor4ub(150, 0, 0, 255);
-
+    //
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_EDGE )
       return vtkColor4ub(255, 0, 0, 255);
-
+    //
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_VERTEX )
       return vtkColor4ub(255, 242, 0, 255);
+
+    // For AAG nodes only.
+    if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_ATTRIBUTED )
+      return vtkColor4ub(0, 100, 255, 255);
 
     return vtkColor4ub(175, 128, 128, 255);
   }

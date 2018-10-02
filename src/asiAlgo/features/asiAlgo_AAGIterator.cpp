@@ -54,7 +54,7 @@ void asiAlgo_AAGRandomIterator::Init(const Handle(asiAlgo_AAG)& graph)
 {
   asiAlgo_AAGIterator::SetGraph(graph);
   //
-  m_it.Initialize(m_graph->m_neighbors);
+  m_it.Initialize( m_graph->GetNeighborhood() );
 }
 
 

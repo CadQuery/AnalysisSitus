@@ -101,6 +101,10 @@ public:
                     const TopTools_IndexedMapOfShape& selectedFaces);
 
   asiUI_EXPORT void
+    RenderAdjacency(const Handle(asiAlgo_AAG)&        aag,
+                    const TopTools_IndexedMapOfShape& selectedFaces);
+
+  asiUI_EXPORT void
     RenderEventCallback();
 
 public:
@@ -115,6 +119,7 @@ protected:
 
   asiUI_EXPORT vtkSmartPointer<vtkGraph>
     convertToGraph(const TopoDS_Shape&               shape,
+                   const Handle(asiAlgo_AAG)&        aag,
                    const TopTools_IndexedMapOfShape& selectedFaces,
                    const Regime                      regime,
                    const TopAbs_ShapeEnum            leafType);

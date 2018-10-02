@@ -279,7 +279,7 @@ void asiUI_ControlsFeature::onShowAAG()
 
   // Show graph
   asiUI_PartGraph* pGraphView = new asiUI_PartGraph(m_model, m_partViewer);
-  pGraphView->RenderAdjacency(part, selected);
+  pGraphView->RenderAdjacency(part_n->GetAAG(), selected);
 }
 
 //-----------------------------------------------------------------------------

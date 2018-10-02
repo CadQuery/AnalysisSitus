@@ -28,72 +28,76 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_FindBlendFaces_h
-#define asiAlgo_FindBlendFaces_h
+#ifndef asiTest_AAG_HeaderFile
+#define asiTest_AAG_HeaderFile
 
-// asiAlgo includes
-#include <asiAlgo_Recognizer.h>
+// asiTest includes
+#include <asiTest_CaseIDs.h>
 
-//! Utility to detect ordinary (face-face) blends.
-class asiAlgo_FindBlendFaces : public asiAlgo_Recognizer
+// asiTestEngine includes
+#include <asiTestEngine_TestCase.h>
+
+//! Test functions attributed adjacency graphs (AAG).
+class asiTest_AAG : public asiTestEngine_TestCase
 {
 public:
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_FindBlendFaces, asiAlgo_Recognizer)
-
-public:
-
-  //! Constructor.
-  //! \param[in] masterCAD full CAD model.
-  //! \param[in] progress  Progress Notifier.
-  //! \param[in] plotter   Imperative Plotter.
-  asiAlgo_EXPORT
-    asiAlgo_FindBlendFaces(const TopoDS_Shape&  masterCAD,
-                           ActAPI_ProgressEntry progress,
-                           ActAPI_PlotterEntry  plotter);
-
-public:
-
-  //! Detects ordinary blends.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT virtual bool
-    Perform();
-
-public:
-
-  //! Sets faces to analyze exclusively.
-  //! \param[in] faces faces to analyze.
-  void SetFaces(const TColStd_PackedMapOfInteger& faces)
+  //! Returns Test Case ID.
+  //! \return ID of the Test Case.
+  static int ID()
   {
-    m_faces2Analyze = faces;
+    return CaseID_AAG;
+  }
+
+  //! Returns filename for the description.
+  //! \return filename for the description of the Test Case.
+  static std::string DescriptionFn()
+  {
+    return "asiTest_AAG";
+  }
+
+  //! Returns Test Case description directory.
+  //! \return description directory for the Test Case.
+  static std::string DescriptionDir()
+  {
+    return "inspection";
+  }
+
+  //! Returns pointers to the Test Functions to launch.
+  //! \param[out] functions output collection of pointers.
+  static void Functions(AsiTestFunctions& functions)
+  {
+    functions << &test001
+              << &test002
+              << &test003
+              << &test004
+              << &test005
+              << &test006
+              << &test007
+              << &test008
+              << &test009
+    ; // Put semicolon here for convenient adding new functions above ;)
   }
 
 private:
 
-  //! Reaction to formulation changing.
-  //! \param[in] formulation activated formulation.
-  virtual void onFormulation(const asiAlgo_FeatureFormulation formulation) override
-  {
-    switch ( formulation )
-    {
-      case FeatureFormulation_GuessFace:
-      case FeatureFormulation_SupportFace:
-        Standard_ProgramError::Raise("Unsupported formulation");
-      case FeatureFormulation_Full:
-      default: break;
-    }
-  }
+  static outcome
+    testAllNeighborsIterator(const int               funcID,
+                             const char*             filename,
+                             const int               seedFaceId,
+                             const std::vector<int>& refFaceIds);
 
-protected:
+private:
 
-  //-------------------------------------------------------------------------//
-  // IN
-  //-------------------------------------------------------------------------//
-
-  //! Optional collection of faces to analyze exclusively. If this set is
-  //! empty, then global recognition will be shot.
-  TColStd_PackedMapOfInteger m_faces2Analyze;
+  static outcome test001(const int funcID);
+  static outcome test002(const int funcID);
+  static outcome test003(const int funcID);
+  static outcome test004(const int funcID);
+  static outcome test005(const int funcID);
+  static outcome test006(const int funcID);
+  static outcome test007(const int funcID);
+  static outcome test008(const int funcID);
+  static outcome test009(const int funcID);
 
 };
 

@@ -60,6 +60,15 @@ public:
                           ActAPI_ProgressEntry       progress,
                           ActAPI_PlotterEntry        plotter);
 
+  //! Constructor.
+  //! \param[in] aag      AAG.
+  //! \param[in] progress Progress Notifier.
+  //! \param[in] plotter  Imperative Plotter.
+  asiAlgo_EXPORT
+    asiAlgo_FindTermEdges(const Handle(asiAlgo_AAG)& aag,
+                          ActAPI_ProgressEntry       progress,
+                          ActAPI_PlotterEntry        plotter);
+
 public:
 
   //! Performs detection of terminating edges for the given face.

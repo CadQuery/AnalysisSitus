@@ -37,9 +37,10 @@
 // OCCT includes
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
-//-----------------------------------------------------------------------------
+// Standard includes
+#include <stack>
 
-DEFINE_STANDARD_HANDLE(asiAlgo_AAGIterator, Standard_Transient)
+//-----------------------------------------------------------------------------
 
 //! AAG iterator.
 class asiAlgo_AAGIterator : public Standard_Transient
@@ -98,8 +99,6 @@ protected:
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiAlgo_AAGRandomIterator, asiAlgo_AAGIterator)
-
 //! Random-order AAG iterator.
 class asiAlgo_AAGRandomIterator : public asiAlgo_AAGIterator
 {
@@ -142,8 +141,6 @@ protected:
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiAlgo_AAGSetIterator, asiAlgo_AAGIterator)
-
 //! Random-order AAG iterator limited by a set of node indices.
 class asiAlgo_AAGSetIterator : public asiAlgo_AAGIterator
 {
@@ -185,6 +182,146 @@ public:
 protected:
 
   TColStd_MapIteratorOfPackedMapOfInteger m_it; //!< Data map iterator.
+
+};
+
+//-----------------------------------------------------------------------------
+
+//! Collection of rules for parameterized neighborhood iterator.
+//! \sa asiAlgo_AAGNeighborsIterator
+namespace asiAlgo_AAGIterationRule
+{
+  //! This rule is fully permissive. Using this rule you can iterate the
+  //! entire connected component of AAG graph.
+  class AllowAny : public Standard_Transient
+  {
+  public:
+
+    // OCCT RTTI
+    DEFINE_STANDARD_RTTI_INLINE(AllowAny, Standard_Transient)
+
+  public:
+
+    AllowAny() {} //!< Default ctor.
+
+  public:
+
+    bool IsBlocking(const int) { return false; }
+  };
+};
+
+//! AAG iterator visiting neighbor faces for the given seed in depth-first order.
+//! Seed faces are also traversed by this iterator. Use this iterator to visit
+//! all nodes constituting a connected component in AAG.
+template <typename t_blockRule>
+class asiAlgo_AAGNeighborsIterator : public asiAlgo_AAGIterator
+{
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_AAGNeighborsIterator, asiAlgo_AAGIterator)
+
+public:
+
+  //! Creates and initializes iterator for AAG.
+  //! \param[in] graph graph to iterate.
+  //! \param[in] seed  seed face.
+  //! \param[in] rule  rule to block traversal of neighbor nodes.
+  asiAlgo_AAGNeighborsIterator(const Handle(asiAlgo_AAG)& graph,
+                               const int                  seed,
+                               const Handle(t_blockRule)& rule) : asiAlgo_AAGIterator()
+  {
+    this->Init(graph, seed);
+    this->SetBlockRule(rule);
+  }
+
+public:
+
+  //! Sets block rule to prevent further iterations on the current node.
+  //! \param[in] rule blocking rule to set.
+  void SetBlockRule(const Handle(t_blockRule)& rule)
+  {
+    m_blockRule = rule;
+  }
+
+public:
+
+  //! Initializes iterator.
+  //! \param[in] graph graph to iterate.
+  //! \param[in] seed  1-based ID of the seed face to start iteration from.
+  void Init(const Handle(asiAlgo_AAG)& graph,
+            const int                  seed)
+  {
+    asiAlgo_AAGIterator::SetGraph(graph);
+    //
+    m_iSeed = seed;
+    m_visited.Clear();
+    //
+    m_fringe.push(m_iSeed);
+    m_visited.Add(m_iSeed);
+  }
+
+  //! \return true if there are still some faces to iterate.
+  bool More() const
+  {
+    return !m_fringe.empty();
+  }
+
+  //! Moves iterator to another (adjacent) face.
+  void Next()
+  {
+    // Let's throw an exception if there is nothing else to iterate
+    if ( !this->More() )
+      Standard_ProgramError::Raise("No next item");
+
+    // Take current
+    const int iCurrent = this->GetFaceId();
+    m_fringe.pop(); // Top item is done
+
+    // Check whether the current node is a dead end
+    if ( m_blockRule->IsBlocking(iCurrent) )
+      return;
+
+    // Put all nodes pending for iteration to the fringe
+    const TColStd_PackedMapOfInteger& neighbors = m_graph->GetNeighbors(iCurrent);
+    //
+    for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbors); nit.More(); nit.Next() )
+    {
+      const int iNext = nit.Key();
+
+      if ( !m_visited.Contains(iNext) )
+      {
+        m_fringe.push(iNext); // Set node to iterate
+        m_visited.Add(iNext);
+      }
+    }
+  }
+
+  //! Returns the neighbors of the current face.
+  //! \param[out] neighbors neighbors.
+  //! \return false is no neighbors available.
+  bool GetNeighbors(TColStd_PackedMapOfInteger& neighbors) const
+  {
+    const int face_id = this->GetFaceId();
+    if ( !m_graph->HasNeighbors(face_id) )
+      return false;
+
+    neighbors = m_graph->GetNeighbors(face_id);
+    return true;
+  }
+
+  //! \return ID of the current face.
+  int GetFaceId() const
+  {
+    return m_fringe.top();
+  }
+
+protected:
+
+  int                        m_iSeed;     //!< Seed node.
+  TColStd_PackedMapOfInteger m_visited;   //!< Visited nodes.
+  std::stack<int>            m_fringe;    //!< Where to return.
+  Handle(t_blockRule)        m_blockRule; //!< Rule to block further iterations.
 
 };
 

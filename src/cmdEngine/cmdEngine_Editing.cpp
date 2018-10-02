@@ -50,6 +50,7 @@
 #include <asiAlgo_PlateOnEdges.h>
 #include <asiAlgo_PlateOnPoints.h>
 #include <asiAlgo_RebuildEdge.h>
+#include <asiAlgo_RecognizeBlends.h>
 #include <asiAlgo_RepatchFaces.h>
 #include <asiAlgo_SmallEdges.h>
 #include <asiAlgo_Timer.h>
@@ -1724,9 +1725,9 @@ int ENGINE_Repatch(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_KillFillet(const Handle(asiTcl_Interp)& interp,
-                      int                          argc,
-                      const char**                 argv)
+int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
 {
   const bool isInteractive = (argc == 1);
 
@@ -1736,7 +1737,7 @@ int ENGINE_KillFillet(const Handle(asiTcl_Interp)& interp,
   if ( partNode.IsNull() || !partNode->IsWellFormed() )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
-    return TCL_OK;
+    return TCL_ERROR;
   }
   Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
   TopoDS_Shape        shape = partNode->GetShape();
@@ -1754,7 +1755,7 @@ int ENGINE_KillFillet(const Handle(asiTcl_Interp)& interp,
     if ( fids.Extent() != 1 )
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Please, select a single 'guess face'.");
-      return TCL_OK;
+      return TCL_ERROR;
     }
     //
     fid = fids.GetMinimalMapped();
@@ -1766,17 +1767,29 @@ int ENGINE_KillFillet(const Handle(asiTcl_Interp)& interp,
     if ( !argStr.IsIntegerValue() )
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed face ID is not an integer value.");
-      return TCL_OK;
+      return TCL_ERROR;
     }
 
     fid = atoi(argv[1]);
     //
     if ( !partNode->GetAAG()->HasFace(fid) )
     {
-      interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Face %1 does not exist in the working part."
-                                                           << fid);
-      return TCL_OK;
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face %1 does not exist in the working part."
+                                                          << fid);
+      return TCL_ERROR;
     }
+  }
+
+  // Prepare recognizer.
+  asiAlgo_RecognizeBlends recognizer( partNode->GetAAG(),
+                                      interp->GetProgress(),
+                                      interp->GetPlotter() );
+
+  // Perform recognition starting from the guess face.
+  if ( !recognizer.Perform(fid) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Recognition failed.");
+    return TCL_ERROR;
   }
 
   // TODO: NYI
@@ -2012,11 +2025,11 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_Repatch);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("kill-fillet",
+  interp->AddCommand("kill-blend",
     //
-    "kill-fillet [fid]\n"
+    "kill-blend [fid]\n"
     "\t Attempts to defeature a fillet starting from the face selected\n"
     "\t interactively or specified as 1-based face ID.",
     //
-    __FILE__, group, ENGINE_KillFillet);
+    __FILE__, group, ENGINE_KillBlend);
 }

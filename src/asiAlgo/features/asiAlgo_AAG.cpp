@@ -686,7 +686,8 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
         const asiAlgo_FeatureAngleType
           face_angle = checkDihAngle.AngleBetweenFaces(face, face, false, 0.0, edges, angRad);
 
-        // Bind attribute
+        // Bind attribute representing the type of dihedral angle. This is an
+        // exceptional case as normally such attributes are bound to arcs.
         m_node_attributes.Bind( f, t_attr_set( new asiAlgo_FeatureAttrAngle(face_angle) ) );
       }
     }

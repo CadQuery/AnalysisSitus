@@ -62,6 +62,15 @@ public:
                        ActAPI_PlotterEntry        plotter);
 
   //! Ctor.
+  //! \param[in] aag      AAG (should not be NULL here).
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_EXPORT
+    asiAlgo_Recognizer(const Handle(asiAlgo_AAG)& aag,
+                       ActAPI_ProgressEntry       progress,
+                       ActAPI_PlotterEntry        plotter);
+
+  //! Ctor.
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
@@ -124,8 +133,6 @@ private:
   virtual void onFormulation(const asiAlgo_FeatureFormulation formulation) = 0;
 
 protected:
-
-  unsigned m_last_error; //!< Last error of Perform
 
   //-------------------------------------------------------------------------//
   // IN

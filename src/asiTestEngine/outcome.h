@@ -31,6 +31,10 @@
 #ifndef outcome_h
 #define outcome_h
 
+// asiAlgo includes
+#include <asiAlgo_MemChecker.h>
+#include <asiAlgo_Utils.h>
+
 // Standard includes
 #include <string>
 #include <sstream>
@@ -52,13 +56,17 @@ public:
   std::string name;           //!< Function name.
   bool        ok;             //!< Success/failure.
   std::string elapsedTimeSec; //!< Elapsed (wall) time in seconds.
+  int         memBefore;      //!< Consumed memory [MiB] before function execution.
+  int         memAfter;       //!< Consumed memory [MiB] after function execution.
 
 public:
 
   //! Default ctor.
   explicit outcome()
   : ok             (false),
-    elapsedTimeSec ("undefined")
+    elapsedTimeSec ("undefined"),
+    memBefore      (-1),
+    memAfter       (-1)
   {
     this->startTimer();
   }
@@ -68,7 +76,23 @@ public:
   explicit outcome(const std::string& _name)
   : name           (_name),
     ok             (false),
-    elapsedTimeSec ("undefined")
+    elapsedTimeSec ("undefined"),
+    memBefore      (-1),
+    memAfter       (-1)
+  {
+    this->startTimer();
+  }
+
+  //! Ctor accepting function name.
+  //! \param[in] _name   function name.
+  //! \param[in] _funcID function ID.
+  explicit outcome(const std::string& _name,
+                   const int          _funcID)
+  : name           (_name + "[" + asiAlgo_Utils::Str::ToString(_funcID) + "]"),
+    ok             (false),
+    elapsedTimeSec ("undefined"),
+    memBefore      (-1),
+    memAfter       (-1)
   {
     this->startTimer();
   }
@@ -77,7 +101,9 @@ public:
   //! \param[in] _ok Boolean value to set as execution status.
   explicit outcome(const bool _ok)
   : ok             (_ok),
-    elapsedTimeSec ("undefined")
+    elapsedTimeSec ("undefined"),
+    memBefore      (-1),
+    memAfter       (-1)
   {
     this->startTimer();
   }
@@ -86,10 +112,12 @@ public:
   //! \param[in] _name function name.
   //! \param[in] _ok   Boolean value to set as execution status.
   explicit outcome(const std::string& _name,
-                    const bool         _ok)
+                   const bool         _ok)
   : name           (_name),
     ok             (_ok),
-    elapsedTimeSec ("undefined")
+    elapsedTimeSec ("undefined"),
+    memBefore      (-1),
+    memAfter       (-1)
   {
     this->startTimer();
   }
@@ -103,7 +131,9 @@ public:
                    const std::string& _time)
   : name           (_name),
     ok             (_ok),
-    elapsedTimeSec (_time)
+    elapsedTimeSec (_time),
+    memBefore      (-1),
+    memAfter       (-1)
   {
     this->startTimer();
   }
@@ -160,6 +190,7 @@ protected:
   //! Starts internal timer.
   void startTimer()
   {
+    MEMCHECK_COUNT_MIB(this->memBefore)
     m_timer.Start();
   }
 
@@ -167,6 +198,7 @@ protected:
   void stopTimer()
   {
     m_timer.Stop();
+    MEMCHECK_COUNT_MIB(this->memAfter)
 
     // Prepare string for elapsed time.
     std::ostringstream os;

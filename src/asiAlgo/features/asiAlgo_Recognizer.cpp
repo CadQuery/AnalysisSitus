@@ -38,10 +38,22 @@ asiAlgo_Recognizer::asiAlgo_Recognizer(const TopoDS_Shape&        masterCAD,
                                        ActAPI_ProgressEntry       progress,
                                        ActAPI_PlotterEntry        plotter)
 //
-: ActAPI_IAlgorithm (progress, plotter),
-  m_formulation     (FeatureFormulation_Full), // Default formulation
-  m_master          (masterCAD),
-  m_aag             (aag)
+: ActAPI_IAlgorithm ( progress, plotter ),
+  m_formulation     ( FeatureFormulation_Full ), // Default formulation
+  m_master          ( masterCAD ),
+  m_aag             ( aag )
+{}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_Recognizer::asiAlgo_Recognizer(const Handle(asiAlgo_AAG)& aag,
+                                       ActAPI_ProgressEntry       progress,
+                                       ActAPI_PlotterEntry        plotter)
+//
+: ActAPI_IAlgorithm ( progress, plotter ),
+  m_formulation     ( FeatureFormulation_Full ), // Default formulation
+  m_master          ( aag->GetMasterCAD() ),
+  m_aag             ( aag )
 {}
 
 //-----------------------------------------------------------------------------
@@ -49,8 +61,8 @@ asiAlgo_Recognizer::asiAlgo_Recognizer(const TopoDS_Shape&        masterCAD,
 asiAlgo_Recognizer::asiAlgo_Recognizer(ActAPI_ProgressEntry progress,
                                        ActAPI_PlotterEntry  plotter)
 //
-: ActAPI_IAlgorithm (progress, plotter),
-  m_formulation     (FeatureFormulation_Full) // Default formulation
+: ActAPI_IAlgorithm ( progress, plotter ),
+  m_formulation     ( FeatureFormulation_Full ) // Default formulation
 {}
 
 //-----------------------------------------------------------------------------

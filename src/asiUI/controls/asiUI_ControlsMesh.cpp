@@ -68,11 +68,13 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
 
   // Buttons
   m_widgets.pLoadStl        = new QPushButton("Load STL");
+  m_widgets.pLoadPly        = new QPushButton("Load PLY");
   m_widgets.pSaveStl        = new QPushButton("Save STL");
   m_widgets.pSelectFaces    = new QPushButton("Select faces");
   m_widgets.pSelectEdges    = new QPushButton("Select edges");
   //
   m_widgets.pLoadStl        -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pLoadPly        -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSaveStl        -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectFaces    -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectEdges    -> setMinimumWidth(BTN_MIN_WIDTH);
@@ -85,6 +87,7 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
   QVBoxLayout* pExchangeLay   = new QVBoxLayout(pExchangeGroup);
   //
   pExchangeLay->addWidget(m_widgets.pLoadStl);
+  pExchangeLay->addWidget(m_widgets.pLoadPly);
   pExchangeLay->addWidget(m_widgets.pSaveStl);
 
   // Group box for interactive selection
@@ -104,6 +107,7 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
 
   // Connect signals to slots
   connect( m_widgets.pLoadStl,     SIGNAL( clicked() ), SLOT( onLoadStl() ) );
+  connect( m_widgets.pLoadPly,     SIGNAL( clicked() ), SLOT( onLoadPly() ) );
   connect( m_widgets.pSaveStl,     SIGNAL( clicked() ), SLOT( onSaveStl() ) );
   connect( m_widgets.pSelectFaces, SIGNAL( clicked() ), SLOT( onSelectFaces() ) );
   connect( m_widgets.pSelectEdges, SIGNAL( clicked() ), SLOT( onSelectEdges() ) );
@@ -155,6 +159,45 @@ void asiUI_ControlsMesh::onLoadStl()
   //---------------------------------------------------------------------------
 
   m_partViewer->PrsMgr()->Actualize(triangulation_n.get(), false, true);
+}
+
+//-----------------------------------------------------------------------------
+
+//! On PLY loading.
+void asiUI_ControlsMesh::onLoadPly()
+{
+  // Select filename
+  QString filename = asiUI_Common::selectPLYFile(asiUI_Common::OpenSaveAction_Open);
+
+  // Load mesh
+  Handle(ActData_Mesh) mesh;
+  //
+  if ( !asiAlgo_Utils::ReadPly(QStr2AsciiStr(filename), mesh, m_notifier) )
+  {
+    m_notifier.SendLogMessage( LogErr(Normal) << "Cannot read PLY file" );
+    return;
+  }
+  //
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Loaded mesh from %1" << QStr2AsciiStr(filename) );
+
+  //---------------------------------------------------------------------------
+  // Initialize Triangulation Node
+  //---------------------------------------------------------------------------
+
+  // Set mesh
+  Handle(asiData_TessNode) tess_n = m_model->GetTessellationNode();
+  //
+  m_model->OpenCommand(); // tx start
+  {
+    tess_n->SetMesh(mesh);
+  }
+  m_model->CommitCommand(); // tx commit
+
+  //---------------------------------------------------------------------------
+  // Update UI
+  //---------------------------------------------------------------------------
+
+  m_partViewer->PrsMgr()->Actualize(tess_n.get(), false, true);
 }
 
 //-----------------------------------------------------------------------------

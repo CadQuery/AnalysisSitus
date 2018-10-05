@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 14 August 2018
+// Created on: 05 October 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -29,63 +29,25 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiEngine_Triangulation.h>
-
-// asiVisu includes
-#include <asiVisu_TriangulationNodeInfo.h>
+#include <asiEngine_Tessellation.h>
 
 // asiAlgo includes
 #include <asiAlgo_Timer.h>
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_TriangulationNode) asiEngine_Triangulation::CreateTriangulation()
+Handle(asiData_TessNode) asiEngine_Tessellation::CreateTessellation()
 {
-  // Add Triangulation Node to Partition
-  Handle(asiData_TriangulationNode)
-    triangulation_n = Handle(asiData_TriangulationNode)::DownCast( asiData_TriangulationNode::Instance() );
+  // Add Tessellation Node to Partition
+  Handle(asiData_TessNode)
+    tess_n = Handle(asiData_TessNode)::DownCast( asiData_TessNode::Instance() );
   //
-  m_model->GetTriangulationPartition()->AddNode(triangulation_n);
+  m_model->GetTessellationPartition()->AddNode(tess_n);
 
   // Initialize
-  triangulation_n->Init();
-  triangulation_n->SetName("Triangulation");
+  tess_n->Init();
+  tess_n->SetName("Tessellation");
 
   // Return the just created Node
-  return triangulation_n;
-}
-
-//-----------------------------------------------------------------------------
-
-void asiEngine_Triangulation::BuildBVH()
-{
-  // Get Triangulation Node
-  Handle(asiData_TriangulationNode) tris_n = m_model->GetTriangulationNode();
-
-  // Build BVH for facets
-  Handle(asiAlgo_BVHFacets)
-    bvh = new asiAlgo_BVHFacets(tris_n->GetTriangulation(),
-                                asiAlgo_BVHFacets::Builder_Binned,
-                                m_progress,
-                                m_plotter);
-
-  // Store in OCAF
-  tris_n->SetBVH(bvh);
-}
-
-//-----------------------------------------------------------------------------
-
-void asiEngine_Triangulation::GetHighlightedFacets(TColStd_PackedMapOfInteger& facetIndices)
-{
-  // Get actual selection
-  const asiVisu_ActualSelection& sel     = m_prsMgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pickRes = sel.PickResult(SelectionNature_Pick);
-  //
-  asiVisu_TriangulationNodeInfo*
-    nodeInfo = asiVisu_TriangulationNodeInfo::Retrieve( pickRes.GetPickedActor() );
-  //
-  if ( !nodeInfo )
-    return;
-
-  facetIndices = pickRes.GetPickedElementIds();
+  return tess_n;
 }

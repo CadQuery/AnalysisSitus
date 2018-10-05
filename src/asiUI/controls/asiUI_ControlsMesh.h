@@ -69,6 +69,7 @@ public:
 public slots:
 
   void onLoadStl();
+  void onLoadPly();
   void onSaveStl();
   void onSelectFaces();
   void onSelectEdges();
@@ -81,11 +82,13 @@ private:
   struct t_widgets
   {
     QPushButton* pLoadStl;     //!< Button for STL loading.
+    QPushButton* pLoadPly;     //!< Button for PLY loading.
     QPushButton* pSaveStl;     //!< Button for STL saving.
     QPushButton* pSelectFaces; //!< Button to enable selection of faces.
     QPushButton* pSelectEdges; //!< Button to enable selection of edges.
 
     t_widgets() : pLoadStl     (NULL),
+                  pLoadPly     (NULL),
                   pSaveStl     (NULL),
                   pSelectFaces (NULL),
                   pSelectEdges (NULL)
@@ -94,6 +97,7 @@ private:
     void Release()
     {
       delete pLoadStl;     pLoadStl     = NULL;
+      delete pLoadPly;     pLoadPly     = NULL;
       delete pSaveStl;     pSaveStl     = NULL;
       delete pSelectFaces; pSelectFaces = NULL;
       delete pSelectEdges; pSelectEdges = NULL;

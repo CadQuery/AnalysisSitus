@@ -35,6 +35,7 @@
 #include <asiEngine_Curve.h>
 #include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
+#include <asiEngine_Tessellation.h>
 #include <asiEngine_TolerantShapes.h>
 #include <asiEngine_Triangulation.h>
 
@@ -71,6 +72,7 @@ REGISTER_NODE_TYPE(asiData_TolerantShapesNode)
 REGISTER_NODE_TYPE(asiData_TolerantRangeNode)
 //
 REGISTER_NODE_TYPE(asiData_TriangulationNode)
+REGISTER_NODE_TYPE(asiData_TessNode)
 //
 REGISTER_NODE_TYPE(asiData_IVCurveNode)
 REGISTER_NODE_TYPE(asiData_IVCurvesNode)
@@ -116,6 +118,9 @@ void asiEngine_Model::Populate()
 
   // Add Triangulation Node
   root_n->AddChildNode( asiEngine_Triangulation(this, NULL).CreateTriangulation() );
+
+  // Add Tessellation Node
+  root_n->AddChildNode( asiEngine_Tessellation(this, NULL).CreateTessellation() );
 
   // Add Imperative Viewer Node
   root_n->AddChildNode( asiEngine_IV(this).Create_IV() );
@@ -187,6 +192,22 @@ Handle(asiData_TriangulationNode) asiEngine_Model::GetTriangulationNode() const
   return NULL;
 }
 
+
+//-----------------------------------------------------------------------------
+
+//! \return single Tessellation Node.
+Handle(asiData_TessNode) asiEngine_Model::GetTessellationNode() const
+{
+  for ( ActData_BasePartition::Iterator it( this->GetTessellationPartition() ); it.More(); it.Next() )
+  {
+    Handle(asiData_TessNode) N = Handle(asiData_TessNode)::DownCast( it.Value() );
+    //
+    if ( !N.IsNull() && N->IsWellFormed() )
+      return N;
+  }
+  return NULL;
+}
+
 //-----------------------------------------------------------------------------
 
 //! \return single Imperative Viewer Node.
@@ -224,6 +245,7 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_TolerantRangeNode>,  Partition_TolerantRange);
   //
   REGISTER_PARTITION(asiData_Partition<asiData_TriangulationNode>,  Partition_Triangulation);
+  REGISTER_PARTITION(asiData_Partition<asiData_TessNode>,           Partition_Tessellation);
   //
   REGISTER_PARTITION(asiData_Partition<asiData_IVNode>,             Partition_IV);
   REGISTER_PARTITION(asiData_Partition<asiData_IVPoints2dNode>,     Partition_IV_Points2d);

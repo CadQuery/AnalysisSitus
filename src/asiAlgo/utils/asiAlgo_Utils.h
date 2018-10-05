@@ -40,6 +40,9 @@
 #include <ActAPI_ILogger.h>
 #include <ActAPI_IProgressNotifier.h>
 
+// Active Data includes
+#include <ActData_Mesh.h>
+
 // OCCT includes
 #include <BRep_Tool.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
@@ -394,6 +397,16 @@ namespace asiAlgo_Utils
   asiAlgo_EXPORT bool
     ReadStl(const TCollection_AsciiString& filename,
             Handle(Poly_Triangulation)&    triangulation,
+            ActAPI_ProgressEntry           progress);
+
+  //! Reads PLY tessellation from file.
+  //! \param[in]  filename source filename.
+  //! \param[out] mesh     output tessellation.
+  //! \param[in]  progress progress notifier.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    ReadPly(const TCollection_AsciiString& filename,
+            Handle(ActData_Mesh)&          mesh,
             ActAPI_ProgressEntry           progress);
 
   //! Writes triangulation to STL file.

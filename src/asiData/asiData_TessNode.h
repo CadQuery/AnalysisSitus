@@ -43,8 +43,6 @@
 // Mesh Node
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_TessNode, ActData_BaseNode)
-
 //! Node representing surface mesh (triangles and quads).
 class asiData_TessNode : public ActData_BaseNode
 {

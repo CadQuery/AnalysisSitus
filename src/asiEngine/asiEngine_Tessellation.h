@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 23 May 2016
+// Created on: 05 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,47 +28,47 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiVisu_IVTessItemPrs.h>
+#ifndef asiEngine_Tessellation_h
+#define asiEngine_Tessellation_h
 
-// A-Situs (visualization) includes
-#include <asiVisu_MeshContourPipeline.h>
-#include <asiVisu_MeshDataProvider.h>
-#include <asiVisu_MeshPipeline.h>
-#include <asiVisu_Utils.h>
+// asiEngine includes
+#include <asiEngine_Model.h>
 
-// VTK includes
-#include <vtkMapper.h>
-#include <vtkProperty.h>
+// asiData includes
+#include <asiData_TessNode.h>
 
-//! Creates a Presentation object for the passed Node.
-//! \param[in] N Node to create a Presentation for.
-asiVisu_IVTessItemPrs::asiVisu_IVTessItemPrs(const Handle(ActAPI_INode)& N)
-: asiVisu_DefaultPrs(N)
+// asiVisu includes
+#include <asiVisu_PrsManager.h>
+
+//! Data Model API for tessellations.
+class asiEngine_Tessellation
 {
-  // Create Data Provider
-  Handle(asiVisu_MeshDataProvider)
-    DP = new asiVisu_MeshDataProvider( N->GetId(),
-                                       ActParamStream() << N->Parameter(asiData_IVTessItemNode::PID_Mesh) );
+public:
 
-  // Pipeline for mesh
-  this->addPipeline        ( Pipeline_Main, new asiVisu_MeshPipeline );
-  this->assignDataProvider ( Pipeline_Main, DP );
+  asiEngine_Tessellation(const Handle(asiEngine_Model)&             model,
+                         const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
+                         ActAPI_ProgressEntry                       progress = NULL,
+                         ActAPI_PlotterEntry                        plotter  = NULL)
+  : m_model    (model),
+    m_prsMgr   (prsMgr),
+    m_progress (progress),
+    m_plotter  (plotter)
+  {}
 
-  // Pipeline for mesh contour
-  this->addPipeline(Pipeline_MeshContour, new asiVisu_MeshContourPipeline);
-  this->assignDataProvider(Pipeline_MeshContour, DP);
+public:
 
-  // We use CONTOUR mesh pipeline along with an ordinary one. Thus it is
-  // really necessary to resolve coincident primitives to avoid blinking
-  // on mesh edges
-  vtkMapper::SetResolveCoincidentTopology(1);
-}
+  //! Creates new Tessellation Node in the Data Model.
+  //! \return newly created Tessellation Node.
+  asiEngine_EXPORT Handle(asiData_TessNode)
+    CreateTessellation();
 
-//! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
-//! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_IVTessItemPrs::Instance(const Handle(ActAPI_INode)& N)
-{
-  return new asiVisu_IVTessItemPrs(N);
-}
+protected:
+
+  Handle(asiEngine_Model)             m_model;    //!< Data Model instance.
+  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr;   //!< Presentation manager.
+  ActAPI_ProgressEntry                m_progress; //!< Progress notifier.
+  ActAPI_PlotterEntry                 m_plotter;  //!< Plotter.
+
+};
+
+#endif

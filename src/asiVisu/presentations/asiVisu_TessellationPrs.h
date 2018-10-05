@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 23 May 2016
+// Created on: 05 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,47 +28,45 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiVisu_IVTessItemPrs.h>
+#ifndef asiVisu_TessellationPrs_h
+#define asiVisu_TessellationPrs_h
 
-// A-Situs (visualization) includes
-#include <asiVisu_MeshContourPipeline.h>
-#include <asiVisu_MeshDataProvider.h>
-#include <asiVisu_MeshPipeline.h>
-#include <asiVisu_Utils.h>
+// asiVisu includes
+#include <asiVisu_DefaultPrs.h>
 
-// VTK includes
-#include <vtkMapper.h>
-#include <vtkProperty.h>
+// asiData includes
+#include <asiData_TessNode.h>
 
-//! Creates a Presentation object for the passed Node.
-//! \param[in] N Node to create a Presentation for.
-asiVisu_IVTessItemPrs::asiVisu_IVTessItemPrs(const Handle(ActAPI_INode)& N)
-: asiVisu_DefaultPrs(N)
+//! Presentation class for Tessellation Nodes.
+class asiVisu_TessellationPrs : public asiVisu_DefaultPrs
 {
-  // Create Data Provider
-  Handle(asiVisu_MeshDataProvider)
-    DP = new asiVisu_MeshDataProvider( N->GetId(),
-                                       ActParamStream() << N->Parameter(asiData_IVTessItemNode::PID_Mesh) );
+public:
 
-  // Pipeline for mesh
-  this->addPipeline        ( Pipeline_Main, new asiVisu_MeshPipeline );
-  this->assignDataProvider ( Pipeline_Main, DP );
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_TessellationPrs, asiVisu_DefaultPrs)
 
-  // Pipeline for mesh contour
-  this->addPipeline(Pipeline_MeshContour, new asiVisu_MeshContourPipeline);
-  this->assignDataProvider(Pipeline_MeshContour, DP);
+  // Allows to register this Presentation class
+  DEFINE_PRESENTATION_FACTORY(asiData_TessNode, Instance)
 
-  // We use CONTOUR mesh pipeline along with an ordinary one. Thus it is
-  // really necessary to resolve coincident primitives to avoid blinking
-  // on mesh edges
-  vtkMapper::SetResolveCoincidentTopology(1);
-}
+public:
 
-//! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
-//! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_IVTessItemPrs::Instance(const Handle(ActAPI_INode)& N)
-{
-  return new asiVisu_IVTessItemPrs(N);
-}
+  //! Pipelines.
+  enum PipelineId
+  {
+    Pipeline_Main = 1,
+    Pipeline_MeshContour
+  };
+
+public:
+
+  asiVisu_EXPORT static Handle(asiVisu_Prs)
+    Instance(const Handle(ActAPI_INode)& N);
+
+private:
+
+  //! Allocation is allowed only via Instance method.
+  asiVisu_TessellationPrs(const Handle(ActAPI_INode)& N);
+
+};
+
+#endif

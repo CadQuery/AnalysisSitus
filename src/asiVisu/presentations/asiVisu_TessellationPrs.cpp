@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 14 August 2018
+// Created on: 05 October 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -29,63 +29,46 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiEngine_Triangulation.h>
+#include <asiVisu_TessellationPrs.h>
 
 // asiVisu includes
-#include <asiVisu_TriangulationNodeInfo.h>
+#include <asiVisu_MeshContourPipeline.h>
+#include <asiVisu_MeshDataProvider.h>
+#include <asiVisu_MeshPipeline.h>
+#include <asiVisu_Utils.h>
 
-// asiAlgo includes
-#include <asiAlgo_Timer.h>
+// VTK includes
+#include <vtkMapper.h>
+#include <vtkProperty.h>
 
-//-----------------------------------------------------------------------------
-
-Handle(asiData_TriangulationNode) asiEngine_Triangulation::CreateTriangulation()
+//! Creates a Presentation object for the passed Node.
+//! \param[in] N Node to create a Presentation for.
+asiVisu_TessellationPrs::asiVisu_TessellationPrs(const Handle(ActAPI_INode)& N)
+: asiVisu_DefaultPrs(N)
 {
-  // Add Triangulation Node to Partition
-  Handle(asiData_TriangulationNode)
-    triangulation_n = Handle(asiData_TriangulationNode)::DownCast( asiData_TriangulationNode::Instance() );
-  //
-  m_model->GetTriangulationPartition()->AddNode(triangulation_n);
+  // Create Data Provider
+  Handle(asiVisu_MeshDataProvider)
+    DP = new asiVisu_MeshDataProvider( N->GetId(),
+                                       ActParamStream() << N->Parameter(asiData_TessNode::PID_Mesh) );
 
-  // Initialize
-  triangulation_n->Init();
-  triangulation_n->SetName("Triangulation");
+  // Pipeline for mesh
+  this->addPipeline        ( Pipeline_Main, new asiVisu_MeshPipeline );
+  this->assignDataProvider ( Pipeline_Main, DP );
 
-  // Return the just created Node
-  return triangulation_n;
+  // Pipeline for mesh contour
+  this->addPipeline(Pipeline_MeshContour, new asiVisu_MeshContourPipeline);
+  this->assignDataProvider(Pipeline_MeshContour, DP);
+
+  // We use CONTOUR mesh pipeline along with an ordinary one. Thus it is
+  // really necessary to resolve coincident primitives to avoid blinking
+  // on mesh edges
+  vtkMapper::SetResolveCoincidentTopology(1);
 }
 
-//-----------------------------------------------------------------------------
-
-void asiEngine_Triangulation::BuildBVH()
+//! Factory method for Presentation.
+//! \param[in] N Node to create a Presentation for.
+//! \return new Presentation instance.
+Handle(asiVisu_Prs) asiVisu_TessellationPrs::Instance(const Handle(ActAPI_INode)& N)
 {
-  // Get Triangulation Node
-  Handle(asiData_TriangulationNode) tris_n = m_model->GetTriangulationNode();
-
-  // Build BVH for facets
-  Handle(asiAlgo_BVHFacets)
-    bvh = new asiAlgo_BVHFacets(tris_n->GetTriangulation(),
-                                asiAlgo_BVHFacets::Builder_Binned,
-                                m_progress,
-                                m_plotter);
-
-  // Store in OCAF
-  tris_n->SetBVH(bvh);
-}
-
-//-----------------------------------------------------------------------------
-
-void asiEngine_Triangulation::GetHighlightedFacets(TColStd_PackedMapOfInteger& facetIndices)
-{
-  // Get actual selection
-  const asiVisu_ActualSelection& sel     = m_prsMgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pickRes = sel.PickResult(SelectionNature_Pick);
-  //
-  asiVisu_TriangulationNodeInfo*
-    nodeInfo = asiVisu_TriangulationNodeInfo::Retrieve( pickRes.GetPickedActor() );
-  //
-  if ( !nodeInfo )
-    return;
-
-  facetIndices = pickRes.GetPickedElementIds();
+  return new asiVisu_TessellationPrs(N);
 }

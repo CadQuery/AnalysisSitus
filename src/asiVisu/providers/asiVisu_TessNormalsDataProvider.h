@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 December 2016
+// Created on: 05 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,31 +28,49 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_PointCloudUtils_h
-#define asiAlgo_PointCloudUtils_h
+#ifndef asiVisu_TessNormalsDataProvider_h
+#define asiVisu_TessNormalsDataProvider_h
 
-// A-Situs includes
-#include <asiAlgo_BaseCloud.h>
+// asiVisu includes
+#include <asiVisu_VectorsDataProvider.h>
 
-//-----------------------------------------------------------------------------
+// asiData includes
+#include <asiData_TessNormsNode.h>
 
-//! Point cloud processing utilities.
-namespace asiAlgo_PointCloudUtils
+//! Data provider for mesh normals.
+class asiVisu_TessNormalsDataProvider : public asiVisu_VectorsDataProvider
 {
-  asiAlgo_EXPORT Handle(TColStd_HArray1OfReal)
-    AsRealArray(const Handle(asiAlgo_BaseCloud<double>)& pointCloud);
+public:
 
-  asiAlgo_EXPORT Handle(TColStd_HArray1OfReal)
-    AsRealArray(const Handle(asiAlgo_BaseCloud<float>)& pointCloud);
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_TessNormalsDataProvider, asiVisu_VectorsDataProvider)
 
-  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<double>)
-    AsCloudd(const Handle(TColStd_HArray1OfReal)& arr);
+public:
 
-  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<float>)
-    AsCloudf(const Handle(TColStd_HArray1OfReal)& arr);
+  asiVisu_EXPORT
+    asiVisu_TessNormalsDataProvider(const Handle(asiData_TessNormsNode)& N);
 
-  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<double>)
-    CloudfAsCloudd(const Handle(asiAlgo_BaseCloud<float>)& pointCloud);
+public:
+
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<float>)
+    GetPointsf();
+
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<float>)
+    GetVectorsf();
+
+  asiVisu_EXPORT virtual double
+    GetMaxVectorModulus() const;
+
+private:
+
+  virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
+
+protected:
+
+  Handle(asiAlgo_BaseCloud<float>) m_points;  //!< Cached points.
+  Handle(asiAlgo_BaseCloud<float>) m_vectors; //!< Cached vectors.
+
 };
 
 #endif

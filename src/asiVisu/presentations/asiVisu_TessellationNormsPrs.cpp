@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 December 2016
+// Created on: 05 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,31 +28,42 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_PointCloudUtils_h
-#define asiAlgo_PointCloudUtils_h
+// Own include
+#include <asiVisu_TessellationNormsPrs.h>
 
-// A-Situs includes
-#include <asiAlgo_BaseCloud.h>
+// asiVisu includes
+#include <asiVisu_TessNormalsDataProvider.h>
+#include <asiVisu_VectorsPipeline.h>
+#include <asiVisu_Utils.h>
 
-//-----------------------------------------------------------------------------
+// VTK includes
+#include <vtkMapper.h>
+#include <vtkProperty.h>
 
-//! Point cloud processing utilities.
-namespace asiAlgo_PointCloudUtils
+//! Creates a Presentation object for the passed Node.
+//! \param[in] N Node to create a Presentation for.
+asiVisu_TessellationNormsPrs::asiVisu_TessellationNormsPrs(const Handle(ActAPI_INode)& N)
+: asiVisu_DefaultPrs(N)
 {
-  asiAlgo_EXPORT Handle(TColStd_HArray1OfReal)
-    AsRealArray(const Handle(asiAlgo_BaseCloud<double>)& pointCloud);
+  // Create Data Provider.
+  Handle(asiVisu_TessNormalsDataProvider)
+    DP = new asiVisu_TessNormalsDataProvider( Handle(asiData_TessNormsNode)::DownCast(N) );
 
-  asiAlgo_EXPORT Handle(TColStd_HArray1OfReal)
-    AsRealArray(const Handle(asiAlgo_BaseCloud<float>)& pointCloud);
+  // Create pipeline for the vector field.
+  Handle(asiVisu_VectorsPipeline) PL = new asiVisu_VectorsPipeline;
+  //
+  PL->Mapper()->ScalarVisibilityOff();
+  PL->Actor()->GetProperty()->SetColor(1,0.5, 0);
 
-  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<double>)
-    AsCloudd(const Handle(TColStd_HArray1OfReal)& arr);
+  // Register pipeline.
+  this->addPipeline        (Pipeline_Main, PL);
+  this->assignDataProvider (Pipeline_Main, DP);
+}
 
-  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<float>)
-    AsCloudf(const Handle(TColStd_HArray1OfReal)& arr);
-
-  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<double>)
-    CloudfAsCloudd(const Handle(asiAlgo_BaseCloud<float>)& pointCloud);
-};
-
-#endif
+//! Factory method for Presentation.
+//! \param[in] N Node to create a Presentation for.
+//! \return new Presentation instance.
+Handle(asiVisu_Prs) asiVisu_TessellationNormsPrs::Instance(const Handle(ActAPI_INode)& N)
+{
+  return new asiVisu_TessellationNormsPrs(N);
+}

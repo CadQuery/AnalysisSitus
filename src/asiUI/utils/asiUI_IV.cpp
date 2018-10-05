@@ -722,7 +722,7 @@ void asiUI_IV::DRAW_ASI_POINTSF(const Handle(asiAlgo_BaseCloud<float>)& points,
   }
   //
   Handle(asiData_IVPointSetNode)
-    points_n = asiEngine_IV(m_model).Create_PointSet(asiAlgo_PointCloudUtils::PointCloudfAsPointCloudd(points), name, true);
+    points_n = asiEngine_IV(m_model).Create_PointSet(asiAlgo_PointCloudUtils::CloudfAsCloudd(points), name, true);
   //
   if ( isTx )
     m_model->CommitCommand();
@@ -941,14 +941,14 @@ void asiUI_IV::draw_points(const Handle(HRealArray)&      coords,
     points_n = asiEngine_IV(m_model).Find_PointSet(name);
     //
     if ( !points_n.IsNull() )
-      points_n->SetPoints( asiAlgo_PointCloudUtils::AsPointCloud(coords) );
+      points_n->SetPoints( asiAlgo_PointCloudUtils::AsCloudd(coords) );
     else
       doCreate = true;
   }
 
   if ( doCreate )
   {
-    points_n = asiEngine_IV(m_model).Create_PointSet(asiAlgo_PointCloudUtils::AsPointCloud(coords), name, newPrimitive);
+    points_n = asiEngine_IV(m_model).Create_PointSet(asiAlgo_PointCloudUtils::AsCloudd(coords), name, newPrimitive);
   }
 
   // Commit transaction

@@ -59,6 +59,7 @@
 #include <asiVisu_IVTextItemPrs.h>
 #include <asiVisu_IVTopoItemPrs.h>
 #include <asiVisu_TessellationPrs.h>
+#include <asiVisu_TessellationNormsPrs.h>
 #include <asiVisu_TolerantRangePrs.h>
 #include <asiVisu_TriangulationPrs.h>
 
@@ -129,6 +130,7 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_CalculusLawPrs)
   REGISTER_PRESENTATION(asiVisu_CurvatureCombsPrs)
   REGISTER_PRESENTATION(asiVisu_TessellationPrs)
+  REGISTER_PRESENTATION(asiVisu_TessellationNormsPrs)
   REGISTER_PRESENTATION(asiVisu_TolerantRangePrs)
   REGISTER_PRESENTATION(asiVisu_TriangulationPrs)
 

@@ -111,6 +111,8 @@ protected slots:
   //
   void onPrintParameters  ();
   void onCopyName         ();
+  //
+  void onComputeNorms     ();
 
 protected:
 

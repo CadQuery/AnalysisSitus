@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 08 April 2016
+// Created on: 05 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,10 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiData_IVPointSetNode.h>
-
-// asiAlgo includes
-#include <asiAlgo_PointCloudUtils.h>
+#include <asiData_TessNormsNode.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -40,65 +37,87 @@
 //-----------------------------------------------------------------------------
 
 //! Default constructor. Registers all involved Parameters.
-asiData_IVPointSetNode::asiData_IVPointSetNode() : ActData_BaseNode()
+asiData_TessNormsNode::asiData_TessNormsNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,      PID_Name);
-  REGISTER_PARAMETER(RealArray, PID_Geometry);
+  REGISTER_PARAMETER(IntArray,  PID_IDs);
+  REGISTER_PARAMETER(RealArray, PID_Vectors);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Returns new DETACHED instance of the Node ensuring its correct
 //! allocation in a heap.
 //! \return new instance of the Node.
-Handle(ActAPI_INode) asiData_IVPointSetNode::Instance()
+Handle(ActAPI_INode) asiData_TessNormsNode::Instance()
 {
-  return new asiData_IVPointSetNode();
+  return new asiData_TessNormsNode();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Performs initial actions required to make Node WELL-FORMED.
-void asiData_IVPointSetNode::Init()
+//! \param[in] ids     element IDs.
+//! \param[in] vectors vector coordinates.
+void asiData_TessNormsNode::Init(const Handle(HIntArray)&  ids,
+                                 const Handle(HRealArray)& vectors)
 {
   // Initialize name Parameter
   this->InitParameter(PID_Name, "Name");
   //
-  this->SetPoints(NULL);
+  this->SetIDs(ids);
+  this->SetVectors(vectors);
 }
 
-//-----------------------------------------------------------------------------
-// Generic naming
 //-----------------------------------------------------------------------------
 
 //! Accessor for the Node's name.
 //! \return name of the Node.
-TCollection_ExtendedString asiData_IVPointSetNode::GetName()
+TCollection_ExtendedString asiData_TessNormsNode::GetName()
 {
   return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Sets name for the Node.
-//! \param theName [in] name to set.
-void asiData_IVPointSetNode::SetName(const TCollection_ExtendedString& theName)
+//! \param[in] name name to set.
+void asiData_TessNormsNode::SetName(const TCollection_ExtendedString& name)
 {
-  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(theName);
+  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
 }
 
 //-----------------------------------------------------------------------------
-// Handy API
-//-----------------------------------------------------------------------------
 
-//! \return stored point cloud.
-Handle(asiAlgo_BaseCloud<double>) asiData_IVPointSetNode::GetPoints() const
+//! Sets array of mesh element IDs having vector values associated.
+//! \param[in] ids array to set.
+void asiData_TessNormsNode::SetIDs(const Handle(HIntArray)& ids)
 {
-  Handle(TColStd_HArray1OfReal)
-    coords = ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->GetArray();
-  //
-  return asiAlgo_PointCloudUtils::AsCloudd(coords);
+  ActData_ParameterFactory::AsIntArray( this->Parameter(PID_IDs) )->SetArray(ids);
 }
 
-//! Sets point cloud to store.
-//! \param points [in] points to store.
-void asiData_IVPointSetNode::SetPoints(const Handle(asiAlgo_BaseCloud<double>)& points)
+//-----------------------------------------------------------------------------
+
+//! Accessor for the array of mesh element IDs having vector values associated.
+//! \return requested array.
+Handle(HIntArray) asiData_TessNormsNode::GetIDs() const
 {
-  Handle(TColStd_HArray1OfReal) arr = asiAlgo_PointCloudUtils::AsRealArray(points);
-  //
-  ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray( points.IsNull() ? NULL : arr );
+  return ActData_ParameterFactory::AsIntArray( this->Parameter(PID_IDs) )->GetArray();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Sets array of mesh elemental vectors.
+//! \param[in] vectors array to set.
+void asiData_TessNormsNode::SetVectors(const Handle(HRealArray)& vectors)
+{
+  ActData_ParameterFactory::AsRealArray( this->Parameter(PID_Vectors) )->SetArray(vectors);
+}
+//-----------------------------------------------------------------------------
+
+//! Accessor for the array of mesh elemental vectors.
+//! \return requested array.
+Handle(HRealArray) asiData_TessNormsNode::GetVectors() const
+{
+  return ActData_ParameterFactory::AsRealArray( this->Parameter(PID_Vectors) )->GetArray();
 }

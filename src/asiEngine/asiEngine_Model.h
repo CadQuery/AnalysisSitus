@@ -58,6 +58,7 @@
 #include <asiData_PartNode.h>
 #include <asiData_RootNode.h>
 #include <asiData_TessNode.h>
+#include <asiData_TessNormsNode.h>
 #include <asiData_TolerantRangeNode.h>
 #include <asiData_TriangulationNode.h>
 
@@ -236,13 +237,18 @@ public:
     return Handle(asiData_Partition<asiData_TriangulationNode>)::DownCast( this->Partition(Partition_Triangulation) );
   }
 
-//-----------------------------------------------------------------------------
-
   //! Accessor for a Partition instance dedicated to Tessellation Nodes.
   //! \return requested Partition.
   Handle(asiData_Partition<asiData_TessNode>) GetTessellationPartition() const
   {
     return Handle(asiData_Partition<asiData_TessNode>)::DownCast( this->Partition(Partition_Tessellation) );
+  }
+
+  //! Accessor for a Partition instance dedicated to Tessellation Norms Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_TessNormsNode>) GetTessellationNormsPartition() const
+  {
+    return Handle(asiData_Partition<asiData_TessNormsNode>)::DownCast( this->Partition(Partition_TessellationNorms) );
   }
 
 //-----------------------------------------------------------------------------
@@ -424,6 +430,7 @@ protected:
   //---------------------------------------------------------------------------
     Partition_Triangulation,
     Partition_Tessellation,
+    Partition_TessellationNorms,
   //---------------------------------------------------------------------------
     Partition_IV,
     Partition_IV_Points2d,

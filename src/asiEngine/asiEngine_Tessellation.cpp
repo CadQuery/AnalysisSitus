@@ -32,13 +32,13 @@
 #include <asiEngine_Tessellation.h>
 
 // asiAlgo includes
-#include <asiAlgo_Timer.h>
+#include <asiAlgo_MeshComputeNorms.h>
 
 //-----------------------------------------------------------------------------
 
 Handle(asiData_TessNode) asiEngine_Tessellation::CreateTessellation()
 {
-  // Add Tessellation Node to Partition
+  // Add Tessellation Node to Partition.
   Handle(asiData_TessNode)
     tess_n = Handle(asiData_TessNode)::DownCast( asiData_TessNode::Instance() );
   //
@@ -48,6 +48,44 @@ Handle(asiData_TessNode) asiEngine_Tessellation::CreateTessellation()
   tess_n->Init();
   tess_n->SetName("Tessellation");
 
-  // Return the just created Node
+  // Return the just created Node.
   return tess_n;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_TessNormsNode)
+  asiEngine_Tessellation::ComputeNorms(const Handle(asiData_TessNode)& tessNode)
+{
+  // Get mesh to compute normal vectors for.
+  Handle(ActData_Mesh) mesh = tessNode->GetMesh();
+  //
+  if ( mesh.IsNull() )
+    return NULL;
+
+  // Compute normal vectors.
+  asiAlgo_MeshComputeNorms algo(mesh, m_progress, m_plotter);
+  //
+  algo.Perform();
+
+  // Get the resulting normal field.
+  Handle(HIntArray) nodeIds;
+  Handle(HRealArray) vectors;
+  //
+  algo.GetResultArrays(nodeIds, vectors);
+
+  // Add Tessellation Norms Node to Partition.
+  Handle(asiData_TessNormsNode)
+    tessNorms_n = Handle(asiData_TessNormsNode)::DownCast( asiData_TessNormsNode::Instance() );
+  //
+  m_model->GetTessellationNormsPartition()->AddNode(tessNorms_n);
+
+  // Initialize.
+  tessNorms_n->Init(nodeIds, vectors);
+  tessNorms_n->SetName("Normal field");
+
+  // Add as child.
+  tessNode->AddChildNode(tessNorms_n);
+
+  return tessNorms_n;
 }

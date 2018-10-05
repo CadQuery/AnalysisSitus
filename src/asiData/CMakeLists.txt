@@ -45,6 +45,7 @@ set (H_FILES
   asiData_RootNode.h
   asiData_SurfNode.h
   asiData_TessNode.h
+  asiData_TessNormsNode.h
   asiData_TolerantRangeNode.h
   asiData_TolerantShapesNode.h
   asiData_TriangulationNode.h
@@ -91,6 +92,7 @@ set (CPP_FILES
   asiData_RootNode.cpp
   asiData_SurfNode.cpp
   asiData_TessNode.cpp
+  asiData_TessNormsNode.cpp
   asiData_TolerantRangeNode.cpp
   asiData_TolerantShapesNode.cpp
   asiData_TriangulationNode.cpp

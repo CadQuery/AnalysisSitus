@@ -139,6 +139,7 @@ set (presentations_H_FILES
   presentations/asiVisu_IVTopoItemPrs.h
   presentations/asiVisu_Prs.h
   presentations/asiVisu_PrsManager.h
+  presentations/asiVisu_TessellationNormsPrs.h
   presentations/asiVisu_TessellationPrs.h
   presentations/asiVisu_TolerantRangePrs.h
   presentations/asiVisu_TriangulationPrs.h
@@ -167,6 +168,7 @@ set (presentations_CPP_FILES
   presentations/asiVisu_IVTopoItemPrs.cpp
   presentations/asiVisu_Prs.cpp
   presentations/asiVisu_PrsManager.cpp
+  presentations/asiVisu_TessellationNormsPrs.cpp
   presentations/asiVisu_TessellationPrs.cpp
   presentations/asiVisu_TolerantRangePrs.cpp
   presentations/asiVisu_TriangulationPrs.cpp
@@ -199,6 +201,7 @@ set (providers_H_FILES
   providers/asiVisu_PointsDataProvider.h
   providers/asiVisu_ShapeDataProvider.h
   providers/asiVisu_SurfaceDataProvider.h
+  providers/asiVisu_TessNormalsDataProvider.h
   providers/asiVisu_TriangulationDataProvider.h
   providers/asiVisu_VectorsDataProvider.h
 )
@@ -220,6 +223,7 @@ set (providers_CPP_FILES
   providers/asiVisu_PartDataProvider.cpp
   providers/asiVisu_PointsDataProvider.cpp
   providers/asiVisu_ShapeDataProvider.cpp
+  providers/asiVisu_TessNormalsDataProvider.cpp
   providers/asiVisu_TriangulationDataProvider.cpp
   providers/asiVisu_VectorsDataProvider.cpp
 )

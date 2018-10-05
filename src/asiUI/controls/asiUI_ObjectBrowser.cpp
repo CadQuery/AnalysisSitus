@@ -37,6 +37,7 @@
 
 // asiEngine includes
 #include <asiEngine_Part.h>
+#include <asiEngine_Tessellation.h>
 
 // asiVisu includes
 #include <asiVisu_GeomPrs.h>
@@ -507,6 +508,44 @@ void asiUI_ObjectBrowser::onCopyName()
                                              << selected_n->GetName() );
 }
 
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::onComputeNorms()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_TessNode) ) )
+    return;
+
+  Handle(asiData_TessNode)
+    tessNode = Handle(asiData_TessNode)::DownCast(selected_n);
+
+  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(m_model);
+
+  // Modify Data Model.
+  Handle(asiData_TessNormsNode) tessNormsNode;
+  //
+  M->OpenCommand();
+  {
+    tessNormsNode = asiEngine_Tessellation(M, NULL).ComputeNorms(tessNode);
+  }
+  M->CommitCommand();
+
+  // Update UI.
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+  {
+    // Actualize in Part Viewer.
+    asiUI_ViewerPart* pViewerPart = dynamic_cast<asiUI_ViewerPart*>(m_viewers[k]);
+    //
+    if ( pViewerPart )
+      pViewerPart->PrsMgr()->Actualize(tessNormsNode);
+  }
+  //
+  this->Populate();
+}
+
 //-----------------------------------------------------------------------------
 
 //! Populates context menu with actions.
@@ -585,6 +624,12 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
         pMenu->addSeparator();
         pMenu->addAction( "Save to BREP...", this, SLOT( onSaveToBREP () ) );
         pMenu->addAction( "Set as part",     this, SLOT( onSetAsPart  () ) );
+      }
+
+      if ( node->IsKind( STANDARD_TYPE(asiData_TessNode) ) )
+      {
+        pMenu->addSeparator();
+        pMenu->addAction( "Compute normal vectors", this, SLOT( onComputeNorms () ) );
       }
     }
   }

@@ -297,7 +297,7 @@ TopoDS_Wire asiData_ContourNode::AsShape(const bool useCache) const
   // If there is no any cached B-Rep, let's build a polyline from the
   // original points
   Handle(asiAlgo_BaseCloud<double>)
-    points = asiAlgo_PointCloudUtils::AsPointCloud( this->GetCoords() );
+    points = asiAlgo_PointCloudUtils::AsCloudd( this->GetCoords() );
   //
   if ( !points->GetNumberOfElements() )
     return TopoDS_Wire();
@@ -363,7 +363,7 @@ void asiData_ContourNode::AsPointsOnFaces(TColgp_SequenceOfPnt&      points,
   Handle(HIntArray) faceIndices = this->GetFaces();
 
   // Get coordinates as point cloud
-  Handle(asiAlgo_BaseCloud<double>) pcloud = asiAlgo_PointCloudUtils::AsPointCloud( this->GetCoords() );
+  Handle(asiAlgo_BaseCloud<double>) pcloud = asiAlgo_PointCloudUtils::AsCloudd( this->GetCoords() );
   const int                         nPts   = pcloud->GetNumberOfElements();
   //
   for ( int p = 0; p < nPts; ++p )

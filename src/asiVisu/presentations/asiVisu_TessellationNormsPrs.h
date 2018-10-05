@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 December 2016
+// Created on: 05 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,31 +28,44 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_PointCloudUtils_h
-#define asiAlgo_PointCloudUtils_h
+#ifndef asiVisu_TessellationNormsPrs_h
+#define asiVisu_TessellationNormsPrs_h
 
-// A-Situs includes
-#include <asiAlgo_BaseCloud.h>
+// asiVisu includes
+#include <asiVisu_DefaultPrs.h>
 
-//-----------------------------------------------------------------------------
+// asiData includes
+#include <asiData_TessNormsNode.h>
 
-//! Point cloud processing utilities.
-namespace asiAlgo_PointCloudUtils
+//! Presentation class for Tessellation Norms Nodes.
+class asiVisu_TessellationNormsPrs : public asiVisu_DefaultPrs
 {
-  asiAlgo_EXPORT Handle(TColStd_HArray1OfReal)
-    AsRealArray(const Handle(asiAlgo_BaseCloud<double>)& pointCloud);
+public:
 
-  asiAlgo_EXPORT Handle(TColStd_HArray1OfReal)
-    AsRealArray(const Handle(asiAlgo_BaseCloud<float>)& pointCloud);
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_TessellationNormsPrs, asiVisu_DefaultPrs)
 
-  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<double>)
-    AsCloudd(const Handle(TColStd_HArray1OfReal)& arr);
+  // Allows to register this Presentation class
+  DEFINE_PRESENTATION_FACTORY(asiData_TessNormsNode, Instance)
 
-  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<float>)
-    AsCloudf(const Handle(TColStd_HArray1OfReal)& arr);
+public:
 
-  asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<double>)
-    CloudfAsCloudd(const Handle(asiAlgo_BaseCloud<float>)& pointCloud);
+  //! Pipelines.
+  enum PipelineId
+  {
+    Pipeline_Main = 1
+  };
+
+public:
+
+  asiVisu_EXPORT static Handle(asiVisu_Prs)
+    Instance(const Handle(ActAPI_INode)& N);
+
+private:
+
+  //! Allocation is allowed only via Instance method.
+  asiVisu_TessellationNormsPrs(const Handle(ActAPI_INode)& N);
+
 };
 
 #endif

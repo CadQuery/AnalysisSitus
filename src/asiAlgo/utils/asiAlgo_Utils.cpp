@@ -1184,6 +1184,7 @@ bool asiAlgo_Utils::Sew(const TopoDS_Shape& shape,
                         TopoDS_Shape&       result)
 {
   BRepBuilderAPI_Sewing Sewer(tolerance);
+  Sewer.SetMinTolerance(tolerance*0.1);
   Sewer.Load(shape);
 
   // Perform sewing

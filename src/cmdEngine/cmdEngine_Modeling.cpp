@@ -43,6 +43,7 @@
 // asiAlgo includes
 #include <asiAlgo_EulerKEF.h>
 #include <asiAlgo_EulerKEV.h>
+#include <asiAlgo_MeshOffset.h>
 #include <asiAlgo_TopoKill.h>
 #include <asiAlgo_Utils.h>
 
@@ -176,6 +177,48 @@ int ENGINE_OffsetShell(const Handle(asiTcl_Interp)& interp,
   // Update UI
   if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_OffsetMesh(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get mesh.
+  Handle(asiData_TessNode) tessNode = cmdEngine::model->GetTessellationNode();
+  //
+  if ( tessNode.IsNull() || !tessNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Tessellation Node is null or inconsistent.");
+    return TCL_ERROR;
+  }
+  //
+  Handle(ActData_Mesh) mesh = tessNode->GetMesh();
+
+  // Get offset value.
+  const double offsetVal = atof(argv[1]);
+
+  // Perform mesh offset.
+  asiAlgo_MeshOffset meshOffset( mesh, interp->GetProgress(), interp->GetPlotter() );
+  meshOffset.Perform(offsetVal);
+
+  // Update Data Model.
+  cmdEngine::model->OpenCommand(); // tx start
+  {
+    tessNode->SetMesh( meshOffset.GetResult() );
+  }
+  cmdEngine::model->CommitCommand(); // tx commit
+
+  // Update UI.
+  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(tessNode.get(), false, false);
 
   return TCL_OK;
 }
@@ -950,6 +993,14 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t singularities on triangular surface patches is used.",
     //
     __FILE__, group, ENGINE_OffsetShell);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("offset-mesh",
+    //
+    "offset-mesh offset\n"
+    "\t Offsets mesh nodes in directions of their norms.",
+    //
+    __FILE__, group, ENGINE_OffsetMesh);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-edge",

@@ -72,6 +72,8 @@ void asiAlgo_MeshComputeNorms::Perform()
     }
     //
     avrNorm /= numElems;
+    //
+    avrNorm.Normalize();
 
     // Add vector to the resulting normal field.
     m_norms.Bind(node->GetID(), avrNorm);

@@ -88,6 +88,7 @@ void asiUI_Viewer3dListener::onContextMenu(const QPoint& globalPos)
   QAction* pPickRotationPoint = NULL;
   QAction* pChangeBg          = NULL;
   QAction* pDumpGraphics      = NULL;
+  QAction* pToggleAxes        = NULL;
 
   // Action for picking custom rotation point
   if ( m_pViewer->PrsMgr()->GetInteractionMode() != asiVisu_PrsManager::InteractionMode_2D )
@@ -96,6 +97,7 @@ void asiUI_Viewer3dListener::onContextMenu(const QPoint& globalPos)
   // Other actions
   pChangeBg     = menu.addAction("Set background color");
   pDumpGraphics = menu.addAction("Dump graphics");
+  pToggleAxes   = menu.addAction("Toggle axes");
 
   // Let sub-classes populate menu
   this->populateMenu(menu);
@@ -233,5 +235,14 @@ void asiUI_Viewer3dListener::onContextMenu(const QPoint& globalPos)
       gl2psExporter->CompressOff();
       gl2psExporter->Write();
     }
+  }
+  //---------------------------------------------------------------------------
+  // ACTION: toggle axes
+  //---------------------------------------------------------------------------
+  else if ( selectedItem && selectedItem == pToggleAxes )
+  {
+    const int visible = m_pViewer->PrsMgr()->GetTrihedron()->GetVisibility();
+    //
+    m_pViewer->PrsMgr()->GetTrihedron()->SetVisibility(visible > 0 ? 0 : 1);
   }
 }

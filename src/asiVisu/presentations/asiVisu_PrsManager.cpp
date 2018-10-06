@@ -100,10 +100,10 @@ void asiVisu_PrsManager::PlaceButton(vtkButtonWidget* pButton,
                                   (double) upperRight->GetComputedDisplayValue(pRenderer)[1] };
 
   double bds[6];
-  const double size = 25.0;
+  const double size = 15.0;
   bds[0] = 3;
   bds[1] = bds[0] + size;
-  bds[2] = displaySize[1] - size - 3;
+  bds[2] = displaySize[1] + bds[0];
   bds[3] = bds[2] + size;
   bds[4] = bds[5] = 0.0;
 
@@ -1582,10 +1582,10 @@ void asiVisu_PrsManager::init()
   vtkSmartPointer<vtkImageData> image3 = vtkSmartPointer<vtkImageData>::New();
   vtkSmartPointer<vtkImageData> image4 = vtkSmartPointer<vtkImageData>::New();
   //
-  unsigned char color1[3] = {255, 0,   0};
-  unsigned char color2[3] = {0,   255, 0};
-  unsigned char color3[3] = {0,   0,   255};
-  unsigned char color4[3] = {0,   255, 255};
+  unsigned char color1[3] = {030, 030, 030};
+  unsigned char color2[3] = {118, 121, 124};
+  unsigned char color3[3] = {118, 121, 124};
+  unsigned char color4[3] = {030, 030, 030};
   //
   CreateImage(image1, color1, color1);
   CreateImage(image2, color2, color2);

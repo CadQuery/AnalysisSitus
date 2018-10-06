@@ -563,12 +563,15 @@ TCollection_AsciiString
   else
     result += "non-orthogonal transformation";
   //
-  result += "\n---\n";
-  result += T_roto(1, 1); result += " "; result += T_roto(1, 2); result += " "; result += T_roto(1, 3); result += "\n";
-  result += T_roto(2, 1); result += " "; result += T_roto(2, 2); result += " "; result += T_roto(2, 3); result += "\n";
-  result += T_roto(3, 1); result += " "; result += T_roto(3, 2); result += " "; result += T_roto(3, 3);
-  result += "\n---\n";
-  result += T_move.X(); result += " "; result += T_move.Y(); result += " "; result += T_move.Z();
+  if ( T_form != gp_Identity )
+  {
+    result += "\n---\n";
+    result += T_roto(1, 1); result += " "; result += T_roto(1, 2); result += " "; result += T_roto(1, 3); result += "\n";
+    result += T_roto(2, 1); result += " "; result += T_roto(2, 2); result += " "; result += T_roto(2, 3); result += "\n";
+    result += T_roto(3, 1); result += " "; result += T_roto(3, 2); result += " "; result += T_roto(3, 3);
+    result += "\n---\n";
+    result += T_move.X(); result += " "; result += T_move.Y(); result += " "; result += T_move.Z();
+  }
 
   return result;
 }

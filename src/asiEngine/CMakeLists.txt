@@ -6,24 +6,28 @@ project(asiEngine)
 
 set (H_FILES
   asiEngine.h
+  asiEngine_Base.h
   asiEngine_Curve.h
   asiEngine_Domain.h
   asiEngine_Editing.h
   asiEngine_IV.h
   asiEngine_Model.h
   asiEngine_Part.h
+  asiEngine_RE.h
   asiEngine_Tessellation.h
   asiEngine_TolerantShapes.h
   asiEngine_Triangulation.h
 )
 
 set (CPP_FILES
+  asiEngine_Base.cpp
   asiEngine_Curve.cpp
   asiEngine_Domain.cpp
   asiEngine_Editing.cpp
   asiEngine_IV.cpp
   asiEngine_Model.cpp
   asiEngine_Part.cpp
+  asiEngine_RE.cpp
   asiEngine_Tessellation.cpp
   asiEngine_TolerantShapes.cpp
   asiEngine_Triangulation.cpp

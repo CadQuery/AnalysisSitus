@@ -75,6 +75,8 @@ REGISTER_NODE_TYPE(asiData_TriangulationNode)
 REGISTER_NODE_TYPE(asiData_TessNode)
 REGISTER_NODE_TYPE(asiData_TessNormsNode)
 //
+REGISTER_NODE_TYPE(asiData_ReTopoNode)
+//
 REGISTER_NODE_TYPE(asiData_IVCurveNode)
 REGISTER_NODE_TYPE(asiData_IVCurvesNode)
 REGISTER_NODE_TYPE(asiData_IVCurve2dNode)
@@ -248,6 +250,8 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_TriangulationNode>,  Partition_Triangulation);
   REGISTER_PARTITION(asiData_Partition<asiData_TessNode>,           Partition_Tessellation);
   REGISTER_PARTITION(asiData_Partition<asiData_TessNormsNode>,      Partition_TessellationNorms);
+  //
+  REGISTER_PARTITION(asiData_Partition<asiData_ReTopoNode>,         Partition_ReTopo);
   //
   REGISTER_PARTITION(asiData_Partition<asiData_IVNode>,             Partition_IV);
   REGISTER_PARTITION(asiData_Partition<asiData_IVPoints2dNode>,     Partition_IV_Points2d);

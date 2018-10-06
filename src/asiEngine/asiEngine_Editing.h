@@ -32,10 +32,10 @@
 #define asiEngine_Editing_h
 
 // asiEngine includes
-#include <asiEngine_Model.h>
+#include <asiEngine_Base.h>
 
 //! API for direct editing functionality.
-class asiEngine_Editing
+class asiEngine_Editing : public asiEngine_Base
 {
 public:
 
@@ -47,10 +47,7 @@ public:
                     ActAPI_ProgressEntry           progress = NULL,
                     ActAPI_PlotterEntry            plotter  = NULL)
   //
-  : m_model    (model),
-    m_progress (progress),
-    m_plotter  (plotter)
-  {}
+  : asiEngine_Base(model, progress, plotter) {}
 
 public:
 
@@ -59,12 +56,6 @@ public:
   //! \return true if the Euler-Poincare relation holds.
   asiEngine_EXPORT bool
     CheckEulerPoincare(const int genus);
-
-protected:
-
-  Handle(asiEngine_Model) m_model;    //!< Data Model instance.
-  ActAPI_ProgressEntry    m_progress; //!< Progress notifier.
-  ActAPI_PlotterEntry     m_plotter;  //!< Imperative plotter.
 
 };
 

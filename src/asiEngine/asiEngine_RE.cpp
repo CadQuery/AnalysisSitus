@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 05 October 2018
+// Created on: 06 October 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,53 +28,25 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_Tessellation_h
-#define asiEngine_Tessellation_h
+// Own include
+#include <asiEngine_RE.h>
 
-// asiEngine includes
-#include <asiEngine_Base.h>
-
-// asiData includes
-#include <asiData_TessNode.h>
-#include <asiData_TessNormsNode.h>
-
-// asiVisu includes
-#include <asiVisu_PrsManager.h>
-
-//! Data Model API for tessellations.
-class asiEngine_Tessellation : public asiEngine_Base
+//! \return newly created Topology Node.
+Handle(asiData_ReTopoNode) asiEngine_RE::Create_Topo()
 {
-public:
-
-  //! Ctor.
-  asiEngine_Tessellation(const Handle(asiEngine_Model)&             model,
-                         const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
-                         ActAPI_ProgressEntry                       progress = NULL,
-                         ActAPI_PlotterEntry                        plotter  = NULL)
+  // Add Node to Partition.
+  Handle(asiData_ReTopoNode)
+    topo_n = Handle(asiData_ReTopoNode)::DownCast( asiData_ReTopoNode::Instance() );
   //
-  : asiEngine_Base (model, progress, plotter),
-    m_prsMgr       (prsMgr)
-  {}
+  m_model->GetReTopoPartition()->AddNode(topo_n);
 
-public:
+  // Initialize Node.
+  topo_n->Init();
+  topo_n->SetName("Topology");
 
-  //! Creates new Tessellation Node in the Data Model.
-  //! \return newly created Tessellation Node.
-  asiEngine_EXPORT Handle(asiData_TessNode)
-    CreateTessellation();
+  // Add as a child to Triangulation Node.
+  m_model->GetTriangulationNode()->AddChildNode(topo_n);
 
-  //! Computes normal field for the given Tessellation Node. This method
-  //! creates a child Node under the passed one to store the computed
-  //! normal vectors.
-  //! \param[in] tessNode Tessellation Node to compute the normal field for.
-  //! \return child Data Node representing the computed normal field.
-  asiEngine_EXPORT Handle(asiData_TessNormsNode)
-    ComputeNorms(const Handle(asiData_TessNode)& tessNode);
-
-protected:
-
-  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr; //!< Presentation manager.
-
-};
-
-#endif
+  // Return the just created Node.
+  return topo_n;
+}

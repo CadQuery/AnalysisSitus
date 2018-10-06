@@ -32,13 +32,13 @@
 #define asiEngine_Curve_h
 
 // asiEngine includes
-#include <asiEngine_Model.h>
+#include <asiEngine_Base.h>
 
 // asiData includes
 #include <asiData_CurvatureCombsNode.h>
 
 //! Data Model API for operating with curves.
-class asiEngine_Curve
+class asiEngine_Curve : public asiEngine_Base
 {
 public:
 
@@ -50,7 +50,7 @@ public:
                   ActAPI_ProgressEntry           progress = NULL,
                   ActAPI_PlotterEntry            plotter  = NULL)
   //
-  : m_model(model), m_progress(progress), m_plotter(plotter) {}
+  : asiEngine_Base(model, progress, plotter) {}
 
 public:
 
@@ -103,16 +103,6 @@ public:
   //! \param[in] parent parent Curve Node to clean the underlying objects for.
   asiEngine_EXPORT void
     Clean_All(const Handle(asiData_CurveNode)& parent);
-
-protected:
-
-  void _cleanChildren(const Handle(ActAPI_INode)& parent);
-
-protected:
-
-  Handle(asiEngine_Model) m_model;    //!< Data Model instance.
-  ActAPI_ProgressEntry    m_progress; //!< Progress notifier.
-  ActAPI_PlotterEntry     m_plotter;  //!< Imperative plotter.
 
 };
 

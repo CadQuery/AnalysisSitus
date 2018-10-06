@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 11 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,21 +32,16 @@
 #define asiEngine_IV_h
 
 // asiEngine includes
-#include <asiEngine_Model.h>
-
-// asiVisu includes
-#include <asiVisu_PrsManager.h>
+#include <asiEngine_Base.h>
 
 //! API for imperative viewer (IV).
-class asiEngine_IV
+class asiEngine_IV : public asiEngine_Base
 {
 public:
 
   //! ctor.
   //! \param model [in] Data Model instance.
-  asiEngine_IV(const Handle(asiEngine_Model)& model)
-  //
-  : m_model(model) {}
+  asiEngine_IV(const Handle(asiEngine_Model)& model) : asiEngine_Base(model) {}
 
 public:
 
@@ -203,15 +198,6 @@ public:
 
   asiEngine_EXPORT void
     Clean_Text();
-
-protected:
-
-  asiEngine_EXPORT void
-    _cleanChildren(const Handle(ActAPI_INode)& parent);
-
-protected:
-
-  Handle(asiEngine_Model) m_model;  //!< Data Model instance.
 
 };
 

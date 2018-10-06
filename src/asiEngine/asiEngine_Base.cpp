@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 05 October 2018
+// Created on: 06 October 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,53 +28,31 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_Tessellation_h
-#define asiEngine_Tessellation_h
-
-// asiEngine includes
+// Own include
 #include <asiEngine_Base.h>
 
-// asiData includes
-#include <asiData_TessNode.h>
-#include <asiData_TessNormsNode.h>
+//-----------------------------------------------------------------------------
 
-// asiVisu includes
-#include <asiVisu_PrsManager.h>
-
-//! Data Model API for tessellations.
-class asiEngine_Tessellation : public asiEngine_Base
+//! Removes all child Nodes for the given parent.
+//! \param[in] parent parent Node to clean up children for.
+void asiEngine_Base::_cleanChildren(const Handle(ActAPI_INode)& parent)
 {
-public:
+  Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList;
 
-  //! Ctor.
-  asiEngine_Tessellation(const Handle(asiEngine_Model)&             model,
-                         const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
-                         ActAPI_ProgressEntry                       progress = NULL,
-                         ActAPI_PlotterEntry                        plotter  = NULL)
-  //
-  : asiEngine_Base (model, progress, plotter),
-    m_prsMgr       (prsMgr)
-  {}
+  // Loop over direct children of a Surfaces Node
+  for ( Handle(ActAPI_IChildIterator) cit = parent->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) child_n = cit->Value();
 
-public:
+    // Check if the given Node is consistent
+    if ( child_n.IsNull() || !child_n->IsWellFormed() )
+      continue;
 
-  //! Creates new Tessellation Node in the Data Model.
-  //! \return newly created Tessellation Node.
-  asiEngine_EXPORT Handle(asiData_TessNode)
-    CreateTessellation();
+    // Set Node for deletion
+    nodesToDelete->Append(child_n);
+  }
 
-  //! Computes normal field for the given Tessellation Node. This method
-  //! creates a child Node under the passed one to store the computed
-  //! normal vectors.
-  //! \param[in] tessNode Tessellation Node to compute the normal field for.
-  //! \return child Data Node representing the computed normal field.
-  asiEngine_EXPORT Handle(asiData_TessNormsNode)
-    ComputeNorms(const Handle(asiData_TessNode)& tessNode);
-
-protected:
-
-  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr; //!< Presentation manager.
-
-};
-
-#endif
+  // Delete all Nodes queued for removal
+  for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
+    m_model->DeleteNode( nit.Value()->GetId() );
+}

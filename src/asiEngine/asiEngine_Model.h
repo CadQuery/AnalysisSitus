@@ -56,6 +56,7 @@
 #include <asiData_IVTopoNode.h>
 #include <asiData_Partition.h>
 #include <asiData_PartNode.h>
+#include <asiData_ReTopoNode.h>
 #include <asiData_RootNode.h>
 #include <asiData_TessNode.h>
 #include <asiData_TessNormsNode.h>
@@ -253,6 +254,15 @@ public:
 
 //-----------------------------------------------------------------------------
 
+  //! Accessor for a Partition instance dedicated to ReTopo Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_ReTopoNode>) GetReTopoPartition() const
+  {
+    return Handle(asiData_Partition<asiData_ReTopoNode>)::DownCast( this->Partition(Partition_ReTopo) );
+  }
+
+//-----------------------------------------------------------------------------
+
   //! Accessor for a Partition instance dedicated to IV Nodes.
   //! \return requested Partition.
   Handle(asiData_Partition<asiData_IVNode>) GetIVPartition() const
@@ -431,6 +441,8 @@ protected:
     Partition_Triangulation,
     Partition_Tessellation,
     Partition_TessellationNorms,
+  //---------------------------------------------------------------------------
+    Partition_ReTopo,
   //---------------------------------------------------------------------------
     Partition_IV,
     Partition_IV_Points2d,

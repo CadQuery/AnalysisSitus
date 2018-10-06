@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 19 April 2018
+// Created on: 06 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,69 +28,37 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_TolerantShapes_h
-#define asiEngine_TolerantShapes_h
+#ifndef asiEngine_Base_h
+#define asiEngine_Base_h
 
 // asiEngine includes
-#include <asiEngine_Base.h>
+#include <asiEngine_Model.h>
 
-// asiData includes
-#include <asiData_TolerantRangeNode.h>
-
-// asiVisu includes
-#include <asiVisu_PrsManager.h>
-
-//! API for operating with Tolerant Shape data objects.
-class asiEngine_TolerantShapes : public asiEngine_Base
+//! Base class for Data Model API classes.
+class asiEngine_Base
 {
 public:
 
-  //! Ctor.
+  //! ctor.
   //! \param[in] model    Data Model instance.
-  //! \param[in] prsMgr   Presentation Manager.
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
-  asiEngine_TolerantShapes(const Handle(asiEngine_Model)&             model,
-                           const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
-                           ActAPI_ProgressEntry                       progress = NULL,
-                           ActAPI_PlotterEntry                        plotter  = NULL)
+  asiEngine_Base(const Handle(asiEngine_Model)& model,
+                 ActAPI_ProgressEntry           progress = NULL,
+                 ActAPI_PlotterEntry            plotter  = NULL)
   //
-  : asiEngine_Base (model, progress, plotter),
-    m_prsMgr       (prsMgr)
-  {
-    m_tolShapes = m_model->GetPartNode()->GetTolerantShapes();
-  }
-
-public:
-
-  //! Populates Tolerant Shapes Node with the results of tolerance analysis.
-  //! \param[in] shape     shape in question.
-  //! \param[in] numRanges number of tolerance ranges to use.
-  asiEngine_EXPORT void
-    Populate(const TopoDS_Shape& shape,
-             const int           numRanges);
-
-  //! Cleans all nested ranges.
-  asiEngine_EXPORT void
-    Clean_All();
-
-  //! Creates Data Node to store shapes within the specified tolerance
-  //! range.
-  //! \param[in] shape    shape to store.
-  //! \param[in] colorNum color to use (integer mask for RGB bytes).
-  //! \param[in] tolerMin min tolerance.
-  //! \param[in] tolerMax max tolerance.
-  //! \return newly created Range Node.
-  asiEngine_EXPORT Handle(asiData_TolerantRangeNode)
-    Create_Range(const TopoDS_Shape& shape,
-                 const int           colorNum,
-                 const double        tolerMin,
-                 const double        tolerMax);
+  : m_model(model) {}
 
 protected:
 
-  Handle(asiData_TolerantShapesNode)  m_tolShapes; //!< Tolerant shapes Node.
-  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr;    //!< Presentation Manager.
+  asiEngine_EXPORT void
+    _cleanChildren(const Handle(ActAPI_INode)& parent);
+
+protected:
+
+  Handle(asiEngine_Model) m_model;    //!< Data Model instance.
+  ActAPI_ProgressEntry    m_progress; //!< Progress notifier.
+  ActAPI_PlotterEntry     m_plotter;  //!< Imperative plotter.
 
 };
 

@@ -133,29 +133,3 @@ void asiEngine_Curve::Clean_All(const Handle(asiData_CurveNode)& parent)
 {
   this->_cleanChildren(parent);
 }
-
-//-----------------------------------------------------------------------------
-
-//! Removes all child Nodes for the given parent.
-//! \param[in] parent parent Node to clean up children for.
-void asiEngine_Curve::_cleanChildren(const Handle(ActAPI_INode)& parent)
-{
-  Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList;
-
-  // Loop over direct children of a Surfaces Node
-  for ( Handle(ActAPI_IChildIterator) cit = parent->GetChildIterator(); cit->More(); cit->Next() )
-  {
-    Handle(ActAPI_INode) child_n = cit->Value();
-
-    // Check if the given Node is consistent
-    if ( child_n.IsNull() || !child_n->IsWellFormed() )
-      continue;
-
-    // Set Node for deletion
-    nodesToDelete->Append(child_n);
-  }
-
-  // Delete all Nodes queued for removal
-  for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
-    m_model->DeleteNode( nit.Value()->GetId() );
-}

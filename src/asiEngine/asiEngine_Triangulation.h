@@ -32,7 +32,7 @@
 #define asiEngine_Triangulation_h
 
 // asiEngine includes
-#include <asiEngine_Model.h>
+#include <asiEngine_Base.h>
 
 // asiData includes
 #include <asiData_TriangulationNode.h>
@@ -41,18 +41,18 @@
 #include <asiVisu_PrsManager.h>
 
 //! Data Model API for mesh.
-class asiEngine_Triangulation
+class asiEngine_Triangulation : public asiEngine_Base
 {
 public:
 
+  //! Ctor.
   asiEngine_Triangulation(const Handle(asiEngine_Model)&             model,
                           const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
                           ActAPI_ProgressEntry                       progress = NULL,
                           ActAPI_PlotterEntry                        plotter  = NULL)
-  : m_model    (model),
-    m_prsMgr   (prsMgr),
-    m_progress (progress),
-    m_plotter  (plotter)
+  //
+  : asiEngine_Base (model, progress, plotter),
+    m_prsMgr       (prsMgr)
   {}
 
 public:
@@ -67,16 +67,13 @@ public:
     BuildBVH();
 
   //! Returns highlighted facets.
-  //! \param facetIndices [out] indices of highlighted facets.
+  //! \param[out] facetIndices indices of highlighted facets.
   asiEngine_EXPORT void
     GetHighlightedFacets(TColStd_PackedMapOfInteger& facetIndices);
 
 protected:
 
-  Handle(asiEngine_Model)             m_model;    //!< Data Model instance.
-  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr;   //!< Presentation manager.
-  ActAPI_ProgressEntry                m_progress; //!< Progress notifier.
-  ActAPI_PlotterEntry                 m_plotter;  //!< Plotter.
+  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr; //!< Presentation manager.
 
 };
 

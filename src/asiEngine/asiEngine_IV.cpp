@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 11 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -30,9 +30,6 @@
 
 // Own include
 #include <asiEngine_IV.h>
-
-// asiEngine includes
-#include <asiEngine_Model.h>
 
 // asiAlgo includes
 #include <asiAlgo_MeshConvert.h>
@@ -180,14 +177,14 @@ Handle(asiData_IVNode) asiEngine_IV::Create_IV()
 //! Cleans all data objects related to imperative plotter.
 void asiEngine_IV::Clean_All()
 {
-  Clean_Curves();
-  Clean_Curves2d();
-  Clean_Points();
-  Clean_Points2d();
-  Clean_Surfaces();
-  Clean_Tess();
-  Clean_Text();
-  Clean_Topo();
+  this->Clean_Curves();
+  this->Clean_Curves2d();
+  this->Clean_Points();
+  this->Clean_Points2d();
+  this->Clean_Surfaces();
+  this->Clean_Tess();
+  this->Clean_Text();
+  this->Clean_Topo();
 }
 
 //-----------------------------------------------------------------------------
@@ -312,7 +309,7 @@ void asiEngine_IV::Clean_Points2d()
   Handle(asiData_IVPoints2dNode)
     IV_Parent = m_model->GetIVNode()->Points2d();
   //
-  _cleanChildren(IV_Parent);
+  this->_cleanChildren(IV_Parent);
 }
 
 //-----------------------------------------------------------------------------
@@ -384,7 +381,7 @@ void asiEngine_IV::Clean_Points()
   Handle(asiData_IVPointsNode)
     IV_Parent = m_model->GetIVNode()->Points();
   //
-  _cleanChildren(IV_Parent);
+  this->_cleanChildren(IV_Parent);
 }
 
 //-----------------------------------------------------------------------------
@@ -498,7 +495,7 @@ void asiEngine_IV::Clean_Curves()
   Handle(asiData_IVCurvesNode)
     IV_Parent = m_model->GetIVNode()->Curves();
   //
-  _cleanChildren(IV_Parent);
+  this->_cleanChildren(IV_Parent);
 }
 
 //-----------------------------------------------------------------------------
@@ -616,7 +613,7 @@ void asiEngine_IV::Clean_Curves2d()
   Handle(asiData_IVCurves2dNode)
     IV_Parent = m_model->GetIVNode()->Curves2d();
   //
-  _cleanChildren(IV_Parent);
+  this->_cleanChildren(IV_Parent);
 }
 
 //-----------------------------------------------------------------------------
@@ -713,7 +710,7 @@ void asiEngine_IV::Clean_Surfaces()
   Handle(asiData_IVSurfacesNode)
     IV_Parent = m_model->GetIVNode()->Surfaces();
   //
-  _cleanChildren(IV_Parent);
+  this->_cleanChildren(IV_Parent);
 }
 
 //-----------------------------------------------------------------------------
@@ -798,7 +795,7 @@ void asiEngine_IV::Clean_Topo()
   Handle(asiData_IVTopoNode)
     IV_Parent = m_model->GetIVNode()->Topology();
   //
-  _cleanChildren(IV_Parent);
+  this->_cleanChildren(IV_Parent);
 }
 
 //-----------------------------------------------------------------------------
@@ -888,7 +885,7 @@ void asiEngine_IV::Clean_Tess()
   Handle(asiData_IVTessNode)
     IV_Parent = m_model->GetIVNode()->Tessellation();
   //
-  _cleanChildren(IV_Parent);
+  this->_cleanChildren(IV_Parent);
 }
 
 //-----------------------------------------------------------------------------
@@ -989,31 +986,5 @@ void asiEngine_IV::Clean_Text()
   Handle(asiData_IVTextNode)
     IV_Parent = m_model->GetIVNode()->Text();
   //
-  _cleanChildren(IV_Parent);
-}
-
-//-----------------------------------------------------------------------------
-
-//! Removes all child Nodes for the given parent.
-//! \param parent [in] parent Node to clean up children for.
-void asiEngine_IV::_cleanChildren(const Handle(ActAPI_INode)& parent)
-{
-  Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList;
-
-  // Loop over direct children of a Surfaces Node
-  for ( Handle(ActAPI_IChildIterator) cit = parent->GetChildIterator(); cit->More(); cit->Next() )
-  {
-    Handle(ActAPI_INode) child_n = cit->Value();
-
-    // Check if the given Node is consistent
-    if ( child_n.IsNull() || !child_n->IsWellFormed() )
-      continue;
-
-    // Set Node for deletion
-    nodesToDelete->Append(child_n);
-  }
-
-  // Delete all Nodes queued for removal
-  for ( ActAPI_NodeList::Iterator nit( *nodesToDelete.operator->() ); nit.More(); nit.Next() )
-    m_model->DeleteNode( nit.Value()->GetId() );
+  this->_cleanChildren(IV_Parent);
 }

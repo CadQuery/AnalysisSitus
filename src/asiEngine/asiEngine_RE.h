@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 05 October 2018
+// Created on: 06 October 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,52 +28,25 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_Tessellation_h
-#define asiEngine_Tessellation_h
+#ifndef asiEngine_RE_h
+#define asiEngine_RE_h
 
 // asiEngine includes
 #include <asiEngine_Base.h>
 
-// asiData includes
-#include <asiData_TessNode.h>
-#include <asiData_TessNormsNode.h>
-
-// asiVisu includes
-#include <asiVisu_PrsManager.h>
-
-//! Data Model API for tessellations.
-class asiEngine_Tessellation : public asiEngine_Base
+//! API for the data model operations related to reverse engineering.
+class asiEngine_RE : public asiEngine_Base
 {
 public:
 
-  //! Ctor.
-  asiEngine_Tessellation(const Handle(asiEngine_Model)&             model,
-                         const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
-                         ActAPI_ProgressEntry                       progress = NULL,
-                         ActAPI_PlotterEntry                        plotter  = NULL)
-  //
-  : asiEngine_Base (model, progress, plotter),
-    m_prsMgr       (prsMgr)
-  {}
+  //! ctor.
+  //! \param[in] model Data Model instance.
+  asiEngine_RE(const Handle(asiEngine_Model)& model) : asiEngine_Base(model) {}
 
 public:
 
-  //! Creates new Tessellation Node in the Data Model.
-  //! \return newly created Tessellation Node.
-  asiEngine_EXPORT Handle(asiData_TessNode)
-    CreateTessellation();
-
-  //! Computes normal field for the given Tessellation Node. This method
-  //! creates a child Node under the passed one to store the computed
-  //! normal vectors.
-  //! \param[in] tessNode Tessellation Node to compute the normal field for.
-  //! \return child Data Node representing the computed normal field.
-  asiEngine_EXPORT Handle(asiData_TessNormsNode)
-    ComputeNorms(const Handle(asiData_TessNode)& tessNode);
-
-protected:
-
-  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr; //!< Presentation manager.
+  asiEngine_EXPORT Handle(asiData_ReTopoNode)
+    Create_Topo();
 
 };
 

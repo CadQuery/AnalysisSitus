@@ -32,7 +32,7 @@
 #define asiEngine_Part_h
 
 // asiEngine includes
-#include <asiEngine_Model.h>
+#include <asiEngine_Base.h>
 
 // asiVisu includes
 #include <asiVisu_PrsManager.h>
@@ -41,7 +41,7 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 
 //! Data Model API for geometric part.
-class asiEngine_Part
+class asiEngine_Part : public asiEngine_Base
 {
 public:
 
@@ -55,13 +55,13 @@ public:
                  ActAPI_ProgressEntry                       progress = NULL,
                  ActAPI_PlotterEntry                        plotter  = NULL)
   //
-  : m_model(model), m_prsMgr(prsMgr), m_progress(progress), m_plotter(plotter) {}
+  : asiEngine_Base(model, progress, plotter), m_prsMgr(prsMgr) {}
 
   //! ctor.
   //! \param model [in] Data Model instance.
   asiEngine_Part(const Handle(asiEngine_Model)& model)
   //
-  : m_model(model) {}
+  : asiEngine_Base(model) {}
 
 public:
 
@@ -141,10 +141,7 @@ public:
 
 protected:
 
-  Handle(asiEngine_Model)             m_model;    //!< Data Model instance.
-  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr;   //!< Presentation Manager.
-  ActAPI_ProgressEntry                m_progress; //!< Progress notifier.
-  ActAPI_PlotterEntry                 m_plotter;  //!< Imperative plotter.
+  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr; //!< Presentation Manager.
 
 };
 

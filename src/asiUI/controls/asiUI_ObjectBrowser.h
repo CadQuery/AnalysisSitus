@@ -113,6 +113,7 @@ protected slots:
   void onCopyName         ();
   //
   void onComputeNorms     ();
+  void onConvertToTris    ();
 
 protected:
 

@@ -41,6 +41,7 @@
 // asiAlgo includes
 #include <asiAlgo_HitFacet.h>
 #include <asiAlgo_InterpolateSurfMesh.h>
+#include <asiAlgo_ReapproxContour.h>
 
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
@@ -156,6 +157,25 @@ int ENGINE_FinishContour(const Handle(asiTcl_Interp)& interp,
     // Finalize contour by setting it closed. Setting this flag does not
     // make any difference unless you ask the Contour Node to build a wire.
     contour_n->SetClosed(true);
+
+    // Get contour as a topological wire.
+    TopoDS_Wire contourWire = contour_n->AsShape();
+
+    // Beautify contour.
+    asiAlgo_ReapproxContour reapproxContour( contourWire,
+                                             1.0e-6,
+                                             5.0,
+                                             interp->GetProgress(),
+                                             interp->GetPlotter() );
+    //
+    if ( !reapproxContour(true, true, contourWire) )
+    {
+      interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Cannot reapproximate contour.");
+    }
+    else
+    {
+      contour_n->SetGeometry(contourWire);
+    }
   }
   cmdEngine::model->CommitCommand();
 

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 05 May 2017
+// Created on: 06 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,5 +28,51 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiData_FuncParameter.h>
+#ifndef asiAlgo_CheckContour_HeaderFile
+#define asiAlgo_CheckContour_HeaderFile
+
+// asiAlgo includes
+#include <asiAlgo.h>
+
+// Active Data includes
+#include <ActAPI_IAlgorithm.h>
+
+// OCCT includes
+#include <TopoDS_Wire.hxx>
+
+//! Contour checking tool.
+class asiAlgo_CheckContour : public ActAPI_IAlgorithm
+{
+public:
+
+  //! Ctor.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_EXPORT
+    asiAlgo_CheckContour(ActAPI_ProgressEntry progress,
+                         ActAPI_PlotterEntry  plotter);
+
+public:
+
+  //! Returns true if the passed contour is a single wire. Returns false
+  //! otherwise.
+  //! \param[in] contour contour to check.
+  //! \return true/false.
+  asiAlgo_EXPORT bool
+    Check_isSingleWire(const TopoDS_Shape& contour) const;
+
+  //! Checks whether the passed contour is connected or not.
+  //! \param[in] contour        contour to check.
+  //! \param[in] doCheckSharing indicates whether to check topological
+  //!                           sharing. If not, the passed precision
+  //!                           is used to check geometric coincidence.
+  //! \param[in] prec           precision to check geometric coincidence.
+  //! \return true/false.
+  asiAlgo_EXPORT bool
+    Check_connectedWire(const TopoDS_Shape& contour,
+                        const bool          doCheckSharing,
+                        const double        prec) const;
+
+};
+
+#endif

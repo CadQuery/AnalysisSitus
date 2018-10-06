@@ -2102,6 +2102,33 @@ int ENGINE_DrawCP(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckTess(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get mesh.
+  Handle(asiData_TessNode) tessNode = cmdEngine::model->GetTessellationNode();
+  //
+  if ( tessNode.IsNull() || !tessNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Tessellation Node is null or inconsistent.");
+    return TCL_ERROR;
+  }
+  //
+  Handle(ActData_Mesh) mesh = tessNode->GetMesh();
+
+  // TODO: NYI
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -2294,4 +2321,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Draws control point of a free-form surface.",
     //
     __FILE__, group, ENGINE_DrawCP);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-tess",
+    //
+    "check-tess\n"
+    "\t Check validity of tessellation.",
+    //
+    __FILE__, group, ENGINE_CheckTess);
 }

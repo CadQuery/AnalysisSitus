@@ -31,13 +31,48 @@
 // Own include
 #include <asiAlgo_MeshConvert.h>
 
-// Mesh includes
+// asiAlgo includes
 #include <asiAlgo_MeshMerge.h>
+
+// Active Data includes
+#include <ActData_Mesh_ElementsIterator.h>
+#include <ActData_Mesh_Quadrangle.h>
+#include <ActData_Mesh_Triangle.h>
 
 // VTK includes
 #include <vtkCellArray.h>
 #include <vtkIdList.h>
 #include <vtkSmartPointer.h>
+
+//-----------------------------------------------------------------------------
+
+void ElemNodes(const Handle(ActData_Mesh)&             mesh,
+               const Handle(ActData_Mesh_Element)&     elem,
+               std::vector<Handle(ActData_Mesh_Node)>& nodes)
+{
+  nodes.clear();
+  int  numNodes = elem->NbNodes();
+  int* nodeIDs  = NULL;
+
+  if ( numNodes == 3 )
+  {
+    const Handle(ActData_Mesh_Triangle)&
+      tri = Handle(ActData_Mesh_Triangle)::DownCast(elem);
+    //
+    nodeIDs = (int*) tri->GetConnections();
+  }
+  else if ( numNodes == 4 )
+  {
+    const Handle(ActData_Mesh_Quadrangle)&
+      quad = Handle(ActData_Mesh_Quadrangle)::DownCast(elem);
+    //
+    nodeIDs = (int*) quad->GetConnections();
+  }
+
+  // Populate output collection.
+  for ( int n = 0; n < numNodes; ++n )
+    nodes.push_back( mesh->FindNode(nodeIDs[n]) );
+}
 
 //-----------------------------------------------------------------------------
 
@@ -63,6 +98,74 @@ bool asiAlgo_MeshConvert::ToPersistent(const Handle(Poly_Triangulation)& source,
                                        Handle(ActData_Mesh)&             result)
 {
   result = new ActData_Mesh(source);
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Converts AD mesh to Poly mesh. All quads as split into triangle pairs.
+//! \param[in]  source AD mesh to convert.
+//! \param[out] result result mesh.
+bool asiAlgo_MeshConvert::FromPersistent(const Handle(ActData_Mesh)& source,
+                                         Handle(Poly_Triangulation)& result)
+{
+  const int numNodes = source->NbNodes();
+
+  // Loop over the nodes of AD mesh to populate those of Poly triangulation.
+  TColgp_Array1OfPnt polyNodes(1, numNodes);
+  int arrIdx = 1;
+  NCollection_DataMap<int, int> nodeIdsMap;
+  //
+  for ( ActData_Mesh_ElementsIterator nit(source, ActData_Mesh_ET_Node); nit.More(); nit.Next(), ++arrIdx )
+  {
+    // Access next node with its owner mesh elements.
+    const Handle(ActData_Mesh_Node)&
+      node = Handle(ActData_Mesh_Node)::DownCast( nit.GetValue() );
+
+    polyNodes(arrIdx) = node->Pnt();
+    nodeIdsMap.Bind(node->GetID(), arrIdx);
+  }
+
+  // Prepare triangles.
+  std::vector<Poly_Triangle> triangles;
+  //
+  for ( ActData_Mesh_ElementsIterator it(source, ActData_Mesh_ET_Face); it.More(); it.Next() )
+  {
+    const Handle(ActData_Mesh_Element)& elem = it.GetValue();
+
+    // Get element's nodes.
+    std::vector<Handle(ActData_Mesh_Node)> elemNodes;
+    ElemNodes(source, elem, elemNodes);
+
+    // Compute norm vector.
+    if ( elem->IsKind( STANDARD_TYPE(ActData_Mesh_Triangle) ) )
+    {
+      const int n0 = elemNodes[0]->GetID();
+      const int n1 = elemNodes[1]->GetID();
+      const int n2 = elemNodes[2]->GetID();
+
+      triangles.push_back( Poly_Triangle( nodeIdsMap(n0), nodeIdsMap(n1), nodeIdsMap(n2) ) );
+    }
+    else if ( elem->IsKind( STANDARD_TYPE(ActData_Mesh_Quadrangle) ) )
+    {
+      const int n0 = elemNodes[0]->GetID();
+      const int n1 = elemNodes[1]->GetID();
+      const int n2 = elemNodes[2]->GetID();
+      const int n3 = elemNodes[3]->GetID();
+
+      triangles.push_back( Poly_Triangle( nodeIdsMap(n0), nodeIdsMap(n1), nodeIdsMap(n2) ) );
+      triangles.push_back( Poly_Triangle( nodeIdsMap(n0), nodeIdsMap(n2), nodeIdsMap(n3) ) );
+    }
+  }
+
+  // Construct array of triangles.
+  Poly_Array1OfTriangle polyTriangles( 1, int( triangles.size() ) );
+  //
+  for ( size_t t = 0; t < triangles.size(); ++t )
+    polyTriangles( int(t + 1) ) = triangles[t];
+
+  // Construct the result.
+  result = new Poly_Triangulation(polyNodes, polyTriangles);
   return true;
 }
 

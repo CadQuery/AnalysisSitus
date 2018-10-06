@@ -46,12 +46,10 @@
 // Node representing a contour on shape
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_ContourNode, ActData_BaseNode)
-
 //! This Node represents a contour on a shape. Initially a contour is defined
 //! by a series of vertices connected with straight line segments. Such
 //! a contour does not have any associated B-Rep, and AsShape() method will
-//! construct it on flight whenever requested. However, it is also possible
+//! construct such on-fly whenever requested. However, it is also possible
 //! to cache B-Rep geometry within this Node in order to have it explicitly.
 //! The latter not only makes the data access faster (as the mentioned on-flight
 //! construction will not happen), but also allows storing the alternative

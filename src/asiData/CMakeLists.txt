@@ -6,97 +6,132 @@ project(asiData)
 
 set (H_FILES
   asiData.h
-  asiData_AAGAttr.h
-  asiData_AAGParameter.h
-  asiData_BoundaryEdgesNode.h
-  asiData_BVHAttr.h
-  asiData_BVHParameter.h
-  asiData_ContourNode.h
-  asiData_CurvatureCombsNode.h
-  asiData_CurveNode.h
-  asiData_DesignLawNode.h
-  asiData_EdgeNode.h
-  asiData_FaceContourNode.h
-  asiData_FaceNode.h
-  asiData_FaceNormsNode.h
-  asiData_FuncAttr.h
-  asiData_FuncParameter.h
-  asiData_IVCurve2dNode.h
-  asiData_IVCurveNode.h
-  asiData_IVCurves2dNode.h
-  asiData_IVCurvesNode.h
-  asiData_IVNode.h
-  asiData_IVPoints2dNode.h
-  asiData_IVPointSet2dNode.h
-  asiData_IVPointSetNode.h
-  asiData_IVPointsNode.h
-  asiData_IVSurfaceNode.h
-  asiData_IVSurfacesNode.h
-  asiData_IVTessItemNode.h
-  asiData_IVTessNode.h
-  asiData_IVTextItemNode.h
-  asiData_IVTextNode.h
-  asiData_IVTopoItemNode.h
-  asiData_IVTopoNode.h
-  asiData_NamingAttr.h
-  asiData_NamingParameter.h
   asiData_Partition.h
-  asiData_PartNode.h
   asiData_RootNode.h
-  asiData_SurfNode.h
-  asiData_TessNode.h
-  asiData_TessNormsNode.h
-  asiData_TolerantRangeNode.h
-  asiData_TolerantShapesNode.h
-  asiData_TriangulationNode.h
-  asiData_VertexNode.h
+)
+set (CPP_FILES 
+  asiData_Partition.cpp
+  asiData_RootNode.cpp
 )
 
-set (CPP_FILES 
-  asiData_AAGAttr.cpp
-  asiData_AAGParameter.cpp
-  asiData_BoundaryEdgesNode.cpp
-  asiData_BVHAttr.cpp
-  asiData_BVHParameter.cpp
-  asiData_ContourNode.cpp
-  asiData_CurvatureCombsNode.cpp
-  asiData_CurveNode.cpp
-  asiData_DesignLawNode.cpp
-  asiData_EdgeNode.cpp
-  asiData_FaceNode.cpp
-  asiData_FaceContourNode.cpp
-  asiData_FaceNormsNode.cpp
-  asiData_FuncAttr.cpp
-  asiData_FuncParameter.cpp
-  asiData_IVCurve2dNode.cpp
-  asiData_IVCurveNode.cpp
-  asiData_IVCurves2dNode.cpp
-  asiData_IVCurvesNode.cpp
-  asiData_IVNode.cpp
-  asiData_IVPoints2dNode.cpp
-  asiData_IVPointSet2dNode.cpp
-  asiData_IVPointSetNode.cpp
-  asiData_IVPointsNode.cpp
-  asiData_IVSurfaceNode.cpp
-  asiData_IVSurfacesNode.cpp
-  asiData_IVTessItemNode.cpp
-  asiData_IVTessNode.cpp
-  asiData_IVTextItemNode.cpp
-  asiData_IVTextNode.cpp
-  asiData_IVTopoItemNode.cpp
-  asiData_IVTopoNode.cpp
-  asiData_NamingAttr.cpp
-  asiData_NamingParameter.cpp
-  asiData_Partition.cpp
-  asiData_PartNode.cpp
-  asiData_RootNode.cpp
-  asiData_SurfNode.cpp
-  asiData_TessNode.cpp
-  asiData_TessNormsNode.cpp
-  asiData_TolerantRangeNode.cpp
-  asiData_TolerantShapesNode.cpp
-  asiData_TriangulationNode.cpp
-  asiData_VertexNode.cpp
+#------------------------------------------------------------------------------
+# Part
+#------------------------------------------------------------------------------
+
+set (part_H_FILES
+  part/asiData_AAGAttr.h
+  part/asiData_AAGParameter.h
+  part/asiData_BoundaryEdgesNode.h
+  part/asiData_BVHAttr.h
+  part/asiData_BVHParameter.h
+  part/asiData_ContourNode.h
+  part/asiData_CurvatureCombsNode.h
+  part/asiData_CurveNode.h
+  part/asiData_EdgeNode.h
+  part/asiData_FaceContourNode.h
+  part/asiData_FaceNode.h
+  part/asiData_FaceNormsNode.h
+  part/asiData_NamingAttr.h
+  part/asiData_NamingParameter.h
+  part/asiData_PartNode.h
+  part/asiData_SurfNode.h
+  part/asiData_TolerantRangeNode.h
+  part/asiData_TolerantShapesNode.h
+  part/asiData_VertexNode.h
+)
+set (part_CPP_FILES 
+  part/asiData_AAGAttr.cpp
+  part/asiData_AAGParameter.cpp
+  part/asiData_BoundaryEdgesNode.cpp
+  part/asiData_BVHAttr.cpp
+  part/asiData_BVHParameter.cpp
+  part/asiData_ContourNode.cpp
+  part/asiData_CurvatureCombsNode.cpp
+  part/asiData_CurveNode.cpp
+  part/asiData_EdgeNode.cpp
+  part/asiData_FaceContourNode.cpp
+  part/asiData_FaceNode.cpp
+  part/asiData_FaceNormsNode.cpp
+  part/asiData_NamingAttr.cpp
+  part/asiData_NamingParameter.cpp
+  part/asiData_PartNode.cpp
+  part/asiData_SurfNode.cpp
+  part/asiData_TolerantRangeNode.cpp
+  part/asiData_TolerantShapesNode.cpp
+  part/asiData_VertexNode.cpp
+)
+
+#------------------------------------------------------------------------------
+# Mesh
+#------------------------------------------------------------------------------
+
+set (mesh_H_FILES
+  mesh/asiData_TessNode.h
+  mesh/asiData_TessNormsNode.h
+  mesh/asiData_TriangulationNode.h
+)
+set (mesh_CPP_FILES
+  mesh/asiData_TessNode.cpp
+  mesh/asiData_TessNormsNode.cpp
+  mesh/asiData_TriangulationNode.cpp
+)
+
+#------------------------------------------------------------------------------
+# IV
+#------------------------------------------------------------------------------
+
+set (iv_H_FILES
+  iv/asiData_IVCurve2dNode.h
+  iv/asiData_IVCurveNode.h
+  iv/asiData_IVCurves2dNode.h
+  iv/asiData_IVCurvesNode.h
+  iv/asiData_IVNode.h
+  iv/asiData_IVPoints2dNode.h
+  iv/asiData_IVPointSet2dNode.h
+  iv/asiData_IVPointSetNode.h
+  iv/asiData_IVPointsNode.h
+  iv/asiData_IVSurfaceNode.h
+  iv/asiData_IVSurfacesNode.h
+  iv/asiData_IVTessItemNode.h
+  iv/asiData_IVTessNode.h
+  iv/asiData_IVTextItemNode.h
+  iv/asiData_IVTextNode.h
+  iv/asiData_IVTopoItemNode.h
+  iv/asiData_IVTopoNode.h
+)
+set (iv_CPP_FILES
+  iv/asiData_IVCurve2dNode.cpp
+  iv/asiData_IVCurveNode.cpp
+  iv/asiData_IVCurves2dNode.cpp
+  iv/asiData_IVCurvesNode.cpp
+  iv/asiData_IVNode.cpp
+  iv/asiData_IVPoints2dNode.cpp
+  iv/asiData_IVPointSet2dNode.cpp
+  iv/asiData_IVPointSetNode.cpp
+  iv/asiData_IVPointsNode.cpp
+  iv/asiData_IVSurfaceNode.cpp
+  iv/asiData_IVSurfacesNode.cpp
+  iv/asiData_IVTessItemNode.cpp
+  iv/asiData_IVTessNode.cpp
+  iv/asiData_IVTextItemNode.cpp
+  iv/asiData_IVTextNode.cpp
+  iv/asiData_IVTopoItemNode.cpp
+  iv/asiData_IVTopoNode.cpp
+)
+
+#------------------------------------------------------------------------------
+# Misc
+#------------------------------------------------------------------------------
+
+set (misc_H_FILES
+  misc/asiData_DesignLawNode.h
+  misc/asiData_FuncAttr.h
+  misc/asiData_FuncParameter.h
+)
+set (misc_CPP_FILES
+  misc/asiData_DesignLawNode.cpp
+  misc/asiData_FuncAttr.cpp
+  misc/asiData_FuncParameter.cpp
 )
 
 #------------------------------------------------------------------------------
@@ -175,12 +210,48 @@ foreach (FILE ${CPP_FILES})
   source_group ("Source Files" FILES "${FILE}")
 endforeach (FILE)
 
+foreach (FILE ${part_H_FILES})
+  source_group ("Header Files\\Part" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${part_CPP_FILES})
+  source_group ("Source Files\\Part" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${mesh_H_FILES})
+  source_group ("Header Files\\Mesh" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${mesh_CPP_FILES})
+  source_group ("Source Files\\Mesh" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${iv_H_FILES})
+  source_group ("Header Files\\IV" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${iv_CPP_FILES})
+  source_group ("Source Files\\IV" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${misc_H_FILES})
+  source_group ("Header Files\\Misc" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${misc_CPP_FILES})
+  source_group ("Source Files\\Misc" FILES "${FILE}")
+endforeach (FILE)
+
 #------------------------------------------------------------------------------
 # Configure includes
 #------------------------------------------------------------------------------
 
 # Create include variable
-set (asiData_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};")
+set (asiData_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
+  ${CMAKE_CURRENT_SOURCE_DIR}/part;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/mesh;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/iv;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/misc;")
 #
 set (asiData_include_dir ${asiData_include_dir_loc} PARENT_SCOPE)
 
@@ -200,7 +271,13 @@ endif()
 # Create library
 #------------------------------------------------------------------------------
 
-add_library (asiData SHARED ${H_FILES} ${CPP_FILES})
+add_library (asiData SHARED
+  ${H_FILES}      ${CPP_FILES}
+  ${part_H_FILES} ${part_CPP_FILES}
+  ${mesh_H_FILES} ${mesh_CPP_FILES}
+  ${iv_H_FILES}   ${iv_CPP_FILES}
+  ${misc_H_FILES} ${misc_CPP_FILES}
+)
 
 #------------------------------------------------------------------------------
 # Dependencies
@@ -296,4 +373,8 @@ install (TARGETS asiData
 
 install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiData.pdb DESTINATION framework/bind CONFIGURATIONS Debug)
 
-install (FILES ${H_FILES} DESTINATION framework/include)
+install (FILES ${H_FILES}      DESTINATION framework/include)
+install (FILES ${part_H_FILES} DESTINATION framework/include)
+install (FILES ${mesh_H_FILES} DESTINATION framework/include)
+install (FILES ${iv_H_FILES}   DESTINATION framework/include)
+install (FILES ${misc_H_FILES} DESTINATION framework/include)

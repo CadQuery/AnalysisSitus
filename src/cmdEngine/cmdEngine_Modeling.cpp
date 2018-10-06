@@ -183,7 +183,7 @@ int ENGINE_OffsetShell(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_OffsetMesh(const Handle(asiTcl_Interp)& interp,
+int ENGINE_OffsetTess(const Handle(asiTcl_Interp)& interp,
                       int                          argc,
                       const char**                 argv)
 {
@@ -995,12 +995,12 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_OffsetShell);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("offset-mesh",
+  interp->AddCommand("offset-tess",
     //
-    "offset-mesh offset\n"
+    "offset-tess offset\n"
     "\t Offsets mesh nodes in directions of their norms.",
     //
-    __FILE__, group, ENGINE_OffsetMesh);
+    __FILE__, group, ENGINE_OffsetTess);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-edge",

@@ -43,6 +43,7 @@
 #include <asiVisu_GeomPrs.h>
 
 // asiAlgo includes
+#include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_Utils.h>
 
 // Qt includes
@@ -508,7 +509,6 @@ void asiUI_ObjectBrowser::onCopyName()
                                              << selected_n->GetName() );
 }
 
-
 //-----------------------------------------------------------------------------
 
 void asiUI_ObjectBrowser::onComputeNorms()
@@ -544,6 +544,43 @@ void asiUI_ObjectBrowser::onComputeNorms()
   }
   //
   this->Populate();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::onConvertToTris()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_TessNode) ) )
+    return;
+
+  Handle(asiData_TessNode)
+    tessNode = Handle(asiData_TessNode)::DownCast(selected_n);
+
+  // Convert to Poly triangulation.
+  Handle(Poly_Triangulation) polyTris;
+  asiAlgo_MeshConvert::FromPersistent(tessNode->GetMesh(), polyTris);
+
+  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(m_model);
+
+  // Modify Data Model.
+  M->OpenCommand();
+  {
+    M->GetTriangulationNode()->SetTriangulation(polyTris);
+  }
+  M->CommitCommand();
+
+  // Update UI.
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+  {
+    // Actualize in Part Viewer.
+    asiUI_ViewerPart* pViewerPart = dynamic_cast<asiUI_ViewerPart*>(m_viewers[k]);
+    //
+    if ( pViewerPart )
+      pViewerPart->PrsMgr()->Actualize( M->GetTriangulationNode() );
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -629,7 +666,8 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
       if ( node->IsKind( STANDARD_TYPE(asiData_TessNode) ) )
       {
         pMenu->addSeparator();
-        pMenu->addAction( "Compute normal vectors", this, SLOT( onComputeNorms () ) );
+        pMenu->addAction( "Compute normal vectors",   this, SLOT( onComputeNorms  () ) );
+        pMenu->addAction( "Convert to triangulation", this, SLOT( onConvertToTris () ) );
       }
     }
   }

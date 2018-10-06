@@ -56,6 +56,10 @@ namespace asiAlgo_MeshConvert
                  Handle(ActData_Mesh)&             result);
 
   asiAlgo_EXPORT bool
+    FromPersistent(const Handle(ActData_Mesh)& source,
+                   Handle(Poly_Triangulation)& result);
+
+  asiAlgo_EXPORT bool
     ToPersistent(vtkPolyData*          source,
                  Handle(ActData_Mesh)& result);
 };

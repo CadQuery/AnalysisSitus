@@ -69,7 +69,7 @@ public:
 
 private:
 
-  //! Allocation is allowed only via Instance method.
+  //! Allocation is allowed only via Instance() method.
   asiVisu_CurvatureCombsPrs(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:

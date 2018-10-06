@@ -100,7 +100,7 @@ public:
 
 protected:
 
-  //! Allocation is allowed only via Instance method.
+  //! Allocation is allowed only via Instance() method.
   asiData_EXPORT
     asiData_IVTextItemNode();
 

@@ -71,7 +71,7 @@ public:
 
 private:
 
-  //! Allocation is allowed only via Instance method.
+  //! Allocation is allowed only via Instance() method.
   asiVisu_GeomFaceNormsPrs(const Handle(ActAPI_INode)& N);
 
 // Callbacks:

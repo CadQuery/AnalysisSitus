@@ -64,7 +64,7 @@ public:
 
 private:
 
-  //! Allocation is allowed only via Instance method.
+  //! Allocation is allowed only via Instance() method.
   asiVisu_TessellationPrs(const Handle(ActAPI_INode)& N);
 
 };

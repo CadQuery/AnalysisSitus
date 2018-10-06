@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 16 April 2016
+// Created on: 08 April 2016
 //-----------------------------------------------------------------------------
 // Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
@@ -28,44 +28,49 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_IVPointSet2dPrs_h
-#define asiVisu_IVPointSet2dPrs_h
+// Own include
+#include <asiData_ReTopoNode.h>
 
-// asiVisu includes
-#include <asiVisu_DefaultPrs.h>
+// Active Data includes
+#include <ActData_ParameterFactory.h>
 
-// asiData includes
-#include <asiData_IVPointSet2dNode.h>
+//-----------------------------------------------------------------------------
 
-//! Presentation class for a single 2D point cloud in IV.
-class asiVisu_IVPointSet2dPrs : public asiVisu_DefaultPrs
+//! Default ctor. Registers all involved Parameters.
+asiData_ReTopoNode::asiData_ReTopoNode() : ActData_BaseNode()
 {
-public:
+  REGISTER_PARAMETER(Name, PID_Name);
+}
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVPointSet2dPrs, asiVisu_DefaultPrs)
+//! Returns new DETACHED instance of the Node ensuring its correct
+//! allocation in a heap.
+//! \return new instance of the Node.
+Handle(ActAPI_INode) asiData_ReTopoNode::Instance()
+{
+  return new asiData_ReTopoNode();
+}
 
-  // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(asiData_IVPointSet2dNode, Instance)
+//! Performs initial actions required to make Node WELL-FORMED.
+void asiData_ReTopoNode::Init()
+{
+  // Initialize name Parameter
+  this->InitParameter(PID_Name, "Name");
+}
 
-public:
+//-----------------------------------------------------------------------------
+// Generic naming
+//-----------------------------------------------------------------------------
 
-  //! Pipelines.
-  enum PipelineId
-  {
-    Pipeline_Main = 1
-  };
+//! Accessor for the Node's name.
+//! \return name of the Node.
+TCollection_ExtendedString asiData_ReTopoNode::GetName()
+{
+  return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
+}
 
-public:
-
-  asiVisu_EXPORT static Handle(asiVisu_Prs)
-    Instance(const Handle(ActAPI_INode)& theNode);
-
-private:
-
-  //! Allocation is allowed only via Instance() method.
-  asiVisu_IVPointSet2dPrs(const Handle(ActAPI_INode)& theNode);
-
-};
-
-#endif
+//! Sets name for the Node.
+//! \param[in] name name to set.
+void asiData_ReTopoNode::SetName(const TCollection_ExtendedString& name)
+{
+  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
+}

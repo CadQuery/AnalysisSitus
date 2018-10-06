@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 16 April 2016
+// Created on: 06 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,43 +28,64 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_IVPointSet2dPrs_h
-#define asiVisu_IVPointSet2dPrs_h
-
-// asiVisu includes
-#include <asiVisu_DefaultPrs.h>
+#ifndef asiData_RePatchNode_h
+#define asiData_RePatchNode_h
 
 // asiData includes
-#include <asiData_IVPointSet2dNode.h>
+#include <asiData.h>
 
-//! Presentation class for a single 2D point cloud in IV.
-class asiVisu_IVPointSet2dPrs : public asiVisu_DefaultPrs
+// Active Data includes
+#include <ActData_BaseNode.h>
+
+//! Data Node representing topological patch for reverse engineering.
+class asiData_RePatchNode : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVPointSet2dPrs, asiVisu_DefaultPrs)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_RePatchNode, ActData_BaseNode)
 
-  // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(asiData_IVPointSet2dNode, Instance)
+  // Automatic registration of Node type in global factory
+  DEFINE_NODE_FACTORY(asiData_RePatchNode, Instance)
 
 public:
 
-  //! Pipelines.
-  enum PipelineId
+  //! IDs for the underlying Parameters.
+  enum ParamId
   {
-    Pipeline_Main = 1
+  //------------------//
+  // Common           //
+  //------------------//
+    PID_Name,         //!< Name of the Node.
+  //------------------//
+    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
 public:
 
-  asiVisu_EXPORT static Handle(asiVisu_Prs)
-    Instance(const Handle(ActAPI_INode)& theNode);
+  asiData_EXPORT static Handle(ActAPI_INode)
+    Instance();
 
-private:
+// Generic naming support:
+public:
+
+  asiData_EXPORT virtual TCollection_ExtendedString
+    GetName();
+
+  asiData_EXPORT virtual void
+    SetName(const TCollection_ExtendedString& name);
+
+// Initialization:
+public:
+
+  asiData_EXPORT void
+    Init();
+
+protected:
 
   //! Allocation is allowed only via Instance() method.
-  asiVisu_IVPointSet2dPrs(const Handle(ActAPI_INode)& theNode);
+  asiData_EXPORT
+    asiData_RePatchNode();
 
 };
 

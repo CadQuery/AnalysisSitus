@@ -82,7 +82,7 @@ public:
 
 private:
 
-  //! Allocation is allowed only via Instance method.
+  //! Allocation is allowed only via Instance() method.
   asiVisu_GeomEdgePrs(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:

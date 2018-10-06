@@ -9,7 +9,7 @@ set (H_FILES
   asiData_Partition.h
   asiData_RootNode.h
 )
-set (CPP_FILES 
+set (CPP_FILES
   asiData_Partition.cpp
   asiData_RootNode.cpp
 )
@@ -39,7 +39,7 @@ set (part_H_FILES
   part/asiData_TolerantShapesNode.h
   part/asiData_VertexNode.h
 )
-set (part_CPP_FILES 
+set (part_CPP_FILES
   part/asiData_AAGAttr.cpp
   part/asiData_AAGParameter.cpp
   part/asiData_BoundaryEdgesNode.cpp
@@ -132,6 +132,23 @@ set (misc_CPP_FILES
   misc/asiData_DesignLawNode.cpp
   misc/asiData_FuncAttr.cpp
   misc/asiData_FuncParameter.cpp
+)
+
+#------------------------------------------------------------------------------
+# RE
+#------------------------------------------------------------------------------
+
+set (re_H_FILES
+  re/asiData_ReEdgeNode.h
+  re/asiData_RePatchNode.h
+  re/asiData_ReTopoNode.h
+  re/asiData_ReVertexNode.h
+)
+set (re_CPP_FILES
+  re/asiData_ReEdgeNode.cpp
+  re/asiData_RePatchNode.cpp
+  re/asiData_ReTopoNode.cpp
+  re/asiData_ReVertexNode.cpp
 )
 
 #------------------------------------------------------------------------------
@@ -242,6 +259,14 @@ foreach (FILE ${misc_CPP_FILES})
   source_group ("Source Files\\Misc" FILES "${FILE}")
 endforeach (FILE)
 
+foreach (FILE ${re_H_FILES})
+  source_group ("Header Files\\RE" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${re_CPP_FILES})
+  source_group ("Source Files\\RE" FILES "${FILE}")
+endforeach (FILE)
+
 #------------------------------------------------------------------------------
 # Configure includes
 #------------------------------------------------------------------------------
@@ -251,6 +276,7 @@ set (asiData_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
   ${CMAKE_CURRENT_SOURCE_DIR}/part;\
   ${CMAKE_CURRENT_SOURCE_DIR}/mesh;\
   ${CMAKE_CURRENT_SOURCE_DIR}/iv;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/re;\
   ${CMAKE_CURRENT_SOURCE_DIR}/misc;")
 #
 set (asiData_include_dir ${asiData_include_dir_loc} PARENT_SCOPE)
@@ -276,6 +302,7 @@ add_library (asiData SHARED
   ${part_H_FILES} ${part_CPP_FILES}
   ${mesh_H_FILES} ${mesh_CPP_FILES}
   ${iv_H_FILES}   ${iv_CPP_FILES}
+  ${re_H_FILES}   ${re_CPP_FILES}
   ${misc_H_FILES} ${misc_CPP_FILES}
 )
 
@@ -377,4 +404,5 @@ install (FILES ${H_FILES}      DESTINATION framework/include)
 install (FILES ${part_H_FILES} DESTINATION framework/include)
 install (FILES ${mesh_H_FILES} DESTINATION framework/include)
 install (FILES ${iv_H_FILES}   DESTINATION framework/include)
+install (FILES ${re_H_FILES}   DESTINATION framework/include)
 install (FILES ${misc_H_FILES} DESTINATION framework/include)

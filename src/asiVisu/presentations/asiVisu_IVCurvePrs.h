@@ -61,7 +61,7 @@ public:
 
 private:
 
-  //! Allocation is allowed only via Instance method.
+  //! Allocation is allowed only via Instance() method.
   asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& theNode);
 
 };

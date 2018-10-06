@@ -101,7 +101,7 @@ public:
 
 private:
 
-  //! Allocation is allowed only via Instance method.
+  //! Allocation is allowed only via Instance() method.
   asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:

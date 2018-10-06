@@ -87,6 +87,7 @@ public:
 public slots:
 
   asiUI_EXPORT void onResetView();
+  asiUI_EXPORT void onFitAll();
   asiUI_EXPORT void onSubShapesPicked();
   asiUI_EXPORT void onWhateverPicked();
   asiUI_EXPORT void onFindFace();

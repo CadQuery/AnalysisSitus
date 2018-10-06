@@ -277,6 +277,17 @@ void asiUI_ViewerPart::onResetView()
 
 //-----------------------------------------------------------------------------
 
+//! Fits view to the contents.
+void asiUI_ViewerPart::onFitAll()
+{
+  asiVisu_Utils::AdjustCamera( m_prs_mgr->GetRenderer(),
+                               m_prs_mgr->PropsByTrihedron() );
+  //
+  this->Repaint();
+}
+
+//-----------------------------------------------------------------------------
+
 //! Callback for picking event.
 void asiUI_ViewerPart::onWhateverPicked()
 {
@@ -563,14 +574,16 @@ void asiUI_ViewerPart::onTopView()
 
 void asiUI_ViewerPart::createActions()
 {
-  QAction* pResetViewAction  = new QAction("Reset", this);
-  QAction* pBackViewAction   = new QAction("Back", this);
+  QAction* pFitAllAction     = new QAction("Fit",    this);
+  QAction* pResetViewAction  = new QAction("Reset",  this);
+  QAction* pBackViewAction   = new QAction("Back",   this);
   QAction* pBottomViewAction = new QAction("Bottom", this);
-  QAction* pFrontViewAction  = new QAction("Front", this);
-  QAction* pLeftViewAction   = new QAction("Left", this);
-  QAction* pRightViewAction  = new QAction("Right", this);
-  QAction* pTopViewAction    = new QAction("Top", this);
+  QAction* pFrontViewAction  = new QAction("Front",  this);
+  QAction* pLeftViewAction   = new QAction("Left",   this);
+  QAction* pRightViewAction  = new QAction("Right",  this);
+  QAction* pTopViewAction    = new QAction("Top",    this);
   //
+  connect( pFitAllAction,     SIGNAL( triggered() ), this, SLOT( onFitAll      () ) );
   connect( pResetViewAction,  SIGNAL( triggered() ), this, SLOT( onDefaultView () ) );
   connect( pBackViewAction,   SIGNAL( triggered() ), this, SLOT( onBackView    () ) );
   connect( pBottomViewAction, SIGNAL( triggered() ), this, SLOT( onBottomView  () ) );
@@ -580,6 +593,7 @@ void asiUI_ViewerPart::createActions()
   connect( pTopViewAction,    SIGNAL( triggered() ), this, SLOT( onTopView     () ) );
 
   // Add action to the toolbar
+  m_toolBar->addAction(pFitAllAction);
   m_toolBar->addAction(pResetViewAction);
   m_toolBar->addAction(pBackViewAction);
   m_toolBar->addAction(pBottomViewAction);

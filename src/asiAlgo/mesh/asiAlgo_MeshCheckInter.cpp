@@ -78,6 +78,10 @@ asiAlgo_MeshCheckInter::t_status asiAlgo_MeshCheckInter::Perform()
   MeshElementsTree anElemTree;
   FillElementsTree(m_mesh, anElemTree);
 
+  std::vector<gp_Pnt> siNodes;
+  std::vector<Poly_Triangle> siTriangles;
+
+  bool hasSI = false;
   const int nbElems = m_mesh->NbTriangles();
   //
   for ( int aEInd = 1; aEInd <= nbElems; ++aEInd )
@@ -96,7 +100,11 @@ asiAlgo_MeshCheckInter::t_status asiAlgo_MeshCheckInter::Perform()
           int illElemN1, illElemN2, illElemN3;
           illElem.Get(illElemN1, illElemN2, illElemN3);
           //
-          m_plotter.DRAW_TRIANGLE(m_mesh->Node(illElemN1), m_mesh->Node(illElemN2), m_mesh->Node(illElemN3), Color_Red, "illElem");
+          siNodes.push_back( m_mesh->Node(illElemN1) ); int idNode1 = int( siNodes.size() );
+          siNodes.push_back( m_mesh->Node(illElemN2) ); int idNode2 = int( siNodes.size() );
+          siNodes.push_back( m_mesh->Node(illElemN3) ); int idNode3 = int( siNodes.size() );
+          //
+          siTriangles.push_back( Poly_Triangle(idNode1, idNode2, idNode3) );
         }
 
         {
@@ -104,18 +112,48 @@ asiAlgo_MeshCheckInter::t_status asiAlgo_MeshCheckInter::Perform()
 
           const Poly_Triangle& companionElem = m_mesh->Triangle( anIt.Value() );
           //
-          int companionElemN1, companionElemN2, companionElemN3;
-          companionElem.Get(companionElemN1, companionElemN2, companionElemN3);
+          int illElemN1, illElemN2, illElemN3;
+          companionElem.Get(illElemN1, illElemN2, illElemN3);
           //
-          m_plotter.DRAW_TRIANGLE(m_mesh->Node(companionElemN1), m_mesh->Node(companionElemN2), m_mesh->Node(companionElemN3), Color_Red, "companionElem");
+          siNodes.push_back( m_mesh->Node(illElemN1) ); int idNode1 = int( siNodes.size() );
+          siNodes.push_back( m_mesh->Node(illElemN2) ); int idNode2 = int( siNodes.size() );
+          siNodes.push_back( m_mesh->Node(illElemN3) ); int idNode3 = int( siNodes.size() );
+          //
+          siTriangles.push_back( Poly_Triangle(idNode1, idNode2, idNode3) );
         }
 
-        return Status_HasIntersections;
+        if ( !hasSI )
+        {
+          hasSI = true;
+          break;
+        }
       }
     }
   }
 
-  return Status_Ok;
+  // Create triangulation for plotter.
+  if ( hasSI )
+  {
+    // Prepare nodes.
+    TColgp_Array1OfPnt siPolyNodes( 1, int( siNodes.size() ) );
+    //
+    for ( size_t k = 0; k < siNodes.size(); ++k )
+      siPolyNodes( int(k + 1) ) = siNodes[k];
+
+    // Prepare triangles.
+    Poly_Array1OfTriangle siPolyTris( 1, int( siTriangles.size() ) );
+    //
+    for ( size_t k = 0; k < siTriangles.size(); ++k )
+      siPolyTris( int(k + 1) ) = siTriangles[k];
+
+    // Build triangulation for the self-intersecting elements and draw it.
+    Handle(Poly_Triangulation)
+      siRes = new Poly_Triangulation(siPolyNodes, siPolyTris);
+    //
+    m_plotter.REDRAW_TRIANGULATION("siRes", siRes, Color_Red, 0.75);
+  }
+
+  return hasSI ? Status_HasIntersections : Status_Ok;
 }
 
 // ===============     Auxiliary functions     ===========================

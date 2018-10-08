@@ -43,6 +43,8 @@
 // asiAlgo includes
 #include <asiAlgo_CheckDihedralAngle.h>
 #include <asiAlgo_CheckValidity.h>
+#include <asiAlgo_MeshCheckInter.h>
+#include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -2102,6 +2104,46 @@ int ENGINE_DrawCP(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckTriangulation(const Handle(asiTcl_Interp)& interp,
+                              int                          argc,
+                              const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get triangulation.
+  Handle(asiData_TriangulationNode)
+    trisNode = cmdEngine::model->GetTriangulationNode();
+  //
+  if ( trisNode.IsNull() || !trisNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  Handle(Poly_Triangulation) tris = trisNode->GetTriangulation();
+
+  // Perform check.
+  asiAlgo_MeshCheckInter meshChecker( tris,
+                                      interp->GetProgress(),
+                                      interp->GetPlotter() );
+  //
+  asiAlgo_MeshCheckInter::t_status res = meshChecker.Perform();
+
+  if ( res == asiAlgo_MeshCheckInter::Status_Ok )
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Triangulation is OK.");
+  else if ( res == asiAlgo_MeshCheckInter::Status_HasIntersections )
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Triangulation is self-intersecting.");
+  else if ( res == asiAlgo_MeshCheckInter::Status_Failed )
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation checker failed for unknown reason.");
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_CheckTess(const Handle(asiTcl_Interp)& interp,
                      int                          argc,
                      const char**                 argv)
@@ -2111,18 +2153,32 @@ int ENGINE_CheckTess(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // Get mesh.
-  Handle(asiData_TessNode) tessNode = cmdEngine::model->GetTessellationNode();
+  // Get triangulation.
+  Handle(asiData_TessNode)
+    tessNode = cmdEngine::model->GetTessellationNode();
   //
   if ( tessNode.IsNull() || !tessNode->IsWellFormed() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Tessellation Node is null or inconsistent.");
-    return TCL_ERROR;
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Tessellation Node is null or ill-defined.");
+    return TCL_OK;
   }
   //
-  Handle(ActData_Mesh) mesh = tessNode->GetMesh();
+  Handle(Poly_Triangulation) tris;
+  asiAlgo_MeshConvert::FromPersistent(tessNode->GetMesh(), tris);
 
-  // TODO: NYI
+  // Perform check.
+  asiAlgo_MeshCheckInter meshChecker( tris,
+                                      interp->GetProgress(),
+                                      interp->GetPlotter() );
+  //
+  asiAlgo_MeshCheckInter::t_status res = meshChecker.Perform();
+
+  if ( res == asiAlgo_MeshCheckInter::Status_Ok )
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Triangulation is OK.");
+  else if ( res == asiAlgo_MeshCheckInter::Status_HasIntersections )
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Triangulation is self-intersecting.");
+  else if ( res == asiAlgo_MeshCheckInter::Status_Failed )
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation checker failed for unknown reason.");
 
   return TCL_OK;
 }
@@ -2323,10 +2379,18 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_DrawCP);
 
   //-------------------------------------------------------------------------//
+  interp->AddCommand("check-triangulation",
+    //
+    "check-triangulation\n"
+    "\t Checks triangulation for self-intersections.",
+    //
+    __FILE__, group, ENGINE_CheckTriangulation);
+
+  //-------------------------------------------------------------------------//
   interp->AddCommand("check-tess",
     //
     "check-tess\n"
-    "\t Check validity of tessellation.",
+    "\t Checks tessellation for self-intersections.",
     //
     __FILE__, group, ENGINE_CheckTess);
 }

@@ -607,7 +607,8 @@ protected:
                   const gp_XYZ&                  p3,
                   const Quantity_Color&          color,
                   const TCollection_AsciiString& name,
-                  const bool                     newPrimitive);
+                  const bool                     newPrimitive,
+                  const bool                     isWireframe);
 
   asiUI_EXPORT void
     draw_triangle(const gp_XY&                   p1,
@@ -615,7 +616,8 @@ protected:
                   const gp_XY&                   p3,
                   const Quantity_Color&          color,
                   const TCollection_AsciiString& name,
-                  const bool                     newPrimitive);
+                  const bool                     newPrimitive,
+                  const bool                     isWireframe);
 
   asiUI_EXPORT void
     draw_triangulation(const Handle(Poly_Triangulation)& tris,

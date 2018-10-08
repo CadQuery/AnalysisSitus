@@ -591,7 +591,7 @@ void asiUI_IV::DRAW_TRIANGLE(const gp_Pnt&                  p1,
                              const Quantity_Color&          color,
                              const TCollection_AsciiString& name)
 {
-  this->draw_triangle(p1.XYZ(), p2.XYZ(), p3.XYZ(), color, name, true);
+  this->draw_triangle(p1.XYZ(), p2.XYZ(), p3.XYZ(), color, name, true, false);
 }
 
 //---------------------------------------------------------------------------//
@@ -602,7 +602,7 @@ void asiUI_IV::DRAW_TRIANGLE(const gp_XYZ&                  p1,
                              const Quantity_Color&          color,
                              const TCollection_AsciiString& name)
 {
-  this->draw_triangle(p1, p2, p3, color, name, true);
+  this->draw_triangle(p1, p2, p3, color, name, true, false);
 }
 
 //---------------------------------------------------------------------------//
@@ -613,7 +613,7 @@ void asiUI_IV::DRAW_TRIANGLE(const gp_Pnt2d&                p1,
                              const Quantity_Color&          color,
                              const TCollection_AsciiString& name)
 {
-  this->draw_triangle(p1.XY(), p2.XY(), p3.XY(), color, name, true);
+  this->draw_triangle(p1.XY(), p2.XY(), p3.XY(), color, name, true, false);
 }
 
 //---------------------------------------------------------------------------//
@@ -624,7 +624,7 @@ void asiUI_IV::DRAW_TRIANGLE(const gp_XY&                   p1,
                              const Quantity_Color&          color,
                              const TCollection_AsciiString& name)
 {
-  this->draw_triangle(p1, p2, p3, color, name, true);
+  this->draw_triangle(p1, p2, p3, color, name, true, false);
 }
 
 //---------------------------------------------------------------------------//
@@ -635,7 +635,7 @@ void asiUI_IV::REDRAW_TRIANGLE(const TCollection_AsciiString& name,
                                const gp_Pnt&                  p3,
                                const Quantity_Color&          color)
 {
-  this->draw_triangle(p1.XYZ(), p2.XYZ(), p3.XYZ(), color, name, false);
+  this->draw_triangle(p1.XYZ(), p2.XYZ(), p3.XYZ(), color, name, false, false);
 }
 
 //---------------------------------------------------------------------------//
@@ -646,7 +646,7 @@ void asiUI_IV::REDRAW_TRIANGLE(const TCollection_AsciiString& name,
                                const gp_XYZ&                  p3,
                                const Quantity_Color&          color)
 {
-  this->draw_triangle(p1, p2, p3, color, name, false);
+  this->draw_triangle(p1, p2, p3, color, name, false, false);
 }
 
 //---------------------------------------------------------------------------//
@@ -657,7 +657,7 @@ void asiUI_IV::REDRAW_TRIANGLE(const TCollection_AsciiString& name,
                                const gp_Pnt2d&                p3,
                                const Quantity_Color&          color)
 {
-  this->draw_triangle(p1.XY(), p2.XY(), p3.XY(), color, name, false);
+  this->draw_triangle(p1.XY(), p2.XY(), p3.XY(), color, name, false, false);
 }
 
 //---------------------------------------------------------------------------//
@@ -668,7 +668,7 @@ void asiUI_IV::REDRAW_TRIANGLE(const TCollection_AsciiString& name,
                                const gp_XY&                   p3,
                                const Quantity_Color&          color)
 {
-  this->draw_triangle(p1, p2, p3, color, name, false);
+  this->draw_triangle(p1, p2, p3, color, name, false, false);
 }
 
 //---------------------------------------------------------------------------//
@@ -1266,11 +1266,28 @@ void asiUI_IV::draw_triangle(const gp_XYZ&                  p1,
                              const gp_XYZ&                  p3,
                              const Quantity_Color&          color,
                              const TCollection_AsciiString& name,
-                             const bool                     newPrimitive)
+                             const bool                     newPrimitive,
+                             const bool                     isWireframe)
 {
-  std::vector<gp_XYZ> poles = {p1, p2, p3, p1};
+  if ( isWireframe )
+  {
+    std::vector<gp_XYZ> poles = {p1, p2, p3, p1};
 
-  this->draw_polyline(poles, color, name, newPrimitive);
+    this->draw_polyline(poles, color, name, newPrimitive);
+  }
+  else
+  {
+    TColgp_Array1OfPnt nodes(1, 3);
+    nodes(1) = p1;
+    nodes(2) = p2;
+    nodes(3) = p3;
+    //
+    Poly_Array1OfTriangle tris(1, 1); tris(1) = Poly_Triangle(1, 2, 3);
+    //
+    Handle(Poly_Triangulation) polyTri = new Poly_Triangulation(nodes, tris);
+
+    this->draw_triangulation(polyTri, color, 1.0, name, newPrimitive);
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -1280,11 +1297,28 @@ void asiUI_IV::draw_triangle(const gp_XY&                   p1,
                              const gp_XY&                   p3,
                              const Quantity_Color&          color,
                              const TCollection_AsciiString& name,
-                             const bool                     newPrimitive)
+                             const bool                     newPrimitive,
+                             const bool                     isWireframe)
 {
-  std::vector<gp_XY> poles = {p1, p2, p3, p1};
+  if ( isWireframe )
+  {
+    std::vector<gp_XY> poles = {p1, p2, p3, p1};
 
-  this->draw_polyline(poles, color, name, newPrimitive);
+    this->draw_polyline(poles, color, name, newPrimitive);
+  }
+  else
+  {
+    TColgp_Array1OfPnt nodes(1, 3);
+    nodes(1) = gp_Pnt(p1.X(), p1.Y(), 0);
+    nodes(2) = gp_Pnt(p2.X(), p2.Y(), 0);
+    nodes(3) = gp_Pnt(p3.X(), p3.Y(), 0);
+    //
+    Poly_Array1OfTriangle tris(1, 1); tris(1) = Poly_Triangle(1, 2, 3);
+    //
+    Handle(Poly_Triangulation) polyTri = new Poly_Triangulation(nodes, tris);
+
+    this->draw_triangulation(polyTri, color, 1.0, name, newPrimitive);
+  }
 }
 
 //---------------------------------------------------------------------------//

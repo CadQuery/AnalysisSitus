@@ -56,9 +56,10 @@ asiData_ContourNode::asiData_ContourNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,      PID_Name);
   REGISTER_PARAMETER(RealArray, PID_Coords);
+  REGISTER_PARAMETER(Selection, PID_Poles);
   REGISTER_PARAMETER(IntArray,  PID_Faces);
   REGISTER_PARAMETER(Bool,      PID_IsClosed);
-  REGISTER_PARAMETER(Shape,     PID_Geometry);
+  REGISTER_PARAMETER(Shape,     PID_Shape);
 }
 
 //! Returns new DETACHED instance of the Node ensuring its correct
@@ -76,10 +77,11 @@ void asiData_ContourNode::Init()
   this->InitParameter(PID_Name, "Name");
 
   // Set default values to primitive Parameters
-  this->SetCoords   ( NULL );
-  this->SetFaces    ( NULL );
-  this->SetClosed   ( false );
-  this->SetGeometry ( TopoDS_Shape() );
+  this->SetCoords      ( NULL );
+  this->SetPoleIndices ( NULL );
+  this->SetFaces       ( NULL );
+  this->SetClosed      ( false );
+  this->SetShape       ( TopoDS_Shape() );
 }
 
 //-----------------------------------------------------------------------------
@@ -115,6 +117,19 @@ void asiData_ContourNode::SetCoords(const Handle(HRealArray)& coords)
 Handle(HRealArray) asiData_ContourNode::GetCoords() const
 {
   return ActParamTool::AsRealArray( this->Parameter(PID_Coords) )->GetArray();
+}
+
+//! Sets indices of polyline points marked as poles.
+//! \param[in] indices indices to store.
+void asiData_ContourNode::SetPoleIndices(const Handle(TColStd_HPackedMapOfInteger)& indices)
+{
+  ActParamTool::AsSelection( this->Parameter(PID_Poles) )->SetMask(indices);
+}
+
+//! \return stored array of pole indices.
+Handle(TColStd_HPackedMapOfInteger) asiData_ContourNode::GetPoleIndices() const
+{
+  return ActParamTool::AsSelection( this->Parameter(PID_Poles) )->GetMask();
 }
 
 //! \return number of stored points.
@@ -179,6 +194,43 @@ gp_XYZ asiData_ContourNode::GetPoint(const int zeroBasedIndex) const
   return res;
 }
 
+//! Adds another point to the contour.
+//! \param[in] point    point to add.
+//! \param[in] face_idx index of the host face.
+//! \return 0-based index of the just added point.
+int asiData_ContourNode::AddPoint(const gp_XYZ& point,
+                                  const int     face_idx)
+{
+  // Change the array of coordinates
+  Handle(HRealArray)
+    coords = ActParamTool::AsRealArray( this->Parameter(PID_Coords) )->GetArray();
+  //
+  coords = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( coords, point.X() );
+  coords = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( coords, point.Y() );
+  coords = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( coords, point.Z() );
+  //
+  this->SetCoords(coords);
+
+  // Change the array of face indices
+  Handle(HIntArray)
+    faces = ActParamTool::AsIntArray( this->Parameter(PID_Faces) )->GetArray();
+  //
+  faces = ActAux_ArrayUtils::Append<HIntArray, Handle(HIntArray), int>(faces, face_idx);
+  //
+  this->SetFaces(faces);
+
+  // Get index of the just added point
+  const int newIndex = coords->Length() / 3 - 1;
+  return newIndex;
+}
+
+//! Registers the passed 0-based ID as a pole index.
+//! \param[in] zeroBasedIndex 0-based index of a point to register as a pole.
+void asiData_ContourNode::AddPoleIndex(const int zeroBasedIndex)
+{
+  ActParamTool::AsSelection( this->Parameter(PID_Poles) )->Add(zeroBasedIndex);
+}
+
 //! Replaces a point with the given 0-based index with the passed
 //! coordinates.
 //! \param[in] zeroBasedIndex 0-based index of the target point.
@@ -236,36 +288,6 @@ Handle(HIntArray) asiData_ContourNode::GetFaces() const
   return ActParamTool::AsIntArray( this->Parameter(PID_Faces) )->GetArray();
 }
 
-//! Adds another point to the contour.
-//! \param[in] point    point to add.
-//! \param[in] face_idx index of the host face.
-//! \return 0-based index of the just added point.
-int asiData_ContourNode::AddPoint(const gp_XYZ& point,
-                                  const int     face_idx)
-{
-  // Change the array of coordinates
-  Handle(HRealArray)
-    coords = ActParamTool::AsRealArray( this->Parameter(PID_Coords) )->GetArray();
-  //
-  coords = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( coords, point.X() );
-  coords = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( coords, point.Y() );
-  coords = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( coords, point.Z() );
-  //
-  this->SetCoords(coords);
-
-  // Change the array of face indices
-  Handle(HIntArray)
-    faces = ActParamTool::AsIntArray( this->Parameter(PID_Faces) )->GetArray();
-  //
-  faces = ActAux_ArrayUtils::Append<HIntArray, Handle(HIntArray), int>(faces, face_idx);
-  //
-  this->SetFaces(faces);
-
-  // Get index of the just added point
-  const int newIndex = coords->Length() / 3 - 1;
-  return newIndex;
-}
-
 //! Sets closeness property for the contour.
 //! \param[in] isClosed indicates whether the contour is
 //!            closed or not.
@@ -281,6 +303,54 @@ bool asiData_ContourNode::IsClosed() const
   return ActParamTool::AsBool( this->Parameter(PID_IsClosed) )->GetValue();
 }
 
+//! Re-packages all coordinates to a convenient sequence structure.
+//! \param[out] points result of re-packaging.
+//! \param[out] faces  indices of the corresponding faces.
+void asiData_ContourNode::AsPointsOnFaces(TColgp_SequenceOfPnt&      points,
+                                          TColStd_SequenceOfInteger& faces) const
+{
+  // Get face indices
+  Handle(HIntArray) faceIndices = this->GetFaces();
+
+  // Get coordinates as point cloud
+  Handle(asiAlgo_BaseCloud<double>) pcloud = asiAlgo_PointCloudUtils::AsCloudd( this->GetCoords() );
+  const int                         nPts   = pcloud->GetNumberOfElements();
+  //
+  for ( int p = 0; p < nPts; ++p )
+  {
+    double xp, yp, zp;
+    pcloud->GetElement(p, xp, yp, zp);
+
+    points.Append( gp_Pnt(xp, yp, zp) );
+    faces.Append( faceIndices->Value(p) );
+  }
+}
+
+//! Sets new points and face indices.
+//! \param[in] points collection of points.
+//! \param[in] faces  collection of face indices.
+void asiData_ContourNode::SetPointsOnFaces(const TColgp_SequenceOfPnt&      points,
+                                           const TColStd_SequenceOfInteger& faces)
+{
+  const int numPts = points.Length();
+
+  Handle(HRealArray) coords = new HRealArray(0, numPts*3 - 1);
+  Handle(HIntArray)  ifaces = new HIntArray(0, numPts - 1);
+
+  // Fill arrays with data
+  for ( int pidx = 1; pidx <= points.Length(); ++pidx )
+  {
+    coords->ChangeValue( (pidx - 1)*3 )     = points(pidx).X();
+    coords->ChangeValue( (pidx - 1)*3 + 1 ) = points(pidx).Y();
+    coords->ChangeValue( (pidx - 1)*3 + 2 ) = points(pidx).Z();
+    ifaces->ChangeValue( pidx - 1 )         = faces(pidx);
+  }
+
+  // Set arrays
+  this->SetCoords(coords);
+  this->SetFaces(ifaces);
+}
+
 //! Returns B-Rep representation of the contour.
 //! \param[in] useCache whether to use cached B-Rep.
 //! \return contour converted to shape.
@@ -289,7 +359,7 @@ TopoDS_Wire asiData_ContourNode::AsShape(const bool useCache) const
   // If there is an alternative representation, let's return it
   TopoDS_Shape derivedRep;
   if ( useCache )
-    derivedRep = this->GetGeometry();
+    derivedRep = this->GetShape();
   //
   if ( !derivedRep.IsNull() )
     return TopoDS::Wire(derivedRep);
@@ -353,63 +423,15 @@ TopoDS_Wire asiData_ContourNode::AsShape(const bool useCache) const
   return result;
 }
 
-//! Re-packages all coordinates to a convenient sequence structure.
-//! \param[out] points result of re-packaging.
-//! \param[out] faces  indices of the corresponding faces.
-void asiData_ContourNode::AsPointsOnFaces(TColgp_SequenceOfPnt&      points,
-                                          TColStd_SequenceOfInteger& faces) const
-{
-  // Get face indices
-  Handle(HIntArray) faceIndices = this->GetFaces();
-
-  // Get coordinates as point cloud
-  Handle(asiAlgo_BaseCloud<double>) pcloud = asiAlgo_PointCloudUtils::AsCloudd( this->GetCoords() );
-  const int                         nPts   = pcloud->GetNumberOfElements();
-  //
-  for ( int p = 0; p < nPts; ++p )
-  {
-    double xp, yp, zp;
-    pcloud->GetElement(p, xp, yp, zp);
-
-    points.Append( gp_Pnt(xp, yp, zp) );
-    faces.Append( faceIndices->Value(p) );
-  }
-}
-
-//! Sets new points and face indices.
-//! \param[in] points collection of points.
-//! \param[in] faces  collection of face indices.
-void asiData_ContourNode::SetPointsOnFaces(const TColgp_SequenceOfPnt&      points,
-                                           const TColStd_SequenceOfInteger& faces)
-{
-  const int numPts = points.Length();
-
-  Handle(HRealArray) coords = new HRealArray(0, numPts*3 - 1);
-  Handle(HIntArray)  ifaces = new HIntArray(0, numPts - 1);
-
-  // Fill arrays with data
-  for ( int pidx = 1; pidx <= points.Length(); ++pidx )
-  {
-    coords->ChangeValue( (pidx - 1)*3 )     = points(pidx).X();
-    coords->ChangeValue( (pidx - 1)*3 + 1 ) = points(pidx).Y();
-    coords->ChangeValue( (pidx - 1)*3 + 2 ) = points(pidx).Z();
-    ifaces->ChangeValue( pidx - 1 )         = faces(pidx);
-  }
-
-  // Set arrays
-  this->SetCoords(coords);
-  this->SetFaces(ifaces);
-}
-
 //! Sets explicit geometry for the contour.
 //! \param[in] shape B-Rep geometry to set.
-void asiData_ContourNode::SetGeometry(const TopoDS_Shape& shape)
+void asiData_ContourNode::SetShape(const TopoDS_Shape& shape)
 {
-  ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(shape);
+  ActParamTool::AsShape( this->Parameter(PID_Shape) )->SetShape(shape);
 }
 
 //! \return stored B-Rep geometry.
-TopoDS_Shape asiData_ContourNode::GetGeometry() const
+TopoDS_Shape asiData_ContourNode::GetShape() const
 {
-  return ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
+  return ActParamTool::AsShape( this->Parameter(PID_Shape) )->GetShape();
 }

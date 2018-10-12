@@ -261,60 +261,60 @@ protected:
 
 //-----------------------------------------------------------------------------
 
-//! Collection of Presentation instances issued for highlighting. This class
-//! represents the currently active highlighting.
+//! This class represents current selection.
 class asiVisu_ActualSelection
 {
 public:
 
-  typedef NCollection_Sequence<Handle(asiVisu_Prs)>                        PrsSeq;
-  typedef NCollection_DataMap<asiVisu_SelectionNature, PrsSeq>             PrsMap;
-  typedef NCollection_DataMap<asiVisu_SelectionNature, asiVisu_PickResult> PickResultMap;
+  typedef NCollection_Sequence<Handle(asiVisu_Prs)>                                      PrsSeq;
+  typedef NCollection_DataMap<asiVisu_SelectionNature, PrsSeq>                           PrsMap;
+  typedef NCollection_DataMap<asiVisu_SelectionNature, Handle(asiVisu_CellPickerResult)> PickerResultMap;
 
 public:
 
-  //! Default constructor.
+  //! Default ctor.
   asiVisu_ActualSelection()
   {
     m_prsSet.Bind( SelectionNature_Pick,      PrsSeq() );
     m_prsSet.Bind( SelectionNature_Detection, PrsSeq() );
 
-    m_pickResultSet.Bind( SelectionNature_Pick,      asiVisu_PickResult() );
-    m_pickResultSet.Bind( SelectionNature_Detection, asiVisu_PickResult() );
+    // Picker results.
+    m_pickerResultSet.Bind( SelectionNature_Pick,      NULL );
+    m_pickerResultSet.Bind( SelectionNature_Detection, NULL );
   }
 
-  //! Cleans up the internal collection.
-  //! \param theRenderer  [in] renderer to remove the Presentations from.
-  //! \param theSelNature [in] selection kind.
-  void PopAll(vtkRenderer*                  theRenderer,
-              const asiVisu_SelectionNature theSelNature)
+  //! Cleans up the internal collections.
+  //! \param[in] renderer  renderer to remove the Presentations from.
+  //! \param[in] selNature selection kind.
+  void PopAll(vtkRenderer*                  renderer,
+              const asiVisu_SelectionNature selNature)
   {
-    PrsSeq::Iterator anIt( m_prsSet.Find(theSelNature) );
+    PrsSeq::Iterator anIt( m_prsSet.Find(selNature) );
     for ( ; anIt.More(); anIt.Next() )
     {
       const Handle(asiVisu_Prs)& aPrs = anIt.Value();
       if ( aPrs.IsNull() )
         continue;
 
-      aPrs->UnHighlight(theRenderer, theSelNature);
+      aPrs->UnHighlight(renderer, selNature);
     }
 
-    m_prsSet.ChangeFind(theSelNature).Clear();
-    m_pickResultSet.ChangeFind(theSelNature).Clear();
+    m_prsSet          .ChangeFind(selNature).Clear();
+    m_pickerResultSet .ChangeFind(selNature).Nullify();
   }
 
   //! Adds the passed Presentation instance to the internal collection.
-  //! \param thePrs       [in] Presentation to add.
-  //! \param theRenderer  [in] renderer to add the Presentation to.
-  //! \param theSelNature [in] selection kind.
-  void PushToRender(const Handle(asiVisu_Prs)&    thePrs,
-                    vtkRenderer*                  theRenderer,
-                    const asiVisu_SelectionNature theSelNature)
+  //! \param[in] prs       Presentation to add.
+  //! \param[in] renderer  renderer to add the Presentation to.
+  //! \param[in] selNature selection kind.
+  void PushToRender(const Handle(asiVisu_Prs)&    prs,
+                    vtkRenderer*                  renderer,
+                    const asiVisu_SelectionNature selNature)
   {
-    asiVisu_PickResult aPickRes = m_pickResultSet.Find(theSelNature);
-    m_prsSet.ChangeFind(theSelNature).Append(thePrs);
+    const asiVisu_CellPickerResult& cellPickRes = m_pickerResultSet(selNature);
+    m_prsSet.ChangeFind(selNature).Append(prs);
 
-    thePrs->Highlight(theRenderer, aPickRes, theSelNature);
+    prs->Highlight(renderer, cellPickRes, selNature);
   }
 
   //! Accessor for picking result structure by selection nature.
@@ -347,8 +347,8 @@ private:
   //! Internal collection of Presentations in OCCT form.
   PrsMap m_prsSet;
 
-  //! Picking results data structure.
-  PickResultMap m_pickResultSet;
+  //! Picker results.
+  PickerResultMap m_pickerResultSet;
 
 };
 

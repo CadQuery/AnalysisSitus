@@ -56,7 +56,10 @@
 #include <asiData_IVTopoNode.h>
 #include <asiData_Partition.h>
 #include <asiData_PartNode.h>
+#include <asiData_ReEdgesNode.h>
 #include <asiData_ReTopoNode.h>
+#include <asiData_RePatchesNode.h>
+#include <asiData_ReVerticesNode.h>
 #include <asiData_RootNode.h>
 #include <asiData_TessNode.h>
 #include <asiData_TessNormsNode.h>
@@ -261,6 +264,27 @@ public:
     return Handle(asiData_Partition<asiData_ReTopoNode>)::DownCast( this->Partition(Partition_ReTopo) );
   }
 
+  //! Accessor for a Partition instance dedicated to RePatches Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_RePatchesNode>) GetRePatchesPartition() const
+  {
+    return Handle(asiData_Partition<asiData_RePatchesNode>)::DownCast( this->Partition(Partition_RePatches) );
+  }
+
+  //! Accessor for a Partition instance dedicated to ReEdges Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_ReEdgesNode>) GetReEdgesPartition() const
+  {
+    return Handle(asiData_Partition<asiData_ReEdgesNode>)::DownCast( this->Partition(Partition_ReEdges) );
+  }
+
+  //! Accessor for a Partition instance dedicated to ReVertices Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_ReVerticesNode>) GetReVerticesPartition() const
+  {
+    return Handle(asiData_Partition<asiData_ReVerticesNode>)::DownCast( this->Partition(Partition_ReVertices) );
+  }
+
 //-----------------------------------------------------------------------------
 
   //! Accessor for a Partition instance dedicated to IV Nodes.
@@ -443,6 +467,9 @@ protected:
     Partition_TessellationNorms,
   //---------------------------------------------------------------------------
     Partition_ReTopo,
+    Partition_RePatches,
+    Partition_ReEdges,
+    Partition_ReVertices,
   //---------------------------------------------------------------------------
     Partition_IV,
     Partition_IV_Points2d,

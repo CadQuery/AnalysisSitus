@@ -40,13 +40,44 @@ class asiEngine_RE : public asiEngine_Base
 public:
 
   //! ctor.
-  //! \param[in] model Data Model instance.
-  asiEngine_RE(const Handle(asiEngine_Model)& model) : asiEngine_Base(model) {}
+  //! \param[in] model    Data Model instance.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiEngine_RE(const Handle(asiEngine_Model)& model,
+               ActAPI_ProgressEntry           progress,
+               ActAPI_PlotterEntry            plotter)
+  : asiEngine_Base(model, progress, plotter) {}
 
 public:
 
+  //! \return newly created Topology Node.
   asiEngine_EXPORT Handle(asiData_ReTopoNode)
     Create_Topo();
+
+  //! Creates Contour Node under the given ReTopology Node.
+  //! \return newly created active Contour Node.
+  asiEngine_EXPORT Handle(asiData_ContourNode)
+    Create_Contour(const Handle(asiData_ReTopoNode)& topo_n);
+
+  //! Creates RePatches Node under the given ReTopology Node.
+  //! \return newly created Node.
+  asiEngine_EXPORT Handle(asiData_RePatchesNode)
+    Create_Patches(const Handle(asiData_ReTopoNode)& topo_n);
+
+  //! Creates ReEdges Node under the given ReTopology Node.
+  //! \return newly created Node.
+  asiEngine_EXPORT Handle(asiData_ReEdgesNode)
+    Create_Edges(const Handle(asiData_ReTopoNode)& topo_n);
+
+  //! Creates ReVertices Node under the given ReTopology Node.
+  //! \return newly created Node.
+  asiEngine_EXPORT Handle(asiData_ReVerticesNode)
+    Create_Vertices(const Handle(asiData_ReTopoNode)& topo_n);
+
+public:
+
+  asiEngine_EXPORT Handle(asiData_ContourNode)
+    GetOrCreate_Contour();
 
 };
 

@@ -104,7 +104,7 @@ Handle(ActAPI_HParameterList) asiVisu_ContourPointsDataProvider::translationSour
 
   // Register Parameter as sensitive
   out << points_n->Parameter(asiData_ContourNode::PID_Coords)
-      << points_n->Parameter(asiData_ContourNode::PID_Geometry);
+      << points_n->Parameter(asiData_ContourNode::PID_Shape);
 
   return out;
 }

@@ -154,7 +154,7 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
     m_pickCallback = vtkSmartPointer<asiUI_PickCallback>::New();
     m_pickCallback->SetViewer(this);
     m_pickCallback->SetModel(m_model);
-    m_pickCallback->SetPickerType(PickType_Cell);
+    m_pickCallback->SetPickerTypes(PickerType_Cell);
 
     // Initialize Callback instance for handling events related to Part viewer
     m_partCallback = vtkSmartPointer<asiUI_PartCallback>::New();

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 19 September 2016
+// Created on: 09 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,67 +28,64 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_GeomContourPrs_h
-#define asiVisu_GeomContourPrs_h
+#ifndef asiData_RePatchNode_h
+#define asiData_RePatchNode_h
 
-// A-Situs (visualization) includes
-#include <asiVisu_Prs.h>
-#include <asiVisu_Utils.h>
+// asiData includes
+#include <asiData.h>
 
-// A-Situs (geometry) includes
-#include <asiData_PartNode.h>
+// Active Data includes
+#include <ActData_BaseNode.h>
 
-//-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiVisu_GeomContourPrs, asiVisu_Prs)
-
-//! Presentation class for a contour.
-class asiVisu_GeomContourPrs : public asiVisu_Prs
+//! Data Node representing a group of topological patches for reverse engineering.
+class asiData_RePatchesNode : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_GeomContourPrs, asiVisu_Prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_RePatchesNode, ActData_BaseNode)
 
-  // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(asiData_ContourNode, Instance)
+  // Automatic registration of Node type in global factory
+  DEFINE_NODE_FACTORY(asiData_RePatchesNode, Instance)
 
 public:
 
-  //! Pipelines.
-  enum PipelineId
+  //! IDs for the underlying Parameters.
+  enum ParamId
   {
-    Pipeline_Main = 1,
-    Pipeline_Points
+  //------------------//
+  // Common           //
+  //------------------//
+    PID_Name,         //!< Name of the Node.
+  //------------------//
+    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
 public:
 
-  asiVisu_EXPORT static Handle(asiVisu_Prs)
-    Instance(const Handle(ActAPI_INode)& theNode);
+  asiData_EXPORT static Handle(ActAPI_INode)
+    Instance();
 
-  asiVisu_EXPORT virtual bool
-    IsVisible() const;
+// Generic naming support:
+public:
 
-private:
+  asiData_EXPORT virtual TCollection_ExtendedString
+    GetName();
+
+  asiData_EXPORT virtual void
+    SetName(const TCollection_ExtendedString& name);
+
+// Initialization:
+public:
+
+  asiData_EXPORT void
+    Init();
+
+protected:
 
   //! Allocation is allowed only via Instance() method.
-  asiVisu_GeomContourPrs(const Handle(ActAPI_INode)& theNode);
-
-// Callbacks:
-private:
-
-  virtual void beforeInitPipelines();
-  virtual void afterInitPipelines();
-  virtual void beforeUpdatePipelines() const;
-  virtual void afterUpdatePipelines() const;
-  virtual void highlight(vtkRenderer* theRenderer,
-                         const asiVisu_PickResult& thePickRes,
-                         const asiVisu_SelectionNature theSelNature) const;
-  virtual void unHighlight(vtkRenderer* theRenderer,
-                           const asiVisu_SelectionNature theSelNature) const;
-  virtual void renderPipelines(vtkRenderer* theRenderer) const;
-  virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
+  asiData_EXPORT
+    asiData_RePatchesNode();
 
 };
 

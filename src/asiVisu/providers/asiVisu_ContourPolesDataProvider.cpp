@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 October 2018
+// Created on: 10 october 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -29,48 +29,73 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiData_RePatchNode.h>
+#include <asiVisu_ContourPolesDataProvider.h>
 
-// Active Data includes
-#include <ActData_ParameterFactory.h>
+// asiAlgo includes
+#include <asiAlgo_PointCloudUtils.h>
+
+//-----------------------------------------------------------------------------
+
+//! Constructor.
+asiVisu_ContourPolesDataProvider::asiVisu_ContourPolesDataProvider(const Handle(asiData_ContourNode)& contour)
+: asiVisu_PointsDataProvider(contour)
+{}
 
 //-----------------------------------------------------------------------------
 
-//! Default ctor. Registers all involved Parameters.
-asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
+//! \return point cloud to visualize.
+Handle(asiAlgo_BaseCloud<double>) asiVisu_ContourPolesDataProvider::GetPoints() const
 {
-  REGISTER_PARAMETER(Name, PID_Name);
-}
+  Handle(asiData_ContourNode)
+    contour_n = Handle(asiData_ContourNode)::DownCast(m_node);
+  //
+  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
+    return NULL;
 
-//! Returns new DETACHED instance of the Node ensuring its correct
-//! allocation in a heap.
-//! \return new instance of the Node.
-Handle(ActAPI_INode) asiData_RePatchNode::Instance()
-{
-  return new asiData_RePatchNode();
-}
+  // Get indices of poles.
+  Handle(TColStd_HPackedMapOfInteger) hPoleIds = contour_n->GetPoleIndices();
 
-//! Performs initial actions required to make Node WELL-FORMED.
-void asiData_RePatchNode::Init()
-{
-  // Initialize name Parameter
-  this->InitParameter(PID_Name, "Name");
+  // Prepare result.
+  Handle(asiAlgo_BaseCloud<double>) res = new asiAlgo_BaseCloud<double>;
+
+  // Get coordinates.
+  Handle(HRealArray) hCoords = contour_n->GetCoords();
+  const int numPts = contour_n->GetNumPoints();
+  //
+  for ( int idx = 0; idx < numPts; ++idx )
+  {
+    if ( !hPoleIds->Map().Contains(idx) )
+      continue;
+
+    const double x = hCoords->Value(3*idx + 0);
+    const double y = hCoords->Value(3*idx + 1);
+    const double z = hCoords->Value(3*idx + 2);
+    //
+    res->AddElement(x, y, z);
+  }
+
+  return res;
 }
 
 //-----------------------------------------------------------------------------
-// Generic naming
-//-----------------------------------------------------------------------------
 
-//! Accessor for the Node's name.
-//! \return name of the Node.
-TCollection_ExtendedString asiData_RePatchNode::GetName()
+//! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
+//! translation process.
+//! \return source Parameters.
+Handle(ActAPI_HParameterList) asiVisu_ContourPolesDataProvider::translationSources() const
 {
-  return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
-}
+  // Resulting Parameters
+  ActParamStream out;
 
-//! Sets name for the Node.
-//! \param[in] name name to set.
-void asiData_RePatchNode::SetName(const TCollection_ExtendedString& name)
-{
-  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
+  Handle(asiData_ContourNode)
+    points_n = Handle(asiData_ContourNode)::DownCast(m_node);
+  //
+  if ( points_n.IsNull() || !points_n->IsWellFormed() )
+    return out;
+
+  // Register Parameter as sensitive
+  out << points_n->Parameter(asiData_ContourNode::PID_Coords)
+      << points_n->Parameter(asiData_ContourNode::PID_Poles);
+
+  return out;
 }

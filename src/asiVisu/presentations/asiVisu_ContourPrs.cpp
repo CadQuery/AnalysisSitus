@@ -29,11 +29,12 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_GeomContourPrs.h>
+#include <asiVisu_ContourPrs.h>
 
 // asiVisu includes
 #include <asiVisu_ContourDataProvider.h>
 #include <asiVisu_ContourPointsDataProvider.h>
+#include <asiVisu_ContourPolesDataProvider.h>
 #include <asiVisu_PointsPipeline.h>
 #include <asiVisu_ShapePipeline.h>
 #include <asiVisu_Utils.h>
@@ -46,11 +47,11 @@
 //-----------------------------------------------------------------------------
 
 //! Creates a Presentation object for the passed Geometry Contour Node.
-//! \param theNode [in] Geometry Contour Node to create a Presentation for.
-asiVisu_GeomContourPrs::asiVisu_GeomContourPrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_Prs(theNode)
+//! \param[in] N Contour Node to create a Presentation for.
+asiVisu_ContourPrs::asiVisu_ContourPrs(const Handle(ActAPI_INode)& N)
+: asiVisu_Prs(N)
 {
-  Handle(asiData_ContourNode) contour_n = Handle(asiData_ContourNode)::DownCast(theNode);
+  Handle(asiData_ContourNode) contour_n = Handle(asiData_ContourNode)::DownCast(N);
 
   // Create Data Provider for polyline
   Handle(asiVisu_ContourDataProvider)
@@ -59,6 +60,10 @@ asiVisu_GeomContourPrs::asiVisu_GeomContourPrs(const Handle(ActAPI_INode)& theNo
   // Create Data Provider for points
   Handle(asiVisu_ContourPointsDataProvider)
     DP_points = new asiVisu_ContourPointsDataProvider(contour_n);
+
+  // Create Data Provider for poles
+  Handle(asiVisu_ContourPolesDataProvider)
+    DP_poles = new asiVisu_ContourPolesDataProvider(contour_n);
 
   // Pipeline for contour
   Handle(asiVisu_ShapePipeline) shape_pl = new asiVisu_ShapePipeline(false);
@@ -74,12 +79,24 @@ asiVisu_GeomContourPrs::asiVisu_GeomContourPrs(const Handle(ActAPI_INode)& theNo
   this->addPipeline        ( Pipeline_Points, points_pl );
   this->assignDataProvider ( Pipeline_Points, DP_points );
 
+  // Pipeline for poles
+  Handle(asiVisu_PointsPipeline) poles_pl = new asiVisu_PointsPipeline;
+  //
+  this->addPipeline        ( Pipeline_Poles, poles_pl );
+  this->assignDataProvider ( Pipeline_Poles, DP_poles );
+
   // Configure presentation
   shape_pl  -> Actor()->GetProperty()->SetLineWidth(2.0f);
   shape_pl  -> Actor()->GetProperty()->SetLighting(0);
   shape_pl  -> Mapper()->SetScalarVisibility(0);
-  points_pl -> Actor()->GetProperty()->SetColor(0.0, 0.0, 1.0);
-  points_pl -> Actor()->GetProperty()->SetPointSize(5.0f);
+  //
+  points_pl -> Actor()->GetProperty()->SetColor(0.0, 0.4, 1.0);
+  poles_pl  -> Actor()->GetProperty()->SetLighting(0);
+  points_pl -> Actor()->GetProperty()->SetPointSize(2.0f);
+  //
+  poles_pl -> Actor()->GetProperty()->SetColor(1.0, 0.0, 1.0);
+  poles_pl -> Actor()->GetProperty()->SetLighting(0);
+  poles_pl -> Actor()->GetProperty()->SetPointSize(5.0f);
 
   // Make contour be visualized always on top of the scene
   shape_pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
@@ -89,19 +106,23 @@ asiVisu_GeomContourPrs::asiVisu_GeomContourPrs(const Handle(ActAPI_INode)& theNo
   points_pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
   points_pl->Mapper()->SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-66000);
   points_pl->Mapper()->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);
+  //
+  poles_pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
+  poles_pl->Mapper()->SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-66000);
+  poles_pl->Mapper()->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);
 }
 
 //! Factory method for Presentation.
 //! \param theNode [in] Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_GeomContourPrs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_ContourPrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new asiVisu_GeomContourPrs(theNode);
+  return new asiVisu_ContourPrs(theNode);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool asiVisu_GeomContourPrs::IsVisible() const
+bool asiVisu_ContourPrs::IsVisible() const
 {
   return true;
 }
@@ -109,27 +130,27 @@ bool asiVisu_GeomContourPrs::IsVisible() const
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void asiVisu_GeomContourPrs::beforeInitPipelines()
+void asiVisu_ContourPrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void asiVisu_GeomContourPrs::afterInitPipelines()
+void asiVisu_ContourPrs::afterInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void asiVisu_GeomContourPrs::beforeUpdatePipelines() const
+void asiVisu_ContourPrs::beforeUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void asiVisu_GeomContourPrs::afterUpdatePipelines() const
+void asiVisu_ContourPrs::afterUpdatePipelines() const
 {
   // Do nothing...
 }
@@ -138,9 +159,9 @@ void asiVisu_GeomContourPrs::afterUpdatePipelines() const
 //! \param theRenderer  [in] renderer.
 //! \param thePickRes   [in] picking results.
 //! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomContourPrs::highlight(vtkRenderer*                  theRenderer,
-                                       const asiVisu_PickResult&     thePickRes,
-                                       const asiVisu_SelectionNature theSelNature) const
+void asiVisu_ContourPrs::highlight(vtkRenderer*                  theRenderer,
+                                   const asiVisu_PickResult&     thePickRes,
+                                   const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
   asiVisu_NotUsed(thePickRes);
@@ -149,8 +170,8 @@ void asiVisu_GeomContourPrs::highlight(vtkRenderer*                  theRenderer
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomContourPrs::unHighlight(vtkRenderer*                  theRenderer,
-                                         const asiVisu_SelectionNature theSelNature) const
+void asiVisu_ContourPrs::unHighlight(vtkRenderer*                  theRenderer,
+                                     const asiVisu_SelectionNature theSelNature) const
 {
   asiVisu_NotUsed(theRenderer);
   asiVisu_NotUsed(theSelNature);
@@ -158,14 +179,14 @@ void asiVisu_GeomContourPrs::unHighlight(vtkRenderer*                  theRender
 
 //! Callback for rendering.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomContourPrs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_ContourPrs::renderPipelines(vtkRenderer* theRenderer) const
 {
   asiVisu_NotUsed(theRenderer);
 }
 
 //! Callback for de-rendering.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomContourPrs::deRenderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_ContourPrs::deRenderPipelines(vtkRenderer* theRenderer) const
 {
   asiVisu_NotUsed(theRenderer);
 }

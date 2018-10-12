@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 October 2018
+// Created on: 05 May 2017
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018-present, Sergey Slyadnev
+// Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,48 +29,4 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiData_RePatchNode.h>
-
-// Active Data includes
-#include <ActData_ParameterFactory.h>
-
-//-----------------------------------------------------------------------------
-
-//! Default ctor. Registers all involved Parameters.
-asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
-{
-  REGISTER_PARAMETER(Name, PID_Name);
-}
-
-//! Returns new DETACHED instance of the Node ensuring its correct
-//! allocation in a heap.
-//! \return new instance of the Node.
-Handle(ActAPI_INode) asiData_RePatchNode::Instance()
-{
-  return new asiData_RePatchNode();
-}
-
-//! Performs initial actions required to make Node WELL-FORMED.
-void asiData_RePatchNode::Init()
-{
-  // Initialize name Parameter
-  this->InitParameter(PID_Name, "Name");
-}
-
-//-----------------------------------------------------------------------------
-// Generic naming
-//-----------------------------------------------------------------------------
-
-//! Accessor for the Node's name.
-//! \return name of the Node.
-TCollection_ExtendedString asiData_RePatchNode::GetName()
-{
-  return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
-}
-
-//! Sets name for the Node.
-//! \param[in] name name to set.
-void asiData_RePatchNode::SetName(const TCollection_ExtendedString& name)
-{
-  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
-}
+#include <asiData_FuncParameter.h>

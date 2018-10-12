@@ -91,6 +91,13 @@ public:
     m_plotter  = plotter;
   }
 
+  //! Initializes the active Contour Node.
+  //! \param[in] contour Contour Node to set as data container.
+  void SetContourNode(const Handle(asiData_ContourNode)& contour)
+  {
+    m_contour = contour;
+  }
+
 private:
 
   asiUI_PickContourCallback  (asiUI_Viewer* theViewer);
@@ -100,6 +107,7 @@ private:
 
   std::vector<Handle(asiAlgo_BVHFacets)> m_bvhs;     //!< Accelerating structure for picking.
   Handle(asiEngine_Model)                m_model;    //!< Data Model instance.
+  Handle(asiData_ContourNode)            m_contour;  //!< Contour Node.
   ActAPI_ProgressEntry                   m_notifier; //!< Progress notifier.
   ActAPI_PlotterEntry                    m_plotter;  //!< Imperative plotter.
 

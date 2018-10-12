@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 October 2018
+// Created on: 10 October 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,49 +28,45 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiData_RePatchNode.h>
+#ifndef asiVisu_ContourPolesDataProvider_h
+#define asiVisu_ContourPolesDataProvider_h
 
-// Active Data includes
-#include <ActData_ParameterFactory.h>
+// asiVisu includes
+#include <asiVisu_PointsDataProvider.h>
 
-//-----------------------------------------------------------------------------
+// asiData includes
+#include <asiData_ContourNode.h>
 
-//! Default ctor. Registers all involved Parameters.
-asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
+//! Data provider for contour poles (specifically marked points of a contour).
+class asiVisu_ContourPolesDataProvider : public asiVisu_PointsDataProvider
 {
-  REGISTER_PARAMETER(Name, PID_Name);
-}
+public:
 
-//! Returns new DETACHED instance of the Node ensuring its correct
-//! allocation in a heap.
-//! \return new instance of the Node.
-Handle(ActAPI_INode) asiData_RePatchNode::Instance()
-{
-  return new asiData_RePatchNode();
-}
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ContourPolesDataProvider, asiVisu_PointsDataProvider)
 
-//! Performs initial actions required to make Node WELL-FORMED.
-void asiData_RePatchNode::Init()
-{
-  // Initialize name Parameter
-  this->InitParameter(PID_Name, "Name");
-}
+public:
 
-//-----------------------------------------------------------------------------
-// Generic naming
-//-----------------------------------------------------------------------------
+  asiVisu_EXPORT
+    asiVisu_ContourPolesDataProvider(const Handle(asiData_ContourNode)& contour);
 
-//! Accessor for the Node's name.
-//! \return name of the Node.
-TCollection_ExtendedString asiData_RePatchNode::GetName()
-{
-  return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
-}
+public:
 
-//! Sets name for the Node.
-//! \param[in] name name to set.
-void asiData_RePatchNode::SetName(const TCollection_ExtendedString& name)
-{
-  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
-}
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<double>)
+    GetPoints() const;
+
+public:
+
+  virtual Handle(TColStd_HPackedMapOfInteger) GetIndices() const
+  {
+    return NULL;
+  }
+
+private:
+
+  asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
+
+};
+
+#endif

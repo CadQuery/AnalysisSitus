@@ -51,11 +51,11 @@
 //-----------------------------------------------------------------------------
 
 //! Picker type.
-enum asiVisu_PickType
+enum asiVisu_PickerType
 {
-  PickType_Cell = 0,
-  PickType_Point,
-  PickType_World
+  PickerType_Cell  = 0x0001,
+  PickerType_Point = 0x0002,
+  PickerType_World = 0x0004
 };
 
 //-----------------------------------------------------------------------------
@@ -74,7 +74,7 @@ enum asiVisu_SelectionNature
 enum asiVisu_SelectionMode
 {
   SelectionMode_None      = 0x0001, //!< Selection is disabled.
-  SelectionMode_Workpiece = 0x0002, //!< Entire shape or mesh.
+  SelectionMode_Workpiece = 0x0002, //!< Any shape or mesh.
   SelectionMode_Face      = 0x0004, //!< Faces only.
   SelectionMode_Edge      = 0x0008, //!< Edges only.
   SelectionMode_Vertex    = 0x0010, //!< Vertices only.
@@ -131,12 +131,17 @@ struct asiVisu_PickInput
 //-----------------------------------------------------------------------------
 
 //! Class representing picking results for different kinds of selection.
-class asiVisu_PickResult
+class asiVisu_PickerResult : public Standard_Transient
 {
 public:
 
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_PickerResult, Standard_Transient)
+
+public:
+
   asiVisu_EXPORT
-    asiVisu_PickResult(const int selModes = SelectionMode_None);
+    asiVisu_PickerResult(const int selModes = SelectionMode_None);
 
 public:
 
@@ -159,27 +164,6 @@ public:
     SetPickedElementIds(const TColStd_PackedMapOfInteger& elemIds);
 
   asiVisu_EXPORT void
-    SetPickedPointId(const vtkIdType pointId);
-
-  asiVisu_EXPORT void
-    AddPickedPointId(const vtkIdType pointId);
-
-  asiVisu_EXPORT void
-    SetPickedPointIds(const TColStd_PackedMapOfInteger& pointIds);
-
-  asiVisu_EXPORT void
-    SetPickedCellId(const vtkIdType cellId);
-
-  asiVisu_EXPORT void
-    AddPickedCellId(const vtkIdType cellId);
-
-  asiVisu_EXPORT void
-    RemovePickedCellId(const vtkIdType elemId);
-
-  asiVisu_EXPORT void
-    SetPickedCellIds(const TColStd_PackedMapOfInteger& cellIds);
-
-  asiVisu_EXPORT void
     SetSelectionModes(const int selModes);
 
 public:
@@ -192,12 +176,6 @@ public:
 
   asiVisu_EXPORT const TColStd_PackedMapOfInteger&
     GetPickedElementIds() const;
-
-  asiVisu_EXPORT const TColStd_PackedMapOfInteger&
-    GetPickedPointIds() const;
-
-  asiVisu_EXPORT const TColStd_PackedMapOfInteger&
-    GetPickedCellIds() const;
 
   asiVisu_EXPORT void
     Clear();
@@ -229,6 +207,10 @@ public:
   asiVisu_EXPORT bool
     IsSelectionSubShape() const;
 
+public:
+
+  virtual asiVisu_PickerType GetPickerType() const = 0;
+
 private:
 
   //! Picked position in world coordinates.
@@ -237,17 +219,78 @@ private:
   //! Picked actor.
   vtkSmartPointer<vtkActor> m_pickedActor;
 
-  // Picked element IDs (application-specific).
-  TColStd_PackedMapOfInteger m_pickedElementIds;
-
-  // Picked point IDs.
-  TColStd_PackedMapOfInteger m_pickedPointIds;
-
-  // Picked cell IDs.
-  TColStd_PackedMapOfInteger m_pickedCellIds;
+  //! Picked IDs (cells, points or whatever elements depending on the type
+  //! of the used picker).
+  TColStd_PackedMapOfInteger m_pickedIds;
 
   //! Selection modes the results were obtained for.
   int m_iSelModes;
+
+};
+
+//-----------------------------------------------------------------------------
+
+//! Result of cell picker.
+class asiVisu_CellPickerResult : public asiVisu_PickerResult
+{
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_CellPickerResult, asiVisu_PickerResult)
+
+public:
+
+  //! Ctor.
+  //! \param[in] selModes selection modes.
+  asiVisu_CellPickerResult(const int selModes = SelectionMode_None)
+  : asiVisu_PickerResult(selModes) {}
+
+  //! \return picker type.
+  virtual asiVisu_PickerType GetPickerType() const { return PickerType_Cell; }
+
+};
+
+//-----------------------------------------------------------------------------
+
+//! Result of point picker.
+class asiVisu_PointPickerResult : public asiVisu_PickerResult
+{
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_PointPickerResult, asiVisu_PickerResult)
+
+public:
+
+  //! Ctor.
+  //! \param[in] selModes selection modes.
+  asiVisu_PointPickerResult(const int selModes = SelectionMode_None)
+  : asiVisu_PickerResult(selModes) {}
+
+  //! \return picker type.
+  virtual asiVisu_PickerType GetPickerType() const { return PickerType_Point; }
+
+};
+
+//-----------------------------------------------------------------------------
+
+//! Result of world picker.
+class asiVisu_WorldPickerResult : public asiVisu_PickerResult
+{
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_WorldPickerResult, asiVisu_PickerResult)
+
+public:
+
+  //! Ctor.
+  //! \param[in] selModes selection modes.
+  asiVisu_WorldPickerResult(const int selModes = SelectionMode_None)
+  : asiVisu_PickerResult(selModes) {}
+
+  //! \return picker type.
+  virtual asiVisu_PickerType GetPickerType() const { return PickerType_World; }
 
 };
 

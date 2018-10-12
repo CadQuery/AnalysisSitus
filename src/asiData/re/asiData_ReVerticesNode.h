@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 October 2018
+// Created on: 09 October 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,49 +28,66 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiData_RePatchNode.h>
+#ifndef asiData_ReVerticesNode_h
+#define asiData_ReVerticesNode_h
+
+// asiData includes
+#include <asiData.h>
 
 // Active Data includes
-#include <ActData_ParameterFactory.h>
+#include <ActData_BaseNode.h>
 
-//-----------------------------------------------------------------------------
-
-//! Default ctor. Registers all involved Parameters.
-asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
+//! Data Node representing a group of topological vertices where several
+//! edges normally join.
+class asiData_ReVerticesNode : public ActData_BaseNode
 {
-  REGISTER_PARAMETER(Name, PID_Name);
-}
+public:
 
-//! Returns new DETACHED instance of the Node ensuring its correct
-//! allocation in a heap.
-//! \return new instance of the Node.
-Handle(ActAPI_INode) asiData_RePatchNode::Instance()
-{
-  return new asiData_RePatchNode();
-}
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiData_ReVerticesNode, ActData_BaseNode)
 
-//! Performs initial actions required to make Node WELL-FORMED.
-void asiData_RePatchNode::Init()
-{
-  // Initialize name Parameter
-  this->InitParameter(PID_Name, "Name");
-}
+  // Automatic registration of Node type in global factory
+  DEFINE_NODE_FACTORY(asiData_ReVerticesNode, Instance)
 
-//-----------------------------------------------------------------------------
-// Generic naming
-//-----------------------------------------------------------------------------
+public:
 
-//! Accessor for the Node's name.
-//! \return name of the Node.
-TCollection_ExtendedString asiData_RePatchNode::GetName()
-{
-  return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
-}
+  //! IDs for the underlying Parameters.
+  enum ParamId
+  {
+  //------------------//
+  // Common           //
+  //------------------//
+    PID_Name,         //!< Name of the Node.
+  //------------------//
+    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
+  };
 
-//! Sets name for the Node.
-//! \param[in] name name to set.
-void asiData_RePatchNode::SetName(const TCollection_ExtendedString& name)
-{
-  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
-}
+public:
+
+  asiData_EXPORT static Handle(ActAPI_INode)
+    Instance();
+
+// Generic naming support:
+public:
+
+  asiData_EXPORT virtual TCollection_ExtendedString
+    GetName();
+
+  asiData_EXPORT virtual void
+    SetName(const TCollection_ExtendedString& name);
+
+// Initialization:
+public:
+
+  asiData_EXPORT void
+    Init();
+
+protected:
+
+  //! Allocation is allowed only via Instance() method.
+  asiData_EXPORT
+    asiData_ReVerticesNode();
+
+};
+
+#endif

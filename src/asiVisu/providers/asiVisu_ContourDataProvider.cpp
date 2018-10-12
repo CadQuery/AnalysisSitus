@@ -47,7 +47,7 @@ asiVisu_ContourDataProvider::asiVisu_ContourDataProvider(const Handle(asiData_Co
   Handle(ActAPI_HParameterList) params = new ActAPI_HParameterList;
   params->Append( m_contour->Parameter(asiData_ContourNode::PID_Coords) );
   params->Append( m_contour->Parameter(asiData_ContourNode::PID_IsClosed) );
-  params->Append( m_contour->Parameter(asiData_ContourNode::PID_Geometry) );
+  params->Append( m_contour->Parameter(asiData_ContourNode::PID_Shape) );
 
   // Set tracked Parameters
   m_params = params;

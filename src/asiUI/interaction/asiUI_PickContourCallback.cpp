@@ -47,25 +47,26 @@
 
 //-----------------------------------------------------------------------------
 
-void hitMidPoint(asiAlgo_ProjectPointOnMesh&        HitFacet,
+void hitMidPoint(asiAlgo_ProjectPointOnMesh&        ProjectPtMesh,
                  const Handle(asiData_ContourNode)& contourNode,
                  const gp_XYZ&                      prevPt,
-                 const gp_XYZ&                      nextPt)
+                 const gp_XYZ&                      nextPt,
+                 const double                       prec)
 {
-  if ( (nextPt - prevPt).Modulus() < 1e-2 )
+  if ( (nextPt - prevPt).Modulus() < prec )
     return;
 
   // Get midpoint.
   const gp_XYZ midPt = 0.5*(prevPt + nextPt);
 
   // Hit facet for the midpoint.
-  gp_Pnt hitMidPt = HitFacet.Perform(midPt);
-  int midPtFacetIndex = (HitFacet.GetTriIdx().size() ? HitFacet.GetTriIdx()[0] : -1);
+  gp_Pnt hitMidPt = ProjectPtMesh.Perform(midPt);
+  int midPtFacetIndex = (ProjectPtMesh.GetTriIdx().size() ? ProjectPtMesh.GetTriIdx()[0] : -1);
   //
   const bool isProjected = (midPtFacetIndex != -1);
   //if ( !HitFacet(midPt, 1.0e-3, hitMidPt, midPtFacetIndex) )
   //
-    hitMidPoint(HitFacet, contourNode, prevPt, hitMidPt.XYZ());
+    hitMidPoint(ProjectPtMesh, contourNode, prevPt, hitMidPt.XYZ(), prec);
   //}
   //else
   //{
@@ -77,7 +78,7 @@ void hitMidPoint(asiAlgo_ProjectPointOnMesh&        HitFacet,
       contourNode->AddPoint(hitMidPt.XYZ(), midPtFacetIndex);
   }
 
-  hitMidPoint(HitFacet, contourNode, hitMidPt.XYZ(), nextPt);
+  hitMidPoint(ProjectPtMesh, contourNode, hitMidPt.XYZ(), nextPt, prec);
   //}
 }
 
@@ -116,14 +117,24 @@ void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
 {
   const vtkSmartPointer<asiVisu_PrsManager>& mgr = this->GetViewer()->PrsMgr();
 
+  // Check if Contour Node is available.
+  if ( m_contour.IsNull() || !m_contour->IsWellFormed() )
+  {
+    m_notifier.SendLogMessage(LogWarn(Normal) << "No persistent data for contour available.");
+    return;
+  }
+
   // Get picking ray
   gp_Lin pickRay = *( (gp_Lin*) theCallData );
 
   for ( size_t k = 0; k < m_bvhs.size(); ++k )
   {
+    const double aabbDiag = m_bvhs[k]->GetBoundingDiag();
+    const double prec     = aabbDiag*0.001;
+
     // Prepare a tool to find the intersected facet
     asiAlgo_HitFacet HitFacet(m_bvhs[k], m_notifier, m_plotter);
-    asiAlgo_ProjectPointOnMesh HitFacet2(m_bvhs[k], NULL, NULL);
+    asiAlgo_ProjectPointOnMesh ProjectPtMesh(m_bvhs[k], NULL, NULL);
 
     // Find intersection
     gp_XYZ hit;
@@ -131,16 +142,6 @@ void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
     if ( !HitFacet(pickRay, facet_idx, hit) )
     {
       m_notifier.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet.");
-      return;
-    }
-
-    // Get object to store the contour
-    Handle(asiData_ContourNode)
-      contour_n = m_model->GetPartNode()->GetContour();
-    //
-    if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
-    {
-      m_notifier.SendLogMessage(LogWarn(Normal) << "No persistent data for contour available.");
       return;
     }
 
@@ -156,23 +157,26 @@ void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
     // Modify data
     m_model->OpenCommand();
     {
-      const int numContourPts = contour_n->GetNumPoints();
+      const int numContourPts = m_contour->GetNumPoints();
 
       // Experiment with middle point
       if ( numContourPts > 0 )
       {
         // Get previous point
-        const gp_XYZ prevPt = contour_n->GetPoint(numContourPts - 1);
+        const gp_XYZ prevPt = m_contour->GetPoint(numContourPts - 1);
 
         // Add midpoints
-        hitMidPoint(HitFacet2, contour_n, prevPt, hit);
+        hitMidPoint(ProjectPtMesh, m_contour, prevPt, hit, prec);
       }
 
       // Add hitted point
-      contour_n->AddPoint(hit, fidx);
+      const int poleIdx = m_contour->AddPoint(hit, fidx);
+      m_contour->AddPoleIndex(poleIdx);
+
+      m_notifier.SendLogMessage(LogInfo(Normal) << "Next pole index: %1." << poleIdx);
     }
     m_model->CommitCommand();
     //
-    mgr->Actualize( contour_n.get() );
+    mgr->Actualize( m_contour.get() );
   }
 }

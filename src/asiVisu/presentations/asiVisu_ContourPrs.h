@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 October 2018
+// Created on: 19 September 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018-present, Sergey Slyadnev
+// Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,49 +28,69 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiData_RePatchNode.h>
+#ifndef asiVisu_ContourPrs_h
+#define asiVisu_ContourPrs_h
 
-// Active Data includes
-#include <ActData_ParameterFactory.h>
+// A-Situs (visualization) includes
+#include <asiVisu_Prs.h>
+#include <asiVisu_Utils.h>
 
-//-----------------------------------------------------------------------------
-
-//! Default ctor. Registers all involved Parameters.
-asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
-{
-  REGISTER_PARAMETER(Name, PID_Name);
-}
-
-//! Returns new DETACHED instance of the Node ensuring its correct
-//! allocation in a heap.
-//! \return new instance of the Node.
-Handle(ActAPI_INode) asiData_RePatchNode::Instance()
-{
-  return new asiData_RePatchNode();
-}
-
-//! Performs initial actions required to make Node WELL-FORMED.
-void asiData_RePatchNode::Init()
-{
-  // Initialize name Parameter
-  this->InitParameter(PID_Name, "Name");
-}
+// A-Situs (geometry) includes
+#include <asiData_PartNode.h>
 
 //-----------------------------------------------------------------------------
-// Generic naming
-//-----------------------------------------------------------------------------
 
-//! Accessor for the Node's name.
-//! \return name of the Node.
-TCollection_ExtendedString asiData_RePatchNode::GetName()
-{
-  return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
-}
+DEFINE_STANDARD_HANDLE(asiVisu_ContourPrs, asiVisu_Prs)
 
-//! Sets name for the Node.
-//! \param[in] name name to set.
-void asiData_RePatchNode::SetName(const TCollection_ExtendedString& name)
+//! Presentation class for a contour.
+class asiVisu_ContourPrs : public asiVisu_Prs
 {
-  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
-}
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ContourPrs, asiVisu_Prs)
+
+  // Allows to register this Presentation class
+  DEFINE_PRESENTATION_FACTORY(asiData_ContourNode, Instance)
+
+public:
+
+  //! Pipelines.
+  enum PipelineId
+  {
+    Pipeline_Main = 1,
+    Pipeline_Points,
+    Pipeline_Poles
+  };
+
+public:
+
+  asiVisu_EXPORT static Handle(asiVisu_Prs)
+    Instance(const Handle(ActAPI_INode)& theNode);
+
+  asiVisu_EXPORT virtual bool
+    IsVisible() const;
+
+private:
+
+  //! Allocation is allowed only via Instance() method.
+  asiVisu_ContourPrs(const Handle(ActAPI_INode)& theNode);
+
+// Callbacks:
+private:
+
+  virtual void beforeInitPipelines();
+  virtual void afterInitPipelines();
+  virtual void beforeUpdatePipelines() const;
+  virtual void afterUpdatePipelines() const;
+  virtual void highlight(vtkRenderer* theRenderer,
+                         const asiVisu_PickResult& thePickRes,
+                         const asiVisu_SelectionNature theSelNature) const;
+  virtual void unHighlight(vtkRenderer* theRenderer,
+                           const asiVisu_SelectionNature theSelNature) const;
+  virtual void renderPipelines(vtkRenderer* theRenderer) const;
+  virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
+
+};
+
+#endif

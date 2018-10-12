@@ -33,6 +33,7 @@
 
 // asiEngine includes
 #include <asiEngine_Part.h>
+#include <asiEngine_RE.h>
 #include <asiEngine_Triangulation.h>
 
 // asiUI includes
@@ -73,18 +74,13 @@ int ENGINE_StartContour(const Handle(asiTcl_Interp)& interp,
   Handle(asiData_PartNode)          part_n = cmdEngine::model->GetPartNode();
   Handle(asiData_TriangulationNode) tris_n = cmdEngine::model->GetTriangulationNode();
 
-  // Get Contour Node.
-  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
-  //
-  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
-  {
-    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "No persistent data for contour available.");
-    return TCL_OK;
-  }
+  // Contour Node.
+  Handle(asiData_ContourNode) contour_n;
 
   // Prepare data model.
   asiEngine_Part          partAPI ( cmdEngine::model, NULL, interp->GetProgress(), interp->GetPlotter() );
   asiEngine_Triangulation trisAPI ( cmdEngine::model, NULL, interp->GetProgress(), interp->GetPlotter() );
+  asiEngine_RE            reAPI   ( cmdEngine::model, interp->GetProgress(), interp->GetPlotter() );
   //
   cmdEngine::model->OpenCommand();
   {
@@ -92,7 +88,8 @@ int ENGINE_StartContour(const Handle(asiTcl_Interp)& interp,
     partAPI.BuildBVH();
     trisAPI.BuildBVH();
 
-    // Clear existing contour.
+    // Clean up the currently active contour.
+    contour_n = reAPI.GetOrCreate_Contour();
     contour_n->Init();
   }
   cmdEngine::model->CommitCommand();
@@ -101,7 +98,7 @@ int ENGINE_StartContour(const Handle(asiTcl_Interp)& interp,
   const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdEngine::cf->ViewerPart->PrsMgr();
 
   // Set picker type to world picker.
-  cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerType(PickType_World);
+  cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerTypes(PickerType_World | PickerType_Cell);
 
   // Set selection mode.
   PM->SetSelectionMode(SelectionMode_Workpiece);
@@ -112,8 +109,9 @@ int ENGINE_StartContour(const Handle(asiTcl_Interp)& interp,
     vtkSmartPointer<asiUI_PickContourCallback>
       cb = vtkSmartPointer<asiUI_PickContourCallback>::New();
     //
-    cb->SetViewer ( cmdEngine::cf->ViewerPart );
-    cb->SetModel  ( cmdEngine::model );
+    cb->SetViewer      ( cmdEngine::cf->ViewerPart );
+    cb->SetModel       ( cmdEngine::model );
+    cb->SetContourNode ( contour_n );
     //
     if ( !part_n->GetShape().IsNull() )
       cb->AddBVH( part_n->GetBVH() );
@@ -143,17 +141,15 @@ int ENGINE_FinishContour(const Handle(asiTcl_Interp)& interp,
   // Get Part Node
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
 
-  // Get Contour Node.
-  Handle(asiData_ContourNode) contour_n = part_n->GetContour();
-  //
-  if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
-  {
-    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "No persistent data for contour available.");
-    return TCL_OK;
-  }
+  // Contour Node.
+  Handle(asiData_ContourNode) contour_n;
 
   cmdEngine::model->OpenCommand();
   {
+    contour_n = asiEngine_RE( cmdEngine::model,
+                              interp->GetProgress(),
+                              interp->GetPlotter() ).GetOrCreate_Contour();
+
     // Finalize contour by setting it closed. Setting this flag does not
     // make any difference unless you ask the Contour Node to build a wire.
     contour_n->SetClosed(true);
@@ -174,7 +170,7 @@ int ENGINE_FinishContour(const Handle(asiTcl_Interp)& interp,
     }
     else
     {
-      contour_n->SetGeometry(contourWire);
+      contour_n->SetShape(contourWire);
     }
   }
   cmdEngine::model->CommitCommand();
@@ -183,7 +179,7 @@ int ENGINE_FinishContour(const Handle(asiTcl_Interp)& interp,
   const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdEngine::cf->ViewerPart->PrsMgr();
 
   // Set picker type to cell picker.
-  cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerType(PickType_Cell);
+  cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerTypes(PickerType_Cell);
 
   // Set selection mode.
   PM->SetSelectionMode(SelectionMode_Face);
@@ -193,6 +189,9 @@ int ENGINE_FinishContour(const Handle(asiTcl_Interp)& interp,
 
   // Update contour.
   PM->Actualize(contour_n);
+
+  // Update UI.
+  cmdEngine::cf->ObjectBrowser->Populate();
 
   return TCL_OK;
 }

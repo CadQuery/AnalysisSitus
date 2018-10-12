@@ -39,6 +39,9 @@
 #include <asiVisu_Selection.h>
 #include <asiVisu_Utils.h>
 
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
+
 // VTK includes
 #include <vtkCamera.h>
 #include <vtkCellData.h>
@@ -58,14 +61,14 @@
 #include <NCollection_Sequence.hxx>
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
-#undef COUT_DEBUG
+#define COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif
 
 #if defined COUT_DEBUG
   //! Returns address as string.
-  //! \param pActor [in] pointer to extract the address for.
+  //! \param[in] pActor pointer to extract the address for.
   //! \return address as string.
   static std::string ActorAddr(const vtkActor* pActor)
   {
@@ -79,7 +82,7 @@
       pos++;
 
     if ( pos )
-      addr_str = asiAlgo_Utils::SubStr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
+      addr_str = asiAlgo_Utils::Str::SubStr( addr_str, (int) pos, (int) (addr_str.size() - pos) );
 
     return addr_str;
   }
@@ -174,7 +177,7 @@ asiVisu_PrsManager::asiVisu_PrsManager()
 //-----------------------------------------------------------------------------
 
 //! Constructs presentation manager.
-//! \param model [in] Data Model instance.
+//! \param[in] model Data Model instance.
 asiVisu_PrsManager::asiVisu_PrsManager(const Handle(ActAPI_IModel)& model)
 : vtkObject         (),
   m_model           (model),
@@ -189,7 +192,7 @@ asiVisu_PrsManager::asiVisu_PrsManager(const Handle(ActAPI_IModel)& model)
 //-----------------------------------------------------------------------------
 
 //! Sets Data Model instance.
-//! \param model [in] Data Model instance to set.
+//! \param[in] model Data Model instance to set.
 void asiVisu_PrsManager::SetModel(const Handle(ActAPI_IModel)& model)
 {
   m_model = model;
@@ -198,8 +201,8 @@ void asiVisu_PrsManager::SetModel(const Handle(ActAPI_IModel)& model)
 //-----------------------------------------------------------------------------
 
 //! Sets intensity values for black and white color schemes.
-//! \param black [in] black intensity (from zero and greater).
-//! \param white [in] white intensity (from one and smaller).
+//! \param[in] black black intensity (from zero and greater).
+//! \param[in] white white intensity (from one and smaller).
 void asiVisu_PrsManager::SetBlackAndWhiteIntensity(const double black,
                                                    const double white)
 {
@@ -238,8 +241,8 @@ void asiVisu_PrsManager::AdjustColors()
 //-----------------------------------------------------------------------------
 
 //! Sets diagnostic tools to all existing Presentations.
-//! \param progress [in] progress notifier.
-//! \param plotter  [in] imperative plotter.
+//! \param[in] progress progress notifier.
+//! \param[in] plotter  imperative plotter.
 void asiVisu_PrsManager::SetDiagnosticTools(ActAPI_ProgressEntry progress,
                                             ActAPI_PlotterEntry  plotter)
 {
@@ -255,12 +258,12 @@ void asiVisu_PrsManager::SetDiagnosticTools(ActAPI_ProgressEntry progress,
 //-----------------------------------------------------------------------------
 
 //! Re-initializes and updates the Node's Presentation.
-//! \param node          [in] Data Node to actualize Presentation for.
-//! \param withChildren  [in] indicates whether child Nodes should also be
-//!                           actualized.
-//! \param doFitContents [in] indicates whether to fit the viewport contents
-//!                           after actualization of Presentations.
-//! \param withRepaint   [in] if true, repaint view window.
+//! \param[in] node          Data Node to actualize Presentation for.
+//! \param[in] withChildren  indicates whether child Nodes should also be
+//!                          actualized.
+//! \param[in] doFitContents indicates whether to fit the viewport contents
+//!                          after actualization of Presentations.
+//! \param[in] withRepaint   if true, repaints view window.
 void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& node,
                                    const bool                  withChildren,
                                    const bool                  doFitContents,
@@ -276,12 +279,12 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& node,
 //-----------------------------------------------------------------------------
 
 //! Re-initializes and updates the Node's Presentation.
-//! \param nodeList      [in] list of Data Nodes to actualize Presentation for.
-//! \param withChildren  [in] indicates whether child Nodes should also be
-//!                           actualized.
-//! \param doFitContents [in] indicates whether to fit the viewport contents
-//!                           after actualization of Presentations.
-//! \param withRepaint   [in] if true, repaint view window.
+//! \param[in] nodeList      list of Data Nodes to actualize Presentation for.
+//! \param[in] withChildren  indicates whether child Nodes should also be
+//!                          actualized.
+//! \param[in] doFitContents indicates whether to fit the viewport contents
+//!                          after actualization of Presentations.
+//! \param[in] withRepaint   if true, repaints view window.
 void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& nodeList,
                                    const bool                      withChildren,
                                    const bool                      doFitContents,
@@ -348,9 +351,9 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& nodeList,
 
 //! Rebuilds the entire scene so that it fully corresponds to the given
 //! collection of Nodes exclusively.
-//! \param nodeList      [in] Data Nodes to visualize.
-//! \param doFitContents [in] indicates whether to fit the viewport contents
-//!                           after actualization of Presentations.
+//! \param[in] nodeList      Data Nodes to visualize.
+//! \param[in] doFitContents indicates whether to fit the viewport contents
+//!                          after actualization of Presentations.
 void asiVisu_PrsManager::ActualizeExclusively(const Handle(ActAPI_HNodeList)& nodeList,
                                               const bool                      doFitContents)
 {
@@ -388,7 +391,7 @@ void asiVisu_PrsManager::ActualizeExclusively(const Handle(ActAPI_HNodeList)& no
 
 //! Checks whether the passed Node has been already registered in the
 //! Presentation Manager.
-//! \param node [in] Node to check.
+//! \param[in] node Node to check.
 //! \return true/false.
 bool asiVisu_PrsManager::IsPresented(const Handle(ActAPI_INode)& node)
 {
@@ -399,17 +402,17 @@ bool asiVisu_PrsManager::IsPresented(const Handle(ActAPI_INode)& node)
 
 //! Checks whether the passed Node has been already registered in the
 //! presentation manager by the passed ID.
-//! \param nodeID [in] ID of the Node to check.
+//! \param[in] nodeId ID of the Node to check.
 //! \return true/false.
-bool asiVisu_PrsManager::IsPresented(const ActAPI_DataObjectId& nodeID)
+bool asiVisu_PrsManager::IsPresented(const ActAPI_DataObjectId& nodeId)
 {
-  return m_nodePresentations.IsBound(nodeID);
+  return m_nodePresentations.IsBound(nodeId);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Checks whether the passed Node type is presentable or not.
-//! \param nodeType [in] Node type to check.
+//! \param[in] nodeType Node type to check.
 //! \return true/false.
 bool asiVisu_PrsManager::IsPresentable(const Handle(Standard_Type)& nodeType)
 {
@@ -426,7 +429,7 @@ bool asiVisu_PrsManager::IsPresentable(const Handle(Standard_Type)& nodeType)
 
 //! Sets up a presentation for the passed Node. If no presentation exists,
 //! this method returns false.
-//! \param node [in] Node to register a Presentation for.
+//! \param[in] node Node to register a Presentation for.
 //! \return true if presentation exists and can be registered so, false --
 //!         otherwise.
 bool asiVisu_PrsManager::SetPresentation(const Handle(ActAPI_INode)& node)
@@ -455,7 +458,7 @@ bool asiVisu_PrsManager::SetPresentation(const Handle(ActAPI_INode)& node)
 
 //! Returns Presentation registered for the passed Node. If no Presentation
 //! is registered, returns NULL.
-//! \param node [in] Node to access Presentation for.
+//! \param[in] node Node to access Presentation for.
 //! \return requested Presentation or NULL.
 Handle(asiVisu_Prs)
   asiVisu_PrsManager::GetPresentation(const Handle(ActAPI_INode)& node)
@@ -467,7 +470,7 @@ Handle(asiVisu_Prs)
 
 //! Returns Presentation registered for the passed Node. If no Presentation
 //! is registered, returns NULL.
-//! \param nodeId [in] ID of the Node to access Presentation for.
+//! \param[in] nodeId ID of the Node to access Presentation for.
 //! \return requested Presentation or NULL.
 Handle(asiVisu_Prs)
   asiVisu_PrsManager::GetPresentation(const ActAPI_DataObjectId& nodeId)
@@ -486,7 +489,7 @@ Handle(asiVisu_Prs)
 //! visualization request for a Node, and again each time when the pipelined
 //! data is changed (e.g. due to Tree Function execution).
 //!
-//! \param node [in] Node to (re-)initialize pipelines for.
+//! \param[in] node Node to (re-)initialize pipelines for.
 void asiVisu_PrsManager::InitPresentation(const Handle(ActAPI_INode)& node)
 {
   this->InitPresentation( node->GetId() );
@@ -500,7 +503,7 @@ void asiVisu_PrsManager::InitPresentation(const Handle(ActAPI_INode)& node)
 //! visualization request for a Node, and again each time when Nodal data
 //! is changed (e.g. due to Tree Function execution).
 //!
-//! \param theNodeID [in] ID of the Node to (re-)initialize pipelines for.
+//! \param[in] nodeID ID of the Node to (re-)initialize pipelines for.
 void asiVisu_PrsManager::InitPresentation(const ActAPI_DataObjectId& nodeId)
 {
   if ( !m_nodePresentations.IsBound(nodeId) )
@@ -522,7 +525,7 @@ void asiVisu_PrsManager::InitPresentation(const ActAPI_DataObjectId& nodeId)
 //! should exist and be registered by SetPresentation() method, otherwise
 //! an exception is thrown.
 //!
-//! \param node [in] Node to render the Presentation for.
+//! \param[in] node Node to render the Presentation for.
 void asiVisu_PrsManager::RenderPresentation(const Handle(ActAPI_INode)& node)
 {
   this->RenderPresentation( node->GetId() );
@@ -534,7 +537,7 @@ void asiVisu_PrsManager::RenderPresentation(const Handle(ActAPI_INode)& node)
 //! should exist and be registered by SetPresentation() method, otherwise
 //! an exception is thrown.
 //!
-//! \param nodeId [in] ID of the Node to render the Presentation for.
+//! \param[in] nodeId ID of the Node to render the Presentation for.
 void asiVisu_PrsManager::RenderPresentation(const ActAPI_DataObjectId& nodeId)
 {
   if ( !m_nodePresentations.IsBound(nodeId) )
@@ -559,7 +562,7 @@ void asiVisu_PrsManager::RenderPresentation(const ActAPI_DataObjectId& nodeId)
 //! Presentation should exist and be registered by SetPresentation()
 //! method, otherwise an exception is thrown.
 //!
-//! \param node [in] Node to de-render the Presentation for.
+//! \param[in] node Node to de-render the Presentation for.
 void asiVisu_PrsManager::DeRenderPresentation(const Handle(ActAPI_INode)& node)
 {
   if ( node.IsNull() )
@@ -571,7 +574,7 @@ void asiVisu_PrsManager::DeRenderPresentation(const Handle(ActAPI_INode)& node)
 //-----------------------------------------------------------------------------
 
 //! Attempts to remove the Node's Presentation from the renderer.
-//! \param nodeId [in] ID of the Node to de-render the Presentation for.
+//! \param[in] nodeId ID of the Node to de-render the Presentation for.
 void asiVisu_PrsManager::DeRenderPresentation(const ActAPI_DataObjectId& nodeId)
 {
   if ( !m_nodePresentations.IsBound(nodeId) )
@@ -608,9 +611,9 @@ void asiVisu_PrsManager::DeRenderAllPresentations()
 //! Presentation should exist and be registered with SetPresentation()
 //! method, otherwise an exception is thrown.
 //!
-//! \param node          [in] Node to update the Presentation for.
-//! \param doFitContents [in] indicates whether to adjust camera in order for
-//!                           the viewer contents to fit the rendering window.
+//! \param[in] node          Node to update the Presentation for.
+//! \param[in] doFitContents indicates whether to adjust camera in order for
+//!                          the viewer contents to fit the rendering window.
 void asiVisu_PrsManager::UpdatePresentation(const Handle(ActAPI_INode)& node,
                                             const bool                  doFitContents)
 {
@@ -625,9 +628,9 @@ void asiVisu_PrsManager::UpdatePresentation(const Handle(ActAPI_INode)& node,
 //! Presentation should exist and be registered with SetPresentation()
 //! method, otherwise an exception is thrown.
 //!
-//! \param nodeId        [in] ID of the Node to update the Presentation for.
-//! \param doFitContents [in] indicates whether to adjust camera in order for
-//!                           the viewer contents to fit the rendering window.
+//! \param[in] nodeId        ID of the Node to update the Presentation for.
+//! \param[in] doFitContents indicates whether to adjust camera in order for
+//!                          the viewer contents to fit the rendering window.
 void asiVisu_PrsManager::UpdatePresentation(const ActAPI_DataObjectId& nodeId,
                                             const bool                 doFitContents)
 {
@@ -663,8 +666,8 @@ void asiVisu_PrsManager::UpdatePresentation(const ActAPI_DataObjectId& nodeId,
 //! Unbinds the Presentation instance for the given Node. If a Presentation
 //! does not exist, returns false, otherwise -- true.
 //!
-//! \param node         [in] Node to remove the Presentation for.
-//! \param withChildren [in] whether to kill presentations for child Nodes.
+//! \param[in] node         Node to remove the Presentation for.
+//! \param[in] withChildren whether to kill presentations for child Nodes.
 //! \return true/false.
 bool asiVisu_PrsManager::DeletePresentation(const Handle(ActAPI_INode)& node,
                                             const bool                  withChildren)
@@ -677,8 +680,8 @@ bool asiVisu_PrsManager::DeletePresentation(const Handle(ActAPI_INode)& node,
 //! Unbinds the Presentation instance for the given Node. If a Presentation
 //! does not exist, returns false, otherwise -- true.
 //!
-//! \param nodeId       [in] ID of the Node to remove the Presentation for.
-//! \param withChildren [in] whether to kill presentations for child Nodes.
+//! \param[in] nodeId       ID of the Node to remove the Presentation for.
+//! \param[in] withChildren whether to kill presentations for child Nodes.
 //! \return true/false.
 bool asiVisu_PrsManager::DeletePresentation(const ActAPI_DataObjectId& nodeId,
                                             const bool                 withChildren)
@@ -760,7 +763,7 @@ void asiVisu_PrsManager::InitPicker(const ActAPI_DataObjectId& nodeId)
 //-----------------------------------------------------------------------------
 
 //! Sets selection modes.
-//! \param mode [in] selection modes to set.
+//! \param[in] mode selection modes to set.
 void asiVisu_PrsManager::SetSelectionMode(const int mode)
 {
   // We erase current highlighting only if user is not switching to NONE
@@ -795,23 +798,234 @@ int asiVisu_PrsManager::GetSelectionMode() const
 
 //-----------------------------------------------------------------------------
 
+ActAPI_DataObjectIdList
+  asiVisu_PrsManager::cellPickerResult(const asiVisu_SelectionNature selNature,
+                                       asiVisu_PickResult&           pickRes)
+{
+  ActAPI_DataObjectIdList result;
+
+  vtkIdType cellId = m_cellPicker->GetCellId();
+  vtkIdType gid    = -1;
+  vtkIdType pid    = -1;
+  //
+  if ( cellId != -1 )
+  {
+#if defined COUT_DEBUG
+    std::cout << "Picked Cell ID = " << cellId << std::endl;
+#endif
+
+    // Global IDs
+    vtkSmartPointer<vtkIdTypeArray>
+      gids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetGlobalIds() );
+    //
+    if ( gids )
+    {
+      gid = gids->GetValue(cellId);
+#if defined COUT_DEBUG
+      std::cout << "Picked GID (Global ID) = " << gid << std::endl;
+#endif
+    }
+
+    // Pedigree IDs
+    vtkSmartPointer<vtkIdTypeArray>
+      pids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetPedigreeIds() );
+    //
+    if ( pids )
+    {
+      pid = pids->GetValue(cellId);
+#if defined COUT_DEBUG
+      std::cout << "Picked PID (Pedigree ID) = " << pid << std::endl;
+#endif
+    }
+  }
+
+  // Get picked position and store it in the result
+  double pickedPos[3];
+  m_cellPicker->GetPickPosition(pickedPos);
+  pickRes.SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
+
+  // Get picked actor
+  vtkActor* pickedActor = m_cellPicker->GetActor();
+  //
+  if ( !pickedActor )
+  {
+#if defined COUT_DEBUG
+    std::cout << "No picked actor" << std::endl;
+#endif
+    m_widget->repaint();
+    return result; // Nothing has been picked
+  }
+
+  // Check consistency of the picked actor with the already recorded one (if any)
+  if ( pickRes.GetPickedActor().GetPointer() &&
+       pickRes.GetPickedActor() != pickedActor )
+  {
+    vtkErrorMacro( << "Selection logic error: attempt to accumulate cell IDs from different actors to a single picking result" );
+    return result;
+  }
+  if ( !pickRes.GetPickedActor().GetPointer() )
+    pickRes.SetPickedActor(pickedActor);
+
+  // Push ID to result: ID can be either a pedigree ID or a global ID
+  // depending on the context.
+  if ( pid != -1 )
+  {
+    // Let the user unpick the already selected elements
+    if ( (selNature == SelectionNature_Pick) && pickRes.GetPickedElementIds().Contains(pid) )
+      pickRes.RemovePickedElementId(pid);
+    else
+      pickRes.AddPickedElementId(pid);
+  }
+  else if ( gid != -1 )
+  {
+    // Let the user unpick the already selected elements
+    if ( (selNature == SelectionNature_Pick) && pickRes.GetPickedCellIds().Contains(gid) )
+      pickRes.RemovePickedElementId(gid);
+    else
+      pickRes.AddPickedElementId(gid);
+  }
+
+  // Let the user unpick the already selected elements
+  if ( (selNature == SelectionNature_Pick) && pickRes.GetPickedCellIds().Contains(cellId) )
+    pickRes.RemovePickedCellId(cellId);
+  else
+    pickRes.AddPickedCellId(cellId);
+}
+
+//-----------------------------------------------------------------------------
+
+ActAPI_DataObjectIdList
+  asiVisu_PrsManager::pointPickerResult(const asiVisu_SelectionNature selNature,
+                                        asiVisu_PickResult&           pickRes)
+{
+  ActAPI_DataObjectIdList result;
+
+  vtkIdType pointId = m_pointPicker->GetPointId();
+
+  // Get picked position and store it in the result
+  double pickedPos[3];
+  m_pointPicker->GetPickPosition(pickedPos);
+  pickRes.SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
+
+  // Get picked actor
+  vtkActor* pickedActor = m_pointPicker->GetActor();
+  //
+  if ( !pickedActor )
+  {
+    m_widget->repaint();
+    return result; // Nothing has been picked
+  }
+
+  // Check consistency of the picked actor with the already recorded one (if any)
+  if ( pickRes.GetPickedActor().GetPointer() &&
+       pickRes.GetPickedActor() != pickedActor )
+  {
+    vtkErrorMacro( << "Selection logic error: attempt to accumulate cell IDs from different actors to a single picking result" );
+    return result;
+  }
+
+  Handle(asiVisu_PickerResult) result = new asiVisu_CellPickerResult(m_iSelectionModes);
+
+  // Push ID to result
+  if ( !pickRes.GetPickedActor().GetPointer() )
+    pickRes.SetPickedActor(pickedActor);
+  //
+  pickRes.AddPickedPointId(pointId);
+
+  if ( pointId != -1 )
+  {
+#if defined COUT_DEBUG
+    std::cout << "Picked Point ID = " << pointId << std::endl;
+#endif
+
+    double coord[3] = {0.0, 0.0, 0.0};
+    m_pointPicker->GetDataSet()->GetPoint(pointId, coord);
+
+#if defined COUT_DEBUG
+    std::cout << "Picked point position: ("
+              << coord[0] << ", " << coord[1] << ", " << coord[2]
+              << ")" << std::endl;
+#endif
+
+    if ( selNature == SelectionNature_Detection )
+      this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &pickRes);
+    else
+      this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &pickRes);
+  }
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
+ActAPI_DataObjectIdList
+  asiVisu_PrsManager::worldPickerResult(const asiVisu_SelectionNature selNature,
+                                        asiVisu_PickResult&           pickRes)
+{
+  ActAPI_DataObjectIdList result;
+
+  // Picked position returned by this kind of "world" picker is very
+  // inaccurate for the needs of computational geometry. This is because
+  // the world picker is based on depth buffer analysis. The latter
+  // makes it very efficient, but not very precise. As a result, if
+  // we simply use the picked position for the intersection testing (we
+  // do that in order to know which face corresponds to the picked
+  // position), the test will fail in many cases as it wouldn't
+  // find even a bounding box containing such an imprecise point.
+  // In order to fix the deal, we take that inaccurate picked position
+  // and reconstruct a ray in the direction of projection (this is
+  // the camera's property). Then we have to intersect our geometry
+  // with the ray, thus obtaining the precise position. If we intersect
+  // the accurate B-Rep primitive, then the solution is ideal in terms
+  // of achievable accuracy. Another option is to intersect the ray
+  // with visualization facets which is faster but less accurate.
+
+  double coord[3];
+  m_worldPicker->GetPickPosition(coord);
+
+  // Store picked position in the result
+  pickRes.SetPickedPos(coord[0], coord[1], coord[2]);
+
+  vtkCamera* camera  = m_renderer->GetActiveCamera();
+  double*    dirProj = camera->GetDirectionOfProjection();
+
+  gp_Pnt cPos(coord[0], coord[1], coord[2]);
+  gp_Pnt cOrigin = cPos.XYZ() - gp_XYZ(dirProj[0], dirProj[1], dirProj[2])*300;
+  gp_Lin pickRay( cOrigin, gp_Dir(dirProj[0], dirProj[1], dirProj[2]) );
+
+#if defined COUT_DEBUG
+  std::cout << "Picked world position: ("
+            << coord[0] << ", " << coord[1] << ", " << coord[2]
+            << ")" << std::endl;
+#endif
+
+  if ( selNature == SelectionNature_Detection )
+    this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &pickRay);
+  else
+    this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &pickRay);
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Performs picking or detection by the passed display coordinates (pick input).
 //!
-//! \param pickInput [in] picking input data.
-//! \param selNature [in] selection nature (picking or detection).
-//! \param pickType  [in] type of picker to use.
+//! \param[in] pickInput picking input data.
+//! \param[in] selNature selection nature (picking or detection).
+//! \param[in] pickType  type of picker to use.
 //! \return list of affected Data Node IDs.
 ActAPI_DataObjectIdList
   asiVisu_PrsManager::Pick(asiVisu_PickInput*            pickInput,
                            const asiVisu_SelectionNature selNature,
-                           const asiVisu_PickType        pickType)
+                           const int                     pickType)
 {
   // Result collection
-  ActAPI_DataObjectIdList result;
+  ActAPI_DataObjectIdList pickedNodes;
 
   // Selection is disabled
   if ( m_iSelectionModes & SelectionMode_None )
-    return result;
+    return pickedNodes;
 
   /* ===================
    *  Some preparations
@@ -829,24 +1043,18 @@ ActAPI_DataObjectIdList
    *  Perform actual pick
    * ===================== */
 
-  // Prepare picking results
-  vtkActor*           pickedActor = NULL;
-  asiVisu_PickResult& pickRes     = m_currentSelection.ChangePickResult(selNature);
-  //
-  pickRes.SetSelectionModes(m_iSelectionModes);
-
   // Use try-catch as sometimes VTK 7.1 crashes if cell locators are used
   try
   {
-    if ( pickType == PickType_Cell ) // Cell (topology) picker
+    if ( pickType & PickerType_Cell ) // Cell (topology) picker
     {
       m_cellPicker->Pick(xStart, yStart, 0, m_renderer);
     }
-    else if ( pickType == PickType_Point ) // Point (geometry) picker
+    if ( pickType & PickerType_Point ) // Point (geometry) picker
     {
       m_pointPicker->Pick(xStart, yStart, 0, m_renderer);
     }
-    else if ( pickType == PickType_World ) // World (any visible point) picker
+    if ( pickType & PickerType_World ) // World (any visible point) picker
     {
       m_worldPicker->Pick(xStart, yStart, 0, m_renderer);
     }
@@ -854,201 +1062,36 @@ ActAPI_DataObjectIdList
   catch ( ... )
   {
     std::cerr << "VTK picker raised an exception" << std::endl;
-    return result;
+    return pickedNodes;
   }
 
-  // Extract cell ID
-  if ( pickType == PickType_Cell )
+  Handle(asiVisu_PickerResult) pickerRes;
+
+  //-------------//
+  // Cell picker
+  //-------------//
+
+  if ( pickType & PickerType_Cell )
   {
-    vtkIdType cellId = m_cellPicker->GetCellId();
-    vtkIdType gid    = -1;
-    vtkIdType pid    = -1;
-    //
-    if ( cellId != -1 )
-    {
-#if defined COUT_DEBUG
-      std::cout << "Picked Cell ID = " << cellId << std::endl;
-#endif
-
-      // Global IDs
-      vtkSmartPointer<vtkIdTypeArray>
-        gids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetGlobalIds() );
-      //
-      if ( gids )
-      {
-        gid = gids->GetValue(cellId);
-#if defined COUT_DEBUG
-        std::cout << "Picked GID (Global ID) = " << gid << std::endl;
-#endif
-      }
-
-      // Pedigree IDs
-      vtkSmartPointer<vtkIdTypeArray>
-        pids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetPedigreeIds() );
-      //
-      if ( pids )
-      {
-        pid = pids->GetValue(cellId);
-#if defined COUT_DEBUG
-        std::cout << "Picked PID (Pedigree ID) = " << pid << std::endl;
-#endif
-      }
-    }
-
-    // Get picked position and store it in the result
-    double pickedPos[3];
-    m_cellPicker->GetPickPosition(pickedPos);
-    pickRes.SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
-
-    // Get picked actor
-    pickedActor = m_cellPicker->GetActor();
-    //
-    if ( !pickedActor )
-    {
-#if defined COUT_DEBUG
-      std::cout << "No picked actor" << std::endl;
-#endif
-      m_widget->repaint();
-      return result; // Nothing has been picked
-    }
-
-    // Check consistency of the picked actor with the already recorded one (if any)
-    if ( pickRes.GetPickedActor().GetPointer() &&
-         pickRes.GetPickedActor() != pickedActor )
-    {
-      vtkErrorMacro( << "Selection logic error: attempt to accumulate cell IDs from different actors to a single picking result" );
-      return result;
-    }
-    if ( !pickRes.GetPickedActor().GetPointer() )
-      pickRes.SetPickedActor(pickedActor);
-
-    // Push ID to result: ID can be either a pedigree ID or a global ID
-    // depending on the context.
-    if ( pid != -1 )
-    {
-      // Let the user unpick the already selected elements
-      if ( (selNature == SelectionNature_Pick) && pickRes.GetPickedElementIds().Contains(pid) )
-        pickRes.RemovePickedElementId(pid);
-      else
-        pickRes.AddPickedElementId(pid);
-    }
-    else if ( gid != -1 )
-    {
-      // Let the user unpick the already selected elements
-      if ( (selNature == SelectionNature_Pick) && pickRes.GetPickedCellIds().Contains(gid) )
-        pickRes.RemovePickedElementId(gid);
-      else
-        pickRes.AddPickedElementId(gid);
-    }
-
-    // Let the user unpick the already selected elements
-    if ( (selNature == SelectionNature_Pick) && pickRes.GetPickedCellIds().Contains(cellId) )
-      pickRes.RemovePickedCellId(cellId);
-    else
-      pickRes.AddPickedCellId(cellId);
-  }
-  else if ( pickType == PickType_Point )
-  {
-    vtkIdType pointId = m_pointPicker->GetPointId();
-
-    // Get picked position and store it in the result
-    double pickedPos[3];
-    m_pointPicker->GetPickPosition(pickedPos);
-    pickRes.SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
-
-    // Get picked actor
-    pickedActor = m_pointPicker->GetActor();
-    //
-    if ( !pickedActor )
-    {
-      m_widget->repaint();
-      return result; // Nothing has been picked
-    }
-
-    // Check consistency of the picked actor with the already recorded one (if any)
-    if ( pickRes.GetPickedActor().GetPointer() &&
-         pickRes.GetPickedActor() != pickedActor )
-    {
-      vtkErrorMacro( << "Selection logic error: attempt to accumulate cell IDs from different actors to a single picking result" );
-      return result;
-    }
-
-    // Push ID to result
-    if ( !pickRes.GetPickedActor().GetPointer() )
-      pickRes.SetPickedActor(pickedActor);
-    //
-    pickRes.AddPickedPointId(pointId);
-
-    if ( pointId != -1 )
-    {
-#if defined COUT_DEBUG
-      std::cout << "Picked Point ID = " << pointId << std::endl;
-#endif
-
-      double coord[3] = {0.0, 0.0, 0.0};
-      m_pointPicker->GetDataSet()->GetPoint(pointId, coord);
-
-#if defined COUT_DEBUG
-      std::cout << "Picked point position: ("
-                << coord[0] << ", " << coord[1] << ", " << coord[2]
-                << ")" << std::endl;
-#endif
-
-      if ( selNature == SelectionNature_Detection )
-        this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &pickRes);
-      else
-        this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &pickRes);
-    }
-  }
-  else // World picker
-  {
-    // Picked position returned by this kind of "world" picker is very
-    // inaccurate for the needs of computational geometry. This is because
-    // the world picker is based on depth buffer analysis. The latter
-    // makes it very efficient, but not very precise. As a result, if
-    // we simply use the picked position for the intersection testing (we
-    // do that in order to know which face corresponds to the picked
-    // position), the test will fail in many cases as it wouldn't
-    // find even a bounding box containing such an imprecise point.
-    // In order to fix the deal, we take that inaccurate picked position
-    // and reconstruct a ray in the direction of projection (this is
-    // the camera's property). Then we have to intersect our geometry
-    // with the ray, thus obtaining the precise position. If we intersect
-    // the accurate B-Rep primitive, then the solution is ideal in terms
-    // of achievable accuracy. Another option is to intersect the ray
-    // with visualization facets which is faster but less accurate.
-
-    double coord[3];
-    m_worldPicker->GetPickPosition(coord);
-
-    // Store picked position in the result
-    pickRes.SetPickedPos(coord[0], coord[1], coord[2]);
-
-    vtkCamera* camera  = m_renderer->GetActiveCamera();
-    double*    dirProj = camera->GetDirectionOfProjection();
-
-    gp_Pnt cPos(coord[0], coord[1], coord[2]);
-    gp_Pnt cOrigin = cPos.XYZ() - gp_XYZ(dirProj[0], dirProj[1], dirProj[2])*300;
-    gp_Lin pickRay( cOrigin, gp_Dir(dirProj[0], dirProj[1], dirProj[2]) );
-
-#if defined COUT_DEBUG
-    std::cout << "Picked world position: ("
-              << coord[0] << ", " << coord[1] << ", " << coord[2]
-              << ")" << std::endl;
-#endif
-
-    if ( selNature == SelectionNature_Detection )
-      this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &pickRay);
-    else
-      this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &pickRay);
+    pickerRes = this->cellPickerResult(selNature, pickRes, pickedNodes);
   }
 
-  if ( !pickedActor )
-  {
-    if ( m_widget && selNature == SelectionNature_Detection )
-      m_widget->repaint(); // Clean up detection highlighting
+  //--------------//
+  // Point picker
+  //--------------//
 
-    return result;
+  if ( pickerRes.IsNull() && (pickType & PickerType_Point) )
+  {
+    pickerRes = this->pointPickerResult(selNature, pickRes, pickedNodes);
+  }
+
+  //--------------//
+  // World picker
+  //--------------//
+
+  if ( pickerRes.IsNull() && (pickType & PickerType_World) )
+  {
+    pickerRes = this->worldPickerResult(selNature, pickRes, pickedNodes);
   }
 
   /* ======================================
@@ -1155,7 +1198,7 @@ ActAPI_DataObjectIdList
 
 //! Set list of Nodes allowed for picking. This can be used to limit
 //! the picking "perimeter".
-//! \param nodeList [in] list of Nodes allowed for picking.
+//! \param[in] nodeList list of Nodes allowed for picking.
 void asiVisu_PrsManager::SetPickList(const Handle(ActAPI_HNodeList)& nodeList)
 {
   m_bAllowedNodes = nodeList;
@@ -1208,7 +1251,7 @@ const Handle(ActAPI_HNodeList)& asiVisu_PrsManager::GetPickList() const
 //-----------------------------------------------------------------------------
 
 //! Enables or disables picking from list.
-//! \param isEnabled [in] true/false.
+//! \param[in] isEnabled true/false.
 void asiVisu_PrsManager::SetPickFromList(const bool isEnabled) const
 {
   m_cellPicker->SetPickFromList(isEnabled ? 1 : 0);
@@ -1226,7 +1269,7 @@ bool asiVisu_PrsManager::IsPickFromList() const
 //-----------------------------------------------------------------------------
 
 //! Highlights Presentation for the passed Nodes.
-//! \param nodeList [in] Nodes to highlight.
+//! \param[in] nodeList Nodes to highlight.
 void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& nodeList)
 {
   // Reset current selection (if any)
@@ -1261,7 +1304,7 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& nodeList)
 //-----------------------------------------------------------------------------
 
 //! Highlights Presentation for the passed Node.
-//! \param node [in] Node to highlight.
+//! \param[in] node Node to highlight.
 void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)& node)
 {
   Handle(ActAPI_HNodeList) dummyList = new ActAPI_HNodeList;
@@ -1272,10 +1315,10 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)& node)
 //-----------------------------------------------------------------------------
 
 //! This method stands for programmatic API of selection.
-//! \param node       [in] Data Node to highlight.
-//! \param actor      [in] actor to pick.
-//! \param elementIds [in] element IDs to pick.
-//! \param modes      [in] active selection modes.
+//! \param[in] node       Data Node to highlight.
+//! \param[in] actor      actor to pick.
+//! \param[in] elementIds element IDs to pick.
+//! \param[in] modes      active selection modes.
 void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)&       node,
                                    const vtkSmartPointer<vtkActor>&  actor,
                                    const TColStd_PackedMapOfInteger& elementIds,
@@ -1356,7 +1399,7 @@ const asiVisu_ActualSelection& asiVisu_PrsManager::GetCurrentSelection() const
 //! you really need to populate your presentation manager with some external
 //! renderer.
 //!
-//! \param renderer [in] renderer to set.
+//! \param[in] renderer renderer to set.
 void asiVisu_PrsManager::SetRenderer(const vtkSmartPointer<vtkRenderer>& renderer)
 {
   m_renderer = renderer;
@@ -1385,8 +1428,8 @@ vtkRenderWindow* asiVisu_PrsManager::GetRenderWindow() const
 //! Initializes rendering process for the input QVTK widget
 //! and VTK render window handled by Presentation Manager.
 //!
-//! \param pWidget     [in] the widget to set.
-//! \param isOffscreen [in] off-screen rendering mode.
+//! \param[in] pWidget     widget to set.
+//! \param[in] isOffscreen off-screen rendering mode.
 void asiVisu_PrsManager::Initialize(QWidget* pWidget, const bool isOffscreen)
 {
   // Initialize QVTK widget depending on rendering mode
@@ -1429,9 +1472,9 @@ void asiVisu_PrsManager::InitializeRenderWindow(const int aams)
 //-----------------------------------------------------------------------------
 
 //! Initializes pickers and lets Data Model participate in such initialization.
-//! \param nodeList [in] list of Data Nodes which may want to perform some
-//!                      additional initializations (e.g. to construct and
-//!                      settle down accelerating structures).
+//! \param[in] nodeList list of Data Nodes which may want to perform some
+//!                     additional initializations (e.g. to construct and
+//!                     settle down accelerating structures).
 void asiVisu_PrsManager::InitializePickers(const Handle(ActAPI_INode)& node)
 {
   Handle(ActAPI_HNodeList) oneNodeList = new ActAPI_HNodeList;
@@ -1443,9 +1486,9 @@ void asiVisu_PrsManager::InitializePickers(const Handle(ActAPI_INode)& node)
 //-----------------------------------------------------------------------------
 
 //! Initializes pickers and lets Data Model participate in such initialization.
-//! \param nodeList [in] list of Data Nodes which may want to perform some
-//!                      additional initializations (e.g. to construct and
-//!                      settle down accelerating structures).
+//! \param[in] nodeList list of Data Nodes which may want to perform some
+//!                     additional initializations (e.g. to construct and
+//!                     settle down accelerating structures).
 void asiVisu_PrsManager::InitializePickers(const Handle(ActAPI_HNodeList)& nodeList)
 {
   // Initialize cell picker
@@ -1614,8 +1657,8 @@ void asiVisu_PrsManager::init()
 
 //! Adds callback to be activated in UpdatePresentation() method.
 //!
-//! \param eventID   [in] ID of callback action
-//! \param pCallback [in] callback to add.
+//! \param[in] eventID   ID of callback action
+//! \param[in] pCallback callback to add.
 //! \return tag of the event.
 long int asiVisu_PrsManager::AddUpdateCallback(unsigned long eventID,
                                                vtkCommand*   pCallback)
@@ -1627,8 +1670,8 @@ long int asiVisu_PrsManager::AddUpdateCallback(unsigned long eventID,
 //-----------------------------------------------------------------------------
 
 //! Removes callback with the given tag.
-//! \param eventID [in] event ID on which events are invoked.
-//! \param tag     [in] tag which is assigned to particular event entity.
+//! \param[in] eventID event ID on which events are invoked.
+//! \param[in] tag     tag which is assigned to particular event entity.
 //! \return true in case of success, false -- otherwise.
 bool asiVisu_PrsManager::RemoveUpdateCallback(unsigned long eventID,
                                               unsigned long tag)

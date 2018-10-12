@@ -821,7 +821,7 @@ void asiUI_IV::visualize(const bool                  is2d,
     //
     if ( isWireframe )
     {
-      pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Wireframe);
+      pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_WireframeAndVertices);
     }
 
     // Process color.

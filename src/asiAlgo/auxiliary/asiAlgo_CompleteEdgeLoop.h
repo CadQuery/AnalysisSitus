@@ -48,6 +48,10 @@ class asiAlgo_CompleteEdgeLoop : public ActAPI_IAlgorithm
 {
 public:
 
+  //! Ctor.
+  //! \param[in] aag      Attributed Adjacency Graph (AAG).
+  //! \param[in] progress Progress Notifier.
+  //! \param[in] plotter  Imperative Plotter.
   asiAlgo_EXPORT
     asiAlgo_CompleteEdgeLoop(const Handle(asiAlgo_AAG)& aag,
                              ActAPI_ProgressEntry       progress,
@@ -55,16 +59,43 @@ public:
 
 public:
 
+  //! Attempts to construct a loop of edges starting from the given seed edge.
+  //! \param[in]  seedEdgeIndex 1-based index of a seed edge.
+  //! \param[out] loopIndices   all edges forming a loop.
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     operator()(const int                   seedEdgeIndex,
                TColStd_PackedMapOfInteger& loopIndices);
 
+public:
+
+  //! Sets map of vertex-edges.
+  //! \param[in] veMap map to set.
+  void SetVertexEdgeMap(const TopTools_IndexedDataMapOfShapeListOfShape& veMap)
+  {
+    m_vertexEdgeMap = veMap;
+  }
+
+  //! Sets map of edge-face.
+  //! \param[in] efMap map to set.
+  void SetEdgeFaceMap(const TopTools_IndexedDataMapOfShapeListOfShape& efMap)
+  {
+    m_edgeFaceMap = efMap;
+  }
+
 protected:
 
+  //! Traverses next/previous edges for the given seed.
+  //! \param[in] seedEdgeIndex 1-based index of the seed edge.
+  //! \param[out] loopIndices  accumulated indices of loop edges.
   asiAlgo_EXPORT void
     traverse(const int                   seedEdgeIndex,
              TColStd_PackedMapOfInteger& loopIndices) const;
 
+  //! From the given collection of neighbor edges, this method selects those
+  //! which were not iterated, and adds them to the output collection.
+  //! \param[in] neighborEdges edges to traverse.
+  //! \param[out] result       accumulated indices of loop edges.
   asiAlgo_EXPORT void
     addEdges(const TopTools_ListOfShape& neighborEdges,
              TColStd_PackedMapOfInteger& loopIndices) const;

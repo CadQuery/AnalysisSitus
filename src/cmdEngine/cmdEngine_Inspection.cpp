@@ -43,6 +43,7 @@
 // asiAlgo includes
 #include <asiAlgo_CheckDihedralAngle.h>
 #include <asiAlgo_CheckValidity.h>
+#include <asiAlgo_CompleteEdgeLoop.h>
 #include <asiAlgo_MeshCheckInter.h>
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_Timer.h>
@@ -66,6 +67,7 @@
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepGProp.hxx>
 #include <GProp_GProps.hxx>
+#include <ShapeAnalysis_FreeBounds.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
@@ -2185,6 +2187,75 @@ int ENGINE_CheckTess(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckOpenEdges(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get part.
+  Handle(asiData_PartNode)
+    partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  TopoDS_Shape partShape = partNode->GetShape();
+
+  // Build map of edges to extract open ("naked") ones.
+  TopTools_IndexedDataMapOfShapeListOfShape edgesFaces;
+  TopExp::MapShapesAndAncestors(partShape, TopAbs_EDGE, TopAbs_FACE, edgesFaces);
+
+  // Find open edges.
+  Handle(TopTools_HSequenceOfShape) openEdgesSeq = new TopTools_HSequenceOfShape;
+  //
+  for ( int k = 1; k <= edgesFaces.Extent(); ++k )
+  {
+    const TopTools_ListOfShape& faces = edgesFaces(k);
+    //
+    if ( faces.Extent() == 1 )
+    {
+      const TopoDS_Edge& E = TopoDS::Edge( edgesFaces.FindKey(k) );
+      //
+      if ( BRep_Tool::Degenerated(E) )
+        continue;
+
+      openEdgesSeq->Append(E);
+    }
+  }
+
+  // Compose border wires from the naked edges.
+  Handle(TopTools_HSequenceOfShape) borderWires;
+  ShapeAnalysis_FreeBounds::ConnectEdgesToWires(openEdgesSeq, 1e-3, 0, borderWires);
+
+  // Dump free wires.
+  if ( !borderWires.IsNull() )
+  {
+    for ( TopTools_HSequenceOfShape::Iterator wit(*borderWires); wit.More(); wit.Next() )
+    {
+      const TopoDS_Wire& wire = TopoDS::Wire( wit.Value() );
+
+      // Calculate global properties.
+      GProp_GProps props;
+      BRepGProp::LinearProperties(wire, props);
+      const double wireLen = props.Mass();
+
+      interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Length of the next border wire: %1." << wireLen);
+      interp->GetPlotter().DRAW_SHAPE(wire, Color_Red, 1.0, true, "free_wire");
+    }
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -2393,4 +2464,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Checks tessellation for self-intersections.",
     //
     __FILE__, group, ENGINE_CheckTess);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-open-edges",
+    //
+    "check-open-edges\n"
+    "\t Checks part for open edges.",
+    //
+    __FILE__, group, ENGINE_CheckOpenEdges);
 }

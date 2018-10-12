@@ -86,23 +86,23 @@ public:
 public:
 
   //! Sets Data Model instance.
-  //! \param model [in] Data Model instance to set.
+  //! \param[in] model Data Model instance to set.
   void SetModel(const Handle(asiEngine_Model)& model)
   {
     m_model = model;
   }
 
   //! Sets type of picker for a workpiece.
-  //! \param type [in] type of picker to set.
-  void SetPickerType(const asiVisu_PickType type)
+  //! \param[in] type type of picker to set.
+  void SetPickerTypes(const int type)
   {
-    m_pickType = type;
+    m_iPickerTypes = type;
   }
 
   //! \return type of picker for a workpiece.
-  asiVisu_PickType GetPickerType() const
+  int GetPickerTypes() const
   {
-    return m_pickType;
+    return m_iPickerTypes;
   }
 
 signals:
@@ -120,8 +120,8 @@ protected:
 
 protected:
 
-  Handle(asiEngine_Model) m_model;    //!< Data Model instance.
-  asiVisu_PickType        m_pickType; //!< Type of picker for a workpiece.
+  Handle(asiEngine_Model) m_model;        //!< Data Model instance.
+  int                     m_iPickerTypes; //!< Types of pickers to user (can be several).
 
 };
 

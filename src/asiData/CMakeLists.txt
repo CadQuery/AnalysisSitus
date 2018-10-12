@@ -24,7 +24,6 @@ set (part_H_FILES
   part/asiData_BoundaryEdgesNode.h
   part/asiData_BVHAttr.h
   part/asiData_BVHParameter.h
-  part/asiData_ContourNode.h
   part/asiData_CurvatureCombsNode.h
   part/asiData_CurveNode.h
   part/asiData_EdgeNode.h
@@ -45,7 +44,6 @@ set (part_CPP_FILES
   part/asiData_BoundaryEdgesNode.cpp
   part/asiData_BVHAttr.cpp
   part/asiData_BVHParameter.cpp
-  part/asiData_ContourNode.cpp
   part/asiData_CurvatureCombsNode.cpp
   part/asiData_CurveNode.cpp
   part/asiData_EdgeNode.cpp
@@ -124,11 +122,13 @@ set (iv_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (misc_H_FILES
+  misc/asiData_ContourNode.h
   misc/asiData_DesignLawNode.h
   misc/asiData_FuncAttr.h
   misc/asiData_FuncParameter.h
 )
 set (misc_CPP_FILES
+  misc/asiData_ContourNode.cpp
   misc/asiData_DesignLawNode.cpp
   misc/asiData_FuncAttr.cpp
   misc/asiData_FuncParameter.cpp
@@ -140,15 +140,21 @@ set (misc_CPP_FILES
 
 set (re_H_FILES
   re/asiData_ReEdgeNode.h
+  re/asiData_ReEdgesNode.h
+  re/asiData_RePatchesNode.h
   re/asiData_RePatchNode.h
   re/asiData_ReTopoNode.h
   re/asiData_ReVertexNode.h
+  re/asiData_ReVerticesNode.h
 )
 set (re_CPP_FILES
   re/asiData_ReEdgeNode.cpp
+  re/asiData_ReEdgesNode.cpp
+  re/asiData_RePatchesNode.cpp
   re/asiData_RePatchNode.cpp
   re/asiData_ReTopoNode.cpp
   re/asiData_ReVertexNode.cpp
+  re/asiData_ReVerticesNode.cpp
 )
 
 #------------------------------------------------------------------------------

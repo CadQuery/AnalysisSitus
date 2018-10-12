@@ -42,7 +42,7 @@
 #include <asiVisu_CalculusLawPrs.h>
 #include <asiVisu_CurvatureCombsPrs.h>
 #include <asiVisu_GeomBoundaryEdgesPrs.h>
-#include <asiVisu_GeomContourPrs.h>
+#include <asiVisu_ContourPrs.h>
 #include <asiVisu_GeomCurvePrs.h>
 #include <asiVisu_GeomEdgePrs.h>
 #include <asiVisu_GeomFaceContourPrs.h>
@@ -126,7 +126,7 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_GeomFaceNormsPrs)
   REGISTER_PRESENTATION(asiVisu_GeomFaceContourPrs)
   REGISTER_PRESENTATION(asiVisu_GeomSurfPrs)
-  REGISTER_PRESENTATION(asiVisu_GeomContourPrs)
+  REGISTER_PRESENTATION(asiVisu_ContourPrs)
   REGISTER_PRESENTATION(asiVisu_CalculusLawPrs)
   REGISTER_PRESENTATION(asiVisu_CurvatureCombsPrs)
   REGISTER_PRESENTATION(asiVisu_TessellationPrs)

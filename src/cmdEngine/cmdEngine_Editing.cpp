@@ -1373,12 +1373,12 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
 
   // Draw result.
   interp->GetPlotter().REDRAW_SURFACE(argv[1], result, (resEnergy < initEnergy) ? Color_Green : Color_Red);
+
+  return TCL_OK;
 #else
   interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
   return TCL_ERROR;
 #endif
-
-  return TCL_OK;
 }
 
 //-----------------------------------------------------------------------------

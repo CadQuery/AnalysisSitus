@@ -37,6 +37,74 @@
 // OCCT includes
 #include <Standard_ProgramError.hxx>
 
+// Useful to print logged messages also to the standard output.
+#define COUT_DEBUG
+
+//-----------------------------------------------------------------------------
+
+#if defined COUT_DEBUG
+
+template<typename T>
+TCollection_AsciiString toString(const Handle(Standard_Transient)& theValue)
+{
+  Handle(T) aValue = Handle(T)::DownCast(theValue);
+  if (aValue.IsNull())
+    return "";
+
+  TCollection_AsciiString anAsciiString(aValue->Value);
+  return anAsciiString;
+}
+
+//-----------------------------------------------------------------------------
+
+TCollection_AsciiString getString(const Handle(Standard_Transient)& theValue)
+{
+  TCollection_AsciiString aStandInteger = toString<ActAPI_VariableInt>(theValue);
+  if (!aStandInteger.IsEmpty())
+    return aStandInteger;
+
+  TCollection_AsciiString aStandReal = toString<ActAPI_VariableReal>(theValue);
+  if (!aStandReal.IsEmpty())
+    return aStandReal;
+
+  TCollection_AsciiString aStandString = toString<ActAPI_VariableString>(theValue);
+  if (!aStandString.IsEmpty())
+    return aStandString;
+
+  return "<empty arg>";
+}
+
+//-----------------------------------------------------------------------------
+
+TCollection_AsciiString getFormatted(const TCollection_AsciiString& message,
+                                     const ActAPI_LogArguments&     arguments)
+{
+  // Try to treat the passed message as a key
+  TCollection_AsciiString formatted = message;
+
+  for ( int i = 1; i <= arguments.Length(); ++i )
+  {
+    TCollection_AsciiString iarg = "%"; iarg += i;
+    const int parg = formatted.Search(iarg);
+    TCollection_AsciiString sarg = getString(arguments.Value(i));
+
+    if ( parg != -1 )
+    {
+      formatted.Remove(parg, iarg.Length());
+      formatted.Insert(parg, sarg);
+    }
+    else
+    {
+      formatted += " ";
+      formatted += sarg;
+    }
+  }
+
+  return formatted;
+}
+
+#endif
+
 //-----------------------------------------------------------------------------
 // THREAD-UNSAFE methods
 //-----------------------------------------------------------------------------
@@ -168,7 +236,10 @@ void asiAlgo_Logger::appendMessage(const TCollection_AsciiString&    theMessage,
                                    const ActAPI_LogArguments&        theArguments,
                                    const Handle(Standard_Transient)& theTimeStamp)
 {
-  std::cout << "\tLOGGER: " << theMessage.ToCString() << std::endl;
+#if defined COUT_DEBUG
+  std::cout << "\tLOGGER: " << getFormatted(theMessage, theArguments).ToCString() << std::endl;
+#endif
+
   m_messageQueue.push( ActAPI_LogMessage(thePriority,
                                          theSeverity,
                                          theMessage,

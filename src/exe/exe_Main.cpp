@@ -36,6 +36,7 @@
 
 // exe includes
 #include <exe_CommonFacilities.h>
+#include <exe_Keywords.h>
 #include <exe_MainWindow.h>
 
 // asiVisu includes
@@ -110,9 +111,48 @@ VTK_MODULE_INIT(vtkRenderingGL2PSOpenGL2);
 //! main().
 int main(int argc, char** argv)
 {
+  //---------------------------------------------------------------------------
+  // Create main window as (it will initialize all resources)
+  //---------------------------------------------------------------------------
+
+  // Construct Qt application.
   QApplication app(argc, argv);
   //
   QApplication::setWindowIcon( QIcon(":icons/asitus/asitus_icon_16x16.png") );
+
+  // Construct main window but do not show it to allow off-screen batch.
+  exe_MainWindow* pMainWindow = new exe_MainWindow;
+
+  //---------------------------------------------------------------------------
+  // Get command line arguments to process in a batch mode
+  //---------------------------------------------------------------------------
+
+  for ( int i = 0; i < argc; ++i )
+    std::cout << "Passed arg[" << i << "]: " << argv[i] << std::endl;
+
+  // Get Tcl interpeter.
+  const Handle(asiTcl_Interp)&
+    interp = pMainWindow->Widgets.wConsole->GetInterp();
+
+  // Check whether batch mode is requested.
+  std::string scriptFilename;
+  const bool isBatch = asiExe::GetKeyValue(argc, argv, ASITUS_KW_runscript, scriptFilename);
+
+  if ( isBatch )
+  {
+    std::cout << "Running Analysis Situs in batch mode..." << std::endl;
+
+    // Execute script.
+    const int ret = interp->Eval( asiTcl_SourceCmd( scriptFilename.c_str() ) );
+
+    // Check result.
+    if ( ret != TCL_OK )
+      interp->PrintLastError();
+
+    std::cout << "Batch mode finished with error code " << ret << "." << std::endl;
+
+    return ret;
+  }
 
   //---------------------------------------------------------------------------
   // Register Presentations
@@ -134,7 +174,7 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_TolerantRangePrs)
   REGISTER_PRESENTATION(asiVisu_TriangulationPrs)
 
-  // Imperative viewer
+  // Imperative viewer.
   REGISTER_PRESENTATION(asiVisu_IVPointSet2dPrs)
   REGISTER_PRESENTATION(asiVisu_IVPointSetPrs)
   REGISTER_PRESENTATION(asiVisu_IVCurve2dPrs)
@@ -145,10 +185,8 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_IVTopoItemPrs)
 
   //---------------------------------------------------------------------------
-  // Create main window
+  // Configure main window
   //---------------------------------------------------------------------------
-
-  exe_MainWindow* pMainWindow = new exe_MainWindow;
 
   // Let Qt do whatever it wants to do before showing UI. This helps
   // to avoid some sort of blinking on launch.
@@ -168,31 +206,24 @@ int main(int argc, char** argv)
   pMainWindow->Widgets.wConsole->setFocus();
 
   //---------------------------------------------------------------------------
-  // Get command line arguments
+  // Process the second argument to open the passed file
   //---------------------------------------------------------------------------
-
-  for ( int i = 0; i < argc; ++i )
-    std::cout << "Passed arg[" << i << "]: " << argv[i] << std::endl;
 
   if ( argc == 2 )
   {
     QStringList qtArgs = QApplication::arguments();
     //
     TCollection_AsciiString
-      filename = QStr2AsciiStr( QDir::fromNativeSeparators( qtArgs.at(1) ) );
+      arg1Str = QStr2AsciiStr( QDir::fromNativeSeparators( qtArgs.at(1) ) );
 
-    // Get Tcl interpeter.
-    const Handle(asiTcl_Interp)&
-      interp = pMainWindow->Widgets.wConsole->GetInterp();
-
-    // Auto-recognize file format
+    // Auto-recognize file format.
     asiAlgo_FileFormat
-      format = asiAlgo_FileFormatTools::FormatFromFileContent(filename);
+      format = asiAlgo_FileFormatTools::FormatFromFileContent(arg1Str);
     //
     if ( format == FileFormat_Unknown )
     {
       // Recognize file format from file extension
-      format = asiAlgo_FileFormatTools::FormatFromFileExtension(filename);
+      format = asiAlgo_FileFormatTools::FormatFromFileExtension(arg1Str);
     }
 
     // Prepare Tcl command.
@@ -200,11 +231,11 @@ int main(int argc, char** argv)
     //
     if ( format == FileFormat_STEP )
     {
-      cmd = "load-step"; cmd += " "; cmd += filename;
+      cmd = "load-step"; cmd += " "; cmd += arg1Str;
     }
     else if ( format == FileFormat_BREP )
     {
-      cmd = "load-brep"; cmd += " "; cmd += filename;
+      cmd = "load-brep"; cmd += " "; cmd += arg1Str;
     }
     else
       std::cout << "Unexpected or not supported file format." << std::endl;

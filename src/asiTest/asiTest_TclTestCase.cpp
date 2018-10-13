@@ -44,7 +44,7 @@ outcome asiTest_TclTestCase::evaluate(const TCollection_AsciiString& scriptFilen
   Handle(asiTest_CommonFacilities) cf = asiTest_CommonFacilities::Instance();
 
   // Execute script.
-  const int ret = cf->Interp->Eval( asiTest_SourceCmd(scriptFilename) );
+  const int ret = cf->Interp->Eval( asiTcl_SourceCmd(scriptFilename) );
 
   // Check result.
   if ( ret != TCL_OK )

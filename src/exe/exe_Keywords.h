@@ -1,8 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 22 August 2017
-// Created by: Sergey SLYADNEV
+// Created on: 13 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,17 +28,73 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiTcl_h
-#define asiTcl_h
+#ifndef exe_Keywords_h
+#define exe_Keywords_h
 
-#define asiTcl_NotUsed(x) x
+//-----------------------------------------------------------------------------
 
-#ifdef asiTcl_EXPORTS
-  #define asiTcl_EXPORT __declspec(dllexport)
-#else
-  #define asiTcl_EXPORT __declspec(dllimport)
-#endif
+#define ASITUS_KW_runscript "runscript"
 
-#define asiTcl_SourceCmd(filename) TCollection_AsciiString("source ").Cat(filename)
+//-----------------------------------------------------------------------------
+
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
+
+// Standard includes
+#include <string>
+
+//-----------------------------------------------------------------------------
+
+class asiExe
+{
+public:
+
+  static bool IsKeyword(const std::string& opt,
+                        const std::string& key)
+  {
+    std::string slashedKey = "/"; slashedKey += key;
+    size_t      found      = opt.find(slashedKey);
+    //
+    if ( found == std::string::npos )
+      return false;
+
+    return true;
+  }
+
+  static bool HasKeyword(const int          argc,
+                         const char**       argv,
+                         const std::string& key)
+  {
+    for ( int k = 1; k < argc; ++k )
+    {
+      if ( IsKeyword(argv[k], key) )
+        return true;
+    }
+    return false;
+  }
+
+  static bool GetKeyValue(const int          argc,
+                          char**             argv,
+                          const std::string& key,
+                          std::string&       value)
+  {
+    for ( int k = 1; k < argc; ++k )
+    {
+      if ( IsKeyword(argv[k], key) )
+      {
+        std::vector<std::string> chunks;
+        asiAlgo_Utils::Str::Split(argv[k], "=", chunks);
+
+        if ( chunks.size() != 2 )
+          return false;
+
+        value = chunks[1];
+        return true;
+      }
+    }
+    return false;
+  }
+
+};
 
 #endif

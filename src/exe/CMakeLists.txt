@@ -5,6 +5,7 @@ project(asiExe)
 #------------------------------------------------------------------------------
 
 set (H_FILES
+  exe_Keywords.h
   exe_Version.h
 )
 set (CPP_FILES

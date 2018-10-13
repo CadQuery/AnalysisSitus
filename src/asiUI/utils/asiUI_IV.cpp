@@ -798,8 +798,11 @@ void asiUI_IV::visualize(const bool                  is2d,
   if ( !this->prsManager(is2d)->IsPresented(node) )
     this->prsManager(is2d)->SetPresentation(node);
 
-  // Set visualization properties.
+  // Get presentation.
   Handle(asiVisu_Prs) prs = this->prsManager(is2d)->GetPresentation(node);
+  //
+  if ( prs.IsNull() )
+    return;
 
   // Specific treatment for predefined pipelines.
   if ( prs->IsKind( STANDARD_TYPE(asiVisu_IVTopoItemPrs) ) )

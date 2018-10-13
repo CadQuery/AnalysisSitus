@@ -49,22 +49,22 @@
  * Prototypes for local procedures defined in this file:
  */
 
-static int  ConsoleClose(ClientData instanceData,
-                         Tcl_Interp* interp);
+static int ConsoleClose(ClientData instanceData,
+                        Tcl_Interp* interp);
 
-static int  ConsoleHandle(ClientData  instanceData,
-                          int         direction,
-                          ClientData* handlePtr);
+static int ConsoleHandle(ClientData  instanceData,
+                         int         direction,
+                         ClientData* handlePtr);
 
-static int  ConsoleInput(ClientData instanceData,
-                         char*      buf,
-                         int        toRead,
-                         int*       errorCode);
+static int ConsoleInput(ClientData instanceData,
+                        char*      buf,
+                        int        toRead,
+                        int*       errorCode);
 
-static int  ConsoleOutput(ClientData  instanceData,
-                          const char* buf,
-                          int         toWrite,
-                          int*        errorCode);
+static int ConsoleOutput(ClientData  instanceData,
+                         const char* buf,
+                         int         toWrite,
+                         int*        errorCode);
 
 static void	ConsoleWatch(ClientData instanceData,
                          int        mask);

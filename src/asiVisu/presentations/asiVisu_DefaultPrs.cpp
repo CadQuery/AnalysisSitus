@@ -60,9 +60,9 @@ void asiVisu_DefaultPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-void asiVisu_DefaultPrs::highlight(vtkRenderer*                  renderer,
-                                   const asiVisu_PickResult&     pickRes,
-                                   const asiVisu_SelectionNature selNature) const
+void asiVisu_DefaultPrs::highlight(vtkRenderer*                        renderer,
+                                   const Handle(asiVisu_PickerResult)& pickRes,
+                                   const asiVisu_SelectionNature       selNature) const
 {
   asiVisu_NotUsed(renderer);
   asiVisu_NotUsed(pickRes);

@@ -58,7 +58,7 @@ void asiVisu_NodeInfo::SetNodeId(const ActAPI_DataObjectId& nodeId)
 
 //! Accessor for Node ID.
 //! \return Node ID.
-ActAPI_DataObjectId asiVisu_NodeInfo::GetNodeId() const
+const ActAPI_DataObjectId& asiVisu_NodeInfo::GetNodeId() const
 {
   return m_nodeId;
 }

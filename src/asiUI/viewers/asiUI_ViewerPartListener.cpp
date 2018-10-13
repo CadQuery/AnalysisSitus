@@ -98,26 +98,26 @@ void asiUI_ViewerPartListener::Connect()
 {
   asiUI_Viewer3dListener::Connect(); // Connect basic reactions.
 
-  connect( m_pViewer, SIGNAL ( facePicked(const asiVisu_PickResult&) ),
-           this,      SLOT   ( onFacePicked(const asiVisu_PickResult&) ) );
+  connect( m_pViewer, SIGNAL ( facePicked(asiVisu_PickerResult*) ),
+           this,      SLOT   ( onFacePicked(asiVisu_PickerResult*) ) );
   //
-  connect( m_pViewer, SIGNAL ( edgePicked(const asiVisu_PickResult&) ),
-           this,      SLOT   ( onEdgePicked(const asiVisu_PickResult&) ) );
+  connect( m_pViewer, SIGNAL ( edgePicked(asiVisu_PickerResult*) ),
+           this,      SLOT   ( onEdgePicked(asiVisu_PickerResult*) ) );
   //
-  connect( m_pViewer, SIGNAL ( vertexPicked(const asiVisu_PickResult&) ),
-           this,      SLOT   ( onVertexPicked(const asiVisu_PickResult&) ) );
+  connect( m_pViewer, SIGNAL ( vertexPicked(asiVisu_PickerResult*) ),
+           this,      SLOT   ( onVertexPicked(asiVisu_PickerResult*) ) );
 }
 
 //-----------------------------------------------------------------------------
 
 //! Reaction on face picking.
 //! \param[in] pickRes pick result.
-void asiUI_ViewerPartListener::onFacePicked(const asiVisu_PickResult& pickRes)
+void asiUI_ViewerPartListener::onFacePicked(asiVisu_PickerResult* pickRes)
 {
   // Check if part is picked
-  asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pickRes.GetPickedActor() );
+  asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pickRes->GetPickedActor() );
   //
-  if ( pickRes.GetPickedActor() && !nodeInfo )
+  if ( pickRes->GetPickedActor() && !nodeInfo )
     return;
 
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
@@ -162,12 +162,12 @@ void asiUI_ViewerPartListener::onFacePicked(const asiVisu_PickResult& pickRes)
 
 //! Reaction on edge picking.
 //! \param[in] pickRes pick result.
-void asiUI_ViewerPartListener::onEdgePicked(const asiVisu_PickResult& pickRes)
+void asiUI_ViewerPartListener::onEdgePicked(asiVisu_PickerResult* pickRes)
 {
   // Check if part is picked
-  asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pickRes.GetPickedActor() );
+  asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pickRes->GetPickedActor() );
   //
-  if ( pickRes.GetPickedActor() && !nodeInfo )
+  if ( pickRes->GetPickedActor() && !nodeInfo )
     return;
 
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
@@ -212,12 +212,12 @@ void asiUI_ViewerPartListener::onEdgePicked(const asiVisu_PickResult& pickRes)
 
 //! Reaction on vertex picking.
 //! \param[in] pickRes pick result.
-void asiUI_ViewerPartListener::onVertexPicked(const asiVisu_PickResult& pickRes)
+void asiUI_ViewerPartListener::onVertexPicked(asiVisu_PickerResult* pickRes)
 {
   // Check if part is picked
-  asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pickRes.GetPickedActor() );
+  asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pickRes->GetPickedActor() );
   //
-  if ( pickRes.GetPickedActor() && !nodeInfo )
+  if ( pickRes->GetPickedActor() && !nodeInfo )
     return;
 
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();

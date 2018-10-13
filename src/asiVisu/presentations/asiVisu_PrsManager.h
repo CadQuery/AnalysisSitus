@@ -246,7 +246,7 @@ public:
   asiVisu_EXPORT int
     GetSelectionMode() const;
 
-  asiVisu_EXPORT ActAPI_DataObjectIdList
+  asiVisu_EXPORT bool
     Pick(asiVisu_PickInput*            pickInput,
          const asiVisu_SelectionNature selNature,
          const int                     pickType);
@@ -364,17 +364,21 @@ protected:
   asiVisu_EXPORT void
     init();
 
-  asiVisu_EXPORT ActAPI_DataObjectIdList
-    cellPickerResult(const asiVisu_SelectionNature selNature,
-                     asiVisu_CellPickerResult&      pickRes);
+  asiVisu_EXPORT bool
+    cellPickerResult(const asiVisu_SelectionNature           selNature,
+                     const Handle(asiVisu_CellPickerResult)& pickRes);
 
-  asiVisu_EXPORT ActAPI_DataObjectIdList
-    pointPickerResult(const asiVisu_SelectionNature selNature,
-                      asiVisu_PointPickerResult&    pickRes);
+  asiVisu_EXPORT bool
+    pointPickerResult(const asiVisu_SelectionNature            selNature,
+                      const Handle(asiVisu_PointPickerResult)& pickRes);
 
-  asiVisu_EXPORT ActAPI_DataObjectIdList
-    worldPickerResult(const asiVisu_SelectionNature selNature,
-                      asiVisu_WorldPickerResult&    pickRes);
+  asiVisu_EXPORT bool
+    worldPickerResult(const asiVisu_SelectionNature            selNature,
+                      const Handle(asiVisu_WorldPickerResult)& pickRes);
+
+  asiVisu_EXPORT Handle(asiVisu_Prs)
+    preparePickedPrs(const asiVisu_SelectionNature       selNature,
+                     const Handle(asiVisu_PickerResult)& pickRes);
 
 public:
 
@@ -445,9 +449,6 @@ private:
 
   //! List of nodes allowed for picking
   Handle(ActAPI_HNodeList) m_bAllowedNodes;
-
-  //! Selection modes.
-  int m_iSelectionModes;
 
   //! Custom Update Presentation callbacks.
   //! They are called in UpdatePresentation() method and

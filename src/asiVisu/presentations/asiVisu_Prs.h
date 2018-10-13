@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 25 November 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@
 //-----------------------------------------------------------------------------
 
 //! Base class for all kinds of Node Presentations which can be visualized
-//! in 3D viewer.
+//! in a 3D viewer.
 class asiVisu_Prs : public Standard_Transient
 {
 public:
@@ -97,42 +97,42 @@ public:
     UpdatePipelines() const;
 
   asiVisu_EXPORT virtual Handle(asiVisu_Pipeline)
-    GetPipeline(const int theId) const;
+    GetPipeline(const int id) const;
 
   asiVisu_EXPORT virtual Handle(asiVisu_HPipelineList)
     GetPipelineList() const;
 
   asiVisu_EXPORT virtual Handle(asiVisu_Pipeline)
-    GetPickPipeline(const int theIdx = 1) const;
+    GetPickPipeline(const int idx = 1) const;
 
   asiVisu_EXPORT virtual Handle(asiVisu_HPipelineList)
     GetPickPipelineList() const;
 
   asiVisu_EXPORT virtual Handle(asiVisu_Pipeline)
-    GetDetectPipeline(const int theIdx = 1) const;
+    GetDetectPipeline(const int idx = 1) const;
 
   asiVisu_EXPORT virtual Handle(asiVisu_HPipelineList)
     GetDetectPipelineList() const;
 
-  asiVisu_EXPORT virtual Handle(ActAPI_INode)
+  asiVisu_EXPORT virtual const Handle(ActAPI_INode)&
     GetNode() const;
 
 public:
 
   asiVisu_EXPORT void
-    RenderPipelines(vtkRenderer* theRenderer) const;
+    RenderPipelines(vtkRenderer* renderer) const;
 
   asiVisu_EXPORT void
-    DeRenderPipelines(vtkRenderer* theRenderer) const;
+    DeRenderPipelines(vtkRenderer* renderer) const;
 
   asiVisu_EXPORT void
-    Highlight(vtkRenderer*                  theRenderer,
-              const asiVisu_PickResult&     thePickRes,
-              const asiVisu_SelectionNature theSelNature) const;
+    Highlight(vtkRenderer*                        renderer,
+              const Handle(asiVisu_PickerResult)& pickRes,
+              const asiVisu_SelectionNature       selNature) const;
 
   asiVisu_EXPORT void
-    UnHighlight(vtkRenderer*                  theRenderer,
-                const asiVisu_SelectionNature theSelNature) const;
+    UnHighlight(vtkRenderer*                  renderer,
+                const asiVisu_SelectionNature selNature) const;
 
 public:
 
@@ -149,48 +149,48 @@ public:
 protected:
 
   asiVisu_EXPORT void
-    addPipeline(const int                       theId,
-                const Handle(asiVisu_Pipeline)& thePipeline);
+    addPipeline(const int                       id,
+                const Handle(asiVisu_Pipeline)& pipeline);
 
   asiVisu_EXPORT void
-    assignDataProvider(const int                           theId,
-                       const Handle(asiVisu_DataProvider)& theDataProvider);
+    assignDataProvider(const int                           id,
+                       const Handle(asiVisu_DataProvider)& dataProvider);
 
   asiVisu_EXPORT Handle(asiVisu_DataProvider)
-    dataProvider(const int theId) const;
+    dataProvider(const int id) const;
 
   asiVisu_EXPORT Handle(asiVisu_DataProvider)
-    dataProvider(const Handle(asiVisu_Pipeline)& thePipeline,
-                 const PipelineGroup             theGroup) const;
+    dataProvider(const Handle(asiVisu_Pipeline)& pipeline,
+                 const PipelineGroup             group) const;
 
   asiVisu_EXPORT Handle(asiVisu_DataProvider)
-    dataProviderPick(const int theIdx = 1) const;
+    dataProviderPick(const int idx = 1) const;
 
   asiVisu_EXPORT Handle(asiVisu_DataProvider)
-    dataProviderDetect(const int theIdx = 1) const;
+    dataProviderDetect(const int idx = 1) const;
 
   asiVisu_EXPORT void
-    installPickPipeline(const Handle(asiVisu_Pipeline)&     thePipeline,
-                        const Handle(asiVisu_DataProvider)& theDataProvider,
-                        const int                           theIdx = 1);
+    installPickPipeline(const Handle(asiVisu_Pipeline)&     pipeline,
+                        const Handle(asiVisu_DataProvider)& dataProvider,
+                        const int                           idx = 1);
 
   asiVisu_EXPORT void
-    installDetectPipeline(const Handle(asiVisu_Pipeline)&     thePipeline,
-                          const Handle(asiVisu_DataProvider)& theDataProvider,
-                          const int                           theIdx = 1);
+    installDetectPipeline(const Handle(asiVisu_Pipeline)&     pipeline,
+                          const Handle(asiVisu_DataProvider)& dataProvider,
+                          const int                           idx = 1);
 
 protected:
 
   asiVisu_EXPORT
-    asiVisu_Prs(const Handle(ActAPI_INode)& theNode);
+    asiVisu_Prs(const Handle(ActAPI_INode)& N);
 
 private:
 
   //! Copying prohibited.
-  asiVisu_Prs(const asiVisu_Prs&);
+  asiVisu_Prs(const asiVisu_Prs&) = delete;
 
   //! Assignment prohibited.
-  asiVisu_Prs& operator=(const asiVisu_Prs&);
+  asiVisu_Prs& operator=(const asiVisu_Prs&) = delete;
 
 protected:
 
@@ -208,7 +208,7 @@ protected:
 
   //! To be provided by descendants.
   virtual void highlight(vtkRenderer*,
-                         const asiVisu_PickResult&,
+                         const Handle(asiVisu_PickerResult)&,
                          const asiVisu_SelectionNature) const = 0;
 
   //! To be provided by descendants.
@@ -261,27 +261,60 @@ protected:
 
 //-----------------------------------------------------------------------------
 
-//! This class represents current selection.
+//! This class represents current selection state. The selection state is
+//! two-fold: it contains information on the selected entities for both
+//! "detection" and "picking" modes (what we call a "selection nature").
+//! For each mode, the following information is available:
+//!
+//! - Result of cell picker.
+//! - Result of point picker.
+//! - Result of world picker.
+//! - Tentative presentations.
+//!
+//! The list of tentative presentations is used for highlighting and
+//! unhighlighting. The logic of how to highlight and unhighlight
+//! a Presentation is implemented directly in the presentation classes, so
+//! the visualization framework asks presentations to highlight/unhighlight
+//! themselves.
 class asiVisu_ActualSelection
 {
 public:
 
-  typedef NCollection_Sequence<Handle(asiVisu_Prs)>                                      PrsSeq;
-  typedef NCollection_DataMap<asiVisu_SelectionNature, PrsSeq>                           PrsMap;
-  typedef NCollection_DataMap<asiVisu_SelectionNature, Handle(asiVisu_CellPickerResult)> PickerResultMap;
+  //! Asset of structures used to represent the current selection.
+  struct t_asset
+  {
+    std::vector<Handle(asiVisu_Prs)>  Presentations;     //!< Picked presentations.
+    ActAPI_DataObjectIdList           NodeIds;           //!< Picked Data Nodes.
+    Handle(asiVisu_CellPickerResult)  CellPickerResult;  //!< Last result of cell picker.
+    Handle(asiVisu_PointPickerResult) PointPickerResult; //!< Last result of point picker.
+    Handle(asiVisu_WorldPickerResult) WorldPickerResult; //!< Last result of world picker.
+
+    //! Default ctor.
+    t_asset()
+    {
+      CellPickerResult  = new asiVisu_CellPickerResult;
+      PointPickerResult = new asiVisu_PointPickerResult;
+      WorldPickerResult = new asiVisu_WorldPickerResult;
+    }
+  };
 
 public:
 
   //! Default ctor.
   asiVisu_ActualSelection()
   {
-    m_prsSet.Bind( SelectionNature_Pick,      PrsSeq() );
-    m_prsSet.Bind( SelectionNature_Detection, PrsSeq() );
-
-    // Picker results.
-    m_pickerResultSet.Bind( SelectionNature_Pick,      NULL );
-    m_pickerResultSet.Bind( SelectionNature_Detection, NULL );
+    m_detection = new t_asset;
+    m_picking   = new t_asset;
   }
+
+  //! Destructor.
+  ~asiVisu_ActualSelection()
+  {
+    delete m_detection;
+    delete m_picking;
+  }
+
+public:
 
   //! Cleans up the internal collections.
   //! \param[in] renderer  renderer to remove the Presentations from.
@@ -289,18 +322,35 @@ public:
   void PopAll(vtkRenderer*                  renderer,
               const asiVisu_SelectionNature selNature)
   {
-    PrsSeq::Iterator anIt( m_prsSet.Find(selNature) );
-    for ( ; anIt.More(); anIt.Next() )
+    t_asset* pAsset = this->getAsset(selNature);
+    //
+    for ( size_t p = 0; p < pAsset->Presentations.size(); ++p )
     {
-      const Handle(asiVisu_Prs)& aPrs = anIt.Value();
-      if ( aPrs.IsNull() )
+      const Handle(asiVisu_Prs)& prs = pAsset->Presentations[p];
+      //
+      if ( prs.IsNull() )
         continue;
 
-      aPrs->UnHighlight(renderer, selNature);
+      prs->UnHighlight(renderer, selNature);
     }
 
-    m_prsSet          .ChangeFind(selNature).Clear();
-    m_pickerResultSet .ChangeFind(selNature).Nullify();
+    // Clean up the internally stored collection of presentations and picking
+    // results for all kinds of pickers.
+    pAsset->Presentations.clear();
+    pAsset->NodeIds.Clear();
+    //
+    pAsset->CellPickerResult  ->Clear();
+    pAsset->PointPickerResult ->Clear();
+    pAsset->WorldPickerResult ->Clear();
+  }
+
+  //! Adds the passed Node ID to the list of stored IDs.
+  //! \param[in] selNature selection nature in question.
+  //! \param[in] id        object ID to add.
+  void AddNodeId(const asiVisu_SelectionNature selNature,
+                 const ActAPI_DataObjectId&    id)
+  {
+    this->getAsset(selNature)->NodeIds.Append(id);
   }
 
   //! Adds the passed Presentation instance to the internal collection.
@@ -311,44 +361,116 @@ public:
                     vtkRenderer*                  renderer,
                     const asiVisu_SelectionNature selNature)
   {
-    const asiVisu_CellPickerResult& cellPickRes = m_pickerResultSet(selNature);
-    m_prsSet.ChangeFind(selNature).Append(prs);
+    if ( prs.IsNull() )
+      return;
 
-    prs->Highlight(renderer, cellPickRes, selNature);
+    t_asset* pAsset = this->getAsset(selNature);
+
+    // Add presentation (if not yet exists).
+    bool prsExists = false;
+    //
+    for ( size_t p = 0; p < pAsset->Presentations.size(); ++p )
+      if ( pAsset->Presentations[p] == prs )
+      {
+        prsExists = true;
+        break;
+      }
+    //
+    if ( !prsExists )
+      pAsset->Presentations.push_back(prs);
+
+    // Ask presentation to highlight itself passing non-empty picker results.
+    if ( !pAsset->CellPickerResult->IsEmpty() )
+      prs->Highlight(renderer, pAsset->CellPickerResult, selNature);
+    //
+    if ( !pAsset->PointPickerResult->IsEmpty() )
+      prs->Highlight(renderer, pAsset->PointPickerResult, selNature);
+    //
+    if ( !pAsset->WorldPickerResult->IsEmpty() )
+      prs->Highlight(renderer, pAsset->WorldPickerResult, selNature);
   }
 
-  //! Accessor for picking result structure by selection nature.
-  //! \param theSelNature [in] selection nature.
+  //! Accessor for the cell picking result in the given selection nature.
+  //! \param[in] selNature selection nature.
   //! \return picking result structure.
-  asiVisu_PickResult& ChangePickResult(const asiVisu_SelectionNature theSelNature)
+  const Handle(asiVisu_CellPickerResult)&
+    GetCellPickerResult(const asiVisu_SelectionNature selNature) const
   {
-    return m_pickResultSet.ChangeFind(theSelNature);
+    return this->getAsset(selNature)->CellPickerResult;
   }
 
-  //! Accessor for picking result structure by selection nature.
-  //! \param theSelNature [in] selection nature.
+  //! Accessor for the point picking result in the given selection nature.
+  //! \param[in] selNature selection nature.
   //! \return picking result structure.
-  const asiVisu_PickResult& PickResult(const asiVisu_SelectionNature theSelNature) const
+  const Handle(asiVisu_PointPickerResult)&
+    GetPointPickerResult(const asiVisu_SelectionNature selNature) const
   {
-    return m_pickResultSet.Find(theSelNature);
+    return this->getAsset(selNature)->PointPickerResult;
   }
 
-  //! Get sequence of rendered presentations.
-  //! \param theSelNature [in] selection kind.
+  //! Accessor for the world picking result in the given selection nature.
+  //! \param[in] selNature selection nature.
+  //! \return picking result structure.
+  const Handle(asiVisu_WorldPickerResult)&
+    GetWorldPickerResult(const asiVisu_SelectionNature selNature) const
+  {
+    return this->getAsset(selNature)->WorldPickerResult;
+  }
+
+  //! Get the collection of the rendered presentations for the given selection
+  //! nature.
+  //! \param[in] selNature selection kind.
   //! \return sequence of rendered presentations.
-  const PrsSeq&
-    RenderedPresentations(const asiVisu_SelectionNature theSelNature) const
+  const std::vector<Handle(asiVisu_Prs)>&
+    GetRenderedPresentations(const asiVisu_SelectionNature selNature) const
   {
-    return m_prsSet.Find(theSelNature);
+    return this->getAsset(selNature)->Presentations;
+  }
+
+  //! \return selection modes.
+  int GetSelectionModes() const
+  {
+    return m_iSelectionModes;
+  }
+
+  //! Set active selection modes.
+  //! \param[in] selModes selection modes to set.
+  void SetSelectionModes(const int selModes)
+  {
+    m_iSelectionModes = selModes;
+
+    m_picking->CellPickerResult->SetSelectionModes(selModes);
+    m_picking->PointPickerResult->SetSelectionModes(selModes);
+    m_picking->WorldPickerResult->SetSelectionModes(selModes);
+
+    m_detection->CellPickerResult->SetSelectionModes(selModes);
+    m_detection->PointPickerResult->SetSelectionModes(selModes);
+    m_detection->WorldPickerResult->SetSelectionModes(selModes);
+  }
+
+protected:
+
+  //! Returns the selection asset structure for the given selection nature.
+  //! \param[in] selNature selection nature of interest.
+  //! \return pointer to the corresponding asset.
+  t_asset* getAsset(const asiVisu_SelectionNature selNature) const
+  {
+    if ( selNature == SelectionNature_Pick )
+      return m_picking;
+
+    if ( selNature == SelectionNature_Detection )
+      return m_detection;
+
+    return NULL;
   }
 
 private:
 
-  //! Internal collection of Presentations in OCCT form.
-  PrsMap m_prsSet;
+  t_asset* m_detection; //!< For "detection" selection nature.
+  t_asset* m_picking;   //!< For "picking" selection nature.
 
-  //! Picker results.
-  PickerResultMap m_pickerResultSet;
+  //! Selection modes.
+  int m_iSelectionModes;
 
 };
 

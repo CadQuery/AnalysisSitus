@@ -134,9 +134,9 @@ void asiVisu_GeomBoundaryEdgesPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-void asiVisu_GeomBoundaryEdgesPrs::highlight(vtkRenderer*                  renderer,
-                                             const asiVisu_PickResult&     pickRes,
-                                             const asiVisu_SelectionNature selNature) const
+void asiVisu_GeomBoundaryEdgesPrs::highlight(vtkRenderer*                        renderer,
+                                             const Handle(asiVisu_PickerResult)& pickRes,
+                                             const asiVisu_SelectionNature       selNature) const
 {
   asiVisu_NotUsed(renderer);
   asiVisu_NotUsed(pickRes);

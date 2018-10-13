@@ -32,7 +32,7 @@
 #include <asiUI_Viewer.h>
 
 //! Creates a new instance of viewer.
-//! \param parent [in] parent widget.
+//! \param[in] parent parent widget.
 asiUI_Viewer::asiUI_Viewer(QWidget* parent) : QWidget(parent)
 {}
 

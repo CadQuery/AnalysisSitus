@@ -64,12 +64,15 @@
 
 //-----------------------------------------------------------------------------
 
-void GetPickedSubshapeIds(const asiVisu_PickResult&         pick_res,
-                          std::vector<int>&                 picked_subshape_IDs,
-                          std::vector<ActAPI_DataObjectId>& picked_node_IDs)
+void GetPickedSubshapeIds(const Handle(asiVisu_PickerResult)& pick_res,
+                          std::vector<int>&                   picked_subshape_IDs,
+                          std::vector<ActAPI_DataObjectId>&   picked_node_IDs)
 {
-  const vtkSmartPointer<vtkActor>&  picked_actor  = pick_res.GetPickedActor();
-  const TColStd_PackedMapOfInteger& subshape_mask = pick_res.GetPickedElementIds();
+  Handle(asiVisu_CellPickerResult)
+    cellPickRes = Handle(asiVisu_CellPickerResult)::DownCast(pick_res);
+
+  const vtkSmartPointer<vtkActor>&  picked_actor  = cellPickRes->GetPickedActor();
+  const TColStd_PackedMapOfInteger& subshape_mask = cellPickRes->GetPickedElementIds();
 
   if ( !picked_actor.GetPointer() )
     return; // Nothing selected
@@ -106,9 +109,9 @@ void GetPickedSubshapeIds(const asiVisu_PickResult&         pick_res,
 //-----------------------------------------------------------------------------
 
 //! Creates a new instance of viewer.
-//! \param model             [in] Data Model instance.
-//! \param enableInteraction [in] enables/disables interaction mechanisms.
-//! \param parent            [in] parent widget.
+//! \param[in] model             Data Model instance.
+//! \param[in] enableInteraction enables/disables interaction mechanisms.
+//! \param[in] parent            parent widget.
 asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
                                    const bool                     enableInteraction,
                                    QWidget*                       parent)
@@ -292,12 +295,12 @@ void asiUI_ViewerPart::onFitAll()
 void asiUI_ViewerPart::onWhateverPicked()
 {
   // Access picking results
-  const asiVisu_ActualSelection& sel      = m_prs_mgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  const asiVisu_ActualSelection&          sel      = m_prs_mgr->GetCurrentSelection();
+  const Handle(asiVisu_CellPickerResult)& pick_res = sel.GetCellPickerResult(SelectionNature_Pick);
 
   // Get picked position without any attempt to interpret what's happening
   double x, y, z;
-  pick_res.GetPickedPos(x, y, z);
+  pick_res->GetPickedPos(x, y, z);
 
   // We don't care of picking logic here and let the listener react
   emit pointPicked(x, y, z);
@@ -309,22 +312,22 @@ void asiUI_ViewerPart::onWhateverPicked()
 void asiUI_ViewerPart::onSubShapesPicked()
 {
   // Access picking results
-  const asiVisu_ActualSelection& sel      = m_prs_mgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  const asiVisu_ActualSelection&      sel      = m_prs_mgr->GetCurrentSelection();
+  const Handle(asiVisu_PickerResult)& pick_res = sel.GetCellPickerResult(SelectionNature_Pick);
 
   // Special processing for Part Node
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();
   //
   if ( geom_n.IsNull() || !geom_n->IsWellFormed() )
   {
-    if ( pick_res.IsSelectionFace() )
-      emit facePicked(pick_res);
+    if ( pick_res->IsSelectionFace() )
+      emit facePicked( pick_res.get() );
     //
-    else if ( pick_res.IsSelectionEdge() )
-      emit edgePicked(pick_res);
+    else if ( pick_res->IsSelectionEdge() )
+      emit edgePicked( pick_res.get() );
     //
-    else if ( pick_res.IsSelectionVertex() )
-      emit vertexPicked(pick_res);
+    else if ( pick_res->IsSelectionVertex() )
+      emit vertexPicked( pick_res.get() );
 
     std::cout << "Geometry Node is not accessible" << std::endl;
     return; // No target Node to proceed with
@@ -337,7 +340,7 @@ void asiUI_ViewerPart::onSubShapesPicked()
   // Retrieve current selection
   //---------------------------------------------------------------------------
 
-  if ( pick_res.IsSelectionFace() )
+  if ( pick_res->IsSelectionFace() )
   {
     // Prepare arrays for selected elements
     std::vector<int>                 picked_face_IDs;
@@ -378,9 +381,9 @@ void asiUI_ViewerPart::onSubShapesPicked()
     // Notify
     //-------------------------------------------------------------------------
 
-    emit facePicked(pick_res);
+    emit facePicked( pick_res.get() );
   }
-  else if ( pick_res.IsSelectionEdge() )
+  else if ( pick_res->IsSelectionEdge() )
   {
     // Prepare arrays for selected elements
     std::vector<int>                 picked_edge_IDs;
@@ -417,9 +420,9 @@ void asiUI_ViewerPart::onSubShapesPicked()
     // Notify
     //-------------------------------------------------------------------------
 
-    emit edgePicked(pick_res);
+    emit edgePicked( pick_res.get() );
   }
-  else if ( pick_res.IsSelectionVertex() )
+  else if ( pick_res->IsSelectionVertex() )
   {
     // Prepare arrays for selected elements
     std::vector<int>                 picked_vertex_IDs;
@@ -454,7 +457,7 @@ void asiUI_ViewerPart::onSubShapesPicked()
     // Notify
     //-------------------------------------------------------------------------
 
-    emit vertexPicked(pick_res);
+    emit vertexPicked( pick_res.get() );
   }
 }
 

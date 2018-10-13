@@ -648,7 +648,7 @@ void asiVisu_PrsManager::UpdatePresentation(const ActAPI_DataObjectId& nodeId,
   for ( NCollection_Sequence<unsigned long>::Iterator it(m_updateCallbackIds);
         it.More(); it.Next() )
   {
-    InvokeEvent( it.Value() );
+    this->InvokeEvent( it.Value() );
   }
 
   // Adjust trihedron
@@ -766,25 +766,12 @@ void asiVisu_PrsManager::InitPicker(const ActAPI_DataObjectId& nodeId)
 //! \param[in] mode selection modes to set.
 void asiVisu_PrsManager::SetSelectionMode(const int mode)
 {
-  // We erase current highlighting only if user is not switching to NONE
-  // selection mode
-  if ( !(mode & SelectionMode_None) )
-  {
-    // If user applies the same (or sub-set) selection mode as the currently
-    // active one, then we do not erase anything. This could happen if user
-    // re-enables some selection mode after neutral (NONE) one
-    if ( !m_currentSelection.PickResult(SelectionNature_Pick).DoesSelectionCover(mode) )
-    {
-      m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
-      m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
+  m_currentSelection.SetSelectionModes(mode);
+  m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
+  m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
 
-      if ( m_widget )
-        m_widget->repaint();
-    }
-  }
-
-  // Set selection mode
-  m_iSelectionModes = mode;
+  if ( m_widget )
+    m_widget->repaint();
 }
 
 //-----------------------------------------------------------------------------
@@ -793,17 +780,15 @@ void asiVisu_PrsManager::SetSelectionMode(const int mode)
 //! \return selection modes.
 int asiVisu_PrsManager::GetSelectionMode() const
 {
-  return m_iSelectionModes;
+  return m_currentSelection.GetSelectionModes();
 }
 
 //-----------------------------------------------------------------------------
 
-ActAPI_DataObjectIdList
-  asiVisu_PrsManager::cellPickerResult(const asiVisu_SelectionNature selNature,
-                                       asiVisu_PickResult&           pickRes)
+bool
+  asiVisu_PrsManager::cellPickerResult(const asiVisu_SelectionNature           selNature,
+                                       const Handle(asiVisu_CellPickerResult)& pickRes)
 {
-  ActAPI_DataObjectIdList result;
-
   vtkIdType cellId = m_cellPicker->GetCellId();
   vtkIdType gid    = -1;
   vtkIdType pid    = -1;
@@ -814,7 +799,7 @@ ActAPI_DataObjectIdList
     std::cout << "Picked Cell ID = " << cellId << std::endl;
 #endif
 
-    // Global IDs
+    // Global IDs.
     vtkSmartPointer<vtkIdTypeArray>
       gids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetGlobalIds() );
     //
@@ -826,7 +811,7 @@ ActAPI_DataObjectIdList
 #endif
     }
 
-    // Pedigree IDs
+    // Pedigree IDs.
     vtkSmartPointer<vtkIdTypeArray>
       pids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetPedigreeIds() );
     //
@@ -839,12 +824,12 @@ ActAPI_DataObjectIdList
     }
   }
 
-  // Get picked position and store it in the result
+  // Get picked position and store it in the result.
   double pickedPos[3];
   m_cellPicker->GetPickPosition(pickedPos);
-  pickRes.SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
+  pickRes->SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
 
-  // Get picked actor
+  // Get picked actor.
   vtkActor* pickedActor = m_cellPicker->GetActor();
   //
   if ( !pickedActor )
@@ -853,84 +838,83 @@ ActAPI_DataObjectIdList
     std::cout << "No picked actor" << std::endl;
 #endif
     m_widget->repaint();
-    return result; // Nothing has been picked
+    return false; // Nothing has been picked.
   }
 
-  // Check consistency of the picked actor with the already recorded one (if any)
-  if ( pickRes.GetPickedActor().GetPointer() &&
-       pickRes.GetPickedActor() != pickedActor )
+  // Check consistency of the picked actor with the already
+  // recorded one (if any).
+  if ( pickRes->GetPickedActor().GetPointer() &&
+       pickRes->GetPickedActor() != pickedActor )
   {
     vtkErrorMacro( << "Selection logic error: attempt to accumulate cell IDs from different actors to a single picking result" );
-    return result;
+    return false;
   }
-  if ( !pickRes.GetPickedActor().GetPointer() )
-    pickRes.SetPickedActor(pickedActor);
+  if ( !pickRes->GetPickedActor().GetPointer() )
+    pickRes->SetPickedActor(pickedActor);
 
   // Push ID to result: ID can be either a pedigree ID or a global ID
   // depending on the context.
   if ( pid != -1 )
   {
-    // Let the user unpick the already selected elements
-    if ( (selNature == SelectionNature_Pick) && pickRes.GetPickedElementIds().Contains(pid) )
-      pickRes.RemovePickedElementId(pid);
+    // Let the user unpick the already selected elements.
+    if ( (selNature == SelectionNature_Pick) && pickRes->GetPickedElementIds().Contains(pid) )
+      pickRes->RemovePickedElementId(pid);
     else
-      pickRes.AddPickedElementId(pid);
+      pickRes->AddPickedElementId(pid);
   }
   else if ( gid != -1 )
   {
-    // Let the user unpick the already selected elements
-    if ( (selNature == SelectionNature_Pick) && pickRes.GetPickedCellIds().Contains(gid) )
-      pickRes.RemovePickedElementId(gid);
+    // Let the user unpick the already selected elements.
+    if ( (selNature == SelectionNature_Pick) && pickRes->GetPickedElementIds().Contains(gid) )
+      pickRes->RemovePickedElementId(gid);
     else
-      pickRes.AddPickedElementId(gid);
+      pickRes->AddPickedElementId(gid);
   }
 
-  // Let the user unpick the already selected elements
-  if ( (selNature == SelectionNature_Pick) && pickRes.GetPickedCellIds().Contains(cellId) )
-    pickRes.RemovePickedCellId(cellId);
+  // Let the user unpick the already selected elements.
+  if ( (selNature == SelectionNature_Pick) && pickRes->GetPickedCellIds().Contains(cellId) )
+    pickRes->RemovePickedCellId(cellId);
   else
-    pickRes.AddPickedCellId(cellId);
+    pickRes->AddPickedCellId(cellId);
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------
 
-ActAPI_DataObjectIdList
-  asiVisu_PrsManager::pointPickerResult(const asiVisu_SelectionNature selNature,
-                                        asiVisu_PickResult&           pickRes)
+bool
+  asiVisu_PrsManager::pointPickerResult(const asiVisu_SelectionNature            selNature,
+                                        const Handle(asiVisu_PointPickerResult)& pickRes)
 {
-  ActAPI_DataObjectIdList result;
-
   vtkIdType pointId = m_pointPicker->GetPointId();
 
-  // Get picked position and store it in the result
+  // Get picked position and store it in the result.
   double pickedPos[3];
   m_pointPicker->GetPickPosition(pickedPos);
-  pickRes.SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
+  pickRes->SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
 
-  // Get picked actor
+  // Get picked actor.
   vtkActor* pickedActor = m_pointPicker->GetActor();
   //
   if ( !pickedActor )
   {
     m_widget->repaint();
-    return result; // Nothing has been picked
+    return false; // Nothing has been picked.
   }
 
-  // Check consistency of the picked actor with the already recorded one (if any)
-  if ( pickRes.GetPickedActor().GetPointer() &&
-       pickRes.GetPickedActor() != pickedActor )
+  // Check consistency of the picked actor with the already recorded one (if any).
+  if ( pickRes->GetPickedActor().GetPointer() &&
+       pickRes->GetPickedActor() != pickedActor )
   {
     vtkErrorMacro( << "Selection logic error: attempt to accumulate cell IDs from different actors to a single picking result" );
-    return result;
+    return false;
   }
 
-  Handle(asiVisu_PickerResult) result = new asiVisu_CellPickerResult(m_iSelectionModes);
-
-  // Push ID to result
-  if ( !pickRes.GetPickedActor().GetPointer() )
-    pickRes.SetPickedActor(pickedActor);
+  // Push ID to result.
+  if ( !pickRes->GetPickedActor().GetPointer() )
+    pickRes->SetPickedActor(pickedActor);
   //
-  pickRes.AddPickedPointId(pointId);
+  pickRes->AddPickedPointId(pointId);
 
   if ( pointId != -1 )
   {
@@ -948,22 +932,20 @@ ActAPI_DataObjectIdList
 #endif
 
     if ( selNature == SelectionNature_Detection )
-      this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &pickRes);
+      this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &*pickRes);
     else
-      this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &pickRes);
+      this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &*pickRes);
   }
 
-  return result;
+  return true;
 }
 
 //-----------------------------------------------------------------------------
 
-ActAPI_DataObjectIdList
-  asiVisu_PrsManager::worldPickerResult(const asiVisu_SelectionNature selNature,
-                                        asiVisu_PickResult&           pickRes)
+bool
+  asiVisu_PrsManager::worldPickerResult(const asiVisu_SelectionNature            selNature,
+                                        const Handle(asiVisu_WorldPickerResult)& pickRes)
 {
-  ActAPI_DataObjectIdList result;
-
   // Picked position returned by this kind of "world" picker is very
   // inaccurate for the needs of computational geometry. This is because
   // the world picker is based on depth buffer analysis. The latter
@@ -983,8 +965,8 @@ ActAPI_DataObjectIdList
   double coord[3];
   m_worldPicker->GetPickPosition(coord);
 
-  // Store picked position in the result
-  pickRes.SetPickedPos(coord[0], coord[1], coord[2]);
+  // Store picked position in the result.
+  pickRes->SetPickedPos(coord[0], coord[1], coord[2]);
 
   vtkCamera* camera  = m_renderer->GetActiveCamera();
   double*    dirProj = camera->GetDirectionOfProjection();
@@ -1004,137 +986,62 @@ ActAPI_DataObjectIdList
   else
     this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &pickRay);
 
-  return result;
+  return true;
 }
 
 //-----------------------------------------------------------------------------
 
-//! Performs picking or detection by the passed display coordinates (pick input).
-//!
-//! \param[in] pickInput picking input data.
-//! \param[in] selNature selection nature (picking or detection).
-//! \param[in] pickType  type of picker to use.
-//! \return list of affected Data Node IDs.
-ActAPI_DataObjectIdList
-  asiVisu_PrsManager::Pick(asiVisu_PickInput*            pickInput,
-                           const asiVisu_SelectionNature selNature,
-                           const int                     pickType)
+Handle(asiVisu_Prs)
+  asiVisu_PrsManager::preparePickedPrs(const asiVisu_SelectionNature       selNature,
+                                       const Handle(asiVisu_PickerResult)& pickRes)
 {
-  // Result collection
-  ActAPI_DataObjectIdList pickedNodes;
+  if ( pickRes.IsNull() )
+    return NULL;
 
-  // Selection is disabled
-  if ( m_iSelectionModes & SelectionMode_None )
-    return pickedNodes;
-
-  /* ===================
-   *  Some preparations
-   * =================== */
-
-  const int  xStart     = pickInput->Start.x();
-  const int  yStart     = pickInput->Start.y();
-  const bool isMultiple = pickInput->IsMultiple;
-
-  // Reset current selection (if any)
-  if ( !isMultiple )
-    m_currentSelection.PopAll(m_renderer, selNature);
-
-  /* =====================
-   *  Perform actual pick
-   * ===================== */
-
-  // Use try-catch as sometimes VTK 7.1 crashes if cell locators are used
-  try
-  {
-    if ( pickType & PickerType_Cell ) // Cell (topology) picker
-    {
-      m_cellPicker->Pick(xStart, yStart, 0, m_renderer);
-    }
-    if ( pickType & PickerType_Point ) // Point (geometry) picker
-    {
-      m_pointPicker->Pick(xStart, yStart, 0, m_renderer);
-    }
-    if ( pickType & PickerType_World ) // World (any visible point) picker
-    {
-      m_worldPicker->Pick(xStart, yStart, 0, m_renderer);
-    }
-  }
-  catch ( ... )
-  {
-    std::cerr << "VTK picker raised an exception" << std::endl;
-    return pickedNodes;
-  }
-
-  Handle(asiVisu_PickerResult) pickerRes;
-
-  //-------------//
-  // Cell picker
-  //-------------//
-
-  if ( pickType & PickerType_Cell )
-  {
-    pickerRes = this->cellPickerResult(selNature, pickRes, pickedNodes);
-  }
-
-  //--------------//
-  // Point picker
-  //--------------//
-
-  if ( pickerRes.IsNull() && (pickType & PickerType_Point) )
-  {
-    pickerRes = this->pointPickerResult(selNature, pickRes, pickedNodes);
-  }
-
-  //--------------//
-  // World picker
-  //--------------//
-
-  if ( pickerRes.IsNull() && (pickType & PickerType_World) )
-  {
-    pickerRes = this->worldPickerResult(selNature, pickRes, pickedNodes);
-  }
-
-  /* ======================================
-   *  Ask Presentation to highlight itself
-   * ====================================== */
-
-  // Retrieve the corresponding Presentation by data object's ID
-  asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve(pickedActor);
+  // Retrieve the corresponding Presentation by the data object ID.
+  asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve( pickRes->GetPickedActor() );
+  //
   if ( !nodeInfo )
   {
 #if defined COUT_DEBUG
-    std::cout << "NULL Node information key: highlight will not happen" << std::endl;
+    std::cout << "NULL Node information key: highlighting is not possible." << std::endl;
 #endif
-    return result;
+    return NULL;
   }
   //
-  ActAPI_DataObjectId nodeId = nodeInfo->GetNodeId();
-  result.Append(nodeId);
+  const ActAPI_DataObjectId& nodeId = nodeInfo->GetNodeId();
+  //
+  m_currentSelection.AddNodeId(selNature, nodeId);
 
   // Eliminate elements of improper type for the picking result. This functionality
   // is available for master Nodes only.
-  if ( !m_model.IsNull() && dynamic_cast<asiVisu_PartNodeInfo*>(nodeInfo) )
+  if ( !m_model.IsNull() &&
+        dynamic_cast<asiVisu_PartNodeInfo*>(nodeInfo) &&
+        pickRes->IsKind( STANDARD_TYPE(asiVisu_CellPickerResult) ) )
   {
-    // Get part Node
+    Handle(asiVisu_CellPickerResult)
+      cellPickRes = Handle(asiVisu_CellPickerResult)::DownCast(pickRes);
+
+    // Get Part Node.
     asiVisu_PartNodeInfo* partInfo = dynamic_cast<asiVisu_PartNodeInfo*>(nodeInfo);
     //
     Handle(asiData_PartNode)
       partNode = Handle(asiData_PartNode)::DownCast( m_model->FindNode( partInfo->GetNodeId() ) );
 
-    // Get AAG
+    // Get AAG.
     Handle(asiAlgo_AAG) aag = partNode->GetAAG();
     //
     if ( !aag.IsNull() )
     {
-      // Filter sub-shape IDs
+      // Filter sub-shape IDs.
       TColStd_PackedMapOfInteger subShapes2Highlight;
-      const TColStd_PackedMapOfInteger& pickedSubshapes = pickRes.GetPickedElementIds();
+      const TColStd_PackedMapOfInteger& pickedSubshapes = cellPickRes->GetPickedElementIds();
       //
       for ( TColStd_MapIteratorOfPackedMapOfInteger mit(pickedSubshapes); mit.More(); mit.Next() )
       {
-        if ( pickRes.IsSelectionFace() )
+        if ( pickRes->IsSelectionFace() )
         {
-          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances
+          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
           {
             TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
             //
@@ -1142,9 +1049,9 @@ ActAPI_DataObjectIdList
               subShapes2Highlight.Add( mit.Key() );
           }
         }
-        else if ( pickRes.IsSelectionEdge() )
+        else if ( pickRes->IsSelectionEdge() )
         {
-          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances
+          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
           {
             TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
             //
@@ -1152,9 +1059,9 @@ ActAPI_DataObjectIdList
               subShapes2Highlight.Add( mit.Key() );
           }
         }
-        else if ( pickRes.IsSelectionVertex() )
+        else if ( pickRes->IsSelectionVertex() )
         {
-          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances
+          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
           {
             TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
             //
@@ -1164,34 +1071,135 @@ ActAPI_DataObjectIdList
         }
       }
 
-      // Re-initialize IDs of the picked elements
-      pickRes.SetPickedElementIds(subShapes2Highlight);
+      // Re-initialize IDs of the picked elements.
+      cellPickRes->SetPickedElementIds(subShapes2Highlight);
     }
   }
 
-  // Get presentation
+  // Get presentation.
   Handle(asiVisu_Prs) prs3D = this->GetPresentation(nodeId);
   //
-  if ( prs3D.IsNull() )
+  return prs3D;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Performs picking or detection by the passed display coordinates (pick input).
+//!
+//! \param[in] pickInput picking input data.
+//! \param[in] selNature selection nature (picking or detection).
+//! \param[in] pickType  type of picker to use.
+//!
+//! \return true if selection result is not empty, false -- otherwise.
+bool
+  asiVisu_PrsManager::Pick(asiVisu_PickInput*            pickInput,
+                           const asiVisu_SelectionNature selNature,
+                           const int                     pickType)
+{
+  // Selection is disabled.
+  if ( m_currentSelection.GetSelectionModes() & SelectionMode_None )
+    return false;
+
+  /* ===================
+   *  Some preparations
+   * =================== */
+
+  const int  xStart     = pickInput->Start.x();
+  const int  yStart     = pickInput->Start.y();
+  const bool isMultiple = pickInput->IsMultiple;
+
+  // Reset current selection (if any).
+  if ( !isMultiple )
+    m_currentSelection.PopAll(m_renderer, selNature);
+
+  /* =====================
+   *  Perform actual pick
+   * ===================== */
+
+  // Use try-catch as sometimes VTK 7.1 crashes if cell locators are used.
+  try
   {
-    vtkErrorMacro( << "No presentation exists for a picked object (?!)" );
-    return result;
+    if ( pickType & PickerType_Cell ) // Cell (VTK topology) picker.
+    {
+      m_cellPicker->Pick(xStart, yStart, 0, m_renderer);
+    }
+    if ( pickType & PickerType_Point ) // Point (VTK geometry) picker.
+    {
+      m_pointPicker->Pick(xStart, yStart, 0, m_renderer);
+    }
+    if ( pickType & PickerType_World ) // World (any visible point) picker.
+    {
+      m_worldPicker->Pick(xStart, yStart, 0, m_renderer);
+    }
+  }
+  catch ( ... )
+  {
+    std::cerr << "VTK picker raised an exception" << std::endl;
+    return false;
   }
 
-  // When picking erase detection at first in order to prevent blinking
+  //-------------//
+  // Cell picker
+  //-------------//
+
+  bool isPicked = false;
+  Handle(asiVisu_PickerResult) lastPickerRes;
+
+  if ( pickType & PickerType_Cell )
+  {
+    isPicked = this->cellPickerResult( selNature,
+                                       m_currentSelection.GetCellPickerResult(selNature) );
+    //
+    if ( isPicked )
+      lastPickerRes = m_currentSelection.GetCellPickerResult(selNature);
+  }
+
+  //--------------//
+  // Point picker
+  //--------------//
+
+  if ( !isPicked && (pickType & PickerType_Point) )
+  {
+    isPicked = this->pointPickerResult( selNature,
+                                        m_currentSelection.GetPointPickerResult(selNature) );
+    //
+    if ( isPicked )
+      lastPickerRes = m_currentSelection.GetPointPickerResult(selNature);
+  }
+
+  //--------------//
+  // World picker
+  //--------------//
+
+  if ( !isPicked && (pickType & PickerType_World) )
+  {
+    isPicked = this->worldPickerResult( selNature,
+                                        m_currentSelection.GetWorldPickerResult(selNature) );
+    //
+    if ( isPicked )
+      lastPickerRes = m_currentSelection.GetWorldPickerResult(selNature);
+  }
+
+  /* ======================================
+   *  Ask Presentation to highlight itself
+   * ====================================== */
+
+  // When picking erase detection at first in order to prevent blinking.
   if ( selNature == SelectionNature_Pick )
     m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
 
-  // Push selection to renderer
+  Handle(asiVisu_Prs) prs3D = this->preparePickedPrs(selNature, lastPickerRes);
+
+  // Push selection to renderer.
   m_currentSelection.PushToRender(prs3D, m_renderer, selNature);
 
-  // Update view window
+  // Update view window.
   if ( m_widget )
   {
     m_widget->repaint();
   }
 
-  return result;
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1272,12 +1280,19 @@ bool asiVisu_PrsManager::IsPickFromList() const
 //! \param[in] nodeList Nodes to highlight.
 void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& nodeList)
 {
-  // Reset current selection (if any)
+  // Reset current selection (if any).
   m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
-  m_currentSelection.ChangePickResult(SelectionNature_Pick).Clear();
-  m_currentSelection.ChangePickResult(SelectionNature_Pick).SetSelectionModes(SelectionMode_Workpiece);
+  //
+  m_currentSelection.GetCellPickerResult(SelectionNature_Pick)->Clear();
+  m_currentSelection.GetCellPickerResult(SelectionNature_Pick)->SetSelectionModes(SelectionMode_Workpiece);
+  //
+  m_currentSelection.GetPointPickerResult(SelectionNature_Pick)->Clear();
+  m_currentSelection.GetPointPickerResult(SelectionNature_Pick)->SetSelectionModes(SelectionMode_Workpiece);
+  //
+  m_currentSelection.GetWorldPickerResult(SelectionNature_Pick)->Clear();
+  m_currentSelection.GetWorldPickerResult(SelectionNature_Pick)->SetSelectionModes(SelectionMode_Workpiece);
 
-  if ( !(m_iSelectionModes & SelectionMode_None) )
+  if ( !(m_currentSelection.GetSelectionModes() & SelectionMode_None) )
   {
     // Iterate over the passed Data Nodes accessing & highlighting
     // their Presentations
@@ -1338,12 +1353,34 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)&       node,
   m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
 
   // Populate Pick resulting structure to be used by Presentation's
-  // highlight method
-  asiVisu_PickResult& pickRes = m_currentSelection.ChangePickResult(SelectionNature_Pick);
-  pickRes.Clear();
-  pickRes.SetSelectionModes(modes);
-  pickRes.SetPickedActor(actor);
-  pickRes.SetPickedElementIds(elementIds);
+  // highlight method.
+  {
+    const Handle(asiVisu_CellPickerResult)&
+      pickRes = m_currentSelection.GetCellPickerResult(SelectionNature_Pick);
+    //
+    pickRes->Clear();
+    pickRes->SetSelectionModes(modes);
+    pickRes->SetPickedActor(actor);
+    pickRes->SetPickedElementIds(elementIds);
+  }
+  //
+  {
+    const Handle(asiVisu_PointPickerResult)&
+      pickRes = m_currentSelection.GetPointPickerResult(SelectionNature_Pick);
+    //
+    pickRes->Clear();
+    pickRes->SetSelectionModes(modes);
+    pickRes->SetPickedActor(actor);
+  }
+  //
+  {
+    const Handle(asiVisu_WorldPickerResult)&
+      pickRes = m_currentSelection.GetWorldPickerResult(SelectionNature_Pick);
+    //
+    pickRes->Clear();
+    pickRes->SetSelectionModes(modes);
+    pickRes->SetPickedActor(actor);
+  }
 
   // Push selection to renderer
   m_currentSelection.PushToRender(prs3D, m_renderer, SelectionNature_Pick);
@@ -1372,11 +1409,11 @@ Handle(ActAPI_HNodeList) asiVisu_PrsManager::GetHighlighted() const
 {
   Handle(ActAPI_HNodeList) list = new ActAPI_HNodeList();
 
-  const asiVisu_ActualSelection::PrsSeq&
-    seq = m_currentSelection.RenderedPresentations(SelectionNature_Pick);
+  const std::vector<Handle(asiVisu_Prs)>&
+    seq = m_currentSelection.GetRenderedPresentations(SelectionNature_Pick);
 
-  for ( asiVisu_ActualSelection::PrsSeq::Iterator it(seq); it.More(); it.Next() )
-    list->Append( it.Value()->GetNode() );
+  for ( size_t k = 0; k < seq.size(); ++k )
+    list->Append( seq[k]->GetNode() );
 
   return list;
 }
@@ -1595,7 +1632,7 @@ void asiVisu_PrsManager::init()
   this->InitializePickers( Handle(ActAPI_INode)() );
 
   // Set default selection mode
-  m_iSelectionModes = SelectionMode_None;
+  m_currentSelection.SetSelectionModes(SelectionMode_None);
 
   // Initialize render window
   this->InitializeRenderWindow(16);

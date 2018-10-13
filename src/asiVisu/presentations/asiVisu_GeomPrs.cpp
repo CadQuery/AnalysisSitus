@@ -57,7 +57,7 @@
 //-----------------------------------------------------------------------------
 
 //! Creates a Presentation object for the passed Part Node.
-//! \param N [in] Part Node to create a Presentation for.
+//! \param[in] N Part Node to create a Presentation for.
 asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
 {
   Handle(asiData_PartNode) partNode = Handle(asiData_PartNode)::DownCast(N);
@@ -103,7 +103,7 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
 //-----------------------------------------------------------------------------
 
 //! Factory method for Presentation.
-//! \param N [in] Geometry Node to create a Presentation for.
+//! \param[in] N Part Node to create a Presentation for.
 //! \return new Presentation instance.
 Handle(asiVisu_Prs) asiVisu_GeomPrs::Instance(const Handle(ActAPI_INode)& N)
 {
@@ -122,8 +122,8 @@ bool asiVisu_GeomPrs::IsVisible() const
 //-----------------------------------------------------------------------------
 
 //! Sets diagnostic tools for the presentation.
-//! \param progress [in] progress notifier.
-//! \param plotter  [in] imperative plotter.
+//! \param[in] progress progress notifier.
+//! \param[in] plotter  imperative plotter.
 void asiVisu_GeomPrs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
                                          ActAPI_PlotterEntry  plotter)
 {
@@ -230,18 +230,25 @@ void asiVisu_GeomPrs::afterUpdatePipelines() const
 //-----------------------------------------------------------------------------
 
 //! Callback for highlighting.
-//! \param renderer  [in] renderer.
-//! \param pickRes   [in] picking results.
-//! \param selNature [in] selection nature (picking or detecting).
-void asiVisu_GeomPrs::highlight(vtkRenderer*                  renderer,
-                                const asiVisu_PickResult&     pickRes,
-                                const asiVisu_SelectionNature selNature) const
+//! \param[in] renderer  renderer.
+//! \param[in] pickRes   picking results.
+//! \param[in] selNature selection nature (picking or detecting).
+void asiVisu_GeomPrs::highlight(vtkRenderer*                        renderer,
+                                const Handle(asiVisu_PickerResult)& pickRes,
+                                const asiVisu_SelectionNature       selNature) const
 {
   asiVisu_NotUsed(renderer);
 
+  // Can react on cell picking only.
+  Handle(asiVisu_CellPickerResult)
+    cellPickRes = Handle(asiVisu_CellPickerResult)::DownCast(pickRes);
+  //
+  if ( cellPickRes.IsNull() )
+    return;
+
   // #################################################
   // FACE selection
-  if ( pickRes.GetPickedActor() == this->MainActor() )
+  if ( cellPickRes->GetPickedActor() == this->MainActor() )
   {
 #if defined COUT_DEBUG
     std::cout << "Picked MAIN actor" << std::endl;
@@ -250,11 +257,11 @@ void asiVisu_GeomPrs::highlight(vtkRenderer*                  renderer,
     Handle(asiVisu_PartPipeline)
       mainPl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
-    mainPl->SetPickedElements(pickRes.GetPickedElementIds(), selNature);
+    mainPl->SetPickedElements(cellPickRes->GetPickedElementIds(), selNature);
   }
   // #################################################
   // EDGE selection
-  else if ( pickRes.GetPickedActor() == this->ContourActor() )
+  else if ( cellPickRes->GetPickedActor() == this->ContourActor() )
   {
 #if defined COUT_DEBUG
     std::cout << "Picked CONTOUR actor" << std::endl;
@@ -263,15 +270,15 @@ void asiVisu_GeomPrs::highlight(vtkRenderer*                  renderer,
     Handle(asiVisu_PartEdgesPipeline)
       contourPl = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
 
-    contourPl->SetPickedElements(pickRes.GetPickedElementIds(), selNature);
+    contourPl->SetPickedElements(cellPickRes->GetPickedElementIds(), selNature);
   }
 }
 
 //-----------------------------------------------------------------------------
 
 //! Callback for highlighting reset.
-//! \param renderer  [in] renderer.
-//! \param selNature [in] selection nature (picking or detecting).
+//! \param[in] renderer  renderer.
+//! \param[in] selNature selection nature (picking or detecting).
 void asiVisu_GeomPrs::unHighlight(vtkRenderer*                  renderer,
                                   const asiVisu_SelectionNature selNature) const
 {
@@ -289,7 +296,7 @@ void asiVisu_GeomPrs::unHighlight(vtkRenderer*                  renderer,
 //-----------------------------------------------------------------------------
 
 //! Callback for rendering.
-//! \param renderer [in] renderer.
+//! \param[in] renderer renderer.
 void asiVisu_GeomPrs::renderPipelines(vtkRenderer* renderer) const
 {
   asiVisu_NotUsed(renderer);
@@ -300,7 +307,7 @@ void asiVisu_GeomPrs::renderPipelines(vtkRenderer* renderer) const
 //-----------------------------------------------------------------------------
 
 //! Callback for de-rendering.
-//! \param renderer [in] renderer.
+//! \param[in] renderer renderer.
 void asiVisu_GeomPrs::deRenderPipelines(vtkRenderer* renderer) const
 {
   asiVisu_NotUsed(renderer);

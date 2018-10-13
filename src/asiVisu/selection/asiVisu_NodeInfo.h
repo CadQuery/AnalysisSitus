@@ -62,7 +62,7 @@ public:
   asiVisu_EXPORT void
     SetNodeId(const ActAPI_DataObjectId& nodeId);
 
-  asiVisu_EXPORT ActAPI_DataObjectId
+  asiVisu_EXPORT const ActAPI_DataObjectId&
     GetNodeId() const;
 
 public:

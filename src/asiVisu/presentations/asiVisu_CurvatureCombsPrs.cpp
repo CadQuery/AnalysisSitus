@@ -124,9 +124,9 @@ void asiVisu_CurvatureCombsPrs::afterUpdatePipelines() const
 //! \param[in] renderer  renderer.
 //! \param[in] pickRes   picking results.
 //! \param[in] selNature selection nature (picking or detecting).
-void asiVisu_CurvatureCombsPrs::highlight(vtkRenderer*                  renderer,
-                                          const asiVisu_PickResult&     pickRes,
-                                          const asiVisu_SelectionNature selNature) const
+void asiVisu_CurvatureCombsPrs::highlight(vtkRenderer*                        renderer,
+                                          const Handle(asiVisu_PickerResult)& pickRes,
+                                          const asiVisu_SelectionNature       selNature) const
 {
   asiVisu_NotUsed(renderer);
   asiVisu_NotUsed(pickRes);

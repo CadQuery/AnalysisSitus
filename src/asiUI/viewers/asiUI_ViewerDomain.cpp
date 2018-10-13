@@ -70,8 +70,8 @@
 //-----------------------------------------------------------------------------
 
 //! Creates a new instance of viewer.
-//! \param model  [in] Data Model instance.
-//! \param parent [in] parent widget.
+//! \param[in] model  Data Model instance.
+//! \param[in] parent parent widget.
 asiUI_ViewerDomain::asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
                                        QWidget*                       parent)
 : asiUI_Viewer(parent), m_model(model)
@@ -232,7 +232,7 @@ void asiUI_ViewerDomain::onDomainPicked()
 
   //// Access picking results
   //const asiVisu_ActualSelection& sel      = m_prs_mgr->GetCurrentSelection();
-  //const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  //const Handle(asiVisu_PickerResult)&      pick_res = sel.PickResult(SelectionNature_Pick);
   //const asiVisu_ActorElemMap&    elem_map = pick_res.GetPickMap();
 
   //// Check if there is anything selected

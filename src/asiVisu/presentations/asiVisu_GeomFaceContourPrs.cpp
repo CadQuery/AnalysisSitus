@@ -119,9 +119,9 @@ void asiVisu_GeomFaceContourPrs::afterUpdatePipelines() const
 //! \param renderer  [in] renderer.
 //! \param pickRes   [in] picking results.
 //! \param selNature [in] selection nature (picking or detecting).
-void asiVisu_GeomFaceContourPrs::highlight(vtkRenderer*                  renderer,
-                                           const asiVisu_PickResult&     pickRes,
-                                           const asiVisu_SelectionNature selNature) const
+void asiVisu_GeomFaceContourPrs::highlight(vtkRenderer*                        renderer,
+                                           const Handle(asiVisu_PickerResult)& pickRes,
+                                           const asiVisu_SelectionNature       selNature) const
 {
   asiVisu_NotUsed(renderer);
   asiVisu_NotUsed(pickRes);

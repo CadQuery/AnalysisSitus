@@ -46,6 +46,7 @@ asiUI_ViewerHostListener::asiUI_ViewerHostListener(asiUI_ViewerPart*            
                                                    const Handle(asiEngine_Model)& model,
                                                    ActAPI_ProgressEntry           progress,
                                                    ActAPI_PlotterEntry            plotter)
+//
 : asiUI_Viewer3dListener (wViewerHost, model, progress, plotter),
   m_wViewerPart          (wViewerPart),
   m_wViewerDomain        (wViewerDomain)

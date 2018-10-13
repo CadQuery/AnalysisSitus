@@ -66,9 +66,9 @@ private:
     afterUpdatePipelines() const;
 
   virtual void
-    highlight(vtkRenderer*                  renderer,
-              const asiVisu_PickResult&     pickRes,
-              const asiVisu_SelectionNature selNature) const;
+    highlight(vtkRenderer*                        renderer,
+              const Handle(asiVisu_PickerResult)& pickRes,
+              const asiVisu_SelectionNature       selNature) const;
 
   virtual void
     unHighlight(vtkRenderer*                  renderer,

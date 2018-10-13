@@ -112,13 +112,13 @@ private:
   virtual void afterInitPipelines    ();
   virtual void beforeUpdatePipelines ()                                        const;
   virtual void afterUpdatePipelines  ()                                        const;
-  virtual void highlight             (vtkRenderer*                  renderer,
-                                      const asiVisu_PickResult&     pickRes,
-                                      const asiVisu_SelectionNature selNature) const;
-  virtual void unHighlight           (vtkRenderer*                  renderer,
-                                      const asiVisu_SelectionNature selNature) const;
-  virtual void renderPipelines       (vtkRenderer*                  renderer)  const;
-  virtual void deRenderPipelines     (vtkRenderer*                  renderer)  const;
+  virtual void highlight             (vtkRenderer*                        renderer,
+                                      const Handle(asiVisu_PickerResult)& pickRes,
+                                      const asiVisu_SelectionNature       selNature) const;
+  virtual void unHighlight           (vtkRenderer*                        renderer,
+                                      const asiVisu_SelectionNature       selNature) const;
+  virtual void renderPipelines       (vtkRenderer*                        renderer)  const;
+  virtual void deRenderPipelines     (vtkRenderer*                        renderer)  const;
 
 };
 

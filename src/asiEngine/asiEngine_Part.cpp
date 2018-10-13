@@ -207,9 +207,9 @@ Handle(asiData_PartNode) asiEngine_Part::CreatePart()
 
 //! Updates part's geometry in a smart way, so all dependent attributes
 //! are also actualized.
-//! \param model             [in] CAD part to set.
-//! \param doResetTessParams [in] indicates whether to reset tessellation
-//!                               parameters.
+//! \param[in] model             CAD part to set.
+//! \param[in] doResetTessParams indicates whether to reset tessellation
+//!                              parameters.
 void asiEngine_Part::Update(const TopoDS_Shape& model,
                             const bool          doResetTessParams)
 {
@@ -339,8 +339,8 @@ TopoDS_Shape asiEngine_Part::GetShape()
 //-----------------------------------------------------------------------------
 
 //! Extracts sub-shape indices for the given collection of face indices.
-//! \param faceIndices [in]  indices of faces.
-//! \param indices     [out] their corresponding indices among all sub-shapes.
+//! \param[in]  faceIndices indices of faces.
+//! \param[out] indices     their corresponding indices among all sub-shapes.
 void asiEngine_Part::GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteger& faceIndices,
                                                      TColStd_PackedMapOfInteger&       indices)
 {
@@ -363,8 +363,8 @@ void asiEngine_Part::GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfIn
 //-----------------------------------------------------------------------------
 
 //! Extracts sub-shape indices for the given collection of edge indices.
-//! \param edgeIndices [in]  indices of edges.
-//! \param indices     [out] their corresponding indices among all sub-shapes.
+//! \param[in]  edgeIndices indices of edges.
+//! \param[out] indices     their corresponding indices among all sub-shapes.
 void asiEngine_Part::GetSubShapeIndicesByEdgeIndices(const TColStd_PackedMapOfInteger& edgeIndices,
                                                      TColStd_PackedMapOfInteger&       indices)
 {
@@ -387,8 +387,8 @@ void asiEngine_Part::GetSubShapeIndicesByEdgeIndices(const TColStd_PackedMapOfIn
 //-----------------------------------------------------------------------------
 
 //! Extracts sub-shape indices for the given collection of sub-shapes.
-//! \param subShapes [in]  sub-shapes of interest.
-//! \param indices   [out] their corresponding IDs.
+//! \param[in]  subShapes sub-shapes of interest.
+//! \param[out] indices   their corresponding IDs.
 void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                                         TColStd_PackedMapOfInteger&       indices)
 {
@@ -403,10 +403,10 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
 
 //! Extracts sub-shape indices for the given collection of sub-shapes. The
 //! output is distributed by faces, edges and vertices.
-//! \param subShapes     [in]  sub-shapes of interest.
-//! \param faceIndices   [out] global indices for faces.
-//! \param edgeIndices   [out] global indices for edges.
-//! \param vertexIndices [out] global indices for vertices.
+//! \param[in]  subShapes     sub-shapes of interest.
+//! \param[out] faceIndices   global indices for faces.
+//! \param[out] edgeIndices   global indices for edges.
+//! \param[out] vertexIndices global indices for vertices.
 void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                                         TColStd_PackedMapOfInteger&       faceIndices,
                                         TColStd_PackedMapOfInteger&       edgeIndices,
@@ -431,8 +431,8 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
 //-----------------------------------------------------------------------------
 
 //! Highlights a single face.
-//! \param faceIndex [in] face to highlight.
-//! \param color     [in] highlighting color.
+//! \param[in] faceIndex face to highlight.
+//! \param[in] color     highlighting color.
 void asiEngine_Part::HighlightFace(const int     faceIndex,
                                    const QColor& color)
 {
@@ -463,8 +463,8 @@ void asiEngine_Part::HighlightFaces(const TColStd_PackedMapOfInteger& faceIndice
 //-----------------------------------------------------------------------------
 
 //! Highlights edges.
-//! \param edgeIndices [in] edges to highlight.
-//! \param color       [in] highlighting color.
+//! \param[in] edgeIndices edges to highlight.
+//! \param[in] color       highlighting color.
 void asiEngine_Part::HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndices,
                                     const QColor&                     color)
 {
@@ -479,8 +479,8 @@ void asiEngine_Part::HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndice
 //-----------------------------------------------------------------------------
 
 //! Highlights the passed sub-shapes identified by their indices.
-//! \param subShapeIndices [in] indices of the sub-shapes to highlight.
-//! \param selMode         [in] selection mode.
+//! \param[in] subShapeIndices indices of the sub-shapes to highlight.
+//! \param[in] selMode         selection mode.
 void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
                                         const asiVisu_SelectionMode       selMode)
 {
@@ -497,9 +497,9 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
 //-----------------------------------------------------------------------------
 
 //! Highlights the passed sub-shapes identified by their indices.
-//! \param subShapeIndices [in] indices of the sub-shapes to highlight.
-//! \param color           [in] highlighting color.
-//! \param selMode         [in] selection mode.
+//! \param[in] subShapeIndices indices of the sub-shapes to highlight.
+//! \param[in] color           highlighting color.
+//! \param[in] selMode         selection mode.
 void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
                                         const int                         color,
                                         const asiVisu_SelectionMode       selMode)
@@ -528,7 +528,7 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
 //-----------------------------------------------------------------------------
 
 //! Highlights the passed sub-shapes in Part Viewer.
-//! \param subShapes [in] sub-shapes to highlight.
+//! \param[in] subShapes sub-shapes to highlight.
 void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes)
 {
   double pick_color[3];
@@ -544,8 +544,8 @@ void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subSha
 //-----------------------------------------------------------------------------
 
 //! Highlights the passed sub-shapes in Part Viewer.
-//! \param subShapes [in] sub-shapes to highlight.
-//! \param color     [in] highlighting color.
+//! \param[in] subShapes sub-shapes to highlight.
+//! \param[in] color     highlighting color.
 void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes,
                                         const int                         color)
 {
@@ -567,7 +567,7 @@ void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subSha
 //-----------------------------------------------------------------------------
 
 //! Retrieves highlighted sub-shapes from the viewer.
-//! \param subShapes [out] result collection.
+//! \param[out] subShapes result collection.
 void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes)
 {
   // Get the map of ALL shapes to extract topology by selected index which
@@ -576,15 +576,15 @@ void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShap
     M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
 
   // Get actual selection
-  const asiVisu_ActualSelection& sel      = m_prsMgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pick_res = sel.PickResult(SelectionNature_Pick);
+  const asiVisu_ActualSelection&          sel      = m_prsMgr->GetCurrentSelection();
+  const Handle(asiVisu_CellPickerResult)& pick_res = sel.GetCellPickerResult(SelectionNature_Pick);
   //
-  asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pick_res.GetPickedActor() );
+  asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pick_res->GetPickedActor() );
   //
   if ( !nodeInfo )
     return;
 
-  const TColStd_PackedMapOfInteger& subshape_mask = pick_res.GetPickedElementIds();
+  const TColStd_PackedMapOfInteger& subshape_mask = pick_res->GetPickedElementIds();
   //
   for ( TColStd_MapIteratorOfPackedMapOfInteger mit(subshape_mask); mit.More(); mit.Next() )
   {
@@ -598,7 +598,7 @@ void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShap
 //-----------------------------------------------------------------------------
 
 //! Retrieves indices of the highlighted faces.
-//! \param faceIndices [out] indices of the highlighted faces.
+//! \param[out] faceIndices indices of the highlighted faces.
 void asiEngine_Part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices)
 {
   TopTools_IndexedMapOfShape subShapes;
@@ -633,7 +633,7 @@ void asiEngine_Part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices
 //-----------------------------------------------------------------------------
 
 //! Retrieves indices of the highlighted edges.
-//! \param edgeIndices [out] indices of the highlighted edges.
+//! \param[out] edgeIndices indices of the highlighted edges.
 void asiEngine_Part::GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices)
 {
   TopTools_IndexedMapOfShape subShapes;

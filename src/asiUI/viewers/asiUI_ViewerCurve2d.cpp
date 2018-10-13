@@ -51,8 +51,8 @@
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
 //! Creates a new instance of viewer.
-//! \param prs_mgr [in/out] externally defined Presentation Manager.
-//! \param parent  [in]     parent widget.
+//! \param[in] prs_mgr externally defined Presentation Manager.
+//! \param[in] parent  parent widget.
 asiUI_ViewerCurve2d::asiUI_ViewerCurve2d(vtkSmartPointer<asiVisu_PrsManager>& prs_mgr,
                                          QWidget*                             parent) : asiUI_Viewer(parent)
 {

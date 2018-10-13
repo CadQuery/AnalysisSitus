@@ -47,7 +47,7 @@
 //-----------------------------------------------------------------------------
 
 //! Creates a Presentation object for the passed Triangulation Node.
-//! \param N [in] Triangulation Node to create a Presentation for.
+//! \param[in] N Triangulation Node to create a Presentation for.
 asiVisu_TriangulationPrs::asiVisu_TriangulationPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
 {
   Handle(asiData_TriangulationNode)
@@ -93,11 +93,11 @@ asiVisu_TriangulationPrs::asiVisu_TriangulationPrs(const Handle(ActAPI_INode)& N
 //-----------------------------------------------------------------------------
 
 //! Factory method for Node's Presentation.
-//! \param theNode [in] Mesh Node to create a Presentation for.
+//! \param[in] N Triangulation Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_TriangulationPrs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_TriangulationPrs::Instance(const Handle(ActAPI_INode)& N)
 {
-  return new asiVisu_TriangulationPrs(theNode);
+  return new asiVisu_TriangulationPrs(N);
 }
 
 //-----------------------------------------------------------------------------
@@ -106,14 +106,14 @@ Handle(asiVisu_Prs) asiVisu_TriangulationPrs::Instance(const Handle(ActAPI_INode
 //! \return true/false.
 bool asiVisu_TriangulationPrs::IsVisible() const
 {
-  return true; // TODO: make visibility controllable
+  return true;
 }
 
 //-----------------------------------------------------------------------------
 
 //! Sets diagnostic tools for the presentation.
-//! \param progress [in] progress notifier.
-//! \param plotter  [in] imperative plotter.
+//! \param[in] progress progress notifier.
+//! \param[in] plotter  imperative plotter.
 void asiVisu_TriangulationPrs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
                                                   ActAPI_PlotterEntry  plotter)
 {
@@ -188,14 +188,21 @@ void asiVisu_TriangulationPrs::afterUpdatePipelines() const
 //-----------------------------------------------------------------------------
 
 //! Callback for highlighting.
-//! \param renderer  [in] renderer.
-//! \param pickRes   [in] picking results.
-//! \param selNature [in] selection nature (picking or detecting).
-void asiVisu_TriangulationPrs::highlight(vtkRenderer*                  renderer,
-                                         const asiVisu_PickResult&     pickRes,
-                                         const asiVisu_SelectionNature selNature) const
+//! \param[in] renderer  renderer.
+//! \param[in] pickRes   picking results.
+//! \param[in] selNature selection nature (picking or detecting).
+void asiVisu_TriangulationPrs::highlight(vtkRenderer*                        renderer,
+                                         const Handle(asiVisu_PickerResult)& pickRes,
+                                         const asiVisu_SelectionNature       selNature) const
 {
   asiVisu_NotUsed(renderer);
+
+  // Can react on cell picking only.
+  Handle(asiVisu_CellPickerResult)
+    cellPickRes = Handle(asiVisu_CellPickerResult)::DownCast(pickRes);
+  //
+  if ( cellPickRes.IsNull() )
+    return;
 
   // There is one peculiarity in selection mechanism for mesh elements. To
   // save memory, we do not store element IDs as pedigrees or global IDs in
@@ -207,7 +214,7 @@ void asiVisu_TriangulationPrs::highlight(vtkRenderer*                  renderer,
 
   // #################################################
   // FACET selection
-  if ( pickRes.GetPickedActor() == this->MainActor() )
+  if ( cellPickRes->GetPickedActor() == this->MainActor() )
   {
 #if defined COUT_DEBUG
     std::cout << "Picked MAIN actor" << std::endl;
@@ -216,11 +223,11 @@ void asiVisu_TriangulationPrs::highlight(vtkRenderer*                  renderer,
     Handle(asiVisu_TriangulationPipeline)
       mainPl = Handle(asiVisu_TriangulationPipeline)::DownCast( this->GetPipeline(Pipeline_Triangulation) );
 
-    mainPl->SetPickedElements( pickRes.GetPickedCellIds(), selNature );
+    mainPl->SetPickedElements( cellPickRes->GetPickedCellIds(), selNature );
   }
   // #################################################
   // LINK selection
-  else if ( pickRes.GetPickedActor() == this->ContourActor() )
+  else if ( cellPickRes->GetPickedActor() == this->ContourActor() )
   {
 #if defined COUT_DEBUG
     std::cout << "Picked CONTOUR actor" << std::endl;
@@ -229,15 +236,15 @@ void asiVisu_TriangulationPrs::highlight(vtkRenderer*                  renderer,
     Handle(asiVisu_TriangulationLinksPipeline)
       contourPl = Handle(asiVisu_TriangulationLinksPipeline)::DownCast( this->GetPipeline(Pipeline_TriangulationLinks) );
 
-    contourPl->SetPickedElements( pickRes.GetPickedCellIds(), selNature );
+    contourPl->SetPickedElements( cellPickRes->GetPickedCellIds(), selNature );
   }
 }
 
 //-----------------------------------------------------------------------------
 
 //! Callback for highlighting reset.
-//! \param renderer  [in] renderer.
-//! \param selNature [in] selection nature (picking or detecting).
+//! \param[in] renderer  renderer.
+//! \param[in] selNature selection nature (picking or detecting).
 void asiVisu_TriangulationPrs::unHighlight(vtkRenderer*                  renderer,
                                            const asiVisu_SelectionNature selNature) const
 {
@@ -256,7 +263,7 @@ void asiVisu_TriangulationPrs::unHighlight(vtkRenderer*                  rendere
 //-----------------------------------------------------------------------------
 
 //! Callback for rendering.
-//! \param renderer [in] renderer.
+//! \param[in] renderer renderer.
 void asiVisu_TriangulationPrs::renderPipelines(vtkRenderer* renderer) const
 {
   asiVisu_NotUsed(renderer);
@@ -267,7 +274,7 @@ void asiVisu_TriangulationPrs::renderPipelines(vtkRenderer* renderer) const
 //-----------------------------------------------------------------------------
 
 //! Callback for de-rendering.
-//! \param renderer [in] renderer.
+//! \param[in] renderer renderer.
 void asiVisu_TriangulationPrs::deRenderPipelines(vtkRenderer* renderer) const
 {
   asiVisu_NotUsed(renderer);

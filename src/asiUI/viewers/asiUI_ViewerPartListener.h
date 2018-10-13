@@ -65,13 +65,13 @@ public:
 protected slots:
 
   void
-    onFacePicked(const asiVisu_PickResult& pickRes);
+    onFacePicked(asiVisu_PickerResult* pickRes);
 
   void
-    onEdgePicked(const asiVisu_PickResult& pickRes);
+    onEdgePicked(asiVisu_PickerResult* pickRes);
 
   void
-    onVertexPicked(const asiVisu_PickResult& pickRes);
+    onVertexPicked(asiVisu_PickerResult* pickRes);
 
 protected:
 

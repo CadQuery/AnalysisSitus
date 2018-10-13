@@ -78,14 +78,14 @@ void asiEngine_Triangulation::BuildBVH()
 void asiEngine_Triangulation::GetHighlightedFacets(TColStd_PackedMapOfInteger& facetIndices)
 {
   // Get actual selection
-  const asiVisu_ActualSelection& sel     = m_prsMgr->GetCurrentSelection();
-  const asiVisu_PickResult&      pickRes = sel.PickResult(SelectionNature_Pick);
+  const asiVisu_ActualSelection&          sel     = m_prsMgr->GetCurrentSelection();
+  const Handle(asiVisu_CellPickerResult)& pickRes = sel.GetCellPickerResult(SelectionNature_Pick);
   //
   asiVisu_TriangulationNodeInfo*
-    nodeInfo = asiVisu_TriangulationNodeInfo::Retrieve( pickRes.GetPickedActor() );
+    nodeInfo = asiVisu_TriangulationNodeInfo::Retrieve( pickRes->GetPickedActor() );
   //
   if ( !nodeInfo )
     return;
 
-  facetIndices = pickRes.GetPickedElementIds();
+  facetIndices = pickRes->GetPickedElementIds();
 }

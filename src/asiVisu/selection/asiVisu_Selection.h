@@ -152,21 +152,7 @@ public:
     SetPickedActor(const vtkSmartPointer<vtkActor>& actor);
 
   asiVisu_EXPORT void
-    SetPickedElementId(const vtkIdType elemId);
-
-  asiVisu_EXPORT void
-    AddPickedElementId(const vtkIdType elemId);
-
-  asiVisu_EXPORT void
-    RemovePickedElementId(const vtkIdType elemId);
-
-  asiVisu_EXPORT void
-    SetPickedElementIds(const TColStd_PackedMapOfInteger& elemIds);
-
-  asiVisu_EXPORT void
     SetSelectionModes(const int selModes);
-
-public:
 
   asiVisu_EXPORT void
     GetPickedPos(double& x, double& y, double& z) const;
@@ -174,23 +160,11 @@ public:
   asiVisu_EXPORT const vtkSmartPointer<vtkActor>&
     GetPickedActor() const;
 
-  asiVisu_EXPORT const TColStd_PackedMapOfInteger&
-    GetPickedElementIds() const;
-
-  asiVisu_EXPORT void
+  asiVisu_EXPORT virtual void
     Clear();
 
   asiVisu_EXPORT bool
     IsEmpty() const;
-
-  asiVisu_EXPORT bool
-    DoesSelectionCover(const int mode) const;
-
-  asiVisu_EXPORT bool
-    IsSelectionEqual(const int mode) const;
-
-  asiVisu_EXPORT bool
-    IsSelectionNone() const;
 
   asiVisu_EXPORT bool
     IsSelectionWorkpiece() const;
@@ -219,10 +193,6 @@ private:
   //! Picked actor.
   vtkSmartPointer<vtkActor> m_pickedActor;
 
-  //! Picked IDs (cells, points or whatever elements depending on the type
-  //! of the used picker).
-  TColStd_PackedMapOfInteger m_pickedIds;
-
   //! Selection modes the results were obtained for.
   int m_iSelModes;
 
@@ -248,6 +218,49 @@ public:
   //! \return picker type.
   virtual asiVisu_PickerType GetPickerType() const { return PickerType_Cell; }
 
+public:
+
+  asiVisu_EXPORT void
+    SetPickedElementId(const vtkIdType elemId);
+
+  asiVisu_EXPORT void
+    AddPickedElementId(const vtkIdType elemId);
+
+  asiVisu_EXPORT void
+    RemovePickedElementId(const vtkIdType elemId);
+
+  asiVisu_EXPORT void
+    SetPickedElementIds(const TColStd_PackedMapOfInteger& elemIds);
+
+  asiVisu_EXPORT const TColStd_PackedMapOfInteger&
+    GetPickedElementIds() const;
+
+  asiVisu_EXPORT void
+    SetPickedCellId(const vtkIdType cellId);
+
+  asiVisu_EXPORT void
+    AddPickedCellId(const vtkIdType cellId);
+
+  asiVisu_EXPORT void
+    RemovePickedCellId(const vtkIdType cellId);
+
+  asiVisu_EXPORT void
+    SetPickedCellIds(const TColStd_PackedMapOfInteger& cellIds);
+
+  asiVisu_EXPORT const TColStd_PackedMapOfInteger&
+    GetPickedCellIds() const;
+
+  asiVisu_EXPORT virtual void
+    Clear();
+
+protected:
+
+  //! Picked element IDs.
+  TColStd_PackedMapOfInteger m_pickedElementIds;
+
+  //! Picked cell IDs.
+  TColStd_PackedMapOfInteger m_pickedCellIds;
+
 };
 
 //-----------------------------------------------------------------------------
@@ -269,6 +282,31 @@ public:
 
   //! \return picker type.
   virtual asiVisu_PickerType GetPickerType() const { return PickerType_Point; }
+
+public:
+
+  asiVisu_EXPORT void
+    SetPickedPointId(const vtkIdType elemId);
+
+  asiVisu_EXPORT void
+    AddPickedPointId(const vtkIdType elemId);
+
+  asiVisu_EXPORT void
+    RemovePickedPointId(const vtkIdType elemId);
+
+  asiVisu_EXPORT void
+    SetPickedPointIds(const TColStd_PackedMapOfInteger& elemIds);
+
+  asiVisu_EXPORT const TColStd_PackedMapOfInteger&
+    GetPickedPointIds() const;
+
+  asiVisu_EXPORT virtual void
+    Clear();
+
+protected:
+
+  //! Picked point IDs.
+  TColStd_PackedMapOfInteger m_pickedPointIds;
 
 };
 

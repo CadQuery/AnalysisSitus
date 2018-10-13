@@ -49,8 +49,8 @@
 //-----------------------------------------------------------------------------
 
 //! Creates a new instance of viewer.
-//! \param model  [in] Data Model instance.
-//! \param parent [in] parent widget.
+//! \param[in] model  Data Model instance.
+//! \param[in] parent parent widget.
 asiUI_ViewerHost::asiUI_ViewerHost(const Handle(asiEngine_Model)& model,
                                    QWidget*                       parent) : asiUI_Viewer(parent)
 {

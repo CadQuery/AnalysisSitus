@@ -72,20 +72,6 @@ bool asiAlgo_EulerPoincare::Check(const TopoDS_Shape&  shape,
                               nbDegenEdges,
                               nbVertexes);
 
-  // Prepare output string with the gathered summary
-  std::cout << "Shape summary:\n";
-  std::cout << "- nb compsolids: "        << nbCompsolids << "\n";
-  std::cout << "- nb compounds: "         << nbCompounds  << "\n";
-  std::cout << "- nb solids: "            << nbSolids     << "\n";
-  std::cout << "- nb shells (s): "        << nbShells     << "\n";
-  std::cout << "- nb faces (f): "         << nbFaces      << "\n";
-  std::cout << "- nb wires: "             << nbWires      << "\n";
-  std::cout << "\t- nb outer wires: "     << nbOuterWires << "\n";
-  std::cout << "\t- nb inner wires (r): " << nbInnerWires << "\n";
-  std::cout << "- nb edges (e - degen): " << nbEdges      << "\n";
-  std::cout << "\t- nb degen edges: "     << nbDegenEdges << "\n";
-  std::cout << "- nb vertices (v): "      << nbVertexes   << "\n";
-
   const int v = nbVertexes;
   const int e = nbEdges - nbDegenEdges;
   const int f = nbFaces;

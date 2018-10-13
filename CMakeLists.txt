@@ -181,7 +181,7 @@ set_property(TARGET asiEngine        PROPERTY FOLDER Framework)
 set_property(TARGET asiUI            PROPERTY FOLDER Framework)
 set_property(TARGET asiTestEngine    PROPERTY FOLDER Framework)
 ################################################################################
-set_property(TARGET BRepInspectorExe PROPERTY FOLDER Executables)
+set_property(TARGET asiExe           PROPERTY FOLDER Executables)
 set_property(TARGET asiTest          PROPERTY FOLDER Executables)
 ################################################################################
 set_property(TARGET setup            PROPERTY FOLDER Utilities)

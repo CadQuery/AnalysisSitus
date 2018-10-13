@@ -1,4 +1,4 @@
-project(BRepInspectorExe)
+project(asiExe)
 
 #------------------------------------------------------------------------------
 # Common
@@ -173,14 +173,14 @@ source_group ("Generated" FILES "${RCC_FILE}")
 # Create executable
 #------------------------------------------------------------------------------
 
-add_executable(BRepInspectorExe ${ui_moc_files} ${src_files} ${RCC_FILE})
+add_executable(asiExe ${ui_moc_files} ${src_files} ${RCC_FILE})
 
 set (USE_CONSOLE OFF CACHE BOOL "Using of debug console")
 if (WIN32 AND MSVC)
   if (USE_CONSOLE)
-    set_target_properties(BRepInspectorExe PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE /ENTRY:mainCRTStartup" OUTPUT_NAME "BRepInspectorExe")
+    set_target_properties(asiExe PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE /ENTRY:mainCRTStartup" OUTPUT_NAME "asiExe")
   else ()
-    set_target_properties(BRepInspectorExe PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup" OUTPUT_NAME "BRepInspectorExe")
+    set_target_properties(asiExe PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup" OUTPUT_NAME "asiExe")
   endif ()
 endif()
 
@@ -191,15 +191,15 @@ endif()
 set (X_COMPILER_BITNESS "x${COMPILER_BITNESS}")
 
 configure_file(${CMAKE_SOURCE_DIR}/cmake/templates/exePROTOTYPE.vcxproj.user.in
-               ${BRepInspectorExe_BINARY_DIR}/BRepInspectorExe.vcxproj.user @ONLY)
+               ${asiExe_BINARY_DIR}/asiExe.vcxproj.user @ONLY)
 
 #------------------------------------------------------------------------------
 # Dependencies
 #------------------------------------------------------------------------------
 
-qt5_use_modules(BRepInspectorExe Core Widgets)
+qt5_use_modules(asiExe Core Widgets)
 
-target_link_libraries(BRepInspectorExe asiTcl asiAlgo asiData asiVisu asiEngine asiUI)
+target_link_libraries(asiExe asiTcl asiAlgo asiData asiVisu asiEngine asiUI)
 
 if (3RDPARTY_tbb_LIBRARY_DIR_DEBUG)
   link_directories(${3RDPARTY_tbb_LIBRARY_DIR_DEBUG})
@@ -215,10 +215,10 @@ foreach (LIB_FILE ${OCCT_LIB_FILES})
   endif()
 
   if (3RDPARTY_OCCT_LIBRARY_DIR_DEBUG AND EXISTS "${3RDPARTY_OCCT_LIBRARY_DIR_DEBUG}/${LIB_FILENAME}")
-    target_link_libraries (BRepInspectorExe debug ${3RDPARTY_OCCT_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
-    target_link_libraries (BRepInspectorExe optimized ${3RDPARTY_OCCT_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (asiExe debug ${3RDPARTY_OCCT_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
+    target_link_libraries (asiExe optimized ${3RDPARTY_OCCT_LIBRARY_DIR}/${LIB_FILENAME})
   else()
-    target_link_libraries (BRepInspectorExe ${3RDPARTY_OCCT_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (asiExe ${3RDPARTY_OCCT_LIBRARY_DIR}/${LIB_FILENAME})
   endif()
 endforeach()
 
@@ -230,10 +230,10 @@ foreach (LIB_FILE ${AD_LIB_FILES})
   endif()
 
   if (3RDPARTY_active_data_LIBRARY_DIR_DEBUG AND EXISTS "${3RDPARTY_active_data_LIBRARY_DIR_DEBUG}/${LIB_FILENAME}")
-    target_link_libraries (BRepInspectorExe debug ${3RDPARTY_active_data_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
-    target_link_libraries (BRepInspectorExe optimized ${3RDPARTY_active_data_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (asiExe debug ${3RDPARTY_active_data_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
+    target_link_libraries (asiExe optimized ${3RDPARTY_active_data_LIBRARY_DIR}/${LIB_FILENAME})
   else()
-    target_link_libraries (BRepInspectorExe ${3RDPARTY_active_data_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (asiExe ${3RDPARTY_active_data_LIBRARY_DIR}/${LIB_FILENAME})
   endif()
 endforeach()
 
@@ -245,10 +245,10 @@ foreach (LIB_FILE ${VTK_LIB_FILES})
   endif()
 
   if (3RDPARTY_vtk_LIBRARY_DIR_DEBUG AND EXISTS "${3RDPARTY_vtk_LIBRARY_DIR_DEBUG}/${LIB_FILENAME}")
-    target_link_libraries (BRepInspectorExe debug ${3RDPARTY_vtk_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
-    target_link_libraries (BRepInspectorExe optimized ${3RDPARTY_vtk_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (asiExe debug ${3RDPARTY_vtk_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
+    target_link_libraries (asiExe optimized ${3RDPARTY_vtk_LIBRARY_DIR}/${LIB_FILENAME})
   else()
-    target_link_libraries (BRepInspectorExe ${3RDPARTY_vtk_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (asiExe ${3RDPARTY_vtk_LIBRARY_DIR}/${LIB_FILENAME})
   endif()
 endforeach()
 
@@ -261,14 +261,14 @@ foreach (LIB_FILE ${TBB_LIB_FILES})
     set (LIB_FILENAME_DEBUG "lib${LIB_FILE}_debug${CMAKE_SHARED_LIBRARY_SUFFIX}")
   endif()
 
-  target_link_libraries (BRepInspectorExe debug ${3RDPARTY_tbb_LIBRARY_DIR}/${LIB_FILENAME_DEBUG})
-  target_link_libraries (BRepInspectorExe optimized ${3RDPARTY_tbb_LIBRARY_DIR}/${LIB_FILENAME})
+  target_link_libraries (asiExe debug ${3RDPARTY_tbb_LIBRARY_DIR}/${LIB_FILENAME_DEBUG})
+  target_link_libraries (asiExe optimized ${3RDPARTY_tbb_LIBRARY_DIR}/${LIB_FILENAME})
 endforeach()
 
 #------------------------------------------------------------------------------
 # Installation of Analysis Situs as a software
 #------------------------------------------------------------------------------
 
-install (TARGETS BRepInspectorExe RUNTIME DESTINATION bin COMPONENT Runtime)
+install (TARGETS asiExe RUNTIME DESTINATION bin COMPONENT Runtime)
 install (FILES resources/asitus/icon.ico DESTINATION bin)
 install (FILES resources/asitus/icon64.ico DESTINATION bin)

@@ -785,305 +785,6 @@ int asiVisu_PrsManager::GetSelectionMode() const
 
 //-----------------------------------------------------------------------------
 
-bool
-  asiVisu_PrsManager::cellPickerResult(const asiVisu_SelectionNature           selNature,
-                                       const Handle(asiVisu_CellPickerResult)& pickRes)
-{
-  vtkIdType cellId = m_cellPicker->GetCellId();
-  vtkIdType gid    = -1;
-  vtkIdType pid    = -1;
-  //
-  if ( cellId != -1 )
-  {
-#if defined COUT_DEBUG
-    std::cout << "Picked Cell ID = " << cellId << std::endl;
-#endif
-
-    // Global IDs.
-    vtkSmartPointer<vtkIdTypeArray>
-      gids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetGlobalIds() );
-    //
-    if ( gids )
-    {
-      gid = gids->GetValue(cellId);
-#if defined COUT_DEBUG
-      std::cout << "Picked GID (Global ID) = " << gid << std::endl;
-#endif
-    }
-
-    // Pedigree IDs.
-    vtkSmartPointer<vtkIdTypeArray>
-      pids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetPedigreeIds() );
-    //
-    if ( pids )
-    {
-      pid = pids->GetValue(cellId);
-#if defined COUT_DEBUG
-      std::cout << "Picked PID (Pedigree ID) = " << pid << std::endl;
-#endif
-    }
-  }
-
-  // Get picked position and store it in the result.
-  double pickedPos[3];
-  m_cellPicker->GetPickPosition(pickedPos);
-  pickRes->SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
-
-  // Get picked actor.
-  vtkActor* pickedActor = m_cellPicker->GetActor();
-  //
-  if ( !pickedActor )
-  {
-#if defined COUT_DEBUG
-    std::cout << "No picked actor" << std::endl;
-#endif
-    m_widget->repaint();
-    return false; // Nothing has been picked.
-  }
-
-  // Check consistency of the picked actor with the already
-  // recorded one (if any).
-  if ( pickRes->GetPickedActor().GetPointer() &&
-       pickRes->GetPickedActor() != pickedActor )
-  {
-    vtkErrorMacro( << "Selection logic error: attempt to accumulate cell IDs from different actors to a single picking result" );
-    return false;
-  }
-  if ( !pickRes->GetPickedActor().GetPointer() )
-    pickRes->SetPickedActor(pickedActor);
-
-  // Push ID to result: ID can be either a pedigree ID or a global ID
-  // depending on the context.
-  if ( pid != -1 )
-  {
-    // Let the user unpick the already selected elements.
-    if ( (selNature == SelectionNature_Pick) && pickRes->GetPickedElementIds().Contains(pid) )
-      pickRes->RemovePickedElementId(pid);
-    else
-      pickRes->AddPickedElementId(pid);
-  }
-  else if ( gid != -1 )
-  {
-    // Let the user unpick the already selected elements.
-    if ( (selNature == SelectionNature_Pick) && pickRes->GetPickedElementIds().Contains(gid) )
-      pickRes->RemovePickedElementId(gid);
-    else
-      pickRes->AddPickedElementId(gid);
-  }
-
-  // Let the user unpick the already selected elements.
-  if ( (selNature == SelectionNature_Pick) && pickRes->GetPickedCellIds().Contains(cellId) )
-    pickRes->RemovePickedCellId(cellId);
-  else
-    pickRes->AddPickedCellId(cellId);
-
-  return true;
-}
-
-//-----------------------------------------------------------------------------
-
-bool
-  asiVisu_PrsManager::pointPickerResult(const asiVisu_SelectionNature            selNature,
-                                        const Handle(asiVisu_PointPickerResult)& pickRes)
-{
-  vtkIdType pointId = m_pointPicker->GetPointId();
-
-  // Get picked position and store it in the result.
-  double pickedPos[3];
-  m_pointPicker->GetPickPosition(pickedPos);
-  pickRes->SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
-
-  // Get picked actor.
-  vtkActor* pickedActor = m_pointPicker->GetActor();
-  //
-  if ( !pickedActor )
-  {
-    m_widget->repaint();
-    return false; // Nothing has been picked.
-  }
-
-  // Check consistency of the picked actor with the already recorded one (if any).
-  if ( pickRes->GetPickedActor().GetPointer() &&
-       pickRes->GetPickedActor() != pickedActor )
-  {
-    vtkErrorMacro( << "Selection logic error: attempt to accumulate cell IDs from different actors to a single picking result" );
-    return false;
-  }
-
-  // Push ID to result.
-  if ( !pickRes->GetPickedActor().GetPointer() )
-    pickRes->SetPickedActor(pickedActor);
-  //
-  pickRes->AddPickedPointId(pointId);
-
-  if ( pointId != -1 )
-  {
-#if defined COUT_DEBUG
-    std::cout << "Picked Point ID = " << pointId << std::endl;
-#endif
-
-    double coord[3] = {0.0, 0.0, 0.0};
-    m_pointPicker->GetDataSet()->GetPoint(pointId, coord);
-
-#if defined COUT_DEBUG
-    std::cout << "Picked point position: ("
-              << coord[0] << ", " << coord[1] << ", " << coord[2]
-              << ")" << std::endl;
-#endif
-
-    if ( selNature == SelectionNature_Detection )
-      this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &*pickRes);
-    else
-      this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &*pickRes);
-  }
-
-  return true;
-}
-
-//-----------------------------------------------------------------------------
-
-bool
-  asiVisu_PrsManager::worldPickerResult(const asiVisu_SelectionNature            selNature,
-                                        const Handle(asiVisu_WorldPickerResult)& pickRes)
-{
-  // Picked position returned by this kind of "world" picker is very
-  // inaccurate for the needs of computational geometry. This is because
-  // the world picker is based on depth buffer analysis. The latter
-  // makes it very efficient, but not very precise. As a result, if
-  // we simply use the picked position for the intersection testing (we
-  // do that in order to know which face corresponds to the picked
-  // position), the test will fail in many cases as it wouldn't
-  // find even a bounding box containing such an imprecise point.
-  // In order to fix the deal, we take that inaccurate picked position
-  // and reconstruct a ray in the direction of projection (this is
-  // the camera's property). Then we have to intersect our geometry
-  // with the ray, thus obtaining the precise position. If we intersect
-  // the accurate B-Rep primitive, then the solution is ideal in terms
-  // of achievable accuracy. Another option is to intersect the ray
-  // with visualization facets which is faster but less accurate.
-
-  double coord[3];
-  m_worldPicker->GetPickPosition(coord);
-
-  // Store picked position in the result.
-  pickRes->SetPickedPos(coord[0], coord[1], coord[2]);
-
-  vtkCamera* camera  = m_renderer->GetActiveCamera();
-  double*    dirProj = camera->GetDirectionOfProjection();
-
-  gp_Pnt cPos(coord[0], coord[1], coord[2]);
-  gp_Pnt cOrigin = cPos.XYZ() - gp_XYZ(dirProj[0], dirProj[1], dirProj[2])*300;
-  gp_Lin pickRay( cOrigin, gp_Dir(dirProj[0], dirProj[1], dirProj[2]) );
-
-#if defined COUT_DEBUG
-  std::cout << "Picked world position: ("
-            << coord[0] << ", " << coord[1] << ", " << coord[2]
-            << ")" << std::endl;
-#endif
-
-  if ( selNature == SelectionNature_Detection )
-    this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &pickRay);
-  else
-    this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &pickRay);
-
-  return true;
-}
-
-//-----------------------------------------------------------------------------
-
-Handle(asiVisu_Prs)
-  asiVisu_PrsManager::preparePickedPrs(const asiVisu_SelectionNature       selNature,
-                                       const Handle(asiVisu_PickerResult)& pickRes)
-{
-  if ( pickRes.IsNull() )
-    return NULL;
-
-  // Retrieve the corresponding Presentation by the data object ID.
-  asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve( pickRes->GetPickedActor() );
-  //
-  if ( !nodeInfo )
-  {
-#if defined COUT_DEBUG
-    std::cout << "NULL Node information key: highlighting is not possible." << std::endl;
-#endif
-    return NULL;
-  }
-  //
-  const ActAPI_DataObjectId& nodeId = nodeInfo->GetNodeId();
-  //
-  m_currentSelection.AddNodeId(selNature, nodeId);
-
-  // Eliminate elements of improper type for the picking result. This functionality
-  // is available for master Nodes only.
-  if ( !m_model.IsNull() &&
-        dynamic_cast<asiVisu_PartNodeInfo*>(nodeInfo) &&
-        pickRes->IsKind( STANDARD_TYPE(asiVisu_CellPickerResult) ) )
-  {
-    Handle(asiVisu_CellPickerResult)
-      cellPickRes = Handle(asiVisu_CellPickerResult)::DownCast(pickRes);
-
-    // Get Part Node.
-    asiVisu_PartNodeInfo* partInfo = dynamic_cast<asiVisu_PartNodeInfo*>(nodeInfo);
-    //
-    Handle(asiData_PartNode)
-      partNode = Handle(asiData_PartNode)::DownCast( m_model->FindNode( partInfo->GetNodeId() ) );
-
-    // Get AAG.
-    Handle(asiAlgo_AAG) aag = partNode->GetAAG();
-    //
-    if ( !aag.IsNull() )
-    {
-      // Filter sub-shape IDs.
-      TColStd_PackedMapOfInteger subShapes2Highlight;
-      const TColStd_PackedMapOfInteger& pickedSubshapes = cellPickRes->GetPickedElementIds();
-      //
-      for ( TColStd_MapIteratorOfPackedMapOfInteger mit(pickedSubshapes); mit.More(); mit.Next() )
-      {
-        if ( pickRes->IsSelectionFace() )
-        {
-          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
-          {
-            TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
-            //
-            if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_FACE )
-              subShapes2Highlight.Add( mit.Key() );
-          }
-        }
-        else if ( pickRes->IsSelectionEdge() )
-        {
-          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
-          {
-            TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
-            //
-            if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_EDGE )
-              subShapes2Highlight.Add( mit.Key() );
-          }
-        }
-        else if ( pickRes->IsSelectionVertex() )
-        {
-          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
-          {
-            TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
-            //
-            if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_VERTEX )
-              subShapes2Highlight.Add( mit.Key() );
-          }
-        }
-      }
-
-      // Re-initialize IDs of the picked elements.
-      cellPickRes->SetPickedElementIds(subShapes2Highlight);
-    }
-  }
-
-  // Get presentation.
-  Handle(asiVisu_Prs) prs3D = this->GetPresentation(nodeId);
-  //
-  return prs3D;
-}
-
-//-----------------------------------------------------------------------------
-
 //! Performs picking or detection by the passed display coordinates (pick input).
 //!
 //! \param[in] pickInput picking input data.
@@ -1616,6 +1317,40 @@ const vtkSmartPointer<vtkCellPicker>& asiVisu_PrsManager::GetCellPicker() const
 
 //-----------------------------------------------------------------------------
 
+//! Adds callback to be activated in UpdatePresentation() method.
+//!
+//! \param[in] eventID   ID of callback action
+//! \param[in] pCallback callback to add.
+//! \return tag of the event.
+long int asiVisu_PrsManager::AddUpdateCallback(unsigned long eventID,
+                                               vtkCommand*   pCallback)
+{
+  m_updateCallbackIds.Append(eventID);
+  return this->AddObserver(eventID, pCallback);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Removes callback with the given tag.
+//! \param[in] eventID event ID on which events are invoked.
+//! \param[in] tag     tag which is assigned to particular event entity.
+//! \return true in case of success, false -- otherwise.
+bool asiVisu_PrsManager::RemoveUpdateCallback(unsigned long eventID,
+                                              unsigned long tag)
+{
+  if ( m_updateCallbackIds.IsEmpty() )
+    return false;
+
+  this->RemoveObserver(tag);
+
+  if ( !this->HasObserver(eventID) )
+    m_updateCallbackIds.Remove(eventID);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Initializes presentation manager.
 void asiVisu_PrsManager::init()
 {
@@ -1692,34 +1427,299 @@ void asiVisu_PrsManager::init()
 
 //-----------------------------------------------------------------------------
 
-//! Adds callback to be activated in UpdatePresentation() method.
-//!
-//! \param[in] eventID   ID of callback action
-//! \param[in] pCallback callback to add.
-//! \return tag of the event.
-long int asiVisu_PrsManager::AddUpdateCallback(unsigned long eventID,
-                                               vtkCommand*   pCallback)
+bool
+  asiVisu_PrsManager::cellPickerResult(const asiVisu_SelectionNature           selNature,
+                                       const Handle(asiVisu_CellPickerResult)& pickRes)
 {
-  m_updateCallbackIds.Append(eventID);
-  return this->AddObserver(eventID, pCallback);
+  vtkIdType cellId = m_cellPicker->GetCellId();
+  vtkIdType gid    = -1;
+  vtkIdType pid    = -1;
+  //
+  if ( cellId != -1 )
+  {
+#if defined COUT_DEBUG
+    std::cout << "Picked Cell ID = " << cellId << std::endl;
+#endif
+
+    // Global IDs.
+    vtkSmartPointer<vtkIdTypeArray>
+      gids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetGlobalIds() );
+    //
+    if ( gids )
+    {
+      gid = gids->GetValue(cellId);
+#if defined COUT_DEBUG
+      std::cout << "Picked GID (Global ID) = " << gid << std::endl;
+#endif
+    }
+
+    // Pedigree IDs.
+    vtkSmartPointer<vtkIdTypeArray>
+      pids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetPedigreeIds() );
+    //
+    if ( pids )
+    {
+      pid = pids->GetValue(cellId);
+#if defined COUT_DEBUG
+      std::cout << "Picked PID (Pedigree ID) = " << pid << std::endl;
+#endif
+    }
+  }
+
+  // Get picked position and store it in the result.
+  double pickedPos[3];
+  m_cellPicker->GetPickPosition(pickedPos);
+  pickRes->SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
+
+  // Get picked actor.
+  vtkActor* pickedActor = m_cellPicker->GetActor();
+  //
+  if ( !pickedActor )
+  {
+#if defined COUT_DEBUG
+    std::cout << "No picked actor" << std::endl;
+#endif
+    m_widget->repaint();
+    return false; // Nothing has been picked.
+  }
+
+  // Check consistency of the picked actor with the already
+  // recorded one (if any).
+  if ( pickRes->GetPickedActor().GetPointer() &&
+       pickRes->GetPickedActor() != pickedActor )
+  {
+    vtkErrorMacro( << "Selection logic error: attempt to accumulate cell IDs from different actors to a single picking result" );
+    return false;
+  }
+  if ( !pickRes->GetPickedActor().GetPointer() )
+    pickRes->SetPickedActor(pickedActor);
+
+  // Push ID to result: ID can be either a pedigree ID or a global ID
+  // depending on the context.
+  if ( pid != -1 )
+  {
+    // Let the user unpick the already selected elements.
+    if ( (selNature == SelectionNature_Pick) && pickRes->GetPickedElementIds().Contains(pid) )
+      pickRes->RemovePickedElementId(pid);
+    else
+      pickRes->AddPickedElementId(pid);
+  }
+  else if ( gid != -1 )
+  {
+    // Let the user unpick the already selected elements.
+    if ( (selNature == SelectionNature_Pick) && pickRes->GetPickedElementIds().Contains(gid) )
+      pickRes->RemovePickedElementId(gid);
+    else
+      pickRes->AddPickedElementId(gid);
+  }
+
+  // Let the user unpick the already selected elements.
+  if ( (selNature == SelectionNature_Pick) && pickRes->GetPickedCellIds().Contains(cellId) )
+    pickRes->RemovePickedCellId(cellId);
+  else
+    pickRes->AddPickedCellId(cellId);
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------
 
-//! Removes callback with the given tag.
-//! \param[in] eventID event ID on which events are invoked.
-//! \param[in] tag     tag which is assigned to particular event entity.
-//! \return true in case of success, false -- otherwise.
-bool asiVisu_PrsManager::RemoveUpdateCallback(unsigned long eventID,
-                                              unsigned long tag)
+bool
+  asiVisu_PrsManager::pointPickerResult(const asiVisu_SelectionNature            selNature,
+                                        const Handle(asiVisu_PointPickerResult)& pickRes)
 {
-  if ( m_updateCallbackIds.IsEmpty() )
+  vtkIdType pointId = m_pointPicker->GetPointId();
+
+  // Get picked position and store it in the result.
+  double pickedPos[3];
+  m_pointPicker->GetPickPosition(pickedPos);
+  pickRes->SetPickedPos(pickedPos[0], pickedPos[1], pickedPos[2]);
+
+  // Get picked actor.
+  vtkActor* pickedActor = m_pointPicker->GetActor();
+  //
+  if ( !pickedActor )
+  {
+    m_widget->repaint();
+    return false; // Nothing has been picked.
+  }
+
+  // Check consistency of the picked actor with the already recorded one (if any).
+  if ( pickRes->GetPickedActor().GetPointer() &&
+       pickRes->GetPickedActor() != pickedActor )
+  {
+    vtkErrorMacro( << "Selection logic error: attempt to accumulate cell IDs from different actors to a single picking result" );
     return false;
+  }
 
-  this->RemoveObserver(tag);
+  // Push ID to result.
+  if ( !pickRes->GetPickedActor().GetPointer() )
+    pickRes->SetPickedActor(pickedActor);
+  //
+  pickRes->AddPickedPointId(pointId);
 
-  if ( !this->HasObserver(eventID) )
-    m_updateCallbackIds.Remove(eventID);
+  if ( pointId != -1 )
+  {
+#if defined COUT_DEBUG
+    std::cout << "Picked Point ID = " << pointId << std::endl;
+#endif
+
+    double coord[3] = {0.0, 0.0, 0.0};
+    m_pointPicker->GetDataSet()->GetPoint(pointId, coord);
+
+#if defined COUT_DEBUG
+    std::cout << "Picked point position: ("
+              << coord[0] << ", " << coord[1] << ", " << coord[2]
+              << ")" << std::endl;
+#endif
+
+    if ( selNature == SelectionNature_Detection )
+      this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &*pickRes);
+    else
+      this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &*pickRes);
+  }
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool
+  asiVisu_PrsManager::worldPickerResult(const asiVisu_SelectionNature            selNature,
+                                        const Handle(asiVisu_WorldPickerResult)& pickRes)
+{
+  // Picked position returned by this kind of "world" picker is very
+  // inaccurate for the needs of computational geometry. This is because
+  // the world picker is based on depth buffer analysis. The latter
+  // makes it very efficient, but not very precise. As a result, if
+  // we simply use the picked position for the intersection testing (we
+  // do that in order to know which face corresponds to the picked
+  // position), the test will fail in many cases as it wouldn't
+  // find even a bounding box containing such an imprecise point.
+  // In order to fix the deal, we take that inaccurate picked position
+  // and reconstruct a ray in the direction of projection (this is
+  // the camera's property). Then we have to intersect our geometry
+  // with the ray, thus obtaining the precise position. If we intersect
+  // the accurate B-Rep primitive, then the solution is ideal in terms
+  // of achievable accuracy. Another option is to intersect the ray
+  // with visualization facets which is faster but less accurate.
+
+  double coord[3];
+  m_worldPicker->GetPickPosition(coord);
+
+  // Store picked position in the result.
+  pickRes->SetPickedPos(coord[0], coord[1], coord[2]);
+
+  vtkCamera* camera  = m_renderer->GetActiveCamera();
+  double*    dirProj = camera->GetDirectionOfProjection();
+
+  gp_Pnt cPos(coord[0], coord[1], coord[2]);
+  gp_Pnt cOrigin = cPos.XYZ() - gp_XYZ(dirProj[0], dirProj[1], dirProj[2])*300;
+  gp_Lin pickRay( cOrigin, gp_Dir(dirProj[0], dirProj[1], dirProj[2]) );
+
+#if defined COUT_DEBUG
+  std::cout << "Picked world position: ("
+            << coord[0] << ", " << coord[1] << ", " << coord[2]
+            << ")" << std::endl;
+#endif
+
+  if ( selNature == SelectionNature_Detection )
+    this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &pickRay);
+  else
+    this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &pickRay);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiVisu_Prs)
+  asiVisu_PrsManager::preparePickedPrs(const asiVisu_SelectionNature       selNature,
+                                       const Handle(asiVisu_PickerResult)& pickRes)
+{
+  if ( pickRes.IsNull() )
+    return NULL;
+
+  // Retrieve the corresponding Presentation by the data object ID.
+  asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve( pickRes->GetPickedActor() );
+  //
+  if ( !nodeInfo )
+  {
+#if defined COUT_DEBUG
+    std::cout << "NULL Node information key: highlighting is not possible." << std::endl;
+#endif
+    return NULL;
+  }
+  //
+  const ActAPI_DataObjectId& nodeId = nodeInfo->GetNodeId();
+  //
+  m_currentSelection.AddNodeId(selNature, nodeId);
+
+  // Eliminate elements of improper type for the picking result. This functionality
+  // is available for master Nodes only.
+  if ( !m_model.IsNull() &&
+        dynamic_cast<asiVisu_PartNodeInfo*>(nodeInfo) &&
+        pickRes->IsKind( STANDARD_TYPE(asiVisu_CellPickerResult) ) )
+  {
+    Handle(asiVisu_CellPickerResult)
+      cellPickRes = Handle(asiVisu_CellPickerResult)::DownCast(pickRes);
+
+    // Get Part Node.
+    asiVisu_PartNodeInfo* partInfo = dynamic_cast<asiVisu_PartNodeInfo*>(nodeInfo);
+    //
+    Handle(asiData_PartNode)
+      partNode = Handle(asiData_PartNode)::DownCast( m_model->FindNode( partInfo->GetNodeId() ) );
+
+    // Get AAG.
+    Handle(asiAlgo_AAG) aag = partNode->GetAAG();
+    //
+    if ( !aag.IsNull() )
+    {
+      // Filter sub-shape IDs.
+      TColStd_PackedMapOfInteger subShapes2Highlight;
+      const TColStd_PackedMapOfInteger& pickedSubshapes = cellPickRes->GetPickedElementIds();
+      //
+      for ( TColStd_MapIteratorOfPackedMapOfInteger mit(pickedSubshapes); mit.More(); mit.Next() )
+      {
+        if ( pickRes->IsSelectionFace() )
+        {
+          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
+          {
+            TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
+            //
+            if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_FACE )
+              subShapes2Highlight.Add( mit.Key() );
+          }
+        }
+        else if ( pickRes->IsSelectionEdge() )
+        {
+          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
+          {
+            TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
+            //
+            if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_EDGE )
+              subShapes2Highlight.Add( mit.Key() );
+          }
+        }
+        else if ( pickRes->IsSelectionVertex() )
+        {
+          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
+          {
+            TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
+            //
+            if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_VERTEX )
+              subShapes2Highlight.Add( mit.Key() );
+          }
+        }
+      }
+
+      // Re-initialize IDs of the picked elements.
+      cellPickRes->SetPickedElementIds(subShapes2Highlight);
+    }
+  }
+
+  // Get presentation.
+  Handle(asiVisu_Prs) prs3D = this->GetPresentation(nodeId);
+  //
+  return prs3D;
 }

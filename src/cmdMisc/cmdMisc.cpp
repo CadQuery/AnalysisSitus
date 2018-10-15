@@ -986,7 +986,7 @@ int MISC_TestPipe(const Handle(asiTcl_Interp)& interp,
 
   const Standard_Real r45=M_PI/4.0,r225=3.0*M_PI/4.0;
 
-  GC_MakeArcOfCircle arcMaker(gp_Circ(gp_Ax2(gp_Pnt(0.0,0.0,0.0), gp_Dir(0.0,0.0,1.0),gp_Dir(1.0,0.0,0.0)),1.0),r45,r225,Standard_True);
+  GC_MakeArcOfCircle arcMaker(gp_Circ(gp_Ax2(gp_Pnt(0.0,0.0,0.0), gp_Dir(0.0,0.0,1.0),gp_Dir(1.0,0.0,0.0)),1.0),r45,r225,true);
   BRepBuilderAPI_MakeEdge edgeMaker(arcMaker.Value());
   BRepBuilderAPI_MakeWire wireMaker(edgeMaker.Edge());
   const TopoDS_Wire circle=wireMaker.Wire();

@@ -35,22 +35,25 @@
 #include <asiAlgo_AAG.h>
 #include <asiAlgo_AAGIterator.h>
 
+#undef FILE_DEBUG
+#if defined FILE_DEBUG
+  #pragma message("===== warning: FILE_DEBUG is enabled")
+#endif
+
 //-----------------------------------------------------------------------------
 
 // Filenames are specified relatively to ASI_TEST_DATA environment variable.
 #define filename_brep_001 "cad/box.brep"
 #define filename_brep_002 "cad/ANC101_isolated_components.brep"
+#define filename_brep_003 "cad/ANC101.brep"
+#define filename_json_001 "reference/aag/testJSON01.json"
+#define filename_json_002 "reference/aag/testJSON02.json"
 
 //-----------------------------------------------------------------------------
 
-outcome asiTest_AAG::testAllNeighborsIterator(const int               funcID,
-                                              const char*             shortFilename,
-                                              const int               seedFaceId,
-                                              const std::vector<int>& refFaceIds)
+bool asiTest_AAG::prepareAAGFromFile(const char*          shortFilename,
+                                     Handle(asiAlgo_AAG)& aag)
 {
-  // Prepare outcome.
-  outcome res(DescriptionFn(), funcID);
-
   // Get common facilities.
   Handle(asiTest_CommonFacilities) cf = asiTest_CommonFacilities::Instance();
 
@@ -65,11 +68,32 @@ outcome asiTest_AAG::testAllNeighborsIterator(const int               funcID,
   {
     cf->ProgressNotifier->SendLogMessage( LogErr(Normal) << "Cannot read file %1."
                                                          << filename.c_str() );
-    return res.failure();
+    return false;
   }
 
   // Prepare AAG allowing smooth dihedral edges for better performance.
-  Handle(asiAlgo_AAG) aag = new asiAlgo_AAG(shape, true);
+  aag = new asiAlgo_AAG(shape, true);
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+outcome asiTest_AAG::testAllNeighborsIterator(const int               funcID,
+                                              const char*             shortFilename,
+                                              const int               seedFaceId,
+                                              const std::vector<int>& refFaceIds)
+{
+  // Prepare outcome.
+  outcome res(DescriptionFn(), funcID);
+
+  // Get common facilities.
+  Handle(asiTest_CommonFacilities) cf = asiTest_CommonFacilities::Instance();
+
+  // Prepare AAG.
+  Handle(asiAlgo_AAG) aag;
+  //
+  if ( !prepareAAGFromFile(shortFilename, aag) )
+    return res.failure();
 
   // Use AAG iterator for neighbor faces.
   size_t refIdx = 0;
@@ -112,7 +136,64 @@ outcome asiTest_AAG::testAllNeighborsIterator(const int               funcID,
 
 //-----------------------------------------------------------------------------
 
-outcome asiTest_AAG::test001(const int funcID)
+outcome asiTest_AAG::testAAG2JSON(const int   funcID,
+                                  const char* shortFilename,
+                                  const char* shortFilenameRef)
+{
+  // Prepare outcome.
+  outcome res(DescriptionFn(), funcID);
+
+  // Get common facilities.
+  Handle(asiTest_CommonFacilities) cf = asiTest_CommonFacilities::Instance();
+
+  // Prepare AAG.
+  Handle(asiAlgo_AAG) aag;
+  //
+  if ( !prepareAAGFromFile(shortFilename, aag) )
+    return res.failure();
+
+  // Dump AAG to JSON.
+  std::stringstream ss;
+  aag->DumpJSON(ss);
+
+#if defined FILE_DEBUG
+  std::ofstream filestream("aagdump.json");
+  //
+  if ( !filestream.is_open() )
+  {
+    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "FILE_DEBUG: file cannot be opened.");
+    return res.failure();
+  }
+  //
+  aag->DumpJSON(filestream);
+  filestream.close();
+#endif
+
+  // Read JSON from file.
+  std::string
+    refFilename = asiAlgo_Utils::Str::Slashed( asiAlgo_Utils::Env::AsiTestData() )
+                + shortFilenameRef;
+  //
+  std::ifstream refFile(refFilename);
+  std::stringstream refBuffer;
+  refBuffer << refFile.rdbuf();
+  //
+  std::string refJson = refBuffer.str();
+  std::string json    = ss.str();
+
+  // Verify.
+  if ( json != refJson )
+  {
+    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "Dumped JSON is different from the expected one.");
+    return res.failure();
+  }
+
+  return res.success();
+}
+
+//-----------------------------------------------------------------------------
+
+outcome asiTest_AAG::testNeighborsIterator001(const int funcID)
 {
   return testAllNeighborsIterator( funcID,
                                    filename_brep_001,
@@ -122,7 +203,7 @@ outcome asiTest_AAG::test001(const int funcID)
 
 //-----------------------------------------------------------------------------
 
-outcome asiTest_AAG::test002(const int funcID)
+outcome asiTest_AAG::testNeighborsIterator002(const int funcID)
 {
   return testAllNeighborsIterator( funcID,
                                    filename_brep_002,
@@ -132,7 +213,7 @@ outcome asiTest_AAG::test002(const int funcID)
 
 //-----------------------------------------------------------------------------
 
-outcome asiTest_AAG::test003(const int funcID)
+outcome asiTest_AAG::testNeighborsIterator003(const int funcID)
 {
   return testAllNeighborsIterator( funcID,
                                    filename_brep_002,
@@ -142,7 +223,7 @@ outcome asiTest_AAG::test003(const int funcID)
 
 //-----------------------------------------------------------------------------
 
-outcome asiTest_AAG::test004(const int funcID)
+outcome asiTest_AAG::testNeighborsIterator004(const int funcID)
 {
   return testAllNeighborsIterator( funcID,
                                    filename_brep_002,
@@ -152,7 +233,7 @@ outcome asiTest_AAG::test004(const int funcID)
 
 //-----------------------------------------------------------------------------
 
-outcome asiTest_AAG::test005(const int funcID)
+outcome asiTest_AAG::testNeighborsIterator005(const int funcID)
 {
   return testAllNeighborsIterator( funcID,
                                    filename_brep_002,
@@ -162,7 +243,7 @@ outcome asiTest_AAG::test005(const int funcID)
 
 //-----------------------------------------------------------------------------
 
-outcome asiTest_AAG::test006(const int funcID)
+outcome asiTest_AAG::testNeighborsIterator006(const int funcID)
 {
   return testAllNeighborsIterator( funcID,
                                    filename_brep_002,
@@ -172,7 +253,7 @@ outcome asiTest_AAG::test006(const int funcID)
 
 //-----------------------------------------------------------------------------
 
-outcome asiTest_AAG::test007(const int funcID)
+outcome asiTest_AAG::testNeighborsIterator007(const int funcID)
 {
   return testAllNeighborsIterator( funcID,
                                    filename_brep_002,
@@ -182,7 +263,7 @@ outcome asiTest_AAG::test007(const int funcID)
 
 //-----------------------------------------------------------------------------
 
-outcome asiTest_AAG::test008(const int funcID)
+outcome asiTest_AAG::testNeighborsIterator008(const int funcID)
 {
   return testAllNeighborsIterator( funcID,
                                    filename_brep_002,
@@ -192,10 +273,24 @@ outcome asiTest_AAG::test008(const int funcID)
 
 //-----------------------------------------------------------------------------
 
-outcome asiTest_AAG::test009(const int funcID)
+outcome asiTest_AAG::testNeighborsIterator009(const int funcID)
 {
   return testAllNeighborsIterator( funcID,
                                    filename_brep_002,
                                    4,
                                   {4, 13, 33, 32, 12, 11, 10} );
+}
+
+//-----------------------------------------------------------------------------
+
+outcome asiTest_AAG::testJSON01(const int funcID)
+{
+  return testAAG2JSON(funcID, filename_brep_001, filename_json_001);
+}
+
+//-----------------------------------------------------------------------------
+
+outcome asiTest_AAG::testJSON02(const int funcID)
+{
+  return testAAG2JSON(funcID, filename_brep_003, filename_json_002);
 }

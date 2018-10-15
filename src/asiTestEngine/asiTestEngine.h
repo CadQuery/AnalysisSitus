@@ -45,4 +45,36 @@
 
 #include <outcome.h>
 
+//! Common functions for unit testing.
+class asiTestEngine
+{
+public:
+
+  //! Compares two passed floating-point values.
+  //! \param[in] val1         first value.
+  //! \param[in] val2         second value.
+  //! \param[in] diff_percent allowed difference in percentage regarding to
+  //!                         average value.
+  //! \param[in] resolution   resolution for very small numbers (which are
+  //!                         impractical to compare: e.g. 0.0001 is 100%
+  //!                         different from 0.0002, but both values may be
+  //!                         too small to consider this difference as
+  //!                         significant in certain use cases).
+  //! \return true in case of such fuzzy equality, false -- otherwise.
+  static bool FuzzyCompare(const double val1,
+                           const double val2,
+                           const double diff_percent,
+                           const double resolution)
+  {
+    if ( Abs(val1 - val2) < resolution )
+      return true;
+
+    const double avg     = (val1 + val2)/2.0;
+    const double actDev = Abs( (val1 - val2)/avg )*100.0;
+
+    return actDev < diff_percent;
+  }
+
+};
+
 #endif

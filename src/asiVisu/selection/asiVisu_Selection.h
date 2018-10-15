@@ -63,9 +63,9 @@ enum asiVisu_PickerType
 //! Selection type.
 enum asiVisu_SelectionNature
 {
-  SelectionNature_None,     //!< Nothing.
-  SelectionNature_Pick = 1, //!< User makes final decision on selection.
-  SelectionNature_Detection //!< User observes selection possibilities.
+  SelectionNature_None,           //!< Nothing.
+  SelectionNature_Persistent = 1, //!< User makes final decision on selection.
+  SelectionNature_Detection       //!< User observes selection possibilities.
 };
 
 //-----------------------------------------------------------------------------

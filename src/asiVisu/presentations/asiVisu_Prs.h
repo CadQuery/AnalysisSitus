@@ -455,7 +455,7 @@ protected:
   //! \return pointer to the corresponding asset.
   t_asset* getAsset(const asiVisu_SelectionNature selNature) const
   {
-    if ( selNature == SelectionNature_Pick )
+    if ( selNature == SelectionNature_Persistent )
       return m_picking;
 
     if ( selNature == SelectionNature_Detection )

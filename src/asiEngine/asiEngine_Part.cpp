@@ -577,7 +577,7 @@ void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShap
 
   // Get actual selection
   const asiVisu_ActualSelection&          sel      = m_prsMgr->GetCurrentSelection();
-  const Handle(asiVisu_CellPickerResult)& pick_res = sel.GetCellPickerResult(SelectionNature_Pick);
+  const Handle(asiVisu_CellPickerResult)& pick_res = sel.GetCellPickerResult(SelectionNature_Persistent);
   //
   asiVisu_PartNodeInfo* nodeInfo = asiVisu_PartNodeInfo::Retrieve( pick_res->GetPickedActor() );
   //

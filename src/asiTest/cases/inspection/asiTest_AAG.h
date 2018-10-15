@@ -67,19 +67,25 @@ public:
   //! \param[out] functions output collection of pointers.
   static void Functions(AsiTestFunctions& functions)
   {
-    functions << &test001
-              << &test002
-              << &test003
-              << &test004
-              << &test005
-              << &test006
-              << &test007
-              << &test008
-              << &test009
+    functions << &testNeighborsIterator001
+              << &testNeighborsIterator002
+              << &testNeighborsIterator003
+              << &testNeighborsIterator004
+              << &testNeighborsIterator005
+              << &testNeighborsIterator006
+              << &testNeighborsIterator007
+              << &testNeighborsIterator008
+              << &testNeighborsIterator009
+              << &testJSON01
+              << &testJSON02
     ; // Put semicolon here for convenient adding new functions above ;)
   }
 
 private:
+
+  static bool
+    prepareAAGFromFile(const char*          shortFilename,
+                       Handle(asiAlgo_AAG)& aag);
 
   static outcome
     testAllNeighborsIterator(const int               funcID,
@@ -87,17 +93,24 @@ private:
                              const int               seedFaceId,
                              const std::vector<int>& refFaceIds);
 
+  static outcome
+    testAAG2JSON(const int   funcID,
+                 const char* shortFilename,
+                 const char* shortFilenameRef);
+
 private:
 
-  static outcome test001(const int funcID);
-  static outcome test002(const int funcID);
-  static outcome test003(const int funcID);
-  static outcome test004(const int funcID);
-  static outcome test005(const int funcID);
-  static outcome test006(const int funcID);
-  static outcome test007(const int funcID);
-  static outcome test008(const int funcID);
-  static outcome test009(const int funcID);
+  static outcome testNeighborsIterator001 (const int funcID);
+  static outcome testNeighborsIterator002 (const int funcID);
+  static outcome testNeighborsIterator003 (const int funcID);
+  static outcome testNeighborsIterator004 (const int funcID);
+  static outcome testNeighborsIterator005 (const int funcID);
+  static outcome testNeighborsIterator006 (const int funcID);
+  static outcome testNeighborsIterator007 (const int funcID);
+  static outcome testNeighborsIterator008 (const int funcID);
+  static outcome testNeighborsIterator009 (const int funcID);
+  static outcome testJSON01               (const int funcID);
+  static outcome testJSON02               (const int funcID);
 
 };
 

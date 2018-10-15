@@ -1,0 +1,439 @@
+{
+  "nodes": {
+    "1": {
+      "surface": "plane"
+    },
+    "2": {
+      "surface": "plane"
+    },
+    "3": {
+      "surface": "plane"
+    },
+    "4": {
+      "surface": "ruled"
+    },
+    "5": {
+      "surface": "plane"
+    },
+    "6": {
+      "surface": "plane"
+    },
+    "7": {
+      "surface": "plane"
+    },
+    "8": {
+      "surface": "plane"
+    },
+    "9": {
+      "surface": "plane"
+    },
+    "10": {
+      "surface": "plane"
+    },
+    "11": {
+      "surface": "cylinder"
+    },
+    "12": {
+      "surface": "plane"
+    },
+    "13": {
+      "surface": "plane"
+    },
+    "14": {
+      "surface": "cylinder"
+    },
+    "15": {
+      "surface": "cylinder"
+    },
+    "16": {
+      "surface": "cylinder"
+    },
+    "17": {
+      "surface": "cylinder"
+    },
+    "18": {
+      "surface": "plane"
+    },
+    "19": {
+      "surface": "plane"
+    },
+    "20": {
+      "surface": "plane"
+    },
+    "21": {
+      "surface": "plane"
+    },
+    "22": {
+      "surface": "cylinder"
+    },
+    "23": {
+      "surface": "plane"
+    },
+    "24": {
+      "surface": "cylinder"
+    },
+    "25": {
+      "surface": "cylinder"
+    },
+    "26": {
+      "surface": "plane"
+    },
+    "27": {
+      "surface": "cylinder"
+    },
+    "28": {
+      "surface": "plane"
+    },
+    "29": {
+      "surface": "cylinder"
+    },
+    "30": {
+      "surface": "plane"
+    },
+    "31": {
+      "surface": "plane"
+    },
+    "32": {
+      "surface": "cylinder"
+    },
+    "33": {
+      "surface": "plane"
+    },
+    "34": {
+      "surface": "cylinder"
+    },
+    "35": {
+      "surface": "plane"
+    },
+    "36": {
+      "surface": "cylinder"
+    },
+    "37": {
+      "surface": "plane"
+    },
+    "38": {
+      "surface": "cylinder"
+    },
+    "39": {
+      "surface": "cylinder"
+    },
+    "40": {
+      "surface": "plane"
+    },
+    "41": {
+      "surface": "plane"
+    },
+    "42": {
+      "surface": "cylinder"
+    },
+    "43": {
+      "surface": "plane"
+    },
+    "44": {
+      "surface": "plane"
+    },
+    "45": {
+      "surface": "cylinder"
+    },
+    "46": {
+      "surface": "cylinder"
+    },
+    "47": {
+      "surface": "plane"
+    },
+    "48": {
+      "surface": "plane"
+    },
+    "49": {
+      "surface": "plane"
+    },
+    "50": {
+      "surface": "plane"
+    },
+    "51": {
+      "surface": "cylinder"
+    },
+    "52": {
+      "surface": "plane"
+    },
+    "53": {
+      "surface": "cylinder"
+    },
+    "54": {
+      "surface": "plane"
+    },
+    "55": {
+      "surface": "plane"
+    },
+    "56": {
+      "surface": "plane"
+    },
+    "57": {
+      "surface": "plane"
+    },
+    "58": {
+      "surface": "plane"
+    },
+    "59": {
+      "surface": "plane"
+    },
+    "60": {
+      "surface": "cylinder"
+    },
+    "61": {
+      "surface": "cylinder"
+    },
+    "62": {
+      "surface": "cylinder"
+    },
+    "63": {
+      "surface": "cylinder"
+    },
+    "64": {
+      "surface": "cylinder"
+    },
+    "65": {
+      "surface": "cylinder"
+    },
+    "66": {
+      "surface": "cylinder"
+    },
+    "67": {
+      "surface": "cylinder"
+    },
+    "68": {
+      "surface": "cylinder"
+    },
+    "69": {
+      "surface": "cylinder"
+    },
+    "70": {
+      "surface": "cylinder"
+    },
+    "71": {
+      "surface": "cylinder"
+    },
+    "72": {
+      "surface": "cylinder"
+    },
+    "73": {
+      "surface": "plane"
+    },
+    "74": {
+      "surface": "plane"
+    },
+    "75": {
+      "surface": "plane"
+    },
+    "76": {
+      "surface": "plane"
+    },
+    "77": {
+      "surface": "plane"
+    },
+    "78": {
+      "surface": "plane"
+    },
+    "79": {
+      "surface": "plane"
+    },
+    "80": {
+      "surface": "plane"
+    },
+    "81": {
+      "surface": "plane"
+    },
+    "82": {
+      "surface": "plane"
+    },
+    "83": {
+      "surface": "torus"
+    },
+    "84": {
+      "surface": "plane"
+    },
+    "85": {
+      "surface": "plane"
+    },
+    "86": {
+      "surface": "plane"
+    },
+    "87": {
+      "surface": "cylinder"
+    }
+  },
+  "arcs": [
+    ["1", "2", "convex"],
+    ["1", "3", "convex"],
+    ["1", "4", "convex"],
+    ["1", "5", "convex"],
+    ["1", "6", "convex"],
+    ["1", "7", "convex"],
+    ["1", "8", "convex"],
+    ["2", "3", "convex"],
+    ["2", "5", "convex"],
+    ["2", "6", "convex"],
+    ["2", "8", "convex"],
+    ["2", "9", "convex"],
+    ["2", "10", "convex"],
+    ["2", "11", "convex"],
+    ["2", "12", "convex"],
+    ["3", "4", "smooth"],
+    ["3", "10", "concave"],
+    ["4", "5", "smooth"],
+    ["4", "13", "concave"],
+    ["5", "10", "concave"],
+    ["6", "7", "convex"],
+    ["6", "9", "convex"],
+    ["6", "14", "convex"],
+    ["6", "15", "convex"],
+    ["6", "16", "convex"],
+    ["6", "17", "convex"],
+    ["6", "18", "concave"],
+    ["6", "19", "concave"],
+    ["6", "20", "concave"],
+    ["6", "21", "concave"],
+    ["6", "22", "smooth"],
+    ["6", "23", "concave"],
+    ["6", "24", "smooth"],
+    ["7", "8", "convex"],
+    ["7", "9", "convex"],
+    ["8", "9", "convex"],
+    ["8", "14", "convex"],
+    ["8", "15", "convex"],
+    ["8", "16", "convex"],
+    ["8", "17", "convex"],
+    ["8", "25", "convex"],
+    ["9", "26", "convex"],
+    ["9", "27", "convex"],
+    ["9", "28", "convex"],
+    ["9", "29", "convex"],
+    ["9", "30", "convex"],
+    ["9", "31", "convex"],
+    ["9", "32", "convex"],
+    ["9", "33", "convex"],
+    ["9", "34", "convex"],
+    ["9", "35", "convex"],
+    ["9", "36", "convex"],
+    ["9", "37", "convex"],
+    ["9", "38", "convex"],
+    ["9", "39", "convex"],
+    ["9", "40", "convex"],
+    ["9", "41", "convex"],
+    ["9", "42", "convex"],
+    ["9", "43", "convex"],
+    ["9", "44", "convex"],
+    ["9", "45", "convex"],
+    ["9", "46", "convex"],
+    ["9", "47", "convex"],
+    ["10", "13", "smooth"],
+    ["11", "12", "concave"],
+    ["11", "48", "concave"],
+    ["12", "48", "concave"],
+    ["18", "19", "convex"],
+    ["18", "21", "convex"],
+    ["18", "49", "convex"],
+    ["19", "20", "convex"],
+    ["19", "49", "convex"],
+    ["19", "50", "convex"],
+    ["19", "51", "convex"],
+    ["20", "21", "convex"],
+    ["20", "50", "convex"],
+    ["21", "22", "concave"],
+    ["21", "24", "concave"],
+    ["21", "49", "convex"],
+    ["21", "50", "convex"],
+    ["21", "52", "concave"],
+    ["21", "53", "concave"],
+    ["21", "54", "concave"],
+    ["22", "23", "convex"],
+    ["22", "54", "smooth"],
+    ["23", "24", "convex"],
+    ["23", "52", "convex"],
+    ["23", "53", "convex"],
+    ["23", "54", "convex"],
+    ["24", "52", "smooth"],
+    ["25", "55", "concave"],
+    ["26", "27", "smooth"],
+    ["26", "36", "smooth"],
+    ["26", "56", "concave"],
+    ["27", "28", "smooth"],
+    ["27", "56", "concave"],
+    ["28", "29", "smooth"],
+    ["28", "56", "concave"],
+    ["29", "30", "smooth"],
+    ["29", "56", "concave"],
+    ["30", "31", "convex"],
+    ["30", "33", "convex"],
+    ["30", "34", "smooth"],
+    ["30", "56", "concave"],
+    ["30", "57", "convex"],
+    ["31", "32", "smooth"],
+    ["31", "57", "concave"],
+    ["32", "33", "smooth"],
+    ["32", "57", "concave"],
+    ["33", "57", "concave"],
+    ["34", "35", "smooth"],
+    ["34", "56", "concave"],
+    ["35", "36", "smooth"],
+    ["35", "56", "concave"],
+    ["36", "56", "concave"],
+    ["37", "38", "smooth"],
+    ["37", "39", "smooth"],
+    ["37", "58", "concave"],
+    ["38", "40", "smooth"],
+    ["38", "58", "concave"],
+    ["39", "41", "smooth"],
+    ["39", "58", "concave"],
+    ["40", "42", "smooth"],
+    ["40", "58", "concave"],
+    ["41", "43", "convex"],
+    ["41", "46", "smooth"],
+    ["41", "47", "convex"],
+    ["41", "58", "concave"],
+    ["41", "59", "convex"],
+    ["42", "44", "smooth"],
+    ["42", "58", "concave"],
+    ["43", "45", "smooth"],
+    ["43", "59", "concave"],
+    ["44", "46", "smooth"],
+    ["44", "58", "concave"],
+    ["45", "47", "smooth"],
+    ["45", "59", "concave"],
+    ["46", "58", "concave"],
+    ["47", "59", "concave"],
+    ["49", "50", "convex"],
+    ["49", "60", "convex"],
+    ["49", "61", "convex"],
+    ["49", "62", "convex"],
+    ["49", "63", "convex"],
+    ["49", "64", "convex"],
+    ["49", "65", "convex"],
+    ["49", "66", "convex"],
+    ["49", "67", "convex"],
+    ["49", "68", "convex"],
+    ["49", "69", "convex"],
+    ["50", "70", "concave"],
+    ["51", "71", "convex"],
+    ["52", "53", "smooth"],
+    ["53", "54", "smooth"],
+    ["55", "72", "convex"],
+    ["60", "73", "concave"],
+    ["61", "74", "concave"],
+    ["62", "75", "concave"],
+    ["63", "76", "concave"],
+    ["64", "77", "concave"],
+    ["65", "78", "concave"],
+    ["66", "79", "concave"],
+    ["67", "80", "concave"],
+    ["68", "81", "concave"],
+    ["69", "82", "concave"],
+    ["70", "83", "smooth"],
+    ["71", "84", "concave"],
+    ["71", "85", "convex"],
+    ["72", "86", "concave"],
+    ["82", "87", "convex"],
+    ["83", "85", "smooth"],
+    ["86", "87", "convex"]
+  ]
+}

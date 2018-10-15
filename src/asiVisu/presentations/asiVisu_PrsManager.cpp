@@ -312,7 +312,7 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& nodeList,
     if ( isPrsOk )
     {
       // Clean up current selection
-      m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
+      m_currentSelection.PopAll(m_renderer, SelectionNature_Persistent);
       m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
 
       // Finally, update Presentation
@@ -767,7 +767,7 @@ void asiVisu_PrsManager::InitPicker(const ActAPI_DataObjectId& nodeId)
 void asiVisu_PrsManager::SetSelectionMode(const int mode)
 {
   m_currentSelection.SetSelectionModes(mode);
-  m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
+  m_currentSelection.PopAll(m_renderer, SelectionNature_Persistent);
   m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
 
   if ( m_widget )
@@ -886,7 +886,7 @@ bool
    * ====================================== */
 
   // When picking erase detection at first in order to prevent blinking.
-  if ( selNature == SelectionNature_Pick )
+  if ( selNature == SelectionNature_Persistent )
     m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
 
   Handle(asiVisu_Prs) prs3D = this->preparePickedPrs(selNature, lastPickerRes);
@@ -982,16 +982,16 @@ bool asiVisu_PrsManager::IsPickFromList() const
 void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& nodeList)
 {
   // Reset current selection (if any).
-  m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
+  m_currentSelection.PopAll(m_renderer, SelectionNature_Persistent);
   //
-  m_currentSelection.GetCellPickerResult(SelectionNature_Pick)->Clear();
-  m_currentSelection.GetCellPickerResult(SelectionNature_Pick)->SetSelectionModes(SelectionMode_Workpiece);
+  m_currentSelection.GetCellPickerResult(SelectionNature_Persistent)->Clear();
+  m_currentSelection.GetCellPickerResult(SelectionNature_Persistent)->SetSelectionModes(SelectionMode_Workpiece);
   //
-  m_currentSelection.GetPointPickerResult(SelectionNature_Pick)->Clear();
-  m_currentSelection.GetPointPickerResult(SelectionNature_Pick)->SetSelectionModes(SelectionMode_Workpiece);
+  m_currentSelection.GetPointPickerResult(SelectionNature_Persistent)->Clear();
+  m_currentSelection.GetPointPickerResult(SelectionNature_Persistent)->SetSelectionModes(SelectionMode_Workpiece);
   //
-  m_currentSelection.GetWorldPickerResult(SelectionNature_Pick)->Clear();
-  m_currentSelection.GetWorldPickerResult(SelectionNature_Pick)->SetSelectionModes(SelectionMode_Workpiece);
+  m_currentSelection.GetWorldPickerResult(SelectionNature_Persistent)->Clear();
+  m_currentSelection.GetWorldPickerResult(SelectionNature_Persistent)->SetSelectionModes(SelectionMode_Workpiece);
 
   if ( !(m_currentSelection.GetSelectionModes() & SelectionMode_None) )
   {
@@ -1008,7 +1008,7 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& nodeList)
         continue; // Node does not have Presentation to highlight
 
       // Push selection to renderer
-      m_currentSelection.PushToRender(prs, m_renderer, SelectionNature_Pick);
+      m_currentSelection.PushToRender(prs, m_renderer, SelectionNature_Persistent);
     }
   }
 
@@ -1051,13 +1051,13 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)&       node,
   }
 
   // Reset current selection (if any)
-  m_currentSelection.PopAll(m_renderer, SelectionNature_Pick);
+  m_currentSelection.PopAll(m_renderer, SelectionNature_Persistent);
 
   // Populate Pick resulting structure to be used by Presentation's
   // highlight method.
   {
     const Handle(asiVisu_CellPickerResult)&
-      pickRes = m_currentSelection.GetCellPickerResult(SelectionNature_Pick);
+      pickRes = m_currentSelection.GetCellPickerResult(SelectionNature_Persistent);
     //
     pickRes->Clear();
     pickRes->SetSelectionModes(modes);
@@ -1067,7 +1067,7 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)&       node,
   //
   {
     const Handle(asiVisu_PointPickerResult)&
-      pickRes = m_currentSelection.GetPointPickerResult(SelectionNature_Pick);
+      pickRes = m_currentSelection.GetPointPickerResult(SelectionNature_Persistent);
     //
     pickRes->Clear();
     pickRes->SetSelectionModes(modes);
@@ -1076,7 +1076,7 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)&       node,
   //
   {
     const Handle(asiVisu_WorldPickerResult)&
-      pickRes = m_currentSelection.GetWorldPickerResult(SelectionNature_Pick);
+      pickRes = m_currentSelection.GetWorldPickerResult(SelectionNature_Persistent);
     //
     pickRes->Clear();
     pickRes->SetSelectionModes(modes);
@@ -1084,7 +1084,7 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)&       node,
   }
 
   // Push selection to renderer
-  m_currentSelection.PushToRender(prs3D, m_renderer, SelectionNature_Pick);
+  m_currentSelection.PushToRender(prs3D, m_renderer, SelectionNature_Persistent);
 
   // Update view window
   if ( m_widget )
@@ -1111,7 +1111,7 @@ Handle(ActAPI_HNodeList) asiVisu_PrsManager::GetHighlighted() const
   Handle(ActAPI_HNodeList) list = new ActAPI_HNodeList();
 
   const std::vector<Handle(asiVisu_Prs)>&
-    seq = m_currentSelection.GetRenderedPresentations(SelectionNature_Pick);
+    seq = m_currentSelection.GetRenderedPresentations(SelectionNature_Persistent);
 
   for ( size_t k = 0; k < seq.size(); ++k )
     list->Append( seq[k]->GetNode() );
@@ -1499,7 +1499,7 @@ bool
   if ( pid != -1 )
   {
     // Let the user unpick the already selected elements.
-    if ( (selNature == SelectionNature_Pick) && pickRes->GetPickedElementIds().Contains(pid) )
+    if ( (selNature == SelectionNature_Persistent) && pickRes->GetPickedElementIds().Contains(pid) )
       pickRes->RemovePickedElementId(pid);
     else
       pickRes->AddPickedElementId(pid);
@@ -1507,14 +1507,14 @@ bool
   else if ( gid != -1 )
   {
     // Let the user unpick the already selected elements.
-    if ( (selNature == SelectionNature_Pick) && pickRes->GetPickedElementIds().Contains(gid) )
+    if ( (selNature == SelectionNature_Persistent) && pickRes->GetPickedElementIds().Contains(gid) )
       pickRes->RemovePickedElementId(gid);
     else
       pickRes->AddPickedElementId(gid);
   }
 
   // Let the user unpick the already selected elements.
-  if ( (selNature == SelectionNature_Pick) && pickRes->GetPickedCellIds().Contains(cellId) )
+  if ( (selNature == SelectionNature_Persistent) && pickRes->GetPickedCellIds().Contains(cellId) )
     pickRes->RemovePickedCellId(cellId);
   else
     pickRes->AddPickedCellId(cellId);

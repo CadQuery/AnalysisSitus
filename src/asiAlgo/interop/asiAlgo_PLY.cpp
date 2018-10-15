@@ -52,9 +52,7 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
 {
   std::ifstream FILE( theFilename.ToCString() );
   if ( !FILE.is_open() )
-  {
     return false;
-  }
 
   // Create container for mesh
   Handle(ActData_Mesh) MeshDS = new ActData_Mesh;

@@ -86,7 +86,7 @@ int ENGINE_LoadStep(const Handle(asiTcl_Interp)& interp,
   if ( !asiAlgo_STEP::Read(filename, false, shape) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot read STEP file.");
-    return TCL_OK;
+    return TCL_ERROR;
   }
 
   onModelLoaded(shape);
@@ -112,10 +112,53 @@ int ENGINE_LoadBRep(const Handle(asiTcl_Interp)& interp,
   if ( !asiAlgo_Utils::ReadBRep(filename, shape) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot read BREP file.");
-    return TCL_OK;
+    return TCL_ERROR;
   }
 
   onModelLoaded(shape);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_DumpAAGJSON(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node and its AAG.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
+    return TCL_ERROR;
+  }
+  //
+  Handle(asiAlgo_AAG) aag = partNode->GetAAG();
+  //
+  if ( aag.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "AAG is null.");
+    return TCL_ERROR;
+  }
+
+  // Dump to file.
+  std::ofstream filestream(argv[1]);
+  //
+  if ( !filestream.is_open() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "FILE_DEBUG: file cannot be opened.");
+    return TCL_ERROR;
+  }
+  //
+  aag->DumpJSON(filestream);
+  filestream.close();
 
   return TCL_OK;
 }
@@ -144,4 +187,12 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
     "\t Loads BREP file to the active part.",
     //
     __FILE__, group, ENGINE_LoadBRep);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("dump-aag-json",
+    //
+    "dump-aag-json filename\n"
+    "\t Dumps AAG of the active part to JSON file.",
+    //
+    __FILE__, group, ENGINE_DumpAAGJSON);
 }

@@ -1,6 +1,6 @@
 #define MyAppVersion "Analysis Situs @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@"
 #define MyAppInstName "asitus_@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@"
-#define MyAppExeName "BRepInspectorExe.exe"
+#define MyAppExeName "asiExe.exe"
 #define MyAppIcoName "icon.ico"
 #define MyAppDesktopIcoName "icon64.ico"
 #define BIN_INPUT "@SETUP_BIN_INPUT@"

@@ -25,7 +25,10 @@ div.header {
   font-size: 20pt;
 }
 div.code {
-  padding: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   background-color: rgb(235, 235, 235);
   border: 1px solid rgb(150, 150, 150);
   font-size: 10pt;

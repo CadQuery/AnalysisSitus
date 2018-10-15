@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Analysis Situs: attributed adjacency graph</title>
+  <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+ </head>
+<body>
+
+<div class="header" align="center">
+<a href="../index.html">Analysis Situs</a> // <a href="../features.html">features</a> // AAG <img src="../imgs/situbug.png"/>
+</div>
+
+<h1>Overview</h1>
+
+<p>
+Attributed adjacency graph (AAG) is the auxiliary data structure which is often used for feature recognition.
+The concept of AAG is well described in the paper by <a href="../references.html#joshi-chang-1988">[Joshi and Chang, 1988]</a>.
+The following figure gives an example of AAG built for a synthetic model.
+</p>
+
+<div align="center"><img src="../imgs/aag_illustration.png"/></div>
+
+<p>AAG is a convenient shape descriptor. It serves the following purposes:</p>
+
+<ol>
+  <li>AAG contains information on face neighborhood explicitly. The neighborhood relations are expressed as graph arcs.</li>
+  <li>Edge vexity (concave or convex property) is stored as arc attribute (hence the graph is called "attributed").
+      Edge vexity is a fundamental geometric heuristic, especially useful for feature recognition.</li>
+  <li>AAG enables graph formalism for operating with CAD models. E.g., using AAG, it is straightforward to find
+      features as subgraphs by the given search pattern.</li>
+  <li>AAG serves as a natural cache for exploration maps: it stores the internal indexation of faces, edges, and vertices. Hence
+      it is not necessary to recompute indexation in algorithms.</li>
+  <li>Since a B-Rep model in OpenCascade does not contain any attributes, the question on how to bind supplementary data with
+      geometric entities often arises. AAG gives a convenient way to assign custom attributes with its nodes and arcs. For example,
+      it is possible to store information on the recognized features right in the AAG. Therefore, the feature recognition process may consist
+      in enriching the graph with more and more information which you were able to extract from the dumb model.</li>
+</ol>
+
+<div align="center"><img src="../imgs/aag_example.png"/></div>
+
+<h1>Dumping to JSON</h1>
+
+<p>
+Analysis Situs allows dumping the attributed adjacency graph in JSON format for subsequent use in external feature recognizers. Here is
+the example of the serialized AAG corresponding to a simple box solid:
+</p>
+
+<div class="code"><pre>{
+  "nodes": {
+    "1": {
+      "surface": "plane"
+    },
+    "2": {
+      "surface": "plane"
+    },
+    "3": {
+      "surface": "plane"
+    },
+    "4": {
+      "surface": "plane"
+    },
+    "5": {
+      "surface": "plane"
+    },
+    "6": {
+      "surface": "plane"
+    }
+  },
+  "arcs": [
+    ["1", "3", "convex"],
+    ["1", "4", "convex"],
+    ["1", "5", "convex"],
+    ["1", "6", "convex"],
+    ["2", "3", "convex"],
+    ["2", "4", "convex"],
+    ["2", "5", "convex"],
+    ["2", "6", "convex"],
+    ["3", "5", "convex"],
+    ["3", "6", "convex"],
+    ["4", "5", "convex"],
+    ["4", "6", "convex"]
+  ]
+}</pre></div>
+
+<p>
+There are two blocks in the JSON output: the "nodes" and the "arcs". Each node has the corresponding 1-based ID. The IDs of the nodes
+are referenced in the "arcs" block. Be aware that the attributed adjacency graph is not oriented, so the order of node IDs has no sense
+in the link specification.
+</p>
+
+<p>
+To dump AAG for the active part to a JSON-file, use the following Tcl command:
+</p>
+
+<div class="code">
+  dump-aag-json &lt;filename&gt;
+</div>
+
+</body>
+</html>

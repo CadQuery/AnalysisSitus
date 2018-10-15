@@ -7,12 +7,14 @@ project (asiTestEngine)
 set (H_FILES
   asiTestEngine.h
   asiTestEngine_Launcher.h
+  asiTestEngine_FileComparator.h
   asiTestEngine_Macro.h
   asiTestEngine_TestCase.h
   outcome.h
 )
 
 set (CPP_FILES
+  asiTestEngine_FileComparator.cpp
   asiTestEngine_Launcher.cpp
   asiTestEngine_TestCase.cpp
 )

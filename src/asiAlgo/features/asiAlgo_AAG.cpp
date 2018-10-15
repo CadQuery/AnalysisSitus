@@ -35,6 +35,8 @@
 #include <asiAlgo_CheckDihedralAngle.h>
 #include <asiAlgo_FeatureAttrAngle.h>
 #include <asiAlgo_FeatureAttrFace.h>
+#include <asiAlgo_JSON.h>
+#include <asiAlgo_Utils.h>
 
 // OCCT includes
 #include <ShapeAnalysis_Edge.hxx>
@@ -46,22 +48,6 @@
 
 //-----------------------------------------------------------------------------
 
-//! Initializes AAG from the    given master model and selected faces.
-//! \param[in] masterCAD        master model (full CAD).
-//! \param[in] selectedFaces    selected faces.
-//! \param[in] allowSmooth      indicates whether to allow "smooth" value for
-//!                             arc attribute. This value means that the
-//!                             joint between faces is at least G1, so in
-//!                             order to calculate dihedral angle, the neighborhood
-//!                             of transition has to be analyzed. The latter
-//!                             analysis introduces additional cost, so you
-//!                             may disable it if you are Ok to attribute G0
-//!                             joints only.
-//! \param[in] smoothAngularTol angular tolerance used for recognition
-//!                             of smooth dihedral angles. A smooth angle
-//!                             may appear to be imperfect by construction,
-//!                             but still smooth by the design intent. With
-//!                             this parameter you're able to control it.
 asiAlgo_AAG::asiAlgo_AAG(const TopoDS_Shape&               masterCAD,
                          const TopTools_IndexedMapOfShape& selectedFaces,
                          const bool                        allowSmooth,
@@ -72,15 +58,6 @@ asiAlgo_AAG::asiAlgo_AAG(const TopoDS_Shape&               masterCAD,
 
 //-----------------------------------------------------------------------------
 
-//! Constructor accepting master CAD only.
-//! \param[in] masterCAD        master CAD.
-//! \param[in] allowSmooth      indicates whether "smooth" attribution for arcs
-//!                             is allowed (true) or not (false).
-//! \param[in] smoothAngularTol angular tolerance used for recognition
-//!                             of smooth dihedral angles. A smooth angle
-//!                             may appear to be imperfect by construction,
-//!                             but still smooth by the design intent. With
-//!                             this parameter you're able to control it.
 asiAlgo_AAG::asiAlgo_AAG(const TopoDS_Shape& masterCAD,
                          const bool          allowSmooth,
                          const double        smoothAngularTol)
@@ -90,13 +67,11 @@ asiAlgo_AAG::asiAlgo_AAG(const TopoDS_Shape& masterCAD,
 
 //-----------------------------------------------------------------------------
 
-//! Destructor.
 asiAlgo_AAG::~asiAlgo_AAG()
 {}
 
 //-----------------------------------------------------------------------------
 
-//! \return copy of this AAG.
 Handle(asiAlgo_AAG) asiAlgo_AAG::Copy() const
 {
   Handle(asiAlgo_AAG) copy = new asiAlgo_AAG;
@@ -118,7 +93,6 @@ Handle(asiAlgo_AAG) asiAlgo_AAG::Copy() const
 
 //-----------------------------------------------------------------------------
 
-//! \return master CAD.
 const TopoDS_Shape& asiAlgo_AAG::GetMasterCAD() const
 {
   return m_master;
@@ -126,10 +100,6 @@ const TopoDS_Shape& asiAlgo_AAG::GetMasterCAD() const
 
 //-----------------------------------------------------------------------------
 
-//! \brief Returns map of indexed sub-shapes of the given type.
-//!
-//! \param[in]  ssType sub-shape type (TopAbs_VERTEX, TopAbs_EDGE or TopAbs_FACE).
-//! \param[out] map    requested map of sub-shapes.
 void asiAlgo_AAG::GetMapOf(const TopAbs_ShapeEnum      ssType,
                            TopTools_IndexedMapOfShape& map) const
 {
@@ -150,7 +120,6 @@ void asiAlgo_AAG::GetMapOf(const TopAbs_ShapeEnum      ssType,
 
 //-----------------------------------------------------------------------------
 
-//! \return map of faces.
 const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfFaces() const
 {
   return m_faces;
@@ -158,7 +127,6 @@ const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfFaces() const
 
 //-----------------------------------------------------------------------------
 
-//! \return map of edges.
 const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfEdges() const
 {
   return m_edges;
@@ -166,7 +134,6 @@ const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfEdges() const
 
 //-----------------------------------------------------------------------------
 
-//! \return map of vertices.
 const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfVertices() const
 {
   return m_vertices;
@@ -174,7 +141,6 @@ const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfVertices() const
 
 //-----------------------------------------------------------------------------
 
-//! \return map of sub-shapes.
 const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfSubShapes() const
 {
   return m_subShapes;
@@ -182,9 +148,6 @@ const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfSubShapes() const
 
 //-----------------------------------------------------------------------------
 
-//! Returns true if the index is in range.
-//! \param[in] face_idx face index.
-//! \return true/false.
 bool asiAlgo_AAG::HasFace(const int face_idx) const
 {
   return face_idx > 0 && face_idx <= m_faces.Extent();
@@ -192,9 +155,6 @@ bool asiAlgo_AAG::HasFace(const int face_idx) const
 
 //-----------------------------------------------------------------------------
 
-//! Returns topological face by its internal index (e.g. coming from iterator).
-//! \param[in] face_idx face index.
-//! \return topological face.
 const TopoDS_Face& asiAlgo_AAG::GetFace(const int face_idx) const
 {
   return TopoDS::Face( m_faces.FindKey(face_idx) );
@@ -202,9 +162,6 @@ const TopoDS_Face& asiAlgo_AAG::GetFace(const int face_idx) const
 
 //-----------------------------------------------------------------------------
 
-//! Returns face ID.
-//! \param[in] face face of interest.
-//! \return face ID.
 int asiAlgo_AAG::GetFaceId(const TopoDS_Shape& face) const
 {
   return m_faces.FindIndex(face);
@@ -212,11 +169,6 @@ int asiAlgo_AAG::GetFaceId(const TopoDS_Shape& face) const
 
 //-----------------------------------------------------------------------------
 
-//! Checks whether the given face has any neighbors recorded in the AAG.
-//! Normally it has, but in some abnormal situations no neighbors could
-//! be there.
-//! \param[in] face_idx face index.
-//! \return true in case if at least one neighbor presents, false -- otherwise.
 bool asiAlgo_AAG::HasNeighbors(const int face_idx) const
 {
   return m_neighbors.IsBound(face_idx);
@@ -224,9 +176,6 @@ bool asiAlgo_AAG::HasNeighbors(const int face_idx) const
 
 //-----------------------------------------------------------------------------
 
-//! Returns neighbors for the face having the given internal index.
-//! \param[in] face_idx face index.
-//! \return indices of the neighbor faces.
 const TColStd_PackedMapOfInteger& asiAlgo_AAG::GetNeighbors(const int face_idx) const
 {
   return m_neighbors.Find(face_idx);
@@ -234,11 +183,6 @@ const TColStd_PackedMapOfInteger& asiAlgo_AAG::GetNeighbors(const int face_idx) 
 
 //-----------------------------------------------------------------------------
 
-//! Returns only those neighbor faces which share the given edge with the
-//! passed face of interest.
-//! \param[in] face_idx ID of the face of interest.
-//! \param[in] edge     common edge.
-//! \return indices of the neighbor faces sharing the given edge.
 TColStd_PackedMapOfInteger
   asiAlgo_AAG::GetNeighborsThru(const int face_idx, const TopoDS_Edge& edge) const
 {
@@ -272,11 +216,6 @@ TColStd_PackedMapOfInteger
 
 //-----------------------------------------------------------------------------
 
-//! Returns neighbor faces for the given face of interest with additional
-//! filter on edges realizing the neighborhood.
-//! \param[in] face_idx index of the face of interest.
-//! \param[in] edge_ids indices of edges of interest.
-//! \return indices of the neighbor faces.
 TColStd_PackedMapOfInteger
   asiAlgo_AAG::GetNeighbors(const int                         face_idx,
                             const TColStd_PackedMapOfInteger& edge_ids) const
@@ -323,8 +262,6 @@ TColStd_PackedMapOfInteger
 
 //-----------------------------------------------------------------------------
 
-//! Returns full collection of neighbor faces.
-//! \return neighborhood data.
 const asiAlgo_AAG::t_adjacency& asiAlgo_AAG::GetNeighborhood() const
 {
   return m_neighbors;
@@ -332,8 +269,6 @@ const asiAlgo_AAG::t_adjacency& asiAlgo_AAG::GetNeighborhood() const
 
 //-----------------------------------------------------------------------------
 
-//! Returns all selected faces.
-//! \return indices of the selected faces.
 const TColStd_PackedMapOfInteger& asiAlgo_AAG::GetSelectedFaces() const
 {
   return m_selected;
@@ -341,7 +276,6 @@ const TColStd_PackedMapOfInteger& asiAlgo_AAG::GetSelectedFaces() const
 
 //-----------------------------------------------------------------------------
 
-//! \return attributes associated with graph arcs.
 const asiAlgo_AAG::t_arc_attributes& asiAlgo_AAG::GetArcAttributes() const
 {
   return m_arc_attributes;
@@ -349,7 +283,6 @@ const asiAlgo_AAG::t_arc_attributes& asiAlgo_AAG::GetArcAttributes() const
 
 //-----------------------------------------------------------------------------
 
-//! \return attribute associated with the given arc.
 const Handle(asiAlgo_FeatureAttr)& asiAlgo_AAG::GetArcAttribute(const t_arc& arc) const
 {
   return m_arc_attributes.Find(arc);
@@ -357,9 +290,6 @@ const Handle(asiAlgo_FeatureAttr)& asiAlgo_AAG::GetArcAttribute(const t_arc& arc
 
 //-----------------------------------------------------------------------------
 
-//! Checks whether the given node has any attributes or not.
-//! \param[in] node ID of the graph node to check.
-//! \return true/false.
 bool asiAlgo_AAG::HasNodeAttributes(const int node) const
 {
   return m_node_attributes.IsBound(node);
@@ -367,9 +297,6 @@ bool asiAlgo_AAG::HasNodeAttributes(const int node) const
 
 //-----------------------------------------------------------------------------
 
-//! Accessor for the collection of nodal attributes.
-//! \param[in] node ID of the graph node of interest.
-//! \return attributes associated with the given graph node.
 const asiAlgo_AAG::t_attr_set& asiAlgo_AAG::GetNodeAttributes(const int node) const
 {
   return m_node_attributes(node);
@@ -377,10 +304,6 @@ const asiAlgo_AAG::t_attr_set& asiAlgo_AAG::GetNodeAttributes(const int node) co
 
 //-----------------------------------------------------------------------------
 
-//! Returns attribute associated with the given graph node.
-//! \param[in] node    ID of the graph node of interest.
-//! \param[in] attr_id ID of the attribute to access.
-//! \return attribute associated with the given node.
 Handle(asiAlgo_FeatureAttr)
   asiAlgo_AAG::GetNodeAttribute(const int            node,
                                 const Standard_GUID& attr_id) const
@@ -396,10 +319,6 @@ Handle(asiAlgo_FeatureAttr)
 
 //-----------------------------------------------------------------------------
 
-//! Sets the given attribute for a node in AAG. If an attribute of this type
-//! is already there, this method does nothing and returns false.
-//! \param[in] node ID of the graph node of interest.
-//! \param[in] attr attribute to set.
 bool asiAlgo_AAG::SetNodeAttribute(const int                          node,
                                    const Handle(asiAlgo_FeatureAttr)& attr)
 {
@@ -431,9 +350,6 @@ bool asiAlgo_AAG::SetNodeAttribute(const int                          node,
 
 //-----------------------------------------------------------------------------
 
-//! Searches for those faces having ALL neighbors attributed with convex link.
-//! \param[out] resultFaces found faces (if any).
-//! \return true if anything has been found, false -- otherwise.
 bool asiAlgo_AAG::FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const
 {
   TColStd_PackedMapOfInteger traversed;
@@ -477,9 +393,6 @@ bool asiAlgo_AAG::FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const
 
 //-----------------------------------------------------------------------------
 
-//! Searches for those faces having ALL neighbors attributed with concave link.
-//! \param[out] resultFaces found faces (if any).
-//! \return true if anything has been found, false -- otherwise.
 bool asiAlgo_AAG::FindConcaveOnly(TopTools_IndexedMapOfShape& resultFaces) const
 {
   TColStd_PackedMapOfInteger traversed;
@@ -524,8 +437,6 @@ bool asiAlgo_AAG::FindConcaveOnly(TopTools_IndexedMapOfShape& resultFaces) const
 
 //-----------------------------------------------------------------------------
 
-//! Removes the passed faces with all corresponding arcs from AAG.
-//! \param[in] faces faces to remove.
 void asiAlgo_AAG::Remove(const TopTools_IndexedMapOfShape& faces)
 {
   // NOTICE: indexed map of shapes is not affected as we want to keep
@@ -568,8 +479,6 @@ void asiAlgo_AAG::Remove(const TopTools_IndexedMapOfShape& faces)
 
 //-----------------------------------------------------------------------------
 
-//! Dumps AAG structure to the passed output stream.
-//! \param[in, out] out target stream.
 void asiAlgo_AAG::Dump(Standard_OStream& out) const
 {
   out << "===================================================\n";
@@ -621,16 +530,26 @@ void asiAlgo_AAG::Dump(Standard_OStream& out) const
 
 //-----------------------------------------------------------------------------
 
-//! Initializes graph tool with master CAD and selected faces.
-//! \param[in] masterCAD        master model (full CAD).
-//! \param[in] selectedFaces    selected faces.
-//! \param[in] allowSmooth      indicates whether "smooth" attribution for arcs
-//!                             is allowed (true) or not (false).
-//! \param[in] smoothAngularTol angular tolerance used for recognition
-//!                             of smooth dihedral angles. A smooth angle
-//!                             may appear to be imperfect by construction,
-//!                             but still smooth by the design intent. With
-//!                             this parameter you're able to control it.
+void asiAlgo_AAG::DumpJSON(Standard_OStream& out) const
+{
+  out << std::setprecision( std::numeric_limits<double>::max_digits10 );
+  out << "{";
+  out <<  "\n  \"nodes\": {";
+  //
+  this->dumpNodesJSON(out);
+  //
+  out << "\n  },"; // End 'nodes'.
+  //
+  out <<  "\n  \"arcs\": [";
+  //
+  this->dumpArcsJSON(out);
+  //
+  out << "\n  ]"; // End 'arcs'.
+  out << "\n}\n";
+}
+
+//-----------------------------------------------------------------------------
+
 void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
                        const TopTools_IndexedMapOfShape& selectedFaces,
                        const bool                        allowSmooth,
@@ -718,8 +637,6 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
 
 //-----------------------------------------------------------------------------
 
-//! Fills graph with nodes for mate faces.
-//! \param[in] mateFaces faces to add (if not yet added).
 void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
 {
   // Create solid angle calculation tool
@@ -776,4 +693,100 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
       m_arc_attributes.Bind( arc, new asiAlgo_FeatureAttrAngle(angle, commonEdges) );
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::dumpNodesJSON(Standard_OStream& out) const
+{
+  const int numNodes = m_neighbors.Extent();
+  int nidx = 0;
+  //
+  for ( t_adjacency::Iterator nit(m_neighbors); nit.More(); nit.Next(), ++nidx )
+  {
+    const int nodeId = nit.Key();
+    //
+    this->dumpNodeJSON(nodeId, out);
+    //
+    if ( nidx < numNodes - 1 )
+      out << ",";
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::dumpNodeJSON(const int         node,
+                               Standard_OStream& out) const
+{
+  // One attribute which should always be dumped is the surface type.
+  std::string
+    surfName = asiAlgo_Utils::SurfaceName( BRep_Tool::Surface( this->GetFace(node) ) );
+
+  out << "\n    \"" << node << "\": {";
+  out << "\n      \"surface\": \"" << surfName << "\"";
+  out << "\n    }";
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::dumpArcsJSON(Standard_OStream& out) const
+{
+  // Map to filter out the already visited arcs.
+  NCollection_Map<t_arc, t_arc> visited;
+
+  int arcidx = 0;
+  //
+  for ( t_adjacency::Iterator it(m_neighbors); it.More(); it.Next() )
+  {
+    const int f_idx = it.Key();
+
+    // Get neighbors.
+    const TColStd_PackedMapOfInteger& localNeighbors = it.Value();
+
+    // Dump arc for each neighbor.
+    for ( TColStd_MapIteratorOfPackedMapOfInteger mit(localNeighbors); mit.More(); mit.Next(), ++arcidx )
+    {
+      const int neighbor_f_idx = mit.Key();
+
+      // Check if the arc was not traversed before.
+      t_arc arc(f_idx, neighbor_f_idx);
+      //
+      if ( visited.Contains(arc) )
+        continue;
+      //
+      visited.Add(arc);
+
+      // Dump arc.
+      this->dumpArcJSON(arc, arcidx == 0, out);
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::dumpArcJSON(const t_arc&      arc,
+                              const bool        isFirst,
+                              Standard_OStream& out) const
+{
+  Handle(asiAlgo_FeatureAttr) arcAttr = this->GetArcAttribute(arc);
+  //
+  Handle(asiAlgo_FeatureAttrAngle)
+    arcAttrAngle = Handle(asiAlgo_FeatureAttrAngle)::DownCast(arcAttr);
+
+  // Prepare a label for the angle type.
+  std::string angleTypeStr;
+  //
+  if ( arcAttrAngle->GetAngle() == FeatureAngleType_Convex )
+    angleTypeStr = "convex";
+  else if ( arcAttrAngle->GetAngle() == FeatureAngleType_Concave )
+    angleTypeStr = "concave";
+  else if ( arcAttrAngle->GetAngle() == FeatureAngleType_Smooth )
+    angleTypeStr = "smooth";
+  else
+    angleTypeStr = "undefined";
+
+  if ( !isFirst )
+    out << ",";
+  //
+  out << "\n    [\"" << arc.F1 << "\", \"" << arc.F2 << "\", \"" << angleTypeStr << "\"]";
 }

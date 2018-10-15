@@ -105,7 +105,7 @@ void asiUI_PickCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
   // Now pick
   asiVisu_PickInput* pickInput = reinterpret_cast<asiVisu_PickInput*>(pCallData);
   //
-  const asiVisu_SelectionNature sel_type = (eventId == EVENT_PICK_DEFAULT) ? SelectionNature_Pick
+  const asiVisu_SelectionNature sel_type = (eventId == EVENT_PICK_DEFAULT) ? SelectionNature_Persistent
                                                                            : SelectionNature_Detection;
   mgr->Pick(pickInput, sel_type, m_iPickerTypes);
 

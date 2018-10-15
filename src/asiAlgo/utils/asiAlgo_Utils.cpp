@@ -1061,6 +1061,9 @@ bool asiAlgo_Utils::ReadPly(const TCollection_AsciiString& filename,
 
   return true;
 #else
+  asiAlgo_NotUsed(filename);
+  asiAlgo_NotUsed(mesh);
+
   progress.SendLogMessage(LogErr(Normal) << "PLY reader is unavailable.");
 
   return false;

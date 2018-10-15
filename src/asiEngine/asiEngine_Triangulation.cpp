@@ -79,7 +79,7 @@ void asiEngine_Triangulation::GetHighlightedFacets(TColStd_PackedMapOfInteger& f
 {
   // Get actual selection
   const asiVisu_ActualSelection&          sel     = m_prsMgr->GetCurrentSelection();
-  const Handle(asiVisu_CellPickerResult)& pickRes = sel.GetCellPickerResult(SelectionNature_Pick);
+  const Handle(asiVisu_CellPickerResult)& pickRes = sel.GetCellPickerResult(SelectionNature_Persistent);
   //
   asiVisu_TriangulationNodeInfo*
     nodeInfo = asiVisu_TriangulationNodeInfo::Retrieve( pickRes->GetPickedActor() );

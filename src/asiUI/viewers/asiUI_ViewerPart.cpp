@@ -296,7 +296,7 @@ void asiUI_ViewerPart::onWhateverPicked()
 {
   // Access picking results
   const asiVisu_ActualSelection&          sel      = m_prs_mgr->GetCurrentSelection();
-  const Handle(asiVisu_CellPickerResult)& pick_res = sel.GetCellPickerResult(SelectionNature_Pick);
+  const Handle(asiVisu_CellPickerResult)& pick_res = sel.GetCellPickerResult(SelectionNature_Persistent);
 
   // Get picked position without any attempt to interpret what's happening
   double x, y, z;
@@ -313,7 +313,7 @@ void asiUI_ViewerPart::onSubShapesPicked()
 {
   // Access picking results
   const asiVisu_ActualSelection&      sel      = m_prs_mgr->GetCurrentSelection();
-  const Handle(asiVisu_PickerResult)& pick_res = sel.GetCellPickerResult(SelectionNature_Pick);
+  const Handle(asiVisu_PickerResult)& pick_res = sel.GetCellPickerResult(SelectionNature_Persistent);
 
   // Special processing for Part Node
   Handle(asiData_PartNode) geom_n = m_model->GetPartNode();

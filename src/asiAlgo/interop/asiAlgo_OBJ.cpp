@@ -215,7 +215,7 @@ bool asiAlgo_OBJ::Write(const TopoDS_Shape&            theShape,
     if ( T.IsNull() )
       continue;
     //
-    const int aLower     = T->Triangles().Lower();
+    const int              aLower     = T->Triangles().Lower();
     const Standard_Boolean isMirrored = L.Transformation().VectorialPart().Determinant() < 0.0;
 
     TCollection_AsciiString aRefName("unnamed");

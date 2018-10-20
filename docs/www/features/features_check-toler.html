@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Analysis Situs: check geometric tolerances</title>
+  <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+ </head>
+<body>
+
+<table align="center" border="0" width="100%">
+<tr>
+  <td colspan="5" class="header" align="center"><a href="../index.html">Analysis Situs</a> // <a href="../features.html">features</a> // check geometric tolerances <img src="../imgs/situbug.png"/></td>
+</tr>
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="../features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="../terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="../references.html">References</a></td>
+</tr>
+</table>
+
+<p>
+Geometric modeling kernels, such as OpenCascade or Parasolid, implement "tolerant modeling" approach.
+I.e., instead of using a global geometric inaccuracy, each boundary element (vertex, edge and face)
+has its own associated imprecision value called [geometric] tolerance.
+</p>
+
+<p class="quote">
+"Tolerant modeling is a foundation on which reliable solid modeling can be built.
+By attaching local tolerances to faces, edges and vertices, the boolean algorithm can
+perform intersections and coincidence tests to appropriate tolerances, and take advantage
+of a richer structure to represent the resulting solid."
+<a href="../references.html#jackson-1995">[Jackson, 1995]</a>
+</p>
+
+<p>
+A visually fine B-Rep model may contain significant geometric flaws like small gaps between faces or
+wild parameterization of curves. Since what you see on a display is not the real shape but only
+its faceted approximation, such imperfections remain hidden unless your modeling engine suddenly
+stops working on downstream operations. Geometric inaccuracy is a nightmare for modeling operators.
+While there is a certain challenge in how (and to which extent) to maintain tight geometric tolerances,
+the must-have feature which is relatively easy to implement is the visual checker of those tolerances.
+The idea is to colorize the boundary elements with respect to their local tolerances. The obtained color
+mapping gives a good insight on how watertight your model is.
+</p>
+
+<p>
+To check tolerances in Analysis Situs, you may use command <span class="code-inline">check-toler</span>.
+This command creates a certain number of tolerance intervals to colorize the shape. "Warmer"
+colors mean less accuracy of the corresponding boundary elements.
+</p>
+
+<div align="center"><img src="../imgs/check_toler_example.png"/></div>
+
+</body>
+</html>

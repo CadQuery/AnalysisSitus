@@ -106,18 +106,18 @@
     TCollection_AsciiString __aux_memcheck_delta_str; \
     if ( __aux_memcheck_delta > 0 ) __aux_memcheck_delta_str = "+"; \
     __aux_memcheck_delta_str += __aux_memcheck_delta; \
-    Notifier->SendLogMessage(LogInfo(Normal) << "============================================="); \
-    Notifier->SendLogMessage(LogInfo(Normal) << "%1" << Msg); \
-    Notifier->SendLogMessage(LogInfo(Normal) << "---------------------------------------------"); \
-    Notifier->SendLogMessage(LogInfo(Normal) << "\tElapsed time (seconds):  %1"     << __aux_debug_Seconds); \
-    Notifier->SendLogMessage(LogInfo(Normal) << "\tElapsed time (minutes):  %1"     << __aux_debug_Minutes); \
-    Notifier->SendLogMessage(LogInfo(Normal) << "\tElapsed time (hours):    %1"     << __aux_debug_Hours); \
-    Notifier->SendLogMessage(LogInfo(Normal) << "\tElapsed time (CPU time): %1"     << __aux_debug_CPUTime); \
-    Notifier->SendLogMessage(LogInfo(Normal) << "\tMemory before:           %1 MiB" << __aux_debug_memcheck_before); \
-    Notifier->SendLogMessage(LogInfo(Normal) << "\tMemory after [delta]:    %1 MiB [%2]" \
-                                             << __aux_debug_memcheck_after \
-                                             << __aux_memcheck_delta_str); \
-    Notifier->SendLogMessage(LogInfo(Normal) << "... Finished."); \
+    Notifier.SendLogMessage(LogInfo(Normal) << "============================================="); \
+    Notifier.SendLogMessage(LogInfo(Normal) << "%1" << Msg); \
+    Notifier.SendLogMessage(LogInfo(Normal) << "---------------------------------------------"); \
+    Notifier.SendLogMessage(LogInfo(Normal) << "\tElapsed time (seconds):  %1"     << __aux_debug_Seconds); \
+    Notifier.SendLogMessage(LogInfo(Normal) << "\tElapsed time (minutes):  %1"     << __aux_debug_Minutes); \
+    Notifier.SendLogMessage(LogInfo(Normal) << "\tElapsed time (hours):    %1"     << __aux_debug_Hours); \
+    Notifier.SendLogMessage(LogInfo(Normal) << "\tElapsed time (CPU time): %1"     << __aux_debug_CPUTime); \
+    Notifier.SendLogMessage(LogInfo(Normal) << "\tMemory before:           %1 MiB" << __aux_debug_memcheck_before); \
+    Notifier.SendLogMessage(LogInfo(Normal) << "\tMemory after [delta]:    %1 MiB [%2]" \
+                                            << __aux_debug_memcheck_after \
+                                            << __aux_memcheck_delta_str); \
+    Notifier.SendLogMessage(LogInfo(Normal) << "... Finished."); \
   }
 
 #endif

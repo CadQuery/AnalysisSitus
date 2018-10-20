@@ -90,7 +90,7 @@ bool asiAlgo_IneqOpt::Perform()
   this->populateLexicographic(M, pMin, pMax, MGrid);
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(m_progress.Access(), "Populate M-dimensional grid")
+  TIMER_COUT_RESULT_NOTIFIER(m_progress, "Populate M-dimensional grid")
 
   for ( int k = 0; k < MGrid.size(); ++k )
   {

@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Analysis Situs: Euler operators</title>
+  <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+ </head>
+<body>
+
+<table align="center" border="0" width="100%">
+<tr>
+  <td colspan="5" class="header" align="center"><a href="../index.html">Analysis Situs</a> // <a href="../features.html">features</a> // Euler operators <img src="../imgs/situbug.png"/></td>
+</tr>
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="../features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="../terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="../references.html">References</a></td>
+</tr>
+</table>
+
+<h1>Introduction to Euler operators</h1>
+
+<p>
+Euler operators allow for atomic modification of a B-Rep model in a manner that keeps the following
+equation (known as Euler-Poincare formula) satisfied:
+</p>
+
+<div class="code">v - e + f = 2(s - h) + r</div>
+
+<p>
+Here
+<span class="code-inline">v</span> is the number of vertices,
+<span class="code-inline">e</span> is the number of edges,
+<span class="code-inline">f</span> is the number of faces,
+<span class="code-inline">s</span> is the number of shells,
+<span class="code-inline">h</span> is the genus of the manifold, and
+<span class="code-inline">r</span> is the number of internal loops.
+</p>
+
+<p>
+The very clear introduction to the concept of Euler operators can be found in the paper by
+<a href="../references.html#mantyla-sulonen-1982">[Mantyla and Sulonen, 1982]</a> describing
+a test solid modeling system named Geometric Workbench (GWB). This system employed Euler operators
+to let the user incrementally create and modify shapes. M. Mantyla, the author of GWB, has
+also authored a comprehensive textbook on solid modeling
+<a href="../references.html#mantyla-1987">[Mantyla, 1987]</a> which gives a brilliant introduction
+to the solid modeling field in a truly scientific way.
+</p>
+
+<p>There are two kinds of Euler operators:</p>
+
+<ul>
+  <li>Make group: MEV, MEF, etc.</li>
+  <li>Kill group: KEV, KEF, etc.</li>
+</ul>
+
+<p>
+  The M-operators allow to create boundary elements, while the K-operators allow to eliminate them. The important
+  practical property of those operators is that they preserve the topological consistency of a B-Rep model.
+</p>
+
+<p class="quote">
+"In a formal sense, Euler operators form a sufficient set of solid definition and manipulation
+operatios. Even so, a solid modeler must include more user-oriented ways to create and handle
+solid models. Euler operators themselves are rather unintuitive and primitive and should not
+be directly visible to the end user. Nevertheless, it is advantageous to use them as
+primitives of higher-level operations to ensure that the models created are well formed."
+<a href="../references.html#mantyla-sulonen-1982">[Mantyla and Sulonen, 1982]</a>
+</p>
+
+<p>
+Informally speaking, Euler operators are like assembler language for B-Rep. The real modeling system should
+rely on them as much as possible. At the same time, the software system should keep Euler operators
+in the "engine room" to be more user-oriented.
+</p>
+
+<h1>Check Euler-Poincare property</h1>
+
+<p>
+To check if the Euler-Poincare property holds for the working part, use the
+<span class="code-inline">check-euler</span> command in Analysis Situs. You
+will have to specify the genus (i.e. the number of through holes) of your model.
+If no genus is passed in the Tcl command, a GUI prompt will appear to type it.
+The following image illustrates a simple shape with genus 0 for which the Euler-Poincare
+property holds.
+</p>
+
+<div align="center"><img src="../imgs/check_euler_before_kev.png"/></div>
+
+<p>
+Once KEV operator is done for a corner vertex, we can make sure that the topological
+consistency of the model is preserved.
+</p>
+
+<div align="center"><img src="../imgs/check_euler_after_kev.png"/></div>
+
+<p>
+At the same time, the model is not geometrically valid anymore. Euler operators ensure only the
+topological (i.e., "syntactical") integrity of the boundary representation.
+</p>
+
+</body>
+</html>

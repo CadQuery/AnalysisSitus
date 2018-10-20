@@ -46,6 +46,24 @@ asiAlgo_History::~asiAlgo_History()
 
 //-----------------------------------------------------------------------------
 
+void asiAlgo_History::GetRoots(std::vector<TopoDS_Shape>& roots) const
+{
+  for ( size_t k = 0; k < m_roots.size(); ++k )
+    roots.push_back(m_roots[k]->TransientPtr);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_History::GetRootsOfType(const TopAbs_ShapeEnum     type,
+                                     std::vector<TopoDS_Shape>& roots) const
+{
+  for ( size_t k = 0; k < m_roots.size(); ++k )
+    if ( m_roots[k]->TransientPtr.ShapeType() == type )
+      roots.push_back(m_roots[k]->TransientPtr);
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_History::AddModified(const TopoDS_Shape& before,
                                   const TopoDS_Shape& after,
                                   const bool          create,
@@ -88,6 +106,51 @@ bool asiAlgo_History::GetModified(const TopoDS_Shape&        shape,
     modified.push_back(leafItems[k]->TransientPtr);
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Shape asiAlgo_History::GetModified(const TopoDS_Shape& shape) const
+{
+  std::vector<TopoDS_Shape> modified;
+  //
+  if ( !this->GetModified(shape, modified) || !modified.size() )
+    return TopoDS_Shape();
+
+  return modified[0];
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Shape asiAlgo_History::GetModifiedOrArg(const TopoDS_Shape& shape) const
+{
+  std::vector<TopoDS_Shape> modified;
+  //
+  if ( !this->GetModified(shape, modified) || !modified.size() )
+    return shape;
+
+  return modified[0];
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Shape
+  asiAlgo_History::GetLastModifiedOrArg(const TopoDS_Shape& shape) const
+{
+  TopoDS_Shape result, nextArg = shape;
+  bool toStop = false;
+  do
+  {
+    result = this->GetModifiedOrArg(nextArg);
+
+    if ( nextArg.IsPartner(result) )
+      toStop = true;
+    else
+      nextArg = result;
+  }
+  while ( !toStop );
+
+  return result;
 }
 
 //-----------------------------------------------------------------------------

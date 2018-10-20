@@ -82,7 +82,7 @@ bool asiAlgo_CheckToler::PerformRanges(const std::vector<double>& tolerRanges,
     this->analyzeSubShape(allFaces(k), tolerRanges, tolerShapes, outOfRangeMin, outOfRangeMax);
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(m_progress.Access(), "Check tolerances")
+  TIMER_COUT_RESULT_NOTIFIER(m_progress, "Check tolerances")
 
   return true;
 }

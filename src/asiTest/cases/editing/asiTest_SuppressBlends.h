@@ -65,40 +65,47 @@ public:
   //! \param[out] functions output collection of pointers.
   static void Functions(AsiTestFunctions& functions)
   {
-    functions << &test001
-              << &test002
-              << &test003
-              << &test004
-              << &test005
-              << &test006
-              << &test007
-              << &test008
-              << &test009
-              << &test010
-              << &test011
-              << &test012
+    functions << &testEuler001
+              << &testEuler002
+              << &testEuler003
+              << &testEuler004
+              << &testEuler005
+              << &testEuler006
+              << &testEuler007
+              << &testEuler008
+              << &testEuler009
+              << &testEuler010
+              << &testEuler011
+              << &testEuler012
+              //<< &testRecognizeAndSuppress001
     ; // Put semicolon here for convenient adding new functions above ;)
   }
 
 private:
 
-  static outcome runtest(const int   funcID,
-                         const char* filename);
+  static outcome runTestScript(const int   funcID,
+                               const char* filename);
+
+  static outcome runTest(const int   funcID,
+                         const char* shortFilename,
+                         const int   seedFaceId);
 
 private:
 
-  static outcome test001(const int funcID);
-  static outcome test002(const int funcID);
-  static outcome test003(const int funcID);
-  static outcome test004(const int funcID);
-  static outcome test005(const int funcID);
-  static outcome test006(const int funcID);
-  static outcome test007(const int funcID);
-  static outcome test008(const int funcID);
-  static outcome test009(const int funcID);
-  static outcome test010(const int funcID);
-  static outcome test011(const int funcID);
-  static outcome test012(const int funcID);
+  static outcome testEuler001(const int funcID);
+  static outcome testEuler002(const int funcID);
+  static outcome testEuler003(const int funcID);
+  static outcome testEuler004(const int funcID);
+  static outcome testEuler005(const int funcID);
+  static outcome testEuler006(const int funcID);
+  static outcome testEuler007(const int funcID);
+  static outcome testEuler008(const int funcID);
+  static outcome testEuler009(const int funcID);
+  static outcome testEuler010(const int funcID);
+  static outcome testEuler011(const int funcID);
+  static outcome testEuler012(const int funcID);
+
+  static outcome testRecognizeAndSuppress001(const int funcID);
 
 };
 

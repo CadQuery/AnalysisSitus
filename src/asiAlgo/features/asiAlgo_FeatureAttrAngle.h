@@ -37,8 +37,6 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiAlgo_FeatureAttrAngle, asiAlgo_FeatureAttrAdjacency)
-
 //! Attribute storing information about feature angle between faces.
 class asiAlgo_FeatureAttrAngle : public asiAlgo_FeatureAttrAdjacency
 {
@@ -81,6 +79,12 @@ public:
   virtual const Standard_GUID& GetGUID() const
   {
     return GUID();
+  }
+
+  //! \return human-readable name of the attribute.
+  virtual const char* GetName() const override
+  {
+    return "angle type";
   }
 
 public:

@@ -76,6 +76,12 @@ public:
     return GUID();
   }
 
+  //! \return human-readable name of the attribute.
+  virtual const char* GetName() const override
+  {
+    return "adjacency";
+  }
+
 public:
 
   //! \return edges.

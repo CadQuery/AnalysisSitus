@@ -351,7 +351,7 @@ int ENGINE_CheckDist(const Handle(asiTcl_Interp)& interp,
                                     Extrema_ExtFlag_MIN);
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Shape-shape distance")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Shape-shape distance")
 
   if ( !distSS.IsDone() )
   {
@@ -710,6 +710,11 @@ int ENGINE_CheckEuler(const Handle(asiTcl_Interp)& interp,
       isOk = asiEngine_Editing( cmdEngine::model,
                                 interp->GetProgress(),
                                 interp->GetPlotter() ).CheckEulerPoincare(genus);
+    //
+    if ( isOk )
+      interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Euler-Poincare property holds.");
+    else
+      interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Euler-Poincare property does not hold.");
 
     // Append result to the interpreter.
     *interp << isOk;
@@ -720,9 +725,9 @@ int ENGINE_CheckEuler(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_DumpTopograph(const Handle(asiTcl_Interp)& interp,
-                         int                          argc,
-                         const char**                 argv)
+int ENGINE_DumpTopographDot(const Handle(asiTcl_Interp)& interp,
+                            int                          argc,
+                            const char**                 argv)
 {
   if ( argc != 2 )
   {
@@ -1982,7 +1987,7 @@ int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
     angleType = dihAngle.AngleBetweenFaces(F, G, allowSmooth, smoothToler);
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Check dihedral angle")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Check dihedral angle")
 
   // Add as a result to interpreter.
   *interp << angleType;
@@ -2338,12 +2343,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_CheckEuler);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("dump-topograph",
+  interp->AddCommand("dump-topograph-dot",
     //
-    "dump-topograph filename\n"
-    "\t Dumps topology graph to file.",
+    "dump-topograph-dot filename\n"
+    "\t Dumps topology graph to DOT file (can be opened by Graphviz).",
     //
-    __FILE__, group, ENGINE_DumpTopograph);
+    __FILE__, group, ENGINE_DumpTopographDot);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("eval-curve",

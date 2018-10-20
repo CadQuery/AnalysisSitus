@@ -231,8 +231,8 @@ public:
                                const int                  seed,
                                const Handle(t_blockRule)& rule) : asiAlgo_AAGIterator()
   {
-    this->Init(graph, seed);
     this->SetBlockRule(rule);
+    this->Init(graph, seed);
   }
 
 public:
@@ -256,8 +256,11 @@ public:
     //
     m_iSeed = seed;
     m_visited.Clear();
+
+    // Check whether the seed face should be added for traversal.
+    if ( !m_blockRule->IsBlocking(m_iSeed) )
+      m_fringe.push(m_iSeed);
     //
-    m_fringe.push(m_iSeed);
     m_visited.Add(m_iSeed);
   }
 
@@ -270,30 +273,33 @@ public:
   //! Moves iterator to another (adjacent) face.
   void Next()
   {
-    // Let's throw an exception if there is nothing else to iterate
+    // Let's throw an exception if there is nothing else to iterate.
     if ( !this->More() )
       Standard_ProgramError::Raise("No next item");
 
-    // Take current
+    // Take current.
     const int iCurrent = this->GetFaceId();
-    m_fringe.pop(); // Top item is done
+    m_fringe.pop(); // Top item is done.
 
-    // Check whether the current node is a dead end
-    if ( m_blockRule->IsBlocking(iCurrent) )
-      return;
-
-    // Put all nodes pending for iteration to the fringe
+    // Put all nodes pending for iteration to the fringe.
     const TColStd_PackedMapOfInteger& neighbors = m_graph->GetNeighbors(iCurrent);
     //
     for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbors); nit.More(); nit.Next() )
     {
       const int iNext = nit.Key();
+      //
+      if ( m_visited.Contains(iNext) )
+        continue;
 
-      if ( !m_visited.Contains(iNext) )
-      {
-        m_fringe.push(iNext); // Set node to iterate
-        m_visited.Add(iNext);
-      }
+      // Set as visited.
+      m_visited.Add(iNext);
+
+      // Check whether the current neighbor should be added for traversal.
+      if ( m_blockRule->IsBlocking(iNext) )
+        continue;
+
+      // Set node to iterate.
+      m_fringe.push(iNext);
     }
   }
 

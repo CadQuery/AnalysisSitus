@@ -2587,3 +2587,82 @@ void asiAlgo_Utils::RebuildBounds(TopoDS_Shape& shape)
     }
   }
 }
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Edge asiAlgo_Utils::GetCommonEdge(const TopoDS_Shape&         F,
+                                         const TopoDS_Shape&         G,
+                                         TopTools_IndexedMapOfShape& allCommonEdges)
+{
+  TopoDS_Edge commonEdge;
+
+  // Extract edges for faces.
+  TopTools_IndexedMapOfShape EdgesF, EdgesG;
+  TopExp::MapShapes(F, TopAbs_EDGE, EdgesF);
+  TopExp::MapShapes(G, TopAbs_EDGE, EdgesG);
+
+  // Collect common edges.
+  for ( int ef = 1; ef <= EdgesF.Extent(); ++ef )
+  {
+    for ( int eg = 1; eg <= EdgesG.Extent(); ++eg )
+    {
+      if ( EdgesF(ef).IsSame( EdgesG(eg) ) )
+      {
+        allCommonEdges.Add( EdgesF(ef) );
+        //
+        if ( commonEdge.IsNull() )
+          commonEdge = TopoDS::Edge( EdgesF(ef) );
+      }
+    }
+  }
+  return commonEdge;
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Edge asiAlgo_Utils::GetCommonEdge(const TopoDS_Shape& F,
+                                         const TopoDS_Shape& G)
+{
+  TopTools_IndexedMapOfShape commonEdges;
+  return GetCommonEdge(F, G, commonEdges);
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Vertex asiAlgo_Utils::GetCommonVertex(const TopoDS_Shape& F,
+                                             const TopoDS_Shape& G,
+                                             const TopoDS_Shape& H)
+{
+  TopoDS_Vertex commonVertex;
+
+  // Extract vertices for faces.
+  TopTools_IndexedMapOfShape VerticesF, VerticesG, VerticesH;
+  TopExp::MapShapes(F, TopAbs_VERTEX, VerticesF);
+  TopExp::MapShapes(G, TopAbs_VERTEX, VerticesG);
+  TopExp::MapShapes(H, TopAbs_VERTEX, VerticesH);
+
+  // Collect common vertices.
+  bool isDone = false;
+  for ( int vf = 1; vf <= VerticesF.Extent(); ++vf )
+  {
+    for ( int vg = 1; vg <= VerticesG.Extent(); ++vg )
+    {
+      for ( int vh = 1; vh <= VerticesH.Extent(); ++vh )
+      {
+        if ( VerticesF(vf).IsSame( VerticesG(vg) ) &&
+             VerticesG(vg).IsSame( VerticesH(vh) ) )
+        {
+          if ( commonVertex.IsNull() ) // A single common vertex is returned.
+          {
+            commonVertex = TopoDS::Vertex( VerticesF(vf) );
+            isDone = true;
+            break;
+          }
+        }
+      }
+      if ( isDone ) break;
+    }
+    if ( isDone ) break;
+  }
+  return commonVertex;
+}

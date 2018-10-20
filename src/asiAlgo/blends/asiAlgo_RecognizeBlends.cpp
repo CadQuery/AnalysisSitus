@@ -45,14 +45,17 @@
 
 namespace asiAlgo_AAGIterationRule
 {
-  //! This rule is prevents further iteration starting from faces which are
-  //! not recognized as blend candidate faces.
-  class AllowBlendCandidates : public Standard_Transient
+  //! This rule prevents further iteration starting from faces which are
+  //! not recognized as blend candidate faces. The important property of
+  //! this rule is that it performs actual recognition. That is, the AAG
+  //! is enriched with new attributes representing the blend candidates as
+  //! a result of iteration.
+  class RecognizeBlendCandidates : public Standard_Transient
   {
   public:
 
     // OCCT RTTI
-    DEFINE_STANDARD_RTTI_INLINE(AllowBlendCandidates, Standard_Transient)
+    DEFINE_STANDARD_RTTI_INLINE(RecognizeBlendCandidates, Standard_Transient)
 
   public:
 
@@ -61,9 +64,9 @@ namespace asiAlgo_AAGIterationRule
     //!                     recognized properties of the model.
     //! \param[in] progress progress notifier.
     //! \param[in] plottter imperative plotter.
-    AllowBlendCandidates(const Handle(asiAlgo_AAG)& aag,
-                         ActAPI_ProgressEntry       progress,
-                         ActAPI_PlotterEntry        plotter)
+    RecognizeBlendCandidates(const Handle(asiAlgo_AAG)& aag,
+                             ActAPI_ProgressEntry       progress,
+                             ActAPI_PlotterEntry        plotter)
     : m_aag(aag)
     {
       m_localReco = new asiAlgo_RecognizeBlendFace(aag, progress, plotter);
@@ -136,9 +139,9 @@ asiAlgo_RecognizeBlends::asiAlgo_RecognizeBlends(const Handle(asiAlgo_AAG)& aag,
 bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
                                       const double radius)
 {
-  /* ====================
-   *  Stage 1: build AAG
-   * ==================== */
+  /* ===========================================
+   *  Stage 1: build AAG (if not yet available)
+   * =========================================== */
 
   // Build master AAG if necessary.
   if ( m_aag.IsNull() )
@@ -157,23 +160,33 @@ bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
 #endif
   }
 
+  // Check if the passed seed face is accessible.
+  if ( !m_aag->HasFace(faceId) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Face %1 does not exist." << faceId);
+    return false;
+  }
+
   // Propagation rule.
-  Handle(asiAlgo_AAGIterationRule::AllowBlendCandidates)
-    itRule = new asiAlgo_AAGIterationRule::AllowBlendCandidates(m_aag,
-                                                                m_progress,
-                                                                m_plotter);
+  Handle(asiAlgo_AAGIterationRule::RecognizeBlendCandidates)
+    itRule = new asiAlgo_AAGIterationRule::RecognizeBlendCandidates(m_aag,
+                                                                    m_progress,
+                                                                    m_plotter);
 
   // Prepare neighborhood iterator with customized propagation rule.
   int numIteratedFaces = 0;
   //
-  asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::AllowBlendCandidates>
-    nit( m_aag, faceId, itRule);
+  asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::RecognizeBlendCandidates>
+    nit(m_aag, faceId, itRule);
   //
   for ( ; nit.More(); nit.Next(), ++numIteratedFaces )
   {
+    const int fid = nit.GetFaceId();
+
+    m_plotter.DRAW_SHAPE(m_aag->GetFace(fid), Color_Blue, 1.0, false, "blendCandidate");
   }
 
-  std::cout << "numIteratedFaces : " << numIteratedFaces << std::endl;
+  // TODO: NYI
 
-  return false;
+  return true;
 }

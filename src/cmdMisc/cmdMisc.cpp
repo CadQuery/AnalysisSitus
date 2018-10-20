@@ -151,7 +151,7 @@ int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
   TopoDS_Shape prism = BRepPrimAPI_MakePrism(face, gp_Vec( workPlane->Axis().Direction() )*h);
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Build hexagonal solid")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Build hexagonal solid")
 
   interp->GetPlotter().REDRAW_SHAPE("contour", wire, Color_Red, 1.0, true);
   interp->GetPlotter().REDRAW_SHAPE("face", face);
@@ -212,7 +212,7 @@ int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
   while ( xcurr < xMax );
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Build cylinders")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Build cylinders")
 
   interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Number of cylinders: %1" << cylCount);
   interp->GetPlotter().REDRAW_SHAPE("cyls", cyls, Color_Yellow);
@@ -227,7 +227,7 @@ int MISC_TestHexagonBops(const Handle(asiTcl_Interp)& interp,
   TopoDS_Shape result = asiAlgo_Utils::BooleanCut(prism, tools, false);
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Cut cylinders")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Cut cylinders")
 
   interp->GetPlotter().REDRAW_SHAPE("result", result);
 
@@ -280,7 +280,7 @@ int MISC_TestHexagonBopsFaces(const Handle(asiTcl_Interp)& interp,
   TopoDS_Face face = BRepBuilderAPI_MakeFace(wire);
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Build hexagon")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Build hexagon")
 
   interp->GetPlotter().REDRAW_SHAPE("contour", wire, Color_Red, 1.0, true);
   interp->GetPlotter().REDRAW_SHAPE("face", face);
@@ -342,7 +342,7 @@ int MISC_TestHexagonBopsFaces(const Handle(asiTcl_Interp)& interp,
   while ( xcurr < xMax );
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Build circles")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Build circles")
 
   interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Number of circles: %1" << circCount);
   interp->GetPlotter().REDRAW_SHAPE("circles", circles, Color_Yellow);
@@ -357,7 +357,7 @@ int MISC_TestHexagonBopsFaces(const Handle(asiTcl_Interp)& interp,
   TopoDS_Shape cutres = asiAlgo_Utils::BooleanCut(face, tools, false);
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Cut circles")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Cut circles")
 
   interp->GetPlotter().REDRAW_SHAPE("cutres", cutres);
 
@@ -372,7 +372,7 @@ int MISC_TestHexagonBopsFaces(const Handle(asiTcl_Interp)& interp,
   TopoDS_Shape result = BRepPrimAPI_MakePrism(cutres, gp_Vec( workPlane->Axis().Direction() )*h);
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Extrude")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Extrude")
 
   interp->GetPlotter().REDRAW_SHAPE("result", result);
 
@@ -1313,7 +1313,7 @@ int MISC_TestEvalCurve(const Handle(asiTcl_Interp)& interp,
     }
 
     TIMER_FINISH
-    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Curve evaluation OCCT")
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Curve evaluation OCCT")
 
     interp->GetPlotter().REDRAW_VECTOR_AT("eval_DN", gp::Origin(), eval_DN, Color_Yellow);
   }
@@ -1356,7 +1356,7 @@ int MISC_TestEvalCurve(const Handle(asiTcl_Interp)& interp,
     }
 
     TIMER_FINISH
-    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Curve evaluation Mobius")
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Curve evaluation Mobius")
 
     interp->GetPlotter().REDRAW_VECTOR_AT("eval_DN",
                                           gp::Origin(),
@@ -1434,7 +1434,7 @@ int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
     }
 
     TIMER_FINISH
-    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Surface evaluation OCCT")
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Surface evaluation OCCT")
 
     interp->GetPlotter().REDRAW_POINT("eval_P", eval_P, Color_Yellow);
   }
@@ -1470,7 +1470,7 @@ int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
     }
 
     TIMER_FINISH
-    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Surface evaluation Mobius")
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Surface evaluation Mobius")
 
     interp->GetPlotter().REDRAW_POINT("eval_P",
                                        gp_Pnt( eval_P.X(), eval_P.Y(), eval_P.Z() ),
@@ -1658,7 +1658,7 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
   }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Fair surface")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Fair surface")
 
   // Get fairing result.
   const mobius::ptr<mobius::bsurf>& mobFaired = F.GetResult();

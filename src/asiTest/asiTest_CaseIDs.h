@@ -40,8 +40,10 @@
 //! IDs for Test Cases.
 enum test_CaseID
 {
-  CaseID_SuppressBlends = 1,
-  CaseID_InvertShells,
+  CaseID_InvertShells = 1,
+  CaseID_KEV,
+  CaseID_RecognizeBlends,
+  CaseID_SuppressBlends,
 
 /* ------------------------------------------------------------------------ */
 

@@ -66,7 +66,7 @@ void asiAlgo_AttrBlendCandidate::Dump(Standard_OStream& out) const
 void asiAlgo_AttrBlendCandidate::Dump(ActAPI_PlotterEntry plotter) const
 {
   asiAlgo_AAG* pAAG = this->getAAG();
-  const int    fid  = this->getFaceId();
+  const int    fid  = this->GetFaceId();
   //
   if ( !pAAG || !pAAG->HasFace(fid) )
     return;

@@ -32,18 +32,25 @@
 #define asiAlgo_BlendTopoCondition_h
 
 // asiAlgo includes
-#include <asiAlgo_BlendTopoConditionType.h>
+#include <asiAlgo_AAG.h>
+#include <asiAlgo_AttrBlendCandidate.h>
+#include <asiAlgo_History.h>
+
+// Active Data includes
+#include <ActAPI_IProgressNotifier.h>
+#include <ActAPI_IPlotter.h>
 
 // OCCT includes
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Vertex.hxx>
 
 //-----------------------------------------------------------------------------
 
-//! Base class for a topological condition.
+//! Base class for topological conditions on blends.
 class asiAlgo_BlendTopoCondition : public Standard_Transient
 {
 public:
@@ -53,47 +60,105 @@ public:
 
 public:
 
-  TopoDS_Face blend; //!< Blend face.
-  TopoDS_Face s1;    //!< Support face 1.
-  TopoDS_Face s2;    //!< Support face 2.
-  TopoDS_Edge s1_s2; //!< s1-s2 intersection edge.
-
-  //! Modified geometry.
-  struct ModifGeom
-  {
-    Handle(Geom_Surface) geom_s1;
-    Handle(Geom_Surface) geom_s2;
-    Handle(Geom_Curve)   geom_s1_s2;
-  };
-
-  //! Default ctor.
-  asiAlgo_BlendTopoCondition() : pModifGeom(NULL) {}
-
-  //! Dtor.
-  ~asiAlgo_BlendTopoCondition()
-  {
-    if ( pModifGeom )
-      delete pModifGeom;
-  }
-
-  //! \return type of blend condition.
-  virtual asiAlgo_BlendTopoConditionType GetType() const
-  {
-    return BlendTopoConditionType_Base;
-  }
-
-  //! Sets geometric modification info to the bend condition. The blend
-  //! condition structure takes ownership of the info: the geometric info
-  //! will be deleted by dtor of the blend info.
-  //! \param[in] geometric modification info to set.
-  void LoadGeomInfo(ModifGeom* info)
-  {
-    pModifGeom = info;
-  }
+  TopoDS_Face f_b; //!< Blend face.
 
 public:
 
-  ModifGeom* pModifGeom; //!< Geometric modification info.
+  //! Ctor.
+  //! \param[in] aag      attributed adjacency graph of the CAD-model in question.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_BlendTopoCondition(const Handle(asiAlgo_AAG)& aag,
+                             ActAPI_ProgressEntry       progress,
+                             ActAPI_PlotterEntry        plotter)
+  //
+  : AAG        ( aag ),
+    m_progress ( progress ),
+    m_plotter  ( plotter )
+  {}
+
+public:
+
+  //! Dumps the topological condition to the passed plotter.
+  virtual void Dump(ActAPI_PlotterEntry plotter) const
+  {
+    plotter.REDRAW_SHAPE("f_b", this->f_b);
+  }
+
+  //! Lets to identify a certain topological condition from the passed blend
+  //! candidate attribute.
+  //! \param[in] bcAttr blend candidate attribute in question.
+  //! \return true if the certain topological condition is identified.
+  virtual bool Initialize(const Handle(asiAlgo_AttrBlendCandidate)& bcAttr)
+  {
+    // Get ID of the blend face.
+    const int f_b_idx = bcAttr->GetFaceId();
+
+    // Initialize blend face.
+    this->f_b = this->AAG->GetFace(f_b_idx);
+
+    return true; // Identified.
+  }
+
+  //! Collapses topology locally.
+  //! \param[in]  input   input shape to perform feature suppression on.
+  //! \param[out] output  suppression result.
+  //! \param[out] history modification history.
+  //! \return true in case of success, false -- otherwise.
+  virtual bool Suppress(const TopoDS_Shape&      input,
+                        TopoDS_Shape&            output,
+                        Handle(asiAlgo_History)& history) = 0;
+
+  //! Actualizes the current state of topological condition w.r.t. the
+  //! passed history.
+  //! \param[in] history modification history to apply.
+  virtual void Actualize(const Handle(asiAlgo_History)& history) = 0;
+
+  //! Gathers the collection of affected edges to rebuild as a result of
+  //! suppression.
+  //! \param[out] edges   output collection of edges to rebuild.
+  virtual void GatherAffectedEdges(NCollection_IndexedMap<TopoDS_Edge>& edges) const = 0;
+
+protected:
+
+  //! Performs KEV Euler operator on the passed shape.
+  //! \param[in]  shape       entire shape.
+  //! \param[in]  edge        edge to kill.
+  //! \param[in]  vertex2Kill vertex to kill.
+  //! \param[out] output      result of Euler operator.
+  //! \param[out] history     history of modification.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    kev(const TopoDS_Shape&      shape,
+        const TopoDS_Edge&       edge,
+        const TopoDS_Vertex&     vertex2Kill,
+        TopoDS_Shape&            output,
+        Handle(asiAlgo_History)& history);
+
+  //! Performs KEF Euler operator on the passed shape.
+  //! \param[in]  shape     entire shape.
+  //! \param[in]  face      face to kill.
+  //! \param[in]  edge2Kill edge to kill.
+  //! \param[in]  edge2Save edge to save.
+  //! \param[out] output    result of Euler operator.
+  //! \param[out] history   history of modification.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    kef(const TopoDS_Shape&      shape,
+        const TopoDS_Face&       face,
+        const TopoDS_Edge&       edge2Kill,
+        const TopoDS_Edge&       edge2Save,
+        TopoDS_Shape&            output,
+        Handle(asiAlgo_History)& history);
+
+public:
+
+  Handle(asiAlgo_AAG) AAG; //!< Attributed adjacency graph.
+
+protected:
+
+  ActAPI_ProgressEntry m_progress; //!< Progress notifier.
+  ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter.
 
 };
 

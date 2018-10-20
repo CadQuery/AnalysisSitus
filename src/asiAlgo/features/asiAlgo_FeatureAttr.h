@@ -58,9 +58,33 @@ public:
   virtual const Standard_GUID&
     GetGUID() const = 0;
 
+  virtual const char*
+    GetName() const = 0;
+
 public:
 
   virtual void Dump(Standard_OStream&) const {}
+
+  //! Dumps this attribute as a JSON object.
+  //! \param[in,out] out       target output stream.
+  //! \param[in]     numSpaces number of spaces to use for formatting.
+  virtual void DumpJSON(Standard_OStream& out,
+                        const int         numSpaces = 0) const
+  {
+    std::string ws; // whitespace.
+    for ( int k = 0; k < numSpaces; ++k ) ws += " ";
+
+    char sguid[Standard_GUID_SIZE_ALLOC];
+    this->GetGUID().ToCString(sguid);
+
+    out << "\n" << ws.c_str() << "{";
+    out << "\n" << ws.c_str() << "  \"guid\": " << "\"" << sguid << "\"";
+    out << ",\n" << ws.c_str() << "  \"name\": " << "\"" << this->GetName() << "\"";
+    //
+    this->dumpJSON(out, numSpaces + 2);
+    //
+    out << "\n" << ws.c_str() << "}";
+  }
 
 public:
 
@@ -92,6 +116,11 @@ protected:
   {
     return m_pAAG;
   }
+
+protected:
+
+  //! Allows sub-classes to dump additional properties to their JSONs.
+  virtual void dumpJSON(Standard_OStream&, const int) const {}
 
 protected:
 

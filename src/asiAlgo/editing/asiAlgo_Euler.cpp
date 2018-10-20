@@ -65,7 +65,7 @@ bool asiAlgo_Euler::Perform(const bool doApply)
   const bool isOk = this->perform(doApply);
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(m_progress.Access(), "Euler operator")
+  TIMER_COUT_RESULT_NOTIFIER(m_progress, "Euler operator")
 
   return isOk;
 }

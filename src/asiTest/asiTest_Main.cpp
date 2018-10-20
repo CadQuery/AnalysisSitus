@@ -34,6 +34,8 @@
 #include <asiTest_EdgeVexity.h>
 #include <asiTest_InvertShells.h>
 #include <asiTest_IsContourClosed.h>
+#include <asiTest_KEV.h>
+#include <asiTest_RecognizeBlends.h>
 #include <asiTest_SuppressBlends.h>
 
 // asiTestEngine includes
@@ -87,11 +89,13 @@ int main(int argc, char* argv[])
   std::cout << "asiTest : main()" << std::endl;
   std::vector< Handle(asiTestEngine_CaseLauncherAPI) > CaseLaunchers;
   //
-  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_SuppressBlends>  );
   CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_InvertShells>    );
+  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_KEV>             );
+  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_RecognizeBlends> );
+  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_SuppressBlends>  );
   CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_AAG>             );
-  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_IsContourClosed> );
   CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_EdgeVexity>      );
+  CaseLaunchers.push_back( new asiTestEngine_CaseLauncher<asiTest_IsContourClosed> );
 
   // Launcher of entire test suite
   asiTestEngine_Launcher Launcher;

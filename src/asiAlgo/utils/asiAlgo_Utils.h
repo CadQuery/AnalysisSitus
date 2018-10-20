@@ -815,6 +815,34 @@ namespace asiAlgo_Utils
   asiAlgo_EXPORT void
     RebuildBounds(TopoDS_Shape& shape);
 
+  //! Gets common (shared) edge between the two passed faces.
+  //! \param[in]  F              first face.
+  //! \param[in]  G              second face.
+  //! \param[out] allCommonEdges all common edges.
+  //! \return first common edge.
+  asiAlgo_EXPORT TopoDS_Edge
+    GetCommonEdge(const TopoDS_Shape&         F,
+                  const TopoDS_Shape&         G,
+                  TopTools_IndexedMapOfShape& allCommonEdges);
+
+  //! Gets common (shared) edge between the two passed faces.
+  //! \param[in] F first face.
+  //! \param[in] G second face.
+  //! \return first common edge.
+  asiAlgo_EXPORT TopoDS_Edge
+    GetCommonEdge(const TopoDS_Shape& F,
+                  const TopoDS_Shape& G);
+
+  //! Gets common (shared) vertex between the three passed faces.
+  //! \param[in] F first face.
+  //! \param[in] G second face.
+  //! \param[in] H third face.
+  //! \return first common edge.
+  asiAlgo_EXPORT TopoDS_Vertex
+    GetCommonVertex(const TopoDS_Shape& F,
+                    const TopoDS_Shape& G,
+                    const TopoDS_Shape& H);
+
 };
 
 #endif

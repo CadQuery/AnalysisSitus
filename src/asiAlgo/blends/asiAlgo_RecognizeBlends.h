@@ -50,8 +50,8 @@ public:
   //! \param[in] plotter   imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_RecognizeBlends(const TopoDS_Shape&  masterCAD,
-                            ActAPI_ProgressEntry progress,
-                            ActAPI_PlotterEntry  plotter);
+                            ActAPI_ProgressEntry progress = NULL,
+                            ActAPI_PlotterEntry  plotter  = NULL);
 
   //! Ctor.
   //! \param[in] masterCAD full CAD model.

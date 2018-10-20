@@ -444,10 +444,13 @@ protected:
     dumpNodesJSON(Standard_OStream& out) const;
 
   //! Dumps single graph node with its attributes to JSON.
-  //! \param[in]     node ID of the graph node to dump.
-  //! \param[in,out] out  target output stream.
+  //! \param[in]     node    ID of the graph node to dump.
+  //! \param[in]     isFirst indicates whether the currently dumped node is the
+  //!                        first one to correctly put commas.
+  //! \param[in,out] out     target output stream.
   asiAlgo_EXPORT void
     dumpNodeJSON(const int         node,
+                 const bool        isFirst,
                  Standard_OStream& out) const;
 
   //! Dumps all graph arcs with their attributes to JSON.

@@ -486,7 +486,7 @@ void asiUI_ControlsFeature::onCheckDihedralAngles()
     }
 
     TIMER_FINISH
-    TIMER_COUT_RESULT_NOTIFIER(m_notifier.Access(), "Classify dihedral angles")
+    TIMER_COUT_RESULT_NOTIFIER(m_notifier, "Classify dihedral angles")
   }
   else
   {
@@ -817,7 +817,7 @@ void asiUI_ControlsFeature::onDeleteSelected()
   }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(m_notifier.Access(), "Faces deletion");
+  TIMER_COUT_RESULT_NOTIFIER(m_notifier, "Faces deletion");
 
   const TopoDS_Shape& result = eraser.GetResult();
 
@@ -858,7 +858,7 @@ void asiUI_ControlsFeature::onDeleteSelectedFull()
   }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(m_notifier.Access(), "FULL faces deletion");
+  TIMER_COUT_RESULT_NOTIFIER(m_notifier, "FULL faces deletion");
 
   const TopoDS_Shape& result = eraser.GetResult();
 
@@ -913,7 +913,7 @@ void asiUI_ControlsFeature::onDeleteSelectedSmart()
   }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(m_notifier.Access(), "Smart faces deletion");
+  TIMER_COUT_RESULT_NOTIFIER(m_notifier, "Smart faces deletion");
 
   // Update part.
   m_model->OpenCommand(); // tx start.

@@ -40,16 +40,40 @@
       "surface": "plane"
     },
     "14": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "15": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "16": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "17": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "18": {
       "surface": "plane"
@@ -73,7 +97,13 @@
       "surface": "cylinder"
     },
     "25": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "26": {
       "surface": "plane"
@@ -133,7 +163,13 @@
       "surface": "plane"
     },
     "45": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "46": {
       "surface": "cylinder"
@@ -151,7 +187,13 @@
       "surface": "plane"
     },
     "51": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "52": {
       "surface": "plane"
@@ -178,43 +220,121 @@
       "surface": "plane"
     },
     "60": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "61": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "62": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "63": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "64": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "65": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "66": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "67": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "68": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "69": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "70": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "71": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "72": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "73": {
       "surface": "plane"
@@ -247,7 +367,13 @@
       "surface": "plane"
     },
     "83": {
-      "surface": "torus"
+      "surface": "torus",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     },
     "84": {
       "surface": "plane"
@@ -259,7 +385,13 @@
       "surface": "plane"
     },
     "87": {
-      "surface": "cylinder"
+      "surface": "cylinder",
+      "attributes": [
+        {
+          "guid": "adcc7a78-e062-4ce2-b394-7f25ddfd555e",
+          "name": "angle type"
+        }
+      ]
     }
   },
   "arcs": [

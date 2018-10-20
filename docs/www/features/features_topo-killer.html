@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Analysis Situs: topology killer</title>
+  <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+ </head>
+<body>
+
+<table align="center" border="0" width="100%">
+<tr>
+  <td colspan="5" class="header" align="center"><a href="../index.html">Analysis Situs</a> // <a href="../features.html">features</a> // topology killer <img src="../imgs/situbug.png"/></td>
+</tr>
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="../features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="../terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="../references.html">References</a></td>
+</tr>
+</table>
+
+<p>
+Modification of a B-Rep model employs operation at two levels of the shape's data structure: topology and geometry.
+The topology represents a "syntaxis" of a model, i.e., how the boundary elements are connected and
+nested into each other. Some modeling operators can perform at purely topological level (e.g., defeaturing
+of isolated holes). Basically, the pure topological operators are 100% robust as they do not delve into
+the geometric imprecision. In contrast, the geometric modifications are error-prone and never 100% robust
+(regardless of the marketing team's opinion).
+</p>
+
+<p>
+Topology killer is a basic tool for removal and replacement of topological entities in the topology graph
+of the B-Rep model. In the modeling kernel which we use (OpenCascade), the modification of a nested
+entity requires rebuilding its owning entities. E.g., to remove or replace a vertex in a model, it is necessary
+to build new data containers for the edges, loops, faces, shells, and solids involved. The following animation
+illustrates how a new topology graph is constructed. It should be noted that the entities which are not affected
+by a modeling operator remain intact in the topology graph.
+</p>
+
+<div align="center">
+  <img src="../imgs/topokill_anim.gif"/>
+</div>
+
+<p>
+To run topological killer, use commands
+<span class="code-inline">kill-vertex</span>,
+<span class="code-inline">kill-edge</span>, and
+<span class="code-inline">kill-face</span>. Be aware that unlike
+<a href="./features_euler-ops.html">Euler operators</a>, the killer
+does not preserve the topological integrity of the model, i.e., the command
+<span class="code-inline">check-euler</span> will return "false".
+</p>
+
+<div align="center">
+  <img src="../imgs/kill_edge.png"/>
+</div>
+
+</body>
+</html>

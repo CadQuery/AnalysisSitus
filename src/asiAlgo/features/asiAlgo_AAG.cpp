@@ -335,7 +335,7 @@ bool asiAlgo_AAG::SetNodeAttribute(const int                          node,
 
   // Set face ID to the attribute representing a feature face
   if ( attr->IsKind( STANDARD_TYPE(asiAlgo_FeatureAttrFace) ) )
-    Handle(asiAlgo_FeatureAttrFace)::DownCast(attr)->setFaceId(node);
+    Handle(asiAlgo_FeatureAttrFace)::DownCast(attr)->SetFaceId(node);
 
   if ( !m_node_attributes.IsBound(node) )
     m_node_attributes.Bind( node, t_attr_set(attr) );
@@ -699,31 +699,52 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
 
 void asiAlgo_AAG::dumpNodesJSON(Standard_OStream& out) const
 {
-  const int numNodes = m_neighbors.Extent();
   int nidx = 0;
   //
   for ( t_adjacency::Iterator nit(m_neighbors); nit.More(); nit.Next(), ++nidx )
   {
     const int nodeId = nit.Key();
     //
-    this->dumpNodeJSON(nodeId, out);
-    //
-    if ( nidx < numNodes - 1 )
-      out << ",";
+    this->dumpNodeJSON(nodeId, nidx == 0, out);
   }
 }
 
 //-----------------------------------------------------------------------------
 
 void asiAlgo_AAG::dumpNodeJSON(const int         node,
+                               const bool        isFirst,
                                Standard_OStream& out) const
 {
   // One attribute which should always be dumped is the surface type.
   std::string
     surfName = asiAlgo_Utils::SurfaceName( BRep_Tool::Surface( this->GetFace(node) ) );
 
+  if ( !isFirst )
+    out << ",";
+  //
   out << "\n    \"" << node << "\": {";
   out << "\n      \"surface\": \"" << surfName << "\"";
+  //
+  if ( this->HasNodeAttributes(node) )
+  {
+    out << ",\n      \"attributes\": [";
+
+    // Dump attributes.
+    const t_attr_set& attrs = this->GetNodeAttributes(node);
+    //
+    int attridx = 0;
+    //
+    for ( t_attr_set::Iterator ait(attrs); ait.More(); ait.Next(), ++attridx )
+    {
+      if ( attridx != 0 )
+        out << ",";
+
+      ait.GetAttr()->DumpJSON(out, 8);
+    }
+
+    out << "\n      ]";
+  }
+  //
   out << "\n    }";
 }
 

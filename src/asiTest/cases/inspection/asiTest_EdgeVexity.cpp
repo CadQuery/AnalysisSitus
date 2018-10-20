@@ -57,7 +57,7 @@ outcome asiTest_EdgeVexity::runtest(const int   funcID,
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test001(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_001.tcl");
+  return runtest(funcID, "inspection/edge-vexity_001.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -67,7 +67,7 @@ outcome asiTest_EdgeVexity::test001(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test002(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_002.tcl");
+  return runtest(funcID, "inspection/edge-vexity_002.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -77,7 +77,7 @@ outcome asiTest_EdgeVexity::test002(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test003(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_003.tcl");
+  return runtest(funcID, "inspection/edge-vexity_003.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -87,7 +87,7 @@ outcome asiTest_EdgeVexity::test003(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test004(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_004.tcl");
+  return runtest(funcID, "inspection/edge-vexity_004.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -97,7 +97,7 @@ outcome asiTest_EdgeVexity::test004(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test005(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_005.tcl");
+  return runtest(funcID, "inspection/edge-vexity_005.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ outcome asiTest_EdgeVexity::test005(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test006(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_006.tcl");
+  return runtest(funcID, "inspection/edge-vexity_006.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -117,7 +117,7 @@ outcome asiTest_EdgeVexity::test006(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test007(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_007.tcl");
+  return runtest(funcID, "inspection/edge-vexity_007.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -127,7 +127,7 @@ outcome asiTest_EdgeVexity::test007(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test008(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_008.tcl");
+  return runtest(funcID, "inspection/edge-vexity_008.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -137,7 +137,7 @@ outcome asiTest_EdgeVexity::test008(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test009(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_009.tcl");
+  return runtest(funcID, "inspection/edge-vexity_009.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -147,7 +147,7 @@ outcome asiTest_EdgeVexity::test009(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test010(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_010.tcl");
+  return runtest(funcID, "inspection/edge-vexity_010.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -157,7 +157,7 @@ outcome asiTest_EdgeVexity::test010(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test011(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_011.tcl");
+  return runtest(funcID, "inspection/edge-vexity_011.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -167,7 +167,7 @@ outcome asiTest_EdgeVexity::test011(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test012(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_012.tcl");
+  return runtest(funcID, "inspection/edge-vexity_012.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -177,7 +177,7 @@ outcome asiTest_EdgeVexity::test012(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test013(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_013.tcl");
+  return runtest(funcID, "inspection/edge-vexity_013.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -187,7 +187,7 @@ outcome asiTest_EdgeVexity::test013(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test014(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_014.tcl");
+  return runtest(funcID, "inspection/edge-vexity_014.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -197,7 +197,7 @@ outcome asiTest_EdgeVexity::test014(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test015(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_015.tcl");
+  return runtest(funcID, "inspection/edge-vexity_015.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -207,7 +207,7 @@ outcome asiTest_EdgeVexity::test015(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test016(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_016.tcl");
+  return runtest(funcID, "inspection/edge-vexity_016.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -217,7 +217,7 @@ outcome asiTest_EdgeVexity::test016(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test017(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_017.tcl");
+  return runtest(funcID, "inspection/edge-vexity_017.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -227,7 +227,7 @@ outcome asiTest_EdgeVexity::test017(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test018(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_018.tcl");
+  return runtest(funcID, "inspection/edge-vexity_018.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -237,7 +237,7 @@ outcome asiTest_EdgeVexity::test018(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test019(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_019.tcl");
+  return runtest(funcID, "inspection/edge-vexity_019.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -247,7 +247,7 @@ outcome asiTest_EdgeVexity::test019(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test020(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_020.tcl");
+  return runtest(funcID, "inspection/edge-vexity_020.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -257,7 +257,7 @@ outcome asiTest_EdgeVexity::test020(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test021(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_021.tcl");
+  return runtest(funcID, "inspection/edge-vexity_021.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -267,7 +267,7 @@ outcome asiTest_EdgeVexity::test021(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test022(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_022.tcl");
+  return runtest(funcID, "inspection/edge-vexity_022.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -277,7 +277,7 @@ outcome asiTest_EdgeVexity::test022(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test023(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_023.tcl");
+  return runtest(funcID, "inspection/edge-vexity_023.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -287,7 +287,7 @@ outcome asiTest_EdgeVexity::test023(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test024(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_024.tcl");
+  return runtest(funcID, "inspection/edge-vexity_024.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -297,7 +297,7 @@ outcome asiTest_EdgeVexity::test024(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test025(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_025.tcl");
+  return runtest(funcID, "inspection/edge-vexity_025.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -307,7 +307,7 @@ outcome asiTest_EdgeVexity::test025(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test026(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_026.tcl");
+  return runtest(funcID, "inspection/edge-vexity_026.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -317,7 +317,7 @@ outcome asiTest_EdgeVexity::test026(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test027(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_027.tcl");
+  return runtest(funcID, "inspection/edge-vexity_027.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -327,7 +327,7 @@ outcome asiTest_EdgeVexity::test027(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test028(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_028.tcl");
+  return runtest(funcID, "inspection/edge-vexity_028.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -337,7 +337,7 @@ outcome asiTest_EdgeVexity::test028(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test029(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_029.tcl");
+  return runtest(funcID, "inspection/edge-vexity_029.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -347,7 +347,7 @@ outcome asiTest_EdgeVexity::test029(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test030(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_030.tcl");
+  return runtest(funcID, "inspection/edge-vexity_030.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -357,7 +357,7 @@ outcome asiTest_EdgeVexity::test030(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test031(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_031.tcl");
+  return runtest(funcID, "inspection/edge-vexity_031.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -367,7 +367,7 @@ outcome asiTest_EdgeVexity::test031(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test032(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_032.tcl");
+  return runtest(funcID, "inspection/edge-vexity_032.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -377,7 +377,7 @@ outcome asiTest_EdgeVexity::test032(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test033(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_033.tcl");
+  return runtest(funcID, "inspection/edge-vexity_033.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -387,7 +387,7 @@ outcome asiTest_EdgeVexity::test033(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test034(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_034.tcl");
+  return runtest(funcID, "inspection/edge-vexity_034.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -397,7 +397,7 @@ outcome asiTest_EdgeVexity::test034(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test035(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_035.tcl");
+  return runtest(funcID, "inspection/edge-vexity_035.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -407,7 +407,7 @@ outcome asiTest_EdgeVexity::test035(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test036(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_036.tcl");
+  return runtest(funcID, "inspection/edge-vexity_036.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -417,7 +417,7 @@ outcome asiTest_EdgeVexity::test036(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test037(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_037.tcl");
+  return runtest(funcID, "inspection/edge-vexity_037.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -427,7 +427,7 @@ outcome asiTest_EdgeVexity::test037(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test038(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_038.tcl");
+  return runtest(funcID, "inspection/edge-vexity_038.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -437,7 +437,7 @@ outcome asiTest_EdgeVexity::test038(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test039(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_039.tcl");
+  return runtest(funcID, "inspection/edge-vexity_039.tcl");
 }
 
 //-----------------------------------------------------------------------------
@@ -447,5 +447,5 @@ outcome asiTest_EdgeVexity::test039(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_EdgeVexity::test040(const int funcID)
 {
-  return runtest(funcID, "inspection/edge_vexity_040.tcl");
+  return runtest(funcID, "inspection/edge-vexity_040.tcl");
 }

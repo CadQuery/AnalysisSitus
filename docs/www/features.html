@@ -3,24 +3,112 @@
  <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Analysis Situs: features</title>
+  <link rel="shortcut icon" type="image/png" href="./imgs/favicon.png"/>
   <link rel="stylesheet" type="text/css" href="./css/situ-main-style.css">
  </head>
 <body>
 
-<div class="header" align="center">
-<a href="./index.html">Analysis Situs</a> // features <img src="./imgs/situbug.png"/>
-</div>
+<table align="center" border="0" width="100%">
+<tr>
+  <td colspan="5" class="header" align="center"><a href="./index.html">Analysis Situs</a> // features <img src="./imgs/situbug.png"/></td>
+</tr>
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="./features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="./terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="./references.html">References</a></td>
+</tr>
+</table>
 
 <h1>Common</h1>
 
 <ul>
-  <li><a href="./features/features_batch-mode.html">Batch processing</a>.
+  <li><a href="./features/features_batch-mode.html">Batch processing</a>.</li>
+  <li>Active scripts.</li>
+  <li>Unit testing.</li>
+  <li>Listing of available Tcl commands.</li>
+  <li>Writing Tcl plugins.</li>
+  <li>Manage visualization pipelines.</li>
 </ul>
 
-<h1>Data structures</h1>
+<h1>Project structure</h1>
 
 <ul>
-  <li><a href="./features/features_aag.html">Attributed adjacency graph</a>.
+  <li>Part Node.</li>
+  <li>Tessellation Nodes.</li>
+  <li>Imperative plotter.</li>
+</ul>
+
+<h1>Precise modeling</h1>
+
+<ul>
+  <li><a href="./features/features_topo-killer.html">Topology killer</a>.</li>
+  <li><a href="./features/features_euler-ops.html">Euler operators</a>.</li>
+  <li>Basic surface and solid modeling operators.</li>
+  <li>Detach and remove faces.</li>
+  <li>Explode shapes to sub-shapes.</li>
+  <li>Compute distances between shapes.</li>
+  <li>Repatch faces.</li>
+  <li>Fill gaps.</li>
+  <li>Stitch faces.</li>
+  <li>Getting rid of small edges.</li>
+  <li>History of modifications.</li>
+  <li>On-fly naming service.</li>
+</ul>
+
+<h1>Mesh toolkit</h1>
+
+<ul>
+  <li>Read/write STL and PLY.</li>
+  <li>Offset mesh shells.</li>
+</ul>
+
+<h1>Inspection</h1>
+
+<div class="note">
+<p>
+This block contains description of the shape interrogation facilities available in Analysis Situs. In general,
+using the inspection tools, it is possible to extract the following information:
+</p>
+
+<ul class="light">
+  <li>Topological connectivity in form of graphs.</li>
+  <li>Host geometry of edges and faces (types of curves and surfaces, their properties).</li>
+  <li>Local tolerances, locations and orientations associated with the boundary elements.</li>
+</ul>
+</div>
+
+<ul>
+  <li><a href="./features/features_aag.html">Attributed adjacency graph</a>.</li>
+  <li>Topology graph.</li>
+  <li>Check overall validity.</li>
+  <li><a href="./features/features_check-toler.html">Check geometric tolerances</a>.</li>
+  <li>Check naked (open) edges.</li>
+  <li>Check non-manifold edges.</li>
+  <li>Check dihedral angles.</li>
+  <li>Check face contour.</li>
+  <li>Check face normal vectors.</li>
+  <li>Curvature plots and combs.</li>
+  <li>Gaussian and mean curvature maps.</li>
+  <li><a href="./features/features_is-contour-closed.html">Check if face contour is closed</a>.</li>
+</ul>
+
+<h1>Reverse engineering</h1>
+
+<ul>
+  <li>Define topology interactively.</li>
+  <li>Interpolate mesh by regular grid.</li>
+  <li>Curve smoothing.</li>
+  <li>Surface smoothing.</li>
+  <li>Extend surface.</li>
+</ul>
+
+<h1>Tips & tricks</h1>
+
+<ul>
+  <li><a href="./features/features_find-entity.html">Find entity</a>.</li>
+  <li>JSON representation of curves and surfaces.</li>
 </ul>
 
 </body>

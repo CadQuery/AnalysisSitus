@@ -1,5 +1,0 @@
-source C:/Work/analysis_situs/scripts/topo-killer/topo-killer-04.tcl
-
-rebuild-edge 6
-
-rebuild-edge 2

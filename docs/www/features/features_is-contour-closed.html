@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Analysis Situs: check face contour</title>
+  <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+ </head>
+<body>
+
+<table align="center" border="0" width="100%">
+<tr>
+  <td colspan="5" class="header" align="center"><a href="../index.html">Analysis Situs</a> // <a href="../features.html">features</a> // check face contour <img src="../imgs/situbug.png"/></td>
+</tr>
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="../features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="../terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="../references.html">References</a></td>
+</tr>
+</table>
+
+<p>
+The visualization engine of Analysis Situs is designed to be tolerant to possible anomalies in the
+CAD model definition. Since the number of possible geometric flaws in boundary representation is literally
+countless, it is important to cope with them, and, whenever reasonable, to draw the user's attention to
+the detected problems. According to <a href="../references.html#requicha-1980">[Requicha, 1980]</a>,
+a mathematical model of a rigid solid body is a bounded, closed, regular, semianalythic subset
+of a three-dimensional space. Such an abstract entity is called an "r-set." This definition has become a
+commonly accepted mathematical formalism in the field of engineering geometric modeling. Therefore,
+one of the basic requirements for a rigid solid is closeness. In the boundary representation scheme,
+closeness of a body can be seen at different levels.
+</p>
+
+<ul>
+  <li>At the level of a solid body (in 3D), closeness means no missing faces (i.e., no "naked" edges).</li>
+  <li>At the level of a single face (in 2D), closeness means no gaps in its contour.</li>
+</ul>
+
+<p>
+Both properties are checked automatically on CAD model import. The shaded visualization of a model starts
+with preparation of facets, i.e., the triangles to be passed to the graphics device for rendering. However,
+if Analysis Situs finds that some face is not closed, it does not attempt to draw its facets. Instead, the
+host surface is visualized with isoparametric lines.
+</p>
+
+<div align="center"><img src="../imgs/is_contour_closed_01.png"/></div>
+
+<p>
+The closeness check is done in the parametric domain (UV space) of each face. Not only geometric properties are
+taken into account. The coincidence test is done using the local tolerances of the face. The orientation of
+edges in the contour loop is also important: those contours having inconsistent orientation of edges are
+recognized as not closed.
+</p>
+
+</body>
+</html>

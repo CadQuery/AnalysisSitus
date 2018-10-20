@@ -53,6 +53,7 @@
 #include <asiAlgo_RecognizeBlends.h>
 #include <asiAlgo_RepatchFaces.h>
 #include <asiAlgo_SmallEdges.h>
+#include <asiAlgo_SuppressBlendChain.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_TopoAttrOrientation.h>
 #include <asiAlgo_TopoKill.h>
@@ -676,7 +677,7 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
   }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Smart face removal")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Smart face removal")
 
   // Modify Data Model
   cmdEngine::model->OpenCommand();
@@ -1143,7 +1144,7 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
   }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Rebuild edge")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Rebuild edge")
 
   // Get result.
   const TopoDS_Shape& result = oper.GetResult();
@@ -1231,7 +1232,7 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
     }
 
     TIMER_FINISH
-    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Mobius B-curve fairing")
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Mobius B-curve fairing")
 
     // Get the faired curve.
     const mobius::ptr<mobius::bcurve>& mobResult = fairing.GetResult();
@@ -1263,7 +1264,7 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
     }
 
     TIMER_FINISH
-    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Analysis Situs B-curve fairing")
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Analysis Situs B-curve fairing")
 
     // Get the faired curve.
     result = fairing.GetResult();
@@ -1355,7 +1356,7 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress().Access(), "Mobius B-surface fairing")
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Mobius B-surface fairing")
 
   // Get the faired surface.
   const mobius::ptr<mobius::bsurf>& mobResult = fairing.GetResult();
@@ -1780,19 +1781,46 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
     }
   }
 
-  // Prepare recognizer.
-  asiAlgo_RecognizeBlends recognizer( partNode->GetAAG(),
-                                      interp->GetProgress(),
-                                      interp->GetPlotter() );
+  TIMER_NEW
+  TIMER_GO
 
   // Perform recognition starting from the guess face.
+  asiAlgo_RecognizeBlends recognizer( partNode->GetAAG(),
+                                      interp->GetProgress(),
+                                      NULL/*interp->GetPlotter()*/ );
+  //
   if ( !recognizer.Perform(fid) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Recognition failed.");
     return TCL_ERROR;
   }
 
-  // TODO: NYI
+  // Perform suppression.
+  asiAlgo_SuppressBlendChain suppressor( recognizer.GetAAG(),
+                                         interp->GetProgress(),
+                                         NULL/*interp->GetPlotter()*/ );
+  //
+  if ( !suppressor.Perform(fid) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Suppression failed.");
+    return TCL_ERROR;
+  }
+  //
+  const TopoDS_Shape& result = suppressor.GetResult();
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "kill-blend")
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
 
   return TCL_OK;
 }

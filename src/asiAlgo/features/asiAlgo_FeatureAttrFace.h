@@ -57,35 +57,18 @@ public:
 
 public:
 
-  //! \return static GUID associated with this type of attribute.
-  static const Standard_GUID& GUID()
-  {
-    static Standard_GUID guid("4F752368-6519-457D-BCC2-9A2CCA3B02B1");
-    return guid;
-  }
-
-  //! \return GUID associated with this type of attribute.
-  virtual const Standard_GUID& GetGUID() const override
-  {
-    return GUID();
-  }
-
-public:
-
   //! \return feature index.
   int GetFeatureId() const { return m_iFeatureId; }
 
-protected:
-
   //! Sets face ID.
   //! \param faceId [in] 1-based face ID.
-  void setFaceId(const int faceId)
+  void SetFaceId(const int faceId)
   {
     m_iFaceId = faceId;
   }
 
   //! \return face ID.
-  int getFaceId() const
+  int GetFaceId() const
   {
     return m_iFaceId;
   }

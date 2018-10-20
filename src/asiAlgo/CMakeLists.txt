@@ -77,8 +77,8 @@ set (aux_CPP_FILES
 set (blends_H_FILES
   blends/asiAlgo_AttrBlendCandidate.h
   blends/asiAlgo_BlendTopoCondition.h
-  blends/asiAlgo_BlendTopoConditionIsolated.h
-  blends/asiAlgo_BlendTopoConditionType.h
+  blends/asiAlgo_BlendTopoConditionFF.h
+  blends/asiAlgo_BlendTopoConditionFFIsolated.h
   blends/asiAlgo_BlendType.h
   blends/asiAlgo_FindCrossEdges.h
   blends/asiAlgo_FindSmoothEdges.h
@@ -86,15 +86,18 @@ set (blends_H_FILES
   blends/asiAlgo_FindTermEdges.h
   blends/asiAlgo_RecognizeBlendFace.h
   blends/asiAlgo_RecognizeBlends.h
+  blends/asiAlgo_SuppressBlendChain.h
 )
 set (blends_CPP_FILES
   blends/asiAlgo_AttrBlendCandidate.cpp
+  blends/asiAlgo_BlendTopoCondition.cpp
   blends/asiAlgo_FindCrossEdges.cpp
   blends/asiAlgo_FindSmoothEdges.cpp
   blends/asiAlgo_FindSpringEdges.cpp
   blends/asiAlgo_FindTermEdges.cpp
   blends/asiAlgo_RecognizeBlendFace.cpp
   blends/asiAlgo_RecognizeBlends.cpp
+  blends/asiAlgo_SuppressBlendChain.cpp
 )
 
 #------------------------------------------------------------------------------

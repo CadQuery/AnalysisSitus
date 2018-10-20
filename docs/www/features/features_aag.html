@@ -3,19 +3,32 @@
  <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Analysis Situs: attributed adjacency graph</title>
+  <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
   <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
  </head>
 <body>
 
-<div class="header" align="center">
-<a href="../index.html">Analysis Situs</a> // <a href="../features.html">features</a> // AAG <img src="../imgs/situbug.png"/>
-</div>
+<table align="center" border="0" width="100%">
+<tr>
+  <td colspan="5" class="header" align="center"><a href="../index.html">Analysis Situs</a> // <a href="../features.html">features</a> // AAG <img src="../imgs/situbug.png"/></td>
+</tr>
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="../features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="../terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="../references.html">References</a></td>
+</tr>
+</table>
 
 <h1>Overview</h1>
 
 <p>
 Attributed adjacency graph (AAG) is the auxiliary data structure which is often used for feature recognition.
 The concept of AAG is well described in the paper by <a href="../references.html#joshi-chang-1988">[Joshi and Chang, 1988]</a>.
+Unlike the face adjacency graph (FAG) presented by <a href="../references.html#ansaldi-et-al-1985">[Ansaldi et al, 1985]</a>,
+our implementation of the graph permits only single arcs between the nodes. In our AAG implementation, an arc expresses
+a neighborhood relation rather than its actual realization by means of boundary edges.
 The following figure gives an example of AAG built for a synthetic model.
 </p>
 
@@ -86,7 +99,7 @@ the example of the serialized AAG corresponding to a simple box solid:
 <p>
 There are two blocks in the JSON output: the "nodes" and the "arcs". Each node has the corresponding 1-based ID. The IDs of the nodes
 are referenced in the "arcs" block. Be aware that the attributed adjacency graph is not oriented, so the order of node IDs has no sense
-in the link specification.
+in the link specification. If there are any attributes associated with AAG nodes, these attributes are also dumped.
 </p>
 
 <p>

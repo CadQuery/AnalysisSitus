@@ -72,6 +72,12 @@ public:
     return GUID();
   }
 
+  //! \return human-readable name of the attribute.
+  virtual const char* GetName() const override
+  {
+    return "blend candidate";
+  }
+
 public:
 
   //! Dumps this attribute to the passed output stream.
@@ -83,6 +89,42 @@ public:
   //! \param[in, out] imperative plotter.
   asiAlgo_EXPORT virtual void
     Dump(ActAPI_PlotterEntry plotter) const;
+
+protected:
+
+  //! Dumps the custome attribute properties to JSON.
+  //! \param[in,out] out       target output stream.
+  //! \param[in]     numSpaces number of spaces to use for formatting.
+  virtual void dumpJSON(Standard_OStream& out,
+                        const int         numSpaces = 0) const
+  {
+    std::string ws; // whitespace.
+    for ( int k = 0; k < numSpaces; ++k ) ws += " ";
+
+    out << ",\n" << ws.c_str() << "\"kind\": "                << "\"" << kindToString(this->Kind)              << "\"";
+    out << ",\n" << ws.c_str() << "\"confirmed\": "           << "\"" << this->Confirmed                       << "\"";
+    out << ",\n" << ws.c_str() << "\"numSmoothEdges\": "      << "\"" << this->SmoothEdgeIndices.Extent()      << "\"";
+    out << ",\n" << ws.c_str() << "\"numSpringEdges\": "      << "\"" << this->SpringEdgeIndices.Extent()      << "\"";
+    out << ",\n" << ws.c_str() << "\"numCrossEdges\": "       << "\"" << this->CrossEdgeIndices.Extent()       << "\"";
+    out << ",\n" << ws.c_str() << "\"numTerminatingEdges\": " << "\"" << this->TerminatingEdgeIndices.Extent() << "\"";
+  }
+
+  //! Converts blend kind enum to string.
+  //! \param[in] kind blend kind in question.
+  //! \return string representation of a blend kind.
+  static std::string kindToString(const asiAlgo_BlendType kind)
+  {
+    switch ( kind )
+    {
+      case BlendType_Uncertain: return "uncertain";
+      case BlendType_Ordinary:  return "ordinary";
+      case BlendType_Vertex:    return "vertex";
+      case BlendType_Cliff:     return "cliff";
+      default: break;
+    }
+
+    return "undefined";
+  }
 
 public:
 

@@ -35,7 +35,7 @@
 #include <asiAlgo_AAG.h>
 #include <asiAlgo_AAGIterator.h>
 
-#undef FILE_DEBUG
+#define FILE_DEBUG
 #if defined FILE_DEBUG
   #pragma message("===== warning: FILE_DEBUG is enabled")
 #endif
@@ -46,6 +46,7 @@
 #define filename_brep_001 "cad/box.brep"
 #define filename_brep_002 "cad/ANC101_isolated_components.brep"
 #define filename_brep_003 "cad/ANC101.brep"
+//
 #define filename_json_001 "reference/aag/testJSON01.json"
 #define filename_json_002 "reference/aag/testJSON02.json"
 

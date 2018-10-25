@@ -958,46 +958,119 @@ int MISC_TestOffset(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-#include <BRepOffsetAPI_MakePipeShell.hxx>
-#include <GC_MakeArcOfCircle.hxx>
-#include <BRepAdaptor_CompCurve.hxx>
+#include <Geom_BezierCurve.hxx>
+#include <GeomConvert.hxx>
+#include <GeomFill_Pipe.hxx>
 
-int MISC_TestPipe(const Handle(asiTcl_Interp)& interp,
-                  int                          argc,
-                  const char**                 argv)
+int MISC_TestPipe1(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
 {
   if ( argc != 1 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  BRepBuilderAPI_MakeEdge edgeMaker1(gp_Pnt(0.0,0.0,0.0),gp_Pnt(0.0,1.0,0.0));
-  const TopoDS_Edge e1=edgeMaker1.Edge();
-  BRepBuilderAPI_MakeWire wireMaker1(e1);
-  BRepBuilderAPI_MakeEdge edgeMaker2(gp_Pnt(0.0,0.0,0.0),gp_Pnt(0.0,0.0,1.0));
-  const TopoDS_Edge e2=edgeMaker2.Edge();
-  BRepBuilderAPI_MakeWire wireMaker2(e2);
-  const TopoDS_Wire w1=wireMaker1.Wire();
-  const TopoDS_Wire w2=wireMaker2.Wire();
-  BRepOffsetAPI_MakePipeShell mps(w1);
-  mps.Add(w2);
-  mps.Build();
-  printf("mps.Generated(e1).Extent() = %d\n",mps.Generated(e1).Extent());fflush(stdout);
+  // Construct path.
+  TColgp_Array1OfPnt pathPoles(1, 3);
+  pathPoles(1) = gp_Pnt(0,   0,   0);
+  pathPoles(2) = gp_Pnt(100, 0,   0);
+  pathPoles(3) = gp_Pnt(100, 100, 0);
+  //
+  Handle(Geom_BezierCurve) path = new Geom_BezierCurve(pathPoles);
 
-  const Standard_Real r45=M_PI/4.0,r225=3.0*M_PI/4.0;
+  // Construct sections.
+  Handle(Geom_Curve)
+    c1 = GeomConvert::CurveToBSplineCurve(new Geom_TrimmedCurve(new Geom_Circle(gp_Ax2( gp::Origin(), gp::DX() ), 10.0), 0, 2*M_PI), Convert_Polynomial);
+  //
+  Handle(Geom_Curve)
+    c2 = GeomConvert::CurveToBSplineCurve(new Geom_TrimmedCurve(new Geom_Circle(gp_Ax2( gp::Origin(), gp::DX() ), 20.0), 0, 2*M_PI), Convert_Polynomial);
 
-  GC_MakeArcOfCircle arcMaker(gp_Circ(gp_Ax2(gp_Pnt(0.0,0.0,0.0), gp_Dir(0.0,0.0,1.0),gp_Dir(1.0,0.0,0.0)),1.0),r45,r225,true);
-  BRepBuilderAPI_MakeEdge edgeMaker(arcMaker.Value());
-  BRepBuilderAPI_MakeWire wireMaker(edgeMaker.Edge());
-  const TopoDS_Wire circle=wireMaker.Wire();
+  interp->GetPlotter().REDRAW_CURVE("c1", c1, Color_Red);
+  interp->GetPlotter().REDRAW_CURVE("c2", c2, Color_Red);
 
-  BRepAdaptor_CompCurve curve(circle);
-  printf("curve.FirstParameter() = %g\n",curve.FirstParameter());
-  printf("curve.LastParameter()  = %g\n",curve.LastParameter());
-  const gp_Pnt start=curve.Value(curve.FirstParameter());
-  const gp_Pnt end=curve.Value(curve.LastParameter());
-  printf("start = (%g,%g,%g)\n",start.X(),start.Y(),start.Z());fflush(stdout);
-  printf("end   = (%g,%g,%g)\n",end.X(),end.Y(),end.Z());fflush(stdout);
+  // Make pipe.
+  GeomFill_Pipe Pipe(path, c1, c2);
+  Pipe.Perform();
+
+  // Get the result.
+  const Handle(Geom_Surface)& result = Pipe.Surface();
+
+  // Set the result as an output.
+  interp->GetPlotter().REDRAW_SURFACE("result", result, Color_White);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+#include <BRepOffsetAPI_MakePipeShell.hxx>
+
+int MISC_TestSweep1(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Construct path.
+  BRepBuilderAPI_MakePolygon mkPath;
+  mkPath.Add( gp_Pnt(0,   0,   0) );
+  mkPath.Add( gp_Pnt(100, 0,   0) );
+  mkPath.Add( gp_Pnt(100, 100, 0) );
+  mkPath.Add( gp_Pnt(200, 50,  0) );
+  //
+  const TopoDS_Wire& pathWire = mkPath.Wire();
+  //
+  interp->GetPlotter().REDRAW_SHAPE("pathWire", pathWire, Color_Yellow, 1.0, true);
+
+  // Initialize sweeping utility.
+  BRepOffsetAPI_MakePipeShell mkPipeShell(pathWire);
+
+  // Construct section.
+  Handle(Geom_Curve)
+    c1 = new Geom_Circle(gp_Ax2( gp::Origin(), gp::DX() ), 10.0);
+  //
+  TopoDS_Edge sectionEdge = BRepBuilderAPI_MakeEdge(c1);
+  TopoDS_Wire sectionWire = BRepBuilderAPI_MakeWire(sectionEdge);
+  //
+  interp->GetPlotter().REDRAW_SHAPE("sectionWire", sectionWire, Color_Red, 1.0, true);
+
+  // Add section to the sweeping tool.
+  bool isT = false,
+       isR = false;
+  //
+  mkPipeShell.Add(sectionWire, isT, isR);
+
+  // Set evolution mode.
+  mkPipeShell.SetMode(true);
+
+  // Set transition strategy for C0 joints.
+  mkPipeShell.SetTransitionMode(BRepBuilderAPI_RightCorner);
+
+  // Build.
+  mkPipeShell.Build();
+  //
+  if ( !mkPipeShell.IsDone() )
+  {
+    BRepBuilderAPI_PipeError Stat = mkPipeShell.GetStatus();
+    if ( Stat == BRepBuilderAPI_PlaneNotIntersectGuide )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "One plane does not intersect the guide.");
+    }
+    if ( Stat == BRepBuilderAPI_ImpossibleContact )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "One section can not be in contact with the guide.");
+    }
+    return TCL_ERROR;
+  }
+
+  // Set the result.
+  TopoDS_Shape result = mkPipeShell.Shape();
+  //
+  interp->GetPlotter().REDRAW_SHAPE("result", result);
 
   return TCL_OK;
 }
@@ -1750,12 +1823,20 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, MISC_TestOffset);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("test-pipe",
+  interp->AddCommand("test-pipe1",
     //
     "test-pipe \n"
     "\t Problem reproducer for pipes.",
     //
-    __FILE__, group, MISC_TestPipe);
+    __FILE__, group, MISC_TestPipe1);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-sweep1",
+    //
+    "test-sweep \n"
+    "\t Problem reproducer for sweeping.",
+    //
+    __FILE__, group, MISC_TestSweep1);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("test-ineq",

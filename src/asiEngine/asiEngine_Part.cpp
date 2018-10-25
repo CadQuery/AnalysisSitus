@@ -230,7 +230,7 @@ void asiEngine_Part::Update(const TopoDS_Shape& model,
     aagParam = Handle(asiData_AAGParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_AAG) );
   //
   shapeParam->SetShape(model);
-  //aagParam->SetAAG( new asiAlgo_AAG(model) );
+  aagParam->SetAAG( new asiAlgo_AAG(model) );
 
   // Reset tessellation parameters if requested
   if ( doResetTessParams )

@@ -584,13 +584,14 @@ void asiVisu_ShapeRobustTessellator::addFace(const TopoDS_Face& face,
                                               << faceId);
 
     // Get bounding box of the face
-    double xMin, yMin, zMin, xMax, yMax, zMax;
-    asiAlgo_Utils::Bounds(face, xMin, yMin, zMin, xMax, yMax, zMax);
+    double xMin = 0, yMin = 0, zMin = 0, xMax = 0, yMax = 0, zMax = 0;
+    const bool
+      canComputeBounds = asiAlgo_Utils::Bounds(face, xMin, yMin, zMin, xMax, yMax, zMax);
 
     // Trim diagonal to avoid infinite here. This can happen for single infinite
     // cylindrical faces for example.
     const double
-      diag = Min( gp_Pnt(xMax, yMax, zMax).Distance( gp_Pnt(xMin, yMin, zMin) ), m_fGlobalBndDiag);
+      boundsDiag = Min( gp_Pnt(xMax, yMax, zMax).Distance( gp_Pnt(xMin, yMin, zMin) ), m_fGlobalBndDiag);
 
     // Get host surface
     Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
@@ -616,11 +617,14 @@ void asiVisu_ShapeRobustTessellator::addFace(const TopoDS_Face& face,
     vMin = Max(vMinSurf, vMinParam);
     vMax = Min(vMaxSurf, vMaxParam);
 
-    // Trim natural bounds by the face bounds
-    uMin = asiVisu_Utils::Trim(uMin, diag);
-    uMax = asiVisu_Utils::Trim(uMax, diag);
-    vMin = asiVisu_Utils::Trim(vMin, diag);
-    vMax = asiVisu_Utils::Trim(vMax, diag);
+    // Trim natural bounds by the face bounds (if such can be computed)
+    if ( canComputeBounds )
+    {
+      uMin = asiVisu_Utils::Trim(uMin, boundsDiag);
+      uMax = asiVisu_Utils::Trim(uMax, boundsDiag);
+      vMin = asiVisu_Utils::Trim(vMin, boundsDiag);
+      vMax = asiVisu_Utils::Trim(vMax, boundsDiag);
+    }
 
     // Boundary is very ill-defined. If min and max parameter values coincide,
     // we cannot draw even surface isolines, so let's try to expand...
@@ -637,6 +641,12 @@ void asiVisu_ShapeRobustTessellator::addFace(const TopoDS_Face& face,
 
     const double uStep = (uMax - uMin) / NUMISOS;
     const double vStep = (vMax - vMin) / NUMISOS;
+    //
+    if ( Abs(uStep) < RealEpsilon() || Abs(vStep) < RealEpsilon() )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Attempt to use zero parametric step.");
+      return;
+    }
 
     // Generate u-isos
     double u     = uMin;

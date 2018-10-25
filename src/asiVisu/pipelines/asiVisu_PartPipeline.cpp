@@ -90,7 +90,14 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
     this->clearCache();
 
     // Configure data source
-    m_source->SetAAG( DP->GetAAG() );
+    if ( !DP->GetAAG().IsNull() )
+    {
+      m_source->SetAAG( DP->GetAAG() );
+    }
+    else
+    {
+      m_source->SetShape( DP->GetShape() );
+    }
     m_source->SetTessellationParams( DP->GetLinearDeflection(),
                                      DP->GetAngularDeflection() );
 

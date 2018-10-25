@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Analysis Situs: active script</title>
+  <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+
+  <!-- [begin] Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112292727-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-112292727-2');
+  </script>
+  <!-- [end] Google Analytics -->
+
+ </head>
+<body>
+
+<table align="center" border="0" width="100%">
+<tr>
+  <td colspan="5" class="header" align="center"><a href="../index.html">Analysis Situs</a> // <a href="../features.html">features</a> // active script <img src="../imgs/situbug.png"/></td>
+</tr>
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="../features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="../terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="../references.html">References</a></td>
+</tr>
+</table>
+
+<p>
+Most functionality of Analysis Situs is available through scripting. We use Tcl language which we
+appreciate for its clearness and pure functional paradigm. Each command in Analysis Situs is
+formulated in the following fashion: <span class="code-inline">verb</span> minus
+<span class="code-inline">noun</span>, e.g.: <span class="code-inline">offset-shell</span>,
+<span class="code-inline">start-contour</span>, <span class="code-inline">print-summary</span>, etc.
+</p>
+
+<p>
+For scripting, we have a dedicated panel where you write your commands and execute them. This panel is
+a bit special, because it is not a usual one-line prompt, but rather the script editor where each line
+can be executed individually (one could have met a similar concept in the Mapple sheets). Using this editor
+is advantageous for prototyping: you are free to insert commands to your sheet, erase unsuccessful trials,
+execute and re-execute lines in arbitrary order, and edit the script the way you like. We have named
+this concept as "Active Script" which, we think, is a more powerful paradigm then a classical
+command-line prompt.
+</p>
+
+<div align="center"><img src="../imgs/active_script_01.png"/></div>
+
+<p>
+Pressing the &lt;Enter&gt; key executes the current command at the position of a cursor. To insert a new
+command between the two existing ones, use &lt;Ctrl+Enter&gt; key combination. You may save the scripts
+prepared in the Active Script editor to file and execute them later with the Tcl native
+<span class="code-inline">source</span> command, e.g.:
+</p>
+
+<div class="code">source &lt;path-to-script&gt;</div>
+
+<p>
+Some example scripts can be found in the "scripts" subdirectory of Analysis Situs. This directory is
+accessible via <span class="code-inline">ASI_TEST_SCRIPTS</span> environment variable in the
+Active Script console.
+</p>
+
+<p class="note">
+When specifying the path for the <span class="code-inline">source</span> command you can use both
+forward and back slashes.
+</p>
+
+<div align="center"><img src="../imgs/active_script_02.png"/></div>
+
+<p>
+You can also execute Tcl scripts in the <a href="./features_batch-mode.html">batch mode</a> without GUI.
+</p>
+
+</body>
+</html>

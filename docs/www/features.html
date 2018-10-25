@@ -5,6 +5,18 @@
   <title>Analysis Situs: features</title>
   <link rel="shortcut icon" type="image/png" href="./imgs/favicon.png"/>
   <link rel="stylesheet" type="text/css" href="./css/situ-main-style.css">
+
+  <!-- [begin] Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112292727-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-112292727-2');
+  </script>
+  <!-- [end] Google Analytics -->
+
  </head>
 <body>
 
@@ -25,9 +37,9 @@
 
 <ul>
   <li><a href="./features/features_batch-mode.html">Batch processing</a>.</li>
-  <li>Active scripts.</li>
-  <li>Unit testing.</li>
-  <li>Listing of available Tcl commands.</li>
+  <li><a href="./features/features_active-script.html">Active script</a>.</li>
+  <li><a href="./features/features_unit-testing.html">Unit testing</a>.</li>
+  <li><a href="./features/features_listing-commands.html">Listing available Tcl commands</a>.</li>
   <li>Writing Tcl plugins.</li>
   <li>Manage visualization pipelines.</li>
 </ul>
@@ -67,10 +79,8 @@
 <h1>Inspection</h1>
 
 <div class="note">
-<p>
 This block contains description of the shape interrogation facilities available in Analysis Situs. In general,
 using the inspection tools, it is possible to extract the following information:
-</p>
 
 <ul class="light">
   <li>Topological connectivity in form of graphs.</li>
@@ -87,17 +97,17 @@ using the inspection tools, it is possible to extract the following information:
   <li>Check naked (open) edges.</li>
   <li>Check non-manifold edges.</li>
   <li>Check dihedral angles.</li>
-  <li>Check face contour.</li>
-  <li>Check face normal vectors.</li>
   <li>Curvature plots and combs.</li>
   <li>Gaussian and mean curvature maps.</li>
   <li><a href="./features/features_is-contour-closed.html">Check if face contour is closed</a>.</li>
+  <li>Check face contour.</li>
+  <li>Check face normal vectors.</li>
 </ul>
 
 <h1>Reverse engineering</h1>
 
 <ul>
-  <li>Define topology interactively.</li>
+  <li><a href="./features/features_re-define-topology.html">Define topology interactively</a>.</li>
   <li>Interpolate mesh by regular grid.</li>
   <li>Curve smoothing.</li>
   <li>Surface smoothing.</li>

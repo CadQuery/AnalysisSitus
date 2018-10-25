@@ -44,9 +44,9 @@ Handle(asiUI_CommonFacilities) cmdEngine::cf    = NULL;
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_Commands(const Handle(asiTcl_Interp)& interp,
-                    int                          argc,
-                    const char**                 argv)
+int ENGINE_ShowCommands(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
 {
   if ( argc != 1 )
   {
@@ -125,12 +125,12 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
    *  Add custom commands
    * ===================== */
 
-  interp->AddCommand("commands",
+  interp->AddCommand("show-commands",
     //
-    "commands\n"
+    "show-commands\n"
     "\t Opens dialog which lists all available commands for analysis.",
     //
-    __FILE__, group, ENGINE_Commands);
+    __FILE__, group, ENGINE_ShowCommands);
 
   // Load sub-modules.
   Commands_Data        (interp, data);

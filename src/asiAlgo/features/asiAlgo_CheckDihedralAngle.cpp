@@ -296,6 +296,7 @@ asiAlgo_FeatureAngleType
     // C1 joint requires additional analysis
     gp_Pnt2d UV_shifted, ST_shifted;
     gp_Pnt   S1_P, S2_P;
+    gp_Vec   TF_precised_vec, TG_precised_vec;
     gp_Dir   TF_precised, TG_precised;
 
     // Let's make small offsets along the in-plane vectors and
@@ -328,8 +329,16 @@ asiAlgo_FeatureAngleType
       S1_P       = SAS1.Value(UV_shifted);
       S2_P       = SAS2.Value(ST_shifted);
 
-      TF_precised = ( S1_P.XYZ() - A.XYZ() );
-      TG_precised = ( S2_P.XYZ() - A.XYZ() );
+      // For invalid models, we need to protect against null vectors.
+      TF_precised_vec = ( S1_P.XYZ() - A.XYZ() );
+      TG_precised_vec = ( S2_P.XYZ() - A.XYZ() );
+      //
+      if ( TF_precised_vec.Magnitude() < Precision::Confusion() ||
+           TG_precised_vec.Magnitude() < Precision::Confusion() )
+        return FeatureAngleType_Undefined;
+      //
+      TF_precised = TF_precised_vec;
+      TG_precised = TG_precised_vec;
 
       avrAngleRad += TF_precised.AngleWithRef(TG_precised, Ref);
 

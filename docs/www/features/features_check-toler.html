@@ -5,6 +5,18 @@
   <title>Analysis Situs: check geometric tolerances</title>
   <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
   <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+
+  <!-- [begin] Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112292727-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-112292727-2');
+  </script>
+  <!-- [end] Google Analytics -->
+
  </head>
 <body>
 
@@ -53,6 +65,17 @@ colors mean less accuracy of the corresponding boundary elements.
 </p>
 
 <div align="center"><img src="../imgs/check_toler_example.png"/></div>
+
+<p>
+Whether your tolerances are Ok or not is a tricky question. It has been agreed quite a while ago that
+the consistency of tolerance definition can be discussed only in the context of a specific application
+(for reference, see the panel discussion at <a href="../references.html#hoschek-1991">[Hoschek, 1991, pp. 264-265]</a>).
+The whole idea of CAD is not to generate mathematically ideal shapes but to make those shapes serve
+the industry. Therefore, quite often even poor tolerances are anough to mill a part or to generate a
+finite element model. However, you may face unpredictable problems down the road, e.g., when
+communicating your CAD model to another software. Thus, even though no model is perfect, it is
+practically more safe to have as tight geometric tolerances as possible.
+</p>
 
 </body>
 </html>

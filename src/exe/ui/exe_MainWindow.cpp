@@ -329,7 +329,7 @@ void exe_MainWindow::createDockWindows()
   // Console window
   QDockWidget* pDockConsoleWindow;
   {
-    pDockConsoleWindow = new QDockWidget("Console", this);
+    pDockConsoleWindow = new QDockWidget("Active Script", this);
     pDockConsoleWindow->setAllowedAreas(Qt::BottomDockWidgetArea);
     //
     Widgets.wConsole = new asiUI_Console(cf->Interp, pDockLogWindow);

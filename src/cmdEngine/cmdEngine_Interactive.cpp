@@ -104,25 +104,25 @@ int ENGINE_ProjectContour(const Handle(asiTcl_Interp)& interp,
   PM->SetSelectionMode(SelectionMode_Workpiece);
 
   // Add observer which takes responsibility to interact with the user.
-  if ( !PM->HasObserver(EVENT_SELECT_WORLD_POINT) )
-  {
-    vtkSmartPointer<asiUI_PickContourCallback>
-      cb = vtkSmartPointer<asiUI_PickContourCallback>::New();
-    //
-    cb->SetViewer      ( cmdEngine::cf->ViewerPart );
-    cb->SetModel       ( cmdEngine::model );
-    cb->SetContourNode ( contour_n );
-    //
-    if ( !part_n->GetShape().IsNull() )
-      cb->AddBVH( part_n->GetBVH() );
-    if ( !tris_n->GetTriangulation().IsNull() )
-      cb->AddBVH( tris_n->GetBVH() );
-    //
-    cb->SetDiagnosticTools ( interp->GetProgress(), interp->GetPlotter() );
+  if ( PM->HasObserver(EVENT_SELECT_WORLD_POINT) )
+    PM->RemoveObservers(EVENT_SELECT_WORLD_POINT);
 
-    // Add observer.
-    PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
-  }
+  vtkSmartPointer<asiUI_PickContourCallback>
+    cb = vtkSmartPointer<asiUI_PickContourCallback>::New();
+  //
+  cb->SetViewer      ( cmdEngine::cf->ViewerPart );
+  cb->SetModel       ( cmdEngine::model );
+  cb->SetContourNode ( contour_n );
+  //
+  if ( !part_n->GetShape().IsNull() )
+    cb->AddBVH( part_n->GetBVH() );
+  if ( !tris_n->GetTriangulation().IsNull() )
+    cb->AddBVH( tris_n->GetBVH() );
+  //
+  cb->SetDiagnosticTools ( interp->GetProgress(), interp->GetPlotter() );
+
+  // Add observer.
+  PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
 
   return TCL_OK;
 }

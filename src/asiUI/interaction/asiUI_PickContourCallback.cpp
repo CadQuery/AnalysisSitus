@@ -33,7 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_HitFacet.h>
-#include <asiAlgo_ProjectPointOnMesh.h>
+#include <asiAlgo_MeshProjectLine.h>
 
 // asiUI includes
 #include <asiUI_ViewerPart.h>
@@ -44,43 +44,6 @@
 
 // OCCT includes
 #include <gp_Lin.hxx>
-
-//-----------------------------------------------------------------------------
-
-void hitMidPoint(asiAlgo_ProjectPointOnMesh&        ProjectPtMesh,
-                 const Handle(asiData_ContourNode)& contourNode,
-                 const gp_XYZ&                      prevPt,
-                 const gp_XYZ&                      nextPt,
-                 const double                       prec)
-{
-  if ( (nextPt - prevPt).Modulus() < prec )
-    return;
-
-  // Get midpoint.
-  const gp_XYZ midPt = 0.5*(prevPt + nextPt);
-
-  // Hit facet for the midpoint.
-  gp_Pnt hitMidPt = ProjectPtMesh.Perform(midPt);
-  int midPtFacetIndex = (ProjectPtMesh.GetTriIdx().size() ? ProjectPtMesh.GetTriIdx()[0] : -1);
-  //
-  const bool isProjected = (midPtFacetIndex != -1);
-  //if ( !HitFacet(midPt, 1.0e-3, hitMidPt, midPtFacetIndex) )
-  //
-    hitMidPoint(ProjectPtMesh, contourNode, prevPt, hitMidPt.XYZ(), prec);
-  //}
-  //else
-  //{
-  if ( isProjected )
-  {
-    gp_XYZ prevPersistent = contourNode->GetPoint(contourNode->GetNumPoints() - 1);
-
-    if ( (prevPersistent - hitMidPt.XYZ()).Modulus() > 1.0 )
-      contourNode->AddPoint(hitMidPt.XYZ(), midPtFacetIndex);
-  }
-
-  hitMidPoint(ProjectPtMesh, contourNode, hitMidPt.XYZ(), nextPt, prec);
-  //}
-}
 
 //-----------------------------------------------------------------------------
 
@@ -127,14 +90,12 @@ void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
   // Get picking ray
   gp_Lin pickRay = *( (gp_Lin*) theCallData );
 
+  // For each available BVH...
   for ( size_t k = 0; k < m_bvhs.size(); ++k )
   {
-    const double aabbDiag = m_bvhs[k]->GetBoundingDiag();
-    const double prec     = aabbDiag*0.001;
-
     // Prepare a tool to find the intersected facet
-    asiAlgo_HitFacet HitFacet(m_bvhs[k], m_notifier, m_plotter);
-    asiAlgo_ProjectPointOnMesh ProjectPtMesh(m_bvhs[k], NULL, NULL);
+    asiAlgo_HitFacet        HitFacet        (m_bvhs[k], m_notifier, m_plotter);
+    asiAlgo_MeshProjectLine ProjectLineMesh (m_bvhs[k], m_notifier, m_plotter);
 
     // Find intersection
     gp_XYZ hit;
@@ -148,7 +109,7 @@ void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
     // Get active face index
     const int fidx = m_bvhs[k]->GetFacet(facet_idx).FaceIndex;
     //
-    m_notifier.SendLogMessage(LogInfo(Normal) << "Picked point (%1, %2, %3) on face %4"
+    m_notifier.SendLogMessage(LogInfo(Normal) << "Picked point (%1, %2, %3) on face %4."
                                               << hit.X()
                                               << hit.Y()
                                               << hit.Z()
@@ -166,7 +127,17 @@ void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
         const gp_XYZ prevPt = m_contour->GetPoint(numContourPts - 1);
 
         // Add midpoints
-        hitMidPoint(ProjectPtMesh, m_contour, prevPt, hit, prec);
+        std::vector<gp_XYZ> projPts;
+        if ( !ProjectLineMesh.Perform(prevPt, hit, projPts, 0.001) )
+        {
+          m_notifier.SendLogMessage(LogErr(Normal) << "Cannot project line to mesh.");
+          m_model->AbortCommand();
+          return;
+        }
+        //
+        if ( projPts.size() > 2 )
+          for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
+            m_contour->AddPoint(projPts[k], -1);
       }
 
       // Add hitted point

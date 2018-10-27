@@ -220,6 +220,7 @@ set (mesh_H_FILES
   mesh/asiAlgo_MeshMerge.h
   mesh/asiAlgo_MeshOffset.h
   mesh/asiAlgo_MeshParams.h
+  mesh/asiAlgo_MeshProjectLine.h
 )
 set (mesh_CPP_FILES
   mesh/asiAlgo_MeshCheckInter.cpp
@@ -230,6 +231,7 @@ set (mesh_CPP_FILES
   mesh/asiAlgo_MeshMerge.cpp
   mesh/asiAlgo_MeshOffset.cpp
   mesh/asiAlgo_MeshParams.cpp
+  mesh/asiAlgo_MeshProjectLine.cpp
 )
 
 #------------------------------------------------------------------------------

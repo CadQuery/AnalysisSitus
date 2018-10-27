@@ -56,5 +56,17 @@ the mesh model as the input data, the user draws a network of curves which compo
 The wireframe model defines the layout of the surfaces (topology).
 </p>
 
+<h1>Project contour</h1>
+
+<p>
+Contour lines are defined interactively via <span class="code-inline">project-contour</span> command.
+Analysis Situs projects the straight line segments between the picked points onto mesh. Projection is
+performed with a certain precision which defines the max allowed distance between the subsequent
+points. Projection is performed non-recursively (to avoid stack overflows) with a controlled number
+of iterations. To speed up computations, BVH (bounding volume hierarchy) structure is used.
+</p>
+
+<div align="center"><img src="../imgs/project_contour_anim.gif"/></div>
+
 </body>
 </html>

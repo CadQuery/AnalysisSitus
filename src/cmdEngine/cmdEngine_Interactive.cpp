@@ -61,9 +61,9 @@
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_StartContour(const Handle(asiTcl_Interp)& interp,
-                        int                          argc,
-                        const char**                 argv)
+int ENGINE_ProjectContour(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
 {
   if ( argc != 1 )
   {
@@ -291,12 +291,12 @@ void cmdEngine::Commands_Interactive(const Handle(asiTcl_Interp)&      interp,
   static const char* group = "cmdEngine";
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("start-contour",
+  interp->AddCommand("project-contour",
     //
-    "start-contour\n"
+    "project-contour\n"
     "\t Enables interactive contour picking.",
     //
-    __FILE__, group, ENGINE_StartContour);
+    __FILE__, group, ENGINE_ProjectContour);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("finish-contour",

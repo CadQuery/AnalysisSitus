@@ -127,7 +127,6 @@ set (presentations_H_FILES
   presentations/asiVisu_GeomFaceContourPrs.h
   presentations/asiVisu_GeomFaceNormsPrs.h
   presentations/asiVisu_GeomFacePrs.h
-  presentations/asiVisu_GeomPrs.h
   presentations/asiVisu_GeomSurfPrs.h
   presentations/asiVisu_IVCurve2dPrs.h
   presentations/asiVisu_IVCurvePrs.h
@@ -137,6 +136,7 @@ set (presentations_H_FILES
   presentations/asiVisu_IVTessItemPrs.h
   presentations/asiVisu_IVTextItemPrs.h
   presentations/asiVisu_IVTopoItemPrs.h
+  presentations/asiVisu_PartPrs.h
   presentations/asiVisu_Prs.h
   presentations/asiVisu_PrsManager.h
   presentations/asiVisu_TessellationNormsPrs.h
@@ -156,7 +156,6 @@ set (presentations_CPP_FILES
   presentations/asiVisu_GeomFaceContourPrs.cpp
   presentations/asiVisu_GeomFaceNormsPrs.cpp
   presentations/asiVisu_GeomFacePrs.cpp
-  presentations/asiVisu_GeomPrs.cpp
   presentations/asiVisu_GeomSurfPrs.cpp
   presentations/asiVisu_IVCurve2dPrs.cpp
   presentations/asiVisu_IVCurvePrs.cpp
@@ -166,6 +165,7 @@ set (presentations_CPP_FILES
   presentations/asiVisu_IVTessItemPrs.cpp
   presentations/asiVisu_IVTextItemPrs.cpp
   presentations/asiVisu_IVTopoItemPrs.cpp
+  presentations/asiVisu_PartPrs.cpp
   presentations/asiVisu_Prs.cpp
   presentations/asiVisu_PrsManager.cpp
   presentations/asiVisu_TessellationNormsPrs.cpp
@@ -200,6 +200,7 @@ set (providers_H_FILES
   providers/asiVisu_MeshDataProvider.h
   providers/asiVisu_PartDataProvider.h
   providers/asiVisu_PointsDataProvider.h
+  providers/asiVisu_PointsFromListDataProvider.h
   providers/asiVisu_ShapeDataProvider.h
   providers/asiVisu_SurfaceDataProvider.h
   providers/asiVisu_TessNormalsDataProvider.h
@@ -224,6 +225,7 @@ set (providers_CPP_FILES
   providers/asiVisu_MeshDataProvider.cpp
   providers/asiVisu_PartDataProvider.cpp
   providers/asiVisu_PointsDataProvider.cpp
+  providers/asiVisu_PointsFromListDataProvider.cpp
   providers/asiVisu_ShapeDataProvider.cpp
   providers/asiVisu_TessNormalsDataProvider.cpp
   providers/asiVisu_TriangulationDataProvider.cpp

@@ -36,6 +36,7 @@
 #include <asiVisu_ContourPointsDataProvider.h>
 #include <asiVisu_ContourPolesDataProvider.h>
 #include <asiVisu_PointsPipeline.h>
+#include <asiVisu_PointsFromListDataProvider.h>
 #include <asiVisu_ShapePipeline.h>
 #include <asiVisu_Utils.h>
 
@@ -43,6 +44,11 @@
 #include <vtkMapper.h>
 #include <vtkProperty.h>
 #include <vtkTextActor.h>
+
+#define COUT_DEBUG
+#if defined COUT_DEBUG
+  #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -55,15 +61,19 @@ asiVisu_ContourPrs::asiVisu_ContourPrs(const Handle(ActAPI_INode)& N)
 
   // Create Data Provider for polyline
   Handle(asiVisu_ContourDataProvider)
-    DP_contour = new asiVisu_ContourDataProvider(contour_n);
+    shape_dp = new asiVisu_ContourDataProvider(contour_n);
 
   // Create Data Provider for points
   Handle(asiVisu_ContourPointsDataProvider)
-    DP_points = new asiVisu_ContourPointsDataProvider(contour_n);
+    points_dp = new asiVisu_ContourPointsDataProvider(contour_n);
 
   // Create Data Provider for poles
   Handle(asiVisu_ContourPolesDataProvider)
-    DP_poles = new asiVisu_ContourPolesDataProvider(contour_n);
+    poles_dp = new asiVisu_ContourPolesDataProvider(contour_n);
+
+  // Create Data Provider for the selected points
+  Handle(asiVisu_PointsFromListDataProvider)
+    poles_from_list_dp = new asiVisu_PointsFromListDataProvider;
 
   // Pipeline for contour
   Handle(asiVisu_ShapePipeline) shape_pl = new asiVisu_ShapePipeline(false);
@@ -71,32 +81,42 @@ asiVisu_ContourPrs::asiVisu_ContourPrs(const Handle(ActAPI_INode)& N)
   shape_pl->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
   //
   this->addPipeline        ( Pipeline_Main, shape_pl );
-  this->assignDataProvider ( Pipeline_Main, DP_contour );
+  this->assignDataProvider ( Pipeline_Main, shape_dp );
 
   // Pipeline for points
   Handle(asiVisu_PointsPipeline) points_pl = new asiVisu_PointsPipeline;
   //
   this->addPipeline        ( Pipeline_Points, points_pl );
-  this->assignDataProvider ( Pipeline_Points, DP_points );
+  this->assignDataProvider ( Pipeline_Points, points_dp );
 
   // Pipeline for poles
   Handle(asiVisu_PointsPipeline) poles_pl = new asiVisu_PointsPipeline;
   //
   this->addPipeline        ( Pipeline_Poles, poles_pl );
-  this->assignDataProvider ( Pipeline_Poles, DP_poles );
+  this->assignDataProvider ( Pipeline_Poles, poles_dp );
+
+  // Pipeline for highlighted poles
+  Handle(asiVisu_PointsPipeline) detected_poles_pl = new asiVisu_PointsPipeline;
+  //
+  detected_poles_pl -> Actor()->GetProperty()->SetPointSize(20.0f);
+  //
+  this->installDetectPipeline (detected_poles_pl, poles_from_list_dp);
 
   // Configure presentation
   shape_pl  -> Actor()->GetProperty()->SetLineWidth(2.0f);
   shape_pl  -> Actor()->GetProperty()->SetLighting(0);
+  shape_pl  -> Actor()->SetPickable(0);
   shape_pl  -> Mapper()->SetScalarVisibility(0);
   //
   points_pl -> Actor()->GetProperty()->SetColor(0.0, 0.4, 1.0);
-  poles_pl  -> Actor()->GetProperty()->SetLighting(0);
+  points_pl -> Actor()->GetProperty()->SetLighting(0);
   points_pl -> Actor()->GetProperty()->SetPointSize(2.0f);
+  points_pl -> Actor()->SetPickable(0);
   //
   poles_pl -> Actor()->GetProperty()->SetColor(1.0, 0.0, 1.0);
   poles_pl -> Actor()->GetProperty()->SetLighting(0);
   poles_pl -> Actor()->GetProperty()->SetPointSize(5.0f);
+  poles_pl -> Actor()->SetPickable(1);
 
   // Make contour be visualized always on top of the scene
   shape_pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
@@ -113,11 +133,11 @@ asiVisu_ContourPrs::asiVisu_ContourPrs(const Handle(ActAPI_INode)& N)
 }
 
 //! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
+//! \param[in] N Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_ContourPrs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_ContourPrs::Instance(const Handle(ActAPI_INode)& N)
 {
-  return new asiVisu_ContourPrs(theNode);
+  return new asiVisu_ContourPrs(N);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
@@ -156,37 +176,97 @@ void asiVisu_ContourPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-//! \param theRenderer  [in] renderer.
-//! \param thePickRes   [in] picking results.
-//! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_ContourPrs::highlight(vtkRenderer*                        theRenderer,
-                                   const Handle(asiVisu_PickerResult)& thePickRes,
-                                   const asiVisu_SelectionNature       theSelNature) const
+//! \param[in] renderer  renderer.
+//! \param[in] pickRes   picking results.
+//! \param[in] selNature selection nature (picking or detecting).
+void asiVisu_ContourPrs::highlight(vtkRenderer*                        renderer,
+                                   const Handle(asiVisu_PickerResult)& pickRes,
+                                   const asiVisu_SelectionNature       selNature) const
 {
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(thePickRes);
-  asiVisu_NotUsed(theSelNature);
+  asiVisu_NotUsed(renderer);
+  asiVisu_NotUsed(selNature);
+
+  // Can react on cell picking only.
+  Handle(asiVisu_CellPickerResult)
+    cellPickRes = Handle(asiVisu_CellPickerResult)::DownCast(pickRes);
+  //
+  if ( cellPickRes.IsNull() )
+    return;
+
+  // #################################################
+  // FACE selection
+  if ( cellPickRes->GetPickedActor() == this->GetPipeline(Pipeline_Poles)->Actor() )
+  {
+#if defined COUT_DEBUG
+    std::cout << "Picked Poles actor" << std::endl;
+#endif
+
+    const Handle(asiVisu_PointsFromListDataProvider)&
+      detect_dp = Handle(asiVisu_PointsFromListDataProvider)::DownCast( this->dataProviderDetect() );
+
+    // Add picked point.
+    double x, y, z;
+    cellPickRes->GetPickedPos(x, y, z);
+    //
+    detect_dp->AddPoint(x, y, z);
+
+    // Update pipeline.
+    const Handle(asiVisu_PointsPipeline)&
+      detect_pl = Handle(asiVisu_PointsPipeline)::DownCast( this->GetDetectPipeline() );
+    //
+    detect_pl->SetInput(detect_dp);
+    detect_pl->Update();
+  }
 }
 
 //! Callback for highlighting reset.
-//! \param theRenderer [in] renderer.
-void asiVisu_ContourPrs::unHighlight(vtkRenderer*                  theRenderer,
-                                     const asiVisu_SelectionNature theSelNature) const
+//! \param[in] renderer renderer.
+//! \param[in] selNature selection nature (picking or detecting).
+void asiVisu_ContourPrs::unHighlight(vtkRenderer*                  renderer,
+                                     const asiVisu_SelectionNature selNature) const
 {
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(theSelNature);
+  asiVisu_NotUsed(renderer);
+  asiVisu_NotUsed(selNature);
+
+  const Handle(asiVisu_PointsFromListDataProvider)&
+    detect_dp = Handle(asiVisu_PointsFromListDataProvider)::DownCast( this->dataProviderDetect() );
+  //
+  detect_dp->Clear();
+
+  // Update pipeline.
+  const Handle(asiVisu_PointsPipeline)&
+    detect_pl = Handle(asiVisu_PointsPipeline)::DownCast( this->GetDetectPipeline() );
+  //
+  detect_pl->SetInput(detect_dp);
+  detect_pl->Update();
 }
 
 //! Callback for rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_ContourPrs::renderPipelines(vtkRenderer* theRenderer) const
+//! \param[in] renderer renderer.
+void asiVisu_ContourPrs::renderPipelines(vtkRenderer* renderer) const
 {
-  asiVisu_NotUsed(theRenderer);
+  //---------------------------------------------------------------------------
+  // Highlighting
+  //---------------------------------------------------------------------------
+
+  Handle(asiVisu_PointsPipeline)
+    detect_pl = Handle(asiVisu_PointsPipeline)::DownCast( this->GetDetectPipeline() );
+
+  // Picking pipeline must be added to renderer the LAST (!). Otherwise
+  // we experience some strange coloring bug because of their coincidence
+  detect_pl->AddToRenderer(renderer);
 }
 
 //! Callback for de-rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_ContourPrs::deRenderPipelines(vtkRenderer* theRenderer) const
+//! \param[in] renderer renderer.
+void asiVisu_ContourPrs::deRenderPipelines(vtkRenderer* renderer) const
 {
-  asiVisu_NotUsed(theRenderer);
+  //---------------------------------------------------------------------------
+  // Highlighting
+  //---------------------------------------------------------------------------
+
+  Handle(asiVisu_PointsPipeline)
+    detect_pl = Handle(asiVisu_PointsPipeline)::DownCast( this->GetDetectPipeline() );
+  //
+  detect_pl->RemoveFromRenderer(renderer);
 }

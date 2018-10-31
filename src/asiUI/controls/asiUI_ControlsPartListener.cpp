@@ -32,7 +32,7 @@
 #include <asiUI_ControlsPartListener.h>
 
 // asiVisu includes
-#include <asiVisu_GeomPrs.h>
+#include <asiVisu_PartPrs.h>
 
 // VTK includes
 #include <vtkCellTreeLocator.h>
@@ -133,8 +133,8 @@ void asiUI_ControlsPartListener::onPartModified()
 //! Reaction on enabling visualization of vertices.
 void asiUI_ControlsPartListener::onVerticesOn()
 {
-  Handle(asiVisu_GeomPrs)
-    prs = Handle(asiVisu_GeomPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+  Handle(asiVisu_PartPrs)
+    prs = Handle(asiVisu_PartPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
   //
   prs->VerticesOn();
 
@@ -148,8 +148,8 @@ void asiUI_ControlsPartListener::onVerticesOn()
 //! Reaction on disabling visualization of vertices.
 void asiUI_ControlsPartListener::onVerticesOff()
 {
-  Handle(asiVisu_GeomPrs)
-    prs = Handle(asiVisu_GeomPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+  Handle(asiVisu_PartPrs)
+    prs = Handle(asiVisu_PartPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
   //
   prs->VerticesOff();
 
@@ -179,8 +179,8 @@ void asiUI_ControlsPartListener::onSelectionFacesOn()
     m_cf->ViewerHost->Repaint();
   }
 
-  Handle(asiVisu_GeomPrs)
-    prs = Handle(asiVisu_GeomPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+  Handle(asiVisu_PartPrs)
+    prs = Handle(asiVisu_PartPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
 
   prs->MainActor()->SetPickable(1);
   prs->ContourActor()->SetPickable(0);
@@ -207,8 +207,8 @@ void asiUI_ControlsPartListener::onSelectionEdgesOn()
     m_cf->ViewerHost->Repaint();
   }
 
-  Handle(asiVisu_GeomPrs)
-    prs = Handle(asiVisu_GeomPrs)::DownCast(m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+  Handle(asiVisu_PartPrs)
+    prs = Handle(asiVisu_PartPrs)::DownCast(m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
 
   prs->MainActor()->SetPickable(0);
   prs->ContourActor()->SetPickable(1);
@@ -235,8 +235,8 @@ void asiUI_ControlsPartListener::onSelectionVerticesOn()
     m_cf->ViewerHost->Repaint();
   }
 
-  Handle(asiVisu_GeomPrs)
-    prs = Handle(asiVisu_GeomPrs)::DownCast(m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+  Handle(asiVisu_PartPrs)
+    prs = Handle(asiVisu_PartPrs)::DownCast(m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
 
   prs->MainActor()->SetPickable(0);
   prs->ContourActor()->SetPickable(1); // Vertices are visualized with contour actor

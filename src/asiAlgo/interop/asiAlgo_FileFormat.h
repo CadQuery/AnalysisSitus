@@ -42,65 +42,117 @@
 enum asiAlgo_FileFormat
 {
   FileFormat_Unknown = 0, //!< Unknown file format.
+
   //---------------------------------------------------------------------------
   // Native
   //---------------------------------------------------------------------------
-  FileFormat_NATIVE,      //!< Native project format.
+  FileFormat_NATIVE, //!< Native project format.
+
   //---------------------------------------------------------------------------
   // CAD
   //---------------------------------------------------------------------------
-  FileFormat_BREP,        //!< BREP.
-  FileFormat_STEP,        //!< STEP.
-  FileFormat_IGES,        //!< IGES.
+  FileFormat_BREP,
+  FileFormat_STEP,
+  FileFormat_IGES,
+
   //---------------------------------------------------------------------------
   // Mesh
   //---------------------------------------------------------------------------
-  FileFormat_STL,         //!< (Polygonal) STL.
+  FileFormat_STL,
+  FileFormat_PLY,
+
+  //---------------------------------------------------------------------------
+  // Others
+  //---------------------------------------------------------------------------
+  FileFormat_XML,
+
   //---------------------------------------------------------------------------
   // Last item
   //---------------------------------------------------------------------------
-  FileFormat_Last         //!< Last item for convenient iteration over enum.
+  FileFormat_Last //!< Last item for convenient iteration over enum.
 };
 
-//! Tools to work with file formats.
-namespace asiAlgo_FileFormatTools
+//! Utility for recognizing CAD data formats and filtering out
+//! unavailable converters.
+class asiAlgo_FileFormatTool
 {
-  //! The list of names for all defined formats.
-  asiAlgo_EXPORT extern const char* const NAMED_FORMATS[FileFormat_Last];
+public:
 
-  //! Get format name
-  inline const char* NameFromFormat(const asiAlgo_FileFormat format)
+  //! The list of names for all CAD formats supported by CAD Processor and
+  //! dependent software.
+  asiAlgo_EXPORT static const char* const
+    NAMED_FORMATS[FileFormat_Last];
+
+public:
+
+  //! Ctor accepting the application-specific extension for native formats.
+  //! \param[in] nativeExt extension for native (project) files.
+  asiAlgo_FileFormatTool(const char* nativeExt) : m_nativeExt(nativeExt) {}
+
+public:
+
+  //! Converts format type enum format name.
+  //! \param[in] formatType format type in question.
+  //! \return format name.
+  static const char* NameFromFormat(const asiAlgo_FileFormat formatType)
   {
-    return ( format >= 0 && format < FileFormat_Last ) ? NAMED_FORMATS[format]
-                                                       : NAMED_FORMATS[FileFormat_Unknown];
+    return formatType >= 0 && formatType < FileFormat_Last
+        ? NAMED_FORMATS[formatType]
+        : NAMED_FORMATS[FileFormat_Unknown];
   }
 
-  //! Get format type.
-  inline asiAlgo_FileFormat FormatFromName(const char* name)
+  //! Converts format string to format type enum.
+  //! \param[in] formatName format name in question.
+  //! \return format type enum.
+  static asiAlgo_FileFormat FormatFromName(const char* formatName)
   {
     for ( int it = 0; it < FileFormat_Last; ++it )
     {
-      if ( std::strcmp(name, NAMED_FORMATS[it]) == 0 )
+      if ( !std::strcmp(formatName, NAMED_FORMATS[it]) )
         return (asiAlgo_FileFormat) it;
     }
     return FileFormat_Unknown;
   }
 
-  //! Returns file extension from the its name in lower case.
-  asiAlgo_EXPORT TCollection_AsciiString
+public:
+
+  //! Returns file extension from the name in lower case.
+  //! \param[in] path full filename.
+  //! \return file extension.
+  asiAlgo_EXPORT static TCollection_AsciiString
     GetFileExtension(const TCollection_AsciiString& path);
 
-  //! Recognizes the file format by its extension.
+public:
+
+  //! Returns file format analyzing the file extension.
+  //! \param[in] path full filename.
+  //! \return file format enum.
   asiAlgo_EXPORT asiAlgo_FileFormat
     FormatFromFileExtension(const TCollection_AsciiString& path);
 
-  //! Recognizes the file format by its contents.
+  //! Returns file format analyzing the file contents.
+  //! \param[in] path full filename.
+  //! \return file format enum.
   asiAlgo_EXPORT asiAlgo_FileFormat
     FormatFromFileContent(const TCollection_AsciiString& path);
 
-  //! Returns true if export to the passed format is supported.
-  asiAlgo_EXPORT bool
+public:
+
+  //! Returns true if the passed CAD data format can be exported.
+  //! \param[in] format data format in question.
+  //! \return true/false.
+  asiAlgo_EXPORT virtual bool
     IsExportSupported(const asiAlgo_FileFormat& format);
+
+  //! Returns true if the passed CAD data format can be imported.
+  //! \param[in] format data format in question.
+  //! \return true/false.
+  asiAlgo_EXPORT virtual bool
+    IsImportSupported(const asiAlgo_FileFormat& format);
+
+protected:
+
+  const char* m_nativeExt; //!< Extension for files in native format.
 
 };
 

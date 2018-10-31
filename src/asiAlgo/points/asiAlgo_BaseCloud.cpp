@@ -216,6 +216,14 @@ void asiAlgo_BaseCloud<TCoordType>::Merge(const Handle(asiAlgo_BaseCloud<TCoordT
 //-----------------------------------------------------------------------------
 
 template <typename TCoordType>
+void asiAlgo_BaseCloud<TCoordType>::Clear()
+{
+  m_coords.clear();
+}
+
+//-----------------------------------------------------------------------------
+
+template <typename TCoordType>
 bool asiAlgo_BaseCloud<TCoordType>::Load(const char* filename)
 {
   std::ifstream FILE(filename);

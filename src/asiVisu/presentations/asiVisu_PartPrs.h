@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_GeomPrs_h
-#define asiVisu_GeomPrs_h
+#ifndef asiVisu_PartPrs_h
+#define asiVisu_PartPrs_h
 
 // asiVisu includes
 #include <asiVisu_Prs.h>
@@ -42,15 +42,13 @@
 #include <vtkActor.h>
 #include <vtkCellPicker.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_GeomPrs, asiVisu_Prs)
-
-//! Presentation class for B-Rep geometry.
-class asiVisu_GeomPrs : public asiVisu_Prs
+//! Presentation class for Part Node.
+class asiVisu_PartPrs : public asiVisu_Prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_GeomPrs, asiVisu_Prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_PartPrs, asiVisu_Prs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_PartNode, Instance)
@@ -109,7 +107,7 @@ public:
 private:
 
   //! Allocation is allowed only via Instance() method.
-  asiVisu_GeomPrs(const Handle(ActAPI_INode)& N);
+  asiVisu_PartPrs(const Handle(ActAPI_INode)& N);
 
 // Callbacks:
 private:

@@ -95,6 +95,9 @@ public:
   asiAlgo_EXPORT void
     Merge(const Handle(asiAlgo_BaseCloud<TCoordType>)& cloud);
 
+  asiAlgo_EXPORT void
+    Clear();
+
 public:
 
   //! Reads base cloud recorded in the input file with common XYZ format. That

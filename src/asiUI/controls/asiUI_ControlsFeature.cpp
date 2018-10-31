@@ -54,7 +54,7 @@
 #include <asiAlgo_Utils.h>
 
 // asiVisu includes
-#include <asiVisu_GeomPrs.h>
+#include <asiVisu_PartPrs.h>
 
 // asiEngine includes
 #include <asiEngine_Part.h>
@@ -350,8 +350,8 @@ void asiUI_ControlsFeature::onFreeEdges()
   m_model->CommitCommand();
 
   // Update viewer
-  Handle(asiVisu_GeomPrs)
-    NPrs = Handle(asiVisu_GeomPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation(part_n) );
+  Handle(asiVisu_PartPrs)
+    NPrs = Handle(asiVisu_PartPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation(part_n) );
   //
   if ( NPrs.IsNull() )
   {
@@ -360,7 +360,7 @@ void asiUI_ControlsFeature::onFreeEdges()
   }
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
-  NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
+  NPrs->GetPipeline(asiVisu_PartPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
 
   // Actualize presentation of edges
   m_partViewer->PrsMgr()->Actualize( BN.get() );
@@ -404,8 +404,8 @@ void asiUI_ControlsFeature::onNonManifoldEdges()
   m_model->CommitCommand();
 
   // Update viewer
-  Handle(asiVisu_GeomPrs)
-    NPrs = Handle(asiVisu_GeomPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation(part_n) );
+  Handle(asiVisu_PartPrs)
+    NPrs = Handle(asiVisu_PartPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation(part_n) );
   //
   if ( NPrs.IsNull() )
   {
@@ -414,7 +414,7 @@ void asiUI_ControlsFeature::onNonManifoldEdges()
   }
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
-  NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
+  NPrs->GetPipeline(asiVisu_PartPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
 
   // Actualize presentation of edges
   m_partViewer->PrsMgr()->Actualize( BN.get() );
@@ -566,8 +566,8 @@ void asiUI_ControlsFeature::onCheckDihedralAngles()
   m_model->CommitCommand();
 
   // Update viewer
-  Handle(asiVisu_GeomPrs)
-    NPrs = Handle(asiVisu_GeomPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation(part_n) );
+  Handle(asiVisu_PartPrs)
+    NPrs = Handle(asiVisu_PartPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation(part_n) );
   //
   if ( NPrs.IsNull() )
   {
@@ -576,7 +576,7 @@ void asiUI_ControlsFeature::onCheckDihedralAngles()
   }
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
-  NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
+  NPrs->GetPipeline(asiVisu_PartPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
 
   // Actualize presentation of edges
   m_partViewer->PrsMgr()->Actualize( BN.get() );
@@ -706,8 +706,8 @@ void asiUI_ControlsFeature::onFindSmoothEdges()
   m_model->CommitCommand();
 
   // Update viewer
-  Handle(asiVisu_GeomPrs)
-    NPrs = Handle(asiVisu_GeomPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation(part_n) );
+  Handle(asiVisu_PartPrs)
+    NPrs = Handle(asiVisu_PartPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation(part_n) );
   //
   if ( NPrs.IsNull() )
   {
@@ -717,7 +717,7 @@ void asiUI_ControlsFeature::onFindSmoothEdges()
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
   //
-  NPrs->GetPipeline(asiVisu_GeomPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
+  NPrs->GetPipeline(asiVisu_PartPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
   //
   m_partViewer->PrsMgr()->Actualize( BN.get() );
 }

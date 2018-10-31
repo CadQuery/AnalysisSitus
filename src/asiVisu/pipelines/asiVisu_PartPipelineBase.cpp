@@ -93,8 +93,8 @@ void asiVisu_PartPipelineBase::SetDiagnosticTools(ActAPI_ProgressEntry progress,
 //-----------------------------------------------------------------------------
 
 //! Highlights the passed elements according to the given selection nature.
-//! \param elementIds [in] element IDs.
-//! \param selNature  [in] selection nature (detection or selection).
+//! \param[in] elementIds element IDs.
+//! \param[in] selNature  selection nature (detection or selection).
 void asiVisu_PartPipelineBase::SetPickedElements(const TColStd_PackedMapOfInteger& elementIds,
                                                  const asiVisu_SelectionNature     selNature)
 {
@@ -186,7 +186,7 @@ void asiVisu_PartPipelineBase::SetPickedElements(const TColStd_PackedMapOfIntege
 //-----------------------------------------------------------------------------
 
 //! Resets initial scalars for the detected/selected cells.
-//! \param selNature [in] selection nature (detection or selection).
+//! \param[in] selNature selection nature (detection or selection).
 void asiVisu_PartPipelineBase::ResetPickedElements(const asiVisu_SelectionNature selNature)
 {
   // Get polygonal data

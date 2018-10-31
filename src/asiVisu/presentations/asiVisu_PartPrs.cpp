@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_GeomPrs.h>
+#include <asiVisu_PartPrs.h>
 
 // asiVisu includes
 #include <asiVisu_ShapeDisplayMode.h>
@@ -58,7 +58,7 @@
 
 //! Creates a Presentation object for the passed Part Node.
 //! \param[in] N Part Node to create a Presentation for.
-asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
+asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
 {
   Handle(asiData_PartNode) partNode = Handle(asiData_PartNode)::DownCast(N);
 
@@ -105,16 +105,16 @@ asiVisu_GeomPrs::asiVisu_GeomPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
 //! Factory method for Presentation.
 //! \param[in] N Part Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_GeomPrs::Instance(const Handle(ActAPI_INode)& N)
+Handle(asiVisu_Prs) asiVisu_PartPrs::Instance(const Handle(ActAPI_INode)& N)
 {
-  return new asiVisu_GeomPrs(N);
+  return new asiVisu_PartPrs(N);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool asiVisu_GeomPrs::IsVisible() const
+bool asiVisu_PartPrs::IsVisible() const
 {
   return true;
 }
@@ -124,7 +124,7 @@ bool asiVisu_GeomPrs::IsVisible() const
 //! Sets diagnostic tools for the presentation.
 //! \param[in] progress progress notifier.
 //! \param[in] plotter  imperative plotter.
-void asiVisu_GeomPrs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
+void asiVisu_PartPrs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
                                          ActAPI_PlotterEntry  plotter)
 {
   asiVisu_Prs::SetDiagnosticTools(progress, plotter);
@@ -141,7 +141,7 @@ void asiVisu_GeomPrs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
 //-----------------------------------------------------------------------------
 
 //! Enables visualization of vertices.
-void asiVisu_GeomPrs::VerticesOn() const
+void asiVisu_PartPrs::VerticesOn() const
 {
   Handle(asiVisu_PartEdgesPipeline)
     pl = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
@@ -156,7 +156,7 @@ void asiVisu_GeomPrs::VerticesOn() const
 //-----------------------------------------------------------------------------
 
 //! Disables visualization of vertices.
-void asiVisu_GeomPrs::VerticesOff() const
+void asiVisu_PartPrs::VerticesOff() const
 {
   Handle(asiVisu_PartEdgesPipeline)
     pl = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
@@ -170,7 +170,7 @@ void asiVisu_GeomPrs::VerticesOff() const
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_GeomPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
+void asiVisu_PartPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
 {
   asiVisu_NotUsed(picker);
 
@@ -196,7 +196,7 @@ void asiVisu_GeomPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& pic
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void asiVisu_GeomPrs::beforeInitPipelines()
+void asiVisu_PartPrs::beforeInitPipelines()
 {
   // Do nothing...
 }
@@ -204,7 +204,7 @@ void asiVisu_GeomPrs::beforeInitPipelines()
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void asiVisu_GeomPrs::afterInitPipelines()
+void asiVisu_PartPrs::afterInitPipelines()
 {
   // Do nothing...
 }
@@ -213,7 +213,7 @@ void asiVisu_GeomPrs::afterInitPipelines()
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void asiVisu_GeomPrs::beforeUpdatePipelines() const
+void asiVisu_PartPrs::beforeUpdatePipelines() const
 {
   // Do nothing...
 }
@@ -222,7 +222,7 @@ void asiVisu_GeomPrs::beforeUpdatePipelines() const
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void asiVisu_GeomPrs::afterUpdatePipelines() const
+void asiVisu_PartPrs::afterUpdatePipelines() const
 {
   // Do nothing...
 }
@@ -233,7 +233,7 @@ void asiVisu_GeomPrs::afterUpdatePipelines() const
 //! \param[in] renderer  renderer.
 //! \param[in] pickRes   picking results.
 //! \param[in] selNature selection nature (picking or detecting).
-void asiVisu_GeomPrs::highlight(vtkRenderer*                        renderer,
+void asiVisu_PartPrs::highlight(vtkRenderer*                        renderer,
                                 const Handle(asiVisu_PickerResult)& pickRes,
                                 const asiVisu_SelectionNature       selNature) const
 {
@@ -279,7 +279,7 @@ void asiVisu_GeomPrs::highlight(vtkRenderer*                        renderer,
 //! Callback for highlighting reset.
 //! \param[in] renderer  renderer.
 //! \param[in] selNature selection nature (picking or detecting).
-void asiVisu_GeomPrs::unHighlight(vtkRenderer*                  renderer,
+void asiVisu_PartPrs::unHighlight(vtkRenderer*                  renderer,
                                   const asiVisu_SelectionNature selNature) const
 {
   asiVisu_NotUsed(renderer);
@@ -297,7 +297,7 @@ void asiVisu_GeomPrs::unHighlight(vtkRenderer*                  renderer,
 
 //! Callback for rendering.
 //! \param[in] renderer renderer.
-void asiVisu_GeomPrs::renderPipelines(vtkRenderer* renderer) const
+void asiVisu_PartPrs::renderPipelines(vtkRenderer* renderer) const
 {
   asiVisu_NotUsed(renderer);
 
@@ -308,7 +308,7 @@ void asiVisu_GeomPrs::renderPipelines(vtkRenderer* renderer) const
 
 //! Callback for de-rendering.
 //! \param[in] renderer renderer.
-void asiVisu_GeomPrs::deRenderPipelines(vtkRenderer* renderer) const
+void asiVisu_PartPrs::deRenderPipelines(vtkRenderer* renderer) const
 {
   asiVisu_NotUsed(renderer);
 

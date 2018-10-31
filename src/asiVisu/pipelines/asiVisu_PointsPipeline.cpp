@@ -72,7 +72,7 @@ void asiVisu_PointsPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 
   Handle(asiAlgo_BaseCloud<double>) points = provider->GetPoints();
   //
-  if ( points.IsNull() )
+  if ( points.IsNull() || points->IsEmpty() )
   {
     // Pass empty data set in order to have valid pipeline
     vtkSmartPointer<vtkPolyData> aDummyDS = vtkSmartPointer<vtkPolyData>::New();

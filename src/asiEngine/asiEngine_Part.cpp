@@ -35,7 +35,7 @@
 #include <asiEngine_Curve.h>
 
 // asiVisu includes
-#include <asiVisu_GeomPrs.h>
+#include <asiVisu_PartPrs.h>
 #include <asiVisu_PartNodeInfo.h>
 #include <asiVisu_Utils.h>
 
@@ -510,8 +510,8 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
   Handle(asiData_PartNode) N = m_model->GetPartNode();
 
   // Get Presentation for the Part Node
-  Handle(asiVisu_GeomPrs)
-    prs = Handle(asiVisu_GeomPrs)::DownCast( m_prsMgr->GetPresentation(N) );
+  Handle(asiVisu_PartPrs)
+    prs = Handle(asiVisu_PartPrs)::DownCast( m_prsMgr->GetPresentation(N) );
 
   if ( prs.IsNull() )
     return;

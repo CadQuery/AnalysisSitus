@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 11 April 2016
+// Created on: 30 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,25 +28,58 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
+#ifndef asiVisu_PointsFromListDataProvider_h
+#define asiVisu_PointsFromListDataProvider_h
+
+// asiVisu includes
 #include <asiVisu_PointsDataProvider.h>
 
-//-----------------------------------------------------------------------------
-
-//! Ctor.
-//! \param N [in] source Node.
-asiVisu_PointsDataProvider::asiVisu_PointsDataProvider(const Handle(ActAPI_INode)& N)
-: asiVisu_DataProvider(),
-  m_node(N)
-{}
-
-//-----------------------------------------------------------------------------
-
-//! \return ID of the associated Data Node.
-ActAPI_DataObjectId asiVisu_PointsDataProvider::GetNodeID() const
+//! Data provider for a set of explicitly passed points.
+class asiVisu_PointsFromListDataProvider : public asiVisu_PointsDataProvider
 {
-  if ( !m_node.IsNull() )
-    return m_node->GetId();
+public:
 
-  return ActAPI_DataObjectId();
-}
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_PointsFromListDataProvider, asiVisu_PointsDataProvider)
+
+public:
+
+  asiVisu_EXPORT
+    asiVisu_PointsFromListDataProvider();
+
+public:
+
+  asiVisu_EXPORT virtual bool
+    MustExecute(const Handle(ActAux_TimeStamp)& Against) const;
+
+public:
+
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<double>)
+    GetPoints() const;
+
+  asiVisu_EXPORT virtual Handle(TColStd_HPackedMapOfInteger)
+    GetIndices() const;
+
+public:
+
+  asiVisu_EXPORT void
+    AddPoint(const gp_XYZ& pt);
+
+  asiVisu_EXPORT void
+    AddPoint(const double x, const double y, const double z);
+
+  asiVisu_EXPORT void
+    Clear();
+
+protected:
+
+  asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
+
+protected:
+
+  Handle(asiAlgo_BaseCloud<double>) m_pts; //!< Points to provide.
+
+};
+
+#endif

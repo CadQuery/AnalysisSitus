@@ -49,7 +49,7 @@
 #include <asiVisu_GeomFaceContourPrs.h>
 #include <asiVisu_GeomFaceNormsPrs.h>
 #include <asiVisu_GeomFacePrs.h>
-#include <asiVisu_GeomPrs.h>
+#include <asiVisu_PartPrs.h>
 #include <asiVisu_GeomSurfPrs.h>
 #include <asiVisu_IVCurve2dPrs.h>
 #include <asiVisu_IVCurvePrs.h>
@@ -158,7 +158,7 @@ int main(int argc, char** argv)
   // Register Presentations
   //---------------------------------------------------------------------------
 
-  REGISTER_PRESENTATION(asiVisu_GeomPrs)
+  REGISTER_PRESENTATION(asiVisu_PartPrs)
   REGISTER_PRESENTATION(asiVisu_GeomBoundaryEdgesPrs)
   REGISTER_PRESENTATION(asiVisu_GeomCurvePrs)
   REGISTER_PRESENTATION(asiVisu_GeomEdgePrs)
@@ -218,12 +218,12 @@ int main(int argc, char** argv)
 
     // Auto-recognize file format.
     asiAlgo_FileFormat
-      format = asiAlgo_FileFormatTools::FormatFromFileContent(arg1Str);
+      format = asiAlgo_FileFormatTool(ASI_FILE_EXT).FormatFromFileContent(arg1Str);
     //
     if ( format == FileFormat_Unknown )
     {
       // Recognize file format from file extension
-      format = asiAlgo_FileFormatTools::FormatFromFileExtension(arg1Str);
+      format = asiAlgo_FileFormatTool(ASI_FILE_EXT).FormatFromFileExtension(arg1Str);
     }
 
     // Prepare Tcl command.

@@ -35,7 +35,7 @@
 #include <OSD_OpenFile.hxx>
 
 //! The list of names for all defined formats.
-const char* const asiAlgo_FileFormatTools::NAMED_FORMATS[] =
+const char* const asiAlgo_FileFormatTool::NAMED_FORMATS[] =
 {
   "Unknown", // FileFormat_Unknown
   "SITU",    // FileFormat_NATIVE
@@ -48,17 +48,18 @@ const char* const asiAlgo_FileFormatTools::NAMED_FORMATS[] =
 //-----------------------------------------------------------------------------
 
 TCollection_AsciiString
-  asiAlgo_FileFormatTools::GetFileExtension(const TCollection_AsciiString& path)
+  asiAlgo_FileFormatTool::GetFileExtension(const TCollection_AsciiString& path)
 {
-  const int THE_EXT_MAX_LEN = 20;
-  const int aLen = path.Length();
-  for ( int anExtLen = 1; anExtLen < aLen && anExtLen < THE_EXT_MAX_LEN; ++anExtLen )
+  const int EXT_MAX_LEN = 20;
+  const int len         = path.Length();
+  //
+  for ( int extLen = 1; extLen < len && extLen < EXT_MAX_LEN; ++extLen )
   {
-    if ( path.Value (aLen - anExtLen) == '.' )
+    if ( path.Value(len - extLen) == '.' )
     {
-      TCollection_AsciiString anExtension = path.SubString (aLen - anExtLen + 1, aLen);
-      anExtension.LowerCase();
-      return anExtension;
+      TCollection_AsciiString extension = path.SubString(len - extLen + 1, len);
+      extension.LowerCase();
+      return extension;
     }
   }
   return TCollection_AsciiString();
@@ -67,7 +68,7 @@ TCollection_AsciiString
 //-----------------------------------------------------------------------------
 
 asiAlgo_FileFormat
-  asiAlgo_FileFormatTools::FormatFromFileExtension(const TCollection_AsciiString& path)
+  asiAlgo_FileFormatTool::FormatFromFileExtension(const TCollection_AsciiString& path)
 {
   TCollection_AsciiString ext = GetFileExtension(path);
 
@@ -91,6 +92,10 @@ asiAlgo_FileFormat
   {
     return FileFormat_IGES;
   }
+  else if ( ext == "xml" )
+  {
+    return FileFormat_XML;
+  }
 
   return FileFormat_Unknown;
 }
@@ -98,7 +103,7 @@ asiAlgo_FileFormat
 //-----------------------------------------------------------------------------
 
 asiAlgo_FileFormat
-  asiAlgo_FileFormatTools::FormatFromFileContent(const TCollection_AsciiString& path)
+  asiAlgo_FileFormatTool::FormatFromFileContent(const TCollection_AsciiString& path)
 {
   TCollection_AsciiString ext = GetFileExtension(path);
 
@@ -164,14 +169,31 @@ asiAlgo_FileFormat
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_FileFormatTools::IsExportSupported(const asiAlgo_FileFormat& format)
+bool asiAlgo_FileFormatTool::IsExportSupported(const asiAlgo_FileFormat& format)
 {
   if ( format == FileFormat_NATIVE
     || format == FileFormat_BREP
-    || format == FileFormat_STEP )
+    || format == FileFormat_STEP
+    || format == FileFormat_STL)
   {
     return true;
   }
 
   return false;
 }
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_FileFormatTool::IsImportSupported(const asiAlgo_FileFormat& format)
+{
+  if ( format == FileFormat_NATIVE
+    || format == FileFormat_BREP
+    || format == FileFormat_STEP
+    || format == FileFormat_STL )
+  {
+    return true;
+  }
+
+  return false;
+}
+

@@ -39,8 +39,14 @@
   #define asiAlgo_EXPORT __declspec(dllimport)
 #endif
 
+//-----------------------------------------------------------------------------
+
 #define ASI_TEST_DATA    "ASI_TEST_DATA"
 #define ASI_TEST_DUMPING "ASI_TEST_DUMPING"
 #define ASI_TEST_DESCR   "ASI_TEST_DESCR"
+
+//-----------------------------------------------------------------------------
+
+#define ASI_FILE_EXT "situ"
 
 #endif

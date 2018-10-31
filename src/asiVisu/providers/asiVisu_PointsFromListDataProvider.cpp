@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 11 April 2016
+// Created on: 30 October 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,24 +29,66 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_PointsDataProvider.h>
+#include <asiVisu_PointsFromListDataProvider.h>
 
 //-----------------------------------------------------------------------------
 
-//! Ctor.
-//! \param N [in] source Node.
-asiVisu_PointsDataProvider::asiVisu_PointsDataProvider(const Handle(ActAPI_INode)& N)
-: asiVisu_DataProvider(),
-  m_node(N)
-{}
-
-//-----------------------------------------------------------------------------
-
-//! \return ID of the associated Data Node.
-ActAPI_DataObjectId asiVisu_PointsDataProvider::GetNodeID() const
+asiVisu_PointsFromListDataProvider::asiVisu_PointsFromListDataProvider()
+: asiVisu_PointsDataProvider(NULL)
 {
-  if ( !m_node.IsNull() )
-    return m_node->GetId();
+  m_pts = new asiAlgo_BaseCloud<double>;
+}
 
-  return ActAPI_DataObjectId();
+//-----------------------------------------------------------------------------
+
+bool asiVisu_PointsFromListDataProvider::MustExecute(const Handle(ActAux_TimeStamp)&) const
+{
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiAlgo_BaseCloud<double>)
+  asiVisu_PointsFromListDataProvider::GetPoints() const
+{
+  return m_pts;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(TColStd_HPackedMapOfInteger)
+  asiVisu_PointsFromListDataProvider::GetIndices() const
+{
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_PointsFromListDataProvider::AddPoint(const gp_XYZ& pt)
+{
+  m_pts->AddElement( pt.X(), pt.Y(), pt.Z() );
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_PointsFromListDataProvider::AddPoint(const double x,
+                                                  const double y,
+                                                  const double z)
+{
+  m_pts->AddElement(x, y, z);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_PointsFromListDataProvider::Clear()
+{
+  m_pts->Clear();
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(ActAPI_HParameterList)
+  asiVisu_PointsFromListDataProvider::translationSources() const
+{
+  return NULL;
 }

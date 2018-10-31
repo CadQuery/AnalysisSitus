@@ -40,7 +40,7 @@
 #include <asiEngine_Tessellation.h>
 
 // asiVisu includes
-#include <asiVisu_GeomPrs.h>
+#include <asiVisu_PartPrs.h>
 
 // asiAlgo includes
 #include <asiAlgo_MeshConvert.h>
@@ -352,8 +352,8 @@ void asiUI_ObjectBrowser::onHidePartEdges()
   for ( size_t k = 0; k < m_viewers.size(); ++k )
     if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
     {
-      Handle(asiVisu_GeomPrs)
-        prs = Handle(asiVisu_GeomPrs)::DownCast( m_viewers[k]->PrsMgr()->GetPresentation(selected_n) );
+      Handle(asiVisu_PartPrs)
+        prs = Handle(asiVisu_PartPrs)::DownCast( m_viewers[k]->PrsMgr()->GetPresentation(selected_n) );
 
       prs->ContourActor()->SetVisibility(0);
 
@@ -374,8 +374,8 @@ void asiUI_ObjectBrowser::onShowPartEdges()
   for ( size_t k = 0; k < m_viewers.size(); ++k )
     if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(selected_n) )
     {
-      Handle(asiVisu_GeomPrs)
-        prs = Handle(asiVisu_GeomPrs)::DownCast( m_viewers[k]->PrsMgr()->GetPresentation(selected_n) );
+      Handle(asiVisu_PartPrs)
+        prs = Handle(asiVisu_PartPrs)::DownCast( m_viewers[k]->PrsMgr()->GetPresentation(selected_n) );
 
       prs->ContourActor()->SetVisibility(1);
 

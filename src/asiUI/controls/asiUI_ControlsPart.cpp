@@ -51,7 +51,7 @@
 #include <asiAlgo_Utils.h>
 
 // asiVisu includes
-#include <asiVisu_GeomPrs.h>
+#include <asiVisu_PartPrs.h>
 
 // OCCT includes
 #include <BRep_Builder.hxx>

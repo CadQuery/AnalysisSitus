@@ -59,7 +59,7 @@ asiVisu_PartPipeline::asiVisu_PartPipeline() : asiVisu_PartPipelineBase(NULL)
 //-----------------------------------------------------------------------------
 
 //! Sets input data for the pipeline.
-//! \param dataProvider [in] Data Provider.
+//! \param[in] dataProvider Data Provider.
 void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
 {
   Handle(asiVisu_PartDataProvider)

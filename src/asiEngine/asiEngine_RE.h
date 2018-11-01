@@ -46,6 +46,7 @@ public:
   asiEngine_RE(const Handle(asiEngine_Model)& model,
                ActAPI_ProgressEntry           progress,
                ActAPI_PlotterEntry            plotter)
+  //
   : asiEngine_Base(model, progress, plotter) {}
 
 public:
@@ -76,8 +77,44 @@ public:
 
 public:
 
+  //! Returns the sole Patches Node available in the project.
+  //! \return Patches Node.
+  asiEngine_EXPORT Handle(asiData_RePatchesNode)
+    Get_Patches();
+
+  //! Returns the sole Edges Node available in the project.
+  //! \return Edges Node.
+  asiEngine_EXPORT Handle(asiData_ReEdgesNode)
+    Get_Edges();
+
+  //! Returns the sole Vertices Node available in the project.
+  //! \return Vertices Node.
+  asiEngine_EXPORT Handle(asiData_ReVerticesNode)
+    Get_Vertices();
+
+  //! Creates or returns the existing Contour Node representing the
+  //! contour being interactively defined by the user.
+  //! \return newly created or existing Contour Node.
   asiEngine_EXPORT Handle(asiData_ContourNode)
-    GetOrCreate_Contour();
+    GetOrCreate_ActiveContour();
+
+  //! Creates a Patch Node under the single Patches Node available in the
+  //! project.
+  //! \return newly created Node.
+  asiEngine_EXPORT Handle(asiData_RePatchNode)
+    Create_Patch();
+
+  //! Creates an Edge Node under the single Edges Node available in the
+  //! project.
+  //! \return newly created Node.
+  asiEngine_EXPORT Handle(asiData_ReEdgeNode)
+    Create_Edge();
+
+  //! Creates a Vertex Node under the single Vertices Node available in the
+  //! project.
+  //! \return newly created Node.
+  asiEngine_EXPORT Handle(asiData_ReVertexNode)
+    Create_Vertex();
 
 };
 

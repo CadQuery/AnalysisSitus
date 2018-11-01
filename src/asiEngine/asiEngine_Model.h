@@ -56,9 +56,12 @@
 #include <asiData_IVTopoNode.h>
 #include <asiData_Partition.h>
 #include <asiData_PartNode.h>
+#include <asiData_ReEdgeNode.h>
 #include <asiData_ReEdgesNode.h>
 #include <asiData_ReTopoNode.h>
 #include <asiData_RePatchesNode.h>
+#include <asiData_RePatchNode.h>
+#include <asiData_ReVertexNode.h>
 #include <asiData_ReVerticesNode.h>
 #include <asiData_RootNode.h>
 #include <asiData_TessNode.h>
@@ -264,6 +267,13 @@ public:
     return Handle(asiData_Partition<asiData_ReTopoNode>)::DownCast( this->Partition(Partition_ReTopo) );
   }
 
+  //! Accessor for a Partition instance dedicated to RePatch Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_RePatchNode>) GetRePatchPartition() const
+  {
+    return Handle(asiData_Partition<asiData_RePatchNode>)::DownCast( this->Partition(Partition_RePatch) );
+  }
+
   //! Accessor for a Partition instance dedicated to RePatches Nodes.
   //! \return requested Partition.
   Handle(asiData_Partition<asiData_RePatchesNode>) GetRePatchesPartition() const
@@ -271,11 +281,25 @@ public:
     return Handle(asiData_Partition<asiData_RePatchesNode>)::DownCast( this->Partition(Partition_RePatches) );
   }
 
+  //! Accessor for a Partition instance dedicated to ReEdge Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_ReEdgeNode>) GetReEdgePartition() const
+  {
+    return Handle(asiData_Partition<asiData_ReEdgeNode>)::DownCast( this->Partition(Partition_ReEdge) );
+  }
+
   //! Accessor for a Partition instance dedicated to ReEdges Nodes.
   //! \return requested Partition.
   Handle(asiData_Partition<asiData_ReEdgesNode>) GetReEdgesPartition() const
   {
     return Handle(asiData_Partition<asiData_ReEdgesNode>)::DownCast( this->Partition(Partition_ReEdges) );
+  }
+
+  //! Accessor for a Partition instance dedicated to ReVertex Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_ReVertexNode>) GetReVertexPartition() const
+  {
+    return Handle(asiData_Partition<asiData_ReVertexNode>)::DownCast( this->Partition(Partition_ReVertex) );
   }
 
   //! Accessor for a Partition instance dedicated to ReVertices Nodes.
@@ -467,8 +491,11 @@ protected:
     Partition_TessellationNorms,
   //---------------------------------------------------------------------------
     Partition_ReTopo,
+    Partition_RePatch,
     Partition_RePatches,
+    Partition_ReEdge,
     Partition_ReEdges,
+    Partition_ReVertex,
     Partition_ReVertices,
   //---------------------------------------------------------------------------
     Partition_IV,

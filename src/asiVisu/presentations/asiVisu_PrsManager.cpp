@@ -1519,6 +1519,11 @@ bool
   else
     pickRes->AddPickedCellId(cellId);
 
+  if ( selNature == SelectionNature_Detection )
+    this->InvokeEvent(EVENT_DETECT_CELL, &*pickRes);
+  else
+    this->InvokeEvent(EVENT_SELECT_CELL, &*pickRes);
+
   return true;
 }
 
@@ -1574,9 +1579,9 @@ bool
 #endif
 
     if ( selNature == SelectionNature_Detection )
-      this->InvokeEvent(EVENT_DETECT_WORLD_POINT, &*pickRes);
+      this->InvokeEvent(EVENT_DETECT_POINT, &*pickRes);
     else
-      this->InvokeEvent(EVENT_SELECT_WORLD_POINT, &*pickRes);
+      this->InvokeEvent(EVENT_SELECT_POINT, &*pickRes);
   }
 
   return true;

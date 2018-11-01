@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_RePatchNode_h
-#define asiData_RePatchNode_h
+#ifndef asiData_RePatchesNode_h
+#define asiData_RePatchesNode_h
 
 // asiData includes
 #include <asiData.h>

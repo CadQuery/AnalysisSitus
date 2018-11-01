@@ -45,6 +45,9 @@ a:visited:hover {
   border: 1px dotted rgb(100, 87, 71);
   font-size: 10pt;
 }
+.bib {
+  margin: 0 0 8px 0
+}
 .bibtex {
   padding-left: 10px;
   background-color: rgb(231, 231, 231);

@@ -31,6 +31,9 @@
 // Own include
 #include <asiEngine_RE.h>
 
+// Active Data includes
+#include <ActData_UniqueNodeName.h>
+
 //-----------------------------------------------------------------------------
 
 Handle(asiData_ReTopoNode) asiEngine_RE::Create_Topo()
@@ -154,9 +157,40 @@ Handle(asiData_ReVerticesNode)
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ContourNode) asiEngine_RE::GetOrCreate_Contour()
+Handle(asiData_RePatchesNode) asiEngine_RE::Get_Patches()
 {
-  Handle(asiData_Partition<asiData_ReTopoNode>) topo_p = m_model->GetReTopoPartition();
+  Handle(asiData_Partition<asiData_RePatchesNode>)
+    patches_p = m_model->GetRePatchesPartition();
+
+  return Handle(asiData_RePatchesNode)::DownCast( patches_p->GetNode(1) );
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReEdgesNode) asiEngine_RE::Get_Edges()
+{
+  Handle(asiData_Partition<asiData_ReEdgesNode>)
+    edges_p = m_model->GetReEdgesPartition();
+
+  return Handle(asiData_ReEdgesNode)::DownCast( edges_p->GetNode(1) );
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReVerticesNode) asiEngine_RE::Get_Vertices()
+{
+  Handle(asiData_Partition<asiData_ReVerticesNode>)
+    vertices_p = m_model->GetReVerticesPartition();
+
+  return Handle(asiData_ReVerticesNode)::DownCast( vertices_p->GetNode(1) );
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ContourNode) asiEngine_RE::GetOrCreate_ActiveContour()
+{
+  Handle(asiData_Partition<asiData_ReTopoNode>)
+    topo_p = m_model->GetReTopoPartition();
 
   // Get number of Topology Nodes.
   int numTopoNodes = 0;
@@ -192,4 +226,91 @@ Handle(asiData_ContourNode) asiEngine_RE::GetOrCreate_Contour()
     return contour_n;
 
   return this->Create_Contour(topo_n);
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_RePatchNode) asiEngine_RE::Create_Patch()
+{
+  // Get parent Patches Node.
+  Handle(asiData_RePatchesNode) patches_n = this->Get_Patches();
+
+  // Add Node to Partition.
+  Handle(asiData_RePatchNode)
+    patch_n = Handle(asiData_RePatchNode)::DownCast( asiData_RePatchNode::Instance() );
+  //
+  m_model->GetRePatchPartition()->AddNode(patch_n);
+
+  // Initialize Node.
+  patch_n->Init();
+
+  // Generate unique name.
+  TCollection_ExtendedString
+    patchName = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(patch_n, patches_n), "Patch");
+  //
+  patch_n->SetName(patchName);
+
+  // Add as a child to Patches Node.
+  patches_n->AddChildNode(patch_n);
+
+  // Return the just created Node.
+  return patch_n;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReEdgeNode) asiEngine_RE::Create_Edge()
+{
+  // Get parent Edges Node.
+  Handle(asiData_ReEdgesNode) edges_n = this->Get_Edges();
+
+  // Add Node to Partition.
+  Handle(asiData_ReEdgeNode)
+    edge_n = Handle(asiData_ReEdgeNode)::DownCast( asiData_ReEdgeNode::Instance() );
+  //
+  m_model->GetReEdgePartition()->AddNode(edge_n);
+
+  // Initialize Node.
+  edge_n->Init();
+
+  // Generate unique name.
+  TCollection_ExtendedString
+    edgeName = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(edge_n, edges_n), "Edge");
+  //
+  edge_n->SetName(edgeName);
+
+  // Add as a child to Edges Node.
+  edges_n->AddChildNode(edge_n);
+
+  // Return the just created Node.
+  return edge_n;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReVertexNode) asiEngine_RE::Create_Vertex()
+{
+  // Get parent Vertices Node.
+  Handle(asiData_ReVerticesNode) vertices_n = this->Get_Vertices();
+
+  // Add Node to Partition.
+  Handle(asiData_ReVertexNode)
+    vertex_n = Handle(asiData_ReVertexNode)::DownCast( asiData_ReVertexNode::Instance() );
+  //
+  m_model->GetReVertexPartition()->AddNode(vertex_n);
+
+  // Initialize Node.
+  vertex_n->Init();
+
+  // Generate unique name.
+  TCollection_ExtendedString
+    vertexName = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(vertex_n, vertices_n), "Vertex");
+  //
+  vertex_n->SetName(vertexName);
+
+  // Add as a child to Vertices Node.
+  vertices_n->AddChildNode(vertex_n);
+
+  // Return the just created Node.
+  return vertex_n;
 }

@@ -89,7 +89,7 @@ int ENGINE_DefineContour(const Handle(asiTcl_Interp)& interp,
     trisAPI.BuildBVH();
 
     // Clean up the currently active contour.
-    contour_n = reAPI.GetOrCreate_Contour();
+    contour_n = reAPI.GetOrCreate_ActiveContour();
     contour_n->Init();
   }
   cmdEngine::model->CommitCommand();
@@ -107,9 +107,9 @@ int ENGINE_DefineContour(const Handle(asiTcl_Interp)& interp,
   vtkSmartPointer<asiUI_PickContourCallback>
     cb = vtkSmartPointer<asiUI_PickContourCallback>::New();
   //
-  cb->SetViewer      ( cmdEngine::cf->ViewerPart );
-  cb->SetModel       ( cmdEngine::model );
-  //cb->SetContourNode ( contour_n );
+  cb->SetViewer        ( cmdEngine::cf->ViewerPart );
+  cb->SetModel         ( cmdEngine::model );
+  cb->SetObjectBrowser ( cmdEngine::cf->ObjectBrowser );
   //
   if ( !part_n->GetShape().IsNull() )
     cb->AddBVH( part_n->GetBVH() );
@@ -121,9 +121,13 @@ int ENGINE_DefineContour(const Handle(asiTcl_Interp)& interp,
   // Remove previously defined observers.
   if ( PM->HasObserver(EVENT_SELECT_WORLD_POINT) )
     PM->RemoveObservers(EVENT_SELECT_WORLD_POINT);
+  //
+  if ( PM->HasObserver(EVENT_SELECT_CELL) )
+    PM->RemoveObservers(EVENT_SELECT_CELL);
 
   // Add observer which takes responsibility to interact with the user.
   PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
+  PM->AddObserver(EVENT_SELECT_CELL,        cb);
 
   return TCL_OK;
 }

@@ -82,10 +82,15 @@
 #define EVENT_JOIN                (vtkCommand::UserEvent + 1006)
 #define EVENT_FIND_FACE           (vtkCommand::UserEvent + 1007)
 #define EVENT_FIND_EDGE           (vtkCommand::UserEvent + 1008)
-#define EVENT_DETECT_WORLD_POINT  (vtkCommand::UserEvent + 1009)
-#define EVENT_SELECT_WORLD_POINT  (vtkCommand::UserEvent + 1010)
-#define EVENT_TRACE_WORLD_POINTS  (vtkCommand::UserEvent + 1011)
-#define EVENT_REFINE_TESSELLATION (vtkCommand::UserEvent + 1012)
+#define EVENT_REFINE_TESSELLATION (vtkCommand::UserEvent + 1009)
+
+// For interactive picking:
+#define EVENT_DETECT_WORLD_POINT  (vtkCommand::UserEvent + 1010) // World picker.
+#define EVENT_SELECT_WORLD_POINT  (vtkCommand::UserEvent + 1011) // World picker.
+#define EVENT_DETECT_POINT        (vtkCommand::UserEvent + 1012) // Point picker.
+#define EVENT_SELECT_POINT        (vtkCommand::UserEvent + 1013) // Point picker.
+#define EVENT_DETECT_CELL         (vtkCommand::UserEvent + 1014) // Cell picker.
+#define EVENT_SELECT_CELL         (vtkCommand::UserEvent + 1015) // Cell picker.
 
 //-----------------------------------------------------------------------------
 

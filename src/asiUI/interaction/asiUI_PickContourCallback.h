@@ -32,6 +32,7 @@
 #define asiUI_PickContourCallback_h
 
 // asiUI includes
+#include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerCallback.h>
 
 // asiEngine includes
@@ -81,6 +82,19 @@ public:
     m_model = model;
   }
 
+  //! Sets Object Browser instance to update when creating new objects.
+  //! \param[in] pBrowser pointer to the Object Browser to set.
+  void SetObjectBrowser(asiUI_ObjectBrowser* pBrowser)
+  {
+    m_pBrowser = pBrowser;
+  }
+
+  //! \return pointer to the Object Browser.
+  asiUI_ObjectBrowser* GetObjectBrowser() const
+  {
+    return m_pBrowser;
+  }
+
 private:
 
   asiUI_PickContourCallback  (asiUI_Viewer* pViewer);
@@ -90,6 +104,9 @@ private:
 
   std::vector<Handle(asiAlgo_BVHFacets)> m_bvhs;     //!< Accelerating structure for picking.
   Handle(asiEngine_Model)                m_model;    //!< Data Model instance.
+  Handle(asiData_ContourNode)            m_contour;  //!< Contour Node being currently composed.
+  Handle(asiData_RePatchNode)            m_patch;    //!< Current patch.
+  asiUI_ObjectBrowser*                   m_pBrowser; //!< Object Browser.
 
 };
 

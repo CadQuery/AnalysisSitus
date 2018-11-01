@@ -57,9 +57,9 @@ asiUI_PickContourCallback* asiUI_PickContourCallback::New()
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting owning viewer as a parameter.
-//! \param theViewer [in] owning viewer.
-asiUI_PickContourCallback::asiUI_PickContourCallback(asiUI_Viewer* theViewer)
-: asiUI_ViewerCallback(theViewer)
+//! \param[in] pViewer owning viewer.
+asiUI_PickContourCallback::asiUI_PickContourCallback(asiUI_Viewer* pViewer)
+: asiUI_ViewerCallback(pViewer)
 {}
 
 //-----------------------------------------------------------------------------
@@ -71,24 +71,17 @@ asiUI_PickContourCallback::~asiUI_PickContourCallback()
 //-----------------------------------------------------------------------------
 
 //! Listens to a dedicated event. Performs all useful operations.
-//! \param theCaller   [in] caller instance.
-//! \param theEventId  [in] ID of the event triggered this listener.
-//! \param theCallData [in] invocation context.
-void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
-                                        unsigned long vtkNotUsed(theEventId),
-                                        void*         theCallData)
+//! \param[in] pCaller   caller instance.
+//! \param[in] eventId   ID of the event triggered this listener.
+//! \param[in] pCallData data passed from the caller.
+void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(pCaller),
+                                        unsigned long vtkNotUsed(eventId),
+                                        void*         pCallData)
 {
   const vtkSmartPointer<asiVisu_PrsManager>& mgr = this->GetViewer()->PrsMgr();
 
-  // Check if Contour Node is available.
-  if ( m_contour.IsNull() || !m_contour->IsWellFormed() )
-  {
-    m_notifier.SendLogMessage(LogWarn(Normal) << "No persistent data for contour available.");
-    return;
-  }
-
   // Get picking ray
-  gp_Lin pickRay = *( (gp_Lin*) theCallData );
+  gp_Lin pickRay = *( (gp_Lin*) pCallData );
 
   // For each available BVH...
   for ( size_t k = 0; k < m_bvhs.size(); ++k )
@@ -115,39 +108,39 @@ void asiUI_PickContourCallback::Execute(vtkObject*    vtkNotUsed(theCaller),
                                               << hit.Z()
                                               << fidx);
 
-    // Modify data
-    m_model->OpenCommand();
-    {
-      const int numContourPts = m_contour->GetNumPoints();
+    //// Modify data
+    //m_model->OpenCommand();
+    //{
+    //  const int numContourPts = m_contour->GetNumPoints();
 
-      // Experiment with middle point
-      if ( numContourPts > 0 )
-      {
-        // Get previous point
-        const gp_XYZ prevPt = m_contour->GetPoint(numContourPts - 1);
+    //  // Experiment with middle point
+    //  if ( numContourPts > 0 )
+    //  {
+    //    // Get previous point
+    //    const gp_XYZ prevPt = m_contour->GetPoint(numContourPts - 1);
 
-        // Add midpoints
-        std::vector<gp_XYZ> projPts;
-        if ( !ProjectLineMesh.Perform(prevPt, hit, projPts, 0.001) )
-        {
-          m_notifier.SendLogMessage(LogErr(Normal) << "Cannot project line to mesh.");
-          m_model->AbortCommand();
-          return;
-        }
-        //
-        if ( projPts.size() > 2 )
-          for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
-            m_contour->AddPoint(projPts[k], -1);
-      }
+    //    // Add midpoints
+    //    std::vector<gp_XYZ> projPts;
+    //    if ( !ProjectLineMesh.Perform(prevPt, hit, projPts, 0.001) )
+    //    {
+    //      m_notifier.SendLogMessage(LogErr(Normal) << "Cannot project line to mesh.");
+    //      m_model->AbortCommand();
+    //      return;
+    //    }
+    //    //
+    //    if ( projPts.size() > 2 )
+    //      for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
+    //        m_contour->AddPoint(projPts[k], -1);
+    //  }
 
-      // Add hitted point
-      const int poleIdx = m_contour->AddPoint(hit, fidx);
-      m_contour->AddPoleIndex(poleIdx);
+    //  // Add hitted point
+    //  const int poleIdx = m_contour->AddPoint(hit, fidx);
+    //  m_contour->AddPoleIndex(poleIdx);
 
-      m_notifier.SendLogMessage(LogInfo(Normal) << "Next pole index: %1." << poleIdx);
-    }
-    m_model->CommitCommand();
-    //
-    mgr->Actualize( m_contour.get() );
+    //  m_notifier.SendLogMessage(LogInfo(Normal) << "Next pole index: %1." << poleIdx);
+    //}
+    //m_model->CommitCommand();
+    ////
+    //mgr->Actualize( m_contour.get() );
   }
 }

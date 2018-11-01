@@ -47,7 +47,7 @@
 // Qt includes
 #include <QObject>
 
-//! Callback for contour creation.
+//! Callback for interactive contour creation.
 class asiUI_PickContourCallback : public QObject,
                                   public asiUI_ViewerCallback
 {
@@ -61,9 +61,9 @@ public:
 
 public:
 
-  virtual void Execute(vtkObject*    theCaller,
-                       unsigned long theEventId,
-                       void*         theCallData);
+  virtual void Execute(vtkObject*    pCaller,
+                       unsigned long eventId,
+                       void*         pCallData);
 
 public:
 
@@ -81,35 +81,15 @@ public:
     m_model = model;
   }
 
-  //! Sets diagnotics tools for the callback.
-  //! \param[in] progress progress notifier.
-  //! \param[in] plotter  imperative plotter.
-  void SetDiagnosticTools(ActAPI_ProgressEntry progress,
-                          ActAPI_PlotterEntry  plotter)
-  {
-    m_notifier = progress;
-    m_plotter  = plotter;
-  }
-
-  //! Initializes the active Contour Node.
-  //! \param[in] contour Contour Node to set as data container.
-  void SetContourNode(const Handle(asiData_ContourNode)& contour)
-  {
-    m_contour = contour;
-  }
-
 private:
 
-  asiUI_PickContourCallback  (asiUI_Viewer* theViewer);
+  asiUI_PickContourCallback  (asiUI_Viewer* pViewer);
   ~asiUI_PickContourCallback ();
 
 private:
 
   std::vector<Handle(asiAlgo_BVHFacets)> m_bvhs;     //!< Accelerating structure for picking.
   Handle(asiEngine_Model)                m_model;    //!< Data Model instance.
-  Handle(asiData_ContourNode)            m_contour;  //!< Contour Node.
-  ActAPI_ProgressEntry                   m_notifier; //!< Progress notifier.
-  ActAPI_PlotterEntry                    m_plotter;  //!< Imperative plotter.
 
 };
 

@@ -2,7 +2,7 @@
 <html>
  <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Analysis Situs: define topology for reverse engineering</title>
+  <title>Analysis Situs: reverse engineering overview</title>
   <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
   <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
 
@@ -25,7 +25,7 @@
   <td align="left" class="header">
     <span class="header-logo"><a href="../index.html" class="header-href">Analysis&nbsp;Situs</a></span>
     &nbsp;
-    ./<a class="header-href" href="../features.html">features</a>/define wireframe model
+    ./<a class="header-href" href="../features.html">features</a>/reverse engineering overview
   </td>
 </tr>
 </table>
@@ -40,33 +40,14 @@
 </table>
 
 <p>
-A typical reverse engineering scenario consists of the following main steps:
+One can think of reverse engineering as a specific CAD modeling
+process where you start from an existing artifact instead of a blank
+workspace. The whole process is driven by a reference shape represented
+with either a point cloud or mesh geometry. Looking from this standpoint,
+Analysis Situs is designed to become a modeling system where the main
+prerequisite is the existence of a reference part guiding the design
+process and used to snap points, curves and surfaces.
 </p>
-
-<ol>
-  <li>Digitization.</li>
-  <li>Segmentation.</li>
-  <li>Surface reconstruction.</li>
-  <li>Beautification.</li>
-</ol>
-
-<p>
-Interactive segmentation gives the user all means to outline the feature lines of the model manually. Given
-the mesh model as the input data, the user draws a network of curves which compose loops defining the patches.
-The wireframe model defines the layout of the surfaces (topology).
-</p>
-
-<h1>Project contour</h1>
-
-<p>
-Contour lines are defined interactively via <span class="code-inline">define-contour</span> command.
-Analysis Situs projects the straight line segments between the picked points onto mesh. Projection is
-performed with a certain precision which defines the max allowed distance between the subsequent
-points. Projection is performed non-recursively (to avoid stack overflows) with a controlled number
-of iterations. To speed up computations, BVH (bounding volume hierarchy) structure is used.
-</p>
-
-<div align="center"><img src="../imgs/project_contour_anim.gif"/></div>
 
 </body>
 </html>

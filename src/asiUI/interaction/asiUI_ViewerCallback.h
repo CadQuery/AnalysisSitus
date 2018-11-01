@@ -34,6 +34,10 @@
 // asiUI includes
 #include <asiUI.h>
 
+// Active Data includes
+#include <ActAPI_IPlotter.h>
+#include <ActAPI_IProgressNotifier.h>
+
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkSmartPointer.h>
@@ -63,13 +67,30 @@ protected:
   asiUI_EXPORT
     ~asiUI_ViewerCallback();
 
-private:
+public:
+
+  //! Sets diagnotics tools for the callback.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  void SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                          ActAPI_PlotterEntry  plotter)
+  {
+    m_notifier = progress;
+    m_plotter  = plotter;
+  }
+
+protected:
 
   //! Host viewer. Notice that lifetime of a Callback instance can be longer
   //! that the lifetime of the viewer because user may close that window. In
   //! that case make sure that SetWindow(NULL) is called in order to keep the
   //! callbacks in a consistent (not initialized however) states.
   asiUI_Viewer* m_pViewer;
+
+protected:
+
+  ActAPI_ProgressEntry m_notifier; //!< Progress notifier.
+  ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter.
 
 };
 

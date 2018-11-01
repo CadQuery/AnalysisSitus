@@ -61,9 +61,9 @@
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_ProjectContour(const Handle(asiTcl_Interp)& interp,
-                          int                          argc,
-                          const char**                 argv)
+int ENGINE_DefineContour(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
 {
   if ( argc != 1 )
   {
@@ -103,16 +103,13 @@ int ENGINE_ProjectContour(const Handle(asiTcl_Interp)& interp,
   // Set selection mode.
   PM->SetSelectionMode(SelectionMode_Workpiece);
 
-  // Add observer which takes responsibility to interact with the user.
-  if ( PM->HasObserver(EVENT_SELECT_WORLD_POINT) )
-    PM->RemoveObservers(EVENT_SELECT_WORLD_POINT);
-
+  // Prepare callback which will manage the interaction process with user.
   vtkSmartPointer<asiUI_PickContourCallback>
     cb = vtkSmartPointer<asiUI_PickContourCallback>::New();
   //
   cb->SetViewer      ( cmdEngine::cf->ViewerPart );
   cb->SetModel       ( cmdEngine::model );
-  cb->SetContourNode ( contour_n );
+  //cb->SetContourNode ( contour_n );
   //
   if ( !part_n->GetShape().IsNull() )
     cb->AddBVH( part_n->GetBVH() );
@@ -121,77 +118,12 @@ int ENGINE_ProjectContour(const Handle(asiTcl_Interp)& interp,
   //
   cb->SetDiagnosticTools ( interp->GetProgress(), interp->GetPlotter() );
 
-  // Add observer.
+  // Remove previously defined observers.
+  if ( PM->HasObserver(EVENT_SELECT_WORLD_POINT) )
+    PM->RemoveObservers(EVENT_SELECT_WORLD_POINT);
+
+  // Add observer which takes responsibility to interact with the user.
   PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
-
-  return TCL_OK;
-}
-
-//-----------------------------------------------------------------------------
-
-int ENGINE_FinishContour(const Handle(asiTcl_Interp)& interp,
-                         int                          argc,
-                         const char**                 argv)
-{
-  if ( argc != 1 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  // Get Part Node
-  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
-
-  // Contour Node.
-  Handle(asiData_ContourNode) contour_n;
-
-  cmdEngine::model->OpenCommand();
-  {
-    contour_n = asiEngine_RE( cmdEngine::model,
-                              interp->GetProgress(),
-                              interp->GetPlotter() ).GetOrCreate_Contour();
-
-    // Finalize contour by setting it closed. Setting this flag does not
-    // make any difference unless you ask the Contour Node to build a wire.
-    contour_n->SetClosed(true);
-
-    // Get contour as a topological wire.
-    TopoDS_Wire contourWire = contour_n->AsShape();
-
-    // Beautify contour.
-    asiAlgo_ReapproxContour reapproxContour( contourWire,
-                                             1.0e-6,
-                                             5.0,
-                                             interp->GetProgress(),
-                                             interp->GetPlotter() );
-    //
-    if ( !reapproxContour(true, true, contourWire) )
-    {
-      interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Cannot reapproximate contour.");
-    }
-    else
-    {
-      contour_n->SetShape(contourWire);
-    }
-  }
-  cmdEngine::model->CommitCommand();
-
-  // Get Part presentation manager.
-  const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdEngine::cf->ViewerPart->PrsMgr();
-
-  // Set picker type to cell picker.
-  cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerTypes(PickerType_Cell);
-
-  // Set selection mode.
-  PM->SetSelectionMode(SelectionMode_Face);
-
-  // Remove observer.
-  PM->RemoveObserver(EVENT_SELECT_WORLD_POINT);
-
-  // Update contour.
-  PM->Actualize(contour_n);
-
-  // Update UI.
-  cmdEngine::cf->ObjectBrowser->Populate();
 
   return TCL_OK;
 }
@@ -291,20 +223,12 @@ void cmdEngine::Commands_Interactive(const Handle(asiTcl_Interp)&      interp,
   static const char* group = "cmdEngine";
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("project-contour",
+  interp->AddCommand("define-contour",
     //
-    "project-contour\n"
+    "define-contour\n"
     "\t Enables interactive contour picking.",
     //
-    __FILE__, group, ENGINE_ProjectContour);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("finish-contour",
-    //
-    "finish-contour\n"
-    "\t Finalizes interactive contour picking.",
-    //
-    __FILE__, group, ENGINE_FinishContour);
+    __FILE__, group, ENGINE_DefineContour);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("contour-to-wire",

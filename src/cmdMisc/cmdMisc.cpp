@@ -58,6 +58,7 @@
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
+#include <BRepOffsetAPI_MakePipeShell.hxx>
 #include <BRepOffsetAPI_MakeThickSolid.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
@@ -1004,8 +1005,6 @@ int MISC_TestPipe1(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-#include <BRepOffsetAPI_MakePipeShell.hxx>
-
 int MISC_TestSweep1(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
@@ -1069,6 +1068,36 @@ int MISC_TestSweep1(const Handle(asiTcl_Interp)& interp,
 
   // Set the result.
   TopoDS_Shape result = mkPipeShell.Shape();
+  //
+  interp->GetPlotter().REDRAW_SHAPE("result", result);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int MISC_TestSweep2(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Construct section.
+  Handle(Geom_Curve)
+    c1 = new Geom_Circle(gp_Ax2( gp::Origin(), gp_Dir(1, 1, 0) ), 10.0);
+  //
+  TopoDS_Edge sectionEdge = BRepBuilderAPI_MakeEdge(c1);
+  TopoDS_Wire sectionWire = BRepBuilderAPI_MakeWire(sectionEdge);
+  //
+  interp->GetPlotter().REDRAW_SHAPE("sectionWire", sectionWire, Color_Red, 1.0, true);
+
+  BRepPrimAPI_MakePrism mkPrism( sectionWire, gp_Vec(100, 0, 0) );
+
+  // Set the result.
+  TopoDS_Shape result = mkPrism.Shape();
   //
   interp->GetPlotter().REDRAW_SHAPE("result", result);
 
@@ -1833,10 +1862,18 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("test-sweep1",
     //
-    "test-sweep \n"
+    "test-sweep1 \n"
     "\t Problem reproducer for sweeping.",
     //
     __FILE__, group, MISC_TestSweep1);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-sweep2",
+    //
+    "test-sweep2 \n"
+    "\t Problem reproducer for sweeping.",
+    //
+    __FILE__, group, MISC_TestSweep2);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("test-ineq",

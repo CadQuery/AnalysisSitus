@@ -36,6 +36,7 @@
 #include <exe_Version.h>
 
 // asiUI includes
+#include <asiUI_Common.h>
 #include <asiUI_StatusBar.h>
 #include <asiUI_StatusBarImpl.h>
 
@@ -45,9 +46,11 @@
 // Qt includes
 #pragma warning(push, 0)
 #include <QApplication>
-#include <QTextStream>
 #include <QDesktopWidget>
+#include <QDir>
 #include <QDockWidget>
+#include <QStringList>
+#include <QTextStream>
 #pragma warning(pop)
 
 #define EXE_LOAD_MODULE(name) \
@@ -322,9 +325,27 @@ void exe_MainWindow::createDockWindows()
   cf->Interp->Init();
   cf->Interp->SetModel(cf->Model);
 
-  // Load commands
+  // Load default commands
   EXE_LOAD_MODULE("cmdMisc")
   EXE_LOAD_MODULE("cmdEngine")
+
+  // Lookup for custom plugins and try to load them
+  QDir pluginDir( QDir::currentPath() + "/asi-plugins" );
+  //
+  std::cout << "Looking for plugins at "
+            << QStr2AsciiStr( pluginDir.absolutePath() ).ToCString() << std::endl;
+  //
+  QStringList cmdLibs = pluginDir.entryList(QStringList() << "*.dll", QDir::Files);
+  //
+  foreach ( QString cmdLib, cmdLibs )
+  {
+    TCollection_AsciiString cmdLibName = QStr2AsciiStr( cmdLib.section(".", 0, 0) );
+    //
+    cf->ProgressNotifier->SendLogMessage(LogInfo(Normal) << "Detected %1 as a custom plugin. Attempting to load it..."
+                                                         << cmdLibName);
+
+    EXE_LOAD_MODULE(cmdLibName);
+  }
 
   // Console window
   QDockWidget* pDockConsoleWindow;

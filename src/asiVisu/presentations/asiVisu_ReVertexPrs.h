@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 October 2018
+// Created on: 02 November 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,70 +28,47 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_ReVertexNode_h
-#define asiData_ReVertexNode_h
+#ifndef asiVisu_ReVertexPrs_h
+#define asiVisu_ReVertexPrs_h
+
+// asiVisu includes
+#include <asiVisu_DefaultPrs.h>
 
 // asiData includes
-#include <asiData.h>
+#include <asiData_ReVertexNode.h>
 
-// Active Data includes
-#include <ActData_BaseNode.h>
+// VTK includes
+#include <vtkTextWidget.h>
 
-//! Data Node representing a topological vertex where several edges normally
-//! join.
-class asiData_ReVertexNode : public ActData_BaseNode
+//! Presentation class for a single vertex in a wireframe model of
+//! reverse engineering workflow.
+class asiVisu_ReVertexPrs : public asiVisu_DefaultPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_ReVertexNode, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReVertexPrs, asiVisu_DefaultPrs)
 
-  // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_ReVertexNode, Instance)
+  // Allows to register this Presentation class
+  DEFINE_PRESENTATION_FACTORY(asiData_ReVertexNode, Instance)
 
 public:
 
-  //! IDs for the underlying Parameters.
-  enum ParamId
+  //! Pipelines.
+  enum PipelineId
   {
-  //------------------//
-    PID_Name,         //!< Name of the Node.
-    PID_Geometry,     //!< Geometry of a vertex (i.e. point coordinates).
-  //------------------//
-    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
+    Pipeline_Main = 1
   };
 
 public:
 
-  asiData_EXPORT static Handle(ActAPI_INode)
-    Instance();
+  asiVisu_EXPORT static Handle(asiVisu_Prs)
+    Instance(const Handle(ActAPI_INode)& N);
 
-// Generic naming support:
-public:
-
-  asiData_EXPORT virtual TCollection_ExtendedString
-    GetName();
-
-  asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& name);
-
-  asiData_EXPORT void
-    SetPoint(const double x, const double y, const double z);
-
-  asiData_EXPORT bool
-    GetPoint(double& x, double& y, double& z) const;
-
-// Initialization:
-public:
-
-  asiData_EXPORT void
-    Init();
-
-protected:
+private:
 
   //! Allocation is allowed only via Instance() method.
-  asiData_EXPORT
-    asiData_ReVertexNode();
+  asiVisu_ReVertexPrs(const Handle(ActAPI_INode)& N);
 
 };
 

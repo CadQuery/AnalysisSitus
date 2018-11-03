@@ -59,6 +59,7 @@
 #include <asiVisu_IVTessItemPrs.h>
 #include <asiVisu_IVTextItemPrs.h>
 #include <asiVisu_IVTopoItemPrs.h>
+#include <asiVisu_ReVertexPrs.h>
 #include <asiVisu_TessellationPrs.h>
 #include <asiVisu_TessellationNormsPrs.h>
 #include <asiVisu_TolerantRangePrs.h>
@@ -173,6 +174,7 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_TessellationNormsPrs)
   REGISTER_PRESENTATION(asiVisu_TolerantRangePrs)
   REGISTER_PRESENTATION(asiVisu_TriangulationPrs)
+  REGISTER_PRESENTATION(asiVisu_ReVertexPrs)
 
   // Imperative viewer.
   REGISTER_PRESENTATION(asiVisu_IVPointSet2dPrs)

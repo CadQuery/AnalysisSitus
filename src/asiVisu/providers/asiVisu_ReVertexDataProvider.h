@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 October 2018
+// Created on: 02 November 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,70 +28,48 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_ReVertexNode_h
-#define asiData_ReVertexNode_h
+#ifndef asiVisu_ReVertexDataProvider_h
+#define asiVisu_ReVertexDataProvider_h
+
+// asiVisu includes
+#include <asiVisu_PointsDataProvider.h>
 
 // asiData includes
-#include <asiData.h>
+#include <asiData_ReVertexNode.h>
 
-// Active Data includes
-#include <ActData_BaseNode.h>
-
-//! Data Node representing a topological vertex where several edges normally
-//! join.
-class asiData_ReVertexNode : public ActData_BaseNode
+//! Data provider for a vertex in reverse engineering workflow.
+class asiVisu_ReVertexDataProvider : public asiVisu_PointsDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_ReVertexNode, ActData_BaseNode)
-
-  // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_ReVertexNode, Instance)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReVertexDataProvider, asiVisu_PointsDataProvider)
 
 public:
 
-  //! IDs for the underlying Parameters.
-  enum ParamId
-  {
-  //------------------//
-    PID_Name,         //!< Name of the Node.
-    PID_Geometry,     //!< Geometry of a vertex (i.e. point coordinates).
-  //------------------//
-    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
-  };
+  asiVisu_EXPORT
+    asiVisu_ReVertexDataProvider(const Handle(asiData_ReVertexNode)& N);
 
 public:
 
-  asiData_EXPORT static Handle(ActAPI_INode)
-    Instance();
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<double>)
+    GetPoints() const;
 
-// Generic naming support:
-public:
+  asiVisu_EXPORT virtual Handle(TColStd_HPackedMapOfInteger)
+    GetIndices() const;
 
-  asiData_EXPORT virtual TCollection_ExtendedString
-    GetName();
+private:
 
-  asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& name);
-
-  asiData_EXPORT void
-    SetPoint(const double x, const double y, const double z);
-
-  asiData_EXPORT bool
-    GetPoint(double& x, double& y, double& z) const;
-
-// Initialization:
-public:
-
-  asiData_EXPORT void
-    Init();
+  virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
 
 protected:
 
-  //! Allocation is allowed only via Instance() method.
-  asiData_EXPORT
-    asiData_ReVertexNode();
+  //! Point cloud structure is stored as a member field to avoid
+  //! unnecessary heap allocations. This is possible because the cloud
+  //! actually contains always one point, and we need it just to comply
+  //! with the pipeline interface.
+  Handle(asiAlgo_BaseCloud<double>) m_cloud;
 
 };
 

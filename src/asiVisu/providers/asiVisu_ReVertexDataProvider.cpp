@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 October 2018
+// Created on: 02 November 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,71 +28,65 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_ReVertexNode_h
-#define asiData_ReVertexNode_h
+// Own include
+#include <asiVisu_ReVertexDataProvider.h>
 
-// asiData includes
-#include <asiData.h>
+//-----------------------------------------------------------------------------
 
-// Active Data includes
-#include <ActData_BaseNode.h>
-
-//! Data Node representing a topological vertex where several edges normally
-//! join.
-class asiData_ReVertexNode : public ActData_BaseNode
+//! Constructor.
+//! \param[in] N Vertex Node to source data from.
+asiVisu_ReVertexDataProvider::asiVisu_ReVertexDataProvider(const Handle(asiData_ReVertexNode)& N)
+: asiVisu_PointsDataProvider(N)
 {
-public:
+  m_cloud = new asiAlgo_BaseCloud<double>;
+  m_cloud->AddElement(0., 0., 0.); // Always one point.
+}
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_ReVertexNode, ActData_BaseNode)
+//-----------------------------------------------------------------------------
 
-  // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_ReVertexNode, Instance)
+//! \return point cloud to visualize.
+Handle(asiAlgo_BaseCloud<double>) asiVisu_ReVertexDataProvider::GetPoints() const
+{
+  Handle(asiData_ReVertexNode)
+    vertex_n = Handle(asiData_ReVertexNode)::DownCast(m_node);
+  //
+  if ( vertex_n.IsNull() || !vertex_n->IsWellFormed() )
+    return NULL;
 
-public:
+  double x, y, z;
+  if ( !vertex_n->GetPoint(x, y, z) )
+    return NULL;
 
-  //! IDs for the underlying Parameters.
-  enum ParamId
-  {
-  //------------------//
-    PID_Name,         //!< Name of the Node.
-    PID_Geometry,     //!< Geometry of a vertex (i.e. point coordinates).
-  //------------------//
-    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
-  };
+  m_cloud->SetElement(0, x, y, z);
+  return m_cloud;
+}
 
-public:
+//-----------------------------------------------------------------------------
 
-  asiData_EXPORT static Handle(ActAPI_INode)
-    Instance();
+//! \return NULL filter.
+Handle(TColStd_HPackedMapOfInteger) asiVisu_ReVertexDataProvider::GetIndices() const
+{
+  return NULL;
+}
 
-// Generic naming support:
-public:
+//-----------------------------------------------------------------------------
 
-  asiData_EXPORT virtual TCollection_ExtendedString
-    GetName();
+//! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
+//! translation process.
+//! \return source Parameters.
+Handle(ActAPI_HParameterList) asiVisu_ReVertexDataProvider::translationSources() const
+{
+  // Resulting Parameters.
+  ActParamStream out;
 
-  asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& name);
+  Handle(asiData_ReVertexNode)
+    points_n = Handle(asiData_ReVertexNode)::DownCast(m_node);
+  //
+  if ( points_n.IsNull() || !points_n->IsWellFormed() )
+    return out;
 
-  asiData_EXPORT void
-    SetPoint(const double x, const double y, const double z);
+  // Register Parameter as sensitive.
+  out << points_n->Parameter(asiData_ReVertexNode::PID_Geometry);
 
-  asiData_EXPORT bool
-    GetPoint(double& x, double& y, double& z) const;
-
-// Initialization:
-public:
-
-  asiData_EXPORT void
-    Init();
-
-protected:
-
-  //! Allocation is allowed only via Instance() method.
-  asiData_EXPORT
-    asiData_ReVertexNode();
-
-};
-
-#endif
+  return out;
+}

@@ -39,7 +39,8 @@
 //! Default ctor. Registers all involved Parameters.
 asiData_ReVertexNode::asiData_ReVertexNode() : ActData_BaseNode()
 {
-  REGISTER_PARAMETER(Name, PID_Name);
+  REGISTER_PARAMETER(Name,      PID_Name);
+  REGISTER_PARAMETER(RealArray, PID_Geometry); // Array of coordinates.
 }
 
 //! Returns new DETACHED instance of the Node ensuring its correct
@@ -53,8 +54,14 @@ Handle(ActAPI_INode) asiData_ReVertexNode::Instance()
 //! Performs initial actions required to make Node WELL-FORMED.
 void asiData_ReVertexNode::Init()
 {
-  // Initialize name Parameter
+  // Initialize name Parameter.
   this->InitParameter(PID_Name, "Name");
+
+  // Initialize array.
+  ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray(NULL);
+
+  // Initialize point coordinates.
+  this->SetPoint(0.0, 0.0, 0.0);
 }
 
 //-----------------------------------------------------------------------------
@@ -73,4 +80,45 @@ TCollection_ExtendedString asiData_ReVertexNode::GetName()
 void asiData_ReVertexNode::SetName(const TCollection_ExtendedString& name)
 {
   ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
+}
+
+//-----------------------------------------------------------------------------
+// Handy accessors
+//-----------------------------------------------------------------------------
+
+//! Sets point coordinates.
+//! \param[in] x X coordinate.
+//! \param[in] y Y coordinate.
+//! \param[in] z Z coordinate.
+void asiData_ReVertexNode::SetPoint(const double x, const double y, const double z)
+{
+  Handle(HRealArray)
+    arr = ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->GetArray();
+  //
+  if ( arr.IsNull() )
+    arr = new HRealArray(0, 2);
+
+  arr->ChangeValue(0) = x;
+  arr->ChangeValue(1) = y;
+  arr->ChangeValue(2) = z;
+}
+
+//! Returns point coordinates.
+//! \param[out] x X coordinate.
+//! \param[out] y Y coordinate.
+//! \param[out] z Z coordinate.
+//! \return false if coordinates cannot be accessed.
+bool asiData_ReVertexNode::GetPoint(double& x, double& y, double& z) const
+{
+  Handle(HRealArray)
+    arr = ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->GetArray();
+  //
+  if ( arr.IsNull() || arr->Lower() != 0 || arr->Upper() != 2 )
+    return false;
+
+  x = arr->Value(0);
+  y = arr->Value(1);
+  z = arr->Value(2);
+
+  return true;
 }

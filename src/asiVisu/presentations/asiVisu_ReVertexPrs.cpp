@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 October 2018
+// Created on: 11 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018-present, Sergey Slyadnev
+// Copyright (c) 2017, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,71 +28,45 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_ReVertexNode_h
-#define asiData_ReVertexNode_h
+// Own include
+#include <asiVisu_ReVertexPrs.h>
 
-// asiData includes
-#include <asiData.h>
+// asiVisu includes
+#include <asiVisu_PointsPipeline.h>
+#include <asiVisu_ReVertexDataProvider.h>
+#include <asiVisu_Utils.h>
 
-// Active Data includes
-#include <ActData_BaseNode.h>
+// VTK includes
+#include <vtkMapper.h>
+#include <vtkProperty.h>
+#include <vtkTextActor.h>
 
-//! Data Node representing a topological vertex where several edges normally
-//! join.
-class asiData_ReVertexNode : public ActData_BaseNode
+//-----------------------------------------------------------------------------
+
+//! Creates a Presentation object for the passed Node.
+//! \param[in] N Node to create a Presentation for.
+asiVisu_ReVertexPrs::asiVisu_ReVertexPrs(const Handle(ActAPI_INode)& N)
+: asiVisu_DefaultPrs(N)
 {
-public:
+  // Create Data Provider.
+  Handle(asiVisu_ReVertexDataProvider)
+    DP = new asiVisu_ReVertexDataProvider( Handle(asiData_ReVertexNode)::DownCast(N) );
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_ReVertexNode, ActData_BaseNode)
+  // Pipeline for points.
+  this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline );
+  this->assignDataProvider ( Pipeline_Main, DP );
 
-  // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_ReVertexNode, Instance)
+  // Adjust point size.
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetPointSize(8.0);
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetColor(1.0, 0.8, 0.3);
+}
 
-public:
+//-----------------------------------------------------------------------------
 
-  //! IDs for the underlying Parameters.
-  enum ParamId
-  {
-  //------------------//
-    PID_Name,         //!< Name of the Node.
-    PID_Geometry,     //!< Geometry of a vertex (i.e. point coordinates).
-  //------------------//
-    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
-  };
-
-public:
-
-  asiData_EXPORT static Handle(ActAPI_INode)
-    Instance();
-
-// Generic naming support:
-public:
-
-  asiData_EXPORT virtual TCollection_ExtendedString
-    GetName();
-
-  asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& name);
-
-  asiData_EXPORT void
-    SetPoint(const double x, const double y, const double z);
-
-  asiData_EXPORT bool
-    GetPoint(double& x, double& y, double& z) const;
-
-// Initialization:
-public:
-
-  asiData_EXPORT void
-    Init();
-
-protected:
-
-  //! Allocation is allowed only via Instance() method.
-  asiData_EXPORT
-    asiData_ReVertexNode();
-
-};
-
-#endif
+//! Factory method for Presentation.
+//! \param[in] N Node to create a Presentation for.
+//! \return new Presentation instance.
+Handle(asiVisu_Prs) asiVisu_ReVertexPrs::Instance(const Handle(ActAPI_INode)& N)
+{
+  return new asiVisu_ReVertexPrs(N);
+}

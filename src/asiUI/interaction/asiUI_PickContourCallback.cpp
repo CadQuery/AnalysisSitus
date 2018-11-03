@@ -128,6 +128,9 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
       // Business logic of reconstruction.
       asiEngine_RE reApi(m_model, m_notifier, m_plotter);
 
+      // New vertex.
+      Handle(asiData_ReVertexNode) nextVertexNode;
+
       // Modify data.
       m_model->OpenCommand();
       {
@@ -139,7 +142,7 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
           m_patch = reApi.Create_Patch();
 
         // Create vertex.
-        reApi.Create_Vertex();
+        nextVertexNode = reApi.Create_Vertex();
 
         // Connect two points by a projected polyline.
         const int numContourPts = m_contour->GetNumPoints();
@@ -173,6 +176,7 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
 
       // Update viewer.
       mgr->Actualize(m_contour);
+      mgr->Actualize(nextVertexNode);
 
       // Update object browser.
       if ( m_pBrowser )

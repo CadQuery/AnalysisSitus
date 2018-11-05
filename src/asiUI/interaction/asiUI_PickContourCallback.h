@@ -70,9 +70,9 @@ public:
 
   //! Sets accelerating structure to use for picking.
   //! \param bvh_facets [in] accelerating structure to set.
-  void AddBVH(const Handle(asiAlgo_BVHFacets)& bvh_facets)
+  void SetBVH(const Handle(asiAlgo_BVHFacets)& bvh_facets)
   {
-    m_bvhs.push_back(bvh_facets);
+    m_bvh = bvh_facets;
   }
 
   //! Sets Data Model instance to access the geometry to pick.
@@ -102,11 +102,11 @@ private:
 
 private:
 
-  std::vector<Handle(asiAlgo_BVHFacets)> m_bvhs;     //!< Accelerating structure for picking.
-  Handle(asiEngine_Model)                m_model;    //!< Data Model instance.
-  Handle(asiData_ContourNode)            m_contour;  //!< Contour Node being currently composed.
-  Handle(asiData_RePatchNode)            m_patch;    //!< Current patch.
-  asiUI_ObjectBrowser*                   m_pBrowser; //!< Object Browser.
+  Handle(asiAlgo_BVHFacets)   m_bvh;      //!< Accelerating structure for picking.
+  Handle(asiEngine_Model)     m_model;    //!< Data Model instance.
+  Handle(asiData_ContourNode) m_contour;  //!< Contour Node being currently composed.
+  Handle(asiData_RePatchNode) m_patch;    //!< Current patch.
+  asiUI_ObjectBrowser*        m_pBrowser; //!< Object Browser.
 
 };
 

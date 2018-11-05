@@ -111,10 +111,8 @@ int ENGINE_DefineContour(const Handle(asiTcl_Interp)& interp,
   cb->SetModel         ( cmdEngine::model );
   cb->SetObjectBrowser ( cmdEngine::cf->ObjectBrowser );
   //
-  if ( !part_n->GetShape().IsNull() )
-    cb->AddBVH( part_n->GetBVH() );
   if ( !tris_n->GetTriangulation().IsNull() )
-    cb->AddBVH( tris_n->GetBVH() );
+    cb->SetBVH( tris_n->GetBVH() );
   //
   cb->SetDiagnosticTools ( interp->GetProgress(), interp->GetPlotter() );
 

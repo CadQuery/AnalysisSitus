@@ -37,6 +37,9 @@
 // asiAlgo includes
 #include <asiAlgo_Utils.h>
 
+// asiUI includes
+#include <asiUI_DialogOCAFDump.h>
+
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
 
@@ -330,6 +333,25 @@ int ENGINE_Clear(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_DumpProject(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  asiUI_DialogOCAFDump*
+    pDumpProject = new asiUI_DialogOCAFDump( cmdEngine::model, interp->GetProgress() );
+  //
+  pDumpProject->show();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -390,4 +412,13 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
     "\t Cleans up project data.",
     //
     __FILE__, group, ENGINE_Clear);
+
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("dump-project",
+    //
+    "dump-project\n"
+    "\t Dumps project contents as text.",
+    //
+    __FILE__, group, ENGINE_DumpProject);
 }

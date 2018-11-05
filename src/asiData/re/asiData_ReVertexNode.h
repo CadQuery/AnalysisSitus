@@ -85,7 +85,7 @@ public:
 public:
 
   asiData_EXPORT void
-    Init();
+    Init(const double x, const double y, const double z);
 
 protected:
 

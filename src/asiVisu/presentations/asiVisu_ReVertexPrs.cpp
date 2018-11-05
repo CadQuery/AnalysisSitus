@@ -43,11 +43,18 @@
 
 //-----------------------------------------------------------------------------
 
-//! Creates a Presentation object for the passed Node.
-//! \param[in] N Node to create a Presentation for.
 asiVisu_ReVertexPrs::asiVisu_ReVertexPrs(const Handle(ActAPI_INode)& N)
 : asiVisu_DefaultPrs(N)
 {
+  // Initialize colors.
+  m_color.r = 255.;
+  m_color.g = 153./255.;
+  m_color.b = 17./255.;
+  //
+  m_hiliColor.r = 155.;
+  m_hiliColor.g = 53./255.;
+  m_hiliColor.b = 7./255.;
+
   // Create Data Provider.
   Handle(asiVisu_ReVertexDataProvider)
     DP = new asiVisu_ReVertexDataProvider( Handle(asiData_ReVertexNode)::DownCast(N) );
@@ -57,16 +64,43 @@ asiVisu_ReVertexPrs::asiVisu_ReVertexPrs(const Handle(ActAPI_INode)& N)
   this->assignDataProvider ( Pipeline_Main, DP );
 
   // Adjust point size.
-  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetPointSize(8.0);
-  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetColor(1.0, 0.8, 0.3);
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetPointSize(20.0);
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetColor(m_color.r,
+                                                                     m_color.g,
+                                                                     m_color.b);
 }
 
 //-----------------------------------------------------------------------------
 
-//! Factory method for Presentation.
-//! \param[in] N Node to create a Presentation for.
-//! \return new Presentation instance.
 Handle(asiVisu_Prs) asiVisu_ReVertexPrs::Instance(const Handle(ActAPI_INode)& N)
 {
   return new asiVisu_ReVertexPrs(N);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_ReVertexPrs::highlight(vtkRenderer*                        renderer,
+                                    const Handle(asiVisu_PickerResult)& pickRes,
+                                    const asiVisu_SelectionNature       selNature) const
+{
+  asiVisu_NotUsed(renderer);
+  asiVisu_NotUsed(pickRes);
+  asiVisu_NotUsed(selNature);
+
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetColor(m_hiliColor.r,
+                                                                     m_hiliColor.g,
+                                                                     m_hiliColor.b);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_ReVertexPrs::unHighlight(vtkRenderer*                  renderer,
+                                      const asiVisu_SelectionNature selNature) const
+{
+  asiVisu_NotUsed(renderer);
+  asiVisu_NotUsed(selNature);
+
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetColor(m_color.r,
+                                                                     m_color.g,
+                                                                     m_color.b);
 }

@@ -62,13 +62,51 @@ public:
 
 public:
 
+  //! Factory method for Presentation.
+  //! \param[in] N Node to create a Presentation for.
+  //! \return new Presentation instance.
   asiVisu_EXPORT static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& N);
 
+protected:
+
+  //! Reaction to highlighting. For the case of Vertex Node, the reaction
+  //! is simply changing the actor's color.
+  //! \param[in] renderer  instance of renderer.
+  //! \param[in] pickRes   picking result.
+  //! \param[in] selNature selection nature.
+  virtual void
+    highlight(vtkRenderer*                        renderer,
+              const Handle(asiVisu_PickerResult)& pickRes,
+              const asiVisu_SelectionNature       selNature) const;
+
+  //! Reaction to unhighlighting. For the case of Vertex Node, the reaction
+  //! is simply changing the actor's color.
+  //! \param[in] renderer  instance of renderer.
+  //! \param[in] selNature selection nature.
+  virtual void
+    unHighlight(vtkRenderer*                  renderer,
+                const asiVisu_SelectionNature selNature) const;
+
 private:
 
+  //! \brief Creates a Presentation object for the passed Node.
   //! Allocation is allowed only via Instance() method.
+  //! \param[in] N Node to create a Presentation for.
   asiVisu_ReVertexPrs(const Handle(ActAPI_INode)& N);
+
+protected:
+
+  // Convenience structure for color in RGB format.
+  struct t_colorRGBf
+  {
+    double r, g, b;
+    t_colorRGBf() : r(0.), g(0.), b(0.) {}
+
+  };
+
+  t_colorRGBf m_color;     //!< Default color of a vertex.
+  t_colorRGBf m_hiliColor; //!< Color on highlighting.
 
 };
 

@@ -52,9 +52,9 @@ class asiUI_DialogOCAFDump : public QDialog
 public:
 
   asiUI_EXPORT
-    asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)&            model,
-                         const Handle(ActAPI_IProgressNotifier)& notifier,
-                         QWidget*                                parent = NULL);
+    asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)& model,
+                         ActAPI_ProgressEntry         progress,
+                         QWidget*                     parent = NULL);
 
   asiUI_EXPORT virtual
     ~asiUI_DialogOCAFDump();

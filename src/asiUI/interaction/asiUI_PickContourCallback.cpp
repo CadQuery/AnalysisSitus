@@ -142,7 +142,7 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
           m_patch = reApi.Create_Patch();
 
         // Create vertex.
-        nextVertexNode = reApi.Create_Vertex();
+        nextVertexNode = reApi.Create_Vertex(hit);
 
         // Connect two points by a projected polyline.
         const int numContourPts = m_contour->GetNumPoints();

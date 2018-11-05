@@ -49,20 +49,20 @@
 
 //! Constructor.
 //! \param model    [in] Data Model instance.
-//! \param notifier [in] progress notifier.
+//! \param progress [in] progress notifier.
 //! \param parent   [in] parent widget.
-asiUI_DialogOCAFDump::asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)&            model,
-                                           const Handle(ActAPI_IProgressNotifier)& notifier,
-                                           QWidget*                                parent)
+asiUI_DialogOCAFDump::asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)& model,
+                                           ActAPI_ProgressEntry         progress,
+                                           QWidget*                     parent)
 : QDialog    (parent),
   m_model    (model),
-  m_notifier (notifier)
+  m_notifier (progress)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
 
   // Group box for parameters
-  QGroupBox* pGroup = new QGroupBox("Contents of OCAF document");
+  QGroupBox* pGroup = new QGroupBox("Contents of current project");
 
   // Editors
   m_widgets.pEditor = new asiUI_StyledTextEdit();
@@ -94,7 +94,7 @@ asiUI_DialogOCAFDump::asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)&         
 
   this->setLayout(m_pMainLayout);
   this->setWindowModality(Qt::WindowModal);
-  this->setWindowTitle("OCAF dump");
+  this->setWindowTitle("Project dump");
 
   // Set good initial size
   this->setMinimumSize( QSize(900, 600) );

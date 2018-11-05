@@ -31,24 +31,22 @@
 #ifndef asiVisu_ContourPrs_h
 #define asiVisu_ContourPrs_h
 
-// A-Situs (visualization) includes
-#include <asiVisu_Prs.h>
+// asiVisu includes
+#include <asiVisu_DefaultPrs.h>
 #include <asiVisu_Utils.h>
 
-// A-Situs (geometry) includes
+// asiData includes
 #include <asiData_PartNode.h>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_ContourPrs, asiVisu_Prs)
-
 //! Presentation class for a contour.
-class asiVisu_ContourPrs : public asiVisu_Prs
+class asiVisu_ContourPrs : public asiVisu_DefaultPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ContourPrs, asiVisu_Prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ContourPrs, asiVisu_DefaultPrs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_ContourNode, Instance)
@@ -59,37 +57,23 @@ public:
   enum PipelineId
   {
     Pipeline_Main = 1,
-    Pipeline_Points,
-    Pipeline_Poles
+    Pipeline_Points
   };
 
 public:
 
+  //! Factory method for Presentation.
+  //! \param[in] N Node to create a Presentation for.
+  //! \return new Presentation instance.
   asiVisu_EXPORT static Handle(asiVisu_Prs)
-    Instance(const Handle(ActAPI_INode)& theNode);
-
-  asiVisu_EXPORT virtual bool
-    IsVisible() const;
+    Instance(const Handle(ActAPI_INode)& N);
 
 private:
 
+  //! \brief Creates a Presentation object for the passed Geometry Contour Node.
   //! Allocation is allowed only via Instance() method.
-  asiVisu_ContourPrs(const Handle(ActAPI_INode)& theNode);
-
-// Callbacks:
-private:
-
-  virtual void beforeInitPipelines();
-  virtual void afterInitPipelines();
-  virtual void beforeUpdatePipelines() const;
-  virtual void afterUpdatePipelines() const;
-  virtual void highlight(vtkRenderer* theRenderer,
-                         const Handle(asiVisu_PickerResult)& thePickRes,
-                         const asiVisu_SelectionNature theSelNature) const;
-  virtual void unHighlight(vtkRenderer* theRenderer,
-                           const asiVisu_SelectionNature theSelNature) const;
-  virtual void renderPipelines(vtkRenderer* theRenderer) const;
-  virtual void deRenderPipelines(vtkRenderer* theRenderer) const;
+  //! \param[in] N Contour Node to create a Presentation for.
+  asiVisu_ContourPrs(const Handle(ActAPI_INode)& N);
 
 };
 

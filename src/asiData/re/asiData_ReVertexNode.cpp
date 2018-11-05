@@ -52,7 +52,12 @@ Handle(ActAPI_INode) asiData_ReVertexNode::Instance()
 }
 
 //! Performs initial actions required to make Node WELL-FORMED.
-void asiData_ReVertexNode::Init()
+//! \param[in] x X coordinate.
+//! \param[in] y Y coordinate.
+//! \param[in] z Z coordinate.
+void asiData_ReVertexNode::Init(const double x,
+                                const double y,
+                                const double z)
 {
   // Initialize name Parameter.
   this->InitParameter(PID_Name, "Name");
@@ -61,7 +66,7 @@ void asiData_ReVertexNode::Init()
   ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray(NULL);
 
   // Initialize point coordinates.
-  this->SetPoint(0.0, 0.0, 0.0);
+  this->SetPoint(x, y, z);
 }
 
 //-----------------------------------------------------------------------------
@@ -96,11 +101,15 @@ void asiData_ReVertexNode::SetPoint(const double x, const double y, const double
     arr = ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->GetArray();
   //
   if ( arr.IsNull() )
+  {
     arr = new HRealArray(0, 2);
+  }
 
   arr->ChangeValue(0) = x;
   arr->ChangeValue(1) = y;
   arr->ChangeValue(2) = z;
+
+  ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray(arr);
 }
 
 //! Returns point coordinates.

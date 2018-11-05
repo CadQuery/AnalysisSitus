@@ -288,7 +288,7 @@ Handle(asiData_ReEdgeNode) asiEngine_RE::Create_Edge()
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ReVertexNode) asiEngine_RE::Create_Vertex()
+Handle(asiData_ReVertexNode) asiEngine_RE::Create_Vertex(const gp_XYZ& coords)
 {
   // Get parent Vertices Node.
   Handle(asiData_ReVerticesNode) vertices_n = this->Get_Vertices();
@@ -300,7 +300,7 @@ Handle(asiData_ReVertexNode) asiEngine_RE::Create_Vertex()
   m_model->GetReVertexPartition()->AddNode(vertex_n);
 
   // Initialize Node.
-  vertex_n->Init();
+  vertex_n->Init( coords.X(), coords.Y(), coords.Z() );
 
   // Generate unique name.
   TCollection_ExtendedString

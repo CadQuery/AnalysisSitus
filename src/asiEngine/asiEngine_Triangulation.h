@@ -46,6 +46,10 @@ class asiEngine_Triangulation : public asiEngine_Base
 public:
 
   //! Ctor.
+  //! \param[in] model    Data Model instance.
+  //! \param[in] prsMgr   Presentation Manager for visual commands.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
   asiEngine_Triangulation(const Handle(asiEngine_Model)&             model,
                           const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
                           ActAPI_ProgressEntry                       progress = NULL,
@@ -53,6 +57,18 @@ public:
   //
   : asiEngine_Base (model, progress, plotter),
     m_prsMgr       (prsMgr)
+  {}
+
+  //! Ctor.
+  //! \param[in] model    Data Model instance.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiEngine_Triangulation(const Handle(asiEngine_Model)& model,
+                          ActAPI_ProgressEntry           progress = NULL,
+                          ActAPI_PlotterEntry            plotter  = NULL)
+  //
+  : asiEngine_Base (model, progress, plotter),
+    m_prsMgr       (NULL)
   {}
 
 public:
@@ -73,7 +89,7 @@ public:
 
 protected:
 
-  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr; //!< Presentation manager.
+  vtkSmartPointer<asiVisu_PrsManager> m_prsMgr; //!< Presentation Manager.
 
 };
 

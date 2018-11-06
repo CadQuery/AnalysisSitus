@@ -131,3 +131,12 @@ bool asiData_ReVertexNode::GetPoint(double& x, double& y, double& z) const
 
   return true;
 }
+
+//! \return point without any checks on the status of data container.
+gp_XYZ asiData_ReVertexNode::GetPoint() const
+{
+  double x, y, z;
+  this->GetPoint(x, y, z);
+
+  return gp_XYZ(x, y, z);
+}

@@ -78,19 +78,14 @@ int ENGINE_DefineContour(const Handle(asiTcl_Interp)& interp,
   Handle(asiData_ContourNode) contour_n;
 
   // Prepare data model.
-  asiEngine_Part          partAPI ( cmdEngine::model, NULL, interp->GetProgress(), interp->GetPlotter() );
-  asiEngine_Triangulation trisAPI ( cmdEngine::model, NULL, interp->GetProgress(), interp->GetPlotter() );
+  asiEngine_Part          partAPI ( cmdEngine::model, interp->GetProgress(), interp->GetPlotter() );
+  asiEngine_Triangulation trisAPI ( cmdEngine::model, interp->GetProgress(), interp->GetPlotter() );
   asiEngine_RE            reAPI   ( cmdEngine::model, interp->GetProgress(), interp->GetPlotter() );
   //
   cmdEngine::model->OpenCommand();
   {
-    // First we build BVH for facets (both part and CAD-agnostic mesh).
-    partAPI.BuildBVH();
+    // Build BVH for CAD-agnostic mesh.
     trisAPI.BuildBVH();
-
-    // Clean up the currently active contour.
-    contour_n = reAPI.GetOrCreate_ActiveContour();
-    contour_n->Init();
   }
   cmdEngine::model->CommitCommand();
 

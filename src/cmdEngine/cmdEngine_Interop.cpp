@@ -54,7 +54,7 @@ void onModelLoaded(const TopoDS_Shape& loadedShape)
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(loadedShape);
+    asiEngine_Part(cmdEngine::model).Update(loadedShape);
   }
   cmdEngine::model->CommitCommand();
 

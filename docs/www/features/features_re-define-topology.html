@@ -56,7 +56,26 @@ the mesh model as the input data, the user draws a network of curves which compo
 The wireframe model defines the layout of the surfaces (topology).
 </p>
 
-<h1>Project contour</h1>
+<div align="center"><img src="../imgs/re_wireframe_01.png"/></div>
+
+<p>
+Internally, the wireframe model is defined as a directed hierarchical graph. The root elements in this graph
+are the patches. A patch contains an ordered list of coedges which are the lightweighted entries of edges plus
+"same sense" flags which allow to agree or disagree with the as-constructed orientation of an edge.
+The coedge-based wireframe structure allows for non-manifold surface modeling which can sometimes be useful.
+</p>
+
+<p>
+In our reverse engineering workflow, the wireframe model is the master model. Manipulating with wireframe
+patches is easy because you only need to modify edges, and the surface patches will be refitted correspondingly.
+Another simplification of this wireframe approach is the lack of p-curves. As a result, there is no need to synchronize
+different curve representations to keep the model consistent. As a downside, such a representation scheme is
+not directly suitable for data interoperability as it is not fully compliant with, for example, STEP standard.
+To solve the interoperability issue and also to enable further modeling operations, the reverse engineering model
+is eventually converted to B-Rep scheme of OpenCascade.
+</p>
+
+<h1>Define contour</h1>
 
 <p>
 Contour lines are defined interactively via <span class="code-inline">define-contour</span> command.

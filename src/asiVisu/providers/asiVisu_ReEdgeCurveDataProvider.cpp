@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 24 August 2017
+// Created on: 06 November 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,62 +28,31 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// cmdEngine includes
-#include <cmdEngine.h>
+// Own include
+#include <asiVisu_ReEdgeCurveDataProvider.h>
 
-// asiEngine includes
-#include <asiEngine_Part.h>
-
-// asiTcl includes
-#include <asiTcl_PluginMacro.h>
-
-// asiAlgo includes
-#include <asiAlgo_Naming.h>
+// Active Data includes
+#include <ActData_ParameterFactory.h>
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_InitNaming(const Handle(asiTcl_Interp)& interp,
-                      int                          argc,
-                      const char**                 argv)
+asiVisu_ReEdgeCurveDataProvider::asiVisu_ReEdgeCurveDataProvider(const Handle(asiData_ReEdgeNode)& N)
+: asiVisu_ShapeDataProvider (),
+  m_node                    (N)
 {
-  if ( argc != 1 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
+  // Set Node ID.
+  m_nodeID = m_node->GetId();
 
-  // Get Part Node.
-  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+  // Set tracked (sensitive) Parameters.
+  Handle(ActAPI_HParameterList) params = new ActAPI_HParameterList;
+  params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_Curve) );
   //
-  if ( part_n.IsNull() || !part_n->IsWellFormed() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
-    return TCL_OK;
-  }
-
-  // Initialize naming service.
-  cmdEngine::model->OpenCommand();
-  {
-    asiEngine_Part(cmdEngine::model).InitializeNaming();
-  }
-  cmdEngine::model->CommitCommand();
-
-  return TCL_OK;
+  m_params = params;
 }
 
 //-----------------------------------------------------------------------------
 
-void cmdEngine::Commands_Naming(const Handle(asiTcl_Interp)&      interp,
-                                const Handle(Standard_Transient)& data)
+TopoDS_Shape asiVisu_ReEdgeCurveDataProvider::GetShape() const
 {
-  cmdEngine_NotUsed(data);
-  //
-  static const char* group = "cmdEngine";
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("init-naming",
-    //
-    "init-naming\n"
-    "\t Initializes topological naming service for the active part.",
-    //
-    __FILE__, group, ENGINE_InitNaming);
+  return m_node->GetCurveAsShape();
 }

@@ -208,7 +208,7 @@ int ENGINE_KEV(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
@@ -317,7 +317,7 @@ int ENGINE_KEF(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
@@ -386,7 +386,7 @@ int ENGINE_KFMV(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
@@ -484,7 +484,7 @@ int ENGINE_MergeSubShapes(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
@@ -583,7 +583,7 @@ int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
@@ -682,7 +682,7 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
@@ -775,7 +775,7 @@ int ENGINE_KillSolidByFace(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
@@ -847,7 +847,7 @@ int ENGINE_MoveByFace(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(moved);
+    asiEngine_Part(cmdEngine::model).Update(moved);
   }
   cmdEngine::model->CommitCommand();
 
@@ -907,7 +907,7 @@ int ENGINE_Imprint(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(fused);
+    asiEngine_Part(cmdEngine::model).Update(fused);
   }
   cmdEngine::model->CommitCommand();
 
@@ -955,7 +955,7 @@ int ENGINE_Repair(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
@@ -1046,7 +1046,7 @@ int ENGINE_SetTolerance(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(partShape);
+    asiEngine_Part(cmdEngine::model).Update(partShape);
   }
   cmdEngine::model->CommitCommand();
 
@@ -1156,7 +1156,7 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
@@ -1434,7 +1434,7 @@ int ENGINE_SplitByContinuity(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(partShape);
+    asiEngine_Part(cmdEngine::model).Update(partShape);
   }
   cmdEngine::model->CommitCommand();
 
@@ -1587,7 +1587,7 @@ int ENGINE_InvertShells(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
@@ -1631,7 +1631,7 @@ int ENGINE_HealSmallEdges(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
@@ -1713,7 +1713,7 @@ int ENGINE_Repatch(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 
@@ -1814,7 +1814,7 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();
 

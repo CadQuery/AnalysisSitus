@@ -59,6 +59,7 @@
 #include <asiVisu_IVTessItemPrs.h>
 #include <asiVisu_IVTextItemPrs.h>
 #include <asiVisu_IVTopoItemPrs.h>
+#include <asiVisu_ReEdgePrs.h>
 #include <asiVisu_ReVertexPrs.h>
 #include <asiVisu_TessellationPrs.h>
 #include <asiVisu_TessellationNormsPrs.h>
@@ -167,13 +168,13 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_GeomFaceNormsPrs)
   REGISTER_PRESENTATION(asiVisu_GeomFaceContourPrs)
   REGISTER_PRESENTATION(asiVisu_GeomSurfPrs)
-  REGISTER_PRESENTATION(asiVisu_ContourPrs)
   REGISTER_PRESENTATION(asiVisu_CalculusLawPrs)
   REGISTER_PRESENTATION(asiVisu_CurvatureCombsPrs)
   REGISTER_PRESENTATION(asiVisu_TessellationPrs)
   REGISTER_PRESENTATION(asiVisu_TessellationNormsPrs)
   REGISTER_PRESENTATION(asiVisu_TolerantRangePrs)
   REGISTER_PRESENTATION(asiVisu_TriangulationPrs)
+  REGISTER_PRESENTATION(asiVisu_ReEdgePrs)
   REGISTER_PRESENTATION(asiVisu_ReVertexPrs)
 
   // Imperative viewer.

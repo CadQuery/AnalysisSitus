@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 24 August 2017
+// Created on: 06 November 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,62 +28,52 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// cmdEngine includes
-#include <cmdEngine.h>
+#ifndef asiVisu_ReEdgePolylineDataProvider_h
+#define asiVisu_ReEdgePolylineDataProvider_h
 
-// asiEngine includes
-#include <asiEngine_Part.h>
+// asiVisu includes
+#include <asiVisu_PointsDataProvider.h>
 
-// asiTcl includes
-#include <asiTcl_PluginMacro.h>
+// asiData includes
+#include <asiData_ReEdgeNode.h>
 
-// asiAlgo includes
-#include <asiAlgo_Naming.h>
-
-//-----------------------------------------------------------------------------
-
-int ENGINE_InitNaming(const Handle(asiTcl_Interp)& interp,
-                      int                          argc,
-                      const char**                 argv)
+//! Data provider for the polyline's poles stored in the RE edge structure.
+class asiVisu_ReEdgePolylineDataProvider : public asiVisu_PointsDataProvider
 {
-  if ( argc != 1 )
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReEdgePolylineDataProvider, asiVisu_PointsDataProvider)
+
+public:
+
+  //! Ctor accepting the data source Node.
+  //! \param[in] N RE Edge Node containing the poles to visualize.
+  asiVisu_EXPORT
+    asiVisu_ReEdgePolylineDataProvider(const Handle(asiData_ReEdgeNode)& N);
+
+public:
+
+  //! \return points to visualize in form of point cloud.
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<double>)
+    GetPoints() const;
+
+public:
+
+  //! \return null map of indices since no filtering is supposed here.
+  virtual Handle(TColStd_HPackedMapOfInteger) GetIndices() const
   {
-    return interp->ErrorOnWrongArgs(argv[0]);
+    return NULL;
   }
 
-  // Get Part Node.
-  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
-  //
-  if ( part_n.IsNull() || !part_n->IsWellFormed() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
-    return TCL_OK;
-  }
+private:
 
-  // Initialize naming service.
-  cmdEngine::model->OpenCommand();
-  {
-    asiEngine_Part(cmdEngine::model).InitializeNaming();
-  }
-  cmdEngine::model->CommitCommand();
+  //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
+  //! translation process.
+  //! \return source Parameters.
+  asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
 
-  return TCL_OK;
-}
+};
 
-//-----------------------------------------------------------------------------
-
-void cmdEngine::Commands_Naming(const Handle(asiTcl_Interp)&      interp,
-                                const Handle(Standard_Transient)& data)
-{
-  cmdEngine_NotUsed(data);
-  //
-  static const char* group = "cmdEngine";
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("init-naming",
-    //
-    "init-naming\n"
-    "\t Initializes topological naming service for the active part.",
-    //
-    __FILE__, group, ENGINE_InitNaming);
-}
+#endif

@@ -170,7 +170,7 @@ int ENGINE_OffsetShell(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(resultShape);
+    asiEngine_Part(cmdEngine::model).Update(resultShape);
   }
   cmdEngine::model->CommitCommand();
 
@@ -958,7 +958,7 @@ int ENGINE_Fillet(const Handle(asiTcl_Interp)& interp,
   // Get result and update part.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update( mkFillet.Shape() );
+    asiEngine_Part(cmdEngine::model).Update( mkFillet.Shape() );
   }
   cmdEngine::model->CommitCommand();
 

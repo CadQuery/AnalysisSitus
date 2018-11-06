@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 24 August 2017
+// Created on: 06 November 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,62 +28,54 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// cmdEngine includes
-#include <cmdEngine.h>
+#ifndef asiVisu_ReEdgePrs_h
+#define asiVisu_ReEdgePrs_h
 
-// asiEngine includes
-#include <asiEngine_Part.h>
+// asiVisu includes
+#include <asiVisu_DefaultPrs.h>
+#include <asiVisu_Utils.h>
 
-// asiTcl includes
-#include <asiTcl_PluginMacro.h>
-
-// asiAlgo includes
-#include <asiAlgo_Naming.h>
+// asiData includes
+#include <asiData_ReEdgeNode.h>
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_InitNaming(const Handle(asiTcl_Interp)& interp,
-                      int                          argc,
-                      const char**                 argv)
+//! Presentation class for a wireframe edge in the reverse engineering
+//! workflow.
+class asiVisu_ReEdgePrs : public asiVisu_DefaultPrs
 {
-  if ( argc != 1 )
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReEdgePrs, asiVisu_DefaultPrs)
+
+  // Allows to register this Presentation class
+  DEFINE_PRESENTATION_FACTORY(asiData_ReEdgeNode, Instance)
+
+public:
+
+  //! Pipelines.
+  enum PipelineId
   {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
+    Pipeline_Polyline = 1,
+    Pipeline_Curve
+  };
 
-  // Get Part Node.
-  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
-  //
-  if ( part_n.IsNull() || !part_n->IsWellFormed() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
-    return TCL_OK;
-  }
+public:
 
-  // Initialize naming service.
-  cmdEngine::model->OpenCommand();
-  {
-    asiEngine_Part(cmdEngine::model).InitializeNaming();
-  }
-  cmdEngine::model->CommitCommand();
+  //! Factory method for Presentation.
+  //! \param[in] N Node to create a Presentation for.
+  //! \return new Presentation instance.
+  asiVisu_EXPORT static Handle(asiVisu_Prs)
+    Instance(const Handle(ActAPI_INode)& N);
 
-  return TCL_OK;
-}
+private:
 
-//-----------------------------------------------------------------------------
+  //! \brief Creates a Presentation object for the passed Node.
+  //! Allocation is allowed only via Instance() method.
+  //! \param[in] N Data Node to create a Presentation for.
+  asiVisu_ReEdgePrs(const Handle(ActAPI_INode)& N);
 
-void cmdEngine::Commands_Naming(const Handle(asiTcl_Interp)&      interp,
-                                const Handle(Standard_Transient)& data)
-{
-  cmdEngine_NotUsed(data);
-  //
-  static const char* group = "cmdEngine";
+};
 
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("init-naming",
-    //
-    "init-naming\n"
-    "\t Initializes topological naming service for the active part.",
-    //
-    __FILE__, group, ENGINE_InitNaming);
-}
+#endif

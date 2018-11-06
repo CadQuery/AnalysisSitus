@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 24 August 2017
+// Created on: 06 November 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,62 +28,64 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// cmdEngine includes
-#include <cmdEngine.h>
-
-// asiEngine includes
-#include <asiEngine_Part.h>
-
-// asiTcl includes
-#include <asiTcl_PluginMacro.h>
+// Own include
+#include <asiVisu_ReEdgePolylineDataProvider.h>
 
 // asiAlgo includes
-#include <asiAlgo_Naming.h>
+#include <asiAlgo_PointCloudUtils.h>
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_InitNaming(const Handle(asiTcl_Interp)& interp,
-                      int                          argc,
-                      const char**                 argv)
+asiVisu_ReEdgePolylineDataProvider::asiVisu_ReEdgePolylineDataProvider(const Handle(asiData_ReEdgeNode)& N)
+: asiVisu_PointsDataProvider(N)
+{}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiAlgo_BaseCloud<double>)
+  asiVisu_ReEdgePolylineDataProvider::GetPoints() const
 {
-  if ( argc != 1 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  // Get Part Node.
-  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+  Handle(asiData_ReEdgeNode)
+    edge_n = Handle(asiData_ReEdgeNode)::DownCast(m_node);
   //
-  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+  if ( edge_n.IsNull() || !edge_n->IsWellFormed() )
+    return NULL;
+
+  // Prepare result.
+  Handle(asiAlgo_BaseCloud<double>) res = new asiAlgo_BaseCloud<double>;
+
+  // Get coordinates.
+  Handle(HRealArray) hCoords = edge_n->GetPolyline();
+  const int          numPts  = edge_n->GetNumPolylinePoles();
+  //
+  for ( int idx = 0; idx < numPts; ++idx )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
-    return TCL_OK;
+    const double x = hCoords->Value(3*idx + 0);
+    const double y = hCoords->Value(3*idx + 1);
+    const double z = hCoords->Value(3*idx + 2);
+    //
+    res->AddElement(x, y, z);
   }
 
-  // Initialize naming service.
-  cmdEngine::model->OpenCommand();
-  {
-    asiEngine_Part(cmdEngine::model).InitializeNaming();
-  }
-  cmdEngine::model->CommitCommand();
-
-  return TCL_OK;
+  return res;
 }
 
 //-----------------------------------------------------------------------------
 
-void cmdEngine::Commands_Naming(const Handle(asiTcl_Interp)&      interp,
-                                const Handle(Standard_Transient)& data)
+Handle(ActAPI_HParameterList)
+  asiVisu_ReEdgePolylineDataProvider::translationSources() const
 {
-  cmdEngine_NotUsed(data);
-  //
-  static const char* group = "cmdEngine";
+  // Resulting Parameters
+  ActParamStream out;
 
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("init-naming",
-    //
-    "init-naming\n"
-    "\t Initializes topological naming service for the active part.",
-    //
-    __FILE__, group, ENGINE_InitNaming);
+  Handle(asiData_ReEdgeNode)
+    edge_n = Handle(asiData_ReEdgeNode)::DownCast(m_node);
+  //
+  if ( edge_n.IsNull() || !edge_n->IsWellFormed() )
+    return out;
+
+  // Register Parameter as sensitive.
+  out << edge_n->Parameter(asiData_ReEdgeNode::PID_Polyline);
+
+  return out;
 }

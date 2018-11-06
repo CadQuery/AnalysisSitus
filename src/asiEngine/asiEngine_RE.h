@@ -55,11 +55,6 @@ public:
   asiEngine_EXPORT Handle(asiData_ReTopoNode)
     Create_Topo();
 
-  //! Creates Contour Node under the given ReTopology Node.
-  //! \return newly created active Contour Node.
-  asiEngine_EXPORT Handle(asiData_ContourNode)
-    Create_Contour(const Handle(asiData_ReTopoNode)& topo_n);
-
   //! Creates RePatches Node under the given ReTopology Node.
   //! \return newly created Node.
   asiEngine_EXPORT Handle(asiData_RePatchesNode)
@@ -92,12 +87,6 @@ public:
   asiEngine_EXPORT Handle(asiData_ReVerticesNode)
     Get_Vertices();
 
-  //! Creates or returns the existing Contour Node representing the
-  //! contour being interactively defined by the user.
-  //! \return newly created or existing Contour Node.
-  asiEngine_EXPORT Handle(asiData_ContourNode)
-    GetOrCreate_ActiveContour();
-
   //! Creates a Patch Node under the single Patches Node available in the
   //! project.
   //! \return newly created Node.
@@ -106,9 +95,12 @@ public:
 
   //! Creates an Edge Node under the single Edges Node available in the
   //! project.
+  //! \param[in] vfirst handle of the first vertex of the edge.
+  //! \param[in] vlast  handle of the second vertex of the edge.
   //! \return newly created Node.
   asiEngine_EXPORT Handle(asiData_ReEdgeNode)
-    Create_Edge();
+    Create_Edge(const Handle(asiData_ReVertexNode)& vfirst = NULL,
+                const Handle(asiData_ReVertexNode)& vlast  = NULL);
 
   //! Creates a Vertex Node under the single Vertices Node available in the
   //! project.

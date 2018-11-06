@@ -69,28 +69,6 @@ Handle(asiData_ReTopoNode) asiEngine_RE::Create_Topo()
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ContourNode)
-  asiEngine_RE::Create_Contour(const Handle(asiData_ReTopoNode)& topo_n)
-{
-  // Add Node to Partition.
-  Handle(asiData_ContourNode)
-    contour_n = Handle(asiData_ContourNode)::DownCast( asiData_ContourNode::Instance() );
-  //
-  m_model->GetContourPartition()->AddNode(contour_n);
-
-  // Initialize.
-  contour_n->Init();
-  contour_n->SetName("Active contour");
-
-  // Set as child.
-  topo_n->AddChildNode(contour_n);
-
-  // Return the just created Node.
-  return contour_n;
-}
-
-//-----------------------------------------------------------------------------
-
 Handle(asiData_RePatchesNode)
   asiEngine_RE::Create_Patches(const Handle(asiData_ReTopoNode)& topo_n)
 {
@@ -187,49 +165,6 @@ Handle(asiData_ReVerticesNode) asiEngine_RE::Get_Vertices()
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ContourNode) asiEngine_RE::GetOrCreate_ActiveContour()
-{
-  Handle(asiData_Partition<asiData_ReTopoNode>)
-    topo_p = m_model->GetReTopoPartition();
-
-  // Get number of Topology Nodes.
-  int numTopoNodes = 0;
-  Handle(asiData_ReTopoNode) any_topo_n;
-  //
-  for ( asiData_Partition<asiData_ReTopoNode>::Iterator pit(topo_p); pit.More(); pit.Next() )
-  {
-    any_topo_n = Handle(asiData_ReTopoNode)::DownCast( pit.Value() );
-    numTopoNodes++;
-  }
-
-  // Get Topology Node.
-  Handle(asiData_ReTopoNode) topo_n;
-  if ( !numTopoNodes )
-    topo_n = this->Create_Topo();
-  else
-    topo_n = any_topo_n;
-
-  // Get Contour Node.
-  Handle(asiData_ContourNode) contour_n;
-  for ( Handle(ActAPI_IChildIterator) cit = topo_n->GetChildIterator(); cit->More(); cit->Next() )
-  {
-    Handle(ActAPI_INode) child_n = cit->Value();
-    //
-    if ( child_n->IsKind( STANDARD_TYPE(asiData_ContourNode) ) )
-    {
-      contour_n = Handle(asiData_ContourNode)::DownCast(child_n);
-      break;
-    }
-  }
-
-  if ( !contour_n.IsNull() )
-    return contour_n;
-
-  return this->Create_Contour(topo_n);
-}
-
-//-----------------------------------------------------------------------------
-
 Handle(asiData_RePatchNode) asiEngine_RE::Create_Patch()
 {
   // Get parent Patches Node.
@@ -259,7 +194,9 @@ Handle(asiData_RePatchNode) asiEngine_RE::Create_Patch()
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ReEdgeNode) asiEngine_RE::Create_Edge()
+Handle(asiData_ReEdgeNode)
+  asiEngine_RE::Create_Edge(const Handle(asiData_ReVertexNode)& vfirst,
+                            const Handle(asiData_ReVertexNode)& vlast)
 {
   // Get parent Edges Node.
   Handle(asiData_ReEdgesNode) edges_n = this->Get_Edges();
@@ -271,7 +208,7 @@ Handle(asiData_ReEdgeNode) asiEngine_RE::Create_Edge()
   m_model->GetReEdgePartition()->AddNode(edge_n);
 
   // Initialize Node.
-  edge_n->Init();
+  edge_n->Init(vfirst, vlast);
 
   // Generate unique name.
   TCollection_ExtendedString
@@ -288,7 +225,8 @@ Handle(asiData_ReEdgeNode) asiEngine_RE::Create_Edge()
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ReVertexNode) asiEngine_RE::Create_Vertex(const gp_XYZ& coords)
+Handle(asiData_ReVertexNode)
+  asiEngine_RE::Create_Vertex(const gp_XYZ& coords)
 {
   // Get parent Vertices Node.
   Handle(asiData_ReVerticesNode) vertices_n = this->Get_Vertices();

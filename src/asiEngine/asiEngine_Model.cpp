@@ -123,13 +123,13 @@ void asiEngine_Model::Populate()
   root_n->SetName("Analysis Situs");
 
   // Add Part Node
-  root_n->AddChildNode( asiEngine_Part(this, NULL).CreatePart() );
+  root_n->AddChildNode( asiEngine_Part(this).CreatePart() );
 
   // Add Triangulation Node
-  root_n->AddChildNode( asiEngine_Triangulation(this, NULL).CreateTriangulation() );
+  root_n->AddChildNode( asiEngine_Triangulation(this).CreateTriangulation() );
 
   // Add Tessellation Node
-  root_n->AddChildNode( asiEngine_Tessellation(this, NULL).CreateTessellation() );
+  root_n->AddChildNode( asiEngine_Tessellation(this).CreateTessellation() );
 
   // Add Imperative Viewer Node
   root_n->AddChildNode( asiEngine_IV(this).Create_IV() );

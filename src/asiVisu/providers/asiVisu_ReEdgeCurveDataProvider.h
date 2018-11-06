@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 24 August 2017
+// Created on: 06 November 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,62 +28,41 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// cmdEngine includes
-#include <cmdEngine.h>
+#ifndef asiVisu_ReEdgeCurveDataProvider_h
+#define asiVisu_ReEdgeCurveDataProvider_h
 
-// asiEngine includes
-#include <asiEngine_Part.h>
+// asiVisu includes
+#include <asiVisu_ShapeDataProvider.h>
 
-// asiTcl includes
-#include <asiTcl_PluginMacro.h>
+// asiData includes
+#include <asiData_ReEdgeNode.h>
 
-// asiAlgo includes
-#include <asiAlgo_Naming.h>
-
-//-----------------------------------------------------------------------------
-
-int ENGINE_InitNaming(const Handle(asiTcl_Interp)& interp,
-                      int                          argc,
-                      const char**                 argv)
+//! Data provider for contour shape.
+class asiVisu_ReEdgeCurveDataProvider : public asiVisu_ShapeDataProvider
 {
-  if ( argc != 1 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
+public:
 
-  // Get Part Node.
-  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
-  //
-  if ( part_n.IsNull() || !part_n->IsWellFormed() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
-    return TCL_OK;
-  }
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReEdgeCurveDataProvider, asiVisu_ShapeDataProvider)
 
-  // Initialize naming service.
-  cmdEngine::model->OpenCommand();
-  {
-    asiEngine_Part(cmdEngine::model).InitializeNaming();
-  }
-  cmdEngine::model->CommitCommand();
+public:
 
-  return TCL_OK;
-}
+  //! Ctor.
+  //! \param[in] N Edge Node to access the geometric data from.
+  asiVisu_EXPORT
+    asiVisu_ReEdgeCurveDataProvider(const Handle(asiData_ReEdgeNode)& N);
 
-//-----------------------------------------------------------------------------
+public:
 
-void cmdEngine::Commands_Naming(const Handle(asiTcl_Interp)&      interp,
-                                const Handle(Standard_Transient)& data)
-{
-  cmdEngine_NotUsed(data);
-  //
-  static const char* group = "cmdEngine";
+  //! Returns the BREP shape to be visualized.
+  //! \return BREP shape being a container for the parametric curve.
+  asiVisu_EXPORT virtual TopoDS_Shape
+    GetShape() const;
 
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("init-naming",
-    //
-    "init-naming\n"
-    "\t Initializes topological naming service for the active part.",
-    //
-    __FILE__, group, ENGINE_InitNaming);
-}
+protected:
+
+  Handle(asiData_ReEdgeNode) m_node; //!< Edge Node.
+
+};
+
+#endif

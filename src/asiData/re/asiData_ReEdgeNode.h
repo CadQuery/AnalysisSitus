@@ -32,10 +32,13 @@
 #define asiData_ReEdgeNode_h
 
 // asiData includes
-#include <asiData.h>
+#include <asiData_ReVertexNode.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
+
+// OCCT includes
+#include <Geom_Curve.hxx>
 
 //! Data Node representing topological edge used for interactive segmentation.
 class asiData_ReEdgeNode : public ActData_BaseNode
@@ -53,33 +56,126 @@ public:
   //! IDs for the underlying Parameters.
   enum ParamId
   {
-  //------------------//
-  // Common           //
-  //------------------//
-    PID_Name,         //!< Name of the Node.
-  //------------------//
+  //--------------------//
+    PID_Name,           //!< Name of the Node.
+    PID_VertexFirstRef, //!< Reference to the first vertex of the edge.
+    PID_VertexLastRef,  //!< Reference to the last vertex of the edge.
+    PID_Polyline,       //!< Polyline representation of the edge.
+    PID_Curve,          //!< Curve representation of the edge.
+  //--------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
 public:
 
+  //! Returns new DETACHED instance of the Node ensuring its correct
+  //! allocation in a heap.
+  //! \return new instance of the Node.
   asiData_EXPORT static Handle(ActAPI_INode)
     Instance();
-
-// Generic naming support:
-public:
-
-  asiData_EXPORT virtual TCollection_ExtendedString
-    GetName();
-
-  asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& name);
 
 // Initialization:
 public:
 
+  //! Performs initial actions required to make Node WELL-FORMED.
+  //! \param[in] vfirst handle of the first vertex of the edge.
+  //! \param[in] vlast  handle of the second vertex of the edge.
   asiData_EXPORT void
-    Init();
+    Init(const Handle(asiData_ReVertexNode)& vfirst = NULL,
+         const Handle(asiData_ReVertexNode)& vlast  = NULL);
+
+// Generic naming support:
+public:
+
+  //! Accessor for the Node's name.
+  //! \return name of the Node.
+  asiData_EXPORT virtual TCollection_ExtendedString
+    GetName();
+
+  //! Sets name for the Node.
+  //! \param[in] name name to set.
+  asiData_EXPORT virtual void
+    SetName(const TCollection_ExtendedString& name);
+
+  //! Sets array storing the coordinates of polyline's poles.
+  //! \param[in] coords array to store.
+  asiData_EXPORT void
+    SetPolyline(const Handle(HRealArray)& coords);
+
+  //! \return number of poles in the polyline representation of the edge.
+  asiData_EXPORT int
+    GetNumPolylinePoles() const;
+
+  //! \return array storing the coordinates of polyline's poles.
+  asiData_EXPORT Handle(HRealArray)
+    GetPolyline() const;
+
+  //! Returns poles of the polyline.
+  //! \param[out] pts poles defined explicitly.
+  asiData_EXPORT void
+    GetPolyline(std::vector<gp_XYZ>& pts) const;
+
+  //! Returns a point by its zero-based index in the persistent array.
+  //! \param[in] zeroBasedIndex 0-based index of the point to access.
+  //! \return coordinates of the point in question.
+  asiData_EXPORT gp_XYZ
+    GetPolylinePole(const int zeroBasedIndex) const;
+
+  //! Adds another point to the polyline.
+  //! \param[in] point point to add.
+  //! \return 0-based index of the just added point.
+  asiData_EXPORT int
+    AddPolylinePole(const gp_XYZ& point);
+
+  //! Returns the stored geometry.
+  //! \return stored geometry.
+  asiData_EXPORT Handle(Geom_Curve)
+    GetCurve() const;
+
+  //! Returns the stored geometry.
+  //! \param[out] f first parameter.
+  //! \param[out] l last parameter.
+  //! \return stored geometry.
+  asiData_EXPORT Handle(Geom_Curve)
+    GetCurve(double& f, double& l) const;
+
+  //! Returns the stored curve in form of CAD edge. This method is used for
+  //! compliance with visualization pipelines.
+  //! \return BREP shape (TopoDS_Edge) representing the curve.
+  asiData_EXPORT TopoDS_Shape
+    GetCurveAsShape() const;
+
+  //! Sets curve to store.
+  //! \param[in] curve geometry to store.
+  asiData_EXPORT void
+    SetCurve(const Handle(Geom_Curve)& curve);
+
+  //! Sets curve to store.
+  //! \param[in] curve geometry to store.
+  //! \param[in] f     first parameter of the curve.
+  //! \param[in] l     last parameter of the curve.
+  asiData_EXPORT void
+    SetCurve(const Handle(Geom_Curve)& curve,
+             const double              f,
+             const double              l);
+
+  //! \return first vertex of the edge.
+  asiData_EXPORT Handle(asiData_ReVertexNode)
+    GetFirstVertex() const;
+
+  //! \return last vertex of the edge.
+  asiData_EXPORT Handle(asiData_ReVertexNode)
+    GetLastVertex() const;
+
+  //! Sets the reference to the first vertex of the edge.
+  //! \param[in] vertex vertex reference to set.
+  asiData_EXPORT void
+    SetFirstVertex(const Handle(asiData_ReVertexNode)& vertex);
+
+  //! Sets the reference to the last vertex of the edge.
+  //! \param[in] vertex vertex reference to set.
+  asiData_EXPORT void
+    SetLastVertex(const Handle(asiData_ReVertexNode)& vertex);
 
 protected:
 

@@ -102,11 +102,13 @@ private:
 
 private:
 
-  Handle(asiAlgo_BVHFacets)   m_bvh;      //!< Accelerating structure for picking.
-  Handle(asiEngine_Model)     m_model;    //!< Data Model instance.
-  Handle(asiData_ContourNode) m_contour;  //!< Contour Node being currently composed.
-  Handle(asiData_RePatchNode) m_patch;    //!< Current patch.
-  asiUI_ObjectBrowser*        m_pBrowser; //!< Object Browser.
+  Handle(asiAlgo_BVHFacets)    m_bvh;      //!< Accelerating structure for picking.
+  Handle(asiEngine_Model)      m_model;    //!< Data Model instance.
+  Handle(asiData_ReEdgeNode)   m_prevEdge; //!< Previously created edge.
+  Handle(asiData_ReEdgeNode)   m_edge;     //!< Edge Node being currently composed.
+  Handle(asiData_RePatchNode)  m_patch;    //!< Current patch.
+  Handle(asiData_ReVertexNode) m_vertex;   //!< Current vertex.
+  asiUI_ObjectBrowser*         m_pBrowser; //!< Object Browser.
 
 };
 

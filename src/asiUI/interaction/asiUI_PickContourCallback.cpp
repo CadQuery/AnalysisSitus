@@ -117,6 +117,13 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
     //
     gp_XYZ hit(vx, vy, vz);
 
+    // Check current objects which are receiving data from interaction.
+    if ( m_edge.IsNull() )
+    {
+      m_notifier.SendLogMessage(LogErr(Normal) << "There is no edge to fill.");
+      return;
+    }
+    //
     if ( m_patch.IsNull() )
     {
       m_notifier.SendLogMessage(LogErr(Normal) << "There is no patch to complete contour for.");
@@ -132,16 +139,18 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
     // Modify data.
     m_model->OpenCommand();
     {
-      // Prepare Active Contour.
-      m_contour = reApi.GetOrCreate_ActiveContour();
-
-      // Connect two points by a projected polyline.
-      const int numContourPts = m_contour->GetNumPoints();
-      //
-      if ( numContourPts > 0 )
+      if ( !m_prevEdge.IsNull() )
       {
-        // Get previous point.
-        const gp_XYZ prevPt = m_contour->GetPoint(numContourPts - 1);
+        // Get previous vertex.
+        Handle(asiData_ReVertexNode) prevVertex = m_prevEdge->GetFirstVertex();
+        //
+        if ( prevVertex.IsNull() || !prevVertex->IsWellFormed() )
+        {
+          m_notifier.SendLogMessage(LogErr(Normal) << "Previous vertex is undefined.");
+          return;
+        }
+        //
+        const gp_XYZ prevPt = prevVertex->GetPoint();
 
         // Add midpoints.
         std::vector<gp_XYZ> projPts;
@@ -154,18 +163,17 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
         //
         if ( projPts.size() > 2 )
           for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
-            m_contour->AddPoint(projPts[k], -1);
+            m_prevEdge->AddPolylinePole(projPts[k]);
       }
-
-      // Set contour closed.
-      m_contour->SetClosed(true);
-
       m_notifier.SendLogMessage(LogInfo(Normal) << "Contour closed.");
+
+      // Complete edge.
+      m_prevEdge->SetLastVertex(vertexNode);
     }
     m_model->CommitCommand();
 
     // Update viewer.
-    mgr->Actualize(m_contour);
+    mgr->Actualize(m_edge);
   }
 
   // Custom point on the mesh was clicked.
@@ -199,29 +207,37 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
     // Business logic of reconstruction.
     asiEngine_RE reApi(m_model, m_notifier, m_plotter);
 
-    // New vertex.
-    Handle(asiData_ReVertexNode) nextVertexNode;
-
     // Modify data.
     m_model->OpenCommand();
     {
-      // Prepare Active Contour.
-      m_contour = reApi.GetOrCreate_ActiveContour();
-
       // Prepare active patch.
       if ( m_patch.IsNull() )
         m_patch = reApi.Create_Patch();
 
       // Create vertex.
-      nextVertexNode = reApi.Create_Vertex(hit);
+      m_vertex = reApi.Create_Vertex(hit);
+
+      // Create active edge.
+      m_edge = reApi.Create_Edge();
+      //
+      m_edge->SetFirstVertex(m_vertex);
 
       // Connect two points by a projected polyline.
-      const int numContourPts = m_contour->GetNumPoints();
-      //
-      if ( numContourPts > 0 )
+      if ( !m_prevEdge.IsNull() )
       {
-        // Get previous point.
-        const gp_XYZ prevPt = m_contour->GetPoint(numContourPts - 1);
+        // Set last vertex.
+        m_prevEdge->SetLastVertex(m_vertex);
+
+        // Get previous vertex.
+        Handle(asiData_ReVertexNode) prevVertex = m_prevEdge->GetFirstVertex();
+        //
+        if ( prevVertex.IsNull() || !prevVertex->IsWellFormed() )
+        {
+          m_notifier.SendLogMessage(LogErr(Normal) << "Previous vertex is undefined.");
+          return;
+        }
+        //
+        const gp_XYZ prevPt = prevVertex->GetPoint();
 
         // Add midpoints.
         std::vector<gp_XYZ> projPts;
@@ -234,20 +250,20 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
         //
         if ( projPts.size() > 2 )
           for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
-            m_contour->AddPoint(projPts[k], -1);
+            m_prevEdge->AddPolylinePole(projPts[k]);
+
+        // Add hitted point.
+        m_prevEdge->AddPolylinePole(hit);
       }
-
-      // Add hitted point.
-      const int poleIdx = m_contour->AddPoint(hit, fidx);
-      m_contour->AddPoleIndex(poleIdx);
-
-      m_notifier.SendLogMessage(LogInfo(Normal) << "Next pole index: %1." << poleIdx);
     }
     m_model->CommitCommand();
 
     // Update viewer.
-    mgr->Actualize(m_contour);
-    mgr->Actualize(nextVertexNode);
+    mgr->Actualize(m_prevEdge);
+    mgr->Actualize(m_vertex);
+
+    // (Re)define previous edge.
+    m_prevEdge = m_edge;
 
     // Update object browser.
     if ( m_pBrowser )

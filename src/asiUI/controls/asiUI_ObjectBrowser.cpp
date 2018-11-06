@@ -443,7 +443,7 @@ void asiUI_ObjectBrowser::onSetAsPart()
   // Modify Data Model.
   M->OpenCommand();
   {
-    asiEngine_Part(M, NULL).Update( topoNode->GetShape() );
+    asiEngine_Part(M).Update( topoNode->GetShape() );
   }
   M->CommitCommand();
 
@@ -529,7 +529,7 @@ void asiUI_ObjectBrowser::onComputeNorms()
   //
   M->OpenCommand();
   {
-    tessNormsNode = asiEngine_Tessellation(M, NULL).ComputeNorms(tessNode);
+    tessNormsNode = asiEngine_Tessellation(M).ComputeNorms(tessNode);
   }
   M->CommitCommand();
 

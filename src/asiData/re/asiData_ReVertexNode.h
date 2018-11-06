@@ -81,6 +81,9 @@ public:
   asiData_EXPORT bool
     GetPoint(double& x, double& y, double& z) const;
 
+  asiData_EXPORT gp_XYZ
+    GetPoint() const;
+
 // Initialization:
 public:
 

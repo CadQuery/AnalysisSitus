@@ -139,6 +139,7 @@ set (presentations_H_FILES
   presentations/asiVisu_PartPrs.h
   presentations/asiVisu_Prs.h
   presentations/asiVisu_PrsManager.h
+  presentations/asiVisu_ReEdgePrs.h
   presentations/asiVisu_ReVertexPrs.h
   presentations/asiVisu_TessellationNormsPrs.h
   presentations/asiVisu_TessellationPrs.h
@@ -169,6 +170,7 @@ set (presentations_CPP_FILES
   presentations/asiVisu_PartPrs.cpp
   presentations/asiVisu_Prs.cpp
   presentations/asiVisu_PrsManager.cpp
+  presentations/asiVisu_ReEdgePrs.cpp
   presentations/asiVisu_ReVertexPrs.cpp
   presentations/asiVisu_TessellationNormsPrs.cpp
   presentations/asiVisu_TessellationPrs.cpp
@@ -203,6 +205,8 @@ set (providers_H_FILES
   providers/asiVisu_PartDataProvider.h
   providers/asiVisu_PointsDataProvider.h
   providers/asiVisu_PointsFromListDataProvider.h
+  providers/asiVisu_ReEdgeCurveDataProvider.h
+  providers/asiVisu_ReEdgePolylineDataProvider.h
   providers/asiVisu_ReVertexDataProvider.h
   providers/asiVisu_ShapeDataProvider.h
   providers/asiVisu_SurfaceDataProvider.h
@@ -229,6 +233,8 @@ set (providers_CPP_FILES
   providers/asiVisu_PartDataProvider.cpp
   providers/asiVisu_PointsDataProvider.cpp
   providers/asiVisu_PointsFromListDataProvider.cpp
+  providers/asiVisu_ReEdgeCurveDataProvider.cpp
+  providers/asiVisu_ReEdgePolylineDataProvider.cpp
   providers/asiVisu_ReVertexDataProvider.cpp
   providers/asiVisu_ShapeDataProvider.cpp
   providers/asiVisu_TessNormalsDataProvider.cpp

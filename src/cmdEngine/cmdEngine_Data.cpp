@@ -245,7 +245,7 @@ int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model, NULL).Update(shapeToSet);
+    asiEngine_Part(cmdEngine::model).Update(shapeToSet);
   }
   cmdEngine::model->CommitCommand();
 

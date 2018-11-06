@@ -45,11 +45,11 @@ class asiEngine_Part : public asiEngine_Base
 {
 public:
 
-  //! ctor.
-  //! \param model    [in] Data Model instance.
-  //! \param prsMgr   [in] Presentation Manager for visual commands.
-  //! \param progress [in] progress notifier.
-  //! \param plotter  [in] imperative plotter.
+  //! Ctor.
+  //! \param[in] model    Data Model instance.
+  //! \param[in] prsMgr   Presentation Manager for visual commands.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
   asiEngine_Part(const Handle(asiEngine_Model)&             model,
                  const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
                  ActAPI_ProgressEntry                       progress = NULL,
@@ -57,11 +57,15 @@ public:
   //
   : asiEngine_Base(model, progress, plotter), m_prsMgr(prsMgr) {}
 
-  //! ctor.
-  //! \param model [in] Data Model instance.
-  asiEngine_Part(const Handle(asiEngine_Model)& model)
+  //! Ctor.
+  //! \param[in] model    Data Model instance.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiEngine_Part(const Handle(asiEngine_Model)& model,
+                 ActAPI_ProgressEntry           progress = NULL,
+                 ActAPI_PlotterEntry            plotter  = NULL)
   //
-  : asiEngine_Base(model) {}
+  : asiEngine_Base(model, progress, plotter), m_prsMgr(NULL) {}
 
 public:
 

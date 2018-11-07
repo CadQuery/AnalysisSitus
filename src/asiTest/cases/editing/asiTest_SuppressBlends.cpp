@@ -227,5 +227,5 @@ outcome asiTest_SuppressBlends::testEuler012(const int funcID)
 //! \return true in case of success, false -- otherwise.
 outcome asiTest_SuppressBlends::testRecognizeAndSuppress001(const int funcID)
 {
-  return outcome().failure();
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_013.tcl");
 }

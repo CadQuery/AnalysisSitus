@@ -75,6 +75,18 @@ a:visited:hover {
   color: rgb(30, 30, 30);
   font-size: 10pt;
 }
+.table-content-header {
+  padding-left: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color: rgb(230, 230, 230);
+  color: rgb(30, 30, 30);
+  font-size: 12pt;
+}
+.table-content-block {
+  color: rgb(30, 30, 30);
+  font-size: 10pt;
+}
 .code {
   padding-left: 15px;
   padding-right: 15px;

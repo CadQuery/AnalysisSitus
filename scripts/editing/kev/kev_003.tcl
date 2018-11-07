@@ -1,5 +1,5 @@
 #===============================================================================
-# KEV / Test case 01:
+# KEV / Test case 03:
 #-------------------------------------------------------------------------------
 # This test case applies KEV (Kill Edge-Vertex) Euler operator to solid body.
 #-------------------------------------------------------------------------------
@@ -22,4 +22,9 @@ kev -edge "edge_5" -vertex "vertex_1"
 # Check Euler-Poincare property.
 if { [check-euler 0] != 1 } {
   error "Euler-Poincare property is not equal to the expected value."
+}
+
+# Check orientations of vertices.
+if { [check-vertices-ori] != 1 } {
+  error "Some edges have non-distinguishable orientations of vertices."
 }

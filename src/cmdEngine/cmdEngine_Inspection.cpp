@@ -1796,6 +1796,9 @@ int ENGINE_CheckContours(const Handle(asiTcl_Interp)& interp,
     }
   }
 
+  if ( isOk )
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "All faces have closed contours.");
+
   *interp << (isOk ? 1 : 0);
 
   return TCL_OK;
@@ -2261,6 +2264,57 @@ int ENGINE_CheckOpenEdges(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckVerticesOri(const Handle(asiTcl_Interp)& interp,
+                            int                          argc,
+                            const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get part.
+  Handle(asiData_PartNode)
+    partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  TopoDS_Shape partShape = partNode->GetShape();
+
+  // Build map of edges to check them one-by-one.
+  TopTools_IndexedMapOfShape edgesMap;
+  TopExp::MapShapes(partShape, TopAbs_EDGE, edgesMap);
+
+  // Check edges.
+  for ( int k = 1; k <= edgesMap.Extent(); ++k )
+  {
+    const TopoDS_Edge& edge = TopoDS::Edge( edgesMap(k) );
+
+    if ( !asiAlgo_CheckValidity::HasDistinctVertexOrientations(edge) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Edge %1 has non-distinguishable vertices."
+                                                          << k);
+      //
+      *interp << false;
+
+      return TCL_OK;
+    }
+  }
+
+  // Everything is fine.
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "All edges have distinguishable vertices.");
+  //
+  *interp << true;
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -2477,4 +2531,15 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Checks part for open edges.",
     //
     __FILE__, group, ENGINE_CheckOpenEdges);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-vertices-ori",
+    //
+    "check-vertices-ori\n"
+    "\t Checks if the vertices of the part are distinguishable by their orientation\n"
+    "\t flags. A valid edge should have one FORWARD vertex and one REVERSED\n"
+    "\t vertex to denote its topological extremities. As a result of some\n"
+    "\t improperly implemented modeling operators, this rule can be broken.",
+    //
+    __FILE__, group, ENGINE_CheckVerticesOri);
 }

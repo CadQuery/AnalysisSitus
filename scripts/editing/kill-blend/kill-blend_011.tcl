@@ -88,3 +88,13 @@ puts "Final tolerance ($finalToler) vs initial tolerance ($initialToler)"
 if { [expr $finalToler - $initialToler] > 1e-3 } {
   error "Significant tolerance degradation."
 }
+
+# Check orientations of vertices.
+if { [check-vertices-ori] != 1 } {
+  error "Some edges have non-distinguishable orientations of vertices."
+}
+
+# Check contours of faces.
+if { [check-contours] != 1 } {
+  error "Some faces has open contours."
+}

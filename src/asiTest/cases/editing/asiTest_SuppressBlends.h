@@ -77,7 +77,7 @@ public:
               << &testEuler010
               << &testEuler011
               << &testEuler012
-              //<< &testRecognizeAndSuppress001
+              /*<< &testRecognizeAndSuppress001*/
     ; // Put semicolon here for convenient adding new functions above ;)
   }
 

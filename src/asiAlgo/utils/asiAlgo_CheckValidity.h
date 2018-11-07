@@ -38,6 +38,7 @@
 #include <ActAPI_IAlgorithm.h>
 
 // OCCT includes
+#include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Wire.hxx>
@@ -73,6 +74,14 @@ public:
     IsFinite(const TopoDS_Solid& solid);
 
   //! Checks whether the passed face has all contours (wires)
+  //! geometrically closed. The default tolerance is used for coincidence
+  //! test.
+  //! \param[in] face face to check.
+  //! \return true if face is Ok, false -- otherwise.
+  asiAlgo_EXPORT static bool
+    HasAllClosedWires(const TopoDS_Face& face);
+
+  //! Checks whether the passed face has all contours (wires)
   //! geometrically closed.
   //! \param[in] face             face to check.
   //! \param[in] coincConfusion3d coincidence confusion tolerance. This value
@@ -103,6 +112,14 @@ public:
   //! \return maximum tolerance value.
   asiAlgo_EXPORT static double
     MaxTolerance(const TopoDS_Shape& shape);
+
+  //! Checks for the given edge if it has distinct orientations of its
+  //! vertices. In a valid edge, there should be one vertex with FORWARD
+  //! orientation and one vertex with REVERSED orientation.
+  //! \param[in] edge edge to check.
+  //! \return true in case of validity, false -- otherwise.
+  asiAlgo_EXPORT static bool
+    HasDistinctVertexOrientations(const TopoDS_Edge& edge);
 
 };
 

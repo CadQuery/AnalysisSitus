@@ -33,3 +33,8 @@ kill-face -name "face_3"
 if { [check-euler 0] != 1 } {
   error "Euler-Poincare property is not equal to the expected value."
 }
+
+# Check orientations of vertices.
+if { [check-vertices-ori] != 1 } {
+  error "Some edges have non-distinguishable orientations of vertices."
+}

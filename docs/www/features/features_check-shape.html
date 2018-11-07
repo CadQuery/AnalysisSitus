@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Analysis Situs: check CAD model validity</title>
+  <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+
+  <!-- [begin] Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112292727-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-112292727-2');
+  </script>
+  <!-- [end] Google Analytics -->
+
+ </head>
+<body>
+
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+  <td align="left" class="header">
+    <span class="header-logo"><a href="../index.html" class="header-href">Analysis&nbsp;Situs</a></span>
+    &nbsp;
+    ./<a class="header-href" href="../features.html">features</a>/check validity
+  </td>
+</tr>
+</table>
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="../features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="../terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="../references.html">References</a></td>
+</tr>
+</table>
+
+<br/>
+
+<table align="center" border="0" cellpadding="5" cellspacing="0" width="100%">
+<tr>
+  <td align="center" class="table-content-header" colspan="2">
+    Ad-hoc checks
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="30%" class="table-content-block">
+    <span class="code-inline">check-vertices-ori</span>
+  </td>
+  <td class="table-content-block">
+    Checks if the vertices of the part are distinguishable by their orientation
+    flags. A valid edge should have one FORWARD vertex and one REVERSED vertex to properly denote
+    its topological extremities. As a result of some poorly implemented modeling operators,
+    this rule may appear to be broken.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="30%" class="table-content-block">
+    <span class="code-inline">check-contours</span>
+  </td>
+  <td class="table-content-block">
+    Checks if the contours of the part faces are closed (have no gaps). The optional
+    'tolerance' argument is used to tune the precision of coincidence test. You
+    can find more details in the <a href="./features_is-contour-closed.html">corresponding chapter</a>.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+</table>
+
+</body>
+</html>

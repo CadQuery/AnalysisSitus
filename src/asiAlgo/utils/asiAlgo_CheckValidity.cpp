@@ -514,6 +514,17 @@ bool asiAlgo_CheckValidity::IsFinite(const TopoDS_Solid& solid)
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_CheckValidity::HasAllClosedWires(const TopoDS_Face& face)
+{
+  // Set default tolerance.
+  const double tolerance = MaxTolerance(face)*5.0;
+
+  // Check closeness.
+  return HasAllClosedWires(face, tolerance);
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_CheckValidity::HasAllClosedWires(const TopoDS_Face& face,
                                               const double       coincConfusion3d)
 {
@@ -757,3 +768,24 @@ double asiAlgo_CheckValidity::MaxTolerance(const TopoDS_Shape& shape)
 
   return maxToler;
 }
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_CheckValidity::HasDistinctVertexOrientations(const TopoDS_Edge& edge)
+{
+  bool isForwardFound = false, isReversedFound = false;
+
+  for ( TopoDS_Iterator it(edge); it.More(); it.Next() )
+  {
+    const TopoDS_Shape& subsh = it.Value();
+    //
+    if ( subsh.Orientation() == TopAbs_FORWARD )
+      isForwardFound = true;
+    //
+    if ( subsh.Orientation() == TopAbs_REVERSED )
+      isReversedFound = true;
+  }
+
+  return isForwardFound && isReversedFound;
+}
+

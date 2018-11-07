@@ -373,6 +373,10 @@ namespace asiAlgo_Utils
            double& XMax, double& YMax, double& ZMax,
            const double tolerance = 0.0);
 
+  //! Cleans up polygonal data from the passed shape.
+  asiAlgo_EXPORT void
+    CleanFacets(TopoDS_Shape& shape);
+
   //! Reads CAD model from native OCCT b-rep file.
   //! \param filename [in]  filename.
   //! \param shape    [out] CAD model retrieved from file.

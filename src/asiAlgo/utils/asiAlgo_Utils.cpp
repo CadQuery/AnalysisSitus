@@ -72,6 +72,7 @@
 #include <BRepLProp_SLProps.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepTools.hxx>
+#include <BRepTools_ShapeSet.hxx>
 #include <GC_MakeCircle.hxx>
 #include <GCPnts_QuasiUniformAbscissa.hxx>
 #include <Geom_BezierCurve.hxx>
@@ -90,6 +91,7 @@
 #include <gp_Vec.hxx>
 #include <math_Matrix.hxx>
 #include <NCollection_IncAllocator.hxx>
+#include <OSD_OpenFile.hxx>
 #include <Precision.hxx>
 #include <RWStl.hxx>
 #include <ShapeAnalysis_Edge.hxx>
@@ -926,6 +928,13 @@ bool asiAlgo_Utils::Bounds(const Handle(Poly_Triangulation)& tris,
 
 //-----------------------------------------------------------------------------
 
+void asiAlgo_Utils::CleanFacets(TopoDS_Shape& shape)
+{
+  BRepTools::Clean(shape);
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_Utils::ReadBRep(const TCollection_AsciiString& filename,
                              TopoDS_Shape&                  shape)
 {
@@ -944,8 +953,34 @@ bool asiAlgo_Utils::ReadBRep(const TCollection_AsciiString& filename,
 bool asiAlgo_Utils::WriteBRep(const TopoDS_Shape&            theShape,
                               const TCollection_AsciiString& theFilename)
 {
-  BRepTools::Clean(theShape);
-  return BRepTools::Write( theShape, theFilename.ToCString() );
+  ofstream os;
+  OSD_OpenStream(os, theFilename, ios::out);
+  //
+  if ( !os.is_open() || !os.good() )
+    return false;
+
+  bool isGood = (os.good() && !os.eof());
+  if ( !isGood )
+    return isGood;
+  
+  // We disable triangulation right in ShapeSet.
+  BRepTools_ShapeSet SS(false);
+  SS.Add(theShape);
+  
+  os << "DBRep_DrawableShape\n";  // for easy Draw read
+  SS.Write(os);
+  isGood = os.good();
+  if( isGood )
+    SS.Write(theShape, os);
+  //
+  os.flush();
+  isGood = os.good();
+
+  errno = 0;
+  os.close();
+  isGood = os.good() && isGood && !errno;
+
+  return isGood;
 }
 
 //-----------------------------------------------------------------------------

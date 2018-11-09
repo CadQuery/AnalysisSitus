@@ -76,7 +76,9 @@ public:
               << &testEuler009
               << &testEuler010
               << &testEuler011
-              << &testEuler012
+              /*<< &testEuler012*/
+              << &testEuler013
+              << &testEuler014
               /*<< &testRecognizeAndSuppress001*/
     ; // Put semicolon here for convenient adding new functions above ;)
   }
@@ -104,6 +106,8 @@ private:
   static outcome testEuler010(const int funcID);
   static outcome testEuler011(const int funcID);
   static outcome testEuler012(const int funcID);
+  static outcome testEuler013(const int funcID);
+  static outcome testEuler014(const int funcID);
 
   static outcome testRecognizeAndSuppress001(const int funcID);
 

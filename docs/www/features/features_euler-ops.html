@@ -120,5 +120,38 @@ At the same time, the model is not geometrically valid anymore. Euler operators 
 topological (i.e., "syntactical") integrity of the boundary representation.
 </p>
 
+<h1>KEF</h1>
+
+<p>
+KEF stand for "kill-edge-face". This operator is used to collapse two-edged face into a single edge.
+One application for this operator is blend suppression where two-edged faces may emerge as a result
+of suppressing cross-edges (you can find more information about this blend suppression technique in
+a remarkable work by <a href="../references.html#venkataraman-2002">[Venkataraman et al, 2002]</a>).
+</p>
+
+<div align="center"><img src="../imgs/kef_suppress_blends.png"/></div>
+
+<p>
+KEF Euler operator is based on <a href="./features_topo-killer.html">Topology Killer</a> whose function
+is to remove the face and either remove or merge edges. Edge merging should be preferred in
+solid modeling cases as this strategy of edge elimination does not break sharing. The following image
+illustrates a naked edge which emerged as a result of edge removal.
+</p>
+
+<div align="center"><img src="../imgs/eulerops_kef_killedge.png"/></div>
+
+<p>
+In contrast, if edge merging is used, sharing is preserved at the data structure level.
+</p>
+
+<div align="center"><img src="../imgs/eulerops_kef_replaceedge.png"/></div>
+
+<p>
+Analysis Situs takes care not only to preserve sharing but also to ensure the correct
+propagation of edges' orientations. Since there is no guarantee that the substituted
+edge has the same geometric orientation as its pre-image in the UV space of a face,
+the orientation of image can be different from the original orientation.
+</p>
+
 </body>
 </html>

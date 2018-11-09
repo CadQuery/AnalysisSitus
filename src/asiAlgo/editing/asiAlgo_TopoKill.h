@@ -39,6 +39,7 @@
 
 // OCCT includes
 #include <NCollection_IndexedMap.hxx>
+#include <TopoDS_Face.hxx>
 #include <TopTools_ShapeMapHasher.hxx>
 
 //! Utility for killing topological entities and reduction of topological
@@ -173,9 +174,10 @@ protected:
 // Input and output:
 protected:
 
-  TopoDS_Shape            m_master;  //!< Master CAD model.
-  TopoDS_Shape            m_result;  //!< Result CAD model.
-  Handle(asiAlgo_History) m_history; //!< History of modification.
+  TopoDS_Face             m_currFace; //!< Current face cached for resolving edge orientations.
+  TopoDS_Shape            m_master;   //!< Master CAD model.
+  TopoDS_Shape            m_result;   //!< Result CAD model.
+  Handle(asiAlgo_History) m_history;  //!< History of modification.
 
 // Requests:
 protected:

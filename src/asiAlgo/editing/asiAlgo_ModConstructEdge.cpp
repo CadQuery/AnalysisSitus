@@ -548,7 +548,7 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
 
   // Correct orientation. BRepTools_Modifier framework does not handle
   // changing orientation of curves, so if after re-intersection the
-  // geometric orientation is affect, we have to fix it here.
+  // geometric orientation is affected, we have to fix it here.
   if ( !this->correctOriC(m_edgeInfo.resolution.icurve->C,
                           m_edgeInfo.situation.e,
                           m_edgeInfo.resolution.icurve->C) )

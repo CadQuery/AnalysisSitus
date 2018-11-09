@@ -39,6 +39,30 @@
 
 bool asiAlgo_BlendTopoCondition::kev(const TopoDS_Shape&      shape,
                                      const TopoDS_Edge&       edge,
+                                     TopoDS_Shape&            output,
+                                     Handle(asiAlgo_History)& history)
+{
+  asiAlgo_EulerKEV KEV( shape,
+                        TopoDS::Edge( edge.Oriented(TopAbs_EXTERNAL) ),
+                        m_progress, m_plotter );
+  //
+  if ( !history.IsNull() )
+    KEV.SetHistory(history);
+  //
+  if ( !KEV.Perform(true) )
+    return false;
+
+  // Set result.
+  output  = KEV.GetResult();
+  history = KEV.GetHistory();
+  //
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_BlendTopoCondition::kev(const TopoDS_Shape&      shape,
+                                     const TopoDS_Edge&       edge,
                                      const TopoDS_Vertex&     vertex2Kill,
                                      TopoDS_Shape&            output,
                                      Handle(asiAlgo_History)& history)

@@ -1769,7 +1769,7 @@ int ENGINE_CheckContours(const Handle(asiTcl_Interp)& interp,
   }
 
   // Read tolerance.
-  double tolerance = ( (argc == 2) ? atof(argv[1]) : 0.0 );
+  double globTolerance = ( (argc == 2) ? atof(argv[1]) : 0.0 );
 
   // Get Part Node.
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
@@ -1785,11 +1785,14 @@ int ENGINE_CheckContours(const Handle(asiTcl_Interp)& interp,
     const TopoDS_Face& face = TopoDS::Face( exp.Current() );
 
     // Set default tolerance.
-    if ( !tolerance )
-      tolerance = asiAlgo_CheckValidity::MaxTolerance(face)*5.0;
+    double locTolerance;
+    if ( globTolerance )
+      locTolerance = globTolerance;
+    else
+      locTolerance = asiAlgo_CheckValidity::MaxTolerance(face)*5.0;
 
     // Check closeness.
-    if ( !asiAlgo_CheckValidity::HasAllClosedWires(face, tolerance) )
+    if ( !asiAlgo_CheckValidity::HasAllClosedWires(face, locTolerance) )
     {
       isOk = false;
       break;
@@ -1798,10 +1801,12 @@ int ENGINE_CheckContours(const Handle(asiTcl_Interp)& interp,
 
   if ( isOk )
     interp->GetProgress().SendLogMessage(LogInfo(Normal) << "All faces have closed contours.");
+  else
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Some contours contain gaps.");
 
   *interp << (isOk ? 1 : 0);
 
-  return TCL_OK;
+  return isOk ? TCL_OK : TCL_ERROR;
 }
 
 //-----------------------------------------------------------------------------

@@ -222,6 +222,26 @@ outcome asiTest_SuppressBlends::testEuler012(const int funcID)
 
 //-----------------------------------------------------------------------------
 
+//! Test scenario 013.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::testEuler013(const int funcID)
+{
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_013.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 014.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::testEuler014(const int funcID)
+{
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_014.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
 //! Test scenario for automatic recognition and suppression.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.

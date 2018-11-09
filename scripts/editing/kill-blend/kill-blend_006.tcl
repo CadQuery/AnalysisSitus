@@ -102,5 +102,5 @@ if { [check-vertices-ori] != 1 } {
 
 # Check contours of faces.
 if { [check-contours] != 1 } {
-  error "Some faces has open contours."
+  error "Some faces have open contours."
 }

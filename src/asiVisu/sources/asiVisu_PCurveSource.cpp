@@ -104,7 +104,7 @@ void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
   std::vector<gp_Pnt> points;
   int nPts = 0;
   //
-  {
+  try {
     Geom2dAdaptor_Curve gac(c2d, f, l);
     GCPnts_QuasiUniformDeflection QUDefl(gac, 1e-4);
     //
@@ -140,6 +140,11 @@ void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
         points.push_back(point);
       }
     }
+  }
+  catch ( ... )
+  {
+    vtkErrorMacro( << "Failed (exception) to discretize curve" );
+    return;
   }
 
   if ( !nPts )

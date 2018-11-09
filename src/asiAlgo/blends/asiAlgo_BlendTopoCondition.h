@@ -122,6 +122,18 @@ public:
 protected:
 
   //! Performs KEV Euler operator on the passed shape.
+  //! \param[in]  shape   entire shape.
+  //! \param[in]  edge    edge to kill.
+  //! \param[out] output  result of Euler operator.
+  //! \param[out] history history of modification.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    kev(const TopoDS_Shape&      shape,
+        const TopoDS_Edge&       edge,
+        TopoDS_Shape&            output,
+        Handle(asiAlgo_History)& history);
+
+  //! Performs KEV Euler operator on the passed shape.
   //! \param[in]  shape       entire shape.
   //! \param[in]  edge        edge to kill.
   //! \param[in]  vertex2Kill vertex to kill.

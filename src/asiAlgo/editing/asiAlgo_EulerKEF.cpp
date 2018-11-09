@@ -32,6 +32,7 @@
 #include <asiAlgo_EulerKEF.h>
 
 // OCCT includes
+#include <BRep_Tool.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 
@@ -101,7 +102,7 @@ bool asiAlgo_EulerKEF::perform(const bool doApply)
   // Merge edges if an edge-to-survive is defined.
   if ( !m_edge2Survive.IsNull() )
   {
-    if ( !m_killer->AskReplace( m_edge2Kill, m_edge2Survive.Oriented( m_edge2Kill.Orientation() ) ) )
+    if ( !m_killer->AskReplace(m_edge2Kill, m_edge2Survive) )
     {
       m_progress.SendLogMessage(LogErr(Normal) << "Request on edge merging rejected.");
       return false;

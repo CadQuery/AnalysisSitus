@@ -176,7 +176,7 @@ public:
     history = new asiAlgo_History;
 
     // Kill the first terminating edge.
-    if ( !this->kev(output, this->e_b_t1, this->v_b_s2_t1, output, history) )
+    if ( !this->kev(output, this->e_b_t1, output, history) )
     {
       m_progress.SendLogMessage(LogErr(Normal) << "KEV failed on terminating edge.");
       return false;
@@ -185,7 +185,7 @@ public:
     this->Actualize(history);
 
     // Kill the second terminating edge.
-    if ( !this->kev(output, this->e_b_t2, this->v_b_s2_t2, output, history) )
+    if ( !this->kev(output, this->e_b_t2, output, history) )
     {
       m_progress.SendLogMessage(LogErr(Normal) << "KEV failed on terminating edge.");
       return false;

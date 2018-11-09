@@ -14,30 +14,27 @@ print-summary
 #
 set initialToler [get-tolerance]
 
-# Check Euler-Poincare property of the manifold before modification.
+# Apply topological operators.
 if { [check-euler 0] != 1 } {
   error "Euler-Poincare property is not equal to the expected value."
 }
-
-# Perform topological operator.
-kill-blend 5
-
-# Check Euler-Poincare property of the manifold.
+#
+init-naming
+kev -name edge_10
+kev -name edge_20
+kef -face face_5 -kedge edge_21 -sedge edge_19
+#
 if { [check-euler 0] != 1 } {
   error "Euler-Poincare property does not hold after topological modification."
 }
 
-# Check orientations of vertices.
-if { [check-vertices-ori] != 1 } {
-  error "Some edges have non-distinguishable orientations of vertices."
-}
-
-# Check contours of faces.
-if { [check-contours] != 1 } {
-  error "Some faces have open contours."
-}
-
-# Check validity of the result.
+# Apply geometric operators.
+rebuild-edge -name edge_11
+rebuild-edge -name edge_19
+rebuild-edge -name edge_25
+rebuild-edge -name edge_9
+rebuild-edge -name edge_30
+#
 if { [check-validity] != 1 } {
   error "Final part is not valid."
 }

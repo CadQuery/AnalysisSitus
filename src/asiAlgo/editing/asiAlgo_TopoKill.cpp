@@ -33,8 +33,45 @@
 
 // OCCT includes
 #include <BRep_Builder.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Iterator.hxx>
+
+//-----------------------------------------------------------------------------
+
+TopAbs_Orientation ChooseOri(const TopoDS_Edge& oldEdge,
+                             const TopoDS_Edge& newEdge,
+                             const TopoDS_Face& face)
+{
+  double fo, lo, fn, ln;
+  //
+  Handle(Geom2d_Curve) oldCurve = BRep_Tool::CurveOnSurface(oldEdge, face, fo, lo);
+  Handle(Geom2d_Curve) newCurve = BRep_Tool::CurveOnSurface(newEdge, face, fn, ln);
+
+  // Check natural orientation at start point
+  // ...
+
+  gp_Pnt2d oldCurveP;
+  gp_Vec2d oldCurveV1;
+  oldCurve->D1(fo, oldCurveP, oldCurveV1);
+
+  gp_Pnt2d newCurveP;
+  gp_Vec2d newCurveV1;
+  newCurve->D1(fn, newCurveP, newCurveV1);
+
+  bool isReversedGeometrically;
+  if ( Abs( oldCurveV1.Angle(newCurveV1) ) > Abs( oldCurveV1.Angle( newCurveV1.Reversed() ) ) )
+    isReversedGeometrically = true;
+  else
+    isReversedGeometrically = false;
+
+  TopAbs_Orientation ori = oldEdge.Orientation();
+  //
+  if ( isReversedGeometrically )
+    ori = (ori == TopAbs_FORWARD ? TopAbs_REVERSED : TopAbs_FORWARD); // Invert.
+
+  return ori;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -175,6 +212,10 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
     const TopoDS_Shape& currentShape = it.Value();
     TopoDS_Shape newResult;
 
+    // Cache current face for resolving orientations of substituted edges.
+    if ( currentShape.ShapeType() == TopAbs_FACE )
+      m_currFace = TopoDS::Face(currentShape);
+
     // This flag indicates whether the twin element for the current entity
     // has been already built. If so, we only need to link the newly
     // built parent with the already existing (also newly built but in
@@ -220,7 +261,22 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
           // If no orientation is passed, it means that the orientation
           // should be defined in-context.
           if ( newResult.Orientation() == TopAbs_EXTERNAL )
-            newResult.Orientation( currentShape.Orientation() );
+          {
+            TopAbs_Orientation newOri;
+            //
+            if ( currentShape.ShapeType() == TopAbs_EDGE && !m_currFace.IsNull() )
+            {
+              // For edges, we should be careful with orientations
+              newOri = ChooseOri( TopoDS::Edge(currentShape),
+                                  TopoDS::Edge(newResult),
+                                  m_currFace );
+            }
+            else
+              newOri = currentShape.Orientation();
+
+            // Set orientation.
+            newResult.Orientation(newOri);
+          }
 
           // Set history record.
           m_history->AddModified(currentShape, newResult);

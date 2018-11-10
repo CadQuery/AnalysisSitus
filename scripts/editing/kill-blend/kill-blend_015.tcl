@@ -19,33 +19,13 @@ if { [check-euler 34] != 1 } {
   error "Euler-Poincare property is not equal to the expected value."
 }
 
+# Diable notifications from the interpretor.
+disable-notifier
+
 # Perform topological operator.
-kill-blend 2
-
-# Check Euler-Poincare property of the manifold.
-if { [check-euler 34] != 1 } {
-  error "Euler-Poincare property does not hold after topological modification."
+if { [kill-blend 2] != 0 } {
+  error "Unexpected result of command."
 }
 
-# Check orientations of vertices.
-if { [check-vertices-ori] != 1 } {
-  error "Some edges have non-distinguishable orientations of vertices."
-}
-
-# Check contours of faces.
-if { [check-contours] != 1 } {
-  error "Some faces have open contours."
-}
-
-# Check validity of the result.
-if { [check-validity] != 1 } {
-  error "Final part is not valid."
-}
-
-# Check that tolernace has not significantly degraded.
-set finalToler [get-tolerance]
-puts "Final tolerance ($finalToler) vs initial tolerance ($initialToler)"
-#
-if { [expr $finalToler - $initialToler] > 1e-3 } {
-  error "Significant tolerance degradation."
-}
+# Enable notifications from the interpretor.
+enable-notifier

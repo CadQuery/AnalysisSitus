@@ -49,6 +49,10 @@
 #define TCL_ERROR 1
 #define TCL_OK 0
 
+#define RETURN_TCL_ERROR(interp) \
+  interp->PrintLastError(); \
+  return TCL_ERROR;
+
 struct Tcl_Interp; // Forward declaration for Tcl C structure.
 
 //! Tcl interpreter interface in Analysis Situs.
@@ -150,9 +154,24 @@ public:
   }
 
   //! \return progress notifier.
-  ActAPI_ProgressEntry& GetProgress()
+  ActAPI_ProgressEntry GetProgress()
   {
-    return m_progress;
+    if ( m_bNotifierOn )
+      return m_progress;
+
+    return ActAPI_ProgressEntry(); // Empty entry.
+  }
+
+  //! Enables notification messages from the interpretor.
+  void SetNotifierOn()
+  {
+    m_bNotifierOn = true;
+  }
+
+  //! Disables notification messages from the interpretor.
+  void SetNotifierOff()
+  {
+    m_bNotifierOn = false;
   }
 
 public:
@@ -338,8 +357,9 @@ protected:
 
 protected:
 
-  Tcl_Interp*                          m_pInterp; //!< Internal pointer to Tcl interpreter.
-  std::vector<TCollection_AsciiString> m_plugins; //!< List of loaded plugins.
+  bool                                 m_bNotifierOn; //!< Indicates whether notifier is on/off.
+  Tcl_Interp*                          m_pInterp;     //!< Internal pointer to Tcl interpreter.
+  std::vector<TCollection_AsciiString> m_plugins;     //!< List of loaded plugins.
   //
   Handle(ActAPI_IModel) m_model;    //!< Data Model instance.
   ActAPI_ProgressEntry  m_progress; //!< Progress sentry.

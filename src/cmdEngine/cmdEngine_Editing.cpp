@@ -1792,7 +1792,9 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
   if ( !recognizer.Perform(fid) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Recognition failed.");
-    return TCL_ERROR;
+
+    *interp << false;
+    return TCL_OK;
   }
 
   // Perform suppression.
@@ -1803,7 +1805,9 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
   if ( !suppressor.Perform(fid) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Suppression failed.");
-    return TCL_ERROR;
+
+    *interp << false;
+    return TCL_OK;
   }
   //
   const TopoDS_Shape& result = suppressor.GetResult();
@@ -1822,6 +1826,7 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
   if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
 
+  *interp << true;
   return TCL_OK;
 }
 

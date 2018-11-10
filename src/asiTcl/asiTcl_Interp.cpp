@@ -367,6 +367,7 @@ static void OverrideTclChannel(const Handle(asiTcl_Interp)& interp,
 asiTcl_Interp::asiTcl_Interp(ActAPI_ProgressEntry progress,
                              ActAPI_PlotterEntry  plotter)
 : Standard_Transient (),
+  m_bNotifierOn      (true),
   m_pInterp          (NULL),
   m_progress         (progress),
   m_plotter          (plotter)
@@ -401,16 +402,18 @@ void asiTcl_Interp::Init()
   //
   std::string channels = Tcl_GetStringResult(m_pInterp);
   //
-  m_progress.SendLogMessage( LogInfo(Normal) << "Available channels: %1."
-                                             << (channels.size() ? channels.c_str() : "none") );
+  this->GetProgress().SendLogMessage( LogInfo(Normal) << "Available channels: %1."
+                                                      << (channels.size() ? channels.c_str() : "none") );
 }
 
 //-----------------------------------------------------------------------------
 
 void asiTcl_Interp::PrintLastError()
 {
-  m_progress.SendLogMessage( LogErr(Normal) << "Tcl result: %1"
-                                            << Tcl_GetStringResult(m_pInterp) );
+  std::string errStr = Tcl_GetStringResult(m_pInterp);
+
+  m_progress.SendLogMessage( LogErr(Normal) << "Tcl last error: %1"
+                                            << ( errStr.empty() ? "<undefined>" : errStr.c_str() ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -419,11 +422,16 @@ int asiTcl_Interp::Eval(const TCollection_AsciiString& cmd)
 {
   if ( !m_pInterp )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Tcl command has finished with TCL_ERROR.");
+    this->GetProgress().SendLogMessage(LogErr(Normal) << "Tcl command has finished with TCL_ERROR.");
     return TCL_ERROR;
   }
 
+  // Evaluate.
   int ret = Tcl_Eval( m_pInterp, cmd.ToCString() );
+  //
+  if ( ret == TCL_ERROR )
+    this->PrintLastError();
+
   return ret;
 }
 
@@ -483,7 +491,7 @@ void asiTcl_Interp::GetAvailableCommands(std::vector<asiTcl_CommandInfo>& comman
 int asiTcl_Interp::ErrorOnWrongArgs(const char* cmd)
 {
   std::cerr << "Error: wrong number of arguments in command " << cmd;
-  m_progress.SendLogMessage(LogErr(Normal) << "Wrong number of arguments in command %1." << cmd);
+  this->GetProgress().SendLogMessage(LogErr(Normal) << "Wrong number of arguments in command %1." << cmd);
 
   return TCL_ERROR;
 }
@@ -663,7 +671,7 @@ bool asiTcl_Interp::addCommand(const TCollection_AsciiString& name,
 
   if ( cmd == NULL )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Tcl_CreateCommand has returned NULL.");
+    this->GetProgress().SendLogMessage(LogErr(Normal) << "Tcl_CreateCommand has returned NULL.");
     return false;
   }
 

@@ -105,7 +105,7 @@ outcome asiTest_SuppressBlends::runTest(const int   funcID,
 //! Test scenario 001.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler001(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend001(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_001.tcl");
 }
@@ -115,7 +115,7 @@ outcome asiTest_SuppressBlends::testEuler001(const int funcID)
 //! Test scenario 002.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler002(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend002(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_002.tcl");
 }
@@ -125,7 +125,7 @@ outcome asiTest_SuppressBlends::testEuler002(const int funcID)
 //! Test scenario 003.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler003(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend003(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_003.tcl");
 }
@@ -135,7 +135,7 @@ outcome asiTest_SuppressBlends::testEuler003(const int funcID)
 //! Test scenario 004.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler004(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend004(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_004.tcl");
 }
@@ -145,7 +145,7 @@ outcome asiTest_SuppressBlends::testEuler004(const int funcID)
 //! Test scenario 005.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler005(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend005(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_005.tcl");
 }
@@ -155,7 +155,7 @@ outcome asiTest_SuppressBlends::testEuler005(const int funcID)
 //! Test scenario 006.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler006(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend006(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_006.tcl");
 }
@@ -165,7 +165,7 @@ outcome asiTest_SuppressBlends::testEuler006(const int funcID)
 //! Test scenario 007.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler007(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend007(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_007.tcl");
 }
@@ -175,7 +175,7 @@ outcome asiTest_SuppressBlends::testEuler007(const int funcID)
 //! Test scenario 008.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler008(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend008(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_008.tcl");
 }
@@ -185,7 +185,7 @@ outcome asiTest_SuppressBlends::testEuler008(const int funcID)
 //! Test scenario 009.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler009(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend009(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_009.tcl");
 }
@@ -195,7 +195,7 @@ outcome asiTest_SuppressBlends::testEuler009(const int funcID)
 //! Test scenario 010.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler010(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend010(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_010.tcl");
 }
@@ -205,7 +205,7 @@ outcome asiTest_SuppressBlends::testEuler010(const int funcID)
 //! Test scenario 011.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler011(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend011(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_011.tcl");
 }
@@ -215,7 +215,7 @@ outcome asiTest_SuppressBlends::testEuler011(const int funcID)
 //! Test scenario 012.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler012(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend012(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_012.tcl");
 }
@@ -225,7 +225,7 @@ outcome asiTest_SuppressBlends::testEuler012(const int funcID)
 //! Test scenario 013.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler013(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend013(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_013.tcl");
 }
@@ -235,17 +235,17 @@ outcome asiTest_SuppressBlends::testEuler013(const int funcID)
 //! Test scenario 014.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testEuler014(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend014(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_014.tcl");
 }
 
 //-----------------------------------------------------------------------------
 
-//! Test scenario for automatic recognition and suppression.
+//! Test scenario 015.
 //! \param[in] funcID ID of the Test Function.
 //! \return true in case of success, false -- otherwise.
-outcome asiTest_SuppressBlends::testRecognizeAndSuppress001(const int funcID)
+outcome asiTest_SuppressBlends::testSuppressBlend015(const int funcID)
 {
-  return runTestScript(funcID, "editing/kill-blend/kill-blend_013.tcl");
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_015.tcl");
 }

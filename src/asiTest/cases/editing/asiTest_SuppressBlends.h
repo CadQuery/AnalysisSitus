@@ -65,21 +65,21 @@ public:
   //! \param[out] functions output collection of pointers.
   static void Functions(AsiTestFunctions& functions)
   {
-    functions << &testEuler001
-              << &testEuler002
-              << &testEuler003
-              << &testEuler004
-              << &testEuler005
-              << &testEuler006
-              << &testEuler007
-              << &testEuler008
-              << &testEuler009
-              << &testEuler010
-              << &testEuler011
-              /*<< &testEuler012*/
-              << &testEuler013
-              << &testEuler014
-              /*<< &testRecognizeAndSuppress001*/
+    functions << &testSuppressBlend001
+              << &testSuppressBlend002
+              << &testSuppressBlend003
+              << &testSuppressBlend004
+              << &testSuppressBlend005
+              << &testSuppressBlend006
+              << &testSuppressBlend007
+              << &testSuppressBlend008
+              << &testSuppressBlend009
+              << &testSuppressBlend010
+              << &testSuppressBlend011
+              /*<< &testSuppressBlend012*/
+              << &testSuppressBlend013
+              << &testSuppressBlend014
+              << &testSuppressBlend015
     ; // Put semicolon here for convenient adding new functions above ;)
   }
 
@@ -94,22 +94,21 @@ private:
 
 private:
 
-  static outcome testEuler001(const int funcID);
-  static outcome testEuler002(const int funcID);
-  static outcome testEuler003(const int funcID);
-  static outcome testEuler004(const int funcID);
-  static outcome testEuler005(const int funcID);
-  static outcome testEuler006(const int funcID);
-  static outcome testEuler007(const int funcID);
-  static outcome testEuler008(const int funcID);
-  static outcome testEuler009(const int funcID);
-  static outcome testEuler010(const int funcID);
-  static outcome testEuler011(const int funcID);
-  static outcome testEuler012(const int funcID);
-  static outcome testEuler013(const int funcID);
-  static outcome testEuler014(const int funcID);
-
-  static outcome testRecognizeAndSuppress001(const int funcID);
+  static outcome testSuppressBlend001(const int funcID);
+  static outcome testSuppressBlend002(const int funcID);
+  static outcome testSuppressBlend003(const int funcID);
+  static outcome testSuppressBlend004(const int funcID);
+  static outcome testSuppressBlend005(const int funcID);
+  static outcome testSuppressBlend006(const int funcID);
+  static outcome testSuppressBlend007(const int funcID);
+  static outcome testSuppressBlend008(const int funcID);
+  static outcome testSuppressBlend009(const int funcID);
+  static outcome testSuppressBlend010(const int funcID);
+  static outcome testSuppressBlend011(const int funcID);
+  static outcome testSuppressBlend012(const int funcID);
+  static outcome testSuppressBlend013(const int funcID);
+  static outcome testSuppressBlend014(const int funcID);
+  static outcome testSuppressBlend015(const int funcID);
 
 };
 

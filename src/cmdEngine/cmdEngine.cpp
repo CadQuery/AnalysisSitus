@@ -44,6 +44,40 @@ Handle(asiUI_CommonFacilities) cmdEngine::cf    = NULL;
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_EnableNotifier(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  interp->SetNotifierOn();
+  interp->GetProgress().SendLogMessage(LogNotice(Normal) << "Interpretor exits silent mode.");
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_DisableNotifier(const Handle(asiTcl_Interp)& interp,
+                           int                          argc,
+                           const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  interp->GetProgress().SendLogMessage(LogNotice(Normal) << "Interpretor enters silent mode.");
+  interp->SetNotifierOff();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_ShowCommands(const Handle(asiTcl_Interp)& interp,
                         int                          argc,
                         const char**                 argv)
@@ -124,6 +158,20 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
   /* =====================
    *  Add custom commands
    * ===================== */
+
+  interp->AddCommand("enable-notifier",
+    //
+    "enable-notifier\n"
+    "\t Enables notification messages.",
+    //
+    __FILE__, group, ENGINE_EnableNotifier);
+
+  interp->AddCommand("disable-notifier",
+    //
+    "disable-notifier\n"
+    "\t Disables notification messages.",
+    //
+    __FILE__, group, ENGINE_DisableNotifier);
 
   interp->AddCommand("show-commands",
     //

@@ -148,7 +148,7 @@ void exe_MainWindow::createDockWindows()
   // Domain viewer
   {
     QDockWidget* pDock = new QDockWidget("Domain", this);
-    pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    pDock->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
     Widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, pDock);
     pDock->setWidget(Widgets.wViewerDomain);
@@ -163,7 +163,7 @@ void exe_MainWindow::createDockWindows()
   // Host viewer
   {
     QDockWidget* pDock = new QDockWidget("Host", this);
-    pDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    pDock->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
     Widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, pDock);
     pDock->setWidget(Widgets.wViewerSurface);
@@ -179,7 +179,7 @@ void exe_MainWindow::createDockWindows()
   QDockWidget* pDockBrowser;
   {
     pDockBrowser = new QDockWidget("Data", this);
-    pDockBrowser->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    pDockBrowser->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
     Widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, cf->ProgressNotifier, pDockBrowser);
     Widgets.wBrowser->AddAssociatedViewer(cf->ViewerPart);
@@ -201,13 +201,13 @@ void exe_MainWindow::createDockWindows()
   QDockWidget* pDockFeature;
   {
     pDockFeature = new QDockWidget("Features", this);
-    pDockFeature->setAllowedAreas(Qt::LeftDockWidgetArea);
+    pDockFeature->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
     Widgets.wControlsFeature = new asiUI_ControlsFeature(cf->Model,
-                                                           cf->ViewerPart,
-                                                           cf->ProgressNotifier,
-                                                           cf->Plotter,
-                                                           pDockFeature);
+                                                         cf->ViewerPart,
+                                                         cf->ProgressNotifier,
+                                                         cf->Plotter,
+                                                         pDockFeature);
     //
     pDockFeature->setWidget(Widgets.wControlsFeature);
     //
@@ -220,7 +220,7 @@ void exe_MainWindow::createDockWindows()
   QDockWidget* pDockMesh;
   {
     pDockMesh = new QDockWidget("Mesh", this);
-    pDockMesh->setAllowedAreas(Qt::LeftDockWidgetArea);
+    pDockMesh->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
     Widgets.wControlsMesh = new asiUI_ControlsMesh(cf->Model,
                                                    cf->ViewerPart,
@@ -239,13 +239,13 @@ void exe_MainWindow::createDockWindows()
   QDockWidget* pDockPart;
   {
     pDockPart = new QDockWidget("Part", this);
-    pDockPart->setAllowedAreas(Qt::LeftDockWidgetArea);
+    pDockPart->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
     Widgets.wControlsPart = new asiUI_ControlsPart(cf->Model,
-                                                     cf->ViewerPart,
-                                                     cf->ProgressNotifier,
-                                                     cf->Plotter,
-                                                     pDockPart);
+                                                   cf->ViewerPart,
+                                                   cf->ProgressNotifier,
+                                                   cf->Plotter,
+                                                   pDockPart);
     //
     pDockPart->setWidget(Widgets.wControlsPart);
     //
@@ -300,6 +300,8 @@ void exe_MainWindow::createDockWindows()
     Widgets.wLogger = new asiUI_StyledTextEdit(pDockLogWindow);
     //
     pDockLogWindow->setWidget(Widgets.wLogger);
+    //
+    this->addDockWidget(Qt::RightDockWidgetArea, pDockLogWindow);
   }
 
   // Create status bar
@@ -358,7 +360,6 @@ void exe_MainWindow::createDockWindows()
     pDockConsoleWindow->setWidget(Widgets.wConsole);
     //
     this->addDockWidget(Qt::BottomDockWidgetArea, pDockConsoleWindow);
-    this->addDockWidget(Qt::BottomDockWidgetArea, pDockLogWindow);
   }
 }
 

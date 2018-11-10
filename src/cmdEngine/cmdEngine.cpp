@@ -53,8 +53,12 @@ int ENGINE_EnableNotifier(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
+  const bool wasSilent = !interp->IsNotifierOn();
+
   interp->SetNotifierOn();
-  interp->GetProgress().SendLogMessage(LogNotice(Normal) << "Interpretor exits silent mode.");
+
+  if ( wasSilent )
+    interp->GetProgress().SendLogMessage(LogNotice(Normal) << "Interpretor exits silent mode.");
 
   return TCL_OK;
 }

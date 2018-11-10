@@ -168,6 +168,12 @@ public:
     m_bNotifierOn = true;
   }
 
+  //! \return true if notifier is on.
+  bool IsNotifierOn() const
+  {
+    return m_bNotifierOn;
+  }
+
   //! Disables notification messages from the interpretor.
   void SetNotifierOff()
   {

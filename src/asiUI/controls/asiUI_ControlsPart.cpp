@@ -215,6 +215,9 @@ asiUI_ControlsPart::~asiUI_ControlsPart()
 void asiUI_ControlsPart::onLoadBRep()
 {
   QString filename = asiUI_Common::selectBRepFile(asiUI_Common::OpenSaveAction_Open);
+  //
+  if ( filename.isEmpty() )
+    return;
 
   m_notifier.SetMessageKey("Load BREP");
   m_notifier.Init(2);
@@ -253,6 +256,9 @@ void asiUI_ControlsPart::onLoadBRep()
 void asiUI_ControlsPart::onAddBRep()
 {
   QString filename = asiUI_Common::selectBRepFile(asiUI_Common::OpenSaveAction_Open);
+  //
+  if ( filename.isEmpty() )
+    return;
 
   m_notifier.SetMessageKey("Add BREP");
   m_notifier.Init(2);

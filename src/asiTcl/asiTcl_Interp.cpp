@@ -413,7 +413,7 @@ void asiTcl_Interp::PrintLastError()
   std::string errStr = Tcl_GetStringResult(m_pInterp);
 
   m_progress.SendLogMessage( LogErr(Normal) << "Tcl last error: %1"
-                                            << ( errStr.empty() ? "<undefined>" : errStr.c_str() ) );
+                                            << ( errStr.empty() ? "undefined." : errStr.c_str() ) );
 }
 
 //-----------------------------------------------------------------------------

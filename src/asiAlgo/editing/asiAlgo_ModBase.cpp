@@ -49,9 +49,9 @@
 
 asiAlgo_ModBase::asiAlgo_ModBase(ActAPI_ProgressEntry notifier,
                                  ActAPI_PlotterEntry  plotter)
-: BRepTools_Modification (),
-  m_progress             (notifier),
-  m_plotter              (plotter)
+: asiAlgo_BRepNormalization (),
+  m_progress                (notifier),
+  m_plotter                 (plotter)
 {}
 
 //-----------------------------------------------------------------------------

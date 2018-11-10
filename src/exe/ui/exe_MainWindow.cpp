@@ -295,7 +295,7 @@ void exe_MainWindow::createDockWindows()
   QDockWidget* pDockLogWindow;
   {
     pDockLogWindow = new QDockWidget("Logger", this);
-    pDockLogWindow->setAllowedAreas(Qt::BottomDockWidgetArea);
+    pDockLogWindow->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
     Widgets.wLogger = new asiUI_StyledTextEdit(pDockLogWindow);
     //

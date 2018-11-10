@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 01 March 2016
+// Created on: 10 November 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,31 +29,10 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_VtkWindow.h>
+#include <asiAlgo_BRepNormalization.h>
 
-//! Constructor.
-//! \param parent [in] parent widget.
-//! \param f      [in] window flags.
-asiUI_VtkWindow::asiUI_VtkWindow(QWidget* parent, Qt::WindowFlags f)
-: QVTKWidget(parent, f)
+//! Default ctor.
+asiAlgo_BRepNormalization::asiAlgo_BRepNormalization()
+: BRepTools_Modification (),
+  m_bErrorState          (false)
 {}
-
-//! Destructor.
-asiUI_VtkWindow::~asiUI_VtkWindow()
-{}
-
-//! Custom reaction on close event.
-//! \param pEvent [in] event instance.
-void asiUI_VtkWindow::closeEvent(QCloseEvent* pEvent)
-{
-  asiUI_NotUsed(pEvent);
-
-  emit windowClosed();
-}
-
-void asiUI_VtkWindow::wheelEvent(QWheelEvent* pEvent)
-{
-  QVTKWidget::wheelEvent(pEvent);
-
-  emit wheelEventOccurred();
-}

@@ -32,10 +32,8 @@
 #include <asiAlgo_RebuildEdge.h>
 
 // asiAlgo includes
+#include <asiAlgo_BRepNormalizer.h>
 #include <asiAlgo_ModConstructEdge.h>
-
-// OCCT includes
-#include <BRepTools_Modifier.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -86,16 +84,13 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
     return false;
 
   // Initialize Modifier.
-  BRepTools_Modifier Modifier;
+  asiAlgo_BRepNormalizer Modifier(m_progress, m_plotter);
   Modifier.Init(partShape);
 
   // Perform Modification.
-  Modifier.Perform(Mod);
-
-  // Check.
-  if ( !Modifier.IsDone() )
+  if ( !Modifier.Perform(Mod) )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "BRepTools_Modifier is not done.");
+    m_progress.SendLogMessage(LogErr(Normal) << "Geometry normalization failed.");
     return false;
   }
 

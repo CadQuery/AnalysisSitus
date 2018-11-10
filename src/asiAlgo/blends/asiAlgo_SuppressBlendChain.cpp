@@ -263,8 +263,8 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
     // Apply geometric operator.
     if ( !rebuildEdge.Perform(edge2Rebuild) )
     {
-      m_progress.SendLogMessage(LogErr(Normal) << "BRepTools_Modifier is not done.");
-      continue;
+      m_progress.SendLogMessage(LogErr(Normal) << "Cannot rebuild edge.");
+      return false;
     }
 
     // Update working part.

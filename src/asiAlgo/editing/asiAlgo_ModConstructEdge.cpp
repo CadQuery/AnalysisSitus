@@ -162,6 +162,8 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
   if ( !intCS(isurf, icurve, ipoints) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot intersect curve and surface.");
+
+    this->SetErrorStateOn();
     return false;
   }
 
@@ -172,6 +174,8 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
   if ( !numInterPts )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "No intersection points found.");
+
+    this->SetErrorStateOn();
     return false;
   }
   else if ( numInterPts > 1 )
@@ -245,6 +249,8 @@ bool asiAlgo_ModConstructEdge::NewCurve2d(const TopoDS_Edge&    E,
   if ( c2d.IsNull() )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot fix p-curve");
+
+    this->SetErrorStateOn();
     return false;
   }
 
@@ -346,6 +352,8 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
   if ( !edgeFaceMap.Contains(targetEdge) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Edge is not a part of the model.");
+
+    this->SetErrorStateOn();
     return false;
   }
 
@@ -356,6 +364,8 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
   if ( edgeFaces.Extent() != 2 )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Edge is either a border or a non-manifold one.");
+
+    this->SetErrorStateOn();
     return false;
   }
 
@@ -511,7 +521,11 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
   //
   if ( f1_prev_neighbors.Extent() != 1 )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood.");
+    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1 (id %1)."
+                                                "Cannot find f_first."
+                                             << f1_id);
+
+    this->SetErrorStateOn();
     return false;
   }
   //
@@ -523,7 +537,11 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
   //
   if ( f1_next_neighbors.Extent() != 1 )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood.");
+    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1 (id %1)."
+                                                "Cannot find f_first."
+                                             << f1_id);
+
+    this->SetErrorStateOn();
     return false;
   }
   //
@@ -543,6 +561,8 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
                              m_edgeInfo.resolution.icurve) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot intersect faces.");
+
+    this->SetErrorStateOn();
     return false;
   }
 
@@ -554,6 +574,8 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
                           m_edgeInfo.resolution.icurve->C) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot correct orientation of the intersection curve.");
+
+    this->SetErrorStateOn();
     return false;
   }
 

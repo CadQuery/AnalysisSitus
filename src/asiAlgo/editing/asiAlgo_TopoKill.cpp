@@ -39,49 +39,13 @@
 
 //-----------------------------------------------------------------------------
 
-TopAbs_Orientation ChooseOri(const TopoDS_Edge& oldEdge,
-                             const TopoDS_Edge& newEdge,
-                             const TopoDS_Face& face)
-{
-  double fo, lo, fn, ln;
-  //
-  Handle(Geom2d_Curve) oldCurve = BRep_Tool::CurveOnSurface(oldEdge, face, fo, lo);
-  Handle(Geom2d_Curve) newCurve = BRep_Tool::CurveOnSurface(newEdge, face, fn, ln);
-
-  // Check natural orientation at start point
-  // ...
-
-  gp_Pnt2d oldCurveP;
-  gp_Vec2d oldCurveV1;
-  oldCurve->D1(fo, oldCurveP, oldCurveV1);
-
-  gp_Pnt2d newCurveP;
-  gp_Vec2d newCurveV1;
-  newCurve->D1(fn, newCurveP, newCurveV1);
-
-  bool isReversedGeometrically;
-  if ( Abs( oldCurveV1.Angle(newCurveV1) ) > Abs( oldCurveV1.Angle( newCurveV1.Reversed() ) ) )
-    isReversedGeometrically = true;
-  else
-    isReversedGeometrically = false;
-
-  TopAbs_Orientation ori = oldEdge.Orientation();
-  //
-  if ( isReversedGeometrically )
-    ori = (ori == TopAbs_FORWARD ? TopAbs_REVERSED : TopAbs_FORWARD); // Invert.
-
-  return ori;
-}
-
-//-----------------------------------------------------------------------------
-
 asiAlgo_TopoKill::asiAlgo_TopoKill(const TopoDS_Shape&  masterCAD,
                                    ActAPI_ProgressEntry progress,
                                    ActAPI_PlotterEntry  plotter)
-: ActAPI_IAlgorithm(progress, plotter)
-{
-  m_master = masterCAD;
-}
+: ActAPI_IAlgorithm (progress, plotter),
+  m_master          (masterCAD),
+  m_bErrorState     (false)
+{}
 
 //-----------------------------------------------------------------------------
 
@@ -192,7 +156,7 @@ bool asiAlgo_TopoKill::Apply()
   // Rebuild topology graph recursively.
   this->buildTopoGraphLevel(m_master, m_result);
 
-  return true;
+  return !this->IsErrorState(); // Some error may have occurred in recursion.
 }
 
 //-----------------------------------------------------------------------------
@@ -200,6 +164,9 @@ bool asiAlgo_TopoKill::Apply()
 void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
                                            TopoDS_Shape&       result)
 {
+  if ( this->IsErrorState() )
+    return;
+
   BRep_Builder BB;
 
   // The "false" flag passed to the iterator below means that we do not
@@ -211,10 +178,6 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
   {
     const TopoDS_Shape& currentShape = it.Value();
     TopoDS_Shape newResult;
-
-    // Cache current face for resolving orientations of substituted edges.
-    if ( currentShape.ShapeType() == TopAbs_FACE )
-      m_currFace = TopoDS::Face(currentShape);
 
     // This flag indicates whether the twin element for the current entity
     // has been already built. If so, we only need to link the newly
@@ -264,12 +227,16 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
           {
             TopAbs_Orientation newOri;
             //
-            if ( currentShape.ShapeType() == TopAbs_EDGE && !m_currFace.IsNull() )
+            if ( currentShape.ShapeType() == TopAbs_EDGE )
             {
               // For edges, we should be careful with orientations
-              newOri = ChooseOri( TopoDS::Edge(currentShape),
-                                  TopoDS::Edge(newResult),
-                                  m_currFace );
+              if ( !this->chooseOri(TopoDS::Edge(currentShape),
+                                    TopoDS::Edge(newResult),
+                                    newOri) )
+              {
+                this->SetErrorStateOn();
+                return;
+              }
             }
             else
               newOri = currentShape.Orientation();
@@ -329,4 +296,47 @@ void asiAlgo_TopoKill::buildTopoGraphLevel(const TopoDS_Shape& root,
       BB.Add(result, newResult);
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_TopoKill::chooseOri(const TopoDS_Edge&  oldEdge,
+                                 const TopoDS_Edge&  newEdge,
+                                 TopAbs_Orientation& ori) const
+{
+  // First, we check if the two edges are geometrically oriented in the
+  // same way. We have to check this on 3D curves because the new edge may
+  // have no parametric image on the host face.
+  double fo, lo, fn, ln;
+  //
+  Handle(Geom_Curve) oldCurve = BRep_Tool::Curve(oldEdge, fo, lo);
+  Handle(Geom_Curve) newCurve = BRep_Tool::Curve(newEdge, fn, ln);
+  //
+  if ( oldCurve.IsNull() || newCurve.IsNull() )
+    return false;
+
+  // Check natural orientation at start point
+  // ...
+
+  gp_Pnt oldCurveP;
+  gp_Vec oldCurveV1;
+  oldCurve->D1(fo, oldCurveP, oldCurveV1);
+
+  gp_Pnt newCurveP;
+  gp_Vec newCurveV1;
+  newCurve->D1(fn, newCurveP, newCurveV1);
+
+  bool isReversedGeometrically;
+  if ( Abs( oldCurveV1.Angle(newCurveV1) ) > Abs( oldCurveV1.Angle( newCurveV1.Reversed() ) ) )
+    isReversedGeometrically = true;
+  else
+    isReversedGeometrically = false;
+
+  // Agree or not with the as-built orientation topologically.
+  ori = oldEdge.Orientation();
+  //
+  if ( isReversedGeometrically )
+    ori = (ori == TopAbs_FORWARD ? TopAbs_REVERSED : TopAbs_FORWARD); // Invert.
+
+  return true;
 }

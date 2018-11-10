@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 01 March 2016
+// Created on: 10 November 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,32 +28,52 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiUI_VtkWindow.h>
+#ifndef asiAlgo_BRepNormalization_HeaderFile
+#define asiAlgo_BRepNormalization_HeaderFile
 
-//! Constructor.
-//! \param parent [in] parent widget.
-//! \param f      [in] window flags.
-asiUI_VtkWindow::asiUI_VtkWindow(QWidget* parent, Qt::WindowFlags f)
-: QVTKWidget(parent, f)
-{}
+// asiAlgo includes
+#include <asiAlgo.h>
 
-//! Destructor.
-asiUI_VtkWindow::~asiUI_VtkWindow()
-{}
+// Active Data includes
+#include <ActAPI_IAlgorithm.h>
 
-//! Custom reaction on close event.
-//! \param pEvent [in] event instance.
-void asiUI_VtkWindow::closeEvent(QCloseEvent* pEvent)
+// OCCT includes
+#include <BRepTools_Modification.hxx>
+
+//! Subclass of BRepTools_Modification to provide better error reporting.
+class asiAlgo_BRepNormalization : public BRepTools_Modification
 {
-  asiUI_NotUsed(pEvent);
+public:
 
-  emit windowClosed();
-}
+  asiAlgo_EXPORT
+    asiAlgo_BRepNormalization();
 
-void asiUI_VtkWindow::wheelEvent(QWheelEvent* pEvent)
-{
-  QVTKWidget::wheelEvent(pEvent);
+public:
 
-  emit wheelEventOccurred();
-}
+  //! Activates error state.
+  void SetErrorStateOn()
+  {
+    m_bErrorState = true;
+  }
+
+  //! Deactivates error state.
+  void SetErrorStateOff()
+  {
+    m_bErrorState = false;
+  }
+
+  //! \return error state flag.
+  bool IsErrorState() const
+  {
+    return m_bErrorState;
+  }
+
+protected:
+
+  //! Indicates whether some error occurred, so the caller algorithm
+  //! (Normalizer) should gracefully halt.
+  bool m_bErrorState;
+
+};
+
+#endif

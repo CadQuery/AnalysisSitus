@@ -599,9 +599,9 @@ int ENGINE_InterpolatePoints(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_Cut(const Handle(asiTcl_Interp)& interp,
-               int                          argc,
-               const char**                 argv)
+int ENGINE_BOPCut(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
 {
   if ( argc != 4 && argc != 5 )
   {
@@ -644,9 +644,9 @@ int ENGINE_Cut(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_Fuse(const Handle(asiTcl_Interp)& interp,
-                int                          argc,
-                const char**                 argv)
+int ENGINE_BOPFuse(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
 {
   if ( argc != 4 )
   {
@@ -1069,20 +1069,20 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_InterpolatePoints);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("cut",
+  interp->AddCommand("bop-cut",
     //
-    "cut result op1 op2 [fuzz]\n"
+    "bop-cut result op1 op2 [fuzz]\n"
     "\t Cuts <op2> from <op1> using Boolean Cut operation.",
     //
-    __FILE__, group, ENGINE_Cut);
+    __FILE__, group, ENGINE_BOPCut);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("fuse",
+  interp->AddCommand("bop-fuse",
     //
-    "fuse result op1 op2\n"
+    "bop-fuse result op1 op2\n"
     "\t Fuses the passed two operands using Boolean Fuse operation.",
     //
-    __FILE__, group, ENGINE_Fuse);
+    __FILE__, group, ENGINE_BOPFuse);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("fuse-gen",

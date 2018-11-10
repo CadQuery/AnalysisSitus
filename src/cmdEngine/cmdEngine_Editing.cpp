@@ -148,7 +148,7 @@ int ENGINE_KEV(const Handle(asiTcl_Interp)& interp,
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "This function is available "
                                                            "for named shapes only.");
-    return TCL_OK;
+    return TCL_ERROR;
   }
 
   // Find edge to kill.
@@ -158,7 +158,7 @@ int ENGINE_KEV(const Handle(asiTcl_Interp)& interp,
        !FindNamedArg(interp, argc, argv, naming, "name", TopAbs_EDGE, edges) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find edge to kill.");
-    return TCL_OK;
+    return TCL_ERROR;
   }
   //
   const TopoDS_Edge& E = TopoDS::Edge( edges.First() );
@@ -173,7 +173,7 @@ int ENGINE_KEV(const Handle(asiTcl_Interp)& interp,
     if ( !FindNamedArg(interp, argc, argv, naming, "vertex", TopAbs_VERTEX, vertices) )
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find vertex to kill.");
-      return TCL_OK;
+      return TCL_ERROR;
     }
     //
     V = TopoDS::Vertex( vertices.First() );
@@ -200,7 +200,7 @@ int ENGINE_KEV(const Handle(asiTcl_Interp)& interp,
   if ( !KEV->Perform() )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "KEV failed.");
-    return TCL_OK;
+    return TCL_ERROR;
   }
   //
   const TopoDS_Shape& result = KEV->GetResult();

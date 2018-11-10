@@ -105,6 +105,8 @@ set (blends_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (editing_H_FILES
+  editing/asiAlgo_BRepNormalization.h
+  editing/asiAlgo_BRepNormalizer.h
   editing/asiAlgo_DeleteEdges.h
   editing/asiAlgo_DetachFaces.h
   editing/asiAlgo_Euler.h
@@ -131,6 +133,8 @@ set (editing_H_FILES
   editing/asiAlgo_TopoKill.h
 )
 set (editing_CPP_FILES
+  editing/asiAlgo_BRepNormalization.cpp
+  editing/asiAlgo_BRepNormalizer.cpp
   editing/asiAlgo_DeleteEdges.cpp
   editing/asiAlgo_DetachFaces.cpp
   editing/asiAlgo_Euler.cpp

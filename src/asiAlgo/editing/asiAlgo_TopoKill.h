@@ -39,6 +39,8 @@
 
 // OCCT includes
 #include <NCollection_IndexedMap.hxx>
+#include <TopAbs_Orientation.hxx>
+#include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopTools_ShapeMapHasher.hxx>
 
@@ -155,6 +157,24 @@ public:
     m_history = history;
   }
 
+  //! Activates error state.
+  void SetErrorStateOn()
+  {
+    m_bErrorState = true;
+  }
+
+  //! Deactivates error state.
+  void SetErrorStateOff()
+  {
+    m_bErrorState = false;
+  }
+
+  //! \return error state flag.
+  bool IsErrorState() const
+  {
+    return m_bErrorState;
+  }
+
 protected:
 
   //! Recursive routine which builds a new topological graph in bottom-up
@@ -171,13 +191,32 @@ protected:
     buildTopoGraphLevel(const TopoDS_Shape& root,
                         TopoDS_Shape&       result);
 
+  //! Internal method which allows to choose properly the topological
+  //! orientation for the new edge which is a replacement for the old one.
+  //! Since the new edge may have opposite parameterization comparing to
+  //! the old edge, simply reusing the old orientation will not work, so
+  //! a more sophisticated analysis is necessary.
+  //!
+  //! \param[in]  oldEdge old edge.
+  //! \param[in]  newEdge new edge.
+  //! \param[out] ori     chosen orientation.
+  //! \return false if this method cannot choose orientation due to faulty
+  //!         edge definitions.
+  asiAlgo_EXPORT bool
+    chooseOri(const TopoDS_Edge&  oldEdge,
+              const TopoDS_Edge&  newEdge,
+              TopAbs_Orientation& ori) const;
+
 // Input and output:
 protected:
 
-  TopoDS_Face             m_currFace; //!< Current face cached for resolving edge orientations.
-  TopoDS_Shape            m_master;   //!< Master CAD model.
-  TopoDS_Shape            m_result;   //!< Result CAD model.
-  Handle(asiAlgo_History) m_history;  //!< History of modification.
+  TopoDS_Shape            m_master;  //!< Master CAD model.
+  TopoDS_Shape            m_result;  //!< Result CAD model.
+  Handle(asiAlgo_History) m_history; //!< History of modification.
+
+  //! Indicates whether some error occurred, so the caller algorithm
+  //! (Normalizer) should gracefully halt.
+  bool m_bErrorState;
 
 // Requests:
 protected:

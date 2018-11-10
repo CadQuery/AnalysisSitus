@@ -63,7 +63,7 @@ protected:
 signals:
 
   void windowClosed();
-  void wheelEventOccured();
+  void wheelEventOccurred();
 
 };
 

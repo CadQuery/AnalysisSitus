@@ -1,13 +1,5 @@
 # Set working variables.
-set datafile     cad/nist/nist_ctc_04.brep
-set ref_ncomp    0
-set ref_ncompso  0
-set ref_nso      1
-set ref_nshe     1
-set ref_nf       505
-set ref_nw       610
-set ref_ne       1242
-set ref_nv       710
+set datafile cad/nist/nist_ctc_04.brep
 
 # Read input geometry.
 set datadir $env(ASI_TEST_DATA)
@@ -19,8 +11,6 @@ if { [check-validity] != 1 } {
 }
 #
 print-summary
-#
-set initialToler [get-tolerance]
 
 # Apply topological operators.
 if { [check-euler 34] != 1 } {

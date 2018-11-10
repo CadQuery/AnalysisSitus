@@ -174,7 +174,7 @@ void asiUI_CurvaturePlot::Render(const std::vector<double>& params,
   connect( m_pViewer, SIGNAL( mouseEvent(QMouseEvent*) ),
            this,      SLOT( onMouseEvent() ) );
   //
-  connect( m_pViewer, SIGNAL( wheelEventOccured() ),
+  connect( m_pViewer, SIGNAL( wheelEventOccurred() ),
            this,      SLOT( onMouseEvent() ) );
   //
   connect( pDump, SIGNAL( clicked() ),

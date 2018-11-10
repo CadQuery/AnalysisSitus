@@ -32,6 +32,7 @@
 #define asiAlgo_ModBase_h
 
 // asiAlgo includes
+#include <asiAlgo_BRepNormalization.h>
 #include <asiAlgo_IntersectionCurveSS.h>
 #include <asiAlgo_IntersectionPointCC.h>
 #include <asiAlgo_Utils.h>
@@ -40,18 +41,15 @@
 #include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
 
-// OCCT includes
-#include <BRepTools_Modification.hxx>
-
 //! Base class for geometric modifications driven by BRepTools_Modifier.
 //! All such modifications are essentially homeomorphisms as they cannot
 //! affect topology of a CAD model.
-class asiAlgo_ModBase : public BRepTools_Modification
+class asiAlgo_ModBase : public asiAlgo_BRepNormalization
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_ModBase, BRepTools_Modification)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_ModBase, asiAlgo_BRepNormalization)
 
 public:
 

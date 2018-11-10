@@ -41,3 +41,11 @@ if { [check-contours] != 1 } {
 if { [check-validity] != 1 } {
   error "Final part is not valid."
 }
+
+# Check that tolernace has not significantly degraded.
+set finalToler [get-tolerance]
+puts "Final tolerance ($finalToler) vs initial tolerance ($initialToler)"
+#
+if { [expr $finalToler - $initialToler] > 1e-3 } {
+  error "Significant tolerance degradation."
+}

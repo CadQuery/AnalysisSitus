@@ -1802,11 +1802,11 @@ int ENGINE_CheckContours(const Handle(asiTcl_Interp)& interp,
   if ( isOk )
     interp->GetProgress().SendLogMessage(LogInfo(Normal) << "All faces have closed contours.");
   else
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Some contours contain gaps.");
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Some contours contain gaps.");
 
   *interp << (isOk ? 1 : 0);
 
-  return isOk ? TCL_OK : TCL_ERROR;
+  return TCL_OK;
 }
 
 //-----------------------------------------------------------------------------

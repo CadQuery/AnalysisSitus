@@ -737,9 +737,7 @@ int ENGINE_CheckEuler(const Handle(asiTcl_Interp)& interp,
                                 interp->GetProgress(),
                                 interp->GetPlotter() ).CheckEulerPoincare(genus);
     //
-    if ( isOk )
-      interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Euler-Poincare property holds.");
-    else
+    if ( !isOk )
       interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Euler-Poincare property does not hold.");
 
     // Append result to the interpreter.

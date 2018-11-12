@@ -47,7 +47,7 @@ public:
                  ActAPI_ProgressEntry           progress = NULL,
                  ActAPI_PlotterEntry            plotter  = NULL)
   //
-  : m_model(model) {}
+  : m_model(model), m_progress(progress), m_plotter(plotter) {}
 
 protected:
 

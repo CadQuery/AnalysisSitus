@@ -46,16 +46,41 @@ class asiAlgo_IntersectCS : public ActAPI_IAlgorithm
 {
 public:
 
+  //! Constructor.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_IntersectCS(ActAPI_ProgressEntry progress,
                         ActAPI_PlotterEntry  plotter);
 
 public:
 
+  //! Performs curve-surface intersection.
+  //! \param[in]  S                   surface.
+  //! \param[in]  C                   curve to intersect with the surface.
+  //! \param[out] result              intersection points.
+  //! \param[out] hasTangentialPoints indicates whether at least one tangential
+  //!                                 intersection point was detected.
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     operator()(const Handle(Geom_Surface)&   S,
                const Handle(Geom_Curve)&     C,
-               asiAlgo_IntersectionPointsCS& result);
+               asiAlgo_IntersectionPointsCS& result,
+               bool&                         hasTangentialPoints);
+
+public:
+
+  //! Sets angular tolerance for resolving tangency situations at
+  //! intersection points.
+  //! \param[in] tolDeg angular tolerance (in degrees).
+  void SetTangencyAngularTol(const double tolDeg)
+  {
+    m_fTangencyTolRad = tolDeg/180.0*M_PI;
+  }
+
+protected:
+
+  double m_fTangencyTolRad; //!< Tolerance for resolving tangency situations (radians).
 
 };
 

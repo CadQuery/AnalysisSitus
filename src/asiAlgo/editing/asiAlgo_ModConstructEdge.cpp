@@ -108,7 +108,7 @@ bool asiAlgo_ModConstructEdge::NewCurve(const TopoDS_Edge&  E,
                                         double&             tol)
 {
   // Now 3D curve is constructed for the target edge only.
-  if ( !E.IsPartner(m_edgeInfo.situation.e) )
+  if ( !E.IsPartner(m_edgeInfo.situation.e_s1_s2) )
     return false;
 
   // Check and set the result.
@@ -131,35 +131,51 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
                                         gp_Pnt&              P,
                                         double&              tol)
 {
-  if ( !V.IsPartner(m_edgeInfo.situation.v_first) &&
-       !V.IsPartner(m_edgeInfo.situation.v_last) )
+  if ( !V.IsPartner(m_edgeInfo.situation.v_s1_s2_t1) &&
+       !V.IsPartner(m_edgeInfo.situation.v_s1_s2_t2) )
     return false;
 
   // Intersection point.
   gp_Pnt* ipoint = NULL;
 
+  // Get old point of the vertex.
+  gp_Pnt oldPt = BRep_Tool::Pnt(V);
+
   // Curve and surface to intersect.
   Handle(Geom_Curve)   icurve = m_edgeInfo.resolution.icurve->C;
   Handle(Geom_Surface) isurf;
 
+  TCollection_AsciiString opFaceName;
+
   // First vertex.
-  if ( V.IsPartner(m_edgeInfo.situation.v_first) )
+  if ( V.IsPartner(m_edgeInfo.situation.v_s1_s2_t1) )
   {
-    isurf  = BRep_Tool::Surface(m_edgeInfo.situation.f_first);
+    isurf  = BRep_Tool::Surface(m_edgeInfo.situation.f_t1);
     ipoint = &m_edgeInfo.resolution.ivf;
+
+    // For diagnostics.
+    opFaceName = "f_t1";
   }
-  else if ( V.IsPartner(m_edgeInfo.situation.v_last) ) // Last vertex.
+  else if ( V.IsPartner(m_edgeInfo.situation.v_s1_s2_t2) ) // Last vertex.
   {
-    isurf  = BRep_Tool::Surface(m_edgeInfo.situation.f_last);
+    isurf  = BRep_Tool::Surface(m_edgeInfo.situation.f_t2);
     ipoint = &m_edgeInfo.resolution.ivl;
+
+    // For diagnostics.
+    opFaceName = "f_t2";
   }
 
-  // Intersect.
+  // Prepare intersection tool.
   asiAlgo_IntersectCS intCS(m_progress, m_plotter);
   //
+  intCS.SetTangencyAngularTol(0.05); // Set tolerance (in degrees) for
+                                     // detecting tangential intersections.
+
+  // Intersect.
+  bool hasTangencyPoints = false;
   asiAlgo_IntersectionPointsCS ipoints;
   //
-  if ( !intCS(isurf, icurve, ipoints) )
+  if ( !intCS(isurf, icurve, ipoints, hasTangencyPoints) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot intersect curve and surface.");
 
@@ -173,20 +189,25 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
   //
   if ( !numInterPts )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "No intersection points found.");
+    m_progress.SendLogMessage(LogWarn(Normal) << "No intersection points found between "
+                                                 "intersection curve 'icurve' and host surface of '%1'."
+                                              << opFaceName);
 
-    this->SetErrorStateOn();
-    return false;
+    // Reuse the old point.
+    (*ipoint) = oldPt;
   }
   else if ( numInterPts > 1 )
   {
-    m_progress.SendLogMessage(LogWarn(Normal) << "Ambiguous intersection point (%1 points computed)."
-                                              << numInterPts);
+    m_progress.SendLogMessage(LogWarn(Normal) << "Ambiguous intersection point (%1 points computed) between "
+                                                 "intersection curve 'icurve' and host surface of '%2'."
+                                              << numInterPts
+                                              << opFaceName);
 
-    // In case of ambiguous intersection, we take the average point. Ambiguous
+    // In case of ambiguous intersection, we take the closest point. Ambiguous
     // intersection may occur, for example, if the surface and the line to
-    // intersect are touching each other.
-    gp_XYZ averagePt;
+    // intersect are touching each other, or if a line intersects a cylinder.
+    gp_XYZ chosenPt, avrPoint;
+    double minDist = DBL_MAX;
     //
     for ( int k = 1; k <= numInterPts; ++k )
     {
@@ -200,13 +221,25 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
       m_plotter.DRAW_POINT(ipoints(k)->P, Color_Red, ipointname);
 #endif
 
-      uncertainty =  Max(uncertainty, ipoints(k)->Uncertainty);
-      averagePt   += ipoints(k)->P.XYZ();
-    }
-    averagePt /= numInterPts;
+      // Select min-distance point.
+      const double dist = ( ipoints(k)->P.XYZ() - oldPt.XYZ() ).Modulus();
+      if ( dist < minDist )
+      {
+        minDist     = dist;
+        chosenPt    = ipoints(k)->P.XYZ();
+        uncertainty = ipoints(k)->Uncertainty;
+      }
 
-    // Initialize intersection point.
-    (*ipoint) = averagePt;
+      // Compute average point.
+      avrPoint += ipoints(k)->P.XYZ();
+    }
+    //
+    avrPoint /= numInterPts;
+
+    // Initialize intersection point. In case if we have the situation of
+    // tangency, we take average point for better precision as multiple points
+    // represent just one (though ill-defined) intersection.
+    (*ipoint) = hasTangencyPoints ? avrPoint : chosenPt;
   }
   else // One intersection point.
   {
@@ -217,7 +250,7 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
   }
 
 #if defined DRAW_DEBUG
-  if ( V.IsPartner(m_edgeInfo.situation.v_first) )
+  if ( V.IsPartner(m_edgeInfo.situation.v_s1_s2_t1) )
     m_plotter.DRAW_POINT(*ipoint, Color_Red, "NewPoint:P (v first)");
   else
     m_plotter.DRAW_POINT(*ipoint, Color_Blue, "NewPoint:P (v last)");
@@ -241,7 +274,7 @@ bool asiAlgo_ModConstructEdge::NewCurve2d(const TopoDS_Edge&    E,
 {
   asiAlgo_NotUsed(F);
 
-  if ( !E.IsPartner(m_edgeInfo.situation.e) )
+  if ( !E.IsPartner(m_edgeInfo.situation.e_s1_s2) )
     return false;
 
   Handle(Geom2d_Curve) c2d = this->buildPCurve(NewE, NewF);
@@ -271,14 +304,14 @@ bool asiAlgo_ModConstructEdge::NewParameter(const TopoDS_Vertex& V,
                                             double&              p,
                                             double&              tol)
 {
-  if ( !V.IsPartner(m_edgeInfo.situation.v_first) &&
-       !V.IsPartner(m_edgeInfo.situation.v_last) )
+  if ( !V.IsPartner(m_edgeInfo.situation.v_s1_s2_t1) &&
+       !V.IsPartner(m_edgeInfo.situation.v_s1_s2_t2) )
     return false;
 
-  if ( E.IsPartner(m_edgeInfo.situation.e) )
+  if ( E.IsPartner(m_edgeInfo.situation.e_s1_s2) )
   {
     // V_first
-    if ( V.IsPartner(m_edgeInfo.situation.v_first) )
+    if ( V.IsPartner(m_edgeInfo.situation.v_s1_s2_t1) )
     {
       gp_Pnt proj;
       ShapeAnalysis_Curve sac;
@@ -298,7 +331,7 @@ bool asiAlgo_ModConstructEdge::NewParameter(const TopoDS_Vertex& V,
     }
 
     // V_last
-    else if ( V.IsPartner(m_edgeInfo.situation.v_last) )
+    else if ( V.IsPartner(m_edgeInfo.situation.v_s1_s2_t2) )
     {
       gp_Pnt proj;
       ShapeAnalysis_Curve sac;
@@ -370,12 +403,12 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
   }
 
   // Initialize edge in question.
-  m_edgeInfo.situation.e = targetEdge;
+  m_edgeInfo.situation.e_s1_s2 = targetEdge;
 
   // Initialize vertices.
   ShapeAnalysis_Edge sae;
-  m_edgeInfo.situation.v_first = sae.FirstVertex(m_edgeInfo.situation.e);
-  m_edgeInfo.situation.v_last  = sae.LastVertex(m_edgeInfo.situation.e);
+  m_edgeInfo.situation.v_s1_s2_t1 = sae.FirstVertex(m_edgeInfo.situation.e_s1_s2);
+  m_edgeInfo.situation.v_s1_s2_t2 = sae.LastVertex(m_edgeInfo.situation.e_s1_s2);
 
   // Initialize owner faces.
   const TopoDS_Face& F1 = TopoDS::Face( edgeFaces.First() );
@@ -390,50 +423,50 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
     {
       const TopoDS_Shape& currentEdge = eexp.Current();
       //
-      if ( !currentEdge.IsPartner(m_edgeInfo.situation.e) )
+      if ( !currentEdge.IsPartner(m_edgeInfo.situation.e_s1_s2) )
         continue;
 
       // Face which employs the target edge with its inherent orientation
       // is declared as F1.
-      if ( currentEdge.Orientation() == m_edgeInfo.situation.e.Orientation() )
+      if ( currentEdge.Orientation() == m_edgeInfo.situation.e_s1_s2.Orientation() )
       {
         if ( edgeFace.IsPartner(F1) )
         {
-          m_edgeInfo.situation.f_1 = F1;
-          m_edgeInfo.situation.f_2 = F2;
+          m_edgeInfo.situation.f_s1 = F1;
+          m_edgeInfo.situation.f_s2 = F2;
         }
         else
         {
-          m_edgeInfo.situation.f_1 = F2;
-          m_edgeInfo.situation.f_2 = F1;
+          m_edgeInfo.situation.f_s1 = F2;
+          m_edgeInfo.situation.f_s2 = F1;
         }
       }
       else
       {
         if ( edgeFace.IsPartner(F1) )
         {
-          m_edgeInfo.situation.f_1 = F2;
-          m_edgeInfo.situation.f_2 = F1;
+          m_edgeInfo.situation.f_s1 = F2;
+          m_edgeInfo.situation.f_s2 = F1;
         }
         else
         {
-          m_edgeInfo.situation.f_1 = F1;
-          m_edgeInfo.situation.f_2 = F2;
+          m_edgeInfo.situation.f_s1 = F1;
+          m_edgeInfo.situation.f_s2 = F2;
         }
       }
     }
 
     // Check if all required information has been collected. If so, break.
-    if ( !m_edgeInfo.situation.f_1.IsNull() &&
-         !m_edgeInfo.situation.f_2.IsNull() )
+    if ( !m_edgeInfo.situation.f_s1.IsNull() &&
+         !m_edgeInfo.situation.f_s2.IsNull() )
       break;
   }
 
   // Build maps for child-parent relations between vertices and edges in F1
   // and F2. These maps are used to resolve previous and next edges.
   TopTools_IndexedDataMapOfShapeListOfShape vertexEdgesF1, vertexEdgesF2;
-  TopExp::MapShapesAndAncestors(m_edgeInfo.situation.f_1, TopAbs_VERTEX, TopAbs_EDGE, vertexEdgesF1);
-  TopExp::MapShapesAndAncestors(m_edgeInfo.situation.f_2, TopAbs_VERTEX, TopAbs_EDGE, vertexEdgesF2);
+  TopExp::MapShapesAndAncestors(m_edgeInfo.situation.f_s1, TopAbs_VERTEX, TopAbs_EDGE, vertexEdgesF1);
+  TopExp::MapShapesAndAncestors(m_edgeInfo.situation.f_s2, TopAbs_VERTEX, TopAbs_EDGE, vertexEdgesF2);
 
   // Initialize the previous and the next edges for the target edge on F1.
   for ( int i = 1; i <= vertexEdgesF1.Extent(); ++i )
@@ -445,9 +478,9 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
     // we skip such vertex.
     bool isFirstOnE = false, isLastOnE = false;
     //
-    if ( vertex.IsPartner(m_edgeInfo.situation.v_first) )
+    if ( vertex.IsPartner(m_edgeInfo.situation.v_s1_s2_t1) )
       isFirstOnE = true;
-    else if ( vertex.IsPartner(m_edgeInfo.situation.v_last) )
+    else if ( vertex.IsPartner(m_edgeInfo.situation.v_s1_s2_t2) )
       isLastOnE = true;
     //
     if ( !isFirstOnE && !isLastOnE )
@@ -459,18 +492,18 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
     {
       const TopoDS_Shape& currentEdge = eit.Value();
       //
-      if ( currentEdge.IsPartner(m_edgeInfo.situation.e) )
+      if ( currentEdge.IsPartner(m_edgeInfo.situation.e_s1_s2) )
         continue; // Skip target edge itself as it is always in the list of parents.
 
       if ( isFirstOnE )
-        m_edgeInfo.situation.e_1_prev = TopoDS::Edge(currentEdge);
+        m_edgeInfo.situation.e_s1_t1 = TopoDS::Edge(currentEdge);
       else if ( isLastOnE )
-        m_edgeInfo.situation.e_1_next = TopoDS::Edge(currentEdge);
+        m_edgeInfo.situation.e_s1_t2 = TopoDS::Edge(currentEdge);
     }
 
     // Stop iterating when both edges are done.
-    if ( !m_edgeInfo.situation.e_1_prev.IsNull() &&
-         !m_edgeInfo.situation.e_1_next.IsNull() )
+    if ( !m_edgeInfo.situation.e_s1_t1.IsNull() &&
+         !m_edgeInfo.situation.e_s1_t2.IsNull() )
       break;
   }
 
@@ -484,9 +517,9 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
     // we skip such vertex.
     bool isFirstOnE = false, isLastOnE = false;
     //
-    if ( vertex.IsPartner(m_edgeInfo.situation.v_first) )
+    if ( vertex.IsPartner(m_edgeInfo.situation.v_s1_s2_t1) )
       isFirstOnE = true;
-    else if ( vertex.IsPartner(m_edgeInfo.situation.v_last) )
+    else if ( vertex.IsPartner(m_edgeInfo.situation.v_s1_s2_t2) )
       isLastOnE = true;
     //
     if ( !isFirstOnE && !isLastOnE )
@@ -498,54 +531,54 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
     {
       const TopoDS_Shape& currentEdge = eit.Value();
       //
-      if ( currentEdge.IsPartner(m_edgeInfo.situation.e) )
+      if ( currentEdge.IsPartner(m_edgeInfo.situation.e_s1_s2) )
         continue; // Skip target edge itself as it is always in the list of parents.
 
       if ( isFirstOnE )
-        m_edgeInfo.situation.e_2_next = TopoDS::Edge(currentEdge);
+        m_edgeInfo.situation.e_s2_t1 = TopoDS::Edge(currentEdge);
       else if ( isLastOnE )
-        m_edgeInfo.situation.e_2_prev = TopoDS::Edge(currentEdge);
+        m_edgeInfo.situation.e_s2_t2 = TopoDS::Edge(currentEdge);
     }
 
     // Stop iterating when both edges are done.
-    if ( !m_edgeInfo.situation.e_2_prev.IsNull() &&
-         !m_edgeInfo.situation.e_2_next.IsNull() )
+    if ( !m_edgeInfo.situation.e_s2_t1.IsNull() &&
+         !m_edgeInfo.situation.e_s2_t2.IsNull() )
       break;
   }
 
-  const int f1_id = m_aag->GetFaceId(m_edgeInfo.situation.f_1);
+  const int f1_id = m_aag->GetFaceId(m_edgeInfo.situation.f_s1);
 
-  // Initialize f_first.
+  // Initialize t1.
   const TColStd_PackedMapOfInteger&
-    f1_prev_neighbors = m_aag->GetNeighborsThru(f1_id, m_edgeInfo.situation.e_1_prev);
+    f1_prev_neighbors = m_aag->GetNeighborsThru(f1_id, m_edgeInfo.situation.e_s1_t1);
   //
   if ( f1_prev_neighbors.Extent() != 1 )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1 (id %1)."
-                                                "Cannot find f_first."
+                                                "Cannot find t1."
                                              << f1_id);
 
     this->SetErrorStateOn();
     return false;
   }
   //
-  m_edgeInfo.situation.f_first = m_aag->GetFace( f1_prev_neighbors.GetMinimalMapped() );
+  m_edgeInfo.situation.f_t1 = m_aag->GetFace( f1_prev_neighbors.GetMinimalMapped() );
 
-  // Initialize f_last.
+  // Initialize t2.
   const TColStd_PackedMapOfInteger&
-    f1_next_neighbors = m_aag->GetNeighborsThru(f1_id, m_edgeInfo.situation.e_1_next);
+    f1_next_neighbors = m_aag->GetNeighborsThru(f1_id, m_edgeInfo.situation.e_s1_t2);
   //
   if ( f1_next_neighbors.Extent() != 1 )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1 (id %1)."
-                                                "Cannot find f_first."
+                                                "Cannot find t2."
                                              << f1_id);
 
     this->SetErrorStateOn();
     return false;
   }
   //
-  m_edgeInfo.situation.f_last = m_aag->GetFace( f1_next_neighbors.GetMinimalMapped() );
+  m_edgeInfo.situation.f_t2 = m_aag->GetFace( f1_next_neighbors.GetMinimalMapped() );
 
 #if defined DRAW_DEBUG
   m_edgeInfo.DumpSituation(m_plotter);
@@ -555,9 +588,9 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
    *  Re-intersect faces (just once for an edge)
    * ============================================ */
 
-  // Re-intersect faces.
-  if ( !this->intersectFaces(m_edgeInfo.situation.f_1,
-                             m_edgeInfo.situation.f_2,
+  // Re-intersect base faces.
+  if ( !this->intersectFaces(m_edgeInfo.situation.f_s1,
+                             m_edgeInfo.situation.f_s2,
                              m_edgeInfo.resolution.icurve) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot intersect faces.");
@@ -570,7 +603,7 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
   // changing orientation of curves, so if after re-intersection the
   // geometric orientation is affected, we have to fix it here.
   if ( !this->correctOriC(m_edgeInfo.resolution.icurve->C,
-                          m_edgeInfo.situation.e,
+                          m_edgeInfo.situation.e_s1_s2,
                           m_edgeInfo.resolution.icurve->C) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot correct orientation of the intersection curve.");

@@ -85,80 +85,106 @@ int ENGINE_Explode(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // Disable visualization for efficiency
+  // Process input flags.
+  const bool isNoLocation = interp->HasKeyword(argc, argv, "noloc");
+  const bool isVertex     = interp->HasKeyword(argc, argv, "vertex");
+  const bool isEdge       = interp->HasKeyword(argc, argv, "edge");
+  const bool isWire       = interp->HasKeyword(argc, argv, "wire");
+  const bool isFace       = interp->HasKeyword(argc, argv, "face");
+  const bool isShell      = interp->HasKeyword(argc, argv, "shell");
+  const bool isSolid      = interp->HasKeyword(argc, argv, "solid");
+
+  if ( isNoLocation && (isVertex ||
+                        isEdge   ||
+                        isFace   ||
+                        isShell  ||
+                        isSolid) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot use '-noloc' flag with subshape qualifiers.");
+    return TCL_ERROR;
+  }
+
+  // Disable visualization for efficiency.
   Handle(asiUI_IV)
     IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Plotter() );
   //
-  IV->BROWSER_OFF();
-  IV->VISUALIZATION_OFF();
+  if ( !IV.IsNull() )
+  {
+    IV->BROWSER_OFF();
+    IV->VISUALIZATION_OFF();
+  }
 
-  // Get Part Node and shape
+  // Get Part Node and shape.
   Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
   //
   TopoDS_Shape partShape = partNode->GetShape();
 
-  if ( argc == 1 )
+  if ( isNoLocation || (argc == 1) )
   {
-    // Explode
-    for ( TopoDS_Iterator it(partShape); it.More(); it.Next() )
+    // Explode.
+    for ( TopoDS_Iterator it(partShape, true, !isNoLocation); it.More(); it.Next() )
     {
       const TopoDS_Shape& subShape = it.Value();
 
-      // Generate name
+      // Generate name.
       TCollection_AsciiString name = asiAlgo_Utils::ShapeTypeStr(subShape).c_str();
 
-      // Draw imperatively (populates Data Model)
+      // Draw imperatively (populates Data Model).
       interp->GetPlotter().DRAW_SHAPE(subShape, name);
     }
   }
   else
   {
-    // Get qualifier of sub-shape
+    // Get qualifier of sub-shape.
     TopAbs_ShapeEnum subshapeType;
 
-    if ( TCollection_AsciiString(argv[1]) == "-vertex" )
+    if ( isVertex )
       subshapeType = TopAbs_VERTEX;
     //
-    else if ( TCollection_AsciiString(argv[1]) == "-edge" )
+    else if ( isEdge )
       subshapeType = TopAbs_EDGE;
     //
-    else if ( TCollection_AsciiString(argv[1]) == "-wire" )
+    else if ( isWire )
       subshapeType = TopAbs_WIRE;
     //
-    else if ( TCollection_AsciiString(argv[1]) == "-face" )
+    else if ( isFace )
       subshapeType = TopAbs_FACE;
     //
-    else if ( TCollection_AsciiString(argv[1]) == "-shell" )
+    else if ( isShell )
       subshapeType = TopAbs_SHELL;
     //
-    else if ( TCollection_AsciiString(argv[1]) == "-solid" )
+    else if ( isSolid )
       subshapeType = TopAbs_SOLID;
     //
     else
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected sub-shape qualifier.");
-      return TCL_OK;
+      return TCL_ERROR;
     }
 
-    // Explode
+    // Explode.
     for ( TopExp_Explorer exp(partShape, subshapeType); exp.More(); exp.Next() )
     {
       const TopoDS_Shape& subShape = exp.Current();
 
-      // Generate name
+      // Generate name.
       TCollection_AsciiString name = asiAlgo_Utils::ShapeTypeStr(subShape).c_str();
 
-      // Draw imperatively (populates Data Model)
+      // Draw imperatively (populates Data Model).
       interp->GetPlotter().DRAW_SHAPE(subShape, name);
     }
   }
 
   // Enable back UI updates.
-  IV->BROWSER_ON();
-  IV->VISUALIZATION_ON();
+  if ( !IV.IsNull() )
+  {
+    IV->BROWSER_ON();
+    IV->VISUALIZATION_ON();
+  }
 
   // Update browser.
-  cmdEngine::cf->ObjectBrowser->Populate();
+  if ( !cmdEngine::cf.IsNull() && cmdEngine::cf->ObjectBrowser )
+    cmdEngine::cf->ObjectBrowser->Populate();
 
   return TCL_OK;
 }
@@ -2330,10 +2356,11 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("explode",
     //
-    "explode [-vertex|-edge|-wire|-face|-shell|-solid]\n"
+    "explode [-vertex|-edge|-wire|-face|-shell|-solid|-noloc]\n"
     "\t Explodes active part to sub-shapes of interest. If no sub-shape\n"
     "\t qualifier is passed, this command explodes the part to its direct\n"
-    "\t children (e.g. edges for wire, wires for face, etc.).",
+    "\t children (e.g. edges for wire, wires for face, etc.). If '-noloc'\n"
+    "\t flag is passed, locations are not accumulated on explode.",
     //
     __FILE__, group, ENGINE_Explode);
 

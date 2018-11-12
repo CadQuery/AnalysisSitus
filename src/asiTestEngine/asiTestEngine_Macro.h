@@ -43,6 +43,7 @@
 #define asiTestEngine_Macro_DOT          '.'
 #define asiTestEngine_Macro_SLASH        '/'
 #define asiTestEngine_Macro_RSLASH       '\\'
+#define asiTestEngine_Macro_ASTERISK_STR "*"
 #define asiTestEngine_Macro_WHITESPACE   ' '
 #define asiTestEngine_Macro_COLON        ':'
 #define asiTestEngine_Macro_NL           '\n'

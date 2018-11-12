@@ -792,8 +792,11 @@ void asiUI_IV::visualize(const bool                  is2d,
                          const double                opacity,
                          const bool                  isWireframe) const
 {
-  if ( m_bBrowserOn )
+  if ( m_bBrowserOn && m_pBrowser )
     m_pBrowser->Populate();
+
+  if ( !this->prsManager(is2d) )
+    return;
 
   if ( !this->prsManager(is2d)->IsPresented(node) )
     this->prsManager(is2d)->SetPresentation(node);

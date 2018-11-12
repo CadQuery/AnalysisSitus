@@ -41,10 +41,7 @@
 #include <asiTcl_PluginMacro.h>
 
 // asiAlgo includes
-#include <asiAlgo_EulerKEF.h>
-#include <asiAlgo_EulerKEV.h>
 #include <asiAlgo_MeshOffset.h>
-#include <asiAlgo_TopoKill.h>
 #include <asiAlgo_Utils.h>
 
 // OCCT includes

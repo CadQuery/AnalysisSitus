@@ -1,3 +1,15 @@
 [TITLE]
 
   Tests on AAG
+
+[1-*:OVERVIEW]
+
+  API and services related to Attributed Adjacency Graph.
+
+[1-*:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%

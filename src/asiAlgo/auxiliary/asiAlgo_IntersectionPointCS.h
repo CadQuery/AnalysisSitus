@@ -52,7 +52,8 @@ public:
   //! Default constructor.
   asiAlgo_IntersectionPointCS()
   : W           (0.0),
-    Uncertainty (0.0)
+    Uncertainty (0.0),
+    IsTangent   (false)
   {}
 
   //! Constructor.
@@ -60,7 +61,8 @@ public:
   asiAlgo_IntersectionPointCS(const gp_Pnt& _P)
   : P           (_P),
     W           (0.0),
-    Uncertainty (0.0)
+    Uncertainty (0.0),
+    IsTangent   (false)
   {}
 
   //! Constructor.
@@ -68,14 +70,18 @@ public:
   //! \param[in] _W           parameter value of the intersection on a curve.
   //! \param[in] _UV          parameters on the surface.
   //! \param[in] _uncertainty uncertainty of the solution.
+  //! \param[in] _isTangent   indicates whether the intersection point is a
+  //!                         result of tangential intersection.
   asiAlgo_IntersectionPointCS(const gp_Pnt&   _P,
                               const double    _W,
                               const gp_Pnt2d& _UV,
-                              const double    _uncertainty)
+                              const double    _uncertainty,
+                              const bool      _isTangent)
   : P           (_P),
     W           (_W),
     UV          (_UV),
-    Uncertainty (_uncertainty)
+    Uncertainty (_uncertainty),
+    IsTangent   (_isTangent)
   {}
 
 public:
@@ -84,6 +90,7 @@ public:
   double   W;           //!< Intersection parameter on the curve.
   gp_Pnt2d UV;          //!< Intersection parameters on the surface.
   double   Uncertainty; //!< Uncertainty in 3D point position.
+  bool     IsTangent;   //!< Indicates whether the intersection is tangent.
 
 };
 

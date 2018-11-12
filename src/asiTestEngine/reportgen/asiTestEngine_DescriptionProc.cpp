@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: November 2013
 //-----------------------------------------------------------------------------
-// Copyright (c) 2013-2018, Sergey Slyadnev
+// Copyright (c) 2013-pesent, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,25 +28,19 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
+// Own include
 #include <asiTestEngine_DescriptionProc.h>
 
 // STD includes
 #include <fstream>
 
-//! Performs processing of description template substituting variable
-//! placeholders with actual values.
-//! \param dir [in] directory to search the description file in.
-//! \param filename [in] filename pointing to description template.
-//! \param vars [in] variables expansion map.
-//! \param caseID [in] ID of the Test Case.
-//! \param title [out] title of the Test Case.
-//! \param overviewBlocks [out] overview sections.
-//! \param detailsBlocks [out] details sections.
-//! \return true in case of success, false -- otherwise.
+//-----------------------------------------------------------------------------
+
 bool asiTestEngine_DescriptionProc::Process(const std::string& dir,
                                             const std::string& filename,
                                             const StrStrMap&   vars,
                                             const int          caseID,
+                                            const int          numFunctions,
                                             std::string&       title,
                                             SeqStr&            overviewBlocks,
                                             SeqStr&            detailsBlocks)
@@ -90,7 +84,11 @@ bool asiTestEngine_DescriptionProc::Process(const std::string& dir,
   SeqStr overviewBlocks_tmp, detailsBlocks_tmp;
 
   // Extract sections from monolith text block
-  extractBlocks(text, title_tmp, overviewBlocks_tmp, detailsBlocks_tmp);
+  extractBlocks(numFunctions,
+                text,
+                title_tmp,
+                overviewBlocks_tmp,
+                detailsBlocks_tmp);
 
   /* ==================
    *  Expand variables
@@ -101,24 +99,23 @@ bool asiTestEngine_DescriptionProc::Process(const std::string& dir,
 
   // Expand overview blocks
   for ( int block = 0; block < (int) overviewBlocks_tmp.size(); ++block )
-    overviewBlocks.push_back( expandVariables( overviewBlocks_tmp[block], vars,
+    overviewBlocks.push_back( expandVariables( overviewBlocks_tmp[block],
+                                               vars,
                                                varScope(caseID, block + 1) ) );
 
   // Expand details blocks
   for ( int block = 0; block < (int) detailsBlocks_tmp.size(); ++block )
-    detailsBlocks.push_back( expandVariables( detailsBlocks_tmp[block], vars,
+    detailsBlocks.push_back( expandVariables( detailsBlocks_tmp[block],
+                                              vars,
                                               varScope(caseID, block + 1) ) );
 
   return true;
 }
 
-//! Extracts semantic sections from the given text.
-//! \param text [in] input monolith text block to parse.
-//! \param title [out] extracted title of the Test Case.
-//! \param overviewBlocks [out] extracted overview sections.
-//! \param detailsBlocks [out] extracted details sections.
-//! \return text from [OVERVIEW] section.
-void asiTestEngine_DescriptionProc::extractBlocks(const std::string& text,
+//-----------------------------------------------------------------------------
+
+void asiTestEngine_DescriptionProc::extractBlocks(const int          numFunctions,
+                                                  const std::string& text,
                                                   std::string&       title,
                                                   SeqStr&            overviewBlocks,
                                                   SeqStr&            detailsBlocks)
@@ -138,6 +135,8 @@ void asiTestEngine_DescriptionProc::extractBlocks(const std::string& text,
 
   // Iterate over the lines
   int idx_F = 0, idx_L = 0;
+  bool isUnbounded = false;
+  //
   for ( int l = 0; l < (int) textLines.size(); ++l )
   {
     const std::string& lineToken = textLines[l];
@@ -155,13 +154,13 @@ void asiTestEngine_DescriptionProc::extractBlocks(const std::string& text,
     else if ( lineToken.find(asiTestEngine_Macro_SEC_OVERVIEW) != std::string::npos )
     {
       readMode = Read_Overview;
-      extractIndicesFromTag(lineToken, idx_F, idx_L);
+      extractIndicesFromTag(lineToken, idx_F, idx_L, isUnbounded);
       continue;
     }
     else if ( lineToken.find(asiTestEngine_Macro_SEC_DETAILS) != std::string::npos )
     {
       readMode = Read_Details;
-      extractIndicesFromTag(lineToken, idx_F, idx_L);
+      extractIndicesFromTag(lineToken, idx_F, idx_L, isUnbounded);
       continue;
     }
 
@@ -175,35 +174,38 @@ void asiTestEngine_DescriptionProc::extractBlocks(const std::string& text,
     // Accumulate overview
     if ( readMode == Read_Overview )
     {
-      // Enrich collection with empty items
-      while ( (int) overviewBlocks.size() < idx_L )
+      int tillIdx = (isUnbounded ? numFunctions : idx_L);
+
+      // Add empty blocks
+      while ( (int) overviewBlocks.size() < tillIdx )
         overviewBlocks.push_back( std::string() );
 
-      // Fill items
-      for ( int idx = idx_F; idx <= idx_L; ++idx )
-        overviewBlocks[idx - 1] += (lineToken + asiTestEngine_Macro_NL);
+      // Fill blocks
+      for ( int idx = idx_F; idx <= tillIdx; ++idx )
+        overviewBlocks[idx-1] += (lineToken + asiTestEngine_Macro_NL);
     }
 
     if ( readMode == Read_Details )
     {
+      int tillIdx = (isUnbounded ? numFunctions : idx_L);
+
       // Enrich collection with empty items
-      while ( (int) detailsBlocks.size() < idx_L )
+      while ( (int) detailsBlocks.size() < tillIdx )
         detailsBlocks.push_back( std::string() );
 
       // Fill items
-      for ( int idx = idx_F; idx <= idx_L; ++idx )
-       detailsBlocks[idx - 1] += (lineToken + asiTestEngine_Macro_NL);
+      for ( int idx = idx_F; idx <= tillIdx; ++idx )
+       detailsBlocks[idx-1] += (lineToken + asiTestEngine_Macro_NL);
     }
   }
 }
 
-//! Extracts numerical indices from the passed tag token.
-//! \param tag [in] tag token.
-//! \param startIdx [out] first index.
-//! \param endIdx [out] last index.
+//-----------------------------------------------------------------------------
+
 void asiTestEngine_DescriptionProc::extractIndicesFromTag(const std::string& tag,
                                                           int&               startIdx,
-                                                          int&               endIdx)
+                                                          int&               endIdx,
+                                                          bool&              isUnbounded)
 {
   // Remove brackets
   std::string tagBase = asiAlgo_Utils::Str::SubStr(tag, 1, (int) tag.length() - 2);
@@ -226,20 +228,22 @@ void asiTestEngine_DescriptionProc::extractIndicesFromTag(const std::string& tag
   std::string numStrFirst = idxTokens[0];
   std::string numStrLast = idxTokens[1];
 
+  if ( numStrLast == asiTestEngine_Macro_ASTERISK_STR )
+    isUnbounded = true;
+  else
+    isUnbounded = false;
+
   // Store range in output
   startIdx = atoi( numStrFirst.c_str() );
-  endIdx = atoi( numStrLast.c_str() );
+  endIdx   = (isUnbounded ? 1 : atoi( numStrLast.c_str() ) );
 }
 
-//! Expands all variables referenced by the given piece of text against the
-//! passed expansion map.
-//! \param text [in] text to substitute variables into.
-//! \param vars [in] expansion map.
-//! \param varsScope [in] string representation for scope of variables.
-//! \return copy of input text block enriched with variable values.
-std::string asiTestEngine_DescriptionProc::expandVariables(const std::string& text,
-                                                           const StrStrMap&   vars,
-                                                           const std::string& varsScope)
+//-----------------------------------------------------------------------------
+
+std::string
+  asiTestEngine_DescriptionProc::expandVariables(const std::string& text,
+                                                 const StrStrMap&   vars,
+                                                 const std::string& varsScope)
 {
   std::string textExpanded;
 
@@ -309,9 +313,8 @@ std::string asiTestEngine_DescriptionProc::expandVariables(const std::string& te
   return textExpanded;
 }
 
-//! Checks whether the passed line contains whitespaces only.
-//! \param line [in] line to check.
-//! \return true/false.
+//-----------------------------------------------------------------------------
+
 bool asiTestEngine_DescriptionProc::isLineOfNulls(const std::string& line)
 {
   for ( int s = 0; s < (int) line.length(); ++s )
@@ -323,14 +326,8 @@ bool asiTestEngine_DescriptionProc::isLineOfNulls(const std::string& line)
   return true;
 }
 
-//! Returns true if the passed string token is recognized as a placeholder
-//! for variable.
-//! \param token [in] string to check.
-//! \param varStart [out] 0-based index of character where the variable
-//!        marker starts.
-//! \param varEnd [out] 0-based index of character where the variable
-//!        marker ends.
-//! \return true/false.
+//-----------------------------------------------------------------------------
+
 bool asiTestEngine_DescriptionProc::isVar(const std::string& token,
                                           int&               varStart,
                                           int&               varEnd)
@@ -339,7 +336,7 @@ bool asiTestEngine_DescriptionProc::isVar(const std::string& token,
     return false;
 
   varStart = (int) token.find(asiTestEngine_Macro_VAR_MARKER);
-  varEnd = (int) token.rfind(asiTestEngine_Macro_VAR_MARKER);
+  varEnd   = (int) token.rfind(asiTestEngine_Macro_VAR_MARKER);
 
   if ( varStart == (int) std::string::npos || varEnd == (int) std::string::npos || varStart >= varEnd )
     return false;
@@ -347,12 +344,8 @@ bool asiTestEngine_DescriptionProc::isVar(const std::string& token,
   return true;
 }
 
-//! Returns true if the passed string token is recognized as pre-formatting
-//! tag.
-//! \param token [in] string to check.
-//! \param isOpen [in] indicates whether we want to recognize opening or
-//!        closing pre-formatting tag.
-//! \return true/false.
+//-----------------------------------------------------------------------------
+
 bool asiTestEngine_DescriptionProc::isPre(const std::string& token,
                                           const bool         isOpen)
 {
@@ -368,10 +361,8 @@ bool asiTestEngine_DescriptionProc::isPre(const std::string& token,
   return false;
 }
 
-//! Prepares a string to be used as a global scope for resolving variables.
-//! \param caseID [in] global ID of the Test Case.
-//! \param funcID [in] local ID of the Test Function.
-//! \return string representing variable's scope in format {caseID}::{funcID}.
+//-----------------------------------------------------------------------------
+
 std::string asiTestEngine_DescriptionProc::varScope(const int caseID,
                                                     const int funcID)
 {

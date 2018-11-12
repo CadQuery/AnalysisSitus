@@ -69,6 +69,7 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
+#include <TopoDS_Vertex.hxx>
 #include <TopoDS_Wire.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -823,11 +824,13 @@ namespace asiAlgo_Utils
   //! \param[in]  F              first face.
   //! \param[in]  G              second face.
   //! \param[out] allCommonEdges all common edges.
+  //! \param[in]  hint           vertex to resolve ambiguity.
   //! \return first common edge.
   asiAlgo_EXPORT TopoDS_Edge
     GetCommonEdge(const TopoDS_Shape&         F,
                   const TopoDS_Shape&         G,
-                  TopTools_IndexedMapOfShape& allCommonEdges);
+                  TopTools_IndexedMapOfShape& allCommonEdges,
+                  const TopoDS_Vertex&        hint = TopoDS_Vertex());
 
   //! Gets common (shared) edge between the two passed faces.
   //! \param[in] F first face.
@@ -836,6 +839,16 @@ namespace asiAlgo_Utils
   asiAlgo_EXPORT TopoDS_Edge
     GetCommonEdge(const TopoDS_Shape& F,
                   const TopoDS_Shape& G);
+
+  //! Gets common (shared) edge between the two passed faces.
+  //! \param[in] F    first face.
+  //! \param[in] G    second face.
+  //! \param[in] hint vertex to resolve ambiguity.
+  //! \return first common edge.
+  asiAlgo_EXPORT TopoDS_Edge
+    GetCommonEdge(const TopoDS_Shape&  F,
+                  const TopoDS_Shape&  G,
+                  const TopoDS_Vertex& hint);
 
   //! Gets common (shared) vertex between the three passed faces.
   //! \param[in] F first face.

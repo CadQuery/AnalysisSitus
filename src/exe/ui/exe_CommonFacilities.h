@@ -98,20 +98,20 @@ private:
     ProgressListener       (NULL)
   {
     // Create Data Model
-    Model = new asiEngine_Model;
-    if ( !Model->NewEmpty() )
+    this->Model = new asiEngine_Model;
+    if ( !this->Model->NewEmpty() )
     {
       Standard_ProgramError::Raise("Cannot create Data Model");
     }
     //
-    Model->DisableTransactions();
+    this->Model->DisableTransactions();
     {
-      Model->Populate();
+      this->Model->Populate();
     }
-    Model->EnableTransactions();
+    this->Model->EnableTransactions();
 
     // Initialize notifier
-    ProgressNotifier = new asiUI_ProgressNotifier;
+    this->ProgressNotifier = new asiUI_ProgressNotifier;
   }
 
 };

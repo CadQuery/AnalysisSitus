@@ -96,6 +96,8 @@ include_directories ( ${asiTest_include_dir_loc}
                       ${asiAlgo_include_dir}
                       ${asiData_include_dir}
                       ${asiEngine_include_dir}
+                      ${asiUI_include_dir}
+                      ${asiVisu_include_dir}
                       ${asiTcl_include_dir}
                       ${asiTestEngine_include_dir}
                       ${3RDPARTY_OCCT_INCLUDE_DIR}
@@ -136,7 +138,7 @@ add_custom_command(
 # Dependencies
 #------------------------------------------------------------------------------
 
-target_link_libraries(asiTest asiAlgo asiData asiEngine asiTestEngine asiTcl cmdEngine cmdMisc)
+target_link_libraries(asiTest asiAlgo asiData asiEngine asiTestEngine asiTcl asiUI cmdEngine cmdMisc)
 
 #------------------------------------------------------------------------------
 # Installation

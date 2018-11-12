@@ -147,17 +147,17 @@ public:
     this->e_b_t1 = e_b_t1_loc;
     this->e_b_t2 = e_b_t2_loc;
 
-    // Get other common edges.
-    this->e_s1_t1 = asiAlgo_Utils::GetCommonEdge(this->f_s1, this->f_t1);
-    this->e_s1_t2 = asiAlgo_Utils::GetCommonEdge(this->f_s1, this->f_t2);
-    this->e_s2_t1 = asiAlgo_Utils::GetCommonEdge(this->f_s2, this->f_t1);
-    this->e_s2_t2 = asiAlgo_Utils::GetCommonEdge(this->f_s2, this->f_t2);
-
     // Get common vertices.
     this->v_b_s1_t1 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s1, this->f_t1);
     this->v_b_s2_t1 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s2, this->f_t1);
     this->v_b_s1_t2 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s1, this->f_t2);
     this->v_b_s2_t2 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s2, this->f_t2);
+
+    // Get other common edges.
+    this->e_s1_t1 = asiAlgo_Utils::GetCommonEdge(this->f_s1, this->f_t1, this->v_b_s1_t1);
+    this->e_s1_t2 = asiAlgo_Utils::GetCommonEdge(this->f_s1, this->f_t2, this->v_b_s1_t2);
+    this->e_s2_t1 = asiAlgo_Utils::GetCommonEdge(this->f_s2, this->f_t1, this->v_b_s2_t1);
+    this->e_s2_t2 = asiAlgo_Utils::GetCommonEdge(this->f_s2, this->f_t2, this->v_b_s2_t2);
 
     return true; // Identified.
   }

@@ -106,50 +106,50 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
     const asiAlgo_ModEdgeInfo& edgeInfo = Mod->GetEdgeInfo();
 
     const TopoDS_Shape&
-      e_new = Modifier.ModifiedShape(edgeInfo.situation.e);
+      e_s1_s2_new = Modifier.ModifiedShape(edgeInfo.situation.e_s1_s2);
 
     const TopoDS_Shape&
-      e_1_next_new = Modifier.ModifiedShape(edgeInfo.situation.e_1_next);
+      e_s1_t1_new = Modifier.ModifiedShape(edgeInfo.situation.e_s1_t1);
 
     const TopoDS_Shape&
-      e_1_prev_new = Modifier.ModifiedShape(edgeInfo.situation.e_1_prev);
+      e_s1_t2_new = Modifier.ModifiedShape(edgeInfo.situation.e_s1_t2);
 
     const TopoDS_Shape&
-      e_2_next_new = Modifier.ModifiedShape(edgeInfo.situation.e_2_next);
+      e_s2_t1_new = Modifier.ModifiedShape(edgeInfo.situation.e_s2_t1);
 
     const TopoDS_Shape&
-      e_2_prev_new = Modifier.ModifiedShape(edgeInfo.situation.e_2_prev);
+      e_s2_t2_new = Modifier.ModifiedShape(edgeInfo.situation.e_s2_t2);
 
     const TopoDS_Shape&
-      f_1_new = Modifier.ModifiedShape(edgeInfo.situation.f_1);
+      f_s1_new = Modifier.ModifiedShape(edgeInfo.situation.f_s1);
 
     const TopoDS_Shape&
-      f_2_new = Modifier.ModifiedShape(edgeInfo.situation.f_2);
+      f_s2_new = Modifier.ModifiedShape(edgeInfo.situation.f_s2);
 
     const TopoDS_Shape&
-      f_first_new = Modifier.ModifiedShape(edgeInfo.situation.f_first);
+      f_t1_new = Modifier.ModifiedShape(edgeInfo.situation.f_t1);
 
     const TopoDS_Shape&
-      f_last_new = Modifier.ModifiedShape(edgeInfo.situation.f_last);
+      f_t2_new = Modifier.ModifiedShape(edgeInfo.situation.f_t2);
 
     const TopoDS_Shape&
-      v_first_new = Modifier.ModifiedShape(edgeInfo.situation.v_first);
+      v_s1_s2_t1_new = Modifier.ModifiedShape(edgeInfo.situation.v_s1_s2_t1);
 
     const TopoDS_Shape&
-      v_last_new = Modifier.ModifiedShape(edgeInfo.situation.v_last);
+      v_s1_s2_t2_new = Modifier.ModifiedShape(edgeInfo.situation.v_s1_s2_t2);
 
     // Populate history.
-    m_history->AddModified(edgeInfo.situation.e,        e_new);
-    m_history->AddModified(edgeInfo.situation.e_1_next, e_1_next_new);
-    m_history->AddModified(edgeInfo.situation.e_1_prev, e_1_prev_new);
-    m_history->AddModified(edgeInfo.situation.e_2_next, e_2_next_new);
-    m_history->AddModified(edgeInfo.situation.e_2_prev, e_2_prev_new);
-    m_history->AddModified(edgeInfo.situation.f_1,      f_1_new);
-    m_history->AddModified(edgeInfo.situation.f_2,      f_2_new);
-    m_history->AddModified(edgeInfo.situation.f_first,  f_first_new);
-    m_history->AddModified(edgeInfo.situation.f_last,   f_last_new);
-    m_history->AddModified(edgeInfo.situation.v_first,  v_first_new);
-    m_history->AddModified(edgeInfo.situation.v_last,   v_last_new);
+    m_history->AddModified(edgeInfo.situation.e_s1_s2,    e_s1_s2_new);
+    m_history->AddModified(edgeInfo.situation.e_s1_t1,    e_s1_t1_new);
+    m_history->AddModified(edgeInfo.situation.e_s1_t2,    e_s1_t2_new);
+    m_history->AddModified(edgeInfo.situation.e_s2_t1,    e_s2_t1_new);
+    m_history->AddModified(edgeInfo.situation.e_s2_t2,    e_s2_t2_new);
+    m_history->AddModified(edgeInfo.situation.f_s1,       f_s1_new);
+    m_history->AddModified(edgeInfo.situation.f_s2,       f_s2_new);
+    m_history->AddModified(edgeInfo.situation.f_t1,       f_t1_new);
+    m_history->AddModified(edgeInfo.situation.f_t2,       f_t2_new);
+    m_history->AddModified(edgeInfo.situation.v_s1_s2_t1, v_s1_s2_t1_new);
+    m_history->AddModified(edgeInfo.situation.v_s1_s2_t2, v_s1_s2_t2_new);
   }
 
   return true; // Success.

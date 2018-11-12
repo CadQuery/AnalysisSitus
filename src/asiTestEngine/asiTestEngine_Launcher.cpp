@@ -187,6 +187,11 @@ bool asiTestEngine_Launcher::generateReport(std::ostream* out) const
   {
     const Handle(asiTestEngine_CaseLauncherAPI)& CaseLauncher = m_launchers.at(l);
 
+    // Local summary
+    const int    nTotal        = CaseLauncher->NumberOfExecuted();
+    const int    nFailed       = CaseLauncher->NumberOfFailed();
+    const double passedPercent = (double) (nTotal-nFailed)/nTotal*100.0;
+
     // Get filename for description
     std::string descGroupDir = CaseLauncher->CaseDescriptionDir();
     std::string descFilename = CaseLauncher->CaseDescriptionFn() + asiTestEngine_Macro_DOT + asiTestEngine_Macro_DESCR_EXT;
@@ -195,10 +200,12 @@ bool asiTestEngine_Launcher::generateReport(std::ostream* out) const
     // Description processing tool
     std::string title;
     std::vector<std::string> overviewBlocks, detailBlocks;
+    //
     if ( !asiTestEngine_DescriptionProc::Process(descDir,
                                                  descFilename,
                                                  CaseLauncher->Variables(),
                                                  CaseLauncher->CaseID(),
+                                                 nTotal,
                                                  title,
                                                  overviewBlocks,
                                                  detailBlocks) )
@@ -207,11 +214,6 @@ bool asiTestEngine_Launcher::generateReport(std::ostream* out) const
         *out << "\tFailed to read description from \"" << descFilename.c_str() << "\"\n";
       return false;
     }
-
-    // Local statistics
-    const int nTotal = CaseLauncher->NumberOfExecuted();
-    const int nFailed = CaseLauncher->NumberOfFailed();
-    const double passedPercent = (double) (nTotal-nFailed)/nTotal*100.0;
 
     // Render header for Test Case
     Rdr->StartTableRow()
@@ -253,7 +255,7 @@ bool asiTestEngine_Launcher::generateReport(std::ostream* out) const
       // Add section for details
       if ( ( (int) detailBlocks.size() >= (f+1) ) && detailBlocks[f].length() )
       {
-        std::string details = detailBlocks[f];
+        const std::string& details = detailBlocks[f];
 
         Rdr->BreakRow()->BreakRow()
            ->AddText("<i>Details:</i>")

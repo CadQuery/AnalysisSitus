@@ -2627,7 +2627,8 @@ void asiAlgo_Utils::RebuildBounds(TopoDS_Shape& shape)
 
 TopoDS_Edge asiAlgo_Utils::GetCommonEdge(const TopoDS_Shape&         F,
                                          const TopoDS_Shape&         G,
-                                         TopTools_IndexedMapOfShape& allCommonEdges)
+                                         TopTools_IndexedMapOfShape& allCommonEdges,
+                                         const TopoDS_Vertex&        hint)
 {
   TopoDS_Edge commonEdge;
 
@@ -2646,7 +2647,21 @@ TopoDS_Edge asiAlgo_Utils::GetCommonEdge(const TopoDS_Shape&         F,
         allCommonEdges.Add( EdgesF(ef) );
         //
         if ( commonEdge.IsNull() )
-          commonEdge = TopoDS::Edge( EdgesF(ef) );
+        {
+          const TopoDS_Edge& candidate = TopoDS::Edge( EdgesF(ef) );
+
+          if ( !hint.IsNull() )
+          {
+            // Use hint vertex to select an edge to return.
+            TopoDS_Vertex vf, vl;
+            TopExp::Vertices(candidate, vf, vl);
+            //
+            if ( vf.IsPartner(hint) || vl.IsPartner(hint) )
+              commonEdge = candidate;
+          }
+          else
+            commonEdge = candidate; // Take just first one.
+        }
       }
     }
   }
@@ -2660,6 +2675,16 @@ TopoDS_Edge asiAlgo_Utils::GetCommonEdge(const TopoDS_Shape& F,
 {
   TopTools_IndexedMapOfShape commonEdges;
   return GetCommonEdge(F, G, commonEdges);
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Edge asiAlgo_Utils::GetCommonEdge(const TopoDS_Shape&  F,
+                                         const TopoDS_Shape&  G,
+                                         const TopoDS_Vertex& hint)
+{
+  TopTools_IndexedMapOfShape commonEdges;
+  return GetCommonEdge(F, G, commonEdges, hint);
 }
 
 //-----------------------------------------------------------------------------

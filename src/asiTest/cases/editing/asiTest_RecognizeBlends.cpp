@@ -34,7 +34,7 @@
 // asiAlgo includes
 #include <asiAlgo_RecognizeBlends.h>
 
-#define FILE_DEBUG
+#undef FILE_DEBUG
 #if defined FILE_DEBUG
   #pragma message("===== warning: FILE_DEBUG is enabled")
 #endif

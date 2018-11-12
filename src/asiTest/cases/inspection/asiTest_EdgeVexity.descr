@@ -2,11 +2,11 @@
 
   Check vexity of edges
 
-[1-40:OVERVIEW]
+[1-*:OVERVIEW]
 
-  Test case 1.
+  Evaluation of edge vexity.
 
-[1-40:DETAILS]
+[1-*:DETAILS]
 
   <b>Run to reproduce:</b>
   <br>

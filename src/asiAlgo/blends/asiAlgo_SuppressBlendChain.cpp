@@ -255,6 +255,8 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
     TopoDS_Edge
       edge2Rebuild = TopoDS::Edge( rebuildHistory->GetLastModifiedOrArg(originalEdge) );
 
+    m_plotter.DRAW_SHAPE(edge2Rebuild, Color_Red, 1.0, true, "edge2Rebuild");
+
     // Prepare algorithm.
     asiAlgo_RebuildEdge rebuildEdge(targetShape, m_progress, m_plotter);
     //

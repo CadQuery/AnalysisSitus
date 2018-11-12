@@ -40,6 +40,9 @@
 // asiTcl includes
 #include <asiTcl_Interp.h>
 
+// asiUI includes
+#include <asiUI_IV.h>
+
 // Active Data includes
 #include <ActAPI_IProgressNotifier.h>
 
@@ -55,6 +58,7 @@ public:
 
   Handle(asiEngine_Model)          Model;            //!< Data Model instance.
   Handle(ActAPI_IProgressNotifier) ProgressNotifier; //!< Progress notifier.
+  Handle(ActAPI_IPlotter)          Plotter;          //!< Plotter.
   Handle(asiTcl_Interp)            Interp;           //!< Tcl interpreter.
 
 public:
@@ -84,11 +88,16 @@ private:
     // Initialize progress notifier.
     this->ProgressNotifier = new asiTest_ProgressNotifier(std::cout);
 
+    // Initialize plotter as we may want at least to work with the data
+    // objects created by the plotter if not with their presentations.
+    this->Plotter = new asiUI_IV(this->Model, NULL, NULL, NULL);
+
     // Construct the interpreter
     this->Interp = new asiTcl_Interp;
     this->Interp->Init();
     this->Interp->SetModel(this->Model);
     this->Interp->SetProgress(this->ProgressNotifier);
+    this->Interp->SetPlotter(this->Plotter);
   }
 
 };

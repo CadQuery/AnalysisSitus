@@ -1,10 +1,10 @@
 [TITLE]
 
-  Inverts shells to reverse orientations of solids
+  Recognize blends
 
 [1-*:OVERVIEW]
 
-  This test performs double inversion of ANC101.
+  Recognition of blends and blend chains.
 
 [1-*:DETAILS]
 

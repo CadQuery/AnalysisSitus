@@ -57,17 +57,17 @@ public:
   //! Topological situation.
   struct Situation
   {
-    TopoDS_Edge   e;        //!< Edge in question.
-    TopoDS_Edge   e_1_prev; //!< Previous edge on the owner face 1.
-    TopoDS_Edge   e_1_next; //!< Next edge on the owner face 1.
-    TopoDS_Edge   e_2_prev; //!< Previous edge on the owner face 2.
-    TopoDS_Edge   e_2_next; //!< Next edge on the owner face 2.
-    TopoDS_Face   f_1;      //!< Owner face 1.
-    TopoDS_Face   f_2;      //!< Owner face 2.
-    TopoDS_Face   f_first;  //!< Face adjacent to f1 via e_1_next.
-    TopoDS_Face   f_last;   //!< Face adjacent to f1 via e_1_prev
-    TopoDS_Vertex v_first;  //!< First vertex of the edge.
-    TopoDS_Vertex v_last;   //!< Last vertex of the edge.
+    TopoDS_Edge   e_s1_s2;    //!< Edge in question.
+    TopoDS_Edge   e_s1_t1;    //!< Edge between owner face s1 and terminating face t1.
+    TopoDS_Edge   e_s1_t2;    //!< Edge between owner face s1 and terminating face t2.
+    TopoDS_Edge   e_s2_t1;    //!< Edge between owner face s2 and terminating face t1.
+    TopoDS_Edge   e_s2_t2;    //!< Edge between owner face s2 and terminating face t2.
+    TopoDS_Face   f_s1;       //!< Owner face 1.
+    TopoDS_Face   f_s2;       //!< Owner face 2.
+    TopoDS_Face   f_t1;       //!< Terminating face t1.
+    TopoDS_Face   f_t2;       //!< Terminating face t2.
+    TopoDS_Vertex v_s1_s2_t1; //!< First vertex of the edge.
+    TopoDS_Vertex v_s1_s2_t2; //!< Last vertex of the edge.
   };
 
   //! Geometric primitives to resolve the topological situation.
@@ -89,19 +89,19 @@ public:
   //! \param[in] plotter imperative plotter.
   void DumpSituation(ActAPI_PlotterEntry plotter) const
   {
-    plotter.REDRAW_SHAPE("Situation.e",        situation.e,        Color_Red,  1.0, true);
-    plotter.REDRAW_SHAPE("Situation.e_1_prev", situation.e_1_prev, Color_Red,  1.0, true);
-    plotter.REDRAW_SHAPE("Situation.e_1_next", situation.e_1_next, Color_Red,  1.0, true);
-    plotter.REDRAW_SHAPE("Situation.e_2_prev", situation.e_2_prev, Color_Blue, 1.0, true);
-    plotter.REDRAW_SHAPE("Situation.e_2_next", situation.e_2_next, Color_Blue, 1.0, true);
+    plotter.REDRAW_SHAPE("Situation.e_s1_s2", situation.e_s1_s2, Color_Red,  1.0, true);
+    plotter.REDRAW_SHAPE("Situation.e_s1_t1", situation.e_s1_t1, Color_Red,  1.0, true);
+    plotter.REDRAW_SHAPE("Situation.e_s1_t2", situation.e_s1_t2, Color_Red,  1.0, true);
+    plotter.REDRAW_SHAPE("Situation.e_s2_t1", situation.e_s2_t1, Color_Blue, 1.0, true);
+    plotter.REDRAW_SHAPE("Situation.e_s2_t2", situation.e_s2_t2, Color_Blue, 1.0, true);
     //
-    plotter.REDRAW_SHAPE("Situation.f_1",     situation.f_1,     Color_Red,  0.25);
-    plotter.REDRAW_SHAPE("Situation.f_2",     situation.f_2,     Color_Blue, 0.25);
-    plotter.REDRAW_SHAPE("Situation.f_first", situation.f_first, Color_Red,  0.95, true);
-    plotter.REDRAW_SHAPE("Situation.f_last",  situation.f_last,  Color_Blue, 0.95, true);
+    plotter.REDRAW_SHAPE("Situation.f_s1", situation.f_s1, Color_Red,  0.25);
+    plotter.REDRAW_SHAPE("Situation.f_s2", situation.f_s2, Color_Blue, 0.25);
+    plotter.REDRAW_SHAPE("Situation.f_t1", situation.f_t1, Color_Red,  0.95, true);
+    plotter.REDRAW_SHAPE("Situation.f_t2", situation.f_t2, Color_Blue, 0.95, true);
     //
-    plotter.REDRAW_SHAPE("Situation.v_first", situation.v_first, Color_Red,  1.0, true);
-    plotter.REDRAW_SHAPE("Situation.v_last",  situation.v_last,  Color_Blue, 1.0, true);
+    plotter.REDRAW_SHAPE("Situation.v_s1_s2_t1", situation.v_s1_s2_t1, Color_Red,  1.0, true);
+    plotter.REDRAW_SHAPE("Situation.v_s1_s2_t2", situation.v_s1_s2_t2, Color_Blue, 1.0, true);
   }
 
 public:

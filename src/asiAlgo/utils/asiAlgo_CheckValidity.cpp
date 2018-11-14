@@ -32,6 +32,7 @@
 #include <asiAlgo_CheckValidity.h>
 
 // OCCT includes
+#include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepCheck_Analyzer.hxx>
@@ -299,9 +300,11 @@ namespace CheckShapeAux
 
   //! Dumps all detected invalidities to Logger.
   //! \param[in] progress progress entry.
+  //! \param[in] plotter  imperative plotter.
   //! \param[in] analyzer checker tool.
   //! \param[in] shape    shape to check.
   void StructuralDump(ActAPI_ProgressEntry      progress,
+                      ActAPI_PlotterEntry       plotter,
                       const BRepCheck_Analyzer& analyzer,
                       const TopoDS_Shape&       shape)
   {
@@ -318,6 +321,7 @@ namespace CheckShapeAux
       NbProblems->SetValue(i, 0);
 
     Handle(TopTools_HSequenceOfShape) sl = new TopTools_HSequenceOfShape();
+    Handle(TopTools_HSequenceOfShape) slv, sle, slw, slf, sls, slo;
 
     TopTools_DataMapOfShapeListOfShape MAP;
     GetProblemShapes(analyzer, shape, sl, NbProblems, MAP);
@@ -465,6 +469,115 @@ namespace CheckShapeAux
     if ( NbProblems->Value(BRepCheck_CheckFail) > 0 )
       progress.SendLogMessage( LogErr(Normal) << "Shape checker failed (count: %1)."
                                               << NbProblems->Value(BRepCheck_CheckFail) );
+
+    /* =====================
+     *  Dump invalid shapes
+     * ===================== */
+
+    slv = new TopTools_HSequenceOfShape();
+    sle = new TopTools_HSequenceOfShape();
+    slw = new TopTools_HSequenceOfShape();
+    slf = new TopTools_HSequenceOfShape();
+    sls = new TopTools_HSequenceOfShape();
+    slo = new TopTools_HSequenceOfShape();
+
+    // Populate collections.
+    for ( int i = 1; i <= sl->Length(); ++i )
+    {
+      const TopoDS_Shape& shi = sl->Value(i);
+      TopAbs_ShapeEnum    sti = shi.ShapeType();
+      //
+      switch (sti)
+      {
+        case TopAbs_VERTEX : slv->Append(shi); break;
+        case TopAbs_EDGE   : sle->Append(shi); break;
+        case TopAbs_WIRE   : slw->Append(shi); break;
+        case TopAbs_FACE   : slf->Append(shi); break;
+        case TopAbs_SHELL  : sls->Append(shi); break;
+        case TopAbs_SOLID  : slo->Append(shi); break;
+        default            : break;
+      }
+    }
+
+    BRep_Builder B;
+
+    // Vertices.
+    if ( slv->Length() )
+    {
+      TopoDS_Compound comp;
+      B.MakeCompound(comp);
+      const int nb = slv->Length();
+
+      for ( int i = 1; i <= nb; ++i )
+        B.Add( comp, slv->Value(i) );
+
+      plotter.DRAW_SHAPE(comp, Color_Red, 1.0, true, "faulty_vertices");
+    }
+
+    // Edges.
+    if ( sle->Length() )
+    {
+      TopoDS_Compound comp;
+      B.MakeCompound(comp);
+      const int nb = sle->Length();
+
+      for( int i = 1; i <= nb; ++i )
+        B.Add( comp, sle->Value(i) );
+
+      plotter.DRAW_SHAPE(comp, Color_Red, 1.0, true, "faulty_edges");
+    }
+
+    // Wires.
+    if ( slw->Length() )
+    {
+      TopoDS_Compound comp;
+      B.MakeCompound(comp);
+      const int nb = slw->Length();
+
+      for ( int i = 1; i <= nb; ++i )
+        B.Add( comp, slw->Value(i) );
+
+      plotter.DRAW_SHAPE(comp, Color_Red, 1.0, true, "faulty_wires");
+    }
+
+    // Faces.
+    if ( slf->Length() )
+    {
+      TopoDS_Compound comp;
+      B.MakeCompound(comp);
+      const int nb = slf->Length();
+
+      for ( int i = 1; i <= nb; ++i )
+        B.Add( comp, slf->Value(i) );
+
+      plotter.DRAW_SHAPE(comp, Color_Red, "faulty_faces");
+    }
+
+    // Shells.
+    if ( sls->Length() )
+    {
+      TopoDS_Compound comp;
+      B.MakeCompound(comp);
+      const int nb = sls->Length();
+
+      for ( int i = 1; i <= nb; ++i )
+        B.Add( comp, sls->Value(i) );
+
+      plotter.DRAW_SHAPE(comp, Color_Red, "faulty_shells");
+    }
+
+    // Solids.
+    if ( slo->Length() )
+    {
+      TopoDS_Compound comp;
+      B.MakeCompound(comp);
+      const int nb = slo->Length();
+
+      for ( int i = 1; i <= nb; ++i )
+        B.Add( comp, slo->Value(i) );
+
+      plotter.DRAW_SHAPE(comp, Color_Red, "faulty_solids");
+    }
   }
 
 };
@@ -494,7 +607,7 @@ bool asiAlgo_CheckValidity::CheckBasic(const TopoDS_Shape& shape)
   // ...
 
   // Perform structural dump
-  CheckShapeAux::StructuralDump(m_progress, Checker, shape);
+  CheckShapeAux::StructuralDump(m_progress, m_plotter, Checker, shape);
 
   return false;
 }

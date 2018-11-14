@@ -66,6 +66,11 @@ public:
   asiAlgo_EXPORT virtual bool
     Init(const TopoDS_Shape& target) override;
 
+  //! Sets the collection of intact ("frozen") vertices.
+  //! \param[in] vertices collection of vertices to set as frozen.
+  asiAlgo_EXPORT void
+    SetFrozenVertices(const TopTools_IndexedMapOfShape& vertices);
+
 public:
 
   //! Returns true if the face <F> has been modified.
@@ -165,6 +170,12 @@ protected:
     buildPCurve(const TopoDS_Edge& E,
                 const TopoDS_Face& F);
 
+  //! Checks if resolution of vertices was successful or not. If not, this
+  //! method turns on the failure flag of the normalization object.
+  //! \return false if the checker detect an error.
+  asiAlgo_EXPORT bool
+    checkResolvedVertices();
+
 protected:
 
   //! Attributed Adjacency Graph.
@@ -173,6 +184,9 @@ protected:
   //! Data structure describing local geometric
   //! situation near the target edge.
   asiAlgo_ModEdgeInfo m_edgeInfo;
+
+  //! Frozen vertices.
+  TopTools_IndexedMapOfShape m_frozenVertices;
 
 };
 

@@ -73,14 +73,30 @@ public:
   //! Geometric primitives to resolve the topological situation.
   struct Resolution
   {
+    //! Auxiliary structure representing the result of vertex computation.
+    struct t_vertexStatus
+    {
+      t_vertexStatus() : done(false) {} //!< Default ctor.
+
+      //! Initializes the vertex status structure.
+      void Init(const gp_Pnt& _point, const bool _done)
+      {
+        this->point = _point;
+        this->done  = _done;
+      }
+
+      gp_Pnt point; //!< Vertex coordinates.
+      bool   done;  //!< True if the coordinates were initialized.
+    };
+
     //! Intersection curve between the owner faces (f_1 and f_2).
     Handle(asiAlgo_IntersectionCurveSS) icurve;
 
-    //! Intersection point to recover the geometric support of v_first;
-    gp_Pnt ivf;
+    //! Intersection point to recover the geometric support of v_first.
+    t_vertexStatus ivf;
 
-    //! Intersection point to recover the geometric support of v_last;
-    gp_Pnt ivl;
+    //! Intersection point to recover the geometric support of v_last.
+    t_vertexStatus ivl;
   };
 
 public:

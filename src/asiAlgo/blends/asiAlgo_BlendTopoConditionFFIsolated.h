@@ -159,6 +159,13 @@ public:
     this->e_s2_t1 = asiAlgo_Utils::GetCommonEdge(this->f_s2, this->f_t1, this->v_b_s2_t1);
     this->e_s2_t2 = asiAlgo_Utils::GetCommonEdge(this->f_s2, this->f_t2, this->v_b_s2_t2);
 
+    // Check if all edges are initialized.
+    if ( this->e_s1_t1.IsNull() ||
+         this->e_s1_t2.IsNull() ||
+         this->e_s2_t1.IsNull() ||
+         this->e_s2_t2.IsNull() )
+      return false;
+
     return true; // Identified.
   }
 
@@ -175,8 +182,9 @@ public:
 
     history = new asiAlgo_History;
 
-    // Kill the first terminating edge.
-    if ( !this->kev(output, this->e_b_t1, output, history) )
+    // Kill the first terminating edge. We also specify a vertex to kill to
+    // be as much deterministic as possible.
+    if ( !this->kev(output, this->e_b_t1, this->v_b_s1_t1, output, history) )
     {
       m_progress.SendLogMessage(LogErr(Normal) << "KEV failed on terminating edge.");
       return false;
@@ -185,7 +193,7 @@ public:
     this->Actualize(history);
 
     // Kill the second terminating edge.
-    if ( !this->kev(output, this->e_b_t2, output, history) )
+    if ( !this->kev(output, this->e_b_t2, this->v_b_s1_t2, output, history) )
     {
       m_progress.SendLogMessage(LogErr(Normal) << "KEV failed on terminating edge.");
       return false;
@@ -232,13 +240,13 @@ public:
   //! Gathers the collection of affected edges to rebuild as a result of
   //! suppression.
   //! \param[out] edges   output collection of edges to rebuild.
-  virtual void GatherAffectedEdges(NCollection_IndexedMap<TopoDS_Edge>& edges) const
+  virtual void GatherAffectedEdges(asiAlgo_Edges2Rebuild& edges) const
   {
-    edges.Add(this->e_s1_t1);
-    edges.Add(this->e_s1_t2);
-    edges.Add(this->e_b_s1);
-    edges.Add(this->e_s2_t1);
-    edges.Add(this->e_s2_t2);
+    edges.Add( asiAlgo_Edge2Rebuild(this->e_s1_t1, this->v_b_s2_t1, false) );
+    edges.Add( asiAlgo_Edge2Rebuild(this->e_s1_t2, this->v_b_s2_t2, false) );
+    edges.Add( asiAlgo_Edge2Rebuild(this->e_b_s1) );
+    edges.Add( asiAlgo_Edge2Rebuild(this->e_s2_t1, this->v_b_s2_t1, false) );
+    edges.Add( asiAlgo_Edge2Rebuild(this->e_s2_t2, this->v_b_s2_t2, false) );
   }
 
 };

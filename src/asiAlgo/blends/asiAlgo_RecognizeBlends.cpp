@@ -174,19 +174,17 @@ bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
                                                                     m_plotter);
 
   // Prepare neighborhood iterator with customized propagation rule.
-  int numIteratedFaces = 0;
+  int numRecognizedFaces = 0;
   //
   asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::RecognizeBlendCandidates>
     nit(m_aag, faceId, itRule);
   //
-  for ( ; nit.More(); nit.Next(), ++numIteratedFaces )
+  for ( ; nit.More(); nit.Next(), ++numRecognizedFaces )
   {
     const int fid = nit.GetFaceId();
 
     m_plotter.DRAW_SHAPE(m_aag->GetFace(fid), Color_Blue, 1.0, false, "blendCandidate");
   }
 
-  // TODO: NYI
-
-  return true;
+  return numRecognizedFaces > 0;
 }

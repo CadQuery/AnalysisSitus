@@ -1118,7 +1118,7 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
     part_n->GetAAG()->GetMapOf(TopAbs_EDGE, subShapesOfType);
 
     // Get sub-shape in question.
-    edge = TopoDS::Edge( subShapesOfType(ssidx) );
+    edge = TopoDS::Edge( subShapesOfType(ssidx).Oriented(TopAbs_EXTERNAL) );
   }
 
   /* ======================
@@ -1787,7 +1787,8 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
   // Perform recognition starting from the guess face.
   asiAlgo_RecognizeBlends recognizer( partNode->GetAAG(),
                                       interp->GetProgress(),
-                                      NULL/*interp->GetPlotter()*/ );
+                                      NULL
+                                      /*interp->GetPlotter()*/ );
   //
   if ( !recognizer.Perform(fid) )
   {
@@ -1800,7 +1801,8 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
   // Perform suppression.
   asiAlgo_SuppressBlendChain suppressor( recognizer.GetAAG(),
                                          interp->GetProgress(),
-                                         NULL/*interp->GetPlotter()*/ );
+                                         NULL
+                                         /*interp->GetPlotter()*/ );
   //
   if ( !suppressor.Perform(fid) )
   {

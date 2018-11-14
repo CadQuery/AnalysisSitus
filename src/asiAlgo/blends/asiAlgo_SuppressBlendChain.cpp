@@ -205,7 +205,7 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
   TopoDS_Shape targetShape = m_aag->GetMasterCAD();
 
   // Affected edges to rebuild after topological reduction.
-  NCollection_IndexedMap<TopoDS_Edge> edges2Rebuild;
+  asiAlgo_Edges2Rebuild edges2Rebuild;
 
   // Process the initialized topological conditions.
   const NCollection_DataMap<int, Handle(asiAlgo_BlendTopoCondition)>&
@@ -248,12 +248,12 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
   // Normalize geometry.
   for ( int k = 1; k <= edges2Rebuild.Extent(); ++k )
   {
-    const TopoDS_Edge& originalEdge = edges2Rebuild(k);
+    const TopoDS_Edge& originalEdge = edges2Rebuild(k).edge;
 
     // Update from history as the edge could have been modified by rebuilder
     // on previous iterations.
     TopoDS_Edge
-      edge2Rebuild = TopoDS::Edge( rebuildHistory->GetLastModifiedOrArg(originalEdge) );
+      edge2Rebuild = TopoDS::Edge( rebuildHistory->GetLastModifiedOrArg(originalEdge).Oriented(TopAbs_EXTERNAL) );
 
     m_plotter.DRAW_SHAPE(edge2Rebuild, Color_Red, 1.0, true, "edge2Rebuild");
 
@@ -261,6 +261,7 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
     asiAlgo_RebuildEdge rebuildEdge(targetShape, m_progress, m_plotter);
     //
     rebuildEdge.SetHistory(rebuildHistory);
+    rebuildEdge.SetFrozenVertices(edges2Rebuild(k).frozenVertices);
 
     // Apply geometric operator.
     if ( !rebuildEdge.Perform(edge2Rebuild) )

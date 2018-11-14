@@ -109,6 +109,7 @@ set (editing_H_FILES
   editing/asiAlgo_BRepNormalizer.h
   editing/asiAlgo_DeleteEdges.h
   editing/asiAlgo_DetachFaces.h
+  editing/asiAlgo_Edge2Rebuild.h
   editing/asiAlgo_Euler.h
   editing/asiAlgo_EulerKEF.h
   editing/asiAlgo_EulerKEV.h

@@ -82,6 +82,13 @@ bool asiAlgo_ModConstructEdge::Init(const TopoDS_Shape& target)
 
 //-----------------------------------------------------------------------------
 
+void asiAlgo_ModConstructEdge::SetFrozenVertices(const TopTools_IndexedMapOfShape& vertices)
+{
+  m_frozenVertices = vertices;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_ModConstructEdge::NewSurface(const TopoDS_Face&    F,
                                           Handle(Geom_Surface)& S,
                                           TopLoc_Location&      L,
@@ -135,11 +142,35 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
        !V.IsPartner(m_edgeInfo.situation.v_s1_s2_t2) )
     return false;
 
-  // Intersection point.
-  gp_Pnt* ipoint = NULL;
-
   // Get old point of the vertex.
   gp_Pnt oldPt = BRep_Tool::Pnt(V);
+
+  // Do not evaluate "frozen" vertices. This small `if` is a part of
+  // our knowledge-driven computation paradigm. According to the latter,
+  // if you know that a vertex is already in its "good" position, then
+  // do not try to reevaluate it. Such a paradigm is especially fruitful
+  // in cases where intersection is not well-defined, e.g., when tangential
+  // situation is realized.
+  if ( m_frozenVertices.Contains(V) )
+  {
+    m_progress.SendLogMessage(LogNotice(Normal) << "Skipping 'frozen' vertex.");
+    m_plotter.DRAW_SHAPE(V, Color_Blue, 1.0, true, "frozen_vertex");
+
+    // Use existing geometry.
+    P   = oldPt;
+    tol = BRep_Tool::Tolerance(V);
+
+    // Set resolution.
+    if ( V.IsPartner(m_edgeInfo.situation.v_s1_s2_t1) )
+      m_edgeInfo.resolution.ivf.Init(P, true);
+    else
+      m_edgeInfo.resolution.ivl.Init(P, true);
+
+    return this->checkResolvedVertices(); // Check if the vertices are Ok.
+  }
+
+  // Intersection point.
+  asiAlgo_ModEdgeInfo::Resolution::t_vertexStatus* ipoint = NULL;
 
   // Curve and surface to intersect.
   Handle(Geom_Curve)   icurve = m_edgeInfo.resolution.icurve->C;
@@ -194,7 +225,7 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
                                               << opFaceName);
 
     // Reuse the old point.
-    (*ipoint) = oldPt;
+    ipoint->Init(oldPt, true);
   }
   else if ( numInterPts > 1 )
   {
@@ -239,14 +270,14 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
     // Initialize intersection point. In case if we have the situation of
     // tangency, we take average point for better precision as multiple points
     // represent just one (though ill-defined) intersection.
-    (*ipoint) = hasTangencyPoints ? avrPoint : chosenPt;
+    ipoint->Init(hasTangencyPoints ? avrPoint : chosenPt, true);
   }
   else // One intersection point.
   {
     uncertainty = ipoints(1)->Uncertainty;
 
     // Initialize intersection point.
-    (*ipoint) = ipoints(1)->P;
+    ipoint->Init(ipoints(1)->P, true);
   }
 
 #if defined DRAW_DEBUG
@@ -257,10 +288,10 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
 #endif
 
   // Set updated data for the caller.
-  P   = *ipoint;
+  P   = ipoint->point;
   tol = uncertainty;
   //
-  return true;
+  return this->checkResolvedVertices(); // Check if the vertices are Ok.
 }
 
 //-----------------------------------------------------------------------------
@@ -316,7 +347,7 @@ bool asiAlgo_ModConstructEdge::NewParameter(const TopoDS_Vertex& V,
       gp_Pnt proj;
       ShapeAnalysis_Curve sac;
       sac.Project(m_edgeInfo.resolution.icurve->C,
-                  m_edgeInfo.resolution.ivf,
+                  m_edgeInfo.resolution.ivf.point,
                   Precision::Confusion(),
                   proj,
                   p);
@@ -336,7 +367,7 @@ bool asiAlgo_ModConstructEdge::NewParameter(const TopoDS_Vertex& V,
       gp_Pnt proj;
       ShapeAnalysis_Curve sac;
       sac.Project(m_edgeInfo.resolution.icurve->C,
-                  m_edgeInfo.resolution.ivl,
+                  m_edgeInfo.resolution.ivl.point,
                   Precision::Confusion(),
                   proj,
                   p);
@@ -666,4 +697,21 @@ Handle(Geom2d_Curve) asiAlgo_ModConstructEdge::buildPCurve(const TopoDS_Edge& E,
   c2d = BRep_Tool::CurveOnSurface(E, F, f, l);*/
 
   return c2d;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_ModConstructEdge::checkResolvedVertices()
+{
+  if ( !m_edgeInfo.resolution.ivf.done || !m_edgeInfo.resolution.ivl.done )
+    return true; // Check is done only if both vertices are resolved.
+
+  // Check if the vertices are not coincident.
+  if ( m_edgeInfo.resolution.ivf.point.Distance(m_edgeInfo.resolution.ivl.point) < Precision::Confusion() )
+  {
+    this->SetErrorStateOn();
+    return false;
+  }
+
+  return true;
 }

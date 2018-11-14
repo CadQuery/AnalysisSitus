@@ -66,5 +66,47 @@ as <span class="code-inline">s1</span> without reducing the generality. The vert
 is chosen as the last vertex of the edge <span class="code-inline">s1-s2</span>.
 </p>
 
+<p>
+The process of edge rebuilding employs recomputation of its host curve and extremities
+(i.e. vertices). However, in some circumstances you may know a priori that
+no recomputation is necessary for certain vertex positions. This knowledge
+can be taken into account in the algorithm by specifying the so called "frozen"
+vertices. Let's expand a bit on why this possibility is important.
+A vertex is generally recomputed using <i>curve-surface intersection algorithm</i>.
+However, if the intersection operands are not in general position
+(see <a href="../references.html#barnhill-1987">[Barnhill et al, 1987]</a> for
+the discussion of "general position" term in the context of intersection), the
+recomputation routine is likely to fail or give inaccurate results. The figure below
+illustrates two situations which are tricky to resolve. In the fist figure, the
+intersection point was not found because of small proximity between the operands.
+Such a proximity has no sense from the engineering point of view as most likely the
+geometries are meant to be tangent. The next figure illustrates a possible result
+of intersection if the operand curve is pulled a bit closer to the surface. We see
+multiple intersection points (none is accurate) while only one point is actually
+meant there.
+</p>
+
+<div align="center"><img src="../imgs/rebuild_edge_genpos.png"/></div>
+
+<p>
+The best practice in geometric modeling is to identify special cases of intersection to enable
+specific treatment for them. Since multiple intersection points may emerge in tangential cases, the
+<span class="code-inline">rebuild-edge</span> command attempts to average the
+obtained points to produce a single result out of them. However, this technique is error-prone as
+it does not guarantee that the average point is more accurate than any of the contributing coordinates. In
+practice, it is much better just to avoid recomputation of intersections as much as possible
+(and especially in non-general-position cases). The possibility to specify the "frozen" vertices
+enables the principle known as "knowledge-guided computation" (see <a href="../references.html#piegl-2005">[Piegl, 2005]</a>
+for a comprehensive discussion of robustness issues in CAD).
+</p>
+
+<div class="note">
+One practical example where "frozen" vertices are used is a blends suppression algorithm. In this algorithm,
+the edge <span class="code-inline">s1-s2</span> represents the collapsed blend face, and the edges
+<span class="code-inline">s1-t1</span>, <span class="code-inline">s2-t1</span>, <span class="code-inline">s1-t2</span>
+and <span class="code-inline">s2-t2</span> require recomputation. Each of the latter edges has one vertex which does
+not require recomputation.
+</div>
+
 </body>
 </html>

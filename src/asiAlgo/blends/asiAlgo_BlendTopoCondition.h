@@ -34,6 +34,7 @@
 // asiAlgo includes
 #include <asiAlgo_AAG.h>
 #include <asiAlgo_AttrBlendCandidate.h>
+#include <asiAlgo_Edge2Rebuild.h>
 #include <asiAlgo_History.h>
 
 // Active Data includes
@@ -117,7 +118,7 @@ public:
   //! Gathers the collection of affected edges to rebuild as a result of
   //! suppression.
   //! \param[out] edges   output collection of edges to rebuild.
-  virtual void GatherAffectedEdges(NCollection_IndexedMap<TopoDS_Edge>& edges) const = 0;
+  virtual void GatherAffectedEdges(asiAlgo_Edges2Rebuild& edges) const = 0;
 
 protected:
 

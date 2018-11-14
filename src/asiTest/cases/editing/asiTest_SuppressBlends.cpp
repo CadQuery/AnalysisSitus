@@ -299,3 +299,59 @@ outcome asiTest_SuppressBlends::testSuppressBlend020(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_020.tcl");
 }
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 021. In this test case, skipping frozen vertices at the
+//! edge normalization stage allows to avoid inaccuracy.
+//!
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::testSuppressBlend021(const int funcID)
+{
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_021.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 022.
+//!
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::testSuppressBlend022(const int funcID)
+{
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_022.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 023.
+//!
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::testSuppressBlend023(const int funcID)
+{
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_023.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 024.
+//!
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::testSuppressBlend024(const int funcID)
+{
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_024.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 025.
+//!
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::testSuppressBlend025(const int funcID)
+{
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_025.tcl");
+}

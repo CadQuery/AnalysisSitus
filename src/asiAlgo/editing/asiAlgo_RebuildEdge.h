@@ -40,6 +40,7 @@
 
 // OCCT includes
 #include <TopoDS_Edge.hxx>
+#include <TopoDS_Vertex.hxx>
 
 //! Geometric operator to rebuild edge from its adjacent surfaces.
 class asiAlgo_RebuildEdge : public ActAPI_IAlgorithm
@@ -77,6 +78,23 @@ public:
   asiAlgo_EXPORT virtual bool
     Perform(const TopoDS_Edge& edge);
 
+  //! Allows to set a collection of vertices which should not be
+  //! recreated (in 3D) by reintersection. In certain topological
+  //! conditions, you may benefit from an a priori knowledge of your
+  //! data to make computations more efficient and robust. This is a sort
+  //! of knowledge-driven computation enabled here.
+  //!
+  //! \param[in] vertex vertex to add.
+  asiAlgo_EXPORT void
+    AddFrozenVertex(const TopoDS_Vertex& vertex);
+
+  //! Sets the collection of intact ("frozen") vertices.
+  //! \sa AddFrozenVertex()
+  //!
+  //! \param[in] vertices collection of vertices to set as frozen.
+  asiAlgo_EXPORT void
+    SetFrozenVertices(const TopTools_IndexedMapOfShape& vertices);
+
 public:
 
   //! \return modified model.
@@ -105,9 +123,10 @@ public:
 
 protected:
 
-  Handle(asiAlgo_History) m_history; //!< Modification history.
-  Handle(asiAlgo_AAG)     m_aag;     //!< AAG of the master CAD model.
-  TopoDS_Shape            m_result;  //!< Result CAD model.
+  Handle(asiAlgo_History)    m_history;        //!< Modification history.
+  Handle(asiAlgo_AAG)        m_aag;            //!< AAG of the master CAD model.
+  TopTools_IndexedMapOfShape m_frozenVertices; //!< Frozen vertices.
+  TopoDS_Shape               m_result;         //!< Result CAD model.
 
 };
 

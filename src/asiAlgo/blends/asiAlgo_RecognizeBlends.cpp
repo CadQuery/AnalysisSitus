@@ -69,12 +69,24 @@ namespace asiAlgo_AAGIterationRule
                              const double               maxRadius,
                              ActAPI_ProgressEntry       progress,
                              ActAPI_PlotterEntry        plotter)
-    : m_aag(aag), m_fMaxRadius(maxRadius)
+    : m_aag(aag), m_fMaxRadius(maxRadius), m_bBlockingModeOn(true)
     {
       m_localReco = new asiAlgo_RecognizeBlendFace(aag, progress, plotter);
     }
 
   public:
+
+    //! Enables blocking mode of the rule.
+    void SetBlockingOn()
+    {
+      m_bBlockingModeOn = true;
+    }
+
+    //! Disables blocking mode of the rule.
+    void SetBlockingOff()
+    {
+      m_bBlockingModeOn = false;
+    }
 
     //! For the given face ID, this method decides whether to check its
     //! neighbors or stop.
@@ -96,16 +108,17 @@ namespace asiAlgo_AAGIterationRule
       // If we are here, then the face in question is not attributed. We can now
       // try to recognize it.
       if ( !m_localReco->Perform(fid, m_fMaxRadius) )
-        return true; // Block further iterations.
+        return m_bBlockingModeOn; // Block further iterations if blocking mode is on.
 
       return false;
     }
 
   protected:
 
-    Handle(asiAlgo_AAG)                m_aag;        //!< AAG instance.
-    Handle(asiAlgo_RecognizeBlendFace) m_localReco;  //!< Local recognizer.
-    double                             m_fMaxRadius; //!< Max allowed radius.
+    Handle(asiAlgo_AAG)                m_aag;             //!< AAG instance.
+    Handle(asiAlgo_RecognizeBlendFace) m_localReco;       //!< Local recognizer.
+    double                             m_fMaxRadius;      //!< Max allowed radius.
+    bool                               m_bBlockingModeOn; //!< Blocking mode.
   };
 };
 
@@ -139,6 +152,61 @@ asiAlgo_RecognizeBlends::asiAlgo_RecognizeBlends(const Handle(asiAlgo_AAG)& aag,
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_RecognizeBlends::Perform(const double radius)
+{
+  /* ===========================================
+   *  Stage 1: build AAG (if not yet available)
+   * =========================================== */
+
+  // Build master AAG if necessary.
+  if ( m_aag.IsNull() )
+  {
+#if defined COUT_DEBUG
+    TIMER_NEW
+    TIMER_GO
+#endif
+
+    // We do not allow smooth transitions here.
+    m_aag = new asiAlgo_AAG(m_master, false);
+
+#if defined COUT_DEBUG
+    TIMER_FINISH
+    TIMER_COUT_RESULT_MSG("Construct AAG")
+#endif
+  }
+
+  /* =====================================================
+   *  Stage 2: iterate AAG attempting to recognize blends
+   * ===================================================== */
+
+  // Propagation rule.
+  Handle(asiAlgo_AAGIterationRule::RecognizeBlendCandidates)
+    itRule = new asiAlgo_AAGIterationRule::RecognizeBlendCandidates(m_aag,
+                                                                    radius,
+                                                                    m_progress,
+                                                                    m_plotter);
+
+  // Rule is used in non-blocking mode to allow full traverse of the model
+  // by neighbors.
+  itRule->SetBlockingOff();
+
+  // Select seed face.
+  const int seedFaceId = 1;
+
+  // Prepare neighborhood iterator with customized propagation rule.
+  asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::RecognizeBlendCandidates>
+    nit(m_aag, seedFaceId, itRule);
+  //
+  while ( nit.More() )
+  {
+    nit.Next();
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
                                       const double radius)
 {
@@ -169,6 +237,10 @@ bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
     m_progress.SendLogMessage(LogErr(Normal) << "Face %1 does not exist." << faceId);
     return false;
   }
+
+  /* =====================================================
+   *  Stage 2: iterate AAG attempting to recognize blends
+   * ===================================================== */
 
   // Propagation rule.
   Handle(asiAlgo_AAGIterationRule::RecognizeBlendCandidates)

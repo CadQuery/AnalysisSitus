@@ -119,7 +119,11 @@ gp_Vec asiAlgo_MeshComputeNorms::computeElemNorm(const Handle(ActData_Mesh_Eleme
     gp_Vec P1P2 = P2.XYZ() - P1.XYZ();
     //
     res = P0P1.Crossed(P0P2);
-    res.Normalize();
+    //
+    if ( res.Magnitude() < gp::Resolution() )
+      res = gp_Vec();
+    else
+      res.Normalize();
   }
   else if ( elem->IsKind( STANDARD_TYPE(ActData_Mesh_Quadrangle) ) )
   {

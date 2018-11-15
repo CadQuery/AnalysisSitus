@@ -75,7 +75,13 @@ public:
 
 public:
 
-  //! Performs recognition of fillets.
+  //! Performs recognition of fillets for the entire model.
+  //! \param[in] radius radius of interest.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT virtual bool
+    Perform(const double radius = 1e100);
+
+  //! Performs recognition of fillets starting from the given seed face.
   //! \param[in] faceId 1-based ID of the seed face.
   //! \param[in] radius radius of interest.
   //! \return true in case of success, false -- otherwise.

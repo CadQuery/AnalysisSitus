@@ -46,6 +46,7 @@
 #include <asiAlgo_CompleteEdgeLoop.h>
 #include <asiAlgo_MeshCheckInter.h>
 #include <asiAlgo_MeshConvert.h>
+#include <asiAlgo_RecognizeBlends.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -2344,6 +2345,48 @@ int ENGINE_CheckVerticesOri(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
+                           int                          argc,
+                           const char**                 argv)
+{
+  if ( argc != 1 && argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get part.
+  Handle(asiData_PartNode)
+    partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  TopoDS_Shape        partShape = partNode->GetShape();
+  Handle(asiAlgo_AAG) partAAG   = partNode->GetAAG();
+
+  // Get max radius.
+  const double maxRadius = ( (argc == 1) ? 1e100 : atof(argv[1]) );
+
+  // Perform recognition.
+  asiAlgo_RecognizeBlends recognizer( partShape,
+                                      partAAG,
+                                      interp->GetProgress(),
+                                      interp->GetPlotter() );
+  //
+  if ( !recognizer.Perform(maxRadius) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Recognition failed.");
+    return TCL_ERROR;
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -2572,4 +2615,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t improperly implemented modeling operators, this rule can be broken.",
     //
     __FILE__, group, ENGINE_CheckVerticesOri);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("recognize-blends",
+    //
+    "recognize-blends radius\n"
+    "\t Recognizes all blend faces in AAG representing the part.",
+    //
+    __FILE__, group, ENGINE_RecognizeBlends);
 }

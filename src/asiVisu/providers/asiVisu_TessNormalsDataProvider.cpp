@@ -40,6 +40,8 @@
 
 // Active Data includes
 #include <ActData_Mesh_ElementsIterator.h>
+#include <ActData_Mesh_Quadrangle.h>
+#include <ActData_Mesh_Triangle.h>
 
 // OCCT includes
 #include <Bnd_Box.hxx>
@@ -63,30 +65,74 @@ Handle(asiAlgo_BaseCloud<float>) asiVisu_TessNormalsDataProvider::GetPointsf()
   //
   m_vectors = asiAlgo_PointCloudUtils::AsCloudf( normsNode->GetVectors() );
 
-  // Get mask of node IDs.
-  Handle(HIntArray) nodeIds = normsNode->GetIDs();
-  //
-  TColStd_PackedMapOfInteger nodeIdsMap;
-  //
-  for ( int i = 0; i < nodeIds->Length(); ++i )
-    nodeIdsMap.Add( nodeIds->Value(i) );
-
-  // Access parent Tessellation Node to get coordinates of mesh vertices.
+  // Access parent Tessellation Node to get geometry of mesh.
   Handle(asiData_TessNode)
     tessNode = Handle(asiData_TessNode)::DownCast( normsNode->GetParentNode() );
   //
   Handle(ActData_Mesh) mesh = tessNode->GetMesh();
 
-  // Get array of node indices and extract nodes of interest.
-  m_points = new asiAlgo_BaseCloud<float>;
+  // Get mask of node/element IDs.
+  Handle(HIntArray) ids = normsNode->GetIDs();
   //
-  for ( ActData_Mesh_ElementsIterator nit(mesh, ActData_Mesh_ET_Node); nit.More(); nit.Next() )
+  TColStd_PackedMapOfInteger idsMap;
+  //
+  for ( int i = 0; i < ids->Length(); ++i )
+    idsMap.Add( ids->Value(i) );
+
+  // Prepare the position cloud to return.
+  m_points = new asiAlgo_BaseCloud<float>;
+
+  // Get positions of the vectors.
+  if ( normsNode->IsElemental() )
   {
-    Handle(ActData_Mesh_Node)
-      node = Handle(ActData_Mesh_Node)::DownCast( nit.GetValue() );
-    //
-    if ( nodeIdsMap.Contains( node->GetID() ) )
-      m_points->AddElement( node->Pnt().X(), node->Pnt().Y(), node->Pnt().Z() );
+    // Compute COGs of mesh elements.
+    for ( ActData_Mesh_ElementsIterator eit(mesh, ActData_Mesh_ET_Face); eit.More(); eit.Next() )
+    {
+      const Handle(ActData_Mesh_Element)& elem = eit.GetValue();
+      //
+      if ( !idsMap.Contains( elem->GetID() ) )
+        continue;
+
+      // Get nodes of the element.
+      std::vector<Handle(ActData_Mesh_Node)> nodes;
+      //
+      this->elementNodes(mesh, elem, nodes);
+
+      // Compute COG.
+      gp_XYZ cog;
+      //
+      if ( elem->IsKind( STANDARD_TYPE(ActData_Mesh_Triangle) ) )
+      {
+        const gp_Pnt& P0 = nodes[0]->Pnt();
+        const gp_Pnt& P1 = nodes[1]->Pnt();
+        const gp_Pnt& P2 = nodes[2]->Pnt();
+
+        cog = ( P0.XYZ() + P1.XYZ() + P2.XYZ() ) / 3.0;
+      }
+      else if ( elem->IsKind( STANDARD_TYPE(ActData_Mesh_Quadrangle) ) )
+      {
+        const gp_Pnt& P0 = nodes[0]->Pnt();
+        const gp_Pnt& P1 = nodes[1]->Pnt();
+        const gp_Pnt& P2 = nodes[2]->Pnt();
+        const gp_Pnt& P3 = nodes[3]->Pnt();
+
+        cog = ( P0.XYZ() + P1.XYZ() + P2.XYZ() + P3.XYZ() ) / 4.0;
+      }
+
+      m_points->AddElement( cog.X(), cog.Y(), cog.Z() );
+    }
+  }
+  else
+  {
+    // Get array of node indices and extract nodes of interest.
+    for ( ActData_Mesh_ElementsIterator nit(mesh, ActData_Mesh_ET_Node); nit.More(); nit.Next() )
+    {
+      Handle(ActData_Mesh_Node)
+        node = Handle(ActData_Mesh_Node)::DownCast( nit.GetValue() );
+      //
+      if ( idsMap.Contains( node->GetID() ) )
+        m_points->AddElement( node->Pnt().X(), node->Pnt().Y(), node->Pnt().Z() );
+    }
   }
 
   return m_points;
@@ -119,6 +165,36 @@ double asiVisu_TessNormalsDataProvider::GetMaxVectorModulus() const
   const double size = ( aabb.CornerMax().XYZ() - aabb.CornerMin().XYZ() ).Modulus()*0.025;
 
   return size;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_TessNormalsDataProvider::elementNodes(const Handle(ActData_Mesh)&             mesh,
+                                                   const Handle(ActData_Mesh_Element)&     elem,
+                                                   std::vector<Handle(ActData_Mesh_Node)>& nodes) const
+{
+  nodes.clear();
+  int  numNodes = elem->NbNodes();
+  int* nodeIDs  = NULL;
+
+  if ( numNodes == 3 )
+  {
+    const Handle(ActData_Mesh_Triangle)&
+      tri = Handle(ActData_Mesh_Triangle)::DownCast(elem);
+    //
+    nodeIDs = (int*) tri->GetConnections();
+  }
+  else if ( numNodes == 4 )
+  {
+    const Handle(ActData_Mesh_Quadrangle)&
+      quad = Handle(ActData_Mesh_Quadrangle)::DownCast(elem);
+    //
+    nodeIDs = (int*) quad->GetConnections();
+  }
+
+  // Populate output collection.
+  for ( int n = 0; n < numNodes; ++n )
+    nodes.push_back( mesh->FindNode(nodeIDs[n]) );
 }
 
 //-----------------------------------------------------------------------------

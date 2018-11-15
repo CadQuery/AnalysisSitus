@@ -511,7 +511,7 @@ void asiUI_ObjectBrowser::onCopyName()
 
 //-----------------------------------------------------------------------------
 
-void asiUI_ObjectBrowser::onComputeNorms()
+void asiUI_ObjectBrowser::onComputeNorms(const bool doElemNorms)
 {
   Handle(ActAPI_INode) selected_n;
   if ( !this->selectedNode(selected_n) ) return;
@@ -529,7 +529,7 @@ void asiUI_ObjectBrowser::onComputeNorms()
   //
   M->OpenCommand();
   {
-    tessNormsNode = asiEngine_Tessellation(M).ComputeNorms(tessNode);
+    tessNormsNode = asiEngine_Tessellation(M).ComputeNorms(tessNode, doElemNorms);
   }
   M->CommitCommand();
 
@@ -544,6 +544,20 @@ void asiUI_ObjectBrowser::onComputeNorms()
   }
   //
   this->Populate();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::onComputeNodalNorms()
+{
+  this->onComputeNorms(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::onComputeElementalNorms()
+{
+  this->onComputeNorms(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -580,6 +594,44 @@ void asiUI_ObjectBrowser::onConvertToTris()
     //
     if ( pViewerPart )
       pViewerPart->PrsMgr()->Actualize( M->GetTriangulationNode() );
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::onConvertToTess()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_TriangulationNode) ) )
+    return;
+
+  Handle(asiData_TriangulationNode)
+    trisNode = Handle(asiData_TriangulationNode)::DownCast(selected_n);
+
+  // Convert to Poly triangulation.
+  Handle(ActData_Mesh) mesh;
+  asiAlgo_MeshConvert::ToPersistent(trisNode->GetTriangulation(), mesh);
+
+  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(m_model);
+
+  // Modify Data Model.
+  M->OpenCommand();
+  {
+    M->GetTessellationNode()->SetMesh(mesh);
+  }
+  M->CommitCommand();
+
+  // Update UI.
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+  {
+    // Actualize in Part Viewer.
+    asiUI_ViewerPart* pViewerPart = dynamic_cast<asiUI_ViewerPart*>(m_viewers[k]);
+    //
+    if ( pViewerPart )
+      pViewerPart->PrsMgr()->Actualize( M->GetTessellationNode() );
   }
 }
 
@@ -666,8 +718,15 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
       if ( node->IsKind( STANDARD_TYPE(asiData_TessNode) ) )
       {
         pMenu->addSeparator();
-        pMenu->addAction( "Compute normal vectors",   this, SLOT( onComputeNorms  () ) );
-        pMenu->addAction( "Convert to triangulation", this, SLOT( onConvertToTris () ) );
+        pMenu->addAction( "Compute nodal norms",      this, SLOT( onComputeNodalNorms     () ) );
+        pMenu->addAction( "Compute elemental norms",  this, SLOT( onComputeElementalNorms () ) );
+        pMenu->addAction( "Convert to triangulation", this, SLOT( onConvertToTris         () ) );
+      }
+
+      if ( node->IsKind( STANDARD_TYPE(asiData_TriangulationNode) ) )
+      {
+        pMenu->addSeparator();
+        pMenu->addAction( "Convert to tessellation",  this, SLOT( onConvertToTess () ) );
       }
     }
   }

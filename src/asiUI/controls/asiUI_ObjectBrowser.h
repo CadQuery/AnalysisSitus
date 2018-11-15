@@ -95,30 +95,34 @@ signals:
 //-----------------------------------------------------------------------------
 protected slots:
 
-  void onSelectionChanged ();
-  void onContextMenu      (QPoint pos);
-  void onShow             ();
-  void onShowOnly         ();
-  void onHide             ();
-  void onManagePipelines  ();
+  void onSelectionChanged      ();
+  void onContextMenu           (QPoint pos);
+  void onShow                  ();
+  void onShowOnly              ();
+  void onHide                  ();
+  void onManagePipelines       ();
   //
-  void onHidePartEdges    ();
-  void onShowPartEdges    ();
-  void onResetPartPrs     ();
+  void onHidePartEdges         ();
+  void onShowPartEdges         ();
+  void onResetPartPrs          ();
   //
-  void onSaveToBREP       ();
-  void onSetAsPart        ();
+  void onSaveToBREP            ();
+  void onSetAsPart             ();
   //
-  void onPrintParameters  ();
-  void onCopyName         ();
+  void onPrintParameters       ();
+  void onCopyName              ();
   //
-  void onComputeNorms     ();
-  void onConvertToTris    ();
+  void onComputeNorms          (const bool);
+  void onComputeNodalNorms     ();
+  void onComputeElementalNorms ();
+  void onConvertToTris         ();
+  void onConvertToTess         ();
 
 protected:
 
-  virtual void populateContextMenu(const Handle(ActAPI_HNodeList)& activeNodes,
-                                   QMenu*                          pMenu);
+  virtual void
+    populateContextMenu(const Handle(ActAPI_HNodeList)& activeNodes,
+                        QMenu*                          pMenu);
 
 protected:
 

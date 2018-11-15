@@ -46,37 +46,53 @@ asiAlgo_MeshComputeNorms::asiAlgo_MeshComputeNorms(const Handle(ActData_Mesh)& m
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_MeshComputeNorms::Perform()
+void asiAlgo_MeshComputeNorms::Perform(const bool doElemNorms)
 {
-  // Loop over the nodes.
-  for ( ActData_Mesh_ElementsIterator nit(m_mesh, ActData_Mesh_ET_Node); nit.More(); nit.Next() )
+  if ( doElemNorms )
   {
-    // Access next node with its owner mesh elements.
-    const Handle(ActData_Mesh_Node)&
-      node = Handle(ActData_Mesh_Node)::DownCast( nit.GetValue() );
-    //
-    const ActData_Mesh_ListOfElements& lstInvElements = node->InverseElements();
-
-    // Skip free nodes.
-    if ( !lstInvElements.Extent() )
-      continue;
-
-    // Calculate normal by averaging norm vectors among all owner elements.
-    gp_Vec avrNorm;
-    int numElems = 0;
-    //
-    for ( ActData_Mesh_ListOfElements::Iterator eit(lstInvElements); eit.More(); eit.Next(), ++numElems )
+    // Loop over the mesh elements.
+    for ( ActData_Mesh_ElementsIterator eit(m_mesh, ActData_Mesh_ET_Face); eit.More(); eit.Next() )
     {
-      gp_Vec elemNorm = this->computeElemNorm( eit.Value() );
-      avrNorm += elemNorm;
-    }
-    //
-    avrNorm /= numElems;
-    //
-    avrNorm.Normalize();
+      const Handle(ActData_Mesh_Element)& elem = eit.GetValue();
+      //
+      gp_Vec elemNorm = this->computeElemNorm(elem);
 
-    // Add vector to the resulting normal field.
-    m_norms.Bind(node->GetID(), avrNorm);
+      // Add vector to the resulting normal field.
+      m_norms.Bind(elem->GetID(), elemNorm);
+    }
+  }
+  else
+  {
+    // Loop over the nodes.
+    for ( ActData_Mesh_ElementsIterator nit(m_mesh, ActData_Mesh_ET_Node); nit.More(); nit.Next() )
+    {
+      // Access next node with its owner mesh elements.
+      const Handle(ActData_Mesh_Node)&
+        node = Handle(ActData_Mesh_Node)::DownCast( nit.GetValue() );
+      //
+      const ActData_Mesh_ListOfElements& lstInvElements = node->InverseElements();
+
+      // Skip free nodes.
+      if ( !lstInvElements.Extent() )
+        continue;
+
+      // Calculate normal by averaging norm vectors among all owner elements.
+      gp_Vec avrNorm;
+      int numElems = 0;
+      //
+      for ( ActData_Mesh_ListOfElements::Iterator eit(lstInvElements); eit.More(); eit.Next(), ++numElems )
+      {
+        gp_Vec elemNorm = this->computeElemNorm( eit.Value() );
+        avrNorm += elemNorm;
+      }
+      //
+      avrNorm /= numElems;
+      //
+      avrNorm.Normalize();
+
+      // Add vector to the resulting normal field.
+      m_norms.Bind(node->GetID(), avrNorm);
+    }
   }
 }
 

@@ -55,7 +55,8 @@ Handle(asiData_TessNode) asiEngine_Tessellation::CreateTessellation()
 //-----------------------------------------------------------------------------
 
 Handle(asiData_TessNormsNode)
-  asiEngine_Tessellation::ComputeNorms(const Handle(asiData_TessNode)& tessNode)
+  asiEngine_Tessellation::ComputeNorms(const Handle(asiData_TessNode)& tessNode,
+                                       const bool                      doElemNorms)
 {
   // Get mesh to compute normal vectors for.
   Handle(ActData_Mesh) mesh = tessNode->GetMesh();
@@ -66,7 +67,7 @@ Handle(asiData_TessNormsNode)
   // Compute normal vectors.
   asiAlgo_MeshComputeNorms algo(mesh, m_progress, m_plotter);
   //
-  algo.Perform();
+  algo.Perform(doElemNorms);
 
   // Get the resulting normal field.
   Handle(HIntArray) nodeIds;
@@ -82,7 +83,8 @@ Handle(asiData_TessNormsNode)
 
   // Initialize.
   tessNorms_n->Init(nodeIds, vectors);
-  tessNorms_n->SetName("Normal field");
+  tessNorms_n->SetIsElemental(doElemNorms);
+  tessNorms_n->SetName(doElemNorms ? "Elemental norms" : "Nodal (averaged) norms");
 
   // Add as child.
   tessNode->AddChildNode(tessNorms_n);

@@ -51,9 +51,9 @@ void asiAlgo_MeshOffset::Perform(const double dist)
 {
   m_result = new ActData_Mesh;
 
-  // Compute normal field.
+  // Compute normal field in nodes.
   asiAlgo_MeshComputeNorms computeNorms(m_input, m_progress, m_plotter);
-  computeNorms.Perform();
+  computeNorms.Perform(false);
   //
   const NCollection_DataMap<int, gp_Vec>& nodeNorms = computeNorms.GetResult();
 

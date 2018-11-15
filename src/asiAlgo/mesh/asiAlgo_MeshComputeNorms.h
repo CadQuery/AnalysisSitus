@@ -62,8 +62,11 @@ public:
 public:
 
   //! Performs computation of normal field in nodes.
+  //! \param[in] doElemNorms indicates whether to compute norms by
+  //!                        elements. The alternative is to compute
+  //!                        norms by nodes (averaging the elements' nodes).
   asiAlgo_EXPORT void
-    Perform();
+    Perform(const bool doElemNorms);
 
 public:
 

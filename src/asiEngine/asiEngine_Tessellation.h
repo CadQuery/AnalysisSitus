@@ -82,10 +82,14 @@ public:
   //! Computes normal field for the given Tessellation Node. This method
   //! creates a child Node under the passed one to store the computed
   //! normal vectors.
-  //! \param[in] tessNode Tessellation Node to compute the normal field for.
+  //! \param[in] tessNode    Tessellation Node to compute the normal field for.
+  //! \param[in] doElemNorms indicates whether to compute norms by
+  //!                        elements. The alternative is to compute
+  //!                        norms by nodes (averaging the elements' nodes).
   //! \return child Data Node representing the computed normal field.
   asiEngine_EXPORT Handle(asiData_TessNormsNode)
-    ComputeNorms(const Handle(asiData_TessNode)& tessNode);
+    ComputeNorms(const Handle(asiData_TessNode)& tessNode,
+                 const bool                      doElemNorms);
 
 protected:
 

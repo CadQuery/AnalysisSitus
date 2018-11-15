@@ -42,6 +42,7 @@ asiData_TessNormsNode::asiData_TessNormsNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Name,      PID_Name);
   REGISTER_PARAMETER(IntArray,  PID_IDs);
   REGISTER_PARAMETER(RealArray, PID_Vectors);
+  REGISTER_PARAMETER(Bool,      PID_IsElemental);
 }
 
 //-----------------------------------------------------------------------------
@@ -67,6 +68,7 @@ void asiData_TessNormsNode::Init(const Handle(HIntArray)&  ids,
   //
   this->SetIDs(ids);
   this->SetVectors(vectors);
+  this->SetIsElemental(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -113,6 +115,7 @@ void asiData_TessNormsNode::SetVectors(const Handle(HRealArray)& vectors)
 {
   ActData_ParameterFactory::AsRealArray( this->Parameter(PID_Vectors) )->SetArray(vectors);
 }
+
 //-----------------------------------------------------------------------------
 
 //! Accessor for the array of mesh elemental vectors.
@@ -120,4 +123,22 @@ void asiData_TessNormsNode::SetVectors(const Handle(HRealArray)& vectors)
 Handle(HRealArray) asiData_TessNormsNode::GetVectors() const
 {
   return ActData_ParameterFactory::AsRealArray( this->Parameter(PID_Vectors) )->GetArray();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Sets the flag indicating that the stored vector field corresponds to mesh
+//! elements rather than to mesh nodes.
+//! \param[in] isElemental value to set.
+void asiData_TessNormsNode::SetIsElemental(const bool isElemental)
+{
+  ActData_ParameterFactory::AsBool( this->Parameter(PID_IsElemental) )->SetValue(isElemental);
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return true if the stored vector field corresponds to mesh elements.
+bool asiData_TessNormsNode::IsElemental() const
+{
+  return ActData_ParameterFactory::AsBool( this->Parameter(PID_IsElemental) )->GetValue();
 }

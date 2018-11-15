@@ -43,7 +43,7 @@
 //! Data Node representing a normal field supplementing Tessellation Node.
 //! Vector results are internally stored in the following way:
 //!
-//! 1. Array of involved element IDs:
+//! 1. Array of involved element/node IDs:
 //!
 //! <pre>
 //!    +-----+-----+-----+-----+-----+
@@ -78,8 +78,9 @@ public:
   //------------------//
     PID_Name,         //!< Name of the Node.
   //------------------//
-    PID_IDs,          //!< IDs of the mesh elements having associated vectors.
+    PID_IDs,          //!< IDs of the mesh elements/nodes having associated vectors.
     PID_Vectors,      //!< Actual vector coordinates bound to the mesh elements.
+    PID_IsElemental,  //!< Indicates whether the vector field corresponds to elements.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -119,6 +120,12 @@ public:
 
   asiData_EXPORT Handle(HRealArray)
     GetVectors() const;
+
+  asiData_EXPORT void
+    SetIsElemental(const bool isElemental);
+
+  asiData_EXPORT bool
+    IsElemental() const;
 
 protected:
 

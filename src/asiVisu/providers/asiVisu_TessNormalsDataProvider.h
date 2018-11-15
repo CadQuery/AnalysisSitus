@@ -37,6 +37,11 @@
 // asiData includes
 #include <asiData_TessNormsNode.h>
 
+// Active Data includes
+#include <ActData_Mesh.h>
+#include <ActData_Mesh_Element.h>
+#include <ActData_Mesh_Node.h>
+
 //! Data provider for mesh normals.
 class asiVisu_TessNormalsDataProvider : public asiVisu_VectorsDataProvider
 {
@@ -60,6 +65,13 @@ public:
 
   asiVisu_EXPORT virtual double
     GetMaxVectorModulus() const;
+
+private:
+
+  void
+    elementNodes(const Handle(ActData_Mesh)&             mesh,
+                 const Handle(ActData_Mesh_Element)&     elem,
+                 std::vector<Handle(ActData_Mesh_Node)>& nodes) const;
 
 private:
 

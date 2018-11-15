@@ -32,6 +32,7 @@
 #include <asiAlgo_AAG.h>
 
 // asiAlgo includes
+#include <asiAlgo_AAGIterator.h>
 #include <asiAlgo_CheckDihedralAngle.h>
 #include <asiAlgo_FeatureAttrAngle.h>
 #include <asiAlgo_FeatureAttrFace.h>
@@ -82,13 +83,69 @@ Handle(asiAlgo_AAG) asiAlgo_AAG::Copy() const
   copy->m_faces             = this->m_faces;
   copy->m_edges             = this->m_edges;
   copy->m_vertices          = this->m_vertices;
-  copy->m_neighbors         = this->m_neighbors;
-  copy->m_arc_attributes    = this->m_arc_attributes;
-  copy->m_node_attributes   = this->m_node_attributes;
+  copy->m_neighborsStack    = this->m_neighborsStack;
+  copy->m_arcAttributes     = this->m_arcAttributes;
+  copy->m_nodeAttributes    = this->m_nodeAttributes;
   copy->m_bAllowSmooth      = this->m_bAllowSmooth;
   copy->m_fSmoothAngularTol = this->m_fSmoothAngularTol;
   //
   return copy;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::PushSubgraph(const TColStd_PackedMapOfInteger& faces2Keep)
+{
+  t_adjacency& currentMx = m_neighborsStack.top();
+
+  // Gather all present face indices into a single map
+  TColStd_PackedMapOfInteger allFaces;
+  for ( t_adjacency::Iterator it(currentMx); it.More(); it.Next() )
+    allFaces.Unite( it.Value() );
+
+  // Prepare a collection of face indices to eliminate
+  TColStd_PackedMapOfInteger face2Exclude;
+  face2Exclude.Subtraction(allFaces, faces2Keep);
+
+  // Erase faces
+  this->PushSubgraphX(face2Exclude);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::PushSubgraphX(const int face2Exclude)
+{
+  TColStd_PackedMapOfInteger faces2Exclude;
+  faces2Exclude.Add(face2Exclude);
+
+  // Erase face
+  this->PushSubgraphX(faces2Exclude);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::PushSubgraphX(const TColStd_PackedMapOfInteger& faces2Exclude)
+{
+  t_adjacency& currentMx = m_neighborsStack.top();
+  t_adjacency subgraphMx = currentMx; // Start with a copy
+
+  // Clean matrix rows
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(faces2Exclude); fit.More(); fit.Next() )
+    subgraphMx.UnBind( fit.Key() );
+
+  // Clean matrix columns
+  for ( t_adjacency::Iterator it(subgraphMx); it.More(); it.Next() )
+    it.ChangeValue().Subtract(faces2Exclude);
+
+  // Push sub-graph to stack
+  m_neighborsStack.push(subgraphMx);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::PopSubgraph()
+{
+  m_neighborsStack.pop();
 }
 
 //-----------------------------------------------------------------------------
@@ -100,57 +157,16 @@ const TopoDS_Shape& asiAlgo_AAG::GetMasterCAD() const
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_AAG::GetMapOf(const TopAbs_ShapeEnum      ssType,
-                           TopTools_IndexedMapOfShape& map) const
-{
-  switch ( ssType )
-  {
-    case TopAbs_VERTEX:
-      map = this->GetMapOfVertices();
-      break;
-    case TopAbs_EDGE:
-      map = this->GetMapOfEdges();
-      break;
-    case TopAbs_FACE:
-      map = this->GetMapOfFaces();
-      break;
-    default: break;
-  }
-}
-
-//-----------------------------------------------------------------------------
-
-const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfFaces() const
-{
-  return m_faces;
-}
-
-//-----------------------------------------------------------------------------
-
-const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfEdges() const
-{
-  return m_edges;
-}
-
-//-----------------------------------------------------------------------------
-
-const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfVertices() const
-{
-  return m_vertices;
-}
-
-//-----------------------------------------------------------------------------
-
-const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfSubShapes() const
-{
-  return m_subShapes;
-}
-
-//-----------------------------------------------------------------------------
-
 bool asiAlgo_AAG::HasFace(const int face_idx) const
 {
   return face_idx > 0 && face_idx <= m_faces.Extent();
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_AAG::HasFace(const TopoDS_Shape& face) const
+{
+  return m_faces.Contains(face);
 }
 
 //-----------------------------------------------------------------------------
@@ -171,14 +187,14 @@ int asiAlgo_AAG::GetFaceId(const TopoDS_Shape& face) const
 
 bool asiAlgo_AAG::HasNeighbors(const int face_idx) const
 {
-  return m_neighbors.IsBound(face_idx);
+  return m_neighborsStack.top().IsBound(face_idx);
 }
 
 //-----------------------------------------------------------------------------
 
 const TColStd_PackedMapOfInteger& asiAlgo_AAG::GetNeighbors(const int face_idx) const
 {
-  return m_neighbors.Find(face_idx);
+  return m_neighborsStack.top().Find(face_idx);
 }
 
 //-----------------------------------------------------------------------------
@@ -264,7 +280,7 @@ TColStd_PackedMapOfInteger
 
 const asiAlgo_AAG::t_adjacency& asiAlgo_AAG::GetNeighborhood() const
 {
-  return m_neighbors;
+  return m_neighborsStack.top();
 }
 
 //-----------------------------------------------------------------------------
@@ -276,30 +292,81 @@ const TColStd_PackedMapOfInteger& asiAlgo_AAG::GetSelectedFaces() const
 
 //-----------------------------------------------------------------------------
 
-const asiAlgo_AAG::t_arc_attributes& asiAlgo_AAG::GetArcAttributes() const
+const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfFaces() const
 {
-  return m_arc_attributes;
+  return m_faces;
 }
 
 //-----------------------------------------------------------------------------
 
-const Handle(asiAlgo_FeatureAttr)& asiAlgo_AAG::GetArcAttribute(const t_arc& arc) const
+const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfEdges() const
 {
-  return m_arc_attributes.Find(arc);
+  return m_edges;
+}
+
+//-----------------------------------------------------------------------------
+
+const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfVertices() const
+{
+  return m_vertices;
+}
+
+//-----------------------------------------------------------------------------
+
+const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfSubShapes() const
+{
+  return m_subShapes;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::GetMapOf(const TopAbs_ShapeEnum      ssType,
+                           TopTools_IndexedMapOfShape& map) const
+{
+  switch ( ssType )
+  {
+    case TopAbs_VERTEX:
+      map = this->GetMapOfVertices();
+      break;
+    case TopAbs_EDGE:
+      map = this->GetMapOfEdges();
+      break;
+    case TopAbs_FACE:
+      map = this->GetMapOfFaces();
+      break;
+    default: break;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+const asiAlgo_AAG::t_arc_attributes&
+  asiAlgo_AAG::GetArcAttributes() const
+{
+  return m_arcAttributes;
+}
+
+//-----------------------------------------------------------------------------
+
+const Handle(asiAlgo_FeatureAttr)&
+  asiAlgo_AAG::GetArcAttribute(const t_arc& arc) const
+{
+  return m_arcAttributes.Find(arc);
 }
 
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_AAG::HasNodeAttributes(const int node) const
 {
-  return m_node_attributes.IsBound(node);
+  return m_nodeAttributes.IsBound(node);
 }
 
 //-----------------------------------------------------------------------------
 
-const asiAlgo_AAG::t_attr_set& asiAlgo_AAG::GetNodeAttributes(const int node) const
+const asiAlgo_AAG::t_attr_set&
+  asiAlgo_AAG::GetNodeAttributes(const int node) const
 {
-  return m_node_attributes(node);
+  return m_nodeAttributes(node);
 }
 
 //-----------------------------------------------------------------------------
@@ -308,13 +375,28 @@ Handle(asiAlgo_FeatureAttr)
   asiAlgo_AAG::GetNodeAttribute(const int            node,
                                 const Standard_GUID& attr_id) const
 {
-  if ( !m_node_attributes.IsBound(node) )
+  if ( !m_nodeAttributes.IsBound(node) )
     return NULL;
 
-  if ( !m_node_attributes(node).GetMap().IsBound(attr_id) )
+  if ( !m_nodeAttributes(node).GetMap().IsBound(attr_id) )
     return NULL;
 
-  return m_node_attributes(node)(attr_id);
+  return m_nodeAttributes(node)(attr_id);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_AAG::RemoveNodeAttribute(const int            node,
+                                      const Standard_GUID& attr_id)
+{
+  if ( !m_nodeAttributes.IsBound(node) )
+    return false;
+
+  if ( !m_nodeAttributes(node).GetMap().IsBound(attr_id) )
+    return false;
+
+  m_nodeAttributes(node).ChangeMap().UnBind(attr_id);
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -337,11 +419,11 @@ bool asiAlgo_AAG::SetNodeAttribute(const int                          node,
   if ( attr->IsKind( STANDARD_TYPE(asiAlgo_FeatureAttrFace) ) )
     Handle(asiAlgo_FeatureAttrFace)::DownCast(attr)->SetFaceId(node);
 
-  if ( !m_node_attributes.IsBound(node) )
-    m_node_attributes.Bind( node, t_attr_set(attr) );
+  if ( !m_nodeAttributes.IsBound(node) )
+    m_nodeAttributes.Bind( node, t_attr_set(attr) );
   else
   {
-    t_attr_set& attr_set = m_node_attributes.ChangeFind(node);
+    t_attr_set& attr_set = m_nodeAttributes.ChangeFind(node);
     attr_set.Add(attr);
   }
 
@@ -353,7 +435,7 @@ bool asiAlgo_AAG::SetNodeAttribute(const int                          node,
 bool asiAlgo_AAG::FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const
 {
   TColStd_PackedMapOfInteger traversed;
-  for ( t_adjacency::Iterator it(m_neighbors); it.More(); it.Next() )
+  for ( t_adjacency::Iterator it( m_neighborsStack.top() ); it.More(); it.Next() )
   {
     const int                         current_face_idx       = it.Key();
     const TColStd_PackedMapOfInteger& current_face_neighbors = it.Value();
@@ -396,7 +478,7 @@ bool asiAlgo_AAG::FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const
 bool asiAlgo_AAG::FindConcaveOnly(TopTools_IndexedMapOfShape& resultFaces) const
 {
   TColStd_PackedMapOfInteger traversed;
-  for ( t_adjacency::Iterator it(m_neighbors); it.More(); it.Next() )
+  for ( t_adjacency::Iterator it( m_neighborsStack.top() ); it.More(); it.Next() )
   {
     const int                         current_face_idx       = it.Key();
     const TColStd_PackedMapOfInteger& current_face_neighbors = it.Value();
@@ -450,31 +532,131 @@ void asiAlgo_AAG::Remove(const TopTools_IndexedMapOfShape& faces)
     toRemove.Add(face_idx);
   }
 
+  // Remove by indices
+  this->Remove(toRemove);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::Remove(const TColStd_PackedMapOfInteger& faceIndices)
+{
+  // NOTICE: indexed map of shapes is not affected as we want to keep
+  //         using the original indices of faces
+
   // Loop over the target faces
-  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(toRemove); fit.More(); fit.Next() )
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(faceIndices); fit.More(); fit.Next() )
   {
     const int face_idx = fit.Key();
 
     // Unbind node attributes
-    m_node_attributes.UnBind(face_idx);
+    m_nodeAttributes.UnBind(face_idx);
 
     // Find all neighbors
-    const TColStd_PackedMapOfInteger& neighbor_indices = m_neighbors.Find(face_idx);
+    const TColStd_PackedMapOfInteger& neighbor_indices = m_neighborsStack.top().Find(face_idx);
     for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbor_indices); nit.More(); nit.Next() )
     {
       const int neighbor_idx = nit.Key();
 
       // Unbind arc attributes
-      m_arc_attributes.UnBind( t_arc(face_idx, neighbor_idx) );
+      m_arcAttributes.UnBind( t_arc(face_idx, neighbor_idx) );
 
-      // Kill the faces being removed from the list of neighbors
-      if ( m_neighbors.IsBound(neighbor_idx) )
-        m_neighbors.ChangeFind(neighbor_idx).Subtract(toRemove);
+      // Kill the corresponding chunks from the list of neighbors
+      if ( m_neighborsStack.top().IsBound(neighbor_idx) )
+        m_neighborsStack.top().ChangeFind(neighbor_idx).Subtract(faceIndices);
     }
 
     // Unbind node
-    m_neighbors.UnBind(face_idx);
+    m_neighborsStack.top().UnBind(face_idx);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+int asiAlgo_AAG::GetConnectedComponentsNb()
+{
+  NCollection_Vector<TColStd_PackedMapOfInteger> ccomps;
+  this->GetConnectedComponents(ccomps);
+
+  return ccomps.Length();
+}
+
+//-----------------------------------------------------------------------------
+
+int asiAlgo_AAG::GetConnectedComponentsNb(const TColStd_PackedMapOfInteger& excludedFaceIndices)
+{
+  Handle(asiAlgo_AAG) aagCopy = this->Copy();
+  aagCopy->Remove(excludedFaceIndices);
+  return aagCopy->GetConnectedComponentsNb();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::GetConnectedComponents(const TColStd_PackedMapOfInteger&               seeds,
+                                         NCollection_Vector<TColStd_PackedMapOfInteger>& res)
+{
+  res.Clear();
+
+  Handle(asiAlgo_AAGSetIterator) seed_it = new asiAlgo_AAGSetIterator(this, seeds);
+  TColStd_PackedMapOfInteger traversed;
+
+  for ( ; seed_it->More() ; seed_it->Next() )
+  {
+    // Get seed face
+    const int seed_face_id = seed_it->GetFaceId();
+
+    if ( traversed.Contains(seed_face_id) )
+      continue; // Skip checked nodes
+
+    traversed.Add(seed_face_id);
+    res.Append( TColStd_PackedMapOfInteger() );
+    res.ChangeLast().Add(seed_face_id);
+
+    // Width-first search
+    TColStd_PackedMapOfInteger seed_neighbor_ids = this->GetNeighbors(seed_face_id);
+    TColStd_PackedMapOfInteger seed_neighbor_next_iter;
+
+    do
+    {
+      seed_neighbor_next_iter.Clear();
+
+      for ( TColStd_MapIteratorOfPackedMapOfInteger nit(seed_neighbor_ids); nit.More(); nit.Next() )
+      {
+        const int seed_face_id_new = nit.Key();
+        TColStd_PackedMapOfInteger seed_neighbor_ids_cand = this->GetNeighbors(seed_face_id_new);
+
+        if ( !seeds.Contains(seed_face_id_new) )
+          continue; // Skip
+
+        traversed.Add(seed_face_id_new);
+
+        // Set faces for the next iteration
+        seed_neighbor_ids_cand.Subtract(traversed);
+        seed_neighbor_ids_cand.Intersect(seeds);
+        seed_neighbor_next_iter.Unite(seed_neighbor_ids_cand);
+        res.ChangeLast().Add(seed_face_id_new);
+      }
+
+      seed_neighbor_ids = seed_neighbor_next_iter;
+    }
+    while ( seed_neighbor_ids.Extent() != 0 );
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::GetConnectedComponents(NCollection_Vector<TColStd_PackedMapOfInteger>& res)
+{
+  // Gather all present face indices into a single map.
+  TColStd_PackedMapOfInteger allFaces;
+  for ( t_adjacency::Iterator it( m_neighborsStack.top() ); it.More(); it.Next() )
+  {
+    const int face = it.Key();
+    //
+    allFaces.Add(face);
+  }
+
+  // Collect connected components using all faces as seeds.
+  this->GetConnectedComponents(allFaces, res);
 }
 
 //-----------------------------------------------------------------------------
@@ -509,14 +691,14 @@ void asiAlgo_AAG::Dump(Standard_OStream& out) const
     if ( !this->HasNodeAttributes(f) )
       continue;
 
-    const NCollection_DataMap<Standard_GUID, Handle(asiAlgo_FeatureAttr), Standard_GUID>& attrs = this->GetNodeAttributes(f).GetMap();
+    const t_attrMap& attrs = this->GetNodeAttributes(f).GetMap();
     //
     if ( attrs.IsEmpty() )
       continue;
 
     out << "\t" << f << " ~ ";
     //
-    for ( NCollection_DataMap<Standard_GUID, Handle(asiAlgo_FeatureAttr), Standard_GUID>::Iterator ait(attrs); ait.More(); ait.Next() )
+    for ( t_attrMap::Iterator ait(attrs); ait.More(); ait.Next() )
     {
       out << "[" << ait.Value()->DynamicType()->Name() << "]\n";
       out << ">>>\n";
@@ -559,8 +741,10 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
   m_bAllowSmooth      = allowSmooth;
   m_fSmoothAngularTol = smoothAngularTol;
 
-  if ( masterCAD.IsNull() )
-    return;
+  //---------------------------------------------------------------------------
+
+  // Put main adjacency matrix to the stack of graph states
+  m_neighborsStack.push( t_adjacency() );
 
   //---------------------------------------------------------------------------
 
@@ -582,7 +766,7 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
   // treatment for each individual face
   for ( int f = 1; f <= m_faces.Extent(); ++f )
   {
-    m_neighbors.Bind( f, TColStd_PackedMapOfInteger() );
+    m_neighborsStack.top().Bind( f, TColStd_PackedMapOfInteger() );
     //
     const TopoDS_Face& face = TopoDS::Face( m_faces(f) );
 
@@ -607,7 +791,7 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
 
         // Bind attribute representing the type of dihedral angle. This is an
         // exceptional case as normally such attributes are bound to arcs.
-        m_node_attributes.Bind( f, t_attr_set( new asiAlgo_FeatureAttrAngle(face_angle) ) );
+        m_nodeAttributes.Bind( f, t_attr_set( new asiAlgo_FeatureAttrAngle(face_angle) ) );
       }
     }
   }
@@ -639,14 +823,14 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
 
 void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
 {
-  // Create solid angle calculation tool
+  // Create dihedral angle calculation
   asiAlgo_CheckDihedralAngle checkDihAngle(NULL, NULL);
 
   // Now analyze the face pairs
   for ( TopTools_ListIteratorOfListOfShape lit(mateFaces); lit.More(); lit.Next() )
   {
     const int                   face_idx   = m_faces.FindIndex( lit.Value() );
-    TColStd_PackedMapOfInteger& face_links = m_neighbors.ChangeFind(face_idx);
+    TColStd_PackedMapOfInteger& face_links = m_neighborsStack.top().ChangeFind(face_idx);
     const TopoDS_Face&          face       = TopoDS::Face( m_faces.FindKey(face_idx) );
 
     // Add all the rest faces as neighbors
@@ -665,7 +849,7 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
       // The graph is not oriented, so we do not want to compute arc
       // attribute G-F is previously we have already done F-G attribution
       t_arc arc(face_idx, linked_face_idx);
-      if ( m_arc_attributes.IsBound(arc) )
+      if ( m_arcAttributes.IsBound(arc) )
         continue;
 
       //-----------------------------------------------------------------------
@@ -689,8 +873,15 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
                                                 commonEdges,
                                                 angRad);
 
-      // Bind attribute
-      m_arc_attributes.Bind( arc, new asiAlgo_FeatureAttrAngle(angle, commonEdges) );
+      // Create attribute
+      Handle(asiAlgo_FeatureAttr)
+        attrAngle = new asiAlgo_FeatureAttrAngle(angle, commonEdges);
+
+      // Set owner
+      attrAngle->setAAG(this);
+
+      // Bind
+      m_arcAttributes.Bind(arc, attrAngle);
     }
   }
 }
@@ -701,7 +892,7 @@ void asiAlgo_AAG::dumpNodesJSON(Standard_OStream& out) const
 {
   int nidx = 0;
   //
-  for ( t_adjacency::Iterator nit(m_neighbors); nit.More(); nit.Next(), ++nidx )
+  for ( t_adjacency::Iterator nit( m_neighborsStack.top() ); nit.More(); nit.Next(), ++nidx )
   {
     const int nodeId = nit.Key();
     //
@@ -757,7 +948,7 @@ void asiAlgo_AAG::dumpArcsJSON(Standard_OStream& out) const
 
   int arcidx = 0;
   //
-  for ( t_adjacency::Iterator it(m_neighbors); it.More(); it.Next() )
+  for ( t_adjacency::Iterator it( m_neighborsStack.top() ); it.More(); it.Next() )
   {
     const int f_idx = it.Key();
 

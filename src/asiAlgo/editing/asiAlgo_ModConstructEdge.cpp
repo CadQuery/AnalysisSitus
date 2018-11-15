@@ -620,9 +620,9 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
    * ============================================ */
 
   // Re-intersect base faces.
-  if ( !this->intersectFaces(m_edgeInfo.situation.f_s1,
-                             m_edgeInfo.situation.f_s2,
-                             m_edgeInfo.resolution.icurve) )
+  if ( !this->intersectSurfaces(m_edgeInfo.situation.f_s1,
+                                m_edgeInfo.situation.f_s2,
+                                m_edgeInfo.resolution.icurve) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot intersect faces.");
 

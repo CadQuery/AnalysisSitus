@@ -71,9 +71,9 @@ public:
 protected:
 
   asiAlgo_EXPORT bool
-    intersectFaces(const TopoDS_Face&                   F1,
-                   const TopoDS_Face&                   F2,
-                   Handle(asiAlgo_IntersectionCurveSS)& res) const;
+    intersectSurfaces(const TopoDS_Face&                   F1,
+                      const TopoDS_Face&                   F2,
+                      Handle(asiAlgo_IntersectionCurveSS)& res) const;
 
   asiAlgo_EXPORT bool
     intersectCurves(const Handle(Geom_Curve)&            C1,

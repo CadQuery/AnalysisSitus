@@ -76,7 +76,7 @@ public:
 private:
 
   int m_iFaceId;    //!< 1-based face ID.
-  int m_iFeatureId; //!< 1-based feature index.
+  int m_iFeatureId; //!< 1-based feature ID.
 
 };
 

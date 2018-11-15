@@ -80,7 +80,7 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   t_itemNodeMap ItemNodeMap;
 
   // Add nodes
-  for ( asiAlgo_History::Iterator hit(history); hit.More(); hit.Next() )
+  for ( asiAlgo_History::RandomIterator hit(history); hit.More(); hit.Next() )
   {
     // Get current item
     asiAlgo_History::t_item* pItem = hit.GetItem();

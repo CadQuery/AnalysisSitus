@@ -119,7 +119,7 @@ bool asiAlgo_FindSmoothEdges::Perform()
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_FindSmoothEdges::PerformForFace(const int face_idx)
+bool asiAlgo_FindSmoothEdges::PerformForFace(const int faceIdx)
 {
   // Build master AAG
   if ( m_aag.IsNull() )
@@ -138,10 +138,10 @@ bool asiAlgo_FindSmoothEdges::PerformForFace(const int face_idx)
   }
 
   // Get face of interest
-  const TopoDS_Face& face = m_aag->GetFace(face_idx);
+  const TopoDS_Face& face = m_aag->GetFace(faceIdx);
 
   // Get neighbors for the face of interest
-  const TColStd_PackedMapOfInteger& neighbor_ids = m_aag->GetNeighbors(face_idx);
+  const TColStd_PackedMapOfInteger& neighbor_ids = m_aag->GetNeighbors(faceIdx);
 
   // Loop over the neighbors
   for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbor_ids); nit.More(); nit.Next() )

@@ -61,10 +61,12 @@ public:
 public:
 
   //! Performs recognition for the given face.
-  //! \param[in] fid ID of the face in question.
+  //! \param[in] fid       ID of the face in question.
+  //! \param[in] maxRadius max allowed radius.
   //! \return true if the face was recognized as a blend face.
   asiAlgo_EXPORT virtual bool
-    Perform(const int fid);
+    Perform(const int    fid,
+            const double maxRadius);
 
 protected:
 

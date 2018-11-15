@@ -39,6 +39,7 @@
 #include <TopoDS_Shape.hxx>
 
 // Standard includes
+#include <stack>
 #include <vector>
 
 //! \brief History graph for topological elements.
@@ -142,14 +143,15 @@ public:
 
 public:
 
-  //! \brief History graph iterator.
-  class Iterator
+  //! \brief History graph iterator which traverses full graph in
+  //!        non-deterministic order.
+  class RandomIterator
   {
   public:
 
     //! ctor accepting the history graph to iterate.
     //! \param[in] historyGraph history graph to iterate.
-    Iterator(const Handle(asiAlgo_History)& historyGraph)
+    RandomIterator(const Handle(asiAlgo_History)& historyGraph)
     {
       m_graph  = historyGraph;
       m_iIndex = 1;
@@ -164,6 +166,7 @@ public:
       return m_iIndex <= m_graph->GetNodes().Extent();
     }
 
+    //! \return integer 1-based index of the current graph node.
     int GetIndex() const
     {
       return m_iIndex;
@@ -194,6 +197,95 @@ public:
 
     //! Internal index.
     int m_iIndex;
+
+  };
+
+  //-------------------------------------------------------------------------//
+
+  //! Depth-first iterator which does not guarantee that each graph node
+  //! is visited only once. MODIFIED items are visited before GENERATED for
+  //! each graph node.
+  class DepthFirstIterator
+  {
+  public:
+
+    DepthFirstIterator(const Handle(asiAlgo_History)& historyGraph,
+                       t_item*                        pRoot,
+                       const bool                     visitModified,
+                       const bool                     visitGenerated)
+    : m_graph (historyGraph),
+      m_pRoot (pRoot),
+      m_bGoM  (visitModified),
+      m_bGoG  (visitGenerated)
+    {
+      m_fringe.push(pRoot);
+    }
+
+  public:
+
+    //! Checks if there are more graph nodes to iterate.
+    //! \return true/false.
+    bool More() const
+    {
+      return !m_fringe.empty();
+    }
+
+    //! \return integer 1-based index of the current graph node.
+    int GetIndex() const
+    {
+      return m_graph->GetNodes().FindIndex( this->GetShape() );
+    }
+
+    //! \return current node.
+    t_item* GetItem() const
+    {
+      return m_fringe.top();
+    }
+
+    //! \return current shape.
+    const TopoDS_Shape& GetShape() const
+    {
+      return this->GetItem()->TransientPtr;
+    }
+
+    //! Moves iterator to the next position.
+    void Next()
+    {
+      // Let's throw an exception if there is nothing else to iterate.
+      if ( !this->More() )
+        Standard_ProgramError::Raise("No next item");
+
+      // Take current.
+      t_item* pCurrent = this->GetItem();
+      m_fringe.pop(); // Top item is done.
+
+      // Put all nodes pending for iteration to the fringe.
+      if ( m_bGoG )
+      {
+        for ( int k = (int) pCurrent->Generated.size() - 1; k >= 0; --k )
+        {
+          // Set node to iterate.
+          m_fringe.push( pCurrent->Generated[k] );
+        }
+      }
+      //
+      if ( m_bGoM )
+      {
+        for ( int k = (int) pCurrent->Modified.size() - 1; k >= 0; --k )
+        {
+          // Set node to iterate.
+          m_fringe.push( pCurrent->Modified[k] );
+        }
+      }
+    }
+
+  protected:
+
+    Handle(asiAlgo_History) m_graph;  //!< History graph.
+    t_item*                 m_pRoot;  //!< Root item to start iterating from.
+    std::stack<t_item*>     m_fringe; //!< Where to return.
+    bool                    m_bGoM;   //!< Whether to visit modified items.
+    bool                    m_bGoG;   //!< Whether to visit generated items.
 
   };
 
@@ -385,6 +477,15 @@ public:
   asiAlgo_EXPORT bool
     IsActive(const TopoDS_Shape& shape) const;
 
+  //! \brief Gathers all leaf items from the history graph.
+  //!
+  //! \param[out] leafItems leaf items of the history graph.
+  //! \param[in]  shapeType shape type in question. Use the default value
+  //!                       to accept any kind of shape.
+  asiAlgo_EXPORT void
+    GetLeafs(std::vector<t_item*>&  leafItems,
+             const TopAbs_ShapeEnum shapeType = TopAbs_SHAPE) const;
+
 public:
 
   //! Returns history node by the given 1-based index.
@@ -402,6 +503,12 @@ public:
   const t_shapeItemMap& GetNodes() const
   {
     return m_items;
+  }
+
+  //! \return root nodes of the history graph.
+  const std::vector<t_item*>& GetRoots() const
+  {
+    return m_roots;
   }
 
 protected:

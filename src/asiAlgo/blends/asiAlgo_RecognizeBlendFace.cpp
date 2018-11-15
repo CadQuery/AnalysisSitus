@@ -59,7 +59,8 @@ asiAlgo_RecognizeBlendFace::asiAlgo_RecognizeBlendFace(const Handle(asiAlgo_AAG)
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_RecognizeBlendFace::Perform(const int fid)
+bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
+                                         const double maxRadius)
 {
   // Check AAG.
   if ( m_aag.IsNull() )
@@ -143,6 +144,13 @@ bool asiAlgo_RecognizeBlendFace::Perform(const int fid)
   }
 
   if ( !isCandidateBlend )
+    return false;
+
+  // Check if max radius is not exceeded.
+  this->Progress().SendLogMessage( LogInfo(Normal) << "Detected candidate radius: %1."
+                                                   << candidateRadius );
+  //
+  if ( candidateRadius > maxRadius )
     return false;
 
   // Prepare face attribute.

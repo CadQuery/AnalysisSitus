@@ -135,7 +135,7 @@ bool asiAlgo_EulerKEV::perform(const bool doApply)
   // Merge vertices if there is a valid counterpart for the one being removed.
   if ( !vertex2Survive.IsNull() )
   {
-    if ( !m_killer->AskReplace( vertex2Kill, vertex2Survive.Oriented( vertex2Kill.Orientation() )) )
+    if ( !m_killer->AskReplace( vertex2Kill, vertex2Survive.Oriented( vertex2Kill.Orientation() ) ) )
     {
       m_progress.SendLogMessage(LogErr(Normal) << "Request on vertex merging rejected.");
       return false;

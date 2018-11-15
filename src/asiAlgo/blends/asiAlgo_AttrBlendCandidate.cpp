@@ -71,9 +71,6 @@ void asiAlgo_AttrBlendCandidate::Dump(ActAPI_PlotterEntry plotter) const
   if ( !pAAG || !pAAG->HasFace(fid) )
     return;
 
-  // Get face
-  const TopoDS_Face& face = pAAG->GetFace(fid);
-
   // Get map of edges
   const TopTools_IndexedMapOfShape& allEdges = pAAG->GetMapOfEdges();
 

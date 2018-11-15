@@ -56,9 +56,9 @@ asiAlgo_ModBase::asiAlgo_ModBase(ActAPI_ProgressEntry notifier,
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_ModBase::intersectFaces(const TopoDS_Face&                   F1,
-                                     const TopoDS_Face&                   F2,
-                                     Handle(asiAlgo_IntersectionCurveSS)& res) const
+bool asiAlgo_ModBase::intersectSurfaces(const TopoDS_Face&                   F1,
+                                        const TopoDS_Face&                   F2,
+                                        Handle(asiAlgo_IntersectionCurveSS)& res) const
 {
   // Get host surfaces to re-intersect
   Handle(Geom_Surface) S1 = BRep_Tool::Surface(F1);

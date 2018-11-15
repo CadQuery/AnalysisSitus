@@ -60,14 +60,16 @@ namespace asiAlgo_AAGIterationRule
   public:
 
     //! Ctor.
-    //! \param[in] aag      attributed adjacency graph keeping information on the
-    //!                     recognized properties of the model.
-    //! \param[in] progress progress notifier.
-    //! \param[in] plottter imperative plotter.
+    //! \param[in] aag       attributed adjacency graph keeping information on the
+    //!                      recognized properties of the model.
+    //! \param[in] maxRadius max allowed radius.
+    //! \param[in] progress  progress notifier.
+    //! \param[in] plottter  imperative plotter.
     RecognizeBlendCandidates(const Handle(asiAlgo_AAG)& aag,
+                             const double               maxRadius,
                              ActAPI_ProgressEntry       progress,
                              ActAPI_PlotterEntry        plotter)
-    : m_aag(aag)
+    : m_aag(aag), m_fMaxRadius(maxRadius)
     {
       m_localReco = new asiAlgo_RecognizeBlendFace(aag, progress, plotter);
     }
@@ -93,7 +95,7 @@ namespace asiAlgo_AAGIterationRule
 
       // If we are here, then the face in question is not attributed. We can now
       // try to recognize it.
-      if ( !m_localReco->Perform(fid) )
+      if ( !m_localReco->Perform(fid, m_fMaxRadius) )
         return true; // Block further iterations.
 
       return false;
@@ -101,8 +103,9 @@ namespace asiAlgo_AAGIterationRule
 
   protected:
 
-    Handle(asiAlgo_AAG)                m_aag;       //!< AAG instance.
-    Handle(asiAlgo_RecognizeBlendFace) m_localReco; //!< Local recognizer.
+    Handle(asiAlgo_AAG)                m_aag;        //!< AAG instance.
+    Handle(asiAlgo_RecognizeBlendFace) m_localReco;  //!< Local recognizer.
+    double                             m_fMaxRadius; //!< Max allowed radius.
   };
 };
 
@@ -170,6 +173,7 @@ bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
   // Propagation rule.
   Handle(asiAlgo_AAGIterationRule::RecognizeBlendCandidates)
     itRule = new asiAlgo_AAGIterationRule::RecognizeBlendCandidates(m_aag,
+                                                                    radius,
                                                                     m_progress,
                                                                     m_plotter);
 

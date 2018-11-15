@@ -35,10 +35,11 @@
 #include <asiAlgo_FeatureAttr.h>
 
 // STL includes
-#include <vector>
+#include <stack>
 
 // OCCT includes
 #include <NCollection_DataMap.hxx>
+#include <NCollection_Vector.hxx>
 #include <Standard_OStream.hxx>
 #include <TColStd_PackedMapOfInteger.hxx>
 #include <TopoDS_Edge.hxx>
@@ -50,7 +51,35 @@ class asiAlgo_AAGRandomIterator;
 
 //-----------------------------------------------------------------------------
 
-//! AAG.
+//! \brief Attributed Adjacency Graph for faces of a CAD model.
+//!
+//! Attributed Adjacency Graph (AAG) is a complementary structure for
+//! B-Rep allowing for extension of geometry with semantics (features).
+//! Some details on the structure can be found in the following paper:
+//!
+//! [Joshi S., Chang T.C. Graph-based heuristics for recognition of machined
+//! features from a 3D solid model // Comput. Des. 1988. Vol. 20, N 2. P. 58-66.]
+//!
+//! AAG is a structure to store semantics of a CAD model just like TopoDS_Shape
+//! is a structure to store its geometric form. Using AAG gives the following
+//! advantages:
+//!
+//! - AAG gives a formal graph view on the CAD model. This enables using graph
+//!   algorithms such as finding connectivity components, search, etc.
+//!
+//! - AAG caches serial indices of sub-shapes. Therefore, it is not necessary
+//!   to use expensive TopExp utilities for a CAD model being unchanged as
+//!   an algorithm runs.
+//!
+//! - AAG extends B-Rep with attributes to represent semantics of the model.
+//!   Therefore, this structure is a storage for features recognized from
+//!   geometry.
+//!
+//! - AAG is a convenience structure for traversing adjacent faces. The adjacency
+//!   relation is explicit in AAG by definition.
+//!
+//! In CAD Processor, AAG is a main working structure for feature recognition.
+//! Any feature recognition algorithm accepts or constructs AAG for operation.
 class asiAlgo_AAG : public Standard_Transient
 {
 public:
@@ -59,6 +88,11 @@ public:
 
   //! Type definition for adjacency matrix.
   typedef NCollection_DataMap<int, TColStd_PackedMapOfInteger> t_adjacency;
+
+  //! Type definition for map of attributes.
+  typedef NCollection_DataMap<Standard_GUID,
+                              Handle(asiAlgo_FeatureAttr),
+                              Standard_GUID> t_attrMap;
 
   //---------------------------------------------------------------------------
 
@@ -89,8 +123,8 @@ public:
     //! \return true if two links are equal.
     static int IsEqual(const t_arc& arc1, const t_arc& arc2)
     {
-      return arc1.F1 == arc2.F1 && arc1.F2 == arc2.F2 ||
-             arc1.F2 == arc2.F1 && arc1.F1 == arc2.F2;
+      return ( (arc1.F1 == arc2.F1) && (arc1.F2 == arc2.F2) ) ||
+             ( (arc1.F2 == arc2.F1) && (arc1.F1 == arc2.F2) );
     }
   };
 
@@ -145,7 +179,7 @@ public:
       const t_attr_set& m_attrs;
 
       //! Internal iterator.
-      NCollection_DataMap<Standard_GUID, Handle(asiAlgo_FeatureAttr)>::Iterator m_it;
+      t_attrMap::Iterator m_it;
 
     private:
 
@@ -181,8 +215,23 @@ public:
       m_set.Bind(attr->GetGUID(), attr);
     }
 
+    //! Checks whether the set of attributes contains an attribute of the
+    //! given type.
+    //! \param[in] id attribute's global ID.
+    //! \return true in case of success, false -- otherwise.
+    bool Contains(const Standard_GUID& id) const
+    {
+      return m_set.IsBound(id);
+    }
+
     //! \return internal collection.
-    const NCollection_DataMap<Standard_GUID, Handle(asiAlgo_FeatureAttr), Standard_GUID>& GetMap() const
+    const t_attrMap& GetMap() const
+    {
+      return m_set;
+    }
+
+    //! \return internal collection.
+    t_attrMap& ChangeMap()
     {
       return m_set;
     }
@@ -190,7 +239,7 @@ public:
   private:
 
     //! Internal set storing attributes in association with their global IDs.
-    NCollection_DataMap<Standard_GUID, Handle(asiAlgo_FeatureAttr), Standard_GUID> m_set;
+    t_attrMap m_set;
 
   };
 
@@ -211,7 +260,12 @@ public:
 
 public:
 
-  //! Initializes AAG from the    given master model and selected faces.
+  /** @name Construction and destruction
+   *  Functions to build and destroy AAG.
+   */
+  //@{
+
+  //! Initializes AAG from the given master model and selected faces.
   //! \param[in] masterCAD        master model (full CAD).
   //! \param[in] selectedFaces    selected faces.
   //! \param[in] allowSmooth      indicates whether to allow "smooth" value for
@@ -230,7 +284,7 @@ public:
   asiAlgo_EXPORT
     asiAlgo_AAG(const TopoDS_Shape&               masterCAD,
                 const TopTools_IndexedMapOfShape& selectedFaces,
-                const bool                        allowSmooth = false,
+                const bool                        allowSmooth      = false,
                 const double                      smoothAngularTol = 1.e-4);
 
   //! Constructor accepting master CAD only.
@@ -244,18 +298,73 @@ public:
   //!                             this parameter you're able to control it.
   asiAlgo_EXPORT
     asiAlgo_AAG(const TopoDS_Shape& masterCAD,
-                const bool          allowSmooth = false,
+                const bool          allowSmooth      = false,
                 const double        smoothAngularTol = 1.e-4);
 
   //! Destructor.
   asiAlgo_EXPORT
     ~asiAlgo_AAG();
 
+  //@}
+
 public:
 
+  /** @name Derived graphs
+   *  Methods to construct derived graphs and sub-graphs from AAG.
+   */
+  //@{
+
+  //! \brief Constructs deep copy of AAG.
   //! \return copy of this AAG.
   asiAlgo_EXPORT Handle(asiAlgo_AAG)
     Copy() const;
+
+  //! \brief Captures sub-graph.
+  //!
+  //! Prepares a sub-graph containing the passed faces only. This sub-graph
+  //! is pushed to the internal stack of sub-graphs eliminating all neighborhood
+  //! relations which are out of interest in the current recognition setting.
+  //!
+  //! \param[in] faces2Keep indices of faces to keep in the model.
+  //!
+  //! \sa PopSubgraph() method to pop the created sub-graph from the stack.
+  asiAlgo_EXPORT void
+    PushSubgraph(const TColStd_PackedMapOfInteger& faces2Keep);
+
+  //! \brief Captures sub-graph.
+  //!
+  //! Prepares a sub-graph by removing the passed faces from the lower graph
+  //! in the stack. This sub-graph is then pushed to the internal stack of
+  //! sub-graphs eliminating all neighborhood relations which are out of
+  //! interest in the current recognition setting.
+  //!
+  //! \param[in] faces2Exclude indices of faces to exclude from the model.
+  //!
+  //! \sa PopSubgraph() method to pop the created sub-graph from the stack.
+  asiAlgo_EXPORT void
+    PushSubgraphX(const TColStd_PackedMapOfInteger& faces2Exclude);
+
+  //! \brief Captures sub-graph.
+  //!
+  //! Prepares a sub-graph by removing the passed face from the lower graph
+  //! in the stack. This sub-graph is then pushed to the internal stack of
+  //! sub-graphs eliminating all neighborhood relations which are out of
+  //! interest in the current recognition setting.
+  //!
+  //! \param[in] face2Exclude index of face to exclude from the model.
+  //!
+  //! \sa PopSubgraph() method to pop the created sub-graph from the stack.
+  asiAlgo_EXPORT void
+    PushSubgraphX(const int face2Exclude);
+
+  //! \brief Pops the top sub-graph from the internal stack.
+  //!
+  //! Goes back to the parent graph from sub-graph. Use this method to
+  //! recover the previous state of AAG.
+  asiAlgo_EXPORT void
+    PopSubgraph();
+
+  //@}
 
 public:
 
@@ -263,35 +372,17 @@ public:
   asiAlgo_EXPORT const TopoDS_Shape&
     GetMasterCAD() const;
 
-  //! \brief Returns map of indexed sub-shapes of the given type.
-  //!
-  //! \param[in]  ssType sub-shape type (TopAbs_VERTEX, TopAbs_EDGE or TopAbs_FACE).
-  //! \param[out] map    requested map of sub-shapes.
-  asiAlgo_EXPORT void
-    GetMapOf(const TopAbs_ShapeEnum      ssType,
-             TopTools_IndexedMapOfShape& map) const;
-
-  //! \return map of all faces.
-  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
-    GetMapOfFaces() const;
-
-  //! \return map of all edges.
-  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
-    GetMapOfEdges() const;
-
-  //! \return map of all vertices.
-  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
-    GetMapOfVertices() const;
-
-  //! \return map of all sub-shapes.
-  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
-    GetMapOfSubShapes() const;
-
   //! Returns true if the index is in range.
   //! \param[in] face_idx face index.
   //! \return true/false.
   asiAlgo_EXPORT bool
     HasFace(const int face_idx) const;
+
+  //! Returns true if the passed face is in graph.
+  //! \param[in] face face to check.
+  //! \return true/false.
+  asiAlgo_EXPORT bool
+    HasFace(const TopoDS_Shape& face) const;
 
   //! Returns topological face by its internal index (e.g. coming from iterator).
   //! \param[in] face_idx face index.
@@ -346,7 +437,33 @@ public:
   asiAlgo_EXPORT const TColStd_PackedMapOfInteger&
     GetSelectedFaces() const;
 
-  //! \return attributes associated with all graph arcs.
+  //! Returns all faces of the master model.
+  //! \return all faces.
+  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
+    GetMapOfFaces() const;
+
+  //! Returns all edges of the master model.
+  //! \return all edges.
+  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
+    GetMapOfEdges() const;
+
+  //! \return map of all vertices.
+  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
+    GetMapOfVertices() const;
+
+  //! \return map of all sub-shapes.
+  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
+    GetMapOfSubShapes() const;
+
+  //! \brief Returns map of indexed sub-shapes of the given type.
+  //!
+  //! \param[in]  ssType sub-shape type (TopAbs_VERTEX, TopAbs_EDGE or TopAbs_FACE).
+  //! \param[out] map    requested map of sub-shapes.
+  asiAlgo_EXPORT void
+    GetMapOf(const TopAbs_ShapeEnum      ssType,
+             TopTools_IndexedMapOfShape& map) const;
+
+  //! \return attributes associated with graph arcs.
   asiAlgo_EXPORT const t_arc_attributes&
     GetArcAttributes() const;
 
@@ -376,12 +493,21 @@ public:
     GetNodeAttribute(const int            node,
                      const Standard_GUID& attr_id) const;
 
+  //! Removes attribute with the passed GUID from the given graph node.
+  //! \param[in] node    ID of the graph node of interest.
+  //! \param[in] attr_id ID of the attribute to remove.
+  //! \return true if the attribute was removed, false -- otherwise (e.g., if
+  //!         such attribute does not exist).
+  asiAlgo_EXPORT bool
+    RemoveNodeAttribute(const int            node,
+                        const Standard_GUID& attr_id);
+
   //! Sets the given attribute for a node in AAG. If an attribute of this type
   //! is already there, this method does nothing and returns false.
   //! \param[in] node ID of the graph node of interest.
   //! \param[in] attr attribute to set.
   asiAlgo_EXPORT bool
-    SetNodeAttribute(const int                   node,
+    SetNodeAttribute(const int                          node,
                      const Handle(asiAlgo_FeatureAttr)& attr);
 
   //! Searches for those faces having ALL neighbors attributed with convex link.
@@ -401,10 +527,33 @@ public:
   asiAlgo_EXPORT void
     Remove(const TopTools_IndexedMapOfShape& faces);
 
-  //! Dumps AAG structure to the passed output stream. The format of dump
-  //! is not well-structured. See `DumpJSON()` method for a more structured
-  //! output.
-  //! \param[in,out] out target stream.
+  //! Removes the passed faces with all corresponding arcs from AAG.
+  //! \param[in] faceIndices indices of faces to remove.
+  asiAlgo_EXPORT void
+    Remove(const TColStd_PackedMapOfInteger& faceIndices);
+
+  //! Calculates number of the connected components.
+  //! \return number of connected components in a graph.
+  asiAlgo_EXPORT int
+    GetConnectedComponentsNb();
+
+  //! Calculates the number of the connected components in AAG without the
+  //! given faces represented by their indexes.
+  //! \return number of connected components in a graph.
+  asiAlgo_EXPORT int
+    GetConnectedComponentsNb(const TColStd_PackedMapOfInteger& excludedFaceIndices);
+
+  //! Calculates connected components for the given set of indexes.
+  asiAlgo_EXPORT void
+    GetConnectedComponents(const TColStd_PackedMapOfInteger&               seeds,
+                           NCollection_Vector<TColStd_PackedMapOfInteger>& res);
+
+  //! Calculates connected components for the full graph.
+  asiAlgo_EXPORT void
+    GetConnectedComponents(NCollection_Vector<TColStd_PackedMapOfInteger>& res);
+
+  //! Dumps AAG structure to the passed output stream.
+  //! \param[in, out] out target stream.
   asiAlgo_EXPORT void
     Dump(Standard_OStream& out) const;
 
@@ -418,8 +567,8 @@ protected:
   //! Initializes graph tool with master CAD and selected faces.
   //! \param[in] masterCAD        master model (full CAD).
   //! \param[in] selectedFaces    selected faces.
-  //! \param[in] allowSmooth      indicates whether "smooth" attribution for arcs
-  //!                             is allowed (true) or not (false).
+  //! \param[in] allowSmooth      indicates whether "smooth" attribution for
+  //!                             arcs is allowed (true) or not (false).
   //! \param[in] smoothAngularTol angular tolerance used for recognition
   //!                             of smooth dihedral angles. A smooth angle
   //!                             may appear to be imperfect by construction,
@@ -435,8 +584,6 @@ protected:
   //! \param[in] mateFaces faces to add (if not yet added).
   asiAlgo_EXPORT void
     addMates(const TopTools_ListOfShape& mateFaces);
-
-protected:
 
   //! Dumps all graph nodes with their attributes to JSON.
   //! \param[in,out] out target output stream.
@@ -494,14 +641,15 @@ protected:
   //! All vertices of the master model.
   TopTools_IndexedMapOfShape m_vertices;
 
-  //! This data map can be seen as adjacency matrix for graph.
-  t_adjacency m_neighbors;
+  //! The data maps stored in this stack represent adjacency matrices. The
+  //! stack is used to keep sub-graphs.
+  std::stack<t_adjacency> m_neighborsStack;
 
   //! Stores attributes associated with each arc.
-  t_arc_attributes m_arc_attributes;
+  t_arc_attributes m_arcAttributes;
 
   //! Stores attributes associated with nodes.
-  t_node_attributes m_node_attributes;
+  t_node_attributes m_nodeAttributes;
 
   //! Indicates whether to allow smooth transitions or not.
   bool m_bAllowSmooth;

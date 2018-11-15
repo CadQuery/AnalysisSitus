@@ -271,6 +271,32 @@ bool asiAlgo_History::IsActive(const TopoDS_Shape& shape) const
 
 //-----------------------------------------------------------------------------
 
+void asiAlgo_History::GetLeafs(std::vector<t_item*>&  leafItems,
+                               const TopAbs_ShapeEnum shapeType) const
+{
+  // Loop over all existing items.
+  for ( RandomIterator it(this); it.More(); it.Next() )
+  {
+    t_item* pItem = it.GetItem();
+    //
+    if ( !pItem )
+      continue; // just in case...
+
+    if ( !pItem->Generated.size() && !pItem->Modified.size() )
+    {
+      bool isAllowed = true;
+      //
+      if ( (shapeType != TopAbs_SHAPE) && (pItem->TransientPtr.ShapeType() != shapeType) )
+        isAllowed = false;
+
+      if ( isAllowed )
+        leafItems.push_back(pItem);
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 asiAlgo_History::t_item*
   asiAlgo_History::findItem(const TopoDS_Shape& shape) const
 {

@@ -1,6 +1,28 @@
 Release notes:
 
 -------------------------------------------------------------------------------
+v0.2.7, 17 November 2018
+-------------------------------------------------------------------------------
+- Add new Tcl commands and improve some existing.
+- Refactor and improve interactive picking mechanism to make
+  it more flexible.
+- Improve unit testing engine.
+- Add batch processing.
+- Add functions to read STL and PLY meshes.
+- Add computation and visualization of mesh norms in mesh nodes
+  and by elements.
+- Add mesh-based topology-preserving offsets.
+- Add basic facilities for interactive construstion of countours on meshes for
+  further reverse engineering.
+- Implement JSON serialization for AAG and its attributes.
+- Improve 'rebuild-edge' algorithm to make it more robust by following
+  knowledge-guided computation principle.
+- Improve KEV and KEF Euler operators.
+- Start working on documenation pages also available online
+  at http://www.analysissitus.org.
+- General ergonomics improvements.
+- Bugfix.
+-------------------------------------------------------------------------------
 v0.2.6, 19 June 2018
 -------------------------------------------------------------------------------
 - Add facilities to serialize B-curves and B-surfaces to JSON.

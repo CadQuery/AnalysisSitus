@@ -167,7 +167,13 @@ Handle(asiData_ReVerticesNode) asiEngine_RE::Get_Vertices()
 
 Handle(asiData_RePatchNode) asiEngine_RE::Create_Patch()
 {
-  // Get parent Patches Node.
+  // Get or create parent Topo Node.
+  Handle(asiData_ReTopoNode) topo_n = m_model->GetReTopoNode();;
+  //
+  if ( topo_n.IsNull() )
+    topo_n = this->Create_Topo();
+
+  // Get Patches Node.
   Handle(asiData_RePatchesNode) patches_n = this->Get_Patches();
 
   // Add Node to Partition.
@@ -179,14 +185,14 @@ Handle(asiData_RePatchNode) asiEngine_RE::Create_Patch()
   // Initialize Node.
   patch_n->Init();
 
+  // Add as a child to Patches Node.
+  patches_n->AddChildNode(patch_n);
+
   // Generate unique name.
   TCollection_ExtendedString
     patchName = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(patch_n, patches_n), "Patch");
   //
   patch_n->SetName(patchName);
-
-  // Add as a child to Patches Node.
-  patches_n->AddChildNode(patch_n);
 
   // Return the just created Node.
   return patch_n;
@@ -198,6 +204,12 @@ Handle(asiData_ReEdgeNode)
   asiEngine_RE::Create_Edge(const Handle(asiData_ReVertexNode)& vfirst,
                             const Handle(asiData_ReVertexNode)& vlast)
 {
+  // Get or create parent Topo Node.
+  Handle(asiData_ReTopoNode) topo_n = m_model->GetReTopoNode();;
+  //
+  if ( topo_n.IsNull() )
+    topo_n = this->Create_Topo();
+
   // Get parent Edges Node.
   Handle(asiData_ReEdgesNode) edges_n = this->Get_Edges();
 
@@ -210,14 +222,14 @@ Handle(asiData_ReEdgeNode)
   // Initialize Node.
   edge_n->Init(vfirst, vlast);
 
+  // Add as a child to Edges Node.
+  edges_n->AddChildNode(edge_n);
+
   // Generate unique name.
   TCollection_ExtendedString
     edgeName = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(edge_n, edges_n), "Edge");
   //
   edge_n->SetName(edgeName);
-
-  // Add as a child to Edges Node.
-  edges_n->AddChildNode(edge_n);
 
   // Return the just created Node.
   return edge_n;
@@ -228,6 +240,12 @@ Handle(asiData_ReEdgeNode)
 Handle(asiData_ReVertexNode)
   asiEngine_RE::Create_Vertex(const gp_XYZ& coords)
 {
+  // Get or create parent Topo Node.
+  Handle(asiData_ReTopoNode) topo_n = m_model->GetReTopoNode();;
+  //
+  if ( topo_n.IsNull() )
+    topo_n = this->Create_Topo();
+
   // Get parent Vertices Node.
   Handle(asiData_ReVerticesNode) vertices_n = this->Get_Vertices();
 
@@ -240,14 +258,14 @@ Handle(asiData_ReVertexNode)
   // Initialize Node.
   vertex_n->Init( coords.X(), coords.Y(), coords.Z() );
 
+  // Add as a child to Vertices Node.
+  vertices_n->AddChildNode(vertex_n);
+
   // Generate unique name.
   TCollection_ExtendedString
     vertexName = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(vertex_n, vertices_n), "Vertex");
   //
   vertex_n->SetName(vertexName);
-
-  // Add as a child to Vertices Node.
-  vertices_n->AddChildNode(vertex_n);
 
   // Return the just created Node.
   return vertex_n;

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 26 November 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@
 
 #define ASITUS_VERSION_MAJOR 0 // Major: incremented by major releases
 #define ASITUS_VERSION_MINOR 2 // Minor: incremented by minor releases
-#define ASITUS_VERSION_PATCH 6 // Patch: incremented with bug-fix releases
+#define ASITUS_VERSION_PATCH 7 // Patch: incremented with bug-fix releases
 
 //-----------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@
 #define ASITUS_VERSION_HEX \
 ( (ASITUS_VERSION_MAJOR << 16) | (ASITUS_VERSION_MINOR << 8) | ASITUS_VERSION_PATCH )
 
-#define ASITUS_VERSION_STRING "0.2.6"
+#define ASITUS_VERSION_STRING "0.2.7"
 #define ASITUS_APP_NAME "Analysis Situs"
 
 #endif

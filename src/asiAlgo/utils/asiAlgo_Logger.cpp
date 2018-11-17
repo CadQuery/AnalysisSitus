@@ -38,7 +38,7 @@
 #include <Standard_ProgramError.hxx>
 
 // Useful to print logged messages also to the standard output.
-#define COUT_DEBUG
+#undef COUT_DEBUG
 
 //-----------------------------------------------------------------------------
 

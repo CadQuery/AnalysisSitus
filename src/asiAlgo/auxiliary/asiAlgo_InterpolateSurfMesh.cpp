@@ -59,7 +59,7 @@
 // Standard includes
 #include <algorithm>
 
-#define DRAW_DEBUG
+#undef DRAW_DEBUG
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif
@@ -278,7 +278,6 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>&   c
   //
   Handle(Geom_Plane) plane = new Geom_Plane(pln);
 
-#if defined DRAW_DEBUG
   // Get characteristic size.
   double size = 0.0;
   //
@@ -287,6 +286,7 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>&   c
   //
   size *= 1.1;
 
+#if defined DRAW_DEBUG
   m_plotter.DRAW_SURFACE(plane, size, size, Color_Green, 0.5, "avrgPlane");
 
   // Get bounding box of the contour.

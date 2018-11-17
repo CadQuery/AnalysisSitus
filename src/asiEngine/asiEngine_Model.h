@@ -119,6 +119,9 @@ public:
   asiEngine_EXPORT Handle(asiData_IVNode)
     GetIVNode() const;
 
+  asiEngine_EXPORT Handle(asiData_ReTopoNode)
+    GetReTopoNode() const;
+
 //-----------------------------------------------------------------------------
 // Overridden:
 public:

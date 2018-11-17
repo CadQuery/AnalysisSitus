@@ -234,6 +234,21 @@ Handle(asiData_IVNode) asiEngine_Model::GetIVNode() const
 
 //-----------------------------------------------------------------------------
 
+//! \return single RE Topology Node.
+Handle(asiData_ReTopoNode) asiEngine_Model::GetReTopoNode() const
+{
+  for ( ActData_BasePartition::Iterator it( this->GetReTopoPartition() ); it.More(); it.Next() )
+  {
+    Handle(asiData_ReTopoNode) N = Handle(asiData_ReTopoNode)::DownCast( it.Value() );
+    //
+    if ( !N.IsNull() && N->IsWellFormed() )
+      return N;
+  }
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Initializes Partitions.
 void asiEngine_Model::initPartitions()
 {

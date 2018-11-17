@@ -34,6 +34,8 @@
 // asiAlgo includes
 #include <asiAlgo_Function.h>
 
+//-----------------------------------------------------------------------------
+
 //! Base class for objective functions to optimize with gradient-wise methods.
 template <typename T_DIMENSION>
 class asiAlgo_FunctionWithGradient : public asiAlgo_Function<T_DIMENSION>

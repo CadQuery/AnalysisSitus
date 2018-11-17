@@ -42,6 +42,8 @@
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Geometric operator to rebuild edge from its adjacent surfaces.
 class asiAlgo_RebuildEdge : public ActAPI_IAlgorithm
 {
@@ -62,11 +64,13 @@ public:
                         ActAPI_PlotterEntry  plotter);
 
   //! Constructor.
-  //! \param[in] aag      AAG of the full CAD model.
-  //! \param[in] progress Progress Notifier.
-  //! \param[in] plotter  Imperative Plotter.
+  //! \param[in] masterCAD full CAD model.
+  //! \param[in] aag       AAG of the full CAD model.
+  //! \param[in] progress  Progress Notifier.
+  //! \param[in] plotter   Imperative Plotter.
   asiAlgo_EXPORT
-    asiAlgo_RebuildEdge(const Handle(asiAlgo_AAG)& aag,
+    asiAlgo_RebuildEdge(const TopoDS_Shape&        masterCAD,
+                        const Handle(asiAlgo_AAG)& aag,
                         ActAPI_ProgressEntry       progress,
                         ActAPI_PlotterEntry        plotter);
 
@@ -126,6 +130,7 @@ protected:
   Handle(asiAlgo_History)    m_history;        //!< Modification history.
   Handle(asiAlgo_AAG)        m_aag;            //!< AAG of the master CAD model.
   TopTools_IndexedMapOfShape m_frozenVertices; //!< Frozen vertices.
+  TopoDS_Shape               m_input;          //!< Input CAD model.
   TopoDS_Shape               m_result;         //!< Result CAD model.
 
 };

@@ -141,7 +141,7 @@ void asiUI_ViewerPartListener::onFacePicked(asiVisu_PickerResult* pickRes)
 
   // Get sub-shapes map.
   const TopTools_IndexedMapOfShape&
-    allSubShapes = geom_n->GetAAG()->GetMapOfSubShapes();
+    allSubShapes = geom_n->GetAAG()->RequestMapOfSubShapes();
   //
   if ( globalId < 1 || globalId > allSubShapes.Extent() )
     return;
@@ -191,7 +191,7 @@ void asiUI_ViewerPartListener::onEdgePicked(asiVisu_PickerResult* pickRes)
 
   // Get sub-shapes map.
   const TopTools_IndexedMapOfShape&
-    allSubShapes = geom_n->GetAAG()->GetMapOfSubShapes();
+    allSubShapes = geom_n->GetAAG()->RequestMapOfSubShapes();
   //
   if ( globalId < 1 || globalId > allSubShapes.Extent() )
     return;
@@ -235,7 +235,7 @@ void asiUI_ViewerPartListener::onVertexPicked(asiVisu_PickerResult* pickRes)
 
   // Get sub-shapes map.
   const TopTools_IndexedMapOfShape&
-    allSubShapes = geom_n->GetAAG()->GetMapOfSubShapes();
+    allSubShapes = geom_n->GetAAG()->RequestMapOfSubShapes();
   //
   if ( globalId < 1 || globalId > allSubShapes.Extent() )
     return;

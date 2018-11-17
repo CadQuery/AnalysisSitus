@@ -130,8 +130,8 @@ public:
     // Get spring edges.
     const int   e_b_s1_idx = bcAttr->SpringEdgeIndices.GetMinimalMapped();
     const int   e_b_s2_idx = bcAttr->SpringEdgeIndices.GetMaximalMapped();
-    TopoDS_Edge e_b_s1_loc = TopoDS::Edge( AAG->GetMapOfEdges()(e_b_s1_idx) );
-    TopoDS_Edge e_b_s2_loc = TopoDS::Edge( AAG->GetMapOfEdges()(e_b_s2_idx) );
+    TopoDS_Edge e_b_s1_loc = TopoDS::Edge( AAG->RequestMapOfEdges()(e_b_s1_idx) );
+    TopoDS_Edge e_b_s2_loc = TopoDS::Edge( AAG->RequestMapOfEdges()(e_b_s2_idx) );
 
     // Get support (`s`) faces as neighbors of the blend face through
     // the spring edges.

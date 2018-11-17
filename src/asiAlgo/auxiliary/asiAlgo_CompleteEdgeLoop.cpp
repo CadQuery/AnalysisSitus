@@ -70,7 +70,7 @@ bool asiAlgo_CompleteEdgeLoop::operator()(const int                   seedEdgeIn
 void asiAlgo_CompleteEdgeLoop::traverse(const int                   seedEdgeIndex,
                                         TColStd_PackedMapOfInteger& loopIndices) const
 {
-  const TopTools_IndexedMapOfShape& edgeMap = m_aag->GetMapOfEdges();
+  const TopTools_IndexedMapOfShape& edgeMap = m_aag->RequestMapOfEdges();
 
   // Get edge by its 1-based index.
   const TopoDS_Edge& edge = TopoDS::Edge( edgeMap.FindKey(seedEdgeIndex) );
@@ -109,7 +109,7 @@ void asiAlgo_CompleteEdgeLoop::traverse(const int                   seedEdgeInde
 void asiAlgo_CompleteEdgeLoop::addEdges(const TopTools_ListOfShape& neighborEdges,
                                         TColStd_PackedMapOfInteger& result) const
 {
-  const TopTools_IndexedMapOfShape& edgeMap = m_aag->GetMapOfEdges();
+  const TopTools_IndexedMapOfShape& edgeMap = m_aag->RequestMapOfEdges();
 
   for ( TopTools_ListIteratorOfListOfShape lit(neighborEdges); lit.More(); lit.Next() )
   {

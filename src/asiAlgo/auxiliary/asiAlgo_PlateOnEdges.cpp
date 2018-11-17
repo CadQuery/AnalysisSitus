@@ -128,7 +128,7 @@ bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
   for ( TColStd_MapIteratorOfPackedMapOfInteger eit(edgeIndices); eit.More(); eit.Next() )
   {
     const int          eidx = eit.Key();
-    const TopoDS_Edge& E    = TopoDS::Edge( m_aag->GetMapOfEdges().FindKey(eidx) );
+    const TopoDS_Edge& E    = TopoDS::Edge( m_aag->RequestMapOfEdges().FindKey(eidx) );
 
     WD->Add(E);
   }
@@ -196,7 +196,7 @@ bool asiAlgo_PlateOnEdges::BuildSurf(const TColStd_PackedMapOfInteger& edgeIndic
   for ( TColStd_MapIteratorOfPackedMapOfInteger eit(edgeIndices); eit.More(); eit.Next() )
   {
     const int          eidx = eit.Key();
-    const TopoDS_Edge& E    = TopoDS::Edge( m_aag->GetMapOfEdges().FindKey(eidx) );
+    const TopoDS_Edge& E    = TopoDS::Edge( m_aag->RequestMapOfEdges().FindKey(eidx) );
     //
     edges.push_back(E);
   }

@@ -40,6 +40,8 @@
 // OCCT includes
 #include <BRepTools_Modification.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Subclass of BRepTools_Modification to provide better error reporting.
 class asiAlgo_BRepNormalization : public BRepTools_Modification
 {

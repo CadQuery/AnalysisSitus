@@ -37,6 +37,8 @@
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
 
+//-----------------------------------------------------------------------------
+
 //! Utility to check tolerances in a B-Rep model.
 class asiAlgo_CheckToler : public ActAPI_IAlgorithm
 {

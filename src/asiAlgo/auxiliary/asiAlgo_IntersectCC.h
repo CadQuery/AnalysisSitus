@@ -41,6 +41,8 @@
 #include <Geom2d_Curve.hxx>
 #include <Geom_Surface.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Curve-curve intersection tool in three-dimensional space.
 class asiAlgo_IntersectCC : public ActAPI_IAlgorithm
 {

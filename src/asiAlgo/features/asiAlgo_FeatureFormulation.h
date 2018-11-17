@@ -34,6 +34,8 @@
 // asiAlgo includes
 #include <asiAlgo.h>
 
+//-----------------------------------------------------------------------------
+
 //! Formulation for feature recognizers.
 enum asiAlgo_FeatureFormulation
 {

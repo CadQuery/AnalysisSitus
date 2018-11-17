@@ -37,7 +37,7 @@
 // OCCT includes
 #include <Standard_Type.hxx>
 
-DEFINE_STANDARD_HANDLE(asiAlgo_FuncUnivariate, Standard_Transient)
+//-----------------------------------------------------------------------------
 
 //! Interface for univariate function f(x) in explicit form.
 class asiAlgo_FuncUnivariate : public Standard_Transient

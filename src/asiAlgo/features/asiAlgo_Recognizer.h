@@ -38,6 +38,8 @@
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
 
+//-----------------------------------------------------------------------------
+
 //! Abstract base class for feature recognizers. It provides a unified
 //! usage pattern, data structures and a fixed call procedure for all AAG-based
 //! feature identification algorithms.

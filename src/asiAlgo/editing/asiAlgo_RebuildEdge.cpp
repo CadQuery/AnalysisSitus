@@ -41,17 +41,21 @@ asiAlgo_RebuildEdge::asiAlgo_RebuildEdge(const TopoDS_Shape&  masterCAD,
                                          ActAPI_ProgressEntry progress,
                                          ActAPI_PlotterEntry  plotter)
 //
-: ActAPI_IAlgorithm(progress, plotter)
+: ActAPI_IAlgorithm (progress, plotter),
+  m_input           (masterCAD)
 {
-  m_aag = new asiAlgo_AAG(masterCAD, true);
+  m_aag = new asiAlgo_AAG(m_input, true);
 }
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_RebuildEdge::asiAlgo_RebuildEdge(const Handle(asiAlgo_AAG)& aag,
+asiAlgo_RebuildEdge::asiAlgo_RebuildEdge(const TopoDS_Shape&        masterCAD,
+                                         const Handle(asiAlgo_AAG)& aag,
                                          ActAPI_ProgressEntry       progress,
                                          ActAPI_PlotterEntry        plotter)
-: ActAPI_IAlgorithm(progress, plotter), m_aag(aag)
+: ActAPI_IAlgorithm (progress, plotter),
+  m_input           (masterCAD),
+  m_aag             (aag)
 {}
 
 //-----------------------------------------------------------------------------
@@ -65,9 +69,6 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
   // Prepare history.
   if ( m_history.IsNull() )
     m_history = new asiAlgo_History;
-
-  // Get part shape.
-  const TopoDS_Shape& partShape = m_aag->GetMasterCAD();
 
   /* ==========================
    *  Apply geometric operator
@@ -87,7 +88,7 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
 
   // Initialize Modifier.
   asiAlgo_BRepNormalizer Modifier(m_progress, m_plotter);
-  Modifier.Init(partShape);
+  Modifier.Init(m_input);
 
   // Perform Modification.
   if ( !Modifier.Perform(Mod) )
@@ -101,7 +102,7 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
    * ========== */
 
   // Get result.
-  m_result = Modifier.ModifiedShape(partShape);
+  m_result = Modifier.ModifiedShape(m_input);
 
   // Populate history.
   {

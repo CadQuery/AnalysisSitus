@@ -59,11 +59,11 @@ public:
   {}
 
   //! Creates feature angle attribute with common edges.
-  //! \param[in] a           angle property.
-  //! \param[in] commonEdges common edges.
+  //! \param[in] a                 angle property.
+  //! \param[in] commonEdgeIndices indices of common edges.
   asiAlgo_FeatureAttrAngle(const asiAlgo_FeatureAngleType    a,
-                           const TopTools_IndexedMapOfShape& commonEdges)
-  : asiAlgo_FeatureAttrAdjacency(commonEdges), m_angle(a)
+                           const TColStd_PackedMapOfInteger& commonEdgeIndices)
+  : asiAlgo_FeatureAttrAdjacency(commonEdgeIndices), m_angle(a)
   {}
 
 public:

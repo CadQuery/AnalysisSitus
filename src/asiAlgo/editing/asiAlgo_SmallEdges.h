@@ -40,6 +40,8 @@
 // OCCT includes
 #include <ShapeBuild_ReShape.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Fixes small edges.
 class asiAlgo_SmallEdges : public ActAPI_IAlgorithm
 {

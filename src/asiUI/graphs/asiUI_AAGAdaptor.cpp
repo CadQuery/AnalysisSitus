@@ -119,7 +119,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
       groupArr->InsertNextValue(ARRNAME_GROUP_ORDINARY);
     }
     //
-    idsArr->InsertNextValue( aag->GetMapOfSubShapes().FindIndex( aag->GetFace(f_idx) ) );
+    idsArr->InsertNextValue( aag->RequestMapOfSubShapes().FindIndex( aag->GetFace(f_idx) ) );
 
     // Add label
     labelArr->InsertNextValue(faceName);

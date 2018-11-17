@@ -42,6 +42,8 @@
 #include <string>
 #include <vector>
 
+//-----------------------------------------------------------------------------
+
 //! Utility class to process JSON objects.
 class asiAlgo_JSON
 {

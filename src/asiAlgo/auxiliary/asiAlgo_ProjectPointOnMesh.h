@@ -36,6 +36,8 @@
 
 struct ProjectionInfoMesh;
 
+//-----------------------------------------------------------------------------
+
 //! Class intended for projection of the point onto triangulation.
 class asiAlgo_ProjectPointOnMesh : public asiAlgo_BVHAlgo
 {

@@ -40,6 +40,8 @@
 // OCCT includes
 #include <TopoDS_Shape.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Services related to mesh generation.
 namespace asiAlgo_MeshGen
 {

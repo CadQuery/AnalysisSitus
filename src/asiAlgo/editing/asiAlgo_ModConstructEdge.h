@@ -39,6 +39,8 @@
 // OCCT includes
 #include <TopoDS_Vertex.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Modification for geometric adjustment of a single edge.
 class asiAlgo_ModConstructEdge : public asiAlgo_ModBase
 {

@@ -37,6 +37,8 @@
 // STD includes
 #include <fstream>
 
+//-----------------------------------------------------------------------------
+
 //! Utility class providing functionality for dumping of algorithmic data
 //! to ASCII files in different manners.
 class asiAlgo_FileDumper

@@ -40,6 +40,8 @@
 #include <TopExp.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Descriptor of an edge which should be rebuilt at resolution stage for a
 //! certain topological condition. Generally, one can rebuild an edge entirely.
 //! However, in some conditions, it may not be necessary to reconstruct some

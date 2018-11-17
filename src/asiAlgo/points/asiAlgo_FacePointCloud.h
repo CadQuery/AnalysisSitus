@@ -37,7 +37,7 @@
 // OCCT includes
 #include <TopoDS_Face.hxx>
 
-DEFINE_STANDARD_HANDLE(asiAlgo_FacePointCloud, asiAlgo_CommonCloud2d)
+//-----------------------------------------------------------------------------
 
 //! Data adapter for two-dimensional point cloud of face vertices.
 class asiAlgo_FacePointCloud : public asiAlgo_CommonCloud2d

@@ -40,6 +40,8 @@
 // Active Data includes
 #include <ActAPI_IProgressNotifier.h>
 
+//-----------------------------------------------------------------------------
+
 //! Utilities for detection of free geometry in CAD.
 namespace asiAlgo_FindFree
 {

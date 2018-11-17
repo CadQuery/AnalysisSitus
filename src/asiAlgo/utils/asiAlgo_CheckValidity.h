@@ -43,6 +43,8 @@
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Wire.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Utility to check validity of shapes.
 class asiAlgo_CheckValidity : public ActAPI_IAlgorithm
 {

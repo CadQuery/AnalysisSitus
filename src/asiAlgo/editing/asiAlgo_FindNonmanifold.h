@@ -40,6 +40,8 @@
 // Active Data includes
 #include <ActAPI_IProgressNotifier.h>
 
+//-----------------------------------------------------------------------------
+
 //! Utilities for detection of non-manifold geometry in CAD.
 namespace asiAlgo_FindNonmanifold
 {

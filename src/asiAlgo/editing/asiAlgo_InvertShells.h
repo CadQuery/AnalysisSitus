@@ -37,6 +37,8 @@
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
 
+//-----------------------------------------------------------------------------
+
 //! Utility to invert orientations of all shells in the given shape.
 class asiAlgo_InvertShells : public ActAPI_IAlgorithm
 {

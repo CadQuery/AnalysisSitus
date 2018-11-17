@@ -39,6 +39,8 @@
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif
 
+//-----------------------------------------------------------------------------
+
 //! Armijo rule for adaptive selection of step length in inexact line search.
 template <typename T_DIMENSION>
 class asiAlgo_ArmijoRule

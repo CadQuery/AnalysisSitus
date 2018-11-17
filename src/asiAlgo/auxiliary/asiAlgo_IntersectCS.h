@@ -41,6 +41,8 @@
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Curve-Surface intersection tool.
 class asiAlgo_IntersectCS : public ActAPI_IAlgorithm
 {

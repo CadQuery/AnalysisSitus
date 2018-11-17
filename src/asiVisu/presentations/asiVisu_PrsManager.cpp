@@ -1688,9 +1688,9 @@ Handle(asiVisu_Prs)
       {
         if ( pickRes->IsSelectionFace() )
         {
-          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
+          if ( aag->RequestMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
           {
-            TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
+            TopoDS_Shape shapeFromAAG = aag->RequestMapOfSubShapes().FindKey( mit.Key() );
             //
             if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_FACE )
               subShapes2Highlight.Add( mit.Key() );
@@ -1698,9 +1698,9 @@ Handle(asiVisu_Prs)
         }
         else if ( pickRes->IsSelectionEdge() )
         {
-          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
+          if ( aag->RequestMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
           {
-            TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
+            TopoDS_Shape shapeFromAAG = aag->RequestMapOfSubShapes().FindKey( mit.Key() );
             //
             if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_EDGE )
               subShapes2Highlight.Add( mit.Key() );
@@ -1708,9 +1708,9 @@ Handle(asiVisu_Prs)
         }
         else if ( pickRes->IsSelectionVertex() )
         {
-          if ( aag->GetMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
+          if ( aag->RequestMapOfSubShapes().Extent() >= mit.Key() ) // To avoid crashes in some circumstances.
           {
-            TopoDS_Shape shapeFromAAG = aag->GetMapOfSubShapes().FindKey( mit.Key() );
+            TopoDS_Shape shapeFromAAG = aag->RequestMapOfSubShapes().FindKey( mit.Key() );
             //
             if ( !shapeFromAAG.IsNull() && shapeFromAAG.ShapeType() == TopAbs_VERTEX )
               subShapes2Highlight.Add( mit.Key() );

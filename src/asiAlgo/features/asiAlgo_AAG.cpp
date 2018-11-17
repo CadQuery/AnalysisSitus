@@ -52,18 +52,28 @@
 asiAlgo_AAG::asiAlgo_AAG(const TopoDS_Shape&               masterCAD,
                          const TopTools_IndexedMapOfShape& selectedFaces,
                          const bool                        allowSmooth,
-                         const double                      smoothAngularTol)
+                         const double                      smoothAngularTol,
+                         const int                         cachedMaps)
 {
-  this->init(masterCAD, selectedFaces, allowSmooth, smoothAngularTol);
+  this->init(masterCAD,
+             selectedFaces,
+             allowSmooth,
+             smoothAngularTol,
+             cachedMaps);
 }
 
 //-----------------------------------------------------------------------------
 
 asiAlgo_AAG::asiAlgo_AAG(const TopoDS_Shape& masterCAD,
                          const bool          allowSmooth,
-                         const double        smoothAngularTol)
+                         const double        smoothAngularTol,
+                         const int           cachedMaps)
 {
-  this->init(masterCAD, TopTools_IndexedMapOfShape(), allowSmooth, smoothAngularTol);
+  this->init(masterCAD,
+             TopTools_IndexedMapOfShape(),
+             allowSmooth,
+             smoothAngularTol,
+             cachedMaps);
 }
 
 //-----------------------------------------------------------------------------
@@ -83,6 +93,7 @@ Handle(asiAlgo_AAG) asiAlgo_AAG::Copy() const
   copy->m_faces             = this->m_faces;
   copy->m_edges             = this->m_edges;
   copy->m_vertices          = this->m_vertices;
+  copy->m_edgesFaces        = this->m_edgesFaces;
   copy->m_neighborsStack    = this->m_neighborsStack;
   copy->m_arcAttributes     = this->m_arcAttributes;
   copy->m_nodeAttributes    = this->m_nodeAttributes;
@@ -200,7 +211,7 @@ const TColStd_PackedMapOfInteger& asiAlgo_AAG::GetNeighbors(const int face_idx) 
 //-----------------------------------------------------------------------------
 
 TColStd_PackedMapOfInteger
-  asiAlgo_AAG::GetNeighborsThru(const int face_idx, const TopoDS_Edge& edge) const
+  asiAlgo_AAG::GetNeighborsThru(const int face_idx, const TopoDS_Edge& edge)
 {
   TColStd_PackedMapOfInteger result;
 
@@ -221,9 +232,12 @@ TColStd_PackedMapOfInteger
       continue;
 
     // Check the collection of common edges
-    const TopTools_IndexedMapOfShape& commonEdges = adjAttr->GetEdges();
+    const TColStd_PackedMapOfInteger&
+      commonEdgeIndices = adjAttr->GetEdgeIndices();
     //
-    if ( commonEdges.Contains(edge) )
+    const int edgeIdx = this->RequestMapOfEdges().FindIndex(edge);
+    //
+    if ( commonEdgeIndices.Contains(edgeIdx) )
       result.Add(neighbor_idx);
   }
 
@@ -258,14 +272,15 @@ TColStd_PackedMapOfInteger
     Handle(asiAlgo_FeatureAttrAdjacency)
       adjAttr = Handle(asiAlgo_FeatureAttrAdjacency)::DownCast(attr);
     //
-    const TopTools_IndexedMapOfShape& edges = adjAttr->GetEdges();
+    const TColStd_PackedMapOfInteger&
+      commonEdgeIndices = adjAttr->GetEdgeIndices();
 
     // Take the index of each edge and check if this edge is of interest
-    for ( int eidx = 1; eidx <= edges.Extent(); ++eidx )
+    for ( TColStd_MapIteratorOfPackedMapOfInteger eit(commonEdgeIndices); eit.More(); eit.Next() )
     {
-      const int globalIdx = allEdges.FindIndex( edges(eidx) );
+      const int eidx = eit.Key();
       //
-      if ( edge_ids.Contains(globalIdx) )
+      if ( edge_ids.Contains(eidx) )
       {
         result.Add(neighbor_idx);
         break;
@@ -299,43 +314,63 @@ const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfFaces() const
 
 //-----------------------------------------------------------------------------
 
-const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfEdges() const
+const TopTools_IndexedMapOfShape& asiAlgo_AAG::RequestMapOfEdges()
 {
+  if ( m_edges.IsEmpty() )
+    TopExp::MapShapes(m_master, TopAbs_EDGE, m_edges);
+
   return m_edges;
 }
 
 //-----------------------------------------------------------------------------
 
-const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfVertices() const
+const TopTools_IndexedMapOfShape& asiAlgo_AAG::RequestMapOfVertices()
 {
+  if ( m_vertices.IsEmpty() )
+    TopExp::MapShapes(m_master, TopAbs_VERTEX, m_vertices);
+
   return m_vertices;
 }
 
 //-----------------------------------------------------------------------------
 
-const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfSubShapes() const
+const TopTools_IndexedMapOfShape& asiAlgo_AAG::RequestMapOfSubShapes()
 {
+  if ( m_subShapes.IsEmpty() )
+    TopExp::MapShapes(m_master, m_subShapes);
+
   return m_subShapes;
 }
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_AAG::GetMapOf(const TopAbs_ShapeEnum      ssType,
-                           TopTools_IndexedMapOfShape& map) const
+void asiAlgo_AAG::RequestMapOf(const TopAbs_ShapeEnum      ssType,
+                               TopTools_IndexedMapOfShape& map)
 {
   switch ( ssType )
   {
     case TopAbs_VERTEX:
-      map = this->GetMapOfVertices();
+      map = this->RequestMapOfVertices();
       break;
     case TopAbs_EDGE:
-      map = this->GetMapOfEdges();
+      map = this->RequestMapOfEdges();
       break;
     case TopAbs_FACE:
       map = this->GetMapOfFaces();
       break;
     default: break;
   }
+}
+
+//-----------------------------------------------------------------------------
+
+const TopTools_IndexedDataMapOfShapeListOfShape&
+  asiAlgo_AAG::RequestMapOfEdgesFaces()
+{
+  if ( m_edgesFaces.IsEmpty() )
+    TopExp::MapShapesAndAncestors(m_master, TopAbs_EDGE, TopAbs_FACE, m_edgesFaces);
+
+  return m_edgesFaces;
 }
 
 //-----------------------------------------------------------------------------
@@ -644,6 +679,17 @@ void asiAlgo_AAG::GetConnectedComponents(const TColStd_PackedMapOfInteger&      
 
 //-----------------------------------------------------------------------------
 
+void asiAlgo_AAG::ClearCache()
+{
+  m_faces.Clear();
+  m_edges.Clear();
+  m_vertices.Clear();
+  m_subShapes.Clear();
+  m_edgesFaces.Clear();
+}
+
+//-----------------------------------------------------------------------------
+
 void asiAlgo_AAG::GetConnectedComponents(NCollection_Vector<TColStd_PackedMapOfInteger>& res)
 {
   // Gather all present face indices into a single map.
@@ -735,7 +781,8 @@ void asiAlgo_AAG::DumpJSON(Standard_OStream& out) const
 void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
                        const TopTools_IndexedMapOfShape& selectedFaces,
                        const bool                        allowSmooth,
-                       const double                      smoothAngularTol)
+                       const double                      smoothAngularTol,
+                       const int                         cachedMaps)
 {
   m_master            = masterCAD;
   m_bAllowSmooth      = allowSmooth;
@@ -751,16 +798,24 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
   ShapeAnalysis_Edge sae;
 
   // Extract all sub-shapes with unique indices from the master CAD
-  TopExp::MapShapes(masterCAD, m_subShapes);
+  if ( cachedMaps & CachedMap_SubShapes )
+    TopExp::MapShapes(masterCAD, m_subShapes);
 
   // Extract all faces with unique indices from the master CAD
-  TopExp::MapShapes(masterCAD, TopAbs_FACE, m_faces);
+  if ( cachedMaps & CachedMap_Faces )
+    TopExp::MapShapes(masterCAD, TopAbs_FACE, m_faces);
 
   // Extract all edges with unique indices from the master CAD
-  TopExp::MapShapes(masterCAD, TopAbs_EDGE, m_edges);
+  if ( cachedMaps & CachedMap_Edges )
+    TopExp::MapShapes(masterCAD, TopAbs_EDGE, m_edges);
 
   // Extract all vertices with unique indices from the master CAD
-  TopExp::MapShapes(masterCAD, TopAbs_VERTEX, m_vertices);
+  if ( cachedMaps & CachedMap_Vertices )
+    TopExp::MapShapes(masterCAD, TopAbs_VERTEX, m_vertices);
+
+  // Build child-parent map for edges and their faces
+  if ( cachedMaps & CachedMap_EdgesFaces )
+    TopExp::MapShapesAndAncestors(masterCAD, TopAbs_EDGE, TopAbs_FACE, m_edgesFaces);
 
   // Fill adjacency map with empty buckets and provide all required
   // treatment for each individual face
@@ -873,9 +928,20 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
                                                 commonEdges,
                                                 angRad);
 
+      // Convert transient edge pointers to a collection of indices
+      TColStd_PackedMapOfInteger commonEdgeIndices;
+      //
+      for ( int eidx = 1; eidx <= commonEdges.Extent(); ++eidx )
+      {
+        const int
+          globalEdgeIdx = this->RequestMapOfEdges().FindIndex( commonEdges(eidx) );
+        //
+        commonEdgeIndices.Add(globalEdgeIdx);
+      }
+
       // Create attribute
       Handle(asiAlgo_FeatureAttr)
-        attrAngle = new asiAlgo_FeatureAttrAngle(angle, commonEdges);
+        attrAngle = new asiAlgo_FeatureAttrAngle(angle, commonEdgeIndices);
 
       // Set owner
       attrAngle->setAAG(this);

@@ -44,6 +44,8 @@
 // Mesh includes
 #include <ActData_Mesh.h>
 
+//-----------------------------------------------------------------------------
+
 //! Services to work with ply files.
 namespace asiAlgo_PLY
 {

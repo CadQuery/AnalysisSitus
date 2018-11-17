@@ -409,8 +409,8 @@ GeomAbs_Shape
 bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
 {
   // Build child-parent map.
-  TopTools_IndexedDataMapOfShapeListOfShape edgeFaceMap;
-  TopExp::MapShapesAndAncestors(m_aag->GetMasterCAD(), TopAbs_EDGE, TopAbs_FACE, edgeFaceMap);
+  const TopTools_IndexedDataMapOfShapeListOfShape&
+    edgeFaceMap = m_aag->RequestMapOfEdgesFaces();
 
   // Check if the edge in question is a part of the model.
   if ( !edgeFaceMap.Contains(targetEdge) )

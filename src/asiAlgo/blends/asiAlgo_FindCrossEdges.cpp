@@ -148,7 +148,7 @@ bool asiAlgo_FindCrossEdges::PerformForFace(const int                         fa
 void asiAlgo_FindCrossEdges::getIds(const TopTools_IndexedMapOfShape& edges,
                                     TColStd_PackedMapOfInteger&       indices) const
 {
-  const TopTools_IndexedMapOfShape& allEdges = m_aag->GetMapOfEdges();
+  const TopTools_IndexedMapOfShape& allEdges = m_aag->RequestMapOfEdges();
   //
   for ( int eidx = 1; eidx <= edges.Extent(); ++eidx )
   {

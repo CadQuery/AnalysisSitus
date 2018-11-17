@@ -41,6 +41,8 @@
 #include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
 
+//-----------------------------------------------------------------------------
+
 //! Base class for geometric modifications driven by BRepTools_Modifier.
 //! All such modifications are essentially homeomorphisms as they cannot
 //! affect topology of a CAD model.

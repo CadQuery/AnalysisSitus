@@ -40,6 +40,8 @@
 // OCCT includes
 #include <TopoDS_Wire.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Contour checking tool.
 class asiAlgo_CheckContour : public ActAPI_IAlgorithm
 {

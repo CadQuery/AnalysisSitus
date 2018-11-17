@@ -126,7 +126,7 @@ bool asiAlgo_FindTermEdges::PerformForFace(const int                         fac
 void asiAlgo_FindTermEdges::getIds(const TopTools_IndexedMapOfShape& edges,
                                    TColStd_PackedMapOfInteger&       indices) const
 {
-  const TopTools_IndexedMapOfShape& allEdges = m_aag->GetMapOfEdges();
+  const TopTools_IndexedMapOfShape& allEdges = m_aag->RequestMapOfEdges();
   //
   for ( int eidx = 1; eidx <= edges.Extent(); ++eidx )
   {

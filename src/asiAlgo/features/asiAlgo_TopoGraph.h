@@ -41,6 +41,8 @@
 #include <TopoDS_Shape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! \brief Topology graph for any B-Rep part.
 //!
 //! This tool gives clear TopoDS-agnostic interface to the graph representing

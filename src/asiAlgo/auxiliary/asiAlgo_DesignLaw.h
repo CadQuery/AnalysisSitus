@@ -40,8 +40,6 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiAlgo_DesignLaw, asiAlgo_FuncUnivariate)
-
 //! Evolution law for a scalar design variable.
 class asiAlgo_DesignLaw : public asiAlgo_FuncUnivariate
 {

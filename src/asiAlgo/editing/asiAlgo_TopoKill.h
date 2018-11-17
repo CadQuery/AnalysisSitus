@@ -44,6 +44,8 @@
 #include <TopoDS_Face.hxx>
 #include <TopTools_ShapeMapHasher.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Utility for killing topological entities and reduction of topological
 //! graph. Such reduction is possible in two ways:
 //!

@@ -41,6 +41,8 @@
 #include <NCollection_UBTree.hxx>
 #include <Poly_Triangulation.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Utility to check self-intersections on mesh.
 class asiAlgo_MeshCheckInter : public ActAPI_IAlgorithm
 {

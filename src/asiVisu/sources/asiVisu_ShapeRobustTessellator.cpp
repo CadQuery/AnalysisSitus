@@ -193,10 +193,10 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   }
   else
   {
-    allVertices  = m_aag->GetMapOfVertices();
-    allEdges     = m_aag->GetMapOfEdges();
+    allVertices  = m_aag->RequestMapOfVertices();
+    allEdges     = m_aag->RequestMapOfEdges();
     allFaces     = m_aag->GetMapOfFaces();
-    allSubShapes = m_aag->GetMapOfSubShapes();
+    allSubShapes = m_aag->RequestMapOfSubShapes();
   }
 
 #if defined COUT_DEBUG

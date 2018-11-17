@@ -72,7 +72,7 @@ void asiAlgo_AttrBlendCandidate::Dump(ActAPI_PlotterEntry plotter) const
     return;
 
   // Get map of edges
-  const TopTools_IndexedMapOfShape& allEdges = pAAG->GetMapOfEdges();
+  const TopTools_IndexedMapOfShape& allEdges = pAAG->RequestMapOfEdges();
 
   // Draw spring edges
   for ( TColStd_MapIteratorOfPackedMapOfInteger mit(this->SpringEdgeIndices);

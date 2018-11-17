@@ -42,6 +42,8 @@
 #include <TCollection_AsciiString.hxx>
 #include <TopoDS_Shape.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! STEP interoperability tool.
 namespace asiAlgo_STEP
 {

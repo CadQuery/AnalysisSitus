@@ -42,6 +42,8 @@
 #include <stack>
 #include <vector>
 
+//-----------------------------------------------------------------------------
+
 //! \brief History graph for topological elements.
 //!
 //! This utility class serves tracking history of topological modifications.

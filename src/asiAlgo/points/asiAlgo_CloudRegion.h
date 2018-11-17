@@ -41,6 +41,8 @@
 // STD includes
 #include <vector>
 
+//-----------------------------------------------------------------------------
+
 //! Region in a base cloud. This is nothing but a set of indices wrapped with
 //! a convenience interface.
 struct asiAlgo_CloudRegion

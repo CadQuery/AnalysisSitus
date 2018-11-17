@@ -45,6 +45,8 @@
 // Standard includes
 #include <vector>
 
+//-----------------------------------------------------------------------------
+
 //! Given a shape with initialized tessellations inside, assembles all
 //! triangles in a monolithic structure. Use this tool to assemble a single
 //! tessellation from series of tessellations distributed by several faces.

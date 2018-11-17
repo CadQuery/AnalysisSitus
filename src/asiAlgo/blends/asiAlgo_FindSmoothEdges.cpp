@@ -184,7 +184,7 @@ void asiAlgo_FindSmoothEdges::detect(const TopoDS_Face&          F,
 void asiAlgo_FindSmoothEdges::getIds(const TopTools_IndexedMapOfShape& edges,
                                      TColStd_PackedMapOfInteger&       indices) const
 {
-  const TopTools_IndexedMapOfShape& allEdges = m_aag->GetMapOfEdges();
+  const TopTools_IndexedMapOfShape& allEdges = m_aag->RequestMapOfEdges();
   //
   for ( int eidx = 1; eidx <= edges.Extent(); ++eidx )
   {

@@ -41,6 +41,8 @@
 // Active Data includes
 #include <ActAux_Common.h>
 
+//-----------------------------------------------------------------------------
+
 //! Services to work with obj files.
 namespace asiAlgo_OBJ
 {

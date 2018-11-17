@@ -95,10 +95,10 @@ int asiVisu_EdgeDataProvider::GetEdgeIndexAmongEdges() const
   if ( globalId )
   {
     const TopTools_IndexedMapOfShape&
-      edges = m_partNode->GetAAG()->GetMapOfEdges();
+      edges = m_partNode->GetAAG()->RequestMapOfEdges();
 
     const TopTools_IndexedMapOfShape&
-      subShapes = m_partNode->GetAAG()->GetMapOfSubShapes();
+      subShapes = m_partNode->GetAAG()->RequestMapOfSubShapes();
 
     return edges.FindIndex( subShapes.FindKey(globalId) );
   }
@@ -116,7 +116,7 @@ TopoDS_Edge asiVisu_EdgeDataProvider::ExtractEdge() const
     return TopoDS_Edge();
 
   const TopTools_IndexedMapOfShape&
-    subShapes = m_partNode->GetAAG()->GetMapOfSubShapes();
+    subShapes = m_partNode->GetAAG()->RequestMapOfSubShapes();
 
   const TopoDS_Shape& shape = subShapes.FindKey(eIdx);
   //

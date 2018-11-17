@@ -43,6 +43,8 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Vertex.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Data structure representing a local topological situation surrounding
 //! the given edge of interest.
 class asiAlgo_ModEdgeInfo : public Standard_Transient

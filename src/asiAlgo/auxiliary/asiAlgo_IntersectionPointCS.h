@@ -38,6 +38,8 @@
 #include <gp_Pnt.hxx>
 #include <NCollection_Sequence.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! This class represents a 0-dimensional intersection point between a curve
 //! and a surface.
 class asiAlgo_IntersectionPointCS : public Standard_Transient

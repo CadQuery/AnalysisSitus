@@ -118,15 +118,16 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
     Handle(asiAlgo_FeatureAttrAdjacency)
       attr = Handle(asiAlgo_FeatureAttrAdjacency)::DownCast( m_aag->GetArcAttribute( asiAlgo_AAG::t_arc(face_idx, neighbor_idx) ) );
     //
-    const TopTools_IndexedMapOfShape& commonEdges = attr->GetEdges();
+    const TColStd_PackedMapOfInteger& commonEdgeIndices = attr->GetEdgeIndices();
     //
-    if ( commonEdges.IsEmpty() )
+    if ( commonEdgeIndices.IsEmpty() )
     {
       this->Progress().SendLogMessage( LogErr(Normal) << "Empty common edges attribute for adjacent faces." );
       return false;
     }
     //
-    const TopoDS_Edge& E = TopoDS::Edge( commonEdges(1) );
+    const TopoDS_Edge&
+      E = TopoDS::Edge( m_aag->RequestMapOfEdges().FindKey( commonEdgeIndices.GetMinimalMapped() ) );
 
     // Get a host curve of the common edge and pick up a midpoint (probe point)
     // to analyze the differential properties of the neighbor faces. We also
@@ -266,7 +267,7 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
 void asiAlgo_FindSpringEdges::getIds(const TopTools_IndexedMapOfShape& edges,
                                      TColStd_PackedMapOfInteger&       indices) const
 {
-  const TopTools_IndexedMapOfShape& allEdges = m_aag->GetMapOfEdges();
+  const TopTools_IndexedMapOfShape& allEdges = m_aag->RequestMapOfEdges();
   //
   for ( int eidx = 1; eidx <= edges.Extent(); ++eidx )
   {

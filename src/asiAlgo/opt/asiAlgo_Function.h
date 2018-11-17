@@ -37,6 +37,8 @@
 // OCCT includes
 #include <Standard_Transient.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Abstract class for a scalar-valued function of an arbitrary argument.
 template <typename T_ARGUMENT>
 class asiAlgo_Function : public Standard_Transient

@@ -40,6 +40,8 @@
 // Active Data includes
 #include <ActData_Mesh.h>
 
+//-----------------------------------------------------------------------------
+
 //! Utility to compute topology-preserving mesh offset.
 class asiAlgo_MeshOffset : public ActAPI_IAlgorithm
 {

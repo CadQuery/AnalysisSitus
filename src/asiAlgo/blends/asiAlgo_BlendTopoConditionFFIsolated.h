@@ -127,8 +127,8 @@ public:
     // Get terminating edges.
     const int   e_b_t1_idx = bcAttr->TerminatingEdgeIndices.GetMinimalMapped();
     const int   e_b_t2_idx = bcAttr->TerminatingEdgeIndices.GetMaximalMapped();
-    TopoDS_Edge e_b_t1_loc = TopoDS::Edge( AAG->GetMapOfEdges()(e_b_t1_idx) );
-    TopoDS_Edge e_b_t2_loc = TopoDS::Edge( AAG->GetMapOfEdges()(e_b_t2_idx) );
+    TopoDS_Edge e_b_t1_loc = TopoDS::Edge( AAG->RequestMapOfEdges()(e_b_t1_idx) );
+    TopoDS_Edge e_b_t2_loc = TopoDS::Edge( AAG->RequestMapOfEdges()(e_b_t2_idx) );
 
     // Get terminating (`t`) faces as neighbors to the blend face through
     // the terminating edges.

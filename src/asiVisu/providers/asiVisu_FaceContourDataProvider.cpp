@@ -58,7 +58,7 @@ TopoDS_Face asiVisu_FaceContourDataProvider::GetFace() const
     return TopoDS_Face();
 
   const TopTools_IndexedMapOfShape&
-    subShapes = m_partNode->GetAAG()->GetMapOfSubShapes();
+    subShapes = m_partNode->GetAAG()->RequestMapOfSubShapes();
 
   const TopoDS_Shape& shape = subShapes.FindKey(globalId);
   //

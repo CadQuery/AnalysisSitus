@@ -457,7 +457,7 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
   }
   //
   TopoDS_Shape                      partShape = partNode->GetShape();
-  const TopTools_IndexedMapOfShape& subShapes = partNode->GetAAG()->GetMapOfSubShapes();
+  const TopTools_IndexedMapOfShape& subShapes = partNode->GetAAG()->RequestMapOfSubShapes();
 
   // Curve Node is expected.
   Handle(asiData_CurveNode) curveNode = partNode->GetCurveRepresentation();
@@ -616,7 +616,7 @@ int ENGINE_CheckContinuity(const Handle(asiTcl_Interp)& interp,
   }
   //
   TopoDS_Shape                      partShape = partNode->GetShape();
-  const TopTools_IndexedMapOfShape& subShapes = partNode->GetAAG()->GetMapOfSubShapes();
+  const TopTools_IndexedMapOfShape& subShapes = partNode->GetAAG()->RequestMapOfSubShapes();
 
   // Surf Node is expected.
   Handle(asiData_SurfNode) surfNode = partNode->GetSurfaceRepresentation();
@@ -1622,7 +1622,7 @@ int ENGINE_CheckLength(const Handle(asiTcl_Interp)& interp,
 
     // Get edge.
     const TopoDS_Shape&
-      edge = M->GetPartNode()->GetAAG()->GetMapOfEdges()(edgeId);
+      edge = M->GetPartNode()->GetAAG()->RequestMapOfEdges()(edgeId);
 
     // Calculate global properties.
     GProp_GProps props;
@@ -1973,7 +1973,7 @@ int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
 
     // Get map of sub-shapes with respect to those the passed index is relevant.
     TopTools_IndexedMapOfShape subShapesOfType;
-    part_n->GetAAG()->GetMapOf(TopAbs_EDGE, subShapesOfType);
+    part_n->GetAAG()->RequestMapOf(TopAbs_EDGE, subShapesOfType);
 
     // Get sub-shape in question.
     edge = TopoDS::Edge( subShapesOfType(ssidx) );

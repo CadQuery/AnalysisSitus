@@ -40,6 +40,8 @@
 // OCCT includes
 #include <TopoDS_Shape.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Utilities to deal with Euler characteristics of a CAD model.
 namespace asiAlgo_EulerPoincare
 {

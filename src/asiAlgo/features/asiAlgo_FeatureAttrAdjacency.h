@@ -35,14 +35,11 @@
 #include <asiAlgo_FeatureAttr.h>
 
 // OCCT includes
-#include <TopTools_IndexedMapOfShape.hxx>
+#include <TColStd_PackedMapOfInteger.hxx>
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiAlgo_FeatureAttrAdjacency, asiAlgo_FeatureAttr)
-
-//! Attribute storing information related to realization of adjacency
-//! between faces.
+//! Attribute to store actual realization of adjacency between faces.
 class asiAlgo_FeatureAttrAdjacency : public asiAlgo_FeatureAttr
 {
 public:
@@ -51,14 +48,16 @@ public:
 
 public:
 
-  //! Creates feature adjacency attribute.
+  //! Creates adjacency attribute with empty collection of edge indices.
+  //! \sa SetEdgeIndices() method to populate the attribute.
   asiAlgo_FeatureAttrAdjacency() : asiAlgo_FeatureAttr() {}
 
-  //! Creates feature adjacency attribute and initializes it with edges.
-  //! \param[in] edges edges to set.
-  asiAlgo_FeatureAttrAdjacency(const TopTools_IndexedMapOfShape& edges)
-  : asiAlgo_FeatureAttr(),
-    m_edges(edges)
+  //! Creates adjacency attribute and initializes it with the indices of
+  //! edges connecting the adjacent faces.
+  //! \param[in] edgeIndices unordered collection of edge indices to set.
+  asiAlgo_FeatureAttrAdjacency(const TColStd_PackedMapOfInteger& edgeIndices)
+  : asiAlgo_FeatureAttr (),
+    m_edgeIndices       (edgeIndices)
   {}
 
 public:
@@ -84,16 +83,22 @@ public:
 
 public:
 
-  //! \return edges.
-  const TopTools_IndexedMapOfShape& GetEdges() const { return m_edges; }
+  //! \return unordered collection of edge indices.
+  const TColStd_PackedMapOfInteger& GetEdgeIndices() const
+  {
+    return m_edgeIndices;
+  }
 
-  //! Sets edges.
-  //! \param[in] edges edges in common.
-  void SetEdges(const TopTools_IndexedMapOfShape& edges) { m_edges = edges; }
+  //! Sets collection of edge indices.
+  //! \param[in] edgeIndices collection of indices of common edges.
+  void SetEdgeIndices(const TColStd_PackedMapOfInteger& edgeIndices)
+  {
+    m_edgeIndices = edgeIndices;
+  }
 
 protected:
 
-  TopTools_IndexedMapOfShape m_edges; //!< Edges in common.
+  TColStd_PackedMapOfInteger m_edgeIndices; //!< Indices of common edges.
 
 };
 

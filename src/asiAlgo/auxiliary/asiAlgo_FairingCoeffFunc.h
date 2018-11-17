@@ -37,6 +37,8 @@
 // OCCT includes
 #include <math_Function.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Base class for fairing coefficients interfaced via
 //! OpenCascade math_Function API.
 class asiAlgo_FairingCoeffFunc : public math_Function

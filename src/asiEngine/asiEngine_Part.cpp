@@ -369,7 +369,7 @@ void asiEngine_Part::GetSubShapeIndicesByEdgeIndices(const TColStd_PackedMapOfIn
                                                      TColStd_PackedMapOfInteger&       indices)
 {
   const TopTools_IndexedMapOfShape&
-    AllEdges = m_model->GetPartNode()->GetAAG()->GetMapOfEdges();
+    AllEdges = m_model->GetPartNode()->GetAAG()->RequestMapOfEdges();
   //
   TopTools_IndexedMapOfShape SelectedEdges;
 
@@ -393,7 +393,7 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
                                         TColStd_PackedMapOfInteger&       indices)
 {
   const TopTools_IndexedMapOfShape&
-    M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
+    M = m_model->GetPartNode()->GetAAG()->RequestMapOfSubShapes();
   //
   for ( int i = 1; i <= subShapes.Extent(); ++i )
     indices.Add( M.FindIndex( subShapes.FindKey(i) ) );
@@ -413,7 +413,7 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
                                         TColStd_PackedMapOfInteger&       vertexIndices)
 {
   const TopTools_IndexedMapOfShape&
-    M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
+    M = m_model->GetPartNode()->GetAAG()->RequestMapOfSubShapes();
   //
   for ( int i = 1; i <= subShapes.Extent(); ++i )
   {
@@ -573,7 +573,7 @@ void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShap
   // Get the map of ALL shapes to extract topology by selected index which
   // is global (related to full accessory graph)
   const TopTools_IndexedMapOfShape&
-    M = m_model->GetPartNode()->GetAAG()->GetMapOfSubShapes();
+    M = m_model->GetPartNode()->GetAAG()->RequestMapOfSubShapes();
 
   // Get actual selection
   const asiVisu_ActualSelection&          sel      = m_prsMgr->GetCurrentSelection();
@@ -644,7 +644,7 @@ void asiEngine_Part::GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices
 
   // Take all edges
   const TopTools_IndexedMapOfShape&
-    allEdges = m_model->GetPartNode()->GetAAG()->GetMapOfEdges();
+    allEdges = m_model->GetPartNode()->GetAAG()->RequestMapOfEdges();
 
   // Filter out non-selected edges
   for ( int e = 1; e <= allEdges.Extent(); ++e )

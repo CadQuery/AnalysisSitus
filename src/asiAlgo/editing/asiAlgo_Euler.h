@@ -37,6 +37,8 @@
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
 
+//-----------------------------------------------------------------------------
+
 //! Base class for Euler operators.
 class asiAlgo_Euler : public ActAPI_IAlgorithm
 {

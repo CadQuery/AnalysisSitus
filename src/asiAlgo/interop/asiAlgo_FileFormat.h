@@ -38,6 +38,8 @@
 #include <NCollection_IndexedMap.hxx>
 #include <TCollection_AsciiString.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Supported file types.
 enum asiAlgo_FileFormat
 {

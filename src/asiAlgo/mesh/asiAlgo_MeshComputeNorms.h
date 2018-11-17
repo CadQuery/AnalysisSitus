@@ -40,6 +40,8 @@
 // Active Data includes
 #include <ActData_Mesh.h>
 
+//-----------------------------------------------------------------------------
+
 //! Utility to compute normal field on mesh.
 class asiAlgo_MeshComputeNorms : public ActAPI_IAlgorithm
 {

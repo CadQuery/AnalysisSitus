@@ -551,7 +551,7 @@ int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
 
     // Get map of sub-shapes with respect to those the passed index is relevant.
     TopTools_IndexedMapOfShape subShapesOfType;
-    part_n->GetAAG()->GetMapOf(ssType, subShapesOfType);
+    part_n->GetAAG()->RequestMapOf(ssType, subShapesOfType);
 
     // Get sub-shape in question.
     subshape = subShapesOfType(ssidx);
@@ -1115,7 +1115,7 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
 
     // Get map of sub-shapes with respect to those the passed index is relevant.
     TopTools_IndexedMapOfShape subShapesOfType;
-    part_n->GetAAG()->GetMapOf(TopAbs_EDGE, subShapesOfType);
+    part_n->GetAAG()->RequestMapOf(TopAbs_EDGE, subShapesOfType);
 
     // Get sub-shape in question.
     edge = TopoDS::Edge( subShapesOfType(ssidx).Oriented(TopAbs_EXTERNAL) );
@@ -1129,7 +1129,8 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
   TIMER_GO
 
   // Prepare algorithm.
-  asiAlgo_RebuildEdge oper( part_n->GetAAG(),
+  asiAlgo_RebuildEdge oper( part_n->GetShape(),
+                            part_n->GetAAG(),
                             interp->GetProgress(),
                             interp->GetPlotter() );
   //

@@ -37,6 +37,8 @@
 // OCCT includes
 #include <Standard_OStream.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Mesh information.
 struct asiAlgo_MeshInfo
 {

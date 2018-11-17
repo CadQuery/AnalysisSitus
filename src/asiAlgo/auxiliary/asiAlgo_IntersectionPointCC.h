@@ -40,6 +40,8 @@
 // OCCT includes
 #include <gp_Pnt.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Point representing 0-dimensional intersection between two curves in 3D. The
 //! first intersected curve corresponds to the parameters with index 1, e.g. W1.
 class asiAlgo_IntersectionPointCC : public Standard_Transient

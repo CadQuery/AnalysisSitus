@@ -34,6 +34,8 @@
 // asiAlgo includes
 #include <asiAlgo_BVHAlgo.h>
 
+//-----------------------------------------------------------------------------
+
 //! Finds a facet which is intersected by the probe ray.
 class asiAlgo_HitFacet : public asiAlgo_BVHAlgo
 {

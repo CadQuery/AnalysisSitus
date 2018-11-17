@@ -91,7 +91,7 @@ public:
     // Get ID of the active edge
     const int globalId = curve_n->GetSelectedEdge();
     //
-    const TopTools_IndexedMapOfShape& subShapes = m_partNode->GetAAG()->GetMapOfSubShapes();
+    const TopTools_IndexedMapOfShape& subShapes = m_partNode->GetAAG()->RequestMapOfSubShapes();
     //
     if ( globalId <= 0 || globalId > subShapes.Extent() )
       return NULL;

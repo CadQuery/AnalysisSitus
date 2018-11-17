@@ -45,6 +45,7 @@
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 
 class asiAlgo_AAGRandomIterator;
@@ -83,6 +84,23 @@ class asiAlgo_AAGRandomIterator;
 class asiAlgo_AAG : public Standard_Transient
 {
 public:
+
+  //! Enumerates options for caching maps of shapes.
+  enum CachedMap
+  {
+    CachedMap_SubShapes  = 0x0001,
+    CachedMap_Faces      = 0x0002,
+    CachedMap_Edges      = 0x0004,
+    CachedMap_Vertices   = 0x0008,
+    CachedMap_EdgesFaces = 0x0010,
+    //
+    CachedMap_Minimal = CachedMap_Faces,
+    CachedMap_All = CachedMap_Faces     |
+                    CachedMap_Edges     |
+                    CachedMap_Vertices  |
+                    CachedMap_SubShapes |
+                    CachedMap_EdgesFaces
+  };
 
   //---------------------------------------------------------------------------
 
@@ -281,11 +299,17 @@ public:
   //!                             may appear to be imperfect by construction,
   //!                             but still smooth by the design intent. With
   //!                             this parameter you're able to control it.
+  //! \param[in] cachedMaps       flag indicating which maps of sub-shapes to
+  //!                             cache. Since building topo maps is costly,
+  //!                             it is generally a good idea to reuse them
+  //!                             as much as possible. Using this flag you
+  //!                             can control which maps will be built.
   asiAlgo_EXPORT
     asiAlgo_AAG(const TopoDS_Shape&               masterCAD,
                 const TopTools_IndexedMapOfShape& selectedFaces,
                 const bool                        allowSmooth      = false,
-                const double                      smoothAngularTol = 1.e-4);
+                const double                      smoothAngularTol = 1.e-4,
+                const int                         cachedMaps       = CachedMap_Minimal);
 
   //! Constructor accepting master CAD only.
   //! \param[in] masterCAD        master CAD.
@@ -296,10 +320,16 @@ public:
   //!                             may appear to be imperfect by construction,
   //!                             but still smooth by the design intent. With
   //!                             this parameter you're able to control it.
+  //! \param[in] cachedMaps       flag indicating which maps of sub-shapes to
+  //!                             cache. Since building topo maps is costly,
+  //!                             it is generally a good idea to reuse them
+  //!                             as much as possible. Using this flag you
+  //!                             can control which maps will be built.
   asiAlgo_EXPORT
     asiAlgo_AAG(const TopoDS_Shape& masterCAD,
                 const bool          allowSmooth      = false,
-                const double        smoothAngularTol = 1.e-4);
+                const double        smoothAngularTol = 1.e-4,
+                const int           cachedMaps       = CachedMap_Minimal);
 
   //! Destructor.
   asiAlgo_EXPORT
@@ -416,7 +446,7 @@ public:
   //! \param[in] edge     common edge.
   //! \return indices of the neighbor faces sharing the given edge.
   asiAlgo_EXPORT TColStd_PackedMapOfInteger
-    GetNeighborsThru(const int face_idx, const TopoDS_Edge& edge) const;
+    GetNeighborsThru(const int face_idx, const TopoDS_Edge& edge);
 
   //! Returns neighbor faces for the given face of interest with additional
   //! filter on edges realizing the neighborhood.
@@ -438,30 +468,43 @@ public:
     GetSelectedFaces() const;
 
   //! Returns all faces of the master model.
+  //! If the map is empty, it is constructed.
   //! \return all faces.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     GetMapOfFaces() const;
 
   //! Returns all edges of the master model.
+  //! If the map is empty, it is constructed.
   //! \return all edges.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
-    GetMapOfEdges() const;
+    RequestMapOfEdges();
 
+  //! Returns all vertices of the master model.
+  //! If the map is empty, it is constructed.
   //! \return map of all vertices.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
-    GetMapOfVertices() const;
+    RequestMapOfVertices();
 
+  //! Returns all subshapes of the master model.
+  //! If the map is empty, it is constructed.
   //! \return map of all sub-shapes.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
-    GetMapOfSubShapes() const;
+    RequestMapOfSubShapes();
 
   //! \brief Returns map of indexed sub-shapes of the given type.
+  //! If the map is empty, it is constructed.
   //!
   //! \param[in]  ssType sub-shape type (TopAbs_VERTEX, TopAbs_EDGE or TopAbs_FACE).
   //! \param[out] map    requested map of sub-shapes.
   asiAlgo_EXPORT void
-    GetMapOf(const TopAbs_ShapeEnum      ssType,
-             TopTools_IndexedMapOfShape& map) const;
+    RequestMapOf(const TopAbs_ShapeEnum      ssType,
+                 TopTools_IndexedMapOfShape& map);
+
+  //! Returns edges and their owner faces.
+  //! If the map is empty, it is constructed.
+  //! \return map of edges and their owner faces.
+  asiAlgo_EXPORT const TopTools_IndexedDataMapOfShapeListOfShape&
+    RequestMapOfEdgesFaces();
 
   //! \return attributes associated with graph arcs.
   asiAlgo_EXPORT const t_arc_attributes&
@@ -552,6 +595,12 @@ public:
   asiAlgo_EXPORT void
     GetConnectedComponents(NCollection_Vector<TColStd_PackedMapOfInteger>& res);
 
+  //! Clears cached maps.
+  asiAlgo_EXPORT void
+    ClearCache();
+
+public:
+
   //! Dumps AAG structure to the passed output stream.
   //! \param[in, out] out target stream.
   asiAlgo_EXPORT void
@@ -574,11 +623,17 @@ protected:
   //!                             may appear to be imperfect by construction,
   //!                             but still smooth by the design intent. With
   //!                             this parameter you're able to control it.
+  //! \param[in] cachedMaps       flag indicating which maps of sub-shapes to
+  //!                             cache. Since building topo maps is costly,
+  //!                             it is generally a good idea to reuse them
+  //!                             as much as possible. Using this flag you
+  //!                             can control which maps will be built.
   asiAlgo_EXPORT void
     init(const TopoDS_Shape&               masterCAD,
          const TopTools_IndexedMapOfShape& selectedFaces,
          const bool                        allowSmooth,
-         const double                      smoothAngularTol);
+         const double                      smoothAngularTol,
+         const int                         cachedMaps);
 
   //! Fills graph with nodes for mate faces.
   //! \param[in] mateFaces faces to add (if not yet added).
@@ -617,7 +672,7 @@ protected:
 
 protected:
 
-  asiAlgo_AAG() {} //!< Default ctor.
+  asiAlgo_AAG() : m_bAllowSmooth(false), m_fSmoothAngularTol(0.0) {} //!< Default ctor.
 
 protected:
 
@@ -640,6 +695,9 @@ protected:
 
   //! All vertices of the master model.
   TopTools_IndexedMapOfShape m_vertices;
+
+  //! Map of edges versus faces.
+  TopTools_IndexedDataMapOfShapeListOfShape m_edgesFaces;
 
   //! The data maps stored in this stack represent adjacency matrices. The
   //! stack is used to keep sub-graphs.

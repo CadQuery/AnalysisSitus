@@ -39,6 +39,8 @@
 
 struct ProjectionInfoMesh;
 
+//-----------------------------------------------------------------------------
+
 /// Tools for calculation distances and projections of points to segments and triangles
 class asiAlgo_BVHAlgo : public ActAPI_IAlgorithm
 {

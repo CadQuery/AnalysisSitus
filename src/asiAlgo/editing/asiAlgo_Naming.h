@@ -38,6 +38,8 @@
 // Active Data includes
 #include <ActAPI_IProgressNotifier.h>
 
+//-----------------------------------------------------------------------------
+
 //! \brief Naming service for a B-Rep part.
 class asiAlgo_Naming : public Standard_Transient
 {

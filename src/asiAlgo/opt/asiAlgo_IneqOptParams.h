@@ -37,6 +37,8 @@
 // Standard includes
 #include <vector>
 
+//-----------------------------------------------------------------------------
+
 //! Parameters for inequality optimizer.
 class asiAlgo_IneqOptParams : public Standard_Transient
 {

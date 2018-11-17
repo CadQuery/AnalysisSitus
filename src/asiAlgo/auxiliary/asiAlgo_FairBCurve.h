@@ -40,9 +40,16 @@
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
 
+//-----------------------------------------------------------------------------
+
 //! Fairing algorithm for B-spline curves.
 class asiAlgo_FairBCurve : public ActAPI_IAlgorithm
 {
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_FairBCurve, ActAPI_IAlgorithm)
+
 public:
 
   //! ctor.

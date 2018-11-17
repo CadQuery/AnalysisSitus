@@ -42,6 +42,8 @@
 #include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
 
+//-----------------------------------------------------------------------------
+
 //! Point-Face classifier.
 class asiAlgo_ClassifyPointFace
 {

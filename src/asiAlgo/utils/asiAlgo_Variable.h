@@ -31,8 +31,6 @@
 #ifndef asiAlgo_Variable_h
 #define asiAlgo_Variable_h
 
-//-----------------------------------------------------------------------------
-
 // OCCT includes
 #include <TCollection_AsciiString.hxx>
 

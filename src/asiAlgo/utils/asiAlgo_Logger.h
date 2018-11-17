@@ -40,6 +40,8 @@
 // TBB includes
 #include <concurrent_queue.h>
 
+//-----------------------------------------------------------------------------
+
 //! Logger for algorithmic messages.
 class asiAlgo_Logger : public ActAPI_ILogger
 {

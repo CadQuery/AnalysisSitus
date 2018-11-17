@@ -98,7 +98,7 @@ int asiVisu_FaceDataProvider::GetFaceIndexAmongFaces() const
       faces = m_partNode->GetAAG()->GetMapOfFaces();
 
     const TopTools_IndexedMapOfShape&
-      subShapes = m_partNode->GetAAG()->GetMapOfSubShapes();
+      subShapes = m_partNode->GetAAG()->RequestMapOfSubShapes();
 
     return faces.FindIndex( subShapes.FindKey(globalId) );
   }
@@ -119,7 +119,7 @@ TopoDS_Face asiVisu_FaceDataProvider::ExtractFace() const
     return TopoDS_Face();
 
   const TopTools_IndexedMapOfShape&
-    subShapes = m_partNode->GetAAG()->GetMapOfSubShapes();
+    subShapes = m_partNode->GetAAG()->RequestMapOfSubShapes();
 
   const TopoDS_Shape& shape = subShapes.FindKey(fIdx);
   //

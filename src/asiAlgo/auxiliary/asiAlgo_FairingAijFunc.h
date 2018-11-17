@@ -37,6 +37,8 @@
 // OCCT includes
 #include <TColStd_Array1OfReal.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Univariate function to interface fairing coefficients via OpenCascade
 //! math_Function API.
 class asiAlgo_FairingAijFunc : public asiAlgo_FairingCoeffFunc

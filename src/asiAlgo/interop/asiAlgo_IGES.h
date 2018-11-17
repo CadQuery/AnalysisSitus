@@ -39,6 +39,8 @@
 #include <TCollection_AsciiString.hxx>
 #include <TopoDS_Shape.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! IGES interoperability tool.
 namespace asiAlgo_IGES
 {

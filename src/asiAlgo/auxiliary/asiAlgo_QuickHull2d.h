@@ -38,6 +38,8 @@
 #include <TColgp_HSequenceOfXY.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Algorithm constructing convex hull of two-dimensional point cloud
 //! by Quick Hull (divide and conquer) method.
 class asiAlgo_QuickHull2d

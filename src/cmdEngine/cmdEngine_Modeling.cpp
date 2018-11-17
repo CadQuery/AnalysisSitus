@@ -456,7 +456,7 @@ int ENGINE_MakeCurve(const Handle(asiTcl_Interp)& interp,
   }
   //
   const TopTools_IndexedMapOfShape&
-    subShapes = partNode->GetAAG()->GetMapOfSubShapes();
+    subShapes = partNode->GetAAG()->RequestMapOfSubShapes();
 
   // Curve Node is expected.
   Handle(asiData_CurveNode) curveNode = partNode->GetCurveRepresentation();
@@ -515,7 +515,7 @@ int ENGINE_MakeSurf(const Handle(asiTcl_Interp)& interp,
   }
   //
   const TopTools_IndexedMapOfShape&
-    subShapes = partNode->GetAAG()->GetMapOfSubShapes();
+    subShapes = partNode->GetAAG()->RequestMapOfSubShapes();
 
   // Surface Node is expected.
   Handle(asiData_SurfNode) surfNode = partNode->GetSurfaceRepresentation();
@@ -937,7 +937,7 @@ int ENGINE_Fillet(const Handle(asiTcl_Interp)& interp,
 
     // Get edge to blend.
     const TopoDS_Edge&
-      edge = TopoDS::Edge( partNode->GetAAG()->GetMapOfEdges()(edgeId) );
+      edge = TopoDS::Edge( partNode->GetAAG()->RequestMapOfEdges()(edgeId) );
 
     // Add edge to the blending operator.
     mkFillet.Add(R, edge);

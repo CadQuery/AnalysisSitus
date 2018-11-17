@@ -40,6 +40,8 @@
 #include <NCollection_Handle.hxx>
 #include <TColStd_PackedMapOfInteger.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Depth-first iterator for BVH structure.
 //!
 //! Stored data of each BVH node has the following meaning:

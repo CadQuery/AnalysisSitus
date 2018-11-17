@@ -40,6 +40,8 @@
 #include <gp_Pnt.hxx>
 #include <math_BullardGenerator.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Common classification functions.
 namespace asiAlgo_Classifier
 {

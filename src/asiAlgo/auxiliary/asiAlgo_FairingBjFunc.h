@@ -38,6 +38,8 @@
 #include <Geom_BSplineCurve.hxx>
 #include <TColStd_Array1OfReal.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Univariate function to interface right-hand-side of fairing linear problem
 //! via OpenCascade math_Function API.
 class asiAlgo_FairingBjFunc : public asiAlgo_FairingCoeffFunc

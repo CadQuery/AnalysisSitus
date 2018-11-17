@@ -42,6 +42,8 @@
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Performs geometric modifications on a shape.
 //!
 //! This class is a slightly reworked version of BRepTools_Modifier from

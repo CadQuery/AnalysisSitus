@@ -37,6 +37,8 @@
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
 
+//-----------------------------------------------------------------------------
+
 //! Optimizer of homogeneous resource distribution in the presence of inequality
 //! constraints. The algorithm is based on the ideas of M. Kh. Prilutskii
 //! which are best described in his Russian paper

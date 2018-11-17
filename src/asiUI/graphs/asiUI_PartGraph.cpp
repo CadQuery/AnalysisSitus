@@ -394,13 +394,13 @@ void asiUI_PartGraph::onVertexPicked(const int              subShapeId,
     mapOfFaces = m_aag.IsNull() ? m_topoGraph->GetMapOfFaces() : m_aag->GetMapOfFaces();
   //
   const TopTools_IndexedMapOfShape&
-    mapOfEdges = m_aag.IsNull() ? m_topoGraph->GetMapOfEdges() : m_aag->GetMapOfEdges();
+    mapOfEdges = m_aag.IsNull() ? m_topoGraph->GetMapOfEdges() : m_aag->RequestMapOfEdges();
   //
   const TopTools_IndexedMapOfShape&
-    mapOfVertices = m_aag.IsNull() ? m_topoGraph->GetMapOfVertices() : m_aag->GetMapOfVertices();
+    mapOfVertices = m_aag.IsNull() ? m_topoGraph->GetMapOfVertices() : m_aag->RequestMapOfVertices();
   //
   const TopTools_IndexedMapOfShape&
-    mapOfSubShapes = m_aag.IsNull() ? m_topoGraph->GetMapOfSubShapes() : m_aag->GetMapOfSubShapes();
+    mapOfSubShapes = m_aag.IsNull() ? m_topoGraph->GetMapOfSubShapes() : m_aag->RequestMapOfSubShapes();
 
   if ( subShapeId > 0 && m_partViewer )
   {

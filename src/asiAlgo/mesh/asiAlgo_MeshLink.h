@@ -37,6 +37,8 @@
 // OCCT includes
 #include <NCollection_IndexedMap.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Auxiliary unoriented link structure.
 struct asiAlgo_MeshLink
 {

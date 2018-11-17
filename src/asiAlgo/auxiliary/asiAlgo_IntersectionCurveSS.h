@@ -39,7 +39,7 @@
 #include <Geom_Surface.hxx>
 #include <NCollection_Sequence.hxx>
 
-DEFINE_STANDARD_HANDLE(asiAlgo_IntersectionCurveSS, Standard_Transient)
+//-----------------------------------------------------------------------------
 
 //! Curve representing 1-dimensional intersection between two surfaces. The
 //! first intersected surface corresponds to the parameters with index 1.

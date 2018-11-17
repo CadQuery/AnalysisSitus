@@ -34,6 +34,8 @@
 // Analysis Situs includes
 #include <asiAlgo.h>
 
+//-----------------------------------------------------------------------------
+
 //! Set membership relations.
 enum asiAlgo_Membership
 {

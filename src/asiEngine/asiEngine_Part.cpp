@@ -570,10 +570,14 @@ void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subSha
 //! \param[out] subShapes result collection.
 void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes)
 {
+  Handle(asiAlgo_AAG) aag = m_model->GetPartNode()->GetAAG();
+  //
+  if ( aag.IsNull() )
+    return;
+
   // Get the map of ALL shapes to extract topology by selected index which
   // is global (related to full accessory graph)
-  const TopTools_IndexedMapOfShape&
-    M = m_model->GetPartNode()->GetAAG()->RequestMapOfSubShapes();
+  const TopTools_IndexedMapOfShape& M = aag->RequestMapOfSubShapes();
 
   // Get actual selection
   const asiVisu_ActualSelection&          sel      = m_prsMgr->GetCurrentSelection();

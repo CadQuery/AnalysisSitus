@@ -269,6 +269,9 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& node,
                                    const bool                  doFitContents,
                                    const bool                  withRepaint)
 {
+  if ( node.IsNull() )
+    return;
+
   Handle(ActAPI_HNodeList) oneNodeList = new ActAPI_HNodeList;
   oneNodeList->Append(node);
 

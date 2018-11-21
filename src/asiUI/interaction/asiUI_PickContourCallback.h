@@ -95,6 +95,11 @@ public:
     return m_pBrowser;
   }
 
+protected:
+
+  bool completeEdge(void* pCallData);
+  bool startNewEdge(void* pCallData);
+
 private:
 
   asiUI_PickContourCallback  (asiUI_Viewer* pViewer);

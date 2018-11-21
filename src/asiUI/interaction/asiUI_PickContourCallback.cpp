@@ -86,187 +86,225 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
 {
   asiUI_NotUsed(pCaller);
 
-  const vtkSmartPointer<asiVisu_PrsManager>& mgr = this->GetViewer()->PrsMgr();
-
+  // Existing vertex was selected again.
   if ( eventId == EVENT_SELECT_CELL )
   {
-    asiVisu_CellPickerResult* pPickRes = (asiVisu_CellPickerResult*) pCallData;
-
-    // Retrieve Node information.
-    asiVisu_NodeInfo* pNodeInfo = asiVisu_NodeInfo::Retrieve( pPickRes->GetPickedActor() );
-    //
-    if ( !pNodeInfo )
-      return;
-
-    // Get Vertex Node.
-    Handle(ActAPI_INode) node = m_model->FindNode( pNodeInfo->GetNodeId() );
-    //
-    if ( !node->IsInstance( STANDARD_TYPE(asiData_ReVertexNode) )
-      || !node->IsWellFormed() )
-      return;
-
-    Handle(asiData_ReVertexNode)
-      vertexNode = Handle(asiData_ReVertexNode)::DownCast(node);
-
-    double vx, vy, vz;
-    if ( !vertexNode->GetPoint(vx, vy, vz) )
-    {
-      m_notifier.SendLogMessage(LogErr(Normal) << "Cannot access vertex coordinates.");
-      return;
-    }
-    //
-    gp_XYZ hit(vx, vy, vz);
-
-    // Check current objects which are receiving data from interaction.
-    if ( m_edge.IsNull() )
-    {
-      m_notifier.SendLogMessage(LogErr(Normal) << "There is no edge to fill.");
-      return;
-    }
-    //
-    if ( m_patch.IsNull() )
-    {
-      m_notifier.SendLogMessage(LogErr(Normal) << "There is no patch to complete contour for.");
-      return;
-    }
-
-    // Business logic of reconstruction.
-    asiEngine_RE reApi(m_model, m_notifier, m_plotter);
-
-    // Tool for line projection.
-    asiAlgo_MeshProjectLine ProjectLineMesh(m_bvh, m_notifier, m_plotter);
-
-    // Modify data.
-    m_model->OpenCommand();
-    {
-      if ( !m_prevEdge.IsNull() )
-      {
-        // Get previous vertex.
-        Handle(asiData_ReVertexNode) prevVertex = m_prevEdge->GetFirstVertex();
-        //
-        if ( prevVertex.IsNull() || !prevVertex->IsWellFormed() )
-        {
-          m_notifier.SendLogMessage(LogErr(Normal) << "Previous vertex is undefined.");
-          return;
-        }
-        //
-        const gp_XYZ prevPt = prevVertex->GetPoint();
-
-        // Add midpoints.
-        std::vector<gp_XYZ> projPts;
-        if ( !ProjectLineMesh.Perform(prevPt, hit, projPts, 0.001) )
-        {
-          m_notifier.SendLogMessage(LogErr(Normal) << "Cannot project line to mesh.");
-          m_model->AbortCommand();
-          return;
-        }
-        //
-        if ( projPts.size() > 2 )
-          for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
-            m_prevEdge->AddPolylinePole(projPts[k]);
-      }
-      m_notifier.SendLogMessage(LogInfo(Normal) << "Contour closed.");
-
-      // Complete edge.
-      m_prevEdge->SetLastVertex(vertexNode);
-    }
-    m_model->CommitCommand();
-
-    // Update viewer.
-    mgr->Actualize(m_edge);
+    if ( !m_prevEdge.IsNull() )
+      this->completeEdge(pCallData);
+    else
+      this->startNewEdge(pCallData);
   }
 
   // Custom point on the mesh was clicked.
   else if ( eventId == EVENT_SELECT_WORLD_POINT )
   {
-    // Get picking ray.
-    gp_Lin pickRay = *( (gp_Lin*) pCallData );
-
-    // Prepare a tool to find the intersected facet.
-    asiAlgo_HitFacet        HitFacet        (m_bvh, m_notifier, m_plotter);
-    asiAlgo_MeshProjectLine ProjectLineMesh (m_bvh, m_notifier, m_plotter);
-
-    // Find intersection.
-    gp_XYZ hit;
-    int facet_idx;
-    if ( !HitFacet(pickRay, facet_idx, hit) )
-    {
-      m_notifier.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet.");
-      return;
-    }
-
-    // Get active face index.
-    const int fidx = m_bvh->GetFacet(facet_idx).FaceIndex;
-    //
-    m_notifier.SendLogMessage(LogInfo(Normal) << "Picked point (%1, %2, %3) on face %4."
-                                              << hit.X()
-                                              << hit.Y()
-                                              << hit.Z()
-                                              << fidx);
-
-    // Business logic of reconstruction.
-    asiEngine_RE reApi(m_model, m_notifier, m_plotter);
-
-    // Modify data.
-    m_model->OpenCommand();
-    {
-      // Prepare active patch.
-      if ( m_patch.IsNull() )
-        m_patch = reApi.Create_Patch();
-
-      // Create vertex.
-      m_vertex = reApi.Create_Vertex(hit);
-
-      // Create active edge.
-      m_edge = reApi.Create_Edge();
-      //
-      m_edge->SetFirstVertex(m_vertex);
-
-      // Connect two points by a projected polyline.
-      if ( !m_prevEdge.IsNull() )
-      {
-        // Set last vertex.
-        m_prevEdge->SetLastVertex(m_vertex);
-
-        // Get previous vertex.
-        Handle(asiData_ReVertexNode) prevVertex = m_prevEdge->GetFirstVertex();
-        //
-        if ( prevVertex.IsNull() || !prevVertex->IsWellFormed() )
-        {
-          m_notifier.SendLogMessage(LogErr(Normal) << "Previous vertex is undefined.");
-          return;
-        }
-        //
-        const gp_XYZ prevPt = prevVertex->GetPoint();
-
-        // Add midpoints.
-        std::vector<gp_XYZ> projPts;
-        if ( !ProjectLineMesh.Perform(prevPt, hit, projPts, 0.001) )
-        {
-          m_notifier.SendLogMessage(LogErr(Normal) << "Cannot project line to mesh.");
-          m_model->AbortCommand();
-          return;
-        }
-        //
-        if ( projPts.size() > 2 )
-          for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
-            m_prevEdge->AddPolylinePole(projPts[k]);
-
-        // Add hitted point.
-        m_prevEdge->AddPolylinePole(hit);
-      }
-    }
-    m_model->CommitCommand();
-
-    // Update viewer.
-    mgr->Actualize(m_prevEdge);
-    mgr->Actualize(m_vertex);
-
-    // (Re)define previous edge.
-    m_prevEdge = m_edge;
-
-    // Update object browser.
-    if ( m_pBrowser )
-      m_pBrowser->Populate();
+    this->startNewEdge(pCallData);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+//! This method completes creation of the previous edge under construction.
+//! \param[in] pCallData data passed by caller.
+//! \return true in case of success, false -- otherwise.
+bool asiUI_PickContourCallback::completeEdge(void* pCallData)
+{
+  // Get active presentation manager.
+  const vtkSmartPointer<asiVisu_PrsManager>& mgr = this->GetViewer()->PrsMgr();
+
+  asiVisu_CellPickerResult* pPickRes = (asiVisu_CellPickerResult*) pCallData;
+
+  // Retrieve Node information.
+  asiVisu_NodeInfo* pNodeInfo = asiVisu_NodeInfo::Retrieve( pPickRes->GetPickedActor() );
+  //
+  if ( !pNodeInfo )
+    return false;
+
+  // Get Vertex Node.
+  Handle(ActAPI_INode) node = m_model->FindNode( pNodeInfo->GetNodeId() );
+  //
+  if ( !node->IsInstance( STANDARD_TYPE(asiData_ReVertexNode) )
+    || !node->IsWellFormed() )
+    return false;
+
+  Handle(asiData_ReVertexNode)
+    vertexNode = Handle(asiData_ReVertexNode)::DownCast(node);
+
+  double vx, vy, vz;
+  if ( !vertexNode->GetPoint(vx, vy, vz) )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Cannot access vertex coordinates.");
+    return false;
+  }
+  //
+  gp_XYZ hit(vx, vy, vz);
+
+  // Check current objects which are receiving data from interaction.
+  if ( m_edge.IsNull() )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "There is no edge to fill.");
+    return false;
+  }
+  //
+  if ( m_patch.IsNull() )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "There is no patch to complete contour for.");
+    return false;
+  }
+
+  // Business logic of reconstruction.
+  asiEngine_RE reApi(m_model, m_notifier, m_plotter);
+
+  // Tool for line projection.
+  asiAlgo_MeshProjectLine ProjectLineMesh(m_bvh, m_notifier, m_plotter);
+
+  // Modify data.
+  m_model->OpenCommand();
+  {
+    if ( !m_prevEdge.IsNull() )
+    {
+      // Get previous vertex.
+      Handle(asiData_ReVertexNode) prevVertex = m_prevEdge->GetFirstVertex();
+      //
+      if ( prevVertex.IsNull() || !prevVertex->IsWellFormed() )
+      {
+        m_notifier.SendLogMessage(LogErr(Normal) << "Previous vertex is undefined.");
+        m_model->AbortCommand();
+        return false;
+      }
+      //
+      const gp_XYZ prevPt = prevVertex->GetPoint();
+
+      // Add midpoints.
+      std::vector<gp_XYZ> projPts;
+      if ( !ProjectLineMesh.Perform(prevPt, hit, projPts, 0.001) )
+      {
+        m_notifier.SendLogMessage(LogErr(Normal) << "Cannot project line to mesh.");
+        m_model->AbortCommand();
+        return false;
+      }
+      //
+      if ( projPts.size() > 2 )
+        for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
+          m_prevEdge->AddPolylinePole(projPts[k]);
+    }
+    m_notifier.SendLogMessage(LogInfo(Normal) << "Contour closed.");
+
+    // Complete edge.
+    m_prevEdge->SetLastVertex(vertexNode);
+
+    // Patch is done.
+    m_patch.Nullify();
+    m_prevEdge.Nullify();
+  }
+  m_model->CommitCommand();
+
+  // Update viewer.
+  mgr->Actualize(m_edge);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+//! This method creates a new edge in the data model.
+//! \param[in] pCallData data passed by caller.
+//! \return true in case of success, false -- otherwise.
+bool asiUI_PickContourCallback::startNewEdge(void* pCallData)
+{
+  // Get active presentation manager.
+  const vtkSmartPointer<asiVisu_PrsManager>& mgr = this->GetViewer()->PrsMgr();
+
+  // Get picking ray.
+  gp_Lin pickRay = *( (gp_Lin*) pCallData );
+
+  // Prepare a tool to find the intersected facet.
+  asiAlgo_HitFacet        HitFacet        (m_bvh, m_notifier, m_plotter);
+  asiAlgo_MeshProjectLine ProjectLineMesh (m_bvh, m_notifier, m_plotter);
+
+  // Find intersection.
+  gp_XYZ hit;
+  int facet_idx;
+  if ( !HitFacet(pickRay, facet_idx, hit) )
+  {
+    m_notifier.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet.");
+    return false;
+  }
+
+  // Get active face index.
+  const int fidx = m_bvh->GetFacet(facet_idx).FaceIndex;
+  //
+  m_notifier.SendLogMessage(LogInfo(Normal) << "Picked point (%1, %2, %3) on face %4."
+                                            << hit.X()
+                                            << hit.Y()
+                                            << hit.Z()
+                                            << fidx);
+
+  // Business logic of reconstruction.
+  asiEngine_RE reApi(m_model, m_notifier, m_plotter);
+
+  // Modify data.
+  m_model->OpenCommand();
+  {
+    // Prepare active patch.
+    if ( m_patch.IsNull() )
+      m_patch = reApi.Create_Patch();
+
+    // Create vertex.
+    m_vertex = reApi.Create_Vertex(hit);
+
+    // Create active edge.
+    m_edge = reApi.Create_Edge();
+    //
+    m_edge->SetFirstVertex(m_vertex);
+
+    // Connect two points by a projected polyline.
+    if ( !m_prevEdge.IsNull() )
+    {
+      // Set last vertex.
+      m_prevEdge->SetLastVertex(m_vertex);
+
+      // Get previous vertex.
+      Handle(asiData_ReVertexNode) prevVertex = m_prevEdge->GetFirstVertex();
+      //
+      if ( prevVertex.IsNull() || !prevVertex->IsWellFormed() )
+      {
+        m_notifier.SendLogMessage(LogErr(Normal) << "Previous vertex is undefined.");
+        m_model->AbortCommand();
+        return false;
+      }
+      //
+      const gp_XYZ prevPt = prevVertex->GetPoint();
+
+      // Add midpoints.
+      std::vector<gp_XYZ> projPts;
+      if ( !ProjectLineMesh.Perform(prevPt, hit, projPts, 0.001) )
+      {
+        m_notifier.SendLogMessage(LogErr(Normal) << "Cannot project line to mesh.");
+        m_model->AbortCommand();
+        return false;
+      }
+      //
+      if ( projPts.size() > 2 )
+        for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
+          m_prevEdge->AddPolylinePole(projPts[k]);
+
+      // Add hitted point.
+      m_prevEdge->AddPolylinePole(hit);
+    }
+  }
+  m_model->CommitCommand();
+
+  // Update viewer.
+  mgr->Actualize(m_prevEdge);
+  mgr->Actualize(m_vertex);
+
+  // (Re)define previous edge.
+  m_prevEdge = m_edge;
+
+  // Update object browser.
+  if ( m_pBrowser )
+    m_pBrowser->Populate();
+
+  return true;
 }

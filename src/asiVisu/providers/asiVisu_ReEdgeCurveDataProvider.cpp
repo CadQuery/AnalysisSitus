@@ -45,6 +45,10 @@ asiVisu_ReEdgeCurveDataProvider::asiVisu_ReEdgeCurveDataProvider(const Handle(as
 
   // Set tracked (sensitive) Parameters.
   Handle(ActAPI_HParameterList) params = new ActAPI_HParameterList;
+  //
+  params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_VertexFirstRef) );
+  params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_VertexLastRef) );
+  params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_Polyline) );
   params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_Curve) );
   //
   m_params = params;

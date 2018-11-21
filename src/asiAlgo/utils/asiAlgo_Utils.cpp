@@ -84,8 +84,14 @@
 #include <Geom_OffsetCurve.hxx>
 #include <Geom_Parabola.hxx>
 #include <GeomAdaptor_Curve.hxx>
+#include <GeomAdaptor_HCurve.hxx>
+#include <GeomAPI_PointsToBSpline.hxx>
 #include <GeomConvert.hxx>
+#include <GeomFill_ConstrainedFilling.hxx>
+#include <GeomFill_SimpleBound.hxx>
 #include <GeomLProp_CLProps.hxx>
+#include <GeomPlate_BuildPlateSurface.hxx>
+#include <GeomPlate_MakeApprox.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Quaternion.hxx>
 #include <gp_Vec.hxx>
@@ -1336,7 +1342,7 @@ bool asiAlgo_Utils::MaximizeFaces(TopoDS_Shape& shape)
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_Utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
+bool asiAlgo_Utils::InterpolatePoints(const std::vector<gp_XYZ>& points,
                                       const int                  p,
                                       Handle(Geom_BSplineCurve)& result)
 {
@@ -1348,7 +1354,7 @@ bool asiAlgo_Utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
   // Calculate total chord length
   double chordTotal = 0.0;
   for ( size_t k = 1; k < numPoles; ++k )
-    chordTotal += Sqrt( ( points[k].XYZ() - points[k-1].XYZ() ).Modulus() );
+    chordTotal += Sqrt( ( points[k] - points[k-1] ).Modulus() );
 
   //-------------------------------------------------------------------------
   // Choose parameters
@@ -1356,7 +1362,7 @@ bool asiAlgo_Utils::InterpolatePoints(const std::vector<gp_Pnt>& points,
   pParams[0] = 0.0;
   for ( int k = 1; k < numPoles - 1; ++k )
   {
-    pParams[k] = pParams[k - 1] + Sqrt( ( points[k].XYZ() - points[k-1].XYZ() ).Modulus() ) / chordTotal;
+    pParams[k] = pParams[k - 1] + Sqrt( ( points[k]- points[k-1] ).Modulus() ) / chordTotal;
   }
   pParams[numPoles - 1] = 1.0;
 
@@ -1540,7 +1546,7 @@ bool asiAlgo_Utils::InterpolatePoints(const Handle(asiAlgo_BaseCloud<double>)& p
                                       const int                                p,
                                       Handle(Geom_BSplineCurve)&               result)
 {
-  std::vector<gp_Pnt> occPts;
+  std::vector<gp_XYZ> occPts;
 
   // Repack data points.
   for ( int i = 0; i < points->GetNumberOfElements(); ++i )
@@ -1548,10 +1554,128 @@ bool asiAlgo_Utils::InterpolatePoints(const Handle(asiAlgo_BaseCloud<double>)& p
     double x, y, z;
     points->GetElement(i, x, y, z);
     //
-    occPts.push_back( gp_Pnt(x, y, z) );
+    occPts.push_back( gp_XYZ(x, y, z) );
   }
 
   return InterpolatePoints(occPts, p, result);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::ApproximatePoints(const std::vector<gp_XYZ>& points,
+                                      const int                  degMin,
+                                      const double               tol3d,
+                                      Handle(Geom_BSplineCurve)& result)
+{
+  // Convert to OCCT collection.
+  const int nPts = int( points.size() );
+  TColgp_Array1OfPnt occPts(1, nPts);
+  //
+  for ( int k = 0; k < nPts; ++k )
+    occPts(k + 1) = points[k];
+
+  // Approximate.
+  GeomAPI_PointsToBSpline api(occPts, degMin, 8, GeomAbs_C2, tol3d);
+  //
+  if ( !api.IsDone() )
+    return false;
+
+  result = api.Curve();
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::Fill4Contour(const std::vector<Handle(Geom_BSplineCurve)>& curves,
+                                 Handle(Geom_BSplineSurface)&                  result)
+{
+  if ( curves.size() != 4 )
+    return false;
+
+  Handle(GeomFill_SimpleBound) b1 = new GeomFill_SimpleBound(new GeomAdaptor_HCurve(curves[0]), 1e-3, 1e-2);
+  Handle(GeomFill_SimpleBound) b2 = new GeomFill_SimpleBound(new GeomAdaptor_HCurve(curves[1]), 1e-3, 1e-2);
+  Handle(GeomFill_SimpleBound) b3 = new GeomFill_SimpleBound(new GeomAdaptor_HCurve(curves[2]), 1e-3, 1e-2);
+  Handle(GeomFill_SimpleBound) b4 = new GeomFill_SimpleBound(new GeomAdaptor_HCurve(curves[3]), 1e-3, 1e-2);
+
+  GeomFill_ConstrainedFilling filling(3, 100);
+  filling.Init(b1, b2, b3, b4);
+  //
+  result = filling.Surface();
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::FillContourPlate(const std::vector<Handle(Geom_BSplineCurve)>& curves,
+                                     Handle(Geom_BSplineSurface)&                  result)
+{
+  const int nbCurves = int( curves.size() );
+
+  // Prepare working collection for support curves (used to create
+  // pinpoint constraints).
+  Handle(GeomPlate_HArray1OfHCurve)
+    fronts = new GeomPlate_HArray1OfHCurve(1, nbCurves);
+
+  // Prepare working collection for smoothness values associated with
+  // each support curve.
+  Handle(TColStd_HArray1OfInteger)
+    tang = new TColStd_HArray1OfInteger(1, nbCurves);
+
+  // Prepare working collection for discretization numbers associated with
+  // each support curve.
+  Handle(TColStd_HArray1OfInteger)
+    nbPtsCur = new TColStd_HArray1OfInteger(1, nbCurves);
+
+  // Loop over the curves to prepare constraints.
+  int i = 0;
+  for ( int cidx = 0; cidx < nbCurves; ++cidx )
+  {
+    i++;
+    tang->SetValue(i, GeomAbs_C0);
+    nbPtsCur->SetValue(i, 50); // Number of discretization points
+
+    Handle(GeomAdaptor_HCurve)
+      curveAdt = new GeomAdaptor_HCurve(curves[cidx]);
+
+    fronts->SetValue(i, curveAdt);
+  }
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Build plate
+  GeomPlate_BuildPlateSurface BuildPlate(nbPtsCur, fronts, tang, 3);
+  //
+  try
+  {
+    BuildPlate.Perform();
+  }
+  catch ( ... )
+  {
+    return false;
+  }
+  //
+  if ( !BuildPlate.IsDone() )
+  {
+    return false;
+  }
+  Handle(GeomPlate_Surface) plate = BuildPlate.Surface();
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("Build plate")
+
+  // Approximate plate with NURBS.
+
+  TIMER_RESET
+  TIMER_GO
+
+  GeomPlate_MakeApprox MKS(plate, Precision::Confusion(), 18, 14, 0.001, 0);
+  result = MKS.Surface();
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_MSG("Approximate plate with B-surface")
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------

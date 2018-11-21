@@ -45,9 +45,10 @@
 
 //-----------------------------------------------------------------------------
 
-void onUndoRedo(const Handle(ActAPI_HParameterMap)& affectedParams)
+void onUndoRedo(const Handle(ActAPI_TxRes)& txRes,
+                ActAPI_ProgressEntry        progress)
 {
-  if ( affectedParams.IsNull() )
+  if ( txRes.IsNull() )
     return;
 
   if ( !cmdEngine::cf )
@@ -55,14 +56,34 @@ void onUndoRedo(const Handle(ActAPI_HParameterMap)& affectedParams)
 
   // Loop over the affected Parameters to get the affected Nodes. These Nodes
   // are placed into a map to have them unique.
-  Handle(ActAPI_HNodeMap) affectedNodes = new ActAPI_HNodeMap;
+  ActAPI_NodeIdMap modifiedNodes, deletedNodes;
   //
-  for ( ActAPI_HParameterMap::Iterator pit(*affectedParams); pit.More(); pit.Next() )
+  for ( int k = 1; k <= txRes->parameterRefs.Extent(); ++k )
   {
-    // Get Node
-    Handle(ActAPI_INode) N = pit.Value()->GetNode();
-    //
-    affectedNodes->Add(N);
+    const ActAPI_TxRes::t_parameterRef& objRef = txRes->parameterRefs(k);
+
+    // Get ID of the Node.
+    ActAPI_NodeId nodeId = ActData_Common::NodeIdByParameterId(objRef.id);
+
+    // Add Node ID.
+    if ( objRef.isAlive )
+    {
+      if ( !modifiedNodes.Contains(nodeId) )
+      {
+        modifiedNodes.Add(nodeId);
+        //
+        progress.SendLogMessage(LogInfo(Normal) << "Modified Node: %1." << nodeId);
+      }
+    }
+    else
+    {
+      if ( !deletedNodes.Contains(nodeId) )
+      {
+        deletedNodes.Add(nodeId);
+        //
+        progress.SendLogMessage(LogInfo(Normal) << "Deleted Node: %1." << nodeId);
+      }
+    }
   }
 
   // Get all presentation managers
@@ -70,23 +91,35 @@ void onUndoRedo(const Handle(ActAPI_HParameterMap)& affectedParams)
   const vtkSmartPointer<asiVisu_PrsManager>& hostPM   = cmdEngine::cf->ViewerHost->PrsMgr();
   const vtkSmartPointer<asiVisu_PrsManager>& domainPM = cmdEngine::cf->ViewerDomain->PrsMgr();
 
-  // Loop over the unique Nodes to actualize them
-  for ( ActAPI_HNodeMap::Iterator nit(*affectedNodes); nit.More(); nit.Next() )
+  // Loop over the deleted Nodes to derender them
+  for ( int k = 1; k <= deletedNodes.Extent(); ++k )
   {
-    const Handle(ActAPI_INode)& N = nit.Value();
+    const ActAPI_DataObjectId& id = deletedNodes(k);
+
+    if ( partPM->IsPresented(id) )
+      partPM->DeRenderPresentation(id);
     //
-    if ( N.IsNull() || !N->IsWellFormed() )
-      continue;
+    if ( hostPM->IsPresented(id) )
+      hostPM->DeRenderPresentation(id);
+    //
+    if ( domainPM->IsPresented(id) )
+      domainPM->DeRenderPresentation(id);
+  }
+
+  // Loop over the modified Nodes to actualize them
+  for ( int k = 1; k <= modifiedNodes.Extent(); ++k )
+  {
+    const ActAPI_DataObjectId& id = modifiedNodes(k);
 
     // Actualize
-    if ( partPM->IsPresented(N) )
-      partPM->Actualize(N);
+    if ( partPM->IsPresented(id) )
+      partPM->Actualize( cmdEngine::model->FindNode(id) );
     //
-    if ( hostPM->IsPresented(N) )
-      hostPM->Actualize(N);
+    if ( hostPM->IsPresented(id) )
+      hostPM->Actualize( cmdEngine::model->FindNode(id) );
     //
-    if ( domainPM->IsPresented(N) )
-      domainPM->Actualize(N);
+    if ( domainPM->IsPresented(id) )
+      domainPM->Actualize( cmdEngine::model->FindNode(id) );
   }
 
   // Update object browser
@@ -105,7 +138,7 @@ int ENGINE_Undo(const Handle(asiTcl_Interp)& interp,
   }
 
   // Undo and process the affected Parameters
-  onUndoRedo( cmdEngine::model->Undo() );
+  onUndoRedo( cmdEngine::model->Undo(), interp->GetProgress() );
 
   return TCL_OK;
 }
@@ -122,7 +155,7 @@ int ENGINE_Redo(const Handle(asiTcl_Interp)& interp,
   }
 
   // Redo and process the affected Parameters
-  onUndoRedo( cmdEngine::model->Redo() );
+  onUndoRedo( cmdEngine::model->Redo(), interp->GetProgress() );
 
   return TCL_OK;
 }

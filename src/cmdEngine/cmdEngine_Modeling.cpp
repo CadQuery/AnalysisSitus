@@ -968,6 +968,93 @@ int ENGINE_Fillet(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_BuildPatch(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Patch Node.
+  Handle(asiData_ReEdgesNode)
+    patchNode = Handle(asiData_ReEdgesNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
+  //
+  if ( patchNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find Patch Node with name '%1'." << argv[1]);
+    return TCL_ERROR;
+  }
+
+  cmdEngine::model->OpenCommand();
+
+  std::vector<Handle(Geom_BSplineCurve)> curves;
+
+  // Get all edges and approximate them.
+  for ( Handle(ActAPI_IChildIterator) cit = patchNode->GetChildIterator();
+        cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) childNode = cit->Value();
+    //
+    if ( !childNode->IsKind( STANDARD_TYPE(asiData_ReEdgeNode) ) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected type of child Node.");
+      //
+      cmdEngine::model->AbortCommand();
+      return TCL_ERROR;
+    }
+    //
+    const Handle(asiData_ReEdgeNode)&
+      edgeNode = Handle(asiData_ReEdgeNode)::DownCast(childNode);
+
+    // Approximate with parametric curve.
+    std::vector<gp_XYZ> pts;
+    edgeNode->GetPolyline(pts);
+    //
+    Handle(Geom_BSplineCurve) curve;
+    if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 0.1, curve) )
+    {
+      interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge %1."
+                                                           << edgeNode->GetId() );
+      //
+      cmdEngine::model->AbortCommand();
+      return TCL_ERROR;
+    }
+
+    // Update Data Model.
+    edgeNode->SetCurve(curve);
+
+    // Add curve to the collection for filling.
+    curves.push_back(curve);
+
+    // Draw curve.
+    interp->GetPlotter().DRAW_CURVE(curve, Color_Red, "boundaryCurve");
+
+    // Update scene.
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(edgeNode);
+  }
+
+  // Build patch.
+  Handle(Geom_BSplineSurface) patchSurf;
+  //
+  if ( !asiAlgo_Utils::FillContourPlate(curves, patchSurf) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot approximate surface.");
+    //
+    cmdEngine::model->AbortCommand();
+    return TCL_ERROR;
+  }
+  //
+  interp->GetPlotter().REDRAW_SURFACE("patch", patchSurf, Color_White);
+
+  cmdEngine::model->CommitCommand();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                                   const Handle(Standard_Transient)& data)
 {
@@ -1123,4 +1210,12 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Blends the selected edges with the given radius.",
     //
     __FILE__, group, ENGINE_Fillet);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("build-patch",
+    //
+    "build-patch patchName\n"
+    "\t Constructs surface patch for the data object with the given name.",
+    //
+    __FILE__, group, ENGINE_BuildPatch);
 }

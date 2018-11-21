@@ -488,9 +488,9 @@ namespace asiAlgo_Utils
   //! \param points [in]  points to interpolate.
   //! \param p      [in]  degree to use.
   //! \param result [out] interpolant.
-  //! \return true om case of success, false -- otherwise.
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    InterpolatePoints(const std::vector<gp_Pnt>& points,
+    InterpolatePoints(const std::vector<gp_XYZ>& points,
                       const int                  p,
                       Handle(Geom_BSplineCurve)& result);
 
@@ -498,6 +498,37 @@ namespace asiAlgo_Utils
     InterpolatePoints(const Handle(asiAlgo_BaseCloud<double>)& points,
                       const int                                p,
                       Handle(Geom_BSplineCurve)&               result);
+
+  //! Approximate the given vector of points with a B-curve of the
+  //! desired degree.
+  //! \param[in]  points points to approximate.
+  //! \param[in]  degMin min degree to use.
+  //! \param[in]  tol3d  3D tolerance.
+  //! \param[out] result interpolant.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    ApproximatePoints(const std::vector<gp_XYZ>& points,
+                      const int                  degMin,
+                      const double               tol3d,
+                      Handle(Geom_BSplineCurve)& result);
+
+  //! Fills the passed contour with a parametric surface using the
+  //! constraint-filling algorithm of OpenCascade.
+  //! \param[in]  curves curves defining the contour to fill.
+  //! \param[out] result resulting patch.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    Fill4Contour(const std::vector<Handle(Geom_BSplineCurve)>& curves,
+                 Handle(Geom_BSplineSurface)&                  result);
+
+  //! Fills the passed contour with a parametric surface using the Plate
+  //! algorithm of OpenCascade to produce a class A surface.
+  //! \param[in]  curves curves defining the contour to fill.
+  //! \param[out] result resulting patch.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    FillContourPlate(const std::vector<Handle(Geom_BSplineCurve)>& curves,
+                     Handle(Geom_BSplineSurface)&                  result);
 
   //! Performs Boolean Cut of a tool shape from the given object shape.
   //! \param Object [in] object to cut from.

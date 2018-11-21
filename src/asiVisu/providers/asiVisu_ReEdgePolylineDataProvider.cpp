@@ -85,7 +85,10 @@ Handle(ActAPI_HParameterList)
     return out;
 
   // Register Parameter as sensitive.
-  out << edge_n->Parameter(asiData_ReEdgeNode::PID_Polyline);
+  out << edge_n->Parameter(asiData_ReEdgeNode::PID_Polyline)
+      << edge_n->Parameter(asiData_ReEdgeNode::PID_VertexFirstRef)
+      << edge_n->Parameter(asiData_ReEdgeNode::PID_VertexLastRef)
+      << edge_n->Parameter(asiData_ReEdgeNode::PID_Curve);
 
   return out;
 }

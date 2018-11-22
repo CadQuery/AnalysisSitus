@@ -86,32 +86,248 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
 {
   asiUI_NotUsed(pCaller);
 
+  // Prepare RE Topology Node.
+  Handle(asiData_ReTopoNode) topoNode = m_model->GetReTopoNode();
+  //
+  if ( topoNode.IsNull() )
+  {
+    m_model->OpenCommand(); // Open transaction.
+    {
+      topoNode = asiEngine_RE(m_model, m_notifier, m_plotter).Create_Topo();
+    }
+    m_model->CommitCommand(); // Commit transaction.
+  }
+
+  // Get current topological situation.
+  Handle(asiData_RePatchNode)  patchNode       = topoNode->GetCurrentPatch();
+  Handle(asiData_ReCoEdgeNode) prevCoedgeNode  = topoNode->GetCurrentCoEdge();
+  Handle(asiData_ReVertexNode) lastVertexNode  = topoNode->GetLastVertex();
+  Handle(asiData_ReVertexNode) firstVertexNode = topoNode->GetFirstVertex();
+  Handle(asiData_ReEdgeNode)   prevEdgeNode    = prevCoedgeNode.IsNull() ? NULL : prevCoedgeNode->GetEdge();
+
   // Existing vertex was selected again.
   if ( eventId == EVENT_SELECT_CELL )
   {
-    if ( !m_prevEdge.IsNull() )
+    Handle(asiData_ReVertexNode)
+      pickedVertex = this->getPickedVertex(pCallData);
+    //
+    if ( pickedVertex.IsNull() )
+      return;
+
+    // Complete current edge and this way complete contour.
+    if ( !prevCoedgeNode.IsNull() )
+    {
+      // Check if the user has clicked the initial vertex.
+      if ( IsEqual( firstVertexNode->GetId(), pickedVertex->GetId() ) )
+        this->completeContour(pickedVertex);
+      else
+      {
+        // Try to find the existing edge.
+        bool samesense = true;
+        //
+        Handle(asiData_ReEdgeNode)
+          existingEdge = this->findEdgeOnVertices(lastVertexNode,
+                                                  pickedVertex,
+                                                  samesense);
+        //
+        if ( existingEdge.IsNull() )
+        {
+          m_notifier.SendLogMessage(LogErr(Normal) << "Cannot find contour edge to add.");
+          return;
+        }
+
+        // Add coedge.
+        this->addContourCoEdge(existingEdge, samesense);
+      }
+    }
+    else
+    {
+      this->startNewContour(pickedVertex);
+    }
+
+    
+
+    //f ( existingEdge.IsNull() )
+
+
+    /*if ( !prevCoedgeNode.IsNull() )
       this->completeEdge(pCallData);
     else
-      this->startNewEdge(pCallData);
+      this->startNewEdge(pCallData);*/
   }
 
   // Custom point on the mesh was clicked.
   else if ( eventId == EVENT_SELECT_WORLD_POINT )
   {
-    this->startNewEdge(pCallData);
+    if ( prevEdgeNode.IsNull() )
+      this->startNewContour(pCallData);
+    else
+      this->addContourEdge(pCallData);
   }
 }
 
 //-----------------------------------------------------------------------------
 
-//! This method completes creation of the previous edge under construction.
-//! \param[in] pCallData data passed by caller.
-//! \return true in case of success, false -- otherwise.
-bool asiUI_PickContourCallback::completeEdge(void* pCallData)
+bool asiUI_PickContourCallback::startNewContour(void* pCallData)
 {
-  // Get active presentation manager.
-  const vtkSmartPointer<asiVisu_PrsManager>& mgr = this->GetViewer()->PrsMgr();
+  m_notifier.SendLogMessage(LogInfo(Normal) << "Starting new contour from picked point...");
 
+  // Get picked point.
+  gp_XYZ hit;
+  if ( !this->getPickedPoint(pCallData, hit) )
+    return false;
+
+  Handle(asiData_ReVertexNode) vertexNode;
+
+  // Modify data.
+  m_model->OpenCommand();
+  {
+    // Create vertex.
+    vertexNode = asiEngine_RE(m_model, m_notifier, m_plotter).Create_Vertex(hit);
+
+    // Build new edge.
+    if ( this->buildNewEdge(vertexNode).IsNull() )
+      m_model->AbortCommand();
+
+    // Store the reference to the first vertex.
+    m_model->GetReTopoNode()->SetFirstVertex(vertexNode);
+  }
+  m_model->CommitCommand();
+
+  // Update scene.
+  this->GetViewer()->PrsMgr()->Actualize(vertexNode);
+
+  // Update object browser.
+  if ( m_pBrowser )
+    m_pBrowser->Populate();
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiUI_PickContourCallback::startNewContour(const Handle(asiData_ReVertexNode)& source)
+{
+  m_notifier.SendLogMessage(LogInfo(Normal) << "Starting new contour from vertex...");
+
+  // Modify data.
+  m_model->OpenCommand();
+  {
+    // Build new edge.
+    if ( this->buildNewEdge(source).IsNull() )
+      m_model->AbortCommand();
+
+    // Store the reference to the first vertex.
+    m_model->GetReTopoNode()->SetFirstVertex(source);
+  }
+  m_model->CommitCommand();
+
+  // Update object browser.
+  if ( m_pBrowser )
+    m_pBrowser->Populate();
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiUI_PickContourCallback::addContourEdge(void* pCallData)
+{
+  m_notifier.SendLogMessage(LogInfo(Normal) << "Adding new edge...");
+
+  // Get picked point.
+  gp_XYZ hit;
+  if ( !this->getPickedPoint(pCallData, hit) )
+    return false;
+
+  Handle(asiData_ReVertexNode) vertexNode;
+
+  // Get previous edge.
+  Handle(asiData_ReEdgeNode)
+    prevEdgeNode = m_model->GetReTopoNode()->GetCurrentCoEdge()->GetEdge();
+
+  // Modify data.
+  m_model->OpenCommand();
+  {
+    // Create vertex.
+    vertexNode = asiEngine_RE(m_model, m_notifier, m_plotter).Create_Vertex(hit);
+
+    // Build new edge.
+    if ( this->buildNewEdge(vertexNode, true, hit).IsNull() )
+      m_model->AbortCommand();
+  }
+  m_model->CommitCommand();
+
+  // Update scene.
+  this->GetViewer()->PrsMgr()->Actualize(prevEdgeNode);
+  this->GetViewer()->PrsMgr()->Actualize(vertexNode);
+
+  // Update object browser.
+  if ( m_pBrowser )
+    m_pBrowser->Populate();
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReEdgeNode)
+  asiUI_PickContourCallback::findEdgeOnVertices(const Handle(asiData_ReVertexNode)& v1,
+                                                const Handle(asiData_ReVertexNode)& v2,
+                                                bool&                               samesense)
+{
+  if ( v1.IsNull() || v2.IsNull() )
+    return NULL;
+
+  // Business logic of reconstruction.
+  asiEngine_RE reApi(m_model, m_notifier, m_plotter);
+
+  // Get Edges Node.
+  Handle(asiData_ReEdgesNode) edgesNode = reApi.Get_Edges();
+  //
+  if ( edgesNode.IsNull() || !edgesNode->IsWellFormed() )
+    return NULL;
+
+  // Iterate over the existing edges trying to find the one with 
+  for ( Handle(ActAPI_IChildIterator) eit = edgesNode->GetChildIterator(); eit->More(); eit->Next() )
+  {
+    Handle(asiData_ReEdgeNode)
+      edgeNode = Handle(asiData_ReEdgeNode)::DownCast( eit->Value() );
+    //
+    if ( edgeNode.IsNull() || !edgeNode->IsWellFormed() )
+      continue;
+
+    Handle(asiData_ReVertexNode) currV1 = edgeNode->GetFirstVertex();
+    Handle(asiData_ReVertexNode) currV2 = edgeNode->GetLastVertex();
+
+    if ( currV1.IsNull() || currV2.IsNull() )
+      continue;
+
+    // Check equality of extremities.
+    if ( IsEqual( currV1->GetId(), v1->GetId() ) &&
+         IsEqual( currV2->GetId(), v2->GetId() ) )
+    {
+      samesense = true;
+    }
+    else if ( IsEqual( currV2->GetId(), v1->GetId() ) &&
+              IsEqual( currV1->GetId(), v2->GetId() ) )
+    {
+      samesense = false;
+    }
+    else continue;
+
+    return edgeNode;
+  }
+
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReVertexNode)
+  asiUI_PickContourCallback::getPickedVertex(void* pCallData)
+{
+  // Convert passed data to cell picker result.
   asiVisu_CellPickerResult* pPickRes = (asiVisu_CellPickerResult*) pCallData;
 
   // Retrieve Node information.
@@ -129,102 +345,25 @@ bool asiUI_PickContourCallback::completeEdge(void* pCallData)
 
   Handle(asiData_ReVertexNode)
     vertexNode = Handle(asiData_ReVertexNode)::DownCast(node);
-
-  double vx, vy, vz;
-  if ( !vertexNode->GetPoint(vx, vy, vz) )
-  {
-    m_notifier.SendLogMessage(LogErr(Normal) << "Cannot access vertex coordinates.");
-    return false;
-  }
   //
-  gp_XYZ hit(vx, vy, vz);
-
-  // Check current objects which are receiving data from interaction.
-  if ( m_edge.IsNull() )
-  {
-    m_notifier.SendLogMessage(LogErr(Normal) << "There is no edge to fill.");
-    return false;
-  }
-  //
-  if ( m_patch.IsNull() )
-  {
-    m_notifier.SendLogMessage(LogErr(Normal) << "There is no patch to complete contour for.");
-    return false;
-  }
-
-  // Business logic of reconstruction.
-  asiEngine_RE reApi(m_model, m_notifier, m_plotter);
-
-  // Tool for line projection.
-  asiAlgo_MeshProjectLine ProjectLineMesh(m_bvh, m_notifier, m_plotter);
-
-  // Modify data.
-  m_model->OpenCommand();
-  {
-    if ( !m_prevEdge.IsNull() )
-    {
-      // Get previous vertex.
-      Handle(asiData_ReVertexNode) prevVertex = m_prevEdge->GetFirstVertex();
-      //
-      if ( prevVertex.IsNull() || !prevVertex->IsWellFormed() )
-      {
-        m_notifier.SendLogMessage(LogErr(Normal) << "Previous vertex is undefined.");
-        m_model->AbortCommand();
-        return false;
-      }
-      //
-      const gp_XYZ prevPt = prevVertex->GetPoint();
-
-      // Add midpoints.
-      std::vector<gp_XYZ> projPts;
-      if ( !ProjectLineMesh.Perform(prevPt, hit, projPts, 0.001) )
-      {
-        m_notifier.SendLogMessage(LogErr(Normal) << "Cannot project line to mesh.");
-        m_model->AbortCommand();
-        return false;
-      }
-      //
-      if ( projPts.size() > 2 )
-        for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
-          m_prevEdge->AddPolylinePole(projPts[k]);
-    }
-    m_notifier.SendLogMessage(LogInfo(Normal) << "Contour closed.");
-
-    // Complete edge.
-    m_prevEdge->SetLastVertex(vertexNode);
-
-    // Patch is done.
-    m_patch.Nullify();
-    m_prevEdge.Nullify();
-  }
-  m_model->CommitCommand();
-
-  // Update viewer.
-  mgr->Actualize(m_edge);
-
-  return true;
+  return vertexNode;
 }
 
 //-----------------------------------------------------------------------------
 
-//! This method creates a new edge in the data model.
-//! \param[in] pCallData data passed by caller.
-//! \return true in case of success, false -- otherwise.
-bool asiUI_PickContourCallback::startNewEdge(void* pCallData)
+bool asiUI_PickContourCallback::getPickedPoint(void*   pCallData,
+                                               gp_XYZ& result)
 {
-  // Get active presentation manager.
-  const vtkSmartPointer<asiVisu_PrsManager>& mgr = this->GetViewer()->PrsMgr();
-
   // Get picking ray.
   gp_Lin pickRay = *( (gp_Lin*) pCallData );
 
   // Prepare a tool to find the intersected facet.
-  asiAlgo_HitFacet        HitFacet        (m_bvh, m_notifier, m_plotter);
-  asiAlgo_MeshProjectLine ProjectLineMesh (m_bvh, m_notifier, m_plotter);
+  asiAlgo_HitFacet HitFacet(m_bvh, m_notifier, m_plotter);
 
   // Find intersection.
   gp_XYZ hit;
   int facet_idx;
+  //
   if ( !HitFacet(pickRay, facet_idx, hit) )
   {
     m_notifier.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet.");
@@ -240,32 +379,80 @@ bool asiUI_PickContourCallback::startNewEdge(void* pCallData)
                                             << hit.Z()
                                             << fidx);
 
+  result = hit;
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiUI_PickContourCallback::projectLine(const gp_XYZ&        p1,
+                                            const gp_XYZ&        p2,
+                                            std::vector<gp_XYZ>& result)
+{
+  // Tool for line projection.
+  asiAlgo_MeshProjectLine ProjectLineMesh(m_bvh, m_notifier, m_plotter);
+
+  // Add midpoints.
+  if ( !ProjectLineMesh.Perform(p1, p2, result, 0.001) )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Cannot project line to mesh.");
+    return false;
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReCoEdgeNode)
+  asiUI_PickContourCallback::buildNewEdge(const Handle(asiData_ReVertexNode)& source,
+                                          const bool                          doProject,
+                                          const gp_XYZ&                       target)
+{
+  // Get Topology Node and the currently composed entities.
+  Handle(asiData_ReTopoNode)   topoNode       = m_model->GetReTopoNode();
+  Handle(asiData_RePatchNode)  patchNode      = topoNode->GetCurrentPatch();
+  Handle(asiData_ReCoEdgeNode) prevCoedgeNode = topoNode->GetCurrentCoEdge();
+  Handle(asiData_ReEdgeNode)   prevEdgeNode   = prevCoedgeNode.IsNull() ? NULL : prevCoedgeNode->GetEdge();
+
   // Business logic of reconstruction.
   asiEngine_RE reApi(m_model, m_notifier, m_plotter);
 
-  // Modify data.
-  m_model->OpenCommand();
+  // Prepare active patch.
+  if ( patchNode.IsNull() )
   {
-    // Prepare active patch.
-    if ( m_patch.IsNull() )
-      m_patch = reApi.Create_Patch();
+    patchNode = reApi.Create_Patch();
+    topoNode->SetCurrentPatch(patchNode);
+  }
 
-    // Create vertex.
-    m_vertex = reApi.Create_Vertex(hit);
+  // Create vertex.
+  topoNode->SetLastVertex(source);
 
-    // Create active edge.
-    m_edge = reApi.Create_Edge();
-    //
-    m_edge->SetFirstVertex(m_vertex);
+  // Create active edge.
+  Handle(asiData_ReEdgeNode)
+    edgeNode = reApi.Create_Edge();
+  //
+  edgeNode->SetFirstVertex(source);
 
-    // Connect two points by a projected polyline.
-    if ( !m_prevEdge.IsNull() )
+  // Create coedge.
+  Handle(asiData_ReCoEdgeNode)
+    coedgeNode = reApi.Create_CoEdge(patchNode, edgeNode, true);
+  //
+  topoNode->SetCurrentCoEdge(coedgeNode);
+
+  // Complete topological and geometric definition of the previous edge.
+  if ( !prevEdgeNode.IsNull() )
+  {
+    prevEdgeNode->SetLastVertex(source);
+
+    // Project line if requested.
+    if ( doProject )
     {
-      // Set last vertex.
-      m_prevEdge->SetLastVertex(m_vertex);
+      // Tool for line projection.
+      asiAlgo_MeshProjectLine ProjectLineMesh(m_bvh, m_notifier, m_plotter);
 
       // Get previous vertex.
-      Handle(asiData_ReVertexNode) prevVertex = m_prevEdge->GetFirstVertex();
+      Handle(asiData_ReVertexNode) prevVertex = prevEdgeNode->GetFirstVertex();
       //
       if ( prevVertex.IsNull() || !prevVertex->IsWellFormed() )
       {
@@ -278,33 +465,132 @@ bool asiUI_PickContourCallback::startNewEdge(void* pCallData)
 
       // Add midpoints.
       std::vector<gp_XYZ> projPts;
-      if ( !ProjectLineMesh.Perform(prevPt, hit, projPts, 0.001) )
+      if ( !this->projectLine(prevPt, target, projPts) )
       {
-        m_notifier.SendLogMessage(LogErr(Normal) << "Cannot project line to mesh.");
         m_model->AbortCommand();
         return false;
       }
       //
       if ( projPts.size() > 2 )
         for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
-          m_prevEdge->AddPolylinePole(projPts[k]);
+          prevEdgeNode->AddPolylinePole(projPts[k]);
 
       // Add hitted point.
-      m_prevEdge->AddPolylinePole(hit);
+      prevEdgeNode->AddPolylinePole(target);
     }
+  }
+
+  return coedgeNode;
+}
+
+//-----------------------------------------------------------------------------
+
+bool
+  asiUI_PickContourCallback::completeContour(const Handle(asiData_ReVertexNode)& target)
+{
+  m_notifier.SendLogMessage(LogInfo(Normal) << "Completing contour...");
+
+  // Get Topology Node and the currently composed entities.
+  Handle(asiData_ReTopoNode)   topoNode   = m_model->GetReTopoNode();
+  Handle(asiData_RePatchNode)  patchNode  = topoNode->GetCurrentPatch();
+  Handle(asiData_ReCoEdgeNode) coedgeNode = topoNode->GetCurrentCoEdge();
+  Handle(asiData_ReEdgeNode)   edgeNode   = coedgeNode.IsNull() ? NULL : coedgeNode->GetEdge();
+  //
+  if ( edgeNode.IsNull() )
+    return false;
+
+  // Get previous vertex.
+  Handle(asiData_ReVertexNode) prevVertex = edgeNode->GetFirstVertex();
+  //
+  if ( prevVertex.IsNull() || !prevVertex->IsWellFormed() )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Previous vertex is undefined.");
+    m_model->AbortCommand();
+    return false;
+  }
+
+  // Tool for line projection.
+  asiAlgo_MeshProjectLine ProjectLineMesh(m_bvh, m_notifier, m_plotter);
+
+  // Business logic of reconstruction.
+  asiEngine_RE reApi(m_model, m_notifier, m_plotter);
+
+  // Perform data model modification.
+  m_model->OpenCommand();
+  {
+    // Set last vertex.
+    topoNode->SetLastVertex(target);
+
+    // Complete topological definition of the current edge.
+    edgeNode->SetLastVertex(target);
+
+    // Get point to connect.
+    const gp_XYZ prevPt  = prevVertex->GetPoint();
+    const gp_XYZ finalPt = target->GetPoint();
+
+    // Add midpoints.
+    std::vector<gp_XYZ> projPts;
+    if ( !this->projectLine(prevPt, finalPt, projPts) )
+    {
+      m_model->AbortCommand();
+      return false;
+    }
+    //
+    if ( projPts.size() > 2 )
+      for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
+        edgeNode->AddPolylinePole(projPts[k]);
+
+    // Add hitted point.
+    edgeNode->AddPolylinePole(finalPt);
+
+    // Reset current references.
+    topoNode->SetCurrentPatch(NULL);
+    topoNode->SetCurrentCoEdge(NULL);
+    topoNode->SetLastVertex(NULL);
   }
   m_model->CommitCommand();
 
-  // Update viewer.
-  mgr->Actualize(m_prevEdge);
-  mgr->Actualize(m_vertex);
+  // Update scene.
+  this->GetViewer()->PrsMgr()->Actualize(edgeNode);
 
-  // (Re)define previous edge.
-  m_prevEdge = m_edge;
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReCoEdgeNode)
+  asiUI_PickContourCallback::buildNewEdge(const Handle(asiData_ReVertexNode)& source)
+{
+  return this->buildNewEdge(source, false);
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReCoEdgeNode)
+  asiUI_PickContourCallback::addContourCoEdge(const Handle(asiData_ReEdgeNode)& edge,
+                                              const bool                        samesense)
+{
+  // Get Topology Node and the currently composed entities.
+  Handle(asiData_ReTopoNode)  topoNode  = m_model->GetReTopoNode();
+  Handle(asiData_RePatchNode) patchNode = topoNode->GetCurrentPatch();
+
+  // Business logic of reconstruction.
+  asiEngine_RE reApi(m_model, m_notifier, m_plotter);
+
+  // Build coedge.
+  Handle(asiData_ReCoEdgeNode)
+    coedge = reApi.Create_CoEdge(patchNode, edge, samesense);
+
+  // Set last vertex.
+  topoNode->SetLastVertex( samesense ? edge->GetLastVertex()
+                                     : edge->GetFirstVertex() );
+
+  // Set current coedge.
+  topoNode->SetCurrentCoEdge(coedge);
 
   // Update object browser.
   if ( m_pBrowser )
     m_pBrowser->Populate();
 
-  return true;
+  return coedge;
 }

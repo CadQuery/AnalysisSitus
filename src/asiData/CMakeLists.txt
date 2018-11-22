@@ -139,6 +139,7 @@ set (misc_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (re_H_FILES
+  re/asiData_ReCoEdgeNode.h
   re/asiData_ReEdgeNode.h
   re/asiData_ReEdgesNode.h
   re/asiData_RePatchesNode.h
@@ -148,6 +149,7 @@ set (re_H_FILES
   re/asiData_ReVerticesNode.h
 )
 set (re_CPP_FILES
+  re/asiData_ReCoEdgeNode.cpp
   re/asiData_ReEdgeNode.cpp
   re/asiData_ReEdgesNode.cpp
   re/asiData_RePatchesNode.cpp

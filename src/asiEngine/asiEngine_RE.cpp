@@ -237,6 +237,35 @@ Handle(asiData_ReEdgeNode)
 
 //-----------------------------------------------------------------------------
 
+Handle(asiData_ReCoEdgeNode)
+  asiEngine_RE::Create_CoEdge(const Handle(asiData_RePatchNode)& patch,
+                              const Handle(asiData_ReEdgeNode)&  edge,
+                              const bool                         samesense)
+{
+  // Add Node to Partition.
+  Handle(asiData_ReCoEdgeNode)
+    coedge_n = Handle(asiData_ReCoEdgeNode)::DownCast( asiData_ReCoEdgeNode::Instance() );
+  //
+  m_model->GetReCoEdgePartition()->AddNode(coedge_n);
+
+  // Initialize Node.
+  coedge_n->Init(edge, samesense);
+
+  // Add as a child to Patch Node.
+  patch->AddChildNode(coedge_n);
+
+  // Generate unique name.
+  TCollection_ExtendedString
+    edgeName = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(coedge_n, patch), "CoEdge");
+  //
+  coedge_n->SetName(edgeName);
+
+  // Return the just created Node.
+  return coedge_n;
+}
+
+//-----------------------------------------------------------------------------
+
 Handle(asiData_ReVertexNode)
   asiEngine_RE::Create_Vertex(const gp_XYZ& coords)
 {

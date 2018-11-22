@@ -34,6 +34,9 @@
 // asiEngine includes
 #include <asiEngine_Base.h>
 
+// asiData includes
+#include <asiData_ReCoEdgeNode.h>
+
 //! API for the data model operations related to reverse engineering.
 class asiEngine_RE : public asiEngine_Base
 {
@@ -101,6 +104,16 @@ public:
   asiEngine_EXPORT Handle(asiData_ReEdgeNode)
     Create_Edge(const Handle(asiData_ReVertexNode)& vfirst = NULL,
                 const Handle(asiData_ReVertexNode)& vlast  = NULL);
+
+  //! Creates a CoEdge Node under the passed Patch Node.
+  //! \param[in] patch     owning patch.
+  //! \param[in] edge      edge to reference.
+  //! \param[in] samesense orientation flag.
+  //! \return newly created Node.
+  asiEngine_EXPORT Handle(asiData_ReCoEdgeNode)
+    Create_CoEdge(const Handle(asiData_RePatchNode)& patch,
+                  const Handle(asiData_ReEdgeNode)&  edge,
+                  const bool                         samesense);
 
   //! Creates a Vertex Node under the single Vertices Node available in the
   //! project.

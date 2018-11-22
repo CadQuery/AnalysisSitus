@@ -97,8 +97,50 @@ public:
 
 protected:
 
-  bool completeEdge(void* pCallData);
-  bool startNewEdge(void* pCallData);
+  bool
+    startNewContour(void* pCallData);
+
+  bool
+    startNewContour(const Handle(asiData_ReVertexNode)& source);
+
+  bool
+    addContourEdge(void* pCallData);
+
+  // Builds new edge between the passed positions.
+  Handle(asiData_ReCoEdgeNode)
+    buildNewEdge(const Handle(asiData_ReVertexNode)& source,
+                 const bool                          doProject,
+                 const gp_XYZ&                       target = gp_XYZ());
+
+  // Builds new edge between the passed positions.
+  bool
+    completeContour(const Handle(asiData_ReVertexNode)& target);
+
+  // Builds new edge starting from the passed vertex.
+  Handle(asiData_ReCoEdgeNode)
+    buildNewEdge(const Handle(asiData_ReVertexNode)& source);
+
+  // Builds new coedge.
+  Handle(asiData_ReCoEdgeNode)
+    addContourCoEdge(const Handle(asiData_ReEdgeNode)& edge,
+                     const bool                        samesense);
+
+  Handle(asiData_ReEdgeNode)
+    findEdgeOnVertices(const Handle(asiData_ReVertexNode)& v1,
+                       const Handle(asiData_ReVertexNode)& v2,
+                       bool&                               samesense);
+
+  Handle(asiData_ReVertexNode)
+    getPickedVertex(void* pCallData);
+
+  bool
+    getPickedPoint(void*   pCallData,
+                   gp_XYZ& result);
+
+  bool
+    projectLine(const gp_XYZ&        p1,
+                const gp_XYZ&        p2,
+                std::vector<gp_XYZ>& pts);
 
 private:
 
@@ -107,13 +149,9 @@ private:
 
 private:
 
-  Handle(asiAlgo_BVHFacets)    m_bvh;      //!< Accelerating structure for picking.
-  Handle(asiEngine_Model)      m_model;    //!< Data Model instance.
-  Handle(asiData_ReEdgeNode)   m_prevEdge; //!< Previously created edge.
-  Handle(asiData_ReEdgeNode)   m_edge;     //!< Edge Node being currently composed.
-  Handle(asiData_RePatchNode)  m_patch;    //!< Current patch.
-  Handle(asiData_ReVertexNode) m_vertex;   //!< Current vertex.
-  asiUI_ObjectBrowser*         m_pBrowser; //!< Object Browser.
+  Handle(asiAlgo_BVHFacets) m_bvh;      //!< Accelerating structure for picking.
+  Handle(asiEngine_Model)   m_model;    //!< Data Model instance.
+  asiUI_ObjectBrowser*      m_pBrowser; //!< Object Browser.
 
 };
 

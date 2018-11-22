@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 October 2018
+// Created on: 22 November 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,96 +28,98 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_ReTopoNode_h
-#define asiData_ReTopoNode_h
+#ifndef asiData_ReCoEdgeNode_h
+#define asiData_ReCoEdgeNode_h
 
 // asiData includes
-#include <asiData_ReCoEdgeNode.h>
-#include <asiData_RePatchNode.h>
-#include <asiData_ReVertexNode.h>
+#include <asiData_ReEdgeNode.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
 
-//! Data Node representing topology defined on discrete data set for the
-//! purpose of reverse engineering. This Node also holds all necessary
-//! pointers to drive the interactive patch definition process.
-class asiData_ReTopoNode : public ActData_BaseNode
+//! Data Node representing an occurrence of a topological edge in a patch.
+//! Technically, this is nothing but a pointer to the edge plus orientation
+//! flag. CoEdges allow for reusing geometry of edges in adjacent patches.
+class asiData_ReCoEdgeNode : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_ReTopoNode, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_ReCoEdgeNode, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_ReTopoNode, Instance)
+  DEFINE_NODE_FACTORY(asiData_ReCoEdgeNode, Instance)
 
 public:
 
   //! IDs for the underlying Parameters.
   enum ParamId
   {
-  //-------------------------//
-    PID_Name,                //!< Name of the Node.
-    PID_CurrentPatchRef,     //!< Reference to the Patch being composed.
-    PID_CurrentCoEdgeRef,    //!< Reference to the CoEdge being composed.
-    PID_FirstVertexRef,      //!< Reference to the first created Vertex.
-    PID_LastVertexRef,       //!< Reference to the last created Vertex.
-  //-------------------------//
+  //---------------//
+    PID_Name,      //!< Name of the Node.
+    PID_EdgeRef,   //!< Reference to the edge (i.e. real geometry).
+    PID_SameSense, //!< Orientation flag (to agree or not with the orientation of edge).
+  //---------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
 public:
 
+  //! Returns new DETACHED instance of the Node ensuring its correct
+  //! allocation in a heap.
+  //! \return new instance of the Node.
   asiData_EXPORT static Handle(ActAPI_INode)
     Instance();
-
-// Generic naming support:
-public:
-
-  asiData_EXPORT virtual TCollection_ExtendedString
-    GetName();
-
-  asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& name);
 
 // Initialization:
 public:
 
+  //! Performs initial actions required to make Node WELL-FORMED.
+  //! \param[in] edge      edge to reference.
+  //! \param[in] samesense orientation flag.
   asiData_EXPORT void
-    Init();
+    Init(const Handle(asiData_ReEdgeNode)& edge,
+         const bool                        samesense);
+
+// Generic naming support:
+public:
+
+  //! Accessor for the Node's name.
+  //! \return name of the Node.
+  asiData_EXPORT virtual TCollection_ExtendedString
+    GetName();
+
+  //! Sets name for the Node.
+  //! \param[in] name name to set.
+  asiData_EXPORT virtual void
+    SetName(const TCollection_ExtendedString& name);
 
 public:
 
+  //! \return referenced edge.
+  asiData_EXPORT Handle(asiData_ReEdgeNode)
+    GetEdge() const;
+
+  //! Sets the reference to the edge.
+  //! \param[in] edge reference to set.
   asiData_EXPORT void
-    SetCurrentPatch(const Handle(asiData_RePatchNode)& patch);
+    SetEdge(const Handle(asiData_ReEdgeNode)& edge);
 
-  asiData_EXPORT Handle(asiData_RePatchNode)
-    GetCurrentPatch() const;
+  //! \return true if the orientation of the coedge is the same as the
+  //!         natural orientation of the referenced edge.
+  asiData_EXPORT bool
+    IsSameSense() const;
 
+  //! Sets orientation flag.
+  //! \param[in] isSameSense flag to set.
   asiData_EXPORT void
-    SetCurrentCoEdge(const Handle(asiData_ReCoEdgeNode)& coedge);
-
-  asiData_EXPORT Handle(asiData_ReCoEdgeNode)
-    GetCurrentCoEdge() const;
-
-  asiData_EXPORT void
-    SetFirstVertex(const Handle(asiData_ReVertexNode)& vertex);
-
-  asiData_EXPORT Handle(asiData_ReVertexNode)
-    GetFirstVertex() const;
-
-  asiData_EXPORT void
-    SetLastVertex(const Handle(asiData_ReVertexNode)& vertex);
-
-  asiData_EXPORT Handle(asiData_ReVertexNode)
-    GetLastVertex() const;
+    SetSameSense(const bool isSameSense);
 
 protected:
 
   //! Allocation is allowed only via Instance() method.
   asiData_EXPORT
-    asiData_ReTopoNode();
+    asiData_ReCoEdgeNode();
 
 };
 

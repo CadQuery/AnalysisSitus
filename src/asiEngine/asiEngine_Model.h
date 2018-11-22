@@ -56,6 +56,7 @@
 #include <asiData_IVTopoNode.h>
 #include <asiData_Partition.h>
 #include <asiData_PartNode.h>
+#include <asiData_ReCoEdgeNode.h>
 #include <asiData_ReEdgeNode.h>
 #include <asiData_ReEdgesNode.h>
 #include <asiData_ReTopoNode.h>
@@ -181,7 +182,6 @@ public:
     return Handle(asiData_Partition<asiData_FaceContourNode>)::DownCast( this->Partition(Partition_FaceContour) );
   }
 
-
   //! Accessor for a Partition instance dedicated to Edge Nodes.
   //! \return requested Partition.
   Handle(asiData_Partition<asiData_EdgeNode>) GetEdgePartition() const
@@ -282,6 +282,13 @@ public:
   Handle(asiData_Partition<asiData_RePatchesNode>) GetRePatchesPartition() const
   {
     return Handle(asiData_Partition<asiData_RePatchesNode>)::DownCast( this->Partition(Partition_RePatches) );
+  }
+
+  //! Accessor for a Partition instance dedicated to CoEdge Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_ReCoEdgeNode>) GetReCoEdgePartition() const
+  {
+    return Handle(asiData_Partition<asiData_ReCoEdgeNode>)::DownCast( this->Partition(Partition_ReCoEdge) );
   }
 
   //! Accessor for a Partition instance dedicated to ReEdge Nodes.
@@ -496,6 +503,7 @@ protected:
     Partition_ReTopo,
     Partition_RePatch,
     Partition_RePatches,
+    Partition_ReCoEdge,
     Partition_ReEdge,
     Partition_ReEdges,
     Partition_ReVertex,

@@ -36,6 +36,7 @@
 
 // asiEngine includes
 #include <asiEngine_Part.h>
+#include <asiEngine_RE.h>
 
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
@@ -968,85 +969,103 @@ int ENGINE_Fillet(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_BuildPatch(const Handle(asiTcl_Interp)& interp,
-                      int                          argc,
-                      const char**                 argv)
+int ENGINE_BuildPatches(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
 {
-  if ( argc != 2 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
+  const bool allPatches = (argc == 1);
 
-  // Find Patch Node.
-  Handle(asiData_ReEdgesNode)
-    patchNode = Handle(asiData_ReEdgesNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
+  asiEngine_RE reApi( cmdEngine::model,
+                      interp->GetProgress(),
+                      interp->GetPlotter() );
+
+  // Find Patches Node.
+  Handle(asiData_RePatchesNode) patchesNode = reApi.Get_Patches();
   //
-  if ( patchNode.IsNull() )
+  if ( patchesNode.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find Patch Node with name '%1'." << argv[1]);
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "No patches are available.");
     return TCL_ERROR;
   }
 
   cmdEngine::model->OpenCommand();
 
-  std::vector<Handle(Geom_BSplineCurve)> curves;
-
-  // Get all edges and approximate them.
-  for ( Handle(ActAPI_IChildIterator) cit = patchNode->GetChildIterator();
-        cit->More(); cit->Next() )
+  // Reconstruct every patch individually.
+  for ( Handle(ActAPI_IChildIterator) pit = patchesNode->GetChildIterator(); pit->More(); pit->Next() )
   {
-    Handle(ActAPI_INode) childNode = cit->Value();
-    //
-    if ( !childNode->IsKind( STANDARD_TYPE(asiData_ReEdgeNode) ) )
+    Handle(asiData_RePatchNode)
+      patchNode = Handle(asiData_RePatchNode)::DownCast( pit->Value() );
+
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Next patch: %1."
+                                                          << patchNode->GetId() );
+
+    std::vector<Handle(Geom_BSplineCurve)> curves;
+
+    // Get all edges and approximate them.
+    for ( Handle(ActAPI_IChildIterator) cit = patchNode->GetChildIterator();
+          cit->More(); cit->Next() )
     {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected type of child Node.");
+      Handle(ActAPI_INode) childNode = cit->Value();
+      //
+      if ( !childNode->IsKind( STANDARD_TYPE(asiData_ReCoEdgeNode) ) )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected type of child Node.");
+        //
+        cmdEngine::model->AbortCommand();
+        return TCL_ERROR;
+      }
+      //
+      const Handle(asiData_ReCoEdgeNode)&
+        coedgeNode = Handle(asiData_ReCoEdgeNode)::DownCast(childNode);
+      //
+      Handle(asiData_ReEdgeNode) edgeNode = coedgeNode->GetEdge();
+
+      // Dump coedge/edge.
+      interp->GetProgress().SendLogMessage( LogInfo(Normal) <<  "\t CoEdge: %1; Orientation: %2; References edge: %3."
+                                                            <<  coedgeNode->GetId()
+                                                            << (coedgeNode->IsSameSense() ? "forward" : "reversed")
+                                                            <<  edgeNode->GetId() );
+
+      // Approximate with parametric curve.
+      std::vector<gp_XYZ> pts;
+      edgeNode->GetPolyline(pts);
+      //
+      Handle(Geom_BSplineCurve) curve;
+      if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 0.1, curve) )
+      {
+        interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge %1."
+                                                             << edgeNode->GetId() );
+        //
+        cmdEngine::model->AbortCommand();
+        return TCL_ERROR;
+      }
+
+      // Update Data Model.
+      edgeNode->SetCurve(curve);
+
+      // Add curve to the collection for filling.
+      curves.push_back(curve);
+
+      // Draw curve.
+      interp->GetPlotter().DRAW_CURVE(curve, Color_Red, "boundaryCurve");
+
+      // Update scene.
+      cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(edgeNode);
+    }
+
+    // Build patch.
+    Handle(Geom_BSplineSurface) patchSurf;
+    //
+    if ( !asiAlgo_Utils::Fill4Contour(curves, patchSurf) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot approximate surface.");
       //
       cmdEngine::model->AbortCommand();
       return TCL_ERROR;
     }
     //
-    const Handle(asiData_ReEdgeNode)&
-      edgeNode = Handle(asiData_ReEdgeNode)::DownCast(childNode);
-
-    // Approximate with parametric curve.
-    std::vector<gp_XYZ> pts;
-    edgeNode->GetPolyline(pts);
-    //
-    Handle(Geom_BSplineCurve) curve;
-    if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 0.1, curve) )
-    {
-      interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge %1."
-                                                           << edgeNode->GetId() );
-      //
-      cmdEngine::model->AbortCommand();
-      return TCL_ERROR;
-    }
-
-    // Update Data Model.
-    edgeNode->SetCurve(curve);
-
-    // Add curve to the collection for filling.
-    curves.push_back(curve);
-
-    // Draw curve.
-    interp->GetPlotter().DRAW_CURVE(curve, Color_Red, "boundaryCurve");
-
-    // Update scene.
-    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(edgeNode);
+    interp->GetPlotter().DRAW_SURFACE(patchSurf, Color_White, "patch");
   }
-
-  // Build patch.
-  Handle(Geom_BSplineSurface) patchSurf;
-  //
-  if ( !asiAlgo_Utils::FillContourPlate(curves, patchSurf) )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot approximate surface.");
-    //
-    cmdEngine::model->AbortCommand();
-    return TCL_ERROR;
-  }
-  //
-  interp->GetPlotter().REDRAW_SURFACE("patch", patchSurf, Color_White);
 
   cmdEngine::model->CommitCommand();
 
@@ -1212,10 +1231,10 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_Fillet);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("build-patch",
+  interp->AddCommand("build-patches",
     //
-    "build-patch patchName\n"
-    "\t Constructs surface patch for the data object with the given name.",
+    "build-patches [patchName1 [patchName2 ...]]\n"
+    "\t Constructs surface patched for the passed data object(s).",
     //
-    __FILE__, group, ENGINE_BuildPatch);
+    __FILE__, group, ENGINE_BuildPatches);
 }

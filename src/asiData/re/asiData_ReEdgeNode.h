@@ -60,6 +60,8 @@ public:
     PID_Name,           //!< Name of the Node.
     PID_VertexFirstRef, //!< Reference to the first vertex of the edge.
     PID_VertexLastRef,  //!< Reference to the last vertex of the edge.
+    PID_VertexFirstIdx, //!< Index of the pole in the polyline which corresponds to the first vertex.
+    PID_VertexLastIdx,  //!< Index of the pole in the polyline which corresponds to the last vertex.
     PID_Polyline,       //!< Polyline representation of the edge.
     PID_Curve,          //!< Curve representation of the edge.
   //--------------------//
@@ -167,6 +169,14 @@ public:
   asiData_EXPORT Handle(asiData_ReVertexNode)
     GetLastVertex() const;
 
+  //! \return index of the first vertex of the edge.
+  asiData_EXPORT int
+    GetFirstVertexIndex() const;
+
+  //! \return last vertex of the edge.
+  asiData_EXPORT int
+    GetLastVertexIndex() const;
+
   //! Sets the reference to the first vertex of the edge.
   //! \param[in] vertex vertex reference to set.
   asiData_EXPORT void
@@ -176,6 +186,16 @@ public:
   //! \param[in] vertex vertex reference to set.
   asiData_EXPORT void
     SetLastVertex(const Handle(asiData_ReVertexNode)& vertex);
+
+  //! Sets the 0-based index of the first vertex of the edge.
+  //! \param[in] idx 0-based index to set.
+  asiData_EXPORT void
+    SetFirstVertexIndex(const int idx);
+
+  //! Sets the 0-based index of the last vertex of the edge.
+  //! \param[in] idx 0-based index to set.
+  asiData_EXPORT void
+    SetLastVertexIndex(const int idx);
 
 protected:
 

@@ -49,6 +49,8 @@ asiData_ReEdgeNode::asiData_ReEdgeNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Name,      PID_Name);
   REGISTER_PARAMETER(Reference, PID_VertexFirstRef);
   REGISTER_PARAMETER(Reference, PID_VertexLastRef);
+  REGISTER_PARAMETER(Int,       PID_VertexFirstIdx);
+  REGISTER_PARAMETER(Int,       PID_VertexLastIdx);
   REGISTER_PARAMETER(RealArray, PID_Polyline);
   REGISTER_PARAMETER(Shape,     PID_Curve);
 }
@@ -69,6 +71,8 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
   this->InitParameter(PID_Name,           "Name");
   this->InitParameter(PID_VertexFirstRef, "First vertex");
   this->InitParameter(PID_VertexLastRef,  "Last vertex");
+  this->InitParameter(PID_VertexFirstIdx, "First vertex index");
+  this->InitParameter(PID_VertexLastIdx,  "Last vertex index");
   this->InitParameter(PID_Polyline,       "Polyline representation");
   this->InitParameter(PID_Curve,          "Parametric curve representation");
 
@@ -79,8 +83,10 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
     this->ConnectReference(PID_VertexLastRef, vlast);
 
   // Set default values.
-  ActParamTool::AsRealArray ( this->Parameter(PID_Polyline) ) ->SetArray( NULL );
-  ActParamTool::AsShape     ( this->Parameter(PID_Curve) )    ->SetShape( TopoDS_Shape() );
+  ActParamTool::AsRealArray ( this->Parameter(PID_Polyline) )       ->SetArray( NULL );
+  ActParamTool::AsShape     ( this->Parameter(PID_Curve) )          ->SetShape( TopoDS_Shape() );
+  ActParamTool::AsInt       ( this->Parameter(PID_VertexFirstIdx) ) ->SetValue(-1);
+  ActParamTool::AsInt       ( this->Parameter(PID_VertexLastIdx) )  ->SetValue(-1);
 }
 
 //-----------------------------------------------------------------------------
@@ -129,6 +135,9 @@ void asiData_ReEdgeNode::GetPolyline(std::vector<gp_XYZ>& pts) const
 {
   Handle(HRealArray) coords = this->GetPolyline();
   //
+  if ( coords.IsNull() )
+    return;
+
   gp_XYZ P_center;
   for ( int i = coords->Lower(); i <= coords->Upper() - 2; i += 3 )
   {
@@ -149,13 +158,15 @@ gp_XYZ asiData_ReEdgeNode::GetPolylinePole(const int zeroBasedIndex) const
   // Get array of coordinates
   Handle(ActData_RealArrayParameter)
     coords_p = ActParamTool::AsRealArray( this->Parameter(PID_Polyline) );
+  //
+  Handle(HRealArray) arr = coords_p->GetArray();
 
   // Construct a point
   const int startIdx = zeroBasedIndex*3;
   //
-  gp_XYZ res( coords_p->GetElement(startIdx),
-              coords_p->GetElement(startIdx + 1),
-              coords_p->GetElement(startIdx + 2) );
+  gp_XYZ res( arr->Value(startIdx),
+              arr->Value(startIdx + 1),
+              arr->Value(startIdx + 2) );
 
   return res;
 }
@@ -267,6 +278,20 @@ Handle(asiData_ReVertexNode)
 
 //-----------------------------------------------------------------------------
 
+int asiData_ReEdgeNode::GetFirstVertexIndex() const
+{
+  return ActParamTool::AsInt( this->Parameter(PID_VertexFirstIdx) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+int asiData_ReEdgeNode::GetLastVertexIndex() const
+{
+  return ActParamTool::AsInt( this->Parameter(PID_VertexLastIdx) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
 void asiData_ReEdgeNode::SetFirstVertex(const Handle(asiData_ReVertexNode)& vertex)
 {
   // Set references to the vertices.
@@ -285,4 +310,18 @@ void asiData_ReEdgeNode::SetLastVertex(const Handle(asiData_ReVertexNode)& verte
     this->ConnectReference(PID_VertexLastRef, vertex);
   else
     this->DisconnectReference(PID_VertexLastRef);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_ReEdgeNode::SetFirstVertexIndex(const int idx)
+{
+  ActParamTool::AsInt( this->Parameter(PID_VertexFirstIdx) )->SetValue(idx);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_ReEdgeNode::SetLastVertexIndex(const int idx)
+{
+  ActParamTool::AsInt( this->Parameter(PID_VertexLastIdx) )->SetValue(idx);
 }

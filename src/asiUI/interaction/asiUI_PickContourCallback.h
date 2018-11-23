@@ -95,6 +95,8 @@ public:
     return m_pBrowser;
   }
 
+// Transactional methods representing different phases and topological
+// situations when contructing a contour:
 protected:
 
   bool
@@ -106,29 +108,54 @@ protected:
   bool
     addContourEdge(void* pCallData);
 
-  // Builds new edge between the passed positions.
-  Handle(asiData_ReCoEdgeNode)
-    buildNewEdge(const Handle(asiData_ReVertexNode)& source,
-                 const bool                          doProject,
-                 const gp_XYZ&                       target = gp_XYZ());
+  bool
+    addContourEdge(const Handle(asiData_ReVertexNode)& target);
 
-  // Builds new edge between the passed positions.
+  bool
+    addContourCoEdge(const Handle(asiData_ReEdgeNode)& edge,
+                     const bool                        samesense);
+
+  bool
+    completeContourCoEdge(const Handle(asiData_ReEdgeNode)& edge,
+                          const bool                        samesense);
+
   bool
     completeContour(const Handle(asiData_ReVertexNode)& target);
 
-  // Builds new edge starting from the passed vertex.
-  Handle(asiData_ReCoEdgeNode)
-    buildNewEdge(const Handle(asiData_ReVertexNode)& source);
+// Non-transactional methods to operate with low-level data structure:
+protected:
 
-  // Builds new coedge.
   Handle(asiData_ReCoEdgeNode)
-    addContourCoEdge(const Handle(asiData_ReEdgeNode)& edge,
-                     const bool                        samesense);
+    buildNewEdge(const Handle(asiData_ReVertexNode)& target,
+                 const bool                          doProjectLine);
+
+  Handle(asiData_ReCoEdgeNode)
+    buildNewEdge(const Handle(asiData_ReVertexNode)& target);
+
+  Handle(asiData_ReCoEdgeNode)
+    buildNewCoEdge(const Handle(asiData_ReEdgeNode)& edge,
+                   const bool                        samesense);
 
   Handle(asiData_ReEdgeNode)
     findEdgeOnVertices(const Handle(asiData_ReVertexNode)& v1,
                        const Handle(asiData_ReVertexNode)& v2,
                        bool&                               samesense);
+
+  bool
+    findEdgesOnVertex(const Handle(asiData_ReVertexNode)&      vertex,
+                      const Handle(asiData_ReEdgeNode)&        self2Skip,
+                      std::vector<Handle(asiData_ReEdgeNode)>& edges);
+
+  size_t
+    chooseMinTurnEdge(const Handle(asiData_ReEdgeNode)&        currentEdge,
+                      const Handle(asiData_ReVertexNode)&      commonVertex,
+                      std::vector<Handle(asiData_ReEdgeNode)>& candidates);
+
+  Handle(asiData_ReCoEdgeNode)
+    getPrevCoEdge(const Handle(asiData_ReEdgeNode)& currentEdge);
+
+  gp_Vec
+    getCoEdgeTrailingDir(const Handle(asiData_ReCoEdgeNode)& coedge);
 
   Handle(asiData_ReVertexNode)
     getPickedVertex(void* pCallData);

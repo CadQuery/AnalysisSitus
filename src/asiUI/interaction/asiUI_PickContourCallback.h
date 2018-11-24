@@ -122,6 +122,11 @@ protected:
   bool
     completeContour(const Handle(asiData_ReVertexNode)& target);
 
+  bool
+    completeContourRecusrively(const Handle(asiData_ReVertexNode)& target,
+                               const bool                          buildGeometry,
+                               ActAPI_DataObjectIdMap&             visitedVertices);
+
 // Non-transactional methods to operate with low-level data structure:
 protected:
 
@@ -149,6 +154,7 @@ protected:
   size_t
     chooseMinTurnEdge(const Handle(asiData_ReEdgeNode)&        currentEdge,
                       const Handle(asiData_ReVertexNode)&      commonVertex,
+                      const bool                               isSameSense,
                       std::vector<Handle(asiData_ReEdgeNode)>& candidates);
 
   Handle(asiData_ReCoEdgeNode)

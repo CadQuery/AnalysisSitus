@@ -1090,7 +1090,9 @@ int ENGINE_BuildPatches(const Handle(asiTcl_Interp)& interp,
       return TCL_ERROR;
     }
     //
-    interp->GetPlotter().DRAW_SURFACE(patchSurf, Color_White, "patch");
+    TCollection_AsciiString patchName("patch_"); patchName += patchNode->GetId();
+    //
+    interp->GetPlotter().REDRAW_SURFACE(patchName, patchSurf, Color_White);
   }
 
   cmdEngine::model->CommitCommand();

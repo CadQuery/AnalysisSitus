@@ -108,6 +108,34 @@ void asiData_ReCoEdgeNode::SetEdge(const Handle(asiData_ReEdgeNode)& edge)
 
 //-----------------------------------------------------------------------------
 
+Handle(asiData_ReVertexNode) asiData_ReCoEdgeNode::GetFirstVertex() const
+{
+  Handle(asiData_ReEdgeNode)   edge = this->GetEdge();
+  Handle(asiData_ReVertexNode) vf   = edge->GetFirstVertex();
+  Handle(asiData_ReVertexNode) vl   = edge->GetLastVertex();
+
+  if ( this->IsSameSense() )
+    return vf;
+
+  return vl;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReVertexNode) asiData_ReCoEdgeNode::GetLastVertex() const
+{
+  Handle(asiData_ReEdgeNode)   edge = this->GetEdge();
+  Handle(asiData_ReVertexNode) vf   = edge->GetFirstVertex();
+  Handle(asiData_ReVertexNode) vl   = edge->GetLastVertex();
+
+  if ( this->IsSameSense() )
+    return vl;
+
+  return vf;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiData_ReCoEdgeNode::IsSameSense() const
 {
   return ActParamTool::AsBool( this->Parameter(PID_SameSense) )->GetValue();

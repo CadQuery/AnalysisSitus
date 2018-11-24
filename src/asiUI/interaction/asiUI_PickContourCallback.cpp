@@ -99,10 +99,10 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
   }
 
   // Get current topological situation.
-  Handle(asiData_RePatchNode)  patchNode       = topoNode->GetCurrentPatch();
-  Handle(asiData_ReCoEdgeNode) prevCoedgeNode  = topoNode->GetCurrentCoEdge();
-  Handle(asiData_ReVertexNode) lastVertexNode  = topoNode->GetLastVertex();
-  Handle(asiData_ReEdgeNode)   prevEdgeNode    = prevCoedgeNode.IsNull() ? NULL : prevCoedgeNode->GetEdge();
+  Handle(asiData_RePatchNode)  patchNode      = topoNode->GetCurrentPatch();
+  Handle(asiData_ReCoEdgeNode) prevCoedgeNode = topoNode->GetCurrentCoEdge();
+  Handle(asiData_ReVertexNode) lastVertexNode = topoNode->GetLastVertex();
+  Handle(asiData_ReEdgeNode)   prevEdgeNode   = prevCoedgeNode.IsNull() ? NULL : prevCoedgeNode->GetEdge();
 
   // Existing vertex was selected again.
   if ( eventId == EVENT_SELECT_CELL )
@@ -115,7 +115,9 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
 
     // Complete current edge and this way complete contour.
     if ( !prevCoedgeNode.IsNull() )
+    {
       this->completeContour(pickedVertex);
+    }
     else
       this->startNewContour(pickedVertex);
   }
@@ -343,7 +345,62 @@ bool
 bool
   asiUI_PickContourCallback::completeContour(const Handle(asiData_ReVertexNode)& target)
 {
-  m_notifier.SendLogMessage(LogInfo(Normal) << "Completing contour...");
+  m_model->OpenCommand();
+  {
+    ActAPI_DataObjectIdMap visitedVertices;
+
+    if ( !this->completeContourRecusrively(target, true, visitedVertices) )
+    {
+      // Abort transaction.
+      m_model->AbortCommand();
+      //m_model->CommitCommand();
+
+      // Prepare diagnostics.
+      TCollection_AsciiString pathStr;
+      //
+      for ( ActAPI_DataObjectIdMap::Iterator it(visitedVertices); it.More(); it.Next() )
+      {
+        pathStr += " -> ";
+        pathStr += it.Value();
+
+        // Dump the faulty path graphically.
+        Handle(asiData_ReVertexNode)
+          vertex = Handle(asiData_ReVertexNode)::DownCast( m_model->FindNode( it.Value() ) );
+        //
+        m_plotter.REDRAW_POINT(it.Value(), vertex->GetPoint(), Color_Red);
+      }
+      //
+      m_notifier.SendLogMessage(LogErr(Normal) << "Visited: %1." << pathStr);
+
+      // Return failure.
+      return false;
+    }
+  }
+  m_model->CommitCommand();
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool
+  asiUI_PickContourCallback::completeContourRecusrively(const Handle(asiData_ReVertexNode)& target,
+                                                        const bool                          buildGeometry,
+                                                        ActAPI_DataObjectIdMap&             visitedVertices)
+{
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Completing contour with target vertex %1..."
+                                             << target->GetId() );
+  //
+  std::cout << "Completing contour with target vertex " << target->GetId() << std::endl;
+
+  // Check if the recursion is not trapped with an infinite loop.
+  if ( visitedVertices.Contains( target->GetId() ) )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Infinite loop detected.");
+    return false;
+  }
+  //
+  visitedVertices.Add( target->GetId() );
 
   // Get Topology Node and the currently composed entities.
   Handle(asiData_ReTopoNode)   topoNode        = m_model->GetReTopoNode();
@@ -352,11 +409,10 @@ bool
   Handle(asiData_ReEdgeNode)   lastEdgeNode    = coedgeNode.IsNull() ? NULL : coedgeNode->GetEdge();
   Handle(asiData_ReVertexNode) firstVertexNode = topoNode->GetFirstVertex();
   //
+  const bool isCurrentSameSense = ( coedgeNode.IsNull() ? true : coedgeNode->IsSameSense() );
+  //
   if ( lastEdgeNode.IsNull() )
     return false;
-
-  const bool isPickedStartVertex = IsEqual( target->GetId(),
-                                            firstVertexNode->GetId() );
 
   // Get previous vertex.
   Handle(asiData_ReVertexNode) prevVertex = lastEdgeNode->GetFirstVertex();
@@ -364,9 +420,14 @@ bool
   if ( prevVertex.IsNull() || !prevVertex->IsWellFormed() )
   {
     m_notifier.SendLogMessage(LogErr(Normal) << "Previous vertex is undefined.");
-    m_model->AbortCommand();
     return false;
   }
+
+  // We have to check if the picked vertex is the initial one. If so, no
+  // additional edges should be added, and all we need is just to close
+  // the contour with the left-most edge.
+  const bool isPickedStartVertex = IsEqual( target->GetId(),
+                                            firstVertexNode->GetId() );
 
   // Tool for line projection.
   asiAlgo_MeshProjectLine ProjectLineMesh(m_bvh, m_notifier, m_plotter);
@@ -374,12 +435,11 @@ bool
   // Business logic of reconstruction.
   asiEngine_RE reApi(m_model, m_notifier, m_plotter);
 
-  // Perform data model modification.
-  m_model->OpenCommand();
-  {
-    // Set last vertex.
-    topoNode->SetLastVertex(target);
+  // Set last vertex.
+  topoNode->SetLastVertex(target);
 
+  if ( buildGeometry )
+  {
     // Complete topological definition of the current edge.
     lastEdgeNode->SetLastVertex(target);
 
@@ -391,7 +451,7 @@ bool
     std::vector<gp_XYZ> projPts;
     if ( !this->projectLine(prevPt, finalPt, projPts) )
     {
-      m_model->AbortCommand();
+      m_notifier.SendLogMessage(LogErr(Normal) << "Line projection failed.");
       return false;
     }
     //
@@ -402,24 +462,35 @@ bool
     // Add hitted point.
     lastEdgeNode->SetFirstVertexIndex(0);
     lastEdgeNode->SetLastVertexIndex( lastEdgeNode->AddPolylinePole(finalPt) );
-
-    // Get edges shared by the target vertex and complete contour by adding
-    // the corresponding coedges while not adding new edges.
-    std::vector<Handle(asiData_ReEdgeNode)> edges;
-    //
-    if ( !isPickedStartVertex && this->findEdgesOnVertex(target, lastEdgeNode, edges) )
-    {
-      // Add coedge with inverse orientation.
-      const size_t edgeIdx = this->chooseMinTurnEdge(lastEdgeNode, target, edges);
-      reApi.Create_CoEdge(patchNode, edges[edgeIdx], false);
-    }
-
-    // Reset current references.
-    topoNode->SetCurrentPatch(NULL);
-    topoNode->SetCurrentCoEdge(NULL);
-    topoNode->SetLastVertex(NULL);
   }
-  m_model->CommitCommand();
+
+  // Get edges shared by the target vertex and complete contour by adding
+  // the corresponding coedges while not adding new edges.
+  std::vector<Handle(asiData_ReEdgeNode)> edges;
+  //
+  if ( !isPickedStartVertex && this->findEdgesOnVertex(target, lastEdgeNode, edges) )
+  {
+    // Add coedge with inverse orientation.
+    const size_t edgeIdx = this->chooseMinTurnEdge(lastEdgeNode, target, isCurrentSameSense, edges);
+    //
+    Handle(asiData_ReCoEdgeNode)
+      nextCoEdge = reApi.Create_CoEdge(patchNode, edges[edgeIdx], false);
+
+    // Get next target vertex.
+    Handle(asiData_ReVertexNode) nextTargetVertex = nextCoEdge->GetLastVertex();
+
+    // Continue completion process.
+    topoNode->SetCurrentCoEdge(nextCoEdge);
+    topoNode->SetLastVertex(nextTargetVertex);
+    //
+    if ( !this->completeContourRecusrively(nextTargetVertex, false, visitedVertices) )
+      return false;
+  }
+
+  // Reset current references.
+  topoNode->SetCurrentPatch(NULL);
+  topoNode->SetCurrentCoEdge(NULL);
+  topoNode->SetLastVertex(NULL);
 
   // Update scene.
   this->GetViewer()->PrsMgr()->Actualize(lastEdgeNode);
@@ -489,13 +560,15 @@ Handle(asiData_ReEdgeNode)
 size_t
   asiUI_PickContourCallback::chooseMinTurnEdge(const Handle(asiData_ReEdgeNode)&        currentEdge,
                                                const Handle(asiData_ReVertexNode)&      commonVertex,
+                                               const bool                               isSameSense,
                                                std::vector<Handle(asiData_ReEdgeNode)>& candidates)
 {
   gp_Vec edgeDir;
   //
   {
     int vertexPole = -1;
-    Handle(asiData_ReVertexNode) vf = currentEdge->GetFirstVertex();
+    Handle(asiData_ReVertexNode) vf = currentEdge->GetFirstVertex();;
+    //
     Handle(asiData_ReVertexNode) vl = currentEdge->GetLastVertex();
     //
     if ( IsEqual( vf->GetId(), commonVertex->GetId() ) )
@@ -510,7 +583,14 @@ size_t
       edgeDir = currentEdge->GetPolylinePole(vertexPole + 1) -
                 currentEdge->GetPolylinePole(vertexPole);
 
-    m_plotter.DRAW_VECTOR_AT( commonVertex->GetPoint(), edgeDir, Color_Red, "edgeDir" );
+    if ( !isSameSense )
+      edgeDir.Reverse();
+
+#if defined DRAW_DEBUG
+    TCollection_AsciiString edgeDirName("edgeDir_");
+    edgeDirName += (isSameSense ? "f" : "r");
+    m_plotter.DRAW_VECTOR_AT( commonVertex->GetPoint(), edgeDir, Color_Red, edgeDirName );
+#endif
   }
 
   std::vector<gp_Vec> candidateVecs;
@@ -519,6 +599,7 @@ size_t
   {
     bool toReverse = false;
     int vertexPole = -1;
+    //
     Handle(asiData_ReVertexNode) vf = candidates[k]->GetFirstVertex();
     Handle(asiData_ReVertexNode) vl = candidates[k]->GetLastVertex();
     //
@@ -544,16 +625,22 @@ size_t
 
     candidateVecs.push_back(candidateDir);
 
+#if defined DRAW_DEBUG
     m_plotter.DRAW_VECTOR_AT( commonVertex->GetPoint(), candidateDir, Color_Blue, "candidateDir" );
+#endif
   }
 
   gp_Vec prevEdgeDir = this->getCoEdgeTrailingDir( this->getPrevCoEdge(currentEdge) );
-  //
+
+#if defined DRAW_DEBUG
   m_plotter.DRAW_VECTOR_AT( commonVertex->GetPoint(), prevEdgeDir, Color_Green, "prevEdgeDir" );
+#endif
 
   gp_Vec cross = prevEdgeDir^edgeDir;
-  //
-  m_plotter.DRAW_VECTOR_AT( commonVertex->GetPoint(), cross*10, Color_Yellow, "cross" );
+
+#if defined DRAW_DEBUG
+  m_plotter.DRAW_VECTOR_AT( commonVertex->GetPoint(), cross*50, Color_Yellow, "cross" );
+#endif
 
   size_t resIdx = 0;
   double maxAng = -DBL_MAX;
@@ -562,7 +649,7 @@ size_t
   {
     const double ang = edgeDir.AngleWithRef(candidateVecs[k], cross);
     //
-    m_notifier.SendLogMessage(LogInfo(Normal) << "ang = %1 deg." << ang/M_PI*180.0);
+    //m_notifier.SendLogMessage(LogInfo(Normal) << "ang = %1 deg." << ang/M_PI*180.0);
     //
     if ( ang > maxAng )
     {

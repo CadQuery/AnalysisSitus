@@ -105,6 +105,16 @@ public:
   asiData_EXPORT void
     SetEdge(const Handle(asiData_ReEdgeNode)& edge);
 
+  //! \return first vertex of the edge taking into account the orientation
+  //!         flag associated with the coedge.
+  asiData_EXPORT Handle(asiData_ReVertexNode)
+    GetFirstVertex() const;
+
+  //! \return last vertex of the edge taking into account the orientation
+  //!         flag associated with the coedge.
+  asiData_EXPORT Handle(asiData_ReVertexNode)
+    GetLastVertex() const;
+
   //! \return true if the orientation of the coedge is the same as the
   //!         natural orientation of the referenced edge.
   asiData_EXPORT bool

@@ -714,7 +714,7 @@ vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitKnotsIsosLookupTable()
   aLookup->SetTableValue(VisuIsosCont_C0, 1.0,       0.0,       0.0);
   aLookup->SetTableValue(VisuIsosCont_C1, 1.0,       1.0,       0.0);
   aLookup->SetTableValue(VisuIsosCont_C2, 153./255., 217./255., 1.0);
-  aLookup->SetTableValue(VisuIsosCont_CN, 1.0,       1.0,       1.0);
+  aLookup->SetTableValue(VisuIsosCont_CN, 0.5,       0.5,       0.5);
 
   return aLookup;
 }

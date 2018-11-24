@@ -45,7 +45,7 @@
 #define ASITUS_VERSION_HEX \
 ( (ASITUS_VERSION_MAJOR << 16) | (ASITUS_VERSION_MINOR << 8) | ASITUS_VERSION_PATCH )
 
-#define ASITUS_VERSION_STRING "0.2.7"
-#define ASITUS_APP_NAME "Analysis Situs"
+//#define ASITUS_VERSION_STRING "0.2.7"
+#define ASITUS_APP_NAME "Curve Network Filling"
 
 #endif

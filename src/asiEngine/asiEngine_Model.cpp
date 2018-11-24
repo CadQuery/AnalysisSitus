@@ -121,7 +121,7 @@ void asiEngine_Model::Populate()
   this->GetRootPartition()->AddNode(root_n);
 
   // Set name
-  root_n->SetName("Analysis Situs");
+  root_n->SetName("Demo");
 
   // Add Part Node
   root_n->AddChildNode( asiEngine_Part(this).CreatePart() );

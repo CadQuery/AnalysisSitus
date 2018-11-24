@@ -231,7 +231,7 @@ vtkIdType
   vtkIntArray*
     typeArr = vtkIntArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_ISOSMULTS_SCALARS) );
   //
-  typeArr->InsertNextValue(cont);
+  typeArr->InsertNextValue(/*cont*/VisuIsosCont_CN);
 
   return cellID;
 }

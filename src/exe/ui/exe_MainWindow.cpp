@@ -74,7 +74,7 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
 
   // Prepare application name with the version number
   TCollection_AsciiString appName(ASITUS_APP_NAME);
-  appName += " ["; appName += ASITUS_VERSION_STRING; appName += "]";
+  //appName += " ["; appName += ASITUS_VERSION_STRING; appName += "]";
   //
   this->setWindowTitle( appName.ToCString() );
 
@@ -82,17 +82,17 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
   // Apply fantastic dark theme
   //---------------------------------------------------------------------------
 
-  QFile f(":qdarkstyle/style.qss");
-  if ( !f.exists() )
-  {
-    printf("Unable to set stylesheet, file not found\n");
-  }
-  else
-  {
-    f.open(QFile::ReadOnly | QFile::Text);
-    QTextStream ts(&f);
-    qApp->setStyleSheet( ts.readAll() );
-  }
+  //QFile f(":qdarkstyle/style.qss");
+  //if ( !f.exists() )
+  //{
+  //  printf("Unable to set stylesheet, file not found\n");
+  //}
+  //else
+  //{
+  //  f.open(QFile::ReadOnly | QFile::Text);
+  //  QTextStream ts(&f);
+  //  //qApp->setStyleSheet( ts.readAll() );
+  //}
 
   // Set this main window to common facilities
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
@@ -151,13 +151,15 @@ void exe_MainWindow::createDockWindows()
     pDock->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
     Widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, pDock);
-    pDock->setWidget(Widgets.wViewerDomain);
+    //pDock->setWidget(Widgets.wViewerDomain);
     //
-    this->addDockWidget(Qt::RightDockWidgetArea, pDock);
+    //this->addDockWidget(Qt::RightDockWidgetArea, pDock);
 
     // Initialize desktop
     cf->ViewerDomain = Widgets.wViewerDomain;
     cf->Prs.Domain   = Widgets.wViewerDomain->PrsMgr();
+    //
+    cf->ViewerDomain->setVisible(false);
   }
 
   // Host viewer
@@ -166,13 +168,15 @@ void exe_MainWindow::createDockWindows()
     pDock->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
     Widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, pDock);
-    pDock->setWidget(Widgets.wViewerSurface);
+    //pDock->setWidget(Widgets.wViewerSurface);
     //
-    this->addDockWidget(Qt::RightDockWidgetArea, pDock);
+    //this->addDockWidget(Qt::RightDockWidgetArea, pDock);
 
     // Initialize desktop
     cf->ViewerHost = Widgets.wViewerSurface;
     cf->Prs.Host   = Widgets.wViewerSurface->PrsMgr();
+    //
+    cf->ViewerHost->setVisible(false);
   }
 
   // Object browser
@@ -212,6 +216,8 @@ void exe_MainWindow::createDockWindows()
     pDockFeature->setWidget(Widgets.wControlsFeature);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockFeature);
+    //
+    pDockFeature->setVisible(false);
   }
   //
   this->tabifyDockWidget(pDockBrowser, pDockFeature);
@@ -219,11 +225,12 @@ void exe_MainWindow::createDockWindows()
   // Mesh controls
   QDockWidget* pDockMesh;
   {
-    pDockMesh = new QDockWidget("Mesh", this);
+    pDockMesh = new QDockWidget("Demo", this);
     pDockMesh->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
     Widgets.wControlsMesh = new asiUI_ControlsMesh(cf->Model,
                                                    cf->ViewerPart,
+                                                   Widgets.wBrowser,
                                                    cf->ProgressNotifier,
                                                    cf->Plotter,
                                                    pDockFeature);
@@ -250,6 +257,8 @@ void exe_MainWindow::createDockWindows()
     pDockPart->setWidget(Widgets.wControlsPart);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockPart);
+    //
+    pDockPart->setVisible(false);
   }
 
   // Tabify widgets
@@ -302,6 +311,8 @@ void exe_MainWindow::createDockWindows()
     pDockLogWindow->setWidget(Widgets.wLogger);
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDockLogWindow);
+    //
+    pDockLogWindow->setVisible(false);
   }
 
   // Create status bar
@@ -311,7 +322,7 @@ void exe_MainWindow::createDockWindows()
   this->setStatusBar( statusBar->GetStatusBar() );
   //
   cf->StatusBar = statusBar;
-  cf->StatusBar->SetStatusText("Load part from STEP or BREP to start analysis");
+  cf->StatusBar->SetStatusText("Copyright (c) 2018 OPEN CASCADE SAS.");
 
   // Initialize and connect progress listener
   cf->Logger           = new asiUI_Logger(Widgets.wLogger);
@@ -360,6 +371,8 @@ void exe_MainWindow::createDockWindows()
     pDockConsoleWindow->setWidget(Widgets.wConsole);
     //
     this->addDockWidget(Qt::BottomDockWidgetArea, pDockConsoleWindow);
+    //
+    pDockConsoleWindow->setVisible(false);
   }
 }
 

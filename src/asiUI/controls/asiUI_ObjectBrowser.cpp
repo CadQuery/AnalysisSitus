@@ -193,6 +193,9 @@ void asiUI_ObjectBrowser::addChildren(const Handle(ActAPI_INode)& root_n,
   {
     Handle(ActAPI_INode) child_n = cit->Value();
     //
+    if ( child_n->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
+      continue;
+    //
     QTreeWidgetItem* child_ui = new QTreeWidgetItem( QStringList() << ExtStr2QStr( child_n->GetName() ) );
     child_ui->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     child_ui->setData( 0, BrowserRoleNodeId, AsciiStr2QStr( child_n->GetId() ) );

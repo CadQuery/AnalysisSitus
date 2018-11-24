@@ -87,7 +87,7 @@ asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
   this->addPipeline        ( Pipeline_Axes, new asiVisu_BSurfAxesPipeline );
   this->assignDataProvider ( Pipeline_Axes, DP );
   //
-  this->GetPipeline(Pipeline_Axes)->Actor()->SetVisibility(1);
+  this->GetPipeline(Pipeline_Axes)->Actor()->SetVisibility(0);
 }
 
 //! Factory method for Presentation.

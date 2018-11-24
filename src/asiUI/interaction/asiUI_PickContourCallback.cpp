@@ -396,7 +396,7 @@ bool
     }
     //
     if ( projPts.size() > 2 )
-      for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
+      for ( size_t k = 0; k < projPts.size() - 1; ++k )
         lastEdgeNode->AddPolylinePole(projPts[k]);
 
     // Add hitted point.
@@ -812,7 +812,7 @@ Handle(asiData_ReCoEdgeNode)
       }
       //
       if ( projPts.size() > 2 )
-        for ( size_t k = 1; k < projPts.size() - 1; ++k ) // Skip ends as they are added individually.
+        for ( size_t k = 0; k < projPts.size() - 1; ++k )
           prevEdgeNode->AddPolylinePole(projPts[k]);
 
       // Add hitted point.

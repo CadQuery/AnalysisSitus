@@ -45,6 +45,10 @@
 #include <asiAlgo_MeshOffset.h>
 #include <asiAlgo_Utils.h>
 
+// Mobius includes
+#include <mobius/cascade_BSplineCurve3D.h>
+#include <mobius/geom_FairBCurve.h>
+
 // OCCT includes
 #include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -61,6 +65,37 @@
 #include <HLRBRep_PolyHLRToShape.hxx>
 #include <Precision.hxx>
 #include <TopoDS.hxx>
+
+//-----------------------------------------------------------------------------
+
+Handle(Geom_BSplineCurve) FairCurve(const Handle(Geom_BSplineCurve)& curve,
+                                    const double                     lambda,
+                                    ActAPI_ProgressEntry             progress)
+{
+  // Convert to Mobius curve.
+  mobius::cascade_BSplineCurve3D toMobius(curve);
+  toMobius.DirectConvert();
+  const mobius::ptr<mobius::bcurve>& mobCurve = toMobius.GetMobiusCurve();
+
+  // Perform fairing from Mobius.
+  mobius::geom_FairBCurve fairing(mobCurve, lambda, NULL, NULL);
+  //
+  if ( !fairing.Perform() )
+  {
+    progress.SendLogMessage(LogErr(Normal) << "Fairing failed.");
+    return TCL_OK;
+  }
+
+  // Get the faired curve.
+  const mobius::ptr<mobius::bcurve>& mobResult = fairing.GetResult();
+
+  // Convert to OpenCascade curve.
+  mobius::cascade_BSplineCurve3D toOpenCascade(mobResult);
+  toOpenCascade.DirectConvert();
+  Handle(Geom_BSplineCurve) result = toOpenCascade.GetOpenCascadeCurve();
+
+  return result;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -1026,28 +1061,19 @@ int ENGINE_BuildPatches(const Handle(asiTcl_Interp)& interp,
                                                             << (coedgeNode->IsSameSense() ? "forward" : "reversed")
                                                             <<  edgeNode->GetId() );
 
-      // Approximate with parametric curve.
-      std::vector<gp_XYZ> pts;
-      edgeNode->GetPolyline(pts);
+      // Get B-curve from edge.
+      Handle(Geom_BSplineCurve)
+        bcurve = Handle(Geom_BSplineCurve)::DownCast( edgeNode->GetCurve() );
       //
-      Handle(Geom_BSplineCurve) curve;
-      if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 0.1, curve) )
+      if ( bcurve.IsNull() )
       {
-        interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge %1."
+        interp->GetProgress().SendLogMessage( LogErr(Normal) << "There is no B-curve ready in edge %1."
                                                              << edgeNode->GetId() );
-        //
-        cmdEngine::model->AbortCommand();
         return TCL_ERROR;
       }
 
-      // Update Data Model.
-      edgeNode->SetCurve(curve);
-
       // Add curve to the collection for filling.
-      curves.push_back(curve);
-
-      // Draw curve.
-      interp->GetPlotter().DRAW_CURVE(curve, Color_Red, "boundaryCurve");
+      curves.push_back(bcurve);
 
       // Update scene.
       cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(edgeNode);
@@ -1068,6 +1094,151 @@ int ENGINE_BuildPatches(const Handle(asiTcl_Interp)& interp,
   }
 
   cmdEngine::model->CommitCommand();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
+                             int                          argc,
+                             const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  asiEngine_RE reApi( cmdEngine::model,
+                      interp->GetProgress(),
+                      interp->GetPlotter() );
+
+  // Find Edges Node.
+  Handle(asiData_ReEdgesNode) edgesNode = reApi.Get_Edges();
+  //
+  if ( edgesNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "No edges are available.");
+    return TCL_ERROR;
+  }
+
+  M->OpenCommand();
+
+  // Approximate every edge individually.
+  for ( Handle(ActAPI_IChildIterator) eit = edgesNode->GetChildIterator(); eit->More(); eit->Next() )
+  {
+    Handle(asiData_ReEdgeNode)
+      edgeNode = Handle(asiData_ReEdgeNode)::DownCast( eit->Value() );
+
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Next edge: %1."
+                                                          << edgeNode->GetId() );
+
+    std::vector<Handle(Geom_BSplineCurve)> curves;
+
+    // Approximate with parametric curve.
+    std::vector<gp_XYZ> pts;
+    edgeNode->GetPolyline(pts);
+    //
+    Handle(Geom_BSplineCurve) curve;
+    if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 0.1, curve) )
+    {
+      interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge %1."
+                                                            << edgeNode->GetId() );
+      //
+      M->AbortCommand();
+      return TCL_ERROR;
+    }
+
+    // Update Data Model.
+    edgeNode->SetCurve(curve);
+
+    // Add curve to the collection for filling.
+    curves.push_back(curve);
+
+    // Update scene.
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(edgeNode);
+  }
+
+  M->CommitCommand();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_FairContourLines(const Handle(asiTcl_Interp)& interp,
+                            int                          argc,
+                            const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get fairing coefficient.
+  const double lambda = atof(argv[1]);
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  asiEngine_RE reApi( cmdEngine::model,
+                      interp->GetProgress(),
+                      interp->GetPlotter() );
+
+  // Find Edges Node.
+  Handle(asiData_ReEdgesNode) edgesNode = reApi.Get_Edges();
+  //
+  if ( edgesNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "No edges are available.");
+    return TCL_ERROR;
+  }
+
+  M->OpenCommand();
+
+  // Approximate every edge individually.
+  for ( Handle(ActAPI_IChildIterator) eit = edgesNode->GetChildIterator(); eit->More(); eit->Next() )
+  {
+    Handle(asiData_ReEdgeNode)
+      edgeNode = Handle(asiData_ReEdgeNode)::DownCast( eit->Value() );
+
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Next edge: %1."
+                                                          << edgeNode->GetId() );
+
+    // Get B-curve from edge.
+    Handle(Geom_BSplineCurve)
+      bcurve = Handle(Geom_BSplineCurve)::DownCast( edgeNode->GetCurve() );
+    //
+    if ( bcurve.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage( LogErr(Normal) << "There is no B-curve ready in edge %1."
+                                                           << edgeNode->GetId() );
+      return TCL_ERROR;
+    }
+
+    // Fair curve.
+    Handle(Geom_BSplineCurve) fairedBCurve = FairCurve( bcurve,
+                                                        lambda,
+                                                        interp->GetProgress() );
+    //
+    if ( fairedBCurve.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage( LogErr(Normal) << "Fairing failed for edge %1."
+                                                           << edgeNode->GetId() );
+      return TCL_ERROR;
+    }
+
+    // Update Data Model.
+    edgeNode->SetCurve(fairedBCurve);
+
+    // Update scene.
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(edgeNode);
+  }
+
+  M->CommitCommand();
 
   return TCL_OK;
 }
@@ -1237,4 +1408,21 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Constructs surface patched for the passed data object(s).",
     //
     __FILE__, group, ENGINE_BuildPatches);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("build-contour-lines",
+    //
+    "build-contour-lines\n"
+    "\t Constructs contour lines for all patches.",
+    //
+    __FILE__, group, ENGINE_BuildContourLines);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("fair-contour-lines",
+    //
+    "fair-contour-lines coeff\n"
+    "\t Fairs (smooths) contour lines for all patches with the given fairing\n"
+    "\t coefficient.",
+    //
+    __FILE__, group, ENGINE_FairContourLines);
 }

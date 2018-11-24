@@ -82,17 +82,17 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
   // Apply fantastic dark theme
   //---------------------------------------------------------------------------
 
-  //QFile f(":qdarkstyle/style.qss");
-  //if ( !f.exists() )
-  //{
-  //  printf("Unable to set stylesheet, file not found\n");
-  //}
-  //else
-  //{
-  //  f.open(QFile::ReadOnly | QFile::Text);
-  //  QTextStream ts(&f);
-  //  //qApp->setStyleSheet( ts.readAll() );
-  //}
+  QFile f(":qdarkstyle/style.qss");
+  if ( !f.exists() )
+  {
+    printf("Unable to set stylesheet, file not found\n");
+  }
+  else
+  {
+    f.open(QFile::ReadOnly | QFile::Text);
+    QTextStream ts(&f);
+    qApp->setStyleSheet( ts.readAll() );
+  }
 
   // Set this main window to common facilities
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();

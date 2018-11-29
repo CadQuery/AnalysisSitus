@@ -45,9 +45,11 @@
 #include <asiAlgo_MeshOffset.h>
 #include <asiAlgo_Utils.h>
 
-// Mobius includes
-#include <mobius/cascade_BSplineCurve3D.h>
-#include <mobius/geom_FairBCurve.h>
+#if defined USE_MOBIUS
+  // Mobius includes
+  #include <mobius/cascade_BSplineCurve3D.h>
+  #include <mobius/geom_FairBCurve.h>
+#endif
 
 // OCCT includes
 #include <BRep_Builder.hxx>
@@ -66,7 +68,7 @@
 #include <Precision.hxx>
 #include <TopoDS.hxx>
 
-//-----------------------------------------------------------------------------
+#if defined USE_MOBIUS
 
 Handle(Geom_BSplineCurve) FairCurve(const Handle(Geom_BSplineCurve)& curve,
                                     const double                     lambda,
@@ -96,6 +98,8 @@ Handle(Geom_BSplineCurve) FairCurve(const Handle(Geom_BSplineCurve)& curve,
 
   return result;
 }
+
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -1175,6 +1179,7 @@ int ENGINE_FairContourLines(const Handle(asiTcl_Interp)& interp,
                             int                          argc,
                             const char**                 argv)
 {
+#if defined USE_MOBIUS
   if ( argc != 2 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
@@ -1243,6 +1248,11 @@ int ENGINE_FairContourLines(const Handle(asiTcl_Interp)& interp,
   M->CommitCommand();
 
   return TCL_OK;
+#else
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This feature is not available.");
+
+  return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------

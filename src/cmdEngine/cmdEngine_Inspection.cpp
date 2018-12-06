@@ -59,7 +59,7 @@
 #include <asiUI_IV.h>
 
 #ifdef USE_MOBIUS
-  #include <mobius/cascade_BSplineCurve3D.h>
+  #include <mobius/cascade_BSplineCurve.h>
   #include <mobius/cascade_BSplineSurface.h>
 #endif
 
@@ -989,7 +989,7 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
     }
 
     // Convert to Mobius curve.
-    mobius::cascade_BSplineCurve3D converter(occtBCurve);
+    mobius::cascade_BSplineCurve converter(occtBCurve);
     converter.DirectConvert();
     //
     const mobius::ptr<mobius::bcurve>&

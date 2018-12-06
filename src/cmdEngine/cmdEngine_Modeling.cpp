@@ -47,7 +47,7 @@
 
 #if defined USE_MOBIUS
   // Mobius includes
-  #include <mobius/cascade_BSplineCurve3D.h>
+  #include <mobius/cascade_BSplineCurve.h>
   #include <mobius/geom_FairBCurve.h>
 #endif
 
@@ -75,7 +75,7 @@ Handle(Geom_BSplineCurve) FairCurve(const Handle(Geom_BSplineCurve)& curve,
                                     ActAPI_ProgressEntry             progress)
 {
   // Convert to Mobius curve.
-  mobius::cascade_BSplineCurve3D toMobius(curve);
+  mobius::cascade_BSplineCurve toMobius(curve);
   toMobius.DirectConvert();
   const mobius::ptr<mobius::bcurve>& mobCurve = toMobius.GetMobiusCurve();
 
@@ -92,7 +92,7 @@ Handle(Geom_BSplineCurve) FairCurve(const Handle(Geom_BSplineCurve)& curve,
   const mobius::ptr<mobius::bcurve>& mobResult = fairing.GetResult();
 
   // Convert to OpenCascade curve.
-  mobius::cascade_BSplineCurve3D toOpenCascade(mobResult);
+  mobius::cascade_BSplineCurve toOpenCascade(mobResult);
   toOpenCascade.DirectConvert();
   Handle(Geom_BSplineCurve) result = toOpenCascade.GetOpenCascadeCurve();
 

@@ -32,12 +32,14 @@
 #include <cmdMisc.h>
 
 // asiAlgo includes
+#include <asiAlgo_BaseCloud.h>
 #include <asiAlgo_PlaneOnPoints.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
 // asiUI includes
 #include <asiUI_CommonFacilities.h>
+#include <asiUI_IV.h>
 
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
@@ -79,11 +81,13 @@
 
 #ifdef USE_MOBIUS
   #include <mobius/bspl_FindSpan.h>
-  #include <mobius/cascade_BSplineCurve3D.h>
-  #include <mobius/cascade_BSplineSurface.h>
+  #include <mobius/cascade.h>
   #include <mobius/core_HeapAlloc.h>
+  #include <mobius/geom_BSplineCurve.h>
+  #include <mobius/geom_CoonsSurface.h>
   #include <mobius/geom_FairBCurve.h>
   #include <mobius/geom_FairBSurf.h>
+  #include <mobius/geom_InterpolateMultiCurve.h>
 #endif
 
 #undef DRAW_DEBUG
@@ -1436,11 +1440,8 @@ int MISC_TestEvalCurve(const Handle(asiTcl_Interp)& interp,
     }
 
     // Convert to Mobius curve.
-    mobius::cascade_BSplineCurve3D converter(occtBCurve);
-    converter.DirectConvert();
-    //
-    const mobius::ptr<mobius::bcurve>&
-      mobCurve = converter.GetMobiusCurve();
+    mobius::ptr<mobius::bcurve>
+      mobCurve = mobius::cascade::GetMobiusBCurve(occtBCurve);
 
     TIMER_GO
 
@@ -1557,11 +1558,8 @@ int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
     }
 
     // Convert to Mobius surface.
-    mobius::cascade_BSplineSurface converter(occtBSurf);
-    converter.DirectConvert();
-    //
-    const mobius::ptr<mobius::bsurf>&
-      mobBSurf = converter.GetMobiusSurface();
+    mobius::ptr<mobius::bsurf>
+      mobBSurf = mobius::cascade::GetMobiusBSurface(occtBSurf);
 
     TIMER_GO
 
@@ -1646,9 +1644,8 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
   }
 
   // Convert to Mobius B-surface.
-  mobius::cascade_BSplineSurface toMobius(occtBSurf);
-  toMobius.DirectConvert();
-  const mobius::ptr<mobius::bsurf>& mobSurf = toMobius.GetMobiusSurface();
+  mobius::ptr<mobius::bsurf>
+    mobSurf = mobius::cascade::GetMobiusBSurface(occtBSurf);
 
   // Print bending energy.
   const double initEnergy = mobSurf->ComputeBendingEnergy();
@@ -1772,11 +1769,209 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
                                                           << resEnergy );
 
   // Convert to OpenCascade surface.
-  mobius::cascade_BSplineSurface toOpenCascade(mobFaired);
-  toOpenCascade.DirectConvert();
-  const Handle(Geom_BSplineSurface)& occtFaired = toOpenCascade.GetOpenCascadeSurface();
+  Handle(Geom_BSplineSurface)
+    occtFaired = mobius::cascade::GetOpenCascadeBSurface(mobFaired);
   //
   interp->GetPlotter().DRAW_SURFACE(occtFaired, (resEnergy < initEnergy) ? Color_Green : Color_Red, "faired");
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int MISC_TestCoons(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  /* ===================
+   *  Build rail curves
+   * =================== */
+
+  mobius::ptr<mobius::bcurve> c0, c1, b0, b1;
+  mobius::xyz p00, p01, p10, p11;
+
+  // Build `c` curves.
+  {
+    std::vector<mobius::xyz> c0_pts = {
+      mobius::xyz(0., 0., 0.),
+      mobius::xyz(1., 1., 1.),
+      mobius::xyz(1., 2., 2.),
+      mobius::xyz(2., 3., 4.)
+    };
+
+    std::vector<mobius::xyz> c1_pts = {
+      mobius::xyz(5., 0., 0.),
+      mobius::xyz(5., 1., 2.),
+      mobius::xyz(5., 2., 2.),
+      mobius::xyz(6., 3., 5.)
+    };
+
+    // Corner points.
+    p00 = c0_pts[0];
+    p01 = c1_pts[0];
+    p10 = c0_pts[c0_pts.size() - 1];
+    p11 = c1_pts[c1_pts.size() - 1];
+
+    interp->GetPlotter().REDRAW_POINT("p00", mobius::cascade::GetOpenCascadePnt(p00), Color_Yellow);
+    interp->GetPlotter().REDRAW_POINT("p01", mobius::cascade::GetOpenCascadePnt(p01), Color_Yellow);
+    interp->GetPlotter().REDRAW_POINT("p10", mobius::cascade::GetOpenCascadePnt(p10), Color_Yellow);
+    interp->GetPlotter().REDRAW_POINT("p11", mobius::cascade::GetOpenCascadePnt(p11), Color_Yellow);
+
+    // Build sample curves.
+    mobius::geom_InterpolateMultiCurve multiInterp(3,
+                                                   mobius::ParamsSelection_Centripetal,
+                                                   mobius::KnotsSelection_Average);
+    //
+    multiInterp.AddRow(c0_pts);
+    multiInterp.AddRow(c1_pts);
+
+    if ( multiInterp.Perform() )
+    {
+      for ( int k = 0; k < multiInterp.GetNumRows(); ++k )
+      {
+        const mobius::ptr<mobius::bcurve>& res = multiInterp.GetResult(k);
+
+        // Convert to OpenCascade curve.
+        const Handle(Geom_BSplineCurve)&
+          occRes = mobius::cascade::GetOpenCascadeBCurve(res);
+
+        interp->GetPlotter().DRAW_CURVE(occRes, Color_Red, "c");
+      }
+
+      // Get rail curves.
+      c0 = multiInterp.GetResult(0);
+      c1 = multiInterp.GetResult(1);
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Multi-curve interpolation failed.");
+      return TCL_ERROR;
+    }
+  }
+
+  // Build `b` curves.
+  {
+    std::vector<mobius::xyz> b0_pts = {
+      mobius::xyz(0.,   0.,  0.),
+      mobius::xyz(2.1, -0.3, 0.),
+      mobius::xyz(4.1,  0.1, 0.5),
+      mobius::xyz(5.,   0.,  0.)
+    };
+
+    std::vector<mobius::xyz> b1_pts = {
+      mobius::xyz(2.,  3.,  4.),
+      mobius::xyz(3.,  3.2, 4.1),
+      mobius::xyz(5.,  2.8, 4.5),
+      mobius::xyz(6.,  3.,  5.)
+    };
+
+    // Build sample curves.
+    mobius::geom_InterpolateMultiCurve multiInterp(3,
+                                                   mobius::ParamsSelection_Centripetal,
+                                                   mobius::KnotsSelection_Average);
+    //
+    multiInterp.AddRow(b0_pts);
+    multiInterp.AddRow(b1_pts);
+
+    if ( multiInterp.Perform() )
+    {
+      for ( int k = 0; k < multiInterp.GetNumRows(); ++k )
+      {
+        const mobius::ptr<mobius::bcurve>& res = multiInterp.GetResult(k);
+
+        // Convert to OpenCascade curve.
+        const Handle(Geom_BSplineCurve)&
+          occRes = mobius::cascade::GetOpenCascadeBCurve(res);
+
+        interp->GetPlotter().DRAW_CURVE(occRes, Color_Blue, "b");
+      }
+
+      // Get rail curves.
+      b0 = multiInterp.GetResult(0);
+      b1 = multiInterp.GetResult(1);
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Multi-curve interpolation failed.");
+      return TCL_ERROR;
+    }
+  }
+
+  /* ===================
+   *  Build Coons patch
+   * =================== */
+
+  // Build Coons surface.
+  mobius::ptr<mobius::geom_CoonsSurface>
+    coons = new mobius::geom_CoonsSurface(c0, c1, b0, b1, p00, p01, p10, p11);
+
+  // Sample patch.
+  Handle(asiAlgo_BaseCloud<double>) pts = new asiAlgo_BaseCloud<double>;
+  //
+  const double uMin = coons->MinParameter_U();
+  const double uMax = coons->MaxParameter_U();
+  const double vMin = coons->MinParameter_V();
+  const double vMax = coons->MaxParameter_V();
+  //
+  const double deltaU = (uMax - uMin)/100.;
+  const double deltaV = (vMax - vMin)/100.;
+  //
+  double u = uMin;
+  //
+  bool stopU = false;
+  do
+  {
+    if ( u > uMax )
+      stopU = true;
+    else
+    {
+      double v = vMin;
+      //
+      bool stopV = false;
+      do
+      {
+        if ( v > vMax )
+          stopV = true;
+        else
+        {
+          mobius::xyz P;
+          coons->Eval(u, v, P);
+
+          pts->AddElement( P.X(), P.Y(), P.Z() );
+
+          v += deltaV;
+        }
+      }
+      while ( !stopV );
+
+      u += deltaU;
+    }
+  }
+  while ( !stopU );
+  //
+  interp->GetPlotter().DRAW_POINTS(pts->GetCoordsArray(), Color_White, "coons");
+
+  // Use constrained filling for demo.
+  std::vector<Handle(Geom_BSplineCurve)>
+    curves = { mobius::cascade::GetOpenCascadeBCurve(c0),
+               mobius::cascade::GetOpenCascadeBCurve(c1),
+               mobius::cascade::GetOpenCascadeBCurve(b0),
+               mobius::cascade::GetOpenCascadeBCurve(b1) };
+  //
+  Handle(Geom_BSplineSurface) surf;
+  //
+  if ( !asiAlgo_Utils::Fill4Contour(curves, surf) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Filling 4-sides failed.");
+    return TCL_ERROR;
+  }
+  //
+  interp->GetPlotter().DRAW_SURFACE(surf, Color_White, "coonssurf");
 
   return TCL_OK;
 }
@@ -1921,6 +2116,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Test fairing function.",
     //
     __FILE__, group, MISC_TestFair);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-coons",
+    //
+    "test-coons\n"
+    "\t Test Coons patch.",
+    //
+    __FILE__, group, MISC_TestCoons);
 #endif
 }
 

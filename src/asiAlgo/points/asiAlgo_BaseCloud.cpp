@@ -31,6 +31,9 @@
 // Own include
 #include <asiAlgo_BaseCloud.h>
 
+// asiAlgo includes
+#include <asiAlgo_PointCloudUtils.h>
+
 // Instantiate for allowed types
 template class asiAlgo_BaseCloud<double>;
 template class asiAlgo_BaseCloud<float>;
@@ -122,6 +125,14 @@ template <typename TCoordType>
 const std::vector<TCoordType>& asiAlgo_BaseCloud<TCoordType>::GetCoords() const
 {
   return m_coords;
+}
+
+//-----------------------------------------------------------------------------
+
+template <typename TCoordType>
+Handle(TColStd_HArray1OfReal) asiAlgo_BaseCloud<TCoordType>::GetCoordsArray() const
+{
+  return asiAlgo_PointCloudUtils::AsRealArray(this);
 }
 
 //-----------------------------------------------------------------------------

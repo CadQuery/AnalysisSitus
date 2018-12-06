@@ -87,7 +87,7 @@
 #include <TopoDS_Solid.hxx>
 
 #if defined USE_MOBIUS
-  #include <mobius/cascade_BSplineCurve3D.h>
+  #include <mobius/cascade_BSplineCurve.h>
   #include <mobius/cascade_BSplineSurface.h>
   #include <mobius/geom_FairBCurve.h>
   #include <mobius/geom_FairBSurf.h>
@@ -1216,7 +1216,7 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
   {
 #if defined USE_MOBIUS
     // Convert to Mobius curve.
-    mobius::cascade_BSplineCurve3D toMobius(occtBCurve);
+    mobius::cascade_BSplineCurve toMobius(occtBCurve);
     toMobius.DirectConvert();
     const mobius::ptr<mobius::bcurve>& mobCurve = toMobius.GetMobiusCurve();
 
@@ -1239,7 +1239,7 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
     const mobius::ptr<mobius::bcurve>& mobResult = fairing.GetResult();
 
     // Convert to OpenCascade curve.
-    mobius::cascade_BSplineCurve3D toOpenCascade(mobResult);
+    mobius::cascade_BSplineCurve toOpenCascade(mobResult);
     toOpenCascade.DirectConvert();
     result = toOpenCascade.GetOpenCascadeCurve();
 #else

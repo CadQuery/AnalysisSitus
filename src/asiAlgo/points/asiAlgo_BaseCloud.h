@@ -81,6 +81,9 @@ public:
   asiAlgo_EXPORT const std::vector<TCoordType>&
     GetCoords() const;
 
+  asiAlgo_EXPORT Handle(TColStd_HArray1OfReal)
+    GetCoordsArray() const;
+
   asiAlgo_EXPORT std::vector<TCoordType>&
     ChangeCoords();
 

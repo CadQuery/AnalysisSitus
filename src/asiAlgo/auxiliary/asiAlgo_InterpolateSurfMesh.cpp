@@ -641,17 +641,15 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>&   c
   // Interpolate.
   mobius::geom_InterpolateSurface interpSurf(mobGrid, degU, degV, paramsType, knotsType);
   //
-  interpSurf.Perform();
-  //
-  if ( interpSurf.ErrorCode() != mobius::geom_InterpolateSurface::ErrCode_NoError )
+  if ( !interpSurf.Perform() )
   {
     m_progress.SendLogMessage( LogErr(Normal) << "Interpolation failed with error code %1."
-                                              << interpSurf.ErrorCode() );
+                                              << interpSurf.GetErrorCode() );
     return false;
   }
 
   // Get Mobius surface.
-  const mobius::ptr<mobius::bsurf>& mobSurf = interpSurf.Result();
+  const mobius::ptr<mobius::bsurf>& mobSurf = interpSurf.GetResult();
 
   // Convert to OpenCascade surface.
   mobius::cascade_BSplineSurface toOpenCascade(mobSurf);

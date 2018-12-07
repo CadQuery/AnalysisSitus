@@ -140,12 +140,12 @@ bool asiAlgo_FairBCurve::Perform()
   const TColgp_Array1OfPnt& poles = m_resultCurve->Poles();
   int                       r     = 0;
   //
-  for ( int p = poles.Lower() + NUM_CONSTRAINED_POLES_LEADING; p <= poles.Upper() - NUM_CONSTRAINED_POLES_TRAILING; ++p, ++r )
+  for ( int pp = poles.Lower() + NUM_CONSTRAINED_POLES_LEADING; p <= poles.Upper() - NUM_CONSTRAINED_POLES_TRAILING; ++pp, ++r )
   {
-    gp_XYZ P = poles(p).XYZ();
+    gp_XYZ P = poles(pp).XYZ();
     gp_XYZ D = gp_XYZ( eigen_X_mx(r, 0), eigen_X_mx(r, 1), eigen_X_mx(r, 2) );
     //
-    m_resultCurve->SetPole(p, P + D);
+    m_resultCurve->SetPole(pp, P + D);
   }
 
 #if defined COUT_DEBUG

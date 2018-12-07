@@ -88,6 +88,7 @@
   #include <mobius/geom_FairBCurve.h>
   #include <mobius/geom_FairBSurf.h>
   #include <mobius/geom_InterpolateMultiCurve.h>
+  #include <mobius/geom_SkinSurface.h>
 #endif
 
 #undef DRAW_DEBUG
@@ -1972,6 +1973,69 @@ int MISC_TestCoons(const Handle(asiTcl_Interp)& interp,
   }
   //
   interp->GetPlotter().DRAW_SURFACE(surf, Color_White, "coonssurf");
+
+  /* =========================================================
+   *  Use Boolean sum approach to build an equivalent surface
+   * ========================================================= */
+
+  // Build P1S.
+  mobius::ptr<mobius::bsurf> P1S;
+  {
+    // Prepare rail curves.
+    std::vector< mobius::ptr<mobius::bcurve> > rails = {c0, c1};
+
+    // Skin ruled surface through c0 and c1 rails.
+    mobius::geom_SkinSurface skinner(rails, 1, false);
+    //
+    if ( !skinner.Perform() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot build P1S.");
+      return TCL_ERROR;
+    }
+    //
+    P1S = skinner.GetResult();
+
+    // Draw.
+    interp->GetPlotter().REDRAW_SURFACE("P1S", mobius::cascade::GetOpenCascadeBSurface(P1S), Color_Red);
+  }
+
+  // Build P2S.
+  mobius::ptr<mobius::bsurf> P2S;
+  {
+    // Prepare rail curves.
+    std::vector< mobius::ptr<mobius::bcurve> > rails = {b0, b1};
+
+    // Skin ruled surface through b0 and b1 rails.
+    mobius::geom_SkinSurface skinner(rails, 1, false);
+    //
+    if ( !skinner.Perform() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot build P2S.");
+      return TCL_ERROR;
+    }
+    //
+    P2S = skinner.GetResult();
+
+    // Draw.
+    interp->GetPlotter().REDRAW_SURFACE("P2S", mobius::cascade::GetOpenCascadeBSurface(P2S), Color_Green);
+  }
+
+  // Build P12S.
+  mobius::ptr<mobius::bsurf> P12S;
+  {
+    std::vector< std::vector<mobius::xyz> >
+      poles = { {p00, p01},
+                {p10, p11} };
+
+    // Define knot vector.
+    std::vector<double> T = {0, 0, 1, 1};
+
+    // Construct directly.
+    P12S = new mobius::geom_BSplineSurface(poles, T, T, 1, 1);
+
+    // Draw.
+    interp->GetPlotter().REDRAW_SURFACE("P12S", mobius::cascade::GetOpenCascadeBSurface(P12S), Color_Blue);
+  }
 
   return TCL_OK;
 }

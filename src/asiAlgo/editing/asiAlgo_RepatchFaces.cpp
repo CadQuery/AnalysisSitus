@@ -91,9 +91,9 @@ bool asiAlgo_RepatchFaces::Perform(const std::vector<TopoDS_Face>& faces)
   //
   for ( int k = 1; k <= edgesFaces.Extent(); ++k )
   {
-    const TopTools_ListOfShape& faces = edgesFaces(k);
+    const TopTools_ListOfShape& facesByEdge = edgesFaces(k);
     //
-    if ( faces.Extent() == 1 )
+    if ( facesByEdge.Extent() == 1 )
     {
       const TopoDS_Edge& E = TopoDS::Edge( edgesFaces.FindKey(k) );
       //

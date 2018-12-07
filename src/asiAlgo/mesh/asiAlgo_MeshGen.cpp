@@ -32,9 +32,11 @@
 #include <asiAlgo_MeshGen.h>
 
 // OCCT includes
+#include <BRep_Tool.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
 #include <BRepTools.hxx>
 #include <OSD.hxx>
+#include <Poly_Triangulation.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <Standard_ErrorHandler.hxx>

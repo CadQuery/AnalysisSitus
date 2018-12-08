@@ -212,7 +212,7 @@ public:
 
   asiAlgo_EXPORT void
     Dump(ActAPI_PlotterEntry            plotter,
-         const Quantity_Color&          color,
+         const ActAPI_Color&            color,
          const TCollection_AsciiString& name,
          const bool                     isWireframe);
 

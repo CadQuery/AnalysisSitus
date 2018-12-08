@@ -1335,8 +1335,8 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   // Perform fairing.
   mobius::geom_FairBSurf fairing(mobSurf, lambda, NULL, NULL);
   //
-  const int nPolesU = int( mobSurf->Poles().size() );
-  const int nPolesV = int( mobSurf->Poles()[0].size() );
+  const int nPolesU = int( mobSurf->GetPoles().size() );
+  const int nPolesV = int( mobSurf->GetPoles()[0].size() );
   //
   for ( int i = 0; i < nPolesU; ++i )
   {
@@ -1835,6 +1835,208 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_InsertKnotCurve(const Handle(asiTcl_Interp)& interp,
+                           int                          argc,
+                           const char**                 argv)
+{
+  if ( argc != 4 && argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+#if defined USE_MOBIUS
+  // Find Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[2]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVCurveNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a curve."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVCurveNode)
+    curveNode = Handle(asiData_IVCurveNode)::DownCast(node);
+
+  // Get B-curve.
+  double f, l;
+  Handle(Geom_BSplineCurve)
+    occtBCurve = Handle(Geom_BSplineCurve)::DownCast( curveNode->GetCurve(f, l) );
+  //
+  if ( occtBCurve.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is not a B-spline curve.");
+    return TCL_OK;
+  }
+
+  // Get knot value.
+  const double u = atof(argv[3]);
+
+  // Get multiplicity.
+  const int times = ( (argc == 5) ? atoi(argv[4]) : 1 );
+
+  // Make a copy of the initial curve.
+  mobius::ptr<mobius::bcurve>
+    mobBCurve = mobius::cascade::GetMobiusBCurve(occtBCurve);
+  //
+  mobius::ptr<mobius::bcurve> mobResult = mobBCurve->Copy();
+
+  // Insert knot.
+  if ( !mobResult->InsertKnot(u, times) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Knot insertion failed for knot %1 to be inserted %2 time(s)."
+                                                        << u << times);
+    return TCL_ERROR;
+  }
+
+  // Draw result.
+  interp->GetPlotter().REDRAW_CURVE(argv[1],
+                                    mobius::cascade::GetOpenCascadeBCurve(mobResult),
+                                    Color_Default);
+
+  return TCL_OK;
+#else
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This function is not available.");
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_InsertKnotSurfU(const Handle(asiTcl_Interp)& interp,
+                           int                          argc,
+                           const char**                 argv)
+{
+  if ( argc != 4 && argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+#if defined USE_MOBIUS
+  // Find Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[2]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfaceNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Get B-surface.
+  Handle(Geom_BSplineSurface)
+    occtBSurface = Handle(Geom_BSplineSurface)::DownCast( surfaceNode->GetSurface() );
+  //
+  if ( occtBSurface.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a B-spline surface.");
+    return TCL_OK;
+  }
+
+  // Get knot value.
+  const double u = atof(argv[3]);
+
+  // Get multiplicity.
+  const int times = ( (argc == 5) ? atoi(argv[4]) : 1 );
+
+  // Make a copy of the initial surface.
+  mobius::ptr<mobius::bsurf>
+    mobBSurface = mobius::cascade::GetMobiusBSurface(occtBSurface);
+  //
+  mobius::ptr<mobius::bsurf> mobResult = mobBSurface->Copy();
+
+  // Insert knot.
+  if ( !mobResult->InsertKnot_U(u, times) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Knot insertion failed for knot %1 to be inserted %2 time(s)."
+                                                        << u << times);
+    return TCL_ERROR;
+  }
+
+  // Draw result.
+  interp->GetPlotter().REDRAW_SURFACE(argv[1],
+                                      mobius::cascade::GetOpenCascadeBSurface(mobResult),
+                                      Color_Default);
+
+  return TCL_OK;
+#else
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This function is not available.");
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_InsertKnotSurfV(const Handle(asiTcl_Interp)& interp,
+                           int                          argc,
+                           const char**                 argv)
+{
+  if ( argc != 4 && argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+#if defined USE_MOBIUS
+  // Find Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[2]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfaceNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Get B-surface.
+  Handle(Geom_BSplineSurface)
+    occtBSurface = Handle(Geom_BSplineSurface)::DownCast( surfaceNode->GetSurface() );
+  //
+  if ( occtBSurface.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a B-spline surface.");
+    return TCL_OK;
+  }
+
+  // Get knot value.
+  const double v = atof(argv[3]);
+
+  // Get multiplicity.
+  const int times = ( (argc == 5) ? atoi(argv[4]) : 1 );
+
+  // Make a copy of the initial surface.
+  mobius::ptr<mobius::bsurf>
+    mobBSurface = mobius::cascade::GetMobiusBSurface(occtBSurface);
+  //
+  mobius::ptr<mobius::bsurf> mobResult = mobBSurface->Copy();
+
+  // Insert knot.
+  if ( !mobResult->InsertKnot_V(v, times) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Knot insertion failed for knot %1 to be inserted %2 time(s)."
+                                                        << v << times);
+    return TCL_ERROR;
+  }
+
+  // Draw result.
+  interp->GetPlotter().REDRAW_SURFACE(argv[1],
+                                      mobius::cascade::GetOpenCascadeBSurface(mobResult),
+                                      Color_Default);
+
+  return TCL_OK;
+#else
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This function is not available.");
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -2068,4 +2270,33 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t interactively or specified as 1-based face ID.",
     //
     __FILE__, group, ENGINE_KillBlend);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("insert-knot-curve",
+    //
+    "insert-knot-curve resName curveName u [r]\n"
+    "\t Inserts the passed knot value <u> <r> times to the\n"
+    "\t B-curve <curveName>. A new curve <resName> is created as a result.",
+    //
+    __FILE__, group, ENGINE_InsertKnotCurve);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("insert-knot-surf-u",
+    //
+    "insert-knot-surf-u resName surfName u [r]\n"
+    "\t Inserts the passed knot value <u> <r> times to the\n"
+    "\t B-surface <surfName> in its U parametric direction.\n"
+    "\t A new surface <resName> is created as a result.",
+    //
+    __FILE__, group, ENGINE_InsertKnotSurfU);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("insert-knot-surf-v",
+    //
+    "insert-knot-surf-v resName surfName v [r]\n"
+    "\t Inserts the passed knot value <v> <r> times to the\n"
+    "\t B-surface <surfName> in its V parametric direction.\n"
+    "\t A new surface <resName> is created as a result.",
+    //
+    __FILE__, group, ENGINE_InsertKnotSurfV);
 }

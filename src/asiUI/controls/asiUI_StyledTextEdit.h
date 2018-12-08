@@ -48,10 +48,10 @@ public:
 
   asiUI_StyledTextEdit(const QString& value,
                        QWidget*       parent = 0)
-  : QTextEdit(value, parent) { this->stylize(); this->setReadOnly(true); }
+  : QTextEdit(value, parent) { this->stylize(); this->setReadOnly(false); }
 
   asiUI_StyledTextEdit(QWidget* parent = 0)
-  : QTextEdit(parent) { this->stylize(); this->setReadOnly(true); }
+  : QTextEdit(parent) { this->stylize(); this->setReadOnly(false); }
 
 protected:
 

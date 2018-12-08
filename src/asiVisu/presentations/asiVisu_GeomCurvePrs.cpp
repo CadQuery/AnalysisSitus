@@ -82,7 +82,7 @@ asiVisu_GeomCurvePrs::asiVisu_GeomCurvePrs(const Handle(ActAPI_INode)& theNode)
 
   // Configure presentation
   this->GetPipeline(Pipeline_Main)  -> Actor()->GetProperty()->SetLineWidth(2.0f);
-  this->GetPipeline(Pipeline_Poles) -> Actor()->GetProperty()->SetColor(0.6, 0.6, 0.6);
+  this->GetPipeline(Pipeline_Poles) -> Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
   this->GetPipeline(Pipeline_Knots) -> Actor()->GetProperty()->SetColor(0.0, 1.0, 0.0);
 
   // Initialize text widget used for annotations
@@ -111,6 +111,9 @@ void asiVisu_GeomCurvePrs::SetColor(const QColor& color) const
 {
   for ( PipelineMap::Iterator pit( m_pipelineRepo.Find(Group_Prs) ); pit.More(); pit.Next() )
   {
+    if ( pit.Key() == Pipeline_Knots )
+      continue;
+
     if ( pit.Key() == Pipeline_Knots )
       continue;
 

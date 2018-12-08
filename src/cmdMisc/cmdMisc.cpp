@@ -1448,8 +1448,8 @@ int MISC_TestEvalCurve(const Handle(asiTcl_Interp)& interp,
 
     // Prepare matrix to hold evaluation results.
     mobius::core_HeapAlloc2D<double> Alloc;
-    double** dN = Alloc.Allocate(mobCurve->Degree() + 1,
-                                 mobCurve->Degree() + 1,
+    double** dN = Alloc.Allocate(mobCurve->GetDegree() + 1,
+                                 mobCurve->GetDegree() + 1,
                                  true);
 
     // Evaluate.
@@ -1655,10 +1655,10 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
                                                           << initEnergy );
 
   // Utilities to find spans.
-  std::vector<double> U = mobSurf->Knots_U();
-  std::vector<double> V = mobSurf->Knots_V();
-  const int           p = mobSurf->Degree_U();
-  const int           q = mobSurf->Degree_V();
+  std::vector<double> U = mobSurf->GetKnots_U();
+  std::vector<double> V = mobSurf->GetKnots_V();
+  const int           p = mobSurf->GetDegree_U();
+  const int           q = mobSurf->GetDegree_V();
   //
   mobius::bspl_FindSpan findSpanU(U, p);
   mobius::bspl_FindSpan findSpanV(V, q);
@@ -1724,7 +1724,7 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
       interp->GetPlotter().DRAW_LINK(S3, S4, Color_Green, "S34");
       interp->GetPlotter().DRAW_LINK(S4, S1, Color_Green, "S41");*/
 
-      const mobius::xyz& mobPole1 = mobSurf->Poles()[spanU][spanV];
+      const mobius::xyz& mobPole1 = mobSurf->GetPoles()[spanU][spanV];
 
       // Pin point.
       F.AddPinnedPole(spanU, spanV);
@@ -1833,20 +1833,12 @@ int MISC_TestCoons(const Handle(asiTcl_Interp)& interp,
 
     if ( multiInterp.Perform() )
     {
-      for ( int k = 0; k < multiInterp.GetNumRows(); ++k )
-      {
-        const mobius::ptr<mobius::bcurve>& res = multiInterp.GetResult(k);
-
-        // Convert to OpenCascade curve.
-        const Handle(Geom_BSplineCurve)&
-          occRes = mobius::cascade::GetOpenCascadeBCurve(res);
-
-        interp->GetPlotter().DRAW_CURVE(occRes, Color_Red, "c");
-      }
-
       // Get rail curves.
       c0 = multiInterp.GetResult(0);
       c1 = multiInterp.GetResult(1);
+      //
+      interp->GetPlotter().REDRAW_CURVE("c0", mobius::cascade::GetOpenCascadeBCurve(c0), Color_Default);
+      interp->GetPlotter().REDRAW_CURVE("c1", mobius::cascade::GetOpenCascadeBCurve(c1), Color_Default);
     }
     else
     {
@@ -1881,20 +1873,12 @@ int MISC_TestCoons(const Handle(asiTcl_Interp)& interp,
 
     if ( multiInterp.Perform() )
     {
-      for ( int k = 0; k < multiInterp.GetNumRows(); ++k )
-      {
-        const mobius::ptr<mobius::bcurve>& res = multiInterp.GetResult(k);
-
-        // Convert to OpenCascade curve.
-        const Handle(Geom_BSplineCurve)&
-          occRes = mobius::cascade::GetOpenCascadeBCurve(res);
-
-        interp->GetPlotter().DRAW_CURVE(occRes, Color_Blue, "b");
-      }
-
       // Get rail curves.
       b0 = multiInterp.GetResult(0);
       b1 = multiInterp.GetResult(1);
+      //
+      interp->GetPlotter().REDRAW_CURVE("b0", mobius::cascade::GetOpenCascadeBCurve(b0), Color_Default);
+      interp->GetPlotter().REDRAW_CURVE("b1", mobius::cascade::GetOpenCascadeBCurve(b1), Color_Default);
     }
     else
     {
@@ -1914,10 +1898,10 @@ int MISC_TestCoons(const Handle(asiTcl_Interp)& interp,
   // Sample patch.
   Handle(asiAlgo_BaseCloud<double>) pts = new asiAlgo_BaseCloud<double>;
   //
-  const double uMin = coons->MinParameter_U();
-  const double uMax = coons->MaxParameter_U();
-  const double vMin = coons->MinParameter_V();
-  const double vMax = coons->MaxParameter_V();
+  const double uMin = coons->GetMinParameter_U();
+  const double uMax = coons->GetMaxParameter_U();
+  const double vMin = coons->GetMinParameter_V();
+  const double vMax = coons->GetMaxParameter_V();
   //
   const double deltaU = (uMax - uMin)/100.;
   const double deltaV = (vMax - vMin)/100.;

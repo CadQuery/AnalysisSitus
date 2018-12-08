@@ -158,18 +158,17 @@ to be extremely useful in Computer-Aided Design field. Tons of research papers
 ever published on the subject took advantage of the topological formalism to
 construct the mathematical models of the studied subjects.
 
-We think that Analysis Situs is a good name for a software which dives into
+We think that Analysis Situs is a good name for software which dives into
 low-level details of geometric modeling. You load a model to inquire what is
 inside. You can study it face-by-face in a CAD-neutral environment. You can look
-at your model as a composition of surface patches trimmed by contours. And you
-can also extend the software with your tools as the architecture is incredibly
-simple.
+at your model as a composition of surface patches trimmed by contours. Also, you
+can extend the software with your tools as the architecture is quite simple.
 
 Several decades ago there was a CAD system PADL connecting academia with industry.
 Practice shows that such a combination of the academic roots playing on the industrial
 ground is somewhat very fruitful. Pioneer researchers like A. Requicha who participated
 in PADL brought a lot of new seminal concepts to the field (for this A. Requicha and
-H. Voelcker got Pierre Bezier Award). So we have a good story to tell and a good
+H. Voelcker got Pierre Bezier Award). So we have a good story to tell and an excellent
 example of how things can work. Analysis Situs has nothing to do with PADL and all
-these brilliant researchers. But there is still the same idea to have a link between
-the academia and the real life. In such setting, Analysis Situs serves as a prototyping tool.
+these brilliant researchers. However, there is still the same idea to have a link between
+academia and real life. In such a setting, Analysis Situs serves as a prototyping tool.

@@ -32,6 +32,8 @@
 #include <asiVisu_IVCurvePrs.h>
 
 // asiVisu includes
+#include <asiVisu_BCurveKnotsPipeline.h>
+#include <asiVisu_BCurvePolesPipeline.h>
 #include <asiVisu_CurvePipeline.h>
 #include <asiVisu_IVCurveDataProvider.h>
 #include <asiVisu_Utils.h>
@@ -48,13 +50,29 @@ asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& theNode)
   // Create Data Provider
   Handle(asiVisu_IVCurveDataProvider) DP = new asiVisu_IVCurveDataProvider(theNode);
 
-  // Pipeline for contours
+  // Pipeline for curve
   this->addPipeline        ( Pipeline_Main, new asiVisu_CurvePipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 
-  // Adjust line width
-  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetLineWidth(1.0f);
-  this->GetPipeline(Pipeline_Main)->Actor()->SetPickable(0);
+  // Pipeline for poles of b-curves
+  this->addPipeline        ( Pipeline_Poles, new asiVisu_BCurvePolesPipeline );
+  this->assignDataProvider ( Pipeline_Poles, DP );
+
+  // Pipeline for knots of b-curves
+  this->addPipeline        ( Pipeline_Knots, new asiVisu_BCurveKnotsPipeline );
+  this->assignDataProvider ( Pipeline_Knots, DP );
+
+  // Adjust props
+  this->GetPipeline(Pipeline_Main)  ->Actor()->GetProperty()->SetLineWidth(1.0f);
+  this->GetPipeline(Pipeline_Poles) ->Actor()->GetProperty()->SetColor(0.6, 0.6, 0.6);
+  this->GetPipeline(Pipeline_Knots) ->Actor()->GetProperty()->SetColor(0.0, 1.0, 0.0);
+  //
+  this->GetPipeline(Pipeline_Main)  ->Actor()->SetPickable(0);
+  this->GetPipeline(Pipeline_Poles) ->Actor()->SetPickable(0);
+  this->GetPipeline(Pipeline_Knots) ->Actor()->SetPickable(0);
+  //
+  this->GetPipeline(Pipeline_Poles) ->Actor()->SetVisibility(1);
+  this->GetPipeline(Pipeline_Knots) ->Actor()->SetVisibility(1);
 }
 
 //! Factory method for Presentation.

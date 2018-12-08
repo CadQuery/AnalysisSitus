@@ -94,94 +94,94 @@ public:
 
   asiUI_EXPORT virtual void
     DRAW_POINT(const gp_XY&,
-               const Quantity_Color&,
+               const ActAPI_Color&,
                const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_POINT(const gp_Pnt2d&,
-               const Quantity_Color&,
+               const ActAPI_Color&,
                const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_POINT(const gp_XYZ&,
-               const Quantity_Color&,
+               const ActAPI_Color&,
                const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_POINT(const gp_Pnt&,
-               const Quantity_Color&,
+               const ActAPI_Color&,
                const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     REDRAW_POINT(const TCollection_AsciiString&,
                  const gp_XY&,
-                 const Quantity_Color&);
+                 const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_POINT(const TCollection_AsciiString&,
                  const gp_Pnt2d&,
-                 const Quantity_Color&);
+                 const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_POINT(const TCollection_AsciiString&,
                  const gp_XYZ&,
-                 const Quantity_Color&);
+                 const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_POINT(const TCollection_AsciiString&,
                  const gp_Pnt&,
-                 const Quantity_Color&);
+                 const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     DRAW_POINTS(const Handle(HRealArray)&,
-                const Quantity_Color&,
+                const ActAPI_Color&,
                 const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     REDRAW_POINTS(const TCollection_AsciiString&,
                   const Handle(HRealArray)&,
-                  const Quantity_Color&);
+                  const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     DRAW_VECTOR_AT(const gp_Pnt&,
                    const gp_Vec&,
-                   const Quantity_Color&,
+                   const ActAPI_Color&,
                    const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     REDRAW_VECTOR_AT(const TCollection_AsciiString&,
                      const gp_Pnt&,
                      const gp_Vec&,
-                     const Quantity_Color&);
+                     const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     DRAW_CURVE(const Handle(Geom_Curve)&,
-               const Quantity_Color&,
+               const ActAPI_Color&,
                const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     REDRAW_CURVE(const TCollection_AsciiString&,
                  const Handle(Geom_Curve)&,
-                 const Quantity_Color&);
+                 const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     DRAW_CURVE2D(const Handle(Geom2d_Curve)&,
-                 const Quantity_Color&,
+                 const ActAPI_Color&,
                  const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     REDRAW_CURVE2D(const TCollection_AsciiString&,
                    const Handle(Geom2d_Curve)&,
-                   const Quantity_Color&);
+                   const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     DRAW_SURFACE(const Handle(Geom_Surface)&,
-                 const Quantity_Color&,
+                 const ActAPI_Color&,
                  const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_SURFACE(const Handle(Geom_Surface)&,
-                 const Quantity_Color&,
+                 const ActAPI_Color&,
                  const double, // opacity
                  const TCollection_AsciiString&);
 
@@ -189,26 +189,26 @@ public:
     DRAW_SURFACE(const Handle(Geom_Surface)&,
                  const double, // U limit
                  const double, // V limit
-                 const Quantity_Color&,
+                 const ActAPI_Color&,
                  const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_SURFACE(const Handle(Geom_Surface)&,
                  const double, // U limit
                  const double, // V limit
-                 const Quantity_Color&,
+                 const ActAPI_Color&,
                  const double, // opacity
                  const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     REDRAW_SURFACE(const TCollection_AsciiString&,
                    const Handle(Geom_Surface)&,
-                   const Quantity_Color&);
+                   const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_SURFACE(const TCollection_AsciiString&,
                    const Handle(Geom_Surface)&,
-                   const Quantity_Color&,
+                   const ActAPI_Color&,
                    const double); // opacity
 
   asiUI_EXPORT virtual void
@@ -216,14 +216,14 @@ public:
                    const Handle(Geom_Surface)&,
                    const double, // U limit
                    const double, // V limit
-                   const Quantity_Color&);
+                   const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_SURFACE(const TCollection_AsciiString&,
                    const Handle(Geom_Surface)&,
                    const double, // U limit
                    const double, // V limit
-                   const Quantity_Color&,
+                   const ActAPI_Color&,
                    const double); // opacity
 
 // TOPOLOGY:
@@ -235,7 +235,7 @@ public:
 
   asiUI_EXPORT virtual void
     DRAW_SHAPE(const TopoDS_Shape&,
-               const Quantity_Color&,
+               const ActAPI_Color&,
                const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
@@ -245,13 +245,13 @@ public:
 
   asiUI_EXPORT virtual void
     DRAW_SHAPE(const TopoDS_Shape&,
-               const Quantity_Color&,
+               const ActAPI_Color&,
                const double, // opacity
                const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_SHAPE(const TopoDS_Shape&,
-               const Quantity_Color&,
+               const ActAPI_Color&,
                const double, // opacity
                const bool, // is wireframe
                const TCollection_AsciiString&);
@@ -263,7 +263,7 @@ public:
   asiUI_EXPORT virtual void
     REDRAW_SHAPE(const TCollection_AsciiString&,
                  const TopoDS_Shape&,
-                 const Quantity_Color&);
+                 const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_SHAPE(const TCollection_AsciiString&,
@@ -273,13 +273,13 @@ public:
   asiUI_EXPORT virtual void
     REDRAW_SHAPE(const TCollection_AsciiString&,
                  const TopoDS_Shape&,
-                 const Quantity_Color&,
+                 const ActAPI_Color&,
                  const double); // opacity
 
   asiUI_EXPORT virtual void
     REDRAW_SHAPE(const TCollection_AsciiString&,
                  const TopoDS_Shape&,
-                 const Quantity_Color&,
+                 const ActAPI_Color&,
                  const double, // opacity
                  const bool); // is wireframe
 
@@ -289,97 +289,97 @@ public:
   asiUI_EXPORT virtual void
     DRAW_LINK(const gp_Pnt&,
               const gp_Pnt&,
-              const Quantity_Color&,
+              const ActAPI_Color&,
               const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_LINK(const gp_XYZ&,
               const gp_XYZ&,
-              const Quantity_Color&,
+              const ActAPI_Color&,
               const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_LINK(const gp_Pnt2d&,
               const gp_Pnt2d&,
-              const Quantity_Color&,
+              const ActAPI_Color&,
               const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_LINK(const gp_XY&,
               const gp_XY&,
-              const Quantity_Color&,
+              const ActAPI_Color&,
               const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     REDRAW_LINK(const TCollection_AsciiString&,
                 const gp_Pnt&,
                 const gp_Pnt&,
-                const Quantity_Color&);
+                const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_LINK(const TCollection_AsciiString&,
                 const gp_XYZ&,
                 const gp_XYZ&,
-                const Quantity_Color&);
+                const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_LINK(const TCollection_AsciiString&,
                 const gp_Pnt2d&,
                 const gp_Pnt2d&,
-                const Quantity_Color&);
+                const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_LINK(const TCollection_AsciiString&,
                 const gp_XY&,
                 const gp_XY&,
-                const Quantity_Color&);
+                const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     DRAW_POLYLINE(const std::vector<gp_XYZ>&,
-                  const Quantity_Color&,
+                  const ActAPI_Color&,
                   const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_POLYLINE(const std::vector<gp_XY>&,
-                  const Quantity_Color&,
+                  const ActAPI_Color&,
                   const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     REDRAW_POLYLINE(const TCollection_AsciiString&,
                     const std::vector<gp_XYZ>&,
-                    const Quantity_Color&);
+                    const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_POLYLINE(const TCollection_AsciiString&,
                     const std::vector<gp_XY>&,
-                    const Quantity_Color&);
+                    const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     DRAW_TRIANGLE(const gp_Pnt&,
                   const gp_Pnt&,
                   const gp_Pnt&,
-                  const Quantity_Color&,
+                  const ActAPI_Color&,
                   const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_TRIANGLE(const gp_XYZ&,
                   const gp_XYZ&,
                   const gp_XYZ&,
-                  const Quantity_Color&,
+                  const ActAPI_Color&,
                   const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_TRIANGLE(const gp_Pnt2d&,
                   const gp_Pnt2d&,
                   const gp_Pnt2d&,
-                  const Quantity_Color&,
+                  const ActAPI_Color&,
                   const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_TRIANGLE(const gp_XY&,
                   const gp_XY&,
                   const gp_XY&,
-                  const Quantity_Color&,
+                  const ActAPI_Color&,
                   const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
@@ -387,39 +387,39 @@ public:
                     const gp_Pnt&,
                     const gp_Pnt&,
                     const gp_Pnt&,
-                    const Quantity_Color&);
+                    const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_TRIANGLE(const TCollection_AsciiString&,
                     const gp_XYZ&,
                     const gp_XYZ&,
                     const gp_XYZ&,
-                    const Quantity_Color&);
+                    const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_TRIANGLE(const TCollection_AsciiString&,
                     const gp_Pnt2d&,
                     const gp_Pnt2d&,
                     const gp_Pnt2d&,
-                    const Quantity_Color&);
+                    const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_TRIANGLE(const TCollection_AsciiString&,
                     const gp_XY&,
                     const gp_XY&,
                     const gp_XY&,
-                    const Quantity_Color&);
+                    const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     DRAW_TRIANGULATION(const Handle(Poly_Triangulation)&,
-                       const Quantity_Color&,
+                       const ActAPI_Color&,
                        const double, // opacity
                        const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     REDRAW_TRIANGULATION(const TCollection_AsciiString&,
                          const Handle(Poly_Triangulation)&,
-                         const Quantity_Color&,
+                         const ActAPI_Color&,
                          const double); // opacity
 
 // TEXT
@@ -438,12 +438,12 @@ public:
 
   asiUI_EXPORT void
     DRAW_ASI_POINTSF(const Handle(asiAlgo_BaseCloud<float>)&,
-                     const Quantity_Color&,
+                     const ActAPI_Color&,
                      const TCollection_AsciiString&);
 
   asiUI_EXPORT void
     DRAW_ASI_POINTS(const std::vector<gp_Pnt2d>&,
-                    const Quantity_Color&,
+                    const ActAPI_Color&,
                     const TCollection_AsciiString&);
 
   asiUI_EXPORT void
@@ -508,7 +508,7 @@ protected:
     visualize(const bool                  is2d,
               const Handle(ActAPI_INode)& node,
               const bool                  hasColor,
-              const Quantity_Color&       color,
+              const ActAPI_Color&         color,
               const double                opacity,
               const bool                  isWireframe) const;
 
@@ -519,26 +519,26 @@ protected:
 
   asiUI_EXPORT void
     draw_point(const gp_XY&                   coord,
-               const Quantity_Color&          color,
+               const ActAPI_Color&            color,
                const TCollection_AsciiString& name,
                const bool                     newPrimitive);
 
   asiUI_EXPORT void
     draw_points(const Handle(HRealArray)&      coords,
-                const Quantity_Color&          color,
+                const ActAPI_Color&            color,
                 const TCollection_AsciiString& name,
                 const bool                     newPrimitive);
 
   asiUI_EXPORT void
     draw_curve(const Handle(Geom_Curve)&      curve,
-               const Quantity_Color&          color,
+               const ActAPI_Color&            color,
                const TCollection_AsciiString& name,
                const bool                     is2dViewer,
                const bool                     newPrimitive);
 
   asiUI_EXPORT void
     draw_curve2d(const Handle(Geom2d_Curve)&    curve,
-                 const Quantity_Color&          color,
+                 const ActAPI_Color&            color,
                  const TCollection_AsciiString& name,
                  const bool                     newPrimitive);
 
@@ -546,7 +546,7 @@ protected:
     draw_surface(const Handle(Geom_Surface)&    surface,
                  const double                   uLimit,
                  const double                   vLimit,
-                 const Quantity_Color&          color,
+                 const ActAPI_Color&            color,
                  const double                   opacity,
                  const TCollection_AsciiString& name,
                  const bool                     newPrimitive);
@@ -554,7 +554,7 @@ protected:
   asiUI_EXPORT void
     draw_shape(const TopoDS_Shape&            shape,
                const bool                     hasColor,
-               const Quantity_Color&          color,
+               const ActAPI_Color&            color,
                const double                   opacity,
                const bool                     isWireframe,
                const TCollection_AsciiString& name,
@@ -563,7 +563,7 @@ protected:
   asiUI_EXPORT void
     draw_link(const gp_XYZ&                  p1,
               const gp_XYZ&                  p2,
-              const Quantity_Color&          color,
+              const ActAPI_Color&            color,
               const TCollection_AsciiString& name,
               const bool                     is2dViewer,
               const bool                     newPrimitive);
@@ -571,33 +571,33 @@ protected:
   asiUI_EXPORT void
     draw_link(const gp_XYZ&                  p1,
               const gp_XYZ&                  p2,
-              const Quantity_Color&          color,
+              const ActAPI_Color&            color,
               const TCollection_AsciiString& name,
               const bool                     newPrimitive);
 
   asiUI_EXPORT void
     draw_link(const gp_XY&                   p1,
               const gp_XY&                   p2,
-              const Quantity_Color&          color,
+              const ActAPI_Color&            color,
               const TCollection_AsciiString& name,
               const bool                     newPrimitive);
 
   asiUI_EXPORT void
     draw_polyline(const std::vector<gp_XYZ>&     poles,
-                  const Quantity_Color&          color,
+                  const ActAPI_Color&            color,
                   const TCollection_AsciiString& name,
                   const bool                     is2dViewer,
                   const bool                     newPrimitive);
 
   asiUI_EXPORT void
     draw_polyline(const std::vector<gp_XYZ>&     poles,
-                  const Quantity_Color&          color,
+                  const ActAPI_Color&            color,
                   const TCollection_AsciiString& name,
                   const bool                     newPrimitive);
 
   asiUI_EXPORT void
     draw_polyline(const std::vector<gp_XY>&      poles,
-                  const Quantity_Color&          color,
+                  const ActAPI_Color&            color,
                   const TCollection_AsciiString& name,
                   const bool                     newPrimitive);
 
@@ -605,7 +605,7 @@ protected:
     draw_triangle(const gp_XYZ&                  p1,
                   const gp_XYZ&                  p2,
                   const gp_XYZ&                  p3,
-                  const Quantity_Color&          color,
+                  const ActAPI_Color&            color,
                   const TCollection_AsciiString& name,
                   const bool                     newPrimitive,
                   const bool                     isWireframe);
@@ -614,14 +614,14 @@ protected:
     draw_triangle(const gp_XY&                   p1,
                   const gp_XY&                   p2,
                   const gp_XY&                   p3,
-                  const Quantity_Color&          color,
+                  const ActAPI_Color&            color,
                   const TCollection_AsciiString& name,
                   const bool                     newPrimitive,
                   const bool                     isWireframe);
 
   asiUI_EXPORT void
     draw_triangulation(const Handle(Poly_Triangulation)& tris,
-                       const Quantity_Color&             color,
+                       const ActAPI_Color&               color,
                        const double                      opacity,
                        const TCollection_AsciiString&    name,
                        const bool                        newPrimitive);

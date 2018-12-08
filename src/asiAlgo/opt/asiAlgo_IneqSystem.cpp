@@ -195,7 +195,7 @@ bool asiAlgo_IneqSystem::IsConsistent(const t_ineqNCoord<double>& x,
 //-----------------------------------------------------------------------------
 
 void asiAlgo_IneqSystem::Dump(ActAPI_PlotterEntry            plotter,
-                              const Quantity_Color&          color,
+                              const ActAPI_Color&            color,
                               const TCollection_AsciiString& name,
                               const bool                     isWireframe)
 {

@@ -2036,10 +2036,10 @@ int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
     //
     interp->GetPlotter().REDRAW_SHAPE("vexity",
                                        edge,
-                                       Quantity_Color(colorR,
-                                                      colorG,
-                                                      colorB,
-                                                      Quantity_TOC_RGB),
+                                       ActAPI_Color(colorR,
+                                                    colorG,
+                                                    colorB,
+                                                    Quantity_TOC_RGB),
                                        1.0,
                                        true);
   }
@@ -2116,7 +2116,7 @@ int ENGINE_DrawCP(const Handle(asiTcl_Interp)& interp,
     //
     const mobius::ptr<mobius::bsurf>& mobSurf = converter.GetMobiusSurface();
 
-    const mobius::xyz& mobP = mobSurf->Poles()[i][j];
+    const mobius::xyz& mobP = mobSurf->GetPoles()[i][j];
     //
     P.SetX( mobP.X() );
     P.SetY( mobP.Y() );

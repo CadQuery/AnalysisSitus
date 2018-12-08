@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Analysis Situs: NURBS modeling</title>
+  <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+
+  <!-- [begin] Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112292727-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-112292727-2');
+  </script>
+  <!-- [end] Google Analytics -->
+
+ </head>
+<body>
+
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+  <td align="left" class="header">
+    <span class="header-logo"><a href="../index.html" class="header-href">Analysis&nbsp;Situs</a></span>
+    &nbsp;
+    ./<a class="header-href" href="../features.html">features</a>/NURBS modeling
+  </td>
+</tr>
+</table>
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="../features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="../terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="../references.html">References</a></td>
+</tr>
+</table>
+
+<p>
+Analysis Situs uses two geometric modeling kernels. The main kernel is OpenCascade. Another one
+is the in-house NURBS modeling kernel developed following the classic monography by
+L. Piegl and W. Tiller, <a href="../references.html#piegl-tiller-1995">The NURBS Book</a>.
+In this chapter, we present the basic NURBS modeling functionality available in Analysis Situs
+without emphasizing the difference between the two kernels.
+</p>
+
+<h1>Create geometry</h1>
+
+<h2>From JSON</h2>
+
+<p>
+You can create a B-curve or a B-surface from its JSON representation using
+<span class="code-inline">define-geom</span> Tcl command. In the opened
+dialog, you will have to type the name of the geometric entity and its
+textual representation.
+</p>
+
+<div align="center"><img src="../imgs/define_geom_01.png"/></div>
+
+<p>
+Here is an example of a valid B-surface JSON representation (try copying and
+pasting it to the dialog opened with <span class="code-inline">define-geom</span> command):
+</p>
+
+<div class="code"><pre>
+{
+  entity: surface,
+  type: b-surface,
+  continuity: C0,
+  domain: {
+    U_min: 0,
+    U_max: 1,
+    V_min: 0,
+    V_max: 1
+  },
+  flags: {
+    is_U_rational: 0,
+    is_V_rational: 0,
+    is_U_periodic: 0,
+    is_V_periodic: 0,
+    is_U_closed: 0,
+    is_V_closed: 0
+  },
+  properties: {
+    U_degree: 1,
+    V_degree: 1,
+    U_knots: [0, 0, 0.5, 1, 1],
+    V_knots: [0, 0, 0.5, 1, 1],
+    num_poles_in_U_axis: 3,
+    num_poles_in_V_axis: 3,
+    poles: {
+      u0: [[-10, -10, 0], [-10, 0, 0], [-10, 10, 0]],
+      u1: [[0, -10, 0], [0, 0, 10], [0, 10, 0]],
+      u2: [[10, -10, 0], [10, 0, 0], [10, 10, 0]]
+    }
+  }
+}</pre></div>
+
+<p>
+In case you start from an existing CAD model, you can obtain a JSON dump by
+selecting the B-surface of interest and using the context menu as shown in
+the following animation:
+</p>
+
+<div align="center"><img src="../imgs/dump_bsurf_json.gif"/></div>
+
+<h1>Basic algorithms</h1>
+
+<h2>Curve knot insertion</h2>
+
+<p>
+Knot insertion into a B-spline curve is implemented following the algorithm
+A5.1 from <a href="../references.html#piegl-tiller-1995">The NURBS Book</a>.
+To perform knot insertion, use <span class="code-inline">insert-knot-curve</span> Tcl command.
+</p>
+
+<div align="center"><img src="../imgs/insert_knot_curve.gif"/></div>
+
+<h2>Surface knot insertion</h2>
+
+<p>
+Knot insertion into a B-spline surface is implemented following the algorithm
+A5.3 from <a href="../references.html#piegl-tiller-1995">The NURBS Book</a>.
+</p>
+
+</body>
+</html>

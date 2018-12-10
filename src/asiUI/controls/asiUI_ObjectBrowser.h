@@ -106,6 +106,7 @@ protected slots:
   void onShowPartEdges         ();
   void onResetPartPrs          ();
   //
+  void onCopyAsJSON            ();
   void onSaveToBREP            ();
   void onSetAsPart             ();
   //

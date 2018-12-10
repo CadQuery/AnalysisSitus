@@ -1851,7 +1851,7 @@ int ENGINE_InsertKnotCurve(const Handle(asiTcl_Interp)& interp,
   if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVCurveNode) ) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a curve."
-                                                        << argv[1]);
+                                                        << argv[2]);
     return TCL_OK;
   }
   //
@@ -1919,7 +1919,7 @@ int ENGINE_InsertKnotSurfU(const Handle(asiTcl_Interp)& interp,
   if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
-                                                        << argv[1]);
+                                                        << argv[2]);
     return TCL_OK;
   }
   //
@@ -1986,7 +1986,7 @@ int ENGINE_InsertKnotSurfV(const Handle(asiTcl_Interp)& interp,
   if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
-                                                        << argv[1]);
+                                                        << argv[2]);
     return TCL_OK;
   }
   //
@@ -2027,6 +2027,121 @@ int ENGINE_InsertKnotSurfV(const Handle(asiTcl_Interp)& interp,
   interp->GetPlotter().REDRAW_SURFACE(argv[1],
                                       mobius::cascade::GetOpenCascadeBSurface(mobResult),
                                       Color_Default);
+
+  return TCL_OK;
+#else
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This function is not available.");
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_ExchangeUV(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+#if defined USE_MOBIUS
+  // Find Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfaceNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Get B-surface.
+  Handle(Geom_BSplineSurface)
+    occtBSurface = Handle(Geom_BSplineSurface)::DownCast( surfaceNode->GetSurface() );
+  //
+  if ( occtBSurface.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a B-spline surface.");
+    return TCL_OK;
+  }
+
+  // Exchange UV.
+  mobius::ptr<mobius::bsurf>
+    mobBSurface = mobius::cascade::GetMobiusBSurface(occtBSurface);
+  //
+  mobBSurface->ExchangeUV();
+
+  // Draw result.
+  interp->GetPlotter().REDRAW_SURFACE(argv[1],
+                                      mobius::cascade::GetOpenCascadeBSurface(mobBSurface),
+                                      Color_Default);
+
+  return TCL_OK;
+#else
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This function is not available.");
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_SplitCurveBezier(const Handle(asiTcl_Interp)& interp,
+                            int                          argc,
+                            const char**                 argv)
+{
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+#if defined USE_MOBIUS
+  // Find Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[2]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVCurveNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a curve."
+                                                        << argv[2]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVCurveNode)
+    curveNode = Handle(asiData_IVCurveNode)::DownCast(node);
+
+  // Get B-curve.
+  double f, l;
+  Handle(Geom_BSplineCurve)
+    occtBCurve = Handle(Geom_BSplineCurve)::DownCast( curveNode->GetCurve(f, l) );
+  //
+  if ( occtBCurve.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is not a B-spline curve.");
+    return TCL_OK;
+  }
+
+  // Convert to Mobius curve.
+  mobius::ptr<mobius::bcurve>
+    mobBCurve = mobius::cascade::GetMobiusBCurve(occtBCurve);
+
+  // Split.
+  std::vector< mobius::ptr<mobius::bcurve> > segments;
+  //
+  if ( !mobBCurve->SplitToBezier(segments) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Splitting to Bezier failed.");
+    return TCL_ERROR;
+  }
+
+  // Draw results.
+  for ( size_t ii = 0; ii < segments.size(); ++ii )
+    interp->GetPlotter().DRAW_CURVE(mobius::cascade::GetOpenCascadeBCurve(segments[ii]),
+                                    Color_Default,
+                                    argv[1]);
 
   return TCL_OK;
 #else
@@ -2299,4 +2414,20 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t A new surface <resName> is created as a result.",
     //
     __FILE__, group, ENGINE_InsertKnotSurfV);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("exchange-uv",
+    //
+    "exchange-uv surfName\n"
+    "\t Flips parameterization of the given B-surface.",
+    //
+    __FILE__, group, ENGINE_ExchangeUV);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("split-curve-bezier",
+    //
+    "split-curve-bezier resName curveName\n"
+    "\t Splits the passed B-curve <curveName> to a series of Bezier curves.",
+    //
+    __FILE__, group, ENGINE_SplitCurveBezier);
 }

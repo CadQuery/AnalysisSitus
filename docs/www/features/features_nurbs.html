@@ -109,6 +109,35 @@ the following animation:
 
 <h1>Basic algorithms</h1>
 
+<h2>Decompose B-curve into Bezier segments</h2>
+
+<p>
+Bezier decomposition is one of the fundamental algorithms for manipulating NURBS-based
+geometry. It is known that any B-curve can be represented as a tuple of Bezier curves
+without distortion. The curve splitting technique implemented in Analysis Situs follows the
+algorithm A5.6 from <a href="../references.html#piegl-tiller-1995">The NURBS Book</a>.
+Use <span class="code-inline">split-curve-bezier</span> Tcl command to decompose a B-curve
+into the equivalent collection of Bezier curves.
+</p>
+
+<div align="center"><img src="../imgs/split_bcurve_bezier.gif"/></div>
+
+<h2>Flip parameterization</h2>
+
+<p>
+To exchange curvilinear U and V axes of a B-surface, use <span class="code-inline">exchange-uv</span>
+Tcl command. The curvilinear axes are visualized with small red (U axis) and green (V axis) glyphs
+starting at the first pole. Exchanging U and V parameters does not change the surface shape but flips the axes.
+</p>
+
+<div align="center"><img src="../imgs/exchange_uv_01.png"/></div>
+
+<p>
+After flipping:
+</p>
+
+<div align="center"><img src="../imgs/exchange_uv_02.png"/></div>
+
 <h2>Curve knot insertion</h2>
 
 <p>
@@ -124,7 +153,11 @@ To perform knot insertion, use <span class="code-inline">insert-knot-curve</span
 <p>
 Knot insertion into a B-spline surface is implemented following the algorithm
 A5.3 from <a href="../references.html#piegl-tiller-1995">The NURBS Book</a>.
+To perform knot insertion, use <span class="code-inline">insert-knot-surf-u</span> and
+<span class="code-inline">insert-knot-surf-v</span> Tcl commands.
 </p>
+
+<div align="center"><img src="../imgs/insert_knot_surf.gif"/></div>
 
 </body>
 </html>

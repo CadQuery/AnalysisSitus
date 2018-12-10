@@ -213,7 +213,7 @@ void asiUI_DialogGeomDef::onApply()
       return;
     }
 
-    m_plotter.REDRAW_CURVE(varName, curve, Color_White);
+    m_plotter.REDRAW_CURVE(varName, curve, Color_Default);
   }
 
   // Create/update surface.
@@ -227,7 +227,7 @@ void asiUI_DialogGeomDef::onApply()
       return;
     }
 
-    m_plotter.REDRAW_SURFACE(varName, surf, Color_White);
+    m_plotter.REDRAW_SURFACE(varName, surf, Color_Default);
   }
 }
 

@@ -43,6 +43,7 @@
 #include <asiVisu_PartPrs.h>
 
 // asiAlgo includes
+#include <asiAlgo_JSON.h>
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_Utils.h>
 
@@ -403,6 +404,34 @@ void asiUI_ObjectBrowser::onResetPartPrs()
 
 //-----------------------------------------------------------------------------
 
+void asiUI_ObjectBrowser::onCopyAsJSON()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+    return;
+
+  // Get surface.
+  Handle(asiData_IVSurfaceNode)
+    surfNode = Handle(asiData_IVSurfaceNode)::DownCast(selected_n);
+  //
+  Handle(Geom_Surface) surface = surfNode->GetSurface();
+
+  // Dump.
+  std::ostringstream jsonStream;
+  //
+  asiAlgo_JSON::DumpSurface(surface, jsonStream);
+  //
+  std::string jsonStr = jsonStream.str().c_str();
+
+  // Set to clipboard.
+  QClipboard* clipboard = QApplication::clipboard();
+  clipboard->setText( jsonStr.c_str() );
+}
+
+//-----------------------------------------------------------------------------
+
 void asiUI_ObjectBrowser::onSaveToBREP()
 {
   Handle(ActAPI_INode) selected_n;
@@ -706,6 +735,12 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
         pMenu->addAction( "Hide edges",         this, SLOT( onHidePartEdges () ) );
         pMenu->addAction( "Show edges",         this, SLOT( onShowPartEdges () ) );
         pMenu->addAction( "Reset presentation", this, SLOT( onResetPartPrs  () ) );
+      }
+
+      if ( node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+      {
+        pMenu->addSeparator();
+        pMenu->addAction( "Copy as JSON", this, SLOT( onCopyAsJSON () ) );
       }
 
       if ( node->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )

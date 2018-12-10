@@ -2000,6 +2000,9 @@ int MISC_TestCoons(const Handle(asiTcl_Interp)& interp,
     //
     P2S = skinner.GetResult();
 
+    // Flip UV coordinates of P2S to be compliant with other surfaces.
+    P2S->ExchangeUV();
+
     // Draw.
     interp->GetPlotter().REDRAW_SURFACE("P2S", mobius::cascade::GetOpenCascadeBSurface(P2S), Color_Green);
   }

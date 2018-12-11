@@ -1781,9 +1781,9 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int MISC_TestCoons(const Handle(asiTcl_Interp)& interp,
-                   int                          argc,
-                   const char**                 argv)
+int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
 {
   if ( argc != 1 )
   {
@@ -2297,12 +2297,12 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, MISC_TestFair);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("test-coons",
+  interp->AddCommand("test-coons1",
     //
-    "test-coons\n"
+    "test-coons1\n"
     "\t Test Coons patch.",
     //
-    __FILE__, group, MISC_TestCoons);
+    __FILE__, group, MISC_TestCoons1);
 #endif
 }
 

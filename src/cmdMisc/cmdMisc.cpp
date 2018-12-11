@@ -81,6 +81,7 @@
 
 #ifdef USE_MOBIUS
   #include <mobius/bspl_FindSpan.h>
+  #include <mobius/bspl_UnifyKnots.h>
   #include <mobius/cascade.h>
   #include <mobius/core_HeapAlloc.h>
   #include <mobius/geom_BSplineCurve.h>
@@ -1963,7 +1964,8 @@ int MISC_TestCoons(const Handle(asiTcl_Interp)& interp,
    * ========================================================= */
 
   // Build P1S.
-  mobius::ptr<mobius::bsurf> P1S;
+  mobius::ptr<mobius::bsurf>  P1S;
+  Handle(Geom_BSplineSurface) P1Socc;
   {
     // Prepare rail curves.
     std::vector< mobius::ptr<mobius::bcurve> > rails = {c0, c1};
@@ -1979,12 +1981,23 @@ int MISC_TestCoons(const Handle(asiTcl_Interp)& interp,
     //
     P1S = skinner.GetResult();
 
+    // Convert to OCC form to run IncreaseDegree() method which does not
+    // currently exist in Mobius.
+    P1Socc = mobius::cascade::GetOpenCascadeBSurface(P1S);
+
+    // Elevate degree.
+    P1Socc->IncreaseDegree(3, 3);
+
+    // Convert back to Mobius.
+    P1S = mobius::cascade::GetMobiusBSurface(P1Socc);
+
     // Draw.
     interp->GetPlotter().REDRAW_SURFACE("P1S", mobius::cascade::GetOpenCascadeBSurface(P1S), Color_Red);
   }
 
   // Build P2S.
-  mobius::ptr<mobius::bsurf> P2S;
+  mobius::ptr<mobius::bsurf>  P2S;
+  Handle(Geom_BSplineSurface) P2Socc;
   {
     // Prepare rail curves.
     std::vector< mobius::ptr<mobius::bcurve> > rails = {b0, b1};
@@ -2003,12 +2016,23 @@ int MISC_TestCoons(const Handle(asiTcl_Interp)& interp,
     // Flip UV coordinates of P2S to be compliant with other surfaces.
     P2S->ExchangeUV();
 
+    // Convert to OCC form to run IncreaseDegree() method which does not
+    // currently exist in Mobius.
+    P2Socc = mobius::cascade::GetOpenCascadeBSurface(P2S);
+
+    // Elevate degree.
+    P2Socc->IncreaseDegree(3, 3);
+
+    // Convert back to Mobius.
+    P2S = mobius::cascade::GetMobiusBSurface(P2Socc);
+
     // Draw.
     interp->GetPlotter().REDRAW_SURFACE("P2S", mobius::cascade::GetOpenCascadeBSurface(P2S), Color_Green);
   }
 
   // Build P12S.
-  mobius::ptr<mobius::bsurf> P12S;
+  mobius::ptr<mobius::bsurf>  P12S;
+  Handle(Geom_BSplineSurface) P12Socc;
   {
     std::vector< std::vector<mobius::xyz> >
       poles = { {p00, p01},
@@ -2020,9 +2044,113 @@ int MISC_TestCoons(const Handle(asiTcl_Interp)& interp,
     // Construct directly.
     P12S = new mobius::geom_BSplineSurface(poles, T, T, 1, 1);
 
+    // Convert to OCC form to run IncreaseDegree() method which does not
+    // currently exist in Mobius.
+    P12Socc = mobius::cascade::GetOpenCascadeBSurface(P12S);
+
+    // Elevate degree.
+    P12Socc->IncreaseDegree(3, 3);
+
+    // Convert back to Mobius.
+    P12S = mobius::cascade::GetMobiusBSurface(P12Socc);
+
     // Draw.
     interp->GetPlotter().REDRAW_SURFACE("P12S", mobius::cascade::GetOpenCascadeBSurface(P12S), Color_Blue);
   }
+
+  enum PS
+  {
+    PS_P1S = 0,
+    PS_P2S,
+    PS_P12S
+  };
+
+  // All U knots.
+  std::vector< std::vector<double> >
+    knotVectors_U = { P1S->GetKnots_U(),
+                      P2S->GetKnots_U(),
+                      P12S->GetKnots_U() };
+
+  // All V knots.
+  std::vector< std::vector<double> >
+    knotVectors_V = { P1S->GetKnots_V(),
+                      P2S->GetKnots_V(),
+                      P12S->GetKnots_V() };
+
+  // Compute addendum knots.
+  mobius::bspl_UnifyKnots unifyKnots;
+  //
+  std::vector< std::vector<double> > U_addendums = unifyKnots(knotVectors_U);
+  std::vector< std::vector<double> > V_addendums = unifyKnots(knotVectors_V);
+
+  // Insert U knots to P1S.
+  for ( size_t ii = 0; ii < U_addendums[PS_P1S].size(); ++ii )
+    P1S->InsertKnot_U(U_addendums[PS_P1S][ii]);
+
+  // Insert V knots to P1S.
+  for ( size_t ii = 0; ii < V_addendums[PS_P1S].size(); ++ii )
+    P1S->InsertKnot_V(V_addendums[PS_P1S][ii]);
+
+  // Insert U knots to P2S.
+  for ( size_t ii = 0; ii < U_addendums[PS_P2S].size(); ++ii )
+    P2S->InsertKnot_U(U_addendums[PS_P2S][ii]);
+
+  // Insert V knots to P2S.
+  for ( size_t ii = 0; ii < V_addendums[PS_P2S].size(); ++ii )
+    P2S->InsertKnot_V(V_addendums[PS_P2S][ii]);
+
+  // Insert U knots to P12S.
+  for ( size_t ii = 0; ii < U_addendums[PS_P12S].size(); ++ii )
+    P12S->InsertKnot_U(U_addendums[PS_P12S][ii]);
+
+  // Insert V knots to P12S.
+  for ( size_t ii = 0; ii < V_addendums[PS_P12S].size(); ++ii )
+    P12S->InsertKnot_V(V_addendums[PS_P12S][ii]);
+
+  // Common knots.
+  const std::vector<double>& Ucommon = P1S->GetKnots_U();
+  const std::vector<double>& Vcommon = P1S->GetKnots_V();
+
+  // Common degrees.
+  const int pcommon = P1S->GetDegree_U();
+  const int qcommon = P1S->GetDegree_V();
+
+  // Draw.
+  interp->GetPlotter().REDRAW_SURFACE("P1S",  mobius::cascade::GetOpenCascadeBSurface(P1S),  Color_Blue);
+  interp->GetPlotter().REDRAW_SURFACE("P2S",  mobius::cascade::GetOpenCascadeBSurface(P2S),  Color_Blue);
+  interp->GetPlotter().REDRAW_SURFACE("P12S", mobius::cascade::GetOpenCascadeBSurface(P12S), Color_Blue);
+
+  // Now all patches are of the same degrees and defined on identical knot
+  // vectors. It means that all patches are defined on the same basis. Therefore,
+  // we can now produce a Boolean sum.
+
+  const std::vector< std::vector<mobius::xyz> >& polesP1S  = P1S->GetPoles();
+  const std::vector< std::vector<mobius::xyz> >& polesP2S  = P2S->GetPoles();
+  const std::vector< std::vector<mobius::xyz> >& polesP12S = P12S->GetPoles();
+
+  const int numPolesU = P1S->GetNumOfPoles_U();
+  const int numPolesV = P1S->GetNumOfPoles_V();
+
+  // Compute the resulting poles.
+  std::vector< std::vector<mobius::xyz> > resPoles;
+  //
+  for ( int i = 0; i < numPolesU; ++i )
+  {
+    std::vector<mobius::xyz> col;
+    for ( int j = 0; j < numPolesV; ++j )
+    {
+      mobius::xyz resPole = polesP1S[i][j] + polesP2S[i][j] - polesP12S[i][j];
+      //
+      col.push_back(resPole);
+    }
+    resPoles.push_back(col);
+  }
+
+  // Construct the resulting surface.
+  mobius::ptr<mobius::bsurf>
+    mobRes = new mobius::bsurf(resPoles, Ucommon, Vcommon, pcommon, qcommon);
+  //
+  interp->GetPlotter().REDRAW_SURFACE("res", mobius::cascade::GetOpenCascadeBSurface(mobRes), Color_Default);
 
   return TCL_OK;
 }

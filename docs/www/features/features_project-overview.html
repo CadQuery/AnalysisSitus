@@ -39,8 +39,28 @@
 </tr>
 </table>
 
+<h1>Overview</h1>
+
 <p>
+Analysis Situs implements Document Model of operating with data. All data
+objects are organized hierarchically into the project tree. Some objects
+are structural and cannot be affected (e.g. <a href="./features_part-node.html">Part Node</a>).
+Some other objects are constructed dynamically and can be dynamically removed.
 The data model of Analysis Situs is entirely based on <a href="https://gitlab.com/ssv/active-data">Active Data framework</a>.
+This framework comes with such handy ready-to-use mechanisms as:
+</p>
+
+<ol>
+  <li>Open/save.</li>
+  <li>Undo/redo.</li>
+  <li>Copy/paste.</li>
+  <li>Transactional approach to data modification.</li>
+  <li>Parametric dependencies between data objects.</li>
+</ol>
+
+<h1>Dump contents</h1>
+
+<p>
 To dump the internals of your current project, use <span class="code-inline">dump-project</span> command.
 </p>
 

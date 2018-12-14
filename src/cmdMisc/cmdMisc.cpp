@@ -89,7 +89,10 @@
   #include <mobius/geom_FairBCurve.h>
   #include <mobius/geom_FairBSurf.h>
   #include <mobius/geom_InterpolateMultiCurve.h>
+  #include <mobius/geom_MakeBicubicBSurf.h>
   #include <mobius/geom_SkinSurface.h>
+
+  using namespace mobius;
 #endif
 
 #undef DRAW_DEBUG
@@ -1594,7 +1597,6 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  
   return TCL_OK;
 }
 
@@ -2154,6 +2156,472 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
 
   return TCL_OK;
 }
+
+//-----------------------------------------------------------------------------
+
+int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  /* ===================
+   *  Build rail curves
+   * =================== */
+
+  mobius::ptr<mobius::bcurve> c0, c1, b0, b1;
+  mobius::xyz p00, p01, p10, p11;
+  std::vector<mobius::xyz> c0_D1, c1_D1, b0_D1, b1_D1;
+
+  // Build `c` curves.
+  {
+    std::vector<mobius::xyz> c0_pts = {
+      mobius::xyz(0.1,  0.,  0.),
+      mobius::xyz(0.,   1.,  0.),
+      mobius::xyz(0.1,  2.,  0.),
+      mobius::xyz(0.1,  3.,  0.)
+    };
+    //
+    c0_D1 = {
+      mobius::xyz(0.,  0.,  3.),
+      mobius::xyz(0.,  0.,  3.),
+      mobius::xyz(0.,  0.,  3.),
+      mobius::xyz(0.,  0.,  3.)
+    };
+
+    std::vector<mobius::xyz> c1_pts = {
+      mobius::xyz(5.1,  0.,  0.),
+      mobius::xyz(5.,   1.,  0.),
+      mobius::xyz(5.1,  2.,  0.),
+      mobius::xyz(5.,   3.,  0.)
+    };
+    //
+    c1_D1 = {
+      mobius::xyz(0.,  0.,  3.),
+      mobius::xyz(0.,  0.,  3.),
+      mobius::xyz(0.,  0.,  3.),
+      mobius::xyz(0.,  0.,  3.)
+    };
+
+    // Corner points.
+    p00 = c0_pts[0];
+    p01 = c1_pts[0];
+    p10 = c0_pts[c0_pts.size() - 1];
+    p11 = c1_pts[c1_pts.size() - 1];
+
+    interp->GetPlotter().REDRAW_POINT("p00", mobius::cascade::GetOpenCascadePnt(p00), Color_Yellow);
+    interp->GetPlotter().REDRAW_POINT("p01", mobius::cascade::GetOpenCascadePnt(p01), Color_Yellow);
+    interp->GetPlotter().REDRAW_POINT("p10", mobius::cascade::GetOpenCascadePnt(p10), Color_Yellow);
+    interp->GetPlotter().REDRAW_POINT("p11", mobius::cascade::GetOpenCascadePnt(p11), Color_Yellow);
+
+    // Build sample curves.
+    mobius::geom_InterpolateMultiCurve multiInterp(3,
+                                                   mobius::ParamsSelection_Centripetal,
+                                                   mobius::KnotsSelection_Average);
+    //
+    multiInterp.AddRow(c0_pts);
+    multiInterp.AddRow(c1_pts);
+
+    if ( multiInterp.Perform() )
+    {
+      // Get rail curves.
+      c0 = multiInterp.GetResult(0);
+      c1 = multiInterp.GetResult(1);
+      //
+      interp->GetPlotter().REDRAW_CURVE("c0", mobius::cascade::GetOpenCascadeBCurve(c0), Color_Default);
+      interp->GetPlotter().REDRAW_CURVE("c1", mobius::cascade::GetOpenCascadeBCurve(c1), Color_Default);
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Multi-curve interpolation failed.");
+      return TCL_ERROR;
+    }
+  }
+
+  // Build `b` curves.
+  {
+    std::vector<mobius::xyz> b0_pts = {
+      p00,
+      mobius::xyz(2.1, -0.3, 0.),
+      mobius::xyz(4.1,  0.1, 0.5),
+      p01
+    };
+    //
+    b0_D1 = {
+      mobius::xyz(0.,  1.,  0.),
+      mobius::xyz(0.,  1.,  0.),
+      mobius::xyz(0.,  1.,  0.),
+      mobius::xyz(0.,  1.,  0.)
+    };
+
+    std::vector<mobius::xyz> b1_pts = {
+      p10,
+      mobius::xyz(3., 3.2, -0.1),
+      mobius::xyz(5., 2.8, 0.5),
+      p11
+    };
+    //
+    b1_D1 = {
+      mobius::xyz(0.,  2.,  0.),
+      mobius::xyz(0.,  2.,  0.),
+      mobius::xyz(0.,  2.,  0.),
+      mobius::xyz(0.,  2.,  0.)
+    };
+
+    // Build sample curves.
+    mobius::geom_InterpolateMultiCurve multiInterp(3,
+                                                   mobius::ParamsSelection_Centripetal,
+                                                   mobius::KnotsSelection_Average);
+    //
+    multiInterp.AddRow(b0_pts);
+    multiInterp.AddRow(b1_pts);
+
+    if ( multiInterp.Perform() )
+    {
+      // Get rail curves.
+      b0 = multiInterp.GetResult(0);
+      b1 = multiInterp.GetResult(1);
+      //
+      interp->GetPlotter().REDRAW_CURVE("b0", mobius::cascade::GetOpenCascadeBCurve(b0), Color_Default);
+      interp->GetPlotter().REDRAW_CURVE("b1", mobius::cascade::GetOpenCascadeBCurve(b1), Color_Default);
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Multi-curve interpolation failed.");
+      return TCL_ERROR;
+    }
+  }
+
+  /* =====================
+   *  Make P1 by skinning
+   * ===================== */
+
+  ptr<bsurf> P1S;
+  {
+    std::vector< ptr<bcurve> > rails = {c0, c1};
+
+    // Skin ruled surface through the rail curves.
+    geom_SkinSurface skinner(rails, 2, false);
+    //
+    skinner.AddLeadingTangencies(c0_D1);
+    skinner.AddTrailingTangencies(c1_D1);
+    //
+    if ( !skinner.Perform() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot build skinning surface.");
+      return TCL_ERROR;
+    }
+    //
+    P1S = skinner.GetResult();
+
+    // Convert to OCC form to run IncreaseDegree() method which does not
+    // currently exist in Mobius.
+    Handle(Geom_BSplineSurface) P1Socc = mobius::cascade::GetOpenCascadeBSurface(P1S);
+
+    // Elevate degree.
+    P1Socc->IncreaseDegree(3, 3);
+
+    // Convert back to Mobius.
+    P1S = mobius::cascade::GetMobiusBSurface(P1Socc);
+  }
+
+  // Draw.
+  interp->GetPlotter().REDRAW_SURFACE("P1", cascade::GetOpenCascadeBSurface(P1S), Color_White);
+
+  /* =====================
+   *  Make P2 by skinning
+   * ===================== */
+
+  ptr<bsurf> P2S;
+  {
+    std::vector< ptr<bcurve> > rails = {b0, b1};
+
+    // Skin ruled surface through the rail curves.
+    geom_SkinSurface skinner(rails, 2, false);
+    //
+    skinner.AddLeadingTangencies(b0_D1);
+    skinner.AddTrailingTangencies(b1_D1);
+    //
+    if ( !skinner.Perform() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot build skinning surface.");
+      return TCL_ERROR;
+    }
+    //
+    P2S = skinner.GetResult();
+
+    // Flip UV coordinates of P2S to be compliant with other surfaces.
+    P2S->ExchangeUV();
+
+    // Convert to OCC form to run IncreaseDegree() method which does not
+    // currently exist in Mobius.
+    Handle(Geom_BSplineSurface) P2Socc = mobius::cascade::GetOpenCascadeBSurface(P2S);
+
+    // Elevate degree.
+    P2Socc->IncreaseDegree(3, 3);
+
+    // Convert back to Mobius.
+    P2S = mobius::cascade::GetMobiusBSurface(P2Socc);
+  }
+
+  // Draw.
+  interp->GetPlotter().REDRAW_SURFACE("P2", cascade::GetOpenCascadeBSurface(P2S), Color_White);
+
+  /* ============================================
+   *  Make P12 as bicubic patch with constraints
+   * ============================================ */
+
+  // Define constraints.
+  const xyz S00        = p00;
+  const xyz S01        = p01;
+  const xyz S10        = p10;
+  const xyz S11        = p11;
+  //
+  const xyz dS_du00    = b0_D1[0];
+  const xyz dS_du01    = b0_D1[b0_D1.size() - 1];
+  const xyz dS_du10    = b1_D1[0];
+  const xyz dS_du11    = b1_D1[b1_D1.size() - 1];
+  //
+  const xyz dS_dv00    = c0_D1[0];
+  const xyz dS_dv01    = c1_D1[0];
+  const xyz dS_dv10    = c0_D1[c0_D1.size() - 1];
+  const xyz dS_dv11    = c1_D1[c1_D1.size() - 1];
+  //
+  const xyz d2S_dudv00 = xyz(0., 0., 1.);
+  const xyz d2S_dudv01 = xyz(0., 0., 1.);
+  const xyz d2S_dudv10 = xyz(0., 0., 1.);
+  const xyz d2S_dudv11 = xyz(0., 0., 1.);
+
+  geom_MakeBicubicBSurf mkBicubic(S00, S01, S10, S11,
+                                  dS_du00, dS_du01, dS_du10, dS_du11,
+                                  dS_dv00, dS_dv01, dS_dv10, dS_dv11,
+                                  d2S_dudv00, d2S_dudv01, d2S_dudv10, d2S_dudv11, NULL, NULL);
+
+  if ( !mkBicubic.Perform() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to make a bicubic patch.");
+    return TCL_ERROR;
+  }
+
+  const ptr<bsurf>& P12S = mkBicubic.GetResult();
+  //
+  interp->GetPlotter().REDRAW_SURFACE("P12", cascade::GetOpenCascadeBSurface(P12S), Color_White);
+
+  // Some tests.
+  xyz P12_S, P12S_d1U, P12S_d1V;
+  P12S->Eval_D1(0., 0., P12_S, P12S_d1U, P12S_d1V);
+  //
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "S(0,0) = (%1,%2,%3)." << P12_S.X() << P12_S.Y() << P12_S.Z() );
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "dS_dU(0,0) = (%1,%2,%3)." << P12S_d1U.X() << P12S_d1U.Y() << P12S_d1U.Z() );
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "dS_dV(0,0) = (%1,%2,%3)." << P12S_d1V.X() << P12S_d1V.Y() << P12S_d1V.Z() );
+
+  /* =========================================
+   *  Unify knot vectors of P1S, P2S and P12S
+   * ========================================= */
+
+  enum PS
+  {
+    PS_P1S = 0,
+    PS_P2S,
+    PS_P12S
+  };
+
+  // All U knots.
+  std::vector< std::vector<double> >
+    knotVectors_U = { P1S->GetKnots_U(),
+                      P2S->GetKnots_U(),
+                      P12S->GetKnots_U() };
+
+  // All V knots.
+  std::vector< std::vector<double> >
+    knotVectors_V = { P1S->GetKnots_V(),
+                      P2S->GetKnots_V(),
+                      P12S->GetKnots_V() };
+
+  // Compute addendum knots.
+  mobius::bspl_UnifyKnots unifyKnots;
+  //
+  std::vector< std::vector<double> > U_addendums = unifyKnots(knotVectors_U);
+  std::vector< std::vector<double> > V_addendums = unifyKnots(knotVectors_V);
+
+  // Insert U knots to P1S.
+  for ( size_t ii = 0; ii < U_addendums[PS_P1S].size(); ++ii )
+    P1S->InsertKnot_U(U_addendums[PS_P1S][ii]);
+
+  // Insert V knots to P1S.
+  for ( size_t ii = 0; ii < V_addendums[PS_P1S].size(); ++ii )
+    P1S->InsertKnot_V(V_addendums[PS_P1S][ii]);
+
+  // Insert U knots to P2S.
+  for ( size_t ii = 0; ii < U_addendums[PS_P2S].size(); ++ii )
+    P2S->InsertKnot_U(U_addendums[PS_P2S][ii]);
+
+  // Insert V knots to P2S.
+  for ( size_t ii = 0; ii < V_addendums[PS_P2S].size(); ++ii )
+    P2S->InsertKnot_V(V_addendums[PS_P2S][ii]);
+
+  // Insert U knots to P12S.
+  for ( size_t ii = 0; ii < U_addendums[PS_P12S].size(); ++ii )
+    P12S->InsertKnot_U(U_addendums[PS_P12S][ii]);
+
+  // Insert V knots to P12S.
+  for ( size_t ii = 0; ii < V_addendums[PS_P12S].size(); ++ii )
+    P12S->InsertKnot_V(V_addendums[PS_P12S][ii]);
+
+  // Common knots.
+  const std::vector<double>& Ucommon = P1S->GetKnots_U();
+  const std::vector<double>& Vcommon = P1S->GetKnots_V();
+
+  // Common degrees.
+  const int pcommon = P1S->GetDegree_U();
+  const int qcommon = P1S->GetDegree_V();
+
+  // Draw.
+  interp->GetPlotter().REDRAW_SURFACE("P1S",  mobius::cascade::GetOpenCascadeBSurface(P1S),  Color_Blue);
+  interp->GetPlotter().REDRAW_SURFACE("P2S",  mobius::cascade::GetOpenCascadeBSurface(P2S),  Color_Blue);
+  interp->GetPlotter().REDRAW_SURFACE("P12S", mobius::cascade::GetOpenCascadeBSurface(P12S), Color_Blue);
+
+  // Now all patches are of the same degrees and defined on identical knot
+  // vectors. It means that all patches are defined on the same basis. Therefore,
+  // we can now produce a Boolean sum.
+
+  const std::vector< std::vector<mobius::xyz> >& polesP1S  = P1S->GetPoles();
+  const std::vector< std::vector<mobius::xyz> >& polesP2S  = P2S->GetPoles();
+  const std::vector< std::vector<mobius::xyz> >& polesP12S = P12S->GetPoles();
+
+  const int numPolesU = P1S->GetNumOfPoles_U();
+  const int numPolesV = P1S->GetNumOfPoles_V();
+
+  // Compute the resulting poles.
+  std::vector< std::vector<mobius::xyz> > resPoles;
+  //
+  for ( int i = 0; i < numPolesU; ++i )
+  {
+    std::vector<mobius::xyz> col;
+    for ( int j = 0; j < numPolesV; ++j )
+    {
+      mobius::xyz resPole = polesP1S[i][j] + polesP2S[i][j] - polesP12S[i][j];
+      //
+      col.push_back(resPole);
+    }
+    resPoles.push_back(col);
+  }
+
+  // Construct the resulting surface.
+  mobius::ptr<mobius::bsurf>
+    mobRes = new mobius::bsurf(resPoles, Ucommon, Vcommon, pcommon, qcommon);
+  //
+  interp->GetPlotter().REDRAW_SURFACE("res", mobius::cascade::GetOpenCascadeBSurface(mobRes), Color_Default);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int MISC_TestSkinning1(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  /* ===================
+   *  Build rail curves
+   * =================== */
+
+  mobius::ptr<mobius::bcurve> c0, c1, cn;
+
+  std::vector<mobius::xyz> c0_D1, cn_D1;
+
+  // Build curves.
+  {
+    std::vector<mobius::xyz> c0_pts = {
+      mobius::xyz(0.1,  0.,  0.),
+      mobius::xyz(0.,   1.,  0.),
+      mobius::xyz(0.1,  2.,  0.)
+    };
+    //
+    c0_D1 = {
+      mobius::xyz(0.,  0.,  3.),
+      mobius::xyz(0.,  0.,  3.),
+      mobius::xyz(0.,  0.,  3.)
+    };
+
+    std::vector<mobius::xyz> c1_pts = {
+      mobius::xyz(2.1,  0.,  0.),
+      mobius::xyz(2.2,  1.,  1.),
+      mobius::xyz(2.1,  2.,  0.)
+    };
+
+    std::vector<mobius::xyz> cn_pts = {
+      mobius::xyz(5.1,  0.,  0.),
+      mobius::xyz(5.,   1.,  0.),
+      mobius::xyz(5.1,  2.,  0.)
+    };
+    //
+    cn_D1 = {
+      mobius::xyz(0.,  0.,  3.),
+      mobius::xyz(0.,  0.,  3.),
+      mobius::xyz(0.,  0.,  3.)
+    };
+
+    // Interpolate points to build curves.
+    mobius::geom_InterpolateMultiCurve multiInterp(2,
+                                                   mobius::ParamsSelection_Centripetal,
+                                                   mobius::KnotsSelection_Average);
+    //
+    multiInterp.AddRow(c0_pts);
+    multiInterp.AddRow(c1_pts);
+    multiInterp.AddRow(cn_pts);
+
+    if ( multiInterp.Perform() )
+    {
+      // Get rail curves.
+      c0 = multiInterp.GetResult(0);
+      c1 = multiInterp.GetResult(1);
+      cn = multiInterp.GetResult(2);
+      //
+      interp->GetPlotter().REDRAW_CURVE("c0", mobius::cascade::GetOpenCascadeBCurve(c0), Color_Default);
+      interp->GetPlotter().REDRAW_CURVE("c1", mobius::cascade::GetOpenCascadeBCurve(c1), Color_Default);
+      interp->GetPlotter().REDRAW_CURVE("cn", mobius::cascade::GetOpenCascadeBCurve(cn), Color_Default);
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Multi-curve interpolation failed.");
+      return TCL_ERROR;
+    }
+  }
+
+  /* ========================
+   *  Build skinning surface
+   * ======================== */
+
+  std::vector< mobius::ptr<mobius::bcurve> > rails = {c0, c1, cn};
+
+  // Skin ruled surface through the rail curves.
+  mobius::geom_SkinSurface skinner(rails, 2, false);
+  //
+  skinner.AddLeadingTangencies(c0_D1);
+  skinner.AddTrailingTangencies(cn_D1);
+  //
+  if ( !skinner.Perform() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot build skinning surface.");
+    return TCL_ERROR;
+  }
+  //
+  const mobius::ptr<mobius::bsurf>& mobRes = skinner.GetResult();
+
+  // Draw.
+  interp->GetPlotter().REDRAW_SURFACE("res", mobius::cascade::GetOpenCascadeBSurface(mobRes), Color_White);
+
+  return TCL_OK;
+}
 #endif
 
 //-----------------------------------------------------------------------------
@@ -2292,7 +2760,7 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("test-fair",
     //
     "test-fair fid\n"
-    "\t Test fairing function.",
+    "\t Test for fairing function.",
     //
     __FILE__, group, MISC_TestFair);
 
@@ -2300,9 +2768,25 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("test-coons1",
     //
     "test-coons1\n"
-    "\t Test Coons patch.",
+    "\t Test for Coons patch.",
     //
     __FILE__, group, MISC_TestCoons1);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-coons2",
+    //
+    "test-coons2\n"
+    "\t Test for Coons patch.",
+    //
+    __FILE__, group, MISC_TestCoons2);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-skinning1",
+    //
+    "test-skinning1\n"
+    "\t Test for skinning.",
+    //
+    __FILE__, group, MISC_TestSkinning1);
 #endif
 }
 

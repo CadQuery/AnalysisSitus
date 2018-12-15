@@ -85,7 +85,8 @@
   #include <mobius/cascade.h>
   #include <mobius/core_HeapAlloc.h>
   #include <mobius/geom_BSplineCurve.h>
-  #include <mobius/geom_CoonsSurface.h>
+  #include <mobius/geom_CoonsSurfaceCubic.h>
+  #include <mobius/geom_CoonsSurfaceLinear.h>
   #include <mobius/geom_FairBCurve.h>
   #include <mobius/geom_FairBSurf.h>
   #include <mobius/geom_InterpolateMultiCurve.h>
@@ -99,6 +100,59 @@
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif
+
+//-----------------------------------------------------------------------------
+
+void DrawSurfPts(const Handle(asiTcl_Interp)&   interp,
+                 const ptr<geom_Surface>&       surface,
+                 const TCollection_AsciiString& name)
+{
+  // Sample patch.
+  Handle(asiAlgo_BaseCloud<double>) pts = new asiAlgo_BaseCloud<double>;
+  //
+  const double uMin = surface->GetMinParameter_U();
+  const double uMax = surface->GetMaxParameter_U();
+  const double vMin = surface->GetMinParameter_V();
+  const double vMax = surface->GetMaxParameter_V();
+  //
+  const double deltaU = (uMax - uMin)/100.;
+  const double deltaV = (vMax - vMin)/100.;
+  //
+  double u = uMin;
+  //
+  bool stopU = false;
+  do
+  {
+    if ( u > uMax )
+      stopU = true;
+    else
+    {
+      double v = vMin;
+      //
+      bool stopV = false;
+      do
+      {
+        if ( v > vMax )
+          stopV = true;
+        else
+        {
+          mobius::xyz P;
+          surface->Eval(u, v, P);
+
+          pts->AddElement( P.X(), P.Y(), P.Z() );
+
+          v += deltaV;
+        }
+      }
+      while ( !stopV );
+
+      u += deltaU;
+    }
+  }
+  while ( !stopU );
+  //
+  interp->GetPlotter().REDRAW_POINTS(name, pts->GetCoordsArray(), Color_White);
+}
 
 //-----------------------------------------------------------------------------
 
@@ -1802,17 +1856,21 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
   // Build `c` curves.
   {
     std::vector<mobius::xyz> c0_pts = {
-      mobius::xyz(0., 0., 0.),
-      mobius::xyz(1., 1., 1.),
-      mobius::xyz(1., 2., 2.),
-      mobius::xyz(2., 3., 4.)
+      mobius::xyz(0.,  0.,  0.),
+      mobius::xyz(0.,  1.,  0.1),
+      mobius::xyz(0.,  2.,  0.2),
+      mobius::xyz(0.,  3.,  0.3),
+      mobius::xyz(0.,  4.,  0.2),
+      mobius::xyz(0.,  4.5, 0.)
     };
 
     std::vector<mobius::xyz> c1_pts = {
-      mobius::xyz(5., 0., 0.),
-      mobius::xyz(5., 1., 2.),
-      mobius::xyz(5., 2., 2.),
-      mobius::xyz(6., 3., 5.)
+      mobius::xyz(5.,  0.,  0.),
+      mobius::xyz(5.,  1.,  0.2),
+      mobius::xyz(5.,  2.,  0.1),
+      mobius::xyz(5.,  3.,  0.2),
+      mobius::xyz(5.,  4.,  0.1),
+      mobius::xyz(5.,  5.,  0.)
     };
 
     // Corner points.
@@ -1853,17 +1911,19 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
   // Build `b` curves.
   {
     std::vector<mobius::xyz> b0_pts = {
-      mobius::xyz(0.,   0.,  0.),
-      mobius::xyz(2.1, -0.3, 0.),
-      mobius::xyz(4.1,  0.1, 0.5),
-      mobius::xyz(5.,   0.,  0.)
+      p00,
+      mobius::xyz(2., 0.0, 0.1),
+      mobius::xyz(3., 0.0, 0.2),
+      mobius::xyz(4., 0.0, 0.1),
+      p01
     };
 
     std::vector<mobius::xyz> b1_pts = {
-      mobius::xyz(2.,  3.,  4.),
-      mobius::xyz(3.,  3.2, 4.1),
-      mobius::xyz(5.,  2.8, 4.5),
-      mobius::xyz(6.,  3.,  5.)
+      p10,
+      mobius::xyz(2., 5.0, 0.2),
+      mobius::xyz(3., 5.0, 0.1),
+      mobius::xyz(4., 5.0, 0.2),
+      p11
     };
 
     // Build sample curves.
@@ -1895,54 +1955,11 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
    * =================== */
 
   // Build Coons surface.
-  mobius::ptr<mobius::geom_CoonsSurface>
-    coons = new mobius::geom_CoonsSurface(c0, c1, b0, b1, p00, p01, p10, p11);
+  mobius::ptr<mobius::geom_CoonsSurfaceLinear>
+    coons = new mobius::geom_CoonsSurfaceLinear(c0, c1, b0, b1, p00, p01, p10, p11);
 
   // Sample patch.
-  Handle(asiAlgo_BaseCloud<double>) pts = new asiAlgo_BaseCloud<double>;
-  //
-  const double uMin = coons->GetMinParameter_U();
-  const double uMax = coons->GetMaxParameter_U();
-  const double vMin = coons->GetMinParameter_V();
-  const double vMax = coons->GetMaxParameter_V();
-  //
-  const double deltaU = (uMax - uMin)/100.;
-  const double deltaV = (vMax - vMin)/100.;
-  //
-  double u = uMin;
-  //
-  bool stopU = false;
-  do
-  {
-    if ( u > uMax )
-      stopU = true;
-    else
-    {
-      double v = vMin;
-      //
-      bool stopV = false;
-      do
-      {
-        if ( v > vMax )
-          stopV = true;
-        else
-        {
-          mobius::xyz P;
-          coons->Eval(u, v, P);
-
-          pts->AddElement( P.X(), P.Y(), P.Z() );
-
-          v += deltaV;
-        }
-      }
-      while ( !stopV );
-
-      u += deltaU;
-    }
-  }
-  while ( !stopU );
-  //
-  interp->GetPlotter().DRAW_POINTS(pts->GetCoordsArray(), Color_White, "coons");
+  DrawSurfPts(interp, coons, "coons-pts");
 
   // Use constrained filling for demo.
   std::vector<Handle(Geom_BSplineCurve)>
@@ -2152,7 +2169,7 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
   mobius::ptr<mobius::bsurf>
     mobRes = new mobius::bsurf(resPoles, Ucommon, Vcommon, pcommon, qcommon);
   //
-  interp->GetPlotter().REDRAW_SURFACE("res", mobius::cascade::GetOpenCascadeBSurface(mobRes), Color_Default);
+  interp->GetPlotter().REDRAW_SURFACE("res-simple", mobius::cascade::GetOpenCascadeBSurface(mobRes), Color_Blue);
 
   return TCL_OK;
 }
@@ -2179,37 +2196,55 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
   // Build `c` curves.
   {
     std::vector<mobius::xyz> c0_pts = {
-      mobius::xyz(0.1,  0.,  0.),
-      mobius::xyz(0.,   1.,  0.),
-      mobius::xyz(0.1,  2.,  0.),
-      mobius::xyz(0.1,  3.,  0.)
+      mobius::xyz(0.,  0.,  0.),
+      mobius::xyz(0.,  1.,  0.1),
+      mobius::xyz(0.,  2.,  0.2),
+      mobius::xyz(0.,  3.,  0.3),
+      mobius::xyz(0.,  4.,  0.2),
+      mobius::xyz(0.,  4.5, 0.)
     };
     //
     c0_D1 = {
-      mobius::xyz(0.,  0.,  3.),
-      mobius::xyz(0.,  0.,  3.),
-      mobius::xyz(0.,  0.,  3.),
-      mobius::xyz(0.,  0.,  3.)
+      mobius::xyz(0.,  0.,  1.),
+      mobius::xyz(0.,  0.,  1.),
+      mobius::xyz(0.,  0.,  1.),
+      mobius::xyz(0.,  0.,  1.),
+      mobius::xyz(0.,  0.,  1.),
+      mobius::xyz(0.,  0.,  1.)
     };
+    //
+    for ( size_t k = 0; k < c0_D1.size(); ++k )
+      interp->GetPlotter().DRAW_VECTOR_AT(cascade::GetOpenCascadePnt(c0_pts[k]),
+                                          cascade::GetOpenCascadeVec(c0_D1[k]),
+                                          Color_Red, "c0_D1");
 
     std::vector<mobius::xyz> c1_pts = {
-      mobius::xyz(5.1,  0.,  0.),
-      mobius::xyz(5.,   1.,  0.),
-      mobius::xyz(5.1,  2.,  0.),
-      mobius::xyz(5.,   3.,  0.)
+      mobius::xyz(5.,  0.,  0.),
+      mobius::xyz(5.,  1.,  0.2),
+      mobius::xyz(5.,  2.,  0.1),
+      mobius::xyz(5.,  3.,  0.2),
+      mobius::xyz(5.,  4.,  0.1),
+      mobius::xyz(5.,  5.,  0.)
     };
     //
     c1_D1 = {
-      mobius::xyz(0.,  0.,  3.),
-      mobius::xyz(0.,  0.,  3.),
-      mobius::xyz(0.,  0.,  3.),
-      mobius::xyz(0.,  0.,  3.)
+      mobius::xyz(1.,  0.,  0.),
+      mobius::xyz(1.,  0.,  0.),
+      mobius::xyz(1.,  0.,  0.),
+      mobius::xyz(1.,  0.,  0.),
+      mobius::xyz(1.,  0.,  0.),
+      mobius::xyz(1.,  0.,  0.)
     };
+    //
+    for ( size_t k = 0; k < c1_D1.size(); ++k )
+      interp->GetPlotter().DRAW_VECTOR_AT(cascade::GetOpenCascadePnt(c1_pts[k]),
+                                          cascade::GetOpenCascadeVec(c1_D1[k]),
+                                          Color_Red, "c1_D1");
 
     // Corner points.
     p00 = c0_pts[0];
-    p01 = c1_pts[0];
     p10 = c0_pts[c0_pts.size() - 1];
+    p01 = c1_pts[0];
     p11 = c1_pts[c1_pts.size() - 1];
 
     interp->GetPlotter().REDRAW_POINT("p00", mobius::cascade::GetOpenCascadePnt(p00), Color_Yellow);
@@ -2245,8 +2280,9 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
   {
     std::vector<mobius::xyz> b0_pts = {
       p00,
-      mobius::xyz(2.1, -0.3, 0.),
-      mobius::xyz(4.1,  0.1, 0.5),
+      mobius::xyz(2., 0.0, 0.1),
+      mobius::xyz(3., 0.0, 0.2),
+      mobius::xyz(4., 0.0, 0.1),
       p01
     };
     //
@@ -2254,22 +2290,35 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
       mobius::xyz(0.,  1.,  0.),
       mobius::xyz(0.,  1.,  0.),
       mobius::xyz(0.,  1.,  0.),
+      mobius::xyz(0.,  1.,  0.),
       mobius::xyz(0.,  1.,  0.)
     };
+    //
+    for ( size_t k = 0; k < b0_D1.size(); ++k )
+      interp->GetPlotter().DRAW_VECTOR_AT(cascade::GetOpenCascadePnt(b0_pts[k]),
+                                          cascade::GetOpenCascadeVec(b0_D1[k]),
+                                          Color_Blue, "b0_D1");
 
     std::vector<mobius::xyz> b1_pts = {
       p10,
-      mobius::xyz(3., 3.2, -0.1),
-      mobius::xyz(5., 2.8, 0.5),
+      mobius::xyz(2., 5.0, 0.2),
+      mobius::xyz(3., 5.0, 0.1),
+      mobius::xyz(4., 5.0, 0.2),
       p11
     };
     //
     b1_D1 = {
-      mobius::xyz(0.,  2.,  0.),
-      mobius::xyz(0.,  2.,  0.),
-      mobius::xyz(0.,  2.,  0.),
-      mobius::xyz(0.,  2.,  0.)
+      mobius::xyz(0.,  1.,  0.),
+      mobius::xyz(0.,  1.,  0.),
+      mobius::xyz(0.,  1.,  0.),
+      mobius::xyz(0.,  1.,  0.),
+      mobius::xyz(0.,  1.,  0.)
     };
+    //
+    for ( size_t k = 0; k < b1_D1.size(); ++k )
+      interp->GetPlotter().DRAW_VECTOR_AT(cascade::GetOpenCascadePnt(b1_pts[k]),
+                                          cascade::GetOpenCascadeVec(b1_D1[k]),
+                                          Color_Blue, "b1_D1");
 
     // Build sample curves.
     mobius::geom_InterpolateMultiCurve multiInterp(3,
@@ -2304,7 +2353,7 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
     std::vector< ptr<bcurve> > rails = {c0, c1};
 
     // Skin ruled surface through the rail curves.
-    geom_SkinSurface skinner(rails, 2, false);
+    geom_SkinSurface skinner(rails, 3, false);
     //
     skinner.AddLeadingTangencies(c0_D1);
     skinner.AddTrailingTangencies(c1_D1);
@@ -2320,9 +2369,6 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
     // Convert to OCC form to run IncreaseDegree() method which does not
     // currently exist in Mobius.
     Handle(Geom_BSplineSurface) P1Socc = mobius::cascade::GetOpenCascadeBSurface(P1S);
-
-    // Elevate degree.
-    P1Socc->IncreaseDegree(3, 3);
 
     // Convert back to Mobius.
     P1S = mobius::cascade::GetMobiusBSurface(P1Socc);
@@ -2340,7 +2386,7 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
     std::vector< ptr<bcurve> > rails = {b0, b1};
 
     // Skin ruled surface through the rail curves.
-    geom_SkinSurface skinner(rails, 2, false);
+    geom_SkinSurface skinner(rails, 3, false);
     //
     skinner.AddLeadingTangencies(b0_D1);
     skinner.AddTrailingTangencies(b1_D1);
@@ -2355,16 +2401,6 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
 
     // Flip UV coordinates of P2S to be compliant with other surfaces.
     P2S->ExchangeUV();
-
-    // Convert to OCC form to run IncreaseDegree() method which does not
-    // currently exist in Mobius.
-    Handle(Geom_BSplineSurface) P2Socc = mobius::cascade::GetOpenCascadeBSurface(P2S);
-
-    // Elevate degree.
-    P2Socc->IncreaseDegree(3, 3);
-
-    // Convert back to Mobius.
-    P2S = mobius::cascade::GetMobiusBSurface(P2Socc);
   }
 
   // Draw.
@@ -2390,10 +2426,45 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
   const xyz dS_dv10    = c0_D1[c0_D1.size() - 1];
   const xyz dS_dv11    = c1_D1[c1_D1.size() - 1];
   //
-  const xyz d2S_dudv00 = xyz(0., 0., 1.);
-  const xyz d2S_dudv01 = xyz(0., 0., 1.);
-  const xyz d2S_dudv10 = xyz(0., 0., 1.);
-  const xyz d2S_dudv11 = xyz(0., 0., 1.);
+  const xyz d2S_dudv00 = xyz(0., 0., 0.);
+  const xyz d2S_dudv01 = xyz(0., 0., 0.);
+  const xyz d2S_dudv10 = xyz(0., 0., 0.);
+  const xyz d2S_dudv11 = xyz(0., 0., 0.);
+
+  // Build Coons surface.
+  mobius::ptr<mobius::geom_CoonsSurfaceCubic>
+    coons = new mobius::geom_CoonsSurfaceCubic(c0, c1, b0, b1,
+                                               S00, S01, S10, S11,
+                                               dS_du00, dS_du01, dS_du10, dS_du11,
+                                               dS_dv00, dS_dv01, dS_dv10, dS_dv11,
+                                               d2S_dudv00, d2S_dudv01, d2S_dudv10, d2S_dudv11);
+
+  // Calculate finite difference to check constraints.
+  {
+    xyz S0, S1;
+    double u0 = 0.5;
+    double v0 = 0.0;
+    double delta = 1.0e-4;
+
+    coons->Eval(u0 - delta, v0, S0);
+    coons->Eval(u0 + delta, v0, S1);
+
+    xyz fd = (S1 - S0)/(2*delta);
+
+    std::cout << "fd = " << fd.X() << ", " << fd.Y() << ", " << fd.Z() << std::endl;
+  }
+
+  // Sample patch.
+  DrawSurfPts(interp, coons, "coons-pts");
+  //
+  coons->SetEvalComponent(geom_CoonsSurfaceCubic::EvalComponent_P1S);
+  DrawSurfPts(interp, coons, "P1S-pts");
+  //
+  coons->SetEvalComponent(geom_CoonsSurfaceCubic::EvalComponent_P2S);
+  DrawSurfPts(interp, coons, "P2S-pts");
+  //
+  coons->SetEvalComponent(geom_CoonsSurfaceCubic::EvalComponent_P12S);
+  DrawSurfPts(interp, coons, "P12S-pts");
 
   geom_MakeBicubicBSurf mkBicubic(S00, S01, S10, S11,
                                   dS_du00, dS_du01, dS_du10, dS_du11,
@@ -2514,7 +2585,10 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
   mobius::ptr<mobius::bsurf>
     mobRes = new mobius::bsurf(resPoles, Ucommon, Vcommon, pcommon, qcommon);
   //
-  interp->GetPlotter().REDRAW_SURFACE("res", mobius::cascade::GetOpenCascadeBSurface(mobRes), Color_Default);
+  interp->GetPlotter().REDRAW_SURFACE("res-constrained", mobius::cascade::GetOpenCascadeBSurface(mobRes), Color_Default);
+
+  xyz S, D1u, D1v;
+  mobRes->Eval_D1(0.5, 0, S, D1u, D1v);
 
   return TCL_OK;
 }

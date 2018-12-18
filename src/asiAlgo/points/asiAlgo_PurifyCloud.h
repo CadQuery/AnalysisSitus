@@ -242,7 +242,7 @@ private:
 
   asiAlgo_PurifyCloud ()                         {}
   asiAlgo_PurifyCloud (const asiAlgo_PurifyCloud&) {}
-  void operator=    (const asiAlgo_PurifyCloud&) {}
+  void operator=      (const asiAlgo_PurifyCloud&) {}
 
 };
 

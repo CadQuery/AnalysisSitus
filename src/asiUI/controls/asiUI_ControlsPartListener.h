@@ -71,9 +71,6 @@ protected slots:
 
 protected:
 
-  void
-    cleanViewers();
-
   virtual void
     reinitializeEverything(const bool fitAll = true);
 

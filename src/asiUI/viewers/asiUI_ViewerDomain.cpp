@@ -362,8 +362,6 @@ void asiUI_ViewerDomain::onKillEdges()
   const TopoDS_Shape& result = eraser.Result();
 
   // Save to model
-  m_model->Clear();
-  //
   m_model->OpenCommand();
   {
     asiEngine_Part(m_model).Update(result);
@@ -406,8 +404,6 @@ void asiUI_ViewerDomain::onJoinEdges()
   const TopoDS_Shape& result = joiner.Result();
 
   // Save to model
-  m_model->Clear();
-  //
   m_model->OpenCommand();
   {
     asiEngine_Part(m_model).Update(result);

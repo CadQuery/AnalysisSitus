@@ -99,6 +99,7 @@ private:
   {
     // Create Data Model
     this->Model = new asiEngine_Model;
+    //
     if ( !this->Model->NewEmpty() )
     {
       Standard_ProgramError::Raise("Cannot create Data Model");

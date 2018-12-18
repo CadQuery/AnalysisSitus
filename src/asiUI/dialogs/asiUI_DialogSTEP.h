@@ -76,6 +76,7 @@ public:
                    const Handle(asiData_PartNode)& part_n,
                    const Mode                      mode,
                    ActAPI_ProgressEntry            notifier,
+                   ActAPI_PlotterEntry             plotter,
                    QWidget*                        parent = NULL);
 
   virtual ~asiUI_DialogSTEP();
@@ -120,7 +121,8 @@ private:
   //
   Handle(ActAPI_IModel)    m_model;    //!< Data Model instance.
   Handle(asiData_PartNode) m_part;     //!< Part Node.
-  ActAPI_ProgressEntry     m_notifier; //!< Progress Notifier.
+  ActAPI_ProgressEntry     m_notifier; //!< Progress notifier.
+  ActAPI_PlotterEntry      m_plotter;  //!< Imperative plotter.
 
 };
 

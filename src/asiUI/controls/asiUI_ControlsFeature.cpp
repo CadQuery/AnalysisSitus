@@ -48,7 +48,6 @@
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_PLY.h>
 #include <asiAlgo_RehostFaces.h>
-#include <asiAlgo_STEP.h>
 #include <asiAlgo_SuppressFaces.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
@@ -777,9 +776,6 @@ void asiUI_ControlsFeature::onDetachSelected()
 
   const TopoDS_Shape& result = detacher.Result();
 
-  // Save to model
-  m_model->Clear();
-  //
   // Update part
   m_model->OpenCommand(); // tx start
   {
@@ -954,9 +950,6 @@ void asiUI_ControlsFeature::onDivideClosedEdges()
 
   const TopoDS_Shape& result = divider.Result();
 
-  // Save to model
-  m_model->Clear();
-  //
   // Update part
   m_model->OpenCommand(); // tx start
   {
@@ -995,9 +988,6 @@ void asiUI_ControlsFeature::onDivideAngle()
 
   const TopoDS_Shape& result = divider.Result();
 
-  // Save to model
-  m_model->Clear();
-  //
   // Update part
   m_model->OpenCommand(); // tx start
   {

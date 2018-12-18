@@ -83,7 +83,7 @@ int ENGINE_LoadStep(const Handle(asiTcl_Interp)& interp,
 
   // Read STEP
   TopoDS_Shape shape;
-  if ( !asiAlgo_STEP::Read(filename, false, shape) )
+  if ( !asiAlgo_STEP( interp->GetProgress() ).Read(filename, false, shape) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot read STEP file.");
     return TCL_ERROR;

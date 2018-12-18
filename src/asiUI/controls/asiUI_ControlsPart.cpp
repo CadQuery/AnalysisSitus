@@ -33,6 +33,7 @@
 
 // asiUI includes
 #include <asiUI_Common.h>
+#include <asiUI_CommonFacilities.h>
 #include <asiUI_DialogGapFilling.h>
 #include <asiUI_DialogSewing.h>
 #include <asiUI_DialogSTEP.h>
@@ -46,7 +47,6 @@
 #include <asiAlgo_CheckValidity.h>
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_PLY.h>
-#include <asiAlgo_STEP.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -234,6 +234,8 @@ void asiUI_ControlsPart::onLoadBRep()
   m_notifier.SetMessageKey("Update accelerating structures");
 
   // Clean up the Model
+  asiUI_CommonFacilities::ClearViewers(m_partViewer, NULL, NULL, true);
+  //
   m_model->Clear();
 
   // Update part
@@ -309,6 +311,7 @@ void asiUI_ControlsPart::onLoadSTEP()
                                                 geom_n,
                                                 asiUI_DialogSTEP::Mode_Read,
                                                 m_notifier,
+                                                m_plotter,
                                                 this);
   pDlg->exec();
 
@@ -331,6 +334,7 @@ void asiUI_ControlsPart::onSaveSTEP()
                                                 part_n,
                                                 asiUI_DialogSTEP::Mode_Write,
                                                 m_notifier,
+                                                m_plotter,
                                                 this);
   pDlg->show();
 

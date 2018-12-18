@@ -31,27 +31,43 @@
 #ifndef asiAlgo_STEP_h
 #define asiAlgo_STEP_h
 
-// A-Situs includes
-#include <asiAlgo.h>
-
-// Geometry includes
+// asiAlgo includes
 #include <asiAlgo_InteropVars.h>
 
-// OCCT includes
-#include <Precision.hxx>
-#include <TCollection_AsciiString.hxx>
-#include <TopoDS_Shape.hxx>
+// Active Data includes
+#include <ActAPI_IAlgorithm.h>
 
 //-----------------------------------------------------------------------------
 
 //! STEP interoperability tool.
-namespace asiAlgo_STEP
+class asiAlgo_STEP : public ActAPI_IAlgorithm
 {
+public:
+
+  //! Ctor accepting progress notifier and imperative plotter.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_STEP(ActAPI_ProgressEntry progress,
+               ActAPI_PlotterEntry  plotter = NULL)
+  //
+  : ActAPI_IAlgorithm(progress, plotter) {}
+
+public:
+
+  //! Performs STEP import.
+  //! \param[in] filename  file to read.
+  //! \param[in] doHealing indicates whether to run shape healing after import.
+  //! \param[in] result    retrieved shape.
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     Read(const TCollection_AsciiString& filename,
          const bool                     doHealing,
          TopoDS_Shape&                  result);
 
+  //! Saves the passed CAD model to STEP file.
+  //! \param[in] shape    shape to store.
+  //! \param[in] filename file to save.
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     Write(const TopoDS_Shape&            shape,
           const TCollection_AsciiString& filename);

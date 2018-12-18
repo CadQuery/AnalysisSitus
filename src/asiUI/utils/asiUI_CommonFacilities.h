@@ -60,6 +60,36 @@ public:
 
 public:
 
+  static void ClearViewers(asiUI_ViewerPart*   pViewerPart,
+                           asiUI_ViewerDomain* pViewerDomain,
+                           asiUI_ViewerHost*   pViewerHost,
+                           const bool          repaint)
+  {
+    // Get all presentation managers
+    asiVisu_PrsManager* partPM   = pViewerPart   ? pViewerPart->PrsMgr()   : NULL;
+    asiVisu_PrsManager* hostPM   = pViewerDomain ? pViewerDomain->PrsMgr() : NULL;
+    asiVisu_PrsManager* domainPM = pViewerHost   ? pViewerHost->PrsMgr()   : NULL;
+
+    // Update viewers
+    if ( partPM )   partPM   ->DeleteAllPresentations();
+    if ( hostPM )   hostPM   ->DeleteAllPresentations();
+    if ( domainPM ) domainPM ->DeleteAllPresentations();
+
+    if ( repaint )
+    {
+      if ( pViewerPart )   pViewerPart->Repaint();
+      if ( pViewerHost )   pViewerHost->Repaint();
+      if ( pViewerDomain ) pViewerDomain->Repaint();
+    }
+  }
+
+  void ClearViewers(const bool repaint)
+  {
+    ClearViewers(this->ViewerPart, this->ViewerDomain, this->ViewerHost, repaint);
+  }
+
+public:
+
   QMainWindow*         MainWindow;    //!< Main window.
   asiUI_ObjectBrowser* ObjectBrowser; //!< Object browser.
   asiUI_ViewerPart*    ViewerPart;    //!< Viewer for part.

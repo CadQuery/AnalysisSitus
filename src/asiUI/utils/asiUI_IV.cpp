@@ -931,6 +931,9 @@ void asiUI_IV::draw_points(const Handle(HRealArray)&      coords,
                            const TCollection_AsciiString& name,
                            const bool                     newPrimitive)
 {
+  if ( coords.IsNull() )
+    return;
+
   // Open transaction
   bool isTx = false;
   if ( !m_model->HasOpenCommand() )

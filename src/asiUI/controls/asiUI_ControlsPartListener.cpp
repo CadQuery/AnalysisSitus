@@ -244,32 +244,12 @@ void asiUI_ControlsPartListener::onSelectionVerticesOn()
 
 //-----------------------------------------------------------------------------
 
-//! Cleans up the managed viewers.
-void asiUI_ControlsPartListener::cleanViewers()
-{
-  // Erase part with all related data from Part Viewer...
-  if ( m_cf->ViewerPart )
-    m_cf->ViewerPart->PrsMgr()->DeleteAllPresentations();
-
-  // ... Domain Viewer...
-  if ( m_cf->ViewerDomain )
-    m_cf->ViewerDomain->PrsMgr()->DeleteAllPresentations();
-
-  // ... and Host Viewer.
-  if ( m_cf->ViewerHost )
-    m_cf->ViewerHost->PrsMgr()->DeleteAllPresentations();
-}
-
-//-----------------------------------------------------------------------------
-
 //! Performs full re-initialization of everything.
 //! \param[in] fitAll indicates whether to fit the scene.
 void asiUI_ControlsPartListener::reinitializeEverything(const bool fitAll)
 {
   m_notifier.SetMessageKey("Actualize presentations");
   m_notifier.Init(1);
-
-  this->cleanViewers();
 
   // Set all necessary diagnostic tools
   ActAPI_DataObjectId partId = m_model->GetPartNode()->GetId();

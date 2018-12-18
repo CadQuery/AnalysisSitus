@@ -64,17 +64,20 @@
 //! \param part_n   [in] Part Node.
 //! \param mode     [in] interoperability mode.
 //! \param notifier [in] progress notifier.
+//! \param plotter  [in] imperative plotter.
 //! \param parent   [in] parent widget.
 asiUI_DialogSTEP::asiUI_DialogSTEP(const Handle(ActAPI_IModel)&    model,
                                    const Handle(asiData_PartNode)& part_n,
                                    const Mode                      mode,
                                    ActAPI_ProgressEntry            notifier,
+                                   ActAPI_PlotterEntry             plotter,
                                    QWidget*                        parent)
 : QDialog    (parent),
   m_model    (model),
   m_part     (part_n),
   m_mode     (mode),
-  m_notifier (notifier)
+  m_notifier (notifier),
+  m_plotter  (plotter)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -305,7 +308,7 @@ void asiUI_DialogSTEP::proceed_Write()
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
   // Save
-  if ( !asiAlgo_STEP::Write( targetShape, QStr2AsciiStr(filename) ) )
+  if ( !asiAlgo_STEP(m_notifier).Write( targetShape, QStr2AsciiStr(filename) ) )
   {
     std::cout << "Error: cannot save shape" << std::endl;
   }
@@ -333,7 +336,7 @@ void asiUI_DialogSTEP::proceed_Read()
 
   // Read STEP
   TopoDS_Shape shape;
-  if ( !asiAlgo_STEP::Read(QStr2AsciiStr(this->Filename), false, shape) )
+  if ( !asiAlgo_STEP(m_notifier, m_plotter).Read(QStr2AsciiStr(this->Filename), false, shape) )
   {
     std::cout << "Error: cannot read STEP file" << std::endl;
     QApplication::restoreOverrideCursor();

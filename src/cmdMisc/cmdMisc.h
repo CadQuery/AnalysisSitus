@@ -45,6 +45,10 @@
 // asiTcl includes
 #include <asiTcl_Interp.h>
 
+#ifdef USE_MOBIUS
+  #include <mobius/geom_Surface.h>
+#endif
+
 //-----------------------------------------------------------------------------
 
 //! Miscellaneous commands. This package is an ideal fit for those commands
@@ -58,6 +62,21 @@ public:
   cmdMisc_EXPORT static void
     Factory(const Handle(asiTcl_Interp)&      interp,
             const Handle(Standard_Transient)& data);
+
+#ifdef USE_MOBIUS
+public:
+
+  cmdMisc_EXPORT static void
+    DrawSurfPts(const Handle(asiTcl_Interp)&             interp,
+                const mobius::ptr<mobius::geom_Surface>& surface,
+                const TCollection_AsciiString&           name);
+#endif
+
+public:
+
+  cmdMisc_EXPORT static void
+    Commands_Coons(const Handle(asiTcl_Interp)&      interp,
+                   const Handle(Standard_Transient)& data);
 
 };
 

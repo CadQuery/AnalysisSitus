@@ -22,6 +22,7 @@ set (H_FILES
 )
 set (CPP_FILES
   cmdMisc.cpp
+  cmdMisc_Coons.cpp
 )
 
 #------------------------------------------------------------------------------

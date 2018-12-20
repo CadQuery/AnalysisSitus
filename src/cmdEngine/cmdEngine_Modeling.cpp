@@ -1157,6 +1157,8 @@ int ENGINE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
       M->AbortCommand();
       return TCL_ERROR;
     }
+    //
+    interp->GetPlotter().REDRAW_CURVE("last-curve", curve, Color_Default);
 
     // Update Data Model.
     edgeNode->SetCurve(curve);

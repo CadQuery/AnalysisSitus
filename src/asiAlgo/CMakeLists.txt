@@ -24,10 +24,6 @@ set (aux_H_FILES
   auxiliary/asiAlgo_CompleteEdgeLoop.h
   auxiliary/asiAlgo_DesignLaw.h
   auxiliary/asiAlgo_DivideByContinuity.h
-  auxiliary/asiAlgo_FairBCurve.h
-  auxiliary/asiAlgo_FairingAijFunc.h
-  auxiliary/asiAlgo_FairingBjFunc.h
-  auxiliary/asiAlgo_FairingCoeffFunc.h
   auxiliary/asiAlgo_FuncUnivariate.h
   auxiliary/asiAlgo_HitFacet.h
   auxiliary/asiAlgo_InterpolateSurfMesh.h
@@ -55,9 +51,6 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_CompleteEdgeLoop.cpp
   auxiliary/asiAlgo_DesignLaw.cpp
   auxiliary/asiAlgo_DivideByContinuity.cpp
-  auxiliary/asiAlgo_FairBCurve.cpp
-  auxiliary/asiAlgo_FairingAijFunc.cpp
-  auxiliary/asiAlgo_FairingBjFunc.cpp
   auxiliary/asiAlgo_FuncUnivariate.cpp
   auxiliary/asiAlgo_HitFacet.cpp
   auxiliary/asiAlgo_InterpolateSurfMesh.cpp

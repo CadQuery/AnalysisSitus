@@ -61,7 +61,7 @@
 #include <NCollection_Sequence.hxx>
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
-#undef COUT_DEBUG
+#define COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif

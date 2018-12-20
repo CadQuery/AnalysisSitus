@@ -43,7 +43,6 @@
 #include <asiAlgo_EulerKEF.h>
 #include <asiAlgo_EulerKEV.h>
 #include <asiAlgo_EulerKFMV.h>
-#include <asiAlgo_FairBCurve.h>
 #include <asiAlgo_InterpolateSurfMesh.h>
 #include <asiAlgo_InvertShells.h>
 #include <asiAlgo_MeshMerge.h>
@@ -1174,7 +1173,7 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
                      int                          argc,
                      const char**                 argv)
 {
-  if ( argc != 4 && argc != 5 )
+  if ( argc != 4 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -1206,75 +1205,43 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
   // Get fairing coefficient.
   const double lambda = Atof(argv[3]);
 
-  // Check whether Mobius operator is requested.
-  const bool isMobius = interp->HasKeyword(argc, argv, "mobius");
-
   // Perform fairing.
   Handle(Geom_BSplineCurve) result;
   //
-  if ( isMobius )
-  {
 #if defined USE_MOBIUS
-    // Convert to Mobius curve.
-    mobius::cascade_BSplineCurve toMobius(occtBCurve);
-    toMobius.DirectConvert();
-    const mobius::ptr<mobius::bcurve>& mobCurve = toMobius.GetMobiusCurve();
+  // Convert to Mobius curve.
+  mobius::cascade_BSplineCurve toMobius(occtBCurve);
+  toMobius.DirectConvert();
+  const mobius::ptr<mobius::bcurve>& mobCurve = toMobius.GetMobiusCurve();
 
-    TIMER_NEW
-    TIMER_GO
+  TIMER_NEW
+  TIMER_GO
 
-    // Perform fairing from Mobius.
-    mobius::geom_FairBCurve fairing(mobCurve, lambda, NULL, NULL);
-    //
-    if ( !fairing.Perform() )
-    {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Fairing failed.");
-      return TCL_OK;
-    }
-
-    TIMER_FINISH
-    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Mobius B-curve fairing")
-
-    // Get the faired curve.
-    const mobius::ptr<mobius::bcurve>& mobResult = fairing.GetResult();
-
-    // Convert to OpenCascade curve.
-    mobius::cascade_BSplineCurve toOpenCascade(mobResult);
-    toOpenCascade.DirectConvert();
-    result = toOpenCascade.GetOpenCascadeCurve();
-#else
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
-    return TCL_ERROR;
-#endif
-  }
-  else
+  // Perform fairing from Mobius.
+  mobius::geom_FairBCurve fairing(mobCurve, lambda, NULL, NULL);
+  //
+  if ( !fairing.Perform() )
   {
-    TIMER_NEW
-    TIMER_GO
-
-    // Perform fairing algorithm.
-    asiAlgo_FairBCurve fairing( occtBCurve,
-                                lambda,
-                                interp->GetProgress(),
-                                interp->GetPlotter() );
-    //
-    if ( !fairing.Perform() )
-    {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Fairing failed.");
-      return TCL_OK;
-    }
-
-    TIMER_FINISH
-    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Analysis Situs B-curve fairing")
-
-    // Get the faired curve.
-    result = fairing.GetResult();
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Fairing failed.");
+    return TCL_OK;
   }
 
-  // Draw result.
-  interp->GetPlotter().REDRAW_CURVE(argv[1], result, Color_Green);
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Mobius B-curve fairing")
+
+  // Get the faired curve.
+  const mobius::ptr<mobius::bcurve>& mobResult = fairing.GetResult();
+
+  // Convert to OpenCascade curve.
+  mobius::cascade_BSplineCurve toOpenCascade(mobResult);
+  toOpenCascade.DirectConvert();
+  result = toOpenCascade.GetOpenCascadeCurve();
 
   return TCL_OK;
+#else
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return TCL_ERROR;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -2309,7 +2276,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("fair-curve",
     //
-    "fair-curve resName curveName fairingCoeff [-mobius]\n"
+    "fair-curve resName curveName fairingCoeff\n"
     "\t Fairs curve with the given name <curveName>. The passed fairing coefficient\n"
     "\t is a weight of a fairing term in the goal function.",
     //

@@ -1237,6 +1237,9 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
   toOpenCascade.DirectConvert();
   result = toOpenCascade.GetOpenCascadeCurve();
 
+  // Draw faired curve.
+  interp->GetPlotter().REDRAW_CURVE(argv[1], result, Color_Green);
+
   return TCL_OK;
 #else
   interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
@@ -2119,6 +2122,68 @@ int ENGINE_SplitCurveBezier(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_MovePointCurve(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc != 6 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVCurveNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a curve."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVCurveNode)
+    curveNode = Handle(asiData_IVCurveNode)::DownCast(node);
+
+  // Get B-curve.
+  double f, l;
+  Handle(Geom_BSplineCurve)
+    occtBCurve = Handle(Geom_BSplineCurve)::DownCast( curveNode->GetCurve(f, l) );
+  //
+  if ( occtBCurve.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is not a B-spline curve.");
+    return TCL_OK;
+  }
+
+  // Get parameter.
+  const double u = atof(argv[2]);
+
+  // Get coordinates of the offset.
+  const double dx = atof(argv[3]);
+  const double dy = atof(argv[4]);
+  const double dz = atof(argv[5]);
+  //
+  gp_Vec D(dx, dy, dz);
+
+  gp_Pnt orig = occtBCurve->Value(u);
+  gp_Pnt dest = orig.XYZ() + D.XYZ();
+
+  interp->GetPlotter().REDRAW_POINT("move-P", orig, Color_Yellow);
+  interp->GetPlotter().REDRAW_VECTOR_AT("move-D", orig, D, Color_Yellow);
+
+  const int index1 = 2, index2 = occtBCurve->Poles().Length() - 1;
+  int resIndex1, resIndex2;
+  //
+  Handle(Geom_BSplineCurve) resCurve = Handle(Geom_BSplineCurve)::DownCast( occtBCurve->Copy() );
+  //
+  resCurve->MovePoint(u, dest, index1, index2, resIndex1, resIndex2);
+  //
+  interp->GetPlotter().REDRAW_CURVE(argv[1], resCurve, Color_Default);
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -2397,4 +2462,12 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t Splits the passed B-curve <curveName> to a series of Bezier curves.",
     //
     __FILE__, group, ENGINE_SplitCurveBezier);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("move-point-curve",
+    //
+    "move-point-curve curveName u dx dy dz\n"
+    "\t Moves point on B-curve with parameter <u> by vector (<dx>, <dy>, <dz>).",
+    //
+    __FILE__, group, ENGINE_MovePointCurve);
 }

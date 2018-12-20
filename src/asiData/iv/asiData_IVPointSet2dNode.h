@@ -34,8 +34,8 @@
 // asiData includes
 #include <asiData.h>
 
-// Geometry includes
-#include <asiAlgo_CommonCloud.h>
+// asiAlgo includes
+#include <asiAlgo_PointWithAttr.h>
 
 // Active Data includes
 #include <ActData_BaseNode.h>
@@ -43,8 +43,6 @@
 //-----------------------------------------------------------------------------
 // Data Node representing a 2D point cloud in IV (Imperative Viewer)
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiData_IVPointSet2dNode, ActData_BaseNode)
 
 //! Data Node representing a 2D point cloud in IV (Imperative Viewer).
 class asiData_IVPointSet2dNode : public ActData_BaseNode

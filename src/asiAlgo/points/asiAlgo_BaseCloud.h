@@ -35,6 +35,7 @@
 #include <asiAlgo_CloudRegion.h>
 
 // OCCT includes
+#include <gp_XYZ.hxx>
 #include <Standard_Type.hxx>
 #include <TColStd_HArray1OfReal.hxx>
 
@@ -73,10 +74,16 @@ public:
     AddElement(const TCoordType x, const TCoordType y, const TCoordType z);
 
   asiAlgo_EXPORT void
+    AddElement(const gp_XYZ xyz);
+
+  asiAlgo_EXPORT void
     SetElement(const int elemIndex, const TCoordType x, const TCoordType y, const TCoordType z);
 
   asiAlgo_EXPORT void
     GetElement(const int elemIndex, TCoordType& x, TCoordType& y, TCoordType& z) const;
+
+  asiAlgo_EXPORT gp_XYZ
+    GetElement(const int elemIndex) const;
 
   asiAlgo_EXPORT const std::vector<TCoordType>&
     GetCoords() const;

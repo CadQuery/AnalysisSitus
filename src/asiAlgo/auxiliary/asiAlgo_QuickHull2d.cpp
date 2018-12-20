@@ -38,7 +38,7 @@
 // Function: constructor
 //-----------------------------------------------------------------------------
 
-asiAlgo_QuickHull2d::asiAlgo_QuickHull2d(const Handle(asiAlgo_CommonCloud2d)& cloud)
+asiAlgo_QuickHull2d::asiAlgo_QuickHull2d(const Handle(asiAlgo_PointWithAttr2dCloud)& cloud)
 {
   m_cloud = cloud;
   m_P_up = m_P_down = m_P_left = m_P_right = NULL;

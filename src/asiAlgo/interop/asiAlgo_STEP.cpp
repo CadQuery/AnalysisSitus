@@ -29,10 +29,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiAlgo_BaseCloud.h>
 #include <asiAlgo_STEP.h>
 
 // OCCT includes
+#include <BRep_Tool.hxx>
+#include <Geom_BSplineCurve.hxx>
 #include <NCollection_CellFilter.hxx>
 #include <STEPControl_Reader.hxx>
 #include <STEPControl_Writer.hxx>
@@ -43,42 +44,17 @@
 #include <Interface_Static.hxx>
 #include <Message_ProgressSentry.hxx>
 #include <ShapeFix_Shape.hxx>
+#include <TopExp.hxx>
+#include <TopoDS.hxx>
 #include <Transfer_TransientProcess.hxx>
 #include <XSControl_TransferReader.hxx>
 #include <XSControl_WorkSession.hxx>
 
-//-----------------------------------------------------------------------------
+#undef COUT_DEBUG
+#if defined COUT_DEBUG
+  #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
 
-//! Auxiliary class to search for coincident spatial points.
-class InspectXYZ : public NCollection_CellFilter_InspectorXYZ
-{
-public:
-
-  typedef gp_XYZ Target;
-
-  //! Constructor accepting resolution distance and point.
-  InspectXYZ(const double tol, const gp_XYZ& P) : m_fTol(tol), m_bFound(false), m_P(P) {}
-
-  //! \return true/false depending on whether the node was found or not.
-  bool IsFound() const { return m_bFound; }
-
-  //! Implementation of inspection method.
-  NCollection_CellFilter_Action Inspect(const gp_XYZ& Target)
-  {
-    m_bFound = ( (m_P - Target).SquareModulus() <= Square(m_fTol) );
-    return CellFilter_Keep;
-  }
-
-  //! \return cell center.
-  gp_XYZ GetTarget() const { return m_P; }
-
-private:
-
-  gp_XYZ m_P;      //!< Source point.
-  bool   m_bFound; //!< Whether two points are coincident or not.
-  double m_fTol;   //!< Resolution to check for coincidence.
-
-};
 
 //-----------------------------------------------------------------------------
 
@@ -112,64 +88,15 @@ bool asiAlgo_STEP::Read(const TCollection_AsciiString& filename,
   m_progress.SendLogMessage( LogInfo(Normal) << "Read %1 entities from STEP file."
                                              << entIt.NbEntities() );
 
+#if defined COUT_DEBUG
   // Prepare a map for counting entities.
   NCollection_DataMap<Handle(Standard_Type), int> entCountMap;
 
-  // Cell filter for Cartesian points.
-  const double conf = Precision::Confusion();
-  //
-  NCollection_CellFilter<InspectXYZ> NodeFilter(conf);
-
   // Iterate all entities.
-  Handle(asiAlgo_BaseCloud<double>) pts = new asiAlgo_BaseCloud<double>;
-  //
   for ( ; entIt.More(); entIt.Next() )
   {
     const Handle(Standard_Transient)& ent     = entIt.Value();
     const Handle(Standard_Type)&      entType = ent->DynamicType();
-
-    /* Check Cartesian points */
-
-    if ( ent->IsKind( STANDARD_TYPE(StepGeom_CartesianPoint) ) )
-    {
-      Handle(StepGeom_CartesianPoint)
-        cpEnt = Handle(StepGeom_CartesianPoint)::DownCast(ent);
-
-      Handle(TColStd_HArray1OfReal) coords = cpEnt->Coordinates();
-      //
-      if ( !coords.IsNull() && coords->Size() == 3 )
-      {
-        gp_XYZ xyz( coords->Value( coords->Lower() ),
-                    coords->Value( coords->Lower() + 1 ),
-                    coords->Value( coords->Lower() + 2) );
-
-        InspectXYZ Inspect(conf, xyz);
-        gp_XYZ XYZ_min = Inspect.Shift( xyz, -Precision::Confusion() );
-        gp_XYZ XYZ_max = Inspect.Shift( xyz,  Precision::Confusion() );
-
-        // Coincidence test
-        NodeFilter.Inspect(XYZ_min, XYZ_max, Inspect);
-        const bool isFound = Inspect.IsFound();
-        //
-        if ( !isFound )
-        {
-          pts->AddElement( xyz.X(), xyz.Y(), xyz.Z() );
-        }
-
-        NodeFilter.Add(xyz, xyz);
-      }
-    }
-
-    /* Check B-spline curves with knots */
-
-    if ( ent->IsKind( STANDARD_TYPE(StepGeom_BSplineCurveWithKnots) ) )
-    {
-      Handle(StepGeom_BSplineCurveWithKnots)
-        bcuEnt = Handle(StepGeom_BSplineCurveWithKnots)::DownCast(ent);
-
-      const int nPoles = bcuEnt->NbControlPointsList();
-
-    }
 
     // Count in a map.
     if ( entCountMap.IsBound(entType) )
@@ -177,10 +104,6 @@ bool asiAlgo_STEP::Read(const TCollection_AsciiString& filename,
     else
       entCountMap.Bind(entType, 1);
   }
-  //
-  m_plotter.REDRAW_POINTS("StepGeom_CartesianPoint", pts->GetCoordsArray(), Color_White);
-
-  return false;
 
   // Dump counts.
   for ( NCollection_DataMap<Handle(Standard_Type), int>::Iterator it(entCountMap); it.More(); it.Next() )
@@ -190,29 +113,30 @@ bool asiAlgo_STEP::Read(const TCollection_AsciiString& filename,
 
     m_progress.SendLogMessage(LogInfo(Normal) << "\t%1 : %2" << entType->Name() << count);
   }
+#endif
 
   /* ==========================
    *  Translate STEP into BREP
    * ========================== */
 
-  // Transfer all roots into one shape or into several shapes
+  // Transfer all roots into one shape or into several shapes.
   try
   {
     reader.TransferRoots();
   }
   catch ( Standard_Failure )
   {
-    std::cout << "Warning: exception occurred during translation" << std::endl;
+    std::cout << "Warning: exception occurred during translation." << std::endl;
   }
   if ( reader.NbShapes() <= 0 )
   {
-    std::cout << "Error: transferring STEP to BREP failed" << std::endl;
+    std::cout << "Error: transferring STEP to BREP failed." << std::endl;
     return false;
   }
 
-  TopoDS_Shape aPreResult = reader.OneShape();
+  TopoDS_Shape preResult = reader.OneShape();
 
-  // Release memory after translation
+  // Release memory after translation.
   reader.WS()->NewModel();
   Standard::Purge();
 
@@ -220,9 +144,9 @@ bool asiAlgo_STEP::Read(const TCollection_AsciiString& filename,
    *  Post-processing
    * ================= */
 
-  result = aPreResult;
+  result = preResult;
 
-  // Apply shape healing
+  // Apply shape healing.
   if ( doHealing )
   {
     Handle(ShapeFix_Shape) aShapeHealer = new ShapeFix_Shape(result);

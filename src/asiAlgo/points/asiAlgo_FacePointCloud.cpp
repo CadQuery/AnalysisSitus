@@ -81,7 +81,7 @@ void asiAlgo_FacePointCloud::SetFace(const TopoDS_Face& face)
 
 //! Creates empty copy of the point cloud.
 //! \return empty copy.
-Handle(asiAlgo_CommonCloud2d) asiAlgo_FacePointCloud::EmptyCopy() const
+Handle(asiAlgo_PointWithAttr2dCloud) asiAlgo_FacePointCloud::EmptyCopy() const
 {
   Handle(asiAlgo_FacePointCloud) cloud = new asiAlgo_FacePointCloud;
   cloud->SetFace(m_face);

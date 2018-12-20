@@ -272,22 +272,22 @@ set (points_H_FILES
   points/asiAlgo_BaseCloud.h
   points/asiAlgo_Cloudify.h
   points/asiAlgo_CloudRegion.h
-  points/asiAlgo_CommonCloud.h
   points/asiAlgo_FacePointCloud.h
   points/asiAlgo_PlaneOnPoints.h
   points/asiAlgo_PlateOnPoints.h
   points/asiAlgo_PointCloudUtils.h
+  points/asiAlgo_PointWithAttr.h
   points/asiAlgo_PurifyCloud.h
   points/asiAlgo_ReorientNorms.h
 )
 set (points_CPP_FILES
   points/asiAlgo_BaseCloud.cpp
   points/asiAlgo_Cloudify.cpp
-  points/asiAlgo_CommonCloud.cpp
   points/asiAlgo_FacePointCloud.cpp
   points/asiAlgo_PlaneOnPoints.cpp
   points/asiAlgo_PlateOnPoints.cpp
   points/asiAlgo_PointCloudUtils.cpp
+  points/asiAlgo_PointWithAttr.cpp
   points/asiAlgo_ReorientNorms.cpp
 )
 

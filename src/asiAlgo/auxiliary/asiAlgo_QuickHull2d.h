@@ -31,8 +31,8 @@
 #ifndef asiAlgo_QuickHull2d_h
 #define asiAlgo_QuickHull2d_h
 
-// Geometry includes
-#include <asiAlgo_CommonCloud.h>
+// asiAlgo includes
+#include <asiAlgo_PointWithAttr.h>
 
 // OCCT includes
 #include <TColgp_HSequenceOfXY.hxx>
@@ -50,7 +50,7 @@ public:
   //! point cloud.
   //! \param cloud [in] initial cloud.
   asiAlgo_EXPORT
-    asiAlgo_QuickHull2d(const Handle(asiAlgo_CommonCloud2d)& cloud);
+    asiAlgo_QuickHull2d(const Handle(asiAlgo_PointWithAttr2dCloud)& cloud);
 
   //! Destructor.
   asiAlgo_EXPORT
@@ -67,7 +67,7 @@ public:
 
   //! Returns initial point cloud.
   //! \return initial point cloud.
-  const Handle(asiAlgo_CommonCloud2d)& Cloud() const
+  const Handle(asiAlgo_PointWithAttr2dCloud)& Cloud() const
   {
     return m_cloud;
   }
@@ -147,8 +147,8 @@ private:
 
 private:
 
-  Handle(asiAlgo_CommonCloud2d)      m_cloud; //!< Initial cloud.
-  Handle(TColStd_HSequenceOfInteger) m_hull;  //!< Resulting hull.
+  Handle(asiAlgo_PointWithAttr2dCloud) m_cloud; //!< Initial cloud.
+  Handle(TColStd_HSequenceOfInteger)   m_hull;  //!< Resulting hull.
 
 private:
 

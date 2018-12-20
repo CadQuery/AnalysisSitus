@@ -59,6 +59,8 @@
 
 //-----------------------------------------------------------------------------
 
+#define DEFDEFL 1.0
+#define INFDEFL 1e10
 #define NUMISOS 20
 #define ISOSDEFLECTION 0.0001
 
@@ -140,7 +142,16 @@ void asiVisu_ShapeRobustTessellator::internalInit(const double         linearDef
   else
     m_fLinDeflection = linearDeflection;
   //
-  m_progress.SendLogMessage(LogInfo(Normal) << "Faceter linear deflection is %1" << m_fLinDeflection);
+  if ( m_fLinDeflection > INFDEFL )
+  {
+    m_progress.SendLogMessage(LogWarn(Normal) << "Too high linear deflection (%1). "
+                                                 "We will use the default value (%2) instead."
+                                              << m_fLinDeflection << DEFDEFL);
+
+    m_fLinDeflection = DEFDEFL;
+  }
+  //
+  m_progress.SendLogMessage(LogInfo(Normal) << "Faceter linear deflection is %1." << m_fLinDeflection);
 
   // Set angular deflection
   if ( Abs(angularDeflection_deg) < asiAlgo_TooSmallValue )

@@ -31,8 +31,8 @@
 #ifndef asiAlgo_FacePointCloud_h
 #define asiAlgo_FacePointCloud_h
 
-// Geometry includes
-#include <asiAlgo_CommonCloud.h>
+// asiAlgo includes
+#include <asiAlgo_PointWithAttr.h>
 
 // OCCT includes
 #include <TopoDS_Face.hxx>
@@ -40,12 +40,12 @@
 //-----------------------------------------------------------------------------
 
 //! Data adapter for two-dimensional point cloud of face vertices.
-class asiAlgo_FacePointCloud : public asiAlgo_CommonCloud2d
+class asiAlgo_FacePointCloud : public asiAlgo_PointWithAttr2dCloud
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_FacePointCloud, asiAlgo_CommonCloud2d)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_FacePointCloud, asiAlgo_PointWithAttr2dCloud)
 
 public:
 
@@ -68,7 +68,7 @@ public:
 
 public:
 
-  asiAlgo_EXPORT virtual Handle(asiAlgo_CommonCloud2d)
+  asiAlgo_EXPORT virtual Handle(asiAlgo_PointWithAttr2dCloud)
     EmptyCopy() const;
 
   asiAlgo_EXPORT virtual const gp_XY&

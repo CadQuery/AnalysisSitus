@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 15 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiAlgo_CommonCloud.h>
+#include <asiAlgo_PointWithAttr.h>
 
 // OCCT includes
 #include <gp_Pnt2d.hxx>
@@ -40,11 +40,11 @@
 //! \param pts  [in] point cloud to affect.
 //! \param prec [in] precision.
 //! \return purified point cloud.
-Handle(asiAlgo_CommonCloud2d)
-  asiAlgo_CommonCloud2d::RemoveCoincidentPoints(const Handle(asiAlgo_CommonCloud2d)& pts,
-                                                const double                         prec)
+Handle(asiAlgo_PointWithAttr2dCloud)
+  asiAlgo_PointWithAttr2dCloud::RemoveCoincidentPoints(const Handle(asiAlgo_PointWithAttr2dCloud)& pts,
+                                                       const double                                prec)
 {
-  Handle(asiAlgo_CommonCloud2d) purified = pts->EmptyCopy();
+  Handle(asiAlgo_PointWithAttr2dCloud) purified = pts->EmptyCopy();
   int ip = 1;
   do
   {
@@ -78,8 +78,8 @@ Handle(asiAlgo_CommonCloud2d)
 // Function: Read
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_CommonCloud2d::Read(const TCollection_AsciiString&   filename,
-                                 Handle(TColgp_HSequenceOfPnt2d)& points)
+bool asiAlgo_PointWithAttr2dCloud::Read(const TCollection_AsciiString&   filename,
+                                        Handle(TColgp_HSequenceOfPnt2d)& points)
 {
   std::ifstream FILE( filename.ToCString() );
   if ( !FILE.is_open() )
@@ -119,8 +119,8 @@ bool asiAlgo_CommonCloud2d::Read(const TCollection_AsciiString&   filename,
 // Function: Write
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_CommonCloud2d::Write(const Handle(TColgp_HSequenceOfPnt2d)& points,
-                                  const TCollection_AsciiString&         filename)
+bool asiAlgo_PointWithAttr2dCloud::Write(const Handle(TColgp_HSequenceOfPnt2d)& points,
+                                         const TCollection_AsciiString&         filename)
 {
   std::ofstream FILE( filename.ToCString() );
   if ( !FILE.is_open() )

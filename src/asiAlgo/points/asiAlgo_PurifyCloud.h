@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 21 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,76 +31,79 @@
 #ifndef asiAlgo_PurifyCloud_h
 #define asiAlgo_PurifyCloud_h
 
-// Common includes
-#include <asiAlgo_CommonCloud.h>
+// asiAlgo includes
+#include <asiAlgo_BaseCloud.h>
+
+// Active Data includes
+#include <ActAPI_IAlgorithm.h>
 
 // OCCT includes
 #include <gp_XYZ.hxx>
 #include <NCollection_CellFilter.hxx>
 
 //-----------------------------------------------------------------------------
-// Two-dimensional inspector
+// Three-dimensional inspector
 //-----------------------------------------------------------------------------
 
 //! Inspector tool (see OCCT Cell Filter) for purification of
 //! points which are coincident with a certain tolerance.
-class asiAlgo_Inspector2d
+class asiAlgo_Inspector3d
 {
 public:
 
   //! Cloud dimension.
-  enum { Dimension = 2 };
+  enum { Dimension = 3 };
 
   //! Point index is used as a cell ID.
   typedef int Target;
 
   //! Point type.
-  typedef asiAlgo_CommonCloud<gp_XY> Point;
+  typedef gp_XYZ Point;
 
   //! Constructor accepting the tolerance.
-  //! \param tol    [in] tolerance to set.
-  //! \param points [in] working collection of points.
-  asiAlgo_Inspector2d(const double                    tol,
-                    const asiAlgo_CommonCloud2dVec& points)
-  : m_fTol(tol*tol),
-    m_points(points)
+  //! \param[in] tol    tolerance to set.
+  //! \param[in] points working collection of points.
+  asiAlgo_Inspector3d(const double                             tol,
+                      const Handle(asiAlgo_BaseCloud<double>)& points)
+  : m_fTol       (tol),
+    m_pointCloud (points)
   {}
 
-  //! Cleans up the list of resulting indices.
-  void ClearResList()
-  {
-    m_resIndices.Clear();
-  }
-
   //! Sets current point to search for coincidence.
-  //! \param target [in] current target.
-  //! \param XY [in] point to set as current.
-  void SetCurrent(const int target, const Point& XY)
+  //! \param[in] target current target.
+  //! \param[in] P      point coordinates to set as current.
+  void SetCurrent(const int target, const Point& P)
   {
     m_iCurrentTarget = target;
-    m_current        = XY;
+    m_current        = P;
   }
 
-  //! Returns the list of indices adjacent with the current.
-  //! \return list of indices.
-  const NCollection_Map<int>& Indices2Exclude() const
+  //! Cleans up the list of resulting indices.
+  void ClearIndices2Purge()
   {
-    return m_resIndices;
+    m_indices2Purge.Clear();
+  }
+
+  //! Returns the list of indices falling to the current cell.
+  //! \return list of indices.
+  const TColStd_PackedMapOfInteger& GetIndices2Purge() const
+  {
+    return m_indices2Purge;
   }
 
   //! Implementation of inspection method.
-  //! \param target [in] target.
+  //! \param[in] target target.
   //! \return verdict (remove or keep).
   NCollection_CellFilter_Action Inspect(const int target)
   {
     if ( m_iCurrentTarget != target )
     {
-      const Point& P     = m_points.at(target);
-      const double delta = (P.Coord - m_current.Coord).SquareModulus();
+      Point        P     = m_pointCloud->GetElement(target);
+      const double delta = (P - m_current).Modulus();
 
       if ( delta < m_fTol )
       {
-        m_resIndices.Add(target);
+        m_indices2Purge.Add(target);
         return CellFilter_Purge;
       }
     }
@@ -108,32 +111,34 @@ public:
     return CellFilter_Keep;
   }
 
-  //! Auxiliary method to shift point by each coordinate on given value.
-  //! Useful for preparing a points range for Inspect with tolerance.
-  Point Shift(const Point& thePnt, double theTol) const
+  //! Auxiliary method to shift point coordinates by the given value.
+  //! Useful for preparing a points range for Inspect() with tolerance.
+  Point Shift(const Point& P, double tol) const
   {
-    Point P(thePnt);
-    P.Coord.SetX( P.Coord.X() + theTol );
-    P.Coord.SetY( P.Coord.Y() + theTol );
-    return P;
+    Point pt(P);
+    pt.SetX(P.X() + tol);
+    pt.SetY(P.Y() + tol);
+    pt.SetZ(P.Z() + tol);
+    //
+    return pt;
   }
 
   //! Returns coordinates.
-  //! \param i      [in] 0-based index of coordinate.
-  //! \param thePnt [in] point to access coordinates for.
+  //! \param[in] i 0-based index of coordinate.
+  //! \param[in] P point to access coordinates for.
   //! \return requested coordinate.
-  static double Coord(int i, const Point& thePnt)
+  static double Coord(int i, const Point& P)
   {
-    return thePnt.Coord.Coord(i + 1);
+    return P.Coord(i + 1);
   }
 
 private:
 
-  double                   m_fTol;           //!< Tolerance to use.
-  NCollection_Map<int>     m_resIndices;     //!< Indices to exclude.
-  asiAlgo_CommonCloud2dVec m_points;         //!< Points kept for comparison.
-  asiAlgo_CommonCloud<gp_XY> m_current;        //!< Current point.
-  int                      m_iCurrentTarget; //!< Current target.
+  double                            m_fTol;           //!< Linear tolerance to use.
+  TColStd_PackedMapOfInteger        m_indices2Purge;  //!< Indices to exclude.
+  Handle(asiAlgo_BaseCloud<double>) m_pointCloud;     //!< Source point cloud.
+  Point                             m_current;        //!< Current point.
+  int                               m_iCurrentTarget; //!< Current target.
 
 };
 
@@ -144,78 +149,90 @@ private:
 //! Auxiliary functions for purification of point clouds. These tools
 //! allow reducing the number of points by getting rid of those which
 //! fall into the given tolerant sphere.
-class asiAlgo_PurifyCloud
+class asiAlgo_PurifyCloud : public ActAPI_IAlgorithm
 {
 public:
 
-  //! Performs purification on the passed 2D point cloud.
-  //! \param tol    [in] tolerance to use.
-  //! \param source [in] source point cloud.
-  //! \param result [in] resulting point cloud.
-  static void Perform2d(const double                    tol,
-                        const asiAlgo_CommonCloud2dVec& source,
-                        asiAlgo_CommonCloud2dVec&       result)
+  //! Ctor accepting progress notifier and imperative plotter.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_PurifyCloud(ActAPI_ProgressEntry progress = NULL,
+                      ActAPI_PlotterEntry  plotter  = NULL)
+  : ActAPI_IAlgorithm(progress, plotter) {}
+
+public:
+
+  //! Performs purification on the passed 3D point cloud.
+  //! \param[in]  tol    tolerance to use.
+  //! \param[in]  source source point cloud.
+  //! \param[out] result resulting point cloud.
+  void Perform3d(const double                             tol,
+                 const Handle(asiAlgo_BaseCloud<double>)& source,
+                 Handle(asiAlgo_BaseCloud<double>)&       result)
   {
-    Purify<asiAlgo_CommonCloud2dVec,
-           asiAlgo_Inspector2d>(tol, source, result);
+    this->Purify<asiAlgo_BaseCloud<double>,
+                 asiAlgo_Inspector3d>(tol, source, result);
   }
 
 public:
 
-  template<typename CloudType,
+  template<typename HCloudType,
            typename InspectorType>
-  static void Purify(const double     tol,
-                     const CloudType& source,
-                     CloudType&       result)
+  void Purify(const double              tol,
+              const Handle(HCloudType)& source,
+              Handle(HCloudType)&       result)
   {
-    const size_t source_size = source.size();
+    // Check if there are any points to purify.
+    const int source_size = source->GetNumberOfElements();
     if ( !source_size )
       return;
 
+    // Populate cell filter with the source points.
     NCollection_CellFilter<InspectorType> CellFilter(tol);
     InspectorType Inspector(tol, source);
-
-    for ( size_t p_idx = 0; p_idx < source.size(); ++p_idx )
+    TColStd_PackedMapOfInteger allIndices;
+    //
+    for ( int p_idx = 0; p_idx < source_size; ++p_idx )
     {
-      const InspectorType::Point& P = source.at(p_idx);
-      CellFilter.Add( (int) p_idx, P );
+      InspectorType::Point P = source->GetElement(p_idx);
+      CellFilter.Add(p_idx, P);
+      //
+      allIndices.Add(p_idx);
     }
 
-    NCollection_Map<int> Traversed;
-    int next_idx = 0;
-    unsigned int allTraversed = 0;
+    // Now classify each point to know which cell it belongs to.
+    TColStd_PackedMapOfInteger traversed;
+    int                        next_idx     = 0;
+    bool                       allTraversed = false;
+    //
     do
     {
-      if ( Traversed.Contains(next_idx) )
+      if ( traversed.Contains(next_idx) )
         continue;
+      else
+        traversed.Add(next_idx);
 
-      Traversed.Add(next_idx);
-      const InspectorType::Point& P = source.at(next_idx);
-
-      Inspector.SetCurrent( (int) next_idx, P );
-      InspectorType::Point P_min = Inspector.Shift(P, -tol);
-      InspectorType::Point P_max = Inspector.Shift(P, tol);
+      // Classify next point of the source cloud. Notice that Shift() is always
+      // done at Precision::Confusion() value in order for the cell filter
+      // to work properly.
+      InspectorType::Point P = source->GetElement(next_idx);
+      //
+      Inspector.SetCurrent(next_idx, P);
+      InspectorType::Point P_min = Inspector.Shift( P, -Precision::Confusion() );
+      InspectorType::Point P_max = Inspector.Shift( P,  Precision::Confusion() );
+      //
       CellFilter.Inspect(P_min, P_max, Inspector);
 
-      // Remaining indices
-      int nonTraversed = -1;
-      const NCollection_Map<int>& indices2Exclude = Inspector.Indices2Exclude();
-      for ( size_t i = 0; i < source_size; ++i )
-      {
-        if ( indices2Exclude.Contains( (int) i ) )
-          continue;
-
-        if ( !Traversed.Contains( (int) i ) )
-        {
-          nonTraversed = (int) i;
-          break;
-        }
-      }
-
-      if ( nonTraversed == -1 )
+      // Get indices of unvisited points.
+      TColStd_PackedMapOfInteger nonTraversedIndices;
+      //
+      nonTraversedIndices.Subtraction( allIndices, traversed );
+      nonTraversedIndices.Subtract( Inspector.GetIndices2Purge() );
+      //
+      if ( nonTraversedIndices.IsEmpty() )
         allTraversed = 1;
       else
-        next_idx = nonTraversed;
+        next_idx = nonTraversedIndices.GetMinimalMapped();
     }
     while ( !allTraversed );
 
@@ -223,26 +240,27 @@ public:
     // Copy remaining points to another (resulting) cloud
     //----------------------------------------------------
 
-    const NCollection_Map<int>& indices2Exclude = Inspector.Indices2Exclude();
-    const int indices_size = indices2Exclude.Extent();
+    const TColStd_PackedMapOfInteger& indices2Purge = Inspector.GetIndices2Purge();
+    const int indices_size = indices2Purge.Extent();
+    //
     if ( !indices_size )
       result = source;
-
-    for ( size_t i = 0; i < source_size; ++i )
+    else
     {
-      if ( indices2Exclude.Contains( (int) i ) )
-        continue;
+      // Prepare result.
+      result = new HCloudType;
 
-      const InspectorType::Point& P = source.at(i);
-      result.push_back(P);
+      // Populate.
+      for ( int i = 0; i < source_size; ++i )
+      {
+        if ( indices2Purge.Contains(i) )
+          continue;
+
+        InspectorType::Point P = source->GetElement(i);
+        result->AddElement(P);
+      }
     }
   }
-
-private:
-
-  asiAlgo_PurifyCloud ()                         {}
-  asiAlgo_PurifyCloud (const asiAlgo_PurifyCloud&) {}
-  void operator=      (const asiAlgo_PurifyCloud&) {}
 
 };
 

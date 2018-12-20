@@ -406,28 +406,27 @@ void asiUI_ObjectBrowser::onResetPartPrs()
 
 void asiUI_ObjectBrowser::onCopyAsJSON()
 {
-  Handle(ActAPI_INode) selected_n;
-  if ( !this->selectedNode(selected_n) ) return;
+  Handle(ActAPI_INode) sel;
+  if ( !this->selectedNode(sel) ) return;
 
-  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
-    return;
-
-  // Get surface.
-  Handle(asiData_IVSurfaceNode)
-    surfNode = Handle(asiData_IVSurfaceNode)::DownCast(selected_n);
-  //
-  Handle(Geom_Surface) surface = surfNode->GetSurface();
-
-  // Dump.
+  // Dump either curve or surface to JSON.
   std::ostringstream jsonStream;
   //
-  asiAlgo_JSON::DumpSurface(surface, jsonStream);
-  //
-  std::string jsonStr = jsonStream.str().c_str();
+  if ( sel->IsKind( STANDARD_TYPE(asiData_IVCurveNode) ) )
+  {
+    asiAlgo_JSON::DumpCurve(Handle(asiData_IVCurveNode)::DownCast(sel)->GetCurve(),
+                            jsonStream);
+  }
+  else if ( sel->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    asiAlgo_JSON::DumpSurface(Handle(asiData_IVSurfaceNode)::DownCast(sel)->GetSurface(),
+                              jsonStream);
+  }
+  else
+    return;
 
-  // Set to clipboard.
-  QClipboard* clipboard = QApplication::clipboard();
-  clipboard->setText( jsonStr.c_str() );
+  // Copy to clipboard.
+  QApplication::clipboard()->setText( jsonStream.str().c_str() );
 }
 
 //-----------------------------------------------------------------------------
@@ -737,7 +736,8 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
         pMenu->addAction( "Reset presentation", this, SLOT( onResetPartPrs  () ) );
       }
 
-      if ( node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+      if ( node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) ||
+           node->IsKind( STANDARD_TYPE(asiData_IVCurveNode) ) )
       {
         pMenu->addSeparator();
         pMenu->addAction( "Copy as JSON", this, SLOT( onCopyAsJSON () ) );

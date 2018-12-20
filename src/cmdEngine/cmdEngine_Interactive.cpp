@@ -44,6 +44,9 @@
 #include <asiAlgo_InterpolateSurfMesh.h>
 #include <asiAlgo_ReapproxContour.h>
 
+// asiVisu includes
+#include <asiVisu_CurvePipeline.h>
+
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
 
@@ -121,6 +124,53 @@ int ENGINE_DefineContour(const Handle(asiTcl_Interp)& interp,
   // Add observer which takes responsibility to interact with the user.
   PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
   PM->AddObserver(EVENT_SELECT_CELL,        cb);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_AddCurveHandle(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part presentation manager.
+  const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdEngine::cf->ViewerPart->PrsMgr();
+
+  // Get all Curve Nodes.
+  Handle(asiData_Partition<asiData_IVCurveNode>) P = cmdEngine::model->GetIVCurvePartition();
+  //
+  for ( ActData_BasePartition::Iterator pit(P); pit.More(); pit.Next() )
+  {
+    Handle(asiData_IVCurveNode)
+      curveNode = Handle(asiData_IVCurveNode)::DownCast( pit.Value() );
+
+    // Get Presentation of Curve.
+    if ( !PM->IsPresented(curveNode) )
+      continue;
+    //
+    Handle(asiVisu_Prs) curvePrs = PM->GetPresentation(curveNode);
+
+    // Iterate over all pipelines making all actors selectable.
+    Handle(asiVisu_HPipelineList) pipelines = curvePrs->GetPipelineList();
+    //
+    for ( asiVisu_HPipelineList::Iterator it(*pipelines); it.More(); it.Next() )
+    {
+      const Handle(asiVisu_Pipeline)& pl = it.Value();
+      //
+      if ( !pl->IsKind( STANDARD_TYPE(asiVisu_CurvePipeline) ) )
+        continue;
+
+      pl->Actor()->SetPickable(1);
+    }
+  }
+
+  // TODO: NYI
 
   return TCL_OK;
 }
@@ -226,6 +276,14 @@ void cmdEngine::Commands_Interactive(const Handle(asiTcl_Interp)&      interp,
     "\t Enables interactive contour picking.",
     //
     __FILE__, group, ENGINE_DefineContour);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("add-curve-handle",
+    //
+    "add-curve-handle\n"
+    "\t Allows to add interactively on-curve handles.",
+    //
+    __FILE__, group, ENGINE_AddCurveHandle);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("contour-to-wire",

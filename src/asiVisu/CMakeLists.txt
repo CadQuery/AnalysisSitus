@@ -43,6 +43,7 @@ set (filters_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (pipelines_H_FILES
+  pipelines/asiVisu_BCurveHandlesPipeline.h
   pipelines/asiVisu_BCurveKnotsPipeline.h
   pipelines/asiVisu_BCurvePolesPipeline.h
   pipelines/asiVisu_BSurfAxesPipeline.h
@@ -78,6 +79,7 @@ set (pipelines_H_FILES
   pipelines/asiVisu_VectorsPipeline.h
 )
 set (pipelines_CPP_FILES 
+  pipelines/asiVisu_BCurveHandlesPipeline.cpp
   pipelines/asiVisu_BCurveKnotsPipeline.cpp
   pipelines/asiVisu_BCurvePolesPipeline.cpp
   pipelines/asiVisu_BSurfAxesPipeline.cpp
@@ -268,6 +270,7 @@ set (selection_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (sources_H_FILES
+  sources/asiVisu_BCurveHandlesSource.h
   sources/asiVisu_BCurveKnotsSource.h
   sources/asiVisu_BCurvePolesSource.h
   sources/asiVisu_BSurfAxesSource.h
@@ -290,6 +293,7 @@ set (sources_H_FILES
   sources/asiVisu_TriangulationSource.h
 )
 set (sources_CPP_FILES 
+  sources/asiVisu_BCurveHandlesSource.cpp
   sources/asiVisu_BCurveKnotsSource.cpp
   sources/asiVisu_BCurvePolesSource.cpp
   sources/asiVisu_BSurfAxesSource.cpp

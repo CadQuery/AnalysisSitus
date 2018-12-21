@@ -44,8 +44,6 @@
 // Data Node representing a single curve in IV (Imperative Viewer)
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_IVCurveNode, ActData_BaseNode)
-
 //! Data Node representing a single curve in IV (Imperative Viewer).
 class asiData_IVCurveNode : public ActData_BaseNode
 {
@@ -68,41 +66,74 @@ public:
     PID_Name,         //!< Name of the Node.
   //------------------//
     PID_Geometry,     //!< Stored geometry.
+    PID_Handles,      //!< On-curve handles for interaction.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
 public:
 
+  //! Returns new DETACHED instance of the Node ensuring its correct
+  //! allocation in a heap.
+  //! \return new instance of the Node.
   asiData_EXPORT static Handle(ActAPI_INode)
     Instance();
 
 // Generic naming support:
 public:
 
+  //! Accessor for the Node's name.
+  //! \return name of the Node.
   asiData_EXPORT virtual TCollection_ExtendedString
     GetName();
 
+  //! Sets name for the Node.
+  //! \param[in] name name to set.
   asiData_EXPORT virtual void
     SetName(const TCollection_ExtendedString& name);
 
 // Handy accessors to the stored data:
 public:
 
+  //! Returns the stored geometry.
+  //! \return stored geometry.
   asiData_EXPORT Handle(Geom_Curve)
     GetCurve() const;
 
+  //! Returns the stored geometry.
+  //! \param[out] f first parameter.
+  //! \param[out] l last parameter.
+  //! \return stored geometry.
   asiData_EXPORT Handle(Geom_Curve)
     GetCurve(double& f, double& l) const;
 
+  //! Sets curve to store.
+  //! \param[in] curve geometry to store.
+  //! \param[in] f     first parameter of the curve.
+  //! \param[in] l     last parameter of the curve.
   asiData_EXPORT void
     SetCurve(const Handle(Geom_Curve)& curve,
              const double              f,
              const double              l);
 
+  //! Adds on-curve handle for the given parameter `u`.
+  //! \param[in] u curve parameter to add as another handle.
+  asiData_EXPORT void
+    AddHandle(const double u);
+
+  //! Sets array of handle parameters.
+  //! \param[in] handles array to set.
+  asiData_EXPORT void
+    SetHandles(const Handle(HRealArray)& handles);
+
+  //! \return stored on-curve handles (parameter values).
+  asiData_EXPORT Handle(HRealArray)
+    GetHandles() const;
+
 // Initialization:
 public:
 
+  //! Performs initial actions required to make Node WELL-FORMED.
   asiData_EXPORT void
     Init();
 

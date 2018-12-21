@@ -58,6 +58,9 @@ public:
   asiVisu_EXPORT virtual Handle(Geom_Curve)
     GetCurve(double& f, double& l) const;
 
+  asiVisu_EXPORT Handle(HRealArray)
+    GetHandles() const;
+
   asiVisu_EXPORT virtual ActAPI_DataObjectId
     GetNodeID() const;
 

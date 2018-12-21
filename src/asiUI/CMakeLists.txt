@@ -134,12 +134,14 @@ set (interaction_H_UI_FILES
   interaction/asiUI_PDomainCallback.h
   interaction/asiUI_PickCallback.h
   interaction/asiUI_PickContourCallback.h
+  interaction/asiUI_PickCurveHandleCallback.h
 )
 set (interaction_CPP_FILES 
   interaction/asiUI_PartCallback.cpp
   interaction/asiUI_PDomainCallback.cpp
   interaction/asiUI_PickCallback.cpp
   interaction/asiUI_PickContourCallback.cpp
+  interaction/asiUI_PickCurveHandleCallback.cpp
   interaction/asiUI_PickEdgeCallback.cpp
   interaction/asiUI_PickFacetCallback.cpp
   interaction/asiUI_RotationCallback.cpp

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 24 August 2017
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2017-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,12 +32,14 @@
 #include <cmdEngine.h>
 
 // asiEngine includes
+#include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
 #include <asiEngine_RE.h>
 #include <asiEngine_Triangulation.h>
 
 // asiUI includes
 #include <asiUI_PickContourCallback.h>
+#include <asiUI_PickCurveHandleCallback.h>
 
 // asiAlgo includes
 #include <asiAlgo_HitFacet.h>
@@ -95,7 +97,7 @@ int ENGINE_DefineContour(const Handle(asiTcl_Interp)& interp,
   // Get Part presentation manager.
   const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdEngine::cf->ViewerPart->PrsMgr();
 
-  // Set picker type to world picker.
+  // Set picker types.
   cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerTypes(PickerType_World | PickerType_Cell);
 
   // Set selection mode.
@@ -139,36 +141,43 @@ int ENGINE_AddCurveHandle(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
+  // API to manage primitives of imperative plotter.
+  asiEngine_IV IV(cmdEngine::model);
+
   // Get Part presentation manager.
   const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdEngine::cf->ViewerPart->PrsMgr();
 
-  // Get all Curve Nodes.
-  Handle(asiData_Partition<asiData_IVCurveNode>) P = cmdEngine::model->GetIVCurvePartition();
+  // Enable interactive picking.
+  IV.ActivateCurvesHandles(true, PM);
+
+  // Set picker types.
+  cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerTypes(PickerType_World | PickerType_Cell);
+
+  // Set selection mode.
+  PM->SetSelectionMode(SelectionMode_Workpiece);
+
+  // Prepare callback which will manage the interaction process with user.
+  vtkSmartPointer<asiUI_PickCurveHandleCallback>
+    cb = vtkSmartPointer<asiUI_PickCurveHandleCallback>::New();
   //
-  for ( ActData_BasePartition::Iterator pit(P); pit.More(); pit.Next() )
-  {
-    Handle(asiData_IVCurveNode)
-      curveNode = Handle(asiData_IVCurveNode)::DownCast( pit.Value() );
+  cb->SetViewer          ( cmdEngine::cf->ViewerPart );
+  cb->SetModel           ( cmdEngine::model );
+  cb->SetDiagnosticTools ( interp->GetProgress(), interp->GetPlotter() );
 
-    // Get Presentation of Curve.
-    if ( !PM->IsPresented(curveNode) )
-      continue;
-    //
-    Handle(asiVisu_Prs) curvePrs = PM->GetPresentation(curveNode);
+  // Remove previously defined observers.
+  if ( PM->HasObserver(EVENT_SELECT_WORLD_POINT) )
+    PM->RemoveObservers(EVENT_SELECT_WORLD_POINT);
+  //
+  if ( PM->HasObserver(EVENT_SELECT_CELL) )
+    PM->RemoveObservers(EVENT_SELECT_CELL);
+  //
+  if ( PM->HasObserver(EVENT_DETECT_CELL) )
+    PM->RemoveObservers(EVENT_DETECT_CELL);
 
-    // Iterate over all pipelines making all actors selectable.
-    Handle(asiVisu_HPipelineList) pipelines = curvePrs->GetPipelineList();
-    //
-    for ( asiVisu_HPipelineList::Iterator it(*pipelines); it.More(); it.Next() )
-    {
-      const Handle(asiVisu_Pipeline)& pl = it.Value();
-      //
-      if ( !pl->IsKind( STANDARD_TYPE(asiVisu_CurvePipeline) ) )
-        continue;
-
-      pl->Actor()->SetPickable(1);
-    }
-  }
+  // Add observer which takes responsibility to interact with the user.
+  PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
+  PM->AddObserver(EVENT_SELECT_CELL,        cb);
+  PM->AddObserver(EVENT_DETECT_CELL,        cb);
 
   // TODO: NYI
 
@@ -262,7 +271,7 @@ int ENGINE_InterpMesh(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-void cmdEngine::Commands_Interactive(const Handle(asiTcl_Interp)&      interp,
+void cmdEngine::Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
                                      const Handle(Standard_Transient)& data)
 {
   cmdEngine_NotUsed(data);

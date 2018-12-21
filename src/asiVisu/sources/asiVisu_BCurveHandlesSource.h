@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 September 2016
+// Created on: 21 December 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,14 +28,11 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_BCurveKnotsSource_h
-#define asiVisu_BCurveKnotsSource_h
+#ifndef asiVisu_BCurveHandlesSource_h
+#define asiVisu_BCurveHandlesSource_h
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_Utils.h>
-
-// Active Data (auxiliary) includes
-#include <ActAux_Common.h>
 
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
@@ -44,52 +41,70 @@
 
 // OCCT includes
 #include <Geom_BSplineCurve.hxx>
-#include <TColgp_HArray1OfPnt.hxx>
 
-//! Data source giving a visual feedback on the distribution of knots
-//! in a b-curve.
-class asiVisu_BCurveKnotsSource : public vtkPolyDataAlgorithm
+//! Data source for interaction handles living on a B-spline curve.
+class asiVisu_BCurveHandlesSource : public vtkPolyDataAlgorithm
 {
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(asiVisu_BCurveKnotsSource, vtkPolyDataAlgorithm);
-  static asiVisu_BCurveKnotsSource* New();
+  vtkTypeMacro(asiVisu_BCurveHandlesSource, vtkPolyDataAlgorithm);
+  static asiVisu_BCurveHandlesSource* New();
 
-// Kernel methods:
 public:
 
-  void SetInputCurve(const Handle(Geom_BSplineCurve)& bcurve);
+  //! Initialize data source from a b-curve.
+  //! \param[in] bcurve  B-spline curve in question.
+  //! \param[in] handles handles as parameter values on curve.
+  void SetInputs(const Handle(Geom_BSplineCurve)& bcurve,
+                 const Handle(HRealArray)&        handles);
 
 protected:
 
+  //! This method (called by superclass) performs conversion of OCCT
+  //! data structures to VTK polygonal representation.
+  //!
+  //! \param[in]  request      describes "what" algorithm should do. This is
+  //!                          typically just one key such as REQUEST_INFORMATION.
+  //! \param[in]  inputVector  inputs of the algorithm.
+  //! \param[out] outputVector outputs of the algorithm.
+  //! \return execution result code (0 in case of error).
   virtual int RequestData(vtkInformation*        request,
                           vtkInformationVector** inputVector,
                           vtkInformationVector*  outputVector);
 
 protected:
 
+  //! Adds the grid point with the given index to the passed polygonal data set.
+  //! \param[in]     index    0-based index of handle.
+  //! \param[in,out] polyData polygonal data set being populated.
+  //! \return ID of the just added VTK point.
   vtkIdType
     registerGridPoint(const int    index,
                       vtkPolyData* polyData);
 
+  //! Adds a vertex cell into the polygonal data set.
+  //! \param[in]     pid      point index.
+  //! \param[in,out] polyData polygonal data set being populated.
+  //! \return ID of the just added VTK cell.
   vtkIdType
     registerVertex(const vtkIdType pid,
                    vtkPolyData*    polyData);
 
 protected:
 
-  asiVisu_BCurveKnotsSource();
-  ~asiVisu_BCurveKnotsSource();
+  asiVisu_BCurveHandlesSource();  //!< Ctor.
+  ~asiVisu_BCurveHandlesSource(); //!< Dtor.
 
 private:
 
-  asiVisu_BCurveKnotsSource(const asiVisu_BCurveKnotsSource&);
-  asiVisu_BCurveKnotsSource& operator=(const asiVisu_BCurveKnotsSource&);
+  asiVisu_BCurveHandlesSource(const asiVisu_BCurveHandlesSource&) = delete;
+  asiVisu_BCurveHandlesSource& operator=(const asiVisu_BCurveHandlesSource&) = delete;
 
 private:
 
-  Handle(Geom_BSplineCurve) m_curve; //!< B-curve as a data container.
+  Handle(Geom_BSplineCurve) m_curve;   //!< B-curve.
+  Handle(HRealArray)        m_handles; //!< Interaction handles.
 
 };
 

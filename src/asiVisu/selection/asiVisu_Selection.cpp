@@ -92,6 +92,18 @@ void asiVisu_PickerResult::GetPickedPos(double& x, double& y, double& z) const
 
 //-----------------------------------------------------------------------------
 
+//! \return picked position as XYZ tuple.
+gp_XYZ asiVisu_PickerResult::GetPickedPos() const
+{
+  double x, y, z;
+  //
+  this->GetPickedPos(x, y, z);
+
+  return gp_XYZ(x, y, z);
+}
+
+//-----------------------------------------------------------------------------
+
 //! \return picked actor.
 const vtkSmartPointer<vtkActor>& asiVisu_PickerResult::GetPickedActor() const
 {

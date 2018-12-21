@@ -89,8 +89,8 @@ protected:
 
 protected:
 
-  ActAPI_ProgressEntry m_notifier; //!< Progress notifier.
-  ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter.
+  mutable ActAPI_ProgressEntry m_notifier; //!< Progress notifier.
+  mutable ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter.
 
 };
 

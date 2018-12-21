@@ -34,6 +34,7 @@
 // asiVisu includes
 #include <asiVisu_CurveSource.h>
 #include <asiVisu_CurveDataProvider.h>
+#include <asiVisu_NodeInfo.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -101,6 +102,9 @@ void asiVisu_CurvePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
     }
     else
       Standard_ProgramError::Raise("Not yet implemented");
+
+    // Bind to a Data Node using information key
+    asiVisu_NodeInfo::Store( DP->GetNodeID(), this->Actor() );
 
     // Initialize pipeline
     this->SetInputConnection( src->GetOutputPort() );

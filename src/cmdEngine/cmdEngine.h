@@ -77,7 +77,7 @@ public:
                         const Handle(Standard_Transient)& data);
 
   cmdEngine_EXPORT static void
-    Commands_Interactive(const Handle(asiTcl_Interp)&      interp,
+    Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
                          const Handle(Standard_Transient)& data);
 
   cmdEngine_EXPORT static void

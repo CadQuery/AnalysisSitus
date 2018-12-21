@@ -12,7 +12,7 @@ set (CPP_FILES
   cmdEngine_Data.cpp
   cmdEngine_Editing.cpp
   cmdEngine_Inspection.cpp
-  cmdEngine_Interactive.cpp
+  cmdEngine_Interaction.cpp
   cmdEngine_Interop.cpp
   cmdEngine_Modeling.cpp
   cmdEngine_Naming.cpp

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 11 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@
 #include <asiVisu_IVCurvePrs.h>
 
 // asiVisu includes
+#include <asiVisu_BCurveHandlesPipeline.h>
 #include <asiVisu_BCurveKnotsPipeline.h>
 #include <asiVisu_BCurvePolesPipeline.h>
 #include <asiVisu_CurvePipeline.h>
@@ -42,43 +43,49 @@
 #include <vtkMapper.h>
 #include <vtkProperty.h>
 
-//! Creates a Presentation object for the passed Node.
-//! \param theNode [in] Node to create a Presentation for.
-asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_DefaultPrs(theNode)
-{
-  // Create Data Provider
-  Handle(asiVisu_IVCurveDataProvider) DP = new asiVisu_IVCurveDataProvider(theNode);
+//-----------------------------------------------------------------------------
 
-  // Pipeline for curve
+asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& N)
+: asiVisu_DefaultPrs(N)
+{
+  // Create Data Provider.
+  Handle(asiVisu_IVCurveDataProvider) DP = new asiVisu_IVCurveDataProvider(N);
+
+  // Pipeline for curve.
   this->addPipeline        ( Pipeline_Main, new asiVisu_CurvePipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 
-  // Pipeline for poles of b-curves
+  // Pipeline for poles of b-curves.
   this->addPipeline        ( Pipeline_Poles, new asiVisu_BCurvePolesPipeline );
   this->assignDataProvider ( Pipeline_Poles, DP );
 
-  // Pipeline for knots of b-curves
+  // Pipeline for knots of b-curves.
   this->addPipeline        ( Pipeline_Knots, new asiVisu_BCurveKnotsPipeline );
   this->assignDataProvider ( Pipeline_Knots, DP );
 
-  // Adjust props
-  this->GetPipeline(Pipeline_Main)  ->Actor()->GetProperty()->SetLineWidth(1.0f);
-  this->GetPipeline(Pipeline_Poles) ->Actor()->GetProperty()->SetColor(0.6, 0.6, 0.6);
-  this->GetPipeline(Pipeline_Knots) ->Actor()->GetProperty()->SetColor(0.0, 1.0, 0.0);
+  // Pipeline for handles of b-curves.
+  this->addPipeline        ( Pipeline_Handles, new asiVisu_BCurveHandlesPipeline );
+  this->assignDataProvider ( Pipeline_Handles, DP );
+
+  // Adjust props.
+  this->GetPipeline(Pipeline_Main)    ->Actor()->GetProperty()->SetLineWidth(1.0f);
+  this->GetPipeline(Pipeline_Poles)   ->Actor()->GetProperty()->SetColor(0.6, 0.6, 0.6);
+  this->GetPipeline(Pipeline_Knots)   ->Actor()->GetProperty()->SetColor(0.0, 1.0, 0.0);
+  this->GetPipeline(Pipeline_Handles) ->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
   //
-  this->GetPipeline(Pipeline_Main)  ->Actor()->SetPickable(0);
-  this->GetPipeline(Pipeline_Poles) ->Actor()->SetPickable(0);
-  this->GetPipeline(Pipeline_Knots) ->Actor()->SetPickable(0);
+  this->GetPipeline(Pipeline_Main)    ->Actor()->SetPickable(0);
+  this->GetPipeline(Pipeline_Poles)   ->Actor()->SetPickable(0);
+  this->GetPipeline(Pipeline_Knots)   ->Actor()->SetPickable(0);
+  this->GetPipeline(Pipeline_Handles) ->Actor()->SetPickable(0);
   //
-  this->GetPipeline(Pipeline_Poles) ->Actor()->SetVisibility(1);
-  this->GetPipeline(Pipeline_Knots) ->Actor()->SetVisibility(1);
+  this->GetPipeline(Pipeline_Poles)   ->Actor()->SetVisibility(0);
+  this->GetPipeline(Pipeline_Knots)   ->Actor()->SetVisibility(0);
+  this->GetPipeline(Pipeline_Handles) ->Actor()->SetVisibility(0);
 }
 
-//! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
-//! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_IVCurvePrs::Instance(const Handle(ActAPI_INode)& theNode)
+//-----------------------------------------------------------------------------
+
+Handle(asiVisu_Prs) asiVisu_IVCurvePrs::Instance(const Handle(ActAPI_INode)& N)
 {
-  return new asiVisu_IVCurvePrs(theNode);
+  return new asiVisu_IVCurvePrs(N);
 }

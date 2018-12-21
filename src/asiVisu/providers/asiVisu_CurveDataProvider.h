@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 10 February 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,13 @@ public:
   virtual Handle(Standard_Type) GetCurveType ()                     const = 0;
   virtual Handle(Geom2d_Curve)  GetCurve2d   (double& f, double& l) const = 0;
   virtual Handle(Geom_Curve)    GetCurve     (double& f, double& l) const = 0;
+
+  //! Returns the array of curve parameters serving as interaction handles.
+  //! Not all curve types support this mechanism of interaction, so this method
+  //! comes with a default empty realization here.
+  //!
+  //! \return array of curve parameters representing the interaction handles.
+  virtual Handle(HRealArray) GetHandles() const { return NULL; }
 
 };
 

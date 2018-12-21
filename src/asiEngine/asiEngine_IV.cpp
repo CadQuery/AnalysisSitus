@@ -34,6 +34,10 @@
 // asiAlgo includes
 #include <asiAlgo_MeshConvert.h>
 
+// asiVisu includes
+#include <asiVisu_BCurveHandlesPipeline.h>
+#include <asiVisu_CurvePipeline.h>
+
 // Active Data includes
 #include <ActData_UniqueNodeName.h>
 
@@ -496,6 +500,45 @@ void asiEngine_IV::Clean_Curves()
     IV_Parent = m_model->GetIVNode()->Curves();
   //
   this->_cleanChildren(IV_Parent);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Enables or disables interactive picking for the Curve Nodes.
+//! \param[in] on      true to enable, false to disable.
+//! \param[in] pPrsMgr Presentation Manager to access Presentations of Curve Nodes.
+void asiEngine_IV::ActivateCurvesHandles(const bool          on,
+                                         asiVisu_PrsManager* pPrsMgr)
+{
+  // Get all Curve Nodes.
+  Handle(asiData_Partition<asiData_IVCurveNode>) P = m_model->GetIVCurvePartition();
+  //
+  for ( ActData_BasePartition::Iterator pit(P); pit.More(); pit.Next() )
+  {
+    Handle(asiData_IVCurveNode)
+      curveNode = Handle(asiData_IVCurveNode)::DownCast( pit.Value() );
+
+    // Get Presentation of Curve.
+    if ( !pPrsMgr->IsPresented(curveNode) )
+      continue;
+    //
+    Handle(asiVisu_Prs) curvePrs = pPrsMgr->GetPresentation(curveNode);
+
+    // Iterate over all pipelines making all actors selectable.
+    Handle(asiVisu_HPipelineList) pipelines = curvePrs->GetPipelineList();
+    //
+    for ( asiVisu_HPipelineList::Iterator it(*pipelines); it.More(); it.Next() )
+    {
+      const Handle(asiVisu_Pipeline)& pl = it.Value();
+      //
+      if ( !pl->IsKind( STANDARD_TYPE(asiVisu_BCurveHandlesPipeline) ) &&
+           !pl->IsKind( STANDARD_TYPE(asiVisu_CurvePipeline) ) )
+        continue;
+
+      pl->Actor()->SetVisibility(on ? 1 : 0);
+      pl->Actor()->SetPickable(on ? 1 : 0);
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------

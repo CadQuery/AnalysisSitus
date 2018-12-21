@@ -35,6 +35,7 @@
 #include <asiVisu.h>
 
 // OCCT includes
+#include <gp_XYZ.hxx>
 #include <NCollection_DataMap.hxx>
 #include <Standard_Type.hxx>
 #include <TColStd_HPackedMapOfInteger.hxx>
@@ -156,6 +157,9 @@ public:
 
   asiVisu_EXPORT void
     GetPickedPos(double& x, double& y, double& z) const;
+
+  asiVisu_EXPORT gp_XYZ
+    GetPickedPos() const;
 
   asiVisu_EXPORT const vtkSmartPointer<vtkActor>&
     GetPickedActor() const;

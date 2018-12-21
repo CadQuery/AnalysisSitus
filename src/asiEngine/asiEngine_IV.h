@@ -34,14 +34,22 @@
 // asiEngine includes
 #include <asiEngine_Base.h>
 
+// asiVisu includes
+#include <asiVisu_PrsManager.h>
+
 //! API for imperative viewer (IV).
 class asiEngine_IV : public asiEngine_Base
 {
 public:
 
-  //! ctor.
-  //! \param model [in] Data Model instance.
-  asiEngine_IV(const Handle(asiEngine_Model)& model) : asiEngine_Base(model) {}
+  //! Ctor.
+  //! \param[in] model    Data Model instance.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiEngine_IV(const Handle(asiEngine_Model)& model,
+               ActAPI_ProgressEntry           progress = NULL,
+               ActAPI_PlotterEntry            plotter  = NULL)
+  : asiEngine_Base(model, progress, plotter) {}
 
 public:
 
@@ -105,6 +113,10 @@ public:
 
   asiEngine_EXPORT void
     Clean_Curves();
+
+  asiEngine_EXPORT void
+    ActivateCurvesHandles(const bool          on,
+                          asiVisu_PrsManager* pPrsMgr);
 
 //---------------------------------------------------------------------------//
 

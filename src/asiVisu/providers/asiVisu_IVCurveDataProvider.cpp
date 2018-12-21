@@ -77,6 +77,18 @@ Handle(Geom_Curve) asiVisu_IVCurveDataProvider::GetCurve(double& f, double& l) c
   return curve_n->GetCurve(f, l);
 }
 
+//! \return array of handles.
+Handle(HRealArray) asiVisu_IVCurveDataProvider::GetHandles() const
+{
+  Handle(asiData_IVCurveNode)
+    curve_n = Handle(asiData_IVCurveNode)::DownCast(m_node);
+  //
+  if ( curve_n.IsNull() || !curve_n->IsWellFormed() )
+    return NULL;
+
+  return curve_n->GetHandles();
+}
+
 //! Returns ID of the Data Node which is being sourced by the visualization
 //! pipeline. This ID is bound to the pipeline's actor in order to have a
 //! back-reference from Presentation to Data Object.
@@ -112,7 +124,8 @@ Handle(ActAPI_HParameterList) asiVisu_IVCurveDataProvider::translationSources() 
     return out;
 
   // Register Parameter as sensitive
-  out << curve_n->Parameter(asiData_IVCurveNode::PID_Geometry);
+  out << curve_n->Parameter(asiData_IVCurveNode::PID_Geometry)
+      << curve_n->Parameter(asiData_IVCurveNode::PID_Handles);
 
   return out;
 }

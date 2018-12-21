@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 11 April 2016
+// Created on: 21 December 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,46 +28,52 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_IVCurvePrs_h
-#define asiVisu_IVCurvePrs_h
+#ifndef asiVisu_BCurveHandlesPipeline_h
+#define asiVisu_BCurveHandlesPipeline_h
 
-// Visualization includes
-#include <asiData_IVCurveNode.h>
-#include <asiVisu_DefaultPrs.h>
+// A-Situs includes
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
-//! Presentation class for curves in IV.
-class asiVisu_IVCurvePrs : public asiVisu_DefaultPrs
+// VTK includes
+#include <vtkPolyDataAlgorithm.h>
+
+//-----------------------------------------------------------------------------
+
+//! Visualization pipeline for handles on a b-curve.
+class asiVisu_BCurveHandlesPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVCurvePrs, asiVisu_DefaultPrs)
-
-  // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(asiData_IVCurveNode, Instance)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_BCurveHandlesPipeline, asiVisu_Pipeline)
 
 public:
 
-  //! Pipelines.
-  enum PipelineId
-  {
-    Pipeline_Main = 1,
-    Pipeline_Poles,
-    Pipeline_Knots,
-    Pipeline_Handles
-  };
+  //! Ctor.
+  asiVisu_EXPORT
+    asiVisu_BCurveHandlesPipeline();
 
 public:
 
-  //! Creates a Presentation object for the passed Node.
-  //! \param[in] N Data Node to create a Presentation for.
-  asiVisu_EXPORT static Handle(asiVisu_Prs)
-    Instance(const Handle(ActAPI_INode)& N);
+  //! Sets input data for the pipeline.
+  //! \param[in] DP Data Provider.
+  asiVisu_EXPORT virtual void
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
 private:
 
-  //! Allocation is allowed only via Instance() method.
-  asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& N);
+  virtual void callback_add_to_renderer      (vtkRenderer*) {}
+  virtual void callback_remove_from_renderer (vtkRenderer*) {}
+  virtual void callback_update               ()             {}
+
+private:
+
+  //! Copying prohibited.
+  asiVisu_BCurveHandlesPipeline(const asiVisu_BCurveHandlesPipeline&);
+
+  //! Assignment prohibited.
+  asiVisu_BCurveHandlesPipeline& operator=(const asiVisu_BCurveHandlesPipeline&);
 
 };
 

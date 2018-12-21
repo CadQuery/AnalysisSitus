@@ -28,65 +28,43 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_BCurveHandlesPipeline_h
-#define asiVisu_BCurveHandlesPipeline_h
+#ifndef asiUI_MoveCurveHandleCallback_h
+#define asiUI_MoveCurveHandleCallback_h
 
-// A-Situs includes
-#include <asiVisu_DataProvider.h>
-#include <asiVisu_Pipeline.h>
+// asiUI includes
+#include <asiUI_CurveHandleCallback.h>
 
-// VTK includes
-#include <vtkPolyDataAlgorithm.h>
-
-//-----------------------------------------------------------------------------
-
-//! Visualization pipeline for handles on a b-curve.
-class asiVisu_BCurveHandlesPipeline : public asiVisu_Pipeline
+//! Callback for adding handles to IV curves.
+class asiUI_MoveCurveHandleCallback : public asiUI_CurveHandleCallback
 {
-public:
-
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_BCurveHandlesPipeline, asiVisu_Pipeline)
+  Q_OBJECT
 
 public:
 
-  //! Ctor.
-  asiVisu_EXPORT
-    asiVisu_BCurveHandlesPipeline();
+  //! Instantiation routine.
+  //! \return instance of the callback class.
+  asiUI_EXPORT static asiUI_MoveCurveHandleCallback* New();
+  //
+  vtkTypeMacro(asiUI_MoveCurveHandleCallback, asiUI_CurveHandleCallback);
 
 public:
 
-  //! Sets input data for the pipeline.
-  //! \param[in] DP Data Provider.
-  asiVisu_EXPORT virtual void
-    SetInput(const Handle(asiVisu_DataProvider)& DP);
-
-public:
-
-  //! Sets transient active handle.
-  //! \param[in] handleId handle ID to use.
-  void SetForcedActiveHandle(const int handleId)
-  {
-    m_iForcedActiveHandle = handleId;
-  }
+  //! Listens to a dedicated event. Performs all useful operations.
+  //! \param[in] pCaller   caller instance.
+  //! \param[in] eventId   ID of the event triggered this listener.
+  //! \param[in] pCallData data passed from the caller.
+  virtual void Execute(vtkObject*    pCaller,
+                       unsigned long eventId,
+                       void*         pCallData);
 
 private:
 
-  virtual void callback_add_to_renderer      (vtkRenderer*) {}
-  virtual void callback_remove_from_renderer (vtkRenderer*) {}
-  virtual void callback_update               ()             {}
+  //! Constructor accepting owning viewer as a parameter.
+  //! \param[in] pViewer owning viewer.
+  asiUI_MoveCurveHandleCallback(asiUI_Viewer* pViewer);
 
-private:
-
-  //! Copying prohibited.
-  asiVisu_BCurveHandlesPipeline(const asiVisu_BCurveHandlesPipeline&);
-
-  //! Assignment prohibited.
-  asiVisu_BCurveHandlesPipeline& operator=(const asiVisu_BCurveHandlesPipeline&);
-
-private:
-
-  int m_iForcedActiveHandle; //!< Transient active handle.
+  //! Dtor.
+  ~asiUI_MoveCurveHandleCallback();
 
 };
 

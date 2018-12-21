@@ -48,6 +48,7 @@ asiData_IVCurveNode::asiData_IVCurveNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Name,      PID_Name);
   REGISTER_PARAMETER(Shape,     PID_Geometry);
   REGISTER_PARAMETER(RealArray, PID_Handles);
+  REGISTER_PARAMETER(Int,       PID_ActiveHandle);
 }
 
 //-----------------------------------------------------------------------------
@@ -61,9 +62,10 @@ Handle(ActAPI_INode) asiData_IVCurveNode::Instance()
 
 void asiData_IVCurveNode::Init()
 {
-  this->InitParameter(PID_Name, "Name");
-  this->SetCurve(NULL, 0.0, 0.0);
-  this->SetHandles(NULL);
+  this->InitParameter   (PID_Name, "Name");
+  this->SetCurve        (NULL, 0.0, 0.0);
+  this->SetHandles      (NULL);
+  this->SetActiveHandle (-1);
 }
 
 //-----------------------------------------------------------------------------
@@ -151,4 +153,18 @@ Handle(HRealArray) asiData_IVCurveNode::GetHandles() const
     handles = ActParamTool::AsRealArray( this->Parameter(PID_Handles) )->GetArray();
   //
   return handles;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_IVCurveNode::SetActiveHandle(const int handleId)
+{
+  ActParamTool::AsInt( this->Parameter(PID_ActiveHandle) )->SetValue(handleId);
+}
+
+//-----------------------------------------------------------------------------
+
+int asiData_IVCurveNode::GetActiveHandle() const
+{
+  return ActParamTool::AsInt( this->Parameter(PID_ActiveHandle) )->GetValue();
 }

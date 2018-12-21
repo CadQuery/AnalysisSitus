@@ -67,6 +67,15 @@ asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& N)
   this->addPipeline        ( Pipeline_Handles, new asiVisu_BCurveHandlesPipeline );
   this->assignDataProvider ( Pipeline_Handles, DP );
 
+  // Pipeline for detection.
+  Handle(asiVisu_BCurveHandlesPipeline)
+    plDetection = new asiVisu_BCurveHandlesPipeline;
+  //
+  plDetection->Actor()->GetProperty()->SetColor(0.0, 1.0, 1.0);
+  plDetection->Actor()->GetProperty()->SetPointSize(10.0);
+  //
+  this->installDetectPipeline(plDetection, DP);
+
   // Adjust props.
   this->GetPipeline(Pipeline_Main)    ->Actor()->GetProperty()->SetLineWidth(1.0f);
   this->GetPipeline(Pipeline_Poles)   ->Actor()->GetProperty()->SetColor(0.6, 0.6, 0.6);
@@ -88,4 +97,72 @@ asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& N)
 Handle(asiVisu_Prs) asiVisu_IVCurvePrs::Instance(const Handle(ActAPI_INode)& N)
 {
   return new asiVisu_IVCurvePrs(N);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_IVCurvePrs::highlight(vtkRenderer*                        renderer,
+                                   const Handle(asiVisu_PickerResult)& pickRes,
+                                   const asiVisu_SelectionNature       selNature) const
+{
+  if ( pickRes->GetPickedActor() != this->GetPipeline(Pipeline_Handles)->Actor() )
+    return;
+
+  Handle(asiVisu_CellPickerResult)
+    cellRes = Handle(asiVisu_CellPickerResult)::DownCast(pickRes);
+  //
+  if ( cellRes.IsNull() )
+    return;
+
+  if ( selNature == SelectionNature_Detection )
+  {
+    Handle(asiVisu_BCurveHandlesPipeline)
+      pl = Handle(asiVisu_BCurveHandlesPipeline)::DownCast( this->GetDetectPipeline() );
+    //
+    pl->SetForcedActiveHandle( cellRes->GetPickedElementIds().GetMinimalMapped() );
+
+    // Update.
+    pl->Actor()->SetVisibility(1);
+    pl->SetInput( this->dataProviderDetect() );
+    pl->Update();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_IVCurvePrs::unHighlight(vtkRenderer*                  renderer,
+                                     const asiVisu_SelectionNature selNature) const
+{
+  if ( selNature == SelectionNature_Detection )
+  {
+    this->GetDetectPipeline()->Actor()->SetVisibility(0);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_IVCurvePrs::renderPipelines(vtkRenderer* renderer) const
+{
+  /* Take care of selection pipelines */
+
+  Handle(asiVisu_Pipeline) detect_pl = this->GetDetectPipeline();
+  Handle(asiVisu_Pipeline) pick_pl   = this->GetPickPipeline();
+
+  // Picking pipeline must be added to renderer the LAST (!). Otherwise
+  // we can experience some strange coloring bug because of their coincidence.
+  /* (1) */ if ( !detect_pl.IsNull() ) detect_pl->AddToRenderer(renderer);
+  /* (2) */ if ( !pick_pl.IsNull() )   pick_pl->AddToRenderer(renderer);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_IVCurvePrs::deRenderPipelines(vtkRenderer* renderer) const
+{
+  /* Take care of selection pipelines */
+
+  Handle(asiVisu_Pipeline) detect_pl = this->GetDetectPipeline();
+  Handle(asiVisu_Pipeline) pick_pl   = this->GetPickPipeline();
+
+  if ( !detect_pl.IsNull() ) detect_pl->RemoveFromRenderer(renderer);
+  if ( !pick_pl.IsNull() )   pick_pl->RemoveFromRenderer(renderer);
 }

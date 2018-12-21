@@ -53,6 +53,8 @@ vtkStandardNewMacro(asiVisu_BCurveHandlesSource);
 
 asiVisu_BCurveHandlesSource::asiVisu_BCurveHandlesSource() : vtkPolyDataAlgorithm()
 {
+  m_iActiveHandleId = -1;
+
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
 }
@@ -69,6 +71,15 @@ void asiVisu_BCurveHandlesSource::SetInputs(const Handle(Geom_BSplineCurve)& bcu
 {
   m_curve   = bcurve;
   m_handles = handles;
+
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_BCurveHandlesSource::SetActiveHandle(const int handleId)
+{
+  m_iActiveHandleId = handleId;
 
   this->Modified();
 }
@@ -103,12 +114,25 @@ int asiVisu_BCurveHandlesSource::RequestData(vtkInformation*        request,
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
   polyOutput->SetPoints(points);
 
-  // Populate poly data with vertices
-  for ( int i = 0; i < nHandles; ++i )
+  // Global IDs for selection.
+  vtkSmartPointer<vtkIdTypeArray> gidsArr = vtkSmartPointer<vtkIdTypeArray>::New();
+  gidsArr->SetNumberOfComponents(1);
+  //
+  polyOutput->GetCellData()->SetGlobalIds(gidsArr);
+
+  // Populate poly data with vertices.
+  for ( int handleId = 0; handleId < nHandles; ++handleId )
   {
-    // Register geometry (point) and topology (vertex)
-    const vtkIdType pid = this->registerGridPoint(i, polyOutput);
-    this->registerVertex(pid, polyOutput);
+    // If active handle is specified, skip all but this handle.
+    if ( m_iActiveHandleId != -1 && handleId != m_iActiveHandleId )
+      continue;
+
+    // Register geometry (point).
+    const vtkIdType
+      pid = this->registerGridPoint(handleId, polyOutput);
+
+    // Register topology (vertex).
+    this->registerVertex(pid, handleId, polyOutput);
   }
 
   return Superclass::RequestData(request, inputVector, outputVector);
@@ -133,13 +157,20 @@ vtkIdType asiVisu_BCurveHandlesSource::registerGridPoint(const int    index,
 //-----------------------------------------------------------------------------
 
 vtkIdType asiVisu_BCurveHandlesSource::registerVertex(const vtkIdType pid,
-                                                   vtkPolyData*    polyData)
+                                                      const int       handleId,
+                                                      vtkPolyData*    polyData)
 {
   std::vector<vtkIdType> pids;
   pids.push_back(pid);
   //
   vtkIdType cellID =
     polyData->InsertNextCell( VTK_VERTEX, (int) pids.size(), &pids[0] );
+
+  // Assign a global ID.
+  vtkSmartPointer<vtkIdTypeArray>
+    gidsArray = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetGlobalIds() );
+  //
+  gidsArray->InsertNextValue(handleId);
 
   return cellID;
 }

@@ -59,6 +59,12 @@ public:
   //! \return array of curve parameters representing the interaction handles.
   virtual Handle(HRealArray) GetHandles() const { return NULL; }
 
+  //! Returns handle ID which is currently active. Not all curve types use
+  //! interactive handles, so this method returns -1 (no handle) by default.
+  //!
+  //! \return 0-based ID of the active handle or -1 if no handle is active.
+  virtual int GetActiveHandle() const { return -1; }
+
 };
 
 #endif

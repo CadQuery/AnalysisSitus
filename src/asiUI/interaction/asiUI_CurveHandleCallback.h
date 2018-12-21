@@ -28,65 +28,69 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_BCurveHandlesPipeline_h
-#define asiVisu_BCurveHandlesPipeline_h
+#ifndef asiUI_CurveHandleCallback_h
+#define asiUI_CurveHandleCallback_h
 
-// A-Situs includes
-#include <asiVisu_DataProvider.h>
-#include <asiVisu_Pipeline.h>
+// asiUI includes
+#include <asiUI_ViewerCallback.h>
+
+// asiEngine includes
+#include <asiEngine_Model.h>
 
 // VTK includes
-#include <vtkPolyDataAlgorithm.h>
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
 
-//-----------------------------------------------------------------------------
+// Qt includes
+#include <QObject>
 
-//! Visualization pipeline for handles on a b-curve.
-class asiVisu_BCurveHandlesPipeline : public asiVisu_Pipeline
+//! Base class for interaction callbacks to work with 3D curves.
+class asiUI_CurveHandleCallback : public QObject,
+                                  public asiUI_ViewerCallback
 {
-public:
-
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_BCurveHandlesPipeline, asiVisu_Pipeline)
+  Q_OBJECT
 
 public:
 
-  //! Ctor.
-  asiVisu_EXPORT
-    asiVisu_BCurveHandlesPipeline();
+  virtual void Execute(vtkObject*,
+                       unsigned long,
+                       void*) = 0;
 
 public:
 
-  //! Sets input data for the pipeline.
-  //! \param[in] DP Data Provider.
-  asiVisu_EXPORT virtual void
-    SetInput(const Handle(asiVisu_DataProvider)& DP);
-
-public:
-
-  //! Sets transient active handle.
-  //! \param[in] handleId handle ID to use.
-  void SetForcedActiveHandle(const int handleId)
+  //! Sets Data Model instance to access the geometry to pick.
+  //! \param[in] model Data Model instance.
+  void SetModel(const Handle(asiEngine_Model)& model)
   {
-    m_iForcedActiveHandle = handleId;
+    m_model = model;
   }
 
-private:
+protected:
 
-  virtual void callback_add_to_renderer      (vtkRenderer*) {}
-  virtual void callback_remove_from_renderer (vtkRenderer*) {}
-  virtual void callback_update               ()             {}
+  bool getPickedPointOnCurve(void*                        pCallData,
+                             Handle(asiData_IVCurveNode)& curveNode,
+                             gp_Pnt&                      resultPt,
+                             double&                      resultParam) const;
 
-private:
+  Handle(Geom_Curve)
+    getPickedCurve(void*                        pCallData,
+                   Handle(asiData_IVCurveNode)& curveNode) const;
 
-  //! Copying prohibited.
-  asiVisu_BCurveHandlesPipeline(const asiVisu_BCurveHandlesPipeline&);
+  Handle(asiData_IVCurveNode)
+    getPickedCurveNode(void* pCallData) const;
 
-  //! Assignment prohibited.
-  asiVisu_BCurveHandlesPipeline& operator=(const asiVisu_BCurveHandlesPipeline&);
+protected:
 
-private:
+  //! Constructor accepting owning viewer as a parameter.
+  //! \param[in] pViewer owning viewer.
+  asiUI_CurveHandleCallback(asiUI_Viewer* pViewer);
 
-  int m_iForcedActiveHandle; //!< Transient active handle.
+  //! Dtor.
+  ~asiUI_CurveHandleCallback();
+
+protected:
+
+  Handle(asiEngine_Model) m_model; //!< Data Model instance.
 
 };
 

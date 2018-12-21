@@ -29,15 +29,14 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_PickCurveHandleCallback.h>
+#include <asiUI_CurveHandleCallback.h>
 
 // asiUI includes
-#include <asiUI_ViewerPart.h>
+#include <asiUI_Viewer.h>
 
 // asiVisu includes
 #include <asiVisu_NodeInfo.h>
 #include <asiVisu_PrsManager.h>
-#include <asiVisu_Utils.h>
 
 // OCCT includes
 #include <gp_Lin.hxx>
@@ -45,59 +44,22 @@
 
 //-----------------------------------------------------------------------------
 
-asiUI_PickCurveHandleCallback* asiUI_PickCurveHandleCallback::New()
-{
-  return new asiUI_PickCurveHandleCallback(NULL);
-}
-
-//-----------------------------------------------------------------------------
-
-asiUI_PickCurveHandleCallback::asiUI_PickCurveHandleCallback(asiUI_Viewer* pViewer)
+asiUI_CurveHandleCallback::asiUI_CurveHandleCallback(asiUI_Viewer* pViewer)
 //
 : asiUI_ViewerCallback(pViewer)
 {}
 
 //-----------------------------------------------------------------------------
 
-asiUI_PickCurveHandleCallback::~asiUI_PickCurveHandleCallback()
+asiUI_CurveHandleCallback::~asiUI_CurveHandleCallback()
 {}
 
 //-----------------------------------------------------------------------------
 
-void asiUI_PickCurveHandleCallback::Execute(vtkObject*    pCaller,
-                                            unsigned long eventId,
-                                            void*         pCallData)
-{
-  asiUI_NotUsed(pCaller);
-
-  if ( eventId == EVENT_SELECT_CELL )
-  {
-    // Get picked point.
-    Handle(asiData_IVCurveNode) curveNode;
-    gp_Pnt                      hitPt;
-    double                      hitParam;
-    //
-    if ( !this->getPickedPointOnCurve(pCallData, curveNode, hitPt, hitParam) )
-      return;
-
-    // Store the obtained parameter as a handle of curve.
-    m_model->OpenCommand();
-    {
-      curveNode->AddHandle(hitParam);
-    }
-    m_model->CommitCommand();
-
-    // Actualize Presentation.
-    m_pViewer->PrsMgr()->Actualize(curveNode);
-  }
-}
-
-//-----------------------------------------------------------------------------
-
-bool asiUI_PickCurveHandleCallback::getPickedPointOnCurve(void*                        pCallData,
-                                                          Handle(asiData_IVCurveNode)& curveNode,
-                                                          gp_Pnt&                      resultPt,
-                                                          double&                      resultParam) const
+bool asiUI_CurveHandleCallback::getPickedPointOnCurve(void*                        pCallData,
+                                                      Handle(asiData_IVCurveNode)& curveNode,
+                                                      gp_Pnt&                      resultPt,
+                                                      double&                      resultParam) const
 {
   // Convert passed data to cell picker result.
   asiVisu_CellPickerResult* pPickRes = (asiVisu_CellPickerResult*) pCallData;
@@ -115,16 +77,14 @@ bool asiUI_PickCurveHandleCallback::getPickedPointOnCurve(void*                 
   ShapeAnalysis_Curve sac;
   sac.Project(curve, pos, 1.0e-3, resultPt, resultParam);
 
-  //m_plotter.REDRAW_POINT("proj-pos", gp_Pnt(projP), Color_Red);
-
   return true;
 }
 
 //-----------------------------------------------------------------------------
 
 Handle(Geom_Curve)
-  asiUI_PickCurveHandleCallback::getPickedCurve(void*                        pCallData,
-                                                Handle(asiData_IVCurveNode)& curveNode) const
+  asiUI_CurveHandleCallback::getPickedCurve(void*                        pCallData,
+                                            Handle(asiData_IVCurveNode)& curveNode) const
 {
   curveNode = this->getPickedCurveNode(pCallData);
   //
@@ -138,7 +98,7 @@ Handle(Geom_Curve)
 //-----------------------------------------------------------------------------
 
 Handle(asiData_IVCurveNode)
-  asiUI_PickCurveHandleCallback::getPickedCurveNode(void* pCallData) const
+  asiUI_CurveHandleCallback::getPickedCurveNode(void* pCallData) const
 {
   // Convert passed data to cell picker result.
   asiVisu_CellPickerResult* pPickRes = (asiVisu_CellPickerResult*) pCallData;

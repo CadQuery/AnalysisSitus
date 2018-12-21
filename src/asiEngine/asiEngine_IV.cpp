@@ -506,9 +506,12 @@ void asiEngine_IV::Clean_Curves()
 
 //! Enables or disables interactive picking for the Curve Nodes.
 //! \param[in] on      true to enable, false to disable.
+//! \param[in] create  indicates whether to activate creation or modification
+//!                    of handles.
 //! \param[in] pPrsMgr Presentation Manager to access Presentations of Curve Nodes.
-void asiEngine_IV::ActivateCurvesHandles(const bool          on,
-                                         asiVisu_PrsManager* pPrsMgr)
+void asiEngine_IV::ActivateCurveHandles(const bool          on,
+                                        const bool          create,
+                                        asiVisu_PrsManager* pPrsMgr)
 {
   // Get all Curve Nodes.
   Handle(asiData_Partition<asiData_IVCurveNode>) P = m_model->GetIVCurvePartition();
@@ -530,13 +533,17 @@ void asiEngine_IV::ActivateCurvesHandles(const bool          on,
     for ( asiVisu_HPipelineList::Iterator it(*pipelines); it.More(); it.Next() )
     {
       const Handle(asiVisu_Pipeline)& pl = it.Value();
-      //
-      if ( !pl->IsKind( STANDARD_TYPE(asiVisu_BCurveHandlesPipeline) ) &&
-           !pl->IsKind( STANDARD_TYPE(asiVisu_CurvePipeline) ) )
-        continue;
 
-      pl->Actor()->SetVisibility(on ? 1 : 0);
-      pl->Actor()->SetPickable(on ? 1 : 0);
+      // Show handles and adjust pickability.
+      if ( pl->IsKind( STANDARD_TYPE(asiVisu_CurvePipeline) ) )
+      {
+        pl->Actor()->SetPickable(create ? 1 : 0);
+      }
+      else if ( pl->IsKind( STANDARD_TYPE(asiVisu_BCurveHandlesPipeline) ) )
+      {
+        pl->Actor()->SetVisibility(on ? 1 : 0);
+        pl->Actor()->SetPickable(create ? 0 : 1);
+      }
     }
   }
 }

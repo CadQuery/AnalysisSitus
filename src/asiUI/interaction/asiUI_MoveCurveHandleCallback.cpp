@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 11 April 2016
+// Created on: 21 December 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,95 +29,43 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_IVCurveDataProvider.h>
+#include <asiUI_MoveCurveHandleCallback.h>
 
-// Active Data includes
-#include <ActData_ParameterFactory.h>
+// asiUI includes
+#include <asiUI_Viewer.h>
+
+// asiVisu includes
+#include <asiVisu_Utils.h>
 
 //-----------------------------------------------------------------------------
 
-asiVisu_IVCurveDataProvider::asiVisu_IVCurveDataProvider(const Handle(ActAPI_INode)& N)
-: asiVisu_CurveDataProvider (),
-  m_node                    ( Handle(asiData_IVCurveNode)::DownCast(N) )
+asiUI_MoveCurveHandleCallback* asiUI_MoveCurveHandleCallback::New()
+{
+  return new asiUI_MoveCurveHandleCallback(NULL);
+}
+
+//-----------------------------------------------------------------------------
+
+asiUI_MoveCurveHandleCallback::asiUI_MoveCurveHandleCallback(asiUI_Viewer* pViewer)
+//
+: asiUI_CurveHandleCallback(pViewer)
 {}
 
 //-----------------------------------------------------------------------------
 
-Handle(Standard_Type)
-  asiVisu_IVCurveDataProvider::GetCurveType() const
-{
-  double f, l;
-  return this->GetCurve(f, l)->DynamicType();
-}
+asiUI_MoveCurveHandleCallback::~asiUI_MoveCurveHandleCallback()
+{}
 
 //-----------------------------------------------------------------------------
 
-Handle(Geom2d_Curve)
-  asiVisu_IVCurveDataProvider::GetCurve2d(double&, double&) const
+void asiUI_MoveCurveHandleCallback::Execute(vtkObject*    pCaller,
+                                            unsigned long eventId,
+                                            void*         pCallData)
 {
-  return NULL;
-}
+  asiUI_NotUsed(pCaller);
 
-//-----------------------------------------------------------------------------
-
-Handle(Geom_Curve)
-  asiVisu_IVCurveDataProvider::GetCurve(double& f, double& l) const
-{
-  if ( m_node.IsNull() )
-    return NULL;
-
-  return m_node->GetCurve(f, l);
-}
-
-//-----------------------------------------------------------------------------
-
-Handle(HRealArray)
-  asiVisu_IVCurveDataProvider::GetHandles() const
-{
-  if ( m_node.IsNull() )
-    return NULL;
-
-  return m_node->GetHandles();
-}
-
-//-----------------------------------------------------------------------------
-
-int asiVisu_IVCurveDataProvider::GetActiveHandle() const
-{
-  if ( m_node.IsNull() )
-    return NULL;
-
-  return m_node->GetActiveHandle();
-}
-
-//-----------------------------------------------------------------------------
-
-ActAPI_DataObjectId asiVisu_IVCurveDataProvider::GetNodeID() const
-{
-  return m_node->GetId();
-}
-
-//-----------------------------------------------------------------------------
-
-Handle(asiVisu_IVCurveDataProvider) asiVisu_IVCurveDataProvider::Clone() const
-{
-  return new asiVisu_IVCurveDataProvider(m_node);
-}
-
-//-----------------------------------------------------------------------------
-
-Handle(ActAPI_HParameterList) asiVisu_IVCurveDataProvider::translationSources() const
-{
-  // Resulting Parameters
-  ActParamStream out;
-
-  if ( m_node.IsNull() )
-    return out;
-
-  // Register Parameter as sensitive
-  out << m_node->Parameter(asiData_IVCurveNode::PID_Geometry)
-      << m_node->Parameter(asiData_IVCurveNode::PID_Handles)
-      << m_node->Parameter(asiData_IVCurveNode::PID_ActiveHandle);
-
-  return out;
+  if ( eventId == EVENT_SELECT_CELL )
+  {
+    // TODO: NYI
+  }
 }

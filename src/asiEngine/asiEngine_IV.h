@@ -115,8 +115,9 @@ public:
     Clean_Curves();
 
   asiEngine_EXPORT void
-    ActivateCurvesHandles(const bool          on,
-                          asiVisu_PrsManager* pPrsMgr);
+    ActivateCurveHandles(const bool          on,
+                         const bool          create,
+                         asiVisu_PrsManager* pPrsMgr);
 
 //---------------------------------------------------------------------------//
 

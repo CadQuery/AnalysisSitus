@@ -64,6 +64,27 @@ public:
   asiVisu_EXPORT static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& N);
 
+protected:
+
+  //! Highlights curve presentation.
+  virtual void
+    highlight(vtkRenderer*                        renderer,
+              const Handle(asiVisu_PickerResult)& pickRes,
+              const asiVisu_SelectionNature       selNature) const;
+
+  //! Unhighlights curve presentation.
+  virtual void
+    unHighlight(vtkRenderer*                  renderer,
+                const asiVisu_SelectionNature selNature) const;
+
+  //! Callback on adding presentation pipelines to renderer.
+  virtual void
+    renderPipelines(vtkRenderer* renderer) const;
+
+  //! Callback on removing presentation pipelines from renderer.
+  virtual void
+    deRenderPipelines(vtkRenderer* renderer) const;
+
 private:
 
   //! Allocation is allowed only via Instance() method.

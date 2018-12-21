@@ -34,6 +34,7 @@
 // asiVisu includes
 #include <asiVisu_BCurveHandlesSource.h>
 #include <asiVisu_CurveDataProvider.h>
+#include <asiVisu_NodeInfo.h>
 
 // VTK includes
 #include <vtkPolyDataMapper.h>
@@ -46,6 +47,8 @@ asiVisu_BCurveHandlesPipeline::asiVisu_BCurveHandlesPipeline()
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                     vtkSmartPointer<vtkActor>::New() )
 {
+  m_iForcedActiveHandle = -1;
+
   this->Actor()->GetProperty()->SetPointSize(8.0f);
 }
 
@@ -75,11 +78,15 @@ void asiVisu_BCurveHandlesPipeline::SetInput(const Handle(asiVisu_DataProvider)&
    *  Prepare polygonal data set
    * ============================ */
 
-  if ( dp->MustExecute( this->GetMTime() ) )
+  // Forced activation is allowed.
+  if ( dp->MustExecute( this->GetMTime() ) || (m_iForcedActiveHandle != -1) )
   {
     // Access curve.
     double f, l;
     Handle(Geom_Curve) c3d = dp->GetCurve(f, l);
+
+    // Bind to a Data Node using information key.
+    asiVisu_NodeInfo::Store( dp->GetNodeID(), this->Actor() );
 
     // B-curve handles.
     if ( !c3d.IsNull() && c3d->IsKind( STANDARD_TYPE(Geom_BSplineCurve) ) )
@@ -90,6 +97,12 @@ void asiVisu_BCurveHandlesPipeline::SetInput(const Handle(asiVisu_DataProvider)&
         bHandlesSrc = vtkSmartPointer<asiVisu_BCurveHandlesSource>::New();
       //
       bHandlesSrc->SetInputs( BC, dp->GetHandles() );
+
+      // Set active handle ID if any.
+      if ( m_iForcedActiveHandle != -1 )
+        bHandlesSrc->SetActiveHandle( m_iForcedActiveHandle );
+      else
+        bHandlesSrc->SetActiveHandle( dp->GetActiveHandle() );
 
       // Connect data source to the pipeline.
       this->SetInputConnection( bHandlesSrc->GetOutputPort() );

@@ -38,8 +38,9 @@
 #include <asiEngine_Triangulation.h>
 
 // asiUI includes
+#include <asiUI_AddCurveHandleCallback.h>
+#include <asiUI_MoveCurveHandleCallback.h>
 #include <asiUI_PickContourCallback.h>
-#include <asiUI_PickCurveHandleCallback.h>
 
 // asiAlgo includes
 #include <asiAlgo_HitFacet.h>
@@ -148,7 +149,51 @@ int ENGINE_AddCurveHandle(const Handle(asiTcl_Interp)& interp,
   const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdEngine::cf->ViewerPart->PrsMgr();
 
   // Enable interactive picking.
-  IV.ActivateCurvesHandles(true, PM);
+  IV.ActivateCurveHandles(true, true, PM);
+
+  // Set picker types.
+  cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerTypes(PickerType_Cell);
+
+  // Set selection mode.
+  PM->SetSelectionMode(SelectionMode_Workpiece);
+
+  // Prepare callback which will manage the interaction process with user.
+  vtkSmartPointer<asiUI_AddCurveHandleCallback>
+    cb = vtkSmartPointer<asiUI_AddCurveHandleCallback>::New();
+  //
+  cb->SetViewer          ( cmdEngine::cf->ViewerPart );
+  cb->SetModel           ( cmdEngine::model );
+  cb->SetDiagnosticTools ( interp->GetProgress(), interp->GetPlotter() );
+
+  // Remove previously defined observers.
+  if ( PM->HasObserver(EVENT_SELECT_CELL) )
+    PM->RemoveObservers(EVENT_SELECT_CELL);
+
+  // Add observer which takes responsibility to interact with the user.
+  PM->AddObserver(EVENT_SELECT_CELL, cb);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_MoveCurveHandle(const Handle(asiTcl_Interp)& interp,
+                           int                          argc,
+                           const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // API to manage primitives of imperative plotter.
+  asiEngine_IV IV(cmdEngine::model);
+
+  // Get Part presentation manager.
+  const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdEngine::cf->ViewerPart->PrsMgr();
+
+  // Enable interactive picking.
+  IV.ActivateCurveHandles(true, false, PM);
 
   // Set picker types.
   cmdEngine::cf->ViewerPart->GetPickCallback()->SetPickerTypes(PickerType_World | PickerType_Cell);
@@ -157,8 +202,8 @@ int ENGINE_AddCurveHandle(const Handle(asiTcl_Interp)& interp,
   PM->SetSelectionMode(SelectionMode_Workpiece);
 
   // Prepare callback which will manage the interaction process with user.
-  vtkSmartPointer<asiUI_PickCurveHandleCallback>
-    cb = vtkSmartPointer<asiUI_PickCurveHandleCallback>::New();
+  vtkSmartPointer<asiUI_MoveCurveHandleCallback>
+    cb = vtkSmartPointer<asiUI_MoveCurveHandleCallback>::New();
   //
   cb->SetViewer          ( cmdEngine::cf->ViewerPart );
   cb->SetModel           ( cmdEngine::model );
@@ -177,9 +222,6 @@ int ENGINE_AddCurveHandle(const Handle(asiTcl_Interp)& interp,
   // Add observer which takes responsibility to interact with the user.
   PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
   PM->AddObserver(EVENT_SELECT_CELL,        cb);
-  PM->AddObserver(EVENT_DETECT_CELL,        cb);
-
-  // TODO: NYI
 
   return TCL_OK;
 }
@@ -293,6 +335,14 @@ void cmdEngine::Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
     "\t Allows to add interactively on-curve handles.",
     //
     __FILE__, group, ENGINE_AddCurveHandle);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("move-curve-handle",
+    //
+    "move-curve-handle\n"
+    "\t Allows to move the selected curve handle to another (picked) position.",
+    //
+    __FILE__, group, ENGINE_MoveCurveHandle);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("contour-to-wire",

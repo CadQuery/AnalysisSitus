@@ -28,25 +28,14 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_PickCurveHandleCallback_h
-#define asiUI_PickCurveHandleCallback_h
+#ifndef asiUI_AddCurveHandleCallback_h
+#define asiUI_AddCurveHandleCallback_h
 
 // asiUI includes
-#include <asiUI_ViewerCallback.h>
+#include <asiUI_CurveHandleCallback.h>
 
-// asiEngine includes
-#include <asiEngine_Model.h>
-
-// VTK includes
-#include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
-
-// Qt includes
-#include <QObject>
-
-//! Callback for picking handles on IV curves.
-class asiUI_PickCurveHandleCallback : public QObject,
-                                      public asiUI_ViewerCallback
+//! Callback for adding handles to IV curves.
+class asiUI_AddCurveHandleCallback : public asiUI_CurveHandleCallback
 {
   Q_OBJECT
 
@@ -54,9 +43,9 @@ public:
 
   //! Instantiation routine.
   //! \return instance of the callback class.
-  asiUI_EXPORT static asiUI_PickCurveHandleCallback* New();
+  asiUI_EXPORT static asiUI_AddCurveHandleCallback* New();
   //
-  vtkTypeMacro(asiUI_PickCurveHandleCallback, asiUI_ViewerCallback);
+  vtkTypeMacro(asiUI_AddCurveHandleCallback, asiUI_CurveHandleCallback);
 
 public:
 
@@ -68,41 +57,14 @@ public:
                        unsigned long eventId,
                        void*         pCallData);
 
-public:
-
-  //! Sets Data Model instance to access the geometry to pick.
-  //! \param[in] model Data Model instance.
-  void SetModel(const Handle(asiEngine_Model)& model)
-  {
-    m_model = model;
-  }
-
-private:
-
-  bool getPickedPointOnCurve(void*                        pCallData,
-                             Handle(asiData_IVCurveNode)& curveNode,
-                             gp_Pnt&                      resultPt,
-                             double&                      resultParam) const;
-
-  Handle(Geom_Curve)
-    getPickedCurve(void*                        pCallData,
-                   Handle(asiData_IVCurveNode)& curveNode) const;
-
-  Handle(asiData_IVCurveNode)
-    getPickedCurveNode(void* pCallData) const;
-
 private:
 
   //! Constructor accepting owning viewer as a parameter.
   //! \param[in] pViewer owning viewer.
-  asiUI_PickCurveHandleCallback(asiUI_Viewer* pViewer);
+  asiUI_AddCurveHandleCallback(asiUI_Viewer* pViewer);
 
   //! Dtor.
-  ~asiUI_PickCurveHandleCallback();
-
-private:
-
-  Handle(asiEngine_Model) m_model; //!< Data Model instance.
+  ~asiUI_AddCurveHandleCallback();
 
 };
 

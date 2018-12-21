@@ -59,6 +59,10 @@ public:
   void SetInputs(const Handle(Geom_BSplineCurve)& bcurve,
                  const Handle(HRealArray)&        handles);
 
+  //! Sets ID of the active handle.
+  //! \param[in] handleId ID of the handle to set.
+  void SetActiveHandle(const int handleId);
+
 protected:
 
   //! This method (called by superclass) performs conversion of OCCT
@@ -85,10 +89,12 @@ protected:
 
   //! Adds a vertex cell into the polygonal data set.
   //! \param[in]     pid      point index.
+  //! \param[in]     handleId 0-based ID of the handle.
   //! \param[in,out] polyData polygonal data set being populated.
   //! \return ID of the just added VTK cell.
   vtkIdType
     registerVertex(const vtkIdType pid,
+                   const int       handleId,
                    vtkPolyData*    polyData);
 
 protected:
@@ -103,8 +109,9 @@ private:
 
 private:
 
-  Handle(Geom_BSplineCurve) m_curve;   //!< B-curve.
-  Handle(HRealArray)        m_handles; //!< Interaction handles.
+  Handle(Geom_BSplineCurve) m_curve;           //!< B-curve.
+  Handle(HRealArray)        m_handles;         //!< Interaction handles.
+  int                       m_iActiveHandleId; //!< ID of the currently active handle.
 
 };
 

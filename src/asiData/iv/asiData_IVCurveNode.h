@@ -67,6 +67,7 @@ public:
   //------------------//
     PID_Geometry,     //!< Stored geometry.
     PID_Handles,      //!< On-curve handles for interaction.
+    PID_ActiveHandle, //!< Index of the currently active handle.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -129,6 +130,15 @@ public:
   //! \return stored on-curve handles (parameter values).
   asiData_EXPORT Handle(HRealArray)
     GetHandles() const;
+
+  //! Sets index of the currently active handle.
+  //! \param[in] handleId ID of the handle to set.
+  asiData_EXPORT void
+    SetActiveHandle(const int handleId);
+
+  //! \return 0-based index of the currently active handle.
+  asiData_EXPORT int
+    GetActiveHandle() const;
 
 // Initialization:
 public:

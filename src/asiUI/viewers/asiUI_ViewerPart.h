@@ -104,10 +104,10 @@ public slots:
 
 signals:
 
-  void pointPicked  (const double, const double, const double);
-  void facePicked   (asiVisu_PickerResult*);
-  void edgePicked   (asiVisu_PickerResult*);
-  void vertexPicked (asiVisu_PickerResult*);
+  void whateverPicked (asiVisu_PickerResult*);
+  void facePicked     (asiVisu_PickerResult*);
+  void edgePicked     (asiVisu_PickerResult*);
+  void vertexPicked   (asiVisu_PickerResult*);
 
 protected:
 

@@ -76,6 +76,15 @@ asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& N)
   //
   this->installDetectPipeline(plDetection, DP);
 
+  // Pipeline for picking.
+  Handle(asiVisu_BCurveHandlesPipeline)
+    plPicking = new asiVisu_BCurveHandlesPipeline;
+  //
+  plPicking->Actor()->GetProperty()->SetColor(1.0, 1.0, 0.0);
+  plPicking->Actor()->GetProperty()->SetPointSize(10.0);
+  //
+  this->installPickPipeline(plPicking, DP);
+
   // Adjust props.
   this->GetPipeline(Pipeline_Main)    ->Actor()->GetProperty()->SetLineWidth(1.0f);
   this->GetPipeline(Pipeline_Poles)   ->Actor()->GetProperty()->SetColor(0.6, 0.6, 0.6);
@@ -108,6 +117,7 @@ void asiVisu_IVCurvePrs::highlight(vtkRenderer*                        renderer,
   if ( pickRes->GetPickedActor() != this->GetPipeline(Pipeline_Handles)->Actor() )
     return;
 
+  // Only cells are processed.
   Handle(asiVisu_CellPickerResult)
     cellRes = Handle(asiVisu_CellPickerResult)::DownCast(pickRes);
   //
@@ -124,6 +134,16 @@ void asiVisu_IVCurvePrs::highlight(vtkRenderer*                        renderer,
     // Update.
     pl->Actor()->SetVisibility(1);
     pl->SetInput( this->dataProviderDetect() );
+    pl->Update();
+  }
+  else if ( selNature == SelectionNature_Persistent )
+  {
+    Handle(asiVisu_BCurveHandlesPipeline)
+      pl = Handle(asiVisu_BCurveHandlesPipeline)::DownCast( this->GetPickPipeline() );
+
+    // Update.
+    pl->Actor()->SetVisibility(1);
+    pl->SetInput( this->dataProviderPick() );
     pl->Update();
   }
 }

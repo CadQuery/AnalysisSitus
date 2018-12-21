@@ -32,7 +32,7 @@
 #define asiUI_ObjectBrowser_h
 
 // asiUI includes
-#include <asiUI_ViewerPart.h>
+#include <asiUI_Viewer.h>
 
 // Active Data (API) includes
 #include <ActAPI_IModel.h>

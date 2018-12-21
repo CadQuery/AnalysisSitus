@@ -294,16 +294,12 @@ void asiUI_ViewerPart::onFitAll()
 //! Callback for picking event.
 void asiUI_ViewerPart::onWhateverPicked()
 {
-  // Access picking results
+  // Access picking results.
   const asiVisu_ActualSelection&          sel      = m_prs_mgr->GetCurrentSelection();
   const Handle(asiVisu_CellPickerResult)& pick_res = sel.GetCellPickerResult(SelectionNature_Persistent);
 
-  // Get picked position without any attempt to interpret what's happening
-  double x, y, z;
-  pick_res->GetPickedPos(x, y, z);
-
-  // We don't care of picking logic here and let the listener react
-  emit pointPicked(x, y, z);
+  // We don't care of picking logic here and let the listener react.
+  emit whateverPicked( pick_res.get() );
 }
 
 //-----------------------------------------------------------------------------

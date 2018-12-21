@@ -66,6 +66,11 @@ private:
   //! Dtor.
   ~asiUI_MoveCurveHandleCallback();
 
+protected:
+
+  //! Currently operated Curve Node.
+  Handle(asiData_IVCurveNode) m_currentCurveNode;
+
 };
 
 #endif

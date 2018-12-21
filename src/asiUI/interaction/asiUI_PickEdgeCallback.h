@@ -58,15 +58,6 @@ public:
             unsigned long eventId,
             void*         pCallData);
 
-public:
-
-  //! Sets Data Model instance to access the geometry to pick.
-  //! \param model [in] Data Model instance.
-  void SetModel(const Handle(asiEngine_Model)& model)
-  {
-    m_model = model;
-  }
-
 private:
 
   asiUI_EXPORT
@@ -74,10 +65,6 @@ private:
 
   asiUI_EXPORT
     ~asiUI_PickEdgeCallback();
-
-private:
-
-  Handle(asiEngine_Model) m_model; //!< Data Model instance.
 
 };
 

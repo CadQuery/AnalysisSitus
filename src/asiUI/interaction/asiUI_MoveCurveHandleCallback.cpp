@@ -37,6 +37,9 @@
 // asiVisu includes
 #include <asiVisu_Utils.h>
 
+// OCCT includes
+#include <Geom_BSplineCurve.hxx>
+
 //-----------------------------------------------------------------------------
 
 asiUI_MoveCurveHandleCallback* asiUI_MoveCurveHandleCallback::New()
@@ -64,8 +67,70 @@ void asiUI_MoveCurveHandleCallback::Execute(vtkObject*    pCaller,
 {
   asiUI_NotUsed(pCaller);
 
+  // Process event.
   if ( eventId == EVENT_SELECT_CELL )
   {
-    // TODO: NYI
+    // Convert passed data to cell picker result.
+    asiVisu_CellPickerResult* pPickRes = (asiVisu_CellPickerResult*) pCallData;
+
+    // Get picked Curve Node.
+    Handle(asiData_IVCurveNode) curveNode = this->getPickedCurveNode(pCallData);
+    //
+    if ( curveNode.IsNull() )
+      return;
+
+    // Store in the Data Model.
+    m_model->OpenCommand();
+    {
+      // Get ID of the picked handle.
+      const int
+        activeHandle = pPickRes->GetPickedElementIds().GetMinimalMapped();
+
+      // Set index.
+      curveNode->SetActiveHandle(activeHandle);
+    }
+    m_model->CommitCommand();
+
+    // Get ready for moving points.
+    m_currentCurveNode = curveNode;
+  }
+  else if ( eventId == EVENT_SELECT_WORLD_POINT )
+  {
+    if ( m_currentCurveNode.IsNull() || m_currentCurveNode->GetActiveHandle() == -1 )
+      return;
+
+    // Get picked point.
+    gp_XYZ hit;
+    if ( !this->getPickedPoint(pCallData, hit) )
+      return;
+
+    // Get curve.
+    Handle(Geom_BSplineCurve)
+      curve = Handle(Geom_BSplineCurve)::DownCast( m_currentCurveNode->GetCurve() );
+
+    // Make a copy.
+    Handle(Geom_BSplineCurve)
+      resCurve = Handle(Geom_BSplineCurve)::DownCast( curve->Copy() );
+
+    // Move point.
+    const int index1 = 2, index2 = resCurve->Poles().Length() - 1;
+    int resIndex1, resIndex2;
+    const double u = m_currentCurveNode->GetActiveHandleParam();
+    //
+    resCurve->MovePoint(u, hit, index1, index2, resIndex1, resIndex2);
+
+    // Store in the data model.
+    m_model->OpenCommand();
+    {
+      m_currentCurveNode->SetCurve(resCurve);
+      m_currentCurveNode->SetActiveHandle(-1);
+    }
+    m_model->CommitCommand();
+
+    // Actualize.
+    m_pViewer->PrsMgr()->Actualize(m_currentCurveNode);
+
+    // Nullify curve.
+    m_currentCurveNode.Nullify();
   }
 }

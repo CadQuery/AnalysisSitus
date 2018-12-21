@@ -57,8 +57,10 @@ asiUI_PickFacetCallback* asiUI_PickFacetCallback::New()
 //! \param[in] viewer     owning viewer.
 asiUI_PickFacetCallback::asiUI_PickFacetCallback(const Handle(asiAlgo_BVHFacets)& bvh_facets,
                                                  asiUI_Viewer*                    viewer)
-: asiUI_ViewerCallback(viewer), m_bvh(bvh_facets)
-{}
+: asiUI_ViewerCallback(viewer)
+{
+  this->SetBVH(bvh_facets);
+}
 
 //! Destructor.
 asiUI_PickFacetCallback::~asiUI_PickFacetCallback()

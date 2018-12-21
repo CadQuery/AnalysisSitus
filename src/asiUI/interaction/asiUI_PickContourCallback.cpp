@@ -64,8 +64,7 @@ asiUI_PickContourCallback* asiUI_PickContourCallback::New()
 //! \param[in] pViewer owning viewer.
 asiUI_PickContourCallback::asiUI_PickContourCallback(asiUI_Viewer* pViewer)
 //
-: asiUI_ViewerCallback (pViewer),
-  m_pBrowser           (nullptr)
+: asiUI_ViewerCallback(pViewer)
 {}
 
 //-----------------------------------------------------------------------------
@@ -776,40 +775,6 @@ Handle(asiData_ReVertexNode)
     vertexNode = Handle(asiData_ReVertexNode)::DownCast(node);
   //
   return vertexNode;
-}
-
-//-----------------------------------------------------------------------------
-
-bool asiUI_PickContourCallback::getPickedPoint(void*   pCallData,
-                                               gp_XYZ& result)
-{
-  // Get picking ray.
-  gp_Lin pickRay = *( (gp_Lin*) pCallData );
-
-  // Prepare a tool to find the intersected facet.
-  asiAlgo_HitFacet HitFacet(m_bvh, m_notifier, m_plotter);
-
-  // Find intersection.
-  gp_XYZ hit;
-  int facet_idx;
-  //
-  if ( !HitFacet(pickRay, facet_idx, hit) )
-  {
-    m_notifier.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet.");
-    return false;
-  }
-
-  // Get active face index.
-  const int fidx = m_bvh->GetFacet(facet_idx).FaceIndex;
-  //
-  m_notifier.SendLogMessage(LogInfo(Normal) << "Picked point (%1, %2, %3) on face %4."
-                                            << hit.X()
-                                            << hit.Y()
-                                            << hit.Z()
-                                            << fidx);
-
-  result = hit;
-  return true;
 }
 
 //-----------------------------------------------------------------------------

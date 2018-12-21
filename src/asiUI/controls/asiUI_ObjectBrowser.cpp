@@ -34,6 +34,7 @@
 // asiUI includes
 #include <asiUI_Common.h>
 #include <asiUI_DialogPipelines.h>
+#include <asiUI_ViewerPart.h>
 
 // asiEngine includes
 #include <asiEngine_Part.h>

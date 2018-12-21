@@ -34,9 +34,6 @@
 // asiUI includes
 #include <asiUI_ViewerCallback.h>
 
-// asiEngine includes
-#include <asiEngine_Model.h>
-
 // VTK includes
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
@@ -55,15 +52,6 @@ public:
   virtual void Execute(vtkObject*,
                        unsigned long,
                        void*) = 0;
-
-public:
-
-  //! Sets Data Model instance to access the geometry to pick.
-  //! \param[in] model Data Model instance.
-  void SetModel(const Handle(asiEngine_Model)& model)
-  {
-    m_model = model;
-  }
 
 protected:
 
@@ -87,10 +75,6 @@ protected:
 
   //! Dtor.
   ~asiUI_CurveHandleCallback();
-
-protected:
-
-  Handle(asiEngine_Model) m_model; //!< Data Model instance.
 
 };
 

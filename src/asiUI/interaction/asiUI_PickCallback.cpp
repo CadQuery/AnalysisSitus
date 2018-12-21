@@ -68,9 +68,10 @@ asiUI_PickCallback*
 asiUI_PickCallback::asiUI_PickCallback(const Handle(asiEngine_Model)& model,
                                        asiUI_Viewer*                  pViewer)
 : asiUI_ViewerCallback (pViewer),
-  m_model              (model),
   m_iPickerTypes       (PickerType_World)
-{}
+{
+  this->SetModel(model);
+}
 
 //! Default destructor.
 asiUI_PickCallback::~asiUI_PickCallback()

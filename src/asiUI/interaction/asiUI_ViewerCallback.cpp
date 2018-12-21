@@ -31,26 +31,67 @@
 // Own include
 #include <asiUI_ViewerCallback.h>
 
-//! Constructor.
-//! \param pViewer [in] owning viewer.
+// asiAlgo includes
+#include <asiAlgo_HitFacet.h>
+
+// OCCT includes
+#include <gp_Lin.hxx>
+
+//-----------------------------------------------------------------------------
+
 asiUI_ViewerCallback::asiUI_ViewerCallback(asiUI_Viewer* pViewer)
-: vtkCommand(), m_pViewer(pViewer)
+: vtkCommand(), m_pViewer(pViewer), m_pBrowser(NULL)
 {}
 
-//! Destructor.
+//-----------------------------------------------------------------------------
+
 asiUI_ViewerCallback::~asiUI_ViewerCallback()
 {}
 
-//! Sets viewer.
-//! \param pViewer [in] owning viewer.
+//-----------------------------------------------------------------------------
+
 void asiUI_ViewerCallback::SetViewer(asiUI_Viewer* pViewer)
 {
   m_pViewer = pViewer;
 }
 
-//! Returns viewer instance.
-//! \return viewer instance.
+//-----------------------------------------------------------------------------
+
 asiUI_Viewer* asiUI_ViewerCallback::GetViewer()
 {
   return m_pViewer;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiUI_ViewerCallback::getPickedPoint(void*   pCallData,
+                                          gp_XYZ& result)
+{
+  // Get picking ray.
+  gp_Lin pickRay = *( (gp_Lin*) pCallData );
+
+  // Prepare a tool to find the intersected facet.
+  asiAlgo_HitFacet HitFacet(m_bvh, m_notifier, m_plotter);
+
+  // Find intersection.
+  gp_XYZ hit;
+  int facet_idx;
+  //
+  if ( !HitFacet(pickRay, facet_idx, hit) )
+  {
+    m_notifier.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet.");
+    return false;
+  }
+
+  // Get active face index.
+  const int fidx = m_bvh->GetFacet(facet_idx).FaceIndex;
+  //
+  m_notifier.SendLogMessage(LogInfo(Normal) << "Picked point (%1, %2, %3) on face %4."
+                                            << hit.X()
+                                            << hit.Y()
+                                            << hit.Z()
+                                            << fidx);
+
+  result = hit;
+  return true;
 }

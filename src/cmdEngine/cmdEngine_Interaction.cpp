@@ -223,6 +223,22 @@ int ENGINE_MoveCurveHandle(const Handle(asiTcl_Interp)& interp,
   PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
   PM->AddObserver(EVENT_SELECT_CELL,        cb);
 
+  // Prepare data model.
+  asiEngine_Triangulation trisAPI( cmdEngine::model, interp->GetProgress(), interp->GetPlotter() );
+  //
+  cmdEngine::model->OpenCommand();
+  {
+    // Build BVH for CAD-agnostic mesh.
+    trisAPI.BuildBVH();
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Get Triangulaion Node.
+  Handle(asiData_TriangulationNode) tris_n = cmdEngine::model->GetTriangulationNode();
+  //
+  if ( !tris_n->GetTriangulation().IsNull() )
+    cb->SetBVH( tris_n->GetBVH() );
+
   return TCL_OK;
 }
 

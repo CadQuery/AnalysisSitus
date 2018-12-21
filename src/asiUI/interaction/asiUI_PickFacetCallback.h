@@ -61,32 +61,6 @@ public:
             unsigned long eventId,
             void*         pCallData);
 
-public:
-
-  //! Sets accelerating structure to use for picking.
-  //! \param bvh_facets [in] accelerating structure to set.
-  void SetBVH(const Handle(asiAlgo_BVHFacets)& bvh_facets)
-  {
-    m_bvh = bvh_facets;
-  }
-
-  //! Sets Data Model instance to access the geometry to pick.
-  //! \param model [in] Data Model instance.
-  void SetModel(const Handle(asiEngine_Model)& model)
-  {
-    m_model = model;
-  }
-
-  //! Sets diagnotics tools for the callback.
-  //! \param progress [in] progress notifier.
-  //! \param plotter  [in] imperative plotter.
-  void SetDiagnosticTools(ActAPI_ProgressEntry progress,
-                          ActAPI_PlotterEntry  plotter)
-  {
-    m_notifier = progress;
-    m_plotter  = plotter;
-  }
-
 private:
 
   asiUI_EXPORT
@@ -95,13 +69,6 @@ private:
 
   asiUI_EXPORT
     ~asiUI_PickFacetCallback();
-
-private:
-
-  Handle(asiAlgo_BVHFacets) m_bvh;      //!< Accelerating structure for picking.
-  Handle(asiEngine_Model)   m_model;    //!< Data Model instance.
-  ActAPI_ProgressEntry      m_notifier; //!< Progress notifier.
-  ActAPI_PlotterEntry       m_plotter;  //!< Imperative plotter.
 
 };
 

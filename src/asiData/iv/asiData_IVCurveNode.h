@@ -117,6 +117,11 @@ public:
              const double              f,
              const double              l);
 
+  //! Sets curve to store.
+  //! \param[in] curve geometry to store.
+  asiData_EXPORT void
+    SetCurve(const Handle(Geom_Curve)& curve);
+
   //! Adds on-curve handle for the given parameter `u`.
   //! \param[in] u curve parameter to add as another handle.
   asiData_EXPORT void
@@ -139,6 +144,10 @@ public:
   //! \return 0-based index of the currently active handle.
   asiData_EXPORT int
     GetActiveHandle() const;
+
+  //! \return curve parameter corresponding to the active handle.
+  asiData_EXPORT double
+    GetActiveHandleParam() const;
 
 // Initialization:
 public:

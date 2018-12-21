@@ -32,7 +32,13 @@
 #define asiUI_ViewerCallback_h
 
 // asiUI includes
-#include <asiUI.h>
+#include <asiUI_ObjectBrowser.h>
+
+// asiEngine includes
+#include <asiEngine_Model.h>
+
+// asiAlgo includes
+#include <asiAlgo_BVHFacets.h>
 
 // Active Data includes
 #include <ActAPI_IPlotter.h>
@@ -53,19 +59,55 @@ public:
 
 public:
 
+  //! Sets viewer.
+  //! \param[in] pViewer owning viewer.
   asiUI_EXPORT void
     SetViewer(asiUI_Viewer* pViewer);
 
+  //! Returns viewer instance.
+  //! \return viewer instance.
   asiUI_EXPORT asiUI_Viewer*
     GetViewer();
 
 protected:
 
+  //! Constructor.
+  //! \param[in] pViewer owning viewer.
   asiUI_EXPORT
     asiUI_ViewerCallback(asiUI_Viewer* pViewer);
 
+  //! Destructor.
   asiUI_EXPORT
     ~asiUI_ViewerCallback();
+
+public:
+
+  //! Sets accelerating structure to use for picking.
+  //! \param[in] bvh_facets accelerating structure to set.
+  void SetBVH(const Handle(asiAlgo_BVHFacets)& bvh_facets)
+  {
+    m_bvh = bvh_facets;
+  }
+
+  //! Sets Data Model instance to access the geometry to pick.
+  //! \param[in] model Data Model instance.
+  void SetModel(const Handle(asiEngine_Model)& model)
+  {
+    m_model = model;
+  }
+
+  //! Sets Object Browser instance to update when creating new objects.
+  //! \param[in] pBrowser pointer to the Object Browser to set.
+  void SetObjectBrowser(asiUI_ObjectBrowser* pBrowser)
+  {
+    m_pBrowser = pBrowser;
+  }
+
+  //! \return pointer to the Object Browser.
+  asiUI_ObjectBrowser* GetObjectBrowser() const
+  {
+    return m_pBrowser;
+  }
 
 public:
 
@@ -81,11 +123,25 @@ public:
 
 protected:
 
+  //! Extracts picked point from the call data using BVH accelerating structure.
+  //! \param[in]  pCallData call data.
+  //! \param[out] result    extracted point.
+  //! \return true in case of success, false -- otherwise.
+  bool
+    getPickedPoint(void*   pCallData,
+                   gp_XYZ& result);
+
+protected:
+
   //! Host viewer. Notice that lifetime of a Callback instance can be longer
   //! that the lifetime of the viewer because user may close that window. In
   //! that case make sure that SetWindow(NULL) is called in order to keep the
   //! callbacks in a consistent (not initialized however) states.
   asiUI_Viewer* m_pViewer;
+
+  Handle(asiAlgo_BVHFacets) m_bvh;      //!< Accelerating structure for picking.
+  Handle(asiEngine_Model)   m_model;    //!< Data Model instance.
+  asiUI_ObjectBrowser*      m_pBrowser; //!< Object Browser.
 
 protected:
 

@@ -85,13 +85,6 @@ public:
 
 public:
 
-  //! Sets Data Model instance.
-  //! \param[in] model Data Model instance to set.
-  void SetModel(const Handle(asiEngine_Model)& model)
-  {
-    m_model = model;
-  }
-
   //! Sets type of picker for a workpiece.
   //! \param[in] type type of picker to set.
   void SetPickerTypes(const int type)
@@ -120,8 +113,7 @@ protected:
 
 protected:
 
-  Handle(asiEngine_Model) m_model;        //!< Data Model instance.
-  int                     m_iPickerTypes; //!< Types of pickers to user (can be several).
+  int m_iPickerTypes; //!< Types of pickers to user (can be several).
 
 };
 

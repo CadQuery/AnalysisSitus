@@ -32,14 +32,7 @@
 #define asiUI_PickContourCallback_h
 
 // asiUI includes
-#include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerCallback.h>
-
-// asiEngine includes
-#include <asiEngine_Model.h>
-
-// asiAlgo includes
-#include <asiAlgo_BVHFacets.h>
 
 // VTK includes
 #include <vtkRenderer.h>
@@ -65,35 +58,6 @@ public:
   virtual void Execute(vtkObject*    pCaller,
                        unsigned long eventId,
                        void*         pCallData);
-
-public:
-
-  //! Sets accelerating structure to use for picking.
-  //! \param bvh_facets [in] accelerating structure to set.
-  void SetBVH(const Handle(asiAlgo_BVHFacets)& bvh_facets)
-  {
-    m_bvh = bvh_facets;
-  }
-
-  //! Sets Data Model instance to access the geometry to pick.
-  //! \param model [in] Data Model instance.
-  void SetModel(const Handle(asiEngine_Model)& model)
-  {
-    m_model = model;
-  }
-
-  //! Sets Object Browser instance to update when creating new objects.
-  //! \param[in] pBrowser pointer to the Object Browser to set.
-  void SetObjectBrowser(asiUI_ObjectBrowser* pBrowser)
-  {
-    m_pBrowser = pBrowser;
-  }
-
-  //! \return pointer to the Object Browser.
-  asiUI_ObjectBrowser* GetObjectBrowser() const
-  {
-    return m_pBrowser;
-  }
 
 // Transactional methods representing different phases and topological
 // situations when contructing a contour:
@@ -167,10 +131,6 @@ protected:
     getPickedVertex(void* pCallData);
 
   bool
-    getPickedPoint(void*   pCallData,
-                   gp_XYZ& result);
-
-  bool
     projectLine(const gp_XYZ&        p1,
                 const gp_XYZ&        p2,
                 std::vector<gp_XYZ>& pts);
@@ -179,12 +139,6 @@ private:
 
   asiUI_PickContourCallback  (asiUI_Viewer* pViewer);
   ~asiUI_PickContourCallback ();
-
-private:
-
-  Handle(asiAlgo_BVHFacets) m_bvh;      //!< Accelerating structure for picking.
-  Handle(asiEngine_Model)   m_model;    //!< Data Model instance.
-  asiUI_ObjectBrowser*      m_pBrowser; //!< Object Browser.
 
 };
 

@@ -108,8 +108,8 @@ Handle(Geom_Curve) asiData_IVCurveNode::GetCurve(double& f, double& l) const
 //-----------------------------------------------------------------------------
 
 void asiData_IVCurveNode::SetCurve(const Handle(Geom_Curve)& curve,
-                                  const double              f,
-                                  const double              l)
+                                   const double              f,
+                                   const double              l)
 {
   // Create a fictive edge to take advantage of topology Parameter of Active Data
   TopoDS_Edge E;
@@ -118,6 +118,13 @@ void asiData_IVCurveNode::SetCurve(const Handle(Geom_Curve)& curve,
 
   // Store
   ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(E);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_IVCurveNode::SetCurve(const Handle(Geom_Curve)& curve)
+{
+  this->SetCurve( curve, curve->FirstParameter(), curve->LastParameter() );
 }
 
 //-----------------------------------------------------------------------------
@@ -167,4 +174,18 @@ void asiData_IVCurveNode::SetActiveHandle(const int handleId)
 int asiData_IVCurveNode::GetActiveHandle() const
 {
   return ActParamTool::AsInt( this->Parameter(PID_ActiveHandle) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+double asiData_IVCurveNode::GetActiveHandleParam() const
+{
+  const int activeHandle = this->GetActiveHandle();
+  //
+  if ( activeHandle == -1 )
+    return DBL_MAX;
+
+  Handle(HRealArray) handles = this->GetHandles();
+  //
+  return handles->Value(activeHandle);
 }

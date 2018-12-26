@@ -1,7 +1,8 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 April 2016
+// Created on: 26 December 2018
+// Created by: Sergey SLYADNEV
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,38 +29,58 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_BuildContours_h
-#define asiAlgo_BuildContours_h
+#ifndef cmdRE_h
+#define cmdRE_h
 
-// A-Situs includes
-#include <asiAlgo.h>
+#define cmdRE_NotUsed(x) x
 
-// Geometry includes
-#include <asiAlgo_IntersectionPointCC.h>
-
-// OCCT includes
-#include <TopTools_IndexedMapOfShape.hxx>
-
-// Active Data includes
-#include <ActAPI_IAlgorithm.h>
+#ifdef cmdRE_EXPORTS
+  #define cmdRE_EXPORT __declspec(dllexport)
+#else
+  #define cmdRE_EXPORT __declspec(dllimport)
+#endif
 
 //-----------------------------------------------------------------------------
 
-//! Utility to build contours from surface / surface intersection results.
-class asiAlgo_BuildContours : public ActAPI_IAlgorithm
+// asiTcl includes
+#include <asiTcl_Interp.h>
+
+// asiEngine includes
+#include <asiEngine_Model.h>
+
+// asiUI includes
+#include <asiUI_CommonFacilities.h>
+
+//-----------------------------------------------------------------------------
+
+//! Reverse engineering commands.
+class cmdRE
 {
 public:
 
-  asiAlgo_EXPORT
-    asiAlgo_BuildContours(ActAPI_ProgressEntry progress,
-                          ActAPI_PlotterEntry  plotter);
+  cmdRE_EXPORT static void
+    Factory(const Handle(asiTcl_Interp)&      interp,
+            const Handle(Standard_Transient)& data);
 
 public:
 
-  asiAlgo_EXPORT bool
-    operator()(const asiAlgo_IntersectionPointsCC& points,
-               TopTools_IndexedMapOfShape&         resultWires,
-               TopTools_IndexedMapOfShape&         resultFaces);
+  cmdRE_EXPORT static void
+    Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
+                         const Handle(Standard_Transient)& data);
+
+  cmdRE_EXPORT static void
+    Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
+                      const Handle(Standard_Transient)& data);
+
+public:
+
+  cmdRE_EXPORT static void
+    ClearViewers(const bool repaint = true);
+
+public:
+
+  static Handle(asiEngine_Model)        model; //!< Data Model instance.
+  static Handle(asiUI_CommonFacilities) cf;    //!< UI common facilities.
 
 };
 

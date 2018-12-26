@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 December (*) 2018
+// Created on: 26 December 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,60 +28,78 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiUI_AddCurveHandleCallback.h>
+// cmdEngine includes
+#include <cmdRE.h>
 
-// asiUI includes
-#include <asiUI_Viewer.h>
-
-// asiVisu includes
-#include <asiVisu_Utils.h>
+// asiTcl includes
+#include <asiTcl_PluginMacro.h>
 
 //-----------------------------------------------------------------------------
 
-asiUI_AddCurveHandleCallback* asiUI_AddCurveHandleCallback::New()
+Handle(asiEngine_Model)        cmdRE::model = NULL;
+Handle(asiUI_CommonFacilities) cmdRE::cf    = NULL;
+
+//-----------------------------------------------------------------------------
+
+void cmdRE::ClearViewers(const bool repaint)
 {
-  return new asiUI_AddCurveHandleCallback(NULL);
-}
+  if ( cf.IsNull() )
+    return;
 
-//-----------------------------------------------------------------------------
+  // Get all presentation managers
+  const vtkSmartPointer<asiVisu_PrsManager>& partPM   = cf->ViewerPart->PrsMgr();
+  const vtkSmartPointer<asiVisu_PrsManager>& hostPM   = cf->ViewerHost->PrsMgr();
+  const vtkSmartPointer<asiVisu_PrsManager>& domainPM = cf->ViewerDomain->PrsMgr();
 
-asiUI_AddCurveHandleCallback::asiUI_AddCurveHandleCallback(asiUI_Viewer* pViewer)
-//
-: asiUI_CurveHandleCallback(pViewer)
-{}
+  // Update viewers
+  partPM  ->DeleteAllPresentations();
+  hostPM  ->DeleteAllPresentations();
+  domainPM->DeleteAllPresentations();
 
-//-----------------------------------------------------------------------------
-
-asiUI_AddCurveHandleCallback::~asiUI_AddCurveHandleCallback()
-{}
-
-//-----------------------------------------------------------------------------
-
-void asiUI_AddCurveHandleCallback::Execute(vtkObject*    pCaller,
-                                           unsigned long eventId,
-                                           void*         pCallData)
-{
-  asiUI_NotUsed(pCaller);
-
-  if ( eventId == EVENT_SELECT_CELL )
+  if ( repaint )
   {
-    // Get picked point.
-    Handle(asiData_IVCurveNode) curveNode;
-    gp_Pnt                      hitPt;
-    double                      hitParam;
-    //
-    if ( !this->getPickedPointOnCurve(pCallData, curveNode, hitPt, hitParam) )
-      return;
-
-    // Store the obtained parameter as a handle of curve.
-    m_model->OpenCommand();
-    {
-      curveNode->AddHandle(hitParam);
-    }
-    m_model->CommitCommand();
-
-    // Actualize Presentation.
-    m_pViewer->PrsMgr()->Actualize(curveNode);
+    cf->ViewerPart->Repaint();
+    cf->ViewerHost->Repaint();
+    cf->ViewerDomain->Repaint();
   }
 }
+
+//-----------------------------------------------------------------------------
+
+void cmdRE::Factory(const Handle(asiTcl_Interp)&      interp,
+                    const Handle(Standard_Transient)& data)
+{
+  static const char* group = "cmdRE";
+
+  /* ==========================
+   *  Initialize UI facilities
+   * ========================== */
+
+  // Get common facilities
+  Handle(asiUI_CommonFacilities)
+    passedCF = Handle(asiUI_CommonFacilities)::DownCast(data);
+  //
+  if ( passedCF.IsNull() )
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "[cmdRE] No UI facilities are available. GUI will not be updated!");
+  else
+    cf = passedCF;
+
+  /* ================================
+   *  Initialize Data Model instance
+   * ================================ */
+
+  model = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+  //
+  if ( model.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "[cmdRE] Data Model instance is NULL or not of asiEngine_Model kind.");
+    return;
+  }
+
+  // Load sub-modules.
+  Commands_Interaction (interp, data);
+  Commands_Modeling    (interp, data);
+}
+
+// Declare entry point PLUGINFACTORY
+ASIPLUGIN(cmdRE)

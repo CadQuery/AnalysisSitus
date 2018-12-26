@@ -160,6 +160,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/exe)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdEngine)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdMisc)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdRE)
 
 #-------------------------------------------------------------------------------
 # Setup compiler
@@ -190,6 +191,7 @@ set_property(TARGET asiTcl           PROPERTY FOLDER Batch)
 ################################################################################
 set_property(TARGET cmdEngine        PROPERTY FOLDER Commands)
 set_property(TARGET cmdMisc          PROPERTY FOLDER Commands)
+set_property(TARGET cmdRE            PROPERTY FOLDER Commands)
 ################################################################################
 
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)

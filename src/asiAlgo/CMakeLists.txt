@@ -13,7 +13,6 @@ set (H_FILES
 #------------------------------------------------------------------------------
 
 set (aux_H_FILES
-  auxiliary/asiAlgo_BuildContours.h
   auxiliary/asiAlgo_BVHAlgo.h
   auxiliary/asiAlgo_BVHFacets.h
   auxiliary/asiAlgo_BVHIterator.h
@@ -26,7 +25,6 @@ set (aux_H_FILES
   auxiliary/asiAlgo_DivideByContinuity.h
   auxiliary/asiAlgo_FuncUnivariate.h
   auxiliary/asiAlgo_HitFacet.h
-  auxiliary/asiAlgo_InterpolateSurfMesh.h
   auxiliary/asiAlgo_IntersectCC.h
   auxiliary/asiAlgo_IntersectCS.h
   auxiliary/asiAlgo_IntersectionCurveSS.h
@@ -34,13 +32,11 @@ set (aux_H_FILES
   auxiliary/asiAlgo_IntersectionPointCS.h
   auxiliary/asiAlgo_IntersectSS.h
   auxiliary/asiAlgo_Membership.h
-  auxiliary/asiAlgo_PlateOnEdges.h
   auxiliary/asiAlgo_ProjectPointOnMesh.h
   auxiliary/asiAlgo_QuickHull2d.h
   auxiliary/asiAlgo_ReapproxContour.h
 )
 set (aux_CPP_FILES
-  auxiliary/asiAlgo_BuildContours.cpp
   auxiliary/asiAlgo_BVHAlgo.cpp
   auxiliary/asiAlgo_BVHFacets.cpp
   auxiliary/asiAlgo_BVHIterator.cpp
@@ -53,11 +49,9 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_DivideByContinuity.cpp
   auxiliary/asiAlgo_FuncUnivariate.cpp
   auxiliary/asiAlgo_HitFacet.cpp
-  auxiliary/asiAlgo_InterpolateSurfMesh.cpp
   auxiliary/asiAlgo_IntersectCC.cpp
   auxiliary/asiAlgo_IntersectCS.cpp
   auxiliary/asiAlgo_IntersectSS.cpp
-  auxiliary/asiAlgo_PlateOnEdges.cpp
   auxiliary/asiAlgo_ProjectPointOnMesh.cpp
   auxiliary/asiAlgo_QuickHull2d.cpp
   auxiliary/asiAlgo_ReapproxContour.cpp
@@ -285,6 +279,21 @@ set (points_CPP_FILES
 )
 
 #------------------------------------------------------------------------------
+# Reverse engineering
+#------------------------------------------------------------------------------
+
+set (re_H_FILES
+  re/asiAlgo_BuildCoonsSurf.h
+  re/asiAlgo_InterpolateSurfMesh.h
+  re/asiAlgo_PlateOnEdges.h
+)
+set (re_CPP_FILES
+  re/asiAlgo_BuildCoonsSurf.cpp
+  re/asiAlgo_InterpolateSurfMesh.cpp
+  re/asiAlgo_PlateOnEdges.cpp
+)
+
+#------------------------------------------------------------------------------
 # Utilities
 #------------------------------------------------------------------------------
 
@@ -463,6 +472,14 @@ foreach (FILE ${points_CPP_FILES})
   source_group ("Source Files\\Points" FILES "${FILE}")
 endforeach (FILE)
 
+foreach (FILE ${re_H_FILES})
+  source_group ("Header Files\\RE" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${re_CPP_FILES})
+  source_group ("Source Files\\RE" FILES "${FILE}")
+endforeach (FILE)
+
 foreach (FILE ${utils_H_FILES})
   source_group ("Header Files\\Utilities" FILES "${FILE}")
 endforeach (FILE)
@@ -485,6 +502,7 @@ set (asiAlgo_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
   ${CMAKE_CURRENT_SOURCE_DIR}/mesh;\
   ${CMAKE_CURRENT_SOURCE_DIR}/opt;\
   ${CMAKE_CURRENT_SOURCE_DIR}/points;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/re;\
   ${CMAKE_CURRENT_SOURCE_DIR}/utils;")
 #
 set (asiAlgo_include_dir ${asiAlgo_include_dir_loc} PARENT_SCOPE)
@@ -514,6 +532,7 @@ add_library (asiAlgo SHARED
   ${mesh_H_FILES}     ${mesh_CPP_FILES}
   ${opt_H_FILES}      ${opt_CPP_FILES}
   ${points_H_FILES}   ${points_CPP_FILES}
+  ${re_H_FILES}       ${re_CPP_FILES}
   ${utils_H_FILES}    ${utils_CPP_FILES}
 )
 
@@ -635,4 +654,5 @@ install (FILES ${interop_H_FILES}  DESTINATION framework/include)
 install (FILES ${mesh_H_FILES}     DESTINATION framework/include)
 install (FILES ${opt_H_FILES}      DESTINATION framework/include)
 install (FILES ${points_H_FILES}   DESTINATION framework/include)
+install (FILES ${re_H_FILES}       DESTINATION framework/include)
 install (FILES ${utils_H_FILES}    DESTINATION framework/include)

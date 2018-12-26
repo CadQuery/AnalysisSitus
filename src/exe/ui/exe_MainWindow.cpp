@@ -330,6 +330,7 @@ void exe_MainWindow::createDockWindows()
   // Load default commands
   EXE_LOAD_MODULE("cmdMisc")
   EXE_LOAD_MODULE("cmdEngine")
+  EXE_LOAD_MODULE("cmdRE")
 
   // Lookup for custom plugins and try to load them
   QDir pluginDir( QDir::currentPath() + "/asi-plugins" );

@@ -503,12 +503,14 @@ namespace asiAlgo_Utils
   //! desired degree.
   //! \param[in]  points points to approximate.
   //! \param[in]  degMin min degree to use.
+  //! \param[in]  degMax max degree to limit polynomial order.
   //! \param[in]  tol3d  3D tolerance.
   //! \param[out] result interpolant.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     ApproximatePoints(const std::vector<gp_XYZ>& points,
                       const int                  degMin,
+                      const int                  degMax,
                       const double               tol3d,
                       Handle(Geom_BSplineCurve)& result);
 

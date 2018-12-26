@@ -47,7 +47,12 @@ Handle(Standard_Type)
   asiVisu_IVCurveDataProvider::GetCurveType() const
 {
   double f, l;
-  return this->GetCurve(f, l)->DynamicType();
+  Handle(Geom_Curve) curve = this->GetCurve(f, l);
+
+  if ( curve.IsNull() )
+    return NULL;
+
+  return curve->DynamicType();
 }
 
 //-----------------------------------------------------------------------------

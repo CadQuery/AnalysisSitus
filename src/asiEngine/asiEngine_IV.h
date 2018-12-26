@@ -98,12 +98,19 @@ public:
 //---------------------------------------------------------------------------//
 
   asiEngine_EXPORT Handle(asiData_IVCurveNode)
+    Get_LastCurve();
+
+  asiEngine_EXPORT Handle(asiData_IVCurveNode)
     Find_Curve(const TCollection_AsciiString& name);
 
   asiEngine_EXPORT Handle(asiData_IVCurveNode)
     Create_Curve(const Handle(Geom_Curve)&      curve,
                  const double                   uLimit,
                  const TCollection_AsciiString& name,
+                 const bool                     useAutoNaming);
+
+  asiEngine_EXPORT Handle(asiData_IVCurveNode)
+    Create_Curve(const TCollection_AsciiString& name,
                  const bool                     useAutoNaming);
 
   asiEngine_EXPORT void

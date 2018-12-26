@@ -49,6 +49,7 @@ asiData_IVCurveNode::asiData_IVCurveNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Shape,     PID_Geometry);
   REGISTER_PARAMETER(RealArray, PID_Handles);
   REGISTER_PARAMETER(Int,       PID_ActiveHandle);
+  REGISTER_PARAMETER(RealArray, PID_ReperPoints);
 }
 
 //-----------------------------------------------------------------------------
@@ -62,10 +63,12 @@ Handle(ActAPI_INode) asiData_IVCurveNode::Instance()
 
 void asiData_IVCurveNode::Init()
 {
-  this->InitParameter   (PID_Name, "Name");
-  this->SetCurve        (NULL, 0.0, 0.0);
-  this->SetHandles      (NULL);
-  this->SetActiveHandle (-1);
+  this->InitParameter   ( PID_Name, "Name" );
+  this->SetCurve        ( NULL, 0.0, 0.0 );
+  this->SetHandles      ( NULL );
+  this->SetActiveHandle ( -1 );
+
+  ActParamTool::AsRealArray( this->Parameter(PID_ReperPoints) )->SetArray(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -188,4 +191,38 @@ double asiData_IVCurveNode::GetActiveHandleParam() const
   Handle(HRealArray) handles = this->GetHandles();
   //
   return handles->Value(activeHandle);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_IVCurveNode::AddReperPoint(const gp_XYZ& pt)
+{
+  Handle(HRealArray)
+    arr = ActParamTool::AsRealArray( this->Parameter(PID_ReperPoints) )->GetArray();
+
+  // Append coordinates.
+  Handle(HRealArray)
+    newArr = ActAux_ArrayUtils::Append3d<HRealArray, Handle(HRealArray), gp_XYZ>(arr, pt);
+
+  ActParamTool::AsRealArray( this->Parameter(PID_ReperPoints) )->SetArray(newArr);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_IVCurveNode::SetReperPoints(const std::vector<gp_XYZ>& pts)
+{
+  Handle(HRealArray) arr;
+  ActAux_ArrayUtils::ToCoords3d<gp_XYZ>(pts, arr);
+
+  ActParamTool::AsRealArray( this->Parameter(PID_ReperPoints) )->SetArray(arr);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_IVCurveNode::GetReperPoints(std::vector<gp_XYZ>& pts) const
+{
+  Handle(HRealArray)
+    arr = ActParamTool::AsRealArray( this->Parameter(PID_ReperPoints) )->GetArray();
+
+  ActAux_ArrayUtils::FromCoords3d<gp_XYZ>(arr, pts);
 }

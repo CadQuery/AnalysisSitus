@@ -219,7 +219,7 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
     edgeNode->GetPolyline(pts);
     //
     Handle(Geom_BSplineCurve) curve;
-    if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 0.1, curve) )
+    if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, 0.1, curve) )
     {
       interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge %1."
                                                             << edgeNode->GetId() );

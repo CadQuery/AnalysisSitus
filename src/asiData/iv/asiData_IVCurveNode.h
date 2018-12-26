@@ -41,8 +41,6 @@
 #include <Geom_Curve.hxx>
 
 //-----------------------------------------------------------------------------
-// Data Node representing a single curve in IV (Imperative Viewer)
-//-----------------------------------------------------------------------------
 
 //! Data Node representing a single curve in IV (Imperative Viewer).
 class asiData_IVCurveNode : public ActData_BaseNode
@@ -64,10 +62,25 @@ public:
   // Common           //
   //------------------//
     PID_Name,         //!< Name of the Node.
+
+  //------------------//
+  // Final state      //
   //------------------//
     PID_Geometry,     //!< Stored geometry.
+
+  //------------------//
+  // Editing          //
+  //------------------//
     PID_Handles,      //!< On-curve handles for interaction.
     PID_ActiveHandle, //!< Index of the currently active handle.
+
+  //------------------//
+  // Creation         //
+  //------------------//
+    PID_ReperPoints,  //!< Collection of reper points to outline a curve through.
+
+  //------------------//
+  // ...              //
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -148,6 +161,21 @@ public:
   //! \return curve parameter corresponding to the active handle.
   asiData_EXPORT double
     GetActiveHandleParam() const;
+
+  //! Adds another reper point for curve definition.
+  //! \param[in] pt point to add.
+  asiData_EXPORT void
+    AddReperPoint(const gp_XYZ& pt);
+
+  //! Sets reper points for the curve.
+  //! \param[in] pts vector of points to set.
+  asiData_EXPORT void
+    SetReperPoints(const std::vector<gp_XYZ>& pts);
+
+  //! Returns the collection of reper points stored for this curve.
+  //! \param[out] pts collection of points.
+  asiData_EXPORT void
+    GetReperPoints(std::vector<gp_XYZ>& pts) const;
 
 // Initialization:
 public:

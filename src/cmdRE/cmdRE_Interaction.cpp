@@ -41,6 +41,7 @@
 
 // asiUI includes
 #include <asiUI_PickContourCallback.h>
+#include <asiUI_PickCurveCallback.h>
 
 //-----------------------------------------------------------------------------
 
@@ -104,6 +105,72 @@ int RE_DefineContour(const Handle(asiTcl_Interp)& interp,
   // Add observer which takes responsibility to interact with the user.
   PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
   PM->AddObserver(EVENT_SELECT_CELL,        cb);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int RE_DefineCurve(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part & Triangulaion Nodes.
+  Handle(asiData_PartNode)          part_n = cmdRE::model->GetPartNode();
+  Handle(asiData_TriangulationNode) tris_n = cmdRE::model->GetTriangulationNode();
+
+  // Contour Node.
+  Handle(asiData_ContourNode) contour_n;
+
+  // Prepare data model.
+  asiEngine_Part          partAPI ( cmdRE::model, interp->GetProgress(), interp->GetPlotter() );
+  asiEngine_Triangulation trisAPI ( cmdRE::model, interp->GetProgress(), interp->GetPlotter() );
+  asiEngine_RE            reAPI   ( cmdRE::model, interp->GetProgress(), interp->GetPlotter() );
+  //
+  cmdRE::model->OpenCommand();
+  {
+    // Build BVH for CAD-agnostic mesh.
+    trisAPI.BuildBVH();
+  }
+  cmdRE::model->CommitCommand();
+
+  // Get Part presentation manager.
+  const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdRE::cf->ViewerPart->PrsMgr();
+
+  // Set picker types.
+  cmdRE::cf->ViewerPart->GetPickCallback()->SetPickerTypes(PickerType_World);
+
+  // Set selection mode.
+  PM->SetSelectionMode(SelectionMode_Workpiece);
+
+  // Prepare callback which will manage the interaction process with user.
+  vtkSmartPointer<asiUI_PickCurveCallback>
+    cb = vtkSmartPointer<asiUI_PickCurveCallback>::New();
+  //
+  cb->SetViewer        ( cmdRE::cf->ViewerPart );
+  cb->SetModel         ( cmdRE::model );
+  cb->SetObjectBrowser ( cmdRE::cf->ObjectBrowser );
+  cb->SetCurveName     ( argv[1] );
+  //
+  if ( !tris_n->GetTriangulation().IsNull() )
+    cb->SetBVH( tris_n->GetBVH() );
+  //
+  cb->SetDiagnosticTools ( interp->GetProgress(), interp->GetPlotter() );
+
+  // Remove previously defined observers.
+  if ( PM->HasObserver(EVENT_SELECT_WORLD_POINT) )
+    PM->RemoveObservers(EVENT_SELECT_WORLD_POINT);
+  //
+  if ( PM->HasObserver(EVENT_SELECT_CELL) )
+    PM->RemoveObservers(EVENT_SELECT_CELL);
+
+  // Add observer which takes responsibility to interact with the user.
+  PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
 
   return TCL_OK;
 }
@@ -209,6 +276,14 @@ void cmdRE::Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
     "\t Enables interactive contour picking.",
     //
     __FILE__, group, RE_DefineContour);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-define-curve",
+    //
+    "re-define-curve\n"
+    "\t Enables interactive curve picking.",
+    //
+    __FILE__, group, RE_DefineCurve);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-contour-to-wire",

@@ -390,6 +390,27 @@ void asiEngine_IV::Clean_Points()
 
 //-----------------------------------------------------------------------------
 
+//! \return last existing curve.
+Handle(asiData_IVCurveNode) asiEngine_IV::Get_LastCurve()
+{
+  Handle(asiData_IVCurveNode) lastCurve;
+  //
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->Curves()->GetChildIterator(true);
+        cit->More(); cit->Next() )
+  {
+    Handle(ActAPI_INode) node = cit->Value();
+    //
+    if ( node.IsNull() || !node->IsWellFormed() )
+      continue;
+
+    lastCurve = Handle(asiData_IVCurveNode)::DownCast(node);
+  }
+
+  return lastCurve;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Finds Node with the given name. Returns null if nothing is found.
 //! \param name [in] target name.
 //! \return found Node (the first one if several exist) or null.
@@ -397,7 +418,8 @@ Handle(asiData_IVCurveNode)
   asiEngine_IV::Find_Curve(const TCollection_AsciiString& name)
 {
   // Find the first Node with the given name
-  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->Curves()->GetChildIterator(true); cit->More(); cit->Next() )
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->Curves()->GetChildIterator(true);
+        cit->More(); cit->Next() )
   {
     Handle(ActAPI_INode) node = cit->Value();
     //
@@ -430,6 +452,21 @@ Handle(asiData_IVCurveNode)
   if ( curve.IsNull() )
     return NULL;
 
+  Handle(asiData_IVCurveNode)
+    item_n = this->Create_Curve(name, useAutoNaming);
+
+  this->Update_Curve(item_n, curve, uLimit);
+
+  // Return the just created Node
+  return item_n;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_IVCurveNode)
+  asiEngine_IV::Create_Curve(const TCollection_AsciiString& name,
+                             const bool                     useAutoNaming)
+{
   // Access Model and parent Node
   Handle(asiData_IVCurvesNode) IV_Parent = m_model->GetIVNode()->Curves();
 
@@ -437,15 +474,15 @@ Handle(asiData_IVCurveNode)
   Handle(asiData_IVCurveNode) item_n = Handle(asiData_IVCurveNode)::DownCast( asiData_IVCurveNode::Instance() );
   m_model->GetIVCurvePartition()->AddNode(item_n);
 
+  // Initialize
+  item_n->Init();
+
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Curve" : name );
   if ( useAutoNaming )
     item_name = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(item_n, IV_Parent), item_name);
   //
   item_n->SetName(item_name);
-
-  // Initialize Node
-  Update_Curve(item_n, curve, uLimit);
 
   // Add as child
   IV_Parent->AddChildNode(item_n);

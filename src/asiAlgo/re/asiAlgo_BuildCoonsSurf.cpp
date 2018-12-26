@@ -39,6 +39,7 @@
   #include <mobius/geom_CoonsSurfaceLinear.h>
   #include <mobius/geom_MakeBicubicBSurf.h>
   #include <mobius/geom_SkinSurface.h>
+  #include <mobius/geom_UnifyBCurves.h>
 
   using namespace mobius;
 #endif
@@ -76,6 +77,42 @@ bool asiAlgo_BuildCoonsSurf::performBilinear()
   ptr<bcurve> c1 = cascade::GetMobiusBCurve(m_c1);
   ptr<bcurve> b0 = cascade::GetMobiusBCurve(m_b0);
   ptr<bcurve> b1 = cascade::GetMobiusBCurve(m_b1);
+
+  // Make `c` curves compatible.
+  {
+    geom_UnifyBCurves unifyCurves(NULL, NULL);
+    //
+    unifyCurves.AddCurve(c0);
+    unifyCurves.AddCurve(c1);
+
+    if ( !unifyCurves.Perform() )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Failed to unify 'c' curves.");
+      return false;
+    }
+
+    // Update curves.
+    c0 = unifyCurves.GetResult()[0];
+    c1 = unifyCurves.GetResult()[1];
+  }
+
+  // Make `b` curves compatible.
+  {
+    geom_UnifyBCurves unifyCurves(NULL, NULL);
+    //
+    unifyCurves.AddCurve(b0);
+    unifyCurves.AddCurve(b1);
+
+    if ( !unifyCurves.Perform() )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Failed to unify 'b' curves.");
+      return false;
+    }
+
+    // Update curves.
+    b0 = unifyCurves.GetResult()[0];
+    b1 = unifyCurves.GetResult()[1];
+  }
 
   // Initialize corner points.
   xyz p00 = c0->D0( c0->GetMinParameter() );

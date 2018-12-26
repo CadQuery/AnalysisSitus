@@ -1564,6 +1564,7 @@ bool asiAlgo_Utils::InterpolatePoints(const Handle(asiAlgo_BaseCloud<double>)& p
 
 bool asiAlgo_Utils::ApproximatePoints(const std::vector<gp_XYZ>& points,
                                       const int                  degMin,
+                                      const int                  degMax,
                                       const double               tol3d,
                                       Handle(Geom_BSplineCurve)& result)
 {
@@ -1575,7 +1576,7 @@ bool asiAlgo_Utils::ApproximatePoints(const std::vector<gp_XYZ>& points,
     occPts(k + 1) = points[k];
 
   // Approximate.
-  GeomAPI_PointsToBSpline api(occPts, degMin, 8, GeomAbs_C2, tol3d);
+  GeomAPI_PointsToBSpline api(occPts, degMin, degMax, GeomAbs_C2, tol3d);
   //
   if ( !api.IsDone() )
     return false;

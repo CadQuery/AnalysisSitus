@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 08 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -50,6 +50,7 @@ asiData_IVCurveNode::asiData_IVCurveNode() : ActData_BaseNode()
   REGISTER_PARAMETER(RealArray, PID_Handles);
   REGISTER_PARAMETER(Int,       PID_ActiveHandle);
   REGISTER_PARAMETER(RealArray, PID_ReperPoints);
+  REGISTER_PARAMETER(Int,       PID_ActiveReper);
 }
 
 //-----------------------------------------------------------------------------
@@ -67,6 +68,7 @@ void asiData_IVCurveNode::Init()
   this->SetCurve        ( NULL, 0.0, 0.0 );
   this->SetHandles      ( NULL );
   this->SetActiveHandle ( -1 );
+  this->SetActiveReper  ( -1 );
 
   ActParamTool::AsRealArray( this->Parameter(PID_ReperPoints) )->SetArray(NULL);
 }
@@ -225,4 +227,33 @@ void asiData_IVCurveNode::GetReperPoints(std::vector<gp_XYZ>& pts) const
     arr = ActParamTool::AsRealArray( this->Parameter(PID_ReperPoints) )->GetArray();
 
   ActAux_ArrayUtils::FromCoords3d<gp_XYZ>(arr, pts);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_IVCurveNode::SetActiveReper(const int reperId)
+{
+  ActParamTool::AsInt( this->Parameter(PID_ActiveReper) )->SetValue(reperId);
+}
+
+//-----------------------------------------------------------------------------
+
+int asiData_IVCurveNode::GetActiveReper() const
+{
+  return ActParamTool::AsInt( this->Parameter(PID_ActiveReper) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+gp_XYZ asiData_IVCurveNode::GetActiveReperPoint() const
+{
+  const int activeReper = this->GetActiveReper();
+  //
+  if ( activeReper == -1 )
+    return gp_XYZ();
+
+  std::vector<gp_XYZ> pts;
+  this->GetReperPoints(pts);
+
+  return pts[activeReper];
 }

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 11 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -79,6 +79,17 @@ public:
   asiVisu_EXPORT virtual int
     GetActiveHandle() const;
 
+  //! Returns an ordered collection of reper points, i.e., the points which
+  //! were used to build this curve.
+  //! \param[out] pts vector of reper points which were used to build the curve.
+  asiVisu_EXPORT virtual void
+    GetReperPoints(std::vector<gp_XYZ>& pts) const;
+
+  //! Returns reper point ID which is currently active.
+  //! \return 0-based ID of the active reper point or -1 if no reper is active.
+  asiVisu_EXPORT virtual int
+    GetActiveReper() const;
+
   //! Returns ID of the Data Node which is being sourced by the visualization
   //! pipeline. This ID is bound to the pipeline's actor in order to have a
   //! back-reference from Presentation to Data Object.
@@ -93,7 +104,7 @@ public:
   asiVisu_EXPORT Handle(asiVisu_IVCurveDataProvider)
     Clone() const;
 
-private:
+protected:
 
   //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
   //! translation process.
@@ -101,9 +112,44 @@ private:
   virtual Handle(ActAPI_HParameterList)
     translationSources() const;
 
-private:
+protected:
 
   Handle(asiData_IVCurveNode) m_node; //!< Source Node.
+
+};
+
+//-----------------------------------------------------------------------------
+
+//! Data provider for a single curve in IV sensitive to interaction.
+class asiVisu_IVCurveDataSensProvider : public asiVisu_IVCurveDataProvider
+{
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_IVCurveDataSensProvider, asiVisu_IVCurveDataProvider)
+
+
+public:
+
+  //! Constructor.
+  //! \param[in] N source Node.
+  asiVisu_IVCurveDataSensProvider(const Handle(ActAPI_INode)& N) : asiVisu_IVCurveDataProvider(N) {}
+
+protected:
+
+  //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
+  //! translation process.
+  //! \return source Parameters.
+  Handle(ActAPI_HParameterList) translationSources() const
+  {
+    ActParamStream out;
+    out.List = asiVisu_IVCurveDataProvider::translationSources();
+
+    // Add more.
+    out << m_node->Parameter(asiData_IVCurveNode::PID_ActiveReper);
+
+    return out;
+  }
 
 };
 

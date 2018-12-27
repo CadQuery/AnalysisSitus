@@ -36,8 +36,6 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_PartPipeline, asiVisu_PartPipelineBase)
-
 //! Visualization pipeline for OCCT shapes. This pipeline serves the purpose
 //! of visualization of "not-so-valid" shapes. Such shapes can occur either
 //! because of any sort of corruption, or they can represent some intermediate

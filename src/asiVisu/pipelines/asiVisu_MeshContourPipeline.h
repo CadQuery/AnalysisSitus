@@ -31,13 +31,13 @@
 #ifndef asiVisu_MeshContourPipeline_h
 #define asiVisu_MeshContourPipeline_h
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_MeshPipeline.h>
 
 // OCCT includes
 #include <NCollection_DataMap.hxx>
 
-DEFINE_STANDARD_HANDLE(asiVisu_MeshContourPipeline, asiVisu_MeshPipeline)
+//-----------------------------------------------------------------------------
 
 //! Visualization pipeline for a tessellation represented with contour.
 class asiVisu_MeshContourPipeline : public asiVisu_MeshPipeline

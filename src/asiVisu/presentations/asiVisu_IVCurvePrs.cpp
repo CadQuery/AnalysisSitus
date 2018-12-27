@@ -35,6 +35,7 @@
 #include <asiVisu_BCurveHandlesPipeline.h>
 #include <asiVisu_BCurveKnotsPipeline.h>
 #include <asiVisu_BCurvePolesPipeline.h>
+#include <asiVisu_BCurveRepersPipeline.h>
 #include <asiVisu_CurvePipeline.h>
 #include <asiVisu_IVCurveDataProvider.h>
 #include <asiVisu_Utils.h>
@@ -49,56 +50,90 @@ asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& N)
 : asiVisu_DefaultPrs(N)
 {
   // Create Data Provider.
-  Handle(asiVisu_IVCurveDataProvider) DP = new asiVisu_IVCurveDataProvider(N);
+  Handle(asiVisu_IVCurveDataProvider) DP     = new asiVisu_IVCurveDataProvider(N);
+  Handle(asiVisu_IVCurveDataProvider) DPsens = new asiVisu_IVCurveDataSensProvider(N);
 
   // Pipeline for curve.
-  this->addPipeline        ( Pipeline_Main, new asiVisu_CurvePipeline );
-  this->assignDataProvider ( Pipeline_Main, DP );
+  this->addPipeline        ( PrimaryPipeline_Main, new asiVisu_CurvePipeline );
+  this->assignDataProvider ( PrimaryPipeline_Main, DP );
 
   // Pipeline for poles of b-curves.
-  this->addPipeline        ( Pipeline_Poles, new asiVisu_BCurvePolesPipeline );
-  this->assignDataProvider ( Pipeline_Poles, DP );
+  this->addPipeline        ( PrimaryPipeline_Poles, new asiVisu_BCurvePolesPipeline );
+  this->assignDataProvider ( PrimaryPipeline_Poles, DP );
 
   // Pipeline for knots of b-curves.
-  this->addPipeline        ( Pipeline_Knots, new asiVisu_BCurveKnotsPipeline );
-  this->assignDataProvider ( Pipeline_Knots, DP );
+  this->addPipeline        ( PrimaryPipeline_Knots, new asiVisu_BCurveKnotsPipeline );
+  this->assignDataProvider ( PrimaryPipeline_Knots, DP );
 
   // Pipeline for handles of b-curves.
-  this->addPipeline        ( Pipeline_Handles, new asiVisu_BCurveHandlesPipeline );
-  this->assignDataProvider ( Pipeline_Handles, DP );
+  this->addPipeline        ( PrimaryPipeline_Handles, new asiVisu_BCurveHandlesPipeline(false) );
+  this->assignDataProvider ( PrimaryPipeline_Handles, DP );
 
-  // Pipeline for detection.
-  Handle(asiVisu_BCurveHandlesPipeline)
-    plDetection = new asiVisu_BCurveHandlesPipeline;
-  //
-  plDetection->Actor()->GetProperty()->SetColor(0.0, 1.0, 1.0);
-  plDetection->Actor()->GetProperty()->SetPointSize(10.0);
-  //
-  this->installDetectPipeline(plDetection, DP);
+  // Pipeline for reper points.
+  this->addPipeline        ( PrimaryPipeline_Repers, new asiVisu_BCurveRepersPipeline(false) );
+  this->assignDataProvider ( PrimaryPipeline_Repers, DP );
 
-  // Pipeline for picking.
-  Handle(asiVisu_BCurveHandlesPipeline)
-    plPicking = new asiVisu_BCurveHandlesPipeline;
-  //
-  plPicking->Actor()->GetProperty()->SetColor(1.0, 1.0, 0.0);
-  plPicking->Actor()->GetProperty()->SetPointSize(10.0);
-  //
-  this->installPickPipeline(plPicking, DP);
+  // Pipeline for detection of handles.
+  {
+    Handle(asiVisu_BCurveHandlesPipeline)
+      plDetection = new asiVisu_BCurveHandlesPipeline(true); // `true` for partial visualization.
+    //
+    plDetection->Actor()->GetProperty()->SetColor(0.0, 1.0, 1.0);
+    plDetection->Actor()->GetProperty()->SetPointSize(10.0);
+    //
+    this->installDetectPipeline(plDetection, DPsens, SelectionPipeline_Handles);
+  }
+
+  // Pipeline for detection of reper points.
+  {
+    Handle(asiVisu_BCurveRepersPipeline)
+      plDetection = new asiVisu_BCurveRepersPipeline(true); // `true` for partial visualization.
+    //
+    plDetection->Actor()->GetProperty()->SetColor(0.0, 1.0, 1.0);
+    plDetection->Actor()->GetProperty()->SetPointSize(10.0);
+    //
+    this->installDetectPipeline(plDetection, DPsens, SelectionPipeline_Repers);
+  }
+
+  // Pipeline for persistent picking of handles.
+  {
+    Handle(asiVisu_BCurveHandlesPipeline)
+      plPicking = new asiVisu_BCurveHandlesPipeline(true); // `true` for partial visualization.
+    //
+    plPicking->Actor()->GetProperty()->SetColor(1.0, 1.0, 0.0);
+    plPicking->Actor()->GetProperty()->SetPointSize(10.0);
+    //
+    this->installPickPipeline(plPicking, DPsens, SelectionPipeline_Handles);
+  }
+
+  // Pipeline for persistent picking of repers.
+  {
+    Handle(asiVisu_BCurveRepersPipeline)
+      plPicking = new asiVisu_BCurveRepersPipeline(true); // `true` for partial visualization.
+    //
+    plPicking->Actor()->GetProperty()->SetColor(1.0, 1.0, 0.0);
+    plPicking->Actor()->GetProperty()->SetPointSize(10.0);
+    //
+    this->installPickPipeline(plPicking, DPsens, SelectionPipeline_Repers);
+  }
 
   // Adjust props.
-  this->GetPipeline(Pipeline_Main)    ->Actor()->GetProperty()->SetLineWidth(1.0f);
-  this->GetPipeline(Pipeline_Poles)   ->Actor()->GetProperty()->SetColor(0.6, 0.6, 0.6);
-  this->GetPipeline(Pipeline_Knots)   ->Actor()->GetProperty()->SetColor(0.0, 1.0, 0.0);
-  this->GetPipeline(Pipeline_Handles) ->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
+  this->GetPipeline(PrimaryPipeline_Main)    ->Actor()->GetProperty()->SetLineWidth(1.0f);
+  this->GetPipeline(PrimaryPipeline_Poles)   ->Actor()->GetProperty()->SetColor(0.6, 0.6, 0.6);
+  this->GetPipeline(PrimaryPipeline_Knots)   ->Actor()->GetProperty()->SetColor(0.0, 1.0, 0.0);
+  this->GetPipeline(PrimaryPipeline_Handles) ->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
+  this->GetPipeline(PrimaryPipeline_Repers)  ->Actor()->GetProperty()->SetColor(1.0, 0.0, 1.0);
   //
-  this->GetPipeline(Pipeline_Main)    ->Actor()->SetPickable(0);
-  this->GetPipeline(Pipeline_Poles)   ->Actor()->SetPickable(0);
-  this->GetPipeline(Pipeline_Knots)   ->Actor()->SetPickable(0);
-  this->GetPipeline(Pipeline_Handles) ->Actor()->SetPickable(0);
+  this->GetPipeline(PrimaryPipeline_Main)    ->Actor()->SetPickable(0);
+  this->GetPipeline(PrimaryPipeline_Poles)   ->Actor()->SetPickable(0);
+  this->GetPipeline(PrimaryPipeline_Knots)   ->Actor()->SetPickable(0);
+  this->GetPipeline(PrimaryPipeline_Handles) ->Actor()->SetPickable(0);
+  this->GetPipeline(PrimaryPipeline_Repers)  ->Actor()->SetPickable(1);
   //
-  this->GetPipeline(Pipeline_Poles)   ->Actor()->SetVisibility(0);
-  this->GetPipeline(Pipeline_Knots)   ->Actor()->SetVisibility(0);
-  this->GetPipeline(Pipeline_Handles) ->Actor()->SetVisibility(0);
+  this->GetPipeline(PrimaryPipeline_Poles)   ->Actor()->SetVisibility(0);
+  this->GetPipeline(PrimaryPipeline_Knots)   ->Actor()->SetVisibility(0);
+  this->GetPipeline(PrimaryPipeline_Handles) ->Actor()->SetVisibility(0);
+  this->GetPipeline(PrimaryPipeline_Repers)  ->Actor()->SetVisibility(1);
 }
 
 //-----------------------------------------------------------------------------
@@ -114,7 +149,13 @@ void asiVisu_IVCurvePrs::highlight(vtkRenderer*                        renderer,
                                    const Handle(asiVisu_PickerResult)& pickRes,
                                    const asiVisu_SelectionNature       selNature) const
 {
-  if ( pickRes->GetPickedActor() != this->GetPipeline(Pipeline_Handles)->Actor() )
+  asiVisu_NotUsed(renderer);
+
+  // Check picked actor.
+  vtkActor* pPickedActor = pickRes->GetPickedActor();
+  //
+  if ( pPickedActor != this->GetPipeline(PrimaryPipeline_Handles)->Actor() &&
+       pPickedActor != this->GetPipeline(PrimaryPipeline_Repers)->Actor() )
     return;
 
   // Only cells are processed.
@@ -126,25 +167,52 @@ void asiVisu_IVCurvePrs::highlight(vtkRenderer*                        renderer,
 
   if ( selNature == SelectionNature_Detection )
   {
-    Handle(asiVisu_BCurveHandlesPipeline)
-      pl = Handle(asiVisu_BCurveHandlesPipeline)::DownCast( this->GetDetectPipeline() );
-    //
-    pl->SetForcedActiveHandle( cellRes->GetPickedElementIds().GetMinimalMapped() );
+    Handle(asiVisu_HPipelineList) pls = this->GetDetectPipelineList();
 
-    // Update.
-    pl->Actor()->SetVisibility(1);
-    pl->SetInput( this->dataProviderDetect() );
-    pl->Update();
+    // Activate detection pipelines.
+    for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
+    {
+      const Handle(asiVisu_Pipeline)& pl = it.Value();
+
+      // Handles.
+      if ( pl->IsKind( STANDARD_TYPE(asiVisu_BCurveHandlesPipeline) ) )
+      {
+        Handle(asiVisu_BCurveHandlesPipeline)
+          castedPl = Handle(asiVisu_BCurveHandlesPipeline)::DownCast(pl);
+        //
+        castedPl->SetForcedActiveHandle( cellRes->GetPickedElementIds().GetMinimalMapped() );
+      }
+
+      // Repers.
+      else if ( pl->IsKind( STANDARD_TYPE(asiVisu_BCurveRepersPipeline) ) )
+      {
+        Handle(asiVisu_BCurveRepersPipeline)
+          castedPl = Handle(asiVisu_BCurveRepersPipeline)::DownCast(pl);
+        //
+        castedPl->SetForcedActiveReper( cellRes->GetPickedElementIds().GetMinimalMapped() );
+      }
+
+      // Update.
+      pl->Actor()->SetVisibility(1);
+      pl->SetInput( this->dataProviderDetect() );
+      pl->Update();
+    }
   }
   else if ( selNature == SelectionNature_Persistent )
   {
-    Handle(asiVisu_BCurveHandlesPipeline)
-      pl = Handle(asiVisu_BCurveHandlesPipeline)::DownCast( this->GetPickPipeline() );
+    Handle(asiVisu_HPipelineList) pls = this->GetPickPipelineList();
 
-    // Update.
-    pl->Actor()->SetVisibility(1);
-    pl->SetInput( this->dataProviderPick() );
-    pl->Update();
+    // Activate picking pipelines.
+    int plIdx = 1;
+    for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
+    {
+      const Handle(asiVisu_Pipeline)& pl = it.Value();
+
+      // Update.
+      pl->Actor()->SetVisibility(1);
+      pl->SetInput( this->dataProviderPick(plIdx++) );
+      pl->Update();
+    }
   }
 }
 
@@ -153,9 +221,23 @@ void asiVisu_IVCurvePrs::highlight(vtkRenderer*                        renderer,
 void asiVisu_IVCurvePrs::unHighlight(vtkRenderer*                  renderer,
                                      const asiVisu_SelectionNature selNature) const
 {
+  asiVisu_NotUsed(renderer);
+
   if ( selNature == SelectionNature_Detection )
   {
-    this->GetDetectPipeline()->Actor()->SetVisibility(0);
+    Handle(asiVisu_HPipelineList) pls = this->GetDetectPipelineList();
+
+    // Deactivate detection pipelines.
+    for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
+      it.Value()->Actor()->SetVisibility(0);
+  }
+  else if ( selNature == SelectionNature_Persistent )
+  {
+    Handle(asiVisu_HPipelineList) pls = this->GetPickPipelineList();
+
+    // Deactivate picking pipelines.
+    for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
+      it.Value()->Actor()->SetVisibility(0);
   }
 }
 
@@ -165,13 +247,16 @@ void asiVisu_IVCurvePrs::renderPipelines(vtkRenderer* renderer) const
 {
   /* Take care of selection pipelines */
 
-  Handle(asiVisu_Pipeline) detect_pl = this->GetDetectPipeline();
-  Handle(asiVisu_Pipeline) pick_pl   = this->GetPickPipeline();
+  Handle(asiVisu_HPipelineList) detectPls = this->GetDetectPipelineList();
+  Handle(asiVisu_HPipelineList) pickPls   = this->GetPickPipelineList();
 
   // Picking pipeline must be added to renderer the LAST (!). Otherwise
   // we can experience some strange coloring bug because of their coincidence.
-  /* (1) */ if ( !detect_pl.IsNull() ) detect_pl->AddToRenderer(renderer);
-  /* (2) */ if ( !pick_pl.IsNull() )   pick_pl->AddToRenderer(renderer);
+  for ( asiVisu_HPipelineList::Iterator it(*detectPls); it.More(); it.Next() )
+    it.Value()->AddToRenderer(renderer);
+  //
+  for ( asiVisu_HPipelineList::Iterator it(*pickPls); it.More(); it.Next() )
+    it.Value()->AddToRenderer(renderer);
 }
 
 //-----------------------------------------------------------------------------
@@ -180,9 +265,12 @@ void asiVisu_IVCurvePrs::deRenderPipelines(vtkRenderer* renderer) const
 {
   /* Take care of selection pipelines */
 
-  Handle(asiVisu_Pipeline) detect_pl = this->GetDetectPipeline();
-  Handle(asiVisu_Pipeline) pick_pl   = this->GetPickPipeline();
+  Handle(asiVisu_HPipelineList) detectPls = this->GetDetectPipelineList();
+  Handle(asiVisu_HPipelineList) pickPls   = this->GetPickPipelineList();
 
-  if ( !detect_pl.IsNull() ) detect_pl->RemoveFromRenderer(renderer);
-  if ( !pick_pl.IsNull() )   pick_pl->RemoveFromRenderer(renderer);
+  for ( asiVisu_HPipelineList::Iterator it(*detectPls); it.More(); it.Next() )
+    it.Value()->RemoveFromRenderer(renderer);
+  //
+  for ( asiVisu_HPipelineList::Iterator it(*pickPls); it.More(); it.Next() )
+    it.Value()->RemoveFromRenderer(renderer);
 }

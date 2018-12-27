@@ -31,11 +31,11 @@
 #ifndef asiVisu_MeshPipeline_h
 #define asiVisu_MeshPipeline_h
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 
-DEFINE_STANDARD_HANDLE(asiVisu_MeshPipeline, asiVisu_Pipeline)
+//-----------------------------------------------------------------------------
 
 //! Visualization pipeline for facets and meshes.
 class asiVisu_MeshPipeline : public asiVisu_Pipeline

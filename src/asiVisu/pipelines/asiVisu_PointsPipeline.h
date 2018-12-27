@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 06 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,13 +31,11 @@
 #ifndef asiVisu_PointsPipeline_h
 #define asiVisu_PointsPipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiVisu_PointsPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for point cloud.
 class asiVisu_PointsPipeline : public asiVisu_Pipeline

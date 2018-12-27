@@ -36,6 +36,7 @@
 
 // asiVisu includes
 #include <asiVisu_BCurveHandlesPipeline.h>
+#include <asiVisu_BCurveRepersPipeline.h>
 #include <asiVisu_CurvePipeline.h>
 
 // Active Data includes
@@ -541,7 +542,7 @@ void asiEngine_IV::Clean_Curves()
 
 //-----------------------------------------------------------------------------
 
-//! Enables or disables interactive picking for the Curve Nodes.
+//! Enables or disables interactive picking for the curve handles.
 //! \param[in] on      true to enable, false to disable.
 //! \param[in] create  indicates whether to activate creation or modification
 //!                    of handles.
@@ -580,6 +581,45 @@ void asiEngine_IV::ActivateCurveHandles(const bool          on,
       {
         pl->Actor()->SetVisibility(on ? 1 : 0);
         pl->Actor()->SetPickable(create ? 0 : 1);
+      }
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+//! Enables or disables interactive picking for the curve repers.
+//! \param[in] on      true to enable, false to disable.
+//! \param[in] pPrsMgr Presentation Manager to access Presentations of Curve Nodes.
+void asiEngine_IV::ActivateCurveRepers(const bool          on,
+                                       asiVisu_PrsManager* pPrsMgr)
+{
+  // Get all Curve Nodes.
+  Handle(asiData_Partition<asiData_IVCurveNode>) P = m_model->GetIVCurvePartition();
+  //
+  for ( ActData_BasePartition::Iterator pit(P); pit.More(); pit.Next() )
+  {
+    Handle(asiData_IVCurveNode)
+      curveNode = Handle(asiData_IVCurveNode)::DownCast( pit.Value() );
+
+    // Get Presentation of Curve.
+    if ( !pPrsMgr->IsPresented(curveNode) )
+      continue;
+    //
+    Handle(asiVisu_Prs) curvePrs = pPrsMgr->GetPresentation(curveNode);
+
+    // Iterate over all pipelines making all actors selectable.
+    Handle(asiVisu_HPipelineList) pipelines = curvePrs->GetPipelineList();
+    //
+    for ( asiVisu_HPipelineList::Iterator it(*pipelines); it.More(); it.Next() )
+    {
+      const Handle(asiVisu_Pipeline)& pl = it.Value();
+
+      // Adjust pickability.
+      if ( pl->IsKind( STANDARD_TYPE(asiVisu_BCurveRepersPipeline) ) )
+      {
+        pl->Actor()->SetVisibility(on ? 1 : 0);
+        pl->Actor()->SetPickable(on ? 1 : 0);
       }
     }
   }

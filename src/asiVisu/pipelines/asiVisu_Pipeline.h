@@ -31,10 +31,7 @@
 #ifndef asiVisu_Pipeline_h
 #define asiVisu_Pipeline_h
 
-// A-Situs includes
-#include <asiVisu.h>
-
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 
 // Active Data (auxiliary) includes
@@ -49,7 +46,7 @@
 // OCCT includes
 #include <NCollection_Sequence.hxx>
 
-DEFINE_STANDARD_HANDLE(asiVisu_Pipeline, Standard_Transient)
+//-----------------------------------------------------------------------------
 
 //! Interface for any visualization pipeline in Analysis Situs. Each pipeline
 //! represents a set of filters for the input dataset along with the

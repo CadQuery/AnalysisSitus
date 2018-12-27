@@ -126,6 +126,10 @@ public:
                          const bool          create,
                          asiVisu_PrsManager* pPrsMgr);
 
+  asiEngine_EXPORT void
+    ActivateCurveRepers(const bool          on,
+                        asiVisu_PrsManager* pPrsMgr);
+
 //---------------------------------------------------------------------------//
 
   asiEngine_EXPORT Handle(asiData_IVCurve2dNode)

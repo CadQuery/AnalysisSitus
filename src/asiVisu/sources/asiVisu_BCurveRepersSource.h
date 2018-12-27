@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 December (*) 2018
+// Created on: 27 December 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_BCurveHandlesSource_h
-#define asiVisu_BCurveHandlesSource_h
+#ifndef asiVisu_BCurveRepersSource_h
+#define asiVisu_BCurveRepersSource_h
 
 // asiVisu includes
 #include <asiVisu_Utils.h>
@@ -39,29 +39,26 @@
 #include <vtkSmartPointer.h>
 #include <vtkType.h>
 
-// OCCT includes
-#include <Geom_BSplineCurve.hxx>
+//-----------------------------------------------------------------------------
 
-//! Data source for interaction handles living on a B-spline curve.
-class asiVisu_BCurveHandlesSource : public vtkPolyDataAlgorithm
+//! Data source for reper points associated with a B-spline curve.
+class asiVisu_BCurveRepersSource : public vtkPolyDataAlgorithm
 {
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(asiVisu_BCurveHandlesSource, vtkPolyDataAlgorithm);
-  static asiVisu_BCurveHandlesSource* New();
+  vtkTypeMacro(asiVisu_BCurveRepersSource, vtkPolyDataAlgorithm);
+  static asiVisu_BCurveRepersSource* New();
 
 public:
 
-  //! Initialize data source from a B-curve.
-  //! \param[in] bcurve  B-spline curve in question.
-  //! \param[in] handles handles as parameter values on curve.
-  void SetInputs(const Handle(Geom_BSplineCurve)& bcurve,
-                 const Handle(HRealArray)&        handles);
+  //! Initialize data source with reper points.
+  //! \param[in] pts points to set.
+  void SetInputPoints(const std::vector<gp_XYZ>& pts);
 
-  //! Sets ID of the active handle.
-  //! \param[in] handleId ID of the handle to set.
-  void SetActiveHandle(const int handleId);
+  //! Sets ID of the active point.
+  //! \param[in] reperId ID of the reper to set.
+  void SetActiveReper(const int reperId);
 
 protected:
 
@@ -89,29 +86,28 @@ protected:
 
   //! Adds a vertex cell into the polygonal data set.
   //! \param[in]     pid      point index.
-  //! \param[in]     handleId 0-based ID of the handle.
+  //! \param[in]     reperId  0-based ID of the reper point.
   //! \param[in,out] polyData polygonal data set being populated.
   //! \return ID of the just added VTK cell.
   vtkIdType
     registerVertex(const vtkIdType pid,
-                   const int       handleId,
+                   const int       reperId,
                    vtkPolyData*    polyData);
 
 protected:
 
-  asiVisu_BCurveHandlesSource();  //!< Ctor.
-  ~asiVisu_BCurveHandlesSource(); //!< Dtor.
+  asiVisu_BCurveRepersSource();  //!< Ctor.
+  ~asiVisu_BCurveRepersSource(); //!< Dtor.
 
 private:
 
-  asiVisu_BCurveHandlesSource(const asiVisu_BCurveHandlesSource&) = delete;
-  asiVisu_BCurveHandlesSource& operator=(const asiVisu_BCurveHandlesSource&) = delete;
+  asiVisu_BCurveRepersSource(const asiVisu_BCurveRepersSource&) = delete;
+  asiVisu_BCurveRepersSource& operator=(const asiVisu_BCurveRepersSource&) = delete;
 
 private:
 
-  Handle(Geom_BSplineCurve) m_curve;           //!< B-curve.
-  Handle(HRealArray)        m_handles;         //!< Interaction handles.
-  int                       m_iActiveHandleId; //!< ID of the currently active handle.
+  std::vector<gp_XYZ> m_repers;         //!< Reper points.
+  int                 m_iActiveReperId; //!< ID of the currently active reper.
 
 };
 

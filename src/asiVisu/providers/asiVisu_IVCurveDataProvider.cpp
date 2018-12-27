@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 11 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -90,9 +90,29 @@ Handle(HRealArray)
 int asiVisu_IVCurveDataProvider::GetActiveHandle() const
 {
   if ( m_node.IsNull() )
-    return NULL;
+    return -1;
 
   return m_node->GetActiveHandle();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_IVCurveDataProvider::GetReperPoints(std::vector<gp_XYZ>& pts) const
+{
+  if ( m_node.IsNull() )
+    return;
+
+  m_node->GetReperPoints(pts);
+}
+
+//-----------------------------------------------------------------------------
+
+int asiVisu_IVCurveDataProvider::GetActiveReper() const
+{
+  if ( m_node.IsNull() )
+    return -1;
+
+  return m_node->GetActiveReper();
 }
 
 //-----------------------------------------------------------------------------
@@ -122,7 +142,8 @@ Handle(ActAPI_HParameterList) asiVisu_IVCurveDataProvider::translationSources() 
   // Register Parameter as sensitive
   out << m_node->Parameter(asiData_IVCurveNode::PID_Geometry)
       << m_node->Parameter(asiData_IVCurveNode::PID_Handles)
-      << m_node->Parameter(asiData_IVCurveNode::PID_ActiveHandle);
+      << m_node->Parameter(asiData_IVCurveNode::PID_ActiveHandle)
+      << m_node->Parameter(asiData_IVCurveNode::PID_ReperPoints);
 
   return out;
 }

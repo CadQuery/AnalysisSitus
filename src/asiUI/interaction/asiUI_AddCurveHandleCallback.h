@@ -32,10 +32,10 @@
 #define asiUI_AddCurveHandleCallback_h
 
 // asiUI includes
-#include <asiUI_CurveHandleCallback.h>
+#include <asiUI_BaseCurveCallback.h>
 
 //! Callback for adding handles to IV curves.
-class asiUI_AddCurveHandleCallback : public asiUI_CurveHandleCallback
+class asiUI_AddCurveHandleCallback : public asiUI_BaseCurveCallback
 {
   Q_OBJECT
 
@@ -45,7 +45,7 @@ public:
   //! \return instance of the callback class.
   asiUI_EXPORT static asiUI_AddCurveHandleCallback* New();
   //
-  vtkTypeMacro(asiUI_AddCurveHandleCallback, asiUI_CurveHandleCallback);
+  vtkTypeMacro(asiUI_AddCurveHandleCallback, asiUI_BaseCurveCallback);
 
 public:
 

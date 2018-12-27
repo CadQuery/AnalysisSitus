@@ -31,7 +31,7 @@
 #ifndef asiVisu_BCurveKnotsPipeline_h
 #define asiVisu_BCurveKnotsPipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 

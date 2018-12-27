@@ -31,13 +31,11 @@
 #ifndef asiVisu_IVSurfacePipeline_h
 #define asiVisu_IVSurfacePipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiVisu_IVSurfacePipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for IV surface.
 class asiVisu_IVSurfacePipeline : public asiVisu_Pipeline

@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_CurveHandleCallback.h>
+#include <asiUI_BaseCurveCallback.h>
 
 // asiUI includes
 #include <asiUI_Viewer.h>
@@ -44,22 +44,22 @@
 
 //-----------------------------------------------------------------------------
 
-asiUI_CurveHandleCallback::asiUI_CurveHandleCallback(asiUI_Viewer* pViewer)
+asiUI_BaseCurveCallback::asiUI_BaseCurveCallback(asiUI_Viewer* pViewer)
 //
 : asiUI_ViewerCallback(pViewer)
 {}
 
 //-----------------------------------------------------------------------------
 
-asiUI_CurveHandleCallback::~asiUI_CurveHandleCallback()
+asiUI_BaseCurveCallback::~asiUI_BaseCurveCallback()
 {}
 
 //-----------------------------------------------------------------------------
 
-bool asiUI_CurveHandleCallback::getPickedPointOnCurve(void*                        pCallData,
-                                                      Handle(asiData_IVCurveNode)& curveNode,
-                                                      gp_Pnt&                      resultPt,
-                                                      double&                      resultParam) const
+bool asiUI_BaseCurveCallback::getPickedPointOnCurve(void*                        pCallData,
+                                                    Handle(asiData_IVCurveNode)& curveNode,
+                                                    gp_Pnt&                      resultPt,
+                                                    double&                      resultParam) const
 {
   // Convert passed data to cell picker result.
   asiVisu_CellPickerResult* pPickRes = (asiVisu_CellPickerResult*) pCallData;
@@ -83,8 +83,8 @@ bool asiUI_CurveHandleCallback::getPickedPointOnCurve(void*                     
 //-----------------------------------------------------------------------------
 
 Handle(Geom_Curve)
-  asiUI_CurveHandleCallback::getPickedCurve(void*                        pCallData,
-                                            Handle(asiData_IVCurveNode)& curveNode) const
+  asiUI_BaseCurveCallback::getPickedCurve(void*                        pCallData,
+                                          Handle(asiData_IVCurveNode)& curveNode) const
 {
   curveNode = this->getPickedCurveNode(pCallData);
   //
@@ -98,7 +98,7 @@ Handle(Geom_Curve)
 //-----------------------------------------------------------------------------
 
 Handle(asiData_IVCurveNode)
-  asiUI_CurveHandleCallback::getPickedCurveNode(void* pCallData) const
+  asiUI_BaseCurveCallback::getPickedCurveNode(void* pCallData) const
 {
   // Convert passed data to cell picker result.
   asiVisu_CellPickerResult* pPickRes = (asiVisu_CellPickerResult*) pCallData;

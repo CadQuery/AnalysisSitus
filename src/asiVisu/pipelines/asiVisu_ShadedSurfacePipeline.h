@@ -31,14 +31,12 @@
 #ifndef asiVisu_ShadedSurfacePipeline_h
 #define asiVisu_ShadedSurfacePipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 #include <asiVisu_SurfaceSource.h>
 
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiVisu_ShadedSurfacePipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for a parametric surface in shaded view.
 class asiVisu_ShadedSurfacePipeline : public asiVisu_Pipeline

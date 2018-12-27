@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Analysis Situs: managing visualization pipelines</title>
+  <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+
+  <!-- [begin] Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112292727-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-112292727-2');
+  </script>
+  <!-- [end] Google Analytics -->
+
+ </head>
+<body>
+
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+  <td align="left" class="header">
+    <span class="header-logo"><a href="../index.html" class="header-href">Analysis&nbsp;Situs</a></span>
+    &nbsp;
+    ./<a class="header-href" href="../features.html">features</a>/visualization pipelines
+  </td>
+</tr>
+</table>
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="../features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="../terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="../references.html">References</a></td>
+</tr>
+</table>
+
+<h1>Introduction</h1>
+<p>
+Analysis Situs employs VTK library (see <a href="../references.html#schroeder-2006">[Schroeder, 2006]</a> for comprehensive text book) for 3D and 2D visualization.
+VTK itself offers an intelligent and flexible architecture of multidisciplinary scientific visualization. In the ecosystem of Analysis Situs, this architecture
+is adopted in a specific way which deserves additional explanation.
+</p>
+
+<p>
+The entire architecture of Analysis Situs is built around its Data Model. For each object (called a Data Node), there can be one (and only one) Presentation
+instance which contains the visualization logic for the Node. Single Presentation does not limit the possibilities to visualize a particular object in diverse
+ways. Plenty different ways of visualization are supported because the Presentation class encapsulates a set of Pipelines. A Pipeline in Analysis Situs
+is a specific type corresponding to VTK pipelines.
+</p>
+
+</body>
+</html>

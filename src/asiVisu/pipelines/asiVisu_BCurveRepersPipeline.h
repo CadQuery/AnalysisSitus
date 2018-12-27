@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 December (*) 2018
+// Created on: 27 December 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,53 +28,68 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_CurveHandleCallback_h
-#define asiUI_CurveHandleCallback_h
+#ifndef asiVisu_BCurveRepersPipeline_h
+#define asiVisu_BCurveRepersPipeline_h
 
-// asiUI includes
-#include <asiUI_ViewerCallback.h>
+// asiVisu includes
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 // VTK includes
-#include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
+#include <vtkPolyDataAlgorithm.h>
 
-// Qt includes
-#include <QObject>
+//-----------------------------------------------------------------------------
 
-//! Base class for interaction callbacks to work with 3D curves.
-class asiUI_CurveHandleCallback : public QObject,
-                                  public asiUI_ViewerCallback
+//! Visualization pipeline for reper points of a b-curve.
+class asiVisu_BCurveRepersPipeline : public asiVisu_Pipeline
 {
-  Q_OBJECT
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_BCurveRepersPipeline, asiVisu_Pipeline)
 
 public:
 
-  virtual void Execute(vtkObject*,
-                       unsigned long,
-                       void*) = 0;
+  //! Ctor.
+  //! \param[in] allowSelection indicates whether this pipeline allows
+  //!                           selection of a certain portion of data.
+  asiVisu_EXPORT
+    asiVisu_BCurveRepersPipeline(const bool allowSelection);
 
-protected:
+public:
 
-  bool getPickedPointOnCurve(void*                        pCallData,
-                             Handle(asiData_IVCurveNode)& curveNode,
-                             gp_Pnt&                      resultPt,
-                             double&                      resultParam) const;
+  //! Sets input data for the pipeline.
+  //! \param[in] DP Data Provider.
+  asiVisu_EXPORT virtual void
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
 
-  Handle(Geom_Curve)
-    getPickedCurve(void*                        pCallData,
-                   Handle(asiData_IVCurveNode)& curveNode) const;
+public:
 
-  Handle(asiData_IVCurveNode)
-    getPickedCurveNode(void* pCallData) const;
+  //! Sets transient active reper.
+  //! \param[in] reperId reper ID to use.
+  void SetForcedActiveReper(const int reperId)
+  {
+    m_iForcedActiveReper = reperId;
+  }
 
-protected:
+private:
 
-  //! Constructor accepting owning viewer as a parameter.
-  //! \param[in] pViewer owning viewer.
-  asiUI_CurveHandleCallback(asiUI_Viewer* pViewer);
+  virtual void callback_add_to_renderer      (vtkRenderer*) {}
+  virtual void callback_remove_from_renderer (vtkRenderer*) {}
+  virtual void callback_update               ()             {}
 
-  //! Dtor.
-  ~asiUI_CurveHandleCallback();
+private:
+
+  //! Copying prohibited.
+  asiVisu_BCurveRepersPipeline(const asiVisu_BCurveRepersPipeline&);
+
+  //! Assignment prohibited.
+  asiVisu_BCurveRepersPipeline& operator=(const asiVisu_BCurveRepersPipeline&);
+
+private:
+
+  int  m_iForcedActiveReper; //!< Transient active reper point.
+  bool m_bAllowSelection;    //!< Enables/disables partial data visualization.
 
 };
 

@@ -46,6 +46,7 @@ set (pipelines_H_FILES
   pipelines/asiVisu_BCurveHandlesPipeline.h
   pipelines/asiVisu_BCurveKnotsPipeline.h
   pipelines/asiVisu_BCurvePolesPipeline.h
+  pipelines/asiVisu_BCurveRepersPipeline.h
   pipelines/asiVisu_BSurfAxesPipeline.h
   pipelines/asiVisu_BSurfKnotsPipeline.h
   pipelines/asiVisu_BSurfPolesPipeline.h
@@ -82,6 +83,7 @@ set (pipelines_CPP_FILES
   pipelines/asiVisu_BCurveHandlesPipeline.cpp
   pipelines/asiVisu_BCurveKnotsPipeline.cpp
   pipelines/asiVisu_BCurvePolesPipeline.cpp
+  pipelines/asiVisu_BCurveRepersPipeline.cpp
   pipelines/asiVisu_BSurfAxesPipeline.cpp
   pipelines/asiVisu_BSurfKnotsPipeline.cpp
   pipelines/asiVisu_BSurfPolesPipeline.cpp
@@ -273,6 +275,7 @@ set (sources_H_FILES
   sources/asiVisu_BCurveHandlesSource.h
   sources/asiVisu_BCurveKnotsSource.h
   sources/asiVisu_BCurvePolesSource.h
+  sources/asiVisu_BCurveRepersSource.h
   sources/asiVisu_BSurfAxesSource.h
   sources/asiVisu_BSurfKnotsSource.h
   sources/asiVisu_BSurfPolesSource.h
@@ -296,6 +299,7 @@ set (sources_CPP_FILES
   sources/asiVisu_BCurveHandlesSource.cpp
   sources/asiVisu_BCurveKnotsSource.cpp
   sources/asiVisu_BCurvePolesSource.cpp
+  sources/asiVisu_BCurveRepersSource.cpp
   sources/asiVisu_BSurfAxesSource.cpp
   sources/asiVisu_BSurfKnotsSource.cpp
   sources/asiVisu_BSurfPolesSource.cpp

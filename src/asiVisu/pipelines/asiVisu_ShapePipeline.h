@@ -46,8 +46,6 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(Shape, asiVisu_Pipeline)
-
 //! Visualization pipeline for OCCT shapes which are not stored in the Part
 //! Node. Hence the visualization process here is not sophisticated and
 //! less services are provided (e.g. no interaction at all).

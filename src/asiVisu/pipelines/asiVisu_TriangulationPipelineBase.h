@@ -42,6 +42,8 @@
 #include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
 
+//-----------------------------------------------------------------------------
+
 //! Base class for all surface triangulation pipelines.
 class asiVisu_TriangulationPipelineBase : public asiVisu_Pipeline
 {

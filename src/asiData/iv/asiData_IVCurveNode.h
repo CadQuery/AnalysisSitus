@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 08 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -78,6 +78,7 @@ public:
   // Creation         //
   //------------------//
     PID_ReperPoints,  //!< Collection of reper points to outline a curve through.
+    PID_ActiveReper,  //!< Index of the currently active reper point.
 
   //------------------//
   // ...              //
@@ -176,6 +177,19 @@ public:
   //! \param[out] pts collection of points.
   asiData_EXPORT void
     GetReperPoints(std::vector<gp_XYZ>& pts) const;
+
+  //! Sets index of the currently active reper point.
+  //! \param[in] reperId ID of the reper point to set.
+  asiData_EXPORT void
+    SetActiveReper(const int reperId);
+
+  //! \return 0-based index of the currently active reper point.
+  asiData_EXPORT int
+    GetActiveReper() const;
+
+  //! \return point corresponding to the active reper index.
+  asiData_EXPORT gp_XYZ
+    GetActiveReperPoint() const;
 
 // Initialization:
 public:

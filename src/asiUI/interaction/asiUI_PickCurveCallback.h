@@ -32,19 +32,11 @@
 #define asiUI_PickCurveCallback_h
 
 // asiUI includes
-#include <asiUI_ViewerCallback.h>
-
-// VTK includes
-#include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
-
-// Qt includes
-#include <QObject>
+#include <asiUI_BaseCurveCallback.h>
 
 //! Callback for interactive creation of a curve by picking points on
 //! triangulation.
-class asiUI_PickCurveCallback : public QObject,
-                                public asiUI_ViewerCallback
+class asiUI_PickCurveCallback : public asiUI_BaseCurveCallback
 {
   Q_OBJECT
 

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 11 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -48,13 +48,21 @@ public:
 
 public:
 
-  //! Pipelines.
-  enum PipelineId
+  //! Primary pipelines.
+  enum PrimaryPipelineId
   {
-    Pipeline_Main = 1,
-    Pipeline_Poles,
-    Pipeline_Knots,
-    Pipeline_Handles
+    PrimaryPipeline_Main = 1, //!< Curve as it is.
+    PrimaryPipeline_Poles,    //!< Poles of a B-curve.
+    PrimaryPipeline_Knots,    //!< Knots of a B-curve.
+    PrimaryPipeline_Handles,  //!< Points on a curve representing its handles.
+    PrimaryPipeline_Repers    //!< Reper points which were used to build this curve.
+  };
+
+  //! Selection pipelines.
+  enum SelectionPipelineId
+  {
+    SelectionPipeline_Handles = 1, //!< Pipeline for interacting on handles.
+    SelectionPipeline_Repers       //!< Pipeline for interacting on reper points.
   };
 
 public:

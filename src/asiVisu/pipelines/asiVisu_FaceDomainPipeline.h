@@ -31,7 +31,7 @@
 #ifndef asiVisu_FaceDomainPipeline_h
 #define asiVisu_FaceDomainPipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 
@@ -44,8 +44,6 @@
 #include <vtkSelectionNode.h>
 
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiVisu_FaceDomainPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for face domain.
 class asiVisu_FaceDomainPipeline : public asiVisu_Pipeline

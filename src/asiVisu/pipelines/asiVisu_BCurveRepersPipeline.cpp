@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 April 2016
+// Created on: 27 December 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2016-present, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,93 +29,85 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_PointsPipeline.h>
+#include <asiVisu_BCurveRepersPipeline.h>
 
 // asiVisu includes
+#include <asiVisu_BCurveRepersSource.h>
+#include <asiVisu_CurveDataProvider.h>
 #include <asiVisu_NodeInfo.h>
-#include <asiVisu_PointsSource.h>
-#include <asiVisu_PointsDataProvider.h>
 
 // VTK includes
-#include <vtkActor.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 
+// OCCT includes
+#include <Geom_BSplineCurve.hxx>
+
 //-----------------------------------------------------------------------------
 
-//! Creates new Pipeline initialized by default VTK mapper and actor.
-asiVisu_PointsPipeline::asiVisu_PointsPipeline()
+asiVisu_BCurveRepersPipeline::asiVisu_BCurveRepersPipeline(const bool allowSelection)
+//
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                     vtkSmartPointer<vtkActor>::New() )
 {
-  // Default visual style
-  this->Actor()->GetProperty()->SetPointSize(3.0);
-  this->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
-  this->Actor()->GetProperty()->SetOpacity(0.5);
+  m_iForcedActiveReper = -1;
+  m_bAllowSelection    = allowSelection;
+
+  this->Actor()->GetProperty()->SetPointSize(8.0f);
 }
 
 //-----------------------------------------------------------------------------
 
-//! Sets input data for the pipeline.
-//! \param DP [in] Data Provider.
-void asiVisu_PointsPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
+void asiVisu_BCurveRepersPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  const Handle(asiVisu_PointsDataProvider)&
-    provider = Handle(asiVisu_PointsDataProvider)::DownCast(DP);
-  //
-  if ( provider.IsNull() )
-    return;
+  Handle(asiVisu_CurveDataProvider)
+    dp = Handle(asiVisu_CurveDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
    * =========================== */
 
-  Handle(asiAlgo_BaseCloud<double>) points = provider->GetPoints();
-  //
-  if ( points.IsNull() || points->IsEmpty() )
+  // Get reper points.
+  std::vector<gp_XYZ> pts;
+  dp->GetReperPoints(pts);
+
+  // Do nothing for empty input.
+  if ( !pts.size() )
   {
-    // Pass empty data set in order to have valid pipeline
-    vtkSmartPointer<vtkPolyData> aDummyDS = vtkSmartPointer<vtkPolyData>::New();
-    this->SetInputData(aDummyDS);
-    this->Modified(); // Update modification timestamp
-    return; // Do nothing
+    // Pass empty data set in order to have valid pipeline.
+    vtkSmartPointer<vtkPolyData> dummyDS = vtkSmartPointer<vtkPolyData>::New();
+    this->SetInputData(dummyDS);
+    this->Modified(); // Update modification timestamp.
+    return; // Do nothing.
   }
 
   /* ============================
    *  Prepare polygonal data set
    * ============================ */
 
-  if ( provider->MustExecute( this->GetMTime() ) )
+  // Forced activation is allowed.
+  if ( dp->MustExecute( this->GetMTime() ) || (m_iForcedActiveReper != -1) )
   {
-    // Source for points
-    vtkSmartPointer< asiVisu_PointsSource<double> >
-      src = vtkSmartPointer< asiVisu_PointsSource<double> >::New();
+    // Bind to a Data Node using information key.
+    asiVisu_NodeInfo::Store( dp->GetNodeID(), this->Actor() );
+
+    // B-curve repers.
+    vtkSmartPointer<asiVisu_BCurveRepersSource>
+      bRepersSrc = vtkSmartPointer<asiVisu_BCurveRepersSource>::New();
     //
-    src->SetInputPoints(points);
-    src->SetFilter( provider->GetIndices() );
+    bRepersSrc->SetInputPoints(pts);
 
-    // Bind to a Data Node using information key
-    asiVisu_NodeInfo::Store( provider->GetNodeID(), this->Actor() );
+    // Set active reper ID if any.
+    if ( m_bAllowSelection )
+      if ( m_iForcedActiveReper != -1 )
+        bRepersSrc->SetActiveReper( m_iForcedActiveReper );
+      else
+        bRepersSrc->SetActiveReper( dp->GetActiveReper() );
 
-    // Initialize pipeline
-    this->SetInputConnection( src->GetOutputPort() );
+    // Connect data source to the pipeline.
+    this->SetInputConnection( bRepersSrc->GetOutputPort() );
   }
 
-  // Update modification timestamp
+  // Update modification timestamp.
   this->Modified();
 }
-
-//-----------------------------------------------------------------------------
-
-//! Callback for AddToRenderer() routine. Good place to adjust visualization
-//! properties of the pipeline's actor.
-void asiVisu_PointsPipeline::callback_add_to_renderer(vtkRenderer*)
-{}
-
-//! Callback for RemoveFromRenderer() routine.
-void asiVisu_PointsPipeline::callback_remove_from_renderer(vtkRenderer*)
-{}
-
-//! Callback for Update() routine.
-void asiVisu_PointsPipeline::callback_update()
-{}

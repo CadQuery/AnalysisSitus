@@ -37,6 +37,9 @@
 // asiAlgo includes
 #include <asiAlgo_Utils.h>
 
+// asiVisu includes
+#include <asiVisu_NodeInfo.h>
+
 //-----------------------------------------------------------------------------
 
 asiUI_PickCurveCallback* asiUI_PickCurveCallback::New()
@@ -48,7 +51,7 @@ asiUI_PickCurveCallback* asiUI_PickCurveCallback::New()
 
 asiUI_PickCurveCallback::asiUI_PickCurveCallback(asiUI_Viewer* pViewer)
 //
-: asiUI_ViewerCallback(pViewer)
+: asiUI_BaseCurveCallback(pViewer)
 {}
 
 //-----------------------------------------------------------------------------
@@ -64,52 +67,63 @@ void asiUI_PickCurveCallback::Execute(vtkObject*    pCaller,
 {
   asiUI_NotUsed(pCaller);
 
-  // Custom point on the mesh was clicked.
-  if ( eventId == EVENT_SELECT_WORLD_POINT )
+  asiEngine_IV IV(m_model, m_notifier, m_plotter);
+  gp_XYZ       pos;
+
+  /* Process event */
+
+  if ( eventId == EVENT_SELECT_CELL ) // Existing reper point was picked.
   {
-    gp_XYZ hit;
-    if ( !this->getPickedPoint(pCallData, hit) )
-      return;
+    // Convert passed data to cell picker result.
+    asiVisu_CellPickerResult* pPickRes = (asiVisu_CellPickerResult*) pCallData;
 
-    // Find Curve Node with the name in question.
-    asiEngine_IV IV(m_model, m_notifier, m_plotter);
-    //
-    Handle(asiData_IVCurveNode) curveNode = IV.Find_Curve(m_name);
-
-    // Modify Data Model.
-    m_model->OpenCommand();
-    {
-      if ( curveNode.IsNull() )
-        curveNode = IV.Create_Curve(m_name, false);
-
-      // Add reper point.
-      curveNode->AddReperPoint(hit);
-
-      // Get all available reper points.
-      std::vector<gp_XYZ> pts;
-      curveNode->GetReperPoints(pts);
-
-      // Build curve.
-      if ( pts.size() > 1 )
-      {
-        Handle(Geom_BSplineCurve) curve;
-        //
-        if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, Precision::Confusion(), curve) )
-        {
-          m_model->AbortCommand();
-          //
-          m_notifier.SendLogMessage(LogErr(Normal) << "Curve approximation failed.");
-          return;
-        }
-
-        // Update Node.
-        curveNode->SetCurve(curve);
-      }
-    }
-    m_model->CommitCommand();
-
-    // Update Curve Node.
-    m_pViewer->PrsMgr()->Actualize(curveNode);
-    m_pBrowser->Populate();
+    // Get picked position.
+    pos = pPickRes->GetPickedPos();
   }
+  else if ( eventId == EVENT_SELECT_WORLD_POINT ) // Custom point on the mesh was clicked.
+  {
+    if ( !this->getPickedPoint(pCallData, pos) )
+      return;
+  }
+  else
+    return; // Untracked event.
+
+  // Find Curve Node with the name in question.
+  Handle(asiData_IVCurveNode) curveNode = IV.Find_Curve(m_name);
+
+  // Modify Data Model.
+  m_model->OpenCommand();
+  {
+    if ( curveNode.IsNull() )
+      curveNode = IV.Create_Curve(m_name, false);
+
+    // Add reper point.
+    curveNode->AddReperPoint(pos);
+
+    // Get all available reper points.
+    std::vector<gp_XYZ> pts;
+    curveNode->GetReperPoints(pts);
+
+    // Build curve.
+    if ( pts.size() > 1 )
+    {
+      Handle(Geom_BSplineCurve) curve;
+      //
+      if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, Precision::Confusion(), curve) )
+      {
+        m_model->AbortCommand();
+        //
+        m_notifier.SendLogMessage(LogErr(Normal) << "Curve approximation failed.");
+        return;
+      }
+
+      // Update Node.
+      curveNode->SetCurve(curve);
+    }
+  }
+  m_model->CommitCommand();
+
+  // Update Curve Node.
+  m_pViewer->PrsMgr()->Actualize(curveNode);
+  m_pBrowser->Populate();
 }

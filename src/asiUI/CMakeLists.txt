@@ -131,7 +131,7 @@ set (interaction_H_FILES
 )
 set (interaction_H_UI_FILES
   interaction/asiUI_AddCurveHandleCallback.h
-  interaction/asiUI_CurveHandleCallback.h
+  interaction/asiUI_BaseCurveCallback.h
   interaction/asiUI_MoveCurveHandleCallback.h
   interaction/asiUI_PartCallback.h
   interaction/asiUI_PDomainCallback.h
@@ -141,7 +141,7 @@ set (interaction_H_UI_FILES
 )
 set (interaction_CPP_FILES 
   interaction/asiUI_AddCurveHandleCallback.cpp
-  interaction/asiUI_CurveHandleCallback.cpp
+  interaction/asiUI_BaseCurveCallback.cpp
   interaction/asiUI_MoveCurveHandleCallback.cpp
   interaction/asiUI_PartCallback.cpp
   interaction/asiUI_PDomainCallback.cpp

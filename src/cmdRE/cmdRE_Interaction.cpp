@@ -35,6 +35,7 @@
 #include <asiAlgo_InterpolateSurfMesh.h>
 
 // asiEngine includes
+#include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
 #include <asiEngine_RE.h>
 #include <asiEngine_Triangulation.h>
@@ -131,6 +132,7 @@ int RE_DefineCurve(const Handle(asiTcl_Interp)& interp,
   asiEngine_Part          partAPI ( cmdRE::model, interp->GetProgress(), interp->GetPlotter() );
   asiEngine_Triangulation trisAPI ( cmdRE::model, interp->GetProgress(), interp->GetPlotter() );
   asiEngine_RE            reAPI   ( cmdRE::model, interp->GetProgress(), interp->GetPlotter() );
+  asiEngine_IV            ivAPI   ( cmdRE::model );
   //
   cmdRE::model->OpenCommand();
   {
@@ -143,10 +145,13 @@ int RE_DefineCurve(const Handle(asiTcl_Interp)& interp,
   const vtkSmartPointer<asiVisu_PrsManager>& PM = cmdRE::cf->ViewerPart->PrsMgr();
 
   // Set picker types.
-  cmdRE::cf->ViewerPart->GetPickCallback()->SetPickerTypes(PickerType_World);
+  cmdRE::cf->ViewerPart->GetPickCallback()->SetPickerTypes(PickerType_World | PickerType_Cell);
 
   // Set selection mode.
   PM->SetSelectionMode(SelectionMode_Workpiece);
+
+  // Activate reper points.
+  ivAPI.ActivateCurveRepers(true, PM);
 
   // Prepare callback which will manage the interaction process with user.
   vtkSmartPointer<asiUI_PickCurveCallback>
@@ -166,11 +171,16 @@ int RE_DefineCurve(const Handle(asiTcl_Interp)& interp,
   if ( PM->HasObserver(EVENT_SELECT_WORLD_POINT) )
     PM->RemoveObservers(EVENT_SELECT_WORLD_POINT);
   //
+  if ( PM->HasObserver(EVENT_DETECT_CELL) )
+    PM->RemoveObservers(EVENT_DETECT_CELL);
+  //
   if ( PM->HasObserver(EVENT_SELECT_CELL) )
     PM->RemoveObservers(EVENT_SELECT_CELL);
 
   // Add observer which takes responsibility to interact with the user.
   PM->AddObserver(EVENT_SELECT_WORLD_POINT, cb);
+  PM->AddObserver(EVENT_DETECT_CELL,        cb);
+  PM->AddObserver(EVENT_SELECT_CELL,        cb);
 
   return TCL_OK;
 }

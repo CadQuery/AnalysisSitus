@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 06 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -50,59 +50,83 @@ template class asiVisu_PointsSource<double>;
 template class asiVisu_PointsSource<float>;
 
 //-----------------------------------------------------------------------------
-// Construction
-//-----------------------------------------------------------------------------
 
 vtkStandardNewMacro(asiVisu_PointsSource<double>);
 vtkStandardNewMacro(asiVisu_PointsSource<float>);
 
-//! Default constructor.
+//-----------------------------------------------------------------------------
+
 template <typename REAL_TYPE>
 asiVisu_PointsSource<REAL_TYPE>::asiVisu_PointsSource() : vtkPolyDataAlgorithm ()
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
-                                  // which has nothing to do with VTK pipeline
+                                  // which has nothing to do with VTK pipeline.
 }
 
-//! Destructor.
+//-----------------------------------------------------------------------------
+
 template <typename REAL_TYPE>
 asiVisu_PointsSource<REAL_TYPE>::~asiVisu_PointsSource()
 {}
 
 //-----------------------------------------------------------------------------
-// Kernel methods
-//-----------------------------------------------------------------------------
 
-//! Sets input points to visualize.
-//! \param points [in] points to visualize.
 template <typename REAL_TYPE>
 void asiVisu_PointsSource<REAL_TYPE>::SetInputPoints(const Handle(asiAlgo_BaseCloud<REAL_TYPE>)& points)
 {
   m_points = points;
+
+  // Set source modified.
+  this->Modified();
+}
+
+
+//-----------------------------------------------------------------------------
+
+template <typename REAL_TYPE>
+void asiVisu_PointsSource<REAL_TYPE>::SetInputPoints(const std::vector<gp_XYZ>& points)
+{
+  // Create and populate a point cloud.
+  m_points = new asiAlgo_BaseCloud<REAL_TYPE>;
   //
+  for ( size_t k = 0; k < points.size(); ++k )
+    m_points->AddElement( points[k].X(), points[k].Y(), points[k].Z() );
+
+  // Set source modified.
   this->Modified();
 }
 
 //-----------------------------------------------------------------------------
 
-//! Sets filter on the indices. The filter will have effect only if the passed
-//! map of indices is not null. Otherwise, the filter is assumed non-existing.
-//! \param filter [in] point indices to visualize.
 template <typename REAL_TYPE>
 void asiVisu_PointsSource<REAL_TYPE>::SetFilter(const Handle(TColStd_HPackedMapOfInteger)& filter)
 {
   m_indices = filter;
+
+  // Set source modified.
+  this->Modified();
 }
 
 //-----------------------------------------------------------------------------
 
-//! This method (called by superclass) performs conversion of OCCT
-//! data structures to VTK polygonal representation.
-//!
-//! \param request      [in]  describes "what" algorithm should do. This is
-//!                           typically just one key such as REQUEST_INFORMATION.
-//! \param inputVector  [in]  inputs of the algorithm.
-//! \param outputVector [out] outputs of the algorithm.
+template <typename REAL_TYPE>
+void asiVisu_PointsSource<REAL_TYPE>::SetOnePointFilter(const int pidx)
+{
+  // Prepare the collection of indices.
+  if ( m_indices.IsNull() )
+    m_indices = new TColStd_HPackedMapOfInteger;
+  else
+    m_indices->ChangeMap().Clear();
+
+  // Set single element.
+  m_indices->ChangeMap().Add(pidx);
+
+  // Set source modified.
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
 template <typename REAL_TYPE>
 int asiVisu_PointsSource<REAL_TYPE>::RequestData(vtkInformation*        request,
                                                  vtkInformationVector** inputVector,
@@ -152,18 +176,16 @@ int asiVisu_PointsSource<REAL_TYPE>::RequestData(vtkInformation*        request,
   return Superclass::RequestData(request, inputVector, outputVector);
 }
 
-//! Adds the given point to the passed polygonal data set.
-//! \param point    [in]     point to add.
-//! \param polyData [in/out] polygonal data set being populated.
-//! \return ID of the just added VTK point.
+//-----------------------------------------------------------------------------
+
 template <typename REAL_TYPE>
 vtkIdType asiVisu_PointsSource<REAL_TYPE>::registerGridPoint(const gp_Pnt& point,
                                                              vtkPolyData*  polyData)
 {
-  // Access necessary arrays
+  // Access necessary arrays.
   vtkPoints* points = polyData->GetPoints();
 
-  // Push the point into VTK data set
+  // Push the point into VTK data set.
   vtkIdType pid = points->InsertNextPoint( point.X(),
                                            point.Y(),
                                            point.Z() );
@@ -171,10 +193,8 @@ vtkIdType asiVisu_PointsSource<REAL_TYPE>::registerGridPoint(const gp_Pnt& point
   return pid;
 }
 
-//! Adds a vertex cell into the polygonal data set.
-//! \param n        [in]     index of the corresponding geometric point.
-//! \param polyData [in/out] polygonal data set being populated.
-//! \return ID of the just added VTK cell.
+//-----------------------------------------------------------------------------
+
 template <typename REAL_TYPE>
 vtkIdType asiVisu_PointsSource<REAL_TYPE>::registerVertex(const vtkIdType n,
                                                           vtkPolyData*    polyData)

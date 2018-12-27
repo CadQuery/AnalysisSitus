@@ -38,6 +38,8 @@
 #include <Geom_Curve.hxx>
 #include <Geom2d_Curve.hxx>
 
+//-----------------------------------------------------------------------------
+
 //! Data provider for parametric curves (either 3D or 2D).
 class asiVisu_CurveDataProvider : public asiVisu_DataProvider
 {
@@ -64,6 +66,19 @@ public:
   //!
   //! \return 0-based ID of the active handle or -1 if no handle is active.
   virtual int GetActiveHandle() const { return -1; }
+
+  //! Returns an ordered collection of reper points, i.e., the points which
+  //! were used to build this curve. Since not for any curve these points are
+  //! recorded, this method has an empty default implementation.
+  //!
+  //! \param[out] pts vector of reper points which were used to build the curve.
+  virtual void GetReperPoints(std::vector<gp_XYZ>& pts) const { asiVisu_NotUsed(pts); }
+
+  //! Returns reper point ID which is currently active. Not all curve types use
+  //! reper points, so this method returns -1 (no point) by default.
+  //!
+  //! \return 0-based ID of the active reper point or -1 if no reper is active.
+  virtual int GetActiveReper() const { return -1; }
 
 };
 

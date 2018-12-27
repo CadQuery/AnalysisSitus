@@ -36,8 +36,6 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_PartEdgesPipeline, asiVisu_PartPipelineBase)
-
 //! Visualization pipeline for wireframe of OCCT shape. This pipeline is
 //! secondary: it should be feeded with a source of a main shape pipeline.
 class asiVisu_PartEdgesPipeline : public asiVisu_PartPipelineBase

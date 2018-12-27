@@ -31,15 +31,13 @@
 #ifndef asiVisu_MeshENScalarPipeline_h
 #define asiVisu_MeshENScalarPipeline_h
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_MeshDataProvider.h>
 #include <asiVisu_MeshPipeline.h>
 
 //-----------------------------------------------------------------------------
 // Data Provider
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiVisu_MeshENScalarDataProvider, asiVisu_MeshDataProvider)
 
 //! Data source for the corresponding pipeline. Specifies all data necessary
 //! for visualization of mesh with element nodal scalars.
@@ -68,8 +66,6 @@ public:
 //-----------------------------------------------------------------------------
 // Pipeline
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiVisu_MeshENScalarPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for meshes with element nodal scalars.
 class asiVisu_MeshENScalarPipeline : public asiVisu_Pipeline

@@ -31,7 +31,7 @@
 #ifndef asiVisu_BCurvePolesPipeline_h
 #define asiVisu_BCurvePolesPipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 

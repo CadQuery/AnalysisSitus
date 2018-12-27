@@ -37,8 +37,6 @@
 
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiVisu_FuncUnivariatePipeline, asiVisu_Pipeline)
-
 //! Visualization pipeline for explicit univariate functions.
 class asiVisu_FuncUnivariatePipeline : public asiVisu_Pipeline
 {

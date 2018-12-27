@@ -31,13 +31,11 @@
 #ifndef asiVisu_EdgeDomainPipeline_h
 #define asiVisu_EdgeDomainPipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiVisu_EdgeDomainPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for edge domain.
 class asiVisu_EdgeDomainPipeline : public asiVisu_Pipeline

@@ -31,13 +31,11 @@
 #ifndef asiVisu_VectorsPipeline_h
 #define asiVisu_VectorsPipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiVisu_VectorsPipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for vectors.
 class asiVisu_VectorsPipeline : public asiVisu_Pipeline

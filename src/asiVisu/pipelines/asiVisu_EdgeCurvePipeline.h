@@ -31,13 +31,11 @@
 #ifndef asiVisu_EdgeCurvePipeline_h
 #define asiVisu_EdgeCurvePipeline_h
 
-// A-Situs includes
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 
 //-----------------------------------------------------------------------------
-
-DEFINE_STANDARD_HANDLE(asiVisu_EdgeCurvePipeline, asiVisu_Pipeline)
 
 //! Visualization pipeline for a host curve of an edge.
 class asiVisu_EdgeCurvePipeline : public asiVisu_Pipeline

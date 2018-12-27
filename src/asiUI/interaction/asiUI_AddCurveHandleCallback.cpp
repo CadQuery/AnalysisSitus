@@ -48,7 +48,7 @@ asiUI_AddCurveHandleCallback* asiUI_AddCurveHandleCallback::New()
 
 asiUI_AddCurveHandleCallback::asiUI_AddCurveHandleCallback(asiUI_Viewer* pViewer)
 //
-: asiUI_CurveHandleCallback(pViewer)
+: asiUI_BaseCurveCallback(pViewer)
 {}
 
 //-----------------------------------------------------------------------------

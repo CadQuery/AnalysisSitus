@@ -42,12 +42,13 @@
 
 //-----------------------------------------------------------------------------
 
-asiVisu_BCurveHandlesPipeline::asiVisu_BCurveHandlesPipeline()
+asiVisu_BCurveHandlesPipeline::asiVisu_BCurveHandlesPipeline(const bool allowSelection)
 //
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                     vtkSmartPointer<vtkActor>::New() )
 {
   m_iForcedActiveHandle = -1;
+  m_bAllowSelection     = allowSelection;
 
   this->Actor()->GetProperty()->SetPointSize(8.0f);
 }
@@ -99,10 +100,11 @@ void asiVisu_BCurveHandlesPipeline::SetInput(const Handle(asiVisu_DataProvider)&
       bHandlesSrc->SetInputs( BC, dp->GetHandles() );
 
       // Set active handle ID if any.
-      if ( m_iForcedActiveHandle != -1 )
-        bHandlesSrc->SetActiveHandle( m_iForcedActiveHandle );
-      else
-        bHandlesSrc->SetActiveHandle( dp->GetActiveHandle() );
+      if ( m_bAllowSelection )
+        if ( m_iForcedActiveHandle != -1 )
+          bHandlesSrc->SetActiveHandle( m_iForcedActiveHandle );
+        else
+          bHandlesSrc->SetActiveHandle( dp->GetActiveHandle() );
 
       // Connect data source to the pipeline.
       this->SetInputConnection( bHandlesSrc->GetOutputPort() );

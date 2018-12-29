@@ -46,7 +46,25 @@ workspace. The whole process is driven by a reference shape represented
 with either a point cloud or mesh geometry. Looking from this standpoint,
 Analysis Situs is designed to become a modeling system where the main
 prerequisite is the existence of a reference part guiding the design
-process and used to snap points, curves, and surfaces.
+process and used to snap points, curves, and surfaces. The following
+figure illustrates the entire reverse engineering workflow in
+Analysis Situs.
+</p>
+
+<div align="center"><img src="../imgs/re-workflow.png"/></div>
+
+<p>
+It all starts with importing a mesh model. The most popular format
+for unorganized triangulations today is the stereolithography format
+(STL). Once the import is done, you begin
+<a href="./features_re-define-topology.html">retopologizing your model</a> by outlining the
+feature lines. The goal of this stage is to build a network of curves
+bounding the surface patches. It is practical to sketch the boundary
+curves following the curvature map of your mesh. Once you are done
+with the topology, it is time to fit surfaces and construct a final
+manifold shell. In the end, you may want to check the obtained deviation
+map and export the result to one of the popular CAD exchange formats, e.g.,
+IGES or STEP.
 </p>
 
 </body>

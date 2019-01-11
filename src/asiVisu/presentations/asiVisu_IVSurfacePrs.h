@@ -33,9 +33,12 @@
 
 // asiVisu includes
 #include <asiVisu_DefaultPrs.h>
+#include <asiVisu_PlaneWidget.h>
 
 // asiData includes
 #include <asiData_IVSurfaceNode.h>
+
+//-----------------------------------------------------------------------------
 
 //! Presentation class for surfaces in IV.
 class asiVisu_IVSurfacePrs : public asiVisu_DefaultPrs
@@ -62,12 +65,33 @@ public:
 public:
 
   asiVisu_EXPORT static Handle(asiVisu_Prs)
-    Instance(const Handle(ActAPI_INode)& theNode);
+    Instance(const Handle(ActAPI_INode)& N);
+
+public:
+
+  //! \return interactive plane.
+  const vtkSmartPointer<asiVisu_PlaneWidget>& GetPlaneWidget() const
+  {
+    return m_planeWidget;
+  }
 
 private:
 
   //! Allocation is allowed only via Instance() method.
-  asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N);
+
+protected:
+
+  virtual void
+    renderPipelines(vtkRenderer* renderer) const;
+
+  virtual void
+    deRenderPipelines(vtkRenderer* renderer) const;
+
+protected:
+
+  //! VTK widget for planes.
+  vtkSmartPointer<asiVisu_PlaneWidget> m_planeWidget;
 
 };
 

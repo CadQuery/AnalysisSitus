@@ -222,3 +222,159 @@ bool asiAlgo_MeshConvert::ToPersistent(vtkPolyData*          source,
   }
   return true;
 }
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_MeshConvert::FromVTK(vtkPolyData*                source,
+                                  Handle(Poly_Triangulation)& result)
+{
+  // Nodes.
+  const vtkIdType numCells = source->GetNumberOfCells();
+
+  if ( numCells == 0 )
+    return false;
+
+  // Calculate real amount of triangles and nodes in resulting mesh.
+  // Some algorithms, like healing can produce linear segments instead of triangles.
+  std::vector<gp_Pnt> nodes;
+  std::vector<std::vector<int>> faces;
+  for ( vtkIdType cellId = 0; cellId < numCells; ++cellId )
+  {
+    const int cellType = source->GetCellType(cellId);
+    vtkSmartPointer<vtkIdList> ptIds = vtkSmartPointer<vtkIdList>::New();
+    if ( cellType != VTK_TRIANGLE )
+      continue;
+
+    // Get the list of points for this cell
+    source->GetCellPoints(cellId, ptIds);
+
+    double coord1[3] = { 0.0, 0.0, 0.0 };
+    double coord2[3] = { 0.0, 0.0, 0.0 };
+    double coord3[3] = { 0.0, 0.0, 0.0 };
+
+    const int node1 = ptIds->GetId(0);
+    const int node2 = ptIds->GetId(1);
+    const int node3 = ptIds->GetId(2);
+
+    source->GetPoint(node1, coord1);
+    source->GetPoint(node2, coord2);
+    source->GetPoint(node3, coord3);
+
+    const gp_Pnt pnt1(coord1[0],coord1[1],coord1[2]);
+    const gp_Pnt pnt2(coord2[0],coord2[1],coord2[2]);
+    const gp_Pnt pnt3(coord3[0],coord3[1],coord3[2]);
+    int resIdx1 = 0, resIdx2 = 0, resIdx3 = 0;
+
+    nodes.push_back(pnt1);
+    nodes.push_back(pnt2);
+    nodes.push_back(pnt3);
+
+    std::vector<int> indexes;
+    indexes.push_back(resIdx1);
+    indexes.push_back(resIdx2);
+    indexes.push_back(resIdx3);
+    faces.push_back(indexes);
+  }
+
+  // Construct resulting mesh and copy data.
+  result = new Poly_Triangulation((int) nodes.size(), (int) faces.size(), false);
+  for (int i = 0; i < (int)nodes.size(); ++i)
+    result->ChangeNode(i + 1) = nodes[i];
+  for (int i = 0; i < (int)faces.size(); ++i)
+    result->ChangeTriangle(i + 1).Set(faces[i][0], faces[i][1], faces[i][2]);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_MeshConvert::ToVTK(const Handle(Poly_Triangulation)& source,
+                                vtkSmartPointer<vtkPolyData>&     result)
+{
+  result = vtkSmartPointer<vtkPolyData>::New();
+  result->Allocate(); // TODO: is that necessary?
+
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+  result->SetPoints(points);
+
+  // Processed nodes
+  NCollection_DataMap<int, vtkIdType> nodeRepo;
+
+  // Pass mesh elements to VTK data source
+  const Poly_Array1OfTriangle& aTriangles = source->ChangeTriangles();
+  for ( int i = aTriangles.Lower(); i <= aTriangles.Upper(); ++i)
+    __translateElement(source, aTriangles(i), result, nodeRepo);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_MeshConvert::__translateElement(const Handle(Poly_Triangulation)&    source,
+                                             const Poly_Triangle&                 elem,
+                                             vtkPolyData*                         polyData,
+                                             NCollection_DataMap<int, vtkIdType>& nodeRepo)
+{
+  int id[3];
+  elem.Get(id[0], id[1], id[2]);
+
+  // Transfer element to VTK polygonal source
+  __registerMeshFace(source, &id[0], 3, polyData, nodeRepo);
+}
+
+//-----------------------------------------------------------------------------
+
+vtkIdType
+  asiAlgo_MeshConvert::__registerMeshFace(const Handle(Poly_Triangulation)&    source,
+                                          const void*                          nodes,
+                                          const int                            nbNodes,
+                                          vtkPolyData*                         polyData,
+                                          NCollection_DataMap<int, vtkIdType>& nodeRepo)
+{
+  // Define the type of the cell being registered
+  VTKCellType cellType = VTK_EMPTY_CELL;
+  switch ( nbNodes )
+  {
+    case 3: cellType = VTK_TRIANGLE; break;
+    case 4: cellType = VTK_QUAD; break;
+    default: return -1;
+  }
+
+  // Register cell in the polygonal data set
+  int* nodeIDs = (int*) nodes;
+  std::vector<vtkIdType> pids;
+  for ( int k = 0; k < nbNodes; k++ )
+  {
+    vtkIdType pid = __registerMeshNode(source, nodeIDs[k], polyData, nodeRepo);
+    pids.push_back(pid);
+  }
+  //
+  vtkIdType
+    cellID = polyData->InsertNextCell( cellType, (int) pids.size(), &pids[0] );
+
+  return cellID;
+}
+
+
+//-----------------------------------------------------------------------------
+
+vtkIdType
+  asiAlgo_MeshConvert::__registerMeshNode(const Handle(Poly_Triangulation)&    source,
+                                          const int                            nodeID,
+                                          vtkPolyData*                         polyData,
+                                          NCollection_DataMap<int, vtkIdType>& nodeRepo)
+{
+  vtkPoints* points    = polyData->GetPoints();
+  vtkIdType* resPidPtr = nodeRepo.ChangeSeek(nodeID);
+
+  if ( resPidPtr == NULL )
+  {
+    // Access mesh node
+    const gp_Pnt& aPnt = source->Nodes().Value(nodeID);
+
+    // Push the point into VTK data set
+    resPidPtr = nodeRepo.Bound(nodeID, points->InsertNextPoint( aPnt.X(), aPnt.Y(), aPnt.Z() ));
+  }
+
+  return (*resPidPtr);
+}

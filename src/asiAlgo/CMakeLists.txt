@@ -208,6 +208,7 @@ set (mesh_H_FILES
   mesh/asiAlgo_MeshConvert.h
   mesh/asiAlgo_MeshGen.h
   mesh/asiAlgo_MeshInfo.h
+  mesh/asiAlgo_MeshInterPlane.h
   mesh/asiAlgo_MeshLink.h
   mesh/asiAlgo_MeshMerge.h
   mesh/asiAlgo_MeshOffset.h
@@ -220,6 +221,7 @@ set (mesh_CPP_FILES
   mesh/asiAlgo_MeshConvert.cpp
   mesh/asiAlgo_MeshGen.cpp
   mesh/asiAlgo_MeshInfo.cpp
+  mesh/asiAlgo_MeshInterPlane.cpp
   mesh/asiAlgo_MeshMerge.cpp
   mesh/asiAlgo_MeshOffset.cpp
   mesh/asiAlgo_MeshParams.cpp

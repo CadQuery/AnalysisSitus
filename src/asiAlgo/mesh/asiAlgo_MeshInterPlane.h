@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 11 April 2016
+// Created on: 11 January 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2016, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,62 +28,50 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_IVPrs_h
-#define asiVisu_IVPrs_h
+#ifndef asiAlgo_MeshInterPlane_HeaderFile
+#define asiAlgo_MeshInterPlane_HeaderFile
 
-// asiVisu includes
-#include <asiVisu_Prs.h>
-#include <asiVisu_Utils.h>
+// asiAlgo includes
+#include <asiAlgo.h>
 
-//! Base class for default non-interactive presentations.
-class asiVisu_DefaultPrs : public asiVisu_Prs
+// Active Data includes
+#include <ActAPI_IAlgorithm.h>
+
+// OCCT includes
+#include <Geom_Plane.hxx>
+
+//-----------------------------------------------------------------------------
+
+//! Utility to intersect mesh with a plane.
+class asiAlgo_MeshInterPlane : public ActAPI_IAlgorithm
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_DefaultPrs, asiVisu_Prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_MeshInterPlane, ActAPI_IAlgorithm)
 
 public:
 
-  virtual bool IsVisible() const
-  {
-    return true;
-  }
+  //! Constructs intersection tool.
+  //! \param[in] mesh     triangulation to intersect.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_EXPORT
+    asiAlgo_MeshInterPlane(const Handle(Poly_Triangulation)& mesh,
+                           ActAPI_ProgressEntry              progress,
+                           ActAPI_PlotterEntry               plotter);
 
-// Callbacks:
-protected:
+public:
 
-  virtual void
-    beforeInitPipelines();
-
-  virtual void
-    afterInitPipelines();
-
-  virtual void
-    beforeUpdatePipelines() const;
-
-  virtual void
-    afterUpdatePipelines() const;
-
-  virtual void
-    highlight(vtkRenderer*                        renderer,
-              const Handle(asiVisu_PickerResult)& pickRes,
-              const asiVisu_SelectionNature       selNature) const;
-
-  virtual void
-    unHighlight(vtkRenderer*                  renderer,
-                const asiVisu_SelectionNature selNature) const;
-
-  virtual void
-    renderPipelines(vtkRenderer* renderer) const;
-
-  virtual void
-    deRenderPipelines(vtkRenderer* renderer) const;
+  //! Performs intersection.
+  //! \param[in] plane plane to intersect the mesh with.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    Perform(const Handle(Geom_Plane)& plane);
 
 protected:
 
-  asiVisu_EXPORT
-    asiVisu_DefaultPrs(const Handle(ActAPI_INode)& node) : asiVisu_Prs(node) {}
+  Handle(Poly_Triangulation) m_mesh; //!< Mesh to check.
 
 };
 

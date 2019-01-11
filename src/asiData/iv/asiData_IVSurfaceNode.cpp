@@ -31,6 +31,9 @@
 // Own include
 #include <asiData_IVSurfaceNode.h>
 
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
+
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
@@ -47,6 +50,7 @@
 asiData_IVSurfaceNode::asiData_IVSurfaceNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,  PID_Name);
+  REGISTER_PARAMETER(Int,   PID_SurfaceType);
   REGISTER_PARAMETER(Shape, PID_Geometry);
   REGISTER_PARAMETER(Real,  PID_ULimit);
   REGISTER_PARAMETER(Real,  PID_VLimit);
@@ -66,8 +70,9 @@ void asiData_IVSurfaceNode::Init()
   // Initialize name Parameter
   this->InitParameter(PID_Name, "Name");
   //
-  this->SetSurface(NULL);
-  this->SetLimits(0.0, 0.0);
+  this->SetSurfaceType (SurfaceType_General);
+  this->SetSurface     (NULL);
+  this->SetLimits      (0.0, 0.0);
 }
 
 //-----------------------------------------------------------------------------
@@ -92,6 +97,20 @@ void asiData_IVSurfaceNode::SetName(const TCollection_ExtendedString& theName)
 // Handy accessors
 //-----------------------------------------------------------------------------
 
+//! \return stored surface type.
+asiData_IVSurfaceNode::SurfaceType
+  asiData_IVSurfaceNode::GetSurfaceType() const
+{
+  return (SurfaceType) ActParamTool::AsInt( this->Parameter(PID_SurfaceType) )->GetValue();
+}
+
+//! Sets surface type to store.
+//! \param[in] type surface type to store.
+void asiData_IVSurfaceNode::SetSurfaceType(const SurfaceType type) const
+{
+  ActParamTool::AsInt( this->Parameter(PID_SurfaceType) )->SetValue(type);
+}
+
 //! \return stored geometry.
 Handle(Geom_Surface) asiData_IVSurfaceNode::GetSurface() const
 {
@@ -110,13 +129,17 @@ Handle(Geom_Surface) asiData_IVSurfaceNode::GetSurface() const
 //! \param surface [in] geometry to store.
 void asiData_IVSurfaceNode::SetSurface(const Handle(Geom_Surface)& surface)
 {
-  // Create a fictive face to take advantage of topology Parameter of Active Data
+  // Create a fictive face to take advantage of topology Parameter of Active Data.
   TopoDS_Face F;
   if ( !surface.IsNull() )
     F = BRepBuilderAPI_MakeFace( surface, Precision::Confusion() );
 
-  // Store
+  // Store surface.
   ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(F);
+
+  // Store surface type.
+  if ( !surface.IsNull() && surface->IsInstance( STANDARD_TYPE(Geom_Plane) ) )
+    this->SetSurfaceType(SurfaceType_Plane);
 }
 
 //! Sets parametric bounds for infinite surfaces.

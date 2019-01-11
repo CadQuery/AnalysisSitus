@@ -249,6 +249,20 @@ const Handle(ActAPI_INode)& asiVisu_Prs::GetNode() const
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_Prs::SetModel(const Handle(ActAPI_IModel)& model)
+{
+  m_model = model;
+}
+
+//-----------------------------------------------------------------------------
+
+const Handle(ActAPI_IModel)& asiVisu_Prs::GetModel() const
+{
+  return m_model;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Adds the underlying pipelines to the passed renderer.
 //! \param[in] renderer renderer to add the pipelines to.
 void asiVisu_Prs::RenderPipelines(vtkRenderer* renderer) const

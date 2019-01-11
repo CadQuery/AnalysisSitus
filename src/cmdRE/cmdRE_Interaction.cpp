@@ -44,6 +44,12 @@
 #include <asiUI_PickContourCallback.h>
 #include <asiUI_PickCurveCallback.h>
 
+// asiVisu includes
+#include <asiVisu_IVSurfacePrs.h>
+
+// OCCT includes
+#include <Geom_Plane.hxx>
+
 //-----------------------------------------------------------------------------
 
 int RE_DefineContour(const Handle(asiTcl_Interp)& interp,
@@ -261,11 +267,75 @@ int RE_InterpMesh(const Handle(asiTcl_Interp)& interp,
   if ( !algo.Perform(poles, grainCoeff, degU, degV, surf) )
   {
     interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Cannot interpolate mesh.");
-    return TCL_OK;
+    return TCL_ERROR;
   }
 
   // Set result.
   interp->GetPlotter().REDRAW_SURFACE(argv[1], surf, Color_White);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int RE_MakePlane(const Handle(asiTcl_Interp)& interp,
+                 int                          argc,
+                 const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(Geom_Plane) plane = new Geom_Plane( gp::YOZ() );
+
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], plane, Color_Green);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int RE_UpdatePlane(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Node.
+  Handle(ActAPI_INode) node = interp->GetModel()->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_ERROR;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfaceNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Get interactive plane.
+  Handle(asiVisu_Prs)
+    nodePrs = cmdRE::cf->ViewerPart->PrsMgr()->GetPresentation(node);
+  //
+  Handle(asiVisu_IVSurfacePrs)
+    ivPrs = Handle(asiVisu_IVSurfacePrs)::DownCast(nodePrs);
+  //
+  const vtkSmartPointer<asiVisu_PlaneWidget>& planeWidget = ivPrs->GetPlaneWidget();
+
+  double center[3], norm[3];
+  planeWidget->GetCenter(center);
+  planeWidget->GetNormal(norm);
+
+  // Update plane.
+  Handle(Geom_Plane) occtPlane = new Geom_Plane( gp_Ax3( gp_Pnt(center[0], center[1], center[2]),
+                                                         gp_Dir(norm[0], norm[1], norm[2]) ) );
+  //
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], occtPlane, Color_Green);
 
   return TCL_OK;
 }
@@ -310,4 +380,21 @@ void cmdRE::Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
     "\t Interpolates mesh.",
     //
     __FILE__, group, RE_InterpMesh);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-make-plane",
+    //
+    "re-make-plane plane\n"
+    "\t Creates interactive plane.",
+    //
+    __FILE__, group, RE_MakePlane);
+
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-update-plane",
+    //
+    "re-update-plane plane\n"
+    "\t Updates persistent plane w.r.t. interactive plane.",
+    //
+    __FILE__, group, RE_UpdatePlane);
 }

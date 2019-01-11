@@ -48,6 +48,9 @@
 asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
 : asiVisu_DefaultPrs(N)
 {
+  Handle(asiData_IVSurfaceNode)
+    ivNode = Handle(asiData_IVSurfaceNode)::DownCast(N);
+
   // Create Data Provider
   Handle(asiVisu_IVSurfaceDataProvider) DP = new asiVisu_IVSurfaceDataProvider(N);
 
@@ -58,8 +61,10 @@ asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
   // Pipeline for shaded surface
   this->addPipeline        ( Pipeline_Main, new asiVisu_IVSurfacePipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
+  //
+  this->GetPipeline(Pipeline_Main)->Actor()->SetVisibility( ivNode->GetSurfaceType() == asiData_IVSurfaceNode::SurfaceType_Plane ? 0 : 1 );
 
-    //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Control network for B-surfaces
   //---------------------------------------------------------------------------
 
@@ -88,6 +93,12 @@ asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
   this->assignDataProvider ( Pipeline_Axes, DP );
   //
   this->GetPipeline(Pipeline_Axes)->Actor()->SetVisibility(1);
+
+  //---------------------------------------------------------------------------
+
+  m_planeWidget = vtkSmartPointer<asiVisu_PlaneWidget>::New();
+  //
+  m_planeWidget->SetSurfaceNode(ivNode);
 }
 
 //! Factory method for Presentation.
@@ -97,3 +108,28 @@ Handle(asiVisu_Prs) asiVisu_IVSurfacePrs::Instance(const Handle(ActAPI_INode)& N
 {
   return new asiVisu_IVSurfacePrs(N);
 }
+
+void asiVisu_IVSurfacePrs::renderPipelines(vtkRenderer* renderer) const
+{
+  if ( !m_node->IsInstance( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+    return;
+
+  // Check surface type.
+  Handle(asiData_IVSurfaceNode)
+    N = Handle(asiData_IVSurfaceNode)::DownCast(m_node);
+  //
+  if ( N->GetSurfaceType() != asiData_IVSurfaceNode::SurfaceType_Plane )
+    return;
+
+  if ( !m_planeWidget->GetInteractor() )
+    m_planeWidget->SetInteractor( renderer->GetRenderWindow()->GetInteractor() );
+
+  m_planeWidget->SetModel(m_model);
+  m_planeWidget->On();
+}
+
+void asiVisu_IVSurfacePrs::deRenderPipelines(vtkRenderer* /*renderer*/) const
+{
+  m_planeWidget->Off();
+}
+

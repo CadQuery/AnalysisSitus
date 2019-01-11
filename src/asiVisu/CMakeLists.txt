@@ -335,6 +335,17 @@ set (utils_CPP_FILES
 )
 
 #------------------------------------------------------------------------------
+# Widgets
+#------------------------------------------------------------------------------
+
+set (widgets_H_FILES
+  widgets/asiVisu_PlaneWidget.h
+)
+set (widgets_CPP_FILES
+  widgets/asiVisu_PlaneWidget.cpp
+)
+
+#------------------------------------------------------------------------------
 set (AD_LIB_FILES
   ActiveDataAPI
   ActiveData
@@ -470,6 +481,14 @@ foreach (FILE ${utils_CPP_FILES})
   source_group ("Source Files\\Utilities" FILES "${FILE}")
 endforeach (FILE)
 
+foreach (FILE ${widgets_H_FILES})
+  source_group ("Header Files\\Widgets" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${widgets_CPP_FILES})
+  source_group ("Source Files\\Widgets" FILES "${FILE}")
+endforeach (FILE)
+
 #------------------------------------------------------------------------------
 # Configure includes
 #------------------------------------------------------------------------------
@@ -482,7 +501,8 @@ set (asiVisu_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
   ${CMAKE_CURRENT_SOURCE_DIR}/providers;\
   ${CMAKE_CURRENT_SOURCE_DIR}/selection;\
   ${CMAKE_CURRENT_SOURCE_DIR}/sources;\
-  ${CMAKE_CURRENT_SOURCE_DIR}/utils;")
+  ${CMAKE_CURRENT_SOURCE_DIR}/utils;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/widgets;")
 #
 set (asiVisu_include_dir ${asiVisu_include_dir_loc} PARENT_SCOPE)
 
@@ -512,6 +532,7 @@ add_library (asiVisu SHARED
   ${selection_H_FILES}     ${selection_CPP_FILES}
   ${sources_H_FILES}       ${sources_CPP_FILES}
   ${utils_H_FILES}         ${utils_CPP_FILES}
+  ${widgets_H_FILES}       ${widgets_CPP_FILES}
 )
 
 #------------------------------------------------------------------------------
@@ -618,3 +639,4 @@ install (FILES ${providers_H_FILES}     DESTINATION framework/include)
 install (FILES ${selection_H_FILES}     DESTINATION framework/include)
 install (FILES ${sources_H_FILES}       DESTINATION framework/include)
 install (FILES ${utils_H_FILES}         DESTINATION framework/include)
+install (FILES ${widgets_H_FILES}       DESTINATION framework/include)

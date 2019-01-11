@@ -452,6 +452,8 @@ bool asiVisu_PrsManager::SetPresentation(const Handle(ActAPI_INode)& node)
   const asiVisu_PrsAllocator& prsAlloc = allocMap.Find(nodeType);
   Handle(asiVisu_Prs)         prs      = (*prsAlloc)(node);
   //
+  prs->SetModel(m_model); // Pass Data Model instance.
+  //
   m_nodePresentations.Bind(nodeID, prs);
 
   return true;

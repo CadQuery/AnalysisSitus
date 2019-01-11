@@ -64,6 +64,56 @@ namespace asiAlgo_MeshConvert
   asiAlgo_EXPORT bool
     ToPersistent(vtkPolyData*          source,
                  Handle(ActData_Mesh)& result);
+
+  asiAlgo_EXPORT bool
+    FromVTK(vtkPolyData*                source,
+            Handle(Poly_Triangulation)& result);
+
+  asiAlgo_EXPORT bool
+    ToVTK(const Handle(Poly_Triangulation)& source,
+          vtkSmartPointer<vtkPolyData>&     result);
+
+//-----------------------------------------------------------------------------
+
+  //! Translates the passed mesh element to VTK polygonal cell.
+  //! \param[in]      source   source mesh.
+  //! \param[in]      elem     mesh element to translate.
+  //! \param[in, out] polyData output polygonal data.
+  //! \param[in, out] nodeRepo already processed nodes.
+  void
+    __translateElement(const Handle(Poly_Triangulation)&    source,
+                       const Poly_Triangle&                 elem,
+                       vtkPolyData*                         polyData,
+                       NCollection_DataMap<int, vtkIdType>& nodeRepo);
+
+  //! Adds the mesh element with the given ID to VTK polygonal data as a
+  //! Triangle or Quadrangle VTK element depending on the actual number
+  //! of nodes.
+  //! \param[in]      source   source mesh.
+  //! \param[in]      nodes    node IDs.
+  //! \param[in]      nbNodes  number of nodes.
+  //! \param[in, out] polyData polygonal data being populated.
+  //! \param[in, out] nodeRepo registered nodes.
+  //! \return ID of the just added VTK cell.
+  vtkIdType
+    __registerMeshFace(const Handle(Poly_Triangulation)&    source,
+                       const void*                          nodes,
+                       const int                            nbNodes,
+                       vtkPolyData*                         polyData,
+                       NCollection_DataMap<int, vtkIdType>& nodeRepo);
+
+  //! Adds a mesh node as a point to the passed polygonal data.
+  //! \param[in] source       source mesh.
+  //! \param[in] nodeID       node ID.
+  //! \param[in,out] polyData output polygonal data.
+  //! \param[in,out] nodeRepo registered nodes.
+  //! \return internal VTK ID for the newly added point.
+  vtkIdType
+    __registerMeshNode(const Handle(Poly_Triangulation)&    source,
+                       const int                            nodeID,
+                       vtkPolyData*                         polyData,
+                       NCollection_DataMap<int, vtkIdType>& nodeRepo);
+
 };
 
 #endif

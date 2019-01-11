@@ -31,13 +31,13 @@
 #ifndef asiVisu_Prs_h
 #define asiVisu_Prs_h
 
-// Visualization includes
-#include <asiVisu.h>
+// asiVisu includes
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 #include <asiVisu_Selection.h>
 
 // Active Data (API) includes
+#include <ActAPI_IModel.h>
 #include <ActAPI_INode.h>
 #include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
@@ -116,6 +116,12 @@ public:
 
   asiVisu_EXPORT virtual const Handle(ActAPI_INode)&
     GetNode() const;
+
+  asiVisu_EXPORT virtual void
+    SetModel(const Handle(ActAPI_IModel)& model);
+
+  asiVisu_EXPORT virtual const Handle(ActAPI_IModel)&
+    GetModel() const;
 
 public:
 
@@ -247,6 +253,9 @@ protected:
 
   //! Data Providers.
   DataProviderRepo m_dataPrvRepo;
+
+  //! Data Model instance.
+  Handle(ActAPI_IModel) m_model;
 
   //! Data Node the Presentation is bound to.
   Handle(ActAPI_INode) m_node;

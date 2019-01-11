@@ -44,8 +44,6 @@
 // Data Node representing a single surface in IV (Imperative Viewer)
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_IVSurfaceNode, ActData_BaseNode)
-
 //! Data Node representing a single surface in IV (Imperative Viewer).
 class asiData_IVSurfaceNode : public ActData_BaseNode
 {
@@ -59,6 +57,13 @@ public:
 
 public:
 
+  //! Surface type.
+  enum SurfaceType
+  {
+    SurfaceType_General, //!< General surface (whatever).
+    SurfaceType_Plane
+  };
+
   //! IDs for the underlying Parameters.
   enum ParamId
   {
@@ -67,6 +72,7 @@ public:
   //------------------//
     PID_Name,         //!< Name of the Node.
   //------------------//
+    PID_SurfaceType,  //!< Surface type.
     PID_Geometry,     //!< Stored geometry.
     PID_ULimit,       //!< Value to limit possibly infinite domain in U (absolute).
     PID_VLimit,       //!< Value to limit possibly infinite domain in V (absolute).
@@ -90,6 +96,12 @@ public:
 
 // Handy accessors to the stored data:
 public:
+
+  asiData_EXPORT SurfaceType
+    GetSurfaceType() const;
+
+  asiData_EXPORT void
+    SetSurfaceType(const SurfaceType type) const;
 
   asiData_EXPORT Handle(Geom_Surface)
     GetSurface() const;

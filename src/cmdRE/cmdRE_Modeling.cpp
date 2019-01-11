@@ -32,6 +32,7 @@
 #include <cmdRE.h>
 
 // asiAlgo includes
+#include <asiAlgo_MeshInterPlane.h>
 #include <asiAlgo_Utils.h>
 
 // asiEngine includes
@@ -329,6 +330,64 @@ int RE_FairContourLines(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int RE_CutWithPlane(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Triangulaion.
+  Handle(asiData_TriangulationNode) tris_n = cmdRE::model->GetTriangulationNode();
+  //
+  if ( tris_n.IsNull() || !tris_n->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mesh is not ready for cutting.");
+    return TCL_ERROR;
+  }
+  //
+  Handle(Poly_Triangulation) triangulation = tris_n->GetTriangulation();
+
+  // Get cutting plane.
+  Handle(ActAPI_INode) node = cmdRE::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_ERROR;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfaceNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+  //
+  Handle(Geom_Plane)
+    occtPlane = Handle(Geom_Plane)::DownCast( surfaceNode->GetSurface() );
+  //
+  if ( occtPlane.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a plane.");
+    return TCL_ERROR;
+  }
+
+  // Intersect with plane.
+  asiAlgo_MeshInterPlane algo( triangulation,
+                               interp->GetProgress(),
+                               interp->GetPlotter() );
+  //
+  if ( !algo.Perform(occtPlane) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to cut mesh with plane.");
+    return TCL_ERROR;
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -360,4 +419,12 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t coefficient.",
     //
     __FILE__, group, RE_FairContourLines);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-cut-with-plane",
+    //
+    "re-cut-with-plane p\n"
+    "\t Cuts triangulation with plane.",
+    //
+    __FILE__, group, RE_CutWithPlane);
 }

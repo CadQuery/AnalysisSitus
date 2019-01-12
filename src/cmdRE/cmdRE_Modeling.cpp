@@ -388,6 +388,55 @@ int RE_CutWithPlane(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int RE_ApproxPoints(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get point cloud.
+  Handle(asiData_IVPointSetNode)
+    ptsNode = Handle(asiData_IVPointSetNode)::DownCast( cmdRE::model->FindNodeByName(argv[2]) );
+  //
+  if ( ptsNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Data object '%1' is not a point cloud."
+                                                        << argv[2]);
+    return TCL_ERROR;
+  }
+
+  Handle(asiAlgo_BaseCloud<double>) ptsCloud = ptsNode->GetPoints();
+
+  // Convert to the collection of XYZ tuples.
+  std::vector<gp_XYZ> pts;
+  //
+  for ( int k = 0; k < ptsCloud->GetNumberOfElements(); ++k )
+  {
+    pts.push_back( ptsCloud->GetElement(k) );
+
+    ///
+    interp->GetPlotter().DRAW_POINT(pts[k], Color_Blue, "P");
+  }
+
+  // Approximate.
+  Handle(Geom_BSplineCurve) resCurve;
+  if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, Precision::Confusion(), resCurve) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Approximation failed.");
+    return TCL_ERROR;
+  }
+
+  // Set result.
+  interp->GetPlotter().REDRAW_CURVE(argv[1], resCurve, Color_Red);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -427,4 +476,13 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Cuts triangulation with plane.",
     //
     __FILE__, group, RE_CutWithPlane);
+
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-approx-points",
+    //
+    "re-approx-points resCurve points\n"
+    "\t Attempts to approximate the given point cloud with a curve.",
+    //
+    __FILE__, group, RE_ApproxPoints);
 }

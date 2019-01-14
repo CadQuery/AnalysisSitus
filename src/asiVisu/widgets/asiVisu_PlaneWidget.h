@@ -361,6 +361,9 @@ public:
     Handle(Geom_Plane)
       plane = Handle(Geom_Plane)::DownCast( m_node->GetSurface() );
 
+    if ( plane.IsNull() )
+      return;
+
     const gp_Pnt& origin = plane->Position().Location();
     const gp_Dir& normal = plane->Position().Direction();
 
@@ -371,12 +374,12 @@ public:
                      normal.Y(),
                      normal.Z() );
 
-    double point1[3];
-    this->GetPoint1(point1);
-    point1[0] *= 100;
-    point1[1] *= 100;
-    point1[2] *= 100;
-    this->SetPoint1(point1);
+    //double point1[3];
+    //this->GetPoint1(point1);
+    //point1[0] *= 100;
+    //point1[1] *= 100;
+    //point1[2] *= 100;
+    //this->SetPoint1(point1);
 
     //double bounds[6];
     //bounds[0] = -0.5;

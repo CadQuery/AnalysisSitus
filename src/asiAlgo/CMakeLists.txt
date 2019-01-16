@@ -33,7 +33,6 @@ set (aux_H_FILES
   auxiliary/asiAlgo_IntersectSS.h
   auxiliary/asiAlgo_Membership.h
   auxiliary/asiAlgo_ProjectPointOnMesh.h
-  auxiliary/asiAlgo_QuickHull2d.h
   auxiliary/asiAlgo_ReapproxContour.h
 )
 set (aux_CPP_FILES
@@ -53,7 +52,6 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_IntersectCS.cpp
   auxiliary/asiAlgo_IntersectSS.cpp
   auxiliary/asiAlgo_ProjectPointOnMesh.cpp
-  auxiliary/asiAlgo_QuickHull2d.cpp
   auxiliary/asiAlgo_ReapproxContour.cpp
 )
 
@@ -262,21 +260,25 @@ set (points_H_FILES
   points/asiAlgo_Cloudify.h
   points/asiAlgo_CloudRegion.h
   points/asiAlgo_FacePointCloud.h
+  points/asiAlgo_KHull2d.h
   points/asiAlgo_PlaneOnPoints.h
   points/asiAlgo_PlateOnPoints.h
   points/asiAlgo_PointCloudUtils.h
   points/asiAlgo_PointWithAttr.h
   points/asiAlgo_PurifyCloud.h
+  points/asiAlgo_QuickHull2d.h
   points/asiAlgo_ReorientNorms.h
 )
 set (points_CPP_FILES
   points/asiAlgo_BaseCloud.cpp
   points/asiAlgo_Cloudify.cpp
   points/asiAlgo_FacePointCloud.cpp
+  points/asiAlgo_KHull2d.cpp
   points/asiAlgo_PlaneOnPoints.cpp
   points/asiAlgo_PlateOnPoints.cpp
   points/asiAlgo_PointCloudUtils.cpp
   points/asiAlgo_PointWithAttr.cpp
+  points/asiAlgo_QuickHull2d.cpp
   points/asiAlgo_ReorientNorms.cpp
 )
 

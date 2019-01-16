@@ -42,7 +42,10 @@
 
 //-----------------------------------------------------------------------------
 
-//! Utility to intersect mesh with a plane.
+//! Utility to intersect mesh with a plane. This algorithm is based on VTK
+//! cutter which returns an unordered set of points. As the second (and
+//! optional) stage, we sort the obtained points with concave hull utility,
+//! thus making the section ready for subsequent curve approximation.
 class asiAlgo_MeshInterPlane : public ActAPI_IAlgorithm
 {
 public:
@@ -64,10 +67,12 @@ public:
 public:
 
   //! Performs intersection.
-  //! \param[in] plane plane to intersect the mesh with.
+  //! \param[in] plane  plane to intersect the mesh with.
+  //! \param[in] doSort indicates whether to sort the obtained points.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    Perform(const Handle(Geom_Plane)& plane);
+    Perform(const Handle(Geom_Plane)& plane,
+            const bool                doSort);
 
 protected:
 

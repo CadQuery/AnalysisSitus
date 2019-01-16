@@ -1327,6 +1327,15 @@ bool asiAlgo_Utils::Sew(const TopoDS_Shape& shape,
 
 bool asiAlgo_Utils::MaximizeFaces(TopoDS_Shape& shape)
 {
+  Handle(BRepTools_History) history;
+  return MaximizeFaces(shape, history);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::MaximizeFaces(TopoDS_Shape&              shape,
+                                  Handle(BRepTools_History)& history)
+{
   ShapeUpgrade_UnifySameDomain Unify(shape);
   try
   {
@@ -1336,7 +1345,9 @@ bool asiAlgo_Utils::MaximizeFaces(TopoDS_Shape& shape)
   {
     return false;
   }
-  shape = Unify.Shape();
+  shape   = Unify.Shape();
+  history = Unify.History();
+  //
   return true;
 }
 
@@ -1681,14 +1692,14 @@ bool asiAlgo_Utils::FillContourPlate(const std::vector<Handle(Geom_BSplineCurve)
 
 //-----------------------------------------------------------------------------
 
-TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& Object,
-                                       const TopoDS_Shape& Tool,
+TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& object,
+                                       const TopoDS_Shape& tool,
                                        const double        fuzzy)
 {
   // Prepare the arguments
   TopTools_ListOfShape BOP_args;
-  BOP_args.Append(Object);
-  BOP_args.Append(Tool);
+  BOP_args.Append(object);
+  BOP_args.Append(tool);
 
   // Prepare data structure (calculate interferences)
   Handle(NCollection_BaseAllocator) Alloc = new NCollection_IncAllocator;
@@ -1709,8 +1720,8 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& Object,
 
   // Run BOP
   BOPAlgo_BOP BOP(Alloc);
-  BOP.AddArgument(Object);
-  BOP.AddTool(Tool);
+  BOP.AddArgument(object);
+  BOP.AddTool(tool);
   BOP.SetRunParallel(0);
   BOP.SetOperation(BOPAlgo_CUT);
   BOP.PerformWithFiller(DSFiller);
@@ -1726,36 +1737,36 @@ TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape& Object,
 
 //-----------------------------------------------------------------------------
 
-TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape&         Object,
-                                       const TopTools_ListOfShape& Tools,
+TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape&         object,
+                                       const TopTools_ListOfShape& tools,
                                        const bool                  isParallel,
                                        const double                fuzz)
 {
   BRepAlgoAPI_Cut API;
   //
-  return BooleanCut(Object, Tools, isParallel, fuzz, API);
+  return BooleanCut(object, tools, isParallel, fuzz, API);
 }
 
 //-----------------------------------------------------------------------------
 
-TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape&         Object,
-                                       const TopTools_ListOfShape& Tools,
+TopoDS_Shape asiAlgo_Utils::BooleanCut(const TopoDS_Shape&         object,
+                                       const TopTools_ListOfShape& tools,
                                        const bool                  isParallel,
                                        const double                fuzz,
                                        BRepAlgoAPI_Cut&            API)
 {
   // Prepare the arguments
-  TopTools_ListOfShape Objects;
-  Objects.Append(Object);
+  TopTools_ListOfShape objects;
+  objects.Append(object);
 
   // Set the arguments
-  API.SetArguments(Objects);
-  API.SetTools(Tools);
+  API.SetArguments(objects);
+  API.SetTools(tools);
   API.SetRunParallel(isParallel);
   API.SetFuzzyValue(fuzz);
 
-  // Run the algorithm 
-  API.Build(); 
+  // Run the algorithm
+  API.Build();
 
   // Check the result
   const bool hasErr = API.HasErrors();
@@ -1787,6 +1798,63 @@ TopoDS_Shape asiAlgo_Utils::BooleanFuse(const TopTools_ListOfShape& objects)
   }
 
   return result;
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Shape asiAlgo_Utils::BooleanFuse(const TopTools_ListOfShape& objects,
+                                        Handle(BRepTools_History)&  history)
+{
+  TopTools_ListIteratorOfListOfShape it(objects);
+  TopoDS_Shape result = it.Value();
+  it.Next();
+
+  // Fuse one by one.
+  history = new BRepTools_History;
+  //
+  for ( ; it.More(); it.Next() )
+  {
+    TopoDS_Shape arg = it.Value();
+    BRepAlgoAPI_Fuse API(result, arg);
+    //
+    result = API.Shape();
+    history->Merge( API.History() );
+  }
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Shape asiAlgo_Utils::BooleanFuse(const TopTools_ListOfShape& objects,
+                                        const bool                  maximizeFaces,
+                                        Handle(BRepTools_History)&  history)
+{
+  // Fuse.
+  Handle(BRepTools_History) bopHistory;
+  TopoDS_Shape              fused = BooleanFuse(objects, bopHistory);
+
+  // Check if face maximization was requested.
+  if ( !maximizeFaces )
+  {
+    history = bopHistory;
+    return fused;
+  }
+
+  // Maximize faces.
+  Handle(BRepTools_History) maximizeHistory;
+  //
+  if ( !MaximizeFaces(fused, maximizeHistory) )
+  {
+    history = bopHistory;
+    return fused;
+  }
+
+  // Merge history and return.
+  bopHistory->Merge(maximizeHistory);
+  history = bopHistory;
+  //
+  return fused;
 }
 
 //-----------------------------------------------------------------------------

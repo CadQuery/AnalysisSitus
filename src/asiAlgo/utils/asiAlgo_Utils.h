@@ -46,6 +46,7 @@
 // OCCT includes
 #include <BRep_Tool.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
+#include <BRepAlgoAPI_Fuse.hxx>
 #include <Geom_BezierSurface.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <Geom_BSplineSurface.hxx>
@@ -478,10 +479,18 @@ namespace asiAlgo_Utils
         TopoDS_Shape&       result);
 
   //! Performs "same domain" expansion on faces and edges.
-  //! \param shape [in/out] shape to modify.
+  //! \param[in,out] shape shape to modify.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     MaximizeFaces(TopoDS_Shape& shape);
+
+  //! Performs "same domain" expansion on faces and edges.
+  //! \param[in,out] shape   shape to modify.
+  //! \param[out]    history modification history.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    MaximizeFaces(TopoDS_Shape&              shape,
+                  Handle(BRepTools_History)& history);
 
   //! Interpolates the given collection of points with B-curve of the
   //! desired degree.
@@ -538,25 +547,48 @@ namespace asiAlgo_Utils
   //! \param fuzzy  [in] fuzzy tolerance.
   //! \return result shape.
   asiAlgo_EXPORT TopoDS_Shape
-    BooleanCut(const TopoDS_Shape& Object,
-               const TopoDS_Shape& Tool,
+    BooleanCut(const TopoDS_Shape& object,
+               const TopoDS_Shape& tool,
                const double        fuzz = 0.0);
 
   asiAlgo_EXPORT TopoDS_Shape
-    BooleanCut(const TopoDS_Shape&         Object,
-               const TopTools_ListOfShape& Tools,
+    BooleanCut(const TopoDS_Shape&         object,
+               const TopTools_ListOfShape& tools,
                const bool                  isParallel,
                const double                fuzz = 0.0);
 
   asiAlgo_EXPORT TopoDS_Shape
-    BooleanCut(const TopoDS_Shape&         Object,
-               const TopTools_ListOfShape& Tools,
+    BooleanCut(const TopoDS_Shape&         object,
+               const TopTools_ListOfShape& tools,
                const bool                  isParallel,
                const double                fuzz,
                BRepAlgoAPI_Cut&            API);
 
+  //! Fuses the passed shapes.
+  //! \param[in] objects shapes to fuse.
+  //! \return result of the Boolean operation.
   asiAlgo_EXPORT TopoDS_Shape
     BooleanFuse(const TopTools_ListOfShape& objects);
+
+  //! Fuses the passed shapes.
+  //! \param[in]  objects shapes to fuse.
+  //! \param[out] history accumulated modification history.
+  //! \return result of the Boolean operation.
+  asiAlgo_EXPORT TopoDS_Shape
+    BooleanFuse(const TopTools_ListOfShape& objects,
+                Handle(BRepTools_History)&  history);
+
+  //! Fuses the passed shapes and optionally maximizes faces in the
+  //! resulting shape.
+  //! \param[in]  objects       shapes to fuse.
+  //! \param[in]  maximizeFaces indicates whether to maximize faces of the
+  //!                           result so that to reduce its complexity.
+  //! \param[out] history       accumulated modification history.
+  //! \return result of the Boolean operation.
+  asiAlgo_EXPORT TopoDS_Shape
+    BooleanFuse(const TopTools_ListOfShape& objects,
+                const bool                  maximizeFaces,
+                Handle(BRepTools_History)&  history);
 
   asiAlgo_EXPORT TopoDS_Shape
     BooleanIntersect(const TopTools_ListOfShape& objects);

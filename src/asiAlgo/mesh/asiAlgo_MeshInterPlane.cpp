@@ -51,8 +51,13 @@ asiAlgo_MeshInterPlane::asiAlgo_MeshInterPlane(const Handle(Poly_Triangulation)&
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_MeshInterPlane::Perform(const Handle(Geom_Plane)& plane)
+bool asiAlgo_MeshInterPlane::Perform(const Handle(Geom_Plane)& plane,
+                                     const bool                doSort)
 {
+  /* =====================================
+   *  Stage 1: convert mesh to VTK format
+   * ===================================== */
+
   // Convert triangulation to VTK form.
   vtkSmartPointer<vtkPolyData> meshVtk;
   if ( !asiAlgo_MeshConvert::ToVTK(m_mesh, meshVtk) )
@@ -60,6 +65,10 @@ bool asiAlgo_MeshInterPlane::Perform(const Handle(Geom_Plane)& plane)
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot convert mesh to VTK data structure.");
     return false;
   }
+
+  /* ==================================
+   *  Stage 2: intersect by VTK cutter
+   * ================================== */
 
   double minBound[3];
   minBound[0] = meshVtk->GetBounds()[0];
@@ -111,6 +120,10 @@ bool asiAlgo_MeshInterPlane::Perform(const Handle(Geom_Plane)& plane)
   //
   m_progress.SendLogMessage(LogInfo(Normal) << "Generated output with %1 cells." << numCells);
 
+  /* =====================================
+   *  Stage 3: convert to asi point cloud
+   * ===================================== */
+
   // Get output points.
   Handle(asiAlgo_BaseCloud<double>) cloud = new asiAlgo_BaseCloud<double>;
   //
@@ -133,5 +146,15 @@ bool asiAlgo_MeshInterPlane::Perform(const Handle(Geom_Plane)& plane)
   }
 
   m_plotter.DRAW_POINTS(cloud->GetCoordsArray(), Color_Red, "pnts");
+
+  /* =========================================
+   *  Stage 4: reorder by constructing a hull
+   * ========================================= */
+
+  if ( doSort )
+  {
+    m_progress.SendLogMessage(LogInfo(Normal) << "Sorting by constructing a concave hull.");
+  }
+
   return true;
 }

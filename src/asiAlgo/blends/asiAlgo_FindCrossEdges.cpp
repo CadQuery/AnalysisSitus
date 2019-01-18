@@ -118,7 +118,7 @@ bool asiAlgo_FindCrossEdges::PerformForFace(const int                         fa
     double k;
     if ( !asiAlgo_Utils::EvaluateAlongCurvature(face, edge, midParam, k) )
     {
-      this->Progress().SendLogMessage( LogErr(Normal) << "Cannot evaluate directional curvature." );
+      this->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot evaluate directional curvature." );
       return false;
     }
 

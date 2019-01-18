@@ -31,11 +31,10 @@
 #ifndef asiAlgo_PointWithAttr_h
 #define asiAlgo_PointWithAttr_h
 
-// A-Situs includes
+// asiAlgo includes
 #include <asiAlgo.h>
 
 // OCCT includes
-#include <gp_XY.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TColgp_HSequenceOfPnt2d.hxx>
 #include <TColStd_HArray1OfReal.hxx>
@@ -52,14 +51,14 @@ template <typename TCoord>
 struct asiAlgo_PointWithAttr
 {
   //! Copy ctor.
-  //! \param P [in] point to initialize this one from.
+  //! \param[in] P point to initialize this one from.
   asiAlgo_PointWithAttr(const asiAlgo_PointWithAttr& P) : Coord(P.Coord), Status(P.Status), Index(P.Index), pData(P.pData) {}
 
   //! Complete ctor.
-  //! \param _coord    [in] spatial coordinates.
-  //! \param _status   [in] status (deleted, not deleted).
-  //! \param _index    [in] index of the point in external collection.
-  //! \param _data_ptr [in] user data.
+  //! \param[in] _coord    spatial coordinates.
+  //! \param[in] _status   status (deleted, not deleted).
+  //! \param[in] _index    index of the point in external collection.
+  //! \param[in] _data_ptr user data.
   asiAlgo_PointWithAttr(const TCoord _coord    = TCoord(),
                         const int    _status   = 0,
                         const size_t _index    = 0,
@@ -68,71 +67,80 @@ struct asiAlgo_PointWithAttr
   bool operator>  (const asiAlgo_PointWithAttr&) const { return false; }
   bool operator== (const asiAlgo_PointWithAttr&) const { return false; }
 
+  //! Conversion operator to access coordinates only, without attributes.
+  operator TCoord() const
+  {
+    return Coord;
+  }
+
   TCoord Coord;  //!< Coordinates.
   int    Status; //!< General-purpose status.
   size_t Index;  //!< Index in the owning collection.
   void*  pData;  //!< Associated data.
 };
 
-//! Collection of 2D points with statuses.
-typedef std::vector< asiAlgo_PointWithAttr<gp_XY>,
-                     std::allocator< asiAlgo_PointWithAttr<gp_XY> > > asiAlgo_PointWithAttr2dVec;
-
 //-----------------------------------------------------------------------------
 // Point cloud
 //-----------------------------------------------------------------------------
 
-//! Data adapter for two-dimensional point cloud.
-class asiAlgo_PointWithAttr2dCloud : public Standard_Transient
+//! Point cloud where each element is enriched with metadata. This class is
+//! to some extent similar to asiAlgo_BaseCloud, though, unlike the latter,
+//! it allows storing not only point coordinates but also custom attributes.
+//! This class is best suited for moderate amount of data because each point
+//! here is stored explicitly (plus metadata it contains also significantly
+//! contributes to the memory consumption).
+//!
+//! Note: interface similarity between this class and asiAlgo_BaseCloud is kept
+//!       to allow for using common services like cloud purification, etc.
+//!
+//! \sa asiAlgo_BaseCloud
+template <typename TCoord>
+class asiAlgo_PointWithAttrCloud : public Standard_Transient
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_PointWithAttr2dCloud, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_PointWithAttrCloud<TCoord>, Standard_Transient)
 
 public:
 
-  asiAlgo_EXPORT static Handle(asiAlgo_PointWithAttr2dCloud)
-    RemoveCoincidentPoints(const Handle(asiAlgo_PointWithAttr2dCloud)& pts,
-                           const double                                prec);
+  //! Default ctor.
+  asiAlgo_EXPORT
+    asiAlgo_PointWithAttrCloud();
 
 public:
 
-  asiAlgo_EXPORT virtual Handle(asiAlgo_PointWithAttr2dCloud)
-    EmptyCopy() const = 0;
-
-  asiAlgo_EXPORT virtual const gp_XY&
-    Value(const int oneBasedIndex) const = 0;
-
-  asiAlgo_EXPORT virtual const int
-    Length() const = 0;
-
-  asiAlgo_EXPORT virtual Handle(TColStd_HArray1OfReal)
-    Coords2d() const = 0;
-
+  //! Cleans up the point cloud.
   asiAlgo_EXPORT virtual void
-    SetCoords2d(const Handle(TColStd_HArray1OfReal)& coords) = 0;
-
-  asiAlgo_EXPORT virtual void
-    AddCoord(const gp_XY& coord) = 0;
+    Clear();
 
 public:
 
-  //! Reads point cloud from file.
-  //! \param[in] filename filename of the target file.
-  //! \param[out] points  retrieved points.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
-    Read(const TCollection_AsciiString&   filename,
-         Handle(TColgp_HSequenceOfPnt2d)& points);
+  //! \return number of contained elements (points).
+  asiAlgo_EXPORT virtual int
+    GetNumberOfElements() const;
 
-  //! Writes point cloud to file.
-  //! \param[in] points   points to write.
-  //! \param[in] filename filename of the target file.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT static bool
-    Write(const Handle(TColgp_HSequenceOfPnt2d)& points,
-          const TCollection_AsciiString&         filename);
+  //! Returns the point cloud element by its zero-based index.
+  //! \param[in] zeroBasedIndex index of the point to access.
+  //! \return const reference to the contained point cloud element.
+  asiAlgo_EXPORT virtual const asiAlgo_PointWithAttr<TCoord>&
+    GetElement(const int zeroBasedIndex) const;
+
+  //! Returns the point cloud element by its zero-based index.
+  //! \param[in] zeroBasedIndex index of the point to access.
+  //! \return non-const reference to the contained point cloud element.
+  asiAlgo_EXPORT virtual asiAlgo_PointWithAttr<TCoord>&
+    ChangeElement(const int zeroBasedIndex);
+
+  //! Adds another element to the point cloud.
+  //! \param[in] coord element to add.
+  asiAlgo_EXPORT virtual void
+    AddElement(const asiAlgo_PointWithAttr<TCoord>& coord);
+
+protected:
+
+  //! Internal collection of points with attributes.
+  std::vector< asiAlgo_PointWithAttr<TCoord> > m_pts;
 
 };
 

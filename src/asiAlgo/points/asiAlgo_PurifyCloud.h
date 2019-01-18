@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
+#include <asiAlgo_PointWithAttr.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
@@ -40,6 +41,107 @@
 // OCCT includes
 #include <gp_XYZ.hxx>
 #include <NCollection_CellFilter.hxx>
+
+//-----------------------------------------------------------------------------
+// Two-dimensional inspector for cloud purification
+//-----------------------------------------------------------------------------
+
+//! Inspector tool (see OCCT Cell Filter) for purification of
+//! points which are coincident with a certain tolerance.
+template <typename TPoint>
+class asiAlgo_PointWithAttrInspector2d
+{
+public:
+
+  //! Cloud dimension.
+  enum { Dimension = 2 };
+
+  //! Point index is used as a cell ID.
+  typedef int Target;
+
+  //! Point type.
+  typedef TPoint Point;
+
+  //! Constructor accepting the tolerance.
+  //! \param[in] tol    tolerance to set.
+  //! \param[in] points working collection of points.
+  asiAlgo_PointWithAttrInspector2d(const double                                      tol,
+                                   const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& points)
+  : m_fTol       (tol),
+    m_pointCloud (points)
+  {}
+
+  //! Sets current point to search for coincidence.
+  //! \param[in] target current target.
+  //! \param[in] P      point coordinates to set as current.
+  void SetCurrent(const int target, const TPoint& P)
+  {
+    m_iCurrentTarget = target;
+    m_current        = P;
+  }
+
+  //! Cleans up the list of resulting indices.
+  void ClearIndices2Purge()
+  {
+    m_indices2Purge.Clear();
+  }
+
+  //! Returns the list of indices falling to the current cell.
+  //! \return list of indices.
+  const TColStd_PackedMapOfInteger& GetIndices2Purge() const
+  {
+    return m_indices2Purge;
+  }
+
+  //! Implementation of inspection method.
+  //! \param[in] target target.
+  //! \return verdict (remove or keep).
+  NCollection_CellFilter_Action Inspect(const int target)
+  {
+    if ( m_iCurrentTarget != target )
+    {
+      TPoint       P     = m_pointCloud->GetElement(target);
+      const double delta = (P - m_current).Modulus();
+
+      if ( delta < m_fTol )
+      {
+        m_indices2Purge.Add(target);
+        return CellFilter_Purge;
+      }
+    }
+
+    return CellFilter_Keep;
+  }
+
+  //! Auxiliary method to shift point coordinates by the given value.
+  //! Useful for preparing a points range for Inspect() with tolerance.
+  TPoint Shift(const TPoint& P, double tol) const
+  {
+    TPoint pt(P);
+    pt.SetX(P.X() + tol);
+    pt.SetY(P.Y() + tol);
+    //
+    return pt;
+  }
+
+  //! Returns coordinates.
+  //! \param[in] i 0-based index of coordinate.
+  //! \param[in] P point to access coordinates for.
+  //! \return requested coordinate.
+  static double Coord(int i, const TPoint& P)
+  {
+    return P.Coord(i + 1);
+  }
+
+private:
+
+  double                                     m_fTol;           //!< Linear tolerance to use.
+  TColStd_PackedMapOfInteger                 m_indices2Purge;  //!< Indices to exclude.
+  Handle(asiAlgo_PointWithAttrCloud<TPoint>) m_pointCloud;     //!< Source point cloud.
+  TPoint                                     m_current;        //!< Current point.
+  int                                        m_iCurrentTarget; //!< Current target.
+
+};
 
 //-----------------------------------------------------------------------------
 // Three-dimensional inspector
@@ -170,17 +272,17 @@ public:
                  const Handle(asiAlgo_BaseCloud<double>)& source,
                  Handle(asiAlgo_BaseCloud<double>)&       result)
   {
-    this->Purify<asiAlgo_BaseCloud<double>,
-                 asiAlgo_Inspector3d>(tol, source, result);
+    this->PerformCommon<asiAlgo_BaseCloud<double>,
+                        asiAlgo_Inspector3d>(tol, source, result);
   }
 
 public:
 
   template<typename HCloudType,
            typename InspectorType>
-  void Purify(const double              tol,
-              const Handle(HCloudType)& source,
-              Handle(HCloudType)&       result)
+  void PerformCommon(const double              tol,
+                     const Handle(HCloudType)& source,
+                     Handle(HCloudType)&       result)
   {
     // Check if there are any points to purify.
     const int source_size = source->GetNumberOfElements();
@@ -248,7 +350,8 @@ public:
     else
     {
       // Prepare result.
-      result = new HCloudType;
+      if ( result.IsNull() )
+        result = new HCloudType;
 
       // Populate.
       for ( int i = 0; i < source_size; ++i )
@@ -256,8 +359,7 @@ public:
         if ( indices2Purge.Contains(i) )
           continue;
 
-        InspectorType::Point P = source->GetElement(i);
-        result->AddElement(P);
+        result->AddElement( source->GetElement(i) );
       }
     }
   }

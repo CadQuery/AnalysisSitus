@@ -61,6 +61,7 @@
 //!       con-convex hulls. This one should not be suggested as the best one.
 //!       It implements just one (quite simple) solution from a big variety
 //!       of hypothetical choices.
+template <typename TPoint>
 class asiAlgo_KHull2d : public ActAPI_IAlgorithm
 {
 public:
@@ -72,11 +73,11 @@ public:
   //! \param[in] progress   progress notifier.
   //! \param[in] plotter    imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_KHull2d(const Handle(asiAlgo_PointWithAttr2dCloud)& cloud,
-                    const int                                   k,
-                    const int                                   limitIters,
-                    ActAPI_ProgressEntry                        progress,
-                    ActAPI_PlotterEntry                         plotter);
+    asiAlgo_KHull2d(const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& cloud,
+                    const int                                         k,
+                    const int                                         limitIters,
+                    ActAPI_ProgressEntry                              progress,
+                    ActAPI_PlotterEntry                               plotter);
 
 public:
 
@@ -89,14 +90,14 @@ public:
 
   //! Returns initial point cloud.
   //! \return initial point cloud.
-  const Handle(asiAlgo_PointWithAttr2dCloud)& GetInputPoints() const
+  const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& GetInputPoints() const
   {
     return m_cloud;
   }
 
   //! Returns resulting non-convex hull.
   //! \return resulting non-convex hull.
-  const Handle(asiAlgo_PointWithAttr2dCloud)& GetHull() const
+  const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& GetHull() const
   {
     return m_hull;
   }
@@ -116,45 +117,45 @@ protected:
   //! \param[in] cloud cloud to sparse (will be kept unchanged).
   //! \param[in] prec  precision to use for resolving coincident points.
   //! \return cloud after processing.
-  asiAlgo_EXPORT Handle(asiAlgo_PointWithAttr2dCloud)
-    sparseCloud(const Handle(asiAlgo_PointWithAttr2dCloud)& cloud,
-                const double                                prec) const;
+  asiAlgo_EXPORT Handle(asiAlgo_PointWithAttrCloud<TPoint>)
+    sparseCloud(const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& cloud,
+                const double                                      prec) const;
 
   //! Creates deep copy of the passed point cloud.
   //! \param[in] cloud point cloud to copy.
   //! \return deep copy of point cloud.
-  asiAlgo_EXPORT Handle(asiAlgo_PointWithAttr2dCloud)
-    copyCloud(const Handle(asiAlgo_PointWithAttr2dCloud)& cloud) const;
+  asiAlgo_EXPORT Handle(asiAlgo_PointWithAttrCloud<TPoint>)
+    copyCloud(const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& cloud) const;
 
   //! Performs actual reconstruction of non-convex hull.
   //! \param[in,out] dataset working cloud.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    perform(Handle(asiAlgo_PointWithAttr2dCloud)& dataset);
+    perform(Handle(asiAlgo_PointWithAttrCloud<TPoint>)& dataset);
 
   //! Selects a point with minimal Y coordinate.
   //! \param[out] point     found point.
   //! \param[out] point_idx zero-based index of the found point.
   //! \param[in]  cloud     working point cloud.
   asiAlgo_EXPORT void
-    findMinYPoint(asiAlgo_PointWithAttr<gp_XY>&               point,
-                  size_t&                                     point_idx,
-                  const Handle(asiAlgo_PointWithAttr2dCloud)& cloud) const;
+    findMinYPoint(asiAlgo_PointWithAttr<TPoint>&                    point,
+                  int&                                           point_idx,
+                  const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& cloud) const;
 
   //! Adds the passed point to the target cloud.
   //! \param point [in]     point to add.
   //! \param cloud [in/out] target point cloud.
   //! \return index of the just added point in the target cloud.
-  asiAlgo_EXPORT size_t
-    addPoint(const asiAlgo_PointWithAttr<gp_XY>&   point,
-             Handle(asiAlgo_PointWithAttr2dCloud)& cloud);
+  asiAlgo_EXPORT int
+    addPoint(const asiAlgo_PointWithAttr<TPoint>&        point,
+             Handle(asiAlgo_PointWithAttrCloud<TPoint>)& cloud);
 
   //! Removes point with the passed index from the target cloud.
   //! \param[in]     point_idx zero-based index of point to remove.
   //! \param[in,out] cloud     target point cloud.
   asiAlgo_EXPORT void
-    removePoint(const size_t                          point_idx,
-                Handle(asiAlgo_PointWithAttr2dCloud)& cloud);
+    removePoint(const int                                   point_idx,
+                Handle(asiAlgo_PointWithAttrCloud<TPoint>)& cloud);
 
   //! Returns all points which are nearest to the given one. Only k nearest
   //! points are consulted.
@@ -163,9 +164,9 @@ protected:
   //! \param[in,out] cloud     working point cloud.
   //! \return indices of the nearest points.
   asiAlgo_EXPORT std::vector<int>
-    nearestPoints(const size_t                          point_idx,
-                  int&                                  k,
-                  Handle(asiAlgo_PointWithAttr2dCloud)& cloud);
+    nearestPoints(const int                                   point_idx,
+                  int&                                        k,
+                  Handle(asiAlgo_PointWithAttrCloud<TPoint>)& cloud);
 
   //! Checks whether the passed point belongs to the interior of the given
   //! polygon. This check is performed using simplest ray casting method.
@@ -173,8 +174,8 @@ protected:
   //! \param[in] poly  target polygon to check the point against.
   //! \return true if the point is inside, false -- otherwise.
   asiAlgo_EXPORT bool
-    isPointInPolygon(const asiAlgo_PointWithAttr<gp_XY>&         point,
-                     const Handle(asiAlgo_PointWithAttr2dCloud)& poly) const;
+    isPointInPolygon(const asiAlgo_PointWithAttr<TPoint>&              point,
+                     const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& poly) const;
 
   //! Checks whether the passed link intersects the given polygon.
   //! \param[in] P1   first point of the link.
@@ -182,9 +183,9 @@ protected:
   //! \param[in] poly polygon to check for intersections with.
   //! \return true/false.
   asiAlgo_EXPORT bool
-    checkIntersections(const asiAlgo_PointWithAttr<gp_XY>&         P1,
-                       const asiAlgo_PointWithAttr<gp_XY>&         P2,
-                       const Handle(asiAlgo_PointWithAttr2dCloud)& poly) const;
+    checkIntersections(const asiAlgo_PointWithAttr<TPoint>&              P1,
+                       const asiAlgo_PointWithAttr<TPoint>&              P2,
+                       const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& poly) const;
 
   //! Starting from the last link of the resulting polygon, checks the angles
   //! between this link and each point from the given list. The points in the
@@ -195,19 +196,19 @@ protected:
   //! \param[in]     poly          resulting polygon.
   //! \return indices of the nearest points in angle-descending order.
   asiAlgo_EXPORT std::vector<int>
-    sortByAngle(const std::vector<int>&                     point_indices,
-                Handle(asiAlgo_PointWithAttr2dCloud)&       dataset,
-                const Handle(asiAlgo_PointWithAttr2dCloud)& poly) const;
+    sortByAngle(const std::vector<int>&                           point_indices,
+                Handle(asiAlgo_PointWithAttrCloud<TPoint>)&       dataset,
+                const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& poly) const;
 
 private:
 
-  int                                  m_iK;          //!< Number of neighbors to consult.
-  int                                  m_iK_init;     //!< Initial value of k.
-  int                                  m_iK_limit;    //!< Max k number.
-  int                                  m_iLimitIters; //!< Limit for number of iterations.
-  int                                  m_iIterNum;    //!< Current iteration number.
-  Handle(asiAlgo_PointWithAttr2dCloud) m_cloud;       //!< Initial cloud.
-  Handle(asiAlgo_PointWithAttr2dCloud) m_hull;        //!< Resulting hull.
+  int                                        m_iK;          //!< Number of neighbors to consult.
+  int                                        m_iK_init;     //!< Initial value of k.
+  int                                        m_iK_limit;    //!< Max k number.
+  int                                        m_iLimitIters; //!< Limit for number of iterations.
+  int                                        m_iIterNum;    //!< Current iteration number.
+  Handle(asiAlgo_PointWithAttrCloud<TPoint>) m_cloud;       //!< Initial cloud.
+  Handle(asiAlgo_PointWithAttrCloud<TPoint>) m_hull;        //!< Resulting hull.
 
 };
 

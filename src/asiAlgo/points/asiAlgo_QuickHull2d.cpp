@@ -38,9 +38,10 @@
 // Function: constructor
 //-----------------------------------------------------------------------------
 
-asiAlgo_QuickHull2d::asiAlgo_QuickHull2d(const Handle(asiAlgo_PointWithAttr2dCloud)& cloud,
-                                         ActAPI_ProgressEntry                        progress,
-                                         ActAPI_PlotterEntry                         plotter)
+template <typename TPoint>
+asiAlgo_QuickHull2d<TPoint>::asiAlgo_QuickHull2d(const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& cloud,
+                                                 ActAPI_ProgressEntry                              progress,
+                                                 ActAPI_PlotterEntry                               plotter)
 : ActAPI_IAlgorithm(progress, plotter)
 {
   m_cloud = cloud;
@@ -51,7 +52,8 @@ asiAlgo_QuickHull2d::asiAlgo_QuickHull2d(const Handle(asiAlgo_PointWithAttr2dClo
 // Function: destructor
 //-----------------------------------------------------------------------------
 
-asiAlgo_QuickHull2d::~asiAlgo_QuickHull2d()
+template <typename TPoint>
+asiAlgo_QuickHull2d<TPoint>::~asiAlgo_QuickHull2d()
 {
   this->releaseNode(m_P_up);
   this->releaseNode(m_P_down);
@@ -63,7 +65,8 @@ asiAlgo_QuickHull2d::~asiAlgo_QuickHull2d()
 // Function: Perform
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_QuickHull2d::Perform()
+template <typename TPoint>
+bool asiAlgo_QuickHull2d<TPoint>::Perform()
 {
   if ( m_cloud.IsNull() || !m_cloud->Length() )
     return false;
@@ -164,9 +167,10 @@ bool asiAlgo_QuickHull2d::Perform()
 // Function: findDistantPoint
 //-----------------------------------------------------------------------------
 
-int asiAlgo_QuickHull2d::findDistantPoint(const int  p1_idx,
-                                          const int  p2_idx,
-                                          const bool up) const
+template <typename TPoint>
+int asiAlgo_QuickHull2d<TPoint>::findDistantPoint(const int  p1_idx,
+                                                  const int  p2_idx,
+                                                  const bool up) const
 {
   if ( p1_idx == -1 || p2_idx == -1 )
     return -1; // Cannot construct line
@@ -220,10 +224,11 @@ int asiAlgo_QuickHull2d::findDistantPoint(const int  p1_idx,
 // Function: process
 //-----------------------------------------------------------------------------
 
-void asiAlgo_QuickHull2d::process(PNode*     prev,
-                                  PNode*     curr,
-                                  const bool left,
-                                  const bool up)
+template <typename TPoint>
+void asiAlgo_QuickHull2d<TPoint>::process(PNode*     prev,
+                                          PNode*     curr,
+                                          const bool left,
+                                          const bool up)
 {
   const int next_idx = this->findDistantPoint(prev->idx, curr->idx, up);
 
@@ -254,8 +259,9 @@ void asiAlgo_QuickHull2d::process(PNode*     prev,
 // Function: traverseTriplet
 //-----------------------------------------------------------------------------
 
-void asiAlgo_QuickHull2d::traverseTriplet(PNode*     parent,
-                                          const bool ccw)
+template <typename TPoint>
+void asiAlgo_QuickHull2d<TPoint>::traverseTriplet(PNode*     parent,
+                                                  const bool ccw)
 {
   PNode* first  = ccw ? parent->right : parent->left;
   PNode* second = parent;
@@ -274,7 +280,8 @@ void asiAlgo_QuickHull2d::traverseTriplet(PNode*     parent,
 // Function: releaseNode
 //-----------------------------------------------------------------------------
 
-void asiAlgo_QuickHull2d::releaseNode(PNode* node)
+template <typename TPoint>
+void asiAlgo_QuickHull2d<TPoint>::releaseNode(PNode* node)
 {
   if ( node && node->left )
     this->releaseNode(node->left);
@@ -289,7 +296,8 @@ void asiAlgo_QuickHull2d::releaseNode(PNode* node)
 // Function: addNode
 //-----------------------------------------------------------------------------
 
-void asiAlgo_QuickHull2d::addNode(PNode* node)
+template <typename TPoint>
+void asiAlgo_QuickHull2d<TPoint>::addNode(PNode* node)
 {
   if ( node->idx == -1 )
     return;

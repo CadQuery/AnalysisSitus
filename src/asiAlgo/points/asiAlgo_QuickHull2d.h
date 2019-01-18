@@ -45,6 +45,7 @@
 
 //! Algorithm constructing convex hull of two-dimensional point cloud
 //! by Quick Hull (divide and conquer) method.
+template <typename TPoint>
 class asiAlgo_QuickHull2d : public ActAPI_IAlgorithm
 {
 public:
@@ -55,9 +56,9 @@ public:
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_QuickHull2d(const Handle(asiAlgo_PointWithAttr2dCloud)& cloud,
-                        ActAPI_ProgressEntry                        progress,
-                        ActAPI_PlotterEntry                         plotter);
+    asiAlgo_QuickHull2d(const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& cloud,
+                        ActAPI_ProgressEntry                              progress,
+                        ActAPI_PlotterEntry                               plotter);
 
   //! Destructor.
   asiAlgo_EXPORT
@@ -74,14 +75,14 @@ public:
 
   //! Returns initial point cloud.
   //! \return initial point cloud.
-  const Handle(asiAlgo_PointWithAttr2dCloud)& Cloud() const
+  const Handle(asiAlgo_PointWithAttrCloud<TPoint>)& GetInputPoints() const
   {
     return m_cloud;
   }
 
   //! Returns resulting convex hull as indices.
   //! \return resulting convex hull.
-  const Handle(TColStd_HSequenceOfInteger)& Hull() const
+  const Handle(TColStd_HSequenceOfInteger)& GetHull() const
   {
     return m_hull;
   }
@@ -154,8 +155,8 @@ private:
 
 private:
 
-  Handle(asiAlgo_PointWithAttr2dCloud) m_cloud; //!< Initial cloud.
-  Handle(TColStd_HSequenceOfInteger)   m_hull;  //!< Resulting hull.
+  Handle(asiAlgo_PointWithAttrCloud<TPoint>) m_cloud; //!< Initial cloud.
+  Handle(TColStd_HSequenceOfInteger)         m_hull;  //!< Resulting hull.
 
 private:
 

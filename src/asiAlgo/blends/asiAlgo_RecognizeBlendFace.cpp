@@ -65,7 +65,7 @@ bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
   // Check AAG.
   if ( m_aag.IsNull() )
   {
-    this->Progress().SendLogMessage(LogErr(Normal) << "AAG is null.");
+    this->GetProgress().SendLogMessage(LogErr(Normal) << "AAG is null.");
     return false;
   }
 
@@ -75,26 +75,26 @@ bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
   // Prepare tool to find smooth edges.
   asiAlgo_FindSmoothEdges
     findSmoothEdges( m_aag,
-                     this->Progress(),
-                     this->Plotter() );
+                     this->GetProgress(),
+                     this->GetPlotter() );
 
   // Prepare tool to find spring edges.
   asiAlgo_FindSpringEdges
     findSpringEdges( m_aag,
-                     this->Progress(),
-                     this->Plotter() );
+                     this->GetProgress(),
+                     this->GetPlotter() );
 
   // Prepare tool to find cross edges.
   asiAlgo_FindCrossEdges
     findCrossEdges( m_aag,
-                    this->Progress(),
-                    this->Plotter() );
+                    this->GetProgress(),
+                    this->GetPlotter() );
 
   // Prepare tool to find terminating edges.
   asiAlgo_FindTermEdges
     findTermEdges( m_aag,
-                   this->Progress(),
-                   this->Plotter() );
+                   this->GetProgress(),
+                   this->GetPlotter() );
 
   /* =========================================================================
    *  STAGE 1: Identify smooth edges which is the first clue for recognition.
@@ -106,7 +106,7 @@ bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
   // Detect smooth edges for a face.
   if ( !findSmoothEdges.PerformForFace(fid) )
   {
-    this->Progress().SendLogMessage( LogErr(Normal) << "Cannot find smooth edges." );
+    this->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot find smooth edges." );
     return false;
   }
 
@@ -139,7 +139,7 @@ bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
                                        isCandidateBlend,
                                        candidateRadius) )
   {
-    this->Progress().SendLogMessage( LogErr(Normal) << "Cannot find spring edges." );
+    this->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot find spring edges." );
     return false;
   }
 
@@ -147,8 +147,8 @@ bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
     return false;
 
   // Check if max radius is not exceeded.
-  this->Progress().SendLogMessage( LogInfo(Normal) << "Detected candidate radius: %1."
-                                                   << candidateRadius );
+  this->GetProgress().SendLogMessage( LogInfo(Normal) << "Detected candidate radius: %1."
+                                                      << candidateRadius );
   //
   if ( candidateRadius > maxRadius )
     return false;
@@ -159,7 +159,7 @@ bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
   //
   if ( !m_aag->SetNodeAttribute(fid, BlendAttr) )
   {
-    this->Progress().SendLogMessage( LogErr(Normal) << "Weird iteration: blend attribute is already there." );
+    this->GetProgress().SendLogMessage( LogErr(Normal) << "Weird iteration: blend attribute is already there." );
     return false;
   }
 
@@ -176,11 +176,11 @@ bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
   else
     return false;
 
-  this->Plotter().DRAW_SHAPE(face, Color_Blue, "Candidate blend after spring edge detection");
+  this->GetPlotter().DRAW_SHAPE(face, Color_Blue, "Candidate blend after spring edge detection");
   //
   for ( int eidx = 1; eidx <= nSpringEdges; ++eidx )
   {
-    this->Plotter().DRAW_SHAPE( springEdges(eidx), Color_Green, 1.0, true, "Spring_edge" );
+    this->GetPlotter().DRAW_SHAPE( springEdges(eidx), Color_Green, 1.0, true, "Spring_edge" );
   }
 
   // Populate blend candidate attribute with smooth and spring edges.
@@ -199,7 +199,7 @@ bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
                                       springEdges,
                                       candidateRadius) )
   {
-    this->Progress().SendLogMessage( LogErr(Normal) << "Cannot find cross edges." );
+    this->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot find cross edges." );
     return false;
   }
 
@@ -216,7 +216,7 @@ bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
 
   for ( int eidx = 1; eidx <= nCrossEdges; ++eidx )
   {
-    this->Plotter().DRAW_SHAPE( crossEdges(eidx), Color_Red, 1.0, true, "Cross_edge" );
+    this->GetPlotter().DRAW_SHAPE( crossEdges(eidx), Color_Red, 1.0, true, "Cross_edge" );
   }
 
   // Populate blend candidate attribute with cross edges.
@@ -235,7 +235,7 @@ bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
                                      crossEdges,
                                      candidateRadius) )
   {
-    this->Progress().SendLogMessage( LogErr(Normal) << "Cannot find cross edges." );
+    this->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot find cross edges." );
     return false;
   }
 
@@ -252,7 +252,7 @@ bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
 
   for ( int eidx = 1; eidx <= nTerminatingEdges; ++eidx )
   {
-    this->Plotter().DRAW_SHAPE( terminatingEdges(eidx), Color_Magenta, 1.0, true, "Terminating_edge" );
+    this->GetPlotter().DRAW_SHAPE( terminatingEdges(eidx), Color_Magenta, 1.0, true, "Terminating_edge" );
   }
 
   // Populate blend candidate attribute with terminating edges.

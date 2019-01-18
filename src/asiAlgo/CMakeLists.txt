@@ -259,7 +259,6 @@ set (points_H_FILES
   points/asiAlgo_BaseCloud.h
   points/asiAlgo_Cloudify.h
   points/asiAlgo_CloudRegion.h
-  points/asiAlgo_FacePointCloud.h
   points/asiAlgo_KHull2d.h
   points/asiAlgo_PlaneOnPoints.h
   points/asiAlgo_PlateOnPoints.h
@@ -272,7 +271,6 @@ set (points_H_FILES
 set (points_CPP_FILES
   points/asiAlgo_BaseCloud.cpp
   points/asiAlgo_Cloudify.cpp
-  points/asiAlgo_FacePointCloud.cpp
   points/asiAlgo_KHull2d.cpp
   points/asiAlgo_PlaneOnPoints.cpp
   points/asiAlgo_PlateOnPoints.cpp

@@ -33,11 +33,22 @@
 
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
+#include <asiAlgo_KHull2d.h>
 #include <asiAlgo_MeshConvert.h>
+#include <asiAlgo_PointWithAttr.h>
+#include <asiAlgo_Timer.h>
+
+// OCCT includes
+#include <ShapeAnalysis_Surface.hxx>
 
 // VTK includes
 #include <vtkCutter.h>
 #include <vtkPlane.h>
+
+#undef DRAW_DEBUG
+#if defined DRAW_DEBUG
+  #pragma message("===== warning: DRAW_DEBUG is enabled")
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -124,8 +135,11 @@ bool asiAlgo_MeshInterPlane::Perform(const Handle(Geom_Plane)& plane,
    *  Stage 3: convert to asi point cloud
    * ===================================== */
 
+  // Prepare adaptor to invert points on surface.
+  ShapeAnalysis_Surface sas(plane);
+
   // Get output points.
-  Handle(asiAlgo_BaseCloud<double>) cloud = new asiAlgo_BaseCloud<double>;
+  Handle(asiAlgo_PointWithAttrCloud<gp_XY>) cloud = new asiAlgo_PointWithAttrCloud<gp_XY>;
   //
   for ( vtkIdType cellId = 0; cellId < numCells; ++cellId )
   {
@@ -141,11 +155,17 @@ bool asiAlgo_MeshInterPlane::Perform(const Handle(Geom_Plane)& plane,
       double coords[3];
       outputVtk->GetPoint(pid, coords);
 
-      cloud->AddElement(coords[0], coords[1], coords[2]);
+      // Project point on plane.
+      gp_XY _P = sas.ValueOfUV(gp_Pnt(coords[0], coords[1], coords[2]), 1.0e-4).XY();
+
+#if defined DRAW_DEBUG
+      m_plotter.DRAW_POINT(_P, Color_Red, "P");
+#endif
+
+      // Add to the point cloud.
+      cloud->AddElement( asiAlgo_PointWithAttr<gp_XY>( _P, 0, int(pid) ) );
     }
   }
-
-  m_plotter.DRAW_POINTS(cloud->GetCoordsArray(), Color_Red, "pnts");
 
   /* =========================================
    *  Stage 4: reorder by constructing a hull
@@ -154,7 +174,58 @@ bool asiAlgo_MeshInterPlane::Perform(const Handle(Geom_Plane)& plane,
   if ( doSort )
   {
     m_progress.SendLogMessage(LogInfo(Normal) << "Sorting by constructing a concave hull.");
+
+    TIMER_NEW
+    TIMER_GO
+
+    // Prepare algorithm.
+    asiAlgo_KHull2d<gp_XY> kHull(cloud, 5, 0, m_progress, m_plotter);
+
+    // Build K-neighbors hull.
+    if ( !kHull.Perform() )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "K-hull failed.");
+      return false;
+    }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(m_progress, "Build K-neighbors hull")
+
+    // Override cloud with its hull.
+    cloud = kHull.GetHull();
+
+#if defined DRAW_DEBUG
+    for ( int k = 0; k < cloud->GetNumberOfElements(); ++k )
+    {
+      gp_XY p1 = cloud->GetElement(k).Coord;
+      gp_XY p2 = ( ( k == cloud->GetNumberOfElements() - 1) ? cloud->GetElement(0).Coord
+                                                            : cloud->GetElement(k + 1).Coord );
+
+      m_plotter.DRAW_LINK(p1, p2, Color_Green, "hull");
+    }
+#endif
   }
+
+  /* ============================
+   *  Stage 5: Obtain base cloud
+   * ============================ */
+
+  // Convert to base cloud.
+  Handle(asiAlgo_BaseCloud<double>) pts = new asiAlgo_BaseCloud<double>;
+  //
+  for ( int k = 0; k < cloud->GetNumberOfElements(); ++k )
+  {
+    const vtkIdType pid = vtkIdType(cloud->GetElement(k).Index);
+
+    // Get point from the VTK dataset.
+    double xyz[3];
+    outputVtk->GetPoint(pid, xyz);
+
+    // Add point to the point cloud.
+    pts->AddElement(xyz[0], xyz[1], xyz[2]);
+  }
+  //
+  m_plotter.DRAW_POINTS(pts->GetCoordsArray(), doSort ? Color_Green : Color_Red, "pts");
 
   return true;
 }

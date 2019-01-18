@@ -377,7 +377,7 @@ int RE_CutWithPlane(const Handle(asiTcl_Interp)& interp,
                                interp->GetProgress(),
                                interp->GetPlotter() );
   //
-  if ( !algo.Perform(occtPlane) )
+  if ( !algo.Perform(occtPlane, true) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to cut mesh with plane.");
     return TCL_ERROR;
@@ -392,7 +392,7 @@ int RE_ApproxPoints(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
 {
-  if ( argc != 3 )
+  if ( argc < 4 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -407,8 +407,14 @@ int RE_ApproxPoints(const Handle(asiTcl_Interp)& interp,
                                                         << argv[2]);
     return TCL_ERROR;
   }
-
+  //
   Handle(asiAlgo_BaseCloud<double>) ptsCloud = ptsNode->GetPoints();
+
+  // Get precision.
+  const double prec = atof(argv[3]);
+
+  // Check is the curve is expected to be closed.
+  const bool isClosed = interp->HasKeyword(argc, argv, "closed");
 
   // Convert to the collection of XYZ tuples.
   std::vector<gp_XYZ> pts;
@@ -418,12 +424,15 @@ int RE_ApproxPoints(const Handle(asiTcl_Interp)& interp,
     pts.push_back( ptsCloud->GetElement(k) );
 
     ///
-    interp->GetPlotter().DRAW_POINT(pts[k], Color_Blue, "P");
+    //interp->GetPlotter().DRAW_POINT(pts[k], Color_Blue, "P");
   }
+  //
+  if ( isClosed )
+    pts.push_back(pts[0]);
 
   // Approximate.
   Handle(Geom_BSplineCurve) resCurve;
-  if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, Precision::Confusion(), resCurve) )
+  if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, prec, resCurve) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Approximation failed.");
     return TCL_ERROR;
@@ -481,7 +490,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-approx-points",
     //
-    "re-approx-points resCurve points\n"
+    "re-approx-points resCurve points prec [-closed]\n"
     "\t Attempts to approximate the given point cloud with a curve.",
     //
     __FILE__, group, RE_ApproxPoints);

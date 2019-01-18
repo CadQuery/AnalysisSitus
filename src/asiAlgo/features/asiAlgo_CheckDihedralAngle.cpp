@@ -161,8 +161,8 @@ asiAlgo_FeatureAngleType
   gp_Pnt A = probeCurve->Value(A_param);
   gp_Pnt B = probeCurve->Value(B_param);
 
-  this->Plotter().DRAW_POINT(A, Color_Red,  "A");
-  this->Plotter().DRAW_POINT(B, Color_Blue, "B");
+  this->GetPlotter().DRAW_POINT(A, Color_Red,  "A");
+  this->GetPlotter().DRAW_POINT(B, Color_Blue, "B");
 
   // Get host surfaces
   Handle(Geom_Surface) S1 = BRep_Tool::Surface(F),
@@ -342,14 +342,14 @@ asiAlgo_FeatureAngleType
 
       avrAngleRad += TF_precised.AngleWithRef(TG_precised, Ref);
 
-      this->Plotter().DRAW_POINT( UV_shifted, Color_Yellow, "S1_UV" );
-      this->Plotter().DRAW_POINT( ST_shifted, Color_Red,    "S2_ST" );
+      this->GetPlotter().DRAW_POINT( UV_shifted, Color_Yellow, "S1_UV" );
+      this->GetPlotter().DRAW_POINT( ST_shifted, Color_Red,    "S2_ST" );
       //
-      this->Plotter().DRAW_VECTOR_AT(A, TF_precised, Color_Yellow, "TF_precised");
-      this->Plotter().DRAW_VECTOR_AT(A, TG_precised, Color_Red,    "TG_precised");
+      this->GetPlotter().DRAW_VECTOR_AT(A, TF_precised, Color_Yellow, "TF_precised");
+      this->GetPlotter().DRAW_VECTOR_AT(A, TG_precised, Color_Red,    "TG_precised");
       //
-      this->Plotter().DRAW_POINT(S1_P, Color_Yellow, "S1_P");
-      this->Plotter().DRAW_POINT(S2_P, Color_Red, "S2_P");
+      this->GetPlotter().DRAW_POINT(S1_P, Color_Yellow, "S1_P");
+      this->GetPlotter().DRAW_POINT(S2_P, Color_Red, "S2_P");
     }
     //
     avrAngleRad /= inSamples;

@@ -94,7 +94,7 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
 #endif
   }
 
-  ActAPI_PlotterEntry IV( this->Plotter() );
+  ActAPI_PlotterEntry IV( this->GetPlotter() );
 
   // Initial guess is that this face looks like a blend
   isCandidateBlend = false;
@@ -122,7 +122,7 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
     //
     if ( commonEdgeIndices.IsEmpty() )
     {
-      this->Progress().SendLogMessage( LogErr(Normal) << "Empty common edges attribute for adjacent faces." );
+      this->GetProgress().SendLogMessage( LogErr(Normal) << "Empty common edges attribute for adjacent faces." );
       return false;
     }
     //
@@ -137,7 +137,7 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
     //
     if ( C.IsNull() )
     {
-      this->Progress().SendLogMessage( LogErr(Normal) << "No 3D curve in the probe edge." );
+      this->GetProgress().SendLogMessage( LogErr(Normal) << "No 3D curve in the probe edge." );
       return false;
     }
     //
@@ -153,7 +153,7 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
     gp_Vec T = P2.XYZ() - P1.XYZ();
     if ( T.Magnitude() < RealEpsilon() )
     {
-      this->Progress().SendLogMessage( LogErr(Normal) << "Irregular parameterization of the probe edge." );
+      this->GetProgress().SendLogMessage( LogErr(Normal) << "Irregular parameterization of the probe edge." );
       return false;
     }
 
@@ -177,12 +177,12 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
     //
     if ( !AProps.IsCurvatureDefined() )
     {
-      this->Progress().SendLogMessage( LogErr(Normal) << "Curvature is not defined for A surface." );
+      this->GetProgress().SendLogMessage( LogErr(Normal) << "Curvature is not defined for A surface." );
       return false;
     }
     if ( !BProps.IsCurvatureDefined() )
     {
-      this->Progress().SendLogMessage( LogErr(Normal) << "Curvature is not defined for B surface." );
+      this->GetProgress().SendLogMessage( LogErr(Normal) << "Curvature is not defined for B surface." );
       return false;
     }
 

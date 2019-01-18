@@ -70,7 +70,7 @@ bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape&                model,
     TopTools_IndexedMapOfShape M;
     TopExp::MapShapes(model, TopAbs_FACE, M);
     //
-    this->Progress().Init( M.Extent() );
+    this->GetProgress().Init( M.Extent() );
   } // Progress [end]
 
   // Iterate over the faces, and sample points in their domains
@@ -143,7 +143,7 @@ bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape&                model,
     }
 
     // Progress
-    this->Progress().StepProgress(1);
+    this->GetProgress().StepProgress(1);
   }
 
   return true;

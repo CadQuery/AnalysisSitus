@@ -50,7 +50,7 @@ asiVisu_IVPointSet2dPrs::asiVisu_IVPointSet2dPrs(const Handle(ActAPI_INode)& the
     DP = new asiVisu_IVPointSet2dDataProvider(theNode);
 
   // Pipeline for points
-  this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline(false) );
   this->assignDataProvider ( Pipeline_Main, DP );
 
   // Adjust point size

@@ -35,6 +35,9 @@
 #include <asiVisu_DataProvider.h>
 #include <asiVisu_Pipeline.h>
 
+// OCCT includes
+#include <TColStd_HPackedMapOfInteger.hxx>
+
 //-----------------------------------------------------------------------------
 
 //! Visualization pipeline for point cloud.
@@ -47,13 +50,27 @@ public:
 
 public:
 
+  //! Ctor.
+  //! \param[in] allowSelection indicates whether this pipeline allows
+  //!                           selection of a certain portion of data.
   asiVisu_EXPORT
-    asiVisu_PointsPipeline();
+    asiVisu_PointsPipeline(const bool allowSelection);
 
 public:
 
+  //! Sets input data for the pipeline.
+  //! \param[in] DP Data Provider.
   asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& DP);
+
+public:
+
+  //! Sets transient active point IDs.
+  //! \param[in] reperId reper IDs to use.
+  void SetForcedActiveRepers(const Handle(TColStd_HPackedMapOfInteger)& reperIds)
+  {
+    m_iForcedActiveRepers = reperIds;
+  }
 
 private:
 
@@ -68,6 +85,14 @@ private:
 
   //! Assignment prohibited.
   asiVisu_PointsPipeline& operator=(const asiVisu_PointsPipeline&);
+
+private:
+
+  //! Transient active reper points.
+  Handle(TColStd_HPackedMapOfInteger) m_iForcedActiveRepers;
+
+  //! Enables/disables partial data visualization.
+  bool m_bAllowSelection;
 
 };
 

@@ -145,7 +145,7 @@ protected:
     ActParamStream out;
     out.List = asiVisu_IVCurveDataProvider::translationSources();
 
-    // Add more.
+    // Add more than in the base class which does not react to PID_ActiveReper.
     out << m_node->Parameter(asiData_IVCurveNode::PID_ActiveReper);
 
     return out;

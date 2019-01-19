@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 11 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@
 // Own include
 #include <asiVisu_IVPointSetPrs.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_IVPointSetDataProvider.h>
 #include <asiVisu_PointsPipeline.h>
 #include <asiVisu_Utils.h>
@@ -41,41 +41,143 @@
 #include <vtkProperty.h>
 #include <vtkTextActor.h>
 
-//! Creates a Presentation object for the passed Node.
-//! \param theNode [in] Node to create a Presentation for.
-asiVisu_IVPointSetPrs::asiVisu_IVPointSetPrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_DefaultPrs(theNode)
+//-----------------------------------------------------------------------------
+
+asiVisu_IVPointSetPrs::asiVisu_IVPointSetPrs(const Handle(ActAPI_INode)& N)
+: asiVisu_DefaultPrs(N)
 {
-  // Create Data Provider
-  Handle(asiVisu_IVPointSetDataProvider) DP = new asiVisu_IVPointSetDataProvider(theNode);
+  // Create Data Provider.
+  Handle(asiVisu_IVPointSetDataProvider) DP = new asiVisu_IVPointSetDataProvider(N);
 
-  // Pipeline for points
-  this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline );
-  this->assignDataProvider ( Pipeline_Main, DP );
+  // Pipeline for points.
+  {
+    this->addPipeline        ( PrimaryPipeline_Main, new asiVisu_PointsPipeline(false) );
+    this->assignDataProvider ( PrimaryPipeline_Main, DP );
+  }
 
-  // Adjust point size
-  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetPointSize(4.0);
-  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->RenderPointsAsSpheresOn();
-  this->GetPipeline(Pipeline_Main)->Actor()->SetPickable(0);
+  // Pipeline for detecting points.
+  {
+    Handle(asiVisu_PointsPipeline)
+      plDetection = new asiVisu_PointsPipeline(true); // `true` for partial visualization.
+    //
+    plDetection->Actor()->GetProperty()->SetColor(0.0, 1.0, 1.0);
+    plDetection->Actor()->GetProperty()->SetPointSize(10.0);
+    //
+    this->installDetectPipeline(plDetection, DP, SelectionPipeline_Main);
+  }
 
-  // Initialize text widget used for annotations
+  // Adjust visual properties.
+  this->GetPipeline(PrimaryPipeline_Main)->Actor()->GetProperty()->SetPointSize(4.0);
+  this->GetPipeline(PrimaryPipeline_Main)->Actor()->GetProperty()->RenderPointsAsSpheresOn();
+  this->GetPipeline(PrimaryPipeline_Main)->Actor()->SetPickable(1);
+
+  // Initialize text widget used for annotation.
   m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
   asiVisu_Utils::InitTextWidget(m_textWidget);
 }
 
-//! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
-//! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_IVPointSetPrs::Instance(const Handle(ActAPI_INode)& theNode)
+//-----------------------------------------------------------------------------
+
+Handle(asiVisu_Prs)
+  asiVisu_IVPointSetPrs::Instance(const Handle(ActAPI_INode)& N)
 {
-  return new asiVisu_IVPointSetPrs(theNode);
+  return new asiVisu_IVPointSetPrs(N);
 }
 
-//! Callback after initialization.
+//-----------------------------------------------------------------------------
+
+void asiVisu_IVPointSetPrs::highlight(vtkRenderer*                        renderer,
+                                      const Handle(asiVisu_PickerResult)& pickRes,
+                                      const asiVisu_SelectionNature       selNature) const
+{
+  asiVisu_NotUsed(renderer);
+
+  // Check picked actor.
+  vtkActor* pPickedActor = pickRes->GetPickedActor();
+  //
+  if ( pPickedActor != this->GetPipeline(PrimaryPipeline_Main)->Actor() )
+    return;
+
+  // Only cells are processed.
+  Handle(asiVisu_CellPickerResult)
+    cellRes = Handle(asiVisu_CellPickerResult)::DownCast(pickRes);
+  //
+  if ( cellRes.IsNull() )
+    return;
+
+  if ( selNature == SelectionNature_Detection )
+  {
+    Handle(asiVisu_HPipelineList) pls = this->GetDetectPipelineList();
+
+    // Activate detection pipelines.
+    for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
+    {
+      const Handle(asiVisu_Pipeline)& pl = it.Value();
+
+      // Check pipeline type.
+      if ( pl->IsKind( STANDARD_TYPE(asiVisu_PointsPipeline) ) )
+      {
+        Handle(asiVisu_PointsPipeline)
+          castedPl = Handle(asiVisu_PointsPipeline)::DownCast(pl);
+        //
+        castedPl->SetForcedActiveRepers( new TColStd_HPackedMapOfInteger( cellRes->GetPickedCellIds() ) );
+      }
+
+      // Update.
+      pl->Actor()->SetVisibility(1);
+      pl->SetInput( this->dataProviderDetect() );
+      pl->Update();
+    }
+  }
+  else if ( selNature == SelectionNature_Persistent )
+  {
+    Handle(asiVisu_HPipelineList) pls = this->GetPickPipelineList();
+
+    // Activate picking pipelines.
+    int plIdx = 1;
+    for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
+    {
+      const Handle(asiVisu_Pipeline)& pl = it.Value();
+
+      // Update.
+      pl->Actor()->SetVisibility(1);
+      pl->SetInput( this->dataProviderPick(plIdx++) );
+      pl->Update();
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_IVPointSetPrs::unHighlight(vtkRenderer*                  renderer,
+                                        const asiVisu_SelectionNature selNature) const
+{
+  asiVisu_NotUsed(renderer);
+
+  if ( selNature == SelectionNature_Detection )
+  {
+    Handle(asiVisu_HPipelineList) pls = this->GetDetectPipelineList();
+
+    // Deactivate detection pipelines.
+    for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
+      it.Value()->Actor()->SetVisibility(0);
+  }
+  else if ( selNature == SelectionNature_Persistent )
+  {
+    Handle(asiVisu_HPipelineList) pls = this->GetPickPipelineList();
+
+    // Deactivate picking pipelines.
+    for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
+      it.Value()->Actor()->SetVisibility(0);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void asiVisu_IVPointSetPrs::afterInitPipelines()
 {
   Handle(asiVisu_IVPointSetDataProvider)
-    DP = Handle(asiVisu_IVPointSetDataProvider)::DownCast( this->dataProvider(Pipeline_Main) );
+    DP = Handle(asiVisu_IVPointSetDataProvider)::DownCast( this->dataProvider(PrimaryPipeline_Main) );
 
   const int nPts = DP->GetPoints()->GetNumberOfElements();
 
@@ -83,37 +185,62 @@ void asiVisu_IVPointSetPrs::afterInitPipelines()
   {
     TCollection_AsciiString title("Num. of points: "); title += nPts;
 
-    // Update text on the annotation
+    // Update text on the annotation.
     m_textWidget->GetTextActor()->SetInput( title.ToCString() );
   }
 }
 
-//! Callback for rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_IVPointSetPrs::renderPipelines(vtkRenderer* theRenderer) const
-{
-  Handle(asiVisu_IVPointSetDataProvider)
-    DP = Handle(asiVisu_IVPointSetDataProvider)::DownCast( this->dataProvider(Pipeline_Main) );
+//-----------------------------------------------------------------------------
 
-  const int nPts = DP->GetPoints()->GetNumberOfElements();
+void asiVisu_IVPointSetPrs::renderPipelines(vtkRenderer* renderer) const
+{
+  /* Take care of selection pipelines */
+
+  Handle(asiVisu_HPipelineList) detectPls = this->GetDetectPipelineList();
+  Handle(asiVisu_HPipelineList) pickPls   = this->GetPickPipelineList();
+
+  // Picking pipeline must be added to renderer the LAST (!). Otherwise
+  // we can experience some strange coloring bug because of their coincidence.
+  for ( asiVisu_HPipelineList::Iterator it(*detectPls); it.More(); it.Next() )
+    it.Value()->AddToRenderer(renderer);
   //
-  if ( nPts > 1 )
+  for ( asiVisu_HPipelineList::Iterator it(*pickPls); it.More(); it.Next() )
+    it.Value()->AddToRenderer(renderer);
+
+  /* Take care of annotation widget */
+
+  Handle(asiVisu_IVPointSetDataProvider)
+    DP = Handle(asiVisu_IVPointSetDataProvider)::DownCast( this->dataProvider(PrimaryPipeline_Main) );
+
+  if ( DP->GetPoints()->GetNumberOfElements() > 1 )
   {
     if ( !m_textWidget->GetCurrentRenderer() )
     {
-      m_textWidget->SetInteractor      ( theRenderer->GetRenderWindow()->GetInteractor() );
-      m_textWidget->SetDefaultRenderer ( theRenderer );
-      m_textWidget->SetCurrentRenderer ( theRenderer );
+      m_textWidget->SetInteractor      ( renderer->GetRenderWindow()->GetInteractor() );
+      m_textWidget->SetDefaultRenderer ( renderer );
+      m_textWidget->SetCurrentRenderer ( renderer );
       m_textWidget->On                 ( );
       m_textWidget->ReleaseFocus       ( );
     }
   }
 }
 
-//! Callback for de-rendering.
-//! \param renderer [in] renderer.
+//-----------------------------------------------------------------------------
+
 void asiVisu_IVPointSetPrs::deRenderPipelines(vtkRenderer* renderer) const
 {
-  asiVisu_NotUsed(renderer);
+  /* Take care of selection pipelines */
+
+  Handle(asiVisu_HPipelineList) detectPls = this->GetDetectPipelineList();
+  Handle(asiVisu_HPipelineList) pickPls   = this->GetPickPipelineList();
+
+  for ( asiVisu_HPipelineList::Iterator it(*detectPls); it.More(); it.Next() )
+    it.Value()->RemoveFromRenderer(renderer);
+  //
+  for ( asiVisu_HPipelineList::Iterator it(*pickPls); it.More(); it.Next() )
+    it.Value()->RemoveFromRenderer(renderer);
+
+  /* Take care of annotation widget */
+
   m_textWidget->Off();
 }

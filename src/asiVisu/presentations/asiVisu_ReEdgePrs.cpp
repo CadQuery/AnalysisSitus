@@ -64,7 +64,7 @@ asiVisu_ReEdgePrs::asiVisu_ReEdgePrs(const Handle(ActAPI_INode)& N)
     curve_dp = new asiVisu_ReEdgeCurveDataProvider(edge_n);
 
   // Pipeline for polyline.
-  Handle(asiVisu_PointsPipeline) polyline_pl = new asiVisu_PointsPipeline;
+  Handle(asiVisu_PointsPipeline) polyline_pl = new asiVisu_PointsPipeline(false);
   //
   this->addPipeline        ( Pipeline_Polyline, polyline_pl );
   this->assignDataProvider ( Pipeline_Polyline, polyline_dp );

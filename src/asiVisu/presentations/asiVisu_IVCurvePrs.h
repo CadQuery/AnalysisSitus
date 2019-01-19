@@ -31,9 +31,13 @@
 #ifndef asiVisu_IVCurvePrs_h
 #define asiVisu_IVCurvePrs_h
 
-// Visualization includes
-#include <asiData_IVCurveNode.h>
+// asiVisu includes
 #include <asiVisu_DefaultPrs.h>
+
+// asiData includes
+#include <asiData_IVCurveNode.h>
+
+//-----------------------------------------------------------------------------
 
 //! Presentation class for curves in IV.
 class asiVisu_IVCurvePrs : public asiVisu_DefaultPrs

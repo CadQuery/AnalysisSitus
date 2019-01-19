@@ -82,7 +82,7 @@ asiVisu_ContourPrs::asiVisu_ContourPrs(const Handle(ActAPI_INode)& N)
   this->assignDataProvider ( Pipeline_Main, shape_dp );
 
   // Pipeline for points
-  Handle(asiVisu_PointsPipeline) points_pl = new asiVisu_PointsPipeline;
+  Handle(asiVisu_PointsPipeline) points_pl = new asiVisu_PointsPipeline(false);
   //
   this->addPipeline        ( Pipeline_Points, points_pl );
   this->assignDataProvider ( Pipeline_Points, points_dp );

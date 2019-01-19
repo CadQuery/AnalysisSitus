@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 11 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,8 @@
 // VTK includes
 #include <vtkTextWidget.h>
 
+//-----------------------------------------------------------------------------
+
 //! Presentation class for a single point cloud in IV.
 class asiVisu_IVPointSetPrs : public asiVisu_DefaultPrs
 {
@@ -53,28 +55,60 @@ public:
 
 public:
 
-  //! Pipelines.
-  enum PipelineId
+  //! Primary pipelines.
+  enum PrimaryPipelineId
   {
-    Pipeline_Main = 1
+    PrimaryPipeline_Main = 1
+  };
+
+  //! Selection pipelines.
+  enum SelectionPipelineId
+  {
+    SelectionPipeline_Main = 1
   };
 
 public:
 
+  //! Factory method for Presentation.
+  //! \param[in] N Node to create a Presentation for.
+  //! \return new Presentation instance.
   asiVisu_EXPORT static Handle(asiVisu_Prs)
-    Instance(const Handle(ActAPI_INode)& theNode);
+    Instance(const Handle(ActAPI_INode)& N);
 
 // Callbacks:
 private:
 
-  virtual void afterInitPipelines ();
-  virtual void renderPipelines    (vtkRenderer* theRenderer) const;
-  virtual void deRenderPipelines  (vtkRenderer* theRenderer) const;
+  //! Highlights presentation.
+  virtual void
+    highlight(vtkRenderer*                        renderer,
+              const Handle(asiVisu_PickerResult)& pickRes,
+              const asiVisu_SelectionNature       selNature) const;
+
+  //! Unhighlights presentation.
+  virtual void
+    unHighlight(vtkRenderer*                  renderer,
+                const asiVisu_SelectionNature selNature) const;
+
+  //! Callback after initialization.
+  virtual void
+    afterInitPipelines();
+
+  //! Callback for rendering.
+  //! \param[in] renderer VTK renderer.
+  virtual void
+    renderPipelines(vtkRenderer* renderer) const;
+
+  //! Callback for derendering.
+  //! \param[in] renderer VTK renderer.
+  virtual void
+    deRenderPipelines(vtkRenderer* renderer) const;
 
 private:
 
   //! Allocation is allowed only via Instance() method.
-  asiVisu_IVPointSetPrs(const Handle(ActAPI_INode)& theNode);
+  //! Creates a Presentation object for the passed Node.
+  //! \param[in] N Node to create a Presentation for.
+  asiVisu_IVPointSetPrs(const Handle(ActAPI_INode)& N);
 
 private:
 

@@ -43,11 +43,13 @@
 
 //-----------------------------------------------------------------------------
 
-//! Creates new Pipeline initialized by default VTK mapper and actor.
-asiVisu_PointsPipeline::asiVisu_PointsPipeline()
+asiVisu_PointsPipeline::asiVisu_PointsPipeline(const bool allowSelection)
+//
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                     vtkSmartPointer<vtkActor>::New() )
 {
+  m_bAllowSelection = allowSelection;
+
   // Default visual style
   this->Actor()->GetProperty()->SetPointSize(3.0);
   this->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
@@ -56,8 +58,6 @@ asiVisu_PointsPipeline::asiVisu_PointsPipeline()
 
 //-----------------------------------------------------------------------------
 
-//! Sets input data for the pipeline.
-//! \param DP [in] Data Provider.
 void asiVisu_PointsPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
   const Handle(asiVisu_PointsDataProvider)&
@@ -85,17 +85,23 @@ void asiVisu_PointsPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
    *  Prepare polygonal data set
    * ============================ */
 
-  if ( provider->MustExecute( this->GetMTime() ) )
+  if ( provider->MustExecute( this->GetMTime() ) || !m_iForcedActiveRepers.IsNull() )
   {
+    // Bind to a Data Node using information key.
+    asiVisu_NodeInfo::Store( provider->GetNodeID(), this->Actor() );
+
     // Source for points
     vtkSmartPointer< asiVisu_PointsSource<double> >
       src = vtkSmartPointer< asiVisu_PointsSource<double> >::New();
     //
     src->SetInputPoints(points);
-    src->SetFilter( provider->GetIndices() );
 
-    // Bind to a Data Node using information key
-    asiVisu_NodeInfo::Store( provider->GetNodeID(), this->Actor() );
+    // Set active reper IDs if any.
+    if ( m_bAllowSelection )
+      if ( !m_iForcedActiveRepers.IsNull() )
+        src->SetFilter( m_iForcedActiveRepers );
+      else
+        src->SetFilter( provider->GetIndices() );
 
     // Initialize pipeline
     this->SetInputConnection( src->GetOutputPort() );

@@ -60,7 +60,7 @@ asiVisu_ReVertexPrs::asiVisu_ReVertexPrs(const Handle(ActAPI_INode)& N)
     DP = new asiVisu_ReVertexDataProvider( Handle(asiData_ReVertexNode)::DownCast(N) );
 
   // Pipeline for points.
-  this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_PointsPipeline(false) );
   this->assignDataProvider ( Pipeline_Main, DP );
 
   // Adjust point size.

@@ -32,7 +32,7 @@
 #define asiAlgo_MeshInterPlane_HeaderFile
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_BaseCloud.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
@@ -74,9 +74,18 @@ public:
     Perform(const Handle(Geom_Plane)& plane,
             const bool                doSort);
 
+public:
+
+  //! \return resulting section points.
+  const Handle(asiAlgo_BaseCloud<double>)& GetResult() const
+  {
+    return m_result;
+  }
+
 protected:
 
-  Handle(Poly_Triangulation) m_mesh; //!< Mesh to check.
+  Handle(Poly_Triangulation)        m_mesh;   //!< Mesh to cut.
+  Handle(asiAlgo_BaseCloud<double>) m_result; //!< Resulting points.
 
 };
 

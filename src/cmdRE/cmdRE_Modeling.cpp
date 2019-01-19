@@ -341,10 +341,12 @@ int RE_CutWithPlane(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
 {
-  if ( argc != 2 )
+  if ( argc != 3 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
+
+  const bool doSort = true;
 
   // Get Triangulaion.
   Handle(asiData_TriangulationNode) tris_n = cmdRE::model->GetTriangulationNode();
@@ -358,7 +360,7 @@ int RE_CutWithPlane(const Handle(asiTcl_Interp)& interp,
   Handle(Poly_Triangulation) triangulation = tris_n->GetTriangulation();
 
   // Get cutting plane.
-  Handle(ActAPI_INode) node = cmdRE::model->FindNodeByName(argv[1]);
+  Handle(ActAPI_INode) node = cmdRE::model->FindNodeByName(argv[2]);
   //
   if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
   {
@@ -389,6 +391,10 @@ int RE_CutWithPlane(const Handle(asiTcl_Interp)& interp,
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to cut mesh with plane.");
     return TCL_ERROR;
   }
+
+  // Get the result.
+  interp->GetPlotter().REDRAW_POINTS(argv[1], algo.GetResult()->GetCoordsArray(),
+                                     doSort ? Color_Green : Color_Red);
 
   return TCL_OK;
 }
@@ -425,31 +431,90 @@ int RE_ApproxPoints(const Handle(asiTcl_Interp)& interp,
 
   // Check is the curve is expected to be closed.
   const bool isClosed = interp->HasKeyword(argc, argv, "closed");
-
-  // Convert to the collection of XYZ tuples.
-  std::vector<gp_XYZ> pts;
   //
-  for ( int k = 0; k < ptsCloud->GetNumberOfElements(); ++k )
+  if ( isClosed && !ptsFilter.IsNull() && ptsFilter->Map().Extent() )
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "There is a filter on points. A closed curve cannot be constructed.");
+
+  // Collect indices of breakpoints into an ordered collection. We do not
+  // rely here on the order of packed map since this map is not ordered
+  // in essence.
+  std::vector<int> breakIndices;
+  //
+  if ( !ptsFilter.IsNull() )
   {
-    pts.push_back( ptsCloud->GetElement(k) );
-
-    ///
-    //interp->GetPlotter().DRAW_POINT(pts[k], Color_Blue, "P");
+    const TColStd_PackedMapOfInteger& filter = ptsFilter->Map();
+    //
+    for ( TColStd_MapIteratorOfPackedMapOfInteger fit(filter); fit.More(); fit.Next() )
+      breakIndices.push_back( fit.Key() );
+    //
+    std::sort( breakIndices.begin(), breakIndices.end() );
   }
-  //
-  if ( isClosed )
-    pts.push_back(pts[0]);
+
+  // Prepare a collection of point regions.
+  std::vector< std::vector<gp_XYZ> > ptsRegions;
+
+  // If no filter is set, there is only one region to approximate.
+  if ( !breakIndices.size() )
+  {
+    std::vector<gp_XYZ> pts;
+    for ( int k = 0; k < ptsCloud->GetNumberOfElements(); ++k )
+      pts.push_back( ptsCloud->GetElement(k) );
+    //
+    ptsRegions.push_back(pts);
+  }
+  else
+  {
+    // Loop over the indices of breakpoints.
+    for ( size_t b = 0; b < breakIndices.size(); ++b )
+    {
+      const int  b_first    = breakIndices[b];
+      const int  b_next     = ( (b == breakIndices.size() - 1) ? breakIndices[0] : breakIndices[b + 1] );
+      const bool isReturing = (b_next == b_first);
+
+      // Populate next region.
+      std::vector<gp_XYZ> pts;
+      int  k    = b_first;
+      bool stop = false;
+      //
+      do
+      {
+        if ( pts.size() && (k == b_next) ) // Reached next breakpoint.
+          stop = true;
+
+        if ( k == ptsCloud->GetNumberOfElements() - 1 ) // Reached the end, cycling...
+        {
+          k = 0;
+          //
+          if ( pts.size() && (k == b_next) ) // Reached next breakpoint.
+            stop = true;
+        }
+
+        pts.push_back( ptsCloud->GetElement(k++) );
+      }
+      while ( !stop );
+
+      // Add region.
+      ptsRegions.push_back(pts);
+    }
+  }
+
+  // For unfiltered clouds, the curve can be closed.
+  if ( (ptsRegions.size() == 1) && isClosed )
+    ptsRegions[0].push_back( ptsRegions[0][0] );
 
   // Approximate.
-  Handle(Geom_BSplineCurve) resCurve;
-  if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, prec, resCurve) )
+  for ( size_t k = 0; k < ptsRegions.size(); ++k )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Approximation failed.");
-    return TCL_ERROR;
-  }
+    Handle(Geom_BSplineCurve) resCurve;
+    if ( !asiAlgo_Utils::ApproximatePoints(ptsRegions[k], 3, 3, prec, resCurve) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Approximation failed.");
+      return TCL_ERROR;
+    }
 
-  // Set result.
-  interp->GetPlotter().REDRAW_CURVE(argv[1], resCurve, Color_Red);
+    // Set result.
+    interp->GetPlotter().DRAW_CURVE(resCurve, Color_Red, argv[1]);
+  }
 
   return TCL_OK;
 }
@@ -802,7 +867,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-cut-with-plane",
     //
-    "re-cut-with-plane p\n"
+    "re-cut-with-plane res p\n"
     "\t Cuts triangulation with plane.",
     //
     __FILE__, group, RE_CutWithPlane);

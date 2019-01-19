@@ -32,7 +32,6 @@
 #include <asiAlgo_MeshInterPlane.h>
 
 // asiAlgo includes
-#include <asiAlgo_BaseCloud.h>
 #include <asiAlgo_KHull2d.h>
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_PointWithAttr.h>
@@ -224,8 +223,9 @@ bool asiAlgo_MeshInterPlane::Perform(const Handle(Geom_Plane)& plane,
     // Add point to the point cloud.
     pts->AddElement(xyz[0], xyz[1], xyz[2]);
   }
-  //
-  m_plotter.DRAW_POINTS(pts->GetCoordsArray(), doSort ? Color_Green : Color_Red, "pts");
+
+  // Set the result.
+  m_result = pts;
 
   return true;
 }

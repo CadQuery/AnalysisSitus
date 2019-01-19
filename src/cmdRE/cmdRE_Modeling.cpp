@@ -404,7 +404,7 @@ int RE_ApproxPoints(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // Get point cloud.
+  // Get point cloud Node.
   Handle(asiData_IVPointSetNode)
     ptsNode = Handle(asiData_IVPointSetNode)::DownCast( cmdRE::model->FindNodeByName(argv[2]) );
   //
@@ -414,8 +414,11 @@ int RE_ApproxPoints(const Handle(asiTcl_Interp)& interp,
                                                         << argv[2]);
     return TCL_ERROR;
   }
-  //
-  Handle(asiAlgo_BaseCloud<double>) ptsCloud = ptsNode->GetPoints();
+
+  // Get points with reper (selected) points. The reper points (if any)
+  // will be used as breakpoints to approximate separately.
+  Handle(asiAlgo_BaseCloud<double>)   ptsCloud  = ptsNode->GetPoints();
+  Handle(TColStd_HPackedMapOfInteger) ptsFilter = ptsNode->GetFilter();
 
   // Get precision.
   const double prec = atof(argv[3]);

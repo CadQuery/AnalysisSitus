@@ -191,6 +191,16 @@ void asiVisu_IVPointSetPrs::unHighlight(vtkRenderer*                  renderer,
   {
     Handle(asiVisu_HPipelineList) pls = this->GetSelectionPipelineList();
 
+    // Update Data Model.
+    m_model->OpenCommand();
+    {
+      Handle(asiData_IVPointSetNode)
+        pointsNode = Handle(asiData_IVPointSetNode)::DownCast(m_node);
+
+      pointsNode->SetFilter(NULL);
+    }
+    m_model->CommitCommand();
+
     // Deactivate picking pipelines.
     for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
       it.Value()->Actor()->SetVisibility(0);

@@ -622,8 +622,10 @@ bool asiAlgo_KHull2d<TPoint>::checkIntersections(const asiAlgo_PointWithAttr<TPo
     Geom2dAPI_InterCurveCurve IntCC(L, LL);
     if ( IntCC.NbPoints() )
     {
+#if defined DRAW_DEBUG
       m_plotter.DRAW_LINK(P1.Coord, P2.Coord, Color_Red, "ilink_a");
       m_plotter.DRAW_LINK(Pi,       Pj,       Color_Red, "ilink_b");
+#endif
       return true;
     }
   }

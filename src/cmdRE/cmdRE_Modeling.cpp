@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_MeshInterPlane.h>
+#include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
 // asiEngine includes
@@ -41,10 +42,16 @@
 #if defined USE_MOBIUS
   // Mobius includes
   #include <mobius/cascade.h>
+  #include <mobius/geom_InterpolateMultiCurve.h>
   #include <mobius/geom_FairBCurve.h>
+  #include <mobius/geom_SkinSurface.h>
 
   using namespace mobius;
 #endif
+
+// OCCT includes
+#include <GCPnts_QuasiUniformAbscissa.hxx>
+#include <GeomAdaptor_Curve.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -446,6 +453,305 @@ int RE_ApproxPoints(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
+{
+  if ( argc < 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Check if fairing is requested.
+  bool   isFairing    = false;
+  double fairingCoeff = 0.0;
+  //
+  for ( int k = 2; k < argc-1; ++k )
+  {
+    if ( interp->IsKeyword(argv[k], "fair-isos") )
+    {
+      isFairing    = true;
+      fairingCoeff = Atof(argv[k + 1]);
+      break;
+    }
+  }
+
+  // Get degree in V curvilinear direction.
+  const int vDegree = atoi(argv[2]);
+
+  // Convert OCCT B-curves to Mobius B-curves.
+  std::vector< ptr<bcurve> > bCurves;
+  //
+  for ( int k = (isFairing ? 5 : 3); k < argc; ++k )
+  {
+    // Get Node.
+    Handle(ActAPI_INode) node = cmdRE::model->FindNodeByName(argv[k]);
+    //
+    if ( node.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find a data object with name '%1'."
+                                                          << argv[k]);
+      return TCL_OK;
+    }
+
+    // Get parametric curve.
+    Handle(Geom_Curve) curveBase;
+    //
+    if ( node->IsInstance( STANDARD_TYPE(asiData_IVCurveNode) ) )
+    {
+      double f, l;
+      curveBase = Handle(asiData_IVCurveNode)::DownCast(node)->GetCurve(f, l);
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected type of Node with ID %1."
+                                                          << argv[k]);
+      return TCL_OK;
+    }
+
+    // Convert curve using a dedicated Mobius utility.
+    Handle(Geom_BSplineCurve)
+      occtBCurve = Handle(Geom_BSplineCurve)::DownCast(curveBase);
+    //
+    ptr<bcurve> mobiusBCurve = cascade::GetMobiusBCurve(occtBCurve);
+    //
+    bCurves.push_back(mobiusBCurve);
+
+#if defined COUT_DEBUG
+    // Print knot vector for information.
+    const std::vector<double>& U = mobiusBCurve->Knots();
+    //
+    TCollection_AsciiString Ustr;
+    //
+    Ustr += "[";
+    for ( size_t s = 0; s < U.size(); ++s )
+    {
+      Ustr += U[s];
+      if ( s < U.size() - 1 )
+        Ustr += " ";
+    }
+    Ustr += "]";
+    //
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "... U[%1] = %2."
+                                                         << argv[k] << Ustr);
+#endif
+  }
+
+  // Skin surface.
+  geom_SkinSurface skinner(bCurves, vDegree, true);
+  //
+  if ( !skinner.PrepareSections() )
+  {
+    interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot prepare sections (error code %1)."
+                                                         << skinner.GetErrorCode() );
+    return TCL_OK;
+  }
+  //
+  if ( !skinner.BuildIsosU() )
+  {
+    interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot build U isos (error code %1)."
+                                                         << skinner.GetErrorCode() );
+    return TCL_OK;
+  }
+
+  // Fair skinning curves.
+  for ( size_t k = 0; k < skinner.IsoU_Curves.size(); ++k )
+  {
+    // Convert Mobius curve to OpenCascade curve.
+    {
+      Handle(Geom_BSplineCurve)
+        occtIsoU = cascade::GetOpenCascadeBCurve(skinner.IsoU_Curves[k]);
+
+#if defined DRAW_DEBUG
+      interp->GetPlotter().DRAW_CURVE(occtIsoU, Color_White, "Iso_U");
+#endif
+    }
+
+    // Perform fairing if requested.
+    if ( isFairing )
+    {
+      geom_FairBCurve fairing(skinner.IsoU_Curves[k], fairingCoeff, NULL, NULL);
+      //asiAlgo_FairBCurve fairing( occtIsoU,
+      //                            fairingCoeff, // Fairing coefficient.
+      //                            interp->GetProgress(),
+      //                            interp->GetPlotter() );
+      //
+      if ( !fairing.Perform() )
+      {
+        interp->GetProgress().SendLogMessage( LogErr(Normal) << "Fairing failed for iso-U curve %1."
+                                                             << int(k) );
+        return TCL_OK;
+      }
+
+      // Override U iso in the skinner.
+      skinner.IsoU_Curves[k] = fairing.GetResult();
+
+      // Convert Mobius curve to OpenCascade curve.
+      {
+        Handle(Geom_BSplineCurve)
+          occtIsoUFaired = cascade::GetOpenCascadeBCurve(skinner.IsoU_Curves[k]);
+
+#if defined DRAW_DEBUG
+        interp->GetPlotter().DRAW_CURVE(occtIsoUFaired, Color_White, "Iso_U_faired");
+#endif
+      }
+    }
+  }
+
+  // Build final surface.
+  if ( !skinner.BuildSurface() )
+  {
+    interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot build interpolant surface (error code %1)."
+                                                         << skinner.GetErrorCode() );
+    return TCL_OK;
+  }
+
+  // Get skinned surface.
+  const mobius::ptr<mobius::bsurf>& mobiusRes = skinner.GetResult();
+
+  /* ==========================================
+   *  Convert interpolant to OpenCascade shape
+   * ========================================== */
+
+  Handle(Geom_BSplineSurface)
+    occtRes = cascade::GetOpenCascadeBSurface(mobiusRes);
+
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], occtRes, Color_Default);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int RE_InterpMulticurve(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
+{
+  if ( argc < 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  /* =====================
+   *  Stage 1: get inputs
+   * ===================== */
+
+  // Get number of discretization points on each curve.
+  const int numPts = atoi(argv[1]);
+
+  // Get degree of interpolation.
+  const int degree = atoi(argv[2]);
+
+  // Get B-curves to interpolate.
+  std::vector<Handle(Geom_BSplineCurve)> bCurves;
+  std::vector<TCollection_AsciiString>   bCurveNames;
+  //
+  for ( int k = 3; k < argc; ++k )
+  {
+    // Get Node.
+    Handle(ActAPI_INode) node = cmdRE::model->FindNodeByName(argv[k]);
+    //
+    if ( node.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find a data object with name '%1'."
+                                                          << argv[k]);
+      return TCL_OK;
+    }
+
+    // Get parametric curve.
+    Handle(Geom_Curve) curveBase;
+    //
+    if ( node->IsInstance( STANDARD_TYPE(asiData_IVCurveNode) ) )
+    {
+      double f, l;
+      curveBase = Handle(asiData_IVCurveNode)::DownCast(node)->GetCurve(f, l);
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected type of Node with ID %1."
+                                                          << argv[k]);
+      return TCL_OK;
+    }
+
+    // Add curve to the collection of curves for synchronous interpolation.
+    Handle(Geom_BSplineCurve)
+      occtBCurve = Handle(Geom_BSplineCurve)::DownCast(curveBase);
+    //
+    if ( !occtBCurve.IsNull() )
+    {
+      bCurves.push_back(occtBCurve);
+      bCurveNames.push_back(argv[k]);
+    }
+  }
+
+  /* ==============================================================
+   *  Stage 2: discretize curves to have the same number of points
+   * ============================================================== */
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Prepare interpolation tool.
+  geom_InterpolateMultiCurve interpTool(degree,
+                                        ParamsSelection_Centripetal,
+                                        KnotsSelection_Average);
+
+  for ( size_t k = 0; k < bCurves.size(); ++k )
+  {
+    // Discretize with a uniform curvilinear step.
+    GeomAdaptor_Curve gac(bCurves[k]);
+    GCPnts_QuasiUniformAbscissa Defl(gac, numPts);
+    //
+    if ( !Defl.IsDone() )
+      return false;
+
+    // Fill row of points.
+    std::vector<xyz> ptsRow;
+    //
+    for ( int i = 1; i <= numPts; ++i )
+    {
+      const double param = Defl.Parameter(i);
+      xyz P = cascade::GetMobiusPnt( bCurves[k]->Value(param) );
+      //
+      ptsRow.push_back(P);
+    }
+
+    // Add points to the interpolation tool.
+    interpTool.AddRow(ptsRow);
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Discretize curves")
+
+  /* =================================
+   *  Stage 3: interpolate multicurve
+   * ================================= */
+
+  TIMER_RESET
+  TIMER_GO
+
+  if ( !interpTool.Perform() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Interpolation failed.");
+    return TCL_ERROR;
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Interpolate curves")
+
+  for ( int k = 0; k < interpTool.GetNumRows(); ++k )
+  {
+    Handle(Geom_BSplineCurve)
+      resCurve = cascade::GetOpenCascadeBCurve( interpTool.GetResult(k) );
+
+    interp->GetPlotter().REDRAW_CURVE(bCurveNames[k], resCurve, Color_Default);
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -486,7 +792,6 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     //
     __FILE__, group, RE_CutWithPlane);
 
-
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-approx-points",
     //
@@ -494,4 +799,20 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Attempts to approximate the given point cloud with a curve.",
     //
     __FILE__, group, RE_ApproxPoints);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-skin-surface",
+    //
+    "re-skin-surface resSurf vDegree [-fair-isos lambda] curveId1 ... curveIdK \n"
+    "\t Interpolates surface by skinning the passed B-curves.",
+    //
+    __FILE__, group, RE_SkinSurface);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-interp-multicurve",
+    //
+    "re-interp-multicurve numpts degree curveName1 [curveName2 [...]]\n"
+    "\t Interpolates a set of curves on the same knot sequence.",
+    //
+    __FILE__, group, RE_InterpMulticurve);
 }

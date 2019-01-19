@@ -49,14 +49,14 @@ asiVisu_Prs::asiVisu_Prs(const Handle(ActAPI_INode)& N)
   m_node             (N)
 {
   // Pipelines.
-  m_pipelineRepo.Bind( Group_Prs,    PipelineMap() );
-  m_pipelineRepo.Bind( Group_Pick,   PipelineMap() );
-  m_pipelineRepo.Bind( Group_Detect, PipelineMap() );
+  m_pipelineRepo.Bind( Group_Prs,       PipelineMap() );
+  m_pipelineRepo.Bind( Group_Selection, PipelineMap() );
+  m_pipelineRepo.Bind( Group_Detection, PipelineMap() );
 
   // Data providers for the pipelines.
-  m_dataPrvRepo.Bind( Group_Prs,    DataProviderMap() );
-  m_dataPrvRepo.Bind( Group_Pick,   DataProviderMap() );
-  m_dataPrvRepo.Bind( Group_Detect, DataProviderMap() );
+  m_dataPrvRepo.Bind( Group_Prs,       DataProviderMap() );
+  m_dataPrvRepo.Bind( Group_Selection, DataProviderMap() );
+  m_dataPrvRepo.Bind( Group_Detection, DataProviderMap() );
 }
 
 //-----------------------------------------------------------------------------
@@ -181,10 +181,10 @@ Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPipelineList() const
 //! Accessor for a visualization pipeline used for picking.
 //! \param[in] idx index of the picking pipeline to access.
 //! \return requested visualization pipeline.
-Handle(asiVisu_Pipeline) asiVisu_Prs::GetPickPipeline(const int idx) const
+Handle(asiVisu_Pipeline) asiVisu_Prs::GetSelectionPipeline(const int idx) const
 {
   // Get picking pipelines.
-  const PipelineMap& plMap = m_pipelineRepo.Find(Group_Pick);
+  const PipelineMap& plMap = m_pipelineRepo.Find(Group_Selection);
   //
   if ( !plMap.IsBound(idx) )
     return NULL;
@@ -196,11 +196,11 @@ Handle(asiVisu_Pipeline) asiVisu_Prs::GetPickPipeline(const int idx) const
 
 //! Returns the list of picking pipelines.
 //! \return list of picking pipelines.
-Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPickPipelineList() const
+Handle(asiVisu_HPipelineList) asiVisu_Prs::GetSelectionPipelineList() const
 {
   Handle(asiVisu_HPipelineList) result = new asiVisu_HPipelineList;
   //
-  for ( PipelineMap::Iterator pit( m_pipelineRepo.Find(Group_Pick) );
+  for ( PipelineMap::Iterator pit( m_pipelineRepo.Find(Group_Selection) );
         pit.More(); pit.Next() )
     result->Append( pit.Value() );
 
@@ -212,10 +212,10 @@ Handle(asiVisu_HPipelineList) asiVisu_Prs::GetPickPipelineList() const
 //! Accessor for a visualization pipeline used for detection.
 //! \param[in] idx index of the detection pipeline to access.
 //! \return requested visualization pipeline.
-Handle(asiVisu_Pipeline) asiVisu_Prs::GetDetectPipeline(const int idx) const
+Handle(asiVisu_Pipeline) asiVisu_Prs::GetDetectionPipeline(const int idx) const
 {
   // Get detection pipelines.
-  const PipelineMap& plMap = m_pipelineRepo.Find(Group_Detect);
+  const PipelineMap& plMap = m_pipelineRepo.Find(Group_Detection);
   //
   if ( !plMap.IsBound(idx) )
     return NULL;
@@ -227,11 +227,11 @@ Handle(asiVisu_Pipeline) asiVisu_Prs::GetDetectPipeline(const int idx) const
 
 //! Gets list of detection pipelines.
 //! \return list of detection pipelineû.
-Handle(asiVisu_HPipelineList) asiVisu_Prs::GetDetectPipelineList() const
+Handle(asiVisu_HPipelineList) asiVisu_Prs::GetDetectionPipelineList() const
 {
   Handle(asiVisu_HPipelineList) result = new asiVisu_HPipelineList;
   //
-  for ( PipelineMap::Iterator pit( m_pipelineRepo.Find(Group_Detect) );
+  for ( PipelineMap::Iterator pit( m_pipelineRepo.Find(Group_Detection) );
         pit.More(); pit.Next() )
     result->Append( pit.Value() );
 
@@ -424,9 +424,9 @@ Handle(asiVisu_DataProvider)
 //! by the passed ID. This method is specialized for PICKING pipelines.
 //! \param[in] id ID of the pipeline to get Data Provider for.
 //! \return requested Data Provider.
-Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderPick(const int id) const
+Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderSelection(const int id) const
 {
-  const DataProviderMap& dataPrvMap = m_dataPrvRepo.Find(Group_Pick);
+  const DataProviderMap& dataPrvMap = m_dataPrvRepo.Find(Group_Selection);
   //
   if ( !dataPrvMap.IsBound(id) )
     return NULL;
@@ -440,9 +440,9 @@ Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderPick(const int id) const
 //! passed ID. This method is specialized for DETECTION pipelines.
 //! \param[in] id ID of the pipeline to get Data Provider for.
 //! \return requested Data Provider.
-Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderDetect(const int id) const
+Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderDetection(const int id) const
 {
-  const DataProviderMap& dataPrvMap = m_dataPrvRepo.Find(Group_Detect);
+  const DataProviderMap& dataPrvMap = m_dataPrvRepo.Find(Group_Detection);
   //
   if ( !dataPrvMap.IsBound(id) )
     return NULL;
@@ -456,12 +456,12 @@ Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderDetect(const int id) const
 //! \param[in] pipeline     pipeline to set.
 //! \param[in] dataProvider Data Provider for the pipeline.
 //! \param[in] idx          pipeline index (1 by default).
-void asiVisu_Prs::installPickPipeline(const Handle(asiVisu_Pipeline)&     pipeline,
-                                      const Handle(asiVisu_DataProvider)& dataProvider,
-                                      const int                           idx)
+void asiVisu_Prs::installSelectionPipeline(const Handle(asiVisu_Pipeline)&     pipeline,
+                                           const Handle(asiVisu_DataProvider)& dataProvider,
+                                           const int                           idx)
 {
-  m_pipelineRepo.ChangeFind(Group_Pick).Bind(idx, pipeline);
-  m_dataPrvRepo.ChangeFind(Group_Pick).Bind(idx, dataProvider);
+  m_pipelineRepo.ChangeFind(Group_Selection).Bind(idx, pipeline);
+  m_dataPrvRepo.ChangeFind(Group_Selection).Bind(idx, dataProvider);
 }
 
 //-----------------------------------------------------------------------------
@@ -470,10 +470,10 @@ void asiVisu_Prs::installPickPipeline(const Handle(asiVisu_Pipeline)&     pipeli
 //! \param[in] pipeline     pipeline to set.
 //! \param[in] dataProvider Data Provider for the pipeline.
 //! \param[in] idx          pipeline index (1 by default).
-void asiVisu_Prs::installDetectPipeline(const Handle(asiVisu_Pipeline)&     pipeline,
-                                        const Handle(asiVisu_DataProvider)& dataProvider,
-                                        const int                           idx)
+void asiVisu_Prs::installDetectionPipeline(const Handle(asiVisu_Pipeline)&     pipeline,
+                                           const Handle(asiVisu_DataProvider)& dataProvider,
+                                           const int                           idx)
 {
-  m_pipelineRepo.ChangeFind(Group_Detect).Bind(idx, pipeline);
-  m_dataPrvRepo.ChangeFind(Group_Detect).Bind(idx, dataProvider);
+  m_pipelineRepo.ChangeFind(Group_Detection).Bind(idx, pipeline);
+  m_dataPrvRepo.ChangeFind(Group_Detection).Bind(idx, dataProvider);
 }

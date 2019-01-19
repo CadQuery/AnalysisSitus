@@ -81,7 +81,7 @@ asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& N)
     plDetection->Actor()->GetProperty()->SetColor(0.0, 1.0, 1.0);
     plDetection->Actor()->GetProperty()->SetPointSize(10.0);
     //
-    this->installDetectPipeline(plDetection, DPsens, SelectionPipeline_Handles);
+    this->installDetectionPipeline(plDetection, DPsens, SelectionPipeline_Handles);
   }
 
   // Pipeline for detection of reper points.
@@ -92,7 +92,7 @@ asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& N)
     plDetection->Actor()->GetProperty()->SetColor(0.0, 1.0, 1.0);
     plDetection->Actor()->GetProperty()->SetPointSize(10.0);
     //
-    this->installDetectPipeline(plDetection, DPsens, SelectionPipeline_Repers);
+    this->installDetectionPipeline(plDetection, DPsens, SelectionPipeline_Repers);
   }
 
   // Pipeline for persistent picking of handles.
@@ -103,7 +103,7 @@ asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& N)
     plPicking->Actor()->GetProperty()->SetColor(1.0, 1.0, 0.0);
     plPicking->Actor()->GetProperty()->SetPointSize(10.0);
     //
-    this->installPickPipeline(plPicking, DPsens, SelectionPipeline_Handles);
+    this->installSelectionPipeline(plPicking, DPsens, SelectionPipeline_Handles);
   }
 
   // Pipeline for persistent picking of repers.
@@ -114,7 +114,7 @@ asiVisu_IVCurvePrs::asiVisu_IVCurvePrs(const Handle(ActAPI_INode)& N)
     plPicking->Actor()->GetProperty()->SetColor(1.0, 1.0, 0.0);
     plPicking->Actor()->GetProperty()->SetPointSize(10.0);
     //
-    this->installPickPipeline(plPicking, DPsens, SelectionPipeline_Repers);
+    this->installSelectionPipeline(plPicking, DPsens, SelectionPipeline_Repers);
   }
 
   // Adjust props.
@@ -167,7 +167,7 @@ void asiVisu_IVCurvePrs::highlight(vtkRenderer*                        renderer,
 
   if ( selNature == SelectionNature_Detection )
   {
-    Handle(asiVisu_HPipelineList) pls = this->GetDetectPipelineList();
+    Handle(asiVisu_HPipelineList) pls = this->GetDetectionPipelineList();
 
     // Activate detection pipelines.
     for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
@@ -194,13 +194,13 @@ void asiVisu_IVCurvePrs::highlight(vtkRenderer*                        renderer,
 
       // Update.
       pl->Actor()->SetVisibility(1);
-      pl->SetInput( this->dataProviderDetect() );
+      pl->SetInput( this->dataProviderDetection() );
       pl->Update();
     }
   }
   else if ( selNature == SelectionNature_Persistent )
   {
-    Handle(asiVisu_HPipelineList) pls = this->GetPickPipelineList();
+    Handle(asiVisu_HPipelineList) pls = this->GetSelectionPipelineList();
 
     // Activate picking pipelines.
     int plIdx = 1;
@@ -210,7 +210,7 @@ void asiVisu_IVCurvePrs::highlight(vtkRenderer*                        renderer,
 
       // Update.
       pl->Actor()->SetVisibility(1);
-      pl->SetInput( this->dataProviderPick(plIdx++) );
+      pl->SetInput( this->dataProviderSelection(plIdx++) );
       pl->Update();
     }
   }
@@ -225,7 +225,7 @@ void asiVisu_IVCurvePrs::unHighlight(vtkRenderer*                  renderer,
 
   if ( selNature == SelectionNature_Detection )
   {
-    Handle(asiVisu_HPipelineList) pls = this->GetDetectPipelineList();
+    Handle(asiVisu_HPipelineList) pls = this->GetDetectionPipelineList();
 
     // Deactivate detection pipelines.
     for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
@@ -233,7 +233,7 @@ void asiVisu_IVCurvePrs::unHighlight(vtkRenderer*                  renderer,
   }
   else if ( selNature == SelectionNature_Persistent )
   {
-    Handle(asiVisu_HPipelineList) pls = this->GetPickPipelineList();
+    Handle(asiVisu_HPipelineList) pls = this->GetSelectionPipelineList();
 
     // Deactivate picking pipelines.
     for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
@@ -247,8 +247,8 @@ void asiVisu_IVCurvePrs::renderPipelines(vtkRenderer* renderer) const
 {
   /* Take care of selection pipelines */
 
-  Handle(asiVisu_HPipelineList) detectPls = this->GetDetectPipelineList();
-  Handle(asiVisu_HPipelineList) pickPls   = this->GetPickPipelineList();
+  Handle(asiVisu_HPipelineList) detectPls = this->GetDetectionPipelineList();
+  Handle(asiVisu_HPipelineList) pickPls   = this->GetSelectionPipelineList();
 
   // Picking pipeline must be added to renderer the LAST (!). Otherwise
   // we can experience some strange coloring bug because of their coincidence.
@@ -265,8 +265,8 @@ void asiVisu_IVCurvePrs::deRenderPipelines(vtkRenderer* renderer) const
 {
   /* Take care of selection pipelines */
 
-  Handle(asiVisu_HPipelineList) detectPls = this->GetDetectPipelineList();
-  Handle(asiVisu_HPipelineList) pickPls   = this->GetPickPipelineList();
+  Handle(asiVisu_HPipelineList) detectPls = this->GetDetectionPipelineList();
+  Handle(asiVisu_HPipelineList) pickPls   = this->GetSelectionPipelineList();
 
   for ( asiVisu_HPipelineList::Iterator it(*detectPls); it.More(); it.Next() )
     it.Value()->RemoveFromRenderer(renderer);

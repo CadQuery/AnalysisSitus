@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 08 April 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@ asiData_IVPointSetNode::asiData_IVPointSetNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,      PID_Name);
   REGISTER_PARAMETER(RealArray, PID_Geometry);
+  REGISTER_PARAMETER(Selection, PID_Filter);
 }
 
 //! Returns new DETACHED instance of the Node ensuring its correct
@@ -61,6 +62,7 @@ void asiData_IVPointSetNode::Init()
   this->InitParameter(PID_Name, "Name");
   //
   this->SetPoints(NULL);
+  this->SetFilter(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -95,10 +97,23 @@ Handle(asiAlgo_BaseCloud<double>) asiData_IVPointSetNode::GetPoints() const
 }
 
 //! Sets point cloud to store.
-//! \param points [in] points to store.
+//! \param[in] points points to store.
 void asiData_IVPointSetNode::SetPoints(const Handle(asiAlgo_BaseCloud<double>)& points)
 {
   Handle(TColStd_HArray1OfReal) arr = asiAlgo_PointCloudUtils::AsRealArray(points);
   //
   ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray( points.IsNull() ? NULL : arr );
+}
+
+//! \return persistent filter.
+Handle(TColStd_HPackedMapOfInteger) asiData_IVPointSetNode::GetFilter() const
+{
+  return ActParamTool::AsSelection( this->Parameter(PID_Filter) )->GetMask();
+}
+
+//! Sets filter of indices.
+//! \param[in] filter mask to store.
+void asiData_IVPointSetNode::SetFilter(const Handle(TColStd_HPackedMapOfInteger)& filter)
+{
+  ActParamTool::AsSelection( this->Parameter(PID_Filter) )->SetMask(filter);
 }

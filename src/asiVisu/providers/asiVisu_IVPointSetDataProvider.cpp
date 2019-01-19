@@ -58,7 +58,13 @@ Handle(asiAlgo_BaseCloud<double>) asiVisu_IVPointSetDataProvider::GetPoints() co
 //! \return NULL filter.
 Handle(TColStd_HPackedMapOfInteger) asiVisu_IVPointSetDataProvider::GetIndices() const
 {
-  return NULL;
+  Handle(asiData_IVPointSetNode)
+    points_n = Handle(asiData_IVPointSetNode)::DownCast(m_node);
+  //
+  if ( points_n.IsNull() || !points_n->IsWellFormed() )
+    return NULL;
+
+  return points_n->GetFilter();
 }
 
 //-----------------------------------------------------------------------------
@@ -77,8 +83,9 @@ Handle(ActAPI_HParameterList) asiVisu_IVPointSetDataProvider::translationSources
   if ( points_n.IsNull() || !points_n->IsWellFormed() )
     return out;
 
-  // Register Parameter as sensitive
-  out << points_n->Parameter(asiData_IVPointSetNode::PID_Geometry);
+  // Register Parameters as sensitive
+  out << points_n->Parameter(asiData_IVPointSetNode::PID_Geometry)
+      << points_n->Parameter(asiData_IVPointSetNode::PID_Filter);
 
   return out;
 }

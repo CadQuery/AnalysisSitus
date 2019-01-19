@@ -98,7 +98,7 @@ asiVisu_GeomFacePrs::asiVisu_GeomFacePrs(const Handle(ActAPI_INode)& N)
   detect_pl->Actor()->SetVisibility(0);
 
   // Bind to the data provider
-  this->installDetectPipeline( detect_pl, DP );
+  this->installDetectionPipeline( detect_pl, DP );
 
   /* ========================
    *  Pipeline for selection
@@ -126,7 +126,7 @@ asiVisu_GeomFacePrs::asiVisu_GeomFacePrs(const Handle(ActAPI_INode)& N)
   sel_pl->Actor()->SetVisibility(0);
 
   // Bind to the data provider
-  this->installPickPipeline( sel_pl, DP );
+  this->installSelectionPipeline( sel_pl, DP );
 }
 
 //! Factory method for Presentation.
@@ -224,14 +224,14 @@ void asiVisu_GeomFacePrs::afterInitPipelines()
 
   // Access pipelines dedicated for highlighting
   const Handle(asiVisu_FaceDomainPipeline)&
-    detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() );
+    detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectionPipeline() );
   const Handle(asiVisu_FaceDomainPipeline)&
-    pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
+    pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetSelectionPipeline() );
 
   const Handle(asiVisu_FaceDataProvider)&
-    detect_dp = Handle(asiVisu_FaceDataProvider)::DownCast( this->dataProviderDetect() );
+    detect_dp = Handle(asiVisu_FaceDataProvider)::DownCast( this->dataProviderDetection() );
   const Handle(asiVisu_FaceDataProvider)&
-    pick_dp = Handle(asiVisu_FaceDataProvider)::DownCast( this->dataProviderPick() );
+    pick_dp = Handle(asiVisu_FaceDataProvider)::DownCast( this->dataProviderSelection() );
 
   // Init PL as selection pipelines are not automated
   detect_pl->SetInput(detect_dp);
@@ -255,9 +255,9 @@ void asiVisu_GeomFacePrs::afterUpdatePipelines() const
 
   // Access pipelines dedicated for highlighting
   const Handle(asiVisu_FaceDomainPipeline)&
-    detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() );
+    detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectionPipeline() );
   const Handle(asiVisu_FaceDomainPipeline)&
-    pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
+    pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetSelectionPipeline() );
 
   // IMPORTANT: We update our highlighting pipelines here just to make things
   // faster. The better place to do that is "highlight" method, because
@@ -309,9 +309,9 @@ void asiVisu_GeomFacePrs::highlight(vtkRenderer*                        theRende
   //Handle(asiVisu_FaceDomainPipeline) hili_pl;
   ////
   //if ( theSelNature == SelectionNature_Pick )
-  //  hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
+  //  hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetSelectionPipeline() );
   //else
-  //  hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() );
+  //  hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectionPipeline() );
 
   //if ( !hili_pl )
   //  return;
@@ -319,7 +319,7 @@ void asiVisu_GeomFacePrs::highlight(vtkRenderer*                        theRende
   //// Set selection mask...
   //hili_pl->SetSelectedCells(cellIds);
   //hili_pl->ForceExecution();
-  //hili_pl->SetInput( this->dataProviderDetect() );
+  //hili_pl->SetInput( this->dataProviderDetection() );
 
   //// ... and visibility
   //hili_pl->Actor()->SetVisibility( !cellIds.IsEmpty() );
@@ -337,9 +337,9 @@ void asiVisu_GeomFacePrs::unHighlight(vtkRenderer*                  theRenderer,
   //Handle(asiVisu_FaceDomainPipeline) hili_pl;
   ////
   //if ( theSelNature == SelectionNature_Pick )
-  //  hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
+  //  hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetSelectionPipeline() );
   //else
-  //  hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() );
+  //  hili_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectionPipeline() );
 
   //if ( !hili_pl )
   //  return;
@@ -369,8 +369,8 @@ void asiVisu_GeomFacePrs::renderPipelines(vtkRenderer* theRenderer) const
   //---------------------------------------------------------------------------
 
   Handle(asiVisu_FaceDomainPipeline)
-    detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() ),
-    pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
+    detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectionPipeline() ),
+    pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetSelectionPipeline() );
 
   // Picking pipeline must be added to renderer the LAST (!). Otherwise
   // we experience some strange coloring bug because of their coincidence
@@ -389,8 +389,8 @@ void asiVisu_GeomFacePrs::deRenderPipelines(vtkRenderer* theRenderer) const
   //---------------------------------------------------------------------------
 
   Handle(asiVisu_FaceDomainPipeline)
-    detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectPipeline() ),
-    pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetPickPipeline() );
+    detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectionPipeline() ),
+    pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetSelectionPipeline() );
   //
   detect_pl->RemoveFromRenderer(theRenderer);
   pick_pl->RemoveFromRenderer(theRenderer);

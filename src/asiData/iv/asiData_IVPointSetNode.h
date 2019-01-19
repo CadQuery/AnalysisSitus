@@ -66,6 +66,7 @@ public:
     PID_Name,         //!< Name of the Node.
   //------------------//
     PID_Geometry,     //!< Point cloud.
+    PID_Filter,       //!< Filter of indices.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -92,6 +93,12 @@ public:
 
   asiData_EXPORT void
     SetPoints(const Handle(asiAlgo_BaseCloud<double>)& pointCloud);
+
+  asiData_EXPORT Handle(TColStd_HPackedMapOfInteger)
+    GetFilter() const;
+
+  asiData_EXPORT void
+    SetFilter(const Handle(TColStd_HPackedMapOfInteger)& filter);
 
 // Initialization:
 public:

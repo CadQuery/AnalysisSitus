@@ -63,7 +63,18 @@ asiVisu_IVPointSetPrs::asiVisu_IVPointSetPrs(const Handle(ActAPI_INode)& N)
     plDetection->Actor()->GetProperty()->SetColor(0.0, 1.0, 1.0);
     plDetection->Actor()->GetProperty()->SetPointSize(10.0);
     //
-    this->installDetectPipeline(plDetection, DP, SelectionPipeline_Main);
+    this->installDetectionPipeline(plDetection, DP, SelectionPipeline_Main);
+  }
+
+  // Pipeline for selecting points.
+  {
+    Handle(asiVisu_PointsPipeline)
+      plSelection = new asiVisu_PointsPipeline(true); // `true` for partial visualization.
+    //
+    plSelection->Actor()->GetProperty()->SetColor(1.0, 1.0, 0.0);
+    plSelection->Actor()->GetProperty()->SetPointSize(10.0);
+    //
+    this->installSelectionPipeline(plSelection, DP, SelectionPipeline_Main);
   }
 
   // Adjust visual properties.
@@ -107,7 +118,7 @@ void asiVisu_IVPointSetPrs::highlight(vtkRenderer*                        render
 
   if ( selNature == SelectionNature_Detection )
   {
-    Handle(asiVisu_HPipelineList) pls = this->GetDetectPipelineList();
+    Handle(asiVisu_HPipelineList) pls = this->GetDetectionPipelineList();
 
     // Activate detection pipelines.
     for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
@@ -125,13 +136,13 @@ void asiVisu_IVPointSetPrs::highlight(vtkRenderer*                        render
 
       // Update.
       pl->Actor()->SetVisibility(1);
-      pl->SetInput( this->dataProviderDetect() );
+      pl->SetInput( this->dataProviderDetection() );
       pl->Update();
     }
   }
   else if ( selNature == SelectionNature_Persistent )
   {
-    Handle(asiVisu_HPipelineList) pls = this->GetPickPipelineList();
+    Handle(asiVisu_HPipelineList) pls = this->GetSelectionPipelineList();
 
     // Activate picking pipelines.
     int plIdx = 1;
@@ -139,9 +150,23 @@ void asiVisu_IVPointSetPrs::highlight(vtkRenderer*                        render
     {
       const Handle(asiVisu_Pipeline)& pl = it.Value();
 
-      // Update.
+      // Get indices of the picked cells.
+      Handle(TColStd_HPackedMapOfInteger)
+        pickedIds = new TColStd_HPackedMapOfInteger( cellRes->GetPickedCellIds() );
+
+      // Update Data Model.
+      m_model->OpenCommand();
+      {
+        Handle(asiData_IVPointSetNode)
+          pointsNode = Handle(asiData_IVPointSetNode)::DownCast(m_node);
+
+        pointsNode->SetFilter(pickedIds);
+      }
+      m_model->CommitCommand();
+
+      // Update actor.
       pl->Actor()->SetVisibility(1);
-      pl->SetInput( this->dataProviderPick(plIdx++) );
+      pl->SetInput( this->dataProviderSelection(plIdx++) );
       pl->Update();
     }
   }
@@ -156,7 +181,7 @@ void asiVisu_IVPointSetPrs::unHighlight(vtkRenderer*                  renderer,
 
   if ( selNature == SelectionNature_Detection )
   {
-    Handle(asiVisu_HPipelineList) pls = this->GetDetectPipelineList();
+    Handle(asiVisu_HPipelineList) pls = this->GetDetectionPipelineList();
 
     // Deactivate detection pipelines.
     for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
@@ -164,7 +189,7 @@ void asiVisu_IVPointSetPrs::unHighlight(vtkRenderer*                  renderer,
   }
   else if ( selNature == SelectionNature_Persistent )
   {
-    Handle(asiVisu_HPipelineList) pls = this->GetPickPipelineList();
+    Handle(asiVisu_HPipelineList) pls = this->GetSelectionPipelineList();
 
     // Deactivate picking pipelines.
     for ( asiVisu_HPipelineList::Iterator it(*pls); it.More(); it.Next() )
@@ -196,8 +221,8 @@ void asiVisu_IVPointSetPrs::renderPipelines(vtkRenderer* renderer) const
 {
   /* Take care of selection pipelines */
 
-  Handle(asiVisu_HPipelineList) detectPls = this->GetDetectPipelineList();
-  Handle(asiVisu_HPipelineList) pickPls   = this->GetPickPipelineList();
+  Handle(asiVisu_HPipelineList) detectPls = this->GetDetectionPipelineList();
+  Handle(asiVisu_HPipelineList) pickPls   = this->GetSelectionPipelineList();
 
   // Picking pipeline must be added to renderer the LAST (!). Otherwise
   // we can experience some strange coloring bug because of their coincidence.
@@ -231,8 +256,8 @@ void asiVisu_IVPointSetPrs::deRenderPipelines(vtkRenderer* renderer) const
 {
   /* Take care of selection pipelines */
 
-  Handle(asiVisu_HPipelineList) detectPls = this->GetDetectPipelineList();
-  Handle(asiVisu_HPipelineList) pickPls   = this->GetPickPipelineList();
+  Handle(asiVisu_HPipelineList) detectPls = this->GetDetectionPipelineList();
+  Handle(asiVisu_HPipelineList) pickPls   = this->GetSelectionPipelineList();
 
   for ( asiVisu_HPipelineList::Iterator it(*detectPls); it.More(); it.Next() )
     it.Value()->RemoveFromRenderer(renderer);

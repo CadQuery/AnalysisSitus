@@ -71,9 +71,9 @@ public:
   //! Pipeline groups.
   enum PipelineGroup
   {
-    Group_Prs,   //!< Group of pipelines dedicated to presentation.
-    Group_Pick,  //!< Group of pipelines dedicated to picking.
-    Group_Detect //!< Group of pipelines dedicated to detection.
+    Group_Prs,       //!< Group of pipelines dedicated to presentation.
+    Group_Selection, //!< Group of pipelines dedicated to persistent selection.
+    Group_Detection  //!< Group of pipelines dedicated to transient detection.
   };
 
 public:
@@ -103,16 +103,16 @@ public:
     GetPipelineList() const;
 
   asiVisu_EXPORT virtual Handle(asiVisu_Pipeline)
-    GetPickPipeline(const int idx = 1) const;
+    GetSelectionPipeline(const int idx = 1) const;
 
   asiVisu_EXPORT virtual Handle(asiVisu_HPipelineList)
-    GetPickPipelineList() const;
+    GetSelectionPipelineList() const;
 
   asiVisu_EXPORT virtual Handle(asiVisu_Pipeline)
-    GetDetectPipeline(const int idx = 1) const;
+    GetDetectionPipeline(const int idx = 1) const;
 
   asiVisu_EXPORT virtual Handle(asiVisu_HPipelineList)
-    GetDetectPipelineList() const;
+    GetDetectionPipelineList() const;
 
   asiVisu_EXPORT virtual const Handle(ActAPI_INode)&
     GetNode() const;
@@ -170,20 +170,20 @@ protected:
                  const PipelineGroup             group) const;
 
   asiVisu_EXPORT Handle(asiVisu_DataProvider)
-    dataProviderPick(const int idx = 1) const;
+    dataProviderSelection(const int idx = 1) const;
 
   asiVisu_EXPORT Handle(asiVisu_DataProvider)
-    dataProviderDetect(const int idx = 1) const;
+    dataProviderDetection(const int idx = 1) const;
 
   asiVisu_EXPORT void
-    installPickPipeline(const Handle(asiVisu_Pipeline)&     pipeline,
-                        const Handle(asiVisu_DataProvider)& dataProvider,
-                        const int                           idx = 1);
+    installSelectionPipeline(const Handle(asiVisu_Pipeline)&     pipeline,
+                             const Handle(asiVisu_DataProvider)& dataProvider,
+                             const int                           idx = 1);
 
   asiVisu_EXPORT void
-    installDetectPipeline(const Handle(asiVisu_Pipeline)&     pipeline,
-                          const Handle(asiVisu_DataProvider)& dataProvider,
-                          const int                           idx = 1);
+    installDetectionPipeline(const Handle(asiVisu_Pipeline)&     pipeline,
+                             const Handle(asiVisu_DataProvider)& dataProvider,
+                             const int                           idx = 1);
 
 protected:
 

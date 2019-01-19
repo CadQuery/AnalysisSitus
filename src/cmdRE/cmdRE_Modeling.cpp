@@ -457,6 +457,7 @@ int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
                    int                          argc,
                    const char**                 argv)
 {
+#if defined USE_MOBIUS
   if ( argc < 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
@@ -619,6 +620,11 @@ int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
   interp->GetPlotter().REDRAW_SURFACE(argv[1], occtRes, Color_Default);
 
   return TCL_OK;
+#else
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This feature is not available.");
+
+  return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -627,6 +633,7 @@ int RE_InterpMulticurve(const Handle(asiTcl_Interp)& interp,
                         int                          argc,
                         const char**                 argv)
 {
+#if defined USE_MOBIUS
   if ( argc < 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
@@ -748,6 +755,11 @@ int RE_InterpMulticurve(const Handle(asiTcl_Interp)& interp,
   }
 
   return TCL_OK;
+#else
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This feature is not available.");
+
+  return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------

@@ -2919,3 +2919,70 @@ TopoDS_Vertex asiAlgo_Utils::GetCommonVertex(const TopoDS_Shape& F,
   }
   return commonVertex;
 }
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::JoinCurves(std::vector<Handle(Geom_BSplineCurve)>& curves,
+                               const int                               order,
+                               Handle(Geom_BSplineCurve)&              result,
+                               ActAPI_ProgressEntry                    progress)
+{
+#if defined USE_MOBIUS
+  if ( curve1->Degree() != curve2->Degree() )
+  {
+    progress.SendLogMessage(LogErr(Normal) << "Cannot join curves of different degrees.");
+    return false;
+  }
+  //
+  const int degree = curve1->Degree();
+
+  // Convert curve 1 to Mobius form.
+  mobius::cascade_BSplineCurve3D converter1(curve1);
+  converter1.DirectConvert();
+  //
+  const ptr<bcurve>& mobCurve1 = converter1.GetMobiusCurve();
+
+  // Convert curve 2 to Mobius form.
+  mobius::cascade_BSplineCurve3D converter2(curve2);
+  converter2.DirectConvert();
+  //
+  const ptr<bcurve>& mobCurve2 = converter2.GetMobiusCurve();
+
+  // Get common vector of poles.
+  std::vector<xyz> poles;
+  //
+  for ( int k = 0; k < mobCurve1->NumOfPoles(); ++k )
+    poles.push_back( mobCurve1->GetPole(k) );
+  //
+  for ( int k = 1; k < mobCurve2->NumOfPoles(); ++k )
+    poles.push_back( mobCurve2->GetPole(k) );
+
+  // Prepare knots.
+  std::vector<double> U;
+  //
+  for ( int k = 0; k < mobCurve1->NumOfKnots() - 1; ++k )
+    U.push_back( mobCurve1->GetKnot(k) );
+  //
+  const double U1max = U[U.size() - 1];
+  //
+  for ( int k = degree + 1; k < mobCurve2->NumOfKnots(); ++k )
+    U.push_back( U1max + mobCurve2->GetKnot(k) );
+
+  if ( order )
+  {
+    // TODO: perform knot removal here...
+  }
+
+  ptr<bcurve> mobResult = new bcurve(poles, U, degree);
+
+  // Convert curve 1 to Mobius form.
+  mobius::cascade_BSplineCurve3D converter3(mobResult);
+  converter3.DirectConvert();
+  //
+  result = converter3.GetOpenCascadeCurve();
+
+  return true;
+#else
+  return false;
+#endif;
+}

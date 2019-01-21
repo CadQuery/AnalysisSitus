@@ -832,6 +832,73 @@ int RE_InterpMulticurve(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int RE_JoinCurves(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  if ( argc < 4 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get B-curves to join.
+  std::vector<Handle(Geom_BSplineCurve)> bCurves;
+  //
+  for ( int k = 2; k < argc; ++k )
+  {
+    // Get Node.
+    Handle(ActAPI_INode) node = cmdRE::model->FindNodeByName(argv[k]);
+    //
+    if ( node.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find a data object with name '%1'."
+                                                          << argv[k]);
+      return TCL_OK;
+    }
+
+    // Get parametric curve.
+    Handle(Geom_Curve) curveBase;
+    //
+    if ( node->IsInstance( STANDARD_TYPE(asiData_IVCurveNode) ) )
+    {
+      double f, l;
+      curveBase = Handle(asiData_IVCurveNode)::DownCast(node)->GetCurve(f, l);
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected type of Node with ID %1."
+                                                          << argv[k]);
+      return TCL_OK;
+    }
+
+    // Add curve to the collection of curves for synchronous interpolation.
+    Handle(Geom_BSplineCurve)
+      occtBCurve = Handle(Geom_BSplineCurve)::DownCast(curveBase);
+    //
+    if ( !occtBCurve.IsNull() )
+      bCurves.push_back(occtBCurve);
+  }
+
+  // Join curves.
+  Handle(Geom_BSplineCurve) jointCurve;
+  //
+  if ( !asiAlgo_Utils::JoinCurves( bCurves,
+                                   2, // C2
+                                   jointCurve,
+                                   interp->GetProgress() ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot join curves.");
+    return TCL_OK;
+  }
+
+  // Set result.
+  interp->GetPlotter().REDRAW_CURVE(argv[1], jointCurve, Color_Default);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -895,4 +962,12 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Interpolates a set of curves on the same knot sequence.",
     //
     __FILE__, group, RE_InterpMulticurve);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-join-curves",
+    //
+    "re-join-curves res curveName1 curveName2 [curveName3 [...]]\n"
+    "\t Joins curves into a single curve.",
+    //
+    __FILE__, group, RE_JoinCurves);
 }

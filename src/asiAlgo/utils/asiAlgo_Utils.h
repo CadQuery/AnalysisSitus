@@ -925,6 +925,22 @@ namespace asiAlgo_Utils
                     const TopoDS_Shape& G,
                     const TopoDS_Shape& H);
 
+  //! Joins the passed pair of B-spline curves into a single curve.
+  //! The resulting curve will have the passed continuity at joints. The input
+  //! curves should be properly oriented.
+  //! \param[in]  curve1   first B-curve to join.
+  //! \param[in]  curve2   second B-curve to join.
+  //! \param[in]  order    order of continuity to ensure.
+  //! \param[out] result   joint curve.
+  //! \param[in]  pregress progress notifier.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    JoinCurves(Handle(Geom_BSplineCurve)& curve1,
+               Handle(Geom_BSplineCurve)& curve2,
+               const int                  order,
+               Handle(Geom_BSplineCurve)& result,
+               ActAPI_ProgressEntry       progress);
+
   //! Joins the passed chain of B-spline curves into a single curve.
   //! The resulting curve will have the passed continuity at joints. The input
   //! curves should be properly oriented.

@@ -341,12 +341,12 @@ int RE_CutWithPlane(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
 {
-  if ( argc != 3 )
+  if ( argc != 3 && argc != 4 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  const bool doSort = true;
+  const bool doSort = !interp->HasKeyword(argc, argv, "nosort");
 
   // Get Triangulaion.
   Handle(asiData_TriangulationNode) tris_n = cmdRE::model->GetTriangulationNode();
@@ -934,8 +934,10 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-cut-with-plane",
     //
-    "re-cut-with-plane res p\n"
-    "\t Cuts triangulation with plane.",
+    "re-cut-with-plane res p [-nosort]\n"
+    "\t Cuts triangulation with plane. If '-nosort' key is passed, the"
+    "\t resulting points are not post-processed with K-neighbors hull"
+    "\t algorithm thus remaining disordered.",
     //
     __FILE__, group, RE_CutWithPlane);
 

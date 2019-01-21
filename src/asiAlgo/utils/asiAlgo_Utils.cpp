@@ -2922,12 +2922,13 @@ TopoDS_Vertex asiAlgo_Utils::GetCommonVertex(const TopoDS_Shape& F,
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_Utils::JoinCurves(std::vector<Handle(Geom_BSplineCurve)>& curves,
-                               const int                               order,
-                               Handle(Geom_BSplineCurve)&              result,
-                               ActAPI_ProgressEntry                    progress)
+bool asiAlgo_Utils::JoinCurves(Handle(Geom_BSplineCurve)& curve1,
+                               Handle(Geom_BSplineCurve)& curve2,
+                               const int                  order,
+                               Handle(Geom_BSplineCurve)& result,
+                               ActAPI_ProgressEntry       progress)
 {
-#if defined USE_MOBIUS
+  #if defined USE_MOBIUS
   if ( curve1->Degree() != curve2->Degree() )
   {
     progress.SendLogMessage(LogErr(Normal) << "Cannot join curves of different degrees.");
@@ -2937,35 +2938,31 @@ bool asiAlgo_Utils::JoinCurves(std::vector<Handle(Geom_BSplineCurve)>& curves,
   const int degree = curve1->Degree();
 
   // Convert curve 1 to Mobius form.
-  mobius::cascade_BSplineCurve3D converter1(curve1);
-  converter1.DirectConvert();
-  //
-  const ptr<bcurve>& mobCurve1 = converter1.GetMobiusCurve();
+  const mobius::ptr<mobius::bcurve>&
+    mobCurve1 = mobius::cascade::GetMobiusBCurve(curve1);
 
   // Convert curve 2 to Mobius form.
-  mobius::cascade_BSplineCurve3D converter2(curve2);
-  converter2.DirectConvert();
-  //
-  const ptr<bcurve>& mobCurve2 = converter2.GetMobiusCurve();
+  const mobius::ptr<mobius::bcurve>&
+    mobCurve2 = mobius::cascade::GetMobiusBCurve(curve2);
 
   // Get common vector of poles.
-  std::vector<xyz> poles;
+  std::vector<mobius::xyz> poles;
   //
-  for ( int k = 0; k < mobCurve1->NumOfPoles(); ++k )
+  for ( int k = 0; k < mobCurve1->GetNumOfPoles(); ++k )
     poles.push_back( mobCurve1->GetPole(k) );
   //
-  for ( int k = 1; k < mobCurve2->NumOfPoles(); ++k )
+  for ( int k = 1; k < mobCurve2->GetNumOfPoles(); ++k )
     poles.push_back( mobCurve2->GetPole(k) );
 
   // Prepare knots.
   std::vector<double> U;
   //
-  for ( int k = 0; k < mobCurve1->NumOfKnots() - 1; ++k )
+  for ( int k = 0; k < mobCurve1->GetNumOfKnots() - 1; ++k )
     U.push_back( mobCurve1->GetKnot(k) );
   //
   const double U1max = U[U.size() - 1];
   //
-  for ( int k = degree + 1; k < mobCurve2->NumOfKnots(); ++k )
+  for ( int k = degree + 1; k < mobCurve2->GetNumOfKnots(); ++k )
     U.push_back( U1max + mobCurve2->GetKnot(k) );
 
   if ( order )
@@ -2973,15 +2970,44 @@ bool asiAlgo_Utils::JoinCurves(std::vector<Handle(Geom_BSplineCurve)>& curves,
     // TODO: perform knot removal here...
   }
 
-  ptr<bcurve> mobResult = new bcurve(poles, U, degree);
+  mobius::ptr<mobius::bcurve>
+    mobResult = new mobius::bcurve(poles, U, degree);
 
-  // Convert curve 1 to Mobius form.
-  mobius::cascade_BSplineCurve3D converter3(mobResult);
-  converter3.DirectConvert();
-  //
-  result = converter3.GetOpenCascadeCurve();
+  // Convert result to OpenCascade form.
+  result = mobius::cascade::GetOpenCascadeBCurve(mobResult);
 
   return true;
+#else
+  progress.SendLogMessage(LogErr(Normal) << "This function is not available.");
+  return false;
+#endif;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::JoinCurves(std::vector<Handle(Geom_BSplineCurve)>& curves,
+                               const int                               order,
+                               Handle(Geom_BSplineCurve)&              result,
+                               ActAPI_ProgressEntry                    progress)
+{
+#if defined USE_MOBIUS
+  const size_t numCurves = curves.size();
+  //
+  if ( numCurves < 2 )
+    return false;
+
+  size_t k = 0;
+  Handle(Geom_BSplineCurve) curve1 = curves[k];
+  Handle(Geom_BSplineCurve) curve2 = curves[++k];
+
+  do
+  {
+    if ( !JoinCurves(curve1, curve2, order, curve1, progress) )
+      return false;
+
+    ++k;
+  }
+  while ( k < numCurves );
 #else
   return false;
 #endif;

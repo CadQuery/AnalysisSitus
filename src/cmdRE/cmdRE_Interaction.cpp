@@ -389,7 +389,6 @@ void cmdRE::Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
     //
     __FILE__, group, RE_MakePlane);
 
-
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-update-plane",
     //

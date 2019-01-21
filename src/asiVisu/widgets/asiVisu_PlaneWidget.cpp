@@ -850,6 +850,8 @@ void asiVisu_PlaneWidget::OnMiddleButtonUp()
   this->EndInteraction();
   this->InvokeEvent(vtkCommand::EndInteractionEvent,NULL);
   this->Interactor->Render();
+
+  this->UpdateSurfaceNode();
 }
 
 void asiVisu_PlaneWidget::OnRightButtonDown()

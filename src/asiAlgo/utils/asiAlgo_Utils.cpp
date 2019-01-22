@@ -2997,17 +2997,23 @@ bool asiAlgo_Utils::JoinCurves(std::vector<Handle(Geom_BSplineCurve)>& curves,
     return false;
 
   size_t k = 0;
-  Handle(Geom_BSplineCurve) curve1 = curves[k];
-  Handle(Geom_BSplineCurve) curve2 = curves[++k];
-
+  Handle(Geom_BSplineCurve) curve1 = curves[k++];
+  //
   do
   {
+    // Get next curve.
+    Handle(Geom_BSplineCurve) curve2 = curves[k];
+
     if ( !JoinCurves(curve1, curve2, order, curve1, progress) )
       return false;
 
     ++k;
   }
   while ( k < numCurves );
+
+  // Set the result.
+  result = curve1;
+  return true;
 #else
   return false;
 #endif;

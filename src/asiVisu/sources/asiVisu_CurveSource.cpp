@@ -48,6 +48,7 @@
 #include <Geom_TrimmedCurve.hxx>
 #include <Geom2dAdaptor_Curve.hxx>
 #include <GeomAdaptor_Curve.hxx>
+#include <GeomLProp_CLProps.hxx>
 #include <gp_Ax1.hxx>
 
 //-----------------------------------------------------------------------------
@@ -83,14 +84,14 @@ bool asiVisu_CurveSource::SetInputEdge(const TopoDS_Edge& edge)
     return false;
 
   double f, l;
-  Handle(Geom_Curve) crv = BRep_Tool::Curve(edge, f, l);
+  m_curve3d = BRep_Tool::Curve(edge, f, l);
   //
-  if ( crv.IsNull() )
+  if ( m_curve3d.IsNull() )
     return false;
 
   // Build a trimmed curve in order to put trimming parameters of a curve
   // right into it
-  Handle(Geom_TrimmedCurve) tcrv = new Geom_TrimmedCurve(crv, f, l);
+  Handle(Geom_TrimmedCurve) tcrv = new Geom_TrimmedCurve(m_curve3d, f, l);
 
   // Resolve orientation
   asiVisu_Orientation ori = VisuOri_Undefined;
@@ -121,8 +122,10 @@ bool asiVisu_CurveSource::SetInputCurve(const Handle(Geom_Curve)& curve,
   const double f = asiVisu_Utils::TrimInf(first),
                l = asiVisu_Utils::TrimInf(last);
 
+  m_curve3d = curve;
+
   // Discretize curve.
-  GeomAdaptor_Curve gac(curve, f, l);
+  GeomAdaptor_Curve gac(m_curve3d, f, l);
   //
   std::vector<gp_Pnt> curvePts;
   asiVisu_GeomUtils::DiscretizeCurve(gac, 100, curvePts);
@@ -331,7 +334,23 @@ int asiVisu_CurveSource::RequestData(vtkInformation*        request,
       if ( m_oriN.Magnitude() > RealEpsilon() )
         m_oriN.Normalize();
       else
-        m_oriN = m_oriT.Rotated( gp_Ax1( gp::Origin(), gp::DZ() ), M_PI/2); // Lets take any orthogonal vector
+      {
+        bool isNComuted = false;
+        if ( !m_curve3d.IsNull() )
+        {
+          GeomLProp_CLProps lProps( m_curve3d, m_curve3d->LastParameter(), 2, gp::Resolution() );
+          //
+          gp_Dir norm;
+          lProps.Normal(norm);
+          //
+          m_oriN     = norm;
+          isNComuted = true;
+        }
+
+        // Last chance.
+        if ( !isNComuted )
+          m_oriN = m_oriT.Rotated( gp_Ax1( gp::Origin(), gp::DZ() ), M_PI/2); // Lets take any orthogonal vector
+      }
 
       // Build tip
       if ( m_oriT.Magnitude() > RealEpsilon() &&

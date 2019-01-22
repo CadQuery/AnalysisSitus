@@ -150,6 +150,7 @@ private:
 
 private:
 
+  Handle(Geom_Curve) m_curve3d;     //!< 3D curve (if specified).
   Handle(HRealArray) m_XCoords;     //!< X coordinates.
   Handle(HRealArray) m_YCoords;     //!< Y coordinates.
   Handle(HRealArray) m_ZCoords;     //!< Z coordinates.

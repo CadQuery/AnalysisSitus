@@ -952,7 +952,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-skin-surface",
     //
-    "re-skin-surface resSurf vDegree [-fair-isos lambda] curveId1 ... curveIdK \n"
+    "re-skin-surface resSurf vDegree [-fair-isos lambda] curveName1 ... curveNameK \n"
     "\t Interpolates surface by skinning the passed B-curves.",
     //
     __FILE__, group, RE_SkinSurface);

@@ -39,6 +39,7 @@
 #include <asiAlgo_Timer.h>
 
 #if defined USE_MOBIUS
+  #include <mobius/cascade.h>
   #include <mobius/cascade_Triangulation.h>
   #include <mobius/poly_ReadPLY.h>
   #include <mobius/poly_ReadSTL.h>
@@ -2601,6 +2602,31 @@ bool asiAlgo_Utils::CalculateStrainEnergy(const Handle(Geom_Curve)& curve,
                          curve->LastParameter(),
                          NUM_INTEGRATION_BINS );
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::CalculateBendingEnergy(const Handle(Geom_Surface)& surface,
+                                           double&                     result)
+{
+#if defined USE_MOBIUS
+  if ( !surface->IsInstance( STANDARD_TYPE(Geom_BSplineSurface) ) )
+    return false;
+
+  Handle(Geom_BSplineSurface)
+    occtSurf = Handle(Geom_BSplineSurface)::DownCast(surface);
+
+  // Convert to Mobius.
+  mobius::ptr<mobius::bsurf>
+    mobSurf = mobius::cascade::GetMobiusBSurface(occtSurf);
+
+  // Evaluate bending energy.
+  result = mobSurf->ComputeBendingEnergy();
+#else
+  asiAlgo_NotUsed(surface);
+  result = 0.0;
+  return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------

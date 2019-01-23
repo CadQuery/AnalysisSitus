@@ -2558,12 +2558,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_GetTolerance);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("get-strain",
+  interp->AddCommand("get-curve-strain",
     //
-    "get-strain curveName\n"
+    "get-curve-strain curveName\n"
     "\t Returns strain energy of the passed curve.",
     //
-    __FILE__, group, ENGINE_GetStrain);
+    __FILE__, group, ENGINE_GetCurveStrain);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-edge-vexity",

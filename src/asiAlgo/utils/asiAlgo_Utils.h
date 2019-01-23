@@ -785,6 +785,15 @@ namespace asiAlgo_Utils
     CalculateStrainEnergy(const Handle(Geom_Curve)& curve,
                           double&                   result);
 
+  //! Calculates approximate bending energy of the passed surface. The strain
+  //! energy is calculated as an area integral of squared second derivatives.
+  //! \param[in]  surface parametric surface to calculate bending energy for.
+  //! \param[out] result  calculated strain energy.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    CalculateBendingEnergy(const Handle(Geom_Surface)& surface,
+                           double&                     result);
+
   //! Reparametrizes the given B-spline curve applying the passed new range
   //! for its knot vector.
   //!

@@ -1856,9 +1856,9 @@ int ENGINE_GetTolerance(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_GetStrain(const Handle(asiTcl_Interp)& interp,
-                       int                          argc,
-                       const char**                 argv)
+int ENGINE_GetCurveStrain(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
 {
   if ( argc != 2 )
   {

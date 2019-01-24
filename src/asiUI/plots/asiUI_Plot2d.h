@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_CurvaturePlot_h
-#define asiUI_CurvaturePlot_h
+#ifndef asiUI_Plot2d_h
+#define asiUI_Plot2d_h
 
 // asiUI includes
 #include <asiUI_VtkWindow.h>
@@ -40,26 +40,32 @@
 // VTK includes
 #include <vtkContextView.h>
 
-//! Visualizes curvature plot.
-class asiUI_CurvaturePlot : public QWidget
+//-----------------------------------------------------------------------------
+
+//! Visualizes two-dimensional plot with basic interaction and exporting
+//! services. This plotter is nice to prepare scientific publications ;)
+class asiUI_Plot2d : public QWidget
 {
   Q_OBJECT
 
 public:
 
   asiUI_EXPORT
-    asiUI_CurvaturePlot(ActAPI_ProgressEntry progress,
-                        ActAPI_PlotterEntry  plotter,
-                        QWidget*             parent = NULL);
+    asiUI_Plot2d(ActAPI_ProgressEntry progress,
+                 ActAPI_PlotterEntry  plotter,
+                 QWidget*             parent = NULL);
 
   asiUI_EXPORT
-    ~asiUI_CurvaturePlot();
+    ~asiUI_Plot2d();
 
 public:
 
   asiUI_EXPORT void
-    Render(const std::vector<double>& params,
-           const std::vector<double>& curvatures);
+    Render(const std::vector<double>& x,
+           const std::vector<double>& fx,
+           const std::string&         xLabel,
+           const std::string&         fxLabel,
+           const std::string&         plotTitle);
 
 public slots:
 

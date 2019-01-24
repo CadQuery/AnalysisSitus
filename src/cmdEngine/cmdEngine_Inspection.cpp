@@ -54,7 +54,7 @@
 #include <asiVisu_Utils.h>
 
 // asiUI includes
-#include <asiUI_CurvaturePlot.h>
+#include <asiUI_Plot2d.h>
 #include <asiUI_DialogEuler.h>
 #include <asiUI_IV.h>
 
@@ -547,10 +547,11 @@ int ENGINE_CheckCurvature(const Handle(asiTcl_Interp)& interp,
   if ( cmdEngine::cf && !noPlot )
   {
     // Open curvature plot.
-    asiUI_CurvaturePlot*
-      cPlot = new asiUI_CurvaturePlot( interp->GetProgress(),
-                                       interp->GetPlotter() );
-    cPlot->Render(params, curvatures);
+    asiUI_Plot2d*
+      cPlot = new asiUI_Plot2d( interp->GetProgress(),
+                                interp->GetPlotter() );
+    //
+    cPlot->Render(params, curvatures, "Parameter", "Curvature", "Curvature Plot");
   }
 
   /* ========================================

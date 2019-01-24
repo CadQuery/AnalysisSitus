@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_CurvaturePlot.h>
+#include <asiUI_Plot2d.h>
 
 // asiUI includes
 #include <asiUI_Common.h>
@@ -69,9 +69,9 @@
 //! \param[in] progress progress notifier.
 //! \param[in] plotter  imperative plotter.
 //! \param[in] parent   parent object.
-asiUI_CurvaturePlot::asiUI_CurvaturePlot(ActAPI_ProgressEntry progress,
-                                         ActAPI_PlotterEntry  plotter,
-                                         QWidget*             parent)
+asiUI_Plot2d::asiUI_Plot2d(ActAPI_ProgressEntry progress,
+                           ActAPI_PlotterEntry  plotter,
+                           QWidget*             parent)
 : QWidget    (parent),
   m_pViewer  (NULL),
   m_progress (progress),
@@ -81,16 +81,19 @@ asiUI_CurvaturePlot::asiUI_CurvaturePlot(ActAPI_ProgressEntry progress,
 //-----------------------------------------------------------------------------
 
 //! Destructor.
-asiUI_CurvaturePlot::~asiUI_CurvaturePlot()
+asiUI_Plot2d::~asiUI_Plot2d()
 {}
 
 //-----------------------------------------------------------------------------
 
-//! Renders curvature plot.
-//! \param[in] params     discretization parameters along the curve in question.
-//! \param[in] curvatures curvature values.
-void asiUI_CurvaturePlot::Render(const std::vector<double>& params,
-                                 const std::vector<double>& curvatures)
+//! Renders the plot.
+//! \param[in] x  arguments.
+//! \param[in] fx function values.
+void asiUI_Plot2d::Render(const std::vector<double>& x,
+                          const std::vector<double>& fx,
+                          const std::string&         xLabel,
+                          const std::string&         fxLabel,
+                          const std::string&         plotTitle)
 {
   /* =================
    *  Fill data table
@@ -99,21 +102,21 @@ void asiUI_CurvaturePlot::Render(const std::vector<double>& params,
   vtkSmartPointer<vtkTable> table = vtkSmartPointer<vtkTable>::New();
 
   vtkSmartPointer<vtkFloatArray> arrX = vtkSmartPointer<vtkFloatArray>::New();
-  arrX->SetName("Parameter");
+  arrX->SetName( xLabel.c_str() );
   table->AddColumn(arrX);
 
   vtkSmartPointer<vtkFloatArray> arrC = vtkSmartPointer<vtkFloatArray>::New();
-  arrC->SetName("Curvature");
+  arrC->SetName( fxLabel.c_str() );
   table->AddColumn(arrC);
 
   // Fill data table.
-  const int numPoints = int ( params.size() );
+  const int numPoints = int ( x.size() );
   table->SetNumberOfRows(numPoints);
   //
   for ( int i = 0; i < numPoints; ++i )
   {
-    table->SetValue(i, 0, params[i]);
-    table->SetValue(i, 1, curvatures[i]);
+    table->SetValue(i, 0, x[i]);
+    table->SetValue(i, 1, fx[i]);
   }
 
   /* =======================
@@ -141,14 +144,14 @@ void asiUI_CurvaturePlot::Render(const std::vector<double>& params,
   line->SetColor(225, 0, 0, 255);
   line->SetWidth(2.0f);
   //
-  line->GetXAxis()->SetTitle("Parameter");
+  line->GetXAxis()->SetTitle( xLabel.c_str() );
   line->GetXAxis()->GetTitleProperties()->BoldOff();
   line->GetXAxis()->GetTitleProperties()->SetLineOffset(8);
   line->GetXAxis()->GetLabelProperties()->BoldOff();
   line->GetXAxis()->GetLabelProperties()->SetColor(0.25, 0.25, 0.25);
   line->GetXAxis()->GetLabelProperties()->SetLineOffset(4);
   //
-  line->GetYAxis()->SetTitle("Curvature");
+  line->GetYAxis()->SetTitle( fxLabel.c_str() );
   line->GetYAxis()->GetTitleProperties()->BoldOff();
   line->GetYAxis()->GetTitleProperties()->SetLineOffset(8);
   line->GetYAxis()->GetLabelProperties()->BoldOff();
@@ -180,7 +183,7 @@ void asiUI_CurvaturePlot::Render(const std::vector<double>& params,
   connect( pDump, SIGNAL( clicked() ),
            this,  SLOT( onDumpGraphics() ) );
 
-  m_contextView->GetRenderWindow()->SetWindowName("Curvature plot");
+  m_contextView->GetRenderWindow()->SetWindowName( plotTitle.c_str() );
   //
   m_contextView->GetInteractor()->Initialize();
 
@@ -190,7 +193,7 @@ void asiUI_CurvaturePlot::Render(const std::vector<double>& params,
 
 //-----------------------------------------------------------------------------
 
-void asiUI_CurvaturePlot::onMouseEvent()
+void asiUI_Plot2d::onMouseEvent()
 {
   m_pViewer->repaint();
 }
@@ -198,7 +201,7 @@ void asiUI_CurvaturePlot::onMouseEvent()
 //-----------------------------------------------------------------------------
 
 //! Dumps graphics to file.
-void asiUI_CurvaturePlot::onDumpGraphics()
+void asiUI_Plot2d::onDumpGraphics()
 {
   vtkSmartPointer<vtkGL2PSExporter>
     gl2psExporter = vtkSmartPointer<vtkGL2PSExporter>::New();

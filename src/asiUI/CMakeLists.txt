@@ -113,10 +113,10 @@ set (graphs_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (plots_H_UI_FILES
-  plots/asiUI_CurvaturePlot.h
+  plots/asiUI_Plot2d.h
 )
 set (plots_CPP_FILES 
-  plots/asiUI_CurvaturePlot.cpp
+  plots/asiUI_Plot2d.cpp
 )
 
 #------------------------------------------------------------------------------

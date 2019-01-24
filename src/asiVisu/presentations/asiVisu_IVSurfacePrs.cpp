@@ -130,6 +130,7 @@ void asiVisu_IVSurfacePrs::renderPipelines(vtkRenderer* renderer) const
 
 void asiVisu_IVSurfacePrs::deRenderPipelines(vtkRenderer* /*renderer*/) const
 {
-  m_planeWidget->Off();
+  if ( m_planeWidget->GetInteractor() )
+    m_planeWidget->Off();
 }
 

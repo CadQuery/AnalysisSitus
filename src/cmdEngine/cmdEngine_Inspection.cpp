@@ -1907,6 +1907,57 @@ int ENGINE_GetCurveStrain(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_GetSurfaceBending(const Handle(asiTcl_Interp)& interp,
+                             int                          argc,
+                             const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Surface Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Get surface.
+  double f, l;
+  Handle(Geom_Surface) occtSurf = surfNode->GetSurface();
+  //
+  if ( occtSurf.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is NULL.");
+    return TCL_OK;
+  }
+
+  // Calculate bending energy.
+  double energy = 0;
+  if ( !asiAlgo_Utils::CalculateBendingEnergy(occtSurf, energy) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot calculate bending energy.");
+    return TCL_OK;
+  }
+
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Approximate bending energy: %1."
+                                                       << energy);
+
+  // Add to interpreter.
+  *interp << energy;
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
                            int                          argc,
                            const char**                 argv)
@@ -2564,6 +2615,14 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Returns strain energy of the passed curve.",
     //
     __FILE__, group, ENGINE_GetCurveStrain);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("get-surface-bending",
+    //
+    "get-surface-bending surfName\n"
+    "\t Returns bending energy of the passed surface.",
+    //
+    __FILE__, group, ENGINE_GetSurfaceBending);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-edge-vexity",

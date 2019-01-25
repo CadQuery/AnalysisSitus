@@ -128,6 +128,29 @@ void onUndoRedo(const Handle(ActAPI_TxRes)& txRes,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_SaveAs(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  if ( !cmdEngine::model->SaveAs(argv[1]) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Save operation failed.");
+    return TCL_ERROR;
+  }
+  //
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Model was saved to %1."
+                                                       << argv[1]);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_Undo(const Handle(asiTcl_Interp)& interp,
                 int                          argc,
                 const char**                 argv)
@@ -391,6 +414,14 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   cmdEngine_NotUsed(data);
   //
   static const char* group = "cmdEngine";
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("save-as",
+    //
+    "save-as filename\n"
+    "\t Saves model to file with the given name.",
+    //
+    __FILE__, group, ENGINE_SaveAs);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("undo",

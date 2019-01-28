@@ -221,6 +221,7 @@ Handle(asiData_ReEdgeNode)
 
   // Initialize Node.
   edge_n->Init(vfirst, vlast);
+  edge_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
 
   // Add as a child to Edges Node.
   edges_n->AddChildNode(edge_n);
@@ -250,6 +251,7 @@ Handle(asiData_ReCoEdgeNode)
 
   // Initialize Node.
   coedge_n->Init(edge, samesense);
+  coedge_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
 
   // Add as a child to Patch Node.
   patch->AddChildNode(coedge_n);
@@ -286,6 +288,7 @@ Handle(asiData_ReVertexNode)
 
   // Initialize Node.
   vertex_n->Init( coords.X(), coords.Y(), coords.Z() );
+  vertex_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
 
   // Add as a child to Vertices Node.
   vertices_n->AddChildNode(vertex_n);

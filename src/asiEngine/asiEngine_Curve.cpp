@@ -43,6 +43,7 @@ Handle(asiData_CurveNode)
   // Initialize
   Handle(asiData_CurveNode) curve = Handle(asiData_CurveNode)::DownCast(node);
   curve->Init();
+  curve->SetUserFlags(NodeFlag_IsPresentedInPartView);
   curve->SetName(name);
 
   // Set as child
@@ -68,6 +69,7 @@ Handle(asiData_CurvatureCombsNode)
   // Initialize
   Handle(asiData_CurvatureCombsNode) combs_n = Handle(asiData_CurvatureCombsNode)::DownCast(node);
   combs_n->Init();
+  combs_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
   combs_n->SetName("Curvature combs");
   combs_n->SetScaleFactor(scaleFactor);
   combs_n->SetPoints(points);

@@ -87,6 +87,9 @@ Handle(asiAlgo_Naming) asiData_NamingParameter::GetNaming()
 
   // Choose a data label ensuring not to create it
   TDF_Label dataLab = ActData_Utils::ChooseLabelByTag(m_label, DS_Naming, false);
+  //
+  if ( dataLab.IsNull() )
+    return NULL;
 
   // Get Naming attribute
   Handle(asiData_NamingAttr) attr;
@@ -103,9 +106,7 @@ Handle(asiAlgo_Naming) asiData_NamingParameter::GetNaming()
 //! \return true if the object is well-formed, false -- otherwise.
 bool asiData_NamingParameter::isWellFormed() const
 {
-  if ( !ActData_Utils::CheckLabelAttr( m_label, DS_Naming,
-                                       asiData_NamingAttr::GUID() ) )
-    return false;
+  // Naming may not be present, that's Ok for such sort of transient attributes.
 
   return true;
 }

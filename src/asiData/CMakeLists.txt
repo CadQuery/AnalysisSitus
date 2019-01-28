@@ -302,6 +302,13 @@ if (USE_MOBIUS)
 endif()
 
 #------------------------------------------------------------------------------
+# Configure resources
+#------------------------------------------------------------------------------
+
+COPY_RESOURCES_TO_BINARY_DIRS(resources/Plugin)
+COPY_RESOURCES_TO_BINARY_DIRS(resources/Resources)
+
+#------------------------------------------------------------------------------
 # Create library
 #------------------------------------------------------------------------------
 
@@ -414,3 +421,6 @@ install (FILES ${mesh_H_FILES} DESTINATION framework/include)
 install (FILES ${iv_H_FILES}   DESTINATION framework/include)
 install (FILES ${re_H_FILES}   DESTINATION framework/include)
 install (FILES ${misc_H_FILES} DESTINATION framework/include)
+
+install (FILES resources/Plugin    DESTINATION bin/resources)
+install (FILES resources/Resources DESTINATION bin/resources)

@@ -339,12 +339,22 @@ int asiVisu_CurveSource::RequestData(vtkInformation*        request,
         if ( !m_curve3d.IsNull() )
         {
           GeomLProp_CLProps lProps( m_curve3d, m_curve3d->LastParameter(), 2, gp::Resolution() );
-          //
-          gp_Dir norm;
-          lProps.Normal(norm);
-          //
-          m_oriN     = norm;
-          isNComuted = true;
+
+          if ( lProps.IsTangentDefined() )
+          {
+            gp_Dir norm;
+
+            try
+            {
+              lProps.Normal(norm);
+              m_oriN     = norm;
+              isNComuted = true;
+            }
+            catch (...)
+            {
+              std::cout << "OCCT crashed on normal calculation." << std::endl;
+            }
+          }
         }
 
         // Last chance.

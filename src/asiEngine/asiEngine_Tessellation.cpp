@@ -46,6 +46,7 @@ Handle(asiData_TessNode) asiEngine_Tessellation::CreateTessellation()
 
   // Initialize
   tess_n->Init();
+  tess_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
   tess_n->SetName("Tessellation");
 
   // Return the just created Node.

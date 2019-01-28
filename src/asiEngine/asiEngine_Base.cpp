@@ -33,8 +33,44 @@
 
 //-----------------------------------------------------------------------------
 
-//! Removes all child Nodes for the given parent.
-//! \param[in] parent parent Node to clean up children for.
+Handle(ActAPI_HNodeList) asiEngine_Base::FindPresentableNodes()
+{
+  Handle(ActAPI_HNodeList) result = new ActAPI_HNodeList;
+
+  // Iterate over the Partitions as they give us the storage order.
+  Handle(ActAPI_HPartitionList) parititons = m_model->Partitions();
+  //
+  for ( ActAPI_HPartitionList::Iterator it(*parititons); it.More(); it.Next() )
+  {
+    Handle(ActAPI_IPartition) iPartition = it.Value();
+
+    // Access base Partition.
+    Handle(ActData_BasePartition)
+      partition = Handle(ActData_BasePartition)::DownCast( it.Value() );
+    //
+    if ( partition.IsNull() )
+      Standard_ProgramError::Raise("Non-standard Partitions prohibited");
+
+    // Iterate over the Nodes in their persistent order.
+    for ( ActData_BasePartition::Iterator nit(partition); nit.More(); nit.Next() )
+    {
+      Handle(ActAPI_INode) N = nit.Value();
+      //
+      if ( N.IsNull() || !N->IsWellFormed() )
+        continue;
+
+      // Add presentable Nodes to the resulting collection.
+      const int userFlags = N->GetUserFlags();
+      if ( userFlags & NodeFlag_IsPresentedInPartView )
+        result->Append(N);
+    }
+  }
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
 void asiEngine_Base::_cleanChildren(const Handle(ActAPI_INode)& parent)
 {
   Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList;

@@ -49,9 +49,9 @@ class asiAlgo_Cloudify : public ActAPI_IAlgorithm
 public:
 
   asiAlgo_EXPORT
-    asiAlgo_Cloudify(const double         uv_step,
-                     ActAPI_ProgressEntry progress,
-                     ActAPI_PlotterEntry  plotter);
+    asiAlgo_Cloudify(const double         uv_step  = 1.0,
+                     ActAPI_ProgressEntry progress = NULL,
+                     ActAPI_PlotterEntry  plotter  = NULL);
 
 public:
 
@@ -62,6 +62,18 @@ public:
   asiAlgo_EXPORT bool
     Sample_Facets(const TopoDS_Shape&                model,
                   Handle(asiAlgo_BaseCloud<double>)& point_cloud);
+
+public:
+
+  //! Sets parametric steps to use.
+  //! \param[in] ustep step in U direction.
+  //! \param[in] vstep step in V direction.
+  void SetParametricSteps(const double ustep, const double vstep)
+  {
+    m_bUseExternalUVSteps = true;
+    m_fUStep              = ustep;
+    m_fVStep              = vstep;
+  }
 
 protected:
 
@@ -74,8 +86,11 @@ protected:
 
 protected:
 
-  double m_fPrecision; //!< Precision of internal classification.
-  double m_fLinStep;   //!< Linear step for point sampling.
+  double m_fPrecision;          //!< Precision of internal classification.
+  double m_fLinStep;            //!< Linear step for point sampling.
+  bool   m_bUseExternalUVSteps; //!< Whether to use externally defined U, V steps.
+  double m_fUStep;              //!< Step in U direction.
+  double m_fVStep;              //!< Step in V direction.
 
 };
 

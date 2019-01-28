@@ -79,7 +79,8 @@ public:
     CreateTriangulation();
 
   //! Constructs BVH structure for the facets stored in the triangulation Node.
-  asiEngine_EXPORT void
+  //! \return constructed BVH.
+  asiEngine_EXPORT Handle(asiAlgo_BVHFacets)
     BuildBVH();
 
   //! Returns highlighted facets.

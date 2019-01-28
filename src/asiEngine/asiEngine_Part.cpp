@@ -64,6 +64,7 @@ Handle(asiData_PartNode) asiEngine_Part::CreatePart()
 
   // Initialize geometry
   geom_n->Init(true);
+  geom_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
   geom_n->SetName("Part");
 
   // Create underlying face representation Node

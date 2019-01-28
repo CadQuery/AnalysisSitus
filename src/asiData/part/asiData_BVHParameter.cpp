@@ -87,6 +87,9 @@ Handle(asiAlgo_BVHFacets) asiData_BVHParameter::GetBVH()
 
   // Choose a data label ensuring not to create it
   TDF_Label dataLab = ActData_Utils::ChooseLabelByTag(m_label, DS_BVH, false);
+  //
+  if ( dataLab.IsNull() )
+    return NULL;
 
   // Get BVH attribute
   Handle(asiData_BVHAttr) attr;
@@ -103,9 +106,7 @@ Handle(asiAlgo_BVHFacets) asiData_BVHParameter::GetBVH()
 //! \return true if the object is well-formed, false -- otherwise.
 bool asiData_BVHParameter::isWellFormed() const
 {
-  if ( !ActData_Utils::CheckLabelAttr( m_label, DS_BVH,
-                                       asiData_BVHAttr::GUID() ) )
-    return false;
+  // BVH may not be present, that's Ok for such sort of transient attributes.
 
   return true;
 }

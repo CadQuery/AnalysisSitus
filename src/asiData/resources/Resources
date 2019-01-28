@@ -1,0 +1,21 @@
+formatlist:BinOcaf|ACTBin
+
+!
+! Default format
+situ.FileFormat: ACTBin
+
+!
+! BinOcaf format
+!
+BinOcaf.Description: Bin Ocaf Document Version 1.0
+BinOcaf.FileExtension: cbf
+BinOcaf.StoragePlugin: 03a56835-8269-11d5-aab2-0050044b1af1
+BinOcaf.RetrievalPlugin: 03a56836-8269-11d5-aab2-0050044b1af1
+
+!
+! ACTBin format
+!
+ACTBin.Description: ACT Binary Document
+ACTBin.FileExtension: situ
+ACTBin.StoragePlugin: 0ac06b28-65c5-428e-86a5-2a35fbe7c4a4
+ACTBin.RetrievalPlugin: 0ac06b28-65c5-428e-86a5-2a35fbe7c4a5

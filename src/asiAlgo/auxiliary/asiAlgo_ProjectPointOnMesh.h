@@ -49,8 +49,8 @@ public:
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_ProjectPointOnMesh(const Handle(asiAlgo_BVHFacets)& facets,
-                               ActAPI_ProgressEntry             progress,
-                               ActAPI_PlotterEntry              plotter);
+                               ActAPI_ProgressEntry             progress = NULL,
+                               ActAPI_PlotterEntry              plotter  = NULL);
 
 public:
 

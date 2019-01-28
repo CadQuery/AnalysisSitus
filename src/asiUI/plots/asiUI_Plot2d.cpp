@@ -72,17 +72,29 @@
 asiUI_Plot2d::asiUI_Plot2d(ActAPI_ProgressEntry progress,
                            ActAPI_PlotterEntry  plotter,
                            QWidget*             parent)
-: QWidget    (parent),
-  m_pViewer  (NULL),
-  m_progress (progress),
-  m_plotter  (plotter)
+: QWidget     (parent),
+  m_bLogScale (false),
+  m_pViewer   (NULL),
+  m_progress  (progress),
+  m_plotter   (plotter)
 {}
 
 //-----------------------------------------------------------------------------
 
 //! Destructor.
 asiUI_Plot2d::~asiUI_Plot2d()
-{}
+{
+  m_bLogScale = true;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Sets logarithmic scale for the argument axis.
+//! \param[in] logScale true/false.
+void asiUI_Plot2d::SetLogScale(const bool logScale)
+{
+  m_bLogScale = logScale;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -150,6 +162,7 @@ void asiUI_Plot2d::Render(const std::vector<double>& x,
   line->GetXAxis()->GetLabelProperties()->BoldOff();
   line->GetXAxis()->GetLabelProperties()->SetColor(0.25, 0.25, 0.25);
   line->GetXAxis()->GetLabelProperties()->SetLineOffset(4);
+  line->GetXAxis()->SetLogScale(m_bLogScale);
   //
   line->GetYAxis()->SetTitle( fxLabel.c_str() );
   line->GetYAxis()->GetTitleProperties()->BoldOff();
@@ -157,6 +170,7 @@ void asiUI_Plot2d::Render(const std::vector<double>& x,
   line->GetYAxis()->GetLabelProperties()->BoldOff();
   line->GetYAxis()->GetLabelProperties()->SetColor(0.25, 0.25, 0.25);
   line->GetYAxis()->GetLabelProperties()->SetLineOffset(4);
+  line->GetYAxis()->SetLogScale(m_bLogScale);
 
   /* =====================
    *  Prepare main widget

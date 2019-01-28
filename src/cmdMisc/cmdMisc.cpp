@@ -33,7 +33,9 @@
 
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
+#include <asiAlgo_Cloudify.h>
 #include <asiAlgo_PlaneOnPoints.h>
+#include <asiAlgo_ProjectPointOnMesh.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -47,6 +49,7 @@
 // asiEngine includes
 #include <asiEngine_Model.h>
 #include <asiEngine_Part.h>
+#include <asiEngine_Triangulation.h>
 
 // OCCT includes
 #include <BOPAlgo_Splitter.hxx>
@@ -3018,6 +3021,86 @@ int MISC_TestSkinning1(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_TestDist(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  if ( argc != 4 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Find topo item.
+  Handle(asiData_IVTopoItemNode)
+    topoNode = Handle(asiData_IVTopoItemNode)::DownCast( M->FindNodeByName(argv[1]) );
+  //
+  if ( topoNode.IsNull() )
+    return TCL_ERROR;
+
+  // Get shape
+  TopoDS_Shape shape = topoNode->GetShape();
+
+  // Cloudify shape.
+  Handle(asiAlgo_BaseCloud<double>) sampledPts;
+  //
+  asiAlgo_Cloudify cloudify;
+  //
+  cloudify.SetParametricSteps( atof(argv[2]), atof(argv[3]) );
+  //
+  if ( !cloudify.Sample_Faces(shape, sampledPts) )
+  {
+    interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot sample shape." );
+    return TCL_ERROR;
+  }
+
+  interp->GetPlotter().REDRAW_POINTS("sampledPts", sampledPts->GetCoordsArray(), Color_Yellow);
+
+  // Prepare triangulation.
+  Handle(asiAlgo_BVHFacets) bvh;
+  //
+  asiEngine_Triangulation trisAPI( M, interp->GetProgress(), interp->GetPlotter() );
+  //
+  M->OpenCommand();
+  {
+    // Build BVH for CAD-agnostic mesh.
+    bvh = trisAPI.BuildBVH();
+  }
+  M->CommitCommand();
+
+  // Project each point.
+  asiAlgo_ProjectPointOnMesh projectTool(bvh);
+  //
+  double dist = -DBL_MAX;
+  gp_Pnt P1, P2;
+  //
+  for ( int k = 0; k < sampledPts->GetNumberOfElements(); ++k )
+  {
+    gp_Pnt       P        = sampledPts->GetElement(k);
+    gp_Pnt       Pproj    = projectTool.Perform(P);
+    const double currDist = P.Distance(Pproj);
+
+    if ( currDist > dist )
+    {
+      dist = currDist;
+      P1   = P;
+      P2   = Pproj;
+    }
+  }
+
+  interp->GetPlotter().REDRAW_POINT("P1", P1, Color_Red);
+  interp->GetPlotter().REDRAW_POINT("P2", P2, Color_Red);
+  interp->GetPlotter().REDRAW_LINK("P12", P1, P2, Color_Red);
+
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Max deviation: %1." << P1.Distance(P2) );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -3179,6 +3262,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Test for skinning.",
     //
     __FILE__, group, MISC_TestSkinning1);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-dist",
+    //
+    "test-dist surfName ustep vstep\n"
+    "\t Test for distance evaluation.",
+    //
+    __FILE__, group, MISC_TestDist);
 #endif
 
   // Load sub-modules.

@@ -273,6 +273,7 @@ Handle(asiData_IVPointSet2dNode)
 
   // Initialize
   item_n->Init();
+  item_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
   item_n->SetName(item_name);
   item_n->SetPoints(coords);
 
@@ -368,6 +369,7 @@ Handle(asiData_IVPointSetNode)
 
   // Initialize
   item_n->Init();
+  item_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
   item_n->SetName(item_name);
   item_n->SetPoints(points);
 
@@ -477,6 +479,7 @@ Handle(asiData_IVCurveNode)
 
   // Initialize
   item_n->Init();
+  item_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Curve" : name );
@@ -526,6 +529,7 @@ void asiEngine_IV::Update_Curve(const Handle(asiData_IVCurveNode)& node,
 
   // Initialize
   node->Init();
+  node->SetUserFlags(NodeFlag_IsPresentedInPartView);
   node->SetCurve(geometry, f, l);
 }
 
@@ -729,6 +733,7 @@ void asiEngine_IV::Update_Curve2d(const Handle(asiData_IVCurve2dNode)& node,
 
   // Initialize
   node->Init();
+  node->SetUserFlags(NodeFlag_IsPresentedInPartView);
   node->SetCONS(geometry, surface, f, l);
 }
 
@@ -825,6 +830,7 @@ void asiEngine_IV::Update_Surface(const Handle(asiData_IVSurfaceNode)& node,
 {
   // Initialize
   node->Init();
+  node->SetUserFlags(NodeFlag_IsPresentedInPartView);
   node->SetSurface(surface);
   node->SetLimits(uLimit, vLimit);
 }
@@ -911,6 +917,7 @@ void asiEngine_IV::Update_TopoItem(const Handle(asiData_IVTopoItemNode)& node,
 {
   // Initialize
   node->Init();
+  node->SetUserFlags(NodeFlag_IsPresentedInPartView);
   node->SetShape(shape);
 }
 
@@ -1001,6 +1008,7 @@ void asiEngine_IV::Update_TessItem(const Handle(asiData_IVTessItemNode)& node,
 
   // Initialize
   node->Init();
+  node->SetUserFlags(NodeFlag_IsPresentedInPartView);
   node->SetMesh(mesh);
 }
 
@@ -1102,6 +1110,7 @@ void asiEngine_IV::Update_TextItem(const Handle(asiData_IVTextItemNode)& node,
                                    const TCollection_AsciiString&        text)
 {
   node->Init();
+  node->SetUserFlags(NodeFlag_IsPresentedInPartView);
   node->SetText(text);
 }
 

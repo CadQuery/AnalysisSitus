@@ -188,9 +188,14 @@ Handle(ActAPI_HNodeList) asiUI_ObjectBrowser::GetSelectedNodes() const
 void asiUI_ObjectBrowser::addChildren(const Handle(ActAPI_INode)& root_n,
                                       QTreeWidgetItem*            root_ui)
 {
-  if ( root_n.IsNull() || !root_n->IsWellFormed() )
+  if ( root_n.IsNull() )
     return;
 
+  // Allow adding bad-formed Nodes, just mark them specifically.
+  if ( !root_n->IsWellFormed() )
+    root_ui->setBackgroundColor(0, Qt::darkRed);
+
+  // Loop over the children.
   for ( Handle(ActAPI_IChildIterator) cit = root_n->GetChildIterator(); cit->More(); cit->Next() )
   {
     Handle(ActAPI_INode) child_n = cit->Value();

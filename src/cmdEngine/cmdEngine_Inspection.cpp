@@ -2439,6 +2439,45 @@ int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_DrawPlot(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc < 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const bool isLogScale = interp->HasKeyword(argc, argv, "log");
+
+  // Get table of values to plot.
+  std::vector<double> xvec, fxvec;
+  //
+  for ( int k = 1; k < argc; k += 2 )
+  {
+    if ( interp->IsKeyword(argv[k], "log") ) continue;
+
+    const double x  = atof(argv[k]);
+    const double fx = atof(argv[k + 1]);
+
+    xvec.push_back(x);
+    fxvec.push_back(fx);
+  }
+
+  // Open curvature plot.
+  asiUI_Plot2d*
+    cPlot = new asiUI_Plot2d( interp->GetProgress(),
+                              interp->GetPlotter() );
+  //
+  cPlot->SetLogScale(isLogScale);
+  //
+  cPlot->Render(xvec, fxvec, "x", "fx", "Plot 2d");
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -2683,4 +2722,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Recognizes all blend faces in AAG representing the part.",
     //
     __FILE__, group, ENGINE_RecognizeBlends);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("draw-plot",
+    //
+    "draw-plot x1 fx1 x2 fx2 [x3 fx3 [...]] [-log]\n"
+    "\t Draws two-dimensional plot of the given values.",
+    //
+    __FILE__, group, ENGINE_DrawPlot);
 }

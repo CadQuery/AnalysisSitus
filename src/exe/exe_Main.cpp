@@ -126,6 +126,19 @@ int main(int argc, char** argv)
   exe_MainWindow* pMainWindow = new exe_MainWindow;
 
   //---------------------------------------------------------------------------
+  // Set essential environment variables
+  //---------------------------------------------------------------------------
+
+  QByteArray appRoot = app.applicationDirPath().toUtf8();
+  QByteArray resDir  = appRoot + "/resources";
+  //
+  if ( QDir(resDir).exists() )
+  {
+    qputenv("CSF_PluginDefaults", resDir);
+    qputenv("CSF_ResourcesDefaults", resDir);
+  }
+
+  //---------------------------------------------------------------------------
   // Get command line arguments to process in a batch mode
   //---------------------------------------------------------------------------
 

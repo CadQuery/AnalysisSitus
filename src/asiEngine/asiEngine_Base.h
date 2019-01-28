@@ -33,6 +33,9 @@
 
 // asiEngine includes
 #include <asiEngine_Model.h>
+#include <asiEngine_NodeFlags.h>
+
+//-----------------------------------------------------------------------------
 
 //! Base class for Data Model API classes.
 class asiEngine_Base
@@ -49,8 +52,17 @@ public:
   //
   : m_model(model), m_progress(progress), m_plotter(plotter) {}
 
+public:
+
+  //! Finds all Data Nodes which are presentable in the Part view.
+  //! \return list of Nodes.
+  asiEngine_EXPORT Handle(ActAPI_HNodeList)
+    FindPresentableNodes();
+
 protected:
 
+  //! Removes all child Nodes for the given parent.
+  //! \param[in] parent parent Node to clean up children for.
   asiEngine_EXPORT void
     _cleanChildren(const Handle(ActAPI_INode)& parent);
 

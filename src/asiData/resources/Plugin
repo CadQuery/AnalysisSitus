@@ -1,0 +1,16 @@
+! Description of available plugins
+! ********************************
+!
+a148e300-5740-11d1-a904-080036aaa103.Location: FWOSPlugin
+
+!
+! BinOcaf Document Plugin
+!
+03a56835-8269-11d5-aab2-0050044b1af1.Location: TKBin
+03a56836-8269-11d5-aab2-0050044b1af1.Location: TKBin
+
+!
+! ACTBin Document Plugin
+!
+0ac06b28-65c5-428e-86a5-2a35fbe7c4a4.Location: ActiveData
+0ac06b28-65c5-428e-86a5-2a35fbe7c4a5.Location: ActiveData

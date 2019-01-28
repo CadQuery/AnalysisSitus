@@ -1,6 +1,25 @@
 # Useful macro
 
 #-------------------------------------------------------------------------------
+# Name:    COPY_RESOURCES_TO_BINARY_DIRS
+# Purpose: Copies resource files to all binary directories - bin, bind, bini
+#-------------------------------------------------------------------------------
+macro (COPY_RESOURCES_TO_BINARY_DIRS RESOURCE_FILEPATH)
+  message (STATUS "... Copying resource file ${PROJECT_SOURCE_DIR}/${RESOURCE_FILEPATH}")
+
+    if ( TARGET ${PROJECT_NAME} )
+      add_custom_command( TARGET ${PROJECT_NAME}
+                          POST_BUILD
+                          COMMENT "Updating resource-file '${RESOURCE_FILEPATH}'"
+                          COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PROJECT_SOURCE_DIR}/${RESOURCE_FILEPATH}" "\$(OutDir)/${RESOURCE_FILEPATH}" )
+    endif()
+
+  foreach(CONF "RELEASE" "RELWITHDEBINFO" "DEBUG")
+    file (COPY "${RESOURCE_FILEPATH}" DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONF}}/resources")
+  endforeach()
+endmacro()
+
+#-------------------------------------------------------------------------------
 # Name:    ASITUS_MAKE_PLATFORM_SHORT_NAME
 # Purpose: initializes PLATFORM variable with a relevant value
 #-------------------------------------------------------------------------------

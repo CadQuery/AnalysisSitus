@@ -1588,7 +1588,7 @@ bool asiAlgo_Utils::ApproximatePoints(const std::vector<gp_XYZ>& points,
     occPts(k + 1) = points[k];
 
   // Approximate.
-  GeomAPI_PointsToBSpline api(occPts, degMin, degMax, GeomAbs_C2, tol3d);
+  GeomAPI_PointsToBSpline api(occPts, Approx_Centripetal, degMin, degMax, GeomAbs_C2, tol3d);
   //
   if ( !api.IsDone() )
     return false;
@@ -2622,6 +2622,7 @@ bool asiAlgo_Utils::CalculateBendingEnergy(const Handle(Geom_Surface)& surface,
 
   // Evaluate bending energy.
   result = mobSurf->ComputeBendingEnergy();
+  return true;
 #else
   asiAlgo_NotUsed(surface);
   result = 0.0;

@@ -68,7 +68,6 @@ void asiData_TriangulationNode::Init()
   this->InitParameter(PID_Name, "Name");
 
   // Set empty initial mesh with empty options
-  this->SetTriangulation(NULL);
   this->SetOptions(NULL);
   this->SetBVH(NULL);
 

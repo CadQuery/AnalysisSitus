@@ -51,8 +51,11 @@
 asiAlgo_Cloudify::asiAlgo_Cloudify(const double         uv_step,
                                    ActAPI_ProgressEntry progress,
                                    ActAPI_PlotterEntry  plotter)
-: ActAPI_IAlgorithm (progress, plotter),
-  m_fLinStep        (uv_step)
+: ActAPI_IAlgorithm     (progress, plotter),
+  m_fLinStep            (uv_step),
+  m_bUseExternalUVSteps (false),
+  m_fUStep              (0.0),
+  m_fVStep              (0.0)
 {}
 
 //-----------------------------------------------------------------------------
@@ -100,8 +103,18 @@ bool asiAlgo_Cloudify::Sample_Faces(const TopoDS_Shape&                model,
     // to derive an angle giving us a certain arc length:
     // L = alpha * R => alpha = L / R
 
-    const double uStep = this->chooseParametricStep(bas, true, uMin, uMax, vMin, vMax);
-    const double vStep = this->chooseParametricStep(bas, false, uMin, uMax, vMin, vMax);
+    double uStep, vStep;
+    //
+    if ( m_bUseExternalUVSteps )
+    {
+      uStep = m_fUStep;
+      vStep = m_fVStep;
+    }
+    else
+    {
+      uStep = this->chooseParametricStep(bas, true, uMin, uMax, vMin, vMax);
+      vStep = this->chooseParametricStep(bas, false, uMin, uMax, vMin, vMax);
+    }
 
     // Prepare classifier
     asiAlgo_ClassifyPointFace classifier(face, BRep_Tool::Tolerance(face), 0.01);

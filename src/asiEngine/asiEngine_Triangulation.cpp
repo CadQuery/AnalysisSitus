@@ -49,6 +49,7 @@ Handle(asiData_TriangulationNode) asiEngine_Triangulation::CreateTriangulation()
 
   // Initialize
   triangulation_n->Init();
+  triangulation_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
   triangulation_n->SetName("Triangulation");
 
   // Return the just created Node
@@ -57,7 +58,7 @@ Handle(asiData_TriangulationNode) asiEngine_Triangulation::CreateTriangulation()
 
 //-----------------------------------------------------------------------------
 
-void asiEngine_Triangulation::BuildBVH()
+Handle(asiAlgo_BVHFacets) asiEngine_Triangulation::BuildBVH()
 {
   // Get Triangulation Node
   Handle(asiData_TriangulationNode) tris_n = m_model->GetTriangulationNode();
@@ -71,6 +72,7 @@ void asiEngine_Triangulation::BuildBVH()
 
   // Store in OCAF
   tris_n->SetBVH(bvh);
+  return bvh;
 }
 
 //-----------------------------------------------------------------------------

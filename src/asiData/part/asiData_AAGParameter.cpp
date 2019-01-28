@@ -87,6 +87,9 @@ Handle(asiAlgo_AAG) asiData_AAGParameter::GetAAG()
 
   // Choose a data label ensuring not to create it
   TDF_Label dataLab = ActData_Utils::ChooseLabelByTag(m_label, DS_AAG, false);
+  //
+  if ( dataLab.IsNull() )
+    return NULL;
 
   // Get AAG attribute
   Handle(asiData_AAGAttr) attr;
@@ -103,9 +106,7 @@ Handle(asiAlgo_AAG) asiData_AAGParameter::GetAAG()
 //! \return true if the object is well-formed, false -- otherwise.
 bool asiData_AAGParameter::isWellFormed() const
 {
-  if ( !ActData_Utils::CheckLabelAttr( m_label, DS_AAG,
-                                       asiData_AAGAttr::GUID() ) )
-    return false;
+  // AAG may not be present, that's Ok for such sort of transient attributes.
 
   return true;
 }

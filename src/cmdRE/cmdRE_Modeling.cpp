@@ -505,6 +505,7 @@ int RE_ApproxPoints(const Handle(asiTcl_Interp)& interp,
   // Approximate.
   for ( size_t k = 0; k < ptsRegions.size(); ++k )
   {
+    // Run approximation algorithm.
     Handle(Geom_BSplineCurve) resCurve;
     if ( !asiAlgo_Utils::ApproximatePoints(ptsRegions[k], 3, 3, prec, resCurve) )
     {

@@ -192,6 +192,7 @@ Handle(asiData_TolerantRangeNode)
 
   // Initialize.
   range_n->Init();
+  range_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
   range_n->SetName(range_name);
   range_n->SetShape(shape);
   range_n->SetColor(colorNum);

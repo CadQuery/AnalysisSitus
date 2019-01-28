@@ -137,14 +137,56 @@ int ENGINE_SaveAs(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  if ( !cmdEngine::model->SaveAs(argv[1]) )
+  // Print format for information.
+  TCollection_AsciiString docFormat = cmdEngine::model->Document()->StorageFormat();
+  //
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Document format is %1."
+                                                       << docFormat);
+
+  // Save.
+  if ( !cmdEngine::model->SaveAs( argv[1], interp->GetProgress() ) )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Save operation failed.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Saving failed.");
     return TCL_ERROR;
   }
   //
   interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Model was saved to %1."
                                                        << argv[1]);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_Load(const Handle(asiTcl_Interp)& interp,
+                int                          argc,
+                const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Release current project.
+  cmdEngine::model->Release();
+
+  // Open.
+  if ( !cmdEngine::model->Open( argv[1], interp->GetProgress() ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Loading failed.");
+    return TCL_ERROR;
+  }
+  //
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Model was loaded from %1."
+                                                       << argv[1]);
+
+  // Find all presentable Nodes.
+  Handle(ActAPI_HNodeList)
+    nodes = asiEngine_Base(cmdEngine::model).FindPresentableNodes();
+
+  // Update UI.
+  cmdEngine::cf->ObjectBrowser->Populate();
+  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(nodes);
 
   return TCL_OK;
 }
@@ -424,6 +466,15 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_SaveAs);
 
   //-------------------------------------------------------------------------//
+  interp->AddCommand("load",
+    //
+    "load filename\n"
+    "\t Loads model from file with the given name. The current project data\n"
+    "\t will be lost.",
+    //
+    __FILE__, group, ENGINE_Load);
+
+  //-------------------------------------------------------------------------//
   interp->AddCommand("undo",
     //
     "undo\n"
@@ -476,7 +527,6 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
     "\t Cleans up project data.",
     //
     __FILE__, group, ENGINE_Clear);
-
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("dump-project",

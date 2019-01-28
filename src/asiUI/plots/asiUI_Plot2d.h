@@ -61,6 +61,9 @@ public:
 public:
 
   asiUI_EXPORT void
+    SetLogScale(const bool logScale);
+
+  asiUI_EXPORT void
     Render(const std::vector<double>& x,
            const std::vector<double>& fx,
            const std::string&         xLabel,
@@ -77,6 +80,7 @@ public slots:
 
 protected:
 
+  bool                            m_bLogScale;   //!< Whether log scale is used.
   vtkSmartPointer<vtkContextView> m_contextView; //!< VTK context view.
   asiUI_VtkWindow*                m_pViewer;     //!< Viewer widget.
   ActAPI_ProgressEntry            m_progress;    //!< Progress notifier.

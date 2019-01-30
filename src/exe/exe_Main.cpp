@@ -61,6 +61,7 @@
 #include <asiVisu_IVTopoItemPrs.h>
 #include <asiVisu_ReEdgePrs.h>
 #include <asiVisu_ReVertexPrs.h>
+#include <asiVisu_SurfDeviationPrs.h>
 #include <asiVisu_TessellationPrs.h>
 #include <asiVisu_TessellationNormsPrs.h>
 #include <asiVisu_TolerantRangePrs.h>
@@ -183,6 +184,7 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_GeomSurfPrs)
   REGISTER_PRESENTATION(asiVisu_CalculusLawPrs)
   REGISTER_PRESENTATION(asiVisu_CurvatureCombsPrs)
+  REGISTER_PRESENTATION(asiVisu_SurfDeviationPrs)
   REGISTER_PRESENTATION(asiVisu_TessellationPrs)
   REGISTER_PRESENTATION(asiVisu_TessellationNormsPrs)
   REGISTER_PRESENTATION(asiVisu_TolerantRangePrs)

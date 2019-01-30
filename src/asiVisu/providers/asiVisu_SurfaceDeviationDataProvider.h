@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 04 December 2015
+// Created on: 30 January 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,55 +28,57 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_FaceSurfacePipeline_h
-#define asiVisu_FaceSurfacePipeline_h
+#ifndef asiVisu_SurfaceDeviationDataProvider_h
+#define asiVisu_SurfaceDeviationDataProvider_h
 
 // asiVisu includes
-#include <asiVisu_DataProvider.h>
-#include <asiVisu_Pipeline.h>
+#include <asiVisu_SurfaceDataProvider.h>
+
+// asiAlgo includes
+#include <asiAlgo_BVHFacets.h>
 
 //-----------------------------------------------------------------------------
 
-//! Visualization pipeline for a host surface of a face.
-class asiVisu_FaceSurfacePipeline : public asiVisu_Pipeline
+//! Data provider for surface deviation computed w.r.t. the reference mesh.
+class asiVisu_SurfaceDeviationDataProvider : public asiVisu_SurfaceDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FaceSurfacePipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_SurfaceDeviationDataProvider, asiVisu_SurfaceDataProvider)
 
 public:
 
   asiVisu_EXPORT
-    asiVisu_FaceSurfacePipeline();
+    asiVisu_SurfaceDeviationDataProvider(const Handle(ActAPI_INode)& N);
 
 public:
 
-  asiVisu_EXPORT virtual void
-    SetInput(const Handle(asiVisu_DataProvider)& DP);
+  asiVisu_EXPORT virtual ActAPI_DataObjectId
+    GetNodeID() const;
 
 public:
 
-  void SetStepsNumber(const int nbSteps)       { m_iStepsNumber = nbSteps; }
-  int  GetStepsNumber()                  const { return m_iStepsNumber; }
+  asiVisu_EXPORT virtual Handle(Standard_Type)
+    GetSurfaceType() const;
+
+  asiVisu_EXPORT virtual Handle(Geom_Surface)
+    GetSurface(double& uMin,
+               double& uMax,
+               double& vMin,
+               double& vMax) const;
+
+  asiVisu_EXPORT Handle(asiAlgo_BVHFacets)
+    GetReferenceMesh();
 
 private:
 
-  virtual void callback_add_to_renderer      (vtkRenderer* theRenderer);
-  virtual void callback_remove_from_renderer (vtkRenderer* theRenderer);
-  virtual void callback_update               ();
+  virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
 
 private:
 
-  //! Copying prohibited.
-  asiVisu_FaceSurfacePipeline(const asiVisu_FaceSurfacePipeline&);
-
-  //! Assignment prohibited.
-  asiVisu_FaceSurfacePipeline& operator=(const asiVisu_FaceSurfacePipeline&);
-
-protected:
-
-  int m_iStepsNumber; //!< Number of steps for sampling the parametric space.
+  Handle(ActAPI_INode) m_node; //!< Source Node.
 
 };
 

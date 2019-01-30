@@ -818,6 +818,52 @@ Handle(asiData_IVSurfaceNode)
 
 //-----------------------------------------------------------------------------
 
+//! Creates a Surface Deviation Node under the given parent.
+//! \param[in] name   name of the Node to create.
+//! \param[in] parent parent Node.
+Handle(asiData_SurfDeviationNode)
+  asiEngine_IV::Create_SurfaceDeviation(const TCollection_AsciiString&       name,
+                                        const Handle(asiData_IVSurfaceNode)& parent)
+{
+  if ( parent.IsNull() || !parent->IsWellFormed() )
+    return NULL;
+
+  // Add new Node to the corresponding Partition.
+  Handle(asiData_SurfDeviationNode)
+    sd_n = Handle(asiData_SurfDeviationNode)::DownCast( asiData_SurfDeviationNode::Instance() );
+  //
+  m_model->GetSurfDeviationPartition()->AddNode(sd_n);
+
+  // Get reference mesh.
+  Handle(asiData_TriangulationNode) tris_n = m_model->GetTriangulationNode();
+
+  // Initialize Node and connect the surface in question to the reference
+  // mesh which is by convention stored in the sole Triangulation Node.
+  // ...
+
+  sd_n->Init();
+  sd_n->SetName(name);
+
+  // Connect surface.
+  if ( !parent.IsNull() )
+    sd_n->ConnectReference( asiData_SurfDeviationNode::PID_SurfaceRef, parent );
+  else
+    m_progress.SendLogMessage(LogErr(Normal) << "Reference Surface Node is not available.");
+
+  // Connect mesh.
+  if ( !tris_n.IsNull() )
+    sd_n->ConnectReference( asiData_SurfDeviationNode::PID_MeshRef, tris_n );
+  else
+    m_progress.SendLogMessage(LogErr(Normal) << "Reference Triangulation Node is not available.");
+
+  // Add to parent.
+  parent->AddChildNode(sd_n);
+
+  return sd_n;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Updates Surface Node.
 //! \param node    [in] Data Node to update.
 //! \param surface [in] parametric surface to store.

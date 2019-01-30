@@ -29,9 +29,9 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_FaceSurfacePipeline.h>
+#include <asiVisu_FaceSurfaceIsosPipeline.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_CurveSource.h>
 #include <asiVisu_FaceDataProvider.h>
 #include <asiVisu_NodeInfo.h>
@@ -49,7 +49,7 @@
 //-----------------------------------------------------------------------------
 
 //! Creates new Face Surface Pipeline initialized by default VTK mapper and actor.
-asiVisu_FaceSurfacePipeline::asiVisu_FaceSurfacePipeline()
+asiVisu_FaceSurfaceIsosPipeline::asiVisu_FaceSurfaceIsosPipeline()
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                     vtkSmartPointer<vtkActor>::New() ),
   m_iStepsNumber(40)
@@ -61,7 +61,7 @@ asiVisu_FaceSurfacePipeline::asiVisu_FaceSurfacePipeline()
 
 //! Sets input data for the pipeline.
 //! \param DP [in] Data Provider.
-void asiVisu_FaceSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
+void asiVisu_FaceSurfaceIsosPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
   if ( !m_iStepsNumber )
     return;
@@ -241,13 +241,13 @@ void asiVisu_FaceSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& D
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void asiVisu_FaceSurfacePipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_FaceSurfaceIsosPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void asiVisu_FaceSurfacePipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_FaceSurfaceIsosPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void asiVisu_FaceSurfacePipeline::callback_update()
+void asiVisu_FaceSurfaceIsosPipeline::callback_update()
 {}

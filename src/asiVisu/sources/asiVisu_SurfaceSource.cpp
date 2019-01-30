@@ -31,8 +31,11 @@
 // Own include
 #include <asiVisu_SurfaceSource.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_Utils.h>
+
+// asiAlgo includes
+#include <asiAlgo_ProjectPointOnMesh.h>
 
 // VTK includes
 #include <vtkCellData.h>
@@ -75,11 +78,22 @@ asiVisu_SurfaceSource::~asiVisu_SurfaceSource()
 // Kernel methods
 //-----------------------------------------------------------------------------
 
+//! Sets reference mesh to compute distance for deriving deviation maps.
+//! \param[in] mesh mesh to set as a reference.
+void asiVisu_SurfaceSource::SetReferenceMesh(const Handle(asiAlgo_BVHFacets)& mesh)
+{
+  m_mesh = mesh;
+  //
+  this->Modified();
+}
+
 //! Initialize data source with a parametric surface.
 //! \param surf [in] surface to visualize.
 void asiVisu_SurfaceSource::SetInputSurface(const Handle(Geom_Surface)& surf)
 {
   m_surf = surf;
+  //
+  this->Modified();
 }
 
 //! Sets the number of sampling steps for surface discretization.
@@ -150,10 +164,12 @@ int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
   // Array for scalars
   vtkSmartPointer<vtkDoubleArray> curvature;
   //
-  if ( m_scalars == Scalars_GaussianCurvature || m_scalars == Scalars_MeanCurvature )
+  if ( m_scalars == Scalars_GaussianCurvature ||
+       m_scalars == Scalars_MeanCurvature ||
+       m_scalars == Scalars_Deviation )
   {
     vtkPointData* PD = polyOutput->GetPointData();
-    curvature = asiVisu_Utils::InitDoubleArray(ARRNAME_SURF_CURVATURE);
+    curvature = asiVisu_Utils::InitDoubleArray(ARRNAME_SURF_SCALARS);
     PD->SetScalars(curvature);
   }
 
@@ -219,23 +235,11 @@ int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
       uIso_ids.push_back( this->registerGridPoint(P, polyOutput) );
 
       // Associate scalars
-      if ( m_scalars == Scalars_GaussianCurvature || m_scalars == Scalars_MeanCurvature )
+      if ( m_scalars != Scalars_NoScalars )
       {
-        GeomLProp_SLProps lProps( m_surf, U[i], V[j], 2, gp::Resolution() );
-        double k = 0.0;
+        const double scalar = this->computeScalar(U[i], V[j]);
         //
-        if ( lProps.IsCurvatureDefined() )
-        {
-          if ( m_scalars == Scalars_GaussianCurvature )
-            k = lProps.GaussianCurvature();
-          if ( m_scalars == Scalars_MeanCurvature )
-            k = lProps.MeanCurvature();
-          //
-          if ( k < m_fMinScalar ) m_fMinScalar = k;
-          if ( k > m_fMaxScalar ) m_fMaxScalar = k;
-        }
-        //
-        curvature->InsertNextValue(k);
+        curvature->InsertNextValue(scalar);
       }
     }
     UV_ids.push_back(uIso_ids);
@@ -312,4 +316,46 @@ vtkIdType asiVisu_SurfaceSource::registerTriangle(const vtkIdType n1,
   vtkIdType cellID = polyData->InsertNextCell(VTK_TRIANGLE, 3, &nodes[0]);
   //
   return cellID;
+}
+
+//! Computes scalar value for the passed point on surface. This function
+//! also updates the stored min and max scalar values which are then used
+//! to specify the range.
+//! \param[in] u U parameter value.
+//! \param[in] v V parameter value.
+//! \return computed scalar.
+double asiVisu_SurfaceSource::computeScalar(const double u, const double v)
+{
+  if ( m_scalars == Scalars_GaussianCurvature || m_scalars == Scalars_MeanCurvature )
+  {
+    GeomLProp_SLProps lProps( m_surf, u, v, 2, gp::Resolution() );
+    double k = 0.0;
+    //
+    if ( lProps.IsCurvatureDefined() )
+    {
+      if ( m_scalars == Scalars_GaussianCurvature )
+        k = lProps.GaussianCurvature();
+      if ( m_scalars == Scalars_MeanCurvature )
+        k = lProps.MeanCurvature();
+      //
+      if ( k < m_fMinScalar ) m_fMinScalar = k;
+      if ( k > m_fMaxScalar ) m_fMaxScalar = k;
+    }
+
+    return k;
+  }
+
+  if ( m_scalars == Scalars_Deviation )
+  {
+    // Compute deviation by projecting the sample point.
+    asiAlgo_ProjectPointOnMesh projectTool(m_mesh);
+    //
+    gp_Pnt       P     = m_surf->Value(u, v);
+    gp_Pnt       Pproj = projectTool.Perform(P);
+    const double dist  = P.Distance(Pproj);
+
+    return dist;
+  }
+
+  return 0.0; // No scalar defined.
 }

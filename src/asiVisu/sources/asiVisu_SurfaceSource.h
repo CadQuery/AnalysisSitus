@@ -31,8 +31,11 @@
 #ifndef asiVisu_SurfaceSource_h
 #define asiVisu_SurfaceSource_h
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_Utils.h>
+
+// asiAlgo includes
+#include <asiAlgo_BVHFacets.h>
 
 // VTK includes
 #include <vtkPolyDataAlgorithm.h>
@@ -41,6 +44,8 @@
 
 // OCCT includes
 #include <Geom_Surface.hxx>
+
+//-----------------------------------------------------------------------------
 
 //! Source of polygonal data representing a parametric surface.
 class asiVisu_SurfaceSource : public vtkPolyDataAlgorithm
@@ -51,9 +56,10 @@ public:
   //! to have associated with your surface.
   enum NodeScalars
   {
-    Scalars_NoScalars = 0,
-    Scalars_GaussianCurvature,
-    Scalars_MeanCurvature
+    Scalars_NoScalars = 0,     //!< No scalars associated with surface points.
+    Scalars_GaussianCurvature, //!< Gaussian curvature measured in sample points.
+    Scalars_MeanCurvature,     //!< Mean curvature measured in sample points.
+    Scalars_Deviation          //!< Deviation from reference mesh measured in sample points.
   };
 
 // RTTI and construction:
@@ -65,6 +71,7 @@ public:
 // Kernel methods:
 public:
 
+  void SetReferenceMesh (const Handle(asiAlgo_BVHFacets)& mesh);
   void SetInputSurface  (const Handle(Geom_Surface)& surface);
   void SetNumberOfSteps (const int nSteps);
   void SetScalars       (const NodeScalars scalars);
@@ -93,6 +100,9 @@ protected:
                      const vtkIdType n3,
                      vtkPolyData*    polyData);
 
+  double
+    computeScalar(const double u, const double v);
+
 protected:
 
   asiVisu_SurfaceSource();
@@ -105,13 +115,14 @@ private:
 
 private:
 
-  Handle(Geom_Surface) m_surf;       //!< Parametric surface to render.
-  int                  m_iSteps;     //!< Number of steps for sampling UV space.
-  NodeScalars          m_scalars;    //!< Type of scalars to associate.
-  double               m_fMinScalar; //!< Min scalar value.
-  double               m_fMaxScalar; //!< Max scalar value.
-  double               m_fTrimU;     //!< Trimming value to limit infinite U.
-  double               m_fTrimV;     //!< Trimming value to limit infinite V.
+  Handle(asiAlgo_BVHFacets) m_mesh;       //!< Reference mesh to compute deviation map.
+  Handle(Geom_Surface)      m_surf;       //!< Parametric surface to render.
+  int                       m_iSteps;     //!< Number of steps for sampling UV space.
+  NodeScalars               m_scalars;    //!< Type of scalars to associate.
+  double                    m_fMinScalar; //!< Min scalar value.
+  double                    m_fMaxScalar; //!< Max scalar value.
+  double                    m_fTrimU;     //!< Trimming value to limit infinite U.
+  double                    m_fTrimV;     //!< Trimming value to limit infinite V.
 };
 
 #endif

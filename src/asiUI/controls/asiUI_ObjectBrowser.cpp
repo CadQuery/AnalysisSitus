@@ -37,6 +37,7 @@
 #include <asiUI_ViewerPart.h>
 
 // asiEngine includes
+#include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
 #include <asiEngine_Tessellation.h>
 
@@ -65,9 +66,9 @@
 //! \param[in] model    Data Model instance.
 //! \param[in] progress progress notifier.
 //! \param[in] parent   parent widget.
-asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
-                                         ActAPI_ProgressEntry         progress,
-                                         QWidget*                     parent)
+asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(asiEngine_Model)& model,
+                                         ActAPI_ProgressEntry           progress,
+                                         QWidget*                       parent)
 : QTreeWidget(parent), m_progress(progress), m_model(model)
 {
   // Configure.
@@ -472,14 +473,12 @@ void asiUI_ObjectBrowser::onSetAsPart()
   Handle(asiData_IVTopoItemNode)
     topoNode = Handle(asiData_IVTopoItemNode)::DownCast(selected_n);
 
-  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(m_model);
-
   // Modify Data Model.
-  M->OpenCommand();
+  m_model->OpenCommand();
   {
-    asiEngine_Part(M).Update( topoNode->GetShape() );
+    asiEngine_Part(m_model).Update( topoNode->GetShape() );
   }
-  M->CommitCommand();
+  m_model->CommitCommand();
 
   // Update UI.
   for ( size_t k = 0; k < m_viewers.size(); ++k )
@@ -489,8 +488,8 @@ void asiUI_ObjectBrowser::onSetAsPart()
       m_viewers[k]->PrsMgr()->DeRenderPresentation(topoNode);
 
     // Actualize part.
-    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented( M->GetPartNode() ) )
-      m_viewers[k]->PrsMgr()->Actualize( M->GetPartNode() );
+    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented( m_model->GetPartNode() ) )
+      m_viewers[k]->PrsMgr()->Actualize( m_model->GetPartNode() );
   }
 }
 
@@ -556,16 +555,14 @@ void asiUI_ObjectBrowser::onComputeNorms(const bool doElemNorms)
   Handle(asiData_TessNode)
     tessNode = Handle(asiData_TessNode)::DownCast(selected_n);
 
-  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(m_model);
-
   // Modify Data Model.
   Handle(asiData_TessNormsNode) tessNormsNode;
   //
-  M->OpenCommand();
+  m_model->OpenCommand();
   {
-    tessNormsNode = asiEngine_Tessellation(M).ComputeNorms(tessNode, doElemNorms);
+    tessNormsNode = asiEngine_Tessellation(m_model).ComputeNorms(tessNode, doElemNorms);
   }
-  M->CommitCommand();
+  m_model->CommitCommand();
 
   // Update UI.
   for ( size_t k = 0; k < m_viewers.size(); ++k )
@@ -611,14 +608,12 @@ void asiUI_ObjectBrowser::onConvertToTris()
   Handle(Poly_Triangulation) polyTris;
   asiAlgo_MeshConvert::FromPersistent(tessNode->GetMesh(), polyTris);
 
-  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(m_model);
-
   // Modify Data Model.
-  M->OpenCommand();
+  m_model->OpenCommand();
   {
-    M->GetTriangulationNode()->SetTriangulation(polyTris);
+    m_model->GetTriangulationNode()->SetTriangulation(polyTris);
   }
-  M->CommitCommand();
+  m_model->CommitCommand();
 
   // Update UI.
   for ( size_t k = 0; k < m_viewers.size(); ++k )
@@ -627,7 +622,7 @@ void asiUI_ObjectBrowser::onConvertToTris()
     asiUI_ViewerPart* pViewerPart = dynamic_cast<asiUI_ViewerPart*>(m_viewers[k]);
     //
     if ( pViewerPart )
-      pViewerPart->PrsMgr()->Actualize( M->GetTriangulationNode() );
+      pViewerPart->PrsMgr()->Actualize( m_model->GetTriangulationNode() );
   }
 }
 
@@ -649,14 +644,12 @@ void asiUI_ObjectBrowser::onConvertToTess()
   Handle(ActData_Mesh) mesh;
   asiAlgo_MeshConvert::ToPersistent(trisNode->GetTriangulation(), mesh);
 
-  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(m_model);
-
   // Modify Data Model.
-  M->OpenCommand();
+  m_model->OpenCommand();
   {
-    M->GetTessellationNode()->SetMesh(mesh);
+    m_model->GetTessellationNode()->SetMesh(mesh);
   }
-  M->CommitCommand();
+  m_model->CommitCommand();
 
   // Update UI.
   for ( size_t k = 0; k < m_viewers.size(); ++k )
@@ -665,7 +658,7 @@ void asiUI_ObjectBrowser::onConvertToTess()
     asiUI_ViewerPart* pViewerPart = dynamic_cast<asiUI_ViewerPart*>(m_viewers[k]);
     //
     if ( pViewerPart )
-      pViewerPart->PrsMgr()->Actualize( M->GetTessellationNode() );
+      pViewerPart->PrsMgr()->Actualize( m_model->GetTessellationNode() );
   }
 }
 

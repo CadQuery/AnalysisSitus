@@ -37,6 +37,7 @@
 #include <asiAlgo_Utils.h>
 
 // asiEngine includes
+#include <asiEngine_IV.h>
 #include <asiEngine_RE.h>
 
 #if defined USE_MOBIUS
@@ -900,6 +901,46 @@ int RE_JoinCurves(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int RE_CheckSurfDeviation(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc < 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get surface to analyze.
+  Handle(ActAPI_INode) node = cmdRE::model->FindNodeByName(argv[2]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[2]);
+    return TCL_ERROR;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfaceNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Prepare Deviation Node.
+  Handle(asiData_SurfDeviationNode) sdNode;
+  //
+  cmdRE::model->OpenCommand();
+  {
+    sdNode = asiEngine_IV(cmdRE::model, interp->GetProgress(), NULL).Create_SurfaceDeviation(argv[1], surfaceNode);
+  }
+  cmdRE::model->CommitCommand();
+
+  // Update UI.
+  cmdRE::cf->ObjectBrowser->Populate();
+  cmdRE::cf->ViewerPart->PrsMgr()->Actualize(sdNode);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -973,4 +1014,12 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Joins curves into a single curve.",
     //
     __FILE__, group, RE_JoinCurves);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-check-surf-deviation",
+    //
+    "re-check-surf-deviation res surfName\n"
+    "\t Checks deviation between the given surface and the reference mesh.",
+    //
+    __FILE__, group, RE_CheckSurfDeviation);
 }

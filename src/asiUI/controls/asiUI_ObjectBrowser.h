@@ -34,8 +34,8 @@
 // asiUI includes
 #include <asiUI_Viewer.h>
 
-// Active Data (API) includes
-#include <ActAPI_IModel.h>
+// asiEngine includes
+#include <asiEngine_Model.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -56,9 +56,9 @@ class asiUI_EXPORT asiUI_ObjectBrowser : public QTreeWidget
 
 public:
 
-  asiUI_ObjectBrowser(const Handle(ActAPI_IModel)& model,
-                      ActAPI_ProgressEntry         progress,
-                      QWidget*                     parent = NULL);
+  asiUI_ObjectBrowser(const Handle(asiEngine_Model)& model,
+                      ActAPI_ProgressEntry           progress,
+                      QWidget*                       parent = NULL);
 
   virtual
     ~asiUI_ObjectBrowser();
@@ -132,7 +132,7 @@ protected:
 
 protected:
 
-  Handle(ActAPI_IModel)      m_model;   //!< Data Model.
+  Handle(asiEngine_Model)    m_model;    //!< Data Model.
   std::vector<asiUI_Viewer*> m_viewers;  //!< Associated viewers.
   ActAPI_ProgressEntry       m_progress; //!< Progress notifier.
 

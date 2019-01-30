@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 01 April 2016
+// Created on: 30 January 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_ShadedSurfacePipeline_h
-#define asiVisu_ShadedSurfacePipeline_h
+#ifndef asiVisu_SurfaceDeviationPipeline_h
+#define asiVisu_SurfaceDeviationPipeline_h
 
 // asiVisu includes
 #include <asiVisu_DataProvider.h>
@@ -38,18 +38,18 @@
 
 //-----------------------------------------------------------------------------
 
-//! Visualization pipeline for a parametric surface in shaded view.
-class asiVisu_ShadedSurfacePipeline : public asiVisu_Pipeline
+//! Visualization pipeline for a surface with deviation scalars.
+class asiVisu_SurfaceDeviationPipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ShadedSurfacePipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_SurfaceDeviationPipeline, asiVisu_Pipeline)
 
 public:
 
   asiVisu_EXPORT
-    asiVisu_ShadedSurfacePipeline();
+    asiVisu_SurfaceDeviationPipeline();
 
 public:
 
@@ -60,36 +60,27 @@ public:
 
   void SetStepsNumber (const int nbSteps)       { m_iStepsNumber = nbSteps; }
   int  GetStepsNumber ()                  const { return m_iStepsNumber; }
-  void ForceUpdate    ()                        { m_bForced = true; }
-  //
-  bool IsCurvature         () const;
-  bool IsGaussianCurvature () const;
-  bool IsMeanCurvature     () const;
-  void GaussianCurvatureOn ();
-  void MeanCurvatureOn     ();
-  void CurvatureOff        ();
 
 private:
 
-  virtual void callback_add_to_renderer      (vtkRenderer* theRenderer);
-  virtual void callback_remove_from_renderer (vtkRenderer* theRenderer);
+  virtual void callback_add_to_renderer      (vtkRenderer* renderer);
+  virtual void callback_remove_from_renderer (vtkRenderer* renderer);
   virtual void callback_update               ();
 
 private:
 
   //! Copying prohibited.
-  asiVisu_ShadedSurfacePipeline(const asiVisu_ShadedSurfacePipeline&);
+  asiVisu_SurfaceDeviationPipeline(const asiVisu_SurfaceDeviationPipeline&);
 
   //! Assignment prohibited.
-  asiVisu_ShadedSurfacePipeline& operator=(const asiVisu_ShadedSurfacePipeline&);
+  asiVisu_SurfaceDeviationPipeline& operator=(const asiVisu_SurfaceDeviationPipeline&);
 
 protected:
 
-  int  m_iStepsNumber; //!< Number of steps for sampling the parametric space.
-  bool m_bForced;      //!< Not very graceful flag to force execution even if
-                       //!< no persistent data has changed.
-  //
-  vtkSmartPointer<asiVisu_SurfaceSource> m_source; //!< Polygonal data source.
+  int m_iStepsNumber; //!< Number of steps for sampling the parametric space.
+
+  //! Polygonal data source.
+  vtkSmartPointer<asiVisu_SurfaceSource> m_source;
 
 };
 

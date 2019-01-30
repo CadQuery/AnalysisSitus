@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 26 November 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -62,6 +62,7 @@ REGISTER_NODE_TYPE(asiData_FaceNode)
 REGISTER_NODE_TYPE(asiData_FaceNormsNode)
 REGISTER_NODE_TYPE(asiData_FaceContourNode)
 REGISTER_NODE_TYPE(asiData_SurfNode)
+REGISTER_NODE_TYPE(asiData_SurfDeviationNode)
 REGISTER_NODE_TYPE(asiData_EdgeNode)
 REGISTER_NODE_TYPE(asiData_CurveNode)
 REGISTER_NODE_TYPE(asiData_CurvatureCombsNode)
@@ -299,6 +300,8 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_IVTessItemNode>,     Partition_IV_TessItem);
   REGISTER_PARTITION(asiData_Partition<asiData_IVTextNode>,         Partition_IV_Text);
   REGISTER_PARTITION(asiData_Partition<asiData_IVTextItemNode>,     Partition_IV_TextItem);
+  //
+  REGISTER_PARTITION(asiData_Partition<asiData_SurfDeviationNode>,  Partition_SurfDeviation);
 }
 
 //-----------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 11 April 2016
+// Created on: 30 January 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2016-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,77 +29,71 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_IVSurfacePipeline.h>
+#include <asiVisu_SurfaceDeviationPipeline.h>
 
 // asiVisu includes
-#include <asiVisu_IVSurfaceDataProvider.h>
-#include <asiVisu_SurfaceSource.h>
+#include <asiVisu_MeshResultUtils.h>
+#include <asiVisu_SurfaceDeviationDataProvider.h>
 
 // VTK includes
-#include <vtkActor.h>
 #include <vtkPolyDataMapper.h>
-#include <vtkProperty.h>
+
+// OCCT includes
+#include <BRep_Tool.hxx>
 
 //-----------------------------------------------------------------------------
 
 //! Creates new Pipeline initialized by default VTK mapper and actor.
-asiVisu_IVSurfacePipeline::asiVisu_IVSurfacePipeline()
+asiVisu_SurfaceDeviationPipeline::asiVisu_SurfaceDeviationPipeline()
+//
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                     vtkSmartPointer<vtkActor>::New() ),
-  m_iStepsNumber(150)
-{
-  this->Actor()->GetProperty()->SetLineWidth(1.0);
   //
-  asiVisu_Utils::ApplyLightingRules( this->Actor() );
-}
+  m_iStepsNumber (0),
+  //
+  m_source( vtkSmartPointer<asiVisu_SurfaceSource>::New() )
+{}
 
 //-----------------------------------------------------------------------------
 
 //! Sets input data for the pipeline.
 //! \param[in] DP Data Provider.
-void asiVisu_IVSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
+void asiVisu_SurfaceDeviationPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
-  if ( !m_iStepsNumber )
-    return;
-
-  Handle(asiVisu_IVSurfaceDataProvider)
-    provider = Handle(asiVisu_IVSurfaceDataProvider)::DownCast(DP);
+  Handle(asiVisu_SurfaceDeviationDataProvider)
+    dp = Handle(asiVisu_SurfaceDeviationDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
    * =========================== */
 
   double uMin, uMax, vMin, vMax;
-  Handle(Geom_Surface) surface = provider->GetSurface(uMin, uMax, vMin, vMax);
-  //
-  if ( surface.IsNull() )
+  Handle(Geom_Surface)      surf = dp->GetSurface(uMin, uMax, vMin, vMax);
+  Handle(asiAlgo_BVHFacets) mesh = dp->GetReferenceMesh();
+
+  if ( !m_iStepsNumber || surf.IsNull() || mesh.IsNull() )
   {
-    // Pass empty data set in order to have valid pipeline
+    // Pass empty data set in order to have valid pipeline.
     vtkSmartPointer<vtkPolyData> dummyDS = vtkSmartPointer<vtkPolyData>::New();
     this->SetInputData(dummyDS);
-    this->Modified(); // Update modification timestamp
-    return; // Do nothing
+    this->Modified(); // Update modification timestamp.
+    return; // Do nothing.
   }
 
   /* ============================
    *  Prepare polygonal data set
    * ============================ */
 
-  if ( provider->MustExecute( this->GetMTime() ) )
+  if ( dp->MustExecute( this->GetMTime() ) )
   {
-    // Trim
-    const double uLimit = std::fmax( Abs(uMin), Abs(uMax) );
-    const double vLimit = std::fmax( Abs(vMin), Abs(vMax) );
-
-    vtkSmartPointer<asiVisu_SurfaceSource>
-      src = vtkSmartPointer<asiVisu_SurfaceSource>::New();
-    //
-    src->SetInputSurface  (surface);
-    src->SetNumberOfSteps (m_iStepsNumber);
-    src->SetTrimValues    (uLimit, vLimit);
+    // Configure surface source
+    m_source->SetInputSurface  (surf);
+    m_source->SetReferenceMesh (mesh);
+    m_source->SetScalars       (asiVisu_SurfaceSource::Scalars_Deviation);
+    m_source->SetNumberOfSteps (m_iStepsNumber );
 
     // Initialize pipeline
-    this->SetInputConnection( src->GetOutputPort() );
+    this->SetInputConnection( m_source->GetOutputPort() );
   }
 
   // Update modification timestamp
@@ -110,13 +104,24 @@ void asiVisu_IVSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void asiVisu_IVSurfacePipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_SurfaceDeviationPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
+
+//-----------------------------------------------------------------------------
 
 //! Callback for RemoveFromRenderer() routine.
-void asiVisu_IVSurfacePipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_SurfaceDeviationPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
+//-----------------------------------------------------------------------------
+
 //! Callback for Update() routine.
-void asiVisu_IVSurfacePipeline::callback_update()
-{}
+void asiVisu_SurfaceDeviationPipeline::callback_update()
+{
+  const double min_k = m_source->GetMinScalar();
+  const double max_k = m_source->GetMaxScalar();
+  //
+  if ( m_source->HasScalars() )
+    asiVisu_MeshResultUtils::InitPointScalarMapper(m_mapper, ARRNAME_SURF_SCALARS,
+                                                   min_k, max_k, false);
+}

@@ -33,6 +33,7 @@ set (part_H_FILES
   part/asiData_NamingAttr.h
   part/asiData_NamingParameter.h
   part/asiData_PartNode.h
+  part/asiData_SurfDeviationNode.h
   part/asiData_SurfNode.h
   part/asiData_TolerantRangeNode.h
   part/asiData_TolerantShapesNode.h
@@ -53,6 +54,7 @@ set (part_CPP_FILES
   part/asiData_NamingAttr.cpp
   part/asiData_NamingParameter.cpp
   part/asiData_PartNode.cpp
+  part/asiData_SurfDeviationNode.cpp
   part/asiData_SurfNode.cpp
   part/asiData_TolerantRangeNode.cpp
   part/asiData_TolerantShapesNode.cpp

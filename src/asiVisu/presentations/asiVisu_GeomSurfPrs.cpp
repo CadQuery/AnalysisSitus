@@ -36,9 +36,9 @@
 #include <asiVisu_BSurfKnotsPipeline.h>
 #include <asiVisu_BSurfPolesPipeline.h>
 #include <asiVisu_FaceDataProvider.h>
-#include <asiVisu_FaceSurfacePipeline.h>
+#include <asiVisu_FaceSurfaceIsosPipeline.h>
 #include <asiVisu_MeshResultUtils.h>
-#include <asiVisu_ShadedSurfacePipeline.h>
+#include <asiVisu_FaceSurfaceShadedPipeline.h>
 #include <asiVisu_Utils.h>
 
 // asiAlgo includes
@@ -144,7 +144,7 @@ asiVisu_GeomSurfPrs::asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& N)
   //---------------------------------------------------------------------------
 
   // Pipeline for surface isolines
-  this->addPipeline        ( Pipeline_Main, new asiVisu_FaceSurfacePipeline );
+  this->addPipeline        ( Pipeline_Main, new asiVisu_FaceSurfaceIsosPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
 
   //---------------------------------------------------------------------------
@@ -152,7 +152,7 @@ asiVisu_GeomSurfPrs::asiVisu_GeomSurfPrs(const Handle(ActAPI_INode)& N)
   //---------------------------------------------------------------------------
 
   // Pipeline for surface in manually crafted shading
-  Handle(asiVisu_ShadedSurfacePipeline) shaded_pl = new asiVisu_ShadedSurfacePipeline;
+  Handle(asiVisu_FaceSurfaceShadedPipeline) shaded_pl = new asiVisu_FaceSurfaceShadedPipeline;
   //
   this->addPipeline        ( Pipeline_Shaded, shaded_pl );
   this->assignDataProvider ( Pipeline_Shaded, DP );
@@ -238,14 +238,14 @@ void asiVisu_GeomSurfPrs::SetColor(const QColor& color) const
 void asiVisu_GeomSurfPrs::DoWireframe()
 {
   // Pipeline for wireframe surface
-  Handle(asiVisu_FaceSurfacePipeline)
-    wire_pl = Handle(asiVisu_FaceSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_FaceSurfaceIsosPipeline)
+    wire_pl = Handle(asiVisu_FaceSurfaceIsosPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
   //
   wire_pl->Actor()->SetVisibility(1);
 
   // Pipeline for shaded surface
-  Handle(asiVisu_ShadedSurfacePipeline)
-    shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+  Handle(asiVisu_FaceSurfaceShadedPipeline)
+    shaded_pl = Handle(asiVisu_FaceSurfaceShadedPipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
   //
   shaded_pl->Actor()->SetVisibility(0);
 }
@@ -254,14 +254,14 @@ void asiVisu_GeomSurfPrs::DoWireframe()
 void asiVisu_GeomSurfPrs::DoShaded()
 {
   // Pipeline for wireframe surface
-  Handle(asiVisu_FaceSurfacePipeline)
-    wire_pl = Handle(asiVisu_FaceSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_FaceSurfaceIsosPipeline)
+    wire_pl = Handle(asiVisu_FaceSurfaceIsosPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
   //
   wire_pl->Actor()->SetVisibility(0);
 
   // Pipeline for shaded surface
-  Handle(asiVisu_ShadedSurfacePipeline)
-    shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+  Handle(asiVisu_FaceSurfaceShadedPipeline)
+    shaded_pl = Handle(asiVisu_FaceSurfaceShadedPipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
   //
   shaded_pl->CurvatureOff();
   shaded_pl->ForceUpdate();
@@ -272,14 +272,14 @@ void asiVisu_GeomSurfPrs::DoShaded()
 void asiVisu_GeomSurfPrs::DoShadedAndGaussian()
 {
   // Pipeline for wireframe surface
-  Handle(asiVisu_FaceSurfacePipeline)
-    wire_pl = Handle(asiVisu_FaceSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_FaceSurfaceIsosPipeline)
+    wire_pl = Handle(asiVisu_FaceSurfaceIsosPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
   //
   wire_pl->Actor()->SetVisibility(0);
 
   // Pipeline for shaded surface
-  Handle(asiVisu_ShadedSurfacePipeline)
-    shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+  Handle(asiVisu_FaceSurfaceShadedPipeline)
+    shaded_pl = Handle(asiVisu_FaceSurfaceShadedPipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
   //
   shaded_pl->GaussianCurvatureOn();
   shaded_pl->ForceUpdate();
@@ -290,14 +290,14 @@ void asiVisu_GeomSurfPrs::DoShadedAndGaussian()
 void asiVisu_GeomSurfPrs::DoShadedAndMean()
 {
   // Pipeline for wireframe surface
-  Handle(asiVisu_FaceSurfacePipeline)
-    wire_pl = Handle(asiVisu_FaceSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+  Handle(asiVisu_FaceSurfaceIsosPipeline)
+    wire_pl = Handle(asiVisu_FaceSurfaceIsosPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
   //
   wire_pl->Actor()->SetVisibility(0);
 
   // Pipeline for shaded surface
-  Handle(asiVisu_ShadedSurfacePipeline)
-    shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+  Handle(asiVisu_FaceSurfaceShadedPipeline)
+    shaded_pl = Handle(asiVisu_FaceSurfaceShadedPipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
   //
   shaded_pl->MeanCurvatureOn();
   shaded_pl->ForceUpdate();
@@ -309,8 +309,8 @@ void asiVisu_GeomSurfPrs::DoShadedAndMean()
 bool asiVisu_GeomSurfPrs::IsShaded() const
 {
   // Pipeline for shaded surface
-  Handle(asiVisu_ShadedSurfacePipeline)
-    shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+  Handle(asiVisu_FaceSurfaceShadedPipeline)
+    shaded_pl = Handle(asiVisu_FaceSurfaceShadedPipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
   //
   return shaded_pl->Actor()->GetVisibility() > 0;
 }
@@ -320,8 +320,8 @@ bool asiVisu_GeomSurfPrs::IsShaded() const
 bool asiVisu_GeomSurfPrs::IsShadedAndScalars() const
 {
   // Pipeline for shaded surface
-  Handle(asiVisu_ShadedSurfacePipeline)
-    shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+  Handle(asiVisu_FaceSurfaceShadedPipeline)
+    shaded_pl = Handle(asiVisu_FaceSurfaceShadedPipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
   //
   return ( shaded_pl->Actor()->GetVisibility() > 0 ) &&
          ( shaded_pl->IsGaussianCurvature() || shaded_pl->IsMeanCurvature() );
@@ -401,8 +401,8 @@ void asiVisu_GeomSurfPrs::afterUpdatePipelines() const
   if ( this->IsShadedAndScalars() )
   {
     // Pipeline for shaded surface
-    Handle(asiVisu_ShadedSurfacePipeline)
-      shaded_pl = Handle(asiVisu_ShadedSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
+    Handle(asiVisu_FaceSurfaceShadedPipeline)
+      shaded_pl = Handle(asiVisu_FaceSurfaceShadedPipeline)::DownCast( this->GetPipeline(Pipeline_Shaded) );
 
     // Initialize scalar bar Actor
     m_scalarBarWidget->GetScalarBarActor()->SetLookupTable( shaded_pl->Mapper()->GetLookupTable() );

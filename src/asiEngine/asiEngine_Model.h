@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 26 November 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -65,6 +65,7 @@
 #include <asiData_ReVertexNode.h>
 #include <asiData_ReVerticesNode.h>
 #include <asiData_RootNode.h>
+#include <asiData_SurfDeviationNode.h>
 #include <asiData_TessNode.h>
 #include <asiData_TessNormsNode.h>
 #include <asiData_TolerantRangeNode.h>
@@ -173,6 +174,13 @@ public:
   Handle(asiData_Partition<asiData_SurfNode>) GetSurfPartition() const
   {
     return Handle(asiData_Partition<asiData_SurfNode>)::DownCast( this->Partition(Partition_Surf) );
+  }
+
+  //! Accessor for a Partition instance dedicated to Surface Deviation Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_SurfDeviationNode>) GetSurfDeviationPartition() const
+  {
+    return Handle(asiData_Partition<asiData_SurfDeviationNode>)::DownCast( this->Partition(Partition_SurfDeviation) );
   }
 
   //! Accessor for a Partition instance dedicated to Face Contour Nodes.
@@ -526,6 +534,8 @@ protected:
     Partition_IV_TessItem,
     Partition_IV_Text,
     Partition_IV_TextItem,
+  //---------------------------------------------------------------------------
+    Partition_SurfDeviation,
   //---------------------------------------------------------------------------
     Partition_LAST
   };

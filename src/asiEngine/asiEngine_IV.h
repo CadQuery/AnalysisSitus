@@ -163,6 +163,10 @@ public:
                    const TCollection_AsciiString& name,
                    const bool                     useAutoNaming);
 
+  asiEngine_EXPORT Handle(asiData_SurfDeviationNode)
+    Create_SurfaceDeviation(const TCollection_AsciiString&       name,
+                            const Handle(asiData_IVSurfaceNode)& parent);
+
   asiEngine_EXPORT void
     Update_Surface(const Handle(asiData_IVSurfaceNode)& node,
                    const Handle(Geom_Surface)&          surface,

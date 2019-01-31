@@ -49,7 +49,7 @@ asiVisu_SurfaceDeviationPipeline::asiVisu_SurfaceDeviationPipeline()
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
                     vtkSmartPointer<vtkActor>::New() ),
   //
-  m_iStepsNumber (0),
+  m_iStepsNumber(100),
   //
   m_source( vtkSmartPointer<asiVisu_SurfaceSource>::New() )
 {}
@@ -123,5 +123,5 @@ void asiVisu_SurfaceDeviationPipeline::callback_update()
   //
   if ( m_source->HasScalars() )
     asiVisu_MeshResultUtils::InitPointScalarMapper(m_mapper, ARRNAME_SURF_SCALARS,
-                                                   min_k, max_k, false);
+                                                   min_k, max_k, true);
 }

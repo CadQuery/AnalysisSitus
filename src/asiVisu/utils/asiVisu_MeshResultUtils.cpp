@@ -51,7 +51,7 @@ vtkSmartPointer<vtkLookupTable>
 {
   vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
   aLookup->SetTableRange(theRangeMin, theRangeMax);
-  aLookup->SetHueRange(0.66667, 0.0);
+  aLookup->SetHueRange(0.0, 0.1);
   return aLookup;
 }
 
@@ -108,9 +108,9 @@ void asiVisu_MeshResultUtils::InitCellScalarMapper(vtkMapper*   theMapper,
 //! \param doInterpolation   [in]     indicates whether to ask mapper to interpolate
 //!                                   scalars before actual mapping.
 void asiVisu_MeshResultUtils::InitPointScalarMapper(vtkMapper*      theMapper,
-                                                   vtkLookupTable* theLookup,
-                                                   const char*     theScalarsArrName,
-                                                   const bool      doInterpolation)
+                                                    vtkLookupTable* theLookup,
+                                                    const char*     theScalarsArrName,
+                                                    const bool      doInterpolation)
 {
   theMapper->ScalarVisibilityOn();
   theMapper->SetScalarModeToUsePointData();
@@ -136,10 +136,10 @@ void asiVisu_MeshResultUtils::InitPointScalarMapper(vtkMapper*      theMapper,
 //! \param doInterpolation   [in]     indicates whether to ask mapper to interpolate
 //!                                   scalars before actual mapping.
 void asiVisu_MeshResultUtils::InitPointScalarMapper(vtkMapper*   theMapper,
-                                                   const char*  theScalarsArrName,
-                                                   const double theRangeMin,
-                                                   const double theRangeMax,
-                                                   const bool   doInterpolation)
+                                                    const char*  theScalarsArrName,
+                                                    const double theRangeMin,
+                                                    const double theRangeMax,
+                                                    const bool   doInterpolation)
 {
   vtkSmartPointer<vtkLookupTable> aLookup = InitLookupTable(theRangeMin, theRangeMax);
   InitPointScalarMapper(theMapper, aLookup, theScalarsArrName, doInterpolation);

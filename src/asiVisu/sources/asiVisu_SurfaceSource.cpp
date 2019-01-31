@@ -353,6 +353,9 @@ double asiVisu_SurfaceSource::computeScalar(const double u, const double v)
     gp_Pnt       P     = m_surf->Value(u, v);
     gp_Pnt       Pproj = projectTool.Perform(P);
     const double dist  = P.Distance(Pproj);
+    //
+    if ( dist < m_fMinScalar ) m_fMinScalar = dist;
+    if ( dist > m_fMaxScalar ) m_fMaxScalar = dist;
 
     return dist;
   }

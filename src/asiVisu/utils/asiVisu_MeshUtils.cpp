@@ -97,7 +97,7 @@ void asiVisu_MeshUtils::InitMapper(vtkMapper*      theMapper,
 //! \param theScalarsArrName [in]     name of the array storing the scalars
 //!                                   for colorization.
 void asiVisu_MeshUtils::InitMapper(vtkMapper*  theMapper,
-                                 const char* theScalarsArrName)
+                                   const char* theScalarsArrName)
 {
   vtkSmartPointer<vtkLookupTable> aLookup = InitLookupTable();
   InitMapper(theMapper, aLookup, theScalarsArrName);

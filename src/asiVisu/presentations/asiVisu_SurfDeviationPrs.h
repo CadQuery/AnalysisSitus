@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_IVSurfDeviationPrs_h
-#define asiVisu_IVSurfDeviationPrs_h
+#ifndef asiVisu_SurfDeviationPrs_h
+#define asiVisu_SurfDeviationPrs_h
 
 // asiVisu includes
 #include <asiVisu_DefaultPrs.h>
@@ -37,6 +37,9 @@
 
 // asiData includes
 #include <asiData_SurfDeviationNode.h>
+
+// VTK includes
+#include <vtkScalarBarWidget.h>
 
 //-----------------------------------------------------------------------------
 
@@ -65,10 +68,25 @@ public:
   asiVisu_EXPORT static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& N);
 
+protected:
+
+  virtual void
+    afterUpdatePipelines() const;
+
+  virtual void
+    renderPipelines(vtkRenderer* renderer) const;
+
+  virtual void
+    deRenderPipelines(vtkRenderer* renderer) const;
+
 private:
 
   //! Allocation is allowed only via Instance() method.
   asiVisu_SurfDeviationPrs(const Handle(ActAPI_INode)& N);
+
+protected:
+
+  vtkSmartPointer<vtkScalarBarWidget> m_scalarBarWidget; //!< Scalar bar.
 
 };
 

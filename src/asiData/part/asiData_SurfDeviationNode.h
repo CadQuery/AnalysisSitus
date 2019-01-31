@@ -75,8 +75,8 @@ public:
   //! \return referenced Surface Node.
   Handle(asiData_IVSurfaceNode) GetSurfaceNode() const
   {
-    Handle(ActAPI_INode)
-      node = ActParamTool::AsReference( this->Parameter(PID_SurfaceRef) )->GetNode();
+    Handle(ActAPI_IDataCursor)
+      node = ActParamTool::AsReference( this->Parameter(PID_SurfaceRef) )->GetTarget();
 
     return Handle(asiData_IVSurfaceNode)::DownCast(node);
   }
@@ -84,8 +84,8 @@ public:
   //! \return referenced Triangulation Node.
   Handle(asiData_TriangulationNode) GetTriangulationNode() const
   {
-    Handle(ActAPI_INode)
-      node = ActParamTool::AsReference( this->Parameter(PID_MeshRef) )->GetNode();
+    Handle(ActAPI_IDataCursor)
+      node = ActParamTool::AsReference( this->Parameter(PID_MeshRef) )->GetTarget();
 
     return Handle(asiData_TriangulationNode)::DownCast(node);
   }

@@ -39,6 +39,7 @@
 // asiEngine includes
 #include <asiEngine_IV.h>
 #include <asiEngine_RE.h>
+#include <asiEngine_Triangulation.h>
 
 #if defined USE_MOBIUS
   // Mobius includes
@@ -928,6 +929,11 @@ int RE_CheckSurfDeviation(const Handle(asiTcl_Interp)& interp,
   //
   cmdRE::model->OpenCommand();
   {
+    // If there is no BVH for mesh, build one.
+    if ( cmdRE::model->GetTriangulationNode()->GetBVH().IsNull() )
+      asiEngine_Triangulation( cmdRE::model, interp->GetProgress(), NULL ).BuildBVH();
+
+    // Create Surface Deviation Node.
     sdNode = asiEngine_IV(cmdRE::model, interp->GetProgress(), NULL).Create_SurfaceDeviation(argv[1], surfaceNode);
   }
   cmdRE::model->CommitCommand();

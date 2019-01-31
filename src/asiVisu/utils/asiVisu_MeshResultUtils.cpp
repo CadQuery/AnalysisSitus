@@ -49,10 +49,19 @@ vtkSmartPointer<vtkLookupTable>
   asiVisu_MeshResultUtils::InitLookupTable(const double theRangeMin,
                                            const double theRangeMax)
 {
-  vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
-  aLookup->SetTableRange(theRangeMin, theRangeMax);
-  aLookup->SetHueRange(0.0, 0.1);
-  return aLookup;
+  vtkSmartPointer<vtkLookupTable> lookup = vtkSmartPointer<vtkLookupTable>::New();
+  lookup->SetTableRange(theRangeMin, theRangeMax);
+
+  // Rainbow colors.
+  lookup->SetHueRange(0.66667, 0.0);
+
+  // Grayscale (for monochrome printing).
+  /*
+  lookup->SetHueRange(0.0, 0.1);
+  lookup->SetValueRange(1.0, 0);
+  lookup->SetSaturationRange(0.0, 0.0);
+  */
+  return lookup;
 }
 
 //! Initializes the passed VTK mapper with the given Lookup Table.
@@ -63,9 +72,9 @@ vtkSmartPointer<vtkLookupTable>
 //! \param doInterpolation   [in]     indicates whether to ask mapper to interpolate
 //!                                   scalars before actual mapping.
 void asiVisu_MeshResultUtils::InitCellScalarMapper(vtkMapper*      theMapper,
-                                                  vtkLookupTable* theLookup,
-                                                  const char*     theScalarsArrName,
-                                                  const bool      doInterpolation)
+                                                   vtkLookupTable* theLookup,
+                                                   const char*     theScalarsArrName,
+                                                   const bool      doInterpolation)
 {
   theMapper->ScalarVisibilityOn();
   theMapper->SetScalarModeToUseCellData();

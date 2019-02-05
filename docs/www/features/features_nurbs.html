@@ -39,6 +39,8 @@
 </tr>
 </table>
 
+<h1>NURBS modeling</h1>
+
 <p>
 Analysis Situs uses two geometric modeling kernels. The main kernel is OpenCascade. Another one
 is the in-house NURBS modeling kernel developed following the classic monography by
@@ -46,6 +48,8 @@ L. Piegl and W. Tiller, <a href="../references.html#piegl-tiller-1995">The NURBS
 In this chapter, we present the basic NURBS modeling functionality available in Analysis Situs
 without emphasizing the difference between the two kernels.
 </p>
+
+<div align="center"><img src="../imgs/nurbs_modeling_kernels.png"/></div>
 
 <h1>Basic algorithms</h1>
 
@@ -109,7 +113,8 @@ is implemented following the paper by <a href="../references.html#kallay-1993">[
 The purpose of this operator is to move the control points of a B-surface
 attempting to minimize its bending energy. The boundary control points are
 usually constrained to be in a fixed position so that any deformation of
-a surface does not violate its boundaries.
+a surface does not violate its boundaries (hence the faired surface is not a trivial plane for any
+values of the fairing coefficient).
 </p>
 
 <h1>Services</h1>

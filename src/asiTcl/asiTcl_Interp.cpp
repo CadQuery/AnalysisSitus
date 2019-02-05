@@ -654,6 +654,29 @@ asiTcl_Interp& asiTcl_Interp::operator<<(const double value)
 
 //-----------------------------------------------------------------------------
 
+asiTcl_Interp& asiTcl_Interp::Append(const TColStd_PackedMapOfInteger& mask)
+{
+  int iter = 0;
+  for ( TColStd_MapIteratorOfPackedMapOfInteger mit(mask); mit.More(); mit.Next() )
+  {
+    if ( iter++ )
+      this->Append(" ");
+
+    this->Append( mit.Key() );
+  }
+
+  return *this;
+}
+
+//-----------------------------------------------------------------------------
+
+asiTcl_Interp& asiTcl_Interp::operator<<(const TColStd_PackedMapOfInteger& mask)
+{
+  return this->Append(mask);
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiTcl_Interp::addCommand(const TCollection_AsciiString& name,
                                const TCollection_AsciiString& help,
                                const TCollection_AsciiString& filename,

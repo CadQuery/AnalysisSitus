@@ -1805,6 +1805,95 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_KillBlends(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  const bool isInteractive = (argc == 1);
+
+  // Get Part Node to access the selected faces.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_ERROR;
+  }
+  Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
+  TopoDS_Shape        shape = partNode->GetShape();
+
+  // Get indices of the faces asked for removal.
+  TColStd_PackedMapOfInteger fids;
+  //
+  if ( isInteractive )
+  {
+    asiEngine_Part partAPI( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() );
+    partAPI.GetHighlightedFaces(fids);
+  }
+  else
+  {
+    for ( int k = 1; k < argc; ++k )
+    {
+      TCollection_AsciiString argStr(argv[k]);
+      //
+      if ( !argStr.IsIntegerValue() )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed face ID '%1' is not an integer value."
+                                                            << argStr);
+        return TCL_ERROR;
+      }
+
+      const int fid = atoi(argv[k]);
+      //
+      if ( !partNode->GetAAG()->HasFace(fid) )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face %1 does not exist in the working part."
+                                                            << fid);
+        return TCL_ERROR;
+      }
+
+      fids.Add(fid);
+    }
+  }
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Perform suppression.
+  asiAlgo_SuppressBlendChain suppressor( aag,
+                                         interp->GetProgress(),
+                                         interp->GetPlotter() );
+  //
+  if ( !suppressor.Perform(fids) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Suppression failed.");
+
+    *interp << false;
+    return TCL_OK;
+  }
+  //
+  const TopoDS_Shape& result = suppressor.GetResult();
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "kill-blends")
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
+
+  *interp << true;
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_InsertKnotCurve(const Handle(asiTcl_Interp)& interp,
                            int                          argc,
                            const char**                 argv)
@@ -2417,6 +2506,14 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t interactively or specified as 1-based face ID.",
     //
     __FILE__, group, ENGINE_KillBlend);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("kill-blends",
+    //
+    "kill-blends [fid1 [fid2 [...]]]\n"
+    "\t Attempts to defeature the selected blends.",
+    //
+    __FILE__, group, ENGINE_KillBlends);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("insert-knot-curve",

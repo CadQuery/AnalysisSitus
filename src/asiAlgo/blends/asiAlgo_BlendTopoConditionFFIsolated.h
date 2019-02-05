@@ -180,7 +180,8 @@ public:
   {
     output = input;
 
-    history = new asiAlgo_History;
+    if ( history.IsNull() )
+      history = new asiAlgo_History;
 
     // Kill the first terminating edge. We also specify a vertex to kill to
     // be as much deterministic as possible.

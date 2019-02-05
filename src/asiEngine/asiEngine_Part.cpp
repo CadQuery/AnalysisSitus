@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 21 March 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -433,48 +433,42 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
 
 //! Highlights a single face.
 //! \param[in] faceIndex face to highlight.
-//! \param[in] color     highlighting color.
-void asiEngine_Part::HighlightFace(const int     faceIndex,
-                                   const QColor& color)
+void asiEngine_Part::HighlightFace(const int faceIndex)
 {
   // Prepare a fictive collection
   TColStd_PackedMapOfInteger faceIndices;
   faceIndices.Add(faceIndex);
 
   // Highlight
-  HighlightFaces(faceIndices, color);
+  HighlightFaces(faceIndices);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Highlights faces.
 //! \param[in] faceIndices faces to highlight.
-//! \param[in] color       highlighting color.
-void asiEngine_Part::HighlightFaces(const TColStd_PackedMapOfInteger& faceIndices,
-                                    const QColor&                     color)
+void asiEngine_Part::HighlightFaces(const TColStd_PackedMapOfInteger& faceIndices)
 {
   // Convert face indices to sub-shape indices
   TColStd_PackedMapOfInteger ssIndices;
   GetSubShapeIndicesByFaceIndices(faceIndices, ssIndices);
 
   // Highlight
-  HighlightSubShapes(ssIndices, asiVisu_Utils::ColorToInt(color), SelectionMode_Face);
+  HighlightSubShapes(ssIndices, SelectionMode_Face);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Highlights edges.
 //! \param[in] edgeIndices edges to highlight.
-//! \param[in] color       highlighting color.
-void asiEngine_Part::HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndices,
-                                    const QColor&                     color)
+void asiEngine_Part::HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndices)
 {
   // Convert edge indices to sub-shape indices
   TColStd_PackedMapOfInteger ssIndices;
   GetSubShapeIndicesByEdgeIndices(edgeIndices, ssIndices);
 
   // Highlight
-  HighlightSubShapes(ssIndices, asiVisu_Utils::ColorToInt(color), SelectionMode_Edge);
+  HighlightSubShapes(ssIndices, SelectionMode_Edge);
 }
 
 //-----------------------------------------------------------------------------
@@ -485,28 +479,6 @@ void asiEngine_Part::HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndice
 void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
                                         const asiVisu_SelectionMode       selMode)
 {
-  double pick_color[3];
-  asiVisu_Utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
-  QColor color;
-  color.setRedF   (pick_color[0]);
-  color.setGreenF (pick_color[1]);
-  color.setBlueF  (pick_color[2]);
-  //
-  HighlightSubShapes( subShapeIndices, asiVisu_Utils::ColorToInt(color), selMode );
-}
-
-//-----------------------------------------------------------------------------
-
-//! Highlights the passed sub-shapes identified by their indices.
-//! \param[in] subShapeIndices indices of the sub-shapes to highlight.
-//! \param[in] color           highlighting color.
-//! \param[in] selMode         selection mode.
-void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
-                                        const int                         color,
-                                        const asiVisu_SelectionMode       selMode)
-{
-  asiEngine_NotUsed(color);
-
   // Get Part Node
   Handle(asiData_PartNode) N = m_model->GetPartNode();
 
@@ -522,8 +494,6 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
     m_prsMgr->Highlight(N, prs->MainActor(), subShapeIndices, selMode);
   else if ( selMode == SelectionMode_Edge )
     m_prsMgr->Highlight(N, prs->ContourActor(), subShapeIndices, selMode);
-
-  // TODO: color is not applied at the moment
 }
 
 //-----------------------------------------------------------------------------
@@ -532,37 +502,19 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
 //! \param[in] subShapes sub-shapes to highlight.
 void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes)
 {
-  double pick_color[3];
-  asiVisu_Utils::DefaultPickingColor(pick_color[0], pick_color[1], pick_color[2]);
-  QColor color;
-  color.setRedF   (pick_color[0]);
-  color.setGreenF (pick_color[1]);
-  color.setBlueF  (pick_color[2]);
-  //
-  HighlightSubShapes( subShapes, asiVisu_Utils::ColorToInt(color) );
-}
-
-//-----------------------------------------------------------------------------
-
-//! Highlights the passed sub-shapes in Part Viewer.
-//! \param[in] subShapes sub-shapes to highlight.
-//! \param[in] color     highlighting color.
-void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes,
-                                        const int                         color)
-{
   // Get global relative indices of the sub-shapes in the CAD model
   TColStd_PackedMapOfInteger selectedFaces, selectedEdges, selectedVertices;
   asiEngine_Part::GetSubShapeIndices(subShapes, selectedFaces, selectedEdges, selectedVertices);
 
   // Highlight
   if ( !selectedFaces.IsEmpty() )
-    HighlightSubShapes(selectedFaces, color, SelectionMode_Face);
+    HighlightSubShapes(selectedFaces, SelectionMode_Face);
   //
   if ( !selectedEdges.IsEmpty() )
-    HighlightSubShapes(selectedEdges, color, SelectionMode_Edge);
+    HighlightSubShapes(selectedEdges, SelectionMode_Edge);
   //
   if ( !selectedVertices.IsEmpty() )
-    HighlightSubShapes(selectedVertices, color, SelectionMode_Vertex);
+    HighlightSubShapes(selectedVertices, SelectionMode_Vertex);
 }
 
 //-----------------------------------------------------------------------------

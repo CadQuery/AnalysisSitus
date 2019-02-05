@@ -175,4 +175,11 @@ protected:
 
 };
 
+//! Convenience type alias. Maps ID of a blend face to the data structure
+//! which is the descriptor of topological situation around that face.
+typedef NCollection_DataMap<int, Handle(asiAlgo_BlendTopoCondition)> asiAlgo_BlendTopoConditionMap;
+
+//! Shared version of asiAlgo_BlendTopoConditionMap.
+typedef NCollection_Shared<asiAlgo_BlendTopoConditionMap> asiAlgo_HBlendTopoConditionMap;
+
 #endif

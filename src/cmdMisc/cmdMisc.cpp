@@ -1659,12 +1659,18 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
 
   // C1.
   TColgp_Array1OfPnt C1Poles(1, 4);
-  C1Poles(1) = gp_Pnt(0,  0, 0);
-  C1Poles(2) = gp_Pnt(1, -0.5, 0);
-  C1Poles(3) = gp_Pnt(2,  1, 0);
-  C1Poles(4) = gp_Pnt(3,  2, 0);
+  C1Poles(1) = gp_Pnt(0.0,  0.0, 0.0);
+  C1Poles(2) = gp_Pnt(1.0, -0.5, 0.0);
+  C1Poles(3) = gp_Pnt(2.0,  1.0, 0.0);
+  C1Poles(4) = gp_Pnt(3.0,  2.0, 0.0);
   //
-  Handle(Geom_BezierCurve) C1 = new Geom_BezierCurve(C1Poles);
+  TColStd_Array1OfReal C1Weights(1, 4);
+  C1Weights(1) = 1.0;
+  C1Weights(2) = 1.0;
+  C1Weights(3) = 1.0;
+  C1Weights(4) = 1.0;
+  //
+  Handle(Geom_BezierCurve) C1 = new Geom_BezierCurve(C1Poles, C1Weights);
 
   // C2.
   TColgp_Array1OfPnt C2Poles(1, 4);
@@ -1673,7 +1679,13 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
   C2Poles(3) = gp_Pnt(2, -1, 0);
   C2Poles(4) = gp_Pnt(3, -2, 0);
   //
-  Handle(Geom_BezierCurve) C2 = new Geom_BezierCurve(C2Poles);
+  TColStd_Array1OfReal C2Weights(1, 4);
+  C2Weights(1) = 1.0;
+  C2Weights(2) = 1.0;
+  C2Weights(3) = 1.0;
+  C2Weights(4) = 1.0;
+  //
+  Handle(Geom_BezierCurve) C2 = new Geom_BezierCurve(C2Poles, C2Weights);
 
   interp->GetPlotter().REDRAW_CURVE("C1", C1, Color_Red);
   interp->GetPlotter().REDRAW_CURVE("C2", C2, Color_Magenta);

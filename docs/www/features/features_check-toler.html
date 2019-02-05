@@ -39,8 +39,11 @@
 </tr>
 </table>
 
+<h1>Geometric tolerances</h1>
+
 <p>
-Geometric modeling kernels, such as OpenCascade or Parasolid, implement "tolerant modeling" approach.
+Maintaining high-fidelity B-Rep is a challenge. Geometric modeling kernels, such as OpenCascade
+or Parasolid, implement "tolerant modeling" approach.
 I.e., instead of using a global geometric inaccuracy, each boundary element (vertex, edge and face)
 has its own associated imprecision value called [geometric] tolerance.
 </p>
@@ -83,10 +86,17 @@ communicating your CAD model to another software. Thus, even though no model is 
 practically more safe to have as tight geometric tolerances as possible.
 </p>
 
+<div align="center"><img src="../imgs/validity_check_edge-pcurve.png"/></div>
+
 <p>
-Maintaining high-fidelity B-Rep is a challenge. There is a certain demand in the utilities which are capable
-of checking the product data quality (PDQ) including but not limited to the geometric accuracy. If the
-quality is not sufficient, then sophisticated healing procedures should come into play.
+Inaccuracies are often observed at the edges of B-Rep models.
+There may be a small gap between faces which needs to be shielded by a sufficient tolerance value to make that
+gap "invisible" for the modeler. Another subtlety is due to the dual edge representation which is a parametric
+curve living in the two-dimensional space of a host surface (check the figure above). The parametric
+curve (pcurve) should have synchronous parameterization with the primary curve in 3D. If not, the deviation
+is also covered by a tolerance value. An asynchronous dual representation often remains invisible because it
+is not necessarily accompanied by any gaps in 3D. Keeping both representations of an edge consistent is a
+fundamental requirement for any geometric kernel which employs pcurves.
 </p>
 
 </body>

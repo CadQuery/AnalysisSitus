@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 21 March 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -107,32 +107,20 @@ public:
                                     TColStd_PackedMapOfInteger&       indices);
 
   asiEngine_EXPORT void
-    HighlightFace(const int     faceIndex,
-                  const QColor& color);
+    HighlightFace(const int faceIndex);
 
   asiEngine_EXPORT void
-    HighlightFaces(const TColStd_PackedMapOfInteger& faceIndices,
-                   const QColor&                     color);
+    HighlightFaces(const TColStd_PackedMapOfInteger& faceIndices);
 
   asiEngine_EXPORT void
-    HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndices,
-                   const QColor&                     color);
+    HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndices);
 
   asiEngine_EXPORT void
     HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
-                       const asiVisu_SelectionMode       selMode);
-
-  asiEngine_EXPORT void
-    HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
-                       const int                         color,
                        const asiVisu_SelectionMode       selMode);
 
   asiEngine_EXPORT void
     HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes);
-
-  asiEngine_EXPORT void
-    HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes,
-                       const int                         color);
 
   asiEngine_EXPORT void
     GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes);

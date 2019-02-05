@@ -184,7 +184,7 @@ void asiUI_DialogGapFilling::onPerform()
     }
 
     // Highlight detected edges
-    asiEngine_Part(m_model, m_prsMgr).HighlightEdges( edgeIndices, QColor(255, 0, 0) );
+    asiEngine_Part(m_model, m_prsMgr).HighlightEdges(edgeIndices);
   }
 
   /* =====================

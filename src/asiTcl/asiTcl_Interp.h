@@ -345,6 +345,18 @@ public:
   asiTcl_EXPORT asiTcl_Interp&
     operator<<(const double value);
 
+  //! Appends the passed integer mask to the result of command execution.
+  //! \param[in] mask integer mask value to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    Append(const TColStd_PackedMapOfInteger& mask);
+
+  //! Appends the passed integer mask to the result of command execution.
+  //! \param[in] mask integer mask to append.
+  //! \return this for subsequent appends.
+  asiTcl_EXPORT asiTcl_Interp&
+    operator<<(const TColStd_PackedMapOfInteger& mask);
+
 protected:
 
   //! Internal method to add command to Tcl interpreter.

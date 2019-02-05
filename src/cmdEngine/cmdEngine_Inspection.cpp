@@ -2426,13 +2426,22 @@ int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
   asiAlgo_RecognizeBlends recognizer( partShape,
                                       partAAG,
                                       interp->GetProgress(),
-                                      interp->GetPlotter() );
+                                      NULL );
   //
   if ( !recognizer.Perform(maxRadius) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Recognition failed.");
     return TCL_ERROR;
   }
+
+  // Highlight the detected faces.
+  const TColStd_PackedMapOfInteger& resIndices = recognizer.GetResultIndices();
+  //
+  asiEngine_Part( cmdEngine::model,
+                  cmdEngine::cf->ViewerPart->PrsMgr() ).HighlightFaces(resIndices);
+
+  // Dump to result.
+  *interp << resIndices;
 
   return TCL_OK;
 }

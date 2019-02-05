@@ -32,9 +32,10 @@
 #define asiAlgo_Edge2Rebuild_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_History.h>
 
 // OCCT includes
+#include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopExp.hxx>
@@ -70,12 +71,31 @@ struct asiAlgo_Edge2Rebuild
       TopoDS_Vertex vf, vl;
       TopExp::Vertices(_edge, vf, vl);
 
-      // Add opposite vertex.
+      // Add opposite vertex to be frozen.
       if ( _vertex.IsPartner(vf) )
         frozenVertices.Add(vl);
       else if ( _vertex.IsPartner(vl) )
         frozenVertices.Add(vf);
     }
+  }
+
+  //! Actualizes the stored boundary elements w.r.t. the passed history.
+  //! \param[in] history editing history for actualization.
+  void Actualize(const Handle(asiAlgo_History)& history)
+  {
+    // Update edge.
+    this->edge = TopoDS::Edge( history->GetLastModifiedOrArg(this->edge) );
+
+    // Update frozen vertices.
+    TopTools_IndexedMapOfShape updatedVertices;
+    //
+    for ( int vidx = 1; vidx <= this->frozenVertices.Extent(); ++vidx )
+    {
+      TopoDS_Shape vertex = history->GetLastModifiedOrArg( this->frozenVertices(vidx) );
+      updatedVertices.Add(vertex);
+    }
+    //
+    this->frozenVertices = updatedVertices;
   }
 
   //! Hasher for data maps.
@@ -96,5 +116,9 @@ struct asiAlgo_Edge2Rebuild
 //! Convenience type definition for the collection of edges to rebuild.
 typedef NCollection_IndexedMap<asiAlgo_Edge2Rebuild,
                                asiAlgo_Edge2Rebuild::Hasher> asiAlgo_Edges2Rebuild;
+
+//! Convenience type definition for the collection of vertices which should
+//! stay intact on edge rebuilding.
+typedef TopTools_IndexedMapOfShape asiAlgo_FrozenVertices;
 
 #endif

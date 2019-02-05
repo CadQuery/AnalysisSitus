@@ -39,6 +39,10 @@
 </tr>
 </table>
 
+<h1>Rebuild edge</h1>
+
+<h2>Topological condition</h2>
+
 <p>
 To rebuild an edge by re-intersecting its neighbor faces, use <span class="code-inline">rebuild-edge</span>
 command. Analysis Situs will analyze the local topological condition around the edge trying to find
@@ -65,6 +69,8 @@ as <span class="code-inline">s1</span> without reducing the generality. The vert
 <span class="code-inline">s1-s2</span>. The vertex <span class="code-inline">s1-s2-t2</span>
 is chosen as the last vertex of the edge <span class="code-inline">s1-s2</span>.
 </p>
+
+<h2>Knowledge-guided computation</h2>
 
 <p>
 The process of edge rebuilding employs recomputation of its host curve and extremities
@@ -93,7 +99,7 @@ The best practice in geometric modeling is to identify special cases of intersec
 specific treatment for them. Since multiple intersection points may emerge in tangential cases, the
 <span class="code-inline">rebuild-edge</span> command attempts to average the
 obtained points to produce a single result out of them. However, this technique is error-prone as
-it does not guarantee that the average point is more accurate than any of the contributing coordinates. In
+it does not guarantee that the average point is more accurate than any of the contributing positions. In
 practice, it is much better just to avoid recomputation of intersections as much as possible
 (and especially in non-general-position cases). The possibility to specify the "frozen" vertices
 enables the principle known as "knowledge-guided computation" (see <a href="../references.html#piegl-2005">[Piegl, 2005]</a>
@@ -102,10 +108,10 @@ for a comprehensive discussion of robustness issues in CAD).
 
 <div class="note">
 One practical example where "frozen" vertices are used is a blends suppression algorithm. In this algorithm,
-the edge <span class="code-inline">s1-s2</span> represents the collapsed blend face, and the edges
+the edge <span class="code-inline">s1-s2</span> is the image of the collapsed blend face, and the edges
 <span class="code-inline">s1-t1</span>, <span class="code-inline">s2-t1</span>, <span class="code-inline">s1-t2</span>
 and <span class="code-inline">s2-t2</span> require recomputation. Each of the latter edges has one vertex which does
-not require recomputation.
+not require recomputation (the vertex on the back face which is not touched by the operation).
 </div>
 
 </body>

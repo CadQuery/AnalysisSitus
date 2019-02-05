@@ -103,6 +103,7 @@ set (editing_H_FILES
   editing/asiAlgo_FindFree.h
   editing/asiAlgo_FindNonmanifold.h
   editing/asiAlgo_FindSameHosts.h
+  editing/asiAlgo_FrozenVertices.h
   editing/asiAlgo_History.h
   editing/asiAlgo_InvertFaces.h
   editing/asiAlgo_InvertShells.h
@@ -155,12 +156,15 @@ set (features_H_FILES
   features/asiAlgo_AAGIterator.h
   features/asiAlgo_BorderTrihedron.h
   features/asiAlgo_CheckDihedralAngle.h
+  features/asiAlgo_ExtractFeatures.h
+  features/asiAlgo_ExtractFeaturesResult.h
   features/asiAlgo_FeatureAngleType.h
   features/asiAlgo_FeatureAttr.h
   features/asiAlgo_FeatureAttrAdjacency.h
   features/asiAlgo_FeatureAttrAngle.h
   features/asiAlgo_FeatureAttrFace.h
   features/asiAlgo_FeatureFormulation.h
+  features/asiAlgo_FeatureType.h
   features/asiAlgo_Recognizer.h
   features/asiAlgo_TopoAttr.h
   features/asiAlgo_TopoAttrLocation.h
@@ -172,6 +176,8 @@ set (features_CPP_FILES
   features/asiAlgo_AAG.cpp
   features/asiAlgo_AAGIterator.cpp
   features/asiAlgo_CheckDihedralAngle.cpp
+  features/asiAlgo_ExtractFeatures.cpp
+  features/asiAlgo_ExtractFeaturesResult.cpp
   features/asiAlgo_Recognizer.cpp
   features/asiAlgo_TopoGraph.cpp
 )

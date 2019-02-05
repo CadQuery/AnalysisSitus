@@ -106,13 +106,13 @@ public:
 
 public:
 
-  //! \return detected holes.
+  //! \return detected faces.
   const TopTools_IndexedMapOfShape& GetResultFaces() const
   {
     return m_result.faces;
   }
 
-  //! \return indices of the detected holes.
+  //! \return indices of the detected faces.
   const TColStd_PackedMapOfInteger& GetResultIndices() const
   {
     return m_result.ids;

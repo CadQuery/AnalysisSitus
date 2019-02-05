@@ -34,6 +34,8 @@
 // asiAlgo includes
 #include <asiAlgo_AAGIterator.h>
 #include <asiAlgo_AttrBlendCandidate.h>
+#include <asiAlgo_ExtractFeatures.h>
+#include <asiAlgo_FeatureType.h>
 #include <asiAlgo_RecognizeBlendFace.h>
 
 #undef COUT_DEBUG
@@ -202,6 +204,25 @@ bool asiAlgo_RecognizeBlends::Perform(const double radius)
     nit.Next();
   }
 
+  /* =============================================================
+   *  Stage 3: extract features from the attributes hooked in AAG
+   * ============================================================= */
+
+  // Prepare tool to extract features from AAG.
+  asiAlgo_ExtractFeatures extractor(m_progress, m_plotter);
+  extractor.RegisterFeatureType( FeatureType_BlendOrdinary,
+                                 asiAlgo_AttrBlendCandidate::GUID() );
+
+  // Extract features.
+  Handle(asiAlgo_ExtractFeaturesResult) featureRes;
+  if ( !extractor.Perform(m_aag, featureRes) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Feature extraction failed.");
+    return false;
+  }
+
+  // Set result.
+  featureRes->GetFaceIndices(m_result.ids);
   return true;
 }
 

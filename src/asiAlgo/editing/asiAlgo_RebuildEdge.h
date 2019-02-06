@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_AAG.h>
+#include <asiAlgo_FrozenVertices.h>
 #include <asiAlgo_History.h>
 
 // Active Data includes
@@ -97,7 +98,7 @@ public:
   //!
   //! \param[in] vertices collection of vertices to set as frozen.
   asiAlgo_EXPORT void
-    SetFrozenVertices(const TopTools_IndexedMapOfShape& vertices);
+    SetFrozenVertices(const asiAlgo_FrozenVertices& vertices);
 
 public:
 
@@ -127,11 +128,11 @@ public:
 
 protected:
 
-  Handle(asiAlgo_History)    m_history;        //!< Modification history.
-  Handle(asiAlgo_AAG)        m_aag;            //!< AAG of the master CAD model.
-  TopTools_IndexedMapOfShape m_frozenVertices; //!< Frozen vertices.
-  TopoDS_Shape               m_input;          //!< Input CAD model.
-  TopoDS_Shape               m_result;         //!< Result CAD model.
+  Handle(asiAlgo_History) m_history;        //!< Modification history.
+  Handle(asiAlgo_AAG)     m_aag;            //!< AAG of the master CAD model.
+  asiAlgo_FrozenVertices  m_frozenVertices; //!< Frozen vertices.
+  TopoDS_Shape            m_input;          //!< Input CAD model.
+  TopoDS_Shape            m_result;         //!< Result CAD model.
 
 };
 

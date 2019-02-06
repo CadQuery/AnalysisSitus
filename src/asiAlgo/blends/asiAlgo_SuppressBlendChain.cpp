@@ -389,10 +389,10 @@ bool
   asiAlgo_SuppressBlendChain::performGeomOperations(TopoDS_Shape& targetShape)
 {
   ///
-  for ( int k = 1; k <= m_workflow.edges2Rebuild.Extent(); ++k )
+  for ( int k = 1; k <= m_workflow.edges2Rebuild.edges.Extent(); ++k )
   {
-    m_plotter.DRAW_SHAPE(m_workflow.edges2Rebuild(k).edge, Color_Red, 1.0, true, "E");
-    m_progress.SendLogMessage(LogNotice(Normal) << "E addr: %1" << asiAlgo_Utils::ShapeAddr(m_workflow.edges2Rebuild(k).edge).c_str());
+    m_plotter.DRAW_SHAPE(m_workflow.edges2Rebuild.edges(k).edge, Color_Red, 1.0, true, "E");
+    m_progress.SendLogMessage(LogNotice(Normal) << "E addr: %1" << asiAlgo_Utils::ShapeAddr(m_workflow.edges2Rebuild.edges(k).edge).c_str());
   }
   //return false;
   ///
@@ -400,14 +400,14 @@ bool
   Handle(asiAlgo_History) history = new asiAlgo_History;
 
   // Normalize geometry.
-  for ( int k = 1; k <= m_workflow.edges2Rebuild.Extent(); ++k )
+  for ( int k = 1; k <= m_workflow.edges2Rebuild.edges.Extent(); ++k )
   {
     // Update from history as the edge could have been modified by rebuilder
     // on previous iterations.
     if ( k > 1 )
       this->updateEdges2Rebuild(history);
 
-    const TopoDS_Edge& edge2Rebuild = m_workflow.edges2Rebuild(k).edge;
+    const TopoDS_Edge& edge2Rebuild = m_workflow.edges2Rebuild.edges(k).edge;
     //
     m_plotter.DRAW_SHAPE(edge2Rebuild, Color_Red, 1.0, true, "edge2Rebuild");
 
@@ -418,7 +418,7 @@ bool
     asiAlgo_RebuildEdge rebuildEdge(targetShape, m_aag, m_progress, m_plotter);
     //
     rebuildEdge.SetHistory(history);
-    rebuildEdge.SetFrozenVertices(m_workflow.edges2Rebuild(k).frozenVertices);
+    rebuildEdge.SetFrozenVertices(m_workflow.edges2Rebuild.edges(k).frozenVertices);
 
     // Apply geometric operator.
     if ( !rebuildEdge.Perform(edge2Rebuild) )
@@ -440,9 +440,9 @@ void asiAlgo_SuppressBlendChain::updateEdges2Rebuild(const Handle(asiAlgo_Histor
 {
   asiAlgo_Edges2Rebuild updated;
 
-  for ( int k = 1; k <= m_workflow.edges2Rebuild.Extent(); ++k )
+  for ( int k = 1; k <= m_workflow.edges2Rebuild.edges.Extent(); ++k )
   {
-    asiAlgo_Edge2Rebuild edgeInfo = m_workflow.edges2Rebuild(k);
+    asiAlgo_Edge2Rebuild edgeInfo = m_workflow.edges2Rebuild.edges(k);
 
     // Update from history.
     edgeInfo.Actualize(history);

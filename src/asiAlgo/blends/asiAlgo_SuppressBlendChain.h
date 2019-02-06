@@ -115,6 +115,9 @@ protected:
   asiAlgo_EXPORT bool
     performGeomOperations(TopoDS_Shape& targetShape);
 
+  //! This method actualizes the information stored in the edges collected to rebuild
+  //! at normalization stage.
+  //! \param[in] history modification history to apply.
   asiAlgo_EXPORT void
     updateEdges2Rebuild(const Handle(asiAlgo_History)& history);
 
@@ -136,10 +139,6 @@ protected:
     //! Edges to rebuild. These edges are used to normalize geometry once
     //! Euler operators are done.
     asiAlgo_Edges2Rebuild edges2Rebuild;
-
-    //! Vertices to keep intact. These data structure is used to avoid
-    //! redundant and error-prone evaluation of non-general-position intersections.
-    asiAlgo_FrozenVertices frozenVertices;
   };
 
   //! Workflow variables.

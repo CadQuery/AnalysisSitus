@@ -32,6 +32,7 @@
 #define asiAlgo_Edge2Rebuild_h
 
 // asiAlgo includes
+#include <asiAlgo_FrozenVertices.h>
 #include <asiAlgo_History.h>
 
 // OCCT includes
@@ -50,8 +51,8 @@
 //! unreliable geometric algorithms (e.g. curve-surface intersection).
 struct asiAlgo_Edge2Rebuild
 {
-  TopoDS_Edge                edge;           //!< Edge to rebuild.
-  TopTools_IndexedMapOfShape frozenVertices; //!< Vertices to keep intact.
+  TopoDS_Edge            edge;           //!< Edge to rebuild.
+  asiAlgo_FrozenVertices frozenVertices; //!< Vertices to keep intact.
 
   // Ctor.
   explicit asiAlgo_Edge2Rebuild(const TopoDS_Edge& _edge) : edge(_edge) {}
@@ -87,9 +88,9 @@ struct asiAlgo_Edge2Rebuild
     this->edge = TopoDS::Edge( history->GetLastModifiedOrArg(this->edge) );
 
     // Update frozen vertices.
-    TopTools_IndexedMapOfShape updatedVertices;
+    asiAlgo_FrozenVertices updatedVertices;
     //
-    for ( int vidx = 1; vidx <= this->frozenVertices.Extent(); ++vidx )
+    for ( int vidx = 1; vidx <= this->frozenVertices.GetNumOfVertices(); ++vidx )
     {
       TopoDS_Shape vertex = history->GetLastModifiedOrArg( this->frozenVertices(vidx) );
       updatedVertices.Add(vertex);
@@ -113,12 +114,49 @@ struct asiAlgo_Edge2Rebuild
   };
 };
 
-//! Convenience type definition for the collection of edges to rebuild.
-typedef NCollection_IndexedMap<asiAlgo_Edge2Rebuild,
-                               asiAlgo_Edge2Rebuild::Hasher> asiAlgo_Edges2Rebuild;
+//-----------------------------------------------------------------------------
 
-//! Convenience type definition for the collection of vertices which should
-//! stay intact on edge rebuilding.
-typedef TopTools_IndexedMapOfShape asiAlgo_FrozenVertices;
+//! Collection of edges to rebuild at geometry normalization stage. This
+//! structure not only wraps the underlying map of edges, but also controls
+//! frozen vertices. I.e., if one edge is added several times, this structure
+//! will check that the edge occurrences all have identical sets of vertices
+//! declared as "frozen". Only those vertices which belong to all occurrences
+//! will remain.
+struct asiAlgo_Edges2Rebuild
+{
+  NCollection_IndexedMap<asiAlgo_Edge2Rebuild,
+                         asiAlgo_Edge2Rebuild::Hasher> edges;
+
+  //! Adds another edge while controlling the frozen vertices.
+  //! \param[in] newEdge2Rebuild element to add.
+  void Add(const asiAlgo_Edge2Rebuild& newEdge2Rebuild)
+  {
+    if ( !this->edges.Contains(newEdge2Rebuild) )
+    {
+      this->edges.Add(newEdge2Rebuild);
+      return;
+    }
+
+    // If we are here, it means that there is already such edge in the map.
+    // We now check that the maps of frozen vertices stored in both edge
+    // occurrences intersect. Only intersection will be stored.
+
+    const int storedEdgeIdx = this->edges.FindIndex(newEdge2Rebuild);
+
+    // Get stored occurrence.
+    const asiAlgo_Edge2Rebuild& storedEdge2Rebuild = this->edges.FindKey(storedEdgeIdx);
+
+    // Narrow down the collection of frozen vertices.
+    asiAlgo_FrozenVertices
+      frozenVerts = storedEdge2Rebuild.frozenVertices.GetIntersection(newEdge2Rebuild.frozenVertices);
+
+    // Prepare another edge2Rebuild.
+    asiAlgo_Edge2Rebuild edge2Rebuild(newEdge2Rebuild.edge);
+    edge2Rebuild.frozenVertices = frozenVerts;
+
+    // Store.
+    edges.Substitute(storedEdgeIdx, edge2Rebuild);
+  }
+};
 
 #endif

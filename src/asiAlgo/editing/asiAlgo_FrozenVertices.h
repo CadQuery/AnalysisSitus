@@ -46,8 +46,46 @@ struct asiAlgo_FrozenVertices
 {
   TopTools_IndexedMapOfShape vertices; //!< Vertices to keep intact.
 
-  // Ctor.
-  explicit asiAlgo_FrozenVertices(const TopTools_IndexedMapOfShape& _vertices) : vertices(_vertices) {}
+  //! Default ctor.
+  asiAlgo_FrozenVertices() {}
+
+  //! Ctor.
+  asiAlgo_FrozenVertices(const TopTools_IndexedMapOfShape& _vertices) : vertices(_vertices) {}
+
+  //! Adds another vertex to the collection of frozen ones.
+  void Add(const TopoDS_Shape& vertex)
+  {
+    vertices.Add(vertex);
+  }
+
+  //! Accessor for a vertex by its index.
+  //! \param[in] oneBasedIdx 1-based ID of the vertex to access.
+  //! \return reference to the vertex.
+  const TopoDS_Shape& operator()(const int oneBasedIdx) const
+  {
+    return vertices(oneBasedIdx);
+  }
+
+  //! \return number of stored vertices.
+  int GetNumOfVertices() const
+  {
+    return vertices.Extent();
+  }
+
+  //! Creates another map of frozen vertices as an intersection between `this`
+  //! map and the passed `op` map.
+  //! \param[in] op operand map.
+  //! \return new collection of frozen vertices.
+  asiAlgo_FrozenVertices GetIntersection(const asiAlgo_FrozenVertices& op) const
+  {
+    asiAlgo_FrozenVertices result;
+
+    for ( int j = 1; j <= op.vertices.Extent(); ++j )
+      if ( this->vertices.Contains( op.vertices(j) ) )
+        result.Add( op.vertices(j) );
+
+    return result;
+  }
 };
 
 #endif

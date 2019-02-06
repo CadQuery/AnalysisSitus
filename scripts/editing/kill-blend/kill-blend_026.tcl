@@ -28,3 +28,21 @@ puts "Detected face IDs: $fids"
 
 # Try to kill blends.
 kill-blends {*}$fids
+
+# Check contours of faces.
+if { [check-contours] != 1 } {
+  error "Some faces have open contours."
+}
+
+# Check validity of the result.
+if { [check-validity] != 1 } {
+  error "Final part is not valid."
+}
+
+# Check that tolernace has not significantly degraded.
+set finalToler [get-tolerance]
+puts "Final tolerance ($finalToler) vs initial tolerance ($initialToler)"
+#
+if { [expr $finalToler - $initialToler] > 1e-3 } {
+  error "Significant tolerance degradation."
+}

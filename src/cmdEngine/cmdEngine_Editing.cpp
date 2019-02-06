@@ -1861,8 +1861,8 @@ int ENGINE_KillBlends(const Handle(asiTcl_Interp)& interp,
 
   // Perform suppression.
   asiAlgo_SuppressBlendChain suppressor( aag,
-                                         interp->GetProgress(),
-                                         interp->GetPlotter() );
+                                         interp->GetProgress(), NULL
+                                         /*interp->GetPlotter()*/ );
   //
   if ( !suppressor.Perform(fids) )
   {

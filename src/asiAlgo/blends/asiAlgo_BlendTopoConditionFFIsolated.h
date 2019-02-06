@@ -239,8 +239,16 @@ public:
   }
 
   //! Gathers the collection of affected edges to rebuild as a result of
-  //! suppression.
-  //! \param[out] edges   output collection of edges to rebuild.
+  //! suppression. Every edge may declare some vertices as "frozen", i.e.,
+  //! these vertices need no recomputation at geometry normalization stage.
+  //! The decision whether to freeze or not a specific vertex will be taken
+  //! by the computational scheme as it possesses knowledge not only of
+  //! one topological condition, but of many of them. That is to say that
+  //! if one vertex is frozen in one topological condition, it may be
+  //! non-frozen in another. In such situation, for the normalization stage
+  //! to succeed, such vertices should be unfreezed.
+  //!
+  //! \param[out] edges output collection of edges to rebuild.
   virtual void GatherAffectedEdges(asiAlgo_Edges2Rebuild& edges) const
   {
     edges.Add( asiAlgo_Edge2Rebuild(this->e_s1_t1, this->v_b_s2_t1, false) );

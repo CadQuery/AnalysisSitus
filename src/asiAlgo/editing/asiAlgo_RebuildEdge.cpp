@@ -84,7 +84,7 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
   if ( !Mod->Init(edge) )
     return false;
   //
-  Mod->SetFrozenVertices(m_frozenVertices);
+  Mod->SetFrozenVertices(m_frozenVertices.vertices);
 
   // Initialize Modifier.
   asiAlgo_BRepNormalizer Modifier(m_progress, m_plotter);
@@ -167,7 +167,7 @@ void asiAlgo_RebuildEdge::AddFrozenVertex(const TopoDS_Vertex& vertex)
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_RebuildEdge::SetFrozenVertices(const TopTools_IndexedMapOfShape& vertices)
+void asiAlgo_RebuildEdge::SetFrozenVertices(const asiAlgo_FrozenVertices& vertices)
 {
   m_frozenVertices = vertices;
 }

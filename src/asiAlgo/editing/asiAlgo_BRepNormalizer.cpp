@@ -387,7 +387,7 @@ bool asiAlgo_BRepNormalizer::rebuildRecursively(const TopoDS_Shape&             
           // built on that same surface (see OCC21772)
           // Note: this check could be made separate method in BRepTools
           bool isClosed = false;
-          if(BRep_Tool::IsClosed(edge,face))
+          if( BRep_Tool::IsClosed(edge,face) )
           {
             isClosed = ( ! newgeom || BRepTools::IsReallyClosed(edge,face) );
             if ( ! isClosed )

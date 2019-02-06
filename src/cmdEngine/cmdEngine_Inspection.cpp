@@ -1931,7 +1931,6 @@ int ENGINE_GetSurfaceBending(const Handle(asiTcl_Interp)& interp,
     surfNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
 
   // Get surface.
-  double f, l;
   Handle(Geom_Surface) occtSurf = surfNode->GetSurface();
   //
   if ( occtSurf.IsNull() )
@@ -2437,8 +2436,9 @@ int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
   // Highlight the detected faces.
   const TColStd_PackedMapOfInteger& resIndices = recognizer.GetResultIndices();
   //
-  asiEngine_Part( cmdEngine::model,
-                  cmdEngine::cf->ViewerPart->PrsMgr() ).HighlightFaces(resIndices);
+  if ( !cmdEngine::cf.IsNull() && cmdEngine::cf->ViewerPart )
+    asiEngine_Part( cmdEngine::model,
+                    cmdEngine::cf->ViewerPart->PrsMgr() ).HighlightFaces(resIndices);
 
   // Dump to result.
   *interp << resIndices;

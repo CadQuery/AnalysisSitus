@@ -366,3 +366,47 @@ outcome asiTest_SuppressBlends::testSuppressBlend026(const int funcID)
 {
   return runTestScript(funcID, "editing/kill-blend/kill-blend_026.tcl");
 }
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 027.
+//!
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::testSuppressBlend027(const int funcID)
+{
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_027.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 028.
+//!
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::testSuppressBlend028(const int funcID)
+{
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_028.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 029.
+//!
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::testSuppressBlend029(const int funcID)
+{
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_029.tcl");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Test scenario 030.
+//!
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_SuppressBlends::testSuppressBlend030(const int funcID)
+{
+  return runTestScript(funcID, "editing/kill-blend/kill-blend_030.tcl");
+}

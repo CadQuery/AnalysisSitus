@@ -248,7 +248,7 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
         if ( !isCandidateBlend )
         {
           isCandidateBlend = true;
-          candidateRadius  = 1.0 / a2;
+          candidateRadius  = 1.0 / Abs(a2);
         }
         //
         m_result.edges.Add(E);

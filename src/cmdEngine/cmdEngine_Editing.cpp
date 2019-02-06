@@ -1868,8 +1868,7 @@ int ENGINE_KillBlends(const Handle(asiTcl_Interp)& interp,
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Suppression failed.");
 
-    *interp << false;
-    return TCL_OK;
+    return TCL_ERROR;
   }
   //
   const TopoDS_Shape& result = suppressor.GetResult();
@@ -1888,7 +1887,8 @@ int ENGINE_KillBlends(const Handle(asiTcl_Interp)& interp,
   if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
 
-  *interp << true;
+  // Return the number of suppressed chains.
+  *interp << suppressor.GetNumSuppressedChains();
   return TCL_OK;
 }
 

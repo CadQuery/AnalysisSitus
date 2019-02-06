@@ -165,14 +165,17 @@ asiAlgo_SuppressBlendChain::asiAlgo_SuppressBlendChain(const Handle(asiAlgo_AAG)
                                                        ActAPI_ProgressEntry       progress,
                                                        ActAPI_PlotterEntry        plotter)
 //
-: ActAPI_IAlgorithm (progress, plotter),
-  m_aag             (aag)
+: ActAPI_IAlgorithm   (progress, plotter),
+  m_aag               (aag),
+  m_iSuppressedChains (0)
 {}
 
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_SuppressBlendChain::Perform(const TColStd_PackedMapOfInteger& faceIds)
 {
+  m_iSuppressedChains = 0;
+
   /* ===================================
    *  Initialize topological conditions
    * =================================== */
@@ -195,6 +198,8 @@ bool asiAlgo_SuppressBlendChain::Perform(const TColStd_PackedMapOfInteger& faceI
                                                 << faceId);
       continue;
     }
+
+    m_iSuppressedChains++;
   }
 
   TIMER_FINISH
@@ -239,6 +244,8 @@ bool asiAlgo_SuppressBlendChain::Perform(const TColStd_PackedMapOfInteger& faceI
 
 bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
 {
+  m_iSuppressedChains = 0;
+
   /* ===================================
    *  Initialize topological conditions
    * =================================== */
@@ -279,7 +286,8 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
     return false;
 
   // Set output.
-  m_result = targetShape;
+  m_result            = targetShape;
+  m_iSuppressedChains = 1;
 
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(m_progress, "Rebuild edges")
@@ -388,14 +396,14 @@ bool
 bool
   asiAlgo_SuppressBlendChain::performGeomOperations(TopoDS_Shape& targetShape)
 {
-  ///
-  for ( int k = 1; k <= m_workflow.edges2Rebuild.edges.Extent(); ++k )
-  {
-    m_plotter.DRAW_SHAPE(m_workflow.edges2Rebuild.edges(k).edge, Color_Red, 1.0, true, "E");
-    m_progress.SendLogMessage(LogNotice(Normal) << "E addr: %1" << asiAlgo_Utils::ShapeAddr(m_workflow.edges2Rebuild.edges(k).edge).c_str());
-  }
-  //return false;
-  ///
+  /////
+  //for ( int k = 1; k <= m_workflow.edges2Rebuild.edges.Extent(); ++k )
+  //{
+  //  m_plotter.DRAW_SHAPE(m_workflow.edges2Rebuild.edges(k).edge, Color_Red, 1.0, true, "E");
+  //  m_progress.SendLogMessage(LogNotice(Normal) << "E addr: %1" << asiAlgo_Utils::ShapeAddr(m_workflow.edges2Rebuild.edges(k).edge).c_str());
+  //}
+  ////return false;
+  /////
 
   Handle(asiAlgo_History) history = new asiAlgo_History;
 

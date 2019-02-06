@@ -84,6 +84,12 @@ public:
     return m_result;
   }
 
+  //! \return output number of suppressed chains.
+  int GetNumSuppressedChains() const
+  {
+    return m_iSuppressedChains;
+  }
+
 protected:
 
   //! Initializes all topological conditions for the blend chain starting
@@ -149,6 +155,9 @@ protected:
 
   //! Result shape.
   TopoDS_Shape m_result;
+
+  //! Number of suppressed chains.
+  int m_iSuppressedChains;
 
 };
 

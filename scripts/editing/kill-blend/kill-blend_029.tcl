@@ -1,7 +1,7 @@
 clear
 
 # Set working variables.
-set datafile cad/blends/isolated_blends_test_01.brep
+set datafile cad/blends/isolated_blends_test_04.brep
 
 # Read input geometry.
 set datadir $env(ASI_TEST_DATA)
@@ -17,14 +17,14 @@ print-summary
 set initialToler [get-tolerance]
 
 # Check Euler-Poincare property of the manifold before modification.
-if { [check-euler 0] != 1 } {
+if { [check-euler 4] != 1 } {
   error "Euler-Poincare property is not equal to the expected value."
 }
 
 # Recognize and kill all blends.
 set fids [recognize-blends]
 #
-if { [llength $fids] != 4 } {
+if { [llength $fids] != 3 } {
   error "Unexpected number of recognized blend faces."
 }
 #

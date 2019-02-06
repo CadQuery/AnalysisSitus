@@ -1,7 +1,7 @@
 clear
 
 # Set working variables.
-set datafile cad/blends/isolated_blends_test_01.brep
+set datafile cad/blends/isolated_blends_test_30.brep
 
 # Read input geometry.
 set datadir $env(ASI_TEST_DATA)
@@ -21,14 +21,14 @@ if { [check-euler 0] != 1 } {
   error "Euler-Poincare property is not equal to the expected value."
 }
 
-# Recognize and kill all blends.
-set fids [recognize-blends]
+# Recognize and kill blends.
+set fids [recognize-blends 11]
 #
-if { [llength $fids] != 4 } {
+if { [llength $fids] != 2 } {
   error "Unexpected number of recognized blend faces."
 }
 #
-if { [kill-blends {*}$fids] != 3 } {
+if { [kill-blends {*}$fids] != 1 } {
   error "Unexpected number of suppressed blend chains."
 }
 

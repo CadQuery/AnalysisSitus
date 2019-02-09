@@ -393,8 +393,12 @@ void asiEngine_Part::GetSubShapeIndicesByEdgeIndices(const TColStd_PackedMapOfIn
 void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                                         TColStd_PackedMapOfInteger&       indices)
 {
-  const TopTools_IndexedMapOfShape&
-    M = m_model->GetPartNode()->GetAAG()->RequestMapOfSubShapes();
+  Handle(asiAlgo_AAG) aag = m_model->GetPartNode()->GetAAG();
+  //
+  if ( aag.IsNull() )
+    return;
+
+  const TopTools_IndexedMapOfShape& M = aag->RequestMapOfSubShapes();
   //
   for ( int i = 1; i <= subShapes.Extent(); ++i )
     indices.Add( M.FindIndex( subShapes.FindKey(i) ) );

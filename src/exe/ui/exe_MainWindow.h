@@ -34,7 +34,7 @@
 // asiUI includes
 #include <asiUI_Console.h>
 #include <asiUI_ControlsFeature.h>
-#include <asiUI_ControlsMesh.h>
+#include <asiUI_ControlsMeshListener.h>
 #include <asiUI_ControlsPartListener.h>
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ViewerDomainListener.h>
@@ -112,11 +112,13 @@ public:
   struct t_listeners
   {
     asiUI_ControlsPartListener* pControlsPart; //!< Listener for part controls.
+    asiUI_ControlsMeshListener* pControlsMesh; //!< Listener for mesh controls.
     asiUI_ViewerPartListener*   pViewerPart;   //!< Listener for part viewer.
     asiUI_ViewerDomainListener* pViewerDomain; //!< Listener for domain viewer.
     asiUI_ViewerHostListener*   pViewerHost;   //!< Listener for host viewer.
 
     t_listeners() : pControlsPart (NULL),
+                    pControlsMesh (NULL),
                     pViewerPart   (NULL),
                     pViewerDomain (NULL),
                     pViewerHost   (NULL)
@@ -125,6 +127,7 @@ public:
     void Release()
     {
       delete pControlsPart; pControlsPart = NULL;
+      delete pControlsMesh; pControlsMesh = NULL;
       delete pViewerPart;   pViewerPart   = NULL;
       delete pViewerDomain; pViewerDomain = NULL;
       delete pViewerHost;   pViewerHost   = NULL;

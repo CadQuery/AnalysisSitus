@@ -107,9 +107,7 @@ public:
   {
     TColStd_PackedMapOfInteger mode = WIREFRAME();
     //
-    mode.Add(ShapePrimitive_FreeVertex);
-    mode.Add(ShapePrimitive_BorderVertex);
-    mode.Add(ShapePrimitive_SharedVertex);
+    mode.Unite( VERTICES() );
     //
     return mode;
   }

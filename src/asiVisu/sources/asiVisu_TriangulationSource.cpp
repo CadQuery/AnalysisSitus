@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 11 July 2017
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2017-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,9 @@
 #include <asiVisu_MeshUtils.h>
 #include <asiVisu_Utils.h>
 
+// OCCT includes
+#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
+
 // VTK includes
 #include <vtkCellData.h>
 #include <vtkDataObject.h>
@@ -54,11 +57,12 @@ vtkStandardNewMacro(asiVisu_TriangulationSource);
 
 asiVisu_TriangulationSource::asiVisu_TriangulationSource()
 {
-  // Enable collecting edges
+  // Enable collecting edges and vertices.
+  this->CollectVerticesModeOn();
   this->CollectEdgesModeOn();
 
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
-                                  // which has nothing to do with VTK pipeline
+                                  // which has nothing to do with VTK pipeline.
 }
 
 //-----------------------------------------------------------------------------
@@ -145,13 +149,15 @@ int asiVisu_TriangulationSource::RequestData(vtkInformation*        request,
   }
 
   // Collect free nodes (ones which are not used)
-  NCollection_List<int> freeNodeIDs;
+  TColStd_PackedMapOfInteger freeNodeIDs;
   //
   for ( int i = nodes.Lower(); i <= nodes.Upper(); ++i )
   {
     // Add as a free node
     if ( !usedNodeIDs.Contains(i) )
-      freeNodeIDs.Append(i);
+      freeNodeIDs.Add(i);
+    else if ( m_bVerticesOn )
+      this->registerNodeCell(i, MeshPrimitive_SharedNode, polyOutput);
   }
   //
   if ( !freeNodeIDs.IsEmpty() )
@@ -323,16 +329,16 @@ vtkIdType
 //-----------------------------------------------------------------------------
 
 vtkIdType
-  asiVisu_TriangulationSource::registerFreeNodesCell(const NCollection_List<int>& nodeIDs,
-                                                     vtkPolyData*                 polyData)
+  asiVisu_TriangulationSource::registerFreeNodesCell(const TColStd_PackedMapOfInteger& nodeIDs,
+                                                     vtkPolyData*                      polyData)
 {
   if ( nodeIDs.IsEmpty() )
     return VTK_BAD_ID;
 
   std::vector<vtkIdType> pids;
-  for ( NCollection_List<int>::Iterator it(nodeIDs); it.More(); it.Next() )
+  for ( TColStd_MapIteratorOfPackedMapOfInteger it(nodeIDs); it.More(); it.Next() )
   {
-    const int nodeID = it.Value();
+    const int nodeID = it.Key();
     pids.push_back( this->findMeshNode(nodeID, polyData) );
   }
 
@@ -385,6 +391,38 @@ vtkIdType
     elemIDsArr = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_MESH_ELEM_IDS) );
   //
   elemIDsArr->InsertNextValue(VTK_BAD_ID);
+
+  return cellID;
+}
+
+//-----------------------------------------------------------------------------
+
+vtkIdType
+    asiVisu_TriangulationSource::registerNodeCell(const int                   nodeID,
+                                                  const asiVisu_MeshPrimitive type,
+                                                  vtkPolyData*                polyData)
+{
+  if ( nodeID == VTK_BAD_ID )
+    return VTK_BAD_ID;
+
+  std::vector<vtkIdType> pids;
+  pids.push_back( this->findMeshNode(nodeID, polyData) );
+
+  // Register VTK cell
+  vtkIdType cellID =
+    polyData->InsertNextCell( VTK_VERTEX, (int) pids.size(), &pids[0] );
+
+  // Set type of the mesh element
+  vtkIdTypeArray*
+    typeArr = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_MESH_ITEM_TYPE) );
+  //
+  typeArr->InsertNextValue(type);
+
+  // Store element ID
+  vtkIdTypeArray*
+    elemIDsArr = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_MESH_ELEM_IDS) );
+  //
+  elemIDsArr->InsertNextValue(nodeID);
 
   return cellID;
 }

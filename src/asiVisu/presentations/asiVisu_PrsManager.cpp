@@ -453,6 +453,7 @@ bool asiVisu_PrsManager::SetPresentation(const Handle(ActAPI_INode)& node)
   Handle(asiVisu_Prs)         prs      = (*prsAlloc)(node);
   //
   prs->SetModel(m_model); // Pass Data Model instance.
+  prs->SetDiagnosticTools(m_progress, m_plotter); // Pass diagnostic tools.
   //
   m_nodePresentations.Bind(nodeID, prs);
 

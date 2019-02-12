@@ -256,8 +256,6 @@ void asiUI_ControlsPartListener::reinitializeEverything(const bool fitAll)
   //
   if ( !m_cf->ViewerPart->PrsMgr()->IsPresented(partId) )
     m_cf->ViewerPart->PrsMgr()->SetPresentation( m_model->GetPartNode() );
-  //
-  m_cf->ViewerPart->PrsMgr()->SetDiagnosticTools(m_notifier, NULL);
 
   // Re-initialize pickers
   this->reinitializePickers();

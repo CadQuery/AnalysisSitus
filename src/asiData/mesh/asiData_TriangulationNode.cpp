@@ -48,6 +48,7 @@ asiData_TriangulationNode::asiData_TriangulationNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Int,           PID_DisplayMode);
   REGISTER_PARAMETER(Bool,          PID_HasColor);
   REGISTER_PARAMETER(Int,           PID_Color);
+  REGISTER_PARAMETER(Bool,          PID_HasVertices);
 
   // Non-standard Parameters.
   this->registerParameter(PID_BVH, asiData_BVHParameter::Instance(), false);
@@ -72,9 +73,10 @@ void asiData_TriangulationNode::Init()
   this->SetBVH(NULL);
 
   // Set Presentation values
-  this->SetHasColor(false);
-  this->SetColor(-1); // No color
-  this->SetDisplayMode(1); // No display mode
+  this->SetHasColor    (false);
+  this->SetColor       (-1); // No color
+  this->SetDisplayMode (1); // No display mode
+  this->SetHasVertices (false);
 }
 
 //-----------------------------------------------------------------------------
@@ -181,4 +183,19 @@ void asiData_TriangulationNode::SetDisplayMode(const int theMode) const
 int asiData_TriangulationNode::GetDisplayMode() const
 {
   return ActParamTool::AsInt( this->Parameter(PID_DisplayMode) )->GetValue();
+}
+
+//! Sets the Boolean value indicating whether the vertices are active
+//! \param hasVertices [in] value to set.
+void asiData_TriangulationNode::SetHasVertices(const bool hasVertices)
+{
+  ActParamTool::AsBool( this->Parameter(PID_HasVertices) )->SetValue(hasVertices);
+}
+
+//! Accessor for the value of the Boolean Parameter indicating whether the
+//! vertices are active.
+//! \return true/false.
+bool asiData_TriangulationNode::HasVertices() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_HasVertices) )->GetValue();
 }

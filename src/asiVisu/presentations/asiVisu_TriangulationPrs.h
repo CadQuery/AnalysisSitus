@@ -62,7 +62,8 @@ public:
   enum PipelineId
   {
     Pipeline_Triangulation = 1,
-    Pipeline_TriangulationLinks
+    Pipeline_TriangulationLinks,
+    Pipeline_TriangulationNodes
   };
 
 public:
@@ -80,8 +81,8 @@ public:
 // Visualization commands:
 public:
 
-  asiVisu_EXPORT void doShading() const;
-  asiVisu_EXPORT void doWireframe() const;
+  asiVisu_EXPORT void VerticesOn() const;
+  asiVisu_EXPORT void VerticesOff() const;
 
 public:
 
@@ -98,6 +99,11 @@ public:
   vtkActor* ContourActor() const
   {
     return this->GetPipeline(Pipeline_TriangulationLinks).IsNull() ? NULL : this->GetPipeline(Pipeline_TriangulationLinks)->Actor();
+  }
+
+  vtkActor* NodesActor() const
+  {
+    return this->GetPipeline(Pipeline_TriangulationNodes).IsNull() ? NULL : this->GetPipeline(Pipeline_TriangulationNodes)->Actor();
   }
 
 private:

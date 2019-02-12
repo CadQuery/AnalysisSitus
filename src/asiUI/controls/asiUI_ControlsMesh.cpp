@@ -70,17 +70,22 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
   m_widgets.pLoadStl        = new QPushButton("Load STL");
   m_widgets.pLoadPly        = new QPushButton("Load PLY");
   m_widgets.pSaveStl        = new QPushButton("Save STL");
+  m_widgets.pShowVertices   = new QPushButton("Show/hide vertices");
   m_widgets.pSelectFaces    = new QPushButton("Select faces");
   m_widgets.pSelectEdges    = new QPushButton("Select edges");
+  m_widgets.pSelectVertices = new QPushButton("Select vertices");
   //
   m_widgets.pLoadStl        -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pLoadPly        -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSaveStl        -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pShowVertices   -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectFaces    -> setMinimumWidth(BTN_MIN_WIDTH);
   m_widgets.pSelectEdges    -> setMinimumWidth(BTN_MIN_WIDTH);
+  m_widgets.pSelectVertices -> setMinimumWidth(BTN_MIN_WIDTH);
 
-  m_widgets.pSelectFaces->setCheckable(true);
-  m_widgets.pSelectEdges->setCheckable(true);
+  m_widgets.pSelectFaces    ->setCheckable(true);
+  m_widgets.pSelectEdges    ->setCheckable(true);
+  m_widgets.pSelectVertices ->setCheckable(true);
 
   // Group box for data interoperability
   QGroupBox*   pExchangeGroup = new QGroupBox("Data Exchange");
@@ -94,8 +99,10 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
   QGroupBox*   pSelectionGroup = new QGroupBox("Selection");
   QVBoxLayout* pSelectionLay   = new QVBoxLayout(pSelectionGroup);
   //
+  pSelectionLay->addWidget(m_widgets.pShowVertices);
   pSelectionLay->addWidget(m_widgets.pSelectFaces);
   pSelectionLay->addWidget(m_widgets.pSelectEdges);
+  pSelectionLay->addWidget(m_widgets.pSelectVertices);
 
   // Set layout
   m_pMainLayout->addWidget(pExchangeGroup);
@@ -106,11 +113,13 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
   this->setLayout(m_pMainLayout);
 
   // Connect signals to slots
-  connect( m_widgets.pLoadStl,     SIGNAL( clicked() ), SLOT( onLoadStl() ) );
-  connect( m_widgets.pLoadPly,     SIGNAL( clicked() ), SLOT( onLoadPly() ) );
-  connect( m_widgets.pSaveStl,     SIGNAL( clicked() ), SLOT( onSaveStl() ) );
-  connect( m_widgets.pSelectFaces, SIGNAL( clicked() ), SLOT( onSelectFaces() ) );
-  connect( m_widgets.pSelectEdges, SIGNAL( clicked() ), SLOT( onSelectEdges() ) );
+  connect( m_widgets.pLoadStl,        SIGNAL( clicked() ), SLOT( onLoadStl        () ) );
+  connect( m_widgets.pLoadPly,        SIGNAL( clicked() ), SLOT( onLoadPly        () ) );
+  connect( m_widgets.pSaveStl,        SIGNAL( clicked() ), SLOT( onSaveStl        () ) );
+  connect( m_widgets.pShowVertices,   SIGNAL( clicked() ), SLOT( onShowVertices   () ) );
+  connect( m_widgets.pSelectFaces,    SIGNAL( clicked() ), SLOT( onSelectFaces    () ) );
+  connect( m_widgets.pSelectEdges,    SIGNAL( clicked() ), SLOT( onSelectEdges    () ) );
+  connect( m_widgets.pSelectVertices, SIGNAL( clicked() ), SLOT( onSelectVertices () ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -224,10 +233,34 @@ void asiUI_ControlsMesh::onSaveStl()
 
 //-----------------------------------------------------------------------------
 
+//! Switches visualization of vertices.
+void asiUI_ControlsMesh::onShowVertices()
+{
+  Handle(asiData_TriangulationNode)
+    triangulation_n = m_model->GetTriangulationNode();
+
+  const bool isOn = triangulation_n->HasVertices();
+
+  // Modify data
+  m_model->OpenCommand();
+  {
+    triangulation_n->SetHasVertices(!isOn);
+  }
+  m_model->CommitCommand();
+
+  // Notify
+  isOn ? emit verticesOff() : emit verticesOn();
+}
+
+//-----------------------------------------------------------------------------
+
 //! On selection of faces.
 void asiUI_ControlsMesh::onSelectFaces()
 {
   m_widgets.pSelectEdges->setChecked(false);
+  m_widgets.pSelectVertices->setChecked(false);
+
+  m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Face);
 
   // Get presentation for Mesh Node
   Handle(asiVisu_TriangulationPrs)
@@ -238,6 +271,7 @@ void asiUI_ControlsMesh::onSelectFaces()
 
   prs->MainActor()->SetPickable( m_widgets.pSelectFaces->isChecked() );
   prs->ContourActor()->SetPickable(0);
+  prs->NodesActor()->SetPickable(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -246,6 +280,9 @@ void asiUI_ControlsMesh::onSelectFaces()
 void asiUI_ControlsMesh::onSelectEdges()
 {
   m_widgets.pSelectFaces->setChecked(false);
+  m_widgets.pSelectVertices->setChecked(false);
+
+  m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Edge);
 
   // Get presentation for Mesh Node
   Handle(asiVisu_TriangulationPrs)
@@ -256,4 +293,27 @@ void asiUI_ControlsMesh::onSelectEdges()
 
   prs->MainActor()->SetPickable(0);
   prs->ContourActor()->SetPickable( m_widgets.pSelectEdges->isChecked() );
+  prs->NodesActor()->SetPickable(0);
+}
+
+//-----------------------------------------------------------------------------
+
+//! On selection of vertices.
+void asiUI_ControlsMesh::onSelectVertices()
+{
+  m_widgets.pSelectFaces->setChecked(false);
+  m_widgets.pSelectEdges->setChecked(false);
+
+  m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Vertex);
+
+  // Get presentation for Mesh Node
+  Handle(asiVisu_TriangulationPrs)
+    prs = Handle(asiVisu_TriangulationPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation( m_model->GetTriangulationNode() ) );
+  //
+  if ( prs.IsNull() )
+    return;
+
+  prs->MainActor()->SetPickable(0);
+  prs->ContourActor()->SetPickable(0);
+  prs->NodesActor()->SetPickable( m_widgets.pSelectVertices->isChecked() );
 }

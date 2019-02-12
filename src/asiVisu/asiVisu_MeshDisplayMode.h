@@ -42,10 +42,12 @@
 //! Enumerates display modes.
 enum asiVisu_MeshDisplayMode
 {
-  MeshDisplayMode_Undefined  = 0x0000, //!< Undefined display mode.
-  MeshDisplayMode_Shaded     = 0x0001, //!< Shaded.
-  MeshDisplayMode_Shrunk     = 0x0002, //!< Shrunk.
-  MeshDisplayMode_Wireframe  = 0x0004  //!< Wireframe.
+  MeshDisplayMode_Undefined            = 0x0000, //!< Undefined display mode.
+  MeshDisplayMode_Shaded               = 0x0001, //!< Shaded.
+  MeshDisplayMode_Shrunk               = 0x0002, //!< Shrunk.
+  MeshDisplayMode_Vertices             = 0x0004, //!< Vertices.
+  MeshDisplayMode_Wireframe            = 0x0008, //!< Wireframe.
+  MeshDisplayMode_WireframeAndVertices = 0x0010  //!< Wireframe with vertices.
 };
 
 //-----------------------------------------------------------------------------
@@ -55,7 +57,7 @@ class asiVisu_MeshDisplayModeProvider
 {
 public:
 
-  //! \return collection of shape primitives employed in SHADED mode.
+  //! \return collection of mesh primitives employed in SHADED mode.
   static TColStd_PackedMapOfInteger SHADED()
   {
     TColStd_PackedMapOfInteger mode;
@@ -79,7 +81,7 @@ public:
     return mode;
   }
 
-  //! \return collection of shape primitives employed in SHRUNK mode.
+  //! \return collection of mesh primitives employed in SHRUNK mode.
   static TColStd_PackedMapOfInteger SHRUNK()
   {
     TColStd_PackedMapOfInteger mode = WIREFRAME();
@@ -90,7 +92,19 @@ public:
     return mode;
   }
 
-  //! \return collection of shape primitives employed in WIREFRAME mode.
+  //! \return collection of mesh primitives employed in VERTICES mode.
+  static TColStd_PackedMapOfInteger VERTICES()
+  {
+    TColStd_PackedMapOfInteger mode;
+    //
+    mode.Add(MeshPrimitive_FreeNode);
+    mode.Add(MeshPrimitive_BorderNode);
+    mode.Add(MeshPrimitive_SharedNode);
+    //
+    return mode;
+  }
+
+  //! \return collection of mesh primitives employed in WIREFRAME mode.
   static TColStd_PackedMapOfInteger WIREFRAME()
   {
     TColStd_PackedMapOfInteger mode;
@@ -109,6 +123,16 @@ public:
     return mode;
   }
 
+  //! \return collection of shape primitives employed in WIREFRAME and VERTICES mode.
+  static TColStd_PackedMapOfInteger WIREFRAME_AND_VERTICES()
+  {
+    TColStd_PackedMapOfInteger mode = WIREFRAME();
+    //
+    mode.Unite( VERTICES() );
+    //
+    return mode;
+  }
+
   //! Returns shape primitives employed in the given display mode.
   //! \param mode [in] display mode of interest.
   //! \return collection of primitive types.
@@ -116,9 +140,11 @@ public:
   {
     switch ( mode )
     {
-      case MeshDisplayMode_Shaded:    return SHADED();
-      case MeshDisplayMode_Shrunk:    return SHRUNK();
-      case MeshDisplayMode_Wireframe: return WIREFRAME();
+      case MeshDisplayMode_Shaded:               return SHADED();
+      case MeshDisplayMode_Shrunk:               return SHRUNK();
+      case MeshDisplayMode_Vertices:             return VERTICES();
+      case MeshDisplayMode_Wireframe:            return WIREFRAME();
+      case MeshDisplayMode_WireframeAndVertices: return WIREFRAME_AND_VERTICES();
       //
       default: break;
     }

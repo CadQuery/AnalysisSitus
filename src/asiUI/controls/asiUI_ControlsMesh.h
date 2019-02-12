@@ -71,8 +71,15 @@ public slots:
   void onLoadStl();
   void onLoadPly();
   void onSaveStl();
+  void onShowVertices();
   void onSelectFaces();
   void onSelectEdges();
+  void onSelectVertices();
+
+signals:
+
+  void verticesOn  ();
+  void verticesOff ();
 
 private:
 
@@ -81,26 +88,32 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    QPushButton* pLoadStl;     //!< Button for STL loading.
-    QPushButton* pLoadPly;     //!< Button for PLY loading.
-    QPushButton* pSaveStl;     //!< Button for STL saving.
-    QPushButton* pSelectFaces; //!< Button to enable selection of faces.
-    QPushButton* pSelectEdges; //!< Button to enable selection of edges.
+    QPushButton* pLoadStl;        //!< Button for STL loading.
+    QPushButton* pLoadPly;        //!< Button for PLY loading.
+    QPushButton* pSaveStl;        //!< Button for STL saving.
+    QPushButton* pShowVertices;   //!< Shows vertices of the model.
+    QPushButton* pSelectFaces;    //!< Button to enable selection of faces.
+    QPushButton* pSelectEdges;    //!< Button to enable selection of edges.
+    QPushButton* pSelectVertices; //!< Button to enable selection of vertices.
 
-    t_widgets() : pLoadStl     (NULL),
-                  pLoadPly     (NULL),
-                  pSaveStl     (NULL),
-                  pSelectFaces (NULL),
-                  pSelectEdges (NULL)
+    t_widgets() : pLoadStl        (NULL),
+                  pLoadPly        (NULL),
+                  pSaveStl        (NULL),
+                  pShowVertices   (NULL),
+                  pSelectFaces    (NULL),
+                  pSelectEdges    (NULL),
+                  pSelectVertices (NULL)
     {}
 
     void Release()
     {
-      delete pLoadStl;     pLoadStl     = NULL;
-      delete pLoadPly;     pLoadPly     = NULL;
-      delete pSaveStl;     pSaveStl     = NULL;
-      delete pSelectFaces; pSelectFaces = NULL;
-      delete pSelectEdges; pSelectEdges = NULL;
+      delete pLoadStl;        pLoadStl        = NULL;
+      delete pLoadPly;        pLoadPly        = NULL;
+      delete pSaveStl;        pSaveStl        = NULL;
+      delete pShowVertices;   pShowVertices   = NULL;
+      delete pSelectFaces;    pSelectFaces    = NULL;
+      delete pSelectEdges;    pSelectEdges    = NULL;
+      delete pSelectVertices; pSelectVertices = NULL;
     }
   };
 

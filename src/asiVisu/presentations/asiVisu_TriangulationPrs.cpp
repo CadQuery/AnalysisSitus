@@ -38,6 +38,9 @@
 #include <asiVisu_TriangulationPipeline.h>
 #include <asiVisu_Utils.h>
 
+// OCCT includes
+#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
+
 // VTK includes
 #include <vtkActor.h>
 #include <vtkCellTreeLocator.h>
@@ -86,6 +89,25 @@ asiVisu_TriangulationPrs::asiVisu_TriangulationPrs(const Handle(ActAPI_INode)& N
   this->addPipeline        ( Pipeline_TriangulationLinks, contour_pl );
   this->assignDataProvider ( Pipeline_TriangulationLinks, dp );
 
+  /* =========================
+   *  Pipeline for mesh nodes
+   * ========================= */
+
+  // Create pipeline for links
+  Handle(asiVisu_TriangulationLinksPipeline)
+    nodes_pl = new asiVisu_TriangulationLinksPipeline( pl->GetSource() );
+  //
+  nodes_pl->GetDisplayModeFilter()->SetDisplayMode(MeshDisplayMode_Vertices);
+
+  // Adjust props
+  nodes_pl->Actor()->GetProperty()->SetOpacity(0.5);
+  nodes_pl->Actor()->GetProperty()->SetPointSize(5.0f);
+  nodes_pl->Actor()->SetPickable(0);
+  nodes_pl->Actor()->SetVisibility(0);
+  //
+  this->addPipeline        ( Pipeline_TriangulationNodes, nodes_pl );
+  this->assignDataProvider ( Pipeline_TriangulationNodes, dp );
+
   // Resolve coincident topology between shaded facets and border links
   vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
 }
@@ -126,6 +148,37 @@ void asiVisu_TriangulationPrs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
     return;
 
   pl->SetDiagnosticTools(m_progress, m_plotter);
+}
+
+
+//-----------------------------------------------------------------------------
+
+//! Enables visualization of vertices.
+void asiVisu_TriangulationPrs::VerticesOn() const
+{
+  Handle(asiVisu_TriangulationLinksPipeline)
+    pl = Handle(asiVisu_TriangulationLinksPipeline)::DownCast( this->GetPipeline(Pipeline_TriangulationNodes) );
+
+  if ( pl.IsNull() )
+    return;
+
+  // Configure display mode
+  pl->Actor()->SetVisibility(1);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Disables visualization of vertices.
+void asiVisu_TriangulationPrs::VerticesOff() const
+{
+  Handle(asiVisu_TriangulationLinksPipeline)
+    pl = Handle(asiVisu_TriangulationLinksPipeline)::DownCast( this->GetPipeline(Pipeline_TriangulationNodes) );
+
+  if ( pl.IsNull() )
+    return;
+
+  // Configure display mode
+  pl->Actor()->SetVisibility(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -204,6 +257,9 @@ void asiVisu_TriangulationPrs::highlight(vtkRenderer*                        ren
   if ( cellPickRes.IsNull() )
     return;
 
+  const TColStd_PackedMapOfInteger& cellIds = cellPickRes->GetPickedCellIds();
+  const TColStd_PackedMapOfInteger& elemIds = cellPickRes->GetPickedElementIds();
+
   // There is one peculiarity in selection mechanism for mesh elements. To
   // save memory, we do not store element IDs as pedigrees or global IDs in
   // vtkPolyData. It is enough to have direct VTK cell IDs as element IDs.
@@ -223,7 +279,12 @@ void asiVisu_TriangulationPrs::highlight(vtkRenderer*                        ren
     Handle(asiVisu_TriangulationPipeline)
       mainPl = Handle(asiVisu_TriangulationPipeline)::DownCast( this->GetPipeline(Pipeline_Triangulation) );
 
-    mainPl->SetPickedElements( cellPickRes->GetPickedCellIds(), selNature );
+    mainPl->SetPickedElements( cellIds, selNature );
+
+    // Diagnostic dump.
+    if ( selNature == SelectionNature_Persistent )
+      for ( TColStd_MapIteratorOfPackedMapOfInteger eit(elemIds); eit.More(); eit.Next() )
+        m_progress.SendLogMessage( LogNotice(Normal) << "Picked face with ID %1." << eit.Key() );
   }
   // #################################################
   // LINK selection
@@ -236,7 +297,30 @@ void asiVisu_TriangulationPrs::highlight(vtkRenderer*                        ren
     Handle(asiVisu_TriangulationLinksPipeline)
       contourPl = Handle(asiVisu_TriangulationLinksPipeline)::DownCast( this->GetPipeline(Pipeline_TriangulationLinks) );
 
-    contourPl->SetPickedElements( cellPickRes->GetPickedCellIds(), selNature );
+    contourPl->SetPickedElements( cellIds, selNature );
+
+    // Diagnostic dump.
+    if ( selNature == SelectionNature_Persistent )
+      for ( TColStd_MapIteratorOfPackedMapOfInteger eit(elemIds); eit.More(); eit.Next() )
+        m_progress.SendLogMessage( LogNotice(Normal) << "Picked link with ID %1." << eit.Key() );
+  }
+  // #################################################
+  // VERTEX selection
+  else if ( cellPickRes->GetPickedActor() == this->NodesActor() )
+  {
+#if defined COUT_DEBUG
+    std::cout << "Picked NODES actor" << std::endl;
+#endif
+
+    Handle(asiVisu_TriangulationLinksPipeline)
+      nodesPl = Handle(asiVisu_TriangulationLinksPipeline)::DownCast( this->GetPipeline(Pipeline_TriangulationNodes) );
+
+    nodesPl->SetPickedElements( cellIds, selNature );
+
+    // Diagnostic dump.
+    if ( selNature == SelectionNature_Persistent )
+      for ( TColStd_MapIteratorOfPackedMapOfInteger eit(elemIds); eit.More(); eit.Next() )
+        m_progress.SendLogMessage( LogNotice(Normal) << "Picked node with ID %1." << eit.Key() );
   }
 }
 
@@ -255,9 +339,13 @@ void asiVisu_TriangulationPrs::unHighlight(vtkRenderer*                  rendere
   //
   Handle(asiVisu_TriangulationLinksPipeline)
     contourPl = Handle(asiVisu_TriangulationLinksPipeline)::DownCast( this->GetPipeline(Pipeline_TriangulationLinks) );
+  //
+  Handle(asiVisu_TriangulationLinksPipeline)
+    nodesPl = Handle(asiVisu_TriangulationLinksPipeline)::DownCast( this->GetPipeline(Pipeline_TriangulationNodes) );
 
   mainPl->ResetPickedElements(selNature);
   contourPl->ResetPickedElements(selNature);
+  nodesPl->ResetPickedElements(selNature);
 }
 
 //-----------------------------------------------------------------------------

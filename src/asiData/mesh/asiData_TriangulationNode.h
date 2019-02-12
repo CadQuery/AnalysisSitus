@@ -81,6 +81,7 @@ public:
     PID_DisplayMode,   //!< Display mode.
     PID_HasColor,      //!< Indicates whether the Color Parameter is active.
     PID_Color,         //!< Color.
+    PID_HasVertices,   //!< Indicates whether vertices are active.
   //-------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -137,6 +138,12 @@ public:
 
   asiData_EXPORT int
     GetDisplayMode() const;
+
+  asiData_EXPORT void
+    SetHasVertices(const bool);
+
+  asiData_EXPORT bool
+    HasVertices() const;
 
 // Initialization:
 public:

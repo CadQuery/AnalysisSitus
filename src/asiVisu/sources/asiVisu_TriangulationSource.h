@@ -77,6 +77,24 @@ public:
 
 public:
 
+  //! Enables collecting vertices in the polygonal source. Vertices are not
+  //! essential in visualization but occupy a certain amount of memory.
+  void CollectVerticesModeOn()
+  {
+    m_bVerticesOn = true;
+    //
+    this->Modified();
+  }
+
+  //! Disables collecting vertices in the polygonal source. Vertices are not
+  //! essential in visualization but occupy a certain amount of memory.
+  void CollectVerticesModeOff()
+  {
+    m_bVerticesOn = false;
+    //
+    this->Modified();
+  }
+
   //! Enables collecting edges in the polygonal source. Edges are not
   //! essential in visualization but occupy a certain amount of memory.
   void CollectEdgesModeOn()
@@ -154,8 +172,8 @@ private:
   //! \param polyData [in,out] polygonal data being populated.
   //! \return ID of the registered cell.
   vtkIdType
-    registerFreeNodesCell(const NCollection_List<int>& nodeIDs,
-                          vtkPolyData*                 polyData);
+    registerFreeNodesCell(const TColStd_PackedMapOfInteger& nodeIDs,
+                          vtkPolyData*                      polyData);
 
   //! Registers the passed mesh nodes as mesh link by constructing a
   //! dedicated VTK cell of VTK_LINE type.
@@ -168,6 +186,17 @@ private:
   vtkIdType
     registerLinkCell(const int                   nodeID1,
                      const int                   nodeID2,
+                     const asiVisu_MeshPrimitive type,
+                     vtkPolyData*                polyData);
+
+  //! Registers the passed mesh node as a VTK vertex cell.
+  //!
+  //! \param nodeID   [in]     ID of the mesh node.
+  //! \param type     [in]     primitive type.
+  //! \param polyData [in,out] polygonal data being populated.
+  //! \return ID of the registered cell.
+  vtkIdType
+    registerNodeCell(const int                   nodeID,
                      const asiVisu_MeshPrimitive type,
                      vtkPolyData*                polyData);
 
@@ -191,6 +220,9 @@ private:
 
   //! Registered VTK points.
   NCollection_DataMap<int, vtkIdType> m_regPoints;
+
+  //! Indicates whether vertices are registered as VTK cells.
+  bool m_bVerticesOn;
 
   //! Indicates whether edges are registered as VTK cells.
   bool m_bEdgesOn;

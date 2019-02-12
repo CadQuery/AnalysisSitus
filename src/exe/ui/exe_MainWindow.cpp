@@ -197,6 +197,9 @@ void exe_MainWindow::createDockWindows()
   // Now we have everything to initialize an imperative plotter
   cf->Plotter = new asiUI_IV(cf->Model, cf->Prs.Part, cf->Prs.Domain, cf->ObjectBrowser);
 
+  // Set diagnostic tools once we've got plotter.
+  cf->Prs.Part->SetDiagnosticTools(cf->ProgressNotifier, cf->Plotter);
+
   // Feature controls
   QDockWidget* pDockFeature;
   {
@@ -261,6 +264,12 @@ void exe_MainWindow::createDockWindows()
                                                            cf,
                                                            cf->ProgressNotifier);
 
+  // Listener for mesh controls
+  Listeners.pControlsMesh = new asiUI_ControlsMeshListener(Widgets.wControlsMesh,
+                                                           cf->Model,
+                                                           cf,
+                                                           cf->ProgressNotifier);
+
   // Listener for part viewer
   Listeners.pViewerPart = new asiUI_ViewerPartListener(Widgets.wViewerPart,
                                                        Widgets.wViewerDomain,
@@ -287,6 +296,7 @@ void exe_MainWindow::createDockWindows()
 
   // Signals-slots
   Listeners.pControlsPart ->Connect();
+  Listeners.pControlsMesh ->Connect();
   Listeners.pViewerPart   ->Connect();
   Listeners.pViewerDomain ->Connect();
   Listeners.pViewerHost   ->Connect();

@@ -75,6 +75,7 @@
 #include <GCPnts_UniformAbscissa.hxx>
 #include <Geom_BoundedSurface.hxx>
 #include <GeomLib.hxx>
+#include <gp_Quaternion.hxx>
 #include <Precision.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
 #include <ShapeAnalysis_Surface.hxx>
@@ -2273,6 +2274,70 @@ int ENGINE_MovePointCurve(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_MoveTriangulation(const Handle(asiTcl_Interp)& interp,
+                             int                          argc,
+                             const char**                 argv)
+{
+  if ( argc != 7 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get mesh from the Triangulation Node.
+  Handle(Poly_Triangulation)
+    poly = cmdEngine::model->GetTriangulationNode()->GetTriangulation();
+  //
+  if ( poly.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation is empty.");
+    return TCL_ERROR;
+  }
+
+  // Read input transformation.
+  const double tx = atof(argv[1]);
+  const double ty = atof(argv[2]);
+  const double tz = atof(argv[3]);
+  const double rx = atof(argv[4]);
+  const double ry = atof(argv[5]);
+  const double rz = atof(argv[6]);
+
+  // Prepare transformation.
+  gp_Vec Translation(tx, ty, tz);
+  gp_Quaternion RX(gp::DX(), rx/180.*M_PI);
+  gp_Quaternion RY(gp::DY(), ry/180.*M_PI);
+  gp_Quaternion RZ(gp::DZ(), rz/180.*M_PI);
+  //
+  gp_Trsf T;
+  T.SetRotation(RZ*RY*RX);
+  T.SetTranslationPart(Translation);
+
+  // Create transformed vertices.
+  const TColgp_Array1OfPnt& oldNodes = poly->Nodes();
+  TColgp_Array1OfPnt newNodes( oldNodes.Lower(), oldNodes.Upper() );
+  //
+  for ( int nidx = oldNodes.Lower(); nidx <= oldNodes.Upper(); ++nidx )
+    newNodes(nidx) = oldNodes(nidx).Transformed(T);
+
+  // Create new triangulation.
+  Handle(Poly_Triangulation)
+    newPoly = new Poly_Triangulation( newNodes, poly->Triangles() );
+
+  // Update Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    cmdEngine::model->GetTriangulationNode()->SetTriangulation(newPoly);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Actualize.
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetTriangulationNode() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -2567,4 +2632,15 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t Moves point on B-curve with parameter <u> by vector (<dx>, <dy>, <dz>).",
     //
     __FILE__, group, ENGINE_MovePointCurve);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("move-triangulation",
+    //
+    "move-triangulation tx ty tz rx ry rz\n"
+    "\t Moves triangulation by applying the passed transformation. The values\n"
+    "\t <tx>, <ty>, <tx> define the translation vector. The values <rx>, <ry>, <rz>\n"
+    "\t define the rotation angles in degrees. Rotation is performed with respect\n"
+    "\t to the global X, Y, Z axes.",
+    //
+    __FILE__, group, ENGINE_MoveTriangulation);
 }

@@ -109,21 +109,34 @@ void cmdEngine::ClearViewers(const bool repaint)
   if ( cf.IsNull() )
     return;
 
-  // Get all presentation managers
-  const vtkSmartPointer<asiVisu_PrsManager>& partPM   = cf->ViewerPart->PrsMgr();
-  const vtkSmartPointer<asiVisu_PrsManager>& hostPM   = cf->ViewerHost->PrsMgr();
-  const vtkSmartPointer<asiVisu_PrsManager>& domainPM = cf->ViewerDomain->PrsMgr();
-
-  // Update viewers
-  partPM  ->DeleteAllPresentations();
-  hostPM  ->DeleteAllPresentations();
-  domainPM->DeleteAllPresentations();
-
-  if ( repaint )
+  /* Update Part viewer */
+  if ( cf->ViewerPart )
   {
-    cf->ViewerPart->Repaint();
-    cf->ViewerHost->Repaint();
-    cf->ViewerDomain->Repaint();
+    const vtkSmartPointer<asiVisu_PrsManager>& partPM = cf->ViewerPart->PrsMgr();
+    partPM->DeleteAllPresentations();
+
+    if ( repaint )
+      cf->ViewerPart->Repaint();
+  }
+
+  /* Update Host viewer */
+  if ( cf->ViewerHost )
+  {
+    const vtkSmartPointer<asiVisu_PrsManager>& hostPM = cf->ViewerHost->PrsMgr();
+    hostPM->DeleteAllPresentations();
+
+    if ( repaint )
+      cf->ViewerHost->Repaint();
+  }
+
+  /* Update Domain viewer */
+  if ( cf->ViewerDomain )
+  {
+    const vtkSmartPointer<asiVisu_PrsManager>& domainPM = cf->ViewerDomain->PrsMgr();
+    domainPM->DeleteAllPresentations();
+
+    if ( repaint )
+      cf->ViewerDomain->Repaint();
   }
 }
 

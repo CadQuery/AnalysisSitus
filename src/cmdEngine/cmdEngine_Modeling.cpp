@@ -41,6 +41,7 @@
 #include <asiTcl_PluginMacro.h>
 
 // asiAlgo includes
+#include <asiAlgo_MeshOBB.h>
 #include <asiAlgo_MeshOffset.h>
 #include <asiAlgo_Utils.h>
 
@@ -902,9 +903,9 @@ int ENGINE_HLR(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_Fillet(const Handle(asiTcl_Interp)& interp,
-                  int                          argc,
-                  const char**                 argv)
+int ENGINE_MakeFillet(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
 {
   if ( argc != 2 )
   {
@@ -968,6 +969,45 @@ int ENGINE_Fillet(const Handle(asiTcl_Interp)& interp,
   // Update UI
   if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_BuildTriangulationOBB(const Handle(asiTcl_Interp)& interp,
+                                 int                          argc,
+                                 const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Triangulaion.
+  Handle(asiData_TriangulationNode) tris_n = cmdEngine::model->GetTriangulationNode();
+  //
+  if ( tris_n.IsNull() || !tris_n->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation is null.");
+    return TCL_ERROR;
+  }
+  //
+  Handle(Poly_Triangulation) triangulation = tris_n->GetTriangulation();
+
+  // Build OBB.
+  asiAlgo_MeshOBB mkOBB(triangulation);
+  //
+  if ( !mkOBB.Perform() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Operation failed.");
+    return TCL_ERROR;
+  }
+
+  // Get result as a solid.
+  TopoDS_Solid obb = mkOBB.GetResultBox();
+  //
+  interp->GetPlotter().REDRAW_SHAPE(argv[1], obb, Color_Yellow, 1.0, true);
 
   return TCL_OK;
 }
@@ -1123,10 +1163,18 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_HLR);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("fillet",
+  interp->AddCommand("make-fillet",
     //
-    "fillet radius\n"
+    "make-fillet radius\n"
     "\t Blends the selected edges with the given radius.",
     //
-    __FILE__, group, ENGINE_Fillet);
+    __FILE__, group, ENGINE_MakeFillet);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("build-triangulation-obb",
+    //
+    "build-triangulation-obb res\n"
+    "\t Builds oriented bounding box (OBB) for triangulation.",
+    //
+    __FILE__, group, ENGINE_BuildTriangulationOBB);
 }

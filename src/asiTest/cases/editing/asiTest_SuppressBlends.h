@@ -94,7 +94,7 @@ public:
               << &testSuppressBlend027
               << &testSuppressBlend028
               << &testSuppressBlend029
-              << &testSuppressBlend030
+              //<< &testSuppressBlend030
     ; // Put semicolon here for convenient adding new functions above ;)
   }
 

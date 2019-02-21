@@ -13,6 +13,7 @@ set (H_FILES
 #------------------------------------------------------------------------------
 
 set (controls_H_FILES
+  controls/asiUI_IParamEditor.h
   controls/asiUI_IStatusBar.h
   controls/asiUI_StatusBarImpl.h
 )
@@ -27,6 +28,11 @@ set (controls_H_UI_FILES
   controls/asiUI_ControlsPartListener.h
   controls/asiUI_LineEdit.h
   controls/asiUI_ObjectBrowser.h
+  controls/asiUI_ParamEditorImpl.h
+  controls/asiUI_ParameterEditor.h
+  controls/asiUI_ParameterEditorDelegate.h
+  controls/asiUI_ParameterEditorItem.h
+  controls/asiUI_ParameterEditorView.h
   controls/asiUI_StatusBar.h
   controls/asiUI_StyledTextEdit.h
 )
@@ -41,9 +47,55 @@ set (controls_CPP_FILES
   controls/asiUI_ControlsPartListener.cpp
   controls/asiUI_LineEdit.cpp
   controls/asiUI_ObjectBrowser.cpp
+  controls/asiUI_ParamEditorImpl.cpp
+  controls/asiUI_ParameterEditor.cpp
+  controls/asiUI_ParameterEditorDelegate.cpp
+  controls/asiUI_ParameterEditorItem.cpp
+  controls/asiUI_ParameterEditorView.cpp
   controls/asiUI_StatusBar.cpp
   controls/asiUI_StatusBarImpl.cpp
   controls/asiUI_StyledTextEdit.cpp
+)
+
+#------------------------------------------------------------------------------
+# Controls
+#------------------------------------------------------------------------------
+
+set (datum_H_UI_FILES
+  datum/asiUI_Datum.h
+  datum/asiUI_DatumCheckBox.h
+  datum/asiUI_DatumColorEdit.h
+  datum/asiUI_DatumColorItem.h
+  datum/asiUI_DatumComboBox.h
+  datum/asiUI_DatumDateEdit.h
+  datum/asiUI_DatumDelegate.h
+  datum/asiUI_DatumFormat.h
+  datum/asiUI_DatumItemEditor.h
+  datum/asiUI_DatumLabel.h
+  datum/asiUI_DatumLineEdit.h
+  datum/asiUI_DatumPathEdit.h
+  datum/asiUI_DatumPathItem.h
+  datum/asiUI_DatumRadioBox.h
+  datum/asiUI_DatumSpinBox.h
+  datum/asiUI_DatumSpinBoxDbl.h
+)
+set (datum_CPP_FILES 
+  datum/asiUI_Datum.cpp
+  datum/asiUI_DatumCheckBox.cpp
+  datum/asiUI_DatumColorEdit.cpp
+  datum/asiUI_DatumColorItem.cpp
+  datum/asiUI_DatumComboBox.cpp
+  datum/asiUI_DatumDateEdit.cpp
+  datum/asiUI_DatumDelegate.cpp
+  datum/asiUI_DatumFormat.cpp
+  datum/asiUI_DatumItemEditor.cpp
+  datum/asiUI_DatumLabel.cpp
+  datum/asiUI_DatumLineEdit.cpp
+  datum/asiUI_DatumPathEdit.cpp
+  datum/asiUI_DatumPathItem.cpp
+  datum/asiUI_DatumRadioBox.cpp
+  datum/asiUI_DatumSpinBox.cpp
+  datum/asiUI_DatumSpinBoxDbl.cpp
 )
 
 #------------------------------------------------------------------------------
@@ -320,6 +372,22 @@ foreach (FILE ${controls_CPP_FILES})
   source_group ("Source Files\\Controls" FILES "${FILE}")
 endforeach (FILE)
 
+foreach (FILE ${datum_H_UI_FILES})
+  set (src_files ${src_files} ${FILE})
+  #
+  unset (MOC_FILE)
+  qt5_wrap_cpp(MOC_FILE ${FILE})
+  message (STATUS "... Info: next MOC file ${MOC_FILE}")
+  set (ui_moc_files ${ui_moc_files} ${MOC_FILE})
+  #
+  source_group ("Generated" FILES "${MOC_FILE}")
+  source_group ("Header Files\\Datum" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${datum_CPP_FILES})
+  source_group ("Source Files\\Datum" FILES "${FILE}")
+endforeach (FILE)
+
 foreach (FILE ${dialogs_H_UI_FILES})
   set (src_files ${src_files} ${FILE})
   #
@@ -435,6 +503,7 @@ endforeach (FILE)
 # Create include variable
 set (asiUI_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
   ${CMAKE_CURRENT_SOURCE_DIR}/controls;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/datum;\
   ${CMAKE_CURRENT_SOURCE_DIR}/dialogs;\
   ${CMAKE_CURRENT_SOURCE_DIR}/graphs;\
   ${CMAKE_CURRENT_SOURCE_DIR}/plots;\
@@ -468,6 +537,7 @@ endif()
 add_library (asiUI SHARED
   ${H_FILES} ${CPP_FILES} ${ui_moc_files}
   ${controls_H_FILES}     ${controls_H_UI_FILES}    ${controls_CPP_FILES}
+  ${datum_H_FILES}        ${datum_H_UI_FILES}       ${datum_CPP_FILES}
   ${dialogs_H_FILES}      ${dialogs_H_UI_FILES}     ${dialogs_CPP_FILES}
   ${graphs_H_FILES}       ${graphs_H_UI_FILES}      ${graphs_CPP_FILES}
   ${plots_H_FILES}        ${plots_H_UI_FILES}       ${plots_CPP_FILES}
@@ -575,6 +645,8 @@ install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMP
 install (FILES ${H_FILES}                DESTINATION framework/include)
 install (FILES ${controls_H_FILES}       DESTINATION framework/include)
 install (FILES ${controls_H_UI_FILES}    DESTINATION framework/include)
+install (FILES ${datum_H_FILES}          DESTINATION framework/include)
+install (FILES ${datum_H_UI_FILES}       DESTINATION framework/include)
 install (FILES ${dialogs_H_FILES}        DESTINATION framework/include)
 install (FILES ${dialogs_H_UI_FILES}     DESTINATION framework/include)
 install (FILES ${graphs_H_FILES}         DESTINATION framework/include)

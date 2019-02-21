@@ -86,6 +86,41 @@ set (blends_CPP_FILES
 )
 
 #------------------------------------------------------------------------------
+# Dictionary
+#------------------------------------------------------------------------------
+
+set (dict_H_FILES
+  dict/asiAlgo_Dictionary.h
+  dict/asiAlgo_DictionaryDimension.h
+  dict/asiAlgo_DictionaryGroup.h
+  dict/asiAlgo_DictionaryItem.h
+  dict/asiAlgo_DictionaryUnit.h
+  dict/asiAlgo_DictionaryUnitSystem.h
+)
+set (dict_CPP_FILES
+  dict/asiAlgo_Dictionary.cpp
+  dict/asiAlgo_DictionaryDimension.cpp
+  dict/asiAlgo_DictionaryGroup.cpp
+  dict/asiAlgo_DictionaryItem.cpp
+  dict/asiAlgo_DictionaryUnit.cpp
+  dict/asiAlgo_DictionaryUnitSystem.cpp
+)
+
+set (dict_salome_H_FILES
+  dict/salome/DDS.h
+  dict/salome/DDS_DicGroup.h
+  dict/salome/DDS_DicItem.h
+  dict/salome/DDS_Dictionary.h
+  dict/salome/DDS_KeyWords.h
+)
+set (dict_salome_CPP_FILES
+  dict/salome/DDS_DicGroup.cxx
+  dict/salome/DDS_DicItem.cxx
+  dict/salome/DDS_Dictionary.cxx
+  dict/salome/DDS_KeyWords.cxx
+)
+
+#------------------------------------------------------------------------------
 # Editing
 #------------------------------------------------------------------------------
 
@@ -434,6 +469,22 @@ foreach (FILE ${blends_CPP_FILES})
   source_group ("Source Files\\Blends" FILES "${FILE}")
 endforeach (FILE)
 
+foreach (FILE ${dict_H_FILES})
+  source_group ("Header Files\\Dictionary" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${dict_CPP_FILES})
+  source_group ("Source Files\\Dictionary" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${dict_salome_H_FILES})
+  source_group ("Header Files\\Dictionary\\Salome" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${dict_salome_CPP_FILES})
+  source_group ("Source Files\\Dictionary\\Salome" FILES "${FILE}")
+endforeach (FILE)
+
 foreach (FILE ${editing_H_FILES})
   source_group ("Header Files\\Editing" FILES "${FILE}")
 endforeach (FILE)
@@ -506,6 +557,8 @@ endforeach (FILE)
 set (asiAlgo_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
   ${CMAKE_CURRENT_SOURCE_DIR}/auxiliary;\
   ${CMAKE_CURRENT_SOURCE_DIR}/blends;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/dict;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/dict/salome;\
   ${CMAKE_CURRENT_SOURCE_DIR}/editing;\
   ${CMAKE_CURRENT_SOURCE_DIR}/features;\
   ${CMAKE_CURRENT_SOURCE_DIR}/interop;\
@@ -533,17 +586,19 @@ endif()
 #------------------------------------------------------------------------------
 
 add_library (asiAlgo SHARED
-  ${H_FILES}          ${CPP_FILES}
-  ${aux_H_FILES}      ${aux_CPP_FILES}
-  ${blends_H_FILES}   ${blends_CPP_FILES}
-  ${editing_H_FILES}  ${editing_CPP_FILES}
-  ${features_H_FILES} ${features_CPP_FILES}
-  ${interop_H_FILES}  ${interop_CPP_FILES}
-  ${mesh_H_FILES}     ${mesh_CPP_FILES}
-  ${opt_H_FILES}      ${opt_CPP_FILES}
-  ${points_H_FILES}   ${points_CPP_FILES}
-  ${re_H_FILES}       ${re_CPP_FILES}
-  ${utils_H_FILES}    ${utils_CPP_FILES}
+  ${H_FILES}             ${CPP_FILES}
+  ${aux_H_FILES}         ${aux_CPP_FILES}
+  ${blends_H_FILES}      ${blends_CPP_FILES}
+  ${dict_H_FILES}        ${dict_CPP_FILES}
+  ${dict_salome_H_FILES} ${dict_salome_CPP_FILES}
+  ${editing_H_FILES}     ${editing_CPP_FILES}
+  ${features_H_FILES}    ${features_CPP_FILES}
+  ${interop_H_FILES}     ${interop_CPP_FILES}
+  ${mesh_H_FILES}        ${mesh_CPP_FILES}
+  ${opt_H_FILES}         ${opt_CPP_FILES}
+  ${points_H_FILES}      ${points_CPP_FILES}
+  ${re_H_FILES}          ${re_CPP_FILES}
+  ${utils_H_FILES}       ${utils_CPP_FILES}
 )
 
 #------------------------------------------------------------------------------
@@ -655,14 +710,16 @@ install (TARGETS asiAlgo
 
 install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiAlgo.pdb DESTINATION framework/bind CONFIGURATIONS Debug)
 
-install (FILES ${H_FILES}          DESTINATION framework/include)
-install (FILES ${aux_H_FILES}      DESTINATION framework/include)
-install (FILES ${blends_H_FILES}   DESTINATION framework/include)
-install (FILES ${editing_H_FILES}  DESTINATION framework/include)
-install (FILES ${features_H_FILES} DESTINATION framework/include)
-install (FILES ${interop_H_FILES}  DESTINATION framework/include)
-install (FILES ${mesh_H_FILES}     DESTINATION framework/include)
-install (FILES ${opt_H_FILES}      DESTINATION framework/include)
-install (FILES ${points_H_FILES}   DESTINATION framework/include)
-install (FILES ${re_H_FILES}       DESTINATION framework/include)
-install (FILES ${utils_H_FILES}    DESTINATION framework/include)
+install (FILES ${H_FILES}             DESTINATION framework/include)
+install (FILES ${aux_H_FILES}         DESTINATION framework/include)
+install (FILES ${blends_H_FILES}      DESTINATION framework/include)
+install (FILES ${dict_H_FILES}        DESTINATION framework/include)
+install (FILES ${dict_salome_H_FILES} DESTINATION framework/include)
+install (FILES ${editing_H_FILES}     DESTINATION framework/include)
+install (FILES ${features_H_FILES}    DESTINATION framework/include)
+install (FILES ${interop_H_FILES}     DESTINATION framework/include)
+install (FILES ${mesh_H_FILES}        DESTINATION framework/include)
+install (FILES ${opt_H_FILES}         DESTINATION framework/include)
+install (FILES ${points_H_FILES}      DESTINATION framework/include)
+install (FILES ${re_H_FILES}          DESTINATION framework/include)
+install (FILES ${utils_H_FILES}       DESTINATION framework/include)

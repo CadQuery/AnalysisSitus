@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -668,7 +668,7 @@ Handle(Geom2d_Curve) asiAlgo_ModConstructEdge::buildPCurve(const TopoDS_Edge& E,
 #endif
 
   Handle(Geom2d_Curve) c2d;
-  Standard_Real TolFirst = -1, TolLast = -1;
+  double TolFirst = -1, TolLast = -1;
   TopoDS_Vertex V1, V2;
   TopExp::Vertices(E, V1, V2);
   if (!V1.IsNull())

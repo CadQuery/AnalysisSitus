@@ -97,8 +97,8 @@ bool asiAlgo_MeshInterPlane::Perform(const Handle(Geom_Plane)& plane,
   center[1] = meshVtk->GetCenter()[1];
   center[2] = meshVtk->GetCenter()[2];
 
-  const double distanceMin = sqrt( vtkMath::Distance2BetweenPoints(minBound, center) );
-  const double distanceMax = sqrt( vtkMath::Distance2BetweenPoints(maxBound, center) );
+  //const double distanceMin = sqrt( vtkMath::Distance2BetweenPoints(minBound, center) );
+  //const double distanceMax = sqrt( vtkMath::Distance2BetweenPoints(maxBound, center) );
 
   const gp_Ax3& origin = plane->Position();
 

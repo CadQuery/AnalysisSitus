@@ -254,9 +254,9 @@ bool asiAlgo_MeshConvert::FromVTK(vtkPolyData*                source,
     double coord2[3] = { 0.0, 0.0, 0.0 };
     double coord3[3] = { 0.0, 0.0, 0.0 };
 
-    const int node1 = ptIds->GetId(0);
-    const int node2 = ptIds->GetId(1);
-    const int node3 = ptIds->GetId(2);
+    const int node1 = int( ptIds->GetId(0) );
+    const int node2 = int( ptIds->GetId(1) );
+    const int node3 = int( ptIds->GetId(2) );
 
     source->GetPoint(node1, coord1);
     source->GetPoint(node2, coord2);

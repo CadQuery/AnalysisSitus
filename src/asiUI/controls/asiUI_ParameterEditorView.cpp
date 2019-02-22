@@ -28,16 +28,16 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
+// Own include
 #include <asiUI_ParameterEditorView.h>
 
 // asiUI includes
-#include <asiUI_Application.h>
 #include <asiUI_WidgetFactory.h>
 #include <asiUI_DatumItemEditor.h>
 #include <asiUI_ParameterEditor.h>
 #include <asiUI_ParameterEditorItem.h>
 #include <asiUI_ParameterEditorDelegate.h>
-#include <asiUI_Tools.h>
+#include <asiUI_Common.h>
 #include <asiUI_DatumLineEdit.h>
 #include <asiUI_DatumCheckBox.h>
 #include <asiUI_DatumComboBox.h>
@@ -55,7 +55,7 @@
 
 // SUIT includes
 #include <DDS_Dictionary.h>
-#include <SUIT_Session.h>
+//#include <SUIT_Session.h>
 #include <SUIT_TreeSync.h>
 
 // Qt includes
@@ -66,17 +66,20 @@
 #pragma warning(pop)
 
 // OCC includes
-#include <Standard/Standard_ProgramError.hxx>
+#include <Standard_ProgramError.hxx>
 
 // =====================================================================================
 //                           PARAMETER EDITOR VIEW
 // =====================================================================================
 
 //! Constructor for parameter view widget
-//! \param theParent [in] parent widget.
-asiUI_ParameterEditorView::asiUI_ParameterEditorView(QWidget* theParent) 
-: QTreeWidget(theParent),
-  m_bSignalsEnabled(true)
+//! \param[in] factory widget factory.
+//! \param[in] parent  parent widget.
+asiUI_ParameterEditorView::asiUI_ParameterEditorView(const Handle(asiUI_WidgetFactory)& factory,
+                                                     QWidget*                           parent)
+: QTreeWidget       (parent),
+  m_bSignalsEnabled (true),
+  m_factory         (factory)
 {
   // customize parameter editor
   setHeaderLabels(QStringList() << tr( "PARAMETER" ) << tr( "" ) << tr( "VALUE" ));
@@ -151,7 +154,7 @@ void asiUI_ParameterEditorView::SetParameters(const asiUI_ParamDataList& thePara
     else
     {
       Handle(DDS_DicItem) aDicItem = DDS_Dictionary::Get()
-        ->GetDicItem(asiUI_Tools::ToAsciiString(aParam.GetDictID()));
+        ->GetDicItem(asiUI_Common::ToAsciiString(aParam.GetDictID()));
 
       // create item for parameters
       anItemParam = new asiUI_ParameterEditorItem(
@@ -539,35 +542,29 @@ void asiUI_ParameterEditorView::onComputedToggled(const bool theIsToggled)
 //! \param theParam [in] provides value data and description
 //!        of data model parameter for the parameter editor.
 //! \return datum for the parameter.
-asiUI_Datum* asiUI_ParameterEditorView::createDatum(
-  const asiUI_ParameterEditorData& theParam)
+asiUI_Datum* asiUI_ParameterEditorView::createDatum(const asiUI_ParameterEditorData& theParam)
 {
-  // try to create datum by dictionary item id.
-
-  // TODO: the parameter editor could have a reference to the application
-  // which can be set as its parent.
-  asiUI_Application* anApp = 
-    (asiUI_Application*)SUIT_Session::session()->activeApplication();
-
-  asiUI_Datum* aDatum = anApp->GetWidgetFactory()->CreateEditor(
-    theParam.GetDictID(), this, asiUI_Datum::Control);
+  asiUI_Datum*
+    datum = m_factory->CreateEditor(theParam.GetDictID(),
+                                    this,
+                                    asiUI_Datum::Control);
 
   // create datum by value type
-  if ( !aDatum )
+  if ( !datum )
   {
     // boolean data type by default get check box datum.
     // all other parameters and data dictionary data types by default get line editor.
     switch ( theParam.GetValue().type() )
     {
       case QVariant::Bool :
-        aDatum = new asiUI_DatumCheckBox("", this, asiUI_Datum::Control); break;
+        datum = new asiUI_DatumCheckBox("", this, asiUI_Datum::Control); break;
 
       default:
-        aDatum = new asiUI_DatumLineEdit("", this, asiUI_Datum::Control); break;
+        datum = new asiUI_DatumLineEdit("", this, asiUI_Datum::Control); break;
     }
   }
 
-  return aDatum;
+  return datum;
 }
 
 //-----------------------------------------------------------------------------

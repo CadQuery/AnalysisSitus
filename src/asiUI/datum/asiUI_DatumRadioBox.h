@@ -39,8 +39,6 @@
 #include <QStringList>
 #pragma warning(pop)
 
-//! \ingroup GUI
-//!
 //! Datum with control corresponding to button group with set of exclusive radio buttons.
 //!
 //! This control used for datum with enumerable values. It can be used for datum which has

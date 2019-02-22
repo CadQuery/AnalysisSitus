@@ -38,7 +38,9 @@
 #include <asiEngine_Model.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkContextView.h>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

@@ -45,8 +45,10 @@
 #include <ActAPI_IProgressNotifier.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCommand.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 class asiUI_Viewer;
 

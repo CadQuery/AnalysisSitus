@@ -79,8 +79,10 @@
 #pragma warning(pop)
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkActor.h>
 #include <vtkProperty.h>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

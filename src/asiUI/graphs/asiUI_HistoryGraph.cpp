@@ -42,6 +42,7 @@
 #include <asiAlgo_Utils.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkActor.h>
 #include <vtkActor2D.h>
 #include <vtkCamera.h>
@@ -62,6 +63,7 @@
 #include <vtkTextProperty.h>
 #include <vtkTextRepresentation.h>
 #include <vtkTextWidget.h>
+#pragma warning(pop)
 
 #define LEGEND_TITLE_HISTORY "History graph"
 

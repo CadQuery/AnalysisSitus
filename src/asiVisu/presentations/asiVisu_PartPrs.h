@@ -39,8 +39,10 @@
 #include <asiData_PartNode.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkActor.h>
 #include <vtkCellPicker.h>
+#pragma warning(pop)
 
 //! Presentation class for Part Node.
 class asiVisu_PartPrs : public asiVisu_Prs

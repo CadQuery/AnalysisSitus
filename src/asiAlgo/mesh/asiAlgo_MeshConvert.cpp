@@ -40,9 +40,11 @@
 #include <ActData_Mesh_Triangle.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCellArray.h>
 #include <vtkIdList.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

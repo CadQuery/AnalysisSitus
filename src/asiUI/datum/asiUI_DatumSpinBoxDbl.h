@@ -42,8 +42,6 @@
 
 class QLineEdit;
 
-//! \ingroup GUI
-//!
 //! Datum with control corresponding to spin box.
 //! This control is suitable for double numbers.
 //! User can input data directly in the spin box or can modify

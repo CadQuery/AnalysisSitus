@@ -41,8 +41,6 @@
 
 class QLabel;
 
-//! \ingroup GUI
-//!
 //! Simple label widget with that supports
 //! whole set of datum controls features. 
 //! Implementation of datum interface class.

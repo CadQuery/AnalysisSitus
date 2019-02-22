@@ -38,8 +38,10 @@
 #include <asiEngine_Model.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 //! Callback for picking an edge in 3D viewer.
 class asiUI_PickEdgeCallback : public asiUI_ViewerCallback

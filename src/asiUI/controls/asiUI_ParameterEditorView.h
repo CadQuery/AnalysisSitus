@@ -33,6 +33,7 @@
 
 // asiUI includes
 #include <asiUI_ParameterEditor.h>
+#include <asiUI_WidgetFactory.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -66,7 +67,8 @@ public:
 
 public:
 
-  asiUI_ParameterEditorView(QWidget* theParent);
+  asiUI_ParameterEditorView(const Handle(asiUI_WidgetFactory)& factory,
+                            QWidget* theParent);
 
   ~asiUI_ParameterEditorView();
 
@@ -209,6 +211,9 @@ private:
   QColor m_BorderColor;
 
   bool m_bSignalsEnabled;
+
+  //! Factory of datums.
+  Handle(asiUI_WidgetFactory) m_factory;
 };
 
 //! \ingroup GUI

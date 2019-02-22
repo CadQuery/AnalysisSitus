@@ -58,15 +58,11 @@ public:
 
 public:
 
-  Handle(asiEngine_Model)          Model;            //!< Data Model instance.
-  //
-  Handle(ActAPI_IProgressNotifier) ProgressNotifier; //!< Progress notifier.
-  asiUI_ProgressListener*          ProgressListener; //!< Progress listener.
-  Handle(ActAPI_IPlotter)          Plotter;          //!< Imperative plotter.
-  Handle(asiUI_IStatusBar)         StatusBar;        //!< Status bar of the main window.
-  Handle(asiUI_Logger)             Logger;           //!< Logger.
-  //
-  Handle(asiTcl_Interp)            Interp;           //!< Tcl interpreter.
+  Handle(asiEngine_Model)  Model;            //!< Data Model instance.
+  asiUI_ProgressListener*  ProgressListener; //!< Progress listener.
+  Handle(asiUI_IStatusBar) StatusBar;        //!< Status bar of the main window.
+  Handle(asiUI_Logger)     Logger;           //!< Logger.
+  Handle(asiTcl_Interp)    Interp;           //!< Tcl interpreter.
 
   //! Visualization facilities.
   struct t_prs
@@ -110,9 +106,6 @@ private:
       this->Model->Populate();
     }
     this->Model->EnableTransactions();
-
-    // Initialize notifier
-    this->ProgressNotifier = new asiUI_ProgressNotifier;
   }
 
 };

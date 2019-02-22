@@ -33,7 +33,7 @@
 #include <asiUI_DatumColorItem.h>
 #include <asiUI_DatumCheckBox.h>
 #include <asiUI_DatumPathItem.h>
-#include <asiUI_Tools.h>
+#include <asiUI_Common.h>
 
 //! Constructor
 //! \param theParent [in] - parent item. this item will be created as child
@@ -184,7 +184,7 @@ QString asiUI_ParameterEditorItem::nameString(const QString& theName)
     TCollection_AsciiString aUnits = m_DicItem->GetUnits();
     if ( !aUnits.IsEmpty() )
     {
-      aName += " [" + asiUI_Tools::ToQString(aUnits) + "]";
+      aName += " [" + asiUI_Common::ToQString(aUnits) + "]";
     }
   }
 

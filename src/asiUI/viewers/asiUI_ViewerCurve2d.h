@@ -31,18 +31,16 @@
 #ifndef asiUI_ViewerCurve2d_h
 #define asiUI_ViewerCurve2d_h
 
-// A-Situs includes
-#include <asiUI.h>
-
-// A-Situs (GUI) includes
-#include <asiUI_Viewer.h>
-
-// A-Situs (visualization) includes
-#include <asiVisu_InteractorStylePick.h>
+// asiUI includes
 #include <asiUI_PickCallback.h>
 
+// asiVisu includes
+#include <asiVisu_InteractorStylePick.h>
+
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkTextWidget.h>
+#pragma warning(pop)
 
 //! Viewer for a two-dimensional parametric curve.
 class asiUI_ViewerCurve2d : public asiUI_Viewer

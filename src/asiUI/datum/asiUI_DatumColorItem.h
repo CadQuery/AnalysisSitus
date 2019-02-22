@@ -33,7 +33,10 @@
 
 // asiUI includes
 #include <asiUI_Datum.h>
-#include <asiUI_Tools.h>
+#include <asiUI_Common.h>
+
+// asiVisu includes
+#include <asiVisu_Utils.h>
 
 // QDS includes
 #pragma warning(push, 0)
@@ -112,7 +115,7 @@ public:
   //! \return value of string type.
   virtual QString getString() const
   {
-    return QString::number(asiUI_Tools::ColorToInt(m_EditColor));
+    return QString::number(asiVisu_Utils::ColorToInt(m_EditColor));
   }
 
 signals:
@@ -129,7 +132,7 @@ protected:
   //!        stirng type.
   virtual void setString(const QString& theString)
   {
-    m_EditColor = asiUI_Tools::StringToColor(theString);
+    m_EditColor = asiVisu_Utils::StringToColor(theString);
 
     QColorDialog* aDialog = colorDialog();
     if ( aDialog )
@@ -140,7 +143,7 @@ protected:
   //! \return qcolor value.
   virtual QVariant value() const
   {
-    return asiUI_Tools::ColorToInt(m_EditColor);
+    return asiVisu_Utils::ColorToInt(m_EditColor);
   }
 
   QColorDialog* colorDialog() const;
@@ -150,7 +153,7 @@ private slots:
   void onColorChanged(const QColor& theColor)
   {
     m_EditColor = theColor;
-    emit ColorChanged(asiUI_Tools::ColorToInt(m_EditColor));
+    emit ColorChanged(asiVisu_Utils::ColorToInt(m_EditColor));
   }
 
 private:

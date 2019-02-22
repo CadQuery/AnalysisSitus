@@ -48,8 +48,6 @@
 class QLineEdit;
 class QValidator;
 
-//! \ingroup GUI
-//!
 //! Datum for editing the paths.
 //! The editor control contains line edit field to
 //! input the path and a button, which opens path dialog
@@ -249,8 +247,6 @@ protected:
   QLineEdit* lineEdit() const;
 
   virtual void setString(const QString& theString);
-
-private:
 
   void setPathCompleter();
 

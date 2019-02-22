@@ -38,11 +38,14 @@
 #include <asiUI_DatumViewItem.h>
 #include <asiUI_Common.h>
 
+// asiVisu includes
+#include <asiVisu_Utils.h>
+
 // SUIT includes
-#pragma warning(push, 0)
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
-#pragma warning(pop)
+//#pragma warning(push, 0)
+//#include <SUIT_Session.h>
+//#include <SUIT_ResourceMgr.h>
+//#pragma warning(pop)
 
 // Qt includes
 #pragma warning(push, 0)
@@ -66,13 +69,13 @@ asiUI_DatumDelegate::asiUI_DatumDelegate(QWidget* theParent)
    *  Load pixmap for path browser item
    * =================================== */
 
-  SUIT_Session* aSession = SUIT_Session::session();
+  /*SUIT_Session* aSession = SUIT_Session::session();
   SUIT_ResourceMgr* aResMgr = NULL;
   if ( aSession )
-    aResMgr = aSession->resourceMgr();
+    aResMgr = aSession->resourceMgr();*/
 
-  m_Browse = aResMgr ? 
-    aResMgr->loadPixmap( "asiUI", tr("ICON_BROWSE") ) : QPixmap(asiUI_PixmapNotFound);
+  m_Browse = /*aResMgr ? 
+    aResMgr->loadPixmap( "asiUI", tr("ICON_BROWSE") ) :*/ QPixmap(asiUI_PixmapNotFound);
 }
 
 //! Get row margin for the height.
@@ -276,7 +279,7 @@ void asiUI_DatumDelegate::paint(QPainter* thePainter,
 
     int aColorCode = theIndex.data(aValueRole).toInt();
 
-    QColor aBgColor = asiUI_Tools::IntToColor(aColorCode);
+    QColor aBgColor = asiVisu_Utils::IntToColor(aColorCode);
 
     thePainter->fillRect(aSmallRect, aBgColor);
     thePainter->setPen(Qt::white);

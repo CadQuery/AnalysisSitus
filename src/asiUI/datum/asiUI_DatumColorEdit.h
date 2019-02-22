@@ -32,8 +32,11 @@
 #define asiUI_DatumColorEdit_HeaderFile
 
 // asiUI includes
+#include <asiUI_Common.h>
 #include <asiUI_Datum.h>
-#include <asiUI_Tools.h>
+
+// asiVisu includes
+#include <asiVisu_Utils.h>
 
 // QDS includes
 #pragma warning(push, 0)
@@ -118,7 +121,7 @@ public:
   {
     QColor aColor = colorButton()->color();
 
-    return QString::number(asiUI_Tools::ColorToInt(aColor));
+    return QString::number(asiVisu_Utils::ColorToInt(aColor));
   }
 
 signals:
@@ -137,7 +140,7 @@ protected:
   {
     QtxColorButton* aButton = colorButton();
     if ( aButton )
-      aButton->setColor(asiUI_Tools::StringToColor(theString));
+      aButton->setColor(asiVisu_Utils::StringToColor(theString));
   }
 
   QtxColorButton* colorButton() const;
@@ -146,7 +149,7 @@ private slots:
 
   void onColorChanged(QColor theColor)
   {
-    int aValue = asiUI_Tools::ColorToInt(theColor);
+    int aValue = asiVisu_Utils::ColorToInt(theColor);
     setIntegerValue(aValue);
 
     emit ColorChanged(aValue);

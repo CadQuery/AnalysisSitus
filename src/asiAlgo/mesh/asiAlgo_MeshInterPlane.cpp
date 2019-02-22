@@ -41,8 +41,10 @@
 #include <ShapeAnalysis_Surface.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCutter.h>
 #include <vtkPlane.h>
+#pragma warning(pop)
 
 #undef DRAW_DEBUG
 #if defined DRAW_DEBUG

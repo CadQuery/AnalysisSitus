@@ -32,12 +32,15 @@
 #include <asiUI_DatumPathItem.h>
 
 // asiUI includes
-#include <asiUI_Tools.h>
+#include <asiUI_Common.h>
 #include <asiUI_OverrideCursor.h>
 
 // asiAlgo includes
 #include <asiAlgo_DictionaryItem.h>
 #include <asiAlgo_Dictionary.h>
+
+// Salome includes
+#include <Qtx.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -55,7 +58,7 @@
 //! \param theDictId [in] id of the dictionary item for datum.
 //! \param theParent [in] parent widget for subwidget controls.
 //! \param theFlags [in] datum subwidget and option flags.
-asiUI_DatumPathItem::asiUI_DatumPathItem(const QString& theDictId, 
+asiUI_DatumPathItem::asiUI_DatumPathItem(const QString& theDictId,
                                            QWidget* theParent,
                                            const int theFlags)
 : asiUI_Datum(theParent),
@@ -282,8 +285,10 @@ void asiUI_DatumPathItem::PathEditImpl::SetPathCompleter(QCompleter* theComplete
 
 //! Notify about text changing in the line edit.
 //! \param theStr [in] current text in the line edit widget.
-void asiUI_DatumPathItem::PathEditImpl::onTextChanged( const QString& asiUI_NotUsed(theStr) )
+void asiUI_DatumPathItem::PathEditImpl::onTextChanged(const QString& theStr)
 {
+  asiUI_NotUsed(theStr);
+
   invalidateCache();
 
   onParamChanged();

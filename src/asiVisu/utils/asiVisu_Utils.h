@@ -326,6 +326,30 @@ public:
     return ret_val;
   }
 
+  //! Converts string to color.
+  //! \param[in] string string to convert.
+  //! \return color.
+  static QColor StringToColor(const QString& string)
+  {
+    bool isOk;
+    int value = (int) string.toInt(&isOk);
+    if ( !isOk )
+    {
+      QRegExp rx("^\\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$");
+      //
+      if ( rx.indexIn(string) != -1 )
+      {
+        QString match = rx.cap(1);
+        value = (int) match.toInt(&isOk, 16);
+      }
+    }
+
+    if ( isOk )
+      return IntToColor(value);
+    
+    return QColor(Qt::white);
+  }
+
   //! Converts RGB color to integer.
   //! \param[in] rgb color.
   //! \return converted value.

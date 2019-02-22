@@ -32,6 +32,7 @@
 #define asiUI_HistoryGraphItem_h
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkAbstractArray.h>
 #include <vtkColor.h>
 #include <vtkContext2D.h>
@@ -42,6 +43,7 @@
 #include <vtkGraphItem.h>
 #include <vtkStdString.h>
 #include <vtkTextProperty.h>
+#pragma warning(pop)
 
 // Qt includes
 #include <QObject>

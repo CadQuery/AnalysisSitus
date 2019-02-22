@@ -35,8 +35,10 @@
 #include <asiVisu_PartPrs.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCellTreeLocator.h>
 #include <vtkMapper.h>
+#pragma warning(pop)
 
 // Qt includes
 #pragma warning(push, 0)

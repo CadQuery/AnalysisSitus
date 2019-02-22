@@ -38,6 +38,10 @@
 // Qt includes
 #include <QObject>
 
+#pragma warning(disable : 4251)
+
+//-----------------------------------------------------------------------------
+
 //! Default slots for controls operating with parts.
 class asiUI_EXPORT asiUI_ControlsPartListener : public QObject
 {
@@ -85,5 +89,7 @@ protected:
   ActAPI_ProgressEntry           m_notifier;  //!< Progress notifier.
 
 };
+
+#pragma warning(default : 4251)
 
 #endif

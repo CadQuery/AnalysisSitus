@@ -47,6 +47,10 @@ enum test_CaseID
 
 /* ------------------------------------------------------------------------ */
 
+  CaseID_DataDictionary,
+
+/* ------------------------------------------------------------------------ */
+
   CaseID_AAG,
   CaseID_IsContourClosed,
   CaseID_EdgeVexity,

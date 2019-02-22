@@ -44,8 +44,8 @@
 //! \param theParent [in] parent widget for subwidget controls.
 //! \param theFlags [in] datum subwidget and option flags.
 asiUI_DatumSpinBoxDbl::asiUI_DatumSpinBoxDbl(const QString& theDictId, 
-                                               QWidget* theParent,
-                                               const int theFlags)
+                                             QWidget* theParent,
+                                             const int theFlags)
 : asiUI_Datum(theParent)
 {
   m_pDatumImpl = new SpinBoxImpl( theDictId, theParent, convertFlags(theFlags) );

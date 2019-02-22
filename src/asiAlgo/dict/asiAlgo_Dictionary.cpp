@@ -67,14 +67,14 @@ void asiAlgo_Dictionary::GetItemIds(TColStd_SequenceOfAsciiString& theSeqOfIds)
 }
 
 //! Get list of defined unit dimensions.
-//! \return handle to a list of dimensions.
-Handle(asiAlgo_DimensionList) asiAlgo_Dictionary::GetDimensions()
+//! \param[out] dimensions list of dimensions.
+void asiAlgo_Dictionary::GetDimensions(asiAlgo_DictionaryDimensions& dimensions)
 {
   Handle(asiAlgo_DictionaryImpl) anImpl = getImpl();
   if ( anImpl.IsNull() )
-    return NULL;
+    return;
 
-  return anImpl->GetDimensions();
+  anImpl->GetDimensions(dimensions);
 }
 
 //! Get unit dimension by name identifier.
@@ -244,38 +244,35 @@ void asiAlgo_DictionaryImpl::FillDataMap(const LDOM_Element& theDicElt)
 }
 
 //! Get list of defined dimensions for all component groups.
-//! \return handle to a list of dimensions.
-Handle(asiAlgo_DimensionList) 
-  asiAlgo_DictionaryImpl::GetDimensions() const
+//! \param[out] dimensions list of dimensions.
+void asiAlgo_DictionaryImpl::GetDimensions(asiAlgo_DictionaryDimensions& dimensions) const
 {
-  Handle(asiAlgo_DimensionList) aDimList = new asiAlgo_DimensionList();
-
-  int anIdx = 1;
-  for ( ; anIdx <= myGroupMap.Extent(); anIdx++ )
+  for ( int idx = 1; idx <= myGroupMap.Extent(); ++idx )
   {
-    Handle(asiAlgo_DictionaryGroup) aGroup = 
-      Handle(asiAlgo_DictionaryGroup)::DownCast(myGroupMap.FindFromIndex(anIdx));
-    if ( !aGroup.IsNull() )
-      aDimList->Append(*(aGroup->GetDimensions().operator->()));
-  }
+    const Handle(asiAlgo_DictionaryGroup)&
+      group = Handle(asiAlgo_DictionaryGroup)::DownCast( myGroupMap.FindFromIndex(idx) );
 
-  return aDimList;
+    if ( !group.IsNull() )
+    {
+      // Collect dimensions from the current group into the output list.
+      group->GetDimensions(dimensions);
+    }
+  }
 }
 
 //! Get list of defined dimensions of a component group.
-//! \param theComponent [in] the component group.
-//! \return handle to a list of dimensions or a null
-//!         handle if the component is not found.
-Handle(asiAlgo_DimensionList) 
-  asiAlgo_DictionaryImpl::GetDimensions(const TCollection_AsciiString& theComponent) const
+//! \param[in]  component  component group.
+//! \param[out] dimensions list of dimensions.
+void asiAlgo_DictionaryImpl::GetDimensions(const TCollection_AsciiString& component,
+                                           asiAlgo_DictionaryDimensions&  dimensions) const
 {
-  if ( !myGroupMap.Contains(theComponent) )
-    return Handle(asiAlgo_DimensionList)();
+  if ( !myGroupMap.Contains(component) )
+    return;
 
-  Handle(asiAlgo_DictionaryGroup) aGroup = 
-    Handle(asiAlgo_DictionaryGroup)::DownCast(myGroupMap.FindFromKey(theComponent));
+  const Handle(asiAlgo_DictionaryGroup)&
+    group = Handle(asiAlgo_DictionaryGroup)::DownCast( myGroupMap.FindFromKey(component) );
 
-  return aGroup->GetDimensions();
+  group->GetDimensions(dimensions);
 }
 
 //! Search dimension definition by name in all component groups.

@@ -46,7 +46,8 @@
 class asiAlgo_DictionaryUnitSystem;
 class asiAlgo_DictionaryGroup;
 
-typedef NCollection_DataMap<TCollection_AsciiString, TCollection_AsciiString> asiAlgo_ParameterMap;
+typedef NCollection_DataMap<TCollection_AsciiString,
+                            TCollection_AsciiString> asiUI_WidgetParameterMap;
 
 #pragma warning(disable: 4263)
 
@@ -161,46 +162,43 @@ public:
 
   //! Get editor widget type.
   //! \return widget type.
-  asiAlgo_EXPORT
-    WidgetType GetWidgetType() const
-    {
-      return m_WidgetType;
-    }
+  WidgetType GetWidgetType() const
+  {
+    return m_WidgetType;
+  }
 
   //! Get map of widget parameters.
-  asiAlgo_EXPORT
-    const asiAlgo_ParameterMap& GetWidgetParams() const
-    {
-      return m_WidgetParams;
-    }
+  const asiUI_WidgetParameterMap& GetWidgetParams() const
+  {
+    return m_WidgetParams;
+  }
 
   //! Get data type for dictionary item. 
   //! The type is used for selecting
   //! appropriate editor in GUI
   //! layer.
-  asiAlgo_EXPORT
-    DataType GetDataType() const
-    { 
-      return m_DataType;
-    }
+  DataType GetDataType() const
+  {
+    return m_DataType;
+  }
 
   //! Get format string. The format string describes 
   //! conversion rules for string representation
   //! of the item's data.
-  asiAlgo_EXPORT
-    TCollection_AsciiString GetValueFormat() const
-    {
-      return m_Format;
-    }
+  const TCollection_AsciiString& GetValueFormat() const
+  {
+    return m_Format;
+  }
 
   //! Get reference identifier of list item 
   //! associated with the datum.
   //! \return list item id string.
-  asiAlgo_EXPORT
-    TCollection_AsciiString GetListRefID() const
-    {
-      return m_ListRef;
-    }
+  const TCollection_AsciiString& GetListRefID() const
+  {
+    return m_ListRef;
+  }
+
+public:
 
   asiAlgo_EXPORT virtual int
     GetPrecision(const UnitSystem& theUnitSystem) const;
@@ -208,8 +206,9 @@ public:
 // Dictionary specific methods
 public:
 
-  asiAlgo_EXPORT void OverrideListOfValues(const Handle(HStringArray)& ARR,
-                                           const Handle(HIntArray)& INDX);
+  asiAlgo_EXPORT void
+    OverrideListOfValues(const Handle(HStringArray)& ARR,
+                         const Handle(HIntArray)& INDX);
 
   asiAlgo_EXPORT virtual void
     FillDataMap(TCollection_AsciiString              theID, 
@@ -219,8 +218,8 @@ public:
                 const TColStd_SequenceOfAsciiString& theUnitSystems);
 
   asiAlgo_EXPORT virtual TCollection_AsciiString
-    GetFormat(const UnitSystem&      theUnitSystem,
-              const bool theIsCanonical = true) const;
+    GetFormat(const UnitSystem& theUnitSystem,
+              const bool        theIsCanonical = true) const;
 
 // unit conversion and unit string generation methods
 public:
@@ -229,14 +228,14 @@ public:
     ToSI(const double theValue);
 
   asiAlgo_EXPORT virtual double
-    ToSI(const double                 theValue,
+    ToSI(const double                        theValue,
          const asiAlgo_DictionaryUnitSystem& theSystem) const;
 
   asiAlgo_EXPORT virtual double
     FromSI(const double theValue);
 
   asiAlgo_EXPORT virtual double
-    FromSI(const double                 theValue,
+    FromSI(const double                        theValue,
            const asiAlgo_DictionaryUnitSystem& theSystem) const;
 
   asiAlgo_EXPORT virtual TCollection_AsciiString
@@ -248,12 +247,12 @@ public:
 protected:
 
   asiAlgo_EXPORT virtual double
-    ToSI(const double theValue,
-         const UnitSystem&   theUnitSystem) const;
+    ToSI(const double      theValue,
+         const UnitSystem& theUnitSystem) const;
 
   asiAlgo_EXPORT virtual double
-    FromSI(const double theValue,
-           const UnitSystem&   theUnitSystem) const;
+    FromSI(const double      theValue,
+           const UnitSystem& theUnitSystem) const;
 
   asiAlgo_EXPORT virtual TCollection_AsciiString
     GetUnits(const UnitSystem& theUnitSystem) const;
@@ -305,7 +304,7 @@ protected:
 
   //! Get item's parent dictionary group.
   //! \return dictionary group reference.
-  Handle(asiAlgo_DictionaryGroup) GetGroup() const
+  const Handle(asiAlgo_DictionaryGroup)& GetGroup() const
   {
     return m_Group;
   }
@@ -330,7 +329,7 @@ private:
   TCollection_AsciiString m_ListRef;
 
   //! Editor widget parameters.
-  asiAlgo_ParameterMap m_WidgetParams;
+  asiUI_WidgetParameterMap m_WidgetParams;
 
   //! Editor widget type.
   WidgetType m_WidgetType;

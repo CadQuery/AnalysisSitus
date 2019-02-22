@@ -158,7 +158,7 @@ void asiAlgo_DictionaryGroup::FillDataMap(const LDOM_Element& groupElt,
       //
       if ( listSeqIds.IsBound(listRefID) )
       {
-        Handle(TColStd_HArray1OfInteger)        seqOfIDs   = listSeqIds.Find(listRefID);
+        Handle(TColStd_HArray1OfInteger)        seqOfIDs  = listSeqIds.Find(listRefID);
         Handle(TColStd_HArray1OfExtendedString) seqOfVals = listSeqVals.Find(listRefID);
 
         datum->SetListOfValues(seqOfVals, seqOfIDs);

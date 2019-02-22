@@ -28,11 +28,13 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// asiUI includes
+// Own include
 #include <asiUI_ParamEditorImpl.h>
+
+// asiUI includes
+#include <asiUI_Common.h>
 #include <asiUI_ParameterEditor.h>
 #include <asiUI_ParameterFlags.h>
-#include <asiUI_Tools.h>
 
 // ActData includes
 #include <ActData_Common.h>
@@ -50,17 +52,16 @@
 // asiUI includes
 #include <ActAPI_IParameter.h>
 
-// OCC includes
-#include <TCollection/TCollection_HExtendedString.hxx>
+// OCCT includes
+#include <TCollection_HExtendedString.hxx>
 
 // Qt includes
 #include <QVariant>
 
-
 //! Fill list of parameters in parameter editor.
-void asiUI_ParamEditorImpl::SetParameters(const Handle(ActAPI_SparseParameterList)& theParameterList)
+void asiUI_ParamEditorImpl::SetParameters(const Handle(ActAPI_HSparseParameterList)& theParameterList)
 {
-  m_ParamList = Handle(ActAPI_SparseParameterList)();
+  m_paramList = Handle(ActAPI_HSparseParameterList)();
 
   if ( m_pEditor == 0 )
   {
@@ -75,10 +76,10 @@ void asiUI_ParamEditorImpl::SetParameters(const Handle(ActAPI_SparseParameterLis
   }
 
   QList<asiUI_ParameterEditorData> aParamList;
-  ActAPI_SparseParameterList::ConstIterator anIt( *theParameterList.operator->() );
+  ActAPI_HSparseParameterList::ConstIterator anIt( *theParameterList.operator->() );
   for ( ; anIt.More(); anIt.Next() )
   {
-    const Handle(ActAPI_IParameter)& aParam = anIt.Value();
+    const Handle(ActAPI_IUserParameter)& aParam = anIt.Value();
 
     bool isVisible  = aParam->HasUserFlags(ParameterFlag_IsVisibleInEditor);
     bool isReadOnly = aParam->HasUserFlags(ParameterFlag_IsReadOnlyInEditor);
@@ -92,39 +93,39 @@ void asiUI_ParamEditorImpl::SetParameters(const Handle(ActAPI_SparseParameterLis
 
     if ( aParam->IsKind(STANDARD_TYPE(ActData_GroupParameter)) )
     {
-      aParamList.append( asiUI_ParameterEditorData::GroupParameter( aNodalId, asiUI_Tools::ToQString( aParam->GetName() ) ) );
+      aParamList.append( asiUI_ParameterEditorData::GroupParameter( aNodalId, asiUI_Common::ToQString( aParam->GetName() ) ) );
       continue;
     }
 
     Handle(ActAPI_INode) aNode = aParam->GetNode();
 
     aParamList.append( asiUI_ParameterEditorData::ValueParameter( aNodalId,
-                       asiUI_Tools::ToQString( aParam->GetName() ),
+                       asiUI_Common::ToQString( aParam->GetName() ),
                        ConvertValue(aParam),
-                       asiUI_Tools::ToQString( aParam->GetSemanticId() ),
+                       asiUI_Common::ToQString( aParam->GetSemanticId() ),
                        aNode->IsEvaluable(aNodalId) == true,
                        aNode->HasConnectedEvaluator(aNodalId) == true,
                        !isReadOnly) );
   }
 
-  m_ParamList = new ActAPI_SparseParameterList(theParameterList->Extent());
-  m_ParamList->Assign(*theParameterList.operator->());
+  m_paramList = new ActAPI_HSparseParameterList(theParameterList->Extent());
+  m_paramList->Assign(*theParameterList.operator->());
   m_pEditor->SetParameters(aParamList);
 }
 
 //! Update displayed data of the parameters shown in the parameter editor.
 void asiUI_ParamEditorImpl::UpdateParameters()
 {
-  if ( m_pEditor == 0 || m_ParamList.IsNull() )
+  if ( m_pEditor == 0 || m_paramList.IsNull() )
   {
     return;
   }
 
   QList<asiUI_ParameterEditorData> aParamList;
-  ActAPI_SparseParameterList::ConstIterator anIt( *( m_ParamList.operator->() ) );
+  ActAPI_SparseParameterList::ConstIterator anIt( *( m_paramList.operator->() ) );
   for ( ; anIt.More(); anIt.Next() )
   {
-    const Handle(ActAPI_IParameter)& aParam = anIt.Value();
+    const Handle(ActAPI_IUserParameter)& aParam = anIt.Value();
 
     bool isVisible  = aParam->HasUserFlags(ParameterFlag_IsVisibleInEditor);
     bool isReadOnly = aParam->HasUserFlags(ParameterFlag_IsReadOnlyInEditor);
@@ -138,16 +139,16 @@ void asiUI_ParamEditorImpl::UpdateParameters()
 
     if ( aParam->IsKind(STANDARD_TYPE(ActData_GroupParameter)) )
     {
-      aParamList.append( asiUI_ParameterEditorData::GroupParameter( aNodalId, asiUI_Tools::ToQString( aParam->GetName() ) ) );
+      aParamList.append( asiUI_ParameterEditorData::GroupParameter( aNodalId, asiUI_Common::ToQString( aParam->GetName() ) ) );
       continue;
     }
 
     Handle(ActAPI_INode) aNode = aParam->GetNode();
 
     aParamList.append( asiUI_ParameterEditorData::ValueParameter( aNodalId,
-                       asiUI_Tools::ToQString( aParam->GetName() ),
+                       asiUI_Common::ToQString( aParam->GetName() ),
                        ConvertValue(aParam),
-                       asiUI_Tools::ToQString( aParam->GetSemanticId() ),
+                       asiUI_Common::ToQString( aParam->GetSemanticId() ),
                        aNode->IsEvaluable(aNodalId) == true,
                        aNode->HasConnectedEvaluator(aNodalId) == true,
                        !isReadOnly) );
@@ -165,13 +166,13 @@ void asiUI_ParamEditorImpl::UpdateParameters()
 //! \param theIds [in] the item ids or values to use if theValueMap is not defined.
 //! \param theValueByIds [in] maps ids to real values, which will be stored in parameter.
 //!        if empty, then the ids are used instead.
-void asiUI_ParamEditorImpl::SetComboValues( const Handle(ActAPI_IParameter)& theParameter,
-                                             const QStringList& theStrings,
-                                             const QIntList& theIds,
-                                             const QVariantList& theValueByIds )
+void asiUI_ParamEditorImpl::SetComboValues( const Handle(ActAPI_IUserParameter)& theParameter,
+                                            const QStringList& theStrings,
+                                            const QList<int>& theIds,
+                                            const QVariantList& theValueByIds )
 {
   QList<asiUI_ParameterEditorData> aParamList;
-  ActAPI_SparseParameterList::ConstIterator anIt( *m_ParamList.operator->() );
+  ActAPI_SparseParameterList::ConstIterator anIt( *m_paramList.operator->() );
   for ( ; anIt.More(); anIt.Next() )
   {
     if ( !ActAPI_IDataCursor::IsEqual( anIt.Value(), theParameter ) )
@@ -224,7 +225,7 @@ void asiUI_ParamEditorImpl::SetReadOnly(const bool theIsReadOnly)
 
 //! Convert value of parameter for parameter editor control.
 //! \param theParameter [in] the parameter to convert.
-QVariant asiUI_ParamEditorImpl::ConvertValue(const Handle(ActAPI_IParameter)& theParameter) const
+QVariant asiUI_ParamEditorImpl::ConvertValue(const Handle(ActAPI_IUserParameter)& theParameter) const
 {
   if ( theParameter->IsKind( STANDARD_TYPE(ActData_ReferenceParameter) ) )
   {
@@ -238,4 +239,140 @@ QVariant asiUI_ParamEditorImpl::ConvertValue(const Handle(ActAPI_IParameter)& th
   }
 
   return asiUI_ParametersTool::GetParameterValue(theParameter);
+}
+
+// ----------------------------------------------------------------------------
+//                      Parameter tool
+// ----------------------------------------------------------------------------
+
+//! Convert parameter's value to QVariant type.
+//! \param theParameter [in] parameter to get the value.
+//! \return converted value or invalid qvariant if the value can't be converted.
+QVariant asiUI_ParametersTool::GetParameterValue(const Handle(ActAPI_IUserParameter)& theParameter)
+{  
+  if ( !theParameter->IsValidData() )
+  {
+    return QVariant();
+  }
+
+  // TODO: use switch - case with ParmeterType enumeration instead of
+  //       if - else check.
+  if ( theParameter->IsKind( STANDARD_TYPE(ActData_NameParameter) ) )
+  {
+    // convert name parameter
+    return ExtStr2QStr(
+      ActData_ParameterFactory::AsName(theParameter)->GetValue() );
+  }
+  else if ( theParameter->IsKind( STANDARD_TYPE(ActData_AsciiStringParameter) ) )
+  {
+    // convert ascii string parameter
+    return ExtStr2QStr(
+      ActData_ParameterFactory::AsAsciiString(theParameter)->GetValue() );
+  }
+  else if ( theParameter->IsKind( STANDARD_TYPE(ActData_IntParameter) ) )
+  {
+    // convert integer type parameter
+    return ActData_ParameterFactory::AsInt(theParameter)->GetValue();
+  }
+  else if ( theParameter->IsKind( STANDARD_TYPE(ActData_RealParameter) ) )
+  {
+    // convert double type parameter
+    return ActData_ParameterFactory::AsReal(theParameter)->GetValue();
+  }
+  else if ( theParameter->IsKind( STANDARD_TYPE(ActData_BoolParameter) ) )
+  {
+    // convert boolean type parameter
+    return ActData_ParameterFactory::AsBool(theParameter)->GetValue();
+  }
+  else if ( theParameter->IsKind( STANDARD_TYPE(ActData_ReferenceParameter) ) )
+  {
+    // convert reference name parameter
+    Handle(ActAPI_IDataCursor) aTarget =
+      ActData_ParameterFactory::AsReference(theParameter)->GetTarget();
+
+    // null reference - return empty name
+    if ( aTarget.IsNull() )
+    {
+      return QVariant( "" );
+    }
+
+    if ( aTarget->IsKind( STANDARD_TYPE(ActAPI_IUserParameter) ) )
+    {
+      return ExtStr2QStr(
+        Handle(ActAPI_IUserParameter)::DownCast(aTarget)->GetName() );
+    }
+    else if ( aTarget->IsKind(STANDARD_TYPE(ActAPI_INode)) )
+    {
+      return ExtStr2QStr(
+        Handle(ActAPI_INode)::DownCast(aTarget)->GetName() );
+    }
+  }
+  else if ( theParameter->IsKind( STANDARD_TYPE(ActData_TimeStampParameter) ) )
+  {
+    Handle(ActAux_TimeStamp) aStamp = 
+      ActData_ParameterFactory::AsTimeStamp(theParameter)->GetValue();
+
+    return !aStamp.IsNull() ?
+      QVariant(asiUI_Common::ToQDateTime(aStamp)) : QVariant();
+  }
+
+  return QVariant("");
+}
+
+//! Get list of computed parameter, which values are evaluated by the framework 
+//! from the expression.
+//! \param theModel [in] model.
+//! \return list of computed parameters.
+Handle(ActAPI_HParameterList) 
+  asiUI_ParametersTool::GetEvaluatedParameters(const Handle(ActAPI_IModel)& theModel)
+{
+  Handle(ActAPI_HParameterList) aList = new ActAPI_HParameterList();
+
+  // get computed parameters for the nodes recursively
+  getComputedParams(theModel->GetRootNode(), aList);
+
+  return aList;
+}
+
+//! Get index of the parameter within the node.
+//! \param theParameter [in] index of this parameter will be searched by this method.
+//! \return index of the parameter or -1 if the index can't be found.
+int asiUI_ParametersTool::GetParameterIndex(const Handle(ActAPI_IUserParameter)& theParameter)
+{
+  Handle(ActAPI_INode) aParamNode = theParameter->GetNode();
+  ASSERT_RAISE(!aParamNode.IsNull(), "invalid node for the parameter");
+
+  Handle(ActAPI_IParamIterator) aParamIt = aParamNode->GetParamIterator();
+  for ( ; aParamIt->More(); aParamIt->Next() )
+  {
+    if ( ActAPI_IDataCursor::IsEqual(aParamIt->Value(), theParameter) )
+      return aParamIt->Key();
+  }
+
+  return -1;
+}
+
+//! recursively append computed parameter from the node to the
+//! passed as argument parameters list.
+//! \param theNode [in] theNode to process.
+//! \param theParamList [out] list of computed parameter.
+void 
+  asiUI_ParametersTool::getComputedParams(const Handle(ActAPI_INode)& theNode,
+                                           Handle(ActAPI_HParameterList)& theParamList)
+{
+  Handle(ActAPI_IParamIterator) aParamIt = theNode->GetParamIterator();
+  for ( ; aParamIt->More(); aParamIt->Next() )
+  {
+    Handle(ActAPI_IUserParameter) aParam = aParamIt->Value();
+    
+    if ( theNode->HasConnectedEvaluator(aParamIt->Key()) )
+      theParamList->Append(aParam);
+  }
+
+  // iterate on children recurisvely
+  Handle(ActAPI_IChildIterator) aChildIt = theNode->GetChildIterator();
+  for ( ; aChildIt->More(); aChildIt->Next() )
+  {
+    getComputedParams(aChildIt->Value(), theParamList);
+  }
 }

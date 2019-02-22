@@ -32,15 +32,13 @@
 #define asiUI_ParamEditorImpl_HeaderFile
 
 // asiUI includes
-#include <asiUI.h>
-
-// asiUI includes
 #include <asiUI_IParamEditor.h>
 
 // OCCT includes
 #include <NCollection_IndexedDataMap.hxx>
 
 // Active Data includes
+#include <ActAPI_IModel.h>
 #include <ActAPI_IParameter.h>
 
 // Qt includes
@@ -79,7 +77,7 @@ public:
 public:
 
   asiUI_EXPORT virtual void
-    SetParameters(const Handle(ActAPI_SparseParameterList)& params);
+    SetParameters(const Handle(ActAPI_HSparseParameterList)& params);
 
   asiUI_EXPORT virtual void
     UpdateParameters();
@@ -108,8 +106,28 @@ private:
 
 private:
 
-  Handle(ActAPI_SparseParameterList) m_paramList; //!< Internal cache.
-  asiUI_ParameterEditor*             m_pEditor;   //!< Encapsulated widget.
+  Handle(ActAPI_HSparseParameterList) m_paramList; //!< Internal cache.
+  asiUI_ParameterEditor*              m_pEditor;   //!< Encapsulated widget.
+};
+
+//-----------------------------------------------------------------------------
+
+//! Tool class provides a set of helpful static methods for processing the
+//! parameters.
+class asiUI_EXPORT asiUI_ParametersTool
+{
+public:
+
+  static QVariant GetParameterValue(const Handle(ActAPI_IUserParameter)& theParameter);
+
+  static Handle(ActAPI_HParameterList) GetEvaluatedParameters(const Handle(ActAPI_IModel)& theModel);
+
+  static int GetParameterIndex(const Handle(ActAPI_IUserParameter)& theParameter);
+
+private:
+
+  static void getComputedParams(const Handle(ActAPI_INode)&   theNode,
+                                Handle(ActAPI_HParameterList)& theParamList);
 };
 
 #endif

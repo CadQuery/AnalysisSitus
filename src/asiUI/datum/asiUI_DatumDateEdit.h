@@ -46,9 +46,6 @@ class QTime;
 class QDateTime;
 class QVariant;
 
-//! \ingroup GUI
-//!
-//! \todo provide comment here
 class asiUI_EXPORT asiUI_DatumDateEdit : public asiUI_Datum
 {
   Q_OBJECT

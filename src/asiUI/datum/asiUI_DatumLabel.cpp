@@ -42,8 +42,8 @@
 //! \param theParent [in] parent object for the datum.
 //! \param theFlags [in] datum initialization flags.
 asiUI_DatumLabel::asiUI_DatumLabel(const QString& theDictId,
-                                     QWidget* theParent,
-                                     const int theFlags)
+                                   QWidget* theParent,
+                                   const int theFlags)
 : asiUI_Datum(theParent)
 {
   m_pEditor = new Editor(theDictId, theParent, theFlags);

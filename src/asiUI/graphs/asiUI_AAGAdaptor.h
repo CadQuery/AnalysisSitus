@@ -35,8 +35,10 @@
 #include <asiAlgo_AAG.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkMutableUndirectedGraph.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 //! Converter of AAG to VTK presentable graph data structure.
 namespace asiUI_AAGAdaptor

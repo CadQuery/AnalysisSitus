@@ -46,8 +46,6 @@ class asiUI_DatumFormat;
 
 typedef QSharedPointer<asiUI_DatumFormat> asiUI_DatumFormatPtr;
 
-//! \ingroup GUI
-//!
 //! Class encapsulates logic of value formatting used in datums.
 //! Formatter instance can be initialized from format string.
 //! Formatter has an option to format passed value in long or short form.

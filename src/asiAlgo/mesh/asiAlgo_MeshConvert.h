@@ -42,7 +42,9 @@
 #include <ActData_Mesh.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkPolyData.h>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

@@ -44,7 +44,9 @@
 #include <asiVisu_InteractorStylePick.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkOrientationMarkerWidget.h>
+#pragma warning(pop)
 
 // Qt includes
 #pragma warning(push, 0)

@@ -39,8 +39,6 @@
 #include <QDS_LineEdit.h>
 #pragma warning(pop)
 
-//! \ingroup GUI
-//!
 //! Datum with control corresponding to the line edit.
 //! User can enter parameter value in single line editor.
 //! The value entered by the user is checked by the validator according to item type

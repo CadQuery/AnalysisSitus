@@ -31,6 +31,7 @@
 #ifndef asiUI_DatumDelegate_HeaderFile
 #define asiUI_DatumDelegate_HeaderFile
 
+// asiUI includes
 #include <asiUI.h>
 
 // Qt includes
@@ -46,8 +47,6 @@ class asiUI_DatumCustomSelector;
 class asiUI_DatumItemEditor;
 class asiUI_DatumPathItem;
 
-//! \ingroup GUI
-//!
 //! Base delegate for populating item views with datum editor controls.
 //! A set of editor factory methods should be redefined to implement
 //! desired delegate's behavior.

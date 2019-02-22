@@ -43,9 +43,11 @@
 #include <TopoDS.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkIntArray.h>
 #include <vtkNew.h>
 #include <vtkStringArray.h>
+#pragma warning(pop)
 
 //! Converts AAG to VTK presentable form.
 //! \param aag [in] AAG to convert.

@@ -39,9 +39,11 @@
 #include <asiVisu_MeshPipeline.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkWorldPointPicker.h>
+#pragma warning(pop)
 
 // Mesh (Active Data) includes
 #include <ActData_Mesh.h>

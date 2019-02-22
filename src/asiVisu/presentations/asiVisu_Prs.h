@@ -47,8 +47,10 @@
 #include <NCollection_Sequence.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCellPicker.h>
 #include <vtkRenderer.h>
+#pragma warning(pop)
 
 // Qt includes
 #pragma warning(push, 0)

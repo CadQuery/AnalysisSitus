@@ -41,8 +41,10 @@
 #include <asiEngine_Model.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 //! Callback for picking a facet in 3D viewer.
 class asiUI_PickFacetCallback : public asiUI_ViewerCallback

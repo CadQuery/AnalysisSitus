@@ -61,11 +61,15 @@
 #include <TopoDS.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkActor.h>
 #include <vtkProperty.h>
+#pragma warning(pop)
 
 // Qt include
+#pragma warning(push, 0)
 #include <QGroupBox>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

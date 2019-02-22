@@ -31,16 +31,15 @@
 #ifndef asiUI_ParameterEditor_HeaderFile
 #define asiUI_ParameterEditor_HeaderFile
 
+// asiUI includes
+#include <asiUI_WidgetFactory.h>
+
 // Active Data includes
 #include <ActAPI_IParameter.h>
 
-// SUIT includes
+// Salome includes
 #pragma warning(push, 0)
 #include <SUIT_PopupClient.h>
-#pragma warning(pop)
-
-// Qtx includes
-#pragma warning(push, 0)
 #include <Qtx.h>
 #pragma warning(pop)
 
@@ -69,9 +68,11 @@ class asiUI_ParameterEditor : public QWidget, public SUIT_PopupClient
 
 public:
 
-  //! Constructor.
-  //! \param[in] parent parent widget for this editor.
-  asiUI_ParameterEditor(QWidget* parent = NULL);
+  //! Ctor.
+  //! \param[in] factory factory for datums.
+  //! \param[in] parent  parent widget for this editor.
+  asiUI_ParameterEditor(const Handle(asiUI_WidgetFactory)& factory,
+                        QWidget*                           parent = NULL);
 
 public:
 
@@ -164,8 +165,7 @@ private:
   typedef QMap<int, IdsValueMap> ParameterValueMapping;
   ParameterValueMapping          m_comboValueMapping;
 
-private:
-
+  //! View.
   QPointer<asiUI_ParameterEditorView> m_pView;
 };
 

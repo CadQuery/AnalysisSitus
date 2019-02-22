@@ -74,8 +74,8 @@ public:
 // dimensions definition
 public:
 
-  asiAlgo_EXPORT static Handle(asiAlgo_DimensionList)
-    GetDimensions();
+  asiAlgo_EXPORT static void
+    GetDimensions(asiAlgo_DictionaryDimensions& dimensions);
 
   asiAlgo_EXPORT static Handle(asiAlgo_DictionaryDimension)
     GetDimension(const TCollection_AsciiString& theName);
@@ -141,11 +141,12 @@ protected:
 // dimensions definition
 public:
   
-  asiAlgo_EXPORT Handle(asiAlgo_DimensionList)
-    GetDimensions() const;
+  asiAlgo_EXPORT void
+    GetDimensions(asiAlgo_DictionaryDimensions& dimensions) const;
 
-  asiAlgo_EXPORT Handle(asiAlgo_DimensionList)
-    GetDimensions(const TCollection_AsciiString& theComponent) const;
+  asiAlgo_EXPORT void
+    GetDimensions(const TCollection_AsciiString& theComponent,
+                  asiAlgo_DictionaryDimensions&  dimensions) const;
 
   asiAlgo_EXPORT Handle(asiAlgo_DictionaryDimension)
     GetDimension(const TCollection_AsciiString& theName) const;
@@ -158,7 +159,7 @@ public:
 
   //! Get local unit system.
   //! \return a copy of local unit system instance.
-  asiAlgo_DictionaryUnitSystem GetLocalUnitSystem() const
+  const asiAlgo_DictionaryUnitSystem& GetLocalUnitSystem() const
   {
     return m_UnitSystem;
   }

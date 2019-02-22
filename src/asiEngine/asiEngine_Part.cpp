@@ -46,7 +46,9 @@
 #include <ActData_ParameterFactory.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkProperty.h>
+#pragma warning(pop)
 
 // OCCT includes
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>

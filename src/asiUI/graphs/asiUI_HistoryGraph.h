@@ -39,12 +39,14 @@
 #include <asiAlgo_Naming.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCommand.h>
 #include <vtkIntArray.h>
 #include <vtkMutableDirectedGraph.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkTextWidget.h>
+#pragma warning(pop)
 
 //! Visualizes history graph.
 class asiUI_HistoryGraph : public QObject

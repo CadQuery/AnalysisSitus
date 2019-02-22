@@ -46,12 +46,14 @@
 #include <TopTools_ListOfShape.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCommand.h>
 #include <vtkIntArray.h>
 #include <vtkMutableDirectedGraph.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkTextWidget.h>
+#pragma warning(pop)
 
 //! Visualizes topology or adjacency graph.
 class asiUI_PartGraph : public QObject

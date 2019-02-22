@@ -35,8 +35,10 @@
 #include <asiAlgo_Naming.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkMutableDirectedGraph.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 //! Converter of topology graph to VTK presentable graph data structure.
 namespace asiUI_TopoGraphAdaptor

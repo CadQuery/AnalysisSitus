@@ -245,11 +245,11 @@ asiUI_DatumPathEdit::Editor::Editor(const QString& theDicID,
   // load filter string parameter
   TCollection_AsciiString aFilterStr("filter");
   if ( aWidgetParams.IsBound(aFilterStr) )
-    SetFilter(asiUI_Tools::ToQString(aWidgetParams.Find(aFilterStr)));
+    SetFilter(asiUI_Common::ToQString(aWidgetParams.Find(aFilterStr)));
 
   TCollection_AsciiString aTitleStr("title");
   if ( aWidgetParams.IsBound(aTitleStr) )
-    SetTitle(asiUI_Tools::ToQString(aWidgetParams.Find(aTitleStr)));
+    SetTitle(asiUI_Common::ToQString(aWidgetParams.Find(aTitleStr)));
 
   m_bIsProjectLoc = false;
   TCollection_AsciiString aLocateStr("location");
@@ -325,8 +325,10 @@ void asiUI_DatumPathEdit::Editor::onOpenDialog()
 
 //! Notify about text changing in the line edit.
 //! \param theStr [in] current text in the line edit widget.
-void asiUI_DatumPathEdit::Editor::onTextChanged( const QString& asiUI_NotUsed(theStr) )
+void asiUI_DatumPathEdit::Editor::onTextChanged(const QString& theStr)
 {
+  asiUI_NotUsed(theStr);
+
   invalidateCache();
 
   onParamChanged();

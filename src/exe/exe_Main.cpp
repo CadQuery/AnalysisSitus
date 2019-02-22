@@ -82,12 +82,14 @@
 #include <QVTKWidget.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCamera.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 // VTK init
 #include <vtkAutoInit.h>

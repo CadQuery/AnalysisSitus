@@ -49,8 +49,6 @@
 
 #pragma warning(disable: 4251) // "Class XXX needs to have dll-interface..."
 
-//! \ingroup GUI
-//!
 //! This is an adapter for datum editors to be used
 //! by QItemDelegate. It provides access to editor's
 //! value, also it controls focus for complex widgets.

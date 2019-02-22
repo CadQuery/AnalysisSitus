@@ -64,11 +64,11 @@
 
 //! Constructor.
 //! The appropriate datums can be created by a widget factory.
-//! 
+//!
 //! However, if the datum is not instantiated by the widget factory, then
 //! its might be necessary to refresh its content when units changed by
 //! calling OnUnitsSystemChanged(...) slot.
-//! 
+//!
 //! \param theParent [in] parent object for the datum.
 asiUI_Datum::asiUI_Datum(QWidget* theParent) 
 : QObject(theParent),

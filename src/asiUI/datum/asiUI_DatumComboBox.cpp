@@ -105,8 +105,8 @@ bool asiUI_DatumComboBox::GetVisibility(const int theID) const
 //! \param theIsVisible [in] visibility state.
 //! \param theIsAppend [in] if true, keep statuses set for other items.
 void asiUI_DatumComboBox::SetVisibility(const int  theID,
-                                         const bool theIsVisible,
-                                         const bool theIsAppend)
+                                        const bool theIsVisible,
+                                        const bool theIsAppend)
 {
   m_pEditor->setState(theIsVisible, theID, theIsAppend);
 }
@@ -118,8 +118,8 @@ void asiUI_DatumComboBox::SetVisibility(const int  theID,
 //! \param theIsVisible [in] visibility state.
 //! \param theIsAppend [in] if true, keep statuses set for other items.
 void asiUI_DatumComboBox::SetVisibility(const QList<int>& theIDs,
-                                         const bool theIsVisible,
-                                         const bool theIsAppend)
+                                        const bool theIsVisible,
+                                        const bool theIsAppend)
 {
   m_pEditor->setState(theIsVisible, theIDs, theIsAppend);
 }
@@ -285,8 +285,8 @@ void asiUI_DatumComboBox::Editor::setIntegerValue(const int theVal)
 //! \param theVal [in] the index value.
 void asiUI_DatumComboBox::Editor::setDoubleValue(const double theVal)
 {
-  int aIdx = (int)theVal;
-  if ( valueToString(theVal).isNull() )
+  int aIdx = int(theVal);
+  if ( valueToString( int(theVal) ).isNull() )
     aIdx = stringToValue( defaultValue() );
 
   QDS_ComboBox::setDoubleValue(aIdx);

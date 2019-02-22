@@ -41,8 +41,6 @@
 
 class QtxIntSpinBox;
 
-//! \ingroup GUI
-//!
 //! Datum with control corresponding to spin box.
 //! This control used for integer numbers. 
 //! User can input data directly in the spin box or can modify

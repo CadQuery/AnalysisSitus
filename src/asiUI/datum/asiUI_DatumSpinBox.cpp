@@ -125,7 +125,7 @@ asiUI_DatumSpinBox::Editor::Editor(const QString& theDicID,
   TCollection_AsciiString aValue = aParamMap.Find(aStepOption);
   if ( aValue.IsRealValue() )
   {
-    setStep( aValue.RealValue() );
+    setStep( int( aValue.RealValue() ) );
   }
 
   QtxIntSpinBox* aSpinBox = spinBox();

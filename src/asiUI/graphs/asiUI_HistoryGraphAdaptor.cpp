@@ -38,9 +38,11 @@
 #include <asiAlgo_Utils.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkIntArray.h>
 #include <vtkNew.h>
 #include <vtkStringArray.h>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

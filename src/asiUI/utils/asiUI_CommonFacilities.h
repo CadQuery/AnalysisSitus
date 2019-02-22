@@ -33,9 +33,16 @@
 
 // asiUI includes
 #include <asiUI_ObjectBrowser.h>
+#include <asiUI_ProgressNotifier.h>
 #include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerPart.h>
 #include <asiUI_ViewerHost.h>
+#include <asiUI_WidgetFactory.h>
+
+// Qt includes
+#pragma warning(push, 0)
+#include <QStandardPaths>
+#pragma warning(pop)
 
 class QMainWindow;
 
@@ -55,11 +62,23 @@ public:
                              ObjectBrowser      (NULL),
                              ViewerPart         (NULL),
                              ViewerDomain       (NULL),
-                             ViewerHost         (NULL)
-  {}
+                             ViewerHost         (NULL),
+                             UnitManager        (NULL)
+  {
+    WidgetFactory = new asiUI_WidgetFactory(this);
+
+    // Initialize notifier.
+    this->Progress = ActAPI_ProgressEntry(new asiUI_ProgressNotifier);
+  }
 
 public:
 
+  //! Cleans up all the passed viewers. Null pointers are allowed in case if
+  //! some viewer should not be touched or does not exist.
+  //! \param[in] pViewerPart   part viewer.
+  //! \param[in] pViewerDomain domain viewer.
+  //! \param[in] pViewerHost   host viewer.
+  //! \param[in] repaint indicates whether to repaint the corresponding widgets.
   static void ClearViewers(asiUI_ViewerPart*   pViewerPart,
                            asiUI_ViewerDomain* pViewerDomain,
                            asiUI_ViewerHost*   pViewerHost,
@@ -83,18 +102,31 @@ public:
     }
   }
 
+  //! Cleans up all standard viewers.
+  //! \param[in] repaint indicates whether to repaint the corresponding widgets.
   void ClearViewers(const bool repaint)
   {
     ClearViewers(this->ViewerPart, this->ViewerDomain, this->ViewerHost, repaint);
   }
 
+  //! Return the default directory to be used in file prompt dialogs.
+  //! \return requested directory.
+  QString GetDefaultDirectory() const
+  {
+    return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+  }
+
 public:
 
-  QMainWindow*         MainWindow;    //!< Main window.
-  asiUI_ObjectBrowser* ObjectBrowser; //!< Object browser.
-  asiUI_ViewerPart*    ViewerPart;    //!< Viewer for part.
-  asiUI_ViewerDomain*  ViewerDomain;  //!< Viewer for face parametric domain.
-  asiUI_ViewerHost*    ViewerHost;    //!< Viewer for host geometry.
+  QMainWindow*                MainWindow;    //!< Main window.
+  asiUI_ObjectBrowser*        ObjectBrowser; //!< Object browser.
+  asiUI_ViewerPart*           ViewerPart;    //!< Viewer for part.
+  asiUI_ViewerDomain*         ViewerDomain;  //!< Viewer for face parametric domain.
+  asiUI_ViewerHost*           ViewerHost;    //!< Viewer for host geometry.
+  asiUI_UnitManager*          UnitManager;   //!< Utility to manage units.
+  ActAPI_ProgressEntry        Progress;      //!< Progress entry.
+  ActAPI_PlotterEntry         Plotter;       //!< Imperative plotter.
+  Handle(asiUI_WidgetFactory) WidgetFactory; //!< Widget factory for datums.
 
 };
 

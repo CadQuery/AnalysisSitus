@@ -38,8 +38,10 @@
 #include <ActAPI_IProgressNotifier.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkMutableDirectedGraph.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 //! Converter of history graph to VTK presentable graph data structure.
 class asiUI_HistoryGraphAdaptor

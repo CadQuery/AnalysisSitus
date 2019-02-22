@@ -44,9 +44,9 @@
 //! \param theDicID [in] id of the dictionary item for datum.
 //! \param theParent [in] parent widget for subwidget controls.
 //! \param theDatumFlags [in] datum subwidget and option flags.
-asiUI_DatumColorItem::asiUI_DatumColorItem(const QString& theDicID, 
-                                             QWidget* theParent,
-                                             const int theDatumFlags)
+asiUI_DatumColorItem::asiUI_DatumColorItem(const QString& theDicID,
+                                           QWidget*       theParent,
+                                           const int      theDatumFlags)
 : asiUI_Datum(theParent)
 {
   m_pEditor = new Editor(theDicID, theParent, convertFlags(theDatumFlags));
@@ -76,8 +76,8 @@ QDS_Datum* asiUI_DatumColorItem::getDatum() const
 
 //! Constructor. Initializes controls.
 asiUI_DatumColorItem::Editor::Editor(const QString& theDicID,
-                                      QWidget* theParent,
-                                      const int theFlags)
+                                     QWidget* theParent,
+                                     const int theFlags)
 : QDS_Datum(theDicID, theParent, theFlags)
 {
 }
@@ -87,10 +87,10 @@ asiUI_DatumColorItem::Editor::Editor(const QString& theDicID,
 //! \return widget pointer.
 QWidget* asiUI_DatumColorItem::Editor::createControl(QWidget* theParent)
 {
-  asiUI_DatumColorItem::ColorItemDialog* anEditor = 
+  asiUI_DatumColorItem::ColorItemDialog* anEditor =
     new asiUI_DatumColorItem::ColorItemDialog(theParent);
 
-  connect(anEditor, SIGNAL(ColorChanged(const QColor&)), 
+  connect(anEditor, SIGNAL(ColorChanged(const QColor&)),
           this,     SLOT(onColorChanged(const QColor&)));
 
   return anEditor;

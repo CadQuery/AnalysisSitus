@@ -28,8 +28,10 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// asiUI includes
+// Own include
 #include <asiUI_ParameterEditor.h>
+
+// asiUI includes
 #include <asiUI_ParameterEditorView.h>
 
 // OCCT includes
@@ -42,10 +44,12 @@
 
 //-----------------------------------------------------------------------------
 
-asiUI_ParameterEditor::asiUI_ParameterEditor(QWidget* parent) : QWidget(parent)
+asiUI_ParameterEditor::asiUI_ParameterEditor(const Handle(asiUI_WidgetFactory)& factory,
+                                             QWidget*                           parent)
+: QWidget(parent)
 {
-  m_pView = new asiUI_ParameterEditorView(parent);
-  
+  m_pView = new asiUI_ParameterEditorView(factory, parent);
+
   QHBoxLayout* layout = new QHBoxLayout;
   layout->setMargin(0);
   layout->addWidget(m_pView);

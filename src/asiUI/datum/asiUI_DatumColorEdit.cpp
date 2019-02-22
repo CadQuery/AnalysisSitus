@@ -85,9 +85,8 @@ asiUI_DatumColorEdit::Editor::Editor(const QString& theDicID,
 //! \return widget pointer.
 QWidget* asiUI_DatumColorEdit::Editor::createControl(QWidget* theParent)
 {
-  QtxColorButton* anEditor = 
-    new QtxColorButton(theParent);
-   
+  QtxColorButton* anEditor = new QtxColorButton(theParent);
+
   anEditor->setSizePolicy(QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ));
 
   connect(anEditor, SIGNAL(changed(QColor)), 

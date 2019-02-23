@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -1583,7 +1583,7 @@ int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
   }
 
   // Get order of derivative to compute.
-  const int order = atoi(argv[5]);
+  //const int order = atoi(argv[5]);
 
   // Check whether Mobius evaluation is requested.
   bool isMobius = interp->HasKeyword(argc, argv, "mobius");
@@ -2292,10 +2292,10 @@ public:
     }
   }
 
-  virtual void Eval_D1(const double u, xyz& P) const
+  virtual void Eval_D1(const double /*u*/, xyz& P) const
   {
     const double uMin = this->GetMinParameter();
-    const double uMax = this->GetMinParameter();
+    //const double uMax = this->GetMinParameter();
 
     P = m_b1->D1(uMin) - m_b0->D1(uMin);
   }
@@ -2329,9 +2329,9 @@ public:
     }
   }
 
-  virtual void Eval_D1(const double u, xyz& P) const
+  virtual void Eval_D1(const double /*u*/, xyz& P) const
   {
-    const double uMin = this->GetMinParameter();
+    //const double uMin = this->GetMinParameter();
     const double uMax = this->GetMinParameter();
 
     P = m_b1->D1(uMax) - m_b0->D1(uMax);
@@ -2366,10 +2366,10 @@ public:
     }
   }
 
-  virtual void Eval_D1(const double u, xyz& P) const
+  virtual void Eval_D1(const double /*u*/, xyz& P) const
   {
     const double uMin = this->GetMinParameter();
-    const double uMax = this->GetMinParameter();
+    //const double uMax = this->GetMinParameter();
 
     P = m_c1->D1(uMin) - m_c0->D1(uMin);
   }
@@ -2403,9 +2403,9 @@ public:
     }
   }
 
-  virtual void Eval_D1(const double u, xyz& P) const
+  virtual void Eval_D1(const double /*u*/, xyz& P) const
   {
-    const double uMin = this->GetMinParameter();
+    //const double uMin = this->GetMinParameter();
     const double uMax = this->GetMinParameter();
 
     P = m_c1->D1(uMax) - m_c0->D1(uMax);

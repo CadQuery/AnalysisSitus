@@ -13,7 +13,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -41,7 +41,7 @@
 enum asiEngine_NodeFlags
 {
   //! Indicates whether the Data Node can be presented in 3D viewer shipped
-  //! with SBM Framework.
+  //! with the framework.
   NodeFlag_IsPresentedInPartView = 0x00001,
 
   //! Indicates that 3D Presentation is currently visible.

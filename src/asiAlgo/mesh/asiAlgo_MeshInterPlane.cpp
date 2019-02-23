@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -41,8 +41,10 @@
 #include <ShapeAnalysis_Surface.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCutter.h>
 #include <vtkPlane.h>
+#pragma warning(pop)
 
 #undef DRAW_DEBUG
 #if defined DRAW_DEBUG
@@ -95,8 +97,8 @@ bool asiAlgo_MeshInterPlane::Perform(const Handle(Geom_Plane)& plane,
   center[1] = meshVtk->GetCenter()[1];
   center[2] = meshVtk->GetCenter()[2];
 
-  const double distanceMin = sqrt( vtkMath::Distance2BetweenPoints(minBound, center) );
-  const double distanceMax = sqrt( vtkMath::Distance2BetweenPoints(maxBound, center) );
+  //const double distanceMin = sqrt( vtkMath::Distance2BetweenPoints(minBound, center) );
+  //const double distanceMax = sqrt( vtkMath::Distance2BetweenPoints(maxBound, center) );
 
   const gp_Ax3& origin = plane->Position();
 

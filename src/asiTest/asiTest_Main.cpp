@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -69,9 +69,9 @@ DEFINE_TEST_VARIABLES
   Handle(asiTest_CommonFacilities) cf = asiTest_CommonFacilities::Instance();\
   \
   if ( !asiTcl_Plugin::Load(cf->Interp, cf, name) ) \
-    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "Cannot load %1 commands." << name); \
+    cf->Progress.SendLogMessage(LogErr(Normal) << "Cannot load %1 commands." << name); \
   else \
-    cf->ProgressNotifier->SendLogMessage(LogInfo(Normal) << "Loaded %1 commands." << name); \
+    cf->Progress.SendLogMessage(LogInfo(Normal) << "Loaded %1 commands." << name); \
 }
 
 //-----------------------------------------------------------------------------

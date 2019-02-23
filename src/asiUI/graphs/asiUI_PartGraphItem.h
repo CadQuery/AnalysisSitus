@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -38,6 +38,7 @@
 #include <TopAbs_ShapeEnum.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkAbstractArray.h>
 #include <vtkColor.h>
 #include <vtkContext2D.h>
@@ -48,6 +49,7 @@
 #include <vtkGraphItem.h>
 #include <vtkStdString.h>
 #include <vtkTextProperty.h>
+#pragma warning(pop)
 
 // Qt includes
 #include <QObject>

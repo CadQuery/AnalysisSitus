@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -31,10 +31,11 @@
 #ifndef asiVisu_MeshResultUtils_h
 #define asiVisu_MeshResultUtils_h
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkActor.h>
 #include <vtkLookupTable.h>
 #include <vtkMapper.h>
@@ -44,6 +45,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkTextActor.h>
 #include <vtkTransform.h>
+#pragma warning(pop)
 
 // OCCT includes
 #include <Standard_Type.hxx>

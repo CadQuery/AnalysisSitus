@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -44,6 +44,8 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #pragma warning(pop)
+
+#pragma warning(disable : 4251)
 
 //! Dialog to dump all available commands.
 class asiUI_EXPORT asiUI_DialogCommands : public QDialog
@@ -85,5 +87,7 @@ private:
   ActAPI_ProgressEntry     m_notifier; //!< Progress Notifier.
 
 };
+
+#pragma warning(default : 4251)
 
 #endif

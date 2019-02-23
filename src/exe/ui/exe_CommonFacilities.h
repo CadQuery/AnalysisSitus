@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -58,15 +58,11 @@ public:
 
 public:
 
-  Handle(asiEngine_Model)          Model;            //!< Data Model instance.
-  //
-  Handle(ActAPI_IProgressNotifier) ProgressNotifier; //!< Progress notifier.
-  asiUI_ProgressListener*          ProgressListener; //!< Progress listener.
-  Handle(ActAPI_IPlotter)          Plotter;          //!< Imperative plotter.
-  Handle(asiUI_IStatusBar)         StatusBar;        //!< Status bar of the main window.
-  Handle(asiUI_Logger)             Logger;           //!< Logger.
-  //
-  Handle(asiTcl_Interp)            Interp;           //!< Tcl interpreter.
+  Handle(asiEngine_Model)  Model;            //!< Data Model instance.
+  asiUI_ProgressListener*  ProgressListener; //!< Progress listener.
+  Handle(asiUI_IStatusBar) StatusBar;        //!< Status bar of the main window.
+  Handle(asiUI_Logger)     Logger;           //!< Logger.
+  Handle(asiTcl_Interp)    Interp;           //!< Tcl interpreter.
 
   //! Visualization facilities.
   struct t_prs
@@ -110,9 +106,6 @@ private:
       this->Model->Populate();
     }
     this->Model->EnableTransactions();
-
-    // Initialize notifier
-    this->ProgressNotifier = new asiUI_ProgressNotifier;
   }
 
 };

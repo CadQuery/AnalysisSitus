@@ -21,6 +21,7 @@
 #include <Geom_Plane.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkActor.h>
 #include <vtkAssemblyNode.h>
 #include <vtkAssemblyPath.h>
@@ -45,6 +46,7 @@
 #include <vtkRenderer.h>
 #include <vtkSphereSource.h>
 #include <vtkTransform.h>
+#pragma warning(pop)
 
 vtkStandardNewMacro(asiVisu_PlaneWidget);
 

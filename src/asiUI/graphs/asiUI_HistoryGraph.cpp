@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -42,6 +42,7 @@
 #include <asiAlgo_Utils.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkActor.h>
 #include <vtkActor2D.h>
 #include <vtkCamera.h>
@@ -62,6 +63,7 @@
 #include <vtkTextProperty.h>
 #include <vtkTextRepresentation.h>
 #include <vtkTextWidget.h>
+#pragma warning(pop)
 
 #define LEGEND_TITLE_HISTORY "History graph"
 

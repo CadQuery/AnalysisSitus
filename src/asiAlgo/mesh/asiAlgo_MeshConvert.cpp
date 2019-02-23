@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -40,9 +40,11 @@
 #include <ActData_Mesh_Triangle.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCellArray.h>
 #include <vtkIdList.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 
@@ -252,9 +254,9 @@ bool asiAlgo_MeshConvert::FromVTK(vtkPolyData*                source,
     double coord2[3] = { 0.0, 0.0, 0.0 };
     double coord3[3] = { 0.0, 0.0, 0.0 };
 
-    const int node1 = ptIds->GetId(0);
-    const int node2 = ptIds->GetId(1);
-    const int node3 = ptIds->GetId(2);
+    const int node1 = int( ptIds->GetId(0) );
+    const int node2 = int( ptIds->GetId(1) );
+    const int node3 = int( ptIds->GetId(2) );
 
     source->GetPoint(node1, coord1);
     source->GetPoint(node2, coord2);

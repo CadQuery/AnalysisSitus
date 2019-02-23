@@ -13,7 +13,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -135,9 +135,9 @@ public:
 
   //! Sets imperative plotter.
   //! \param[in] plotter imperative plotter to set.
-  void SetPlotter(const Handle(ActAPI_IPlotter)& plotter)
+  void SetPlotter(ActAPI_PlotterEntry plotter)
   {
-    m_plotter = ActAPI_PlotterEntry(plotter);
+    m_plotter = plotter;
   }
 
   //! \return plotter.
@@ -148,9 +148,9 @@ public:
 
   //! Sets progress notifier.
   //! \param[in] progress progress notifier to set.
-  void SetProgress(const Handle(ActAPI_IProgressNotifier)& progress)
+  void SetProgress(ActAPI_ProgressEntry progress)
   {
-    m_progress = ActAPI_ProgressEntry(progress);
+    m_progress = progress;
   }
 
   //! \return progress notifier.

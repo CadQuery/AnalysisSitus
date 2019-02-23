@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -92,7 +92,10 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
 {
-  const bool allPatches = (argc == 1);
+  cmdRE_NotUsed(argc);
+  cmdRE_NotUsed(argv);
+
+  //const bool allPatches = (argc == 1);
 
   asiEngine_RE reApi( cmdRE::model,
                       interp->GetProgress(),
@@ -471,7 +474,7 @@ int RE_ApproxPoints(const Handle(asiTcl_Interp)& interp,
     {
       const int  b_first    = breakIndices[b];
       const int  b_next     = ( (b == breakIndices.size() - 1) ? breakIndices[0] : breakIndices[b + 1] );
-      const bool isReturing = (b_next == b_first);
+      //const bool isReturing = (b_next == b_first);
 
       // Populate next region.
       std::vector<gp_XYZ> pts;

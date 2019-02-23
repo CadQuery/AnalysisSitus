@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -37,6 +37,8 @@
 
 // Qt includes
 #include <QObject>
+
+#pragma warning(disable : 4251)
 
 //-----------------------------------------------------------------------------
 
@@ -73,5 +75,7 @@ protected:
   ActAPI_ProgressEntry           m_notifier;  //!< Progress notifier.
 
 };
+
+#pragma warning(default : 4251)
 
 #endif

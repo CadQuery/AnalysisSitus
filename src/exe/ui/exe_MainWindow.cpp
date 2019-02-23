@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -58,9 +58,9 @@
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();\
   \
   if ( !asiTcl_Plugin::Load(cf->Interp, cf, name) ) \
-    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "Cannot load %1 commands." << name); \
+    cf->Progress.SendLogMessage(LogErr(Normal) << "Cannot load %1 commands." << name); \
   else \
-    cf->ProgressNotifier->SendLogMessage(LogInfo(Normal) << "Loaded %1 commands." << name); \
+    cf->Progress.SendLogMessage(LogInfo(Normal) << "Loaded %1 commands." << name); \
 }
 
 //-----------------------------------------------------------------------------
@@ -181,7 +181,7 @@ void exe_MainWindow::createDockWindows()
     pDockBrowser = new QDockWidget("Data", this);
     pDockBrowser->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
-    Widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, cf->ProgressNotifier, pDockBrowser);
+    Widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, cf->Progress, pDockBrowser);
     Widgets.wBrowser->AddAssociatedViewer(cf->ViewerPart);
     Widgets.wBrowser->AddAssociatedViewer(cf->ViewerDomain);
     Widgets.wBrowser->AddAssociatedViewer(cf->ViewerHost);
@@ -195,10 +195,13 @@ void exe_MainWindow::createDockWindows()
   }
 
   // Now we have everything to initialize an imperative plotter
-  cf->Plotter = new asiUI_IV(cf->Model, cf->Prs.Part, cf->Prs.Domain, cf->ObjectBrowser);
+  cf->Plotter = ActAPI_PlotterEntry( new asiUI_IV(cf->Model,
+                                                  cf->Prs.Part,
+                                                  cf->Prs.Domain,
+                                                  cf->ObjectBrowser) );
 
   // Set diagnostic tools once we've got plotter.
-  cf->Prs.Part->SetDiagnosticTools(cf->ProgressNotifier, cf->Plotter);
+  cf->Prs.Part->SetDiagnosticTools(cf->Progress, cf->Plotter);
 
   // Feature controls
   QDockWidget* pDockFeature;
@@ -208,7 +211,7 @@ void exe_MainWindow::createDockWindows()
     //
     Widgets.wControlsFeature = new asiUI_ControlsFeature(cf->Model,
                                                          cf->ViewerPart,
-                                                         cf->ProgressNotifier,
+                                                         cf->Progress,
                                                          cf->Plotter,
                                                          pDockFeature);
     //
@@ -227,7 +230,7 @@ void exe_MainWindow::createDockWindows()
     //
     Widgets.wControlsMesh = new asiUI_ControlsMesh(cf->Model,
                                                    cf->ViewerPart,
-                                                   cf->ProgressNotifier,
+                                                   cf->Progress,
                                                    cf->Plotter,
                                                    pDockFeature);
     //
@@ -246,7 +249,7 @@ void exe_MainWindow::createDockWindows()
     //
     Widgets.wControlsPart = new asiUI_ControlsPart(cf->Model,
                                                    cf->ViewerPart,
-                                                   cf->ProgressNotifier,
+                                                   cf->Progress,
                                                    cf->Plotter,
                                                    pDockPart);
     //
@@ -262,20 +265,20 @@ void exe_MainWindow::createDockWindows()
   Listeners.pControlsPart = new asiUI_ControlsPartListener(Widgets.wControlsPart,
                                                            cf->Model,
                                                            cf,
-                                                           cf->ProgressNotifier);
+                                                           cf->Progress);
 
   // Listener for mesh controls
   Listeners.pControlsMesh = new asiUI_ControlsMeshListener(Widgets.wControlsMesh,
                                                            cf->Model,
                                                            cf,
-                                                           cf->ProgressNotifier);
+                                                           cf->Progress);
 
   // Listener for part viewer
   Listeners.pViewerPart = new asiUI_ViewerPartListener(Widgets.wViewerPart,
                                                        Widgets.wViewerDomain,
                                                        Widgets.wViewerSurface,
                                                        cf->Model,
-                                                       cf->ProgressNotifier,
+                                                       cf->Progress,
                                                        cf->Plotter);
 
   // Listener for domain viewer
@@ -283,7 +286,7 @@ void exe_MainWindow::createDockWindows()
                                                            Widgets.wViewerDomain,
                                                            Widgets.wViewerSurface,
                                                            cf->Model,
-                                                           cf->ProgressNotifier,
+                                                           cf->Progress,
                                                            cf->Plotter);
 
   // Listener for host viewer
@@ -291,7 +294,7 @@ void exe_MainWindow::createDockWindows()
                                                        Widgets.wViewerDomain,
                                                        Widgets.wViewerSurface,
                                                        cf->Model,
-                                                       cf->ProgressNotifier,
+                                                       cf->Progress,
                                                        cf->Plotter);
 
   // Signals-slots
@@ -325,7 +328,7 @@ void exe_MainWindow::createDockWindows()
 
   // Initialize and connect progress listener
   cf->Logger           = new asiUI_Logger(Widgets.wLogger);
-  cf->ProgressListener = new asiUI_ProgressListener(statusBar, cf->ProgressNotifier, cf->Logger);
+  cf->ProgressListener = new asiUI_ProgressListener(statusBar, cf->Progress.Access(), cf->Logger);
   cf->ProgressListener->Connect();
 
   /* ==================================
@@ -333,7 +336,7 @@ void exe_MainWindow::createDockWindows()
    * ================================== */
 
   // Construct the interpreter
-  cf->Interp = new asiTcl_Interp(cf->ProgressNotifier, cf->Plotter);
+  cf->Interp = new asiTcl_Interp(cf->Progress, cf->Plotter);
   cf->Interp->Init();
   cf->Interp->SetModel(cf->Model);
 
@@ -354,8 +357,8 @@ void exe_MainWindow::createDockWindows()
   {
     TCollection_AsciiString cmdLibName = QStr2AsciiStr( cmdLib.section(".", 0, 0) );
     //
-    cf->ProgressNotifier->SendLogMessage(LogInfo(Normal) << "Detected %1 as a custom plugin. Attempting to load it..."
-                                                         << cmdLibName);
+    cf->Progress.SendLogMessage(LogInfo(Normal) << "Detected %1 as a custom plugin. Attempting to load it..."
+                                                << cmdLibName);
 
     EXE_LOAD_MODULE(cmdLibName);
   }

@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -324,6 +324,30 @@ public:
       ret_val = -limit;
 
     return ret_val;
+  }
+
+  //! Converts string to color.
+  //! \param[in] string string to convert.
+  //! \return color.
+  static QColor StringToColor(const QString& string)
+  {
+    bool isOk;
+    int value = (int) string.toInt(&isOk);
+    if ( !isOk )
+    {
+      QRegExp rx("^\\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$");
+      //
+      if ( rx.indexIn(string) != -1 )
+      {
+        QString match = rx.cap(1);
+        value = (int) match.toInt(&isOk, 16);
+      }
+    }
+
+    if ( isOk )
+      return IntToColor(value);
+    
+    return QColor(Qt::white);
   }
 
   //! Converts RGB color to integer.

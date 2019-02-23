@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -282,6 +282,9 @@ bool
   asiUI_PickContourCallback::addContourCoEdge(const Handle(asiData_ReEdgeNode)& edge,
                                               const bool                        samesense)
 {
+  asiUI_NotUsed(edge);
+  asiUI_NotUsed(samesense);
+
   //m_notifier.SendLogMessage(LogInfo(Normal) << "Adding new coedge for the existing edge...");
 
   //// Get previous edge.
@@ -316,6 +319,8 @@ bool
   asiUI_PickContourCallback::completeContourCoEdge(const Handle(asiData_ReEdgeNode)& edge,
                                                    const bool                        samesense)
 {
+  asiUI_NotUsed(edge);
+
   m_notifier.SendLogMessage(LogInfo(Normal) << "Complete contour by adjusting current coedge...");
 
   Handle(asiData_ReTopoNode)   topoNode   = m_model->GetReTopoNode();
@@ -890,6 +895,9 @@ Handle(asiData_ReCoEdgeNode)
   asiUI_PickContourCallback::buildNewCoEdge(const Handle(asiData_ReEdgeNode)& edge,
                                             const bool                        samesense)
 {
+  asiUI_NotUsed(edge);
+  asiUI_NotUsed(samesense);
+
   //// Get Topology Node and the currently composed entities.
   //Handle(asiData_ReTopoNode)   topoNode       = m_model->GetReTopoNode();
   //Handle(asiData_ReCoEdgeNode) currCoedgeNode = topoNode->GetCurrentCoEdge();

@@ -35,6 +35,13 @@ set (cases_editing_CPP_FILES
   cases/editing/asiTest_SuppressBlends.cpp
 )
 
+set (cases_framework_H_FILES
+  cases/framework/asiTest_DataDictionary.h
+)
+set (cases_framework_CPP_FILES
+  cases/framework/asiTest_DataDictionary.cpp
+)
+
 set (cases_inspection_H_FILES
   cases/inspection/asiTest_AAG.h
   cases/inspection/asiTest_EdgeVexity.h
@@ -70,6 +77,16 @@ foreach (FILE ${cases_editing_CPP_FILES})
   source_group ("Source Files\\Cases\\Editing" FILES "${FILE}")
 endforeach (FILE)
 
+foreach (FILE ${cases_framework_H_FILES})
+  set (src_files ${src_files} ${FILE})
+  source_group ("Header Files\\Cases\\Framework" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${cases_framework_CPP_FILES})
+  set (src_files ${src_files} ${FILE})
+  source_group ("Source Files\\Cases\\Framework" FILES "${FILE}")
+endforeach (FILE)
+
 foreach (FILE ${cases_inspection_H_FILES})
   set (src_files ${src_files} ${FILE})
   source_group ("Header Files\\Cases\\Inspection" FILES "${FILE}")
@@ -81,6 +98,12 @@ foreach (FILE ${cases_inspection_CPP_FILES})
 endforeach (FILE)
 
 #------------------------------------------------------------------------------
+# Resources
+#------------------------------------------------------------------------------
+
+source_group ("Resources" FILES resources/asiTestDictionary.xml)
+
+#------------------------------------------------------------------------------
 # Configure includes
 #------------------------------------------------------------------------------
 
@@ -88,6 +111,7 @@ endforeach (FILE)
 set (asiTest_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
   ${CMAKE_CURRENT_SOURCE_DIR}/cases;\
   ${CMAKE_CURRENT_SOURCE_DIR}/cases/editing;\
+  ${CMAKE_CURRENT_SOURCE_DIR}/cases/framework;\
   ${CMAKE_CURRENT_SOURCE_DIR}/cases/inspection;")
 #
 set (asiTest_include_dir ${asiTest_include_dir_loc} PARENT_SCOPE)
@@ -111,9 +135,11 @@ include_directories ( ${asiTest_include_dir_loc}
 # Create executable
 #------------------------------------------------------------------------------
 
-add_executable(asiTest ${src_files} ${RCC_FILE})
+add_executable(asiTest ${src_files} ${RCC_FILE} resources/asiTestDictionary.xml)
 
 set (X_COMPILER_BITNESS "x${COMPILER_BITNESS}")
+
+COPY_RESOURCES_TO_BINARY_DIRS(resources/asiTestDictionary.xml)
 
 configure_file(${CMAKE_SOURCE_DIR}/cmake/templates/exePROTOTYPE.vcxproj.user.in
                ${asiTest_BINARY_DIR}/asiTest.vcxproj.user @ONLY)
@@ -145,3 +171,4 @@ target_link_libraries(asiTest asiAlgo asiData asiEngine asiTestEngine asiTcl asi
 #------------------------------------------------------------------------------
 
 install (TARGETS asiTest RUNTIME DESTINATION bin COMPONENT Runtime)
+install (FILES resources/asiTestDictionary.xml DESTINATION bin/resources)

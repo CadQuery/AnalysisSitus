@@ -12,7 +12,7 @@
 //    * Redistributions in binary form must reproduce the above copyright
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
-//    * Neither the name of Sergey Slyadnev nor the
+//    * Neither the name of the copyright holder(s) nor the
 //      names of all contributors may be used to endorse or promote products
 //      derived from this software without specific prior written permission.
 //
@@ -50,6 +50,33 @@
 #include <QColor>
 #include <QDateTime>
 #pragma warning(pop)
+
+//-----------------------------------------------------------------------------
+
+// Invalid resource pixmap.
+static const char* asiUI_PixmapNotFound[] = {
+"16 16 3 1",
+"       c None",
+".      c #000000",
+"+      c #A80000",
+"                ",
+"                ",
+"    .     .     ",
+"   .+.   .+.    ",
+"  .+++. .+++.   ",
+"   .+++.+++.    ",
+"    .+++++.     ",
+"     .+++.      ",
+"    .+++++.     ",
+"   .+++.+++.    ",
+"  .+++. .+++.   ",
+"   .+.   .+.    ",
+"    .     .     ",
+"                ",
+"                ",
+"                "};
+
+//-----------------------------------------------------------------------------
 
 //! GUI utilities.
 class asiUI_Common

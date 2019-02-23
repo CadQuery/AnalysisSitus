@@ -38,8 +38,10 @@
 #include <ActAPI_INode.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkObject.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 // VTK forward declarations
 class vtkActor;

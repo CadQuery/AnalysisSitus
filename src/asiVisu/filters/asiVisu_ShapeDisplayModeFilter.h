@@ -35,7 +35,9 @@
 #include <asiVisu_ShapeDisplayMode.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkPolyDataAlgorithm.h>
+#pragma warning(pop)
 
 //! Filters shape polygonal data extracting only those cells which correspond
 //! to the desired type of shape visualization primitive. The cells remaining

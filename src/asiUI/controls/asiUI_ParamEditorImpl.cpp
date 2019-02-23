@@ -56,7 +56,9 @@
 #include <TCollection_HExtendedString.hxx>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QVariant>
+#pragma warning(pop)
 
 //! Fill list of parameters in parameter editor.
 void asiUI_ParamEditorImpl::SetParameters(const Handle(ActAPI_HSparseParameterList)& theParameterList)

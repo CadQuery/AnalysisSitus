@@ -34,7 +34,7 @@
 // GUI includes
 #include <asiUI_Common.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_PrsManager.h>
 #include <asiVisu_Utils.h>
 

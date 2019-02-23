@@ -47,7 +47,11 @@
 #include <TopoDS_Vertex.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkType.h>
+#pragma warning(pop)
+
+//-----------------------------------------------------------------------------
 
 //! Utility which is designed to offer a high level of sustainability of
 //! visualization facets. Why would you want to have a non-standard

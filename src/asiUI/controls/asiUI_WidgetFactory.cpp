@@ -55,8 +55,10 @@
 #include <asiAlgo_Dictionary.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QWidget>
 #include <QAbstractItemView>
+#pragma warning(pop)
 
 //! Ctor.
 asiUI_WidgetFactory::asiUI_WidgetFactory(asiUI_CommonFacilities* cf)

@@ -37,8 +37,10 @@
 #include <asiVisu_Utils.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkMapper.h>
 #include <vtkProperty.h>
+#pragma warning(pop)
 
 //! Creates a Presentation object for the passed Node.
 //! \param[in] N Node to create a Presentation for.

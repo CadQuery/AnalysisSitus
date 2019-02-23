@@ -45,6 +45,8 @@
 #include <QVBoxLayout>
 #pragma warning(pop)
 
+#pragma warning(disable : 4251)
+
 //! Dialog to dump all available commands.
 class asiUI_EXPORT asiUI_DialogCommands : public QDialog
 {
@@ -85,5 +87,7 @@ private:
   ActAPI_ProgressEntry     m_notifier; //!< Progress Notifier.
 
 };
+
+#pragma warning(default : 4251)
 
 #endif

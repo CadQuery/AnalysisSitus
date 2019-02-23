@@ -42,6 +42,8 @@
 #include <QTreeWidget>
 #pragma warning(pop)
 
+#pragma warning(disable : 4251)
+
 //-----------------------------------------------------------------------------
 
 // Qt role to store node ID near the tree item
@@ -137,5 +139,7 @@ protected:
   ActAPI_ProgressEntry       m_progress; //!< Progress notifier.
 
 };
+
+#pragma warning(default : 4251)
 
 #endif

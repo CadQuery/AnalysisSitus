@@ -51,6 +51,7 @@
 #include <TopoDS_Iterator.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkActor.h>
 #include <vtkActor2D.h>
 #include <vtkCamera.h>
@@ -71,6 +72,7 @@
 #include <vtkTextProperty.h>
 #include <vtkTextRepresentation.h>
 #include <vtkTextWidget.h>
+#pragma warning(pop)
 
 #define LEGEND_TITLE_ACCESSORY "Topology graph"
 #define LEGEND_TITLE_ADJACENCY "AAG"

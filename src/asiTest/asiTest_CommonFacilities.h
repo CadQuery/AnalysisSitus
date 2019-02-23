@@ -56,10 +56,10 @@ public:
 
 public:
 
-  Handle(asiEngine_Model)          Model;            //!< Data Model instance.
-  Handle(ActAPI_IProgressNotifier) ProgressNotifier; //!< Progress notifier.
-  Handle(ActAPI_IPlotter)          Plotter;          //!< Plotter.
-  Handle(asiTcl_Interp)            Interp;           //!< Tcl interpreter.
+  Handle(asiEngine_Model)  Model;    //!< Data Model instance.
+  ActAPI_ProgressEntry     Progress; //!< Progress notifier.
+  ActAPI_PlotterEntry      Plotter;  //!< Plotter.
+  Handle(asiTcl_Interp)    Interp;   //!< Tcl interpreter.
 
 public:
 
@@ -86,17 +86,17 @@ private:
     this->Model->EnableTransactions();
 
     // Initialize progress notifier.
-    this->ProgressNotifier = new asiTest_ProgressNotifier(std::cout);
+    this->Progress = ActAPI_ProgressEntry( new asiTest_ProgressNotifier(std::cout) );
 
     // Initialize plotter as we may want at least to work with the data
     // objects created by the plotter if not with their presentations.
-    this->Plotter = new asiUI_IV(this->Model, NULL, NULL, NULL);
+    this->Plotter = ActAPI_PlotterEntry( new asiUI_IV(this->Model, NULL, NULL, NULL) );
 
     // Construct the interpreter
     this->Interp = new asiTcl_Interp;
     this->Interp->Init();
     this->Interp->SetModel(this->Model);
-    this->Interp->SetProgress(this->ProgressNotifier);
+    this->Interp->SetProgress(this->Progress);
     this->Interp->SetPlotter(this->Plotter);
   }
 

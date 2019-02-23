@@ -35,8 +35,10 @@
 #include <asiVisu_Selection.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkInteractorStyleImage.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 // OCCT includes
 #include <NCollection_Sequence.hxx>

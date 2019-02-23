@@ -37,7 +37,9 @@
 #include <asiUI_StatusBarImpl.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QCoreApplication>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

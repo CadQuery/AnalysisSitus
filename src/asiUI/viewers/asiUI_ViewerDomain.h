@@ -40,7 +40,9 @@
 #include <asiEngine_Model.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkTextWidget.h>
+#pragma warning(pop)
 
 //! Viewer for domains of topological entities (edges, faces).
 class asiUI_ViewerDomain : public asiUI_Viewer

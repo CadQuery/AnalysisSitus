@@ -52,7 +52,9 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCamera.h>
+#pragma warning(pop)
 
 // Qt includes
 #pragma warning(push, 0)

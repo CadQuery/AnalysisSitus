@@ -39,10 +39,12 @@
 #include <asiVisu_Utils.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCamera.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#pragma warning(pop)
 
 //! Instantiation routine.
 //! \return instance of the callback class.

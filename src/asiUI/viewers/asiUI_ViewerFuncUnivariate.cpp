@@ -43,9 +43,11 @@
 #pragma warning(pop)
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkProperty.h>
 #include <vtkTextActor.h>
 #include <vtkTextRepresentation.h>
+#pragma warning(pop)
 
 // OCCT includes
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>

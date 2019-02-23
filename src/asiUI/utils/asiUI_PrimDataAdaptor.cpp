@@ -31,7 +31,7 @@
 // Own include
 #include <asiUI_PrimDataAdaptor.h>
 
-// A-Situs (GUI) includes
+// asiUI includes
 #include <asiUI_Common.h>
 
 // Active Data includes

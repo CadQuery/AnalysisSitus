@@ -50,9 +50,11 @@
 #include <GCE2d_MakeSegment.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkActor.h>
 #include <vtkMapper.h>
 #include <vtkProperty.h>
+#pragma warning(pop)
 
 //---------------------------------------------------------------------------//
 

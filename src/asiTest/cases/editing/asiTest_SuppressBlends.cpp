@@ -74,26 +74,26 @@ outcome asiTest_SuppressBlends::runTest(const int   funcID,
   TopoDS_Shape shape;
   if ( !asiAlgo_Utils::ReadBRep(filename.c_str(), shape) )
   {
-    cf->ProgressNotifier->SendLogMessage( LogErr(Normal) << "Cannot read file %1."
-                                                         << filename.c_str() );
+    cf->Progress.SendLogMessage( LogErr(Normal) << "Cannot read file %1."
+                                                << filename.c_str() );
     return res.failure();
   }
 
   // Perform recognition starting from the guess face.
-  asiAlgo_RecognizeBlends recognizer(shape, cf->ProgressNotifier);
+  asiAlgo_RecognizeBlends recognizer(shape, cf->Progress);
   //
   if ( !recognizer.Perform(seedFaceId) )
   {
-    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "Recognition failed.");
+    cf->Progress.SendLogMessage(LogErr(Normal) << "Recognition failed.");
     return res.failure();
   }
 
   // Perform suppression.
-  asiAlgo_SuppressBlendChain suppressor(recognizer.GetAAG(), cf->ProgressNotifier);
+  asiAlgo_SuppressBlendChain suppressor(recognizer.GetAAG(), cf->Progress);
   //
   if ( !suppressor.Perform(seedFaceId) )
   {
-    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "Suppression failed.");
+    cf->Progress.SendLogMessage(LogErr(Normal) << "Suppression failed.");
     return res.failure();
   }
 

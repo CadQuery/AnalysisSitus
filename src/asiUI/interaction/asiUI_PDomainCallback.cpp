@@ -31,10 +31,10 @@
 // Own include
 #include <asiUI_PDomainCallback.h>
 
-// UI includes
+// asiUI includes
 #include <asiUI_Viewer.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_PrsManager.h>
 
 //! Instantiation routine.

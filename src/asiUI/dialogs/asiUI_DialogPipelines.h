@@ -45,6 +45,10 @@
 #include <QVBoxLayout>
 #pragma warning(pop)
 
+#pragma warning(disable : 4251)
+
+//-----------------------------------------------------------------------------
+
 //! Dialog to configure pipelines for the given 3D presentation.
 class asiUI_EXPORT asiUI_DialogPipelines : public QDialog
 {
@@ -93,5 +97,7 @@ private:
   vtkSmartPointer<asiVisu_PrsManager> m_prsMgr; //!< Presentation manager.
 
 };
+
+#pragma warning(default : 4251)
 
 #endif

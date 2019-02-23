@@ -46,6 +46,7 @@
 #include <ActAPI_IProgressNotifier.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkAxesActor.h>
 #include <vtkButtonWidget.h>
 #include <vtkCellPicker.h>
@@ -55,6 +56,7 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkWorldPointPicker.h>
+#pragma warning(pop)
 
 // QVTK includes
 #pragma warning(push, 0)

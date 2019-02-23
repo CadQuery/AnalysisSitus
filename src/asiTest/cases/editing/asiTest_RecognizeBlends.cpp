@@ -72,18 +72,18 @@ outcome asiTest_RecognizeBlends::runtest(const int   funcID,
   TopoDS_Shape shape;
   if ( !asiAlgo_Utils::ReadBRep(filename.c_str(), shape) )
   {
-    cf->ProgressNotifier->SendLogMessage( LogErr(Normal) << "Cannot read file %1."
-                                                         << filename.c_str() );
+    cf->Progress.SendLogMessage( LogErr(Normal) << "Cannot read file %1."
+                                                << filename.c_str() );
     return res.failure();
   }
 
   // Prepare recognizer.
-  asiAlgo_RecognizeBlends recognizer(shape, cf->ProgressNotifier);
+  asiAlgo_RecognizeBlends recognizer(shape, cf->Progress);
 
   // Perform recognition starting from the guess face.
   if ( !recognizer.Perform(seedFaceId) )
   {
-    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "Recognition failed.");
+    cf->Progress.SendLogMessage(LogErr(Normal) << "Recognition failed.");
     return res.failure();
   }
 
@@ -99,7 +99,7 @@ outcome asiTest_RecognizeBlends::runtest(const int   funcID,
   //
   if ( !filestream.is_open() )
   {
-    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "FILE_DEBUG: file cannot be opened.");
+    cf->Progress.SendLogMessage(LogErr(Normal) << "FILE_DEBUG: file cannot be opened.");
     return res.failure();
   }
   //
@@ -122,7 +122,7 @@ outcome asiTest_RecognizeBlends::runtest(const int   funcID,
   // Verify.
   if ( json != refJson )
   {
-    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "Dumped JSON is different from the expected one.");
+    cf->Progress.SendLogMessage(LogErr(Normal) << "Dumped JSON is different from the expected one.");
     return res.failure();
   }
 

@@ -47,6 +47,8 @@
 
 class QPaintDevice;
 
+#pragma warning(disable : 4251)
+
 //! Color picking button.
 class asiUI_EXPORT asiUI_ColorButton : public QToolButton
 {
@@ -135,5 +137,7 @@ private:
   ColorMap m_colors;
 
 };
+
+#pragma warning(default : 4251)
 
 #endif

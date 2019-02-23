@@ -28,8 +28,10 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// asiUI includes
+// Own include
 #include <asiUI_StatusBarImpl.h>
+
+// asiUI includes
 #include <asiUI_StatusBar.h>
 
 //-----------------------------------------------------------------------------

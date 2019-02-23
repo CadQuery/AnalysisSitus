@@ -39,8 +39,10 @@
 #include <asiEngine_Part.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCamera.h>
 #include <vtkGL2PSExporter.h>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

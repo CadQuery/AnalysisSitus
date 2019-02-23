@@ -135,9 +135,9 @@ public:
 
   //! Sets imperative plotter.
   //! \param[in] plotter imperative plotter to set.
-  void SetPlotter(const Handle(ActAPI_IPlotter)& plotter)
+  void SetPlotter(ActAPI_PlotterEntry plotter)
   {
-    m_plotter = ActAPI_PlotterEntry(plotter);
+    m_plotter = plotter;
   }
 
   //! \return plotter.
@@ -148,9 +148,9 @@ public:
 
   //! Sets progress notifier.
   //! \param[in] progress progress notifier to set.
-  void SetProgress(const Handle(ActAPI_IProgressNotifier)& progress)
+  void SetProgress(ActAPI_ProgressEntry progress)
   {
-    m_progress = ActAPI_ProgressEntry(progress);
+    m_progress = progress;
   }
 
   //! \return progress notifier.

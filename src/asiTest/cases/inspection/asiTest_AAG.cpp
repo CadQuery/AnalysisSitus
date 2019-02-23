@@ -67,7 +67,7 @@ bool asiTest_AAG::prepareAAGFromFile(const char*          shortFilename,
   TopoDS_Shape shape;
   if ( !asiAlgo_Utils::ReadBRep(filename.c_str(), shape) )
   {
-    cf->ProgressNotifier->SendLogMessage( LogErr(Normal) << "Cannot read file %1."
+    cf->Progress.SendLogMessage( LogErr(Normal) << "Cannot read file %1."
                                                          << filename.c_str() );
     return false;
   }
@@ -108,13 +108,13 @@ outcome asiTest_AAG::testAllNeighborsIterator(const int               funcID,
 
     if ( refIdx >= refFaceIds.size() )
     {
-      cf->ProgressNotifier->SendLogMessage( LogErr(Normal) << "Not enough reference data (out of range error)." );
+      cf->Progress.SendLogMessage( LogErr(Normal) << "Not enough reference data (out of range error)." );
       return res.failure();
     }
 
     if ( iNext != refFaceIds[refIdx] )
     {
-      cf->ProgressNotifier->SendLogMessage( LogErr(Normal) << "Unexpected next ID (expected %1, while current is %2)."
+      cf->Progress.SendLogMessage( LogErr(Normal) << "Unexpected next ID (expected %1, while current is %2)."
                                                            << refFaceIds[refIdx] << iNext );
       return res.failure();
     }
@@ -123,7 +123,7 @@ outcome asiTest_AAG::testAllNeighborsIterator(const int               funcID,
   // Check the number of iterations.
   if ( refFaceIds.size() != refIdx )
   {
-    cf->ProgressNotifier->SendLogMessage( LogErr(Normal) << "Unexpected number of iterations (expected %1, while realized %2)."
+    cf->Progress.SendLogMessage( LogErr(Normal) << "Unexpected number of iterations (expected %1, while realized %2)."
                                                          << int( refFaceIds.size() ) << int(refIdx) );
     return res.failure();
   }
@@ -162,7 +162,7 @@ outcome asiTest_AAG::testAAG2JSON(const int   funcID,
   //
   if ( !filestream.is_open() )
   {
-    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "FILE_DEBUG: file cannot be opened.");
+    cf->Progress.SendLogMessage(LogErr(Normal) << "FILE_DEBUG: file cannot be opened.");
     return res.failure();
   }
   //
@@ -185,7 +185,7 @@ outcome asiTest_AAG::testAAG2JSON(const int   funcID,
   // Verify.
   if ( json != refJson )
   {
-    cf->ProgressNotifier->SendLogMessage(LogErr(Normal) << "Dumped JSON is different from the expected one.");
+    cf->Progress.SendLogMessage(LogErr(Normal) << "Dumped JSON is different from the expected one.");
     return res.failure();
   }
 

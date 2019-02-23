@@ -98,8 +98,10 @@
 #include <OSD_Environment.hxx>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QDir>
 #include <QTextStream>
+#pragma warning(pop)
 
 // Activate object factories
 VTK_MODULE_INIT(vtkRenderingContextOpenGL2);

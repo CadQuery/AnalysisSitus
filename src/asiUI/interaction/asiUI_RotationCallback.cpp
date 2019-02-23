@@ -38,11 +38,13 @@
 #include <asiUI_ViewerPart.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkCamera.h>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#pragma warning(pop)
 
 #undef EXPERIMENTAL_ROTO_AROUND_POINT
 

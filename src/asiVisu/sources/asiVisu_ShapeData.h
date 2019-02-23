@@ -38,8 +38,10 @@
 #include <Standard_Type.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 //! Wrapper for vtkPolyData representing B-Rep shape.
 class asiVisu_ShapeData : public Standard_Transient

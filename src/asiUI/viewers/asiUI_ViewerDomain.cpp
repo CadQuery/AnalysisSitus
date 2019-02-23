@@ -44,11 +44,13 @@
 #include <asiVisu_Utils.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
 #include <vtkTextRepresentation.h>
+#pragma warning(pop)
 
 // Qt-VTK includes
 #include <QVTKWidget.h>

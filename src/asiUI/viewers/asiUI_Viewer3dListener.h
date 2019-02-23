@@ -45,6 +45,8 @@
 #include <QMenu>
 #pragma warning(pop)
 
+#pragma warning(disable : 4251)
+
 //! Default slots for 3D viewers.
 class asiUI_EXPORT asiUI_Viewer3dListener : public QObject
 {
@@ -86,5 +88,7 @@ protected:
   ActAPI_PlotterEntry     m_plotter;  //!< Imperative plotter.
 
 };
+
+#pragma warning(default : 4251)
 
 #endif

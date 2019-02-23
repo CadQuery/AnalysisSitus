@@ -28,8 +28,10 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// asiUI includes
+// Own include
 #include <asiUI_ParameterEditorItem.h>
+
+// asiUI includes
 #include <asiUI_DatumColorItem.h>
 #include <asiUI_DatumCheckBox.h>
 #include <asiUI_DatumPathItem.h>

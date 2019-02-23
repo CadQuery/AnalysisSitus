@@ -38,8 +38,10 @@
 #include <asiVisu_Utils.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkMapper.h>
 #include <vtkProperty.h>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

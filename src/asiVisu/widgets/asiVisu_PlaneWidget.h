@@ -59,6 +59,8 @@ class vtkPlane;
 #define VTK_PLANE_WIREFRAME 2
 #define VTK_PLANE_SURFACE 3
 
+#pragma warning(disable : 4251)
+
 class asiVisu_EXPORT asiVisu_PlaneWidget : public vtkPolyDataSourceWidget
 {
 public:
@@ -410,5 +412,7 @@ private:
   asiVisu_PlaneWidget(const asiVisu_PlaneWidget&) VTK_DELETE_FUNCTION;
   void operator=(const asiVisu_PlaneWidget&) VTK_DELETE_FUNCTION;
 };
+
+#pragma warning(default : 4251)
 
 #endif

@@ -42,7 +42,9 @@
 #include <ActAPI_IProgressNotifier.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkPolyDataNormals.h>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

@@ -41,8 +41,10 @@
 #include <TColStd_HPackedMapOfInteger.hxx>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkActor.h>
 #include <vtkSmartPointer.h>
+#pragma warning(pop)
 
 // Qt includes
 #pragma warning(push, 0)

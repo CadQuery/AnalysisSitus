@@ -42,6 +42,10 @@
 #include <QKeyEvent>
 #pragma warning(pop)
 
+#pragma warning(disable : 4251)
+
+//-----------------------------------------------------------------------------
+
 //! Console window.
 class asiUI_EXPORT asiUI_Console : public asiUI_StyledTextEdit
 {
@@ -98,5 +102,7 @@ protected:
   Handle(asiTcl_Interp) m_interp; //!< Tcl interpreter.
 
 };
+
+#pragma warning(default : 4251)
 
 #endif

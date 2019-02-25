@@ -50,7 +50,7 @@
 //! Constructor accepting all necessary facilities.
 //! \param wControls [in] controls.
 //! \param model     [in] Data Model instance.
-//! \param cf        [in] commonf facilities.
+//! \param cf        [in] common facilities.
 //! \param notifier  [in] progress notifier.
 asiUI_ControlsPartListener::asiUI_ControlsPartListener(asiUI_ControlsPart*                   wControls,
                                                        const Handle(asiEngine_Model)&        model,

@@ -37,6 +37,7 @@
 
 // asiUI includes
 #include <asiUI_Common.h>
+#include <asiUI_ParamEditorImpl.h>
 #include <asiUI_StatusBar.h>
 #include <asiUI_StatusBarImpl.h>
 
@@ -72,7 +73,7 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
   this->createDockWindows();
   this->setCentralWidget(Widgets.wViewerPart);
 
-  // Prepare application name with the version number
+  // Prepare application name with the version number.
   TCollection_AsciiString appName(ASITUS_APP_NAME);
   appName += " ["; appName += ASITUS_VERSION_STRING; appName += "]";
   //
@@ -94,7 +95,7 @@ exe_MainWindow::exe_MainWindow() : QMainWindow()
     qApp->setStyleSheet( ts.readAll() );
   }
 
-  // Set this main window to common facilities
+  // Set this main window to common facilities.
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
   //
   cf->MainWindow = this;
@@ -115,7 +116,7 @@ void exe_MainWindow::closeEvent(QCloseEvent* evt)
   // It seems that we have to destruct objects properly and manually in
   // order to avoid some side effects from VTK. E.g. if we don't kill the
   // widgets explicitly here, we may sometimes get a warning window of VTK
-  // saying that it lacks some resources
+  // saying that it lacks some resources.
   Widgets.Release();
   //
   evt->accept();
@@ -126,13 +127,13 @@ void exe_MainWindow::closeEvent(QCloseEvent* evt)
 //! Creates main (part) viewer.
 void exe_MainWindow::createPartViewer()
 {
-  // Common facilities instance
+  // Common facilities instance.
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
 
-  // Create viewer
+  // Create viewer.
   Widgets.wViewerPart = new asiUI_ViewerPart(cf->Model, true);
 
-  // Initialize desktop
+  // Initialize desktop.
   cf->ViewerPart = Widgets.wViewerPart;
   cf->Prs.Part   = Widgets.wViewerPart->PrsMgr();
 }
@@ -142,10 +143,10 @@ void exe_MainWindow::createPartViewer()
 //! Creates main dockable widgets.
 void exe_MainWindow::createDockWindows()
 {
-  // Common facilities instance
+  // Common facilities instance.
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
 
-  // Domain viewer
+  // Domain viewer.
   {
     QDockWidget* pDock = new QDockWidget("Domain", this);
     pDock->setAllowedAreas(Qt::AllDockWidgetAreas);
@@ -155,12 +156,12 @@ void exe_MainWindow::createDockWindows()
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDock);
 
-    // Initialize desktop
+    // Initialize desktop.
     cf->ViewerDomain = Widgets.wViewerDomain;
     cf->Prs.Domain   = Widgets.wViewerDomain->PrsMgr();
   }
 
-  // Host viewer
+  // Host viewer.
   {
     QDockWidget* pDock = new QDockWidget("Host", this);
     pDock->setAllowedAreas(Qt::AllDockWidgetAreas);
@@ -170,12 +171,12 @@ void exe_MainWindow::createDockWindows()
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDock);
 
-    // Initialize desktop
+    // Initialize desktop.
     cf->ViewerHost = Widgets.wViewerSurface;
     cf->Prs.Host   = Widgets.wViewerSurface->PrsMgr();
   }
 
-  // Object browser
+  // Object browser.
   QDockWidget* pDockBrowser;
   {
     pDockBrowser = new QDockWidget("Data", this);
@@ -190,11 +191,11 @@ void exe_MainWindow::createDockWindows()
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockBrowser);
 
-    // Initialize desktop
+    // Initialize desktop.
     cf->ObjectBrowser = Widgets.wBrowser;
   }
 
-  // Now we have everything to initialize an imperative plotter
+  // Now we have everything to initialize an imperative plotter.
   cf->Plotter = ActAPI_PlotterEntry( new asiUI_IV(cf->Model,
                                                   cf->Prs.Part,
                                                   cf->Prs.Domain,
@@ -203,7 +204,7 @@ void exe_MainWindow::createDockWindows()
   // Set diagnostic tools once we've got plotter.
   cf->Prs.Part->SetDiagnosticTools(cf->Progress, cf->Plotter);
 
-  // Feature controls
+  // Feature controls.
   QDockWidget* pDockFeature;
   {
     pDockFeature = new QDockWidget("Features", this);
@@ -222,7 +223,7 @@ void exe_MainWindow::createDockWindows()
   //
   this->tabifyDockWidget(pDockBrowser, pDockFeature);
 
-  // Mesh controls
+  // Mesh controls.
   QDockWidget* pDockMesh;
   {
     pDockMesh = new QDockWidget("Mesh", this);
@@ -241,7 +242,7 @@ void exe_MainWindow::createDockWindows()
   //
   this->tabifyDockWidget(pDockFeature, pDockMesh);
 
-  // Part controls
+  // Part controls.
   QDockWidget* pDockPart;
   {
     pDockPart = new QDockWidget("Part", this);
@@ -257,23 +258,40 @@ void exe_MainWindow::createDockWindows()
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockPart);
   }
-
-  // Tabify widgets
+  //
   this->tabifyDockWidget(pDockMesh, pDockPart);
 
-  // Listener for part controls
+  // Parameter editor.
+  QDockWidget* pDockParamEditor;
+  {
+    pDockParamEditor = new QDockWidget("Parameters", this);
+    pDockParamEditor->setAllowedAreas(Qt::AllDockWidgetAreas);
+    //
+    Widgets.wParamEditor = new asiUI_ParameterEditor(cf->WidgetFactory,
+                                                     pDockParamEditor);
+    //
+    pDockParamEditor->setWidget(Widgets.wParamEditor);
+    //
+    this->addDockWidget(Qt::BottomDockWidgetArea, pDockParamEditor);
+
+    // Set to common facilities.
+    cf->ParamEditor = new asiUI_ParamEditorImpl(Widgets.wParamEditor);
+    cf->ObjectBrowser->SetParameterEditor(cf->ParamEditor);
+  }
+
+  // Listener for part controls.
   Listeners.pControlsPart = new asiUI_ControlsPartListener(Widgets.wControlsPart,
                                                            cf->Model,
                                                            cf,
                                                            cf->Progress);
 
-  // Listener for mesh controls
+  // Listener for mesh controls.
   Listeners.pControlsMesh = new asiUI_ControlsMeshListener(Widgets.wControlsMesh,
                                                            cf->Model,
                                                            cf,
                                                            cf->Progress);
 
-  // Listener for part viewer
+  // Listener for part viewer.
   Listeners.pViewerPart = new asiUI_ViewerPartListener(Widgets.wViewerPart,
                                                        Widgets.wViewerDomain,
                                                        Widgets.wViewerSurface,
@@ -281,7 +299,7 @@ void exe_MainWindow::createDockWindows()
                                                        cf->Progress,
                                                        cf->Plotter);
 
-  // Listener for domain viewer
+  // Listener for domain viewer.
   Listeners.pViewerDomain = new asiUI_ViewerDomainListener(Widgets.wViewerPart,
                                                            Widgets.wViewerDomain,
                                                            Widgets.wViewerSurface,
@@ -289,7 +307,7 @@ void exe_MainWindow::createDockWindows()
                                                            cf->Progress,
                                                            cf->Plotter);
 
-  // Listener for host viewer
+  // Listener for host viewer.
   Listeners.pViewerHost = new asiUI_ViewerHostListener(Widgets.wViewerPart,
                                                        Widgets.wViewerDomain,
                                                        Widgets.wViewerSurface,
@@ -297,14 +315,19 @@ void exe_MainWindow::createDockWindows()
                                                        cf->Progress,
                                                        cf->Plotter);
 
-  // Signals-slots
+  // Listener for parameter editor.
+  Listeners.pParamEditor = new asiUI_ParameterEditorListener(Widgets.wParamEditor,
+                                                             cf);
+
+  // Signals-slots.
   Listeners.pControlsPart ->Connect();
   Listeners.pControlsMesh ->Connect();
   Listeners.pViewerPart   ->Connect();
   Listeners.pViewerDomain ->Connect();
   Listeners.pViewerHost   ->Connect();
+  Listeners.pParamEditor  ->Connect();
 
-  // Log window
+  // Log window.
   QDockWidget* pDockLogWindow;
   {
     pDockLogWindow = new QDockWidget("Logger", this);
@@ -317,7 +340,7 @@ void exe_MainWindow::createDockWindows()
     this->addDockWidget(Qt::RightDockWidgetArea, pDockLogWindow);
   }
 
-  // Create status bar
+  // Create status bar.
   Handle(asiUI_StatusBarImpl)
     statusBar = new asiUI_StatusBarImpl(new asiUI_StatusBar);
   //
@@ -326,7 +349,7 @@ void exe_MainWindow::createDockWindows()
   cf->StatusBar = statusBar;
   cf->StatusBar->SetStatusText("Load part from STEP or BREP to start analysis");
 
-  // Initialize and connect progress listener
+  // Initialize and connect progress listener.
   cf->Logger           = new asiUI_Logger(Widgets.wLogger);
   cf->ProgressListener = new asiUI_ProgressListener(statusBar, cf->Progress.Access(), cf->Logger);
   cf->ProgressListener->Connect();
@@ -335,17 +358,17 @@ void exe_MainWindow::createDockWindows()
    *  Tcl console with custom commands
    * ================================== */
 
-  // Construct the interpreter
+  // Construct the interpreter.
   cf->Interp = new asiTcl_Interp(cf->Progress, cf->Plotter);
   cf->Interp->Init();
   cf->Interp->SetModel(cf->Model);
 
-  // Load default commands
+  // Load default commands.
   EXE_LOAD_MODULE("cmdMisc")
   EXE_LOAD_MODULE("cmdEngine")
   EXE_LOAD_MODULE("cmdRE")
 
-  // Lookup for custom plugins and try to load them
+  // Lookup for custom plugins and try to load them.
   QDir pluginDir( QDir::currentPath() + "/asi-plugins" );
   //
   std::cout << "Looking for plugins at "
@@ -363,7 +386,7 @@ void exe_MainWindow::createDockWindows()
     EXE_LOAD_MODULE(cmdLibName);
   }
 
-  // Console window
+  // Console window.
   QDockWidget* pDockConsoleWindow;
   {
     pDockConsoleWindow = new QDockWidget("Active Script", this);

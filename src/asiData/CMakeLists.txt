@@ -6,6 +6,7 @@ project(asiData)
 
 set (H_FILES
   asiData.h
+  asiData_ParameterFlags.h
   asiData_Partition.h
   asiData_RootNode.h
 )

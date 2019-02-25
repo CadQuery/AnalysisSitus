@@ -56,13 +56,16 @@ struct asiUI_ParameterEditorData;
 
 typedef QList<asiUI_ParameterEditorData> asiUI_ParamDataList;
 
+#pragma warning(disable : 4251)
+
 //-----------------------------------------------------------------------------
 
 //! Widget to handle Data Model parameters. This widget is encapsulated into
 //! the implementation of asiUI_IParamEditor interface.
 //!
 //! \sa asiUI_IParamEditor
-class asiUI_ParameterEditor : public QWidget, public SUIT_PopupClient
+class asiUI_EXPORT asiUI_ParameterEditor : public QWidget,
+                                           public SUIT_PopupClient
 {
   Q_OBJECT
 
@@ -307,5 +310,7 @@ private:
   //! is it enabled.
   bool m_bIsEnabled;
 };
+
+#pragma warning(default : 4251)
 
 #endif

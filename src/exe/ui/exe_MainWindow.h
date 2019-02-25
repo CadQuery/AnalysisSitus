@@ -37,6 +37,7 @@
 #include <asiUI_ControlsMeshListener.h>
 #include <asiUI_ControlsPartListener.h>
 #include <asiUI_ObjectBrowser.h>
+#include <asiUI_ParameterEditorListener.h>
 #include <asiUI_ViewerDomainListener.h>
 #include <asiUI_ViewerHostListener.h>
 #include <asiUI_ViewerPartListener.h>
@@ -46,6 +47,8 @@
 #include <QCloseEvent>
 #include <QMainWindow>
 #pragma warning(pop)
+
+//-----------------------------------------------------------------------------
 
 //! Main window for Analysis Situs.
 class exe_MainWindow : public QMainWindow
@@ -82,6 +85,7 @@ public:
     asiUI_ControlsMesh*    wControlsMesh;    //!< Mesh controls.
     asiUI_StyledTextEdit*  wLogger;          //!< Logger.
     asiUI_Console*         wConsole;         //!< Console for scripting.
+    asiUI_ParameterEditor* wParamEditor;     //!< Parameter editor.
 
     t_widgets() : wBrowser         (NULL),
                   wViewerDomain    (NULL),
@@ -91,7 +95,8 @@ public:
                   wControlsFeature (NULL),
                   wControlsMesh    (NULL),
                   wLogger          (NULL),
-                  wConsole         (NULL)
+                  wConsole         (NULL),
+                  wParamEditor     (NULL)
     {}
 
     void Release()
@@ -105,23 +110,26 @@ public:
       delete wControlsMesh;    wControlsMesh    = NULL;
       delete wLogger;          wLogger          = NULL;
       delete wConsole;         wConsole         = NULL;
+      delete wParamEditor;     wParamEditor     = NULL;
     }
   };
 
   //! Listeners.
   struct t_listeners
   {
-    asiUI_ControlsPartListener* pControlsPart; //!< Listener for part controls.
-    asiUI_ControlsMeshListener* pControlsMesh; //!< Listener for mesh controls.
-    asiUI_ViewerPartListener*   pViewerPart;   //!< Listener for part viewer.
-    asiUI_ViewerDomainListener* pViewerDomain; //!< Listener for domain viewer.
-    asiUI_ViewerHostListener*   pViewerHost;   //!< Listener for host viewer.
+    asiUI_ControlsPartListener*    pControlsPart; //!< Listener for part controls.
+    asiUI_ControlsMeshListener*    pControlsMesh; //!< Listener for mesh controls.
+    asiUI_ViewerPartListener*      pViewerPart;   //!< Listener for part viewer.
+    asiUI_ViewerDomainListener*    pViewerDomain; //!< Listener for domain viewer.
+    asiUI_ViewerHostListener*      pViewerHost;   //!< Listener for host viewer.
+    asiUI_ParameterEditorListener* pParamEditor;  //!< Listener for parameter editor.
 
     t_listeners() : pControlsPart (NULL),
                     pControlsMesh (NULL),
                     pViewerPart   (NULL),
                     pViewerDomain (NULL),
-                    pViewerHost   (NULL)
+                    pViewerHost   (NULL),
+                    pParamEditor  (NULL)
     {}
 
     void Release()
@@ -131,6 +139,7 @@ public:
       delete pViewerPart;   pViewerPart   = NULL;
       delete pViewerDomain; pViewerDomain = NULL;
       delete pViewerHost;   pViewerHost   = NULL;
+      delete pParamEditor;  pParamEditor  = NULL;
     }
   };
 

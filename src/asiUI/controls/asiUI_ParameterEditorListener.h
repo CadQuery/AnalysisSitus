@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 February 2019
+// Created on: 25 February 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2019-present, Anton Poletaev, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,62 +28,45 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_IParamEditor_HeaderFile
-#define asiUI_IParamEditor_HeaderFile
+#ifndef asiUI_ParameterEditorListener_h
+#define asiUI_ParameterEditorPartListener_h
 
 // asiUI includes
-#include <asiUI.h>
+#include <asiUI_CommonFacilities.h>
+#include <asiUI_ParameterEditor.h>
 
-// Active Data includes
-#include <ActAPI_IParameter.h>
+// Qt includes
+#include <QObject>
+
+#pragma warning(disable : 4251)
 
 //-----------------------------------------------------------------------------
 
-//! Interface for parameter editor UI control. This control is designed to
-//! give the user access to the Active Data parameters for a particular
-//! Data Node. This class is pure abstract. Its sub-classes should encapsulate
-//! the real widget to tackle the Data Model contents.
-class asiUI_IParamEditor : public Standard_Transient
+//! Default slots for parameter editor.
+class asiUI_EXPORT asiUI_ParameterEditorListener : public QObject
 {
-public:
-
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiUI_IParamEditor, Standard_Transient)
+  Q_OBJECT
 
 public:
 
-  //! Sets the list of parameters to handle.
+  asiUI_ParameterEditorListener(asiUI_ParameterEditor*                wEditor,
+                                const Handle(asiUI_CommonFacilities)& cf);
+
+  virtual
+    ~asiUI_ParameterEditorListener();
+
+public:
+
   virtual void
-    SetParameters(const Handle(ActAPI_HSparseParameterList)& params) = 0;
+    Connect();
 
-  //! Updates and redisplays values of the handled parameters.
-  virtual void
-    UpdateParameters() = 0;
+protected:
 
-  //! Checks whether the user interaction with the parameter editor is
-  //! enabled.
-  //! \return Boolean value that indicates whether the parameter editor is
-  //!         enabled for interaction or not.
-  virtual bool
-    IsEnabled() const = 0;
+  asiUI_ParameterEditor*         m_wEditor; //!< Parameter editor.
+  Handle(asiUI_CommonFacilities) m_cf;      //!< Common facilities.
 
-  //! Enables/disables user interaction with the parameter editor.
-  //! \param[in] isEnabled indicates whether the parameter editor
-  //!                      should be enabled or disabled.
-  virtual void
-    SetEnabled(const bool isEnabled) = 0;
-
-  //! Checks whether the parameter editor is in a read-only state.
-  //! \return Boolean value indicating the parameter editor is in
-  //!         a read-only state or not.
-  virtual bool
-    IsReadOnly() const = 0;
-
-  //! Enables/disables read-only state for the parameter editor.
-  //! \param[in] isReadOnly specifies whether the parameter editor's
-  //!                       state should be set to read-only or not.
-  virtual void
-    SetReadOnly(const bool isReadOnly) = 0;
 };
+
+#pragma warning(default : 4251)
 
 #endif

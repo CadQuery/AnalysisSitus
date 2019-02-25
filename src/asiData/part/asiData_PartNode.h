@@ -83,6 +83,7 @@ public:
   //------------------//
   // Presentation     //
   //------------------//
+    PID_GroupTess,    //!< Tessellation group.
     PID_TessLinDefl,  //!< Linear deflection of visualization tessellation.
     PID_TessAngDefl,  //!< Angular deflection of visualization tessellation.
     PID_DisplayMode,  //!< Display mode.

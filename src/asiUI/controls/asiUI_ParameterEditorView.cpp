@@ -82,12 +82,12 @@ asiUI_ParameterEditorView::asiUI_ParameterEditorView(const Handle(asiUI_WidgetFa
   m_factory         (factory)
 {
   // customize parameter editor
-  setHeaderLabels(QStringList() << tr( "PARAMETER" ) << tr( "" ) << tr( "VALUE" ));
+  setHeaderLabels(QStringList() << "Parameter" << "" << "Value");
   setAlternatingRowColors(true);
 
   SetReadOnly(true);
 
-  setStyle( new asiUI_ViewStyleProxy(NULL) );
+  //setStyle( new asiUI_ViewStyleProxy(NULL) );
   setIndentation(12);
   setColumnCount(3);
   header()->setSectionResizeMode(Column_Computed, QHeaderView::Fixed);

@@ -32,6 +32,7 @@
 #define asiUI_CommonFacilities_h
 
 // asiUI includes
+#include <asiUI_IParamEditor.h>
 #include <asiUI_ObjectBrowser.h>
 #include <asiUI_ProgressNotifier.h>
 #include <asiUI_ViewerDomain.h>
@@ -63,7 +64,8 @@ public:
                              ViewerPart         (NULL),
                              ViewerDomain       (NULL),
                              ViewerHost         (NULL),
-                             UnitManager        (NULL)
+                             UnitManager        (NULL),
+                             ParamEditor        (NULL)
   {
     WidgetFactory = new asiUI_WidgetFactory(this);
 
@@ -127,6 +129,7 @@ public:
   ActAPI_ProgressEntry        Progress;      //!< Progress entry.
   ActAPI_PlotterEntry         Plotter;       //!< Imperative plotter.
   Handle(asiUI_WidgetFactory) WidgetFactory; //!< Widget factory for datums.
+  Handle(asiUI_IParamEditor)  ParamEditor;   //!< Parameter editor.
 
 };
 

@@ -32,6 +32,7 @@
 #define asiUI_ObjectBrowser_h
 
 // asiUI includes
+#include <asiUI_IParamEditor.h>
 #include <asiUI_Viewer.h>
 
 // asiEngine includes
@@ -58,32 +59,53 @@ class asiUI_EXPORT asiUI_ObjectBrowser : public QTreeWidget
 
 public:
 
+  //! Creates a new instance of tree view.
+  //! \param[in] model    Data Model instance.
+  //! \param[in] progress progress notifier.
+  //! \param[in] parent   parent widget.
   asiUI_ObjectBrowser(const Handle(asiEngine_Model)& model,
                       ActAPI_ProgressEntry           progress,
                       QWidget*                       parent = NULL);
 
+  //! Destructor.
   virtual
     ~asiUI_ObjectBrowser();
 
 public:
 
+  //! Adds a viewer to be connected with the object browser to enable typical
+  //! visualization commands such as "show", "hide", "show only".
+  //! \param[in] pViewer viewer to associate.
   void
     AddAssociatedViewer(asiUI_Viewer* pViewer);
 
+  //! Sets parameter editor associated with the tree.
+  //! \param[in] editor parameter editor to set.
+  void
+    SetParameterEditor(const Handle(asiUI_IParamEditor)& editor);
+
+  //! Populates tree view from the Data Model.
   void
     Populate();
 
+  //! Searches for an item with the given index and set that item selected.
+  //! \param[in] nodeId target Node ID.
   void
     SetSelectedNode(const ActAPI_DataObjectId& nodeId);
 
+  //! \return selected Node or NULL if nothing is selected.
   Handle(ActAPI_INode)
     GetSelectedNode() const;
 
+  //! \return selected Nodes or empty list if nothing is selected.
   Handle(ActAPI_HNodeList)
     GetSelectedNodes() const;
 
 protected:
 
+  //! Adds all child items under the given root.
+  //! \param[in] root_n  root Node in a Data Model.
+  //! \param[in] root_ui root item in a tree view.
   void addChildren(const Handle(ActAPI_INode)& root_n, QTreeWidgetItem* root_ui);
 
 //-----------------------------------------------------------------------------
@@ -134,9 +156,10 @@ protected:
 
 protected:
 
-  Handle(asiEngine_Model)    m_model;    //!< Data Model.
-  std::vector<asiUI_Viewer*> m_viewers;  //!< Associated viewers.
-  ActAPI_ProgressEntry       m_progress; //!< Progress notifier.
+  Handle(asiEngine_Model)    m_model;       //!< Data Model.
+  Handle(asiUI_IParamEditor) m_paramEditor; //!< Associated parameter editor.
+  std::vector<asiUI_Viewer*> m_viewers;     //!< Associated viewers.
+  ActAPI_ProgressEntry       m_progress;    //!< Progress notifier.
 
 };
 

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
+// Created on: 22 February 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,32 +28,21 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_h
-#define asiData_h
+#ifndef asiData_ParameterFlags_HeaderFile
+#define asiData_ParameterFlags_HeaderFile
 
-#define asiData_NotUsed(x) x
+//! User flags for Nodal Parameters. The items of this enumeration are used
+//! for additional customization of CAF Data Objects with information
+//! required by GUI. The kind of such information is representation-dependent,
+//! so other GUI services might want to use some other set of user flags.
+enum asiData_ParameterFlags
+{
+  //! Indicates whether the Data Parameter must be shown in Parameter Editor.
+  ParameterFlag_IsVisible = 0x00001,
 
-#ifdef asiData_EXPORTS
-  #define asiData_EXPORT __declspec(dllexport)
-#else
-  #define asiData_EXPORT __declspec(dllimport)
-#endif
-
-// asiData includes
-#include <asiData_ParameterFlags.h>
-
-// Active Data includes
-#include <ActAPI_IParameter.h>
-
-//-----------------------------------------------------------------------------
-// Custom Active Data Parameters
-//-----------------------------------------------------------------------------
-
-#define Parameter_AAG             Parameter_LASTFREE
-#define Parameter_BVH             Parameter_LASTFREE + 1
-#define Parameter_Naming          Parameter_LASTFREE + 2
-#define Parameter_Function        Parameter_LASTFREE + 3
-//
-#define Parameter_LASTFREE_ASITUS Parameter_Function
+  //! Indicates whether the Data Parameter must be shown as read-only one
+  //! in Parameter Editor.
+  ParameterFlag_IsReadOnly = 0x00002
+};
 
 #endif

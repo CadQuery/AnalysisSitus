@@ -42,6 +42,7 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   // Register standard Active Data Parameters.
   REGISTER_PARAMETER(Name,  PID_Name);
   REGISTER_PARAMETER(Shape, PID_Geometry);
+  REGISTER_PARAMETER(Group, PID_GroupTess);
   REGISTER_PARAMETER(Real,  PID_TessLinDefl);
   REGISTER_PARAMETER(Real,  PID_TessAngDefl);
   REGISTER_PARAMETER(Int,   PID_DisplayMode);
@@ -66,10 +67,10 @@ Handle(ActAPI_INode) asiData_PartNode::Instance()
 //! Performs initial actions required to make Geometry Node WELL-FORMED.
 void asiData_PartNode::Init(const bool resetNaming)
 {
-  // Initialize name Parameter
+  // Initialize name Parameter.
   this->InitParameter(PID_Name, "Name");
 
-  // Set empty initial B-Rep and AAG
+  // Set empty initial B-Rep and AAG.
   this->setShape ( TopoDS_Shape() );
   this->setAAG   ( NULL );
   this->setBVH   ( NULL );
@@ -77,13 +78,18 @@ void asiData_PartNode::Init(const bool resetNaming)
   if ( resetNaming )
     this->setNaming ( NULL );
 
-  // Set default values to primitive Parameters
+  // Set default values to primitive Parameters.
   this->SetLinearDeflection  (0.0);
   this->SetAngularDeflection (0.0);
   this->SetHasColor          (false);
   this->SetColor             (-1);
   this->SetDisplayMode       (1);
   this->SetHasVertices       (false);
+
+  // Initialize Parameter flags.
+  this->InitParameter(PID_Name,        "Name",               "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_GroupTess,   "Tessellation",       "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TessAngDefl, "Angular deflection", "", ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------

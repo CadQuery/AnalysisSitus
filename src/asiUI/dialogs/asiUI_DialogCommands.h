@@ -81,10 +81,10 @@ private:
     }
   };
 
-  t_widgets                m_widgets;  //!< Involved widgets.
+  t_widgets             m_widgets;  //!< Involved widgets.
   //
-  Handle(asiTcl_Interp)    m_interp;   //!< Tcl interpreter.
-  ActAPI_ProgressEntry     m_notifier; //!< Progress Notifier.
+  Handle(asiTcl_Interp) m_interp;   //!< Tcl interpreter.
+  ActAPI_ProgressEntry  m_notifier; //!< Progress Notifier.
 
 };
 

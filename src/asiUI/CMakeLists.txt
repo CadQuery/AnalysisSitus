@@ -36,6 +36,7 @@ set (controls_H_UI_FILES
   controls/asiUI_ObjectBrowser.h
   controls/asiUI_ParameterEditor.h
   controls/asiUI_ParameterEditorDelegate.h
+  controls/asiUI_ParameterEditorListener.h
   controls/asiUI_ParameterEditorView.h
   controls/asiUI_StatusBar.h
   controls/asiUI_StyledTextEdit.h
@@ -55,6 +56,7 @@ set (controls_CPP_FILES
   controls/asiUI_ParamEditorImpl.cpp
   controls/asiUI_ParameterEditor.cpp
   controls/asiUI_ParameterEditorDelegate.cpp
+  controls/asiUI_ParameterEditorListener.cpp
   controls/asiUI_ParameterEditorItem.cpp
   controls/asiUI_ParameterEditorView.cpp
   controls/asiUI_StatusBar.cpp
@@ -284,7 +286,6 @@ set (utils_H_FILES
   utils/asiUI_IV.h
   utils/asiUI_Logger.h
   utils/asiUI_OverrideCursor.h
-  utils/asiUI_ParameterFlags.h
   utils/asiUI_PrimDataAdaptor.h
 )
 set (utils_H_UI_FILES

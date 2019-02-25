@@ -62,10 +62,6 @@
 
 //-----------------------------------------------------------------------------
 
-//! Creates a new instance of tree view.
-//! \param[in] model    Data Model instance.
-//! \param[in] progress progress notifier.
-//! \param[in] parent   parent widget.
 asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(asiEngine_Model)& model,
                                          ActAPI_ProgressEntry           progress,
                                          QWidget*                       parent)
@@ -95,15 +91,11 @@ asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(asiEngine_Model)& model,
 
 //-----------------------------------------------------------------------------
 
-//! Destructor.
 asiUI_ObjectBrowser::~asiUI_ObjectBrowser()
 {}
 
 //-----------------------------------------------------------------------------
 
-//! Adds a viewer to be connected with the object browser to enable typical
-//! visualization commands such as "show", "hide", "show only".
-//! \param[in] pViewer viewer to associate.
 void asiUI_ObjectBrowser::AddAssociatedViewer(asiUI_Viewer* pViewer)
 {
   m_viewers.push_back(pViewer);
@@ -111,7 +103,13 @@ void asiUI_ObjectBrowser::AddAssociatedViewer(asiUI_Viewer* pViewer)
 
 //-----------------------------------------------------------------------------
 
-//! Populates tree view from the Data Model.
+void asiUI_ObjectBrowser::SetParameterEditor(const Handle(asiUI_IParamEditor)& editor)
+{
+  m_paramEditor = editor;
+}
+
+//-----------------------------------------------------------------------------
+
 void asiUI_ObjectBrowser::Populate()
 {
   // Clean up the existing contents.
@@ -138,8 +136,6 @@ void asiUI_ObjectBrowser::Populate()
 
 //-----------------------------------------------------------------------------
 
-//! Searches for an item with the given index and set that item selected.
-//! \param[in] nodeId target Node ID.
 void asiUI_ObjectBrowser::SetSelectedNode(const ActAPI_DataObjectId& nodeId)
 {
   QTreeWidgetItemIterator it(this);
@@ -159,7 +155,6 @@ void asiUI_ObjectBrowser::SetSelectedNode(const ActAPI_DataObjectId& nodeId)
 
 //-----------------------------------------------------------------------------
 
-//! \return selected Node or NULL if nothing is selected.
 Handle(ActAPI_INode) asiUI_ObjectBrowser::GetSelectedNode() const
 {
   Handle(ActAPI_INode) selected;
@@ -171,7 +166,6 @@ Handle(ActAPI_INode) asiUI_ObjectBrowser::GetSelectedNode() const
 
 //-----------------------------------------------------------------------------
 
-//! \return selected Nodes or empty list if nothing is selected.
 Handle(ActAPI_HNodeList) asiUI_ObjectBrowser::GetSelectedNodes() const
 {
   Handle(ActAPI_HNodeList) selected;
@@ -183,9 +177,6 @@ Handle(ActAPI_HNodeList) asiUI_ObjectBrowser::GetSelectedNodes() const
 
 //-----------------------------------------------------------------------------
 
-//! Adds all child items under the given root.
-//! \param[in] root_n  root Node in a Data Model.
-//! \param[in] root_ui root item in a tree view.
 void asiUI_ObjectBrowser::addChildren(const Handle(ActAPI_INode)& root_n,
                                       QTreeWidgetItem*            root_ui)
 {
@@ -217,6 +208,17 @@ void asiUI_ObjectBrowser::addChildren(const Handle(ActAPI_INode)& root_n,
 //! Reaction on selection in a tree view.
 void asiUI_ObjectBrowser::onSelectionChanged()
 {
+  // Populate parameter editor.
+  if ( !m_paramEditor.IsNull() )
+  {
+    Handle(ActAPI_HNodeList) nodes = this->GetSelectedNodes();
+    //
+    if ( nodes->Length() == 1 )
+      m_paramEditor->SetParameters( nodes->First()->Parameters() );
+    else
+      m_paramEditor->SetParameters( NULL );
+  }
+
   emit nodeSelected();
 }
 

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 22 February 2019
+// Created on: 25 February 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2019-present, Anton Poletaev, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,21 +28,31 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_ParameterFlags_HeaderFile
-#define asiUI_ParameterFlags_HeaderFile
+// Own include
+#include <asiUI_ParameterEditorListener.h>
 
-//! User flags for Nodal Parameters. The items of this enumeration are used
-//! for additional customization of CAF Data Objects with information
-//! required by GUI. The kind of such information is representation-dependent,
-//! so other GUI services might want to use some other set of user flags.
-enum asiUI_ParameterFlags
+//-----------------------------------------------------------------------------
+
+//! Constructor accepting all necessary facilities.
+//! \param[in] wEditor widget
+//! \param[in] cf      common facilities.
+asiUI_ParameterEditorListener::asiUI_ParameterEditorListener(asiUI_ParameterEditor*                wEditor,
+                                                             const Handle(asiUI_CommonFacilities)& cf)
+: QObject   (),
+  m_wEditor (wEditor),
+  m_cf      (cf)
+{}
+
+//-----------------------------------------------------------------------------
+
+//! Destructor.
+asiUI_ParameterEditorListener::~asiUI_ParameterEditorListener()
+{}
+
+//-----------------------------------------------------------------------------
+
+//! Connects this listener to the controls widget.
+void asiUI_ParameterEditorListener::Connect()
 {
-  //! Indicates whether the Data Parameter must be shown in Parameter Editor.
-  ParameterFlag_IsVisibleInEditor = 0x00001,
-
-  //! Indicates whether the Data Parameter must be shown as read-only one
-  //! in Parameter Editor.
-  ParameterFlag_IsReadOnlyInEditor = 0x00002
-};
-
-#endif
+  // TODO: NYI
+}

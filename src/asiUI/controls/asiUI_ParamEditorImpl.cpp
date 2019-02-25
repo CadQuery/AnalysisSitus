@@ -34,7 +34,13 @@
 // asiUI includes
 #include <asiUI_Common.h>
 #include <asiUI_ParameterEditor.h>
-#include <asiUI_ParameterFlags.h>
+
+// asiData includes
+#include <asiData_ParameterFlags.h>
+
+// asiAlgo includes
+#include <asiAlgo_Dictionary.h>
+#include <asiAlgo_DictionaryItem.h>
 
 // ActData includes
 #include <ActData_Common.h>
@@ -44,13 +50,6 @@
 #include <ActData_IntParameter.h>
 #include <ActData_GroupParameter.h>
 #include <ActData_BaseNode.h>
-
-// asiAlgo includes
-#include <asiAlgo_Dictionary.h>
-#include <asiAlgo_DictionaryItem.h>
-
-// asiUI includes
-#include <ActAPI_IParameter.h>
 
 // OCCT includes
 #include <TCollection_HExtendedString.hxx>
@@ -63,12 +62,10 @@
 //! Fill list of parameters in parameter editor.
 void asiUI_ParamEditorImpl::SetParameters(const Handle(ActAPI_HSparseParameterList)& theParameterList)
 {
-  m_paramList = Handle(ActAPI_HSparseParameterList)();
+  m_paramList.Nullify();
 
   if ( m_pEditor == 0 )
-  {
     return;
-  }
 
   // if input list is empty, clear the parameter
   if ( theParameterList.IsNull() )
@@ -81,30 +78,28 @@ void asiUI_ParamEditorImpl::SetParameters(const Handle(ActAPI_HSparseParameterLi
   ActAPI_HSparseParameterList::ConstIterator anIt( *theParameterList.operator->() );
   for ( ; anIt.More(); anIt.Next() )
   {
-    const Handle(ActAPI_IUserParameter)& aParam = anIt.Value();
+    const Handle(ActAPI_IUserParameter)& P = anIt.Value();
 
-    bool isVisible  = aParam->HasUserFlags(ParameterFlag_IsVisibleInEditor);
-    bool isReadOnly = aParam->HasUserFlags(ParameterFlag_IsReadOnlyInEditor);
+    const bool isVisible  = P->HasUserFlags(ParameterFlag_IsVisible);
+    const bool isReadOnly = P->HasUserFlags(ParameterFlag_IsReadOnly);
 
-    if ( aParam->GetName().Length() == 0 || !isVisible )
-    {
+    if ( P->GetName().Length() == 0 || !isVisible )
       continue;
-    }
 
     int aNodalId = (int) anIt.Key();
 
-    if ( aParam->IsKind(STANDARD_TYPE(ActData_GroupParameter)) )
+    if ( P->IsKind(STANDARD_TYPE(ActData_GroupParameter)) )
     {
-      aParamList.append( asiUI_ParameterEditorData::GroupParameter( aNodalId, asiUI_Common::ToQString( aParam->GetName() ) ) );
+      aParamList.append( asiUI_ParameterEditorData::GroupParameter( aNodalId, asiUI_Common::ToQString( P->GetName() ) ) );
       continue;
     }
 
-    Handle(ActAPI_INode) aNode = aParam->GetNode();
+    Handle(ActAPI_INode) aNode = P->GetNode();
 
     aParamList.append( asiUI_ParameterEditorData::ValueParameter( aNodalId,
-                       asiUI_Common::ToQString( aParam->GetName() ),
-                       ConvertValue(aParam),
-                       asiUI_Common::ToQString( aParam->GetSemanticId() ),
+                       asiUI_Common::ToQString( P->GetName() ),
+                       ConvertValue(P),
+                       asiUI_Common::ToQString( P->GetSemanticId() ),
                        aNode->IsEvaluable(aNodalId) == true,
                        aNode->HasConnectedEvaluator(aNodalId) == true,
                        !isReadOnly) );
@@ -124,13 +119,13 @@ void asiUI_ParamEditorImpl::UpdateParameters()
   }
 
   QList<asiUI_ParameterEditorData> aParamList;
-  ActAPI_SparseParameterList::ConstIterator anIt( *( m_paramList.operator->() ) );
+  ActAPI_HSparseParameterList::ConstIterator anIt( *( m_paramList.operator->() ) );
   for ( ; anIt.More(); anIt.Next() )
   {
     const Handle(ActAPI_IUserParameter)& aParam = anIt.Value();
 
-    bool isVisible  = aParam->HasUserFlags(ParameterFlag_IsVisibleInEditor);
-    bool isReadOnly = aParam->HasUserFlags(ParameterFlag_IsReadOnlyInEditor);
+    bool isVisible  = aParam->HasUserFlags(ParameterFlag_IsVisible);
+    bool isReadOnly = aParam->HasUserFlags(ParameterFlag_IsReadOnly);
 
     if ( aParam->GetName().Length() == 0 || !isVisible )
     {
@@ -174,7 +169,7 @@ void asiUI_ParamEditorImpl::SetComboValues( const Handle(ActAPI_IUserParameter)&
                                             const QVariantList& theValueByIds )
 {
   QList<asiUI_ParameterEditorData> aParamList;
-  ActAPI_SparseParameterList::ConstIterator anIt( *m_paramList.operator->() );
+  ActAPI_HSparseParameterList::ConstIterator anIt( *m_paramList.operator->() );
   for ( ; anIt.More(); anIt.Next() )
   {
     if ( !ActAPI_IDataCursor::IsEqual( anIt.Value(), theParameter ) )

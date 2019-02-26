@@ -40,10 +40,15 @@
 #include <asiUI_ViewerHost.h>
 #include <asiUI_WidgetFactory.h>
 
+// asiEngine includes
+#include <asiEngine_Model.h>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QStandardPaths>
 #pragma warning(pop)
+
+//-----------------------------------------------------------------------------
 
 class QMainWindow;
 
@@ -58,20 +63,8 @@ public:
 public:
 
   // Default ctor.
-  asiUI_CommonFacilities() : Standard_Transient (),
-                             MainWindow         (NULL),
-                             ObjectBrowser      (NULL),
-                             ViewerPart         (NULL),
-                             ViewerDomain       (NULL),
-                             ViewerHost         (NULL),
-                             UnitManager        (NULL),
-                             ParamEditor        (NULL)
-  {
-    WidgetFactory = new asiUI_WidgetFactory(this);
-
-    // Initialize notifier.
-    this->Progress = ActAPI_ProgressEntry(new asiUI_ProgressNotifier);
-  }
+  asiUI_EXPORT
+    asiUI_CommonFacilities();
 
 public:
 
@@ -130,6 +123,7 @@ public:
   ActAPI_PlotterEntry         Plotter;       //!< Imperative plotter.
   Handle(asiUI_WidgetFactory) WidgetFactory; //!< Widget factory for datums.
   Handle(asiUI_IParamEditor)  ParamEditor;   //!< Parameter editor.
+  Handle(asiEngine_Model)     Model;         //!< Data Model instance.
 
 };
 

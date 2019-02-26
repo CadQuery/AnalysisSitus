@@ -60,9 +60,9 @@ asiUI_ParameterEditorDelegate::asiUI_ParameterEditorDelegate(asiUI_ParameterEdit
 //! datum editor for the edited model index.
 //! \param theParent [in] parent widget.
 //! \param theIndex [in] model index.
-asiUI_DatumItemEditor* asiUI_ParameterEditorDelegate::createDatum(
-  QWidget* theParent,
-  const QModelIndex& theIndex) const
+asiUI_DatumItemEditor*
+  asiUI_ParameterEditorDelegate::createDatum(QWidget*           theParent,
+                                             const QModelIndex& theIndex) const
 {
   if ( m_pTreeView.isNull() )
     return NULL;

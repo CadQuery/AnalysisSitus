@@ -34,9 +34,6 @@
 // asiVisu includes
 #include <asiVisu_PrsManager.h>
 
-// asiEngine includes
-#include <asiEngine_Model.h>
-
 // asiUI includes
 #include <asiUI_CommonFacilities.h>
 #include <asiUI_IStatusBar.h>
@@ -58,7 +55,6 @@ public:
 
 public:
 
-  Handle(asiEngine_Model)  Model;            //!< Data Model instance.
   asiUI_ProgressListener*  ProgressListener; //!< Progress listener.
   Handle(asiUI_IStatusBar) StatusBar;        //!< Status bar of the main window.
   Handle(asiUI_Logger)     Logger;           //!< Logger.

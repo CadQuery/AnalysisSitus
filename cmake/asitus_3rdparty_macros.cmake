@@ -1,7 +1,7 @@
 # Useful macro to work with 3-rd parties
 
 # Include functions
-include (${CMAKE_SOURCE_DIR}/cmake/ASITUS_functions.cmake)
+include (${CMAKE_SOURCE_DIR}/cmake/asitus_functions.cmake)
 
 #-------------------------------------------------------------------------------
 # Name:    ASITUS_CHECK_PATH_FOR_CONSISTENCY

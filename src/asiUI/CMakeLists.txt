@@ -297,6 +297,7 @@ set (utils_H_UI_FILES
 )
 set (utils_CPP_FILES 
   utils/asiUI_Common.cpp
+  utils/asiUI_CommonFacilities.cpp
   utils/asiUI_DataAdaptor.cpp
   utils/asiUI_IV.cpp
   utils/asiUI_Logger.cpp

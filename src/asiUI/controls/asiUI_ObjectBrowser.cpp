@@ -213,10 +213,10 @@ void asiUI_ObjectBrowser::onSelectionChanged()
   {
     Handle(ActAPI_HNodeList) nodes = this->GetSelectedNodes();
     //
-    if ( nodes->Length() == 1 )
-      m_paramEditor->SetParameters( nodes->First()->Parameters() );
-    else
+    if ( nodes.IsNull() || nodes->Length() != 1 )
       m_paramEditor->SetParameters( NULL );
+    else
+      m_paramEditor->SetParameters( nodes->First()->Parameters() );
   }
 
   emit nodeSelected();

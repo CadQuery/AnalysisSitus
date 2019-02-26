@@ -55,7 +55,6 @@
 
 // SUIT includes
 #include <DDS_Dictionary.h>
-//#include <SUIT_Session.h>
 #include <SUIT_TreeSync.h>
 
 // Qt includes
@@ -85,7 +84,7 @@ asiUI_ParameterEditorView::asiUI_ParameterEditorView(const Handle(asiUI_WidgetFa
   setHeaderLabels(QStringList() << "Parameter" << "" << "Value");
   setAlternatingRowColors(true);
 
-  SetReadOnly(true);
+  SetReadOnly(false);
 
   //setStyle( new asiUI_ViewStyleProxy(NULL) );
   setIndentation(12);
@@ -98,7 +97,9 @@ asiUI_ParameterEditorView::asiUI_ParameterEditorView(const Handle(asiUI_WidgetFa
     new asiUI_ParameterEditorDelegate(this);
 
   setItemDelegate(aDelegate);
-  
+
+  this->setStyleSheet( QString::fromUtf8("QHeaderView::section {border: none}") );
+
   setUniformRowHeights(true);
   setSelectionBehavior(QAbstractItemView::SelectRows);
   setAllColumnsShowFocus(true);
@@ -107,7 +108,7 @@ asiUI_ParameterEditorView::asiUI_ParameterEditorView(const Handle(asiUI_WidgetFa
   connect( this, SIGNAL( itemChanged(QTreeWidgetItem*, int) ), SLOT( onItemChanged(QTreeWidgetItem*, int) ) );
   connect( this, SIGNAL( itemPressed(QTreeWidgetItem*, int) ), SLOT( onItemPressed(QTreeWidgetItem*, int) ) );
 
-  m_BorderColor = QColor::fromRgb(195, 195, 195);
+  m_BorderColor = QColor::fromRgb(105, 105, 105);
 }
 
 asiUI_ParameterEditorView::~asiUI_ParameterEditorView()
@@ -494,7 +495,7 @@ void asiUI_ParameterEditorView::onItemPressed(QTreeWidgetItem* theItem, int theC
 
 //! Handle postponed events.
 //! \param theEvent [in] the event
-bool asiUI_ParameterEditorView::event (QEvent *theEvent)
+bool asiUI_ParameterEditorView::event(QEvent *theEvent)
 {
   // delayed event for "data modified" notifications
   //if ( theEvent->type() == ModificationEvent::type() )

@@ -147,14 +147,15 @@ void exe_MainWindow::createDockWindows()
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
 
   // Domain viewer.
+  QDockWidget* pDockDomain;
   {
-    QDockWidget* pDock = new QDockWidget("Domain", this);
-    pDock->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockDomain = new QDockWidget("Domain", this);
+    pDockDomain->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
-    Widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, pDock);
-    pDock->setWidget(Widgets.wViewerDomain);
+    Widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, pDockDomain);
+    pDockDomain->setWidget(Widgets.wViewerDomain);
     //
-    this->addDockWidget(Qt::RightDockWidgetArea, pDock);
+    this->addDockWidget(Qt::RightDockWidgetArea, pDockDomain);
 
     // Initialize desktop.
     cf->ViewerDomain = Widgets.wViewerDomain;
@@ -162,14 +163,15 @@ void exe_MainWindow::createDockWindows()
   }
 
   // Host viewer.
+  QDockWidget* pDockHost;
   {
-    QDockWidget* pDock = new QDockWidget("Host", this);
-    pDock->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockHost = new QDockWidget("Host", this);
+    pDockHost->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
-    Widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, pDock);
-    pDock->setWidget(Widgets.wViewerSurface);
+    Widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, pDockHost);
+    pDockHost->setWidget(Widgets.wViewerSurface);
     //
-    this->addDockWidget(Qt::RightDockWidgetArea, pDock);
+    this->addDockWidget(Qt::RightDockWidgetArea, pDockHost);
 
     // Initialize desktop.
     cf->ViewerHost = Widgets.wViewerSurface;
@@ -272,12 +274,14 @@ void exe_MainWindow::createDockWindows()
     //
     pDockParamEditor->setWidget(Widgets.wParamEditor);
     //
-    this->addDockWidget(Qt::BottomDockWidgetArea, pDockParamEditor);
+    this->addDockWidget(Qt::RightDockWidgetArea, pDockParamEditor);
 
     // Set to common facilities.
     cf->ParamEditor = new asiUI_ParamEditorImpl(Widgets.wParamEditor);
     cf->ObjectBrowser->SetParameterEditor(cf->ParamEditor);
   }
+  //
+  this->tabifyDockWidget(pDockDomain, pDockParamEditor);
 
   // Listener for part controls.
   Listeners.pControlsPart = new asiUI_ControlsPartListener(Widgets.wControlsPart,
@@ -316,8 +320,7 @@ void exe_MainWindow::createDockWindows()
                                                        cf->Plotter);
 
   // Listener for parameter editor.
-  Listeners.pParamEditor = new asiUI_ParameterEditorListener(Widgets.wParamEditor,
-                                                             cf);
+  Listeners.pParamEditor = new asiUI_ParameterEditorListener(cf);
 
   // Signals-slots.
   Listeners.pControlsPart ->Connect();

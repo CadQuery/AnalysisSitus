@@ -147,6 +147,26 @@ public:
     return QDateTime(date, time);
   }
 
+  //! Convert QDateTime to a time stamp representation.
+  //! \param[in] dateTime qt's date and time representation.
+  //! \return date and time converted to time stamp.
+  static Handle(ActAux_TimeStamp) ToTimeStamp(const QDateTime& dateTime)
+  {
+    Handle(HIntArray) dateArr = new HIntArray(0, 9);
+
+    QTime time = dateTime.time();
+    dateArr->ChangeValue(0) = time.second();      // seconds [0-59]
+    dateArr->ChangeValue(1) = time.minute();      // minutes [0-59]
+    dateArr->ChangeValue(2) = time.hour();        // hours   [0-23]
+
+    QDate date = dateTime.date();
+    dateArr->ChangeValue(3) = date.day();          // days   [1-31]
+    dateArr->ChangeValue(4) = date.month() - 1;    // months [1-12]  -> months [0-11]
+    dateArr->ChangeValue(5) = date.year()  - 1900; // year [0 - ...] -> [1900-...]
+
+    return ActAux_TimeStampTool::FromChunked(dateArr);
+  }
+
 public:
 
   asiUI_EXPORT static QString

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 February 2019
+// Created on: 26 February 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,72 +28,28 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_ParameterEditorListener_h
-#define asiUI_ParameterEditorPartListener_h
+// Own include
+#include <asiUI_CommonFacilities.h>
 
 // asiUI includes
-#include <asiUI_CommonFacilities.h>
-#include <asiUI_ParameterEditor.h>
-
-// Qt includes
-#include <QObject>
-
-#pragma warning(disable : 4251)
+#include <asiUI_ParamEditorImpl.h>
 
 //-----------------------------------------------------------------------------
 
-//! Default slots for parameter editor.
-class asiUI_EXPORT asiUI_ParameterEditorListener : public QObject
+asiUI_CommonFacilities::asiUI_CommonFacilities()
+//
+: Standard_Transient (),
+  MainWindow         (NULL),
+  ObjectBrowser      (NULL),
+  ViewerPart         (NULL),
+  ViewerDomain       (NULL),
+  ViewerHost         (NULL),
+  UnitManager        (NULL),
+  ParamEditor        (NULL)
+//
 {
-  Q_OBJECT
+  WidgetFactory = new asiUI_WidgetFactory(this);
 
-public:
-
-  //! Constructor accepting all necessary facilities.
-  //! \param[in] cf common facilities.
-  asiUI_ParameterEditorListener(const Handle(asiUI_CommonFacilities)& cf);
-
-  //! Dtor.
-  virtual
-    ~asiUI_ParameterEditorListener();
-
-public:
-
-  //! Connects this listener to the controls widget.
-  virtual void
-    Connect();
-
-protected slots:
-
-  //! Stores the modified parameter values in the data model. This virtual
-  //! method can be overridden in the sub-classes to add custom processing.
-  //! \param[in] pid   ID of the parameter.
-  //! \param[in] value new value of the modified parameter.
-  virtual void
-    onParameterChanged(const int pid, const QVariant& value);
-
-signals:
-
-  //! Emitted just after the transactional modification in the data model
-  //! is done.
-  void parameterStored();
-
-protected:
-
-  //! Performs actual modification of Data Model. Must be executed in
-  //! transactional scope only.
-  //! \param[in] pid   ID of the parameter.
-  //! \param[in] value new value of the modified parameter.
-  //! \return true in case of success, false -- otherwise.
-  virtual bool
-    applyParameter(const int pid, const QVariant& value);
-
-protected:
-
-  Handle(asiUI_CommonFacilities) m_cf; //!< Common facilities.
-
-};
-
-#pragma warning(default : 4251)
-
-#endif
+  // Initialize notifier.
+  this->Progress = ActAPI_ProgressEntry(new asiUI_ProgressNotifier);
+}

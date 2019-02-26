@@ -87,15 +87,14 @@ public:
                       const QList<int>&      theIds);
 
   //! Set the color of borders for the cells.
-  //! \param theBorderColor [in] color.
+  //! \param theBorderColor [in] color to set.
   void SetBorderColor(const QColor& theBorderColor)
   {
     m_BorderColor = theBorderColor;
   }
 
-  //! Get color of cell's border.
-  //! \return the border color.
-  QColor GetBorderColor() const
+  //! \return border color for cells.
+  const QColor& GetBorderColor() const
   {
     return m_BorderColor;
   }

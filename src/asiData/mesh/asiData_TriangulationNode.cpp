@@ -45,6 +45,7 @@ asiData_TriangulationNode::asiData_TriangulationNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Name,          PID_Name);
   REGISTER_PARAMETER(Triangulation, PID_Triangulation);
   REGISTER_PARAMETER(RealArray,     PID_Options);
+  REGISTER_PARAMETER(Group,         PID_GroupPrs);
   REGISTER_PARAMETER(Int,           PID_DisplayMode);
   REGISTER_PARAMETER(Bool,          PID_HasColor);
   REGISTER_PARAMETER(Int,           PID_Color);
@@ -77,6 +78,13 @@ void asiData_TriangulationNode::Init()
   this->SetColor       (-1); // No color
   this->SetDisplayMode (1); // No display mode
   this->SetHasVertices (false);
+
+  // Initialize Parameter flags.
+  this->InitParameter(PID_GroupPrs,    "Presentation",       "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_DisplayMode, "Display mode",       "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_HasColor,    "Colorized",          "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Color,       "Color",              "PrsCustomColor", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_HasVertices, "Show vertices",      "",               ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------

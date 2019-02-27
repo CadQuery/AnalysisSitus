@@ -183,6 +183,23 @@ void asiVisu_TriangulationPrs::VerticesOff() const
 
 //-----------------------------------------------------------------------------
 
+//! Sets custom color.
+//! \param[in] color color to set.
+void asiVisu_TriangulationPrs::Colorize(const QColor& color) const
+{
+  if ( !color.isValid() )
+    return;
+
+  Handle(asiVisu_TriangulationPipeline)
+    pl = Handle(asiVisu_TriangulationPipeline)::DownCast( this->GetPipeline(Pipeline_Triangulation) );
+
+  pl->Actor()->GetProperty()->SetColor( color.redF(),
+                                        color.greenF(),
+                                        color.blueF() );
+}
+
+//-----------------------------------------------------------------------------
+
 void asiVisu_TriangulationPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
 {
   picker->RemoveAllLocators();
@@ -217,7 +234,23 @@ void asiVisu_TriangulationPrs::beforeInitPipelines()
 //! Callback for initialization of Presentation pipelines.
 void asiVisu_TriangulationPrs::afterInitPipelines()
 {
-  // Do nothing...
+  Handle(asiData_TriangulationNode)
+    N = Handle(asiData_TriangulationNode)::DownCast( this->GetNode() );
+
+  /* Actualize color */
+
+  if ( N->HasColor() )
+  {
+    QColor color = asiVisu_Utils::IntToColor( N->GetColor() );
+    this->Colorize(color);
+  }
+
+  /* Actualize visualization of vertices */
+
+  if ( N->HasVertices() )
+    this->VerticesOn();
+  else
+    this->VerticesOff();
 }
 
 //-----------------------------------------------------------------------------

@@ -180,21 +180,9 @@ void asiVisu_PartPrs::Colorize(const QColor& color) const
   Handle(asiVisu_PartPipeline)
     pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
-  //pl->Mapper()->ScalarVisibilityOff();
   pl->Actor()->GetProperty()->SetColor( color.redF(),
                                         color.greenF(),
                                         color.blueF() );
-}
-
-//-----------------------------------------------------------------------------
-
-//! Unsets custom color.
-void asiVisu_PartPrs::UnColorize() const
-{
-  Handle(asiVisu_PartPipeline)
-    pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
-
-  pl->Mapper()->ScalarVisibilityOn();
 }
 
 //-----------------------------------------------------------------------------
@@ -263,8 +251,6 @@ void asiVisu_PartPrs::afterUpdatePipelines() const
     QColor color = asiVisu_Utils::IntToColor( N->GetColor() );
     this->Colorize(color);
   }
-  else
-    this->UnColorize();
 
   /* Actualize visualization of vertices */
 

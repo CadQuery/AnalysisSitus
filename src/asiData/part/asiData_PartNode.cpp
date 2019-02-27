@@ -83,8 +83,8 @@ void asiData_PartNode::Init(const bool resetNaming)
   this->SetLinearDeflection  (0.0);
   this->SetAngularDeflection (0.0);
   this->SetHasColor          (false);
-  this->SetColor             (2500134); // Sort of black color.
-  this->SetDisplayMode       (1);
+  this->SetColor             (2500134); // Sort of dark color.
+  this->SetDisplayMode       (1);       // Shading.
   this->SetHasVertices       (false);
 
   // Initialize Parameter flags.
@@ -95,7 +95,7 @@ void asiData_PartNode::Init(const bool resetNaming)
   this->InitParameter(PID_TessAngDefl, "Angular deflection", "",               ParameterFlag_IsVisible, true);
   //
   this->InitParameter(PID_GroupPrs,    "Presentation",       "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_DisplayMode, "Display mode",       "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_DisplayMode, "Display mode",       "PrsDisplayMode", ParameterFlag_IsVisible, true);
   this->InitParameter(PID_HasColor,    "Colorized",          "",               ParameterFlag_IsVisible, true);
   this->InitParameter(PID_Color,       "Color",              "PrsCustomColor", ParameterFlag_IsVisible, true);
   this->InitParameter(PID_HasVertices, "Show vertices",      "",               ParameterFlag_IsVisible, true);

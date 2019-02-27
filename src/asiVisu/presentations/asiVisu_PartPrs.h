@@ -95,6 +95,12 @@ public:
   asiVisu_EXPORT void
     Colorize(const QColor& color) const;
 
+  asiVisu_EXPORT void
+    ShadingOn() const;
+
+  asiVisu_EXPORT void
+    WireframeOn() const;
+
 public:
 
   asiVisu_EXPORT virtual void

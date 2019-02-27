@@ -244,6 +244,8 @@ void asiVisu_TriangulationPrs::afterInitPipelines()
     QColor color = asiVisu_Utils::IntToColor( N->GetColor() );
     this->Colorize(color);
   }
+  else
+    this->Colorize(Qt::white);
 
   /* Actualize visualization of vertices */
 

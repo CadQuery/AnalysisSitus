@@ -75,16 +75,16 @@ void asiData_TriangulationNode::Init()
 
   // Set Presentation values
   this->SetHasColor    (false);
-  this->SetColor       (-1); // No color
-  this->SetDisplayMode (1); // No display mode
+  this->SetColor       (2500134); // Sort of dark color.
+  this->SetDisplayMode (1);       // Shading.
   this->SetHasVertices (false);
 
   // Initialize Parameter flags.
-  this->InitParameter(PID_GroupPrs,    "Presentation",       "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_DisplayMode, "Display mode",       "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_HasColor,    "Colorized",          "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_Color,       "Color",              "PrsCustomColor", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_HasVertices, "Show vertices",      "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_GroupPrs,    "Presentation",  "",                   ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_DisplayMode, "Display mode",  "PrsMeshDisplayMode", 0,                       true);
+  this->InitParameter(PID_HasColor,    "Colorized",     "",                   ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Color,       "Color",         "PrsCustomColor",     ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_HasVertices, "Show vertices", "",                   ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------

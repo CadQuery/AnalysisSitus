@@ -187,6 +187,47 @@ void asiVisu_PartPrs::Colorize(const QColor& color) const
 
 //-----------------------------------------------------------------------------
 
+//! Enables shaded mode for the main pipeline.
+void asiVisu_PartPrs::ShadingOn() const
+{
+  Handle(asiVisu_PartPipeline)
+    plMain = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+
+  Handle(asiVisu_PartEdgesPipeline)
+    plContour = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
+
+  if ( plMain.IsNull() || plContour.IsNull() )
+    return;
+
+  // Configure display mode.
+  plMain->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Shaded);
+  //
+  plMain->Actor()->SetPickable(1);
+  plContour->Actor()->SetVisibility(1);
+}
+//-----------------------------------------------------------------------------
+
+//! Enables wireframe mode for the main pipeline.
+void asiVisu_PartPrs::WireframeOn() const
+{
+  Handle(asiVisu_PartPipeline)
+    plMain = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+
+  Handle(asiVisu_PartEdgesPipeline)
+    plContour = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
+
+  if ( plMain.IsNull() || plContour.IsNull() )
+    return;
+
+  // Configure display mode.
+  plMain->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_WireframeAndVertices);
+  //
+  plMain->Actor()->SetPickable(0);
+  plContour->Actor()->SetVisibility(0);
+}
+
+//-----------------------------------------------------------------------------
+
 void asiVisu_PartPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
 {
   asiVisu_NotUsed(picker);
@@ -232,7 +273,17 @@ void asiVisu_PartPrs::afterInitPipelines()
 //! kernel update routine starts.
 void asiVisu_PartPrs::beforeUpdatePipelines() const
 {
-  // Do nothing...
+  Handle(asiData_PartNode)
+    N = Handle(asiData_PartNode)::DownCast( this->GetNode() );
+
+  /* Actualize display mode */
+
+  const int dm = N->GetDisplayMode();
+  //
+  if ( dm & ShapeDisplayMode_Shaded )
+    this->ShadingOn();
+  else if ( dm & ShapeDisplayMode_WireframeAndVertices )
+    this->WireframeOn();
 }
 
 //-----------------------------------------------------------------------------

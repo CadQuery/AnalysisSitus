@@ -82,7 +82,7 @@ asiUI_ParameterEditorView::asiUI_ParameterEditorView(const Handle(asiUI_WidgetFa
 {
   // customize parameter editor
   setHeaderLabels(QStringList() << "Parameter" << "" << "Value");
-  setAlternatingRowColors(true);
+  setAlternatingRowColors(false);
 
   SetReadOnly(false);
 
@@ -108,7 +108,7 @@ asiUI_ParameterEditorView::asiUI_ParameterEditorView(const Handle(asiUI_WidgetFa
   connect( this, SIGNAL( itemChanged(QTreeWidgetItem*, int) ), SLOT( onItemChanged(QTreeWidgetItem*, int) ) );
   connect( this, SIGNAL( itemPressed(QTreeWidgetItem*, int) ), SLOT( onItemPressed(QTreeWidgetItem*, int) ) );
 
-  m_BorderColor = QColor::fromRgb(105, 105, 105);
+  m_BorderColor = QColor::fromRgb(45, 49, 54);
 }
 
 asiUI_ParameterEditorView::~asiUI_ParameterEditorView()

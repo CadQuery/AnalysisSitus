@@ -19,7 +19,6 @@ set (H_FILES
   asiEngine_TolerantShapes.h
   asiEngine_Triangulation.h
 )
-
 set (CPP_FILES
   asiEngine_Base.cpp
   asiEngine_Curve.cpp
@@ -32,6 +31,15 @@ set (CPP_FILES
   asiEngine_Tessellation.cpp
   asiEngine_TolerantShapes.cpp
   asiEngine_Triangulation.cpp
+)
+
+#------------------------------------------------------------------------------
+# Tree Functions
+#------------------------------------------------------------------------------
+
+set (func_H_FILES
+)
+set (func_CPP_FILES
 )
 
 #------------------------------------------------------------------------------
@@ -110,12 +118,24 @@ foreach (FILE ${CPP_FILES})
   source_group ("Source Files" FILES "${FILE}")
 endforeach (FILE)
 
+foreach (FILE ${func_H_FILES})
+  set (src_files ${src_files} ${FILE})
+  source_group ("Header Files\\Tree Functions" FILES "${FILE}")
+endforeach (FILE)
+
+foreach (FILE ${func_CPP_FILES})
+  set (src_files ${src_files} ${FILE})
+  source_group ("Source Files\\Tree Functions" FILES "${FILE}")
+endforeach (FILE)
+
 #------------------------------------------------------------------------------
 # Configure includes
 #------------------------------------------------------------------------------
 
 # Create include variable
-set (asiEngine_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};")
+set (asiEngine_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
+  ${CMAKE_CURRENT_SOURCE_DIR}/func;\
+")
 #
 set (asiEngine_include_dir ${asiEngine_include_dir_loc} PARENT_SCOPE)
 
@@ -137,7 +157,7 @@ endif()
 # Create library
 #------------------------------------------------------------------------------
 
-add_library (asiEngine SHARED ${H_FILES} ${CPP_FILES})
+add_library (asiEngine SHARED ${H_FILES} ${CPP_FILES} ${func_H_FILES} ${func_CPP_FILES})
 
 #------------------------------------------------------------------------------
 # Dependencies
@@ -234,3 +254,4 @@ install (TARGETS asiEngine
 install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiEngine.pdb DESTINATION framework/bind CONFIGURATIONS Debug)
 
 install (FILES ${H_FILES} DESTINATION framework/include)
+install (FILES ${func_H_FILES} DESTINATION framework/include)

@@ -85,6 +85,9 @@ void asiUI_ParameterEditorListener::onParameterChanged(const int       pid,
     }
   }
   m_cf->Model->CommitCommand();
+
+  // Actualize Node.
+  m_cf->ActualizeNode( m_cf->ObjectBrowser->GetSelectedNode() );
 }
 
 //-----------------------------------------------------------------------------

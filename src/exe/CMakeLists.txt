@@ -140,6 +140,12 @@ foreach (FILE ${ui_CPP_FILES})
 endforeach (FILE)
 
 #------------------------------------------------------------------------------
+# Resources
+#------------------------------------------------------------------------------
+
+source_group ("Resources" FILES resources/asiExeDictionary.xml)
+
+#------------------------------------------------------------------------------
 # Configure includes
 #------------------------------------------------------------------------------
 
@@ -174,7 +180,9 @@ source_group ("Generated" FILES "${RCC_FILE}")
 # Create executable
 #------------------------------------------------------------------------------
 
-add_executable(asiExe ${ui_moc_files} ${src_files} ${RCC_FILE})
+add_executable(asiExe ${ui_moc_files} ${src_files} ${RCC_FILE} resources/asiExeDictionary.xml)
+
+COPY_RESOURCES_TO_BINARY_DIRS(resources/asiExeDictionary.xml)
 
 set (USE_CONSOLE OFF CACHE BOOL "Using of debug console")
 if (WIN32 AND MSVC)
@@ -273,3 +281,4 @@ endforeach()
 install (TARGETS asiExe RUNTIME DESTINATION bin COMPONENT Runtime)
 install (FILES resources/asitus/icon.ico DESTINATION bin)
 install (FILES resources/asitus/icon64.ico DESTINATION bin)
+install (FILES resources/asiExeDictionary.xml DESTINATION bin/resources)

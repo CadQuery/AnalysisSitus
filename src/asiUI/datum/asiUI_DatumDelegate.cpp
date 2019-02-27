@@ -282,7 +282,7 @@ void asiUI_DatumDelegate::paint(QPainter* thePainter,
     QColor aBgColor = asiVisu_Utils::IntToColor(aColorCode);
 
     thePainter->fillRect(aSmallRect, aBgColor);
-    thePainter->setPen(Qt::white);
+    thePainter->setPen(Qt::black);
     thePainter->drawRect(aSmallRect);
 
     thePainter->setPen(Qt::gray);

@@ -42,9 +42,9 @@
 //! \param theDicID [in] id of the dictionary item for datum.
 //! \param theParent [in] parent widget for subwidget controls.
 //! \param theDatumFlags [in] datum subwidget and option flags.
-asiUI_DatumColorEdit::asiUI_DatumColorEdit(const QString& theDicID, 
-                                             QWidget* theParent,
-                                             const int theDatumFlags)
+asiUI_DatumColorEdit::asiUI_DatumColorEdit(const QString& theDicID,
+                                           QWidget* theParent,
+                                           const int theDatumFlags)
 : asiUI_Datum(theParent)
 {
   m_pEditor = new Editor(theDicID, theParent, convertFlags(theDatumFlags));
@@ -74,8 +74,8 @@ QDS_Datum* asiUI_DatumColorEdit::getDatum() const
 
 //! Constructor. Initializes controls.
 asiUI_DatumColorEdit::Editor::Editor(const QString& theDicID,
-                                      QWidget* theParent,
-                                      const int theFlags)
+                                     QWidget* theParent,
+                                     const int theFlags)
 : QDS_Datum(theDicID, theParent, theFlags)
 {
 }
@@ -87,7 +87,7 @@ QWidget* asiUI_DatumColorEdit::Editor::createControl(QWidget* theParent)
 {
   QtxColorButton* anEditor = new QtxColorButton(theParent);
 
-  anEditor->setSizePolicy(QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ));
+  anEditor->setSizePolicy( QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed) );
 
   connect(anEditor, SIGNAL(changed(QColor)), 
           this,     SLOT(onColorChanged(QColor)));

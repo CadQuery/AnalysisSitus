@@ -45,6 +45,7 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Group, PID_GroupTess);
   REGISTER_PARAMETER(Real,  PID_TessLinDefl);
   REGISTER_PARAMETER(Real,  PID_TessAngDefl);
+  REGISTER_PARAMETER(Group, PID_GroupPrs);
   REGISTER_PARAMETER(Int,   PID_DisplayMode);
   REGISTER_PARAMETER(Bool,  PID_HasColor);
   REGISTER_PARAMETER(Int,   PID_Color);
@@ -82,14 +83,22 @@ void asiData_PartNode::Init(const bool resetNaming)
   this->SetLinearDeflection  (0.0);
   this->SetAngularDeflection (0.0);
   this->SetHasColor          (false);
-  this->SetColor             (-1);
+  this->SetColor             (2500134); // Sort of black color.
   this->SetDisplayMode       (1);
   this->SetHasVertices       (false);
 
   // Initialize Parameter flags.
-  this->InitParameter(PID_Name,        "Name",               "", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_GroupTess,   "Tessellation",       "", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_TessAngDefl, "Angular deflection", "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Name,        "Name",               "",               ParameterFlag_IsVisible, true);
+  //
+  this->InitParameter(PID_GroupTess,   "Tessellation",       "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TessLinDefl, "Linear deflection",  "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TessAngDefl, "Angular deflection", "",               ParameterFlag_IsVisible, true);
+  //
+  this->InitParameter(PID_GroupPrs,    "Presentation",       "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_DisplayMode, "Display mode",       "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_HasColor,    "Colorized",          "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Color,       "Color",              "PrsCustomColor", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_HasVertices, "Show vertices",      "",               ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------

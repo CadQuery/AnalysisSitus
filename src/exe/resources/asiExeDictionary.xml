@@ -1,0 +1,4019 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<datadictionary version="1">
+
+  <!-- ==================================================================== -->
+  <!-- Common semantic IDs                                                  -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List-YesNo" name="Yes/No">
+    <value id="1">Yes</value>
+    <value id="2">No</value>
+  </valueList>
+
+  <valueList id="List-ShapeDisplayMode" name="Display mode">
+    <value id="1">Shading</value>
+    <value id="2">Wireframe</value>
+  </valueList>
+
+  <valueList id="List-MeshDisplayMode" name="Display mode">
+    <value id="1">Shading</value>
+    <value id="2">Wireframe</value>
+    <value id="4">Shrink</value>
+  </valueList>
+
+  <!-- Display mode for shape presentation -->
+  <datum id="PrsDisplayMode" format="" label="Display mode">
+    <domain type="List" list="List-ShapeDisplayMode" />
+    <ui widget="ComboBox" />
+    <description>Display mode</description>
+  </datum>
+
+  <!-- Display mode for mesh presentation -->
+  <datum id="PrsMeshDisplayMode" format="" label="Display mode">
+    <domain type="List" list="List-MeshDisplayMode" />
+    <ui widget="ComboBox" />
+    <description>Display mode</description>
+  </datum>
+
+  <!-- Indicates whether the color for presentation is active -->
+  <datum id="PrsHasCustomColor" format="" label="Has custom color">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description>Custom color activation</description>
+  </datum>
+
+  <!-- Color for presentation -->
+  <datum id="PrsCustomColor" format="" label="Color">
+    <domain type="Integer" />
+    <ui widget="ColorPicker" />
+    <description>Color picker</description>
+  </datum>
+
+  <!-- Selector for directories -->
+  <datum id="DirSelector" format="" label="">
+    <domain type="String" />
+    <ui widget="DirPath" widgetParams="title=Select directory..." />
+    <description>Directory selector</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for PROJECT Node                                        -->
+  <!-- ==================================================================== -->
+
+  <datum id="Project_WaterDepth" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="1.0e-6" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Water depth</description>
+  </datum>
+
+  <datum id="Project_GravityAccel" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="length" value="1" />
+      <dimension name="time" value="-2" />
+    </dimensions>
+    <domain type="Float" min="1.0e-6" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Gravity acceleration</description>
+  </datum>
+
+  <datum id="Project_WaterDensity" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="mass" value="1" />
+      <dimension name="length" value="-3" />
+    </dimensions>
+    <domain type="Float" min="1.0e-6" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Water density</description>
+  </datum>
+
+  <datum id="Project_AirDensity" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="mass" value="1" />
+      <dimension name="length" value="-3" />
+    </dimensions>
+    <domain type="Float" min="1.0e-6" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Air density</description>
+  </datum>
+
+  <datum id="Project_Number" format="" label="">
+    <domain type="String" />
+    <ui widget="LineEdit" />
+    <description>Project number</description>
+  </datum>
+
+  <datum id="Project_CreationDate" format="dd/MM/yyyy hh:mm" label="">
+    <domain type="String" />
+    <ui widget="DatePicker" />
+    <description>Creation date</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for VESSELS Node                                        -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List-VesselsArrangementTypes" name="Arrangement">
+    <value id="1">Spread</value>
+    <value id="2">Turret</value>
+    <value id="3">Side By Side</value>
+    <value id="4">Tandem</value>
+  </valueList>
+
+  <datum id="VesselsArrangementTypes" format="" label="Arrangement">
+    <domain type="List" list="List-VesselsArrangementTypes" />
+    <ui widget="ComboBox" />
+    <description>Arrangement types</description>
+  </datum>
+
+  <datum id="VesselsHydroCoupling" format="" label="Hydro coupling">
+    <domain type="Bool" />
+    <ui widget="CheckBox" widgetParams="" />
+    <description>Hydro coupling</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for VESSEL Node                                         -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List-BilgeKeelDefTypes" name="Bilge keel">
+    <value id="1">No</value>
+    <value id="2">Geometric</value>
+    <value id="3">Data</value>
+  </valueList>
+
+  <datum id="Vessel_BilgeKeelDefType" format="" label="Bilge keel definition">
+    <domain type="List" list="List-BilgeKeelDefTypes" />
+    <ui widget="ComboBox" />
+    <description>Bilge keel definition types</description>
+  </datum>
+
+  <datum id="Vessel_BilgeKeelLength" format="%0.3g" label="Bilge keel length">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Bilge keel length</description>
+  </datum>
+
+  <datum id="Vessel_BilgeKeelHeight" format="%0.3g" label="Bilge keel height">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Bilge keel height</description>
+  </datum>
+
+  <datum id="Vessel_BilgeKeelQuad" format="%0.3g" label="Quad.">
+    <dimensions>
+      <dimension name="length" value="1"/>
+      <dimension name="force" value="1"/>
+      <dimension name="time" value="2"/>
+      <dimension name="angle" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Quadratic roll damping</description>
+  </datum>
+
+  <valueList id="List-FormulationTypes" name="Formulation">
+    <value id="1">Isnard</value>
+    <value id="2">Duchemin</value>
+  </valueList>
+
+  <datum id="Vessel_FormulationTypes" format="" label="Formulation">
+    <domain type="List" list="List-FormulationTypes" />
+    <ui widget="ComboBox" />
+    <description>Formulation types</description>
+  </datum>
+
+  <datum id="Vessel_CorrectionFactor" format="%0.3g" label="Correction factor">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Correction factor</description>
+  </datum>
+
+  <datum id="Vessel_Lpp" format="%0.3g" label="Lpp">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Lpp</description>
+  </datum>
+
+  <datum id="Vessel_Length" format="%0.3g" label="Length Overall">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Length Overall</description>
+  </datum>
+
+  <datum id="Vessel_Beam" format="%0.3g" label="Beam">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Beam</description>
+  </datum>
+
+  <datum id="Vessel_XCenter" format="%0.3g" label="X Center">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>X Center</description>
+  </datum>
+
+  <datum id="Vessel_YCenter" format="%0.3g" label="Y Center">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Y Center</description>
+  </datum>
+
+  <datum id="Vessel_XArea" format="%0.3g" label="X Area">
+    <dimensions>
+      <dimension name="length" value="2" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>X Area</description>
+  </datum>
+
+  <datum id="Vessel_YArea" format="%0.3g" label="Y Area">
+    <dimensions>
+      <dimension name="length" value="2" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Y Area</description>
+  </datum>
+
+  <datum id="Vessel_POI_ID" format="" label="Point">
+    <domain type="String" />
+    <ui widget="LineEdit" />
+    <description>Point ID</description>
+  </datum>
+
+  <datum id="Vessel_POI_X" format="%0.3g" label="x">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>X</description>
+  </datum>
+
+  <datum id="Vessel_POI_Y" format="%0.3g" label="y">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Y</description>
+  </datum>
+
+  <datum id="Vessel_POI_Z" format="%0.3g" label="z">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Z</description>
+  </datum>
+
+  <datum id="Vessel_TurretX" format="%0.3g" label="X">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Turret X coordinate in LCS</description>
+  </datum>
+
+  <datum id="Vessel_TurretY" format="%0.3g" label="Y">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Turret Y coordinate in LCS</description>
+  </datum>
+
+  <datum id="Vessel_TurretZ" format="%0.3g" label="Z">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Turret Z coordinate in LCS</description>
+  </datum>
+
+  <datum id="Vessel_Turret_Mass_X_X" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="mass" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description></description>
+  </datum>
+
+  <datum id="Vessel_Turret_Mass_X_RX" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="length" value="1" />
+      <dimension name="mass" value="1" />
+      <dimension name="angle" value="-1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description></description>
+  </datum>
+
+  <datum id="Vessel_Turret_Mass_RX_X" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="length" value="1" />
+      <dimension name="mass" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description></description>
+  </datum>
+
+  <datum id="Vessel_Turret_Mass_RX_RX" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="length" value="2" />
+      <dimension name="mass" value="1" />
+      <dimension name="angle" value="-1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description></description>
+  </datum>
+
+  <datum id="Vessel_CAD_Filename" format="" label="CAD filename">
+    <domain type="String" />
+    <ui widget="OpenFilePath"
+        widgetParams="filter=IGES files (*.igs *.iges);;STEP files (*.stp *.step);;BRep files (*.brep *.rle);;LIN (lines plan) files (*.lin)|title=Select CAD file..." />
+    <description>CAD file</description>
+  </datum>
+
+  <datum id="Vessel_CAD_X" format="%0.3g" label="X">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>X</description>
+  </datum>
+
+  <datum id="Vessel_CAD_Y" format="%0.3g" label="Y">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Y</description>
+  </datum>
+
+  <datum id="Vessel_CAD_Z" format="%0.3g" label="Z">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Z</description>
+  </datum>
+
+  <datum id="Vessel_CAD_RX" format="%0.3g" label="RX">
+    <dimensions>
+      <dimension name="angle" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>RX</description>
+  </datum>
+
+  <datum id="Vessel_CAD_RY" format="%0.3g" label="RY">
+    <dimensions>
+      <dimension name="angle" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>RY</description>
+  </datum>
+
+  <datum id="Vessel_CAD_RZ" format="%0.3g" label="RZ">
+    <dimensions>
+      <dimension name="angle" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>RZ</description>
+  </datum>
+
+  <datum id="Vessel_SDef_Mask" format="%s" label="Faces">
+    <ui widget="Selector" />
+    <description>Face indices</description>
+  </datum>
+
+  <valueList id="List-SurfaceDefTypes" name="Type">
+    <value id="1">Thin</value>
+    <value id="2">Damping</value>
+  </valueList>
+
+  <datum id="Vessel_SDef_Type" format="" label="Type">
+    <domain type="List" list="List-SurfaceDefTypes" />
+    <ui widget="ComboBox" />
+    <description>Surface type</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for LOADING CONDITION Node                              -->
+  <!-- ==================================================================== -->
+
+  <datum id="LC_Vessel_X" format="%5.3x3" label="X">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Surge</description>
+  </datum>
+
+  <datum id="LC_Vessel_Y" format="%5.3x3" label="Y">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Sway</description>
+  </datum>
+
+  <datum id="LC_Vessel_Z" format="%5.3x3" label="Z">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Heave</description>
+  </datum>
+
+  <datum id="LC_Vessel_RX" format="%5.3x3" label="RX">
+    <dimensions>
+      <dimension name="angle" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Roll</description>
+  </datum>
+
+  <datum id="LC_Vessel_RY" format="%5.3x3" label="RY">
+    <dimensions>
+      <dimension name="angle" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Pitch</description>
+  </datum>
+
+  <datum id="LC_Vessel_RZ" format="%5.3x3" label="RZ">
+    <dimensions>
+      <dimension name="angle" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Yaw</description>
+  </datum>
+
+  <datum id="LC_Draft" format="%5.3x3" label="Draft">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Draft</description>
+  </datum>
+
+  <datum id="LC_XWindingArea" format="%5.3x3" label="X winding area">
+    <dimensions>
+      <dimension name="length" value="2" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>X winding area</description>
+  </datum>
+
+  <datum id="LC_YWindingArea" format="%5.3x3" label="Y winding area">
+    <dimensions>
+      <dimension name="length" value="2" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Y winding area</description>
+  </datum>
+
+  <datum id="LC_WindDBFilename" format="" label="Wind database">
+    <domain type="String" />
+    <ui widget="OpenFilePath" widgetParams="filter=Excel files (*.xls);;All files (*.*)|title=Select database file..." />
+    <description>Wind database selection</description>
+  </datum>
+
+  <datum id="LC_CurrentDBFilename" format="" label="Current database">
+    <domain type="String" />
+    <ui widget="OpenFilePath" widgetParams="filter=Excel files (*.xls);;All files (*.*)|title=Select database file..." />
+    <description>Current database selection</description>
+  </datum>
+
+  <valueList id="List-LCMassTypes" name="Mass definition type">
+    <value id="1">Gyration</value>
+    <value id="2">Full</value>
+  </valueList>
+
+  <datum id="LC_MassType" format="" label="Mass definition">
+    <domain type="List" list="List-LCMassTypes" />
+    <ui widget="ComboBox" />
+    <description>Mass definition type</description>
+  </datum>
+
+  <datum id="LC_COG_X" format="%5.3x3" label="COG X">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Center of gravity (X) in LCS</description>
+  </datum>
+
+  <datum id="LC_COG_Y" format="%5.3x3" label="COG Y">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Center of gravity (Y) in LCS</description>
+  </datum>
+
+  <datum id="LC_COG_Z" format="%5.3x3" label="COG Z">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Center of gravity (Z) in LCS</description>
+  </datum>
+
+  <datum id="LC_COG_Midship_Dist" format="%5.3x3" label="COG-midship distance">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>COG-midship distance</description>
+  </datum>
+
+  <datum id="LC_Mass" format="%5.3x3" label="Mass">
+    <dimensions>
+      <dimension name="mass" value="1" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Mass</description>
+  </datum>
+
+  <datum id="LC_Gyration_RX" format="%5.3x3" label="Gyration RX">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Gyration RX</description>
+  </datum>
+
+  <datum id="LC_Gyration_RY" format="%5.3x3" label="Gyration RY">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Gyration RY</description>
+  </datum>
+
+  <datum id="LC_Gyration_RZ" format="%5.3x3" label="Gyration RZ">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Gyration RZ</description>
+  </datum>
+
+  <datum id="LC_Mass_X_X" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="mass" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description></description>
+  </datum>
+
+  <datum id="LC_Mass_X_RX" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1" />
+      <dimension name="mass" value="1" />
+      <dimension name="angle" value="-1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description></description>
+  </datum>
+
+  <datum id="LC_Mass_RX_X" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1" />
+      <dimension name="mass" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description></description>
+  </datum>
+
+  <datum id="LC_Mass_RX_RX" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="2" />
+      <dimension name="mass" value="1" />
+      <dimension name="angle" value="-1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description></description>
+  </datum>
+
+  <datum id="LC_FIDA_X_Y_Z" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="mass" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description></description>
+  </datum>
+
+  <datum id="LC_FIDA_RX_RY_RZ" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="2" />
+      <dimension name="mass" value="1" />
+      <dimension name="angle" value="-1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description></description>
+  </datum>
+
+  <datum id="LC_FIDD_X_Y_Z" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="force" value="1" />
+      <dimension name="time" value="1" />
+      <dimension name="length" value="-1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description></description>
+  </datum>
+
+  <datum id="LC_FIDD_RX_RY_RZ" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1" />
+      <dimension name="force" value="1" />
+      <dimension name="time" value="1" />
+      <dimension name="angle" value="-1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description></description>
+  </datum>
+
+  <datum id="LC_DoShowThin" format="" label="Show thin">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description>Show/Hide thin faces</description>
+  </datum>
+
+  <datum id="LC_DoShowDamping" format="" label="Show damping">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description>Show/Hide damping faces</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for DIFFRACTION/RADIATION Node                          -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List-DRSoftwareList" name="Software selection list">
+    <value id="1">AQWA</value>
+    <value id="2">HydroStar</value>
+    <value id="3">Wamit</value>
+  </valueList>
+
+  <datum id="DR_Software" format="" label="Software selection list">
+    <domain type="List" list="List-DRSoftwareList" />
+    <ui widget="ComboBox" />
+    <description>Software selection list</description>
+  </datum>
+
+  <datum id="DR_Autorun" format="" label="Autorun solver">
+    <domain type="Bool" />
+    <ui widget="CheckBox" widgetParams="" />
+    <description>Autorunning property for hydrodynamic solver</description>
+  </datum>
+
+  <datum id="DR_DoSplit" format="" label="Split by waterline">
+    <domain type="Bool" />
+    <ui widget="CheckBox" widgetParams="" />
+    <description>Split hull by waterline level</description>
+  </datum>
+
+  <datum id="DR_Input_AddDirection" format="%5.2x3" label="Add direction">
+    <dimensions>
+      <dimension name="extra" value="deg."/>
+    </dimensions>
+    <domain type="Float" min="-180" max="180" />
+    <ui widget="SpinBox" widgetParams="step=10" />
+    <description>Add direction</description>
+  </datum>
+
+  <datum id="DR_Input_AddDirectionVec" format="%5.2x3" label="Add directions">
+    <dimensions>
+      <dimension name="extra" value="deg."/>
+    </dimensions>
+    <domain type="Float" min="-180" max="180" />
+    <ui widget="SpinBox" widgetParams="step=10" />
+    <description>Add direction vector</description>
+  </datum>
+
+  <datum id="DR_Input_Direction" format="%5.2x3" label="Direction">
+    <domain type="Float" min="-180" max="180" />
+    <ui widget="SpinBox" widgetParams="step=10" />
+    <description>Direction</description>
+  </datum>
+
+  <datum id="DR_Input_DirectionCol" format="%5.2x3" label="Direction">
+    <domain type="Float" min="-180" max="180" />
+    <ui widget="Label" />
+    <description>Direction</description>
+  </datum>
+
+  <datum id="DR_Input_DirectionStep" format="%5.2x3" label="Direction step">
+    <domain type="Float" min="0.001" max="180" />
+    <ui widget="SpinBox" widgetParams="step=10" />
+    <description>Direction step</description>
+  </datum>
+
+  <valueList id="List-DRXSymmetry" name="Software selection list">
+    <value id="0">No</value>
+    <value id="1">Yes</value>
+  </valueList>
+
+  <datum id="DR_Input_Dir_XSymmetry" format="" label="X symmetry">
+    <domain type="List" list="List-DRXSymmetry" />
+    <ui widget="ComboBox" />
+    <description>X symmetry</description>
+  </datum>
+
+  <datum id="DR_Input_Frequency" format="%0.3g" label="Frequency">
+    <dimensions>
+      <dimension name="extra" value="rad/s"/>
+    </dimensions>
+    <domain type="Float" min="1.0e-6" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Frequency</description>
+  </datum>
+
+  <datum id="DR_Input_FrequencyMin" format="%0.3g" label="Min">
+    <dimensions>
+      <dimension name="extra" value="rad/s"/>
+    </dimensions>
+    <domain type="Float" min="0.001" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Frequency minimal value</description>
+  </datum>
+
+  <datum id="DR_Input_FrequencyMax" format="%0.3g" label="Max">
+    <dimensions>
+      <dimension name="extra" value="rad/s"/>
+    </dimensions>
+    <domain type="Float" min="0.001" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Frequency maximal value</description>
+  </datum>
+
+  <datum id="DR_Input_FrequencyNum" format="" label="Nb of values">
+    <domain type="Integer" min="2" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Number of frequencies</description>
+  </datum>
+
+  <datum id="DR_UsePreCAD" format="" label="Use PreCAD">
+    <domain type="Bool" />
+    <ui widget="CheckBox" widgetParams="" />
+    <description>Use PreCAD</description>
+  </datum>
+
+  <datum id="DR_GSizing_Min" format="%0.3g" label="Defeaturing size">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="1.0e-6" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.5" />
+    <description>Minimal size of mesh element</description>
+  </datum>
+
+  <datum id="DR_GSizing_Def" format="%0.3g" label="Default size">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="1.0e-6" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.5" />
+    <description>Default size of mesh element</description>
+  </datum>
+
+  <datum id="DR_GSizing_Max" format="%0.3g" label="Max size">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="1.0e-6" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.5" />
+    <description>Maximal size of mesh element</description>
+  </datum>
+
+  <datum id="DR_GSizing_MaxHint" format="%0.3g" label="Advised max size">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="1.0e-6" max="1e99" />
+    <ui widget="Label" />
+    <description>Hint on maximum panel size</description>
+  </datum>
+
+  <datum id="DR_LSizing_Mask" format="%s" label="Entities">
+    <ui widget="Selector" />
+    <description>Local sizing entities</description>
+  </datum>
+
+  <datum id="DR_LSizing_Size" format="%0.3g" label="Size">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="1.0e-6" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.01" />
+    <description>Local size</description>
+  </datum>
+
+  <datum id="DR_DoShowThin" format="" label="Show thin">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description>Show/Hide thin elements</description>
+  </datum>
+
+  <datum id="DR_DoShowDamping" format="" label="Show damping">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description>Show/Hide damping elements</description>
+  </datum>
+
+  <datum id="DR_NormalMaxModulus" format="%0.3g" label="Normal field max modulus">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="1.0e-6" max="1.0e6" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Maximum modulus of normal vector</description>
+  </datum>
+
+  <datum id="DR_NormalColor" format="" label="Normal field color">
+    <domain type="Integer" />
+    <ui widget="ColorPicker" />
+    <description>Normal field color</description>
+  </datum>
+
+  <datum id="DR_ShowMeshContour" format="" label="Mesh contour">
+    <domain type="Bool" />
+    <ui widget="CheckBox" widgetParams="" />
+    <description>Show/Hide mesh contour</description>
+  </datum>
+
+  <datum id="DR_MStat_Displacement" format="%0.3g" label="Displacement">
+    <dimensions>
+      <dimension name="mass" value="1"/>
+    </dimensions>
+    <domain type="Float" min="1.0e-6" max="1e99" />
+    <ui widget="Label" />
+    <description>Displacement value</description>
+  </datum>
+
+  <datum id="DR_MStat_COB" format="%0.4g" label="COB">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>COB (Center Of Buoyancy)</description>
+  </datum>
+
+  <datum id="DR_GStat_COBX" format="%0.3g" label="COB X">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>COB (Center Of Buoyancy) X coordinate</description>
+  </datum>
+
+  <datum id="DR_GStat_COBY" format="%0.3g" label="COB Y">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>COB (Center Of Buoyancy) Y coordinate</description>
+  </datum>
+
+  <datum id="DR_GStat_COBZ" format="%0.3g" label="COB Z">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>COB (Center Of Buoyancy) Z coordinate</description>
+  </datum>
+
+  <datum id="DR_ResMass_X_X" format="%0.3g" label="Matrix element">
+    <dimensions>
+      <dimension name="mass" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>Element of Mass matrix</description>
+  </datum>
+
+  <datum id="DR_ResMass_X_RX" format="%0.3g" label="Matrix element">
+    <dimensions>
+      <dimension name="length" value="1" />
+      <dimension name="mass" value="1" />
+      <dimension name="angle" value="-1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>Element of Mass matrix</description>
+  </datum>
+
+  <datum id="DR_ResMass_RX_X" format="%0.3g" label="Matrix element">
+    <dimensions>
+      <dimension name="length" value="1" />
+      <dimension name="mass" value="1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>Element of Mass matrix</description>
+  </datum>
+
+  <datum id="DR_ResMass_RX_RX" format="%0.3g" label="Matrix element">
+    <dimensions>
+      <dimension name="length" value="2" />
+      <dimension name="mass" value="1" />
+      <dimension name="angle" value="-1" />
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>Element of Mass matrix</description>
+  </datum>
+
+  <datum id="DR_ResMx_HydStiff_X_X" format="%0.3g" label="Matrix element">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>Element of Hydrostatic Stiffness matrix</description>
+  </datum>
+
+  <datum id="DR_ResMx_HydStiff_X_RX" format="%0.3g" label="Matrix element">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="angle" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>Element of Hydrostatic Stiffness matrix</description>
+  </datum>
+
+  <datum id="DR_ResMx_HydStiff_RX_X" format="%0.3g" label="Matrix element">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="1 -1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>Element of Hydrostatic Stiffness matrix</description>
+  </datum>
+
+  <datum id="DR_ResMx_HydStiff_RX_RX" format="%0.3g" label="Matrix element">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="1"/>
+      <dimension name="angle" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>Element of Hydrostatic Stiffness matrix</description>
+  </datum>
+
+  <datum id="DR_Units_AddedMass_T_T" format="" label="">
+    <dimensions>
+      <dimension name="mass" value="1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="DR_Units_AddedMass_R_T" format="" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+      <dimension name="mass" value="1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="DR_Units_AddedMass_T_R" format="" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+      <dimension name="mass" value="1"/>
+      <dimension name="angle" value="-1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="DR_Units_AddedMass_R_R" format="" label="">
+    <dimensions>
+      <dimension name="length" value="2"/>
+      <dimension name="mass" value="1"/>
+      <dimension name="angle" value="-1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="DR_Units_Damping_T_T" format="" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="time" value="1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="DR_Units_Damping_R_T" format="" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="time" value="1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="DR_Units_Damping_T_R" format="" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="time" value="1"/>
+      <dimension name="angle" value="-1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="DR_Units_Damping_R_R" format="" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+      <dimension name="force" value="1"/>
+      <dimension name="time" value="1"/>
+      <dimension name="angle" value="-1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="DR_ExportConfigurator" format="" label="">
+    <domain type="String"/>
+    <ui widget="CustomSelector">
+      <widgetParam id="icon">select_cfg_small.png</widgetParam>
+    </ui>
+    <description></description>
+  </datum>
+
+  <datum id="DR_Units_Results_X" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="extra" value="rad.s^-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="DR_Units_Phase" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="DR_Units_ForceRAO_XYZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="DR_Units_ForceRAO_RXRYRZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="1 -1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="DR_Units_MotionRAO_XYZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="length" value="1 -1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="DR_Units_MotionRAO_RXRYRZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="DR_Units_MDForces_XYZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="DR_Units_MDForces_RXRYRZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="1 -2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="DR_Units_FullQTF_XYZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="DR_Units_FullQTF_RXRYRZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="1 -2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for WIND/CURRENT COEFFICIENT Nodes                      -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List-WCSource" name="Source list">
+    <value id="1">Internal</value>
+    <value id="2">External</value>
+  </valueList>
+
+  <datum id="WC_Source" format="" label="Source list">
+    <domain type="List" list="List-WCSource" />
+    <ui widget="ComboBox" />
+    <description>Wind coefficient source list</description>
+  </datum>
+
+  <datum id="WC_XSymmetry" format="" label="X symmetry">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description>X symmetry option</description>
+  </datum>
+
+  <datum id="WC_X" format="%0.3g" label="X">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1.0e6" max="1.0e6" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>X coordinate of reference point</description>
+  </datum>
+
+  <datum id="WC_Y" format="%0.3g" label="Y">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1.0e6" max="1.0e6" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Y coordinate of reference point</description>
+  </datum>
+
+  <datum id="WC_Z" format="%0.3g" label="Z">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1.0e6" max="1.0e6" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Z coordinate of reference point</description>
+  </datum>
+
+  <datum id="WC_Dir" format="%0.12g" label="Direction">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="Float" min="-1.0e6" max="1.0e6" />
+    <ui widget="SpinBox" widgetParams="step=5"/>
+    <description>Direction</description>
+  </datum>
+
+  <datum id="WC_Fx" format="%5.3x3" label="Fx">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="-2"/>
+      <dimension name="time" value="2"/>
+    </dimensions>
+    <domain type="Float" min="-1.0e6" max="1.0e6" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Fx</description>
+  </datum>
+
+  <datum id="WC_Fy" format="%5.3x3" label="Fy">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="-2"/>
+      <dimension name="time" value="2"/>
+    </dimensions>
+    <domain type="Float" min="-1.0e6" max="1.0e6" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Fy</description>
+  </datum>
+
+  <datum id="WC_Mz" format="%5.3x3" label="Mz">
+    <dimensions>
+      <dimension name="length" value="1 -2"/>
+      <dimension name="force" value="1"/>
+      <dimension name="time" value="2"/>
+    </dimensions>
+    <domain type="Float" min="-1.0e6" max="1.0e6" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Mz</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for MOORING DATABASE Node                               -->
+  <!-- ==================================================================== -->
+
+  <datum id="MooringDb_Seg_Name" format="" label="Segment name">
+    <domain type="String" />
+    <ui widget="LineEdit" />
+    <description>Name of segment record</description>
+  </datum>
+
+  <datum id="MooringDb_Seg_WeightAir" format="%0.6g" label="Weight in air">
+    <dimensions>
+      <dimension name="mass" value="1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="MooringDb_Seg_WeightWater" format="%0.6g" label="Weight in water">
+    <dimensions>
+      <dimension name="mass" value="1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="MooringDb_Seg_EA" format="%0.6g" label="EA">
+    <dimensions>
+      <dimension name="force" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Axial Stiffness</description>
+  </datum>
+
+  <datum id="MooringDb_Seg_EI" format="%0.6g" label="EI">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="2"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Bending Stiffness</description>
+  </datum>
+
+  <datum id="MooringDb_Seg_PhiDrag" format="%0.6g" label="Phi Drag">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Diameter to be consulted for drag calculation</description>
+  </datum>
+
+  <datum id="MooringDb_Seg_Cd" format="%0.6g" label="Cd">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="MooringDb_Seg_Cm" format="%0.6g" label="Cm">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="MooringDb_Seg_MBL" format="%0.6g" label="MBL">
+    <dimensions>
+      <dimension name="force" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Mooring Breaking Load</description>
+  </datum>
+
+  <datum id="MooringRiserDB_Tension" format="%0.6g" label="Tension">
+    <dimensions>
+      <dimension name="force" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="MooringRiserDB_TensionH" format="%0.6g" label="Tension H">
+    <dimensions>
+      <dimension name="force" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="MooringRiserDB_TensionV" format="%0.6g" label="Tension V">
+    <dimensions>
+      <dimension name="force" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="MooringRiserDB_LaidLength" format="%0.6g" label="Laid Length">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="MooringRiserDB_dH" format="%0.6g" label="dH">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="MooringRiserDB_dV" format="%0.6g" label="dV">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for VFluid RAO Node                                     -->
+  <!-- ==================================================================== -->
+
+  <datum id="VFluidRAO_Filename" format="" label="Filename">
+    <domain type="String" />
+    <ui widget="OpenFilePath"
+        widgetParams="filter=Input files (*.xls *.txt);;All files (*.*)|title=Select file to import velocity fluid..." />
+    <description>Input file with Velocity Fluid data</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for VFluid RAO DefPOI Node                              -->
+  <!-- ==================================================================== -->
+
+  <datum id="VFluid_DampingTableString" format="%0.6g" label="Dampings">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="time"  value="1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Damping values</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Fixed Heading Analysis Node                         -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List_FieldTypes" name="Source list">
+    <value id="1">Near Field</value>
+    <value id="2">Far Field</value>
+  </valueList>
+
+  <datum id="Field_type" format="" label="Far/Near field">
+    <domain type="List" list="List_FieldTypes" />
+    <ui widget="ComboBox" />
+    <description>Specifies QTF type</description>
+  </datum>
+
+  <datum id="FHA_StringFx" format="%0.6g" label="Fx">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Force projection on X axis</description>
+  </datum>
+
+  <datum id="FHA_StringFy" format="%0.6g" label="Fy">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Force projection on Y axis</description>
+  </datum>
+
+  <datum id="FHA_StringMz" format="%0.6g" label="Mz">
+    <dimensions>
+      <dimension name="extra" value="kN.m"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Moment projection on Z axis</description>
+  </datum>
+
+  <datum id="FHA_StringHeading" format="%0.6g" label="Heading">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Heading in equilibrium</description>
+  </datum>
+
+  <datum id="FHA_StringMinLL" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Minimum laid length</description>
+  </datum>
+
+  <datum id="FHA_StringMaxAT" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Maximum anchor tension</description>
+  </datum>
+
+  <datum id="FHA_StringMaxFT" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Maximum fairlead tension</description>
+  </datum>
+
+  <datum id="FHA_StringLineName" format="" label="Line">
+    <domain type="String" />
+    <ui widget="Label" />
+    <description>Line number corresponding to the value on the left</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Heading Analysis Node                               -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List_HeadingMethodologies" name="Source list">
+    <value id="1">No link</value>
+    <value id="2">Moment-dependent</value>
+    <value id="3">Distance-dependent</value>
+  </valueList>
+
+  <datum id="Heading_Methodology" format="" label="Methodology type">
+    <domain type="List" list="List_HeadingMethodologies" />
+    <ui widget="ComboBox" />
+    <description>Specifies heading calculation methodology</description>
+  </datum>
+
+  <datum id="HA_Envelope_Type" label="">
+    <domain type="List" list="List-EnvelopeType" />
+    <ui widget="ComboBox" />
+    <description></description>
+  </datum>
+
+  <datum id="HA_Excursion" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Tandem Heading Analysis Node                         -->
+  <!-- ==================================================================== -->
+
+  <datum id="THA_StringFx" format="%0.6g" label="Fx">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Force projection on X axis</description>
+  </datum>
+
+  <datum id="THA_StringFy" format="%0.6g" label="Fy">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Force projection on Y axis</description>
+  </datum>
+
+  <datum id="THA_StringMz" format="%0.6g" label="Mz">
+    <dimensions>
+      <dimension name="extra" value="kN.m"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Moment projection on Z axis</description>
+  </datum>
+
+  <datum id="THA_StringHeading" format="%0.6g" label="Heading">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Heading in equilibrium</description>
+  </datum>
+
+  <datum id="THA_StringHT" format="%0.6g" label="Tension Hawser">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Tension at hawser</description>
+  </datum>
+
+  <datum id="THA_StringMinLL" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Minimum laid length</description>
+  </datum>
+
+  <datum id="THA_StringMaxAT" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Maximum anchor tension</description>
+  </datum>
+
+  <datum id="THA_StringMaxFT" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Maximum fairlead tension</description>
+  </datum>
+
+  <datum id="THA_StringLineName" format="" label="Line">
+    <domain type="String" />
+    <ui widget="Label" />
+    <description>Line number corresponding to the value on the left</description>
+  </datum>
+
+  <datum id="THA_Hawser_Selector" format="" label="Hawser">
+    <domain type="List" list ="" />
+    <ui widget="ComboBox" />
+    <description>List of lines(moorings) which can be selected as a hawser</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for STIFFNESS Node                                      -->
+  <!-- ==================================================================== -->
+
+  <datum id="Stiffness_Filename" format="" label="Filename">
+    <domain type="String" />
+    <ui widget="OpenFilePath"
+        widgetParams="filter=LIS files (*.lis)|title=Select file to import stiffness..." />
+    <description>LIS file</description>
+  </datum>
+
+  <datum id="Stiffness_IsExternal" format="" label="Import from file">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description>External definition of stiffness (imported from file)</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for LINE Node                                           -->
+  <!-- ==================================================================== -->
+
+  <datum id="LineNodePoint_Name" format="" label="">
+    <domain type="String" />
+    <description>Connection point idenitifer</description>
+  </datum>
+
+  <datum id="LineNodePoint_X" format="%0.6g" label="X">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="LineNodePoint_Y" format="%0.6g" label="Y">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="LineNodePoint_Z" format="%0.6g" label="Z">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="LineNodePoint_R" format="%0.6g" label="R">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="LineNodePoint_Theta" format="%0.6g" label="Theta">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-3.1415" max="3.1415" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="LineNodePoint_DZ" format="%0.6g" label="dZ">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="LineNodeSeg_Length" format="%0.6g" label="Length">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="LineNodeSeg_Discretization" format="" label="Number of elements">
+    <domain type="Integer" min="1" max="1e99" />
+    <ui widget="SpinBox" />
+    <description></description>
+  </datum>
+
+  <datum id="LineRiserNode_XRange" format="%0.2f" label="X Range">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>Highest value of excursion offset</description>
+  </datum>
+
+  <datum id="LineRiserNode_ZRange" format="%0.2f" label="Z Range">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description>Highest value of dZ</description>
+  </datum>
+
+  <datum id="LineRiserNode_Offset" format="" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="LineRiserNode_Tension" format="" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="LineRiserNode_dHdV" format="" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="LineRiserNode_LaidLength" format="" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="LineRiserNode_DepAngle" format="" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="LineRiserNode_ZValue" format="" label="Z Value">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Selector of dZ value to show on plot</description>
+  </datum>
+
+  <datum id="LineRiserNode_ZMin" format="%5.3x3" label="Z min">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Minimal Z for safety envelope</description>
+  </datum>
+
+  <datum id="LineRiserNode_ZMax" format="%5.3x3" label="Z max">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Maximal Z for safety envelope</description>
+  </datum>
+
+  <valueList id="List-LineRiserQuantity" name="Quantity">
+    <value id="1">Tension</value>
+    <value id="2">Horizontal tension</value>
+    <value id="3">Vertical tension</value>
+    <value id="4">dH</value>
+    <value id="5">dV</value>
+    <value id="6">Laid length</value>
+    <value id="7">Dep. angle</value>
+  </valueList>
+
+  <datum id="LineRiserNode_Quantity" format="" label="Quantity">
+    <domain type="List" list="List-LineRiserQuantity" />
+    <ui widget="ComboBox" />
+    <description>Selector of Quantity to show on plot</description>
+  </datum>
+
+  <datum id="LineRiserNode_Filename" format="" label="Results filename">
+    <domain type="String" />
+    <ui widget="OpenFilePath"
+        widgetParams="filter=LIS files (*.lis)|title=Select results file..." />
+    <description>LIS file</description>
+  </datum>
+
+  <datum id="LineRiserNode_IsExternal" format="" label="External software">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description>External definition of Line characteristics (imported from file)</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Riser Database Node                                 -->
+  <!-- ==================================================================== -->
+
+  <datum id="RiserDb_Seg_Name" format="" label="Segment name">
+    <domain type="String" />
+    <ui widget="LineEdit" />
+    <description>Name of segment record</description>
+  </datum>
+  
+  <datum id="RiserDb_Seg_OD" format="%0.6g" label="OD">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="RiserDb_Seg_ID" format="%0.6g" label="ID">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="RiserDb_Seg_MassEmpty" format="%0.6g" label="Mass empty">
+    <dimensions>
+      <dimension name="mass" value="1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="RiserDb_Seg_EA" format="%0.6g" label="EA">
+    <dimensions>
+      <dimension name="force" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Axial Stiffness</description>
+  </datum>
+
+  <datum id="RiserDb_Seg_EI" format="%0.6g" label="EI">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="2"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Bending Stiffness</description>
+  </datum>
+
+  <datum id="RiserDb_Seg_GJ" format="%0.6g" label="GJ">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="1"/>
+      <dimension name="angle" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Torsional Stiffness</description>
+  </datum>
+
+  <datum id="RiserDb_Seg_PhiDrag" format="%0.6g" label="Phi Drag">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Diameter to be consulted for drag calculation</description>
+  </datum>
+
+  <datum id="RiserDb_Seg_Cd" format="%0.6g" label="Cd">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="RiserDb_Seg_Cm" format="%0.6g" label="Cm">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Riser Node                                          -->
+  <!-- ==================================================================== -->
+
+  <datum id="Riser_ContentDensity" format="%0.6g" label="Content density">
+     <dimensions>
+      <dimension name="mass" value="1"/>
+      <dimension name="length" value="-3"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Eigen Nodes                                         -->
+  <!-- ==================================================================== -->
+
+  <datum id="Eigen_RiserAsMooring" format="" label="Treat riser as mooring">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description>Treat riser as mooring</description>
+  </datum>
+
+  <datum id="Eigen_NumOfSteps" format="" label="Number of steps">
+    <domain type="Integer" min="1" max="1e10" />
+    <ui widget="SpinBox" widgetParams="step=1"/>
+    <description>Number of steps</description>
+  </datum>
+
+  <datum id="Eigen_Table_Omega" format="%0.3g" label="Frequency">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label"/>
+    <description></description>
+  </datum>
+
+  <datum id="Eigen_Table_Period" format="%0.3g" label="Period">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label"/>
+    <description></description>
+  </datum>
+
+  <datum id="Eigen_Table_DOF_Amp_M" format="%0.3g" label="A">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label"/>
+    <dimensions>
+      <dimension name="extra" value="m"/>
+    </dimensions>
+    <description></description>
+  </datum>
+
+  <datum id="Eigen_Table_DOF_Amp_Deg" format="%0.3g" label="A">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label"/>
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <description></description>
+  </datum>
+
+  <datum id="Eigen_Table_DOF_Phi_Deg" format="%0.3g" label="Phi">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label"/>
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <description></description>
+  </datum>
+
+  <datum id="Eigen_Table_DOF_Phase" format="%0.3g" label="">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label"/>
+    <description></description>
+  </datum>
+
+  <datum id="Eigen_Table_MModal" format="%0.3g" label="M Modal">
+    <dimensions>
+      <dimension name="mass" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label"/>
+    <description></description>
+  </datum>
+
+  <datum id="Eigen_Table_DModal" format="%0.3g" label="D Modal">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="time" value="1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label"/>
+    <description></description>
+  </datum>
+
+  <datum id="Eigen_Table_KModal" format="%0.3g" label="K Modal">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label"/>
+    <description></description>
+  </datum>
+
+  <datum id="Eigen_Table_Xi" format="%0.3g" label="Xi [%]">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label"/>
+    <description></description>
+  </datum>
+
+  <datum id="Eigen_Table_DampedFreq" format="%0.3g" label="Damp. Freq. [rad/s]">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label"/>
+    <description></description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Motion RAO Node                                     -->
+  <!-- ==================================================================== -->
+
+  <datum id="MotionRAO_Units_Motion_XYZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="length" value="1 -1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="MotionRAO_Units_Motion_RXRYRZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="MotionRAO_Units_Velocity_XYZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="length" value="1 -1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="MotionRAO_Units_Velocity_RXRYRZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="MotionRAO_Units_Acceleration_XYZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="length" value="1 -1"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="MotionRAO_Units_Acceleration_RXRYRZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-2"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Velocity Fluid RAO Node                             -->
+  <!-- ==================================================================== -->
+
+  <datum id="VFluidRAO_Units_Velocity_XYZ" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="length" value="1 -1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for LTD Results Node                                    -->
+  <!-- ==================================================================== -->
+
+  <datum id="LTDR_AnalysisType" format="" label="">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Selector of Analysis type</description>
+  </datum>
+
+  <datum id="LTDR_Probability" format="%5.2x2" label="">
+    <dimensions>
+      <dimension name="extra" value="%"/>
+    </dimensions>
+    <domain type="Float" min="0" max="100.0" />
+    <ui widget="SpinBox" widgetParams="step=0.5"/>
+    <description>Results probability</description>
+  </datum>
+
+  <datum id="LTDR_BinNumber" format="" label="">
+    <domain type="Integer" min="0" max="10000" />
+    <ui widget="SpinBox" widgetParams="step=1"/>
+    <description>Number of bins</description>
+  </datum>
+  
+  <datum id="LTDR_Duration" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="extra" value="y"/>
+    </dimensions>
+    <domain type="Float" min="0" max="100.0" />
+    <ui widget="SpinBox" widgetParams="step=0.5"/>
+    <description>LTD duration (in years)</description>
+  </datum>
+
+  <datum id="LTDR_MinRange" format="%0.6g" label="">
+    <domain type="Float" min="0" max="10000.0" />
+    <ui widget="SpinBox" widgetParams="step=0.5"/>
+    <description>Min range</description>
+  </datum>
+
+  <datum id="LTDR_MaxRange" format="%0.6g" label="">
+    <domain type="Float" min="0" max="10000.0" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Max range</description>
+  </datum>
+
+  <!-- Table column editors -->
+
+  <datum id="LTD_Rao" format="" label="">
+    <domain type="String" />
+    <ui widget="Label" />
+    <description>RAO</description>
+  </datum>
+
+  <datum id="LTD_Unit" format="" label="">
+    <domain type="String" />
+    <ui widget="Label" />
+    <description>RAO units</description>
+  </datum>
+  
+  <datum id="LTD_MaxAmp" format="%0.6g" label="">
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Max amplitude</description>
+  </datum>
+
+  <datum id="LTD_Alpha" format="%0.6g" label="Alpha">
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Alpha value</description>
+  </datum>
+
+  <datum id="LTD_Beta" format="%0.6g" label="Beta">
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Beta value</description>
+  </datum>
+
+  <datum id="LTD_Theta" format="%0.6g" label="Theta">
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Theta value</description>
+  </datum>
+
+  <datum id="LTD_NbClass" format="" label="Nb Class">
+    <domain type="Integer" min="0" max="50" />
+    <ui widget="LineEdit" />
+    <description>Class number</description>
+  </datum>
+
+  <datum id="LTD_CorellationCoeff" format="%0.6g" label="Corellation Coefficient">
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Corellation coefficient value</description>
+  </datum>
+
+  <datum id="LTD_MPEV" format="%0.6g" label="MPEV">
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>MPEV value</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Fatigue Results Node                                -->
+  <!-- ==================================================================== -->
+
+  <datum id="Fatigue_AnalysisType" format="" label="">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Selector of Analysis type</description>
+  </datum>
+
+  <datum id="Fatigue_Probability" format="%5.2x2" label="">
+    <dimensions>
+      <dimension name="extra" value="%"/>
+    </dimensions>
+    <domain type="Float" min="0" max="100.0" />
+    <ui widget="SpinBox" widgetParams="step=0.5"/>
+    <description>Results probability</description>
+  </datum>
+
+  <datum id="Fatigue_Duration" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="extra" value="y"/>
+    </dimensions>
+    <domain type="Float" min="0" max="100.0" />
+    <ui widget="SpinBox" widgetParams="step=0.5"/>
+    <description>Fatigue Duration (in years)</description>
+  </datum>
+  
+  <!-- Table column editors -->
+
+  <datum id="Fatigue_RAOName" format="" label="">
+    <domain type="String" />
+    <ui widget="Label" />
+    <description>RAO</description>
+  </datum>
+  
+  <datum id="Fatigue_Damage" format="%0.6g" label="MPEV">
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Damage value</description>
+  </datum>
+
+  <datum id="Fatigue_FatigueLife" format="%0.6g" label="MPEV">
+    <dimensions>
+      <dimension name="extra" value="y"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Fatigue Life value</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Bilge Node                                          -->
+  <!-- ==================================================================== -->
+
+  <datum id="Bilge_Structure" format="" label="">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Selector of structure</description>
+  </datum>
+
+  <datum id="Bilge_WaveType" format="" label="">
+    <domain type="List" list="List-WaveType" />
+    <ui widget="ComboBox" />
+    <description>Selector of wave type</description>
+  </datum>
+
+  <datum id="Bilge_Incidence" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Incidence</description>
+  </datum>
+
+  <datum id="Bilge_Hs" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Hs</description>
+  </datum>
+
+  <datum id="Bilge_Tp" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="time" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Tp</description>
+  </datum>
+
+  <datum id="Bilge_Tz" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="time" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Tz</description>
+  </datum>
+
+  <datum id="Bilge_Gamma" format="%0.6g" label="">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Gamma</description>
+  </datum>
+
+  <datum id="Bilge_Sigma" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Sigma</description>
+  </datum>
+
+  <datum id="Bilge_Spreading" format="" label="">
+    <domain type="Integer" min="0" max="100" />
+    <ui widget="SpinBox" widgetParams="step=1"/>
+    <description>Spreading</description>
+  </datum>
+
+  <datum id="Bilge_HalfBandNumber" format="" label="">
+    <domain type="Integer" min="1" max="100" />
+    <ui widget="SpinBox" widgetParams="step=1"/>
+    <description>Half-band number</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Bilge Report                                        -->
+  <!-- ==================================================================== -->
+
+  <datum id="Bilge_Report_Lpp" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_Beam" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_Draft" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_Displacement" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="mass" value="1"/>
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_KeelLength" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_KeelHeight" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_MinRadius" format="%0.6g" label="">
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_KeelQuad" format="%0.3g" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+      <dimension name="force" value="1"/>
+      <dimension name="time" value="2"/>
+      <dimension name="angle" value="-2"/>
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_WaveType" format="%0.3g" label="">
+    <domain type="List" list="List-WaveType" />
+  </datum>
+
+  <datum id="Bilge_Report_WaveIncidence" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_WaveHs" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_WaveTp" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="time" value="1"/>
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_WaveGamma" format="%0.6g" label="">
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_WaveSigma" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float" />
+  </datum>
+
+  <datum id="Bilge_Report_IterationNb" format="" label="">
+    <domain type="Integer"/>
+  </datum>
+
+  <datum id="Bilge_Report_RMSRollMotion" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_RMSRollVelocity" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_LinearRollDamping" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_MaxRollReponse" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+      <dimension name="force" value="1"/>
+      <dimension name="time" value="1"/>
+      <dimension name="angle" value="-1"/>
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_FreqOfMaxRoll" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_RAOFreq" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <datum id="Bilge_Report_RAOAmp" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float"/>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Tension RAO Node                                    -->
+  <!-- ==================================================================== -->
+
+  <datum id="TensionRAO_Filename" format="" label="Filename">
+    <domain type="String" />
+    <ui widget="OpenFilePath"
+        widgetParams="filter=Text (*.txt);;Excel (*.xls *.xlsx);;All files (*.*)|title=Select file to import Tension RAO..." />
+    <description>Input file with Tension data</description>
+  </datum>
+
+  <datum id="TensionRAO_Units_Motion" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="force" value="1 -1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="TensionRAO_Units_Velocity" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="force" value="1 -1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="TensionRAO_Units_Acceleration" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="force" value="1 -1"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Wind Component Nodes                                -->
+  <!-- ==================================================================== -->
+
+  <datum id="Wind_AveragePeriod" format="%0.8g" label="Average period">
+    <dimensions>
+      <dimension name="time" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Average period</description>
+  </datum>
+
+  <valueList id="List-WindDefinition" name="Definition">
+    <value id="1">Constant</value>
+    <value id="2">NPD</value>
+    <value id="3">API</value>
+    <value id="4">Time History</value>
+  </valueList>
+
+  <datum id="Wind_Definition" format="" label="Definition">
+    <domain type="List" list="List-WindDefinition" />
+    <ui widget="ComboBox" />
+    <description>Selector of wind definition</description>
+  </datum>
+
+  <datum id="Wind_Speed" format="%0.6g" label="Wind speed">
+    <dimensions>
+      <dimension name="length" value="1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Wind speed</description>
+  </datum>
+
+  <datum id="Wind_Direction" format="%0.6g" label="Wind direction">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=5"/>
+    <description>Wind direction</description>
+  </datum>
+
+  <datum id="Wind_TimeOrigin" format="%0.6g" label="Time origin">
+    <dimensions>
+      <dimension name="time" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Wind time origin</description>
+  </datum>
+
+  <datum id="Wind_Seed" format="" label="Seed">
+    <domain type="Integer" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1"/>
+    <description>Seed</description>
+  </datum>
+
+  <datum id="Wind_Time" format="%0.6g" label="Time">
+    <dimensions>
+      <dimension name="time" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Wind time</description>
+  </datum>
+
+  <datum id="Wind_Rotation" format="%0.6g" label="Wind rotation">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Wind rotation</description>
+  </datum>
+
+  <datum id="Wind_Factor" format="%0.6g" label="Wind factor">
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Wind factor</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Current Component Nodes                             -->
+  <!-- ==================================================================== -->
+
+  <datum id="Current_NbProfiles" format="" label="Nb Profiles">
+    <domain type="Integer" min="0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Number of depth profiles</description>
+  </datum>
+
+  <datum id="Current_Speed" format="%0.6g" label="Current speed">
+    <dimensions>
+      <dimension name="length" value="1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Current speed</description>
+  </datum>
+
+  <datum id="Current_Direction" format="%0.6g" label="Current direction">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=5"/>
+    <description>Current direction</description>
+  </datum>
+
+  <datum id="Current_RotationDn" format="%0.6g" label="Rotation">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Rotation modificator for current direction</description>
+  </datum>
+
+  <datum id="Current_FactorDn" format="%0.6g" label="Factor">
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description>Modification factor for current speed</description>
+  </datum>
+
+  <datum id="Current_ProfileDepth" format="%0.6g" label="Depth">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Profile depth for current</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Wave Component Nodes                                -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List-WaveType" name="Wave type">
+    <value id="1">JONSWAP Tp</value>
+    <value id="2">JONSWAP Tp Gamma</value>
+    <value id="3">JONSWAP Tz Gamma</value>
+    <value id="4">Pierson-Moskowitz Tp</value>
+    <value id="5">Pierson-Moskowitz Tz</value>
+    <value id="6">Torsethaugen Hs Tp</value>
+    <value id="7">Ochi-Hubble Tp Gamma</value>
+    <value id="8">Gaussian Tp Sigma</value>
+  </valueList>
+
+  <datum id="Wave_Type" format="" label="Wave type">
+    <domain type="List" list="List-WaveType" />
+    <ui widget="ComboBox" />
+    <description>Selector of wave type</description>
+  </datum>
+
+  <datum id="Wave_Spreading" format="" label="Wave spreading">
+    <domain type="List" list="List-YesNo" />
+    <ui widget="ComboBox" />
+    <description>Selector of wave speading</description>
+  </datum>
+
+  <datum id="Wave_Hs" format="%0.6g" label="Hs">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Hs</description>
+  </datum>
+
+  <datum id="Wave_Tp" format="%0.6g" label="Tp">
+    <dimensions>
+      <dimension name="time" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Tp</description>
+  </datum>
+
+  <datum id="Wave_Tz" format="%0.6g" label="Tz">
+    <dimensions>
+      <dimension name="time" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Tz</description>
+  </datum>
+
+  <datum id="Wave_Gamma" format="%0.6g" label="Gamma">
+    <domain type="Float" min="-50" max="50" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Gamma</description>
+  </datum>
+
+  <datum id="Wave_Sigma" format="%0.6g" label="Sigma">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Sigma</description>
+  </datum>
+
+  <datum id="Wave_Direction" format="%0.6g" label="Direction">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=5.0"/>
+    <description>Direction</description>
+  </datum>
+
+  <datum id="Wave_Directions_Deg" format="%0.6g" label="Directions">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="String"/>
+    <ui widget="LineEdit"/>
+    <description>Directions in degrees</description>
+  </datum>
+
+  <datum id="Wave_SpreadingParameter" format="" label="Spreading">
+    <domain type="Integer" min="0" max="100" />
+    <ui widget="SpinBox" widgetParams="step=1"/>
+    <description>Spreading</description>
+  </datum>
+
+  <datum id="Wave_Spectrum" format="" label="Spectrum">
+    <dimensions>
+      <dimension name="length" value="2"/>
+      <dimension name="time" value="1"/>
+      <dimension name="angle" value="-1"/>
+    </dimensions>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Results Group IDs                                                    -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List-Fatigue" name="Fatigue">
+    <value id="0">No Fatigue</value>
+    <value id="1">T/N Linear</value>
+    <value id="2">T/N Bi-Linear</value>
+    <value id="3">S/N DNV-OS-E301</value>
+  </valueList>
+
+  <valueList id="List-ExtRAOQuantity" name="Quantity">
+    <value id="0">Absolute</value>
+    <value id="1">Relative</value>
+  </valueList>
+
+  <datum id="ResultsGroup_DOF" label="DOF">
+    <domain type="List" list="List-DOF" />
+    <ui widget="ComboBox" />
+    <description>Degree of Freedom</description>
+  </datum>
+
+  <datum id="ResultsGroup_Quantity" label="Quantity">
+    <domain type="List" list="List-MotionGroup" />
+    <ui widget="ComboBox" />
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_AddGravity" format="" label="Add gravity">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_Lbk" format="%0.6g" label="Lbk">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_Hbk" format="%0.6g" label="Hbk">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_INCbk" format="%0.6g" label="INCbk">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_Legend" format="" label="Legend">
+    <domain type="String" />
+    <ui widget="LineEdit" />
+    <description>Provides legend string for this record</description>
+  </datum>
+
+  <datum id="ResultsGroup_TangentialMotions" format="" label="Tangential motions">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_InPlaneRotation" format="" label="In plane rotation">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_OutOfPlaneRotation" format="" label="Out of plane rotation">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_Tension" format="" label="Tension">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_LineAzimuth" format="%0.6g" label="Line azimuth (North, anti-clockwise)">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_FairleadRadius" format="%0.6g" label="Fairlead radius">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_PretensionAngle" format="%0.6g" label="Pretension angle from horizontal">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_ElevVSChainTable" format="%0.6g" label="Elevation vs Chain Table">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_ExtRAOQuantity" label="Quantity">
+    <domain type="List" list="List-ExtRAOQuantity" />
+    <ui widget="ComboBox" />
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_Fatigue" label="Fatigue">
+    <domain type="List" list="List-Fatigue" />
+    <ui widget="ComboBox" />
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_BreakingLoad" format="%0.6g" label="Breaking load">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_SCF" format="%0.6g" label="SCF">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_K" format="%0.6g" label="K">
+    <dimensions>
+      <dimension name="extra" value="kN^3"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_M" format="%0.6g" label="m">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_Threshold" format="%0.6g" label="Threshold">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_K2" format="%0.6g" label="K2">
+    <dimensions>
+      <dimension name="extra" value="kN^3"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_M2" format="%0.6g" label="m2">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_AD" format="%0.6g" label="aD">
+    <dimensions>
+      <dimension name="extra" value="MPa^3"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="ResultsGroup_CSA" format="%0.6g" label="CSA">
+    <dimensions>
+      <dimension name="length" value="2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Cable steel section</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Wave Frequency Results Node                         -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List-WFR_InterpMethods" name="Interpolation Method">
+    <value id="0">Motion RAO</value>
+    <value id="1">Force RAO FIDD</value>
+    <value id="2">Force RAO Quadratic</value>
+  </valueList>
+
+  <valueList id="List-WFR_FreqTable" name="Frequency Table">
+    <value id="0">Automatic</value>
+    <value id="1">User-defined</value>
+  </valueList>
+
+  <valueList id="List-WFR_HeadingType" name="Heading Type">
+    <value id="0">Fixed</value>
+    <value id="1">Link</value>
+    <value id="2">From file</value>
+  </valueList>
+
+  <datum id="WFR_InterpMethod" label="Interpolation Method">
+    <domain type="List" list="List-WFR_InterpMethods" />
+    <ui widget="ComboBox" />
+    <description></description>
+  </datum>
+
+  <datum id="WFR_FreqTable" label="Frequency Table">
+    <domain type="List" list="List-WFR_FreqTable" />
+    <ui widget="ComboBox" />
+    <description></description>
+  </datum>
+
+  <datum id="WFR_HeadingType" label="Heading Type">
+    <domain type="List" list="List-WFR_HeadingType" />
+    <ui widget="ComboBox" />
+    <description></description>
+  </datum>
+
+  <datum id="WFR_ResultsGroup" format="" label="Results Group">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies Results Group</description>
+  </datum>
+
+  <datum id="WFR_Link" label="Link">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies Link</description>
+  </datum>
+
+  <datum id="WFR_HeadingFilename" format="" label="Heading filename">
+    <domain type="String" />
+    <ui widget="OpenFilePath" widgetParams="filter=All files (*.*)|title=Select heading file..." />
+    <description>Heading file selection</description>
+  </datum>
+
+  <datum id="WFR_Step" format="" label="Step">
+    <domain type="Integer" />
+    <ui widget="LineEdit" />
+    <description>Number of step</description>
+  </datum>
+
+  <datum id="WFR_FixedHeading" format="%4.1x" label="Fixed Heading">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="Float" min="-180.0" max="180.0" />
+    <ui widget="SpinBox" widgetParams="step=1" />
+    <description>Fixed Heading Value</description>
+  </datum>
+
+  <datum id="WFR_Heading" format="%5.3x3" label="Heading">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Heading of the vessel</description>
+  </datum>
+
+  <datum id="WFR_COG_RMS" format="%0.3x" label="COG RMS">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="WFR_COG_M_0" format="%0.3x" label="COG m0">
+    <dimensions>
+      <dimension name="length" value="2"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit"/>
+    <description></description>
+  </datum>
+
+  <datum id="WFR_COG_M_2" format="%0.3x" label="COG m2">
+    <dimensions>
+      <dimension name="length" value="2"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit"/>
+    <description></description>
+  </datum>
+
+  <datum id="WFR_COG_Tz" format="%0.3x" label="COG Tz">
+    <dimensions>
+      <dimension name="time" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="LineEdit"/>
+    <description></description>
+  </datum>
+
+  <datum id="WFR_Default" format="%0.3x" label="">
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Roses Calculation Node                              -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List-CodeCheck" name="Code Check">
+    <value id="0">API</value>
+    <value id="1">DnV</value>
+  </valueList>
+
+  <valueList id="List-EnvelopeType" name="">
+    <value id="0">Envelopes with lines</value>
+    <value id="1">Envelopes with points</value>
+  </valueList>
+
+  <valueList id="List-OptimizationType" name="Optimization Type">
+    <value id="0">BFGS Search</value>
+    <value id="1">Simulated Annealing</value>
+  </valueList>
+
+  <datum id="Roses_Calculation_Load" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_Moment" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="extra" value="kN.m"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_Code_Check" label="Code Ckeck">
+    <domain type="List" list="List-CodeCheck" />
+    <ui widget="ComboBox" />
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_MBL" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_DAF" format="%5.3x3" label="">
+    <domain type="Float" min="0.1" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_Excursion" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_Tension" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="Label" />
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_IntactDamaged" format="%0.6g" label="">
+    <domain type="Float" min="0" max="100" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_NFPoints_Azimuth" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_NFPoints_Radius" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_Envelope_Type" label="">
+    <domain type="List" list="List-EnvelopeType" />
+    <ui widget="ComboBox" />
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_Optimization_Type" label="">
+    <domain type="List" list="List-OptimizationType" />
+    <ui widget="ComboBox" />
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_SAModification_Type" label="">
+    <domain type="List" list="List-SAModification" />
+    <ui widget="ComboBox" />
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Calculation_SAParamN" format="%5.3x3" label="">
+    <domain type="Float" min="0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Exponential part of convergence speed coefficient M.e^(-N)</description>
+  </datum>
+
+  <datum id="Roses_Calculation_SAParamM" format="%5.3x3" label="">
+    <domain type="Float" min="1e-3" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1.0"/>
+    <description>Linear part of convergence speed coefficient M.e^(-N)</description>
+  </datum>
+
+  <!-- Dictionary Items for Roses Report-->
+  <datum id="Roses_Report_M" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="extra" value="m"/>
+    </dimensions>
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Report_Deg" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Report_kN" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="extra" value="kN"/>
+    </dimensions>
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Report_Perc" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="extra" value="%"/>
+    </dimensions>
+    <description></description>
+  </datum>
+
+  <datum id="Roses_Report_Common" format="%5.3x3" label="">
+    <description></description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for Bilge Keel Results Node                         -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List-BKR_HeadingType" name="Heading Type">
+    <value id="0">Fixed</value>
+    <value id="1">Link</value>
+    <value id="2">From file</value>
+  </valueList>
+
+  <datum id="BKR_HeadingType" label="Heading Type">
+    <domain type="List" list="List-BKR_HeadingType" />
+    <ui widget="ComboBox" />
+    <description></description>
+  </datum>
+
+  <datum id="BKR_ResultsGroup" format="" label="Results Group">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies Results Group</description>
+  </datum>
+
+  <datum id="BKR_Link" label="Link">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies Link</description>
+  </datum>
+
+  <datum id="BKR_HeadingFilename" format="" label="Heading File Name">
+    <domain type="String" />
+    <ui widget="OpenFilePath" widgetParams="filter=All files (*.*)|title=Select heading file..." />
+    <description>Heading file selection</description>
+  </datum>
+
+  <datum id="BKR_KCvsCDFilename" format="" label="KCvsCD File Name">
+    <domain type="String" />
+    <ui widget="OpenFilePath" widgetParams="filter=All files (*.*)|title=Select heading file..." />
+    <description>KCvsCD file selection</description>
+  </datum>
+
+  <datum id="BKR_FixedHeading" format="%5.3x3" label="Fixed Heading">
+    <dimensions>
+      <dimension name="extra" value="deg"/>
+    </dimensions>
+    <domain type="Float" min="-180.0" max="180.0" />
+    <ui widget="SpinBox" widgetParams="step=1" />
+    <description>Fixed Heading Value</description>
+  </datum>
+  
+  <datum id="BKR_POIReference" format="" label="POI Reference">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies POI</description>
+  </datum>
+
+  <datum id="BKR_ShowStressSignal" format="" label="Show Stress Signal">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description>Indicates is stress signal should be shown</description>
+  </datum>
+
+  <valueList id="List-StressSignalMode" name="Display mode">
+    <value id="0">Only signal</value>
+    <value id="1">Only envelope</value>
+    <value id="2">Signal and envelope</value>
+  </valueList>
+  
+  <datum id="BKR_ShowSignalMode" format="" label="Stress Signal showing mode">
+    <domain type="List" list="List-StressSignalMode" />
+    <ui widget="ComboBox" />
+    <description>Indicates mode of stress signal showing</description>
+  </datum>
+
+  <datum id="BKR_StressSignalPath" format="" label="Stress signal directory">
+    <domain type="String" />
+    <ui widget="DirPath" widgetParams="title=Select stress signal directory...|location=project" />
+    <description>Stress signal directory selection</description>
+  </datum>
+
+  <datum id="BKR_StressForce" format="%0.6g" label="Stress">
+    <domain type="Float" min="0.0" max="1e99" />
+    <dimensions>
+      <dimension name="force" value="1"/>
+    </dimensions>
+    <ui widget="LineEdit" />
+    <description>Max stress values</description>
+  </datum>
+
+  <datum id="BKR_Signal_XAxis" format="" label="">
+    <dimensions>
+      <dimension name="time" value="1"/>
+    </dimensions>
+  </datum>
+  
+  <datum id="BKR_Signal_YAxis" format="" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="BKR_Histogram_XAxis" format="" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="BKR_TimeDuration" format="%5.3x3" label="Time duration">
+    <dimensions>
+      <dimension name="extra" value="s"/>
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1" />
+    <description>Time duration</description>
+  </datum>
+
+  <datum id="BKR_TimeStep" format="%5.3x3" label="Time step">
+    <dimensions>
+      <dimension name="extra" value="s"/>
+    </dimensions>
+    <domain type="Float" min="0.01" max="1e99" />
+    <ui widget="SpinBox" widgetParams="step=1" />
+    <description>Time step</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Vessel 2D dialog IDs                                                 -->
+  <!-- ==================================================================== -->
+
+  <datum id="Vessel2D_Lpp" format="%0.3g" label="Lpp">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="Label" />
+    <description>Lpp</description>
+  </datum>
+
+  <datum id="Vessel2D_Beam" format="%0.3g" label="Beam">
+    <dimensions>
+      <dimension name="length" value="1" />
+    </dimensions>
+    <domain type="Float" min="0.0" max="1e99" />
+    <ui widget="Label" />
+    <description>Beam</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Common semantic IDs                                                  -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List-DOF" name="DOF">
+    <value id="0">Surge</value>
+    <value id="1">Sway</value>
+    <value id="2">Heave</value>
+    <value id="3">Roll</value>
+    <value id="4">Pitch</value>
+    <value id="5">Yaw</value>
+  </valueList>
+
+  <valueList id="List-MotionGroup" name="Motion Group">
+    <value id="0">Motion</value>
+    <value id="1">Velocity</value>
+    <value id="2">Acceleration</value>
+    <value id="3">Relative Wave Elevation</value>
+  </valueList>
+
+  <valueList id="List-RAO_DOF" name="Quantity">
+    <value id="1">X</value>
+    <value id="2">Y</value>
+    <value id="3">Z</value>
+    <value id="4">RX</value>
+    <value id="5">RY</value>
+    <value id="6">RZ</value>
+    <value id="7">VX</value>
+    <value id="8">VY</value>
+    <value id="9">VZ</value>
+    <value id="10">VRX</value>
+    <value id="11">VRY</value>
+    <value id="12">VRZ</value>
+    <value id="13">AX</value>
+    <value id="14">AY</value>
+    <value id="15">AZ</value>
+    <value id="16">ARX</value>
+    <value id="17">ARY</value>
+    <value id="18">ARZ</value>
+  </valueList>
+
+  <datum id="Frequency_Units" format="" label="">
+    <dimensions>
+      <dimension name="extra" value="rad.s^-1"/>
+    </dimensions>
+  </datum>
+
+  <datum id="Units_Phase" format="%0.6g" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="RAO_Structure" format="" label="Structure">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies Structure for which the RAO is plotted</description>
+  </datum>
+
+  <datum id="RAO_Direction" format="" label="Direction">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies RAO direction to be plotted</description>
+  </datum>
+
+  <datum id="RAO_DOF" format="" label="DOF">
+    <domain type="List" list="List-RAO_DOF" />
+    <ui widget="ComboBox" />
+    <description>Specifies DOF to be plotted</description>
+  </datum>
+
+  <datum id="RAO_Frequency" format="%0.6g" label="Freq.">
+    <dimensions>
+      <dimension name="extra" value="rad/s"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+  </datum>
+
+  <datum id="RAO_Amplitude" format="%0.6g" label="Amplitude">
+    <domain type="Float" min="-1e99" max="1e99" />
+  </datum>
+
+  <datum id="RAO_Phase" format="%0.6g" label="Phase">
+    <domain type="Float" min="-1e99" max="1e99" />
+  </datum>
+
+  <datum id="Vessels_Configuration" format="" label="Vessels Configuration">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies Configuration of Vessels</description>
+  </datum>
+
+  <datum id="Moorings_Configuration" label="Moorings Configuration">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies Configuration of Mooring Lines</description>
+  </datum>
+
+  <datum id="Environment_Configuration" label="Environment">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies Environment</description>
+  </datum>
+
+  <datum id="Risers_Configuration" label="Risers Configuration">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies Configuration Risers of Riser Lines</description>
+  </datum>
+
+  <datum id="LA_Configuration" label="LA Configuration">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies LA Configuration of RAO results</description>
+  </datum>
+
+  <datum id="ResultsGroup_Selector" label="Results Group">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies Results Group</description>
+  </datum>
+
+  <datum id="Reference_Point" format="" label="Reference Point">
+    <domain type="List" list="" />
+    <ui widget="ComboBox" />
+    <description>Specifies Reference Points</description>
+  </datum>
+
+  <datum id="CheckBox" format="" label="">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description></description>
+  </datum>
+
+  <datum id="EnvDb_Prob_Value" format="%0.2f" label="Probability">
+    <domain type="Float" min="-1e14" max="1e14" />
+    <ui widget="SpinBox" widgetParams="step=0.1"/>
+    <description></description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs for different response types                            -->
+  <!-- ==================================================================== -->
+
+  <datum id="RAO_Motion_Translation" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1 -1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="RAO_Motion_Rotation" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="RAO_Velocity_Translation" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1 -1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="RAO_Velocity_Rotation" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-1"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="RAO_Acceleration_Translation" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1 -1"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="RAO_Acceleration_Rotation" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-2"/>
+      <dimension name="length" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="RAO_Force_Translation" format="%5.3x3" label="">
+  <dimensions>
+    <dimension name="force" value="1"/>
+    <dimension name="length" value="-1"/>
+  </dimensions>
+  <domain type="Float" min="-1e99" max="1e99" />
+  <ui widget="LineEdit" />
+  <description></description>
+  </datum>
+
+  <datum id="RAO_Force_Rotation" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="1 -1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="QTF_Translation" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="QTF_Rotation" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+      <dimension name="length" value="1 -2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Motion_Translation_RMS" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Motion_Translation_M0" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Motion_Translation_M2" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="2"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Motion_Rotation_RMS" format="%5.3x3" label="Rotation RMS">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description>Rotation RMS</description>
+  </datum>
+
+  <datum id="Motion_Rotation_M0" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="angle" value="2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Motion_Rotation_M2" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="angle" value="2"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Velocity_Translation_RMS" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Velocity_Translation_M0" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="2"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Velocity_Translation_M2" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="2"/>
+      <dimension name="time" value="-4"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Velocity_Rotation_RMS" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Velocity_Rotation_M0" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="angle" value="2"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Velocity_Rotation_M2" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="angle" value="2"/>
+      <dimension name="time" value="-4"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Acceleration_Translation_RMS" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Acceleration_Translation_M0" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="2"/>
+      <dimension name="time" value="-4"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Acceleration_Translation_M2" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="2"/>
+      <dimension name="time" value="-6"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Acceleration_Rotation_RMS" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="angle" value="1"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Acceleration_Rotation_M0" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="angle" value="2"/>
+      <dimension name="time" value="-4"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Acceleration_Rotation_M2" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="angle" value="2"/>
+      <dimension name="time" value="-6"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Relative_Wave_Elevation_RMS" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Relative_Wave_Elevation_M0" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Relative_Wave_Elevation_M2" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="2"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Cable_Motion_RMS" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Cable_Motion_M0" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Cable_Motion_M2" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="length" value="2"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Cable_Tension_RMS" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Cable_Tension_M0" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="force" value="2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Cable_Tension_M2" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="force" value="2"/>
+      <dimension name="time" value="-2"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="Period_Tz" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="time" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <datum id="RAO_Bilge_Keel" format="%5.3x3" label="">
+    <dimensions>
+      <dimension name="force" value="1"/>
+    </dimensions>
+    <domain type="Float" min="-1e99" max="1e99" />
+    <ui widget="LineEdit" />
+    <description></description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- DEFINITIONS OF DIMENSIONS AND ASSOCIATED UNITS                       -->
+  <!-- ==================================================================== -->
+
+  <dimension name="length">
+    <unit name="m" si="yes"/>
+    <unit name="mm" si="no" k="1e-3" b="0"/>
+    <unit name="cm" si="no" k="1e-2" b="0"/>
+    <unit name="km" si="no" k="1e3" b="0"/>
+    <unit name="ft" si="no" k="0.3048" b="0"/>
+    <unit name="in" si="no" k="0.0254" b="0"/>
+  </dimension>
+  <dimension name="mass">
+    <unit name="g" si="no" k="1e-3" b="0"/>
+    <unit name="kg" si="yes" />
+    <unit name="Tonne" si="no" k="1e3" b="0"/>
+    <unit name="Ton" si="no" k="907.18474" b="0"/>
+    <unit name="Pound" si="no" k="0.45359237" b="0"/>
+    <unit name="Kip" si="no" k="453.59237" b="0"/>
+  </dimension>
+  <dimension name="force">
+    <unit name="N" si="yes"/>
+    <unit name="kN" si="no" k="1e3" b="0"/>
+  </dimension>
+  <dimension name="time">
+    <unit name="s" si="yes"/>
+    <unit name="Minute" si="no" k="60" b="0"/>
+    <unit name="Hour" si="no" k="3.6e3" b="0"/>
+    <unit name="Day" si="no" k="86.4e3" b="0"/>
+    <unit name="Month" si="no" k="2.6208e6" b="0"/>
+    <unit name="Year" si="no" k="31.4496e6" b="0"/>
+  </dimension>
+  <dimension name="angle">
+    <unit name="deg" si="no" k="0.01745329251994" b="0"/>
+    <unit name="rad" si="yes"/>
+  </dimension>
+  <dimension name="temperature">
+    <unit name="°K" si="yes"/>
+    <unit name="°C" si="no" k="1" b="-273.15"/>
+    <unit name="°F" si="no" k="0.5555555555556" b="-255.3722222222"/>
+  </dimension>
+
+</datadictionary>

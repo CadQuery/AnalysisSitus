@@ -68,6 +68,28 @@ public:
 
 public:
 
+  //! Actualizes the passed Node in the Presentation Manager where this Node
+  //! is presented.
+  //! \param[in] N Data Node to actualize.
+  void ActualizeNode(const Handle(ActAPI_INode)& N)
+  {
+    // Get all presentation managers
+    asiVisu_PrsManager* partPM   = this->ViewerPart   ? this->ViewerPart->PrsMgr()   : NULL;
+    asiVisu_PrsManager* hostPM   = this->ViewerDomain ? this->ViewerDomain->PrsMgr() : NULL;
+    asiVisu_PrsManager* domainPM = this->ViewerHost   ? this->ViewerHost->PrsMgr()   : NULL;
+
+    if ( partPM && partPM->IsPresented(N) )
+      partPM->Actualize(N);
+
+    if ( hostPM && hostPM->IsPresented(N) )
+      hostPM->Actualize(N);
+
+    if ( domainPM && domainPM->IsPresented(N) )
+      domainPM->Actualize(N);
+  }
+
+public:
+
   //! Cleans up all the passed viewers. Null pointers are allowed in case if
   //! some viewer should not be touched or does not exist.
   //! \param[in] pViewerPart   part viewer.

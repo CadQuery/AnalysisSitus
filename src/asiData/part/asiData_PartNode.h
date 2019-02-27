@@ -81,11 +81,15 @@ public:
     PID_BVH,          //!< BVH structure.
     PID_Naming,       //!< Topology naming service.
   //------------------//
-  // Presentation     //
+  // Facets           //
   //------------------//
     PID_GroupTess,    //!< Tessellation group.
     PID_TessLinDefl,  //!< Linear deflection of visualization tessellation.
     PID_TessAngDefl,  //!< Angular deflection of visualization tessellation.
+  //------------------//
+  // Presentation     //
+  //------------------//
+    PID_GroupPrs,     //!< Presentation group.
     PID_DisplayMode,  //!< Display mode.
     PID_HasColor,     //!< Indicates whether the Color Parameter is active.
     PID_Color,        //!< Color.

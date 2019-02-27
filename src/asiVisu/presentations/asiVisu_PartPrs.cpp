@@ -170,6 +170,35 @@ void asiVisu_PartPrs::VerticesOff() const
 
 //-----------------------------------------------------------------------------
 
+//! Sets custom color.
+//! \param[in] color color to set.
+void asiVisu_PartPrs::Colorize(const QColor& color) const
+{
+  if ( !color.isValid() )
+    return;
+
+  Handle(asiVisu_PartPipeline)
+    pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+
+  //pl->Mapper()->ScalarVisibilityOff();
+  pl->Actor()->GetProperty()->SetColor( color.redF(),
+                                        color.greenF(),
+                                        color.blueF() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Unsets custom color.
+void asiVisu_PartPrs::UnColorize() const
+{
+  Handle(asiVisu_PartPipeline)
+    pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+
+  pl->Mapper()->ScalarVisibilityOn();
+}
+
+//-----------------------------------------------------------------------------
+
 void asiVisu_PartPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
 {
   asiVisu_NotUsed(picker);
@@ -224,7 +253,25 @@ void asiVisu_PartPrs::beforeUpdatePipelines() const
 //! kernel update routine completes.
 void asiVisu_PartPrs::afterUpdatePipelines() const
 {
-  // Do nothing...
+  Handle(asiData_PartNode)
+    N = Handle(asiData_PartNode)::DownCast( this->GetNode() );
+
+  /* Actualize color */
+
+  if ( N->HasColor() )
+  {
+    QColor color = asiVisu_Utils::IntToColor( N->GetColor() );
+    this->Colorize(color);
+  }
+  else
+    this->UnColorize();
+
+  /* Actualize visualization of vertices */
+
+  if ( N->HasVertices() )
+    this->VerticesOn();
+  else
+    this->VerticesOff();
 }
 
 //-----------------------------------------------------------------------------

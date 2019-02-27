@@ -160,14 +160,14 @@ asiUI_Datum* asiUI_WidgetFactory::editor(const QString& theDataDicID,
   if ( dicItem.IsNull() )
   {
     if ( m_pCommonFacilities )
-      m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Invalid dictionary ID %1."
+      m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Invalid dictionary ID '%1'."
                                                                    << QStr2AsciiStr(theDataDicID) );
 
     return NULL;
   }
 
   // get value type and widget type
-  asiAlgo_DictionaryItem::DataType aDataType     = dicItem->GetDataType();
+  asiAlgo_DictionaryItem::DataType   aDataType   = dicItem->GetDataType();
   asiAlgo_DictionaryItem::WidgetType aWidgetType = dicItem->GetWidgetType();
 
   bool isDelegateEditor = ( theParent != 0 && (
@@ -221,7 +221,7 @@ asiUI_Datum* asiUI_WidgetFactory::editor(const QString& theDataDicID,
 
       // notify that the inappropriate editor type specified.
       if ( m_pCommonFacilities )
-        m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Inappropriate editor %1 : %2."
+        m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Inappropriate editor '%1' : '%2'."
                                                                      << QStr2AsciiStr(theDataDicID)
                                                                      << "LineEdit" );
 
@@ -247,7 +247,7 @@ asiUI_Datum* asiUI_WidgetFactory::editor(const QString& theDataDicID,
 
       // notify that the inappropriate editor type specified.
       if ( m_pCommonFacilities )
-        m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Inappropriate editor %1 : %2."
+        m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Inappropriate editor '%1' : '%2'."
                                                                      << QStr2AsciiStr(theDataDicID)
                                                                      << "LineEdit" );
 
@@ -296,7 +296,7 @@ asiUI_Datum* asiUI_WidgetFactory::editor(const QString& theDataDicID,
 
       // notify that the inappropriate editor type specified.
       if ( m_pCommonFacilities )
-        m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Inappropriate editor %1 : %2."
+        m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Inappropriate editor '%1' : '%2'."
                                                                      << QStr2AsciiStr(theDataDicID)
                                                                      << "LineEdit" );
 
@@ -311,7 +311,7 @@ asiUI_Datum* asiUI_WidgetFactory::editor(const QString& theDataDicID,
       if ( aWidgetType != asiAlgo_DictionaryItem::WT_ComboBox )
       {
         if ( m_pCommonFacilities )
-          m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Inappropriate editor %1 : %2."
+          m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Inappropriate editor '%1' : '%2'."
                                                                        << QStr2AsciiStr(theDataDicID)
                                                                        << "ComboBox" );
       }
@@ -324,7 +324,7 @@ asiUI_Datum* asiUI_WidgetFactory::editor(const QString& theDataDicID,
       if ( aWidgetType != asiAlgo_DictionaryItem::WT_CheckBox )
       {
         if ( m_pCommonFacilities )
-          m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Inappropriate editor %1 : %2."
+          m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Inappropriate editor '%1' : '%2'."
                                                                        << QStr2AsciiStr(theDataDicID)
                                                                        << "CheckBox" );
       }
@@ -335,7 +335,7 @@ asiUI_Datum* asiUI_WidgetFactory::editor(const QString& theDataDicID,
 
   // notify that the unknown data type specified
   if ( m_pCommonFacilities )
-    m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Unknown data type for editor %1 : %2."
+    m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Unknown data type for editor '%1' : '%2'."
                                                                  << QStr2AsciiStr(theDataDicID)
                                                                  << "LineEdit" );
 

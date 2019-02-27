@@ -68,6 +68,7 @@
 #include <asiVisu_TriangulationPrs.h>
 
 // asiAlgo includes
+#include <asiAlgo_Dictionary.h>
 #include <asiAlgo_FileFormat.h>
 
 // Qt includes
@@ -141,6 +142,16 @@ int main(int argc, char** argv)
   {
     qputenv("CSF_PluginDefaults", resDir);
     qputenv("CSF_ResourcesDefaults", resDir);
+
+    // Load data dictionary.
+    QByteArray dictFilename = resDir + "/asiExeDictionary.xml";
+    QString dictFilenameStr = QString::fromLatin1( dictFilename.data() );
+    //
+    if ( !asiAlgo_Dictionary::Load( QStr2AsciiStr(dictFilenameStr) ) )
+    {
+      std::cout << "Cannot load data dictionary from "
+                << QStr2AsciiStr(dictFilenameStr).ToCString() << std::endl;
+    }
   }
 
   //---------------------------------------------------------------------------

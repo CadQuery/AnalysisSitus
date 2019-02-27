@@ -88,6 +88,8 @@ public:
 
   asiVisu_EXPORT void VerticesOn() const;
   asiVisu_EXPORT void VerticesOff() const;
+  asiVisu_EXPORT void Colorize(const QColor& color) const;
+  asiVisu_EXPORT void UnColorize() const;
 
 public:
 

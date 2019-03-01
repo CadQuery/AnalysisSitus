@@ -57,7 +57,7 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
                                        ActAPI_ProgressEntry           notifier,
                                        ActAPI_PlotterEntry            plotter,
                                        QWidget*                       parent)
-: QWidget      (parent),
+: QScrollArea  (parent),
   m_model      (model),
   m_partViewer (pPartViewer),
   m_notifier   (notifier),
@@ -110,7 +110,12 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
   //
-  this->setLayout(m_pMainLayout);
+  QWidget* pMainWidget = new QWidget(this);
+  pMainWidget->setLayout(m_pMainLayout);
+  //
+  this->setWidgetResizable(true);
+  this->setFrameStyle(QFrame::NoFrame);
+  this->setWidget(pMainWidget);
 
   // Connect signals to slots
   connect( m_widgets.pLoadStl,        SIGNAL( clicked() ), SLOT( onLoadStl        () ) );

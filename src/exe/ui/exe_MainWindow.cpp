@@ -350,7 +350,7 @@ void exe_MainWindow::createDockWindows()
   this->setStatusBar( statusBar->GetStatusBar() );
   //
   cf->StatusBar = statusBar;
-  cf->StatusBar->SetStatusText("Load part from STEP or BREP to start analysis");
+  cf->StatusBar->SetStatusText("Debug your B-Rep...");
 
   // Initialize and connect progress listener.
   cf->Logger           = new asiUI_Logger(Widgets.wLogger);

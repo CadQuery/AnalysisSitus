@@ -42,6 +42,7 @@
 // Qt includes
 #pragma warning(push, 0)
 #include <QPushButton>
+#include <QScrollArea>
 #include <QVBoxLayout>
 #pragma warning(pop)
 
@@ -50,7 +51,7 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 
 //! Widget for feature controls.
-class asiUI_ControlsFeature : public QWidget
+class asiUI_ControlsFeature : public QScrollArea
 {
   Q_OBJECT
 

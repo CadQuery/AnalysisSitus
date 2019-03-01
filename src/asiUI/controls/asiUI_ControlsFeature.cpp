@@ -101,7 +101,7 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
                                              ActAPI_ProgressEntry           notifier,
                                              ActAPI_PlotterEntry            plotter,
                                              QWidget*                       parent)
-: QWidget      (parent),
+: QScrollArea  (parent),
   m_model      (model),
   m_partViewer (pPartViewer),
   m_notifier   (notifier),
@@ -183,7 +183,12 @@ asiUI_ControlsFeature::asiUI_ControlsFeature(const Handle(asiEngine_Model)& mode
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
   //
-  this->setLayout(m_pMainLayout);
+  QWidget* pMainWidget = new QWidget(this);
+  pMainWidget->setLayout(m_pMainLayout);
+  //
+  this->setWidgetResizable(true);
+  this->setFrameStyle(QFrame::NoFrame);
+  this->setWidget(pMainWidget);
 
   // Connect signals to slots
   connect( m_widgets.pShowTOPOGraph,       SIGNAL( clicked() ), SLOT( onShowTOPOGraph       () ) );

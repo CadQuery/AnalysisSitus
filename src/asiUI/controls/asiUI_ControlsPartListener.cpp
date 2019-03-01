@@ -48,10 +48,10 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting all necessary facilities.
-//! \param wControls [in] controls.
-//! \param model     [in] Data Model instance.
-//! \param cf        [in] common facilities.
-//! \param notifier  [in] progress notifier.
+//! \param[in] wControls controls.
+//! \param[in] model     Data Model instance.
+//! \param[in] cf        common facilities.
+//! \param[in] notifier  progress notifier.
 asiUI_ControlsPartListener::asiUI_ControlsPartListener(asiUI_ControlsPart*                   wControls,
                                                        const Handle(asiEngine_Model)&        model,
                                                        const Handle(asiUI_CommonFacilities)& cf,
@@ -82,12 +82,6 @@ void asiUI_ControlsPartListener::Connect()
   //
   connect( m_wControls, SIGNAL ( partModified() ),
            this,        SLOT   ( onPartModified() ) );
-  //
-  connect( m_wControls, SIGNAL ( verticesOn() ),
-           this,        SLOT   ( onVerticesOn() ) );
-  //
-  connect( m_wControls, SIGNAL ( verticesOff() ),
-           this,        SLOT   ( onVerticesOff() ) );
   //
   connect( m_wControls, SIGNAL ( selectionFacesOn() ),
            this,        SLOT   ( onSelectionFacesOn() ) );
@@ -128,36 +122,6 @@ void asiUI_ControlsPartListener::onPartModified()
 
   // Re-initialize pickers
   this->reinitializePickers();
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on enabling visualization of vertices.
-void asiUI_ControlsPartListener::onVerticesOn()
-{
-  Handle(asiVisu_PartPrs)
-    prs = Handle(asiVisu_PartPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
-  //
-  prs->VerticesOn();
-
-  // Re-initialize pickers as the data set has changed
-  m_cf->ViewerPart->PrsMgr()->InitializePickers( Handle(ActAPI_INode)() );
-  m_cf->ViewerPart->Repaint();
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on disabling visualization of vertices.
-void asiUI_ControlsPartListener::onVerticesOff()
-{
-  Handle(asiVisu_PartPrs)
-    prs = Handle(asiVisu_PartPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
-  //
-  prs->VerticesOff();
-
-  // Re-initialize pickers as the data set has changed
-  m_cf->ViewerPart->PrsMgr()->InitializePickers( Handle(ActAPI_INode)() );
-  m_cf->ViewerPart->Repaint();
 }
 
 //-----------------------------------------------------------------------------

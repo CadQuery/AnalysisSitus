@@ -47,16 +47,25 @@
 // Qt includes
 #pragma warning(push, 0)
 #include <QPushButton>
+#include <QScrollArea>
 #include <QVBoxLayout>
 #pragma warning(pop)
 
-//! Widget for main controls in Part viewer.
-class asiUI_ControlsPart : public QWidget
+//-----------------------------------------------------------------------------
+
+//! Controls in 'Part' tab.
+class asiUI_ControlsPart : public QScrollArea
 {
   Q_OBJECT
 
 public:
 
+  //! Constructor.
+  //! \param[in] model       Data Model instance.
+  //! \param[in] pPartViewer Part viewer.
+  //! \param[in] notifier    progress notifier.
+  //! \param[in] plotter     imperative plotter.
+  //! \param[in] parent      parent widget.
   asiUI_EXPORT
     asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
                        asiUI_ViewerPart*              pPartViewer,
@@ -64,26 +73,22 @@ public:
                        ActAPI_PlotterEntry            plotter,
                        QWidget*                       parent = NULL);
 
+  //! Dtor.
   asiUI_EXPORT virtual
     ~asiUI_ControlsPart();
 
 public slots:
 
-  void onLoadBRep       ();
-  void onAddBRep        ();
-  void onLoadSTEP       ();
-  void onSaveSTEP       ();
-  void onSavePly        ();
-  void onSaveBRep       ();
-  //
-  void onCheckShape     ();
-  void onTolerance      ();
-  //
-  void onSewing         ();
-  void onMaximizeFaces  ();
-  void onFillGap        ();
-  //
-  void onShowVertices   ();
+  /* Load */
+  void onLoadFromSTEP       ();
+  void onLoadFromBRep       ();
+  void onLoadFromBRepAppend ();
+
+  /* Save */
+  void onSaveToSTEP();
+  void onSaveToBRep();
+
+  /* Visualization */
   void onSelectFaces    ();
   void onSelectEdges    ();
   void onSelectVertices ();
@@ -94,8 +99,6 @@ signals:
   void partAdded           (const QString&);
   void partSaved           ();
   void partModified        ();
-  void verticesOn          ();
-  void verticesOff         ();
   void selectionFacesOn    ();
   void selectionEdgesOn    ();
   void selectionVerticesOn ();
@@ -107,66 +110,31 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    QPushButton* pLoadBRep;       //!< Button for BREP loading.
-    QPushButton* pAddBRep;        //!< Button for adding BREP.
-    QPushButton* pLoadSTEP;       //!< Button for STEP loading.
-    QPushButton* pSaveSTEP;       //!< Save shape to STEP.
-    QPushButton* pSavePly;        //!< Save triangulation to ply.
-    QPushButton* pSaveBRep;       //!< Save shape to BREP.
-    //
-    QPushButton* pCheckShape;     //!< Runs shape validity checker.
-    QPushButton* pTolerance;      //!< Checks tolerance.
-    //
-    QPushButton* pSewing;         //!< Performs sewing.
-    QPushButton* pMaximizeFaces;  //!< Performs face maximization.
-    QPushButton* pFillGap;        //!< Performs gap filling.
-    //
-    QPushButton* pShowVertices;   //!< Shows vertices of the model.
-    QPushButton* pSelectFaces;    //!< Enables selection by faces.
-    QPushButton* pSelectEdges;    //!< Enables selection by edges.
-    QPushButton* pSelectVertices; //!< Enables selection by vertices.
-
-    t_widgets() : pLoadBRep       (NULL),
-                  pAddBRep        (NULL),
-                  pLoadSTEP       (NULL),
-                  pSaveSTEP       (NULL),
-                  pSavePly        (NULL),
-                  pSaveBRep       (NULL),
-                  //
-                  pCheckShape     (NULL),
-                  pTolerance      (NULL),
-                  //
-                  pSewing         (NULL),
-                  pMaximizeFaces  (NULL),
-                  pFillGap        (NULL),
-                  //
-                  pShowVertices   (NULL),
-                  pSelectFaces    (NULL),
-                  pSelectEdges    (NULL),
-                  pSelectVertices (NULL)
-    {}
-
-    void Release()
+    struct t_load
     {
-      delete pLoadBRep;       pLoadBRep      = NULL;
-      delete pAddBRep;        pAddBRep       = NULL;
-      delete pLoadSTEP;       pLoadSTEP      = NULL;
-      delete pSaveSTEP;       pSaveSTEP      = NULL;
-      delete pSavePly;        pSavePly       = NULL;
-      delete pSaveBRep;       pSaveBRep      = NULL;
-      //
-      delete pCheckShape;     pCheckShape    = NULL;
-      delete pTolerance;      pTolerance     = NULL;
-      //
-      delete pSewing;         pSewing        = NULL;
-      delete pMaximizeFaces;  pMaximizeFaces = NULL;
-      delete pFillGap;        pFillGap       = NULL;
-      //
-      delete pShowVertices;   pShowVertices  = NULL;
-      delete pSelectFaces;    pSelectFaces   = NULL;
-      delete pSelectEdges;    pSelectEdges   = NULL;
-      delete pSelectVertices; pSelectEdges   = NULL;
-    }
+      t_load() : pSTEP(NULL), pBRep(NULL), pBRepAppend(NULL) {} //!< Ctor.
+
+      QPushButton* pSTEP;       //!< Button for STEP loading.
+      QPushButton* pBRep;       //!< Button for BREP loading.
+      QPushButton* pBRepAppend; //!< Button for adding BREP.
+    } Load;
+
+    struct t_save
+    {
+      t_save() : pSTEP(NULL), pBRep(NULL) {} //!< Ctor.
+
+      QPushButton* pSTEP; //!< Save shape to STEP.
+      QPushButton* pBRep; //!< Save shape to BREP.
+    } Save;
+
+    struct t_select
+    {
+      t_select() : pFaces(NULL), pEdges(NULL), pVertices(NULL) {} //!< Ctor.
+
+      QPushButton* pFaces;    //!< Enables selection by faces.
+      QPushButton* pEdges;    //!< Enables selection by edges.
+      QPushButton* pVertices; //!< Enables selection by vertices.
+    } Select;
   };
 
   t_widgets               m_widgets;      //!< Involved widgets.

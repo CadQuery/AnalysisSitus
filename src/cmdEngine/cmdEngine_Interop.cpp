@@ -45,12 +45,6 @@
 
 void onModelLoaded(const TopoDS_Shape& loadedShape)
 {
-  // Clear viewers.
-  cmdEngine::ClearViewers();
-
-  // Clear data.
-  cmdEngine::model->Clear();
-
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
@@ -90,6 +84,58 @@ int ENGINE_LoadStep(const Handle(asiTcl_Interp)& interp,
   }
 
   onModelLoaded(shape);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_SaveStep(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 2 && argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  TCollection_AsciiString filename = ( argc == 2 ? argv[1] : argv[2] );
+
+  TopoDS_Shape shape;
+  if ( argc == 2 )
+  {
+    // Get Part Node to access shape.
+    Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+    //
+    if ( partNode.IsNull() || !partNode->IsWellFormed() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
+      return TCL_ERROR;
+    }
+    //
+    shape = partNode->GetShape();
+  }
+  else
+  {
+    // Get topological variable.
+    Handle(asiData_IVTopoItemNode)
+      topoItem = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
+    //
+    if ( topoItem.IsNull() || !topoItem->IsWellFormed() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
+      return TCL_OK;
+    }
+    //
+    shape = topoItem->GetShape();
+  }
+
+  // Save STEP.
+  if ( !asiAlgo_STEP( interp->GetProgress() ).Write(shape, filename) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot save STEP file.");
+    return TCL_ERROR;
+  }
 
   return TCL_OK;
 }
@@ -179,6 +225,15 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
     "\t Loads STEP file to the active part.",
     //
     __FILE__, group, ENGINE_LoadStep);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("save-step",
+    //
+    "save-step [varName] filename\n"
+    "\t Save active part or variable (if specified) to a STEP file with the\n"
+    "\t given name.",
+    //
+    __FILE__, group, ENGINE_SaveStep);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("load-brep",

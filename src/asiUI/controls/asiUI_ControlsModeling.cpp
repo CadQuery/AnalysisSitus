@@ -45,6 +45,9 @@
 // asiEngine includes
 #include <asiEngine_Part.h>
 
+// OCCT includes
+#include <ShapeFix_Shape.hxx>
+
 // Qt include
 #pragma warning(push, 0)
 #include <QGroupBox>
@@ -319,7 +322,25 @@ void asiUI_ControlsModeling::onSew()
 
 void asiUI_ControlsModeling::onAutoRepair()
 {
-  m_notifier.SendLogMessage(LogErr(Normal) << "NYI");
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+
+  // Fix shape.
+  ShapeFix_Shape fix( part_n->GetShape() );
+  fix.Perform();
+  TopoDS_Shape result = fix.Shape();
+
+  // Update part.
+  m_model->OpenCommand(); // tx start
+  {
+    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(result);
+  }
+  m_model->CommitCommand(); // tx commit
+
+  // Update viewer.
+  m_partViewer->PrsMgr()->Actualize(part_n);
 }
 
 //-----------------------------------------------------------------------------

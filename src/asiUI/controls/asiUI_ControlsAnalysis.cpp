@@ -34,6 +34,7 @@
 // asiUI includes
 #include <asiUI_AAGAdaptor.h>
 #include <asiUI_Common.h>
+#include <asiUI_DialogEuler.h>
 #include <asiUI_DialogSmoothAngleTol.h>
 #include <asiUI_DialogTopoGraphDepth.h>
 #include <asiUI_PartGraph.h>
@@ -196,7 +197,11 @@ void asiUI_ControlsAnalysis::onCheckToler()
 
 void asiUI_ControlsAnalysis::onCheckEuler()
 {
-  m_notifier.SendLogMessage(LogErr(Normal) << "NYI");
+  asiUI_DialogEuler* pEuler = new asiUI_DialogEuler(m_model,
+                                                    m_notifier,
+                                                    this);
+  //
+  pEuler->show();
 }
 
 //-----------------------------------------------------------------------------

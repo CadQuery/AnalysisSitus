@@ -34,46 +34,22 @@
 // asiUI includes
 #include <asiUI_Common.h>
 #include <asiUI_CommonFacilities.h>
-#include <asiUI_DialogGapFilling.h>
-#include <asiUI_DialogSewing.h>
 #include <asiUI_DialogSTEP.h>
-#include <asiUI_PickCallback.h>
-#include <asiUI_PickEdgeCallback.h>
 
 // asiEngine includes
 #include <asiEngine_Part.h>
 
 // asiAlgo includes
-#include <asiAlgo_CheckValidity.h>
-#include <asiAlgo_MeshConvert.h>
-#include <asiAlgo_PLY.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
-// asiVisu includes
-#include <asiVisu_PartPrs.h>
-
 // OCCT includes
 #include <BRep_Builder.hxx>
-#include <BRepBndLib.hxx>
-#include <BRepTools.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopoDS.hxx>
-
-// VTK includes
-#pragma warning(push, 0)
-#include <vtkActor.h>
-#include <vtkProperty.h>
-#pragma warning(pop)
 
 // Qt include
 #pragma warning(push, 0)
 #include <QGroupBox>
 #pragma warning(pop)
-
-//-----------------------------------------------------------------------------
-
-#define BTN_MIN_WIDTH 120
 
 //-----------------------------------------------------------------------------
 
@@ -100,13 +76,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   //
   m_widgets.Save.pSTEP       = new QPushButton("STEP");
   m_widgets.Save.pBRep       = new QPushButton("BREP");
-  ////
-  //m_widgets.pCheckShape     = new QPushButton("Check shape");
-  //m_widgets.pTolerance      = new QPushButton("Tolerance");
-  ////
-  //m_widgets.pSewing         = new QPushButton("Sewing");
-  //m_widgets.pMaximizeFaces  = new QPushButton("Maximize faces");
-  //m_widgets.pFillGap        = new QPushButton("Fill gap");
   //
   m_widgets.Select.pFaces    = new QPushButton("Faces");
   m_widgets.Select.pEdges    = new QPushButton("Edges");
@@ -135,21 +104,6 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   pSelectLay->addWidget(m_widgets.Select.pEdges);
   pSelectLay->addWidget(m_widgets.Select.pVertices);
 
-  //// Group for analysis
-  //QGroupBox*   pAnalysisGroup = new QGroupBox("Analysis");
-  //QVBoxLayout* pAnalysisLay   = new QVBoxLayout(pAnalysisGroup);
-  ////
-  //pAnalysisLay->addWidget(m_widgets.pCheckShape);
-  //pAnalysisLay->addWidget(m_widgets.pTolerance);
-
-  //// Group for processing
-  //QGroupBox*   pProcessingGroup = new QGroupBox("Processing");
-  //QVBoxLayout* pProcessingLay   = new QVBoxLayout(pProcessingGroup);
-  ////
-  //pProcessingLay->addWidget(m_widgets.pSewing);
-  //pProcessingLay->addWidget(m_widgets.pMaximizeFaces);
-  //pProcessingLay->addWidget(m_widgets.pFillGap);
-
   // Set main layout.
   m_pMainLayout->addWidget(pLoadGroup);
   m_pMainLayout->addWidget(pSaveGroup);
@@ -172,22 +126,10 @@ asiUI_ControlsPart::asiUI_ControlsPart(const Handle(asiEngine_Model)& model,
   connect( m_widgets.Save.pSTEP,       SIGNAL( clicked() ), SLOT( onSaveToSTEP () ) );
   connect( m_widgets.Save.pBRep,       SIGNAL( clicked() ), SLOT( onSaveToBRep () ) );
   //
-  //connect( m_widgets.pCheckShape,     SIGNAL( clicked() ), SLOT( onCheckShape     () ) );
-  //connect( m_widgets.pTolerance,      SIGNAL( clicked() ), SLOT( onTolerance      () ) );
-  ////
-  //connect( m_widgets.pSewing,         SIGNAL( clicked() ), SLOT( onSewing         () ) );
-  //connect( m_widgets.pMaximizeFaces,  SIGNAL( clicked() ), SLOT( onMaximizeFaces  () ) );
-  //connect( m_widgets.pFillGap,        SIGNAL( clicked() ), SLOT( onFillGap        () ) );
-  //
   connect( m_widgets.Select.pFaces,    SIGNAL( clicked() ), SLOT( onSelectFaces    () ) );
   connect( m_widgets.Select.pEdges,    SIGNAL( clicked() ), SLOT( onSelectEdges    () ) );
   connect( m_widgets.Select.pVertices, SIGNAL( clicked() ), SLOT( onSelectVertices () ) );
 }
-
-//-----------------------------------------------------------------------------
-
-asiUI_ControlsPart::~asiUI_ControlsPart()
-{}
 
 //-----------------------------------------------------------------------------
 
@@ -322,37 +264,6 @@ void asiUI_ControlsPart::onSaveToSTEP()
   emit partSaved();
 }
 
-////-----------------------------------------------------------------------------
-//
-////! Saves mesh to PLY file.
-//void asiUI_ControlsPart::onSavePly()
-//{
-//  Handle(asiData_PartNode) part_n;
-//  TopoDS_Shape             part;
-//  //
-//  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
-//  //
-//  QString filename = asiUI_Common::selectPLYFile(asiUI_Common::OpenSaveAction_Save);
-//
-//  // Convert shape's inherent mesh to a storable mesh
-//  Handle(ActData_Mesh) storedMesh;
-//  if ( !asiAlgo_MeshConvert::ToPersistent(part, storedMesh) )
-//  {
-//    std::cout << "Error: cannot convert mesh to persistent form" << std::endl;
-//    return;
-//  }
-//
-//  // Save mesh to ply files
-//  if ( !asiAlgo_PLY::Write( storedMesh, QStr2AsciiStr(filename) ) )
-//  {
-//    std::cout << "Error: cannot save mesh" << std::endl;
-//    return;
-//  }
-//
-//  // Notify
-//  emit partSaved();
-//}
-
 //-----------------------------------------------------------------------------
 
 //! Saves model to BREP file.
@@ -445,102 +356,7 @@ void asiUI_ControlsPart::onSaveToBRep()
 //    m_notifier.SendLogMessage(LogInfo(Normal) << "Max tolerance for selected sub-shape: %1" << maxTol);
 //  }
 //}
-//
 ////-----------------------------------------------------------------------------
-//
-////! Runs sewing.
-//void asiUI_ControlsPart::onSewing()
-//{
-//  Handle(asiData_PartNode) part_n;
-//  TopoDS_Shape             part;
-//  //
-//  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
-//
-//  // Run dialog for sewing properties
-//  asiUI_DialogSewing* wSewing = new asiUI_DialogSewing(m_model, this);
-//  wSewing->exec();
-//
-//  // Notify
-//  emit partModified();
-//}
-//
-////-----------------------------------------------------------------------------
-//
-////! Runs face maximization.
-//void asiUI_ControlsPart::onMaximizeFaces()
-//{
-//  Handle(asiData_PartNode) part_n;
-//  TopoDS_Shape             part;
-//  //
-//  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
-//
-//  m_model->OpenCommand();
-//  {
-//    TIMER_NEW
-//    TIMER_GO
-//
-//    // Perform merge
-//    if ( !asiAlgo_Utils::MaximizeFaces(part) )
-//    {
-//      std::cout << "Error: face merging failed" << std::endl;
-//      m_model->AbortCommand();
-//      return;
-//    }
-//
-//    TIMER_FINISH
-//    TIMER_COUT_RESULT_MSG("Face Maximization")
-//
-//    //
-//    std::cout << "Face merging done. Visualizing..." << std::endl;
-//    //
-//    asiEngine_Part(m_model).Update(part);
-//  }
-//  m_model->CommitCommand();
-//
-//  // Notify
-//  emit partModified();
-//}
-//
-////-----------------------------------------------------------------------------
-//
-////! Performs gap filling.
-//void asiUI_ControlsPart::onFillGap()
-//{
-//  Handle(asiData_PartNode) part_n;
-//  TopoDS_Shape             part;
-//  //
-//  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
-//
-//  /* ======================================================
-//   *  Gather free edges which should form a closed contour
-//   * ====================================================== */
-//
-//  TColStd_PackedMapOfInteger edgeIndices;
-//  asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedEdges(edgeIndices);
-//  //
-//  if ( !edgeIndices.Extent() )
-//  {
-//    m_notifier.SendLogMessage(LogErr(Normal) << "No seed edges selected");
-//    return;
-//  }
-//
-//  /* =====================
-//   *  Perform gap filling
-//   * ===================== */
-//
-//  // Dialog for reading STEP
-//  asiUI_DialogGapFilling*
-//    pDlg = new asiUI_DialogGapFilling(m_model,
-//                                      m_partViewer->PrsMgr(),
-//                                      m_partViewer,
-//                                      m_notifier,
-//                                      m_plotter,
-//                                      this);
-//  pDlg->exec();
-//
-//  // Notify
-//  emit partModified();
-//}
 
 //-----------------------------------------------------------------------------
 

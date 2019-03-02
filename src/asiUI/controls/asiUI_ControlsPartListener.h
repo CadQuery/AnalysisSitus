@@ -50,9 +50,7 @@ class asiUI_EXPORT asiUI_ControlsPartListener : public QObject
 public:
 
   asiUI_ControlsPartListener(asiUI_ControlsPart*                   wControls,
-                             const Handle(asiEngine_Model)&        model,
-                             const Handle(asiUI_CommonFacilities)& cf,
-                             ActAPI_ProgressEntry                  notifier);
+                             const Handle(asiUI_CommonFacilities)& cf);
 
   virtual
     ~asiUI_ControlsPartListener();
@@ -83,8 +81,6 @@ protected:
 
   asiUI_ControlsPart*            m_wControls; //!< Controls.
   Handle(asiUI_CommonFacilities) m_cf;        //!< Common facilities.
-  Handle(asiEngine_Model)        m_model;     //!< Data Model instance.
-  ActAPI_ProgressEntry           m_notifier;  //!< Progress notifier.
 
 };
 

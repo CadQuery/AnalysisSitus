@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 14 August 2018
+// Created on: 31 March 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018-present, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_ControlsMesh_h
-#define asiUI_ControlsMesh_h
+#ifndef asiUI_ControlsModeling_h
+#define asiUI_ControlsModeling_h
 
 // asiUI includes
 #include <asiUI_Common.h>
@@ -46,39 +46,44 @@
 #include <QVBoxLayout>
 #pragma warning(pop)
 
+// OCCT include
+#include <TopoDS_Compound.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 //-----------------------------------------------------------------------------
 
-//! Widget for mesh controls.
-class asiUI_ControlsMesh : public QScrollArea
+//! Widget for modeling controls.
+class asiUI_ControlsModeling : public QScrollArea
 {
   Q_OBJECT
 
 public:
 
-  //! Constructor.
+  //! Ctor.
   //! \param[in] model       Data Model instance.
-  //! \param[in] pPartViewer part viewer.
+  //! \param[in] pPartViewer Part viewer.
   //! \param[in] notifier    progress notifier.
   //! \param[in] plotter     imperative plotter.
   //! \param[in] parent      parent widget.
   asiUI_EXPORT
-    asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
-                       asiUI_ViewerPart*              pPartViewer,
-                       ActAPI_ProgressEntry           notifier,
-                       ActAPI_PlotterEntry            plotter,
-                       QWidget*                       parent = NULL);
+    asiUI_ControlsModeling(const Handle(asiEngine_Model)& model,
+                           asiUI_ViewerPart*              pPartViewer,
+                           ActAPI_ProgressEntry           notifier,
+                           ActAPI_PlotterEntry            plotter,
+                           QWidget*                       parent = NULL);
 
 public slots:
 
-  void onLoadFromStl();
-  void onLoadFromPly();
+  void onDeleteFaces    (); //!< On face removal (gap will emerge).
+  void onSuppressFaces  (); //!< On face suppression (useful for isolated features).
+  void onDefeatureFaces (); //!< On "smart" face removal.
+  void onDetachFaces    (); //!< On face detaching (breaking sharing).
   //
-  void onSaveToStl();
-  void onSaveFacetsToPly();
-  //
-  void onSelectFaces();
-  void onSelectEdges();
-  void onSelectVertices();
+  void onSew            (); //!< On sewing.
+  void onAutoRepair     (); //!< On automatic repair.
+  void onMaximizeFaces  (); //!< On face maximization.
+  void onHealSmallEdges (); //!< On merging "small" edges.
+  void onFillGap        (); //!< On gap filling.
 
 private:
 
@@ -87,36 +92,35 @@ private:
   //! Widgets.
   struct t_widgets
   {
-    struct t_load
+    struct t_edit
     {
-      //! Ctor.
-      t_load() : pFromStl(NULL), pFromPly(NULL)
+      t_edit() : pDeleteFaces    (NULL),
+                 pSuppressFaces  (NULL),
+                 pDefeatureFaces (NULL),
+                 pDetachFaces    (NULL)
       {}
 
-      QPushButton* pFromStl; //!< Button for STL loading.
-      QPushButton* pFromPly; //!< Button for PLY loading.
-    } Load;
+      QPushButton* pDeleteFaces;    //!< Deletes selected faces (only).
+      QPushButton* pSuppressFaces;  //!< Deletes selected faces with all contours.
+      QPushButton* pDefeatureFaces; //!< Deletes selected faces and stitches neighbors.
+      QPushButton* pDetachFaces;    //!< Detaches selected faces from B-Rep.
+    } Edit;
 
-    struct t_save
+    struct t_healing
     {
-      //! Ctor.
-      t_save() : pToStl(NULL), pFacetsToPly(NULL)
+      t_healing() : pSew            (NULL),
+                    pAutoRepair     (NULL),
+                    pMaximizeFaces  (NULL),
+                    pHealSmallEdges (NULL),
+                    pFillGap        (NULL)
       {}
 
-      QPushButton* pToStl;       //!< Button for STL saving.
-      QPushButton* pFacetsToPly; //!< Button for saving part's facets to PLY.
-    } Save;
-
-    struct t_select
-    {
-      //! Ctor.
-      t_select() : pFaces(NULL), pEdges(NULL), pVertices(NULL)
-      {}
-
-      QPushButton* pFaces;    //!< Button to enable selection of faces.
-      QPushButton* pEdges;    //!< Button to enable selection of edges.
-      QPushButton* pVertices; //!< Button to enable selection of vertices.
-    } Select;
+      QPushButton* pSew;            //!< Sewing.
+      QPushButton* pAutoRepair;     //!< Automatic repair.
+      QPushButton* pMaximizeFaces;  //!< Maximizes faces.
+      QPushButton* pHealSmallEdges; //!< Heals small edges.
+      QPushButton* pFillGap;        //!< Fills gaps.
+    } Healing;
   };
 
   t_widgets               m_widgets;    //!< Involved widgets.

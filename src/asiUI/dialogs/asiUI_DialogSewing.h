@@ -52,6 +52,7 @@ class asiUI_DialogSewing : public QDialog
 public:
 
   asiUI_DialogSewing(const Handle(asiEngine_Model)& model,
+                     ActAPI_ProgressEntry           progress,
                      QWidget*                       parent = NULL);
 
   virtual ~asiUI_DialogSewing();
@@ -93,6 +94,7 @@ protected:
   t_widgets                m_widgets;     //!< UI controls.
   QVBoxLayout*             m_pMainLayout; //!< Layout of the widget.
   Handle(asiEngine_Model)  m_model;       //!< Data Model instance.
+  ActAPI_ProgressEntry     m_progress;    //!< Progress entry.
 
 };
 

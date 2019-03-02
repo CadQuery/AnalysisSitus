@@ -52,12 +52,14 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-//! \param model  [in] Data Model instance.
-//! \param parent [in] parent widget.
+//! \param[in] model    Data Model instance.
+//! \param[in] progress progress notifier.
+//! \param[in] parent   parent widget.
 asiUI_DialogSewing::asiUI_DialogSewing(const Handle(asiEngine_Model)& model,
+                                       ActAPI_ProgressEntry           progress,
                                        QWidget*                       parent)
 //
-: QDialog(parent), m_model(model)
+: QDialog(parent), m_model(model), m_progress(progress)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();
@@ -144,7 +146,7 @@ void asiUI_DialogSewing::onPerform()
   //
   if ( part.IsNull() )
   {
-    std::cout << "Error: part shape is null" << std::endl;
+    m_progress.SendLogMessage(LogErr(Normal) << "Part shape is null.");
     return;
   }
 
@@ -153,17 +155,15 @@ void asiUI_DialogSewing::onPerform()
   {
     // Perform sewing
     //
-    std::cout << "Sewing tolerance = " << toler << std::endl;
+    m_progress.SendLogMessage(LogInfo(Normal) << "Sewing tolerance: %1." << toler);
     //
     TopoDS_Shape sewnPart;
     //
     if ( !asiAlgo_Utils::Sew(part, toler, sewnPart) )
     {
-      std::cout << "Error: sewing failed" << std::endl;
+      m_progress.SendLogMessage(LogErr(Normal) << "Sewing failed.");
       this->close();
     }
-    //
-    std::cout << "Sewing done. Visualizing..." << std::endl;
     //
     asiEngine_Part(m_model).Update(sewnPart);
   }

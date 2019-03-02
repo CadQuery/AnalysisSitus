@@ -49,18 +49,12 @@
 
 //! Constructor accepting all necessary facilities.
 //! \param[in] wControls controls.
-//! \param[in] model     Data Model instance.
 //! \param[in] cf        common facilities.
-//! \param[in] notifier  progress notifier.
 asiUI_ControlsPartListener::asiUI_ControlsPartListener(asiUI_ControlsPart*                   wControls,
-                                                       const Handle(asiEngine_Model)&        model,
-                                                       const Handle(asiUI_CommonFacilities)& cf,
-                                                       ActAPI_ProgressEntry                  notifier)
+                                                       const Handle(asiUI_CommonFacilities)& cf)
 : QObject     (),
   m_wControls (wControls),
-  m_model     (model),
-  m_cf        (cf),
-  m_notifier  (notifier)
+  m_cf        (cf)
 {}
 
 //-----------------------------------------------------------------------------
@@ -118,7 +112,7 @@ void asiUI_ControlsPartListener::onPartAdded(const QString&)
 //! Reaction on part modification.
 void asiUI_ControlsPartListener::onPartModified()
 {
-  m_cf->ViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, false);
+  m_cf->ViewerPart->PrsMgr()->Actualize(m_cf->Model->GetPartNode(), false, false);
 
   // Re-initialize pickers
   this->reinitializePickers();
@@ -146,7 +140,7 @@ void asiUI_ControlsPartListener::onSelectionFacesOn()
   }
 
   Handle(asiVisu_PartPrs)
-    prs = Handle(asiVisu_PartPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+    prs = Handle(asiVisu_PartPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_cf->Model->GetPartNode() ) );
 
   prs->MainActor()->SetPickable(1);
   prs->ContourActor()->SetPickable(0);
@@ -174,7 +168,7 @@ void asiUI_ControlsPartListener::onSelectionEdgesOn()
   }
 
   Handle(asiVisu_PartPrs)
-    prs = Handle(asiVisu_PartPrs)::DownCast(m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+    prs = Handle(asiVisu_PartPrs)::DownCast(m_cf->ViewerPart->PrsMgr()->GetPresentation( m_cf->Model->GetPartNode() ) );
 
   prs->MainActor()->SetPickable(0);
   prs->ContourActor()->SetPickable(1);
@@ -202,7 +196,7 @@ void asiUI_ControlsPartListener::onSelectionVerticesOn()
   }
 
   Handle(asiVisu_PartPrs)
-    prs = Handle(asiVisu_PartPrs)::DownCast(m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
+    prs = Handle(asiVisu_PartPrs)::DownCast(m_cf->ViewerPart->PrsMgr()->GetPresentation( m_cf->Model->GetPartNode() ) );
 
   prs->MainActor()->SetPickable(0);
   prs->ContourActor()->SetPickable(1); // Vertices are visualized with contour actor
@@ -214,20 +208,20 @@ void asiUI_ControlsPartListener::onSelectionVerticesOn()
 //! \param[in] fitAll indicates whether to fit the scene.
 void asiUI_ControlsPartListener::reinitializeEverything(const bool fitAll)
 {
-  m_notifier.SetMessageKey("Actualize presentations");
-  m_notifier.Init(1);
+  m_cf->Progress.SetMessageKey("Actualize presentations");
+  m_cf->Progress.Init(1);
 
   // Set all necessary diagnostic tools
-  ActAPI_DataObjectId partId = m_model->GetPartNode()->GetId();
+  ActAPI_DataObjectId partId = m_cf->Model->GetPartNode()->GetId();
   //
   if ( !m_cf->ViewerPart->PrsMgr()->IsPresented(partId) )
-    m_cf->ViewerPart->PrsMgr()->SetPresentation( m_model->GetPartNode() );
+    m_cf->ViewerPart->PrsMgr()->SetPresentation( m_cf->Model->GetPartNode() );
 
   // Re-initialize pickers
   this->reinitializePickers();
 
   // Actualize
-  m_cf->ViewerPart->PrsMgr()->Actualize(m_model->GetPartNode(), false, fitAll);
+  m_cf->ViewerPart->PrsMgr()->Actualize(m_cf->Model->GetPartNode(), false, fitAll);
 
   // Repaint other viewers which may have been affected
   m_cf->ViewerHost->Repaint();
@@ -236,8 +230,8 @@ void asiUI_ControlsPartListener::reinitializeEverything(const bool fitAll)
   // Repopulate object browser
   m_cf->ObjectBrowser->Populate();
 
-  m_notifier.StepProgress(1);
-  m_notifier.SetProgressStatus(Progress_Succeeded);
+  m_cf->Progress.StepProgress(1);
+  m_cf->Progress.SetProgressStatus(Progress_Succeeded);
 }
 
 //-----------------------------------------------------------------------------
@@ -248,7 +242,7 @@ void asiUI_ControlsPartListener::reinitializePickers()
   // Set Part Node as the only pickable object. This prevents UI from
   // any reaction on "useless" actors, e.g. normal fields, etc.
   Handle(ActAPI_HNodeList) pickableNodes = new ActAPI_HNodeList;
-  pickableNodes->Append( m_model->GetPartNode() );
+  pickableNodes->Append( m_cf->Model->GetPartNode() );
   //
   m_cf->ViewerPart->PrsMgr()->SetPickFromList(true);
   m_cf->ViewerPart->PrsMgr()->SetPickList(pickableNodes);

@@ -31,30 +31,14 @@
 // Own include
 #include <asiUI_ControlsMeshListener.h>
 
-// asiVisu includes
-#include <asiVisu_TriangulationPrs.h>
-
-// Qt includes
-#pragma warning(push, 0)
-#include <QMainWindow>
-#pragma warning(pop)
-
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting all necessary facilities.
-//! \param wControls [in] controls.
-//! \param model     [in] Data Model instance.
-//! \param cf        [in] commonf facilities.
-//! \param notifier  [in] progress notifier.
 asiUI_ControlsMeshListener::asiUI_ControlsMeshListener(asiUI_ControlsMesh*                   wControls,
-                                                       const Handle(asiEngine_Model)&        model,
-                                                       const Handle(asiUI_CommonFacilities)& cf,
-                                                       ActAPI_ProgressEntry                  notifier)
+                                                       const Handle(asiUI_CommonFacilities)& cf)
 : QObject     (),
   m_wControls (wControls),
-  m_model     (model),
-  m_cf        (cf),
-  m_notifier  (notifier)
+  m_cf        (cf)
 {}
 
 //-----------------------------------------------------------------------------
@@ -68,39 +52,5 @@ asiUI_ControlsMeshListener::~asiUI_ControlsMeshListener()
 //! Connects this listener to the controls widget.
 void asiUI_ControlsMeshListener::Connect()
 {
-  connect( m_wControls, SIGNAL ( verticesOn() ),
-           this,        SLOT   ( onVerticesOn() ) );
-  //
-  connect( m_wControls, SIGNAL ( verticesOff() ),
-           this,        SLOT   ( onVerticesOff() ) );
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on enabling visualization of vertices.
-void asiUI_ControlsMeshListener::onVerticesOn()
-{
-  Handle(asiVisu_TriangulationPrs)
-    prs = Handle(asiVisu_TriangulationPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetTriangulationNode() ) );
-  //
-  prs->VerticesOn();
-
-  // Re-initialize pickers as the data set has changed
-  m_cf->ViewerPart->PrsMgr()->InitializePickers( Handle(ActAPI_INode)() );
-  m_cf->ViewerPart->Repaint();
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on disabling visualization of vertices.
-void asiUI_ControlsMeshListener::onVerticesOff()
-{
-  Handle(asiVisu_TriangulationPrs)
-    prs = Handle(asiVisu_TriangulationPrs)::DownCast( m_cf->ViewerPart->PrsMgr()->GetPresentation( m_model->GetTriangulationNode() ) );
-  //
-  prs->VerticesOff();
-
-  // Re-initialize pickers as the data set has changed
-  m_cf->ViewerPart->PrsMgr()->InitializePickers( Handle(ActAPI_INode)() );
-  m_cf->ViewerPart->Repaint();
+  // Empty yet.
 }

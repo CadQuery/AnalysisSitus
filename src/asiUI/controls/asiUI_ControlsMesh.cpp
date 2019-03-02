@@ -35,6 +35,8 @@
 #include <asiVisu_TriangulationPrs.h>
 
 // asiAlgo includes
+#include <asiAlgo_MeshConvert.h>
+#include <asiAlgo_PLY.h>
 #include <asiAlgo_Utils.h>
 
 // Qt includes
@@ -42,16 +44,6 @@
 
 //-----------------------------------------------------------------------------
 
-#define BTN_MIN_WIDTH 120
-
-//-----------------------------------------------------------------------------
-
-//! Constructor.
-//! \param[in] model       Data Model instance.
-//! \param[in] pPartViewer part viewer.
-//! \param[in] notifier    progress notifier.
-//! \param[in] plotter     imperative plotter.
-//! \param[in] parent      parent widget.
 asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
                                        asiUI_ViewerPart*              pPartViewer,
                                        ActAPI_ProgressEntry           notifier,
@@ -63,49 +55,49 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
   m_notifier   (notifier),
   m_plotter    (plotter)
 {
-  // Main layout
-  m_pMainLayout = new QVBoxLayout();
+  // Main layout.
+  m_pMainLayout = new QVBoxLayout;
 
-  // Buttons
-  m_widgets.pLoadStl        = new QPushButton("Load STL");
-  m_widgets.pLoadPly        = new QPushButton("Load PLY");
-  m_widgets.pSaveStl        = new QPushButton("Save STL");
-  m_widgets.pShowVertices   = new QPushButton("Show/hide vertices");
-  m_widgets.pSelectFaces    = new QPushButton("Select faces");
-  m_widgets.pSelectEdges    = new QPushButton("Select edges");
-  m_widgets.pSelectVertices = new QPushButton("Select vertices");
+  // Buttons.
+  m_widgets.Load.pFromStl = new QPushButton("From STL");
+  m_widgets.Load.pFromPly = new QPushButton("From PLY");
   //
-  m_widgets.pLoadStl        -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pLoadPly        -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pSaveStl        -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pShowVertices   -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pSelectFaces    -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pSelectEdges    -> setMinimumWidth(BTN_MIN_WIDTH);
-  m_widgets.pSelectVertices -> setMinimumWidth(BTN_MIN_WIDTH);
-
-  m_widgets.pSelectFaces    ->setCheckable(true);
-  m_widgets.pSelectEdges    ->setCheckable(true);
-  m_widgets.pSelectVertices ->setCheckable(true);
-
-  // Group box for data interoperability
-  QGroupBox*   pExchangeGroup = new QGroupBox("Data Exchange");
-  QVBoxLayout* pExchangeLay   = new QVBoxLayout(pExchangeGroup);
+  m_widgets.Save.pToStl       = new QPushButton("To STL");
+  m_widgets.Save.pFacetsToPly = new QPushButton("B-Rep facets to PLY");
   //
-  pExchangeLay->addWidget(m_widgets.pLoadStl);
-  pExchangeLay->addWidget(m_widgets.pLoadPly);
-  pExchangeLay->addWidget(m_widgets.pSaveStl);
+  m_widgets.Select.pFaces    = new QPushButton("Triangles");
+  m_widgets.Select.pEdges    = new QPushButton("Links");
+  m_widgets.Select.pVertices = new QPushButton("Nodes");
+  //
+  m_widgets.Select.pFaces    ->setCheckable(true);
+  m_widgets.Select.pEdges    ->setCheckable(true);
+  m_widgets.Select.pVertices ->setCheckable(true);
 
-  // Group box for interactive selection
-  QGroupBox*   pSelectionGroup = new QGroupBox("Selection");
+  // Group box for loading mesh.
+  QGroupBox*   pLoadGroup = new QGroupBox("Load");
+  QVBoxLayout* pLoadLay   = new QVBoxLayout(pLoadGroup);
+  //
+  pLoadLay->addWidget(m_widgets.Load.pFromStl);
+  pLoadLay->addWidget(m_widgets.Load.pFromPly);
+
+  // Group box for saving mesh.
+  QGroupBox*   pSaveGroup = new QGroupBox("Save");
+  QVBoxLayout* pSaveLay   = new QVBoxLayout(pSaveGroup);
+  //
+  pLoadLay->addWidget(m_widgets.Save.pToStl);
+  pLoadLay->addWidget(m_widgets.Save.pFacetsToPly);
+
+  // Group box for interactive selection.
+  QGroupBox*   pSelectionGroup = new QGroupBox("Select");
   QVBoxLayout* pSelectionLay   = new QVBoxLayout(pSelectionGroup);
   //
-  pSelectionLay->addWidget(m_widgets.pShowVertices);
-  pSelectionLay->addWidget(m_widgets.pSelectFaces);
-  pSelectionLay->addWidget(m_widgets.pSelectEdges);
-  pSelectionLay->addWidget(m_widgets.pSelectVertices);
+  pSelectionLay->addWidget(m_widgets.Select.pFaces);
+  pSelectionLay->addWidget(m_widgets.Select.pEdges);
+  pSelectionLay->addWidget(m_widgets.Select.pVertices);
 
   // Set layout
-  m_pMainLayout->addWidget(pExchangeGroup);
+  m_pMainLayout->addWidget(pLoadGroup);
+  m_pMainLayout->addWidget(pSaveGroup);
   m_pMainLayout->addWidget(pSelectionGroup);
   //
   m_pMainLayout->setAlignment(Qt::AlignTop);
@@ -118,48 +110,39 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
   this->setWidget(pMainWidget);
 
   // Connect signals to slots
-  connect( m_widgets.pLoadStl,        SIGNAL( clicked() ), SLOT( onLoadStl        () ) );
-  connect( m_widgets.pLoadPly,        SIGNAL( clicked() ), SLOT( onLoadPly        () ) );
-  connect( m_widgets.pSaveStl,        SIGNAL( clicked() ), SLOT( onSaveStl        () ) );
-  connect( m_widgets.pShowVertices,   SIGNAL( clicked() ), SLOT( onShowVertices   () ) );
-  connect( m_widgets.pSelectFaces,    SIGNAL( clicked() ), SLOT( onSelectFaces    () ) );
-  connect( m_widgets.pSelectEdges,    SIGNAL( clicked() ), SLOT( onSelectEdges    () ) );
-  connect( m_widgets.pSelectVertices, SIGNAL( clicked() ), SLOT( onSelectVertices () ) );
-}
-
-//-----------------------------------------------------------------------------
-
-//! Destructor.
-asiUI_ControlsMesh::~asiUI_ControlsMesh()
-{
-  delete m_pMainLayout;
-  m_widgets.Release();
+  connect( m_widgets.Load.pFromStl,     SIGNAL( clicked() ), SLOT( onLoadFromStl     () ) );
+  connect( m_widgets.Load.pFromPly,     SIGNAL( clicked() ), SLOT( onLoadFromPly     () ) );
+  connect( m_widgets.Save.pToStl,       SIGNAL( clicked() ), SLOT( onSaveToStl       () ) );
+  connect( m_widgets.Save.pFacetsToPly, SIGNAL( clicked() ), SLOT( onSaveFacetsToPly () ) );
+  connect( m_widgets.Select.pFaces,     SIGNAL( clicked() ), SLOT( onSelectFaces     () ) );
+  connect( m_widgets.Select.pEdges,     SIGNAL( clicked() ), SLOT( onSelectEdges     () ) );
+  connect( m_widgets.Select.pVertices,  SIGNAL( clicked() ), SLOT( onSelectVertices  () ) );
 }
 
 //-----------------------------------------------------------------------------
 
 //! On STL loading.
-void asiUI_ControlsMesh::onLoadStl()
+void asiUI_ControlsMesh::onLoadFromStl()
 {
-  // Select filename
+  // Select filename.
   QString filename = asiUI_Common::selectSTLFile(asiUI_Common::OpenSaveAction_Open);
 
-  // Load mesh
+  // Load mesh.
   Handle(Poly_Triangulation) triangulation;
   //
   if ( !asiAlgo_Utils::ReadStl(QStr2AsciiStr(filename), triangulation, m_notifier) )
   {
-    m_notifier.SendLogMessage( LogErr(Normal) << "Cannot read STL file" );
+    m_notifier.SendLogMessage( LogErr(Normal) << "Cannot read STL file." );
     return;
   }
   //
-  m_notifier.SendLogMessage( LogInfo(Normal) << "Loaded mesh from %1" << QStr2AsciiStr(filename) );
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Loaded mesh from %1." << QStr2AsciiStr(filename) );
 
   //---------------------------------------------------------------------------
   // Initialize Triangulation Node
   //---------------------------------------------------------------------------
 
-  // Set mesh
+  // Set mesh.
   Handle(asiData_TriangulationNode) triangulation_n = m_model->GetTriangulationNode();
   //
   m_model->OpenCommand(); // tx start
@@ -178,27 +161,27 @@ void asiUI_ControlsMesh::onLoadStl()
 //-----------------------------------------------------------------------------
 
 //! On PLY loading.
-void asiUI_ControlsMesh::onLoadPly()
+void asiUI_ControlsMesh::onLoadFromPly()
 {
-  // Select filename
+  // Select filename.
   QString filename = asiUI_Common::selectPLYFile(asiUI_Common::OpenSaveAction_Open);
 
-  // Load mesh
+  // Load mesh.
   Handle(ActData_Mesh) mesh;
   //
   if ( !asiAlgo_Utils::ReadPly(QStr2AsciiStr(filename), mesh, m_notifier) )
   {
-    m_notifier.SendLogMessage( LogErr(Normal) << "Cannot read PLY file" );
+    m_notifier.SendLogMessage( LogErr(Normal) << "Cannot read PLY file." );
     return;
   }
   //
-  m_notifier.SendLogMessage( LogInfo(Normal) << "Loaded mesh from %1" << QStr2AsciiStr(filename) );
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Loaded mesh from %1." << QStr2AsciiStr(filename) );
 
   //---------------------------------------------------------------------------
   // Initialize Triangulation Node
   //---------------------------------------------------------------------------
 
-  // Set mesh
+  // Set mesh.
   Handle(asiData_TessNode) tess_n = m_model->GetTessellationNode();
   //
   m_model->OpenCommand(); // tx start
@@ -217,9 +200,9 @@ void asiUI_ControlsMesh::onLoadPly()
 //-----------------------------------------------------------------------------
 
 //! On STL saving.
-void asiUI_ControlsMesh::onSaveStl()
+void asiUI_ControlsMesh::onSaveToStl()
 {
-  // Select filename
+  // Select filename.
   QString filename = asiUI_Common::selectSTLFile(asiUI_Common::OpenSaveAction_Save);
 
   // Get mesh
@@ -229,7 +212,7 @@ void asiUI_ControlsMesh::onSaveStl()
   // Save
   if ( !asiAlgo_Utils::WriteStl( triangulation, QStr2AsciiStr(filename) ) )
   {
-    m_notifier.SendLogMessage( LogErr(Normal) << "Cannot write STL file" );
+    m_notifier.SendLogMessage( LogErr(Normal) << "Cannot write STL file." );
     return;
   }
   //
@@ -238,23 +221,31 @@ void asiUI_ControlsMesh::onSaveStl()
 
 //-----------------------------------------------------------------------------
 
-//! Switches visualization of vertices.
-void asiUI_ControlsMesh::onShowVertices()
+//! Saves facets to PLY file.
+void asiUI_ControlsMesh::onSaveFacetsToPly()
 {
-  Handle(asiData_TriangulationNode)
-    triangulation_n = m_model->GetTriangulationNode();
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+  //
+  QString filename = asiUI_Common::selectPLYFile(asiUI_Common::OpenSaveAction_Save);
 
-  const bool isOn = triangulation_n->HasVertices();
-
-  // Modify data
-  m_model->OpenCommand();
+  // Convert shape's inherent mesh to a storable mesh.
+  Handle(ActData_Mesh) storedMesh;
+  //
+  if ( !asiAlgo_MeshConvert::ToPersistent(part, storedMesh) )
   {
-    triangulation_n->SetHasVertices(!isOn);
+    m_notifier.SendLogMessage(LogErr(Normal) << "Cannot convert mesh to persistent form.");
+    return;
   }
-  m_model->CommitCommand();
 
-  // Notify
-  isOn ? emit verticesOff() : emit verticesOn();
+  // Save mesh to ply file.
+  if ( !asiAlgo_PLY::Write( storedMesh, QStr2AsciiStr(filename) ) )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Cannot save mesh to PLY file.");
+    return;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -262,19 +253,19 @@ void asiUI_ControlsMesh::onShowVertices()
 //! On selection of faces.
 void asiUI_ControlsMesh::onSelectFaces()
 {
-  m_widgets.pSelectEdges->setChecked(false);
-  m_widgets.pSelectVertices->setChecked(false);
+  m_widgets.Select.pEdges->setChecked(false);
+  m_widgets.Select.pVertices->setChecked(false);
 
   m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Face);
 
-  // Get presentation for Mesh Node
+  // Get presentation for Triangulation Node.
   Handle(asiVisu_TriangulationPrs)
     prs = Handle(asiVisu_TriangulationPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation( m_model->GetTriangulationNode() ) );
   //
   if ( prs.IsNull() )
     return;
 
-  prs->MainActor()->SetPickable( m_widgets.pSelectFaces->isChecked() );
+  prs->MainActor()->SetPickable( m_widgets.Select.pFaces->isChecked() );
   prs->ContourActor()->SetPickable(0);
   prs->NodesActor()->SetPickable(0);
 }
@@ -284,12 +275,12 @@ void asiUI_ControlsMesh::onSelectFaces()
 //! On selection of edges.
 void asiUI_ControlsMesh::onSelectEdges()
 {
-  m_widgets.pSelectFaces->setChecked(false);
-  m_widgets.pSelectVertices->setChecked(false);
+  m_widgets.Select.pFaces->setChecked(false);
+  m_widgets.Select.pVertices->setChecked(false);
 
   m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Edge);
 
-  // Get presentation for Mesh Node
+  // Get presentation for Triangulation Node.
   Handle(asiVisu_TriangulationPrs)
     prs = Handle(asiVisu_TriangulationPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation( m_model->GetTriangulationNode() ) );
   //
@@ -297,7 +288,7 @@ void asiUI_ControlsMesh::onSelectEdges()
     return;
 
   prs->MainActor()->SetPickable(0);
-  prs->ContourActor()->SetPickable( m_widgets.pSelectEdges->isChecked() );
+  prs->ContourActor()->SetPickable( m_widgets.Select.pEdges->isChecked() );
   prs->NodesActor()->SetPickable(0);
 }
 
@@ -306,12 +297,12 @@ void asiUI_ControlsMesh::onSelectEdges()
 //! On selection of vertices.
 void asiUI_ControlsMesh::onSelectVertices()
 {
-  m_widgets.pSelectFaces->setChecked(false);
-  m_widgets.pSelectEdges->setChecked(false);
+  m_widgets.Select.pFaces->setChecked(false);
+  m_widgets.Select.pEdges->setChecked(false);
 
   m_partViewer->PrsMgr()->SetSelectionMode(SelectionMode_Vertex);
 
-  // Get presentation for Mesh Node
+  // Get presentation for Triangulation Node.
   Handle(asiVisu_TriangulationPrs)
     prs = Handle(asiVisu_TriangulationPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation( m_model->GetTriangulationNode() ) );
   //
@@ -320,5 +311,5 @@ void asiUI_ControlsMesh::onSelectVertices()
 
   prs->MainActor()->SetPickable(0);
   prs->ContourActor()->SetPickable(0);
-  prs->NodesActor()->SetPickable( m_widgets.pSelectVertices->isChecked() );
+  prs->NodesActor()->SetPickable( m_widgets.Select.pVertices->isChecked() );
 }

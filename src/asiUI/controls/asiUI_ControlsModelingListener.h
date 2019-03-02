@@ -28,12 +28,12 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_ControlsMeshListener_h
-#define asiUI_ControlsMeshListener_h
+#ifndef asiUI_ControlsModelingListener_h
+#define asiUI_ControlsModelingListener_h
 
 // asiUI includes
 #include <asiUI_CommonFacilities.h>
-#include <asiUI_ControlsMesh.h>
+#include <asiUI_ControlsModeling.h>
 
 // Qt includes
 #include <QObject>
@@ -42,18 +42,18 @@
 
 //-----------------------------------------------------------------------------
 
-//! Default slots for controls operating with meshes.
-class asiUI_EXPORT asiUI_ControlsMeshListener : public QObject
+//! Default slots for part modeling controls.
+class asiUI_EXPORT asiUI_ControlsModelingListener : public QObject
 {
   Q_OBJECT
 
 public:
 
-  asiUI_ControlsMeshListener(asiUI_ControlsMesh*                   wControls,
-                             const Handle(asiUI_CommonFacilities)& cf);
+  asiUI_ControlsModelingListener(asiUI_ControlsModeling*               wControls,
+                                 const Handle(asiUI_CommonFacilities)& cf);
 
   virtual
-    ~asiUI_ControlsMeshListener();
+    ~asiUI_ControlsModelingListener();
 
 public:
 
@@ -62,7 +62,7 @@ public:
 
 protected:
 
-  asiUI_ControlsMesh*            m_wControls; //!< Controls.
+  asiUI_ControlsModeling*        m_wControls; //!< Controls.
   Handle(asiUI_CommonFacilities) m_cf;        //!< Common facilities.
 
 };

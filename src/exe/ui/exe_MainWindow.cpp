@@ -206,24 +206,43 @@ void exe_MainWindow::createDockWindows()
   // Set diagnostic tools once we've got plotter.
   cf->Prs.Part->SetDiagnosticTools(cf->Progress, cf->Plotter);
 
-  // Feature controls.
-  QDockWidget* pDockFeature;
+  // Analysis controls.
+  QDockWidget* pDockAnalysis;
   {
-    pDockFeature = new QDockWidget("Features", this);
-    pDockFeature->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockAnalysis = new QDockWidget("Analysis", this);
+    pDockAnalysis->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
-    Widgets.wControlsFeature = new asiUI_ControlsFeature(cf->Model,
-                                                         cf->ViewerPart,
-                                                         cf->Progress,
-                                                         cf->Plotter,
-                                                         pDockFeature);
+    Widgets.wControlsAnalysis = new asiUI_ControlsAnalysis(cf->Model,
+                                                           cf->ViewerPart,
+                                                           cf->Progress,
+                                                           cf->Plotter,
+                                                           pDockAnalysis);
     //
-    pDockFeature->setWidget(Widgets.wControlsFeature);
+    pDockAnalysis->setWidget(Widgets.wControlsAnalysis);
     //
-    this->addDockWidget(Qt::LeftDockWidgetArea, pDockFeature);
+    this->addDockWidget(Qt::LeftDockWidgetArea, pDockAnalysis);
   }
   //
-  this->tabifyDockWidget(pDockBrowser, pDockFeature);
+  this->tabifyDockWidget(pDockBrowser, pDockAnalysis);
+
+  // Modeling controls.
+  QDockWidget* pDockModeling;
+  {
+    pDockModeling = new QDockWidget("Modeling", this);
+    pDockModeling->setAllowedAreas(Qt::AllDockWidgetAreas);
+    //
+    Widgets.wControlsModeling = new asiUI_ControlsModeling(cf->Model,
+                                                           cf->ViewerPart,
+                                                           cf->Progress,
+                                                           cf->Plotter,
+                                                           pDockModeling);
+    //
+    pDockModeling->setWidget(Widgets.wControlsModeling);
+    //
+    this->addDockWidget(Qt::LeftDockWidgetArea, pDockModeling);
+  }
+  //
+  this->tabifyDockWidget(pDockAnalysis, pDockModeling);
 
   // Mesh controls.
   QDockWidget* pDockMesh;
@@ -235,14 +254,14 @@ void exe_MainWindow::createDockWindows()
                                                    cf->ViewerPart,
                                                    cf->Progress,
                                                    cf->Plotter,
-                                                   pDockFeature);
+                                                   pDockMesh);
     //
     pDockMesh->setWidget(Widgets.wControlsMesh);
     //
     this->addDockWidget(Qt::LeftDockWidgetArea, pDockMesh);
   }
   //
-  this->tabifyDockWidget(pDockFeature, pDockMesh);
+  this->tabifyDockWidget(pDockModeling, pDockMesh);
 
   // Part controls.
   QDockWidget* pDockPart;
@@ -283,17 +302,21 @@ void exe_MainWindow::createDockWindows()
   //
   this->tabifyDockWidget(pDockDomain, pDockParamEditor);
 
+  // Listener for analysis controls.
+  Listeners.pControlsAnalysis = new asiUI_ControlsAnalysisListener(Widgets.wControlsAnalysis,
+                                                                   cf);
+
+  // Listener for modeling controls.
+  Listeners.pControlsModeling = new asiUI_ControlsModelingListener(Widgets.wControlsModeling,
+                                                                   cf);
+
   // Listener for part controls.
   Listeners.pControlsPart = new asiUI_ControlsPartListener(Widgets.wControlsPart,
-                                                           cf->Model,
-                                                           cf,
-                                                           cf->Progress);
+                                                           cf);
 
   // Listener for mesh controls.
   Listeners.pControlsMesh = new asiUI_ControlsMeshListener(Widgets.wControlsMesh,
-                                                           cf->Model,
-                                                           cf,
-                                                           cf->Progress);
+                                                           cf);
 
   // Listener for part viewer.
   Listeners.pViewerPart = new asiUI_ViewerPartListener(Widgets.wViewerPart,
@@ -323,12 +346,14 @@ void exe_MainWindow::createDockWindows()
   Listeners.pParamEditor = new asiUI_ParameterEditorListener(cf);
 
   // Signals-slots.
-  Listeners.pControlsPart ->Connect();
-  Listeners.pControlsMesh ->Connect();
-  Listeners.pViewerPart   ->Connect();
-  Listeners.pViewerDomain ->Connect();
-  Listeners.pViewerHost   ->Connect();
-  Listeners.pParamEditor  ->Connect();
+  Listeners.pControlsAnalysis ->Connect();
+  Listeners.pControlsPart     ->Connect();
+  Listeners.pControlsModeling ->Connect();
+  Listeners.pControlsMesh     ->Connect();
+  Listeners.pViewerPart       ->Connect();
+  Listeners.pViewerDomain     ->Connect();
+  Listeners.pViewerHost       ->Connect();
+  Listeners.pParamEditor      ->Connect();
 
   // Log window.
   QDockWidget* pDockLogWindow;
@@ -354,7 +379,9 @@ void exe_MainWindow::createDockWindows()
 
   // Initialize and connect progress listener.
   cf->Logger           = new asiUI_Logger(Widgets.wLogger);
-  cf->ProgressListener = new asiUI_ProgressListener(statusBar, cf->Progress.Access(), cf->Logger);
+  cf->ProgressListener = new asiUI_ProgressListener(statusBar,
+                                                    cf->Progress.Access(),
+                                                    cf->Logger);
   cf->ProgressListener->Connect();
 
   /* ==================================

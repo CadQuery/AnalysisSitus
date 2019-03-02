@@ -28,45 +28,29 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiUI_ControlsMeshListener_h
-#define asiUI_ControlsMeshListener_h
-
-// asiUI includes
-#include <asiUI_CommonFacilities.h>
-#include <asiUI_ControlsMesh.h>
-
-// Qt includes
-#include <QObject>
-
-#pragma warning(disable : 4251)
+// Own include
+#include <asiUI_ControlsModelingListener.h>
 
 //-----------------------------------------------------------------------------
 
-//! Default slots for controls operating with meshes.
-class asiUI_EXPORT asiUI_ControlsMeshListener : public QObject
+//! Constructor accepting all necessary facilities.
+asiUI_ControlsModelingListener::asiUI_ControlsModelingListener(asiUI_ControlsModeling*               wControls,
+                                                               const Handle(asiUI_CommonFacilities)& cf)
+: QObject     (),
+  m_wControls (wControls),
+  m_cf        (cf)
+{}
+
+//-----------------------------------------------------------------------------
+
+//! Destructor.
+asiUI_ControlsModelingListener::~asiUI_ControlsModelingListener()
+{}
+
+//-----------------------------------------------------------------------------
+
+//! Connects this listener to the controls widget.
+void asiUI_ControlsModelingListener::Connect()
 {
-  Q_OBJECT
-
-public:
-
-  asiUI_ControlsMeshListener(asiUI_ControlsMesh*                   wControls,
-                             const Handle(asiUI_CommonFacilities)& cf);
-
-  virtual
-    ~asiUI_ControlsMeshListener();
-
-public:
-
-  virtual void
-    Connect();
-
-protected:
-
-  asiUI_ControlsMesh*            m_wControls; //!< Controls.
-  Handle(asiUI_CommonFacilities) m_cf;        //!< Common facilities.
-
-};
-
-#pragma warning(default : 4251)
-
-#endif
+  // Empty yet.
+}

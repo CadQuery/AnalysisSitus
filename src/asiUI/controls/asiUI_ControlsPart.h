@@ -73,10 +73,6 @@ public:
                        ActAPI_PlotterEntry            plotter,
                        QWidget*                       parent = NULL);
 
-  //! Dtor.
-  asiUI_EXPORT virtual
-    ~asiUI_ControlsPart();
-
 public slots:
 
   /* Load */

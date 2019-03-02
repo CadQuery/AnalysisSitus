@@ -26,9 +26,12 @@ set (controls_H_UI_FILES
   controls/asiUI_BgColorDialog.h
   controls/asiUI_ColorButton.h
   controls/asiUI_Console.h
-  controls/asiUI_ControlsFeature.h
+  controls/asiUI_ControlsAnalysis.h
+  controls/asiUI_ControlsAnalysisListener.h
   controls/asiUI_ControlsMesh.h
   controls/asiUI_ControlsMeshListener.h
+  controls/asiUI_ControlsModeling.h
+  controls/asiUI_ControlsModelingListener.h
   controls/asiUI_ControlsPart.h
   controls/asiUI_ControlsPartListener.h
   controls/asiUI_EvalButton.h
@@ -45,9 +48,12 @@ set (controls_CPP_FILES
   controls/asiUI_BgColorDialog.cpp
   controls/asiUI_ColorButton.cpp
   controls/asiUI_Console.cpp
-  controls/asiUI_ControlsFeature.cpp
+  controls/asiUI_ControlsAnalysis.cpp
+  controls/asiUI_ControlsAnalysisListener.cpp
   controls/asiUI_ControlsMesh.cpp
   controls/asiUI_ControlsMeshListener.cpp
+  controls/asiUI_ControlsModeling.cpp
+  controls/asiUI_ControlsModelingListener.cpp
   controls/asiUI_ControlsPart.cpp
   controls/asiUI_ControlsPartListener.cpp
   controls/asiUI_EvalButton.cpp

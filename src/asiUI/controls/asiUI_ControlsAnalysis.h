@@ -61,13 +61,15 @@ public:
 
   //! Constructor.
   //! \param[in] model       Data Model instance.
-  //! \param[in] pPartViewer Part viewer.
+  //! \param[in] pPartViewer part viewer.
+  //! \param[in] pBrowser    object browser.
   //! \param[in] notifier    progress notifier.
   //! \param[in] plotter     imperative plotter.
   //! \param[in] parent      parent widget.
   asiUI_EXPORT
     asiUI_ControlsAnalysis(const Handle(asiEngine_Model)& model,
                            asiUI_ViewerPart*              pPartViewer,
+                           asiUI_ObjectBrowser*           pBrowser,
                            ActAPI_ProgressEntry           notifier,
                            ActAPI_PlotterEntry            plotter,
                            QWidget*                       parent = NULL);
@@ -179,6 +181,7 @@ private:
   t_widgets               m_widgets;    //!< Involved widgets.
   Handle(asiEngine_Model) m_model;      //!< Data Model instance.
   asiUI_ViewerPart*       m_partViewer; //!< Part viewer.
+  asiUI_ObjectBrowser*    m_browser;    //!< Object browser.
   ActAPI_ProgressEntry    m_notifier;   //!< Progress Notifier.
   ActAPI_PlotterEntry     m_plotter;    //!< Imperative Plotter.
 

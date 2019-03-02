@@ -214,6 +214,7 @@ void exe_MainWindow::createDockWindows()
     //
     Widgets.wControlsAnalysis = new asiUI_ControlsAnalysis(cf->Model,
                                                            cf->ViewerPart,
+                                                           cf->ObjectBrowser,
                                                            cf->Progress,
                                                            cf->Plotter,
                                                            pDockAnalysis);

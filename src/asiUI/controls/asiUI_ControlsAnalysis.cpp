@@ -42,6 +42,7 @@
 // asiAlgo includes
 #include <asiAlgo_AAGIterator.h>
 #include <asiAlgo_CheckDihedralAngle.h>
+#include <asiAlgo_CheckValidity.h>
 #include <asiAlgo_FindFree.h>
 #include <asiAlgo_FindNonmanifold.h>
 #include <asiAlgo_Timer.h>
@@ -52,6 +53,7 @@
 
 // asiEngine includes
 #include <asiEngine_Part.h>
+#include <asiEngine_TolerantShapes.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -75,12 +77,14 @@
 
 asiUI_ControlsAnalysis::asiUI_ControlsAnalysis(const Handle(asiEngine_Model)& model,
                                                asiUI_ViewerPart*              pPartViewer,
+                                               asiUI_ObjectBrowser*           pBrowser,
                                                ActAPI_ProgressEntry           notifier,
                                                ActAPI_PlotterEntry            plotter,
                                                QWidget*                       parent)
 : QScrollArea  (parent),
   m_model      (model),
   m_partViewer (pPartViewer),
+  m_browser    (pBrowser),
   m_notifier   (notifier),
   m_plotter    (plotter)
 {
@@ -190,7 +194,53 @@ void asiUI_ControlsAnalysis::onDiagnose()
 
 void asiUI_ControlsAnalysis::onCheckToler()
 {
-  m_notifier.SendLogMessage(LogErr(Normal) << "NYI");
+  // Attempt to get the highlighted sub-shapes. If no sub-shapes are selected,
+  // we work on the full part.
+  TopTools_IndexedMapOfShape selectedSubShapes;
+  //
+  asiEngine_Part PartAPI(m_model,
+                         m_partViewer->PrsMgr(),
+                         m_notifier, m_plotter);
+  //
+  PartAPI.GetHighlightedSubShapes(selectedSubShapes);
+
+  // Choose shape to check.
+  TopoDS_Shape shape2Check;
+  //
+  if ( selectedSubShapes.Extent() )
+  {
+    TopoDS_Compound comp;
+    BRep_Builder().MakeCompound(comp);
+    //
+    for ( int k = 1; k <= selectedSubShapes.Extent(); ++k )
+      BRep_Builder().Add( comp, selectedSubShapes(k) );
+
+    shape2Check = comp;
+  }
+  else
+  {
+    shape2Check = m_model->GetPartNode()->GetShape();
+  }
+
+  // Prepare API to analyze tolerances.
+  asiEngine_TolerantShapes TolInfo(m_model,
+                                   m_partViewer->PrsMgr(),
+                                   m_notifier, m_plotter);
+
+  // Perform tolerance analysis.
+  m_model->OpenCommand();
+  {
+    TolInfo.Clean_All();
+    TolInfo.Populate(shape2Check, 10);
+  }
+  m_model->CommitCommand();
+
+  // Output max tolerance.
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Max tolerance: %1."
+                                             << asiAlgo_CheckValidity::MaxTolerance(shape2Check) );
+
+  // Update UI.
+  m_browser->Populate();
 }
 
 //-----------------------------------------------------------------------------

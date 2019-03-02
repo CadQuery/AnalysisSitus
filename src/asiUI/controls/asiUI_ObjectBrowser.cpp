@@ -138,6 +138,10 @@ void asiUI_ObjectBrowser::Populate()
 
 void asiUI_ObjectBrowser::SetSelectedNode(const ActAPI_DataObjectId& nodeId)
 {
+  // Clear current selection.
+  this->selectionModel()->clearSelection();
+
+  // Find the Node asked for selection and select it.
   QTreeWidgetItemIterator it(this);
   //
   while ( *it )

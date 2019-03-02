@@ -72,7 +72,8 @@ protected slots:
 protected:
 
   virtual void
-    reinitializeEverything(const bool fitAll = true);
+    reinitializeEverything(const bool fitAll          = true,
+                           const bool populateBrowser = true);
 
   void
     reinitializePickers();

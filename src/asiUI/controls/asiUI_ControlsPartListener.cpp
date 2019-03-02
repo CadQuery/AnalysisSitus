@@ -96,7 +96,10 @@ void asiUI_ControlsPartListener::onPartLoaded(const QString& filename)
   if ( m_cf->MainWindow )
     m_cf->MainWindow->setWindowTitle("Analysis of [" + filename + "]");
 
-  this->reinitializeEverything(true);
+  if ( m_cf->ObjectBrowser )
+    m_cf->ObjectBrowser->SetSelectedNode( m_cf->Model->GetPartNode()->GetId() );
+
+  this->reinitializeEverything(true, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -104,7 +107,10 @@ void asiUI_ControlsPartListener::onPartLoaded(const QString& filename)
 //! Reaction on part adding.
 void asiUI_ControlsPartListener::onPartAdded(const QString&)
 {
-  this->reinitializeEverything(false);
+  if ( m_cf->ObjectBrowser )
+    m_cf->ObjectBrowser->SetSelectedNode( m_cf->Model->GetPartNode()->GetId() );
+
+  this->reinitializeEverything(false, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -205,8 +211,10 @@ void asiUI_ControlsPartListener::onSelectionVerticesOn()
 //-----------------------------------------------------------------------------
 
 //! Performs full re-initialization of everything.
-//! \param[in] fitAll indicates whether to fit the scene.
-void asiUI_ControlsPartListener::reinitializeEverything(const bool fitAll)
+//! \param[in] fitAll          indicates whether to fit the scene.
+//! \param[in] populateBrowser indicates whether to repopulate browser.
+void asiUI_ControlsPartListener::reinitializeEverything(const bool fitAll,
+                                                        const bool populateBrowser)
 {
   m_cf->Progress.SetMessageKey("Actualize presentations");
   m_cf->Progress.Init(1);
@@ -228,7 +236,8 @@ void asiUI_ControlsPartListener::reinitializeEverything(const bool fitAll)
   m_cf->ViewerDomain->Repaint();
 
   // Repopulate object browser
-  m_cf->ObjectBrowser->Populate();
+  if ( m_cf->ObjectBrowser && populateBrowser )
+    m_cf->ObjectBrowser->Populate();
 
   m_cf->Progress.StepProgress(1);
   m_cf->Progress.SetProgressStatus(Progress_Succeeded);

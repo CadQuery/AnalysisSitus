@@ -84,8 +84,8 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
   QGroupBox*   pSaveGroup = new QGroupBox("Save");
   QVBoxLayout* pSaveLay   = new QVBoxLayout(pSaveGroup);
   //
-  pLoadLay->addWidget(m_widgets.Save.pToStl);
-  pLoadLay->addWidget(m_widgets.Save.pFacetsToPly);
+  pSaveLay->addWidget(m_widgets.Save.pToStl);
+  pSaveLay->addWidget(m_widgets.Save.pFacetsToPly);
 
   // Group box for interactive selection.
   QGroupBox*   pSelectionGroup = new QGroupBox("Select");

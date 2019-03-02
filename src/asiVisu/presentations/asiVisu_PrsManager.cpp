@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 25 November 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,6 @@
 #include <asiVisu_PrsManager.h>
 
 // asiVisu includes
-#include <asiVisu_AxesBtnCallback.h>
 #include <asiVisu_PartNodeInfo.h>
 #include <asiVisu_Prs.h>
 #include <asiVisu_Pipeline.h>
@@ -46,14 +45,12 @@
 #include <vtkCamera.h>
 #include <vtkCellData.h>
 #include <vtkIdTypeArray.h>
-#include <vtkImageData.h>
 #include <vtkInformation.h>
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
-#include <vtkTexturedButtonRepresentation2D.h>
 #include <vtkWidgetRepresentation.h>
 
 // OCCT includes
@@ -90,68 +87,6 @@
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_PrsManager::PlaceButton(vtkButtonWidget* pButton,
-                                     vtkRenderer*     pRenderer)
-{
-  // Place the widget. Must be done after a render so that the viewport is
-  // defined. Here the widget placement is in normalized display coordinates
-  vtkSmartPointer<vtkCoordinate> upperRight = vtkSmartPointer<vtkCoordinate>::New();
-  upperRight->SetCoordinateSystemToNormalizedDisplay();
-  upperRight->SetValue(1.0, 1.0);
-
-  const double displaySize[2] = { (double) upperRight->GetComputedDisplayValue(pRenderer)[0],
-                                  (double) upperRight->GetComputedDisplayValue(pRenderer)[1] };
-
-  double bds[6];
-  const double size = 15.0;
-  bds[0] = 3;
-  bds[1] = bds[0] + size;
-  bds[2] = displaySize[1] + bds[0];
-  bds[3] = bds[2] + size;
-  bds[4] = bds[5] = 0.0;
-
-  // Scale to 1, default is .5
-  pButton->GetRepresentation()->SetPlaceFactor(1);
-  pButton->GetRepresentation()->PlaceWidget(bds);
-}
-
-//-----------------------------------------------------------------------------
-
-void asiVisu_PrsManager::CreateImage(vtkSmartPointer<vtkImageData> image,
-                                     unsigned char*                color1,
-                                     unsigned char*                color2)
-{
-  // Specify the size of the image data
-  image->SetDimensions(10, 10, 1);
-  image->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
-  int* dims = image->GetDimensions();
-
-  // Fill the image
-  for ( int y = 0; y < dims[1]; ++y )
-  {
-    for ( int x = 0; x < dims[0]; ++x )
-    {
-      unsigned char*
-        pixel = static_cast<unsigned char*>( image->GetScalarPointer(x, y, 0) );
-      //
-      if ( x < 5 )
-      {
-        pixel[0] = color1[0];
-        pixel[1] = color1[1];
-        pixel[2] = color1[2];
-      }
-      else
-      {
-        pixel[0] = color2[0];
-        pixel[1] = color2[1];
-        pixel[2] = color2[2];
-      }
-    }
-  }
-}
-
-//-----------------------------------------------------------------------------
-
 vtkStandardNewMacro(asiVisu_PrsManager);
 
 //-----------------------------------------------------------------------------
@@ -165,11 +100,8 @@ void asiVisu_PrsManager::PrintSelf(ostream& os, vtkIndent indent)
 
 //! Constructs presentation manager.
 asiVisu_PrsManager::asiVisu_PrsManager()
-: vtkObject         (),
-  m_widget          (NULL),
-  BlackIntensity    (0.0),
-  WhiteIntensity    (1.0),
-  isWhiteBackground (false)
+: vtkObject (),
+  m_widget  (NULL)
 {
   this->init();
 }
@@ -179,12 +111,9 @@ asiVisu_PrsManager::asiVisu_PrsManager()
 //! Constructs presentation manager.
 //! \param[in] model Data Model instance.
 asiVisu_PrsManager::asiVisu_PrsManager(const Handle(ActAPI_IModel)& model)
-: vtkObject         (),
-  m_model           (model),
-  m_widget          (NULL),
-  BlackIntensity    (0.0),
-  WhiteIntensity    (1.0),
-  isWhiteBackground (false)
+: vtkObject (),
+  m_model   (model),
+  m_widget  (NULL)
 {
   this->init();
 }
@@ -196,46 +125,6 @@ asiVisu_PrsManager::asiVisu_PrsManager(const Handle(ActAPI_IModel)& model)
 void asiVisu_PrsManager::SetModel(const Handle(ActAPI_IModel)& model)
 {
   m_model = model;
-}
-
-//-----------------------------------------------------------------------------
-
-//! Sets intensity values for black and white color schemes.
-//! \param[in] black black intensity (from zero and greater).
-//! \param[in] white white intensity (from one and smaller).
-void asiVisu_PrsManager::SetBlackAndWhiteIntensity(const double black,
-                                                   const double white)
-{
-  this->BlackIntensity = black;
-  this->WhiteIntensity = white;
-}
-
-//-----------------------------------------------------------------------------
-
-void asiVisu_PrsManager::AdjustColors()
-{
-  // Choose color.
-  QColor color;
-  if ( this->isWhiteBackground )
-    color.setRgbF(this->BlackIntensity,
-                  this->BlackIntensity,
-                  this->BlackIntensity);
-  else
-    color.setRgbF(this->WhiteIntensity,
-                  this->WhiteIntensity,
-                  this->WhiteIntensity);
-
-  // Now ask each Presentation to colorize itself.
-  for ( TNodePrsMap::Iterator it(m_nodePresentations); it.More(); it.Next() )
-  {
-    // Get Presentation instance.
-    const Handle(asiVisu_Prs)& prs = it.Value();
-    //
-    if ( prs.IsNull() || !prs->IsColorizable() )
-      continue;
-
-    prs->SetColor(color);
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -520,9 +409,6 @@ void asiVisu_PrsManager::InitPresentation(const ActAPI_DataObjectId& nodeId)
 
   const Handle(asiVisu_Prs)& prs = m_nodePresentations.Find(nodeId);
   prs->InitPipelines();
-
-  // Adjust viewer-specific colors.
-  this->AdjustColors();
 }
 
 //-----------------------------------------------------------------------------
@@ -1387,48 +1273,6 @@ void asiVisu_PrsManager::init()
   m_trihedron->SetAxisLabels(0);
   m_trihedron->SetConeRadius(0);
   m_renderer->AddActor(m_trihedron);
-
-  // Button to switch between visualization modes
-  m_axesButton = vtkSmartPointer<vtkButtonWidget>::New();
-  m_axesCallback = vtkSmartPointer<asiVisu_AxesBtnCallback>::New();
-  //
-  m_axesCallback->SetAxesActor(m_trihedron);
-  m_axesCallback->SetRenderer(m_renderer);
-  m_axesCallback->SetManager(this);
-  m_axesButton->AddObserver(vtkCommand::StateChangedEvent, m_axesCallback);
-
-  // Create images for textures
-  vtkSmartPointer<vtkImageData> image1 = vtkSmartPointer<vtkImageData>::New();
-  vtkSmartPointer<vtkImageData> image2 = vtkSmartPointer<vtkImageData>::New();
-  vtkSmartPointer<vtkImageData> image3 = vtkSmartPointer<vtkImageData>::New();
-  vtkSmartPointer<vtkImageData> image4 = vtkSmartPointer<vtkImageData>::New();
-  //
-  unsigned char color1[3] = {030, 030, 030};
-  unsigned char color2[3] = {118, 121, 124};
-  unsigned char color3[3] = {118, 121, 124};
-  unsigned char color4[3] = {030, 030, 030};
-  //
-  CreateImage(image1, color1, color1);
-  CreateImage(image2, color2, color2);
-  CreateImage(image3, color3, color3);
-  CreateImage(image4, color4, color4);
-
-  // Create the widget and its representation
-  vtkSmartPointer<vtkTexturedButtonRepresentation2D>
-    buttonRepresentation = vtkSmartPointer<vtkTexturedButtonRepresentation2D>::New();
-  //
-  buttonRepresentation->SetNumberOfStates(4);
-  buttonRepresentation->SetButtonTexture(0, image1);
-  buttonRepresentation->SetButtonTexture(1, image2);
-  buttonRepresentation->SetButtonTexture(2, image3);
-  buttonRepresentation->SetButtonTexture(3, image4);
-
-  m_axesButton->SetInteractor( m_renderer->GetRenderWindow()->GetInteractor() );
-  m_axesButton->SetRepresentation(buttonRepresentation);
-  //
-  m_axesButton->On();
-  //
-  PlaceButton(m_axesButton, m_renderer);
 }
 
 //-----------------------------------------------------------------------------

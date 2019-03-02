@@ -122,7 +122,6 @@ set (pipelines_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (presentations_H_FILES
-  presentations/asiVisu_AxesBtnCallback.h
   presentations/asiVisu_CalculusLawPrs.h
   presentations/asiVisu_ContourPrs.h
   presentations/asiVisu_CurvatureCombsPrs.h
@@ -154,7 +153,6 @@ set (presentations_H_FILES
   presentations/asiVisu_TriangulationPrs.h
 )
 set (presentations_CPP_FILES 
-  presentations/asiVisu_AxesBtnCallback.cpp
   presentations/asiVisu_CalculusLawPrs.cpp
   presentations/asiVisu_ContourPrs.cpp
   presentations/asiVisu_CurvatureCombsPrs.cpp

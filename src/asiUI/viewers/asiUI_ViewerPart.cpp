@@ -122,7 +122,6 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
   //
   m_prs_mgr->SetModel(model);
   m_prs_mgr->Initialize(this);
-  m_prs_mgr->SetBlackAndWhiteIntensity(0.8, 0.9);
   m_prs_mgr->SetInteractionMode(asiVisu_PrsManager::InteractionMode_3D);
   m_prs_mgr->SetSelectionMode(SelectionMode_Face);
 

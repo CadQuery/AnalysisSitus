@@ -48,9 +48,7 @@
 // VTK includes
 #pragma warning(push, 0)
 #include <vtkAxesActor.h>
-#include <vtkButtonWidget.h>
 #include <vtkCellPicker.h>
-#include <vtkCubeAxesActor.h>
 #include <vtkObject.h>
 #include <vtkPointPicker.h>
 #include <vtkRenderer.h>
@@ -66,7 +64,7 @@
 // OCCT includes
 #include <NCollection_DataMap.hxx>
 
-class asiVisu_AxesBtnCallback;
+//-----------------------------------------------------------------------------
 
 //! This class is designed to handle 3D representations. Besides that,
 //! presentation manager controls QVTK widget along with all standard
@@ -101,17 +99,6 @@ public:
 
 public:
 
-  asiVisu_EXPORT static void
-    PlaceButton(vtkButtonWidget* pButton,
-                vtkRenderer*     pRenderer);
-
-  asiVisu_EXPORT static void
-    CreateImage(vtkSmartPointer<vtkImageData> image,
-                unsigned char*                color1,
-                unsigned char*                color2);
-
-public:
-
   asiVisu_EXPORT
     asiVisu_PrsManager();
 
@@ -122,13 +109,6 @@ public:
 
   asiVisu_EXPORT void
     SetModel(const Handle(ActAPI_IModel)& model);
-
-  asiVisu_EXPORT void
-    SetBlackAndWhiteIntensity(const double black,
-                              const double white);
-
-  asiVisu_EXPORT void
-    AdjustColors();
 
   asiVisu_EXPORT void
     SetDiagnosticTools(ActAPI_ProgressEntry progress,
@@ -382,12 +362,6 @@ protected:
     preparePickedPrs(const asiVisu_SelectionNature       selNature,
                      const Handle(asiVisu_PickerResult)& pickRes);
 
-public:
-
-  double BlackIntensity;    //!< Variation of black color for part actor.
-  double WhiteIntensity;    //!< Variation of white color for part actor.
-  bool   isWhiteBackground; //!< Whether white background is set or not.
-
 // Data Model:
 private:
 
@@ -442,12 +416,6 @@ private:
 
   //! Axes actor.
   vtkSmartPointer<vtkAxesActor> m_trihedron;
-
-  //! Button to toggle axes.
-  vtkSmartPointer<vtkButtonWidget> m_axesButton;
-
-  //! Callback for axes button.
-  vtkSmartPointer<asiVisu_AxesBtnCallback> m_axesCallback;
 
   //! List of nodes allowed for picking
   Handle(ActAPI_HNodeList) m_bAllowedNodes;

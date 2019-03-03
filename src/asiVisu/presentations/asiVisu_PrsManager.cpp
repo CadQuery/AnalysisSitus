@@ -497,6 +497,31 @@ void asiVisu_PrsManager::DeRenderAllPresentations()
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_PrsManager::GarbageCollect()
+{
+  if ( m_model.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot collect garbage with uninitialized model.");
+    return;
+  }
+
+  for ( TNodePrsMap::Iterator it(m_nodePresentations); it.More(); it.Next() )
+  {
+    const ActAPI_DataObjectId& nodeId = it.Key();
+
+    // Check if the Node is still alive in the model.
+    Handle(ActAPI_INode) N = m_model->FindNode(nodeId);
+    //
+    if ( N.IsNull() || !N->IsWellFormed() )
+      this->DeRenderPresentation(nodeId);
+  }
+
+  if ( m_widget )
+    m_widget->repaint();
+}
+
+//-----------------------------------------------------------------------------
+
 //! Builds (if not yet) visualization pipelines for the Node's Presentation
 //! and sends VTK Update request for pipeline execution. Normally, you invoke
 //! this method once you somehow affect the Node's data. Notice that a

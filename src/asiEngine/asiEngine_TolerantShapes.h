@@ -40,6 +40,8 @@
 // asiVisu includes
 #include <asiVisu_PrsManager.h>
 
+//-----------------------------------------------------------------------------
+
 //! API for operating with Tolerant Shape data objects.
 class asiEngine_TolerantShapes : public asiEngine_Base
 {

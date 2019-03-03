@@ -96,10 +96,10 @@ void asiUI_ControlsPartListener::onPartLoaded(const QString& filename)
   if ( m_cf->MainWindow )
     m_cf->MainWindow->setWindowTitle("Analysis of [" + filename + "]");
 
+  this->reinitializeEverything(true, true);
+
   if ( m_cf->ObjectBrowser )
     m_cf->ObjectBrowser->SetSelectedNode( m_cf->Model->GetPartNode()->GetId() );
-
-  this->reinitializeEverything(true, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -107,10 +107,10 @@ void asiUI_ControlsPartListener::onPartLoaded(const QString& filename)
 //! Reaction on part adding.
 void asiUI_ControlsPartListener::onPartAdded(const QString&)
 {
+  this->reinitializeEverything(false, true);
+
   if ( m_cf->ObjectBrowser )
     m_cf->ObjectBrowser->SetSelectedNode( m_cf->Model->GetPartNode()->GetId() );
-
-  this->reinitializeEverything(false, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -229,6 +229,7 @@ void asiUI_ControlsPartListener::reinitializeEverything(const bool fitAll,
   this->reinitializePickers();
 
   // Actualize
+  m_cf->ViewerPart->PrsMgr()->GarbageCollect(); // Derender any dead objects
   m_cf->ViewerPart->PrsMgr()->Actualize(m_cf->Model->GetPartNode(), false, fitAll);
 
   // Repaint other viewers which may have been affected

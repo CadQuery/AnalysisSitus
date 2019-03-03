@@ -162,9 +162,6 @@ void asiUI_ControlsModeling::onDeleteFaces()
     asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(result);
   }
   m_model->CommitCommand(); // tx commit
-
-  // Update viewer.
-  m_partViewer->PrsMgr()->Actualize(part_n);
 }
 
 //-----------------------------------------------------------------------------
@@ -203,9 +200,6 @@ void asiUI_ControlsModeling::onSuppressFaces()
     asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(result);
   }
   m_model->CommitCommand(); // tx commit
-
-  // Update viewer.
-  m_partViewer->PrsMgr()->Actualize(part_n);
 }
 
 //-----------------------------------------------------------------------------
@@ -255,9 +249,6 @@ void asiUI_ControlsModeling::onDefeatureFaces()
     asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(result);
   }
   m_model->CommitCommand(); // tx commit.
-
-  // Update viewer.
-  m_partViewer->PrsMgr()->Actualize(part_n);
 }
 
 //-----------------------------------------------------------------------------
@@ -296,9 +287,6 @@ void asiUI_ControlsModeling::onDetachFaces()
     asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(result);
   }
   m_model->CommitCommand(); // tx commit
-
-  // Update viewer.
-  m_partViewer->PrsMgr()->Actualize(part_n);
 }
 
 //-----------------------------------------------------------------------------
@@ -338,9 +326,6 @@ void asiUI_ControlsModeling::onAutoRepair()
     asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(result);
   }
   m_model->CommitCommand(); // tx commit
-
-  // Update viewer.
-  m_partViewer->PrsMgr()->Actualize(part_n);
 }
 
 //-----------------------------------------------------------------------------
@@ -371,9 +356,6 @@ void asiUI_ControlsModeling::onMaximizeFaces()
     asiEngine_Part(m_model).Update(part);
   }
   m_model->CommitCommand();
-
-  // Update viewer.
-  m_partViewer->PrsMgr()->Actualize(part_n);
 }
 
 //-----------------------------------------------------------------------------

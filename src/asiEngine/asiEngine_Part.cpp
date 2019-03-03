@@ -32,6 +32,9 @@
 #include <asiEngine_Part.h>
 
 // asiEngine includes
+#include <asiEngine_TolerantShapes.h>
+
+// asiEngine includes
 #include <asiEngine_Curve.h>
 
 // asiVisu includes
@@ -216,14 +219,14 @@ Handle(asiData_PartNode) asiEngine_Part::CreatePart()
 void asiEngine_Part::Update(const TopoDS_Shape& model,
                             const bool          doResetTessParams)
 {
-  // Get Part Node
+  // Get Part Node.
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
   //
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
     return;
 
-  // Reset data while not reseting naming
-  Clean(false);
+  // Reset data while not reseting naming.
+  this->Clean(false);
 
   // Set working structures
   Handle(ActData_ShapeParameter)
@@ -235,16 +238,20 @@ void asiEngine_Part::Update(const TopoDS_Shape& model,
   shapeParam->SetShape(model);
   aagParam->SetAAG( new asiAlgo_AAG(model) );
 
-  // Reset tessellation parameters if requested
+  // Reset tessellation parameters if requested.
   if ( doResetTessParams )
   {
     part_n->SetLinearDeflection( asiAlgo_Utils::AutoSelectLinearDeflection(model) );
     part_n->SetAngularDeflection( asiAlgo_Utils::AutoSelectAngularDeflection(model) );
   }
 
-  // Actualize naming if it is initialized
+  // Actualize naming if it is initialized.
   if ( part_n->HasNaming() )
     part_n->GetNaming()->Actualize(model);
+
+  // Actualize presentation.
+  if ( m_prsMgr )
+    m_prsMgr->Actualize(part_n);
 }
 
 //-----------------------------------------------------------------------------
@@ -310,19 +317,24 @@ void asiEngine_Part::BuildBVH()
 //! Cleans up Data Model structure related to the Part Node.
 void asiEngine_Part::Clean(const bool resetNaming)
 {
-  // Get Part Node
+  // Get Part Node.
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
   //
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
     return;
 
-  // Reset data
+  // Reset data.
   part_n                                   ->Init(resetNaming);
   part_n->GetFaceRepresentation()          ->Init();
   part_n->GetSurfaceRepresentation()       ->Init();
   part_n->GetEdgeRepresentation()          ->Init();
   part_n->GetCurveRepresentation()         ->Init();
   part_n->GetBoundaryEdgesRepresentation() ->Init();
+
+  // Clean up tolerant shapes.
+  asiEngine_TolerantShapes tolApi(m_model, m_prsMgr, m_progress, m_plotter);
+  //
+  tolApi.Clean_All();
 }
 
 //-----------------------------------------------------------------------------

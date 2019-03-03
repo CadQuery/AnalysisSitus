@@ -189,6 +189,11 @@ public:
 //-----------------------------------------------------------------------------
 
   asiVisu_EXPORT virtual void
+    GarbageCollect();
+
+//-----------------------------------------------------------------------------
+
+  asiVisu_EXPORT virtual void
     UpdatePresentation(const Handle(ActAPI_INode)& node,
                        const bool doFitContents = true);
 

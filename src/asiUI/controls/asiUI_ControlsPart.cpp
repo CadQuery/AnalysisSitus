@@ -279,7 +279,7 @@ void asiUI_ControlsPart::onSaveToBRep()
   // Save shape
   if ( !asiAlgo_Utils::WriteBRep( part, QStr2AsciiStr(filename) ) )
   {
-    std::cout << "Error: cannot save shape" << std::endl;
+    m_notifier.SendLogMessage(LogErr(Normal) << "Cannot save shape to BREP.");
     return;
   }
 
@@ -326,37 +326,6 @@ void asiUI_ControlsPart::onSaveToBRep()
 //  }
 //}
 //
-////-----------------------------------------------------------------------------
-//
-////! Consults tolerance.
-//void asiUI_ControlsPart::onTolerance()
-//{
-//  Handle(asiData_PartNode) part_n;
-//  TopoDS_Shape             part;
-//  //
-//  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
-//
-//  // Get highlighted faces
-//  TopTools_IndexedMapOfShape selected;
-//  asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedSubShapes(selected);
-//
-//  if ( selected.IsEmpty() )
-//  {
-//    const double maxTol = asiAlgo_CheckValidity::MaxTolerance(part);
-//    m_notifier.SendLogMessage(LogInfo(Normal) << "Max tolerance: %1" << maxTol);
-//  }
-//  else
-//  {
-//    double maxTol = 0.0;
-//    for ( int i = 1; i <= selected.Extent(); ++i )
-//    {
-//      const double tol = asiAlgo_CheckValidity::MaxTolerance( selected(i) );
-//      maxTol = std::max(tol, maxTol);
-//    }
-//    m_notifier.SendLogMessage(LogInfo(Normal) << "Max tolerance for selected sub-shape: %1" << maxTol);
-//  }
-//}
-////-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 

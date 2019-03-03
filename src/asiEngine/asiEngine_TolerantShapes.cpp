@@ -161,6 +161,10 @@ void asiEngine_TolerantShapes::Clean_All()
       continue;
 
     nodesToDelete->Append(node);
+
+    // Clean up presentation.
+    if ( m_prsMgr && m_prsMgr->IsPresented(node) )
+      m_prsMgr->DeletePresentation(node);
   }
 
   // Delete all Nodes collected for removal.

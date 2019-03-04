@@ -302,6 +302,8 @@ void asiVisu_PartPrs::afterUpdatePipelines() const
     QColor color = asiVisu_Utils::IntToColor( N->GetColor() );
     this->Colorize(color);
   }
+  else
+    this->Colorize(Qt::white);
 
   /* Actualize visualization of vertices */
 

@@ -52,6 +52,7 @@
 #include <asiVisu_PartPrs.h>
 
 // asiEngine includes
+#include <asiEngine_Curve.h>
 #include <asiEngine_Part.h>
 #include <asiEngine_TolerantShapes.h>
 
@@ -60,7 +61,10 @@
 
 // OCCT includes
 #include <BRep_Builder.hxx>
+#include <BRepGProp.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
+#include <GProp_GProps.hxx>
+#include <TopExp_Explorer.hxx>
 
 // Qt include
 #pragma warning(push, 0)
@@ -187,7 +191,38 @@ asiUI_ControlsAnalysis::asiUI_ControlsAnalysis(const Handle(asiEngine_Model)& mo
 
 void asiUI_ControlsAnalysis::onDiagnose()
 {
-  m_notifier.SendLogMessage(LogErr(Normal) << "NYI");
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+
+  asiAlgo_CheckValidity checker(m_notifier, m_plotter);
+
+  // Get highlighted faces
+  TopTools_IndexedMapOfShape selected;
+  asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedSubShapes(selected);
+
+  if ( selected.IsEmpty() )
+  {
+    if ( !checker.CheckBasic(part) )
+    {
+      m_notifier.SendLogMessage(LogErr(Normal) << "Shape is invalid.");
+      return;
+    }
+    m_notifier.SendLogMessage(LogInfo(Normal) << "Shape is correct.");
+  }
+  else
+  {
+    for ( int i = 1; i <= selected.Extent(); ++i )
+    {
+      if ( !checker.CheckBasic( selected(i) ) )
+      {
+        m_notifier.SendLogMessage(LogErr(Normal) << "Sub-shape is invalid.");
+        return;
+      }
+      m_notifier.SendLogMessage(LogInfo(Normal) << "Sub-shape is correct.");
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -258,7 +293,40 @@ void asiUI_ControlsAnalysis::onCheckEuler()
 
 void asiUI_ControlsAnalysis::onCheckContours()
 {
-  m_notifier.SendLogMessage(LogErr(Normal) << "NYI");
+  double globTolerance = 0.0;
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+
+  // Get Part shape.
+  TopoDS_Shape partSh = part_n->GetShape();
+
+  // Check each face individually.
+  bool isOk = true;
+  //
+  for ( TopExp_Explorer exp(partSh, TopAbs_FACE); exp.More(); exp.Next() )
+  {
+    const TopoDS_Face& face = TopoDS::Face( exp.Current() );
+
+    // Set default tolerance.
+    double locTolerance;
+    if ( globTolerance )
+      locTolerance = globTolerance;
+    else
+      locTolerance = asiAlgo_CheckValidity::MaxTolerance(face)*5.0;
+
+    // Check closeness.
+    if ( !asiAlgo_CheckValidity::HasAllClosedWires(face, locTolerance) )
+    {
+      isOk = false;
+      break;
+    }
+  }
+
+  if ( isOk )
+    m_notifier.SendLogMessage(LogInfo(Normal) << "All faces have closed contours.");
+  else
+    m_notifier.SendLogMessage(LogWarn(Normal) << "Some contours contain gaps.");
 }
 
 //-----------------------------------------------------------------------------
@@ -798,35 +866,258 @@ void asiUI_ControlsAnalysis::onFindConvexOnly()
 
 void asiUI_ControlsAnalysis::onEdgeCurvature()
 {
-  m_notifier.SendLogMessage(LogErr(Normal) << "NYI");
+  /* ================
+   *  Prepare inputs
+   * ================ */
+
+  bool noPlot           = false;
+  bool noAlongCurvature = false;
+
+  // Get numerical values.
+  int    numPts      = 100;
+  double scaleFactor = 1.0;
+  double amplFactor  = 1.0;
+
+  // Get Part Node to access the selected edge.
+  Handle(asiData_PartNode) partNode = m_model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return;
+  }
+  //
+  TopoDS_Shape                      partShape = partNode->GetShape();
+  const TopTools_IndexedMapOfShape& subShapes = partNode->GetAAG()->RequestMapOfSubShapes();
+
+  // Curve Node is expected.
+  Handle(asiData_CurveNode) curveNode = partNode->GetCurveRepresentation();
+  //
+  if ( curveNode.IsNull() || !curveNode->IsWellFormed() )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Curve Node is null or ill-defined.");
+    return;
+  }
+
+  // Get ID of the selected edge.
+  const int edgeIdx = curveNode->GetSelectedEdge();
+  //
+  if ( edgeIdx <= 0 )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Please, select edge first.");
+    return;
+  }
+
+  // Get host curve of the selected edge.
+  const TopoDS_Shape& edgeShape = subShapes(edgeIdx);
+  //
+  if ( edgeShape.ShapeType() != TopAbs_EDGE )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "Unexpected topological type of the selected edge.");
+    return;
+  }
+  //
+  double f, l;
+  Handle(Geom_Curve) curve = BRep_Tool::Curve( TopoDS::Edge(edgeShape), f, l );
+
+  /* ==========================
+   *  Evaluate curvature combs
+   * ========================== */
+
+  // Create curvature combs.
+  asiEngine_Curve CurveAPI(m_model, m_notifier, m_plotter);
+  //
+  Handle(asiData_CurvatureCombsNode) combsNode;
+  //
+  std::vector<gp_Pnt> points;
+  std::vector<double> params;
+  std::vector<double> curvatures;
+  std::vector<gp_Vec> combs;
+  std::vector<bool>   combsOk;
+  //
+  m_model->OpenCommand();
+  {
+    // Calculate curvature field.
+    if ( !asiAlgo_Utils::CalculateCurvatureCombs(curve,
+                                                 f,
+                                                 l,
+                                                 numPts,
+                                                 amplFactor,
+                                                 points,
+                                                 params,
+                                                 curvatures,
+                                                 combs,
+                                                 combsOk) )
+    {
+      m_notifier.SendLogMessage(LogErr(Normal) << "Cannot calculate curvature field.");
+      return;
+    }
+
+    // Create persistent object.
+    combsNode = CurveAPI.CreateOrUpdateCurvatureCombs(curveNode,
+                                                      scaleFactor,
+                                                      points,
+                                                      combsOk,
+                                                      params,
+                                                      curvatures,
+                                                      combs);
+  }
+  m_model->CommitCommand();
+
+  // Actualize.
+  m_browser->Populate();
+  m_partViewer->PrsMgr()->Actualize(combsNode);
 }
 
 //-----------------------------------------------------------------------------
 
 void asiUI_ControlsAnalysis::onEdgeLength()
 {
-  m_notifier.SendLogMessage(LogErr(Normal) << "NYI");
+  // Attempt to get the highlighted sub-shapes.
+  TColStd_PackedMapOfInteger selectedEdgeIds;
+  //
+  asiEngine_Part PartAPI( m_model,
+                          m_partViewer->PrsMgr(),
+                          m_notifier,
+                          m_plotter );
+  //
+  PartAPI.GetHighlightedEdges(selectedEdgeIds);
+
+  // Get total length.
+  double len = 0.0;
+  for ( TColStd_MapIteratorOfPackedMapOfInteger eit(selectedEdgeIds); eit.More(); eit.Next() )
+  {
+    const int edgeId = eit.Key();
+
+    // Get edge.
+    const TopoDS_Shape&
+      edge = m_model->GetPartNode()->GetAAG()->RequestMapOfEdges()(edgeId);
+
+    // Calculate global properties.
+    GProp_GProps props;
+    BRepGProp::LinearProperties(edge, props);
+    len += props.Mass();
+  }
+
+  m_notifier.SendLogMessage(LogInfo(Normal) << "Length: %1." << len);
 }
 
 //-----------------------------------------------------------------------------
 
 void asiUI_ControlsAnalysis::onEdgeStrain()
 {
-  m_notifier.SendLogMessage(LogErr(Normal) << "NYI");
+  // Attempt to get the highlighted sub-shapes.
+  TColStd_PackedMapOfInteger selectedEdgeIds;
+  //
+  asiEngine_Part PartAPI( m_model,
+                          m_partViewer->PrsMgr(),
+                          m_notifier,
+                          m_plotter );
+  //
+  PartAPI.GetHighlightedEdges(selectedEdgeIds);
+
+  // Get total strain.
+  double totalEnergy = 0.0;
+  for ( TColStd_MapIteratorOfPackedMapOfInteger eit(selectedEdgeIds); eit.More(); eit.Next() )
+  {
+    const int edgeId = eit.Key();
+
+    // Get edge.
+    const TopoDS_Shape&
+      edge = m_model->GetPartNode()->GetAAG()->RequestMapOfEdges()(edgeId);
+
+    // Get curve.
+    double f, l;
+    Handle(Geom_Curve) edgeCurve = BRep_Tool::Curve(TopoDS::Edge(edge), f, l);
+
+    // Calculate strain energy.
+    double energy = 0;
+    if ( !asiAlgo_Utils::CalculateStrainEnergy(edgeCurve, energy) )
+    {
+      m_notifier.SendLogMessage(LogErr(Normal) << "Cannot calculate strain energy.");
+      return;
+    }
+
+    totalEnergy += energy;
+  }
+
+  m_notifier.SendLogMessage(LogInfo(Normal) << "Approximate total strain energy: %1."
+                                            << totalEnergy);
 }
 
 //-----------------------------------------------------------------------------
 
 void asiUI_ControlsAnalysis::onFaceArea()
 {
-  m_notifier.SendLogMessage(LogErr(Normal) << "NYI");
+  // Attempt to get the highlighted sub-shapes.
+  TColStd_PackedMapOfInteger selectedFaceIds;
+  //
+  asiEngine_Part PartAPI( m_model,
+                          m_partViewer->PrsMgr(),
+                          m_notifier,
+                          m_plotter );
+  //
+  PartAPI.GetHighlightedFaces(selectedFaceIds);
+
+  // Get total area.
+  double area = 0.0;
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(selectedFaceIds); fit.More(); fit.Next() )
+  {
+    const int faceId = fit.Key();
+
+    // Get face.
+    const TopoDS_Shape&
+      face = m_model->GetPartNode()->GetAAG()->GetMapOfFaces()(faceId);
+
+    // Calculate global properties.
+    GProp_GProps props;
+    BRepGProp::SurfaceProperties(face, props);
+    area += props.Mass();
+  }
+
+  m_notifier.SendLogMessage(LogInfo(Normal) << "Total area: %1." << area);
 }
 
 //-----------------------------------------------------------------------------
 
 void asiUI_ControlsAnalysis::onFaceEnergy()
 {
-  m_notifier.SendLogMessage(LogErr(Normal) << "NYI");
+  // Attempt to get the highlighted sub-shapes.
+  TColStd_PackedMapOfInteger selectedFaceIds;
+  //
+  asiEngine_Part PartAPI( m_model,
+                          m_partViewer->PrsMgr(),
+                          m_notifier,
+                          m_plotter );
+  //
+  PartAPI.GetHighlightedFaces(selectedFaceIds);
+
+  // Get total bending energy.
+  double totalEnergy = 0.0;
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(selectedFaceIds); fit.More(); fit.Next() )
+  {
+    const int faceId = fit.Key();
+
+    // Get face.
+    const TopoDS_Shape&
+      face = m_model->GetPartNode()->GetAAG()->GetMapOfFaces()(faceId);
+
+    // Get surface.
+    Handle(Geom_Surface) surf = BRep_Tool::Surface( TopoDS::Face(face) );
+
+    // Calculate bending energy.
+    double energy = 0;
+    if ( !asiAlgo_Utils::CalculateBendingEnergy(surf, energy) )
+    {
+      m_notifier.SendLogMessage(LogErr(Normal) << "Cannot calculate bending energy.");
+      return;
+    }
+
+    totalEnergy += energy;
+  }
+
+  m_notifier.SendLogMessage(LogInfo(Normal) << "Approximate total bending energy: %1."
+                                            << totalEnergy);
 }
 
 //-----------------------------------------------------------------------------

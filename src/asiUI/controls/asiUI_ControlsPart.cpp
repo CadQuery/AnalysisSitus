@@ -287,46 +287,6 @@ void asiUI_ControlsPart::onSaveToBRep()
   emit partSaved();
 }
 
-////-----------------------------------------------------------------------------
-//
-////! Runs shape checker.
-//void asiUI_ControlsPart::onCheckShape()
-//{
-//  Handle(asiData_PartNode) part_n;
-//  TopoDS_Shape             part;
-//  //
-//  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
-//
-//  asiAlgo_CheckValidity checker(m_notifier, m_plotter);
-//
-//  // Get highlighted faces
-//  TopTools_IndexedMapOfShape selected;
-//  asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedSubShapes(selected);
-//
-//  if ( selected.IsEmpty() )
-//  {
-//    if ( !checker.CheckBasic(part) )
-//    {
-//      std::cout << "Error: shape is invalid" << std::endl;
-//      return;
-//    }
-//    std::cout << "Shape is correct" << std::endl;
-//  }
-//  else
-//  {
-//    for ( int i = 1; i <= selected.Extent(); ++i )
-//    {
-//      if ( !checker.CheckBasic( selected(i) ) )
-//      {
-//        std::cout << "Error: sub-shape is invalid" << std::endl;
-//        return;
-//      }
-//      std::cout << "Sub-shape is correct" << std::endl;
-//    }
-//  }
-//}
-//
-
 //-----------------------------------------------------------------------------
 
 //! Switches to selection by faces.

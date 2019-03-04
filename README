@@ -1,6 +1,24 @@
 Release notes:
 
 -------------------------------------------------------------------------------
+v0.3.0, 04 March 2019
+-------------------------------------------------------------------------------
+- Rearrange control panels to give more logical and powerful interface.
+- Add parameter editor and data dictionary.
+- Remove useless (after the latest improvements) toggle button in 3D viewer.
+- Add 'save-step' Tcl command.
+- Add 'build-triangulation-obb' Tcl command.
+- Add 'move-triangulation' Tcl command.
+- Add visualization and selection of triangulation nodes.
+- Prototype surface deviation checker.
+- Prototype commands for saving and loading binary project files.
+- Refactor curvature plot to become a general-purpose 2D plot.
+- Prototype reverse engineering asset of Tcl commands.
+- Add interactive selection of points in point clouds.
+- Refactor purification algorithm for point clouds.
+- Add commands to build bilinear Coons patches.
+- Bugfix.
+-------------------------------------------------------------------------------
 v0.2.7, 17 November 2018
 -------------------------------------------------------------------------------
 - Add new Tcl commands and improve some existing.

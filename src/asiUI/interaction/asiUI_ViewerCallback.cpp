@@ -84,9 +84,13 @@ bool asiUI_ViewerCallback::getPickedPoint(void*   pCallData,
     return false;
   }
 
-  // Get active face index.
-  const int fidx = m_bvh->GetFacet(facet_idx).FaceIndex;
+  // Get facet properties, such as its normal and the corresponding face index.
+  const asiAlgo_BVHFacets::t_facet& facet = m_bvh->GetFacet(facet_idx);
+  const int                         fidx  = facet.FaceIndex;
   //
+  norm = facet.N.XYZ();
+  //
+  m_plotter.REDRAW_VECTOR_AT("norm", hit, gp_Vec(norm), Color_Red);
   m_notifier.SendLogMessage(LogInfo(Normal) << "Picked point (%1, %2, %3) on face %4."
                                             << hit.X()
                                             << hit.Y()

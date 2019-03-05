@@ -644,13 +644,20 @@ size_t
 #endif
   }
 
-  gp_Vec prevEdgeDir = this->getCoEdgeTrailingDir( this->getPrevCoEdge(currentEdge) );
+  // Get reference vector.
+  gp_Vec cross = commonVertex->GetNormal();
+  //
+  if ( cross.Magnitude() < RealEpsilon() )
+  {
+    m_notifier.SendLogMessage(LogWarn(Normal) << "Normal vector is undefined or null at the picked vertex.");
+    //
+    gp_Vec prevEdgeDir = this->getCoEdgeTrailingDir( this->getPrevCoEdge(currentEdge) );
+    cross = prevEdgeDir^edgeDir;
 
 #if defined DRAW_DEBUG
-  m_plotter.DRAW_VECTOR_AT( commonVertex->GetPoint(), prevEdgeDir, Color_Green, "prevEdgeDir" );
+    m_plotter.DRAW_VECTOR_AT( commonVertex->GetPoint(), prevEdgeDir, Color_Green, "prevEdgeDir" );
 #endif
-
-  gp_Vec cross = prevEdgeDir^edgeDir;
+  }
 
 #if defined DRAW_DEBUG
   m_plotter.DRAW_VECTOR_AT( commonVertex->GetPoint(), cross*50, Color_Yellow, "cross" );

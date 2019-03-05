@@ -40,7 +40,8 @@
 asiData_ReVertexNode::asiData_ReVertexNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,      PID_Name);
-  REGISTER_PARAMETER(RealArray, PID_Geometry); // Array of coordinates.
+  REGISTER_PARAMETER(RealArray, PID_Geometry); // Array of position coordinates.
+  REGISTER_PARAMETER(RealArray, PID_Norm);     // Array of normal coordinates.
 }
 
 //! Returns new DETACHED instance of the Node ensuring its correct
@@ -52,21 +53,29 @@ Handle(ActAPI_INode) asiData_ReVertexNode::Instance()
 }
 
 //! Performs initial actions required to make Node WELL-FORMED.
-//! \param[in] x X coordinate.
-//! \param[in] y Y coordinate.
-//! \param[in] z Z coordinate.
+//! \param[in] x  X coordinate.
+//! \param[in] y  Y coordinate.
+//! \param[in] z  Z coordinate.
+//! \param[in] nx X coordinate of a normal vector.
+//! \param[in] ny Y coordinate of a normal vector.
+//! \param[in] nz Z coordinate of a normal vector.
 void asiData_ReVertexNode::Init(const double x,
                                 const double y,
-                                const double z)
+                                const double z,
+                                const double nx,
+                                const double ny,
+                                const double nz)
 {
   // Initialize name Parameter.
   this->InitParameter(PID_Name, "Name");
 
-  // Initialize array.
+  // Initialize arrays.
   ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray(NULL);
+  ActParamTool::AsRealArray( this->Parameter(PID_Norm) )->SetArray(NULL);
 
-  // Initialize point coordinates.
+  // Initialize coordinates.
   this->SetPoint(x, y, z);
+  this->SetNormal(nx, ny, nz);
 }
 
 //-----------------------------------------------------------------------------
@@ -139,4 +148,54 @@ gp_XYZ asiData_ReVertexNode::GetPoint() const
   this->GetPoint(x, y, z);
 
   return gp_XYZ(x, y, z);
+}
+
+//! Sets normal coordinates.
+//! \param[in] x X coordinate.
+//! \param[in] y Y coordinate.
+//! \param[in] z Z coordinate.
+void asiData_ReVertexNode::SetNormal(const double x, const double y, const double z)
+{
+  Handle(HRealArray)
+    arr = ActParamTool::AsRealArray( this->Parameter(PID_Norm) )->GetArray();
+  //
+  if ( arr.IsNull() )
+  {
+    arr = new HRealArray(0, 2);
+  }
+
+  arr->ChangeValue(0) = x;
+  arr->ChangeValue(1) = y;
+  arr->ChangeValue(2) = z;
+
+  ActParamTool::AsRealArray( this->Parameter(PID_Norm) )->SetArray(arr);
+}
+
+//! Returns normal coordinates.
+//! \param[out] x X coordinate.
+//! \param[out] y Y coordinate.
+//! \param[out] z Z coordinate.
+//! \return false if coordinates cannot be accessed.
+bool asiData_ReVertexNode::GetNormal(double& x, double& y, double& z) const
+{
+  Handle(HRealArray)
+    arr = ActParamTool::AsRealArray( this->Parameter(PID_Norm) )->GetArray();
+  //
+  if ( arr.IsNull() || arr->Lower() != 0 || arr->Upper() != 2 )
+    return false;
+
+  x = arr->Value(0);
+  y = arr->Value(1);
+  z = arr->Value(2);
+
+  return true;
+}
+
+//! \return normal vector without any checks on the status of data container.
+gp_Vec asiData_ReVertexNode::GetNormal() const
+{
+  double x, y, z;
+  this->GetNormal(x, y, z);
+
+  return gp_Vec(x, y, z);
 }

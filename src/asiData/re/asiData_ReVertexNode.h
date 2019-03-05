@@ -57,6 +57,7 @@ public:
   //------------------//
     PID_Name,         //!< Name of the Node.
     PID_Geometry,     //!< Geometry of a vertex (i.e. point coordinates).
+    PID_Norm,         //!< Normal vector at the vertex position.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -84,11 +85,21 @@ public:
   asiData_EXPORT gp_XYZ
     GetPoint() const;
 
+  asiData_EXPORT void
+    SetNormal(const double x, const double y, const double z);
+
+  asiData_EXPORT bool
+    GetNormal(double& x, double& y, double& z) const;
+
+  asiData_EXPORT gp_Vec
+    GetNormal() const;
+
 // Initialization:
 public:
 
   asiData_EXPORT void
-    Init(const double x, const double y, const double z);
+    Init(const double x, const double y, const double z,
+         const double nx, const double ny, const double nz);
 
 protected:
 

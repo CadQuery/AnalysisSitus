@@ -287,7 +287,9 @@ Handle(asiData_ReVertexNode)
   m_model->GetReVertexPartition()->AddNode(vertex_n);
 
   // Initialize Node.
-  vertex_n->Init( coords.X(), coords.Y(), coords.Z() );
+  vertex_n->Init( coords.X(), coords.Y(), coords.Z(),
+                  norm.X(),   norm.Y(),   norm.Z() );
+
   vertex_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
 
   // Add as a child to Vertices Node.

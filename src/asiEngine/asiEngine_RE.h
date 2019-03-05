@@ -118,9 +118,10 @@ public:
   //! Creates a Vertex Node under the single Vertices Node available in the
   //! project.
   //! \param[in] coords vertex coordinates.
+  //! \param[in] norm   normal vector at vertex position.
   //! \return newly created Node.
   asiEngine_EXPORT Handle(asiData_ReVertexNode)
-    Create_Vertex(const gp_XYZ& coords);
+    Create_Vertex(const gp_XYZ& coords, const gp_XYZ& norm);
 
 };
 

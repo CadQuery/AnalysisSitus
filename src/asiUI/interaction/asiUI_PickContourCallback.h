@@ -89,7 +89,7 @@ protected:
     completeContour(const Handle(asiData_ReVertexNode)& target);
 
   bool
-    completeContourRecusrively(const Handle(asiData_ReVertexNode)& target,
+    completeContourRecursively(const Handle(asiData_ReVertexNode)& target,
                                const bool                          buildGeometry,
                                ActAPI_DataObjectIdMap&             visitedVertices);
 
@@ -118,10 +118,10 @@ protected:
                       std::vector<Handle(asiData_ReEdgeNode)>& edges);
 
   size_t
-    chooseMinTurnEdge(const Handle(asiData_ReEdgeNode)&        currentEdge,
-                      const Handle(asiData_ReVertexNode)&      commonVertex,
-                      const bool                               isSameSense,
-                      std::vector<Handle(asiData_ReEdgeNode)>& candidates);
+    chooseLeftTurnEdge(const Handle(asiData_ReEdgeNode)&        currentEdge,
+                       const Handle(asiData_ReVertexNode)&      commonVertex,
+                       const bool                               isSameSense,
+                       std::vector<Handle(asiData_ReEdgeNode)>& candidates);
 
   Handle(asiData_ReCoEdgeNode)
     getPrevCoEdge(const Handle(asiData_ReEdgeNode)& currentEdge);

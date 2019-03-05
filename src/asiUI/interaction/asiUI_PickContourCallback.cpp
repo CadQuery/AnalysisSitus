@@ -49,6 +49,11 @@
 // OCCT includes
 #include <gp_Lin.hxx>
 
+#define DRAW_DEBUG
+#if defined DRAW_DEBUG
+  #pragma message("===== warning: DRAW_DEBUG is enabled")
+#endif
+
 //-----------------------------------------------------------------------------
 
 //! Instantiation routine.
@@ -138,8 +143,8 @@ bool asiUI_PickContourCallback::startNewContour(void* pCallData)
   m_notifier.SendLogMessage(LogInfo(Normal) << "Starting new contour from picked point...");
 
   // Get picked point.
-  gp_XYZ hit;
-  if ( !this->getPickedPoint(pCallData, hit) )
+  gp_XYZ hit, norm;
+  if ( !this->getPickedPoint(pCallData, hit, norm) )
     return false;
 
   Handle(asiData_ReVertexNode) vertexNode;
@@ -148,7 +153,7 @@ bool asiUI_PickContourCallback::startNewContour(void* pCallData)
   m_model->OpenCommand();
   {
     // Create vertex.
-    vertexNode = asiEngine_RE(m_model, m_notifier, m_plotter).Create_Vertex(hit);
+    vertexNode = asiEngine_RE(m_model, m_notifier, m_plotter).Create_Vertex(hit, norm);
 
     // Build new edge.
     if ( this->buildNewEdge(vertexNode).IsNull() )
@@ -207,8 +212,8 @@ bool asiUI_PickContourCallback::addContourEdge(void* pCallData)
   m_notifier.SendLogMessage(LogInfo(Normal) << "Adding new edge...");
 
   // Get picked point.
-  gp_XYZ hit;
-  if ( !this->getPickedPoint(pCallData, hit) )
+  gp_XYZ hit, norm;
+  if ( !this->getPickedPoint(pCallData, hit, norm) )
     return false;
 
   Handle(asiData_ReVertexNode) vertexNode;
@@ -221,7 +226,7 @@ bool asiUI_PickContourCallback::addContourEdge(void* pCallData)
   m_model->OpenCommand();
   {
     // Create vertex.
-    vertexNode = asiEngine_RE(m_model, m_notifier, m_plotter).Create_Vertex(hit);
+    vertexNode = asiEngine_RE(m_model, m_notifier, m_plotter).Create_Vertex(hit, norm);
 
     // Build new edge.
     if ( this->buildNewEdge(vertexNode, true).IsNull() )
@@ -353,11 +358,11 @@ bool
   {
     ActAPI_DataObjectIdMap visitedVertices;
 
-    if ( !this->completeContourRecusrively(target, true, visitedVertices) )
+    if ( !this->completeContourRecursively(target, true, visitedVertices) )
     {
       // Abort transaction.
-      m_model->AbortCommand();
-      //m_model->CommitCommand();
+      //m_model->AbortCommand();
+      m_model->CommitCommand(); // Commit for debugging in IV.
 
       // Prepare diagnostics.
       TCollection_AsciiString pathStr;
@@ -388,7 +393,7 @@ bool
 //-----------------------------------------------------------------------------
 
 bool
-  asiUI_PickContourCallback::completeContourRecusrively(const Handle(asiData_ReVertexNode)& target,
+  asiUI_PickContourCallback::completeContourRecursively(const Handle(asiData_ReVertexNode)& target,
                                                         const bool                          buildGeometry,
                                                         ActAPI_DataObjectIdMap&             visitedVertices)
 {
@@ -475,19 +480,25 @@ bool
   if ( !isPickedStartVertex && this->findEdgesOnVertex(target, lastEdgeNode, edges) )
   {
     // Add coedge with inverse orientation.
-    const size_t edgeIdx = this->chooseMinTurnEdge(lastEdgeNode, target, isCurrentSameSense, edges);
+    const size_t edgeIdx = this->chooseLeftTurnEdge(lastEdgeNode, target, isCurrentSameSense, edges);
     //
     Handle(asiData_ReCoEdgeNode)
       nextCoEdge = reApi.Create_CoEdge(patchNode, edges[edgeIdx], false);
 
     // Get next target vertex.
-    Handle(asiData_ReVertexNode) nextTargetVertex = nextCoEdge->GetLastVertex();
+    //std::cout << "Next coedge samesense: " << (nextCoEdge->IsSameSense() ? "true" : "false") << std::endl;
+    Handle(asiData_ReVertexNode) nextFirstVertex = nextCoEdge->GetFirstVertex();
+    Handle(asiData_ReVertexNode) nextLastVertex  = nextCoEdge->GetLastVertex();
+    //
+    Handle(asiData_ReVertexNode)
+      nextTargetVertex = ( target->GetId() == nextFirstVertex->GetId() ) ? nextLastVertex
+                                                                         : nextFirstVertex;
 
     // Continue completion process.
     topoNode->SetCurrentCoEdge(nextCoEdge);
     topoNode->SetLastVertex(nextTargetVertex);
     //
-    if ( !this->completeContourRecusrively(nextTargetVertex, false, visitedVertices) )
+    if ( !this->completeContourRecursively(nextTargetVertex, false, visitedVertices) )
       return false;
   }
 
@@ -562,17 +573,16 @@ Handle(asiData_ReEdgeNode)
 //-----------------------------------------------------------------------------
 
 size_t
-  asiUI_PickContourCallback::chooseMinTurnEdge(const Handle(asiData_ReEdgeNode)&        currentEdge,
-                                               const Handle(asiData_ReVertexNode)&      commonVertex,
-                                               const bool                               isSameSense,
-                                               std::vector<Handle(asiData_ReEdgeNode)>& candidates)
+  asiUI_PickContourCallback::chooseLeftTurnEdge(const Handle(asiData_ReEdgeNode)&        currentEdge,
+                                                const Handle(asiData_ReVertexNode)&      commonVertex,
+                                                const bool                               isSameSense,
+                                                std::vector<Handle(asiData_ReEdgeNode)>& candidates)
 {
   gp_Vec edgeDir;
   //
   {
     int vertexPole = -1;
-    Handle(asiData_ReVertexNode) vf = currentEdge->GetFirstVertex();;
-    //
+    Handle(asiData_ReVertexNode) vf = currentEdge->GetFirstVertex();
     Handle(asiData_ReVertexNode) vl = currentEdge->GetLastVertex();
     //
     if ( IsEqual( vf->GetId(), commonVertex->GetId() ) )
@@ -653,7 +663,7 @@ size_t
   {
     const double ang = edgeDir.AngleWithRef(candidateVecs[k], cross);
     //
-    //m_notifier.SendLogMessage(LogInfo(Normal) << "ang = %1 deg." << ang/M_PI*180.0);
+    m_notifier.SendLogMessage(LogInfo(Normal) << "ang = %1 deg." << ang/M_PI*180.0);
     //
     if ( ang > maxAng )
     {

@@ -115,16 +115,57 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
+  /* =============================
+   *  Collect patches of interest
+   * ============================= */
+
+  std::vector<Handle(asiData_RePatchNode)> patchNodes;
+
+  if ( argc == 1 )
+  {
+    /* Collect all patches */
+
+    for ( Handle(ActAPI_IChildIterator) eit = patchesNode->GetChildIterator(); eit->More(); eit->Next() )
+    {
+      Handle(asiData_RePatchNode)
+        patchNode = Handle(asiData_RePatchNode)::DownCast( eit->Value() );
+      //
+      patchNodes.push_back(patchNode);
+    }
+  }
+  else
+  {
+    /* Collect patches by names */
+
+    for ( int k = 1; k < argc; ++k )
+    {
+      Handle(asiData_RePatchNode)
+        patchNode = Handle(asiData_RePatchNode)::DownCast( cmdRE::model->FindNodeByName(argv[k]) );
+      //
+      if ( patchNode.IsNull() || !patchNode->IsWellFormed() )
+      {
+        interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Object with name '%1' is not a patch."
+                                                             << argv[k]);
+        continue;
+      }
+      //
+      patchNodes.push_back(patchNode);
+    }
+  }
+
+  /* ================
+   *  Build surfaces
+   * ================ */
+
   cmdRE::model->OpenCommand();
 
   // Reconstruct every patch individually.
-  for ( Handle(ActAPI_IChildIterator) pit = patchesNode->GetChildIterator(); pit->More(); pit->Next() )
+  for ( size_t k = 0; k < patchNodes.size(); ++k )
   {
-    Handle(asiData_RePatchNode)
-      patchNode = Handle(asiData_RePatchNode)::DownCast( pit->Value() );
+    const Handle(asiData_RePatchNode)& patchNode = patchNodes[k];
 
-    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Next patch: %1."
-                                                          << patchNode->GetId() );
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Next patch: '%1'."
+                                                          << patchNode->GetName() );
 
     std::vector<Handle(Geom_BSplineCurve)> curves;
 
@@ -161,6 +202,7 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
       {
         interp->GetProgress().SendLogMessage( LogErr(Normal) << "There is no B-curve ready in edge %1."
                                                              << edgeNode->GetId() );
+        cmdRE::model->AbortCommand();
         return TCL_ERROR;
       }
 
@@ -224,11 +266,6 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
                          int                          argc,
                          const char**                 argv)
 {
-  if ( argc != 1 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
   Handle(asiEngine_Model)
     M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
 
@@ -245,16 +282,57 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
+  /* ===========================
+   *  Collect edges of interest
+   * =========================== */
+
+  std::vector<Handle(asiData_ReEdgeNode)> edgeNodes;
+
+  if ( argc == 1 )
+  {
+    /* Collect all edges */
+
+    for ( Handle(ActAPI_IChildIterator) eit = edgesNode->GetChildIterator(); eit->More(); eit->Next() )
+    {
+      Handle(asiData_ReEdgeNode)
+        edgeNode = Handle(asiData_ReEdgeNode)::DownCast( eit->Value() );
+      //
+      edgeNodes.push_back(edgeNode);
+    }
+  }
+  else
+  {
+    /* Collect edges by names */
+
+    for ( int k = 1; k < argc; ++k )
+    {
+      Handle(asiData_ReEdgeNode)
+        edgeNode = Handle(asiData_ReEdgeNode)::DownCast( cmdRE::model->FindNodeByName(argv[k]) );
+      //
+      if ( edgeNode.IsNull() || !edgeNode->IsWellFormed() )
+      {
+        interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Object with name '%1' is not an edge."
+                                                             << argv[k]);
+        continue;
+      }
+      //
+      edgeNodes.push_back(edgeNode);
+    }
+  }
+
+  /* =================================
+   *  Perform data model modification
+   * ================================= */
+
   M->OpenCommand();
 
   // Approximate every edge individually.
-  for ( Handle(ActAPI_IChildIterator) eit = edgesNode->GetChildIterator(); eit->More(); eit->Next() )
+  for ( size_t k = 0; k < edgeNodes.size(); ++k )
   {
-    Handle(asiData_ReEdgeNode)
-      edgeNode = Handle(asiData_ReEdgeNode)::DownCast( eit->Value() );
+    const Handle(asiData_ReEdgeNode)& edgeNode = edgeNodes[k];
 
-    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Next edge: %1."
-                                                          << edgeNode->GetId() );
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Next edge: '%1'."
+                                                          << edgeNode->GetName() );
 
     std::vector<Handle(Geom_BSplineCurve)> curves;
 
@@ -265,8 +343,8 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
     Handle(Geom_BSplineCurve) curve;
     if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, 0.1, curve) )
     {
-      interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge %1."
-                                                            << edgeNode->GetId() );
+      interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge '%1'."
+                                                            << edgeNode->GetName() );
       //
       M->AbortCommand();
       return TCL_ERROR;
@@ -999,8 +1077,9 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-build-contour-lines",
     //
-    "re-build-contour-lines\n"
-    "\t Constructs contour lines for all patches.",
+    "re-build-contour-lines [edgeName1 [edgeName2 ...]]\n"
+    "\t Constructs contour lines either for all patches or for the passed\n"
+    "\t edges only.",
     //
     __FILE__, group, RE_BuildContourLines);
 

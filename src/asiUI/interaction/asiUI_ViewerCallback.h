@@ -128,10 +128,12 @@ protected:
   //! Extracts picked point from the call data using BVH accelerating structure.
   //! \param[in]  pCallData call data.
   //! \param[out] result    extracted point.
+  //! \param[out] norm      
   //! \return true in case of success, false -- otherwise.
   bool
     getPickedPoint(void*   pCallData,
-                   gp_XYZ& result);
+                   gp_XYZ& result,
+                   gp_XYZ& norm);
 
 protected:
 

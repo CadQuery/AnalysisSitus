@@ -65,7 +65,8 @@ asiUI_Viewer* asiUI_ViewerCallback::GetViewer()
 //-----------------------------------------------------------------------------
 
 bool asiUI_ViewerCallback::getPickedPoint(void*   pCallData,
-                                          gp_XYZ& result)
+                                          gp_XYZ& result,
+                                          gp_XYZ& norm)
 {
   // Get picking ray.
   gp_Lin pickRay = *( (gp_Lin*) pCallData );

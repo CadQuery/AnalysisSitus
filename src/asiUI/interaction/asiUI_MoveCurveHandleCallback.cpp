@@ -100,8 +100,8 @@ void asiUI_MoveCurveHandleCallback::Execute(vtkObject*    pCaller,
       return;
 
     // Get picked point.
-    gp_XYZ hit;
-    if ( !this->getPickedPoint(pCallData, hit) )
+    gp_XYZ hit, norm;
+    if ( !this->getPickedPoint(pCallData, hit, norm) )
       return;
 
     // Get curve.

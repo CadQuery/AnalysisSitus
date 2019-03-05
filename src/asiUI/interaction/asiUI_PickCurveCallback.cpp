@@ -68,7 +68,7 @@ void asiUI_PickCurveCallback::Execute(vtkObject*    pCaller,
   asiUI_NotUsed(pCaller);
 
   asiEngine_IV IV(m_model, m_notifier, m_plotter);
-  gp_XYZ       pos;
+  gp_XYZ       pos, norm;
 
   /* Process event */
 
@@ -82,7 +82,7 @@ void asiUI_PickCurveCallback::Execute(vtkObject*    pCaller,
   }
   else if ( eventId == EVENT_SELECT_WORLD_POINT ) // Custom point on the mesh was clicked.
   {
-    if ( !this->getPickedPoint(pCallData, pos) )
+    if ( !this->getPickedPoint(pCallData, pos, norm) )
       return;
   }
   else

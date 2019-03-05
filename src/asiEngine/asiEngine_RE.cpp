@@ -269,7 +269,7 @@ Handle(asiData_ReCoEdgeNode)
 //-----------------------------------------------------------------------------
 
 Handle(asiData_ReVertexNode)
-  asiEngine_RE::Create_Vertex(const gp_XYZ& coords)
+  asiEngine_RE::Create_Vertex(const gp_XYZ& coords, const gp_XYZ& norm)
 {
   // Get or create parent Topo Node.
   Handle(asiData_ReTopoNode) topo_n = m_model->GetReTopoNode();;

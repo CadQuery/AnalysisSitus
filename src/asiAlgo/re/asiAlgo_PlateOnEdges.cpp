@@ -36,6 +36,7 @@
 
 // OCCT includes
 #include <Adaptor3d_HCurveOnSurface.hxx>
+#include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_HCurve2d.hxx>
 #include <BRepAdaptor_Surface.hxx>
@@ -46,17 +47,20 @@
 #include <BRepLib.hxx>
 #include <BRepTopAdaptor_FClass2d.hxx>
 #include <Geom_BSplineSurface.hxx>
+#include <GeomAdaptor_HCurve.hxx>
 #include <GeomAdaptor_HSurface.hxx>
 #include <GeomPlate_BuildPlateSurface.hxx>
 #include <GeomPlate_HArray1OfHCurve.hxx>
 #include <GeomPlate_MakeApprox.hxx>
 #include <GeomPlate_PlateG0Criterion.hxx>
+#include <ShapeAnalysis_FreeBounds.hxx>
 #include <ShapeExtend_WireData.hxx>
 #include <ShapeFix_Shape.hxx>
 #include <TColGeom2d_HArray1OfCurve.hxx>
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <TopoDS_Wire.hxx>
 #include <TopTools_Array1OfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
@@ -68,137 +72,98 @@
 
 //-----------------------------------------------------------------------------
 
-//! Constructs the tool.
-//! \param aag      [in] Attributed Adjacency Graph (AAG).
-//! \param progress [in] progress indicator.
-//! \param plotter  [in] imperative plotter.
+asiAlgo_PlateOnEdges::asiAlgo_PlateOnEdges(ActAPI_ProgressEntry progress,
+                                           ActAPI_PlotterEntry  plotter)
+: ActAPI_IAlgorithm ( progress, plotter ),
+  m_iNumDiscrPts    ( 10 )
+{}
+
+//-----------------------------------------------------------------------------
+
 asiAlgo_PlateOnEdges::asiAlgo_PlateOnEdges(const Handle(asiAlgo_AAG)& aag,
                                            ActAPI_ProgressEntry       progress,
                                            ActAPI_PlotterEntry        plotter)
-: ActAPI_IAlgorithm(progress, plotter), m_aag(aag), m_shape( aag->GetMasterCAD() )
+: ActAPI_IAlgorithm ( progress, plotter ),
+  m_aag             ( aag),
+  m_shape           ( aag->GetMasterCAD() ),
+  m_iNumDiscrPts    ( 10 )
 {}
 
 //-----------------------------------------------------------------------------
 
-//! Constructs the tool.
-//! \param shape    [in] working shape.
-//! \param progress [in] progress indicator.
-//! \param plotter  [in] imperative plotter.
 asiAlgo_PlateOnEdges::asiAlgo_PlateOnEdges(const TopoDS_Shape&  shape,
                                            ActAPI_ProgressEntry progress,
                                            ActAPI_PlotterEntry  plotter)
-: ActAPI_IAlgorithm(progress, plotter), m_shape(shape)
+: ActAPI_IAlgorithm ( progress, plotter ),
+  m_shape           ( shape ),
+  m_iNumDiscrPts    ( 10 )
 {}
 
 //-----------------------------------------------------------------------------
 
-//! Constructs TPS (Thin Plate Spline) approximation for the passed edges.
-//! \param edgeIndices [in]  edges to build the approximation surface for.
-//! \param continuity  [in]  desired order of continuity.
-//! \param support     [out] support b-surface.
-//! \param result      [out] reconstructed face.
-//! \return true in case of success, false -- otherwise.
-bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
-                                 const unsigned int                continuity,
-                                 Handle(Geom_BSplineSurface)&      support,
-                                 TopoDS_Face&                      result)
+bool asiAlgo_PlateOnEdges::Build(Handle(TopTools_HSequenceOfShape)& edges,
+                                 const unsigned int                 continuity,
+                                 Handle(Geom_BSplineSurface)&       support,
+                                 TopoDS_Face&                       result)
 {
-  /* =============================
-   *  STAGE 1: build host surface
-   * ============================= */
-
-  if ( !this->BuildSurf(edgeIndices, continuity, support) )
+  // Build surface.
+  if ( !this->BuildSurf(edges, continuity, support) )
     return false;
 
-  /* ===============================
-   *  STAGE 2: reconstruct topology
-   * =============================== */
-
-  TIMER_NEW
-  TIMER_GO
-
-  const int nbedges = edgeIndices.Extent();
-
-  TopTools_Array1OfShape tab(1, nbedges);
-
-  // Fill wire builder with edges. We use the original topology as-is. The
-  // only post-processing stage which is necessary to apply is re-projection
-  // of 3D-curves to the plate surface (in order to obtain p-curves)
-  Handle(ShapeExtend_WireData) WD = new ShapeExtend_WireData;
-  for ( TColStd_MapIteratorOfPackedMapOfInteger eit(edgeIndices); eit.More(); eit.Next() )
-  {
-    const int          eidx = eit.Key();
-    const TopoDS_Edge& E    = TopoDS::Edge( m_aag->RequestMapOfEdges().FindKey(eidx) );
-
-    WD->Add(E);
-  }
-  //
-  TopoDS_Wire W = WD->WireAPIMake();
-  //
-  if ( W.IsNull() )
-  {
-    m_plotter.DRAW_SURFACE(support, Color_Red, "support");
-    m_progress.SendLogMessage(LogErr(Normal) << "Wire reconstruction failed: null wire");
+  // Build face.
+  if ( !this->BuildFace(edges, support, result) )
     return false;
-  }
-
-  // Build face
-  BRepBuilderAPI_MakeFace MF(support, W, true);
-  TopoDS_Face face = MF.Face();
-
-  // Check orientation of the outer wire
-  BRepTopAdaptor_FClass2d clas2d( face, Precision::Confusion() );
-  if ( clas2d.PerformInfinitePoint() == TopAbs_IN )
-  {
-    W.Reverse();
-    BRepBuilderAPI_MakeFace MF1(support, W, true);
-    face = MF1.Face();
-  }
-
-  // Use shape healer to re-project 3D curves and obtain missing p-curves so
-  ShapeFix_Shape ShapeHealer(face);
-  try
-  {
-    ShapeHealer.Perform();
-  }
-  catch ( ... )
-  {
-    m_plotter.DRAW_SURFACE(support, Color_Red, "support");
-    m_progress.SendLogMessage(LogErr(Normal) << "Face healing failed");
-    return false;
-  }
-  face = TopoDS::Face( ShapeHealer.Shape() );
-
-  // Check the result
-  if ( !BRepAlgo::IsValid(face) )
-  {
-    m_plotter.DRAW_SURFACE(support, Color_Red, "support");
-    m_progress.SendLogMessage(LogWarn(Normal) << "Face is not valid");
-  }
-
-  // Set result
-  result = face;
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("Construct topology")
 
   return true;
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_PlateOnEdges::BuildSurf(const TColStd_PackedMapOfInteger& edgeIndices,
-                                     const unsigned int                continuity,
-                                     Handle(Geom_BSplineSurface)&      support)
+bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger&  edgeIndices,
+                                 const unsigned int                 continuity,
+                                 Handle(TopTools_HSequenceOfShape)& edges,
+                                 Handle(Geom_BSplineSurface)&       support,
+                                 TopoDS_Face&                       result)
 {
-  std::vector<TopoDS_Edge> edges;
+  // Build surface.
+  if ( !this->BuildSurf(edgeIndices, continuity, edges, support) )
+    return false;
+
+  // Build face.
+  if ( !this->BuildFace(edges, support, result) )
+    return false;
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_PlateOnEdges::Build(const TColStd_PackedMapOfInteger& edgeIndices,
+                                 const unsigned int                continuity,
+                                 Handle(Geom_BSplineSurface)&      support,
+                                 TopoDS_Face&                      result)
+{
+  Handle(TopTools_HSequenceOfShape) edges;
   //
+  return this->Build(edgeIndices, continuity, edges, support, result);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_PlateOnEdges::BuildSurf(const TColStd_PackedMapOfInteger&  edgeIndices,
+                                     const unsigned int                 continuity,
+                                     Handle(TopTools_HSequenceOfShape)& edges,
+                                     Handle(Geom_BSplineSurface)&       support)
+{
+  if ( edges.IsNull() )
+    edges = new TopTools_HSequenceOfShape;
+
   for ( TColStd_MapIteratorOfPackedMapOfInteger eit(edgeIndices); eit.More(); eit.Next() )
   {
     const int          eidx = eit.Key();
     const TopoDS_Edge& E    = TopoDS::Edge( m_aag->RequestMapOfEdges().FindKey(eidx) );
     //
-    edges.push_back(E);
+    edges->Append(E);
   }
 
   return this->BuildSurf(edges, continuity, support);
@@ -206,62 +171,90 @@ bool asiAlgo_PlateOnEdges::BuildSurf(const TColStd_PackedMapOfInteger& edgeIndic
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_PlateOnEdges::BuildSurf(const std::vector<TopoDS_Edge>& edges,
-                                     const unsigned int              continuity,
-                                     Handle(Geom_BSplineSurface)&    support)
+bool asiAlgo_PlateOnEdges::BuildSurf(const Handle(TopTools_HSequenceOfShape)& edges,
+                                     const unsigned int                       continuity,
+                                     Handle(Geom_BSplineSurface)&             support)
 {
   /* ==============================
    *  STAGE 1: prepare constraints
    * ============================== */
 
-  const int nbedges = int( edges.size() );
+  const int nbedges = int( edges->Length() );
 
   // Prepare working collection for support curves (used to create
-  // pinpoint constraints)
+  // pinpoint constraints).
   Handle(GeomPlate_HArray1OfHCurve)
     fronts = new GeomPlate_HArray1OfHCurve(1, nbedges);
 
   // Prepare working collection for smoothness values associated with
-  // each support curve
+  // each support curve.
   Handle(TColStd_HArray1OfInteger)
     tang = new TColStd_HArray1OfInteger(1, nbedges);
 
   // Prepare working collection for discretization numbers associated with
-  // each support curve
+  // each support curve.
   Handle(TColStd_HArray1OfInteger)
     nbPtsCur = new TColStd_HArray1OfInteger(1, nbedges);
 
-  // Get model
-  const TopoDS_Shape& model = m_shape;
-
-  // Build edge-face map
-  TopTools_IndexedDataMapOfShapeListOfShape M;
-  TopExp::MapShapesAndAncestors(model, TopAbs_EDGE, TopAbs_FACE, M);
-
-  // Loop over the edges to prepare constraints
-  int i = 0;
-  for ( int eidx = 0; eidx < nbedges; ++eidx )
+  if ( m_shape.IsNull() )
   {
-    i++;
-    tang->SetValue(i, continuity);
-    nbPtsCur->SetValue(i, 10); // Number of discretization points
+    /* Master shape is null -> we cannot use CONS constraints */
 
-    const TopoDS_Edge& E = TopoDS::Edge( edges[eidx] );
-    const TopoDS_Face& F = TopoDS::Face( M.FindFromKey(E).First() );
+    // Loop over the curves to prepare constraints.
+    int i = 0;
+    for ( int eidx = 0; eidx < nbedges; ++eidx )
+    {
+      i++;
+      tang->SetValue(i, continuity);
+      nbPtsCur->SetValue(i, m_iNumDiscrPts); // Number of discretization points.
 
-    m_plotter.DRAW_SHAPE(E, Color_Red, 1.0, true, "asiAlgo_PlateOnEdges_E");
+      // Get edge and its host curve.
+      double f, l;
+      const TopoDS_Edge& E = TopoDS::Edge( edges->Value(eidx + 1) );
+      Handle(Geom_Curve) C = BRep_Tool::Curve(E, f, l);
 
-    // Get CONS for each edge and fill the constraint
-    BRepAdaptor_Surface S(F);
-    GeomAdaptor_Surface GAS = S.Surface();
-    Handle(GeomAdaptor_HSurface) HGAS = new GeomAdaptor_HSurface(GAS);
-    //
-    Handle(BRepAdaptor_HCurve2d) C = new BRepAdaptor_HCurve2d();
-    C->ChangeCurve2d().Initialize(E, F);
-    //
-    Adaptor3d_CurveOnSurface ConS(C, HGAS);
-    Handle(Adaptor3d_HCurveOnSurface) HConS = new Adaptor3d_HCurveOnSurface(ConS);
-    fronts->SetValue(i, HConS);
+      Handle(GeomAdaptor_HCurve)
+        curveAdt = new GeomAdaptor_HCurve(C);
+
+      fronts->SetValue(i, curveAdt);
+    }
+  }
+  else
+  {
+    /* Master shape is not null -> we can use CONS constraints */
+
+    // Get model.
+    const TopoDS_Shape& model = m_shape;
+
+    // Build edge-face map.
+    TopTools_IndexedDataMapOfShapeListOfShape M;
+    TopExp::MapShapesAndAncestors(model, TopAbs_EDGE, TopAbs_FACE, M);
+
+    // Loop over the edges to prepare constraints.
+    int i = 0;
+    for ( int eidx = 0; eidx < nbedges; ++eidx )
+    {
+      i++;
+      tang->SetValue(i, continuity);
+      nbPtsCur->SetValue(i, m_iNumDiscrPts); // Number of discretization points.
+
+      const TopoDS_Edge& E = TopoDS::Edge( edges->Value(eidx + 1) );
+      const TopoDS_Face& F = TopoDS::Face( M.FindFromKey(E).First() );
+
+      m_plotter.DRAW_SHAPE(E, Color_Red, 1.0, true, "asiAlgo_PlateOnEdges_E");
+
+      // Get CONS for each edge and fill the constraint
+      BRepAdaptor_Surface S(F);
+      GeomAdaptor_Surface GAS = S.Surface();
+      Handle(GeomAdaptor_HSurface) HGAS = new GeomAdaptor_HSurface(GAS);
+      //
+      Handle(BRepAdaptor_HCurve2d) C = new BRepAdaptor_HCurve2d();
+      C->ChangeCurve2d().Initialize(E, F);
+      //
+      Adaptor3d_CurveOnSurface ConS(C, HGAS);
+      Handle(Adaptor3d_HCurveOnSurface) HConS = new Adaptor3d_HCurveOnSurface(ConS);
+      fronts->SetValue(i, HConS);
+    }
   }
 
   /* ======================
@@ -271,7 +264,7 @@ bool asiAlgo_PlateOnEdges::BuildSurf(const std::vector<TopoDS_Edge>& edges,
   TIMER_NEW
   TIMER_GO
 
-  // Build plate
+  // Build plate.
   GeomPlate_BuildPlateSurface BuildPlate(nbPtsCur, fronts, tang, 3);
   //
   try
@@ -307,5 +300,44 @@ bool asiAlgo_PlateOnEdges::BuildSurf(const std::vector<TopoDS_Edge>& edges,
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Approximate plate with B-surface")
 
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_PlateOnEdges::BuildFace(Handle(TopTools_HSequenceOfShape)& edges,
+                                     const Handle(Geom_BSplineSurface)& support,
+                                     TopoDS_Face&                       result)
+{
+  // Compose a new wire.
+  Handle(TopTools_HSequenceOfShape) freeWires;
+  ShapeAnalysis_FreeBounds::ConnectEdgesToWires(edges, 1e-3, 0, freeWires);
+  //
+  const TopoDS_Wire& repatchW = TopoDS::Wire( freeWires->First() );
+
+  // Build new face.
+  TopoDS_Face newF = BRepBuilderAPI_MakeFace(support, repatchW, false);
+
+  // Heal defects.
+  ShapeFix_Shape shapeHealer(newF);
+  shapeHealer.Perform();
+  newF = TopoDS::Face( shapeHealer.Shape() );
+
+  // Classify point to invert wire if necessary.
+  BRepTopAdaptor_FClass2d FClass(newF, 0.0);
+  if ( FClass.PerformInfinitePoint() == TopAbs_IN )
+  {
+    BRep_Builder B;
+    TopoDS_Shape S = newF.EmptyCopied();
+    TopoDS_Iterator it(newF);
+    while ( it.More() )
+    {
+      B.Add( S, it.Value().Reversed() );
+      it.Next();
+    }
+    newF = TopoDS::Face(S);
+  }
+
+  result = newF;
   return true;
 }

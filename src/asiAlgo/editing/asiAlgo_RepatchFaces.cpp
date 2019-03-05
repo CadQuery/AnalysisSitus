@@ -86,7 +86,6 @@ bool asiAlgo_RepatchFaces::Perform(const std::vector<TopoDS_Face>& faces)
   TopExp::MapShapesAndAncestors(compFaces, TopAbs_EDGE, TopAbs_FACE, edgesFaces);
 
   // Get free edges.
-  std::vector<TopoDS_Edge> freeEdges;
   Handle(TopTools_HSequenceOfShape) freeEdgesSeq = new TopTools_HSequenceOfShape;
   //
   for ( int k = 1; k <= edgesFaces.Extent(); ++k )
@@ -100,7 +99,6 @@ bool asiAlgo_RepatchFaces::Perform(const std::vector<TopoDS_Face>& faces)
       if ( BRep_Tool::Degenerated(E) )
         continue;
 
-      freeEdges.push_back(E);
       freeEdgesSeq->Append(E);
 
 #if defined DRAW_DEBUG
@@ -125,7 +123,7 @@ bool asiAlgo_RepatchFaces::Perform(const std::vector<TopoDS_Face>& faces)
   // Interpolate.
   Handle(Geom_BSplineSurface) repatchSurf;
   //
-  if ( !interpAlgo.BuildSurf(freeEdges, GeomAbs_C0, repatchSurf) )
+  if ( !interpAlgo.BuildSurf(freeEdgesSeq, GeomAbs_C0, repatchSurf) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Interpolation failed.");
     return false;

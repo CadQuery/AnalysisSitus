@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_MeshInterPlane.h>
+#include <asiAlgo_PlateOnEdges.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -52,6 +53,8 @@
 #endif
 
 // OCCT includes
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
 #include <GCPnts_QuasiUniformAbscissa.hxx>
 #include <GeomAdaptor_Curve.hxx>
 
@@ -96,6 +99,8 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
   cmdRE_NotUsed(argv);
 
   //const bool allPatches = (argc == 1);
+
+  const bool isPlate = interp->HasKeyword(argc, argv, "plate");
 
   asiEngine_RE reApi( cmdRE::model,
                       interp->GetProgress(),
@@ -167,19 +172,45 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
     }
 
     // Build patch.
+    TopoDS_Face                 patchFace;
     Handle(Geom_BSplineSurface) patchSurf;
     //
-    if ( !asiAlgo_Utils::Fill4Contour(curves, patchSurf) )
+    if ( isPlate || curves.size() != 4 )
+    {
+      asiAlgo_PlateOnEdges plateOnEdges( interp->GetProgress(),
+                                         interp->GetPlotter() );
+
+      // Build collection of edges as required by the plate construction
+      // algorithm. Those edges are artificial: natural extremities are used.
+      Handle(TopTools_HSequenceOfShape) edges = new TopTools_HSequenceOfShape;
+      //
+      for ( size_t c = 0; c < curves.size(); ++c )
+        edges->Append( BRepBuilderAPI_MakeEdge(curves[c]) );
+
+      // Build patch.
+      if ( !plateOnEdges.Build(edges, 0, patchSurf, patchFace) )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot approximate trimmed surface.");
+        //
+        cmdRE::model->AbortCommand();
+        return TCL_ERROR;
+      }
+    }
+    else if ( !asiAlgo_Utils::Fill4Contour(curves, patchSurf) )
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot approximate surface.");
       //
       cmdRE::model->AbortCommand();
       return TCL_ERROR;
     }
-    //
+
+    // Construct face for the naturally bounded surface.
+    if ( patchFace.IsNull() )
+      patchFace = BRepBuilderAPI_MakeFace( patchSurf, Precision::Confusion() );
+
     TCollection_AsciiString patchName("patch_"); patchName += patchNode->GetId();
     //
-    interp->GetPlotter().REDRAW_SURFACE(patchName, patchSurf, Color_White);
+    interp->GetPlotter().REDRAW_SHAPE(patchName, patchFace, Color_White);
   }
 
   cmdRE::model->CommitCommand();
@@ -960,7 +991,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-build-patches",
     //
-    "re-build-patches [patchName1 [patchName2 ...]]\n"
+    "re-build-patches [patchName1 [patchName2 ...]] [-plate]\n"
     "\t Constructs surface patched for the passed data object(s).",
     //
     __FILE__, group, RE_BuildPatches);

@@ -156,7 +156,7 @@ asiUI_DialogGapFilling::~asiUI_DialogGapFilling()
 void asiUI_DialogGapFilling::onPerform()
 {
   const int continuity = m_widgets.pOrder->currentIndex();
-  m_notifier.SendLogMessage(LogInfo(Normal) << "Smoothness C%1 requested" << continuity);
+  m_notifier.SendLogMessage(LogInfo(Normal) << "Smoothness C%1 requested." << continuity);
   //
   Handle(asiData_PartNode) part_n;
   TopoDS_Shape             part;
@@ -168,7 +168,7 @@ void asiUI_DialogGapFilling::onPerform()
   //
   if ( !edgeIndices.Extent() )
   {
-    m_notifier.SendLogMessage(LogErr(Normal) << "No seed edges selected");
+    m_notifier.SendLogMessage(LogErr(Normal) << "No seed edges selected.");
     return;
   }
 
@@ -179,7 +179,7 @@ void asiUI_DialogGapFilling::onPerform()
     //
     if ( !CompleteEdgeLoop(edgeIndices.GetMaximalMapped(), edgeIndices) )
     {
-      m_notifier.SendLogMessage(LogErr(Normal) << "Cannot find a closed loop of edges to fill");
+      m_notifier.SendLogMessage(LogErr(Normal) << "Cannot find a closed loop of edges to fill.");
       return;
     }
 
@@ -200,7 +200,7 @@ void asiUI_DialogGapFilling::onPerform()
   //
   if ( !PlateOnEdges.Build(edgeIndices, continuity, supportSurf, patchFace) )
   {
-    m_notifier.SendLogMessage(LogErr(Normal) << "Gap filling failed");
+    m_notifier.SendLogMessage(LogErr(Normal) << "Gap filling failed.");
     return;
   }
 

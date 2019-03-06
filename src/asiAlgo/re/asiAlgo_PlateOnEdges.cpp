@@ -34,6 +34,12 @@
 // asiAlgo includes
 #include <asiAlgo_Timer.h>
 
+// Mobius includes
+#if defined USE_MOBIUS
+  #include <mobius/cascade.h>
+  #include <mobius/geom_FairBSurf.h>
+#endif
+
 // OCCT includes
 #include <Adaptor3d_HCurveOnSurface.hxx>
 #include <BRep_Builder.hxx>
@@ -75,7 +81,8 @@
 asiAlgo_PlateOnEdges::asiAlgo_PlateOnEdges(ActAPI_ProgressEntry progress,
                                            ActAPI_PlotterEntry  plotter)
 : ActAPI_IAlgorithm ( progress, plotter ),
-  m_iNumDiscrPts    ( 10 )
+  m_iNumDiscrPts    ( 10 ),
+  m_fFairCoeff      ( 0. )
 {}
 
 //-----------------------------------------------------------------------------
@@ -86,7 +93,8 @@ asiAlgo_PlateOnEdges::asiAlgo_PlateOnEdges(const Handle(asiAlgo_AAG)& aag,
 : ActAPI_IAlgorithm ( progress, plotter ),
   m_aag             ( aag),
   m_shape           ( aag->GetMasterCAD() ),
-  m_iNumDiscrPts    ( 10 )
+  m_iNumDiscrPts    ( 10 ),
+  m_fFairCoeff      ( 0. )
 {}
 
 //-----------------------------------------------------------------------------
@@ -96,7 +104,8 @@ asiAlgo_PlateOnEdges::asiAlgo_PlateOnEdges(const TopoDS_Shape&  shape,
                                            ActAPI_PlotterEntry  plotter)
 : ActAPI_IAlgorithm ( progress, plotter ),
   m_shape           ( shape ),
-  m_iNumDiscrPts    ( 10 )
+  m_iNumDiscrPts    ( 10 ),
+  m_fFairCoeff      ( 0. )
 {}
 
 //-----------------------------------------------------------------------------
@@ -299,6 +308,52 @@ bool asiAlgo_PlateOnEdges::BuildSurf(const Handle(TopTools_HSequenceOfShape)& ed
 
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Approximate plate with B-surface")
+
+  /* ================================
+   *  STAGE 4: fair surface if asked
+   * ================================ */
+
+   if ( m_fFairCoeff )
+   {
+     TIMER_RESET
+     TIMER_GO
+
+     mobius::ptr<mobius::bsurf>
+       mobSurf = mobius::cascade::GetMobiusBSurface(support);
+
+     // Perform fairing.
+     mobius::geom_FairBSurf fairing(mobSurf, m_fFairCoeff, NULL, NULL);
+     //
+     const int nPolesU = int( mobSurf->GetPoles().size() );
+     const int nPolesV = int( mobSurf->GetPoles()[0].size() );
+     //
+     for ( int i = 0; i < nPolesU; ++i )
+     {
+       fairing.AddPinnedPole( i, 0 );
+       fairing.AddPinnedPole( i, nPolesV - 1 );
+     }
+     //
+     for ( int j = 0; j < nPolesV; ++j )
+     {
+       fairing.AddPinnedPole( 0, j );
+       fairing.AddPinnedPole( nPolesU - 1, j );
+     }
+     //
+     if ( !fairing.Perform() )
+     {
+       m_progress.SendLogMessage(LogErr(Normal) << "Fairing failed.");
+       return false;
+     }
+
+     // Get the faired surface.
+     const mobius::ptr<mobius::bsurf>& mobResult = fairing.GetResult();
+
+     // Convert to OCCT B-surface.
+     support = mobius::cascade::GetOpenCascadeBSurface(mobResult);
+
+     TIMER_FINISH
+     TIMER_COUT_RESULT_MSG("Fair B-surface")
+   }
 
   return true;
 }

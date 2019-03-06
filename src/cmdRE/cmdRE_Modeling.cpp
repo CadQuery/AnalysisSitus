@@ -102,6 +102,13 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
 
   const bool isPlate = interp->HasKeyword(argc, argv, "plate");
 
+  // Get surface fairing coefficient.
+  double fairCoeff = 0.;
+  TCollection_AsciiString fairCoeffStr;
+  //
+  if ( interp->GetKeyValue(argc, argv, "fair", fairCoeffStr) )
+    fairCoeff = fairCoeffStr.RealValue();
+
   asiEngine_RE reApi( cmdRE::model,
                       interp->GetProgress(),
                       interp->GetPlotter() );
@@ -139,13 +146,18 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
 
     for ( int k = 1; k < argc; ++k )
     {
+      // Skip keywords.
+      TCollection_AsciiString arg(argv[k]);
+      if ( arg.IsRealValue() || arg == "fair" )
+        continue;
+
       Handle(asiData_RePatchNode)
-        patchNode = Handle(asiData_RePatchNode)::DownCast( cmdRE::model->FindNodeByName(argv[k]) );
+        patchNode = Handle(asiData_RePatchNode)::DownCast( cmdRE::model->FindNodeByName(arg) );
       //
       if ( patchNode.IsNull() || !patchNode->IsWellFormed() )
       {
         interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Object with name '%1' is not a patch."
-                                                             << argv[k]);
+                                                             << arg);
         continue;
       }
       //
@@ -221,6 +233,9 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
     {
       asiAlgo_PlateOnEdges plateOnEdges( interp->GetProgress(),
                                          interp->GetPlotter() );
+
+      if ( fairCoeff )
+        plateOnEdges.SetFairingCoeff(fairCoeff);
 
       // Build collection of edges as required by the plate construction
       // algorithm. Those edges are artificial: natural extremities are used.
@@ -1069,7 +1084,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-build-patches",
     //
-    "re-build-patches [patchName1 [patchName2 ...]] [-plate]\n"
+    "re-build-patches [patchName1 [patchName2 ...]] [-plate] [-fair <coeff>]\n"
     "\t Constructs surface patched for the passed data object(s).",
     //
     __FILE__, group, RE_BuildPatches);

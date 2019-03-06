@@ -170,11 +170,25 @@ public:
     return m_iNumDiscrPts;
   }
 
+  //! Sets fairing coefficient.
+  //! \param[in] fairCoeff coefficient to set.
+  void SetFairingCoeff(const double fairCoeff)
+  {
+    m_fFairCoeff = fairCoeff;
+  }
+
+  //! \return fairing coefficient.
+  double GetFairingCoeff() const
+  {
+    return m_fFairCoeff;
+  }
+
 protected:
 
   TopoDS_Shape        m_shape;        //!< Working shape.
   Handle(asiAlgo_AAG) m_aag;          //!< AAG.
   int                 m_iNumDiscrPts; //!< Number of discretization points.
+  double              m_fFairCoeff;   //!< Optional fairing coefficient.
 
 };
 

@@ -127,6 +127,9 @@ void asiUI_ObjectBrowser::Populate()
   //
   this->addTopLevelItem(root_ui);
 
+  const bool isHidden = ( root_n->GetUserFlags() & NodeFlag_IsHiddenInBrowser ) > 0;
+  root_ui->setHidden(isHidden);
+
   // Add child nodes.
   this->addChildren(root_n, root_ui);
 

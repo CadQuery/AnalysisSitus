@@ -29,8 +29,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_NodeFlags_HeaderFile
-#define asiEngine_NodeFlags_HeaderFile
+#ifndef asiData_NodeFlags_HeaderFile
+#define asiData_NodeFlags_HeaderFile
 
 //-----------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@
 //! for additional customization of CAF Data Objects with information
 //! required by GUI. The kind of such information is representation-dependent,
 //! so other GUI services might want to use some other set of user flags.
-enum asiEngine_NodeFlags
+enum asiData_NodeFlags
 {
   //! Indicates whether the Data Node can be presented in 3D viewer shipped
   //! with the framework.
@@ -49,7 +49,7 @@ enum asiEngine_NodeFlags
 
   //! Indicates that Data Node should not be displayed in Object Browser
   //! even if its Tree Node connectivity allows it.
-  NodeFlag_IsHiddenInObjectBrowser = 0x00004,
+  NodeFlag_IsHiddenInBrowser = 0x00004,
 
   //! Indicates whether this Data Node is structural or not. We say that
   //! Data Node is structural if it is an essential (and so immutable)

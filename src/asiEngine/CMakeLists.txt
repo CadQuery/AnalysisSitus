@@ -12,7 +12,6 @@ set (H_FILES
   asiEngine_Editing.h
   asiEngine_IV.h
   asiEngine_Model.h
-  asiEngine_NodeFlags.h
   asiEngine_Part.h
   asiEngine_RE.h
   asiEngine_Tessellation.h

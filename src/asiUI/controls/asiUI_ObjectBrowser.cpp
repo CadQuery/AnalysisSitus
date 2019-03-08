@@ -198,11 +198,14 @@ void asiUI_ObjectBrowser::addChildren(const Handle(ActAPI_INode)& root_n,
     //
     QTreeWidgetItem* child_ui = new QTreeWidgetItem( QStringList() << ExtStr2QStr( child_n->GetName() ) );
 
-
     child_ui->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     child_ui->setData( 0, BrowserRoleNodeId, AsciiStr2QStr( child_n->GetId() ) );
     //
     root_ui->addChild(child_ui);
+
+    // Check user flags which may customize visibility of an item.
+    const bool isHidden = ( child_n->GetUserFlags() & NodeFlag_IsHiddenInBrowser ) > 0;
+    child_ui->setHidden(isHidden);
 
     // Repeat recursively.
     this->addChildren(child_n, child_ui);

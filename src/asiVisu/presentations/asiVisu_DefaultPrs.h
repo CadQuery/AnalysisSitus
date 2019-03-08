@@ -53,31 +53,31 @@ public:
 // Callbacks:
 protected:
 
-  virtual void
+  asiVisu_EXPORT virtual void
     beforeInitPipelines();
 
-  virtual void
+  asiVisu_EXPORT virtual void
     afterInitPipelines();
 
-  virtual void
+  asiVisu_EXPORT virtual void
     beforeUpdatePipelines() const;
 
-  virtual void
+  asiVisu_EXPORT virtual void
     afterUpdatePipelines() const;
 
-  virtual void
+  asiVisu_EXPORT virtual void
     highlight(vtkRenderer*                        renderer,
               const Handle(asiVisu_PickerResult)& pickRes,
               const asiVisu_SelectionNature       selNature) const;
 
-  virtual void
+  asiVisu_EXPORT virtual void
     unHighlight(vtkRenderer*                  renderer,
                 const asiVisu_SelectionNature selNature) const;
 
-  virtual void
+  asiVisu_EXPORT virtual void
     renderPipelines(vtkRenderer* renderer) const;
 
-  virtual void
+  asiVisu_EXPORT virtual void
     deRenderPipelines(vtkRenderer* renderer) const;
 
 protected:

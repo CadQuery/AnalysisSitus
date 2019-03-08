@@ -109,6 +109,13 @@ void asiData_TriangulationNode::SetName(const TCollection_ExtendedString& name)
 // Handy accessors
 //-----------------------------------------------------------------------------
 
+//! \return triangulation parameter.
+Handle(ActData_TriangulationParameter)
+  asiData_TriangulationNode::GetTriangulationParam() const
+{
+  return ActParamTool::AsTriangulation( this->Parameter(PID_Triangulation) );
+}
+
 //! \return stored tessellation.
 Handle(Poly_Triangulation) asiData_TriangulationNode::GetTriangulation() const
 {

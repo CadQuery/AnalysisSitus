@@ -54,11 +54,14 @@
 asiVisu_TriangulationPrs::asiVisu_TriangulationPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
 {
   Handle(asiData_TriangulationNode)
-    triangulationNode = Handle(asiData_TriangulationNode)::DownCast(N);
+    TN = Handle(asiData_TriangulationNode)::DownCast(N);
+  //
+  Handle(ActData_TriangulationParameter)
+    TP = Handle(ActData_TriangulationParameter)::DownCast( TN->Parameter(asiData_TriangulationNode::PID_Triangulation) );
 
   // Create Data Provider
   Handle(asiVisu_TriangulationDataProvider)
-    dp = new asiVisu_TriangulationDataProvider(triangulationNode);
+    dp = new asiVisu_TriangulationDataProvider(TP);
 
   // Main pipeline
   Handle(asiVisu_TriangulationPipeline) pl = new asiVisu_TriangulationPipeline();

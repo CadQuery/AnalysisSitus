@@ -104,6 +104,9 @@ public:
 // Handy accessors to the stored data:
 public:
 
+  asiData_EXPORT Handle(ActData_TriangulationParameter)
+    GetTriangulationParam() const;
+
   asiData_EXPORT Handle(Poly_Triangulation)
     GetTriangulation() const;
 

@@ -36,25 +36,14 @@
 
 //-----------------------------------------------------------------------------
 
-//! ctor.
-asiVisu_TriangulationDataProvider::asiVisu_TriangulationDataProvider()
-: asiVisu_DataProvider()
+asiVisu_TriangulationDataProvider::asiVisu_TriangulationDataProvider(const Handle(ActData_TriangulationParameter)& P)
+: asiVisu_DataProvider ( ),
+  m_node               ( P->GetNode() ),
+  m_param              ( P )
 {}
 
 //-----------------------------------------------------------------------------
 
-//! Constructor accepting the data source Node.
-//! \param N [in] Triangulation Node.
-asiVisu_TriangulationDataProvider::asiVisu_TriangulationDataProvider(const Handle(asiData_TriangulationNode)& N)
-: asiVisu_DataProvider(), m_node(N)
-{}
-
-//-----------------------------------------------------------------------------
-
-//! Returns ID of the Data Node which is being sourced by the visualization
-//! pipeline. This ID is bound to the pipeline's actor in order to have a
-//! back-reference from Presentation to Data Object.
-//! \return Node ID.
 ActAPI_DataObjectId
   asiVisu_TriangulationDataProvider::GetNodeID() const
 {
@@ -63,43 +52,28 @@ ActAPI_DataObjectId
 
 //-----------------------------------------------------------------------------
 
-//! \return Triangulation Node.
-Handle(asiData_TriangulationNode)
-  asiVisu_TriangulationDataProvider::GetTriangulationNode() const
-{
-  return m_node;
-}
-
-//-----------------------------------------------------------------------------
-
-//! Returns the OCCT triangulation to be visualized.
-//! \return OCCT facet model.
 Handle(Poly_Triangulation)
   asiVisu_TriangulationDataProvider::GetTriangulation() const
 {
-  return m_node->GetTriangulation();
+  return m_param->GetTriangulation();
 }
 
 //-----------------------------------------------------------------------------
 
-//! \return copy.
 Handle(asiVisu_TriangulationDataProvider)
   asiVisu_TriangulationDataProvider::Clone() const
 {
-  return new asiVisu_TriangulationDataProvider(m_node);
+  return new asiVisu_TriangulationDataProvider(m_param);
 }
 
 //-----------------------------------------------------------------------------
 
-//! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
-//! translation process.
-//! \return source Parameters.
 Handle(ActAPI_HParameterList)
   asiVisu_TriangulationDataProvider::translationSources() const
 {
   ActParamStream params;
 
-  params << m_node->Parameter(asiData_TriangulationNode::PID_Triangulation);
+  params << m_param;
 
   return params.List;
 }

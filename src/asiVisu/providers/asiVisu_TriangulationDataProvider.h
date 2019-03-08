@@ -34,10 +34,13 @@
 // asiVisu includes
 #include <asiVisu_DataProvider.h>
 
-// asiData includes
-#include <asiData_TriangulationNode.h>
+// Active Data includes
+#include <ActData_TriangulationParameter.h>
 
-//! Data provider from Triangulation Node to Presentation.
+//-----------------------------------------------------------------------------
+
+//! Data provider from triangulation parameter to visualization pipeline.
+//! This provider is independent of a Node type.
 class asiVisu_TriangulationDataProvider : public asiVisu_DataProvider
 {
 public:
@@ -47,39 +50,46 @@ public:
 
 public:
 
+  //! Ctor accepting Triangulation Parameter.
+  //! \param[in] P parameter holding triangulation to visualize.
   asiVisu_EXPORT
-    asiVisu_TriangulationDataProvider(const Handle(asiData_TriangulationNode)& N);
-
-protected:
-
-  asiVisu_EXPORT
-    asiVisu_TriangulationDataProvider();
+    asiVisu_TriangulationDataProvider(const Handle(ActData_TriangulationParameter)& P);
 
 public:
 
+  //! Returns ID of the Data Node which is being sourced by the visualization
+  //! pipeline. This ID is bound to the pipeline's actor in order to have a
+  //! back-reference from Presentation to Data Object.
+  //! \return Node ID.
   asiVisu_EXPORT virtual ActAPI_DataObjectId
     GetNodeID() const;
 
-  asiVisu_EXPORT virtual Handle(asiData_TriangulationNode)
-    GetTriangulationNode() const;
-
+  //! Returns the OCCT triangulation to be visualized.
+  //! \return OCCT facet model.
   asiVisu_EXPORT virtual Handle(Poly_Triangulation)
     GetTriangulation() const;
 
 public:
 
+  //! \return copy.
   asiVisu_EXPORT Handle(asiVisu_TriangulationDataProvider)
     Clone() const;
 
 protected:
 
+  //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
+  //! translation process.
+  //! \return source Parameters.
   virtual Handle(ActAPI_HParameterList)
     translationSources() const;
 
 protected:
 
   //! Source Node.
-  Handle(asiData_TriangulationNode) m_node;
+  Handle(ActAPI_INode) m_node;
+
+  //! Source Parameter.
+  Handle(ActData_TriangulationParameter) m_param;
 
 };
 

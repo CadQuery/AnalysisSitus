@@ -77,6 +77,12 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
   pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
 
+  // Colorize backface so that inverted faces are immediately visible
+  vtkSmartPointer<vtkProperty> propBackface = vtkSmartPointer<vtkProperty>::New();
+  propBackface->DeepCopy( pl->Actor()->GetProperty() );
+  propBackface->SetColor(1.0, 0.0, 0.0);
+  pl->Actor()->SetBackfaceProperty(propBackface);
+
   /* ====================
    *  Pipeline for edges
    * ==================== */

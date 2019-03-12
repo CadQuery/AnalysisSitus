@@ -741,6 +741,8 @@ void asiVisu_ShapeRobustTessellator::addFace(const TopoDS_Face& face,
   }
   else
   {
+    const bool isReversed = (face.Orientation() == TopAbs_REVERSED);
+
     // Get facets associated with the face
     TopLoc_Location loc;
     const Handle(Poly_Triangulation)& triangulation = BRep_Tool::Triangulation(face, loc);
@@ -777,9 +779,9 @@ void asiVisu_ShapeRobustTessellator::addFace(const TopoDS_Face& face,
 
       // Insert VTK cell
       m_data->InsertTriangle(shapeId,
-                             pointIds(n1),
+                             isReversed ? pointIds(n3) : pointIds(n1),
                              pointIds(n2),
-                             pointIds(n3),
+                             isReversed ? pointIds(n1) : pointIds(n3),
                              ShapePrimitive_Facet);
     }
   }

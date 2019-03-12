@@ -78,7 +78,15 @@ bool asiAlgo_MeshGen::DoNative(const TopoDS_Shape& shape,
 #endif
 
     // Notice that parallel mode is enabled
-    BRepMesh_IncrementalMesh MeshGen(shape, linearDeflection, 0, angularDeflection_deg, 1);
+    IMeshTools_Parameters params;
+    params.Deflection               = linearDeflection;
+    params.Angle                    = angularDeflection_deg;
+    //params.MinSize                  = 0.05;
+    //params.ControlSurfaceDeflection = false;
+    params.InParallel               = true;
+    //
+    BRepMesh_IncrementalMesh MeshGen(shape, params);
+    
   }
   catch ( ... )
   {

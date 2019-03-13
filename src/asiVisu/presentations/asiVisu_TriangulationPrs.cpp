@@ -73,6 +73,12 @@ asiVisu_TriangulationPrs::asiVisu_TriangulationPrs(const Handle(ActAPI_INode)& N
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
   pl->Actor()->GetProperty()->SetLineWidth(1.5f);
 
+  // Colorize backface so that inverted faces are immediately visible
+  vtkSmartPointer<vtkProperty> propBackface = vtkSmartPointer<vtkProperty>::New();
+  propBackface->DeepCopy( pl->Actor()->GetProperty() );
+  propBackface->SetColor(1.0, 0.0, 0.0);
+  pl->Actor()->SetBackfaceProperty(propBackface);
+
   // !!! For performance reasons !!!
   pl->Actor()->SetPickable(0);
 

@@ -293,7 +293,8 @@ void asiEngine_Part::InitializeNaming()
 
 //! Constructs BVH structure for the visualization facets stored in the
 //! part shape.
-void asiEngine_Part::BuildBVH()
+//! \return constructed BVH.
+Handle(asiAlgo_BVHFacets) asiEngine_Part::BuildBVH()
 {
   // Get Part Node
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
@@ -310,6 +311,8 @@ void asiEngine_Part::BuildBVH()
     bvhParam = Handle(asiData_BVHParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_BVH) );
   //
   bvhParam->SetBVH(bvh);
+
+  return bvh;
 }
 
 //-----------------------------------------------------------------------------

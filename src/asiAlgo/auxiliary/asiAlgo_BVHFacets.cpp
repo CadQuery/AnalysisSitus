@@ -299,9 +299,8 @@ void asiAlgo_BVHFacets::Dump(ActAPI_PlotterEntry IV)
   }
 
   // Draw BVH
-  IV.ERASE_ALL();
-  IV.DRAW_SHAPE(comp_left,  Color_Yellow, 1.0, true, "BVH Left");
-  IV.DRAW_SHAPE(comp_right, Color_Green, 1.0, true, "BVH Right");
+  IV.REDRAW_SHAPE("BVH Left",  comp_left,  Color_Yellow, 1.0, true);
+  IV.REDRAW_SHAPE("BVH Right", comp_right, Color_Yellow, 1.0, true);
 }
 
 //-----------------------------------------------------------------------------

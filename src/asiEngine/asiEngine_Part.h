@@ -79,7 +79,7 @@ public:
   asiEngine_EXPORT void
     InitializeNaming();
 
-  asiEngine_EXPORT void
+  asiEngine_EXPORT Handle(asiAlgo_BVHFacets)
     BuildBVH();
 
   asiEngine_EXPORT void

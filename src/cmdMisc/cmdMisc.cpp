@@ -3162,6 +3162,48 @@ int MISC_TestDist(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_DumpBVH(const Handle(asiTcl_Interp)& interp,
+                 int                          argc,
+                 const char**                 argv)
+{
+  if ( argc != 1 && argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  const bool doBuild = interp->HasKeyword(argc, argv, "build");
+
+  // Get BVH from Part Node.
+  Handle(asiAlgo_BVHFacets) bvh = M->GetPartNode()->GetBVH();
+  //
+  if ( bvh.IsNull() )
+  {
+    if ( !doBuild )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "BVH is not initialized.");
+      return TCL_ERROR;
+    }
+    else
+    {
+      // Construct BVH right here.
+      M->OpenCommand();
+      {
+        bvh = asiEngine_Part(M).BuildBVH();
+      }
+      M->CommitCommand();
+    }
+  }
+
+  // Dump.
+  bvh->Dump( interp->GetPlotter() );
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -3331,6 +3373,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Test for distance evaluation.",
     //
     __FILE__, group, MISC_TestDist);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("dump-bvh",
+    //
+    "dump-bvh [-build]\n"
+    "\t Dumps BVH to viewer.",
+    //
+    __FILE__, group, MISC_DumpBVH);
 #endif
 
   // Load sub-modules.

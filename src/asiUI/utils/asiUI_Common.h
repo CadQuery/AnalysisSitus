@@ -76,6 +76,31 @@ static const char* asiUI_PixmapNotFound[] = {
 "                ",
 "                "};
 
+static const char* asiUI_BrowsePixmap[] = {
+"16 16 5 1",
+"  c none",
+". c #ffff00",
+"# c #848200",
+"a c #ffffff",
+"b c #000000",
+"                ",
+"          bbb   ",
+"         b   b b",
+"              bb",
+"  bbb        bbb",
+" ba.abbbbbbb    ",
+" b.a.a.a.a.b    ",
+" ba.a.a.a.ab    ",
+" b.a.abbbbbbbbbb",
+" ba.ab#########b",
+" b.ab#########b ",
+" bab#########b  ",
+" bb#########b   ",
+" bbbbbbbbbbb    ",
+"                ",
+"                "
+};
+
 //-----------------------------------------------------------------------------
 
 //! GUI utilities.

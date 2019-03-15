@@ -150,7 +150,7 @@ void asiUI_DatumPathEdit::onUnitsUpdated()
 }
 
 void asiUI_DatumPathEdit::SetEnabled(const bool theIsEnabled,
-                                      const int  theWidgets)
+                                     const int  theWidgets)
 {
   m_pEditor->GetLineEdit()->setReadOnly (!theIsEnabled);
   asiUI_Datum::SetEnabled( theIsEnabled, theWidgets );

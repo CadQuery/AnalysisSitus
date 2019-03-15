@@ -59,8 +59,8 @@
 //! \param theParent [in] parent widget for subwidget controls.
 //! \param theFlags [in] datum subwidget and option flags.
 asiUI_DatumPathItem::asiUI_DatumPathItem(const QString& theDictId,
-                                           QWidget* theParent,
-                                           const int theFlags)
+                                         QWidget* theParent,
+                                         const int theFlags)
 : asiUI_Datum(theParent),
   m_PathType(OpenPath)
 {

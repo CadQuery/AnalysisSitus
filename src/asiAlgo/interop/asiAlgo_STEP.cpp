@@ -178,7 +178,6 @@ bool asiAlgo_STEP::Write(const TopoDS_Shape&            shape,
    * ================================== */
 
   STEPControl_Writer aWriter;
-  Handle(XSControl_WorkSession) aWS = aWriter.WS();
 
   /* ========================
    *  Transfer shape to STEP

@@ -75,7 +75,7 @@ asiUI_DatumDelegate::asiUI_DatumDelegate(QWidget* theParent)
     aResMgr = aSession->resourceMgr();*/
 
   m_Browse = /*aResMgr ? 
-    aResMgr->loadPixmap( "asiUI", tr("ICON_BROWSE") ) :*/ QPixmap(asiUI_PixmapNotFound);
+    aResMgr->loadPixmap( "asiUI", tr("ICON_BROWSE") ) :*/ QPixmap(asiUI_BrowsePixmap);
 }
 
 //! Get row margin for the height.

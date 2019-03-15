@@ -233,8 +233,11 @@ void asiUI_ControlsPartListener::reinitializeEverything(const bool fitAll,
   m_cf->ViewerPart->PrsMgr()->Actualize(m_cf->Model->GetPartNode(), false, fitAll);
 
   // Repaint other viewers which may have been affected
-  m_cf->ViewerHost->Repaint();
-  m_cf->ViewerDomain->Repaint();
+  if ( m_cf->ViewerHost )
+    m_cf->ViewerHost->Repaint();
+  //
+  if ( m_cf->ViewerDomain )
+    m_cf->ViewerDomain->Repaint();
 
   // Repopulate object browser
   if ( m_cf->ObjectBrowser && populateBrowser )

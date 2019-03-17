@@ -182,11 +182,18 @@ bool asiAlgo_MeshOBB::Perform()
   gp_Pnt corner_min(ax_X_param_min, ax_Y_param_min, ax_Z_param_min);
   gp_Pnt corner_max(ax_X_param_max, ax_Y_param_max, ax_Z_param_max);
   //
-  m_placement      = ax3_placement;
-  m_localCornerMin = corner_min;
-  m_localCornerMax = corner_max;
+  m_obb.Placement      = ax3_placement;
+  m_obb.LocalCornerMin = corner_min;
+  m_obb.LocalCornerMax = corner_max;
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+const asiAlgo_OBB& asiAlgo_MeshOBB::GetResult() const
+{
+  return m_obb;
 }
 
 //-----------------------------------------------------------------------------
@@ -194,7 +201,7 @@ bool asiAlgo_MeshOBB::Perform()
 gp_Trsf asiAlgo_MeshOBB::GetResultTrsf() const
 {
   gp_Trsf T;
-  T.SetTransformation(m_placement);
+  T.SetTransformation(m_obb.Placement);
   T.Invert();
   return T;
 }
@@ -209,7 +216,7 @@ TopoDS_Solid asiAlgo_MeshOBB::GetResultBox() const
   TopoDS_Shape solid;
   try
   {
-    BRepPrimAPI_MakeBox mkOBB(m_localCornerMin, m_localCornerMax);
+    BRepPrimAPI_MakeBox mkOBB(m_obb.LocalCornerMin, m_obb.LocalCornerMax);
     solid = BRepBuilderAPI_Transform(mkOBB.Solid(), T, true);
   }
   catch ( ... ) {}

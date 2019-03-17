@@ -43,6 +43,35 @@
 
 //-----------------------------------------------------------------------------
 
+//! Oriented Bounding Box.
+struct asiAlgo_OBB
+{
+  gp_Ax3 Placement;      //!< Placement of the local axes of the OBB.
+  gp_Pnt LocalCornerMin; //!< Min corner.
+  gp_Pnt LocalCornerMax; //!< Max corner.
+
+  void Dump() const
+  {
+    // Access data
+    const gp_Pnt& pos = this->Placement.Location();
+    const gp_Dir& OZ  = this->Placement.Direction();
+    const gp_Dir& OX  = this->Placement.XDirection();
+    //
+    const gp_Pnt& MinCorner = this->LocalCornerMin;
+    const gp_Pnt& MaxCorner = this->LocalCornerMax;
+
+    // Dump
+    std::cout << "Pos       = (" << pos.X()       << ", " << pos.Y()       << ", " << pos.Z()       << ")" << std::endl;
+    std::cout << "OZ        = (" << OZ.X()        << ", " << OZ.Y()        << ", " << OZ.Z()        << ")" << std::endl;
+    std::cout << "OX        = (" << OX.X()        << ", " << OX.Y()        << ", " << OX.Z()        << ")" << std::endl;
+    std::cout << "MinCorner = (" << MinCorner.X() << ", " << MinCorner.Y() << ", " << MinCorner.Z() << ")" << std::endl;
+    std::cout << "MaxCorner = (" << MaxCorner.X() << ", " << MaxCorner.Y() << ", " << MaxCorner.Z() << ")" << std::endl;
+  }
+};
+
+
+//-----------------------------------------------------------------------------
+
 //! Utility to build Oriented Bounding Box on mesh by finding eigen vectors
 //! of a covariance matrix.
 class asiAlgo_MeshOBB : public ActAPI_IAlgorithm
@@ -70,6 +99,10 @@ public:
   asiAlgo_EXPORT bool
     Perform();
 
+  //! \return resulting OBB.
+  asiAlgo_EXPORT const asiAlgo_OBB&
+    GetResult() const;
+
   //! \return resulting transformation matrix which defines the placement
   //!         of the oriented box.
   asiAlgo_EXPORT gp_Trsf
@@ -93,10 +126,8 @@ protected:
 
 protected:
 
-  Handle(Poly_Triangulation) m_input;          //!< Input triangulation.
-  gp_Ax3                     m_placement;      //!< Placement of the local axes of the OBB.
-  gp_Pnt                     m_localCornerMin; //!< Min corner.
-  gp_Pnt                     m_localCornerMax; //!< Max corner.
+  Handle(Poly_Triangulation) m_input; //!< Input triangulation.
+  asiAlgo_OBB                m_obb;   //!< Constructed OBB.
 
 };
 

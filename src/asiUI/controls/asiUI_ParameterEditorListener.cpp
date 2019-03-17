@@ -83,6 +83,18 @@ void asiUI_ParameterEditorListener::onParameterChanged(const int       pid,
       m_cf->Model->AbortCommand();
       return;
     }
+
+    // Execute Tree Functions.
+    const int execStatus = m_cf->Model->FuncExecuteAll();
+    //
+    if ( execStatus & ActAPI_IModel::Execution_Done )
+      m_cf->Progress.SendLogMessage(LogNotice(Normal) << "Tree functions were successfully executed.");
+    if ( execStatus & ActAPI_IModel::Execution_NoFunctions )
+      m_cf->Progress.SendLogMessage(LogNotice(Normal) << "There are no tree functions in the model.");
+    if ( execStatus & ActAPI_IModel::Execution_LoopsDetected )
+      m_cf->Progress.SendLogMessage(LogErr(Normal) << "Tree functions cannot be executed because of dependency loop.");
+    if ( execStatus & ActAPI_IModel::Execution_Failed )
+      m_cf->Progress.SendLogMessage(LogErr(Normal) << "Tree function execution failed.");
   }
   m_cf->Model->CommitCommand();
 

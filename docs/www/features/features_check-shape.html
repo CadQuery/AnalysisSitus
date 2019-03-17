@@ -39,35 +39,415 @@
 </tr>
 </table>
 
+<h1>What a good model is?</h1>
+
+<p>
+  A careful analysis of CAD model validity should employ thinking at three levels of abstraction:
+</p>
+
+<ul>
+  <li>Geometric validity (parameterization irregularities, curve/surface self-intersections, parametric discontinuities, etc.).</li>
+  <li>Topological validity (orientations of boundary elements, face/solid closeness, formal shape structure, etc.).</li>
+  <li>Validity w.r.t. the design intent (e.g., spline surfaces where canonical geometry is a better fit).</li>
+</ul>
+
+<p>
+  The geometric validity checks are concerned with the mathematics of form. The input data for those checks
+  are the equations of curves and surfaces while the verification methods usually employ some computationally
+  expensive algorithms (intersection tests, sampling, evaluation of derivatives, etc.).
+  The topological validity checks are concerned with the syntactical analysis of the model and perform
+  verification of the data structure consistency. Finally, the analysis of the design intent requires the
+  understanding of the function of the part, its manufacturing constraints and other reasoning which may
+  often require human intervention.
+  The following rule often works in practice: to fix the problem of a lower level, it is necessary to
+  rise to the upper level of abstraction. E.g., to correctly fill a gap due to a missing face,
+  it might be necessary to recognize and recover its containing feature (e.g., to
+  extend and intersect surfaces rather than to patch a hole with a NURBS surface).
+</p>
+
 <h1>CAD model validity</h1>
+
+<p>
+  The reasoning on the validity of a CAD model should always be based on its
+  application domain. E.g., self-intersection defects might be critical for mesh
+  generation algorithms while they often have zero impact on specific modeling
+  procedures such as unfolding of sheet metals.
+  The following table provides a checklist for a CAD model to
+  verify its validity. These checks are relevant to a B-Rep
+  representation scheme of OpenCascade kernel exclusively. The set of
+  checks listed below is not full though the most frequently occurring defects
+  are enumerated.
+</p>
 
 <table align="center" border="0" cellpadding="5" cellspacing="0" width="100%">
 <tr>
-  <td align="center" class="table-content-header" colspan="2">
-    Ad-hoc checks
+  <td align="center" class="table-content-header">
+    Check
+  </td>
+  <td align="center" class="table-content-header">
+    Tcl command
+  </td>
+  <td align="center" class="table-content-header">
+    Issue description
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
 <tr>
-  <td width="30%" class="table-content-block">
+  <td width="20%" class="table-content-block">
+    Euler-Poincare property
+  </td>
+  <td width="20%" class="table-content-block">
+    <span class="code-inline">check-euler</span>
+  </td>
+  <td class="table-content-block">
+    Checks if the <a href="./features_euler-ops.html">Euler-Poincare property</a> holds
+    for the user-specified genus.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Orientation of vertex in edge
+  </td>
+  <td width="20%" class="table-content-block">
     <span class="code-inline">check-vertices-ori</span>
   </td>
   <td class="table-content-block">
     Checks if the vertices of the part are distinguishable by their orientation
-    flags. A valid edge should have one FORWARD vertex and one REVERSED vertex to properly denote
+    flags. A valid edge should have one FORWARD vertex and one REVERSED vertex to properly signify
     its topological extremities. As a result of some poorly implemented modeling operators,
-    this rule may appear to be broken.
+    this rule may appear to be violated.
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
 <tr>
-  <td width="30%" class="table-content-block">
+  <td width="20%" class="table-content-block">
+    Orientation of edge in wire
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    The edges should be oriented so that their owning contour is traversed
+    in a determined order (clockwise or counterclockwise).
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Orientation of wire in face
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    The wire should be oriented so that the material of its owning face
+    is either enclosed (for the outer wires) or lies outside (for holes).
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Orientation of face in solid
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    The faces of a solid model should be oriented so that to point outwards the
+    bounded volume. This requirement is relaxed for surface modeling (shells).
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Contour closeness
+  </td>
+  <td width="20%" class="table-content-block">
     <span class="code-inline">check-contours</span>
   </td>
   <td class="table-content-block">
     Checks if the contours of the part faces are closed (have no gaps). The optional
-    'tolerance' argument is used to tune the precision of coincidence test. You
+    "tolerance" argument is used to tune the precision of coincidence test. You
     can find more details in the <a href="./features_is-contour-closed.html">corresponding chapter</a>.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Solid closeness (finiteness)
+  </td>
+  <td width="20%" class="table-content-block">
+    <span class="code-inline">check-finite</span>
+  </td>
+  <td class="table-content-block">
+    Checks if the solid body is finite. It should be noted that in some workflows
+    infinite volumes are perfectly valid.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Open (naked) edges
+  </td>
+  <td width="20%" class="table-content-block">
+    <span class="code-inline">check-open-edges</span>
+  </td>
+  <td class="table-content-block">
+    The open edges (those owned by less than two faces) are valid for shells and prohibited for
+    solid models. To fix this problem, face stitching (sewing) algorithm might be necessary.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Missing face (gap)
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    The gap filling algorithm is required to fix this anomaly.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Intersection and overlapping of surfaces
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    All surface intersections should be resolved by inserting the corresponding topological primitives (vertices,
+    edges or patches in case of overlapping). If surfaces interact while having no topological
+    resolution, the shape is considered locally faulty. Intersections or overlaps of the trimmed NURBS
+    surfaces are a huge challenge for healing algorithms
+    <a href="../references.html#frischmann-2011">[Frischmann, 2011]</a>.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Singular surface points
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    Surface degeneracies usually occur due to the coincidence of NURBS control points. Such surfaces
+    are often used to represent triangular patches, e.g., in ship
+    hull design. Even though the singularity points are usually allowed by a modeler,
+    their existence may cause problems in subsequent operators (e.g., offsets).
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Missing 3D curve
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    The 3D curve is a primary edge representation. If the 3D curve does not
+    exist, it is clearly a problem. To fix the issue, the corresponding p-curves
+    should be evaluated against their host surfaces. The obtained points are then
+    reapproximated.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Missing p-curve
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    In OpenCascade kernel, the primary 3D curve should be followed by its
+    images in all surface patches meeting at this curve. These p-curves
+    can be recovered by projection of a 3D curve to each host surface.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Non-synchronous parameterization of curves
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    The 3D curves and thecorresponding p-curves should be parameterized synchronously, so that
+    they yield identical points for the same parameter value (with tolerance).
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Missing seam
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    The seam edges correspond to a period value of a periodic surface. These edges
+    are necessary to close the parametric domain of a face. Not all geometric kernels
+    use the notion of seam edges, so it is necessary to recover them sometimes after data exchange.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Non-manifoldness
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    Non-manifold vertices, edges and faces might be perfectly valid if they
+    are modeled like this intentionally. Otherwise, the existence of non-manifold
+    boundary elements might be a problem for subsequent modeling operators
+    and manufacturing planning (such models are clearly non-manufacturable).
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Unexpected shape type
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    It sometimes happens that the visually fine, closed models are defined as
+    shells instead of being formal solids. Other examples include single faces defined
+    as shells or compound parts wrapping a single result of a solid Boolean operation.
+    These anomalies can be traced down using a topology graph representation of B-Rep
+    model. The graph will contain excessive nodes and/or nodes of improper type.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+</table>
+
+<h1>CAD model dirtiness</h1>
+
+<p>
+  There are two aspects which contribute to what we call shape "dirtiness" here:
+</p>
+
+<ul>
+  <li>Excessive shape description.</li>
+  <li>High geometric tolerances.</li>
+</ul>
+
+<p>
+  The excessive shape description might lead to an increase of data volume or influence the processing
+  time of geometry-based algorithms. Moreover, excessive shape representation and dirtiness might cause
+  serious numeric problems within the downstream engineering workflows
+  <a href="../references.html#frischmann-2011">[Frischmann, 2011]</a>. At the same time,
+  all flaws enumerated below do not break the formal validity of a CAD model.
+</p>
+
+<table align="center" border="0" cellpadding="5" cellspacing="0" width="100%">
+<tr>
+  <td align="center" class="table-content-header">
+    Problem
+  </td>
+  <td align="center" class="table-content-header">
+    Tcl command
+  </td>
+  <td align="center" class="table-content-header">
+    Issue description
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Non-canonic geometry
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    Example: a geometrically planar surface represented with a NURBS surface.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Many small edges
+  </td>
+  <td width="20%" class="table-content-block">
+    <span class="code-inline">heal-small-edges</span>
+  </td>
+  <td class="table-content-block">
+    Sometimes a CAD model contains excessive number of small (usually straight)
+    edges which are hard to treat numerically (e.g., when generating FEA meshes).
+    Such edges can be enlarged by reapproximation.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Non-maximized boundary elements
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    Face/edge maximization is usually performed as a post-processing stage of
+    a Boolean operation.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    High geometric tolerances
+  </td>
+  <td width="20%" class="table-content-block">
+    <span class="code-inline">check-toler</span>
+  </td>
+  <td class="table-content-block">
+    See the <a href="./features_check-toler.html">corresponding chapter</a> for details.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    C0 geometry
+  </td>
+  <td width="20%" class="table-content-block">
+    <span class="code-inline">split-by-continuity</span>
+  </td>
+  <td class="table-content-block">
+    The support of C0 geometric primitives is limited in all geometric kernels. It is
+    usually a good idea to split such entities with the relevant boundary elements (vertices or edges)
+    to enhance the smoothness of the geometry. Alternatively, for NURBS curves
+    and surfaces, it is possible to remove knots if the shape is geometrically continuous
+    though parameterized improperly. The knot insertion algorithm can also be applied
+    for non-G-smooth geometric elements if a certain deformation (within the prescribed
+    tolerance) is allowed.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Nested local transformations
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    In OpenCascade kernel, each topological element might be assigned with a local
+    transformation to place it relative to its parent element. While this capacity
+    of the modeler is convenient for representing assemblies as compounds, we
+    discourage using the transformed boundary elements in a single solid representation.
+    Formally speaking, a local transformation is a property of an arc in the topology
+    graph. In Analysis Situs, it is possible to colorize the arcs for a visual check
+    of internal transformations. It is Ok to have a local transformation for in-compound
+    inclusions and not Ok to have them deeper in the graph.
   </td>
 </tr>
 <!---------------------------------------------------------------------------->

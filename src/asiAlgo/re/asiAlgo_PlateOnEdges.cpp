@@ -315,6 +315,7 @@ bool asiAlgo_PlateOnEdges::BuildSurf(const Handle(TopTools_HSequenceOfShape)& ed
 
    if ( m_fFairCoeff )
    {
+#if defined USE_MOBIUS
      TIMER_RESET
      TIMER_GO
 
@@ -353,6 +354,9 @@ bool asiAlgo_PlateOnEdges::BuildSurf(const Handle(TopTools_HSequenceOfShape)& ed
 
      TIMER_FINISH
      TIMER_COUT_RESULT_MSG("Fair B-surface")
+#else
+     m_progress.SendLogMessage(LogWarn(Normal) << "Fairing feature is not available.");
+#endif
    }
 
   return true;

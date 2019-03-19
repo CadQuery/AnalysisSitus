@@ -1,0 +1,23 @@
+/* XPM */
+static const char * atribute_xpm[] = {
+"16 16 4 1",
+" 	c #FFFFFFFFFFFF",
+".	c #C0C0C0C0C0C0",
+"X	c #000000000000",
+"o	c #FFFFFFFF0000",
+"        .XXXX   ",
+"       .XooooX  ",
+"       XoooooX  ",
+"      XooooooX  ",
+"     .XooooooX  ",
+"     XoooXoooX  ",
+"XX  .XooX XooX  ",
+"XX  XooooXoooX  ",
+"XX .XooooooooX  ",
+"   XoooXXXoooX  ",
+"  .XooX. .XooX  ",
+"  XoooX   XooX  ",
+" .XooX.   XooX. ",
+".XoooX.  .XoooX.",
+"XoooooX  XoooooX",
+".XXXXX.  .XXXXX."};

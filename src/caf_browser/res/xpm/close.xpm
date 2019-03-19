@@ -1,0 +1,27 @@
+/* XPM */
+static const char * close_xpm[] = {
+/* width height ncolors cpp [x_hot y_hot] */
+"16 17 4 1 0 0",
+/* colors */
+" 	s none	m none	c none",
+".	s iconColor1	m black	c black",
+"X	s iconColor2	m white	c white",
+"o	s iconColor6	m white	c yellow",
+/* pixels */
+"                ",
+"                ",
+"                ",
+"                ",
+"  ...           ",
+" .XoX.......    ",
+" .oXoXoXoXo.    ",
+" .XoXoXoXoX.    ",
+" .oXoXoXoXo.    ",
+" .XoXoXoXoX.    ",
+" .oXoXoXoXo.    ",
+" .XoXoXoXoX.    ",
+" .oXoXoXoXo.    ",
+" ...........    ",
+"                ",
+"                ",
+"                "};

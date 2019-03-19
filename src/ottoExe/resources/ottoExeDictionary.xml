@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<datadictionary version="1">
+
+  <!-- ==================================================================== -->
+  <!-- Common semantic IDs                                                  -->
+  <!-- ==================================================================== -->
+
+  <valueList id="List-YesNo" name="Yes/No">
+    <value id="1">Yes</value>
+    <value id="2">No</value>
+  </valueList>
+
+  <valueList id="List-ShapeDisplayMode" name="Display mode">
+    <value id="1">Shading</value>
+    <value id="8">Wireframe</value>
+  </valueList>
+
+  <valueList id="List-MeshDisplayMode" name="Display mode">
+    <value id="1">Shading</value>
+    <value id="2">Wireframe</value>
+    <value id="4">Shrink</value>
+  </valueList>
+
+  <!-- Display mode for shape presentation -->
+  <datum id="PrsDisplayMode" format="" label="Display mode">
+    <domain type="List" list="List-ShapeDisplayMode" />
+    <ui widget="ComboBox" />
+    <description>Display mode</description>
+  </datum>
+
+  <!-- Display mode for mesh presentation -->
+  <datum id="PrsMeshDisplayMode" format="" label="Display mode">
+    <domain type="List" list="List-MeshDisplayMode" />
+    <ui widget="ComboBox" />
+    <description>Display mode</description>
+  </datum>
+
+  <!-- Indicates whether the color for presentation is active -->
+  <datum id="PrsHasCustomColor" format="" label="Has custom color">
+    <domain type="Bool" />
+    <ui widget="CheckBox" />
+    <description>Custom color activation</description>
+  </datum>
+
+  <!-- Color for presentation -->
+  <datum id="PrsCustomColor" format="" label="Color">
+    <domain type="Integer" />
+    <ui widget="ColorPicker" />
+    <description>Color picker</description>
+  </datum>
+
+  <!-- Selector for directories -->
+  <datum id="DirSelector" format="" label="">
+    <domain type="String" />
+    <ui widget="DirPath" widgetParams="title=Select directory..." />
+    <description>Directory selector</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- Semantic IDs                                                         -->
+  <!-- ==================================================================== -->
+
+  <datum id="STL_Filename" format="" label="STL filename">
+    <domain type="String" />
+    <ui widget="OpenFilePath"
+        widgetParams="filter=STL files (*.stl)|title=Select STL file..." />
+    <description>STL file</description>
+  </datum>
+
+  <datum id="Num_Sections" format="" label="Num. of sections">
+    <domain type="Integer" min="2" max="100" />
+    <ui widget="LineEdit" />
+    <description>Number of sections</description>
+  </datum>
+
+  <!-- ==================================================================== -->
+  <!-- DEFINITIONS OF DIMENSIONS AND ASSOCIATED UNITS                       -->
+  <!-- ==================================================================== -->
+
+  <dimension name="length">
+    <unit name="m" si="yes"/>
+    <unit name="mm" si="no" k="1e-3" b="0"/>
+    <unit name="cm" si="no" k="1e-2" b="0"/>
+    <unit name="km" si="no" k="1e3" b="0"/>
+    <unit name="ft" si="no" k="0.3048" b="0"/>
+    <unit name="in" si="no" k="0.0254" b="0"/>
+  </dimension>
+  <dimension name="mass">
+    <unit name="g" si="no" k="1e-3" b="0"/>
+    <unit name="kg" si="yes" />
+    <unit name="Tonne" si="no" k="1e3" b="0"/>
+    <unit name="Ton" si="no" k="907.18474" b="0"/>
+    <unit name="Pound" si="no" k="0.45359237" b="0"/>
+    <unit name="Kip" si="no" k="453.59237" b="0"/>
+  </dimension>
+  <dimension name="force">
+    <unit name="N" si="yes"/>
+    <unit name="kN" si="no" k="1e3" b="0"/>
+  </dimension>
+  <dimension name="time">
+    <unit name="s" si="yes"/>
+    <unit name="Minute" si="no" k="60" b="0"/>
+    <unit name="Hour" si="no" k="3.6e3" b="0"/>
+    <unit name="Day" si="no" k="86.4e3" b="0"/>
+    <unit name="Month" si="no" k="2.6208e6" b="0"/>
+    <unit name="Year" si="no" k="31.4496e6" b="0"/>
+  </dimension>
+  <dimension name="angle">
+    <unit name="deg" si="no" k="0.01745329251994" b="0"/>
+    <unit name="rad" si="yes"/>
+  </dimension>
+  <dimension name="temperature">
+    <unit name="°K" si="yes"/>
+    <unit name="°C" si="no" k="1" b="-273.15"/>
+    <unit name="°F" si="no" k="0.5555555555556" b="-255.3722222222"/>
+  </dimension>
+
+</datadictionary>

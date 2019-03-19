@@ -1,0 +1,25 @@
+formatlist:BinOcaf|OcafExBin
+
+!
+! Default format
+cbf.FileFormat: BinOcaf
+
+!
+! Custom format
+ottobock.FileFormat: OcafExBin
+
+!
+! BinOcaf format
+!
+BinOcaf.Description: Bin Ocaf Document Version 1.0
+BinOcaf.FileExtension: cbf
+BinOcaf.StoragePlugin: 03a56835-8269-11d5-aab2-0050044b1af1
+BinOcaf.RetrievalPlugin: 03a56836-8269-11d5-aab2-0050044b1af1
+
+!
+! OcafExBin format
+!
+OcafExBin.Description: Custom Ottobock format
+OcafExBin.FileExtension: ottobock
+OcafExBin.StoragePlugin: 7397208c-5d82-48c3-9c35-53274cea5d73
+OcafExBin.RetrievalPlugin: 7397208c-5d82-48c3-9c35-53274cea5d74

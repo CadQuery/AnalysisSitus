@@ -161,6 +161,15 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/exe)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdEngine)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdMisc)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdRE)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/caf_browser)
+
+# Ottobock workbench
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/ottoAlgo)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/ottoData)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/ottoVisu)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/ottoEngine)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/ottoExe)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/ottoCmd)
 
 #-------------------------------------------------------------------------------
 # Setup compiler
@@ -186,12 +195,20 @@ set_property(TARGET asiExe           PROPERTY FOLDER Executables)
 set_property(TARGET asiTest          PROPERTY FOLDER Executables)
 ################################################################################
 set_property(TARGET setup            PROPERTY FOLDER Utilities)
+set_property(TARGET caf_browser      PROPERTY FOLDER Utilities)
 ################################################################################
 set_property(TARGET asiTcl           PROPERTY FOLDER Batch)
 ################################################################################
 set_property(TARGET cmdEngine        PROPERTY FOLDER Commands)
 set_property(TARGET cmdMisc          PROPERTY FOLDER Commands)
 set_property(TARGET cmdRE            PROPERTY FOLDER Commands)
+################################################################################
+set_property(TARGET ottoAlgo         PROPERTY FOLDER Ottobock)
+set_property(TARGET ottoData         PROPERTY FOLDER Ottobock)
+set_property(TARGET ottoEngine       PROPERTY FOLDER Ottobock)
+set_property(TARGET ottoVisu         PROPERTY FOLDER Ottobock)
+set_property(TARGET ottoExe          PROPERTY FOLDER Ottobock)
+set_property(TARGET ottoCmd          PROPERTY FOLDER Ottobock)
 ################################################################################
 
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)

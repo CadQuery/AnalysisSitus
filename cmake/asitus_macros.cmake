@@ -74,6 +74,49 @@ macro (ASITUS_MAKE_COMPILER_BITNESS)
   math (EXPR COMPILER_BITNESS "32 + 32*(${CMAKE_SIZEOF_VOID_P}/8)")
 endmacro()
 
+# Name:    LINK_PROJECT_TO_LIBRARIES_SET
+# Purpose: links target with name equal to "PROJECT_NAME" to set of libraries "LIBRARIES"
+#          It is possible to use optional arguments:
+#          4 LIBRARY_NAME_DEBUG_SUFFIX  - adds suffix for debug libraries names only ("" by default)
+#          5 LIBRARY_NAME_COMMON_SUFFIX - adds suffix for all libraries names        ("" by default)
+#          6 LINKAGE_OPTION             - advanced keywords for CMake command 'target_link_libraries'
+#                                         The PUBLIC, PRIVATE and INTERFACE keywords can be used to
+#                                         specify both the link dependencies and the link interface
+#                                         in one command (not used by default)
+#---------------------------------------------------------------------------------------------------
+macro (LINK_PROJECT_TO_LIBRARIES_SET PROJECT_NAME LIBRARY_VARIABLE_NAME LIBRARIES)
+  set (LIBRARY_NAME_DEBUG_SUFFIX "")
+  set (LIBRARY_NAME_COMMON_SUFFIX "")
+  set (LINKAGE_OPTION "")
+  if ( ${ARGC} EQUAL 4 OR ${ARGC} GREATER 4 )
+    set (LIBRARY_NAME_DEBUG_SUFFIX "${ARGV3}")
+  endif()
+  if ( ${ARGC} EQUAL 5 OR ${ARGC} GREATER 5 )
+    set (LIBRARY_NAME_COMMON_SUFFIX "${ARGV4}")
+  endif()
+  if ( ${ARGC} EQUAL 6 )
+    set (LINKAGE_OPTION "${ARGV5}")
+  endif()
+
+  foreach (LIB_FILE ${${LIBRARIES}})
+    if (WIN32)
+      set (LIB_FILENAME "${LIB_FILE}${LIBRARY_NAME_COMMON_SUFFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+      set (LIB_FILENAME_D "${LIB_FILE}${LIBRARY_NAME_DEBUG_SUFFIX}${LIBRARY_NAME_COMMON_SUFFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    else()
+      set (LIB_FILENAME "lib${LIB_FILE}${LIBRARY_NAME_COMMON_SUFFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+      set (LIB_FILENAME_D "${LIB_FILE}${LIBRARY_NAME_DEBUG_SUFFIX}${LIBRARY_NAME_COMMON_SUFFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+    endif()
+
+    set (DEBUG_DIR "${${LIBRARY_VARIABLE_NAME}}")
+    if (${LIBRARY_VARIABLE_NAME}_DEBUG AND EXISTS "${${LIBRARY_VARIABLE_NAME}_DEBUG}/${LIB_FILENAME_D}")
+      set (DEBUG_DIR "${${LIBRARY_VARIABLE_NAME}_DEBUG}")
+    endif()
+
+    target_link_libraries (${PROJECT_NAME} ${LINKAGE_OPTION} debug     ${DEBUG_DIR}/${LIB_FILENAME_D})
+    target_link_libraries (${PROJECT_NAME} ${LINKAGE_OPTION} optimized ${${LIBRARY_VARIABLE_NAME}}/${LIB_FILENAME})
+  endforeach()
+endmacro()
+
 #-------------------------------------------------------------------------------
 # Name:    GENERATE_3RDPARTY_DEBUG_VARIABLES
 # Purpose: Creates internal cache variables for 3rd-party debug directories

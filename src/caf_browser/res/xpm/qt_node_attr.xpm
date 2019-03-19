@@ -1,0 +1,22 @@
+/* XPM */
+static const char * qt_node_attr_xpm[] = {
+"16 16 3 1",
+" 	c None",
+".	c #000000000000",
+"X	c #FFFFFFFF0000",
+"     ....       ",
+"  ...XXXX....   ",
+"  .XXXXX.XXXX...",
+" .XXXXXXXXXXXXX.",
+" .XXXXXX.XXXXX. ",
+" .XXXXXXXXXXXX. ",
+" .XX.X.X.XXXXX. ",
+".X.XXXXXXX.XXX. ",
+".XXXXXX.XXXX.X. ",
+".XXXXXXXXXXXX.  ",
+" .XXXXX.XXXXX.  ",
+" .XXXXXXXXXXX.  ",
+" .X.....XXXXX.  ",
+" ..     ...XX.  ",
+"           ...  ",
+"             .  "};

@@ -3373,6 +3373,7 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Test for distance evaluation.",
     //
     __FILE__, group, MISC_TestDist);
+#endif
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("dump-bvh",
@@ -3381,7 +3382,6 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Dumps BVH to viewer.",
     //
     __FILE__, group, MISC_DumpBVH);
-#endif
 
   // Load sub-modules.
   Commands_Coons(interp, data);

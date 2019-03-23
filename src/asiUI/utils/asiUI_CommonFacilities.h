@@ -68,11 +68,44 @@ public:
 
 public:
 
+  //! Actualizes all Nodes in the Model.
+  void Actualize()
+  {
+    if ( this->Model.IsNull() )
+      return;
+
+    // Get all presentation managers
+    asiVisu_PrsManager* partPM   = this->ViewerPart   ? this->ViewerPart->PrsMgr()   : NULL;
+    asiVisu_PrsManager* hostPM   = this->ViewerDomain ? this->ViewerDomain->PrsMgr() : NULL;
+    asiVisu_PrsManager* domainPM = this->ViewerHost   ? this->ViewerHost->PrsMgr()   : NULL;
+
+    for ( Handle(ActAPI_IChildIterator) cit = this->Model->GetRootNode()->GetChildIterator(true);
+         cit->More(); cit->Next() )
+    {
+      Handle(ActAPI_INode) N = cit->Value();
+      //
+      if ( N.IsNull() || !N->IsWellFormed() )
+        continue;
+
+      if ( partPM && partPM->IsPresented(N) )
+        partPM->Actualize(N);
+
+      if ( hostPM && hostPM->IsPresented(N) )
+        hostPM->Actualize(N);
+
+      if ( domainPM && domainPM->IsPresented(N) )
+        domainPM->Actualize(N);
+    }
+  }
+
   //! Actualizes the passed Node in the Presentation Manager where this Node
   //! is presented.
   //! \param[in] N Data Node to actualize.
   void ActualizeNode(const Handle(ActAPI_INode)& N)
   {
+    if ( N.IsNull() )
+      return;
+
     // Get all presentation managers
     asiVisu_PrsManager* partPM   = this->ViewerPart   ? this->ViewerPart->PrsMgr()   : NULL;
     asiVisu_PrsManager* hostPM   = this->ViewerDomain ? this->ViewerDomain->PrsMgr() : NULL;

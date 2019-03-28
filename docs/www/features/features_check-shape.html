@@ -545,6 +545,22 @@
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Ill-defined surface extension
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    For some operations like removing face, push/pull, etc. surface extensions
+    are used. It may easily happen that if parameter lines of a surface are
+    converging, the surface extension start to self-intersect. In such
+    situations, any modeling operators which require surface extensions will
+    likely fail.
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
 </table>
 
 <h2>Fitness</h2>

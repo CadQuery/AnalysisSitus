@@ -98,6 +98,10 @@ void asiUI_ParameterEditorListener::onParameterChanged(const int       pid,
   }
   m_cf->Model->CommitCommand();
 
+  // Update the Node in Browser.
+  if ( m_cf->ObjectBrowser )
+    m_cf->ObjectBrowser->UpdateSelectedNode();
+
   // Actualize Node.
   m_cf->ActualizeNode( m_cf->ObjectBrowser->GetSelectedNode() );
 }

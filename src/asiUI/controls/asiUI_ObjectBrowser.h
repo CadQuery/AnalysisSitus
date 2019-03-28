@@ -88,6 +88,10 @@ public:
   void
     Populate();
 
+  //! Updates selected Node.
+  void
+    UpdateSelectedNode();
+
   //! Searches for an item with the given index and set that item selected.
   //! \param[in] nodeId target Node ID.
   void
@@ -96,6 +100,12 @@ public:
   //! \return selected Node or NULL if nothing is selected.
   Handle(ActAPI_INode)
     GetSelectedNode() const;
+
+  //! Accessor for a selected Node with its corresponding UI item.
+  //! \param[out] pItem UI item.
+  //! \return selected Node or NULL if nothing is selected.
+  Handle(ActAPI_INode)
+    GetSelectedNode(QTreeWidgetItem*& pItem) const;
 
   //! \return selected Nodes or empty list if nothing is selected.
   Handle(ActAPI_HNodeList)
@@ -152,6 +162,7 @@ protected:
 protected:
 
   bool selectedNode  (Handle(ActAPI_INode)&     Node) const;
+  bool selectedNode  (Handle(ActAPI_INode)&     Node, QTreeWidgetItem*& pItem) const;
   bool selectedNodes (Handle(ActAPI_HNodeList)& Nodes) const;
 
 protected:

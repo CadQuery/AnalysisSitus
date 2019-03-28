@@ -37,6 +37,7 @@
 // asiAlgo includes
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_PLY.h>
+#include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
 // Qt includes
@@ -127,6 +128,9 @@ void asiUI_ControlsMesh::onLoadFromStl()
   // Select filename.
   QString filename = asiUI_Common::selectSTLFile(asiUI_Common::OpenSaveAction_Open);
 
+  TIMER_NEW
+  TIMER_GO
+
   // Load mesh.
   Handle(Poly_Triangulation) triangulation;
   //
@@ -137,6 +141,13 @@ void asiUI_ControlsMesh::onLoadFromStl()
   }
   //
   m_notifier.SendLogMessage( LogInfo(Normal) << "Loaded mesh from %1." << QStr2AsciiStr(filename) );
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(m_notifier, "Load STL")
+
+  // Dump the number of loaded triangles.
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Loaded %1 triangles."
+                                             << triangulation->Triangles().Length() );
 
   //---------------------------------------------------------------------------
   // Initialize Triangulation Node

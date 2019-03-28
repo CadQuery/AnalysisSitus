@@ -139,6 +139,24 @@ void asiUI_ObjectBrowser::Populate()
 
 //-----------------------------------------------------------------------------
 
+void asiUI_ObjectBrowser::UpdateSelectedNode()
+{
+  Handle(ActAPI_INode) N;
+  QTreeWidgetItem*     pItem = NULL;
+
+  if ( !this->selectedNode(N, pItem) )
+    return;
+
+  if ( pItem )
+  {
+    pItem->setText( 0, ExtStr2QStr( N->GetName() ) );
+
+    // Do any other actualization on the widget item.
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void asiUI_ObjectBrowser::SetSelectedNode(const ActAPI_DataObjectId& nodeId)
 {
   // Clear current selection.
@@ -166,6 +184,17 @@ Handle(ActAPI_INode) asiUI_ObjectBrowser::GetSelectedNode() const
 {
   Handle(ActAPI_INode) selected;
   if ( !this->selectedNode(selected) )
+    return NULL;
+
+  return selected;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(ActAPI_INode) asiUI_ObjectBrowser::GetSelectedNode(QTreeWidgetItem*& pItem) const
+{
+  Handle(ActAPI_INode) selected;
+  if ( !this->selectedNode(selected, pItem) )
     return NULL;
 
   return selected;
@@ -783,16 +812,18 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
 //-----------------------------------------------------------------------------
 
 //! Returns the currently active Node.
-//! \param[out] Node requested Node.
+//! \param[out] Node  requested Node.
+//! \param[out] pItem UI item corresponding to the selected Node.
 //! \return true in case of success, false -- otherwise.
-bool asiUI_ObjectBrowser::selectedNode(Handle(ActAPI_INode)& Node) const
+bool asiUI_ObjectBrowser::selectedNode(Handle(ActAPI_INode)& Node,
+                                       QTreeWidgetItem*&     pItem) const
 {
   QList<QTreeWidgetItem*> items = this->selectedItems();
   if ( !items.length() || items.length() > 1 )
     return false;
 
-  QTreeWidgetItem* item = items.at(0);
-  TCollection_AsciiString entry = QStr2AsciiStr( item->data(0, BrowserRoleNodeId).toString() );
+  pItem = items.at(0);
+  TCollection_AsciiString entry = QStr2AsciiStr( pItem->data(0, BrowserRoleNodeId).toString() );
 
   // Take the corresponding data object
   Handle(ActAPI_INode) selected_n = m_model->FindNode(entry);
@@ -806,6 +837,17 @@ bool asiUI_ObjectBrowser::selectedNode(Handle(ActAPI_INode)& Node) const
   // Set result
   Node = selected_n;
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Returns the currently active Node.
+//! \param[out] Node requested Node.
+//! \return true in case of success, false -- otherwise.
+bool asiUI_ObjectBrowser::selectedNode(Handle(ActAPI_INode)& Node) const
+{
+  QTreeWidgetItem* pItem = NULL;
+  return this->selectedNode(Node, pItem);
 }
 
 //-----------------------------------------------------------------------------

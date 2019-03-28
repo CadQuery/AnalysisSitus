@@ -52,12 +52,8 @@
       <li>Topological validity (orientations of boundary elements, face/solid closeness, formal shape structure, etc.).</li>
     </ul>
   </li>
-  <li>Validity w.r.t. the design intent
-    <ul>
-      <li>Dirtiness of presentation (e.g., spline surfaces where canonical geometry is a better fit).</li>
-      <li>Fitness to functional requirements.</li>
-    </ul>
-  </li>
+  <li>Health of a valid representation (dirtiness).</li>
+  <li>Fitness to functional requirements.</li>
 </ul>
 
 <p>
@@ -378,9 +374,7 @@
 <!---------------------------------------------------------------------------->
 </table>
 
-<h1>Validity w.r.t. the design intent</h1>
-
-<h2>Dirtiness</h2>
+<h1>B-Rep health</h1>
 
 <div align="right">
   <i>
@@ -555,7 +549,7 @@
   <td class="table-content-block">
     For some operations like removing face, push/pull, etc. surface extensions
     are used. It may easily happen that if parameter lines of a surface are
-    converging, the surface extension start to self-intersect. In such
+    converging, the surface extension starts to self-intersect. In such
     situations, any modeling operators which require surface extensions will
     likely fail.
   </td>
@@ -563,7 +557,7 @@
 <!---------------------------------------------------------------------------->
 </table>
 
-<h2>Fitness</h2>
+<h1>Fitness</h1>
 
 <p>
   It is necessary to add a few words for the situations when we have a consistent &

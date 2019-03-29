@@ -71,7 +71,8 @@ asiUI_Console::asiUI_Console(const Handle(asiTcl_Interp)& interp,
   // unset busy cursor
   this->viewport()->unsetCursor();
 
-  this->addText( QString("Tcl version: %1 [%2.%3.%4.%5]\n***")
+  this->addText( QString("Tcl version: %1 [%2.%3.%4.%5]\n"
+                         "Type 'show-commands' to display available commands.\n***")
                  .arg(TCL_VERSION)
                  .arg(TCL_MAJOR_VERSION)
                  .arg(TCL_MINOR_VERSION)

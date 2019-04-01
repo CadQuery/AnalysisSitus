@@ -42,22 +42,21 @@
 <h1>Architecture overview</h1>
 
 <p>
-Analysis Situs generally follows the architecture which is kind of typical
-for many desktop engineering software packages. First of all, one can easily
-distinguish between the backend and the frontend components of the platform.
-The contents of each component are schematically shown in the figure below.
+All packages of Analysis Situs can be
+divided logically to a <i>backend</i> and a <i>frontend</i> parts.
+The contents of each part are schematically shown in the figure below.
 </p>
 
 <div align="center"><img src="../imgs/engineering_app_arch.png"/></div>
 
 <p>
-As a backbone of the entire Data Model, <a href="https://gitlab.com/ssv/active-data">Active Data</a>
-framework is used. This framework is based on OCAF module of OpenCascade geometric
-kernel. At its lowest level, the architecture of an OCAF-based application is similar
-to the architecture of an enterprise application which is built on the top of some
+To represent Data Model, <a href="https://gitlab.com/ssv/active-data">Active Data</a>
+framework is used. The Active Data framework is based on OCAF module of OpenCascade
+kernel. The architecture of an OCAF-based application resembles a typical
+architecture of an Enterprise application constructed on the top of a
 database engine. In our case, we have OCAF (Active Data) serving as a hierarchical
-no-sql in-memory database. One architectural layer above we have all necessary
-Data Access Objects (DAO) which bring object-oriented abstraction to the Data Model.
+no-sql in-memory database. At the layer above, all necessary
+Data Access Objects (DAO) reside. These DAOs bring an object-oriented abstraction to the Data Model.
 The Data Access Objects are also called Data Cursors (or Data Interfaces) as they
 do not store any data in their member fields and only point to the corresponding
 persistent entity (OCAF label) which can be used to read and write actual data.

@@ -62,7 +62,7 @@ do not store any data in their member fields and only point to the corresponding
 persistent entity (OCAF label) which can be used to read and write actual data.
 Finally, at the top level of Data Model, we have Services which drive the business
 logic of the application. It is the role of Service layer to update the contents of the
-Data Model on the user changes.
+Data Model according to the user inputs.
 </p>
 
 <div align="center"><img src="../imgs/situ_arch_01.png"/></div>
@@ -70,8 +70,20 @@ Data Model on the user changes.
 <p>
 Programmatically, the DAO layer of the architecture is realized
 in <span class="code-inline">asiData</span> library. In this library, all
-object interfaces are declared and implemented. For the service layer, we
-have <span class="code-inline">asiEngine</span> library.
+object interfaces are declared and implemented. For the Service layer, we
+have a dedicated <span class="code-inline">asiEngine</span> library. In the
+Service library, one can find classes like <span class="code-inline">asiEngine_Part</span>
+or <span class="code-inline">asiEngine_IV</span> which contain the business logic
+relevant to a specific object type (Part and Imperative Viewer for the mentioned
+classes).
+</p>
+
+<p class="note">
+For a Part object, a piece of business logic may assume recomputation of accelerating
+structures or <a href="./features_aag.html">AAG</a> in case if the Part gets another B-Rep shape to store. In most cases,
+it is a good idea to work with a Part (and other object types) via its Service API (i.e., <span class="code-inline">asiEngine_Part</span>)
+instead of using the DAOs class (i.e., <span class="code-inline">asiData_Part</span>) directly. Calling API functions ensures that the
+Data Model remains consistent.
 </p>
 
 <p>

@@ -201,6 +201,7 @@ set (features_H_FILES
   features/asiAlgo_FeatureFormulation.h
   features/asiAlgo_FeatureType.h
   features/asiAlgo_Recognizer.h
+  features/asiAlgo_ShapePartnerHasher.h
   features/asiAlgo_TopoAttr.h
   features/asiAlgo_TopoAttrLocation.h
   features/asiAlgo_TopoAttrName.h

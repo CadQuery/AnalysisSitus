@@ -37,7 +37,6 @@
 #include <asiAlgo_FeatureAttrAngle.h>
 #include <asiAlgo_FeatureAttrFace.h>
 #include <asiAlgo_JSON.h>
-#include <asiAlgo_Utils.h>
 
 // OCCT includes
 #include <ShapeAnalysis_Edge.hxx>

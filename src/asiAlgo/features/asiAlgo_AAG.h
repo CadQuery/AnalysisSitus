@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_FeatureAttr.h>
+#include <asiAlgo_Utils.h>
 
 // STL includes
 #include <stack>
@@ -479,17 +480,35 @@ public:
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     RequestMapOfEdges();
 
+  //! Returns all edges of the master model having unique TShape pointers.
+  //! If the map is empty, it is constructed.
+  //! \return all edges.
+  asiAlgo_EXPORT const asiAlgo_IndexedMapOfTShape&
+    RequestTMapOfEdges();
+
   //! Returns all vertices of the master model.
   //! If the map is empty, it is constructed.
   //! \return map of all vertices.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     RequestMapOfVertices();
 
+  //! Returns all vertices of the master model having unique TShape pointers.
+  //! If the map is empty, it is constructed.
+  //! \return all vertices.
+  asiAlgo_EXPORT const asiAlgo_IndexedMapOfTShape&
+    RequestTMapOfVertices();
+
   //! Returns all subshapes of the master model.
   //! If the map is empty, it is constructed.
   //! \return map of all sub-shapes.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     RequestMapOfSubShapes();
+
+  //! Returns all sub-shapes of the master model having unique TShape pointers.
+  //! If the map is empty, it is constructed.
+  //! \return all sub-shapes.
+  asiAlgo_EXPORT const asiAlgo_IndexedMapOfTShape&
+    RequestTMapOfSubShapes();
 
   //! \brief Returns map of indexed sub-shapes of the given type.
   //! If the map is empty, it is constructed.
@@ -500,11 +519,28 @@ public:
     RequestMapOf(const TopAbs_ShapeEnum      ssType,
                  TopTools_IndexedMapOfShape& map);
 
+  //! \brief Returns map of indexed sub-shapes with unique TShape pointers
+  //!        of the given type.
+  //!
+  //! If the map is empty, it is constructed.
+  //!
+  //! \param[in]  ssType sub-shape type (TopAbs_VERTEX, TopAbs_EDGE or TopAbs_FACE).
+  //! \param[out] map    requested map of sub-shapes.
+  asiAlgo_EXPORT void
+    RequestTMapOf(const TopAbs_ShapeEnum      ssType,
+                  asiAlgo_IndexedMapOfTShape& map);
+
   //! Returns edges and their owner faces.
   //! If the map is empty, it is constructed.
   //! \return map of edges and their owner faces.
   asiAlgo_EXPORT const TopTools_IndexedDataMapOfShapeListOfShape&
     RequestMapOfEdgesFaces();
+
+  //! Returns edges with unique TShape pointers and their owner faces.
+  //! If the map is empty, it is constructed.
+  //! \return map of edges and their owner faces.
+  asiAlgo_EXPORT const asiAlgo_IndexedDataMapOfTShapeListOfShape&
+    RequestTMapOfEdgesFaces();
 
   //! \return attributes associated with graph arcs.
   asiAlgo_EXPORT const t_arc_attributes&
@@ -687,17 +723,32 @@ protected:
   //! All sub-shapes.
   TopTools_IndexedMapOfShape m_subShapes;
 
+  //! All sub-shapes with distinct TShape pointers.
+  asiAlgo_IndexedMapOfTShape m_tSubShapes;
+
   //! All faces of the master model.
   TopTools_IndexedMapOfShape m_faces;
+
+  //! All faces of the master model with distinct TShape pointers.
+  asiAlgo_IndexedMapOfTShape m_tFaces;
 
   //! All edges of the master model.
   TopTools_IndexedMapOfShape m_edges;
 
+  //! All edges of the master model with distinct TShape pointers.
+  asiAlgo_IndexedMapOfTShape m_tEdges;
+
   //! All vertices of the master model.
   TopTools_IndexedMapOfShape m_vertices;
 
+  //! All vertices of the master model with distinct TShape pointers.
+  asiAlgo_IndexedMapOfTShape m_tVertices;
+
   //! Map of edges versus faces.
   TopTools_IndexedDataMapOfShapeListOfShape m_edgesFaces;
+
+  //! Map of edges with distinct TShape pointers versus faces.
+  asiAlgo_IndexedDataMapOfTShapeListOfShape m_tEdgesFaces;
 
   //! The data maps stored in this stack represent adjacency matrices. The
   //! stack is used to keep sub-graphs.

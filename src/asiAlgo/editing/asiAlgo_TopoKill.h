@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_History.h>
+#include <asiAlgo_ShapePartnerHasher.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
@@ -223,26 +224,6 @@ protected:
 // Requests:
 protected:
 
-  //! Hasher which does not take into account neither locations nor
-  //! orientations of shapes. Our killer is extremely cruel in this regard...
-  class t_partner_hasher
-  {
-  public:
-
-    static int HashCode(const TopoDS_Shape& S, const int Upper)
-    {
-      const int I  = (int) ptrdiff_t( S.TShape().operator->() );
-      const int HS = ::HashCode(I, Upper);
-      //
-      return HS;
-    }
-
-    static bool IsEqual(const TopoDS_Shape& S1, const TopoDS_Shape& S2)
-    {
-      return S1.IsPartner(S2);
-    }
-  };
-
   // NOTICE: in both maps below, an unoriented/unlocated hasher is used. This is because
   //         the nodes in a formal topology graph do not encode orientations/locations.
   //         In formal topology graph, orientation/location is a property of an arc, i.e.
@@ -251,13 +232,13 @@ protected:
   //         need to distinguish between differently oriented entities.
 
   //! Sub-shapes to remove.
-  NCollection_IndexedMap<TopoDS_Shape, t_partner_hasher> m_toRemove;
+  NCollection_IndexedMap<TopoDS_Shape, asiAlgo_ShapePartnerHasher> m_toRemove;
 
   //! Sub-shapes to replace.
-  NCollection_DataMap<TopoDS_Shape, TopoDS_Shape, t_partner_hasher> m_toReplace;
+  NCollection_DataMap<TopoDS_Shape, TopoDS_Shape, asiAlgo_ShapePartnerHasher> m_toReplace;
 
   //! Newly created sub-shapes.
-  NCollection_DataMap<TopoDS_Shape, TopoDS_Shape, t_partner_hasher> m_newElements;
+  NCollection_DataMap<TopoDS_Shape, TopoDS_Shape, asiAlgo_ShapePartnerHasher> m_newElements;
 
 };
 

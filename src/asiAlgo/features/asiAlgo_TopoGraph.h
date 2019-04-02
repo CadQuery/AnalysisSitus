@@ -32,6 +32,7 @@
 #define asiAlgo_TopoGraph_h
 
 // asiAlgo includes
+#include <asiAlgo_ShapePartnerHasher.h>
 #include <asiAlgo_TopoAttr.h>
 
 // OCCT includes
@@ -130,28 +131,8 @@ public:
 
 public:
 
-  //! Hasher which does not take into account neither locations nor
-  //! orientations of shapes. Our killer is extremely cruel in this regard...
-  class t_partner_hasher
-  {
-  public:
-
-    static int HashCode(const TopoDS_Shape& S, const int Upper)
-    {
-      const int I  = (int) ptrdiff_t( S.TShape().operator->() );
-      const int HS = ::HashCode(I, Upper);
-      //
-      return HS;
-    }
-
-    static bool IsEqual(const TopoDS_Shape& S1, const TopoDS_Shape& S2)
-    {
-      return S1.IsPartner(S2);
-    }
-  };
-
   //! Type definition for indexed nodes.
-  typedef NCollection_IndexedMap<TopoDS_Shape, t_partner_hasher> t_nodes;
+  typedef NCollection_IndexedMap<TopoDS_Shape, asiAlgo_ShapePartnerHasher> t_nodes;
 
   //---------------------------------------------------------------------------
 
@@ -444,7 +425,7 @@ public:
 
   //! \brief Returns the unordered set of graph nodes.
   //! \return graph nodes.
-  const NCollection_IndexedMap<TopoDS_Shape, t_partner_hasher>& GetNodes() const
+  const NCollection_IndexedMap<TopoDS_Shape, asiAlgo_ShapePartnerHasher>& GetNodes() const
   {
     return m_nodes;
   }

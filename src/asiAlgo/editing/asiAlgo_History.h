@@ -32,7 +32,7 @@
 #define asiAlgo_History_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_ShapePartnerHasher.h>
 
 // OCCT includes
 #include <NCollection_IndexedDataMap.hxx>
@@ -120,28 +120,8 @@ public:
     };
   };
 
-  //! Hasher which does not take into account neither locations nor
-  //! orientations of shapes.
-  class t_partner_hasher
-  {
-  public:
-
-    static int HashCode(const TopoDS_Shape& S, const int Upper)
-    {
-      const int I  = (int) ptrdiff_t( S.TShape().operator->() );
-      const int HS = ::HashCode(I, Upper);
-      //
-      return HS;
-    }
-
-    static bool IsEqual(const TopoDS_Shape& S1, const TopoDS_Shape& S2)
-    {
-      return S1.IsPartner(S2);
-    }
-  };
-
   //! Convenience alias for indexed map of shapes-vs-items.
-  typedef NCollection_IndexedDataMap<TopoDS_Shape, t_item*, t_partner_hasher> t_shapeItemMap;
+  typedef NCollection_IndexedDataMap<TopoDS_Shape, t_item*, asiAlgo_ShapePartnerHasher> t_shapeItemMap;
 
 public:
 

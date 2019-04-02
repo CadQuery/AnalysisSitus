@@ -82,6 +82,16 @@
 #define asiAlgo_TooSmallValue 1.0e-4
 #define asiAlgo_SlashStr      "/"
 
+//! Indexed map of shapes distinguished only by their TShape pointers.
+typedef NCollection_IndexedMap<TopoDS_Shape,
+                               asiAlgo_ShapePartnerHasher> asiAlgo_IndexedMapOfTShape;
+
+//! Indexed data map of shapes and their ancestors distinguished only by their
+//! TShape pointers.
+typedef NCollection_IndexedDataMap<TopoDS_Shape,
+                                   TopTools_ListOfShape,
+                                   asiAlgo_ShapePartnerHasher> asiAlgo_IndexedDataMapOfTShapeListOfShape;
+
 //-----------------------------------------------------------------------------
 
 //! Auxiliary functions facilitating working with OCCT topological shapes.
@@ -963,6 +973,37 @@ namespace asiAlgo_Utils
                const int                               order,
                Handle(Geom_BSplineCurve)&              result,
                ActAPI_ProgressEntry                    progress);
+
+  //! This method is the analogue of TopExp::MapShapes() except the fact that
+  //! it does not distinguish sub-shapes with different locations.
+  //! \param[in]  S shape to decompose.
+  //! \param[out] M populated map of sub-shapes.
+  asiAlgo_EXPORT void
+    MapTShapes(const TopoDS_Shape&         S,
+               asiAlgo_IndexedMapOfTShape& M);
+
+  //! This method is the analogue of TopExp::MapShapes() except the fact that
+  //! it does not distinguish sub-shapes with different locations.
+  //! \param[in]  S shape to decompose.
+  //! \param[in]  T sub-shape's type of interest.
+  //! \param[out] M populated map of sub-shapes.
+  asiAlgo_EXPORT void
+    MapTShapes(const TopoDS_Shape&         S,
+               const TopAbs_ShapeEnum      T,
+               asiAlgo_IndexedMapOfTShape& M);
+
+  //! This method is the analogue of TopExp::MapShapesAndAncestors() except
+  //! the fact that it does not distinguish sub-shapes with different
+  //! locations.
+  //! \param[in]  S  shape to decompose.
+  //! \param[in]  TS sub-shape's type of interest.
+  //! \param[in]  TA ancestor's type of interest.
+  //! \param[out] M  populated map of sub-shapes.
+  asiAlgo_EXPORT void
+    MapTShapesAndAncestors(const TopoDS_Shape&                        S,
+                           const TopAbs_ShapeEnum                     TS,
+                           const TopAbs_ShapeEnum                     TA,
+                           asiAlgo_IndexedDataMapOfTShapeListOfShape& M);
 
 };
 

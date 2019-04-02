@@ -122,7 +122,7 @@ void asiAlgo_TopoGraph::Dump(Standard_OStream& out) const
   out << "\n";
 
   // Dump nodes with attributes
-  const NCollection_IndexedMap<TopoDS_Shape, t_partner_hasher>& nodes = this->GetNodes();
+  const NCollection_IndexedMap<TopoDS_Shape, asiAlgo_ShapePartnerHasher>& nodes = this->GetNodes();
   //
   for ( int n = 1; n <= nodes.Extent(); ++n )
   {

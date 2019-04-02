@@ -43,7 +43,7 @@
 
 <p>
 All packages of Analysis Situs can be
-divided logically to a <i>backend</i> and a <i>frontend</i> parts.
+divided logically to the <i>backend</i> and the <i>frontend</i> parts.
 The contents of each part are schematically shown in the figure below.
 </p>
 
@@ -74,7 +74,7 @@ object interfaces are declared and implemented. For the Service layer, we
 have a dedicated <span class="code-inline">asiEngine</span> library. In the
 Service library, one can find classes like <span class="code-inline">asiEngine_Part</span>
 or <span class="code-inline">asiEngine_IV</span> which contain the business logic
-relevant to a specific object type (Part and Imperative Viewer for the mentioned
+relevant to a specific object type (<a href="./features_part-node.html">Part</a> and Imperative Viewer for the mentioned
 classes).
 </p>
 
@@ -87,7 +87,7 @@ Data Model remains consistent.
 </p>
 
 <p>
-An object in Analysis Situs software is called a Node following the convention
+An object in Analysis Situs is called a Node following the convention
 of the Active Data framework. A Node is defined with a list of its Parameters which
 can be observed in the Parameter Editor panel of the desktop application. Additionally,
 a Node may have different relations to other Nodes, including:
@@ -100,6 +100,8 @@ a Node may have different relations to other Nodes, including:
 
 <h1>Visualization</h1>
 
+<h2>Visualization basics</h2>
+
 <p>
 The visualization module (implemented in <span class="code-inline">asiVisu</span>
 library) is tightly bounded to the Data Model backbone. For a Node to be represented in a
@@ -107,17 +109,17 @@ library) is tightly bounded to the Data Model backbone. For a Node to be represe
 between the Node types and the Presentation types. Practically, it means that whenever a new Node
 type is introduced, the dual Presentation class should be created. A Presentation is essentially a
 collection of Pipelines, where a Pipeline is an abstraction to represent the similar notion of
-VTK visualization.
+VTK visualization library <a href="../references.html#schroeder-2006">[Schroeder, 2006]</a>.
 </p>
 
 <div align="center"><img src="../imgs/situ_arch_02.png"/></div>
 
 <p>
-A Pipeline starts with a Data Source which is aware of geometric modeling
-primitives such are curves, surfaces, meshes, etc. At the same time, a Data Source is not aware
-of OCAF which allows us reusing the predefined set of Pipelines in situations when no persistent
-storage is used or when the storage is variable (e.g., you may store a parametric curve in
-different Node types and still use the same Pipeline class to draw it).
+A Pipeline starts with a Data Source which is aware of geometric
+primitives such as curves, surfaces, meshes, etc. At the same time, a Data Source is not aware
+of OCAF. The independency from OCAF at a Data Source level allows us reusing the predefined set of Pipelines
+in situations when no persistent storage is used or when the storage is variable (e.g., you may
+store a parametric curve in different Node types while the visualization Pipeline is just the same).
 </p>
 
 <div align="center"><img src="../imgs/situ_arch_03.png"/></div>
@@ -126,7 +128,7 @@ different Node types and still use the same Pipeline class to draw it).
 It is also possible to reuse Data Sources in different Pipelines. The latter is especially useful
 when dealing with large objects. It is a Pipeline object which creates all used data sources,
 algorithms (VTK "filters"), mappers and actors. By convention, a Pipeline may
-have only one actor.
+have only one actor (check VTK documentation for the overview about filters, mappers and actors).
 </p>
 
 <div align="center"><img src="../imgs/situ_arch_04.png"/></div>
@@ -137,7 +139,7 @@ Data Providers. A <i>Data Provider is used to handle variability</i> in the Data
 object which needs to be rendered in a 3D scene. Thanks to the abstract Data Providers, all <i>Pipelines
 can be kept OCAF-free</i>. The Pipelines only rely on the abstract interfaces of the corresponding Data Providers to
 feed their Data Sources properly. All details related to the Data Model, specific Node and Parameter
-types, and the relations between the data objects are encapsulated within implementations of Data
+types, and the relations between the data objects are encapsulated within the implementations of the specific Data
 Providers. The correspondence between Pipelines and their Data Providers is managed by Presentation classes.
 The Presentation classes construct Pipelines, Data Providers and associate them with each other.
 </p>
@@ -148,6 +150,27 @@ Each Pipeline stores its modification time as a member field. If the modificatio
 more recent than the modification time of a Pipeline, the Pipeline should be (re)executed to bring data to the up-to-date
 state. Technically, since a Pipeline is not aware of OCAF and Data Model Parameters, the timestamp check is done by
 a Data Provider.
+</p>
+
+<h2>Presentation Manager</h2>
+
+<p>
+To visualize a Node, you need to construct a Presentation object for it. Additionally, it is necessary
+to specify the 3D viewer where this Presentation will render its Pipelines. The associativity between the Presentations and
+the Nodes together with a link to the rendering window is managed by the so called Presentation Manager. The Presentation
+Manager provides the following common services:
+<ul>
+  <li>Actualizes Presentation of a Node (<span class="code-inline">asiVisu_PrsManager::Actualize()</span> method).</li>
+  <li>Performs interactive picking (<span class="code-inline">asiVisu_PrsManager::Pick()</span> method).</li>
+  <li>Manages all Presentations (allows to create, access and remove them).</li>
+</ul>
+</p>
+
+<p>
+There is a one-to-one correspondence between Presentation Managers and 3D viewers. To visualize a Node in a certain viewer,
+you need this viewer to be managed by a dedicated Presentation Manager class. In Analysis Situs, the base class for all
+3D viewers is <span class="code-inline">asiUI_Viewer</span>. This class holds a reference to its corresponding
+Presentation Manager.
 </p>
 
 <h1>Data Model facade</h1>

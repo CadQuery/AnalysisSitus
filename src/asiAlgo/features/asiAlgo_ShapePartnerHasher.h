@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 14 May (*) 2018
+// Created on: 02 April 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,26 +28,35 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Own include
-#include <asiEngine_Editing.h>
+#ifndef asiAlgo_ShapePartnerHasher_h
+#define asiAlgo_ShapePartnerHasher_h
 
 // asiAlgo includes
-#include <asiAlgo_EulerPoincare.h>
+#include <asiAlgo.h>
+
+// OCCT includes
+#include <TopoDS_Shape.hxx>
 
 //-----------------------------------------------------------------------------
 
-bool asiEngine_Editing::CheckEulerPoincare(const int genus)
+//! Hasher which does not take into account neither locations nor
+//! orientations of shapes.
+class asiAlgo_ShapePartnerHasher
 {
-  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
-  TopoDS_Shape             part   = part_n->GetShape();
+public:
 
-  // Calculate the Euler-Poincare property.
-  const bool result = asiAlgo_EulerPoincare::Check(part, genus, m_progress);
-  //
-  if ( !result )
-    m_progress.SendLogMessage(LogWarn(Normal) << "Euler-Poincare: false.");
-  else
-    m_progress.SendLogMessage(LogInfo(Normal) << "Euler-Poincare property holds.");
+  static int HashCode(const TopoDS_Shape& S, const int Upper)
+  {
+    const int I  = (int) ptrdiff_t( S.TShape().operator->() );
+    const int HS = ::HashCode(I, Upper);
+    //
+    return HS;
+  }
 
-  return result;
-}
+  static bool IsEqual(const TopoDS_Shape& S1, const TopoDS_Shape& S2)
+  {
+    return S1.IsPartner(S2);
+  }
+};
+
+#endif

@@ -3045,3 +3045,67 @@ bool asiAlgo_Utils::JoinCurves(std::vector<Handle(Geom_BSplineCurve)>& curves,
   return false;
 #endif;
 }
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Utils::MapTShapes(const TopoDS_Shape&         S,
+                               asiAlgo_IndexedMapOfTShape& M)
+{
+  M.Add(S);
+  TopoDS_Iterator It(S);
+  //
+  while ( It.More() )
+  {
+    MapTShapes(It.Value(), M);
+    It.Next();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Utils::MapTShapes(const TopoDS_Shape&         S,
+                               const TopAbs_ShapeEnum      T,
+                               asiAlgo_IndexedMapOfTShape& M)
+{
+  TopExp_Explorer Ex(S, T);
+  while ( Ex.More() )
+  {
+    M.Add( Ex.Current() );
+    Ex.Next();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Utils::MapTShapesAndAncestors(const TopoDS_Shape&                        S,
+                                           const TopAbs_ShapeEnum                     TS,
+                                           const TopAbs_ShapeEnum                     TA,
+                                           asiAlgo_IndexedDataMapOfTShapeListOfShape& M)
+{
+  TopTools_ListOfShape empty;
+
+  // Visit ancestors.
+  TopExp_Explorer exa(S,TA);
+  while ( exa.More() )
+  {
+    // Visit shapes.
+    const TopoDS_Shape& anc = exa.Current();
+    TopExp_Explorer exs(anc, TS);
+    while ( exs.More() )
+    {
+      int index = M.FindIndex( exs.Current() );
+      if ( index == 0 ) index = M.Add(exs.Current(), empty);
+      M(index).Append(anc);
+      exs.Next();
+    }
+    exa.Next();
+  }
+  
+  // Visit shapes not under ancestors.
+  TopExp_Explorer ex(S, TS, TA);
+  while ( ex.More() ) {
+    int index = M.FindIndex( ex.Current() );
+    if ( index == 0 ) index = M.Add(ex.Current(), empty);
+    ex.Next();
+  }
+}

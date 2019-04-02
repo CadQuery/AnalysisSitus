@@ -133,13 +133,7 @@ void asiUI_DialogEuler::onCheck()
   const int genus = QVariant( m_widgets.pGenus->text() ).toInt();
 
   // Calculate the Euler-Poincare property for the active part.
-  const bool
-    isOk = asiEngine_Editing(m_model, m_progress, NULL).CheckEulerPoincare(genus);
-  //
-  if ( isOk )
-    m_progress.SendLogMessage(LogInfo(Normal) << "Euler-Poincare property holds.");
-  else
-    m_progress.SendLogMessage(LogWarn(Normal) << "Euler-Poincare property does not hold.");
+  asiEngine_Editing(m_model, m_progress, NULL).CheckEulerPoincare(genus);
 
   // Close.
   this->close();

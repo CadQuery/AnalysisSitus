@@ -474,6 +474,12 @@ public:
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     GetMapOfFaces() const;
 
+  //! Returns all faces of the master model having unique TShape pointers.
+  //! If the map is empty, it is constructed.
+  //! \return all faces.
+  asiAlgo_EXPORT const asiAlgo_IndexedMapOfTShape&
+    RequestTMapOfFaces();
+
   //! Returns all edges of the master model.
   //! If the map is empty, it is constructed.
   //! \return all edges.

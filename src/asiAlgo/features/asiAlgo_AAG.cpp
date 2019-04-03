@@ -313,12 +313,32 @@ const TopTools_IndexedMapOfShape& asiAlgo_AAG::GetMapOfFaces() const
 
 //-----------------------------------------------------------------------------
 
+const asiAlgo_IndexedMapOfTShape& asiAlgo_AAG::RequestTMapOfFaces()
+{
+  if ( m_tFaces.IsEmpty() )
+    asiAlgo_Utils::MapTShapes(m_master, TopAbs_FACE, m_tFaces);
+
+  return m_tFaces;
+}
+
+//-----------------------------------------------------------------------------
+
 const TopTools_IndexedMapOfShape& asiAlgo_AAG::RequestMapOfEdges()
 {
   if ( m_edges.IsEmpty() )
     TopExp::MapShapes(m_master, TopAbs_EDGE, m_edges);
 
   return m_edges;
+}
+
+//-----------------------------------------------------------------------------
+
+const asiAlgo_IndexedMapOfTShape& asiAlgo_AAG::RequestTMapOfEdges()
+{
+  if ( m_tEdges.IsEmpty() )
+    asiAlgo_Utils::MapTShapes(m_master, TopAbs_EDGE, m_tEdges);
+
+  return m_tEdges;
 }
 
 //-----------------------------------------------------------------------------
@@ -333,12 +353,32 @@ const TopTools_IndexedMapOfShape& asiAlgo_AAG::RequestMapOfVertices()
 
 //-----------------------------------------------------------------------------
 
+const asiAlgo_IndexedMapOfTShape& asiAlgo_AAG::RequestTMapOfVertices()
+{
+  if ( m_tVertices.IsEmpty() )
+    asiAlgo_Utils::MapTShapes(m_master, TopAbs_VERTEX, m_tVertices);
+
+  return m_tVertices;
+}
+
+//-----------------------------------------------------------------------------
+
 const TopTools_IndexedMapOfShape& asiAlgo_AAG::RequestMapOfSubShapes()
 {
   if ( m_subShapes.IsEmpty() )
     TopExp::MapShapes(m_master, m_subShapes);
 
   return m_subShapes;
+}
+
+//-----------------------------------------------------------------------------
+
+const asiAlgo_IndexedMapOfTShape& asiAlgo_AAG::RequestTMapOfSubShapes()
+{
+  if ( m_tSubShapes.IsEmpty() )
+    asiAlgo_Utils::MapTShapes(m_master, m_tSubShapes);
+
+  return m_tSubShapes;
 }
 
 //-----------------------------------------------------------------------------
@@ -363,6 +403,26 @@ void asiAlgo_AAG::RequestMapOf(const TopAbs_ShapeEnum      ssType,
 
 //-----------------------------------------------------------------------------
 
+void asiAlgo_AAG::RequestTMapOf(const TopAbs_ShapeEnum      ssType,
+                                asiAlgo_IndexedMapOfTShape& map)
+{
+  switch ( ssType )
+  {
+    case TopAbs_VERTEX:
+      map = this->RequestTMapOfVertices();
+      break;
+    case TopAbs_EDGE:
+      map = this->RequestTMapOfEdges();
+      break;
+    case TopAbs_FACE:
+      map = this->RequestTMapOfFaces();
+      break;
+    default: break;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 const TopTools_IndexedDataMapOfShapeListOfShape&
   asiAlgo_AAG::RequestMapOfEdgesFaces()
 {
@@ -370,6 +430,17 @@ const TopTools_IndexedDataMapOfShapeListOfShape&
     TopExp::MapShapesAndAncestors(m_master, TopAbs_EDGE, TopAbs_FACE, m_edgesFaces);
 
   return m_edgesFaces;
+}
+
+//-----------------------------------------------------------------------------
+
+const asiAlgo_IndexedDataMapOfTShapeListOfShape&
+  asiAlgo_AAG::RequestTMapOfEdgesFaces()
+{
+  if ( m_tEdgesFaces.IsEmpty() )
+    asiAlgo_Utils::MapTShapesAndAncestors(m_master, TopAbs_EDGE, TopAbs_FACE, m_tEdgesFaces);
+
+  return m_tEdgesFaces;
 }
 
 //-----------------------------------------------------------------------------

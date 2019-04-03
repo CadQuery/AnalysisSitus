@@ -83,7 +83,7 @@ public:
     BuildBVH();
 
   asiEngine_EXPORT void
-    Clean(const bool resetNaming);
+    Clean();
 
   asiEngine_EXPORT TopoDS_Shape
     GetShape();

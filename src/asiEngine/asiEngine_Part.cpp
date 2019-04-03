@@ -225,8 +225,8 @@ void asiEngine_Part::Update(const TopoDS_Shape& model,
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
     return;
 
-  // Reset data while not reseting naming.
-  this->Clean(false);
+  // Reset data.
+  this->Clean();
 
   // Set working structures
   Handle(ActData_ShapeParameter)
@@ -318,7 +318,7 @@ Handle(asiAlgo_BVHFacets) asiEngine_Part::BuildBVH()
 //-----------------------------------------------------------------------------
 
 //! Cleans up Data Model structure related to the Part Node.
-void asiEngine_Part::Clean(const bool resetNaming)
+void asiEngine_Part::Clean()
 {
   // Get Part Node.
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
@@ -327,7 +327,6 @@ void asiEngine_Part::Clean(const bool resetNaming)
     return;
 
   // Reset data.
-  part_n                                   ->Init(resetNaming);
   part_n->GetFaceRepresentation()          ->Init();
   part_n->GetSurfaceRepresentation()       ->Init();
   part_n->GetEdgeRepresentation()          ->Init();

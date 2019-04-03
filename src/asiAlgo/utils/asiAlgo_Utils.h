@@ -159,7 +159,7 @@ namespace asiAlgo_Utils
     //! \return string.
     template <typename T>
     static T ToNumber(const std::string& str,
-                       const T            default_value = 0)
+                      const T            default_value = 0)
     {
       std::istringstream is(str);
       T result;

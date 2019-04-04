@@ -102,44 +102,114 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
    * ========== */
 
   // Get result.
-  m_result = Modifier.ModifiedShape(m_input);
+  if ( !Modifier.ModifiedShape(m_input, m_result) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "There is no image for the input shape.");
+    return false;
+  }
 
   // Populate history.
   {
     const asiAlgo_ModEdgeInfo& edgeInfo = Mod->GetEdgeInfo();
 
-    const TopoDS_Shape&
-      e_s1_s2_new = Modifier.ModifiedShape(edgeInfo.situation.e_s1_s2);
+    /* e_s1_s2 */
 
-    const TopoDS_Shape&
-      e_s1_t1_new = Modifier.ModifiedShape(edgeInfo.situation.e_s1_t1);
+    TopoDS_Shape e_s1_s2_new;
+    if ( !Modifier.ModifiedShape(edgeInfo.situation.e_s1_s2, e_s1_s2_new) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "There is no image for e_s1_s2.");
+      return false;
+    }
 
-    const TopoDS_Shape&
-      e_s1_t2_new = Modifier.ModifiedShape(edgeInfo.situation.e_s1_t2);
+    /* e_s1_t1 */
 
-    const TopoDS_Shape&
-      e_s2_t1_new = Modifier.ModifiedShape(edgeInfo.situation.e_s2_t1);
+    TopoDS_Shape e_s1_t1_new;
+    if ( !Modifier.ModifiedShape(edgeInfo.situation.e_s1_t1, e_s1_t1_new) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "There is no image for e_s1_t1.");
+      return false;
+    }
 
-    const TopoDS_Shape&
-      e_s2_t2_new = Modifier.ModifiedShape(edgeInfo.situation.e_s2_t2);
+    /* e_s1_t2 */
 
-    const TopoDS_Shape&
-      f_s1_new = Modifier.ModifiedShape(edgeInfo.situation.f_s1);
+    TopoDS_Shape e_s1_t2_new;
+    if ( !Modifier.ModifiedShape(edgeInfo.situation.e_s1_t2, e_s1_t2_new) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "There is no image for e_s1_t2.");
+      return false;
+    }
 
-    const TopoDS_Shape&
-      f_s2_new = Modifier.ModifiedShape(edgeInfo.situation.f_s2);
+    /* e_s2_t1 */
 
-    const TopoDS_Shape&
-      f_t1_new = Modifier.ModifiedShape(edgeInfo.situation.f_t1);
+    TopoDS_Shape e_s2_t1_new;
+    if ( !Modifier.ModifiedShape(edgeInfo.situation.e_s2_t1, e_s2_t1_new) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "There is no image for e_s2_t1.");
+      return false;
+    }
 
-    const TopoDS_Shape&
-      f_t2_new = Modifier.ModifiedShape(edgeInfo.situation.f_t2);
+    /* e_s2_t2 */
 
-    const TopoDS_Shape&
-      v_s1_s2_t1_new = Modifier.ModifiedShape(edgeInfo.situation.v_s1_s2_t1);
+    TopoDS_Shape e_s2_t2_new;
+    if ( !Modifier.ModifiedShape(edgeInfo.situation.e_s2_t2, e_s2_t2_new) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "There is no image for e_s2_t2.");
+      return false;
+    }
 
-    const TopoDS_Shape&
-      v_s1_s2_t2_new = Modifier.ModifiedShape(edgeInfo.situation.v_s1_s2_t2);
+    /* f_s1 */
+
+    TopoDS_Shape f_s1_new;
+    if ( !Modifier.ModifiedShape(edgeInfo.situation.f_s1, f_s1_new) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "There is no image for f_s1.");
+      return false;
+    }
+
+    /* f_s2 */
+
+    TopoDS_Shape f_s2_new;
+    if ( !Modifier.ModifiedShape(edgeInfo.situation.f_s2, f_s2_new) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "There is no image for f_s2.");
+      return false;
+    }
+
+    /* f_t1 */
+
+    TopoDS_Shape f_t1_new;
+    if ( !Modifier.ModifiedShape(edgeInfo.situation.f_t1, f_t1_new) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "There is no image for f_t1.");
+      return false;
+    }
+
+    /* f_t2 */
+
+    TopoDS_Shape f_t2_new;
+    if ( !Modifier.ModifiedShape(edgeInfo.situation.f_t2, f_t2_new) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "There is no image for f_t2.");
+      return false;
+    }
+
+    /* v_s1_s2_t1 */
+
+    TopoDS_Shape v_s1_s2_t1_new;
+    if ( !Modifier.ModifiedShape(edgeInfo.situation.v_s1_s2_t1, v_s1_s2_t1_new) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "There is no image for v_s1_s2_t1.");
+      return false;
+    }
+
+    /* v_s1_s2_t2 */
+
+    TopoDS_Shape v_s1_s2_t2_new;
+    if ( !Modifier.ModifiedShape(edgeInfo.situation.v_s1_s2_t2, v_s1_s2_t2_new) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "There is no image for v_s1_s2_t2.");
+      return false;
+    }
 
     // Populate history.
     m_history->AddModified(edgeInfo.situation.e_s1_s2,    e_s1_s2_new);

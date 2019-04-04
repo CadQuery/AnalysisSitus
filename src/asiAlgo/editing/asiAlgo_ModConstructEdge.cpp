@@ -56,7 +56,7 @@
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif
 
-#undef DRAW_DEBUG
+#define DRAW_DEBUG
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif
@@ -267,6 +267,15 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
     //
     avrPoint /= numInterPts;
 
+    if ( !hasTangencyPoints )
+    {
+      m_progress.SendLogMessage(LogNotice(Normal) << "Min distance point is chosen.");
+
+#if defined DRAW_DEBUG
+      m_plotter.DRAW_POINT(chosenPt, Color_Red, "chosenPt");
+#endif
+    }
+
     // Initialize intersection point. In case if we have the situation of
     // tangency, we take average point for better precision as multiple points
     // represent just one (though ill-defined) intersection.
@@ -282,9 +291,9 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
 
 #if defined DRAW_DEBUG
   if ( V.IsPartner(m_edgeInfo.situation.v_s1_s2_t1) )
-    m_plotter.DRAW_POINT(*ipoint, Color_Red, "NewPoint:P (v first)");
+    m_plotter.DRAW_POINT((*ipoint).point, Color_Red, "NewPoint:P (v first)");
   else
-    m_plotter.DRAW_POINT(*ipoint, Color_Blue, "NewPoint:P (v last)");
+    m_plotter.DRAW_POINT((*ipoint).point, Color_Blue, "NewPoint:P (v last)");
 #endif
 
   // Set updated data for the caller.

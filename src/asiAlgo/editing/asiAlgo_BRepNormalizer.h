@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_BRepNormalization.h>
+#include <asiAlgo_Utils.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
@@ -86,10 +87,14 @@ public:
 public:
 
   //! Returns the modified shape corresponding to <S>.
-  const TopoDS_Shape& ModifiedShape(const TopoDS_Shape& S) const
+  bool ModifiedShape(const TopoDS_Shape& S,
+                     TopoDS_Shape&       I) const
   {
-    if (!myMap.IsBound(S)) { throw Standard_NoSuchObject();}
-    return myMap(S);
+    if ( !myMap.IsBound(S) )
+      return false;
+
+    I = myMap(S);
+    return true;
   }
 
 protected:
@@ -136,10 +141,10 @@ protected:
     bool                 myRevFace;
   };
 
-  TopTools_DataMapOfShapeShape myMap;
-  TopoDS_Shape                 myShape;
-  TopTools_MapOfShape          myNonUpdFace;
-  TopTools_MapOfShape          myHasNewGeom;
+  asiAlgo_DataMapOfShapeShape myMap;
+  TopoDS_Shape                myShape;
+  TopTools_MapOfShape         myNonUpdFace;
+  TopTools_MapOfShape         myHasNewGeom;
 
   NCollection_DataMap<TopoDS_Edge,
                       NewCurveInfo,

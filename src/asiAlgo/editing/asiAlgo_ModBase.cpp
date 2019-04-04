@@ -40,7 +40,7 @@
 #include <Geom_TrimmedCurve.hxx>
 #include <Precision.hxx>
 
-#undef DRAW_DEBUG
+#define DRAW_DEBUG
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif
@@ -88,7 +88,7 @@ bool asiAlgo_ModBase::intersectSurfaces(const TopoDS_Face&                   F1,
   res = icurves(1);
 
 #if defined DRAW_DEBUG
-  m_plotter.DRAW_CURVE(res->C, Color_Violet, "intersectFaces:icurve");
+  m_plotter.DRAW_CURVE(new Geom_TrimmedCurve(res->C, -15, -12), Color_Violet, "intersectFaces:icurve");
 #endif
 
   return true;

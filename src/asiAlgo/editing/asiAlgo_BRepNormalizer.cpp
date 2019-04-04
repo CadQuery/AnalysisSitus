@@ -122,7 +122,7 @@ bool asiAlgo_BRepNormalizer::Perform(const Handle(asiAlgo_BRepNormalization)& M)
   TopExp::MapShapes(myShape, TopAbs_EDGE, MapE);
   TopExp::MapShapes(myShape, TopAbs_FACE, MapF);
 #endif
-  TopTools_DataMapIteratorOfDataMapOfShapeShape theIter(myMap);
+  asiAlgo_DataMapOfShapeShape::Iterator theIter(myMap);
 
   TopTools_IndexedDataMapOfShapeListOfShape aMVE, aMEF;
   TopExp::MapShapesAndAncestors(myShape, TopAbs_VERTEX, TopAbs_EDGE, aMVE);

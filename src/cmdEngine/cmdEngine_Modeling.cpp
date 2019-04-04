@@ -507,44 +507,70 @@ int ENGINE_MakeSurf(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
 {
-  if ( argc != 2 )
+  if ( argc != 2 && argc != 3 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // Get Part Node to access the selected face.
-  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
-  //
-  if ( partNode.IsNull() || !partNode->IsWellFormed() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
-    return TCL_OK;
-  }
-  //
-  const TopTools_IndexedMapOfShape&
-    subShapes = partNode->GetAAG()->RequestMapOfSubShapes();
+  TopoDS_Shape faceShape;
 
-  // Surface Node is expected.
-  Handle(asiData_SurfNode) surfNode = partNode->GetSurfaceRepresentation();
-  //
-  if ( surfNode.IsNull() || !surfNode->IsWellFormed() )
+  if ( argc == 2 )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Surface Node is null or ill-defined.");
-    return TCL_OK;
+    // Get Part Node to access the selected face.
+    Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+    //
+    if ( partNode.IsNull() || !partNode->IsWellFormed() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+      return TCL_OK;
+    }
+    //
+    const TopTools_IndexedMapOfShape&
+      subShapes = partNode->GetAAG()->RequestMapOfSubShapes();
+
+    // Surface Node is expected.
+    Handle(asiData_SurfNode) surfNode = partNode->GetSurfaceRepresentation();
+    //
+    if ( surfNode.IsNull() || !surfNode->IsWellFormed() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Surface Node is null or ill-defined.");
+      return TCL_OK;
+    }
+
+    // Get ID of the selected face.
+    const int faceIdx = surfNode->GetSelectedFace();
+    //
+    if ( faceIdx <= 0 )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Please, select face first.");
+      return TCL_OK;
+    }
+
+    faceShape = subShapes(faceIdx);
+  }
+  else
+  {
+    /* The face has been passed by name */
+
+    // Find Node by name.
+    Handle(ActAPI_INode)
+      baseN = cmdEngine::model->FindNodeByName(argv[2]);
+    //
+    Handle(asiData_IVTopoItemNode)
+      topoN = Handle(asiData_IVTopoItemNode)::DownCast(baseN);
+    //
+    if ( topoN.IsNull() || !topoN->IsWellFormed() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Object '%1' is not a topological item."
+                                                          << argv[2]);
+      return TCL_ERROR;
+    }
+
+    // Get shape.
+    faceShape = topoN->GetShape();
   }
 
-  // Get ID of the selected face.
-  const int faceIdx = surfNode->GetSelectedFace();
-  //
-  if ( faceIdx <= 0 )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Please, select face first.");
-    return TCL_OK;
-  }
-
-  // Get host surface of the selected face.
-  const TopoDS_Shape& faceShape = subShapes(faceIdx);
-  //
+  // Check type.
   if ( faceShape.ShapeType() != TopAbs_FACE )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected topological type of the selected face.");
@@ -1098,8 +1124,8 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-surf",
     //
-    "make-surf surfName\n"
-    "\t Creates a surface from the selected face.",
+    "make-surf surfName [faceName]\n"
+    "\t Creates a surface from the selected face or a face with the given name.",
     //
     __FILE__, group, ENGINE_MakeSurf);
 

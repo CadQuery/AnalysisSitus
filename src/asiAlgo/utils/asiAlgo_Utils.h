@@ -92,6 +92,12 @@ typedef NCollection_IndexedDataMap<TopoDS_Shape,
                                    TopTools_ListOfShape,
                                    asiAlgo_ShapePartnerHasher> asiAlgo_IndexedDataMapOfTShapeListOfShape;
 
+//! Data map of shapes and their images distinguished only by their
+//! TShape pointers.
+typedef NCollection_DataMap<TopoDS_Shape,
+                            TopoDS_Shape,
+                            asiAlgo_ShapePartnerHasher> asiAlgo_DataMapOfShapeShape;
+
 //-----------------------------------------------------------------------------
 
 //! Auxiliary functions facilitating working with OCCT topological shapes.

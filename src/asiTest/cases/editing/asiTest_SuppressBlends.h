@@ -95,6 +95,7 @@ public:
               << &testSuppressBlend028
               << &testSuppressBlend029
               //<< &testSuppressBlend030
+              << &testSuppressBlend031
     ; // Put semicolon here for convenient adding new functions above ;)
   }
 
@@ -139,6 +140,7 @@ private:
   static outcome testSuppressBlend028(const int funcID);
   static outcome testSuppressBlend029(const int funcID);
   static outcome testSuppressBlend030(const int funcID);
+  static outcome testSuppressBlend031(const int funcID);
 
 };
 

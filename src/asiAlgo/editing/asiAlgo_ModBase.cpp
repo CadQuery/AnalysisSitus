@@ -39,8 +39,9 @@
 #include <BRep_Tool.hxx>
 #include <Geom_TrimmedCurve.hxx>
 #include <Precision.hxx>
+#include <ShapeAnalysis_Curve.hxx>
 
-#define DRAW_DEBUG
+#undef DRAW_DEBUG
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif
@@ -150,15 +151,34 @@ bool asiAlgo_ModBase::correctOriC(const Handle(Geom_Curve)& newCurve,
   gp_Vec oldCurveV1;
   oldCurve->D1(f, oldCurveP, oldCurveV1);
 
+  // Check orientation of the new curve at the same point. For that, we
+  // have to inverse the point. Here we rely on the fact, that if the old
+  // curve had a point in some position of 3D space, the new curve should
+  // also have this point geometrically.
+  double newCurveU;
   gp_Pnt newCurveP;
+  ShapeAnalysis_Curve sac;
+  sac.Project(newCurve,
+              oldCurveP,
+              Precision::Confusion(),
+              newCurveP,
+              newCurveU);
+  //
   gp_Vec newCurveV1;
-  newCurve->D1(f, newCurveP, newCurveV1);
+  newCurve->D1(newCurveU, newCurveP, newCurveV1);
 
   bool toReverse;
   if ( Abs( oldCurveV1.Angle(newCurveV1) ) > Abs( oldCurveV1.Angle( newCurveV1.Reversed() ) ) )
     toReverse = true;
   else
     toReverse = false;
+
+#if defined DRAW_DEBUG
+  m_plotter.DRAW_VECTOR_AT(oldCurveP, oldCurveV1, Color_Red, "oldCurveV1");
+  m_plotter.DRAW_VECTOR_AT(newCurveP, newCurveV1, Color_Blue, "newCurveV1");
+
+  m_progress.SendLogMessage(LogNotice(Normal) << "To reverse intersection curve: %1." << toReverse);
+#endif
 
   if ( !toReverse )
   {

@@ -56,7 +56,7 @@
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif
 
-#define DRAW_DEBUG
+#undef DRAW_DEBUG
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif
@@ -366,7 +366,7 @@ bool asiAlgo_ModConstructEdge::NewParameter(const TopoDS_Vertex& V,
         if ( p - M_PI > 0 )
           p = p - 2*M_PI;
 
-      m_plotter.DRAW_POINT(proj, Color_Yellow, "P in NewParameter for v_first on target edge");
+      m_progress.SendLogMessage(LogInfo(Normal) << "P in NewParameter for v_first on target edge: %1." << p);
       m_plotter.DRAW_POINT(proj, Color_Yellow, "P in NewParameter for v_first on target edge");
     }
 
@@ -386,6 +386,7 @@ bool asiAlgo_ModConstructEdge::NewParameter(const TopoDS_Vertex& V,
         if ( p - M_PI > 0 )
           p = p - 2*M_PI;
 
+      m_progress.SendLogMessage(LogInfo(Normal) << "P in NewParameter for v_last on target edge: %1." << p);
       m_plotter.DRAW_POINT(proj, Color_Yellow, "P in NewParameter for v_last on target edge");
     }
 
@@ -664,7 +665,6 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
 Handle(Geom2d_Curve) asiAlgo_ModConstructEdge::buildPCurve(const TopoDS_Edge& E,
                                                            const TopoDS_Face& F)
 {
-
   Handle(ShapeConstruct_ProjectCurveOnSurface)
     myProjector = new ShapeConstruct_ProjectCurveOnSurface;
 

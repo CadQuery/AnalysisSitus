@@ -1,5 +1,5 @@
 # Set working variables.
-set datafile cad/blends/isolated_blends_test_13.brep
+set datafile cad/blends/isolated_blends_test_13_noloc.brep
 
 # Read input geometry.
 set datadir $env(ASI_TEST_DATA)
@@ -14,23 +14,68 @@ print-summary
 #
 set initialToler [get-tolerance]
 
-# Apply topological operators.
+# Check Euler-Poincare property of the manifold before modification.
 if { [check-euler 3] != 1 } {
   error "Euler-Poincare property is not equal to the expected value."
 }
+
+# Kill blends.
+if { [kill-blend 229] != 1 } {
+  error "Unexpected blend suppression result (success expected)."
+}
 #
-init-naming
-kev -name edge_737
-kev -name edge_730
-kef -face face_229 -kedge edge_735 -sedge edge_724
+if { [kill-blend 230] != 1 } {
+  error "Unexpected blend suppression result (success expected)."
+}
 #
+if { [kill-blend 116] != 1 } {
+  error "Unexpected blend suppression result (success expected)."
+}
+#
+if { [kill-blend 137] != 1 } {
+  error "Unexpected blend suppression result (success expected)."
+}
+#
+if { [kill-blend 208] != 1 } {
+  error "Unexpected blend suppression result (success expected)."
+}
+#
+if { [kill-blend 233] != 1 } {
+  error "Unexpected blend suppression result (success expected)."
+}
+#
+if { [kill-blend 214] != 1 } {
+  error "Unexpected blend suppression result (success expected)."
+}
+#
+if { [kill-blend 212] != 1 } {
+  error "Unexpected blend suppression result (success expected)."
+}
+#
+if { [kill-blend 119] != 1 } {
+  error "Unexpected blend suppression result (success expected)."
+}
+#
+if { [kill-blend 121] != 1 } {
+  error "Unexpected blend suppression result (success expected)."
+}
+
+# Check Euler-Poincare property of the manifold.
 if { [check-euler 3] != 1 } {
   error "Euler-Poincare property does not hold after topological modification."
 }
 
-# Apply geometric operators.
-rebuild-edge -name edge_724
-#
+# Check orientations of vertices.
+if { [check-vertices-ori] != 1 } {
+  error "Some edges have non-distinguishable orientations of vertices."
+}
+
+# Check contours of faces.
+if { [check-contours] != 1 } {
+  error "Some faces have open contours."
+}
+
+# Check validity of the result.
 if { [check-validity] != 1 } {
   error "Final part is not valid."
 }

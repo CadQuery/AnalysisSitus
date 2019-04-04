@@ -61,8 +61,8 @@ public:
   //! \param[in] plotter   Imperative Plotter.
   asiAlgo_EXPORT
     asiAlgo_RebuildEdge(const TopoDS_Shape&  masterCAD,
-                        ActAPI_ProgressEntry progress,
-                        ActAPI_PlotterEntry  plotter);
+                        ActAPI_ProgressEntry progress = NULL,
+                        ActAPI_PlotterEntry  plotter  = NULL);
 
   //! Constructor.
   //! \param[in] masterCAD full CAD model.
@@ -72,8 +72,8 @@ public:
   asiAlgo_EXPORT
     asiAlgo_RebuildEdge(const TopoDS_Shape&        masterCAD,
                         const Handle(asiAlgo_AAG)& aag,
-                        ActAPI_ProgressEntry       progress,
-                        ActAPI_PlotterEntry        plotter);
+                        ActAPI_ProgressEntry       progress = NULL,
+                        ActAPI_PlotterEntry        plotter  = NULL);
 
 public:
 

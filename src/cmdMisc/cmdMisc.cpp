@@ -1657,65 +1657,11 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // C1.
-  TColgp_Array1OfPnt C1Poles(1, 4);
-  C1Poles(1) = gp_Pnt(0.0,  0.0, 0.0);
-  C1Poles(2) = gp_Pnt(1.0, -0.5, 0.0);
-  C1Poles(3) = gp_Pnt(2.0,  1.0, 0.0);
-  C1Poles(4) = gp_Pnt(3.0,  2.0, 0.0);
+  interp->GetPlotter().DRAW_VECTOR_AT(gp::Origin(), gp::DX(), Color_Red,   "DX");
+  interp->GetPlotter().DRAW_VECTOR_AT(gp::Origin(), gp::DY(), Color_Green, "DY");
+  interp->GetPlotter().DRAW_VECTOR_AT(gp::Origin(), gp::DZ(), Color_Blue,  "DZ");
   //
-  TColStd_Array1OfReal C1Weights(1, 4);
-  C1Weights(1) = 1.0;
-  C1Weights(2) = 1.0;
-  C1Weights(3) = 1.0;
-  C1Weights(4) = 1.0;
-  //
-  Handle(Geom_BezierCurve) C1 = new Geom_BezierCurve(C1Poles, C1Weights);
-
-  // C2.
-  TColgp_Array1OfPnt C2Poles(1, 4);
-  C2Poles(1) = gp_Pnt(0, -1, 0);
-  C2Poles(2) = gp_Pnt(1,  0, 0);
-  C2Poles(3) = gp_Pnt(2, -1, 0);
-  C2Poles(4) = gp_Pnt(3, -2, 0);
-  //
-  TColStd_Array1OfReal C2Weights(1, 4);
-  C2Weights(1) = 1.0;
-  C2Weights(2) = 1.0;
-  C2Weights(3) = 1.0;
-  C2Weights(4) = 1.0;
-  //
-  Handle(Geom_BezierCurve) C2 = new Geom_BezierCurve(C2Poles, C2Weights);
-
-  interp->GetPlotter().REDRAW_CURVE("C1", C1, Color_Red);
-  interp->GetPlotter().REDRAW_CURVE("C2", C2, Color_Magenta);
-
-  GeomAPI_ExtremaCurveCurve Ex(C1, C2);
-  //
-  const int nExtrema = Ex.NbExtrema();
-  //
-  if ( !nExtrema )
-  {
-    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "No extrema.");
-    return TCL_OK;
-  }
-  //
-  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "%1 extrema point found." << nExtrema);
-
-  for ( int k = 1; k <= nExtrema; ++k )
-  {
-    double uOnC1, uOnC2;
-    Ex.Parameters(k, uOnC1, uOnC2);
-    const double dist = Ex.Distance(k);
-
-    gp_Pnt POnC1, POnC2;
-    Ex.Points(k, POnC1, POnC2);
-
-    interp->GetPlotter().DRAW_POINT(POnC1, Color_Yellow, "POnC1");
-    interp->GetPlotter().DRAW_POINT(POnC2, Color_Yellow, "POnC2");
-    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Solution %1:\n\tParam on C1: %2\n\tParam on C2: %3\n\tDistance: %4"
-                                                         << k << uOnC1 << uOnC2 << dist);
-  }
+  interp->GetPlotter().DRAW_VECTOR_AT(gp::Origin(), gp_Dir(1., 1., 1.), Color_Yellow, "V");
 
   return TCL_OK;
 }

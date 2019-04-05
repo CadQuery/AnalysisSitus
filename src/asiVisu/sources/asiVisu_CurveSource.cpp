@@ -340,26 +340,45 @@ int asiVisu_CurveSource::RequestData(vtkInformation*        request,
         {
           GeomLProp_CLProps lProps( m_curve3d, m_curve3d->LastParameter(), 2, gp::Resolution() );
 
-          if ( lProps.IsTangentDefined() )
+          if ( Abs( lProps.Curvature() ) > RealEpsilon() )
           {
             gp_Dir norm;
 
-            try
-            {
-              lProps.Normal(norm);
-              m_oriN     = norm;
-              isNComuted = true;
-            }
-            catch (...)
-            {
-              std::cout << "OCCT crashed on normal calculation." << std::endl;
-            }
+            lProps.Normal(norm);
+            m_oriN     = norm;
+            isNComuted = true;
           }
         }
 
         // Last chance.
         if ( !isNComuted )
-          m_oriN = m_oriT.Rotated( gp_Ax1( gp::Origin(), gp::DZ() ), M_PI/2); // Lets take any orthogonal vector
+        {
+          double Nx = 0., Ny = 0., Nz = 0.;
+
+          if ( Abs( m_oriT.X() ) > RealEpsilon() )
+            Nx = 1.0 / m_oriT.X();
+
+          if ( Abs( m_oriT.Y() ) > RealEpsilon() )
+            Ny = 1.0 / m_oriT.Y();
+
+          if ( Abs( m_oriT.Z() ) > RealEpsilon() )
+            Nz = 1.0 / m_oriT.Z();
+
+          if ( Nx && Ny )
+            m_oriN = gp_Dir(Nx, -Ny, 0.);
+          else if ( Nx && Nz )
+            m_oriN = gp_Dir(Nx, 0., -Nz);
+          else if ( Ny && Nz )
+            m_oriN = gp_Dir(0., Ny, -Nz);
+          else if ( Nx && !Ny && !Nz )
+            m_oriN = gp::DY();
+          else if ( !Nx && Ny && !Nz )
+            m_oriN = gp::DX();
+          else if ( !Nx && !Ny && Nz )
+            m_oriN = gp::DX();
+          else
+            m_oriN = gp::DZ();
+        }
       }
 
       // Build tip

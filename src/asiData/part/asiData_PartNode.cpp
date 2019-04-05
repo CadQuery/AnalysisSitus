@@ -82,7 +82,7 @@ void asiData_PartNode::Init(const bool resetNaming)
   // Set default values to primitive Parameters.
   this->SetLinearDeflection  (0.0);
   this->SetAngularDeflection (0.0);
-  this->SetHasColor          (false);
+  this->SetHasColor          (true);
   this->SetColor             (2500134); // Sort of dark color.
   this->SetDisplayMode       (1);       // Shading.
   this->SetHasVertices       (false);

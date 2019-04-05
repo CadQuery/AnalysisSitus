@@ -62,8 +62,10 @@ asiVisu_SurfaceSource::asiVisu_SurfaceSource()
     m_scalars            (Scalars_NoScalars),
     m_fMinScalar         (0.0),
     m_fMaxScalar         (0.0),
-    m_fTrimU             (100.0),
-    m_fTrimV             (100.0)
+    m_fTrimUmin          (-100.0),
+    m_fTrimUmax          (100.0),
+    m_fTrimVmin          (-100.0),
+    m_fTrimVmax          (100.0)
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline
@@ -115,13 +117,17 @@ void asiVisu_SurfaceSource::SetScalars(const NodeScalars scalars)
 }
 
 //! Sets trimming values for infinite surface domains.
-//! \param uLimit [in] trimming value for U.
-//! \param vLimit [in] trimming value for V.
-void asiVisu_SurfaceSource::SetTrimValues(const double uLimit,
-                                          const double vLimit)
+//! \param[in] uMin trimming value for min U.
+//! \param[in] uMax trimming value for max U.
+//! \param[in] vMin trimming value for min V.
+//! \param[in] vMax trimming value for max V.
+void asiVisu_SurfaceSource::SetTrimValues(const double uMin, const double uMax,
+                                          const double vMin, const double vMax)
 {
-  m_fTrimU = uLimit;
-  m_fTrimV = vLimit;
+  m_fTrimUmin = uMin;
+  m_fTrimUmax = uMax;
+  m_fTrimVmin = vMin;
+  m_fTrimVmax = vMax;
   //
   this->Modified();
 }
@@ -178,13 +184,24 @@ int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
   double uMin, uMax, vMin, vMax;
   m_surf->Bounds(uMin, uMax, vMin, vMax);
   //
-  uMin = asiVisu_Utils::TrimInf(uMin, m_fTrimU);
-  uMax = asiVisu_Utils::TrimInf(uMax, m_fTrimU);
-  vMin = asiVisu_Utils::TrimInf(vMin, m_fTrimV);
-  vMax = asiVisu_Utils::TrimInf(vMax, m_fTrimV);
+  uMin = Max(m_fTrimUmin, uMin);
+  uMax = Min(m_fTrimUmax, uMax);
+  vMin = Max(m_fTrimVmin, vMin);
+  vMax = Min(m_fTrimVmax, vMax);
+  //
+  uMin = asiVisu_Utils::TrimInf(uMin);
+  uMax = asiVisu_Utils::TrimInf(uMax);
+  vMin = asiVisu_Utils::TrimInf(vMin);
+  vMax = asiVisu_Utils::TrimInf(vMax);
 
   const double uStep = (uMax - uMin) / m_iSteps;
   const double vStep = (vMax - vMin) / m_iSteps;
+
+  if ( uStep < RealEpsilon() || vStep < RealEpsilon() )
+  {
+    vtkErrorMacro( << "Invalid parametric range" );
+    return 0;
+  }
 
   // Choose u values
   std::vector<double> U;

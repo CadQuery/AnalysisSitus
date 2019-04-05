@@ -87,16 +87,12 @@ void asiVisu_IVSurfacePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 
   if ( provider->MustExecute( this->GetMTime() ) )
   {
-    // Trim
-    const double uLimit = std::fmax( Abs(uMin), Abs(uMax) );
-    const double vLimit = std::fmax( Abs(vMin), Abs(vMax) );
-
     vtkSmartPointer<asiVisu_SurfaceSource>
       src = vtkSmartPointer<asiVisu_SurfaceSource>::New();
     //
     src->SetInputSurface  (surface);
     src->SetNumberOfSteps (m_iStepsNumber);
-    src->SetTrimValues    (uLimit, vLimit);
+    src->SetTrimValues    (uMin, uMax, vMin, vMax);
 
     // Initialize pipeline
     this->SetInputConnection( src->GetOutputPort() );

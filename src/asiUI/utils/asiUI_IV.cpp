@@ -297,7 +297,15 @@ void asiUI_IV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
                             const ActAPI_Color&            color,
                             const TCollection_AsciiString& name)
 {
-  this->DRAW_SURFACE(surface, 1000, 1000, color, 1.0, name);
+  double uMin, uMax, vMin, vMax;
+  surface->Bounds(uMin, uMax, vMin, vMax);
+  //
+  uMin = asiVisu_Utils::TrimInf(uMin);
+  uMax = asiVisu_Utils::TrimInf(uMax);
+  vMin = asiVisu_Utils::TrimInf(vMin);
+  vMax = asiVisu_Utils::TrimInf(vMax);
+
+  this->DRAW_SURFACE(surface, uMin, uMax, vMin, vMax, color, 1.0, name);
 }
 
 //---------------------------------------------------------------------------//
@@ -307,30 +315,42 @@ void asiUI_IV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
                             const double                   opacity,
                             const TCollection_AsciiString& name)
 {
-  this->DRAW_SURFACE(surface, 1000, 1000, color, opacity, name);
+  double uMin, uMax, vMin, vMax;
+  surface->Bounds(uMin, uMax, vMin, vMax);
+  //
+  uMin = asiVisu_Utils::TrimInf(uMin);
+  uMax = asiVisu_Utils::TrimInf(uMax);
+  vMin = asiVisu_Utils::TrimInf(vMin);
+  vMax = asiVisu_Utils::TrimInf(vMax);
+
+  this->DRAW_SURFACE(surface, uMin, uMax, vMin, vMax, color, opacity, name);
 }
 
 //---------------------------------------------------------------------------//
 
 void asiUI_IV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
-                            const double                   uLimit,
-                            const double                   vLimit,
+                            const double                   uMin,
+                            const double                   uMax,
+                            const double                   vMin,
+                            const double                   vMax,
                             const ActAPI_Color&            color,
                             const TCollection_AsciiString& name)
 {
-  this->DRAW_SURFACE(surface, uLimit, vLimit, color, 1.0, name);
+  this->DRAW_SURFACE(surface, uMin, uMax, vMin, vMax, color, 1.0, name);
 }
 
 //---------------------------------------------------------------------------//
 
 void asiUI_IV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
-                            const double                   uLimit,
-                            const double                   vLimit,
+                            const double                   uMin,
+                            const double                   uMax,
+                            const double                   vMin,
+                            const double                   vMax,
                             const ActAPI_Color&            color,
                             const double                   opacity,
                             const TCollection_AsciiString& name)
 {
-  this->draw_surface(surface, uLimit, vLimit, color, opacity, name, true);
+  this->draw_surface(surface, uMin, uMax, vMin, vMax, color, opacity, name, true);
 }
 
 //---------------------------------------------------------------------------//
@@ -339,7 +359,15 @@ void asiUI_IV::REDRAW_SURFACE(const TCollection_AsciiString& name,
                               const Handle(Geom_Surface)&    surface,
                               const ActAPI_Color&            color)
 {
-  this->REDRAW_SURFACE(name, surface, 1000, 1000, color, 1.0);
+  double uMin, uMax, vMin, vMax;
+  surface->Bounds(uMin, uMax, vMin, vMax);
+  //
+  uMin = asiVisu_Utils::TrimInf(uMin);
+  uMax = asiVisu_Utils::TrimInf(uMax);
+  vMin = asiVisu_Utils::TrimInf(vMin);
+  vMax = asiVisu_Utils::TrimInf(vMax);
+
+  this->REDRAW_SURFACE(name, surface, uMin, uMax, vMin, vMax, color, 1.0);
 }
 
 //---------------------------------------------------------------------------//
@@ -349,30 +377,42 @@ void asiUI_IV::REDRAW_SURFACE(const TCollection_AsciiString& name,
                               const ActAPI_Color&            color,
                               const double                   opacity)
 {
-  this->REDRAW_SURFACE(name, surface, 1000, 1000, color, opacity);
+  double uMin, uMax, vMin, vMax;
+  surface->Bounds(uMin, uMax, vMin, vMax);
+  //
+  uMin = asiVisu_Utils::TrimInf(uMin);
+  uMax = asiVisu_Utils::TrimInf(uMax);
+  vMin = asiVisu_Utils::TrimInf(vMin);
+  vMax = asiVisu_Utils::TrimInf(vMax);
+
+  this->REDRAW_SURFACE(name, surface, uMin, uMax, vMin, vMax, color, opacity);
 }
 
 //---------------------------------------------------------------------------//
 
 void asiUI_IV::REDRAW_SURFACE(const TCollection_AsciiString& name,
                               const Handle(Geom_Surface)&    surface,
-                              const double                   uLimit,
-                              const double                   vLimit,
+                              const double                   uMin,
+                              const double                   uMax,
+                              const double                   vMin,
+                              const double                   vMax,
                               const ActAPI_Color&            color)
 {
-  this->REDRAW_SURFACE(name, surface, uLimit, vLimit, color, 1.0);
+  this->REDRAW_SURFACE(name, surface, uMin, uMax, vMin, vMax, color, 1.0);
 }
 
 //---------------------------------------------------------------------------//
 
 void asiUI_IV::REDRAW_SURFACE(const TCollection_AsciiString& name,
                               const Handle(Geom_Surface)&    surface,
-                              const double                   uLimit,
-                              const double                   vLimit,
+                              const double                   uMin,
+                              const double                   uMax,
+                              const double                   vMin,
+                              const double                   vMax,
                               const ActAPI_Color&            color,
                               const double                   opacity)
 {
-  this->draw_surface(surface, uLimit, vLimit, color, opacity, name, false);
+  this->draw_surface(surface, uMin, uMax, vMin, vMax, color, opacity, name, false);
 }
 
 //---------------------------------------------------------------------------//
@@ -1065,8 +1105,10 @@ void asiUI_IV::draw_curve2d(const Handle(Geom2d_Curve)&    curve,
 //---------------------------------------------------------------------------//
 
 void asiUI_IV::draw_surface(const Handle(Geom_Surface)&    surface,
-                            const double                   uLimit,
-                            const double                   vLimit,
+                            const double                   uMin,
+                            const double                   uMax,
+                            const double                   vMin,
+                            const double                   vMax,
                             const ActAPI_Color&            color,
                             const double                   opacity,
                             const TCollection_AsciiString& name,
@@ -1090,14 +1132,18 @@ void asiUI_IV::draw_surface(const Handle(Geom_Surface)&    surface,
     surface_n = asiEngine_IV(m_model).Find_Surface(name);
     //
     if ( !surface_n.IsNull() )
-      asiEngine_IV(m_model).Update_Surface(surface_n, surface, uLimit, vLimit);
+      asiEngine_IV(m_model).Update_Surface(surface_n, surface,
+                                           uMin, uMax, vMin, vMax);
     else
       doCreate = true;
   }
 
   if ( doCreate )
   {
-    surface_n = asiEngine_IV(m_model).Create_Surface(surface, uLimit, vLimit, name, newPrimitive);
+    surface_n = asiEngine_IV(m_model).Create_Surface(surface,
+                                                     uMin, uMax,
+                                                     vMin, vMax,
+                                                     name, newPrimitive);
   }
 
   // Commit transaction

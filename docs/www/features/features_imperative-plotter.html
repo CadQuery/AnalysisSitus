@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Analysis Situs: check geometric tolerances</title>
+  <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+
+  <!-- [begin] Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112292727-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-112292727-2');
+  </script>
+  <!-- [end] Google Analytics -->
+
+ </head>
+<body>
+
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+  <td align="left" class="header">
+    <span class="header-logo"><a href="../index.html" class="header-href">Analysis&nbsp;Situs</a></span>
+    &nbsp;
+    ./<a class="header-href" href="../features.html">features</a>/imperative plotter
+  </td>
+</tr>
+</table>
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="../features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="../terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="../references.html">References</a></td>
+</tr>
+</table>
+
+<h1>Imperative plotter</h1>
+
+<h2>Motivation</h2>
+
+<p>
+The imperative plotter (or visual debugger) is the abstract interface available together with
+a progress notifier in all algorithms of Analysis Situs. This interface is designed to easily
+dump geometric primitives in cout-like manner right into a 3D viewer for fast check of the
+state of your algorithms. The necessity to have visual debuggers is very well understood by
+the computer graphics community and by anyone who ever implemented any non-trivial geometric
+computations. Just like having all sorts of "Watch" views or printing diagnostic outputs,
+the availability of a plotter to dump your geometric primitives is indispensable for understanding
+computation flow and debugging.
+</p>
+
+<p>
+The idea of ​​imperative visualization assumes that at an arbitrary stage of the algorithm, any geometric
+primitive involved in it can be displayed for profiling. An example of imperative visualization logic
+is presented in a pseudo-code below:
+</p>
+
+<div class="code"><pre>{
+  // ...
+  // Here goes some code to build two surfaces S1 and S2
+  // ...
+
+  IV.DRAW_SURFACE(S1)
+  IV.DRAW_SURFACE(S2)
+
+  // ...
+  // Here goes some code to intersect two surfaces S1 and S2
+  // ...
+
+  IV.CLEAN
+  IV.DRAW_CURVE(intersection_curve)
+}
+</pre></div>
+
+<p>
+In the above snippet, object IV represents a plotter. It makes sense to keep imperative calls even if
+profiling is disabled. This way, you ensure that during the maintenance phase, you will have all necessary
+diagnostic dumps in your code.
+</p>
+
+<p>
+Unlike general visualization workflow, the imperative plotting does not bother you with such notions as
+a scene tree, the lifecycle of your rendered primitives, and their states. Programmatically, to draw
+a primitive from the algorithm should be as easy as to print a diagnostic message. On the other hand,
+the actual implementations of the plotter interface may use any internal structuring of the visualized
+objects and maintain their properties so that you may change them later on. A good imperative visualization
+should simulate a whiteboard where you can draw and erase whatever you want at any moment of time. It gives you
+essentially a <i>cognitive visualization</i> tool which significantly speeds up the development and
+debugging routines.
+</p>
+
+<p>
+The abstract interface of imperative plotter declares the methods like <span class="code-inline">DRAW something</span>
+and <span class="code-inline">REDRAW something</span>. It is assumed that the DRAW-methods create new visualization
+primitives while the REDRAW-methods update the existing ones (or create them if such primitives are not yet available).
+The primitives are identified by their names.
+</p>
+
+<p>
+Attributes, such as color or transparency, are not configured separately, but are specified for each object individually at the time of drawing.
+Thus, the "brush" metaphor is not used here to relieve the imperative principle from having any sort of "memory".
+All properties of the visualized primitive should be fully defined by the arguments of a drawing call.
+The use of naming makes the profiled algorithm "speak its own language" which is defined as a set of variable names
+that might be dumped into explicit geometric representations.
+</p>
+
+<h2>Implementation</h2>
+
+<p>
+The abstract interface of imperative plotter is declared in <span class="code-inline">ActAPI_IAlgorithm</span>
+class which is a part of <a href="https://gitlab.com/ssv/active-data">Active Data</a> framework. The algorithms
+of Analysis Situs inherit from this base class to take advantage of the imperative plotting services.
+</p>
+
+<p>
+The implementation of the imperative plotter interface in Analysis Situs is available in its <span class="code-inline">asiUI_IV</span>
+class (IV = Imperative Viewer). This class overrides all virtual methods of an abstract plotter and delegates the visualization job to VTK
+visualization. The visualization mechanics of the imperative plotter fully respects the common
+<a href="./features_architecture.html">visualization architecture</a>. Each dumped primitive corresponds to a data object
+stored under the common root of <span class="code-inline">asiData_IVNode</span> class. There are several predefined Node types
+corresponding to all commonly used primitives:
+<ol>
+  <li>Point set: <span class="code-inline">asiData_IVPointSetNode</span>.</li>
+  <li>Point set 2D: <span class="code-inline">asiData_IVPointSet2dNode</span>.</li>
+  <li>Curve: <span class="code-inline">asiData_IVCurveNode</span>.</li>
+  <li>Curve 2D: <span class="code-inline">asiData_IVCurve2dNode</span>.</li>
+  <li>Surface: <span class="code-inline">asiData_IVSurfaceNode</span>.</li>
+  <li>Tessellation: <span class="code-inline">asiData_IVTessItemNode</span>.</li>
+  <li>B-Rep model: <span class="code-inline">asiData_IVTopoItemNode</span>.</li>
+  <li>Text: <span class="code-inline">asiData_IVTextItemNode</span>.</li>
+</ol>
+</p>
+
+<p>
+All Nodes representing the IV primitives are available in a dedicated section of the project tree. Therefore, the user
+is able to manipulate with these primitives if necessary.
+</p>
+
+<div align="center"><img src="../imgs/iv-object-browser.png"/></div>
+
+<p>
+The imperative plotter is another tool from a gentleman's set of a computational geometer. In essence, this is more of
+a practice, the adherence to which helps in the development and maintenance of industrial algorithms.
+</p>
+
+</body>
+</html>

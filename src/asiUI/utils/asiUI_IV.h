@@ -187,15 +187,19 @@ public:
 
   asiUI_EXPORT virtual void
     DRAW_SURFACE(const Handle(Geom_Surface)&,
-                 const double, // U limit
-                 const double, // V limit
+                 const double, // U min
+                 const double, // U max
+                 const double, // V min
+                 const double, // V max
                  const ActAPI_Color&,
                  const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
     DRAW_SURFACE(const Handle(Geom_Surface)&,
-                 const double, // U limit
-                 const double, // V limit
+                 const double, // U min
+                 const double, // U max
+                 const double, // V min
+                 const double, // V max
                  const ActAPI_Color&,
                  const double, // opacity
                  const TCollection_AsciiString&);
@@ -214,15 +218,19 @@ public:
   asiUI_EXPORT virtual void
     REDRAW_SURFACE(const TCollection_AsciiString&,
                    const Handle(Geom_Surface)&,
-                   const double, // U limit
-                   const double, // V limit
+                   const double, // U min
+                   const double, // U max
+                   const double, // V min
+                   const double, // V max
                    const ActAPI_Color&);
 
   asiUI_EXPORT virtual void
     REDRAW_SURFACE(const TCollection_AsciiString&,
                    const Handle(Geom_Surface)&,
-                   const double, // U limit
-                   const double, // V limit
+                   const double, // U min
+                   const double, // U max
+                   const double, // V min
+                   const double, // V max
                    const ActAPI_Color&,
                    const double); // opacity
 
@@ -544,8 +552,10 @@ protected:
 
   asiUI_EXPORT void
     draw_surface(const Handle(Geom_Surface)&    surface,
-                 const double                   uLimit,
-                 const double                   vLimit,
+                 const double                   uMin,
+                 const double                   uMax,
+                 const double                   vMin,
+                 const double                   vMax,
                  const ActAPI_Color&            color,
                  const double                   opacity,
                  const TCollection_AsciiString& name,

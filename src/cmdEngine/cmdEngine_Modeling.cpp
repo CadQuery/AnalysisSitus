@@ -879,7 +879,7 @@ int ENGINE_HLR(const Handle(asiTcl_Interp)& interp,
   // Prepare projection plane and its transformation.
   gp_Ax2 axes( pos, gp_Dir(dX, dY, dZ) );
   gp_Pln projPlane(axes);
-  interp->GetPlotter().REDRAW_SURFACE("projPlane", new Geom_Plane(projPlane), diag, diag, Color_Blue, 0.1);
+  interp->GetPlotter().REDRAW_SURFACE("projPlane", new Geom_Plane(projPlane), -diag, diag, -diag, diag, Color_Blue, 0.1);
   //
   gp_Trsf T;
   T.SetTransformation(axes);

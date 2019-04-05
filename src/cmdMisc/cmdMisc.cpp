@@ -603,9 +603,9 @@ int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
   maxDelta += maxDelta*0.1;
 
   // Draw
-  interp->GetPlotter().REDRAW_SURFACE("nX_plane", nX_plane, maxDelta, maxDelta, Color_Red,   0.7);
-  interp->GetPlotter().REDRAW_SURFACE("nY_plane", nY_plane, maxDelta, maxDelta, Color_Green, 0.7);
-  interp->GetPlotter().REDRAW_SURFACE("nZ_plane", nZ_plane, maxDelta, maxDelta, Color_Blue,  0.7);
+  interp->GetPlotter().REDRAW_SURFACE("nX_plane", nX_plane, -maxDelta, maxDelta, -maxDelta, maxDelta, Color_Red,   0.7);
+  interp->GetPlotter().REDRAW_SURFACE("nY_plane", nY_plane, -maxDelta, maxDelta, -maxDelta, maxDelta, Color_Green, 0.7);
+  interp->GetPlotter().REDRAW_SURFACE("nZ_plane", nZ_plane, -maxDelta, maxDelta, -maxDelta, maxDelta, Color_Blue,  0.7);
 
   // Choose the working section plane
   Handle(Geom_Plane) sectionPlane;

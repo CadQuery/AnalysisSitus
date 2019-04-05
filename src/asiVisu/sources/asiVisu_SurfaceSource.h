@@ -75,7 +75,8 @@ public:
   void SetInputSurface  (const Handle(Geom_Surface)& surface);
   void SetNumberOfSteps (const int nSteps);
   void SetScalars       (const NodeScalars scalars);
-  void SetTrimValues    (const double uLimit, const double vLimit);
+  void SetTrimValues    (const double uMin, const double uMax,
+                         const double vMin, const double vMax);
   //
   double      GetMinScalar  () const { return m_fMinScalar; }
   double      GetMaxScalar  () const { return m_fMaxScalar; }
@@ -121,8 +122,10 @@ private:
   NodeScalars               m_scalars;    //!< Type of scalars to associate.
   double                    m_fMinScalar; //!< Min scalar value.
   double                    m_fMaxScalar; //!< Max scalar value.
-  double                    m_fTrimU;     //!< Trimming value to limit infinite U.
-  double                    m_fTrimV;     //!< Trimming value to limit infinite V.
+  double                    m_fTrimUmin;  //!< Trimming value to limit U.
+  double                    m_fTrimUmax;  //!< Trimming value to limit U.
+  double                    m_fTrimVmin;  //!< Trimming value to limit V.
+  double                    m_fTrimVmax;  //!< Trimming value to limit V.
 };
 
 #endif

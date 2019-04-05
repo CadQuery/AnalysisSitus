@@ -85,15 +85,10 @@ Handle(Geom_Surface)
   if ( surface_n.IsNull() || !surface_n->IsWellFormed() )
     return NULL;
 
-  // Access data from the Node
-  double uLimit, vLimit;
-  surface_n->GetLimits(uLimit, vLimit);
-  //
-  uMin = -uLimit;
-  uMax =  uLimit;
-  vMin = -vLimit;
-  vMax =  vLimit;
+  // Get bounds.
+  surface_n->GetLimits(uMin, uMax, vMin, vMax);
 
+  // Get surface.
   return surface_n->GetSurface();
 }
 
@@ -114,7 +109,11 @@ Handle(ActAPI_HParameterList) asiVisu_IVSurfaceDataProvider::translationSources(
     return out;
 
   // Add sensitive Parameters
-  out << surface_n->Parameter(asiData_IVSurfaceNode::PID_Geometry);
+  out << surface_n->Parameter(asiData_IVSurfaceNode::PID_Geometry)
+      << surface_n->Parameter(asiData_IVSurfaceNode::PID_UMin)
+      << surface_n->Parameter(asiData_IVSurfaceNode::PID_UMax)
+      << surface_n->Parameter(asiData_IVSurfaceNode::PID_VMin)
+      << surface_n->Parameter(asiData_IVSurfaceNode::PID_VMax);
 
   return out;
 }

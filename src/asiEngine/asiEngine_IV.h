@@ -158,8 +158,10 @@ public:
 
   asiEngine_EXPORT Handle(asiData_IVSurfaceNode)
     Create_Surface(const Handle(Geom_Surface)&    surface,
-                   const double                   uLimit,
-                   const double                   vLimit,
+                   const double                   uMin,
+                    const double                  uMax,
+                    const double                  vMin,
+                    const double                  vMax,
                    const TCollection_AsciiString& name,
                    const bool                     useAutoNaming);
 
@@ -170,8 +172,10 @@ public:
   asiEngine_EXPORT void
     Update_Surface(const Handle(asiData_IVSurfaceNode)& node,
                    const Handle(Geom_Surface)&          surface,
-                   const double                         uLimit,
-                   const double                         vLimit);
+                   const double                         uMin,
+                   const double                         uMax,
+                   const double                         vMin,
+                   const double                         vMax);
 
   asiEngine_EXPORT void
     Clean_Surfaces();

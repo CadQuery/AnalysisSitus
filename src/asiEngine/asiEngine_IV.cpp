@@ -777,15 +777,19 @@ Handle(asiData_IVSurfaceNode)
 
 //! Creates Surface Node.
 //! \param surface       [in] parametric surface to store.
-//! \param uLimit        [in] absolute value to bound infinite parametric domain in U.
-//! \param vLimit        [in] absolute value to bound infinite parametric domain in V.
+//! \param uMin          [in] value to trim min U bound.
+//! \param uMax          [in] value to trim max U bound.
+//! \param vMin          [in] value to trim min V bound.
+//! \param vMax          [in] value to trim max V bound.
 //! \param name          [in] name to set (auto-generated if empty).
 //! \param useAutoNaming [in] indicates whether to auto-name entities.
 //! \return newly created Node.
 Handle(asiData_IVSurfaceNode)
   asiEngine_IV::Create_Surface(const Handle(Geom_Surface)&    surface,
-                               const double                   uLimit,
-                               const double                   vLimit,
+                               const double                   uMin,
+                               const double                   uMax,
+                               const double                   vMin,
+                               const double                   vMax,
                                const TCollection_AsciiString& name,
                                const bool                     useAutoNaming)
 {
@@ -807,7 +811,7 @@ Handle(asiData_IVSurfaceNode)
   item_n->SetName(item_name);
 
   // Initialize
-  Update_Surface(item_n, surface, uLimit, vLimit);
+  Update_Surface(item_n, surface, uMin, uMax, vMin, vMax);
 
   // Add as child
   IV_Parent->AddChildNode(item_n);
@@ -867,18 +871,22 @@ Handle(asiData_SurfDeviationNode)
 //! Updates Surface Node.
 //! \param node    [in] Data Node to update.
 //! \param surface [in] parametric surface to store.
-//! \param uLimit  [in] absolute value to bound infinite parametric domain in U.
-//! \param vLimit  [in] absolute value to bound infinite parametric domain in V.
+//! \param uMin    [in] trimming value for U min.
+//! \param uMax    [in] trimming value for U max.
+//! \param vMin    [in] trimming value for V min.
+//! \param vMax    [in] trimming value for V max.
 void asiEngine_IV::Update_Surface(const Handle(asiData_IVSurfaceNode)& node,
                                   const Handle(Geom_Surface)&          surface,
-                                  const double                         uLimit,
-                                  const double                         vLimit)
+                                  const double                         uMin,
+                                  const double                         uMax,
+                                  const double                         vMin,
+                                  const double                         vMax)
 {
   // Initialize
   node->Init();
   node->SetUserFlags(NodeFlag_IsPresentedInPartView);
   node->SetSurface(surface);
-  node->SetLimits(uLimit, vLimit);
+  node->SetLimits(uMin, uMax, vMin, vMax);
 }
 
 //-----------------------------------------------------------------------------

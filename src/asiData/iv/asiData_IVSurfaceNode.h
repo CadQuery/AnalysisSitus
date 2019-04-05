@@ -74,8 +74,10 @@ public:
   //------------------//
     PID_SurfaceType,  //!< Surface type.
     PID_Geometry,     //!< Stored geometry.
-    PID_ULimit,       //!< Value to limit possibly infinite domain in U (absolute).
-    PID_VLimit,       //!< Value to limit possibly infinite domain in V (absolute).
+    PID_UMin,         //!< Value to trim the surface in its U parametric direction.
+    PID_UMax,         //!< Value to trim the surface in its U parametric direction.
+    PID_VMin,         //!< Value to trim the surface in its V parametric direction.
+    PID_VMax,         //!< Value to trim the surface in its V parametric direction.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -110,10 +112,12 @@ public:
     SetSurface(const Handle(Geom_Surface)& surface);
 
   asiData_EXPORT void
-    SetLimits(const double uLimit, const double vLimit);
+    SetLimits(const double uMin, const double uMax,
+              const double vMin, const double vMax);
 
   asiData_EXPORT void
-    GetLimits(double& uLimit, double& vLimit) const;
+    GetLimits(double& uMin, double& uMax,
+              double& vMin, double& vMax) const;
 
 // Initialization:
 public:

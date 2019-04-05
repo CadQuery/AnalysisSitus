@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Analysis Situs: check geometric tolerances</title>
+  <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+
+  <!-- [begin] Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112292727-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-112292727-2');
+  </script>
+  <!-- [end] Google Analytics -->
+
+ </head>
+<body>
+
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+  <td align="left" class="header">
+    <span class="header-logo"><a href="../index.html" class="header-href">Analysis&nbsp;Situs</a></span>
+    &nbsp;
+    ./<a class="header-href" href="../features.html">features</a>/check face norms
+  </td>
+</tr>
+</table>
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="../features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="../terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="../references.html">References</a></td>
+</tr>
+</table>
+
+<h1>Check normal vectors</h1>
+
+<p>
+To draw a normal field for the selected face, use the corresponding "Show face normals" context menu action.
+This function samples the parametric domain of the selected face and renders the normal field using
+the following conventions:
+<ol>
+  <li>
+      A norm vector points in the direction of a cross product of the partial surface derivatives.
+      That is, the arrows of the vector field represent the <i>geometric orientation</i> of a host surface.
+  </li>
+  <li>
+      The red color of the field denotes the FORWARD orientation of the face. The blue color denotes the REVERSED
+      orientation of the face. I.e., it is a valid situation to have a blue vector field pointing inside a solid.
+  </li>
+</ol>
+</p>
+
+<div align="center"><img src="../imgs/check_face_norms_anim.gif"/></div>
+
+<p>
+The color of the vector field (red or blue) is therefore used to represent the <i>topological orientation</i>
+of the face. The topological orientation is essentially a Boolean flag which allows to agree or not with the
+as-constructed geometric orientation of the host surface. The latter geometric orientation is the intristic
+property of the mathematical form which is defined by the underlying surface parameterization. In
+geometric modeling, the topological orientations are used to properly orient material without touching
+the geometric information.
+</p>
+
+</body>
+</html>

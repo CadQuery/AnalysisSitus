@@ -52,8 +52,10 @@ asiData_IVSurfaceNode::asiData_IVSurfaceNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Name,  PID_Name);
   REGISTER_PARAMETER(Int,   PID_SurfaceType);
   REGISTER_PARAMETER(Shape, PID_Geometry);
-  REGISTER_PARAMETER(Real,  PID_ULimit);
-  REGISTER_PARAMETER(Real,  PID_VLimit);
+  REGISTER_PARAMETER(Real,  PID_UMin);
+  REGISTER_PARAMETER(Real,  PID_UMax);
+  REGISTER_PARAMETER(Real,  PID_VMin);
+  REGISTER_PARAMETER(Real,  PID_VMax);
 }
 
 //! Returns new DETACHED instance of the Node ensuring its correct
@@ -67,12 +69,17 @@ Handle(ActAPI_INode) asiData_IVSurfaceNode::Instance()
 //! Performs initial actions required to make Node WELL-FORMED.
 void asiData_IVSurfaceNode::Init()
 {
-  // Initialize name Parameter
-  this->InitParameter(PID_Name, "Name");
-  //
+  // Set default values.
   this->SetSurfaceType (SurfaceType_General);
   this->SetSurface     (NULL);
-  this->SetLimits      (0.0, 0.0);
+  this->SetLimits      (0.0, 0.0, 0.0, 0.0);
+
+  // Initialize properties.
+  this->InitParameter (PID_Name,  "Name",  "", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_UMin,  "U min", "", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_UMax,  "U max", "", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_VMin,  "V min", "", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_VMax,  "V max", "", ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -126,7 +133,7 @@ Handle(Geom_Surface) asiData_IVSurfaceNode::GetSurface() const
 }
 
 //! Sets surface to store.
-//! \param surface [in] geometry to store.
+//! \param[in] surface geometry to store.
 void asiData_IVSurfaceNode::SetSurface(const Handle(Geom_Surface)& surface)
 {
   // Create a fictive face to take advantage of topology Parameter of Active Data.
@@ -143,19 +150,29 @@ void asiData_IVSurfaceNode::SetSurface(const Handle(Geom_Surface)& surface)
 }
 
 //! Sets parametric bounds for infinite surfaces.
-//! \param uLimit [in] limit by U curvilinear axis.
-//! \param vLimit [in] limit by V curvilinear axis.
-void asiData_IVSurfaceNode::SetLimits(const double uLimit, const double vLimit)
+//! \param[in] uMin min limit by U curvilinear axis.
+//! \param[in] uMax max limit by U curvilinear axis.
+//! \param[in] vMin min limit by V curvilinear axis.
+//! \param[in] vMax max limit by V curvilinear axis.
+void asiData_IVSurfaceNode::SetLimits(const double uMin, const double uMax,
+                                      const double vMin, const double vMax)
 {
-  ActParamTool::AsReal( this->Parameter(PID_ULimit) )->SetValue(uLimit);
-  ActParamTool::AsReal( this->Parameter(PID_VLimit) )->SetValue(vLimit);
+  ActParamTool::AsReal( this->Parameter(PID_UMin) )->SetValue(uMin);
+  ActParamTool::AsReal( this->Parameter(PID_UMax) )->SetValue(uMax);
+  ActParamTool::AsReal( this->Parameter(PID_VMin) )->SetValue(vMin);
+  ActParamTool::AsReal( this->Parameter(PID_VMax) )->SetValue(vMax);
 }
 
 //! Gets parametric bounds used for infinite surfaces.
-//! \param uLimit [out] limit by U curvilinear axis.
-//! \param vLimit [out] limit by V curvilinear axis.
-void asiData_IVSurfaceNode::GetLimits(double& uLimit, double& vLimit) const
+//! \param[out] uMin min limit by U curvilinear axis.
+//! \param[out] uMax max limit by U curvilinear axis.
+//! \param[out] vMin min limit by V curvilinear axis.
+//! \param[out] vMax max limit by V curvilinear axis.
+void asiData_IVSurfaceNode::GetLimits(double& uMin, double& uMax,
+                                      double& vMin, double& vMax) const
 {
-  uLimit = ActParamTool::AsReal( this->Parameter(PID_ULimit) )->GetValue();
-  vLimit = ActParamTool::AsReal( this->Parameter(PID_VLimit) )->GetValue();
+  uMin = ActParamTool::AsReal( this->Parameter(PID_UMin) )->GetValue();
+  uMax = ActParamTool::AsReal( this->Parameter(PID_UMax) )->GetValue();
+  vMin = ActParamTool::AsReal( this->Parameter(PID_VMin) )->GetValue();
+  vMax = ActParamTool::AsReal( this->Parameter(PID_VMax) )->GetValue();
 }

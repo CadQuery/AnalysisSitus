@@ -93,14 +93,8 @@ Handle(Geom_Surface)
   if ( surface_n.IsNull() || !surface_n->IsWellFormed() )
     return NULL;
 
-  // Access data from the Node.
-  double uLimit, vLimit;
-  surface_n->GetLimits(uLimit, vLimit);
-  //
-  uMin = -uLimit;
-  uMax =  uLimit;
-  vMin = -vLimit;
-  vMax =  vLimit;
+  // Get bounds.
+  surface_n->GetLimits(uMin, uMax, vMin, vMax);
 
   return surface_n->GetSurface();
 }

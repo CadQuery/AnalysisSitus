@@ -43,6 +43,8 @@
 #include <vtkMapper.h>
 #include <vtkProperty.h>
 
+//-----------------------------------------------------------------------------
+
 //! Creates a Presentation object for the passed Node.
 //! \param[in] N Node to create a Presentation for.
 asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
@@ -54,9 +56,7 @@ asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
   // Create Data Provider
   Handle(asiVisu_IVSurfaceDataProvider) DP = new asiVisu_IVSurfaceDataProvider(N);
 
-  //---------------------------------------------------------------------------
-  // Main pipeline
-  //---------------------------------------------------------------------------
+  /* Main pipeline */
 
   // Pipeline for shaded surface
   this->addPipeline        ( Pipeline_Main, new asiVisu_IVSurfacePipeline );
@@ -64,9 +64,7 @@ asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
   //
   this->GetPipeline(Pipeline_Main)->Actor()->SetVisibility( ivNode->GetSurfaceType() == asiData_IVSurfaceNode::SurfaceType_Plane ? 0 : 1 );
 
-  //---------------------------------------------------------------------------
-  // Control network for B-surfaces
-  //---------------------------------------------------------------------------
+  /* Control network for B-surfaces */
 
   // Pipeline for control net
   this->addPipeline        ( Pipeline_BPoles, new asiVisu_BSurfPolesPipeline );
@@ -74,9 +72,7 @@ asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
   //
   this->GetPipeline(Pipeline_BPoles)->Actor()->SetVisibility(0);
 
-  //---------------------------------------------------------------------------
-  // Knots isos for B-surfaces
-  //---------------------------------------------------------------------------
+  /* Knots isos for B-surfaces */
 
   // Pipeline for surface isolines corresponding to knots
   this->addPipeline        ( Pipeline_BKnotsIsos, new asiVisu_BSurfKnotsPipeline );
@@ -84,9 +80,7 @@ asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
   //
   this->GetPipeline(Pipeline_BKnotsIsos)->Actor()->SetVisibility(0);
 
-  //---------------------------------------------------------------------------
-  // Local curvilinear axes
-  //---------------------------------------------------------------------------
+  /* Local curvilinear axes */
 
   // Pipeline for surface axes
   this->addPipeline        ( Pipeline_Axes, new asiVisu_BSurfAxesPipeline );
@@ -94,12 +88,14 @@ asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
   //
   this->GetPipeline(Pipeline_Axes)->Actor()->SetVisibility(1);
 
-  //---------------------------------------------------------------------------
+  /* Plane widget */
 
   m_planeWidget = vtkSmartPointer<asiVisu_PlaneWidget>::New();
   //
   m_planeWidget->SetSurfaceNode(ivNode);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Factory method for Presentation.
 //! \param[in] N Node to create a Presentation for.
@@ -108,6 +104,25 @@ Handle(asiVisu_Prs) asiVisu_IVSurfacePrs::Instance(const Handle(ActAPI_INode)& N
 {
   return new asiVisu_IVSurfacePrs(N);
 }
+
+//-----------------------------------------------------------------------------
+
+//! Sets custom color.
+//! \param[in] color color to set.
+void asiVisu_IVSurfacePrs::Colorize(const QColor& color) const
+{
+  if ( !color.isValid() )
+    return;
+
+  Handle(asiVisu_IVSurfacePipeline)
+    pl = Handle(asiVisu_IVSurfacePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+
+  pl->Actor()->GetProperty()->SetColor( color.redF(),
+                                        color.greenF(),
+                                        color.blueF() );
+}
+
+//-----------------------------------------------------------------------------
 
 void asiVisu_IVSurfacePrs::renderPipelines(vtkRenderer* renderer) const
 {
@@ -128,9 +143,30 @@ void asiVisu_IVSurfacePrs::renderPipelines(vtkRenderer* renderer) const
   m_planeWidget->On();
 }
 
+//-----------------------------------------------------------------------------
+
 void asiVisu_IVSurfacePrs::deRenderPipelines(vtkRenderer* /*renderer*/) const
 {
   if ( m_planeWidget->GetInteractor() )
     m_planeWidget->Off();
 }
 
+//-----------------------------------------------------------------------------
+
+//! Callback for updating of Presentation pipelines invoked after the
+//! kernel update routine completes.
+void asiVisu_IVSurfacePrs::afterUpdatePipelines() const
+{
+  Handle(asiData_IVSurfaceNode)
+    N = Handle(asiData_IVSurfaceNode)::DownCast( this->GetNode() );
+
+  /* Actualize color */
+
+  if ( N->HasColor() )
+  {
+    QColor color = asiVisu_Utils::IntToColor( N->GetColor() );
+    this->Colorize(color);
+  }
+  else
+    this->Colorize(Qt::white);
+}

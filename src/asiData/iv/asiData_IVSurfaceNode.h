@@ -74,10 +74,20 @@ public:
   //------------------//
     PID_SurfaceType,  //!< Surface type.
     PID_Geometry,     //!< Stored geometry.
+  //------------------//
+  // Bounds           //
+  //------------------//
+    PID_GroupBounds,  //!< Parametric bounds group.
     PID_UMin,         //!< Value to trim the surface in its U parametric direction.
     PID_UMax,         //!< Value to trim the surface in its U parametric direction.
     PID_VMin,         //!< Value to trim the surface in its V parametric direction.
     PID_VMax,         //!< Value to trim the surface in its V parametric direction.
+  //------------------//
+  // Presentation     //
+  //------------------//
+    PID_GroupPrs,     //!< Presentation group.
+    PID_HasColor,     //!< Indicates whether the Color Parameter is active.
+    PID_Color,        //!< Color.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -118,6 +128,18 @@ public:
   asiData_EXPORT void
     GetLimits(double& uMin, double& uMax,
               double& vMin, double& vMax) const;
+
+  asiData_EXPORT void
+    SetHasColor(const bool);
+
+  asiData_EXPORT bool
+    HasColor() const;
+
+  asiData_EXPORT void
+    SetColor(const int);
+
+  asiData_EXPORT int
+    GetColor() const;
 
 // Initialization:
 public:

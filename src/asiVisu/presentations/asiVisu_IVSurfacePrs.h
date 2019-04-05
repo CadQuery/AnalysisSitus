@@ -69,6 +69,11 @@ public:
 
 public:
 
+  asiVisu_EXPORT void
+    Colorize(const QColor& color) const;
+
+public:
+
   //! \return interactive plane.
   const vtkSmartPointer<asiVisu_PlaneWidget>& GetPlaneWidget() const
   {
@@ -87,6 +92,9 @@ protected:
 
   virtual void
     deRenderPipelines(vtkRenderer* renderer) const;
+
+  virtual void
+    afterUpdatePipelines() const;
 
 protected:
 

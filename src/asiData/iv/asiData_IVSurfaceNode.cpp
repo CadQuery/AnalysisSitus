@@ -52,10 +52,14 @@ asiData_IVSurfaceNode::asiData_IVSurfaceNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Name,  PID_Name);
   REGISTER_PARAMETER(Int,   PID_SurfaceType);
   REGISTER_PARAMETER(Shape, PID_Geometry);
+  REGISTER_PARAMETER(Group, PID_GroupBounds);
   REGISTER_PARAMETER(Real,  PID_UMin);
   REGISTER_PARAMETER(Real,  PID_UMax);
   REGISTER_PARAMETER(Real,  PID_VMin);
   REGISTER_PARAMETER(Real,  PID_VMax);
+  REGISTER_PARAMETER(Group, PID_GroupPrs);
+  REGISTER_PARAMETER(Bool,  PID_HasColor);
+  REGISTER_PARAMETER(Int,   PID_Color);
 }
 
 //! Returns new DETACHED instance of the Node ensuring its correct
@@ -73,13 +77,21 @@ void asiData_IVSurfaceNode::Init()
   this->SetSurfaceType (SurfaceType_General);
   this->SetSurface     (NULL);
   this->SetLimits      (0.0, 0.0, 0.0, 0.0);
+  this->SetHasColor    (false);
+  this->SetColor       (2500134); // Sort of dark color.
 
   // Initialize properties.
-  this->InitParameter (PID_Name,  "Name",  "", ParameterFlag_IsVisible, true);
-  this->InitParameter (PID_UMin,  "U min", "", ParameterFlag_IsVisible, true);
-  this->InitParameter (PID_UMax,  "U max", "", ParameterFlag_IsVisible, true);
-  this->InitParameter (PID_VMin,  "V min", "", ParameterFlag_IsVisible, true);
-  this->InitParameter (PID_VMax,  "V max", "", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_Name, "Name", "", ParameterFlag_IsVisible, true);
+  //
+  this->InitParameter (PID_GroupBounds, "Bounds", "", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_UMin,        "U min",  "", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_UMax,        "U max",  "", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_VMin,        "V min",  "", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_VMax,        "V max",  "", ParameterFlag_IsVisible, true);
+  //
+  this->InitParameter (PID_GroupPrs, "Presentation", "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_HasColor, "Colorized",    "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_Color,    "Color",        "PrsCustomColor", ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -175,4 +187,35 @@ void asiData_IVSurfaceNode::GetLimits(double& uMin, double& uMax,
   uMax = ActParamTool::AsReal( this->Parameter(PID_UMax) )->GetValue();
   vMin = ActParamTool::AsReal( this->Parameter(PID_VMin) )->GetValue();
   vMax = ActParamTool::AsReal( this->Parameter(PID_VMax) )->GetValue();
+}
+
+
+//! Sets the Boolean value indicating whether the color Parameter of this
+//! Data Node is in force.
+//! \param[in] hasColor value to set.
+void asiData_IVSurfaceNode::SetHasColor(const bool hasColor)
+{
+  ActParamTool::AsBool( this->Parameter(PID_HasColor) )->SetValue(hasColor);
+}
+
+//! Accessor for the value of the Boolean Parameter indicating whether the
+//! Color Parameter of this Data Node is in force.
+//! \return true/false.
+bool asiData_IVSurfaceNode::HasColor() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_HasColor) )->GetValue();
+}
+
+//! Sets color.
+//! \param[in] color color to set.
+void asiData_IVSurfaceNode::SetColor(const int color)
+{
+  ActParamTool::AsInt( this->Parameter(PID_Color) )->SetValue(color);
+}
+
+//! Accessor for the stored color value.
+//! \return color value.
+int asiData_IVSurfaceNode::GetColor() const
+{
+  return ActParamTool::AsInt( this->Parameter(PID_Color) )->GetValue();
 }

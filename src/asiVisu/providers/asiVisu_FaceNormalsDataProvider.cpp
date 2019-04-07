@@ -44,7 +44,7 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-//! \param faceNode [in] face Node.
+//! \param[in] faceNode face Node.
 asiVisu_FaceNormalsDataProvider::asiVisu_FaceNormalsDataProvider(const Handle(asiData_FaceNormsNode)& faceNode)
 : asiVisu_VectorsDataProvider(faceNode)
 {
@@ -62,7 +62,10 @@ Handle(asiAlgo_BaseCloud<float>) asiVisu_FaceNormalsDataProvider::GetPointsf()
   if ( face.IsNull() )
     return NULL;
 
-  if ( !asiAlgo_Utils::CalculateFaceNormals(face, m_points, m_vectors) )
+  if ( !asiAlgo_Utils::CalculateFaceNormals(face,
+                                            this->GetSampleRate(),
+                                            m_points,
+                                            m_vectors) )
     return NULL;
 
   // Return
@@ -74,7 +77,7 @@ Handle(asiAlgo_BaseCloud<float>) asiVisu_FaceNormalsDataProvider::GetPointsf()
 //! \return normals to visualize.
 Handle(asiAlgo_BaseCloud<float>) asiVisu_FaceNormalsDataProvider::GetVectorsf()
 {
-  // Return cached vectors available after GetPointsf() invocation
+  // Return cached vectors available after GetPointsf() invocation.
   return m_vectors;
 }
 
@@ -112,9 +115,17 @@ TopoDS_Face asiVisu_FaceNormalsDataProvider::GetFace() const
   if ( shape.ShapeType() != TopAbs_FACE )
     return TopoDS_Face();
 
-  // Access face by the stored index
+  // Access face by the stored index.
   const TopoDS_Face& F = TopoDS::Face(shape);
   return F;
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return sample rate value which controls the density of sampling.
+double asiVisu_FaceNormalsDataProvider::GetSampleRate() const
+{
+  return Handle(asiData_FaceNormsNode)::DownCast(m_source)->GetSampleRate();
 }
 
 //-----------------------------------------------------------------------------
@@ -124,7 +135,7 @@ TopoDS_Face asiVisu_FaceNormalsDataProvider::GetFace() const
 //! \return source Parameters.
 Handle(ActAPI_HParameterList) asiVisu_FaceNormalsDataProvider::translationSources() const
 {
-  // Resulting Parameters
+  // Resulting Parameters.
   ActParamStream out;
 
   Handle(asiData_FaceNormsNode)
@@ -133,8 +144,9 @@ Handle(ActAPI_HParameterList) asiVisu_FaceNormalsDataProvider::translationSource
   if ( face_n.IsNull() || !face_n->IsWellFormed() )
     return out;
 
-  // Register Parameter as sensitive
+  // Register Parameter as sensitive.
   out << face_n->Parameter(asiData_FaceNormsNode::PID_SelectedFace)
+      << face_n->Parameter(asiData_FaceNormsNode::PID_SampleRate)
       << m_partNode->Parameter(asiData_PartNode::PID_Geometry)
       << m_partNode->Parameter(asiData_PartNode::PID_AAG);
 

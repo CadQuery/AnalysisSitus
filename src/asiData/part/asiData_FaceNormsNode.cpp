@@ -41,6 +41,7 @@ asiData_FaceNormsNode::asiData_FaceNormsNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name, PID_Name);
   REGISTER_PARAMETER(Int,  PID_SelectedFace);
+  REGISTER_PARAMETER(Real, PID_SampleRate);
 }
 
 //! Returns new DETACHED instance of Node ensuring its correct
@@ -54,11 +55,13 @@ Handle(ActAPI_INode) asiData_FaceNormsNode::Instance()
 //! Performs initial actions required to make Node WELL-FORMED.
 void asiData_FaceNormsNode::Init()
 {
-  // Initialize name Parameter
-  this->InitParameter(PID_Name, "Name");
-
-  // Set default values to primitive Parameters
+  // Set default values to primitive Parameters.
   this->SetSelectedFace(0);
+  this->SetSampleRate(0.05);
+
+  // Initialize Parameter flags.
+  this->InitParameter(PID_Name,        "Name",          "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_SampleRate,  "Sampling rate", "", ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -94,4 +97,17 @@ void asiData_FaceNormsNode::SetSelectedFace(const int faceId)
 int asiData_FaceNormsNode::GetSelectedFace() const
 {
   return ActParamTool::AsInt( this->Parameter(PID_SelectedFace) )->GetValue();
+}
+
+//! Sets the sample rate value.
+//! \param[in] value to set.
+void asiData_FaceNormsNode::SetSampleRate(const double value)
+{
+  ActParamTool::AsReal( this->Parameter(PID_SampleRate) )->SetValue(value);
+}
+
+//! \return sample rate value.
+double asiData_FaceNormsNode::GetSampleRate() const
+{
+  return ActParamTool::AsReal( this->Parameter(PID_SampleRate) )->GetValue();
 }

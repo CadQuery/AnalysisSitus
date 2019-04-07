@@ -68,9 +68,6 @@ Handle(ActAPI_INode) asiData_PartNode::Instance()
 //! Performs initial actions required to make Geometry Node WELL-FORMED.
 void asiData_PartNode::Init(const bool resetNaming)
 {
-  // Initialize name Parameter.
-  this->InitParameter(PID_Name, "Name");
-
   // Set empty initial B-Rep and AAG.
   this->setShape ( TopoDS_Shape() );
   this->setAAG   ( NULL );

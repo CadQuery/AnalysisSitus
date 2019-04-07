@@ -66,6 +66,9 @@ public:
   asiVisu_EXPORT TopoDS_Face
     GetFace() const;
 
+  asiVisu_EXPORT double
+    GetSampleRate() const;
+
 private:
 
   virtual Handle(ActAPI_HParameterList)

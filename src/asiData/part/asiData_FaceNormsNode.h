@@ -41,8 +41,6 @@
 // Face normal vectors
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_FaceNormsNode, ActData_BaseNode)
-
 //! Node representing normal vectors of a b-rep face.
 class asiData_FaceNormsNode : public ActData_BaseNode
 {
@@ -60,13 +58,9 @@ public:
   enum ParamId
   {
   //------------------//
-  // Common           //
-  //------------------//
     PID_Name,         //!< Name of the Node.
-  //------------------//
-  // Geometry         //
-  //------------------//
     PID_SelectedFace, //!< ID of the selected face.
+    PID_SampleRate,   //!< Sampling rate.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -93,6 +87,12 @@ public:
 
   asiData_EXPORT int
     GetSelectedFace() const;
+
+  asiData_EXPORT void
+    SetSampleRate(const double value);
+
+  asiData_EXPORT double
+    GetSampleRate() const;
 
 // Initialization:
 public:

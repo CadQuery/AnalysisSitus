@@ -707,13 +707,15 @@ namespace asiAlgo_Utils
   //!          normal vectors represent geometric orientation of
   //!          the face (i.e., the cross product of its partials).
   //!
-  //! \param[in]  face    topological face in question.
-  //! \param[out] test    points (internal or lying on the boundary).
-  //! \param[out] vectors computed normal field.
+  //! \param[in]  face       topological face in question.
+  //! \param[in]  sampleRate sampling rate from (0, 1) interval.
+  //! \param[out] points     sample points (internal or lying on the boundary).
+  //! \param[out] vectors    computed normal field.
   //!
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     CalculateFaceNormals(const TopoDS_Face&                face,
+                         const double                      sampleRate,
                          Handle(asiAlgo_BaseCloud<float>)& points,
                          Handle(asiAlgo_BaseCloud<float>)& vectors);
 

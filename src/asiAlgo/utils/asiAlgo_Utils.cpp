@@ -2277,10 +2277,14 @@ void asiAlgo_Utils::PolygonPoles(const gp_XY&        center,
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_Utils::CalculateFaceNormals(const TopoDS_Face&                face,
+                                         const double                      sampleRate,
                                          Handle(asiAlgo_BaseCloud<float>)& points,
                                          Handle(asiAlgo_BaseCloud<float>)& vectors)
 {
-  // Take surface
+  if ( sampleRate < 1e-10 || sampleRate > 1 )
+    return false;
+
+  // Take surface.
   Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
   //
   if ( surf.IsNull() )
@@ -2294,8 +2298,8 @@ bool asiAlgo_Utils::CalculateFaceNormals(const TopoDS_Face&                face,
   double uMin, uMax, vMin, vMax;
   BRepTools::UVBounds(face, uMin, uMax, vMin, vMax);
   //
-  const double uStep = (uMax - uMin)*0.05;
-  const double vStep = (vMax - vMin)*0.05;
+  const double uStep = (uMax - uMin)*sampleRate;
+  const double vStep = (vMax - vMin)*sampleRate;
 
   // Prepare classifier
   asiAlgo_ClassifyPointFace classifier(face, BRep_Tool::Tolerance(face), 0.01);

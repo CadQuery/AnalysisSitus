@@ -2396,6 +2396,37 @@ int ENGINE_CheckVerticesOri(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckInternalLocations(const Handle(asiTcl_Interp)& interp,
+                                  int                          argc,
+                                  const char**                 argv)
+{
+  if ( argc != 1 && argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const bool skipFirstLevel = interp->HasKeyword(argc, argv, "skip-first-level");
+
+  // Get part.
+  Handle(asiData_PartNode)
+    partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  TopoDS_Shape partShape = partNode->GetShape();
+
+  // Check and result.
+  *interp << asiAlgo_Utils::HasInternalLocations(partShape, skipFirstLevel);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
                            int                          argc,
                            const char**                 argv)
@@ -2723,6 +2754,14 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t improperly implemented modeling operators, this rule can be broken.",
     //
     __FILE__, group, ENGINE_CheckVerticesOri);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-internal-locations",
+    //
+    "check-internal-locations [-skip-first-level]\n"
+    "\t Checks if the part contains any internal non-identity locations.",
+    //
+    __FILE__, group, ENGINE_CheckInternalLocations);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("recognize-blends",

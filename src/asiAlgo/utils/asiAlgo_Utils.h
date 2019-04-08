@@ -1013,6 +1013,17 @@ namespace asiAlgo_Utils
                            const TopAbs_ShapeEnum                     TA,
                            asiAlgo_IndexedDataMapOfTShapeListOfShape& M);
 
+  //! Checks whether the passed shape has any internal non-identity TopLoc_Location
+  //! structures. In some algorithm, such internal locations are prohibited
+  //! because these algorithms make an assumption that all boundary elements
+  //! of a shape are unique.
+  //! \param[in] S              shape to check.
+  //! \param[in] skipFirstLevel indicates whether to skip first-level locations.
+  //! \return true if some internal locations exist, false -- otheriwse.
+  asiAlgo_EXPORT bool
+    HasInternalLocations(const TopoDS_Shape& S,
+                         const bool          skipFirstLevel);
+
 };
 
 #endif

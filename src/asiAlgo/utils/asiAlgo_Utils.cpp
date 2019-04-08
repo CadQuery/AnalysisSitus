@@ -3107,9 +3107,31 @@ void asiAlgo_Utils::MapTShapesAndAncestors(const TopoDS_Shape&                  
   
   // Visit shapes not under ancestors.
   TopExp_Explorer ex(S, TS, TA);
-  while ( ex.More() ) {
+  while ( ex.More() )
+  {
     int index = M.FindIndex( ex.Current() );
     if ( index == 0 ) index = M.Add(ex.Current(), empty);
     ex.Next();
   }
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::HasInternalLocations(const TopoDS_Shape& S,
+                                         const bool          skipFirstLevel)
+{
+  // Iterate over the sub-shapes.
+  for ( TopoDS_Iterator it(S, false, false); it.More(); it.Next() )
+  {
+    const TopoDS_Shape& subShape = it.Value();
+
+    if ( !skipFirstLevel )
+      if ( !subShape.Location().IsIdentity() )
+        return true;
+
+    if ( HasInternalLocations(subShape, false) ) // Go deeper.
+      return true;
+  }
+
+  return false;
 }

@@ -58,7 +58,7 @@ class exe_MainWindow : public QMainWindow
 
 public:
 
-  exe_MainWindow();
+  exe_MainWindow(const bool offscreen);
   virtual ~exe_MainWindow();
 
 public:
@@ -167,6 +167,10 @@ public:
   t_listeners Listeners;
   t_menus     Menus;
   t_toolbar   Toolbar;
+
+private:
+
+  bool m_bOffscreen; //!< Offscreen mode flag (on/off).
 
 };
 

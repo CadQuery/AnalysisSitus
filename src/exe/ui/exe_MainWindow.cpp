@@ -67,7 +67,10 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor.
-exe_MainWindow::exe_MainWindow() : QMainWindow()
+//! \param[in] offscreen indicates whether the application is running in
+//!                      the offscreen mode.
+exe_MainWindow::exe_MainWindow(const bool offscreen)
+: QMainWindow(), m_bOffscreen(offscreen)
 {
   this->createPartViewer();
   this->createDockWindows();
@@ -391,7 +394,7 @@ void exe_MainWindow::createDockWindows()
 
   // Construct the interpreter.
   cf->Interp = new asiTcl_Interp(cf->Progress, cf->Plotter);
-  cf->Interp->Init();
+  cf->Interp->Init(!m_bOffscreen); // Do not override channels in offscreen mode.
   cf->Interp->SetModel(cf->Model);
 
   // Load default commands.

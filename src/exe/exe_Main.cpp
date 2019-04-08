@@ -119,6 +119,10 @@ VTK_MODULE_INIT(vtkRenderingGL2PSOpenGL2);
 //! main().
 int main(int argc, char** argv)
 {
+  // Check whether batch mode is requested.
+  std::string scriptFilename;
+  const bool isBatch = asiExe::GetKeyValue(argc, argv, ASITUS_KW_runscript, scriptFilename);
+
   //---------------------------------------------------------------------------
   // Create main window as (it will initialize all resources)
   //---------------------------------------------------------------------------
@@ -129,7 +133,7 @@ int main(int argc, char** argv)
   QApplication::setWindowIcon( QIcon(":icons/asitus/asitus_icon_16x16.png") );
 
   // Construct main window but do not show it to allow off-screen batch.
-  exe_MainWindow* pMainWindow = new exe_MainWindow;
+  exe_MainWindow* pMainWindow = new exe_MainWindow(isBatch);
 
   //---------------------------------------------------------------------------
   // Set essential environment variables
@@ -165,10 +169,6 @@ int main(int argc, char** argv)
   const Handle(asiTcl_Interp)&
     interp = pMainWindow->Widgets.wConsole->GetInterp();
 
-  // Check whether batch mode is requested.
-  std::string scriptFilename;
-  const bool isBatch = asiExe::GetKeyValue(argc, argv, ASITUS_KW_runscript, scriptFilename);
-
   if ( isBatch )
   {
     std::cout << "Running Analysis Situs in batch mode..." << std::endl;
@@ -178,9 +178,13 @@ int main(int argc, char** argv)
 
     // Check result.
     if ( ret != TCL_OK )
+    {
       interp->PrintLastError();
-
-    std::cout << "Batch mode finished with error code " << ret << "." << std::endl;
+      //
+      std::cout << "Batch mode finished with error code " << ret << "." << std::endl;
+    }
+    else
+      std::cout << "Batch mode finished finished successfully (error code " << ret << ")." << std::endl;
 
     return ret;
   }

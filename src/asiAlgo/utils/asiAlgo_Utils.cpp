@@ -948,7 +948,20 @@ bool asiAlgo_Utils::ReadBRep(const TCollection_AsciiString& filename,
   if ( IsASCII(filename) )
   {
     BRep_Builder BB;
-    return BRepTools::Read(shape, filename.ToCString(), BB);
+    bool isOk;
+
+    // We use try-catch as sometimes BREP reader crashes (if this happens in
+    // batch, that's really annoying).
+    try
+    {
+      isOk = BRepTools::Read(shape, filename.ToCString(), BB);
+    }
+    catch ( ... )
+    {
+      isOk = false;
+    }
+
+    return isOk;
   }
 
   // Try to read as binary
@@ -3117,19 +3130,21 @@ void asiAlgo_Utils::MapTShapesAndAncestors(const TopoDS_Shape&                  
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_Utils::HasInternalLocations(const TopoDS_Shape& S,
-                                         const bool          skipFirstLevel)
+bool asiAlgo_Utils::HasInternalLocations(const TopoDS_Shape&    S,
+                                         const TopAbs_ShapeEnum ST)
 {
   // Iterate over the sub-shapes.
   for ( TopoDS_Iterator it(S, false, false); it.More(); it.Next() )
   {
     const TopoDS_Shape& subShape = it.Value();
 
-    if ( !skipFirstLevel )
+    if ( ST == TopAbs_SHAPE || subShape.ShapeType() == ST )
+    {
       if ( !subShape.Location().IsIdentity() )
         return true;
+    }
 
-    if ( HasInternalLocations(subShape, false) ) // Go deeper.
+    if ( HasInternalLocations(subShape, ST) ) // Go deeper.
       return true;
   }
 

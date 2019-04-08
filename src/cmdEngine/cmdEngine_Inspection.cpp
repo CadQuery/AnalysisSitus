@@ -2405,7 +2405,7 @@ int ENGINE_CheckInternalLocations(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  const bool skipFirstLevel = interp->HasKeyword(argc, argv, "skip-first-level");
+  const bool findFaces = interp->HasKeyword(argc, argv, "f");
 
   // Get part.
   Handle(asiData_PartNode)
@@ -2420,7 +2420,7 @@ int ENGINE_CheckInternalLocations(const Handle(asiTcl_Interp)& interp,
   TopoDS_Shape partShape = partNode->GetShape();
 
   // Check and result.
-  *interp << asiAlgo_Utils::HasInternalLocations(partShape, skipFirstLevel);
+  *interp << asiAlgo_Utils::HasInternalLocations(partShape, findFaces ? TopAbs_FACE : TopAbs_SHAPE);
 
   return TCL_OK;
 }
@@ -2758,8 +2758,9 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-internal-locations",
     //
-    "check-internal-locations [-skip-first-level]\n"
-    "\t Checks if the part contains any internal non-identity locations.",
+    "check-internal-locations [-f]\n"
+    "\t Checks if the part contains any internal non-identity locations.\n"
+    "\t If the '-f' key is passed, the located faces will be searched for.",
     //
     __FILE__, group, ENGINE_CheckInternalLocations);
 

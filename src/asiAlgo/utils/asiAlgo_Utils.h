@@ -1017,12 +1017,14 @@ namespace asiAlgo_Utils
   //! structures. In some algorithm, such internal locations are prohibited
   //! because these algorithms make an assumption that all boundary elements
   //! of a shape are unique.
-  //! \param[in] S              shape to check.
-  //! \param[in] skipFirstLevel indicates whether to skip first-level locations.
+  //! \param[in] S  shape to check.
+  //! \param[in] ST indicates the shape type to search for internal locations.
+  //!               E.g., if TopAbs_FACE is passed, this function will look
+  //!               for the located face instances.
   //! \return true if some internal locations exist, false -- otheriwse.
   asiAlgo_EXPORT bool
-    HasInternalLocations(const TopoDS_Shape& S,
-                         const bool          skipFirstLevel);
+    HasInternalLocations(const TopoDS_Shape&    S,
+                         const TopAbs_ShapeEnum ST = TopAbs_SHAPE);
 
 };
 

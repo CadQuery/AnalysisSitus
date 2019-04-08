@@ -94,7 +94,7 @@ private:
 
     // Construct the interpreter
     this->Interp = new asiTcl_Interp;
-    this->Interp->Init();
+    this->Interp->Init(false);
     this->Interp->SetModel(this->Model);
     this->Interp->SetProgress(this->Progress);
     this->Interp->SetPlotter(this->Plotter);

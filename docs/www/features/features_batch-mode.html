@@ -53,7 +53,17 @@
   asiExe.exe /runscript="C:/scripts/myscript.tcl"
 </div>
 
-<p>Make sure to use forward slashes in the path to your script.</p>
+<p>
+Make sure to use forward slashes in the path to your script. To redirect output to a file use the following syntax:
+</p>
+
+<div class="code">
+  asiExe.exe /runscript="C:/scripts/myscript.tcl" > log.txt
+</div>
+
+<p>
+In the batch mode, the Tcl standard channels are not overridden, so all messages and errors will be printed to the standard output.
+</p>
 
 </body>
 </html>

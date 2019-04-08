@@ -183,8 +183,10 @@ public:
 public:
 
   //! Initializes interpreter.
+  //! \param[in] overrideChannels indicates whether the standard Tcl stdout,
+  //!                             stderr channels should be overridden or not.
   asiTcl_EXPORT void
-    Init();
+    Init(const bool overrideChannels);
 
   //! Prints last error.
   asiTcl_EXPORT void

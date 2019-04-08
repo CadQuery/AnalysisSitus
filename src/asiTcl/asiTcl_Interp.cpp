@@ -383,7 +383,7 @@ asiTcl_Interp::~asiTcl_Interp()
 
 //-----------------------------------------------------------------------------
 
-void asiTcl_Interp::Init()
+void asiTcl_Interp::Init(const bool overrideChannels)
 {
   if ( m_pInterp )
     Tcl_DeleteInterp(m_pInterp);
@@ -394,8 +394,11 @@ void asiTcl_Interp::Init()
    *  Override standard Tcl channels
    * ================================ */
 
-  OverrideTclChannel(this, TCL_STDOUT);
-  OverrideTclChannel(this, TCL_STDERR);
+  if ( overrideChannels )
+  {
+    OverrideTclChannel(this, TCL_STDOUT);
+    OverrideTclChannel(this, TCL_STDERR);
+  }
 
   // Output available channels.
   Tcl_GetChannelNames(m_pInterp);

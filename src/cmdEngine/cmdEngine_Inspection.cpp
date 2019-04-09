@@ -54,9 +54,10 @@
 #include <asiVisu_Utils.h>
 
 // asiUI includes
-#include <asiUI_Plot2d.h>
 #include <asiUI_DialogEuler.h>
 #include <asiUI_IV.h>
+#include <asiUI_PartGraph.h>
+#include <asiUI_Plot2d.h>
 
 #ifdef USE_MOBIUS
   #include <mobius/cascade_BSplineCurve.h>
@@ -2518,6 +2519,43 @@ int ENGINE_DrawPlot(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_ShowAAG(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(cmdEngine::model, part_n, part) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
+    return TCL_ERROR;
+  }
+
+  if ( !cmdEngine::cf->ViewerPart )
+  {
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Part viewer is not available.");
+    return TCL_OK;
+  }
+
+  // Access selected faces (if any).
+  TopTools_IndexedMapOfShape selected;
+  asiEngine_Part( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() ).GetHighlightedSubShapes(selected);
+
+  // Show graph.
+  asiUI_PartGraph* pGraphView = new asiUI_PartGraph(cmdEngine::model, cmdEngine::cf->ViewerPart);
+  pGraphView->RenderAdjacency(part_n->GetAAG(), selected);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -2779,4 +2817,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Draws two-dimensional plot of the given values.",
     //
     __FILE__, group, ENGINE_DrawPlot);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("show-aag",
+    //
+    "show-aag\n"
+    "\t Visualizes AAG for the active part.",
+    //
+    __FILE__, group, ENGINE_ShowAAG);
 }

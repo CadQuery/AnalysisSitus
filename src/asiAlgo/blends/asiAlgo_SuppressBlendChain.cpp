@@ -168,7 +168,9 @@ asiAlgo_SuppressBlendChain::asiAlgo_SuppressBlendChain(const Handle(asiAlgo_AAG)
 : ActAPI_IAlgorithm   (progress, plotter),
   m_aag               (aag),
   m_iSuppressedChains (0)
-{}
+{
+  m_history = new asiAlgo_History;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -233,10 +235,12 @@ bool asiAlgo_SuppressBlendChain::Perform(const TColStd_PackedMapOfInteger& faceI
   // Set output.
   m_result = targetShape;
 
+  // Set history.
+  m_history->AddModified(m_aag->GetMasterCAD(), m_result);
+
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(m_progress, "Rebuild edges")
 
-  // TODO: NYI
   return true;
 }
 
@@ -288,6 +292,9 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
   // Set output.
   m_result            = targetShape;
   m_iSuppressedChains = 1;
+
+  // Set history.
+  m_history->AddModified(m_aag->GetMasterCAD(), m_result);
 
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(m_progress, "Rebuild edges")
@@ -369,9 +376,7 @@ bool
     const int                                 blendFaceId = cit.Key();
     const Handle(asiAlgo_BlendTopoCondition)& cond        = cit.Value();
 
-    Handle(asiAlgo_History) history;
-    //
-    if ( !cond->Suppress(resultShape, resultShape, history) )
+    if ( !cond->Suppress(resultShape, resultShape, m_history) )
     {
       m_progress.SendLogMessage(LogErr(Normal) << "Cannot suppress topological condition for blend face %1."
                                                << blendFaceId);
@@ -379,13 +384,13 @@ bool
     }
 
     // Update all topological conditions.
-    this->updateTopoConditions(blendFaceId, history);
+    this->updateTopoConditions(blendFaceId, m_history);
 
     // Add edges to rebuild.
     cond->GatherAffectedEdges(m_workflow.edges2Rebuild);
 
     // Update all edges to rebuild.
-    this->updateEdges2Rebuild(history);
+    this->updateEdges2Rebuild(m_history);
   }
 
   return true;
@@ -396,36 +401,26 @@ bool
 bool
   asiAlgo_SuppressBlendChain::performGeomOperations(TopoDS_Shape& targetShape)
 {
-  /////
-  //for ( int k = 1; k <= m_workflow.edges2Rebuild.edges.Extent(); ++k )
-  //{
-  //  m_plotter.DRAW_SHAPE(m_workflow.edges2Rebuild.edges(k).edge, Color_Red, 1.0, true, "E");
-  //  m_progress.SendLogMessage(LogNotice(Normal) << "E addr: %1" << asiAlgo_Utils::ShapeAddr(m_workflow.edges2Rebuild.edges(k).edge).c_str());
-  //}
-  ////return false;
-  /////
-
-  Handle(asiAlgo_History) history = new asiAlgo_History;
-
   // Normalize geometry.
   for ( int k = 1; k <= m_workflow.edges2Rebuild.edges.Extent(); ++k )
   {
     // Update from history as the edge could have been modified by rebuilder
     // on previous iterations.
     if ( k > 1 )
-      this->updateEdges2Rebuild(history);
+      this->updateEdges2Rebuild(m_history);
 
     const TopoDS_Edge& edge2Rebuild = m_workflow.edges2Rebuild.edges(k).edge;
     //
     m_plotter.DRAW_SHAPE(edge2Rebuild, Color_Red, 1.0, true, "edge2Rebuild");
 
     // Update AAG.
+    // TODO: full update of AAG is an overkill. It is better to adjust it.
     m_aag = new asiAlgo_AAG(targetShape, true);
 
     // Prepare algorithm.
     asiAlgo_RebuildEdge rebuildEdge(targetShape, m_aag, m_progress, m_plotter);
     //
-    rebuildEdge.SetHistory(history);
+    rebuildEdge.SetHistory(m_history);
     rebuildEdge.SetFrozenVertices(m_workflow.edges2Rebuild.edges(k).frozenVertices);
 
     // Apply geometric operator.

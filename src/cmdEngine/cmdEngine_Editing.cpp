@@ -95,6 +95,93 @@
 
 //-----------------------------------------------------------------------------
 
+bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)&        aag,
+                                 const TColStd_PackedMapOfInteger& faceIds,
+                                 TopoDS_Shape&                     result,
+                                 ActAPI_ProgressEntry              progress,
+                                 ActAPI_PlotterEntry               plotter)
+{
+  TColStd_PackedMapOfInteger fids = faceIds;
+
+  int                 numSuppressedChains = 0;
+  Handle(asiAlgo_AAG) tempAAG             = aag;
+  //
+  do
+  {
+    std::cout << "Num. faces remaining: " << fids.Extent() << std::endl;
+
+    const int fid = fids.GetMinimalMapped();
+    //
+    if ( !tempAAG->HasFace(fid) )
+    {
+      fids.Remove(fid);
+      continue;
+    }
+
+    // Perform recognition starting from the guess face.
+    asiAlgo_RecognizeBlends recognizer( tempAAG,
+                                        progress,
+                                        NULL
+                                        /*interp->GetPlotter()*/ );
+    //
+    if ( !recognizer.Perform(fid) )
+    {
+      progress.SendLogMessage(LogWarn(Normal) << "Recognition failed.");
+      fids.Remove(fid);
+      continue;
+    }
+
+    // Prepare tool.
+    asiAlgo_SuppressBlendChain incSuppress(tempAAG, progress, plotter);
+    //
+    if ( !incSuppress.Perform(fid) )
+    {
+      progress.SendLogMessage(LogWarn(Normal) << "Next face suppression failed. Keep going...");
+      fids.Remove(fid);
+      continue;
+    }
+
+    numSuppressedChains++;
+    fids.Remove(fid);
+
+    // Get result.
+    const TopoDS_Shape&            incRes     = incSuppress.GetResult();
+    const Handle(asiAlgo_History)& incHistory = incSuppress.GetHistory();
+
+    // Construct new AAG.
+    Handle(asiAlgo_AAG) updatedAAG = new asiAlgo_AAG(incRes, false);
+
+    // Update face indices.
+    TColStd_PackedMapOfInteger newFaceIds;
+    //
+    for ( TColStd_MapIteratorOfPackedMapOfInteger fit(fids); fit.More(); fit.Next() )
+    {
+      const int oldFaceId = fit.Key();
+
+      // Get new face.
+      const TopoDS_Face& oldFace = tempAAG->GetFace(oldFaceId);
+      TopoDS_Face        newFace = TopoDS::Face( incHistory->GetLastModifiedOrArg(oldFace) );
+
+      // Get ID of the new face.
+      const int newFaceId = updatedAAG->GetFaceId(newFace);
+      //
+      newFaceIds.Add(newFaceId);
+    }
+    //
+    fids = newFaceIds;
+
+    // Update AAG.
+    tempAAG = updatedAAG;
+  }
+  while ( !fids.IsEmpty() );
+
+  result = tempAAG->GetMasterCAD();
+
+  return numSuppressedChains > 0;
+}
+
+//-----------------------------------------------------------------------------
+
 bool FindNamedArg(const Handle(asiTcl_Interp)&  interp,
                   const int                     argc,
                   const char**                  argv,
@@ -1860,6 +1947,8 @@ int ENGINE_KillBlends(const Handle(asiTcl_Interp)& interp,
   TIMER_NEW
   TIMER_GO
 
+  TopoDS_Shape result;
+
   // Perform suppression.
   asiAlgo_SuppressBlendChain suppressor( aag,
                                          interp->GetProgress(), NULL
@@ -1868,11 +1957,10 @@ int ENGINE_KillBlends(const Handle(asiTcl_Interp)& interp,
   if ( !suppressor.Perform(fids) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Suppression failed.");
-
     return TCL_ERROR;
   }
-  //
-  const TopoDS_Shape& result = suppressor.GetResult();
+  else
+    result = suppressor.GetResult();
 
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "kill-blends")
@@ -1890,6 +1978,88 @@ int ENGINE_KillBlends(const Handle(asiTcl_Interp)& interp,
 
   // Return the number of suppressed chains.
   *interp << suppressor.GetNumSuppressedChains();
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  const bool isInteractive = (argc == 1);
+
+  // Get Part Node to access the selected faces.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_ERROR;
+  }
+  Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
+  TopoDS_Shape        shape = partNode->GetShape();
+
+  // Get indices of the faces asked for removal.
+  TColStd_PackedMapOfInteger fids;
+  //
+  if ( isInteractive )
+  {
+    asiEngine_Part partAPI( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() );
+    partAPI.GetHighlightedFaces(fids);
+  }
+  else
+  {
+    for ( int k = 1; k < argc; ++k )
+    {
+      TCollection_AsciiString argStr(argv[k]);
+      //
+      if ( !argStr.IsIntegerValue() )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed face ID '%1' is not an integer value."
+                                                            << argStr);
+        return TCL_ERROR;
+      }
+
+      const int fid = atoi(argv[k]);
+      //
+      if ( !partNode->GetAAG()->HasFace(fid) )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face %1 does not exist in the working part."
+                                                            << fid);
+        return TCL_ERROR;
+      }
+
+      fids.Add(fid);
+    }
+  }
+
+  TIMER_NEW
+  TIMER_GO
+
+  TopoDS_Shape result;
+
+  // Perform suppression.
+  if ( !SuppressBlendsIncrementally( aag, fids, result, interp->GetProgress(), NULL ) )
+  {
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Incremental suppression failed.");
+    return TCL_ERROR;
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "kill-blends-inc")
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
+
   return TCL_OK;
 }
 
@@ -2579,6 +2749,15 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t Attempts to defeature the selected blends.",
     //
     __FILE__, group, ENGINE_KillBlends);
+
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("kill-blends-inc",
+    //
+    "kill-blends-inc\n"
+    "\t Attempts to defeature all blends incrementally.",
+    //
+    __FILE__, group, ENGINE_KillBlendsInc);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("insert-knot-curve",

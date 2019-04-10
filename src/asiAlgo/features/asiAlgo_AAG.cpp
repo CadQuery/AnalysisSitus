@@ -89,10 +89,15 @@ Handle(asiAlgo_AAG) asiAlgo_AAG::Copy() const
   copy->m_master            = this->m_master;
   copy->m_selected          = this->m_selected;
   copy->m_subShapes         = this->m_subShapes;
+  copy->m_tSubShapes        = this->m_tSubShapes;
   copy->m_faces             = this->m_faces;
+  copy->m_tFaces            = this->m_tFaces;
   copy->m_edges             = this->m_edges;
+  copy->m_tEdges            = this->m_tEdges;
   copy->m_vertices          = this->m_vertices;
+  copy->m_tVertices         = this->m_tVertices;
   copy->m_edgesFaces        = this->m_edgesFaces;
+  copy->m_tEdgesFaces       = this->m_tEdgesFaces;
   copy->m_neighborsStack    = this->m_neighborsStack;
   copy->m_arcAttributes     = this->m_arcAttributes;
   copy->m_nodeAttributes    = this->m_nodeAttributes;

@@ -84,6 +84,11 @@ public:
     return m_result;
   }
 
+  const Handle(asiAlgo_History)& GetHistory() const
+  {
+    return m_history;
+  }
+
   //! \return output number of suppressed chains.
   int GetNumSuppressedChains() const
   {
@@ -152,6 +157,9 @@ protected:
 
 // OUTPUTS:
 protected:
+
+  //! History of modification.
+  Handle(asiAlgo_History) m_history;
 
   //! Result shape.
   TopoDS_Shape m_result;

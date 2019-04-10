@@ -2556,6 +2556,43 @@ int ENGINE_ShowAAG(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_IsolateRealParts(const Handle(asiTcl_Interp)& interp,
+                            int                          argc,
+                            const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(cmdEngine::model, part_n, part) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
+    return TCL_ERROR;
+  }
+
+  // Isolate.
+  TopTools_ListOfShape realParts;
+  asiAlgo_Utils::IsolateRealParts(part, realParts);
+
+  // Draw.
+  for ( TopTools_ListIteratorOfListOfShape lit(realParts); lit.More(); lit.Next() )
+  {
+    const TopoDS_Shape& realPart = lit.Value();
+
+    // Generate name and draw.
+    TCollection_AsciiString name = asiAlgo_Utils::ShapeTypeStr(realPart).c_str();
+    interp->GetPlotter().DRAW_SHAPE(realPart, name);
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -2825,4 +2862,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Visualizes AAG for the active part.",
     //
     __FILE__, group, ENGINE_ShowAAG);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("isolate-real-parts",
+    //
+    "isolate-real-parts\n"
+    "\t Takes out all non-located entities.",
+    //
+    __FILE__, group, ENGINE_IsolateRealParts);
 }

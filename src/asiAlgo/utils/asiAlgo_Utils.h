@@ -1026,6 +1026,33 @@ namespace asiAlgo_Utils
     HasInternalLocations(const TopoDS_Shape&    S,
                          const TopAbs_ShapeEnum ST = TopAbs_SHAPE);
 
+  //! Often in practice a part is represented with a compound having some
+  //! internal instances (i.e., the located occurrences of nested shapes).
+  //! Such a data structure is a bad mix of part vs assembly concept. However,
+  //! we have to deal with such complex part as they are not something
+  //! exotic (to get one, it is enough to read a STEP assembly into a
+  //! single TopoDS_Shape).
+  //!
+  //! The level of the topology graph where the instancing interrupts
+  //! corresponds to the level of a real part definition. A part per se can
+  //! be a solid, a shell or whatever entity not excluding another compound
+  //! without a location. This function is used to extract real parts from
+  //! the passed shape. The extracted shapes have no locations.
+  //!
+  //! \param[in]  S     shape in question.
+  //! \param[out] parts extracted real parts (shapes without locations).
+  asiAlgo_EXPORT void
+    IsolateRealParts(const TopoDS_Shape&   S,
+                     TopTools_ListOfShape& parts);
+
+  //! Finds a shape in the given list which contains the passed subshape.
+  //! \param[in] parts    list of shapes to check.
+  //! \param[in] subshape subshape to find.
+  //! \return found shape from the list or null shape if nothing was found.
+  asiAlgo_EXPORT TopoDS_Shape
+    FindBySubshape(const TopTools_ListOfShape& parts,
+                   const TopoDS_Shape&         subshape);
+
 };
 
 #endif

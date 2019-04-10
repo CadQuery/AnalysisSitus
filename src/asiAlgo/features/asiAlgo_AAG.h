@@ -192,6 +192,12 @@ public:
         return m_it.Value();
       }
 
+      //! \return non-const reference to the currently iterated attribute.
+      Handle(asiAlgo_FeatureAttr)& ChangeAttr()
+      {
+        return m_it.ChangeValue();
+      }
+
     protected:
 
       //! Attributes to iterate over.

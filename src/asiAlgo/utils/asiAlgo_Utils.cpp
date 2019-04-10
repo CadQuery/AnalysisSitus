@@ -3150,3 +3150,40 @@ bool asiAlgo_Utils::HasInternalLocations(const TopoDS_Shape&    S,
 
   return false;
 }
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Utils::IsolateRealParts(const TopoDS_Shape&   S,
+                                     TopTools_ListOfShape& parts)
+{
+  for ( TopoDS_Iterator it(S, false, false); it.More(); it.Next() )
+  {
+    const TopoDS_Shape& subShape = it.Value();
+
+    if ( subShape.Location().IsIdentity() )
+      parts.Append( S.Located( TopLoc_Location() ) ); // Stop recursion and add the parent as a real part.
+    else
+      IsolateRealParts(subShape, parts); // Go deeper.
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Shape
+  asiAlgo_Utils::FindBySubshape(const TopTools_ListOfShape& parts,
+                                const TopoDS_Shape&         subshape)
+{
+  for ( TopTools_ListIteratorOfListOfShape lit(parts); lit.More(); lit.Next() )
+  {
+    const TopoDS_Shape& currPart = lit.Value();
+
+    // Try to find the passed shape as a subshape.
+    asiAlgo_IndexedMapOfTShape M;
+    MapTShapes(currPart, subshape.ShapeType(), M);
+    //
+    if ( M.Contains(subshape) )
+      return currPart;
+  }
+
+  return TopoDS_Shape(); // Not found.
+}

@@ -101,7 +101,7 @@ bool asiAlgo_IntersectCS::operator()(const Handle(Geom_Surface)&   S,
       {
         gp_Dir dcurve(HC_D1), nsurf(HS_N);
 
-        const double ang     = ACos( dcurve.Dot(nsurf) );
+        const double ang     = acos( dcurve.Dot(nsurf) );
         const double angDiff = Abs(ang - M_PI/2.);
 
         if ( angDiff < m_fTangencyTolRad )

@@ -83,6 +83,9 @@
 #define asiAlgo_SlashStr      "/"
 
 //! Indexed map of shapes distinguished only by their TShape pointers.
+typedef NCollection_DataMap<int, TopoDS_Shape> asiAlgo_DataMapOfShape;
+
+//! Indexed map of shapes distinguished only by their TShape pointers.
 typedef NCollection_IndexedMap<TopoDS_Shape,
                                asiAlgo_ShapePartnerHasher> asiAlgo_IndexedMapOfTShape;
 
@@ -981,6 +984,33 @@ namespace asiAlgo_Utils
                const int                               order,
                Handle(Geom_BSplineCurve)&              result,
                ActAPI_ProgressEntry                    progress);
+
+  //! This method is the analogue of TopExp::MapShapes() except the fact that
+  //! it populates a data map instead of an indexed map. Data maps can be
+  //! used to store the same shapes under different indices (indexed map will
+  //! throw an exception if you try to use its Substitute() method passed
+  //! the already contained shape).
+  //! \param[in]     S        shape to decompose.
+  //! \param[out]    M        populated map of sub-shapes.
+  //! \param[in,out] startIdx starting index (1-based indexation is the default).
+  //! \param[out]    IM       indexed map to avoid duplicates and maintain
+  //!                         equal identifiers in the data map and indexed map.
+  asiAlgo_EXPORT void
+    MapShapes(const TopoDS_Shape&         S,
+              asiAlgo_DataMapOfShape&     M,
+              int&                        startIdx,
+              TopTools_IndexedMapOfShape& IM);
+
+  //! This method is the analogue of TopExp::MapShapes() except the fact that
+  //! it populates a data map instead of an indexed map. Data maps can be
+  //! used to store the same shapes under different indices (indexed map will
+  //! throw an exception if you try to use its Substitute() method passed
+  //! the already contained shape).
+  //! \param[in]  S shape to decompose.
+  //! \param[out] M populated map of sub-shapes.
+  asiAlgo_EXPORT void
+    MapShapes(const TopoDS_Shape&     S,
+              asiAlgo_DataMapOfShape& M);
 
   //! This method is the analogue of TopExp::MapShapes() except the fact that
   //! it does not distinguish sub-shapes with different locations.

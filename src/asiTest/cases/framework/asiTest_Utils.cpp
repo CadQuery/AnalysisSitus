@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 22 June 2018
+// Created on: 11 April 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,38 +28,54 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiTest_CaseIDs_HeaderFile
-#define asiTest_CaseIDs_HeaderFile
+// Own include
+#include <asiTest_Utils.h>
 
-// Tests includes
-#include <asiTest_CommonFacilities.h>
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
 
-// asiTestEngine includes
-#include <asiTestEngine.h>
+// OCCT includes
+#include <BRepPrimAPI_MakeBox.hxx>
 
-//! IDs for Test Cases.
-enum test_CaseID
+//-----------------------------------------------------------------------------
+
+outcome asiTest_Utils::testMapShapes1(const int funcID)
 {
-  CaseID_InvertShells = 1,
-  CaseID_KEV,
-  CaseID_RecognizeBlends,
-  CaseID_SuppressBlends,
+  // Get common facilities.
+  Handle(asiTest_CommonFacilities) cf = asiTest_CommonFacilities::Instance();
 
-/* ------------------------------------------------------------------------ */
+  // Prepare outcome.
+  outcome res(DescriptionFn(), funcID);
 
-  CaseID_DataDictionary,
-  CaseID_Utils,
+  /* Make a unit box and compare indexation by two different methods. */
 
-/* ------------------------------------------------------------------------ */
+  TopoDS_Shape box = BRepPrimAPI_MakeBox(1, 1, 1);
 
-  CaseID_AAG,
-  CaseID_IsContourClosed,
-  CaseID_EdgeVexity,
+  // Use data map.
+  asiAlgo_DataMapOfShape M;
+  asiAlgo_Utils::MapShapes(box, M);
 
-/* ------------------------------------------------------------------------ */
+  // Use indexed map.
+  TopTools_IndexedMapOfShape IM;
+  TopExp::MapShapes(box, IM);
 
-  CaseID_LAST
+  // Compare indices.
+  for ( int k = 1; k <= IM.Extent(); ++k )
+  {
+    // Get sub-shape from the data map by the current index.
+    const TopoDS_Shape& M_sh = M(k);
 
-};
+    // Get sub-shape from the indexed map by the current index.
+    const TopoDS_Shape& IM_sh = IM(k);
 
-#endif
+    // Compare.
+    if ( !M_sh.IsEqual(IM_sh) )
+    {
+      cf->Progress.SendLogMessage(LogErr(Normal) << "Shape %1 from an indexed map is different "
+                                                    "from shape from a data map." << k);
+      return res.failure();
+    }
+  }
+
+  return res.success();
+}

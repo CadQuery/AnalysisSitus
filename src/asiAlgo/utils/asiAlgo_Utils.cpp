@@ -3065,6 +3065,39 @@ bool asiAlgo_Utils::JoinCurves(std::vector<Handle(Geom_BSplineCurve)>& curves,
 
 //-----------------------------------------------------------------------------
 
+void asiAlgo_Utils::MapShapes(const TopoDS_Shape&         S,
+                              asiAlgo_DataMapOfShape&     M,
+                              int&                        startIdx,
+                              TopTools_IndexedMapOfShape& IM)
+{
+  if ( !IM.Contains(S) )
+  {
+    IM.Add(S);
+    M.Bind(startIdx++, S);
+  }
+
+  TopoDS_Iterator It(S);
+  //
+  while ( It.More() )
+  {
+    MapShapes(It.Value(), M, startIdx, IM);
+    It.Next();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Utils::MapShapes(const TopoDS_Shape&     S,
+                              asiAlgo_DataMapOfShape& M)
+{
+  int startIdx = 1;
+  TopTools_IndexedMapOfShape IM;
+  //
+  MapShapes(S, M, startIdx, IM);
+}
+
+//-----------------------------------------------------------------------------
+
 void asiAlgo_Utils::MapTShapes(const TopoDS_Shape&         S,
                                asiAlgo_IndexedMapOfTShape& M)
 {

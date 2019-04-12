@@ -36,7 +36,8 @@
 #include <asiAlgo_AttrBlendCandidate.h>
 #include <asiAlgo_ExtractFeatures.h>
 #include <asiAlgo_FeatureType.h>
-#include <asiAlgo_RecognizeBlendFace.h>
+#include <asiAlgo_RecognizeEBF.h>
+#include <asiAlgo_RecognizeVBF.h>
 
 #undef COUT_DEBUG
 #if defined COUT_DEBUG
@@ -45,19 +46,16 @@
 
 //-----------------------------------------------------------------------------
 
+//! Namespace for all AAG iteration rules used by blends recognizer.
 namespace asiAlgo_AAGIterationRule
 {
-  //! This rule prevents further iteration starting from faces which are
-  //! not recognized as blend candidate faces. The important property of
-  //! this rule is that it performs actual recognition. That is, the AAG
-  //! is enriched with new attributes representing the blend candidates as
-  //! a result of iteration.
-  class RecognizeBlendCandidates : public Standard_Transient
+  //! This rule recognizes edge-blend faces (EBFs).
+  class RecognizeEdgeBlends : public Standard_Transient
   {
   public:
 
     // OCCT RTTI
-    DEFINE_STANDARD_RTTI_INLINE(RecognizeBlendCandidates, Standard_Transient)
+    DEFINE_STANDARD_RTTI_INLINE(RecognizeEdgeBlends, Standard_Transient)
 
   public:
 
@@ -67,13 +65,13 @@ namespace asiAlgo_AAGIterationRule
     //! \param[in] maxRadius max allowed radius.
     //! \param[in] progress  progress notifier.
     //! \param[in] plottter  imperative plotter.
-    RecognizeBlendCandidates(const Handle(asiAlgo_AAG)& aag,
-                             const double               maxRadius,
-                             ActAPI_ProgressEntry       progress,
-                             ActAPI_PlotterEntry        plotter)
+    RecognizeEdgeBlends(const Handle(asiAlgo_AAG)& aag,
+                        const double               maxRadius,
+                        ActAPI_ProgressEntry       progress,
+                        ActAPI_PlotterEntry        plotter)
     : m_aag(aag), m_fMaxRadius(maxRadius), m_bBlockingModeOn(true)
     {
-      m_localReco = new asiAlgo_RecognizeBlendFace(aag, progress, plotter);
+      m_localReco = new asiAlgo_RecognizeEBF(aag, progress, plotter);
     }
 
   public:
@@ -117,10 +115,79 @@ namespace asiAlgo_AAGIterationRule
 
   protected:
 
-    Handle(asiAlgo_AAG)                m_aag;             //!< AAG instance.
-    Handle(asiAlgo_RecognizeBlendFace) m_localReco;       //!< Local recognizer.
-    double                             m_fMaxRadius;      //!< Max allowed radius.
-    bool                               m_bBlockingModeOn; //!< Blocking mode.
+    Handle(asiAlgo_AAG)          m_aag;             //!< AAG instance.
+    Handle(asiAlgo_RecognizeEBF) m_localReco;       //!< Local recognizer.
+    double                       m_fMaxRadius;      //!< Max allowed radius.
+    bool                         m_bBlockingModeOn; //!< Blocking mode.
+  };
+
+  //! This rule recognizes vertex-blend faces (VBFs).
+  class RecognizeVertexBlends : public Standard_Transient
+  {
+  public:
+
+    // OCCT RTTI
+    DEFINE_STANDARD_RTTI_INLINE(RecognizeVertexBlends, Standard_Transient)
+
+  public:
+
+    //! Ctor.
+    //! \param[in] aag      attributed adjacency graph keeping information on the
+    //!                     recognized properties of the model.
+    //! \param[in] progress progress notifier.
+    //! \param[in] plottter imperative plotter.
+    RecognizeVertexBlends(const Handle(asiAlgo_AAG)& aag,
+                          ActAPI_ProgressEntry       progress,
+                          ActAPI_PlotterEntry        plotter)
+    : m_aag(aag), m_bBlockingModeOn(true)
+    {
+      m_localReco = new asiAlgo_RecognizeVBF(aag, progress, plotter);
+    }
+
+  public:
+
+    //! Enables blocking mode of the rule.
+    void SetBlockingOn()
+    {
+      m_bBlockingModeOn = true;
+    }
+
+    //! Disables blocking mode of the rule.
+    void SetBlockingOff()
+    {
+      m_bBlockingModeOn = false;
+    }
+
+    //! For the given face ID, this method decides whether to check its
+    //! neighbors or stop.
+    //! \param[in] fid 1-based ID of the face in question.
+    //! \return true if the face in question is a gatekeeper for further iteration.
+    bool IsBlocking(const int fid)
+    {
+      // If there are some nodal attributes for this face, we check whether
+      // it has already been recognized as a blend candidate.
+      if ( m_aag->HasNodeAttributes(fid) )
+      {
+        Handle(asiAlgo_FeatureAttr)
+          attr = m_aag->GetNodeAttribute( fid, asiAlgo_AttrBlendCandidate::GUID() );
+        //
+        if ( !attr.IsNull() )
+          return false; // Allow further iteration.
+      }
+
+      // If we are here, then the face in question is not attributed. We can now
+      // try to recognize it.
+      if ( !m_localReco->Perform(fid) )
+        return m_bBlockingModeOn; // Block further iterations if blocking mode is on.
+
+      return false;
+    }
+
+  protected:
+
+    Handle(asiAlgo_AAG)          m_aag;             //!< AAG instance.
+    Handle(asiAlgo_RecognizeVBF) m_localReco;       //!< Local recognizer.
+    bool                         m_bBlockingModeOn; //!< Blocking mode.
   };
 };
 
@@ -182,30 +249,56 @@ bool asiAlgo_RecognizeBlends::Perform(const double radius)
    * ===================================================== */
 
   // Propagation rule.
-  Handle(asiAlgo_AAGIterationRule::RecognizeBlendCandidates)
-    itRule = new asiAlgo_AAGIterationRule::RecognizeBlendCandidates(m_aag,
-                                                                    radius,
-                                                                    m_progress,
-                                                                    m_plotter);
+  Handle(asiAlgo_AAGIterationRule::RecognizeEdgeBlends)
+    ebfRule = new asiAlgo_AAGIterationRule::RecognizeEdgeBlends(m_aag,
+                                                                radius,
+                                                                m_progress,
+                                                                m_plotter);
 
   // Rule is used in non-blocking mode to allow full traverse of the model
   // by neighbors.
-  itRule->SetBlockingOff();
+  ebfRule->SetBlockingOff();
 
   // Select seed face.
-  const int seedFaceId = 1;
+  int seedFaceId = 1;
 
   // Prepare neighborhood iterator with customized propagation rule.
-  asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::RecognizeBlendCandidates>
-    nit(m_aag, seedFaceId, itRule);
+  asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::RecognizeEdgeBlends>
+    ebfIt(m_aag, seedFaceId, ebfRule);
   //
-  while ( nit.More() )
+  while ( ebfIt.More() )
   {
-    nit.Next();
+    ebfIt.Next();
+  }
+
+  /* ==================================
+   *  Stage 3: recognize vertex blends
+   * ================================== */
+
+  // Propagation rule.
+  Handle(asiAlgo_AAGIterationRule::RecognizeVertexBlends)
+    vbfRule = new asiAlgo_AAGIterationRule::RecognizeVertexBlends(m_aag,
+                                                                  m_progress,
+                                                                  m_plotter);
+
+  // Rule is used in non-blocking mode to allow full traverse of the model
+  // by neighbors.
+  vbfRule->SetBlockingOff();
+
+  // Select seed face.
+  seedFaceId = 1;
+
+  // Prepare neighborhood iterator with customized propagation rule.
+  asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::RecognizeVertexBlends>
+    vbfIt(m_aag, seedFaceId, vbfRule);
+  //
+  while ( vbfIt.More() )
+  {
+    vbfIt.Next();
   }
 
   /* =============================================================
-   *  Stage 3: extract features from the attributes hooked in AAG
+   *  Stage 4: extract features from the attributes hooked in AAG
    * ============================================================= */
 
   // Prepare tool to extract features from AAG.
@@ -264,23 +357,46 @@ bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
    * ===================================================== */
 
   // Propagation rule.
-  Handle(asiAlgo_AAGIterationRule::RecognizeBlendCandidates)
-    itRule = new asiAlgo_AAGIterationRule::RecognizeBlendCandidates(m_aag,
-                                                                    radius,
-                                                                    m_progress,
-                                                                    m_plotter);
+  Handle(asiAlgo_AAGIterationRule::RecognizeEdgeBlends)
+    ebfRule = new asiAlgo_AAGIterationRule::RecognizeEdgeBlends(m_aag,
+                                                                radius,
+                                                                m_progress,
+                                                                m_plotter);
 
   // Prepare neighborhood iterator with customized propagation rule.
   int numRecognizedFaces = 0;
   //
-  asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::RecognizeBlendCandidates>
-    nit(m_aag, faceId, itRule);
+  asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::RecognizeEdgeBlends>
+    ebfIt(m_aag, faceId, ebfRule);
   //
-  for ( ; nit.More(); nit.Next(), ++numRecognizedFaces )
+  for ( ; ebfIt.More(); ebfIt.Next(), ++numRecognizedFaces )
   {
-    const int fid = nit.GetFaceId();
+    const int fid = ebfIt.GetFaceId();
 
     m_plotter.DRAW_SHAPE(m_aag->GetFace(fid), Color_Blue, 1.0, false, "blendCandidate");
+  }
+
+  /* ==================================
+   *  Stage 3: recognize vertex blends
+   * ================================== */
+
+  // Propagation rule.
+  Handle(asiAlgo_AAGIterationRule::RecognizeVertexBlends)
+    vbfRule = new asiAlgo_AAGIterationRule::RecognizeVertexBlends(m_aag,
+                                                                  m_progress,
+                                                                  m_plotter);
+
+  // Rule is used in non-blocking mode to allow full traverse of the model
+  // by neighbors.
+  vbfRule->SetBlockingOff();
+
+  // Prepare neighborhood iterator with customized propagation rule.
+  asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::RecognizeVertexBlends>
+    vbfIt(m_aag, faceId, vbfRule);
+  //
+  while ( vbfIt.More() )
+  {
+    vbfIt.Next();
   }
 
   return numRecognizedFaces > 0;

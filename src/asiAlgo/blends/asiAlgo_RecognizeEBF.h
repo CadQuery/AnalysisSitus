@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_RecognizeBlendFace_h
-#define asiAlgo_RecognizeBlendFace_h
+#ifndef asiAlgo_RecognizeEBF_h
+#define asiAlgo_RecognizeEBF_h
 
 // asiAlgo includes
 #include <asiAlgo_AAG.h>
@@ -37,15 +37,17 @@
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
 
-//! Utility to recognize blend faces of different kinds. This utility accepts
-//! a single face and populates the corresponding AAG node with a blend
-//! candidate attribute if the recognition is successful.
-class asiAlgo_RecognizeBlendFace : public ActAPI_IAlgorithm
+//-----------------------------------------------------------------------------
+
+//! Utility to recognize blend faces of EBF type (edge-blend face).
+//! This utility accepts a single face and populates the corresponding AAG
+//! node with a blend candidate attribute if the recognition is successful.
+class asiAlgo_RecognizeEBF : public ActAPI_IAlgorithm
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_RecognizeBlendFace, ActAPI_IAlgorithm)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_RecognizeEBF, ActAPI_IAlgorithm)
 
 public:
 
@@ -54,9 +56,9 @@ public:
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_RecognizeBlendFace(const Handle(asiAlgo_AAG)& aag,
-                               ActAPI_ProgressEntry       progress,
-                               ActAPI_PlotterEntry        plotter);
+    asiAlgo_RecognizeEBF(const Handle(asiAlgo_AAG)& aag,
+                         ActAPI_ProgressEntry       progress,
+                         ActAPI_PlotterEntry        plotter);
 
 public:
 

@@ -69,8 +69,9 @@ set (blends_H_FILES
   blends/asiAlgo_FindSmoothEdges.h
   blends/asiAlgo_FindSpringEdges.h
   blends/asiAlgo_FindTermEdges.h
-  blends/asiAlgo_RecognizeBlendFace.h
   blends/asiAlgo_RecognizeBlends.h
+  blends/asiAlgo_RecognizeEBF.h
+  blends/asiAlgo_RecognizeVBF.h
   blends/asiAlgo_SuppressBlendChain.h
 )
 set (blends_CPP_FILES
@@ -80,8 +81,9 @@ set (blends_CPP_FILES
   blends/asiAlgo_FindSmoothEdges.cpp
   blends/asiAlgo_FindSpringEdges.cpp
   blends/asiAlgo_FindTermEdges.cpp
-  blends/asiAlgo_RecognizeBlendFace.cpp
   blends/asiAlgo_RecognizeBlends.cpp
+  blends/asiAlgo_RecognizeEBF.cpp
+  blends/asiAlgo_RecognizeVBF.cpp
   blends/asiAlgo_SuppressBlendChain.cpp
 )
 

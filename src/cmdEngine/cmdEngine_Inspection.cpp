@@ -2457,7 +2457,7 @@ int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
   asiAlgo_RecognizeBlends recognizer( partShape,
                                       partAAG,
                                       interp->GetProgress(),
-                                      NULL );
+                                      interp->GetPlotter() );
   //
   if ( !recognizer.Perform(maxRadius) )
   {

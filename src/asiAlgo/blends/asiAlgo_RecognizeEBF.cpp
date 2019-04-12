@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiAlgo_RecognizeBlendFace.h>
+#include <asiAlgo_RecognizeEBF.h>
 
 // asiAlgo includes
 #include <asiAlgo_AttrBlendCandidate.h>
@@ -50,17 +50,17 @@
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_RecognizeBlendFace::asiAlgo_RecognizeBlendFace(const Handle(asiAlgo_AAG)& aag,
-                                                       ActAPI_ProgressEntry       progress,
-                                                       ActAPI_PlotterEntry        plotter)
+asiAlgo_RecognizeEBF::asiAlgo_RecognizeEBF(const Handle(asiAlgo_AAG)& aag,
+                                           ActAPI_ProgressEntry       progress,
+                                           ActAPI_PlotterEntry        plotter)
 : ActAPI_IAlgorithm (progress, plotter),
   m_aag             (aag)
 {}
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_RecognizeBlendFace::Perform(const int    fid,
-                                         const double maxRadius)
+bool asiAlgo_RecognizeEBF::Perform(const int    fid,
+                                   const double maxRadius)
 {
   // Check AAG.
   if ( m_aag.IsNull() )

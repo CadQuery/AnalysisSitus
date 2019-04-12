@@ -98,7 +98,7 @@ public:
       return false; // Not identified.
 
     // Ordinary blend contains either two cross or two terminating edges.
-    TColStd_PackedMapOfInteger* pEdges = NULL;
+    int e_b_c1_idx = 0, e_b_c2_idx = 0;
     //
     const int numCrossEdges  = bcAttr->CrossEdgeIndices.Extent();
     const int numTermEdges   = bcAttr->TerminatingEdgeIndices.Extent();
@@ -108,9 +108,20 @@ public:
       return false;
     //
     if ( numCrossEdges == 2 && numTermEdges == 0 )
-      pEdges = &bcAttr->CrossEdgeIndices;
+    {
+      e_b_c1_idx = bcAttr->CrossEdgeIndices.GetMinimalMapped();
+      e_b_c2_idx = bcAttr->CrossEdgeIndices.GetMaximalMapped();
+    }
     else if ( numCrossEdges == 0 && numTermEdges == 2 )
-      pEdges = &bcAttr->TerminatingEdgeIndices;
+    {
+      e_b_c1_idx = bcAttr->TerminatingEdgeIndices.GetMinimalMapped();
+      e_b_c2_idx = bcAttr->TerminatingEdgeIndices.GetMaximalMapped();
+    }
+    else if ( numCrossEdges == 1 && numTermEdges == 1 )
+    {
+      e_b_c1_idx = bcAttr->CrossEdgeIndices.GetMinimalMapped();
+      e_b_c2_idx = bcAttr->TerminatingEdgeIndices.GetMinimalMapped();
+    }
     else
       return false;
 
@@ -118,8 +129,6 @@ public:
     const int f_b_idx = bcAttr->GetFaceId();
 
     // Get cross edges.
-    const int   e_b_c1_idx = pEdges->GetMinimalMapped();
-    const int   e_b_c2_idx = pEdges->GetMaximalMapped();
     TopoDS_Edge e_b_c1_loc = TopoDS::Edge( AAG->RequestMapOfEdges()(e_b_c1_idx) );
     TopoDS_Edge e_b_c2_loc = TopoDS::Edge( AAG->RequestMapOfEdges()(e_b_c2_idx) );
 

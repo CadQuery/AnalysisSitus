@@ -134,7 +134,11 @@ namespace asiAlgo_AAGIterationRule
             return false; // Allow further iteration.
           }
           //
-          else if ( m_bAllInitialized ) m_bAllInitialized = false;
+          else if ( m_bAllInitialized )
+          {
+            m_problematicFaces.Add(fid);
+            m_bAllInitialized = false;
+          }
         }
       }
 
@@ -154,6 +158,12 @@ namespace asiAlgo_AAGIterationRule
       return m_bAllInitialized;
     }
 
+    //! \return IDs of the problematic faces.
+    const TColStd_PackedMapOfInteger& GetProblematicFaces() const
+    {
+      return m_problematicFaces;
+    }
+
   protected:
 
     //! AAG instance.
@@ -164,6 +174,9 @@ namespace asiAlgo_AAGIterationRule
 
     //! Indicates whether all topological conditions were identified or not.
     bool m_bAllInitialized;
+
+    //! IDs of the faces whose topological conditions are not initialized.
+    TColStd_PackedMapOfInteger m_problematicFaces;
 
   protected:
 
@@ -345,7 +358,21 @@ bool
   // Check if suppression is possible.
   if ( !itRule->AreAllInitialized() )
   {
-    m_progress.SendLogMessage(LogWarn(Normal) << "Some non-identified topological conditions remain.");
+    int kk = 1;
+    TCollection_AsciiString problemFacesStr;
+    const TColStd_PackedMapOfInteger& problemFaces = itRule->GetProblematicFaces();
+    //
+    for ( TColStd_MapIteratorOfPackedMapOfInteger fit(problemFaces); fit.More(); fit.Next(), ++kk )
+    {
+      problemFacesStr += fit.Key();
+
+      if ( kk < problemFaces.Extent() )
+        problemFacesStr += " ";
+    }
+
+    m_progress.SendLogMessage(LogWarn(Normal) << "Some non-identified topological conditions "
+                                                 "remain for faces with the following IDs: %1."
+                                              << problemFacesStr);
     return false;
   }
 

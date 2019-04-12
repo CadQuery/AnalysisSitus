@@ -164,6 +164,18 @@ protected:
         TopoDS_Shape&            output,
         Handle(asiAlgo_History)& history);
 
+  //! Performs KFMV Euler operator for suppressing vertex blends.
+  //! \param[in]  shape   entire shape.
+  //! \param[in]  face    face to kill.
+  //! \param[out] output  result of Euler operator.
+  //! \param[out] history history of modification.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    kfmv(const TopoDS_Shape&      shape,
+         const TopoDS_Face&       face,
+         TopoDS_Shape&            output,
+         Handle(asiAlgo_History)& history);
+
 public:
 
   Handle(asiAlgo_AAG) AAG; //!< Attributed adjacency graph.

@@ -65,6 +65,7 @@ set (blends_H_FILES
   blends/asiAlgo_BlendTopoConditionFF.h
   blends/asiAlgo_BlendTopoConditionFFIsolated.h
   blends/asiAlgo_BlendTopoConditionFFOrdinaryEBF.h
+  blends/asiAlgo_BlendTopoConditionFFOrdinaryVBF.h
   blends/asiAlgo_BlendType.h
   blends/asiAlgo_FindCrossEdges.h
   blends/asiAlgo_FindSmoothEdges.h

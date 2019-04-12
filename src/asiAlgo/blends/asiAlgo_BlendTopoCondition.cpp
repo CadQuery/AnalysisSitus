@@ -34,6 +34,7 @@
 // asiAlgo includes
 #include <asiAlgo_EulerKEF.h>
 #include <asiAlgo_EulerKEV.h>
+#include <asiAlgo_EulerKFMV.h>
 
 //-----------------------------------------------------------------------------
 
@@ -110,6 +111,30 @@ bool asiAlgo_BlendTopoCondition::kef(const TopoDS_Shape&      shape,
   // Set result.
   output  = KEF.GetResult();
   history = KEF.GetHistory();
+  //
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_BlendTopoCondition::kfmv(const TopoDS_Shape&      shape,
+                                      const TopoDS_Face&       face,
+                                      TopoDS_Shape&            output,
+                                      Handle(asiAlgo_History)& history)
+{
+  asiAlgo_EulerKFMV KFMV( shape,
+                          TopoDS::Face( face.Oriented(TopAbs_EXTERNAL) ),
+                          m_progress, m_plotter );
+  //
+  if ( !history.IsNull() )
+    KFMV.SetHistory(history);
+  //
+  if ( !KFMV.Perform(true) )
+    return false;
+
+  // Set result.
+  output  = KFMV.GetResult();
+  history = KFMV.GetHistory();
   //
   return true;
 }

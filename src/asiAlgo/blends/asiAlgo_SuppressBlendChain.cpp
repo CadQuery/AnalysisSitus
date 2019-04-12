@@ -36,6 +36,7 @@
 #include <asiAlgo_AttrBlendCandidate.h>
 #include <asiAlgo_BlendTopoConditionFFIsolated.h>
 #include <asiAlgo_BlendTopoConditionFFOrdinaryEBF.h>
+#include <asiAlgo_BlendTopoConditionFFOrdinaryVBF.h>
 #include <asiAlgo_RebuildEdge.h>
 #include <asiAlgo_Timer.h>
 
@@ -115,6 +116,9 @@ namespace asiAlgo_AAGIterationRule
           //
           Handle(asiAlgo_BlendTopoConditionFFOrdinaryEBF)
             cond2 = new asiAlgo_BlendTopoConditionFFOrdinaryEBF(m_aag, m_progress, m_plotter);
+          //
+          Handle(asiAlgo_BlendTopoConditionFFOrdinaryVBF)
+            cond3 = new asiAlgo_BlendTopoConditionFFOrdinaryVBF(m_aag, m_progress, m_plotter);
 
           // Attempt to identify a topological condition.
           if ( cond1->Initialize(bcAttr) )
@@ -130,6 +134,14 @@ namespace asiAlgo_AAGIterationRule
             cond2->Dump(m_plotter);
             //
             m_faceInfo->Bind(fid, cond2);
+
+            return false; // Allow further iteration.
+          }
+          else if ( cond3->Initialize(bcAttr) )
+          {
+            cond3->Dump(m_plotter);
+            //
+            m_faceInfo->Bind(fid, cond3);
 
             return false; // Allow further iteration.
           }

@@ -71,6 +71,17 @@ bool asiAlgo_RecognizeVBF::Perform(const int fid)
     //
     if ( attr.IsNull() )
       return false;
+
+    // Downcast.
+    Handle(asiAlgo_AttrBlendCandidate)
+      bcAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(attr);
+
+    // Get common edge. This should be a cross edge.
+    TopoDS_Edge commonEdge   = asiAlgo_Utils::GetCommonEdge( face, m_aag->GetFace(nid) );
+    const int   commonEdgeId = m_aag->RequestMapOfEdges().FindIndex(commonEdge);
+
+    if ( !bcAttr->CrossEdgeIndices.Contains(commonEdgeId) )
+      return false;
   }
 
   // Prepare face attribute.

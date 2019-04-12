@@ -2926,6 +2926,36 @@ TopoDS_Edge asiAlgo_Utils::GetCommonEdge(const TopoDS_Shape&  F,
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_Utils::GetCommonEdges(const TopoDS_Shape&         F,
+                                   const TopoDS_Vertex&        V,
+                                   TopTools_IndexedMapOfShape& edges)
+{
+  TopTools_IndexedDataMapOfShapeListOfShape M;
+  TopExp::MapShapesAndAncestors(F, TopAbs_VERTEX, TopAbs_EDGE, M);
+
+  bool isAnyFound = false;
+  for ( int k = 1; k <= M.Extent(); ++k )
+  {
+    const TopoDS_Shape& currV = M.FindKey(k);
+    //
+    if ( !currV.IsSame(V) )
+      continue;
+
+    // Add all edges sharing the vertex `V` within the face `F` to the result.
+    const TopTools_ListOfShape& currEdges = M.FindFromIndex(k);
+    //
+    for ( TopTools_ListIteratorOfListOfShape lit(currEdges); lit.More(); lit.Next() )
+    {
+      edges.Add( lit.Value() );
+      if ( !isAnyFound ) isAnyFound = true;
+    }
+  }
+
+  return isAnyFound;
+}
+
+//-----------------------------------------------------------------------------
+
 TopoDS_Vertex asiAlgo_Utils::GetCommonVertex(const TopoDS_Shape& F,
                                              const TopoDS_Shape& G,
                                              const TopoDS_Shape& H)

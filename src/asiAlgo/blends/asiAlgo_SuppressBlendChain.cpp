@@ -35,6 +35,7 @@
 #include <asiAlgo_AAGIterator.h>
 #include <asiAlgo_AttrBlendCandidate.h>
 #include <asiAlgo_BlendTopoConditionFFIsolated.h>
+#include <asiAlgo_BlendTopoConditionFFOrdinaryEBF.h>
 #include <asiAlgo_RebuildEdge.h>
 #include <asiAlgo_Timer.h>
 
@@ -108,18 +109,31 @@ namespace asiAlgo_AAGIterationRule
           Handle(asiAlgo_AttrBlendCandidate)
             bcAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(attr);
 
-          // Attempt to identify a topological condition.
+          // Prepare topological conditions.
           Handle(asiAlgo_BlendTopoConditionFFIsolated)
-            cond = new asiAlgo_BlendTopoConditionFFIsolated(m_aag, m_progress, m_plotter);
+            cond1 = new asiAlgo_BlendTopoConditionFFIsolated(m_aag, m_progress, m_plotter);
           //
-          if ( cond->Initialize(bcAttr) )
+          Handle(asiAlgo_BlendTopoConditionFFOrdinaryEBF)
+            cond2 = new asiAlgo_BlendTopoConditionFFOrdinaryEBF(m_aag, m_progress, m_plotter);
+
+          // Attempt to identify a topological condition.
+          if ( cond1->Initialize(bcAttr) )
           {
-            cond->Dump(m_plotter);
+            cond1->Dump(m_plotter);
             //
-            m_faceInfo->Bind(fid, cond);
+            m_faceInfo->Bind(fid, cond1);
 
             return false; // Allow further iteration.
           }
+          else if ( cond2->Initialize(bcAttr) )
+          {
+            cond2->Dump(m_plotter);
+            //
+            m_faceInfo->Bind(fid, cond2);
+
+            return false; // Allow further iteration.
+          }
+          //
           else if ( m_bAllInitialized ) m_bAllInitialized = false;
         }
       }

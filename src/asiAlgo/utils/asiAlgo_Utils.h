@@ -945,6 +945,16 @@ namespace asiAlgo_Utils
                   const TopoDS_Shape&  G,
                   const TopoDS_Vertex& hint);
 
+  //! Gets common edges for the passed face and it vertex.
+  //! \param[in]  F     face in question.
+  //! \param[in]  V     vertex in question.
+  //! \param[out] edges found common edges.
+  //! \return false if no common edges exist.
+  asiAlgo_EXPORT bool
+    GetCommonEdges(const TopoDS_Shape&         F,
+                   const TopoDS_Vertex&        V,
+                   TopTools_IndexedMapOfShape& edges);
+
   //! Gets common (shared) vertex between the three passed faces.
   //! \param[in] F first face.
   //! \param[in] G second face.

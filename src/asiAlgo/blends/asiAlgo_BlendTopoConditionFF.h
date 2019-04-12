@@ -56,14 +56,6 @@ public:
   TopoDS_Edge e_b_s1; //!< Spring edge between faces `b` and `s1`.
   TopoDS_Edge e_b_s2; //!< Spring edge between faces `b` and `s2`.
 
-  //! Modified geometry.
-  struct ModifGeom
-  {
-    Handle(Geom_Surface) s_s1;    //!< Modified surface of `s1` face.
-    Handle(Geom_Surface) s_s2;    //!< Modified surface of `s2` face.
-    Handle(Geom_Curve)   c_s1_s2; //!< Intersection curve between `s1` and `s2`.
-  };
-
 public:
 
   //! Ctor.
@@ -74,27 +66,8 @@ public:
                                ActAPI_ProgressEntry       progress,
                                ActAPI_PlotterEntry        plotter)
   //
-  : asiAlgo_BlendTopoCondition (aag, progress, plotter),
-    pModifGeom                 (NULL)
+  : asiAlgo_BlendTopoCondition (aag, progress, plotter)
   {}
-
-  //! Dtor.
-  ~asiAlgo_BlendTopoConditionFF()
-  {
-    if ( pModifGeom )
-      delete pModifGeom;
-  }
-
-public:
-
-  //! Sets geometric modification info to the bend condition. The blend
-  //! condition structure takes ownership of the info: the geometric info
-  //! will be deleted by dtor of the blend info.
-  //! \param[in] geometric modification info to set.
-  void LoadGeomInfo(ModifGeom* info)
-  {
-    pModifGeom = info;
-  }
 
 public:
 
@@ -109,7 +82,7 @@ public:
     plotter.REDRAW_SHAPE("e_b_s2", this->e_b_s2, Color_Blue, 1.0, true);
   }
 
-  //! Lets to identify a certain topological condition from the passed blend
+  //! Allows to identify a certain topological condition from the passed blend
   //! candidate attribute.
   //! \param[in] bcAttr blend candidate attribute in question.
   //! \return true if the certain topological condition is identified.
@@ -152,10 +125,6 @@ public:
 
     return true; // Identified.
   }
-
-public:
-
-  ModifGeom* pModifGeom; //!< Geometric modification info.
 
 };
 

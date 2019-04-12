@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_BlendTopoConditionIsolated_h
-#define asiAlgo_BlendTopoConditionIsolated_h
+#ifndef asiAlgo_BlendTopoConditionFFIsolated_h
+#define asiAlgo_BlendTopoConditionFFIsolated_h
 
 // asiAlgo includes
 #include <asiAlgo_BlendTopoConditionFF.h>
@@ -57,17 +57,6 @@ public:
   TopoDS_Vertex v_b_s2_t1; //!< Vertex common for `b`, `s2` and `t1`.
   TopoDS_Vertex v_b_s1_t2; //!< Vertex common for `b`, `s1` and `t2`.
   TopoDS_Vertex v_b_s2_t2; //!< Vertex common for `b`, `s2` and `t2`.
-
-  //! Modified geometry.
-  struct ModifGeom : public asiAlgo_BlendTopoConditionFF::ModifGeom
-  {
-    Handle(Geom_Surface) s_t1;
-    Handle(Geom_Surface) s_t2;
-    Handle(Geom_Curve)   c_s1_t1;
-    Handle(Geom_Curve)   c_s1_t2;
-    Handle(Geom_Curve)   c_s2_t1;
-    Handle(Geom_Curve)   c_s2_t2;
-  };
 
 public:
 
@@ -103,7 +92,7 @@ public:
     plotter.REDRAW_SHAPE("v_b_s2_t2", this->v_b_s2_t2, Color_White, 1.0, true);
   }
 
-  //! Lets to identify a certain topological condition from the passed blend
+  //! Allows to identify a certain topological condition from the passed blend
   //! candidate attribute.
   //! \param[in] bcAttr blend candidate attribute in question.
   //! \return true if the certain topological condition is identified.

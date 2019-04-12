@@ -86,7 +86,7 @@ public:
     plotter.REDRAW_SHAPE("f_b", this->f_b);
   }
 
-  //! Lets to identify a certain topological condition from the passed blend
+  //! Allows to identify a certain topological condition from the passed blend
   //! candidate attribute.
   //! \param[in] bcAttr blend candidate attribute in question.
   //! \return true if the certain topological condition is identified.

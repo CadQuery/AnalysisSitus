@@ -164,19 +164,8 @@ namespace asiAlgo_AAGIterationRule
     //! \return true if the face in question is a gatekeeper for further iteration.
     bool IsBlocking(const int fid)
     {
-      // If there are some nodal attributes for this face, we check whether
-      // it has already been recognized as a blend candidate.
-      if ( m_aag->HasNodeAttributes(fid) )
-      {
-        Handle(asiAlgo_FeatureAttr)
-          attr = m_aag->GetNodeAttribute( fid, asiAlgo_AttrBlendCandidate::GUID() );
-        //
-        if ( !attr.IsNull() )
-          return false; // Allow further iteration.
-      }
-
-      // If we are here, then the face in question is not attributed. We can now
-      // try to recognize it.
+      // Try recognizing the face even if it has been already attributed.
+      // At this stage, we can precise EBFs as VBFs.
       if ( !m_localReco->Perform(fid) )
         return m_bBlockingModeOn; // Block further iterations if blocking mode is on.
 

@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_AttrBlendCandidate.h>
+#include <asiAlgo_FeatureAttrAdjacency.h>
 
 //-----------------------------------------------------------------------------
 
@@ -60,41 +61,75 @@ bool asiAlgo_RecognizeVBF::Perform(const int fid)
   // Get the neighbor faces.
   const TColStd_PackedMapOfInteger& nids = m_aag->GetNeighbors(fid);
 
-  // All neighbor faces should be EBFs.
+  // Among the neighbor faces, there should be some EBFs. At least three
+  // EBFs are expected.
+  int numEBFs = 0;
+  //
+  TColStd_PackedMapOfInteger specialEdges, allEdges;
   for ( TColStd_MapIteratorOfPackedMapOfInteger nit(nids); nit.More(); nit.Next() )
   {
     const int nid = nit.Key();
+
+    Handle(asiAlgo_FeatureAttrAdjacency)
+      adjAttr = Handle(asiAlgo_FeatureAttrAdjacency)::DownCast( m_aag->GetArcAttribute( asiAlgo_AAG::t_arc(fid, nid) ) );
+    //
+    allEdges.Unite( adjAttr->GetEdgeIndices() );
 
     // Get blend candidate attribute.
     Handle(asiAlgo_FeatureAttr)
       attr = m_aag->GetNodeAttribute( nid, asiAlgo_AttrBlendCandidate::GUID() );
     //
     if ( attr.IsNull() )
-      return false;
+      continue;
 
     // Downcast.
     Handle(asiAlgo_AttrBlendCandidate)
       bcAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(attr);
 
-    // Get common edge. This should be a cross edge.
+    // Get common edge. This should be either a cross or a smooth edge.
     TopoDS_Edge commonEdge   = asiAlgo_Utils::GetCommonEdge( face, m_aag->GetFace(nid) );
     const int   commonEdgeId = m_aag->RequestMapOfEdges().FindIndex(commonEdge);
 
-    if ( !bcAttr->CrossEdgeIndices.Contains(commonEdgeId) )
-      return false;
+    if ( !bcAttr->CrossEdgeIndices.Contains(commonEdgeId) &&
+         !bcAttr->SpringEdgeIndices.Contains(commonEdgeId) ) // Spring edges may be detected on VBFs.
+      return false; // All edges of a vertex blend are special.
+
+    specialEdges.Add(commonEdgeId);
+    numEBFs++;
   }
 
-  // Prepare face attribute.
-  Handle(asiAlgo_AttrBlendCandidate)
-    BlendAttr = new asiAlgo_AttrBlendCandidate(0);
-  //
-  BlendAttr->Kind = BlendType_Vertex;
-  //
-  if ( !m_aag->SetNodeAttribute(fid, BlendAttr) )
-  {
-    this->GetProgress().SendLogMessage( LogErr(Normal) << "Weird iteration: blend attribute is already there." );
+  if ( numEBFs < 3 )
     return false;
+
+  // If any edges remain unrecognized, the candidate face cannot be a VBF.
+  TColStd_PackedMapOfInteger unrecEdges = allEdges;
+  unrecEdges.Subtract(specialEdges);
+  //
+  if ( !unrecEdges.IsEmpty() )
+    return false;
+
+  // Get face attribute which may already exist here if the VBF was
+  // recognized as a EBF previously.
+  Handle(asiAlgo_AttrBlendCandidate) blendAttr;
+  //
+  Handle(asiAlgo_FeatureAttr)
+    attr = m_aag->GetNodeAttribute( fid, asiAlgo_AttrBlendCandidate::GUID() );
+  //
+  if ( attr.IsNull() )
+  {
+    blendAttr = new asiAlgo_AttrBlendCandidate(0);
+
+    if ( !m_aag->SetNodeAttribute(fid, blendAttr) )
+    {
+      this->GetProgress().SendLogMessage( LogErr(Normal) << "Weird iteration: blend attribute is already there." );
+      return false;
+    }
   }
+  else
+    blendAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(attr);
+
+  // Modify the attribute.
+  blendAttr->Kind = BlendType_Vertex;
 
   return true;
 }

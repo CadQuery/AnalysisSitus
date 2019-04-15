@@ -2593,6 +2593,77 @@ int ENGINE_IsolateRealParts(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckAlongCurvature(const Handle(asiTcl_Interp)& interp,
+                               int                          argc,
+                               const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Attempt to get the highlighted sub-shapes.
+  TColStd_PackedMapOfInteger selectedEdgeIds;
+  //
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+  {
+    asiEngine_Part PartAPI( M,
+                            cmdEngine::cf->ViewerPart->PrsMgr(),
+                            interp->GetProgress(),
+                            interp->GetPlotter() );
+    //
+    PartAPI.GetHighlightedEdges(selectedEdgeIds);
+  }
+
+  if ( selectedEdgeIds.Extent() != 1 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Exactly one edge should be selected.");
+    return TCL_ERROR;
+  }
+
+  const int edgeId = selectedEdgeIds.GetMinimalMapped();
+
+  // Get edge.
+  const TopoDS_Edge&
+    edge = TopoDS::Edge( M->GetPartNode()->GetAAG()->RequestMapOfEdges()(edgeId) );
+
+  // Get faces.
+  const TopTools_IndexedDataMapOfShapeListOfShape&
+    EF = M->GetPartNode()->GetAAG()->RequestMapOfEdgesFaces();
+  //
+  const TopTools_ListOfShape& ownerFaces = EF.FindFromIndex(edgeId);
+
+  // Check on-surface curvature for the edge and its every owning face.
+  for ( TopTools_ListIteratorOfListOfShape lif(ownerFaces); lif.More(); lif.Next() )
+  {
+    const TopoDS_Face& ownerFace = TopoDS::Face( lif.Value() );
+
+    // Get face ID.
+    const int faceId = M->GetPartNode()->GetAAG()->GetFaceId(ownerFace);
+
+    // Evaluate curvature.
+    double k;
+    if ( !asiAlgo_Utils::EvaluateAlongCurvature(ownerFace, edge, k) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot evaluate on-surface curvature "
+                                                             "for the edge %1 on face %2."
+                                                          << edgeId << faceId);
+      return TCL_ERROR;
+    }
+
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "On-surface curvature for the edge %1 on face %2 "
+                                                            "in the midpoint is %3."
+                                                         << edgeId << faceId << k);
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -2870,4 +2941,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Takes out all non-located entities.",
     //
     __FILE__, group, ENGINE_IsolateRealParts);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-along-curvature",
+    //
+    "check-along-curvature\n"
+    "\t Checks on-surface curvature for the selected edge.",
+    //
+    __FILE__, group, ENGINE_CheckAlongCurvature);
 }

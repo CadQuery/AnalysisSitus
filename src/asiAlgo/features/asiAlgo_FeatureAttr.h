@@ -36,6 +36,7 @@
 
 // OCCT includes
 #include <Standard_GUID.hxx>
+#include <TCollection_AsciiString.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -62,6 +63,8 @@ public:
     GetName() const = 0;
 
 public:
+
+  virtual TCollection_AsciiString DumpInline() const { return ""; }
 
   virtual void Dump(Standard_OStream&) const {}
 

@@ -114,6 +114,13 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
         const Handle(asiAlgo_FeatureAttr)& attr = it.GetAttr();
         faceName += " / ";
         faceName += attr->DynamicType()->Name();
+
+        TCollection_AsciiString inlineDump = attr->DumpInline();
+        if ( !inlineDump.IsEmpty() )
+        {
+          faceName += " / ";
+          faceName += inlineDump.ToCString();
+        }
       }
     }
     else

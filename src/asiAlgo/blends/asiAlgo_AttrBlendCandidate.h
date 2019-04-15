@@ -78,6 +78,12 @@ public:
     return "blend candidate";
   }
 
+  //! \return brief dump.
+  virtual TCollection_AsciiString DumpInline() const
+  {
+    return (this->Kind == BlendType_Vertex) ? "vertex blend" : "";
+  }
+
 public:
 
   //! Dumps this attribute to the passed output stream.

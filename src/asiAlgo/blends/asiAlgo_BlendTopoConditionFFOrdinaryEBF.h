@@ -181,7 +181,7 @@ public:
     // be as much deterministic as possible.
     if ( !this->kev(output, this->e_b_c1, this->v_b_s1_c1, output, history) )
     {
-      m_progress.SendLogMessage(LogErr(Normal) << "KEV failed on cross edge.");
+      m_progress.SendLogMessage(LogErr(Normal) << "KEV failed on the first cross edge.");
       return false;
     }
     //
@@ -190,7 +190,7 @@ public:
     // Kill the second cross edge.
     if ( !this->kev(output, this->e_b_c2, this->v_b_s1_c2, output, history) )
     {
-      m_progress.SendLogMessage(LogErr(Normal) << "KEV failed on cross edge.");
+      m_progress.SendLogMessage(LogErr(Normal) << "KEV failed on the second cross edge.");
       return false;
     }
     //

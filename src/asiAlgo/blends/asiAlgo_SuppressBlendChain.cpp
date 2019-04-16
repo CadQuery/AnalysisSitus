@@ -464,7 +464,10 @@ bool
 
     const TopoDS_Edge& edge2Rebuild = m_workflow.edges2Rebuild.edges(k).edge;
     //
-    m_plotter.DRAW_SHAPE(edge2Rebuild, Color_Red, 1.0, true, "edge2Rebuild");
+    if ( edge2Rebuild.IsNull() )
+      continue; // Null image of the next edge to rebuild.
+    //
+    m_plotter.DRAW_SHAPE(edge2Rebuild, Color_Magenta, 1.0, true, "edge2Rebuild");
 
     // Update AAG.
     // TODO: full update of AAG is an overkill. It is better to adjust it.
@@ -479,6 +482,7 @@ bool
     // Apply geometric operator.
     if ( !rebuildEdge.Perform(edge2Rebuild) )
     {
+      m_plotter.DRAW_SHAPE(edge2Rebuild, Color_Red, 1.0, true, "edge2Rebuild_failed");
       m_progress.SendLogMessage(LogWarn(Normal) << "Cannot rebuild edge.");
       return false;
     }

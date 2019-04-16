@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_AttrBlendCandidate.h>
+#include <asiAlgo_AttrBlendSupport.h>
 #include <asiAlgo_FindCrossEdges.h>
 #include <asiAlgo_FindSmoothEdges.h>
 #include <asiAlgo_FindSpringEdges.h>
@@ -186,6 +187,27 @@ bool asiAlgo_RecognizeEBF::Perform(const int    fid,
   // Populate blend candidate attribute with smooth and spring edges.
   BlendAttr->SmoothEdgeIndices = smoothEdgeIndices;
   BlendAttr->SpringEdgeIndices = springEdgeIndices;
+
+  // Mark adjacent faces as support faces.
+  for ( int ek = 1; ek <= springEdges.Extent(); ++ek )
+  {
+    const TopoDS_Edge& springEdge = TopoDS::Edge( springEdges(ek) );
+
+    // Attribute support faces.
+    TColStd_PackedMapOfInteger
+      supportFaceIds = m_aag->GetNeighborsThru(fid, springEdge);
+    //
+    for ( TColStd_MapIteratorOfPackedMapOfInteger fit(supportFaceIds); fit.More(); fit.Next() )
+    {
+      const int supportFaceId = fit.Key();
+
+      // Prepare face attribute.
+      Handle(asiAlgo_AttrBlendSupport)
+        BlendSupportAttr = new asiAlgo_AttrBlendSupport(0);
+      //
+      m_aag->SetNodeAttribute(supportFaceId, BlendSupportAttr);
+    }
+  }
 
   /* ================================
    *  STAGE 3: Identify cross edges.

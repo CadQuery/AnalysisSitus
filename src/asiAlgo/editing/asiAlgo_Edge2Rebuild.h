@@ -85,18 +85,26 @@ struct asiAlgo_Edge2Rebuild
   void Actualize(const Handle(asiAlgo_History)& history)
   {
     // Update edge.
-    this->edge = TopoDS::Edge( history->GetLastModifiedOrArg(this->edge) );
-
-    // Update frozen vertices.
-    asiAlgo_FrozenVertices updatedVertices;
-    //
-    for ( int vidx = 1; vidx <= this->frozenVertices.GetNumOfVertices(); ++vidx )
+    if ( history->IsDeleted(this->edge) )
     {
-      TopoDS_Shape vertex = history->GetLastModifiedOrArg( this->frozenVertices(vidx) );
-      updatedVertices.Add(vertex);
+      this->edge.Nullify();
+      this->frozenVertices.vertices.Clear();
     }
-    //
-    this->frozenVertices = updatedVertices;
+    else
+    {
+      this->edge = TopoDS::Edge( history->GetLastModifiedOrArg(this->edge) );
+
+      // Update frozen vertices.
+      asiAlgo_FrozenVertices updatedVertices;
+      //
+      for ( int vidx = 1; vidx <= this->frozenVertices.GetNumOfVertices(); ++vidx )
+      {
+        TopoDS_Shape vertex = history->GetLastModifiedOrArg( this->frozenVertices(vidx) );
+        updatedVertices.Add(vertex);
+      }
+      //
+      this->frozenVertices = updatedVertices;
+    }
   }
 
   //! Hasher for data maps.

@@ -50,6 +50,9 @@
 //
 #define filename_bb_boxblend_03         "cad/blends/bb_boxblend_03.brep"
 #define filename_bb_boxblend_03_f29_ref "reference/aag/test_bb_boxblend_03_f29_ref.json"
+//
+#define filename_boxblend_05     "cad/blends/boxblend_05.brep"
+#define filename_boxblend_05_ref "reference/aag/test_boxblend_05_ref.json"
 
 //-----------------------------------------------------------------------------
 
@@ -119,6 +122,11 @@ outcome asiTest_RecognizeBlends::runtest(const int   funcID,
   std::string refJson = refBuffer.str();
   std::string json    = ss.str();
 
+  // Set description variables.
+  SetVarDescr("filename", filename,   ID(), funcID);
+  SetVarDescr("time",     res.time(), ID(), funcID);
+  SetVarDescr("fid",      seedFaceId, ID(), funcID);
+
   // Verify.
   if ( json != refJson )
   {
@@ -157,4 +165,14 @@ outcome asiTest_RecognizeBlends::test_bb_boxblend_03_f29(const int funcID)
                  filename_bb_boxblend_03,
                  filename_bb_boxblend_03_f29_ref,
                  29);
+}
+
+//-----------------------------------------------------------------------------
+
+outcome asiTest_RecognizeBlends::test_boxblend_05(const int funcID)
+{
+  return runtest(funcID,
+                 filename_boxblend_05,
+                 filename_boxblend_05_ref,
+                 0);
 }

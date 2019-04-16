@@ -4,12 +4,19 @@
 
 [1-*:OVERVIEW]
 
-  Recognition of blends and blend chains.
+  Recognition of blends and blend chains. The AAG obtained upon recognition is
+  dumped to JSON format and then compared with the pre-validated reference file.
 
 [1-*:DETAILS]
 
-  <b>Run to reproduce:</b>
-  <br>
-  <tt>source %%filename%%</tt>
+  <b>Test file:</b> <tt>%%filename%%</tt>
   <br><br>
   Elapsed time [s]: %%time%%
+  <br><br>
+  <tt>
+  > load-brep %%filename%%
+  <br>
+  > recognize-blends -fid %%fid%%
+  <br>
+  > show-aag
+  </tt>

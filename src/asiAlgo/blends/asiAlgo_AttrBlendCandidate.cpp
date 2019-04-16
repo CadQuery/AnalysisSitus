@@ -63,7 +63,7 @@ void asiAlgo_AttrBlendCandidate::Dump(Standard_OStream& out) const
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_AttrBlendCandidate::Dump(ActAPI_PlotterEntry plotter) const
+void asiAlgo_AttrBlendCandidate::DumpGraphically(ActAPI_PlotterEntry plotter) const
 {
   asiAlgo_AAG* pAAG = this->getAAG();
   const int    fid  = this->GetFaceId();
@@ -71,24 +71,29 @@ void asiAlgo_AttrBlendCandidate::Dump(ActAPI_PlotterEntry plotter) const
   if ( !pAAG || !pAAG->HasFace(fid) )
     return;
 
-  // Get map of edges
+  // Dump the face.
+  plotter.DRAW_SHAPE( pAAG->GetFace(fid),
+                      this->Kind == BlendType_Ordinary ? Color_Blue : Color_Magenta,
+                      "DUMP blend" );
+
+  // Get map of edges.
   const TopTools_IndexedMapOfShape& allEdges = pAAG->RequestMapOfEdges();
 
-  // Draw spring edges
+  // Draw spring edges.
   for ( TColStd_MapIteratorOfPackedMapOfInteger mit(this->SpringEdgeIndices);
         mit.More(); mit.Next() )
   {
     plotter.DRAW_SHAPE( allEdges.FindKey( mit.Key() ), Color_Green, 1.0, true, "DUMP spring edge" );
   }
 
-  // Draw cross edges
+  // Draw cross edges.
   for ( TColStd_MapIteratorOfPackedMapOfInteger mit(this->CrossEdgeIndices);
         mit.More(); mit.Next() )
   {
     plotter.DRAW_SHAPE( allEdges.FindKey( mit.Key() ), Color_Red, 1.0, true, "DUMP cross edge" );
   }
 
-  // Draw terminating edges
+  // Draw terminating edges.
   for ( TColStd_MapIteratorOfPackedMapOfInteger mit(this->TerminatingEdgeIndices);
         mit.More(); mit.Next() )
   {

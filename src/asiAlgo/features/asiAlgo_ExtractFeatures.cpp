@@ -102,6 +102,9 @@ bool asiAlgo_ExtractFeatures::Perform(const Handle(asiAlgo_AAG)&             aag
         if ( attr.IsNull() )
           return false; // Should never happen.
 
+        // Dump graphically.
+        attr->DumpGraphically(m_plotter);
+
         // Get group of face indices representing a single feature.
         TColStd_PackedMapOfInteger&
           feature = result->FindFeature( type, attr->GetFeatureId() );

@@ -67,8 +67,8 @@ namespace asiAlgo_AAGIterationRule
     //! \param[in] plottter  imperative plotter.
     RecognizeEdgeBlends(const Handle(asiAlgo_AAG)& aag,
                         const double               maxRadius,
-                        ActAPI_ProgressEntry       progress,
-                        ActAPI_PlotterEntry        plotter)
+                        ActAPI_ProgressEntry       progress = NULL,
+                        ActAPI_PlotterEntry        plotter  = NULL)
     : m_aag(aag), m_fMaxRadius(maxRadius), m_bBlockingModeOn(true)
     {
       m_localReco = new asiAlgo_RecognizeEBF(aag, progress, plotter);
@@ -241,8 +241,8 @@ bool asiAlgo_RecognizeBlends::Perform(const double radius)
   Handle(asiAlgo_AAGIterationRule::RecognizeEdgeBlends)
     ebfRule = new asiAlgo_AAGIterationRule::RecognizeEdgeBlends(m_aag,
                                                                 radius,
-                                                                m_progress,
-                                                                m_plotter);
+                                                                m_progress/*,
+                                                                m_plotter*/);
 
   // Rule is used in non-blocking mode to allow full traverse of the model
   // by neighbors.
@@ -313,6 +313,9 @@ bool asiAlgo_RecognizeBlends::Perform(const double radius)
 bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
                                       const double radius)
 {
+  if ( !faceId )
+    return this->Perform(radius);
+
   /* ===========================================
    *  Stage 1: build AAG (if not yet available)
    * =========================================== */
@@ -353,16 +356,12 @@ bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
                                                                 m_plotter);
 
   // Prepare neighborhood iterator with customized propagation rule.
-  int numRecognizedFaces = 0;
-  //
   asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::RecognizeEdgeBlends>
     ebfIt(m_aag, faceId, ebfRule);
   //
-  for ( ; ebfIt.More(); ebfIt.Next(), ++numRecognizedFaces )
+  while ( ebfIt.More() )
   {
-    const int fid = ebfIt.GetFaceId();
-
-    m_plotter.DRAW_SHAPE(m_aag->GetFace(fid), Color_Blue, 1.0, false, "blendCandidate");
+    ebfIt.Next();
   }
 
   /* ==================================
@@ -388,5 +387,24 @@ bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
     vbfIt.Next();
   }
 
-  return numRecognizedFaces > 0;
+  /* =============================================================
+   *  Stage 4: extract features from the attributes hooked in AAG
+   * ============================================================= */
+
+  // Prepare tool to extract features from AAG.
+  asiAlgo_ExtractFeatures extractor(m_progress, m_plotter);
+  extractor.RegisterFeatureType( FeatureType_BlendOrdinary,
+                                 asiAlgo_AttrBlendCandidate::GUID() );
+
+  // Extract features.
+  Handle(asiAlgo_ExtractFeaturesResult) featureRes;
+  if ( !extractor.Perform(m_aag, featureRes) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Feature extraction failed.");
+    return false;
+  }
+
+  // Set result.
+  featureRes->GetFaceIndices(m_result.ids);
+  return true;
 }

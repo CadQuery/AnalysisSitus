@@ -34,6 +34,9 @@
 // asiAlgo includes
 #include <asiAlgo.h>
 
+// Active Data includes
+#include <ActAPI_IPlotter.h>
+
 // OCCT includes
 #include <Standard_GUID.hxx>
 #include <TCollection_AsciiString.hxx>
@@ -64,9 +67,16 @@ public:
 
 public:
 
+  //! Dumps the attribute into a single line (to be used in titles).
+  //! \return brief one-line dump of the attribute.
   virtual TCollection_AsciiString DumpInline() const { return ""; }
 
-  virtual void Dump(Standard_OStream&) const {}
+  //! Dumps the attribute to the passed output stream.
+  //! \param[out] out target output stream.
+  virtual void Dump(Standard_OStream& out) const
+  {
+    asiAlgo_NotUsed(out);
+  }
 
   //! Dumps this attribute as a JSON object.
   //! \param[in,out] out       target output stream.
@@ -87,6 +97,13 @@ public:
     this->dumpJSON(out, numSpaces + 2);
     //
     out << "\n" << ws.c_str() << "}";
+  }
+
+  //! Dumps the attribute to the plotter.
+  //! \param[in] plotter plotter to dump the attribute.
+  virtual void DumpGraphically(ActAPI_PlotterEntry plotter) const
+  {
+    asiAlgo_NotUsed(plotter);
   }
 
 public:

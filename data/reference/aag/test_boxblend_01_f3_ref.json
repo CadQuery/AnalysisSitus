@@ -1,7 +1,13 @@
 {
   "nodes": {
     "1": {
-      "surface": "plane"
+      "surface": "plane",
+      "attributes": [
+        {
+          "guid": "5e0875bf-2779-4db4-9d26-667424ccc2c1",
+          "name": "blend support"
+        }
+      ]
     },
     "2": {
       "surface": "plane"
@@ -28,7 +34,13 @@
       "surface": "plane"
     },
     "6": {
-      "surface": "plane"
+      "surface": "plane",
+      "attributes": [
+        {
+          "guid": "5e0875bf-2779-4db4-9d26-667424ccc2c1",
+          "name": "blend support"
+        }
+      ]
     },
     "7": {
       "surface": "plane"

@@ -2432,10 +2432,24 @@ int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
                            int                          argc,
                            const char**                 argv)
 {
-  if ( argc != 1 && argc != 2 )
+  if ( argc != 1 && argc != 3 && argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
+
+  // Attempt to read the seed face.
+  int fid = 0;
+  TCollection_AsciiString fidStr;
+  //
+  if ( interp->GetKeyValue(argc, argv, "fid", fidStr) )
+    fid = fidStr.IntegerValue();
+
+  // Attempt to read the blend radius.
+  double maxRadius = 1e100;
+  TCollection_AsciiString maxRadiusStr;
+  //
+  if ( interp->GetKeyValue(argc, argv, "radius", maxRadiusStr) )
+    maxRadius = maxRadiusStr.RealValue();
 
   // Get part.
   Handle(asiData_PartNode)
@@ -2450,16 +2464,13 @@ int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
   TopoDS_Shape        partShape = partNode->GetShape();
   Handle(asiAlgo_AAG) partAAG   = partNode->GetAAG();
 
-  // Get max radius.
-  const double maxRadius = ( (argc == 1) ? 1e100 : atof(argv[1]) );
-
   // Perform recognition.
   asiAlgo_RecognizeBlends recognizer( partShape,
                                       partAAG,
                                       interp->GetProgress(),
                                       interp->GetPlotter() );
   //
-  if ( !recognizer.Perform(maxRadius) )
+  if ( !recognizer.Perform(fid, maxRadius) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Recognition failed.");
     return TCL_ERROR;
@@ -2913,8 +2924,10 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("recognize-blends",
     //
-    "recognize-blends radius\n"
-    "\t Recognizes all blend faces in AAG representing the part.",
+    "recognize-blends [-radius r] [-fid id]\n"
+    "\t Recognizes all blend faces in AAG representing the part. The optional\n"
+    "\t '-fid' key allows to specify the face ID to start recognition from.\n"
+    "\t The optional '-radius' key allows to limit the recognized radius.",
     //
     __FILE__, group, ENGINE_RecognizeBlends);
 

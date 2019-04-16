@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 16 October 2018
+// Created on: 15 April 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,63 +28,52 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiTest_RecognizeBlends_HeaderFile
-#define asiTest_RecognizeBlends_HeaderFile
+#ifndef asiAlgo_AttrBlendSupport_h
+#define asiAlgo_AttrBlendSupport_h
 
-// asiTest includes
-#include <asiTest_CaseIDs.h>
-#include <asiTest_TclTestCase.h>
+// asiAlgo includes
+#include <asiAlgo_BlendType.h>
+#include <asiAlgo_FeatureAttrFace.h>
 
-//! Test functions for recognizing blend chains.
-class asiTest_RecognizeBlends : public asiTestEngine_TestCase
+// Active Data includes
+#include <ActAPI_IPlotter.h>
+
+//-----------------------------------------------------------------------------
+
+//! Attribute to mark a face as a blend support face.
+class asiAlgo_AttrBlendSupport : public asiAlgo_FeatureAttrFace
 {
 public:
 
-  //! Returns Test Case ID.
-  //! \return ID of the Test Case.
-  static int ID()
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_AttrBlendSupport, asiAlgo_FeatureAttrFace)
+
+public:
+
+  //! Creates attribute with feature ID.
+  //! \param[in] featureId 1-based feature ID.
+  asiAlgo_AttrBlendSupport(const int featureId) : asiAlgo_FeatureAttrFace(featureId)
+  {}
+
+public:
+
+  //! \return static GUID associated with this type of attribute.
+  static const Standard_GUID& GUID()
   {
-    return CaseID_RecognizeBlends;
+    static Standard_GUID guid("5E0875BF-2779-4DB4-9D26-667424CCC2C1");
+    return guid;
   }
 
-  //! Returns filename for the description.
-  //! \return filename for the description of the Test Case.
-  static std::string DescriptionFn()
+  //! \return GUID associated with this type of attribute.
+  virtual const Standard_GUID& GetGUID() const override
   {
-    return "asiTest_RecognizeBlends";
+    return GUID();
   }
 
-  //! Returns Test Case description directory.
-  //! \return description directory for the Test Case.
-  static std::string DescriptionDir()
+  //! \return human-readable name of the attribute.
+  virtual const char* GetName() const override
   {
-    return "editing";
+    return "blend support";
   }
-
-  //! Returns pointers to the Test Functions to launch.
-  //! \param[out] functions output collection of pointers.
-  static void Functions(AsiTestFunctions& functions)
-  {
-    functions << &test_boxblend_01_f3
-              << &test_boxblend_02_f3
-              << &test_bb_boxblend_03_f29
-              << &test_boxblend_05
-    ; // Put semicolon here for convenient adding new functions above ;)
-  }
-
-private:
-
-  static outcome runtest(const int   funcID,
-                         const char* shortFilename,
-                         const char* shortFilenameRef,
-                         const int   seedFaceId);
-
-private:
-
-  static outcome test_boxblend_01_f3     (const int funcID);
-  static outcome test_boxblend_02_f3     (const int funcID);
-  static outcome test_bb_boxblend_03_f29 (const int funcID);
-  static outcome test_boxblend_05        (const int funcID);
 
 };
 

@@ -6,11 +6,11 @@
         {
           "guid": "7b7c2dd0-5bd6-429e-9b71-5f935bf1e815",
           "name": "blend candidate",
-          "kind": "ordinary",
-          "confirmed": "1",
-          "numSmoothEdges": "4",
-          "numSpringEdges": "2",
-          "numCrossEdges": "2",
+          "kind": "vertex",
+          "confirmed": "0",
+          "numSmoothEdges": "0",
+          "numSpringEdges": "0",
+          "numCrossEdges": "0",
           "numTerminatingEdges": "0"
         }
       ]
@@ -22,7 +22,7 @@
           "guid": "7b7c2dd0-5bd6-429e-9b71-5f935bf1e815",
           "name": "blend candidate",
           "kind": "ordinary",
-          "confirmed": "1",
+          "confirmed": "0",
           "numSmoothEdges": "3",
           "numSpringEdges": "2",
           "numCrossEdges": "1",
@@ -37,7 +37,7 @@
           "guid": "7b7c2dd0-5bd6-429e-9b71-5f935bf1e815",
           "name": "blend candidate",
           "kind": "ordinary",
-          "confirmed": "1",
+          "confirmed": "0",
           "numSmoothEdges": "3",
           "numSpringEdges": "2",
           "numCrossEdges": "1",
@@ -46,7 +46,13 @@
       ]
     },
     "4": {
-      "surface": "plane"
+      "surface": "plane",
+      "attributes": [
+        {
+          "guid": "5e0875bf-2779-4db4-9d26-667424ccc2c1",
+          "name": "blend support"
+        }
+      ]
     },
     "5": {
       "surface": "plane"
@@ -61,10 +67,14 @@
       "surface": "cylinder",
       "attributes": [
         {
+          "guid": "5e0875bf-2779-4db4-9d26-667424ccc2c1",
+          "name": "blend support"
+        },
+        {
           "guid": "7b7c2dd0-5bd6-429e-9b71-5f935bf1e815",
           "name": "blend candidate",
           "kind": "ordinary",
-          "confirmed": "1",
+          "confirmed": "0",
           "numSmoothEdges": "3",
           "numSpringEdges": "2",
           "numCrossEdges": "1",
@@ -124,13 +134,31 @@
       "surface": "plane"
     },
     "26": {
-      "surface": "plane"
+      "surface": "plane",
+      "attributes": [
+        {
+          "guid": "5e0875bf-2779-4db4-9d26-667424ccc2c1",
+          "name": "blend support"
+        }
+      ]
     },
     "27": {
-      "surface": "plane"
+      "surface": "plane",
+      "attributes": [
+        {
+          "guid": "5e0875bf-2779-4db4-9d26-667424ccc2c1",
+          "name": "blend support"
+        }
+      ]
     },
     "28": {
-      "surface": "plane"
+      "surface": "plane",
+      "attributes": [
+        {
+          "guid": "5e0875bf-2779-4db4-9d26-667424ccc2c1",
+          "name": "blend support"
+        }
+      ]
     },
     "29": {
       "surface": "cylinder",

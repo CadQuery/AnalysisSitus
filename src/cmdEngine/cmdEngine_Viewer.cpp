@@ -46,10 +46,7 @@ int ENGINE_Erase(const Handle(asiTcl_Interp)& interp,
                  int                          argc,
                  const char**                 argv)
 {
-  if ( argc < 2 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
+  bool erasePart = (argc == 1);
 
   for ( int k = 1; k < argc; ++k )
   {
@@ -70,6 +67,9 @@ int ENGINE_Erase(const Handle(asiTcl_Interp)& interp,
     else
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[k]);
   }
+
+  if ( erasePart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderPresentation( cmdEngine::model->GetPartNode() );
 
   // Repaint
   cmdEngine::cf->ViewerPart->Repaint();
@@ -234,7 +234,7 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("erase",
     //
-    "erase varName1 [varName2 ...]\n"
+    "erase [varName1 [varName2 ...]]\n"
     "\t Hides object in viewer.",
     //
     __FILE__, group, ENGINE_Erase);

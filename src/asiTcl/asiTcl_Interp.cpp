@@ -493,7 +493,7 @@ void asiTcl_Interp::GetAvailableCommands(std::vector<asiTcl_CommandInfo>& comman
 
 int asiTcl_Interp::ErrorOnWrongArgs(const char* cmd)
 {
-  std::cerr << "Error: wrong number of arguments in command " << cmd;
+  std::cerr << "Error: Wrong number of arguments in command " << cmd << ".";
   this->GetProgress().SendLogMessage(LogErr(Normal) << "Wrong number of arguments in command %1." << cmd);
 
   return TCL_ERROR;

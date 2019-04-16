@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_AttrBlendCandidate.h>
+#include <asiAlgo_AttrBlendSupport.h>
 #include <asiAlgo_FeatureAttrAdjacency.h>
 
 //-----------------------------------------------------------------------------
@@ -55,67 +56,143 @@ bool asiAlgo_RecognizeVBF::Perform(const int fid)
     return false;
   }
 
-  // Get face in question.
+  // Get candidate face.
   const TopoDS_Face& face = m_aag->GetFace(fid);
+
+  // Get face attribute which may already exist here if the VBF was
+  // recognized as a EBF previously.
+  Handle(asiAlgo_FeatureAttr)
+    blendAttrBase = m_aag->GetNodeAttribute( fid, asiAlgo_AttrBlendCandidate::GUID() );
+  //
+  Handle(asiAlgo_AttrBlendCandidate)
+    blendAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(blendAttrBase);
+
+  /* ------------------------------------------------- */
+  /* Heuristic 1: the face is not a blend support face */
+  /* ------------------------------------------------- */
+
+  Handle(asiAlgo_FeatureAttr)
+    supportAttrBase = m_aag->GetNodeAttribute( fid, asiAlgo_AttrBlendSupport::GUID() );
+  //
+  if ( !supportAttrBase.IsNull() )
+    return false;
+
+  /* -------------------------------------------------------- */
+  /* Heuristic 2: all VBFs have not less than 3 adjacent EBFs */
+  /* -------------------------------------------------------- */
 
   // Get the neighbor faces.
   const TColStd_PackedMapOfInteger& nids = m_aag->GetNeighbors(fid);
+
+  // Structure to add additionally recognized cross-edges. Those edges
+  // are collected when the heuristic is being checked, but not applied
+  // directly to the AAG. The edges will be added later, once all heuristics
+  // are done and the status of the vertex blend is confirmed.
+  struct t_crossEdge
+  {
+    Handle(asiAlgo_AttrBlendCandidate) EBF;    //!< EBF to adjust.
+    int                                edgeId; //!< New cross edge index.
+
+    t_crossEdge() : edgeId(0) {}
+    t_crossEdge(const Handle(asiAlgo_AttrBlendCandidate)& _ebf, const int _id) : EBF(_ebf), edgeId(_id) {}
+  };
+  //
+  std::vector<t_crossEdge> extraCrossEdges;
 
   // Among the neighbor faces, there should be some EBFs. At least three
   // EBFs are expected.
   int numEBFs = 0;
   //
-  TColStd_PackedMapOfInteger specialEdges, allEdges;
   for ( TColStd_MapIteratorOfPackedMapOfInteger nit(nids); nit.More(); nit.Next() )
   {
     const int nid = nit.Key();
 
-    Handle(asiAlgo_FeatureAttrAdjacency)
-      adjAttr = Handle(asiAlgo_FeatureAttrAdjacency)::DownCast( m_aag->GetArcAttribute( asiAlgo_AAG::t_arc(fid, nid) ) );
-    //
-    allEdges.Unite( adjAttr->GetEdgeIndices() );
+    // Get neighbor face.
+    const TopoDS_Face& neighborFace = m_aag->GetFace(nid);
 
     // Get blend candidate attribute.
     Handle(asiAlgo_FeatureAttr)
-      attr = m_aag->GetNodeAttribute( nid, asiAlgo_AttrBlendCandidate::GUID() );
+      neighborAttr = m_aag->GetNodeAttribute( nid, asiAlgo_AttrBlendCandidate::GUID() );
     //
-    if ( attr.IsNull() )
+    Handle(asiAlgo_AttrBlendCandidate)
+      neighborBcAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(neighborAttr);
+
+    // EBFs are marked with blend candidate attributes.
+    if ( neighborBcAttr.IsNull() )
       continue;
 
-    // Downcast.
-    Handle(asiAlgo_AttrBlendCandidate)
-      bcAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(attr);
+    if ( neighborBcAttr->Kind == BlendType_Vertex )
+      return false; // A vertex blend cannot have another vertex blend as a neighbor.
+                    // At least, we do not recognize such cases.
 
-    // Get common edge. This should be either a cross or a smooth edge.
-    TopoDS_Edge commonEdge   = asiAlgo_Utils::GetCommonEdge( face, m_aag->GetFace(nid) );
-    const int   commonEdgeId = m_aag->RequestMapOfEdges().FindIndex(commonEdge);
+    /*
+       Sometimes the adjacent EBF may have been recognized as a support face.
+       The latter happens if the blend face was initially recognized as EBF
+       itself. As this status of the blend face is going to be precised,
+       its adjacent EBF should receive the new cross edge index which is the
+       index of the edge shared with the blend face.
+     */
 
-    if ( !bcAttr->CrossEdgeIndices.Contains(commonEdgeId) &&
-         !bcAttr->SpringEdgeIndices.Contains(commonEdgeId) ) // Spring edges may be detected on VBFs.
-      return false; // All edges of a vertex blend are special.
+    // Get ID of the common edge between the candidate vertex blend and the
+    // neighbor EBF.
+    TopoDS_Edge commonEdge = asiAlgo_Utils::GetCommonEdge(face, neighborFace);
+    const int commonEdgeId = m_aag->RequestMapOfEdges().FindIndex(commonEdge);
 
-    specialEdges.Add(commonEdgeId);
+    extraCrossEdges.push_back( t_crossEdge(neighborBcAttr, commonEdgeId) );
+
+    // Increment the number of EBFs arriving at the candidate blend face to
+    // check the heuristic.
     numEBFs++;
   }
-
+  //
   if ( numEBFs < 3 )
     return false;
 
-  // If any edges remain unrecognized, the candidate face cannot be a VBF.
-  TColStd_PackedMapOfInteger unrecEdges = allEdges;
-  unrecEdges.Subtract(specialEdges);
-  //
-  if ( !unrecEdges.IsEmpty() )
-    return false;
+  /* ---------------------------------------------------------------- */
+  /* Heuristic 3: VBF cannot be adjacent to EBF via terminating edges */
+  /* ---------------------------------------------------------------- */
 
-  // Get face attribute which may already exist here if the VBF was
-  // recognized as a EBF previously.
-  Handle(asiAlgo_AttrBlendCandidate) blendAttr;
-  //
-  Handle(asiAlgo_FeatureAttr)
-    attr = m_aag->GetNodeAttribute( fid, asiAlgo_AttrBlendCandidate::GUID() );
-  //
-  if ( attr.IsNull() )
+  for ( TColStd_MapIteratorOfPackedMapOfInteger nit(nids); nit.More(); nit.Next() )
+  {
+    const int nid = nit.Key();
+
+    // Get neighbor face.
+    const TopoDS_Face& neighborFace = m_aag->GetFace(nid);
+
+    // Get blend candidate attribute.
+    Handle(asiAlgo_FeatureAttr)
+      neighborAttr = m_aag->GetNodeAttribute( nid, asiAlgo_AttrBlendCandidate::GUID() );
+    //
+    Handle(asiAlgo_AttrBlendCandidate)
+      neighborBcAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(neighborAttr);
+
+    // EBFs are marked with blend candidate attributes.
+    if ( neighborBcAttr.IsNull() )
+      continue;
+
+    // Get ID of the common edge between the candidate vertex blend and the
+    // neighbor EBF.
+    TopoDS_Edge commonEdge = asiAlgo_Utils::GetCommonEdge(face, neighborFace);
+    const int commonEdgeId = m_aag->RequestMapOfEdges().FindIndex(commonEdge);
+
+    // Check if the common edge is terminating or not.
+    if ( neighborBcAttr->TerminatingEdgeIndices.Contains(commonEdgeId) )
+      return false;
+  }
+
+  /* ------------------------------------------------- */
+  /*  Finalize recognition as all heuristics are done  */
+  /* ------------------------------------------------- */
+
+  // Add extra cross-edges.
+  for ( size_t k = 0; k < extraCrossEdges.size(); ++k )
+  {
+    extraCrossEdges[k].EBF->CrossEdgeIndices.Add(extraCrossEdges[k].edgeId);
+    extraCrossEdges[k].EBF->SpringEdgeIndices.Remove(extraCrossEdges[k].edgeId);
+  }
+
+  // If blend attribute is not available for this face, settle down a new one.
+  if ( blendAttr.IsNull() )
   {
     blendAttr = new asiAlgo_AttrBlendCandidate(0);
 
@@ -126,7 +203,12 @@ bool asiAlgo_RecognizeVBF::Perform(const int fid)
     }
   }
   else
-    blendAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(attr);
+  {
+    // Clean up the edges.
+    blendAttr->SmoothEdgeIndices.Clear();
+    blendAttr->SpringEdgeIndices.Clear();
+    blendAttr->CrossEdgeIndices.Clear();
+  }
 
   // Modify the attribute.
   blendAttr->Kind = BlendType_Vertex;

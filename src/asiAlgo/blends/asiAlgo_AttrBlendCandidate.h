@@ -92,9 +92,9 @@ public:
     Dump(Standard_OStream& out) const;
 
   //! Dumps this attribute to the passed plotter.
-  //! \param[in, out] imperative plotter.
+  //! \param[in,out] imperative plotter.
   asiAlgo_EXPORT virtual void
-    Dump(ActAPI_PlotterEntry plotter) const;
+    DumpGraphically(ActAPI_PlotterEntry plotter) const;
 
 protected:
 

@@ -54,6 +54,7 @@ public:
   asiAlgo_AttrBlendCandidate(const int featureId)
   : asiAlgo_FeatureAttrFace (featureId),
     Kind                    (BlendType_Uncertain),
+    Radius                  (0.),
     Confirmed               (false)
   {}
 
@@ -135,6 +136,7 @@ protected:
 public:
 
   asiAlgo_BlendType          Kind;                   //!< Blend type.
+  double                     Radius;                 //!< Actual radius.
   bool                       Confirmed;              //!< Confirmed/Unconfirmed blend.
   TColStd_PackedMapOfInteger SmoothEdgeIndices;      //!< Smooth edges.
   TColStd_PackedMapOfInteger SpringEdgeIndices;      //!< Spring edges.

@@ -40,6 +40,32 @@
 
 //-----------------------------------------------------------------------------
 
+class asiAlgo_FeatureAttrFace;
+
+//! \brief Function to filter the extracted faces by attributes.
+class asiAlgo_ExtractFeaturesFilter : public Standard_Transient
+{
+public:
+
+  // OCCT RTTI.
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_ExtractFeaturesFilter, Standard_Transient)
+
+public:
+
+  //! If the returned flag is true, the attribute and its corresponding
+  //! face is accepted.
+  //! \param[in] attr AAG node attribute to check.
+  //! \return true to accepts, false -- to deny.
+  virtual bool operator()(const Handle(asiAlgo_FeatureAttrFace)& attr) const
+  {
+    asiAlgo_NotUsed(attr);
+    return true;
+  }
+
+};
+
+//-----------------------------------------------------------------------------
+
 //! \brief Extracts feature faces from AAG using the hooked attributes.
 //!        This tool is designed to finalize feature recognition process.
 //!
@@ -98,11 +124,13 @@ public:
   //!
   //! \param[in]  aag    AAG to extract features from.
   //! \param[out] result extracted features.
+  //! \param[in]  filter filering functor.
   //!
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    Perform(const Handle(asiAlgo_AAG)&             aag,
-            Handle(asiAlgo_ExtractFeaturesResult)& result) const;
+    Perform(const Handle(asiAlgo_AAG)&                   aag,
+            Handle(asiAlgo_ExtractFeaturesResult)&       result,
+            const Handle(asiAlgo_ExtractFeaturesFilter)& filter = NULL) const;
 
   //! \brief Performs extraction for the given feature type only.
   //!
@@ -112,12 +140,14 @@ public:
   //! \param[in]      aag    AAG to extract features from.
   //! \param[in]      type   feature type of interest.
   //! \param[in, out] result extracted features.
+  //! \param[in]      filter filering functor.
   //!
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    PerformForType(const Handle(asiAlgo_AAG)&             aag,
-                   const int                              type,
-                   Handle(asiAlgo_ExtractFeaturesResult)& result) const;
+    PerformForType(const Handle(asiAlgo_AAG)&                   aag,
+                   const int                                    type,
+                   Handle(asiAlgo_ExtractFeaturesResult)&       result,
+                   const Handle(asiAlgo_ExtractFeaturesFilter)& filter = NULL) const;
 
 protected:
 

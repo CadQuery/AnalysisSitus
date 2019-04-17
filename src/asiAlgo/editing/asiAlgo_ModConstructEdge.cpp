@@ -317,11 +317,20 @@ bool asiAlgo_ModConstructEdge::NewCurve2d(const TopoDS_Edge&    E,
   if ( !E.IsPartner(m_edgeInfo.situation.e_s1_s2) )
     return false;
 
-  Handle(Geom2d_Curve) c2d = this->buildPCurve(NewE, NewF);
-  //
+  Handle(Geom2d_Curve) c2d;
+
+  try
+  {
+    c2d = this->buildPCurve(NewE, NewF);
+  }
+  catch ( ... )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Crash on constructing p-curve.");
+  }
+
   if ( c2d.IsNull() )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Cannot fix p-curve");
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot fix p-curve.");
 
     this->SetErrorStateOn();
     return false;

@@ -156,9 +156,11 @@ bool asiAlgo_RecognizeEBF::Perform(const int    fid,
 
   // Prepare face attribute.
   Handle(asiAlgo_AttrBlendCandidate)
-    BlendAttr = new asiAlgo_AttrBlendCandidate(0);
+    blendAttr = new asiAlgo_AttrBlendCandidate(0);
   //
-  if ( !m_aag->SetNodeAttribute(fid, BlendAttr) )
+  blendAttr->Radius = candidateRadius;
+  //
+  if ( !m_aag->SetNodeAttribute(fid, blendAttr) )
   {
     this->GetProgress().SendLogMessage( LogErr(Normal) << "Weird iteration: blend attribute is already there." );
     return false;
@@ -171,9 +173,9 @@ bool asiAlgo_RecognizeEBF::Perform(const int    fid,
   const int nSpringEdges = springEdges.Extent();
   //
   if ( nSpringEdges == 2 )
-    BlendAttr->Kind = BlendType_Ordinary;
+    blendAttr->Kind = BlendType_Ordinary;
   else if ( nSpringEdges == 1)
-    BlendAttr->Kind = BlendType_Cliff;
+    blendAttr->Kind = BlendType_Cliff;
   else
     return false;
 
@@ -185,8 +187,8 @@ bool asiAlgo_RecognizeEBF::Perform(const int    fid,
   }
 
   // Populate blend candidate attribute with smooth and spring edges.
-  BlendAttr->SmoothEdgeIndices = smoothEdgeIndices;
-  BlendAttr->SpringEdgeIndices = springEdgeIndices;
+  blendAttr->SmoothEdgeIndices = smoothEdgeIndices;
+  blendAttr->SpringEdgeIndices = springEdgeIndices;
 
   // Mark adjacent faces as support faces.
   for ( int ek = 1; ek <= springEdges.Extent(); ++ek )
@@ -203,9 +205,9 @@ bool asiAlgo_RecognizeEBF::Perform(const int    fid,
 
       // Prepare face attribute.
       Handle(asiAlgo_AttrBlendSupport)
-        BlendSupportAttr = new asiAlgo_AttrBlendSupport(0);
+        blendSupportAttr = new asiAlgo_AttrBlendSupport(0);
       //
-      m_aag->SetNodeAttribute(supportFaceId, BlendSupportAttr);
+      m_aag->SetNodeAttribute(supportFaceId, blendSupportAttr);
     }
   }
 
@@ -233,7 +235,7 @@ bool asiAlgo_RecognizeEBF::Perform(const int    fid,
   //
   if ( nCrossEdges == 1 || nCrossEdges == 2 )
   {
-    BlendAttr->Confirmed = true;
+    blendAttr->Confirmed = true;
   }
 
   for ( int eidx = 1; eidx <= nCrossEdges; ++eidx )
@@ -242,7 +244,7 @@ bool asiAlgo_RecognizeEBF::Perform(const int    fid,
   }
 
   // Populate blend candidate attribute with cross edges.
-  BlendAttr->CrossEdgeIndices = crossEdgeIndices;
+  blendAttr->CrossEdgeIndices = crossEdgeIndices;
 
   /* ======================================
    *  STAGE 4: Identify terminating edges.
@@ -269,7 +271,7 @@ bool asiAlgo_RecognizeEBF::Perform(const int    fid,
   //
   if ( nTerminatingEdges == 2 )
   {
-    BlendAttr->Confirmed = true;
+    blendAttr->Confirmed = true;
   }
 
   for ( int eidx = 1; eidx <= nTerminatingEdges; ++eidx )
@@ -278,7 +280,7 @@ bool asiAlgo_RecognizeEBF::Perform(const int    fid,
   }
 
   // Populate blend candidate attribute with terminating edges.
-  BlendAttr->TerminatingEdgeIndices = terminatingEdgeIndices;
+  blendAttr->TerminatingEdgeIndices = terminatingEdgeIndices;
 
   return true;
 }

@@ -101,7 +101,8 @@ bool asiAlgo_RecognizeVBF::Perform(const int fid)
 
   // Among the neighbor faces, there should be some EBFs. At least three
   // EBFs are expected.
-  int numEBFs = 0;
+  int    numEBFs   = 0;
+  double maxRadius = 0.; // Max radius of EBFs meeting at VBF will be assigned to VBF attribute.
   //
   for ( TColStd_MapIteratorOfPackedMapOfInteger nit(nids); nit.More(); nit.Next() )
   {
@@ -143,6 +144,10 @@ bool asiAlgo_RecognizeVBF::Perform(const int fid)
     // Increment the number of EBFs arriving at the candidate blend face to
     // check the heuristic.
     numEBFs++;
+
+    // Update max radius.
+    if ( neighborBcAttr->Radius > maxRadius )
+      maxRadius = neighborBcAttr->Radius;
   }
   //
   if ( numEBFs < 3 )
@@ -211,7 +216,8 @@ bool asiAlgo_RecognizeVBF::Perform(const int fid)
   }
 
   // Modify the attribute.
-  blendAttr->Kind = BlendType_Vertex;
+  blendAttr->Radius = maxRadius;
+  blendAttr->Kind   = BlendType_Vertex;
 
   return true;
 }

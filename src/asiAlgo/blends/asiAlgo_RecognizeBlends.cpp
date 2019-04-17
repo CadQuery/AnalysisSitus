@@ -46,6 +46,50 @@
 
 //-----------------------------------------------------------------------------
 
+//! \brief Function to filter the extracted blend candidates by radius.
+class asiAlgo_ExtractBlendsFilter : public asiAlgo_ExtractFeaturesFilter
+{
+public:
+
+  // OCCT RTTI.
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_ExtractBlendsFilter, asiAlgo_ExtractFeaturesFilter)
+
+public:
+
+  //! If the returned flag is true, the attribute and its corresponding
+  //! face is accepted.
+  //! \param[in] attr AAG node attribute to check.
+  //! \return true to accepts, false -- to deny.
+  virtual bool operator()(const Handle(asiAlgo_FeatureAttrFace)& attr) const
+  {
+    Handle(asiAlgo_AttrBlendCandidate)
+      bcAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(attr);
+    //
+    if ( bcAttr.IsNull() )
+      return false;
+
+    // Filter by radius.
+    if ( bcAttr->Radius > m_fMaxR )
+      return false;
+
+    return true;
+  }
+
+public:
+
+  //! Ctor accepting the max allowed radius.
+  //! \param[in] r max allowed radius to use for filtering.
+  asiAlgo_ExtractBlendsFilter(const double r) : asiAlgo_ExtractFeaturesFilter(), m_fMaxR(r) {}
+
+private:
+
+  double m_fMaxR; //!< Max allowed radius.
+
+};
+
+
+//-----------------------------------------------------------------------------
+
 //! Namespace for all AAG iteration rules used by blends recognizer.
 namespace asiAlgo_AAGIterationRule
 {
@@ -295,9 +339,13 @@ bool asiAlgo_RecognizeBlends::Perform(const double radius)
   extractor.RegisterFeatureType( FeatureType_BlendOrdinary,
                                  asiAlgo_AttrBlendCandidate::GUID() );
 
+  // Use extraction filter.
+  Handle(asiAlgo_ExtractBlendsFilter)
+    filter = new asiAlgo_ExtractBlendsFilter(radius);
+
   // Extract features.
   Handle(asiAlgo_ExtractFeaturesResult) featureRes;
-  if ( !extractor.Perform(m_aag, featureRes) )
+  if ( !extractor.Perform(m_aag, featureRes, filter) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Feature extraction failed.");
     return false;
@@ -396,9 +444,13 @@ bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
   extractor.RegisterFeatureType( FeatureType_BlendOrdinary,
                                  asiAlgo_AttrBlendCandidate::GUID() );
 
+  // Use extraction filter.
+  Handle(asiAlgo_ExtractBlendsFilter)
+    filter = new asiAlgo_ExtractBlendsFilter(radius);
+
   // Extract features.
   Handle(asiAlgo_ExtractFeaturesResult) featureRes;
-  if ( !extractor.Perform(m_aag, featureRes) )
+  if ( !extractor.Perform(m_aag, featureRes, filter) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Feature extraction failed.");
     return false;

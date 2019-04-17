@@ -61,8 +61,9 @@ bool asiAlgo_ExtractFeatures::RegisterFeatureType(const int            type,
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_ExtractFeatures::Perform(const Handle(asiAlgo_AAG)&             aag,
-                                      Handle(asiAlgo_ExtractFeaturesResult)& result) const
+bool asiAlgo_ExtractFeatures::Perform(const Handle(asiAlgo_AAG)&                   aag,
+                                      Handle(asiAlgo_ExtractFeaturesResult)&       result,
+                                      const Handle(asiAlgo_ExtractFeaturesFilter)& filter) const
 {
   // Prepare result.
   if ( result.IsNull() )
@@ -102,6 +103,10 @@ bool asiAlgo_ExtractFeatures::Perform(const Handle(asiAlgo_AAG)&             aag
         if ( attr.IsNull() )
           return false; // Should never happen.
 
+        // Filter out the extracted attribute.
+        if ( !filter.IsNull() && !(*filter)(attr) )
+          continue;
+
         // Dump graphically.
         attr->DumpGraphically(m_plotter);
 
@@ -120,9 +125,10 @@ bool asiAlgo_ExtractFeatures::Perform(const Handle(asiAlgo_AAG)&             aag
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_ExtractFeatures::PerformForType(const Handle(asiAlgo_AAG)&             aag,
-                                             const int                              type,
-                                             Handle(asiAlgo_ExtractFeaturesResult)& result) const
+bool asiAlgo_ExtractFeatures::PerformForType(const Handle(asiAlgo_AAG)&                   aag,
+                                             const int                                    type,
+                                             Handle(asiAlgo_ExtractFeaturesResult)&       result,
+                                             const Handle(asiAlgo_ExtractFeaturesFilter)& filter) const
 {
   // Prepare result.
   if ( result.IsNull() )
@@ -148,6 +154,10 @@ bool asiAlgo_ExtractFeatures::PerformForType(const Handle(asiAlgo_AAG)&         
       //
       if ( attr.IsNull() )
         return false; // Should never happen.
+
+      // Filter out the extracted attribute.
+      if ( !filter.IsNull() && !(*filter)(attr) )
+        continue;
 
       // Get group of face indices representing a single feature.
       TColStd_PackedMapOfInteger&

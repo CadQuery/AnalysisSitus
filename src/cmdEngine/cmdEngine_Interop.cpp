@@ -211,6 +211,34 @@ int ENGINE_DumpAAGJSON(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_LoadPoints(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  TCollection_AsciiString filename(argv[2]);
+
+  // Load point cloud
+  Handle(asiAlgo_BaseCloud<double>) cloud = new asiAlgo_BaseCloud<double>;
+  //
+  if ( !cloud->Load( filename.ToCString() ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot load point cloud.");
+    return TCL_ERROR;
+  }
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Point cloud was loaded successfully.");
+
+  interp->GetPlotter().REDRAW_POINTS(argv[1], cloud->GetCoordsArray(), Color_White);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -250,4 +278,12 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
     "\t Dumps AAG of the active part to JSON file.",
     //
     __FILE__, group, ENGINE_DumpAAGJSON);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("load-points",
+    //
+    "load-points name filename\n"
+    "\t Loads points from file to the point cloud with the given name.",
+    //
+    __FILE__, group, ENGINE_LoadPoints);
 }

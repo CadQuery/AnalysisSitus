@@ -208,23 +208,23 @@ public:
   //! \param[in] history modification history to apply.
   virtual void Actualize(const Handle(asiAlgo_History)& history)
   {
-    this->f_b       = TopoDS::Face   ( history->GetLastModifiedOrArg(this->f_b) );
-    this->f_s1      = TopoDS::Face   ( history->GetLastModifiedOrArg(this->f_s1) );
-    this->f_s2      = TopoDS::Face   ( history->GetLastModifiedOrArg(this->f_s2) );
-    this->f_t1      = TopoDS::Face   ( history->GetLastModifiedOrArg(this->f_t1) );
-    this->f_t2      = TopoDS::Face   ( history->GetLastModifiedOrArg(this->f_t2) );
-    this->e_b_t1    = TopoDS::Edge   ( history->GetLastModifiedOrArg(this->e_b_t1) );
-    this->e_b_t2    = TopoDS::Edge   ( history->GetLastModifiedOrArg(this->e_b_t2) );
-    this->e_b_s1    = TopoDS::Edge   ( history->GetLastModifiedOrArg(this->e_b_s1) );
-    this->e_b_s2    = TopoDS::Edge   ( history->GetLastModifiedOrArg(this->e_b_s2) );
-    this->e_s1_t1   = TopoDS::Edge   ( history->GetLastModifiedOrArg(this->e_s1_t1) );
-    this->e_s1_t2   = TopoDS::Edge   ( history->GetLastModifiedOrArg(this->e_s1_t2) );
-    this->e_s2_t1   = TopoDS::Edge   ( history->GetLastModifiedOrArg(this->e_s2_t1) );
-    this->e_s2_t2   = TopoDS::Edge   ( history->GetLastModifiedOrArg(this->e_s2_t2) );
-    this->v_b_s1_t1 = TopoDS::Vertex ( history->GetLastModifiedOrArg(this->v_b_s1_t1) );
-    this->v_b_s1_t2 = TopoDS::Vertex ( history->GetLastModifiedOrArg(this->v_b_s1_t2) );
-    this->v_b_s2_t1 = TopoDS::Vertex ( history->GetLastModifiedOrArg(this->v_b_s2_t1) );
-    this->v_b_s2_t2 = TopoDS::Vertex ( history->GetLastModifiedOrArg(this->v_b_s2_t2) );
+    this->f_b       = TopoDS::Face   ( history->GetLastImageOrArg(this->f_b) );
+    this->f_s1      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_s1) );
+    this->f_s2      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_s2) );
+    this->f_t1      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_t1) );
+    this->f_t2      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_t2) );
+    this->e_b_t1    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_t1) );
+    this->e_b_t2    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_t2) );
+    this->e_b_s1    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_s1) );
+    this->e_b_s2    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_s2) );
+    this->e_s1_t1   = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_s1_t1) );
+    this->e_s1_t2   = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_s1_t2) );
+    this->e_s2_t1   = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_s2_t1) );
+    this->e_s2_t2   = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_s2_t2) );
+    this->v_b_s1_t1 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s1_t1) );
+    this->v_b_s1_t2 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s1_t2) );
+    this->v_b_s2_t1 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s2_t1) );
+    this->v_b_s2_t2 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s2_t2) );
   }
 
   //! Gathers the collection of affected edges to rebuild as a result of

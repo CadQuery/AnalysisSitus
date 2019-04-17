@@ -368,6 +368,19 @@ public:
   asiAlgo_EXPORT TopoDS_Shape
     GetLastModifiedOrArg(const TopoDS_Shape& shape) const;
 
+  //! \brief Returns last image of the given shape or the shape itself.
+  //!
+  //! This method is similar to GetLastImageOrArg(). Howeverm if the shape
+  //! in question was deleted, it results an empty shape.
+  //!
+  //! \param[in] shape (sub-)shape in question.
+  //!
+  //! \return argument shape if no modified (sub-)shapes are available for
+  //!         the (sub-)shape in question. Else, the first image or null shape
+  //!         is returned.
+  asiAlgo_EXPORT TopoDS_Shape
+    GetLastImageOrArg(const TopoDS_Shape& shape) const;
+
   //! \brief Checks whether the given (sub-)shape is modified.
   //!
   //! This method simply checks if there are any modification records for

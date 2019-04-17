@@ -155,6 +155,16 @@ TopoDS_Shape
 
 //-----------------------------------------------------------------------------
 
+TopoDS_Shape asiAlgo_History::GetLastImageOrArg(const TopoDS_Shape& shape) const
+{
+  if ( this->IsDeleted(shape) )
+    return TopoDS_Shape();
+
+  return this->GetLastModifiedOrArg(shape);
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_History::IsModified(const TopoDS_Shape& shape) const
 {
   // Get item for the shape in question.

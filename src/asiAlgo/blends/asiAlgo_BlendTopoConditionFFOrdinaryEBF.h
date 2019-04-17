@@ -179,7 +179,7 @@ public:
 
     // Kill the first cross edge. We also specify a vertex to kill to
     // be as much deterministic as possible.
-    if ( !this->kev(output, this->e_b_c1, this->v_b_s1_c1, output, history) )
+    if ( !this->e_b_c1.IsNull() && !this->kev(output, this->e_b_c1, this->v_b_s1_c1, output, history) )
     {
       m_progress.SendLogMessage(LogErr(Normal) << "KEV failed on the first cross edge.");
       return false;
@@ -188,7 +188,7 @@ public:
     this->Actualize(history);
 
     // Kill the second cross edge.
-    if ( !this->kev(output, this->e_b_c2, this->v_b_s1_c2, output, history) )
+    if ( !this->e_b_c2.IsNull() && !this->kev(output, this->e_b_c2, this->v_b_s1_c2, output, history) )
     {
       m_progress.SendLogMessage(LogErr(Normal) << "KEV failed on the second cross edge.");
       return false;
@@ -213,24 +213,24 @@ public:
   //! \param[in] history modification history to apply.
   virtual void Actualize(const Handle(asiAlgo_History)& history)
   {
-    this->f_b       = TopoDS::Face   ( history->GetLastModifiedOrArg(this->f_b) );
-    this->f_s1      = TopoDS::Face   ( history->GetLastModifiedOrArg(this->f_s1) );
-    this->f_s2      = TopoDS::Face   ( history->GetLastModifiedOrArg(this->f_s2) );
-    this->f_c1      = TopoDS::Face   ( history->GetLastModifiedOrArg(this->f_c1) );
-    this->f_c2      = TopoDS::Face   ( history->GetLastModifiedOrArg(this->f_c2) );
-    this->e_b_c1    = TopoDS::Edge   ( history->GetLastModifiedOrArg(this->e_b_c1) );
-    this->e_b_c2    = TopoDS::Edge   ( history->GetLastModifiedOrArg(this->e_b_c2) );
-    this->e_b_s1    = TopoDS::Edge   ( history->GetLastModifiedOrArg(this->e_b_s1) );
-    this->e_b_s2    = TopoDS::Edge   ( history->GetLastModifiedOrArg(this->e_b_s2) );
-    this->v_b_s1_c1 = TopoDS::Vertex ( history->GetLastModifiedOrArg(this->v_b_s1_c1) );
-    this->v_b_s1_c2 = TopoDS::Vertex ( history->GetLastModifiedOrArg(this->v_b_s1_c2) );
-    this->v_b_s2_c1 = TopoDS::Vertex ( history->GetLastModifiedOrArg(this->v_b_s2_c1) );
-    this->v_b_s2_c2 = TopoDS::Vertex ( history->GetLastModifiedOrArg(this->v_b_s2_c2) );
+    this->f_b       = TopoDS::Face   ( history->GetLastImageOrArg(this->f_b) );
+    this->f_s1      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_s1) );
+    this->f_s2      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_s2) );
+    this->f_c1      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_c1) );
+    this->f_c2      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_c2) );
+    this->e_b_c1    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_c1) );
+    this->e_b_c2    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_c2) );
+    this->e_b_s1    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_s1) );
+    this->e_b_s2    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_s2) );
+    this->v_b_s1_c1 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s1_c1) );
+    this->v_b_s1_c2 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s1_c2) );
+    this->v_b_s2_c1 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s2_c1) );
+    this->v_b_s2_c2 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s2_c2) );
 
     // Update extra edges.
     TopTools_IndexedMapOfShape e_extra_updated;
     for ( int k = 1; k <= e_extra.Extent(); ++k )
-      e_extra_updated.Add( TopoDS::Edge( history->GetLastModifiedOrArg( this->e_extra(k) ) ) );
+      e_extra_updated.Add( TopoDS::Edge( history->GetLastImageOrArg( this->e_extra(k) ) ) );
   }
 
   //! Gathers the collection of affected edges to rebuild as a result of

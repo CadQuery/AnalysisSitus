@@ -111,7 +111,7 @@ public:
   //! \param[in] history modification history to apply.
   virtual void Actualize(const Handle(asiAlgo_History)& history)
   {
-    this->f_b = TopoDS::Face( history->GetLastModifiedOrArg(this->f_b) );
+    this->f_b = TopoDS::Face( history->GetLastImageOrArg(this->f_b) );
   }
 
   //! Gathers the collection of affected edges to rebuild as a result of

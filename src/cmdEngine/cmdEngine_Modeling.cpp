@@ -41,6 +41,7 @@
 #include <asiTcl_PluginMacro.h>
 
 // asiAlgo includes
+#include <asiAlgo_MeshDeform.h>
 #include <asiAlgo_MeshOBB.h>
 #include <asiAlgo_MeshOffset.h>
 #include <asiAlgo_Utils.h>
@@ -1040,6 +1041,74 @@ int ENGINE_BuildTriangulationOBB(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_DeformTriangulation(const Handle(asiTcl_Interp)& interp,
+                               int                          argc,
+                               const char**                 argv)
+{
+  if ( argc != 4 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Triangulaion.
+  Handle(asiData_TriangulationNode) tris_n = cmdEngine::model->GetTriangulationNode();
+  //
+  if ( tris_n.IsNull() || !tris_n->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation is null.");
+    return TCL_ERROR;
+  }
+  //
+  Handle(Poly_Triangulation) triangulation = tris_n->GetTriangulation();
+
+  // Get deformation ratios.
+  const double ratioX = atof(argv[1]);
+  const double ratioY = atof(argv[2]);
+  const double ratioZ = atof(argv[3]);
+
+  // Compute bounds.
+  double xMin, yMin, zMin, xMax, yMax, zMax;
+  if ( !asiAlgo_Utils::Bounds(triangulation, xMin, yMin, zMin, xMax, yMax, zMax) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot compute bounds for the input triangulation.");
+    return TCL_ERROR;
+  }
+
+  double corners[6] = {xMin, yMin, zMin, xMax, yMax, zMax};
+
+  // Deform mesh.
+  asiAlgo_MeshDeform mkDeformation( corners,
+                                    ratioX,
+                                    ratioY,
+                                    ratioZ,
+                                    interp->GetProgress(),
+                                    interp->GetPlotter() );
+  //
+  if ( !mkDeformation.Perform( triangulation, TopLoc_Location() ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Operation failed.");
+    return TCL_ERROR;
+  }
+
+  // Get result.
+  const Handle(Poly_Triangulation)&
+    defTriangulation = mkDeformation.GetResult();
+
+  // Update mesh.
+  cmdEngine::model->OpenCommand();
+  {
+    tris_n->SetTriangulation(defTriangulation);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(tris_n);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                                   const Handle(Standard_Transient)& data)
 {
@@ -1203,4 +1272,12 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Builds oriented bounding box (OBB) for triangulation.",
     //
     __FILE__, group, ENGINE_BuildTriangulationOBB);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("deform-triangulation",
+    //
+    "deform-triangulation\n"
+    "\t Deforms triangulation in a random way.",
+    //
+    __FILE__, group, ENGINE_DeformTriangulation);
 }

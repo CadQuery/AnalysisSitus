@@ -143,6 +143,13 @@ bool asiAlgo_BRepNormalizer::Perform(const Handle(asiAlgo_BRepNormalization)& M)
   bool aNewGeom;
   this->rebuildRecursively(myShape, M, aNewGeom);
 
+  // Check error state after recursive invocation.
+  if ( M->IsErrorState() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Internal error in normalization tool.");
+    return false;
+  }
+
   if (myShape.ShapeType() == TopAbs_FACE)
   {
     if (myShape.Orientation() == TopAbs_REVERSED)
@@ -374,112 +381,122 @@ bool asiAlgo_BRepNormalizer::rebuildRecursively(const TopoDS_Shape&             
 #ifdef DEBUG_Modifier
         iE = MapE.Contains(edge) ? MapE.FindIndex(edge) : 0;
 #endif
-        if ( newGeom &&
-             M->NewCurve2d(edge, face, TopoDS::Edge(myMap(ex.Current())), TopoDS::Face(result), curve2d, tol) )
+        if ( newGeom )
         {
-          // rem dub 16/09/97 : Make constant topology or not make at all.
-          // Do not make if CopySurface = 1
-          // Atention, TRUE sewing edges (RealyClosed)  
-          // stay even if  CopySurface is true.
-    
-          // check that edge contains two pcurves on this surface:
-          // either it is true seam on the current face, or belongs to two faces
-          // built on that same surface (see OCC21772)
-          // Note: this check could be made separate method in BRepTools
-          bool isClosed = false;
-          if( BRep_Tool::IsClosed(edge,face) )
+          const bool isC2dOk = M->NewCurve2d(edge, face, TopoDS::Edge(myMap(ex.Current())), TopoDS::Face(result), curve2d, tol);
+
+          if ( isC2dOk)
           {
-            isClosed = ( ! newgeom || BRepTools::IsReallyClosed(edge,face) );
-            if ( ! isClosed )
+            // rem dub 16/09/97 : Make constant topology or not make at all.
+            // Do not make if CopySurface = 1
+            // Atention, TRUE sewing edges (RealyClosed)  
+            // stay even if  CopySurface is true.
+    
+            // check that edge contains two pcurves on this surface:
+            // either it is true seam on the current face, or belongs to two faces
+            // built on that same surface (see OCC21772)
+            // Note: this check could be made separate method in BRepTools
+            bool isClosed = false;
+            if( BRep_Tool::IsClosed(edge,face) )
             {
-              TopLoc_Location aLoc;
-              TopoDS_Shape resface = (myMap.IsBound(face) ? myMap(face) : face);
-              if(resface.IsNull())
-                resface = face;
-              Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(resface), aLoc);
-              // check other faces sharing the same surface
-              TopExp_Explorer aExpF(myShape,TopAbs_FACE);
-              for( ; aExpF.More() && !isClosed; aExpF.Next())
+              isClosed = ( ! newgeom || BRepTools::IsReallyClosed(edge,face) );
+              if ( ! isClosed )
               {
-                TopoDS_Face anOther = TopoDS::Face(aExpF.Current());
-                if(anOther.IsSame(face))
-                  continue;
-                TopoDS_Shape resface2 = (myMap.IsBound(anOther) ? myMap(anOther) : anOther);
-                if(resface2.IsNull())
-                  resface2 = anOther;
-                TopLoc_Location anOtherLoc;
-                Handle(Geom_Surface) anOtherSurf = 
-                  BRep_Tool::Surface(TopoDS::Face(resface2), anOtherLoc);
-                if ( aSurf == anOtherSurf && aLoc.IsEqual (anOtherLoc) )
+                TopLoc_Location aLoc;
+                TopoDS_Shape resface = (myMap.IsBound(face) ? myMap(face) : face);
+                if(resface.IsNull())
+                  resface = face;
+                Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(resface), aLoc);
+                // check other faces sharing the same surface
+                TopExp_Explorer aExpF(myShape,TopAbs_FACE);
+                for( ; aExpF.More() && !isClosed; aExpF.Next())
                 {
-                  TopExp_Explorer aExpE(anOther,TopAbs_EDGE);
-                  for( ; aExpE.More() && !isClosed ; aExpE.Next())
-                    isClosed = edge.IsSame(aExpE.Current());
+                  TopoDS_Face anOther = TopoDS::Face(aExpF.Current());
+                  if(anOther.IsSame(face))
+                    continue;
+                  TopoDS_Shape resface2 = (myMap.IsBound(anOther) ? myMap(anOther) : anOther);
+                  if(resface2.IsNull())
+                    resface2 = anOther;
+                  TopLoc_Location anOtherLoc;
+                  Handle(Geom_Surface) anOtherSurf = 
+                    BRep_Tool::Surface(TopoDS::Face(resface2), anOtherLoc);
+                  if ( aSurf == anOtherSurf && aLoc.IsEqual (anOtherLoc) )
+                  {
+                    TopExp_Explorer aExpE(anOther,TopAbs_EDGE);
+                    for( ; aExpE.More() && !isClosed ; aExpE.Next())
+                      isClosed = edge.IsSame(aExpE.Current());
+                  }
                 }
               }
             }
-          }
-          if (isClosed) 
-          {
-            TopoDS_Edge CurE = TopoDS::Edge(myMap(edge));
-            TopoDS_Shape aLocalResult = result;
-            aLocalResult.Orientation(TopAbs_FORWARD);
-            TopoDS_Face CurF = TopoDS::Face(aLocalResult);
-            Handle(Geom2d_Curve) curve2d1, currcurv;
-            double f,l;
-            if ((!RevWires && fcor != edge.Orientation()) ||
-              ( RevWires && fcor == edge.Orientation())) {
-                CurE.Orientation(TopAbs_FORWARD);
+            if (isClosed) 
+            {
+              TopoDS_Edge CurE = TopoDS::Edge(myMap(edge));
+              TopoDS_Shape aLocalResult = result;
+              aLocalResult.Orientation(TopAbs_FORWARD);
+              TopoDS_Face CurF = TopoDS::Face(aLocalResult);
+              Handle(Geom2d_Curve) curve2d1, currcurv;
+              double f,l;
+              if ((!RevWires && fcor != edge.Orientation()) ||
+                ( RevWires && fcor == edge.Orientation())) {
+                  CurE.Orientation(TopAbs_FORWARD);
+                  curve2d1 = BRep_Tool::CurveOnSurface(CurE,CurF,f,l);
+                  if (curve2d1.IsNull()) curve2d1 = new Geom2d_Line(gp::OX2d());
+                  B.UpdateEdge (CurE, curve2d1, curve2d, CurF, 0.);
+              }
+              else {
+                CurE.Orientation(TopAbs_REVERSED);
                 curve2d1 = BRep_Tool::CurveOnSurface(CurE,CurF,f,l);
                 if (curve2d1.IsNull()) curve2d1 = new Geom2d_Line(gp::OX2d());
-                B.UpdateEdge (CurE, curve2d1, curve2d, CurF, 0.);
+                B.UpdateEdge (CurE, curve2d, curve2d1, CurF, 0.);
+              }
+              currcurv = BRep_Tool::CurveOnSurface(CurE,CurF,f,l);
+              B.Range(CurE,f,l);
             }
             else {
-              CurE.Orientation(TopAbs_REVERSED);
-              curve2d1 = BRep_Tool::CurveOnSurface(CurE,CurF,f,l);
-              if (curve2d1.IsNull()) curve2d1 = new Geom2d_Line(gp::OX2d());
-              B.UpdateEdge (CurE, curve2d, curve2d1, CurF, 0.);
+              B.UpdateEdge(TopoDS::Edge(myMap(ex.Current())),
+                curve2d,
+                TopoDS::Face(result), 0.);
             }
-            currcurv = BRep_Tool::CurveOnSurface(CurE,CurF,f,l);
-            B.Range(CurE,f,l);
-          }
-          else {
-            B.UpdateEdge(TopoDS::Edge(myMap(ex.Current())),
-              curve2d,
-              TopoDS::Face(result), 0.);
-          }
 
-          TopLoc_Location theLoc;
-          double theF,theL;
-          Handle(Geom_Curve) C3D = BRep_Tool::Curve(TopoDS::Edge(myMap(ex.Current())), theLoc, theF, theL);
-          if (C3D.IsNull()) { // Update vertices
-            double param;
-            TopExp_Explorer ex2(edge,TopAbs_VERTEX);
-            while (ex2.More()) {
-              const TopoDS_Vertex& vertex = TopoDS::Vertex(ex2.Current());
-              if (!M->NewParameter(vertex, edge, param, tol)) {
-                tol = BRep_Tool::Tolerance(vertex);
-                param = BRep_Tool::Parameter(vertex,edge);
+            TopLoc_Location theLoc;
+            double theF,theL;
+            Handle(Geom_Curve) C3D = BRep_Tool::Curve(TopoDS::Edge(myMap(ex.Current())), theLoc, theF, theL);
+            if (C3D.IsNull()) { // Update vertices
+              double param;
+              TopExp_Explorer ex2(edge,TopAbs_VERTEX);
+              while (ex2.More()) {
+                const TopoDS_Vertex& vertex = TopoDS::Vertex(ex2.Current());
+                if (!M->NewParameter(vertex, edge, param, tol)) {
+                  tol = BRep_Tool::Tolerance(vertex);
+                  param = BRep_Tool::Parameter(vertex,edge);
+                }
+
+                TopAbs_Orientation vtxrelat = vertex.Orientation();
+                if (edge.Orientation() == TopAbs_REVERSED) {
+                  // Update considere l'edge FORWARD, et le vertex en relatif
+                  vtxrelat= TopAbs::Reverse(vtxrelat);
+                }
+                //if (myMap(edge).Orientation() == TopAbs_REVERSED) {
+                //  vtxrelat= TopAbs::Reverse(vtxrelat);
+                //}
+
+                TopoDS_Vertex aLocalVertex = TopoDS::Vertex(myMap(vertex));
+                aLocalVertex.Orientation(vtxrelat);
+                //B.UpdateVertex(TopoDS::Vertex
+                //(myMap(vertex).Oriented(vtxrelat)),
+                B.UpdateVertex(aLocalVertex, param, TopoDS::Edge(myMap(edge)), tol);
+                ex2.Next();
               }
-
-              TopAbs_Orientation vtxrelat = vertex.Orientation();
-              if (edge.Orientation() == TopAbs_REVERSED) {
-                // Update considere l'edge FORWARD, et le vertex en relatif
-                vtxrelat= TopAbs::Reverse(vtxrelat);
-              }
-              //if (myMap(edge).Orientation() == TopAbs_REVERSED) {
-              //  vtxrelat= TopAbs::Reverse(vtxrelat);
-              //}
-
-              TopoDS_Vertex aLocalVertex = TopoDS::Vertex(myMap(vertex));
-              aLocalVertex.Orientation(vtxrelat);
-              //B.UpdateVertex(TopoDS::Vertex
-              //(myMap(vertex).Oriented(vtxrelat)),
-              B.UpdateVertex(aLocalVertex, param, TopoDS::Edge(myMap(edge)), tol);
-              ex2.Next();
             }
+
+          } // c2d ok
+          else if ( M->IsErrorState() )
+          {
+            m_progress.SendLogMessage(LogErr(Normal) << "Internal error in normalization tool.");
+            return false;
           }
-        }
+        } // newGeom
 
         // Copy polygon on triangulation
         Handle(Poly_PolygonOnTriangulation) aPolyOnTria_1, aPolyOnTria_2;

@@ -206,7 +206,7 @@ void asiUI_ControlsAnalysis::onDiagnose()
   {
     if ( !checker.CheckBasic(part) )
     {
-      m_notifier.SendLogMessage(LogErr(Normal) << "Shape is invalid.");
+      m_notifier.SendLogMessage(LogErr(Normal) << "Basic validity checker returns false.");
       return;
     }
     m_notifier.SendLogMessage(LogInfo(Normal) << "Shape is correct.");

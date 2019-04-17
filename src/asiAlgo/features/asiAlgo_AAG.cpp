@@ -172,6 +172,22 @@ const TopoDS_Shape& asiAlgo_AAG::GetMasterCAD() const
 
 //-----------------------------------------------------------------------------
 
+void asiAlgo_AAG::SetSelectedFaces(const TopTools_IndexedMapOfShape& selectedFaces)
+{
+  // Save selected faces for future filtering.
+  for ( int s = 1; s <= selectedFaces.Extent(); ++s )
+    m_selected.Add( m_faces.FindIndex( selectedFaces.FindKey(s) ) );
+}
+
+//-----------------------------------------------------------------------------
+
+const TColStd_PackedMapOfInteger& asiAlgo_AAG::GetSelectedFaces() const
+{
+  return m_selected;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_AAG::HasFace(const int face_idx) const
 {
   return face_idx > 0 && face_idx <= m_faces.Extent();
@@ -300,13 +316,6 @@ TColStd_PackedMapOfInteger
 const asiAlgo_AAG::t_adjacency& asiAlgo_AAG::GetNeighborhood() const
 {
   return m_neighborsStack.top();
-}
-
-//-----------------------------------------------------------------------------
-
-const TColStd_PackedMapOfInteger& asiAlgo_AAG::GetSelectedFaces() const
-{
-  return m_selected;
 }
 
 //-----------------------------------------------------------------------------
@@ -940,13 +949,8 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
     this->addMates(adjacentFaces);
   }
 
-  //---------------------------------------------------------------------------
-
-  // Save selected faces for future filtering
-  for ( int s = 1; s <= selectedFaces.Extent(); ++s )
-  {
-    m_selected.Add( m_faces.FindIndex( selectedFaces.FindKey(s) ) );
-  }
+  // Set selected faces
+  this->SetSelectedFaces(selectedFaces);
 }
 
 //-----------------------------------------------------------------------------

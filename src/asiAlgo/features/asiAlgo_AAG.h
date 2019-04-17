@@ -409,6 +409,18 @@ public:
   asiAlgo_EXPORT const TopoDS_Shape&
     GetMasterCAD() const;
 
+  //! Sets the collection of "selected" faces, i.e., the faces which are
+  //! of particular interest to the client code. There is no logic behind
+  //! this technique of marking some faces as selected.
+  //! \param[in] selectedFaces faces to set as "selected".
+  asiAlgo_EXPORT void
+    SetSelectedFaces(const TopTools_IndexedMapOfShape& selectedFaces);
+
+  //! Returns all selected faces.
+  //! \return collection of 1-based indices of the selected faces.
+  asiAlgo_EXPORT const TColStd_PackedMapOfInteger&
+    GetSelectedFaces() const;
+
   //! Returns true if the index is in range.
   //! \param[in] face_idx face index.
   //! \return true/false.
@@ -468,11 +480,6 @@ public:
   //! \return neighborhood data.
   asiAlgo_EXPORT const t_adjacency&
     GetNeighborhood() const;
-
-  //! Returns all selected faces.
-  //! \return collection of 1-based indices of the selected faces.
-  asiAlgo_EXPORT const TColStd_PackedMapOfInteger&
-    GetSelectedFaces() const;
 
   //! Returns all faces of the master model.
   //! If the map is empty, it is constructed.

@@ -351,7 +351,10 @@ vtkSmartPointer<vtkGraph>
   }
   else if ( regime == Regime_AAG )
   {
-    m_aag = (aag.IsNull() ? new asiAlgo_AAG(shape, selectedFaces) : aag);
+    m_aag = (aag.IsNull() ? new asiAlgo_AAG(shape) : aag);
+
+    // Set selected faces
+    m_aag->SetSelectedFaces(selectedFaces);
 
     // Convert
     vtkSmartPointer<vtkMutableUndirectedGraph>

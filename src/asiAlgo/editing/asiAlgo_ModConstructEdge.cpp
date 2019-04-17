@@ -704,10 +704,12 @@ Handle(Geom2d_Curve) asiAlgo_ModConstructEdge::buildPCurve(const TopoDS_Edge& E,
   }
   catch ( ... )
   {
-    // Let's convert our curve to b-curve.
-    c3d = GeomConvert::CurveToBSplineCurve(c3d, Convert_QuasiAngular);
+    std::cout << "Exception on projecting 3D curve" << std::endl;
+    this->SetErrorStateOn();
+    //// Let's convert our curve to b-curve.
+    //c3d = GeomConvert::CurveToBSplineCurve(c3d, Convert_QuasiAngular);
 
-    myProjector->Perform (c3d,f,l,c2d,TolFirst,TolLast);
+    //myProjector->Perform (c3d,f,l,c2d,TolFirst,TolLast);
   }
 
   /*ShapeFix_Edge sfe;

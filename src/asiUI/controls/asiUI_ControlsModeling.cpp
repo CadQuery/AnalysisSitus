@@ -353,7 +353,7 @@ void asiUI_ControlsModeling::onMaximizeFaces()
     TIMER_FINISH
     TIMER_COUT_RESULT_MSG("Face maximization")
 
-    asiEngine_Part(m_model).Update(part);
+    asiEngine_Part( m_model, m_partViewer->PrsMgr() ).Update(part);
   }
   m_model->CommitCommand();
 }

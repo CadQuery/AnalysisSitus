@@ -81,6 +81,57 @@
 //! having some visual feedback from your prototyping system.
 class asiVisu_ShapeRobustTessellator : public vtkObject
 {
+public:
+
+  //! Generator of scalars for custom colors associated with boundary
+  //! elements of a shape.
+  class t_colorScalarGenerator
+  {
+  public:
+
+    //! Ctor accepting the last non-occupied scalar value. This value will be
+    //! the value returned on first invocation of GetScalar() method.
+    //! \param[in] firstUnusedScalar first unused scalar.
+    t_colorScalarGenerator(const int firstUnusedScalar)
+    {
+      m_iUnusedScalar = firstUnusedScalar;
+    }
+
+  public:
+
+    //! Returns the scalar associated with the passed color.
+    //! \param[in] color integer representation of the color in question.
+    //! \return scalar to use.
+    int GetScalar(const int color)
+    {
+      const int* pScalar = m_map.Seek(color);
+      if ( pScalar )
+        return *pScalar;
+
+      int result = m_iUnusedScalar++;
+      m_map.Bind(color, result);
+      return result;
+    }
+
+    //! \return unused scalar.
+    int GetUnusedScalar() const
+    {
+      return m_iUnusedScalar;
+    }
+
+    //! \return scalar mapping.
+    const NCollection_DataMap<int, int>& GetScalarMap() const
+    {
+      return m_map;
+    }
+
+  private:
+
+    int m_iUnusedScalar; //!< Current unused scalar.
+
+    NCollection_DataMap<int, int> m_map; //!< Color-scalar map.
+  };
+
 // RTTI and construction:
 public:
 
@@ -91,6 +142,9 @@ public:
 
   asiVisu_EXPORT
     asiVisu_ShapeRobustTessellator();
+
+  asiVisu_EXPORT
+    ~asiVisu_ShapeRobustTessellator();
 
 public:
 
@@ -128,6 +182,20 @@ public:
     return m_data;
   }
 
+  //! \return last unused scalar for boundary element coloring.
+  int GetLastUnusedScalar() const
+  {
+    return m_pScalarGen->GetUnusedScalar();
+  }
+
+  //! Returns the map containing scalar values for custom colors.
+  //! \param[out] extraScalars map of extra scalars used for custom coloring
+  //!                          of boundary elements.
+  void GetExtraColorsScalars(NCollection_DataMap<int, int>& extraScalars) const
+  {
+    extraScalars = m_pScalarGen->GetScalarMap();
+  }
+
 public:
 
   asiVisu_EXPORT void
@@ -146,6 +214,10 @@ protected:
 
   asiVisu_EXPORT bool
     isValidFace(const TopoDS_Face& face) const;
+
+  asiVisu_EXPORT int
+    getFaceScalar(const int                    faceId,
+                  const asiVisu_ShapePrimitive defaultType) const;
 
 protected:
 
@@ -189,6 +261,9 @@ protected:
   double                    m_fAngDeflectionDeg; //!< Angular deflection.
   ActAPI_ProgressEntry      m_progress;          //!< Progress notifier.
   ActAPI_PlotterEntry       m_plotter;           //!< Imperative plotter.
+
+  //! Scalars generator for coloring.
+  t_colorScalarGenerator* m_pScalarGen;
 
 };
 

@@ -64,27 +64,27 @@ public:
                      const double z);
 
   asiVisu_EXPORT virtual void
-    InsertVertex(vtkIdType              shapeID,
-                 vtkIdType              pid,
-                 asiVisu_ShapePrimitive scType);
+    InsertVertex(vtkIdType shapeID,
+                 vtkIdType pid,
+                 const int scType);
 
   asiVisu_EXPORT virtual void
-    InsertLine(vtkIdType              shapeID,
-               vtkIdType              pid1,
-               vtkIdType              pid2,
-               asiVisu_ShapePrimitive scType);
+    InsertLine(vtkIdType shapeID,
+               vtkIdType pid1,
+               vtkIdType pid2,
+               const int scType);
 
   asiVisu_EXPORT virtual void
     InsertPolyline(vtkIdType                         shapeID,
                    const vtkSmartPointer<vtkIdList>& pids,
-                   asiVisu_ShapePrimitive            scType);
+                   const int                         scType);
 
   asiVisu_EXPORT virtual void
-    InsertTriangle(vtkIdType              shapeID,
-                   vtkIdType              pid1,
-                   vtkIdType              pid2,
-                   vtkIdType              pid3,
-                   asiVisu_ShapePrimitive scType);
+    InsertTriangle(vtkIdType shapeID,
+                   vtkIdType pid1,
+                   vtkIdType pid2,
+                   vtkIdType pid3,
+                   const int scType);
 
 
 public:

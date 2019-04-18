@@ -50,8 +50,9 @@ vtkStandardNewMacro(asiVisu_ShapeDisplayModeFilter)
 //-----------------------------------------------------------------------------
 
 asiVisu_ShapeDisplayModeFilter::asiVisu_ShapeDisplayModeFilter()
-: vtkPolyDataAlgorithm(),
-  m_displayMode(ShapeDisplayMode_Undefined)
+: vtkPolyDataAlgorithm (),
+  m_displayMode        (ShapeDisplayMode_Undefined),
+  m_bAllowExtraScalars (false)
 {}
 
 //-----------------------------------------------------------------------------
@@ -149,7 +150,11 @@ int asiVisu_ShapeDisplayModeFilter::RequestData(vtkInformation*        pInfo,
   {
     const int primTypeOfACell = (int) pInputCellTypeArray->GetValue(cellId);
 
-    if ( m_modePrimitiveTypes.Contains(primTypeOfACell) )
+    // Notice that the second condition makes the cells with the custom scalars
+    // pass just any display mode filtering. That's probably not good, but
+    // we keep it like this for now...
+    if ( m_modePrimitiveTypes.Contains(primTypeOfACell) ||
+         (m_bAllowExtraScalars && primTypeOfACell >= ShapePrimitive_LAST) )
     {
       // Add a cell id to output if it's value is in the set
       cellIdsToPass->InsertNextId(cellId);

@@ -32,7 +32,7 @@
 #define asiVisu_ShapeRobustSource_h
 
 // asiVisu includes
-#include <asiVisu_ShapeData.h>
+#include <asiVisu_ShapeRobustTessellator.h>
 
 // asiAlgo includes
 #include <asiAlgo_AAG.h>
@@ -79,6 +79,12 @@ public:
     SetTessellationParams(const double linDefl,
                           const double angDefl);
 
+  asiVisu_EXPORT int
+    GetLastUnusedScalar() const;
+
+  asiVisu_EXPORT void
+    GetExtraColorsScalars(NCollection_DataMap<int, int>& extraScalars) const;
+
 protected:
 
   //! Builds output polygonal data set from the B-Rep shape.
@@ -112,6 +118,9 @@ protected:
   double                    m_fAngDeflectionDeg; //!< Angular deflection.
   ActAPI_ProgressEntry      m_progress;          //!< Progress notifier.
   ActAPI_PlotterEntry       m_plotter;           //!< Imperative plotter.
+
+  //! Tessellator for convering B-Rep shape to visualization facets.
+  vtkSmartPointer<asiVisu_ShapeRobustTessellator> m_tessellator;
 
 };
 

@@ -31,9 +31,6 @@
 // Own include
 #include <asiVisu_ShapeRobustSource.h>
 
-// asiVisu includes
-#include <asiVisu_ShapeRobustTessellator.h>
-
 // VTK includes
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
@@ -123,6 +120,26 @@ void asiVisu_ShapeRobustSource::SetTessellationParams(const double linDefl,
 
 //-----------------------------------------------------------------------------
 
+int asiVisu_ShapeRobustSource::GetLastUnusedScalar() const
+{
+  if ( !m_tessellator.Get() )
+    return 0;
+
+  return m_tessellator->GetLastUnusedScalar();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_ShapeRobustSource::GetExtraColorsScalars(NCollection_DataMap<int, int>& extraScalars) const
+{
+  if ( !m_tessellator.Get() )
+    return;
+
+  m_tessellator->GetExtraColorsScalars(extraScalars);
+}
+
+//-----------------------------------------------------------------------------
+
 int asiVisu_ShapeRobustSource::RequestData(vtkInformation*        pInfo,
                                            vtkInformationVector** pInputVector,
                                            vtkInformationVector*  pOutputVector)
@@ -139,24 +156,23 @@ int asiVisu_ShapeRobustSource::RequestData(vtkInformation*        pInfo,
 
   m_shapeData = new asiVisu_ShapeData;
   //
-  vtkSmartPointer<asiVisu_ShapeRobustTessellator>
-    tessGen = vtkSmartPointer<asiVisu_ShapeRobustTessellator>::New();
+  m_tessellator = vtkSmartPointer<asiVisu_ShapeRobustTessellator>::New();
   //
   if ( m_aag.IsNull() )
-    tessGen->Initialize(m_shape,
-                        m_fLinDeflection,
-                        m_fAngDeflectionDeg,
-                        m_progress,
-                        m_plotter);
+    m_tessellator->Initialize(m_shape,
+                              m_fLinDeflection,
+                              m_fAngDeflectionDeg,
+                              m_progress,
+                              m_plotter);
   else
-    tessGen->Initialize(m_aag,
-                        m_fLinDeflection,
-                        m_fAngDeflectionDeg,
-                        m_progress,
-                        m_plotter);
-  tessGen->Build();
+    m_tessellator->Initialize(m_aag,
+                              m_fLinDeflection,
+                              m_fAngDeflectionDeg,
+                              m_progress,
+                              m_plotter);
+  m_tessellator->Build();
   //
-  const Handle(asiVisu_ShapeData)&    tessResult         = tessGen->GetResult();
+  const Handle(asiVisu_ShapeData)&    tessResult         = m_tessellator->GetResult();
   const vtkSmartPointer<vtkPolyData>& tessResultPolyData = tessResult->GetPolyData();
 
   /* ==========

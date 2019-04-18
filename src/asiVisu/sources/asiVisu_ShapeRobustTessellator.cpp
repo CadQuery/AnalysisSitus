@@ -35,6 +35,7 @@
 #include <asiVisu_CurveSource.h>
 
 // asiAlgo includes
+#include <asiAlgo_AttrFaceColor.h>
 #include <asiAlgo_CheckValidity.h>
 #include <asiAlgo_MeshGen.h>
 #include <asiAlgo_MeshMerge.h>
@@ -70,22 +71,33 @@ vtkStandardNewMacro(asiVisu_ShapeRobustTessellator);
 
 //-----------------------------------------------------------------------------
 
-//! ctor.
+//! Ctor.
 asiVisu_ShapeRobustTessellator::asiVisu_ShapeRobustTessellator()
 : vtkObject(), m_fGlobalBndDiag(0.0)
 {
   m_data = new asiVisu_ShapeData; // Allocate data for visualization primitives
-                                  // (i.e. VTK points, cells, arrays)
+                                  // (i.e. VTK points, cells, arrays).
+
+  // Initialize the scalar generator for faces.
+  m_pScalarGen = new t_colorScalarGenerator(ShapePrimitive_LAST);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Dtor.
+asiVisu_ShapeRobustTessellator::~asiVisu_ShapeRobustTessellator()
+{
+  delete m_pScalarGen;
 }
 
 //-----------------------------------------------------------------------------
 
 //! Initializes tessellation tool.
-//! \param aag                   [in] AAG.
-//! \param linearDeflection      [in] linear deflection.
-//! \param angularDeflection_deg [in] angular deflection in degrees.
-//! \param progress              [in] progress notifier.
-//! \param plotter               [in] imperative plotter.
+//! \param[in] aag                   AAG.
+//! \param[in] linearDeflection      linear deflection.
+//! \param[in] angularDeflection_deg angular deflection in degrees.
+//! \param[in] progress              progress notifier.
+//! \param[in] plotter               imperative plotter.
 void asiVisu_ShapeRobustTessellator::Initialize(const Handle(asiAlgo_AAG)& aag,
                                                 const double               linearDeflection,
                                                 const double               angularDeflection_deg,
@@ -101,11 +113,11 @@ void asiVisu_ShapeRobustTessellator::Initialize(const Handle(asiAlgo_AAG)& aag,
 //-----------------------------------------------------------------------------
 
 //! Initializes tessellation tool.
-//! \param shape                 [in] shape.
-//! \param linearDeflection      [in] linear deflection.
-//! \param angularDeflection_deg [in] angular deflection in degrees.
-//! \param progress              [in] progress notifier.
-//! \param plotter               [in] imperative plotter.
+//! \param[in] shape                 shape.
+//! \param[in] linearDeflection      linear deflection.
+//! \param[in] angularDeflection_deg angular deflection in degrees.
+//! \param[in] progress              progress notifier.
+//! \param[in] plotter               imperative plotter.
 void asiVisu_ShapeRobustTessellator::Initialize(const TopoDS_Shape&  shape,
                                                 const double         linearDeflection,
                                                 const double         angularDeflection_deg,
@@ -185,15 +197,13 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   // Build map of shapes and their parents
   TopTools_IndexedDataMapOfShapeListOfShape verticesOnEdges;
   TopExp::MapShapesAndAncestors(m_shape, TopAbs_VERTEX, TopAbs_EDGE, verticesOnEdges);
-  //
-  TopTools_IndexedDataMapOfShapeListOfShape edgesOnFaces;
-  TopExp::MapShapesAndAncestors(m_shape, TopAbs_EDGE, TopAbs_FACE, edgesOnFaces);
 
   // Get maps of sub-shapes (either cached in AAG or not)
-  TopTools_IndexedMapOfShape allVertices;
-  TopTools_IndexedMapOfShape allEdges;
-  TopTools_IndexedMapOfShape allFaces;
-  TopTools_IndexedMapOfShape allSubShapes;
+  TopTools_IndexedMapOfShape                allVertices;
+  TopTools_IndexedMapOfShape                allEdges;
+  TopTools_IndexedMapOfShape                allFaces;
+  TopTools_IndexedMapOfShape                allSubShapes;
+  TopTools_IndexedDataMapOfShapeListOfShape edgesOnFaces;
   //
   if ( m_aag.IsNull() )
   {
@@ -201,6 +211,9 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     TopExp::MapShapes(m_shape, TopAbs_EDGE, allEdges);
     TopExp::MapShapes(m_shape, TopAbs_FACE, allFaces);
     TopExp::MapShapes(m_shape, allSubShapes);
+
+    // Edges and their owner faces.
+    TopExp::MapShapesAndAncestors(m_shape, TopAbs_EDGE, TopAbs_FACE, edgesOnFaces);
   }
   else
   {
@@ -208,6 +221,7 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
     allEdges     = m_aag->RequestMapOfEdges();
     allFaces     = m_aag->GetMapOfFaces();
     allSubShapes = m_aag->RequestMapOfSubShapes();
+    edgesOnFaces = m_aag->RequestMapOfEdgesFaces();
   }
 
 #if defined COUT_DEBUG
@@ -432,6 +446,29 @@ bool asiVisu_ShapeRobustTessellator::isValidFace(const TopoDS_Face& face) const
   return asiAlgo_CheckValidity::HasAllClosedWires(face, tol) &&
         !asiAlgo_CheckValidity::HasEdgesWithoutVertices(face) &&
         !BRep_Tool::Triangulation(face, loc).IsNull();
+}
+
+//-----------------------------------------------------------------------------
+
+int asiVisu_ShapeRobustTessellator::getFaceScalar(const int                    faceId,
+                                                  const asiVisu_ShapePrimitive defaultType) const
+{
+  Handle(asiAlgo_FeatureAttr)
+    attrBase = m_aag->GetNodeAttribute( faceId, asiAlgo_AttrFaceColor::GUID() );
+  //
+  if ( attrBase.IsNull() )
+    return defaultType;
+
+  // Get color.
+  unsigned urgb[3];
+  Handle(asiAlgo_AttrFaceColor)::DownCast(attrBase)->GetColor(urgb[0], urgb[1], urgb[2]);
+
+  // Convert color to integer.
+  const int color = asiVisu_Utils::ColorToInt(urgb);
+
+  // Get scalar for color.
+  const int scalar = m_pScalarGen->GetScalar(color);
+  return scalar;
 }
 
 //-----------------------------------------------------------------------------
@@ -778,11 +815,11 @@ void asiVisu_ShapeRobustTessellator::addFace(const TopoDS_Face& face,
       triangle.Get(n1, n2, n3);
 
       // Insert VTK cell
-      m_data->InsertTriangle(shapeId,
-                             isReversed ? pointIds(n3) : pointIds(n1),
-                             pointIds(n2),
-                             isReversed ? pointIds(n1) : pointIds(n3),
-                             ShapePrimitive_Facet);
+      m_data->InsertTriangle( shapeId,
+                              isReversed ? pointIds(n3) : pointIds(n1),
+                              pointIds(n2),
+                              isReversed ? pointIds(n1) : pointIds(n3),
+                              this->getFaceScalar(faceId, ShapePrimitive_Facet) );
     }
   }
 }

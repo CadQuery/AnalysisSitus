@@ -264,15 +264,15 @@ void asiVisu_Utils::AdjustCameraClippingRange(vtkRenderer* theRenderer)
   if ( !theRenderer || !theRenderer->VisibleActorCount() )
     return;
 
-  vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
-  if ( !anActiveCamera )
+  vtkCamera* activeCamera = theRenderer->GetActiveCamera();
+  if ( !activeCamera )
     return;
 
   // Find the plane equation for the camera view plane
   double aNorm[3];
-  anActiveCamera->GetViewPlaneNormal(aNorm);
+  activeCamera->GetViewPlaneNormal(aNorm);
   double aPos[3];
-  anActiveCamera->GetPosition(aPos);
+  activeCamera->GetPosition(aPos);
 
   double aBounds[6];
   theRenderer->ComputeVisiblePropBounds(aBounds);
@@ -297,85 +297,85 @@ void asiVisu_Utils::AdjustCameraClippingRange(vtkRenderer* theRenderer)
   if ( aRange[0] < 0.0 )
     aRange[0] = 0.0;
 
-  anActiveCamera->SetClippingRange(aRange);
+  activeCamera->SetClippingRange(aRange);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Puts camera on the top position.
-//! \param theRenderer [in] Renderer instance.
-void asiVisu_Utils::CameraOnTop(vtkRenderer* theRenderer)
+//! \param[in] renderer renderer instance.
+void asiVisu_Utils::CameraOnTop(vtkRenderer* renderer)
 {
-  vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
-  anActiveCamera->SetPosition(0, 0, 1);
-  anActiveCamera->SetViewUp(0, 1, 0);
-  anActiveCamera->SetFocalPoint(0, 0, 0);
+  vtkCamera* activeCamera = renderer->GetActiveCamera();
+  activeCamera->SetPosition   (0, 0, 1);
+  activeCamera->SetViewUp     (0, 1, 0);
+  activeCamera->SetFocalPoint (0, 0, 0);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Puts camera on the bottom position.
-//! \param theRenderer [in] Renderer instance.
-void asiVisu_Utils::CameraOnBottom(vtkRenderer* theRenderer)
+//! \param[in] renderer renderer instance.
+void asiVisu_Utils::CameraOnBottom(vtkRenderer* renderer)
 {
-  vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
-  anActiveCamera->SetPosition(0, 0, -1);
-  anActiveCamera->SetViewUp(0, 1, 0);
-  anActiveCamera->SetFocalPoint(0, 0, 0);
+  vtkCamera* activeCamera = renderer->GetActiveCamera();
+  activeCamera->SetPosition   (0, 0, -1);
+  activeCamera->SetViewUp     (0, 1,  0);
+  activeCamera->SetFocalPoint (0, 0,  0);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Puts camera on the front position.
-//! \param theRenderer [in] Renderer instance.
-void asiVisu_Utils::CameraOnFront(vtkRenderer* theRenderer)
+//! \param[in] renderer renderer instance.
+void asiVisu_Utils::CameraOnFront(vtkRenderer* renderer)
 {
-  vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
-  anActiveCamera->SetPosition(1, 0, 0);
-  anActiveCamera->SetViewUp(0, 0, 1);
-  anActiveCamera->SetFocalPoint(0, 0, 0);
+  vtkCamera* activeCamera = renderer->GetActiveCamera();
+  activeCamera->SetPosition   (1, 0, 0);
+  activeCamera->SetViewUp     (0, 0, 1);
+  activeCamera->SetFocalPoint (0, 0, 0);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Puts camera on the back position.
-//! \param theRenderer [in] Renderer instance.
-void asiVisu_Utils::CameraOnBack(vtkRenderer* theRenderer)
+//! \param[in] renderer renderer instance.
+void asiVisu_Utils::CameraOnBack(vtkRenderer* renderer)
 {
-  vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
-  anActiveCamera->SetPosition(-1, 0, 0);
-  anActiveCamera->SetViewUp(0, 0, 1);
-  anActiveCamera->SetFocalPoint(0, 0, 0);
+  vtkCamera* activeCamera = renderer->GetActiveCamera();
+  activeCamera->SetPosition   (-1, 0, 0);
+  activeCamera->SetViewUp     ( 0, 0, 1);
+  activeCamera->SetFocalPoint ( 0, 0, 0);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Puts camera on the left position.
-//! \param theRenderer [in] Renderer instance.
-void asiVisu_Utils::CameraOnLeft(vtkRenderer* theRenderer)
+//! \param[in] renderer renderer instance.
+void asiVisu_Utils::CameraOnLeft(vtkRenderer* renderer)
 {
-  vtkCamera* anActiveCamera = theRenderer->GetActiveCamera(); 
-  anActiveCamera->SetPosition(0, -1, 0);
-  anActiveCamera->SetViewUp(0, 0, 1);
-  anActiveCamera->SetFocalPoint(0, 0, 0);
+  vtkCamera* activeCamera = renderer->GetActiveCamera(); 
+  activeCamera->SetPosition   (0, -1, 0);
+  activeCamera->SetViewUp     (0,  0, 1);
+  activeCamera->SetFocalPoint (0,  0, 0);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Puts camera on the right position.
-//! \param theRenderer [in] Renderer instance.
-void asiVisu_Utils::CameraOnRight(vtkRenderer* theRenderer)
+//! \param[in] renderer renderer instance.
+void asiVisu_Utils::CameraOnRight(vtkRenderer* renderer)
 {
-  vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
-  anActiveCamera->SetPosition(0, 1, 0);
-  anActiveCamera->SetViewUp(0, 0, 1);
-  anActiveCamera->SetFocalPoint(0, 0, 0);
+  vtkCamera* activeCamera = renderer->GetActiveCamera();
+  activeCamera->SetPosition   (0, 1, 0);
+  activeCamera->SetViewUp     (0, 0, 1);
+  activeCamera->SetFocalPoint (0, 0, 0);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Sets the predefined lighting options to the passed Actor.
-//! \param actor [in] Actor to adjust lighting options.
+//! \param[in] actor actor to adjust lighting options.
 void asiVisu_Utils::ApplyLightingRules(vtkActor* actor)
 {
   actor->GetProperty()->SetOpacity(1.0);
@@ -452,10 +452,10 @@ void asiVisu_Utils::AdjustTrihedron(vtkRenderer*       theRenderer,
 
   // Calculate bounds of presented Actors excluding those ones which comprise
   // the trihedron itself
-  double aBounds[6];
-  ComputeVisiblePropBounds(theRenderer, aBounds, thePropsToSkip);
+  double bounds[6];
+  ComputeVisiblePropBounds(theRenderer, bounds, thePropsToSkip);
 
-  if ( aBounds[0] == VTK_FLOAT_MAX )
+  if ( bounds[0] == VTK_FLOAT_MAX )
     return;
 
   // Calculate the new length by the bounding box
@@ -463,14 +463,14 @@ void asiVisu_Utils::AdjustTrihedron(vtkRenderer*       theRenderer,
   if ( CALC_BY_DIAG )
   {
     aLength =
-      Sqrt( (aBounds[1] - aBounds[0]) * (aBounds[1] - aBounds[0]) +
-            (aBounds[3] - aBounds[2]) * (aBounds[3] - aBounds[2]) +
-            (aBounds[5] - aBounds[4]) * (aBounds[5] - aBounds[4]) );
+      Sqrt( (bounds[1] - bounds[0]) * (bounds[1] - bounds[0]) +
+            (bounds[3] - bounds[2]) * (bounds[3] - bounds[2]) +
+            (bounds[5] - bounds[4]) * (bounds[5] - bounds[4]) );
   }
   else {
-    aLength = aBounds[1] - aBounds[0];
-    aLength = Max(aBounds[3] - aBounds[2], aLength);
-    aLength = Max(aBounds[5] - aBounds[4], aLength);
+    aLength = bounds[1] - bounds[0];
+    aLength = Max(bounds[3] - bounds[2], aLength);
+    aLength = Max(bounds[5] - bounds[4], aLength);
   }
   double anOldSize = theActor->GetTotalLength()[0];
   double aNewSize = aLength * SIZE_FACTOR;
@@ -492,63 +492,64 @@ void asiVisu_Utils::AdjustTrihedron(vtkRenderer*       theRenderer,
 //-----------------------------------------------------------------------------
 
 //! Allocates VTK single-component integer data array with the given name.
-//! \param theArrName [in] name of array.
+//! \param[in] arrName name of array.
 //! \return array.
-vtkSmartPointer<vtkIntArray> asiVisu_Utils::InitIntArray(const char* theArrName)
+vtkSmartPointer<vtkIntArray> asiVisu_Utils::InitIntArray(const char* arrName)
 {
-  vtkSmartPointer<vtkIntArray> aResult = vtkSmartPointer<vtkIntArray>::New();
-  aResult->SetName(theArrName);
-  aResult->SetNumberOfComponents(1);
-  return aResult;
+  vtkSmartPointer<vtkIntArray> result = vtkSmartPointer<vtkIntArray>::New();
+  result->SetName(arrName);
+  result->SetNumberOfComponents(1);
+  return result;
 }
 
 //-----------------------------------------------------------------------------
 
 //! Allocates VTK single-component real data array with the given name.
-//! \param theArrName [in] name of array.
+//! \param[in] arrName name of array.
 //! \return array.
-vtkSmartPointer<vtkDoubleArray> asiVisu_Utils::InitDoubleArray(const char* theArrName)
+vtkSmartPointer<vtkDoubleArray>
+  asiVisu_Utils::InitDoubleArray(const char* arrName)
 {
-  vtkSmartPointer<vtkDoubleArray> aResult = vtkSmartPointer<vtkDoubleArray>::New();
-  aResult->SetName(theArrName);
-  aResult->SetNumberOfComponents(1);
-  return aResult;
+  vtkSmartPointer<vtkDoubleArray> result = vtkSmartPointer<vtkDoubleArray>::New();
+  result->SetName(arrName);
+  result->SetNumberOfComponents(1);
+  return result;
 }
 
 //-----------------------------------------------------------------------------
 
 //! Allocates VTK three-component real data array with the given name.
-//! \param theArrName [in] name of array.
+//! \param[in] arrName name of array.
 //! \return array.
 vtkSmartPointer<vtkDoubleArray>
-  asiVisu_Utils::InitDoubleVectorArray(const char* theArrName)
+  asiVisu_Utils::InitDoubleVectorArray(const char* arrName)
 {
-  vtkSmartPointer<vtkDoubleArray> aResult = vtkSmartPointer<vtkDoubleArray>::New();
-  aResult->SetName(theArrName);
-  aResult->SetNumberOfComponents(3);
-  return aResult;
+  vtkSmartPointer<vtkDoubleArray> result = vtkSmartPointer<vtkDoubleArray>::New();
+  result->SetName(arrName);
+  result->SetNumberOfComponents(3);
+  return result;
 }
 
 //-----------------------------------------------------------------------------
 
 //! Allocates VTK single-component string data array with the given name.
-//! \param theArrName [in] name of array.
+//! \param[in] arrName name of array.
 //! \return array.
 vtkSmartPointer<vtkStringArray>
-  asiVisu_Utils::InitStringArray(const char* theArrName)
+  asiVisu_Utils::InitStringArray(const char* arrName)
 {
-  vtkSmartPointer<vtkStringArray> aResult = vtkSmartPointer<vtkStringArray>::New();
-  aResult->SetName(theArrName);
-  aResult->SetNumberOfComponents(1);
-  return aResult;
+  vtkSmartPointer<vtkStringArray> result = vtkSmartPointer<vtkStringArray>::New();
+  result->SetName(arrName);
+  result->SetNumberOfComponents(1);
+  return result;
 }
 
 //-----------------------------------------------------------------------------
 
 //! Returns default color for picking.
-//! \param fR [out] red component [0;1].
-//! \param fG [out] green component [0;1].
-//! \param fB [out] blue component [0;1].
+//! \param[out] fR red component [0;1].
+//! \param[out] fG green component [0;1].
+//! \param[out] fB blue component [0;1].
 void asiVisu_Utils::DefaultPickingColor(double& fR,
                                         double& fG,
                                         double& fB)
@@ -561,9 +562,9 @@ void asiVisu_Utils::DefaultPickingColor(double& fR,
 //-----------------------------------------------------------------------------
 
 //! Returns default color for highlighting.
-//! \param fR [out] red component [0,1].
-//! \param fG [out] green component [0,1].
-//! \param fB [out] blue component [0,1].
+//! \param[out] fR red component [0,1].
+//! \param[out] fG green component [0,1].
+//! \param[out] fB blue component [0,1].
 void asiVisu_Utils::DefaultDetectionColor(double& fR,
                                           double& fG,
                                           double& fB)
@@ -575,7 +576,6 @@ void asiVisu_Utils::DefaultDetectionColor(double& fR,
 
 //-----------------------------------------------------------------------------
 
-//! Returns default line width for picking highlight.
 //! \return default line width for picking highlight.
 double asiVisu_Utils::DefaultPickLineWidth()
 {
@@ -584,7 +584,6 @@ double asiVisu_Utils::DefaultPickLineWidth()
 
 //-----------------------------------------------------------------------------
 
-//! Returns default line width for detection highlight.
 //! \return default line width for detection highlight.
 double asiVisu_Utils::DefaultDetectionLineWidth()
 {
@@ -593,7 +592,6 @@ double asiVisu_Utils::DefaultDetectionLineWidth()
 
 //-----------------------------------------------------------------------------
 
-//! Returns default point size for highlighting.
 //! \return default point size for highlighting.
 double asiVisu_Utils::DefaultHilightPointSize()
 {
@@ -604,18 +602,26 @@ double asiVisu_Utils::DefaultHilightPointSize()
 
 vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitLookupTable()
 {
+  NCollection_DataMap<int, int> customScalarMap;
+  const int lastUnusedScalar = ShapePrimitive_LAST;
+
+  return InitLookupTable(customScalarMap, lastUnusedScalar);
+}
+
+//-----------------------------------------------------------------------------
+
+vtkSmartPointer<vtkLookupTable>
+  asiVisu_Utils::InitLookupTable(const NCollection_DataMap<int, int>& customScalarMap,
+                                 const int                            lastUnusedScalar)
+{
   vtkSmartPointer<vtkLookupTable>
     colorTable = vtkSmartPointer<vtkLookupTable>::New();
 
   // Set colors table for 3D shapes
-  double range[2];
-  range[0] = ShapePrimitive_Undefined;
-  range[1] = ShapePrimitive_LAST - 1;
+  double range[2] = {ShapePrimitive_Undefined, lastUnusedScalar - 1};
   //
-  colorTable->Allocate(ShapePrimitive_LAST);
-  colorTable->SetNumberOfTableValues(ShapePrimitive_LAST);
-  colorTable->SetTableRange(range);
-  colorTable->SetValueRange(0, 1);
+  colorTable->SetRange(range);
+  colorTable->SetNumberOfColors(lastUnusedScalar);
   //
   colorTable->SetTableValue(ShapePrimitive_Undefined,       0.0, 0.0, 0.0);
   //
@@ -635,28 +641,53 @@ vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitLookupTable()
   colorTable->SetTableValue(ShapePrimitive_Detected,        0.0, 1.0, 1.0);
   colorTable->SetTableValue(ShapePrimitive_Selected,        1.0, 1.0, 0.0);
 
+  // Add extra scalars.
+  for ( NCollection_DataMap<int, int>::Iterator it(customScalarMap); it.More(); it.Next() )
+  {
+    const int colorId = it.Key();
+    const int scalar  = it.Value();
+
+    // Convert color.
+    QColor color = IntToColor(colorId);
+    int r = color.red();
+    int g = color.green();
+    int b = color.blue();
+
+    // Add scalar mapping to the lookup table.
+    colorTable->SetTableValue(scalar, r/255., g/255., b/255.);
+  }
+
   return colorTable;
 }
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_Utils::InitShapeMapper(vtkMapper* theMapper)
+void asiVisu_Utils::InitShapeMapper(vtkMapper* mapper)
 {
-  InitShapeMapper( theMapper, InitLookupTable() );
+  InitShapeMapper( mapper, InitLookupTable() );
 }
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_Utils::InitShapeMapper(vtkMapper*      theMapper,
-                                    vtkLookupTable* theColorTable)
+void asiVisu_Utils::InitShapeMapper(vtkMapper*      mapper,
+                                    vtkLookupTable* colorTable)
 {
-  theMapper->ScalarVisibilityOn();
-  theMapper->SetScalarModeToUseCellFieldData();
-  theMapper->SelectColorArray(ARRNAME_PART_CELL_TYPES);
-  theMapper->SetColorModeToMapScalars();
-  theMapper->SetScalarRange(theColorTable->GetRange());
-  theMapper->SetLookupTable(theColorTable);
-  theMapper->Update();
+  mapper->ScalarVisibilityOn();
+  mapper->SetScalarModeToUseCellFieldData();
+  mapper->SelectColorArray(ARRNAME_PART_CELL_TYPES);
+  mapper->SetColorModeToMapScalars();
+  mapper->SetScalarRange(colorTable->GetRange());
+  mapper->SetLookupTable(colorTable);
+  mapper->Update();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_Utils::InitShapeMapper(vtkMapper*                           mapper,
+                                    const NCollection_DataMap<int, int>& customScalarMap,
+                                    const int                            lastUnusedScalar)
+{
+  InitShapeMapper( mapper, InitLookupTable(customScalarMap, lastUnusedScalar) );
 }
 
 //-----------------------------------------------------------------------------
@@ -665,18 +696,18 @@ void asiVisu_Utils::InitShapeMapper(vtkMapper*      theMapper,
 //! \return VTK lookup table.
 vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitDomainLookupTable()
 {
-  vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
+  vtkSmartPointer<vtkLookupTable> lookup = vtkSmartPointer<vtkLookupTable>::New();
 
-  double aRange[2] = {VisuOri_Forward, VisuOri_External};
-  aLookup->SetRange(aRange);
-  aLookup->SetNumberOfColors(VisuOri_Last);
+  double range[2] = {VisuOri_Forward, VisuOri_External};
+  lookup->SetRange(range);
+  lookup->SetNumberOfColors(VisuOri_Last);
 
-  aLookup->SetTableValue(VisuOri_Forward,  1.0, 0.0, 0.0);
-  aLookup->SetTableValue(VisuOri_Reversed, 0.2, 0.4, 1.0);
-  aLookup->SetTableValue(VisuOri_Internal, 1.0, 1.0, 0.0);
-  aLookup->SetTableValue(VisuOri_External, 0.0, 1.0, 1.0);
+  lookup->SetTableValue(VisuOri_Forward,  1.0, 0.0, 0.0);
+  lookup->SetTableValue(VisuOri_Reversed, 0.2, 0.4, 1.0);
+  lookup->SetTableValue(VisuOri_Internal, 1.0, 1.0, 0.0);
+  lookup->SetTableValue(VisuOri_External, 0.0, 1.0, 1.0);
 
-  return aLookup;
+  return lookup;
 }
 
 //-----------------------------------------------------------------------------
@@ -685,18 +716,18 @@ vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitDomainLookupTable()
 //! \return VTK lookup table.
 vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitCurvatureCombsLookupTable()
 {
-  vtkSmartPointer<vtkLookupTable> aLookup = vtkSmartPointer<vtkLookupTable>::New();
+  vtkSmartPointer<vtkLookupTable> lookup = vtkSmartPointer<vtkLookupTable>::New();
 
-  double aRange[2] = {VisuCurvComb_PointOk, VisuCurvComb_Envelope};
-  aLookup->SetRange(aRange);
-  aLookup->SetNumberOfColors(VisuCurvComb_Last);
+  double range[2] = {VisuCurvComb_PointOk, VisuCurvComb_Envelope};
+  lookup->SetRange(range);
+  lookup->SetNumberOfColors(VisuCurvComb_Last);
 
-  aLookup->SetTableValue(VisuCurvComb_PointOk,      0.0, 0.8, 0.0);
-  aLookup->SetTableValue(VisuCurvComb_PointFailure, 0.8, 0.0, 0.0);
-  aLookup->SetTableValue(VisuCurvComb_Comb,         0.6, 0.6, 0.6);
-  aLookup->SetTableValue(VisuCurvComb_Envelope,     0.0, 0.3, 1.0);
+  lookup->SetTableValue(VisuCurvComb_PointOk,      0.0, 0.8, 0.0);
+  lookup->SetTableValue(VisuCurvComb_PointFailure, 0.8, 0.0, 0.0);
+  lookup->SetTableValue(VisuCurvComb_Comb,         0.6, 0.6, 0.6);
+  lookup->SetTableValue(VisuCurvComb_Envelope,     0.0, 0.3, 1.0);
 
-  return aLookup;
+  return lookup;
 }
 
 //-----------------------------------------------------------------------------
@@ -741,32 +772,32 @@ vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitCurviAxesLookupTable()
 //-----------------------------------------------------------------------------
 
 //! Initializes the passed VTK mapper with the given Lookup Table.
-//! \param theMapper         [in/out] mapper to initialize.
-//! \param theLookup         [in]     Lookup Table to initialize the mapper with.
-//! \param theScalarsArrName [in]     name of the array storing the scalars
-//!                                   for colorization.
-void asiVisu_Utils::InitMapper(vtkMapper*      theMapper,
-                               vtkLookupTable* theLookup,
-                               const char*     theScalarsArrName)
+//! \param[in,out] mapper         mapper to initialize.
+//! \param[in]     lokup          lookup table to initialize the mapper with.
+//! \param[in]     scalarsArrName name of the array storing the scalars
+//!                               for colorization.
+void asiVisu_Utils::InitMapper(vtkMapper*      mapper,
+                               vtkLookupTable* lookup,
+                               const char*     scalarsArrName)
 {
-  theMapper->ScalarVisibilityOn();
-  theMapper->SetScalarModeToUseCellFieldData();
-  theMapper->SelectColorArray(theScalarsArrName);
-  theMapper->SetColorModeToMapScalars();
-  theMapper->SetScalarRange( theLookup->GetRange() );
-  theMapper->SetLookupTable(theLookup);
-  theMapper->Update();
+  mapper->ScalarVisibilityOn();
+  mapper->SetScalarModeToUseCellFieldData();
+  mapper->SelectColorArray(scalarsArrName);
+  mapper->SetColorModeToMapScalars();
+  mapper->SetScalarRange( lookup->GetRange() );
+  mapper->SetLookupTable(lookup);
+  mapper->Update();
 }
 
 //-----------------------------------------------------------------------------
 
 //! Initializes the passed text widget.
-//! \param theScalarBarWidget [in] scalar bar widget to initialize.
-void asiVisu_Utils::InitTextWidget(vtkTextWidget* theTextWidget)
+//! \param[in] textWidget text widget to initialize.
+void asiVisu_Utils::InitTextWidget(vtkTextWidget* textWidget)
 {
-  vtkTextRepresentation* textRep = vtkTextRepresentation::SafeDownCast( theTextWidget->GetRepresentation() );
-  theTextWidget->SelectableOff();
-  theTextWidget->SetManagesCursor(0); // To avoid annoying bug with changing cursor at On() method
+  vtkTextRepresentation* textRep = vtkTextRepresentation::SafeDownCast( textWidget->GetRepresentation() );
+  textWidget->SelectableOff();
+  textWidget->SetManagesCursor(0); // To avoid annoying bug with changing cursor at On() method
 
   vtkSmartPointer<vtkTextActor> textActor = vtkSmartPointer<vtkTextActor>::New();
   textRep->SetTextActor(textActor);

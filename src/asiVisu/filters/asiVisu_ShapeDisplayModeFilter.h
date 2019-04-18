@@ -75,6 +75,17 @@ public:
   asiVisu_EXPORT void
     RemovePrimitive(const asiVisu_ShapePrimitive prim);
 
+public:
+
+  //! This method allows to configure whether the display model filter
+  //! should filter out the cells whose scalars lie outside the conventional
+  //! range for the boundary elements.
+  //! \param[in] on value to set (true/false).
+  void SetAllowExtraScalars(const bool on)
+  {
+    m_bAllowExtraScalars = on;
+  }
+
 protected:
 
   asiVisu_EXPORT virtual int
@@ -91,6 +102,7 @@ protected:
 
   asiVisu_ShapeDisplayMode   m_displayMode;        //!< Display mode.
   TColStd_PackedMapOfInteger m_modePrimitiveTypes; //!< Primitive types corresponding to the display mode.
+  bool                       m_bAllowExtraScalars; //!< Whether to allow extra scalars.
 
 };
 

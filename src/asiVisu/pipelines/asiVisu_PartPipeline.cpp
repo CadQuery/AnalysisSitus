@@ -31,7 +31,7 @@
 // Own include
 #include <asiVisu_PartPipeline.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_PartDataProvider.h>
 #include <asiVisu_PartNodeInfo.h>
 #include <asiVisu_Utils.h>
@@ -39,6 +39,7 @@
 // VTK includes
 #include <vtkActor.h>
 #include <vtkInformation.h>
+#include <vtkMapper.h>
 #include <vtkProperty.h>
 
 #undef COUT_DEBUG
@@ -51,6 +52,7 @@
 asiVisu_PartPipeline::asiVisu_PartPipeline() : asiVisu_PartPipelineBase(NULL)
 {
   m_dmFilter->SetDisplayMode(ShapeDisplayMode_Shaded);
+  m_dmFilter->SetAllowExtraScalars(true);
 
   // Apply lightning rules
   asiVisu_Utils::ApplyLightingRules( this->Actor() );
@@ -111,3 +113,23 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
   // Update modification timestamp
   this->Modified();
 }
+
+//-----------------------------------------------------------------------------
+
+//! Callback for Update() routine.
+void asiVisu_PartPipeline::callback_update()
+{
+  // Get extra scalars.
+  NCollection_DataMap<int, int> extraScalars;
+  m_source->GetExtraColorsScalars(extraScalars);
+  //
+  const int lastUnusedScalar = m_source->GetLastUnusedScalar();
+
+  // Initialize mapper and a lookup table to have not only the default
+  // colors for boundary elements, but also the custom colors.
+  asiVisu_Utils::InitShapeMapper(m_mapper.Get(), extraScalars, lastUnusedScalar);
+
+  if ( !m_bMapperColorsSet )
+    m_bMapperColorsSet = true;
+}
+

@@ -58,6 +58,10 @@ public:
   asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
 
+private:
+
+  virtual void callback_update();
+
 };
 
 #endif

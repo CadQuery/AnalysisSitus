@@ -13,6 +13,7 @@ set (H_FILES
 #------------------------------------------------------------------------------
 
 set (aux_H_FILES
+  auxiliary/asiAlgo_AttrFaceColor.h
   auxiliary/asiAlgo_BVHAlgo.h
   auxiliary/asiAlgo_BVHFacets.h
   auxiliary/asiAlgo_BVHIterator.h

@@ -244,11 +244,20 @@ public:
   asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
     InitLookupTable();
 
-  asiVisu_EXPORT static void
-    InitShapeMapper(vtkMapper* theMapper);
+  asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
+    InitLookupTable(const NCollection_DataMap<int, int>& customScalarMap,
+                    const int                            lastUnusedScalar);
 
   asiVisu_EXPORT static void
-    InitShapeMapper(vtkMapper* theMapper, vtkLookupTable* theColorTable);
+    InitShapeMapper(vtkMapper* mapper);
+
+  asiVisu_EXPORT static void
+    InitShapeMapper(vtkMapper* mapper, vtkLookupTable* colorTable);
+
+  asiVisu_EXPORT static void
+    InitShapeMapper(vtkMapper*                           mapper,
+                    const NCollection_DataMap<int, int>& customScalarMap,
+                    const int                            lastUnusedScalar);
 
   asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
     InitDomainLookupTable();
@@ -348,6 +357,14 @@ public:
       return IntToColor(value);
     
     return QColor(Qt::white);
+  }
+
+  //! Converts RGB color to integer.
+  //! \param[in] rgb color.
+  //! \return converted value.
+  static int ColorToInt(unsigned rgb[3])
+  {
+    return rgb[0] << 16 | rgb[1] << 8 | rgb[2];
   }
 
   //! Converts RGB color to integer.

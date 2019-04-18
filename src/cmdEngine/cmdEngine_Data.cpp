@@ -35,6 +35,7 @@
 #include <asiEngine_Part.h>
 
 // asiAlgo includes
+#include <asiAlgo_AttrFaceColor.h>
 #include <asiAlgo_Utils.h>
 
 // asiUI includes
@@ -450,6 +451,123 @@ int ENGINE_DumpProject(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_SetFaceColor(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
+{
+  if ( argc != 3 && argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get face ID (if passed).
+  int fid = 0;
+  TCollection_AsciiString fidStr;
+  //
+  if ( interp->GetKeyValue(argc, argv, "fid", fidStr) )
+    fid = fidStr.IntegerValue();
+
+  // Get color RGB components as unsigned integer values.
+  TCollection_AsciiString colorStr;
+  //
+  if ( !interp->GetKeyValue(argc, argv, "color", colorStr) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Color components are not specified.");
+    return TCL_ERROR;
+  }
+
+  // Get color components.
+  std::vector<int> colorComponents;
+  std::vector<std::string> colorComponentsStr;
+  //
+  asiAlgo_Utils::Str::Split(colorStr.ToCString(), "(,)", colorComponentsStr);
+  //
+  for ( size_t k = 0; k < colorComponentsStr.size(); ++k )
+  {
+    TCollection_AsciiString compStr( colorComponentsStr[k].c_str() );
+    //
+    if ( compStr.IsIntegerValue() )
+      colorComponents.push_back( compStr.IntegerValue() );
+  }
+
+  if ( colorComponents.size() != 3 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Three color components expected.");
+    return TCL_ERROR;
+  }
+
+  // Get Part Node to access AAG and optionally the selected faces.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_ERROR;
+  }
+  Handle(asiAlgo_AAG) aag = partNode->GetAAG();
+  //
+  if ( aag.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "AAG is null.");
+    return TCL_ERROR;
+  }
+
+  // If the face ID is not passed, get the selected face.
+  TColStd_PackedMapOfInteger fids;
+  //
+  if ( !fid )
+  {
+    asiEngine_Part partAPI( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() );
+    partAPI.GetHighlightedFaces(fids);
+  }
+  else
+    fids.Add(fid);
+
+  // Add color attributes to AAG.
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(fids); fit.More(); fit.Next() )
+  {
+    const int currFid = fit.Key();
+
+    Handle(asiAlgo_FeatureAttr)
+      attrBase = aag->GetNodeAttribute( currFid, asiAlgo_AttrFaceColor::GUID() );
+
+    // Create a new color attribute or get the existing one.
+    Handle(asiAlgo_AttrFaceColor) attrColor;
+    //
+    if ( attrBase.IsNull() )
+    {
+      attrColor = new asiAlgo_AttrFaceColor;
+
+      if ( !aag->SetNodeAttribute(currFid, attrColor) )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot set color attribute to AAG.");
+        return TCL_ERROR;
+      }
+    }
+    else
+      attrColor = Handle(asiAlgo_AttrFaceColor)::DownCast(attrBase);
+
+    // Adjust color.
+    attrColor->SetColor(colorComponents[0],
+                        colorComponents[1],
+                        colorComponents[2]);
+  }
+
+  // Touch Parameter and actualize.
+  // TODO: that's an overkill !!!
+  cmdEngine::model->OpenCommand();
+  {
+    partNode->Parameter(asiData_PartNode::PID_AAG)->SetModified();
+  }
+  cmdEngine::model->CommitCommand();
+  //
+  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -535,4 +653,12 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
     "\t Dumps project contents as text.",
     //
     __FILE__, group, ENGINE_DumpProject);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("set-face-color",
+    //
+    "set-face-color [-fid id] -color rgb(ured, ugreen, ublue)\n"
+    "\t Sets color for the given face.",
+    //
+    __FILE__, group, ENGINE_SetFaceColor);
 }

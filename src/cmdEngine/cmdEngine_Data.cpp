@@ -451,9 +451,9 @@ int ENGINE_DumpProject(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_SetFaceColor(const Handle(asiTcl_Interp)& interp,
-                        int                          argc,
-                        const char**                 argv)
+int ENGINE_SetFaceColorAAG(const Handle(asiTcl_Interp)& interp,
+                           int                          argc,
+                           const char**                 argv)
 {
   if ( argc != 3 && argc != 5 )
   {
@@ -655,10 +655,10 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_DumpProject);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("set-face-color",
+  interp->AddCommand("set-face-color-aag",
     //
-    "set-face-color [-fid id] -color rgb(ured, ugreen, ublue)\n"
-    "\t Sets color for the given face.",
+    "set-face-color-aag [-fid id] -color rgb(ured, ugreen, ublue)\n"
+    "\t Sets color for the given face as AAG attribute.",
     //
-    __FILE__, group, ENGINE_SetFaceColor);
+    __FILE__, group, ENGINE_SetFaceColorAAG);
 }

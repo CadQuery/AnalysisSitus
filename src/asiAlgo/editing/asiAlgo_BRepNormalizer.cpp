@@ -341,6 +341,9 @@ bool asiAlgo_BRepNormalizer::rebuildRecursively(const TopoDS_Shape&             
       bool isSubNewGeom = false;
       bool subrebuilt = this->rebuildRecursively(it.Value(), M, isSubNewGeom);
       //
+      if ( M->IsErrorState() )
+        return false;
+      //
       rebuild = subrebuilt || rebuild ;
       newGeom = newGeom || isSubNewGeom;
     }

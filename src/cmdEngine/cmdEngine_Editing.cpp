@@ -86,6 +86,7 @@
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Solid.hxx>
 
+// Mobius includes
 #if defined USE_MOBIUS
   #include <mobius/cascade_BSplineCurve.h>
   #include <mobius/cascade_BSplineSurface.h>

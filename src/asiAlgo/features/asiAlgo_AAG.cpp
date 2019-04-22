@@ -103,6 +103,7 @@ Handle(asiAlgo_AAG) asiAlgo_AAG::Copy() const
   copy->m_nodeAttributes    = this->m_nodeAttributes;
   copy->m_bAllowSmooth      = this->m_bAllowSmooth;
   copy->m_fSmoothAngularTol = this->m_fSmoothAngularTol;
+  copy->m_naming            = this->m_naming;
   //
   return copy;
 }
@@ -113,16 +114,16 @@ void asiAlgo_AAG::PushSubgraph(const TColStd_PackedMapOfInteger& faces2Keep)
 {
   t_adjacency& currentMx = m_neighborsStack.top();
 
-  // Gather all present face indices into a single map
+  // Gather all present face indices into a single map.
   TColStd_PackedMapOfInteger allFaces;
   for ( t_adjacency::Iterator it(currentMx); it.More(); it.Next() )
     allFaces.Unite( it.Value() );
 
-  // Prepare a collection of face indices to eliminate
+  // Prepare a collection of face indices to eliminate.
   TColStd_PackedMapOfInteger face2Exclude;
   face2Exclude.Subtraction(allFaces, faces2Keep);
 
-  // Erase faces
+  // Erase faces.
   this->PushSubgraphX(face2Exclude);
 }
 
@@ -133,7 +134,7 @@ void asiAlgo_AAG::PushSubgraphX(const int face2Exclude)
   TColStd_PackedMapOfInteger faces2Exclude;
   faces2Exclude.Add(face2Exclude);
 
-  // Erase face
+  // Erase face.
   this->PushSubgraphX(faces2Exclude);
 }
 
@@ -142,17 +143,17 @@ void asiAlgo_AAG::PushSubgraphX(const int face2Exclude)
 void asiAlgo_AAG::PushSubgraphX(const TColStd_PackedMapOfInteger& faces2Exclude)
 {
   t_adjacency& currentMx = m_neighborsStack.top();
-  t_adjacency subgraphMx = currentMx; // Start with a copy
+  t_adjacency subgraphMx = currentMx; // Start with a copy.
 
-  // Clean matrix rows
+  // Clean matrix rows.
   for ( TColStd_MapIteratorOfPackedMapOfInteger fit(faces2Exclude); fit.More(); fit.Next() )
     subgraphMx.UnBind( fit.Key() );
 
-  // Clean matrix columns
+  // Clean matrix columns.
   for ( t_adjacency::Iterator it(subgraphMx); it.More(); it.Next() )
     it.ChangeValue().Subtract(faces2Exclude);
 
-  // Push sub-graph to stack
+  // Push sub-graph to stack.
   m_neighborsStack.push(subgraphMx);
 }
 

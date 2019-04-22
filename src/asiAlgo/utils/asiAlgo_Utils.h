@@ -119,6 +119,16 @@ namespace asiAlgo_Utils
             const std::string&        delim_str,
             std::vector<std::string>& result);
 
+    //! Splits the passed string by the given delimiter. Note that the
+    //! passed output vector is not cleaned up beforehand.
+    //! \param source_str [in]  input string to split.
+    //! \param delim      [in]  delimiter.
+    //! \param result     [out] resulting collection of tokens after split.
+    asiAlgo_EXPORT void
+      Split(const TCollection_AsciiString&        source_str,
+            const char*                           delim,
+            std::vector<TCollection_AsciiString>& result);
+
     //! Replaces all occurrences of {what} with {with} in string {str}.
     //! \param str [in/out] target string.
     //! \param what [in] sub-string to replace.

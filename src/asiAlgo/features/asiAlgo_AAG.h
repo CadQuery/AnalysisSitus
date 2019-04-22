@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 26 February 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_FeatureAttr.h>
+#include <asiAlgo_Naming.h>
 #include <asiAlgo_Utils.h>
 
 // STL includes
@@ -80,8 +81,8 @@ class asiAlgo_AAGRandomIterator;
 //! - AAG is a convenience structure for traversing adjacent faces. The adjacency
 //!   relation is explicit in AAG by definition.
 //!
-//! In CAD Processor, AAG is a main working structure for feature recognition.
-//! Any feature recognition algorithm accepts or constructs AAG for operation.
+//! AAG is a main working structure for feature recognition. Any feature
+//! recognition algorithm accepts or constructs AAG for operation.
 class asiAlgo_AAG : public Standard_Transient
 {
 public:
@@ -656,6 +657,46 @@ public:
 
 public:
 
+  //! Sets the naming service for the AAG. If the naming service is available,
+  //! AAG will use indirect indexation of the topological elements. Rather
+  //! than requesting the transient shape pointers directly from the cached
+  //! maps, AAG will take the TShape pointers to further pass them through
+  //! the naming service. At this stage, the persistent indices will be
+  //! first used to make names (e.g., face number N will be named as 'face_N').
+  //! In the assumption that the passed naming service uses the conventional
+  //! names, AAG will pass the name to the naming service to access the
+  //! currently alive entity in the CAD model. Thus the id-to-subshape
+  //! mapping becomes indirect.
+  //!
+  //! In general, supplying AAG with the naming service allows to capture
+  //! the indices once and then reuse them as long as the modeling operator is
+  //! able to preserve the continuous history. Such an approach allows us
+  //! to keep the persistent indices obtained at the AAG creation stage,
+  //! so there is no need to reindex the master part or to adjust anyhow the
+  //! AAG in order to actualize it with the present state of the model.
+  //!
+  //! \param[in] naming naming service to use for indirect indexation.
+  void SetNaming(const Handle(asiAlgo_Naming)& naming)
+  {
+    m_naming = naming;
+  }
+
+  //! Resets naming service. This method simply nullifies the internal
+  //! pointer to the naming service.
+  void ResetNaming()
+  {
+    m_naming.Nullify();
+  }
+
+  //! Returns the currently used naming service (if any).
+  //! \return const reference to the naming service smart pointer.
+  const Handle(asiAlgo_Naming)& GetNaming() const
+  {
+    return m_naming;
+  }
+
+public:
+
   //! Dumps AAG structure to the passed output stream.
   //! \param[in, out] out target stream.
   asiAlgo_EXPORT void
@@ -784,6 +825,9 @@ protected:
 
   //! Angular tolerance to use for attribution of "smooth" dihedral edges.
   double m_fSmoothAngularTol;
+
+  //! Optional naming service.
+  Handle(asiAlgo_Naming) m_naming;
 
 };
 

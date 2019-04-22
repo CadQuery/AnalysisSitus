@@ -35,6 +35,9 @@
 #include <asiAlgo_AAG.h>
 #include <asiAlgo_AAGIterator.h>
 
+// OCCT includes
+#include <BRepPrimAPI_MakeBox.hxx>
+
 #undef FILE_DEBUG
 #if defined FILE_DEBUG
   #pragma message("===== warning: FILE_DEBUG is enabled")
@@ -46,14 +49,16 @@
 #define filename_brep_001 "cad/box.brep"
 #define filename_brep_002 "cad/ANC101_isolated_components.brep"
 #define filename_brep_003 "cad/ANC101.brep"
+#define filename_brep_004 "cad/blends/3boxesblend_06.brep"
+#define filename_brep_005 "cad/blends/customblend_04.brep"
+#define filename_brep_006 "cad/blends/nist_ctc_01_asme1_ap242.brep"
 //
 #define filename_json_001 "reference/aag/testJSON01.json"
 #define filename_json_002 "reference/aag/testJSON02.json"
 
 //-----------------------------------------------------------------------------
 
-bool asiTest_AAG::prepareAAGFromFile(const char*          shortFilename,
-                                     Handle(asiAlgo_AAG)& aag)
+TopoDS_Shape asiTest_AAG::readBRep(const char* shortFilename)
 {
   // Get common facilities.
   Handle(asiTest_CommonFacilities) cf = asiTest_CommonFacilities::Instance();
@@ -65,12 +70,25 @@ bool asiTest_AAG::prepareAAGFromFile(const char*          shortFilename,
 
   // Read shape.
   TopoDS_Shape shape;
+  //
   if ( !asiAlgo_Utils::ReadBRep(filename.c_str(), shape) )
   {
     cf->Progress.SendLogMessage( LogErr(Normal) << "Cannot read file %1."
-                                                         << filename.c_str() );
-    return false;
+                                                << filename.c_str() );
+    return TopoDS_Shape();
   }
+
+  return shape;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiTest_AAG::prepareAAGFromFile(const char*          shortFilename,
+                                     Handle(asiAlgo_AAG)& aag)
+{
+  TopoDS_Shape shape = readBRep(shortFilename);
+  if ( shape.IsNull() )
+    return false;
 
   // Prepare AAG allowing smooth dihedral edges for better performance.
   aag = new asiAlgo_AAG(shape, true);
@@ -194,6 +212,86 @@ outcome asiTest_AAG::testAAG2JSON(const int   funcID,
 
 //-----------------------------------------------------------------------------
 
+outcome asiTest_AAG::testAAGIndices(const int           funcID,
+                                    const TopoDS_Shape& shape)
+{
+  // Get common facilities.
+  Handle(asiTest_CommonFacilities) cf = asiTest_CommonFacilities::Instance();
+
+  // Prepare outcome.
+  outcome res(DescriptionFn(), funcID);
+
+  // Prepare AAG (indexation follows right at the same time).
+  Handle(asiAlgo_AAG) aag = new asiAlgo_AAG(shape, true);
+
+  // Create naming service to give all sub-shapes their persistent names.
+  Handle(asiAlgo_Naming) naming = new asiAlgo_Naming(shape);
+
+  /* Iterate sub-shapes indexed in AAG and check their persistent names. Those
+     names should normally be derived from the indices. */
+
+  if ( !checkNamesVersusIds(aag, naming, TopAbs_FACE, cf->Progress) )
+    return res.failure();
+
+  if ( !checkNamesVersusIds(aag, naming, TopAbs_EDGE, cf->Progress) )
+    return res.failure();
+
+  if ( !checkNamesVersusIds(aag, naming, TopAbs_VERTEX, cf->Progress) )
+    return res.failure();
+
+  return res.success();
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiTest_AAG::checkNamesVersusIds(const Handle(asiAlgo_AAG)&    aag,
+                                      const Handle(asiAlgo_Naming)& naming,
+                                      const TopAbs_ShapeEnum        shapeType,
+                                      ActAPI_ProgressEntry          progress)
+{
+  TopTools_IndexedMapOfShape mapOfShapes;
+  aag->RequestMapOf(shapeType, mapOfShapes);
+
+  // Iterate over the map indices and compare those indices with the suffixes
+  // of persistent names.
+  for ( int k = 1; k <= mapOfShapes.Extent(); ++k )
+  {
+    TCollection_AsciiString
+      shapeName = asiAlgo_Naming::PrepareName(shapeType, k);
+
+    // The name is composed of two parts where the second one is the index.
+    // This latter index should be equal to the index in AAG.
+    std::vector<TCollection_AsciiString> nameChunks;
+    asiAlgo_Utils::Str::Split(shapeName, "_", nameChunks);
+    //
+    if ( nameChunks.size() != 2 )
+    {
+      progress.SendLogMessage(LogErr(Normal) << "Unexpected number of name chunks.");
+      return false;
+    }
+    //
+    if ( !nameChunks[1].IsIntegerValue() )
+    {
+      progress.SendLogMessage(LogErr(Normal) << "The second name chunk is not an integer.");
+      return false;
+    }
+
+    // Get ID from the name and verify.
+    const int idOfName = nameChunks[1].IntegerValue();
+    //
+    if ( idOfName != k )
+    {
+      progress.SendLogMessage(LogErr(Normal) << "ID of name '%1' does not correspond to serial ID %2."
+                                             << shapeName << k);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 outcome asiTest_AAG::testNeighborsIterator001(const int funcID)
 {
   return testAllNeighborsIterator( funcID,
@@ -294,4 +392,35 @@ outcome asiTest_AAG::testJSON01(const int funcID)
 outcome asiTest_AAG::testJSON02(const int funcID)
 {
   return testAAG2JSON(funcID, filename_brep_003, filename_json_002);
+}
+
+//-----------------------------------------------------------------------------
+
+outcome asiTest_AAG::testNaming01(const int funcID)
+{
+  // Make a unit box as a working body.
+  TopoDS_Shape box = BRepPrimAPI_MakeBox(1, 1, 1);
+
+  return testAAGIndices(funcID, box);
+}
+
+//-----------------------------------------------------------------------------
+
+outcome asiTest_AAG::testNaming02(const int funcID)
+{
+  return testAAGIndices( funcID, readBRep(filename_brep_004) );
+}
+
+//-----------------------------------------------------------------------------
+
+outcome asiTest_AAG::testNaming03(const int funcID)
+{
+  return testAAGIndices( funcID, readBRep(filename_brep_005) );
+}
+
+//-----------------------------------------------------------------------------
+
+outcome asiTest_AAG::testNaming04(const int funcID)
+{
+  return testAAGIndices( funcID, readBRep(filename_brep_006) );
 }

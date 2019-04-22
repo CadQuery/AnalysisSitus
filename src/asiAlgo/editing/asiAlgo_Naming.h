@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 27 November 2017
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2017-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -78,6 +78,23 @@ public:
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     InitNames();
+
+  //! \brief Constructs name for the given shape type and its index.
+  //!
+  //! E.g., this method will create name 'face_10' for the shape type
+  //! TopAbs_FACE and shape index 10. This method will not populate the
+  //! naming service internally but only generate a name for further
+  //! referencing.
+  //!
+  //! \param[in] shapeType  shape type.
+  //! \param[in] shapeIndex 1-based shape ID.
+  //! \return generated name as ASCII string.
+  //!
+  //! \sa GenerateName() method for indexing the working model with names
+  //!     and populating the service internally.
+  asiAlgo_EXPORT static TCollection_AsciiString
+    PrepareName(const TopAbs_ShapeEnum shapeType,
+                const int              shapeIndex);
 
   //! \brief Generates a unique name for the passed sub-shape.
   //! \param[in] shape shape to generate a name for.

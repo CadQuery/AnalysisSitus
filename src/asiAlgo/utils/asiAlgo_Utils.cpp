@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 20 November 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -258,6 +258,28 @@ void asiAlgo_Utils::Str::Split(const std::string&        source_str,
 
   // Set result
   result = chunks;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Utils::Str::Split(const TCollection_AsciiString&        source_str,
+                               const char*                           delim,
+                               std::vector<TCollection_AsciiString>& result)
+{
+  int tt = 1;
+  TCollection_AsciiString chunk;
+  bool stop = false;
+
+  do
+  {
+    chunk = source_str.Token(delim, tt++);
+    //
+    if ( !chunk.IsEmpty() )
+      result.push_back(chunk);
+    else
+      stop = true;
+  }
+  while ( !stop );
 }
 
 //-----------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 27 November 2017
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2017-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -96,10 +96,9 @@ bool asiAlgo_Naming::InitNames()
 //-----------------------------------------------------------------------------
 
 TCollection_AsciiString
-  asiAlgo_Naming::GenerateName(const TopoDS_Shape& shape)
+  asiAlgo_Naming::PrepareName(const TopAbs_ShapeEnum shapeType,
+                              const int              shapeIndex)
 {
-  const TopAbs_ShapeEnum shapeType = shape.ShapeType();
-
   // Generate base name which corresponds to the topological type.
   TCollection_AsciiString baseName;
   //
@@ -125,14 +124,30 @@ TCollection_AsciiString
       baseName = "shape"; break;
   }
 
-  // Add 1-based index as a suffix to make the name unique.
+  // Add suffix.
+  baseName += "_";
+  baseName += shapeIndex;
+
+  return baseName;
+}
+
+//-----------------------------------------------------------------------------
+
+TCollection_AsciiString
+  asiAlgo_Naming::GenerateName(const TopoDS_Shape& shape)
+{
+  const TopAbs_ShapeEnum shapeType = shape.ShapeType();
+
+  // Request index from the stored collection. The last free one will be used.
   if ( !m_nameIds.IsBound(shapeType) )
     m_nameIds.Bind(shapeType, 1);
   else
     m_nameIds(shapeType) += 1;
   //
-  baseName += "_";
-  baseName += m_nameIds(shapeType);
+  const int shapeIndex = m_nameIds(shapeType);
+
+  // Generate name.
+  TCollection_AsciiString baseName = PrepareName(shapeType, shapeIndex);
 
   return baseName;
 }

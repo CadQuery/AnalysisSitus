@@ -78,10 +78,17 @@ public:
               << &testNeighborsIterator009
               << &testJSON01
               << &testJSON02
+              << &testNaming01
+              << &testNaming02
+              << &testNaming03
+              << &testNaming04
     ; // Put semicolon here for convenient adding new functions above ;)
   }
 
 private:
+
+  static TopoDS_Shape
+    readBRep(const char* shortFilename);
 
   static bool
     prepareAAGFromFile(const char*          shortFilename,
@@ -98,6 +105,16 @@ private:
                  const char* shortFilename,
                  const char* shortFilenameRef);
 
+  static outcome
+    testAAGIndices(const int           funcID,
+                   const TopoDS_Shape& shape);
+
+  static bool
+    checkNamesVersusIds(const Handle(asiAlgo_AAG)&    aag,
+                        const Handle(asiAlgo_Naming)& naming,
+                        const TopAbs_ShapeEnum        shapeType,
+                        ActAPI_ProgressEntry          progress);
+
 private:
 
   static outcome testNeighborsIterator001 (const int funcID);
@@ -111,6 +128,10 @@ private:
   static outcome testNeighborsIterator009 (const int funcID);
   static outcome testJSON01               (const int funcID);
   static outcome testJSON02               (const int funcID);
+  static outcome testNaming01             (const int funcID);
+  static outcome testNaming02             (const int funcID);
+  static outcome testNaming03             (const int funcID);
+  static outcome testNaming04             (const int funcID);
 
 };
 

@@ -41,6 +41,26 @@
 //-----------------------------------------------------------------------------
 
 //! \brief Naming service for a B-Rep part.
+//!
+//! Naming service is essentially a super-structure over the history of
+//! modifications. The function of the naming service to keep track of the
+//! evolution of the topological entities as long as some computation scheme
+//! unfolds. In the simplest form, the naming service is simply a history graph
+//! whose roots are associated with some persistent names. In a more rich form,
+//! the naming service may also hold an explicit topology graph whose attributes
+//! are the names of the topological entities.
+//!
+//! The idea of the naming service is throughly discussed at
+//!
+//! [Kripac, J. 1997. A mechanism for persistently naming topological
+//!  entities in history-based parametric solid models. Computer-Aided
+//!  Design 29, 113-122.]
+//!
+//! Keeping the explicit topology graph updated is actually an overkill, so it
+//! should be done during the maintenance sessions only. For giving sub-shapes
+//! their persistent IDs, it is enough to give names to the root items
+//! of a history graph. All images can then be traced back to these roots
+//! and names can be propagated.
 class asiAlgo_Naming : public Standard_Transient
 {
 public:

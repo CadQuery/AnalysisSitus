@@ -65,7 +65,11 @@ public:
   }
 
   //! Allows to identify a certain topological condition from the passed blend
-  //! candidate attribute.
+  //! candidate attribute. This method is responsible for persistent-transient
+  //! mapping of sub-shape IDs. The persistent IDs are those available in the
+  //! AAG. The transient IDs are the pointers to the sub-shapes which are
+  //! currently "alive" in the B-Rep model.
+  //!
   //! \param[in] bcAttr blend candidate attribute in question.
   //! \return true if the certain topological condition is identified.
   virtual bool Initialize(const Handle(asiAlgo_AttrBlendCandidate)& bcAttr)

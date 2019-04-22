@@ -1807,6 +1807,17 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
   Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
   TopoDS_Shape        shape = partNode->GetShape();
 
+  // Make sure to have diagnostic tools in AAG.
+  aag->SetDiagnosticTools( interp->GetProgress(), interp->GetPlotter() );
+
+  // Prepare naming service.
+  Handle(asiAlgo_Naming)
+    naming = new asiAlgo_Naming( shape, interp->GetProgress() );
+  //
+  naming->InitNames();
+  //
+  aag->SetNaming(naming);
+
   // Get index of the base face.
   int fid = 0;
   //
@@ -1915,6 +1926,9 @@ int ENGINE_KillBlends(const Handle(asiTcl_Interp)& interp,
   Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
   TopoDS_Shape        shape = partNode->GetShape();
 
+  // Make sure to have diagnostic tools in AAG.
+  aag->SetDiagnosticTools( interp->GetProgress(), interp->GetPlotter() );
+
   // Get indices of the faces asked for removal.
   TColStd_PackedMapOfInteger fids;
   //
@@ -2010,6 +2024,9 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
   }
   Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
   TopoDS_Shape        shape = partNode->GetShape();
+
+  // Make sure to have diagnostic tools in AAG.
+  aag->SetDiagnosticTools( interp->GetProgress(), interp->GetPlotter() );
 
   TIMER_NEW
   TIMER_GO

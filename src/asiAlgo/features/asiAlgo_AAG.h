@@ -347,6 +347,18 @@ public:
 
 public:
 
+  //! Sets diagnostic tools to the AAG.
+  //! \param[in] progress progress notifier to set.
+  //! \param[in] plotter  imperative plotter to set.
+  void SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                          ActAPI_PlotterEntry  plotter)
+  {
+    m_progress = progress;
+    m_plotter  = plotter;
+  }
+
+public:
+
   /** @name Derived graphs
    *  Methods to construct derived graphs and sub-graphs from AAG.
    */
@@ -403,6 +415,26 @@ public:
     PopSubgraph();
 
   //@}
+
+public:
+
+  //! Returns face by its sequential ID using the internal naming service.
+  //! \param[in] fid 1-based face ID.
+  //! \return transient face.
+  asiAlgo_EXPORT TopoDS_Face
+    GetNamedFace(const int fid);
+
+  //! Returns edge by its sequential ID using the internal naming service.
+  //! \param[in] eid 1-based edge ID.
+  //! \return transient edge.
+  asiAlgo_EXPORT TopoDS_Edge
+    GetNamedEdge(const int eid);
+
+  //! Returns vertex by its sequential ID using the internal naming service.
+  //! \param[in] vid 1-based vertex ID.
+  //! \return transient vertex.
+  asiAlgo_EXPORT TopoDS_Vertex
+    GetNamedVertex(const int vid);
 
 public:
 
@@ -828,6 +860,12 @@ protected:
 
   //! Optional naming service.
   Handle(asiAlgo_Naming) m_naming;
+
+  //! Progress entry.
+  ActAPI_ProgressEntry m_progress;
+
+  //! Plotter.
+  ActAPI_PlotterEntry m_plotter;
 
 };
 

@@ -166,6 +166,75 @@ void asiAlgo_AAG::PopSubgraph()
 
 //-----------------------------------------------------------------------------
 
+TopoDS_Face asiAlgo_AAG::GetNamedFace(const int fid)
+{
+  if ( m_naming.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Naming service is null while requested.");
+    return TopoDS_Face();
+  }
+
+  TCollection_AsciiString name   = asiAlgo_Naming::PrepareName(TopAbs_FACE, fid);
+  TopoDS_Shape            nshape = m_naming->GetShape(name);
+  //
+  if ( nshape.IsNull() || nshape.ShapeType() != TopAbs_FACE )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Shape for face ID %1 is null or not a face."
+                                             << fid);
+    return TopoDS_Face();
+  }
+
+  return TopoDS::Face(nshape);
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Edge asiAlgo_AAG::GetNamedEdge(const int eid)
+{
+  if ( m_naming.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Naming service is null while requested.");
+    return TopoDS_Edge();
+  }
+
+  TCollection_AsciiString name   = asiAlgo_Naming::PrepareName(TopAbs_EDGE, eid);
+  TopoDS_Shape            nshape = m_naming->GetShape(name);
+  //
+  if ( nshape.IsNull() || nshape.ShapeType() != TopAbs_EDGE )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Shape for edge ID %1 is null or not an edge."
+                                             << eid);
+    return TopoDS_Edge();
+  }
+
+  return TopoDS::Edge(nshape);
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Vertex asiAlgo_AAG::GetNamedVertex(const int vid)
+{
+  if ( m_naming.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Naming service is null while requested.");
+    return TopoDS_Vertex();
+  }
+
+  TCollection_AsciiString name   = asiAlgo_Naming::PrepareName(TopAbs_VERTEX, vid);
+  TopoDS_Shape            nshape = m_naming->GetShape(name);
+  //
+  if ( nshape.IsNull() || nshape.ShapeType() != TopAbs_VERTEX )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Shape for vertex ID %1 is null or not a vertex."
+                                             << vid);
+    return TopoDS_Vertex();
+  }
+
+  return TopoDS::Vertex(nshape);
+}
+
+//-----------------------------------------------------------------------------
+
 const TopoDS_Shape& asiAlgo_AAG::GetMasterCAD() const
 {
   return m_master;

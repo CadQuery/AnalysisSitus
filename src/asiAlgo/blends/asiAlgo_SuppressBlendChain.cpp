@@ -208,7 +208,14 @@ asiAlgo_SuppressBlendChain::asiAlgo_SuppressBlendChain(const Handle(asiAlgo_AAG)
   m_aag               (aag),
   m_iSuppressedChains (0)
 {
-  m_history = new asiAlgo_History;
+  // Check if there is a naming service active.
+  const Handle(asiAlgo_Naming)& naming = aag->GetNaming();
+
+  // Reuse or create new history.
+  if ( naming.IsNull() )
+    m_history = new asiAlgo_History;
+  else
+    m_history = naming->GetHistory();
 }
 
 //-----------------------------------------------------------------------------

@@ -110,10 +110,9 @@ private:
                    const TopoDS_Shape& shape);
 
   static bool
-    checkNamesVersusIds(const Handle(asiAlgo_AAG)&    aag,
-                        const Handle(asiAlgo_Naming)& naming,
-                        const TopAbs_ShapeEnum        shapeType,
-                        ActAPI_ProgressEntry          progress);
+    checkNamesVersusIds(const Handle(asiAlgo_AAG)& aag,
+                        const TopAbs_ShapeEnum     shapeType,
+                        ActAPI_ProgressEntry       progress);
 
 private:
 

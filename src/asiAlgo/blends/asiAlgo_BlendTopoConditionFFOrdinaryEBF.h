@@ -88,7 +88,11 @@ public:
   }
 
   //! Allows to identify a certain topological condition from the passed blend
-  //! candidate attribute.
+  //! candidate attribute. This method is responsible for persistent-transient
+  //! mapping of sub-shape IDs. The persistent IDs are those available in the
+  //! AAG. The transient IDs are the pointers to the sub-shapes which are
+  //! currently "alive" in the B-Rep model.
+  //!
   //! \param[in] bcAttr blend candidate attribute in question.
   //! \return true if the certain topological condition is identified.
   virtual bool Initialize(const Handle(asiAlgo_AttrBlendCandidate)& bcAttr)
@@ -129,12 +133,12 @@ public:
     const int f_b_idx = bcAttr->GetFaceId();
 
     // Get cross edges.
-    TopoDS_Edge e_b_c1_loc = TopoDS::Edge( AAG->RequestMapOfEdges()(e_b_c1_idx) );
-    TopoDS_Edge e_b_c2_loc = TopoDS::Edge( AAG->RequestMapOfEdges()(e_b_c2_idx) );
+    TopoDS_Edge e_b_c1_loc = this->AAG->GetNamedEdge(e_b_c1_idx);
+    TopoDS_Edge e_b_c2_loc = this->AAG->GetNamedEdge(e_b_c2_idx);
 
     // Get `c` faces as neighbors to the blend face through the cross edges.
-    TColStd_PackedMapOfInteger f_b_c1_indices = AAG->GetNeighborsThru(f_b_idx, e_b_c1_loc);
-    TColStd_PackedMapOfInteger f_b_c2_indices = AAG->GetNeighborsThru(f_b_idx, e_b_c2_loc);
+    TColStd_PackedMapOfInteger f_b_c1_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_c1_loc);
+    TColStd_PackedMapOfInteger f_b_c2_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_c2_loc);
     //
     if ( f_b_c1_indices.Extent() != 1 || f_b_c2_indices.Extent() != 1 )
       return false;
@@ -143,8 +147,8 @@ public:
     const int f_b_c2_idx = f_b_c2_indices.GetMinimalMapped();
 
     // Initialize topological primitives.
-    this->f_c1   = this->AAG->GetFace(f_b_c1_idx);
-    this->f_c2   = this->AAG->GetFace(f_b_c2_idx);
+    this->f_c1   = this->AAG->GetNamedFace(f_b_c1_idx);
+    this->f_c2   = this->AAG->GetNamedFace(f_b_c2_idx);
     this->e_b_c1 = e_b_c1_loc;
     this->e_b_c2 = e_b_c2_loc;
 

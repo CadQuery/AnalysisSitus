@@ -83,7 +83,11 @@ public:
   }
 
   //! Allows to identify a certain topological condition from the passed blend
-  //! candidate attribute.
+  //! candidate attribute. This method is responsible for persistent-transient
+  //! mapping of sub-shape IDs. The persistent IDs are those available in the
+  //! AAG. The transient IDs are the pointers to the sub-shapes which are
+  //! currently "alive" in the B-Rep model.
+  //!
   //! \param[in] bcAttr blend candidate attribute in question.
   //! \return true if the certain topological condition is identified.
   virtual bool Initialize(const Handle(asiAlgo_AttrBlendCandidate)& bcAttr)
@@ -103,13 +107,13 @@ public:
     // Get spring edges.
     const int   e_b_s1_idx = bcAttr->SpringEdgeIndices.GetMinimalMapped();
     const int   e_b_s2_idx = bcAttr->SpringEdgeIndices.GetMaximalMapped();
-    TopoDS_Edge e_b_s1_loc = TopoDS::Edge( AAG->RequestMapOfEdges()(e_b_s1_idx) );
-    TopoDS_Edge e_b_s2_loc = TopoDS::Edge( AAG->RequestMapOfEdges()(e_b_s2_idx) );
+    TopoDS_Edge e_b_s1_loc = this->AAG->GetNamedEdge(e_b_s1_idx);
+    TopoDS_Edge e_b_s2_loc = this->AAG->GetNamedEdge(e_b_s2_idx);
 
     // Get support (`s`) faces as neighbors of the blend face through
     // the spring edges.
-    TColStd_PackedMapOfInteger f_b_s1_indices = AAG->GetNeighborsThru(f_b_idx, e_b_s1_loc);
-    TColStd_PackedMapOfInteger f_b_s2_indices = AAG->GetNeighborsThru(f_b_idx, e_b_s2_loc);
+    TColStd_PackedMapOfInteger f_b_s1_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_s1_loc);
+    TColStd_PackedMapOfInteger f_b_s2_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_s2_loc);
     //
     if ( f_b_s1_indices.Extent() != 1 || f_b_s2_indices.Extent() != 1 )
       return false;
@@ -118,8 +122,8 @@ public:
     const int f_b_s2_idx = f_b_s2_indices.GetMinimalMapped();
 
     // Initialize topological primitives.
-    this->f_s1   = this->AAG->GetFace(f_b_s1_idx);
-    this->f_s2   = this->AAG->GetFace(f_b_s2_idx);
+    this->f_s1   = this->AAG->GetNamedFace(f_b_s1_idx);
+    this->f_s2   = this->AAG->GetNamedFace(f_b_s2_idx);
     this->e_b_s1 = e_b_s1_loc;
     this->e_b_s2 = e_b_s2_loc;
 

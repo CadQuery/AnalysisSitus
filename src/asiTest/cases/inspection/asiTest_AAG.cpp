@@ -224,19 +224,16 @@ outcome asiTest_AAG::testAAGIndices(const int           funcID,
   // Prepare AAG (indexation follows right at the same time).
   Handle(asiAlgo_AAG) aag = new asiAlgo_AAG(shape, true);
 
-  // Create naming service to give all sub-shapes their persistent names.
-  Handle(asiAlgo_Naming) naming = new asiAlgo_Naming(shape);
-
   /* Iterate sub-shapes indexed in AAG and check their persistent names. Those
      names should normally be derived from the indices. */
 
-  if ( !checkNamesVersusIds(aag, naming, TopAbs_FACE, cf->Progress) )
+  if ( !checkNamesVersusIds(aag, TopAbs_FACE, cf->Progress) )
     return res.failure();
 
-  if ( !checkNamesVersusIds(aag, naming, TopAbs_EDGE, cf->Progress) )
+  if ( !checkNamesVersusIds(aag, TopAbs_EDGE, cf->Progress) )
     return res.failure();
 
-  if ( !checkNamesVersusIds(aag, naming, TopAbs_VERTEX, cf->Progress) )
+  if ( !checkNamesVersusIds(aag, TopAbs_VERTEX, cf->Progress) )
     return res.failure();
 
   return res.success();
@@ -244,10 +241,9 @@ outcome asiTest_AAG::testAAGIndices(const int           funcID,
 
 //-----------------------------------------------------------------------------
 
-bool asiTest_AAG::checkNamesVersusIds(const Handle(asiAlgo_AAG)&    aag,
-                                      const Handle(asiAlgo_Naming)& naming,
-                                      const TopAbs_ShapeEnum        shapeType,
-                                      ActAPI_ProgressEntry          progress)
+bool asiTest_AAG::checkNamesVersusIds(const Handle(asiAlgo_AAG)& aag,
+                                      const TopAbs_ShapeEnum     shapeType,
+                                      ActAPI_ProgressEntry       progress)
 {
   TopTools_IndexedMapOfShape mapOfShapes;
   aag->RequestMapOf(shapeType, mapOfShapes);

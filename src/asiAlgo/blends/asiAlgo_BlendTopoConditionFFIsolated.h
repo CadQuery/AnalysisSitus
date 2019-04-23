@@ -125,8 +125,8 @@ public:
 
     // Get terminating (`t`) faces as neighbors to the blend face through
     // the terminating edges.
-    TColStd_PackedMapOfInteger f_b_t1_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_t1_loc);
-    TColStd_PackedMapOfInteger f_b_t2_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_t2_loc);
+    TColStd_PackedMapOfInteger f_b_t1_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_t1_idx);
+    TColStd_PackedMapOfInteger f_b_t2_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_t2_idx);
     //
     if ( f_b_t1_indices.Extent() != 1 || f_b_t2_indices.Extent() != 1 )
       return false;

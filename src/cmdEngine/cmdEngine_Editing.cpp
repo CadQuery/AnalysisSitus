@@ -104,33 +104,35 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
                                  ActAPI_PlotterEntry        plotter  = NULL)
 {
   numSuppressedChains = 0;
-  TColStd_PackedMapOfInteger fids;
 
-  bool                recognize = true;
-  bool                stop      = false;
-  Handle(asiAlgo_AAG) tempAAG   = aag;
+  // Contract checks.
+  if ( !aag->HasNaming() )
+  {
+    progress.SendLogMessage(LogErr(Normal) << "Naming service is inactive.");
+    return false;
+  }
+
+  // Perform recognition.
+  asiAlgo_RecognizeBlends recognizer( aag,
+                                      progress,
+                                      NULL
+                                      /*interp->GetPlotter()*/ );
+  //
+  if ( !recognizer.Perform(radius) )
+  {
+    progress.SendLogMessage(LogWarn(Normal) << "Recognition failed.");
+    return false;
+  }
+
+  // Get IDs of all blend faces.
+  TColStd_PackedMapOfInteger fids = recognizer.GetResultIndices();
+
+  // Starting from each blend face, attempt to suppress the corresponding
+  // blend chain.
+  bool stop = false;
   //
   do
   {
-    if ( recognize )
-    {
-      recognize = false;
-
-      // Perform recognition starting from the guess face.
-      asiAlgo_RecognizeBlends recognizer( tempAAG,
-                                          progress,
-                                          NULL
-                                          /*interp->GetPlotter()*/ );
-      //
-      if ( !recognizer.Perform(radius) )
-      {
-        progress.SendLogMessage(LogWarn(Normal) << "Recognition failed.");
-        return false;
-      }
-      //
-      fids = recognizer.GetResultIndices();
-    }
-
     std::cout << "Num. faces remaining: " << fids.Extent() << std::endl;
 
     if ( !fids.Extent() )
@@ -144,23 +146,20 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
     const int fid = fids.GetMinimalMapped();
 
     // Prepare tool.
-    asiAlgo_SuppressBlendChain incSuppress(tempAAG, progress, plotter);
+    asiAlgo_SuppressBlendChain incSuppress(aag, progress, plotter);
     //
     if ( !incSuppress.Perform(fid) )
     {
       progress.SendLogMessage(LogWarn(Normal) << "Next face suppression failed. Keep going...");
 
-      recognize = false; // Try next face.
       fids.Remove(fid);
       continue;
     }
 
-    if ( incSuppress.GetNumSuppressedChains() == 0 )
-    {
-      stop = true;
-      continue;
-    }
+    // Update master CAD model.
+    aag->ChangeMasterCAD() = incSuppress.GetResult();
 
+    // Update number of suppressed chains.
     numSuppressedChains += incSuppress.GetNumSuppressedChains();
 
     fids.Remove(fid);
@@ -170,17 +169,11 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
       stop = true;
       continue;
     }
-
-    // Get result.
-    const TopoDS_Shape& incRes = incSuppress.GetResult();
-
-    // Update AAG.
-    tempAAG = new asiAlgo_AAG(incRes, false);
-    recognize = true;
   }
   while ( !stop );
 
-  result = tempAAG->GetMasterCAD();
+  // Set the result.
+  result = aag->GetMasterCAD();
 
   return true;
 }
@@ -1929,6 +1922,14 @@ int ENGINE_KillBlends(const Handle(asiTcl_Interp)& interp,
   // Make sure to have diagnostic tools in AAG.
   aag->SetDiagnosticTools( interp->GetProgress(), interp->GetPlotter() );
 
+  // Prepare naming service.
+  Handle(asiAlgo_Naming)
+    naming = new asiAlgo_Naming( shape, interp->GetProgress() );
+  //
+  naming->InitNames();
+  //
+  aag->SetNaming(naming);
+
   // Get indices of the faces asked for removal.
   TColStd_PackedMapOfInteger fids;
   //
@@ -2027,6 +2028,14 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
 
   // Make sure to have diagnostic tools in AAG.
   aag->SetDiagnosticTools( interp->GetProgress(), interp->GetPlotter() );
+
+  // Prepare naming service.
+  Handle(asiAlgo_Naming)
+    naming = new asiAlgo_Naming( shape, interp->GetProgress() );
+  //
+  naming->InitNames();
+  //
+  aag->SetNaming(naming);
 
   TIMER_NEW
   TIMER_GO

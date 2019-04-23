@@ -137,8 +137,8 @@ public:
     TopoDS_Edge e_b_c2_loc = this->AAG->GetNamedEdge(e_b_c2_idx);
 
     // Get `c` faces as neighbors to the blend face through the cross edges.
-    TColStd_PackedMapOfInteger f_b_c1_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_c1_loc);
-    TColStd_PackedMapOfInteger f_b_c2_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_c2_loc);
+    TColStd_PackedMapOfInteger f_b_c1_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_c1_idx);
+    TColStd_PackedMapOfInteger f_b_c2_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_c2_idx);
     //
     if ( f_b_c1_indices.Extent() != 1 || f_b_c2_indices.Extent() != 1 )
       return false;

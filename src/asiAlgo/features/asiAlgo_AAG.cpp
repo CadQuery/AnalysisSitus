@@ -174,6 +174,7 @@ TopoDS_Face asiAlgo_AAG::GetNamedFace(const int fid)
     return TopoDS_Face();
   }
 
+  // Get original shape by its name.
   TCollection_AsciiString name   = asiAlgo_Naming::PrepareName(TopAbs_FACE, fid);
   TopoDS_Shape            nshape = m_naming->GetShape(name);
   //
@@ -183,6 +184,9 @@ TopoDS_Face asiAlgo_AAG::GetNamedFace(const int fid)
                                              << fid);
     return TopoDS_Face();
   }
+
+  // Get image.
+  nshape = m_naming->GetHistory()->GetLastImageOrArg(nshape);
 
   return TopoDS::Face(nshape);
 }
@@ -197,6 +201,7 @@ TopoDS_Edge asiAlgo_AAG::GetNamedEdge(const int eid)
     return TopoDS_Edge();
   }
 
+  // Get original shape by its name.
   TCollection_AsciiString name   = asiAlgo_Naming::PrepareName(TopAbs_EDGE, eid);
   TopoDS_Shape            nshape = m_naming->GetShape(name);
   //
@@ -206,6 +211,9 @@ TopoDS_Edge asiAlgo_AAG::GetNamedEdge(const int eid)
                                              << eid);
     return TopoDS_Edge();
   }
+
+  // Get image.
+  nshape = m_naming->GetHistory()->GetLastImageOrArg(nshape);
 
   return TopoDS::Edge(nshape);
 }
@@ -220,6 +228,7 @@ TopoDS_Vertex asiAlgo_AAG::GetNamedVertex(const int vid)
     return TopoDS_Vertex();
   }
 
+  // Get original shape by its name.
   TCollection_AsciiString name   = asiAlgo_Naming::PrepareName(TopAbs_VERTEX, vid);
   TopoDS_Shape            nshape = m_naming->GetShape(name);
   //
@@ -230,12 +239,22 @@ TopoDS_Vertex asiAlgo_AAG::GetNamedVertex(const int vid)
     return TopoDS_Vertex();
   }
 
+  // Get image.
+  nshape = m_naming->GetHistory()->GetLastImageOrArg(nshape);
+
   return TopoDS::Vertex(nshape);
 }
 
 //-----------------------------------------------------------------------------
 
 const TopoDS_Shape& asiAlgo_AAG::GetMasterCAD() const
+{
+  return m_master;
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Shape& asiAlgo_AAG::ChangeMasterCAD()
 {
   return m_master;
 }
@@ -303,6 +322,16 @@ const TColStd_PackedMapOfInteger& asiAlgo_AAG::GetNeighbors(const int face_idx) 
 TColStd_PackedMapOfInteger
   asiAlgo_AAG::GetNeighborsThru(const int face_idx, const TopoDS_Edge& edge)
 {
+  const int edge_idx = this->RequestMapOfEdges().FindIndex(edge);
+
+  return GetNeighborsThru(face_idx, edge_idx);
+}
+
+//-----------------------------------------------------------------------------
+
+TColStd_PackedMapOfInteger
+  asiAlgo_AAG::GetNeighborsThru(const int face_idx, const int edge_idx)
+{
   TColStd_PackedMapOfInteger result;
 
   // Get all neighbors of the face of interest
@@ -325,9 +354,7 @@ TColStd_PackedMapOfInteger
     const TColStd_PackedMapOfInteger&
       commonEdgeIndices = adjAttr->GetEdgeIndices();
     //
-    const int edgeIdx = this->RequestMapOfEdges().FindIndex(edge);
-    //
-    if ( commonEdgeIndices.Contains(edgeIdx) )
+    if ( commonEdgeIndices.Contains(edge_idx) )
       result.Add(neighbor_idx);
   }
 

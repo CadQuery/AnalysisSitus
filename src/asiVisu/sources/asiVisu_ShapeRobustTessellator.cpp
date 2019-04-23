@@ -453,6 +453,9 @@ bool asiVisu_ShapeRobustTessellator::isValidFace(const TopoDS_Face& face) const
 int asiVisu_ShapeRobustTessellator::getFaceScalar(const int                    faceId,
                                                   const asiVisu_ShapePrimitive defaultType) const
 {
+  if ( m_aag.IsNull() )
+    return defaultType;
+
   Handle(asiAlgo_FeatureAttr)
     attrBase = m_aag->GetNodeAttribute( faceId, asiAlgo_AttrFaceColor::GUID() );
   //

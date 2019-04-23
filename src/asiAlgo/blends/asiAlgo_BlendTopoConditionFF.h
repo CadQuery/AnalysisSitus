@@ -112,8 +112,8 @@ public:
 
     // Get support (`s`) faces as neighbors of the blend face through
     // the spring edges.
-    TColStd_PackedMapOfInteger f_b_s1_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_s1_loc);
-    TColStd_PackedMapOfInteger f_b_s2_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_s2_loc);
+    TColStd_PackedMapOfInteger f_b_s1_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_s1_idx);
+    TColStd_PackedMapOfInteger f_b_s2_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_s2_idx);
     //
     if ( f_b_s1_indices.Extent() != 1 || f_b_s2_indices.Extent() != 1 )
       return false;

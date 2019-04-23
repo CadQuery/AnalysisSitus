@@ -438,9 +438,13 @@ public:
 
 public:
 
-  //! \return master CAD.
+  //! \return master CAD model.
   asiAlgo_EXPORT const TopoDS_Shape&
     GetMasterCAD() const;
+
+  //! \return non-const reference to master CAD model.
+  asiAlgo_EXPORT TopoDS_Shape&
+    ChangeMasterCAD();
 
   //! Sets the collection of "selected" faces, i.e., the faces which are
   //! of particular interest to the client code. There is no logic behind
@@ -499,6 +503,14 @@ public:
   //! \return indices of the neighbor faces sharing the given edge.
   asiAlgo_EXPORT TColStd_PackedMapOfInteger
     GetNeighborsThru(const int face_idx, const TopoDS_Edge& edge);
+
+  //! Returns only those neighbor faces which share the given edge with the
+  //! passed face of interest.
+  //! \param[in] face_idx ID of the face of interest.
+  //! \param[in] edge_idx ID of the common edge.
+  //! \return indices of the neighbor faces sharing the given edge.
+  asiAlgo_EXPORT TColStd_PackedMapOfInteger
+    GetNeighborsThru(const int face_idx, const int edge_idx);
 
   //! Returns neighbor faces for the given face of interest with additional
   //! filter on edges realizing the neighborhood.
@@ -718,6 +730,12 @@ public:
   void ResetNaming()
   {
     m_naming.Nullify();
+  }
+
+  //! \return true if the naming service is enabled.
+  bool HasNaming() const
+  {
+    return !m_naming.IsNull();
   }
 
   //! Returns the currently used naming service (if any).

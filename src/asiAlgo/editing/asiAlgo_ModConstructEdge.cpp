@@ -435,6 +435,7 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
   if ( !edgeFaceMap.Contains(targetEdge) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Edge is not a part of the model.");
+    m_plotter.DRAW_SHAPE(targetEdge, Color_Red, 1., true, "nonContainedEdge");
 
     this->SetErrorStateOn();
     return false;

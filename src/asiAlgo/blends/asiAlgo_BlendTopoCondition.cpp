@@ -48,7 +48,7 @@ bool asiAlgo_BlendTopoCondition::kev(const TopoDS_Shape&      shape,
 
   // Run Euler operator.
   asiAlgo_EulerKEV KEV( shape,
-                        edge,
+                        TopoDS::Edge( edge.Oriented(TopAbs_EXTERNAL) ),
                         m_progress, m_plotter );
   //
   if ( !history.IsNull() )
@@ -78,8 +78,8 @@ bool asiAlgo_BlendTopoCondition::kev(const TopoDS_Shape&      shape,
 
   // Run Euler operator.
   asiAlgo_EulerKEV KEV( shape,
-                        edge,
-                        vertex2Kill,
+                        TopoDS::Edge( edge.Oriented(TopAbs_EXTERNAL) ),
+                        TopoDS::Vertex( vertex2Kill.Oriented(TopAbs_EXTERNAL) ),
                         false,
                         m_progress, m_plotter );
   //
@@ -112,9 +112,9 @@ bool asiAlgo_BlendTopoCondition::kef(const TopoDS_Shape&      shape,
 
   // Run Euler operator.
   asiAlgo_EulerKEF KEF( shape,
-                        face,
-                        edge2Kill,
-                        edge2Save,
+                        TopoDS::Face( face.Oriented(TopAbs_EXTERNAL) ),
+                        TopoDS::Edge( edge2Kill.Oriented(TopAbs_EXTERNAL) ),
+                        TopoDS::Edge( edge2Save.Oriented(TopAbs_EXTERNAL) ),
                         m_progress, m_plotter );
   //
   if ( !history.IsNull() )
@@ -142,7 +142,7 @@ bool asiAlgo_BlendTopoCondition::kfmv(const TopoDS_Shape&      shape,
 
   // Run Euler operator.
   asiAlgo_EulerKFMV KFMV( shape,
-                          face,
+                          TopoDS::Face( face.Oriented(TopAbs_EXTERNAL) ),
                           m_progress, m_plotter );
   //
   if ( !history.IsNull() )

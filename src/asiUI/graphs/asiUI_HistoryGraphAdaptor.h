@@ -50,12 +50,10 @@ public:
 
   //! Converts history graph to VTK presentable form.
   //! \param[in] history  history graph to convert.
-  //! \param[in] naming   optional naming service.
   //! \param[in] progress progress notifier.
   //! \return VTK graph.
   static vtkSmartPointer<vtkMutableDirectedGraph>
     Convert(const Handle(asiAlgo_History)& history,
-            const Handle(asiAlgo_Naming)&  naming,
             ActAPI_ProgressEntry           progress);
 };
 

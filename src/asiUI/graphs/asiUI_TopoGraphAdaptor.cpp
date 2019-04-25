@@ -156,18 +156,9 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     if ( !naming.IsNull() )
     {
       // If naming is available, the topology graph is enriched with names.
-      Handle(asiAlgo_TopoAttr)
-        nameAttrBase = topograph->GetNodeAttribute( n, asiAlgo_TopoAttrName::GUID() );
-      //
-      if ( !nameAttrBase.IsNull() )
-      {
-        Handle(asiAlgo_TopoAttrName)
-          nameAttr = Handle(asiAlgo_TopoAttrName)::DownCast(nameAttrBase);
-        //
-        label += "\n";
-        label += "Topo name: ";
-        label += nameAttr->GetName().ToCString();
-      }
+      label += "\n";
+      label += "Topo name: ";
+      label += naming->GenerateName(shape).ToCString();
     }
     //
     labelArr->InsertNextValue(label);

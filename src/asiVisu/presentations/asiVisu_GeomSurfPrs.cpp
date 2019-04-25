@@ -354,14 +354,9 @@ void asiVisu_GeomSurfPrs::afterInitPipelines()
   // If naming service is alive, add persistent name
   if ( !m_partNode->GetNaming().IsNull() )
   {
-    /*TCollection_AsciiString namingName;
-
-    if ( m_partNode->GetNaming()->FindName(F, namingName) )
-    {
-      TITLE += " [";
-      TITLE += namingName;
-      TITLE += "]";
-    }*/
+    TITLE += " [";
+    TITLE += m_partNode->GetNaming()->GenerateName(F);
+    TITLE += "]";
   }
 
   if ( S.IsNull() )

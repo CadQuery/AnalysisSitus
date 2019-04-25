@@ -48,7 +48,6 @@
 
 vtkSmartPointer<vtkMutableDirectedGraph>
   asiUI_HistoryGraphAdaptor::Convert(const Handle(asiAlgo_History)& history,
-                                     const Handle(asiAlgo_Naming)&  naming,
                                      ActAPI_ProgressEntry           progress)
 {
   vtkSmartPointer<vtkMutableDirectedGraph>
@@ -104,13 +103,16 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     label += "Shape: ";
     label += asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str();
     //
-    if ( !naming.IsNull() )
+    if ( history->IsInstance( STANDARD_TYPE(asiAlgo_Naming) ) )
     {
-      //TCollection_AsciiString shapeName;
-      //naming->FindName(shape, shapeName);
-      ////
-      //label += " / ";
-      //label += ( shapeName.IsEmpty() ? "<empty>" : shapeName.ToCString() );
+      Handle(asiAlgo_Naming) naming = Handle(asiAlgo_Naming)::DownCast(history);
+
+      // Prepare name.
+      const int               rigidId   = naming->FindRigidId(shape);
+      TCollection_AsciiString shapeName = asiAlgo_Naming::PrepareName(shape.ShapeType(), rigidId);
+      //
+      label += " / ";
+      label += ( shapeName.IsEmpty() ? "<empty>" : shapeName.ToCString() );
     }
 
     // Add label

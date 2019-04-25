@@ -245,6 +245,10 @@ void asiEngine_Part::Update(const TopoDS_Shape& model,
     part_n->SetAngularDeflection( asiAlgo_Utils::AutoSelectAngularDeflection(model) );
   }
 
+  // Actualize naming if it is initialized.
+  if ( part_n->HasNaming() )
+    part_n->GetNaming()->InitNames( aagParam->GetAAG() );
+
   // Actualize presentation.
   if ( m_prsMgr )
     m_prsMgr->Actualize(part_n);

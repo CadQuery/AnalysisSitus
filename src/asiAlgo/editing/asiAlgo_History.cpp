@@ -55,6 +55,8 @@ asiAlgo_History::t_item* asiAlgo_History::AddRoot(const TopoDS_Shape& shape,
 {
   t_item* pRootItem = this->makeItem(shape, 0, rigidId);
   //
+  pRootItem->IsActive = true;
+  //
   m_roots.push_back(pRootItem);
 
   return pRootItem;

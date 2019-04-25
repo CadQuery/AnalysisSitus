@@ -616,18 +616,18 @@ bool asiAlgo_ModConstructEdge::initSituation(const int targetEdgeId)
   //
   if ( !f1_id )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Cannot access f_s1 from the naming service");
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot access f_s1 from the naming service.");
     this->SetErrorStateOn();
     return false;
   }
 
   // Initialize t1.
   const TColStd_PackedMapOfInteger&
-    f1_prev_neighbors = m_aag->GetNeighborsThru(f1_id, m_edgeInfo.situation.e_s1_t1);
+    f1_prev_neighbors = m_aag->GetNeighborsThru( f1_id, m_aag->GetNamingIndex(m_edgeInfo.situation.e_s1_t1) );
   //
   if ( f1_prev_neighbors.Extent() != 1 )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1 (id %1)."
+    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1 (id %1). "
                                                 "Cannot find t1."
                                              << f1_id);
 
@@ -639,11 +639,11 @@ bool asiAlgo_ModConstructEdge::initSituation(const int targetEdgeId)
 
   // Initialize t2.
   const TColStd_PackedMapOfInteger&
-    f1_next_neighbors = m_aag->GetNeighborsThru(f1_id, m_edgeInfo.situation.e_s1_t2);
+    f1_next_neighbors = m_aag->GetNeighborsThru( f1_id, m_aag->GetNamingIndex(m_edgeInfo.situation.e_s1_t2) );
   //
   if ( f1_next_neighbors.Extent() != 1 )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1 (id %1)."
+    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1 (id %1). "
                                                 "Cannot find t2."
                                              << f1_id);
 

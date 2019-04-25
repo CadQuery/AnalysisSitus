@@ -151,7 +151,11 @@ bool asiAlgo_Naming::InitNames(const Handle(asiAlgo_AAG)& aag)
 int asiAlgo_Naming::FindRigidId(const TopoDS_Shape& shape) const
 {
   if ( !m_items.Contains(shape) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "No history for the passed shape.");
+    m_plotter.DRAW_SHAPE(shape, Color_Red, "FindRigidId_shape_NoHistory");
     return 0;
+  }
 
   t_item* pItem = m_items.FindFromKey(shape);
   return pItem->RigidId;
@@ -271,4 +275,18 @@ TopoDS_Shape
     return this->FindAliveVertex(rigidId);
 
   return TopoDS_Shape();
+}
+
+//-----------------------------------------------------------------------------
+
+TCollection_AsciiString
+  asiAlgo_Naming::GenerateName(const TopoDS_Shape& shape) const
+{
+  if ( shape.IsNull() )
+    return "";
+
+  const int               rigidId   = this->FindRigidId(shape);
+  TCollection_AsciiString shapeName = asiAlgo_Naming::PrepareName(shape.ShapeType(), rigidId);
+  //
+  return shapeName;
 }

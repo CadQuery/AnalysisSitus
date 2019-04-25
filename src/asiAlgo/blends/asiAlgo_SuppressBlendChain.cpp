@@ -492,6 +492,8 @@ bool
 
     // Update working part.
     targetShape = rebuildEdge.GetResult();
+
+    m_aag->ChangeMasterCAD() = targetShape;
   }
 
   return true;

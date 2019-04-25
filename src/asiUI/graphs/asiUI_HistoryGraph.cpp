@@ -235,7 +235,7 @@ void asiUI_HistoryGraph::RenderEventCallback()
 vtkSmartPointer<vtkGraph> asiUI_HistoryGraph::convertToGraph()
 {
   vtkSmartPointer<vtkGraph>
-    result = asiUI_HistoryGraphAdaptor::Convert(m_history, NULL,/*m_naming,*/ m_progress);
+    result = asiUI_HistoryGraphAdaptor::Convert(m_history, m_progress);
 
   return result;
 }

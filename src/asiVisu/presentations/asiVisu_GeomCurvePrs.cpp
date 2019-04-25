@@ -163,14 +163,9 @@ void asiVisu_GeomCurvePrs::afterInitPipelines()
   // If naming service is alive, add persistent name
   if ( !m_partNode->GetNaming().IsNull() )
   {
-    /*TCollection_AsciiString namingName;
-
-    if ( m_partNode->GetNaming()->FindName(E, namingName) )
-    {
-      TITLE += " [";
-      TITLE += namingName;
-      TITLE += "]";
-    }*/
+    TITLE += " [";
+    TITLE += m_partNode->GetNaming()->GenerateName(E);
+    TITLE += "]";
   }
 
   // Trimmed Curve

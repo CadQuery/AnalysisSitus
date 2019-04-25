@@ -584,10 +584,10 @@ protected:
   t_shapeItemMap m_items;
 
   //! Progress notifier.
-  ActAPI_ProgressEntry m_progress;
+  mutable ActAPI_ProgressEntry m_progress;
 
   //! Imperative plotter.
-  ActAPI_PlotterEntry m_plotter;
+  mutable ActAPI_PlotterEntry m_plotter;
 
 };
 

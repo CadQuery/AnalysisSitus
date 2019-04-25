@@ -201,6 +201,9 @@ bool FindNamedArg(const Handle(asiTcl_Interp)&  interp,
       if ( subshape.IsNull() || subshape.ShapeType() != ssType )
         continue;
 
+      // Reset orientation.
+      subshape.Orientation(TopAbs_EXTERNAL);
+
       // Set result and return.
       result.Append(subshape);
     }
@@ -2014,38 +2017,39 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
   // Make sure to have diagnostic tools in AAG.
   aag->SetDiagnosticTools( interp->GetProgress(), interp->GetPlotter() );
 
-  // Prepare naming service.
-  Handle(asiAlgo_Naming)
-    naming = new asiAlgo_Naming( interp->GetProgress(), interp->GetPlotter() );
-  //
-  naming->InitNames(aag);
-  //
-  aag->SetNaming(naming);
-
-  TIMER_NEW
-  TIMER_GO
-
-  TopoDS_Shape result;
-
-  // Perform suppression incrementally.
   int numSuppressedChains = 0;
-  if ( !SuppressBlendsIncrementally( aag, maxRadius, result,
-                                     numSuppressedChains,
-                                     interp->GetProgress()/*,
-                                     interp->GetPlotter()*/ ) )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Incremental suppression failed.");
-    return TCL_ERROR;
-  }
-  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Number of suppressed blend chains: %1."
-                                                       << numSuppressedChains);
 
-  TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "kill-blends-inc")
-
-  // Modify Data Model.
+  // Perform transactional modification.
   cmdEngine::model->OpenCommand();
   {
+    // Initialize naming service.
+    asiEngine_Part(cmdEngine::model).InitializeNaming();
+
+    // Prepare naming service.
+    Handle(asiAlgo_Naming) naming = partNode->GetNaming();
+    //
+    aag->SetNaming(naming);
+
+    TIMER_NEW
+    TIMER_GO
+
+    TopoDS_Shape result;
+
+    // Perform suppression incrementally.
+    if ( !SuppressBlendsIncrementally( aag, maxRadius, result,
+                                       numSuppressedChains,
+                                       interp->GetProgress()/*,
+                                       interp->GetPlotter()*/ ) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Incremental suppression failed.");
+      return TCL_ERROR;
+    }
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Number of suppressed blend chains: %1."
+                                                         << numSuppressedChains);
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "kill-blends-inc")
+
     asiEngine_Part(cmdEngine::model).Update(result);
   }
   cmdEngine::model->CommitCommand();

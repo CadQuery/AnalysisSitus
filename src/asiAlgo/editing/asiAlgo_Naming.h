@@ -148,6 +148,12 @@ public:
   asiAlgo_EXPORT TopoDS_Shape
     FindAliveShape(const TCollection_AsciiString& name) const;
 
+  //! Generates a conventional name for the passed shape.
+  //! \param[in] shape shape in question.
+  //! \return generated name.
+  asiAlgo_EXPORT TCollection_AsciiString
+    GenerateName(const TopoDS_Shape& shape) const;
+
 };
 
 #endif

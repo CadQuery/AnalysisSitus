@@ -1151,7 +1151,7 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
                        int                          argc,
                        const char**                 argv)
 {
-  if ( argc != 2 && argc != 3 )
+  if (  argc != 3 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -1169,34 +1169,26 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
-  // Edge to rebuild.
-  TopoDS_Edge edge;
-
   // Check if naming service is active. If so, the user may ask to access
   // a sub-shape in question by its unique name.
-  if ( argc == 3 )
+  if ( !interp->IsKeyword(argv[1], "name") )
   {
-    if ( !interp->IsKeyword(argv[1], "name") )
-    {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Keyword '-name' is expected.");
-      return TCL_ERROR;
-    }
-    else
-    {
-      TCollection_AsciiString name(argv[2]);
-      //
-      TopoDS_Shape subshape = part_n->GetNaming()->FindAliveShape(name);
-      //
-      if ( subshape.IsNull() || subshape.ShapeType() != TopAbs_EDGE )
-      {
-        interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed sub-shape is null "
-                                                               "or not of a proper type.");
-        return TCL_OK;
-      }
-      //
-      edge = TopoDS::Edge(subshape);
-    }
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Keyword '-name' is expected.");
+    return TCL_ERROR;
   }
+
+  TCollection_AsciiString name(argv[2]);
+  //
+  TopoDS_Shape subshape = part_n->GetNaming()->FindAliveShape(name);
+  //
+  if ( subshape.IsNull() || subshape.ShapeType() != TopAbs_EDGE )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed sub-shape is null "
+                                                           "or not of a proper type.");
+    return TCL_OK;
+  }
+  //
+  TopoDS_Edge edge = TopoDS::Edge(subshape);
 
   /* ======================
    *  Perform modification
@@ -2657,8 +2649,8 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("rebuild-edge",
     //
-    "rebuild-edge <edgeIndex|-name 'edgeName'>\n"
-    "\t Rebuilds edge with the given ID or name.",
+    "rebuild-edge -name 'edgeName'\n"
+    "\t Rebuilds edge with the given name.",
     //
     __FILE__, group, ENGINE_RebuildEdge);
 

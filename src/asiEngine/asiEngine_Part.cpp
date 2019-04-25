@@ -247,7 +247,10 @@ void asiEngine_Part::Update(const TopoDS_Shape& model,
 
   // Actualize naming if it is initialized.
   if ( part_n->HasNaming() )
+  {
     part_n->GetNaming()->InitNames( aagParam->GetAAG() );
+    aagParam->GetAAG()->SetNaming( part_n->GetNaming() );
+  }
 
   // Actualize presentation.
   if ( m_prsMgr )
@@ -287,6 +290,8 @@ void asiEngine_Part::InitializeNaming()
     namingParam = Handle(asiData_NamingParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_Naming) );
   //
   namingParam->SetNaming(naming);
+
+  part_n->GetAAG()->SetNaming(naming);
 }
 
 //-----------------------------------------------------------------------------
